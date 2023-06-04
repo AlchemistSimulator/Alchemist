@@ -25,7 +25,7 @@ open class Benchmarks {
      */
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    @Fork(value = 3)
+    @Fork(value = 1)
     @Suppress("unused")
     fun singleThreadedSimulation() {
         Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-p", "1", "-t", "100"))

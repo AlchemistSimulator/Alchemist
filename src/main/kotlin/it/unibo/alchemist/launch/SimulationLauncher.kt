@@ -11,7 +11,7 @@ package it.unibo.alchemist.launch
 
 import com.google.common.collect.Lists
 import it.unibo.alchemist.AlchemistExecutionOptions
-import it.unibo.alchemist.core.implementations.BatchEngine
+import it.unibo.alchemist.core.implementations.EngineBuilder
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
@@ -64,14 +64,16 @@ abstract class SimulationLauncher : AbstractLauncher() {
             ?: listOf(emptyMap())
     }
 
-    // TODO overriding or debug
     protected fun <T, P : Position<P>> prepareSimulation(
         loader: Loader,
         parameters: AlchemistExecutionOptions,
         variables: Map<String, *>,
     ): Simulation<T, P> {
         val initialized: InitializedEnvironment<T, P> = loader.getWith(variables)
-        val simulation = BatchEngine(initialized.environment, DoubleTime(parameters.endTime))
+        val simulation = EngineBuilder.newInstance(initialized.environment)
+            .withTime(DoubleTime(parameters.endTime))
+            .withBatchSize(parameters.parallelism)
+            .build()
         if (initialized.exporters.isNotEmpty()) {
             simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         }

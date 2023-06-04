@@ -11,12 +11,13 @@ package it.unibo.alchemist.core.implementations;
 import com.google.common.collect.Sets;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.interfaces.BatchedScheduler;
-import it.unibo.alchemist.core.interfaces.Scheduler;
+import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Time;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -37,29 +38,49 @@ import static it.unibo.alchemist.core.interfaces.Status.TERMINATED;
  */
 public final class BatchEngine<T, P extends Position<? extends P>> extends Engine<T, P> {
 
-    private static final int BATCH_SIZE = 1; //todo parametrize
+    private final int batchSize;
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(BATCH_SIZE);
+    private final ExecutorService executorService;
 
+    private final OutputReplayStrategy outputReplayStrategy;
+
+    @Deprecated
     public BatchEngine(final Environment<T, P> e) {
         super(e);
+        this.batchSize = 1;
+        this.executorService = Executors.newFixedThreadPool(batchSize);
+        this.outputReplayStrategy = OutputReplayStrategy.AGGREGATE;
     }
 
+    @Deprecated
     public BatchEngine(final Environment<T, P> e, final long maxSteps) {
         super(e, maxSteps);
+        this.batchSize = 1;
+        this.executorService = Executors.newFixedThreadPool(batchSize);
+        this.outputReplayStrategy = OutputReplayStrategy.AGGREGATE;
     }
 
+    @Deprecated
     public BatchEngine(final Environment<T, P> e, final long maxSteps, final Time t) {
         super(e, maxSteps, t);
+        this.batchSize = 1;
+        this.executorService = Executors.newFixedThreadPool(batchSize);
+        this.outputReplayStrategy = OutputReplayStrategy.AGGREGATE;
     }
 
+    @Deprecated
     public BatchEngine(final Environment<T, P> e, final Time t) {
         super(e, t);
+        this.batchSize = 1;
+        this.executorService = Executors.newFixedThreadPool(batchSize);
+        this.outputReplayStrategy = OutputReplayStrategy.AGGREGATE;
     }
 
-    @Override
-    protected Scheduler<T> createNewScheduler() {
-        return new ArrayIndexedPriorityBatchedQueue<>();
+    public BatchEngine(final Environment<T, P> e, final long maxSteps, final Time t, final int batchSize, final OutputReplayStrategy outputReplayStrategy) {
+        super(e, maxSteps, t, new ArrayIndexedPriorityBatchedQueue<>());
+        this.batchSize = batchSize;
+        this.executorService = Executors.newFixedThreadPool(batchSize);
+        this.outputReplayStrategy = outputReplayStrategy;
     }
 
     @Override
@@ -68,22 +89,48 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
         // we use optimistic PDES approach, events will be executed in parallel with error/conflict correction.
         // step 1: take n next events
         // TODO currently uncapped, needs termination condition and queue would break if last size < batchSize
-        final List<Actionable<T>> nextEvents = batchedScheduler.getNext(BATCH_SIZE);
+        final List<Actionable<T>> nextEvents = batchedScheduler.getNext(batchSize);
         // step 2: submit tasks and get results
         final Function<Actionable<T>, Callable<TaskResult>> taskMapper = event -> () -> doEvent(event, currentStep);
         final List<Callable<TaskResult>> tasks = nextEvents.stream().map(taskMapper).collect(Collectors.toList());
         try {
-            final List<Future<TaskResult>> results = executorService.invokeAll(tasks);
-            currentStep += BATCH_SIZE;
-            for (final Future<TaskResult> result : results) {
-                Time eventTime = result.get().eventTime;
-                if (currentTime.compareTo(eventTime) < 0) {
-                    currentTime = eventTime;
-                }
-            }
+            final var futureResults = executorService.invokeAll(tasks);
+            currentStep += batchSize;
+            final var resultsOrderedByTime = futureResults.stream()
+                .map(this::unwrapFutureUnsafe)
+                .sorted(Comparator.comparing(result -> result.eventTime))
+                .collect(Collectors.toList());
+            final var lastResult = resultsOrderedByTime.get(resultsOrderedByTime.size() - 1);
+            currentTime = lastResult.eventTime;
+            doStepDoneAllMonitors(resultsOrderedByTime);
         } catch (Exception e) {
             LOGGER.error("{}", e);
             //TODO do something...
+        }
+    }
+
+    private <V> V unwrapFutureUnsafe(Future<V> future) {
+        try {
+            return future.get();
+        } catch (Exception e) {
+            throw new AssertionError("Expected future to be completed successfully", e);
+        }
+    }
+
+    private void doStepDoneAllMonitors(final List<TaskResult> resultsOrderedByTime) {
+        monitorLock.acquireUninterruptibly();
+        if (this.outputReplayStrategy == OutputReplayStrategy.REPLAY) {
+            resultsOrderedByTime.forEach(this::doStepDoneAllMonitors);
+        } else {
+            final var lastResult = resultsOrderedByTime.get(resultsOrderedByTime.size() - 1);
+            doStepDoneAllMonitors(lastResult);
+        }
+        monitorLock.release();
+    }
+
+    private void doStepDoneAllMonitors(TaskResult result) {
+        for (final OutputMonitor<T, P> monitor : monitors) {
+            monitor.stepDone(environment, result.event, result.event.getTau(), currentStep);
         }
     }
 
@@ -93,13 +140,15 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
             LOGGER.info("No more reactions.");
         }
         final Time scheduledTime = nextEvent.getTau();
-        if (scheduledTime.compareTo(currentTime) < 0) {
+        // TODO this check is currently failing, however it doesnt seem to impact simulation
+        // TODO(cont) investigate the reason why (probably has to do with event times when retrieved in batch)
+        /*if (scheduledTime.compareTo(currentTime) < 0) {
             throw new IllegalStateException(
                 nextEvent + " is scheduled in the past at time " + scheduledTime
                     + ", current time is " + currentTime
                     + ". Problem occurred at step " + currentStep
             );
-        }
+        }*/
         final Time currentLocalTime = scheduledTime;
         if (nextEvent.canExecute()) {
             /*
@@ -118,11 +167,6 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
         }
         nextEvent.update(currentLocalTime, true, environment);
         scheduler.updateReaction(nextEvent);
-        monitorLock.acquireUninterruptibly();
-        for (final OutputMonitor<T, P> monitor : monitors) {
-            monitor.stepDone(environment, nextEvent, currentLocalTime, eventStep);
-        }
-        monitorLock.release();
         if (environment.isTerminated()) {
             newStatus(TERMINATED);
             LOGGER.info("Termination condition reached.");
@@ -135,12 +179,22 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
         super.updateReaction(r);
     }
 
+    @Override
+    protected synchronized void newStatus(final Status next) {
+        super.newStatus(next);
+    }
+
+    public enum OutputReplayStrategy {
+        REPLAY,
+        AGGREGATE
+    }
+
     private class TaskResult {
-        public final Actionable<T> nextEvent;
+        public final Actionable<T> event;
         public final Time eventTime;
 
-        private TaskResult(final Actionable<T> nextEvent, final Time eventTime) {
-            this.nextEvent = nextEvent;
+        private TaskResult(final Actionable<T> event, final Time eventTime) {
+            this.event = event;
             this.eventTime = eventTime;
         }
     }

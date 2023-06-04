@@ -93,6 +93,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      *
      * @param e the environment at the initial time
      */
+    @Deprecated
     public Engine(final Environment<T, P> e) {
         this(e, Time.INFINITY);
     }
@@ -106,6 +107,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * @param e        the environment at the initial time
      * @param maxSteps the maximum number of steps to do
      */
+    @Deprecated
     public Engine(final Environment<T, P> e, final long maxSteps) {
         this(e, maxSteps, Time.INFINITY);
     }
@@ -126,11 +128,27 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         justification = "The environment is stored intentionally, and this class is final"
     )
     public Engine(final Environment<T, P> e, final long maxSteps, final Time t) {
+        this(e, maxSteps, t, new ArrayIndexedPriorityQueue<>());
+    }
+
+
+    /**
+     * Builds a simulation for a given environment. By default, it uses a
+     * DependencyGraph and an IndexedPriorityBatchQueue internally. If you want to
+     * use your own implementations of {@link DependencyGraph} and
+     * {@link Scheduler} interfaces, don't use this constructor.
+     *
+     * @param e        t
+     *                 he environment at the initial time
+     * @param maxSteps the maximum number of steps to do
+     * @param t        the maximum time to reach
+     */
+    public Engine(final Environment<T, P> e, final long maxSteps, final Time t, final Scheduler<T> scheduler) {
         LOGGER.trace("Engine created");
         environment = e;
         environment.setSimulation(this);
         dependencyGraph = new JGraphTDependencyGraph<>(environment);
-        scheduler = createNewScheduler();
+        this.scheduler = scheduler;
         this.finalStep = maxSteps;
         this.finalTime = t;
     }
@@ -144,12 +162,9 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * @param e the environment at the initial time
      * @param t the maximum time to reach
      */
+    @Deprecated
     public Engine(final Environment<T, P> e, final Time t) {
         this(e, Long.MAX_VALUE, t);
-    }
-
-    protected Scheduler<T> createNewScheduler() {
-        return new ArrayIndexedPriorityQueue<>();
     }
 
     @Override
@@ -404,7 +419,6 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                     m.initialized(environment);
                 }
                 monitorLock.release();
-                status = RUNNING;//TODO this is only for debug
                 while (status.equals(Status.READY)) {
                     idleProcessSingleCommand();
                 }

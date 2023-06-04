@@ -19,11 +19,9 @@ object Debug {
                 "simulation.yml",
                 "-g",
                 "alchemist-benchmark/effects/simulation.json",
-                "-p",
-                "1",
                 "-t",
                 "100",
-            )
+            ),
         )
     }
 }

@@ -147,7 +147,7 @@ kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" 
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.42.0"
+kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.42.1"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.5.1"
 publishOnCentral = "org.danilopianini.publish-on-central:5.0.5"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"

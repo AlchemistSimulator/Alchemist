@@ -45,7 +45,9 @@ internal abstract class LoadingSystem(
         private val mutex = Semaphore(1)
         private var consumed = false
 
-        fun <T : Any?, P : Position<P>> environmentWith(values: Map<String, *>): EnvironmentWithExportersAndMonitors<T, P> {
+        fun <T : Any?, P : Position<P>> environmentWith(
+            values: Map<String, *>,
+        ): EnvironmentWithExportersAndMonitors<T, P> {
             try {
                 mutex.acquireUninterruptibly()
                 check(!consumed) {

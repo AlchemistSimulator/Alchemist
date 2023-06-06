@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Position
 
 /**
  * The result of the loading of an [environment] with all the free variables instanced,
- * also providing access to [exporters].
+ * also providing access to [exporters] and [monitors].
  */
 interface InitializedEnvironment<T, P : Position<P>> {
 
@@ -27,4 +27,9 @@ interface InitializedEnvironment<T, P : Position<P>> {
      * The data exporters for this environment.
      */
     val exporters: List<Exporter<T, P>>
+
+    /**
+     * The monitors for this environment.
+     */
+    val monitors: List<OutputMonitor<T, P>>
 }

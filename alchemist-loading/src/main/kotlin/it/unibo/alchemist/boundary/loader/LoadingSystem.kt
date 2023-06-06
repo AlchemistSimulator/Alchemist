@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.loader
 
-import it.unibo.alchemist.boundary.EnvironmentAndExports
+import it.unibo.alchemist.boundary.EnvironmentWithExportersAndMonitors
 import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
@@ -45,7 +45,7 @@ internal abstract class LoadingSystem(
         private val mutex = Semaphore(1)
         private var consumed = false
 
-        fun <T : Any?, P : Position<P>> environmentWith(values: Map<String, *>): EnvironmentAndExports<T, P> {
+        fun <T : Any?, P : Position<P>> environmentWith(values: Map<String, *>): EnvironmentWithExportersAndMonitors<T, P> {
             try {
                 mutex.acquireUninterruptibly()
                 check(!consumed) {
@@ -104,6 +104,8 @@ internal abstract class LoadingSystem(
                 SimulationModel.visitLinkingRule<P, T>(context, root.getOrEmptyMap(DocumentRoot.linkingRule))
             environment.linkingRule = linkingRule
             contextualize(linkingRule)
+            // MONITORS
+            val monitors = SimulationModel.visitOutputMonitors<P, T>(context, root[DocumentRoot.outputMonitors])
             // DISPLACEMENTS
             setCurrentRandomGenerator(scenarioRNG)
             val displacementsSource = root.getOrEmpty(DocumentRoot.deployments)
@@ -140,7 +142,8 @@ internal abstract class LoadingSystem(
                 SimulationModel.visitSingleExporter(incarnation, context, it)
             }
             exporters.forEach { it.bindVariables(variableValues) }
-            return EnvironmentAndExports(environment, exporters)
+
+            return EnvironmentWithExportersAndMonitors(environment, exporters, monitors)
         }
 
         private fun <T, P : Position<P>> loadGlobalProgramsOnEnvironment(

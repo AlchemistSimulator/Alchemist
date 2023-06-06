@@ -74,6 +74,7 @@ abstract class SimulationLauncher : AbstractLauncher() {
             initialized.environment,
             DoubleTime(parameters.endTime),
         )
+        initialized.monitors.forEach(simulation::addOutputMonitor)
         if (initialized.exporters.isNotEmpty()) {
             simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         }

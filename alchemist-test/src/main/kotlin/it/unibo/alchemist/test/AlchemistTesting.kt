@@ -65,7 +65,10 @@ fun loadAlchemistFromResource(simulationResource: String): Loader {
 fun <T, P : Position<P>> InitializedEnvironment<T, P>.createSimulation(
     finalTime: Time = Time.INFINITY,
     finalStep: Long = Long.MAX_VALUE,
-) = Engine(environment, finalStep, finalTime).apply { addOutputMonitor(GlobalExporter(exporters)) }
+) = Engine(environment, finalStep, finalTime).apply {
+    addOutputMonitor(GlobalExporter(exporters))
+    monitors.forEach { addOutputMonitor(it) }
+}
 
 /**
  * Runs an existing [Simulation] in the current thread.

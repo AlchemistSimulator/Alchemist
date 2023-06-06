@@ -21,7 +21,7 @@ public class ArrayIndexedPriorityBatchedQueue<T> extends ArrayIndexedPriorityQue
     public List<Actionable<T>> getNext(final int batchSize) {
         List<Actionable<T>> result = new ArrayList<>();
         if (!tree.isEmpty()) {
-            result = tree.subList(0, batchSize);
+            result = tree.subList(0, Math.min(tree.size(), batchSize));
         }
         return result;
     }

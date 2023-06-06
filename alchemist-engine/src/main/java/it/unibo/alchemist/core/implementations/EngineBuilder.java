@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.core.implementations;
 
-import it.unibo.alchemist.core.interfaces.Scheduler;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Time;
@@ -32,10 +31,7 @@ public class EngineBuilder<T, P extends Position<? extends P>> {
     private long maxSteps = Long.MAX_VALUE;
     private Time time = Time.INFINITY;
     private int batchSize = 1;
-
     private BatchEngine.OutputReplayStrategy outputReplayStrategy = BatchEngine.OutputReplayStrategy.AGGREGATE;
-
-    private Scheduler<T> scheduler = new ArrayIndexedPriorityQueue<>();
 
     public EngineBuilder(final Environment<T, P> environment) {
         this.environment = environment;
@@ -62,6 +58,11 @@ public class EngineBuilder<T, P extends Position<? extends P>> {
             throw new IllegalArgumentException("batchSize cannot be <= 0");
         }
         this.batchSize = batchSize;
+        return this;
+    }
+
+    public EngineBuilder<T, P> withOutputReplayStrategy(final BatchEngine.OutputReplayStrategy outputReplayStrategy) {
+        this.outputReplayStrategy = outputReplayStrategy;
         return this;
     }
 

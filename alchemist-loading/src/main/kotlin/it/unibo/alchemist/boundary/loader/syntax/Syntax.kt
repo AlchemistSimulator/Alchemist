@@ -149,7 +149,7 @@ internal object DocumentRoot : SyntaxElement {
             },
         )
     }
-    object OutputMonitor : SyntaxElement {
+    object Monitor : SyntaxElement {
         override val validDescriptors = setOf(
             validDescriptor {
                 mandatory(JavaType.type)
@@ -178,7 +178,7 @@ internal object DocumentRoot : SyntaxElement {
     val export by OwnName
     val incarnation by OwnName
     val layers by OwnName
-    const val outputMonitors = "output-monitors"
+    const val monitors = "monitors"
     const val linkingRule = "network-model"
     const val remoteDependencies = "remote-dependencies"
     val seeds by OwnName

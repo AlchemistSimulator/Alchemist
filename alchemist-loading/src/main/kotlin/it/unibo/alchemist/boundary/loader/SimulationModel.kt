@@ -530,7 +530,7 @@ internal object SimulationModel {
         context: Context,
         root: Any?,
     ): List<OutputMonitor<T, P>> =
-        visitRecursively(context, root ?: emptyList<Any>(), DocumentRoot.OutputMonitor) { origin ->
+        visitRecursively(context, root ?: emptyList<Any>(), DocumentRoot.Monitor) { origin ->
             (origin as? Map<*, *>)?.let { _ ->
                 visitBuilding<OutputMonitor<T, P>>(context, origin)
             }

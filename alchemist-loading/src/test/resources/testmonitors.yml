@@ -8,5 +8,5 @@ environment:
         parameters: [1.0]
       type: GlobalTestReaction
 
-output-monitors:
+monitors:
   - type: another.location.SimpleMonitor

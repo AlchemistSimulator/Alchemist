@@ -246,6 +246,7 @@ internal object SimulationModel {
             else -> CombinedLinkingRule(linkingRules)
         }
     }
+
     @Suppress("UNCHECKED_CAST")
     internal fun inject(context: Context, root: Map<String, *>): Map<String, Any> =
         (replaceKnownRecursively(context, root) as Map<String, Any>).also { logger.debug("New model: {}", it) }

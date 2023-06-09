@@ -42,7 +42,7 @@ graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstr
 groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.17"
 gson = "com.google.code.gson:gson:2.10.1"
 gson-extras = "org.danilopianini:gson-extras:1.2.0"
-guava = "com.google.guava:guava:32.0.0-jre"
+guava = "com.google.guava:guava:32.0.1-jre"
 ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "ignite" }
 ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "ignite" }
 ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "ignite" }

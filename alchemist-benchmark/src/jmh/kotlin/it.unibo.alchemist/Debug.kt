@@ -20,7 +20,7 @@ object Debug {
                 "-g",
                 "alchemist-benchmark/effects/simulation.json",
                 "-t",
-                "100",
+                "50",
             ),
         )
     }

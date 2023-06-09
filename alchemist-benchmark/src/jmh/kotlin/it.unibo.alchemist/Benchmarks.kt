@@ -13,6 +13,7 @@ import org.openjdk.jmh.annotations.Benchmark
 import org.openjdk.jmh.annotations.BenchmarkMode
 import org.openjdk.jmh.annotations.Fork
 import org.openjdk.jmh.annotations.Mode
+import org.openjdk.jmh.annotations.Threads
 
 /**
  * Collection of benchmarks to be used with JMH
@@ -21,13 +22,40 @@ import org.openjdk.jmh.annotations.Mode
 open class Benchmarks {
 
     /**
-     * Simple single-threaded simulation run
+     * Singlethreaded and deterministic simulation run
      */
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    @Fork(value = 1)
+    @Fork(value = 3)
+    @Threads(1)
     @Suppress("unused")
     fun singleThreadedSimulation() {
-        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-p", "1", "-t", "100"))
+        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-p", "1", "-t", "50"))
+    }
+
+    /**
+     * Multithreaded simulation run that uses 4 threads, this benchmark should
+     * perform well on most modern processors
+     */
+    @Benchmark
+    @BenchmarkMode(Mode.Throughput)
+    @Fork(value = 3)
+    @Threads(5)
+    @Suppress("unused")
+    fun multiThreadedSimulationFourCoresCores() {
+        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-p", "4", "-t", "50"))
+    }
+
+    /**
+     * Multithreaded simulation run that uses 8 threads, this benchmark should perform
+     * well on higher-end processors
+     */
+    @Benchmark
+    @BenchmarkMode(Mode.Throughput)
+    @Fork(value = 3)
+    @Threads(9)
+    @Suppress("unused")
+    fun multiThreadedSimulationEightCoresCores() {
+        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-p", "8", "-t", "50"))
     }
 }

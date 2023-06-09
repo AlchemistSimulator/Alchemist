@@ -93,7 +93,6 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      *
      * @param e the environment at the initial time
      */
-    @Deprecated
     public Engine(final Environment<T, P> e) {
         this(e, Time.INFINITY);
     }
@@ -107,7 +106,6 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * @param e        the environment at the initial time
      * @param maxSteps the maximum number of steps to do
      */
-    @Deprecated
     public Engine(final Environment<T, P> e, final long maxSteps) {
         this(e, maxSteps, Time.INFINITY);
     }
@@ -162,7 +160,6 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * @param e the environment at the initial time
      * @param t the maximum time to reach
      */
-    @Deprecated
     public Engine(final Environment<T, P> e, final Time t) {
         this(e, Long.MAX_VALUE, t);
     }
@@ -452,8 +449,13 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                 } finally {
                     monitorLock.release();
                 }
+                aferCompleted();
             }
         }
+    }
+
+    protected void aferCompleted() {
+        // do nothing...
     }
 
     private void pauseWhen(final BooleanSupplier condition) {

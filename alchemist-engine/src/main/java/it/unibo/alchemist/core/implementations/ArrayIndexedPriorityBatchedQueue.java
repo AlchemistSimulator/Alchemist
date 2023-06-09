@@ -27,8 +27,10 @@ public class ArrayIndexedPriorityBatchedQueue<T> extends ArrayIndexedPriorityQue
     }
 
     @Override
-    public synchronized void updateReaction(final Actionable<T> reaction) {
-        super.updateReaction(reaction);
+    public void updateReaction(final Actionable<T> reaction) {
+        synchronized (this) {
+            super.updateReaction(reaction);
+        }
     }
 
 }

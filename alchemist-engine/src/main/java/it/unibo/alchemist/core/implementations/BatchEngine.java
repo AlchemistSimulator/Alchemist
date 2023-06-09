@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,6 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
     private final ExecutorService executorService;
     private final OutputReplayStrategy outputReplayStrategy;
 
-    @Deprecated
     public BatchEngine(final Environment<T, P> e) {
         super(e);
         this.batchSize = 1;
@@ -51,7 +51,6 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
         this.outputReplayStrategy = OutputReplayStrategy.AGGREGATE;
     }
 
-    @Deprecated
     public BatchEngine(final Environment<T, P> e, final long maxSteps) {
         super(e, maxSteps);
         this.batchSize = 1;
@@ -59,7 +58,6 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
         this.outputReplayStrategy = OutputReplayStrategy.AGGREGATE;
     }
 
-    @Deprecated
     public BatchEngine(final Environment<T, P> e, final long maxSteps, final Time t) {
         super(e, maxSteps, t);
         this.batchSize = 1;
@@ -67,7 +65,6 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
         this.outputReplayStrategy = OutputReplayStrategy.AGGREGATE;
     }
 
-    @Deprecated
     public BatchEngine(final Environment<T, P> e, final Time t) {
         super(e, t);
         this.batchSize = 1;
@@ -201,6 +198,20 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
     protected synchronized void newStatus(final Status next) {
         synchronized (this) {
             super.newStatus(next);
+        }
+    }
+
+    @Override
+    protected void aferCompleted() {
+        try {
+            this.executorService.shutdownNow();
+            final boolean isSuccessful = this.executorService.awaitTermination(1, TimeUnit.MINUTES);
+            if (!isSuccessful) {
+                throw new IllegalStateException("Executor failed to terminate");
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            //TODO
         }
     }
 

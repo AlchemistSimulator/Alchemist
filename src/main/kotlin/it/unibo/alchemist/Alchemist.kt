@@ -45,6 +45,7 @@ object Alchemist {
     private const val TIME = 't'
     private const val YAML = 'y'
     private const val WEB = 'w'
+    private const val FEATURE_FLAGS = 'f'
     private val logger = LoggerFactory.getLogger(Alchemist::class.java)
     private val launchers: List<Launcher> = ClassPathScanner
         .subTypesOf(Launcher::class.java, "it.unibo.alchemist")
@@ -85,6 +86,7 @@ object Alchemist {
             when {
                 value == null ->
                     exitBecause("Not a valid ${T::class.simpleName}: $it", ExitStatus.NUMBER_FORMAT_ERROR)
+
                 else -> value
             }
         }
@@ -141,6 +143,7 @@ object Alchemist {
                         )
                         exitWith(ExitStatus.INVALID_CLI)
                     }
+
                 else -> {
                     logger.error("No valid launchers for {}", options)
                     printLaunchers()
@@ -193,6 +196,7 @@ object Alchemist {
                     "Conflicting verbosity specification. Only one of ${logLevels.keys} can be specified.",
                     ExitStatus.MULTIPLE_VERBOSITY,
                 )
+
             verbosity.size == 1 -> setLogbackLoggingLevel(verbosity.first())
             else -> setLogbackLoggingLevel(Level.WARN)
         }
@@ -240,6 +244,7 @@ object Alchemist {
             parallelism = hasNumeric(PARALLELISM, kotlin.String::toIntOrNull)
                 ?: AlchemistExecutionOptions.defaultParallelism,
             variables = getOptionValues(VARIABLES)?.toList().orEmpty(),
+            featureFlags = getOptionValues(FEATURE_FLAGS)?.toList().orEmpty(),
             configuration = getOptionValue(YAML),
         )
 

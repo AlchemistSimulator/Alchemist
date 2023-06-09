@@ -11,6 +11,7 @@ package it.unibo.alchemist.launch
 
 import com.google.common.collect.Lists
 import it.unibo.alchemist.AlchemistExecutionOptions
+import it.unibo.alchemist.ExperimentalFeatureFlag
 import it.unibo.alchemist.core.implementations.EngineBuilder
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.InitializedEnvironment
@@ -72,12 +73,20 @@ abstract class SimulationLauncher : AbstractLauncher() {
         val initialized: InitializedEnvironment<T, P> = loader.getWith(variables)
         val simulation = EngineBuilder.newInstance(initialized.environment)
             .withTime(DoubleTime(parameters.endTime))
-            .withBatchSize(parameters.parallelism)
+            .withBatchSize(parseBatchSize(parameters))
             .build()
         if (initialized.exporters.isNotEmpty()) {
             simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         }
         return simulation
+    }
+
+    private fun parseBatchSize(parameters: AlchemistExecutionOptions): Int {
+        return if (parameters.featureFlags.contains(ExperimentalFeatureFlag.BATCH_ENGINE.code)) {
+            parameters.parallelism
+        } else {
+            1
+        }
     }
 
     /**

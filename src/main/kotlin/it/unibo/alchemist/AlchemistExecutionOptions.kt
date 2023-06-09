@@ -38,6 +38,7 @@ data class AlchemistExecutionOptions(
     val server: String? = null,
     val parallelism: Int = defaultParallelism,
     val endTime: Double = defaultEndTime,
+    val featureFlags: List<String> = emptyList(),
 ) {
     /**
      * returns true if all options are set to their default value.

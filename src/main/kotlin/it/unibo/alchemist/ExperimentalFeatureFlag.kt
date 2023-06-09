@@ -9,21 +9,7 @@
 
 package it.unibo.alchemist
 
-object Debug {
+enum class ExperimentalFeatureFlag(val code: String) {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        Alchemist.main(
-            arrayOf(
-                "-y",
-                "simulation.yml",
-                "-g",
-                "alchemist-benchmark/effects/simulation.json",
-                "-t",
-                "50",
-                "-f",
-                "batch",
-            ),
-        )
-    }
+    BATCH_ENGINE("batch"),
 }

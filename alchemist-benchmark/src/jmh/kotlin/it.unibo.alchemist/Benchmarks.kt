@@ -34,7 +34,7 @@ open class Benchmarks {
     }
 
     /**
-     * Multithreaded simulation run that uses 4 threads, this benchmark should
+     * Multithreaded simulation run with experimental batch engine enabled that uses 4 threads, this benchmark should
      * perform well on most modern processors
      */
     @Benchmark
@@ -43,11 +43,11 @@ open class Benchmarks {
     @Threads(5)
     @Suppress("unused")
     fun multiThreadedSimulationFourCoresCores() {
-        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-p", "4", "-t", "50"))
+        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-f", "batch", "-p", "4", "-t", "50"))
     }
 
     /**
-     * Multithreaded simulation run that uses 8 threads, this benchmark should perform
+     * Multithreaded simulation run with experimental batch engine enabled that uses 8 threads, this benchmark should perform
      * well on higher-end processors
      */
     @Benchmark
@@ -56,6 +56,6 @@ open class Benchmarks {
     @Threads(9)
     @Suppress("unused")
     fun multiThreadedSimulationEightCoresCores() {
-        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-p", "8", "-t", "50"))
+        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-f", "batch", "-p", "8", "-t", "50"))
     }
 }

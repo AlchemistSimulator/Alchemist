@@ -10,7 +10,6 @@ package it.unibo.alchemist.core.implementations;
 
 import com.google.common.collect.Sets;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.core.interfaces.BatchedScheduler;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -43,6 +42,9 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
     private final int batchSize;
     private final ExecutorService executorService;
     private final OutputReplayStrategy outputReplayStrategy;
+
+    private final Object executeLock = new Object();
+    private final Object updateLock = new Object();
 
     public BatchEngine(final Environment<T, P> e) {
         super(e);
@@ -81,21 +83,21 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
 
     @Override
     protected void doStep() {
-        final BatchedScheduler<T> batchedScheduler = (ArrayIndexedPriorityBatchedQueue<T>) scheduler;
+        final var batchedScheduler = (ArrayIndexedPriorityBatchedQueue<T>) scheduler;
 
-        final List<Actionable<T>> nextEvents = batchedScheduler.getNext(batchSize);
+        final var nextEvents = batchedScheduler.getNext(batchSize);
         if (nextEvents.isEmpty()) {
             this.newStatus(TERMINATED);
             LOGGER.info("No more reactions.");
             return;
         }
 
-        final List<Actionable<T>> sortededNextEvents = nextEvents.stream().sorted(Comparator.comparing(Actionable::getTau)).collect(Collectors.toList());
-        final Time minSlidingWindowTime = sortededNextEvents.get(0).getTau();
-        final Time maxSlidingWindowTime = sortededNextEvents.get(sortededNextEvents.size() - 1).getTau();
+        final var sortededNextEvents = nextEvents.stream().sorted(Comparator.comparing(Actionable::getTau)).collect(Collectors.toList());
+        final var minSlidingWindowTime = sortededNextEvents.get(0).getTau();
+        final var maxSlidingWindowTime = sortededNextEvents.get(sortededNextEvents.size() - 1).getTau();
 
         final Function<Actionable<T>, Callable<TaskResult>> taskMapper = event -> () -> doEvent(event, minSlidingWindowTime);
-        final List<Callable<TaskResult>> tasks = nextEvents.stream().map(taskMapper).collect(Collectors.toList());
+        final var tasks = nextEvents.stream().map(taskMapper).collect(Collectors.toList());
 
         try {
             final var futureResults = executorService.invokeAll(tasks);
@@ -107,16 +109,19 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
             currentTime = maxSlidingWindowTime;
             doStepDoneAllMonitors(resultsOrderedByTime);
         } catch (InterruptedException e) {
-            LOGGER.error("{}", e);
-            //TODO do something...
+            LOGGER.error(e.getMessage(), e);
+            Thread.currentThread().interrupt();
         }
     }
 
     private <V> V unwrapFutureUnsafe(final Future<V> future) {
         try {
             return future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new AssertionError("Expected future to be completed successfully", e);
+        } catch (ExecutionException e) {
+            throw new IllegalStateException("Expected future to be completed successfully", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted");
         }
     }
 
@@ -141,24 +146,13 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
         validateEventExecutionTime(nextEvent, slidingWindowTime);
         final Time currentLocalTime = nextEvent.getTau();
         if (nextEvent.canExecute()) {
-            /*
-             * This must be taken before execution, because the reaction
-             * might remove itself (or its node) from the environment.
-             */
-            nextEvent.getConditions().forEach(it.unibo.alchemist.model.interfaces.Condition::reactionReady);
             safeExecuteEvent(nextEvent);
-            Set<Actionable<T>> toUpdate = dependencyGraph.outboundDependencies(nextEvent);
-            if (!afterExecutionUpdates.isEmpty()) {
-                afterExecutionUpdates.forEach(Update::performChanges);
-                afterExecutionUpdates.clear();
-                toUpdate = Sets.union(toUpdate, dependencyGraph.outboundDependencies(nextEvent));
-            }
-            toUpdate.forEach(this::updateReaction);
+            safeUpdateEvent(nextEvent);
         }
         nextEvent.update(currentLocalTime, true, environment);
         scheduler.updateReaction(nextEvent);
         if (environment.isTerminated()) {
-            newStatus(TERMINATED);
+            this.newStatus(TERMINATED);
             LOGGER.info("Termination condition reached.");
         }
         return new TaskResult(nextEvent, currentLocalTime);
@@ -183,19 +177,31 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
         return scheduledTime.compareTo(slidingWindowTime) < 0;
     }
 
-    private synchronized void safeExecuteEvent(final Actionable<T> event) {
-        event.execute();
+    private void safeExecuteEvent(final Actionable<T> event) {
+        synchronized (executeLock) {
+            /*
+             * This must be taken before execution, because the reaction
+             * might remove itself (or its node) from the environment.
+             */
+            event.getConditions().forEach(it.unibo.alchemist.model.interfaces.Condition::reactionReady);
+            event.execute();
+        }
     }
 
-    @Override
-    protected void updateReaction(final Actionable<T> r) {
-        synchronized (this) {
-            super.updateReaction(r);
+    private void safeUpdateEvent(final Actionable<T> event) {
+        synchronized (updateLock) {
+            Set<Actionable<T>> toUpdate = dependencyGraph.outboundDependencies(event);
+            if (!afterExecutionUpdates.isEmpty()) {
+                afterExecutionUpdates.forEach(Update::performChanges);
+                afterExecutionUpdates.clear();
+                toUpdate = Sets.union(toUpdate, dependencyGraph.outboundDependencies(event));
+            }
+            toUpdate.forEach(this::updateReaction);
         }
     }
 
     @Override
-    protected synchronized void newStatus(final Status next) {
+    protected void newStatus(final Status next) {
         synchronized (this) {
             super.newStatus(next);
         }
@@ -205,13 +211,14 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
     protected void aferCompleted() {
         try {
             this.executorService.shutdownNow();
-            final boolean isSuccessful = this.executorService.awaitTermination(1, TimeUnit.MINUTES);
-            if (!isSuccessful) {
+            if (!this.executorService.awaitTermination(1, TimeUnit.MINUTES)) {
                 throw new IllegalStateException("Executor failed to terminate");
             }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            //TODO
+        } catch (IllegalStateException e) {
+            LOGGER.error("Unable to gracefully shudown simulation executor: {}", e.getMessage(), e);
+        } catch (InterruptedException e) {
+            LOGGER.error("Unable to gracefully shudown simulation executor: InterruptedException");
+            Thread.currentThread().interrupt();
         }
     }
 

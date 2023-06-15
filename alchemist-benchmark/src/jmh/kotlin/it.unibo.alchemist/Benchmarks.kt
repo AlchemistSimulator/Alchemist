@@ -42,7 +42,7 @@ open class Benchmarks {
     @Fork(value = 3)
     @Threads(5)
     @Suppress("unused")
-    fun multiThreadedSimulationFourCoresCores() {
+    fun multiThreadedSimulationFourThreads() {
         Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-f", "batch", "-p", "4", "-t", "50"))
     }
 
@@ -55,7 +55,7 @@ open class Benchmarks {
     @Fork(value = 3)
     @Threads(9)
     @Suppress("unused")
-    fun multiThreadedSimulationEightCoresCores() {
+    fun multiThreadedSimulationEightThreads() {
         Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-f", "batch", "-p", "8", "-t", "50"))
     }
 }

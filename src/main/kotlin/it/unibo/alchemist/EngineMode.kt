@@ -9,9 +9,8 @@
 
 package it.unibo.alchemist
 
-enum class ExperimentalFeatureFlag(val code: String) {
+enum class EngineMode(val code: String) {
 
-    ENGINE_MODE("mode"),
-    FIXED_BATCH_ENGINE_SIZE("batchSize"),
-    EPSILON_BATCH_ENGINE_VALUE("epsilonSize"),
+    BATCH("batch"),
+    EPSILON("epsilon"),
 }

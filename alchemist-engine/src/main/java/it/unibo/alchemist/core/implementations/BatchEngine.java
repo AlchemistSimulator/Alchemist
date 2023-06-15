@@ -10,6 +10,7 @@ package it.unibo.alchemist.core.implementations;
 
 import com.google.common.collect.Sets;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.core.interfaces.BatchedScheduler;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -39,7 +40,7 @@ import static it.unibo.alchemist.core.interfaces.Status.TERMINATED;
  */
 public final class BatchEngine<T, P extends Position<? extends P>> extends Engine<T, P> {
 
-    private final int batchSize;
+    private final int workersNum;
     private final ExecutorService executorService;
     private final OutputReplayStrategy outputReplayStrategy;
 
@@ -48,44 +49,52 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
 
     public BatchEngine(final Environment<T, P> e) {
         super(e);
-        this.batchSize = 1;
-        this.executorService = Executors.newFixedThreadPool(batchSize);
+        this.workersNum = 1;
+        this.executorService = Executors.newFixedThreadPool(workersNum);
         this.outputReplayStrategy = OutputReplayStrategy.AGGREGATE;
     }
 
     public BatchEngine(final Environment<T, P> e, final long maxSteps) {
         super(e, maxSteps);
-        this.batchSize = 1;
-        this.executorService = Executors.newFixedThreadPool(batchSize);
+        this.workersNum = 1;
+        this.executorService = Executors.newFixedThreadPool(workersNum);
         this.outputReplayStrategy = OutputReplayStrategy.AGGREGATE;
     }
 
     public BatchEngine(final Environment<T, P> e, final long maxSteps, final Time t) {
         super(e, maxSteps, t);
-        this.batchSize = 1;
-        this.executorService = Executors.newFixedThreadPool(batchSize);
+        this.workersNum = 1;
+        this.executorService = Executors.newFixedThreadPool(workersNum);
         this.outputReplayStrategy = OutputReplayStrategy.AGGREGATE;
     }
 
     public BatchEngine(final Environment<T, P> e, final Time t) {
         super(e, t);
-        this.batchSize = 1;
-        this.executorService = Executors.newFixedThreadPool(batchSize);
+        this.workersNum = 1;
+        this.executorService = Executors.newFixedThreadPool(workersNum);
         this.outputReplayStrategy = OutputReplayStrategy.AGGREGATE;
     }
 
-    public BatchEngine(final Environment<T, P> e, final long maxSteps, final Time t, final int batchSize, final OutputReplayStrategy outputReplayStrategy) {
-        super(e, maxSteps, t, new ArrayIndexedPriorityBatchedQueue<>());
-        this.batchSize = batchSize;
-        this.executorService = Executors.newFixedThreadPool(batchSize);
+    public BatchEngine(
+        final Environment<T, P> e,
+        final long maxSteps,
+        final Time t,
+        final int workersNum,
+        final OutputReplayStrategy outputReplayStrategy,
+        final BatchedScheduler<T> scheduler
+    ) {
+        super(e, maxSteps, t, scheduler);
+        this.workersNum = workersNum;
+        this.executorService = Executors.newFixedThreadPool(workersNum);
         this.outputReplayStrategy = outputReplayStrategy;
     }
 
     @Override
     protected void doStep() {
-        final var batchedScheduler = (ArrayIndexedPriorityBatchedQueue<T>) scheduler;
+        final var batchedScheduler = (BatchedScheduler<T>) scheduler;
 
-        final var nextEvents = batchedScheduler.getNext(batchSize);
+        final var nextEvents = batchedScheduler.getNextBatch();
+
         if (nextEvents.isEmpty()) {
             this.newStatus(TERMINATED);
             LOGGER.info("No more reactions.");
@@ -101,7 +110,7 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
 
         try {
             final var futureResults = executorService.invokeAll(tasks);
-            currentStep += batchSize;
+            currentStep += workersNum;
             final var resultsOrderedByTime = futureResults.stream()
                 .map(this::unwrapFutureUnsafe)
                 .sorted(Comparator.comparing(result -> result.eventTime))

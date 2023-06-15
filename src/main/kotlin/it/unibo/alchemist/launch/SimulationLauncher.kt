@@ -11,8 +11,12 @@ package it.unibo.alchemist.launch
 
 import com.google.common.collect.Lists
 import it.unibo.alchemist.AlchemistExecutionOptions
+import it.unibo.alchemist.EngineMode
 import it.unibo.alchemist.ExperimentalFeatureFlag
-import it.unibo.alchemist.core.implementations.EngineBuilder
+import it.unibo.alchemist.core.implementations.ArrayIndexedPriorityEpsilonBatchQueue
+import it.unibo.alchemist.core.implementations.ArrayIndexedPriorityFixedBatchQueue
+import it.unibo.alchemist.core.implementations.BatchEngine
+import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
@@ -71,22 +75,70 @@ abstract class SimulationLauncher : AbstractLauncher() {
         variables: Map<String, *>,
     ): Simulation<T, P> {
         val initialized: InitializedEnvironment<T, P> = loader.getWith(variables)
-        val simulation = EngineBuilder.newInstance(initialized.environment)
-            .withTime(DoubleTime(parameters.endTime))
-            .withBatchSize(parseBatchSize(parameters))
-            .build()
+        val simulation = buildEngine(initialized, parameters)
         if (initialized.exporters.isNotEmpty()) {
             simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         }
         return simulation
     }
 
-    private fun parseBatchSize(parameters: AlchemistExecutionOptions): Int {
-        return if (parameters.featureFlags.contains(ExperimentalFeatureFlag.BATCH_ENGINE.code)) {
-            parameters.parallelism
-        } else {
-            1
+    private fun <T, P : Position<P>> buildEngine(
+        initialized: InitializedEnvironment<T, P>,
+        parameters: AlchemistExecutionOptions,
+    ): Engine<T, P> {
+        return when (parseMode(parameters)) {
+            EngineMode.BATCH -> {
+                val batchSize = parseBatchSize(parameters)
+                BatchEngine(
+                    initialized.environment,
+                    Long.MAX_VALUE,
+                    DoubleTime(parameters.endTime),
+                    parameters.parallelism,
+                    BatchEngine.OutputReplayStrategy.AGGREGATE,
+                    ArrayIndexedPriorityFixedBatchQueue(batchSize),
+                )
+            }
+
+            EngineMode.EPSILON -> {
+                val epsilon = parseEpsilon(parameters)
+                BatchEngine(
+                    initialized.environment,
+                    Long.MAX_VALUE,
+                    DoubleTime(parameters.endTime),
+                    parameters.parallelism,
+                    BatchEngine.OutputReplayStrategy.AGGREGATE,
+                    ArrayIndexedPriorityEpsilonBatchQueue(epsilon),
+                )
+            }
+
+            else -> Engine(
+                initialized.environment,
+                DoubleTime(parameters.endTime),
+            )
         }
+    }
+
+    private fun parseMode(parameters: AlchemistExecutionOptions): EngineMode? {
+        val maybeMode = parameters.featureFlags
+            .find { it.startsWith(ExperimentalFeatureFlag.ENGINE_MODE.code) }?.substringAfter('=')
+        return when (maybeMode) {
+            EngineMode.BATCH.code -> EngineMode.BATCH
+            EngineMode.EPSILON.code -> EngineMode.EPSILON
+            else -> null
+        }
+    }
+
+    private fun parseBatchSize(parameters: AlchemistExecutionOptions): Int {
+        return parameters.featureFlags
+            .find { it.startsWith(ExperimentalFeatureFlag.FIXED_BATCH_ENGINE_SIZE.code) }?.substringAfter('=')?.toInt()
+            ?: parameters.parallelism
+    }
+
+    private fun parseEpsilon(parameters: AlchemistExecutionOptions): Double {
+        return parameters.featureFlags
+            .find { it.startsWith(ExperimentalFeatureFlag.EPSILON_BATCH_ENGINE_VALUE.code) }?.substringAfter('=')
+            ?.toDouble()
+            ?: DEFAULT_EPSILON_VALUE
     }
 
     /**
@@ -98,4 +150,8 @@ abstract class SimulationLauncher : AbstractLauncher() {
      * Allows subclasses to perform further checks before getting executed. Defaults to simply return [Validation.OK]
      */
     abstract fun additionalValidation(currentOptions: AlchemistExecutionOptions): Validation
+
+    companion object {
+        const val DEFAULT_EPSILON_VALUE = 0.01
+    }
 }

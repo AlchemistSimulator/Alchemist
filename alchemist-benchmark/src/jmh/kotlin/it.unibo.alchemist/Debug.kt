@@ -22,7 +22,7 @@ object Debug {
                 "-t",
                 "50",
                 "-f",
-                "batch",
+                "mode=epsilon,epsilon=0.01",
             ),
         )
     }

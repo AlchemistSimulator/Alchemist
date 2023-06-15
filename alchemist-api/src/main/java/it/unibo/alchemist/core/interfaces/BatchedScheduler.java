@@ -15,6 +15,6 @@ import java.util.List;
 
 public interface BatchedScheduler<T> extends Scheduler<T> {
 
-    List<Actionable<T>> getNext(int batchSize);
+    List<Actionable<T>> getNextBatch();
 
 }

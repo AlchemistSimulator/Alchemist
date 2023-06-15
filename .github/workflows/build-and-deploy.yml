@@ -17,7 +17,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.9
+        uses: danysk/action-checkout@0.2.10
       - uses: DanySK/build-check-deploy-gradle-action@2.2.6
         with:
           pre-build-command: ./gradlew kotlinUpgradeYarnLock --parallel
@@ -56,7 +56,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.9
+        uses: danysk/action-checkout@0.2.10
       - uses: DanySK/build-check-deploy-gradle-action@2.2.6
         with:
           build-command: ./gradlew kotlinUpgradeYarnLock --parallel
@@ -80,7 +80,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.9
+        uses: danysk/action-checkout@0.2.10
       - uses: DanySK/build-check-deploy-gradle-action@2.2.6
         with:
           build-command: |
@@ -135,13 +135,13 @@ jobs:
       )
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v3.5.3
         with:
           submodules: recursive
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout the docs
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v3.5.3
         with:
           path: website
           fetch-depth: 0

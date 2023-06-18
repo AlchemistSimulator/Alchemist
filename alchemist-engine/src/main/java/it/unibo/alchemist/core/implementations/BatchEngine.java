@@ -217,7 +217,7 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
     }
 
     @Override
-    protected void aferCompleted() {
+    protected void afterRun() {
         try {
             this.executorService.shutdownNow();
             if (!this.executorService.awaitTermination(1, TimeUnit.MINUTES)) {

@@ -406,6 +406,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     public void run() {
         synchronized (environment) {
             try {
+                LOGGER.info("Starting engine {} with scheduler {}", this.getClass(), scheduler.getClass());
                 simulationThread = Thread.currentThread();
                 finalizeConstructor();
                 status = Status.READY;
@@ -449,13 +450,13 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                 } finally {
                     monitorLock.release();
                 }
-                aferCompleted();
+                afterRun();
             }
         }
     }
 
-    protected void aferCompleted() {
-        // do nothing...
+    protected void afterRun() {
+        // do nothing, leave for override...
     }
 
     private void pauseWhen(final BooleanSupplier condition) {

@@ -94,6 +94,7 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
         final var batchedScheduler = (BatchedScheduler<T>) scheduler;
 
         final var nextEvents = batchedScheduler.getNextBatch();
+        final var batchSize = nextEvents.size();
 
         if (nextEvents.isEmpty()) {
             this.newStatus(TERMINATED);
@@ -110,7 +111,7 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
 
         try {
             final var futureResults = executorService.invokeAll(tasks);
-            currentStep += workersNum;
+            currentStep += batchSize;
             final var resultsOrderedByTime = futureResults.stream()
                 .map(this::unwrapFutureUnsafe)
                 .sorted(Comparator.comparing(result -> result.eventTime))

@@ -21,7 +21,7 @@ scalacache = "0.28.0"
 antlr4 = { module = "org.antlr:antlr4", version.ref = "antlr4" }
 antlr4-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr4" }
 apache-commons-cli = "commons-cli:commons-cli:1.5.0"
-apache-commons-codec = "commons-codec:commons-codec:1.15"
+apache-commons-codec = "commons-codec:commons-codec:1.16.0"
 apache-commons-collections4 = "org.apache.commons:commons-collections4:4.4"
 apache-commons-io = "commons-io:commons-io:2.13.0"
 apache-commons-lang3 = "org.apache.commons:commons-lang3:3.12.0"

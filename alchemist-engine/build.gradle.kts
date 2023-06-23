@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.jgrapht.core)
     implementation(libs.guava)
     implementation(libs.trove4j)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 
     testImplementation(alchemist("euclidean-geometry"))
     testImplementation(alchemist("implementationbase"))

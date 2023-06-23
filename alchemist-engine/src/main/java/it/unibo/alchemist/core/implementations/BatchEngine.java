@@ -116,7 +116,7 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
                 .map(this::unwrapFutureUnsafe)
                 .sorted(Comparator.comparing(result -> result.eventTime))
                 .collect(Collectors.toList());
-            currentTime = maxSlidingWindowTime;
+            currentTime = maxSlidingWindowTime.compareTo(currentTime) > 0 ? maxSlidingWindowTime : currentTime;
             doStepDoneAllMonitors(resultsOrderedByTime);
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
@@ -148,7 +148,7 @@ public final class BatchEngine<T, P extends Position<? extends P>> extends Engin
 
     private void doStepDoneAllMonitors(final TaskResult result) {
         for (final OutputMonitor<T, P> monitor : monitors) {
-            monitor.stepDone(environment, result.event, result.event.getTau(), currentStep);
+            monitor.stepDone(environment, result.event, currentTime, currentStep);
         }
     }
 

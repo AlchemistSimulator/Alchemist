@@ -254,6 +254,10 @@
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.157",
     "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.157/package-list"
   },
+  "io.github.classgraph/classgraph/4.8.158": {
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.158",
+    "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.158/package-list"
+  },
   "io.jenetics/jpx/2.3.0": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0",
     "second": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0/element-list"
@@ -312,6 +316,10 @@
     "first": "https://javadoc.io/doc/org.apache.ignite/ignite-core/2.14.0",
     "second": "https://javadoc.io/doc/org.apache.ignite/ignite-core/2.14.0/package-list"
   },
+  "org.apache.ignite/ignite-core/2.15.0": {
+    "first": "https://javadoc.io/doc/org.apache.ignite/ignite-core/2.15.0",
+    "second": "https://javadoc.io/doc/org.apache.ignite/ignite-core/2.15.0/package-list"
+  },
   "org.apache.ignite/ignite-indexing/2.12.0": {
     "first": "https://javadoc.io/doc/org.apache.ignite/ignite-indexing/2.12.0",
     "second": "https://javadoc.io/doc/org.apache.ignite/ignite-indexing/2.12.0/package-list"
@@ -323,6 +331,10 @@
   "org.apache.ignite/ignite-indexing/2.14.0": {
     "first": "https://javadoc.io/doc/org.apache.ignite/ignite-indexing/2.14.0"
   },
+  "org.apache.ignite/ignite-indexing/2.15.0": {
+    "first": "https://javadoc.io/doc/org.apache.ignite/ignite-indexing/2.15.0",
+    "second": "https://javadoc.io/doc/org.apache.ignite/ignite-indexing/2.15.0/package-list"
+  },
   "org.apache.ignite/ignite-spring/2.12.0": {
     "first": "https://javadoc.io/doc/org.apache.ignite/ignite-spring/2.12.0",
     "second": "https://javadoc.io/doc/org.apache.ignite/ignite-spring/2.12.0/package-list"
@@ -333,6 +345,10 @@
   },
   "org.apache.ignite/ignite-spring/2.14.0": {
     "first": "https://javadoc.io/doc/org.apache.ignite/ignite-spring/2.14.0"
+  },
+  "org.apache.ignite/ignite-spring/2.15.0": {
+    "first": "https://javadoc.io/doc/org.apache.ignite/ignite-spring/2.15.0",
+    "second": "https://javadoc.io/doc/org.apache.ignite/ignite-spring/2.15.0/package-list"
   },
   "org.controlsfx/controlsfx/11.1.1": {
     "first": "https://javadoc.io/doc/org.controlsfx/controlsfx/11.1.1",
@@ -390,6 +406,10 @@
   "org.danilopianini/jirf/0.4.7": {
     "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.7",
     "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.7/element-list"
+  },
+  "org.danilopianini/jirf/0.4.8": {
+    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.8",
+    "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.8/element-list"
   },
   "org.danilopianini/listset/0.3.9": {
     "first": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9",
@@ -502,9 +522,16 @@
   "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.6.4": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.6.4"
   },
+  "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.7.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.7.0"
+  },
   "org.jgrapht/jgrapht-core/1.5.1": {
     "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.1",
     "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.1/element-list"
+  },
+  "org.jgrapht/jgrapht-core/1.5.2": {
+    "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2",
+    "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2/element-list"
   },
   "org.jooq/jool/0.9.15": {
     "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15",

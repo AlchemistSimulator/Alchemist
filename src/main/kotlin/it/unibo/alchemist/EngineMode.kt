@@ -9,8 +9,19 @@
 
 package it.unibo.alchemist
 
+/**
+ * Engine modes.
+ * @property code mode code
+ */
 enum class EngineMode(val code: String) {
 
+    /**
+     *  Launch simulation in fixed batch size mode.
+     */
     BATCH("batch"),
+
+    /**
+     *  Launch simulation in epsilon batch mode.
+     */
     EPSILON("epsilon"),
 }

@@ -152,6 +152,9 @@ abstract class SimulationLauncher : AbstractLauncher() {
     abstract fun additionalValidation(currentOptions: AlchemistExecutionOptions): Validation
 
     companion object {
+        /**
+         *  Default epsilon value for epsilon batch mode.
+         */
         const val DEFAULT_EPSILON_VALUE = 0.01
     }
 }

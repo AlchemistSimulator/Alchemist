@@ -24,6 +24,7 @@ package it.unibo.alchemist
  * @property server if launched as Alchemist grid node server, the path to the configuration file. Null otherwise.
  * @property parallelism parallel threads used for running locally. Defaults to [defaultParallelism]
  * @property endTime final simulation time. Defaults to [defaultEndTime]
+ * @property featureFlags experimental feature flags. Defaults to [emptyList]
  */
 data class AlchemistExecutionOptions(
     val configuration: String? = null,

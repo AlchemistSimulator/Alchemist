@@ -95,7 +95,7 @@ protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.r
 protelis-lang = { module = "org.protelis:protelis-lang", version.ref = "protelis" }
 quadtree = "org.danilopianini:java-quadtree:0.2.0"
 resourceloader = "org.danilopianini:thread-inheritable-resource-loader:0.3.6"
-rtree = "com.github.davidmoten:rtree:0.10"
+rtree = "com.github.davidmoten:rtree:0.11"
 scafi-core = { module = "it.unibo.scafi:scafi-core_2.13", version.ref = "scafi" }
 scala-compiler = { module = "org.scala-lang:scala-compiler", version.ref = "scala" }
 scala-library = { module = "org.scala-lang:scala-library", version.ref = "scala" }

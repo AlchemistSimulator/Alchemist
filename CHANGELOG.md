@@ -1,3 +1,16 @@
+## [26.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.6...26.0.7) (2023-07-01)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.0.4 ([e72bd45](https://github.com/AlchemistSimulator/Alchemist/commit/e72bd4560f608fffba7b91a468a77ce8ba321ee1))
+* **deps:** update dependency com.google.guava:guava to v32.1.1-jre ([2fd8cc2](https://github.com/AlchemistSimulator/Alchemist/commit/2fd8cc200cad27e9114f8ca43ae85c1f4ee91176))
+* **deps:** update dependency org.danilopianini:jirf to v0.4.12 ([5a8d15b](https://github.com/AlchemistSimulator/Alchemist/commit/5a8d15be205e614c38a366536f3a45adabe07fcf))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-coroutines-core to v1.7.2 ([5138d2a](https://github.com/AlchemistSimulator/Alchemist/commit/5138d2a030e554384db1fc170120bb1af69917e3))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 9380dc4 ([9fd8754](https://github.com/AlchemistSimulator/Alchemist/commit/9fd875461568daa7068d7411ce532b092f1d0ee8))
+* **deps:** update external-resources/learning-scafi-alchemist digest to b182cdd ([5fcc32a](https://github.com/AlchemistSimulator/Alchemist/commit/5fcc32a9767861505a13938a9372d4523a996372))
+* **deps:** update react to v18.2.0-pre.583 ([095e2c1](https://github.com/AlchemistSimulator/Alchemist/commit/095e2c11cc67ef57cd883cc67fea9a04b73ea25f))
+
 ## [26.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.5...26.0.6) (2023-06-30)
 
 

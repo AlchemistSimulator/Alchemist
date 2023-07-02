@@ -22,7 +22,7 @@ object Debug {
                 "-t",
                 "50",
                 "-f",
-                "mode=epsilon,epsilon=0.01",
+                "mode=epsilon,epsilon=0.01,outputReplayStrategy=aggregate",
             ),
         )
     }

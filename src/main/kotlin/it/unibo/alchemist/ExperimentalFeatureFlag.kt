@@ -16,7 +16,7 @@ package it.unibo.alchemist
 enum class ExperimentalFeatureFlag(val code: String) {
 
     /**
-     * Specify engine mode.
+     * Specifies engine mode.
      */
     ENGINE_MODE("mode"),
 
@@ -29,4 +29,9 @@ enum class ExperimentalFeatureFlag(val code: String) {
      * Used only in batch epsilon mode, determines epsilon value (defaults to 0.01).
      */
     EPSILON_BATCH_ENGINE_VALUE("epsilonSize"),
+
+    /**
+     * Specifies output replay strategy.
+     */
+    OUTPUT_REPLAY_STRATEGY("outputReplayStrategy"),
 }

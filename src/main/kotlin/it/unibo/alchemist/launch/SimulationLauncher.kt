@@ -13,6 +13,7 @@ import com.google.common.collect.Lists
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.EngineMode
 import it.unibo.alchemist.ExperimentalFeatureFlag
+import it.unibo.alchemist.OutputReplayStrategy
 import it.unibo.alchemist.core.implementations.ArrayIndexedPriorityEpsilonBatchQueue
 import it.unibo.alchemist.core.implementations.ArrayIndexedPriorityFixedBatchQueue
 import it.unibo.alchemist.core.implementations.BatchEngine
@@ -86,6 +87,7 @@ abstract class SimulationLauncher : AbstractLauncher() {
         initialized: InitializedEnvironment<T, P>,
         parameters: AlchemistExecutionOptions,
     ): Engine<T, P> {
+        val outputReplayStrategy = parseOutputReplayStratgy(parameters)
         return when (parseMode(parameters)) {
             EngineMode.BATCH -> {
                 val batchSize = parseBatchSize(parameters)
@@ -94,7 +96,7 @@ abstract class SimulationLauncher : AbstractLauncher() {
                     Long.MAX_VALUE,
                     DoubleTime(parameters.endTime),
                     parameters.parallelism,
-                    BatchEngine.OutputReplayStrategy.AGGREGATE,
+                    outputReplayStrategy,
                     ArrayIndexedPriorityFixedBatchQueue(batchSize),
                 )
             }
@@ -106,7 +108,7 @@ abstract class SimulationLauncher : AbstractLauncher() {
                     Long.MAX_VALUE,
                     DoubleTime(parameters.endTime),
                     parameters.parallelism,
-                    BatchEngine.OutputReplayStrategy.AGGREGATE,
+                    outputReplayStrategy,
                     ArrayIndexedPriorityEpsilonBatchQueue(epsilon),
                 )
             }
@@ -125,6 +127,16 @@ abstract class SimulationLauncher : AbstractLauncher() {
             EngineMode.BATCH.code -> EngineMode.BATCH
             EngineMode.EPSILON.code -> EngineMode.EPSILON
             else -> null
+        }
+    }
+
+    private fun parseOutputReplayStratgy(parameters: AlchemistExecutionOptions): it.unibo.alchemist.core.implementations.BatchEngine.OutputReplayStrategy {
+        val maybeStrategy = parameters.featureFlags
+            .find { it.startsWith(ExperimentalFeatureFlag.OUTPUT_REPLAY_STRATEGY.code) }?.substringAfter('=')
+        return when (maybeStrategy) {
+            OutputReplayStrategy.REPLAY.code -> it.unibo.alchemist.core.implementations.BatchEngine.OutputReplayStrategy.REPLAY
+            OutputReplayStrategy.AGGREGATE.code -> it.unibo.alchemist.core.implementations.BatchEngine.OutputReplayStrategy.AGGREGATE
+            else -> it.unibo.alchemist.core.implementations.BatchEngine.OutputReplayStrategy.REPLAY
         }
     }
 

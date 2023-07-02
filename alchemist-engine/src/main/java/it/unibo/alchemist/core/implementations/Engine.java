@@ -172,7 +172,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     }
 
     private void checkCaller() {
-        if (!Thread.currentThread().equals(simulationThread)) {
+        if (this.getClass() != BatchEngine.class && !Thread.currentThread().equals(simulationThread)) {
             throw new IllegalMonitorStateException("This method must get called from the simulation thread.");
         }
     }

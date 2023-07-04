@@ -1,6 +1,9 @@
 import Libs.alchemist
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
+// Required by the 'shadowJar' task
+project.setProperty("mainClassName", "it.unibo.alchemist.Alchemist")
+
 plugins {
     application
     id("me.champeau.jmh") version "0.7.1"

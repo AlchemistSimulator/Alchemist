@@ -27,18 +27,16 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
 
     private static final long serialVersionUID = 8064379974084348391L;
 
-    protected final TObjectIntMap<Actionable<T>> indexes =
-            new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
-    protected final List<Time> times = new ArrayList<>();
-    protected final List<Actionable<T>> tree = new ArrayList<>();
+    private final TObjectIntMap<Actionable<T>> indexes =
+        new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
+    private final List<Time> times = new ArrayList<>();
+    private final List<Actionable<T>> tree = new ArrayList<>();
 
-    protected static int getParent(final int i) {
-        if (i == 0) {
-            return -1;
-        }
-        return (i - 1) / 2;
-    }
-
+    /**
+     * Should not be overridden.
+     *
+     * @param reaction the reaction to be added
+     */
     @Override
     public void addReaction(final Actionable<T> reaction) {
         tree.add(reaction);
@@ -48,7 +46,7 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         updateEffectively(reaction, index);
     }
 
-    protected void down(final Actionable<T> reaction, final int reactionIndex) {
+    private void down(final Actionable<T> reaction, final int reactionIndex) {
         int index = reactionIndex;
         final Time newTime = reaction.getTau();
         while (true) {
@@ -76,6 +74,11 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
+    /**
+     * Could be overridden.
+     *
+     * @return next actionable to execute
+     */
     @Override
     public Actionable<T> getNext() {
         Actionable<T> result = null;
@@ -105,7 +108,7 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
-    protected void swap(final int i1, final Actionable<T> r1, final int i2, final Actionable<T> r2) {
+    private void swap(final int i1, final Actionable<T> r1, final int i2, final Actionable<T> r2) {
         indexes.put(r1, i2);
         indexes.put(r2, i1);
         tree.set(i1, r2);
@@ -115,6 +118,10 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         times.set(i2, t);
     }
 
+    /**
+     * Could be overridden.
+     * @return string representation of the queue
+     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -135,7 +142,7 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         return sb.toString();
     }
 
-    protected boolean up(final Actionable<T> reaction, final int reactionIndex) {
+    private boolean up(final Actionable<T> reaction, final int reactionIndex) {
         int index = reactionIndex;
         int parentIndex = getParent(index);
         final Time newTime = reaction.getTau();
@@ -160,7 +167,7 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
-    protected void updateEffectively(final Actionable<T> reaction, final int index) {
+    private void updateEffectively(final Actionable<T> reaction, final int index) {
         if (!up(reaction, index)) {
             down(reaction, index);
         }
@@ -175,4 +182,18 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
+    private static int getParent(final int i) {
+        if (i == 0) {
+            return -1;
+        }
+        return (i - 1) / 2;
+    }
+
+    /**
+     * Accessor for tree.
+     * @return tree
+     */
+    protected List<Actionable<T>> getTree() {
+        return tree;
+    }
 }

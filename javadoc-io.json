@@ -525,6 +525,9 @@
   "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.7.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.7.0"
   },
+  "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.7.1": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.7.1"
+  },
   "org.jgrapht/jgrapht-core/1.5.1": {
     "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.1",
     "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.1/element-list"

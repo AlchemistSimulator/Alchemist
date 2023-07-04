@@ -15,10 +15,20 @@ import it.unibo.alchemist.model.interfaces.Actionable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArrayIndexedPriorityFixedBatchQueue<T> extends ArrayIndexedPriorityQueue<T> implements BatchedScheduler<T> {
+/**
+ * Batched extension for ArrayIndexedPriorityQueue.
+ * This implementation presents fixed size batches.
+ *
+ * @param <T> concentration type
+ */
+public final class ArrayIndexedPriorityFixedBatchQueue<T> extends ArrayIndexedPriorityQueue<T> implements BatchedScheduler<T> {
 
     private final int batchSize;
 
+    /**
+     * Construct a new ArrayIndexedPriorityFixedBatchQueue.
+     * @param batchSize batch size
+     */
     public ArrayIndexedPriorityFixedBatchQueue(final int batchSize) {
         this.batchSize = batchSize;
     }
@@ -26,8 +36,8 @@ public class ArrayIndexedPriorityFixedBatchQueue<T> extends ArrayIndexedPriority
     @Override
     public List<Actionable<T>> getNextBatch() {
         List<Actionable<T>> result = new ArrayList<>();
-        if (!tree.isEmpty()) {
-            result = tree.subList(0, Math.min(tree.size(), batchSize));
+        if (!getTree().isEmpty()) {
+            result = getTree().subList(0, Math.min(getTree().size(), batchSize));
         }
         return result;
     }

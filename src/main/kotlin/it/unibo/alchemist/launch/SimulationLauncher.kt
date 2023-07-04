@@ -130,13 +130,13 @@ abstract class SimulationLauncher : AbstractLauncher() {
         }
     }
 
-    private fun parseOutputReplayStratgy(parameters: AlchemistExecutionOptions): it.unibo.alchemist.core.implementations.BatchEngine.OutputReplayStrategy {
+    private fun parseOutputReplayStratgy(parameters: AlchemistExecutionOptions): BatchEngine.OutputReplayStrategy {
         val maybeStrategy = parameters.featureFlags
             .find { it.startsWith(ExperimentalFeatureFlag.OUTPUT_REPLAY_STRATEGY.code) }?.substringAfter('=')
         return when (maybeStrategy) {
-            OutputReplayStrategy.REPLAY.code -> it.unibo.alchemist.core.implementations.BatchEngine.OutputReplayStrategy.REPLAY
-            OutputReplayStrategy.AGGREGATE.code -> it.unibo.alchemist.core.implementations.BatchEngine.OutputReplayStrategy.AGGREGATE
-            else -> it.unibo.alchemist.core.implementations.BatchEngine.OutputReplayStrategy.REPLAY
+            OutputReplayStrategy.REPLAY.code -> BatchEngine.OutputReplayStrategy.REPLAY
+            OutputReplayStrategy.AGGREGATE.code -> BatchEngine.OutputReplayStrategy.AGGREGATE
+            else -> BatchEngine.OutputReplayStrategy.REPLAY
         }
     }
 

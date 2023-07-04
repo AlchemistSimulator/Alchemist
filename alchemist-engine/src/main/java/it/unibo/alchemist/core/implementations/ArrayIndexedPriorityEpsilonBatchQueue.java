@@ -16,30 +16,42 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ArrayIndexedPriorityEpsilonBatchQueue<T> extends ArrayIndexedPriorityQueue<T> implements BatchedScheduler<T> {
+/**
+ * Batched extension for ArrayIndexedPriorityQueue.
+ * This implementation uses epsilon-sensitivity
+ * in order to build the next batch to process. Events will be added to the batch
+ * while | tau(e1) - tau(e2) | < epsilon.
+ *
+ * @param <T> concentration type
+ */
+public final class ArrayIndexedPriorityEpsilonBatchQueue<T> extends ArrayIndexedPriorityQueue<T> implements BatchedScheduler<T> {
 
     private final double epsilon;
 
+    /**
+     * Construct a new ArrayIndexedPriorityEpsilonBatchQueue.
+     * @param epsilon epsilon sensitivity value
+     */
     public ArrayIndexedPriorityEpsilonBatchQueue(final double epsilon) {
         this.epsilon = epsilon;
     }
 
     @Override
     public List<Actionable<T>> getNextBatch() {
-        if(tree.size() == 0) {
+        if (getTree().size() == 0) {
             return Collections.emptyList();
         }
-        if (tree.size() == 1) {
+        if (getTree().size() == 1) {
             List<Actionable<T>> result = new ArrayList<>();
-            result.add(tree.get(0));
+            result.add(getTree().get(0));
             return result;
         }
 
         List<Actionable<T>> result = new ArrayList<>();
-        var prev = tree.get(0);
+        var prev = getTree().get(0);
         result.add(prev);
-        for(final var next : tree.subList(1, tree.size())) {
-            if(Math.abs(next.getTau().toDouble() - prev.getTau().toDouble()) >= epsilon) {
+        for (final var next : getTree().subList(1, getTree().size())) {
+            if (Math.abs(next.getTau().toDouble() - prev.getTau().toDouble()) >= epsilon) {
                 break;
             } else {
                 result.add(next);

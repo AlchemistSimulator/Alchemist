@@ -65,25 +65,28 @@ import static it.unibo.alchemist.core.interfaces.Status.TERMINATED;
  */
 public class Engine<T, P extends Position<? extends P>> implements Simulation<T, P> {
 
+    /**
+     * Logger.
+     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);
-    protected static final int ALL_PERMITS = Integer.MAX_VALUE;
-    protected final Lock statusLock = new ReentrantLock();
-    protected final ImmutableMap<Status, SynchBox> statusLocks = Arrays.stream(Status.values())
+    private static final int ALL_PERMITS = Integer.MAX_VALUE;
+    private final Lock statusLock = new ReentrantLock();
+    private final ImmutableMap<Status, SynchBox> statusLocks = Arrays.stream(Status.values())
         .collect(ImmutableMap.toImmutableMap(Function.identity(), it -> new SynchBox()));
-    protected final BlockingQueue<CheckedRunnable> commands = new LinkedBlockingQueue<>();
-    protected final Queue<Update> afterExecutionUpdates = new ArrayDeque<>();
-    protected final Environment<T, P> environment;
-    protected final DependencyGraph<T> dependencyGraph;
-    protected final Scheduler<T> scheduler;
-    protected final Time finalTime;
-    protected final Semaphore monitorLock = new Semaphore(ALL_PERMITS);
-    protected final List<OutputMonitor<T, P>> monitors = new LinkedList<>();
-    protected final long finalStep;
-    protected volatile Status status = Status.INIT;
-    protected Optional<Throwable> error = Optional.empty();
-    protected Time currentTime = Time.ZERO;
-    protected long currentStep;
-    protected Thread simulationThread;
+    private final BlockingQueue<CheckedRunnable> commands = new LinkedBlockingQueue<>();
+    private final Queue<Update> afterExecutionUpdates = new ArrayDeque<>();
+    private final Environment<T, P> environment;
+    private final DependencyGraph<T> dependencyGraph;
+    private final Scheduler<T> scheduler;
+    private final Time finalTime;
+    private final Semaphore monitorLock = new Semaphore(ALL_PERMITS);
+    private final List<OutputMonitor<T, P>> monitors = new LinkedList<>();
+    private final long finalStep;
+    private volatile Status status = Status.INIT;
+    private Optional<Throwable> error = Optional.empty();
+    private Time currentTime = Time.ZERO;
+    private long currentStep;
+    private Thread simulationThread;
 
     /**
      * Builds a simulation for a given environment. By default, it uses a
@@ -136,10 +139,11 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
      *
-     * @param e        t
-     *                 he environment at the initial time
-     * @param maxSteps the maximum number of steps to do
-     * @param t        the maximum time to reach
+     * @param e         t
+     *                  he environment at the initial time
+     * @param maxSteps  the maximum number of steps to do
+     * @param t         the maximum time to reach
+     * @param scheduler the scheduler implementation to be used
      */
     public Engine(final Environment<T, P> e, final long maxSteps, final Time t, final Scheduler<T> scheduler) {
         LOGGER.trace("Engine created");
@@ -535,6 +539,42 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     @Override
     public Status waitFor(final Status next, final long timeout, final TimeUnit tu) {
         return lockForStatus(next).waitFor(next, timeout, tu);
+    }
+
+    protected Queue<Update> getAfterExecutionUpdates() {
+        return afterExecutionUpdates;
+    }
+
+    protected DependencyGraph<T> getDependencyGraph() {
+        return dependencyGraph;
+    }
+
+    protected Scheduler<T> getScheduler() {
+        return scheduler;
+    }
+
+    protected Semaphore getMonitorLock() {
+        return monitorLock;
+    }
+
+    protected List<OutputMonitor<T, P>> getMonitors() {
+        return monitors;
+    }
+
+    protected Time getCurrentTime() {
+        return currentTime;
+    }
+
+    protected void setCurrentTime(final Time currentTime) {
+        this.currentTime = currentTime;
+    }
+
+    protected long getCurrentStep() {
+        return currentStep;
+    }
+
+    protected void setCurrentStep(final long currentStep) {
+        this.currentStep = currentStep;
     }
 
     // CHECKSTYLE: FinalClassCheck OFF

@@ -13,8 +13,16 @@ import it.unibo.alchemist.model.interfaces.Actionable;
 
 import java.util.List;
 
+/**
+ * Extension to Scheduler to allow for batched retrieval from the queue.
+ * @param <T> concentration type
+ */
 public interface BatchedScheduler<T> extends Scheduler<T> {
 
+    /**
+     * Retrieve the next scheduled batch of reactions.
+     * @return batch of reactions to execute
+     */
     List<Actionable<T>> getNextBatch();
 
 }

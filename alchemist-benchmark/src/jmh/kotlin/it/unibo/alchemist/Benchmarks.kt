@@ -16,13 +16,13 @@ import org.openjdk.jmh.annotations.Mode
 import org.openjdk.jmh.annotations.Threads
 
 /**
- * Collection of benchmarks to be used with JMH
+ * Collection of benchmarks to be used with JMH.
  */
-@Suppress("unused")
+@Suppress("unused", "MagicNumber")
 open class Benchmarks {
 
     /**
-     * Singlethreaded and deterministic simulation run
+     * Singlethreaded and deterministic simulation run.
      */
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
@@ -34,8 +34,9 @@ open class Benchmarks {
     }
 
     /**
-     * Multithreaded simulation run with experimental batch engine in fixed-size batch mode that uses 4 threads, this benchmark should
-     * perform well on most modern processors
+     * Multithreaded simulation run with experimental batch engine
+     * in fixed-size batch mode that uses 4 threads, this benchmark should
+     * perform well on most modern processors.
      */
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
@@ -47,8 +48,9 @@ open class Benchmarks {
     }
 
     /**
-     * Multithreaded simulation run with experimental batch engine in fixed-size batch mode that uses 8 threads, this benchmark should perform
-     * well on higher-end processors
+     * Multithreaded simulation run with experimental batch engine
+     * in fixed-size batch mode that uses 8 threads, this benchmark should perform
+     * well on higher-end processors.
      */
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
@@ -60,8 +62,9 @@ open class Benchmarks {
     }
 
     /**
-     * Multithreaded simulation run with experimental batch engine in epsilon dynamic batch mode that uses 4 threads, this benchmark should
-     * perform well on most modern processors
+     * Multithreaded simulation run with experimental batch engine
+     * in epsilon dynamic batch mode that uses 4 threads, this benchmark should
+     * perform well on most modern processors.
      */
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
@@ -73,8 +76,9 @@ open class Benchmarks {
     }
 
     /**
-     * Multithreaded simulation run with experimental batch engine epsilon dynamic that uses 8 threads, this benchmark should perform
-     * well on higher-end processors
+     * Multithreaded simulation run with experimental batch engine
+     * epsilon dynamic that uses 8 threads, this benchmark should perform
+     * well on higher-end processors.
      */
     @Benchmark
     @BenchmarkMode(Mode.Throughput)

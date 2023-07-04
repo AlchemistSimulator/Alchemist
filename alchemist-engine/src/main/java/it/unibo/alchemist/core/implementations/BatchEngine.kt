@@ -70,6 +70,9 @@ class BatchEngine<T, P : Position<out P>> :
         this.outputReplayStrategy = outputReplayStrategy
     }
 
+    /**
+     * Performs the next simulation step.
+     */
     override fun doStep() {
         val batchedScheduler = scheduler as BatchedScheduler<T>
         val nextEvents = batchedScheduler.nextBatch
@@ -154,7 +157,7 @@ class BatchEngine<T, P : Position<out P>> :
                 slidingWindowTime,
             )
         ) {
-            throw IllegalStateException(
+            error(
                 nextEvent.toString() + " is scheduled in the past at time " + scheduledTime +
                     ", current time is " + currentTime +
                     ". Problem occurred at step " + currentStep,
@@ -198,12 +201,25 @@ class BatchEngine<T, P : Position<out P>> :
         }
     }
 
+    /**
+     * Safely set simulation status.
+     */
     override fun newStatus(next: Status) {
         synchronized(this) { super.newStatus(next) }
     }
 
+    /**
+     * Output replay strategy mode.
+     */
     enum class OutputReplayStrategy {
+        /**
+         * Replay last batch of events ordered by execution time.
+         */
         REPLAY,
+
+        /**
+         * Replay only the latest event in the batch.
+         */
         AGGREGATE,
     }
 

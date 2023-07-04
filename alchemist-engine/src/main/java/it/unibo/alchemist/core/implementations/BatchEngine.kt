@@ -99,7 +99,7 @@ class BatchEngine<T, P : Position<out P>> :
                 currentStep += batchSize.toLong()
                 val resultsOrderedByTime = futureResults
                     .sortedWith(Comparator.comparing { result: TaskResult -> result.eventTime })
-                currentTime = maxSlidingWindowTime
+                currentTime = if (maxSlidingWindowTime > currentTime) maxSlidingWindowTime else currentTime
                 doStepDoneAllMonitors(resultsOrderedByTime)
             } catch (e: InterruptedException) {
                 LOGGER.error(e.message, e)
@@ -127,7 +127,7 @@ class BatchEngine<T, P : Position<out P>> :
 
     private fun doStepDoneAllMonitors(result: TaskResult) {
         for (monitor: OutputMonitor<T, P> in monitors) {
-            monitor.stepDone(environment, result.event, result.event.tau, currentStep)
+            monitor.stepDone(environment, result.event, currentTime, currentStep)
         }
     }
 

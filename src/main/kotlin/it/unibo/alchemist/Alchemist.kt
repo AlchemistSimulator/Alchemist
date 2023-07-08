@@ -13,7 +13,9 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import it.unibo.alchemist.launch.Launcher
 import it.unibo.alchemist.launch.Validation
 import it.unibo.alchemist.model.api.SupportedIncarnations
@@ -38,7 +40,7 @@ object Alchemist {
     private val logger = LoggerFactory.getLogger(Alchemist::class.java)
     private val launchers: List<Launcher> = loadLaunchers()
 
-    private val mapper = jacksonObjectMapper()
+    private val mapper = ObjectMapper(YAMLFactory()).registerKotlinModule()
 
     private const val defaultLauncherName = "HeadlessSimulationLauncher"
     private const val javaFxLauncherName = "SingleRunFXUI"
@@ -116,14 +118,14 @@ object Alchemist {
                 Currently supported options are:
                 
                 - variables : comma separated list of strings : selected batch variables
-                - batch : boolean : whether batch mode is selected
-                - distributed : string : the path to the file with the load distribution configuration, or null if the run is local
-                - graphics : string : the path to the effects file, or null if unspecified
-                - server : string : if launched as Alchemist grid node server, the path to the configuration file. Null otherwise.
+                - isBatch : boolean : whether batch mode is selected
+                - distributedConfigPath : string : the path to the file with the load distribution configuration, or null if the run is local
+                - graphicsPath : string : the path to the effects file, or null if unspecified
+                - serverConfigPath : string : if launched as Alchemist grid node server, the path to the configuration file. Null otherwise.
                 - parallelism : integer : parallel threads used for running locally. Defaults to available processores at runtime
-                - time : decimal : final simulation time. Defaults to positive infinity.
-                - web : boolean : true if the web renderer is used. Defaults to false.
-                - engine-mode : one option of [deterministic, batchFixed, batchEpsilon] : engine event processing mode, defaults to Deterministic. Batch modes utilize parallel processing and may not yield predicatble results, use at your own risk.
+                - endTime : decimal : final simulation time. Defaults to positive infinity.
+                - isWeb : boolean : true if the web renderer is used. Defaults to false.
+                - engineMode : one option of [deterministic, batchFixed, batchEpsilon] : engine event processing mode, defaults to Deterministic. Batch modes utilize parallel processing and may not yield predicatble results, use at your own risk.
                 - verbosity : one option of [v, vv, vvv, q, qq] : determines log verbosity level. v = info vv = debug, vvv = all, q = error, qq = off . Defaults to warn.
                 """.trimIndent(),
             )
@@ -150,6 +152,7 @@ object Alchemist {
         optionsFile: String?,
         overridesFile: String?,
     ) {
+        println(overridesFile) // TODO do something later
         validateOutputModule()
         validateIncarnations()
         val launcherName = launcher ?: defaultLauncherName
@@ -167,9 +170,10 @@ object Alchemist {
         }
     }
 
-    private fun parseOptions(path: String?): OptionsConfig {
-        return if (path != null) {
-            Files.newBufferedReader(Paths.get(path)).use {
+    private fun parseOptions(pathString: String?): OptionsConfig {
+        return if (pathString != null) {
+            val path = Paths.get(pathString)
+            Files.newBufferedReader(path).use {
                 mapper.readValue(it, OptionsConfig::class.java)
             }
         } else {
@@ -205,7 +209,7 @@ object Alchemist {
         if (candidateLauncher == null) {
             logger.error("No valid launchers for {} and class {}", options, launcherClass)
             printLaunchers()
-            logger.error("Available launchers: {}", launchers.map { it.name })
+            logger.error("Available launchers: {}", launchers.map { "${it.name} - [${it.javaClass.name}]" })
             invalidLaunchers.forEach { (validation, launcher) ->
                 if (validation is Validation.Invalid) {
                     logger.error("{}: {}", launcher::class.java.simpleName, validation.reason)
@@ -236,7 +240,7 @@ object Alchemist {
         .partition { (validation, _) -> validation is Validation.OK }
 
     private fun printLaunchers() {
-        logger.warn("Available launchers: {}", launchers.map { it.name })
+        logger.warn("Available launchers: {}", launchers.map { "${it.name} - [${it.javaClass.name}]" })
     }
 
     /**

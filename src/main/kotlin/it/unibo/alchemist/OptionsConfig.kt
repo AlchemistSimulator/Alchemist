@@ -9,12 +9,16 @@
 
 package it.unibo.alchemist
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+
 /**
  * Holds alchemist launch options configuration values
  */
 data class OptionsConfig(
     val variables: List<String> = emptyList(),
+    @JsonDeserialize(using = EngineModeDeserializer::class)
     val engineMode: EngineMode = defaultEngineMode,
+    @JsonDeserialize(using = VerbosityDeserializer::class)
     val verbosity: Verbosity = defaultVerbosity,
     val parallelism: Int = defaultParallelism,
     val endTime: Double = defaultEndTime,

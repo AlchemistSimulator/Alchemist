@@ -28,7 +28,7 @@ enum class EngineMode(val code: String) {
     /**
      *  Launch simulation in fixed batch size mode.
      */
-    BATCH("batchFixed"),
+    BATCH_FIXED("batchFixed"),
 
     /**
      *  Launch simulation in epsilon batch mode.

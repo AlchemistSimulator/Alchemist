@@ -12,7 +12,6 @@ package it.unibo.alchemist.launch
 import com.google.common.collect.Lists
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.EngineMode
-import it.unibo.alchemist.ExperimentalFeatureFlag
 import it.unibo.alchemist.OutputReplayStrategy
 import it.unibo.alchemist.core.implementations.ArrayIndexedPriorityEpsilonBatchQueue
 import it.unibo.alchemist.core.implementations.ArrayIndexedPriorityFixedBatchQueue
@@ -87,28 +86,28 @@ abstract class SimulationLauncher : AbstractLauncher() {
         initialized: InitializedEnvironment<T, P>,
         parameters: AlchemistExecutionOptions,
     ): Engine<T, P> {
-        val outputReplayStrategy = parseOutputReplayStratgy(parameters)
-        return when (parseMode(parameters)) {
-            EngineMode.BATCH -> {
-                val batchSize = parseBatchSize(parameters)
+        val outputReplayStrategy = OutputReplayStrategy.AGGREGATE // TODO parametrize
+        return when (parameters.engineMode) {
+            EngineMode.BATCH_FIXED -> {
+                val batchSize = parameters.parallelism // TODO parametrize
                 BatchEngine(
                     initialized.environment,
                     Long.MAX_VALUE,
                     DoubleTime(parameters.endTime),
                     parameters.parallelism,
-                    outputReplayStrategy,
+                    outputReplayStrategy.toEngine(),
                     ArrayIndexedPriorityFixedBatchQueue(batchSize),
                 )
             }
 
             EngineMode.EPSILON -> {
-                val epsilon = parseEpsilon(parameters)
+                val epsilon = 0.01 // TODO parametrize
                 BatchEngine(
                     initialized.environment,
                     Long.MAX_VALUE,
                     DoubleTime(parameters.endTime),
                     parameters.parallelism,
-                    outputReplayStrategy,
+                    outputReplayStrategy.toEngine(),
                     ArrayIndexedPriorityEpsilonBatchQueue(epsilon),
                 )
             }
@@ -120,37 +119,11 @@ abstract class SimulationLauncher : AbstractLauncher() {
         }
     }
 
-    private fun parseMode(parameters: AlchemistExecutionOptions): EngineMode? {
-        val maybeMode = parameters.featureFlags
-            .find { it.startsWith(ExperimentalFeatureFlag.ENGINE_MODE.code) }?.substringAfter('=')
-        return when (maybeMode) {
-            EngineMode.BATCH.code -> EngineMode.BATCH
-            EngineMode.EPSILON.code -> EngineMode.EPSILON
-            else -> null
+    private fun OutputReplayStrategy.toEngine(): BatchEngine.OutputReplayStrategy {
+        return when (this) {
+            OutputReplayStrategy.AGGREGATE -> BatchEngine.OutputReplayStrategy.AGGREGATE
+            OutputReplayStrategy.REPLAY -> BatchEngine.OutputReplayStrategy.REPLAY
         }
-    }
-
-    private fun parseOutputReplayStratgy(parameters: AlchemistExecutionOptions): BatchEngine.OutputReplayStrategy {
-        val maybeStrategy = parameters.featureFlags
-            .find { it.startsWith(ExperimentalFeatureFlag.OUTPUT_REPLAY_STRATEGY.code) }?.substringAfter('=')
-        return when (maybeStrategy) {
-            OutputReplayStrategy.REPLAY.code -> BatchEngine.OutputReplayStrategy.REPLAY
-            OutputReplayStrategy.AGGREGATE.code -> BatchEngine.OutputReplayStrategy.AGGREGATE
-            else -> BatchEngine.OutputReplayStrategy.REPLAY
-        }
-    }
-
-    private fun parseBatchSize(parameters: AlchemistExecutionOptions): Int {
-        return parameters.featureFlags
-            .find { it.startsWith(ExperimentalFeatureFlag.FIXED_BATCH_ENGINE_SIZE.code) }?.substringAfter('=')?.toInt()
-            ?: parameters.parallelism
-    }
-
-    private fun parseEpsilon(parameters: AlchemistExecutionOptions): Double {
-        return parameters.featureFlags
-            .find { it.startsWith(ExperimentalFeatureFlag.EPSILON_BATCH_ENGINE_VALUE.code) }?.substringAfter('=')
-            ?.toDouble()
-            ?: DEFAULT_EPSILON_VALUE
     }
 
     /**

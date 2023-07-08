@@ -126,7 +126,7 @@ object Alchemist {
                 - endTime : decimal : final simulation time. Defaults to positive infinity.
                 - isWeb : boolean : true if the web renderer is used. Defaults to false.
                 - engineMode : one option of [deterministic, batchFixed, batchEpsilon] : engine event processing mode, defaults to Deterministic. Batch modes utilize parallel processing and may not yield predicatble results, use at your own risk.
-                - verbosity : one option of [v, vv, vvv, q, qq] : determines log verbosity level. v = info vv = debug, vvv = all, q = error, qq = off . Defaults to warn.
+                - verbosity : one option of [debug, info, all, error, off, warn] : determines log verbosity level. v = info vv = debug, vvv = all, q = error, qq = off, w = warn. Defaults to warn.
                 """.trimIndent(),
             )
 

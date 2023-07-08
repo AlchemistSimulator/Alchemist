@@ -26,32 +26,32 @@ enum class Verbosity(val code: String, val logLevel: Level) {
     /**
      * Debug.
      */
-    DEBUG("vv", Level.DEBUG),
+    DEBUG("debug", Level.DEBUG),
 
     /**
      * INFO.
      */
-    INFO("v", Level.INFO),
+    INFO("info", Level.INFO),
 
     /**
      * WARN.
      */
-    WARN("w", Level.WARN),
+    WARN("warn", Level.WARN),
 
     /**
      * ERROR.
      */
-    ERROR("q", Level.ERROR),
+    ERROR("error", Level.ERROR),
 
     /**
      * ALL.
      */
-    ALL("vvv", Level.ALL),
+    ALL("all", Level.ALL),
 
     /**
      * OFF.
      */
-    OFF("qq", Level.OFF),
+    OFF("off", Level.OFF),
 }
 
 /**

@@ -1,3 +1,4 @@
 graphicsPath: alchemist-benchmark/effects/simulation.json
 endTime: 50
 engineMode: deterministic
+verbosity: info

@@ -9,48 +9,66 @@
 
 package it.unibo.alchemist
 
+import ch.qos.logback.classic.Level
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 
 /**
- * Engine modes.
- * @property code mode code
+ * Log verbosity configuration.
+ *
+ * @property code verbosity code
+ * @property logLevel logging level mapping
  */
-enum class EngineMode(val code: String) {
+enum class Verbosity(val code: String, val logLevel: Level) {
 
     /**
-     * Launch simulation is single-threaded deterministic mode
+     * Debug.
      */
-    DETERMINISTIC("deterministic"),
+    DEBUG("vv", Level.DEBUG),
 
     /**
-     *  Launch simulation in fixed batch size mode.
+     * INFO.
      */
-    BATCH("batchFixed"),
+    INFO("v", Level.INFO),
 
     /**
-     *  Launch simulation in epsilon batch mode.
+     * WARN.
      */
-    EPSILON("batchEpsilon"),
+    WARN("w", Level.WARN),
+
+    /**
+     * ERROR.
+     */
+    ERROR("q", Level.ERROR),
+
+    /**
+     * ALL.
+     */
+    ALL("vvv", Level.ALL),
+
+    /**
+     * OFF.
+     */
+    OFF("qq", Level.OFF),
 }
 
 /**
- * EngineMode deserializer using code.
+ * Verbosity deserializer using code.
  */
-class EngineModeDeserializer : StdDeserializer<EngineMode>(EngineMode::class.java) {
+class VerbosityDeserializer : StdDeserializer<Verbosity>(Verbosity::class.java) {
     /**
      * deserialize.
      */
-    override fun deserialize(jsonParser: JsonParser, ctxt: DeserializationContext?): EngineMode {
+    override fun deserialize(jsonParser: JsonParser, ctxt: DeserializationContext?): Verbosity {
         val node: JsonNode = jsonParser.codec.readTree(jsonParser)
         val value = node.textValue()
-        val match = EngineMode.values().find { it.code == value }
+        val match = Verbosity.values().find { it.code == value }
         if (match != null) {
             return match
         } else {
-            throw IllegalArgumentException("Unknown EngineMode value $value, allowed: [${EngineMode.values()}]")
+            throw IllegalArgumentException("Unknown Verbosity value $value, allowed: [${Verbosity.values()}]")
         }
     }
 }

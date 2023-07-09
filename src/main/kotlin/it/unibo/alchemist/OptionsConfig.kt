@@ -16,8 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
  */
 data class OptionsConfig(
     val variables: List<String> = emptyList(),
-    @JsonDeserialize(using = EngineModeDeserializer::class)
-    val engineMode: EngineMode = defaultEngineMode,
+    val engineConfig: EngineConfig = EngineConfig(),
     @JsonDeserialize(using = VerbosityDeserializer::class)
     val verbosity: Verbosity = defaultVerbosity,
     val parallelism: Int = defaultParallelism,
@@ -28,6 +27,19 @@ data class OptionsConfig(
     val graphicsPath: String? = null,
     val serverConfigPath: String? = null,
 ) {
+
+    /**
+     * Engine configuration.
+     */
+    data class EngineConfig(
+        @JsonDeserialize(using = EngineModeDeserializer::class)
+        val engineMode: EngineMode = defaultEngineMode,
+        @JsonDeserialize(using = OutputReplayStrategyDeserializer::class)
+        val outputReplayStrategy: OutputReplayStrategy = defaultOutputReplayStrategy,
+        val batchSize: Int? = null,
+        val epsilon: Double = defaultEpsilonSize,
+    )
+
     companion object {
         /**
          * If no specific number of parallel threads to use is specified, this value is used.
@@ -52,5 +64,17 @@ data class OptionsConfig(
          * Defaults to [Verbosity.WARN]
          */
         val defaultVerbosity = Verbosity.WARN
+
+        /**
+         * Default epsilon value used only in epsilon engine mode.
+         * Defaults to 0.01
+         */
+        const val defaultEpsilonSize = 0.01
+
+        /**
+         * Default output replay strategy.
+         * Defaults to replay
+         */
+        val defaultOutputReplayStrategy = OutputReplayStrategy.REPLAY
     }
 }

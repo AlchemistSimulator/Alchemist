@@ -1,4 +1,7 @@
 graphicsPath: alchemist-benchmark/effects/simulation.json
 endTime: 50
-engineMode: deterministic
-verbosity: info
+engineConfig:
+  engineMode: batchEpsilon
+  epsilon: 0.01
+  outputReplayStrategy: replay
+verbosity: warn

@@ -125,7 +125,11 @@ object Alchemist {
                 - parallelism : integer : parallel threads used for running locally. Defaults to available processores at runtime
                 - endTime : decimal : final simulation time. Defaults to positive infinity.
                 - isWeb : boolean : true if the web renderer is used. Defaults to false.
-                - engineMode : one option of [deterministic, batchFixed, batchEpsilon] : engine event processing mode, defaults to Deterministic. Batch modes utilize parallel processing and may not yield predicatble results, use at your own risk.
+                - engineConfig : object containing configurations related to engine execution mode.
+                    - engineMode : one option of [deterministic, batchFixed, batchEpsilon] : engine event processing mode, defaults to deterministic. Batch modes utilize parallel processing and may not yield predicatble results, use at your own risk.
+                    - outputReplayStrategy : one option of [aggregate, replay] : engine events batch output strategy, defaults to replay.
+                    - batchSize : integer : events batch size, only used with batchFixed mode
+                    - epsilon : decimal : events epsilon value, only used with batchEpsilon mode
                 - verbosity : one option of [debug, info, all, error, off, warn] : determines log verbosity level. v = info vv = debug, vvv = all, q = error, qq = off, w = warn. Defaults to warn.
                 """.trimIndent(),
             )

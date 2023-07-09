@@ -86,10 +86,10 @@ abstract class SimulationLauncher : AbstractLauncher() {
         initialized: InitializedEnvironment<T, P>,
         parameters: AlchemistExecutionOptions,
     ): Engine<T, P> {
-        val outputReplayStrategy = OutputReplayStrategy.AGGREGATE // TODO parametrize
-        return when (parameters.engineMode) {
+        val outputReplayStrategy = parameters.engineConfig.outputReplayStrategy
+        return when (parameters.engineConfig.engineMode) {
             EngineMode.BATCH_FIXED -> {
-                val batchSize = parameters.parallelism // TODO parametrize
+                val batchSize = parameters.engineConfig.batchSize ?: parameters.parallelism
                 BatchEngine(
                     initialized.environment,
                     Long.MAX_VALUE,
@@ -101,7 +101,7 @@ abstract class SimulationLauncher : AbstractLauncher() {
             }
 
             EngineMode.EPSILON -> {
-                val epsilon = 0.01 // TODO parametrize
+                val epsilon = parameters.engineConfig.epsilon
                 BatchEngine(
                     initialized.environment,
                     Long.MAX_VALUE,

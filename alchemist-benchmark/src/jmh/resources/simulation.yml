@@ -1,5 +1,15 @@
 incarnation: protelis
 
+_simulation-configuration:
+  launcher: SingleRunSwingUI
+  graphics-path: alchemist-benchmark/effects/simulation.json
+  end-time: 50
+  engine-configuration:
+    engine-mode: batchEpsilon
+    epsilon: 0.01
+    output-replay-strategy: replay
+  verbosity: warn
+
 network-model:
   type: ConnectWithinDistance
   parameters: [0.5]

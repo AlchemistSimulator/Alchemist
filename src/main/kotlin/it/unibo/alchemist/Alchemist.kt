@@ -13,6 +13,7 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -41,6 +42,7 @@ object Alchemist {
     private val launchers: List<Launcher> = loadLaunchers()
 
     private val mapper = ObjectMapper(YAMLFactory()).registerKotlinModule()
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     private const val defaultLauncherName = "HeadlessSimulationLauncher"
     private const val javaFxLauncherName = "SingleRunFXUI"
@@ -96,7 +98,7 @@ object Alchemist {
 
             val simulationFile by parser.argument(
                 type = ArgType.String,
-                fullName = "simulation file",
+                fullName = "simulation configuration file",
                 description = """
                 File containing simulation configuration to be executed.
                 """.trimIndent(),
@@ -106,44 +108,47 @@ object Alchemist {
                 type = ArgType.String,
                 fullName = "launcher",
                 description = """
-                Simulation launcher class to be used. Use fully-qualified name e.g. it.unibo.alchemist.launch.HeadlessSimulationLauncher.
+                Simulation launcher class name. Defaults to HeadlessSimulationLauncher.
                 """.trimIndent(),
-            ).default("it.unibo.alchemist.launch.HeadlessSimulationLauncher")
+            ).default("HeadlessSimulationLauncher")
 
-            val options by parser.option(
-                type = ArgType.String,
-                fullName = "options",
+            val verbosity by parser.option(
+                type = ArgType.Choice<Verbosity>(),
+                fullName = "verbosity",
                 description = """
-                Path to a valid yaml file containing additional launch options.
-                Currently supported options are:
+                Simulation logging verbosity level. Choose one of the following values:
+               
+                - debug
+                - info
+                - warn
+                - error
+                - all
+                - off
                 
-                - variables : comma separated list of strings : selected batch variables
-                - isBatch : boolean : whether batch mode is selected
-                - distributedConfigPath : string : the path to the file with the load distribution configuration, or null if the run is local
-                - graphicsPath : string : the path to the effects file, or null if unspecified
-                - serverConfigPath : string : if launched as Alchemist grid node server, the path to the configuration file. Null otherwise.
-                - parallelism : integer : parallel threads used for running locally. Defaults to available processores at runtime
-                - endTime : decimal : final simulation time. Defaults to positive infinity.
-                - isWeb : boolean : true if the web renderer is used. Defaults to false.
-                - engineConfig : object containing configurations related to engine execution mode.
-                    - engineMode : one option of [deterministic, batchFixed, batchEpsilon] : engine event processing mode, defaults to deterministic. Batch modes utilize parallel processing and may not yield predicatble results, use at your own risk.
-                    - outputReplayStrategy : one option of [aggregate, replay] : engine events batch output strategy, defaults to replay.
-                    - batchSize : integer : events batch size, only used with batchFixed mode
-                    - epsilon : decimal : events epsilon value, only used with batchEpsilon mode
-                - verbosity : one option of [debug, info, all, error, off, warn] : determines log verbosity level. v = info vv = debug, vvv = all, q = error, qq = off, w = warn. Defaults to warn.
+                defaults to "warn"
                 """.trimIndent(),
-            )
+            ).default(Verbosity.WARN)
 
             val overrides by parser.option(
                 type = ArgType.String,
                 fullName = "overrides",
                 description = """
-                TODO
+                Json object used to override simulation configuration values. Example:
+                
+                yaml file:
+                
+                foo:
+                 bar:
+                  fizz: 2
+                  
+                foo.bar.fizz is overriden with the following json
+                
+                {"foo": {"bar": {"fizz": 2}}}
                 """.trimIndent(),
             )
 
             override fun execute() {
-                executeSimlation(simulationFile, launcher, options, overrides)
+                executeSimlation(simulationFile, verbosity, overrides)
             }
         }
         parser.subcommands(Run())
@@ -152,18 +157,16 @@ object Alchemist {
 
     private fun executeSimlation(
         simulationFile: String,
-        launcher: String?,
-        optionsFile: String?,
-        overridesFile: String?,
+        verbosity: Verbosity,
+        overridesJson: String?,
     ) {
-        println(overridesFile) // TODO do something later
+        println(overridesJson) // TODO parse json, put into legacy variables param
         validateOutputModule()
         validateIncarnations()
-        val launcherName = launcher ?: defaultLauncherName
-        val optionsConfig = parseOptions(optionsFile)
-        val legacyConfig = optionsConfig.toLegacy(simulationFile, launcherName)
-        setVerbosity(optionsConfig.verbosity)
-        val selectedLauncher = selectLauncher(legacyConfig, launcherName)
+        setVerbosity(verbosity)
+        val optionsConfig = parseOptions(simulationFile)
+        val legacyConfig = optionsConfig.toLegacy(simulationFile)
+        val selectedLauncher = selectLauncher(legacyConfig, optionsConfig.launcher)
         selectedLauncher.launch(legacyConfig)
     }
 
@@ -174,26 +177,26 @@ object Alchemist {
         }
     }
 
-    private fun parseOptions(pathString: String?): OptionsConfig {
+    private fun parseOptions(pathString: String?): SimulationConfig {
         return if (pathString != null) {
             val path = Paths.get(pathString)
             Files.newBufferedReader(path).use {
-                mapper.readValue(it, OptionsConfig::class.java)
+                mapper.readValue(it, SimulationConfigWrapper::class.java).simulationConfiguration
             }
         } else {
-            OptionsConfig()
+            SimulationConfig()
         }
     }
 
-    private fun OptionsConfig.toLegacy(simulationFile: String, launcherName: String): AlchemistExecutionOptions {
+    private fun SimulationConfig.toLegacy(simulationFile: String): AlchemistExecutionOptions {
         return AlchemistExecutionOptions(
             configuration = simulationFile,
-            headless = launcherName == defaultLauncherName,
-            variables = this.variables,
+            headless = this.launcher == defaultLauncherName,
+            variables = emptyList(),
             batch = this.isBatch,
             distributed = this.distributedConfigPath,
             graphics = this.graphicsPath,
-            fxui = launcherName == javaFxLauncherName,
+            fxui = this.launcher == javaFxLauncherName,
             web = this.isWeb,
             help = false,
             server = this.serverConfigPath,
@@ -209,7 +212,7 @@ object Alchemist {
                 validation as Validation.OK to launcher
             }
             .sortedByDescending { it.first.priority }
-        val candidateLauncher = sortedLaunchers.find { it.second.javaClass.name == launcherClass }
+        val candidateLauncher = sortedLaunchers.find { it.second.javaClass.simpleName == launcherClass }
         if (candidateLauncher == null) {
             logger.error("No valid launchers for {} and class {}", options, launcherClass)
             printLaunchers()

@@ -9,10 +9,9 @@
 
 package it.unibo.alchemist
 
-object Debug {
+import com.fasterxml.jackson.annotation.JsonProperty
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        Alchemist.main(arrayOf("run", "alchemist-benchmark/src/jmh/resources/simulation.yml"))
-    }
-}
+data class SimulationConfigWrapper(
+    @JsonProperty("_simulation-configuration")
+    val simulationConfiguration: SimulationConfig,
+)

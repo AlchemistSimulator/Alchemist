@@ -39,7 +39,7 @@ data class AlchemistExecutionOptions(
     val server: String? = null,
     val parallelism: Int = defaultParallelism,
     val endTime: Double = defaultEndTime,
-    val engineConfig: OptionsConfig.EngineConfig = OptionsConfig.EngineConfig(),
+    val engineConfig: SimulationConfig.EngineConfig = SimulationConfig.EngineConfig(),
 ) {
     /**
      * returns true if all options are set to their default value.

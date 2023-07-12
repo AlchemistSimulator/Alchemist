@@ -10,10 +10,6 @@
 package it.unibo.alchemist
 
 import ch.qos.logback.classic.Level
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 
 /**
  * Log verbosity configuration.
@@ -52,23 +48,4 @@ enum class Verbosity(val code: String, val logLevel: Level) {
      * OFF.
      */
     OFF("off", Level.OFF),
-}
-
-/**
- * Verbosity deserializer using code.
- */
-class VerbosityDeserializer : StdDeserializer<Verbosity>(Verbosity::class.java) {
-    /**
-     * deserialize.
-     */
-    override fun deserialize(jsonParser: JsonParser, ctxt: DeserializationContext?): Verbosity {
-        val node: JsonNode = jsonParser.codec.readTree(jsonParser)
-        val value = node.textValue()
-        val match = Verbosity.values().find { it.code == value }
-        if (match != null) {
-            return match
-        } else {
-            throw IllegalArgumentException("Unknown Verbosity value $value, allowed: [${Verbosity.values()}]")
-        }
-    }
 }

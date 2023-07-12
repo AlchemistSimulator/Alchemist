@@ -9,22 +9,30 @@
 
 package it.unibo.alchemist
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 
 /**
  * Holds alchemist launch options configuration values
  */
-data class OptionsConfig(
-    val variables: List<String> = emptyList(),
+data class SimulationConfig(
+    @JsonProperty("launcher")
+    val launcher: String = "HeadlessSimulationLauncher",
+    @JsonProperty("engine-config")
     val engineConfig: EngineConfig = EngineConfig(),
-    @JsonDeserialize(using = VerbosityDeserializer::class)
-    val verbosity: Verbosity = defaultVerbosity,
+    @JsonProperty("parallelism")
     val parallelism: Int = defaultParallelism,
+    @JsonProperty("end-time")
     val endTime: Double = defaultEndTime,
+    @JsonProperty("is-web")
     val isWeb: Boolean = false,
+    @JsonProperty("is-batch")
     val isBatch: Boolean = false,
+    @JsonProperty("distributed-config-path")
     val distributedConfigPath: String? = null,
+    @JsonProperty("graphics-path")
     val graphicsPath: String? = null,
+    @JsonProperty("server-config-path")
     val serverConfigPath: String? = null,
 ) {
 
@@ -32,11 +40,15 @@ data class OptionsConfig(
      * Engine configuration.
      */
     data class EngineConfig(
+        @JsonProperty("engine-mode")
         @JsonDeserialize(using = EngineModeDeserializer::class)
         val engineMode: EngineMode = defaultEngineMode,
+        @JsonProperty("output-replay-strategy")
         @JsonDeserialize(using = OutputReplayStrategyDeserializer::class)
         val outputReplayStrategy: OutputReplayStrategy = defaultOutputReplayStrategy,
+        @JsonProperty("batch-size")
         val batchSize: Int? = null,
+        @JsonProperty("epsilon")
         val epsilon: Double = defaultEpsilonSize,
     )
 

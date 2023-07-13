@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -156,7 +157,7 @@ class TestYAMLLoader {
     void testDependencies() {
         final var is = ResourceLoader.getResource("isac/16-dependencies.yaml");
         assertNotNull(is);
-        final Loader loader = LoadAlchemist.from(is);
+        final Loader loader = LoadAlchemist.from(is, emptyList());
         final List<String> dependencies = loader.getRemoteDependencies();
         assertEquals(dependencies.size(), 2);
         assertEquals(dependencies.get(0), "dependencies_test.txt");
@@ -172,7 +173,7 @@ class TestYAMLLoader {
             final Map<String, Double> vars
     ) {
         assertNotNull(resource, "Missing test resource " + resource);
-        final Environment<T, P> environment = LoadAlchemist.from(resource, YamlProvider.INSTANCE)
+        final Environment<T, P> environment = LoadAlchemist.from(resource, YamlProvider.INSTANCE, emptyList())
                 .<T, P>getWith(vars).getEnvironment();
         final Simulation<T, P> sim = new Engine<>(environment, 10_000);
         sim.play();

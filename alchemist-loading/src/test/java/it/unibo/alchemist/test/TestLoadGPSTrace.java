@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -77,7 +78,7 @@ class TestLoadGPSTrace {
     <T> void testLoadGPSTrace() {
         final var res = ResourceLoader.getResource("testgps.yml");
         assertNotNull(res, "Missing test resource " + "testgps.yml");
-        final Environment<T, GeoPosition> environment = LoadAlchemist.from(res).<T, GeoPosition>getDefault().getEnvironment();
+        final Environment<T, GeoPosition> environment = LoadAlchemist.from(res, emptyList()).<T, GeoPosition>getDefault().getEnvironment();
         assertTrue(environment.getNodeCount() > 0);
         environment.getNodes().forEach(node -> {
             final var reactions = node.getReactions();

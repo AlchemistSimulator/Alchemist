@@ -42,89 +42,124 @@ object VariablesOverrider {
      * The overrider cannot create new variables.
      */
     @JvmStatic
-    @Suppress("UNCHECKED_CAST")
     fun applyOverrides(map: Map<String, *>, overrides: List<String>): Map<String, *> {
         return if (overrides.isEmpty()) {
             map
         } else {
             val newMap = LinkedHashMap(map)
-            overrides.forEach { override ->
-                val key = override.substringBefore("=")
-                val value = override.substringAfter("=")
-                val keyChain = key.split(".")
-                val accessors = keyChain.subList(0, keyChain.size - 1)
-                val target = keyChain[keyChain.size - 1]
-
-                var pointer: MutableMap<*, *> = newMap
-                accessors.forEach { accessor ->
-                    val maybeArrayAccessor = parseArrayAccessor(accessor)
-                    pointer = if (maybeArrayAccessor != null) {
-                        if (pointer[maybeArrayAccessor.key] == null) {
-                            throw IllegalArgumentException("key $accessor in $key does not exist in simulation variables")
-                        }
-                        val x = pointer[maybeArrayAccessor.key]
-                        val list = x as List<MutableMap<*, *>>
-                        list[maybeArrayAccessor.index]
-                    } else {
-                        if (pointer[accessor] == null) {
-                            throw IllegalArgumentException("key $accessor in $key does not exist in simulation variables")
-                        }
-                        pointer[accessor] as MutableMap<*, *>
-                    }
-                }
-
-                when (pointer[target]) {
-                    is Int -> {
-                        val castPointer = pointer as MutableMap<String, Int>
-                        castPointer[target] = value.toInt()
-                    }
-
-                    is String -> {
-                        val castPointer = pointer as MutableMap<String, String>
-                        castPointer[target] = value
-                    }
-
-                    is Double -> {
-                        val castPointer = pointer as MutableMap<String, Double>
-                        castPointer[target] = value.toDouble()
-                    }
-
-                    is List<*> -> {
-                        val castList = pointer[target] as List<*>
-                        when (castList[0]) {
-                            is Int -> {
-                                val castPointer = pointer as MutableMap<String, List<Int>>
-                                castPointer[target] = parseList(value) { it.toInt() }
-                            }
-
-                            is String -> {
-                                val castPointer = pointer as MutableMap<String, List<String>>
-                                castPointer[target] = parseList(value) { it }
-                            }
-
-                            is Double -> {
-                                val castPointer = pointer as MutableMap<String, List<Double>>
-                                castPointer[target] = parseList(value) { it.toDouble() }
-                            }
-                        }
-                    }
-
-                    null -> {
-                        throw UnsupportedOperationException("Cannot ovveride null value $key")
-                    }
-
-                    else -> throw UnsupportedOperationException("Cannot ovveride type ${pointer[target]?.javaClass?.name}")
-                }
-            }
-
+            overrides.forEach { applyOverride(it, newMap) }
             newMap
         }
     }
 
-    private data class AccessorParseResult(
-        val key: String,
-        val index: Int,
-    )
+    @JvmStatic
+    private fun applyOverride(override: String, newMap: MutableMap<String, Any?>) {
+        val key = override.substringBefore("=")
+        val value = override.substringAfter("=")
+        val keyChain = key.split(".")
+        val accessors = keyChain.subList(0, keyChain.size - 1)
+        val target = keyChain[keyChain.size - 1]
+        val pointer = navigateAccessors(newMap, accessors, key)
+        overrideValue(pointer, target, value, key)
+    }
+
+    @JvmStatic
+    private fun navigateAccessors(
+        newMap: MutableMap<String, Any?>,
+        accessors: List<String>,
+        key: String,
+    ): MutableMap<*, *> {
+        var pointer: MutableMap<*, *> = newMap
+        accessors.forEach { accessor ->
+            val maybeArrayAccessor = parseArrayAccessor(accessor)
+            pointer = if (maybeArrayAccessor != null) {
+                navigateListAccessor(pointer, maybeArrayAccessor, key)
+            } else {
+                navigateMapAccessor(pointer, accessor, key)
+            }
+        }
+        return pointer
+    }
+
+    @JvmStatic
+    @Suppress("UNCHECKED_CAST")
+    private fun navigateListAccessor(
+        pointer: MutableMap<*, *>,
+        arrayAccessor: AccessorParseResult,
+        key: String,
+    ): MutableMap<*, *> {
+        if (pointer[arrayAccessor.key] == null) {
+            throw IllegalArgumentException("key ${arrayAccessor.key} in $key does not exist in simulation variables")
+        }
+        val x = pointer[arrayAccessor.key]
+        val list = x as List<MutableMap<*, *>>
+        return list[arrayAccessor.index]
+    }
+
+    @JvmStatic
+    private fun navigateMapAccessor(pointer: MutableMap<*, *>, accessor: String, key: String): MutableMap<*, *> {
+        if (pointer[accessor] == null) {
+            throw IllegalArgumentException("key $accessor in $key does not exist in simulation variables")
+        }
+        return pointer[accessor] as MutableMap<*, *>
+    }
+
+    @JvmStatic
+    @Suppress("UNCHECKED_CAST")
+    private fun overrideValue(pointer: MutableMap<*, *>, target: String, value: String, key: String) {
+        when (pointer[target]) {
+            is Int -> {
+                val castPointer = pointer as MutableMap<String, Int>
+                castPointer[target] = value.toInt()
+            }
+
+            is String -> {
+                val castPointer = pointer as MutableMap<String, String>
+                castPointer[target] = value
+            }
+
+            is Double -> {
+                val castPointer = pointer as MutableMap<String, Double>
+                castPointer[target] = value.toDouble()
+            }
+
+            is List<*> -> {
+                castListPointer(pointer, target, value)
+            }
+
+            null -> {
+                throw UnsupportedOperationException("Cannot ovveride null value $key")
+            }
+
+            else -> throw UnsupportedOperationException("Cannot ovveride type ${pointer[target]?.javaClass?.name}")
+        }
+    }
+
+    @JvmStatic
+    @Suppress("UNCHECKED_CAST")
+    private fun castListPointer(pointer: MutableMap<*, *>, target: String, value: String) {
+        val castList = pointer[target] as List<*>
+        return when (castList[0]) {
+            is Int -> {
+                val castPointer = pointer as MutableMap<String, List<Int>>
+                castPointer[target] = parseList(value) { it.toInt() }
+            }
+
+            is String -> {
+                val castPointer = pointer as MutableMap<String, List<String>>
+                castPointer[target] = parseList(value) { it }
+            }
+
+            is Double -> {
+                val castPointer = pointer as MutableMap<String, List<Double>>
+                castPointer[target] = parseList(value) { it.toDouble() }
+            }
+
+            else -> {
+                throw UnsupportedOperationException("Cannot ovveride type ${pointer[target]?.javaClass?.name}")
+            }
+        }
+    }
 
     @JvmStatic
     private fun parseArrayAccessor(accessor: String): AccessorParseResult? {
@@ -146,4 +181,9 @@ object VariablesOverrider {
             .split(",")
             .map { mapper(it) }
     }
+
+    private data class AccessorParseResult(
+        val key: String,
+        val index: Int,
+    )
 }

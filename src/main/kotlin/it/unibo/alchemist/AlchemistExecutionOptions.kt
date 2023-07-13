@@ -30,6 +30,7 @@ data class AlchemistExecutionOptions(
     val configuration: String? = null,
     val headless: Boolean = false,
     val variables: List<String> = emptyList(),
+    val overrides: List<String> = emptyList(),
     val batch: Boolean = false,
     val distributed: String? = null,
     val graphics: String? = null,

@@ -13,6 +13,20 @@ object Debug {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        Alchemist.main(arrayOf("run", "alchemist-benchmark/src/jmh/resources/simulation.yml"))
+        Alchemist.main(
+            arrayOf(
+                "run", "--verbosity", "info",
+                "--override", "_test.str=test",
+                "--override", "_test.int=10",
+                "--override", "_test.dbl=10.1",
+                "--override", "_test.strL=[test1, test2]",
+                "--override", "_test.intL=[9, 19]",
+                "--override", "_test.dblL=[9.1, 9.87]",
+                "--override", "_test.arr[0].nst1-1=test",
+                "--override", "_test.arr[0].nst1-2=test",
+                "--override", "_test.arr[1].nst2-1[0].nst2-1-1=test",
+                "alchemist-benchmark/src/jmh/resources/simulation.yml",
+            ),
+        )
     }
 }

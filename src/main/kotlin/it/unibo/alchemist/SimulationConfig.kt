@@ -18,6 +18,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 data class SimulationConfig(
     @JsonProperty("launcher")
     val launcher: String = "HeadlessSimulationLauncher",
+    @JsonProperty("variables")
+    val variables: List<String> = emptyList(),
     @JsonProperty("engine-config")
     val engineConfig: EngineConfig = EngineConfig(),
     @JsonProperty("parallelism")

@@ -26,6 +26,7 @@ import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
 import kotlinx.cli.default
+import kotlinx.cli.multiple
 import org.apache.commons.cli.CommandLine
 import org.slf4j.LoggerFactory
 import org.slf4j.helpers.NOPLoggerFactory
@@ -131,9 +132,9 @@ object Alchemist {
 
             val overrides by parser.option(
                 type = ArgType.String,
-                fullName = "overrides",
+                fullName = "override",
                 description = """
-                Json object used to override simulation configuration values. Example:
+                Multi-option used to override simulation configuration values. Example:
                 
                 yaml file:
                 
@@ -141,11 +142,11 @@ object Alchemist {
                  bar:
                   fizz: 2
                   
-                foo.bar.fizz is overriden with the following json
+                is overriden with 
                 
-                {"foo": {"bar": {"fizz": 2}}}
+                --override foo.bar.fizz='10'
                 """.trimIndent(),
-            )
+            ).multiple()
 
             override fun execute() {
                 executeSimlation(simulationFile, verbosity, overrides)
@@ -158,14 +159,13 @@ object Alchemist {
     private fun executeSimlation(
         simulationFile: String,
         verbosity: Verbosity,
-        overridesJson: String?,
+        overrides: List<String>,
     ) {
-        println(overridesJson) // TODO parse json, put into legacy variables param
         validateOutputModule()
         validateIncarnations()
         setVerbosity(verbosity)
         val optionsConfig = parseOptions(simulationFile)
-        val legacyConfig = optionsConfig.toLegacy(simulationFile)
+        val legacyConfig = optionsConfig.toLegacy(simulationFile, overrides)
         val selectedLauncher = selectLauncher(legacyConfig, optionsConfig.launcher)
         selectedLauncher.launch(legacyConfig)
     }
@@ -188,11 +188,12 @@ object Alchemist {
         }
     }
 
-    private fun SimulationConfig.toLegacy(simulationFile: String): AlchemistExecutionOptions {
+    private fun SimulationConfig.toLegacy(simulationFile: String, overrides: List<String>): AlchemistExecutionOptions {
         return AlchemistExecutionOptions(
             configuration = simulationFile,
             headless = this.launcher == defaultLauncherName,
-            variables = emptyList(),
+            variables = this.variables,
+            overrides = overrides,
             batch = this.isBatch,
             distributed = this.distributedConfigPath,
             graphics = this.graphicsPath,

@@ -51,6 +51,7 @@ abstract class SimulationLauncher : AbstractLauncher() {
             ResourceLoader.getResource(configuration)
                 ?: File(configuration).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
                 ?: error("No classpath resource or file $configuration was found"),
+            parameters.overrides,
         )
         launch(loader, parameters)
     }
@@ -135,11 +136,4 @@ abstract class SimulationLauncher : AbstractLauncher() {
      * Allows subclasses to perform further checks before getting executed. Defaults to simply return [Validation.OK]
      */
     abstract fun additionalValidation(currentOptions: AlchemistExecutionOptions): Validation
-
-    companion object {
-        /**
-         *  Default epsilon value for epsilon batch mode.
-         */
-        const val DEFAULT_EPSILON_VALUE = 0.01
-    }
 }

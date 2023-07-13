@@ -1,13 +1,9 @@
 incarnation: protelis
 
-_simulation-configuration:
-  launcher: HeadlessSimulationLauncher
-  graphics-path: alchemist-benchmark/effects/simulation.json
+__simulation-configuration:
   end-time: 50
   engine-configuration:
-    engine-mode: batchEpsilon
-    epsilon: 0.01
-    output-replay-strategy: replay
+    output-replay-strategy: aggregate
 
 network-model:
   type: ConnectWithinDistance

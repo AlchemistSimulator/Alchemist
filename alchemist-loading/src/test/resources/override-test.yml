@@ -1,5 +1,8 @@
 foo: bar
 
+__ignored:
+  x: foo
+
 _test:
   str: replaceme
   int: 1

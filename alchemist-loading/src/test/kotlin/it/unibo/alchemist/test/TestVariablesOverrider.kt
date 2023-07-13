@@ -21,6 +21,7 @@ class TestVariablesOverrider : StringSpec({
         val resource = ResourceLoader.getResource("override-test.yml")
         val variables = YamlProvider.from(resource)
         val overrides = listOf(
+            "__ignored.x=bar",
             "_test.str=test",
             "_test.int=10",
             "_test.dbl=10.1",
@@ -33,6 +34,9 @@ class TestVariablesOverrider : StringSpec({
         )
         val expected = mapOf(
             "foo" to "bar",
+            "__ignored" to mapOf(
+                "x" to "foo",
+            ),
             "_test" to mapOf(
                 "str" to "test",
                 "int" to 10,

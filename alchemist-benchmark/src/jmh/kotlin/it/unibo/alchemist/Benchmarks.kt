@@ -22,7 +22,7 @@ import org.openjdk.jmh.annotations.Threads
 open class Benchmarks {
 
     /**
-     * Singlethreaded and deterministic simulation run.
+     * Single-threaded and deterministic simulation run.
      */
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
@@ -30,11 +30,18 @@ open class Benchmarks {
     @Threads(1)
     @Suppress("unused")
     fun singleThreadedSimulation() {
-        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-p", "1", "-t", "50"))
+        Alchemist.main(
+            arrayOf(
+                "run",
+                "simulation.yml",
+                "--override",
+                "__simulation-configuration.parallelism=1",
+            ),
+        )
     }
 
     /**
-     * Multithreaded simulation run with experimental batch engine
+     * Multithreaded simulation run with batch engine
      * in fixed-size batch mode that uses 4 threads, this benchmark should
      * perform well on most modern processors.
      */
@@ -44,11 +51,22 @@ open class Benchmarks {
     @Threads(4)
     @Suppress("unused")
     fun multiThreadedSimulationFourThreadsFixedBatch() {
-        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-f", "mode=batch,batchSize=4", "-p", "4", "-t", "50"))
+        Alchemist.main(
+            arrayOf(
+                "run",
+                "simulation.yml",
+                "--override",
+                "__simulation-configuration.parallelism=4",
+                "--override",
+                "__simulation-configuration.engine-configuration.engine-mode=batchFixed",
+                "--override",
+                "__simulation-configuration.engine-configuration.batch-size=4",
+            ),
+        )
     }
 
     /**
-     * Multithreaded simulation run with experimental batch engine
+     * Multithreaded simulation run with batch engine
      * in fixed-size batch mode that uses 8 threads, this benchmark should perform
      * well on higher-end processors.
      */
@@ -58,11 +76,22 @@ open class Benchmarks {
     @Threads(8)
     @Suppress("unused")
     fun multiThreadedSimulationEightThreadsFixedBatch() {
-        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-f", "mode=batch,batchSize=8", "-p", "8", "-t", "50"))
+        Alchemist.main(
+            arrayOf(
+                "run",
+                "simulation.yml",
+                "--override",
+                "__simulation-configuration.parallelism=8",
+                "--override",
+                "__simulation-configuration.engine-configuration.engine-mode=batchFixed",
+                "--override",
+                "__simulation-configuration.engine-configuration.batch-size=8",
+            ),
+        )
     }
 
     /**
-     * Multithreaded simulation run with experimental batch engine
+     * Multithreaded simulation run with batch engine
      * in epsilon dynamic batch mode that uses 4 threads, this benchmark should
      * perform well on most modern processors.
      */
@@ -72,12 +101,23 @@ open class Benchmarks {
     @Threads(4)
     @Suppress("unused")
     fun multiThreadedSimulationFourThreadsEpsilonBatch() {
-        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-f", "mode=epsilon,epsilon=0.01", "-p", "4", "-t", "50"))
+        Alchemist.main(
+            arrayOf(
+                "run",
+                "simulation.yml",
+                "--override",
+                "__simulation-configuration.parallelism=4",
+                "--override",
+                "__simulation-configuration.engine-configuration.engine-mode=batchEpsilon",
+                "--override",
+                "__simulation-configuration.engine-configuration.epsilon=0.01",
+            ),
+        )
     }
 
     /**
-     * Multithreaded simulation run with experimental batch engine
-     * epsilon dynamic that uses 8 threads, this benchmark should perform
+     * Multithreaded simulation run with batch engine
+     * epsilon dynamic batch mode that uses 8 threads, this benchmark should perform
      * well on higher-end processors.
      */
     @Benchmark
@@ -86,6 +126,17 @@ open class Benchmarks {
     @Threads(8)
     @Suppress("unused")
     fun multiThreadedSimulationEightThreadsEpsilonBatch() {
-        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-f", "mode=batch,epsilon=0.01", "-p", "8", "-t", "50"))
+        Alchemist.main(
+            arrayOf(
+                "run",
+                "simulation.yml",
+                "--override",
+                "__simulation-configuration.parallelism=8",
+                "--override",
+                "__simulation-configuration.engine-configuration.engine-mode=batchEpsilon",
+                "--override",
+                "__simulation-configuration.engine-configuration.epsilon=0.01",
+            ),
+        )
     }
 }

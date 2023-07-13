@@ -16,6 +16,6 @@ data class SimulationConfigWrapper(
     val simulationConfiguration: SimulationConfig,
 ) {
     companion object {
-        const val wrapperKey = "_simulation-configuration"
+        const val wrapperKey = "__simulation-configuration"
     }
 }

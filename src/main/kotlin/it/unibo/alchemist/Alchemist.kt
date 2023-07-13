@@ -28,10 +28,10 @@ import kotlinx.cli.Subcommand
 import kotlinx.cli.default
 import kotlinx.cli.multiple
 import org.apache.commons.cli.CommandLine
+import org.kaikikm.threadresloader.ResourceLoader
 import org.slf4j.LoggerFactory
 import org.slf4j.helpers.NOPLoggerFactory
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.io.File
 
 private typealias ValidLauncher = Pair<Validation.OK, Launcher>
 
@@ -171,10 +171,10 @@ object Alchemist {
 
     private fun parseOptions(pathString: String?, overrides: List<String>): SimulationConfig {
         return if (pathString != null) {
-            val path = Paths.get(pathString)
-            val config = Files.newBufferedReader(path).use {
-                mapper.readValue(it, SimulationConfigWrapper::class.java).simulationConfiguration
-            }
+            val path = ResourceLoader.getResource(pathString)
+                ?: File(pathString).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
+                ?: error("No classpath resource or file $pathString was found")
+            val config = mapper.readValue(path, SimulationConfigWrapper::class.java).simulationConfiguration
             SimulationConfigOverrider.overrideOptionsFile(config, overrides)
         } else {
             SimulationConfig()

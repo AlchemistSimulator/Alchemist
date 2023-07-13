@@ -1,4 +1,4 @@
-_simulation-configuration:
+__simulation-configuration:
   launcher: HeadlessSimulationLauncher
   variables: [1, 2, a]
   parallelism: 1

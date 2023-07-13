@@ -40,6 +40,7 @@ object VariablesOverrider {
      *
      * The overrider supports common variable types (such as string, int, double...).
      * The overrider cannot create new variables.
+     * The overrider ignores configuration variables prefixed by __.
      */
     @JvmStatic
     fun applyOverrides(map: Map<String, *>, overrides: List<String>): Map<String, *> {
@@ -47,7 +48,7 @@ object VariablesOverrider {
             map
         } else {
             val newMap = LinkedHashMap(map)
-            overrides.forEach { applyOverride(it, newMap) }
+            overrides.filter { !it.startsWith("__") }.forEach { applyOverride(it, newMap) }
             newMap
         }
     }

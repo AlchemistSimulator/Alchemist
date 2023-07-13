@@ -16,25 +16,25 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
  * Holds alchemist launch options configuration values
  */
 data class SimulationConfig(
-    @JsonProperty("launcher")
-    val launcher: String = "HeadlessSimulationLauncher",
-    @JsonProperty("variables")
+    @JsonProperty(launcherKey)
+    val launcher: String = defaultLauncher,
+    @JsonProperty(variablesKey)
     val variables: List<String> = emptyList(),
-    @JsonProperty("engine-config")
+    @JsonProperty(engineConfigKey)
     val engineConfig: EngineConfig = EngineConfig(),
-    @JsonProperty("parallelism")
+    @JsonProperty(parallelismKey)
     val parallelism: Int = defaultParallelism,
-    @JsonProperty("end-time")
+    @JsonProperty(endTimeKey)
     val endTime: Double = defaultEndTime,
-    @JsonProperty("is-web")
+    @JsonProperty(isWebKey)
     val isWeb: Boolean = false,
-    @JsonProperty("is-batch")
+    @JsonProperty(isBatchKey)
     val isBatch: Boolean = false,
-    @JsonProperty("distributed-config-path")
+    @JsonProperty(distributedConfigPathKey)
     val distributedConfigPath: String? = null,
-    @JsonProperty("graphics-path")
+    @JsonProperty(graphicsPathKey)
     val graphicsPath: String? = null,
-    @JsonProperty("server-config-path")
+    @JsonProperty(serverConfigPathKey)
     val serverConfigPath: String? = null,
 ) {
 
@@ -42,19 +42,32 @@ data class SimulationConfig(
      * Engine configuration.
      */
     data class EngineConfig(
-        @JsonProperty("engine-mode")
+        @JsonProperty(engineModeKey)
         @JsonDeserialize(using = EngineModeDeserializer::class)
         val engineMode: EngineMode = defaultEngineMode,
-        @JsonProperty("output-replay-strategy")
+        @JsonProperty(outputReplayStrategyKey)
         @JsonDeserialize(using = OutputReplayStrategyDeserializer::class)
         val outputReplayStrategy: OutputReplayStrategy = defaultOutputReplayStrategy,
-        @JsonProperty("batch-size")
+        @JsonProperty(batchSizeKey)
         val batchSize: Int? = null,
-        @JsonProperty("epsilon")
+        @JsonProperty(epsilonKey)
         val epsilon: Double = defaultEpsilonSize,
-    )
+    ) {
+        companion object {
+            const val engineModeKey = "engine-mode"
+            const val outputReplayStrategyKey = "output-replay-strategy"
+            const val batchSizeKey = "batch-size"
+            const val epsilonKey = "epsilon"
+        }
+    }
 
     companion object {
+        /**
+         * If not specific launcher is specified, this value is used.
+         * Defaults to HeadlessSimulationLauncher
+         */
+        const val defaultLauncher = "HeadlessSimulationLauncher"
+
         /**
          * If no specific number of parallel threads to use is specified, this value is used.
          * Defaults to the number of logical cores detected by the JVM.
@@ -90,5 +103,16 @@ data class SimulationConfig(
          * Defaults to replay
          */
         val defaultOutputReplayStrategy = OutputReplayStrategy.REPLAY
+
+        const val launcherKey = "launcher"
+        const val variablesKey = "variables"
+        const val engineConfigKey = "engine-configuration"
+        const val parallelismKey = "parallelism"
+        const val endTimeKey = "end-time"
+        const val isWebKey = "is-web"
+        const val isBatchKey = "is-batch"
+        const val distributedConfigPathKey = "distributed-configuration-path"
+        const val graphicsPathKey = "graphics-path"
+        const val serverConfigPathKey = "server-configuration-path"
     }
 }

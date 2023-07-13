@@ -12,6 +12,10 @@ package it.unibo.alchemist
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class SimulationConfigWrapper(
-    @JsonProperty("_simulation-configuration")
+    @JsonProperty(wrapperKey)
     val simulationConfiguration: SimulationConfig,
-)
+) {
+    companion object {
+        const val wrapperKey = "_simulation-configuration"
+    }
+}

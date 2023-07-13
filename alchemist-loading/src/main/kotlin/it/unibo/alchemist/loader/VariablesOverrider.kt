@@ -91,8 +91,8 @@ object VariablesOverrider {
         if (pointer[arrayAccessor.key] == null) {
             throw IllegalArgumentException("key ${arrayAccessor.key} in $key does not exist in simulation variables")
         }
-        val x = pointer[arrayAccessor.key]
-        val list = x as List<MutableMap<*, *>>
+        val listPointer = pointer[arrayAccessor.key]
+        val list = listPointer as List<MutableMap<*, *>>
         return list[arrayAccessor.index]
     }
 

@@ -105,14 +105,6 @@ object Alchemist {
                 """.trimIndent(),
             )
 
-            val launcher by parser.option(
-                type = ArgType.String,
-                fullName = "launcher",
-                description = """
-                Simulation launcher class name. Defaults to HeadlessSimulationLauncher.
-                """.trimIndent(),
-            ).default("HeadlessSimulationLauncher")
-
             val verbosity by parser.option(
                 type = ArgType.Choice<Verbosity>(),
                 fullName = "verbosity",
@@ -164,7 +156,7 @@ object Alchemist {
         validateOutputModule()
         validateIncarnations()
         setVerbosity(verbosity)
-        val optionsConfig = parseOptions(simulationFile)
+        val optionsConfig = parseOptions(simulationFile, overrides)
         val legacyConfig = optionsConfig.toLegacy(simulationFile, overrides)
         val selectedLauncher = selectLauncher(legacyConfig, optionsConfig.launcher)
         selectedLauncher.launch(legacyConfig)
@@ -177,12 +169,13 @@ object Alchemist {
         }
     }
 
-    private fun parseOptions(pathString: String?): SimulationConfig {
+    private fun parseOptions(pathString: String?, overrides: List<String>): SimulationConfig {
         return if (pathString != null) {
             val path = Paths.get(pathString)
-            Files.newBufferedReader(path).use {
+            val config = Files.newBufferedReader(path).use {
                 mapper.readValue(it, SimulationConfigWrapper::class.java).simulationConfiguration
             }
+            SimulationConfigOverrider.overrideOptionsFile(config, overrides)
         } else {
             SimulationConfig()
         }

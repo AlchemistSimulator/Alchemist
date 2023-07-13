@@ -1,18 +1,5 @@
 incarnation: protelis
 
-_test:
-  str: replaceme
-  int: 1
-  dbl: 0.2
-  strL: [ a, b ]
-  intL: [ 1, 2 ]
-  dblL: [ 1.0, 2.0, 3.0 ]
-  arr:
-    - nst1-1: replaceme
-      nst1-2: replaceme
-    - nst2-1:
-        - nst2-1-1: replaceme
-
 _simulation-configuration:
   launcher: HeadlessSimulationLauncher
   graphics-path: alchemist-benchmark/effects/simulation.json
@@ -21,7 +8,6 @@ _simulation-configuration:
     engine-mode: batchEpsilon
     epsilon: 0.01
     output-replay-strategy: replay
-  verbosity: warn
 
 network-model:
   type: ConnectWithinDistance

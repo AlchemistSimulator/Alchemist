@@ -1,3 +1,57 @@
+## [26.0.8](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.7...26.0.8) (2023-07-14)
+
+
+### Bug Fixes
+
+* **alchemist-ui-tooling:** adjust GUI centering ([ff7400d](https://github.com/AlchemistSimulator/Alchemist/commit/ff7400db79171b6e853414df2dfe58f242ab1df8))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/setup-node action to v3.7.0 ([5ec9163](https://github.com/AlchemistSimulator/Alchemist/commit/5ec91635a0971cb0eaba591f0dc650bb0be275f1))
+
+
+### Dependency updates
+
+* **deps:** update dependency gradle to v8.2 ([b409583](https://github.com/AlchemistSimulator/Alchemist/commit/b4095838a3790010d23247b92952712b6aa97927))
+* **deps:** update dependency gradle to v8.2.1 ([f2115f1](https://github.com/AlchemistSimulator/Alchemist/commit/f2115f157535a253a22bf68f5c7698c72bc95a8a))
+* **deps:** update dependency io.arrow-kt:arrow-core to v1.2.0 ([4a83e56](https://github.com/AlchemistSimulator/Alchemist/commit/4a83e56fc59b5d777f29b2527ede257eb15e45ea))
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.161 ([3965c3a](https://github.com/AlchemistSimulator/Alchemist/commit/3965c3a82590b0d8dd7bbf72f855aaf704ebea7d))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v4.10.2 ([d032ea0](https://github.com/AlchemistSimulator/Alchemist/commit/d032ea0dfa16008412b9fea23d07a13dfe4f87ef))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.39 ([0636fe0](https://github.com/AlchemistSimulator/Alchemist/commit/0636fe0aad8c6b887117819bd33a155d65a37b35))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.40 ([b5a6fc3](https://github.com/AlchemistSimulator/Alchemist/commit/b5a6fc3b811472ed2fe9cae6cec15b79c365c12e))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.41 ([356d94b](https://github.com/AlchemistSimulator/Alchemist/commit/356d94b45bb1ec6ceb9f69752c5d11958e62c90a))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 4ec0a8c ([92d705d](https://github.com/AlchemistSimulator/Alchemist/commit/92d705df054244f6840b496abe14f93a866cc1b7))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 4edc3ff ([62bbf2c](https://github.com/AlchemistSimulator/Alchemist/commit/62bbf2c1eebf7786caed566300562a6af8ad2eef))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 6254868 ([2ad9078](https://github.com/AlchemistSimulator/Alchemist/commit/2ad9078bb1d3e11fe29a35b6915eb7019483f444))
+* **deps:** update external-resources/learning-scafi-alchemist digest to cfd9f84 ([15c40d3](https://github.com/AlchemistSimulator/Alchemist/commit/15c40d37c7c0a5c59cd0f4963d97823a7b95a6b0))
+* **deps:** update gohugoio/hugo action to v0.115.1 ([8540521](https://github.com/AlchemistSimulator/Alchemist/commit/8540521b14265c81f2c4844ff1792099aaa94716))
+* **deps:** update gohugoio/hugo action to v0.115.2 ([0d965dc](https://github.com/AlchemistSimulator/Alchemist/commit/0d965dc5f21dcf183672cac1b3e060e2429954ec))
+* **deps:** update gohugoio/hugo action to v0.115.3 ([61dc8c8](https://github.com/AlchemistSimulator/Alchemist/commit/61dc8c8ce807fd1011ad4dd51518d0dddfa6aa2a))
+* **deps:** update npm to v9.8.0 ([59bb942](https://github.com/AlchemistSimulator/Alchemist/commit/59bb942562bc496dd6e1f0e85168eec20d8dcaa2))
+* **deps:** update plugin multijvmtesting to v0.5.3 ([91b88a5](https://github.com/AlchemistSimulator/Alchemist/commit/91b88a52a14cdc7a061402301d54b3ee65ad206d))
+* **deps:** update plugin multijvmtesting to v0.5.4 ([f7a5331](https://github.com/AlchemistSimulator/Alchemist/commit/f7a533158f27acc126fbee6cf7eaeaf29e420ea3))
+* **deps:** update plugin org.gradle.toolchains.foojay-resolver-convention to v0.6.0 ([a964021](https://github.com/AlchemistSimulator/Alchemist/commit/a964021d97f2eaa134ce02d7682148f0dc3f521d))
+* **deps:** update plugin publishoncentral to v5.0.10 ([c94ae02](https://github.com/AlchemistSimulator/Alchemist/commit/c94ae02282d56f4f122350d32cdc42ddcfa0ad10))
+* **deps:** update plugin publishoncentral to v5.0.8 ([8d2fbe1](https://github.com/AlchemistSimulator/Alchemist/commit/8d2fbe1bf12576a1d7c032668ed2ead0794f58e6))
+* **deps:** update plugin publishoncentral to v5.0.9 ([bcad467](https://github.com/AlchemistSimulator/Alchemist/commit/bcad46739301d7a9f90d4338c8564bdf21afcf88))
+* **deps:** update react to v18.2.0-pre.584 ([e3de3fc](https://github.com/AlchemistSimulator/Alchemist/commit/e3de3fcdf7e14ea20747efcb8a8752187dfc30b4))
+* **deps:** update react to v18.2.0-pre.585 ([0cce2f3](https://github.com/AlchemistSimulator/Alchemist/commit/0cce2f306ce14d0b6047763313623d88f00cb6ab))
+* **deps:** update react to v18.2.0-pre.588 ([157d285](https://github.com/AlchemistSimulator/Alchemist/commit/157d285b7833e45915321fdb458287961148109b))
+* **deps:** update react to v18.2.0-pre.589 ([6004013](https://github.com/AlchemistSimulator/Alchemist/commit/6004013e73b5d1c468009960e6914cc6fb275bd9))
+* **deps:** update react to v18.2.0-pre.590 ([a739caa](https://github.com/AlchemistSimulator/Alchemist/commit/a739caac7e3bb50d0063c35357e1a05fa2960e25))
+* **deps:** update react to v18.2.0-pre.591 ([51190de](https://github.com/AlchemistSimulator/Alchemist/commit/51190dea10ff720bf91755cf25578d51cfc05974))
+* **deps:** update react to v18.2.0-pre.592 ([8cc5a92](https://github.com/AlchemistSimulator/Alchemist/commit/8cc5a92fcc83a623f6cd828ffc9ec169c38216d3))
+* **deps:** update react to v18.2.0-pre.593 ([700b2f7](https://github.com/AlchemistSimulator/Alchemist/commit/700b2f76591f0755c33a43b4f537b6d11f6ce062))
+* **deps:** update react to v18.2.0-pre.594 ([177e553](https://github.com/AlchemistSimulator/Alchemist/commit/177e55348c413935a4830269e9e44106f441a860))
+* **deps:** update react to v18.2.0-pre.595 ([4c8be6d](https://github.com/AlchemistSimulator/Alchemist/commit/4c8be6d3f7f1bb35f400a7c7b62395ec9a9efc95))
+* **deps:** update react to v18.2.0-pre.596 ([0137578](https://github.com/AlchemistSimulator/Alchemist/commit/0137578189c8493ea4608e903f14520f83d2ca95))
+
+
+### General maintenance
+
+* better centering the system correctly considering the offset ([8e9f8b0](https://github.com/AlchemistSimulator/Alchemist/commit/8e9f8b097cc23c796db9c89231e8eff730e7b931))
+
 ## [26.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.6...26.0.7) (2023-07-01)
 
 

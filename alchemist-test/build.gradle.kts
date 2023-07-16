@@ -22,8 +22,8 @@ dependencies {
     api(alchemist("api"))
     api(alchemist("engine"))
     api(alchemist("loading"))
-    implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))
+    implementation(alchemist("physics"))
     testImplementation(alchemist("test"))
 }
 

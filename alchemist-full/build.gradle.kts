@@ -23,7 +23,7 @@ dependencies {
         }
     }
     testImplementation(rootProject)
-    testImplementation(alchemist("euclidean-geometry"))
+    testImplementation(alchemist("physics"))
 }
 
 application {

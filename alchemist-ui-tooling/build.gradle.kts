@@ -10,9 +10,9 @@ import Libs.incarnation
  */
 
 dependencies {
+    api(alchemist("physics"))
     implementation(rootProject)
     implementation(alchemist("implementationbase"))
-    implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("maps"))
     testRuntimeOnly(incarnation("protelis"))
 }

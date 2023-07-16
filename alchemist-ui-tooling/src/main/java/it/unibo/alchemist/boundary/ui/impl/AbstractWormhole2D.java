@@ -12,8 +12,8 @@ package it.unibo.alchemist.boundary.ui.impl;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.ui.api.ViewPort;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position2D;
 
 import javax.annotation.Nonnull;
 import java.awt.Point;
@@ -249,7 +249,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         final double[] size = getEnvironment().getSize();
         final PointAdapter<P> center = Double.isNaN(off[0]) || Double.isNaN(off[1]) || size[0] <= 0 || size[1] <= 0
                 ? from(0, 0)
-                : from(off[0] + size[0] / 2, off[1] + size[1] / 2);
+                : from(-(off[0] + size[0] / 2), -(off[1] + size[1] / 2));
         setEnvPosition(center.toPosition(environment));
     }
 

@@ -19,7 +19,7 @@ These are then grown and crossings are found between them.
 ![navigation graph generation](/explanation/pathfinding/navigation-graph-generation.jpeg)
 
 Once you have your image ready for the generation of the navigation graph, you can exploit the
-{{% api package="model.implementations.environments" class="ImageEnvironmentWithGraph" %}} class to produce it for you.
+{{% api package="model.cognitive.environments" class="ImageEnvironmentWithGraph" %}} class to produce it for you.
 This will read your image, extract the positions you marked blue and pass them to the NaviGator algorithm.
 
 ### Examples

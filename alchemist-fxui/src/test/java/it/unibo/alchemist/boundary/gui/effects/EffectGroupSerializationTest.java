@@ -1,11 +1,12 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
-import it.unibo.alchemist.boundary.fxui.effects.impl.DrawColoredDot;
-import it.unibo.alchemist.boundary.fxui.effects.impl.DrawDot;
-import it.unibo.alchemist.boundary.fxui.effects.impl.EffectStack;
-import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.boundary.fxui.EffectFX;
+import it.unibo.alchemist.boundary.fxui.EffectGroup;
+import it.unibo.alchemist.boundary.fxui.effects.DrawColoredDot;
+import it.unibo.alchemist.boundary.fxui.effects.DrawDot;
+import it.unibo.alchemist.boundary.fxui.effects.EffectStack;
+import it.unibo.alchemist.boundary.fxui.effects.serialization.EffectSerializer;
+import it.unibo.alchemist.model.Position2D;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 
@@ -63,9 +64,9 @@ class EffectGroupSerializationTest {
      * messages.
      * 
      * @param origin
-     *            the original {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX effect}
+     *            the original {@link EffectFX effect}
      * @param deserialized
-     *            the deserialized {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX effect}
+     *            the deserialized {@link EffectFX effect}
      * @return the message of test fail
      */
     protected String getMessage(final EffectGroup<?> origin, final EffectGroup<?> deserialized) {

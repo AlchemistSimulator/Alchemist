@@ -9,8 +9,8 @@
 
 package another.location
 
-import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Incarnation
+import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 class MyTestEnv<T> (incarnation: Incarnation<T, Euclidean2DPosition>) : Continuous2DEnvironment<T>(incarnation)

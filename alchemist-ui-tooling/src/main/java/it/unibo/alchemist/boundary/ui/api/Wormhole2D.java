@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.boundary.ui.api;
 
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 
 import java.awt.Point;
 import java.awt.geom.Dimension2D;

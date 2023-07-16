@@ -76,9 +76,12 @@ kotlin {
     }
 
     targets.all {
-        compilations.all {
-            kotlinOptions {
-                allWarningsAsErrors = true
+        compilations.configureEach {
+            // Workaround for w: duplicate library name: org.jetbrains.kotlin:kotlinx-atomicfu-runtime
+            if (defaultSourceSet.name != "jsTest") {
+                kotlinOptions {
+                    allWarningsAsErrors = true
+                }
             }
         }
     }

@@ -11,11 +11,11 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.loader.GraphStreamSupport
-import it.unibo.alchemist.model.api.SupportedIncarnations
-import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.implementations.nodes.GenericNode
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.SupportedIncarnations
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.nodes.GenericNode
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.util.GraphStreamSupport
 import org.apache.commons.math3.random.MersenneTwister
 
 typealias EnvironmentDisplacement = List<Pair<List<Double>, List<Int>>>
@@ -40,7 +40,7 @@ class TestGraphStreamReproducibility : FreeSpec({
                         environment = environment,
                         nodeCount = 100,
                         generatorName = graphType,
-                        uniqueId = uniqueId.toLong(),
+                        uniqueId = uniqueId,
                         layoutQuality = 0.1,
                         parameters = parameters.toTypedArray(),
                     )

@@ -1,14 +1,17 @@
 incarnation: protelis
 
+_exit: &exit
+  exit
+
 environment:
-  type: Continuous2DEnvironment
+  type: ContinuousPhysics2DEnvironment
 
 seeds:
   scenario: 0
   simulation: 1
 
 _create_friends: &create_friends
-  "it.unibo.alchemist.model.implementations.groups.GroupFactory.friends()"
+  "it.unibo.alchemist.model.cognitive.groups.GroupFactory.friends()"
 variables:
   group1: &group1
     formula: *create_friends
@@ -22,8 +25,6 @@ variables:
   group4: &group4
     formula: *create_friends
     language: kotlin
-  exit: &exit
-    formula: "\"exit\""
 
 layers:
   - type: BidimensionalGaussianLayer

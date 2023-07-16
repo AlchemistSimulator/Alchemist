@@ -8,7 +8,8 @@
  */
 
 package it.unibo.alchemist.model.implementations.nodes
-import it.unibo.alchemist.model.interfaces.{Node, NodeProperty}
+
+import it.unibo.alchemist.model.{Node, NodeProperty}
 
 class ScafiDevice[E](node: Node[E]) extends NodeProperty[E] {
   override def getNode: Node[E] = node

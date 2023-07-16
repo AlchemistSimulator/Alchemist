@@ -16,12 +16,9 @@ import io.kotest.matchers.regex.shouldMatch
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotBeEmpty
-import it.unibo.alchemist.loader.InitializedEnvironment
-import it.unibo.alchemist.loader.export.exporters.CSVExporter
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.testsupport.createSimulation
-import it.unibo.alchemist.testsupport.loadAlchemist
-import it.unibo.alchemist.testsupport.runInCurrentThread
+import it.unibo.alchemist.boundary.InitializedEnvironment
+import it.unibo.alchemist.boundary.exporters.CSVExporter
+import it.unibo.alchemist.model.Position
 import java.io.File
 
 class TestCSVExporter<T, P : Position<P>> : FreeSpec({

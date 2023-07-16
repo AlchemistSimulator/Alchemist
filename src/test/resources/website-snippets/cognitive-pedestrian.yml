@@ -1,5 +1,8 @@
 incarnation: protelis
 
+environment:
+  type: ContinuousPhysics2DEnvironment
+
 _reactions: &behavior
   - time-distribution:
       type: DiracComb

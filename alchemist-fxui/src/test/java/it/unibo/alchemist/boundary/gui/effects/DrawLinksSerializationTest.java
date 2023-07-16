@@ -1,9 +1,9 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.fxui.effects.impl.DrawLinks;
+import it.unibo.alchemist.boundary.fxui.effects.DrawLinks;
 import it.unibo.alchemist.boundary.gui.effects.json.AbstractEffectSerializationTest;
-import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.boundary.fxui.effects.serialization.EffectSerializer;
+import it.unibo.alchemist.model.Position2D;
 import it.unibo.alchemist.test.TemporaryFile;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +26,7 @@ final class DrawLinksSerializationTest extends AbstractEffectSerializationTest<D
         testSerializationOf(effect);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void testGsonSerialization() throws IOException {
         final File file = TemporaryFile.create();

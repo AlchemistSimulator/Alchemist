@@ -8,9 +8,9 @@
  */
 package it.unibo.alchemist.boundary.swingui.api;
 
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Position;
 
 import java.util.List;
 

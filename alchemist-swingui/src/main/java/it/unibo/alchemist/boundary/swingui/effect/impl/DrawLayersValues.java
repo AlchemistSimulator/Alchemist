@@ -12,9 +12,10 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 import it.unibo.alchemist.boundary.swingui.effect.api.FunctionDrawer;
 import it.unibo.alchemist.boundary.swingui.effect.api.LayerToFunctionMapper;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Layer;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Layer;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Position2D;
 import org.danilopianini.view.ExportForGUI;
 
 import java.awt.Graphics2D;
@@ -22,14 +23,14 @@ import java.util.Collection;
 import java.util.function.Function;
 
 /**
- * This is a basic class for all the effects meant to draw {@link it.unibo.alchemist.model.interfaces.Layer}s
+ * This is a basic class for all the effects meant to draw {@link Layer}s
  * values in different points of the view. One effect could draw isolines,
  * whereas another could represent different values with a gradient.
  *
  * Normally, drawing a layer's values only makes sense for "numerical" layers
  * (i.e. layers for which the values are {@link Number}s). However, one could have
  * a "non-numerical" layer whose
- * {@link it.unibo.alchemist.model.interfaces.Layer#getValue(it.unibo.alchemist.model.interfaces.Position)}
+ * {@link Layer#getValue(Position)}
  * return type is an object from which a value can be extracted somehow. In the end,
  * drawing a layer's values makes sense as long as there is a way to map
  * those values to Numbers. More generally, a {@link LayerToFunctionMapper} is needed.

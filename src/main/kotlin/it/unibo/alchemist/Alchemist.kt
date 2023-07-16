@@ -17,9 +17,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import it.unibo.alchemist.launch.Launcher
-import it.unibo.alchemist.launch.Validation
-import it.unibo.alchemist.model.api.SupportedIncarnations
+import it.unibo.alchemist.boundary.launch.Launcher
+import it.unibo.alchemist.boundary.launch.Validation
+import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.util.ClassPathScanner
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType

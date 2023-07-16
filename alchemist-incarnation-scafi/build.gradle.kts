@@ -27,7 +27,7 @@ dependencies {
     api(libs.scafi.core)
 
     implementation(alchemist("implementationbase"))
-    implementation(alchemist("euclidean-geometry"))
+    implementation(alchemist("physics"))
     implementation(libs.bundles.scala)
     implementation(libs.bundles.scalacache)
 

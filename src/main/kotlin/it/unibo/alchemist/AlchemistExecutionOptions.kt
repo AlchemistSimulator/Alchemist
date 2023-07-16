@@ -58,7 +58,7 @@ data class AlchemistExecutionOptions(
          * Default final time to be used if no final time is specified.
          * Defaults to [Double.POSITIVE_INFINITY].
          */
-        val defaultEndTime = Double.POSITIVE_INFINITY
+        const val defaultEndTime = Double.POSITIVE_INFINITY
 
         /**
          * Default engine mode to be used if not engine mode is specified.

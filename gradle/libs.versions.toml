@@ -1,48 +1,48 @@
 [versions]
 antlr4 = "4.11.1"
-arrow = "1.1.5"
+arrow = "1.2.0"
 graphhopper = "7.0"
 graphstream = "2.0"
 ignite = "2.15.0"
 junit = "5.9.3"
 konf = "1.1.2"
-kotest = "5.6.1"
-ktor = "2.3.0"
+kotest = "5.6.2"
+ktor = "2.3.2"
 dokka = "1.8.10"
-kotlin = "1.8.21"
-mockito = "5.3.1"
-protelis = "17.0.0"
-react = "18.2.0-pre.548"
+kotlin = "1.8.22"
+mockito = "5.4.0"
+protelis = "17.0.4"
+react = "18.2.0-pre.597"
 scafi = "1.1.7"
-scala = "2.13.10"
+scala = "2.13.11"
 scalacache = "0.28.0"
 
 [libraries]
 antlr4 = { module = "org.antlr:antlr4", version.ref = "antlr4" }
 antlr4-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr4" }
 apache-commons-cli = "commons-cli:commons-cli:1.5.0"
-apache-commons-codec = "commons-codec:commons-codec:1.15"
+apache-commons-codec = "commons-codec:commons-codec:1.16.0"
 apache-commons-collections4 = "org.apache.commons:commons-collections4:4.4"
-apache-commons-io = "commons-io:commons-io:2.11.0"
+apache-commons-io = "commons-io:commons-io:2.13.0"
 apache-commons-lang3 = "org.apache.commons:commons-lang3:3.12.0"
 apache-commons-math3 = "org.apache.commons:commons-math3:3.6.1"
 appdirs = "net.harawata:appdirs:1.2.1"
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
 caffeine = "com.github.ben-manes.caffeine:caffeine:3.1.6"
-classgraph = "io.github.classgraph:classgraph:4.8.158"
+classgraph = "io.github.classgraph:classgraph:4.8.161"
 conrec = "org.danilopianini:conrec:0.1.0"
 controlsfx = "org.controlsfx:controlsfx:11.1.2"
 dyn4j = "org.dyn4j:dyn4j:5.0.1"
 dsiutils = "it.unimi.dsi:dsiutils:2.7.3"
-embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.6.3"
+embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.7.0"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
-groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.17"
+groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.18"
 gson = "com.google.code.gson:gson:2.10.1"
 gson-extras = "org.danilopianini:gson-extras:1.2.0"
-guava = "com.google.guava:guava:31.1-jre"
+guava = "com.google.guava:guava:32.1.1-jre"
 ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "ignite" }
 ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "ignite" }
 ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "ignite" }
@@ -51,11 +51,11 @@ jackson-yaml = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.1"
 javafxSvg = "de.codecentric.centerdevice:javafxsvg:1.3.0"
 javalib-java7 = "org.danilopianini:javalib-java7:0.6.1"
 jfoenix = "com.jfoenix:jfoenix:9.0.10"
-jgit = "org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r"
+jgit = "org.eclipse.jgit:org.eclipse.jgit:6.6.0.202305301015-r"
 jgrapht-core = "org.jgrapht:jgrapht-core:1.5.2"
 jiconfont-javafx = "com.github.jiconfont:jiconfont-javafx:1.0.0"
 jiconfont-materialDesignIcons = "com.github.jiconfont:jiconfont-google_material_design_icons:2.2.0.2"
-jirf = "org.danilopianini:jirf:0.4.8"
+jirf = "org.danilopianini:jirf:0.4.12"
 jool = "org.jooq:jool:0.9.15"
 jpx = "io.jenetics:jpx:2.3.0"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
@@ -68,12 +68,12 @@ kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", versio
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
 kotlin-cli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.5"
-kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0"
+kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2"
 kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
 kotlin-react = { module = "org.jetbrains.kotlin-wrappers:kotlin-react", version.ref = "react" }
 kotlin-react-dom = { module = "org.jetbrains.kotlin-wrappers:kotlin-react-dom", version.ref = "react" }
-kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
+kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
@@ -88,17 +88,17 @@ ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor"
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 leafletmap = "org.danilopianini:de.saring.leafletmap:1.0.5"
 listset = "org.danilopianini:listset:0.3.9"
-logback = "ch.qos.logback:logback-classic:1.4.7"
+logback = "ch.qos.logback:logback-classic:1.4.8"
 mapsforge = "org.mapsforge:mapsforge-map-awt:0.19.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.1"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-mongodb = "org.mongodb:mongodb-driver-sync:4.9.1"
+mongodb = "org.mongodb:mongodb-driver-sync:4.10.2"
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.2.50"
 protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }
 protelis-lang = { module = "org.protelis:protelis-lang", version.ref = "protelis" }
 quadtree = "org.danilopianini:java-quadtree:0.2.0"
 resourceloader = "org.danilopianini:thread-inheritable-resource-loader:0.3.6"
-rtree = "com.github.davidmoten:rtree:0.10"
+rtree = "com.github.davidmoten:rtree:0.11"
 scafi-core = { module = "it.unibo.scafi:scafi-core_2.13", version.ref = "scafi" }
 scala-compiler = { module = "org.scala-lang:scala-compiler", version.ref = "scala" }
 scala-library = { module = "org.scala-lang:scala-library", version.ref = "scala" }
@@ -143,16 +143,16 @@ testing-runtimeOnly = [ "junit-engine" ]
 
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:1.1.9"
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:1.1.10"
 hugo = "io.github.fstaudt.hugo:0.6.0"
-java-qa = "org.danilopianini.gradle-java-qa:1.8.0"
+java-qa = "org.danilopianini.gradle-java-qa:1.11.0"
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.41.0"
-multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.5.0"
-publishOnCentral = "org.danilopianini.publish-on-central:5.0.5"
+kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.42.1"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.5.4"
+publishOnCentral = "org.danilopianini.publish-on-central:5.0.10"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"
 scalatest = "com.github.maiflai.scalatest:0.32"
 shadowJar = "com.github.johnrengelman.shadow:8.1.1"

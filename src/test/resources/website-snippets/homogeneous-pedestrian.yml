@@ -1,5 +1,8 @@
 incarnation: protelis
 
+environment:
+  type: ContinuousPhysics2DEnvironment
+
 deployments:
   - type: Circle
     parameters: [100, 0, 0, 20]

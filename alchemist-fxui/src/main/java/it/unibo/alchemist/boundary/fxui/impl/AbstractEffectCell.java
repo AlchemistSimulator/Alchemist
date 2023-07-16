@@ -11,9 +11,11 @@ package it.unibo.alchemist.boundary.fxui.impl;
 
 import com.jfoenix.controls.JFXToggleButton;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.boundary.fxui.EffectFX;
+import it.unibo.alchemist.boundary.fxui.EffectGroup;
 import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
 import it.unibo.alchemist.boundary.fxui.util.SVGImages;
-import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor;
+import it.unibo.alchemist.boundary.fxui.FXOutputMonitor;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -46,12 +48,12 @@ import java.util.Optional;
 
 /**
  * Abstract class that models a ListView Cell to represent
- * {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX}s or
- * {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup}s.
+ * {@link EffectFX}s or
+ * {@link EffectGroup}s.
  *
  * @param <T> the generic class that will be inside the cell; it should be
- *            {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX} or
- *            {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup}
+ *            {@link EffectFX} or
+ *            {@link EffectGroup}
  */
 @SuppressFBWarnings(
         value = { "BC_UNCONFIRMED_CAST_OF_RETURN_VALUE" },
@@ -181,18 +183,18 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     }
 
     /**
-     * Getter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
+     * Getter method for the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}.
      *
-     * @return the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}, if any
+     * @return the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}, if any
      */
     protected final Optional<FXOutputMonitor<?, ?>> getDisplayMonitor() {
         return displayMonitor;
     }
 
     /**
-     * Setter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
+     * Setter method for the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}.
      *
-     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to set;
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.OutputMonitor} to set;
      *                       if null, it will be {@link Optional#empty() unset}
      */
     protected final void setDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> displayMonitor) {

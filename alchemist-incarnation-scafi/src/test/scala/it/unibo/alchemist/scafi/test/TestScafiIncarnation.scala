@@ -9,9 +9,9 @@
 package it.unibo.alchemist.scafi.test
 
 import it.unibo.alchemist.model.ScafiIncarnation
-import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.reactions.Event
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.reactions.Event
 import org.apache.commons.math3.random.MersenneTwister
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
@@ -21,7 +21,7 @@ import org.scalatest.matchers.should.Matchers
 class TestScafiIncarnation extends AnyFunSuite with Matchers {
   private val INC = new ScafiIncarnation[Any, Euclidean2DPosition]
 
-  /** Tests the ability of {@link ScafiIncarnation} of properly building Alchemist entities for running Scafi. */
+  /** Tests the ability of [[ScafiIncarnation]] of properly building Alchemist entities for running Scafi. */
   test("build") {
     val rng = new MersenneTwister(0)
     val env = new Continuous2DEnvironment[Any](INC)

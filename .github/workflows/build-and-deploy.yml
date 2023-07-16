@@ -7,17 +7,18 @@ jobs:
   # Runs all tests
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [ windows-2022, macos-12, ubuntu-22.04 ]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 120
+    timeout-minutes: 180
     concurrency:
       group: ${{ github.workflow }}-build-${{ matrix.os }}-${{ github.event.number || github.ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.9
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.4
+        uses: danysk/action-checkout@0.2.10
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.6
         with:
           pre-build-command: ./gradlew kotlinUpgradeYarnLock --parallel
           # check that all tasks used in subsequent phases are there
@@ -34,7 +35,7 @@ jobs:
             "
             eval $COMMAND || eval $COMMAND
           check-command: |
-            ./gradlew build --parallel || ./gradlew build --parallel
+            ./gradlew check --parallel || ./gradlew check --parallel
           clean-command: |
             ./gradlew clean --parallel || ./gradlew clean --parallel || true
           should-run-codecov: ${{ contains('Linux', runner.os) }}
@@ -55,8 +56,8 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.9
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.4
+        uses: danysk/action-checkout@0.2.10
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.6
         with:
           build-command: ./gradlew kotlinUpgradeYarnLock --parallel
           check-command: true
@@ -79,8 +80,8 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.9
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.4
+        uses: danysk/action-checkout@0.2.10
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.6
         with:
           build-command: |
             for i in 1 2 3 4 5; do
@@ -134,13 +135,13 @@ jobs:
       )
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v3.5.3
         with:
           submodules: recursive
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout the docs
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v3.5.3
         with:
           path: website
           fetch-depth: 0
@@ -155,10 +156,10 @@ jobs:
         id: node-version
         run: echo "version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
       - name: Install Node
-        uses: actions/setup-node@v3.6.0
+        uses: actions/setup-node@v3.7.0
         with:
           node-version: ${{ steps.node-version.outputs.version }}
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.4
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.6
         with:
           java-version: 11
           build-command: |

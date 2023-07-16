@@ -32,6 +32,7 @@ dependencies {
     antlr(libs.antlr4)
     api(alchemist("implementationbase"))
     api(alchemist("euclidean-geometry"))
+    api(alchemist("physics"))
     implementation(libs.apache.commons.lang3)
     implementation(libs.boilerplate)
     implementation(libs.jirf)
@@ -59,7 +60,7 @@ tasks.withType<Test> {
 }
 
 tasks.generateGrammarSource.configure {
-    val destination = "it.unibo.alchemist.model.internal.biochemistry.dsl"
+    val destination = "it.unibo.alchemist.model.biochemistry.dsl"
     arguments = arguments + listOf("-visitor", "-package", destination, "-long-messages")
 }
 

@@ -9,6 +9,9 @@
 
 package it.unibo.alchemist
 
+import it.unibo.alchemist.AlchemistExecutionOptions.Companion.defaultEndTime
+import it.unibo.alchemist.AlchemistExecutionOptions.Companion.defaultParallelism
+
 /**
  * Alchemist options provided by the command line.
  *
@@ -40,7 +43,7 @@ data class AlchemistExecutionOptions(
     val server: String? = null,
     val parallelism: Int = defaultParallelism,
     val endTime: Double = defaultEndTime,
-    val engineConfig: SimulationConfig.EngineConfig = SimulationConfig.EngineConfig(),
+    val engineConfig: EngineConfig = EngineConfig(),
 ) {
     /**
      * returns true if all options are set to their default value.
@@ -67,5 +70,27 @@ data class AlchemistExecutionOptions(
         val defaultEngineMode = EngineMode.DETERMINISTIC
 
         private val NO_OPTION = AlchemistExecutionOptions()
+
+        data class EngineConfig(
+            val engineMode: EngineMode = defaultEngineMode,
+            val outputReplayStrategy: OutputReplayStrategy = defaultOutputReplayStrategy,
+            val batchSize: Int? = null,
+            val epsilon: Double = defaultEpsilonSize,
+        ) {
+
+            companion object {
+                /**
+                 * Default epsilon value used only in epsilon engine mode.
+                 * Defaults to 0.01
+                 */
+                const val defaultEpsilonSize = 0.01
+
+                /**
+                 * Default output replay strategy.
+                 * Defaults to replay
+                 */
+                val defaultOutputReplayStrategy = OutputReplayStrategy.REPLAY
+            }
+        }
     }
 }

@@ -35,7 +35,7 @@ open class Benchmarks {
                 "run",
                 "simulation.yml",
                 "--override",
-                "simulation-configuration.parallelism=1",
+                "launcher.parameters.parallelism=1",
             ),
         )
     }
@@ -56,11 +56,11 @@ open class Benchmarks {
                 "run",
                 "simulation.yml",
                 "--override",
-                "simulation-configuration.parallelism=4",
+                "launcher.parameters.parallelism=4",
                 "--override",
-                "simulation-configuration.engine-configuration.engine-mode=batchFixed",
+                "launcher.parameters.engine-mode=batchFixed",
                 "--override",
-                "simulation-configuration.engine-configuration.batch-size=4",
+                "launcher.parameters.batch-size=4",
             ),
         )
     }
@@ -81,11 +81,11 @@ open class Benchmarks {
                 "run",
                 "simulation.yml",
                 "--override",
-                "simulation-configuration.parallelism=8",
+                "launcher.parameters.parallelism=8",
                 "--override",
-                "simulation-configuration.engine-configuration.engine-mode=batchFixed",
+                "launcher.parameters.engine-mode=batchFixed",
                 "--override",
-                "simulation-configuration.engine-configuration.batch-size=8",
+                "launcher.parameters.batch-size=8",
             ),
         )
     }
@@ -106,11 +106,11 @@ open class Benchmarks {
                 "run",
                 "simulation.yml",
                 "--override",
-                "simulation-configuration.parallelism=4",
+                "launcher.parameters.parallelism=4",
                 "--override",
-                "simulation-configuration.engine-configuration.engine-mode=batchEpsilon",
+                "launcher.parameters.engine-mode=batchEpsilon",
                 "--override",
-                "simulation-configuration.engine-configuration.epsilon=0.01",
+                "launcher.parameters.epsilon=0.01",
             ),
         )
     }
@@ -131,11 +131,11 @@ open class Benchmarks {
                 "run",
                 "simulation.yml",
                 "--override",
-                "simulation-configuration.parallelism=8",
+                "launcher.parameters.parallelism=8",
                 "--override",
-                "simulation-configuration.engine-configuration.engine-mode=batchEpsilon",
+                "launcher.parameters.engine-mode=batchEpsilon",
                 "--override",
-                "simulation-configuration.engine-configuration.epsilon=0.01",
+                "launcher.parameters.epsilon=0.01",
             ),
         )
     }

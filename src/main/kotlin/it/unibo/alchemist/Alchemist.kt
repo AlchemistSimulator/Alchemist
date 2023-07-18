@@ -102,24 +102,6 @@ object Alchemist {
                 fullName = "simulation configuration file",
                 description = """
                 File containing simulation configuration to be executed.
-                The execution configuration is done inside this file in a special property simulation-configuration.
-                Please refer to the following example for a complete description of properties:
-                
-                simulation-configuration:
-                  launcher: HeadlessSimulationLauncher -> select the desired simulation launcher class to be used. Defaults to HeadlessSimulationLauncher.
-                  variables: [1, 2, a] -> Used when is-batch is set to true. If the specified variable exists in the Alchemist YAML file, it is added to the pool of variables. Be wary: complexity quickly grows with the number of variables.
-                  parallelism: 1 -> Used when is-batch is set to true. Sets how many threads will be used in batch mode (default to the number of cores of your CPU).
-                  end-time: 50 -> The simulation will be concluded at the specified time. Defaults to infinity.
-                  is-web: true -> When true, runs the simulation using the Web Renderer.
-                  is-batch: true -> When true, runs in batch mode. If one or more -var parameters are specified, multiple simulation runs will be executed in parallel with all the combinations of values.
-                  distributed-configuration-path: foo-bar -> Path to configuration for distributed simulations in computer grid
-                  graphics-path: foo-bar -> Path to graphics effects configuration file for GUI runs.
-                  server-configuration-path: foo-bar -> Path to confuguration to start an Alchemist cluster node on local machine (alchemist-grid must be included in the classpath for this option to work).
-                  engine-configuration:
-                    engine-mode: batchEpsilon -> Specify engine used for events processing. Defaults to deterministic (classic Alchemist). 
-                    epsilon: 0.01 -> Used with batchEpsilon engine mode. Specify epsilon-sensitivity, events will be processed in the same batch as long as the putative time difference is < than epsilon. Defaults to 0.01.
-                    batch-size: 4 -> Used with batchFixed engine mode. Specify size of an events batch to be processed in parallel. Defaults to default to the number of cores of your CPU.
-                    output-replay-strategy: replay -> Specify output replay strategy. "replay" signals all the ordered events to the output monitors afer a batch execution, "aggregate" only signals the last event.
                 """.trimIndent(),
             )
 
@@ -176,7 +158,7 @@ object Alchemist {
         setVerbosity(verbosity)
         val optionsConfig = parseOptions(simulationFile, overrides)
         val legacyConfig = optionsConfig.toLegacy(simulationFile, overrides)
-        val selectedLauncher = selectLauncher(legacyConfig, optionsConfig.launcher)
+        val selectedLauncher = selectLauncher(legacyConfig, optionsConfig.type)
         selectedLauncher.launch(legacyConfig)
     }
 
@@ -202,18 +184,18 @@ object Alchemist {
     private fun SimulationConfig.toLegacy(simulationFile: String, overrides: List<String>): AlchemistExecutionOptions {
         return AlchemistExecutionOptions(
             configuration = simulationFile,
-            headless = this.launcher == defaultLauncherName,
-            variables = this.variables,
+            headless = this.type == defaultLauncherName,
+            variables = this.parameters.variables,
             overrides = overrides,
-            batch = this.isBatch,
-            distributed = this.distributedConfigPath,
-            graphics = this.graphicsPath,
-            fxui = this.launcher == javaFxLauncherName,
-            web = this.isWeb,
+            batch = this.parameters.isBatch,
+            distributed = this.parameters.distributedConfigPath,
+            graphics = this.parameters.graphicsPath,
+            fxui = this.type == javaFxLauncherName,
+            web = this.parameters.isWeb,
             help = false,
-            server = this.serverConfigPath,
-            parallelism = this.parallelism,
-            endTime = this.endTime,
+            server = this.parameters.serverConfigPath,
+            parallelism = this.parameters.parallelism,
+            endTime = this.parameters.endTime,
         )
     }
 

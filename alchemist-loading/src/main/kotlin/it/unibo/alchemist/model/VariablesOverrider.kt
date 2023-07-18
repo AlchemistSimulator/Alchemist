@@ -40,7 +40,6 @@ object VariablesOverrider {
      *
      * The overrider supports common variable types (such as string, int, double...).
      * The overrider cannot create new variables.
-     * The overrider ignores configuration variables prefixed by __.
      */
     @JvmStatic
     fun applyOverrides(map: Map<String, *>, overrides: List<String>): Map<String, *> {
@@ -61,7 +60,7 @@ object VariablesOverrider {
         val accessors = keyChain.subList(0, keyChain.size - 1)
         val target = keyChain[keyChain.size - 1]
         val pointer = navigateAccessors(newMap, accessors, key)
-        overrideValue(pointer, target, value, key)
+        overrideValue(pointer, target, value)
     }
 
     @JvmStatic
@@ -107,7 +106,7 @@ object VariablesOverrider {
 
     @JvmStatic
     @Suppress("UNCHECKED_CAST")
-    private fun overrideValue(pointer: MutableMap<*, *>, target: String, value: String, key: String) {
+    private fun overrideValue(pointer: MutableMap<*, *>, target: String, value: String) {
         when (pointer[target]) {
             is Int -> {
                 val castPointer = pointer as MutableMap<String, Int>
@@ -128,11 +127,9 @@ object VariablesOverrider {
                 castListPointer(pointer, target, value)
             }
 
-            null -> {
-                throw UnsupportedOperationException("Cannot ovveride null value $key")
+            else -> {
+                // TODO Do nothing, implement override
             }
-
-            else -> throw UnsupportedOperationException("Cannot ovveride type ${pointer[target]?.javaClass?.name}")
         }
     }
 

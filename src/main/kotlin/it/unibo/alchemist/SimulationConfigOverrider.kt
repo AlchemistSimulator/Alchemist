@@ -19,7 +19,7 @@ object SimulationConfigOverrider {
      *
      * For example, given the following yml file parsed to a map of maps (and lists):
      *
-     * _simulation-configuration:
+     * simulation-configuration:
      *   end-time: 50
      *   engine-configuration:
      *     engine-mode: batchEpsilon
@@ -27,8 +27,8 @@ object SimulationConfigOverrider {
      * In order to override each variable we should provide:
      *
      * [
-     *   _simulation-configuration.end-time=100
-     *   _simulation-configuration.engine-configuration.engine-mode=batchEpsilon
+     *   launcher.end-time=100
+     *   simulation-configuration.engine-configuration.engine-mode=batchEpsilon
      * ]
      */
     @JvmStatic
@@ -49,40 +49,40 @@ object SimulationConfigOverrider {
             }
 
             SimulationConfig(
-                launcher = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.launcherKey}" }?.value
-                    ?: config.launcher,
-                variables = parseVariables(overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.variablesKey}" }?.value)
-                    ?: config.variables,
-                engineConfig = SimulationConfig.EngineConfig(
-                    engineMode = parseEngineMode(overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.engineConfigKey}.${SimulationConfig.EngineConfig.engineModeKey}" }?.value)
-                        ?: config.engineConfig.engineMode,
-                    outputReplayStrategy = parseOutputReplayStrategy(overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.engineConfigKey}.${SimulationConfig.EngineConfig.outputReplayStrategyKey}" }?.value)
-                        ?: config.engineConfig.outputReplayStrategy,
-                    batchSize = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.engineConfigKey}.${SimulationConfig.EngineConfig.batchSizeKey}" }?.value
+                type = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.typeKey}" }?.value
+                    ?: config.type,
+                parameters = SimulationConfig.SimulationConfigParameters(
+                    variables = parseVariables(overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.SimulationConfigParameters.variablesKey}" }?.value)
+                        ?: config.parameters.variables,
+                    parallelism = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.SimulationConfigParameters.parallelismKey}" }?.value
                         ?.toInt()
-                        ?: config.engineConfig.batchSize,
-                    epsilon = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.engineConfigKey}.${SimulationConfig.EngineConfig.epsilonKey}" }?.value
+                        ?: config.parameters.parallelism,
+                    endTime = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.SimulationConfigParameters.endTimeKey}" }?.value
                         ?.toDouble()
-                        ?: config.engineConfig.epsilon,
+                        ?: config.parameters.endTime,
+                    isWeb = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.SimulationConfigParameters.isWebKey}" }?.value
+                        ?.toBoolean()
+                        ?: config.parameters.isWeb,
+                    isBatch = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.SimulationConfigParameters.isBatchKey}" }?.value
+                        ?.toBoolean()
+                        ?: config.parameters.isBatch,
+                    distributedConfigPath = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.SimulationConfigParameters.distributedConfigPathKey}" }?.value
+                        ?: config.parameters.distributedConfigPath,
+                    graphicsPath = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.SimulationConfigParameters.graphicsPathKey}" }?.value
+                        ?: config.parameters.graphicsPath,
+                    serverConfigPath = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.SimulationConfigParameters.serverConfigPathKey}" }?.value
+                        ?: config.parameters.serverConfigPath,
+                    engineMode = parseEngineMode(overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.SimulationConfigParameters.engineModeKey}" }?.value)
+                        ?: config.parameters.engineMode,
+                    outputReplayStrategy = parseOutputReplayStrategy(overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.SimulationConfigParameters.outputReplayStrategyKey}" }?.value)
+                        ?: config.parameters.outputReplayStrategy,
+                    batchSize = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.SimulationConfigParameters.batchSizeKey}" }?.value
+                        ?.toInt()
+                        ?: config.parameters.batchSize,
+                    epsilon = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.SimulationConfigParameters.epsilonKey}" }?.value
+                        ?.toDouble()
+                        ?: config.parameters.epsilon,
                 ),
-                parallelism = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.parallelismKey}" }?.value
-                    ?.toInt()
-                    ?: config.parallelism,
-                endTime = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.endTimeKey}" }?.value
-                    ?.toDouble()
-                    ?: config.endTime,
-                isWeb = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.isWebKey}" }?.value
-                    ?.toBoolean()
-                    ?: config.isWeb,
-                isBatch = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.isBatchKey}" }?.value
-                    ?.toBoolean()
-                    ?: config.isBatch,
-                distributedConfigPath = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.distributedConfigPathKey}" }?.value
-                    ?: config.distributedConfigPath,
-                graphicsPath = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.graphicsPathKey}" }?.value
-                    ?: config.graphicsPath,
-                serverConfigPath = overrides.find { it.key == "${SimulationConfigWrapper.wrapperKey}.${SimulationConfig.serverConfigPathKey}" }?.value
-                    ?: config.serverConfigPath,
             )
         }
     }

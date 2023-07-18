@@ -1,8 +1,9 @@
 incarnation: protelis
 
-simulation-configuration:
-  end-time: 50
-  engine-configuration:
+launcher:
+  type: HeadlessSimulationLauncher
+  parameters:
+    end-time: 50
     output-replay-strategy: aggregate
 
 network-model:

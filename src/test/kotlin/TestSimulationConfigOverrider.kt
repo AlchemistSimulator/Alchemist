@@ -31,18 +31,18 @@ class TestSimulationConfigOverrider : StringSpec({
         val config = mapper.readValue(resource, SimulationConfigWrapper::class.java).simulationConfiguration
 
         val overrides = listOf(
-            "__simulation-configuration.launcher=TestLauncher",
-            "__simulation-configuration.variables=[10, 12, 13]",
-            "__simulation-configuration.parallelism=10",
-            "__simulation-configuration.end-time=100.5",
-            "__simulation-configuration.is-web=false",
-            "__simulation-configuration.is-batch=false",
-            "__simulation-configuration.distributed-configuration-path=test",
-            "__simulation-configuration.graphics-path=test",
-            "__simulation-configuration.server-configuration-path=test",
-            "__simulation-configuration.engine-configuration.engine-mode=batchFixed",
-            "__simulation-configuration.engine-configuration.epsilon=0.0001",
-            "__simulation-configuration.engine-configuration.output-replay-strategy=aggregate",
+            "simulation-configuration.launcher=TestLauncher",
+            "simulation-configuration.variables=[10, 12, 13]",
+            "simulation-configuration.parallelism=10",
+            "simulation-configuration.end-time=100.5",
+            "simulation-configuration.is-web=false",
+            "simulation-configuration.is-batch=false",
+            "simulation-configuration.distributed-configuration-path=test",
+            "simulation-configuration.graphics-path=test",
+            "simulation-configuration.server-configuration-path=test",
+            "simulation-configuration.engine-configuration.engine-mode=batchFixed",
+            "simulation-configuration.engine-configuration.epsilon=0.0001",
+            "simulation-configuration.engine-configuration.output-replay-strategy=aggregate",
         )
         val expected = SimulationConfig(
             launcher = "TestLauncher",

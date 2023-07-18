@@ -1,6 +1,6 @@
 incarnation: protelis
 
-__simulation-configuration:
+simulation-configuration:
   end-time: 50
   engine-configuration:
     output-replay-strategy: aggregate

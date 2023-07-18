@@ -102,10 +102,10 @@ object Alchemist {
                 fullName = "simulation configuration file",
                 description = """
                 File containing simulation configuration to be executed.
-                The execution configuration is done inside this file in a special property __simulation-configuration.
+                The execution configuration is done inside this file in a special property simulation-configuration.
                 Please refer to the following example for a complete description of properties:
                 
-                __simulation-configuration:
+                simulation-configuration:
                   launcher: HeadlessSimulationLauncher -> select the desired simulation launcher class to be used. Defaults to HeadlessSimulationLauncher.
                   variables: [1, 2, a] -> Used when is-batch is set to true. If the specified variable exists in the Alchemist YAML file, it is added to the pool of variables. Be wary: complexity quickly grows with the number of variables.
                   parallelism: 1 -> Used when is-batch is set to true. Sets how many threads will be used in batch mode (default to the number of cores of your CPU).

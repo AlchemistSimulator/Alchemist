@@ -126,17 +126,8 @@ object Alchemist {
                 type = ArgType.String,
                 fullName = "override",
                 description = """
-                Multi-option used to override simulation configuration values. Example:
-                
-                yaml file:
-                
-                foo:
-                 bar:
-                  fizz: 2
-                  
-                is overriden with 
-                
-                --override foo.bar.fizz='10'
+                Valid yaml files used to override simulation config,
+                files are applied sequentially.
                 """.trimIndent(),
             ).multiple()
 

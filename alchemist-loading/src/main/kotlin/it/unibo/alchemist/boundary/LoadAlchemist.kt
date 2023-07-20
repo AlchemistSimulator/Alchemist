@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary
 
 import it.unibo.alchemist.boundary.loader.SimulationModel
-import it.unibo.alchemist.loader.VariablesOverrider
+import it.unibo.alchemist.model.VariablesOverrider
 import it.unibo.alchemist.util.ClassPathScanner
 import java.io.File
 import java.io.InputStream

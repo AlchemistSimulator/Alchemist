@@ -29,6 +29,7 @@ class TestVariablesOverrider : StringSpec({
         val overrides = listOf(override1, override2)
         val expected = mapOf(
             "foo" to "bar",
+            "fizz" to "buzz",
             "_test" to mapOf(
                 "str" to "test",
                 "int" to 10,

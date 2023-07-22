@@ -11,6 +11,8 @@ package it.unibo.alchemist
 
 import it.unibo.alchemist.AlchemistExecutionOptions.Companion.defaultEndTime
 import it.unibo.alchemist.AlchemistExecutionOptions.Companion.defaultParallelism
+import it.unibo.alchemist.config.EngineMode
+import it.unibo.alchemist.config.OutputReplayStrategy
 
 /**
  * Alchemist options provided by the command line.

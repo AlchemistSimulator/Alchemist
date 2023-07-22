@@ -34,8 +34,14 @@ open class Benchmarks {
             arrayOf(
                 "run",
                 "simulation.yml",
+                "--verbosity",
+                "off",
                 "--override",
-                "launcher.parameters.parallelism=1",
+                """
+                launcher:
+                    parameters:
+                        parallelism: 1
+                """.trimIndent(),
             ),
         )
     }
@@ -55,12 +61,16 @@ open class Benchmarks {
             arrayOf(
                 "run",
                 "simulation.yml",
+                "--verbosity",
+                "off",
                 "--override",
-                "launcher.parameters.parallelism=4",
-                "--override",
-                "launcher.parameters.engine-mode=batchFixed",
-                "--override",
-                "launcher.parameters.batch-size=4",
+                """
+                launcher:
+                    parameters:
+                        parallelism: 4
+                        engine-mode: batchFixed
+                        batch-size: 4
+                """.trimIndent(),
             ),
         )
     }
@@ -80,12 +90,16 @@ open class Benchmarks {
             arrayOf(
                 "run",
                 "simulation.yml",
+                "--verbosity",
+                "off",
                 "--override",
-                "launcher.parameters.parallelism=8",
-                "--override",
-                "launcher.parameters.engine-mode=batchFixed",
-                "--override",
-                "launcher.parameters.batch-size=8",
+                """
+                launcher:
+                    parameters:
+                        parallelism: 8
+                        engine-mode: batchFixed
+                        batch-size: 8
+                """.trimIndent(),
             ),
         )
     }
@@ -105,12 +119,16 @@ open class Benchmarks {
             arrayOf(
                 "run",
                 "simulation.yml",
+                "--verbosity",
+                "off",
                 "--override",
-                "launcher.parameters.parallelism=4",
-                "--override",
-                "launcher.parameters.engine-mode=batchEpsilon",
-                "--override",
-                "launcher.parameters.epsilon=0.01",
+                """
+                launcher:
+                    parameters:
+                        parallelism: 4
+                        engine-mode: batchEpsilon
+                        epsilon: 0.01
+                """.trimIndent(),
             ),
         )
     }
@@ -130,12 +148,16 @@ open class Benchmarks {
             arrayOf(
                 "run",
                 "simulation.yml",
+                "--verbosity",
+                "off",
                 "--override",
-                "launcher.parameters.parallelism=8",
-                "--override",
-                "launcher.parameters.engine-mode=batchEpsilon",
-                "--override",
-                "launcher.parameters.epsilon=0.01",
+                """
+                launcher:
+                    parameters:
+                        parallelism: 8
+                        engine-mode: batchEpsilon
+                        epsilon: 0.01
+                """.trimIndent(),
             ),
         )
     }

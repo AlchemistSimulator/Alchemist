@@ -351,8 +351,6 @@ dependencies {
         implementation(lang3)
     }
     implementation(libs.kotlin.cli)
-    implementation(libs.jackson)
-    implementation(libs.jackson.yaml)
     implementation(libs.apache.commons.cli)
     implementation(libs.guava)
     implementation(libs.logback)

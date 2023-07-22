@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist
+package it.unibo.alchemist.config
 
 import ch.qos.logback.classic.Level
 

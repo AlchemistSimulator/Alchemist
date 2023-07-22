@@ -11,13 +11,13 @@ package it.unibo.alchemist.boundary.launch
 
 import com.google.common.collect.Lists
 import it.unibo.alchemist.AlchemistExecutionOptions
-import it.unibo.alchemist.EngineMode
-import it.unibo.alchemist.OutputReplayStrategy
 import it.unibo.alchemist.boundary.InitializedEnvironment
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.boundary.exporters.GlobalExporter
+import it.unibo.alchemist.config.EngineMode
+import it.unibo.alchemist.config.OutputReplayStrategy
 import it.unibo.alchemist.core.ArrayIndexedPriorityEpsilonBatchQueue
 import it.unibo.alchemist.core.ArrayIndexedPriorityFixedBatchQueue
 import it.unibo.alchemist.core.BatchEngine
@@ -101,7 +101,7 @@ abstract class SimulationLauncher : AbstractLauncher() {
                 )
             }
 
-            EngineMode.EPSILON -> {
+            EngineMode.BATCH_EPSILON -> {
                 val epsilon = parameters.engineConfig.epsilon
                 BatchEngine(
                     initialized.environment,

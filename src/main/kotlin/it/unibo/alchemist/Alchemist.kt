@@ -13,13 +13,13 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import it.unibo.alchemist.boundary.launch.Launcher
 import it.unibo.alchemist.boundary.launch.Validation
+import it.unibo.alchemist.boundary.modelproviders.YamlProvider
+import it.unibo.alchemist.config.SimulationConfig
+import it.unibo.alchemist.config.Verbosity
 import it.unibo.alchemist.model.SupportedIncarnations
+import it.unibo.alchemist.model.VariablesOverrider
 import it.unibo.alchemist.util.ClassPathScanner
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
@@ -41,12 +41,6 @@ private typealias ValidLauncher = Pair<Validation.OK, Launcher>
 object Alchemist {
     private val logger = LoggerFactory.getLogger(Alchemist::class.java)
     private val launchers: List<Launcher> = loadLaunchers()
-
-    private val mapper = ObjectMapper(YAMLFactory()).registerKotlinModule()
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-
-    private const val defaultLauncherName = "HeadlessSimulationLauncher"
-    private const val javaFxLauncherName = "SingleRunFXUI"
 
     private fun loadLaunchers(): List<Launcher> {
         return ClassPathScanner
@@ -165,29 +159,14 @@ object Alchemist {
             val path = ResourceLoader.getResource(pathString)
                 ?: File(pathString).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
                 ?: error("No classpath resource or file $pathString was found")
-            val config = mapper.readValue(path, SimulationConfigWrapper::class.java).simulationConfiguration
-            SimulationConfigOverrider.overrideOptionsFile(config, overrides)
+            val variables = YamlProvider.from(path)
+            logger.debug("Config:\n{}", variables)
+            VariablesOverrider.applyOverrides(variables, overrides)
+            logger.debug("Overriden Config:\n{}", variables)
+            SimulationConfig.fromVariables(variables)
         } else {
-            SimulationConfig()
+            error("Classpath resource or file was null")
         }
-    }
-
-    private fun SimulationConfig.toLegacy(simulationFile: String, overrides: List<String>): AlchemistExecutionOptions {
-        return AlchemistExecutionOptions(
-            configuration = simulationFile,
-            headless = this.type == defaultLauncherName,
-            variables = this.parameters.variables,
-            overrides = overrides,
-            batch = this.parameters.isBatch,
-            distributed = this.parameters.distributedConfigPath,
-            graphics = this.parameters.graphicsPath,
-            fxui = this.type == javaFxLauncherName,
-            web = this.parameters.isWeb,
-            help = false,
-            server = this.parameters.serverConfigPath,
-            parallelism = this.parameters.parallelism,
-            endTime = this.parameters.endTime,
-        )
     }
 
     private fun selectLauncher(options: AlchemistExecutionOptions, launcherClass: String): Launcher {

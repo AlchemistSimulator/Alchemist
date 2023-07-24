@@ -29,7 +29,7 @@ apache-commons-math3 = "org.apache.commons:commons-math3:3.6.1"
 appdirs = "net.harawata:appdirs:1.2.1"
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
-caffeine = "com.github.ben-manes.caffeine:caffeine:3.1.6"
+caffeine = "com.github.ben-manes.caffeine:caffeine:3.1.7"
 classgraph = "io.github.classgraph:classgraph:4.8.161"
 conrec = "org.danilopianini:conrec:0.1.0"
 controlsfx = "org.controlsfx:controlsfx:11.1.2"

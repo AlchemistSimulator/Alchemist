@@ -39,7 +39,7 @@ public final class ArrayIndexedPriorityEpsilonBatchQueue<T> extends ArrayIndexed
     @Override
     public List<Actionable<T>> getNextBatch() {
         if (getTree().size() == 0) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
         if (getTree().size() == 1) {
             List<Actionable<T>> result = new ArrayList<>();

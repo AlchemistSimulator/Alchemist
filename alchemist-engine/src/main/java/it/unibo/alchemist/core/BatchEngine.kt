@@ -97,10 +97,10 @@ class BatchEngine<T, P : Position<out P>> :
             val tasks = nextEvents.stream().map(taskMapper).collect(Collectors.toList())
             try {
                 val futureResults = tasks.awaitAll()
-                currentStep += batchSize.toLong()
+                step += batchSize.toLong()
                 val resultsOrderedByTime = futureResults
                     .sortedWith(Comparator.comparing { result: TaskResult -> result.eventTime })
-                currentTime = if (maxSlidingWindowTime > currentTime) maxSlidingWindowTime else currentTime
+                time = if (maxSlidingWindowTime > time) maxSlidingWindowTime else time
                 doStepDoneAllMonitors(resultsOrderedByTime)
             } catch (e: InterruptedException) {
                 LOGGER.error(e.message, e)
@@ -126,7 +126,7 @@ class BatchEngine<T, P : Position<out P>> :
 
     private fun doStepDoneAllMonitors(result: TaskResult) {
         for (monitor: OutputMonitor<T, P> in monitors) {
-            monitor.stepDone(environment, result.event, currentTime, currentStep)
+            monitor.stepDone(environment, result.event, time, step)
         }
     }
 
@@ -155,8 +155,8 @@ class BatchEngine<T, P : Position<out P>> :
         ) {
             error(
                 nextEvent.toString() + " is scheduled in the past at time " + scheduledTime +
-                    ", current time is " + currentTime +
-                    ". Problem occurred at step " + currentStep,
+                    ", current time is " + time +
+                    ". Problem occurred at step " + step,
             )
         }
     }

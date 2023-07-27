@@ -196,14 +196,14 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
             LOGGER.info("No more reactions.");
         } else {
             final Time scheduledTime = nextEvent.getTau();
-            if (scheduledTime.compareTo(currentTime) < 0) {
+            if (scheduledTime.compareTo(getTime()) < 0) {
                 throw new IllegalStateException(
                     nextEvent + " is scheduled in the past at time " + scheduledTime
-                        + ", current time is " + currentTime
-                        + ". Problem occurred at step " + currentStep
+                        + ", current time is " + getTime()
+                        + ". Problem occurred at step " + getStep()
                 );
             }
-            currentTime = scheduledTime;
+            setCurrentTime(scheduledTime);
             if (nextEvent.canExecute()) {
                 /*
                  * This must be taken before execution, because the reaction
@@ -219,17 +219,18 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                 }
                 toUpdate.forEach(this::updateReaction);
             }
-            nextEvent.update(currentTime, true, environment);
+            nextEvent.update(getTime(), true, environment);
             scheduler.updateReaction(nextEvent);
             for (final OutputMonitor<T, P> monitor : monitors) {
-                monitor.stepDone(environment, nextEvent, currentTime, currentStep);
+                monitor.stepDone(environment, nextEvent, getTime(), getStep());
             }
         }
         if (environment.isTerminated()) {
             newStatus(TERMINATED);
             LOGGER.info("Termination condition reached.");
         }
-        currentStep++;
+        var newStep = getStep() + 1;
+        setCurrentStep(newStep);
     }
 
     private void finalizeConstructor() {
@@ -268,12 +269,12 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     }
 
     @Override
-    public long getStep() {
+    public synchronized long getStep() {
         return currentStep;
     }
 
     @Override
-    public Time getTime() {
+    public synchronized Time getTime() {
         return currentTime;
     }
 
@@ -410,7 +411,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                 while (status.equals(Status.READY)) {
                     idleProcessSingleCommand();
                 }
-                while (status != TERMINATED && currentStep < finalStep && currentTime.compareTo(finalTime) < 0) {
+                while (status != TERMINATED && getStep() < finalStep && getTime().compareTo(finalTime) < 0) {
                     while (!commands.isEmpty()) {
                         processCommand(commands.poll());
                     }
@@ -429,7 +430,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                 commands.clear();
                 try {
                     for (final OutputMonitor<T, P> m : monitors) {
-                        m.finished(environment, currentTime, currentStep);
+                        m.finished(environment, getTime(), getStep());
                     }
                 } catch (Throwable e) { //NOPMD: we need to catch everything
                     error.ifPresentOrElse(
@@ -479,7 +480,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     private void scheduleReaction(final Actionable<T> reaction) {
         dependencyGraph.createDependencies(reaction);
-        reaction.initializationComplete(currentTime, environment);
+        reaction.initializationComplete(getTime(), environment);
         scheduler.addReaction(reaction);
     }
 
@@ -495,7 +496,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     protected void updateReaction(final Actionable<T> r) {
         final Time t = r.getTau();
-        r.update(currentTime, false, environment);
+        r.update(getTime(), false, environment);
         if (!r.getTau().equals(t)) {
             scheduler.updateReaction(r);
         }
@@ -537,19 +538,11 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         return monitors;
     }
 
-    protected Time getCurrentTime() {
-        return currentTime;
-    }
-
-    protected void setCurrentTime(final Time currentTime) {
+    protected synchronized void setCurrentTime(final Time currentTime) {
         this.currentTime = currentTime;
     }
 
-    protected long getCurrentStep() {
-        return currentStep;
-    }
-
-    protected void setCurrentStep(final long currentStep) {
+    protected synchronized void setCurrentStep(final long currentStep) {
         this.currentStep = currentStep;
     }
 

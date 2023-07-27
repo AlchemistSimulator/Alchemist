@@ -65,7 +65,7 @@ kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref =
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
-kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2"
+kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
 kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
 kotlin-react = { module = "org.jetbrains.kotlin-wrappers:kotlin-react", version.ref = "react" }

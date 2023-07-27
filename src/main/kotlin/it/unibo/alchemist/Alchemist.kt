@@ -19,7 +19,7 @@ import it.unibo.alchemist.boundary.modelproviders.YamlProvider
 import it.unibo.alchemist.config.SimulationConfig
 import it.unibo.alchemist.config.Verbosity
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.VariablesOverrider
+import it.unibo.alchemist.model.util.VariablesOverrider
 import it.unibo.alchemist.util.ClassPathScanner
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType

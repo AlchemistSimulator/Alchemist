@@ -4,7 +4,7 @@ arrow = "1.2.0"
 graphhopper = "7.0"
 graphstream = "2.0"
 ignite = "2.15.0"
-junit = "5.9.3"
+junit = "5.10.0"
 konf = "1.1.2"
 kotest = "5.6.2"
 ktor = "2.3.2"
@@ -12,7 +12,7 @@ dokka = "1.8.10"
 kotlin = "1.8.22"
 mockito = "5.4.0"
 protelis = "17.0.4"
-react = "18.2.0-pre.597"
+react = "18.2.0-pre.599"
 scafi = "1.1.7"
 scala = "2.13.11"
 scalacache = "0.28.0"
@@ -29,13 +29,13 @@ apache-commons-math3 = "org.apache.commons:commons-math3:3.6.1"
 appdirs = "net.harawata:appdirs:1.2.1"
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
-caffeine = "com.github.ben-manes.caffeine:caffeine:3.1.6"
+caffeine = "com.github.ben-manes.caffeine:caffeine:3.1.7"
 classgraph = "io.github.classgraph:classgraph:4.8.161"
 conrec = "org.danilopianini:conrec:0.1.0"
 controlsfx = "org.controlsfx:controlsfx:11.1.2"
 dyn4j = "org.dyn4j:dyn4j:5.0.1"
 dsiutils = "it.unimi.dsi:dsiutils:2.7.3"
-embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.7.0"
+embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.7.1"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
@@ -66,7 +66,7 @@ kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", versio
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
 kotlin-cli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.5"
-kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2"
+kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
 kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
 kotlin-react = { module = "org.jetbrains.kotlin-wrappers:kotlin-react", version.ref = "react" }

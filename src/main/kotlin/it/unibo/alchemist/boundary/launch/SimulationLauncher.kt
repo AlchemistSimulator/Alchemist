@@ -16,11 +16,6 @@ import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.boundary.exporters.GlobalExporter
-import it.unibo.alchemist.config.EngineMode
-import it.unibo.alchemist.config.OutputReplayStrategy
-import it.unibo.alchemist.core.ArrayIndexedPriorityEpsilonBatchQueue
-import it.unibo.alchemist.core.ArrayIndexedPriorityFixedBatchQueue
-import it.unibo.alchemist.core.BatchEngine
 import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Position
@@ -51,7 +46,6 @@ abstract class SimulationLauncher : AbstractLauncher() {
             ResourceLoader.getResource(configuration)
                 ?: File(configuration).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
                 ?: error("No classpath resource or file $configuration was found"),
-            parameters.overrides,
         )
         launch(loader, parameters)
     }
@@ -76,55 +70,14 @@ abstract class SimulationLauncher : AbstractLauncher() {
         variables: Map<String, *>,
     ): Simulation<T, P> {
         val initialized: InitializedEnvironment<T, P> = loader.getWith(variables)
-        val simulation = buildEngine(initialized, parameters)
+        val simulation = Engine(
+            initialized.environment,
+            DoubleTime(parameters.endTime),
+        )
         if (initialized.exporters.isNotEmpty()) {
             simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         }
         return simulation
-    }
-
-    private fun <T, P : Position<P>> buildEngine(
-        initialized: InitializedEnvironment<T, P>,
-        parameters: AlchemistExecutionOptions,
-    ): Engine<T, P> {
-        val outputReplayStrategy = parameters.engineConfig.outputReplayStrategy
-        return when (parameters.engineConfig.engineMode) {
-            EngineMode.BATCH_FIXED -> {
-                val batchSize = parameters.engineConfig.batchSize ?: parameters.parallelism
-                BatchEngine(
-                    initialized.environment,
-                    Long.MAX_VALUE,
-                    DoubleTime(parameters.endTime),
-                    parameters.parallelism,
-                    outputReplayStrategy.toEngine(),
-                    ArrayIndexedPriorityFixedBatchQueue(batchSize),
-                )
-            }
-
-            EngineMode.BATCH_EPSILON -> {
-                val epsilon = parameters.engineConfig.epsilon
-                BatchEngine(
-                    initialized.environment,
-                    Long.MAX_VALUE,
-                    DoubleTime(parameters.endTime),
-                    parameters.parallelism,
-                    outputReplayStrategy.toEngine(),
-                    ArrayIndexedPriorityEpsilonBatchQueue(epsilon),
-                )
-            }
-
-            else -> Engine(
-                initialized.environment,
-                DoubleTime(parameters.endTime),
-            )
-        }
-    }
-
-    private fun OutputReplayStrategy.toEngine(): BatchEngine.OutputReplayStrategy {
-        return when (this) {
-            OutputReplayStrategy.AGGREGATE -> BatchEngine.OutputReplayStrategy.AGGREGATE
-            OutputReplayStrategy.REPLAY -> BatchEngine.OutputReplayStrategy.REPLAY
-        }
     }
 
     /**

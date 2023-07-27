@@ -16,6 +16,11 @@ import it.unibo.alchemist.boundary.modelproviders.YamlProvider
  */
 object VariablesOverrider {
 
+    /**
+     * Apply overrides to a map of variables.
+     * @parameter map Map to be overriden
+     * @parameter overrides list of valid String yaml strings containing overrides
+     */
     @JvmStatic
     fun applyOverrides(map: Map<String, *>, overrides: List<String>): Map<String, *> {
         return if (overrides.isEmpty()) {
@@ -36,6 +41,7 @@ object VariablesOverrider {
     }
 
     @Suppress("UNCHECKED_CAST")
+    @JvmStatic
     private fun mergeInto(key: String, value: Any?, newMap: MutableMap<String, Any?>) {
         when (value) {
             is MutableMap<*, *> -> {

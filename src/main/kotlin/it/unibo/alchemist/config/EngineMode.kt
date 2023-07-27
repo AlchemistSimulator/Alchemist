@@ -16,7 +16,7 @@ package it.unibo.alchemist.config
 enum class EngineMode(val code: String) {
 
     /**
-     * Launch simulation is single-threaded deterministic mode
+     * Launch simulation is single-threaded deterministic mode.
      */
     DETERMINISTIC("deterministic"),
 
@@ -31,12 +31,13 @@ enum class EngineMode(val code: String) {
     BATCH_EPSILON("batchEpsilon"), ;
 
     companion object {
+        /**
+         * Parse string into EngineMode.
+         */
         fun parseCode(code: String): EngineMode {
             val match = EngineMode.values().find { it.code == code }
-            if (match != null) {
-                return match
-            } else {
-                throw IllegalArgumentException("Unknown EngineMode value $code, allowed: [${EngineMode.values()}]")
+            return requireNotNull(match) {
+                "Unknown EngineMode value $code, allowed: [${EngineMode.values()}]"
             }
         }
     }

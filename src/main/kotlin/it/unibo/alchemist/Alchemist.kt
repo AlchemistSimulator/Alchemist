@@ -27,7 +27,6 @@ import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
 import kotlinx.cli.default
 import kotlinx.cli.multiple
-import org.apache.commons.cli.CommandLine
 import org.kaikikm.threadresloader.ResourceLoader
 import org.slf4j.LoggerFactory
 import org.slf4j.helpers.NOPLoggerFactory
@@ -69,16 +68,6 @@ object Alchemist {
      * Set this to false for testing purposes.
      */
     private var isNormalExecution = true
-
-    private inline fun <reified T : Number> CommandLine.hasNumeric(name: Char, converter: String.() -> T?): T? =
-        getOptionValue(name)?.let {
-            when (val value = converter(it)) {
-                null ->
-                    exitBecause("Not a valid ${T::class.simpleName}: $it", ExitStatus.NUMBER_FORMAT_ERROR)
-
-                else -> value
-            }
-        }
 
     /**
      * @param args
@@ -243,14 +232,6 @@ object Alchemist {
             System.exit(status.ordinal)
         }
         throw AlchemistWouldHaveExitedException(status.ordinal)
-    }
-
-    private fun exitBecause(reason: String, status: ExitStatus, exception: Exception? = null): Nothing {
-        when {
-            exception == null -> logger.error(reason)
-            else -> logger.error(reason, exception)
-        }
-        exitWith(status)
     }
 
     private enum class ExitStatus {

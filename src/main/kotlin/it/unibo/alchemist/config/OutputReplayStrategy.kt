@@ -26,12 +26,13 @@ enum class OutputReplayStrategy(val code: String) {
     REPLAY("replay"), ;
 
     companion object {
+        /**
+         * Parse string into OutputReplayStrategy.
+         */
         fun parseCode(code: String): OutputReplayStrategy {
             val match = OutputReplayStrategy.values().find { it.code == code }
-            if (match != null) {
-                return match
-            } else {
-                throw IllegalArgumentException("Unknown OutputReplayStrategy value $code, allowed: [${OutputReplayStrategy.values()}]")
+            return requireNotNull(match) {
+                "Unknown OutputReplayStrategy value $code, allowed: [${OutputReplayStrategy.values()}]"
             }
         }
     }

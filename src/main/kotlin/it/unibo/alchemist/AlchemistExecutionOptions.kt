@@ -20,6 +20,7 @@ import it.unibo.alchemist.config.OutputReplayStrategy
  * @property configuration null if no simulation file is specified (default), file path otherwise
  * @property headless true if forced, false otherwise (default)
  * @property variables selected batch variables. Defaults to [emptyList]
+ * @property overrides valid yaml string with configuration overrides
  * @property batch whether batch mode is selected.
  * @property distributed the path to the file with the load distribution configuration, or null if the run is local
  * @property graphics the path to the effects file, or null if unspecified
@@ -73,6 +74,12 @@ data class AlchemistExecutionOptions(
 
         private val NO_OPTION = AlchemistExecutionOptions()
 
+        /**
+         * @property engineMode engine execution mode.
+         * @property outputReplayStrategy batch mode engine output replay strategy.
+         * @property batchSize fixed batch mode batch size.
+         * @property epsilon epsilon batch mode epsilon threshold.
+         */
         data class EngineConfig(
             val engineMode: EngineMode = defaultEngineMode,
             val outputReplayStrategy: OutputReplayStrategy = defaultOutputReplayStrategy,

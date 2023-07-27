@@ -97,10 +97,11 @@ class BatchEngine<T, P : Position<out P>> :
             val tasks = nextEvents.stream().map(taskMapper).collect(Collectors.toList())
             try {
                 val futureResults = tasks.awaitAll()
-                step += batchSize.toLong()
+                val newStep = step + batchSize.toLong()
+                setCurrentStep(newStep)
                 val resultsOrderedByTime = futureResults
                     .sortedWith(Comparator.comparing { result: TaskResult -> result.eventTime })
-                time = if (maxSlidingWindowTime > time) maxSlidingWindowTime else time
+                setCurrentTime(if (maxSlidingWindowTime > time) maxSlidingWindowTime else time)
                 doStepDoneAllMonitors(resultsOrderedByTime)
             } catch (e: InterruptedException) {
                 LOGGER.error(e.message, e)

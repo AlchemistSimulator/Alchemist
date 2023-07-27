@@ -86,6 +86,9 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         return result;
     }
 
+    /**
+     * @param reaction the reaction to be removed
+     */
     @Override
     public void removeReaction(final Actionable<T> reaction) {
         final int index = indexes.get(reaction);
@@ -118,6 +121,7 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
 
     /**
      * Could be overridden.
+     *
      * @return string representation of the queue
      */
     @Override
@@ -171,6 +175,9 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
+    /**
+     * @param reaction the reaction which has changed
+     */
     @Override
     public void updateReaction(final Actionable<T> reaction) {
         final int index = indexes.get(reaction);
@@ -180,18 +187,19 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
+    /**
+     * Accessor for tree.
+     *
+     * @return tree
+     */
+    protected List<Actionable<T>> getTree() {
+        return tree;
+    }
+
     private static int getParent(final int i) {
         if (i == 0) {
             return -1;
         }
         return (i - 1) / 2;
-    }
-
-    /**
-     * Accessor for tree.
-     * @return tree
-     */
-    protected List<Actionable<T>> getTree() {
-        return tree;
     }
 }

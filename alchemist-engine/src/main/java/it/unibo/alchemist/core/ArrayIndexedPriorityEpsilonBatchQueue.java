@@ -12,7 +12,6 @@ package it.unibo.alchemist.core;
 import it.unibo.alchemist.model.Actionable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

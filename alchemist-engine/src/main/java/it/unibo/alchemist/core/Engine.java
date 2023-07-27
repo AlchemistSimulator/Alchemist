@@ -162,6 +162,9 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         this(e, Long.MAX_VALUE, t);
     }
 
+    /**
+     * @param op the OutputMonitor to add
+     */
     @Override
     public void addOutputMonitor(final OutputMonitor<T, P> op) {
         monitors.add(op);
@@ -242,47 +245,78 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         }
     }
 
+    /**
+     * @return environment
+     */
     @Override
     @SuppressFBWarnings("EI_EXPOSE_REP")
     public Environment<T, P> getEnvironment() {
         return environment;
     }
 
+    /**
+     * @return error
+     */
     @Override
     public Optional<Throwable> getError() {
         return error;
     }
 
+    /**
+     * @return final step
+     */
     @Override
     public long getFinalStep() {
         return finalStep;
     }
 
+    /**
+     * @return final time
+     */
     @Override
     public Time getFinalTime() {
         return finalTime;
     }
 
+    /**
+     * @return status
+     */
     @Override
     public Status getStatus() {
         return status;
     }
 
+    /**
+     * thread-safe.
+     *
+     * @return step
+     */
     @Override
     public synchronized long getStep() {
         return currentStep;
     }
 
+    /**
+     * thread-safe.
+     *
+     * @return time
+     */
     @Override
     public synchronized Time getTime() {
         return currentTime;
     }
 
+    /**
+     * @param step the number of steps to execute
+     */
     @Override
     public void goToStep(final long step) {
         pauseWhen(() -> getStep() >= step);
     }
 
+    /**
+     * @param t the target time
+     */
     @Override
     public void goToTime(final Time t) {
         pauseWhen(() -> getTime().compareTo(t) >= 0);
@@ -301,18 +335,29 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         }
     }
 
+    /**
+     * @param node the node
+     * @param n    the second node
+     */
     @Override
     public void neighborAdded(final Node<T> node, final Node<T> n) {
         checkCaller();
         afterExecutionUpdates.add(new NeigborAdded(node, n));
     }
 
+    /**
+     * @param node the node
+     * @param n    the second node
+     */
     @Override
     public void neighborRemoved(final Node<T> node, final Node<T> n) {
         checkCaller();
         afterExecutionUpdates.add(new NeigborRemoved(node, n));
     }
 
+    /**
+     * @param next next status
+     */
     protected void newStatus(final Status next) {
         schedule(() -> doOnStatus(() -> {
             if (next.isReachableFrom(status)) {
@@ -322,39 +367,62 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         }));
     }
 
+    /**
+     * @param node the freshly added node
+     */
     @Override
     public void nodeAdded(final Node<T> node) {
         checkCaller();
         afterExecutionUpdates.add(new NodeAddition(node));
     }
 
+    /**
+     * @param node the node
+     */
     @Override
     public void nodeMoved(final Node<T> node) {
         checkCaller();
         afterExecutionUpdates.add(new Movement(node));
     }
 
+    /**
+     * @param node            the freshly removed node
+     * @param oldNeighborhood the neighborhood of the node as it was before it was removed
+     *                        (used to calculate reverse dependencies)
+     */
     @Override
     public void nodeRemoved(final Node<T> node, final Neighborhood<T> oldNeighborhood) {
         checkCaller();
         afterExecutionUpdates.add(new NodeRemoval(node));
     }
 
+    /**
+     * pause.
+     */
     @Override
     public void pause() {
         newStatus(PAUSED);
     }
 
+    /**
+     * play.
+     */
     @Override
     public void play() {
         newStatus(RUNNING);
     }
 
+    /**
+     * @param reactionToAdd the reaction to add
+     */
     @Override
     public void reactionAdded(final Actionable<T> reactionToAdd) {
         reactionChanged(new ReactionAddition(reactionToAdd));
     }
 
+    /**
+     * @param reactionToRemove the reaction to remove
+     */
     @Override
     public void reactionRemoved(final Actionable<T> reactionToRemove) {
         reactionChanged(new ReactionRemoval(reactionToRemove));
@@ -390,11 +458,17 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         });
     }
 
+    /**
+     * @param op the OutputMonitor to add
+     */
     @Override
     public void removeOutputMonitor(final OutputMonitor<T, P> op) {
         monitors.remove(op);
     }
 
+    /**
+     * run simulation.
+     */
     @Override
     public void run() {
         synchronized (environment) {
@@ -443,10 +517,16 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         }
     }
 
+    /**
+     * Override this to execute something after simulation run.
+     */
     protected void afterRun() {
         // do nothing, leave for override...
     }
 
+    /**
+     * @param condition condition
+     */
     private void pauseWhen(final BooleanSupplier condition) {
         addOutputMonitor(new OutputMonitor<>() {
 
@@ -470,6 +550,9 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         });
     }
 
+    /**
+     * @param runnable the runnable to execute
+     */
     @Override
     public void schedule(final CheckedRunnable runnable) {
         if (getStatus().equals(TERMINATED)) {
@@ -484,16 +567,27 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         scheduler.addReaction(reaction);
     }
 
+    /**
+     * terminate.
+     */
     @Override
     public void terminate() {
         newStatus(TERMINATED);
     }
 
+    /**
+     * @return string representation of the engine
+     */
     @Override
     public String toString() {
         return getClass().getSimpleName() + " t: " + getTime() + ", s: " + getStep();
     }
 
+    /**
+     * update reaction
+     *
+     * @param r reaction to be updated
+     */
     protected void updateReaction(final Actionable<T> r) {
         final Time t = r.getTau();
         r.update(getTime(), false, environment);
@@ -513,35 +607,66 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         return statusLock;
     }
 
+    /**
+     * @param next    The {@link Status} the simulation should reach before returning from this method
+     * @param timeout The maximum lapse of time the caller wants to wait before being resumed
+     * @param tu      The {@link TimeUnit} used to define "timeout"
+     * @return
+     */
     @Override
     public Status waitFor(final Status next, final long timeout, final TimeUnit tu) {
         return lockForStatus(next).waitFor(next, timeout, tu);
     }
 
+    /**
+     * @return after execution updates
+     */
     protected Queue<Update> getAfterExecutionUpdates() {
         return afterExecutionUpdates;
     }
 
+    /**
+     * @return dependency graph
+     */
     protected DependencyGraph<T> getDependencyGraph() {
         return dependencyGraph;
     }
 
+    /**
+     * @return scheduler
+     */
     protected Scheduler<T> getScheduler() {
         return scheduler;
     }
 
+    /**
+     * @return status lock
+     */
     protected ImmutableMap<Status, SynchBox> getStatusLocks() {
         return statusLocks;
     }
 
+    /**
+     * @return monitors
+     */
     protected List<OutputMonitor<T, P>> getMonitors() {
         return monitors;
     }
 
+    /**
+     * thread safe.
+     *
+     * @param currentTime new current time
+     */
     protected synchronized void setCurrentTime(final Time currentTime) {
         this.currentTime = currentTime;
     }
 
+    /**
+     * thread safe.
+     *
+     * @param currentStep new current step
+     */
     protected synchronized void setCurrentStep(final long currentStep) {
         this.currentStep = currentStep;
     }

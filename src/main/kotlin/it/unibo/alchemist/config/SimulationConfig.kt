@@ -12,6 +12,8 @@ package it.unibo.alchemist.config
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.AlchemistExecutionOptions.Companion.defaultEndTime
 import it.unibo.alchemist.AlchemistExecutionOptions.Companion.defaultParallelism
+import it.unibo.alchemist.config.SimulationConfig.SimulationConfigParameters.Companion.defaultEndTime
+import it.unibo.alchemist.config.SimulationConfig.SimulationConfigParameters.Companion.defaultParallelism
 import it.unibo.alchemist.config.VariablesParsingUtils.parse
 import it.unibo.alchemist.config.VariablesParsingUtils.parseBoolean
 import it.unibo.alchemist.config.VariablesParsingUtils.parseDouble
@@ -111,7 +113,7 @@ data class SimulationConfig(
             fun fromVariables(variables: Map<String, Any?>?): SimulationConfigParameters {
                 return SimulationConfigParameters(
                     variables = variables?.get(parametersKey)?.parseMap()?.get(variablesKey).parseStringList()
-                        ?: emptyList(),
+                        .orEmpty(),
                     parallelism = variables?.get(parametersKey)?.parseMap()?.get(parallelismKey).parseInt()
                         ?: defaultParallelism,
                     endTime = variables?.get(parametersKey)?.parseMap()?.get(endTimeKey).parseDouble()

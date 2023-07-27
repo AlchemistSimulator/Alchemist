@@ -184,6 +184,7 @@ internal object DocumentRoot : SyntaxElement {
     val environment by OwnName
     val export by OwnName
     val incarnation by OwnName
+    val launcher by OwnName
     val layers by OwnName
     const val linkingRule = "network-model"
     const val remoteDependencies = "remote-dependencies"

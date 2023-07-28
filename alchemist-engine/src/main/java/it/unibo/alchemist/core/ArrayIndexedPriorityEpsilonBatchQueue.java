@@ -37,17 +37,17 @@ public final class ArrayIndexedPriorityEpsilonBatchQueue<T> extends ArrayIndexed
 
     @Override
     public List<Actionable<T>> getNextBatch() {
-        if (getTree().size() == 0) {
+        if (getTree().isEmpty()) {
             return new ArrayList<>();
         }
         if (getTree().size() == 1) {
-            List<Actionable<T>> result = new ArrayList<>();
+            final List<Actionable<T>> result = new ArrayList<>();
             result.add(getTree().get(0));
             return result;
         }
 
-        List<Actionable<T>> result = new ArrayList<>();
-        var prev = getTree().get(0);
+        final List<Actionable<T>> result = new ArrayList<>();
+        final var prev = getTree().get(0);
         result.add(prev);
         for (final var next : getTree().subList(1, getTree().size())) {
             if (Math.abs(next.getTau().toDouble() - prev.getTau().toDouble()) >= epsilon) {

@@ -64,7 +64,6 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * Logger.
      */
     protected static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);
-    private static final int ALL_PERMITS = Integer.MAX_VALUE;
     private final Lock statusLock = new ReentrantLock();
     private final ImmutableMap<Status, SynchBox> statusLocks = Arrays.stream(Status.values())
         .collect(ImmutableMap.toImmutableMap(Function.identity(), it -> new SynchBox()));
@@ -235,7 +234,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
             newStatus(TERMINATED);
             LOGGER.info("Termination condition reached.");
         }
-        var newStep = getStep() + 1;
+        final var newStep = getStep() + 1;
         setCurrentStep(newStep);
     }
 
@@ -359,6 +358,8 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     }
 
     /**
+     * Sets new status.
+     *
      * @param next next status
      */
     protected void newStatus(final Status next) {
@@ -614,7 +615,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * @param next    The {@link Status} the simulation should reach before returning from this method
      * @param timeout The maximum lapse of time the caller wants to wait before being resumed
      * @param tu      The {@link TimeUnit} used to define "timeout"
-     * @return
+     * @return status
      */
     @Override
     public Status waitFor(final Status next, final long timeout, final TimeUnit tu) {
@@ -622,42 +623,42 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     }
 
     /**
-     * @return after execution updates
+     * Returns after execution updates.
      */
     protected Queue<Update> getAfterExecutionUpdates() {
         return afterExecutionUpdates;
     }
 
     /**
-     * @return dependency graph
+     * Returns dependency graph.
      */
     protected DependencyGraph<T> getDependencyGraph() {
         return dependencyGraph;
     }
 
     /**
-     * @return scheduler
+     * Returns scheduler.
      */
     protected Scheduler<T> getScheduler() {
         return scheduler;
     }
 
     /**
-     * @return status lock
+     * Returns status lock.
      */
     protected ImmutableMap<Status, SynchBox> getStatusLocks() {
         return statusLocks;
     }
 
     /**
-     * @return monitors
+     * Returns monitors.
      */
     protected List<OutputMonitor<T, P>> getMonitors() {
         return monitors;
     }
 
     /**
-     * thread safe.
+     * thread safe. Updates current time
      *
      * @param currentTime new current time
      */
@@ -666,7 +667,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     }
 
     /**
-     * thread safe.
+     * thread safe. Updates current step.
      *
      * @param currentStep new current step
      */

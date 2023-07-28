@@ -138,6 +138,9 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * @param t         the maximum time to reach
      * @param scheduler the scheduler implementation to be used
      */
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+        value = {"EI_EXPOSE_REP2", "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR"},
+        justification = "Environment anche scheduler are not clonable, setSimulation is not final")
     public Engine(final Environment<T, P> e, final long maxSteps, final Time t, final Scheduler<T> scheduler) {
         LOGGER.trace("Engine created");
         environment = e;
@@ -624,6 +627,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     /**
      * Returns after execution updates.
+     *
      * @return after execution updates
      */
     protected Queue<Update> getAfterExecutionUpdates() {
@@ -632,6 +636,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     /**
      * Returns dependency graph.
+     *
      * @return dependency graph
      */
     protected DependencyGraph<T> getDependencyGraph() {
@@ -640,6 +645,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     /**
      * Returns scheduler.
+     *
      * @return scheduler
      */
     protected Scheduler<T> getScheduler() {
@@ -648,6 +654,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     /**
      * Returns status lock.
+     *
      * @return status locks
      */
     protected ImmutableMap<Status, SynchBox> getStatusLocks() {
@@ -656,6 +663,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     /**
      * Returns monitors.
+     *
      * @return monitors
      */
     protected List<OutputMonitor<T, P>> getMonitors() {

@@ -624,6 +624,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     /**
      * Returns after execution updates.
+     * @return after execution updates
      */
     protected Queue<Update> getAfterExecutionUpdates() {
         return afterExecutionUpdates;
@@ -631,6 +632,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     /**
      * Returns dependency graph.
+     * @return dependency graph
      */
     protected DependencyGraph<T> getDependencyGraph() {
         return dependencyGraph;
@@ -638,6 +640,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     /**
      * Returns scheduler.
+     * @return scheduler
      */
     protected Scheduler<T> getScheduler() {
         return scheduler;
@@ -645,6 +648,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     /**
      * Returns status lock.
+     * @return status locks
      */
     protected ImmutableMap<Status, SynchBox> getStatusLocks() {
         return statusLocks;
@@ -652,6 +656,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     /**
      * Returns monitors.
+     * @return monitors
      */
     protected List<OutputMonitor<T, P>> getMonitors() {
         return monitors;

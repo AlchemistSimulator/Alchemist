@@ -192,6 +192,9 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         });
     }
 
+    /**
+     * Perform a single step of the simulation.
+     */
     protected void doStep() {
         final Actionable<T> nextEvent = scheduler.getNext();
         if (nextEvent == null) {
@@ -584,7 +587,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     }
 
     /**
-     * update reaction
+     * update reaction.
      *
      * @param r reaction to be updated
      */
@@ -671,12 +674,22 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         this.currentStep = currentStep;
     }
 
+    /**
+     * Class representing an update.
+     */
     // CHECKSTYLE: FinalClassCheck OFF
     protected class Update {
 
+        /**
+         * Perform changes.
+         */
         public void performChanges() {
+            // override me
         }
 
+        /**
+         * @return reactions to update
+         */
         public Stream<? extends Actionable<T>> getReactionsToUpdate() {
             return Stream.empty();
         }

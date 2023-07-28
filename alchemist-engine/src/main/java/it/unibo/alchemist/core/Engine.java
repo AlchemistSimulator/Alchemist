@@ -138,9 +138,9 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * @param t         the maximum time to reach
      * @param scheduler the scheduler implementation to be used
      */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    @SuppressFBWarnings(
         value = {"EI_EXPOSE_REP2", "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR"},
-        justification = "Environment anche scheduler are not clonable, setSimulation is not final")
+        justification = "Environment and scheduler are not clonable, setSimulation is not final")
     public Engine(final Environment<T, P> e, final long maxSteps, final Time t, final Scheduler<T> scheduler) {
         LOGGER.trace("Engine created");
         environment = e;

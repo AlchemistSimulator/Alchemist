@@ -14,7 +14,6 @@ plugins {
 
 include(
     "alchemist-api",
-    "alchemist-benchmark",
     "alchemist-cognitive-agents",
     "alchemist-engine",
     "alchemist-euclidean-geometry",

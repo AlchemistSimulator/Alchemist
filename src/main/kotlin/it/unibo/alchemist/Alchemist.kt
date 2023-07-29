@@ -77,7 +77,13 @@ object Alchemist {
     @JvmStatic
     fun main(args: Array<String>) {
         val parser = ArgParser("alchemist")
+        val run = createRunCommand(parser)
+        parser.subcommands(run)
+        parser.parse(args)
+    }
 
+    @OptIn(ExperimentalCli::class)
+    private fun createRunCommand(parser: ArgParser): Subcommand {
         class Run : Subcommand("run", "Run a simulation or a batch of simulations") {
 
             val simulationFile by parser.argument(
@@ -118,8 +124,7 @@ object Alchemist {
                 executeSimlation(simulationFile, verbosity, overrides)
             }
         }
-        parser.subcommands(Run())
-        parser.parse(args)
+        return Run()
     }
 
     private fun executeSimlation(

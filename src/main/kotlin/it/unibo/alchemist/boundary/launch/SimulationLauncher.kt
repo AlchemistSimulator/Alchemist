@@ -12,7 +12,6 @@ package it.unibo.alchemist.boundary.launch
 import com.google.common.collect.Lists
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.boundary.InitializedEnvironment
-import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.boundary.exporters.GlobalExporter
@@ -20,8 +19,6 @@ import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.times.DoubleTime
-import org.kaikikm.threadresloader.ResourceLoader
-import java.io.File
 import java.io.Serializable
 
 /**
@@ -33,7 +30,7 @@ abstract class SimulationLauncher : AbstractLauncher() {
 
     final override fun validate(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
         when {
-            configuration == null -> requires("a simulation file")
+            loader == null -> requires("a loader")
             help -> incompatibleWith("help printing")
             server != null -> incompatibleWith("Alchemist grid computing server mode")
             else -> additionalValidation(currentOptions)
@@ -41,12 +38,7 @@ abstract class SimulationLauncher : AbstractLauncher() {
     }
 
     final override fun launch(parameters: AlchemistExecutionOptions) = with(parameters) {
-        checkNotNull(configuration) { "Invalid configuration $configuration" }
-        val loader = LoadAlchemist.from(
-            ResourceLoader.getResource(configuration)
-                ?: File(configuration).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
-                ?: error("No classpath resource or file $configuration was found"),
-        )
+        checkNotNull(loader) { "Invalid loader $loader" }
         launch(loader, parameters)
     }
 

@@ -1,6 +1,7 @@
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.AlchemistExecutionOptions
+import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.modelproviders.YamlProvider
 import it.unibo.alchemist.config.EngineMode
 import it.unibo.alchemist.config.OutputReplayStrategy
@@ -45,7 +46,7 @@ class TestSimulationConfig : StringSpec({
         result shouldBe expected
     }
 
-    "test toLegacy" {
+    "test toOptions" {
         val config = SimulationConfig(
             type = "HeadlessSimulationLauncher",
             parameters = SimulationConfig.SimulationConfigParameters(
@@ -63,11 +64,12 @@ class TestSimulationConfig : StringSpec({
                 outputReplayStrategy = OutputReplayStrategy.REPLAY,
             ),
         )
+        val resource = ResourceLoader.getResource("config/config-test.yml")
+        val loader = LoadAlchemist.from(resource)
         val expected = AlchemistExecutionOptions(
-            configuration = "test",
+            loader = loader,
             headless = true,
             variables = listOf("1", "2", "a"),
-            overrides = emptyList(),
             batch = true,
             distributed = "foo-bar1",
             graphics = "foo-bar2",
@@ -85,6 +87,6 @@ class TestSimulationConfig : StringSpec({
             ),
         )
 
-        config.toLegacy("test", emptyList()) shouldBe expected
+        config.toOptions(loader) shouldBe expected
     }
 })

@@ -11,16 +11,17 @@ package it.unibo.alchemist
 
 import it.unibo.alchemist.AlchemistExecutionOptions.Companion.defaultEndTime
 import it.unibo.alchemist.AlchemistExecutionOptions.Companion.defaultParallelism
+import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.config.EngineMode
 import it.unibo.alchemist.config.OutputReplayStrategy
 
 /**
  * Alchemist options provided by the command line.
  *
- * @property configuration null if no simulation file is specified (default), file path otherwise
+ * @property loader null if no simulation loader is specified (default), loader otherwise
+ * @property launcherName launcher name to be used
  * @property headless true if forced, false otherwise (default)
  * @property variables selected batch variables. Defaults to [emptyList]
- * @property overrides valid yaml string with configuration overrides
  * @property batch whether batch mode is selected.
  * @property distributed the path to the file with the load distribution configuration, or null if the run is local
  * @property graphics the path to the effects file, or null if unspecified
@@ -33,10 +34,10 @@ import it.unibo.alchemist.config.OutputReplayStrategy
  * @property engineConfig specifies engine execution configuration.
  */
 data class AlchemistExecutionOptions(
-    val configuration: String? = null,
+    val loader: Loader? = null,
+    val launcherName: String = defaultLauncherName,
     val headless: Boolean = false,
     val variables: List<String> = emptyList(),
-    val overrides: List<String> = emptyList(),
     val batch: Boolean = false,
     val distributed: String? = null,
     val graphics: String? = null,
@@ -54,6 +55,12 @@ data class AlchemistExecutionOptions(
     val isEmpty: Boolean get() = this == NO_OPTION
 
     companion object {
+        /**
+         * If no specific launcher name is specified, this value is used.
+         * Defaults to HeadlessSimulationLauncher.
+         */
+        const val defaultLauncherName = "HeadlessSimulationLauncher"
+
         /**
          * If no specific number of parallel threads to use is specified, this value is used.
          * Defaults to the number of logical cores detected by the JVM.

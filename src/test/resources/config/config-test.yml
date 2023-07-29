@@ -1,3 +1,5 @@
+incarnation: protelis
+
 launcher:
   type: TestLauncher
   parameters:

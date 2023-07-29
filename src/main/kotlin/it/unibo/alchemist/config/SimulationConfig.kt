@@ -12,6 +12,7 @@ package it.unibo.alchemist.config
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.AlchemistExecutionOptions.Companion.defaultEndTime
 import it.unibo.alchemist.AlchemistExecutionOptions.Companion.defaultParallelism
+import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.config.SimulationConfig.SimulationConfigParameters.Companion.defaultEndTime
 import it.unibo.alchemist.config.SimulationConfig.SimulationConfigParameters.Companion.defaultParallelism
 import it.unibo.alchemist.config.VariablesParsingUtils.parse
@@ -147,12 +148,11 @@ data class SimulationConfig(
      * @property simulationFile path to simulation file
      * @property overrides list of valid yaml strings to be applied as overrides
      */
-    fun toLegacy(simulationFile: String, overrides: List<String>): AlchemistExecutionOptions {
+    fun toOptions(loader: Loader): AlchemistExecutionOptions {
         return AlchemistExecutionOptions(
-            configuration = simulationFile,
+            loader = loader,
             headless = this.type == defaultLauncherType,
             variables = this.parameters.variables,
-            overrides = overrides,
             batch = this.parameters.isBatch,
             distributed = this.parameters.distributedConfigPath,
             graphics = this.parameters.graphicsPath,

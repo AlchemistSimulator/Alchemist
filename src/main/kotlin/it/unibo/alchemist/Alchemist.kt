@@ -13,13 +13,13 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
+import it.unibo.alchemist.boundary.LoadAlchemist
+import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.launch.Launcher
 import it.unibo.alchemist.boundary.launch.Validation
-import it.unibo.alchemist.boundary.modelproviders.YamlProvider
 import it.unibo.alchemist.config.SimulationConfig
 import it.unibo.alchemist.config.Verbosity
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.util.VariablesOverrider
 import it.unibo.alchemist.util.ClassPathScanner
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
@@ -130,10 +130,9 @@ object Alchemist {
         validateOutputModule()
         validateIncarnations()
         setVerbosity(verbosity)
-        val optionsConfig = parseOptions(simulationFile, overrides)
-        val legacyConfig = optionsConfig.toLegacy(simulationFile, overrides)
-        val selectedLauncher = selectLauncher(legacyConfig, optionsConfig.type)
-        selectedLauncher.launch(legacyConfig)
+        val options = parseOptions(simulationFile, overrides)
+        val selectedLauncher = selectLauncher(options)
+        selectedLauncher.launch(options)
     }
 
     private fun validateOutputModule() {
@@ -143,31 +142,35 @@ object Alchemist {
         }
     }
 
-    private fun parseOptions(pathString: String?, overrides: List<String>): SimulationConfig {
-        return if (pathString != null) {
-            val path = ResourceLoader.getResource(pathString)
-                ?: File(pathString).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
-                ?: error("No classpath resource or file $pathString was found")
-            val variables = YamlProvider.from(path)
-            logger.debug("Config:\n{}", variables)
-            VariablesOverrider.applyOverrides(variables, overrides)
-            logger.debug("Overriden Config:\n{}", variables)
-            SimulationConfig.fromVariables(variables)
+    private fun parseOptions(simulationFile: String?, overrides: List<String>): AlchemistExecutionOptions {
+        return if (simulationFile != null) {
+            val loader = createLoader(simulationFile, overrides)
+            SimulationConfig.fromVariables(loader.variables).toOptions(loader)
         } else {
             error("Classpath resource or file was null")
         }
     }
 
-    private fun selectLauncher(options: AlchemistExecutionOptions, launcherClass: String): Launcher {
+    private fun createLoader(simulationFile: String, overrides: List<String>): Loader {
+        val url = ResourceLoader.getResource(simulationFile)
+            ?: File(simulationFile).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
+            ?: error("No classpath resource or file $simulationFile was found")
+        return LoadAlchemist.from(
+            url,
+            overrides,
+        )
+    }
+
+    private fun selectLauncher(options: AlchemistExecutionOptions): Launcher {
         val (validLaunchers, invalidLaunchers) = options.classifyLaunchers()
         val sortedLaunchers: List<ValidLauncher> = validLaunchers
             .map { (validation, launcher) ->
                 validation as Validation.OK to launcher
             }
             .sortedByDescending { it.first.priority }
-        val candidateLauncher = sortedLaunchers.find { it.second.javaClass.simpleName == launcherClass }
+        val candidateLauncher = sortedLaunchers.find { it.second.javaClass.simpleName == options.launcherName }
         if (candidateLauncher == null) {
-            logger.error("No valid launchers for {} and class {}", options, launcherClass)
+            logger.error("No valid launchers for {} and class {}", options, options.launcherName)
             printLaunchers()
             logger.error("Available launchers: {}", launchers.map { "${it.name} - [${it.javaClass.name}]" })
             invalidLaunchers.forEach { (validation, launcher) ->

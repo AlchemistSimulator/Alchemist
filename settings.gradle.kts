@@ -57,4 +57,3 @@ gitHooks {
     }
     createHooks(overwriteExisting = true)
 }
-include("alchemist-benchmark")

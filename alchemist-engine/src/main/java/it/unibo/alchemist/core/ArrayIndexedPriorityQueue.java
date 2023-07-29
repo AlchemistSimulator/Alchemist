@@ -30,6 +30,13 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
     private final List<Time> times = new ArrayList<>();
     private final List<Actionable<T>> tree = new ArrayList<>();
 
+    private static int getParent(final int i) {
+        if (i == 0) {
+            return -1;
+        }
+        return (i - 1) / 2;
+    }
+
     @Override
     public void addReaction(final Actionable<T> reaction) {
         tree.add(reaction);
@@ -164,13 +171,6 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
             times.set(index, reaction.getTau());
             updateEffectively(reaction, index);
         }
-    }
-
-    private static int getParent(final int i) {
-        if (i == 0) {
-            return -1;
-        }
-        return (i - 1) / 2;
     }
 
 }

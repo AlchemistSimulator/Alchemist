@@ -55,8 +55,10 @@ import static it.unibo.alchemist.core.Status.TERMINATED;
  * This class implements a simulation. It offers a wide number of static
  * factories to ease the creation process.
  *
- * @param <T> concentration type
- * @param <P> {@link Position} type
+ * @param <T>
+ *            concentration type
+ * @param <P>
+ *            {@link Position} type
  */
 public final class Engine<T, P extends Position<? extends P>> implements Simulation<T, P> {
 
@@ -84,7 +86,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
      *
-     * @param e the environment at the initial time
+     * @param e
+     *            the environment at the initial time
      */
     public Engine(final Environment<T, P> e) {
         this(e, Time.INFINITY);
@@ -96,8 +99,10 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
      *
-     * @param e        the environment at the initial time
-     * @param maxSteps the maximum number of steps to take
+     * @param e
+     *            the environment at the initial time
+     * @param maxSteps
+     *            the maximum number of steps to take
      */
     public Engine(final Environment<T, P> e, final long maxSteps) {
         this(e, maxSteps, Time.INFINITY);
@@ -109,12 +114,15 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
      *
-     * @param e        the environment at the initial time
-     * @param maxSteps the maximum number of steps to take
-     * @param t        the maximum time to reach
+     * @param e
+     *            the environment at the initial time
+     * @param maxSteps
+     *            the maximum number of steps to take
+     * @param t
+     *            the maximum time to reach
      */
     @SuppressFBWarnings(
-        value = {"EI_EXPOSE_REP", "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR"},
+        value = { "EI_EXPOSE_REP", "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" },
         justification = "The environment is stored intentionally, and this class is final"
     )
     public Engine(final Environment<T, P> e, final long maxSteps, final Time t) {
@@ -133,8 +141,10 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
      *
-     * @param e the environment at the initial time
-     * @param t the maximum time to reach
+     * @param e
+     *            the environment at the initial time
+     * @param t
+     *            the maximum time to reach
      */
     public Engine(final Environment<T, P> e, final Time t) {
         this(e, Long.MAX_VALUE, t);
@@ -492,8 +502,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     // CHECKSTYLE: FinalClassCheck OFF
     private class Update {
 
-        public void performChanges() {
-        }
+        public void performChanges() { }
 
         public Stream<? extends Actionable<T>> getReactionsToUpdate() {
             return Stream.empty();

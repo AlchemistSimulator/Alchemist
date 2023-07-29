@@ -22,7 +22,7 @@ object IgniteServerLauncher : AbstractLauncher() {
 
     override fun validate(currentOptions: AlchemistExecutionOptions): Validation = with(currentOptions) {
         when {
-            configuration != null -> incompatibleWith("direct execution of a simulation file")
+            loader != null -> incompatibleWith("direct execution of a simulation file")
             variables.isNotEmpty() -> incompatibleWith("simulation variables set")
             batch -> incompatibleWith("batch mode")
             distributed != null -> incompatibleWith("distributed execution")

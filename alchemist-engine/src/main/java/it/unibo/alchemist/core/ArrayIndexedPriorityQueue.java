@@ -23,18 +23,13 @@ import java.util.List;
  *
  * @param <T> concentration type
  */
-public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
+public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
 
     private final TObjectIntMap<Actionable<T>> indexes =
         new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
     private final List<Time> times = new ArrayList<>();
     private final List<Actionable<T>> tree = new ArrayList<>();
 
-    /**
-     * Should not be overridden.
-     *
-     * @param reaction the reaction to be added
-     */
     @Override
     public void addReaction(final Actionable<T> reaction) {
         tree.add(reaction);
@@ -72,11 +67,6 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
-    /**
-     * Could be overridden.
-     *
-     * @return next actionable to execute
-     */
     @Override
     public Actionable<T> getNext() {
         Actionable<T> result = null;
@@ -86,9 +76,6 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         return result;
     }
 
-    /**
-     * @param reaction the reaction to be removed
-     */
     @Override
     public void removeReaction(final Actionable<T> reaction) {
         final int index = indexes.get(reaction);
@@ -119,11 +106,6 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         times.set(i2, t);
     }
 
-    /**
-     * Could be overridden.
-     *
-     * @return string representation of the queue
-     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -175,9 +157,6 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
-    /**
-     * @param reaction the reaction which has changed
-     */
     @Override
     public void updateReaction(final Actionable<T> reaction) {
         final int index = indexes.get(reaction);
@@ -187,19 +166,11 @@ public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
-    /**
-     * Accessor for tree.
-     *
-     * @return tree
-     */
-    protected List<Actionable<T>> getTree() {
-        return tree;
-    }
-
     private static int getParent(final int i) {
         if (i == 0) {
             return -1;
         }
         return (i - 1) / 2;
     }
+
 }

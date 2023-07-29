@@ -22,7 +22,6 @@ internal object DocumentRoot : SyntaxElement {
             },
         )
     }
-
     object DependentVariable : SyntaxElement {
         val language by OwnName
         val formula by OwnName
@@ -35,7 +34,6 @@ internal object DocumentRoot : SyntaxElement {
             },
         )
     }
-
     object Deployment : SyntaxElement {
         val contents by OwnName
         val nodes by OwnName
@@ -63,7 +61,6 @@ internal object DocumentRoot : SyntaxElement {
                 },
             )
         }
-
         object Property : SyntaxElement {
             override val validDescriptors = setOf(
                 validDescriptor {
@@ -72,7 +69,6 @@ internal object DocumentRoot : SyntaxElement {
                 },
             )
         }
-
         object Contents : SyntaxElement {
             val molecule by OwnName
             val concentration by OwnName
@@ -83,7 +79,6 @@ internal object DocumentRoot : SyntaxElement {
                 },
             )
         }
-
         object Program : SyntaxElement {
             val program by OwnName
             val actions by OwnName
@@ -101,13 +96,11 @@ internal object DocumentRoot : SyntaxElement {
             )
         }
     }
-
     object Export : SyntaxElement {
         val data by OwnName
         override val validDescriptors = setOf(
             validDescriptor { mandatory(JavaType.type, JavaType.parameters, data) },
         )
-
         object Data : SyntaxElement {
             val time by OwnName
             val molecule by OwnName
@@ -127,10 +120,8 @@ internal object DocumentRoot : SyntaxElement {
             )
         }
     }
-
     object Environment : SyntaxElement {
         const val globalPrograms = "global-programs"
-
         object GlobalProgram : SyntaxElement {
             val actions by OwnName
             val conditions by OwnName
@@ -141,17 +132,14 @@ internal object DocumentRoot : SyntaxElement {
                     optional(JavaType.parameters, actions, conditions, timeDistribution)
                 },
             )
-
             override fun toString(): String = this::class.simpleName ?: this.javaClass.canonicalName
         }
-
         override val validDescriptors = setOf(
             validDescriptor {
                 optional(JavaType.parameters, globalPrograms)
             },
         )
     }
-
     object Layer : SyntaxElement {
         val molecule by OwnName
         override val validDescriptors = setOf(
@@ -161,7 +149,6 @@ internal object DocumentRoot : SyntaxElement {
             },
         )
     }
-
     object Seeds : SyntaxElement {
         val scenario by OwnName
         val simulation by OwnName
@@ -169,7 +156,6 @@ internal object DocumentRoot : SyntaxElement {
             validDescriptor { optional(simulation, scenario) },
         )
     }
-
     object Variable : SyntaxElement {
         val min by OwnName
         val max by OwnName
@@ -179,7 +165,6 @@ internal object DocumentRoot : SyntaxElement {
             validDescriptor { mandatory(min, max, default, step) },
         )
     }
-
     val deployments by OwnName
     val environment by OwnName
     val export by OwnName

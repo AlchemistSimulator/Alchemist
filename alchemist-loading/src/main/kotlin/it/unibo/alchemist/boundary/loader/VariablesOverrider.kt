@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.util
+package it.unibo.alchemist.boundary.loader
 
 import it.unibo.alchemist.boundary.modelproviders.YamlProvider
 

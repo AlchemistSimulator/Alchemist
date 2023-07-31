@@ -33,102 +33,62 @@ object LoadAlchemist {
      * Load from an [input] [String] with overrides.
      */
     @JvmStatic
-    fun from(input: String, model: AlchemistModelProvider, overrides: List<String>) =
+    @JvmOverloads
+    fun from(input: String, model: AlchemistModelProvider, overrides: List<String> = emptyList()) =
         SimulationModel.fromMap(
             applyOverrides(model.from(input), overrides),
         )
 
     /**
-     * Load from an [input] [String].
-     */
-    @JvmStatic
-    fun from(input: String, model: AlchemistModelProvider) =
-        from(input, model, emptyList())
-
-    /**
      * Load from a [reader] with overrides.
      */
     @JvmStatic
-    fun from(reader: Reader, model: AlchemistModelProvider, overrides: List<String>) =
+    @JvmOverloads
+    fun from(reader: Reader, model: AlchemistModelProvider, overrides: List<String> = emptyList()) =
         SimulationModel.fromMap(
             applyOverrides(model.from(reader), overrides),
         )
 
     /**
-     * Load from a [reader].
-     */
-    @JvmStatic
-    fun from(reader: Reader, model: AlchemistModelProvider) =
-        from(reader, model, emptyList())
-
-    /**
      * Load from an [InputStream] with overrides.
      */
     @JvmStatic
-    fun from(stream: InputStream, model: AlchemistModelProvider, overrides: List<String>) =
+    @JvmOverloads
+    fun from(stream: InputStream, model: AlchemistModelProvider, overrides: List<String> = emptyList()) =
         SimulationModel.fromMap(
             applyOverrides(model.from(stream), overrides),
         )
 
     /**
-     * Load from an [InputStream].
-     */
-    @JvmStatic
-    fun from(stream: InputStream, model: AlchemistModelProvider) =
-        from(stream, model, emptyList())
-
-    /**
      * Load from an [url] with overrides.
      */
     @JvmStatic
-    fun from(url: URL, model: AlchemistModelProvider, overrides: List<String>) =
+    @JvmOverloads
+    fun from(url: URL, model: AlchemistModelProvider, overrides: List<String> = emptyList()) =
         SimulationModel.fromMap(applyOverrides(model.from(url), overrides))
 
     /**
-     * Load from an [url].
-     */
-    @JvmStatic
-    fun from(url: URL, model: AlchemistModelProvider) =
-        from(url, model, emptyList())
-
-    /**
      * Load from an [url] with overrides.
      */
     @JvmStatic
-    fun from(url: URL, overrides: List<String>) =
+    @JvmOverloads
+    fun from(url: URL, overrides: List<String> = emptyList()) =
         from(url, modelForExtension(url.path.takeLastWhile { it != '.' }), overrides)
-
-    /**
-     * Load from an [url].
-     */
-    @JvmStatic
-    fun from(url: URL) =
-        from(url, emptyList())
 
     /**
      * Load from a [file] with overrides.
      */
     @JvmStatic
-    fun from(file: File, overrides: List<String>) =
+    @JvmOverloads
+    fun from(file: File, overrides: List<String> = emptyList()) =
         from(file.inputStream(), modelForExtension(file.extension), overrides)
-
-    /**
-     * Load from a [file].
-     */
-    @JvmStatic
-    fun from(file: File) = from(file.inputStream(), modelForExtension(file.extension))
 
     /**
      * Load from a [string] with overrides.
      */
     @JvmStatic
-    fun from(string: String, overrides: List<String>) = from(File(string), overrides)
-
-    /**
-     * Load from a [string].
-     */
-    @JvmStatic
-    fun from(string: String) = from(string, emptyList())
+    @JvmOverloads
+    fun from(string: String, overrides: List<String> = emptyList()) = from(File(string), overrides)
 
     @JvmStatic
     private fun modelForExtension(extension: String) = ClassPathScanner
@@ -139,7 +99,7 @@ object LoadAlchemist {
         .first()
 
     @JvmStatic
-    private fun applyOverrides(map: Map<String, *>, overrides: List<String>): Map<String, *> {
+    private fun applyOverrides(map: Map<String, *>, overrides: List<String> = emptyList()): Map<String, *> {
         return VariablesOverrider.applyOverrides(map, overrides)
     }
 }

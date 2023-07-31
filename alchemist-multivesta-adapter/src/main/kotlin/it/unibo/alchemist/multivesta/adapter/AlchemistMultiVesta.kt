@@ -80,7 +80,6 @@ object AlchemistMultiVesta {
             when (val value = converter(it)) {
                 null ->
                     exitBecause("Not a valid ${T::class.simpleName}: $it", ExitStatus.NUMBER_FORMAT_ERROR)
-
                 else -> value
             }
         }

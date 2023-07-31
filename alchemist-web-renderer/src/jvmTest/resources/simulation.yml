@@ -1,0 +1,17 @@
+incarnation: protelis
+
+launcher:
+  type: TestLauncher
+  parameters:
+    variables: [1, 2, a]
+    parallelism: 8
+    end-time: 50
+    is-web: true
+    is-batch: true
+    distributed-configuration-path: foo-bar
+    graphics-path: foo-bar
+    server-configuration-path: foo-bar
+    engine-mode: batchEpsilon
+    epsilon: 0.01
+    batch-size: 10
+    output-replay-strategy: replay

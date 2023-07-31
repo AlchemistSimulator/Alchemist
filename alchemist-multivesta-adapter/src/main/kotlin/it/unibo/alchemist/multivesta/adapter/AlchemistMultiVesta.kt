@@ -50,6 +50,7 @@ object AlchemistMultiVesta {
     private const val MULTIVESTA = "mv"
     private const val ALREADY_EXECUTED_SIMULATION = "aes"
     private const val HEADLESS = "hl"
+    private const val VARIABLES = "var"
     private const val BATCH = 'b'
     private const val FXUI = "fxui"
     private const val DISTRIBUTED = 'd'
@@ -257,6 +258,7 @@ object AlchemistMultiVesta {
             headless = hasOption(HEADLESS),
             parallelism = hasNumeric(PARALLELISM, String::toIntOrNull)
                 ?: AlchemistExecutionOptions.defaultParallelism,
+            variables = getOptionValues(VARIABLES)?.toList().orEmpty(),
         )
     }
 

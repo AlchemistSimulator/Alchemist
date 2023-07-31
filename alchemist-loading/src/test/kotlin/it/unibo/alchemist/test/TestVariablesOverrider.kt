@@ -27,42 +27,8 @@ class TestVariablesOverrider : StringSpec({
         val override2 = resource2.readText()
 
         val overrides = listOf(override1, override2)
-        val expected = mapOf(
-            "foo" to "bar",
-            "fizz" to "buzz",
-            "_test" to mapOf(
-                "str" to "test",
-                "int" to 10,
-                "dbl" to 10.1,
-                "strL" to listOf("test1", "test2"),
-                "intL" to listOf(9, 19),
-                "dblL" to listOf(9.1, 9.87),
-                "arr" to listOf(
-                    mapOf(
-                        "nst1-1" to "test",
-                        "nst1-2" to "test",
-                    ),
-                    mapOf(
-                        "nst2-1" to listOf(
-                            mapOf(
-                                "nst2-1-1" to "test",
-                            ),
-                        ),
-                    ),
-                ),
-                "map" to mapOf(
-                    "elem1" to 10,
-                    "elem2" to mapOf(
-                        "key1" to "testtest",
-                        "key2" to mapOf(
-                            "foo" to listOf(
-                                10,
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        )
+        val resourceExpected = ResourceLoader.getResource("override/testOverrideResult.yml")
+        val expected = YamlProvider.from(resourceExpected)
 
         val result = variables.let { VariablesOverrider.applyOverrides(it, overrides) }
 

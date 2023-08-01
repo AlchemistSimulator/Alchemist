@@ -1,3 +1,10 @@
+## [26.0.10](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.9...26.0.10) (2023-08-01)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.1.1 ([f31f749](https://github.com/AlchemistSimulator/Alchemist/commit/f31f7499cf75940d1c33cae6781270607ddf9436))
+
 ## [26.0.9](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.8...26.0.9) (2023-07-31)
 
 

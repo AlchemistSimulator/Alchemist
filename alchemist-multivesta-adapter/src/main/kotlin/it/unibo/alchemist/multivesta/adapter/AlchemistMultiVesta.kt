@@ -210,7 +210,6 @@ object AlchemistMultiVesta {
                     "Conflicting verbosity specification. Only one of ${logLevels.keys} can be specified.",
                     ExitStatus.MULTIPLE_VERBOSITY,
                 )
-
             verbosity.size == 1 -> setLogbackLoggingLevel(verbosity.first())
             else -> setLogbackLoggingLevel(Level.WARN)
         }

@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.boundary
 
+import it.unibo.alchemist.boundary.loader.Overrides.overrideAll
 import it.unibo.alchemist.boundary.loader.SimulationModel
-import it.unibo.alchemist.boundary.loader.VariablesOverrider
 import it.unibo.alchemist.util.ClassPathScanner
 import java.io.File
 import java.io.InputStream
@@ -100,6 +100,6 @@ object LoadAlchemist {
 
     @JvmStatic
     private fun applyOverrides(map: Map<String, *>, overrides: List<String> = emptyList()): Map<String, *> {
-        return VariablesOverrider.applyOverrides(map, overrides)
+        return map.overrideAll(overrides)
     }
 }

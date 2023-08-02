@@ -11,13 +11,13 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.boundary.loader.VariablesOverrider
+import it.unibo.alchemist.boundary.loader.Overrides.overrideAll
 import it.unibo.alchemist.boundary.modelproviders.YamlProvider
 import org.kaikikm.threadresloader.ResourceLoader
 
 class TestVariablesOverrider : StringSpec({
 
-    "test overrides" {
+    "overriding variables in a YAML file should be possible" {
         val resource = ResourceLoader.getResource("override/testOverride.yml")
         val variables = YamlProvider.from(resource)
 
@@ -30,7 +30,7 @@ class TestVariablesOverrider : StringSpec({
         val resourceExpected = ResourceLoader.getResource("override/testOverrideResult.yml")
         val expected = YamlProvider.from(resourceExpected)
 
-        val result = variables.let { VariablesOverrider.applyOverrides(it, overrides) }
+        val result = variables.overrideAll(overrides)
 
         result shouldBe expected
     }

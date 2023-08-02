@@ -14,7 +14,7 @@ import it.unibo.alchemist.boundary.modelproviders.YamlProvider
 /**
  * Use this to override a map of variables with a list of resolvable key-value pairs.
  */
-object VariablesOverrider {
+internal object Overrides {
 
     /**
      * Apply overrides to a map of variables.
@@ -22,14 +22,10 @@ object VariablesOverrider {
      * @parameter overrides list of valid String yaml strings containing overrides
      */
     @JvmStatic
-    fun applyOverrides(map: Map<String, *>, overrides: List<String>): Map<String, *> {
-        return if (overrides.isEmpty()) {
-            map
-        } else {
-            val newMap = map.toMutableMap()
-            overrides.forEach { applyOverride(it, newMap) }
-            newMap
-        }
+    fun Map<String, *>.overrideAll(overrides: List<String>): Map<String, *> = when {
+        overrides.isEmpty() -> this
+        else ->
+            this.toMutableMap().also { overrides.forEach { applyOverride(it, this.toMutableMap()) } }
     }
 
     @JvmStatic
@@ -46,9 +42,9 @@ object VariablesOverrider {
         when (value) {
             is MutableMap<*, *> -> {
                 if (newMap[key] is MutableMap<*, *>) {
-                    val castValue = value as MutableMap<String, Any?>
+                    val innerMap = value as MutableMap<String, Any?>
                     val pointer = newMap[key] as MutableMap<String, Any?>
-                    castValue.forEach { entry ->
+                    innerMap.forEach { entry ->
                         mergeInto(entry.key, entry.value, pointer)
                     }
                 } else {

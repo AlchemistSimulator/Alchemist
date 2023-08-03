@@ -14,7 +14,6 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
-import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.boundary.Extractor
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.Loader
@@ -80,6 +79,7 @@ object AlchemistMultiVesta {
             when (val value = converter(it)) {
                 null ->
                     exitBecause("Not a valid ${T::class.simpleName}: $it", ExitStatus.NUMBER_FORMAT_ERROR)
+
                 else -> value
             }
         }
@@ -123,11 +123,6 @@ object AlchemistMultiVesta {
         try {
             val cmd: CommandLine = parser.parse(opts, args)
             setVerbosity(cmd)
-            val options = cmd.toAlchemist()
-            if (options.isEmpty || options.help) {
-                printHelp()
-                exitWith(if (options.help) ExitStatus.OK else ExitStatus.INVALID_CLI)
-            }
             require(SupportedIncarnations.getAvailableIncarnations().isNotEmpty()) {
                 logger.error(
                     """
@@ -184,13 +179,13 @@ object AlchemistMultiVesta {
     fun launchSimulation(seed: Int): AlchemistSimulationAdapter {
         logger.info("Launching simulation with seed $seed")
         val cmd = parseOptions(File("alchemist_args.txt").readText().split(" ").toTypedArray())
-        val options = cmd.toAlchemist(seed)
         if (cmd.isSimulationAlreadyExecuted) {
             return ExperimentAlchemistSimulationAdapter(ExperimentAlchemistSimulationAdapter.GridType.REGULAR, seed)
             // to do: load the specified CSVAlchemistSimulationAdapter by using reflection
         }
-        val launcher = AlchemistMultiVestaSimulationLauncher()
-        launcher.launch(options)
+        val loader = createLoader(cmd.getOptionValue(YAML), seed)
+        val launcher = loader.launcher as AlchemistMultiVestaSimulationLauncher
+        launcher.launch(loader)
         return when (cmd.extractor) {
             null -> AlchemistSimulationAdapterWithExporter(launcher.simulation)
             else -> {
@@ -210,6 +205,7 @@ object AlchemistMultiVesta {
                     "Conflicting verbosity specification. Only one of ${logLevels.keys} can be specified.",
                     ExitStatus.MULTIPLE_VERBOSITY,
                 )
+
             verbosity.size == 1 -> setLogbackLoggingLevel(verbosity.first())
             else -> setLogbackLoggingLevel(Level.WARN)
         }
@@ -240,24 +236,6 @@ object AlchemistMultiVesta {
             else -> logger.error(reason, exception)
         }
         exitWith(status)
-    }
-
-    private fun CommandLine.toAlchemist(seed: Int? = null): AlchemistExecutionOptions {
-        return AlchemistExecutionOptions(
-            loader = createLoader(getOptionValue(YAML), seed),
-            server = getOptionValue(SERVER),
-            help = hasOption(HELP),
-            batch = hasOption(BATCH),
-            distributed = getOptionValue(DISTRIBUTED),
-            endTime = hasNumeric(TIME, String::toDoubleOrNull)
-                ?: AlchemistExecutionOptions.defaultEndTime,
-            graphics = getOptionValue(GRAPHICS),
-            fxui = hasOption(FXUI),
-            headless = hasOption(HEADLESS),
-            parallelism = hasNumeric(PARALLELISM, String::toIntOrNull)
-                ?: AlchemistExecutionOptions.defaultParallelism,
-            variables = getOptionValues(VARIABLES)?.toList().orEmpty(),
-        )
     }
 
     private fun createLoader(simulationFile: String, seed: Int?): Loader {

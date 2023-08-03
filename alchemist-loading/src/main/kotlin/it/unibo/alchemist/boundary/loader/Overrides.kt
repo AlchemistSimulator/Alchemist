@@ -25,7 +25,9 @@ internal object Overrides {
     fun Map<String, *>.overrideAll(overrides: List<String>): Map<String, *> = when {
         overrides.isEmpty() -> this
         else ->
-            this.toMutableMap().also { overrides.forEach { applyOverride(it, this.toMutableMap()) } }
+            this.toMutableMap().also { mutableMap ->
+                overrides.forEach { applyOverride(it, mutableMap) }
+            }
     }
 
     @JvmStatic

@@ -43,11 +43,19 @@ internal object Overrides {
     private fun mergeInto(key: String, value: Any?, newMap: MutableMap<String, Any?>) {
         when (value) {
             is MutableMap<*, *> -> {
-                if (newMap[key] is MutableMap<*, *>) {
-                    val innerMap = value as MutableMap<String, Any?>
-                    val pointer = newMap[key] as MutableMap<String, Any?>
-                    innerMap.forEach { entry ->
-                        mergeInto(entry.key, entry.value, pointer)
+                if (
+                    value.isNotEmpty() &&
+                    newMap[key] is MutableMap<*, *>
+                ) {
+                    val currentTreeNode = newMap[key] as MutableMap<*, *>
+                    value.forEach { entry ->
+                        if (
+                            entry.key is String &&
+                            currentTreeNode.isNotEmpty() &&
+                            currentTreeNode.keys.toList()[0] is String
+                        ) {
+                            mergeInto(entry.key as String, entry.value, currentTreeNode as MutableMap<String, Any?>)
+                        }
                     }
                 } else {
                     newMap[key] = value

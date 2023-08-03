@@ -15,7 +15,7 @@ import it.unibo.alchemist.boundary.loader.Overrides.overrideAll
 import it.unibo.alchemist.boundary.modelproviders.YamlProvider
 import org.kaikikm.threadresloader.ResourceLoader
 
-class TestVariablesOverrider : StringSpec({
+class TestOverrides : StringSpec({
 
     "overriding variables in a YAML file should be possible" {
         val resource = ResourceLoader.getResource("override/testOverride.yml")

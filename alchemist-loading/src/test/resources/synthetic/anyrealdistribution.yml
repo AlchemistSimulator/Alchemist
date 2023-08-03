@@ -1,5 +1,8 @@
 incarnation: sapere
 
+launcher:
+  type: HeadlessSimulationLauncher
+
 deployments:
   - type: Point
     parameters: [0, 0]

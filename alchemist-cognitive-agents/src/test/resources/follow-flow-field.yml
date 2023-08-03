@@ -1,5 +1,8 @@
 incarnation: protelis
 
+launcher:
+  type: HeadlessSimulationLauncher
+
 _target: &target
   target
 

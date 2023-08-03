@@ -8,6 +8,9 @@ export:
 
 incarnation: protelis
 
+launcher:
+  type: HeadlessSimulationLauncher
+
 seeds: 
  scenario: 0
  simulation: 0

@@ -14,6 +14,7 @@ import it.unibo.alchemist.boundary.DependentVariable
 import it.unibo.alchemist.boundary.ExportFilter
 import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Extractor
+import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
@@ -52,7 +53,6 @@ import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
-import java.lang.IllegalStateException
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.DependentVariable.formula as formulaKey
@@ -66,8 +66,7 @@ import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Layer as LayerSynt
  * UTILITY ALIASES
  */
 private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
-private typealias ReactionComponentFunction<T, P, R> =
-(RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, String?) -> R
+private typealias ReactionComponentFunction<T, P, R> = (RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, String?) -> R
 
 /*
  * UTILITY FUNCTIONS
@@ -134,6 +133,7 @@ private fun Any.validateVariableConsistencyRecursively(
         key?.validateVariableConsistencyRecursively(names, errors)
         value?.validateVariableConsistencyRecursively(names + key.toString(), errors)
     }
+
     is Iterable<*> -> forEach { it?.validateVariableConsistencyRecursively(names, errors) }
     is SimulationModel.PlaceHolderForVariables -> {
         val message = "Variable '$name' could not be evaluated as a constant, " +
@@ -144,6 +144,7 @@ private fun Any.validateVariableConsistencyRecursively(
             ?.joinToString(prefix = "Possibly related causes:\n", separator = "\n")
         error("$message\n${related.orEmpty()}")
     }
+
     else -> Unit
 }
 
@@ -212,6 +213,12 @@ internal object SimulationModel {
         variablesLeft?.validateVariableConsistencyRecursively(errors = collectedNonFatalFailures)
         val variables: Map<String, Variable<*>> = visitVariables(context, variablesLeft)
         logger.info("Variables: {}", variables)
+
+        val launcherDescriptor = injectedRoot[DocumentRoot.launcher]
+        val launcher: Launcher =
+            visitBuilding<Launcher>(context, launcherDescriptor)?.getOrThrow() ?: cantBuildWith<Launcher>(
+                launcherDescriptor,
+            )
         injectedRoot = inject(context, injectedRoot)
         val remoteDependencies =
             visitRecursively(
@@ -224,6 +231,7 @@ internal object SimulationModel {
             override fun getVariables() = variables
             override fun getConstants() = context.constants
             override fun getRemoteDependencies() = remoteDependencies
+            override fun getLauncher(): Launcher = launcher
         }
     }
 
@@ -260,9 +268,11 @@ internal object SimulationModel {
                     null -> root.entries.associate {
                         replaceKnownRecursively(context, it.key) to replaceKnownRecursively(context, it.value)
                     }
+
                     else -> lookup
                 }
             }
+
             is Iterable<*> -> root.map { replaceKnownRecursively(context, it) }
             else -> root.also { logger.debug("Could not replace nor iterate over {}", root) }
         }
@@ -299,6 +309,7 @@ internal object SimulationModel {
                     ?.onSuccess { context.registerConstant(name, root, it) }
                     ?.map { Constant(it) }
             }
+
             else -> null
         }
         constant?.onSuccess {
@@ -391,6 +402,7 @@ internal object SimulationModel {
                     formula,
                     root[timeoutKey],
                 )
+
                 is Number -> Result.success(Constant(formula))
                 is List<*> -> Result.success(Constant(formula))
                 is Map<*, *> -> throw IllegalArgumentException(
@@ -404,10 +416,12 @@ internal object SimulationModel {
                     See: https://bit.ly/groovy-map-literals
                     """.trimIndent(),
                 )
+
                 else -> throw IllegalArgumentException(
                     "Unexpected type ${formula::class.simpleName} for variable $name",
                 )
             }
+
             else -> visitJVMConstructor(context, root)
                 ?.takeIf { TypeSearch.typeNamed<DependentVariable<Any>>(it.typeName).subOptimalMatches.isNotEmpty() }
                 ?.buildAny<DependentVariable<Any>>(context.factory)
@@ -442,6 +456,7 @@ internal object SimulationModel {
         when {
             root is String && root.equals(DocumentRoot.Export.Data.time, ignoreCase = true) ->
                 Result.success(Time())
+
             root is Map<*, *> && DocumentRoot.Export.Data.validateDescriptor(root) -> {
                 val molecule = root[DocumentRoot.Export.Data.molecule]?.toString()
                 if (molecule == null) {
@@ -464,6 +479,7 @@ internal object SimulationModel {
                             )
                             digits.toInt()
                         }
+
                         else ->
                             runCatching { digits.toString().toInt() }.getOrElse { exception ->
                                 throw IllegalArgumentException(
@@ -485,6 +501,7 @@ internal object SimulationModel {
                     Result.success(MoleculeReader(molecule, property, incarnation, filter, aggregators, precision))
                 }
             }
+
             else -> null
         } as Result<Extractor<E>>?
 
@@ -503,6 +520,7 @@ internal object SimulationModel {
                 exporter.bindDataExtractors(dataExtractors)
                 Result.success(exporter)
             }
+
             else -> null
         }
 
@@ -548,7 +566,7 @@ internal object SimulationModel {
     private fun visitRandomGenerator(context: Context, root: Any): RandomGenerator =
         when (root) {
             is Map<*, *> -> visitBuilding<RandomGenerator>(context, root)
-            else -> visitBuilding<Long>(context, root) ?.map { makeDefaultRandomGenerator(it) }
+            else -> visitBuilding<Long>(context, root)?.map { makeDefaultRandomGenerator(it) }
         }?.onFailure { logger.error("Unable to build a random generator: {}", it.message) }
             ?.getOrThrow()
             ?: cantBuildWith<RandomGenerator>(root)
@@ -578,6 +596,7 @@ internal object SimulationModel {
             fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = runCatching {
                 makeWith(simulationRNG, environment, node, timeDistribution, actionable, parameter?.toString())
             }
+
             val filters = visitFilter<P>(context, program)
             val conditions = visitRecursively<Condition<T>>(
                 context,
@@ -639,6 +658,7 @@ internal object SimulationModel {
                         DocumentRoot.Seeds.simulation,
                     )
                 }
+
             is Map<*, *> -> {
                 val stringKeys = root.keys.filterIsInstance<String>()
                 require(stringKeys.size == root.keys.size) {
@@ -660,6 +680,7 @@ internal object SimulationModel {
                 visitRandomGenerator(context, valueOf(DocumentRoot.Seeds.scenario)) to
                     visitRandomGenerator(context, valueOf(DocumentRoot.Seeds.simulation))
             }
+
             else -> throw IllegalArgumentException(
                 "Not a valid ${DocumentRoot.seeds} section: $root. Expected " +
                     DocumentRoot.Seeds.validKeys.map { it to "<a number>" },
@@ -676,6 +697,7 @@ internal object SimulationModel {
     ) = when (root) {
         is Map<*, *> -> visitBuilding<TimeDistribution<T>>(context, root)?.getOrThrow()
             ?: cantBuildWith<TimeDistribution<T>>(root)
+
         else -> incarnation.createTimeDistribution(simulationRNG, environment, node, root?.toString())
     }
 
@@ -692,6 +714,7 @@ internal object SimulationModel {
                 val variable = when (JavaType.type) {
                     in element -> visitBuilding<Variable<*>>(context, element) // arbitrary type
                         ?.onFailure { logger.debug("Invalid variable: {} from {}: {}", name, element, it.message) }
+
                     else -> runCatching { // Must be a linear variable, or else fail
                         LinearVariable(
                             element[DocumentRoot.Variable.default].toDouble(),
@@ -765,6 +788,7 @@ internal object SimulationModel {
         return when (root) {
             is Iterable<*> ->
                 root.flatMap { visitRecursively(evidence, context, it, syntax, error, visitSingle) }
+
             is Map<*, *> -> {
                 logger.debug("Trying to build a {} from {} (syntax: {})", evidence.simpleName, root, syntax)
                 fun recurse(previousResult: Result<T>?): List<T> = visitRecursively(
@@ -779,10 +803,12 @@ internal object SimulationModel {
                     syntax == null -> tryVisit().let { result ->
                         result?.map { listOf(it) }?.getOrNull() ?: recurse(result)
                     }
+
                     syntax.validateDescriptor(root) -> forceVisit()
                     else -> recurse(null)
                 }
             }
+
             else -> forceVisit()
         }
     }
@@ -809,6 +835,7 @@ internal object SimulationModel {
             is Iterable<*> -> root.flatMap {
                 visitNamedRecursively(evidence, context, it, syntax, forceSuccess, visitSingle).toList()
             }.toMap()
+
             else -> emptyMap()
         }
     }
@@ -831,6 +858,7 @@ internal object SimulationModel {
             logger.debug("Visiting: {} searching for {}", root, evidence.simpleName)
             fun recurse(): List<Pair<String, T>> =
                 visitNamedRecursively(evidence, context, value, syntax, forceSuccess, visitSingle).toList()
+
             fun result() = visitSingle(key.toString(), value)?.map { listOf(key.toString() to it) }
             when (value) {
                 is Map<*, *> -> when {
@@ -838,8 +866,10 @@ internal object SimulationModel {
                         ?.getOrThrow()
                         .whenNull(and = forceSuccess) { cantBuildWith(evidence, value) }
                         .orEmpty()
+
                     else -> recurse()
                 }
+
                 is Iterable<*> -> result()?.getOrNull() ?: recurse()
                 else -> result()?.getOrThrow().orEmpty()
             }

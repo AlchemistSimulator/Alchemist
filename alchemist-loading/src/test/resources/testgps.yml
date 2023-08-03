@@ -4,6 +4,9 @@ environment:
 
 incarnation: sapere
 
+launcher:
+  type: HeadlessSimulationLauncher
+
 _pools:
   - pool: &move
     - time-distribution: 0.1

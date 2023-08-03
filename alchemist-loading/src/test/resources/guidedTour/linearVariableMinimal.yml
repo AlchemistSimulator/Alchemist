@@ -1,5 +1,8 @@
 incarnation: sapere
 
+launcher:
+  type: HeadlessSimulationLauncher
+
 variables:
   myvar: &myvar
     type: LinearVariable

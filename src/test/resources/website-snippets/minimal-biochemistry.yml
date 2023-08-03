@@ -1,1 +1,5 @@
 incarnation: biochemistry
+
+launcher:
+  type: HeadlessSimulationLauncher
+

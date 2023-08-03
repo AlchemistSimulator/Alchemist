@@ -10,7 +10,6 @@
 package it.unibo.alchemist.boundary.launch
 
 import io.ktor.server.netty.EngineMain
-import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.webui.server.monitor.EnvironmentMonitorFactory.makeEnvironmentMonitor
 import it.unibo.alchemist.boundary.webui.server.state.ServerStore.store
@@ -24,27 +23,7 @@ import kotlinx.coroutines.runBlocking
 /**
  * A launcher that starts a REST server to allow the visualization of the simulation on a Browser.
  */
-object WebRendererLauncher : SimulationLauncher() {
-    override val name: String = "Web Renderer Launcher"
-
-    /**
-     * Check if the [it.unibo.alchemist.AlchemistExecutionOptions] is valid for this launcher.
-     * @param currentOptions the options to check.
-     * @return true if the options are valid, false otherwise.
-     */
-    override fun additionalValidation(currentOptions: AlchemistExecutionOptions): Validation =
-        with(currentOptions) {
-            when {
-                headless -> incompatibleWith("headless mode")
-                batch -> incompatibleWith("batch mode")
-                variables.isNotEmpty() -> incompatibleWith("variable exploration mode")
-                distributed != null -> incompatibleWith("distributed execution")
-                server != null -> incompatibleWith("Alchemist grid computing server mode")
-                graphics != null || fxui -> incompatibleWith("graphics mode")
-                web -> Validation.OK(Priority.High("Web Rendererer requested, priority shifts up"))
-                else -> Validation.OK()
-            }
-        }
+class WebRendererLauncher : SimulationLauncher() {
 
     /**
      *  Prepares the simulation to be run, execute it in a coroutine and start the REST server by
@@ -52,8 +31,8 @@ object WebRendererLauncher : SimulationLauncher() {
      *  @param loader the loader of the simulation.
      *  @param parameters the parameters of the simulation.
      */
-    override fun launch(loader: Loader, parameters: AlchemistExecutionOptions) {
-        val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, parameters, emptyMap<String, Any>())
+    override fun launch(loader: Loader) {
+        val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, emptyMap<String, Any>())
         store.dispatch(SetSimulation(simulation))
         simulation.addOutputMonitor(makeEnvironmentMonitor(simulation.environment))
         startServer(simulation)

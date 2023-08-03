@@ -1,5 +1,8 @@
 incarnation: protelis
 
+launcher:
+  type: HeadlessSimulationLauncher
+
 environment:
   type: EnvironmentWithDynamics
   parameters: [images/square.png, 0.1, -60.0, -60.0]

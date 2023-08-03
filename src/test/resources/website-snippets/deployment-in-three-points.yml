@@ -1,4 +1,6 @@
 incarnation: sapere # The incarnation is always mandatory
+launcher:
+  type: HeadlessSimulationLauncher
 network-model:
   type: ConnectWithinDistance # Loads a class with this name implementing LinkingRule
   parameters: [2] # Connection radius (parameter of a ConnectWithinDistance's constructor)

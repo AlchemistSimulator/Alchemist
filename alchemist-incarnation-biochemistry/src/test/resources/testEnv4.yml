@@ -1,5 +1,8 @@
 incarnation: biochemistry
 
+launcher:
+  type: HeadlessSimulationLauncher
+
 network-model:
   type: ConnectWithinDistance
   parameters: [2]

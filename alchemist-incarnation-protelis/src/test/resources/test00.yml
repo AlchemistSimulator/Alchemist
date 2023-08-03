@@ -7,6 +7,9 @@ variables:
     
 incarnation: protelis
 
+launcher:
+  type: HeadlessSimulationLauncher
+
 seeds:
   scenario: 1
   simulation: *testVar

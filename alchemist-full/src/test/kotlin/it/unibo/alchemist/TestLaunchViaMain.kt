@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets.UTF_8
  */
 class TestLaunchViaMain : StringSpec({
     "A simple simulation should be executable in headless mode" {
-        Alchemist.main(arrayOf("simulation.yml"))
+        Alchemist.main(arrayOf("run", "simulation.yml"))
     }
 
     "The default logging level should be warn" {

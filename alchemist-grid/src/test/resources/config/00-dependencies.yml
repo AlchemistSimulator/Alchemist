@@ -1,4 +1,10 @@
 incarnation: sapere
+
+launcher:
+  type: DistributedExecution
+  parameters:
+    distributed-config-path: config/dependencies_test.txt
+
 remote-dependencies:
   - config/dependencies_test.txt
   - config/dependencies_test1.txt

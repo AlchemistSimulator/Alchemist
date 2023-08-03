@@ -1,4 +1,8 @@
 incarnation: sapere
+
+launcher:
+  type: HeadlessSimulationLauncher
+
 network-model: { type: ConnectWithinDistance, parameters: [0.5] }
 deployments:
   type: GraphStreamDeployment

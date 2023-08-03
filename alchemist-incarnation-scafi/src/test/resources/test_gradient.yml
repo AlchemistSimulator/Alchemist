@@ -4,6 +4,9 @@ network-model:
   
 incarnation: scafi
 
+launcher:
+  type: HeadlessSimulationLauncher
+
 _pool: &program
   - time-distribution: 2
     type: Event

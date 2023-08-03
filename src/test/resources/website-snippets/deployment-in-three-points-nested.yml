@@ -1,4 +1,6 @@
 incarnation: protelis
+launcher:
+  type: HeadlessSimulationLauncher
 deployments:
   the_bottom_point:
     type: Point

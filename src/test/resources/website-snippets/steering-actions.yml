@@ -1,5 +1,9 @@
 incarnation: protelis
 
+launcher:
+  type: HeadlessSimulationLauncher
+
+
 environment:
   type: ImageEnvironment
   parameters: [planimetry.png]

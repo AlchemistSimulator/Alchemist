@@ -1,4 +1,8 @@
 incarnation: sapere
+
+launcher:
+  type: HeadlessSimulationLauncher
+
 environment: { type: OSMEnvironment }
 network-model: { type: ConnectWithinDistance, parameters: [1000] }
 _venice_lagoon: &lagoon

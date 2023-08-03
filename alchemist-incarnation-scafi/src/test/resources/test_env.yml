@@ -4,6 +4,9 @@ network-model:
   
 incarnation: scafi
 
+launcher:
+  type: HeadlessSimulationLauncher
+
 _pool: &program
   - time-distribution: 0.5 # DiracComb: the parameter (rate) tells how many events should happen per time out
     type: Event

@@ -15,12 +15,8 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.Loader
-import it.unibo.alchemist.boundary.launch.Launcher
-import it.unibo.alchemist.boundary.launch.Validation
-import it.unibo.alchemist.config.SimulationConfig
 import it.unibo.alchemist.config.Verbosity
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.util.ClassPathScanner
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
@@ -32,37 +28,11 @@ import org.slf4j.LoggerFactory
 import org.slf4j.helpers.NOPLoggerFactory
 import java.io.File
 
-private typealias ValidLauncher = Pair<Validation.OK, Launcher>
-
 /**
  * Starts Alchemist.
  */
 object Alchemist {
     private val logger = LoggerFactory.getLogger(Alchemist::class.java)
-    private val launchers: List<Launcher> = loadLaunchers()
-
-    private fun loadLaunchers(): List<Launcher> {
-        return ClassPathScanner
-            .subTypesOf(Launcher::class.java, "it.unibo.alchemist")
-            .map { clazz ->
-                val zeroAryConstructors = clazz.constructors
-                    .filter { it.parameterCount == 0 && it.canAccess(null) }
-                if (zeroAryConstructors.size == 1) {
-                    zeroAryConstructors.first().newInstance() as Launcher
-                } else {
-                    val instances = clazz.fields.filter {
-                        it.name == "INSTANCE" &&
-                            it.canAccess(null) &&
-                            Launcher::class.java.isAssignableFrom(it.type)
-                    }
-                    if (instances.size == 1) {
-                        instances.first().get(null) as Launcher
-                    } else {
-                        error("Cannot instance or access an instance of $clazz")
-                    }
-                }
-            }
-    }
 
     /**
      * Set this to false for testing purposes.
@@ -135,24 +105,14 @@ object Alchemist {
         validateOutputModule()
         validateIncarnations()
         setVerbosity(verbosity)
-        val options = parseOptions(simulationFile, overrides)
-        val selectedLauncher = selectLauncher(options)
-        selectedLauncher.launch(options)
+        val loader = createLoader(simulationFile, overrides)
+        loader.launcher.launch(loader)
     }
 
     private fun validateOutputModule() {
         if (LoggerFactory.getILoggerFactory().javaClass == NOPLoggerFactory::class.java) {
             println("Alchemist could not load the output module (broken SLF4J depedencies?)") // NOPMD
             exitWith(ExitStatus.NO_LOGGER)
-        }
-    }
-
-    private fun parseOptions(simulationFile: String?, overrides: List<String>): AlchemistExecutionOptions {
-        return if (simulationFile != null) {
-            val loader = createLoader(simulationFile, overrides)
-            SimulationConfig.fromVariables(loader.variables).toOptions(loader)
-        } else {
-            error("Classpath resource or file was null")
         }
     }
 
@@ -164,28 +124,6 @@ object Alchemist {
             url,
             overrides,
         )
-    }
-
-    private fun selectLauncher(options: AlchemistExecutionOptions): Launcher {
-        val (validLaunchers, invalidLaunchers) = options.classifyLaunchers()
-        val sortedLaunchers: List<ValidLauncher> = validLaunchers
-            .map { (validation, launcher) ->
-                validation as Validation.OK to launcher
-            }
-            .sortedByDescending { it.first.priority }
-        val candidateLauncher = sortedLaunchers.find { it.second.javaClass.simpleName == options.launcherName }
-        if (candidateLauncher == null) {
-            logger.error("No valid launchers for {} and class {}", options, options.launcherName)
-            printLaunchers()
-            logger.error("Available launchers: {}", launchers.map { "${it.name} - [${it.javaClass.name}]" })
-            invalidLaunchers.forEach { (validation, launcher) ->
-                if (validation is Validation.Invalid) {
-                    logger.error("{}: {}", launcher::class.java.simpleName, validation.reason)
-                }
-            }
-            exitWith(ExitStatus.INVALID_CLI)
-        }
-        return candidateLauncher.second
     }
 
     private fun validateIncarnations() {
@@ -201,14 +139,6 @@ object Alchemist {
             )
             "There are no incarnations in the classpath, no simulation can get executed"
         }
-    }
-
-    private fun AlchemistExecutionOptions.classifyLaunchers() = launchers
-        .map { it.validate(this) to it }
-        .partition { (validation, _) -> validation is Validation.OK }
-
-    private fun printLaunchers() {
-        logger.warn("Available launchers: {}", launchers.map { "${it.name} - [${it.javaClass.name}]" })
     }
 
     /**

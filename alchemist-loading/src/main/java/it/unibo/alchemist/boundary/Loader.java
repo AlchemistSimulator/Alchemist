@@ -68,8 +68,14 @@ public interface Loader extends Serializable {
     Map<String, Object> getConstants();
 
     /**
-     * 
+     *
      * @return dependencies files
      */
     List<String> getRemoteDependencies();
+
+    /**
+     *
+     * @return launcher to be used in the simulation
+     */
+    Launcher getLauncher();
 }

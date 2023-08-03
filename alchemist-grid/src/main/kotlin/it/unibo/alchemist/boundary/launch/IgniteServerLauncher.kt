@@ -9,8 +9,9 @@
 package it.unibo.alchemist.boundary.launch
 
 import it.unibo.alchemist.AlchemistExecutionOptions
-import it.unibo.alchemist.boundary.launch.Validation.Invalid
-import it.unibo.alchemist.boundary.launch.Validation.OK
+import it.unibo.alchemist.boundary.Validation
+import it.unibo.alchemist.boundary.Validation.Invalid
+import it.unibo.alchemist.boundary.Validation.OK
 import org.apache.ignite.startup.cmdline.CommandLineStartup
 
 /**

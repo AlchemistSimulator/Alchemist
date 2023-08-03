@@ -1,5 +1,8 @@
 incarnation: scafi
 
+launcher:
+  type: HeadlessSimulationLauncher
+
 deployments:
   - type: Point
     parameters: [4,4]

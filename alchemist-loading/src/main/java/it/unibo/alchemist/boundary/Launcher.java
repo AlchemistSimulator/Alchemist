@@ -10,12 +10,13 @@
 package it.unibo.alchemist.boundary;
 
 /**
- * An entity with a [name] that can take responsibility for performing an Alchemist run
+ * An entity with a [name] that can take responsibility for performing an Alchemist run.
  */
 public interface Launcher {
 
     /**
-     * Launches the simulation
+     * Launches the simulation.
+     * @param loader loader
      */
     void launch(Loader loader);
 

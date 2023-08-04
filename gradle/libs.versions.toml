@@ -7,11 +7,11 @@ ignite = "2.15.0"
 junit = "5.10.0"
 konf = "1.1.2"
 kotest = "5.6.2"
-ktor = "2.3.2"
+ktor = "2.3.3"
 dokka = "1.8.10"
 kotlin = "1.8.22"
 mockito = "5.4.0"
-protelis = "17.0.4"
+protelis = "17.1.1"
 react = "18.2.0-pre.599"
 scafi = "1.1.7"
 scala = "2.13.11"
@@ -35,14 +35,14 @@ conrec = "org.danilopianini:conrec:0.1.0"
 controlsfx = "org.controlsfx:controlsfx:11.1.2"
 dyn4j = "org.dyn4j:dyn4j:5.0.1"
 dsiutils = "it.unimi.dsi:dsiutils:2.7.3"
-embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.7.1"
+embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.7.2"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
 groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.18"
 gson = "com.google.code.gson:gson:2.10.1"
 gson-extras = "org.danilopianini:gson-extras:1.2.0"
-guava = "com.google.guava:guava:32.1.1-jre"
+guava = "com.google.guava:guava:32.1.2-jre"
 ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "ignite" }
 ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "ignite" }
 ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "ignite" }
@@ -53,7 +53,7 @@ jgit = "org.eclipse.jgit:org.eclipse.jgit:6.6.0.202305301015-r"
 jgrapht-core = "org.jgrapht:jgrapht-core:1.5.2"
 jiconfont-javafx = "com.github.jiconfont:jiconfont-javafx:1.0.0"
 jiconfont-materialDesignIcons = "com.github.jiconfont:jiconfont-google_material_design_icons:2.2.0.2"
-jirf = "org.danilopianini:jirf:0.4.13"
+jirf = "org.danilopianini:jirf:0.4.14"
 jool = "org.jooq:jool:0.9.15"
 jpx = "io.jenetics:jpx:2.3.0"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
@@ -143,7 +143,7 @@ testing-runtimeOnly = [ "junit-engine" ]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:1.1.10"
 hugo = "io.github.fstaudt.hugo:0.6.0"
-java-qa = "org.danilopianini.gradle-java-qa:1.12.0"
+java-qa = "org.danilopianini.gradle-java-qa:1.14.0"
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

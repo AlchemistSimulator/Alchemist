@@ -19,7 +19,7 @@ import javax.swing.JFrame
  * Launches a Swing GUI meant to be used for a single simulation run.
  */
 class SingleRunSwingUI(
-    val graphics: String? = null,
+    private val graphics: String? = null,
 ) : SimulationLauncher() {
 
     override fun launch(loader: Loader) {

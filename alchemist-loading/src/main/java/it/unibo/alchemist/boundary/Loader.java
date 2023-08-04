@@ -75,7 +75,7 @@ public interface Loader extends Serializable {
 
     /**
      *
-     * @return launcher to be used in the simulation
+     *Returns launcher to be used in the simulation.
      */
     Launcher getLauncher();
 }

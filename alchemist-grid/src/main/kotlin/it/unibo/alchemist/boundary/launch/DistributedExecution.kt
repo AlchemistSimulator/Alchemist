@@ -21,7 +21,7 @@ import java.nio.file.Paths
  */
 class DistributedExecution(
     private val variables: List<String> = emptyList(),
-    private val distributeConfigPath: String?,
+    private val distributedConfigPath: String?,
 ) : SimulationLauncher() {
 
     override fun launch(loader: Loader) {
@@ -35,7 +35,7 @@ class DistributedExecution(
             simConfigs,
         )
         val cluster =
-            ClusterImpl(Paths.get(requireNotNull(distributeConfigPath) { "No remote configuration file" }))
+            ClusterImpl(Paths.get(requireNotNull(distributedConfigPath) { "No remote configuration file" }))
         cluster.getWorkersSet(simulationSet.computeComplexity()).distributeSimulations(simulationSet)
     }
 }

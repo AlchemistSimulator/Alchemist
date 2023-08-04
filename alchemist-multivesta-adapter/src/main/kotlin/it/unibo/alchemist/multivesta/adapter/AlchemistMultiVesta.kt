@@ -48,16 +48,6 @@ object AlchemistMultiVesta {
 
     private const val MULTIVESTA = "mv"
     private const val ALREADY_EXECUTED_SIMULATION = "aes"
-    private const val HEADLESS = "hl"
-    private const val VARIABLES = "var"
-    private const val BATCH = 'b'
-    private const val FXUI = "fxui"
-    private const val DISTRIBUTED = 'd'
-    private const val GRAPHICS = 'g'
-    private const val HELP = 'h'
-    private const val SERVER = 's'
-    private const val PARALLELISM = 'p'
-    private const val TIME = 't'
     private const val YAML = 'y'
     private const val EXTRACTOR = 'e'
     private val logger = LoggerFactory.getLogger(AlchemistMultiVesta::class.java)
@@ -73,16 +63,6 @@ object AlchemistMultiVesta {
      * Set this to false for testing purposes.
      */
     private const val isNormalExecution = true
-
-    private inline fun <reified T : Number> CommandLine.hasNumeric(name: Char, converter: String.() -> T?): T? =
-        getOptionValue(name)?.let {
-            when (val value = converter(it)) {
-                null ->
-                    exitBecause("Not a valid ${T::class.simpleName}: $it", ExitStatus.NUMBER_FORMAT_ERROR)
-
-                else -> value
-            }
-        }
 
     private fun appendSeedsToYmlFile(seed: Int, configurationPath: String): String {
         try {

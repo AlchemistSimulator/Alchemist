@@ -45,6 +45,9 @@ class SingleRunFXUI(
     }
 
     companion object {
+        /**
+         * Default visual effects.
+         */
         const val defaultEffects = "it/unibo/alchemist/gui/effects/json/DefaultEffects.json"
     }
 }

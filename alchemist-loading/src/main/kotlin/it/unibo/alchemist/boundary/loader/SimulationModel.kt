@@ -66,7 +66,8 @@ import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Layer as LayerSynt
  * UTILITY ALIASES
  */
 private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
-private typealias ReactionComponentFunction<T, P, R> = (RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, String?) -> R
+private typealias ReactionComponentFunction<T, P, R> =
+(RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, String?) -> R
 
 /*
  * UTILITY FUNCTIONS

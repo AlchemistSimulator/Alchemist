@@ -36,7 +36,7 @@ internal abstract class LoadingSystem(
     private val originalRoot: Map<String, *>,
 ) : Loader {
 
-    override fun <T : Any?, P : Position<P>> getWith(values: MutableMap<String, *>) =
+    override fun <T : Any?, P : Position<P>> getWith(values: Map<String, *>) =
         SingleUseLoader(originalContext, originalRoot).environmentWith<T, P>(values)
 
     private inner class SingleUseLoader(originalContext: Context, private val originalRoot: Map<String, *>) {

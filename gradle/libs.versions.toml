@@ -35,7 +35,7 @@ conrec = "org.danilopianini:conrec:0.1.0"
 controlsfx = "org.controlsfx:controlsfx:11.1.2"
 dyn4j = "org.dyn4j:dyn4j:5.0.1"
 dsiutils = "it.unimi.dsi:dsiutils:2.7.3"
-embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.7.2"
+embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.8.0"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }

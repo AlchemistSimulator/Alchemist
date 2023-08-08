@@ -281,7 +281,7 @@ allprojects {
                 developer {
                     name.set("Danilo Pianini")
                     email.set("danilo.pianini@unibo.it")
-                    url.set("http://www.danilopianini.org")
+                    url.set("https://www.danilopianini.org")
                     roles.set(mutableSetOf("architect", "developer"))
                 }
             }

@@ -7,7 +7,7 @@ summary = "Reference API for the SAPERE Incarnation."
 
 ## LSAs
 
-LSAs, similarly to Prolog terms, support [unification and substitution](http://archive.is/oLSpq):
+LSAs, similarly to Prolog terms, support [unification and substitution](https://archive.is/oLSpq):
 it is possible to create tuple templates,
 match them against sets of ground tuples,
 and obtain a matching ground tuple as result.

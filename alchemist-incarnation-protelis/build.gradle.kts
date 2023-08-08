@@ -39,14 +39,14 @@ publishing.publications {
                 developer {
                     name.set("Danilo Pianini")
                     email.set("danilo.pianini@unibo.it")
-                    url.set("http://www.danilopianini.org")
+                    url.set("https://www.danilopianini.org")
                 }
             }
             contributors {
                 contributor {
                     name.set("Jacob Beal")
                     email.set("jakebeal@bbn.com")
-                    url.set("http://web.mit.edu/jakebeal/www/")
+                    url.set("https://jakebeal.github.io/")
                 }
             }
         }

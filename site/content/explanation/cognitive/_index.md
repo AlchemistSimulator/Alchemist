@@ -74,7 +74,7 @@ Simulating Crowd Evacuation with Socio-Cultural, Cognitive, and Emotional Elemen
 Transactions on Computational Collective Intelligence XXVII. 2017.](https://doi.org/10.1007/978-3-319-70647-4_11)
 
 [Craig W. Reynolds\
-Steering Behaviors for Autonomous Characters. 1999.](http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.16.8035)
+Steering Behaviors for Autonomous Characters. 1999.](https://archive.is/PwYQz)
 
 [Erik Andresen, Mohcine Chraibi & Armin Seyfried\
 A representation of partial spatial knowledge: a cognitive map approach for evacuation simulations](https://www.tandfonline.com/doi/full/10.1080/23249935.2018.1432717)

@@ -21,7 +21,7 @@ import javax.script.SimpleBindings
 import kotlin.reflect.jvm.jvmName
 
 /**
- * This variable loads any [JSR-233](http://archive.fo/PGdk8) language available in the classpath.
+ * This variable loads any [JSR-233](http://archive.is/PGdk8) language available in the classpath.
  *
  * @constructor builds a new JSR223Variable given a language name and a script.
  *

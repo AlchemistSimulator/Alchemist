@@ -36,7 +36,7 @@ These are derived from the work of [van der Wal et al](https://doi.org/10.1007/9
 ## Types of behaviors
 
 There are two macro-categories of behaviours:
-- those inspired to [Reynold's steering behaviors](https://archive.ph/fkUpJ),
+- those inspired to [Reynold's steering behaviors](https://archive.is/fkUpJ),
   which operate in a greedy fashion, i.e. performing only local choices;
 - those inspired to the work of [Andresen et al](https://www.tandfonline.com/doi/full/10.1080/23249935.2018.1432717),
   which exploit the spatial information available to orienting pedestrians

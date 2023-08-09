@@ -74,7 +74,10 @@ class TestEuclidean2DShapeFactory : FreeSpec({
                     .transformed { origin(7.0, 0.0) }
                     .transformed { rotate(angle) }
                     .transformed { repeat(3) { rotate(angle) } }
-                    .transformed { origin(initialOrigin); rotate(angle) }
+                    .transformed {
+                        origin(initialOrigin)
+                        rotate(angle)
+                    }
                 rotated.centroid shouldBe shape.centroid
             }
         }

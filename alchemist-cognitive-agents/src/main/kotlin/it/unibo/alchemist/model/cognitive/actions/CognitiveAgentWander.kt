@@ -57,9 +57,8 @@ open class CognitiveAgentWander<T>(
 ) {
 
     private val heading by lazy {
-        environment.setHeading(node, randomGenerator.random2DVersor(environment)).let {
-            { environment.getHeading(node) }
-        }
+        environment.setHeading(node, randomGenerator.random2DVersor(environment));
+        { environment.getHeading(node) }
     }
 
     override fun nextPosition(): Euclidean2DPosition = heading()

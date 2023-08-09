@@ -390,7 +390,7 @@ tasks {
         val docTask = docTaskProvider.get()
         val copyLogo = register<Copy>("copyLogoFor${docTask.name.capitalized()}") {
             from(alchemistLogo)
-            into(docTask.outputDirectory.map { File(it, "images") })
+            into(docTask.outputDirectory.map { File(it.asFile, "images") })
             rename("logo.svg", "logo-icon.svg")
         }
         docTask.finalizedBy(copyLogo)

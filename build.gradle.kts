@@ -23,6 +23,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.AbstractDokkaParentTask
+import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -378,8 +379,19 @@ tasks {
         outputDirectory = websiteDir
     }
 
-    dokkaJavadocCollector {
-        removeChildTasks(subprojects.filter { it.isMultiplatform })
+// Exclude the UI packages from the collector documentation.
+    withType<DokkaCollectorTask>().configureEach {
+        /*
+         * Although the method is deprecated, no valid alternative has been implemented yet.
+         * Disabling individual partial tasks has been proven ineffective.
+         */
+        removeChildTasks(
+            listOf(
+                alchemist("fxui"),
+                alchemist("swingui"),
+                alchemist("web-renderer"),
+            ),
+        )
     }
 
     /**

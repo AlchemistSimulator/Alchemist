@@ -51,4 +51,4 @@ interface NavigationGraph<V, A, N, E> : org.jgrapht.Graph<N, E> where
  * two edges so that e1.equal(e2).
  */
 typealias Euclidean2DNavigationGraph =
-NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DPassage>
+    NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DPassage>

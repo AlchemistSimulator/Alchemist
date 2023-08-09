@@ -134,14 +134,14 @@ publishing.publications {
     }
 }
 
-/* This is a workaround for the following error in Gradle:
+/*
+ * This is a workaround for the following Gradle error,
+ * and should be removed as soon as possible.
+ *
  * * What went wrong:
  * Execution failed for task ':dokkaHtmlCollector'.
  * > Could not determine the dependencies of null.
  * > Current thread does not hold the state lock for project ':alchemist-web-renderer'
- *
- * It should be removed as soon as possible
  */
-rootProject.tasks.named("dokkaHtmlCollector").configure {
-    dependsOn(tasks.javadocJar)
-}
+val dokkaHtmlCollector by rootProject.tasks.named("dokkaHtmlCollector")
+dokkaHtmlCollector.dependsOn(tasks.dokkaHtml)

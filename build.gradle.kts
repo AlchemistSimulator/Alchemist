@@ -360,6 +360,10 @@ dependencies {
     testRuntimeOnly(alchemist("physics"))
 }
 
+tasks.named("kotlinStoreYarnLock").configure {
+    dependsOn("kotlinUpgradeYarnLock")
+}
+
 // WEBSITE
 
 val websiteDir = File(buildDir, "website")

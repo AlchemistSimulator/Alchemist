@@ -22,8 +22,4 @@ reference/kdoc/alchemist-cognitive-agents/it.unibo.alchemist.model/-linking-rule
 reference/kdoc/alchemist-cognitive-agents/it.unibo.alchemist.model/-node/index.html
 
 # Exclude archive.is links going in timeout for unknown reasons
-^https?://archive\.is/fkUpJ$
-^https?://archive\.is/oLSpq$
-^https?://archive\.is/PGdk8$
-^http://archive\.is/umlcC$
-^http://archive\.is/YR1v9$
+^https?://archive\.(is|ph)/(fkUpJ|oLSpq|PGdk8|PwYQz|umlcC|YR1v9)$

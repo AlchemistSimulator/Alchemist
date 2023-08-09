@@ -50,8 +50,11 @@ object AlchemistSimStatesLoader {
         return emptyList()
     }
 
-    private fun readAlchemistSimStates(reader: BufferedReader, fields: List<String>, separator: String):
-        List<AlchemistStateObservations> {
+    private fun readAlchemistSimStates(
+        reader: BufferedReader,
+        fields: List<String>,
+        separator: String,
+    ): List<AlchemistStateObservations> {
         val simStates = mutableListOf<AlchemistStateObservations>()
         var line: String?
         while (reader.readLine().also { line = it?.trim() } != null) {

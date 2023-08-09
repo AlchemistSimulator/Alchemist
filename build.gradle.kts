@@ -290,7 +290,7 @@ allprojects {
     }
 
     // Shadow Jar
-    tasks.withType<ShadowJar>() {
+    tasks.withType<ShadowJar> {
         manifest {
             attributes(
                 mapOf(

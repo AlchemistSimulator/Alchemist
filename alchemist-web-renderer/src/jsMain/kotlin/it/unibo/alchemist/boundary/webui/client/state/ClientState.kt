@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.webui.client.state
 
-import com.soywiz.korim.bitmap.Bitmap
 import it.unibo.alchemist.boundary.webui.client.state.reducers.bitmapReducer
 import it.unibo.alchemist.boundary.webui.client.state.reducers.playButtonReducer
 import it.unibo.alchemist.boundary.webui.client.state.reducers.renderModeReducer
@@ -18,6 +17,7 @@ import it.unibo.alchemist.boundary.webui.common.model.RenderMode
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.StatusSurrogate
 import it.unibo.alchemist.boundary.webui.common.state.CommonState
 import it.unibo.alchemist.boundary.webui.common.utility.Action
+import korlibs.image.bitmap.Bitmap
 
 /**
  * The state of the client.

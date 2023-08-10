@@ -9,8 +9,6 @@
 
 package it.unibo.alchemist.boundary.webui.client.logic
 
-import com.soywiz.korim.bitmap.Bitmap
-import com.soywiz.korio.async.launch
 import it.unibo.alchemist.boundary.webui.client.api.EnvironmentApi
 import it.unibo.alchemist.boundary.webui.client.api.SimulationApi.getSimulationStatus
 import it.unibo.alchemist.boundary.webui.client.state.ClientStore.store
@@ -18,6 +16,8 @@ import it.unibo.alchemist.boundary.webui.client.state.actions.SetBitmap
 import it.unibo.alchemist.boundary.webui.client.state.actions.SetStatusSurrogate
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.EnvironmentSurrogate
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.PositionSurrogate
+import korlibs.image.bitmap.Bitmap
+import korlibs.io.async.launch
 import kotlinx.coroutines.Dispatchers
 
 /**

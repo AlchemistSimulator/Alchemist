@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.webui.client.api
 
-import com.soywiz.korim.bitmap.Bitmap
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import it.unibo.alchemist.boundary.webui.client.api.utility.JsonClient.client
@@ -20,6 +19,7 @@ import it.unibo.alchemist.boundary.webui.common.model.surrogate.EnvironmentSurro
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.PositionSurrogate
 import it.unibo.alchemist.boundary.webui.common.renderer.Bitmap32Serializer
 import it.unibo.alchemist.boundary.webui.common.utility.Routes
+import korlibs.image.bitmap.Bitmap
 
 /**
  * API to retrieve the Environment of the simulation.

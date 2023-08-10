@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.boundary.webui.client.components
 
-import com.soywiz.korim.bitmap.Bitmap
-import com.soywiz.korim.format.toHtmlNative
 import it.unibo.alchemist.boundary.webui.client.logic.HwAutoRenderModeStrategy
 import it.unibo.alchemist.boundary.webui.client.logic.RESTUpdateStateStrategy
 import it.unibo.alchemist.boundary.webui.client.logic.updateState
 import it.unibo.alchemist.boundary.webui.client.state.ClientStore.store
+import korlibs.image.bitmap.Bitmap
+import korlibs.image.format.toHtmlNative
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.boundary.webui.common.state
 
-import com.soywiz.korim.bitmap.Bitmap
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.PositionSurrogate
 import it.unibo.alchemist.boundary.webui.common.renderer.BitmapRenderer
 import it.unibo.alchemist.boundary.webui.common.renderer.Renderer
+import korlibs.image.bitmap.Bitmap
 
 /**
  * The common state of the client and the server.

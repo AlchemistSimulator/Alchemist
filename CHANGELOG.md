@@ -1,3 +1,47 @@
+## [26.0.12](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.11...26.0.12) (2023-08-10)
+
+
+### Build and continuous integration
+
+* **dokka:** work around `Current thread does not hold the state lock for project ':alchemist-web-renderer'` ([a9bcaca](https://github.com/AlchemistSimulator/Alchemist/commit/a9bcacaa1cd9bc66c04fc8a527d5646afc4e8b1e))
+* force-update the Kotlin-generated yarn.lock file when the storage task is called ([2961ec3](https://github.com/AlchemistSimulator/Alchemist/commit/2961ec36c32f0748a5aeb34df6d45930f7d7d99a))
+* **mergify:** disable the rebase-triggering comments (does not trigger a rebase anyway) ([1f303ed](https://github.com/AlchemistSimulator/Alchemist/commit/1f303ede49ce54abdad8a08de2c0e3ac5a645058))
+* **web-renderer:** improve the horrible workaround for Dokka's `Could not determine the dependencies of null. Current thread does not hold the state lock for project ':alchemist-web-renderer'` ([0e4169e](https://github.com/AlchemistSimulator/Alchemist/commit/0e4169ebe483f9d7cdf5ad43a94553374983c0e3))
+
+
+### Dependency updates
+
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.4.10 ([3c52329](https://github.com/AlchemistSimulator/Alchemist/commit/3c52329f39b1ee89f20688fc31f70fddf31a59e8))
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.4.11 ([b422c0d](https://github.com/AlchemistSimulator/Alchemist/commit/b422c0d23f90f63b37b68f32c470076dbf149543))
+* **deps:** update dependency com.github.ben-manes.caffeine:caffeine to v3.1.8 ([98581e3](https://github.com/AlchemistSimulator/Alchemist/commit/98581e31c8cf97b1de90298083c892b251626667))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 5c21ad0 ([e016753](https://github.com/AlchemistSimulator/Alchemist/commit/e0167536e5050d9d555cd90fdcebdc965e2a59a1))
+* **deps:** update kotlin to v1.9.0 ([1dccb47](https://github.com/AlchemistSimulator/Alchemist/commit/1dccb470f745d67a617c20166501ad183498646b))
+* **deps:** update plugin java-qa to v1.15.0 ([dbe855e](https://github.com/AlchemistSimulator/Alchemist/commit/dbe855e7abaafe8ff3a38dc8a9ee88d1b4de6aa1))
+* **deps:** update plugin kotlin-qa to v0.49.0 ([49fd730](https://github.com/AlchemistSimulator/Alchemist/commit/49fd7300fdd77822703b37aaf2d7cd27cfc657c6))
+
+
+### Style improvements
+
+* **buildfile:** remove unnecessary `()` ([48d7b02](https://github.com/AlchemistSimulator/Alchemist/commit/48d7b020f9d51b23c99fc19c6fb4f5135c9bdc13))
+* **cognitive-agents:** remove unnecessary `let` call on `Unit` ([440dcc9](https://github.com/AlchemistSimulator/Alchemist/commit/440dcc9992d7a66bdf09eabdeed7fe0d5dc54116))
+* **euclidean-geometry:** fix comment indentations in `NaviGator` ([7cb25e4](https://github.com/AlchemistSimulator/Alchemist/commit/7cb25e4e958e3db88efd1a84ced52e85bbf0b140))
+* **geometry:** use `repeat` instead of rewriting the same call three times ([c18c619](https://github.com/AlchemistSimulator/Alchemist/commit/c18c61919d65fe7234f18fca2478f0ce603af233))
+* **geometry:** use `repeat` instead of rewriting the same call three times ([fb20dfd](https://github.com/AlchemistSimulator/Alchemist/commit/fb20dfdc762b433e3ccb253b128dc9f4746b4c1d))
+* **geometry:** use `repeat` instead of rewriting the same call three times ([f7638ef](https://github.com/AlchemistSimulator/Alchemist/commit/f7638ef732f3d8d4d4d08ab0fb45166fe51e5692))
+* indent multiline Kotlin typealiases ([08ad995](https://github.com/AlchemistSimulator/Alchemist/commit/08ad995379dd756627604e1245eba248ecdea5b1))
+* **multivesta-adapter:** fix indentation in `readAlchemistSimStates` ([b52b6e5](https://github.com/AlchemistSimulator/Alchemist/commit/b52b6e5bd89c590b82fd21e1d4163711ddce6964))
+
+
+### Documentation
+
+* exclude UI subprojects from the overall project documentation ([0d73df0](https://github.com/AlchemistSimulator/Alchemist/commit/0d73df0351919139612eaf0f93140190ef21bd24))
+* **website:** do not refer to dropped effect class ([d4ffe85](https://github.com/AlchemistSimulator/Alchemist/commit/d4ffe858bc590c3352dd08d9d6f41e01e2ce197c))
+
+
+### General maintenance
+
+* **build:** actualize the `yarn.lock` file ([cc3c9ca](https://github.com/AlchemistSimulator/Alchemist/commit/cc3c9ca6f22414f9f048a1351a21f3396063e548))
+
 ## [26.0.11](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.10...26.0.11) (2023-08-09)
 
 

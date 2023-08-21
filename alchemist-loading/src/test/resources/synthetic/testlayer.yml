@@ -1,8 +1,5 @@
 incarnation: sapere
 
-launcher:
-  type: HeadlessSimulationLauncher
-
 environment:
   type: Continuous2DEnvironment
   parameters: []

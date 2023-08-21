@@ -1,4 +1,2 @@
 incarnation: scafi
 
-launcher:
-  type: HeadlessSimulationLauncher

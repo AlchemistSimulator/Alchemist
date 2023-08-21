@@ -1,8 +1,5 @@
 incarnation: scafi
 
-launcher:
-  type: HeadlessSimulationLauncher
-
 _remover: &remover
   - time-distribution: 1
     type: Event

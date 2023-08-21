@@ -1,4 +1,2 @@
 incarnation: sapere
 
-launcher:
-  type: HeadlessSimulationLauncher

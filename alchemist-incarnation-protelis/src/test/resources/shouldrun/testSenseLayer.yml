@@ -1,8 +1,5 @@
 incarnation: protelis
 
-launcher:
-  type: HeadlessSimulationLauncher
-
 layers:
   - type: ConstantLayer
     parameters: [ 20.0 ]

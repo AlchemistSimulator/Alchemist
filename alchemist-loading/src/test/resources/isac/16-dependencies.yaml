@@ -1,8 +1,6 @@
 incarnation: sapere
 
-launcher:
-  type: HeadlessSimulationLauncher
-
 remote-dependencies:
   - dependencies_test.txt
   - dependencies_test2.txt
+g

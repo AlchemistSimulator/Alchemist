@@ -1,7 +1,4 @@
 incarnation: protelis
 
-launcher:
-  type: HeadlessSimulationLauncher
-
 environment:
   type: it.unibo.alchemist.model.environments.Continuous2DEnvironment

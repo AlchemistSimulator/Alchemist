@@ -1,8 +1,5 @@
 incarnation: protelis
 
-launcher:
-  type: HeadlessSimulationLauncher
-
 environment:
   type: ImageEnvironmentWithGraph
   parameters: [images/congestion-avoidance.png, 0.1, 12, 60]

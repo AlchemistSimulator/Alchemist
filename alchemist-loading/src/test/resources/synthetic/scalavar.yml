@@ -1,8 +1,5 @@
 incarnation: sapere
 
-launcher:
-  type: HeadlessSimulationLauncher
-
 variables:
   var: &var
     language: scala

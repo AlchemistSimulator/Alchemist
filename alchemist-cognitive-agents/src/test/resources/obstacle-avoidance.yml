@@ -1,8 +1,5 @@
 incarnation: protelis
 
-launcher:
-  type: HeadlessSimulationLauncher
-
 variables:
   danger: &danger
     formula: "\"danger\""

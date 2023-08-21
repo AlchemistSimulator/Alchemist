@@ -13,7 +13,7 @@
 package it.unibo.alchemist.boundary.webui.client.adapters.reactBootstrap.modal
 
 import react.ComponentClass
-import react.Props
+import react.PropsWithChildren
 
 /**
  * React Bootstrap ModalFooter adapter.
@@ -22,4 +22,4 @@ import react.Props
  */
 
 @JsName("default")
-external val ModalFooter: ComponentClass<Props>
+external val ModalFooter: ComponentClass<PropsWithChildren>

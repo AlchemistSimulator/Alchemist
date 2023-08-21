@@ -13,7 +13,7 @@
 package it.unibo.alchemist.boundary.webui.client.adapters.reactBootstrap.buttons
 
 import react.ComponentClass
-import react.Props
+import react.PropsWithChildren
 
 /**
  * React Bootstrap ToggleButton adapter.
@@ -27,7 +27,7 @@ external val ToggleButton: ComponentClass<ToggleButtonProps>
 /**
  * Props used to customize the ToggleButton.
  */
-external interface ToggleButtonProps : Props {
+external interface ToggleButtonProps : PropsWithChildren {
 
     /**
      * id props, required.

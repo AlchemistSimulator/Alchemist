@@ -13,7 +13,7 @@
 package it.unibo.alchemist.boundary.webui.client.adapters.reactBootstrap.modal
 
 import react.ComponentClass
-import react.Props
+import react.PropsWithChildren
 
 /**
  * React Bootstrap Modal adapter.
@@ -27,7 +27,7 @@ external val Modal: ComponentClass<ModalProps>
 /**
  * Props used to customize the Modal.
  */
-external interface ModalProps : Props {
+external interface ModalProps : PropsWithChildren {
     /**
      * show prop, false by default.
      */

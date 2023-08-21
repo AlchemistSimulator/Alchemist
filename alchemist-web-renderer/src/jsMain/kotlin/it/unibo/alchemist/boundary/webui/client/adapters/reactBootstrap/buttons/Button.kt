@@ -13,7 +13,7 @@
 package it.unibo.alchemist.boundary.webui.client.adapters.reactBootstrap.buttons
 
 import react.ComponentClass
-import react.Props
+import react.PropsWithChildren
 
 /**
  * React Bootstrap Button adapter.
@@ -27,7 +27,7 @@ external val Button: ComponentClass<ButtonProps>
 /**
  * Props used to customize the Button.
  */
-external interface ButtonProps : Props {
+external interface ButtonProps : PropsWithChildren {
 
     /**
      * active prop, false by default.

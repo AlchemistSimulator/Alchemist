@@ -13,7 +13,7 @@
 package it.unibo.alchemist.boundary.webui.client.adapters.reactBootstrap.navbar
 
 import react.ComponentClass
-import react.Props
+import react.PropsWithChildren
 
 /**
  * React Bootstrap Navbar adapter.
@@ -25,7 +25,7 @@ external val Navbar: ComponentClass<NavbarProps>
 /**
  * Props used to customize the Navbar.
  */
-external interface NavbarProps : Props {
+external interface NavbarProps : PropsWithChildren {
     /**
      * bg props.
      */

@@ -13,7 +13,7 @@
 package it.unibo.alchemist.boundary.webui.client.adapters.reactBootstrap.modal
 
 import react.ComponentClass
-import react.Props
+import react.PropsWithChildren
 
 /**
  * React Bootstrap ModalTitle adapter.
@@ -27,7 +27,7 @@ external val ModalTitle: ComponentClass<ModalTitleProps>
 /**
  * Props used to customize the ModalHeader.
  */
-external interface ModalTitleProps : Props {
+external interface ModalTitleProps : PropsWithChildren {
     /**
      * className prop. Useful for customizing.
      */

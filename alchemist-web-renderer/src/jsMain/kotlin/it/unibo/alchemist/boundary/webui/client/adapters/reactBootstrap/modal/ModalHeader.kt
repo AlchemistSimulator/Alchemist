@@ -13,7 +13,7 @@
 package it.unibo.alchemist.boundary.webui.client.adapters.reactBootstrap.modal
 
 import react.ComponentClass
-import react.Props
+import react.PropsWithChildren
 
 /**
  * React Bootstrap ModalHeader adapter.
@@ -27,7 +27,7 @@ external val ModalHeader: ComponentClass<ModalHeaderProps>
 /**
  * Props used to customize the ModalHeader.
  */
-external interface ModalHeaderProps : Props {
+external interface ModalHeaderProps : PropsWithChildren {
     /**
      * closeButton prop.
      */

@@ -1,4 +1,5 @@
 incarnation: protelis
+
 environment:
   type: Continuous2DEnvironment
   global-programs:

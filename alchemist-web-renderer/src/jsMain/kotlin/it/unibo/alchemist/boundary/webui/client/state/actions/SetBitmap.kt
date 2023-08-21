@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.webui.client.state.actions
 
-import com.soywiz.korim.bitmap.Bitmap
+import korlibs.image.bitmap.Bitmap
 
 /**
  * Redux action to set the bitmap to display.

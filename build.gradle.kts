@@ -23,6 +23,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.AbstractDokkaParentTask
+import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -281,7 +282,7 @@ allprojects {
                 developer {
                     name.set("Danilo Pianini")
                     email.set("danilo.pianini@unibo.it")
-                    url.set("http://www.danilopianini.org")
+                    url.set("https://www.danilopianini.org")
                     roles.set(mutableSetOf("architect", "developer"))
                 }
             }
@@ -289,7 +290,7 @@ allprojects {
     }
 
     // Shadow Jar
-    tasks.withType<ShadowJar>() {
+    tasks.withType<ShadowJar> {
         manifest {
             attributes(
                 mapOf(
@@ -361,6 +362,10 @@ dependencies {
     testRuntimeOnly(alchemist("physics"))
 }
 
+tasks.named("kotlinStoreYarnLock").configure {
+    dependsOn("kotlinUpgradeYarnLock")
+}
+
 // WEBSITE
 
 val websiteDir = File(buildDir, "website")
@@ -375,8 +380,19 @@ tasks {
         outputDirectory = websiteDir
     }
 
-    dokkaJavadocCollector {
-        removeChildTasks(subprojects.filter { it.isMultiplatform })
+// Exclude the UI packages from the collector documentation.
+    withType<DokkaCollectorTask>().configureEach {
+        /*
+         * Although the method is deprecated, no valid alternative has been implemented yet.
+         * Disabling individual partial tasks has been proven ineffective.
+         */
+        removeChildTasks(
+            listOf(
+                alchemist("fxui"),
+                alchemist("swingui"),
+                alchemist("web-renderer"),
+            ),
+        )
     }
 
     /**
@@ -387,7 +403,7 @@ tasks {
         val docTask = docTaskProvider.get()
         val copyLogo = register<Copy>("copyLogoFor${docTask.name.capitalized()}") {
             from(alchemistLogo)
-            into(docTask.outputDirectory.map { File(it, "images") })
+            into(docTask.outputDirectory.map { File(it.asFile, "images") })
             rename("logo.svg", "logo-icon.svg")
         }
         docTask.finalizedBy(copyLogo)

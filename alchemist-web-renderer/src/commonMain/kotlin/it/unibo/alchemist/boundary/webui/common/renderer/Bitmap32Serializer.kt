@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.boundary.webui.common.renderer
 
-import com.soywiz.korim.bitmap.Bitmap32
-import com.soywiz.korim.color.RgbaArray
+import korlibs.image.bitmap.Bitmap32
+import korlibs.image.color.RgbaArray
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.descriptors.SerialDescriptor

@@ -178,7 +178,7 @@ internal object DocumentRoot : SyntaxElement {
     val variables by OwnName
     override val validDescriptors = setOf(
         validDescriptor {
-            mandatory(incarnation, launcher)
+            mandatory(incarnation)
             optional(*validKeys.toTypedArray())
         },
     )

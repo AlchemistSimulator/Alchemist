@@ -62,6 +62,8 @@ import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Deployment.Program
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Environment.GlobalProgram as GlobalProgramSyntax
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Layer as LayerSyntax
 
+private const val defaultSimulationLauncherClass = "HeadlessSimulationLauncher"
+
 /*
  * UTILITY ALIASES
  */
@@ -216,10 +218,9 @@ internal object SimulationModel {
         logger.info("Variables: {}", variables)
 
         val launcherDescriptor = injectedRoot[DocumentRoot.launcher]
+        val defaultLauncher = NamedParametersConstructor(type = defaultSimulationLauncherClass).buildAny<Launcher>(context.factory).getOrThrow()
         val launcher: Launcher =
-            visitBuilding<Launcher>(context, launcherDescriptor)?.getOrThrow() ?: cantBuildWith<Launcher>(
-                launcherDescriptor,
-            )
+            visitBuilding<Launcher>(context, launcherDescriptor)?.getOrDefault(defaultLauncher) ?: defaultLauncher
         injectedRoot = inject(context, injectedRoot)
         val remoteDependencies =
             visitRecursively(
@@ -289,6 +290,7 @@ internal object SimulationModel {
         when (root) {
             is T -> Result.success(root)
             is Map<*, *> -> visitJVMConstructor(context, root)?.buildAny(context.factory)
+            null -> null
             else -> {
                 logger.debug("Unable to build a {} with {}, attempting a JIRF conversion ", root, T::class.simpleName)
                 context.factory.convert(T::class.java, root)

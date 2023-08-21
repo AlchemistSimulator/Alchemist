@@ -95,9 +95,6 @@ application {
  * Webpack task that generates the JS artifacts.
  */
 val webpackTask = tasks.named("jsBrowserProductionWebpack")
-dependencies {
-    implementation(project(mapOf("path" to ":")))
-}
 
 tasks.named("run", JavaExec::class).configure {
     classpath(

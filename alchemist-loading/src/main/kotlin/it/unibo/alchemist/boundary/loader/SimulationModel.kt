@@ -69,7 +69,7 @@ private const val defaultSimulationLauncherClass = "HeadlessSimulationLauncher"
  */
 private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
 private typealias ReactionComponentFunction<T, P, R> =
-(RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, String?) -> R
+    (RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, String?) -> R
 
 /*
  * UTILITY FUNCTIONS

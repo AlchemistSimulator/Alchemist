@@ -15,23 +15,6 @@ pull_request_rules:
 #     actions:
 #       rebase:
 
-# This rule (temporarily, hopefully) replaces the former
-  - name: Trigger an auto-rebase workflow
-    conditions:
-      - or:
-        - label=auto-update-rebase
-        - and:
-            - label=dependencies
-            - or: &authors_are_bots
-                - author=renovate[bot]
-                - author=dependabot[bot]
-      - -draft
-      - -conflict
-    actions:
-      comment:
-        message: |
-          /rebase
-
   - name: Auto-update with merge if appropriately labeled
     conditions:
       - label=auto-update-merge
@@ -43,7 +26,9 @@ pull_request_rules:
   - name: rebase-merge working updates
     conditions:
       - and:
-        - or: *authors_are_bots
+        - or: &authors_are_bots
+          - author=renovate[bot]
+          - author=dependabot[bot]
         - and:
           - or:
             - check-success=ci-cd / success

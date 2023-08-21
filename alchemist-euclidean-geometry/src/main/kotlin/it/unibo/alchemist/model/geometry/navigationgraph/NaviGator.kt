@@ -24,6 +24,7 @@ import java.awt.Shape
 
 /**
  * TODO(improve the quality of this algorithm)
+ *
  * NaviGator (Navigation Graphs Generator) is an algorithm capable of generating an
  * [Euclidean2DNavigationGraph] of a given environment with obstacles. The nodes of
  * the produced graph are convex polygons representing the areas of the environment
@@ -88,8 +89,8 @@ object NaviGator {
                 if (edge.isHorizontal || edge.isVertical) {
                     val passages = seed.findPassages(index, seeds, origin, width, height, obstacles, unity)
                     /*
-                 * Moves the edge back to its previous position as findCrossings modified it.
-                 */
+                     * Moves the edge back to its previous position as findCrossings modified it.
+                     */
                     seed.replaceEdge(index, edge)
                     passages
                 } else {
@@ -121,12 +122,12 @@ object NaviGator {
     }
 
     /*
- * Finds the passages on the side of the polygon specified by the index parameter.
- * The specified side should be axis-aligned. This method is recursive and modifies
- * the specified edge.
- * In brief, this method advances the specified edge, keeping track of the portions
- * of it not occluded by obstacles yet, until every passage has been detected.
- */
+     * Finds the passages on the side of the polygon specified by the index parameter.
+     * The specified side should be axis-aligned. This method is recursive and modifies
+     * the specified edge.
+     * In brief, this method advances the specified edge, keeping track of the portions
+     * of it not occluded by obstacles yet, until every passage has been detected.
+     */
     private fun ExtendableConvexPolygonInEnvironment.findPassages(
         index: Int,
         seeds: Collection<ExtendableConvexPolygon>,
@@ -136,21 +137,21 @@ object NaviGator {
         obstacles: Collection<Shape>,
         unity: Double,
         /*
-     * Original position of the edge being advanced.
-     */
+         * Original position of the edge being advanced.
+         */
         oldEdge: Segment2D<Euclidean2DPosition> = getEdge(index),
         /*
-     * Portion of the advancing edge not occluded by obstacles yet. Since the edge
-     * is axis-aligned, a DoubleInterval is sufficient to represent a portion of it.
-     */
+         * Portion of the advancing edge not occluded by obstacles yet. Since the edge
+         * is axis-aligned, a DoubleInterval is sufficient to represent a portion of it.
+         */
         remaining: ClosedRange<Double> = oldEdge.toRange(),
     ): Collection<Euclidean2DPassage> = emptyList<Euclidean2DPassage>()
         .takeIf { fuzzyEquals(remaining.start, remaining.endInclusive) }
         ?: let { _ ->
             /*
-         * ToInterval functions map a shape or polygon to the DoubleInterval relevant for
-         * the intersection with the advancing edge.
-         */
+             * ToInterval functions map a shape or polygon to the DoubleInterval relevant for
+             * the intersection with the advancing edge.
+             */
             val polygonToInterval: (ExtendableConvexPolygon) -> ClosedRange<Double> = {
                 it.closestEdgeTo(oldEdge).toRange(oldEdge.isHorizontal)
             }
@@ -162,9 +163,9 @@ object NaviGator {
             val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
                 seeds.filter {
                     /*
-                 * A seed is considered intersected if it intersects with the polygon and, in particular, with the
-                 * remaining portion of the advancing edge. Similarly for obstacles below.
-                 */
+                     * A seed is considered intersected if it intersects with the polygon and, in particular, with the
+                     * remaining portion of the advancing edge. Similarly for obstacles below.
+                     */
                     it != this && it.intersects(asAwtShape()) && polygonToInterval(it).intersectsBoundsExcluded(
                         remaining,
                     )
@@ -178,8 +179,8 @@ object NaviGator {
             while (intersectedSeeds().isEmpty() && intersectedObstacles().isEmpty()) {
                 if (!advanceEdge(index, unity)) {
                     /*
-                 * Edge is out of the environment's boundaries.
-                 */
+                     * Edge is out of the environment's boundaries.
+                     */
                     return emptyList()
                 }
             }
@@ -188,18 +189,18 @@ object NaviGator {
             )
             val neighborToIntervals = intersectedSeeds().map { neighbor ->
                 /*
-             * Maps each neighbor to a collection of intervals representing
-             * the portions of the advancing edge leading to that neighbor.
-             */
+                 * Maps each neighbor to a collection of intervals representing
+                 * the portions of the advancing edge leading to that neighbor.
+                 */
                 neighbor to newRemaining.mapNotNull { remaining ->
                     polygonToInterval(neighbor).intersect(remaining)
                 }
             }
             val passages = neighborToIntervals.flatMap { (neighbor, intervals) ->
                 /*
-             * Intervals should be mapped to actual segments, considering the
-             * coordinate we ignored so far of the oldEdge.
-             */
+                 * Intervals should be mapped to actual segments, considering the
+                 * coordinate we ignored so far of the oldEdge.
+                 */
                 intervals.map {
                     val passageShape = when {
                         oldEdge.isHorizontal -> createSegment(it.start, oldEdge.first.y, x2 = it.endInclusive)
@@ -210,8 +211,8 @@ object NaviGator {
             }
             return passages + newRemaining.flatMap {
                 /*
-             * The portions of edge that became passages won't be considered further.
-             */
+                 * The portions of edge that became passages won't be considered further.
+                 */
                 it.subtractAll(neighborToIntervals.flatMap { (_, intervals) -> intervals })
             }.flatMap {
                 findPassages(index, seeds, origin, width, height, obstacles, unity, oldEdge, it)

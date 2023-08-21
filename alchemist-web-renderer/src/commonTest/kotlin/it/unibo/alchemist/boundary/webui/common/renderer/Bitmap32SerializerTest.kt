@@ -9,13 +9,13 @@
 
 package it.unibo.alchemist.boundary.webui.common.renderer
 
-import com.soywiz.korim.bitmap.Bitmap
-import com.soywiz.korim.bitmap.Bitmap32
-import com.soywiz.korim.paint.ColorPaint
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.alchemist.boundary.webui.common.model.serialization.jsonFormat
+import korlibs.image.bitmap.Bitmap
+import korlibs.image.bitmap.Bitmap32
+import korlibs.image.paint.ColorPaint
 
 class Bitmap32SerializerTest : StringSpec({
     "Bitmap32 should be serialized and deserialized correctly" {

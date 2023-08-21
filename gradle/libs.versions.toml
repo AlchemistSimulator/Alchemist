@@ -8,11 +8,11 @@ junit = "5.10.0"
 konf = "1.1.2"
 kotest = "5.6.2"
 ktor = "2.3.3"
-dokka = "1.8.10"
-kotlin = "1.8.22"
+dokka = "1.8.20"
+kotlin = "1.9.0"
 mockito = "5.4.0"
 protelis = "17.1.1"
-react = "18.2.0-pre.599"
+react = "18.2.0-pre.608"
 scafi = "1.1.7"
 scala = "2.13.11"
 scalacache = "0.28.0"
@@ -29,13 +29,13 @@ apache-commons-math3 = "org.apache.commons:commons-math3:3.6.1"
 appdirs = "net.harawata:appdirs:1.2.1"
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
-caffeine = "com.github.ben-manes.caffeine:caffeine:3.1.7"
-classgraph = "io.github.classgraph:classgraph:4.8.161"
+caffeine = "com.github.ben-manes.caffeine:caffeine:3.1.8"
+classgraph = "io.github.classgraph:classgraph:4.8.162"
 conrec = "org.danilopianini:conrec:0.1.0"
 controlsfx = "org.controlsfx:controlsfx:11.1.2"
 dyn4j = "org.dyn4j:dyn4j:5.0.1"
 dsiutils = "it.unimi.dsi:dsiutils:2.7.3"
-embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.7.2"
+embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.9.0"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
@@ -59,7 +59,7 @@ jpx = "io.jenetics:jpx:2.3.0"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
-korim = "com.soywiz.korlibs.korim:korim:3.4.0"
+korim = "com.soywiz.korlibs.korim:korim:4.0.9"
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
@@ -86,8 +86,8 @@ ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor"
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 leafletmap = "org.danilopianini:de.saring.leafletmap:1.0.5"
 listset = "org.danilopianini:listset:0.3.9"
-logback = "ch.qos.logback:logback-classic:1.4.9"
-mapsforge = "org.mapsforge:mapsforge-map-awt:0.19.0"
+logback = "ch.qos.logback:logback-classic:1.4.11"
+mapsforge = "org.mapsforge:mapsforge-map-awt:0.20.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.1"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mongodb = "org.mongodb:mongodb-driver-sync:4.10.2"
@@ -143,14 +143,14 @@ testing-runtimeOnly = [ "junit-engine" ]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:1.1.10"
 hugo = "io.github.fstaudt.hugo:0.6.0"
-java-qa = "org.danilopianini.gradle-java-qa:1.14.0"
+java-qa = "org.danilopianini.gradle-java-qa:1.16.0"
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.42.1"
+kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.49.0"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.5.4"
-publishOnCentral = "org.danilopianini.publish-on-central:5.0.10"
+publishOnCentral = "org.danilopianini.publish-on-central:5.0.11"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"
 scalatest = "com.github.maiflai.scalatest:0.32"
 shadowJar = "com.github.johnrengelman.shadow:8.1.1"

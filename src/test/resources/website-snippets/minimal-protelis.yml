@@ -1,4 +1,2 @@
 incarnation: protelis
 
-launcher:
-  type: HeadlessSimulationLauncher

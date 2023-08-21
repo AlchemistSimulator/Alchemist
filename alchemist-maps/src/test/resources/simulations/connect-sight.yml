@@ -1,8 +1,5 @@
 incarnation: protelis
 
-launcher:
-  type: HeadlessSimulationLauncher
-
 variables:
   initial_latitude: &initial_latitude
     formula: 12.613

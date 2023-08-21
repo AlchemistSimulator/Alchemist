@@ -1,8 +1,5 @@
 incarnation: sapere
 
-launcher:
-  type: HeadlessSimulationLauncher
-
 variables:
   var0:
     formula: 2

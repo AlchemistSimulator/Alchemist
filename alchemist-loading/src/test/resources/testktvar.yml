@@ -18,5 +18,3 @@ variables:
     formula: test + test2
 incarnation: sapere
 
-launcher:
-  type: HeadlessSimulationLauncher

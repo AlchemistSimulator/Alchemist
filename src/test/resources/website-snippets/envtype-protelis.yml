@@ -1,5 +1,3 @@
 incarnation: protelis
-launcher:
-  type: HeadlessSimulationLauncher
 environment:
   type: Continuous2DEnvironment

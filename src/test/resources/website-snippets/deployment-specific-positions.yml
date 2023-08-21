@@ -1,6 +1,4 @@
 incarnation: sapere
-launcher:
-  type: HeadlessSimulationLauncher
 deployments:
   type: SpecificPositions
   parameters: [[0,1],[2,2],[3,4]]

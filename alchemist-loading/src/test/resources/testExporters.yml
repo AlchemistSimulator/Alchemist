@@ -1,5 +1,4 @@
 incarnation: protelis
-
 export:
   - type: CSVExporter
     parameters:

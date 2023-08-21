@@ -1,5 +1,4 @@
 incarnation: protelis
-
 deployments:
   type: Point
   parameters: [0, 0]

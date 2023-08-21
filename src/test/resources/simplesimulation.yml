@@ -1,5 +1,4 @@
 incarnation: protelis
-
 variables:
   foo: &foo
     formula: 1

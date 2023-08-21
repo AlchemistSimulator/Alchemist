@@ -1,5 +1,4 @@
 incarnation: protelis
-
 network-model:
   type: EuclideanDistance
   parameters: [10]

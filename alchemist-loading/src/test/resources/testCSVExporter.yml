@@ -1,5 +1,4 @@
 incarnation: protelis
-
 variables:
   zoom: &zoom
     formula: 0.1

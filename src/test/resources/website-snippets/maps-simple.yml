@@ -1,5 +1,4 @@
 incarnation: sapere
-
 environment: { type: OSMEnvironment }
 network-model: { type: ConnectWithinDistance, parameters: [1000] }
 _venice_lagoon: &lagoon

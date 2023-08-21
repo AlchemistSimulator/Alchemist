@@ -1,5 +1,4 @@
 incarnation: sapere
-
 deployments:
   type: Circle
   parameters: [1000, 0, 0, 10]

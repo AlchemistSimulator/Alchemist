@@ -1,5 +1,4 @@
 incarnation: protelis
-
 environment: { type: ImageEnvironment, parameters: [chiaravalle.png, 0.1] }
 network-model: { type: ObstaclesBreakConnection, parameters: [50] }
 deployments:

@@ -1,5 +1,4 @@
 incarnation: protelis
-
 network-model:
   type: ConnectWithinDistance
   parameters: [10]

@@ -62,7 +62,7 @@ import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Deployment.Program
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Environment.GlobalProgram as GlobalProgramSyntax
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Layer as LayerSyntax
 
-private const val defaultSimulationLauncherClass = "HeadlessSimulationLauncher"
+private const val DEFAULT_SIMULATION_LAUNCHER_CLASS = "HeadlessSimulationLauncher"
 
 /*
  * UTILITY ALIASES
@@ -218,7 +218,9 @@ internal object SimulationModel {
         logger.info("Variables: {}", variables)
 
         val launcherDescriptor = injectedRoot[DocumentRoot.launcher]
-        val defaultLauncher = NamedParametersConstructor(type = defaultSimulationLauncherClass).buildAny<Launcher>(context.factory).getOrThrow()
+        val defaultLauncher =
+            NamedParametersConstructor(type = DEFAULT_SIMULATION_LAUNCHER_CLASS).buildAny<Launcher>(context.factory)
+                .getOrThrow()
         val launcher: Launcher =
             visitBuilding<Launcher>(context, launcherDescriptor)?.getOrDefault(defaultLauncher) ?: defaultLauncher
         injectedRoot = inject(context, injectedRoot)

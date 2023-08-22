@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets.UTF_8
  */
 class TestLaunchViaMain : StringSpec({
     "A simple simulation should be executable in headless mode" {
-        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-t", "2"))
+        Alchemist.main(arrayOf("run", "simulation.yml"))
     }
 
     "The default logging level should be warn" {
@@ -32,11 +32,11 @@ class TestLaunchViaMain : StringSpec({
     }
 
     "Verbosity levels should be controllable via command line options" {
-        launchWithLoggingOption("-qq") should beEmpty()
-        option("-q") shouldLogAtLevel Level.ERROR
-        option("-v") shouldLogAtLevel Level.INFO
-        option("-vv") shouldLogAtLevel Level.DEBUG
-        option("-vvv") shouldLogAtLevel Level.TRACE
+        launchWithLoggingOption("off") should beEmpty()
+        option("error") shouldLogAtLevel Level.ERROR
+        option("info") shouldLogAtLevel Level.INFO
+        option("debug") shouldLogAtLevel Level.DEBUG
+        option("all") shouldLogAtLevel Level.TRACE
     }
 }) {
     companion object {
@@ -45,8 +45,11 @@ class TestLaunchViaMain : StringSpec({
             val writer = ByteArrayOutputStream()
             val systemOut = System.out
             System.setOut(PrintStream(writer, true, UTF_8))
-            val loggerOptions = if (option == null) arrayOf() else arrayOf(option)
-            Alchemist.main(arrayOf("-y", "logging.yml", "-hl") + loggerOptions)
+            var options = arrayOf("run", "logging.yml")
+            if (option != null) {
+                options = options.plus(arrayOf("--verbosity", option))
+            }
+            Alchemist.main(options)
             System.setOut(systemOut)
             return writer.toString(UTF_8)
         }

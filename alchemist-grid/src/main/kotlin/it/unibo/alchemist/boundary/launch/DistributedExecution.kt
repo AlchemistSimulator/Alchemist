@@ -8,44 +8,34 @@
  */
 package it.unibo.alchemist.boundary.launch
 
-import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.grid.cluster.ClusterImpl
 import it.unibo.alchemist.boundary.grid.config.LocalGeneralSimulationConfig
 import it.unibo.alchemist.boundary.grid.config.SimulationConfigImpl
 import it.unibo.alchemist.boundary.grid.simulation.SimulationSetImpl
-import it.unibo.alchemist.model.times.DoubleTime
+import it.unibo.alchemist.model.Time
 import java.nio.file.Paths
 
 /**
  * Launches a simulation set on a cluster of Alchemist nodes running in server mode.
  */
-object DistributedExecution : SimulationLauncher() {
+class DistributedExecution(
+    private val variables: List<String> = emptyList(),
+    private val distributedConfigPath: String?,
+) : SimulationLauncher() {
 
-    override val name = "Alchemist execution on a grid system"
-
-    override fun additionalValidation(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
-        when {
-            variables.isEmpty() -> Validation.Invalid("$name requires a variable set")
-            distributed == null -> Validation.Invalid("No configuration file for distributed execution")
-            graphics != null -> Validation.OK(Priority.Fallback("Distributed execution will ignore graphical settings"))
-            parallelism != AlchemistExecutionOptions.defaultParallelism -> incompatibleWith("custom parallelism")
-            else -> Validation.OK()
-        }
-    }
-
-    override fun launch(loader: Loader, parameters: AlchemistExecutionOptions) {
+    override fun launch(loader: Loader) {
         val simulationConfig = LocalGeneralSimulationConfig(
             loader,
-            DoubleTime(parameters.endTime),
+            Time.INFINITY,
         )
-        val simConfigs = loader.variables.cartesianProductOf(parameters.variables).map(::SimulationConfigImpl)
+        val simConfigs = loader.variables.cartesianProductOf(variables).map(::SimulationConfigImpl)
         val simulationSet = SimulationSetImpl(
             simulationConfig,
             simConfigs,
         )
         val cluster =
-            ClusterImpl(Paths.get(requireNotNull(parameters.distributed) { "No remote configuration file" }))
+            ClusterImpl(Paths.get(requireNotNull(distributedConfigPath) { "No remote configuration file" }))
         cluster.getWorkersSet(simulationSet.computeComplexity()).distributeSimulations(simulationSet)
     }
 }

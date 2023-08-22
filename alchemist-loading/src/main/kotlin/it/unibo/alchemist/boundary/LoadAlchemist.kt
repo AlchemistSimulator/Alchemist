@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary
 
+import it.unibo.alchemist.boundary.loader.Overrides.overrideAll
 import it.unibo.alchemist.boundary.loader.SimulationModel
 import it.unibo.alchemist.util.ClassPathScanner
 import java.io.File
@@ -29,46 +30,65 @@ object LoadAlchemist {
         ?: error("Cannot extract package from ${T::class.jvmName}")
 
     /**
-     * Load from an [input] [String].
+     * Load from an [input] [String] with overrides.
      */
     @JvmStatic
-    fun from(input: String, model: AlchemistModelProvider) = SimulationModel.fromMap(model.from(input))
+    @JvmOverloads
+    fun from(input: String, model: AlchemistModelProvider, overrides: List<String> = emptyList()) =
+        SimulationModel.fromMap(
+            applyOverrides(model.from(input), overrides),
+        )
 
     /**
-     * Load from a [reader].
+     * Load from a [reader] with overrides.
      */
     @JvmStatic
-    fun from(reader: Reader, model: AlchemistModelProvider) = SimulationModel.fromMap(model.from(reader))
+    @JvmOverloads
+    fun from(reader: Reader, model: AlchemistModelProvider, overrides: List<String> = emptyList()) =
+        SimulationModel.fromMap(
+            applyOverrides(model.from(reader), overrides),
+        )
 
     /**
-     * Load from an [InputStream].
+     * Load from an [InputStream] with overrides.
      */
     @JvmStatic
-    fun from(stream: InputStream, model: AlchemistModelProvider) = SimulationModel.fromMap(model.from(stream))
+    @JvmOverloads
+    fun from(stream: InputStream, model: AlchemistModelProvider, overrides: List<String> = emptyList()) =
+        SimulationModel.fromMap(
+            applyOverrides(model.from(stream), overrides),
+        )
 
     /**
-     * Load from an [url].
+     * Load from an [url] with overrides.
      */
     @JvmStatic
-    fun from(url: URL, model: AlchemistModelProvider) = SimulationModel.fromMap(model.from(url))
+    @JvmOverloads
+    fun from(url: URL, model: AlchemistModelProvider, overrides: List<String> = emptyList()) =
+        SimulationModel.fromMap(applyOverrides(model.from(url), overrides))
 
     /**
-     * Load from an [url].
+     * Load from an [url] with overrides.
      */
     @JvmStatic
-    fun from(url: URL) = from(url, modelForExtension(url.path.takeLastWhile { it != '.' }))
+    @JvmOverloads
+    fun from(url: URL, overrides: List<String> = emptyList()) =
+        from(url, modelForExtension(url.path.takeLastWhile { it != '.' }), overrides)
 
     /**
-     * Load from a [file].
+     * Load from a [file] with overrides.
      */
     @JvmStatic
-    fun from(file: File) = from(file.inputStream(), modelForExtension(file.extension))
+    @JvmOverloads
+    fun from(file: File, overrides: List<String> = emptyList()) =
+        from(file.inputStream(), modelForExtension(file.extension), overrides)
 
     /**
-     * Load from a [string].
+     * Load from a [string] with overrides.
      */
     @JvmStatic
-    fun from(string: String) = from(File(string))
+    @JvmOverloads
+    fun from(string: String, overrides: List<String> = emptyList()) = from(File(string), overrides)
 
     @JvmStatic
     private fun modelForExtension(extension: String) = ClassPathScanner
@@ -77,4 +97,9 @@ object LoadAlchemist {
         .filter { it.fileExtensions.matches(extension) }
         .also { require(it.size == 1) { "None or conflicting loaders for extension $extension: $it" } }
         .first()
+
+    @JvmStatic
+    private fun applyOverrides(map: Map<String, *>, overrides: List<String> = emptyList()): Map<String, *> {
+        return map.overrideAll(overrides)
+    }
 }

@@ -65,7 +65,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);
     private final Lock statusLock = new ReentrantLock();
     private final ImmutableMap<Status, SynchBox> statusLocks = Arrays.stream(Status.values())
-            .collect(ImmutableMap.toImmutableMap(Function.identity(), it -> new SynchBox()));
+        .collect(ImmutableMap.toImmutableMap(Function.identity(), it -> new SynchBox()));
     private final BlockingQueue<CheckedRunnable> commands = new LinkedBlockingQueue<>();
     private final Queue<Update> afterExecutionUpdates = new ArrayDeque<>();
     private final Environment<T, P> environment;
@@ -441,10 +441,10 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
             @Override
             public void stepDone(
-                    @Nonnull final Environment<T, P> environment,
-                    @Nullable final Actionable<T> reaction,
-                    @Nonnull final Time time,
-                    final long step
+                @Nonnull final Environment<T, P> environment,
+                @Nullable final Actionable<T> reaction,
+                @Nonnull final Time time,
+                final long step
             ) {
                 initialized(environment);
             }
@@ -487,8 +487,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         final var statusLock = statusLocks.get(status);
         if (statusLock == null) {
             throw new IllegalStateException(
-                    "Inconsistent state, the Alchemist engine tried to synchronize on a non-existing lock"
-                            + "searching for status: " + status + ", available locks: " + statusLocks
+                "Inconsistent state, the Alchemist engine tried to synchronize on a non-existing lock"
+                    + "searching for status: " + status + ", available locks: " + statusLocks
             );
         }
         return statusLock;
@@ -639,13 +639,13 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                             // source, target, and all their neighbors are candidates.
                             Stream.of(sourceNode, targetNode),
                             Stream.of(environment.getNeighborhood(sourceNode), environment.getNeighborhood(getTargetNode()))
-                                    .flatMap(it -> it.getNeighbors().stream()))
-                            .distinct()
-                            .flatMap(it -> it.getReactions().stream())
-                            .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
+                                .flatMap(it -> it.getNeighbors().stream()))
+                        .distinct()
+                        .flatMap(it -> it.getReactions().stream())
+                        .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
                     // Global reactions
                     dependencyGraph.globalInputContextReactions().stream())
-                    .reduce(Stream.empty(), Stream::concat);
+                .reduce(Stream.empty(), Stream::concat);
         }
     }
 

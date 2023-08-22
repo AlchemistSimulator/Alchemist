@@ -20,13 +20,13 @@ import java.util.List;
 
 /**
  * This class implements the indexed priority queue through an Array.
- * 
+ *
  * @param <T> concentration type
  */
 public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
 
     private final TObjectIntMap<Actionable<T>> indexes =
-            new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
+        new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
     private final List<Time> times = new ArrayList<>();
     private final List<Actionable<T>> tree = new ArrayList<>();
 

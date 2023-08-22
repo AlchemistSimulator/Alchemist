@@ -1,0 +1,6 @@
+_test:
+  map:
+    elem2:
+      key1: testtest
+
+fizz: buzz

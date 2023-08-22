@@ -9,10 +9,8 @@
 
 package it.unibo.alchemist.boundary.launch
 
-import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.boundary.Loader
 import org.slf4j.LoggerFactory
-import java.awt.GraphicsEnvironment
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -20,62 +18,32 @@ import java.util.concurrent.TimeUnit
 /**
  * Executes simulations locally in a headless environment.
  */
-object HeadlessSimulationLauncher : SimulationLauncher() {
+class HeadlessSimulationLauncher(
+    private val parallelism: Int = defaultParallelism,
+    private val variables: List<String> = emptyList(),
+) : SimulationLauncher() {
 
-    override val name = "Alchemist headless runner"
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun additionalValidation(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
-        when {
-            headless || GraphicsEnvironment.isHeadless() -> Validation.OK()
-            graphics != null ->
-                Validation.OK(
-                    Priority.Fallback(
-                        """
-                        Graphical interface required but unavailable.
-                        Import an Alchemist module with a graphical launcher, e.g. alchemist-swingui.
-                        See: https://alchemistsimulator.github.io/wiki/usage/gui/
-                        """.trimIndent(),
-                    ),
-                )
-            distributed != null ->
-                Validation.OK(
-                    Priority.Fallback(
-                        """
-                        Distributed execution required but unavailable.
-                        Import an Alchemist module with a distributed executor, e.g. alchemist-grid.
-                        See: https://alchemistsimulator.github.io/wiki/usage/grid/
-                        """.trimIndent(),
-                    ),
-                )
-            else ->
-                Validation.OK(
-                    Priority.Fallback(
-                        "Headless mode not explicitly requested, but no graphic environment found",
-                    ),
-                )
-        }
-    }
-
-    override fun launch(loader: Loader, parameters: AlchemistExecutionOptions) {
+    override fun launch(loader: Loader) {
         var count = 0
-        val executor = Executors.newFixedThreadPool(parameters.parallelism) {
+        val executor = Executors.newFixedThreadPool(parallelism) {
             Thread(it).apply { name = "alchemist-executor-${count++}" }
         }
         val errorQueue = ConcurrentLinkedQueue<Throwable>()
-        val cartesianProduct = loader.variables.cartesianProductOf(parameters.variables)
-        cartesianProduct.forEach { variables ->
+        val cartesianProduct = loader.variables.cartesianProductOf(variables)
+        cartesianProduct.forEach { newVariables ->
             executor.submit {
-                runCatching { prepareSimulation<Any, Nothing>(loader, parameters, variables) }
-                    .onFailure { logger.error("Error during the preparation of the simulation: $variables", it) }
+                runCatching { prepareSimulation<Any, Nothing>(loader, newVariables) }
+                    .onFailure { logger.error("Error during the preparation of the simulation: $newVariables", it) }
                     .mapCatching { simulation ->
                         simulation.play()
                         simulation.run()
                         simulation.error.ifPresent { throw it }
-                        logger.info("Simulation with {} completed successfully", variables)
+                        logger.info("Simulation with {} completed successfully", newVariables)
                     }
                     .onFailure {
-                        logger.error("Failure in Simulation with $variables", it)
+                        logger.error("Failure in Simulation with $newVariables", it)
                         errorQueue.add(it)
                         executor.shutdownNow()
                     }

@@ -351,6 +351,7 @@ dependencies {
         implementation(io)
         implementation(lang3)
     }
+    implementation(libs.kotlin.cli)
     implementation(libs.apache.commons.cli)
     implementation(libs.guava)
     implementation(libs.logback)

@@ -13,7 +13,7 @@
 package it.unibo.alchemist.boundary.webui.client.adapters.reactBootstrap.buttons
 
 import react.ComponentClass
-import react.Props
+import react.PropsWithChildren
 
 /**
  * React Bootstrap ToggleButtonGroup adapter.
@@ -27,7 +27,7 @@ external val ToggleButtonGroup: ComponentClass<ToggleButtonGroupProps>
 /**
  * Props used to customize the ToggleButtonGroup.
  */
-external interface ToggleButtonGroupProps : Props {
+external interface ToggleButtonGroupProps : PropsWithChildren {
     /**
      * type prop, 'checkbox' | 'radio'.
      */

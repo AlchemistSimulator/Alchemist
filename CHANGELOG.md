@@ -1,3 +1,22 @@
+## [27.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.13...27.0.0) (2023-08-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* new command line (#2495)
+
+### Features
+
+* new command line ([#2495](https://github.com/AlchemistSimulator/Alchemist/issues/2495)) ([8bc30c1](https://github.com/AlchemistSimulator/Alchemist/commit/8bc30c170936b179d9c8cc20f57b3d087aa3fcab))
+
+
+### Dependency updates
+
+* **deps:** update dependency org.codehaus.groovy:groovy-jsr223 to v3.0.19 ([5961ce8](https://github.com/AlchemistSimulator/Alchemist/commit/5961ce8428a7a00fc6309a11c9583d7a43a93ef5))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.6.0 ([727dbba](https://github.com/AlchemistSimulator/Alchemist/commit/727dbba0836c6ce00049d62c58217398c0705ce5))
+* **deps:** update dependency org.mockito:mockito-core to v5.5.0 ([6fe0375](https://github.com/AlchemistSimulator/Alchemist/commit/6fe0375674c410070dd0bd17c5265e0e23bab67d))
+* **deps:** update external-resources/learning-scafi-alchemist digest to c92b8d7 ([c52528b](https://github.com/AlchemistSimulator/Alchemist/commit/c52528bece3d8604dd5bbf33b6ef0f95cf9a1bd0))
+
 ## [26.0.13](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.12...26.0.13) (2023-08-22)
 
 

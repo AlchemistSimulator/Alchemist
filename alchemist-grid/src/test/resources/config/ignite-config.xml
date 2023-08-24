@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright (C) 2010-2023, Danilo Pianini and contributors
+  ~ listed, for each module, in the respective subproject's build.gradle.kts file.
+  ~
+  ~ This file is part of Alchemist, and is distributed under the terms of the
+  ~ GNU General Public License, with a linking exception,
+  ~ as described in the file LICENSE in the Alchemist distribution's top directory.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean class="org.apache.ignite.configuration.IgniteConfiguration">
+		<property name="workDirectory" value="/tmp/alchemist"/>
+	</bean>
+</beans>

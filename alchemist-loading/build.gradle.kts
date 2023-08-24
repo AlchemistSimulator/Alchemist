@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -21,6 +21,7 @@ dependencies {
     api(alchemist("api"))
     api(alchemist("implementationbase"))
 
+    implementation(alchemist("engine"))
     implementation(alchemist("euclidean-geometry"))
     implementation(libs.apache.commons.lang3)
     implementation(libs.arrow.core)

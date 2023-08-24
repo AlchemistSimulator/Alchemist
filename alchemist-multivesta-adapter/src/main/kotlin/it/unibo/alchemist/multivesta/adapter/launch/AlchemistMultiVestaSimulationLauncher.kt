@@ -10,7 +10,7 @@
 package it.unibo.alchemist.multivesta.adapter.launch
 
 import it.unibo.alchemist.boundary.Loader
-import it.unibo.alchemist.boundary.launch.SimulationLauncher
+import it.unibo.alchemist.boundary.launchers.SimulationLauncher
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.multivesta.adapter.AlchemistMultiVesta

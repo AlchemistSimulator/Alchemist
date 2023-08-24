@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.launch
+package it.unibo.alchemist.boundary.launchers
 
 import io.ktor.server.netty.EngineMain
 import it.unibo.alchemist.boundary.Loader
@@ -29,7 +29,6 @@ class WebRendererLauncher : SimulationLauncher() {
      *  Prepares the simulation to be run, execute it in a coroutine and start the REST server by
      *  executing [EngineMain] using the application.conf configuration file.
      *  @param loader the loader of the simulation.
-     *  @param parameters the parameters of the simulation.
      */
     override fun launch(loader: Loader) {
         val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, emptyMap<String, Any>())

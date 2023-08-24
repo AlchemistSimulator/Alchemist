@@ -18,8 +18,8 @@ import Libs.incarnation
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
 dependencies {
-    api(alchemist("implementationbase"))
     api(alchemist("api"))
+    api(alchemist("implementationbase"))
 
     implementation(alchemist("euclidean-geometry"))
     implementation(libs.apache.commons.lang3)

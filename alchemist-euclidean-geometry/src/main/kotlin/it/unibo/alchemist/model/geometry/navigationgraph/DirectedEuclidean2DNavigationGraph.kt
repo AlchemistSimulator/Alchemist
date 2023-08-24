@@ -17,4 +17,4 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  * A 2D [DirectedNavigationGraph].
  */
 typealias DirectedEuclidean2DNavigationGraph =
-DirectedNavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DPassage>
+    DirectedNavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DPassage>

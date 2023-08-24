@@ -10,23 +10,21 @@
 package it.unibo.alchemist.boundary.launch
 
 import com.google.common.collect.Lists
-import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.boundary.InitializedEnvironment
-import it.unibo.alchemist.boundary.LoadAlchemist
+import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.boundary.exporters.GlobalExporter
-import it.unibo.alchemist.config.EngineMode
-import it.unibo.alchemist.config.OutputReplayStrategy
 import it.unibo.alchemist.core.ArrayIndexedPriorityEpsilonBatchQueue
 import it.unibo.alchemist.core.ArrayIndexedPriorityFixedBatchQueue
 import it.unibo.alchemist.core.BatchEngine
 import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
+import it.unibo.alchemist.core.model.EpsilonBatchEngineConfiguration
+import it.unibo.alchemist.core.model.FixedBatchEngineConfiguration
+import it.unibo.alchemist.model.OutputReplayStrategy
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.times.DoubleTime
-import org.kaikikm.threadresloader.ResourceLoader
-import java.io.File
+import it.unibo.alchemist.model.Time
 import java.io.Serializable
 
 /**
@@ -34,27 +32,7 @@ import java.io.Serializable
  * Takes care of creating a [Loader],
  * and provides support functions for generating simulations and computing the possible parameters configurations.
  */
-abstract class SimulationLauncher : AbstractLauncher() {
-
-    final override fun validate(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
-        when {
-            configuration == null -> requires("a simulation file")
-            help -> incompatibleWith("help printing")
-            server != null -> incompatibleWith("Alchemist grid computing server mode")
-            else -> additionalValidation(currentOptions)
-        }
-    }
-
-    final override fun launch(parameters: AlchemistExecutionOptions) = with(parameters) {
-        checkNotNull(configuration) { "Invalid configuration $configuration" }
-        val loader = LoadAlchemist.from(
-            ResourceLoader.getResource(configuration)
-                ?: File(configuration).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
-                ?: error("No classpath resource or file $configuration was found"),
-            parameters.overrides,
-        )
-        launch(loader, parameters)
-    }
+abstract class SimulationLauncher : Launcher {
 
     protected fun Map<String, Variable<*>>.cartesianProductOf(
         variables: Collection<String>,
@@ -72,11 +50,10 @@ abstract class SimulationLauncher : AbstractLauncher() {
 
     protected fun <T, P : Position<P>> prepareSimulation(
         loader: Loader,
-        parameters: AlchemistExecutionOptions,
         variables: Map<String, *>,
     ): Simulation<T, P> {
         val initialized: InitializedEnvironment<T, P> = loader.getWith(variables)
-        val simulation = buildEngine(initialized, parameters)
+        val simulation = buildEngine(initialized)
         if (initialized.exporters.isNotEmpty()) {
             simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         }
@@ -85,55 +62,50 @@ abstract class SimulationLauncher : AbstractLauncher() {
 
     private fun <T, P : Position<P>> buildEngine(
         initialized: InitializedEnvironment<T, P>,
-        parameters: AlchemistExecutionOptions,
     ): Engine<T, P> {
-        val outputReplayStrategy = parameters.engineConfig.outputReplayStrategy
-        return when (parameters.engineConfig.engineMode) {
-            EngineMode.BATCH_FIXED -> {
-                val batchSize = parameters.engineConfig.batchSize ?: parameters.parallelism
+        return when (val engineConfiguration = initialized.engineConfiguration) {
+            is FixedBatchEngineConfiguration -> {
+                val batchSize = engineConfiguration.batchSize
                 BatchEngine(
                     initialized.environment,
                     Long.MAX_VALUE,
-                    DoubleTime(parameters.endTime),
-                    parameters.parallelism,
-                    outputReplayStrategy.toEngine(),
+                    Time.INFINITY,
+                    engineConfiguration.workersNumber,
+                    OutputReplayStrategy.parseCode(engineConfiguration.outputReplayStrategy),
                     ArrayIndexedPriorityFixedBatchQueue(batchSize),
                 )
             }
 
-            EngineMode.BATCH_EPSILON -> {
-                val epsilon = parameters.engineConfig.epsilon
+            is EpsilonBatchEngineConfiguration -> {
+                val epsilon = engineConfiguration.epsilonValue
                 BatchEngine(
                     initialized.environment,
                     Long.MAX_VALUE,
-                    DoubleTime(parameters.endTime),
-                    parameters.parallelism,
-                    outputReplayStrategy.toEngine(),
+                    Time.INFINITY,
+                    engineConfiguration.workersNumber,
+                    OutputReplayStrategy.parseCode(engineConfiguration.outputReplayStrategy),
                     ArrayIndexedPriorityEpsilonBatchQueue(epsilon),
                 )
             }
 
             else -> Engine(
                 initialized.environment,
-                DoubleTime(parameters.endTime),
+                Time.INFINITY,
             )
-        }
-    }
-
-    private fun OutputReplayStrategy.toEngine(): BatchEngine.OutputReplayStrategy {
-        return when (this) {
-            OutputReplayStrategy.AGGREGATE -> BatchEngine.OutputReplayStrategy.AGGREGATE
-            OutputReplayStrategy.REPLAY -> BatchEngine.OutputReplayStrategy.REPLAY
         }
     }
 
     /**
      * Launches a simulation using the provided [loader] and option [parameters].
      */
-    abstract fun launch(loader: Loader, parameters: AlchemistExecutionOptions)
+    abstract override fun launch(loader: Loader)
 
-    /**
-     * Allows subclasses to perform further checks before getting executed. Defaults to simply return [Validation.OK]
-     */
-    abstract fun additionalValidation(currentOptions: AlchemistExecutionOptions): Validation
+    companion object {
+        /**
+         * If no specific number of parallel threads to use is specified, this value is used.
+         * Defaults to the number of logical cores detected by the JVM.
+         */
+        @JvmStatic
+        protected val defaultParallelism = Runtime.getRuntime().availableProcessors()
+    }
 }

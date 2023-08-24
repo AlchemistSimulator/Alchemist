@@ -1,5 +1,9 @@
 incarnation: protelis
 
+terminate:
+  - type: AfterTime
+    parameters: 1
+
 network-model:
   type: ConnectWithinDistance
   parameters: [0.5]

@@ -14,8 +14,9 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
-import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.boundary.Extractor
+import it.unibo.alchemist.boundary.LoadAlchemist
+import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.cli.CLIMaker
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.multivesta.adapter.launch.AlchemistMultiVestaSimulationLauncher
@@ -26,6 +27,7 @@ import org.apache.commons.cli.CommandLineParser
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.ParseException
+import org.kaikikm.threadresloader.ResourceLoader
 import org.slf4j.LoggerFactory
 import org.slf4j.helpers.NOPLoggerFactory
 import java.io.BufferedWriter
@@ -46,16 +48,6 @@ object AlchemistMultiVesta {
 
     private const val MULTIVESTA = "mv"
     private const val ALREADY_EXECUTED_SIMULATION = "aes"
-    private const val HEADLESS = "hl"
-    private const val VARIABLES = "var"
-    private const val BATCH = 'b'
-    private const val FXUI = "fxui"
-    private const val DISTRIBUTED = 'd'
-    private const val GRAPHICS = 'g'
-    private const val HELP = 'h'
-    private const val SERVER = 's'
-    private const val PARALLELISM = 'p'
-    private const val TIME = 't'
     private const val YAML = 'y'
     private const val EXTRACTOR = 'e'
     private val logger = LoggerFactory.getLogger(AlchemistMultiVesta::class.java)
@@ -71,15 +63,6 @@ object AlchemistMultiVesta {
      * Set this to false for testing purposes.
      */
     private const val isNormalExecution = true
-
-    private inline fun <reified T : Number> CommandLine.hasNumeric(name: Char, converter: String.() -> T?): T? =
-        getOptionValue(name)?.let {
-            when (val value = converter(it)) {
-                null ->
-                    exitBecause("Not a valid ${T::class.simpleName}: $it", ExitStatus.NUMBER_FORMAT_ERROR)
-                else -> value
-            }
-        }
 
     private fun appendSeedsToYmlFile(seed: Int, configurationPath: String): String {
         try {
@@ -120,11 +103,6 @@ object AlchemistMultiVesta {
         try {
             val cmd: CommandLine = parser.parse(opts, args)
             setVerbosity(cmd)
-            val options = cmd.toAlchemist
-            if (options.isEmpty || options.help) {
-                printHelp()
-                exitWith(if (options.help) ExitStatus.OK else ExitStatus.INVALID_CLI)
-            }
             require(SupportedIncarnations.getAvailableIncarnations().isNotEmpty()) {
                 logger.error(
                     """
@@ -181,18 +159,13 @@ object AlchemistMultiVesta {
     fun launchSimulation(seed: Int): AlchemistSimulationAdapter {
         logger.info("Launching simulation with seed $seed")
         val cmd = parseOptions(File("alchemist_args.txt").readText().split(" ").toTypedArray())
-        var options = cmd.toAlchemist
-        options.configuration?.let { configPath ->
-            appendSeedsToYmlFile(seed, configPath).let { newConfigPath ->
-                options = options.copy(configuration = newConfigPath)
-            }
-        }
         if (cmd.isSimulationAlreadyExecuted) {
             return ExperimentAlchemistSimulationAdapter(ExperimentAlchemistSimulationAdapter.GridType.REGULAR, seed)
             // to do: load the specified CSVAlchemistSimulationAdapter by using reflection
         }
-        val launcher = AlchemistMultiVestaSimulationLauncher()
-        launcher.launch(options)
+        val loader = createLoader(cmd.getOptionValue(YAML), seed)
+        val launcher = loader.launcher as AlchemistMultiVestaSimulationLauncher
+        launcher.launch(loader)
         return when (cmd.extractor) {
             null -> AlchemistSimulationAdapterWithExporter(launcher.simulation)
             else -> {
@@ -212,6 +185,7 @@ object AlchemistMultiVesta {
                     "Conflicting verbosity specification. Only one of ${logLevels.keys} can be specified.",
                     ExitStatus.MULTIPLE_VERBOSITY,
                 )
+
             verbosity.size == 1 -> setLogbackLoggingLevel(verbosity.first())
             else -> setLogbackLoggingLevel(Level.WARN)
         }
@@ -244,24 +218,18 @@ object AlchemistMultiVesta {
         exitWith(status)
     }
 
-    private val CommandLine.toAlchemist: AlchemistExecutionOptions
-        get() {
-            return AlchemistExecutionOptions(
-                server = getOptionValue(SERVER),
-                help = hasOption(HELP),
-                batch = hasOption(BATCH),
-                distributed = getOptionValue(DISTRIBUTED),
-                endTime = hasNumeric(TIME, String::toDoubleOrNull)
-                    ?: AlchemistExecutionOptions.defaultEndTime,
-                graphics = getOptionValue(GRAPHICS),
-                fxui = hasOption(FXUI),
-                headless = hasOption(HEADLESS),
-                parallelism = hasNumeric(PARALLELISM, String::toIntOrNull)
-                    ?: AlchemistExecutionOptions.defaultParallelism,
-                variables = getOptionValues(VARIABLES)?.toList().orEmpty(),
-                configuration = getOptionValue(YAML),
-            )
+    private fun createLoader(simulationFile: String, seed: Int?): Loader {
+        var newSimulationFile = simulationFile
+        if (seed != null) {
+            newSimulationFile = appendSeedsToYmlFile(seed, simulationFile)
         }
+        val url = ResourceLoader.getResource(newSimulationFile)
+            ?: File(newSimulationFile).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
+            ?: error("No classpath resource or file $newSimulationFile was found")
+        return LoadAlchemist.from(
+            url,
+        )
+    }
 
     private val CommandLine.toMultiVesta: Array<String>
         get() = getOptionValue(MULTIVESTA)?.split(" ").orEmpty().toTypedArray()

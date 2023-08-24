@@ -123,7 +123,7 @@ publishing.publications {
                 contributor {
                     name.set("Sara Montagna")
                     email.set("sara.montagna@unibo.it")
-                    url.set("http://saramontagna.apice.unibo.it/")
+                    url.set("https://www.unibo.it/sitoweb/sara.montagna")
                 }
             }
         }

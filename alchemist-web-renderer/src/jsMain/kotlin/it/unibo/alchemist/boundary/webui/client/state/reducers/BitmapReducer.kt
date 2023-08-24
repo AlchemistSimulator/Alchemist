@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.boundary.webui.client.state.reducers
 
-import com.soywiz.korim.bitmap.Bitmap
 import it.unibo.alchemist.boundary.webui.client.state.actions.SetBitmap
+import korlibs.image.bitmap.Bitmap
 
 /**
  * Reducer for the bitmap.

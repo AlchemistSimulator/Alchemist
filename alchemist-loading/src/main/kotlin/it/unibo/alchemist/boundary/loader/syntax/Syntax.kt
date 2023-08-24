@@ -187,6 +187,7 @@ internal object DocumentRoot : SyntaxElement {
     val launcher by OwnName
     val layers by OwnName
     const val linkingRule = "network-model"
+    const val engineConfiguration = "engine-configuration"
     const val remoteDependencies = "remote-dependencies"
     val seeds by OwnName
     val terminate by OwnName

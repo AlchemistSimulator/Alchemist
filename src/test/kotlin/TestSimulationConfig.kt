@@ -2,9 +2,9 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.boundary.modelproviders.YamlProvider
-import it.unibo.alchemist.config.EngineMode
-import it.unibo.alchemist.config.OutputReplayStrategy
 import it.unibo.alchemist.config.SimulationConfig
+import it.unibo.alchemist.core.model.EngineMode
+import it.unibo.alchemist.model.OutputReplayStrategy
 import org.kaikikm.threadresloader.ResourceLoader
 
 /*

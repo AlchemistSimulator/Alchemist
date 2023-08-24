@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.webui.client.state
 
-import com.soywiz.korim.bitmap.Bitmap32
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.client.state.actions.SetBitmap
@@ -19,6 +18,7 @@ import it.unibo.alchemist.boundary.webui.client.state.actions.SetStatusSurrogate
 import it.unibo.alchemist.boundary.webui.common.model.RenderMode
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.StatusSurrogate
 import it.unibo.alchemist.boundary.webui.common.utility.Action
+import korlibs.image.bitmap.Bitmap32
 import org.reduxkotlin.Store
 import org.reduxkotlin.createStore
 

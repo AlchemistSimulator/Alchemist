@@ -7,13 +7,17 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.cognitive
-
-import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+package it.unibo.alchemist.boundary;
 
 /**
- * A [NavigationStrategy] in a bidimensional euclidean space.
+ * An entity with a [name] that can take responsibility for performing an Alchemist run.
  */
-typealias NavigationStrategy2D<T, L, R, N, E> =
-    NavigationStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, L, R, N, E>
+public interface Launcher {
+
+    /**
+     * Launches the simulation.
+     * @param loader loader
+     */
+    void launch(Loader loader);
+
+}

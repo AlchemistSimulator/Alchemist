@@ -7,13 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.cognitive
+package it.unibo.alchemist.core.model
 
-import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.EngineConfiguration
 
 /**
- * A [NavigationStrategy] in a bidimensional euclidean space.
+ * Sequential engine configuration.
  */
-typealias NavigationStrategy2D<T, L, R, N, E> =
-    NavigationStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, L, R, N, E>
+class SequentialEngineConfiguration : EngineConfiguration

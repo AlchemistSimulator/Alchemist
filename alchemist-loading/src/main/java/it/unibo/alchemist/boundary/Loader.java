@@ -9,6 +9,7 @@
 package it.unibo.alchemist.boundary;
 
 import it.unibo.alchemist.model.Position;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -20,11 +21,10 @@ import java.util.Map;
 public interface Loader extends Serializable {
 
     /**
-     * @param <T>
-     *            concentration type
+     * @param <T> concentration type
      * @param <P> position type
      * @return an {@link InitializedEnvironment} with all the variables set at their
-     *         default values
+     * default values
      */
     default <T, P extends Position<P>> InitializedEnvironment<T, P> getDefault() {
         return getWith(Collections.emptyMap());
@@ -41,21 +41,18 @@ public interface Loader extends Serializable {
 
     /**
      * @return a {@link Map} between variable names and their actual
-     *         representation
+     * representation
      */
     Map<String, Variable<?>> getVariables();
 
     /**
-     * @param values
-     *            a map specifying name-value bindings for the variables in this
-     *            scenario
-     * @param <T>
-     *            concentration type
-     * @param <P>
-     *            position type
+     * @param values a map specifying name-value bindings for the variables in this
+     *               scenario
+     * @param <T>    concentration type
+     * @param <P>    position type
      * @return an {@link InitializedEnvironment} with all the variables set at the
-     *         specified values. If the value is unspecified, the default is
-     *         used instead
+     * specified values. If the value is unspecified, the default is
+     * used instead
      */
     <T, P extends Position<P>> InitializedEnvironment<T, P> getWith(Map<String, ?> values);
 
@@ -68,8 +65,15 @@ public interface Loader extends Serializable {
     Map<String, Object> getConstants();
 
     /**
-     * 
      * @return dependencies files
      */
     List<String> getRemoteDependencies();
+
+    /**
+     * Returns launcher to be used in the simulation.
+     *
+     * @return launcher
+     */
+    Launcher getLauncher();
+
 }

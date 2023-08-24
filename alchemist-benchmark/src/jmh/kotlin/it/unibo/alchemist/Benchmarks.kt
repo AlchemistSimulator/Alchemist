@@ -35,7 +35,7 @@ open class Benchmarks {
                 "run",
                 "simulation.yml",
                 "--verbosity",
-                "off",
+                "warn",
                 "--override",
                 """
                 launcher:
@@ -62,14 +62,18 @@ open class Benchmarks {
                 "run",
                 "simulation.yml",
                 "--verbosity",
-                "off",
+                "warn",
                 "--override",
                 """
                 launcher:
                     parameters:
                         parallelism: 4
-                        engine-mode: batchFixed
-                        batch-size: 4
+                engine-configuration:
+                    type: FixedBatchEngineConfiguration
+                    parameters:
+                        outputReplayStrategy: aggregate
+                        workersNumber: 4
+                        batchSize: 4
                 """.trimIndent(),
             ),
         )
@@ -91,14 +95,18 @@ open class Benchmarks {
                 "run",
                 "simulation.yml",
                 "--verbosity",
-                "off",
+                "warn",
                 "--override",
                 """
                 launcher:
                     parameters:
                         parallelism: 8
-                        engine-mode: batchFixed
-                        batch-size: 8
+                engine-configuration:
+                    type: FixedBatchEngineConfiguration
+                    parameters:
+                        outputReplayStrategy: aggregate
+                        workersNumber: 4
+                        batchSize: 4
                 """.trimIndent(),
             ),
         )
@@ -120,14 +128,18 @@ open class Benchmarks {
                 "run",
                 "simulation.yml",
                 "--verbosity",
-                "off",
+                "warn",
                 "--override",
                 """
                 launcher:
                     parameters:
                         parallelism: 4
-                        engine-mode: batchEpsilon
-                        epsilon: 0.01
+                engine-configuration:
+                    type: EpsilonBatchEngineConfiguration
+                    parameters:
+                        outputReplayStrategy: aggregate
+                        workersNumber: 4
+                        epsilonValue: 0.01
                 """.trimIndent(),
             ),
         )
@@ -149,14 +161,18 @@ open class Benchmarks {
                 "run",
                 "simulation.yml",
                 "--verbosity",
-                "off",
+                "warn",
                 "--override",
                 """
                 launcher:
                     parameters:
                         parallelism: 8
-                        engine-mode: batchEpsilon
-                        epsilon: 0.01
+                engine-configuration:
+                    type: EpsilonBatchEngineConfiguration
+                    parameters:
+                        outputReplayStrategy: aggregate
+                        workersNumber: 8
+                        epsilonValue: 0.01
                 """.trimIndent(),
             ),
         )

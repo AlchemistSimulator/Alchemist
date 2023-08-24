@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.config
+package it.unibo.alchemist.core.model
 
 /**
  * Engine modes.
@@ -18,7 +18,7 @@ enum class EngineMode(val code: String) {
     /**
      * Launch simulation is single-threaded deterministic mode.
      */
-    DETERMINISTIC("deterministic"),
+    SEQUENTIAL("deterministic"),
 
     /**
      *  Launch simulation in fixed batch size mode.

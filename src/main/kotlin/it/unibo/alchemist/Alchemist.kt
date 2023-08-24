@@ -13,14 +13,10 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
-import it.unibo.alchemist.boundary.launch.Launcher
-import it.unibo.alchemist.boundary.launch.Validation
-import it.unibo.alchemist.boundary.modelproviders.YamlProvider
-import it.unibo.alchemist.config.SimulationConfig
+import it.unibo.alchemist.boundary.LoadAlchemist
+import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.config.Verbosity
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.util.VariablesOverrider
-import it.unibo.alchemist.util.ClassPathScanner
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
@@ -32,37 +28,11 @@ import org.slf4j.LoggerFactory
 import org.slf4j.helpers.NOPLoggerFactory
 import java.io.File
 
-private typealias ValidLauncher = Pair<Validation.OK, Launcher>
-
 /**
  * Starts Alchemist.
  */
 object Alchemist {
     private val logger = LoggerFactory.getLogger(Alchemist::class.java)
-    private val launchers: List<Launcher> = loadLaunchers()
-
-    private fun loadLaunchers(): List<Launcher> {
-        return ClassPathScanner
-            .subTypesOf(Launcher::class.java, "it.unibo.alchemist")
-            .map { clazz ->
-                val zeroAryConstructors = clazz.constructors
-                    .filter { it.parameterCount == 0 && it.canAccess(null) }
-                if (zeroAryConstructors.size == 1) {
-                    zeroAryConstructors.first().newInstance() as Launcher
-                } else {
-                    val instances = clazz.fields.filter {
-                        it.name == "INSTANCE" &&
-                            it.canAccess(null) &&
-                            Launcher::class.java.isAssignableFrom(it.type)
-                    }
-                    if (instances.size == 1) {
-                        instances.first().get(null) as Launcher
-                    } else {
-                        error("Cannot instance or access an instance of $clazz")
-                    }
-                }
-            }
-    }
 
     /**
      * Set this to false for testing purposes.
@@ -77,7 +47,13 @@ object Alchemist {
     @JvmStatic
     fun main(args: Array<String>) {
         val parser = ArgParser("alchemist")
+        val run = createRunCommand(parser)
+        parser.subcommands(run)
+        parser.parse(args)
+    }
 
+    @OptIn(ExperimentalCli::class)
+    private fun createRunCommand(parser: ArgParser): Subcommand {
         class Run : Subcommand("run", "Run a simulation or a batch of simulations") {
 
             val simulationFile by parser.argument(
@@ -118,8 +94,7 @@ object Alchemist {
                 executeSimlation(simulationFile, verbosity, overrides)
             }
         }
-        parser.subcommands(Run())
-        parser.parse(args)
+        return Run()
     }
 
     private fun executeSimlation(
@@ -130,10 +105,8 @@ object Alchemist {
         validateOutputModule()
         validateIncarnations()
         setVerbosity(verbosity)
-        val optionsConfig = parseOptions(simulationFile, overrides)
-        val legacyConfig = optionsConfig.toLegacy(simulationFile, overrides)
-        val selectedLauncher = selectLauncher(legacyConfig, optionsConfig.type)
-        selectedLauncher.launch(legacyConfig)
+        val loader = createLoader(simulationFile, overrides)
+        loader.launcher.launch(loader)
     }
 
     private fun validateOutputModule() {
@@ -143,41 +116,14 @@ object Alchemist {
         }
     }
 
-    private fun parseOptions(pathString: String?, overrides: List<String>): SimulationConfig {
-        return if (pathString != null) {
-            val path = ResourceLoader.getResource(pathString)
-                ?: File(pathString).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
-                ?: error("No classpath resource or file $pathString was found")
-            val variables = YamlProvider.from(path)
-            logger.debug("Config:\n{}", variables)
-            VariablesOverrider.applyOverrides(variables, overrides)
-            logger.debug("Overriden Config:\n{}", variables)
-            SimulationConfig.fromVariables(variables)
-        } else {
-            error("Classpath resource or file was null")
-        }
-    }
-
-    private fun selectLauncher(options: AlchemistExecutionOptions, launcherClass: String): Launcher {
-        val (validLaunchers, invalidLaunchers) = options.classifyLaunchers()
-        val sortedLaunchers: List<ValidLauncher> = validLaunchers
-            .map { (validation, launcher) ->
-                validation as Validation.OK to launcher
-            }
-            .sortedByDescending { it.first.priority }
-        val candidateLauncher = sortedLaunchers.find { it.second.javaClass.simpleName == launcherClass }
-        if (candidateLauncher == null) {
-            logger.error("No valid launchers for {} and class {}", options, launcherClass)
-            printLaunchers()
-            logger.error("Available launchers: {}", launchers.map { "${it.name} - [${it.javaClass.name}]" })
-            invalidLaunchers.forEach { (validation, launcher) ->
-                if (validation is Validation.Invalid) {
-                    logger.error("{}: {}", launcher::class.java.simpleName, validation.reason)
-                }
-            }
-            exitWith(ExitStatus.INVALID_CLI)
-        }
-        return candidateLauncher.second
+    private fun createLoader(simulationFile: String, overrides: List<String>): Loader {
+        val url = ResourceLoader.getResource(simulationFile)
+            ?: File(simulationFile).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
+            ?: error("No classpath resource or file $simulationFile was found")
+        return LoadAlchemist.from(
+            url,
+            overrides,
+        )
     }
 
     private fun validateIncarnations() {
@@ -193,14 +139,6 @@ object Alchemist {
             )
             "There are no incarnations in the classpath, no simulation can get executed"
         }
-    }
-
-    private fun AlchemistExecutionOptions.classifyLaunchers() = launchers
-        .map { it.validate(this) to it }
-        .partition { (validation, _) -> validation is Validation.OK }
-
-    private fun printLaunchers() {
-        logger.warn("Available launchers: {}", launchers.map { "${it.name} - [${it.javaClass.name}]" })
     }
 
     /**

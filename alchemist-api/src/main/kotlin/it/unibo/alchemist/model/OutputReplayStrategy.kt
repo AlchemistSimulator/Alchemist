@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.config
+package it.unibo.alchemist.model
 
 /**
  * Engine output replay strategy modes.

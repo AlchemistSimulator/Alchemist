@@ -9,13 +9,15 @@
 
 package it.unibo.alchemist.boundary
 
+import it.unibo.alchemist.model.EngineConfiguration
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 
 /**
- * Pair-like implementation of [InitializedEnvironment].
+ * Tuple-like implementation of [InitializedEnvironment].
  */
-data class EnvironmentAndExports<T, P : Position<P>>(
+data class EnvironmentWithConfiguration<T, P : Position<P>>(
     override val environment: Environment<T, P>,
     override val exporters: List<Exporter<T, P>>,
+    override val engineConfiguration: EngineConfiguration,
 ) : InitializedEnvironment<T, P>

@@ -12,6 +12,7 @@ import com.google.common.collect.Sets
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.OutputReplayStrategy
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
 import kotlinx.coroutines.async
@@ -203,21 +204,6 @@ class BatchEngine<T, P : Position<out P>> :
      */
     override fun newStatus(next: Status) {
         synchronized(this) { super.newStatus(next) }
-    }
-
-    /**
-     * Output replay strategy mode.
-     */
-    enum class OutputReplayStrategy {
-        /**
-         * Replay last batch of events ordered by execution time.
-         */
-        REPLAY,
-
-        /**
-         * Replay only the latest event in the batch.
-         */
-        AGGREGATE,
     }
 
     private inner class TaskResult(val event: Actionable<T>, val eventTime: Time)

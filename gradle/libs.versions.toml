@@ -59,7 +59,7 @@ jpx = "io.jenetics:jpx:2.3.0"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
-korim = "com.soywiz.korlibs.korim:korim:4.0.9"
+korim = "com.soywiz.korlibs.korim:korim:4.0.10"
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }

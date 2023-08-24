@@ -20,6 +20,7 @@ import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
 import it.unibo.alchemist.boundary.extractors.MoleculeReader
 import it.unibo.alchemist.boundary.extractors.Time
+import it.unibo.alchemist.boundary.launchers.HeadlessSimulationLauncher
 import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.JavaType
@@ -61,8 +62,6 @@ import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.DependentVariable.
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Deployment.Program as ProgramSyntax
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Environment.GlobalProgram as GlobalProgramSyntax
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Layer as LayerSyntax
-
-private const val DEFAULT_SIMULATION_LAUNCHER_CLASS = "HeadlessSimulationLauncher"
 
 /*
  * UTILITY ALIASES
@@ -218,11 +217,10 @@ internal object SimulationModel {
         logger.info("Variables: {}", variables)
 
         val launcherDescriptor = injectedRoot[DocumentRoot.launcher]
-        val defaultLauncher =
-            NamedParametersConstructor(type = DEFAULT_SIMULATION_LAUNCHER_CLASS).buildAny<Launcher>(context.factory)
-                .getOrThrow()
-        val launcher: Launcher =
-            visitBuilding<Launcher>(context, launcherDescriptor)?.getOrDefault(defaultLauncher) ?: defaultLauncher
+        val launcher: Launcher = when (launcherDescriptor) {
+            emptyMap<Nothing, Any>() -> HeadlessSimulationLauncher()
+            else -> visitBuilding<Launcher>(context, launcherDescriptor)?.getOrThrow() ?: HeadlessSimulationLauncher()
+        }
         injectedRoot = inject(context, injectedRoot)
         val remoteDependencies =
             visitRecursively(

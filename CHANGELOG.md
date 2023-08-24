@@ -1,3 +1,34 @@
+## [28.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/27.0.0...28.0.0) (2023-08-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* fix #2554 and contextually refactor the launchers
+
+### Bug Fixes
+
+* fix [#2554](https://github.com/AlchemistSimulator/Alchemist/issues/2554) and contextually refactor the launchers ([6c52d55](https://github.com/AlchemistSimulator/Alchemist/commit/6c52d55be1e30c80d94c4f1c10aa3985334ca587))
+* **loading:** improve the explanation of loading errors ([a240c8c](https://github.com/AlchemistSimulator/Alchemist/commit/a240c8cf2de1af725b16cb5c74e5dd525ea817a3))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.soywiz.korlibs.korim:korim to v4.0.10 ([5248e72](https://github.com/AlchemistSimulator/Alchemist/commit/5248e72f6916e701fadeb97ab9a4cb35d624ec85))
+* **deps:** update kotlin to v1.9.10 ([8b7c9f4](https://github.com/AlchemistSimulator/Alchemist/commit/8b7c9f4f8be0f688ab4ac8490cbbe462a9238a69))
+* **deps:** update react to v18.2.0-pre.620 ([05a5c0a](https://github.com/AlchemistSimulator/Alchemist/commit/05a5c0a0ee02652f036e7d4af863affb7719b577))
+
+
+### Tests
+
+* **alchemist-grid:** launcher should be correctly selected ([a0cfc71](https://github.com/AlchemistSimulator/Alchemist/commit/a0cfc71b5352e68a4245dd0a5305d387d8102167))
+* **grid:** add a trailing newline ([7b9f94c](https://github.com/AlchemistSimulator/Alchemist/commit/7b9f94cfdf36d28f3c47643bbbbd083dc410efa2))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v3.6.0 ([83193b3](https://github.com/AlchemistSimulator/Alchemist/commit/83193b35b5b7664d99b58fa03dc456861e35211a))
+* **loading:** sort dependencies ([8980737](https://github.com/AlchemistSimulator/Alchemist/commit/89807378a05f4750ab7d8a237507c28e45bb58a4))
+
 ## [27.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.13...27.0.0) (2023-08-22)
 
 

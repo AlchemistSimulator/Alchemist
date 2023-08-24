@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.fxui.util
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.fxui.EffectGroup
 import it.unibo.alchemist.boundary.fxui.effects.serialization.EffectSerializer
-import it.unibo.alchemist.boundary.launch.SimulationLauncher
+import it.unibo.alchemist.boundary.launchers.SimulationLauncher
 import javafx.embed.swing.JFXPanel
 import javafx.stage.Stage
 import java.io.File

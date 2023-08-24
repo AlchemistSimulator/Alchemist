@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.launch
+package it.unibo.alchemist.boundary.launchers
 
 import com.google.common.collect.Lists
 import it.unibo.alchemist.boundary.InitializedEnvironment
@@ -96,7 +96,7 @@ abstract class SimulationLauncher : Launcher {
     }
 
     /**
-     * Launches a simulation using the provided [loader] and option [parameters].
+     * Launches a simulation using the provided [loader].
      */
     abstract override fun launch(loader: Loader)
 

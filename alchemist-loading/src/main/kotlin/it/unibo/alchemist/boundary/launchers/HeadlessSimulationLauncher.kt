@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.launch
+package it.unibo.alchemist.boundary.launchers
 
 import it.unibo.alchemist.boundary.Loader
 import org.slf4j.LoggerFactory

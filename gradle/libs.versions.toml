@@ -12,7 +12,7 @@ dokka = "1.8.20"
 kotlin = "1.9.10"
 mockito = "5.5.0"
 protelis = "17.1.1"
-react = "18.2.0-pre.619"
+react = "18.2.0-pre.620"
 scafi = "1.1.7"
 scala = "2.13.11"
 scalacache = "0.28.0"
@@ -59,7 +59,7 @@ jpx = "io.jenetics:jpx:2.3.0"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
-korim = "com.soywiz.korlibs.korim:korim:4.0.9"
+korim = "com.soywiz.korlibs.korim:korim:4.0.10"
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }

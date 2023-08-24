@@ -1,3 +1,4 @@
 incarnation: protelis
 launcher:
   type: IgniteServerLauncher
+  parameters: config/ignite-config.xml

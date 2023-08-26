@@ -235,7 +235,8 @@ internal object SimulationModel {
     internal fun <P : Position<P>, T : Any?> visitIncarnation(root: Any?): Incarnation<T, P> =
         SupportedIncarnations.get<T, P>(root.toString()).orElseThrow {
             IllegalArgumentException(
-                "Invalid incarnation descriptor: $root. " + "Valid incarnations are ${SupportedIncarnations.getAvailableIncarnations()}",
+                "Invalid incarnation descriptor: $root. " +
+                    "Valid incarnations are ${SupportedIncarnations.getAvailableIncarnations()}",
             )
         }
 
@@ -345,7 +346,8 @@ internal object SimulationModel {
                 val moleculeElement = element[moleculeKey]
                 require(moleculeElement !is Map<*, *> && moleculeElement !is Iterable<*>) {
                     val type = moleculeElement?.let { ": " + it::class.simpleName }.orEmpty()
-                    "molecule $moleculeElement$type is not a scalar value." + "This might be caused by a missing quotation of a String."
+                    "molecule $moleculeElement$type is not a scalar value." +
+                        "This might be caused by a missing quotation of a String."
                 }
                 val molecule = incarnation.createMolecule(moleculeElement?.toString())
                 logger.debug("Molecule: {}", molecule)
@@ -477,7 +479,8 @@ internal object SimulationModel {
 
                     else -> runCatching { digits.toString().toInt() }.getOrElse { exception ->
                         throw IllegalArgumentException(
-                            "Invalid digit precision: '$digits' (type: ${digits::class.simpleName})." + "Must be an integer number, or parseable to an integer number.",
+                            "Invalid digit precision: '$digits' (type: ${digits::class.simpleName})." +
+                                "Must be an integer number, or parseable to an integer number.",
                             exception,
                         )
                     }
@@ -671,7 +674,8 @@ internal object SimulationModel {
         }
 
         else -> throw IllegalArgumentException(
-            "Not a valid ${DocumentRoot.seeds} section: $root. Expected " + DocumentRoot.Seeds.validKeys.map { it to "<a number>" },
+            "Not a valid ${DocumentRoot.seeds} section: $root. Expected " +
+                DocumentRoot.Seeds.validKeys.map { it to "<a number>" },
         )
     }
 

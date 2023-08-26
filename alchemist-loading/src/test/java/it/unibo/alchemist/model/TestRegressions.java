@@ -19,7 +19,6 @@ import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.util.List;
 
-import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,7 +30,7 @@ class TestRegressions {
 
     private static Exporter<?, ?> exporterOf(final String simulation) {
         final var exporters = LoadAlchemist
-            .from(ResourceLoader.getResource(simulation), emptyList())
+            .from(ResourceLoader.getResource(simulation))
             .getDefault()
             .getExporters();
         assertEquals(1, exporters.size());
@@ -56,7 +55,7 @@ class TestRegressions {
     @Test
     void testLoadAndSerialize() {
         final Environment<?, ?> environment = LoadAlchemist
-            .from(ResourceLoader.getResource("testCustomExport.yml"), emptyList())
+            .from(ResourceLoader.getResource("testCustomExport.yml"))
             .getDefault()
             .getEnvironment();
         assertNotNull(environment.getIncarnation());

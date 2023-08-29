@@ -70,7 +70,6 @@ abstract class SimulationLauncher : Launcher {
                     initialized.environment,
                     Long.MAX_VALUE,
                     Time.INFINITY,
-                    engineConfiguration.workersNumber,
                     OutputReplayStrategy.parseCode(engineConfiguration.outputReplayStrategy),
                     ArrayIndexedPriorityFixedBatchQueue(batchSize),
                 )
@@ -82,7 +81,6 @@ abstract class SimulationLauncher : Launcher {
                     initialized.environment,
                     Long.MAX_VALUE,
                     Time.INFINITY,
-                    engineConfiguration.workersNumber,
                     OutputReplayStrategy.parseCode(engineConfiguration.outputReplayStrategy),
                     ArrayIndexedPriorityEpsilonBatchQueue(epsilon),
                 )

@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.BatchEngineConfiguration
  */
 class FixedBatchEngineConfiguration(
     override val outputReplayStrategy: String,
-    override val workersNumber: Int,
     val batchSize: Int,
 ) : BatchEngineConfiguration
 
@@ -28,6 +27,5 @@ class FixedBatchEngineConfiguration(
  */
 class EpsilonBatchEngineConfiguration(
     override val outputReplayStrategy: String,
-    override val workersNumber: Int,
     val epsilonValue: Double,
 ) : BatchEngineConfiguration

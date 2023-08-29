@@ -22,7 +22,6 @@ that speeds up the computaitions by processing event batches
 in parallel. **This implementation sacrifices determinism**.
 
 All batch engine implementations require the following parameters:
-- workersNumber - number of threads allocated to processing
 - outputReplayStrategy - determines how the output monitors get notified after the 
 batch has been processed. Available values:
     - aggregate - only the state after the batch processing is sent to the monitors 
@@ -38,11 +37,8 @@ engine-configuration:
   type: FixedBatchEngineConfiguration
   parameters:
     outputReplayStrategy: aggregate
-    workersNumber: 4
     batchSize: 4
 ```
-
-For best results configure launcher to have workersNumber = batchSize.
 
 #### Epsilon Batch Engine
 
@@ -56,7 +52,6 @@ engine-configuration:
   type: EpsilonBatchEngineConfiguration
   parameters:
     outputReplayStrategy: aggregate
-    workersNumber: 4
     epsilonValue: 0.01
 ```
 

@@ -72,7 +72,6 @@ open class Benchmarks {
                     type: FixedBatchEngineConfiguration
                     parameters:
                         outputReplayStrategy: aggregate
-                        workersNumber: 4
                         batchSize: 4
                 """.trimIndent(),
             ),
@@ -105,7 +104,6 @@ open class Benchmarks {
                     type: FixedBatchEngineConfiguration
                     parameters:
                         outputReplayStrategy: aggregate
-                        workersNumber: 4
                         batchSize: 4
                 """.trimIndent(),
             ),
@@ -138,7 +136,6 @@ open class Benchmarks {
                     type: EpsilonBatchEngineConfiguration
                     parameters:
                         outputReplayStrategy: aggregate
-                        workersNumber: 4
                         epsilonValue: 0.01
                 """.trimIndent(),
             ),
@@ -171,7 +168,6 @@ open class Benchmarks {
                     type: EpsilonBatchEngineConfiguration
                     parameters:
                         outputReplayStrategy: aggregate
-                        workersNumber: 8
                         epsilonValue: 0.01
                 """.trimIndent(),
             ),

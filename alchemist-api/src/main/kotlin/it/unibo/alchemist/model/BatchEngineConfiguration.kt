@@ -18,6 +18,4 @@ package it.unibo.alchemist.model
 interface BatchEngineConfiguration : EngineConfiguration {
 
     val outputReplayStrategy: String
-
-    val workersNumber: Int
 }

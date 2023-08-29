@@ -32,28 +32,23 @@ import java.util.stream.Collectors
 class BatchEngine<T, P : Position<out P>> :
     Engine<T, P> {
 
-    private val workersNum: Int
     private val outputReplayStrategy: OutputReplayStrategy
     private val executeLock = Any()
     private val updateLock = Any()
 
     constructor(e: Environment<T, P>?) : super(e) {
-        workersNum = 1
         outputReplayStrategy = OutputReplayStrategy.AGGREGATE
     }
 
     constructor(e: Environment<T, P>?, maxSteps: Long) : super(e, maxSteps) {
-        workersNum = 1
         outputReplayStrategy = OutputReplayStrategy.AGGREGATE
     }
 
     constructor(e: Environment<T, P>?, maxSteps: Long, t: Time?) : super(e, maxSteps, t) {
-        workersNum = 1
         outputReplayStrategy = OutputReplayStrategy.AGGREGATE
     }
 
     constructor(e: Environment<T, P>?, t: Time?) : super(e, t) {
-        workersNum = 1
         outputReplayStrategy = OutputReplayStrategy.AGGREGATE
     }
 
@@ -61,11 +56,9 @@ class BatchEngine<T, P : Position<out P>> :
         e: Environment<T, P>?,
         maxSteps: Long,
         t: Time?,
-        workersNum: Int,
         outputReplayStrategy: OutputReplayStrategy,
         scheduler: BatchedScheduler<T>?,
     ) : super(e, maxSteps, t, scheduler) {
-        this.workersNum = workersNum
         this.outputReplayStrategy = outputReplayStrategy
     }
 

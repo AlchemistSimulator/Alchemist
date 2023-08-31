@@ -10,9 +10,9 @@ package it.unibo.alchemist.core
 
 import com.google.common.collect.Sets
 import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.core.model.OutputReplayStrategy
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.OutputReplayStrategy
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
 import kotlinx.coroutines.async

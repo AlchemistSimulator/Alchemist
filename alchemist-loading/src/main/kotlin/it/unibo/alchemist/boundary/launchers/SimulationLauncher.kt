@@ -22,7 +22,7 @@ import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.model.EpsilonBatchEngineConfiguration
 import it.unibo.alchemist.core.model.FixedBatchEngineConfiguration
-import it.unibo.alchemist.model.OutputReplayStrategy
+import it.unibo.alchemist.core.model.OutputReplayStrategy
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
 import java.io.Serializable

@@ -7,12 +7,12 @@ ignite = "2.15.0"
 junit = "5.10.0"
 konf = "1.1.2"
 kotest = "5.6.2"
-ktor = "2.3.3"
+ktor = "2.3.4"
 dokka = "1.8.20"
 kotlin = "1.9.10"
 mockito = "5.5.0"
 protelis = "17.1.1"
-react = "18.2.0-pre.622"
+react = "18.2.0-pre.623"
 scafi = "1.1.7"
 scala = "2.13.11"
 scalacache = "0.28.0"
@@ -65,7 +65,7 @@ kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref =
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
-kotlin-cli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.5"
+kotlin-cli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.6"
 kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
 kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
@@ -149,8 +149,8 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.49.0"
-multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.5.4"
-publishOnCentral = "org.danilopianini.publish-on-central:5.0.12"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.5.5"
+publishOnCentral = "org.danilopianini.publish-on-central:5.0.13"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"
 scalatest = "com.github.maiflai.scalatest:0.32"
 shadowJar = "com.github.johnrengelman.shadow:8.1.1"

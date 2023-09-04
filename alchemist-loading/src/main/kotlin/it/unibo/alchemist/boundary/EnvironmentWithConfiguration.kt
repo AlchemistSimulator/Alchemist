@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary
 
-import it.unibo.alchemist.model.EngineConfiguration
+import it.unibo.alchemist.core.EngineConfiguration
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 

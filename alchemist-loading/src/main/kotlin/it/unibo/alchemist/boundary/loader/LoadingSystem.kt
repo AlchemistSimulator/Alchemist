@@ -15,8 +15,8 @@ import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot
 import it.unibo.alchemist.boundary.loader.util.NamedParametersConstructor
+import it.unibo.alchemist.core.EngineConfiguration
 import it.unibo.alchemist.model.Deployment
-import it.unibo.alchemist.model.EngineConfiguration
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Incarnation

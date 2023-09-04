@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.core;
 
-import it.unibo.alchemist.core.Scheduler;
 import it.unibo.alchemist.model.Actionable;
 
 import java.util.List;

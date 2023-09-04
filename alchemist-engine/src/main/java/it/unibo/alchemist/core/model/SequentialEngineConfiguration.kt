@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.core.model
 
-import it.unibo.alchemist.model.EngineConfiguration
+import it.unibo.alchemist.core.EngineConfiguration
 
 /**
  * Sequential engine configuration.

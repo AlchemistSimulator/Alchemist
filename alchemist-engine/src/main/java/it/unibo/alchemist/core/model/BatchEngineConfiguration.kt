@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.core.model
 
-import it.unibo.alchemist.model.BatchEngineConfiguration
+import it.unibo.alchemist.core.BatchEngineConfiguration
 
 /**
  * Contains the fixed size batch engine configuration parameters.

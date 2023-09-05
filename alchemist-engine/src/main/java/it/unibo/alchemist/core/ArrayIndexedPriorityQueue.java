@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @param <T> concentration type
  */
-public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
+public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
 
     private final TObjectIntMap<Actionable<T>> indexes =
         new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);

@@ -192,7 +192,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
      *
      * @return tree
      */
-    protected List<Actionable<T>> getTree() {
+    public List<Actionable<T>> getTree() {
         return tree;
     }
 

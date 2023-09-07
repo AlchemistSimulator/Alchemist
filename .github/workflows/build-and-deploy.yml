@@ -112,7 +112,7 @@ jobs:
       - name: Tar files
         run: tar -cvf website.tar build/website
       - name: Upload website
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: website
           path: website.tar

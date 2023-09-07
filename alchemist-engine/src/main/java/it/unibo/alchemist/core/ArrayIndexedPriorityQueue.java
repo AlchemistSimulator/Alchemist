@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.core;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gnu.trove.impl.Constants;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
@@ -192,6 +193,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
      *
      * @return tree
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     public List<Actionable<T>> getTree() {
         return tree;
     }

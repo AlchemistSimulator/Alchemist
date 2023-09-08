@@ -139,8 +139,8 @@ publishing.publications {
         pom {
             contributors {
                 contributor {
-                    name.set("Angelo Filaseta")
-                    email.set("angelo.filaseta@studio.unibo.it")
+                    name.set("Stefano Furi")
+                    email.set("stefano.furi@studio.unibo.it")
                 }
             }
         }

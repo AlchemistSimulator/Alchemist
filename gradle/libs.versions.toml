@@ -1,5 +1,6 @@
 [versions]
 antlr4 = "4.13.1"
+apollo ="4.0.0-alpha.2"
 arrow = "1.2.1"
 graphhopper = "7.0"
 graphql-server = "6.5.3"
@@ -28,6 +29,7 @@ apache-commons-collections4 = "org.apache.commons:commons-collections4:4.4"
 apache-commons-io = "commons-io:commons-io:2.13.0"
 apache-commons-lang3 = "org.apache.commons:commons-lang3:3.13.0"
 apache-commons-math3 = "org.apache.commons:commons-math3:3.6.1"
+apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
 appdirs = "net.harawata:appdirs:1.2.2"
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
@@ -151,6 +153,7 @@ testing-runtimeOnly = [ "junit-engine" ]
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:1.1.10"
+graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql-server" }
 hugo = "io.github.fstaudt.hugo:0.6.1"
 java-qa = "org.danilopianini.gradle-java-qa:1.17.0"

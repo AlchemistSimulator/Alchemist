@@ -391,18 +391,16 @@ tasks {
         outputDirectory = websiteDir
     }
 
-// Exclude the UI packages from the collector documentation.
+// Exclude the UI and Multiplatform packages from the collector documentation.
     withType<DokkaCollectorTask>().configureEach {
         /*
          * Although the method is deprecated, no valid alternative has been implemented yet.
          * Disabling individual partial tasks has been proven ineffective.
          */
         removeChildTasks(
-            listOf(
+            allprojects.filter { it.isMultiplatform } + listOf(
                 alchemist("fxui"),
                 alchemist("swingui"),
-                alchemist("web-renderer"),
-                alchemist("graphql"),
             ),
         )
     }

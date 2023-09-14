@@ -189,7 +189,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
     }
 
     /**
-     * Accessor for tree.
+     * Accessor for tree.substratum
      *
      * @return tree
      */

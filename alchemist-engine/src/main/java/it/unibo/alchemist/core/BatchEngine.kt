@@ -190,13 +190,26 @@ class BatchEngine<T, P : Position<out P>> :
 
     private inner class TaskResult(val event: Actionable<T>, val eventTime: Time)
 
-    sealed interface OutputReplayStrategy {
+    /**
+     * This interface represents the way outputs are replied. It is meant for internal use.
+     */
+    sealed class OutputReplayStrategy {
 
-        val name: String get() = requireNotNull(this::class.simpleName).lowercase()
+        protected val name: String = requireNotNull(this::class.simpleName).lowercase()
 
-        data object Aggregate : OutputReplayStrategy
-        data object Reply : OutputReplayStrategy
+        /**
+         * Outputs are aggregated.
+         */
+        data object Aggregate : OutputReplayStrategy()
 
+        /**
+         * Outputs are replied.
+         */
+        data object Reply : OutputReplayStrategy()
+
+        /**
+         * Converts a [String] to the corresponding [OutputReplayStrategy], based on the name.
+         */
         fun String.toReplayStrategy(): OutputReplayStrategy = when (this.lowercase()) {
             Aggregate.name -> Aggregate
             Reply.name -> Reply

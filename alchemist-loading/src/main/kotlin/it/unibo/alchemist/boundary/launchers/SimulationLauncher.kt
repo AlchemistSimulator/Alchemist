@@ -60,9 +60,7 @@ abstract class SimulationLauncher : Launcher {
         return simulation
     }
 
-    private fun <T, P : Position<P>> buildEngine(
-        initialized: InitializedEnvironment<T, P>,
-    ): Engine<T, P> {
+    private fun <T, P : Position<P>> buildEngine(initialized: InitializedEnvironment<T, P>): Engine<T, P> {
         return when (val engineConfiguration = initialized.engineConfiguration) {
             is FixedBatchEngineConfiguration -> {
                 val batchSize = engineConfiguration.batchSize

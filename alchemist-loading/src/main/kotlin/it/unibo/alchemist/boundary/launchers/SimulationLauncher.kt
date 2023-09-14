@@ -18,11 +18,11 @@ import it.unibo.alchemist.boundary.exporters.GlobalExporter
 import it.unibo.alchemist.core.ArrayIndexedPriorityEpsilonBatchQueue
 import it.unibo.alchemist.core.ArrayIndexedPriorityFixedBatchQueue
 import it.unibo.alchemist.core.BatchEngine
+import it.unibo.alchemist.core.BatchEngine.OutputReplayStrategy.Reply.toReplayStrategy
 import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.core.model.EpsilonBatchEngineConfiguration
-import it.unibo.alchemist.core.model.FixedBatchEngineConfiguration
-import it.unibo.alchemist.core.model.OutputReplayStrategy
+import it.unibo.alchemist.core.configurations.EpsilonBatchEngineConfiguration
+import it.unibo.alchemist.core.configurations.FixedBatchEngineConfiguration
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
 import java.io.Serializable
@@ -70,7 +70,7 @@ abstract class SimulationLauncher : Launcher {
                     initialized.environment,
                     Long.MAX_VALUE,
                     Time.INFINITY,
-                    OutputReplayStrategy.parseCode(engineConfiguration.outputReplayStrategy),
+                    engineConfiguration.outputReplayStrategy.toReplayStrategy(),
                     ArrayIndexedPriorityFixedBatchQueue(batchSize),
                 )
             }
@@ -81,7 +81,7 @@ abstract class SimulationLauncher : Launcher {
                     initialized.environment,
                     Long.MAX_VALUE,
                     Time.INFINITY,
-                    OutputReplayStrategy.parseCode(engineConfiguration.outputReplayStrategy),
+                    engineConfiguration.outputReplayStrategy.toReplayStrategy(),
                     ArrayIndexedPriorityEpsilonBatchQueue(epsilon),
                 )
             }

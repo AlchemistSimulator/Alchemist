@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.core.model
+package it.unibo.alchemist.core.configurations
 
 import it.unibo.alchemist.core.BatchEngineConfiguration
 
@@ -18,14 +18,4 @@ import it.unibo.alchemist.core.BatchEngineConfiguration
 class FixedBatchEngineConfiguration(
     override val outputReplayStrategy: String,
     val batchSize: Int,
-) : BatchEngineConfiguration
-
-/**
- * Contains the epsilon dynamic batch engine configuration parameters.
- * @property epsilonValue epsilon sensitivity value used to build a batch
- * to be processed in parallel
- */
-class EpsilonBatchEngineConfiguration(
-    override val outputReplayStrategy: String,
-    val epsilonValue: Double,
 ) : BatchEngineConfiguration

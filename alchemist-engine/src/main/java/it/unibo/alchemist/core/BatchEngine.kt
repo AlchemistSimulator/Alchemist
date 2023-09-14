@@ -10,7 +10,6 @@ package it.unibo.alchemist.core
 
 import com.google.common.collect.Sets
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.core.model.OutputReplayStrategy
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
@@ -37,19 +36,19 @@ class BatchEngine<T, P : Position<out P>> :
     private val updateLock = Any()
 
     constructor(e: Environment<T, P>?) : super(e) {
-        outputReplayStrategy = OutputReplayStrategy.AGGREGATE
+        outputReplayStrategy = OutputReplayStrategy.Aggregate
     }
 
     constructor(e: Environment<T, P>?, maxSteps: Long) : super(e, maxSteps) {
-        outputReplayStrategy = OutputReplayStrategy.AGGREGATE
+        outputReplayStrategy = OutputReplayStrategy.Aggregate
     }
 
     constructor(e: Environment<T, P>?, maxSteps: Long, t: Time?) : super(e, maxSteps, t) {
-        outputReplayStrategy = OutputReplayStrategy.AGGREGATE
+        outputReplayStrategy = OutputReplayStrategy.Aggregate
     }
 
     constructor(e: Environment<T, P>?, t: Time?) : super(e, t) {
-        outputReplayStrategy = OutputReplayStrategy.AGGREGATE
+        outputReplayStrategy = OutputReplayStrategy.Aggregate
     }
 
     constructor(
@@ -104,19 +103,9 @@ class BatchEngine<T, P : Position<out P>> :
         }
     }
 
-    private fun doStepDoneAllMonitors(resultsOrderedByTime: List<TaskResult>) {
-        if (outputReplayStrategy == OutputReplayStrategy.REPLAY) {
-            resultsOrderedByTime.forEach(
-                Consumer { result: TaskResult ->
-                    this.doStepDoneAllMonitors(
-                        result,
-                    )
-                },
-            )
-        } else {
-            val lastResult = resultsOrderedByTime[resultsOrderedByTime.size - 1]
-            doStepDoneAllMonitors(lastResult)
-        }
+    private fun doStepDoneAllMonitors(resultsOrderedByTime: List<TaskResult>): Unit = when (outputReplayStrategy) {
+        is OutputReplayStrategy.Reply -> resultsOrderedByTime.forEach(::doStepDoneAllMonitors)
+        is OutputReplayStrategy.Aggregate -> doStepDoneAllMonitors(resultsOrderedByTime[resultsOrderedByTime.size - 1])
     }
 
     private fun doStepDoneAllMonitors(result: TaskResult) {
@@ -200,4 +189,23 @@ class BatchEngine<T, P : Position<out P>> :
     }
 
     private inner class TaskResult(val event: Actionable<T>, val eventTime: Time)
+
+    sealed interface OutputReplayStrategy {
+
+        val name: String get() = requireNotNull(this::class.simpleName).lowercase()
+
+        data object Aggregate : OutputReplayStrategy
+        data object Reply : OutputReplayStrategy
+
+        fun String.toReplayStrategy(): OutputReplayStrategy = when (this.lowercase()) {
+            Aggregate.name -> Aggregate
+            Reply.name -> Reply
+            else ->
+                error(
+                    """
+                    Invalid output reply strategy $this. Available choices: ${listOf(Aggregate, Reply).map { it.name }}    
+                    """.trimIndent(),
+                )
+        }
+    }
 }

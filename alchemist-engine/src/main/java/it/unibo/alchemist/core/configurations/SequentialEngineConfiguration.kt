@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.core.model
+package it.unibo.alchemist.core.configurations
 
 import it.unibo.alchemist.core.EngineConfiguration
 

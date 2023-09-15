@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -8,52 +8,76 @@
  */
 
 import Libs.alchemist
-import Libs.incarnation
+import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateSDLTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     application
-    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotest.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ktor)
+    alias(libs.plugins.graphql.server)
+}
+
+dependencies {
+    implementation("io.ktor:ktor-server-cors-jvm:2.3.3")
+    implementation("io.ktor:ktor-server-core-jvm:2.3.3")
+    implementation("io.ktor:ktor-server-websockets-jvm:2.3.3")
 }
 
 kotlin {
     jvm {
         withJava()
+
+        // workaround for fixing "task compileKotlin not found", will be fixed in GraphQL Kotlin v.7
+        tasks.maybeCreate("compileKotlin").dependsOn(tasks.named("compileKotlinJvm"))
+        tasks.named<GraphQLGenerateSDLTask>("graphqlGenerateSDL") {
+            val srcSet = sourceSets.getByName("jvmMain").kotlin
+            source = srcSet.asFileTree
+            projectClasspath.setFrom(srcSet)
+        }
+        tasks {
+            graphql {
+                schema {
+                    packages = listOf(
+                        "it.unibo.alchemist.boundary.graphql",
+                    )
+                }
+            }
+
+            // Disabling GraphQL Kotlin unwanted tasks
+            listOf(
+                "graphqlGenerateClient",
+                "graphqlGenerateTestClient",
+            ).map {
+                this.getByName(it)
+            }.forEach { it.enabled = false }
+        }
     }
+
     js(IR) {
         browser {
             binaries.executable()
         }
     }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
-                compileOnly(libs.spotbugs.annotations)
-                implementation(libs.korim)
-                implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.serialization.json)
-                implementation(libs.ktor.client.core)
-                implementation(libs.redux.kotlin.threadsafe)
             }
         }
         val commonTest by getting {
             dependencies {
-                implementation(libs.kotest.assertions.core)
-                implementation(libs.kotest.framework.engine)
-                implementation(libs.kotest.framework.datatest)
-                implementation(libs.kotlin.test.common)
-                implementation(libs.kotlin.test.annotations)
+                implementation(kotlin("test"))
             }
         }
         val jvmMain by getting {
             dependencies {
                 api(alchemist("api"))
-                implementation(incarnation("sapere"))
                 implementation(rootProject)
+                implementation(libs.bundles.graphql.server)
                 implementation(libs.bundles.ktor.server)
-                implementation(libs.logback)
-                implementation(libs.resourceloader)
             }
         }
         val jvmTest by getting {
@@ -68,22 +92,11 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
-                implementation(libs.bundles.ktor.client)
-                implementation(libs.bundles.kotlin.react)
-                implementation(npm("react-bootstrap", "2.5.0"))
+                implementation(libs.apollo.runtime)
+                implementation(libs.kotlin.coroutines.core)
             }
         }
-    }
-
-    targets.all {
-        compilations.configureEach {
-            // Workaround for w: duplicate library name: org.jetbrains.kotlin:kotlinx-atomicfu-runtime
-            if (defaultSourceSet.name != "jsTest") {
-                kotlinOptions {
-                    allWarningsAsErrors = true
-                }
-            }
-        }
+        val jsTest by getting
     }
 }
 
@@ -126,8 +139,8 @@ publishing.publications {
         pom {
             contributors {
                 contributor {
-                    name.set("Angelo Filaseta")
-                    email.set("angelo.filaseta@studio.unibo.it")
+                    name.set("Stefano Furi")
+                    email.set("stefano.furi@studio.unibo.it")
                 }
             }
         }

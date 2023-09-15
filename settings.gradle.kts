@@ -18,6 +18,7 @@ include(
     "alchemist-engine",
     "alchemist-euclidean-geometry",
     "alchemist-full",
+    "alchemist-graphql",
     "alchemist-grid",
     "alchemist-implementationbase",
     "alchemist-incarnation-protelis",

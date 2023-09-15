@@ -61,7 +61,7 @@ allprojects {
     apply(plugin = "distribution")
 
     multiJvm {
-        jvmVersionForCompilation.set(11)
+        jvmVersionForCompilation.set(17)
         maximumSupportedJvmVersion.set(latestJava)
         if (isInCI && (isWindows || isMac)) {
             /*
@@ -162,6 +162,17 @@ allprojects {
                 }
             }
         }
+        /*
+         * This is a workaround for the following Gradle error,
+         * and should be removed as soon as possible.
+         *
+         * * What went wrong:
+         * Execution failed for task ':dokkaHtmlCollector'.
+         * > Could not determine the dependencies of null.
+         * > Current thread does not hold the state lock for project ':alchemist-web-renderer'
+         */
+        val dokkaHtmlCollector by rootProject.tasks.named("dokkaHtmlCollector")
+        dokkaHtmlCollector.dependsOn(tasks.dokkaHtml)
     }
 
     // COMPILE
@@ -380,17 +391,16 @@ tasks {
         outputDirectory = websiteDir
     }
 
-// Exclude the UI packages from the collector documentation.
+// Exclude the UI and Multiplatform packages from the collector documentation.
     withType<DokkaCollectorTask>().configureEach {
         /*
          * Although the method is deprecated, no valid alternative has been implemented yet.
          * Disabling individual partial tasks has been proven ineffective.
          */
         removeChildTasks(
-            listOf(
+            allprojects.filter { it.isMultiplatform } + listOf(
                 alchemist("fxui"),
                 alchemist("swingui"),
-                alchemist("web-renderer"),
             ),
         )
     }

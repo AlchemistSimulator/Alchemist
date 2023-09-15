@@ -1,3 +1,40 @@
+## [28.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/28.0.1...28.1.0) (2023-09-15)
+
+
+### Features
+
+* **engine:** create a parallel engine ([#2563](https://github.com/AlchemistSimulator/Alchemist/issues/2563)) ([51dad74](https://github.com/AlchemistSimulator/Alchemist/commit/51dad74966ae824dbed104618e343b74c5110d17))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.apollographql.apollo3 to v4.0.0-alpha.3 ([92d1330](https://github.com/AlchemistSimulator/Alchemist/commit/92d133081d59d6dcfb0fabe0a9c9014334edc990))
+* **deps:** update dependency io.arrow-kt:arrow-core to v1.2.1 ([2f7ea8f](https://github.com/AlchemistSimulator/Alchemist/commit/2f7ea8fc40b082229112f7d488234ef1bd83bdea))
+* **deps:** update dependency io.kotest.multiplatform to v5.7.2 ([a68ec54](https://github.com/AlchemistSimulator/Alchemist/commit/a68ec548b8105327ceb7748c06c63455dbfa999c))
+* **deps:** update dependency org.eclipse.jgit:org.eclipse.jgit to v6.7.0.202309050840-r ([6433036](https://github.com/AlchemistSimulator/Alchemist/commit/64330368f8a03a20595f186c7b91fcf62e84ba8c))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.54 ([57d9761](https://github.com/AlchemistSimulator/Alchemist/commit/57d9761bc7d647b7ee95c18102c22cd3dcb77c01))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.55 ([534fe2b](https://github.com/AlchemistSimulator/Alchemist/commit/534fe2b0569a866125f45a4988a2fe9fdbf022c1))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 08802dc ([ae1688c](https://github.com/AlchemistSimulator/Alchemist/commit/ae1688c0d69ad3e5209328cad01eabef98fb9831))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 0b46c4a ([14849ae](https://github.com/AlchemistSimulator/Alchemist/commit/14849aeeadcbe85beb9132eb38cd897666f5e4da))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 756a597 ([27f218b](https://github.com/AlchemistSimulator/Alchemist/commit/27f218b10b7f15bbcd95eb5fcff6598281527a57))
+* **deps:** update graphql.server to v6.5.6 ([71a4ab3](https://github.com/AlchemistSimulator/Alchemist/commit/71a4ab3551cf45cea5d430dd31f1d5d5001fd382))
+* **deps:** update plugin com.gradle.enterprise to v3.15 ([02b39de](https://github.com/AlchemistSimulator/Alchemist/commit/02b39dea5b93b395ee1959a60819ef13fe04ae63))
+* **deps:** update react to v18.2.0-pre.624 ([b6ee2a9](https://github.com/AlchemistSimulator/Alchemist/commit/b6ee2a91ef23a14d7f95d0460fbd5e848da3dee9))
+* **deps:** update scala to v2.13.12 ([47413b6](https://github.com/AlchemistSimulator/Alchemist/commit/47413b6423eb55a960edd12781e79a52788ffa88))
+* **deps:** update site/themes/hugo-theme-relearn digest to 196188b ([c6915e7](https://github.com/AlchemistSimulator/Alchemist/commit/c6915e78a269fef87ea93ebcd2bccde6c8575d3d))
+* **deps:** update site/themes/hugo-theme-relearn digest to 2c3c9d1 ([93a050c](https://github.com/AlchemistSimulator/Alchemist/commit/93a050c926debf74f2754f1dafa837791e8fb7eb))
+* **deps:** update site/themes/hugo-theme-relearn digest to 4921ec0 ([477d9e2](https://github.com/AlchemistSimulator/Alchemist/commit/477d9e2a6191d5726a1ab7a8eba4c86ecc760d64))
+* **deps:** update site/themes/hugo-theme-relearn digest to 6138eb1 ([686cadc](https://github.com/AlchemistSimulator/Alchemist/commit/686cadce87d751c114043aaccfab0e88502a5eec))
+* **deps:** update site/themes/hugo-theme-relearn digest to 6cd5a93 ([5b39bbb](https://github.com/AlchemistSimulator/Alchemist/commit/5b39bbb50a7983a3d986b59ad7f2914afbf8ed7c))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/upload-artifact action to v3.1.3 ([e2023cf](https://github.com/AlchemistSimulator/Alchemist/commit/e2023cf48a5e1665401b49e11ac1569364ca9902))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.9 ([8b0db8a](https://github.com/AlchemistSimulator/Alchemist/commit/8b0db8affb90c7ea706ee0c257d6c5ad9ba940a5))
+* **graphql:** use libraries from the catalog ([bd7f24d](https://github.com/AlchemistSimulator/Alchemist/commit/bd7f24d9d36b3417826b4450ab72b99adeb4b43d))
+* **website:** shallow import learning-scafi-alchemist ([3340687](https://github.com/AlchemistSimulator/Alchemist/commit/334068722272026e20669281be621a36558746c9))
+
 ## [28.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/28.0.0...28.0.1) (2023-09-05)
 
 

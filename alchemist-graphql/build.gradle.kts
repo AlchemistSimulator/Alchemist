@@ -20,9 +20,9 @@ plugins {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-cors-jvm:2.3.3")
-    implementation("io.ktor:ktor-server-core-jvm:2.3.3")
-    implementation("io.ktor:ktor-server-websockets-jvm:2.3.3")
+    implementation(libs.ktor.server.cors.jvm)
+    implementation(libs.ktor.server.core.jvm)
+    implementation(libs.ktor.server.websockets)
 }
 
 kotlin {

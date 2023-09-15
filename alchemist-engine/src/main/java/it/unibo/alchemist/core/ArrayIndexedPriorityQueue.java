@@ -121,7 +121,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
     }
 
     /**
-     * Could be overridden.
+     * String representation, could be overridden.
      *
      * @return string representation of the queue
      */

@@ -15,8 +15,14 @@ import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.boundary.exporters.GlobalExporter
+import it.unibo.alchemist.core.ArrayIndexedPriorityEpsilonBatchQueue
+import it.unibo.alchemist.core.ArrayIndexedPriorityFixedBatchQueue
+import it.unibo.alchemist.core.BatchEngine
+import it.unibo.alchemist.core.BatchEngine.OutputReplayStrategy.Reply.toReplayStrategy
 import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
+import it.unibo.alchemist.core.configurations.EpsilonBatchEngineConfiguration
+import it.unibo.alchemist.core.configurations.FixedBatchEngineConfiguration
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
 import java.io.Serializable
@@ -47,14 +53,42 @@ abstract class SimulationLauncher : Launcher {
         variables: Map<String, *>,
     ): Simulation<T, P> {
         val initialized: InitializedEnvironment<T, P> = loader.getWith(variables)
-        val simulation = Engine(
-            initialized.environment,
-            Time.INFINITY,
-        )
+        val simulation = buildEngine(initialized)
         if (initialized.exporters.isNotEmpty()) {
             simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         }
         return simulation
+    }
+
+    private fun <T, P : Position<P>> buildEngine(initialized: InitializedEnvironment<T, P>): Engine<T, P> {
+        return when (val engineConfiguration = initialized.engineConfiguration) {
+            is FixedBatchEngineConfiguration -> {
+                val batchSize = engineConfiguration.batchSize
+                BatchEngine(
+                    initialized.environment,
+                    Long.MAX_VALUE,
+                    Time.INFINITY,
+                    engineConfiguration.outputReplayStrategy.toReplayStrategy(),
+                    ArrayIndexedPriorityFixedBatchQueue(batchSize),
+                )
+            }
+
+            is EpsilonBatchEngineConfiguration -> {
+                val epsilon = engineConfiguration.epsilonValue
+                BatchEngine(
+                    initialized.environment,
+                    Long.MAX_VALUE,
+                    Time.INFINITY,
+                    engineConfiguration.outputReplayStrategy.toReplayStrategy(),
+                    ArrayIndexedPriorityEpsilonBatchQueue(epsilon),
+                )
+            }
+
+            else -> Engine(
+                initialized.environment,
+                Time.INFINITY,
+            )
+        }
     }
 
     /**

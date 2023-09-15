@@ -14,23 +14,10 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 
 /**
- * The result of the loading of an [environment] with all the free variables instanced,
- * also providing access to [exporters].
+ * Tuple-like implementation of [InitializedEnvironment].
  */
-interface InitializedEnvironment<T, P : Position<P>> {
-
-    /**
-     * The environment.
-     */
-    val environment: Environment<T, P>
-
-    /**
-     * The data exporters for this environment.
-     */
-    val exporters: List<Exporter<T, P>>
-
-    /**
-     * @return the [EngineConfiguration] used to choose and initialize the engine to be used in the simulation.
-     */
-    val engineConfiguration: EngineConfiguration
-}
+data class EnvironmentWithConfiguration<T, P : Position<P>>(
+    override val environment: Environment<T, P>,
+    override val exporters: List<Exporter<T, P>>,
+    override val engineConfiguration: EngineConfiguration,
+) : InitializedEnvironment<T, P>

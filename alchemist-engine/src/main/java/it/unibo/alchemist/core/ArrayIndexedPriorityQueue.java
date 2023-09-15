@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.core;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gnu.trove.impl.Constants;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
@@ -30,13 +31,11 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
     private final List<Time> times = new ArrayList<>();
     private final List<Actionable<T>> tree = new ArrayList<>();
 
-    private static int getParent(final int i) {
-        if (i == 0) {
-            return -1;
-        }
-        return (i - 1) / 2;
-    }
-
+    /**
+     * Should not be overridden.
+     *
+     * @param reaction the reaction to be added
+     */
     @Override
     public void addReaction(final Actionable<T> reaction) {
         tree.add(reaction);
@@ -74,6 +73,11 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
+    /**
+     * Could be overridden.
+     *
+     * @return next actionable to execute
+     */
     @Override
     public Actionable<T> getNext() {
         Actionable<T> result = null;
@@ -83,6 +87,9 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         return result;
     }
 
+    /**
+     * @param reaction the reaction to be removed
+     */
     @Override
     public void removeReaction(final Actionable<T> reaction) {
         final int index = indexes.get(reaction);
@@ -113,6 +120,11 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         times.set(i2, t);
     }
 
+    /**
+     * String representation, could be overridden.
+     *
+     * @return string representation of the queue
+     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -164,6 +176,9 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
+    /**
+     * @param reaction the reaction which has changed
+     */
     @Override
     public void updateReaction(final Actionable<T> reaction) {
         final int index = indexes.get(reaction);
@@ -173,4 +188,20 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
+    /**
+     * Accessor for tree.substratum.
+     *
+     * @return tree
+     */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
+    public List<Actionable<T>> getTree() {
+        return tree;
+    }
+
+    private static int getParent(final int i) {
+        if (i == 0) {
+            return -1;
+        }
+        return (i - 1) / 2;
+    }
 }

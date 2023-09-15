@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 /**
  */
@@ -75,7 +76,7 @@ class TestConfig {
     }
 
     private Loader getLoader(final URL yaml) {
-        return LoadAlchemist.from(yaml);
+        return LoadAlchemist.from(yaml, Collections.emptyList());
     }
 
 }

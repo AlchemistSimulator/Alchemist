@@ -1,6 +1,6 @@
 [versions]
 antlr4 = "4.13.1"
-apollo ="4.0.0-alpha.2"
+apollo ="4.0.0-alpha.3"
 arrow = "1.2.1"
 graphhopper = "7.0"
 graphql-server = "6.5.3"

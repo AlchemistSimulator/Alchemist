@@ -18,7 +18,7 @@ import kotlinx.serialization.serializer
  * If the serialization fails (i.e. the content does not provide a [serializer]), the string
  * representation of the content is returned.
  *
- * @param concentration The concentration containing the to convert.
+ * @param concentration The concentration containing the content to convert.
  * @return The Json String representation of the concentration content or its string representation.
  */
 fun <T : Any> encodeConcentrationContentToString(concentration: Concentration<T>): String {

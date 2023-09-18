@@ -43,6 +43,15 @@ data class EnvironmentSurrogate<T, P : Position<P>>(
      * Returns a [NodeToPosMap] representing all nodes associated with their position.
      */
     fun nodeToPos(): NodeToPosMap = origin.nodes.associate { it.id to origin.getPosition(it) }.toNodeToPosMap()
+
+    /**
+     * Returns the neighborhood of the node with the given id.
+     *
+     * @param nodeId the id of the node
+     * @return the neighborhood of the node with the given id.
+     */
+    fun getNeighborhood(nodeId: Int): NeighborhoodSurrogate<T> =
+        origin.getNeighborhood(origin.getNodeByID(nodeId)).toGraphQLNeighborhoodSurrogate()
 }
 
 /**

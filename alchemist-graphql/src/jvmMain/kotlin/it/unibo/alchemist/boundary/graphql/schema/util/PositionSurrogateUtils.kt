@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.graphql.schema.util
 
+import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.GenericPositionSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.Position2DSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.PositionInput
@@ -26,6 +27,7 @@ object PositionSurrogateUtils {
      * @param position the [Position] to convert.
      * @return the [PositionSurrogate] relative to the given position.
      */
+    @GraphQLIgnore
     fun toPositionSurrogate(position: Position<*>) = when (position.dimensions) {
         2 -> Position2DSurrogate(position.coordinates[0], position.coordinates[1])
         else -> GenericPositionSurrogate(position.coordinates.toList(), position.dimensions)
@@ -37,6 +39,7 @@ object PositionSurrogateUtils {
      * @param input the [PositionInput] to convert.
      * @return the [PositionSurrogate] relative to the given position.
      */
+    @GraphQLIgnore
     fun fromPositionInput(input: PositionInput) = when (input.dimensions) {
         2 -> Position2DSurrogate(input.coordinates[0], input.coordinates[1])
         else -> GenericPositionSurrogate(input.coordinates, input.dimensions)

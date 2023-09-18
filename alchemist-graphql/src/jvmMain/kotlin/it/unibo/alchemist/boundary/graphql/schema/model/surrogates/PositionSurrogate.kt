@@ -10,6 +10,7 @@
 package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
+import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
 import it.unibo.alchemist.model.Position
 
 /**
@@ -31,6 +32,7 @@ interface PositionSurrogate {
      * Converts this surrogate to a [PositionInput] object.
      * @return a [PositionInput] object.
      */
+    @GraphQLIgnore
     fun toInputPosition() = PositionInput(coordinates, dimensions)
 }
 

@@ -23,8 +23,9 @@ import it.unibo.alchemist.model.geometry.Vector
 class NodeSurrogateTest<T, P> : StringSpec({
     "NodeSurrogate should map a Node to a GraphQL compliant object" {
         graphqlTestEnvironmnets<T, P>().forEach {
-            val node: Node<T> = it.nodes.first()
-            checkNodeSurrogate<T, P>(node, node.toGraphQLNodeSurrogate())
+            it.nodes.forEach { node ->
+                checkNodeSurrogate<T, P>(node, node.toGraphQLNodeSurrogate())
+            }
         }
     }
 }) where T : Any, P : Position<P>, P : Vector<P>
@@ -35,6 +36,11 @@ fun <T : Any, P> checkNodeSurrogate(node: Node<T>, nodeSurrogate: NodeSurrogate<
 
     node.reactions.size shouldBe nodeSurrogate.reactions().size
     node.reactions.forEach { reaction -> checkReactionSurrogate(reaction, reaction.toGraphQLReactionSurrogate()) }
+
+    node.contents.forEach { (molecule, concentration) ->
+        val concentrationSurrogate = nodeSurrogate.contents()[MoleculeInput(molecule.name)]
+        checkConcentrationContent(concentration, concentrationSurrogate!!)
+    }
 
     node.contents.size shouldBe nodeSurrogate.contents().size
     node.contents.forEach { (molecule, concentration) ->

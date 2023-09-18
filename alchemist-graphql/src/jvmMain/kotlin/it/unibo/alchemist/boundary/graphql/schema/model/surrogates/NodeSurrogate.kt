@@ -10,8 +10,7 @@
 package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 
 import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
-import it.unibo.alchemist.boundary.graphql.schema.util.GraphQLListExtensions.get
-import it.unibo.alchemist.boundary.graphql.schema.util.toGraphQLEntryList
+import it.unibo.alchemist.boundary.graphql.schema.util.toMoleculeToConcentrationMap
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 
@@ -44,7 +43,7 @@ data class NodeSurrogate<T>(
     /**
      * @return the molecule corresponding to the i-th position.
      */
-    fun contents() = origin.contents.toGraphQLEntryList()
+    fun contents() = origin.contents.toMoleculeToConcentrationMap()
 
     /**
      * Calculates the concentration of a molecule.

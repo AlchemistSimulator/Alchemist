@@ -52,6 +52,26 @@ data class EnvironmentSurrogate<T, P : Position<P>>(
      */
     fun getNeighborhood(nodeId: Int): NeighborhoodSurrogate<T> =
         origin.getNeighborhood(origin.getNodeByID(nodeId)).toGraphQLNeighborhoodSurrogate()
+
+    /**
+     * Clone the node associated with the given id to the specified position.
+     *
+     * @param nodeId the id of the node to clone
+     * @param position the position where to clone the node
+     * @return true if the node has been cloned, false otherwise
+     */
+    fun cloneNode(nodeId: Int, position: PositionInput, time: TimeSurrogate): NodeSurrogate<T>? {
+        val newNode = origin.getNodeByID(nodeId).cloneNode(time.toAlchemistTime())
+        return if (origin.addNode(
+                newNode,
+                origin.makePosition(*position.coordinates.toTypedArray()),
+            )
+        ) {
+            newNode.toGraphQLNodeSurrogate()
+        } else {
+            null
+        }
+    }
 }
 
 /**

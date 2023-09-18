@@ -29,6 +29,7 @@ class EnvironmentSurrogateTest<T, P> : StringSpec({
             it.nodes.forEach { node ->
                 val nodeSurrogate = envSurrogate.nodeById(node.id)
                 checkNodeSurrogate<T, P>(node, nodeSurrogate)
+                checkPositionSurrogate(it.getPosition(node), envSurrogate.nodeToPos()[node.id]!!)
             }
 
             // Testing propagation of changes

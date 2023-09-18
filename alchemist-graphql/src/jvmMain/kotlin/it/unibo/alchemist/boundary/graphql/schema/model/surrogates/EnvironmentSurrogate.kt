@@ -11,6 +11,8 @@ package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
+import it.unibo.alchemist.boundary.graphql.schema.util.NodeToPosMap
+import it.unibo.alchemist.boundary.graphql.schema.util.toNodeToPosMap
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 
@@ -36,6 +38,11 @@ data class EnvironmentSurrogate<T, P : Position<P>>(
      * @param id the id of the node
      */
     fun nodeById(id: Int): NodeSurrogate<T> = origin.getNodeByID(id).toGraphQLNodeSurrogate()
+
+    /**
+     * Returns a [NodeToPosMap] representing all nodes associated with their position.
+     */
+    fun nodeToPos(): NodeToPosMap = origin.nodes.associate { it.id to origin.getPosition(it) }.toNodeToPosMap()
 }
 
 /**

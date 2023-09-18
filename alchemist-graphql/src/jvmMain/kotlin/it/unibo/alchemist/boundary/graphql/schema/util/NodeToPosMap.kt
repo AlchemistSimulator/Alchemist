@@ -35,6 +35,9 @@ data class NodeToPosMap(
 
 /**
  * A single entry in a [NodeToPosMap], storing a node's id and its position.
+ *
+ * @param id the node's id
+ * @param position the node's position
  */
 @GraphQLDescription("The pair NodeId-Position")
 data class NodeToPosEntry(

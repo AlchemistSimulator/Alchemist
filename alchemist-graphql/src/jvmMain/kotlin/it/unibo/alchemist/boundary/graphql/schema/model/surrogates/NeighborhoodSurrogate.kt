@@ -12,8 +12,11 @@ package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
 import it.unibo.alchemist.model.Neighborhood
 
+/**
+ * A GraphQL surrogate for a [Neighborhood].
+ */
 data class NeighborhoodSurrogate<T>(
-    override val origin: Neighborhood<T>,
+    @GraphQLIgnore override val origin: Neighborhood<T>,
 ) : GraphQLSurrogate<Neighborhood<T>>(origin) {
 
     /**

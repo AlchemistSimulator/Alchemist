@@ -9,6 +9,11 @@
 
 package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 
+import it.unibo.alchemist.model.Time
+
+/**
+ * A GraphQL surrogate for a [Time].
+ */
 enum class TimeSurrogate {
     ZERO,
     INFINITY,
@@ -16,10 +21,10 @@ enum class TimeSurrogate {
 }
 
 /**
- * Maps a [TimeSurrogate] into a [it.unibo.alchemist.model.Time].
+ * Maps a [TimeSurrogate] into a [Time].
  */
-fun TimeSurrogate.toAlchemistTime(): it.unibo.alchemist.model.Time = when (this) {
-    TimeSurrogate.ZERO -> it.unibo.alchemist.model.Time.ZERO
-    TimeSurrogate.INFINITY -> it.unibo.alchemist.model.Time.INFINITY
-    TimeSurrogate.NEGATIVE_INFINITY -> it.unibo.alchemist.model.Time.NEGATIVE_INFINITY
+fun TimeSurrogate.toAlchemistTime(): Time = when (this) {
+    TimeSurrogate.ZERO -> Time.ZERO
+    TimeSurrogate.INFINITY -> Time.INFINITY
+    TimeSurrogate.NEGATIVE_INFINITY -> Time.NEGATIVE_INFINITY
 }

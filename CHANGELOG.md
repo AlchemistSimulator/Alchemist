@@ -1,3 +1,24 @@
+## [28.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/28.1.0...28.2.0) (2023-09-19)
+
+
+### Features
+
+* **graphql:** add basic GraphQL Surrogate classes ([#2637](https://github.com/AlchemistSimulator/Alchemist/issues/2637)) ([c6ac7c6](https://github.com/AlchemistSimulator/Alchemist/commit/c6ac7c619800384f0f0f07b755298ed7db4df254))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.expediagroup:graphql-kotlin-ktor-server to v7.0.0 ([a652714](https://github.com/AlchemistSimulator/Alchemist/commit/a6527147d9ccfb690c8a180935e76f93b3750e48))
+* **deps:** update dependency com.expediagroup:graphql-kotlin-ktor-server to v7.0.0-alpha.7 ([b60ae35](https://github.com/AlchemistSimulator/Alchemist/commit/b60ae359228934aae2357f2f08cca3d7e088184b))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 8f5eb35 ([2b245c4](https://github.com/AlchemistSimulator/Alchemist/commit/2b245c4c6794fe9dcabf497fe74a320d407b70b6))
+* **deps:** update external-resources/learning-scafi-alchemist digest to e5dbf6f ([9db6aee](https://github.com/AlchemistSimulator/Alchemist/commit/9db6aee7446b98790c8273d94bc6a5dfe5e08c6f))
+* **deps:** update node.js to 18.18 ([6ee9bc1](https://github.com/AlchemistSimulator/Alchemist/commit/6ee9bc14c519e557cfe294aa4f1d8aff7100dad5))
+* **deps:** update plugin kotlin-qa to v0.50.0 ([d25f442](https://github.com/AlchemistSimulator/Alchemist/commit/d25f442df2d7b97abac36828e7f2554ed6a7d040))
+* **deps:** update plugin publishoncentral to v5.0.14 ([fe0735a](https://github.com/AlchemistSimulator/Alchemist/commit/fe0735af81480d3cdcea1f3cf24a5626f7c229a5))
+* **deps:** update react to v18.2.0-pre.625 ([4390a8f](https://github.com/AlchemistSimulator/Alchemist/commit/4390a8f82b00a3b592a499878446ae358845d06c))
+* **deps:** update site/themes/hugo-theme-relearn digest to 156985f ([27b1407](https://github.com/AlchemistSimulator/Alchemist/commit/27b1407d5c5adc34f1f29fd00a88fcd0c52bb369))
+* **deps:** update site/themes/hugo-theme-relearn digest to 84cd619 ([92eca6d](https://github.com/AlchemistSimulator/Alchemist/commit/92eca6d8c88f298e07575f8e4376d5d86d6ebd58))
+
 ## [28.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/28.0.1...28.1.0) (2023-09-15)
 
 

@@ -8,6 +8,7 @@
  */
 
 import Libs.alchemist
+import Libs.incarnation
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateSDLTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
@@ -85,6 +86,7 @@ kotlin {
                 implementation(libs.kotest.assertions)
                 implementation(libs.kotest.runner)
                 implementation(libs.ktor.server.test.host)
+                implementation(incarnation("sapere"))
                 implementation(alchemist("euclidean-geometry"))
                 implementation(alchemist("implementationbase"))
                 implementation(alchemist("test"))

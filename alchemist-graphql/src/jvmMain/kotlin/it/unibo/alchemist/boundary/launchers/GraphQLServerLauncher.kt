@@ -9,9 +9,14 @@
 
 package it.unibo.alchemist.boundary.launchers
 
-import io.ktor.server.netty.EngineMain
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import it.unibo.alchemist.boundary.Loader
+import it.unibo.alchemist.boundary.graphql.server.SimulationAttributeKey
+import it.unibo.alchemist.boundary.graphql.server.modules.graphQLModule
+import it.unibo.alchemist.boundary.graphql.server.modules.graphQLRoutingModule
 import it.unibo.alchemist.core.Simulation
+import it.unibo.alchemist.model.Position
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,15 +31,28 @@ class GraphQLServerLauncher : SimulationLauncher() {
         startServer(simulation)
     }
 
-    private fun startServer(
-        simulation: Simulation<Any, Nothing>,
+    private fun <T, P : Position<P>> startServer(
+        simulation: Simulation<T, P>,
         serverDispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) {
         return runBlocking {
             launch(serverDispatcher) {
-                EngineMain.main(emptyArray())
+                val server = getServer(simulation)
+                server.start(wait = true)
             }
             simulation.run()
         }
     }
+
+    private fun<T, P : Position<out P>> getServer(simulation: Simulation<T, P>) =
+        embeddedServer(
+            Netty,
+            port = 8081,
+            host = "127.0.0.1",
+            module = {
+                attributes.put(SimulationAttributeKey, simulation)
+                graphQLModule()
+                graphQLRoutingModule()
+            },
+        )
 }

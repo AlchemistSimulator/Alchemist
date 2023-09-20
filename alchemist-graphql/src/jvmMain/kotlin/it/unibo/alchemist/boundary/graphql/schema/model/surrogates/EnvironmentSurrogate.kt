@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.Position
  * @param dimensions the number of dimensions of this environment.
  */
 @GraphQLDescription("The simulation environment")
-data class EnvironmentSurrogate<T, P : Position<P>>(
+data class EnvironmentSurrogate<T, P : Position<out P>>(
     @GraphQLIgnore override val origin: Environment<T, P>,
     val dimensions: Int = origin.dimensions,
 ) : GraphQLSurrogate<Environment<T, P>>(origin) {
@@ -80,4 +80,4 @@ data class EnvironmentSurrogate<T, P : Position<P>>(
  * @param P the position
  * @return a [EnvironmentSurrogate] representing the given [Environment]
  */
-fun <T, P : Position<P>> Environment<T, P>.toGraphQLEnvironmentSurrogate() = EnvironmentSurrogate(this)
+fun <T, P : Position<out P>> Environment<T, P>.toGraphQLEnvironmentSurrogate() = EnvironmentSurrogate(this)

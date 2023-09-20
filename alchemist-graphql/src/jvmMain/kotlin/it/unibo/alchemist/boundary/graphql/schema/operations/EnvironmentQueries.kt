@@ -11,16 +11,16 @@ package it.unibo.alchemist.boundary.graphql.schema.operations
 
 import com.expediagroup.graphql.server.operations.Query
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLEnvironmentSurrogate
-import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Position
 
 /**
  * Simple environment test queries.
  *
- * @param env the simulation [Environment]
+ * @param simulation current simulation
  */
-class EnvironmentQueries<T, P : Position<out P>>(private val env: Environment<T, P>) : Query {
-    private val envSurrogate = env.toGraphQLEnvironmentSurrogate()
+class EnvironmentQueries<T, P : Position<out P>>(private val simulation: Simulation<T, P>) : Query {
+    private val envSurrogate = simulation.environment.toGraphQLEnvironmentSurrogate()
 
     /**
      * Returns the actual state of the environment.

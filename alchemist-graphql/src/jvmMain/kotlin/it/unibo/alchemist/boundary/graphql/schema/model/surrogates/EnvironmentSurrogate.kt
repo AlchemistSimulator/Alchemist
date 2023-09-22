@@ -14,7 +14,10 @@ import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
 import it.unibo.alchemist.boundary.graphql.schema.util.NodeToPosMap
 import it.unibo.alchemist.boundary.graphql.schema.util.toNodeToPosMap
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Layer
+import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Position
+import kotlin.jvm.optionals.getOrNull
 
 /**
  * A surrogate for [Environment].
@@ -27,11 +30,33 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
     @GraphQLIgnore override val origin: Environment<T, P>,
     val dimensions: Int = origin.dimensions,
 ) : GraphQLSurrogate<Environment<T, P>>(origin) {
+
+    /**
+     * The [Layer]s of this environment associated with their corresponding [Molecule].
+     * The first initialization is made upon all molecules contained inside this environment's nodes.
+     * Subsequent updates should be made whenever the [Environment.addLayer] is called.
+     */
+    private val moleculeToLayer: Map<Molecule, Layer<T, P>?> =
+        origin.nodes.map { it.contents.keys }
+            .flatten()
+            .distinct()
+            .associateWith { origin.getLayer(it).getOrNull() }
+
     /**
      * The nodes inside this environment.
      * @return the nodes in this environment.
      */
     fun nodes() = origin.nodes.map { NodeSurrogate(it) }
+
+    /**
+     * The layers inside this environment.
+     * @return the layers in this environment.
+     */
+    fun layers() = origin.layers.map {
+        it.toGraphQLLayerSurrogate { coordinates ->
+            origin.makePosition(*coordinates.toTypedArray())
+        }
+    }
 
     /**
      * Returns the node with the given id.
@@ -72,6 +97,27 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
             null
         }
     }
+
+    /**
+     * Returns the [LayerSurrogate] associated with the molecule represented by the given [MoleculeInput].
+     *
+     * @param m the [MoleculeInput] object associated to the layer
+     * @return the [LayerSurrogate] associated with the molecule represented by the given [MoleculeInput]
+     */
+    fun getLayer(m: MoleculeInput): LayerSurrogate<T, P>? =
+        getLayerFromMoleculeInput(m)?.toGraphQLLayerSurrogate { coordinates ->
+            origin.makePosition(*coordinates.toTypedArray())
+        }
+
+    /**
+     * Returns the [Layer] associated with the molecule represented by the given [MoleculeInput].
+     * NB: molecule is resolved with name matching.
+     *
+     * @param m the [MoleculeInput] object
+     * @return the [Layer] associated with the molecule represented by the given [MoleculeInput]
+     */
+    private fun getLayerFromMoleculeInput(m: MoleculeInput) =
+        moleculeToLayer.filterKeys { it.name == m.name }.values.firstOrNull()
 }
 
 /**

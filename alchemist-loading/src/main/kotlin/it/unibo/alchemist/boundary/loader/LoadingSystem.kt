@@ -145,24 +145,14 @@ internal abstract class LoadingSystem(
             }
             exporters.forEach { it.bindVariables(variableValues) }
             // ENGINE CONFIGURATION
-            val engineConfigurationDescriptor = root.getOrEmpty(DocumentRoot.engineConfiguration)
-            val defaultEngineConfiguration =
-                NamedParametersConstructor(type = DEFAULT_ENGINE_CONFIGURATION_CLASS)
-                    .buildAny<EngineConfiguration>(context.factory)
-                    .getOrThrow()
+            val engineConfigurationDescriptor = root[DocumentRoot.engineConfiguration]
             val maybeEngineConfiguration =
                 SimulationModel.visitBuilding<EngineConfiguration>(context, engineConfigurationDescriptor)
-            maybeEngineConfiguration?.onFailure { error ->
-                logger.warn(
-                    "Engine confiugration could not be parsed, defaulting to sequential, reason: {}",
-                    error.message,
-                    error,
-                )
-            }
-            val engineConfiguration = maybeEngineConfiguration?.getOrDefault(
-                defaultEngineConfiguration,
-            )
-                ?: defaultEngineConfiguration
+            val engineConfiguration = maybeEngineConfiguration
+                ?.getOrThrow()
+                ?: NamedParametersConstructor(type = DEFAULT_ENGINE_CONFIGURATION_CLASS)
+                    .buildAny<EngineConfiguration>(context.factory)
+                    .getOrThrow()
             return EnvironmentWithConfiguration(environment, exporters, engineConfiguration)
         }
 

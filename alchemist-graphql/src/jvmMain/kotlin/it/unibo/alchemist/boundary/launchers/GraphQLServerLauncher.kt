@@ -25,7 +25,10 @@ import kotlinx.coroutines.runBlocking
 /**
  * A launcher that starts a GraphQL server for exposing the simulation.
  */
-class GraphQLServerLauncher : SimulationLauncher() {
+class GraphQLServerLauncher @JvmOverloads constructor(
+    private val port: Int = 8081,
+    private val host: String = "127.0.0.1",
+) : SimulationLauncher() {
     override fun launch(loader: Loader) {
         val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, emptyMap<String, Any>())
         startServer(simulation)
@@ -37,18 +40,18 @@ class GraphQLServerLauncher : SimulationLauncher() {
     ) {
         return runBlocking {
             launch(serverDispatcher) {
-                val server = getServer(simulation)
+                val server = makeServer(simulation)
                 server.start(wait = true)
             }
             simulation.run()
         }
     }
 
-    private fun<T, P : Position<out P>> getServer(simulation: Simulation<T, P>) =
+    private fun<T, P : Position<out P>> makeServer(simulation: Simulation<T, P>) =
         embeddedServer(
             Netty,
-            port = 8081,
-            host = "127.0.0.1",
+            port = port,
+            host = host,
             module = {
                 attributes.put(SimulationAttributeKey, simulation)
                 graphQLModule()

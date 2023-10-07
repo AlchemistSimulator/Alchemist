@@ -9,14 +9,20 @@
 
 package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 
+import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import it.unibo.alchemist.model.Time
 
 /**
  * A GraphQL surrogate for a [Time].
  */
 enum class TimeSurrogate {
+    @GraphQLDescription("Initial Time")
     ZERO,
+
+    @GraphQLDescription("Indefinetely future time")
     INFINITY,
+
+    @GraphQLDescription("Indefinetely past time")
     NEGATIVE_INFINITY,
 }
 

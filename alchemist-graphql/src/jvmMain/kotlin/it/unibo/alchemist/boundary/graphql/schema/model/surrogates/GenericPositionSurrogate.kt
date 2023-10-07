@@ -8,11 +8,13 @@
  */
 
 package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
+import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import it.unibo.alchemist.model.Position
 
 /**
  * An implementation of [PositionSurrogate] for a generic [Position] object.
  */
+@GraphQLDescription("A generic position in space")
 data class GenericPositionSurrogate(
     override val coordinates: List<Double>,
     override val dimensions: Int = coordinates.size,

@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 
+import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Reaction
@@ -19,6 +20,7 @@ import it.unibo.alchemist.model.Reaction
  * @param outputContext the output context of the reaction
  * @param node the [NodeSurrogate] in which this [ReactionSurrogate] executes
  */
+@GraphQLDescription("A generic reaction")
 data class ReactionSurrogate<T>(
     @GraphQLIgnore override val origin: Reaction<T>,
     val inputContext: Context = origin.inputContext,

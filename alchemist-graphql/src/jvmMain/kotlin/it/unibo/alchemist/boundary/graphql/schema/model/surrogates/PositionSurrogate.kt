@@ -44,7 +44,7 @@ interface PositionSurrogate {
  * @param coordinates the coordinates of the position.
  * @param dimensions the dimension of the position.
  */
-@GraphQLDescription("Position in space, used as input parameter for mutation")
+@GraphQLDescription("Position in space, used as input parameter")
 data class PositionInput(
     val coordinates: List<Double>,
     val dimensions: Int = coordinates.size,

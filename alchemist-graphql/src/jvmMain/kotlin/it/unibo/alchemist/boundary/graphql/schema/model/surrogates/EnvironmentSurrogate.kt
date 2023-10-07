@@ -49,12 +49,14 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * The nodes inside this environment.
      * @return the nodes in this environment.
      */
+    @GraphQLDescription("The nodes in this environment")
     fun nodes() = origin.nodes.map { NodeSurrogate(it) }
 
     /**
      * The layers inside this environment.
      * @return the layers in this environment.
      */
+    @GraphQLDescription("The layers in this environment")
     fun layers() = origin.layers.map {
         it.toGraphQLLayerSurrogate { coordinates ->
             origin.makePosition(*coordinates.toTypedArray())
@@ -65,11 +67,13 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * Returns the node with the given id.
      * @param id the id of the node
      */
+    @GraphQLDescription("The node with the given id")
     fun nodeById(id: Int): NodeSurrogate<T> = origin.getNodeByID(id).toGraphQLNodeSurrogate()
 
     /**
      * Returns a [NodeToPosMap] representing all nodes associated with their position.
      */
+    @GraphQLDescription("A list of entries NodeId-Position")
     fun nodeToPos(): NodeToPosMap = origin.nodes.associate { it.id to origin.getPosition(it) }.toNodeToPosMap()
 
     /**
@@ -78,6 +82,7 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * @param nodeId the id of the node
      * @return the neighborhood of the node with the given id.
      */
+    @GraphQLDescription("The neighborhood of the node with the given id")
     fun getNeighborhood(nodeId: Int): NeighborhoodSurrogate<T> =
         origin.getNeighborhood(origin.getNodeByID(nodeId)).toGraphQLNeighborhoodSurrogate()
 
@@ -88,6 +93,7 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * @param position the position where to clone the node
      * @return true if the node has been cloned, false otherwise
      */
+    @GraphQLDescription("Clone the node associated with the given id to the specified position")
     suspend fun cloneNode(nodeId: Int, position: PositionInput, time: TimeSurrogate): NodeSurrogate<T>? {
         val newNode = origin.getNodeByID(nodeId).cloneNode(time.toAlchemistTime())
         val mutex = Semaphore(1, 1)
@@ -109,6 +115,7 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * @param m the [MoleculeInput] object associated to the layer
      * @return the [LayerSurrogate] associated with the molecule represented by the given [MoleculeInput]
      */
+    @GraphQLDescription("The layer associated with the molecule represented by the given MoleculeInput")
     fun getLayer(m: MoleculeInput): LayerSurrogate<T, P>? =
         getLayerFromMoleculeInput(m)?.toGraphQLLayerSurrogate { coordinates ->
             origin.makePosition(*coordinates.toTypedArray())

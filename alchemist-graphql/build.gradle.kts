@@ -66,6 +66,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.apollo.runtime)
+                implementation(libs.kotlin.coroutines.core)
             }
         }
         val commonTest by getting {
@@ -93,12 +95,7 @@ kotlin {
                 implementation(alchemist("test"))
             }
         }
-        val jsMain by getting {
-            dependencies {
-                implementation(libs.apollo.runtime)
-                implementation(libs.kotlin.coroutines.core)
-            }
-        }
+        val jsMain by getting
         val jsTest by getting
     }
 }

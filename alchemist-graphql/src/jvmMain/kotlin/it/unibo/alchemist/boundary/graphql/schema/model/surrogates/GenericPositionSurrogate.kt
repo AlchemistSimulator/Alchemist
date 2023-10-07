@@ -15,5 +15,5 @@ import it.unibo.alchemist.model.Position
  */
 data class GenericPositionSurrogate(
     override val coordinates: List<Double>,
-    override val dimensions: Int,
+    override val dimensions: Int = coordinates.size,
 ) : PositionSurrogate

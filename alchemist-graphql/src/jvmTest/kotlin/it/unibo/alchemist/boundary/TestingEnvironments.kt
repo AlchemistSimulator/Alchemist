@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.EuclideanEnvironment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.test.loadYamlSimulation
+import it.unibo.alchemist.test.startSimulation
 import java.io.File
 
 object TestingEnvironments {
@@ -22,7 +23,7 @@ object TestingEnvironments {
         this::class.java.classLoader.getResource("yaml")?.path?.let { path ->
             File(path).listFiles()?.map {
                 loadYamlSimulation<T, P>("yaml/${it.name}")
-            }?.toSet()
+            }?.toSet()?.onEach { it.startSimulation() }
         }.orEmpty()
 }
 

@@ -20,7 +20,9 @@ fun <T> checkNeighborhood(n: Neighborhood<T>, ns: NeighborhoodSurrogate<T>) {
     n.isEmpty shouldBe ns.isEmpty()
     n.center.toGraphQLNodeSurrogate() shouldBe ns.getCenter()
 
-    val node = n.neighbors.first()
-    ns.contains(node.toGraphQLNodeSurrogate()) shouldBe true
-    ns.getNeighbors().shouldContainAll(n.neighbors.map { it.toGraphQLNodeSurrogate() })
+    if (!n.isEmpty) {
+        val node = n.neighbors.first()
+        ns.contains(node.toGraphQLNodeSurrogate()) shouldBe true
+        ns.getNeighbors().shouldContainAll(n.neighbors.map { it.toGraphQLNodeSurrogate() })
+    }
 }

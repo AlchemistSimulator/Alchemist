@@ -26,6 +26,7 @@ import kotlin.jvm.optionals.getOrNull
  * @param T the concentration type
  * @param P the position
  * @param dimensions the number of dimensions of this environment.
+ * @param simulation the simulation containing this environment
  */
 @GraphQLDescription("The simulation environment")
 data class EnvironmentSurrogate<T, P : Position<out P>>(
@@ -139,4 +140,5 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
  * @param simulation the simulation containing this environment
  * @return a [EnvironmentSurrogate] representing the given [Environment]
  */
-fun <T, P : Position<out P>> Environment<T, P>.toGraphQLEnvironmentSurrogate(simulation: Simulation<T, P>) = EnvironmentSurrogate(this, simulation)
+fun <T, P : Position<out P>> Environment<T, P>.toGraphQLEnvironmentSurrogate(simulation: Simulation<T, P>) =
+    EnvironmentSurrogate(this, simulation)

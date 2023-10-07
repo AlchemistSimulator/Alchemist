@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.Position
  * @param simulation current simulation
  */
 class EnvironmentQueries<T, P : Position<out P>>(private val simulation: Simulation<T, P>) : Query {
-    private val envSurrogate = simulation.environment.toGraphQLEnvironmentSurrogate()
+    private val envSurrogate = simulation.environment.toGraphQLEnvironmentSurrogate(simulation)
 
     /**
      * Returns the actual state of the environment.

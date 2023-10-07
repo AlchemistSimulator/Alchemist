@@ -13,10 +13,12 @@ import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
 import it.unibo.alchemist.boundary.graphql.schema.util.NodeToPosMap
 import it.unibo.alchemist.boundary.graphql.schema.util.toNodeToPosMap
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Position
+import kotlinx.coroutines.sync.Semaphore
 import kotlin.jvm.optionals.getOrNull
 
 /**
@@ -28,6 +30,7 @@ import kotlin.jvm.optionals.getOrNull
 @GraphQLDescription("The simulation environment")
 data class EnvironmentSurrogate<T, P : Position<out P>>(
     @GraphQLIgnore override val origin: Environment<T, P>,
+    @GraphQLIgnore val simulation: Simulation<T, P>,
     val dimensions: Int = origin.dimensions,
 ) : GraphQLSurrogate<Environment<T, P>>(origin) {
 
@@ -85,17 +88,19 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * @param position the position where to clone the node
      * @return true if the node has been cloned, false otherwise
      */
-    fun cloneNode(nodeId: Int, position: PositionInput, time: TimeSurrogate): NodeSurrogate<T>? {
+    suspend fun cloneNode(nodeId: Int, position: PositionInput, time: TimeSurrogate): NodeSurrogate<T>? {
         val newNode = origin.getNodeByID(nodeId).cloneNode(time.toAlchemistTime())
-        return if (origin.addNode(
-                newNode,
-                origin.makePosition(*position.coordinates.toTypedArray()),
-            )
-        ) {
-            newNode.toGraphQLNodeSurrogate()
-        } else {
-            null
+        val mutex = Semaphore(1, 1)
+        var isAdded: Boolean = false
+        simulation.schedule {
+            try {
+                isAdded = origin.addNode(newNode, origin.makePosition(*position.coordinates.toTypedArray()))
+            } finally {
+                mutex.release()
+            }
         }
+        mutex.acquire()
+        return if (isAdded) newNode.toGraphQLNodeSurrogate() else null
     }
 
     /**
@@ -124,6 +129,7 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
  * Converts an [Environment] to a [EnvironmentSurrogate].
  * @param T the concentration type
  * @param P the position
+ * @param simulation the simulation containing this environment
  * @return a [EnvironmentSurrogate] representing the given [Environment]
  */
-fun <T, P : Position<out P>> Environment<T, P>.toGraphQLEnvironmentSurrogate() = EnvironmentSurrogate(this)
+fun <T, P : Position<out P>> Environment<T, P>.toGraphQLEnvironmentSurrogate(simulation: Simulation<T, P>) = EnvironmentSurrogate(this, simulation)

@@ -25,5 +25,5 @@ class EnvironmentQueries<T, P : Position<out P>>(private val simulation: Simulat
     /**
      * Returns the actual state of the environment.
      */
-    fun currentEnv() = this.envSurrogate
+    fun environment() = this.envSurrogate
 }

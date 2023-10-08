@@ -97,7 +97,7 @@ leafletmap = "org.danilopianini:de.saring.leafletmap:1.0.5"
 listset = "org.danilopianini:listset:0.3.9"
 logback = "ch.qos.logback:logback-classic:1.4.11"
 mapsforge = "org.mapsforge:mapsforge-map-awt:0.20.0"
-miglayout-swing = "com.miglayout:miglayout-swing:11.1"
+miglayout-swing = "com.miglayout:miglayout-swing:11.2"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mongodb = "org.mongodb:mongodb-driver-sync:4.10.2"
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.2.50"

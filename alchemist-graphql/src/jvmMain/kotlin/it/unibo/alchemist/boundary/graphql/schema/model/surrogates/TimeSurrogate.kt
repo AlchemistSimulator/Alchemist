@@ -10,27 +10,61 @@
 package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
+import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
 import it.unibo.alchemist.model.Time
 
 /**
  * A GraphQL surrogate for a [Time].
  */
-enum class TimeSurrogate {
-    @GraphQLDescription("Initial Time")
-    ZERO,
+data class TimeSurrogate(
+    @GraphQLIgnore override val origin: Time,
+) : GraphQLSurrogate<Time>(origin) {
 
-    @GraphQLDescription("Indefinetely future time")
-    INFINITY,
-
-    @GraphQLDescription("Indefinetely past time")
-    NEGATIVE_INFINITY,
+    /**
+     * The time represented as a double.
+     */
+    @GraphQLDescription("The time represented as a double")
+    val doubleTime: Double
+        get() = origin.toDouble()
 }
 
 /**
- * Maps a [TimeSurrogate] into a [Time].
+ * A GraphQL input types used by clients for representing time.
  */
-fun TimeSurrogate.toAlchemistTime(): Time = when (this) {
-    TimeSurrogate.ZERO -> Time.ZERO
-    TimeSurrogate.INFINITY -> Time.INFINITY
-    TimeSurrogate.NEGATIVE_INFINITY -> Time.NEGATIVE_INFINITY
+enum class TimeInput {
+    /**
+     * Initial Time.
+     */
+    @GraphQLDescription("Initial Time")
+    ZERO,
+
+    /**
+     * Indefinitely future time.
+     */
+    @GraphQLDescription("Indefinetely future time")
+    INFINITY,
+
+    /**
+     * Indefinitely past time.
+     */
+    @GraphQLDescription("Indefinetely past time")
+    NEGATIVE_INFINITY,
+
+    ;
+
+    /**
+     * Maps elements of this enum to the corresponding [TimeSurrogate] kind.
+     */
+    @GraphQLIgnore
+    fun toTimeSurrogate() = when (this) {
+        ZERO -> Time.ZERO.toGraphQLTimeSurrogate()
+        INFINITY -> Time.INFINITY.toGraphQLTimeSurrogate()
+        NEGATIVE_INFINITY -> Time.NEGATIVE_INFINITY.toGraphQLTimeSurrogate()
+    }
 }
+
+/**
+ * Converts a [Time] into a [TimeSurrogate].
+ * @return a [TimeSurrogate] representing the given [Time].
+ */
+fun Time.toGraphQLTimeSurrogate(): TimeSurrogate = TimeSurrogate(this)

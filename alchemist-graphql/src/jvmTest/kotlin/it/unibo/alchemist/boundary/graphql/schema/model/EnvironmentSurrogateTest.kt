@@ -11,7 +11,7 @@ package it.unibo.alchemist.boundary.graphql.schema.model
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.boundary.TestingEnvironments.graphqlTestEnvironmnets
+import it.unibo.alchemist.boundary.TestingEnvironments.graphqlTestEnvironments
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLEnvironmentSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLNodeSurrogate
 import it.unibo.alchemist.model.Position
@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.geometry.Vector
 
 class EnvironmentSurrogateTest<T, P> : StringSpec({
     "EnvironmentSurrogate should map an Environment to a GraphQL compliant object" {
-        graphqlTestEnvironmnets<T, P>().forEach {
+        graphqlTestEnvironments<T, P>().forEach {
             requireNotNull(it.simulation)
             val envSurrogate = it.toGraphQLEnvironmentSurrogate(it.simulation)
 

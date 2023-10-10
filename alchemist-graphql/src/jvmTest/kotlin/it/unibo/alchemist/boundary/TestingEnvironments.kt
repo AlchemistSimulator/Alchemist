@@ -22,9 +22,7 @@ object TestingEnvironments {
     fun <T, P> graphqlTestEnvironments(): Sequence<EuclideanEnvironment<T, P>> where P : Position<P>, P : Vector<P> =
         this::class.java.classLoader.getResource("yaml")?.path?.let { path ->
             File(path).listFiles()?.asSequence()?.distinct()?.map {
-                val env = loadYamlSimulation<T, P>("yaml/${it.name}")
-                env.startSimulation()
-                env
+                loadYamlSimulation<T, P>("yaml/${it.name}").apply { startSimulation() }
             }
         }.orEmpty()
 }

@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.times.DoubleTime
 import kotlinx.coroutines.sync.Semaphore
 import kotlin.jvm.optionals.getOrNull
 
@@ -95,8 +96,8 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * @return true if the node has been cloned, false otherwise
      */
     @GraphQLDescription("Clone the node associated with the given id to the specified position")
-    suspend fun cloneNode(nodeId: Int, position: PositionInput, time: TimeInput): NodeSurrogate<T>? {
-        val newNode = origin.getNodeByID(nodeId).cloneNode(time.toTimeSurrogate().origin)
+    suspend fun cloneNode(nodeId: Int, position: PositionInput, time: Double): NodeSurrogate<T>? {
+        val newNode = origin.getNodeByID(nodeId).cloneNode(DoubleTime(time))
         val mutex = Semaphore(1, 1)
         var isAdded: Boolean = false
         simulation.schedule {

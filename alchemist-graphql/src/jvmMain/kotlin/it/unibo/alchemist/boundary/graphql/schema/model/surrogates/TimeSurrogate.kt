@@ -16,6 +16,7 @@ import it.unibo.alchemist.model.Time
 /**
  * A GraphQL surrogate for a [Time].
  */
+@GraphQLDescription("A time representation")
 data class TimeSurrogate(
     @GraphQLIgnore override val origin: Time,
 ) : GraphQLSurrogate<Time>(origin) {
@@ -26,41 +27,6 @@ data class TimeSurrogate(
     @GraphQLDescription("The time represented as a double")
     val doubleTime: Double
         get() = origin.toDouble()
-}
-
-/**
- * A GraphQL input types used by clients for representing time.
- */
-enum class TimeInput {
-    /**
-     * Initial Time.
-     */
-    @GraphQLDescription("Initial Time")
-    ZERO,
-
-    /**
-     * Indefinitely future time.
-     */
-    @GraphQLDescription("Indefinetely future time")
-    INFINITY,
-
-    /**
-     * Indefinitely past time.
-     */
-    @GraphQLDescription("Indefinetely past time")
-    NEGATIVE_INFINITY,
-
-    ;
-
-    /**
-     * Maps elements of this enum to the corresponding [TimeSurrogate] kind.
-     */
-    @GraphQLIgnore
-    fun toTimeSurrogate() = when (this) {
-        ZERO -> Time.ZERO.toGraphQLTimeSurrogate()
-        INFINITY -> Time.INFINITY.toGraphQLTimeSurrogate()
-        NEGATIVE_INFINITY -> Time.NEGATIVE_INFINITY.toGraphQLTimeSurrogate()
-    }
 }
 
 /**

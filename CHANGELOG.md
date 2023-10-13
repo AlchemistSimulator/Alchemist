@@ -1,3 +1,21 @@
+## [28.2.2](https://github.com/AlchemistSimulator/Alchemist/compare/28.2.1...28.2.2) (2023-10-13)
+
+
+### Dependency updates
+
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.8.0 ([bd2e88b](https://github.com/AlchemistSimulator/Alchemist/commit/bd2e88b8cd622e3929784540e0fd44d832c17332))
+* **deps:** update plugin java-qa to v1.20.0 ([b7a61cb](https://github.com/AlchemistSimulator/Alchemist/commit/b7a61cbb881845c5eb45f05db27ac80284590fd0))
+* **deps:** update react to v18.2.0-pre.633 ([069b31c](https://github.com/AlchemistSimulator/Alchemist/commit/069b31ce73a95b14cce80a14515e1da3d40f0c7a))
+* **deps:** update site/themes/hugo-theme-relearn digest to 93b80d0 ([b664d24](https://github.com/AlchemistSimulator/Alchemist/commit/b664d243bc6856ec94190324a000cbe631464169))
+* **deps:** update site/themes/hugo-theme-relearn digest to 94af0c1 ([9335587](https://github.com/AlchemistSimulator/Alchemist/commit/9335587568d8aa41fe082f7bb03b2c81b06bbddb))
+* **deps:** update site/themes/hugo-theme-relearn digest to c2a7173 ([7f99335](https://github.com/AlchemistSimulator/Alchemist/commit/7f99335ba267b7db6189e7c75a98c072b4e0d68f))
+* **deps:** update site/themes/hugo-theme-relearn digest to c6db1f0 ([e656cdb](https://github.com/AlchemistSimulator/Alchemist/commit/e656cdbc5502f35be814e9830be269ab635499d2))
+
+
+### Bug Fixes
+
+* show a clear error message when a configuration contains variables depending on other variables ([#2725](https://github.com/AlchemistSimulator/Alchemist/issues/2725)) ([d5d0870](https://github.com/AlchemistSimulator/Alchemist/commit/d5d0870595fefad7c8e60d532d22c6bb3452ff33))
+
 ## [28.2.1](https://github.com/AlchemistSimulator/Alchemist/compare/28.2.0...28.2.1) (2023-10-11)
 
 

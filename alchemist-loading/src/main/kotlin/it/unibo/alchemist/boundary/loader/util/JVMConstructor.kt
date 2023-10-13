@@ -27,7 +27,7 @@ import kotlin.reflect.jvm.jvmErasure
  */
 class OrderedParametersConstructor(
     type: String,
-    private val parameters: List<*> = emptyList<Any?>(),
+    val parameters: List<*> = emptyList<Any?>(),
 ) : JVMConstructor(type) {
 
     override fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*> = parameters
@@ -44,7 +44,7 @@ private typealias OrderedParameters = List<KParameter>
  */
 class NamedParametersConstructor(
     type: String,
-    private val parametersMap: Map<*, *> = emptyMap<Any?, Any?>(),
+    val parametersMap: Map<*, *> = emptyMap<Any?, Any?>(),
 ) : JVMConstructor(type) {
 
     private fun List<OrderedParameters>.description() = joinToString(prefix = "\n- ", separator = "\n- ") {
@@ -137,7 +137,7 @@ sealed class JVMConstructor(val typeName: String) {
     /**
      * provided a [target] class, extracts the parameters as an ordered list.
      */
-    abstract fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*>
+    protected abstract fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*>
 
     /**
      * Provided a JIRF [factory], builds an instance of the requested type [T] or fails gracefully,

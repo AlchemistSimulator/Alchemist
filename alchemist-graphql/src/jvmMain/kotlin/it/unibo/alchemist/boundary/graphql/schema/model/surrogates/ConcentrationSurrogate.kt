@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 
+import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
 import it.unibo.alchemist.boundary.graphql.schema.util.encodeConcentrationContentToString
 import it.unibo.alchemist.model.Concentration
@@ -19,6 +20,7 @@ import it.unibo.alchemist.model.Concentration
  * [origin].
  * @param T The type of the original concentration.
  */
+@GraphQLDescription("The concentration of a molecule, represented as a Json String or its string representation.")
 data class ConcentrationSurrogate<T>(
     @GraphQLIgnore override val origin: Concentration<T>,
     /**

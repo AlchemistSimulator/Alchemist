@@ -25,5 +25,5 @@ open class GraphQLMap<K, V>(
     /**
      * Custom indexing with the key of the wrapped [Map].
      */
-    operator fun get(key: K) = originMap[key]
+    @GraphQLIgnore operator fun get(key: K) = originMap[key]
 }

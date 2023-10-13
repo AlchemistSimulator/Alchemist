@@ -9,22 +9,28 @@
 
 package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 
+import com.expediagroup.graphql.generator.annotations.GraphQLDescription
+import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
 import it.unibo.alchemist.model.Time
 
 /**
  * A GraphQL surrogate for a [Time].
  */
-enum class TimeSurrogate {
-    ZERO,
-    INFINITY,
-    NEGATIVE_INFINITY,
+@GraphQLDescription("A time representation")
+data class TimeSurrogate(
+    @GraphQLIgnore override val origin: Time,
+) : GraphQLSurrogate<Time>(origin) {
+
+    /**
+     * The time represented as a double.
+     */
+    @GraphQLDescription("The time represented as a double")
+    val doubleTime: Double
+        get() = origin.toDouble()
 }
 
 /**
- * Maps a [TimeSurrogate] into a [Time].
+ * Converts a [Time] into a [TimeSurrogate].
+ * @return a [TimeSurrogate] representing the given [Time].
  */
-fun TimeSurrogate.toAlchemistTime(): Time = when (this) {
-    TimeSurrogate.ZERO -> Time.ZERO
-    TimeSurrogate.INFINITY -> Time.INFINITY
-    TimeSurrogate.NEGATIVE_INFINITY -> Time.NEGATIVE_INFINITY
-}
+fun Time.toGraphQLTimeSurrogate(): TimeSurrogate = TimeSurrogate(this)

@@ -21,7 +21,8 @@ import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.timeout
-import it.unibo.alchemist.boundary.graphql.schema.operations.TestQuery
+import it.unibo.alchemist.boundary.graphql.schema.operations.EnvironmentQueries
+import it.unibo.alchemist.boundary.graphql.server.SimulationAttributeKey
 import java.time.Duration
 
 // The following values are referred to milliseconds.
@@ -53,9 +54,7 @@ fun Application.graphQLModule() {
             packages = listOf(
                 "it.unibo.alchemist.boundary.graphql.schema",
             )
-            // An error is raised if no queries are provided.
-            // When queries will be ready, this will be removed.
-            queries = listOf(TestQuery())
+            queries = listOf(EnvironmentQueries(attributes[SimulationAttributeKey]))
             mutations = emptyList()
             subscriptions = emptyList()
             hooks = FlowSubscriptionSchemaGeneratorHooks()

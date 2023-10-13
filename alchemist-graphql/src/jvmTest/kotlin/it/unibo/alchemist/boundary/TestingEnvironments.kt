@@ -15,19 +15,20 @@ import it.unibo.alchemist.model.EuclideanEnvironment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.test.loadYamlSimulation
+import it.unibo.alchemist.test.startSimulation
 import java.io.File
 
 object TestingEnvironments {
-    fun <T, P> graphqlTestEnvironmnets(): Set<EuclideanEnvironment<T, P>> where P : Position<P>, P : Vector<P> =
+    fun <T, P> graphqlTestEnvironments(): Sequence<EuclideanEnvironment<T, P>> where P : Position<P>, P : Vector<P> =
         this::class.java.classLoader.getResource("yaml")?.path?.let { path ->
-            File(path).listFiles()?.map {
-                loadYamlSimulation<T, P>("yaml/${it.name}")
-            }?.toSet()
+            File(path).listFiles()?.asSequence()?.distinct()?.map {
+                loadYamlSimulation<T, P>("yaml/${it.name}").apply { startSimulation() }
+            }
         }.orEmpty()
 }
 
 class TestingEnvironmentTest<T, P> : StringSpec({
     "TestingEnvironments should load all the environments" {
-        TestingEnvironments.graphqlTestEnvironmnets<T, P>().size shouldNotBe 0
+        TestingEnvironments.graphqlTestEnvironments<T, P>().count() shouldNotBe 0
     }
 }) where T : Any, P : Position<P>, P : Vector<P>

@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 
+import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import it.unibo.alchemist.model.Position
 
 /**
@@ -17,6 +18,7 @@ import it.unibo.alchemist.model.Position
  * @param x the x coordinate of the position.
  * @param y the y coordinate of the position.
  */
+@GraphQLDescription("A position in a two dimensional space")
 data class Position2DSurrogate(
     val x: Double,
     val y: Double,

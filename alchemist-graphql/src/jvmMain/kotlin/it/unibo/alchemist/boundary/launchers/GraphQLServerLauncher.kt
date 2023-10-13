@@ -9,9 +9,14 @@
 
 package it.unibo.alchemist.boundary.launchers
 
-import io.ktor.server.netty.EngineMain
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import it.unibo.alchemist.boundary.Loader
+import it.unibo.alchemist.boundary.graphql.server.SimulationAttributeKey
+import it.unibo.alchemist.boundary.graphql.server.modules.graphQLModule
+import it.unibo.alchemist.boundary.graphql.server.modules.graphQLRoutingModule
 import it.unibo.alchemist.core.Simulation
+import it.unibo.alchemist.model.Position
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,21 +25,37 @@ import kotlinx.coroutines.runBlocking
 /**
  * A launcher that starts a GraphQL server for exposing the simulation.
  */
-class GraphQLServerLauncher : SimulationLauncher() {
+class GraphQLServerLauncher @JvmOverloads constructor(
+    private val port: Int = 8081,
+    private val host: String = "127.0.0.1",
+) : SimulationLauncher() {
     override fun launch(loader: Loader) {
         val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, emptyMap<String, Any>())
         startServer(simulation)
     }
 
-    private fun startServer(
-        simulation: Simulation<Any, Nothing>,
+    private fun <T, P : Position<P>> startServer(
+        simulation: Simulation<T, P>,
         serverDispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) {
         return runBlocking {
             launch(serverDispatcher) {
-                EngineMain.main(emptyArray())
+                val server = makeServer(simulation)
+                server.start(wait = true)
             }
             simulation.run()
         }
     }
+
+    private fun<T, P : Position<out P>> makeServer(simulation: Simulation<T, P>) =
+        embeddedServer(
+            Netty,
+            port = port,
+            host = host,
+            module = {
+                attributes.put(SimulationAttributeKey, simulation)
+                graphQLModule()
+                graphQLRoutingModule()
+            },
+        )
 }

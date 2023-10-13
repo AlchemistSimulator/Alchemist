@@ -50,7 +50,7 @@ data class NodeToPosEntry(
  *
  * @return the [NodeToPosMap] representing the given [Map]
  */
-fun <P : Position<P>> Map<Int, P>.toNodeToPosMap() =
+fun <P : Position<out P>> Map<Int, P>.toNodeToPosMap() =
     NodeToPosMap(
         this.mapValues { PositionSurrogateUtils.toPositionSurrogate(it.value) },
     )

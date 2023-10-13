@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 
+import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
 import it.unibo.alchemist.boundary.graphql.schema.util.toMoleculeToConcentrationMap
 import it.unibo.alchemist.model.Molecule
@@ -19,6 +20,7 @@ import it.unibo.alchemist.model.Node
  * @param T The type of the concentration.
  * @param id The id of the node.
  */
+@GraphQLDescription("A node in the environment")
 data class NodeSurrogate<T>(
     @GraphQLIgnore override val origin: Node<T>,
     val id: Int = origin.id,
@@ -33,16 +35,19 @@ data class NodeSurrogate<T>(
     /**
      * @return the list of properties/capabilities of this node as a string.
      */
+    @GraphQLDescription("The list of properties/capabilities of this node as a string")
     fun properties() = origin.properties.map { it.toString() }
 
     /**
      * Returns all reactions of the node.
      */
+    @GraphQLDescription("The list of reactions of this node")
     fun reactions() = origin.reactions.map { it.toGraphQLReactionSurrogate() }
 
     /**
      * @return the molecule corresponding to the i-th position.
      */
+    @GraphQLDescription("List of Molecule-Concentration pairs")
     fun contents() = origin.contents.toMoleculeToConcentrationMap()
 
     /**
@@ -50,6 +55,7 @@ data class NodeSurrogate<T>(
      *
      * @param molecule the [MoleculeInput] object representing the molecule.
      */
+    @GraphQLDescription("The concentration of the given molecule")
     fun getConcentration(molecule: MoleculeInput) = this.contents()[molecule]
 
     /**
@@ -58,6 +64,7 @@ data class NodeSurrogate<T>(
      * @param molecule the [MoleculeInput] object representing the molecule.
      * @return true if the molecule is present, false otherwise
      */
+    @GraphQLDescription("Whether the given molecule is present")
     fun contains(molecule: MoleculeInput): Boolean = this.contents()[molecule] != null
 }
 

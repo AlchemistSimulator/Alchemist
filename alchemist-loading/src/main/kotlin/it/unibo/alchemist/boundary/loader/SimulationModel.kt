@@ -211,7 +211,6 @@ internal object SimulationModel {
         variablesLeft?.validateVariableConsistencyRecursively(errors = collectedNonFatalFailures)
         val variables: Map<String, Variable<*>> = visitVariables(context, variablesLeft)
         logger.info("Variables: {}", variables)
-
         val launcherDescriptor = injectedRoot[DocumentRoot.launcher]
         val launcher: Launcher = when (launcherDescriptor) {
             emptyMap<Nothing, Any>() -> HeadlessSimulationLauncher()
@@ -268,7 +267,6 @@ internal object SimulationModel {
                 else -> lookup
             }
         }
-
         is Iterable<*> -> root.map { replaceKnownRecursively(context, it) }
         else -> root.also { logger.debug("Could not replace nor iterate over {}", root) }
     }
@@ -281,7 +279,28 @@ internal object SimulationModel {
 
     internal inline fun <reified T : Any> visitBuilding(context: Context, root: Any?): Result<T>? = when (root) {
         is T -> Result.success(root)
-        is Map<*, *> -> visitJVMConstructor(context, root)?.buildAny(context.factory)
+        is Map<*, *> ->
+            visitJVMConstructor(context, root)
+                ?.also { constructor: JVMConstructor ->
+                    val params = when (constructor) {
+                        is OrderedParametersConstructor -> constructor.parameters
+                        is NamedParametersConstructor -> constructor.parametersMap.values
+                    }
+                    for (param in params) {
+                        if (param is PlaceHolderForVariables) {
+                            error(
+                                """
+                                    Attempted construction of a ${T::class.simpleName} with an unresolvable variable
+                                    §placeholder referring to '${param.name}: $root'.
+                                    This usually happens when a variable depends on another variable,
+                                    §check that no other variable is using the variable named '${param.name}'.
+                                    Variables can depend solely on constants to prevent circular dependencies.
+                                """.trimIndent().replace(Regex("\\R§"), " "),
+                            )
+                        }
+                    }
+                }
+                ?.buildAny(context.factory)
         null -> null
         else -> {
             logger.debug("Unable to build a {} with {}, attempting a JIRF conversion ", root, T::class.simpleName)
@@ -698,21 +717,23 @@ internal object SimulationModel {
         root,
         syntax = DocumentRoot.Variable,
     ) { name, element ->
-        (element as? Map<*, *>?)?.takeIfNotAConstant(name, context)
+        (element as? Map<*, *>?)
+            ?.takeIfNotAConstant(name, context)
             ?.takeIf { DocumentRoot.Variable.validateDescriptor(element) }?.let { _ ->
                 fun Any?.toDouble(): Double = coerceToDouble(context)
                 val variable = when (JavaType.type) {
-                    in element -> visitBuilding<Variable<*>>(context, element) // arbitrary type
-                        ?.onFailure { logger.debug("Invalid variable: {} from {}: {}", name, element, it.message) }
-
-                    else -> runCatching { // Must be a linear variable, or else fail
-                        LinearVariable(
-                            element[DocumentRoot.Variable.default].toDouble(),
-                            element[DocumentRoot.Variable.min].toDouble(),
-                            element[DocumentRoot.Variable.max].toDouble(),
-                            element[DocumentRoot.Variable.step].toDouble(),
-                        )
-                    }
+                    in element ->
+                        visitBuilding<Variable<*>>(context, element) // arbitrary type
+                            ?.onFailure { logger.debug("Invalid variable: {} from {}: {}", name, element, it.message) }
+                    else ->
+                        runCatching { // Must be a linear variable, or else fail
+                            LinearVariable(
+                                element[DocumentRoot.Variable.default].toDouble(),
+                                element[DocumentRoot.Variable.min].toDouble(),
+                                element[DocumentRoot.Variable.max].toDouble(),
+                                element[DocumentRoot.Variable.step].toDouble(),
+                            )
+                        }
                 }
                 variable?.onSuccess { context.registerVariable(name, element) }
             }

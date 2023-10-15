@@ -1,3 +1,16 @@
+## [28.3.0](https://github.com/AlchemistSimulator/Alchemist/compare/28.2.2...28.3.0) (2023-10-15)
+
+
+### Features
+
+* **graphql:** make `Environment` accessible through GraphQL query ([#2706](https://github.com/AlchemistSimulator/Alchemist/issues/2706)) ([b39848e](https://github.com/AlchemistSimulator/Alchemist/commit/b39848e21f2ae1c7a165e1d3df5b698789083d12))
+
+
+### Dependency updates
+
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.163 ([917a073](https://github.com/AlchemistSimulator/Alchemist/commit/917a0737ae1535c16e669d208a17aa7ce5d7e575))
+* **deps:** update plugin java-qa to v1.21.0 ([686a7bb](https://github.com/AlchemistSimulator/Alchemist/commit/686a7bb89fc923c1950f87e1992b5f08e771b7b5))
+
 ## [28.2.2](https://github.com/AlchemistSimulator/Alchemist/compare/28.2.1...28.2.2) (2023-10-13)
 
 

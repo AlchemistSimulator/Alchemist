@@ -10,19 +10,29 @@
 package it.unibo.alchemist.boundary.graphql.monitor
 
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.boundary.graphql.util.EnvironmentEventBus
+import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.EnvironmentSurrogate
+import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLEnvironmentSurrogate
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 /**
- * A monitor that emits the environment through a [kotlinx.coroutines.flow.MutableSharedFlow].
- * @param environmentEmitter the environment emitter as a [kotlinx.coroutines.flow.MutableSharedFlow]
+ * An [OutputMonitor] that emits a new [Environment] as a [EnvironmentSurrogate]
+ * each time the [OutputMonitor.stepDone] function is called.
+ *
+ * @param T the concentration type
+ * @param P the position
  */
-class EnvironmentSubscriptionMonitor<T, P : Position<out P>>(
-    private val environmentEmitter: EnvironmentEventBus<T, P>,
-) : OutputMonitor<T, P> {
+class EnvironmentSubscriptionMonitor<T, P : Position<out P>> : OutputMonitor<T, P> {
+    private val internalFlow = MutableSharedFlow<EnvironmentSurrogate<T, P>>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
+
     override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
         sendEnvironment(environment)
     }
@@ -35,7 +45,19 @@ class EnvironmentSubscriptionMonitor<T, P : Position<out P>>(
         this.stepDone(environment, null, Time.ZERO, 0L)
     }
 
+    /**
+     * Returns a [Flow] that emits a new [EnvironmentSurrogate] each time the
+     * [OutputMonitor.stepDone] function is called.
+     */
+    fun subscribe(): Flow<EnvironmentSurrogate<T, P>> {
+        return internalFlow
+    }
+
+    /**
+     * Sends the given [Environment].
+     * @param environment the environment to send.
+     */
     private fun sendEnvironment(environment: Environment<T, P>) {
-        environmentEmitter.sendEnvironment(environment)
+        internalFlow.tryEmit(environment.toGraphQLEnvironmentSurrogate())
     }
 }

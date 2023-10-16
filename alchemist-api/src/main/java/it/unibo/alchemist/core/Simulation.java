@@ -230,6 +230,12 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      */
     Status waitFor(Status s, long timeout, TimeUnit timeunit);
 
+    /**
+     * Allows to access a list of all the {@link OutputMonitor} currently
+     * attached to this simulation.
+     *
+     * @return the list of {@link OutputMonitor}
+     */
     List<OutputMonitor<T, P>> getOutputMonitors();
 
 }

@@ -1,0 +1,179 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+"Marks the field, argument, input field or enum value as deprecated"
+directive @deprecated(
+    "The reason for the deprecation"
+    reason: String = "No longer supported"
+  ) on FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM_VALUE | INPUT_FIELD_DEFINITION
+
+"Directs the executor to include this field or fragment only when the `if` argument is true"
+directive @include(
+    "Included when true."
+    if: Boolean!
+  ) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"Directs the executor to skip this field or fragment when the `if` argument is true."
+directive @skip(
+    "Skipped when true."
+    if: Boolean!
+  ) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"Exposes a URL that specifies the behaviour of this scalar."
+directive @specifiedBy(
+    "The URL that specifies the behaviour of this scalar."
+    url: String!
+  ) on SCALAR
+
+"Generic position in space"
+interface PositionSurrogate {
+  coordinates: [Float!]!
+  dimensions: Int!
+}
+
+"The simulation environment"
+type EnvironmentSurrogate {
+  "Clone the node associated with the given id to the specified position"
+  cloneNode(nodeId: Int!, position: PositionInput!, time: Float!): NodeSurrogate
+  dimensions: Int!
+  "The layer associated with the molecule represented by the given MoleculeInput"
+  getLayer(m: MoleculeInput!): LayerSurrogate
+  "The neighborhood of the node with the given id"
+  getNeighborhood(nodeId: Int!): NeighborhoodSurrogate!
+  "The layers in this environment"
+  layers: [LayerSurrogate!]!
+  "The node with the given id"
+  nodeById(id: Int!): NodeSurrogate!
+  "A list of entries NodeId-Position"
+  nodeToPos: NodeToPosMap!
+  "The nodes in this environment"
+  nodes: [NodeSurrogate!]!
+}
+
+"A generic position in space"
+type GenericPositionSurrogate implements PositionSurrogate {
+  coordinates: [Float!]!
+  dimensions: Int!
+}
+
+"A layer containing a substance or a molecule with a spatial distribution"
+type LayerSurrogate {
+  "Returns the value of the layer at the given position"
+  getValue(p: PositionInput!): String!
+}
+
+"A molecule with an associated name"
+type MoleculeSurrogate {
+  name: String!
+}
+
+"A pair Molecule-Concentration"
+type MoleculeToConcentrationEntry {
+  concentration: String!
+  molecule: MoleculeSurrogate!
+}
+
+"A map storing molecules and their concentrations"
+type MoleculeToConcentrationMap {
+  "The list of pairs Molecule-Concentration"
+  entries: [MoleculeToConcentrationEntry!]!
+  size: Int!
+}
+
+type Mutation {
+  "Pause the simulation"
+  pauseSimulation: String!
+  "Play the simulation"
+  playSimulation: String!
+  "Terminate the simulation"
+  terminateSimulation: String!
+}
+
+"A neighborhood of nodes"
+type NeighborhoodSurrogate {
+  "The central node of this neighborhood"
+  getCenter: NodeSurrogate!
+  "The list of the neighbors"
+  getNeighbors: [NodeSurrogate!]!
+  "Whether this neighborhood is empty"
+  isEmpty: Boolean!
+  size: Int!
+}
+
+"A node in the environment"
+type NodeSurrogate {
+  "Whether the given molecule is present"
+  contains(molecule: MoleculeInput!): Boolean!
+  "List of Molecule-Concentration pairs"
+  contents: MoleculeToConcentrationMap!
+  "The concentration of the given molecule"
+  getConcentration(molecule: MoleculeInput!): String
+  id: Int!
+  moleculeCount: Int!
+  "The list of properties/capabilities of this node as a string"
+  properties: [String!]!
+  "The list of reactions of this node"
+  reactions: [ReactionSurrogate!]!
+}
+
+"The pair NodeId-Position"
+type NodeToPosEntry {
+  id: Int!
+  position: PositionSurrogate!
+}
+
+"Map of nodes' ids and their position"
+type NodeToPosMap {
+  "The list of pairs NodeId-Position"
+  entries: [NodeToPosEntry!]!
+  size: Int!
+}
+
+"A position in a two dimensional space"
+type Position2DSurrogate implements PositionSurrogate {
+  coordinates: [Float!]!
+  dimensions: Int!
+  x: Float!
+  y: Float!
+}
+
+type Query {
+  "The actual state of the environment"
+  environment: EnvironmentSurrogate!
+  "The status of the simulation"
+  simulationStatus: String!
+}
+
+"A generic reaction"
+type ReactionSurrogate {
+  inputContext: Context!
+  node: NodeSurrogate!
+  outputContext: Context!
+}
+
+type Subscription {
+  "The simulation's environment"
+  environment: EnvironmentSurrogate!
+  "A node in the simulation's environment"
+  node(nodeId: Int!): NodeSurrogate!
+}
+
+enum Context {
+  GLOBAL
+  LOCAL
+  NEIGHBORHOOD
+}
+
+"A molecule with an associated name, used as input object"
+input MoleculeInput {
+  name: String!
+}
+
+"Position in space, used as input parameter"
+input PositionInput {
+  coordinates: [Float!]!
+  dimensions: Int!
+}

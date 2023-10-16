@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktor)
     alias(libs.plugins.graphql.server)
+    alias(libs.plugins.graphql.client)
 }
 
 dependencies {
@@ -66,6 +67,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.kotlin.stdlib)
                 implementation(libs.apollo.runtime)
                 implementation(libs.kotlin.coroutines.core)
             }
@@ -102,6 +104,34 @@ kotlin {
 
 application {
     mainClass.set("it.unibo.alchemist.Alchemist")
+}
+
+/**
+ * Configure the Apollo Gradle plugin to generate Kotlin models
+ * from the GraphQL schema inside the `commonMain` sourceSet.
+ */
+apollo {
+    service("alchemist") {
+        generateKotlinModels.set(true)
+        packageName.set("it.unibo.alchemist.boundary.graphql.client")
+        schemaFiles.from(file("src/commonMain/resources/graphql/schema.graphqls"))
+        srcDir("src/commonMain/resources/graphql")
+        outputDirConnection {
+            connectToKotlinSourceSet("commonMain")
+        }
+    }
+}
+
+fun isGeneratedFile(file: FileTreeElement): Boolean = file.file.absolutePath.contains("generated" + File.separator)
+
+ktlint {
+    filter {
+        exclude(::isGeneratedFile)
+    }
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>() {
+    exclude(::isGeneratedFile)
 }
 
 /**

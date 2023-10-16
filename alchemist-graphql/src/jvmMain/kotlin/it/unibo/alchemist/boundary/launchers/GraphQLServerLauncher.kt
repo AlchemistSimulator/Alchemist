@@ -12,9 +12,11 @@ package it.unibo.alchemist.boundary.launchers
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import it.unibo.alchemist.boundary.Loader
-import it.unibo.alchemist.boundary.graphql.server.SimulationAttributeKey
+import it.unibo.alchemist.boundary.graphql.monitor.EnvironmentSubscriptionMonitor
+import it.unibo.alchemist.boundary.graphql.server.attributes.SimulationContextAttributeKey
 import it.unibo.alchemist.boundary.graphql.server.modules.graphQLModule
 import it.unibo.alchemist.boundary.graphql.server.modules.graphQLRoutingModule
+import it.unibo.alchemist.boundary.graphql.util.GraphQLSimulationContext
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Position
 import kotlinx.coroutines.CoroutineDispatcher
@@ -34,26 +36,28 @@ class GraphQLServerLauncher @JvmOverloads constructor(
         startServer(simulation)
     }
 
-    private fun <T, P : Position<P>> startServer(
+    private fun <T, P : Position<out P>> startServer(
         simulation: Simulation<T, P>,
         serverDispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) {
         return runBlocking {
             launch(serverDispatcher) {
-                val server = makeServer(simulation)
+                val simulationContext = GraphQLSimulationContext(simulation)
+                val server = makeServer(simulationContext)
+                simulation.addOutputMonitor(EnvironmentSubscriptionMonitor(simulationContext.environmentEmitter))
                 server.start(wait = true)
             }
             simulation.run()
         }
     }
 
-    private fun<T, P : Position<out P>> makeServer(simulation: Simulation<T, P>) =
+    private fun<T, P : Position<out P>> makeServer(simulationContext: GraphQLSimulationContext<T, P>) =
         embeddedServer(
             Netty,
             port = port,
             host = host,
             module = {
-                attributes.put(SimulationAttributeKey, simulation)
+                attributes.put(SimulationContextAttributeKey, simulationContext)
                 graphQLModule()
                 graphQLRoutingModule()
             },

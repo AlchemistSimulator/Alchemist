@@ -22,7 +22,8 @@ import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.timeout
 import it.unibo.alchemist.boundary.graphql.schema.operations.EnvironmentQueries
-import it.unibo.alchemist.boundary.graphql.server.SimulationAttributeKey
+import it.unibo.alchemist.boundary.graphql.schema.operations.EnvironmentSubscriptions
+import it.unibo.alchemist.boundary.graphql.server.attributes.SimulationContextAttributeKey
 import java.time.Duration
 
 // The following values are referred to milliseconds.
@@ -54,9 +55,9 @@ fun Application.graphQLModule() {
             packages = listOf(
                 "it.unibo.alchemist.boundary.graphql.schema",
             )
-            queries = listOf(EnvironmentQueries(attributes[SimulationAttributeKey]))
+            queries = listOf(EnvironmentQueries(attributes[SimulationContextAttributeKey].simulation))
             mutations = emptyList()
-            subscriptions = emptyList()
+            subscriptions = listOf(EnvironmentSubscriptions(attributes[SimulationContextAttributeKey]))
             hooks = FlowSubscriptionSchemaGeneratorHooks()
         }
 

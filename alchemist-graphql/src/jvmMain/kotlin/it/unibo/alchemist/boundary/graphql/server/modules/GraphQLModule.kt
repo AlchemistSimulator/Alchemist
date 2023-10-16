@@ -21,9 +21,10 @@ import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.timeout
-import it.unibo.alchemist.boundary.graphql.schema.operations.EnvironmentQueries
-import it.unibo.alchemist.boundary.graphql.schema.operations.EnvironmentSubscriptions
-import it.unibo.alchemist.boundary.graphql.server.attributes.SimulationContextAttributeKey
+import it.unibo.alchemist.boundary.graphql.schema.operations.mutations.SimulationHandler
+import it.unibo.alchemist.boundary.graphql.schema.operations.queries.EnvironmentQueries
+import it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions.EnvironmentSubscriptions
+import it.unibo.alchemist.boundary.graphql.server.attributes.SimulationAttributeKey
 import java.time.Duration
 
 // The following values are referred to milliseconds.
@@ -50,14 +51,22 @@ fun Application.graphQLModule() {
         contentConverter = JacksonWebsocketContentConverter()
     }
 
+    val environment = attributes[SimulationAttributeKey].environment
+
     install(GraphQL) {
         schema {
             packages = listOf(
                 "it.unibo.alchemist.boundary.graphql.schema",
             )
-            queries = listOf(EnvironmentQueries(attributes[SimulationContextAttributeKey].simulation))
-            mutations = emptyList()
-            subscriptions = listOf(EnvironmentSubscriptions(attributes[SimulationContextAttributeKey]))
+            queries = listOf(
+                EnvironmentQueries(environment),
+            )
+            mutations = listOf(
+                SimulationHandler(environment),
+            )
+            subscriptions = listOf(
+                EnvironmentSubscriptions(environment),
+            )
             hooks = FlowSubscriptionSchemaGeneratorHooks()
         }
 

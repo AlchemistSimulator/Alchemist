@@ -13,10 +13,9 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.graphql.monitor.EnvironmentSubscriptionMonitor
-import it.unibo.alchemist.boundary.graphql.server.attributes.SimulationContextAttributeKey
+import it.unibo.alchemist.boundary.graphql.server.attributes.SimulationAttributeKey
 import it.unibo.alchemist.boundary.graphql.server.modules.graphQLModule
 import it.unibo.alchemist.boundary.graphql.server.modules.graphQLRoutingModule
-import it.unibo.alchemist.boundary.graphql.util.GraphQLSimulationContext
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Position
 import kotlinx.coroutines.CoroutineDispatcher
@@ -33,31 +32,30 @@ class GraphQLServerLauncher @JvmOverloads constructor(
 ) : SimulationLauncher() {
     override fun launch(loader: Loader) {
         val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, emptyMap<String, Any>())
+        simulation.addOutputMonitor(EnvironmentSubscriptionMonitor())
         startServer(simulation)
     }
 
     private fun <T, P : Position<out P>> startServer(
         simulation: Simulation<T, P>,
-        serverDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        serverDispatcher: CoroutineDispatcher = Dispatchers.Default,
     ) {
         return runBlocking {
+            val server = makeServer(simulation)
             launch(serverDispatcher) {
-                val simulationContext = GraphQLSimulationContext(simulation)
-                val server = makeServer(simulationContext)
-                simulation.addOutputMonitor(EnvironmentSubscriptionMonitor(simulationContext.environmentEmitter))
                 server.start(wait = true)
             }
             simulation.run()
         }
     }
 
-    private fun<T, P : Position<out P>> makeServer(simulationContext: GraphQLSimulationContext<T, P>) =
+    private fun<T, P : Position<out P>> makeServer(simulation: Simulation<T, P>) =
         embeddedServer(
             Netty,
             port = port,
             host = host,
             module = {
-                attributes.put(SimulationContextAttributeKey, simulationContext)
+                attributes.put(SimulationAttributeKey, simulation)
                 graphQLModule()
                 graphQLRoutingModule()
             },

@@ -10,10 +10,9 @@
 package it.unibo.alchemist.boundary.graphql.server.attributes
 
 import io.ktor.util.AttributeKey
-import it.unibo.alchemist.boundary.graphql.util.GraphQLSimulationContext
+import it.unibo.alchemist.core.Simulation
 
 /**
- * Ktor's attribute to be used for passing a [it.unibo.alchemist.boundary.graphql.util.GraphQLSimulationContext]
- * among Ktor's modules.
+ * Ktor's attribute to be used for passing a [it.unibo.alchemist.core.Simulation] among Ktor's modules.
  */
-val SimulationContextAttributeKey = AttributeKey<GraphQLSimulationContext<*, *>>("simulationContext")
+val SimulationAttributeKey = AttributeKey<Simulation<*, *>>("simulationContext")

@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.core;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -623,6 +624,11 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     @Override
     public Status waitFor(final Status next, final long timeout, final TimeUnit tu) {
         return lockForStatus(next).waitFor(next, timeout, tu);
+    }
+
+    @Override
+    public List<OutputMonitor<T, P>> getOutputMonitors() {
+        return ImmutableList.copyOf(monitors);
     }
 
     /**

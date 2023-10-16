@@ -626,6 +626,11 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         return lockForStatus(next).waitFor(next, timeout, tu);
     }
 
+    /**
+     * Returns output monitors.
+     *
+     * @return output monitors
+     */
     @Override
     public List<OutputMonitor<T, P>> getOutputMonitors() {
         return ImmutableList.copyOf(monitors);

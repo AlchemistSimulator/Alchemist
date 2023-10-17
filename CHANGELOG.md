@@ -1,3 +1,19 @@
+## [28.3.1](https://github.com/AlchemistSimulator/Alchemist/compare/28.3.0...28.3.1) (2023-10-17)
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to d2e4492 ([cb5d887](https://github.com/AlchemistSimulator/Alchemist/commit/cb5d88770575925aa85b62bb44a02db885d5bff5))
+* **deps:** update plugin gitsemver to v1.1.11 ([686e94b](https://github.com/AlchemistSimulator/Alchemist/commit/686e94bed306c1760e531ac243397a53ae2b4c58))
+* **deps:** update plugin kotlin-qa to v0.51.1 ([5893da7](https://github.com/AlchemistSimulator/Alchemist/commit/5893da73ff0968980a99a91858562347f84f014c))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.1.11 ([3211782](https://github.com/AlchemistSimulator/Alchemist/commit/3211782a23cb26d5e115fdcc3fbfcef6e17386ca))
+* **deps:** update react to v18.2.0-pre.634 ([2ce3016](https://github.com/AlchemistSimulator/Alchemist/commit/2ce30165db827771e745e98f0812d59cb32a21f8))
+
+
+### Documentation
+
+* **deps:** update dependency org.jetbrains.dokka to v1.9.10 ([e16be9d](https://github.com/AlchemistSimulator/Alchemist/commit/e16be9d5fdffbbc0c8f0663cf4a31373d01f4a66))
+
 ## [28.3.0](https://github.com/AlchemistSimulator/Alchemist/compare/28.2.2...28.3.0) (2023-10-15)
 
 

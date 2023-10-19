@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.graphql.schema.operations.mutations
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.server.operations.Mutation
+import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 
@@ -24,17 +25,32 @@ class SimulationHandler<T, P : Position<out P>>(
      * Play the simulation.
      */
     @GraphQLDescription("Play the simulation")
-    fun playSimulation(): String = this.environment.simulation.apply { play() }.status.toString()
+    fun playSimulation(): String =
+        runCatching { environment.simulation.apply { play() } }
+            .fold(
+                onSuccess = { Status.RUNNING.toString() },
+                onFailure = { it.message.toString() },
+            )
 
     /**
      * Pause the simulation.
      */
     @GraphQLDescription("Pause the simulation")
-    fun pauseSimulation(): String = this.environment.simulation.apply { pause() }.status.toString()
+    fun pauseSimulation(): String =
+        runCatching { this.environment.simulation.apply { pause() } }
+            .fold(
+                onSuccess = { Status.PAUSED.toString() },
+                onFailure = { it.message.toString() },
+            )
 
     /**
      * Terminate the simulation.
      */
     @GraphQLDescription("Terminate the simulation")
-    fun terminateSimulation(): String = this.environment.simulation.apply { terminate() }.status.toString()
+    fun terminateSimulation(): String =
+        runCatching { this.environment.simulation.apply { terminate() } }
+            .fold(
+                onSuccess = { Status.TERMINATED.toString() },
+                onFailure = { it.message.toString() },
+            )
 }

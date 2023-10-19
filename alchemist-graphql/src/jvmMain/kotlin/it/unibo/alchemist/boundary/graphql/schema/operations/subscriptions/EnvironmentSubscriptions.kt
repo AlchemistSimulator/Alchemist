@@ -11,15 +11,12 @@ package it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.server.operations.Subscription
-import io.ktor.utils.io.CancellationException
 import it.unibo.alchemist.boundary.graphql.monitor.EnvironmentSubscriptionMonitor
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.EnvironmentSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.NodeSurrogate
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.cancellable
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
 /**
@@ -47,7 +44,5 @@ class EnvironmentSubscriptions<T, P : Position<out P>>(
      * @param nodeId the node Id.
      */
     @GraphQLDescription("A node in the simulation's environment")
-    fun node(nodeId: Int): Flow<NodeSurrogate<T>> = environmentMonitor().subscribe().map {
-        it.nodeById(nodeId)
-    }.catch { e -> if (e !is CancellationException) throw e }.cancellable()
+    fun node(nodeId: Int): Flow<NodeSurrogate<T>> = environmentMonitor().subscribe().map { it.nodeById(nodeId) }
 }

@@ -16,9 +16,9 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 
 /**
- * A [SimulationHandler] provides GraphQL [Mutation] for manipulating the current simulation.
+ * A [SimulationManagerMutations] provides GraphQL [Mutation] for manipulating the current simulation.
  */
-class SimulationHandler<T, P : Position<out P>>(
+class SimulationManagerMutations<T, P : Position<out P>>(
     private val environment: Environment<T, P>,
 ) : Mutation {
     /**

@@ -10,7 +10,7 @@ The first step to take in order to use the simulator, is to answer the question
 
 > what does Alchemist simulate?
 
-A broad introduction is provided in form of introductory video from the [DAIS 2021](http://www.discotec.org/2021/dais.html)
+A broad introduction is provided in form of introductory video from the [DAIS 2021](https://www.discotec.org/2021/dais.html)
 conference tutorial.
 
 {{< youtube zF-LHHQjdOg >}}
@@ -91,7 +91,7 @@ Alchemist becomes a stochastic simulator for chemistry featuring interconnected 
 
 The standalone distribution comes with:
 
-* [Protelis Incarnation](http://protelis.org)
-* [SAPERE Incarnation](http://dx.doi.org/10.1016/j.pmcj.2014.12.002)
+* [Protelis Incarnation](https://protelis.github.io/)
+* [SAPERE Incarnation](https://dx.doi.org/10.1016/j.pmcj.2014.12.002)
 * Biochemistry Incarnation
 * [Scafi incarnation](https://scafi.github.io/)

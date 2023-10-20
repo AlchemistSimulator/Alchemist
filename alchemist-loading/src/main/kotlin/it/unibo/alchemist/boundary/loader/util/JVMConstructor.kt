@@ -27,7 +27,7 @@ import kotlin.reflect.jvm.jvmErasure
  */
 class OrderedParametersConstructor(
     type: String,
-    private val parameters: List<*> = emptyList<Any?>(),
+    val parameters: List<*> = emptyList<Any?>(),
 ) : JVMConstructor(type) {
 
     override fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*> = parameters
@@ -44,7 +44,7 @@ private typealias OrderedParameters = List<KParameter>
  */
 class NamedParametersConstructor(
     type: String,
-    private val parametersMap: Map<*, *> = emptyMap<Any?, Any?>(),
+    val parametersMap: Map<*, *> = emptyMap<Any?, Any?>(),
 ) : JVMConstructor(type) {
 
     private fun List<OrderedParameters>.description() = joinToString(prefix = "\n- ", separator = "\n- ") {
@@ -137,7 +137,7 @@ sealed class JVMConstructor(val typeName: String) {
     /**
      * provided a [target] class, extracts the parameters as an ordered list.
      */
-    abstract fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*>
+    protected abstract fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*>
 
     /**
      * Provided a JIRF [factory], builds an instance of the requested type [T] or fails gracefully,
@@ -278,17 +278,40 @@ sealed class JVMConstructor(val typeName: String) {
             }
         }
         val creationResult = jirf.build(target.java, parameters)
-        return creationResult.createdObject.orElseGet {
-            val implicits =
-                """
-                |implicitly available singleton objects:
-                ${jirf.singletonObjects.map { (type, it) -> "|  * ${type.simpleName} -> $it" }.joinToString("\n") }}"
-                """.trim()
-            val exceptionsummary = creationResult.exceptions.asSequence().map { (constructor, exception) ->
+        return creationResult.createdObject
+            .orElseThrow { explainedFailure(jirf, target, originalParameters, creationResult) }
+            .also { creationResult.logErrors { message, arguments -> logger.info(message, *arguments) } }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(JVMConstructor::class.java)
+        private fun Constructor<*>.shorterToString() =
+            declaringClass.simpleName + parameterTypes.joinToString(prefix = "(", postfix = ")") { it.simpleName }
+
+        private fun <T : Any> explainedFailure(
+            jirf: Factory,
+            target: KClass<T>,
+            parameters: List<*>,
+            creationResult: CreationResult<T>,
+        ): Nothing {
+            val implicits = when {
+                jirf.singletonObjects.isEmpty() -> "|No singleton objects available in the context"
+                else ->
+                    """
+                    |Implicitly available singleton objects in the context: ${
+                        jirf.singletonObjects
+                            .map { (type, it) -> "|  * $it # associated to type ${type.simpleName}" }
+                            .joinToString(prefix = "\n", separator = ";\n", postfix = ".")
+                    }
+                    """.trim()
+            }
+            val exceptions = creationResult.exceptions.asSequence()
+            val exceptionsSummary = exceptions.mapIndexed { consIndex, (constructor, exception) ->
                 val causalChain = generateSequence<Throwable>(exception) { it.cause }
                     .mapIndexed { index, cause ->
                         val message = cause.takeIf { it is InstancingImpossibleException }?.message
                             ?.replace("it.unibo.alchemist.model.interfaces.", "")
+                            ?.replace("it.unibo.alchemist.boundary.", "i.u.a.b.")
                             ?.replace("it.unibo.alchemist.model.", "i.u.a.m.")
                             ?.replace("it.unibo.alchemist.", "i.u.a.")
                             ?.replace("java.lang.", "")
@@ -296,27 +319,22 @@ sealed class JVMConstructor(val typeName: String) {
                             ?: cause.message ?: "No message"
                         "|    failure message ${index + 1} of ${cause::class.simpleName}: $message"
                     }
-                    .joinToString(separator = "\n")
-                "|  - constructor: ${constructor.shorterToString()}\n$causalChain".trim()
+                val constructorName = constructor.shorterToString()
+                val intro = "${consIndex + 1}. Constructor $constructorName failed with the following exception(s):"
+                val causalChainString = causalChain.joinToString(separator = "\n")
+                "| $intro\n$causalChainString".trim()
             }.joinToString(separator = "\n")
             val errorMessage =
                 """
                 |Could not create $this, requested as instance of ${target.simpleName}.
                 |Actual parameters: $parameters
-                $exceptionsummary
                 $implicits
+                |Failure list analysis:
+                $exceptionsSummary
                 """.trimMargin().trim()
             val masterException = IllegalArgumentException("Illegal Alchemist specification: $errorMessage")
             creationResult.exceptions.forEach { (_, exception) -> masterException.addSuppressed(exception) }
             throw masterException
-        }.also {
-            creationResult.logErrors { message, arguments -> logger.info(message, *arguments) }
         }
-    }
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(JVMConstructor::class.java)
-        private fun Constructor<*>.shorterToString() =
-            declaringClass.simpleName + parameterTypes.joinToString(prefix = "(", postfix = ")") { it.simpleName }
     }
 }

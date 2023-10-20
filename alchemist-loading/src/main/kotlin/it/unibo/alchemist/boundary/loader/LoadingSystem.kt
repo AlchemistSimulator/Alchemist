@@ -9,11 +9,13 @@
 
 package it.unibo.alchemist.boundary.loader
 
-import it.unibo.alchemist.boundary.EnvironmentWithExportersAndMonitors
+import it.unibo.alchemist.boundary.EnvironmentWithConfiguration
 import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot
+import it.unibo.alchemist.boundary.loader.util.NamedParametersConstructor
+import it.unibo.alchemist.core.EngineConfiguration
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
@@ -31,12 +33,14 @@ import org.danilopianini.jirf.Factory
 import java.util.concurrent.Semaphore
 import java.util.function.Predicate
 
+private const val DEFAULT_ENGINE_CONFIGURATION_CLASS = "SequentialEngineConfiguration"
+
 internal abstract class LoadingSystem(
     private val originalContext: Context,
     private val originalRoot: Map<String, *>,
 ) : Loader {
 
-    override fun <T : Any?, P : Position<P>> getWith(values: MutableMap<String, *>) =
+    override fun <T : Any?, P : Position<P>> getWith(values: Map<String, *>) =
         SingleUseLoader(originalContext, originalRoot).environmentWith<T, P>(values)
 
     private inner class SingleUseLoader(originalContext: Context, private val originalRoot: Map<String, *>) {
@@ -45,9 +49,7 @@ internal abstract class LoadingSystem(
         private val mutex = Semaphore(1)
         private var consumed = false
 
-        fun <T : Any?, P : Position<P>> environmentWith(
-            values: Map<String, *>,
-        ): EnvironmentWithExportersAndMonitors<T, P> {
+        fun <T : Any?, P : Position<P>> environmentWith(values: Map<String, *>): EnvironmentWithConfiguration<T, P> {
             try {
                 mutex.acquireUninterruptibly()
                 check(!consumed) {
@@ -145,7 +147,16 @@ internal abstract class LoadingSystem(
             }
             exporters.forEach { it.bindVariables(variableValues) }
 
-            return EnvironmentWithExportersAndMonitors(environment, exporters, monitors)
+            // ENGINE CONFIGURATION
+            val engineConfigurationDescriptor = root[DocumentRoot.engineConfiguration]
+            val maybeEngineConfiguration =
+                SimulationModel.visitBuilding<EngineConfiguration>(context, engineConfigurationDescriptor)
+            val engineConfiguration = maybeEngineConfiguration
+                ?.getOrThrow()
+                ?: NamedParametersConstructor(type = DEFAULT_ENGINE_CONFIGURATION_CLASS)
+                    .buildAny<EngineConfiguration>(context.factory)
+                    .getOrThrow()
+            return EnvironmentWithConfiguration(environment, exporters, monitors, engineConfiguration)
         }
 
         private fun <T, P : Position<P>> loadGlobalProgramsOnEnvironment(
@@ -329,6 +340,7 @@ internal abstract class LoadingSystem(
         private inline fun <reified T> decontextualize(target: T) = factory.deregisterSingleton(target)
         private inline fun <reified T, reified R> registerImplicit(noinline translator: (T) -> R) =
             factory.registerImplicit(T::class.java, R::class.java, translator)
+
         private fun Map<*, *>.getOrEmpty(key: String) = get(key) ?: emptyList<Any>()
         private fun Map<*, *>.getOrEmptyMap(key: String) = get(key) ?: emptyMap<String, Any>()
     }

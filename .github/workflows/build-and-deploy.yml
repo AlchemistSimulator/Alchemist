@@ -17,8 +17,8 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.10
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.6
+        uses: danysk/action-checkout@0.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.10
         with:
           pre-build-command: ./gradlew kotlinUpgradeYarnLock --parallel
           # check that all tasks used in subsequent phases are there
@@ -56,8 +56,8 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.10
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.6
+        uses: danysk/action-checkout@0.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.10
         with:
           build-command: ./gradlew kotlinUpgradeYarnLock --parallel
           check-command: true
@@ -80,8 +80,8 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.10
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.6
+        uses: danysk/action-checkout@0.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.10
         with:
           build-command: |
             for i in 1 2 3 4 5; do
@@ -112,7 +112,7 @@ jobs:
       - name: Tar files
         run: tar -cvf website.tar build/website
       - name: Upload website
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: website
           path: website.tar
@@ -135,13 +135,13 @@ jobs:
       )
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           submodules: recursive
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout the docs
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           path: website
           fetch-depth: 0
@@ -156,10 +156,10 @@ jobs:
         id: node-version
         run: echo "version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
       - name: Install Node
-        uses: actions/setup-node@v3.6.0
+        uses: actions/setup-node@v3.8.1
         with:
           node-version: ${{ steps.node-version.outputs.version }}
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.6
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.10
         with:
           java-version: 11
           build-command: |

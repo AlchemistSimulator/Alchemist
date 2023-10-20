@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary
 
+import it.unibo.alchemist.core.EngineConfiguration
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 
@@ -32,4 +33,9 @@ interface InitializedEnvironment<T, P : Position<P>> {
      * The monitors for this environment.
      */
     val monitors: List<OutputMonitor<T, P>>
+
+    /**
+     * @return the [EngineConfiguration] used to choose and initialize the engine to be used in the simulation.
+     */
+    val engineConfiguration: EngineConfiguration
 }

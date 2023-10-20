@@ -10,11 +10,11 @@
 package it.unibo.alchemist.boundary.webui.client.adapters.reactBootstrap.navbar
 
 import react.ComponentClass
-import react.Props
+import react.PropsWithChildren
 
 /**
  * Navbar.Brand component.
  * Note: an explicit cast is required here, as the original Javascript structure is dynamic.
  */
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-val NavbarBrand: ComponentClass<Props> = Navbar.asDynamic().Brand as ComponentClass<Props>
+val NavbarBrand: ComponentClass<PropsWithChildren> = Navbar.asDynamic().Brand as ComponentClass<PropsWithChildren>

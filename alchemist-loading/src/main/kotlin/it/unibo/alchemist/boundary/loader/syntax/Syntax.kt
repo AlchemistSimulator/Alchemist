@@ -22,6 +22,7 @@ internal object DocumentRoot : SyntaxElement {
             },
         )
     }
+
     object DependentVariable : SyntaxElement {
         val language by OwnName
         val formula by OwnName
@@ -34,6 +35,7 @@ internal object DocumentRoot : SyntaxElement {
             },
         )
     }
+
     object Deployment : SyntaxElement {
         val contents by OwnName
         val nodes by OwnName
@@ -61,6 +63,7 @@ internal object DocumentRoot : SyntaxElement {
                 },
             )
         }
+
         object Property : SyntaxElement {
             override val validDescriptors = setOf(
                 validDescriptor {
@@ -69,6 +72,7 @@ internal object DocumentRoot : SyntaxElement {
                 },
             )
         }
+
         object Contents : SyntaxElement {
             val molecule by OwnName
             val concentration by OwnName
@@ -79,6 +83,7 @@ internal object DocumentRoot : SyntaxElement {
                 },
             )
         }
+
         object Program : SyntaxElement {
             val program by OwnName
             val actions by OwnName
@@ -120,6 +125,7 @@ internal object DocumentRoot : SyntaxElement {
             )
         }
     }
+
     object Environment : SyntaxElement {
         const val globalPrograms = "global-programs"
         object GlobalProgram : SyntaxElement {
@@ -140,6 +146,7 @@ internal object DocumentRoot : SyntaxElement {
             },
         )
     }
+
     object Layer : SyntaxElement {
         val molecule by OwnName
         override val validDescriptors = setOf(
@@ -149,6 +156,7 @@ internal object DocumentRoot : SyntaxElement {
             },
         )
     }
+
     object Monitor : SyntaxElement {
         override val validDescriptors = setOf(
             validDescriptor {
@@ -157,6 +165,7 @@ internal object DocumentRoot : SyntaxElement {
             },
         )
     }
+
     object Seeds : SyntaxElement {
         val scenario by OwnName
         val simulation by OwnName
@@ -164,6 +173,7 @@ internal object DocumentRoot : SyntaxElement {
             validDescriptor { optional(simulation, scenario) },
         )
     }
+
     object Variable : SyntaxElement {
         val min by OwnName
         val max by OwnName
@@ -173,13 +183,16 @@ internal object DocumentRoot : SyntaxElement {
             validDescriptor { mandatory(min, max, default, step) },
         )
     }
+
     val deployments by OwnName
     val environment by OwnName
     val export by OwnName
     val incarnation by OwnName
+    val launcher by OwnName
     val layers by OwnName
     const val monitors = "monitors"
     const val linkingRule = "network-model"
+    const val engineConfiguration = "engine-configuration"
     const val remoteDependencies = "remote-dependencies"
     val seeds by OwnName
     val terminate by OwnName

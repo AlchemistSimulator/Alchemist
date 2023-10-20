@@ -7,6 +7,9 @@
 
 incarnation: sapere
 
+launcher:
+  type: WebRendererLauncher
+
 network-model:
   type: ConnectWithinDistance
   parameters: [0.5]

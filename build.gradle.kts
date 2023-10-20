@@ -23,6 +23,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.AbstractDokkaParentTask
+import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -60,7 +61,7 @@ allprojects {
     apply(plugin = "distribution")
 
     multiJvm {
-        jvmVersionForCompilation.set(11)
+        jvmVersionForCompilation.set(17)
         maximumSupportedJvmVersion.set(latestJava)
         if (isInCI && (isWindows || isMac)) {
             /*
@@ -161,6 +162,17 @@ allprojects {
                 }
             }
         }
+        /*
+         * This is a workaround for the following Gradle error,
+         * and should be removed as soon as possible.
+         *
+         * * What went wrong:
+         * Execution failed for task ':dokkaHtmlCollector'.
+         * > Could not determine the dependencies of null.
+         * > Current thread does not hold the state lock for project ':alchemist-web-renderer'
+         */
+        val dokkaHtmlCollector by rootProject.tasks.named("dokkaHtmlCollector")
+        dokkaHtmlCollector.dependsOn(tasks.dokkaHtml)
     }
 
     // COMPILE
@@ -281,7 +293,7 @@ allprojects {
                 developer {
                     name.set("Danilo Pianini")
                     email.set("danilo.pianini@unibo.it")
-                    url.set("http://www.danilopianini.org")
+                    url.set("https://www.danilopianini.org")
                     roles.set(mutableSetOf("architect", "developer"))
                 }
             }
@@ -289,7 +301,7 @@ allprojects {
     }
 
     // Shadow Jar
-    tasks.withType<ShadowJar>() {
+    tasks.withType<ShadowJar> {
         manifest {
             attributes(
                 mapOf(
@@ -350,6 +362,7 @@ dependencies {
         implementation(io)
         implementation(lang3)
     }
+    implementation(libs.kotlin.cli)
     implementation(libs.apache.commons.cli)
     implementation(libs.guava)
     implementation(libs.logback)
@@ -358,6 +371,10 @@ dependencies {
     testRuntimeOnly(incarnation("biochemistry"))
     testRuntimeOnly(alchemist("cognitive-agents"))
     testRuntimeOnly(alchemist("physics"))
+}
+
+tasks.named("kotlinStoreYarnLock").configure {
+    dependsOn("kotlinUpgradeYarnLock")
 }
 
 // WEBSITE
@@ -374,8 +391,18 @@ tasks {
         outputDirectory = websiteDir
     }
 
-    dokkaJavadocCollector {
-        removeChildTasks(subprojects.filter { it.isMultiplatform })
+// Exclude the UI and Multiplatform packages from the collector documentation.
+    withType<DokkaCollectorTask>().configureEach {
+        /*
+         * Although the method is deprecated, no valid alternative has been implemented yet.
+         * Disabling individual partial tasks has been proven ineffective.
+         */
+        removeChildTasks(
+            allprojects.filter { it.isMultiplatform } + listOf(
+                alchemist("fxui"),
+                alchemist("swingui"),
+            ),
+        )
     }
 
     /**
@@ -386,7 +413,7 @@ tasks {
         val docTask = docTaskProvider.get()
         val copyLogo = register<Copy>("copyLogoFor${docTask.name.capitalized()}") {
             from(alchemistLogo)
-            into(docTask.outputDirectory.map { File(it, "images") })
+            into(docTask.outputDirectory.map { File(it.asFile, "images") })
             rename("logo.svg", "logo-icon.svg")
         }
         docTask.finalizedBy(copyLogo)

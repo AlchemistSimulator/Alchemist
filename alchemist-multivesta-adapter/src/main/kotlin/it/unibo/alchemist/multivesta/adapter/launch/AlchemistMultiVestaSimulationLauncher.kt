@@ -9,10 +9,8 @@
 
 package it.unibo.alchemist.multivesta.adapter.launch
 
-import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.boundary.Loader
-import it.unibo.alchemist.boundary.launch.SimulationLauncher
-import it.unibo.alchemist.boundary.launch.Validation.OK
+import it.unibo.alchemist.boundary.launchers.SimulationLauncher
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.multivesta.adapter.AlchemistMultiVesta
@@ -23,7 +21,6 @@ import java.util.concurrent.TimeUnit
  * Launches a single simulation run that can be controlled by MultiVesta.
  */
 class AlchemistMultiVestaSimulationLauncher : SimulationLauncher() {
-    override val name = "Alchemist + MultiVesta simulation"
 
     private val logger = LoggerFactory.getLogger(AlchemistMultiVestaSimulationLauncher::class.java)
 
@@ -33,21 +30,11 @@ class AlchemistMultiVestaSimulationLauncher : SimulationLauncher() {
     lateinit var simulation: Simulation<Any, Nothing>
         private set
 
-    override fun additionalValidation(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
-        when {
-            headless -> incompatibleWith("headless mode")
-            batch -> incompatibleWith("batch mode")
-            variables.isNotEmpty() -> incompatibleWith("variable exploration mode")
-            distributed != null -> incompatibleWith("distributed execution")
-            else -> OK()
-        }
-    }
-
     /**
      * Launch the simulation and pause it immediately before step 0.
      */
-    override fun launch(loader: Loader, parameters: AlchemistExecutionOptions) {
-        simulation = prepareSimulation(loader, parameters, emptyMap<String, Any>())
+    override fun launch(loader: Loader) {
+        simulation = prepareSimulation(loader, emptyMap<String, Any>())
         logger.info("Simulation prepared")
         simulation.goToStep(-1) // configure the simulation to pause immediately before the first step
         Thread(simulation).start() // this will pause the simulation without executing any step

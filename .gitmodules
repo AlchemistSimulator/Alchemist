@@ -5,3 +5,4 @@
 [submodule "site/content/tutorials/scafi/learning-scafi-alchemist"]
 	path = external-resources/learning-scafi-alchemist
 	url = https://github.com/scafi/learning-scafi-alchemist.git
+	shallow = true

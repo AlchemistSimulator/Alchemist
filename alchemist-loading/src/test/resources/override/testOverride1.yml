@@ -1,0 +1,18 @@
+_test:
+  str: test
+  int: 10
+  dbl: 10.1
+  strL: [ test1, test2 ]
+  intL: [ 9, 19 ]
+  dblL: [ 9.1, 9.87]
+  arr:
+    - nst1-1: test
+      nst1-2: test
+    - nst2-1:
+        - nst2-1-1: test
+  map:
+    elem1: 10
+    elem2:
+      key1: replaceme
+      key2:
+        foo: [10]

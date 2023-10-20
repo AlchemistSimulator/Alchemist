@@ -9,8 +9,6 @@
 
 package it.unibo.alchemist.boundary.webui.common.renderer
 
-import com.soywiz.korim.bitmap.Bitmap
-import com.soywiz.korim.bitmap.Bitmap32
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
@@ -22,6 +20,8 @@ import it.unibo.alchemist.boundary.webui.common.model.surrogate.MoleculeSurrogat
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.NodeSurrogate
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.Position2DSurrogate
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.PositionSurrogate
+import korlibs.image.bitmap.Bitmap
+import korlibs.image.bitmap.Bitmap32
 
 class BitmapRendererTest : StringSpec({
 

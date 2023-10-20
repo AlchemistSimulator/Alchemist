@@ -11,46 +11,40 @@ package it.unibo.alchemist.boundary.graphql.schema.operations.mutations
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.server.operations.Mutation
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 
 /**
- * A [SimulationManagerMutations] provides GraphQL [Mutation] for manipulating the current simulation.
+ * A [SimulationControl] provides GraphQL [Mutation] for manipulating the current simulation.
  */
-class SimulationManagerMutations<T, P : Position<out P>>(
+class SimulationControl<T, P : Position<out P>>(
     private val environment: Environment<T, P>,
 ) : Mutation {
+
     /**
      * Play the simulation.
      */
     @GraphQLDescription("Play the simulation")
-    fun playSimulation(): String =
-        runCatching { environment.simulation.apply { play() } }
-            .fold(
-                onSuccess = { Status.RUNNING.toString() },
-                onFailure = { it.message.toString() },
-            )
+    fun play(): String = executeAction(Simulation<T, P>::play, Status.RUNNING)
 
     /**
      * Pause the simulation.
      */
     @GraphQLDescription("Pause the simulation")
-    fun pauseSimulation(): String =
-        runCatching { this.environment.simulation.apply { pause() } }
-            .fold(
-                onSuccess = { Status.PAUSED.toString() },
-                onFailure = { it.message.toString() },
-            )
+    fun pause(): String = executeAction(Simulation<T, P>::pause, Status.PAUSED)
 
     /**
      * Terminate the simulation.
      */
     @GraphQLDescription("Terminate the simulation")
-    fun terminateSimulation(): String =
-        runCatching { this.environment.simulation.apply { terminate() } }
+    fun terminate(): String = executeAction(Simulation<T, P>::terminate, Status.TERMINATED)
+
+    private fun executeAction(action: Simulation<T, P>.() -> Unit, status: Status) =
+        runCatching { this.environment.simulation.apply { action() } }
             .fold(
-                onSuccess = { Status.TERMINATED.toString() },
+                onSuccess = { status.toString() },
                 onFailure = { it.message.toString() },
             )
 }

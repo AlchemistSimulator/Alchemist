@@ -21,7 +21,7 @@ import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.timeout
-import it.unibo.alchemist.boundary.graphql.schema.operations.mutations.SimulationManagerMutations
+import it.unibo.alchemist.boundary.graphql.schema.operations.mutations.SimulationControl
 import it.unibo.alchemist.boundary.graphql.schema.operations.queries.EnvironmentQueries
 import it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions.EnvironmentSubscriptions
 import it.unibo.alchemist.boundary.graphql.server.attributes.SimulationAttributeKey
@@ -62,7 +62,7 @@ fun Application.graphQLModule() {
                 EnvironmentQueries(environment),
             )
             mutations = listOf(
-                SimulationManagerMutations(environment),
+                SimulationControl(environment),
             )
             subscriptions = listOf(
                 EnvironmentSubscriptions(environment),

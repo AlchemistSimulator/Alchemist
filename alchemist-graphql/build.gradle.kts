@@ -79,8 +79,6 @@ kotlin {
                 implementation(rootProject)
                 implementation(libs.bundles.graphql.server)
                 implementation(libs.bundles.ktor.server)
-//                implementation(incarnation("sapere"))
-                implementation(alchemist("euclidean-geometry"))
                 implementation(alchemist("implementationbase"))
             }
         }

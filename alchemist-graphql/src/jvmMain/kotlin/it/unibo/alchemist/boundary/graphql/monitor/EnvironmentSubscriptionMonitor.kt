@@ -49,9 +49,7 @@ class EnvironmentSubscriptionMonitor<T, P : Position<out P>> : OutputMonitor<T, 
      * Returns a [Flow] that emits a new [EnvironmentSurrogate] each time the
      * [OutputMonitor.stepDone] function is called.
      */
-    fun subscribe(): Flow<EnvironmentSurrogate<T, P>> {
-        return internalFlow
-    }
+    fun eventFlow(): Flow<EnvironmentSurrogate<T, P>> = internalFlow
 
     /**
      * Sends the given [Environment].

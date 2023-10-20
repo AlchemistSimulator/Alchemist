@@ -33,8 +33,14 @@ class EnvironmentSubscriptionMonitor<T, P : Position<out P>> : OutputMonitor<T, 
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
+    /**
+     * Returns a [Flow] that emits a new [EnvironmentSurrogate] each time the
+     * [OutputMonitor.stepDone] function is called.
+     */
+    val eventFlow: Flow<EnvironmentSurrogate<T, P>> get() = internalFlow
+
     override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
-        sendEnvironment(environment)
+        internalFlow.tryEmit(environment.toGraphQLEnvironmentSurrogate())
     }
 
     override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
@@ -43,19 +49,5 @@ class EnvironmentSubscriptionMonitor<T, P : Position<out P>> : OutputMonitor<T, 
 
     override fun initialized(environment: Environment<T, P>) {
         this.stepDone(environment, null, Time.ZERO, 0L)
-    }
-
-    /**
-     * Returns a [Flow] that emits a new [EnvironmentSurrogate] each time the
-     * [OutputMonitor.stepDone] function is called.
-     */
-    fun eventFlow(): Flow<EnvironmentSurrogate<T, P>> = internalFlow
-
-    /**
-     * Sends the given [Environment].
-     * @param environment the environment to send.
-     */
-    private fun sendEnvironment(environment: Environment<T, P>) {
-        internalFlow.tryEmit(environment.toGraphQLEnvironmentSurrogate())
     }
 }

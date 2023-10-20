@@ -36,7 +36,7 @@ class EnvironmentSubscriptions<T, P : Position<out P>>(
      * [it.unibo.alchemist.boundary.graphql.schema.model.surrogates.EnvironmentSurrogate].
      */
     @GraphQLDescription("The simulation's environment")
-    fun environment(): Flow<EnvironmentSurrogate<T, P>> = environmentMonitor().eventFlow()
+    fun environment(): Flow<EnvironmentSurrogate<T, P>> = environmentMonitor().eventFlow
 
     /**
      * Returns a [Flow] with the updated value of the
@@ -44,5 +44,5 @@ class EnvironmentSubscriptions<T, P : Position<out P>>(
      * @param nodeId the node Id.
      */
     @GraphQLDescription("A node in the simulation's environment")
-    fun node(nodeId: Int): Flow<NodeSurrogate<T>> = environmentMonitor().eventFlow().map { it.nodeById(nodeId) }
+    fun node(nodeId: Int): Flow<NodeSurrogate<T>> = environmentMonitor().eventFlow.map { it.nodeById(nodeId) }
 }

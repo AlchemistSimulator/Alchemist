@@ -1,3 +1,21 @@
+## [28.4.0](https://github.com/AlchemistSimulator/Alchemist/compare/28.3.2...28.4.0) (2023-10-23)
+
+
+### Features
+
+* **graphql:** add support for subscriptions ([#2749](https://github.com/AlchemistSimulator/Alchemist/issues/2749)) ([f292d10](https://github.com/AlchemistSimulator/Alchemist/commit/f292d1011cf6efead19acb00caec1e060f248cb6))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 97fc06e ([8df71d2](https://github.com/AlchemistSimulator/Alchemist/commit/8df71d2d76b84b7d51ae87cba4fcb14c87c6c00c))
+* **deps:** update external-resources/learning-scafi-alchemist digest to ea1e591 ([9b89f4b](https://github.com/AlchemistSimulator/Alchemist/commit/9b89f4b68029f62df55f6ad5cf20d793e2fe15c2))
+* **deps:** update npm to v10.2.1 ([dcd7e1a](https://github.com/AlchemistSimulator/Alchemist/commit/dcd7e1aafce111dab011777ea7e716bf3d105817))
+* **deps:** update react to v18.2.0-pre.635 ([c86fd1e](https://github.com/AlchemistSimulator/Alchemist/commit/c86fd1ec3754355e506880f9db37f511b9ee3186))
+* **deps:** update site/themes/hugo-theme-relearn digest to 477aa95 ([ccb41e1](https://github.com/AlchemistSimulator/Alchemist/commit/ccb41e18bf601283cfd0ae5ca7f1062c5999b328))
+* **deps:** update site/themes/hugo-theme-relearn digest to 7ba8f53 ([7cb2574](https://github.com/AlchemistSimulator/Alchemist/commit/7cb2574af540becd0262366253ed5ad0dc6acb90))
+* **deps:** update site/themes/hugo-theme-relearn digest to 870c40f ([2fc0b88](https://github.com/AlchemistSimulator/Alchemist/commit/2fc0b88f5082928f8b2c41d54da5354297389807))
+
 ## [28.3.2](https://github.com/AlchemistSimulator/Alchemist/compare/28.3.1...28.3.2) (2023-10-20)
 
 

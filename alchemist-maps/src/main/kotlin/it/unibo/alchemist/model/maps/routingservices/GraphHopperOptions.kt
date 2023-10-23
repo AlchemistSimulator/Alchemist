@@ -15,6 +15,7 @@ import com.graphhopper.config.Profile
 import com.graphhopper.routing.RoutingAlgorithm
 import com.graphhopper.routing.util.VehicleEncodedValuesFactory
 import com.graphhopper.routing.weighting.Weighting
+import com.graphhopper.util.CustomModel
 import com.graphhopper.util.Parameters.Algorithms.ALT_ROUTE
 import com.graphhopper.util.Parameters.Algorithms.ASTAR
 import com.graphhopper.util.Parameters.Algorithms.ASTAR_BI
@@ -44,6 +45,17 @@ class GraphHopperOptions private constructor(
     )
 
     private constructor(info: Pair<String, String>) : this(info.first, info.second)
+
+    /**
+     * The GraphHopper weights to use.
+     * [distanceInfluence] is the number of seconds per km to penalize longer routes with.
+     */
+    private data class GraphHopperWeighting(
+        val name: String,
+        val distanceInfluence: Double, // seconds per km to penalize longer routes with
+    ) {
+        val customModel: CustomModel = CustomModel().setDistanceInfluence(distanceInfluence)
+    }
 
     companion object {
 
@@ -79,16 +91,17 @@ class GraphHopperOptions private constructor(
         /**
          * All the non-abstract subclasses of [Weighting] available in the runtime.
          */
-        val graphHopperWeightings: List<String> = listOf("fastest", "short_fastest", "shortest")
+        private val graphHopperWeightings: List<GraphHopperWeighting> = listOf(
+            GraphHopperWeighting("fastest", 0.0),
+            GraphHopperWeighting("short_fastest", 30.0),
+            GraphHopperWeighting("shortest", 3600.0),
+        )
 
         /**
          * All the available profiles for GraphHopper navigation.
          */
-        val allProfiles: List<Profile> = graphHopperVehicles.flatMap { vehicle ->
-            graphHopperWeightings.map { weighting ->
-                profileFor(vehicle, weighting)
-            }
-        }
+        val allProfiles: List<Profile> = graphHopperVehicles
+            .flatMap { vehicle -> graphHopperWeightings.map { weighting -> profileFor(vehicle, weighting) } }
 
         /**
          * Default [GraphHopperOptions]: foot as vehicle, fastest as weighting, and dijkstrabi as algorithm.
@@ -122,8 +135,12 @@ class GraphHopperOptions private constructor(
             )
         }
 
-        private fun profileFor(vehicle: String, weighting: String): Profile = Profile("${vehicle}_$weighting")
+        private fun profileFor(
+            vehicle: String,
+            weighting: GraphHopperWeighting,
+        ): Profile = Profile("${vehicle}_${weighting.name}")
             .setVehicle(vehicle)
-            .setWeighting(weighting)
+            .setWeighting("custom")
+            .setCustomModel(weighting.customModel)
     }
 }

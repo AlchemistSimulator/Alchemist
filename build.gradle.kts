@@ -325,7 +325,7 @@ allprojects {
         )
         isZip64 = true
         mergeServiceFiles()
-        destinationDirectory.set(file("${rootProject.buildDir}/shadow"))
+        destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })
         val deleteOutput = tasks.register<Delete>("deleteOutputOf${name.capitalized()}") {
             setDelete(this@withType)
         }
@@ -379,7 +379,7 @@ tasks.named("kotlinStoreYarnLock").configure {
 
 // WEBSITE
 
-val websiteDir = File(buildDir, "website")
+val websiteDir = project.layout.buildDirectory.map { it.dir("website").asFile }.get()
 
 hugo {
     version = Regex("gohugoio/hugo@v([\\.\\-\\+\\w]+)")

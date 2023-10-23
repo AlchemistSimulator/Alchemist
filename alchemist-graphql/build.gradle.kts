@@ -79,6 +79,7 @@ kotlin {
                 implementation(rootProject)
                 implementation(libs.bundles.graphql.server)
                 implementation(libs.bundles.ktor.server)
+                implementation(alchemist("implementationbase"))
             }
         }
         val jvmTest by getting {

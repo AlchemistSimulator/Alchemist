@@ -7,13 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.graphql.server
+package it.unibo.alchemist.boundary.graphql.server.attributes
 
 import io.ktor.util.AttributeKey
 import it.unibo.alchemist.core.Simulation
 
 /**
- * Simulation attribute to be used for passing a [it.unibo.alchemist.core.Simulation]
- * inside Ktor's modules.
+ * Ktor's attribute to be used for passing a [it.unibo.alchemist.core.Simulation] among Ktor's modules.
  */
-val SimulationAttributeKey = AttributeKey<Simulation<*, *>>("simulation")
+val SimulationAttributeKey = AttributeKey<Simulation<*, *>>("simulationContext")

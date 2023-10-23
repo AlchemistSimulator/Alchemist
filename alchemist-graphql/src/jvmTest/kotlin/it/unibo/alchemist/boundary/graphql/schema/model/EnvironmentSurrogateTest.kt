@@ -22,7 +22,7 @@ class EnvironmentSurrogateTest<T, P> : StringSpec({
     "EnvironmentSurrogate should map an Environment to a GraphQL compliant object" {
         graphqlTestEnvironments<T, P>().forEach {
             requireNotNull(it.simulation)
-            val envSurrogate = it.toGraphQLEnvironmentSurrogate(it.simulation)
+            val envSurrogate = it.toGraphQLEnvironmentSurrogate()
 
             it.dimensions shouldBe envSurrogate.dimensions
 

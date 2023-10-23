@@ -7,12 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.eclipse.jgit.api.Git
+import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
@@ -39,7 +39,6 @@ object Util {
     private val gson = Gson().newBuilder().setPrettyPrinting().create()
     private val mapType = object : TypeToken<MutableMap<String, Pair<URL, URL?>>>() { }.type
 
-    @Suppress("UNCHECKED_CAST")
     private val javadocIO: MutableMap<String, Pair<URL, URL?>> = javadocIOcacheFile
         .takeIf(File::exists)
         ?.let { gson.fromJson(it.readText(), mapType) }
@@ -78,7 +77,7 @@ object Util {
     /**
      * Verifies that the generated shadow jar displays the help, and that SLF4J is not falling back to NOP.
      */
-    fun Project.testShadowJar(jarFile: Provider<RegularFile>) = tasks.register<Exec>(
+    fun Project.testShadowJar(javaExecutable: Provider<String>, jarFile: Provider<RegularFile>) = tasks.register<Exec>(
         "test${
         jarFile.get().asFile.nameWithoutExtension
             .removeSuffix("-all")
@@ -90,14 +89,13 @@ object Util {
     ) {
         group = "Verification"
         description = "Verifies the terminal output correctness when printing the help via ${jarFile.get().asFile.name}"
-        val javaExecutable = org.gradle.internal.jvm.Jvm.current().javaExecutable.absolutePath
         val interceptOutput = ByteArrayOutputStream()
         val interceptError = ByteArrayOutputStream()
         standardOutput = interceptOutput
         errorOutput = interceptError
         isIgnoreExitValue = true
         doFirst {
-            commandLine(javaExecutable, "-jar", jarFile.get().asFile.absolutePath, "--help")
+            commandLine(javaExecutable.get(), "-jar", jarFile.get().asFile.absolutePath, "--help")
         }
         doLast {
             val exit = executionResult.get().exitValue

@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.core;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -228,5 +229,13 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      * @return the status of the Simulation at the end of the wait
      */
     Status waitFor(Status s, long timeout, TimeUnit timeunit);
+
+    /**
+     * Allows to access a list of all the {@link OutputMonitor} currently
+     * attached to this simulation.
+     *
+     * @return the list of {@link OutputMonitor}
+     */
+    List<OutputMonitor<T, P>> getOutputMonitors();
 
 }

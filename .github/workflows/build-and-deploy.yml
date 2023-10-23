@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.14
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Compute Java version
         id: java-version
         run: ruby -e 'puts("java-version=#{/^minJavaVersion\s*=\s*(\d+)$/.match(File.read("gradle.properties"))[1]}")' >> $GITHUB_OUTPUT

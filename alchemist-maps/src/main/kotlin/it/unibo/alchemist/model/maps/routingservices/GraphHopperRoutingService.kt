@@ -172,4 +172,10 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         private fun InputStream.nameFromHash(): String =
             Base32().encodeAsString(Hashing.sha256().hashBytes(readAllBytes()).asBytes()).filter { it != '=' }
     }
+
+//    private class AlchemistGraphHopper : GraphHopper() {
+//        override fun createWeightingFactory() = WeightingFactory { profile, hints, disable ->
+//            FastestWeighting(geta, hints)
+//        }
+//    }
 }

@@ -10,16 +10,18 @@
 package it.unibo.alchemist.model.maps.actions;
 
 import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.actions.AbstractConfigurableMoveNode;
-import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
+import it.unibo.alchemist.model.actions.AbstractConfigurableMoveNode;
+import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy;
 import it.unibo.alchemist.utils.Maps;
+
+import java.io.Serial;
 
 /**
  * @param <T> Concentration type
@@ -29,6 +31,7 @@ import it.unibo.alchemist.utils.Maps;
 public class MoveOnMap<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
     extends AbstractConfigurableMoveNode<T, GeoPosition> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

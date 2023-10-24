@@ -1,3 +1,20 @@
+## [28.4.2](https://github.com/AlchemistSimulator/Alchemist/compare/28.4.1...28.4.2) (2023-10-24)
+
+
+### Dependency updates
+
+* **deps:** update graphql.server to v7 ([69cdf8d](https://github.com/AlchemistSimulator/Alchemist/commit/69cdf8d653f4f06198945b72103c8c227d278001))
+
+
+### Bug Fixes
+
+* **build:** effectively use Java 17 throughout the build ([9382537](https://github.com/AlchemistSimulator/Alchemist/commit/938253779abd42847918d11280878f38703e9a50))
+
+
+### General maintenance
+
+* **ci:** use the same version of actions/checkout across the workflow ([2874711](https://github.com/AlchemistSimulator/Alchemist/commit/287471135086adcf519bcba234e9b8b8a3cd2d0e))
+
 ## [28.4.1](https://github.com/AlchemistSimulator/Alchemist/compare/28.4.0...28.4.1) (2023-10-24)
 
 

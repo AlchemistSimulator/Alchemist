@@ -1,3 +1,31 @@
+## [28.4.1](https://github.com/AlchemistSimulator/Alchemist/compare/28.4.0...28.4.1) (2023-10-24)
+
+
+### Dependency updates
+
+* **deps:** update dependency com.apollographql.apollo3 to v4.0.0-beta.2 ([266b9f2](https://github.com/AlchemistSimulator/Alchemist/commit/266b9f29a49e3f6aa9040a58c4dd8e9a795fc1a4))
+* **deps:** update dependency com.graphhopper:graphhopper-core to v8 ([c8766d4](https://github.com/AlchemistSimulator/Alchemist/commit/c8766d4180be89b776b7e1b972785048dc64ac8f))
+* **deps:** update external-resources/learning-scafi-alchemist digest to abc5df2 ([35c5253](https://github.com/AlchemistSimulator/Alchemist/commit/35c52530e12d913b4082595bec345b11bc1fe4a1))
+* **deps:** update node.js to v20 ([706df25](https://github.com/AlchemistSimulator/Alchemist/commit/706df25cf60fcda4650da17f64d28783ddb24e87))
+
+
+### Bug Fixes
+
+* **maps:** adapt to GraphHopper 8 ([edd4ce9](https://github.com/AlchemistSimulator/Alchemist/commit/edd4ce923cc3e84c275ddb670c9ec3adc46a4a18))
+* **maps:** drop motorbikes (no longer supported by graphhopper) ([d695002](https://github.com/AlchemistSimulator/Alchemist/commit/d695002269a36f8377291ab4fe227a1bfac18262))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/setup-node action to v3.8.2 ([a8635f8](https://github.com/AlchemistSimulator/Alchemist/commit/a8635f8235eb563702f8ed8e11f93f239451416d))
+* **deps:** update actions/setup-node action to v4 ([278b0d8](https://github.com/AlchemistSimulator/Alchemist/commit/278b0d8fe16cf89725d9b0c6478bc96ed28a4496))
+* remove calls to deprecated `buildDir` ([9f64b51](https://github.com/AlchemistSimulator/Alchemist/commit/9f64b51c115720c4a09e113fbb056cbb24b3a4a3))
+
+
+### Style improvements
+
+* **maps:** annotate `MoveOnMap`'s `serialVersionUID` with `@Serial` ([6fbd501](https://github.com/AlchemistSimulator/Alchemist/commit/6fbd5018bf0eade9447f25baf92d3861be1a20ea))
+
 ## [28.4.0](https://github.com/AlchemistSimulator/Alchemist/compare/28.3.2...28.4.0) (2023-10-23)
 
 

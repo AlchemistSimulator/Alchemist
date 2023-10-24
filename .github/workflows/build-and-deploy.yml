@@ -5,7 +5,21 @@ on:
 
 jobs:
   # Runs all tests
+  select-java-version:
+    concurrency:
+      group: ${{ github.workflow }}-select-java-version-${{ github.event.number || github.ref }}
+    outputs:
+        java-version: ${{ steps.java-version.outputs.java-version }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Compute Java version
+        id: java-version
+        run: ruby -e 'puts("java-version=#{/^minJavaVersion\s*=\s*(\d+)$/.match(File.read("gradle.properties"))[1]}")' >> $GITHUB_OUTPUT
   build:
+    needs:
+      - select-java-version
     strategy:
       fail-fast: false
       matrix:
@@ -38,11 +52,14 @@ jobs:
             ./gradlew check --parallel || ./gradlew check --parallel
           clean-command: |
             ./gradlew clean --parallel || ./gradlew clean --parallel || true
+          java-version: ${{ needs.select-java-version.outputs.java-version }}
           should-run-codecov: ${{ contains('Linux', runner.os) }}
           should-deploy: false
           should-validate-wrapper: ${{ contains('Linux', runner.os) }}
   # Performs a dry-deployment if credentials are available
   test-deploy:
+    needs:
+      - select-java-version
     runs-on: ubuntu-22.04
     if: >-
       !github.event.repository.fork
@@ -64,7 +81,7 @@ jobs:
           deploy-command: |
             COMMAND="./gradlew uploadJvm uploadJs uploadKotlinOSSRH uploadKotlinMultiplatform close drop --parallel"
             eval "$COMMAND" || eval "$COMMAND" || eval "$COMMAND"
-          java-version: 11
+          java-version: ${{ needs.select-java-version.outputs.java-version }}
           should-run-codecov: false
           should-deploy: true
           should-validate-wrapper: false
@@ -73,6 +90,8 @@ jobs:
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
   # Builds the website and verifies link sanity
   build-website:
+    needs:
+      - select-java-version
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     concurrency:
@@ -106,6 +125,7 @@ jobs:
                 false
               fi
             done
+          java-version: ${{ needs.select-java-version.outputs.java-version }}
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
@@ -123,6 +143,7 @@ jobs:
       # Strictly sequential.
       group: release-${{ github.event.number || github.ref }}
     needs:
+      - select-java-version
       - build
       - build-website
       - test-deploy
@@ -161,7 +182,7 @@ jobs:
           node-version: ${{ steps.node-version.outputs.version }}
       - uses: DanySK/build-check-deploy-gradle-action@2.2.10
         with:
-          java-version: 11
+          java-version: ${{ needs.select-java-version.outputs.java-version }}
           build-command: |
             ls -ahl
             echo Copying the new website

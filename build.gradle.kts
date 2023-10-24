@@ -41,6 +41,8 @@ plugins {
     alias(libs.plugins.hugo)
 }
 
+val minJavaVersion: String by properties
+
 allprojects {
 
     with(rootProject.libs.plugins) {
@@ -61,7 +63,7 @@ allprojects {
     apply(plugin = "distribution")
 
     multiJvm {
-        jvmVersionForCompilation.set(17)
+        jvmVersionForCompilation.set(minJavaVersion.toInt())
         maximumSupportedJvmVersion.set(latestJava)
         if (isInCI && (isWindows || isMac)) {
             /*
@@ -335,7 +337,10 @@ allprojects {
         }
         if ("full" in project.name || "incarnation" in project.name || project == rootProject) {
             // Run the jar and check the output
-            val testShadowJar = testShadowJar(archiveFile)
+            val javaExecutable = javaToolchains.launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(minJavaVersion))
+            }.map { it.executablePath.asFile.absolutePath }
+            val testShadowJar = testShadowJar(javaExecutable, archiveFile)
             testShadowJar.get().dependsOn(this)
             this.finalizedBy(testShadowJar)
             deleteOutput.get().mustRunAfter(testShadowJar)

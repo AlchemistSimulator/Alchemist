@@ -42,7 +42,7 @@ If you have no idea of what I'm talking about,
 [take a step back and make sure you followed the quickstart](../quickstart).
 {{% /notice %}}
 
-1. `git clone git@github.com:DanySK/DisCoTec-2021-Tutorial.git`
+1. `git clone https://github.com/DanySK/DisCoTec-2021-Tutorial.git`
 2. `cd DisCoTec-2021-Tutorial`
 3.
     * Unix-like terminals: `./gradlew run00`

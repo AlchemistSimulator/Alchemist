@@ -1,3 +1,21 @@
+## [28.4.3](https://github.com/AlchemistSimulator/Alchemist/compare/28.4.2...28.4.3) (2023-10-26)
+
+
+### Dependency updates
+
+* **deps:** update dependency commons-io:commons-io to v2.15.0 ([a94377f](https://github.com/AlchemistSimulator/Alchemist/commit/a94377f2edcda77c614fc2bae5511b9bfd033fff))
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.9.3 ([1bec5f4](https://github.com/AlchemistSimulator/Alchemist/commit/1bec5f48d80aef1ac4f83b4fd5a338b2749b7c3f))
+* **deps:** update node.js to 20.9 ([fb5f7be](https://github.com/AlchemistSimulator/Alchemist/commit/fb5f7be0e568edb8f375df4de544fdeb26bb6c19))
+* **deps:** update plugin gitsemver to v2 ([925a8f5](https://github.com/AlchemistSimulator/Alchemist/commit/925a8f5ed578aa4722c93cb08cb9ed139b496b3b))
+* **deps:** update react to v18.2.0-pre.636 ([b9af8e0](https://github.com/AlchemistSimulator/Alchemist/commit/b9af8e0aa97cf8b5afcae5e40cc501f1c7398417))
+* **deps:** update site/themes/hugo-theme-relearn digest to 5a534d0 ([937efb9](https://github.com/AlchemistSimulator/Alchemist/commit/937efb925a4b5618b47ce9634ca5879e21299dbb))
+* **deps:** update site/themes/hugo-theme-relearn digest to d2583cf ([00cafff](https://github.com/AlchemistSimulator/Alchemist/commit/00cafff57dcd387c5bfb36f944a3e5e1b883e2c2))
+
+
+### Documentation
+
+* **website:** use https URIs over ssh ones for the tutorial ([#2770](https://github.com/AlchemistSimulator/Alchemist/issues/2770)) ([ee9b506](https://github.com/AlchemistSimulator/Alchemist/commit/ee9b50663d656aa8dacffd6e83fae22d52895b9f))
+
 ## [28.4.2](https://github.com/AlchemistSimulator/Alchemist/compare/28.4.1...28.4.2) (2023-10-24)
 
 

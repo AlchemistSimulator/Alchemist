@@ -23,6 +23,7 @@ import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.timeout
 import it.unibo.alchemist.boundary.graphql.schema.operations.mutations.SimulationControl
 import it.unibo.alchemist.boundary.graphql.schema.operations.queries.EnvironmentQueries
+import it.unibo.alchemist.boundary.graphql.schema.operations.queries.NodeQueries
 import it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions.EnvironmentSubscriptions
 import it.unibo.alchemist.boundary.graphql.server.attributes.SimulationAttributeKey
 import java.time.Duration
@@ -60,6 +61,7 @@ fun Application.graphQLModule() {
             )
             queries = listOf(
                 EnvironmentQueries(environment),
+                NodeQueries(environment),
             )
             mutations = listOf(
                 SimulationControl(environment),

@@ -9,7 +9,6 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateSDLTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
@@ -30,14 +29,6 @@ dependencies {
 kotlin {
     jvm {
         withJava()
-
-        // workaround for fixing "task compileKotlin not found", will be fixed in GraphQL Kotlin v.7
-        tasks.maybeCreate("compileKotlin").dependsOn(tasks.named("compileKotlinJvm"))
-        tasks.named<GraphQLGenerateSDLTask>("graphqlGenerateSDL") {
-            val srcSet = sourceSets.getByName("jvmMain").kotlin
-            source = srcSet.asFileTree
-            projectClasspath.setFrom(srcSet)
-        }
         tasks {
             graphql {
                 schema {
@@ -46,7 +37,6 @@ kotlin {
                     )
                 }
             }
-
             // Disabling GraphQL Kotlin unwanted tasks
             listOf(
                 "graphqlGenerateClient",
@@ -97,7 +87,11 @@ kotlin {
                 implementation(alchemist("test"))
             }
         }
-        val jsMain by getting
+        val jsMain by getting {
+            dependencies {
+                implementation(libs.letsplot.js)
+            }
+        }
         val jsTest by getting
     }
 }

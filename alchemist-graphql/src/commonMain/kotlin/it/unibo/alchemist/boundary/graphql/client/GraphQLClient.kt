@@ -66,8 +66,8 @@ interface GraphQLClientBuilder {
     /**
      * Sets the server URL, if nothing is specified, default values will be applied.
      *
-     * @param host hostname of the server, default to "localhost"
-     * @param port port number of the server, default to "8080"
+     * @param host hostname of the server, default to localhost "127.0.0.1"
+     * @param port port number of the server, default to "8081"
      */
     fun serverUrl(host: String = "127.0.0.1", port: Int = 8081): GraphQLClientBuilder
 

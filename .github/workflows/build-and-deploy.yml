@@ -141,6 +141,8 @@ jobs:
             for file in files; do
               # Ignore all meta tags containing links
               perl -i -pe 's/<meta(\s*\w+\s*=\s*"[^"]*")*(\s*\w+\s*=\s*"https?:\/\/(\w|\/|\.)+")+(\s*\w+\s*=\s*"[^"]*")*>//g'
+              # Ignore all tag links
+              perl -i -pe 's/<a(\s+class\s*=\s*\"tag-link\"|\s+href\s*=\s*\"(\.\.\/)+tags\/.*\"){2}\s*>.*<\/a>//g'
             done
             CHECK_LINKS="docker run --rm -v ""$(pwd)/build/website:/website"" -e GITHUB_TOKEN lycheeverse/lychee:0.10.3 $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 403,429,500,502,503"
             for i in 1 2 3 4 5; do

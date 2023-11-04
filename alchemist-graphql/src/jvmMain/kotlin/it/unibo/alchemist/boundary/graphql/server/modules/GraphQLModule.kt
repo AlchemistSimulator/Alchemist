@@ -25,6 +25,7 @@ import it.unibo.alchemist.boundary.graphql.schema.operations.mutations.Simulatio
 import it.unibo.alchemist.boundary.graphql.schema.operations.queries.EnvironmentQueries
 import it.unibo.alchemist.boundary.graphql.schema.operations.queries.NodeQueries
 import it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions.EnvironmentSubscriptions
+import it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions.NodeSubscriptions
 import it.unibo.alchemist.boundary.graphql.server.attributes.SimulationAttributeKey
 import java.time.Duration
 
@@ -68,6 +69,7 @@ fun Application.graphQLModule() {
             )
             subscriptions = listOf(
                 EnvironmentSubscriptions(environment),
+                NodeSubscriptions(environment),
             )
             hooks = FlowSubscriptionSchemaGeneratorHooks()
         }

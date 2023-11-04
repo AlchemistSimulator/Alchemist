@@ -136,6 +136,7 @@ jobs:
               find build/website/ -name '*.html' |
               grep -v /kdoc/ |
               grep -v /javadoc/ |
+              grep -v /tags/ |
               sed -e 's#^build##'
             )"
             for file in files; do

@@ -145,7 +145,7 @@ jobs:
               # Ignore all tag links
               # perl -i -pe 's/<a(\s+class\s*=\s*\"tag-link\"|\s+href\s*=\s*\"(\.\.\/)+tags\/.*\"){2}\s*>.*<\/a>//g' file
               # Ignore generated menu auto-links
-              # perl -i -pe 's/\s*<li.*<a\s+class\s*=\s*"padding"\s+href\s*=\s*"\.\.\/\.\.\/\.\.\/.*<\/a>\s*<\/li>//g' file
+              perl -i -pe 's/\s*<li.*<a\s+class\s*=\s*"padding"\s+href\s*=\s*"\.\.\/\.\.\/\.\.\/.*<\/a>\s*<\/li>//g' "$file"
               # Ignore all local data-urls
               # perl -i -pe 's/data-url="\.\.\/.*"//g' file
             done

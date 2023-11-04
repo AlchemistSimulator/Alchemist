@@ -32,7 +32,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.10
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.11
         with:
           pre-build-command: ./gradlew kotlinUpgradeYarnLock --parallel
           # check that all tasks used in subsequent phases are there
@@ -74,7 +74,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.10
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.11
         with:
           build-command: ./gradlew kotlinUpgradeYarnLock --parallel
           check-command: true
@@ -100,7 +100,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.10
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.11
         with:
           build-command: |
             for i in 1 2 3 4 5; do
@@ -180,7 +180,7 @@ jobs:
         uses: actions/setup-node@v4.0.0
         with:
           node-version: ${{ steps.node-version.outputs.version }}
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.10
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.11
         with:
           java-version: ${{ needs.select-java-version.outputs.java-version }}
           build-command: |

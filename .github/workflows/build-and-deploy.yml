@@ -121,7 +121,7 @@ jobs:
         with:
           name: website
           path: website.tar
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.10
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.11
         with:
           build-command: |
           check-command: |

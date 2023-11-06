@@ -101,13 +101,11 @@ internal object DocumentRoot : SyntaxElement {
             )
         }
     }
-
     object Export : SyntaxElement {
         val data by OwnName
         override val validDescriptors = setOf(
             validDescriptor { mandatory(JavaType.type, JavaType.parameters, data) },
         )
-
         object Data : SyntaxElement {
             val time by OwnName
             val molecule by OwnName
@@ -130,7 +128,6 @@ internal object DocumentRoot : SyntaxElement {
 
     object Environment : SyntaxElement {
         const val globalPrograms = "global-programs"
-
         object GlobalProgram : SyntaxElement {
             val actions by OwnName
             val conditions by OwnName
@@ -141,10 +138,8 @@ internal object DocumentRoot : SyntaxElement {
                     optional(JavaType.parameters, actions, conditions, timeDistribution)
                 },
             )
-
             override fun toString(): String = this::class.simpleName ?: this.javaClass.canonicalName
         }
-
         override val validDescriptors = setOf(
             validDescriptor {
                 optional(JavaType.parameters, globalPrograms)
@@ -157,6 +152,15 @@ internal object DocumentRoot : SyntaxElement {
         override val validDescriptors = setOf(
             validDescriptor {
                 mandatory(JavaType.type, molecule)
+                optional(JavaType.parameters)
+            },
+        )
+    }
+
+    object Monitor : SyntaxElement {
+        override val validDescriptors = setOf(
+            validDescriptor {
+                mandatory(JavaType.type)
                 optional(JavaType.parameters)
             },
         )
@@ -186,6 +190,7 @@ internal object DocumentRoot : SyntaxElement {
     val incarnation by OwnName
     val launcher by OwnName
     val layers by OwnName
+    const val monitors = "monitors"
     const val linkingRule = "network-model"
     const val engineConfiguration = "engine-configuration"
     const val remoteDependencies = "remote-dependencies"

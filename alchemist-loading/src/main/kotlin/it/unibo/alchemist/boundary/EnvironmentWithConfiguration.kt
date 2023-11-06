@@ -19,5 +19,6 @@ import it.unibo.alchemist.model.Position
 data class EnvironmentWithConfiguration<T, P : Position<P>>(
     override val environment: Environment<T, P>,
     override val exporters: List<Exporter<T, P>>,
+    override val monitors: List<OutputMonitor<T, P>>,
     override val engineConfiguration: EngineConfiguration,
 ) : InitializedEnvironment<T, P>

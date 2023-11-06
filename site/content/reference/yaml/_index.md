@@ -501,6 +501,26 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 ---
 
+### `monitor`
+**Type**: SpecMap
+Builds a {{% api package="boundary" class="OutputMonitor" %}}
+using the [arbitrary class loading system](#arbitrary-class-loading-system).
+
+#### Examples
+* Creation of one {{% api package="boundary" class="OutputMonitor" %}}s
+  {{< code path="alchemist-loading/src/test/resources/testmonitors.yml" >}}
+
+---
+
+### `monitors`
+**Type**: Traversable of [`monitor`](#monitor)
+
+#### Examples
+* Creation of one {{% api package="boundary" class="OutputMonitor" %}}s
+  {{< code path="alchemist-loading/src/test/resources/testmonitors.yml" >}}
+
+---
+
 ### `network-model`
 
 **Type**: SpecMap

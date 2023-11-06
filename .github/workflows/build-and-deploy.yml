@@ -109,22 +109,7 @@ jobs:
                 false
               fi
             done
-          check-command: |
-            # Temporarily disable checks on kdoc/javadoc: too many bugs in Dokka.
-            # See:
-            # https://github.com/Kotlin/dokka/issues/2320
-            # https://github.com/Kotlin/dokka/issues/2321
-            # https://github.com/Kotlin/dokka/issues/2322
-            # https://github.com/Kotlin/dokka/issues/2323
-            # Once everything gets fixed, lychee could simply run on '/website/**/*.html'
-            FILES="$(find build/website/ -name '*.html' | grep -v /kdoc/ | grep -v /javadoc/ | sed -e 's#^build##')"
-            CHECK_LINKS="docker run --rm -v ""$(pwd)/build/website:/website"" -e GITHUB_TOKEN lycheeverse/lychee:0.10.3 $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 403,429,500,502,503"
-            for i in 1 2 3 4 5; do
-              $(echo $CHECK_LINKS) && break || sleep 30
-              if [ "$i" = 5 ]; then
-                false
-              fi
-            done
+          check-command: true
           java-version: ${{ needs.select-java-version.outputs.java-version }}
           should-run-codecov: false
           should-deploy: false
@@ -136,6 +121,39 @@ jobs:
         with:
           name: website
           path: website.tar
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.10
+        with:
+          build-command: |
+          check-command: |
+            # Temporarily disable checks on kdoc/javadoc: too many bugs in Dokka.
+            # See:
+            # https://github.com/Kotlin/dokka/issues/2320
+            # https://github.com/Kotlin/dokka/issues/2321
+            # https://github.com/Kotlin/dokka/issues/2322
+            # https://github.com/Kotlin/dokka/issues/2323
+            # Once everything gets fixed, lychee could simply run on '/website/**/*.html'
+            FILES="$(
+              find build/website/ -name '*.html' |
+              grep -v /kdoc/ |
+              grep -v /javadoc/ |
+              grep -v /tags/ |
+              sed -e 's#^build##'
+            )"
+            for file in $FILES; do
+              # Ignore all meta tags containing absolute links
+              perl -i -pe 's/<meta.*\"http.*\".*>//g' "build/$file"
+            done
+            CHECK_LINKS="docker run --rm -v ""$(pwd)/build/website:/website"" -e GITHUB_TOKEN lycheeverse/lychee:0.10.3 $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 403,429,500,502,503"
+            for i in 1 2 3 4 5; do
+              $(echo $CHECK_LINKS) && break || sleep 30
+              if [ "$i" = 5 ]; then
+                false
+              fi
+            done
+          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          should-run-codecov: false
+          should-deploy: false
+          should-validate-wrapper: false
   # Performs a release if needed
   release:
     concurrency:

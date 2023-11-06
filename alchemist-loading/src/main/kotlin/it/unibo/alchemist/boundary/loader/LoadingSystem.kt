@@ -108,6 +108,8 @@ internal abstract class LoadingSystem(
                 SimulationModel.visitLinkingRule<P, T>(context, root.getOrEmptyMap(DocumentRoot.linkingRule))
             environment.linkingRule = linkingRule
             contextualize(linkingRule)
+            // MONITORS
+            val monitors = SimulationModel.visitOutputMonitors<P, T>(context, root[DocumentRoot.monitors])
             // DISPLACEMENTS
             setCurrentRandomGenerator(scenarioRNG)
             val displacementsSource = root.getOrEmpty(DocumentRoot.deployments)
@@ -144,6 +146,7 @@ internal abstract class LoadingSystem(
                 SimulationModel.visitSingleExporter(incarnation, context, it)
             }
             exporters.forEach { it.bindVariables(variableValues) }
+
             // ENGINE CONFIGURATION
             val engineConfigurationDescriptor = root[DocumentRoot.engineConfiguration]
             val maybeEngineConfiguration =
@@ -153,7 +156,7 @@ internal abstract class LoadingSystem(
                 ?: NamedParametersConstructor(type = DEFAULT_ENGINE_CONFIGURATION_CLASS)
                     .buildAny<EngineConfiguration>(context.factory)
                     .getOrThrow()
-            return EnvironmentWithConfiguration(environment, exporters, engineConfiguration)
+            return EnvironmentWithConfiguration(environment, exporters, monitors, engineConfiguration)
         }
 
         private fun <T, P : Position<P>> loadGlobalProgramsOnEnvironment(

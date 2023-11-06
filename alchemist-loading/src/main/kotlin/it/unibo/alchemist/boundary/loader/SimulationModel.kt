@@ -16,6 +16,7 @@ import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Extractor
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.Loader
+import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
 import it.unibo.alchemist.boundary.extractors.MoleculeReader
@@ -559,6 +560,15 @@ internal object SimulationModel {
             }
         }
 
+    fun <P : Position<P>, T> visitOutputMonitors(
+        context: Context,
+        root: Any?,
+    ): List<OutputMonitor<T, P>> =
+        visitRecursively(context, root ?: emptyList<Any>(), DocumentRoot.Monitor) { origin ->
+            (origin as? Map<*, *>)?.let { _ ->
+                visitBuilding<OutputMonitor<T, P>>(context, origin)
+            }
+        }
     fun <T, P : Position<P>> visitNode(
         randomGenerator: RandomGenerator,
         incarnation: Incarnation<T, P>,

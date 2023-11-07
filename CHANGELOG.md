@@ -1,3 +1,26 @@
+## [28.5.1](https://github.com/AlchemistSimulator/Alchemist/compare/28.5.0...28.5.1) (2023-11-07)
+
+
+### Dependency updates
+
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.8.1 ([87bee75](https://github.com/AlchemistSimulator/Alchemist/commit/87bee750ddd3d97dc1695e0dbb1be7dd818321a8))
+* **deps:** update dependency io.jenetics:jpx to v3.1.0 ([68c63d4](https://github.com/AlchemistSimulator/Alchemist/commit/68c63d4ccb16077b25aea96ac63349505367f7a3))
+* **deps:** update dependency org.controlsfx:controlsfx to v11.2.0 ([857892d](https://github.com/AlchemistSimulator/Alchemist/commit/857892df3298ca0b10d427d6f353bb851d73e3f5))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.71 ([2cd6ae1](https://github.com/AlchemistSimulator/Alchemist/commit/2cd6ae1bf01e79b7d4d10842bee912ece547e326))
+* **deps:** update ktor to v2.3.6 ([885de48](https://github.com/AlchemistSimulator/Alchemist/commit/885de483716930a273b6d5c220a1c745ab7c99c2))
+* **deps:** update react to v18.2.0-pre.638 ([08e3da7](https://github.com/AlchemistSimulator/Alchemist/commit/08e3da79afbbd57801d8f51310567f9441395171))
+* **deps:** update react to v18.2.0-pre.639 ([b42e45a](https://github.com/AlchemistSimulator/Alchemist/commit/b42e45a2da86b2e0a3363325d0f02246f65db71f))
+
+
+### Documentation
+
+* **maps:** add a comment on test source explaining the need for a specific OSM file (possibly causes [#2821](https://github.com/AlchemistSimulator/Alchemist/issues/2821)) ([#2828](https://github.com/AlchemistSimulator/Alchemist/issues/2828)) ([3f323bd](https://github.com/AlchemistSimulator/Alchemist/commit/3f323bd506e9d150f23fe22448502fe873acb932))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.11 ([4a63ba5](https://github.com/AlchemistSimulator/Alchemist/commit/4a63ba5ce47fa2016be0560e4278d6feed54b0cc))
+
 ## [28.5.0](https://github.com/AlchemistSimulator/Alchemist/compare/28.4.4...28.5.0) (2023-11-06)
 
 

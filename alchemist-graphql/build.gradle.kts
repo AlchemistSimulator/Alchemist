@@ -87,11 +87,7 @@ kotlin {
                 implementation(alchemist("test"))
             }
         }
-        val jsMain by getting {
-            dependencies {
-                implementation(libs.letsplot.js)
-            }
-        }
+        val jsMain by getting
         val jsTest by getting
     }
 }

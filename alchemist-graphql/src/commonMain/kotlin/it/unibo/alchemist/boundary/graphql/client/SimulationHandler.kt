@@ -40,12 +40,11 @@ class SimulationHandler(private val graphqlClient: GraphQLClient) {
      * Plays the simulation.
      */
     suspend fun play(): PlaySimulationMutation.Data {
-        val status = (
-            handleSimulation(
-                PlaySimulationMutation(),
-                "STARTING SIMULATION",
-            ) as PlaySimulationMutation.Data
-            )
+        val status = handleSimulation(
+            PlaySimulationMutation(),
+            "STARTING SIMULATION",
+        ) as PlaySimulationMutation.Data
+
         require(status.play == "RUNNING") { status.play }
         return status
     }

@@ -142,6 +142,15 @@ tasks.named("run", JavaExec::class).configure {
 }
 
 /**
+ * Configure GraphQL Schema download task to download the schema from the server
+ * at the default endpoint, locating the updated schema under the correct directory.
+ */
+tasks.withType<com.expediagroup.graphql.plugin.gradle.tasks.GraphQLDownloadSDLTask>().configureEach {
+    outputFile.set(File("src/commonMain/resources/graphql/schema.graphqls"))
+    endpoint = "http://localhost:8081/sdl"
+}
+
+/**
  * Configure the [ShadowJar] task to work exactly like the "jvmJar" task of Kotlin Multiplatform, but also
  * include the JS artifacts by depending on the "jsBrowserProductionWebpack" task.
  */

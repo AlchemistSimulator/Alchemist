@@ -71,7 +71,7 @@ class TestLoadGPSTrace {
     @Test
     <T> void testLoadGPSTrace() {
         final var res = ResourceLoader.getResource("testgps.yml");
-        assertNotNull(res, "Missing test resource " + "testgps.yml");
+        assertNotNull(res, "Missing test resource testgps.yml");
         final Environment<T, GeoPosition> environment = LoadAlchemist.from(res).<T, GeoPosition>getDefault().getEnvironment();
         assertTrue(environment.getNodeCount() > 0);
         environment.getNodes().forEach(node -> {

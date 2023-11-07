@@ -1,6 +1,6 @@
 environment:
   type: OSMEnvironment
-  parameters: ["vcm.pbf", false]
+  parameters: ["vcm.pbf", false] # Requires the file vcm.pbf in the classpath!
 
 incarnation: sapere
 

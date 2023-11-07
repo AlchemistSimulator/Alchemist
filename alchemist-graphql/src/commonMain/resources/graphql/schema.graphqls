@@ -143,6 +143,10 @@ type Position2DSurrogate implements PositionSurrogate {
 type Query {
   "The actual state of the environment"
   environment: EnvironmentSurrogate!
+  "The neighborhood which the given node is the center."
+  neighborhood(nodeId: Int!): NeighborhoodSurrogate!
+  "The position in space of the given node."
+  nodePosition(nodeId: Int!): PositionSurrogate
   "The status of the simulation"
   simulationStatus: String!
 }
@@ -157,6 +161,8 @@ type ReactionSurrogate {
 type Subscription {
   "The simulation's environment"
   environment: EnvironmentSurrogate!
+  "The neighborhood of a node in the simulation's environment"
+  neighborhood(nodeId: Int!): NeighborhoodSurrogate!
   "A node in the simulation's environment"
   node(nodeId: Int!): NodeSurrogate!
 }

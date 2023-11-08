@@ -50,7 +50,13 @@ class DefaultGraphQLClient(private val client: ApolloClient) : GraphQLClient {
 
     override fun close() = client.close()
 
-    private fun checkBuilt() = if (!isBuilt) throw ClientNotBuiltException() else true
+    private fun checkBuilt() {
+        check(!isBuilt) {
+            throw IllegalStateException(
+                "The client was not built properly! Make sure to call `build()` before running any operation.",
+            )
+        }
+    }
 
     /**
      * [GraphQLClientBuilder] implementation for this [GraphQLClient].
@@ -90,9 +96,3 @@ class DefaultGraphQLClient(private val client: ApolloClient) : GraphQLClient {
         }
     }
 }
-
-/**
- * Exception thrown when the client is not built properly.
- */
-class ClientNotBuiltException :
-    Exception("The client was not built properly! Make sure to call `build()` before running any operation.")

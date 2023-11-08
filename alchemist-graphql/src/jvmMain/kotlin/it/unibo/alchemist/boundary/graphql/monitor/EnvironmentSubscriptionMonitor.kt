@@ -52,6 +52,10 @@ class EnvironmentSubscriptionMonitor<T, P : Position<out P>> : OutputMonitor<T, 
     }
 }
 
+/**
+ * Extension object for [Environment]s providing a function to retrieve the
+ * [EnvironmentSubscriptionMonitor] of this [Environment].
+ */
 object Environments {
     /**
      * Returns the [EnvironmentSubscriptionMonitor] of this [Environment].

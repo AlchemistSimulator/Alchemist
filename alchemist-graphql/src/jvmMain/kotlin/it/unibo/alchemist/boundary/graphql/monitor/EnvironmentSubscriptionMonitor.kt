@@ -51,3 +51,15 @@ class EnvironmentSubscriptionMonitor<T, P : Position<out P>> : OutputMonitor<T, 
         this.stepDone(environment, null, Time.ZERO, 0L)
     }
 }
+
+object Environments {
+    /**
+     * Returns the [EnvironmentSubscriptionMonitor] of this [Environment].
+     * @return the [EnvironmentSubscriptionMonitor] of this [Environment]
+     */
+    fun <T, P>Environment<T, P>.subscriptionMonitor(): EnvironmentSubscriptionMonitor<T, P>
+        where P : Position<out P> =
+        this.simulation.outputMonitors.filterIsInstance<EnvironmentSubscriptionMonitor<T, P>>()
+            .apply { check(size == 1) { "Only one subscription monitor is allowed" } }
+            .first()
+}

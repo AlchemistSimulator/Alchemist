@@ -11,9 +11,9 @@ package it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.server.operations.Subscription
+import it.unibo.alchemist.boundary.graphql.monitor.Environments.subscriptionMonitor
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.NeighborhoodSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.NodeSurrogate
-import it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions.util.SubscriptionsUtils
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.map
  * @param environment the environment.
  */
 class NodeSubscriptions<T, P : Position<out P>>(environment: Environment<T, P>) : Subscription {
-    private val environmentMonitor = SubscriptionsUtils.environmentSubscriptionMonitor(environment)
+    private val environmentMonitor = environment.subscriptionMonitor()
 
     /**
      * Returns a [Flow] with the updated value of the

@@ -10,10 +10,10 @@ package it.unibo.alchemist.boundary.gps.loaders;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
-import it.unibo.alchemist.util.ClassPathScanner;
 import it.unibo.alchemist.boundary.gps.GPSFileLoader;
 import it.unibo.alchemist.boundary.gps.GPSTimeAlignment;
 import it.unibo.alchemist.model.maps.GPSTrace;
+import it.unibo.alchemist.util.ClassPathScanner;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
 import org.jooq.lambda.Unchecked;
@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Semaphore;
 import java.util.function.Function;
@@ -212,6 +213,10 @@ public final class TraceLoader implements Iterable<GPSTrace> {
 
     private static <R> R runOnPathsStream(final String path, final Function<Stream<String>, R> op) {
         final InputStream resourceStream = ResourceLoader.getResourceAsStream(path);
+        Objects.requireNonNull(
+            resourceStream,
+            "resource not found: '" + path + "', make sure the file exists in the classpath"
+        );
         try (BufferedReader in = new BufferedReader(new InputStreamReader(resourceStream, StandardCharsets.UTF_8))) {
             return op.apply(in.lines().map(line -> path + "/" + line));
         } catch (IOException e) {

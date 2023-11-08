@@ -60,9 +60,11 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
             final Time currentTime,
             final boolean executed,
             final double newpropensity,
-            final Environment<T, ?> environment) {
-        assert !Double.isNaN(newpropensity);
-        assert !Double.isNaN(oldPropensity);
+            final Environment<T, ?> environment
+    ) {
+        if (Double.isNaN(newpropensity) || Double.isNaN(oldPropensity)) {
+            throw new IllegalStateException("Propensity cannot be NaN");
+        }
         if (oldPropensity == 0 && newpropensity != 0) {
             update(newpropensity, true, currentTime);
         } else if (oldPropensity != 0 && newpropensity != 0) {

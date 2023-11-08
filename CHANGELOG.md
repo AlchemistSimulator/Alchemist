@@ -1,3 +1,12 @@
+## [28.5.2](https://github.com/AlchemistSimulator/Alchemist/compare/28.5.1...28.5.2) (2023-11-08)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.2.3 ([ac45ada](https://github.com/AlchemistSimulator/Alchemist/commit/ac45ada835226bcafa3bd8b7ef90274ade02dbd2))
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.10.1 ([77ad515](https://github.com/AlchemistSimulator/Alchemist/commit/77ad51529a8a14d123123c763b3d67be771a9ed4))
+* **deps:** update plugin hugo to v0.6.2 ([528711a](https://github.com/AlchemistSimulator/Alchemist/commit/528711a28d79677005d95415ef294be5d215125a))
+
 ## [28.5.1](https://github.com/AlchemistSimulator/Alchemist/compare/28.5.0...28.5.1) (2023-11-07)
 
 

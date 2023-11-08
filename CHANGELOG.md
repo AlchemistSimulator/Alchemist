@@ -1,3 +1,20 @@
+## [28.5.3](https://github.com/AlchemistSimulator/Alchemist/compare/28.5.2...28.5.3) (2023-11-08)
+
+
+### Bug Fixes
+
+* **loading:** improve the error message when the GPS traces are requested but they are not available on the classpath ([16dfe16](https://github.com/AlchemistSimulator/Alchemist/commit/16dfe163a41fd91878a1d34d162a48b22e7c2bf6))
+
+
+### Tests
+
+* remove useless concatenation of string literals ([b938115](https://github.com/AlchemistSimulator/Alchemist/commit/b938115a92b63bab16a0098e19dc56829ae0c391))
+
+
+### Style improvements
+
+* **implementationbase:** replace assertions with a proper consistency check ([3c16db5](https://github.com/AlchemistSimulator/Alchemist/commit/3c16db510f2a29a1aaaea60d8e758aa531411cc0))
+
 ## [28.5.2](https://github.com/AlchemistSimulator/Alchemist/compare/28.5.1...28.5.2) (2023-11-08)
 
 

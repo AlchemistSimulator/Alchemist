@@ -23,10 +23,7 @@ object GraphQLClientFactory {
     fun basicClient(
         host: String = "127.0.0.1",
         port: Int = 8081,
-    ): GraphQLClient =
-        DefaultGraphQLClient.Builder()
-            .serverUrl(host, port)
-            .build()
+    ): GraphQLClient = DefaultGraphQLClient.Builder().serverUrl(host, port).build()
 
     /**
      * Returns a [GraphQLClient] capable of executing queries, mutations and subscriptions.
@@ -37,9 +34,5 @@ object GraphQLClientFactory {
     fun subscriptionClient(
         host: String = "127.0.0.1",
         port: Int = 8081,
-    ): GraphQLClient =
-        DefaultGraphQLClient.Builder()
-            .serverUrl(host, port)
-            .addSubscriptionModule()
-            .build()
+    ): GraphQLClient = DefaultGraphQLClient.Builder().serverUrl(host, port).addSubscriptionModule().build()
 }

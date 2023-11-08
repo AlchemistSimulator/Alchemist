@@ -87,8 +87,6 @@ kotlin {
                 implementation(alchemist("test"))
             }
         }
-        val jsMain by getting
-        val jsTest by getting
     }
 }
 

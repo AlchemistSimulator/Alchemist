@@ -18,10 +18,6 @@ import com.apollographql.apollo3.api.Subscription
  * The most basic GraphQL client, capable of executing queries, mutations and subscriptions.
  */
 interface GraphQLClient {
-    /**
-     * Returns a builder for the client.
-     */
-    fun builder(): GraphQLClientBuilder
 
     /**
      * Prepare a query to be executed.

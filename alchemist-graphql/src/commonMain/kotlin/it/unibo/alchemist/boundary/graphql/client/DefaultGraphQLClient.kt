@@ -19,80 +19,42 @@ import com.apollographql.apollo3.network.ws.WebSocketNetworkTransport
 
 /**
  * Default GraphQL client implementation.
- * @param client the Apollo client
+ *
+ * @param host the host of the GraphQL server
+ * @param port the port of the GraphQL server
+ * @param enableSubscription whether to enable subscriptions or not
  */
-class DefaultGraphQLClient(private val client: ApolloClient) : GraphQLClient {
-    private var isBuilt: Boolean = false
-    private var isSubscriptionModuleEnabled = false
-
-    private constructor(builder: Builder) : this(builder.apolloClientBuilder.build()) {
-        isBuilt = true
-        isSubscriptionModuleEnabled = builder.isSubscriptionModuleEnabled
-    }
-
-    override fun builder(): GraphQLClientBuilder = Builder()
+class DefaultGraphQLClient(
+    private val host: String = "127.0.0.1",
+    private val port: Int = 8081,
+    private val enableSubscription: Boolean = false,
+) : GraphQLClient {
+    private val client: ApolloClient = ApolloClient.Builder()
+        .serverUrl("http://$host:$port/graphql")
+        .apply {
+            if (enableSubscription) {
+                subscriptionNetworkTransport(
+                    WebSocketNetworkTransport.Builder()
+                        .serverUrl("ws://$host:$port/subscriptions")
+                        .protocol(GraphQLWsProtocol.Factory())
+                        .build(),
+                )
+            }
+        }
+        .build()
 
     override fun <D : Query.Data> query(query: Query<D>): ApolloCall<D> {
-        checkBuilt()
         return client.query(query)
     }
 
     override fun <D : Mutation.Data> mutation(mutation: Mutation<D>): ApolloCall<D> {
-        checkBuilt()
         return client.mutation(mutation)
     }
 
     override fun <D : Subscription.Data> subscription(subscription: Subscription<D>): ApolloCall<D> {
-        checkBuilt()
-        check(isSubscriptionModuleEnabled) { "Subscription module is not enabled!" }
+        check(enableSubscription) { "Subscription module is not enabled!" }
         return client.subscription(subscription)
     }
 
     override fun close() = client.close()
-
-    private fun checkBuilt() {
-        check(!isBuilt) {
-            throw IllegalStateException(
-                "The client was not built properly! Make sure to call `build()` before running any operation.",
-            )
-        }
-    }
-
-    /**
-     * [GraphQLClientBuilder] implementation for this [GraphQLClient].
-     */
-    class Builder : GraphQLClientBuilder {
-        private var url: String? = null
-
-        private var isBuilt: Boolean = false
-        override var isSubscriptionModuleEnabled: Boolean = false
-
-        /**
-         * [ApolloClient.Builder] instance for building the underlying [ApolloClient].
-         */
-        val apolloClientBuilder = ApolloClient.Builder()
-
-        override fun serverUrl(host: String, port: Int): Builder = apply {
-            url = "$host:$port"
-            apolloClientBuilder.serverUrl("http://$url/graphql")
-        }
-
-        override fun addSubscriptionModule(): Builder = apply {
-            check(url == null) { "Server URL must be set before adding subscription module!" }
-            apolloClientBuilder.subscriptionNetworkTransport(
-                WebSocketNetworkTransport.Builder()
-                    .serverUrl("ws://$url/subscriptions")
-                    // specifying "graphql-ws" protocol
-                    .protocol(GraphQLWsProtocol.Factory())
-                    .build(),
-            )
-
-            isSubscriptionModuleEnabled = true
-        }
-
-        override fun build(): DefaultGraphQLClient {
-            isBuilt = true
-            return DefaultGraphQLClient(this)
-        }
-    }
 }

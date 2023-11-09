@@ -99,7 +99,7 @@ logback = "ch.qos.logback:logback-classic:1.4.11"
 mapsforge = "org.mapsforge:mapsforge-map-awt:0.20.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.2"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-mongodb = "org.mongodb:mongodb-driver-sync:4.11.0"
+mongodb = "org.mongodb:mongodb-driver-sync:4.11.1"
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.2.50"
 protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }
 protelis-lang = { module = "org.protelis:protelis-lang", version.ref = "protelis" }

@@ -1,3 +1,23 @@
+## [28.5.4](https://github.com/AlchemistSimulator/Alchemist/compare/28.5.3...28.5.4) (2023-11-12)
+
+
+### Dependency updates
+
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v4.11.1 ([1253ae8](https://github.com/AlchemistSimulator/Alchemist/commit/1253ae85e75f3d3a4ac319122c8d3b8933bf8d6d))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.72 ([4bcf64b](https://github.com/AlchemistSimulator/Alchemist/commit/4bcf64b934b4584f53e5fdedb0678df84f80afa4))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.73 ([a45d20f](https://github.com/AlchemistSimulator/Alchemist/commit/a45d20f661b6fac0dbed5a4732d253c2e5ba34d5))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.74 ([8442a16](https://github.com/AlchemistSimulator/Alchemist/commit/8442a1611b59d10981712821006406015070334b))
+* **deps:** update gohugoio/hugo action to v0.120.4 ([ea04f03](https://github.com/AlchemistSimulator/Alchemist/commit/ea04f03e3ecebf9dfe78c53b151b736be070df8f))
+* **deps:** update plugin java-qa to v1.24.1 ([6882a18](https://github.com/AlchemistSimulator/Alchemist/commit/6882a18cba8adf4eab3511d7e5cac927ac949204))
+* **deps:** update plugin publishoncentral to v5.0.19 ([be21be2](https://github.com/AlchemistSimulator/Alchemist/commit/be21be2ea2f1a4b25afb1334ca95f1c2e9d516f7))
+* **deps:** update react to v18.2.0-pre.640 ([feb038d](https://github.com/AlchemistSimulator/Alchemist/commit/feb038da5e6fa3e28a839611cbda24fda9490716))
+* **deps:** update react to v18.2.0-pre.641 ([6aef4ee](https://github.com/AlchemistSimulator/Alchemist/commit/6aef4ee5e5b7116ac21bad1c88d827823202cc25))
+
+
+### Bug Fixes
+
+* **ui-tooling:** adjust the initial GUI centering on the map ([#2842](https://github.com/AlchemistSimulator/Alchemist/issues/2842)) ([c00028d](https://github.com/AlchemistSimulator/Alchemist/commit/c00028d6ed2faf10d73c198e5133a752fdaab878))
+
 ## [28.5.3](https://github.com/AlchemistSimulator/Alchemist/compare/28.5.2...28.5.3) (2023-11-08)
 
 

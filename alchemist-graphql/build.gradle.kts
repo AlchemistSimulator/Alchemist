@@ -56,10 +56,10 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(libs.kotlinx.serialization.json)
-                implementation(libs.kotlin.stdlib)
                 implementation(libs.apollo.runtime)
                 implementation(libs.kotlin.coroutines.core)
+                implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.serialization.json)
             }
         }
         val commonTest by getting {
@@ -99,7 +99,7 @@ application {
  * from the GraphQL schema inside the `commonMain` sourceSet.
  */
 apollo {
-    service("alchemist") {
+    service(name) {
         generateKotlinModels.set(true)
         packageName.set("it.unibo.alchemist.boundary.graphql.client")
         schemaFiles.from(file("src/commonMain/resources/graphql/schema.graphqls"))

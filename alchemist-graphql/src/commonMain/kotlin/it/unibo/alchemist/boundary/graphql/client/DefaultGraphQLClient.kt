@@ -16,6 +16,7 @@ import com.apollographql.apollo3.api.Query
 import com.apollographql.apollo3.api.Subscription
 import com.apollographql.apollo3.network.ws.GraphQLWsProtocol
 import com.apollographql.apollo3.network.ws.WebSocketNetworkTransport
+import it.unibo.alchemist.boundary.graphql.utils.DefaultGraphQLSettings
 
 /**
  * Default GraphQL client implementation.
@@ -25,8 +26,8 @@ import com.apollographql.apollo3.network.ws.WebSocketNetworkTransport
  * @param enableSubscription whether to enable subscriptions or not
  */
 class DefaultGraphQLClient(
-    private val host: String = "127.0.0.1",
-    private val port: Int = 8081,
+    private val host: String = DefaultGraphQLSettings.DEFAULT_HOST,
+    private val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
     private val enableSubscription: Boolean = false,
 ) : GraphQLClient {
     private val client: ApolloClient = ApolloClient.Builder()

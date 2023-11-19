@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.boundary.graphql.client
 
+import it.unibo.alchemist.boundary.graphql.utils.DefaultGraphQLSettings
+
 /**
  * Factory for [GraphQLClient]s.
  */
@@ -21,8 +23,8 @@ object GraphQLClientFactory {
      * @param port the port of the GraphQL server
      */
     fun basicClient(
-        host: String = "127.0.0.1",
-        port: Int = 8081,
+        host: String = DefaultGraphQLSettings.DEFAULT_HOST,
+        port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
     ): GraphQLClient = DefaultGraphQLClient(host, port)
 
     /**
@@ -32,7 +34,7 @@ object GraphQLClientFactory {
      * @param port the port of the GraphQL server
      */
     fun subscriptionClient(
-        host: String = "127.0.0.1",
-        port: Int = 8081,
+        host: String = DefaultGraphQLSettings.DEFAULT_HOST,
+        port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
     ): GraphQLClient = DefaultGraphQLClient(host, port, enableSubscription = true)
 }

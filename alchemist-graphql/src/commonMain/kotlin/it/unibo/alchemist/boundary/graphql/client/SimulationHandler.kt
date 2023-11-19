@@ -45,7 +45,7 @@ class SimulationHandler(private val graphqlClient: GraphQLClient) {
             "STARTING SIMULATION",
         ) as PlaySimulationMutation.Data
 
-        require(status.play == "RUNNING") { status.play }
+        check(status.play == "RUNNING") { status.play }
         return status
     }
 

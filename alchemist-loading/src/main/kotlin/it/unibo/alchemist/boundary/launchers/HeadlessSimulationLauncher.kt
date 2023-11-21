@@ -18,9 +18,9 @@ import java.util.concurrent.TimeUnit
 /**
  * Executes simulations locally in a headless environment.
  */
-class HeadlessSimulationLauncher(
-    private val parallelism: Int = defaultParallelism,
+class HeadlessSimulationLauncher @JvmOverloads constructor(
     private val variables: List<String> = emptyList(),
+    private val parallelism: Int = defaultParallelism,
 ) : SimulationLauncher() {
 
     private val logger = LoggerFactory.getLogger(this::class.java)

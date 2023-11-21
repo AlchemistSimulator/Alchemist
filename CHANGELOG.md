@@ -1,3 +1,44 @@
+## [29.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/28.5.4...29.0.0) (2023-11-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* overloads constructor and change the order of constructor parameters to specify only the variables parameter
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.10.2 ([254e91a](https://github.com/AlchemistSimulator/Alchemist/commit/254e91a31322f666e1db0f505192ff7ad2a9e151))
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.11.1 ([afaa276](https://github.com/AlchemistSimulator/Alchemist/commit/afaa276726927b25cdde207a3fea8a66166a4555))
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.165 ([f2fa102](https://github.com/AlchemistSimulator/Alchemist/commit/f2fa1027fc5893c06646804d52ffb04f0908e866))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.6.1 ([26f2080](https://github.com/AlchemistSimulator/Alchemist/commit/26f2080d438a92cc78e030f3dcc6f71fd04f1ed3))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.75 ([83221b7](https://github.com/AlchemistSimulator/Alchemist/commit/83221b768de59c8b10b243118af1b764358e2ef6))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.76 ([3f6f04a](https://github.com/AlchemistSimulator/Alchemist/commit/3f6f04a73a3ee20c36664d7760c29b0593a79d1b))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 74dece4 ([9a114cf](https://github.com/AlchemistSimulator/Alchemist/commit/9a114cf199660d1e13c8fb357166624ff3c59a84))
+* **deps:** update external-resources/learning-scafi-alchemist digest to ee1433f ([31efa30](https://github.com/AlchemistSimulator/Alchemist/commit/31efa302ee8f2823512d128aadb99338f40ec965))
+* **deps:** update npm to v10.2.4 ([6db7e01](https://github.com/AlchemistSimulator/Alchemist/commit/6db7e013eeb46e7f8a07cc9c2caf47f5dab9a44d))
+* **deps:** update plugin gitsemver to v2.0.2 ([8fddade](https://github.com/AlchemistSimulator/Alchemist/commit/8fddade939f8c287e363a53a6d5c8a1cc1bd88da))
+* **deps:** update plugin java-qa to v1.25.0 ([2c49454](https://github.com/AlchemistSimulator/Alchemist/commit/2c494540151e86113262fbac59d880f6cf5710c4))
+* **deps:** update react to v18.2.0-pre.642 ([7cdd9d1](https://github.com/AlchemistSimulator/Alchemist/commit/7cdd9d1ef7d74157c4ce5474a628e45d4bcb8b8c))
+* **deps:** update react to v18.2.0-pre.643 ([649c396](https://github.com/AlchemistSimulator/Alchemist/commit/649c3965747a870180fd6067face005bdf803dd4))
+* **deps:** update react to v18.2.0-pre.644 ([51ddfb6](https://github.com/AlchemistSimulator/Alchemist/commit/51ddfb6e957e3423226a598a765cdce70ecb5d91))
+* **deps:** update react to v18.2.0-pre.645 ([4b2e68f](https://github.com/AlchemistSimulator/Alchemist/commit/4b2e68fa18a04d79dfd160e272ff21ec1cc06557))
+* **deps:** update react to v18.2.0-pre.646 ([9faf098](https://github.com/AlchemistSimulator/Alchemist/commit/9faf09880c4d632a512f5a0963cf057e35161584))
+* **deps:** update site/themes/hugo-theme-relearn digest to 1f7a2aa ([b79c092](https://github.com/AlchemistSimulator/Alchemist/commit/b79c092e1fd5bd36c634e655e700e4b42ad8cde5))
+* **deps:** update site/themes/hugo-theme-relearn digest to 258093e ([272e66b](https://github.com/AlchemistSimulator/Alchemist/commit/272e66b99643c92ef342c622e3a027b19ec4cce6))
+* **deps:** update site/themes/hugo-theme-relearn digest to 264250c ([3893a47](https://github.com/AlchemistSimulator/Alchemist/commit/3893a47ebcdbecdb66dbf4c489e87c78cd1c2a03))
+* **deps:** update site/themes/hugo-theme-relearn digest to 2e07b80 ([c4113c5](https://github.com/AlchemistSimulator/Alchemist/commit/c4113c56840068825f683c222573631d871b912e))
+* **deps:** update site/themes/hugo-theme-relearn digest to 682e6b6 ([4e3cd41](https://github.com/AlchemistSimulator/Alchemist/commit/4e3cd41a3dcfeb029b1ff2590489ffb4e05985fe))
+* **deps:** update site/themes/hugo-theme-relearn digest to 6cdff18 ([9b4b471](https://github.com/AlchemistSimulator/Alchemist/commit/9b4b47179bb34495fbcdccf219cdfaa1ac18db56))
+* **deps:** update site/themes/hugo-theme-relearn digest to 97c1a07 ([90009e2](https://github.com/AlchemistSimulator/Alchemist/commit/90009e2213fa791f8c477b1e865b2950268240ad))
+* **deps:** update site/themes/hugo-theme-relearn digest to b91fb6e ([2fc6ddd](https://github.com/AlchemistSimulator/Alchemist/commit/2fc6ddd88c21b9ceb85b519fb5497cb387172349))
+* **deps:** update site/themes/hugo-theme-relearn digest to ee79857 ([b897ad2](https://github.com/AlchemistSimulator/Alchemist/commit/b897ad271aea732eea36f811e0c06e10d7d7503a))
+* **deps:** update site/themes/hugo-theme-relearn digest to f3e6008 ([1b94fdf](https://github.com/AlchemistSimulator/Alchemist/commit/1b94fdf42aaba3b76efef2f8c93f2e2df2b8d4f4))
+
+
+### Bug Fixes
+
+* overloads constructor and change the order of constructor parameters to specify only the variables parameter ([acafb53](https://github.com/AlchemistSimulator/Alchemist/commit/acafb53b381f48767088eea14e6e1f1a24ec7850))
+
 ## [28.5.4](https://github.com/AlchemistSimulator/Alchemist/compare/28.5.3...28.5.4) (2023-11-12)
 
 

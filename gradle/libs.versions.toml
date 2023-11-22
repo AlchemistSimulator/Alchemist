@@ -27,7 +27,7 @@ apache-commons-cli = "commons-cli:commons-cli:1.6.0"
 apache-commons-codec = "commons-codec:commons-codec:1.16.0"
 apache-commons-collections4 = "org.apache.commons:commons-collections4:4.4"
 apache-commons-io = "commons-io:commons-io:2.15.0"
-apache-commons-lang3 = "org.apache.commons:commons-lang3:3.13.0"
+apache-commons-lang3 = "org.apache.commons:commons-lang3:3.14.0"
 apache-commons-math3 = "org.apache.commons:commons-math3:3.6.1"
 apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
 appdirs = "net.harawata:appdirs:1.2.2"

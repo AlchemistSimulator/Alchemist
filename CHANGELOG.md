@@ -1,3 +1,12 @@
+## [29.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/29.0.0...29.0.1) (2023-11-22)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.0 ([58b44a5](https://github.com/AlchemistSimulator/Alchemist/commit/58b44a52b9dfb603f3c7cfc2079624702f95afcd))
+* **deps:** update dependency org.apache.commons:commons-lang3 to v3.14.0 ([478829e](https://github.com/AlchemistSimulator/Alchemist/commit/478829e4ebfef75178f58066e2ed326f5a581ca8))
+* **deps:** update node.js to 20.10 ([ac46c31](https://github.com/AlchemistSimulator/Alchemist/commit/ac46c31f0fce4e9600496e7eead0e728dfc68494))
+
 ## [29.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/28.5.4...29.0.0) (2023-11-21)
 
 

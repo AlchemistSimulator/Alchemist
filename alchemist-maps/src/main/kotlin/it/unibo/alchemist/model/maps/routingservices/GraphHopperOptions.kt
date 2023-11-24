@@ -85,7 +85,6 @@ class GraphHopperOptions private constructor(
             VehicleEncodedValuesFactory.MOUNTAINBIKE,
             VehicleEncodedValuesFactory.RACINGBIKE,
             VehicleEncodedValuesFactory.ROADS,
-            VehicleEncodedValuesFactory.WHEELCHAIR,
         )
 
         /**

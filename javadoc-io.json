@@ -75,6 +75,10 @@
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.7",
     "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.7/element-list"
   },
+  "com.github.ben-manes.caffeine/caffeine/3.1.8": {
+    "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.8",
+    "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.8/element-list"
+  },
   "com.github.cb372/scalacache-core_2.13/0.28.0": {
     "first": "https://javadoc.io/doc/com.github.cb372/scalacache-core_2.13/0.28.0"
   },
@@ -137,6 +141,10 @@
     "first": "https://javadoc.io/doc/com.google.guava/guava/32.1.1-jre",
     "second": "https://javadoc.io/doc/com.google.guava/guava/32.1.1-jre/element-list"
   },
+  "com.google.guava/guava/32.1.3-jre": {
+    "first": "https://javadoc.io/doc/com.google.guava/guava/32.1.3-jre",
+    "second": "https://javadoc.io/doc/com.google.guava/guava/32.1.3-jre/element-list"
+  },
   "com.graphhopper/graphhopper-core/4.0": {
     "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/4.0",
     "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/4.0/package-list"
@@ -164,6 +172,10 @@
   "com.graphhopper/graphhopper-core/7.0-testgithub6": {
     "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/7.0-testgithub6",
     "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/7.0-testgithub6/package-list"
+  },
+  "com.graphhopper/graphhopper-core/9.0-pre1": {
+    "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/9.0-pre1",
+    "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/9.0-pre1/element-list"
   },
   "com.javadocmd/simplelatlng/1.3.1": {
     "first": "https://javadoc.io/doc/com.javadocmd/simplelatlng/1.3.1",
@@ -205,6 +217,10 @@
   "commons-io/commons-io/2.13.0": {
     "first": "https://javadoc.io/doc/commons-io/commons-io/2.13.0",
     "second": "https://javadoc.io/doc/commons-io/commons-io/2.13.0/package-list"
+  },
+  "commons-io/commons-io/2.15.0": {
+    "first": "https://javadoc.io/doc/commons-io/commons-io/2.15.0",
+    "second": "https://javadoc.io/doc/commons-io/commons-io/2.15.0/element-list"
   },
   "de.codecentric.centerdevice/javafxsvg/1.3.0": {
     "first": "https://javadoc.io/doc/de.codecentric.centerdevice/javafxsvg/1.3.0",
@@ -293,6 +309,10 @@
     "first": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0",
     "second": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0/element-list"
   },
+  "io.jenetics/jpx/3.1.0": {
+    "first": "https://javadoc.io/doc/io.jenetics/jpx/3.1.0",
+    "second": "https://javadoc.io/doc/io.jenetics/jpx/3.1.0/element-list"
+  },
   "it.unibo.scafi/scafi-core_2.13/1.1.7": {
     "first": "https://javadoc.io/doc/it.unibo.scafi/scafi-core_2.13/1.1.7"
   },
@@ -324,6 +344,10 @@
     "first": "https://javadoc.io/doc/net.harawata/appdirs/1.2.1",
     "second": "https://javadoc.io/doc/net.harawata/appdirs/1.2.1/package-list"
   },
+  "net.harawata/appdirs/1.2.2": {
+    "first": "https://javadoc.io/doc/net.harawata/appdirs/1.2.2",
+    "second": "https://javadoc.io/doc/net.harawata/appdirs/1.2.2/element-list"
+  },
   "net.sf.trove4j/trove4j/3.0.3": {
     "first": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3",
     "second": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3/package-list"
@@ -342,6 +366,10 @@
   "org.apache.commons/commons-lang3/3.13.0": {
     "first": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.13.0",
     "second": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.13.0/package-list"
+  },
+  "org.apache.commons/commons-lang3/3.14.0": {
+    "first": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.14.0",
+    "second": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.14.0/element-list"
   },
   "org.apache.commons/commons-math3/3.6.1": {
     "first": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1",
@@ -438,6 +466,10 @@
     "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.13",
     "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.13/element-list"
   },
+  "org.danilopianini/jirf/0.4.16": {
+    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.16",
+    "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.16/element-list"
+  },
   "org.danilopianini/jirf/0.4.5": {
     "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.5",
     "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.5/element-list"
@@ -514,6 +546,9 @@
   "org.jetbrains.kotlin/kotlin-reflect/1.8.22": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.8.22"
   },
+  "org.jetbrains.kotlin/kotlin-reflect/1.9.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.9.21"
+  },
   "org.jetbrains.kotlin/kotlin-reflect/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/null"
   },
@@ -552,6 +587,9 @@
   },
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.8.22": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.8.22"
+  },
+  "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.9.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.9.21"
   },
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/null"
@@ -766,6 +804,10 @@
   "org.slf4j/slf4j-api/2.0.7": {
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.7",
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.7/element-list"
+  },
+  "org.slf4j/slf4j-api/2.0.9": {
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.9",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.9/element-list"
   },
   "org.yaml/snakeyaml/1.30": {
     "first": "https://javadoc.io/doc/org.yaml/snakeyaml/1.30",

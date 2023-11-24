@@ -1,3 +1,12 @@
+## [29.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/29.0.2...29.0.3) (2023-11-24)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.2 ([d99f876](https://github.com/AlchemistSimulator/Alchemist/commit/d99f8764b017279cf35cbc56bbf530344a47fd9c))
+* **deps:** update site/themes/hugo-theme-relearn digest to 286b6a1 ([8313e56](https://github.com/AlchemistSimulator/Alchemist/commit/8313e56ec179fb69199d787d90fb62f56ddc5fe0))
+* **deps:** update site/themes/hugo-theme-relearn digest to ee77892 ([506f011](https://github.com/AlchemistSimulator/Alchemist/commit/506f011c5ef3976714ba73c287162854f6e1c203))
+
 ## [29.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/29.0.1...29.0.2) (2023-11-23)
 
 

@@ -1,3 +1,20 @@
+## [29.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/29.0.3...29.0.4) (2023-11-26)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.3 ([8b15616](https://github.com/AlchemistSimulator/Alchemist/commit/8b15616dc8fb5dde040df2cdb14f8af322ead3fb))
+* **deps:** update dependency com.graphhopper:graphhopper-core to v9 ([c82f5de](https://github.com/AlchemistSimulator/Alchemist/commit/c82f5de6850acb18e3e30e9b6868cdb72bcbdd7c))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.78 ([380c5e7](https://github.com/AlchemistSimulator/Alchemist/commit/380c5e7438740cd0f844c6a2a2991e4be08ac625))
+* **deps:** update external-resources/learning-scafi-alchemist digest to ee1433f ([c0a0283](https://github.com/AlchemistSimulator/Alchemist/commit/c0a0283b98e0201528bb625673e019347a78cd8a))
+* **deps:** update plugin kotlin-qa to v0.55.1 ([8bdc8e6](https://github.com/AlchemistSimulator/Alchemist/commit/8bdc8e6c8439ef31016731ac10c4ef3a96bf9f2f))
+* **deps:** update react to v18.2.0-pre.648 ([2c163f8](https://github.com/AlchemistSimulator/Alchemist/commit/2c163f87f62fa745acc836163083bd230bb71a31))
+* **deps:** update site/themes/hugo-theme-relearn digest to 7081028 ([d8c87d1](https://github.com/AlchemistSimulator/Alchemist/commit/d8c87d131934562a6d25129e3c900715c7f46af4))
+* **deps:** update site/themes/hugo-theme-relearn digest to 87df35a ([d24a75d](https://github.com/AlchemistSimulator/Alchemist/commit/d24a75dfc0d8a4b7340ec5ecf38ba60faf371dd8))
+* **deps:** update site/themes/hugo-theme-relearn digest to ee77892 ([83b7bce](https://github.com/AlchemistSimulator/Alchemist/commit/83b7bce239d70afe8df085d978876ddadf48e57c))
+* **deps:** update site/themes/hugo-theme-relearn digest to f9f6365 ([ff6ffd1](https://github.com/AlchemistSimulator/Alchemist/commit/ff6ffd15a0d025b7064342da611f050812a619ae))
+* **deps:** update site/themes/hugo-theme-relearn digest to ff978f3 ([d0b5904](https://github.com/AlchemistSimulator/Alchemist/commit/d0b590401ad2776b1b24904e50d63fd58a40c184))
+
 ## [29.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/29.0.2...29.0.3) (2023-11-24)
 
 

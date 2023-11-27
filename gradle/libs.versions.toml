@@ -95,7 +95,7 @@ ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref 
 ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", version.ref = "ktor" }
 leafletmap = "org.danilopianini:de.saring.leafletmap:1.0.5"
 listset = "org.danilopianini:listset:0.3.9"
-logback = "ch.qos.logback:logback-classic:1.4.11"
+logback = "ch.qos.logback:logback-classic:1.4.12"
 mapsforge = "org.mapsforge:mapsforge-map-awt:0.20.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.2"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }

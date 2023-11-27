@@ -9,6 +9,7 @@
 
 import Libs.alchemist
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.graphql.server)
@@ -26,6 +27,9 @@ dependencies {
 tasks {
     graphqlGenerateSDL {
         packages = listOf("monitor", "schema", "operations", "util").map { "it.unibo.alchemist.boundary.graphql.$it" }
+    }
+    withType<KotlinCompile>().configureEach {
+        finalizedBy(graphqlGenerateSDL)
     }
     withType<AbstractGenerateClientTask>().configureEach {
         enabled = false

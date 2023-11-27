@@ -9,6 +9,7 @@
 
 import Libs.alchemist
 import Libs.incarnation
+import com.apollographql.apollo3.gradle.internal.ApolloGenerateSourcesTask
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import io.gitlab.arturbosch.detekt.Detekt
@@ -99,6 +100,8 @@ tasks.withType<AbstractGenerateClientTask>().configureEach {
     }
 }
 
+val surrogates = project(":${project.name}-surrogates")
+
 /**
  * Configure the Apollo Gradle plugin to generate Kotlin models
  * from the GraphQL schema inside the `commonMain` sourceSet.
@@ -107,12 +110,16 @@ apollo {
     service(name) {
         generateKotlinModels.set(true)
         packageName.set("it.unibo.alchemist.boundary.graphql.client")
-        schemaFiles.from(project(":${project.name}-surrogates").layout.buildDirectory.file("schema.graphql"))
+        schemaFiles.from(surrogates.layout.buildDirectory.file("schema.graphql"))
         srcDir("src/commonMain/resources/graphql")
         outputDirConnection {
             connectToKotlinSourceSet("commonMain")
         }
     }
+}
+
+tasks.withType<ApolloGenerateSourcesTask>().configureEach {
+    dependsOn(surrogates.tasks.named("graphqlGenerateSDL"))
 }
 
 /**

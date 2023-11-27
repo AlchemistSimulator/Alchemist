@@ -23,11 +23,9 @@ class ConcentrationSurrogateTest : StringSpec({
         // Basic concentration content test
         val c1: Concentration<Double> = Concentration { 1.0 }
         checkConcentrationContent(c1.content, c1.toGraphQLConcentrationSurrogate().content)
-
         // Test with a serializable content
         val c2: Concentration<TestSerializableContent> = Concentration { TestSerializableContent(1, "a") }
         checkConcentrationContent(c2.content, c2.toGraphQLConcentrationSurrogate().content)
-
         // Test with a non-serializable content
         val c3: Concentration<TestNonSerializableContent> = Concentration { TestNonSerializableContent(1, "a") }
         checkConcentrationContent(c3.content, c3.toGraphQLConcentrationSurrogate().content)
@@ -54,13 +52,9 @@ fun <T : Any> checkGenericContent(c: T, cs: String) {
 fun <T : Any> checkJsonContent(c: T, cs: String) {
     val jsonContent = Json.Default.encodeToString(serializer(c::class.java), c)
     jsonContent shouldBe cs
-
     val content = Json.Default.decodeFromString(serializer(c::class.java), cs)
     content shouldBe c
 }
 
-private fun <T : Any> canSerialize(content: T): Boolean {
-    return runCatching {
-        Json.Default.encodeToString(serializer(content::class.java), content)
-    }.isSuccess
-}
+private fun <T : Any> canSerialize(content: T): Boolean =
+    runCatching { Json.Default.encodeToString(serializer(content::class.java), content) }.isSuccess

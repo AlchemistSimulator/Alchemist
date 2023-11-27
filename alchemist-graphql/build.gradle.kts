@@ -9,7 +9,10 @@
 
 import Libs.alchemist
 import Libs.incarnation
+import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import io.gitlab.arturbosch.detekt.Detekt
+import java.io.File.separator
 
 plugins {
     application
@@ -20,39 +23,13 @@ plugins {
     alias(libs.plugins.graphql.client)
 }
 
-dependencies {
-    implementation(libs.ktor.server.cors.jvm)
-    implementation(libs.ktor.server.core.jvm)
-    implementation(libs.ktor.server.websockets)
-}
-
 kotlin {
-    jvm {
-        withJava()
-        tasks {
-            graphql {
-                schema {
-                    packages = listOf(
-                        "it.unibo.alchemist.boundary.graphql",
-                    )
-                }
-            }
-            // Disabling GraphQL Kotlin unwanted tasks
-            listOf(
-                "graphqlGenerateClient",
-                "graphqlGenerateTestClient",
-            ).map {
-                this.getByName(it)
-            }.forEach { it.enabled = false }
-        }
-    }
-
+    jvm()
     js(IR) {
         browser {
             binaries.executable()
         }
     }
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -70,10 +47,12 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 api(alchemist("api"))
+                api(alchemist("graphql-surrogates"))
                 implementation(rootProject)
+                implementation(alchemist("implementationbase"))
+                implementation(libs.ktor.server.websockets)
                 implementation(libs.bundles.graphql.server)
                 implementation(libs.bundles.ktor.server)
-                implementation(alchemist("implementationbase"))
             }
         }
         val jvmTest by getting {
@@ -94,6 +73,32 @@ application {
     mainClass.set("it.unibo.alchemist.Alchemist")
 }
 
+graphql {
+    schema {
+        packages = listOf(
+            "it.unibo.alchemist.boundary.graphql",
+        )
+    }
+}
+
+tasks.withType<AbstractGenerateClientTask>().configureEach {
+    schemaFile.convention {
+        project(":${project.name}-surrogates")
+            .tasks
+            .named("graphqlGenerateSDL")
+            .get()
+            .run { this.property("schemaFile") as RegularFileProperty }
+            .asFile
+            .get()
+    }
+    packageName.set("it.unibo.alchemist.boundary.graphql.client.generated")
+    kotlin {
+        sourceSets {
+            queryFileDirectory.set(file("src/commonMain/resources/graphql"))
+        }
+    }
+}
+
 /**
  * Configure the Apollo Gradle plugin to generate Kotlin models
  * from the GraphQL schema inside the `commonMain` sourceSet.
@@ -102,24 +107,12 @@ apollo {
     service(name) {
         generateKotlinModels.set(true)
         packageName.set("it.unibo.alchemist.boundary.graphql.client")
-        schemaFiles.from(file("src/commonMain/resources/graphql/schema.graphqls"))
+        schemaFiles.from(project(":${project.name}-surrogates").layout.buildDirectory.file("schema.graphql"))
         srcDir("src/commonMain/resources/graphql")
         outputDirConnection {
             connectToKotlinSourceSet("commonMain")
         }
     }
-}
-
-fun isGeneratedFile(file: FileTreeElement): Boolean = file.file.absolutePath.contains("generated" + File.separator)
-
-ktlint {
-    filter {
-        exclude(::isGeneratedFile)
-    }
-}
-
-tasks.withType<io.gitlab.arturbosch.detekt.Detekt>() {
-    exclude(::isGeneratedFile)
 }
 
 /**
@@ -140,15 +133,6 @@ tasks.named("run", JavaExec::class).configure {
 }
 
 /**
- * Configure GraphQL Schema download task to download the schema from the server
- * at the default endpoint, locating the updated schema under the correct directory.
- */
-tasks.withType<com.expediagroup.graphql.plugin.gradle.tasks.GraphQLDownloadSDLTask>().configureEach {
-    outputFile.set(File("src/commonMain/resources/graphql/schema.graphqls"))
-    endpoint = "http://localhost:8081/sdl"
-}
-
-/**
  * Configure the [ShadowJar] task to work exactly like the "jvmJar" task of Kotlin Multiplatform, but also
  * include the JS artifacts by depending on the "jsBrowserProductionWebpack" task.
  */
@@ -160,6 +144,10 @@ tasks.withType<ShadowJar>().configureEach {
     mustRunAfter(tasks.distTar, tasks.distZip)
     archiveClassifier.set("all")
 }
+
+fun PatternFilterable.excludeGenerated() = exclude { "build${separator}generated" in it.file.absolutePath }
+tasks.withType<Detekt>().configureEach { excludeGenerated() }
+ktlint { filter { excludeGenerated() } }
 
 publishing.publications {
     withType<MavenPublication> {

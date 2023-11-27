@@ -3,8 +3,7 @@ antlr4 = "4.13.1"
 apollo ="4.0.0-beta.3"
 arrow = "1.2.1"
 graphhopper = "9.0-pre1"
-graphql-server = "7.0.2"
-graphql-server-ktor = "7.0.2"
+graphql = "7.0.2"
 graphstream = "2.0"
 ignite = "2.15.0"
 junit = "5.10.1"
@@ -41,8 +40,9 @@ dyn4j = "org.dyn4j:dyn4j:5.0.1"
 dsiutils = "it.unimi.dsi:dsiutils:2.7.3"
 embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.11.1"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
-graphql-server = { module = "com.expediagroup:graphql-kotlin-server", version.ref = "graphql-server" }
-graphql-server-ktor = { module = "com.expediagroup:graphql-kotlin-ktor-server", version.ref = "graphql-server-ktor" }
+graphql-hooks-provider = { module = "com.expediagroup:graphql-kotlin-hooks-provider", version.ref = "graphql" }
+graphql-server = { module = "com.expediagroup:graphql-kotlin-server", version.ref = "graphql" }
+graphql-server-ktor = { module = "com.expediagroup:graphql-kotlin-ktor-server", version.ref = "graphql" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
 groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.19"
@@ -155,7 +155,7 @@ testing-runtimeOnly = [ "junit-engine" ]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:2.0.4"
 graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
-graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql-server" }
+graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
 hugo = "io.github.fstaudt.hugo:0.6.2"
 java-qa = "org.danilopianini.gradle-java-qa:1.28.0"
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }

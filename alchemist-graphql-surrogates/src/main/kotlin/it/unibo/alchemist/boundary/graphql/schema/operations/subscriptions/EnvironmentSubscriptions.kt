@@ -11,10 +11,10 @@ package it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.server.operations.Subscription
-import it.unibo.alchemist.boundary.graphql.monitor.Environments.subscriptionMonitor
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.EnvironmentSurrogate
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.util.Environments.subscriptionMonitor
 import kotlinx.coroutines.flow.Flow
 
 /**

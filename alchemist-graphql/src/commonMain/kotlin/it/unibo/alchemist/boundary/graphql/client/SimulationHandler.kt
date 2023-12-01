@@ -24,7 +24,6 @@ class SimulationHandler(private val graphqlClient: GraphQLClient) {
     suspend fun pause() =
         handleSimulation(
             PauseSimulationMutation(),
-            "PAUSING SIMULATION",
         ) as PauseSimulationMutation.Data
 
     /**
@@ -33,7 +32,6 @@ class SimulationHandler(private val graphqlClient: GraphQLClient) {
     suspend fun terminate() =
         handleSimulation(
             TerminateSimulationMutation(),
-            "TERMINATING SIMULATION",
         ) as TerminateSimulationMutation.Data
 
     /**
@@ -42,7 +40,6 @@ class SimulationHandler(private val graphqlClient: GraphQLClient) {
     suspend fun play(): PlaySimulationMutation.Data {
         val status = handleSimulation(
             PlaySimulationMutation(),
-            "STARTING SIMULATION",
         ) as PlaySimulationMutation.Data
 
         check(status.play == "RUNNING") { status.play }
@@ -54,6 +51,6 @@ class SimulationHandler(private val graphqlClient: GraphQLClient) {
      */
     suspend fun status() = graphqlClient.query(SimulationStatusQuery()).execute().data?.simulationStatus
 
-    private suspend fun handleSimulation(action: Mutation<*>, message: String) =
-        graphqlClient.mutation(action).execute().also { println(message) }.data!!
+    private suspend fun handleSimulation(action: Mutation<*>) =
+        graphqlClient.mutation(action).execute().data!!
 }

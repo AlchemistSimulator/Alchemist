@@ -24,4 +24,4 @@ variables to produce batches of simulations terminating at different times.
 
 A terminator is provided for terminating when a simulation is "stable"
 (nothing changes in terms of positions and nodes' content).
-The class implementing it is {{% api package="model.implementations.terminators" class="StableForSteps" %}}.
+The class implementing it is {{% api package="model.terminators" class="StableForSteps" %}}.

@@ -10,8 +10,8 @@
 package it.unibo.alchemist.boundary.swingui.effect.api;
 
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position2D;
 
 import java.awt.Graphics2D;
 import java.util.function.Function;

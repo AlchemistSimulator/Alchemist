@@ -85,12 +85,12 @@ then it will be interpreted as the [Markovian rate](https://en.wikipedia.org/wik
 of an [exponentially distributed time](https://en.wikipedia.org/wiki/Exponential_distribution).
 
 Other distributions found at
-{{% api package="model.implementations.timedistributions" %}}
+{{% api package="model.timedistributions" %}}
 can be used leveraging the
 [arbitrary class loading system](/reference/yaml#arbitrary-class-loading-system).
 
 In the following example, two Eco-Laws are configured, and one of them is bound to an
-{{% api package="model.implementations.timedistributions" class="ExponentialTime" %}}
+{{% api package="model.timedistributions" class="ExponentialTime" %}}
 with rate 1, namely, when the reaction can be executed
 (the left hand LSAs have local matches),
 it will execute at an average of once per second

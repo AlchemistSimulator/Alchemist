@@ -1,9 +1,9 @@
 Alchemist is Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the `pom.xml` file available for each
-module from "The Central Repository", reachable from http://search.maven.org/.
+module from "The Central Repository", reachable from https://central.sonatype.com/.
 
 Alchemist is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 3, or (at your option) any later version.  Alchemist's
-documentation is licensed under the [Creative Commons Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/).
+documentation is licensed under the [Creative Commons Attribution 3.0 License](https://creativecommons.org/licenses/by/3.0/).
 
 Alchemist is distributed in the hope that it will be useful, but **WITHOUT ANY WARRANTY**; without even the implied
 warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.

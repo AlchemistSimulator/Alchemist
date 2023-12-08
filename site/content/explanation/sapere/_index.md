@@ -6,11 +6,11 @@ summary = "Basics of SAPERE and how its concepts are mapped in Alchemist."
 +++
 
 The SAPERE incarnation for Alchemist was the first stable incarnation produced for the simulator.
-It was developed in the context of the [SAPERE EU project](http://archive.ph/umlcC).
+It was developed in the context of the [SAPERE EU project](https://archive.is/umlcC).
 
 At the core of [SAPERE](https://doi.org/10.1016/j.pmcj.2014.12.002) is the concept of *Live Semantic Annotation* (LSA),
 namely a description of a resource (sensor, service, actuator...) always mapping the current resource status
-(somewhat a prelude to the currently famous [digital twin](http://archive.ph/YR1v9) concept).
+(somewhat a prelude to the currently famous [digital twin](https://archive.is/YR1v9) concept).
 
 These annotations evolve following so-called *Eco-Laws*,
 mimicking the complex behaviours of natural ecosystems.
@@ -26,7 +26,7 @@ From the point of view of
 the concept of
 {{% api class="Molecule" %}}
 is mapped to 
-**LSA** ({{% api package="model.implementations.molecules" class="LsaMolecule" %}}).
+**LSA** ({{% api package="model.sapere.molecules" class="LsaMolecule" %}}).
 As a consequence, LSAs can be inserted in nodes.
 
 ## Eco-Laws

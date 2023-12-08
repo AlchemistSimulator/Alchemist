@@ -1,8 +1,7 @@
 incarnation: sapere
 
 environment:
-  type: Continuous2DEnvironment
-  parameters: []
+  type: ContinuousPhysics2DEnvironment
 
 deployments:
   type: SpecificPositions

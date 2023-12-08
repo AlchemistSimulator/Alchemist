@@ -7,7 +7,7 @@ summary = "A (video) guide through the main features of the simulator, as presen
 +++
 
 In this page, we show an up to date version the examples that are presented in the tutorial paper presented at
-[DAIS 2021](http://www.discotec.org/2021/dais.html)
+[DAIS 2021](https://www.discotec.org/2021/dais.html)
 (one of the three conferences of [DisCoTec 2021](https://www.discotec.org/2021/)).
 
 This tutorial features some companion videos, embedded in this page.
@@ -42,7 +42,7 @@ If you have no idea of what I'm talking about,
 [take a step back and make sure you followed the quickstart](../quickstart).
 {{% /notice %}}
 
-1. `git clone git@github.com:DanySK/DisCoTec-2021-Tutorial.git`
+1. `git clone https://github.com/DanySK/DisCoTec-2021-Tutorial.git`
 2. `cd DisCoTec-2021-Tutorial`
 3.
     * Unix-like terminals: `./gradlew run00`

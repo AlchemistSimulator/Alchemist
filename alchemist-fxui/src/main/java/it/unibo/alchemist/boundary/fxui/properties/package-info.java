@@ -10,7 +10,7 @@
 /**
  * This package contains new {@link javafx.beans.property.Property JavaFX
  * Properties} specifically written to be {@link java.io.Serializable} and to be
- * used as {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX Effects}
+ * used as {@link it.unibo.alchemist.boundary.fxui.EffectFX Effects}
  * properties.
  * <p>
  * This choice makes the binding process with JavaFX GUI components (like the

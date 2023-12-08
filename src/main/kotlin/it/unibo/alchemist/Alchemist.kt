@@ -13,167 +13,134 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
-import it.unibo.alchemist.cli.CLIMaker
-import it.unibo.alchemist.launch.Launcher
-import it.unibo.alchemist.launch.Priority
-import it.unibo.alchemist.launch.Validation
-import it.unibo.alchemist.model.api.SupportedIncarnations
-import it.unibo.alchemist.util.ClassPathScanner
-import org.apache.commons.cli.CommandLine
-import org.apache.commons.cli.CommandLineParser
-import org.apache.commons.cli.DefaultParser
-import org.apache.commons.cli.HelpFormatter
-import org.apache.commons.cli.ParseException
+import it.unibo.alchemist.boundary.LoadAlchemist
+import it.unibo.alchemist.boundary.Loader
+import it.unibo.alchemist.config.Verbosity
+import it.unibo.alchemist.model.SupportedIncarnations
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
+import kotlinx.cli.ExperimentalCli
+import kotlinx.cli.Subcommand
+import kotlinx.cli.default
+import kotlinx.cli.multiple
+import org.kaikikm.threadresloader.ResourceLoader
 import org.slf4j.LoggerFactory
 import org.slf4j.helpers.NOPLoggerFactory
+import java.io.File
 
-private typealias ValidLauncher = Pair<Validation.OK, Launcher>
 /**
  * Starts Alchemist.
  */
 object Alchemist {
-    private const val HEADLESS = "hl"
-    private const val VARIABLES = "var"
-    private const val BATCH = 'b'
-    private const val FXUI = "fxui"
-    private const val DISTRIBUTED = 'd'
-    private const val GRAPHICS = 'g'
-    private const val HELP = 'h'
-    private const val SERVER = 's'
-    private const val PARALLELISM = 'p'
-    private const val TIME = 't'
-    private const val YAML = 'y'
-    private const val WEB = 'w'
     private val logger = LoggerFactory.getLogger(Alchemist::class.java)
-    private val launchers: List<Launcher> = ClassPathScanner
-        .subTypesOf(Launcher::class.java, "it.unibo.alchemist")
-        .map { clazz ->
-            val zeroAryConstructors = clazz.constructors
-                .filter { it.parameterCount == 0 && it.canAccess(null) }
-            if (zeroAryConstructors.size == 1) {
-                zeroAryConstructors.first().newInstance() as Launcher
-            } else {
-                val instances = clazz.fields.filter {
-                    it.name == "INSTANCE" &&
-                        it.canAccess(null) &&
-                        Launcher::class.java.isAssignableFrom(it.type)
-                }
-                if (instances.size == 1) {
-                    instances.first().get(null) as Launcher
-                } else {
-                    error("Cannot instance or access an instance of $clazz")
-                }
-            }
-        }
-    private val logLevels = mapOf(
-        "v" to Level.INFO,
-        "vv" to Level.DEBUG,
-        "vvv" to Level.ALL,
-        "q" to Level.ERROR,
-        "qq" to Level.OFF
-    )
+
     /**
      * Set this to false for testing purposes.
      */
     private var isNormalExecution = true
 
-    private inline fun <reified T : Number> CommandLine.hasNumeric(name: Char, converter: String.() -> T?): T? =
-        getOptionValue(name)?.let {
-            val value = converter(it)
-            when {
-                value == null ->
-                    exitBecause("Not a valid ${T::class.simpleName}: $it", ExitStatus.NUMBER_FORMAT_ERROR)
-                else -> value
-            }
-        }
-
     /**
      * @param args
      * the argument for the program
      */
+    @OptIn(ExperimentalCli::class)
     @JvmStatic
     fun main(args: Array<String>) {
+        val parser = ArgParser("alchemist")
+        val run = createRunCommand(parser)
+        parser.subcommands(run)
+        parser.parse(args)
+    }
+
+    @OptIn(ExperimentalCli::class)
+    private fun createRunCommand(parser: ArgParser): Subcommand {
+        class Run : Subcommand("run", "Run a simulation or a batch of simulations") {
+
+            val simulationFile by parser.argument(
+                type = ArgType.String,
+                fullName = "simulation configuration file",
+                description = """
+                File containing simulation configuration to be executed.
+                """.trimIndent(),
+            )
+
+            val verbosity by parser.option(
+                type = ArgType.Choice<Verbosity>(),
+                fullName = "verbosity",
+                description = """
+                Simulation logging verbosity level. Choose one of the following values:
+               
+                - debug
+                - info
+                - warn
+                - error
+                - all
+                - off
+                
+                defaults to "warn"
+                """.trimIndent(),
+            ).default(Verbosity.WARN)
+
+            val overrides by parser.option(
+                type = ArgType.String,
+                fullName = "override",
+                description = """
+                Valid yaml files used to override simulation config,
+                files are applied sequentially.
+                """.trimIndent(),
+            ).multiple()
+
+            override fun execute() {
+                executeSimlation(simulationFile, verbosity, overrides)
+            }
+        }
+        return Run()
+    }
+
+    private fun executeSimlation(
+        simulationFile: String,
+        verbosity: Verbosity,
+        overrides: List<String>,
+    ) {
+        validateOutputModule()
+        validateIncarnations()
+        setVerbosity(verbosity)
+        val loader = createLoader(simulationFile, overrides)
+        loader.launcher.launch(loader)
+    }
+
+    private fun validateOutputModule() {
         if (LoggerFactory.getILoggerFactory().javaClass == NOPLoggerFactory::class.java) {
             println("Alchemist could not load the output module (broken SLF4J depedencies?)") // NOPMD
             exitWith(ExitStatus.NO_LOGGER)
         }
-        val opts = CLIMaker.getOptions()
-        fun printHelp() = HelpFormatter().printHelp("java -jar alchemist-redist-{version}.jar", opts)
-        val parser: CommandLineParser = DefaultParser()
-        try {
-            val cmd: CommandLine = parser.parse(opts, args)
-            setVerbosity(cmd)
-            val options = cmd.toAlchemist
-            if (options.isEmpty || options.help) {
-                printHelp()
-                exitWith(if (options.help) ExitStatus.OK else ExitStatus.INVALID_CLI)
-            }
-            require(SupportedIncarnations.getAvailableIncarnations().isNotEmpty()) {
-                logger.error(
-                    """
+    }
+
+    private fun createLoader(simulationFile: String, overrides: List<String>): Loader {
+        val url = ResourceLoader.getResource(simulationFile)
+            ?: File(simulationFile).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
+            ?: error("No classpath resource or file $simulationFile was found")
+        return LoadAlchemist.from(
+            url,
+            overrides,
+        )
+    }
+
+    private fun validateIncarnations() {
+        require(SupportedIncarnations.getAvailableIncarnations().isNotEmpty()) {
+            logger.error(
+                """
                     Alchemist requires an incarnation to execute, but none was found in the classpath.
                     Please refer to the alchemist manual at https://alchemistsimulator.github.io to learn more on
                     how to include incarnations in your project.
                     If you believe this is a bug, please open a report at:
                     https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
-                    """.trimIndent().trim().replace('\n', ' ')
-                )
-                "There are no incarnations in the classpath, no simulation can get executed"
-            }
-            val (validLaunchers, invalidLaunchers) = options.classifyLaunchers()
-            val sortedLaunchers: List<ValidLauncher> = validLaunchers
-                .map { (validation, launcher) ->
-                    validation as Validation.OK to launcher
-                }
-                .sortedByDescending { it.first.priority }
-            when {
-                sortedLaunchers.size == 1 -> sortedLaunchers.first().launch(options)
-                validLaunchers.size > 1 ->
-                    if (sortedLaunchers.priorityOf(0) > sortedLaunchers.priorityOf(1)) {
-                        sortedLaunchers.first().launch(options)
-                    } else {
-                        logger.error(
-                            "Multiple execution strategies match options {} with the same priority, available: {}",
-                            options,
-                            sortedLaunchers,
-                        )
-                        exitWith(ExitStatus.INVALID_CLI)
-                    }
-                else -> {
-                    logger.error("No valid launchers for {}", options)
-                    printLaunchers()
-                    logger.error("Available launchers: {}", launchers.map { it.name })
-                    invalidLaunchers.forEach { (validation, launcher) ->
-                        if (validation is Validation.Invalid) {
-                            logger.error("{}: {}", launcher::class.java.simpleName, validation.reason)
-                        }
-                    }
-                    exitWith(ExitStatus.INVALID_CLI)
-                }
-            }
-        } catch (e: ParseException) {
-            logger.error("Your command sequence could not be parsed.", e)
-            printHelp()
-            exitWith(ExitStatus.INVALID_CLI)
+                """.trimIndent().trim().replace('\n', ' '),
+            )
+            "There are no incarnations in the classpath, no simulation can get executed"
         }
     }
 
-    private fun AlchemistExecutionOptions.classifyLaunchers() = launchers
-        .map { it.validate(this) to it }
-        .partition { (validation, _) -> validation is Validation.OK }
-
-    private fun printLaunchers() {
-        logger.warn("Available launchers: {}", launchers.map { it.name })
-    }
-
-    private fun List<ValidLauncher>.priorityOf(index: Int) = get(index).first.priority
-
-    private fun ValidLauncher.launch(options: AlchemistExecutionOptions) {
-        if (first.priority !is Priority.Normal) {
-            printLaunchers()
-        }
-        second(options)
-    }
     /**
      * Call this method to enable testing mode, preventing Alchemist from shutting down the JVM.
      */
@@ -181,18 +148,9 @@ object Alchemist {
         isNormalExecution = false
     }
 
-    private fun setVerbosity(cmd: CommandLine) {
+    private fun setVerbosity(verbosity: Verbosity) {
         (LoggerFactory.getLogger("org.reflections.Reflections") as Logger).level = Level.OFF
-        val verbosity = logLevels.filterKeys { cmd.hasOption(it) }.values
-        when {
-            verbosity.size > 1 ->
-                exitBecause(
-                    "Conflicting verbosity specification. Only one of ${logLevels.keys} can be specified.",
-                    ExitStatus.MULTIPLE_VERBOSITY
-                )
-            verbosity.size == 1 -> setLogbackLoggingLevel(verbosity.first())
-            else -> setLogbackLoggingLevel(Level.WARN)
-        }
+        setLogbackLoggingLevel(verbosity.logLevel)
     }
 
     private fun setLogbackLoggingLevel(level: Level) {
@@ -203,7 +161,7 @@ object Alchemist {
                 encoder = PatternLayoutEncoder().apply {
                     pattern = "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n"
                 }
-            }
+            },
         )
     }
 
@@ -214,32 +172,6 @@ object Alchemist {
         throw AlchemistWouldHaveExitedException(status.ordinal)
     }
 
-    private fun exitBecause(reason: String, status: ExitStatus, exception: Exception? = null): Nothing {
-        when {
-            exception == null -> logger.error(reason)
-            else -> logger.error(reason, exception)
-        }
-        exitWith(status)
-    }
-
-    private val CommandLine.toAlchemist: AlchemistExecutionOptions
-        get() = AlchemistExecutionOptions(
-            server = getOptionValue(SERVER),
-            help = hasOption(HELP),
-            batch = hasOption(BATCH),
-            distributed = getOptionValue(DISTRIBUTED),
-            endTime = hasNumeric(TIME, kotlin.String::toDoubleOrNull)
-                ?: AlchemistExecutionOptions.defaultEndTime,
-            graphics = getOptionValue(GRAPHICS),
-            fxui = hasOption(FXUI),
-            web = hasOption(WEB),
-            headless = hasOption(HEADLESS),
-            parallelism = hasNumeric(PARALLELISM, kotlin.String::toIntOrNull)
-                ?: AlchemistExecutionOptions.defaultParallelism,
-            variables = getOptionValues(VARIABLES)?.toList().orEmpty(),
-            configuration = getOptionValue(YAML)
-        )
-
     private enum class ExitStatus {
         OK, INVALID_CLI, NO_LOGGER, NUMBER_FORMAT_ERROR, MULTIPLE_VERBOSITY
     }
@@ -247,8 +179,10 @@ object Alchemist {
     /**
      * This exception is thrown in place of calling [System.exit] when the simulator is used in debug mode.
      * The [exitStatus] returns the exit status the execution would have had.
+     *
+     * @property exitStatus exit status
      */
     data class AlchemistWouldHaveExitedException(
-        val exitStatus: Int
+        val exitStatus: Int,
     ) : RuntimeException("Alchemist would have exited with $exitStatus")
 }

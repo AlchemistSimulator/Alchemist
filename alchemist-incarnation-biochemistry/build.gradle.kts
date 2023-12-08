@@ -9,9 +9,12 @@
 
 import Libs.alchemist
 import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask
+import org.jlleitschuh.gradle.ktlint.tasks.KtLintFormatTask
 
 /*
  * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
@@ -29,6 +32,7 @@ dependencies {
     antlr(libs.antlr4)
     api(alchemist("implementationbase"))
     api(alchemist("euclidean-geometry"))
+    api(alchemist("physics"))
     implementation(libs.apache.commons.lang3)
     implementation(libs.boilerplate)
     implementation(libs.jirf)
@@ -55,28 +59,29 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-tasks.generateGrammarSource {
-    val destination = "it.unibo.alchemist.model.internal.biochemistry.dsl"
+tasks.generateGrammarSource.configure {
+    val destination = "it.unibo.alchemist.model.biochemistry.dsl"
     arguments = arguments + listOf("-visitor", "-package", destination, "-long-messages")
-    tasks.sourcesJar.orNull?.dependsOn(this)
 }
 
+tasks.sourcesJar.configure { dependsOn(tasks.generateGrammarSource) }
+tasks.withType<KtLintFormatTask>().configureEach { dependsOn(tasks.generateGrammarSource) }
 tasks.generateTestGrammarSource {
     enabled = false
 }
 
 tasks {
     val needGrammarGeneration = listOf(
+        rootProject.tasks.withType<DokkaCollectorTask>(),
         withType<Detekt>(),
         withType<DokkaTask>(),
+        withType<DokkaTaskPartial>(),
         withType<JavaCompile>(),
         withType<KotlinCompile>(),
         withType<KtLintCheckTask>(),
     )
     needGrammarGeneration.forEach {
-        it.configureEach {
-            dependsOn(generateGrammarSource)
-        }
+        it.configureEach { dependsOn(generateGrammarSource) }
     }
 }
 
@@ -118,7 +123,7 @@ publishing.publications {
                 contributor {
                     name.set("Sara Montagna")
                     email.set("sara.montagna@unibo.it")
-                    url.set("http://saramontagna.apice.unibo.it/")
+                    url.set("https://www.unibo.it/sitoweb/sara.montagna")
                 }
             }
         }

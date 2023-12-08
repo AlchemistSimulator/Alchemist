@@ -30,7 +30,7 @@ class DiracDeltaDistribution constructor(val value: Double) : RealDistribution, 
      */
     constructor(
         @Suppress("UNUSED_PARAMETER") randomGenerator: RandomGenerator? = null,
-        value: Double
+        value: Double,
     ) : this(value)
 
     override fun probability(x: Double) = if (x == value) 1.0 else 0.0

@@ -4,7 +4,7 @@ variables:
     language: kts
   test:
     formula: |
-      import it.unibo.alchemist.loader.Loader
+      import it.unibo.alchemist.boundary.Loader
       import kotlin.collections.listOf
       val b = 5.5
       listOf(bindings["a"], b)

@@ -23,7 +23,7 @@ and our [tutorials](tutorials) to learn how to fiddle with the tool.
 Once you are on track, we prepared specific [how-to guides](howtos) for the most common operations.
 To better understand how the simulator works, refer to our [explanation](explanation) section;
 to master it, building your own extensions and advanced scenarios or customizing what is available,
-take a look to the the [reference](reference).
+take a look to the [reference](reference).
 
 ## Alchemist for Academia
 

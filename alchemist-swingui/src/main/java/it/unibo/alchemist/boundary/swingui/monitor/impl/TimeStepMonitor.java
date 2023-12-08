@@ -9,12 +9,12 @@
 package it.unibo.alchemist.boundary.swingui.monitor.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Actionable;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.boundary.OutputMonitor;
+import it.unibo.alchemist.model.times.DoubleTime;
+import it.unibo.alchemist.model.Actionable;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Time;
 
 import javax.annotation.Nonnull;
 import javax.swing.Box;
@@ -97,8 +97,8 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
         time = curTime;
         step = curStep;
         if (!updateIsScheduled.get()) {
-            scheduleUpdate();
             updateIsScheduled.set(true);
+            scheduleUpdate();
         }
     }
 

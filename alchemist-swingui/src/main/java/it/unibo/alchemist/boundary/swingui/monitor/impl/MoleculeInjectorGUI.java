@@ -9,8 +9,8 @@
 package it.unibo.alchemist.boundary.swingui.monitor.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.Incarnation;
+import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.util.ClassPathScanner;
 import org.danilopianini.lang.CollectionWithCurrentElement;
 import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;

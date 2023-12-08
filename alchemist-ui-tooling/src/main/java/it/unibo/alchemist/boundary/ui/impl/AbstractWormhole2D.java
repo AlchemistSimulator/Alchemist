@@ -12,8 +12,8 @@ package it.unibo.alchemist.boundary.ui.impl;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.ui.api.ViewPort;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position2D;
 
 import javax.annotation.Nonnull;
 import java.awt.Point;
@@ -36,6 +36,7 @@ import static it.unibo.alchemist.boundary.ui.impl.PointAdapter.from;
  * @param <P> the position type
  */
 public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> implements Wormhole2D<P> {
+    private static final double ZOOM_FACTOR = 0.10;
     private final Environment<?, P> environment;
     private final ViewPort view;
     private PointAdapter<P> position;
@@ -45,6 +46,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     private double rotation;
     private Mode mode = Mode.ISOMETRIC;
     private PointAdapter<P> effectCenter = from(0, 0);
+
 
     /**
      * Wormhole constructor for any {@link ViewPort}.
@@ -217,11 +219,14 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
      */
     @Override
     public void optimalZoom() {
-        if (getEnvRatio() <= getViewRatio()) {
-            setZoom(Math.max(1, getView().getHeight()) / getEnvironment().getSize()[1]);
-        } else {
-            setZoom(Math.max(1, getView().getWidth()) / getEnvironment().getSize()[0]);
-        }
+        final var size = getViewSize();
+        final PointAdapter<P> viewCenter = from(size.getWidth() / 2, size.getHeight() / 2);
+        final var zoom = getEnvRatio() <= getViewRatio()
+            ? Math.max(1, getView().getHeight()) / getEnvironment().getSize()[1]
+            : Math.max(1, getView().getWidth()) / getEnvironment().getSize()[0];
+        final var adjustedZoom = getEnvRatio() <= getViewRatio()
+            ? zoom * (1 - ZOOM_FACTOR) : zoom * (1 + ZOOM_FACTOR);
+        zoomOnPoint(viewCenter.toPoint(), adjustedZoom);
     }
 
     /**

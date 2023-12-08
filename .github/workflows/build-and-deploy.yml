@@ -5,25 +5,42 @@ on:
 
 jobs:
   # Runs all tests
+  select-java-version:
+    concurrency:
+      group: ${{ github.workflow }}-select-java-version-${{ github.event.number || github.ref }}
+    outputs:
+        java-version: ${{ steps.java-version.outputs.java-version }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Compute Java version
+        id: java-version
+        run: ruby -e 'puts("java-version=#{/^minJavaVersion\s*=\s*(\d+)$/.match(File.read("gradle.properties"))[1]}")' >> $GITHUB_OUTPUT
   build:
+    needs:
+      - select-java-version
     strategy:
+      fail-fast: false
       matrix:
         os: [ windows-2022, macos-12, ubuntu-22.04 ]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 120
+    timeout-minutes: 180
     concurrency:
       group: ${{ github.workflow }}-build-${{ matrix.os }}-${{ github.event.number || github.ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.5
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.26
+        uses: danysk/action-checkout@0.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.12
         with:
+          pre-build-command: ./gradlew kotlinUpgradeYarnLock --parallel
           # check that all tasks used in subsequent phases are there
           build-command: |
             COMMAND="./gradlew \
             build clean close \
             hugoBuild \
+            performWebsiteStringReplacements \
             publishKotlinOSSRHPublicationToGithubRepository \
             release \
             shadowJar \
@@ -32,14 +49,17 @@ jobs:
             "
             eval $COMMAND || eval $COMMAND
           check-command: |
-            ./gradlew build --parallel || ./gradlew build --parallel
+            ./gradlew check --parallel || ./gradlew check --parallel
           clean-command: |
             ./gradlew clean --parallel || ./gradlew clean --parallel || true
+          java-version: ${{ needs.select-java-version.outputs.java-version }}
           should-run-codecov: ${{ contains('Linux', runner.os) }}
           should-deploy: false
           should-validate-wrapper: ${{ contains('Linux', runner.os) }}
   # Performs a dry-deployment if credentials are available
   test-deploy:
+    needs:
+      - select-java-version
     runs-on: ubuntu-22.04
     if: >-
       !github.event.repository.fork
@@ -53,15 +73,15 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.5
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.26
+        uses: danysk/action-checkout@0.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.12
         with:
-          build-command: true
+          build-command: ./gradlew kotlinUpgradeYarnLock --parallel
           check-command: true
           deploy-command: |
             COMMAND="./gradlew uploadJvm uploadJs uploadKotlinOSSRH uploadKotlinMultiplatform close drop --parallel"
             eval "$COMMAND" || eval "$COMMAND" || eval "$COMMAND"
-          java-version: 11
+          java-version: ${{ needs.select-java-version.outputs.java-version }}
           should-run-codecov: false
           should-deploy: true
           should-validate-wrapper: false
@@ -70,6 +90,8 @@ jobs:
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
   # Builds the website and verifies link sanity
   build-website:
+    needs:
+      - select-java-version
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     concurrency:
@@ -77,8 +99,8 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.5
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.26
+        uses: danysk/action-checkout@0.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.12
         with:
           build-command: |
             for i in 1 2 3 4 5; do
@@ -87,6 +109,21 @@ jobs:
                 false
               fi
             done
+          check-command: true
+          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          should-run-codecov: false
+          should-deploy: false
+          should-validate-wrapper: false
+      - name: Tar files
+        run: tar -cvf website.tar build/website
+      - name: Upload website
+        uses: actions/upload-artifact@v3.1.3
+        with:
+          name: website
+          path: website.tar
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.12
+        with:
+          build-command: |
           check-command: |
             # Temporarily disable checks on kdoc/javadoc: too many bugs in Dokka.
             # See:
@@ -94,25 +131,29 @@ jobs:
             # https://github.com/Kotlin/dokka/issues/2321
             # https://github.com/Kotlin/dokka/issues/2322
             # https://github.com/Kotlin/dokka/issues/2323
-            # Once everything gets fixed, lychee could simply run on '/lychee/**/*.html'
-            FILES="$(find build/website/ -name '*.html' | grep -v /kdoc/ | grep -v /javadoc/ | sed -e 's#^build##')"
-            CHECK_LINKS="docker run --rm -v ""$(pwd)/build/website:/website"" -e GITHUB_TOKEN lycheeverse/lychee $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 429,500,502,503"
+            # Once everything gets fixed, lychee could simply run on '/website/**/*.html'
+            FILES="$(
+              find build/website/ -name '*.html' |
+              grep -v /kdoc/ |
+              grep -v /javadoc/ |
+              grep -v /tags/ |
+              sed -e 's#^build##'
+            )"
+            for file in $FILES; do
+              # Ignore all meta tags containing absolute links
+              perl -i -pe 's/<meta.*\"http.*\".*>//g' "build/$file"
+            done
+            CHECK_LINKS="docker run --rm -v ""$(pwd)/build/website:/website"" -e GITHUB_TOKEN lycheeverse/lychee:0.10.3 $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 403,429,500,502,503"
             for i in 1 2 3 4 5; do
               $(echo $CHECK_LINKS) && break || sleep 30
               if [ "$i" = 5 ]; then
                 false
               fi
             done
+          java-version: ${{ needs.select-java-version.outputs.java-version }}
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
-      - name: Tar files
-        run: tar -cvf website.tar build/website
-      - name: Upload website
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: website
-          path: website.tar
   # Performs a release if needed
   release:
     concurrency:
@@ -120,6 +161,7 @@ jobs:
       # Strictly sequential.
       group: release-${{ github.event.number || github.ref }}
     needs:
+      - select-java-version
       - build
       - build-website
       - test-deploy
@@ -132,13 +174,13 @@ jobs:
       )
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           submodules: recursive
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout the docs
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           path: website
           fetch-depth: 0
@@ -153,12 +195,12 @@ jobs:
         id: node-version
         run: echo "version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
       - name: Install Node
-        uses: actions/setup-node@v3.6.0
+        uses: actions/setup-node@v4.0.0
         with:
           node-version: ${{ steps.node-version.outputs.version }}
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.26
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.12
         with:
-          java-version: 11
+          java-version: ${{ needs.select-java-version.outputs.java-version }}
           build-command: |
             ls -ahl
             echo Copying the new website

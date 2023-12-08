@@ -49,10 +49,11 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 api(alchemist("api"))
-                implementation(rootProject)
                 implementation(incarnation("sapere"))
+                implementation(rootProject)
                 implementation(libs.bundles.ktor.server)
                 implementation(libs.logback)
+                implementation(libs.resourceloader)
             }
         }
         val jvmTest by getting {
@@ -75,9 +76,12 @@ kotlin {
     }
 
     targets.all {
-        compilations.all {
-            kotlinOptions {
-                allWarningsAsErrors = true
+        compilations.configureEach {
+            // Workaround for w: duplicate library name: org.jetbrains.kotlin:kotlinx-atomicfu-runtime
+            if (defaultSourceSet.name != "jsTest") {
+                kotlinOptions {
+                    allWarningsAsErrors = true
+                }
             }
         }
     }
@@ -100,7 +104,7 @@ tasks.named("run", JavaExec::class).configure {
             task.outputs.files.map { file ->
                 file.parent
             }
-        }
+        },
     )
 }
 

@@ -9,8 +9,8 @@ package it.unibo.alchemist.test.util;
 
 import java.util.List;
 
-import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.linkingrules.NoLinks;
+import it.unibo.alchemist.model.Position;
 
 /**
  * @param <T>

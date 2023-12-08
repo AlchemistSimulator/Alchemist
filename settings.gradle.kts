@@ -7,9 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 plugins {
-    id("com.gradle.enterprise") version "3.12.3"
-    id("org.danilopianini.gradle-pre-commit-git-hooks") version "1.1.3"
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.4.0"
+    id("com.gradle.enterprise") version "3.16"
+    id("org.danilopianini.gradle-pre-commit-git-hooks") version "1.1.16"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
 }
 
 include(
@@ -18,6 +18,7 @@ include(
     "alchemist-engine",
     "alchemist-euclidean-geometry",
     "alchemist-full",
+    "alchemist-graphql",
     "alchemist-grid",
     "alchemist-implementationbase",
     "alchemist-incarnation-protelis",
@@ -27,6 +28,7 @@ include(
     "alchemist-loading",
     "alchemist-maintenance-tooling",
     "alchemist-maps",
+    "alchemist-multivesta-adapter",
     "alchemist-physics",
     "alchemist-sapere-mathexp",
     "alchemist-smartcam",

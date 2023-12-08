@@ -14,7 +14,7 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.doubles.shouldBeLessThan
 import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.ints.shouldBeGreaterThan
-import it.unibo.alchemist.loader.LoadAlchemist
+import it.unibo.alchemist.boundary.LoadAlchemist
 import org.kaikikm.threadresloader.ResourceLoader
 
 class TestGraphStream : FreeSpec({

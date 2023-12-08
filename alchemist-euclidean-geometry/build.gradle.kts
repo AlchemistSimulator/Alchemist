@@ -23,14 +23,12 @@ dependencies {
     api(alchemist("implementationbase"))
     api(libs.dyn4j)
 
-    implementation(libs.boilerplate)
-    implementation(libs.caffeine)
     implementation(libs.classgraph)
     implementation(libs.jgrapht.core)
-    implementation(libs.rtree)
     implementation(libs.trove4j)
 
     testImplementation(alchemist("loading"))
+    testImplementation(alchemist("physics"))
     testRuntimeOnly(incarnation("protelis"))
 }
 

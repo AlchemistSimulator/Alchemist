@@ -16,11 +16,11 @@ or by ignoring the map information and just move as you would in a continuous sp
 ## Setting up a map environment
 
 In order to run simulations on real world maps, an appropriate environment must be selected, such as
-{{% api package="model.implementations.environments" class="OSMEnvironment" %}}.
+{{% api package="model.maps.environments" class="OSMEnvironment" %}}.
 
 If you need map data to perform *on-streets routing*,
 you need to feed it to the simulator.
-{{% api package="model.implementations.environments" class="OSMEnvironment" %}}
+{{% api package="model.maps.environments" class="OSMEnvironment" %}}
 supports [OpenStreetMap](https://www.openstreetmap.org) extracts in several formats,
 we recommend using the
 [protocol buffer binary format (pbf)](https://wiki.openstreetmap.org/wiki/PBF_Format)

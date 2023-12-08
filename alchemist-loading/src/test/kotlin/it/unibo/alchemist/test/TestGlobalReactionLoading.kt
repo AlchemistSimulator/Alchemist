@@ -11,7 +11,7 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldHaveSize
-import it.unibo.alchemist.loader.LoadAlchemist
+import it.unibo.alchemist.boundary.LoadAlchemist
 import org.kaikikm.threadresloader.ResourceLoader
 
 class TestGlobalReactionLoading : FreeSpec({

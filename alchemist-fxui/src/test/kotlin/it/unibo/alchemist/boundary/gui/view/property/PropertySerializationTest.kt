@@ -11,22 +11,22 @@ package it.unibo.alchemist.boundary.gui.view.property
 
 import com.google.common.base.Charsets
 import com.google.gson.reflect.TypeToken
-import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer
-import it.unibo.alchemist.boundary.fxui.properties.internal.PropertyFactory
-import it.unibo.alchemist.boundary.fxui.properties.internal.RangedIntegerProperty
-import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableBooleanProperty
-import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableEnumProperty
-import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableStringProperty
+import it.unibo.alchemist.boundary.fxui.effects.serialization.EffectSerializer
+import it.unibo.alchemist.boundary.fxui.properties.PropertyFactory
+import it.unibo.alchemist.boundary.fxui.properties.RangedIntegerProperty
+import it.unibo.alchemist.boundary.fxui.properties.SerializableBooleanProperty
+import it.unibo.alchemist.boundary.fxui.properties.SerializableEnumProperty
+import it.unibo.alchemist.boundary.fxui.properties.SerializableStringProperty
 import it.unibo.alchemist.boundary.fxui.util.RangedDoubleProperty
 import it.unibo.alchemist.test.TemporaryFile.create
+import javafx.beans.property.Property
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import java.io.FileReader
 import java.io.FileWriter
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.lang.reflect.Type
-import javafx.beans.property.Property
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
 
 /**
  * A class that exposes functions for testing the serialization of serializable properties.
@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test
 class PropertySerializationTester<T : Property<E>, E : Any>(
     private val gsonType: Type,
     private val toProperty: Any.() -> T,
-    vararg serializables: T
+    vararg serializables: T,
 ) {
     private val properties: List<T> = serializables.asList()
 
@@ -139,7 +139,7 @@ class RangedDoublePropertySerializationTest : PropertySerializationTest() {
         { this as RangedDoubleProperty },
         RangedDoubleProperty(DOUBLE_PROPERTY, DOUBLE_INITIAL_VALUE, DOUBLE_LOWER_BOUND, DOUBLE_UPPER_BOUND),
         PropertyFactory.getFXColorChannelProperty(DOUBLE_COLOR_NAME, DOUBLE_COLOR_INITIAL_VALUE),
-        PropertyFactory.getPercentageRangedProperty(DOUBLE_PERCENT_NAME, DOUBLE_PERCENT_INITIAL_VALUE)
+        PropertyFactory.getPercentageRangedProperty(DOUBLE_PERCENT_NAME, DOUBLE_PERCENT_INITIAL_VALUE),
     )
 }
 
@@ -161,8 +161,8 @@ class RangedIntegerPropertySerializationTest : PropertySerializationTest() {
             INTEGER_PROPERTY,
             INTEGER_INITIAL_VALUE,
             INTEGER_LOWER_BOUND,
-            INTEGER_UPPER_BOUND
-        )
+            INTEGER_UPPER_BOUND,
+        ),
     )
 }
 
@@ -179,12 +179,12 @@ class SerializableBooleanPropertySerializationTest : PropertySerializationTest()
         { this as SerializableBooleanProperty },
         SerializableBooleanProperty(
             BOOLEAN_PROPERTY,
-            true
+            true,
         ),
         SerializableBooleanProperty(
             BOOLEAN_PROPERTY,
-            false
-        )
+            false,
+        ),
     )
 }
 
@@ -207,8 +207,8 @@ class SerializableEnumPropertySerializationTest : PropertySerializationTest() {
         { this as SerializableEnumProperty<TestEnum> },
         SerializableEnumProperty(
             ENUM_PROPERTY,
-            TestEnum.TEST
-        )
+            TestEnum.TEST,
+        ),
     )
 }
 
@@ -226,7 +226,7 @@ class SerializableStringPropertySerializationTest : PropertySerializationTest() 
         { this as SerializableStringProperty },
         SerializableStringProperty(
             STRING_PROPERTY,
-            STRING_INITIAL_VALUE
-        )
+            STRING_INITIAL_VALUE,
+        ),
     )
 }

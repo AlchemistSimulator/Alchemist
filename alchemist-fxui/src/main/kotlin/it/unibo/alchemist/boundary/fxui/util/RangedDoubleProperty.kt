@@ -12,14 +12,14 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonSerializationContext
-import it.unibo.alchemist.boundary.fxui.properties.api.PropertyTypeAdapter
-import it.unibo.alchemist.boundary.fxui.properties.api.PropertyTypeAdapter.NAME
-import it.unibo.alchemist.boundary.fxui.properties.api.PropertyTypeAdapter.VALUE
+import it.unibo.alchemist.boundary.fxui.PropertyTypeAdapter
+import it.unibo.alchemist.boundary.fxui.PropertyTypeAdapter.NAME
+import it.unibo.alchemist.boundary.fxui.PropertyTypeAdapter.VALUE
+import javafx.beans.property.DoublePropertyBase
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.lang.reflect.Type
-import javafx.beans.property.DoublePropertyBase
 import kotlin.math.abs
 
 private const val LOWER_BOUND = "lower bound"
@@ -39,7 +39,7 @@ class RangedDoubleProperty @JvmOverloads constructor(
     private var name: String,
     initialValue: Double = 0.0,
     lowerBound: Double = -Double.MAX_VALUE,
-    upperBound: Double = Double.MAX_VALUE
+    upperBound: Double = Double.MAX_VALUE,
 ) : DoublePropertyBase(initialValue), Serializable {
 
     /**
@@ -145,6 +145,7 @@ class RangedDoubleProperty @JvmOverloads constructor(
 
     companion object {
         private const val serialVersionUID: Long = 1L
+
         /**
          * Returns a [JsonSerializer][com.google.gson.JsonSerializer] and
          * [JsonDeserializer][com.google.gson.JsonDeserializer] combo class
@@ -159,21 +160,21 @@ class RangedDoubleProperty @JvmOverloads constructor(
                 override fun deserialize(
                     json: JsonElement,
                     typeOfT: Type,
-                    context: JsonDeserializationContext
+                    context: JsonDeserializationContext,
                 ): RangedDoubleProperty {
                     val jObj = json as JsonObject
                     return RangedDoubleProperty(
                         jObj.get(NAME).asString,
                         jObj.get(VALUE).asDouble,
                         jObj.get(LOWER_BOUND).asDouble,
-                        jObj.get(UPPER_BOUND).asDouble
+                        jObj.get(UPPER_BOUND).asDouble,
                     )
                 }
 
                 override fun serialize(
                     src: RangedDoubleProperty,
                     typeOfSrc: Type,
-                    context: JsonSerializationContext
+                    context: JsonSerializationContext,
                 ): JsonElement {
                     val jObj = JsonObject()
                     jObj.addProperty(NAME, src.name)

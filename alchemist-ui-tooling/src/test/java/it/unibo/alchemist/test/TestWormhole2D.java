@@ -11,11 +11,11 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.boundary.ui.api.ViewPort;
 import it.unibo.alchemist.boundary.ui.impl.AbstractWormhole2D;
 import it.unibo.alchemist.boundary.ui.impl.PointAdapter;
-import it.unibo.alchemist.model.api.SupportedIncarnations;
-import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.SupportedIncarnations;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position2D;
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import org.junit.jupiter.api.Test;
 
 /**

@@ -28,11 +28,11 @@ In the following example, three molecules are created and injected into all node
 By default, all nodes in the deployment will be injected with the required contents.
 It is possible, though, to select only a subset of them through the [`in`](/reference/yaml/#contentin) keyword,
 which expects enough information to be able to build a
-{{% api package="loader.filters" class="Filter" %}}
+{{% api package="model" class="PositionBasedFilter" %}}
 through the [arbitrary class loading system](/reference/yaml/#arbitrary-class-loading-system).
 
 In the following example, only molecules located inside a
-{{% api package="loader.filters" class="Rectangle" %}}
+{{% api package="model.positionfilters" class="Rectangle" %}}
 get the `ball` molecule:
 
 {{<code path="src/test/resources/website-snippets/grid-dodgeball.yml" >}}

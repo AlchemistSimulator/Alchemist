@@ -11,9 +11,10 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 
 import it.unibo.alchemist.boundary.swingui.effect.isolines.api.IsolinesFactory;
 import it.unibo.alchemist.boundary.swingui.effect.isolines.impl.ConcreteIsolinesFactory;
+import it.unibo.alchemist.model.layers.BidimensionalGaussianLayer;
 
 /**
- * Draw isolines for {@link it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer}s.
+ * Draw isolines for {@link BidimensionalGaussianLayer}s.
  * It ignores any other layer.
  */
 public class DrawBidimensionalGaussianLayersIsolines extends DrawLayersIsolines {

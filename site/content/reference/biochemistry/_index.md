@@ -61,10 +61,10 @@ This program constantly moves a cell without any other condition:
 The Biochemistry Incarnation supports cell collisions and deformations too.
 
 In order to do that, however, the environment must feature appropriate support, as for instance
-{{% api package="model.implementations.environments" class="BioRect2DEnvironmentNoOverlap" %}}.
+{{% api package="model.biochemistry.environments" class="BioRect2DEnvironmentNoOverlap" %}}.
 
 The cells must support deformation as well, as, for instance, a node with the
-{{% api package="model.implementations.properties" class="CircularDeformableCell" %}}
+{{% api package="model.biochemistry.properties" class="CircularDeformableCell" %}}
 property.
 
 The minimum radius of the cell is so that ``min-radius = rigidity * max-radius``

@@ -23,8 +23,8 @@ dependencies {
     api(alchemist("implementationbase"))
     api(libs.bundles.protelis)
     // IMPLEMENTATION
-    implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("maps"))
+    implementation(alchemist("physics"))
     implementation(libs.apache.commons.lang3)
     // TESTING
     testImplementation(alchemist("loading"))
@@ -39,14 +39,14 @@ publishing.publications {
                 developer {
                     name.set("Danilo Pianini")
                     email.set("danilo.pianini@unibo.it")
-                    url.set("http://www.danilopianini.org")
+                    url.set("https://www.danilopianini.org")
                 }
             }
             contributors {
                 contributor {
                     name.set("Jacob Beal")
                     email.set("jakebeal@bbn.com")
-                    url.set("http://web.mit.edu/jakebeal/www/")
+                    url.set("https://jakebeal.github.io/")
                 }
             }
         }
@@ -65,7 +65,7 @@ tasks.register<Exec>("testIncarnationProtelisShadowJarExecution") {
             "$projectDir/src/test/resources/testbase.yml",
             "-t",
             "2",
-            "--batch"
+            "--batch",
         )
     }
     tasks.shadowJar.get().finalizedBy(this)

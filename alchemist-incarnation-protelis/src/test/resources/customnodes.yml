@@ -7,5 +7,5 @@ deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
     nodes:
-      type: it.unibo.alchemist.test.CustomNode
+      type: it.unibo.alchemist.model.protelis.CustomNode
       parameters: []

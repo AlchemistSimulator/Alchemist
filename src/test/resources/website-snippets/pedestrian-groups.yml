@@ -1,11 +1,14 @@
 incarnation: protelis
 
+environment:
+  type: ContinuousPhysics2DEnvironment
+
 variables:
   group1: &group1
-    formula: it.unibo.alchemist.model.implementations.groups.GroupFactory.friends()
+    formula: it.unibo.alchemist.model.cognitive.groups.GroupFactory.friends()
     language: kotlin
   group2: &group2
-    formula: it.unibo.alchemist.model.implementations.groups.GroupFactory.friends()
+    formula: it.unibo.alchemist.model.cognitive.groups.GroupFactory.friends()
     language: kotlin
 
 deployments:

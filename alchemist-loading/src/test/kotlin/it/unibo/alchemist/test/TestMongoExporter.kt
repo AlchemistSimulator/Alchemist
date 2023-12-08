@@ -15,16 +15,16 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.longs.shouldBeGreaterThan
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor
-import it.unibo.alchemist.core.implementations.Engine
-import it.unibo.alchemist.loader.InitializedEnvironment
-import it.unibo.alchemist.loader.LoadAlchemist
-import it.unibo.alchemist.loader.export.exporters.GlobalExporter
-import it.unibo.alchemist.loader.export.exporters.MongoDBExporter
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.boundary.InitializedEnvironment
+import it.unibo.alchemist.boundary.LoadAlchemist
+import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.boundary.exporters.GlobalExporter
+import it.unibo.alchemist.boundary.exporters.MongoDBExporter
+import it.unibo.alchemist.core.Engine
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Time
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
 
@@ -46,7 +46,7 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
                     environment: Environment<T, P>,
                     reaction: Actionable<T>?,
                     time: Time,
-                    step: Long
+                    step: Long,
                 ) = checkForErrors()
             })
             simulation.play()

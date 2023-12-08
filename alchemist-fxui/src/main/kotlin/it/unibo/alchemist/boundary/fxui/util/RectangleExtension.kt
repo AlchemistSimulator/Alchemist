@@ -10,8 +10,8 @@
 package it.unibo.alchemist.boundary.fxui.util
 
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position2D
 import javafx.scene.shape.Rectangle
 import java.awt.Point
 
@@ -25,7 +25,7 @@ object RectangleExtension {
      */
     fun <T, P : Position2D<P>> Rectangle.intersectingNodes(
         nodes: Map<Node<T>, P>,
-        wormhole: Wormhole2D<P>
+        wormhole: Wormhole2D<P>,
     ): Map<Node<T>, P> = nodes.filterValues { wormhole.getViewPoint(it) in this }
 
     /**

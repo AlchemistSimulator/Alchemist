@@ -1,15 +1,25 @@
 # False positives
 https://archive.is/xyaA6
-https://archive.fo/PGdk8
+https://archive.is/PGdk8
 https://doi.org/10.1007/978-3-030-78198-9_10
 https://doi.org/10.1007/978-3-319-70647-4_11
 https://doi.org/10.1007/s11047-012-9324-y
 https://pubs.acs.org/doi/10.1021/jp993732q
 https://doi.org/10.1021/jp993732q
+https://www.sciencedirect.com/science/article/abs/pii/S0952197620303389
 
 # Stuff imported from outer sources with relative links
 .*scafi/assets.*
 
 # Exclude the example link of Hugo:
 ^https?://localhost:1313/?$
- 
+
+# Exclude links to source code to relieve the stress on github
+^https?://github\.com/AlchemistSimulator/Alchemist/.*\.(java|kt)#L\d+$
+
+# Dokka bugs
+reference/kdoc/alchemist-cognitive-agents/it.unibo.alchemist.model/-linking-rule/index.html$
+reference/kdoc/alchemist-cognitive-agents/it.unibo.alchemist.model/-node/index.html
+
+# Exclude archive.is links going in timeout for unknown reasons
+^https?://archive\.(is|ph)/(fkUpJ|oLSpq|PGdk8|PwYQz|umlcC|YR1v9)$

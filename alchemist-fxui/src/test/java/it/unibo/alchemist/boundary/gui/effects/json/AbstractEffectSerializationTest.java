@@ -1,6 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectFX;
+import it.unibo.alchemist.boundary.fxui.EffectFX;
 import it.unibo.alchemist.test.TemporaryFile;
 
 import java.io.File;

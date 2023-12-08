@@ -29,19 +29,19 @@ The most basic example of a camera is a
 containing a
 {{% api class=Reaction %}}
 with the
-{{% api package="model.implementations.actions" class=CameraSee %}}
+{{% api package="model.actions" class=CameraSee %}}
 action.
 
 {{% notice warning %}}
 Note: the
-{{% api package="model.implementations.actions" class=CameraSee %}}
+{{% api package="model.actions" class=CameraSee %}}
 action currently
 only works in 2D environments supporting euclidean geometry,
 for example
-{{% api package="model.implementations.environments" class=Continuous2DEnvironment %}}.
+{{% api package="model.environments" class=Continuous2DEnvironment %}}.
 {{% /notice %}}
 
-{{% api package="model.implementations.actions" class=CameraSee %}}
+{{% api package="model.actions" class=CameraSee %}}
 requires the following parameters:
 1. the distance of the field of view,
 2. its angle in degrees, and
@@ -55,25 +55,25 @@ requires the following parameters:
 
 ### Movement
 The ability to move can be defined using movement actions such as
-{{% api package="model.implementations.actions" class=MoveToTarget %}}
+{{% api package="model.actions" class=MoveToTarget %}}
 or
-{{% api package="model.implementations.actions" class=FollowAtDistance %}}.
+{{% api package="model.actions" class=FollowAtDistance %}}.
 
-{{% api package="model.implementations.actions" class=MoveToTarget %}}
+{{% api package="model.actions" class=MoveToTarget %}}
 expects 2 parameters:
 1. the name of the molecule containing the target's position, and
 2. the movement speed.
 
-{{% api package="model.implementations.actions" class=FollowAtDistance %}} requires:
+{{% api package="model.actions" class=FollowAtDistance %}} requires:
 1. the name of the molecule containing the target's position,
 2. the distance to mantain from the target, and
 3. the movement speed.
 
 ### Rotation
-{{% api package="model.implementations.actions" class=HeadTowardTarget %}}
+{{% api package="model.physics.actions" class=HeadTowardTarget %}}
 can be used to instruct cameras to always face the specified target.
 
-{{% api package="model.implementations.actions" class=Spin %}}
+{{% api package="model.physics.actions" class=Spin %}}
 only requires the angular speed and will make the camera spin around itself like a radar.
 
 ### Other behavior

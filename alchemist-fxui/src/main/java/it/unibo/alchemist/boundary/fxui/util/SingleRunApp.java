@@ -10,25 +10,27 @@
 package it.unibo.alchemist.boundary.fxui.util;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
-import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer;
-import it.unibo.alchemist.boundary.fxui.impl.BaseFXDisplay;
+import it.unibo.alchemist.boundary.fxui.EffectGroup;
+import it.unibo.alchemist.boundary.fxui.effects.serialization.EffectSerializer;
+import it.unibo.alchemist.boundary.fxui.monitors.BaseFXDisplay;
 import it.unibo.alchemist.boundary.fxui.impl.ButtonsBarController;
-import it.unibo.alchemist.boundary.fxui.impl.FX2DDisplay;
-import it.unibo.alchemist.boundary.fxui.impl.LeafletMapDisplay;
-import it.unibo.alchemist.boundary.fxui.interaction.keyboard.api.KeyboardActionListener;
-import it.unibo.alchemist.boundary.fxui.interaction.keyboard.impl.ActionOnKey;
-import it.unibo.alchemist.boundary.fxui.interaction.keyboard.impl.KeyboardTriggerAction;
-import it.unibo.alchemist.boundary.fxui.interaction.keyboard.util.ActionFromKey;
-import it.unibo.alchemist.boundary.fxui.interaction.keyboard.util.Keybinds;
-import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor;
-import it.unibo.alchemist.boundary.fxui.monitors.impl.FXStepMonitor;
-import it.unibo.alchemist.boundary.fxui.monitors.impl.FXTimeMonitor;
-import it.unibo.alchemist.boundary.fxui.monitors.impl.PlayPauseMonitor;
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.model.interfaces.MapEnvironment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.boundary.fxui.monitors.FX2DDisplay;
+import it.unibo.alchemist.boundary.fxui.maps.LeafletMapDisplay;
+import it.unibo.alchemist.boundary.fxui.interaction.keyboard.KeyboardActionListener;
+import it.unibo.alchemist.boundary.fxui.interaction.keyboard.ActionOnKey;
+import it.unibo.alchemist.boundary.fxui.interaction.keyboard.KeyboardTriggerAction;
+import it.unibo.alchemist.boundary.fxui.interaction.keyboard.ActionFromKey;
+import it.unibo.alchemist.boundary.fxui.interaction.keyboard.Keybinds;
+import it.unibo.alchemist.boundary.fxui.FXOutputMonitor;
+import it.unibo.alchemist.boundary.fxui.monitors.FXStepMonitor;
+import it.unibo.alchemist.boundary.fxui.monitors.FXTimeMonitor;
+import it.unibo.alchemist.boundary.fxui.monitors.PlayPauseMonitor;
+import it.unibo.alchemist.boundary.OutputMonitor;
+import it.unibo.alchemist.core.Simulation;
+import it.unibo.alchemist.model.Concentration;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.maps.MapEnvironment;
+import it.unibo.alchemist.model.Position2D;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -61,7 +63,7 @@ import static it.unibo.alchemist.boundary.fxui.impl.ButtonsBarController.BUTTONS
 /**
  * The class models a non-reusable GUI for simulation display.
  *
- * @param <T> the {@link it.unibo.alchemist.model.interfaces.Concentration} type
+ * @param <T> the {@link Concentration} type
  * @param <P> the position type
  */
 @SuppressFBWarnings(
@@ -243,11 +245,11 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      *
      * @param simulation the simulation to
      *      {@link Simulation#schedule(org.jooq.lambda.fi.lang.CheckedRunnable) schedule} initialization and to take
-     *      {@link it.unibo.alchemist.model.interfaces.Environment} from
+     *      {@link Environment} from
      * @param monitors   the {@code OutputMonitors} to
-     *      {@link OutputMonitor#initialized(it.unibo.alchemist.model.interfaces.Environment) initialize}
+     *      {@link OutputMonitor#initialized(Environment) initialize}
      * @see Simulation#schedule(org.jooq.lambda.fi.lang.CheckedRunnable)
-     * @see OutputMonitor#initialized(it.unibo.alchemist.model.interfaces.Environment)
+     * @see OutputMonitor#initialized(Environment)
      */
     @SafeVarargs
     private void initMonitors(

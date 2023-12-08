@@ -8,21 +8,21 @@ summary = "Deployment of nodes randomly inside arbitrary shapes."
 Sometimes it is useful to deploy a bunch of nodes randomly inside some area marked by a shape.
 Circles and polygons are first-class citizens,
 but of course users may create their own deployments by implementing
-{{% api package="loader.deployments" class="Deployment" %}}.
+{{% api package="model" class="Deployment" %}}.
 
 This example places 1000 nodes randomly in a
-{{% api package="loader.deployments" class="Circle" %}}
+{{% api package="model.deployments" class="Circle" %}}
 with center in (0, 0) and radius 10.
 
 {{<code path="src/test/resources/website-snippets/deployment-circle.yml" >}}
 
 In the following example, they are instead deployed randomly within a 10x20
-{{% api package="loader.deployments" class="Rectangle" %}}
+{{% api package="model.deployments" class="Rectangle" %}}
 originating in (0,0).
 
 {{<code path="src/test/resources/website-snippets/deployment-rectangle.yml" >}}
 
-{{% api package="loader.deployments" class="Polygon" %}}s
+{{% api package="model.deployments" class="Polygon" %}}s
 can be specified by providing all vertices.
 In the following example, we deploy some nodes within the Venice lagoon.
 

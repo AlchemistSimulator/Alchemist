@@ -1,11 +1,10 @@
 incarnation: protelis
 
-variables:
-  danger: &danger
-    formula: '"danger"'
+_danger: &danger
+  danger
 
 environment:
-  type: Continuous2DEnvironment
+  type: ContinuousPhysics2DEnvironment
 
 seeds:
   scenario: 0

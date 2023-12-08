@@ -11,9 +11,9 @@ package it.unibo.alchemist.boundary.swingui.effect.api
 
 import it.unibo.alchemist.boundary.swingui.effect.impl.DrawLayersValues
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Layer
-import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Layer
+import it.unibo.alchemist.model.Position2D
 import java.awt.Graphics2D
 import java.io.Serializable
 import java.util.function.Function
@@ -31,7 +31,7 @@ interface LayerToFunctionMapper : Serializable {
         toDraw: Collection<Layer<T, P>>,
         environment: Environment<T, P>,
         g: Graphics2D,
-        wormhole: Wormhole2D<P>
+        wormhole: Wormhole2D<P>,
     ) = Unit // defaults to nothing
 
     /**

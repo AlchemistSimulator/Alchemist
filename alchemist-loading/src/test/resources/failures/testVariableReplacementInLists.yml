@@ -1,0 +1,30 @@
+incarnation: sapere
+
+variables:
+  devices: &devices
+    min: 100
+    max: 200
+    step: 50
+    default: 100
+  topology: &topology
+    type: ArbitraryVariable
+    parameters: [
+      [*devices, "Lobster", 2, 15],
+      [
+        [*devices, "Lobster", 2, 4],
+        [*devices, "Lobster", 2, 5],
+        [*devices, "Lobster", 2, 6]
+      ]
+    ]
+
+environment:
+  type: Continuous2DEnvironment
+  parameters: []
+
+seeds:
+  scenario: 0
+  simulation: 0
+
+deployments:
+  type: GraphStreamDeployment
+  parameters: *topology

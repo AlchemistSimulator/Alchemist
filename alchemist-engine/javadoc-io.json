@@ -1,0 +1,28 @@
+{
+  "com.google.guava/guava/31.1-jre": {
+    "first": "https://javadoc.io/doc/com.google.guava/guava/31.1-jre",
+    "second": "https://javadoc.io/doc/com.google.guava/guava/31.1-jre/element-list"
+  },
+  "net.sf.trove4j/trove4j/3.0.3": {
+    "first": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3",
+    "second": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3/package-list"
+  },
+  "org.danilopianini/thread-inheritable-resource-loader/0.3.6": {
+    "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.6",
+    "second": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.6/package-list"
+  },
+  "org.jetbrains.kotlin/kotlin-reflect/1.8.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.8.21"
+  },
+  "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.8.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.8.21"
+  },
+  "org.jgrapht/jgrapht-core/1.5.2": {
+    "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2",
+    "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2/element-list"
+  },
+  "org.slf4j/slf4j-api/2.0.7": {
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.7",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.7/element-list"
+  }
+}

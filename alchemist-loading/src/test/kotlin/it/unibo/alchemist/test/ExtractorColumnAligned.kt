@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.test
 
-import it.unibo.alchemist.loader.export.Extractor
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.boundary.Extractor
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Time
 
 /**
  * Utility used to verify the correctness of CSVExport.
@@ -25,7 +25,7 @@ class ExtractorColumnAligned : Extractor<Int> {
         environment: Environment<T, *>,
         reaction: Actionable<T>?,
         time: Time,
-        step: Long
+        step: Long,
     ): Map<String, Int> {
         val leftMap = columnNames.zip(columnNames.indices).toMap()
         return HashMap<String, Int>(leftMap)

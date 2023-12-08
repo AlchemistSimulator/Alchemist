@@ -1,7 +1,18 @@
-import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
+/*
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.apache.tools.ant.taskdefs.condition.Os
+import org.eclipse.jgit.api.Git
+import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
@@ -12,27 +23,22 @@ import org.gradle.plugin.use.PluginDependency
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URL
-import java.util.Locale
-
-/*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
- * listed, for each module, in the respective subproject's build.gradle.kts file.
- *
- * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception,
- * as described in the file LICENSE in the Alchemist distribution's top directory.
- */
 
 /**
  * Collector of imperative code.
  */
 object Util {
 
+    val isInCI get() = System.getenv("CI") == true.toString()
+    val isWindows = Os.isFamily(Os.FAMILY_WINDOWS)
+    val isMac = Os.isFamily(Os.FAMILY_MAC)
+    val Project.currentCommitHash get(): String? =
+        kotlin.runCatching { Git.open(rootProject.projectDir).repository.resolve("HEAD")?.name }.getOrNull()
+
     private val javadocIOcacheFile = File("javadoc-io.json")
     private val gson = Gson().newBuilder().setPrettyPrinting().create()
     private val mapType = object : TypeToken<MutableMap<String, Pair<URL, URL?>>>() { }.type
 
-    @Suppress("UNCHECKED_CAST")
     private val javadocIO: MutableMap<String, Pair<URL, URL?>> = javadocIOcacheFile
         .takeIf(File::exists)
         ?.let { gson.fromJson(it.readText(), mapType) }
@@ -71,7 +77,7 @@ object Util {
     /**
      * Verifies that the generated shadow jar displays the help, and that SLF4J is not falling back to NOP.
      */
-    fun Project.testShadowJar(jarFile: Provider<RegularFile>) = tasks.register<Exec>(
+    fun Project.testShadowJar(javaExecutable: Provider<String>, jarFile: Provider<RegularFile>) = tasks.register<Exec>(
         "test${
         jarFile.get().asFile.nameWithoutExtension
             .removeSuffix("-all")
@@ -83,14 +89,13 @@ object Util {
     ) {
         group = "Verification"
         description = "Verifies the terminal output correctness when printing the help via ${jarFile.get().asFile.name}"
-        val javaExecutable = org.gradle.internal.jvm.Jvm.current().javaExecutable.absolutePath
         val interceptOutput = ByteArrayOutputStream()
         val interceptError = ByteArrayOutputStream()
         standardOutput = interceptOutput
         errorOutput = interceptError
         isIgnoreExitValue = true
         doFirst {
-            commandLine(javaExecutable, "-jar", jarFile.get().asFile.absolutePath, "--help")
+            commandLine(javaExecutable.get(), "-jar", jarFile.get().asFile.absolutePath, "--help")
         }
         doLast {
             val exit = executionResult.get().exitValue

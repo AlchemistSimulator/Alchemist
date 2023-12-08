@@ -75,7 +75,7 @@ foo:
     buzz: 3
 ```
 
-The overrides are arbitatry, types can be changed and new varibales introduced.
+The overrides are arbitrary, types can be changed and new varibales introduced.
 
 ### Launcher Configuration
 

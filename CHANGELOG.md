@@ -1,3 +1,21 @@
+## [29.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/29.0.6...29.0.7) (2023-12-08)
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 0decfa1 ([b4d9134](https://github.com/AlchemistSimulator/Alchemist/commit/b4d91345eb0598688ae04396d962c3fac0edcc7d))
+* **deps:** update gohugoio/hugo action to v0.121.1 ([49c4b90](https://github.com/AlchemistSimulator/Alchemist/commit/49c4b90748bb66b0bf37b4117f30ebe8aa7c5e8f))
+* **deps:** update ktor to v2.3.7 ([32ad17d](https://github.com/AlchemistSimulator/Alchemist/commit/32ad17dce117463fd0c4c27562621d530a541e60))
+* **deps:** update react to v18.2.0-pre.660 ([6a8c9d9](https://github.com/AlchemistSimulator/Alchemist/commit/6a8c9d92807c9be997a961e649c4baee905931a5))
+* **deps:** update react to v18.2.0-pre.661 ([b80cc93](https://github.com/AlchemistSimulator/Alchemist/commit/b80cc93f6d8bebda74e6c870002066cddd5cfe8b))
+* **deps:** update react to v18.2.0-pre.662 ([8284a73](https://github.com/AlchemistSimulator/Alchemist/commit/8284a7395b380de565afbcbe64b386c867fc5139))
+
+
+### Documentation
+
+* **website:** fix typo ([3e1404e](https://github.com/AlchemistSimulator/Alchemist/commit/3e1404e4c018c0fb270bd89ff81ca12cc0eaaf0f))
+* **website:** fix typo ([605478f](https://github.com/AlchemistSimulator/Alchemist/commit/605478ffc34a0d07dffeb4598ff13f1d9f19d1b9))
+
 ## [29.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/29.0.5...29.0.6) (2023-12-06)
 
 

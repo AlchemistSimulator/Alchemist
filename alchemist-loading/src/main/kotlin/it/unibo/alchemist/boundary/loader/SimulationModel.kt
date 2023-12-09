@@ -278,39 +278,81 @@ internal object SimulationModel {
         else -> root
     }
 
-    internal inline fun <reified T : Any> visitBuilding(context: Context, root: Any?): Result<T>? = when (root) {
-        is T -> Result.success(root)
-        is Map<*, *> ->
-            visitJVMConstructor(context, root)
-                ?.also { constructor: JVMConstructor ->
-                    val params = when (constructor) {
-                        is OrderedParametersConstructor -> constructor.parameters
-                        is NamedParametersConstructor -> constructor.parametersMap.values
-                    }
-                    for (param in params) {
-                        if (param is PlaceHolderForVariables) {
-                            error(
-                                """
-                                    Attempted construction of a ${T::class.simpleName} with an unresolvable variable
-                                    §placeholder referring to '${param.name}: $root'.
-                                    This usually happens when a variable depends on another variable,
-                                    §check that no other variable is using the variable named '${param.name}'.
-                                    Variables can depend solely on constants to prevent circular dependencies.
-                                """.trimIndent().replace(Regex("\\R§"), " "),
-                            )
-                        }
+    internal inline fun <reified T : Any> visitBuilding(context: Context, root: Map<*, *>): Result<T>? =
+        visitJVMConstructor(context, root)
+            ?.also { constructor: JVMConstructor ->
+                val params = when (constructor) {
+                    is OrderedParametersConstructor -> constructor.parameters
+                    is NamedParametersConstructor -> constructor.parametersMap.values
+                }
+                for (param in params) {
+                    if (param is PlaceHolderForVariables) {
+                        error(
+                            """
+                                Attempted construction of a ${T::class.simpleName} with an unresolvable variable
+                                §placeholder referring to '${param.name}: $root'.
+                                This usually happens when a variable depends on another variable,
+                                §check that no other variable is using the variable named '${param.name}'.
+                                Variables can depend solely on constants to prevent circular dependencies.
+                            """.trimIndent().replace(Regex("\\R§"), " "),
+                        )
                     }
                 }
-                ?.buildAny(context.factory)
+            }
+            ?.buildAny(context.factory)
+
+    private fun <T> Iterable<T>.deepFlatten(): List<*> = flatMap {
+        when (it) {
+            is Iterable<*> -> it.deepFlatten()
+            else -> listOf(it)
+        }
+    }
+
+    private inline fun <reified T> Iterable<*>.extractOne(): Any? {
+        val flattened = deepFlatten()
+        check(flattened.size == 1) {
+            """
+            Alchemist was requested to build a single ${T::class.simpleName} using a ${this::class.simpleName}
+            of ${count()} elements with contents $this, which Alchemist tried to flatten obtaining $flattened,
+            which contains ${flattened.size} elements, thus ending up into an ambiguous state.
+            Replace the collection with a single object, or use a collection with a single element.
+            """.trimIndent().replace(Regex("\\R"), " ")
+        }
+        return flattened.first()
+    }
+
+    private inline fun <reified T : Any> visitBuildingExcludingIterable(
+        context: Context,
+        root: Any?,
+    ): Result<T>? = when (root) {
+        is T -> Result.success(root)
+        is Map<*, *> -> visitBuilding(context, root)
         null -> null
         else -> {
             logger.debug("Unable to build a {} with {}, attempting a JIRF conversion ", root, T::class.simpleName)
             context.factory.convert(T::class.java, root).map { Result.success(it) }.orElseGet {
                 Result.failure(
-                    IllegalArgumentException("Unable to convert $root into a ${T::class.simpleName}"),
+                    IllegalArgumentException(
+                        """Unable to convert $root into a ${T::class.simpleName}""",
+                    ),
                 )
             }
         }
+    }
+
+    internal inline fun <reified T : Any> visitBuilding(context: Context, root: Any?): Result<T>? = when (root) {
+        is T -> Result.success(root)
+        is Iterable<*> -> {
+            logger.warn(
+                "Alchemist is trying to build a single {} from a collection of type {}: {}. " +
+                    "Even if the operation succeeds, you should make your configuration clearer using a single object.",
+                T::class.simpleName,
+                root::class.simpleName,
+                root,
+            )
+            visitBuildingExcludingIterable(context, root.extractOne<T>())
+        }
+        else -> visitBuildingExcludingIterable(context, root)
     }
 
     private fun visitConstant(name: String, context: Context, root: Any?): Result<Constant<*>>? {

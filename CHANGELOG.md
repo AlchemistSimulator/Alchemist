@@ -1,3 +1,10 @@
+## [29.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/29.1.0...29.1.1) (2023-12-09)
+
+
+### Bug Fixes
+
+* **swingui:** explicitly fail at startup when effect loading fails ([#2965](https://github.com/AlchemistSimulator/Alchemist/issues/2965)) ([a226188](https://github.com/AlchemistSimulator/Alchemist/commit/a2261886b4f26e55eff24e6312f773bffb35b068))
+
 ## [29.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/29.0.7...29.1.0) (2023-12-09)
 
 

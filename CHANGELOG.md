@@ -1,3 +1,22 @@
+## [29.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/29.0.7...29.1.0) (2023-12-09)
+
+
+### Features
+
+* **loading:** allow loading elements within singleton lists ([#2964](https://github.com/AlchemistSimulator/Alchemist/issues/2964)) ([2248fc8](https://github.com/AlchemistSimulator/Alchemist/commit/2248fc8b48c596e3ca94f7978951dcdb890f4c2d))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 4a9df44 ([fd617f2](https://github.com/AlchemistSimulator/Alchemist/commit/fd617f237ade80001ae24e2b3b5f927100377b85))
+* **deps:** update react to v18.2.0-pre.663 ([6489bce](https://github.com/AlchemistSimulator/Alchemist/commit/6489bce1e997df9bf964a791337b09eb7485b615))
+
+
+### Documentation
+
+* **website:** add documentation for `launcher` ([4a7a537](https://github.com/AlchemistSimulator/Alchemist/commit/4a7a537ba04d2e6e8d7610f2872cfd7e111afcff))
+* **website:** fix typo ([5264a81](https://github.com/AlchemistSimulator/Alchemist/commit/5264a8188d6c8b52aeb541c6bc22d8a21d204105))
+
 ## [29.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/29.0.6...29.0.7) (2023-12-08)
 
 

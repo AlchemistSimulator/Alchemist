@@ -142,9 +142,9 @@ The document contents at the root of the file. Builds an
 
 **(Multi)Spec**
 
-| Mandatory keys | Optional keys                                                                                                               |
-|----------------|-----------------------------------------------------------------------------------------------------------------------------|
-| `incarnation`  | `deployments`, `environment`, `export`, `layers`, `network-model`, `remote-dependencies`, `seeds`, `terminate`, `variables` |
+| Mandatory keys | Optional keys                                                                                                                           |
+|----------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| `incarnation`  | `deployments`, `environment`, `export`, `layers`, `launcher`, `network-model`, `remote-dependencies`, `seeds`, `terminate`, `variables` |
 
 #### Examples
 
@@ -472,6 +472,24 @@ Same as [parameters](#parameters)
 
 ---
 
+### `launcher`
+
+**Type**: SpecMap
+
+Builds a {{% api package="boundary" class="Launcher" %}}
+using the [arbitrary class loading system](#arbitrary-class-loading-system).
+If unspecified, defaults to {{% api package="boundary.launchers" class="HeadlessSimulationLauncher" %}},
+and the simulation will be executed with no graphical interface attached.
+
+#### Examples
+
+* Creation of two {{% api class="Layer" %}}s
+  {{< code path="alchemist-loading/src/test/resources/synthetic/testlayer.yml" >}}
+* Creation of two {{% api package="model.layers" class="BidimensionalGaussianLayer" %}}s:
+  {{< code path="alchemist-cognitive-agents/src/test/resources/social-contagion.yml" >}}
+
+---
+
 ### `layer`
 
 **Type**: SpecMap
@@ -528,7 +546,7 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
 Builds a {{% api class="LinkingRule" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
 If unspecified, defaults to {{% api package="model.linkingrules" class="NoLinks" %}},
-and no nodes will have any neighbor.
+and no node will have any neighbor.
 
 #### Examples
 * Nodes connected when closer than some range

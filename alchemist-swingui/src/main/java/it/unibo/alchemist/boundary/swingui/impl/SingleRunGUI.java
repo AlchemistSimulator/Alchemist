@@ -17,8 +17,6 @@ import it.unibo.alchemist.boundary.swingui.tape.impl.JEffectsTab;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Position2D;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -40,7 +38,6 @@ import java.util.Optional;
  */
 @Deprecated
 public final class SingleRunGUI {
-    private static final Logger L = LoggerFactory.getLogger(SingleRunGUI.class);
     private static final float SCALE_FACTOR = 0.8f;
     private static final int FALLBACK_X_SIZE = 800;
     private static final int FALLBACK_Y_SIZE = 600;
@@ -66,7 +63,7 @@ public final class SingleRunGUI {
     /**
      * @param simulation     the simulation for this GUI
      * @param closeOperation the type of close operation for this GUI
-     * @param <T>            concentration type         concentration type
+     * @param <T>            concentration type
      * @param <P>            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> simulation, final int closeOperation) {
@@ -112,15 +109,6 @@ public final class SingleRunGUI {
     }
 
     /**
-     * Logs an error during effect loading.
-     *
-     * @param e thrown exception
-     */
-    private static void errorLoadingEffects(final Throwable e) {
-        L.error(LocalizedResourceBundle.getString("cannot_load_effects"), e);
-    }
-
-    /**
      * Builds a single-use graphical interface.
      *
      * @param simulation     the simulation for this GUI
@@ -153,10 +141,21 @@ public final class SingleRunGUI {
         canvas.add(upper, BorderLayout.NORTH);
         final JEffectsTab<T> effects = new JEffectsTab<>(main, false);
         if (effectsFile != null) {
+            if (!effectsFile.exists()) {
+                throw new IllegalArgumentException("Effects file " + effectsFile.getAbsolutePath() + " does not exist");
+            }
+            if (effectsFile.isDirectory()) {
+                throw new IllegalArgumentException(
+                    "The effects file at " + effectsFile.getAbsolutePath() + " is a directory, but a file was expected"
+                );
+            }
             try {
                 effects.setEffects(EffectSerializationFactory.effectsFromFile(effectsFile));
             } catch (IOException | ClassNotFoundException ex) {
-                errorLoadingEffects(ex);
+                throw new IllegalStateException(
+                    "An error occurred while trying to load the effects at " + effectsFile.getAbsolutePath(),
+                    ex
+                );
             }
         }
         upper.add(effects);

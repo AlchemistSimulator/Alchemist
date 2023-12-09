@@ -48,7 +48,7 @@ In some cases it may be desirable to override some of the simulation file variab
 resorting to creating a new file. For such cases, `--override` option is available.
 This options takes in input a valid yaml string representing the part of the configuration file to be overriden.
 
-For example, given configuration file `simualation.yml`:
+For example, given configuration file `simulation.yml`:
 
 ```yaml
 foo:

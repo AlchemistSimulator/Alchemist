@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.Time
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import java.util.function.Function
 import java.util.stream.Collectors
@@ -184,8 +185,9 @@ class BatchEngine<T, P : Position<out P>> :
     /**
      * Safely set simulation status.
      */
-    override fun newStatus(next: Status) {
-        synchronized(this) { super.newStatus(next) }
+    @SuppressWarnings("ForbiddenVoid")
+    override fun newStatus(next: Status): CompletableFuture<Void> {
+        synchronized(this) { return super.newStatus(next) }
     }
 
     private inner class TaskResult(val event: Actionable<T>, val eventTime: Time)

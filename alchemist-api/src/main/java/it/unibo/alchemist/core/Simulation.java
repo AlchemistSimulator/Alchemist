@@ -11,6 +11,7 @@ package it.unibo.alchemist.core;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import it.unibo.alchemist.model.Actionable;
@@ -92,18 +93,22 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      * Executes a certain number of steps, then pauses it.
      *
      * @param steps the number of steps to execute
+     *
+     * @return a {@link CompletableFuture} that will be completed when the steps are executed
      */
-    void goToStep(long steps);
+    CompletableFuture<Void> goToStep(long steps);
 
     /**
      * Executes the simulation until the target time is reached, then pauses it.
      *
      * @param t the target time
+     *
+     * @return a {@link CompletableFuture} that will be completed when the target time is reached
      */
-    void goToTime(Time t);
+    CompletableFuture<Void> goToTime(Time t);
 
     /**
-     * This method must get called in case a a communication link connecting two
+     * This method must get called in case a communication link connecting two
      * nodes gets created during the simulation. This method provides dependency
      * and scheduling times re-computation for all the reactions interested by
      * such change.
@@ -165,14 +170,18 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     /**
      * Sends a pause command to the simulation.
      * There is no guarantee on when this command will be actually processed.
+     *
+     * @return a {@link CompletableFuture} that will be completed when the simulation is paused
      */
-    void pause();
+    CompletableFuture<Void> pause();
 
     /**
      * Sends a play command to the simulation.
      * There is no guarantee on when this command will be actually processed.
+     *
+     * @return a {@link CompletableFuture} that will be completed when the simulation is played
      */
-    void play();
+    CompletableFuture<Void> play();
 
     /**
      * Adds a reaction during the simulation to the scheduler and start to execute it.
@@ -213,8 +222,10 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     /**
      * Sends a terminate command to the simulation.
      * There is no guarantee on when this command will be actually processed.
+     *
+     * @return a {@link CompletableFuture} that will be completed when the simulation is terminated
      */
-    void terminate();
+    CompletableFuture<Void> terminate();
 
     /**
      * Suspends the caller until the simulation reaches the selected {@link Status} or the timeout ends.

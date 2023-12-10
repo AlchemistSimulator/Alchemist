@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -316,16 +317,16 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * @param step the number of steps to execute
      */
     @Override
-    public void goToStep(final long step) {
-        pauseWhen(() -> getStep() >= step);
+    public CompletableFuture<Void> goToStep(final long step) {
+        return pauseWhen(() -> getStep() >= step);
     }
 
     /**
      * @param t the target time
      */
     @Override
-    public void goToTime(final Time t) {
-        pauseWhen(() -> getTime().compareTo(t) >= 0);
+    public CompletableFuture<Void> goToTime(final Time t) {
+        return pauseWhen(() -> getTime().compareTo(t) >= 0);
     }
 
     private void idleProcessSingleCommand() throws Throwable {
@@ -365,14 +366,19 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * Sets new status.
      *
      * @param next next status
+     *
+     * @return a future that completes when the status is set to {@code next}
      */
-    protected void newStatus(final Status next) {
+    protected CompletableFuture<Void> newStatus(final Status next) {
+        final var future = new CompletableFuture<Void>();
         schedule(() -> doOnStatus(() -> {
             if (next.isReachableFrom(status)) {
                 status = next;
                 lockForStatus(next).releaseAll();
             }
+            future.complete(null);
         }));
+        return future;
     }
 
     /**
@@ -408,16 +414,16 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * pause.
      */
     @Override
-    public void pause() {
-        newStatus(PAUSED);
+    public CompletableFuture<Void> pause() {
+        return newStatus(PAUSED);
     }
 
     /**
      * play.
      */
     @Override
-    public void play() {
-        newStatus(RUNNING);
+    public CompletableFuture<Void> play() {
+        return newStatus(RUNNING);
     }
 
     /**
@@ -532,17 +538,15 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         // do nothing, leave for override...
     }
 
-    /**
-     * @param condition condition
-     */
-    private void pauseWhen(final BooleanSupplier condition) {
+    private CompletableFuture<Void> pauseWhen(final BooleanSupplier condition) {
+        final var future = new CompletableFuture<Void>();
         addOutputMonitor(new OutputMonitor<>() {
 
             @Override
             public void initialized(@Nonnull final Environment<T, P> environment) {
                 if (condition.getAsBoolean()) {
                     monitors.remove(this);
-                    pause();
+                    pause().thenRun(() -> future.complete(null));
                 }
             }
 
@@ -556,6 +560,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                 initialized(environment);
             }
         });
+        return future;
     }
 
     /**
@@ -579,8 +584,8 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * terminate.
      */
     @Override
-    public void terminate() {
-        newStatus(TERMINATED);
+    public CompletableFuture<Void> terminate() {
+        return newStatus(TERMINATED);
     }
 
     /**

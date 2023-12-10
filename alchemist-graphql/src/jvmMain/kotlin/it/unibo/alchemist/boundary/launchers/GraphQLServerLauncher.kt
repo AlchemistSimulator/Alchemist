@@ -16,6 +16,7 @@ import it.unibo.alchemist.boundary.graphql.monitor.EnvironmentSubscriptionMonito
 import it.unibo.alchemist.boundary.graphql.server.attributes.SimulationAttributeKey
 import it.unibo.alchemist.boundary.graphql.server.modules.graphQLModule
 import it.unibo.alchemist.boundary.graphql.server.modules.graphQLRoutingModule
+import it.unibo.alchemist.boundary.graphql.utils.DefaultGraphQLSettings
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Position
 import kotlinx.coroutines.CoroutineDispatcher
@@ -27,8 +28,8 @@ import kotlinx.coroutines.runBlocking
  * A launcher that starts a GraphQL server for exposing the simulation.
  */
 class GraphQLServerLauncher @JvmOverloads constructor(
-    private val port: Int = 8081,
-    private val host: String = "127.0.0.1",
+    private val host: String = DefaultGraphQLSettings.DEFAULT_HOST,
+    private val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
 ) : SimulationLauncher() {
     override fun launch(loader: Loader) {
         val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, emptyMap<String, Any>())

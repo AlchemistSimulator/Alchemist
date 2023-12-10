@@ -9,8 +9,11 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateSDLTask
+import com.apollographql.apollo3.gradle.internal.ApolloGenerateSourcesTask
+import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import io.gitlab.arturbosch.detekt.Detekt
+import java.io.File.separator
 
 plugins {
     application
@@ -18,53 +21,22 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktor)
     alias(libs.plugins.graphql.server)
-}
-
-dependencies {
-    implementation(libs.ktor.server.cors.jvm)
-    implementation(libs.ktor.server.core.jvm)
-    implementation(libs.ktor.server.websockets)
+    alias(libs.plugins.graphql.client)
 }
 
 kotlin {
-    jvm {
-        withJava()
-
-        // workaround for fixing "task compileKotlin not found", will be fixed in GraphQL Kotlin v.7
-        tasks.maybeCreate("compileKotlin").dependsOn(tasks.named("compileKotlinJvm"))
-        tasks.named<GraphQLGenerateSDLTask>("graphqlGenerateSDL") {
-            val srcSet = sourceSets.getByName("jvmMain").kotlin
-            source = srcSet.asFileTree
-            projectClasspath.setFrom(srcSet)
-        }
-        tasks {
-            graphql {
-                schema {
-                    packages = listOf(
-                        "it.unibo.alchemist.boundary.graphql",
-                    )
-                }
-            }
-
-            // Disabling GraphQL Kotlin unwanted tasks
-            listOf(
-                "graphqlGenerateClient",
-                "graphqlGenerateTestClient",
-            ).map {
-                this.getByName(it)
-            }.forEach { it.enabled = false }
-        }
-    }
-
+    jvm()
     js(IR) {
         browser {
             binaries.executable()
         }
     }
-
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(libs.apollo.runtime)
+                implementation(libs.kotlin.coroutines.core)
+                implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.serialization.json)
             }
         }
@@ -76,10 +48,12 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 api(alchemist("api"))
+                api(alchemist("graphql-surrogates"))
                 implementation(rootProject)
+                implementation(alchemist("implementationbase"))
+                implementation(libs.ktor.server.websockets)
                 implementation(libs.bundles.graphql.server)
                 implementation(libs.bundles.ktor.server)
-                implementation(alchemist("implementationbase"))
             }
         }
         val jvmTest by getting {
@@ -93,18 +67,59 @@ kotlin {
                 implementation(alchemist("test"))
             }
         }
-        val jsMain by getting {
-            dependencies {
-                implementation(libs.apollo.runtime)
-                implementation(libs.kotlin.coroutines.core)
-            }
-        }
-        val jsTest by getting
     }
 }
 
 application {
     mainClass.set("it.unibo.alchemist.Alchemist")
+}
+
+graphql {
+    schema {
+        packages = listOf(
+            "it.unibo.alchemist.boundary.graphql",
+        )
+    }
+}
+
+tasks.withType<AbstractGenerateClientTask>().configureEach {
+    schemaFile.convention {
+        project(":${project.name}-surrogates")
+            .tasks
+            .named("graphqlGenerateSDL")
+            .get()
+            .run { this.property("schemaFile") as RegularFileProperty }
+            .asFile
+            .get()
+    }
+    packageName.set("it.unibo.alchemist.boundary.graphql.client.generated")
+    kotlin {
+        sourceSets {
+            queryFileDirectory.set(file("src/commonMain/resources/graphql"))
+        }
+    }
+}
+
+val surrogates = project(":${project.name}-surrogates")
+
+/**
+ * Configure the Apollo Gradle plugin to generate Kotlin models
+ * from the GraphQL schema inside the `commonMain` sourceSet.
+ */
+apollo {
+    service(name) {
+        generateKotlinModels.set(true)
+        packageName.set("it.unibo.alchemist.boundary.graphql.client")
+        schemaFiles.from(surrogates.layout.buildDirectory.file("schema.graphql"))
+        srcDir("src/commonMain/resources/graphql")
+        outputDirConnection {
+            connectToKotlinSourceSet("commonMain")
+        }
+    }
+}
+
+tasks.withType<ApolloGenerateSourcesTask>().configureEach {
+    dependsOn(surrogates.tasks.named("graphqlGenerateSDL"))
 }
 
 /**
@@ -136,6 +151,10 @@ tasks.withType<ShadowJar>().configureEach {
     mustRunAfter(tasks.distTar, tasks.distZip)
     archiveClassifier.set("all")
 }
+
+fun PatternFilterable.excludeGenerated() = exclude { "build${separator}generated" in it.file.absolutePath }
+tasks.withType<Detekt>().configureEach { excludeGenerated() }
+ktlint { filter { excludeGenerated() } }
 
 publishing.publications {
     withType<MavenPublication> {

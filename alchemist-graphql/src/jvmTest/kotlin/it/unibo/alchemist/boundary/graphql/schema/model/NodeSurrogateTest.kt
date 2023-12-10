@@ -14,10 +14,12 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.TestingEnvironments.graphqlTestEnvironments
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.MoleculeInput
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.NodeSurrogate
+import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.ReactionSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLNodeSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLReactionSurrogate
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.geometry.Vector
 
 class NodeSurrogateTest<T, P> : StringSpec({
@@ -38,8 +40,8 @@ fun <T : Any, P> checkNodeSurrogate(node: Node<T>, nodeSurrogate: NodeSurrogate<
     node.reactions.forEach { reaction -> checkReactionSurrogate(reaction, reaction.toGraphQLReactionSurrogate()) }
 
     node.contents.forEach { (molecule, concentration) ->
-        val concentrationSurrogate = nodeSurrogate.contents()[MoleculeInput(molecule.name)]
-        checkConcentrationContent(concentration, concentrationSurrogate!!)
+        val concentrationSurrogate = requireNotNull(nodeSurrogate.contents()[MoleculeInput(molecule.name)])
+        checkConcentrationContent(concentration, concentrationSurrogate)
     }
 
     node.contents.size shouldBe nodeSurrogate.contents().size
@@ -48,4 +50,10 @@ fun <T : Any, P> checkNodeSurrogate(node: Node<T>, nodeSurrogate: NodeSurrogate<
         nodeSurrogate.contains(moleculeInput) shouldBe true
         checkConcentrationContent(concentration, nodeSurrogate.getConcentration(moleculeInput)!!)
     }
+}
+
+fun <T>checkReactionSurrogate(reaction: Reaction<T>, reactionSurrogate: ReactionSurrogate<T>) {
+    reaction.inputContext shouldBe reactionSurrogate.inputContext
+    reaction.outputContext shouldBe reactionSurrogate.outputContext
+    reaction.node.toGraphQLNodeSurrogate() shouldBe reactionSurrogate.node
 }

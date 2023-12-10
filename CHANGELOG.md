@@ -1,3 +1,15 @@
+## [29.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/29.1.1...29.2.0) (2023-12-10)
+
+
+### Features
+
+* **alchemist-api:** add async simulation control ([#2032](https://github.com/AlchemistSimulator/Alchemist/issues/2032)) ([14e01a1](https://github.com/AlchemistSimulator/Alchemist/commit/14e01a1e40b11143143240de397d66680ea6b9c1))
+
+
+### Dependency updates
+
+* **deps:** update npm to v10.2.5 ([77fd074](https://github.com/AlchemistSimulator/Alchemist/commit/77fd07429c619b21a9a9b4acc5c61f55ba9593bd))
+
 ## [29.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/29.1.0...29.1.1) (2023-12-09)
 
 

@@ -83,15 +83,15 @@ graphql {
 }
 
 tasks.withType<AbstractGenerateClientTask>().configureEach {
-    schemaFile.convention {
-        project(":${project.name}-surrogates")
-            .tasks
-            .named("graphqlGenerateSDL")
-            .get()
-            .run { this.property("schemaFile") as RegularFileProperty }
-            .asFile
-            .get()
-    }
+    val graphQLGenerateSDL = project(":${project.name}-surrogates")
+        .tasks
+        .named("graphqlGenerateSDL")
+    dependsOn(graphQLGenerateSDL)
+    schemaFile.convention(
+        graphQLGenerateSDL
+            .map { it.property("schemaFile") as RegularFileProperty }
+            .map { it.get() },
+    )
     packageName.set("it.unibo.alchemist.boundary.graphql.client.generated")
     kotlin {
         sourceSets {

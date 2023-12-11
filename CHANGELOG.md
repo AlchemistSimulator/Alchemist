@@ -1,3 +1,20 @@
+## [29.3.0](https://github.com/AlchemistSimulator/Alchemist/compare/29.2.0...29.3.0) (2023-12-11)
+
+
+### Features
+
+* **graphql:** add GraphQL client stub ([#2832](https://github.com/AlchemistSimulator/Alchemist/issues/2832)) ([b2ff80e](https://github.com/AlchemistSimulator/Alchemist/commit/b2ff80e42bb20927c914f293cdfe32eafde838c0))
+
+
+### Dependency updates
+
+* **deps:** update dependency org.jetbrains.kotlin-wrappers:kotlin-react to v18.2.0-pre.664 ([35e6f91](https://github.com/AlchemistSimulator/Alchemist/commit/35e6f916ac6fdd15c8b13079cb60897ee4e0d89e))
+
+
+### Build and continuous integration
+
+* **graphql:** make the client generation explicitly depend on task `graphqlGenerateSDL` ([5b2ddd3](https://github.com/AlchemistSimulator/Alchemist/commit/5b2ddd36bc22708cbca588d68d9c152b891772b0))
+
 ## [29.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/29.1.1...29.2.0) (2023-12-10)
 
 

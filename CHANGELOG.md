@@ -1,3 +1,20 @@
+## [29.3.1](https://github.com/AlchemistSimulator/Alchemist/compare/29.3.0...29.3.1) (2023-12-12)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.6 ([29bb88d](https://github.com/AlchemistSimulator/Alchemist/commit/29bb88d230f3b9af8fc30a755084b79065e98d23))
+* **deps:** update dependency com.miglayout:miglayout-swing to v11.3 ([037107c](https://github.com/AlchemistSimulator/Alchemist/commit/037107cfe5b6534d2f076f4945a716f377f1f2f6))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.80 ([a56fb51](https://github.com/AlchemistSimulator/Alchemist/commit/a56fb519222ac70c4d84da522e613d111f6953bf))
+* **deps:** update plugin kotlin-qa to v0.57.0 ([bfa74ff](https://github.com/AlchemistSimulator/Alchemist/commit/bfa74ff9e821eec269b07609b66ceb78ada13b2b))
+* **deps:** update react to v18.2.0-pre.665 ([86bb061](https://github.com/AlchemistSimulator/Alchemist/commit/86bb061e83f3d3a95c09bf181a402c04481fb03e))
+
+
+### General maintenance
+
+* delete .github/workflows/rebase-on-comment.yml ([cfedb0f](https://github.com/AlchemistSimulator/Alchemist/commit/cfedb0f184c1cf89dd49339a9c6407c5c56f564b))
+* delete refactoring.md ([581803a](https://github.com/AlchemistSimulator/Alchemist/commit/581803a04bfe08dea4c142770d2d57d367ae4f2f))
+
 ## [29.3.0](https://github.com/AlchemistSimulator/Alchemist/compare/29.2.0...29.3.0) (2023-12-11)
 
 

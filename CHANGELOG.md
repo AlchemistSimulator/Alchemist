@@ -1,3 +1,10 @@
+## [29.3.2](https://github.com/AlchemistSimulator/Alchemist/compare/29.3.1...29.3.2) (2023-12-12)
+
+
+### Documentation
+
+* **graphql:** add usage documentation ([#2975](https://github.com/AlchemistSimulator/Alchemist/issues/2975)) ([f97b320](https://github.com/AlchemistSimulator/Alchemist/commit/f97b320e95fbc59e813c623d6c8586ed6a3c52d2))
+
 ## [29.3.1](https://github.com/AlchemistSimulator/Alchemist/compare/29.3.0...29.3.1) (2023-12-12)
 
 

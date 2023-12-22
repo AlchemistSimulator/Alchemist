@@ -91,6 +91,8 @@ jobs:
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
   # Test jpackage utility
   test-packaging:
+    needs:
+      - select-java-version
     strategy:
       matrix:
         os: [ windows-2022, macos-12, ubuntu-22.04 ]
@@ -101,6 +103,11 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
+      - name: Dry run
+        run: ./gradlew clean build jpackage --info -Djpackage.dryRun=true
+      # Build a package and test it
+      - name: Create package and test
+        run: echo "test"
 
   # Builds the website and verifies link sanity
   build-website:
@@ -247,6 +254,7 @@ jobs:
       - build-website
       - release
       - test-deploy
+      - test-packaging
     if: >-
       always() && (
         contains(join(needs.*.result, ','), 'failure')

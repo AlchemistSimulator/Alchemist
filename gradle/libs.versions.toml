@@ -147,7 +147,7 @@ testing-compile = [
     "junit-api",
     "kotest-assertions",
     "kotest-runner",
-    "mockito-core"  
+    "mockito-core"
 ]
 testing-runtimeOnly = [ "junit-engine" ]
 

@@ -304,22 +304,26 @@ allprojects {
         }
     }
 
-    // DEBUGGING ONLY
-    tasks.create("printout") {
-        // println("Build dir: ${rootProject.buildDir} Version: ${project.version}")
-        // println("Main jar: ${tasks.shadowJar.get().archiveFileName.get()}")
-        // println("Dir: ${rootProject.layout.buildDirectory.map { it.dir("shadow")}.get().asFile.path}")
-    }
-
     // JPackage
     tasks.jpackage {
+        // General info
+        // icon =
+        // resourceDir =
         appName = rootProject.name
+        appVersion = rootProject.version.toString()
+        copyright = "Copyright (C) 2010-2023, Danilo Pianini and contributors"
+        appDescription = rootProject.description
+        vendor = ""
+        licenseFile = "LICENSE.md"
+
+        // Packaging settings
         input = rootProject.layout.buildDirectory.map { it.dir("shadow") }.get().asFile.path
         destination = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path
-        // should be set to alchemist-all.jar and pass all the other jars as cp in command line options
-        // or to alchemist-full-all.jar
-        // mainJar = "alchemist-" + rootProject.version + "-*all.jar"
+        mainJar = "alchemist-full-" + rootProject.version + "-all.jar"
+        mainClass = "it.unibo.alchemist.Alchemist"
+
         windows {
+            appVersion = rootProject.version.toString().substringBefore('-')
             winDirChooser = true
             winShortcutPrompt = true
         }

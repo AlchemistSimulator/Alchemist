@@ -39,6 +39,7 @@ plugins {
     alias(libs.plugins.shadowJar)
     alias(libs.plugins.taskTree)
     alias(libs.plugins.hugo)
+    alias(libs.plugins.jpackage)
 }
 
 val minJavaVersion: String by properties
@@ -59,6 +60,7 @@ allprojects {
         apply(plugin = publishOnCentral.id)
         apply(plugin = shadowJar.id)
         apply(plugin = taskTree.id)
+        apply(plugin = jpackage.id)
     }
     apply(plugin = "distribution")
 
@@ -299,6 +301,27 @@ allprojects {
                     roles.set(mutableSetOf("architect", "developer"))
                 }
             }
+        }
+    }
+
+    // DEBUGGING ONLY
+    tasks.create("printout") {
+        // println("Build dir: ${rootProject.buildDir} Version: ${project.version}")
+        // println("Main jar: ${tasks.shadowJar.get().archiveFileName.get()}")
+        // println("Dir: ${rootProject.layout.buildDirectory.map { it.dir("shadow")}.get().asFile.path}")
+    }
+
+    // JPackage
+    tasks.jpackage {
+        appName = rootProject.name
+        input = rootProject.layout.buildDirectory.map { it.dir("shadow") }.get().asFile.path
+        destination = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path
+        // should be set to alchemist-all.jar and pass all the other jars as cp in command line options
+        // or to alchemist-full-all.jar
+        // mainJar = "alchemist-" + rootProject.version + "-*all.jar"
+        windows {
+            winDirChooser = true
+            winShortcutPrompt = true
         }
     }
 

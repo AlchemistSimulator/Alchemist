@@ -19,6 +19,7 @@ git -C build/website/ push || exit 3
 RELEASE_ON_CENTRAL="./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs release --parallel"
 eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || exit 5
 ./gradlew publishKotlinOSSRHPublicationToGithubRepository --continue || true
+./gradlew jpackage
 `
 var config = require('semantic-release-preconfigured-conventional-commits');
 config.plugins.push(
@@ -28,6 +29,7 @@ config.plugins.push(
     ["@semantic-release/github", {
         "assets": [ 
             { "path": "build/shadow/*-all.jar" },
+            { "path": "build/package/*"}
          ]
     }],
     "@semantic-release/git",

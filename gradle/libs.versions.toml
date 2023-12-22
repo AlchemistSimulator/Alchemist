@@ -45,7 +45,7 @@ graphql-server = { module = "com.expediagroup:graphql-kotlin-server", version.re
 graphql-server-ktor = { module = "com.expediagroup:graphql-kotlin-ktor-server", version.ref = "graphql" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
-groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.19"
+groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.20"
 gson = "com.google.code.gson:gson:2.10.1"
 gson-extras = "org.danilopianini:gson-extras:1.2.0"
 guava = "com.google.guava:guava:33.0.0-jre"

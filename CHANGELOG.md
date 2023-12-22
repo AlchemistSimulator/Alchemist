@@ -1,3 +1,22 @@
+## [29.3.4](https://github.com/AlchemistSimulator/Alchemist/compare/29.3.3...29.3.4) (2023-12-22)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.9 ([1a0d485](https://github.com/AlchemistSimulator/Alchemist/commit/1a0d48555c631155abc3f38cb4e8a5176e4188be))
+* **deps:** update dependency org.danilopianini:jirf to v0.4.17 ([ef20dc9](https://github.com/AlchemistSimulator/Alchemist/commit/ef20dc97e722ce1b3046ad45a2c911f1906dc357))
+* **deps:** update kotlin monorepo to v1.9.22 ([b558854](https://github.com/AlchemistSimulator/Alchemist/commit/b558854c10f92e2c40ad429fd1eaa0d60d0c69ac))
+* **deps:** update plugin gitsemver to v2.0.5 ([b3b4930](https://github.com/AlchemistSimulator/Alchemist/commit/b3b49302e3313ba4f5a3e6d53dfd1b6140376b0d))
+* **deps:** update plugin java-qa to v1.31.0 ([d9329d9](https://github.com/AlchemistSimulator/Alchemist/commit/d9329d95588c9c82bfe41509c81988f050424704))
+* **deps:** update plugin kotlin-qa to v0.57.1 ([3b37c8f](https://github.com/AlchemistSimulator/Alchemist/commit/3b37c8f62d1fab684d0ea436d910297070b8f9ca))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.1.17 ([3db9076](https://github.com/AlchemistSimulator/Alchemist/commit/3db90768ad7022e55823b0532742380aff4c37aa))
+* **deps:** update site/themes/hugo-theme-relearn digest to 974798a ([4ef6599](https://github.com/AlchemistSimulator/Alchemist/commit/4ef65992b4222c8d69a90a3f9be555bef5e3a923))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/download-artifact action to v4.1.0 ([7885c0d](https://github.com/AlchemistSimulator/Alchemist/commit/7885c0d2b4cbbf881d0f04466693141b0129f71e))
+
 ## [29.3.3](https://github.com/AlchemistSimulator/Alchemist/compare/29.3.2...29.3.3) (2023-12-19)
 
 

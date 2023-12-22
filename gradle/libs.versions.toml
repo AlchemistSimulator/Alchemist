@@ -11,9 +11,9 @@ konf = "1.1.2"
 kotest = "5.8.0"
 ktor = "2.3.7"
 dokka = "1.9.10"
-kotlin = "1.9.21"
+kotlin = "1.9.22"
 mockito = "5.8.0"
-protelis = "17.3.7"
+protelis = "17.3.9"
 react = "18.2.0-pre.668"
 scafi = "1.2.0"
 scala = "2.13.12"
@@ -45,7 +45,7 @@ graphql-server = { module = "com.expediagroup:graphql-kotlin-server", version.re
 graphql-server-ktor = { module = "com.expediagroup:graphql-kotlin-ktor-server", version.ref = "graphql" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
-groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.19"
+groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.20"
 gson = "com.google.code.gson:gson:2.10.1"
 gson-extras = "org.danilopianini:gson-extras:1.2.0"
 guava = "com.google.guava:guava:33.0.0-jre"
@@ -59,7 +59,7 @@ jgit = "org.eclipse.jgit:org.eclipse.jgit:6.8.0.202311291450-r"
 jgrapht-core = "org.jgrapht:jgrapht-core:1.5.2"
 jiconfont-javafx = "com.github.jiconfont:jiconfont-javafx:1.0.0"
 jiconfont-materialDesignIcons = "com.github.jiconfont:jiconfont-google_material_design_icons:2.2.0.2"
-jirf = "org.danilopianini:jirf:0.4.16"
+jirf = "org.danilopianini:jirf:0.4.17"
 jool = "org.jooq:jool:0.9.15"
 jpx = "io.jenetics:jpx:3.1.0"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
@@ -153,19 +153,19 @@ testing-runtimeOnly = [ "junit-engine" ]
 
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:2.0.4"
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:2.0.5"
 graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
 hugo = "io.github.fstaudt.hugo:0.6.2"
-java-qa = "org.danilopianini.gradle-java-qa:1.29.0"
+java-qa = "org.danilopianini.gradle-java-qa:1.31.0"
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.57.0"
+kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.57.1"
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.5.5"
-publishOnCentral = "org.danilopianini.publish-on-central:5.0.20"
+publishOnCentral = "org.danilopianini.publish-on-central:5.0.22"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"
 scalatest = "com.github.maiflai.scalatest:0.32"
 shadowJar = "com.github.johnrengelman.shadow:8.1.1"

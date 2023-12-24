@@ -104,7 +104,7 @@ jobs:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
       - name: Dry run
-        run: ./gradlew clean build jpackage --info -Djpackage.dryRun=true
+        run: ./gradlew :jpackage --info -Djpackage.dryRun=true
       # Build a package and test it
       - name: Create package and test
         run: echo "test"

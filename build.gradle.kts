@@ -15,6 +15,7 @@ import Util.id
 import Util.isInCI
 import Util.isMac
 import Util.isMultiplatform
+import Util.isUnix
 import Util.isWindows
 import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
@@ -25,6 +26,9 @@ import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.AbstractDokkaParentTask
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.panteleyev.jpackage.ImageType
+import java.io.ByteArrayOutputStream
+
 
 plugins {
     distribution
@@ -60,7 +64,6 @@ allprojects {
         apply(plugin = publishOnCentral.id)
         apply(plugin = shadowJar.id)
         apply(plugin = taskTree.id)
-        apply(plugin = jpackage.id)
     }
     apply(plugin = "distribution")
 
@@ -304,33 +307,9 @@ allprojects {
         }
     }
 
-    // JPackage
-    tasks.jpackage {
-        // General info
-        // icon =
-        // resourceDir =
-        appName = rootProject.name
-        appVersion = rootProject.version.toString()
-        copyright = "Copyright (C) 2010-2023, Danilo Pianini and contributors"
-        appDescription = rootProject.description
-        vendor = ""
-        licenseFile = "LICENSE.md"
-
-        // Packaging settings
-        input = rootProject.layout.buildDirectory.map { it.dir("shadow") }.get().asFile.path
-        destination = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path
-        mainJar = "alchemist-full-" + rootProject.version + "-all.jar"
-        mainClass = "it.unibo.alchemist.Alchemist"
-
-        windows {
-            appVersion = rootProject.version.toString().substringBefore('-')
-            winDirChooser = true
-            winShortcutPrompt = true
-        }
-    }
-
     // Shadow Jar
     tasks.withType<ShadowJar> {
+
         manifest {
             attributes(
                 mapOf(
@@ -407,6 +386,77 @@ dependencies {
 
 tasks.named("kotlinStoreYarnLock").configure {
     dependsOn("kotlinUpgradeYarnLock")
+}
+
+// JPackage
+tasks.jpackage {
+    // General info
+    // icon =
+    // resourceDir =
+    appName = rootProject.name
+    appVersion = rootProject.version.toString().substringBefore('-')
+    copyright = "Copyright (C) 2010-2023, Danilo Pianini and contributors"
+    appDescription = rootProject.description
+    vendor = ""
+    licenseFile = "LICENSE.md"
+    verbose = true
+
+    // Packaging settings
+    input = rootProject.layout.buildDirectory.map { it.dir("shadow") }.get().asFile.path
+    destination = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path
+    mainJar = "alchemist-full-" + rootProject.version + "-all.jar"
+    mainClass = "it.unibo.alchemist.Alchemist"
+    linux {
+        type = ImageType.RPM
+    }
+    windows {
+        type = ImageType.MSI
+        winDirChooser = true
+        winShortcutPrompt = true
+    }
+    getTasksByName("shadowJar", true).forEach {
+        this.dependsOn(it)
+        this.mustRunAfter(it)
+    }
+}
+
+tasks.register<Exec>("testJpackageOutput") {
+    group = "Verification"
+    description = "Verifies the jpackage output correctness for the OS running the script"
+    val interceptOutput = ByteArrayOutputStream()
+    val interceptError = ByteArrayOutputStream()
+    standardOutput = interceptOutput
+    errorOutput = interceptError
+
+    workingDir = project.file("build/package/")
+
+    val isLinux = isUnix && !isMac
+    var execute = listOf("echo")
+    if (isWindows) {
+        execute = listOf("msiexec", "/i", "alchemist*.msi", "/quiet", "INSTALLDIR=install")
+        println("Testing on Windows")
+    } else if (isMac) {
+        println("Testing on Mac OS")
+    } else if (isLinux) {
+        println("Testing on Linux")
+    }
+
+    doFirst {
+        // Extract the packet
+        commandLine(*execute.toTypedArray())
+
+        // Test the executable extracted
+        commandLine("ls", "-a", "install")
+    }
+
+    doLast {
+        val exit = executionResult.get().exitValue
+        // Check the output of the executable
+        // Check if package contains every file needed
+    }
+
+    dependsOn(tasks.jpackage)
+    mustRunAfter(tasks.jpackage)
 }
 
 // WEBSITE

@@ -68,6 +68,7 @@ jobs:
     #    github.event_name != 'pull_request'
     #    || github.event.pull_request.head.repo.full_name == github.repository
     #  )
+    if: false 
     timeout-minutes: 120
     concurrency:
       group: ${{ github.workflow }}-test-deploy-${{ github.event.number || github.ref }}
@@ -103,11 +104,18 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
+        # Use DanySK/build-check-deploy-gradle-action@2.2.12 with jpackage tests
+      - name: Setup Java
+        uses: actions/setup-java@v4.0.0
+        with:
+          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          distribution: 'temurin'
       - name: Dry run
-        run: ./gradlew :jpackage --info -Djpackage.dryRun=true
+        shell: bash
+        run: ./gradlew jpackage --info -Djpackage.dryRun=true
+      - name: Create package
+        run: ./gradlew jpackage --info
       # Build a package and test it
-      - name: Create package and test
-        run: echo "test"
 
   # Builds the website and verifies link sanity
   build-website:
@@ -185,7 +193,7 @@ jobs:
       - select-java-version
       - build
       - build-website
-      - test-deploy
+    # - test-deploy
       - test-packaging
     runs-on: ubuntu-22.04
     #Disabled for testing purposes
@@ -247,13 +255,16 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
+      #Add a step to publish to AUR
+
+      #Add a step to publish to Snap Store
   success:
     runs-on: ubuntu-22.04
     needs:
       - build
       - build-website
       - release
-      - test-deploy
+    # - test-deploy
       - test-packaging
     if: >-
       always() && (

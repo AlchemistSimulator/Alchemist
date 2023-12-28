@@ -113,9 +113,11 @@ jobs:
       - name: Dry run
         shell: bash
         run: ./gradlew jpackage --info -Djpackage.dryRun=true
-      - name: Create package
-        run: ./gradlew jpackage --info
-      # Build a package and test it
+      - name: Install bsdtar
+        if: matrix.os == 'ubuntu-22.04'
+        run: sudo apt update && sudo apt install libarchive-tools
+      - name: Test packaging
+        run: ./gradlew testJpackageOutput --info
 
   # Builds the website and verifies link sanity
   build-website:

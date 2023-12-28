@@ -391,8 +391,7 @@ tasks.named("kotlinStoreYarnLock").configure {
 // JPackage
 tasks.jpackage {
     // General info
-    // icon =
-    // resourceDir =
+    resourceDir = "package-settings"
     appName = rootProject.name
     appVersion = rootProject.version.toString().substringBefore('-')
     copyright = "Copyright (C) 2010-2023, Danilo Pianini and contributors"
@@ -404,20 +403,25 @@ tasks.jpackage {
     // Packaging settings
     input = rootProject.layout.buildDirectory.map { it.dir("shadow") }.get().asFile.path
     destination = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path
-    mainJar = "alchemist-full-" + rootProject.version + "-all.jar"
+    mainJar = "alchemist-full-${rootProject.version}-all.jar"
     mainClass = "it.unibo.alchemist.Alchemist"
     linux {
+        icon = "package-settings/logo.png"
         type = ImageType.RPM
+        resourceDir = "package-settings"
     }
     windows {
+        icon = "package-settings/logo.ico"
         type = ImageType.MSI
         winDirChooser = true
         winShortcutPrompt = true
+        resourceDir = "package-settings/windows/"
     }
-    getTasksByName("shadowJar", true).forEach {
-        this.dependsOn(it)
-        this.mustRunAfter(it)
+    mac {
+        resourceDir = "package-settings"
     }
+
+    dependsOn(":alchemist-full:shadowJar")
 }
 
 tasks.register<Exec>("testJpackageOutput") {
@@ -427,32 +431,36 @@ tasks.register<Exec>("testJpackageOutput") {
     val interceptError = ByteArrayOutputStream()
     standardOutput = interceptOutput
     errorOutput = interceptError
-
+    isIgnoreExitValue = true
     workingDir = project.file("build/package/")
 
     val isLinux = isUnix && !isMac
-    var execute = listOf("echo")
+    var execute = listOf(":")
     if (isWindows) {
-        execute = listOf("msiexec", "/i", "alchemist*.msi", "/quiet", "INSTALLDIR=install")
-        println("Testing on Windows")
+        execute = listOf("msiexec", "-i", "alchemist-${rootProject.version}.msi", "-quiet", "INSTALLDIR=install")
     } else if (isMac) {
-        println("Testing on Mac OS")
     } else if (isLinux) {
-        println("Testing on Linux")
+        execute = listOf("bsdtar", "-xf", "${rootProject.name}-${rootProject.version}-1.x86_64.rpm")
     }
-
     doFirst {
         // Extract the packet
         commandLine(*execute.toTypedArray())
-
-        // Test the executable extracted
-        commandLine("ls", "-a", "install")
     }
-
     doLast {
         val exit = executionResult.get().exitValue
-        // Check the output of the executable
         // Check if package contains every file needed
+        if (isWindows) {
+            val files = workingDir.resolve("install").listFiles().map { it.name }
+            require("${rootProject.name}.exe" in files)
+            val appFiles = workingDir.resolve("install/app").listFiles().map { it.name }
+            require(tasks.jpackage.get().mainJar in appFiles)
+        } else if (isMac) {
+        } else if (isLinux) {
+            val files = workingDir.resolve("opt/alchemist/bin").listFiles().map { it.name }
+            require("${rootProject.name}" in files)
+            val appFiles = workingDir.resolve("opt/alchemist/lib/app").listFiles().map { it.name }
+            require(tasks.jpackage.get().mainJar in appFiles)
+        }
     }
 
     dependsOn(tasks.jpackage)

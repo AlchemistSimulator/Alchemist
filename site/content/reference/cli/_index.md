@@ -130,8 +130,8 @@ SwingGUI Launch configuration
 
 ```yaml
 ...
-launcher:
-  type: SingleRunSwingUI
+monitors:
+  type: SwingGUI
   parameters:
     graphics: /effects/some-effect.json
 ...

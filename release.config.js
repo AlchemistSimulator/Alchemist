@@ -8,17 +8,17 @@
  */
 
 var publishCmd = `
-git tag -a -f \${nextRelease.version} \${nextRelease.version} -F CHANGELOG.md
-git push --force origin \${nextRelease.version} || exit 6
-./gradlew kotlinUpgradeYarnLock || exit 8
-./gradlew performWebsiteStringReplacements || exit 7
-git -C build/website/ add . || exit 1
-git -C build/website/ commit -m "chore: update website to version \${nextRelease.version}" || exit 2
-git -C build/website/ push || exit 3
+ git tag -a -f \${nextRelease.version} \${nextRelease.version} -F CHANGELOG.md
+ git push --force origin \${nextRelease.version} || exit 6
+// ./gradlew kotlinUpgradeYarnLock || exit 8
+// ./gradlew performWebsiteStringReplacements || exit 7
+// git -C build/website/ add . || exit 1
+// git -C build/website/ commit -m "chore: update website to version \${nextRelease.version}" || exit 2
+// git -C build/website/ push || exit 3
 ./gradlew jpackage || exit 4
 RELEASE_ON_CENTRAL="./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs release --parallel"
-eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || exit 5
-./gradlew publishKotlinOSSRHPublicationToGithubRepository --continue || true
+// eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || exit 5
+// ./gradlew publishKotlinOSSRHPublicationToGithubRepository --continue || true
 `
 var config = require('semantic-release-preconfigured-conventional-commits');
 config.plugins.push(

@@ -398,7 +398,7 @@ tasks.jpackage {
     appDescription = rootProject.description
     vendor = ""
     licenseFile = "LICENSE.md"
-    verbose = true
+    verbose = isInCI
 
     // Packaging settings
     input = rootProject.layout.buildDirectory.map { it.dir("shadow") }.get().asFile.path
@@ -415,9 +415,11 @@ tasks.jpackage {
         type = ImageType.MSI
         winDirChooser = true
         winShortcutPrompt = true
+        winPerUserInstall = isInCI
         resourceDir = "package-settings/windows/"
     }
     mac {
+        type = ImageType.PKG
         resourceDir = "package-settings"
     }
 
@@ -429,42 +431,50 @@ tasks.register<Exec>("testJpackageOutput") {
     description = "Verifies the jpackage output correctness for the OS running the script"
     val interceptOutput = ByteArrayOutputStream()
     val interceptError = ByteArrayOutputStream()
+    val version = rootProject.version.toString().substringBefore('-')
+    val isLinux = isUnix && !isMac
     standardOutput = interceptOutput
     errorOutput = interceptError
     isIgnoreExitValue = true
     workingDir = project.file("build/package/")
-
-    val isLinux = isUnix && !isMac
-    var execute = listOf(":")
-    if (isWindows) {
-        execute = listOf("msiexec", "-i", "alchemist-${rootProject.version}.msi", "-quiet", "INSTALLDIR=install")
-    } else if (isMac) {
-    } else if (isLinux) {
-        execute = listOf("bsdtar", "-xf", "${rootProject.name}-${rootProject.version}-1.x86_64.rpm")
-    }
     doFirst {
         // Extract the packet
-        commandLine(*execute.toTypedArray())
+        if (isWindows) {
+            commandLine("msiexec", "-i", "${rootProject.name}-$version.msi", "-quiet", "INSTALLDIR=${workingDir.path}\\install")
+        } else if (isMac) {
+            commandLine("sudo", "installer", "-pkg", "${rootProject.name}-$version.pkg", "-target", "/")
+        } else if (isLinux) {
+            workingDir.resolve("install").mkdirs()
+            commandLine("bsdtar", "-xf", "${rootProject.name}-$version-1.x86_64.rpm", "-C", "install")
+        }
     }
     doLast {
         val exit = executionResult.get().exitValue
         // Check if package contains every file needed
+        var execFiles = listOf("")
+        var appFiles = listOf("")
         if (isWindows) {
-            val files = workingDir.resolve("install").listFiles().map { it.name }
-            require("${rootProject.name}.exe" in files)
-            val appFiles = workingDir.resolve("install/app").listFiles().map { it.name }
-            require(tasks.jpackage.get().mainJar in appFiles)
+            execFiles = workingDir.resolve("install").listFiles().map { it.name }
+            appFiles = workingDir.resolve("install/app").listFiles().map { it.name }
         } else if (isMac) {
+            val root = File("/Applications/${rootProject.name}.app")
+            execFiles = root.resolve("Contents/MacOS").listFiles().map { it.name }
+            appFiles = root.resolve("Contents/app").listFiles().map { it.name }
         } else if (isLinux) {
-            val files = workingDir.resolve("opt/alchemist/bin").listFiles().map { it.name }
-            require("${rootProject.name}" in files)
-            val appFiles = workingDir.resolve("opt/alchemist/lib/app").listFiles().map { it.name }
-            require(tasks.jpackage.get().mainJar in appFiles)
+            execFiles = workingDir.resolve("install/opt/alchemist/bin").listFiles().map { it.name }
+            appFiles = workingDir.resolve("install/opt/alchemist/lib/app").listFiles().map { it.name }
         }
+        require(rootProject.name in execFiles || "${rootProject.name}.exe" in execFiles)
+        require(tasks.jpackage.get().mainJar in appFiles)
     }
 
     dependsOn(tasks.jpackage)
     mustRunAfter(tasks.jpackage)
+    finalizedBy("deleteJpackageOutput")
+}
+
+tasks.register<Delete>("deleteJpackageOutput") {
+    setDelete(project.file("build/package/install"))
 }
 
 // WEBSITE

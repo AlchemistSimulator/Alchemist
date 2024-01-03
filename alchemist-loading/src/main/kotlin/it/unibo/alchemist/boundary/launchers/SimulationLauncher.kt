@@ -57,6 +57,7 @@ abstract class SimulationLauncher : Launcher {
         if (initialized.exporters.isNotEmpty()) {
             simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         }
+        initialized.monitors.forEach(simulation::addOutputMonitor)
         return simulation
     }
 

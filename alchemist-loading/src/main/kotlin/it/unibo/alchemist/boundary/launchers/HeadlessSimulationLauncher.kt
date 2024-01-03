@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit
  */
 class HeadlessSimulationLauncher @JvmOverloads constructor(
     private val variables: List<String> = emptyList(),
+    private val autostart: Boolean = true,
     private val parallelism: Int = defaultParallelism,
 ) : SimulationLauncher() {
 
@@ -37,7 +38,9 @@ class HeadlessSimulationLauncher @JvmOverloads constructor(
                 runCatching { prepareSimulation<Any, Nothing>(loader, newVariables) }
                     .onFailure { logger.error("Error during the preparation of the simulation: $newVariables", it) }
                     .mapCatching { simulation ->
-                        simulation.play()
+                        if (autostart) {
+                            simulation.play()
+                        }
                         simulation.run()
                         simulation.error.ifPresent { throw it }
                         logger.info("Simulation with {} completed successfully", newVariables)

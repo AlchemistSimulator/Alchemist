@@ -37,7 +37,7 @@ object YamlProvider : AlchemistModelProvider {
     override fun from(input: URL): Map<String, Any> =
         Yaml(loaderOptions).load<Map<String, Any>>(input.openStream()).checkNotNull(input)
 
-    private inline fun <reified T> T?.checkNotNull(input: Any): T {
+    inline fun <reified T> T?.checkNotNull(input: Any): T {
         requireNotNull(this) {
             "The Alchemist YAML parser for $input could not load anything: maybe the YAML resource is an empty file?"
         }

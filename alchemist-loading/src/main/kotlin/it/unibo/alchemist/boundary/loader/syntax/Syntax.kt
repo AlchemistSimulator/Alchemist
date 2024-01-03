@@ -190,7 +190,7 @@ internal object DocumentRoot : SyntaxElement {
     val incarnation by OwnName
     val launcher by OwnName
     val layers by OwnName
-    const val monitors = "monitors"
+    val monitors by OwnName
     const val linkingRule = "network-model"
     const val engineConfiguration = "engine-configuration"
     const val remoteDependencies = "remote-dependencies"

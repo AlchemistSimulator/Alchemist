@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.conrec)
     implementation(libs.jgrapht.core)
     implementation(libs.oxygen.icons)
+    testImplementation(alchemist("test"))
     testRuntimeOnly(incarnation("protelis"))
 }
 

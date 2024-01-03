@@ -26,7 +26,7 @@ import it.unibo.alchemist.boundary.graphql.schema.operations.queries.Environment
 import it.unibo.alchemist.boundary.graphql.schema.operations.queries.NodeQueries
 import it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions.EnvironmentSubscriptions
 import it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions.NodeSubscriptions
-import it.unibo.alchemist.boundary.graphql.server.attributes.SimulationAttributeKey
+import it.unibo.alchemist.model.Environment
 import java.time.Duration
 
 // The following values are referred to milliseconds.
@@ -36,7 +36,7 @@ private const val DEFAULT_TIMEOUT_DURATION = 10000L
 /**
  * Ktor module for enabling GraphQL on server.
  */
-fun Application.graphQLModule() {
+fun Application.graphQLModule(environment: Environment<*, *>) {
     install(CORS) {
         anyHost()
     }
@@ -52,8 +52,6 @@ fun Application.graphQLModule() {
         masking = false
         contentConverter = JacksonWebsocketContentConverter()
     }
-
-    val environment = attributes[SimulationAttributeKey].environment
 
     install(GraphQL) {
         schema {

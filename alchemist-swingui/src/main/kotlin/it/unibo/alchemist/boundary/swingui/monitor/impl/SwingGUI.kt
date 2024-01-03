@@ -53,8 +53,8 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
     @JvmOverloads constructor(
         environment: Environment<T, P>,
         graphics: File?,
-        closeOperation: Int = JFrame.EXIT_ON_CLOSE,
         failOnHeadless: Boolean = false,
+        closeOperation: Int = JFrame.EXIT_ON_CLOSE,
     ) : this(environment, graphics, closeOperation, failOnHeadless, makeSwingComponent(environment))
 
     /**
@@ -67,9 +67,9 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
     @JvmOverloads constructor(
         environment: Environment<T, P>,
         graphics: String? = null,
-        closeOperation: Int = JFrame.EXIT_ON_CLOSE,
         failOnHeadless: Boolean = false,
-    ) : this(environment, graphics?.let { File(it) }, closeOperation, failOnHeadless)
+        closeOperation: Int = JFrame.EXIT_ON_CLOSE,
+    ) : this(environment, graphics?.let { File(it) }, failOnHeadless, closeOperation)
 
     private val timeStepMonitor: TimeStepMonitor<T, P> = TimeStepMonitor()
 

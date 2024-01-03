@@ -150,7 +150,7 @@ class TestYAMLLoader {
         final var is = ResourceLoader.getResource("isac/16-dependencies.yaml");
         assertNotNull(is);
         final Loader loader = LoadAlchemist.from(is);
-        final List<String> dependencies = loader.getRemoteDependencies();
+        final List<String> dependencies = loader.remoteDependencies;
         assertEquals(dependencies.size(), 2);
         assertEquals(dependencies.get(0), "dependencies_test.txt");
     }

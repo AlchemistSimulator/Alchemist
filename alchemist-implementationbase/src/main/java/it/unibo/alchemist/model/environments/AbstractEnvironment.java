@@ -305,9 +305,13 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     }
 
     @Override
+    @Nonnull
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     public final Simulation<T, P> getSimulation() {
-        return simulation;
+        return Objects.requireNonNull(
+            simulation,
+            "This environment is not attached to any simulation."
+        );
     }
 
     @Override
@@ -340,7 +344,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
      * @param action  the {@link Consumer} to execute
      */
     protected final void ifEngineAvailable(final Consumer<Simulation<T, P>> action) {
-        Optional.ofNullable(getSimulation()).ifPresent(action);
+        Optional.ofNullable(simulation).ifPresent(action);
     }
 
     private void invalidateCache() {

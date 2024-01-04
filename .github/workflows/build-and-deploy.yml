@@ -61,14 +61,12 @@ jobs:
     needs:
       - select-java-version
     runs-on: ubuntu-22.04
-    #Disabled for testing purposes
-    #if: >-
-    #  !github.event.repository.fork
-    #  && (
-    #    github.event_name != 'pull_request'
-    #    || github.event.pull_request.head.repo.full_name == github.repository
-    #  )
-    if: false 
+    if: >-
+      !github.event.repository.fork
+      && (
+        github.event_name != 'pull_request'
+        || github.event.pull_request.head.repo.full_name == github.repository
+      )
     timeout-minutes: 120
     concurrency:
       group: ${{ github.workflow }}-test-deploy-${{ github.event.number || github.ref }}
@@ -104,7 +102,6 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-        # Use DanySK/build-check-deploy-gradle-action@2.2.12 with jpackage tests
       - name: Setup Java
         uses: actions/setup-java@v4.0.0
         with:
@@ -196,35 +193,34 @@ jobs:
       - select-java-version
       - build
       - build-website
-    # - test-deploy
+      - test-deploy
       - test-packaging
     runs-on: ubuntu-22.04
-    #Disabled for testing purposes
-    #if: >-
-    #  !github.event.repository.fork
-    #  && (
-    #    github.event_name != 'pull_request'
-    #    || github.event.pull_request.head.repo.full_name == github.repository
-    #  )
+    if: >-
+      !github.event.repository.fork
+      && (
+        github.event_name != 'pull_request'
+        || github.event.pull_request.head.repo.full_name == github.repository
+      )
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           submodules: recursive
-      #     token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      # - name: Checkout the docs
-      #   if: contains(github.repository, 'AlchemistSimulator/Alchemist')
-      #   uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      #   with:
-      #     path: website
-      #     fetch-depth: 0
-      #     persist-credentials: true
-      #     repository: AlchemistSimulator/alchemistsimulator.github.io
-      #     token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      # - name: Download website artifact
-      #   uses: actions/download-artifact@v4.1.0
-      #   with:
-      #     name: website
+          token: ${{ secrets.DEPLOYMENT_TOKEN }}
+      - name: Checkout the docs
+        if: contains(github.repository, 'AlchemistSimulator/Alchemist')
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          path: website
+          fetch-depth: 0
+          persist-credentials: true
+          repository: AlchemistSimulator/alchemistsimulator.github.io
+          token: ${{ secrets.DEPLOYMENT_TOKEN }}
+      - name: Download website artifact
+        uses: actions/download-artifact@v4.1.0
+        with:
+          name: website
       - name: Find the version of Node from package.json
         id: node-version
         run: echo "version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
@@ -237,16 +233,16 @@ jobs:
           java-version: ${{ needs.select-java-version.outputs.java-version }}
           build-command: |
             ls -ahl
-          #   echo Copying the new website
-          #   tar -xf website.tar
-          #   echo Copying git information
-          #   mv website/.git build/website/.git
-          #   # git -C build/website/ status
-          #   echo Removing old website
-          #   rm -rf website
-          #   echo Adding changes to the stage
-          #   git -C build/website/ add .
-          #   # git -C build/website/ status
+            echo Copying the new website
+            tar -xf website.tar
+            echo Copying git information
+            mv website/.git build/website/.git
+            # git -C build/website/ status
+            echo Removing old website
+            rm -rf website
+            echo Adding changes to the stage
+            git -C build/website/ add .
+            # git -C build/website/ status
           check-command: true
           deploy-command: |
             npm install
@@ -260,14 +256,13 @@ jobs:
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
       #Add a step to publish to AUR
 
-      #Add a step to publish to Snap Store
   success:
     runs-on: ubuntu-22.04
     needs:
       - build
       - build-website
       - release
-    # - test-deploy
+      - test-deploy
       - test-packaging
     if: >-
       always() && (

@@ -15,7 +15,6 @@ import Util.id
 import Util.isInCI
 import Util.isMac
 import Util.isMultiplatform
-import Util.isUnix
 import Util.isWindows
 import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
@@ -26,8 +25,6 @@ import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.AbstractDokkaParentTask
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.panteleyev.jpackage.ImageType
-import java.io.ByteArrayOutputStream
 
 
 plugins {
@@ -43,7 +40,6 @@ plugins {
     alias(libs.plugins.shadowJar)
     alias(libs.plugins.taskTree)
     alias(libs.plugins.hugo)
-    alias(libs.plugins.jpackage)
 }
 
 val minJavaVersion: String by properties
@@ -386,92 +382,6 @@ dependencies {
 
 tasks.named("kotlinStoreYarnLock").configure {
     dependsOn("kotlinUpgradeYarnLock")
-}
-
-// JPackage
-tasks.jpackage {
-    // General info
-    resourceDir = "package-settings"
-    appName = rootProject.name
-    appVersion = rootProject.version.toString().substringBefore('-')
-    copyright = "Copyright (C) 2010-2023, Danilo Pianini and contributors"
-    appDescription = rootProject.description
-    vendor = ""
-    licenseFile = "LICENSE.md"
-    verbose = isInCI
-
-    // Packaging settings
-    input = rootProject.layout.buildDirectory.map { it.dir("shadow") }.get().asFile.path
-    destination = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path
-    mainJar = "alchemist-full-${rootProject.version}-all.jar"
-    mainClass = "it.unibo.alchemist.Alchemist"
-    linux {
-        icon = "package-settings/logo.png"
-        type = ImageType.RPM
-    }
-    windows {
-        icon = "package-settings/logo.ico"
-        type = ImageType.MSI
-        winDirChooser = true
-        winShortcutPrompt = true
-        winPerUserInstall = isInCI
-    }
-    mac {
-        type = ImageType.PKG
-    }
-
-    dependsOn(":alchemist-full:shadowJar")
-}
-
-tasks.register<Exec>("testJpackageOutput") {
-    group = "Verification"
-    description = "Verifies the jpackage output correctness for the OS running the script"
-    val interceptOutput = ByteArrayOutputStream()
-    val interceptError = ByteArrayOutputStream()
-    val version = rootProject.version.toString().substringBefore('-')
-    val isLinux = isUnix && !isMac
-    standardOutput = interceptOutput
-    errorOutput = interceptError
-    isIgnoreExitValue = true
-    workingDir = project.file("build/package/")
-    doFirst {
-        // Extract the packet
-        if (isWindows) {
-            commandLine("msiexec", "-i", "${rootProject.name}-$version.msi", "-quiet", "INSTALLDIR=${workingDir.path}\\install")
-        } else if (isMac) {
-            commandLine("sudo", "installer", "-pkg", "${rootProject.name}-$version.pkg", "-target", "/")
-        } else if (isLinux) {
-            workingDir.resolve("install").mkdirs()
-            commandLine("bsdtar", "-xf", "${rootProject.name}-$version-1.x86_64.rpm", "-C", "install")
-        }
-    }
-    doLast {
-        val exit = executionResult.get().exitValue
-        // Check if package contains every file needed
-        var execFiles = listOf("")
-        var appFiles = listOf("")
-        if (isWindows) {
-            execFiles = workingDir.resolve("install").listFiles().map { it.name }
-            appFiles = workingDir.resolve("install/app").listFiles().map { it.name }
-        } else if (isMac) {
-            val root = File("/Applications/${rootProject.name}.app")
-            execFiles = root.resolve("Contents/MacOS").listFiles().map { it.name }
-            appFiles = root.resolve("Contents/app").listFiles().map { it.name }
-        } else if (isLinux) {
-            execFiles = workingDir.resolve("install/opt/alchemist/bin").listFiles().map { it.name }
-            appFiles = workingDir.resolve("install/opt/alchemist/lib/app").listFiles().map { it.name }
-        }
-        require(rootProject.name in execFiles || "${rootProject.name}.exe" in execFiles)
-        require(tasks.jpackage.get().mainJar in appFiles)
-    }
-
-    dependsOn(tasks.jpackage)
-    mustRunAfter(tasks.jpackage)
-    finalizedBy("deleteJpackageOutput")
-}
-
-tasks.register<Delete>("deleteJpackageOutput") {
-    setDelete(project.file("build/package/install"))
 }
 
 // WEBSITE

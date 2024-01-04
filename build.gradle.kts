@@ -408,7 +408,6 @@ tasks.jpackage {
     linux {
         icon = "package-settings/logo.png"
         type = ImageType.RPM
-        resourceDir = "package-settings"
     }
     windows {
         icon = "package-settings/logo.ico"
@@ -416,11 +415,9 @@ tasks.jpackage {
         winDirChooser = true
         winShortcutPrompt = true
         winPerUserInstall = isInCI
-        resourceDir = "package-settings/windows/"
     }
     mac {
         type = ImageType.PKG
-        resourceDir = "package-settings"
     }
 
     dependsOn(":alchemist-full:shadowJar")

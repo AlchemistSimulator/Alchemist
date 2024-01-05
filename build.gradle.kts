@@ -26,7 +26,6 @@ import org.jetbrains.dokka.gradle.AbstractDokkaParentTask
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-
 plugins {
     distribution
     alias(libs.plugins.dokka)
@@ -305,7 +304,6 @@ allprojects {
 
     // Shadow Jar
     tasks.withType<ShadowJar> {
-
         manifest {
             attributes(
                 mapOf(

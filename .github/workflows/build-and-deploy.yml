@@ -113,7 +113,7 @@ jobs:
         shell: bash
         run: ./gradlew jpackage --info -Djpackage.dryRun=true
       - name: Install bsdtar
-        if: matrix.os == 'ubuntu-22.04'
+        if: runner.os == 'Linux'
         run: sudo apt update && sudo apt install libarchive-tools
       - name: Test packaging
         shell: bash

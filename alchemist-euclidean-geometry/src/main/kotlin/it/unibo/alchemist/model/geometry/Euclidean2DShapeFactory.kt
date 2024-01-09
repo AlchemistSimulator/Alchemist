@@ -44,4 +44,12 @@ interface Euclidean2DShapeFactory : GeometricShapeFactory<Euclidean2DPosition, E
      * @return the shape
      */
     fun circleSector(radius: Double, angle: Double, heading: Double): Euclidean2DShape
+
+    /**
+     * An ellipse extends in the first and second axis by its width and height.
+     * @param width the width
+     * @param height the height
+     * @return the shape
+     */
+    fun ellipse(width: Double, height: Double): Euclidean2DShape
 }

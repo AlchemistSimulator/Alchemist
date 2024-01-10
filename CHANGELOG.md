@@ -1,3 +1,15 @@
+## [29.4.0](https://github.com/AlchemistSimulator/Alchemist/compare/29.3.5...29.4.0) (2024-01-10)
+
+
+### Features
+
+* **euclidean-geometry:** add ellipse shape building to Euclidean2DShapeFactory ([#3036](https://github.com/AlchemistSimulator/Alchemist/issues/3036)) ([3496835](https://github.com/AlchemistSimulator/Alchemist/commit/3496835ec108203ef5a32163cd9ae34ddad88391))
+
+
+### Dependency updates
+
+* **deps:** update plugin kotlin-qa to v0.58.0 ([016e5ea](https://github.com/AlchemistSimulator/Alchemist/commit/016e5ead0c95ca3eb3f87263898c8e0db3cb44ef))
+
 ## [29.3.5](https://github.com/AlchemistSimulator/Alchemist/compare/29.3.4...29.3.5) (2024-01-10)
 
 

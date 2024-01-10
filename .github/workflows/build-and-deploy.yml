@@ -142,6 +142,40 @@ jobs:
       - name: Test package
         shell: bash
         run: ./gradlew testJpackageOutput --info     
+  # Test PKGBUILD for aur release
+  test-aur-package:
+    needs: select-java-version
+    runs-on:  ubuntu-22.04
+    container: 
+      image: archlinux:base-devel
+      options: --user 1001
+    if: >-
+      github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    concurrency:
+      group: ${{ github.workflow }}-test-aur-release-${{ github.event.number || github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Setup arch
+        run: sudo pacman --noconfirm -Syu && sudo pacman --noconfirm -Sy namcap git
+      - name: Checkout
+        uses: danysk/action-checkout@0.2.14
+      - name: Setup Java
+        uses: actions/setup-java@v4.0.0
+        with:
+          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          distribution: 'temurin'
+      - name: Generate PKGBUILD
+        run: ./gradlew generatePKGBUILD -DgeneratePKGBUILD.testSource=true
+      - name: Test PKGBUILD
+        run: |
+          cd build/package
+          namcap PKGBUILD
+          makepkg
+          namcap alchemist-*.zst
+          sudo pacman -U --noconfirm alchemist-*.zst
+          sudo pacman -Q | grep -q alchemist
+          output=$(alchemist)
+          [ -n "$output" ] && echo "Success! Alchemist is installed correctly"
   # Builds the website and verifies link sanity
   build-website:
     needs:
@@ -220,6 +254,7 @@ jobs:
       - build-website
       - test-deploy
       - test-packages
+      - test-aur-package
     runs-on: ubuntu-22.04
     if: >-
       !github.event.repository.fork
@@ -300,6 +335,7 @@ jobs:
       - release
       - test-deploy
       - test-packages
+      - test-aur-package
     if: >-
       always() && (
         contains(join(needs.*.result, ','), 'failure')

@@ -13,6 +13,7 @@ import Util.isMultiplatform
 import Util.isWindows
 import org.panteleyev.jpackage.ImageType
 import org.panteleyev.jpackage.JPackageTask
+import java.io.ByteArrayOutputStream
 
 plugins {
     application
@@ -143,6 +144,45 @@ tasks.register<Exec>("testJpackageOutput") {
     }
     mustRunAfter(jpackageFull)
     finalizedBy(deleteJpackageOutput)
+}
+
+val generatePKGBUILD by tasks.registering(Exec::class) {
+    group = "Publishing"
+    description = "Generates a valid PKGBUILD by replacing values in the template file"
+    val inputFile = file("${project.projectDir}/PKGBUILD.template")
+    val outputDir = file(rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path)
+    val tokenToReplace = "{%}"
+    var replacementValues: List<String>
+    val interceptOutput = ByteArrayOutputStream()
+    val testSourceParam = System.getProperty("generatePKGBUILD.testSource", "false")
+    standardOutput = interceptOutput
+    doFirst {
+        require(!isWindows && !isMac)
+        val version = rootProject.version.toString().substringBefore('-')
+        commandLine("md5sum", "-b", "${rootProject.layout.buildDirectory.get().asFile.resolve("package").path}/${rootProject.name}-$version-1.x86_64.rpm")
+    }
+
+    doLast {
+        val exit = executionResult.get().exitValue
+        require(exit == 0)
+        val md5 = String(interceptOutput.toByteArray(), Charsets.UTF_8).split(' ')[0]
+        val version = rootProject.version.toString().substringBefore('-')
+        val fileContent = inputFile.readText()
+        replacementValues = listOf(
+            version, // pkgver
+            if (testSourceParam.toBoolean()) { "alchemist-$version-1.x86_64.rpm" } else { "https://github.com/AlchemistSimulator/Alchemist/releases/download/$version/alchemist-$version-1.x86_64.rpm" }, // source name
+            md5, // md5sums
+        )
+        val replacedContent = replacementValues.foldIndexed(fileContent) { index, content, value ->
+            content.replaceFirst(tokenToReplace, value)
+        }
+        outputDir.mkdirs()
+        val file = outputDir.resolve("PKGBUILD")
+        file.createNewFile()
+        file.writeText(replacedContent)
+    }
+    dependsOn(tasks.jpackage)
+    mustRunAfter(jpackageFull)
 }
 
 tasks.withType<AbstractArchiveTask> {

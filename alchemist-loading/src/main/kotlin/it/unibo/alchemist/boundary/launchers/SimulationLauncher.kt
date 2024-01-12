@@ -14,7 +14,6 @@ import it.unibo.alchemist.boundary.InitializedEnvironment
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
-import it.unibo.alchemist.boundary.exporters.GlobalExporter
 import it.unibo.alchemist.core.ArrayIndexedPriorityEpsilonBatchQueue
 import it.unibo.alchemist.core.ArrayIndexedPriorityFixedBatchQueue
 import it.unibo.alchemist.core.BatchEngine
@@ -51,15 +50,14 @@ abstract class SimulationLauncher : Launcher {
     protected fun <T, P : Position<P>> prepareSimulation(
         loader: Loader,
         variables: Map<String, *>,
-    ): Simulation<T, P> {
-        val initialized: InitializedEnvironment<T, P> = loader.getWith(variables)
-        val simulation = buildEngine(initialized)
-        if (initialized.exporters.isNotEmpty()) {
-            simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
-        }
-        initialized.monitors.forEach(simulation::addOutputMonitor)
-        return simulation
-    }
+    ): Simulation<T, P> = loader.getWith(variables)
+//        val simulation = buildEngine(initialized)
+//        if (initialized.exporters.isNotEmpty()) {
+//            simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
+//        }
+//        initialized.monitors.forEach(simulation::addOutputMonitor)
+//        return simulation
+//    }
 
     private fun <T, P : Position<P>> buildEngine(initialized: InitializedEnvironment<T, P>): Engine<T, P> {
         return when (val engineConfiguration = initialized.engineConfiguration) {

@@ -15,7 +15,7 @@ import java.io.Serializable
 /**
  * An entity which is able to produce an Alchemist [InitializedEnvironment], resolving user defined variable values.
  */
-interface Loader<ProgressMeasure : Comparable<ProgressMeasure>> : Serializable {
+interface Loader : Serializable {
 
     /**
      * Allows to access the currently defined constants, namely variables defined in the simulation file whose value is
@@ -23,19 +23,19 @@ interface Loader<ProgressMeasure : Comparable<ProgressMeasure>> : Serializable {
      *
      * @return a [Map] between variable names and their computed value
      */
-    val constants: Map<String, Any>
+    val constants: Map<String, Any?>
 
     /**
-     * @return dependencies files
+     * @return remote dependencies files
      */
     val remoteDependencies: List<String>
 
     /**
-     * Returns launcher to be used in the simulation.
+     * Returns the launcher to be used in to manage the simulation lifecycle.
      *
      * @return launcher
      */
-    val launcher: Launcher<ProgressMeasure>
+    val launcher: Launcher
 
     /**
      * Allows to access the currently defined dependent variable (those variables whose value can be determined given a
@@ -58,8 +58,8 @@ interface Loader<ProgressMeasure : Comparable<ProgressMeasure>> : Serializable {
      * @return an [InitializedEnvironment] with all the variables set at their
      * default values
      </P></T> */
-    fun <T, P : Position<P>> getDefault(): Simulation<T, P> {
-        return getWith(emptyMap<String, Any>())
+    fun <T, P : Position<out P>> getDefault(): Simulation<T, P> {
+        return getWith(emptyMap<String, Nothing>())
     }
 
     /**
@@ -71,17 +71,13 @@ interface Loader<ProgressMeasure : Comparable<ProgressMeasure>> : Serializable {
      * specified values. If the value is unspecified, the default is
      * used instead
      </P></T> */
-    fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P>
+    fun <T, P : Position<out P>> getWith(values: Map<String, *>): Simulation<T, P>
 
     /**
      * Launches the simulations as configured by this loader.
-     *
-     * @param forceAutostart if true, the simulation will start automatically
+     * A custom [launcher] can be provided.
+     * Blocking, returns when all simulations are completed.
      * @param launcher the launcher to be used
-     * @return a [Progress] object to monitor the progress of the simulation
      */
-    fun launch(
-        forceAutostart: Boolean = false,
-        launcher: Launcher<ProgressMeasure> = this.launcher,
-    ): Progress<ProgressMeasure> = launcher.launch(this, forceAutostart)
+    fun launch(launcher: Launcher = this.launcher): Unit = launcher.launch(this)
 }

@@ -16,6 +16,7 @@ import it.unibo.alchemist.model.Position
 /**
  * Tuple-like implementation of [InitializedEnvironment].
  */
+@Deprecated("Remove this")
 data class EnvironmentWithConfiguration<T, P : Position<P>>(
     override val environment: Environment<T, P>,
     override val exporters: List<Exporter<T, P>>,

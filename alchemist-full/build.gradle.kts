@@ -12,6 +12,7 @@ import Util.isMac
 import Util.isMultiplatform
 import Util.isWindows
 import org.panteleyev.jpackage.ImageType
+import org.panteleyev.jpackage.JPackageTask
 
 plugins {
     application
@@ -36,14 +37,36 @@ application {
 }
 
 val copyForPackaging by tasks.registering(Copy::class) {
-    val jarFile = "alchemist-full-${rootProject.version}-all.jar"
+    val jarFile = tasks.shadowJar.get().archiveFileName.get()
     from("${rootProject.projectDir}/build/shadow/$jarFile")
     into("${rootProject.projectDir}/build/package-input")
     dependsOn(tasks.shadowJar)
 }
 
-// JPackage
+open class CustomJPackageTask() : JPackageTask() {
+    @TaskAction
+    override fun action() {
+        var types: List<ImageType>
+        when {
+            isWindows -> types = listOf(ImageType.EXE, ImageType.MSI)
+            isMac -> types = listOf(ImageType.DMG, ImageType.PKG)
+            else -> types = listOf(ImageType.DEB, ImageType.RPM)
+        }
+        types.forEach {
+            setType(it)
+            super.action()
+        }
+    }
+}
+
+// jpackageFull should be used instead
 tasks.jpackage {
+    enabled = false
+}
+
+val jpackageFull by tasks.registering(CustomJPackageTask::class) {
+    group = "Distribution"
+    description = "Creates application bundle in every supported type using jpackage"
     // General info
     resourceDir = "${project.projectDir}/package-settings"
     appName = rootProject.name
@@ -57,25 +80,21 @@ tasks.jpackage {
     // Packaging settings
     input = rootProject.layout.buildDirectory.map { it.dir("package-input") }.get().asFile.path
     destination = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path
-    mainJar = "alchemist-full-${rootProject.version}-all.jar"
-    mainClass = "it.unibo.alchemist.Alchemist"
+    mainJar = tasks.shadowJar.get().archiveFileName.get()
+    mainClass = application.mainClass.get()
 
     linux {
         icon = "${project.projectDir}/package-settings/logo.png"
-        type = ImageType.RPM
     }
     windows {
         icon = "${project.projectDir}/package-settings/logo.ico"
-        type = ImageType.MSI
         winDirChooser = true
         winShortcutPrompt = true
         winPerUserInstall = isInCI
     }
     mac {
         icon = "${project.projectDir}/package-settings/logo.png"
-        type = ImageType.PKG
     }
-
     dependsOn(copyForPackaging)
 }
 
@@ -120,10 +139,9 @@ tasks.register<Exec>("testJpackageOutput") {
             }
         }
         require(rootProject.name in execFiles || "${rootProject.name}.exe" in execFiles)
-        require(tasks.jpackage.get().mainJar in appFiles)
+        require(jpackageFull.get().mainJar in appFiles)
     }
-
-    dependsOn(tasks.jpackage)
+    dependsOn(jpackageFull)
     finalizedBy(deleteJpackageOutput)
 }
 

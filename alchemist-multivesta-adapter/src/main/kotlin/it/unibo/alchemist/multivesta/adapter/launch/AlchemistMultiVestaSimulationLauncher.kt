@@ -10,7 +10,7 @@
 package it.unibo.alchemist.multivesta.adapter.launch
 
 import it.unibo.alchemist.boundary.Loader
-import it.unibo.alchemist.boundary.launchers.SimulationLauncher
+import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.multivesta.adapter.AlchemistMultiVesta
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Launches a single simulation run that can be controlled by MultiVesta.
  */
-class AlchemistMultiVestaSimulationLauncher : SimulationLauncher() {
+class AlchemistMultiVestaSimulationLauncher : DefaultLauncher() {
 
     private val logger = LoggerFactory.getLogger(AlchemistMultiVestaSimulationLauncher::class.java)
 

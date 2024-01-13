@@ -58,7 +58,7 @@ interface Loader : Serializable {
      * @return an [InitializedEnvironment] with all the variables set at their
      * default values
      </P></T> */
-    fun <T, P : Position<out P>> getDefault(): Simulation<T, P> {
+    fun <T, P : Position<P>> getDefault(): Simulation<T, P> {
         return getWith(emptyMap<String, Nothing>())
     }
 
@@ -71,7 +71,7 @@ interface Loader : Serializable {
      * specified values. If the value is unspecified, the default is
      * used instead
      </P></T> */
-    fun <T, P : Position<out P>> getWith(values: Map<String, *>): Simulation<T, P>
+    fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P>
 
     /**
      * Launches the simulations as configured by this loader.

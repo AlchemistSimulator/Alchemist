@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import it.unibo.alchemist.model.Actionable;
+import it.unibo.alchemist.model.Reaction;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 
 import it.unibo.alchemist.boundary.OutputMonitor;
@@ -55,18 +56,6 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      *         simulation is ongoing or has terminated successfully.
      */
     Optional<Throwable> getError();
-
-    /**
-     * @return the step at which this simulation will eventually stop.
-     */
-    long getFinalStep();
-
-    /**
-     * Allows to at which time this simulation will end.
-     *
-     * @return the final time
-     */
-    Time getFinalTime();
 
     /**
      * Allows to access the current status.
@@ -229,7 +218,6 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
 
     /**
      * Suspends the caller until the simulation reaches the selected {@link Status} or the timeout ends.
-     *
      * Please note that waiting for a status does not mean that every {@link OutputMonitor} will already be
      * notified of the update.
      *

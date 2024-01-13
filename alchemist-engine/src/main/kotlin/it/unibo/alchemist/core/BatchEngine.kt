@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2024, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,6 +10,7 @@ package it.unibo.alchemist.core
 
 import com.google.common.collect.Sets
 import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.core.BatchEngine.OutputReplayStrategy.Aggregate.toReplayStrategy
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
@@ -17,6 +18,7 @@ import it.unibo.alchemist.model.Time
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import java.util.function.Function
@@ -29,38 +31,66 @@ import java.util.stream.Collectors
  * @param <T> concentration type
  * @param <P> [Position] type
 </P></T> */
-class BatchEngine<T, P : Position<out P>> :
-    Engine<T, P> {
+class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
 
     private val outputReplayStrategy: OutputReplayStrategy
     private val executeLock = Any()
     private val updateLock = Any()
 
-    constructor(e: Environment<T, P>?) : super(e) {
-        outputReplayStrategy = OutputReplayStrategy.Aggregate
-    }
-
-    constructor(e: Environment<T, P>?, maxSteps: Long) : super(e, maxSteps) {
-        outputReplayStrategy = OutputReplayStrategy.Aggregate
-    }
-
-    constructor(e: Environment<T, P>?, maxSteps: Long, t: Time?) : super(e, maxSteps, t) {
-        outputReplayStrategy = OutputReplayStrategy.Aggregate
-    }
-
-    constructor(e: Environment<T, P>?, t: Time?) : super(e, t) {
-        outputReplayStrategy = OutputReplayStrategy.Aggregate
-    }
-
-    constructor(
-        e: Environment<T, P>?,
-        maxSteps: Long,
-        t: Time?,
-        outputReplayStrategy: OutputReplayStrategy,
-        scheduler: BatchedScheduler<T>?,
-    ) : super(e, maxSteps, t, scheduler) {
+    private constructor(
+        environment: Environment<T, P>,
+        outputReplayStrategy: OutputReplayStrategy = OutputReplayStrategy.Aggregate,
+        scheduler: BatchedScheduler<T>,
+    ) : super(environment, scheduler) {
         this.outputReplayStrategy = outputReplayStrategy
     }
+
+    @JvmOverloads constructor(
+        environment: Environment<T, P>,
+        scheduler: BatchedScheduler<T>,
+        outputReplayStrategy: String = "aggregate",
+    ) : this(environment, outputReplayStrategy.toReplayStrategy(), scheduler)
+
+    @JvmOverloads constructor(
+        environment: Environment<T, P>,
+        scheduler: String,
+        batchSizeOrEpsilon: Number,
+        outputReplayStrategy: String = "aggregate",
+    ) : this(
+        environment,
+        when {
+            scheduler.contains("epsilon", ignoreCase = true) -> {
+                val epsilon = batchSizeOrEpsilon.toDouble()
+                if (batchSizeOrEpsilon !is Double) {
+                    logger.warn(
+                        "Requested epsilon-batch scheduler, expected a double but got epsilon={} ({}). Coercing to {}",
+                        batchSizeOrEpsilon,
+                        batchSizeOrEpsilon::class.simpleName,
+                        epsilon,
+                    )
+                }
+                ArrayIndexedPriorityEpsilonBatchQueue(epsilon)
+            }
+            scheduler.equals("fixed", ignoreCase = true) -> {
+                val batchSize = batchSizeOrEpsilon.toInt()
+                if (batchSizeOrEpsilon !is Int) {
+                    logger.warn(
+                        "Fixed-batch scheduler requested, expected an integer size but got {} ({}). Coercing to {}",
+                        batchSizeOrEpsilon,
+                        batchSizeOrEpsilon::class.simpleName,
+                        batchSize,
+                    )
+                }
+                ArrayIndexedPriorityFixedBatchQueue(batchSize)
+            }
+            else -> error(
+                """
+                Invalid scheduler $scheduler. Available choices: epsilon, fixed
+                """.trimIndent(),
+            )
+        },
+        outputReplayStrategy,
+    )
 
     /**
      * Performs the next simulation step.
@@ -195,19 +225,19 @@ class BatchEngine<T, P : Position<out P>> :
     /**
      * This interface represents the way outputs are replied. It is meant for internal use.
      */
-    sealed class OutputReplayStrategy {
+    private sealed interface OutputReplayStrategy {
 
-        protected val name: String = requireNotNull(this::class.simpleName).lowercase()
+        val name: String get() = requireNotNull(this::class.simpleName).lowercase()
 
         /**
          * Outputs are aggregated.
          */
-        data object Aggregate : OutputReplayStrategy()
+        data object Aggregate : OutputReplayStrategy
 
         /**
          * Outputs are replied.
          */
-        data object Reply : OutputReplayStrategy()
+        data object Reply : OutputReplayStrategy
 
         /**
          * Converts a [String] to the corresponding [OutputReplayStrategy], based on the name.
@@ -222,5 +252,9 @@ class BatchEngine<T, P : Position<out P>> :
                     """.trimIndent(),
                 )
         }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(BatchEngine::class.java)
     }
 }

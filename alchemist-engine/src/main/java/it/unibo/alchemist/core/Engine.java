@@ -74,9 +74,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     private final Environment<T, P> environment;
     private final DependencyGraph<T> dependencyGraph;
     private final Scheduler<T> scheduler;
-    private final Time finalTime;
     private final List<OutputMonitor<T, P>> monitors = new CopyOnWriteArrayList<>();
-    private final long finalStep;
     private volatile Status status = Status.INIT;
     private Optional<Throwable> error = Optional.empty();
     private Time currentTime = Time.ZERO;
@@ -89,42 +87,10 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
      *
-     * @param e the environment at the initial time
+     * @param environment the environment at the initial time
      */
-    public Engine(final Environment<T, P> e) {
-        this(e, Time.INFINITY);
-    }
-
-    /**
-     * Builds a simulation for a given environment. By default, it uses a
-     * DependencyGraph and an IndexedPriorityQueue internally. If you want to
-     * use your own implementations of {@link DependencyGraph} and
-     * {@link Scheduler} interfaces, don't use this constructor.
-     * <p>
-     *
-     * @param e        the environment at the initial time
-     * @param maxSteps the maximum number of steps to take
-     */
-    public Engine(final Environment<T, P> e, final long maxSteps) {
-        this(e, maxSteps, Time.INFINITY);
-    }
-
-    /**
-     * Builds a simulation for a given environment. By default, it uses a
-     * DependencyGraph and an IndexedPriorityQueue internally. If you want to
-     * use your own implementations of {@link DependencyGraph} and
-     * {@link Scheduler} interfaces, don't use this constructor.
-     *
-     * @param environment        the environment at the initial time
-     * @param maxSteps the maximum number of steps to take
-     * @param time        the maximum time to reach
-     */
-    @SuppressFBWarnings(
-        value = {"EI_EXPOSE_REP", "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR"},
-        justification = "The environment is stored intentionally, and this class is final"
-    )
-    public Engine(final Environment<T, P> environment, final long maxSteps, final Time time) {
-        this(environment, maxSteps, time, new ArrayIndexedPriorityQueue<>());
+    public Engine(final Environment<T, P> environment) {
+        this(environment, new ArrayIndexedPriorityQueue<>());
     }
 
 
@@ -136,8 +102,6 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      *
      * @param environment         maxTime
      *                  he environment at the initial time
-     * @param maxSteps  the maximum number of steps to take
-     * @param maxTime         the maximum time to reach
      * @param scheduler the scheduler implementation to be used
      */
     @SuppressFBWarnings(
@@ -145,8 +109,6 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         justification = "Environment and scheduler are not clonable, setSimulation is not final")
     public Engine(
         final Environment<T, P> environment,
-        final long maxSteps,
-        final Time maxTime,
         final Scheduler<T> scheduler
     ) {
         LOGGER.trace("Engine created");
@@ -154,21 +116,6 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         this.environment.setSimulation(this);
         dependencyGraph = new JGraphTDependencyGraph<>(this.environment);
         this.scheduler = scheduler;
-        this.finalStep = maxSteps;
-        this.finalTime = maxTime;
-    }
-
-    /**
-     * Builds a simulation for a given environment. By default, it uses a
-     * DependencyGraph and an IndexedPriorityQueue internally. If you want to
-     * use your own implementations of {@link DependencyGraph} and
-     * {@link Scheduler} interfaces, don'time use this constructor.
-     *
-     * @param environment the environment at the initial time
-     * @param time the maximum time to reach
-     */
-    public Engine(final Environment<T, P> environment, final Time time) {
-        this(environment, Long.MAX_VALUE, time);
     }
 
     /**
@@ -272,22 +219,6 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     @Override
     public Optional<Throwable> getError() {
         return error;
-    }
-
-    /**
-     * @return final step
-     */
-    @Override
-    public long getFinalStep() {
-        return finalStep;
-    }
-
-    /**
-     * @return final time
-     */
-    @Override
-    public Time getFinalTime() {
-        return finalTime;
     }
 
     /**
@@ -504,7 +435,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                 while (status.equals(Status.READY)) {
                     idleProcessSingleCommand();
                 }
-                while (status != TERMINATED && getStep() < finalStep && getTime().compareTo(finalTime) < 0) {
+                while (status != TERMINATED && getTime().compareTo(Time.INFINITY) < 0) {
                     while (!commands.isEmpty()) {
                         processCommand(commands.poll());
                     }

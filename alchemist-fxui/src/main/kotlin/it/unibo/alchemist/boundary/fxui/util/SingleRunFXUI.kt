@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.fxui.util
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.fxui.EffectGroup
 import it.unibo.alchemist.boundary.fxui.effects.serialization.EffectSerializer
-import it.unibo.alchemist.boundary.launchers.SimulationLauncher
+import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import javafx.embed.swing.JFXPanel
 import javafx.stage.Stage
 import java.io.File
@@ -22,7 +22,7 @@ import java.io.File
  */
 class SingleRunFXUI(
     private val graphics: String? = defaultEffects,
-) : SimulationLauncher() {
+) : DefaultLauncher() {
 
     override fun launch(loader: Loader) {
         prepareSimulation<Any, Nothing>(loader, emptyMap<String, Any>()).let { simulation ->

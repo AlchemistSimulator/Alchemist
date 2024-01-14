@@ -31,7 +31,7 @@ class WebRendererLauncher : DefaultLauncher() {
      *  @param loader the loader of the simulation.
      */
     override fun launch(loader: Loader) {
-        val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, emptyMap<String, Any>())
+        val simulation: Simulation<Any, Nothing> = loader.getDefault()
         store.dispatch(SetSimulation(simulation))
         simulation.addOutputMonitor(makeEnvironmentMonitor(simulation.environment))
         startServer(simulation)

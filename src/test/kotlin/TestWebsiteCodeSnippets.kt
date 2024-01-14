@@ -7,7 +7,6 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.optional.shouldBeEmpty
 import io.kotest.matchers.shouldNot
 import it.unibo.alchemist.boundary.LoadAlchemist
-import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.model.terminators.StepCount
 import it.unibo.alchemist.util.ClassPathScanner
 
@@ -27,7 +26,9 @@ class TestWebsiteCodeSnippets : FreeSpec(
             .onEach { it shouldNot beNull() }
         allSpecs.forEach { url ->
             "snippet ${url.path.split("/").last()} should load correctly" - {
-                val environment = LoadAlchemist.from(url).getDefault<Any, Nothing>().environment
+                val simulation = LoadAlchemist.from(url).getDefault<Any, Nothing>()
+                simulation.shouldNotBeNull()
+                val environment = simulation.environment
                 environment.shouldNotBeNull()
                 if (url.readText().contains("deployments:")) {
                     "and have deployed nodes" {
@@ -40,12 +41,9 @@ class TestWebsiteCodeSnippets : FreeSpec(
                     }
                 }
                 "and execute a few steps without errors" {
-                    val engine = Engine(environment).apply {
-                        environment.addTerminator(StepCount(100))
-                        play()
-                    }
-                    engine.run()
-                    engine.error.shouldBeEmpty()
+                    environment.addTerminator(StepCount(100))
+                    simulation.run()
+                    simulation.error.shouldBeEmpty()
                 }
             }
         }

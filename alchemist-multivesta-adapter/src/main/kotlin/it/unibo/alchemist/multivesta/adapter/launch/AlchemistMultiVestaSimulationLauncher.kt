@@ -34,7 +34,7 @@ class AlchemistMultiVestaSimulationLauncher : DefaultLauncher() {
      * Launch the simulation and pause it immediately before step 0.
      */
     override fun launch(loader: Loader) {
-        simulation = prepareSimulation(loader, emptyMap<String, Any>())
+        simulation = loader.getDefault()
         logger.info("Simulation prepared")
         simulation.goToStep(-1) // configure the simulation to pause immediately before the first step
         Thread(simulation).start() // this will pause the simulation without executing any step

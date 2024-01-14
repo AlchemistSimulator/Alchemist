@@ -15,8 +15,8 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.times.DoubleTime
+import it.unibo.alchemist.test.AlchemistTesting.createEmptyEnvironment
 import it.unibo.alchemist.test.GlobalTestReaction
-import it.unibo.alchemist.test.createEmptyEnvironment
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit

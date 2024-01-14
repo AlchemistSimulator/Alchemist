@@ -115,6 +115,7 @@ open class DefaultLauncher(
 
         private val logger = LoggerFactory.getLogger(this::class.java)
 
+        @JvmStatic
         protected fun Map<String, Variable<*>>.cartesianProductOf(
             variables: Collection<String>,
         ): List<Map<String, Serializable?>> {

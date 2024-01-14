@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 
+import static it.unibo.alchemist.test.AlchemistTesting.terminatingAfterSteps;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -80,7 +81,7 @@ final class TestEnvironmentNodes {
      * test a simple reaction "[A] --> [A in env]".
      */
     @Test
-    void test1() {
+    void testSimpleReactionAToAInEnv() {
         final Node<Double> cellNode = createNode();
         final EnvironmentNode envNode = new EnvironmentNodeImpl(environment);
         final Molecule a = new Biomolecule("A");
@@ -89,9 +90,7 @@ final class TestEnvironmentNodes {
         environment.setLinkingRule(new ConnectWithinDistance<>(2));
         environment.addNode(cellNode, new Euclidean2DPosition(0, 0));
         environment.addNode(envNode, new Euclidean2DPosition(0, 1));
-        final Simulation<?, ?> sim = new Engine<>(environment, 10_000);
-        sim.play();
-        sim.run();
+        simulate(environment);
         assertEquals(envNode.getConcentration(a), 1000, PRECISION);
     }
 
@@ -108,9 +107,7 @@ final class TestEnvironmentNodes {
         environment.setLinkingRule(new ConnectWithinDistance<>(2));
         environment.addNode(envNode1, new Euclidean2DPosition(0, 0));
         environment.addNode(envNode2, new Euclidean2DPosition(0, 1));
-        final Simulation<?, ?> sim = new Engine<>(environment, 10_000);
-        sim.play();
-        sim.run();
+        simulate(environment);
         assertTrue(envNode2.getConcentration(a) == 1000 && envNode1.getConcentration(a) == 0);
     }
 
@@ -138,9 +135,7 @@ final class TestEnvironmentNodes {
         final Molecule a = new Biomolecule("A");
         injectAInEnvReaction(center, 1);
         center.setConcentration(a, 1000.0);
-        final Simulation<?, ?> sim = new Engine<>(environment, 10_000);
-        sim.play();
-        sim.run();
+        simulate(environment);
         assertEquals(0, center.getConcentration(a));
         assertTrue(Arrays.stream(nodes).noneMatch(it -> it.getConcentration(a) == 0));
     }
@@ -187,9 +182,7 @@ final class TestEnvironmentNodes {
         environment.addNode(envNode2, pos2);
         environment.addNode(envNode3, pos3);
         environment.addNode(envNode4, pos4);
-        final Simulation<?, ?> sim = new Engine<>(environment, 10_000);
-        sim.play();
-        sim.run();
+        simulate(environment);
         assertNotEquals(0.0, envNode3.getConcentration(a));
         assertNotEquals(0.0, envNode4.getConcentration(a));
         assertEquals(total, envNode3.getConcentration(a) + envNode4.getConcentration(a), PRECISION);
@@ -206,9 +199,7 @@ final class TestEnvironmentNodes {
         cellNode.setConcentration(a, 1000.0);
         environment.setLinkingRule(new ConnectWithinDistance<>(2));
         environment.addNode(cellNode, new Euclidean2DPosition(0, 0));
-        final Simulation<?, ?> sim = new Engine<>(environment, 10_000);
-        sim.play();
-        sim.run();
+        simulate(environment);
         assertEquals(cellNode.getConcentration(a), 1000, PRECISION);
     }
 
@@ -374,11 +365,18 @@ final class TestEnvironmentNodes {
     ) {
         final var res = ResourceLoader.getResource(resource);
         assertNotNull(res);
-        final Environment<T, P> environment = LoadAlchemist.from(res).<T, P>getWith(vars).getEnvironment();
-        final Simulation<?, ?> sim = new Engine<>(environment, 10_000);
-        sim.play();
-        sim.run();
-        return environment;
+        final var simulation = LoadAlchemist.from(res).<T, P>getWith(vars);
+        simulate(simulation);
+        return simulation.getEnvironment();
     }
 
+    private static <T, P extends Position<P>> void simulate(final Environment<T, P> environment) {
+        simulate(new Engine<>(environment));
+    }
+
+    private static <T, P extends Position<P>> void simulate(final Simulation<T, P> simulation) {
+        terminatingAfterSteps(simulation, 10_000);
+        simulation.play();
+        simulation.run();
+    }
 }

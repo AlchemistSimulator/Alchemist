@@ -22,6 +22,7 @@ import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironment;
 import it.unibo.alchemist.model.linkingrules.NoLinks;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.test.AlchemistTesting;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -753,8 +755,10 @@ class TestBioRect2DEnvironmentNoOverlap {
         final Environment<Double, Euclidean2DPosition> env = LoadAlchemist.from(res)
                 .<Double, Euclidean2DPosition>getWith(vars)
                 .getEnvironment();
-        final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(env, 10000);
+        final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(env);
+        AlchemistTesting.terminatingAfterSteps(sim, 10_000);
         sim.addOutputMonitor(new OutputMonitor<>() {
+            @Serial
             private static final long serialVersionUID = 1L;
 
             @Override

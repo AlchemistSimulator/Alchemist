@@ -25,7 +25,7 @@ class SingleRunFXUI(
 ) : DefaultLauncher() {
 
     override fun launch(loader: Loader) {
-        prepareSimulation<Any, Nothing>(loader, emptyMap<String, Any>()).let { simulation ->
+        loader.getDefault<Any?, Nothing>().let { simulation ->
             // fetches default effects if graphics is null, otherwise loads from graphics
             val effects: EffectGroup<Nothing> = graphics?.let {
                 EffectSerializer.effectsFromFile(File(it))

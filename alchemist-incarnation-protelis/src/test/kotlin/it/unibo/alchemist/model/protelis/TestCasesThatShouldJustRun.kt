@@ -13,8 +13,8 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.optional.bePresent
 import io.kotest.matchers.shouldNot
 import it.unibo.alchemist.boundary.LoadAlchemist
-import it.unibo.alchemist.test.createSimulation
 import it.unibo.alchemist.test.runInCurrentThread
+import it.unibo.alchemist.test.terminatingAfterSteps
 import it.unibo.alchemist.util.ClassPathScanner
 
 class TestCasesThatShouldJustRun : StringSpec(
@@ -22,7 +22,7 @@ class TestCasesThatShouldJustRun : StringSpec(
         ClassPathScanner.resourcesMatching(".+\\.ya?ml", "shouldrun").forEach {
             "simulation at ${it.path} should run" {
                 LoadAlchemist.from(it).getDefault<Any, Nothing>()
-                    .createSimulation(finalStep = 100)
+                    .terminatingAfterSteps(100)
                     .runInCurrentThread()
                     .error shouldNot bePresent()
             }

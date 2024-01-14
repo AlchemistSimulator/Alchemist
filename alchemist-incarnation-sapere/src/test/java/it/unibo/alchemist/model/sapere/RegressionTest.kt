@@ -14,9 +14,9 @@ import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.sapere.nodes.LsaNode
 import it.unibo.alchemist.model.timedistributions.DiracComb
-import it.unibo.alchemist.test.createSimulation
 import it.unibo.alchemist.test.loadAlchemistFromResource
 import it.unibo.alchemist.test.runInCurrentThread
+import it.unibo.alchemist.test.terminatingAfterSteps
 import org.apache.commons.math3.random.MersenneTwister
 
 class RegressionTest : StringSpec(
@@ -36,7 +36,7 @@ class RegressionTest : StringSpec(
             twoOutGoingDependencies.outboundDependencies.size shouldBe 2
             loadAlchemistFromResource("it/unibo/alchemist/regressions/bug1718.yml")
                 .getDefault<Any, Nothing>()
-                .createSimulation(finalStep = 100)
+                .terminatingAfterSteps(100)
                 .runInCurrentThread()
                 .error
                 .ifPresent { throw it }

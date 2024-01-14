@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.EuclideanEnvironment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.geometry.Vector
+import it.unibo.alchemist.model.terminators.StepCount
 import org.kaikikm.threadresloader.ResourceLoader
 
 /**
@@ -38,7 +39,8 @@ fun <T, P> EuclideanEnvironment<T, P>.startSimulation(
     whenFinished: (EuclideanEnvironment<T, P>, Time, Long) -> Unit = { _, _, _ -> },
     steps: Long = 10000,
 ) where P : Position<P>, P : Vector<P> =
-    Engine(this, steps).apply {
+    Engine(this).apply {
+        addTerminator(StepCount(steps))
         fun checkForErrors() = error.ifPresent { throw it }
         addOutputMonitor(
             object : OutputMonitor<T, P> {

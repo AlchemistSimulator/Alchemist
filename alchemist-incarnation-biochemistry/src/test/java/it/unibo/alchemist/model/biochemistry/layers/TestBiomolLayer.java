@@ -26,6 +26,7 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
+import it.unibo.alchemist.test.AlchemistTesting;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
@@ -69,7 +70,8 @@ class TestBiomolLayer {
         );
         environment.addNode(cellNode, new Euclidean2DPosition(0, 0));
         environment.addLayer(b, bLayer);
-        final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(environment, 3000);
+        final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(environment);
+        AlchemistTesting.terminatingAfterSteps(sim, 3000);
         sim.play();
         sim.addOutputMonitor(new OutputMonitor<>() {
             private static final long serialVersionUID = 0L;

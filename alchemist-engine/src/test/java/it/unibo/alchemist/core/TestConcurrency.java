@@ -19,6 +19,7 @@ import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.reactions.Event;
+import it.unibo.alchemist.model.terminators.StepCount;
 import it.unibo.alchemist.model.timedistributions.DiracComb;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,7 +72,8 @@ class TestConcurrency {
     )
     void testCommandInterleaving() throws InterruptedException, ExecutionException {
         final int inWaitCount = 100;
-        final Simulation<?, ?> sim = new Engine<>(environment, 10);
+        final Simulation<?, ?> sim = new Engine<>(environment);
+        environment.addTerminator(new StepCount<>(10));
         sim.pause();
         final ExecutorService container = Executors.newFixedThreadPool(inWaitCount + 1);
         container.submit(sim);

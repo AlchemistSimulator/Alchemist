@@ -12,7 +12,7 @@ fun <T, P : Position<out P>> Environment<T, P>.startSimulation(
     stepDone: (e: Environment<T, P>, r: Actionable<T>?, t: Time, s: Long) -> Unit,
     finished: (e: Environment<T, P>, t: Time, s: Long) -> Unit,
 ) {
-    with(Engine(this, Time.INFINITY)) {
+    with(Engine(this)) {
         addOutputMonitor(
             object : OutputMonitor<T, P> {
                 override fun initialized(environment: Environment<T, P>) = initialized.invoke(environment)

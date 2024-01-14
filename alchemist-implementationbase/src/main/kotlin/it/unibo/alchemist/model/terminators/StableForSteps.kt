@@ -42,7 +42,7 @@ import java.util.function.Predicate
  * @param equalIntervals The amount of [checkInterval] intervals that need to pass
  * (during which the environment doesn't change) for [test] to return true
  */
-class StableForSteps<T>(
+data class StableForSteps<T>(
     private val checkInterval: Long,
     private val equalIntervals: Long,
 ) : Predicate<Environment<T, *>> {

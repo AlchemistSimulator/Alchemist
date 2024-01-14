@@ -4,9 +4,11 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.optional.shouldBeEmpty
 import io.kotest.matchers.shouldNot
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.core.Engine
+import it.unibo.alchemist.model.terminators.StepCount
 import it.unibo.alchemist.util.ClassPathScanner
 
 /*
@@ -38,7 +40,12 @@ class TestWebsiteCodeSnippets : FreeSpec(
                     }
                 }
                 "and execute a few steps without errors" {
-                    Engine(environment, 100L).apply { play() }.run()
+                    val engine = Engine(environment).apply {
+                        environment.addTerminator(StepCount(100))
+                        play()
+                    }
+                    engine.run()
+                    engine.error.shouldBeEmpty()
                 }
             }
         }

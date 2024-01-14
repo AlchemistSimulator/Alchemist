@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.protelis.actions.RunProtelisProgram
+import it.unibo.alchemist.test.terminatingAfterSteps
 import org.apache.commons.math3.random.MersenneTwister
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -55,8 +56,7 @@ class TestGetPosition {
 
     @Test
     fun testGetPosition() {
-        val sim: Simulation<Any, Euclidean2DPosition> =
-            Engine(environment, 100)
+        val sim: Simulation<Any, Euclidean2DPosition> = Engine(environment).terminatingAfterSteps(100)
         sim.addOutputMonitor(
             object : OutputMonitor<Any, Euclidean2DPosition> {
                 override fun finished(environment: Environment<Any, Euclidean2DPosition>, time: Time, step: Long) = Unit

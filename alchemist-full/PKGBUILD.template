@@ -20,5 +20,5 @@ package() {
     cp -r "${srcdir}/opt/${pkgname}/" "${pkgdir}/usr/lib/" 
 
     # Create a soft link from usr/bin to the application launcher
-    ln -s "${pkgdir}/usr/lib/${pkgname}/bin/${pkgname}" "${pkgdir}/usr/bin/${pkgname}"
+    ln -s "/usr/lib/${pkgname}/bin/${pkgname}" "${pkgdir}/usr/bin/${pkgname}"
 }

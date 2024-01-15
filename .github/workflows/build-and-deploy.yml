@@ -157,7 +157,7 @@ jobs:
       - name: Setup arch
         run: |
           sudo pacman --noconfirm -Syu 
-          sudo pacman --noconfirm -Sy namcap git rpm-tools
+          sudo pacman --noconfirm -Sy git rpm-tools
       - run: git config --system --add safe.directory /__w/Alchemist/Alchemist # https://github.com/actions/checkout/issues/1169
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
@@ -177,8 +177,7 @@ jobs:
         run: |
           sudo pacman -U --noconfirm alchemist-*.zst
           (sudo pacman -Q | grep -q alchemist &&  echo "Success! Alchemist found in the package list") || exit 1
-          output=$(alchemist)
-          ([ -n "$output" ] && echo "Success! Alchemist is installed correctly") || exit 2
+          (/usr/bin/alchemist --help | grep -q options_list && echo "Success! Alchemist available") || exit 2
   # Builds the website and verifies link sanity
   build-website:
     needs:

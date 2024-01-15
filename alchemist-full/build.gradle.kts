@@ -153,8 +153,8 @@ val generatePKGBUILD by tasks.registering(Exec::class) {
     val outputDir = file(rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path)
     val tokenToReplace = "{%}"
     var replacementValues: List<String>
-    val interceptOutput = ByteArrayOutputStream()
     val testSourceParam = System.getProperty("generatePKGBUILD.testSource", "false")
+    val interceptOutput = ByteArrayOutputStream()
     standardOutput = interceptOutput
     doFirst {
         require(!isWindows && !isMac)
@@ -170,7 +170,7 @@ val generatePKGBUILD by tasks.registering(Exec::class) {
         val fileContent = inputFile.readText()
         replacementValues = listOf(
             version, // pkgver
-            if (testSourceParam.toBoolean()) { "alchemist-$version-1.x86_64.rpm" } else { "https://github.com/AlchemistSimulator/Alchemist/releases/download/$version/alchemist-$version-1.x86_64.rpm" }, // source name
+            if (testSourceParam.toBoolean()) { "${rootProject.name}-$version-1.x86_64.rpm" } else { "https://github.com/AlchemistSimulator/Alchemist/releases/download/$version/${rootProject.name}-$version-1.x86_64.rpm" }, // source name
             md5, // md5sums
         )
         val replacedContent = replacementValues.foldIndexed(fileContent) { index, content, value ->

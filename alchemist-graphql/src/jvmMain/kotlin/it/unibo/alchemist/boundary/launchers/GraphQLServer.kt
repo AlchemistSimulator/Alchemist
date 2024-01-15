@@ -30,6 +30,8 @@ import kotlinx.coroutines.sync.Semaphore
 /**
  * An [OutputMonitor] observing the [environment] through a GraphQL server listening on [host]:[port].
  * The server is started in a new coroutine on the [serverDispatcher] dispatcher.
+ * By default, the server is stopped after the simulation terminates.
+ * This behavior can be changed by setting [teardownOnSimulationTermination] to false.
  */
 class GraphQLServer<T, P : Position<out P>> @JvmOverloads constructor(
     val environment: Environment<T, P>,

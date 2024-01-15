@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.loader.util
 
 import it.unibo.alchemist.util.BugReporting
 import it.unibo.alchemist.util.ClassPathScanner
+import net.pearx.kasechange.splitToWords
 import org.danilopianini.jirf.CreationResult
 import org.danilopianini.jirf.Factory
 import org.danilopianini.jirf.InstancingImpossibleException
@@ -52,6 +53,15 @@ class NamedParametersConstructor(
     }
 
     private inline infix fun Boolean.and(then: () -> Boolean): Boolean = if (this) then() else false
+    private inline infix fun Boolean.or(alternatively: () -> Boolean): Boolean = if (this) true else alternatively()
+
+    private fun List<String>.allLowerCase() = map { it.lowercase() }
+
+    private fun String?.couldBeInterpretedAs(name: String?): Boolean =
+        equals(name, ignoreCase = true) || this?.splitToWords()?.allLowerCase() == name?.splitToWords()?.allLowerCase()
+
+    private fun List<String>.looselyEqual(contained: List<String?>): Boolean =
+        contained.all { parameter -> count { parameter.couldBeInterpretedAs(it) } == 1 }
 
     override fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*> {
         val providedNames = parametersMap.map { it.key.toString() }
@@ -61,10 +71,24 @@ class NamedParametersConstructor(
         }
         val usableConstructors: List<OrderedParameters> = constructorsWithOrderedParameters.filter { parameters ->
             (providedNames.size <= parameters.size) and {
+                // Parameter count must be compatible (as many or less parameters provided)
                 val (optional, mandatory) = parameters.partition { it.isOptional }
-                providedNames.containsAll(mandatory.map { it.name }) and {
-                    val requiredOptionals = optional.take(providedNames.size - mandatory.size)
-                    providedNames.containsAll(requiredOptionals.map { it.name })
+                val mandatoryNames = mandatory.map { it.name }
+                val requiredOptionals by lazy { optional.take(providedNames.size - mandatory.size).map { it.name } }
+                fun verifyParameterMatch(matchMethod: (List<String>).(List<String?>) -> Boolean) =
+                    providedNames.matchMethod(mandatoryNames) and {
+                        providedNames.matchMethod(requiredOptionals)
+                    }
+                // Check for exact name match
+                val exactMatch = verifyParameterMatch(List<String>::containsAll)
+                exactMatch or {
+                    // Check for similar-enough non-ambiguous matches (case insensitive), kebab-case, snake_case
+                    verifyParameterMatch { looselyEqual(it) } and {
+                        logger.warn(
+                            "Parameter ",
+                        )
+                        true
+                    }
                 }
             }
         }
@@ -284,7 +308,9 @@ sealed class JVMConstructor(val typeName: String) {
     }
 
     companion object {
+        @JvmStatic
         private val logger = LoggerFactory.getLogger(JVMConstructor::class.java)
+
         private fun Constructor<*>.shorterToString() =
             declaringClass.simpleName + parameterTypes.joinToString(prefix = "(", postfix = ")") { it.simpleName }
 

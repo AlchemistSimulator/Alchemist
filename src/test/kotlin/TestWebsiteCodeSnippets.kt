@@ -8,6 +8,7 @@ import io.kotest.matchers.optional.shouldBeEmpty
 import io.kotest.matchers.shouldNot
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.model.terminators.StepCount
+import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import it.unibo.alchemist.util.ClassPathScanner
 
 /*
@@ -42,8 +43,7 @@ class TestWebsiteCodeSnippets : FreeSpec(
                 }
                 "and execute a few steps without errors" {
                     environment.addTerminator(StepCount(100))
-                    simulation.run()
-                    simulation.error.shouldBeEmpty()
+                    simulation.runInCurrentThread().error.shouldBeEmpty()
                 }
             }
         }

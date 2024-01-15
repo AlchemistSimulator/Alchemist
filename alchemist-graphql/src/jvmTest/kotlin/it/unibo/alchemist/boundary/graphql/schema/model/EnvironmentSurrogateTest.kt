@@ -27,9 +27,7 @@ class EnvironmentSurrogateTest<T, P> : StringSpec({
         GraphQLTestEnvironments.loadTests<T, P> {
             requireNotNull(it.simulation)
             val envSurrogate = it.toGraphQLEnvironmentSurrogate()
-
             it.dimensions shouldBe envSurrogate.dimensions
-
             it.nodes.size shouldBe envSurrogate.nodes().size
             it.nodes.forEach { node ->
                 val nodeSurrogate = envSurrogate.nodeById(node.id)
@@ -37,7 +35,6 @@ class EnvironmentSurrogateTest<T, P> : StringSpec({
                 checkPositionSurrogate(it.getPosition(node), envSurrogate.nodeToPos()[node.id]!!)
                 checkNeighborhood(it.getNeighborhood(node), envSurrogate.getNeighborhood(node.id))
             }
-
             // Test propagation of changes
             val newNode = it.nodes.first().cloneNode(Time.ZERO)
             val newPosition = it.makePosition(0.0, 0.0)

@@ -11,7 +11,6 @@
 
 package it.unibo.alchemist.test
 
-import it.unibo.alchemist.boundary.InitializedEnvironment
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.OutputMonitor
@@ -46,7 +45,7 @@ object AlchemistTesting {
         apply { environment.addTerminator(StepCount(finalStep)) }
 
     /**
-     * Prepares an [InitializedEnvironment] given a [simulationResource] and, optionally, the [variables]' bindings.
+     * Prepares a [Simulation] given a [simulationResource] and, optionally, the [variables]' bindings.
      */
     @JvmStatic
     fun <T, P : Position<P>> loadAlchemist(

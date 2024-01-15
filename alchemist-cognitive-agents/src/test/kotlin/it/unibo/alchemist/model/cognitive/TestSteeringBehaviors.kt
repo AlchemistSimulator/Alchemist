@@ -64,7 +64,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
 
     "nodes arriving to a target must decelerate while approaching it" {
         with(loadYamlSimulation<T, P>("arrive.yml")) {
-            val nodesPositions: Map<Node<T>, MutableList<P>> = nodes.map { it to mutableListOf<P>() }.toMap()
+            val nodesPositions: Map<Node<T>, MutableList<P>> = environment.nodes.associateWith { mutableListOf() }
             startSimulation(
                 atEachStep = { e, _, _, _ ->
                     e.nodes.forEach {

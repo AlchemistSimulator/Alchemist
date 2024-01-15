@@ -14,9 +14,9 @@ import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.sapere.nodes.LsaNode
 import it.unibo.alchemist.model.timedistributions.DiracComb
-import it.unibo.alchemist.test.loadAlchemistFromResource
-import it.unibo.alchemist.test.runInCurrentThread
-import it.unibo.alchemist.test.terminatingAfterSteps
+import it.unibo.alchemist.test.AlchemistTesting.loadAlchemistFromResource
+import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
+import it.unibo.alchemist.test.AlchemistTesting.terminatingAfterSteps
 import org.apache.commons.math3.random.MersenneTwister
 
 class RegressionTest : StringSpec(

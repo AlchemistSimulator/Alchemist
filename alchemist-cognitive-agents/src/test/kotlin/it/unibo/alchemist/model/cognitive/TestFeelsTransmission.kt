@@ -33,13 +33,15 @@ class TestFeelsTransmission<T> : StringSpec({
             environment.nodes.mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.danger }
                 .forEach { it shouldNotBe null }
         }
-        val aggregateDangerWithLayer = loadYamlSimulation<T, Euclidean2DPosition>("feels-transmission-with-layer.yml")
-            .also { it.environment.layers shouldNot beEmpty() }
-            .dangerIsLoaded()
-            .startSimulation()
-        val aggregateDangerWithoutLayer = loadYamlSimulation<T, Euclidean2DPosition>("feels-transmission-without-layer.yml")
-            .also { it.getEnvironment().layers should beEmpty() }
-            .startSimulation()
+        val aggregateDangerWithLayer =
+            loadYamlSimulation<T, Euclidean2DPosition>("feels-transmission-with-layer.yml")
+                .also { it.environment.layers shouldNot beEmpty() }
+                .dangerIsLoaded()
+                .startSimulation()
+        val aggregateDangerWithoutLayer =
+            loadYamlSimulation<T, Euclidean2DPosition>("feels-transmission-without-layer.yml")
+                .also { it.getEnvironment().layers should beEmpty() }
+                .startSimulation()
         println("Without layer aggregate danger: $aggregateDangerWithoutLayer")
         println("With layer aggregate danger: $aggregateDangerWithLayer")
         aggregateDangerWithLayer.perceivedDanger() shouldBeGreaterThan aggregateDangerWithoutLayer.perceivedDanger()

@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.Time
  *  @param exporters The list of [Exporter].
  */
 class GlobalExporter<T, P : Position<P>>(
-    private val exporters: List<Exporter<T, P>>,
+    val exporters: List<Exporter<T, P>>,
 ) : OutputMonitor<T, P> {
 
     @Override

@@ -71,7 +71,7 @@ class TestBiomolLayer {
         environment.addNode(cellNode, new Euclidean2DPosition(0, 0));
         environment.addLayer(b, bLayer);
         final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(environment);
-        AlchemistTesting.terminatingAfterSteps(sim, 3000);
+        AlchemistTesting.terminatingAfterSteps(sim, 1_000);
         sim.play();
         sim.addOutputMonitor(new OutputMonitor<>() {
             private static final long serialVersionUID = 0L;

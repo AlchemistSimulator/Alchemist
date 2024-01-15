@@ -22,10 +22,10 @@ object GraphQLTestEnvironments {
             .map { LoadAlchemist.from(it) }
             .onEach { it.launcher.launch(it) }
             .map { it.getDefault<T, P>() }
-            .forEach { initializedEnvironment ->
-                initializedEnvironment.monitors.find { it is GraphQLServer<*, *> }
-                initializedEnvironment.monitors.find { it is EnvironmentSubscriptionMonitor<*, *> }
-                test(initializedEnvironment.environment)
-                initializedEnvironment.environment.simulation.terminate()
+            .forEach { simulation ->
+                simulation.outputMonitors.find { it is GraphQLServer<*, *> }
+                simulation.outputMonitors.find { it is EnvironmentSubscriptionMonitor<*, *> }
+                test(simulation.environment)
+                simulation.environment.simulation.terminate()
             }
 }

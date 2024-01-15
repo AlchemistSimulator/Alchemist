@@ -8,9 +8,9 @@
 incarnation: sapere
 
 launcher:
-  type: HeadlessSimulationLauncher
+  type: DefaultLauncher
   parameters:
-    variables: []
+    batch: []
     autostart: false
 
 monitors:

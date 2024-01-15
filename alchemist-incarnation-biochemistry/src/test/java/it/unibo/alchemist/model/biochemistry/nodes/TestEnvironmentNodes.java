@@ -49,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 final class TestEnvironmentNodes {
 
     private static final double PRECISION = 1e-12;
+    private static final long FINAL_STEP = 10_000;
     private static final BiochemistryIncarnation INCARNATION = new BiochemistryIncarnation();
     private Environment<Double, Euclidean2DPosition> environment;
     private RandomGenerator rand;
@@ -375,7 +376,7 @@ final class TestEnvironmentNodes {
     }
 
     private static <T, P extends Position<P>> void simulate(final Simulation<T, P> simulation) {
-        terminatingAfterSteps(simulation, 10_000);
+        terminatingAfterSteps(simulation, FINAL_STEP);
         simulation.play();
         simulation.run();
     }

@@ -21,7 +21,8 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.protelis.actions.RunProtelisProgram
-import it.unibo.alchemist.test.terminatingAfterSteps
+import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
+import it.unibo.alchemist.test.AlchemistTesting.terminatingAfterSteps
 import org.apache.commons.math3.random.MersenneTwister
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -76,8 +77,7 @@ class TestGetPosition {
                 }
             },
         )
-        sim.play()
-        sim.run()
+        sim.runInCurrentThread()
         Assertions.assertEquals(Optional.empty<Any>(), sim.error)
     }
 }

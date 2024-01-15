@@ -13,8 +13,8 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContain
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.terminators.StepCount
-import it.unibo.alchemist.test.loadAlchemist
-import it.unibo.alchemist.test.runInCurrentThread
+import it.unibo.alchemist.test.AlchemistTesting.loadAlchemist
+import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 
 class SimpleFunctionalTest : StringSpec(
     {

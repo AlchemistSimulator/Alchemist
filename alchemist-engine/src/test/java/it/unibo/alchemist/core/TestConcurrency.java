@@ -41,6 +41,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TestConcurrency {
 
+    @SuppressFBWarnings(
+        value = "UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR",
+        justification = "This field is used by JUnit via reflection"
+    )
     private Environment<Double, Euclidean2DPosition> environment;
 
     /**

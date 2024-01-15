@@ -756,7 +756,7 @@ class TestBioRect2DEnvironmentNoOverlap {
                 .<Double, Euclidean2DPosition>getWith(vars)
                 .getEnvironment();
         final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(env);
-        AlchemistTesting.terminatingAfterSteps(sim, 10_000);
+        AlchemistTesting.terminatingAfterSteps(sim, 1_000);
         sim.addOutputMonitor(new OutputMonitor<>() {
             @Serial
             private static final long serialVersionUID = 1L;

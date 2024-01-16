@@ -38,7 +38,9 @@ class NodeSurrogateTest<T, P> : StringSpec({
             node.moleculeCount shouldBe nodeSurrogate.moleculeCount
 
             node.reactions.size shouldBe nodeSurrogate.reactions().size
-            node.reactions.forEach { reaction -> checkReactionSurrogate(reaction, reaction.toGraphQLReactionSurrogate()) }
+            node.reactions.forEach { reaction ->
+                checkReactionSurrogate(reaction, reaction.toGraphQLReactionSurrogate())
+            }
 
             node.contents.forEach { (molecule, concentration) ->
                 val concentrationSurrogate = requireNotNull(nodeSurrogate.contents()[MoleculeInput(molecule.name)])

@@ -28,13 +28,14 @@ import it.unibo.alchemist.model.geometry.Vector
 class ToNodeSurrogateTest<T, P> : StringSpec({
     "ToNodeSurrogate should map a Node to a NodeSurrogate" {
         webRendererTestEnvironments<T, P>().forEach {
-            val node: Node<T> = it.nodes.first()
+            val environment: Environment<T, P> = it.environment
+            val node: Node<T> = environment.nodes.first()
             val nodeSurrogate = node.toNodeSurrogate(
-                it,
+                environment,
                 toEmptyConcentration,
-                toSuitablePositionSurrogate(it.dimensions),
+                toSuitablePositionSurrogate(environment.dimensions),
             )
-            checkToNodeSurrogate(it, node, nodeSurrogate)
+            checkToNodeSurrogate(environment, node, nodeSurrogate)
         }
     }
 }) where T : Any, P : Position<P>, P : Vector<P>

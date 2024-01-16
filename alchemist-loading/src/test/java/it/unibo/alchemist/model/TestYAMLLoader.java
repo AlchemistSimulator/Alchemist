@@ -8,14 +8,14 @@
  */
 package it.unibo.alchemist.model;
 
-import it.unibo.alchemist.core.Engine;
-import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.Loader;
 import it.unibo.alchemist.boundary.modelproviders.YamlProvider;
+import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.layers.StepLayer;
-import it.unibo.alchemist.model.timedistributions.AnyRealDistribution;
 import it.unibo.alchemist.model.nodes.TestNode;
+import it.unibo.alchemist.model.terminators.StepCount;
+import it.unibo.alchemist.model.timedistributions.AnyRealDistribution;
 import it.unibo.alchemist.util.ClassPathScanner;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
@@ -28,6 +28,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -48,8 +49,8 @@ class TestYAMLLoader {
      */
     @Test
     void testAnyRealDistribution() {
-        final Environment<?, ?> environment = testNoVar("synthetic/anyrealdistribution.yml");
-        environment.forEach(n -> n.forEach(r -> assertTrue(r.getTimeDistribution() instanceof AnyRealDistribution)));
+        final Environment<?, ?> environment = testNoVar("synthetic/anyrealdistribution.yml").getEnvironment();
+        environment.forEach(n -> n.forEach(r -> assertInstanceOf(AnyRealDistribution.class, r.getTimeDistribution())));
     }
 
     /**
@@ -58,9 +59,15 @@ class TestYAMLLoader {
     @Test
     void testCustomNodes() {
         testNoVar("synthetic/customnode.yml")
-        .forEach(n -> assertTrue(n instanceof TestNode,
-                "Node are not instances of " + TestNode.class.getName()
-                + " as expected, but " + n.getClass().getName() + " instead"));
+            .getEnvironment()
+            .forEach(n ->
+                assertInstanceOf(
+                    TestNode.class,
+                    n,
+                    "Node are not instances of " + TestNode.class.getName() + " as expected, but "
+                        + n.getClass().getName() + " instead"
+                )
+            );
     }
 
     /**
@@ -112,7 +119,7 @@ class TestYAMLLoader {
      */
     @Test
     void testMultipleMolecules() {
-        final Environment<?, ?> environment = testNoVar("synthetic/multiplemolecule.yml");
+        final Environment<?, ?> environment = testNoVar("synthetic/multiplemolecule.yml").getEnvironment();
         environment.forEach(n -> assertEquals(4, n.getMoleculeCount()));
     }
 
@@ -137,7 +144,7 @@ class TestYAMLLoader {
      */
     @Test
     void testScalaVar() {
-        final Environment<Object, ?> environment = testNoVar("synthetic/scalavar.yml");
+        final Environment<Object, ?> environment = testNoVar("synthetic/scalavar.yml").getEnvironment();
         assertNotNull(environment);
         assertEquals(environment.makePosition(3, 10), environment.getPosition(environment.getNodeByID(0)));
     }
@@ -150,38 +157,37 @@ class TestYAMLLoader {
         final var is = ResourceLoader.getResource("isac/16-dependencies.yaml");
         assertNotNull(is);
         final Loader loader = LoadAlchemist.from(is);
-        final List<String> dependencies = loader.remoteDependencies;
+        final List<String> dependencies = loader.getRemoteDependencies();
         assertEquals(dependencies.size(), 2);
         assertEquals(dependencies.get(0), "dependencies_test.txt");
     }
 
     @Test
     void testMaxAliases() {
-        assertFalse(testNoVar("yamlAliases/aliases.yml").getNodes().isEmpty());
+        assertFalse(testNoVar("yamlAliases/aliases.yml").getEnvironment().getNodes().isEmpty());
     }
 
-    private static <T, P extends Position<P>> Environment<T, P> testLoading(
+    private static <T, P extends Position<P>> Simulation<T, P> testLoading(
             final InputStream resource,
             final Map<String, Double> vars
     ) {
         assertNotNull(resource, "Missing test resource " + resource);
-        final Environment<T, P> environment = LoadAlchemist.from(resource, YamlProvider.INSTANCE)
-                .<T, P>getWith(vars).getEnvironment();
-        final Simulation<T, P> sim = new Engine<>(environment, 10_000);
-        sim.play();
+        final Simulation<T, P> simulation = LoadAlchemist.from(resource, YamlProvider.INSTANCE).getWith(vars);
+        simulation.getEnvironment().addTerminator(new StepCount<>(1_000)); // Was working with 10_000
+        simulation.play();
 //        if (!java.awt.GraphicsEnvironment.isHeadless()) {
-//            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
+//            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(simulation);
 //        }
-        sim.run();
-        sim.getError().ifPresent(e -> fail(e.getMessage()));
-        return environment;
+        simulation.run();
+        simulation.getError().ifPresent(e -> fail(e.getMessage()));
+        return simulation;
     }
 
-    private static <T> Environment<T, ?> testNoVar(final InputStream resource) {
+    private static <T> Simulation<T, ?> testNoVar(final InputStream resource) {
         return testLoading(resource, Collections.emptyMap());
     }
 
-    private static <T> Environment<T, ?> testNoVar(final String resource) {
+    private static <T> Simulation<T, ?> testNoVar(final String resource) {
         return testLoading(ResourceLoader.getResourceAsStream(resource), Collections.emptyMap());
     }
 

@@ -12,8 +12,9 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.boundary.Exporter
-import it.unibo.alchemist.boundary.InitializedEnvironment
 import it.unibo.alchemist.boundary.LoadAlchemist
+import it.unibo.alchemist.boundary.exporters.GlobalExporter
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
@@ -24,8 +25,9 @@ class TestExportersCreation<T, P : Position<P>> : StringSpec({
         assertNotNull(file)
         val loader = LoadAlchemist.from(file)
         assertNotNull(loader)
-        val initialized: InitializedEnvironment<T, P> = loader.getDefault()
-        val exporters: List<Exporter<T, P>> = initialized.exporters
+        val initialized: Simulation<T, P> = loader.getDefault()
+        val exporters: List<Exporter<T, P>> =
+            initialized.outputMonitors.filterIsInstance<GlobalExporter<T, P>>().flatMap { it.exporters }
         exporters.size shouldBeGreaterThan 0
         exporters.forEach {
             it shouldNotBe null

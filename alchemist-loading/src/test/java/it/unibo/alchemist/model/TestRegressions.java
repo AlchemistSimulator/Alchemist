@@ -32,7 +32,11 @@ class TestRegressions {
         final var exporters = LoadAlchemist
             .from(ResourceLoader.getResource(simulation))
             .getDefault()
-            .getExporters();
+            .getOutputMonitors()
+            .stream()
+            .filter(it -> it instanceof Exporter<?, ?>)
+            .map(it -> (Exporter<?, ?>) it)
+            .toList();
         assertEquals(1, exporters.size());
         return exporters.get(0);
     }

@@ -18,7 +18,7 @@ import it.unibo.alchemist.boundary.webui.server.monitor.EnvironmentMonitorFactor
 class EnvironmentMonitorFactoryTest : StringSpec({
     "EnvironmentMonitorFactory should create a monitor using different strategy" {
         webRendererTestEnvironments<Any, Nothing>().forEach {
-            makeEnvironmentMonitor(it).let { monitor ->
+            makeEnvironmentMonitor(it.environment).let { monitor ->
                 monitor::class shouldBe EnvironmentMonitor::class
             }
         }

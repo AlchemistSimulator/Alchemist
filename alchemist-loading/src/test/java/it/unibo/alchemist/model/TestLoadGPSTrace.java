@@ -10,10 +10,8 @@ package it.unibo.alchemist.model;
 
 import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.OutputMonitor;
-import it.unibo.alchemist.core.Engine;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.maps.positions.LatLongPosition;
-import it.unibo.alchemist.model.times.DoubleTime;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
@@ -72,7 +70,8 @@ class TestLoadGPSTrace {
     <T> void testLoadGPSTrace() {
         final var res = ResourceLoader.getResource("testgps.yml");
         assertNotNull(res, "Missing test resource testgps.yml");
-        final Environment<T, GeoPosition> environment = LoadAlchemist.from(res).<T, GeoPosition>getDefault().getEnvironment();
+        final Simulation<T, GeoPosition> simulation = LoadAlchemist.from(res).getDefault();
+        final Environment<T, GeoPosition> environment = simulation.getEnvironment();
         assertTrue(environment.getNodeCount() > 0);
         environment.getNodes().forEach(node -> {
             final var reactions = node.getReactions();
@@ -82,8 +81,7 @@ class TestLoadGPSTrace {
                 assertEquals(1, reaction.getActions().size());
             });
         });
-        final Simulation<T, GeoPosition> sim = new Engine<>(environment, new DoubleTime(TIME_TO_REACH));
-        sim.addOutputMonitor(new OutputMonitor<>() {
+        simulation.addOutputMonitor(new OutputMonitor<>() {
 
             @Override
             public void finished(
@@ -124,9 +122,9 @@ class TestLoadGPSTrace {
                 final long step
             ) { }
         });
-        sim.play();
-        sim.run();
-        sim.getError().ifPresent(Unchecked.consumer(e ->  {
+        simulation.play();
+        simulation.run();
+        simulation.getError().ifPresent(Unchecked.consumer(e ->  {
             throw e;
         }));
     }

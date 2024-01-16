@@ -20,7 +20,7 @@ class TestLoadSwingGUI : StringSpec(
     {
         "the Swing-based GUI should be loadable" {
             val loader = LoadAlchemist.from(ResourceLoader.getResource("test.yml"))
-            loader.getDefault<Any, Nothing>().monitors.first { it is SwingGUI }
+            loader.getDefault<Any, Nothing>().outputMonitors.first { it is SwingGUI }
         }
     },
 )

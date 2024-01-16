@@ -1,4 +1,4 @@
 incarnation: protelis
 
 launcher:
-  - [ type: HeadlessSimulationLauncher ]
+  - [ type: DefaultLauncher ]

@@ -38,7 +38,11 @@ class EnvironmentSurrogateTest<T, P> : StringSpec({
             // Test propagation of changes
             val newNode = it.nodes.first().cloneNode(Time.ZERO)
             val newPosition = it.makePosition(0.0, 0.0)
-            it.addNode(newNode, newPosition)
+            it.simulation.schedule {
+                it.addNode(newNode, newPosition)
+            }
+            it.simulation.play()
+            it.simulation.run()
             it.getNodeByID(newNode.id).toGraphQLNodeSurrogate() shouldBe envSurrogate.nodeById(newNode.id)
         }
     }

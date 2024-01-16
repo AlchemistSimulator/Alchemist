@@ -10,9 +10,10 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.boundary.InitializedEnvironment
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.exporters.CSVExporter
+import it.unibo.alchemist.boundary.exporters.GlobalExporter
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
@@ -23,9 +24,10 @@ class TestExportInterval<T, P : Position<P>> : StringSpec({
         assertNotNull(file)
         val loader = LoadAlchemist.from(file)
         assertNotNull(loader)
-        val initialized: InitializedEnvironment<T, P> = loader.getDefault()
-        initialized.exporters.size shouldBe 1
-        val exporter = initialized.exporters.first()
+        val simulation: Simulation<T, P> = loader.getDefault()
+        val exporters = simulation.outputMonitors.filterIsInstance<GlobalExporter<T, P>>().flatMap { it.exporters }
+        exporters.size shouldBe 1
+        val exporter = exporters.first()
         require(exporter is CSVExporter) {
             "Invalid exporter of type '${exporter::class.simpleName}'"
         }

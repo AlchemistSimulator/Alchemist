@@ -50,7 +50,7 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
      * @param graphics the effects file
      * @param closeOperation the type of close operation for this GUI
      */
-    @JvmOverloads constructor(
+    constructor(
         environment: Environment<T, P>,
         graphics: File?,
         failOnHeadless: Boolean = false,

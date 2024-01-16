@@ -28,15 +28,15 @@ class EnvironmentMonitorTest : StringSpec({
 
     "EnvironmentMonitor stepDone should work as expected" {
         webRendererTestEnvironments<Any, Nothing>().forEach {
-            val environmentMonitor = makeEnvironmentMonitor(it)
+            val environmentMonitor = makeEnvironmentMonitor(it.environment)
             checkStep {
-                environmentMonitor.stepDone(it, null, Time.ZERO, 111)
+                environmentMonitor.stepDone(it.environment, null, Time.ZERO, 111)
             }
             checkStep {
-                environmentMonitor.initialized(it)
+                environmentMonitor.initialized(it.environment)
             }
             checkStep {
-                environmentMonitor.finished(it, Time.ZERO, 222)
+                environmentMonitor.finished(it.environment, Time.ZERO, 222)
             }
         }
     }

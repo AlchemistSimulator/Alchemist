@@ -1,3 +1,30 @@
+## [29.5.0](https://github.com/AlchemistSimulator/Alchemist/compare/29.4.0...29.5.0) (2024-01-16)
+
+
+### Features
+
+* release platform-specific packages ([#3022](https://github.com/AlchemistSimulator/Alchemist/issues/3022)) ([ab92e34](https://github.com/AlchemistSimulator/Alchemist/commit/ab92e34186cdb9d2ab9fde443428c7a1e5595439))
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.12.1 ([8648bb4](https://github.com/AlchemistSimulator/Alchemist/commit/8648bb439291d6dff43079be509bf34404b4703c))
+* **deps:** update dependency org.mockito:mockito-core to v5.9.0 ([4478f0c](https://github.com/AlchemistSimulator/Alchemist/commit/4478f0cd3a07aa995f4d6759e28f93a422ce89f1))
+* **deps:** update external-resources/learning-scafi-alchemist digest to ea11bf2 ([f63b491](https://github.com/AlchemistSimulator/Alchemist/commit/f63b4917cb109d68133a2240edcd5aba807b3fe2))
+* **deps:** update node.js to 20.11 ([6d571be](https://github.com/AlchemistSimulator/Alchemist/commit/6d571be75926906bbf5e547ca6cc5306dd0f9a70))
+* **deps:** update npm to v10.3.0 ([eb8d456](https://github.com/AlchemistSimulator/Alchemist/commit/eb8d4567c75e2d3a4baa2c4acb8ead8f59e4ac8f))
+* **deps:** update plugin org.gradle.toolchains.foojay-resolver-convention to v0.8.0 ([c1ca6da](https://github.com/AlchemistSimulator/Alchemist/commit/c1ca6da1be0fb35d8743d34281afdfc90fe29d67))
+* **deps:** update react to v18.2.0-pre.683 ([ae48762](https://github.com/AlchemistSimulator/Alchemist/commit/ae487629eaaea69e4d95ef0dd86c61b40f44b4ef))
+* **deps:** update react to v18.2.0-pre.684 ([5cb370a](https://github.com/AlchemistSimulator/Alchemist/commit/5cb370aef9c24db8717e0365400791f4b0b6cb89))
+* **deps:** update react to v18.2.0-pre.685 ([6380ece](https://github.com/AlchemistSimulator/Alchemist/commit/6380ece427d41454079482ce063e4ae91adabe48))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/download-artifact action to v4.1.1 ([1fe6548](https://github.com/AlchemistSimulator/Alchemist/commit/1fe65486db3caa19aa922b4cf6132b64205c671a))
+* **deps:** update actions/upload-artifact action to v4.1.0 ([6f10075](https://github.com/AlchemistSimulator/Alchemist/commit/6f100758d294dd55bef62cef5318411ce9df3a43))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.13 ([ac80009](https://github.com/AlchemistSimulator/Alchemist/commit/ac8000962f9b6137f988998e6415a17cd9871a62))
+
 ## [29.4.0](https://github.com/AlchemistSimulator/Alchemist/compare/29.3.5...29.4.0) (2024-01-10)
 
 

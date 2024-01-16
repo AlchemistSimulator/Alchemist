@@ -53,15 +53,11 @@ class NamedParametersConstructor(
     }
 
     private inline infix fun Boolean.and(then: () -> Boolean): Boolean = if (this) then() else false
-    private inline infix fun Boolean.or(alternatively: () -> Boolean): Boolean = if (this) true else alternatively()
 
     private fun List<String>.allLowerCase() = map { it.lowercase() }
 
     private fun String?.couldBeInterpretedAs(name: String?): Boolean =
         equals(name, ignoreCase = true) || this?.splitToWords()?.allLowerCase() == name?.splitToWords()?.allLowerCase()
-
-    private fun List<String>.looselyEqual(contained: List<String?>): Boolean =
-        contained.all { parameter -> count { parameter.couldBeInterpretedAs(it) } == 1 }
 
     override fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*> {
         val providedNames = parametersMap.map { it.key.toString() }
@@ -69,30 +65,52 @@ class NamedParametersConstructor(
         val constructorsWithOrderedParameters = target.constructors.map { constructor ->
             constructor.valueParameters.filterNot { it.type.jvmErasure.java in singletons }.sortedBy { it.index }
         }
-        val usableConstructors: List<OrderedParameters> = constructorsWithOrderedParameters.filter { parameters ->
-            (providedNames.size <= parameters.size) and {
-                // Parameter count must be compatible (as many or less parameters provided)
-                val (optional, mandatory) = parameters.partition { it.isOptional }
-                val mandatoryNames = mandatory.map { it.name }
-                val requiredOptionals by lazy { optional.take(providedNames.size - mandatory.size).map { it.name } }
-                fun verifyParameterMatch(matchMethod: (List<String>).(List<String?>) -> Boolean) =
-                    providedNames.matchMethod(mandatoryNames) and {
-                        providedNames.matchMethod(requiredOptionals)
+        val usableConstructors: Map<OrderedParameters, Map<String, String>> =
+            constructorsWithOrderedParameters.mapNotNull { parameters ->
+                if (providedNames.size <= parameters.size) {
+                    // Parameter count must be compatible (as many or less parameters provided)
+                    val (optional, mandatory) = parameters.partition { it.isOptional }
+                    val mandatoryNames = mandatory.map { it.name }
+                    val requiredOptionals by lazy { optional.take(providedNames.size - mandatory.size).map { it.name } }
+                    fun verifyParameterMatch(matchMethod: (List<String>).(List<String?>) -> Boolean) =
+                        providedNames.matchMethod(mandatoryNames) and { providedNames.matchMethod(requiredOptionals) }
+                    // Check for exact name match
+                    val exactMatch = verifyParameterMatch(List<String>::containsAll)
+                    if (exactMatch) {
+                        parameters to emptyMap()
+                    } else {
+                        // Check for similar-enough non-ambiguous matches: kebab-case, snake_case, etc.
+                        // convertedNames is a map between the actual parameter name and the provided name
+                        val convertedNames = providedNames.mapNotNull { providedName ->
+                            parameters.filter { it.name.couldBeInterpretedAs(providedName) }
+                                .takeIf { it.size == 1 }
+                                ?.first()
+                                ?.name
+                                ?.let { it to providedName }
+                        }.toMap()
+                        val worksIfNamesAreReplaced = convertedNames.keys.containsAll(mandatoryNames) and {
+                            convertedNames.keys.containsAll(requiredOptionals)
+                        }
+                        if (worksIfNamesAreReplaced) {
+                            logger.warn(
+                                "Alchemist had to replace some parameter names to match the constructor signature: {}",
+                                convertedNames,
+                            )
+                            parameters to convertedNames
+                        } else {
+                            null
+                        }
                     }
-                // Check for exact name match
-                val exactMatch = verifyParameterMatch(List<String>::containsAll)
-                exactMatch or {
-                    // Check for similar-enough non-ambiguous matches (case insensitive), kebab-case, snake_case
-                    verifyParameterMatch { looselyEqual(it) } and {
-                        logger.warn(
-                            "Parameter ",
-                        )
-                        true
-                    }
+                } else {
+                    null
                 }
-            }
-        }
-        require(usableConstructors.isNotEmpty()) {
+            }.toMap()
+        // If at least one constructor is a perfect match, discard the ones requiring name replacement.
+        val preferredMatch = usableConstructors
+            .filterValues { replacements -> replacements.isEmpty() }
+            .takeIf { it.isNotEmpty() }
+            ?: usableConstructors
+        require(preferredMatch.isNotEmpty()) {
             """
             No constructor available for ${target.simpleName} with named parameters $providedNames.
             Note: Due to the way Kotlin's @JvmOverloads works, all the optional parameters that precede the ones
@@ -101,14 +119,17 @@ class NamedParametersConstructor(
             """.trimIndent().replace(Regex("\\R§"), " ") +
                 constructorsWithOrderedParameters.description()
         }
-        require(usableConstructors.size == 1) {
+        require(preferredMatch.size == 1) {
             """
             |Ambiguous constructors resolution for ${target.simpleName} with named parameters $providedNames.
-            | ${ usableConstructors.joinToString("\n|") { "Match: ${it.namedParametersDescriptor()}" } }
+            | ${ usableConstructors.keys.joinToString("\n|") { "Match: ${it.namedParametersDescriptor()}" } }
             |Available constructors have the following *named* parameters:
             """.trimMargin() + constructorsWithOrderedParameters.description()
         }
-        return usableConstructors.first().mapNotNull { parametersMap[it.name] }
+        val (selectedConstructor, replacements) = preferredMatch.toList().first()
+        return selectedConstructor.map { parameter ->
+            parametersMap[replacements.getOrDefault(parameter.name, parameter.name)]
+        }
     }
 
     private fun Collection<KParameter>.namedParametersDescriptor() = "$size-ary constructor: " +
@@ -117,6 +138,11 @@ class NamedParametersConstructor(
         }
 
     override fun toString(): String = "$typeName($parametersMap)"
+
+    companion object {
+        @JvmStatic
+        private val logger = LoggerFactory.getLogger(NamedParametersConstructor::class.java)
+    }
 }
 
 internal data class TypeSearch<out T>(val typeName: String, val targetType: Class<out T>) {

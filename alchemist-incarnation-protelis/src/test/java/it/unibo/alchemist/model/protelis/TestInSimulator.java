@@ -9,10 +9,8 @@
 package it.unibo.alchemist.model.protelis;
 
 import com.google.common.collect.Maps;
-import it.unibo.alchemist.core.Engine;
-import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.boundary.LoadAlchemist;
-import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.Position;
 import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
@@ -122,14 +120,10 @@ class TestInSimulator {
     private static <T, P extends Position<P>> void testLoading(final String resource, final Map<String, Double> vars) {
         final var res = ResourceLoader.getResource(resource);
         assertNotNull(res, "Missing test resource " + resource);
-        final Environment<T, P> environment = LoadAlchemist.from(res).<T, P>getWith(vars).getEnvironment();
-        final Simulation<T, P> sim = new Engine<>(environment, 10_000);
-        sim.play();
-//        if (!java.awt.GraphicsEnvironment.isHeadless()) {
-//            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
-//        }
-        sim.run();
-        sim.getError().ifPresent(Unchecked.consumer(e ->  {
+        final Simulation<T, P> simulation = LoadAlchemist.from(res).<T, P>getWith(vars);
+        simulation.play();
+        simulation.run();
+        simulation.getError().ifPresent(Unchecked.consumer(e ->  {
             throw e;
         }));
     }

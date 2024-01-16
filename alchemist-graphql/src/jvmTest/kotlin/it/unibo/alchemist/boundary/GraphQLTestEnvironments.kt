@@ -26,6 +26,6 @@ object GraphQLTestEnvironments {
                 simulation.outputMonitors.find { it is GraphQLServer<*, *> }
                 simulation.outputMonitors.find { it is EnvironmentSubscriptionMonitor<*, *> }
                 test(simulation.environment)
-                simulation.environment.simulation.terminate()
+                simulation.terminate()
             }
 }

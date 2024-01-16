@@ -8,10 +8,9 @@
  */
 package it.unibo.alchemist.model.biochemistry.environments;
 
-import it.unibo.alchemist.boundary.OutputMonitor;
-import it.unibo.alchemist.core.Engine;
-import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.boundary.LoadAlchemist;
+import it.unibo.alchemist.boundary.OutputMonitor;
+import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
@@ -752,10 +751,8 @@ class TestBioRect2DEnvironmentNoOverlap {
         final Map<String, Double> vars = Collections.emptyMap();
         final var res = ResourceLoader.getResource(resource);
         assertNotNull(res, "Missing test resource " + resource);
-        final Environment<Double, Euclidean2DPosition> env = LoadAlchemist.from(res)
-                .<Double, Euclidean2DPosition>getWith(vars)
-                .getEnvironment();
-        final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(env);
+        final Simulation<Double, Euclidean2DPosition> sim = LoadAlchemist.from(res).getWith(vars);
+        final Environment<Double, Euclidean2DPosition> env = sim.getEnvironment();
         AlchemistTesting.terminatingAfterSteps(sim, 1_000);
         sim.addOutputMonitor(new OutputMonitor<>() {
             @Serial

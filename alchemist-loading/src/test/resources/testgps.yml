@@ -17,3 +17,9 @@ deployments:
     parameters: [7, "gpsTrace", true, "AlignToSimulationTime"]
     programs:
       - *move
+
+terminate:
+  type: StableForSteps
+  parameters:
+    equalIntervals: 5
+    checkInterval: 100

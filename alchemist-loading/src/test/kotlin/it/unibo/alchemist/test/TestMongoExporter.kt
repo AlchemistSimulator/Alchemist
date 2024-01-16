@@ -13,11 +13,12 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.longs.shouldBeGreaterThan
-import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.boundary.exporters.GlobalExporter
 import it.unibo.alchemist.boundary.exporters.MongoDBExporter
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Actionable
@@ -49,9 +50,11 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             simulation.play()
             simulation.run()
             checkForErrors()
-            val exporter = simulation.outputMonitors.filterIsInstance<Exporter<T, P>>().firstOrNull {
-                it is MongoDBExporter
-            }
+            val exporter = simulation.outputMonitors
+                .filterIsInstance<GlobalExporter<T, P>>()
+                .flatMap { it.exporters }
+                .apply { size shouldBeExactly 1 }
+                .firstOrNull { it is MongoDBExporter }
             require(exporter is MongoDBExporter)
             exporter.dataExtractors.size shouldBeGreaterThan 0
             val testClient: MongoClient = MongoClients.create(exporter.uri)

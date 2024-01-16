@@ -118,7 +118,7 @@ class NamedParametersConstructor(
         require(preferredMatch.size == 1) {
             """
             |Ambiguous constructors resolution for ${target.simpleName} with named parameters $providedNames.
-            | ${ usableConstructors.keys.joinToString("\n|") { "Match: ${it.namedParametersDescriptor()}" } }
+            |${ usableConstructors.keys.joinToString("\n|") { "Match: ${it.namedParametersDescriptor()}" } }
             |Available constructors have the following *named* parameters:
             """.trimMargin() + constructorsWithOrderedParameters.description()
         }

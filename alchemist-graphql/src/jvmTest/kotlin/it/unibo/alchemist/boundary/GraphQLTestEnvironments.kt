@@ -11,7 +11,6 @@ package it.unibo.alchemist.boundary
 
 import it.unibo.alchemist.boundary.graphql.monitor.EnvironmentSubscriptionMonitor
 import it.unibo.alchemist.boundary.launchers.GraphQLServer
-import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.util.ClassPathScanner
@@ -21,14 +20,10 @@ object GraphQLTestEnvironments {
         ClassPathScanner.resourcesMatching(".*\\.yml", "it.unibo.alchemist.test.graphql")
             .asSequence()
             .map { LoadAlchemist.from(it) }
-            .onEach { it.launcher.launch(it) }
             .map { it.getDefault<T, P>() }
             .forEach { simulation ->
                 simulation.outputMonitors.find { it is GraphQLServer<*, *> }
                 simulation.outputMonitors.find { it is EnvironmentSubscriptionMonitor<*, *> }
                 test(simulation.environment)
-                if (simulation.status != Status.TERMINATED) {
-                    simulation.terminate()
-                }
             }
 }

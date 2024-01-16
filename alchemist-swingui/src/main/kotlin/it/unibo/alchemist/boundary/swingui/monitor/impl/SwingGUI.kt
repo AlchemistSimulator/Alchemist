@@ -35,7 +35,7 @@ import javax.swing.JPanel
 @Deprecated("The Swing UI must be replaced by a web UI")
 class SwingGUI<T, P : Position2D<P>> private constructor(
     val environment: Environment<T, P>,
-    graphics: File?,
+    graphicsFile: File?,
     closeOperation: Int,
     failOnHeadless: Boolean,
     private val main: Generic2DDisplay<T, P>,
@@ -80,12 +80,12 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
         }
         if (headAttached) {
             val effects = JEffectsTab(main, false)
-            if (graphics != null) {
-                require(graphics.exists()) { "Effects file " + graphics.absolutePath + " does not exist" }
-                require(!graphics.isDirectory) {
-                    "The effects file at " + graphics.absolutePath + " is a directory, but a file was expected"
+            if (graphicsFile != null) {
+                require(graphicsFile.exists()) { "Effects file " + graphicsFile.absolutePath + " does not exist" }
+                require(!graphicsFile.isDirectory) {
+                    "The effects file at " + graphicsFile.absolutePath + " is a directory, but a file was expected"
                 }
-                effects.setEffects(EffectSerializationFactory.effectsFromFile(graphics))
+                effects.setEffects(EffectSerializationFactory.effectsFromFile(graphicsFile))
             }
             val frame = JFrame("Alchemist Simulator")
             frame.defaultCloseOperation = closeOperation

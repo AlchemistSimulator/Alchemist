@@ -44,7 +44,6 @@ class TestNodeCloning<P extends Position<P>> {
     private static final Molecule SOURCEMOL = new SimpleMolecule("source");
     private static final Molecule ENABLEDMOL = new SimpleMolecule("enabled");
     private static final Molecule DATAMOL = new SimpleMolecule("data");
-    private static final long SIMULATED_STEPS = 5000;
     private static final long ENABLE_STEP = 50;
     private static final long ENABLE_CHECKS = ENABLE_STEP + 10;
     private Environment<Object, P> environment;

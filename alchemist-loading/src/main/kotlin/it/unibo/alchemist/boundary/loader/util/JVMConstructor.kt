@@ -92,11 +92,7 @@ class NamedParametersConstructor(
                             convertedNames.keys.containsAll(requiredOptionals)
                         }
                         if (worksIfNamesAreReplaced) {
-                            logger.warn(
-                                "Alchemist had to replace some parameter names to match the constructor signature: {}",
-                                convertedNames,
-                            )
-                            parameters to convertedNames
+                            parameters to convertedNames.filter { it.key != it.value }
                         } else {
                             null
                         }
@@ -127,9 +123,16 @@ class NamedParametersConstructor(
             """.trimMargin() + constructorsWithOrderedParameters.description()
         }
         val (selectedConstructor, replacements) = preferredMatch.toList().first()
-        return selectedConstructor.map { parameter ->
-            parametersMap[replacements.getOrDefault(parameter.name, parameter.name)]
+        if (replacements.isNotEmpty()) {
+            logger.warn(
+                "Alchemist had to replace some parameter names to match the constructor signature or {}: {}",
+                target.simpleName,
+                replacements,
+            )
         }
+        return selectedConstructor
+            .filter { parametersMap.containsKey(replacements.getOrDefault(it.name, it.name)) }
+            .map { parametersMap[replacements.getOrDefault(it.name, it.name)] }
     }
 
     private fun Collection<KParameter>.namedParametersDescriptor() = "$size-ary constructor: " +

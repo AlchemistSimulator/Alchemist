@@ -56,6 +56,15 @@ jobs:
           should-run-codecov: ${{ contains('Linux', runner.os) }}
           should-deploy: false
           should-validate-wrapper: ${{ contains('Linux', runner.os) }}
+      - name: Generate packages
+        shell: bash
+        run: ./gradlew jpackageFull
+      - name: Upload packages
+        uses: actions/upload-artifact@v4.0.0
+        with:
+          name: installer-package-${{ runner.os }}
+          path: build/package/*
+          if-no-files-found: error
   # Performs a dry-deployment if credentials are available
   test-deploy:
     needs:
@@ -223,6 +232,12 @@ jobs:
         uses: actions/download-artifact@v4.1.1
         with:
           name: website
+      - name: Download packages
+        uses: actions/download-artifact@v4.1.0
+        with:
+          path: build/package/
+          pattern: installer-package-*
+          merge-multiple: true
       - name: Find the version of Node from package.json
         id: node-version
         run: echo "version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT

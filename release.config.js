@@ -16,7 +16,6 @@ git -C build/website/ add . || exit 1
 git -C build/website/ commit -m "chore: update website to version \${nextRelease.version}" || exit 2
 git -C build/website/ push || exit 3
 ./gradlew shadowJar --parallel || ./gradlew shadowJar --parallel || exit 4
-./gradlew jpackageFull || exit 9
 RELEASE_ON_CENTRAL="./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs release --parallel"
 eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || exit 5
 ./gradlew publishKotlinOSSRHPublicationToGithubRepository --continue || true

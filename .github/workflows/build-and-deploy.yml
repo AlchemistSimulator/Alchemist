@@ -167,7 +167,7 @@ jobs:
           java-version: ${{ needs.select-java-version.outputs.java-version }}
           distribution: 'temurin'
       - name: Generate PKGBUILD
-        run: ./gradlew generatePKGBUILD -DgeneratePKGBUILD.testSource=true
+        run: ./gradlew jpackageFull generatePKGBUILD -DgeneratePKGBUILD.testSource=true
       - name: Makepkg Build and Check
         uses: edlanglois/pkgbuild-action@v1
         with:

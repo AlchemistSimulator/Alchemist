@@ -161,7 +161,6 @@ val generatePKGBUILD by tasks.registering(Exec::class) {
         val version = rootProject.version.toString().substringBefore('-')
         commandLine("md5sum", "-b", "${rootProject.layout.buildDirectory.get().asFile.resolve("package").path}/${rootProject.name}-$version-1.x86_64.rpm")
     }
-
     doLast {
         val exit = executionResult.get().exitValue
         require(exit == 0)
@@ -181,7 +180,6 @@ val generatePKGBUILD by tasks.registering(Exec::class) {
         file.createNewFile()
         file.writeText(replacedContent)
     }
-    dependsOn(tasks.jpackage)
     mustRunAfter(jpackageFull)
 }
 

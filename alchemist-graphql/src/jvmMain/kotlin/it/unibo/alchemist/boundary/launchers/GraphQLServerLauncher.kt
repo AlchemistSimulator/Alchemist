@@ -60,5 +60,6 @@ class GraphQLServerLauncher @JvmOverloads constructor(
                 graphQLModule()
                 graphQLRoutingModule()
             },
+
         )
 }

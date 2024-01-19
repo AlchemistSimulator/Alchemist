@@ -1,0 +1,11 @@
+subscription Environment {
+    environment{
+        nodeToPos{
+            entries{
+                position{
+                    coordinates
+                }
+            }
+        }
+    }
+}

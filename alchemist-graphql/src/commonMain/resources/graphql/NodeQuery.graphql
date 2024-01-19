@@ -1,0 +1,5 @@
+query NodeQuery($id: Int! = 0) {
+    nodePosition(nodeId: $id) {
+        coordinates
+    }
+}

@@ -47,15 +47,15 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
      * Builds a single-use graphical interface.
      *
      * @param environment the simulation for this GUI
-     * @param graphics the effects file
+     * @param graphicsFile the effects file
      * @param closeOperation the type of close operation for this GUI
      */
     constructor(
         environment: Environment<T, P>,
-        graphics: File?,
+        graphicsFile: File?,
         failOnHeadless: Boolean = false,
         closeOperation: Int = JFrame.EXIT_ON_CLOSE,
-    ) : this(environment, graphics, closeOperation, failOnHeadless, makeSwingComponent(environment))
+    ) : this(environment, graphicsFile, closeOperation, failOnHeadless, makeSwingComponent(environment))
 
     /**
      * Builds a single-use graphical interface.

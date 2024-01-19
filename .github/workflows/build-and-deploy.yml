@@ -157,7 +157,7 @@ jobs:
       - name: Setup arch
         run: |
           sudo pacman --noconfirm -Syu 
-          sudo pacman --noconfirm -Sy git rpm-tools
+          sudo pacman --noconfirm -Sy git rpm-tools dpkg
       - run: git config --system --add safe.directory /__w/Alchemist/Alchemist # https://github.com/actions/checkout/issues/1169
       - name: Checkout
         uses: danysk/action-checkout@0.2.14

@@ -233,7 +233,7 @@ jobs:
         with:
           name: website
       - name: Download packages
-        uses: actions/download-artifact@v4.1.0
+        uses: actions/download-artifact@v4.1.1
         with:
           path: build/package/
           pattern: installer-package-*

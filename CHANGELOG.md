@@ -1,3 +1,32 @@
+## [29.5.1](https://github.com/AlchemistSimulator/Alchemist/compare/29.5.0...29.5.1) (2024-01-21)
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.12.2 ([4e9e793](https://github.com/AlchemistSimulator/Alchemist/commit/4e9e79340a305c9c88bd58bf35062f98505b6d6e))
+* **deps:** update dependency org.danilopianini:jirf to v0.4.18 ([bcf2e22](https://github.com/AlchemistSimulator/Alchemist/commit/bcf2e2216a7e48662e9230f8f4933396be812e0f))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 8857c19 ([0360463](https://github.com/AlchemistSimulator/Alchemist/commit/03604632e13cdf21818603124247008d963208b0))
+* **deps:** update plugin gitsemver to v3 ([561875b](https://github.com/AlchemistSimulator/Alchemist/commit/561875bbbc6f6d381c4190c845bcdf2f254a2223))
+* **deps:** update plugin jpackage to v1.6.0 ([d4f7d88](https://github.com/AlchemistSimulator/Alchemist/commit/d4f7d88e345bfe9b453464b311cb1ad48ccad530))
+* **deps:** update react to v18.2.0-pre.687 ([f4d8951](https://github.com/AlchemistSimulator/Alchemist/commit/f4d8951797c710fba798cad5c4bddb7eab24a223))
+* **deps:** update react to v18.2.0-pre.688 ([0e1212d](https://github.com/AlchemistSimulator/Alchemist/commit/0e1212deacdec1fd90f74307c35c8e87fac04ffc))
+* **deps:** update react to v18.2.0-pre.689 ([b8514ee](https://github.com/AlchemistSimulator/Alchemist/commit/b8514eed76145f88c1c17755336b46a40cb25de0))
+* **deps:** update site/themes/hugo-theme-relearn digest to 9c13f0b ([50eb3ae](https://github.com/AlchemistSimulator/Alchemist/commit/50eb3aec1d27140d5bd74cdedad3c16fd9521517))
+* **deps:** update site/themes/hugo-theme-relearn digest to df39abc ([ac4e8b5](https://github.com/AlchemistSimulator/Alchemist/commit/ac4e8b5839c168595ebefbbf8d92dbc2af5fcbec))
+
+
+### Bug Fixes
+
+* **cd:** windows and macOs packages release ([#3057](https://github.com/AlchemistSimulator/Alchemist/issues/3057)) ([f83bd3e](https://github.com/AlchemistSimulator/Alchemist/commit/f83bd3edb371d0f9b4b9c50fccaa2b9453e03c3d))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/download-artifact action to v4.1.1 ([1ad29c8](https://github.com/AlchemistSimulator/Alchemist/commit/1ad29c8344793dc53a9b0b2604fcbc0cd4662e24))
+* **deps:** update actions/upload-artifact action to v4.2.0 ([de6689f](https://github.com/AlchemistSimulator/Alchemist/commit/de6689ff4462d3151ae45a620f9b8ac7bd2b65cc))
+* **deps:** update actions/upload-artifact action to v4.2.0 ([596168d](https://github.com/AlchemistSimulator/Alchemist/commit/596168ddb79eaf6dcbf209ab8f9ca65b01245ff7))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.14 ([6f2aa0d](https://github.com/AlchemistSimulator/Alchemist/commit/6f2aa0d05a1b777f7d56719298a0c134a06ccdba))
+
 ## [29.5.0](https://github.com/AlchemistSimulator/Alchemist/compare/29.4.0...29.5.0) (2024-01-16)
 
 

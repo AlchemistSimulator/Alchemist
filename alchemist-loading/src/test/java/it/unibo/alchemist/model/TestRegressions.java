@@ -12,6 +12,7 @@ import it.unibo.alchemist.boundary.Exporter;
 import it.unibo.alchemist.boundary.Extractor;
 import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.exporters.CSVExporter;
+import it.unibo.alchemist.boundary.exporters.GlobalExporter;
 import it.unibo.alchemist.boundary.extractors.MeanSquaredError;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
@@ -34,8 +35,8 @@ class TestRegressions {
             .getDefault()
             .getOutputMonitors()
             .stream()
-            .filter(it -> it instanceof Exporter<?, ?>)
-            .map(it -> (Exporter<?, ?>) it)
+            .filter(it -> it instanceof GlobalExporter<?, ?>)
+            .flatMap(it -> ((GlobalExporter<?, ?>) it).getExporters().stream())
             .toList();
         assertEquals(1, exporters.size());
         return exporters.get(0);

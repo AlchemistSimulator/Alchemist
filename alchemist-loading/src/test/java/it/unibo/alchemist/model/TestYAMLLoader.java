@@ -88,8 +88,9 @@ class TestYAMLLoader {
      */
     @Test
     <P extends Position<P>> void testLayers() {
+        final var simulation = testNoVar("synthetic/testlayer.yml");
         @SuppressWarnings("unchecked")
-        final Environment<Object, P> environment = (Environment<Object, P>) testNoVar("synthetic/testlayer.yml");
+        final Environment<Object, P> environment = (Environment<Object, P>) simulation.getEnvironment();
         final Set<Layer<Object, P>> layers = environment.getLayers();
         assertFalse(layers.isEmpty());
         assertEquals(2, layers.size());
@@ -100,10 +101,10 @@ class TestYAMLLoader {
                 () -> new IllegalStateException("No SAPERE incarnation available"));
         final Molecule a = inc.createMolecule("A");
         assertTrue(environment.getLayer(a).isPresent());
-        assertTrue(environment.getLayer(a).get() instanceof StepLayer);
+        assertInstanceOf(StepLayer.class, environment.getLayer(a).get());
         final Molecule b = inc.createMolecule("B");
         assertTrue(environment.getLayer(b).isPresent());
-        assertTrue(environment.getLayer(b).get() instanceof StepLayer);
+        assertInstanceOf(StepLayer.class, environment.getLayer(b).get());
     }
 
     /**

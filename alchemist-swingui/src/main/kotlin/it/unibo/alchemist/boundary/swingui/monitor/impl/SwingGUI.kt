@@ -123,21 +123,21 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
     override fun initialized(environment: Environment<T, P>) {
         if (headAttached) {
             timeStepMonitor.initialized(environment)
-            super.initialized(environment)
+            main.initialized(environment)
         }
     }
 
     override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
         if (headAttached) {
             timeStepMonitor.stepDone(environment, reaction, time, step)
-            super.stepDone(environment, reaction, time, step)
+            main.stepDone(environment, reaction, time, step)
         }
     }
 
     override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
         if (headAttached) {
             timeStepMonitor.finished(environment, time, step)
-            super.finished(environment, time, step)
+            main.finished(environment, time, step)
         }
     }
 

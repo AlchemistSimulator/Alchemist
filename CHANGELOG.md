@@ -1,3 +1,21 @@
+## [30.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/29.5.1...30.0.0) (2024-01-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove `InitializedEnvironment` and other ancillary classes. `Loader`s can now produce simulations. `Launcher`s are now responsible for the lifecycle of an Alchemist run, which may be composed of one simulation or multiple batches. `SwingGUI` becomes a plain output monitor and can be attached by need (#3014)
+
+### Dependency updates
+
+* **deps:** update plugin gitsemver to v3.1.0 ([2d156bd](https://github.com/AlchemistSimulator/Alchemist/commit/2d156bdd6247b43c765486780e71baaa4ff3925c))
+* **deps:** update react to v18.2.0-pre.690 ([baf5907](https://github.com/AlchemistSimulator/Alchemist/commit/baf59079080305fc155acb6e919b26d70150618b))
+* **deps:** update site/themes/hugo-theme-relearn digest to 13b4513 ([3dd3ebb](https://github.com/AlchemistSimulator/Alchemist/commit/3dd3ebb320988521d84756f63111eaa34c30d7a9))
+
+
+### Refactoring
+
+* remove `InitializedEnvironment` and other ancillary classes. `Loader`s can now produce simulations. `Launcher`s are now responsible for the lifecycle of an Alchemist run, which may be composed of one simulation or multiple batches. `SwingGUI` becomes a plain output monitor and can be attached by need ([#3014](https://github.com/AlchemistSimulator/Alchemist/issues/3014)) ([6669281](https://github.com/AlchemistSimulator/Alchemist/commit/6669281908ccc038bab9f600c1e33a0c47730c82))
+
 ## [29.5.1](https://github.com/AlchemistSimulator/Alchemist/compare/29.5.0...29.5.1) (2024-01-21)
 
 

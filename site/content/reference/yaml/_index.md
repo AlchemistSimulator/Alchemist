@@ -137,8 +137,13 @@ Instantiation is delegated to the [Java Implicit Reflective Factory](https://git
 
 **Type**: SpecMap
 
-The document contents at the root of the file. Builds an
-{{% api package="boundary" class="InitializedEnvironment" %}}.
+The document contents at the root of the file.
+Contains all the information required to buld a 
+{{% api package="boundary" class="Loader" %}},
+which, in turn, is able to spawn
+{{% api package="core" class="Simulation" %}}s
+through a
+{{% api package="boundary" class="Launcher" %}}.
 
 **(Multi)Spec**
 

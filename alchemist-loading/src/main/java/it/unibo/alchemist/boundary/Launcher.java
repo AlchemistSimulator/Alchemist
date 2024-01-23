@@ -19,5 +19,4 @@ public interface Launcher {
      * @param loader loader
      */
     void launch(Loader loader);
-
 }

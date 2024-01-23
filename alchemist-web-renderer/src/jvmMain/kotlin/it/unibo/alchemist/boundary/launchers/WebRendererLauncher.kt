@@ -23,7 +23,7 @@ import kotlinx.coroutines.runBlocking
 /**
  * A launcher that starts a REST server to allow the visualization of the simulation on a Browser.
  */
-class WebRendererLauncher : SimulationLauncher() {
+class WebRendererLauncher : DefaultLauncher() {
 
     /**
      *  Prepares the simulation to be run, execute it in a coroutine and start the REST server by
@@ -31,7 +31,7 @@ class WebRendererLauncher : SimulationLauncher() {
      *  @param loader the loader of the simulation.
      */
     override fun launch(loader: Loader) {
-        val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, emptyMap<String, Any>())
+        val simulation: Simulation<Any, Nothing> = loader.getDefault()
         store.dispatch(SetSimulation(simulation))
         simulation.addOutputMonitor(makeEnvironmentMonitor(simulation.environment))
         startServer(simulation)

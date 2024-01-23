@@ -22,7 +22,7 @@ import java.nio.file.Paths
 class DistributedExecution(
     private val variables: List<String> = emptyList(),
     private val distributedConfigPath: String?,
-) : SimulationLauncher() {
+) : DefaultLauncher() {
 
     override fun launch(loader: Loader) {
         val simulationConfig = LocalGeneralSimulationConfig(

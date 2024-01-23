@@ -11,4 +11,5 @@ _program-pools:
     - time-distribution: { type: ExponentialTime, parameters: [1] }
       type: Event
       actions: { type: MoveToTarget, parameters: [destination, 1] }
-deployments: { type: Circle, parameters: [500, 0, 0, 50], programs: [*gradient, *move] }
+deployments: { type: Circle, parameters: [50, 0, 0, 5], programs: [*gradient, *move] }
+terminate: { type: AfterTime, parameters: [20] }

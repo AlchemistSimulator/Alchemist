@@ -23,16 +23,17 @@ class ToEnvironmentSurrogateTest<T, P> : StringSpec({
 
     "ToEnvironmentSurrogate should map an Environment to an EnvironmentSurrogate" {
         webRendererTestEnvironments<T, P>().forEach {
-            val environmentSurrogate = it.toEnvironmentSurrogate(
+            val environment = it.environment
+            val environmentSurrogate = environment.toEnvironmentSurrogate(
                 toEmptyConcentration,
-                toSuitablePositionSurrogate(it.dimensions),
+                toSuitablePositionSurrogate(environment.dimensions),
             )
-            it.dimensions shouldBe environmentSurrogate.dimensions
-            it.nodes.size shouldBe environmentSurrogate.nodes.size
-            it.nodes.forEach { node ->
+            environment.dimensions shouldBe environmentSurrogate.dimensions
+            environment.nodes.size shouldBe environmentSurrogate.nodes.size
+            environment.nodes.forEach { node ->
                 val surrogateNode = environmentSurrogate.nodes.find { surrogateNode -> node.id == surrogateNode.id }
                 if (surrogateNode != null) {
-                    checkToNodeSurrogate(it, node, surrogateNode)
+                    checkToNodeSurrogate(environment, node, surrogateNode)
                 } else {
                     fail("Can't find a corresponding SurrogateNode")
                 }

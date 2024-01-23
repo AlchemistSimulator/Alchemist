@@ -13,7 +13,7 @@ import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.boundary.TestUtility.webRendererTestEnvironments
-import it.unibo.alchemist.model.EuclideanEnvironment
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.test.loadYamlSimulation
@@ -21,7 +21,7 @@ import java.io.File
 
 object TestUtility {
 
-    fun <T, P> webRendererTestEnvironments(): Set<EuclideanEnvironment<T, P>> where P : Position<P>, P : Vector<P> =
+    fun <T, P> webRendererTestEnvironments(): Set<Simulation<T, P>> where P : Position<P>, P : Vector<P> =
         this::class.java.classLoader.getResource("yaml")?.path?.let { path ->
             File(path).listFiles()?.map {
                 loadYamlSimulation<T, P>("yaml/${it.name}")

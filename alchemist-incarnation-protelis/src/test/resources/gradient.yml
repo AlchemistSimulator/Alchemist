@@ -23,3 +23,7 @@ deployments:
       - molecule: data
         concentration: 1 / 0
     programs: *gradient
+
+terminate:
+  type: StepCount
+  parameters: 5000

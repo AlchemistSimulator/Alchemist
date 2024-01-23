@@ -16,38 +16,39 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNot
 import io.kotest.matchers.shouldNotBe
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.EuclideanEnvironment
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.geometry.Vector
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.test.loadYamlSimulation
 import it.unibo.alchemist.test.startSimulation
 
-class TestFeelsTransmission<T, P> : StringSpec({
+class TestFeelsTransmission<T> : StringSpec({
 
     "danger layer affects cognitive pedestrians" {
-        fun Environment<T, P>.perceivedDanger() = nodes
+        fun Environment<T, Euclidean2DPosition>.perceivedDanger() = nodes
             .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel }
             .sumOf { it.dangerBelief() }
-        fun EuclideanEnvironment<T, P>.dangerIsLoaded() = this.also { _ ->
-            nodes.mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.danger }
+        fun Simulation<T, Euclidean2DPosition>.dangerIsLoaded() = this.also { _ ->
+            environment.nodes.mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.danger }
                 .forEach { it shouldNotBe null }
         }
-        val aggregateDangerWithLayer = loadYamlSimulation<T, P>("feels-transmission-with-layer.yml")
-            .also { it.layers shouldNot beEmpty() }
-            .dangerIsLoaded()
-            .startSimulation()
-        val aggregateDangerWithoutLayer = loadYamlSimulation<T, P>("feels-transmission-without-layer.yml")
-            .also { it.layers should beEmpty() }
-            .startSimulation()
+        val aggregateDangerWithLayer =
+            loadYamlSimulation<T, Euclidean2DPosition>("feels-transmission-with-layer.yml")
+                .also { it.environment.layers shouldNot beEmpty() }
+                .dangerIsLoaded()
+                .startSimulation()
+        val aggregateDangerWithoutLayer =
+            loadYamlSimulation<T, Euclidean2DPosition>("feels-transmission-without-layer.yml")
+                .also { it.getEnvironment().layers should beEmpty() }
+                .startSimulation()
         println("Without layer aggregate danger: $aggregateDangerWithoutLayer")
         println("With layer aggregate danger: $aggregateDangerWithLayer")
         aggregateDangerWithLayer.perceivedDanger() shouldBeGreaterThan aggregateDangerWithoutLayer.perceivedDanger()
     }
 
     "social contagion makes nodes evacuate despite they haven't directly seen the danger" {
-        loadYamlSimulation<T, P>("social-contagion.yml").startSimulation(
+        loadYamlSimulation<T, Euclidean2DPosition>("social-contagion.yml").startSimulation(
             steps = 8000,
             whenFinished = { environment, _, _ ->
                 val reference = environment.makePosition(-50.0, 0.0)
@@ -57,4 +58,4 @@ class TestFeelsTransmission<T, P> : StringSpec({
             },
         )
     }
-}) where P : Position<P>, P : Vector<P>
+})

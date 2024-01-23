@@ -13,19 +13,18 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.comparables.shouldBeLessThan
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.core.Engine
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import org.kaikikm.threadresloader.ResourceLoader
 
 class TestAfterTime : FreeSpec(
     {
         "simulation with AfterTime terminator should end" {
-            val loaded = LoadAlchemist.from(ResourceLoader.getResource("termination.yml"))
-                .getDefault<Nothing, Nothing>()
-                .environment
-            val simulation = Engine(loaded)
+            val simulation: Simulation<Nothing, Nothing> =
+                LoadAlchemist.from(ResourceLoader.getResource("termination.yml")).getDefault()
             simulation.addOutputMonitor(object : OutputMonitor<Nothing, Nothing> {
                 override fun finished(environment: Environment<Nothing, Nothing>, time: Time, step: Long) = Unit
                 override fun initialized(environment: Environment<Nothing, Nothing>) = Unit
@@ -38,8 +37,7 @@ class TestAfterTime : FreeSpec(
                     time.toDouble() shouldBeLessThan 2.0
                 }
             })
-            simulation.play()
-            simulation.run()
+            simulation.runInCurrentThread()
             simulation.error.ifPresent { throw it }
         }
     },

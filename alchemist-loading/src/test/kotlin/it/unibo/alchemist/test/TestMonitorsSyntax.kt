@@ -13,15 +13,17 @@ import another.location.SimpleMonitor
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.terminators.AfterTime
 import it.unibo.alchemist.model.times.DoubleTime
+import it.unibo.alchemist.test.AlchemistTesting.loadAlchemist
+import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 
 class TestMonitorsSyntax<T, P : Position<P>> : FreeSpec(
     {
         "output monitor can be specified via YAML" {
-            val initialized = loadAlchemist<T, P>("testmonitors.yml")
-            val monitor = initialized.monitors.first()
-            val simulation = initialized.createSimulation(finalTime = DoubleTime(1.0))
-            simulation.finalStep
+            val simulation = loadAlchemist<T, P>("testmonitors.yml")
+            simulation.environment.addTerminator(AfterTime(DoubleTime(1.0)))
+            val monitor = simulation.outputMonitors.first()
             simulation.runInCurrentThread()
             when (monitor) {
                 is SimpleMonitor -> {

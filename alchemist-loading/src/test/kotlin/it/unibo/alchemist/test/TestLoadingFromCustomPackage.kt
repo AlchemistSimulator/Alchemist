@@ -15,6 +15,7 @@ import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
 import io.kotest.matchers.types.instanceOf
+import it.unibo.alchemist.test.AlchemistTesting.loadAlchemistFromResource
 
 class TestLoadingFromCustomPackage : StringSpec({
     "classes in custom packages can be loaded" {

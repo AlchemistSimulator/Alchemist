@@ -201,6 +201,7 @@ allprojects {
             exceptionFormat = TestExceptionFormat.FULL
         }
         useJUnitPlatform()
+        maxHeapSize = "1g"
     }
 
     // CODE QUALITY

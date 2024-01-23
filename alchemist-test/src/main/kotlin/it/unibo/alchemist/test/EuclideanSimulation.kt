@@ -11,13 +11,14 @@ package it.unibo.alchemist.test
 
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.core.Engine
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.EuclideanEnvironment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.geometry.Vector
+import it.unibo.alchemist.model.terminators.StepCount
 import org.kaikikm.threadresloader.ResourceLoader
 
 /**
@@ -32,27 +33,29 @@ import org.kaikikm.threadresloader.ResourceLoader
  * @param steps
  *          the number of steps the simulation must execute.
  */
-fun <T, P> EuclideanEnvironment<T, P>.startSimulation(
+fun <T, P> Simulation<T, P>.startSimulation(
     onceInitialized: (EuclideanEnvironment<T, P>) -> Unit = { },
     atEachStep: (EuclideanEnvironment<T, P>, Actionable<T>?, Time, Long) -> Unit = { _, _, _, _ -> },
     whenFinished: (EuclideanEnvironment<T, P>, Time, Long) -> Unit = { _, _, _ -> },
     steps: Long = 10000,
 ) where P : Position<P>, P : Vector<P> =
-    Engine(this, steps).apply {
+    apply {
+        environment.addTerminator(StepCount(steps))
+        check(environment is EuclideanEnvironment<*, *>)
         fun checkForErrors() = error.ifPresent { throw it }
         addOutputMonitor(
             object : OutputMonitor<T, P> {
                 override fun initialized(environment: Environment<T, P>) {
                     checkForErrors()
-                    onceInitialized(this@startSimulation)
+                    onceInitialized(environment as EuclideanEnvironment<T, P>)
                 }
                 override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, t: Time, s: Long) {
                     checkForErrors()
-                    atEachStep(this@startSimulation, reaction, t, s)
+                    atEachStep(environment as EuclideanEnvironment<T, P>, reaction, t, s)
                 }
                 override fun finished(environment: Environment<T, P>, t: Time, s: Long) {
                     checkForErrors()
-                    whenFinished(this@startSimulation, t, s)
+                    whenFinished(environment as EuclideanEnvironment<T, P>, t, s)
                 }
             },
         )
@@ -72,6 +75,6 @@ fun <T, P> EuclideanEnvironment<T, P>.startSimulation(
 fun <T, P> loadYamlSimulation(
     resource: String,
     vars: Map<String, Double> = emptyMap(),
-): EuclideanEnvironment<T, P> where P : Position<P>, P : Vector<P> =
-    LoadAlchemist.from(ResourceLoader.getResource(resource)).getWith<T, P>(vars).environment
-        .let { it as? EuclideanEnvironment } ?: error("Illegal kind of environment")
+): Simulation<T, P> where P : Position<P>, P : Vector<P> =
+    LoadAlchemist.from(ResourceLoader.getResource(resource)).getWith<T, P>(vars)
+        .also { it.environment as? EuclideanEnvironment ?: error("Illegal kind of environment") }

@@ -45,7 +45,7 @@ abstract class AbstractAlchemistSimulationAdapter(
     }
 
     final override fun performWholeSimulation() {
-        simulation.goToStep(simulation.finalStep)
+        simulation.waitFor(Status.TERMINATED, Long.MAX_VALUE, TimeUnit.SECONDS)
     }
 
     /**

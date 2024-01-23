@@ -10,10 +10,11 @@ package it.unibo.alchemist.scafi.test
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.boundary.LoadAlchemist
-import it.unibo.alchemist.core.Engine
+import it.unibo.alchemist.core.{Engine, Simulation}
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.terminators.StepCount
 import it.unibo.scafi.space.{Point2D, Point3D}
 import it.unibo.scafi.space.Point3D.toPoint2D
 import org.scalatest.funsuite.AnyFunSuite
@@ -100,11 +101,11 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
     import scala.jdk.CollectionConverters._
     val res: URL = classOf[TestInSimulator[P]].getResource(resource)
     res shouldNot be(null)
-    val env: Environment[T, P] = LoadAlchemist.from(res).getWith[T, P](vars.asJava).getEnvironment
-    val sim = new Engine[T, P](env, maxSteps)
+    val sim: Simulation[T, P] = LoadAlchemist.from(res).getWith[T, P](vars.asJava)
+    sim.getEnvironment.addTerminator(new StepCount[T, P](maxSteps))
     sim.play()
     sim.run()
     if (sim.getError.isPresent) throw new Exception(sim.getError.get().getMessage)
-    env
+    sim.getEnvironment
   }
 }

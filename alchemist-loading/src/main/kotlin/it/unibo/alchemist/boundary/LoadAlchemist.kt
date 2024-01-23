@@ -34,7 +34,7 @@ object LoadAlchemist {
      */
     @JvmStatic
     @JvmOverloads
-    fun from(input: String, model: AlchemistModelProvider, overrides: List<String> = emptyList()) =
+    fun from(input: String, model: AlchemistModelProvider, overrides: List<String> = emptyList()): Loader =
         SimulationModel.fromMap(
             applyOverrides(model.from(input), overrides),
         )
@@ -44,7 +44,7 @@ object LoadAlchemist {
      */
     @JvmStatic
     @JvmOverloads
-    fun from(reader: Reader, model: AlchemistModelProvider, overrides: List<String> = emptyList()) =
+    fun from(reader: Reader, model: AlchemistModelProvider, overrides: List<String> = emptyList()): Loader =
         SimulationModel.fromMap(
             applyOverrides(model.from(reader), overrides),
         )
@@ -54,7 +54,7 @@ object LoadAlchemist {
      */
     @JvmStatic
     @JvmOverloads
-    fun from(stream: InputStream, model: AlchemistModelProvider, overrides: List<String> = emptyList()) =
+    fun from(stream: InputStream, model: AlchemistModelProvider, overrides: List<String> = emptyList()): Loader =
         SimulationModel.fromMap(
             applyOverrides(model.from(stream), overrides),
         )
@@ -64,7 +64,7 @@ object LoadAlchemist {
      */
     @JvmStatic
     @JvmOverloads
-    fun from(url: URL, model: AlchemistModelProvider, overrides: List<String> = emptyList()) =
+    fun from(url: URL, model: AlchemistModelProvider, overrides: List<String> = emptyList()): Loader =
         SimulationModel.fromMap(applyOverrides(model.from(url), overrides))
 
     /**
@@ -72,7 +72,7 @@ object LoadAlchemist {
      */
     @JvmStatic
     @JvmOverloads
-    fun from(url: URL, overrides: List<String> = emptyList()) =
+    fun from(url: URL, overrides: List<String> = emptyList()): Loader =
         from(url, modelForExtension(url.path.takeLastWhile { it != '.' }), overrides)
 
     /**
@@ -80,7 +80,7 @@ object LoadAlchemist {
      */
     @JvmStatic
     @JvmOverloads
-    fun from(file: File, overrides: List<String> = emptyList()) =
+    fun from(file: File, overrides: List<String> = emptyList()): Loader =
         from(file.inputStream(), modelForExtension(file.extension), overrides)
 
     /**
@@ -88,7 +88,7 @@ object LoadAlchemist {
      */
     @JvmStatic
     @JvmOverloads
-    fun from(string: String, overrides: List<String> = emptyList()) = from(File(string), overrides)
+    fun from(string: String, overrides: List<String> = emptyList()): Loader = from(File(string), overrides)
 
     @JvmStatic
     private fun modelForExtension(extension: String) = ClassPathScanner

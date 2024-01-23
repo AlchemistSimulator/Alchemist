@@ -8,30 +8,29 @@
  */
 package it.unibo.alchemist.boundary.grid.simulation;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-import java.util.UUID;
-
-import it.unibo.alchemist.boundary.InitializedEnvironment;
-import it.unibo.alchemist.boundary.exporters.GlobalExporter;
+import it.unibo.alchemist.boundary.Loader;
 import it.unibo.alchemist.boundary.grid.config.GeneralSimulationConfig;
+import it.unibo.alchemist.boundary.grid.config.SimulationConfig;
+import it.unibo.alchemist.boundary.grid.util.WorkingDirectory;
+import it.unibo.alchemist.core.Simulation;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.terminators.AfterTime;
+import it.unibo.alchemist.model.terminators.StepCount;
 import org.apache.ignite.Ignition;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.core.Engine;
-import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.boundary.grid.config.SimulationConfig;
-import it.unibo.alchemist.boundary.grid.util.WorkingDirectory;
-import it.unibo.alchemist.boundary.Loader;
-import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Position;
+import java.io.IOException;
+import java.io.Serial;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * {@link RemoteSimulation} implementation for Apache Ignite.
@@ -44,6 +43,7 @@ public final class RemoteSimulationImpl<T, P extends Position<P>> implements Rem
     /**
      * 
      */
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final Logger L = LoggerFactory.getLogger(RemoteSimulationImpl.class);
     private final GeneralSimulationConfig generalConfig;
@@ -72,15 +72,11 @@ public final class RemoteSimulationImpl<T, P extends Position<P>> implements Rem
             final Callable<RemoteResultImpl> callable = () -> {
                 ResourceLoader.injectURLs(wd.getDirectoryUrl());
                 final Loader loader = generalConfig.getLoader();
-                final InitializedEnvironment<T, P> initialized = loader.getWith(config.getVariables());
-                final Environment<T, P> environment = initialized.getEnvironment();
-                final Simulation<T, P> simulation = new Engine<>(
-                        environment,
-                        generalConfig.getEndStep(),
-                        generalConfig.getEndTime()
-                );
+                final Simulation<T, P> simulation = loader.getWith(config.getVariables());
+                final Environment<T, P> environment = simulation.getEnvironment();
+                environment.addTerminator(new StepCount<>(generalConfig.getEndStep()));
+                environment.addTerminator(new AfterTime<>(generalConfig.getEndTime()));
                 final String filename = masterNodeId + "_" + config + ".txt";
-                simulation.addOutputMonitor(new GlobalExporter<>(initialized.getExporters()));
                 simulation.play();
                 simulation.run();
                 try (var ignite = Ignition.ignite()) {

@@ -80,8 +80,8 @@ The overrides are arbitrary, types can be changed and new varibales introduced.
 ### Launcher Configuration
 
 Alchemist needs a `Launcher` class in order to run the simulation. Unless configured,
-Alchemist will default to a headless simulation launcher (`HeadlessSimulationLauncher`)
-with default parameters.
+Alchemist will default to a launcher that runs the default configuration,
+unless batch variables are explicitly provided: {{% api package="boundary.launchers" class="DefaultLauncher" %}}
 
 If you would like to use another launcher class, you need to configure it in the simulation configuration file
 as per the alchemist [Arbitrary class loading system](https://alchemistsimulator.github.io/reference/yaml/index.html).
@@ -99,7 +99,7 @@ simulation.yml
 ```yaml
 ...
 launcher:
-  type: HeadlessSimulationLauncher
+  type: DefaultLauncher
   parameters:
     parallelism: 4
     variables: [ 1, 2, 3, 4 ]
@@ -111,7 +111,7 @@ launcher:
 Here is a brief guide on how to re-map legacy CLI configuration options to the new
 configuration flow.
 
-- `-hl` - Migrated to launcher configuration, use HeadlessSimulationLauncher
+- `-hl` - Migrated to launcher configuration, use {{% api package="boundary.launchers" class="DefaultLauncher" %}}
 - `-var` - Migrated to launcher configuration, used as parameters in supporting launchers
 - `-b` - Migrated to launcher configuration
 - `-fxui` - Migrated to launcher configuration

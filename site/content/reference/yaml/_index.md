@@ -478,7 +478,7 @@ Same as [parameters](#parameters)
 
 Builds a {{% api package="boundary" class="Launcher" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
-If unspecified, defaults to {{% api package="boundary.launchers" class="HeadlessSimulationLauncher" %}},
+If unspecified, defaults to {{% api package="boundary.launchers" class="DefaultLauncher" %}},
 and the simulation will be executed with no graphical interface attached.
 
 #### Examples

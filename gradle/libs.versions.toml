@@ -14,7 +14,7 @@ dokka = "1.9.10"
 kotlin = "1.9.22"
 mockito = "5.9.0"
 protelis = "17.3.10"
-react = "18.2.0-pre.685"
+react = "18.2.0-pre.690"
 scafi = "1.2.0"
 scala = "2.13.12"
 scalacache = "0.28.0"
@@ -38,7 +38,7 @@ conrec = "org.danilopianini:conrec:0.1.0"
 controlsfx = "org.controlsfx:controlsfx:11.2.0"
 dyn4j = "org.dyn4j:dyn4j:5.0.1"
 dsiutils = "it.unimi.dsi:dsiutils:2.7.3"
-embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.12.1"
+embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.12.2"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphql-hooks-provider = { module = "com.expediagroup:graphql-kotlin-hooks-provider", version.ref = "graphql" }
 graphql-server = { module = "com.expediagroup:graphql-kotlin-server", version.ref = "graphql" }
@@ -154,7 +154,7 @@ testing-runtimeOnly = [ "junit-engine" ]
 
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:2.0.5"
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:3.1.0"
 graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
 hugo = "io.github.fstaudt.hugo:0.7.0"

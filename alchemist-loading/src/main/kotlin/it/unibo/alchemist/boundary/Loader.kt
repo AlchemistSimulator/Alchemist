@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.Position
 import java.io.Serializable
 
 /**
- * An entity which is able to produce an Alchemist [InitializedEnvironment], resolving user defined variable values.
+ * An entity which is able to produce an Alchemist [Simulation], resolving user defined variable values.
  */
 interface Loader : Serializable {
 
@@ -55,7 +55,7 @@ interface Loader : Serializable {
     /**
      * @param <T> concentration type
      * @param <P> position type
-     * @return an [InitializedEnvironment] with all the variables set at their
+     * @return an [Simulation] with all the variables set at their
      * default values
      </P></T> */
     fun <T, P : Position<P>> getDefault(): Simulation<T, P> {
@@ -67,7 +67,7 @@ interface Loader : Serializable {
      * scenario
      * @param <T>    concentration type
      * @param <P>    position type
-     * @return an [InitializedEnvironment] with all the variables set at the
+     * @return an [Simulation] with all the variables set at the
      * specified values. If the value is unspecified, the default is
      * used instead
      </P></T> */

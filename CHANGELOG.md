@@ -1,3 +1,15 @@
+## [30.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/30.0.0...30.0.1) (2024-01-23)
+
+
+### Bug Fixes
+
+* **swingui:** make the GUI draw the environment correctly by fixing the binding between the main monitor and the SwingGUI outputmonitor ([9953233](https://github.com/AlchemistSimulator/Alchemist/commit/995323393ce4e85fb842fbf0a903b63db4d0db15))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/upload-artifact action to v4.3.0 ([234134f](https://github.com/AlchemistSimulator/Alchemist/commit/234134f25016385cab2644b12494736fc650af99))
+
 ## [30.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/29.5.1...30.0.0) (2024-01-23)
 
 

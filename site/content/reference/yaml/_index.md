@@ -484,14 +484,13 @@ Same as [parameters](#parameters)
 Builds a {{% api package="boundary" class="Launcher" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
 If unspecified, defaults to {{% api package="boundary.launchers" class="DefaultLauncher" %}},
-and the simulation will be executed with no graphical interface attached.
+which runs the default simulation,
+unless the variable set on which the batch should be executed is specified.
 
-#### Examples
-
-* Creation of two {{% api class="Layer" %}}s
-  {{< code path="alchemist-loading/src/test/resources/synthetic/testlayer.yml" >}}
-* Creation of two {{% api package="model.layers" class="BidimensionalGaussianLayer" %}}s:
-  {{< code path="alchemist-cognitive-agents/src/test/resources/social-contagion.yml" >}}
+Customizing the launcher can be useful for implementing custom batch execution strategies,
+or "simulations of simulations",
+if the process requires multiple simulation "stages"
+(e.g., running a batch to train a neural network, then running another batch to test it).
 
 ---
 

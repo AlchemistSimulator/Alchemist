@@ -1,3 +1,15 @@
+## [30.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/30.0.1...30.0.2) (2024-01-24)
+
+
+### Dependency updates
+
+* **deps:** update plugin java-qa to v1.35.0 ([e9b7c1f](https://github.com/AlchemistSimulator/Alchemist/commit/e9b7c1f0836e53cf7c729c5bd688b057b434be24))
+
+
+### Bug Fixes
+
+* generate multiple constructors for `DefaultLauncher` ([4a41d13](https://github.com/AlchemistSimulator/Alchemist/commit/4a41d1321f2332c2c73fe71d6ffe290c75908d16))
+
 ## [30.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/30.0.0...30.0.1) (2024-01-23)
 
 

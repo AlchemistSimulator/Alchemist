@@ -30,12 +30,18 @@ import java.util.concurrent.atomic.AtomicInteger
  * If [parallelism] is greater than 1, the simulations are run in parallel;
  * defaults to the number of logical cores detected by the JVM.
  */
-open class DefaultLauncher(
+open class DefaultLauncher @JvmOverloads constructor(
     val batch: List<String> = emptyList(),
     val autoStart: Boolean = true,
     val showProgress: Boolean = true,
     val parallelism: Int = Runtime.getRuntime().availableProcessors(),
 ) : Launcher {
+
+    @JvmOverloads constructor(
+        autoStart: Boolean,
+        showProgress: Boolean = true,
+        parallelism: Int = Runtime.getRuntime().availableProcessors(),
+    ) : this(emptyList(), autoStart, showProgress, parallelism)
 
     /**
      * Launches a simulation using the provided [loader].

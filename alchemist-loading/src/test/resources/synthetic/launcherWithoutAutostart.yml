@@ -1,0 +1,5 @@
+incarnation: protelis
+
+launcher:
+  parameters:
+    auto-start: false

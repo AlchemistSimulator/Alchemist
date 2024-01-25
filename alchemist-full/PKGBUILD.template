@@ -1,3 +1,5 @@
+# Maintainer: Marco Sternini <mkarko01@gmail.com>
+# Maintainer: Danilo Pianini <danilo.pianini@unibo.it>
 pkgname=alchemist
 pkgver={%}
 pkgrel=1
@@ -5,7 +7,7 @@ pkgdesc="An extensible simulator for pervasive computing"
 arch=('x86_64')
 url="https://github.com/AlchemistSimulator/Alchemist"
 license=('GPL')
-depends=('glibc' 'libxrender' 'libxtst' 'libxi' 'libx11' 'freetype2' 'java-runtime' 'alsa-lib' 'libxext')
+depends=('glibc' 'libxrender' 'libxtst' 'libxi' 'libx11' 'freetype2' 'alsa-lib' 'libxext')
 makedepends=()
 source=({%})
 md5sums=({%})

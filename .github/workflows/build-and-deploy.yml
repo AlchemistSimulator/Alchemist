@@ -329,7 +329,9 @@ jobs:
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
       - name: Generate PKGBUILD
-        run: ./gradlew generatePKGBUILD
+        run: |
+          ./gradlew generatePKGBUILD
+          echo "VERSION=$(./gradlew properties | grep ^version: | cut -d" " -f2)" >> $GITHUB_ENV
       - name: Publish AUR package
         uses: KSXGitHub/github-actions-deploy-aur@v2.7.0
         with:
@@ -338,7 +340,7 @@ jobs:
           commit_username: ${{ secrets.AUR_USERNAME }}
           commit_email: ${{ secrets.AUR_EMAIL }}
           ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
-          commit_message: Update AUR package
+          commit_message: Update to version ${{ env.VERSION }}
   success:
     runs-on: ubuntu-22.04
     needs:

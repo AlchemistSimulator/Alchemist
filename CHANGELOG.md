@@ -1,3 +1,21 @@
+## [30.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/30.0.2...30.0.3) (2024-01-26)
+
+
+### Dependency updates
+
+* **deps:** update dependency org.mockito:mockito-core to v5.10.0 ([4731a45](https://github.com/AlchemistSimulator/Alchemist/commit/4731a454ff9a40c19ce028c11a9526284f474286))
+
+
+### Bug Fixes
+
+* **loading:** fix the `DefaultLauncher` batch execution throwing `RejectedExecutionException`, add a regression test ([b43436e](https://github.com/AlchemistSimulator/Alchemist/commit/b43436e77733690ec5bf47f57a5a92e59d44591c))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.15 ([cab66a5](https://github.com/AlchemistSimulator/Alchemist/commit/cab66a51d73d85203c1d38221b0326b4919afac5))
+* disable fail-fast for packaging jobs ([ce9076f](https://github.com/AlchemistSimulator/Alchemist/commit/ce9076f62e505f22d6c0e1e88303770606c62d5e))
+
 ## [30.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/30.0.1...30.0.2) (2024-01-24)
 
 

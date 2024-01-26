@@ -9,8 +9,8 @@ url="https://github.com/AlchemistSimulator/Alchemist"
 license=('GPL')
 depends=('glibc' 'libxrender' 'libxtst' 'libxi' 'libx11' 'freetype2' 'alsa-lib' 'libxext')
 makedepends=()
-source=({%})
-md5sums=({%})
+source=("{%}")
+md5sums=('{%}')
 
 package() {
     mkdir -p "${pkgdir}/usr/share/${pkgname}"

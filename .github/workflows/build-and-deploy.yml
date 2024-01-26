@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.15
         with:
           pre-build-command: ./gradlew kotlinUpgradeYarnLock --parallel
           # check that all tasks used in subsequent phases are there
@@ -97,7 +97,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.15
         with:
           build-command: ./gradlew kotlinUpgradeYarnLock --parallel
           check-command: true
@@ -119,6 +119,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-2022, macos-12, ubuntu-22.04 ]
+      fail-fast: false
     runs-on: ${{ matrix.os }}
     if: >-
       github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
@@ -157,7 +158,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.15
         with:
           build-command: |
             for i in 1 2 3 4 5; do
@@ -178,7 +179,7 @@ jobs:
         with:
           name: website
           path: website.tar
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.15
         with:
           build-command: |
           check-command: |
@@ -268,7 +269,7 @@ jobs:
         uses: actions/setup-node@v4.0.1
         with:
           node-version: ${{ steps.node-version.outputs.version }}
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.15
         with:
           java-version: ${{ needs.select-java-version.outputs.java-version }}
           build-command: |

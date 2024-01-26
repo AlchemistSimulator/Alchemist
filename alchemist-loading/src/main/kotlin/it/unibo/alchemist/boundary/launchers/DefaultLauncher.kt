@@ -96,13 +96,13 @@ open class DefaultLauncher @JvmOverloads constructor(
                                 }
                             }
                     }
-                    executor.shutdown()
-                    executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)
-                    if (errorQueue.isNotEmpty()) {
-                        throw errorQueue.reduce { previous, other ->
-                            previous.addSuppressed(other)
-                            previous
-                        }
+                }
+                executor.shutdown()
+                executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)
+                if (errorQueue.isNotEmpty()) {
+                    throw errorQueue.reduce { previous, other ->
+                        previous.addSuppressed(other)
+                        previous
                     }
                 }
             }

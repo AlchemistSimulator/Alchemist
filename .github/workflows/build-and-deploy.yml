@@ -23,7 +23,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-2022, macos-12, ubuntu-22.04 ]
+        os: [ windows-2022, macos-12]
+        generateJars: [false]
+        include:
+          - os: ubuntu-22.04
+            generateJars: true
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     concurrency:
@@ -65,6 +69,16 @@ jobs:
           name: installer-package-${{ runner.os }}
           path: build/package/*
           if-no-files-found: error
+      - name: Generate jars
+        if: ${{ matrix.generateJars }}
+        run: ./gradlew shadowJar
+      - name: Upload FatJars
+        if: ${{ matrix.generateJars }}
+        uses: actions/upload-artifact@v4.3.0
+        with:
+            name: fat-jars
+            path: build/shadow/*
+            if-no-files-found: error
   # Performs a dry-deployment if credentials are available
   test-deploy:
     needs:
@@ -97,10 +111,11 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
-  # Test jpackage utility
-  test-packaging:
+  # Test packages correctness
+  test-packages:
     needs:
       - select-java-version
+      - build
     strategy:
       matrix:
         os: [ windows-2022, macos-12, ubuntu-22.04 ]
@@ -118,16 +133,18 @@ jobs:
         with:
           java-version: ${{ needs.select-java-version.outputs.java-version }}
           distribution: 'temurin'
-      - name: Dry run
-        shell: bash
-        run: ./gradlew jpackage --info -Djpackage.dryRun=true
       - name: Install bsdtar
         if: runner.os == 'Linux'
         run: sudo apt update && sudo apt install libarchive-tools
-      - name: Test packaging
+      - name: Download packages
+        uses: actions/download-artifact@v4.1.1
+        with:
+          name: installer-package-${{ runner.os }}
+          path: build/package/
+          merge-multiple: true
+      - name: Test package
         shell: bash
-        run: ./gradlew testJpackageOutput --info
-            
+        run: ./gradlew testJpackageOutput --info     
   # Builds the website and verifies link sanity
   build-website:
     needs:
@@ -205,7 +222,7 @@ jobs:
       - build
       - build-website
       - test-deploy
-      - test-packaging
+      - test-packages
     runs-on: ubuntu-22.04
     if: >-
       !github.event.repository.fork
@@ -235,8 +252,14 @@ jobs:
       - name: Download packages
         uses: actions/download-artifact@v4.1.1
         with:
-          path: build/package/
           pattern: installer-package-*
+          path: build/package/
+          merge-multiple: true
+      - name: Download fatJars
+        uses: actions/download-artifact@v4.1.1
+        with:
+          name: fat-jars
+          path: build/shadow/
           merge-multiple: true
       - name: Find the version of Node from package.json
         id: node-version
@@ -271,7 +294,6 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
-      #Add a step to publish to AUR
 
   success:
     runs-on: ubuntu-22.04
@@ -280,7 +302,7 @@ jobs:
       - build-website
       - release
       - test-deploy
-      - test-packaging
+      - test-packages
     if: >-
       always() && (
         contains(join(needs.*.result, ','), 'failure')

@@ -36,5 +36,9 @@ class RegressionTestOnRealCases : FreeSpec(
             loader.launcher should beOfType<DefaultLauncher>()
             (loader.launcher as DefaultLauncher).autoStart shouldBe false
         }
+        "it should be possible to run a parallel batch" {
+            val loader = LoadAlchemist.from(ResourceLoader.getResource("synthetic/batch-boostrap.yml"))
+            loader.launch()
+        }
     },
 )

@@ -23,11 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-2022, macos-12]
-        generateJars: [false]
-        include:
-          - os: ubuntu-22.04
-            generateJars: true
+        os: [ windows-2022, macos-12, ubuntu-22.04]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     concurrency:
@@ -70,10 +66,10 @@ jobs:
           path: build/package/*
           if-no-files-found: error
       - name: Generate jars
-        if: ${{ matrix.generateJars }}
+        if: ${{ runner.os == 'Linux' }}
         run: ./gradlew shadowJar
       - name: Upload FatJars
-        if: ${{ matrix.generateJars }}
+        if: ${{ runner.os == 'Linux' }}
         uses: actions/upload-artifact@v4.3.0
         with:
             name: fat-jars

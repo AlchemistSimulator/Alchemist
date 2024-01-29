@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-/*import io.kvision.BootstrapCssModule
+import io.kvision.BootstrapCssModule
 import io.kvision.BootstrapIconsModule
 import io.kvision.BootstrapModule
 import io.kvision.BootstrapUploadModule
@@ -44,9 +44,9 @@ fun main() {
         TabulatorModule,
         TabulatorCssBootstrapModule,
         MapsModule,
-        CoreModule
+        CoreModule,
     )
-}*/
+}
 
 /*fun main() {
     val container = document.getElementById("root") ?: error("Couldn't find container!")

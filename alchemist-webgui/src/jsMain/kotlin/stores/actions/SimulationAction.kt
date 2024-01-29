@@ -7,4 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package components
+package stores.actions
+
+import io.kvision.redux.RAction
+import it.unibo.alchemist.boundary.graphql.client.SimulationStatusQuery
+
+sealed class SimulationAction : RAction {
+    data class SetSimulation(val simulationState: SimulationStatusQuery.Data?) : SimulationAction()
+}

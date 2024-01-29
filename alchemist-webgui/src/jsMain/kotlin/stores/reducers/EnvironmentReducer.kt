@@ -9,12 +9,19 @@
 
 package stores.reducers
 
-/*
-import stores.EnvironmentState
 import stores.actions.EnvironmentStateAction
+import stores.states.EnvironmentState
 
-fun environmentReducer(state: EnvironmentState, action: EnvironmentStateAction): EnvironmentState = when (action) {
-    is EnvironmentStateAction.SetNodes -> {
-        state.copy(nodes = action.nodes)
+fun environmentReducer(state: EnvironmentState, action: EnvironmentStateAction): EnvironmentState {
+    when (action) {
+        is EnvironmentStateAction.SetNodes -> {
+            return state.copy(nodes = action.nodes)
+        }
+
+        is EnvironmentStateAction.AddAllNodes -> {
+            state.nodes.clear()
+            state.nodes.addAll(action.nodes)
+            return state
+        }
     }
-}*/
+}

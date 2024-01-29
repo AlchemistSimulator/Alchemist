@@ -9,10 +9,10 @@
 
 package stores.actions
 
-/*
 import io.kvision.redux.RAction
 import it.unibo.alchemist.boundary.graphql.client.EnvironmentSubscription
 
 sealed class EnvironmentStateAction : RAction {
-    data class SetNodes(val nodes: EnvironmentSubscription.Data?) : EnvironmentStateAction()
-}*/
+    data class SetNodes(val nodes: MutableList<EnvironmentSubscription.Entry>) : EnvironmentStateAction()
+    data class AddAllNodes(val nodes: List<EnvironmentSubscription.Entry>) : EnvironmentStateAction()
+}

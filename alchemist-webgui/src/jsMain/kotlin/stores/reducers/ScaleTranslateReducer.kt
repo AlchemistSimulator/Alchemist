@@ -9,8 +9,8 @@
 
 package stores.reducers
 
-/*import stores.ScaleTranslateState
 import stores.actions.ScaleTranslateAction
+import stores.states.ScaleTranslateState
 
 fun scaleTranslateReducer(state: ScaleTranslateState, action: ScaleTranslateAction): ScaleTranslateState = when (action) {
     is ScaleTranslateAction.SetScale -> {
@@ -20,4 +20,4 @@ fun scaleTranslateReducer(state: ScaleTranslateState, action: ScaleTranslateActi
     is ScaleTranslateAction.SetTranslation -> {
         state.copy(translate = action.translate)
     }
-}*/
+}

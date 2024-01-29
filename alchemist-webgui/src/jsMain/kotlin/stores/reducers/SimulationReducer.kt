@@ -7,18 +7,13 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package ui
+package stores.reducers
 
-import components.Appbar
-import components.Content
-import io.kvision.Application
-import io.kvision.panel.root
+import stores.actions.SimulationAction
+import stores.states.SimulationState
 
-class AppMain : Application() {
-    override fun start() {
-        root("root") {
-            add(Appbar())
-            add(Content())
-        }
+fun simulationReducer(state: SimulationState, action: SimulationAction): SimulationState = when (action) {
+    is SimulationAction.SetSimulation -> {
+        state.copy(status = action.simulationState)
     }
 }

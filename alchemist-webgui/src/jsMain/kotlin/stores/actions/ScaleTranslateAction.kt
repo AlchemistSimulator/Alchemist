@@ -9,10 +9,9 @@
 
 package stores.actions
 
-/*
 import io.kvision.redux.RAction
 
 sealed class ScaleTranslateAction : RAction {
     data class SetScale(val scale: Double) : ScaleTranslateAction()
     data class SetTranslation(var translate: Pair<Double, Double>) : ScaleTranslateAction()
-}*/
+}

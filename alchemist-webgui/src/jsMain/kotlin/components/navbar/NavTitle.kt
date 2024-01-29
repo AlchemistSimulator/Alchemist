@@ -7,18 +7,6 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package ui
+package components.navbar
 
-import components.Appbar
-import components.Content
-import io.kvision.Application
-import io.kvision.panel.root
-
-class AppMain : Application() {
-    override fun start() {
-        root("root") {
-            add(Appbar())
-            add(Content())
-        }
-    }
-}
+class NavTitle

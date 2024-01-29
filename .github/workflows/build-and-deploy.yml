@@ -157,7 +157,7 @@ jobs:
       - name: Setup arch
         run: |
           sudo pacman --noconfirm -Syu 
-          sudo pacman --noconfirm -Sy git rpm-tools dpkg
+          sudo pacman --noconfirm -Sy git rpm-tools
       - run: git config --system --add safe.directory /__w/Alchemist/Alchemist # https://github.com/actions/checkout/issues/1169
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
@@ -166,8 +166,14 @@ jobs:
         with:
           java-version: ${{ needs.select-java-version.outputs.java-version }}
           distribution: 'temurin'
+      - name: Download packages
+        uses: actions/download-artifact@v4.1.1
+        with:
+          pattern: installer-package-Linux
+          path: build/package/
+          merge-multiple: true
       - name: Generate PKGBUILD
-        run: ./gradlew jpackageFull generatePKGBUILD -DgeneratePKGBUILD.testSource=true
+        run: ./gradlew generatePKGBUILD -DgeneratePKGBUILD.testSource=true
       - name: Makepkg Build and Check
         uses: edlanglois/pkgbuild-action@v1
         with:

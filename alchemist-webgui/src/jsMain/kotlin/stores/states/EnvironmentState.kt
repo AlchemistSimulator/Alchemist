@@ -7,11 +7,8 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package stores
+package stores.states
 
-/*
-import components.Content
+import it.unibo.alchemist.boundary.graphql.client.EnvironmentSubscription
 
-data class ScaleTranslateState(
-    var scale: Double = Content.DEFAULT_SCALE.toDouble(),
-    var translate: Pair<Double, Double> = Pair((Content.DEFAULT_WIDTH /2).toDouble(),(Content.DEFAULT_HEIGHT/2).toDouble()))*/
+data class EnvironmentState(val nodes: MutableList<EnvironmentSubscription.Entry>)

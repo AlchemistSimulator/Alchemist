@@ -7,8 +7,8 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package stores
+package stores.states
 
-/*import it.unibo.alchemist.boundary.graphql.client.EnvironmentSubscription
+import it.unibo.alchemist.boundary.graphql.client.SimulationStatusQuery
 
-data class EnvironmentState(val nodes: EnvironmentSubscription.Data? = null)*/
+data class SimulationState(val status: SimulationStatusQuery.Data? = null)

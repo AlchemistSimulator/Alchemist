@@ -141,7 +141,7 @@ tasks.register<Exec>("testJpackageOutput") {
         require(rootProject.name in execFiles || "${rootProject.name}.exe" in execFiles)
         require(jpackageFull.get().mainJar in appFiles)
     }
-    dependsOn(jpackageFull)
+    mustRunAfter(jpackageFull)
     finalizedBy(deleteJpackageOutput)
 }
 

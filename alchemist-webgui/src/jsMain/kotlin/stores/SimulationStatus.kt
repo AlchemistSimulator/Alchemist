@@ -23,10 +23,11 @@ object SimulationStatus {
 
     fun callGetStatus() {
         MainScope().launch {
-            println("Call get status coroutine")
+            println("COROUTINE[CALLGETSTATUS]: Started")
             val result = SimulationControlApi.getSimulationStatus().await()
 
             simulationStore.dispatch(SimulationAction.SetSimulation(result))
+            println("COROUTINE[CALLGETSTATUS]: Ended")
         }
     }
 }

@@ -23,12 +23,13 @@ object EnvironmentStore {
 
     fun callEnvironmentSubscription() {
         MainScope().launch {
-            println("Before subscription")
+            println("COROUTINE[callEnvironmentSubscription]: Started")
             EnvironmentApi.environMentSubScription().collect { response ->
 
                 store.dispatch(EnvironmentStateAction.AddAllNodes(response.data!!.environment.nodeToPos.entries))
+
             }
-            println("After subscription")
+            println("COROUTINE[callEnvironmentSubscription]: Ended")
         }
     }
 }

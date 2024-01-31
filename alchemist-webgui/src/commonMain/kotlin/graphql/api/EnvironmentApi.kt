@@ -21,14 +21,15 @@ import kotlinx.coroutines.flow.Flow
 
 object EnvironmentApi {
 
-    suspend fun retrieveQuery(): Deferred<NodeQuery.Data?> = coroutineScope {
+    suspend fun retrieveQuery(nodeId: Int = 0): Deferred<NodeQuery.Data?> = coroutineScope {
         async {
-            ClientConnection.client.query(NodeQuery(id = Optional.present(10))).execute().data
+            ClientConnection.client.query(NodeQuery(id = Optional.present(nodeId))).execute().data
         }
     }
 
     fun environMentSubScription(): Flow<ApolloResponse<EnvironmentSubscription.Data>> {
-        // ClientConnection.client.close()
+
         return ClientConnection.client.subscription(EnvironmentSubscription()).toFlow()
+
     }
 }

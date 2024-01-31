@@ -9,54 +9,32 @@
 
 package components.content
 
+import components.content.shared.CommonProperties
 import graphql.api.EnvironmentApi
-import io.kvision.core.AlignItems
 import io.kvision.core.Border
 import io.kvision.core.BorderStyle
+import io.kvision.core.BoxShadow
 import io.kvision.core.Color
+import io.kvision.core.CssSize
 import io.kvision.core.Cursor
-import io.kvision.core.FlexWrap
-import io.kvision.core.JustifyContent
+import io.kvision.core.UNIT
 import io.kvision.core.onEvent
-import io.kvision.core.onInput
-import io.kvision.form.number.range
 import io.kvision.html.canvas
-import io.kvision.html.div
 import io.kvision.panel.SimplePanel
-import io.kvision.panel.hPanel
-import io.kvision.panel.vPanel
-import io.kvision.progress.progress
-import io.kvision.redux.createTypedReduxStore
-import io.kvision.state.ObservableValue
 import io.kvision.state.bind
 import io.kvision.utils.px
+import korlibs.image.color.Colors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.w3c.dom.CanvasRenderingContext2D
 import stores.EnvironmentStore
 import stores.actions.EnvironmentStateAction
 import stores.actions.ScaleTranslateAction
-import stores.reducers.scaleTranslateReducer
-import stores.states.ScaleTranslateState
 import kotlin.math.PI
-import kotlin.math.min
 import kotlin.random.Random
 
-class SimulationContext : SimplePanel(className = "simulation-context") {
-
-    companion object {
-        const val DEFUALT_NODE_RADIUS = 5.0
-        const val DEFAULT_HEIGHT = 1000
-        const val DEFAULT_WIDTH = 1000
-        const val DEFAULT_SCALE = 25
-        const val DEFAULT_START_POSITION = 0
-        const val DEFAULT_SCALE_RATIO = 0.8
-        const val DEFAULT_NODE_COLOR = "#FF0000"
-    }
-    private val scaleTranslationStore = createTypedReduxStore(::scaleTranslateReducer, ScaleTranslateState())
-    private var nodesRadius: ObservableValue<Double> = ObservableValue(DEFUALT_NODE_RADIUS)
+class SimulationContext(className: String = "") : SimplePanel(className = className) {
 
     private fun randomColor(): String {
         val letters = "0123456789ABCDEF"
@@ -65,12 +43,16 @@ class SimulationContext : SimplePanel(className = "simulation-context") {
         return color
     }
 
-    private fun CanvasRenderingContext2D.drawNode(position: Pair<Double, Double>, color: String = DEFAULT_NODE_COLOR) {
+    private fun CanvasRenderingContext2D.drawNode(
+        position: Pair<Double, Double>,
+        color: String = CommonProperties.RenderProperties.DEFAULT_NODE_COLOR
+    ) {
         beginPath()
         arc(
             position.first,
             position.second,
-            nodesRadius.value * 1 / scaleTranslationStore.getState().scale,
+            CommonProperties.Observables.nodesRadius.value * 1 /
+                CommonProperties.Observables.scaleTranslationStore.getState().scale,
             0.0,
             2 * PI,
             false,
@@ -81,14 +63,15 @@ class SimulationContext : SimplePanel(className = "simulation-context") {
     }
 
     private fun CanvasRenderingContext2D.redrawNodes(
-        scale: Double = DEFAULT_SCALE.toDouble(),
+        scale: Double = CommonProperties.RenderProperties.DEFAULT_SCALE.toDouble(),
         translation: Pair<Double, Double> =
-            Pair(DEFAULT_START_POSITION.toDouble(), DEFAULT_START_POSITION.toDouble()),
+            Pair(CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble(),
+                CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble()),
     ) {
-        println("Redrawing function")
-        val translationScaled = Pair<Double, Double>(
-            translation.first * 1 / scaleTranslationStore.getState().scale,
-            translation.second * 1 / scaleTranslationStore.getState().scale,
+        println("Function[Redraw]: Redrawing function")
+        val translationScaled = Pair(
+            translation.first * 1 / CommonProperties.Observables.scaleTranslationStore.getState().scale,
+            translation.second * 1 / CommonProperties.Observables.scaleTranslationStore.getState().scale,
         )
 
         scale(scale, scale)
@@ -97,11 +80,18 @@ class SimulationContext : SimplePanel(className = "simulation-context") {
         clearRect(
             -translationScaled.first,
             -translationScaled.second,
-            DEFAULT_WIDTH.toDouble(),
-            DEFAULT_HEIGHT.toDouble(),
+            CommonProperties.RenderProperties.DEFAULT_WIDTH,
+            CommonProperties.RenderProperties.DEFAULT_HEIGHT,
         )
 
-        // println("Translated to:"+translationScaled.first+", "+translationScaled.second)
+        /*beginPath()
+        strokeStyle = "#000000"
+        moveTo((CommonProperties.RenderProperties.DEFAULT_WIDTH / 2), 0.0)
+        lineTo((CommonProperties.RenderProperties.DEFAULT_WIDTH / 2), CommonProperties.RenderProperties.DEFAULT_HEIGHT)
+        moveTo(0.0, (CommonProperties.RenderProperties.DEFAULT_HEIGHT / 2))
+        lineTo(CommonProperties.RenderProperties.DEFAULT_WIDTH, (CommonProperties.RenderProperties.DEFAULT_HEIGHT / 2))
+        stroke()
+        closePath()*/
 
         EnvironmentStore.store.getState().nodes.forEach {
             drawNode(Pair(it.position.coordinates[0], it.position.coordinates[1]), randomColor())
@@ -111,143 +101,92 @@ class SimulationContext : SimplePanel(className = "simulation-context") {
     }
 
     init {
-        /*CoroutineScope(Dispatchers.CIO).launch {
-            println("Init scope update environment store")
-            EnvironmentApi.environMentSubScription().collect { response ->
-                //async{
-                println("data-->"+response.data)
-                //}.await()
-
-                //EnvironmentStore.store.dispatch(EnvironmentStateAction.SetNodes(it.data?.environment?.nodeToPos!!.entries.toMutableList()))
-            }
-        }*/
 
         CoroutineScope(Dispatchers.Default).launch {
+            println("COROUTINE[environmentSubscription]: Environmnent subscription started")
             EnvironmentApi.environMentSubScription().collect {
                 // println("A")
                 EnvironmentStore.store.dispatch(EnvironmentStateAction.AddAllNodes(it.data?.environment?.nodeToPos!!.entries))
             }
+            println("COROUTINE[environmentSubscription]: Environmnent subscription ended")
         }
 
-        hPanel(
-            FlexWrap.NOWRAP,
-            JustifyContent.START,
-            AlignItems.START,
-            spacing = 5,
-        ) {
-            canvas(className = "environment-renderer") {
-                canvasWidth = DEFAULT_WIDTH
-                canvasHeight = DEFAULT_HEIGHT
-                border = Border(width = 1.px, style = BorderStyle.SOLID, color = Color("#ff0000"))
+        canvas(className = "environment-renderer") {
+            canvasWidth = CommonProperties.RenderProperties.DEFAULT_WIDTH.toInt()
+            canvasHeight = CommonProperties.RenderProperties.DEFAULT_HEIGHT.toInt()
+            borderRadius = CssSize(10, UNIT.px)
+            border = Border(width = 2.px, BorderStyle.SOLID, Color("#A3A3A3"))
 
-                var cor: Job
+            var mouseIsDown = false
 
-                var mouseIsDown = false
+            var translatePos: Pair<Double, Double> =
+                Pair(CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble(),
+                    CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble())
 
-                var translatePos: Pair<Double, Double> =
-                    Pair(DEFAULT_START_POSITION.toDouble(), DEFAULT_START_POSITION.toDouble())
+            var startDragOffset: Pair<Double, Double> =
+                Pair(CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble(),
+                    CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble())
 
-                var startDragOffset: Pair<Double, Double> =
-                    Pair(DEFAULT_START_POSITION.toDouble(), DEFAULT_START_POSITION.toDouble())
+            addAfterCreateHook {
 
-                addBeforeDisposeHook {
+                this.bind(CommonProperties.Observables.scaleTranslationStore) { state ->
+                    context2D.redrawNodes(state.scale, state.translate)
                 }
 
-                addAfterCreateHook {
-
-                    this.bind(scaleTranslationStore) { state ->
-                        context2D.redrawNodes(state.scale, state.translate)
-                    }
-
-                    this.bind(nodesRadius) {
-                        context2D.redrawNodes(
-                            scaleTranslationStore.getState().scale,
-                            scaleTranslationStore.getState().translate,
-                        )
-                    }
-
-                    this.bind(EnvironmentStore.store) {
-                        println("Bind to store")
-                        context2D.redrawNodes(
-                            scaleTranslationStore.getState().scale,
-                            scaleTranslationStore.getState().translate,
-                        )
-                    }
+                this.bind(CommonProperties.Observables.nodesRadius) {
+                    context2D.redrawNodes(
+                        CommonProperties.Observables.scaleTranslationStore.getState().scale,
+                        CommonProperties.Observables.scaleTranslationStore.getState().translate,
+                    )
                 }
 
-                addAfterInsertHook {
-                }
-
-                onEvent {
-                    mousedown = { e ->
-                        cursor = Cursor.GRABBING
-                        mouseIsDown = true
-                        startDragOffset =
-                            Pair(
-                                e.clientX - translatePos.first,
-                                e.clientY - translatePos.second,
-                            )
-                    }
-                    mousemove = { e ->
-                        if (mouseIsDown) {
-                            translatePos =
-                                Pair(
-                                    e.clientX - startDragOffset.first,
-                                    e.clientY - startDragOffset.second,
-                                )
-                            scaleTranslationStore.dispatch(
-                                ScaleTranslateAction.SetTranslation(translatePos),
-                            )
-                        }
-                    }
-                    mouseup = {
-                        mouseIsDown = false
-                        cursor = Cursor.DEFAULT
-                    }
-                    mousewheel = { e ->
-                        e.preventDefault()
-                        if (e.deltaY > 0) {
-                            scaleTranslationStore.dispatch(
-                                ScaleTranslateAction.SetScale(
-                                    scaleTranslationStore.getState().scale * DEFAULT_SCALE_RATIO,
-                                ),
-                            )
-                        } else {
-                            scaleTranslationStore.dispatch(
-                                ScaleTranslateAction.SetScale(
-                                    scaleTranslationStore.getState().scale / DEFAULT_SCALE_RATIO,
-                                ),
-                            )
-                        }
-                    }
+                this.bind(EnvironmentStore.store) {
+                    println("Bind to store")
+                    context2D.redrawNodes(
+                        CommonProperties.Observables.scaleTranslationStore.getState().scale,
+                        CommonProperties.Observables.scaleTranslationStore.getState().translate,
+                    )
                 }
             }
 
-            vPanel {
-                div().bind(scaleTranslationStore) { state -> +"Scale: ${state.scale}" }
+            addAfterInsertHook {
+            }
 
-                div().bind(scaleTranslationStore) { state ->
-                    +"Translation: ${state.translate.first}, ${state.translate.second}"
+            onEvent {
+                mousedown = { e ->
+                    cursor = Cursor.GRABBING
+                    mouseIsDown = true
+                    startDragOffset =
+                        Pair(
+                            e.clientX - translatePos.first,
+                            e.clientY - translatePos.second,
+                        )
                 }
-
-                range {
-                    label = "Node radius $min - $max"
-                    min = DEFUALT_NODE_RADIUS
-                    max = DEFUALT_NODE_RADIUS * 20
-                    step = 1.0
-                    value = DEFUALT_NODE_RADIUS
-                    onInput {
-                        nodesRadius.value = getValue()!!.toDouble()
+                mousemove = { e ->
+                    if (mouseIsDown) {
+                        translatePos =
+                            Pair(
+                                e.clientX - startDragOffset.first,
+                                e.clientY - startDragOffset.second,
+                            )
+                        CommonProperties.Observables.scaleTranslationStore.dispatch(
+                            ScaleTranslateAction.SetTranslation(translatePos),
+                        )
                     }
                 }
-
-                progress(max = scaleTranslationStore.store.getState().scale) {
-                    // this.bounds = (ObservableValue(Bounds(min = 0,)))
-                }.bind(scaleTranslationStore) {
+                mouseup = {
+                    mouseIsDown = false
+                    cursor = Cursor.DEFAULT
                 }
+                mousewheel = { e ->
+                    e.preventDefault()
+                    val nextScale = CommonProperties.Utils.nextScale(e.deltaY)
 
-                div().bind(nodesRadius) {
-                    +"Node radius: ${nodesRadius.value}"
+                    if(nextScale <= CommonProperties.RenderProperties.MAX_SCALE &&
+                        nextScale >= CommonProperties.RenderProperties.MIN_SCALE) {
+                        CommonProperties.Observables.scaleTranslationStore
+                            .dispatch(ScaleTranslateAction.SetScale(nextScale))
+                    }
                 }
             }
         }

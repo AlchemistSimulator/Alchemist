@@ -10,22 +10,33 @@
 package components
 
 import components.navbar.PlayButton
+import io.kvision.core.AlignItems
 import io.kvision.core.Color
+import io.kvision.core.CssSize
+import io.kvision.core.FlexDirection
+import io.kvision.core.JustifyContent
+import io.kvision.core.UNIT
+import io.kvision.form.check.checkBox
+import io.kvision.form.text.text
+import io.kvision.html.InputType
+import io.kvision.html.br
 import io.kvision.html.div
+import io.kvision.html.input
 import io.kvision.navbar.NavbarColor
 import io.kvision.navbar.NavbarType
 import io.kvision.navbar.nav
+import io.kvision.navbar.navForm
 import io.kvision.navbar.navbar
 import io.kvision.panel.SimplePanel
+import io.kvision.panel.flexPanel
 import io.kvision.state.bind
 import stores.SimulationStatus
 
-open class Appbar() : SimplePanel(className = "appbar-root") {
+open class Appbar(className: String = "") : SimplePanel(className = className) {
 
     private val simulationFileName = "simulationTest.yml"
 
     init {
-        // SimulationStatus.callGetStatus()
         navbar(
             if (simulationFileName.isEmpty()) "Alchemist" else "Alchemist - $simulationFileName",
             collapseOnClick = false,
@@ -33,18 +44,25 @@ open class Appbar() : SimplePanel(className = "appbar-root") {
             type = NavbarType.STICKYTOP
             nColor = NavbarColor.DARK
 
-            nav {
-
-                div {
-                    color = Color("#ffffff")
-                }.bind(SimulationStatus.simulationStore) { sim ->
-                    val simStatus = sim.status?.simulationStatus
-                    +"SIMULATION STATUS IS: $simStatus"
+            navForm {
+                text(InputType.SEARCH){
+                    placeholder = "Search node"
                 }
             }
 
             nav(rightAlign = true) {
-                add(PlayButton("Play"))
+                flexPanel {
+                    flexDirection = FlexDirection.ROW
+                    alignItems = AlignItems.CENTER
+                    spacing = 15
+                    div {
+                        color = Color("#ffffff")
+                    }.bind(SimulationStatus.simulationStore) { sim ->
+                        +"STATUS: ${sim.status?.simulationStatus}"
+                    }
+
+                    add(PlayButton("Play"))
+                }
             }
         }
     }

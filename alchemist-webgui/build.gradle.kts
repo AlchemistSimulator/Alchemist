@@ -1,5 +1,6 @@
 import Libs.alchemist
 import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.kotlin.gradle.targets.js.npm.importedPackageDir
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 group = "it.unibo.alchemist"
@@ -22,7 +23,7 @@ repositories {
     mavenLocal()
 }
 
-dependencies {
+/*dependencies {
     implementation(alchemist("graphql"))
     implementation(alchemist("api"))
     implementation(alchemist("full"))
@@ -37,63 +38,43 @@ dependencies {
 
     implementation(libs.kotest.runner)
     implementation(libs.ktor.server.test.host)
-}
+}*/
 
-application {
+/*application {
     mainClass.set("it.unibo.alchemist.Alchemist")
-}
+}*/
 
 val task by tasks.register<JavaExec>("runWEB") {
+    dependencies{
+        implementation(alchemist("graphql"))
+        implementation(alchemist("api"))
+        implementation(alchemist("full"))
+    }
     group = alchemistGroup
     description = "Launches simulation"
 
-    // Custom property to store the simulation file path
     val simulationFile = project.objects.property(String::class.java)
 
-    // Set the property value from the command line or use a default value
     simulationFile.set(project.findProperty("simulationFile") as String? ?: "C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/Alchemist fork/Alchemist/test.yml")
-    // effect.set(project.findProperty("effect") as String? ?: "")
+
     mainClass.set("it.unibo.alchemist.Alchemist")
 
-    // Add the simulation file path as a program argument
     args("run", "C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/yaml/" + simulationFile.get())
 
     doFirst {
+        val libsDir = "C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/Alchemist fork/Alchemist/alchemist-graphql/build/libs/"
         classpath(
             sourceSets["main"].runtimeClasspath,
-            // tasks.named("compileKotlinJvm"),
-            // configurations.named("jvmRuntimeClasspath"),
-            files("C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/Alchemist fork/Alchemist/alchemist-graphql/build/libs/alchemist-graphql-0.1.0-archeo+343bdac0b.jar"),
-            files("C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/Alchemist fork/Alchemist/alchemist-graphql/build/libs/alchemist-graphql-js-0.1.0-archeo+343bdac0b.klib"),
-            files("C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/Alchemist fork/Alchemist/alchemist-graphql/build/libs/alchemist-graphql-jvm-0.1.0-archeo+343bdac0b.jar"),
-            files("C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/Alchemist fork/Alchemist/alchemist-graphql/build/libs/alchemist-graphql-kotlin-0.1.0-archeo+343bdac0b-sources.jar"),
-            files("C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/Alchemist fork/Alchemist/alchemist-graphql/build/libs/alchemist-graphql-metadata-0.1.0-archeo+343bdac0b.jar"),
-
+            fileTree(libsDir) {
+                include("**/*.jar")
+                include("**/*.klib")
+            }
         )
     }
 
     // classpath(tasks.named("compileKotlinJvm"), configurations.named("jvmRuntimeClasspath"))
 
-    // , "-g","C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/effects/" + effect.get()
 }
-
-/*tasks {
-    named("run", JavaExec::class).configure {
-        classpath(named("compileKotlinJvm"), configurations.named("jvmRuntimeClasspath"))
-        // val simulationFile = project.objects.property(String::class.java)
-        // args("run", "C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/yaml/" + simulationFile.get())
-    }
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-    if (name == "sourcesJar") {
-        dependsOn("kspCommonMainKotlinMetadata")
-    }
-}
-
-tasks.named("sourcesJar").configure {
-    dependsOn("kspCommonMainKotlinMetadata")
-}*/
 
 kotlin {
     jvm {
@@ -123,11 +104,11 @@ kotlin {
                 },
             )
 
-            /*testTask(Action {
+            testTask(Action {
                 useKarma {
                     useChromeHeadless()
                 }
-            })*/
+            })
 
             binaries.executable()
         }
@@ -212,31 +193,6 @@ kotlin {
             }
         }
 
-        /*val jsTest by getting {
-            dependencies{
-                implementation("io.kvision:kvision-testutils:$kvisionVersion")
-            }
-
-        }*/
-        /*val jsTest by getting {
-            dependencies {
-                implementation(alchemist("graphql"))
-                //implementation(alchemist("api"))
-                implementation(alchemist("full"))
-                implementation(libs.apollo.runtime)
-                implementation(libs.kotlin.coroutines.core)
-                implementation(libs.kotlin.stdlib)
-                implementation(libs.kotlinx.serialization.json)
-
-                implementation(libs.ktor.server.websockets)
-                implementation(libs.bundles.graphql.server)
-                implementation(libs.bundles.ktor.server)
-
-                implementation(libs.kotest.assertions)
-                implementation(libs.kotest.runner)
-                implementation(libs.ktor.server.test.host)
-            }
-        }*/
     }
 }
 

@@ -24,11 +24,11 @@ import io.kvision.ToastifyModule
 import io.kvision.TomSelectModule
 import io.kvision.module
 import io.kvision.startApplication
-import ui.App
+import ui.AppMain
 
 fun main() {
     startApplication(
-        ::App,
+        ::AppMain,
         module.hot,
         BootstrapModule,
         BootstrapCssModule,
@@ -47,9 +47,3 @@ fun main() {
         CoreModule,
     )
 }
-
-/*fun main() {
-    val container = document.getElementById("root") ?: error("Couldn't find container!")
-    createRoot(container.unsafeCast<Element>()).render(App.create())
-
-}*/

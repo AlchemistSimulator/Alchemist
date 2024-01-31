@@ -31,8 +31,8 @@ object SimulationControlApi {
     suspend fun pauseSimulation() = coroutineScope {
         async {
             withContext(Dispatchers.Default) {
-                println("paused the simulation")
                 ClientConnection.client.mutation(PauseSimulationMutation()).execute()
+                println("COROUTINE[pauseSimulation]: Paused the simulation")
             }
         }
     }
@@ -40,8 +40,8 @@ object SimulationControlApi {
     suspend fun playSimulation() = coroutineScope {
         async {
             withContext(Dispatchers.Default) {
-                println("playing the simulation")
                 ClientConnection.client.mutation(PlaySimulationMutation()).execute()
+                println("COROUTINE[playSimulation]: Played the simulation")
             }
         }
     }
@@ -49,8 +49,8 @@ object SimulationControlApi {
     suspend fun terminateSimulation() = coroutineScope {
         async {
             withContext(Dispatchers.Default) {
-                println("terminated the simulation")
                 ClientConnection.client.mutation(TerminateSimulationMutation()).execute()
+                println("COROUTINE[terminateSimulation]: Terminated the simulation")
             }
         }
     }

@@ -9,7 +9,7 @@
 
 package stores.states
 
-import components.content.SimulationContext.Companion.DEFAULT_SCALE
+import components.content.shared.CommonProperties.RenderProperties.DEFAULT_SCALE
 
 data class ScaleTranslateState(
     var scale: Double = DEFAULT_SCALE.toDouble(),

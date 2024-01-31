@@ -15,6 +15,11 @@ Help()
    echo
 }
 
+if [[ $# -ne 4 ]]; then
+    Help
+    exit 1
+fi
+
 aur_repo_dir="/tmp/aur-repo"
 main_repo_dir=$(pwd)
 

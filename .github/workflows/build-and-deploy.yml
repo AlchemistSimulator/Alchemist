@@ -144,7 +144,9 @@ jobs:
         run: ./gradlew testJpackageOutput --info     
   # Test PKGBUILD for aur release
   test-aur-package:
-    needs: select-java-version
+    needs: 
+      - select-java-version
+      - build
     runs-on:  ubuntu-22.04
     container: 
       image: archlinux:base-devel

@@ -334,19 +334,9 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
-      - name: Generate PKGBUILD
-        run: |
-          ./gradlew generatePKGBUILD
-          echo "VERSION=$(./gradlew properties | grep ^version: | cut -d" " -f2)" >> $GITHUB_ENV
-      - name: Publish AUR package
-        uses: KSXGitHub/github-actions-deploy-aur@v2.7.0
-        with:
-          pkgname: alchemist
-          pkgbuild: build/package/PKGBUILD
-          commit_username: ${{ secrets.AUR_USERNAME }}
-          commit_email: ${{ secrets.AUR_EMAIL }}
-          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
-          commit_message: Update to version ${{ env.VERSION }}
+          custom-secret-0: ${{ secrets.AUR_USERNAME }}
+          custom-secret-1: ${{ secrets.AUR_EMAIL }}
+          custom-secret-2: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
   success:
     runs-on: ubuntu-22.04
     needs:

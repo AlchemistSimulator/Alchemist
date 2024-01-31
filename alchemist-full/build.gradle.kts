@@ -157,7 +157,6 @@ val generatePKGBUILD by tasks.registering(Exec::class) {
     val interceptOutput = ByteArrayOutputStream()
     standardOutput = interceptOutput
     doFirst {
-        require(!isWindows && !isMac)
         val version = rootProject.version.toString().substringBefore('-')
         commandLine("md5sum", "-b", "${rootProject.layout.buildDirectory.get().asFile.resolve("package").path}/${rootProject.name}-$version-1.x86_64.rpm")
     }
@@ -172,7 +171,7 @@ val generatePKGBUILD by tasks.registering(Exec::class) {
             if (testSourceParam.toBoolean()) { "${rootProject.name}-$version-1.x86_64.rpm" } else { "https://github.com/AlchemistSimulator/Alchemist/releases/download/$version/${rootProject.name}-$version-1.x86_64.rpm" }, // source name
             md5, // md5sums
         )
-        val replacedContent = replacementValues.foldIndexed(fileContent) { index, content, value ->
+        val replacedContent = replacementValues.foldIndexed(fileContent) { _, content, value ->
             content.replaceFirst(tokenToReplace, value)
         }
         outputDir.mkdirs()

@@ -47,7 +47,7 @@ git clone -v "https://aur.archlinux.org/${pkgname}.git" $aur_repo_dir
     git config user.email "$email"
     cp -r "$main_repo_dir/$pkgbuild" $aur_repo_dir
     # Retrieve the version from the PKGBUILD
-    version=$(cat PKGBUILD | grep pkgver | cut -d'=' -f 2)
+    version=$(< PKGBUILD grep pkgver | cut -d'=' -f 2)
     makepkg --printsrcinfo > .SRCINFO
     echo "-- Committing the update to version $version"
 

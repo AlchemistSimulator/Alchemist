@@ -18,8 +18,8 @@ git -C build/website/ push || exit 3
 RELEASE_ON_CENTRAL="./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs release --parallel"
 eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || exit 5
 ./gradlew publishKotlinOSSRHPublicationToGithubRepository --continue || true
-./gradlew generatePKGBUILD
-./publishToAUR.sh build/package/PKGBUILD $CUSTOM_SECRET_0 $CUSTOM_SECRET_1 "$CUSTOM_SECRET_2" || exit 9
+./gradlew generatePKGBUILD || exit 9
+./publishToAUR.sh build/package/PKGBUILD $CUSTOM_SECRET_0 $CUSTOM_SECRET_1 "$CUSTOM_SECRET_2" || exit 10
 `
 var config = require('semantic-release-preconfigured-conventional-commits');
 config.plugins.push(

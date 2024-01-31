@@ -13,7 +13,7 @@ import Util.isMultiplatform
 import Util.isWindows
 import org.panteleyev.jpackage.ImageType
 import org.panteleyev.jpackage.JPackageTask
-import java.io.ByteArrayOutputStream
+import java.security.MessageDigest
 
 plugins {
     application
@@ -73,6 +73,7 @@ val jpackageFull by tasks.registering(CustomJPackageTask::class) {
     appName = rootProject.name
     appVersion = rootProject.version.toString().substringBefore('-')
     copyright = "Copyright (C) 2010-2023, Danilo Pianini and contributors"
+    aboutUrl = "https://alchemistsimulator.github.io/"
     appDescription = rootProject.description
     vendor = ""
     licenseFile = "${rootProject.projectDir}/LICENSE.md"
@@ -146,7 +147,7 @@ tasks.register<Exec>("testJpackageOutput") {
     finalizedBy(deleteJpackageOutput)
 }
 
-val generatePKGBUILD by tasks.registering(Exec::class) {
+val generatePKGBUILD by tasks.registering() {
     group = "Publishing"
     description = "Generates a valid PKGBUILD by replacing values in the template file"
     val inputFile = file("${project.projectDir}/PKGBUILD.template")
@@ -154,22 +155,17 @@ val generatePKGBUILD by tasks.registering(Exec::class) {
     val tokenToReplace = "{%}"
     var replacementValues: List<String>
     val testSourceParam = System.getProperty("generatePKGBUILD.testSource", "false")
-    val interceptOutput = ByteArrayOutputStream()
-    standardOutput = interceptOutput
-    doFirst {
-        val version = rootProject.version.toString().substringBefore('-')
-        commandLine("md5sum", "-b", "${rootProject.layout.buildDirectory.get().asFile.resolve("package").path}/${rootProject.name}-$version-1.x86_64.rpm")
-    }
     doLast {
-        val exit = executionResult.get().exitValue
-        require(exit == 0)
-        val md5 = String(interceptOutput.toByteArray(), Charsets.UTF_8).split(' ')[0]
         val version = rootProject.version.toString().substringBefore('-')
+        val rpmPackage = file("${rootProject.layout.buildDirectory.get().asFile.resolve("package").path}/${rootProject.name}-$version-1.x86_64.rpm")
+        require(rpmPackage.exists())
+        val md5 = MessageDigest.getInstance("MD5")
+        val checksum = md5.digest(rpmPackage.readBytes()).joinToString("") { "%02x".format(it) }
         val fileContent = inputFile.readText()
         replacementValues = listOf(
             version, // pkgver
             if (testSourceParam.toBoolean()) { "${rootProject.name}-$version-1.x86_64.rpm" } else { "https://github.com/AlchemistSimulator/Alchemist/releases/download/$version/${rootProject.name}-$version-1.x86_64.rpm" }, // source name
-            md5, // md5sums
+            checksum, // md5sums
         )
         val replacedContent = replacementValues.foldIndexed(fileContent) { _, content, value ->
             content.replaceFirst(tokenToReplace, value)

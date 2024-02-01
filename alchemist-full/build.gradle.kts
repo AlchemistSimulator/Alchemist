@@ -86,7 +86,7 @@ tasks.withType<ShadowJar> {
         dependsOn(this@withType)
     }
     this.finalizedBy(testShadowJar)
-    tasks.check.configure { dependsOn(testShadowJar) }
+    tasks.assemble.configure { dependsOn(testShadowJar) }
     // There is little space on the Windows CI, so we need to delete the output as soon as possible
     val deleteOutput = tasks.register<Delete>("deleteOutputOf${name.capitalized()}") {
         setDelete(this@withType)

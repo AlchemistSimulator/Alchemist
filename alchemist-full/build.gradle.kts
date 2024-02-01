@@ -98,6 +98,10 @@ tasks.withType<ShadowJar> {
     }
 }
 
+// Disable distTar and distZip
+val toDisable = listOf(tasks.distTar, tasks.distZip, tasks.jpackage).map { it.name }
+tasks.matching { it.name in toDisable }.configureEach { enabled = false }
+
 // Default JPackageTask disabled to generate multiple packages
 tasks.jpackage {
     enabled = false

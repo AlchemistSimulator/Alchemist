@@ -135,6 +135,42 @@ jobs:
           path: build/package/*
           if-no-files-found: error
 
+  test-windows-msi-installers:
+    needs:
+      - assemble-and-upload
+    runs-on: windows-2022
+    concurrency:
+      group: test-windows-msi-installers-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v4.1.1
+        with:
+          name: installer-package-${{ github.sha }}-${{ runner.os }}
+      - name: Install packages
+        run: |
+          for installer in build/package/*.msi; do
+            msiexec.exe -i $installer -quiet INSTALLDIR="$GITHUB_WORKSPACE/installed/$installer/"
+          done
+
+  test-linux-deb-installers:
+    needs:
+      - assemble-and-upload
+    runs-on: ubuntu-22.04
+    concurrency:
+      group: test-linux-deb-installers-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v4.1.1
+        with:
+          name: installer-package-${{ github.sha }}-${{ runner.os }}
+      - name: Install packages
+        run: |
+          for installer in build/package/*.deb; do
+              sudo apt install -y $installer
+          done
+
   # Testing and static analysis
   build:
     needs:

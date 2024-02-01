@@ -151,14 +151,15 @@ jobs:
         run: ./gradlew testJpackageOutput --info     
   # Test PKGBUILD for aur release
   test-aur-package:
-    needs: 
+    needs:
+      - compute-build-ref
       - select-java-version
       - build
     runs-on:  ubuntu-22.04
     container: 
       image: archlinux:base-devel-20240101.0.204074
     concurrency:
-      group: ${{ github.workflow }}-test-aur-release-${{ github.event.number || github.ref }}
+      group: test-aur-release-${{ needs.compute-build-ref.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Setup arch

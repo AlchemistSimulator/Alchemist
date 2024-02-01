@@ -114,7 +114,7 @@ jobs:
           pre-build-command: |
             ./gradlew kotlinUpgradeYarnLock --parallel
           build-command: |
-            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel
+            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel --debug
           check-command: true
           deploy-command: |
             ./gradlew \

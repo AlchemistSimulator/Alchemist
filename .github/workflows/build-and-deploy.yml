@@ -66,26 +66,23 @@ jobs:
           should-run-codecov: ${{ contains('Linux', runner.os) }}
           should-deploy: false
           should-validate-wrapper: ${{ contains('Linux', runner.os) }}
-      - name: Generate packages
-        shell: bash
-        run: ./gradlew jpackageFull
-      - name: Upload packages
-        uses: actions/upload-artifact@v4.3.0
-        with:
-          name: installer-package-${{ runner.os }}
-          path: build/package/*
-          if-no-files-found: error
-      - name: Generate jars
-        if: ${{ runner.os == 'Linux' }}
-        run: ./gradlew shadowJar
-      - name: Upload FatJars
+      - name: Generate fatjars and platform-specific packages
+        run: ./gradlew shadowJar jpackageFull --parallel
+      - name: Upload fatjars built on Linux
         if: ${{ runner.os == 'Linux' }}
         uses: actions/upload-artifact@v4.3.0
         with:
-            name: fat-jars
+            name: fat-jars-${{ needs.compute-build-ref.outputs.build-ref }}
             path: build/shadow/*
             if-no-files-found: error
-  # Performs a dry-deployment if credentials are available
+      - name: Upload platform-specific packages
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: installer-package-${{ runner.os }}-${{ needs.compute-build-ref.outputs.build-ref }}
+          path: build/package/*
+          if-no-files-found: error
+
+  # Performs a dry-deployment on Central if credentials are available
   test-deploy:
     needs:
       - select-java-version

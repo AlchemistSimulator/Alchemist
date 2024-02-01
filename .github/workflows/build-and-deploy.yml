@@ -125,7 +125,11 @@ jobs:
             if [[ "${{ needs.ci-preparation.outputs.will-release }}" != "true" ]]; then
               ./gradlew -PstagingRepositoryId=${{ needs.staging-repo.outputs.maven-central-repo-id }} drop --parallel
             fi
-          clean-command: true
+          clean-command: |
+            # Clean the build directory on Win and Mac
+            if [[ "${{ contains('Linux', runner.os) }}" == "false" ]]; then
+              rm -rf build/shadow/*
+            fi
       - name: Upload fatjars built on Linux
         if: ${{ runner.os == 'Linux' }}
         uses: actions/upload-artifact@v4.3.0

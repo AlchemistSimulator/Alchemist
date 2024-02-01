@@ -117,9 +117,13 @@ jobs:
             ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel --debug
           check-command: true
           deploy-command: |
+            [ -n "${{ needs.staging-repo.outputs.repo-id }}" ] || (
+              echo "Staging repository ID not found" &&
+              exit 1
+            )
             ./gradlew \
             ${{ needs.ci-preparation.outputs.force-version }}\
-            -PstagingRepositoryId=${{ needs.staging-repo.outputs.maven-central-repo-id }}\
+            -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
             uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel
             #
             # Drop the staging repository if the build is not a release

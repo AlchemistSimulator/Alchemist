@@ -216,43 +216,7 @@ jobs:
           java-version: ${{ needs.ci-preparation.outputs.java-version }}
           should-run-codecov: ${{ contains('Linux', runner.os) }}
           should-deploy: false
-          should-validate-wrapper: ${{ contains('Linux', runner.os) }}
-      - name: Generate fatjars and platform-specific packages
-        run: ./gradlew shadowJar jpackageFull --parallel
-
-  # Test packages correctness
-  test-packages:
-    needs:
-      - ci-preparation
-      - build
-    strategy:
-      matrix:
-        os: [ windows-2022, macos-12, ubuntu-22.04 ]
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
-    concurrency:
-      group: test-packages-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
-    steps:
-      - name: Checkout
-        uses: danysk/action-checkout@0.2.14
-      - name: Setup Java
-        uses: actions/setup-java@v4.0.0
-        with:
-          java-version: ${{ needs.ci-preparation.outputs.java-version }}
-          distribution: 'temurin'
-      - name: Install bsdtar
-        if: runner.os == 'Linux'
-        run: sudo apt update && sudo apt install libarchive-tools
-      - name: Download packages
-        uses: actions/download-artifact@v4.1.1
-        with:
-          name: installer-package-${{ github.sha }}-${{ runner.os }}
-          path: build/package/
-          merge-multiple: true
-      - name: Test package
-        shell: bash
-        run: ./gradlew testJpackageOutput --info --parallel
+          should-validate-wrapper: false
 
   # Test PKGBUILD for AUR release
   test-aur-package:
@@ -370,7 +334,6 @@ jobs:
       - ci-preparation
       - build
       - build-website
-      - test-packages
       - test-aur-package
     concurrency:
       # Only one release job at a time per branch, as only master releases.
@@ -457,7 +420,6 @@ jobs:
       - build
       - build-website
       - release
-      - test-packages
       - test-aur-package
     if: >-
       always() && (

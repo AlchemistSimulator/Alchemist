@@ -157,7 +157,7 @@ jobs:
           path: build/package/*
           if-no-files-found: error
 
-  test-windows-msi-installers:
+  test-windows-msi-installer:
     needs:
       - assemble-and-upload
     runs-on: windows-2022
@@ -175,7 +175,7 @@ jobs:
             msiexec.exe -i $installer -quiet INSTALLDIR="$GITHUB_WORKSPACE/installed/$installer/"
           done
 
-  test-linux-deb-installers:
+  test-linux-deb-installer:
     needs:
       - assemble-and-upload
     runs-on: ubuntu-22.04
@@ -340,6 +340,8 @@ jobs:
       - build
       - build-website
       - test-aur-package
+      - test-linux-deb-installer
+      - test-windows-msi-installer
     concurrency:
       # Only one release job at a time per branch, as only master releases.
       # Strictly sequential.
@@ -422,10 +424,13 @@ jobs:
   success:
     runs-on: ubuntu-22.04
     needs:
+      - ci-preparation
       - build
       - build-website
       - release
       - test-aur-package
+      - test-linux-deb-installer
+      - test-windows-msi-installer
     if: >-
       always() && (
         contains(join(needs.*.result, ','), 'failure')

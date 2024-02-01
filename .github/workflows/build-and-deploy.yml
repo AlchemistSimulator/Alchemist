@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Compute build ref
         id: compute-build-ref
-        run: echo "${{ github.workflow }}-${{ github.event.number || github.ref }}" >> $GITHUB_OUTPUT
+        run: echo "build-ref=${{ github.workflow }}-${{ github.event.number || github.ref }}" >> $GITHUB_OUTPUT
 
   select-java-version:
     outputs:

@@ -108,7 +108,7 @@ jobs:
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           should-run-codecov: false
-          should-deploy: ${{ contains('Linux', runner.os) }}
+          should-deploy: ${{ contains('Linux', runner.os) && needs.ci-preparation.outputs.may-deploy }}
           should-validate-wrapper: ${{ contains('Linux', runner.os) }}
           build-command: |
             ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel
@@ -117,11 +117,14 @@ jobs:
             ./gradlew \
             ${{ needs.ci-preparation.outputs.force-version }}\
             -PstagingRepositoryId=${{ needs.staging-repo.outputs.maven-central-repo-id }}\
-            uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel\
-          clean-command: |
+            uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel
+            #
+            # Drop the staging repository if the build is not a release
+            #
             if [[ "${{ needs.ci-preparation.outputs.will-release }}" != "true" ]]; then
-              ./gradlew drop --parallel
+              ./gradlew -PstagingRepositoryId=${{ needs.staging-repo.outputs.maven-central-repo-id }} drop --parallel
             fi
+          clean-command: true
       - name: Upload fatjars built on Linux
         if: ${{ runner.os == 'Linux' }}
         uses: actions/upload-artifact@v4.3.0

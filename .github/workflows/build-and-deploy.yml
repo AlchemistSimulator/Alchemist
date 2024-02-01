@@ -5,20 +5,18 @@ on:
 
 jobs:
 
-  compute-build-ref:
+  ci-preparation:
     runs-on: ubuntu-22.04
+    concurrency:
+      group: ci-preparation-${{ github.workflow }}-${{ github.event.number || github.ref }}
+      cancel-in-progress: true
     outputs:
-      build-ref: ${{ steps.compute-build-ref.outputs.build-ref }}
+      build-ref: ${{ steps.ci-preparation.outputs.build-ref }}
+      java-version: ${{ steps.java-version.outputs.java-version }}
     steps:
       - name: Compute build ref
-        id: compute-build-ref
+        id: ci-preparation
         run: echo "build-ref=${{ github.workflow }}-${{ github.event.number || github.ref }}" >> $GITHUB_OUTPUT
-
-  select-java-version:
-    outputs:
-        java-version: ${{ steps.java-version.outputs.java-version }}
-    runs-on: ubuntu-22.04
-    steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Compute Java version
@@ -28,8 +26,7 @@ jobs:
   # Complete build, including testing, static analysis, and packaging
   build:
     needs:
-      - select-java-version
-      - compute-build-ref
+      - ci-preparation
     strategy:
       fail-fast: false
       matrix:
@@ -37,7 +34,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     concurrency:
-      group: build-${{ matrix.os }}-${{ needs.compute-build-ref.outputs.build-ref }}
+      group: build-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
@@ -62,7 +59,7 @@ jobs:
             ./gradlew check --parallel || ./gradlew check --parallel
           clean-command: |
             ./gradlew clean --parallel || ./gradlew clean --parallel || true
-          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
           should-run-codecov: ${{ contains('Linux', runner.os) }}
           should-deploy: false
           should-validate-wrapper: ${{ contains('Linux', runner.os) }}
@@ -72,7 +69,7 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         uses: actions/upload-artifact@v4.3.0
         with:
-            name: fat-jars-${{ needs.compute-build-ref.outputs.build-ref }}
+            name: fat-jars-${{ needs.ci-preparation.outputs.build-ref }}
             path: build/shadow/*
             if-no-files-found: error
       - name: Upload platform-specific packages
@@ -85,8 +82,7 @@ jobs:
   # Performs a dry-deployment on Central if credentials are available
   test-deploy:
     needs:
-      - select-java-version
-      - compute-build-ref
+      - ci-preparation
     runs-on: ubuntu-22.04
     if: >-
       !github.event.repository.fork
@@ -96,7 +92,7 @@ jobs:
       )
     timeout-minutes: 120
     concurrency:
-      group: test-deploy-${{ needs.compute-build-ref.outputs.build-ref }}
+      group: test-deploy-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
@@ -108,7 +104,7 @@ jobs:
           deploy-command: |
             COMMAND="./gradlew uploadJvm uploadJs uploadKotlinOSSRH uploadKotlinMultiplatform close drop --parallel"
             eval "$COMMAND" || eval "$COMMAND" || eval "$COMMAND"
-          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
           should-run-codecov: false
           should-deploy: true
           should-validate-wrapper: false
@@ -119,8 +115,7 @@ jobs:
   # Test packages correctness
   test-packages:
     needs:
-      - compute-build-ref
-      - select-java-version
+      - ci-preparation
       - build
     strategy:
       matrix:
@@ -128,7 +123,7 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     concurrency:
-      group: test-packages-${{ needs.compute-build-ref.outputs.build-ref }}
+      group: test-packages-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
@@ -136,7 +131,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4.0.0
         with:
-          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
           distribution: 'temurin'
       - name: Install bsdtar
         if: runner.os == 'Linux'
@@ -144,7 +139,7 @@ jobs:
       - name: Download packages
         uses: actions/download-artifact@v4.1.1
         with:
-          name: installer-package-${{ runner.os }}-${{ needs.compute-build-ref.outputs.build-ref }}
+          name: installer-package-${{ runner.os }}-${{ needs.ci-preparation.outputs.build-ref }}
           path: build/package/
           merge-multiple: true
       - name: Test package
@@ -154,14 +149,13 @@ jobs:
   # Test PKGBUILD for AUR release
   test-aur-package:
     needs:
-      - compute-build-ref
-      - select-java-version
+      - ci-preparation
       - build
     runs-on:  ubuntu-22.04
     container: 
       image: archlinux:base-devel-20240101.0.204074
     concurrency:
-      group: test-aur-release-${{ needs.compute-build-ref.outputs.build-ref }}
+      group: test-aur-release-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Setup arch
@@ -174,12 +168,12 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4.0.0
         with:
-          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
           distribution: 'temurin'
       - name: Download packages
         uses: actions/download-artifact@v4.1.1
         with:
-          pattern: installer-package-${{ runner.os }}-${{ needs.compute-build-ref.outputs.build-ref }}
+          pattern: installer-package-${{ runner.os }}-${{ needs.ci-preparation.outputs.build-ref }}
           path: build/package/
           merge-multiple: true
       - name: Generate PKGBUILD
@@ -198,12 +192,11 @@ jobs:
   # Builds the website and verifies link sanity
   build-website:
     needs:
-      - select-java-version
-      - compute-build-ref
+      - ci-preparation
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     concurrency:
-      group: build-website-${{ needs.compute-build-ref.outputs.build-ref }}
+      group: build-website-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
@@ -218,7 +211,7 @@ jobs:
               fi
             done
           check-command: true
-          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
@@ -227,7 +220,7 @@ jobs:
       - name: Upload website
         uses: actions/upload-artifact@v4.3.0
         with:
-          name: website-${{ needs.compute-build-ref.outputs.build-ref }}
+          name: website-${{ needs.ci-preparation.outputs.build-ref }}
           path: website.tar
       - uses: DanySK/build-check-deploy-gradle-action@2.2.17
         with:
@@ -258,7 +251,7 @@ jobs:
                 false
               fi
             done
-          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
@@ -266,8 +259,7 @@ jobs:
   # Performs a release if needed
   release:
     needs:
-      - compute-build-ref
-      - select-java-version
+      - ci-preparation
       - build
       - build-website
       - test-deploy
@@ -276,7 +268,7 @@ jobs:
     concurrency:
       # Only one release job at a time per branch, as only master releases.
       # Strictly sequential.
-      group: release-${{ needs.compute-build-ref.outputs.build-ref }}
+      group: release-${{ needs.ci-preparation.outputs.build-ref }}
     runs-on: ubuntu-22.04
     if: >-
       !github.event.repository.fork
@@ -294,7 +286,7 @@ jobs:
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
-          path: website-${{ needs.compute-build-ref.outputs.build-ref }}
+          path: website-${{ needs.ci-preparation.outputs.build-ref }}
           fetch-depth: 0
           persist-credentials: true
           repository: AlchemistSimulator/alchemistsimulator.github.io
@@ -302,17 +294,17 @@ jobs:
       - name: Download website artifact
         uses: actions/download-artifact@v4.1.1
         with:
-          name: website-${{ needs.compute-build-ref.outputs.build-ref }}
+          name: website-${{ needs.ci-preparation.outputs.build-ref }}
       - name: Download packages
         uses: actions/download-artifact@v4.1.1
         with:
-          pattern: installer-package-*-${{ needs.compute-build-ref.outputs.build-ref }}
+          pattern: installer-package-*-${{ needs.ci-preparation.outputs.build-ref }}
           path: build/package/
           merge-multiple: true
       - name: Download fatJars
         uses: actions/download-artifact@v4.1.1
         with:
-          name: fat-jars-${{ needs.compute-build-ref.outputs.build-ref }}
+          name: fat-jars-${{ needs.ci-preparation.outputs.build-ref }}
           path: build/shadow/
           merge-multiple: true
       - name: Find the version of Node from package.json
@@ -324,7 +316,7 @@ jobs:
           node-version: ${{ steps.node-version.outputs.version }}
       - uses: DanySK/build-check-deploy-gradle-action@2.2.17
         with:
-          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
           build-command: |
             ls -ahl
             echo Copying the new website

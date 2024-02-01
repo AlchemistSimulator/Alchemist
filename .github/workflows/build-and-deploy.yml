@@ -151,8 +151,8 @@ jobs:
             COMMAND="./gradlew \
             build clean close \
             hugoBuild \
-            jpackageFull \
             performWebsiteStringReplacements \
+            generatePKGBUILD \
             publishKotlinOSSRHPublicationToGithubRepository \
             release \
             shadowJar \

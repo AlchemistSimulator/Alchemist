@@ -143,7 +143,7 @@ jobs:
       - name: Download packages
         uses: actions/download-artifact@v4.1.1
         with:
-          name: installer-package-${{ runner.os }}
+          name: installer-package-${{ runner.os }}-${{ needs.compute-build-ref.outputs.build-ref }}
           path: build/package/
           merge-multiple: true
       - name: Test package
@@ -177,7 +177,7 @@ jobs:
       - name: Download packages
         uses: actions/download-artifact@v4.1.1
         with:
-          pattern: installer-package-Linux
+          pattern: installer-package-${{ runner.os }}-${{ needs.compute-build-ref.outputs.build-ref }}
           path: build/package/
           merge-multiple: true
       - name: Generate PKGBUILD
@@ -224,7 +224,7 @@ jobs:
       - name: Upload website
         uses: actions/upload-artifact@v4.3.0
         with:
-          name: website
+          name: website-${{ needs.compute-build-ref.outputs.build-ref }}
           path: website.tar
       - uses: DanySK/build-check-deploy-gradle-action@2.2.20
         with:
@@ -294,7 +294,7 @@ jobs:
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
-          path: website
+          path: website-${{ needs.compute-build-ref.outputs.build-ref }}
           fetch-depth: 0
           persist-credentials: true
           repository: AlchemistSimulator/alchemistsimulator.github.io
@@ -302,17 +302,17 @@ jobs:
       - name: Download website artifact
         uses: actions/download-artifact@v4.1.1
         with:
-          name: website
+          name: website-${{ needs.compute-build-ref.outputs.build-ref }}
       - name: Download packages
         uses: actions/download-artifact@v4.1.1
         with:
-          pattern: installer-package-*
+          pattern: installer-package-*-${{ needs.compute-build-ref.outputs.build-ref }}
           path: build/package/
           merge-multiple: true
       - name: Download fatJars
         uses: actions/download-artifact@v4.1.1
         with:
-          name: fat-jars
+          name: fat-jars-${{ needs.compute-build-ref.outputs.build-ref }}
           path: build/shadow/
           merge-multiple: true
       - name: Find the version of Node from package.json

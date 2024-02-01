@@ -17,7 +17,6 @@ git -C build/website/ commit -m "chore: update website to version \${nextRelease
 git -C build/website/ push || exit 3
 RELEASE_ON_CENTRAL="./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs release --parallel"
 eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || exit 5
-./gradlew publishKotlinOSSRHPublicationToGithubRepository --continue || true
 ./gradlew generatePKGBUILD || exit 9
 ./publishToAUR.sh build/pkgbuild/PKGBUILD "$CUSTOM_SECRET_0" "$CUSTOM_SECRET_1" "$CUSTOM_SECRET_2" || exit 10
 `

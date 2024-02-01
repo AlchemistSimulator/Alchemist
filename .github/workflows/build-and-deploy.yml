@@ -3,6 +3,10 @@ on:
   workflow_call:
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
 
   ci-preparation:

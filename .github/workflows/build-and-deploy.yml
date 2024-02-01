@@ -9,6 +9,7 @@ defaults:
 
 jobs:
 
+  # Prepare the environment for the build
   ci-preparation:
     runs-on: ubuntu-22.04
     concurrency:

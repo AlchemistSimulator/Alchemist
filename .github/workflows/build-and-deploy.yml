@@ -261,10 +261,6 @@ jobs:
           should-validate-wrapper: false
   # Performs a release if needed
   release:
-    concurrency:
-      # Only one release job at a time per branch, as only master releases.
-      # Strictly sequential.
-      group: release-${{ github.event.number || github.ref }}
     needs:
       - compute-build-ref
       - select-java-version

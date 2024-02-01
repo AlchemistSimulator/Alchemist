@@ -116,8 +116,11 @@ jobs:
             ./gradlew \
             ${{ needs.ci-preparation.outputs.force-version }}\
             -PstagingRepositoryId=${{ needs.staging-repo.outputs.maven-central-repo-id }}\
-            uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs --parallel\
-          clean-command: true
+            uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel\
+          clean-command: |
+            if [[ "${{ needs.ci-preparation.outputs.will-release }}" != "true" ]]; then
+              ./gradlew drop --parallel
+            fi
       - name: Upload fatjars built on Linux
         if: ${{ runner.os == 'Linux' }}
         uses: actions/upload-artifact@v4.3.0

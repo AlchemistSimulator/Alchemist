@@ -195,12 +195,15 @@ jobs:
         with:
           pre-build-command: ./gradlew kotlinUpgradeYarnLock --parallel
           # check that all tasks used in subsequent phases are there
+          pre-build-command: |
+            ./gradlew kotlinUpgradeYarnLock --parallel
           build-command: |
+            # check that all tasks used in subsequent phases are there
             COMMAND="./gradlew \
             build clean close \
             hugoBuild \
+            jpackageFull \
             performWebsiteStringReplacements \
-            generatePKGBUILD \
             publishKotlinOSSRHPublicationToGithubRepository \
             release \
             shadowJar \

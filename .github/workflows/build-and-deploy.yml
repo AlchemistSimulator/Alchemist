@@ -69,13 +69,13 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         uses: actions/upload-artifact@v4.3.0
         with:
-            name: fat-jars-${{ needs.ci-preparation.outputs.build-ref }}
+            name: fat-jars-${{ github.sha }}
             path: build/shadow/*
             if-no-files-found: error
       - name: Upload platform-specific packages
         uses: actions/upload-artifact@v4.3.0
         with:
-          name: installer-package-${{ runner.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+          name: installer-package-${{ github.sha }}-${{ runner.os }}
           path: build/package/*
           if-no-files-found: error
 
@@ -139,7 +139,7 @@ jobs:
       - name: Download packages
         uses: actions/download-artifact@v4.1.1
         with:
-          name: installer-package-${{ runner.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+          name: installer-package-${{ github.sha }}-${{ runner.os }}
           path: build/package/
           merge-multiple: true
       - name: Test package
@@ -173,7 +173,7 @@ jobs:
       - name: Download packages
         uses: actions/download-artifact@v4.1.1
         with:
-          pattern: installer-package-${{ runner.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+          pattern: installer-package-${{ github.sha }}-${{ runner.os }}
           path: build/package/
           merge-multiple: true
       - name: Generate PKGBUILD
@@ -220,7 +220,7 @@ jobs:
       - name: Upload website
         uses: actions/upload-artifact@v4.3.0
         with:
-          name: website-${{ needs.ci-preparation.outputs.build-ref }}
+          name: website-${{ github.sha }}
           path: website.tar
       - uses: DanySK/build-check-deploy-gradle-action@2.2.17
         with:
@@ -269,6 +269,7 @@ jobs:
       # Only one release job at a time per branch, as only master releases.
       # Strictly sequential.
       group: release-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: false
     runs-on: ubuntu-22.04
     if: >-
       !github.event.repository.fork
@@ -294,17 +295,17 @@ jobs:
       - name: Download website artifact
         uses: actions/download-artifact@v4.1.1
         with:
-          name: website-${{ needs.ci-preparation.outputs.build-ref }}
+          name: website-${{ github.sha }}
       - name: Download packages
         uses: actions/download-artifact@v4.1.1
         with:
-          pattern: installer-package-*-${{ needs.ci-preparation.outputs.build-ref }}
+          pattern: installer-package-${{ github.sha }}*
           path: build/package/
           merge-multiple: true
       - name: Download fatJars
         uses: actions/download-artifact@v4.1.1
         with:
-          name: fat-jars-${{ needs.ci-preparation.outputs.build-ref }}
+          name: fat-jars-${{ github.sha }}
           path: build/shadow/
           merge-multiple: true
       - name: Find the version of Node from package.json

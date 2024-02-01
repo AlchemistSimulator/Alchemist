@@ -15,8 +15,6 @@ jobs:
         run: echo "${{ github.workflow }}-${{ github.event.number || github.ref }}" >> $GITHUB_OUTPUT
 
   select-java-version:
-    concurrency:
-      group: ${{ github.workflow }}-select-java-version-${{ github.event.number || github.ref }}
     outputs:
         java-version: ${{ steps.java-version.outputs.java-version }}
     runs-on: ubuntu-22.04

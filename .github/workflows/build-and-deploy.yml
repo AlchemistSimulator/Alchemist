@@ -4,7 +4,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  # Runs all tests
+
+  compute-build-ref:
+    runs-on: ubuntu-22.04
+    outputs:
+      build-ref: ${{ steps.compute-build-ref.outputs.build-ref }}
+    steps:
+      - name: Compute build ref
+        id: compute-build-ref
+        run: echo "${{ github.workflow }}-${{ github.event.number || github.ref }}" >> $GITHUB_OUTPUT
+
   select-java-version:
     concurrency:
       group: ${{ github.workflow }}-select-java-version-${{ github.event.number || github.ref }}

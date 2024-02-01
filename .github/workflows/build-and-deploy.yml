@@ -216,39 +216,6 @@ jobs:
       - name: Generate fatjars and platform-specific packages
         run: ./gradlew shadowJar jpackageFull --parallel
 
-  # Performs a dry-deployment on Central if credentials are available
-  test-deploy:
-    needs:
-      - ci-preparation
-    runs-on: ubuntu-22.04
-    if: >-
-      !github.event.repository.fork
-      && (
-        github.event_name != 'pull_request'
-        || github.event.pull_request.head.repo.full_name == github.repository
-      )
-    timeout-minutes: 120
-    concurrency:
-      group: test-deploy-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
-    steps:
-      - name: Checkout
-        uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
-        with:
-          build-command: ./gradlew kotlinUpgradeYarnLock --parallel
-          check-command: true
-          deploy-command: |
-            COMMAND="./gradlew uploadJvm uploadJs uploadKotlinOSSRH uploadKotlinMultiplatform close drop --parallel"
-            eval "$COMMAND" || eval "$COMMAND" || eval "$COMMAND"
-          java-version: ${{ needs.ci-preparation.outputs.java-version }}
-          should-run-codecov: false
-          should-deploy: true
-          should-validate-wrapper: false
-          maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          signing-key: ${{ secrets.SIGNING_KEY }}
-          signing-password: ${{ secrets.SIGNING_PASSWORD }}
-
   # Test packages correctness
   test-packages:
     needs:
@@ -361,7 +328,7 @@ jobs:
           path: website.tar
       - uses: DanySK/build-check-deploy-gradle-action@2.2.20
         with:
-          build-command: |
+          build-command: ""
           check-command: |
             # Temporarily disable checks on kdoc/javadoc: too many bugs in Dokka.
             # See:
@@ -399,7 +366,6 @@ jobs:
       - ci-preparation
       - build
       - build-website
-      - test-deploy
       - test-packages
       - test-aur-package
     concurrency:
@@ -487,7 +453,6 @@ jobs:
       - build
       - build-website
       - release
-      - test-deploy
       - test-packages
       - test-aur-package
     if: >-

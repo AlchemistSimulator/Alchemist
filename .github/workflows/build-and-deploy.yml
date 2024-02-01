@@ -115,6 +115,7 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
+
   # Test packages correctness
   test-packages:
     needs:
@@ -148,8 +149,9 @@ jobs:
           merge-multiple: true
       - name: Test package
         shell: bash
-        run: ./gradlew testJpackageOutput --info     
-  # Test PKGBUILD for aur release
+        run: ./gradlew testJpackageOutput --info --parallel
+
+  # Test PKGBUILD for AUR release
   test-aur-package:
     needs:
       - compute-build-ref
@@ -192,6 +194,7 @@ jobs:
           sudo pacman -U --noconfirm alchemist-*.zst
           (sudo pacman -Q | grep -q alchemist &&  echo "Success! Alchemist found in the package list") || exit 1
           (/usr/bin/alchemist --help | grep -q options_list && echo "Success! Alchemist available") || exit 2
+
   # Builds the website and verifies link sanity
   build-website:
     needs:
@@ -259,6 +262,7 @@ jobs:
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
+
   # Performs a release if needed
   release:
     needs:

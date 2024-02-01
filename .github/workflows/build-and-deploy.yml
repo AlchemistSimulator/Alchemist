@@ -58,6 +58,7 @@ jobs:
       - ci-preparation
     concurrency:
       group: staging-repo-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: true
     if: needs.ci-preparation.outputs.may-deploy
     outputs:
       repo-id: ${{ steps.staging-repo.outputs.MavenCentral }}

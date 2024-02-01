@@ -24,6 +24,8 @@ jobs:
       - name: Compute Java version
         id: java-version
         run: ruby -e 'puts("java-version=#{/^minJavaVersion\s*=\s*(\d+)$/.match(File.read("gradle.properties"))[1]}")' >> $GITHUB_OUTPUT
+
+  # Complete build, including testing, static analysis, and packaging
   build:
     needs:
       - select-java-version

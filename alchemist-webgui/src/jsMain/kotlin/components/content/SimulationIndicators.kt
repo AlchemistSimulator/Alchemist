@@ -10,11 +10,11 @@
 package components.content
 
 import components.content.shared.CommonProperties
-import io.kvision.core.AlignItems
+import io.kvision.core.Background
 import io.kvision.core.Border
 import io.kvision.core.BorderStyle
+import io.kvision.core.Col
 import io.kvision.core.Color
-import io.kvision.core.UNIT
 import io.kvision.core.onInput
 import io.kvision.form.number.range
 import io.kvision.html.div
@@ -24,18 +24,23 @@ import io.kvision.panel.vPanel
 import io.kvision.progress.progress
 import io.kvision.progress.progressNumeric
 import io.kvision.state.bind
+import io.kvision.utils.perc
 import io.kvision.utils.px
 import korlibs.math.roundDecimalPlaces
-import kotlin.math.roundToInt
 
 class SimulationIndicators(className: String = "") : SimplePanel(className = className) {
 
     init {
+        border = Border(width = 1.px, BorderStyle.SOLID, Color("#ff0000"))
+        height = 100.perc
+
         vPanel {
+            height = 95.perc
+            width = 95.perc
             spacing = 5
             borderRadius = 10.px
+            background = Background(color = Color.name(Col.WHITE))
             border = Border(width = 2.px, BorderStyle.SOLID, Color("#A3A3A3"))
-
 
             div().bind(CommonProperties.Observables.scaleTranslationStore) { state ->
                 +"Scale: ${state.scale}"
@@ -60,13 +65,13 @@ class SimulationIndicators(className: String = "") : SimplePanel(className = cla
                 +"Node radius: ${CommonProperties.Observables.nodesRadius.value}"
             }
 
-            p(className = "scale-value").bind(CommonProperties.Observables.scaleTranslationStore){ state ->
+            p(className = "scale-value").bind(CommonProperties.Observables.scaleTranslationStore) { state ->
                 +"Zoom: ${((state.scale/CommonProperties.RenderProperties.MAX_SCALE) * 100).roundDecimalPlaces(0)}%"
             }
 
             progress(
                 min = CommonProperties.RenderProperties.MIN_SCALE,
-                max =  CommonProperties.RenderProperties.MAX_SCALE
+                max = CommonProperties.RenderProperties.MAX_SCALE,
             ) {
                 progressNumeric {
                     striped = false

@@ -28,8 +28,6 @@ object EnvironmentApi {
     }
 
     fun environMentSubScription(): Flow<ApolloResponse<EnvironmentSubscription.Data>> {
-
         return ClientConnection.client.subscription(EnvironmentSubscription()).toFlow()
-
     }
 }

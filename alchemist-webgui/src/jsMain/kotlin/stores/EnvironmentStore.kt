@@ -27,7 +27,6 @@ object EnvironmentStore {
             EnvironmentApi.environMentSubScription().collect { response ->
 
                 store.dispatch(EnvironmentStateAction.AddAllNodes(response.data!!.environment.nodeToPos.entries))
-
             }
             println("COROUTINE[callEnvironmentSubscription]: Ended")
         }

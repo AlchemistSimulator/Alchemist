@@ -11,30 +11,47 @@ package components.content
 
 import components.content.shared.CommonProperties
 import graphql.api.EnvironmentApi
+import io.kvision.core.AlignContent
+import io.kvision.core.AlignItems
+import io.kvision.core.Background
 import io.kvision.core.Border
 import io.kvision.core.BorderStyle
 import io.kvision.core.BoxShadow
+import io.kvision.core.Col
 import io.kvision.core.Color
 import io.kvision.core.CssSize
 import io.kvision.core.Cursor
+import io.kvision.core.FlexDirection
+import io.kvision.core.FlexWrap
+import io.kvision.core.JustifyContent
 import io.kvision.core.UNIT
 import io.kvision.core.onEvent
 import io.kvision.html.canvas
 import io.kvision.panel.SimplePanel
+import io.kvision.panel.flexPanel
 import io.kvision.state.bind
+import io.kvision.utils.perc
 import io.kvision.utils.px
-import korlibs.image.color.Colors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.DOMRect
 import stores.EnvironmentStore
 import stores.actions.EnvironmentStateAction
 import stores.actions.ScaleTranslateAction
 import kotlin.math.PI
+import kotlin.math.ceil
 import kotlin.random.Random
 
 class SimulationContext(className: String = "") : SimplePanel(className = className) {
+
+
+    data class Node(val id: String, val x: Double, val y: Double, val color: String)
+
+    private val nodes = List(50) { index ->
+        Node("${index + 1}", Random.nextDouble(0.0, 400.0), Random.nextDouble(0.0, 200.0), randomColor())
+    }
 
     private fun randomColor(): String {
         val letters = "0123456789ABCDEF"
@@ -45,7 +62,7 @@ class SimulationContext(className: String = "") : SimplePanel(className = classN
 
     private fun CanvasRenderingContext2D.drawNode(
         position: Pair<Double, Double>,
-        color: String = CommonProperties.RenderProperties.DEFAULT_NODE_COLOR
+        color: String = CommonProperties.RenderProperties.DEFAULT_NODE_COLOR,
     ) {
         beginPath()
         arc(
@@ -63,15 +80,13 @@ class SimulationContext(className: String = "") : SimplePanel(className = classN
     }
 
     private fun CanvasRenderingContext2D.redrawNodes(
-        scale: Double = CommonProperties.RenderProperties.DEFAULT_SCALE.toDouble(),
-        translation: Pair<Double, Double> =
-            Pair(CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble(),
-                CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble()),
+        scale: Double = CommonProperties.Observables.scaleTranslationStore.getState().scale,
+        translation: Pair<Double, Double> = CommonProperties.Observables.scaleTranslationStore.getState().translate,
     ) {
         println("Function[Redraw]: Redrawing function")
         val translationScaled = Pair(
-            translation.first * 1 / CommonProperties.Observables.scaleTranslationStore.getState().scale,
-            translation.second * 1 / CommonProperties.Observables.scaleTranslationStore.getState().scale,
+            translation.first * 1 / scale,
+            translation.second * 1 / scale,
         )
 
         scale(scale, scale)
@@ -84,23 +99,45 @@ class SimulationContext(className: String = "") : SimplePanel(className = classN
             CommonProperties.RenderProperties.DEFAULT_HEIGHT,
         )
 
-        /*beginPath()
-        strokeStyle = "#000000"
-        moveTo((CommonProperties.RenderProperties.DEFAULT_WIDTH / 2), 0.0)
-        lineTo((CommonProperties.RenderProperties.DEFAULT_WIDTH / 2), CommonProperties.RenderProperties.DEFAULT_HEIGHT)
-        moveTo(0.0, (CommonProperties.RenderProperties.DEFAULT_HEIGHT / 2))
-        lineTo(CommonProperties.RenderProperties.DEFAULT_WIDTH, (CommonProperties.RenderProperties.DEFAULT_HEIGHT / 2))
-        stroke()
-        closePath()*/
+        drawGrid()
 
-        EnvironmentStore.store.getState().nodes.forEach {
+        /*EnvironmentStore.store.getState().nodes.forEach {
             drawNode(Pair(it.position.coordinates[0], it.position.coordinates[1]), randomColor())
+        }*/
+
+        nodes.forEach {
+            drawNode(Pair(it.x, it.y), it.color)
         }
 
         setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
     }
 
+    private fun CanvasRenderingContext2D.drawGrid(){
+        strokeStyle = "#ccc"
+        lineWidth = 1.0 / CommonProperties.Observables.scaleTranslationStore.getState().scale
+
+        val stepP = 10
+        val left = 0.5 - ceil(CommonProperties.RenderProperties.DEFAULT_WIDTH / stepP) * stepP
+        val top = 0.5 - ceil(CommonProperties.RenderProperties.DEFAULT_HEIGHT / stepP) * stepP
+        val right = 2 * CommonProperties.RenderProperties.DEFAULT_WIDTH
+        val bottom = 2 * CommonProperties.RenderProperties.DEFAULT_HEIGHT
+        clearRect(left, top, right - left, bottom - top)
+        beginPath()
+        for (x in left.toInt() until right.toInt() + stepP step stepP) {
+            moveTo(x.toDouble(), top)
+            lineTo(x.toDouble(), bottom)
+        }
+        for (y in top.toInt() until bottom.toInt() + stepP step stepP) {
+            moveTo(left, y.toDouble())
+            lineTo(right, y.toDouble())
+        }
+        strokeStyle = "#ADADAD"
+        stroke()
+    }
+
     init {
+
+        border = Border(width = 1.px, BorderStyle.SOLID, Color("#ff0000"))
 
         CoroutineScope(Dispatchers.Default).launch {
             println("COROUTINE[environmentSubscription]: Environmnent subscription started")
@@ -111,81 +148,112 @@ class SimulationContext(className: String = "") : SimplePanel(className = classN
             println("COROUTINE[environmentSubscription]: Environmnent subscription ended")
         }
 
-        canvas(className = "environment-renderer") {
-            canvasWidth = CommonProperties.RenderProperties.DEFAULT_WIDTH.toInt()
-            canvasHeight = CommonProperties.RenderProperties.DEFAULT_HEIGHT.toInt()
-            borderRadius = CssSize(10, UNIT.px)
-            border = Border(width = 2.px, BorderStyle.SOLID, Color("#A3A3A3"))
+        flexPanel(
+            FlexDirection.COLUMN,
+            FlexWrap.NOWRAP,
+            JustifyContent.CENTER,
+            AlignItems.CENTER,
+            AlignContent.CENTER
+        ) {
+            height = 100.perc
 
-            var mouseIsDown = false
+           canvas(className = "environment-renderer") {
+                canvasWidth = CommonProperties.RenderProperties.DEFAULT_WIDTH.toInt()
+                canvasHeight = CommonProperties.RenderProperties.DEFAULT_HEIGHT.toInt()
+                borderRadius = CssSize(10, UNIT.px)
+                boxShadow = BoxShadow(0.px, 0.px, 5.px, 0.px, Color.rgba(0, 0, 0, (0.5 * 255).toInt()))
+                background = Background(color = Color.name(Col.WHITE))
 
-            var translatePos: Pair<Double, Double> =
-                Pair(CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble(),
-                    CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble())
+                var mouseIsDown = false
 
-            var startDragOffset: Pair<Double, Double> =
-                Pair(CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble(),
-                    CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble())
+                var translatePos: Pair<Double, Double>
 
-            addAfterCreateHook {
-
-                this.bind(CommonProperties.Observables.scaleTranslationStore) { state ->
-                    context2D.redrawNodes(state.scale, state.translate)
-                }
-
-                this.bind(CommonProperties.Observables.nodesRadius) {
-                    context2D.redrawNodes(
-                        CommonProperties.Observables.scaleTranslationStore.getState().scale,
-                        CommonProperties.Observables.scaleTranslationStore.getState().translate,
+                var startDragOffset: Pair<Double, Double> =
+                    Pair(
+                        CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble(),
+                        CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble(),
                     )
-                }
+                lateinit var boundingRect: DOMRect
 
-                this.bind(EnvironmentStore.store) {
-                    println("Bind to store")
-                    context2D.redrawNodes(
-                        CommonProperties.Observables.scaleTranslationStore.getState().scale,
-                        CommonProperties.Observables.scaleTranslationStore.getState().translate,
-                    )
-                }
-            }
 
-            addAfterInsertHook {
-            }
+                addAfterCreateHook {
 
-            onEvent {
-                mousedown = { e ->
-                    cursor = Cursor.GRABBING
-                    mouseIsDown = true
-                    startDragOffset =
-                        Pair(
-                            e.clientX - translatePos.first,
-                            e.clientY - translatePos.second,
-                        )
-                }
-                mousemove = { e ->
-                    if (mouseIsDown) {
-                        translatePos =
-                            Pair(
-                                e.clientX - startDragOffset.first,
-                                e.clientY - startDragOffset.second,
-                            )
-                        CommonProperties.Observables.scaleTranslationStore.dispatch(
-                            ScaleTranslateAction.SetTranslation(translatePos),
-                        )
+                    boundingRect = getElement()!!.getBoundingClientRect()
+
+                    bind(CommonProperties.Observables.scaleTranslationStore) { state ->
+                        context2D.redrawNodes(state.scale, state.translate)
+                    }
+
+                    bind(CommonProperties.Observables.nodesRadius) {
+                        context2D.redrawNodes()
+                    }
+
+                    bind(EnvironmentStore.store) {
+                        println("Bind[EnvironmentStore.store]: Redrawing nodes on store bind")
+                        context2D.redrawNodes()
                     }
                 }
-                mouseup = {
-                    mouseIsDown = false
-                    cursor = Cursor.DEFAULT
-                }
-                mousewheel = { e ->
-                    e.preventDefault()
-                    val nextScale = CommonProperties.Utils.nextScale(e.deltaY)
 
-                    if(nextScale <= CommonProperties.RenderProperties.MAX_SCALE &&
-                        nextScale >= CommonProperties.RenderProperties.MIN_SCALE) {
-                        CommonProperties.Observables.scaleTranslationStore
-                            .dispatch(ScaleTranslateAction.SetScale(nextScale))
+                onEvent {
+                    mousedown = { e ->
+                        cursor = Cursor.GRABBING
+                        mouseIsDown = true
+                        startDragOffset = Pair(
+                            e.clientX - CommonProperties.Observables.scaleTranslationStore.getState().translate.first,
+                            e.clientY - CommonProperties.Observables.scaleTranslationStore.getState().translate.second
+                        )
+                    }
+
+                    mousemove = { e ->
+                        if (mouseIsDown) {
+
+                            translatePos = Pair(
+                                e.clientX - startDragOffset.first,
+                                e.clientY - startDragOffset.second
+                            )
+
+                            CommonProperties.Observables.scaleTranslationStore.dispatch(
+                                ScaleTranslateAction.SetTranslation(translatePos)
+                            )
+                        }
+                    }
+
+                    mouseup = {
+                        mouseIsDown = false
+                        cursor = Cursor.DEFAULT
+                    }
+
+                    mousewheel = { e ->
+                        e.preventDefault()
+                        val nextScale = CommonProperties.Utils.nextScale(e.deltaY)
+
+                        if (nextScale <= CommonProperties.RenderProperties.MAX_SCALE &&
+                            nextScale >= CommonProperties.RenderProperties.MIN_SCALE
+                        ) {
+                            val currentState = CommonProperties.Observables.scaleTranslationStore.getState()
+
+                            val scaleChangeFactor = nextScale / currentState.scale
+                            val translationChangeX = (1 - scaleChangeFactor) * (e.clientX - boundingRect.left - currentState.translate.first)
+                            val translationChangeY = (1 - scaleChangeFactor) * (e.clientY - boundingRect.top - currentState.translate.second)
+
+                            translatePos = Pair(
+                                translationChangeX,
+                                translationChangeY
+                            )
+
+                            CommonProperties.Observables.scaleTranslationStore.dispatch(
+                                ScaleTranslateAction.SetScale(nextScale),
+
+                            )
+                            CommonProperties.Observables.scaleTranslationStore.dispatch(
+                                ScaleTranslateAction.SetTranslation(
+                                    Pair(
+                                        currentState.translate.first + translationChangeX,
+                                        currentState.translate.second + translationChangeY
+                                    )
+                                )
+                            )
+                        }
                     }
                 }
             }

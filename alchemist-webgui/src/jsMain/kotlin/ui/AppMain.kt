@@ -12,17 +12,11 @@ package ui
 import components.Appbar
 import components.Content
 import io.kvision.Application
-import io.kvision.core.AlignItems
-import io.kvision.core.CssSize
-import io.kvision.core.FlexDirection
-import io.kvision.core.JustifyContent
-import io.kvision.core.UNIT
-import io.kvision.panel.flexPanel
 import io.kvision.panel.root
 
 class AppMain : Application() {
     override fun start() {
-        root(id="root") {
+        root(id = "root") {
             add(Appbar(className = "appbar-root"))
             add(Content(className = "content-root"))
         }

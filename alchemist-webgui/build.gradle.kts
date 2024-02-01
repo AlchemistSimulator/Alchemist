@@ -1,6 +1,5 @@
 import Libs.alchemist
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.gradle.targets.js.npm.importedPackageDir
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 group = "it.unibo.alchemist"
@@ -45,7 +44,7 @@ repositories {
 }*/
 
 val task by tasks.register<JavaExec>("runWEB") {
-    dependencies{
+    dependencies {
         implementation(alchemist("graphql"))
         implementation(alchemist("api"))
         implementation(alchemist("full"))
@@ -68,12 +67,11 @@ val task by tasks.register<JavaExec>("runWEB") {
             fileTree(libsDir) {
                 include("**/*.jar")
                 include("**/*.klib")
-            }
+            },
         )
     }
 
     // classpath(tasks.named("compileKotlinJvm"), configurations.named("jvmRuntimeClasspath"))
-
 }
 
 kotlin {
@@ -104,11 +102,13 @@ kotlin {
                 },
             )
 
-            testTask(Action {
-                useKarma {
-                    useChromeHeadless()
-                }
-            })
+            testTask(
+                Action {
+                    useKarma {
+                        useChromeHeadless()
+                    }
+                },
+            )
 
             binaries.executable()
         }
@@ -192,7 +192,6 @@ kotlin {
                 implementation("io.kvision:kvision-redux-kotlin:$kvisionVersion")
             }
         }
-
     }
 }
 

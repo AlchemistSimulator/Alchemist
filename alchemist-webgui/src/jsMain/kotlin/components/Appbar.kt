@@ -12,16 +12,10 @@ package components
 import components.navbar.PlayButton
 import io.kvision.core.AlignItems
 import io.kvision.core.Color
-import io.kvision.core.CssSize
 import io.kvision.core.FlexDirection
-import io.kvision.core.JustifyContent
-import io.kvision.core.UNIT
-import io.kvision.form.check.checkBox
 import io.kvision.form.text.text
 import io.kvision.html.InputType
-import io.kvision.html.br
 import io.kvision.html.div
-import io.kvision.html.input
 import io.kvision.navbar.NavbarColor
 import io.kvision.navbar.NavbarType
 import io.kvision.navbar.nav
@@ -45,7 +39,7 @@ open class Appbar(className: String = "") : SimplePanel(className = className) {
             nColor = NavbarColor.DARK
 
             navForm {
-                text(InputType.SEARCH){
+                text(InputType.SEARCH) {
                     placeholder = "Search node"
                 }
             }

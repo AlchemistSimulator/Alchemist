@@ -7,17 +7,30 @@
  */
 
 import Libs.alchemist
+import Util.commandExists
 import Util.isInCI
 import Util.isMac
 import Util.isMultiplatform
 import Util.isWindows
+import Util.testShadowJar
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.configurationcache.extensions.capitalized
+import org.jetbrains.kotlin.daemon.common.toHexString
+import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import org.panteleyev.jpackage.ImageType
+import org.panteleyev.jpackage.ImageType.DEB
+import org.panteleyev.jpackage.ImageType.DMG
+import org.panteleyev.jpackage.ImageType.EXE
+import org.panteleyev.jpackage.ImageType.MSI
+import org.panteleyev.jpackage.ImageType.PKG
+import org.panteleyev.jpackage.ImageType.RPM
 import org.panteleyev.jpackage.JPackageTask
 import java.security.MessageDigest
 
 plugins {
     application
     alias(libs.plugins.jpackage)
+    alias(libs.plugins.shadowJar)
 }
 
 dependencies {
@@ -37,146 +50,266 @@ application {
     mainClass.set("it.unibo.alchemist.Alchemist")
 }
 
-val copyForPackaging by tasks.registering(Copy::class) {
-    val jarFile = tasks.shadowJar.get().archiveFileName.get()
-    from("${rootProject.projectDir}/build/shadow/$jarFile")
-    into("${rootProject.projectDir}/build/package-input")
-    dependsOn(tasks.shadowJar)
-}
-
-open class CustomJPackageTask() : JPackageTask() {
-    @TaskAction
-    override fun action() {
-        var types: List<ImageType>
-        when {
-            isWindows -> types = listOf(ImageType.EXE, ImageType.MSI)
-            isMac -> types = listOf(ImageType.DMG, ImageType.PKG)
-            else -> types = listOf(ImageType.DEB, ImageType.RPM)
-        }
-        types.forEach {
-            setType(it)
-            super.action()
-        }
+// Shadow Jar
+tasks.withType<ShadowJar> {
+    manifest {
+        attributes(
+            mapOf(
+                "Implementation-Title" to "Alchemist",
+                "Implementation-Version" to rootProject.version,
+                "Main-Class" to "it.unibo.alchemist.Alchemist",
+                "Automatic-Module-Name" to "it.unibo.alchemist",
+            ),
+        )
+    }
+    exclude(
+        "ant_tasks/",
+        "about_files/",
+        "help/about/",
+        "build",
+        ".gradle",
+        "build.gradle",
+        "gradle",
+        "gradlew.bat",
+        "gradlew",
+    )
+    isZip64 = true
+    mergeServiceFiles()
+    destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })
+    // Run the jar and check the output
+    val minJavaVersion: String by properties
+    val javaExecutable = javaToolchains
+        .launcherFor { languageVersion.set(JavaLanguageVersion.of(minJavaVersion)) }
+        .map { it.executablePath.asFile.absolutePath }
+    val testShadowJar = testShadowJar(javaExecutable, archiveFile)
+    testShadowJar.configure {
+        dependsOn(this@withType)
+    }
+    this.finalizedBy(testShadowJar)
+    tasks.check.configure { dependsOn(testShadowJar) }
+    // There is little space on the Windows CI, so we need to delete the output as soon as possible
+    val deleteOutput = tasks.register<Delete>("deleteOutputOf${name.capitalized()}") {
+        setDelete(this@withType)
+        mustRunAfter(this@withType)
+        mustRunAfter(testShadowJar)
+    }
+    if (isInCI && isWindows) {
+        this.finalizedBy(deleteOutput)
     }
 }
 
-// jpackageFull should be used instead
+// Default JPackageTask disabled to generate multiple packages
 tasks.jpackage {
     enabled = false
 }
 
-val jpackageFull by tasks.registering(CustomJPackageTask::class) {
-    group = "Distribution"
-    description = "Creates application bundle in every supported type using jpackage"
-    // General info
-    resourceDir = "${project.projectDir}/package-settings"
-    appName = rootProject.name
-    appVersion = rootProject.version.toString().substringBefore('-')
-    copyright = "Copyright (C) 2010-2023, Danilo Pianini and contributors"
-    aboutUrl = "https://alchemistsimulator.github.io/"
-    appDescription = rootProject.description
-    vendor = ""
-    licenseFile = "${rootProject.projectDir}/LICENSE.md"
-    verbose = isInCI
+sealed interface PackagingMethod
+data class ValidPackaging(val format: ImageType, val perUser: Boolean = false) : PackagingMethod {
+    val name get() = format.formatName
 
-    // Packaging settings
-    input = rootProject.layout.buildDirectory.map { it.dir("package-input") }.get().asFile.path
-    destination = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path
-    mainJar = tasks.shadowJar.get().archiveFileName.get()
-    mainClass = application.mainClass.get()
+    override fun toString() = "$name packaging${ " (userspace)".takeIf { perUser }.orEmpty() }"
+}
+data class DisabledPackaging(val reason: String) : PackagingMethod
 
-    linux {
-        icon = "${project.projectDir}/package-settings/logo.png"
-    }
-    windows {
-        icon = "${project.projectDir}/package-settings/logo.ico"
-        winDirChooser = true
-        winShortcutPrompt = true
-        winPerUserInstall = isInCI
-    }
-    mac {
-        icon = "${project.projectDir}/package-settings/logo.png"
-    }
-    dependsOn(copyForPackaging)
+val ImageType.formatName get() = name.lowercase()
+fun ImageType.disabledBecause(reason: String): List<DisabledPackaging> = listOf(
+    DisabledPackaging("$formatName packaging disabled because $reason"),
+)
+fun ImageType.disabledOnNon(os: String): List<DisabledPackaging> = disabledBecause("unsupported non non-$os systems")
+fun ImageType.valid(): List<ValidPackaging> = listOf(ValidPackaging(this)) + when (this) {
+    MSI, EXE -> listOf(ValidPackaging(this, true))
+    else -> emptyList()
+}
+fun ImageType.validIfCommandExists(command: String): List<PackagingMethod> = when {
+    commandExists(command) -> valid()
+    else -> disabledBecause("the required command '$command' could not be found in PATH.")
 }
 
-val deleteJpackageOutput by tasks.registering(Delete::class) {
-    setDelete(project.file("build/package/install"))
+val packageRequirements: List<PackagingMethod> = ImageType.values().flatMap { format ->
+    when (format) {
+        EXE, MSI -> if (isWindows) format.valid() else format.disabledOnNon("Windows")
+        DMG, PKG -> if (isMac) format.valid() else format.disabledOnNon("MacOS")
+        DEB -> when {
+            isWindows || isMac -> format.disabledOnNon("Linux")
+            else -> format.validIfCommandExists("dpkg")
+        }
+        RPM -> when {
+            isWindows || isMac -> format.disabledOnNon("Linux")
+            else -> format.validIfCommandExists("rpmbuild")
+        }
+        else -> format.disabledBecause("it is currently not supported. If needed, open a feature request.")
+    }
 }
 
-tasks.register<Exec>("testJpackageOutput") {
-    group = "Verification"
-    description = "Verifies the jpackage output correctness for the OS running the script"
-    isIgnoreExitValue = true
-    workingDir = rootProject.file("build/package/")
-    doFirst {
-        val version = rootProject.version.toString().substringBefore('-')
-        // Extract the packet
-        when {
-            isWindows -> commandLine("msiexec", "-i", "${rootProject.name}-$version.msi", "-quiet", "INSTALLDIR=${workingDir.path}\\install")
-            isMac -> commandLine("sudo", "installer", "-pkg", "${rootProject.name}-$version.pkg", "-target", "/")
-            else -> {
-                workingDir.resolve("install").mkdirs()
-                commandLine("bsdtar", "-xf", "${rootProject.name}-$version-1.x86_64.rpm", "-C", "install")
-            }
+val (validFormats, disabledFormats) = packageRequirements.partitionIsInstance<PackagingMethod, ValidPackaging>()
+
+disabledFormats.filterIsInstance<DisabledPackaging>().forEach { logger.warn(it.reason) }
+
+validFormats.forEach { packaging: ValidPackaging ->
+    val baseVersion: Provider<String> = provider { rootProject.version.toString() }
+    val packageSpecificVersion = baseVersion.map {
+        when (packaging.format) {
+            RPM -> it.replace('-', '.')
+            else -> it
         }
     }
-    doLast {
-        // Check if package contains every file needed
-        var execFiles: List<String>
-        var appFiles: List<String>
-        when {
-            isWindows -> {
-                execFiles = workingDir.resolve("install").listFiles().map { it.name }
-                appFiles = workingDir.resolve("install/app").listFiles().map { it.name }
-            }
-            isMac -> {
-                val root = File("/Applications/${rootProject.name}.app")
-                execFiles = root.resolve("Contents/MacOS").listFiles().map { it.name }
-                appFiles = root.resolve("Contents/app").listFiles().map { it.name }
-            }
-            else -> {
-                execFiles = workingDir.resolve("install/opt/alchemist/bin").listFiles().map { it.name }
-                appFiles = workingDir.resolve("install/opt/alchemist/lib/app").listFiles().map { it.name }
+    val packagingTaskNameSuffix = "${packaging.name.capitalized()}${"PerUser".takeIf { packaging.perUser }.orEmpty()}"
+    val packagingTask = tasks.register<JPackageTask>("jpackage$packagingTaskNameSuffix") {
+        dependsOn(tasks.shadowJar)
+
+        group = "Distribution"
+        description = "Creates application bundle through jpackage using $packaging"
+        // General info
+        resourceDir = "$projectDir/package-settings"
+        appName = rootProject.name
+        appVersion = packageSpecificVersion.get()
+        copyright = "Danilo Pianini and the Alchemist contributors"
+        aboutUrl = "https://alchemistsimulator.github.io/"
+        appDescription = rootProject.description
+        licenseFile = "${rootProject.projectDir}/LICENSE.md"
+
+        type = packaging.format
+        input = tasks.shadowJar.get().archiveFile.get().asFile.parent
+        // Packaging settings
+        destination = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path
+        mainJar = tasks.shadowJar.get().archiveFileName.get()
+        mainClass = application.mainClass.get()
+
+        linux {
+            icon = "${project.projectDir}/package-settings/logo.png"
+        }
+        windows {
+            icon = "${project.projectDir}/package-settings/logo.ico"
+            winDirChooser = true
+            winShortcutPrompt = true
+            winPerUserInstall = packaging.perUser
+        }
+        mac {
+            icon = "${project.projectDir}/package-settings/logo.png"
+        }
+    }
+    tasks.assemble.configure { dependsOn(packagingTask) }
+    // AUR Package based on the RPM distribution
+    if (packaging.format == RPM) {
+        logger.info("RPM packaging supported, enabling PKGBUILD support as well")
+        val generatePKGBUILD by tasks.registering {
+            group = "Distribution"
+            description = "Generates a valid PKGBUILD by replacing values in the template file"
+            dependsOn(packagingTask)
+            inputs.files(packagingTask)
+            doLast {
+                val inputFile = file("${project.projectDir}/PKGBUILD.template")
+                val template = inputFile.readText()
+                val templateStrings = listOf("VERSION", "RPM_URL", "RPM_MD5").map { "%ALCHEMIST_$it%" }
+                templateStrings.forEach {
+                    check(it in template) { "Corrupt PKGBUILD.template, missing $it" }
+                }
+                val outputDir = rootProject.layout.buildDirectory.map { it.dir("pkgbuild") }.get().asFile
+                if (!outputDir.mkdirs()) {
+                    check(outputDir.exists() && outputDir.isDirectory) {
+                        "Could not create output directory $outputDir, as it already exists and is not a directory"
+                    }
+                }
+                val rpmFileName = "${rootProject.name}-${packageSpecificVersion.get()}-1.x86_64.rpm"
+                val rpmFile = packagingTask.map { File(it.destination).resolve(rpmFileName) }.get()
+                check(rpmFile.exists()) { "Could not find $rpmFileName in ${rpmFile.parentFile}" }
+                check(rpmFile.isFile) { "$rpmFileName is a directory" }
+                val md5 = MessageDigest.getInstance("MD5")
+                rpmFile.inputStream().use {
+                    while (it.available() > 0) {
+                        md5.update(it.readNBytes(10 * 1024 * 1024))
+                    }
+                }
+                val replacements = templateStrings.associateWith { key ->
+                    when {
+                        "VERSION" in key -> baseVersion.get()
+                        "RPM_URL" in key ->
+                            "https://github.com/AlchemistSimulator/Alchemist/releases/download/" +
+                                "${baseVersion.get()}/$rpmFileName"
+                        "RPM_MD5" in key -> md5.digest().toHexString()
+                        else -> error("Unknown PKGBUILD replacement key $key")
+                    }
+                }
+                val pkgbuildContent = replacements.toList().fold(template) { base, replacement ->
+                    val (key, actualValue) = replacement
+                    base.replace(key, actualValue)
+                }
+                outputDir.resolve("PKGBUILD").writeText(pkgbuildContent)
             }
         }
-        require(rootProject.name in execFiles || "${rootProject.name}.exe" in execFiles)
-        require(jpackageFull.get().mainJar in appFiles)
+        tasks.assemble.configure { dependsOn(generatePKGBUILD) }
     }
-    mustRunAfter(jpackageFull)
-    finalizedBy(deleteJpackageOutput)
+//    tasks.register<Exec>("test${packagingTaskNameSuffix}PackageInstallation") {
+//        group = "Verification"
+//        description = "Tries to install locally the Alchemist installer created with $packaging"
+//        workingDir = rootProject.layout.buildDirectory.dir("package-${packaging.name}-install").get().asFile
+//        dependsOn(packagingTask)
+//        inputs.files(packagingTask)
+//        doLast {
+//            when (packaging.format) {
+//                MSI -> commandLine(
+//                    "msiexec",
+//                    "-i",
+//                    "${rootProject.name}-$actualVersion.msi",
+//                    "-quiet", "INSTALLDIR=${workingDir.path}")
+//                PKG -> commandLine(
+//                    "sudo",
+//                    "installer",
+//                    "-pkg",
+//                    "${rootProject.name}-$actualVersion.pkg",
+//                    "-target",
+//                    "/")
+//                else -> logger.warn("No testing in place yet for $packaging")
+//            }
+//        }
+//    }
 }
 
-val generatePKGBUILD by tasks.registering() {
-    group = "Publishing"
-    description = "Generates a valid PKGBUILD by replacing values in the template file"
-    val inputFile = file("${project.projectDir}/PKGBUILD.template")
-    val outputDir = file(rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path)
-    val tokenToReplace = "{%}"
-    var replacementValues: List<String>
-    val testSourceParam = System.getProperty("generatePKGBUILD.testSource", "false")
-    doLast {
-        val version = rootProject.version.toString().substringBefore('-')
-        val rpmPackage = file("${rootProject.layout.buildDirectory.get().asFile.resolve("package").path}/${rootProject.name}-$version-1.x86_64.rpm")
-        require(rpmPackage.exists())
-        val md5 = MessageDigest.getInstance("MD5")
-        val checksum = md5.digest(rpmPackage.readBytes()).joinToString("") { "%02x".format(it) }
-        val fileContent = inputFile.readText()
-        replacementValues = listOf(
-            version, // pkgver
-            if (testSourceParam.toBoolean()) { "${rootProject.name}-$version-1.x86_64.rpm" } else { "https://github.com/AlchemistSimulator/Alchemist/releases/download/$version/${rootProject.name}-$version-1.x86_64.rpm" }, // source name
-            checksum, // md5sums
-        )
-        val replacedContent = replacementValues.foldIndexed(fileContent) { _, content, value ->
-            content.replaceFirst(tokenToReplace, value)
-        }
-        outputDir.mkdirs()
-        val file = outputDir.resolve("PKGBUILD")
-        file.createNewFile()
-        file.writeText(replacedContent)
-    }
-    mustRunAfter(jpackageFull)
-}
+// val deleteJpackageOutput by tasks.registering(Delete::class) {
+//    setDelete(project.file("build/package/install"))
+// }
+//
+// tasks.register<Exec>("testJpackageInstall") {
+//    isIgnoreExitValue = true
+//    workingDir = rootProject.file("build/package/")
+//    doFirst {
+//        val version = rootProject.version.toString().substringBefore('-')
+//        // Extract the packet
+//        when {
+//            isWindows -> Unit
+//            isMac -> commandLine("sudo", "installer", "-pkg", "${rootProject.name}-$version.pkg", "-target", "/")
+//            else -> {
+//                workingDir.resolve("install").mkdirs()
+//                commandLine("bsdtar", "-xf", "${rootProject.name}-$version-1.x86_64.rpm", "-C", "install")
+//            }
+//        }
+//    }
+//    doLast {
+//        // Check if package contains every file needed
+//        var execFiles: List<String>
+//        var appFiles: List<String>
+//        when {
+//            isWindows -> {
+//                execFiles = workingDir.resolve("install").listFiles().map { it.name }
+//                appFiles = workingDir.resolve("install/app").listFiles().map { it.name }
+//            }
+//            isMac -> {
+//                val root = File("/Applications/${rootProject.name}.app")
+//                execFiles = root.resolve("Contents/MacOS").listFiles().map { it.name }
+//                appFiles = root.resolve("Contents/app").listFiles().map { it.name }
+//            }
+//            else -> {
+//                execFiles = workingDir.resolve("install/opt/alchemist/bin").listFiles().map { it.name }
+//                appFiles = workingDir.resolve("install/opt/alchemist/lib/app").listFiles().map { it.name }
+//            }
+//        }
+//        require(rootProject.name in execFiles || "${rootProject.name}.exe" in execFiles)
+//        require(jpackageFull.get().mainJar in appFiles)
+//    }
+//    mustRunAfter(jpackageFull)
+//    finalizedBy(deleteJpackageOutput)
+// }
+//
 
 tasks.withType<AbstractArchiveTask> {
     duplicatesStrategy = DuplicatesStrategy.WARN

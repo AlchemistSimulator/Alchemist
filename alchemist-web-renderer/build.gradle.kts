@@ -9,7 +9,6 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     application
@@ -108,18 +107,18 @@ tasks.named("run", JavaExec::class).configure {
     )
 }
 
-/**
- * Configure the [ShadowJar] task to work exactly like the "jvmJar" task of Kotlin Multiplatform, but also
+/*
+ * Configure the shadowJar task to work exactly like the "jvmJar" task of Kotlin Multiplatform, but also
  * include the JS artifacts by depending on the "jsBrowserProductionWebpack" task.
  */
-tasks.withType<ShadowJar>().configureEach {
-    val jvmJarTask = tasks.named("jvmJar")
-    from(webpackTask)
-    from(jvmJarTask)
-    from(tasks.named("jsBrowserDistribution"))
-    mustRunAfter(tasks.distTar, tasks.distZip)
-    archiveClassifier.set("all")
-}
+// tasks.withType<ShadowJar>().configureEach {
+//    val jvmJarTask = tasks.named("jvmJar")
+//    from(webpackTask)
+//    from(jvmJarTask)
+//    from(tasks.named("jsBrowserDistribution"))
+//    mustRunAfter(tasks.distTar, tasks.distZip)
+//    archiveClassifier.set("all")
+// }
 
 publishing.publications {
     withType<MavenPublication> {

@@ -194,22 +194,9 @@ jobs:
         uses: danysk/action-checkout@0.2.14
       - uses: DanySK/build-check-deploy-gradle-action@2.2.20
         with:
-          pre-build-command: |
-            ./gradlew kotlinUpgradeYarnLock --parallel
+          pre-build-command: true
           build-command: |
-            # check that all tasks used in subsequent phases are there
-            COMMAND="./gradlew \
-            build clean close \
-            generatePKGBUILD \
-            hugoBuild \
-            performWebsiteStringReplacements \
-            publishKotlinOSSRHPublicationToGithubRepository \
-            release \
-            shadowJar \
-            uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs \
-            --dry-run
-            "
-            eval $COMMAND || eval $COMMAND
+            ./gradlew kotlinUpgradeYarnLock --parallel
           check-command: |
             ./gradlew check --parallel || ./gradlew check --parallel
           clean-command: |

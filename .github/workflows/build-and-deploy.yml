@@ -29,6 +29,7 @@ jobs:
   build:
     needs:
       - select-java-version
+      - compute-build-ref
     strategy:
       fail-fast: false
       matrix:
@@ -36,7 +37,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     concurrency:
-      group: ${{ github.workflow }}-build-${{ matrix.os }}-${{ github.event.number || github.ref }}
+      group: build-${{ matrix.os }}-${{ needs.compute-build-ref.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout

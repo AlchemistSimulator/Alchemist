@@ -111,6 +111,8 @@ jobs:
           should-run-codecov: false
           should-deploy: ${{ contains('Linux', runner.os) && needs.ci-preparation.outputs.may-deploy }}
           should-validate-wrapper: ${{ contains('Linux', runner.os) }}
+          pre-build-command: |
+            ./gradlew kotlinUpgradeYarnLock --parallel
           build-command: |
             ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel
           check-command: true

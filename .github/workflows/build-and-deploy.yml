@@ -17,6 +17,14 @@ jobs:
       - name: Compute build ref
         id: ci-preparation
         run: echo "build-ref=${{ github.workflow }}-${{ github.event.number || github.ref }}" >> $GITHUB_OUTPUT
+      - name: Determine whether this build may run deployments
+        id: may-deploy
+        run: |
+          echo "may-deploy=${{
+            !github.event.repository.fork && (
+              github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+            )
+          }}" >> $GITHUB_OUTPUT
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Compute Java version

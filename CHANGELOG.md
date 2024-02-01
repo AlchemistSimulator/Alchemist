@@ -1,3 +1,26 @@
+## [30.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/30.0.3...30.0.4) (2024-02-01)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.11 ([98cea45](https://github.com/AlchemistSimulator/Alchemist/commit/98cea45fc8107aed537999f8c78d94dfd7fa3cba))
+* **deps:** update external-resources/learning-scafi-alchemist digest to af4e3fa ([142daec](https://github.com/AlchemistSimulator/Alchemist/commit/142daec4f9bd2d9c1455c5eefa8d8f0bf44e7cce))
+* **deps:** update external-resources/learning-scafi-alchemist digest to d085e8d ([75ed9f0](https://github.com/AlchemistSimulator/Alchemist/commit/75ed9f03a0c97179e303f0eeb7c015ea4ef5adba))
+* **deps:** update external-resources/learning-scafi-alchemist digest to e1dcb40 ([eecab26](https://github.com/AlchemistSimulator/Alchemist/commit/eecab2649fd13e318e51156f9a9fb7e473329229))
+* **deps:** update gohugoio/hugo action to v0.122.0 ([76e268e](https://github.com/AlchemistSimulator/Alchemist/commit/76e268e49e370fabfd8567ef6703846525e82b6e))
+* **deps:** update npm to v10.4.0 ([3b665f0](https://github.com/AlchemistSimulator/Alchemist/commit/3b665f0c85247d253bb348ddbd19974d94d7f3c4))
+* **deps:** update plugin com.gradle.enterprise to v3.16.2 ([a2c3f94](https://github.com/AlchemistSimulator/Alchemist/commit/a2c3f9438320325efcb91d1355234aa9c2bbdcb1))
+* **deps:** update plugin java-qa to v1.36.0 ([07813d7](https://github.com/AlchemistSimulator/Alchemist/commit/07813d7389110137b20fbe063f6704b1bee516d8))
+* **deps:** update plugin kotlin-qa to v0.59.0 ([6bdb6f3](https://github.com/AlchemistSimulator/Alchemist/commit/6bdb6f311f620471bab2d76071af3c8f873570c2))
+* **deps:** update react to v18.2.0-pre.691 ([57f1b53](https://github.com/AlchemistSimulator/Alchemist/commit/57f1b533c3013eb69f8500d1688b3e25eeab854f))
+* **deps:** update site/themes/hugo-theme-relearn digest to eaabbfd ([dcf0df6](https://github.com/AlchemistSimulator/Alchemist/commit/dcf0df6d4e2863a752dbadceb50b10f81ddaae0d))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.16 ([58b6c87](https://github.com/AlchemistSimulator/Alchemist/commit/58b6c876e1cf0405359024771703121f80841b6b))
+* speed-up the workflow by uploading and downloading the shadowJars instead of regerating them ([#3079](https://github.com/AlchemistSimulator/Alchemist/issues/3079)) ([9d0ba2e](https://github.com/AlchemistSimulator/Alchemist/commit/9d0ba2e8a8264cebf737126051e1615e4bcd1753))
+
 ## [30.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/30.0.2...30.0.3) (2024-01-26)
 
 

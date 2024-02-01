@@ -266,12 +266,17 @@ jobs:
       # Strictly sequential.
       group: release-${{ github.event.number || github.ref }}
     needs:
+      - compute-build-ref
       - select-java-version
       - build
       - build-website
       - test-deploy
       - test-packages
       - test-aur-package
+    concurrency:
+      # Only one release job at a time per branch, as only master releases.
+      # Strictly sequential.
+      group: release-${{ needs.compute-build-ref.outputs.build-ref }}
     runs-on: ubuntu-22.04
     if: >-
       !github.event.repository.fork

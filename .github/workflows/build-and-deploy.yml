@@ -12,9 +12,13 @@ jobs:
       cancel-in-progress: true
     outputs:
       build-ref: ${{ steps.ci-preparation.outputs.build-ref }}
+      force-version: ${{ steps.force-version.outputs.version }}
       java-version: ${{ steps.java-version.outputs.java-version }}
+      may-deploy: ${{ steps.may-deploy.outputs.may-deploy }}
+      next-version: ${{ steps.compute-next-version.outputs.next-version }}
+      will-release: ${{ steps.compute-next-version.outputs.will-release }}
     steps:
-      - name: Compute build ref
+      - name: Compute the build ref
         id: ci-preparation
         run: echo "build-ref=${{ github.workflow }}-${{ github.event.number || github.ref }}" >> $GITHUB_OUTPUT
       - name: Determine whether this build may run deployments
@@ -27,9 +31,20 @@ jobs:
           }}" >> $GITHUB_OUTPUT
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - name: Compute Java version
+      - name: Compute the Java version
         id: java-version
         run: ruby -e 'puts("java-version=#{/^minJavaVersion\s*=\s*(\d+)$/.match(File.read("gradle.properties"))[1]}")' >> $GITHUB_OUTPUT
+      - name: Compute the next release version
+        id: compute-next-version
+        uses: nicolasfara/precompute-semantic-release-version-action@1.0.2
+        with:
+          github-token: ${{ github.token }}
+      - name: Prepare a force version parameter for Gradle
+        id: force-version
+        run: |
+          if [[ "${{ steps.compute-next-version.outputs.will-release }}" == "true" ]]; then
+              echo 'version=-PforceVersion="${{ steps.compute-next-version.outputs.next-version }}"' >> $GITHUB_OUTPUT
+          fi
 
   # Complete build, including testing, static analysis, and packaging
   build:

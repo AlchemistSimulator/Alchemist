@@ -47,6 +47,7 @@ jobs:
             COMMAND="./gradlew \
             build clean close \
             hugoBuild \
+            jpackageFull \
             performWebsiteStringReplacements \
             publishKotlinOSSRHPublicationToGithubRepository \
             release \

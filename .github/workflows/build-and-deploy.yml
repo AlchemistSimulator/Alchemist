@@ -75,7 +75,7 @@ jobs:
       - name: Upload platform-specific packages
         uses: actions/upload-artifact@v4.3.0
         with:
-          name: installer-package-${{ runner.os }}-${{ needs.compute-build-ref.outputs.build-ref }}
+          name: installer-package-${{ runner.os }}-${{ needs.ci-preparation.outputs.build-ref }}
           path: build/package/*
           if-no-files-found: error
 

@@ -5,16 +5,15 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
-
 import Libs.alchemist
 import Util.commandExists
-import Util.isInCI
 import Util.isMac
 import Util.isMultiplatform
 import Util.isWindows
 import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.configurationcache.extensions.capitalized
+import org.jetbrains.kotlin.com.intellij.util.io.Murmur3_32Hash
 import org.jetbrains.kotlin.daemon.common.toHexString
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import org.panteleyev.jpackage.ImageType
@@ -25,6 +24,7 @@ import org.panteleyev.jpackage.ImageType.MSI
 import org.panteleyev.jpackage.ImageType.PKG
 import org.panteleyev.jpackage.ImageType.RPM
 import org.panteleyev.jpackage.JPackageTask
+import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 
 plugins {
@@ -87,15 +87,6 @@ tasks.withType<ShadowJar> {
     }
     this.finalizedBy(testShadowJar)
     tasks.assemble.configure { dependsOn(testShadowJar) }
-    // There is little space on the Windows CI, so we need to delete the output as soon as possible
-    val deleteOutput = tasks.register<Delete>("deleteOutputOf${name.capitalized()}") {
-        setDelete(this@withType)
-        mustRunAfter(this@withType)
-        mustRunAfter(testShadowJar)
-    }
-    if (isInCI && isWindows) {
-        this.finalizedBy(deleteOutput)
-    }
 }
 
 // Disable distTar and distZip
@@ -155,11 +146,30 @@ val (validFormats, disabledFormats) = packageRequirements.partitionIsInstance<Pa
 
 disabledFormats.filterIsInstance<DisabledPackaging>().forEach { logger.warn(it.reason) }
 
+val versionComponentExtractor = Regex("^(\\d+\\.\\d+\\.)(\\d+)(.*)$")
+private data class SemVerExtracted(val base: String, val patch: String, val suffix: String) {
+    fun asMangledVersion(): String = "$base$patch$0${patch}0${
+        if (suffix.isEmpty()) {
+            ""
+        } else {
+            val asBytes = suffix.toByteArray(StandardCharsets.UTF_8)
+            Murmur3_32Hash.MURMUR3_32.hashBytes(asBytes, 0, asBytes.size).toUInt().toString()
+        }
+    }"
+}
+private fun String.extractVersionComponents(): SemVerExtracted {
+    val (base, patch, suffix) = versionComponentExtractor.matchEntire(this)
+        ?.destructured
+        ?: error("Invalid version format: $this")
+    return SemVerExtracted(base, patch, suffix)
+}
+
 validFormats.forEach { packaging: ValidPackaging ->
     val baseVersion: Provider<String> = provider { rootProject.version.toString() }
     val packageSpecificVersion = baseVersion.map { version ->
         when (packaging.format) {
-            DMG, EXE, PKG -> version.substringBefore('-')
+            MSI -> version.substringBefore('-')
+            DMG, EXE, PKG -> version.extractVersionComponents().asMangledVersion()
             RPM -> version.replace('-', '.')
             else -> version
         }

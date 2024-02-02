@@ -160,7 +160,7 @@ validFormats.forEach { packaging: ValidPackaging ->
     val packageSpecificVersion = baseVersion.map { version ->
         when (packaging.format) {
             RPM -> version.replace('-', '.')
-            DMG -> version.substringBefore('-')
+            DMG, EXE -> version.substringBefore('-')
             else -> version
         }
     }

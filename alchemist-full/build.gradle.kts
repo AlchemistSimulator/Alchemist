@@ -157,10 +157,11 @@ disabledFormats.filterIsInstance<DisabledPackaging>().forEach { logger.warn(it.r
 
 validFormats.forEach { packaging: ValidPackaging ->
     val baseVersion: Provider<String> = provider { rootProject.version.toString() }
-    val packageSpecificVersion = baseVersion.map {
+    val packageSpecificVersion = baseVersion.map { version ->
         when (packaging.format) {
-            RPM -> it.replace('-', '.')
-            else -> it
+            RPM -> version.replace('-', '.')
+            DMG -> version.substringBefore('-')
+            else -> version
         }
     }
     val packagingTaskNameSuffix = "${packaging.name.capitalized()}${"PerUser".takeIf { packaging.perUser }.orEmpty()}"

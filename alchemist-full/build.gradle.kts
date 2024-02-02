@@ -148,7 +148,7 @@ disabledFormats.filterIsInstance<DisabledPackaging>().forEach { logger.warn(it.r
 
 val versionComponentExtractor = Regex("^(\\d+\\.\\d+\\.)(\\d+)(.*)$")
 private data class SemVerExtracted(val base: String, val patch: String, val suffix: String) {
-    fun asMangledVersion(): String = "$base$patch$0${patch}0${
+    fun asMangledVersion(): String = "${base}0${patch}0${
         if (suffix.isEmpty()) {
             ""
         } else {

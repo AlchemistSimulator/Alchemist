@@ -121,10 +121,10 @@ jobs:
               echo "Staging repository ID not found" &&
               exit 1
             )
-            ./gradlew \
-            ${{ needs.ci-preparation.outputs.force-version }}\
-            -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
-            uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel
+            ./gradlew\
+              ${{ needs.ci-preparation.outputs.force-version }}\
+              -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
+              uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel
             #
             # Drop the staging repository if the build is not a release
             #

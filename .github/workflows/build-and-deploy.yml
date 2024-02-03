@@ -172,6 +172,7 @@ jobs:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
         run: |
+          ls -ahl
           for installer in *.msi; do
             msiexec.exe -i "$installer" -quiet INSTALLDIR="$GITHUB_WORKSPACE/installed/$installer/"
           done

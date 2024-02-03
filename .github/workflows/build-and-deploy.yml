@@ -193,7 +193,29 @@ jobs:
         run: |
           ls -ahl
           for installer in *.deb; do
-              sudo apt install -y "$installer"
+              sudo dpkg -i "$installer"
+          done
+      - name: Test installation
+        run: alchemist --help
+
+  test-linux-rpm-installer:
+    needs:
+      - assemble-and-upload
+    runs-on: ubuntu-22.04
+    container:
+      image: fedora:40
+    concurrency:
+      group: test-linux-rpm-installer-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v4.1.1
+        with:
+          name: installer-package-${{ github.sha }}-${{ runner.os }}
+      - name: Install packages
+        run: |
+          for installer in *.rpm; do
+              sudo rpm -i "$installer"
           done
       - name: Test installation
         run: alchemist --help

@@ -114,7 +114,8 @@ jobs:
           pre-build-command: |
             ./gradlew kotlinUpgradeYarnLock --parallel
           build-command: |
-            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel --info
+            # In case of issues with JPackage, run with --info
+            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel
           check-command: true
           deploy-command: |
             [ -n "${{ needs.staging-repo.outputs.repo-id }}" ] || (

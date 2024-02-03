@@ -8,17 +8,14 @@
  */
 
 var publishCmd = `
-git tag -a -f \${nextRelease.version} \${nextRelease.version} -F CHANGELOG.md
-git push --force origin \${nextRelease.version} || exit 6
-./gradlew kotlinUpgradeYarnLock || exit 8
-./gradlew performWebsiteStringReplacements || exit 7
-git -C build/website/ add . || exit 1
-git -C build/website/ commit -m "chore: update website to version \${nextRelease.version}" || exit 2
-git -C build/website/ push || exit 3
-RELEASE_ON_CENTRAL="./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs release --parallel"
-eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || exit 5
-./gradlew generatePKGBUILD || exit 9
-./publishToAUR.sh build/pkgbuild/PKGBUILD "$CUSTOM_SECRET_0" "$CUSTOM_SECRET_1" "$CUSTOM_SECRET_2" || exit 10
+./gradlew kotlinUpgradeYarnLock || exit 2
+./gradlew performWebsiteStringReplacements || exit 3
+git -C build/website/ add . || exit 4
+git -C build/website/ commit -m "chore: update website to version \${nextRelease.version}" || exit 5
+git -C build/website/ push || exit 6
+RELEASE_ON_CENTRAL="./gradlew -PstagingRepositoryId=\${process.env.STAGING_REPO_ID} releaseStagingRepositoryOnMavenCentral"
+eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || exit 7
+./publishToAUR.sh pkgbuild/PKGBUILD "$CUSTOM_SECRET_0" "$CUSTOM_SECRET_1" "$CUSTOM_SECRET_2" || exit 8
 `
 var config = require('semantic-release-preconfigured-conventional-commits');
 config.plugins.push(

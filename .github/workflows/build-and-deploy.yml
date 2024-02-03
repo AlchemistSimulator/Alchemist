@@ -195,6 +195,8 @@ jobs:
           for installer in *.deb; do
               sudo apt install -y "$installer"
           done
+      - name: Test installation
+        run: alchemist --help
 
   # Testing and static analysis
   build:

@@ -171,8 +171,8 @@ jobs:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
         run: |
-          for installer in build/package/*.msi; do
-            msiexec.exe -i $installer -quiet INSTALLDIR="$GITHUB_WORKSPACE/installed/$installer/"
+          for installer in *.msi; do
+            msiexec.exe -i "$installer" -quiet INSTALLDIR="$GITHUB_WORKSPACE/installed/$installer/"
           done
 
   test-linux-deb-installer:
@@ -189,8 +189,9 @@ jobs:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
         run: |
-          for installer in build/package/*.deb; do
-              sudo apt install -y $installer
+          ls -ahl
+          for installer in *.deb; do
+              sudo apt install -y "$installer"
           done
 
   # Testing and static analysis

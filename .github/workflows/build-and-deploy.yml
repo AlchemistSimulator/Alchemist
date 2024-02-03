@@ -435,6 +435,8 @@ jobs:
         with:
           node-version: ${{ steps.node-version.outputs.version }}
       - uses: DanySK/build-check-deploy-gradle-action@2.2.20
+        env:
+          STAGING_REPO_ID: ${{ needs.staging-repo.outputs.maven-central-repo-id }}
         with:
           java-version: ${{ needs.ci-preparation.outputs.java-version }}
           build-command: |

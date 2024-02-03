@@ -426,6 +426,12 @@ jobs:
           name: fat-jars-${{ github.sha }}
           path: build/shadow/
           merge-multiple: true
+      - name: Download the PKGBUILD
+        uses: actions/download-artifact@v4.1.1
+        with:
+          pattern: pkgbuild-${{ github.sha }}
+          path: pkgbuild/
+          merge-multiple: true
       - name: Find the version of Node from package.json
         id: node-version
         run: echo "version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT

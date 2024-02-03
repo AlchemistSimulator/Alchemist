@@ -23,3 +23,6 @@ reference/kdoc/alchemist-cognitive-agents/it.unibo.alchemist.model/-node/index.h
 
 # Exclude archive.is links going in timeout for unknown reasons
 ^https?://archive\.(is|ph)/(fkUpJ|oLSpq|PGdk8|PwYQz|umlcC|YR1v9)$
+
+# Exclude the scafi documentation on surge.sh going timeout
+^http://scafi-docs.surge.sh/.*

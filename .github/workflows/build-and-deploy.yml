@@ -381,6 +381,7 @@ jobs:
       - build-website
       - test-aur-package
       - test-linux-deb-installer
+      - test-linux-rpm-installer
       - test-windows-msi-installer
     concurrency:
       # Only one release job at a time per branch, as only master releases.
@@ -472,6 +473,7 @@ jobs:
       - release
       - test-aur-package
       - test-linux-deb-installer
+      - test-linux-rpm-installer
       - test-windows-msi-installer
     if: >-
       always() && (

@@ -163,7 +163,7 @@ jobs:
       - assemble-and-upload
     runs-on: windows-2022
     concurrency:
-      group: test-windows-msi-installers-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      group: test-windows-msi-installer-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Download packages
@@ -181,7 +181,7 @@ jobs:
       - assemble-and-upload
     runs-on: ubuntu-22.04
     concurrency:
-      group: test-linux-deb-installers-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      group: test-linux-deb-installer-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Download packages

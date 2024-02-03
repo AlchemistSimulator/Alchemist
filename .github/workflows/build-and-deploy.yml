@@ -319,8 +319,6 @@ jobs:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
       - uses: DanySK/build-check-deploy-gradle-action@2.2.20
-        env:
-          STAGING_REPO_ID: ${{ needs.staging-repo.outputs.maven-central-repo-id }}
         with:
           build-command: |
             for i in 1 2 3 4 5; do

@@ -6,8 +6,25 @@ pkgrel=1
 pkgdesc="An extensible simulator for pervasive computing"
 arch=('x86_64')
 url="https://alchemistsimulator.github.io"
-license=('GPL with linking exception')
-depends=('glibc' 'libxrender' 'libxtst' 'libxi' 'libx11' 'freetype2' 'alsa-lib' 'libxext')
+license=('GPL3')
+depends=(
+    'alsa-lib'
+    'freetype2'
+    'gcc-libs'
+    'glibc'
+    'giflib'
+    'harfbuzz'
+    'java-runtime'
+    'lcms2'
+    'libpng'
+    'libjpeg-turbo'
+    'libx11'
+    'libxext'
+    'libxi'
+    'libxrender'
+    'libxtst'
+    'zlib'
+)
 makedepends=()
 source=("%ALCHEMIST_RPM_URL%")
 md5sums=('%ALCHEMIST_RPM_MD5%')

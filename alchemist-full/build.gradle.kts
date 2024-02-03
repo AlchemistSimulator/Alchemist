@@ -168,8 +168,8 @@ validFormats.forEach { packaging: ValidPackaging ->
     val baseVersion: Provider<String> = provider { rootProject.version.toString() }
     val packageSpecificVersion = baseVersion.map { version ->
         when (packaging.format) {
-            MSI -> version.substringBefore('-')
-            DMG, EXE, PKG -> version.extractVersionComponents().asMangledVersion()
+            MSI, EXE -> version.substringBefore('-')
+            DMG, PKG -> version.extractVersionComponents().asMangledVersion()
             RPM -> version.replace('-', '.')
             else -> version
         }

@@ -243,10 +243,12 @@ validFormats.forEach { packaging: ValidPackaging ->
                 }
                 val replacements = templateStrings.associateWith { key ->
                     when {
-                        "VERSION" in key -> baseVersion.get()
+                        "VERSION" in key -> baseVersion.get().replace('-', '.')
                         "RPM_URL" in key ->
                             "https://github.com/AlchemistSimulator/Alchemist/releases/download/" +
-                                "${baseVersion.get()}/$rpmFileName"
+                                "${baseVersion.get()}/" +
+                                // Replace x86_64 with $CARCH to avoid namcap warnings
+                                rpmFileName.replace("x86_64", "\$CARCH")
                         "RPM_MD5" in key -> md5.digest().toHexString()
                         else -> error("Unknown PKGBUILD replacement key $key")
                     }

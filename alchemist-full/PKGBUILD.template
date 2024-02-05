@@ -10,20 +10,20 @@ license=('GPL-3.0-or-later')
 depends=(
     'alsa-lib'
     'freetype2'
-    'gcc-libs'
+#    'gcc-libs'
     'glibc'
-    'giflib'
-    'harfbuzz'
+#    'giflib'
+#    'harfbuzz'
     'java-runtime'
-    'lcms2'
-    'libpng'
-    'libjpeg-turbo'
+#    'lcms2'
+#    'libpng'
+#    'libjpeg-turbo'
     'libx11'
     'libxext'
     'libxi'
     'libxrender'
     'libxtst'
-    'zlib'
+#    'zlib'
 )
 makedepends=()
 source=("%ALCHEMIST_RPM_URL%")

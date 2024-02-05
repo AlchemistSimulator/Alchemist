@@ -459,7 +459,7 @@ jobs:
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
-          path: website-${{ needs.ci-preparation.outputs.build-ref }}
+          path: website
           fetch-depth: 0
           persist-credentials: true
           repository: AlchemistSimulator/alchemistsimulator.github.io

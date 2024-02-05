@@ -336,7 +336,7 @@ jobs:
               yum -y localinstall "$installer"
           done
       - name: Test installation
-        run: alchemist --help
+        run: /opt/alchemist/bin/alchemist --help
 
         # Test PKGBUILD for AUR release
   test-aur-package:

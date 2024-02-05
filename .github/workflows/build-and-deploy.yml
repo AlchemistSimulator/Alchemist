@@ -85,40 +85,6 @@ jobs:
           should-deploy: false
           should-validate-wrapper: false
 
-  # Create a staging repository on Central
-  staging-repo:
-    runs-on: ubuntu-22.04
-    needs:
-      - ci-preparation
-    concurrency:
-      group: staging-repo-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
-    if: needs.ci-preparation.outputs.may-deploy
-    outputs:
-      repo-id: ${{ steps.staging-repo.outputs.MavenCentral }}
-    steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v4.1.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.17
-        with:
-          maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          should-run-codecov: false
-          should-deploy: true
-          build-command: true
-          check-command: true
-          deploy-command: |
-            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} createStagingRepositoryOnMavenCentral --parallel
-      - name: Save the staging repository ID
-        id: staging-repo
-        run: |
-          [[ -f build/staging-repo-ids.properties ]] || (
-            echo "Staging repositories ID file not found" &&
-            exit 1
-          )
-          REPO_IDS=$(cat build/staging-repo-ids.properties)
-          echo "Staging repositories IDs:\n$REPO_IDS"
-          echo $REPO_IDS >> $GITHUB_OUTPUT
-
   # Builds the website and verifies link sanity
   build-website:
     needs:
@@ -185,6 +151,41 @@ jobs:
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
+
+  # Create a staging repository on Central
+  staging-repo:
+    runs-on: ubuntu-22.04
+    needs:
+      - ci-preparation
+    concurrency:
+      group: staging-repo-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: true
+    if: needs.ci-preparation.outputs.may-deploy
+    outputs:
+      repo-id: ${{ steps.staging-repo.outputs.MavenCentral }}
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4.1.1
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.17
+        with:
+          maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          should-run-codecov: false
+          should-deploy: true
+          build-command: true
+          check-command: true
+          deploy-command: |
+            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} createStagingRepositoryOnMavenCentral --parallel
+      - name: Save the staging repository ID
+        id: staging-repo
+        run: |
+          [[ -f build/staging-repo-ids.properties ]] || (
+            echo "Staging repositories ID file not found" &&
+            exit 1
+          )
+          REPO_IDS=$(cat build/staging-repo-ids.properties)
+          echo "Staging repositories IDs:\n$REPO_IDS"
+          echo $REPO_IDS >> $GITHUB_OUTPUT
+
 
   # Assemble all artifacts and upload them
   assemble-and-upload:

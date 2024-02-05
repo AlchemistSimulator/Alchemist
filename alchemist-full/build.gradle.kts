@@ -196,8 +196,12 @@ validFormats.forEach { packaging: ValidPackaging ->
         mainJar = tasks.shadowJar.get().archiveFileName.get()
         mainClass = application.mainClass.get()
 
+        verbose = true
+
         linux {
             icon = "${project.projectDir}/package-settings/logo.png"
+            linuxShortcut = true
+            linuxDebMaintainer = "Danilo Pianini"
         }
         windows {
             icon = "${project.projectDir}/package-settings/logo.ico"

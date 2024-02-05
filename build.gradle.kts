@@ -23,6 +23,7 @@ import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.AbstractDokkaParentTask
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.time.Duration
 
 plugins {
     distribution
@@ -105,6 +106,7 @@ allprojects {
         }
 
         tasks.withType<AbstractDokkaLeafTask>().configureEach {
+            timeout.set(Duration.ofMinutes(5))
             dokkaSourceSets.configureEach {
                 jdkVersion.set(multiJvm.jvmVersionForCompilation)
                 listOf("kotlin", "java")

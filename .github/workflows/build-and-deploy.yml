@@ -525,10 +525,12 @@ jobs:
   success:
     runs-on: ubuntu-22.04
     needs:
-      - ci-preparation
+      - assemble-and-upload
       - build
       - build-website
+      - ci-preparation
       - release
+      - staging-repo
       - test-aur-package
       - test-linux-deb-installer
       - test-linux-rpm-installer

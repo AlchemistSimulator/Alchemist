@@ -325,7 +325,7 @@ jobs:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
         run: |
-          yum check-update
+          yum check-update || [ $? -eq 100 ]
           for installer in *.rpm; do
               yum localinstall "$installer"
           done

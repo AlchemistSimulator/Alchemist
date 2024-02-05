@@ -216,6 +216,8 @@ jobs:
             ./gradlew kotlinUpgradeYarnLock --parallel
           build-command: |
             # In case of issues with JPackage, run with --info
+            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel || \
+            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel || \
             ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel
           check-command: true
           deploy-command: |
@@ -338,7 +340,7 @@ jobs:
       - ci-preparation
       - assemble-and-upload
     runs-on:  ubuntu-22.04
-    container: 
+    container:
       image: archlinux:base-devel-20240101.0.204074
     concurrency:
       group: test-aur-release-${{ needs.ci-preparation.outputs.build-ref }}

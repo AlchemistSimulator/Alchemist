@@ -55,6 +55,36 @@ jobs:
               echo 'version=-PforceVersion="${{ steps.compute-next-version.outputs.next-version }}"' >> $GITHUB_OUTPUT
           fi
 
+  # Testing and static analysis
+  build:
+    needs:
+      - ci-preparation
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-2022, macos-12, ubuntu-22.04 ]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 180
+    concurrency:
+      group: build-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: danysk/action-checkout@0.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
+        with:
+          pre-build-command: true
+          build-command: |
+            ./gradlew kotlinUpgradeYarnLock --parallel
+          check-command: |
+            ./gradlew check --parallel || ./gradlew check --parallel
+          clean-command: |
+            ./gradlew clean --parallel || ./gradlew clean --parallel || true
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
+          should-run-codecov: ${{ contains('Linux', runner.os) }}
+          should-deploy: false
+          should-validate-wrapper: false
+
   # Create a staging repository on Central
   staging-repo:
     runs-on: ubuntu-22.04
@@ -88,6 +118,73 @@ jobs:
           REPO_IDS=$(cat build/staging-repo-ids.properties)
           echo "Staging repositories IDs:\n$REPO_IDS"
           echo $REPO_IDS >> $GITHUB_OUTPUT
+
+  # Builds the website and verifies link sanity
+  build-website:
+    needs:
+      - ci-preparation
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    concurrency:
+      group: build-website-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: danysk/action-checkout@0.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
+        with:
+          build-command: |
+            for i in 1 2 3 4 5; do
+              ./gradlew ${{ needs.ci-preparation.outputs.force-version }} hugoBuild performWebsiteStringReplacements --parallel && break || sleep 120
+              if [ "$i" = 5 ]; then
+                false
+              fi
+            done
+          check-command: true
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
+          should-run-codecov: false
+          should-deploy: false
+          should-validate-wrapper: false
+      - name: Tar files
+        run: tar -cvf website.tar build/website
+      - name: Upload website
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: website-${{ github.sha }}
+          path: website.tar
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
+        with:
+          build-command: ""
+          check-command: |
+            # Temporarily disable checks on kdoc/javadoc: too many bugs in Dokka.
+            # See:
+            # https://github.com/Kotlin/dokka/issues/2320
+            # https://github.com/Kotlin/dokka/issues/2321
+            # https://github.com/Kotlin/dokka/issues/2322
+            # https://github.com/Kotlin/dokka/issues/2323
+            # Once everything gets fixed, lychee could simply run on '/website/**/*.html'
+            FILES="$(
+              find build/website/ -name '*.html' |
+              grep -v /kdoc/ |
+              grep -v /javadoc/ |
+              grep -v /tags/ |
+              sed -e 's#^build##'
+            )"
+            for file in $FILES; do
+              # Ignore all meta tags containing absolute links
+              perl -i -pe 's/<meta.*\"http.*\".*>//g' "build/$file"
+            done
+            CHECK_LINKS="docker run --rm -v ""$(pwd)/build/website:/website"" -e GITHUB_TOKEN lycheeverse/lychee:0.10.3 $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 403,429,500,502,503"
+            for i in 1 2 3 4 5; do
+              $(echo $CHECK_LINKS) && break || sleep 30
+              if [ "$i" = 5 ]; then
+                false
+              fi
+            done
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
+          should-run-codecov: false
+          should-deploy: false
+          should-validate-wrapper: false
 
   # Assemble all artifacts and upload them
   assemble-and-upload:
@@ -235,37 +332,7 @@ jobs:
       - name: Test installation
         run: alchemist --help
 
-  # Testing and static analysis
-  build:
-    needs:
-      - ci-preparation
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ windows-2022, macos-12, ubuntu-22.04 ]
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 180
-    concurrency:
-      group: build-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
-    steps:
-      - name: Checkout
-        uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
-        with:
-          pre-build-command: true
-          build-command: |
-            ./gradlew kotlinUpgradeYarnLock --parallel
-          check-command: |
-            ./gradlew check --parallel || ./gradlew check --parallel
-          clean-command: |
-            ./gradlew clean --parallel || ./gradlew clean --parallel || true
-          java-version: ${{ needs.ci-preparation.outputs.java-version }}
-          should-run-codecov: ${{ contains('Linux', runner.os) }}
-          should-deploy: false
-          should-validate-wrapper: false
-
-  # Test PKGBUILD for AUR release
+        # Test PKGBUILD for AUR release
   test-aur-package:
     needs:
       - ci-preparation
@@ -321,73 +388,6 @@ jobs:
         run: |
           sudo pacman -U --noconfirm *alchemist-*.pkg.tar*
           alchemist --help
-
-  # Builds the website and verifies link sanity
-  build-website:
-    needs:
-      - ci-preparation
-    runs-on: ubuntu-22.04
-    timeout-minutes: 30
-    concurrency:
-      group: build-website-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
-    steps:
-      - name: Checkout
-        uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
-        with:
-          build-command: |
-            for i in 1 2 3 4 5; do
-              ./gradlew ${{ needs.ci-preparation.outputs.force-version }} hugoBuild performWebsiteStringReplacements --parallel && break || sleep 120
-              if [ "$i" = 5 ]; then
-                false
-              fi
-            done
-          check-command: true
-          java-version: ${{ needs.ci-preparation.outputs.java-version }}
-          should-run-codecov: false
-          should-deploy: false
-          should-validate-wrapper: false
-      - name: Tar files
-        run: tar -cvf website.tar build/website
-      - name: Upload website
-        uses: actions/upload-artifact@v4.3.0
-        with:
-          name: website-${{ github.sha }}
-          path: website.tar
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
-        with:
-          build-command: ""
-          check-command: |
-            # Temporarily disable checks on kdoc/javadoc: too many bugs in Dokka.
-            # See:
-            # https://github.com/Kotlin/dokka/issues/2320
-            # https://github.com/Kotlin/dokka/issues/2321
-            # https://github.com/Kotlin/dokka/issues/2322
-            # https://github.com/Kotlin/dokka/issues/2323
-            # Once everything gets fixed, lychee could simply run on '/website/**/*.html'
-            FILES="$(
-              find build/website/ -name '*.html' |
-              grep -v /kdoc/ |
-              grep -v /javadoc/ |
-              grep -v /tags/ |
-              sed -e 's#^build##'
-            )"
-            for file in $FILES; do
-              # Ignore all meta tags containing absolute links
-              perl -i -pe 's/<meta.*\"http.*\".*>//g' "build/$file"
-            done
-            CHECK_LINKS="docker run --rm -v ""$(pwd)/build/website:/website"" -e GITHUB_TOKEN lycheeverse/lychee:0.10.3 $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 403,429,500,502,503"
-            for i in 1 2 3 4 5; do
-              $(echo $CHECK_LINKS) && break || sleep 30
-              if [ "$i" = 5 ]; then
-                false
-              fi
-            done
-          java-version: ${{ needs.ci-preparation.outputs.java-version }}
-          should-run-codecov: false
-          should-deploy: false
-          should-validate-wrapper: false
 
   # Performs a release if needed
   release:

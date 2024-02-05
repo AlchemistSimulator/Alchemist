@@ -205,8 +205,9 @@ jobs:
         run: |
           ls -ahl
           sudo apt update -y
+          sudo apt install gdebi-core
           for installer in *.deb; do
-            sudo apt install "$installer" -y
+            sudo gdebi "$installer"
           done
       - name: Test installation
         run: alchemist --help

@@ -307,7 +307,7 @@ jobs:
           sudo apt update -y
           sudo apt install gdebi-core
           for installer in *.deb; do
-            sudo gdebi "$installer"
+            sudo gdebi -n "$installer"
           done
       - name: Test installation
         run: alchemist --help

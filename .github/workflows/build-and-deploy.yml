@@ -216,9 +216,13 @@ jobs:
             ./gradlew kotlinUpgradeYarnLock --parallel
           build-command: |
             # In case of issues with JPackage, run with --info
-            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel || \
-            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel || \
-            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel
+            COMMAND='./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel'
+            for i in 1 2 3 4 5; do
+              $(echo $COMMAND) && break || sleep 5
+              if [ "$i" = 5 ]; then
+                false
+              fi
+            done
           check-command: true
           deploy-command: |
             [ -n "${{ needs.staging-repo.outputs.repo-id }}" ] || (
@@ -228,7 +232,15 @@ jobs:
             ./gradlew\
               ${{ needs.ci-preparation.outputs.force-version }}\
               -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
-              uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel
+              uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
+            ./gradlew\
+              ${{ needs.ci-preparation.outputs.force-version }}\
+              -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
+              uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
+            ./gradlew\
+              ${{ needs.ci-preparation.outputs.force-version }}\
+              -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
+              uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
             #
             # Drop the staging repository if the build is not a release
             #
@@ -393,6 +405,7 @@ jobs:
            | grep -v "W: Referenced library 'libjvm.so' is an uninstalled dependency"\
            | grep -v "W: Unused shared library '/usr/lib/libnet.so'"\
            | grep -v "W: Unused shared library '/usr/lib/libm.so.6'"\
+           | grep -v "lacks GNU_PROPERTY_X86_FEATURE_1_SHSTK"\
            | awk 'END { exit (NR > 0 ? NR : 0) }'
       - name: Test installation
         run: |

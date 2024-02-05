@@ -52,21 +52,3 @@ publishing.publications {
         }
     }
 }
-
-tasks.register<Exec>("testIncarnationProtelisShadowJarExecution") {
-    dependsOn(tasks.shadowJar)
-    val javaExecutable = org.gradle.internal.jvm.Jvm.current().javaExecutable.absolutePath
-    doFirst {
-        commandLine(
-            javaExecutable,
-            "-jar",
-            tasks.shadowJar.get().archiveFile.get().asFile.absolutePath,
-            "-y",
-            "$projectDir/src/test/resources/testbase.yml",
-            "-t",
-            "2",
-            "--batch",
-        )
-    }
-    tasks.shadowJar.get().finalizedBy(this)
-}

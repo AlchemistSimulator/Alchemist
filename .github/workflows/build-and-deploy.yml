@@ -52,7 +52,7 @@ jobs:
         id: force-version
         run: |
           if [[ "${{ steps.compute-next-version.outputs.will-release }}" == "true" ]]; then
-              echo 'version=-PforceVersion="${{ steps.compute-next-version.outputs.next-version }}"' >> $GITHUB_OUTPUT
+              echo 'version=-PforceVersion=${{ steps.compute-next-version.outputs.next-version }}' >> $GITHUB_OUTPUT
           fi
 
   # Testing and static analysis

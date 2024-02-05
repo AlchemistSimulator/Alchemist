@@ -204,8 +204,9 @@ jobs:
       - name: Install packages
         run: |
           ls -ahl
+          sudo apt update -y
           for installer in *.deb; do
-              sudo dpkg -i "$installer"
+            sudo apt install "$installer" -y
           done
       - name: Test installation
         run: alchemist --help

@@ -388,7 +388,7 @@ jobs:
           sudo -u builduser bash -c 'makepkg -sf --noconfirm'
       - name: Check the package sanity
         run: |
-          namcap *.pkg.tar* 2>&1
+          namcap *.pkg.tar*
           namcap *.pkg.tar* 2>&1 \
            | grep -v "W: Referenced library 'libjvm.so' is an uninstalled dependency"\
            | grep -v "W: Unused shared library '/usr/lib/libnet.so'"\

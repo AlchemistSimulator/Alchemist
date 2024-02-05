@@ -175,11 +175,19 @@ jobs:
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
+        shell: powershell
         run: |
-          ls -ahl
-          for installer in *.msi; do
-            msiexec.exe -i "$installer" -quiet INSTALLDIR="$GITHUB_WORKSPACE/installed/$installer/"
-          done
+          Get-ChildItem -Force | Format-Table -AutoSize
+          foreach ($file in Get-ChildItem -Filter *.msi) {
+            $log = "install.log"
+            $procMain = Start-Process "msiexec" "/i `"$file`" /qn /l*! `"$log`"" -NoNewWindow -PassThru
+            $procLog = Start-Process "powershell" "Get-Content -Path `"$log`" -Wait" -NoNewWindow -PassThru 
+            $procMain.WaitForExit() 
+            $procLog.Kill()
+          }
+      - name: Print the logs
+        if: always()
+        run: cat install.log
 
   test-linux-deb-installer:
     needs:

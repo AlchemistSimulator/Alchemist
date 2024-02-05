@@ -317,7 +317,6 @@ jobs:
            | grep -v "W: Unused shared library '/usr/lib/libm.so.6'"\
            | awk 'END { exit (NR > 0 ? NR : 0) }'
       - name: Test installation
-        working-directory: build/package
         run: |
           sudo pacman -U --noconfirm *alchemist-*.pkg.tar*
           alchemist --help

@@ -206,8 +206,8 @@ validFormats.forEach { packaging: ValidPackaging ->
         windows {
             icon = "${project.projectDir}/package-settings/logo.ico"
             winDirChooser = true
-            winShortcutPrompt = true
             winPerUserInstall = packaging.perUser
+            winShortcutPrompt = true
         }
         mac {
             icon = "${project.projectDir}/package-settings/logo.png"

@@ -301,6 +301,9 @@ jobs:
         uses: actions/download-artifact@v4.1.1
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
+      - name: Work around xdg bug https://bugs.archlinux.org/task/33316
+        run: |
+          sudo mkdir /usr/share/desktop-directories/
       - name: Install packages
         run: |
           ls -ahl

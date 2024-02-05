@@ -400,16 +400,28 @@ jobs:
           sudo -u builduser bash -c 'makepkg -sf --noconfirm'
       - name: Check the package sanity
         run: |
-          namcap *.pkg.tar*
-          namcap *.pkg.tar* 2>&1 \
-           | grep -v "W: Referenced library 'libjvm.so' is an uninstalled dependency"\
-           | grep -v "W: Unused shared library '/usr/lib/libdl.so.2'"\
-           | grep -v "W: Unused shared library '/usr/lib/libm.so.6'"\
-           | grep -v "W: Unused shared library '/usr/lib/libnet.so'"\
-           | grep -v "W: Unused shared library '/usr/lib/librt.so.1'"\
-           | grep -v "W: Unused shared library '/usr/lib/libpthread.so.0'"\
-           | grep -v "lacks GNU_PROPERTY_X86_FEATURE_1_SHSTK"\
-           | awk 'END { exit (NR > 0 ? NR : 0) }'
+          namcap *.pkg.tar* 2>&1 > namcap.log
+          cat namcap.log
+          ignored=(
+            "W: Referenced library 'libjvm.so' is an uninstalled dependency"
+            "W: Unused shared library '/usr/lib/libdl.so.2'"
+            "W: Unused shared library '/usr/lib/libm.so.6'"
+            "W: Unused shared library '/usr/lib/libnet.so'"
+            "W: Unused shared library '/usr/lib/libpthread.so.0'"
+            "W: Unused shared library '/usr/lib/librt.so.1'"
+            "lacks GNU_PROPERTY_X86_FEATURE_1_SHSTK"
+          )
+          for i in $ignored; do
+              echo "$i" >> ignored
+          done
+          ruby -e '
+            ignored = File.read("ignored").lines.map(&:chomp)
+            warnings = File.read("namcap.log").lines.reject { |line|
+              ignored.any? { |i| line.include?(i) }
+            }
+            puts warnings.join("\n")
+            exit warnings.size
+          '
       - name: Test installation
         run: |
           sudo pacman -U --noconfirm *alchemist-*.pkg.tar*

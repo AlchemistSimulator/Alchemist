@@ -352,7 +352,11 @@ jobs:
     steps:
       - name: Setup arch
         run: |
-          sudo pacman --noconfirm -Sy git namcap ruby
+          sudo pacman --noconfirm -Sy git namcap ruby sudo
+          useradd builduser -m
+          passwd -d builduser
+          echo "builduser ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
+          chmod 777 .
       - run: git config --system --add safe.directory /__w/Alchemist/Alchemist # https://github.com/actions/checkout/issues/1169
       - name: Download the PKGBUILD
         uses: actions/download-artifact@v4.1.1
@@ -381,7 +385,7 @@ jobs:
           '
       - name: Makepkg
         run: |
-          makepkg -f --noconfirm
+          sudo -u builduser bash -c 'makepkg -sf --noconfirm'
       - name: Check the package sanity
         run: |
           namcap *.pkg.tar* 2>&1

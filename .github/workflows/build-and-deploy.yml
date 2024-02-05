@@ -189,16 +189,24 @@ jobs:
 
   # Assemble all artifacts and upload them
   assemble-and-upload:
+    needs:
+      - ci-preparation
+      - staging-repo
     strategy:
       fail-fast: false
       matrix:
         os: [ windows-2022, macos-12, ubuntu-22.04 ]
     runs-on: ${{ matrix.os }}
-    if: always() && !contains(needs.*.result, 'failure')
+    # Run if:
+    # - The staging repository is ready
+    # - The staging repository cannot be created as there is no access to secrets
+    if: >-
+      always() && (
+        contains(needs.staging-repo.result, 'success') || (
+          contains(needs.*.result, 'skipped') && !needs.ci-preparation.outputs.may-deploy
+        )
+      )
     timeout-minutes: 120
-    needs:
-      - ci-preparation
-      - staging-repo
     concurrency:
       group: assemble-and-upload-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true

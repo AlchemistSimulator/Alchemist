@@ -227,8 +227,9 @@ jobs:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
         run: |
+          yum check-update
           for installer in *.rpm; do
-              sudo rpm -i "$installer"
+              yum localinstall "$installer"
           done
       - name: Test installation
         run: alchemist --help

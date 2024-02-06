@@ -1,3 +1,10 @@
+## [30.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.2...30.1.3) (2024-02-06)
+
+
+### Bug Fixes
+
+* **aur:** create the `~/.ssh` folder before trying to populate `known_hosts` ([2020b12](https://github.com/AlchemistSimulator/Alchemist/commit/2020b12f42aef496551ed3c7593dac1f017f5e27))
+
 ## [30.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.1...30.1.2) (2024-02-06)
 
 

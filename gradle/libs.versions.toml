@@ -6,15 +6,15 @@ graphhopper = "9.0-pre1"
 graphql = "7.0.2"
 graphstream = "2.0"
 ignite = "2.16.0"
-junit = "5.10.1"
+junit = "5.10.2"
 konf = "1.1.2"
 kotest = "5.8.0"
 ktor = "2.3.8"
 dokka = "1.9.10"
 kotlin = "1.9.22"
 mockito = "5.10.0"
-protelis = "17.3.11"
-react = "18.2.0-pre.693"
+protelis = "17.3.12"
+react = "18.2.0-pre.694"
 scafi = "1.2.0"
 scala = "2.13.12"
 scalacache = "0.28.0"
@@ -115,7 +115,7 @@ scalacache-guava = { module = "com.github.cb372:scalacache-guava_2.13", version.
 scalatest = "org.scalatest:scalatest_2.13:3.3.0-SNAP4"
 scalatest-plusjunit = "org.scalatestplus:scalatestplus-junit_2.13:1.0.0-SNAP9"
 simplelatlng = "com.javadocmd:simplelatlng:1.4.0"
-slf4j = "org.slf4j:slf4j-api:2.0.11"
+slf4j = "org.slf4j:slf4j-api:2.0.12"
 snakeyaml = "org.yaml:snakeyaml:2.2"
 spotbugs-annotations = "com.github.spotbugs:spotbugs-annotations:4.8.3"
 redux-kotlin-threadsafe = "org.reduxkotlin:redux-kotlin-threadsafe:0.6.1"
@@ -154,7 +154,7 @@ testing-runtimeOnly = [ "junit-engine" ]
 
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:3.1.0"
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:3.1.1"
 graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
 hugo = "io.github.fstaudt.hugo:0.7.0"
@@ -163,9 +163,9 @@ kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" 
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.59.0"
+kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.59.1"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.5.5"
-publishOnCentral = "org.danilopianini.publish-on-central:5.0.22"
+publishOnCentral = "org.danilopianini.publish-on-central:5.0.23"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"
 scalatest = "com.github.maiflai.scalatest:0.32"
 shadowJar = "com.github.johnrengelman.shadow:8.1.1"

@@ -17,7 +17,7 @@ jobs:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - uses: DanySK/build-check-deploy-gradle-action@2.2.20
         with:
-          build-command: ./gradlew kotlinUpgradeYarnLock --parallel
+          build-command: ./gradlew kotlinUpgradeYarnLock dokkaHtmlCollector --parallel
           check-command: |
             git config user.name 'Danilo Pianini [bot]'
             git config user.email 'danilo.pianini@gmail.com'

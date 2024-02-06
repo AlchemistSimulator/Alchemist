@@ -254,7 +254,7 @@ jobs:
             # Drop the staging repository if the build is not a release
             #
             if [[ "${{ needs.ci-preparation.outputs.will-release }}" != "true" ]]; then
-              ./gradlew -PstagingRepositoryId=${{ needs.staging-repo.outputs.maven-central-repo-id }} drop --parallel
+              ./gradlew -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }} drop --parallel
             fi
           clean-command: |
             # Clean the build directory on Win and Mac
@@ -285,9 +285,10 @@ jobs:
   test-windows-msi-installer:
     needs:
       - assemble-and-upload
+      - ci-preparation
     runs-on: windows-2022
     concurrency:
-      group: test-windows-msi-installer-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      group: test-windows-msi-installer-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Download packages
@@ -313,9 +314,10 @@ jobs:
   test-linux-deb-installer:
     needs:
       - assemble-and-upload
+      - ci-preparation
     runs-on: ubuntu-22.04
     concurrency:
-      group: test-linux-deb-installer-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      group: test-linux-deb-installer-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Download packages
@@ -339,11 +341,12 @@ jobs:
   test-linux-rpm-installer:
     needs:
       - assemble-and-upload
+      - ci-preparation
     runs-on: ubuntu-22.04
     container:
       image: fedora:40
     concurrency:
-      group: test-linux-rpm-installer-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      group: test-linux-rpm-installer-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Download packages
@@ -502,7 +505,7 @@ jobs:
           node-version-file: package.json
       - uses: DanySK/build-check-deploy-gradle-action@2.2.20
         env:
-          STAGING_REPO_ID: ${{ needs.staging-repo.outputs.maven-central-repo-id }}
+          STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
         with:
           java-version: ${{ needs.ci-preparation.outputs.java-version }}
           build-command: |

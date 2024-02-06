@@ -30,6 +30,8 @@ email="$3"
 ssh_key="$4"
 
 echo "-- Setting up ssh configuration"
+mkdir -p ~/.ssh
+touch ~/.ssh/known_hosts
 ssh-keyscan -v -t "rsa" aur.archlinux.org >> ~/.ssh/known_hosts
 echo "$ssh_key" > ~/.ssh/aur
 chmod -vR 600 ~/.ssh/aur*

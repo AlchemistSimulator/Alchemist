@@ -291,7 +291,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Download packages
-        uses: actions/download-artifact@v4.1.1
+        uses: actions/download-artifact@v4.1.2
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
@@ -319,7 +319,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Download packages
-        uses: actions/download-artifact@v4.1.1
+        uses: actions/download-artifact@v4.1.2
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Work around xdg bug https://bugs.archlinux.org/task/33316
@@ -347,7 +347,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Download packages
-        uses: actions/download-artifact@v4.1.1
+        uses: actions/download-artifact@v4.1.2
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
@@ -380,7 +380,7 @@ jobs:
           chmod 777 .
       - run: git config --system --add safe.directory /__w/Alchemist/Alchemist # https://github.com/actions/checkout/issues/1169
       - name: Download the PKGBUILD
-        uses: actions/download-artifact@v4.1.1
+        uses: actions/download-artifact@v4.1.2
         with:
           pattern: pkgbuild-${{ github.sha }}
           merge-multiple: true
@@ -389,7 +389,7 @@ jobs:
           namcap PKGBUILD 2>&1
           namcap PKGBUILD 2>&1 | awk 'END { exit (NR > 0 ? NR : 0) }'
       - name: Download the RPM
-        uses: actions/download-artifact@v4.1.1
+        uses: actions/download-artifact@v4.1.2
         with:
           pattern: installer-package-${{ github.sha }}-${{ runner.os }}
           merge-multiple: true
@@ -474,23 +474,23 @@ jobs:
           repository: AlchemistSimulator/alchemistsimulator.github.io
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Download website artifact
-        uses: actions/download-artifact@v4.1.1
+        uses: actions/download-artifact@v4.1.2
         with:
           name: website-${{ github.sha }}
       - name: Download packages
-        uses: actions/download-artifact@v4.1.1
+        uses: actions/download-artifact@v4.1.2
         with:
           pattern: installer-package-${{ github.sha }}*
           path: build/package/
           merge-multiple: true
       - name: Download fatJars
-        uses: actions/download-artifact@v4.1.1
+        uses: actions/download-artifact@v4.1.2
         with:
           name: fat-jars-${{ github.sha }}
           path: build/shadow/
           merge-multiple: true
       - name: Download the PKGBUILD
-        uses: actions/download-artifact@v4.1.1
+        uses: actions/download-artifact@v4.1.2
         with:
           pattern: pkgbuild-${{ github.sha }}
           path: pkgbuild/

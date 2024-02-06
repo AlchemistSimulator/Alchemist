@@ -1,3 +1,10 @@
+## [30.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.1...30.1.2) (2024-02-06)
+
+
+### Bug Fixes
+
+* **release:** fix multiple broken accesses and missing dependencies to variables in CI ([674712c](https://github.com/AlchemistSimulator/Alchemist/commit/674712ce228b35a21cf9ed81c69d86923296d175))
+
 ## [30.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.0...30.1.1) (2024-02-06)
 
 

@@ -1,3 +1,27 @@
+## [30.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.0...30.1.1) (2024-02-06)
+
+
+### Dependency updates
+
+* **deps:** update dependency org.slf4j:slf4j-api to v2.0.12 ([37337aa](https://github.com/AlchemistSimulator/Alchemist/commit/37337aaaaf3cc959d7cf95c2bdb07a888d7ad9ac))
+
+
+### Bug Fixes
+
+* **release:** releasing requires a staging repo to be existing ([539072f](https://github.com/AlchemistSimulator/Alchemist/commit/539072ff7308a8a1d68aa1d39d4984f164d5a8b3))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/download-artifact action to v4.1.2 ([dea9ded](https://github.com/AlchemistSimulator/Alchemist/commit/dea9ded8d5999fab3b1d9fbe10fe4c90ff4abccb))
+* **deps:** update actions/upload-artifact action to v4.3.1 ([fd8197e](https://github.com/AlchemistSimulator/Alchemist/commit/fd8197e912cdb10ff9a1ac2ece65c46ea4f81959))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.20 ([244d32d](https://github.com/AlchemistSimulator/Alchemist/commit/244d32dda8a72fe968835a3a67dac15d4b38efe1))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([dc33940](https://github.com/AlchemistSimulator/Alchemist/commit/dc339400843392ffb14bede873d46d6d9665c069))
+
 ## [30.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/30.0.5...30.1.0) (2024-02-06)
 
 

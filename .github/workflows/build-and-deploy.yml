@@ -442,6 +442,7 @@ jobs:
       - ci-preparation
       - build
       - build-website
+      - staging-repo
       - test-aur-package
       - test-linux-deb-installer
       - test-linux-rpm-installer

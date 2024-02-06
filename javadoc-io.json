@@ -907,6 +907,10 @@
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.11",
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.11/element-list"
   },
+  "org.slf4j/slf4j-api/2.0.12": {
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.12",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.12/element-list"
+  },
   "org.slf4j/slf4j-api/2.0.2": {
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.2",
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.2/element-list"

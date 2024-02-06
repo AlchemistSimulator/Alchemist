@@ -1,3 +1,34 @@
+## [30.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/30.0.5...30.1.0) (2024-02-06)
+
+
+### Features
+
+* **aur:** restructure the entire build and CI and automatically release the AUR packages ([#3107](https://github.com/AlchemistSimulator/Alchemist/issues/3107)) ([e68ed7b](https://github.com/AlchemistSimulator/Alchemist/commit/e68ed7b57b6c83e50371b3d7622d7761bf04e45a))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 299f09b ([623b6a8](https://github.com/AlchemistSimulator/Alchemist/commit/623b6a87fc50c48a68719a7ca64f61886dccf5d9))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 299f09b ([562734c](https://github.com/AlchemistSimulator/Alchemist/commit/562734c16a5c0a8863d37c2c3a39940d197144cf))
+* **deps:** update junit5 monorepo to v5.10.2 ([7561d9d](https://github.com/AlchemistSimulator/Alchemist/commit/7561d9d3ab6635253c186b2472512a4749efbfab))
+* **deps:** update plugin gitsemver to v3.1.1 ([2165d32](https://github.com/AlchemistSimulator/Alchemist/commit/2165d326b8013ff5705a3ab19ddd61b3487e8133))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.1 ([37a97d3](https://github.com/AlchemistSimulator/Alchemist/commit/37a97d3499566ca18d2eba2a0b4dbaddead8a630))
+* **deps:** update react to v18.2.0-pre.694 ([9d17495](https://github.com/AlchemistSimulator/Alchemist/commit/9d1749590b38e553057fab9ce28f00a72a57d9f5))
+
+
+### Build and continuous integration
+
+* add missing dependencies to the `success` job ([a304659](https://github.com/AlchemistSimulator/Alchemist/commit/a304659ebaab4d529f89c5274e6d886490282276))
+* do not run `assemble` if `staging-repository` is canceled ([d958a78](https://github.com/AlchemistSimulator/Alchemist/commit/d958a788c4fdbee2f23e8fbd64df2fc6c86568b8))
+* move `build-website` before `staging-repo` ([cc1b0f6](https://github.com/AlchemistSimulator/Alchemist/commit/cc1b0f660fa1d55f81b8844efeef363390d3198e))
+* remove the double quotes from the forced version ([dec7814](https://github.com/AlchemistSimulator/Alchemist/commit/dec781413d2e7b1c3342b252b5c1f3b62463e77a))
+* run `dokkaHtmlCollector` to actualize the `javadoc-io.json` cache ([f9e2866](https://github.com/AlchemistSimulator/Alchemist/commit/f9e28665f20183c86108f9209032e2a64a448204))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([1c648f4](https://github.com/AlchemistSimulator/Alchemist/commit/1c648f43974b1734140ce486fcc60a37a6e78aa1))
+
 ## [30.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/30.0.4...30.0.5) (2024-02-04)
 
 

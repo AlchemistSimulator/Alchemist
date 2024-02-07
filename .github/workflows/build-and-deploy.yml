@@ -226,11 +226,11 @@ jobs:
           build-command: |
             # In case of issues with JPackage, run with --info
             COMMAND='./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --info --parallel'
-            #for i in 1 2 3 4 5; do
+            for i in 1 2 3 4 5; do
               $(echo $COMMAND) && break || sleep 5
-            #  if [ "$i" = 5 ]; then
-            #    false
-            #  fi
+              if [ "$i" = 5 ]; then
+                false
+              fi
             done
           check-command: true
           deploy-command: |

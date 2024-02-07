@@ -360,9 +360,9 @@ jobs:
               yum -y localinstall "$installer"
           done
       - name: Test installation
-        run: /opt/alchemist/bin/alchemist --help
+        run: alchemist --help
 
-        # Test PKGBUILD for AUR release
+  # Test PKGBUILD for AUR release
   test-aur-package:
     needs:
       - ci-preparation

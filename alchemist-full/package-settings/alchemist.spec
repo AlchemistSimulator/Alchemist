@@ -63,7 +63,7 @@ sed -i -e 's|"%{license_install_file}"||' -e '/^$/d' %{package_filelist}
 %post
 xdg-desktop-menu install /opt/alchemist/lib/alchemist-alchemist.desktop
 # Create a soft link from usr/bin to the application launcher
-ln -s "/usr/lib/%{name}/bin/%{name}" "%{buildroot}/%{_bindir}/%{name}"
+ln -s "/usr/lib/%{name}/bin/%{name}" "%{_bindir}/%{name}"
 
 %preun
 xdg-desktop-menu uninstall /opt/alchemist/lib/alchemist-alchemist.desktop

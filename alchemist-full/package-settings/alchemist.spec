@@ -48,30 +48,23 @@ rm -rf %{buildroot}
 install -d -m 755 %{buildroot}/usr/lib/%{name}
 install -d -m 755 %{buildroot}/%{_bindir}/%{name}
 cp -r %{_sourcedir}/opt/%{name}/* %{buildroot}/usr/lib/%{name}
-%if "x/home/zimbrando/Projects/Alchemist/LICENSE.md" != "x"
-  %define license_install_file %{_defaultlicensedir}/%{name}-%{version}/%{basename:/home/zimbrando/Projects/Alchemist/LICENSE.md}
-  install -d -m 755 "%{buildroot}%{dirname:%{license_install_file}}"
-  install -m 644 "/home/zimbrando/Projects/Alchemist/LICENSE.md" "%{buildroot}%{license_install_file}"
-%endif
+#%define license_install_file %{_defaultlicensedir}/%{name}-%{version}/
+#install -d -m 755 "%{buildroot}%{dirname:%{license_install_file}}"
+#install -m 644 "/home/zimbrando/Projects/Alchemist/LICENSE.md" "%{buildroot}%{license_install_file}"
 (cd %{buildroot} && find . -type d) | sed -e 's/^\.//' -e '/^$/d' | sort > %{app_filelist}
 { rpm -ql filesystem || echo %{default_filesystem}; } | sort > %{filesystem_filelist}
 comm -23 %{app_filelist} %{filesystem_filelist} > %{package_filelist}
 sed -i -e 's/.*/%dir "&"/' %{package_filelist}
 (cd %{buildroot} && find . -not -type d) | sed -e 's/^\.//' -e 's/.*/"&"/' >> %{package_filelist}
-%if "x/home/zimbrando/Projects/Alchemist/LICENSE.md" != "x"
-  sed -i -e 's|"%{license_install_file}"||' -e '/^$/d' %{package_filelist}
-%endif
+sed -i -e 's|"%{license_install_file}"||' -e '/^$/d' %{package_filelist}
 
 %files -f %{package_filelist}
-%if "x/home/zimbrando/Projects/Alchemist/LICENSE.md" != "x"
-  %license "%{license_install_file}"
-%endif
+#%license "%{license_install_file}"
 
 %post
 xdg-desktop-menu install /opt/alchemist/lib/alchemist-alchemist.desktop
 # Create a soft link from usr/bin to the application launcher
 ln -s "/usr/lib/%{name}/bin/%{name}" "%{buildroot}/%{_bindir}/%{name}"
-
 %preun
 
 xdg-desktop-menu uninstall /opt/alchemist/lib/alchemist-alchemist.desktop

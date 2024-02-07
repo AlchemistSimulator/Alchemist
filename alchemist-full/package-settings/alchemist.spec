@@ -46,7 +46,6 @@ alchemist
 %install
 rm -rf %{buildroot}
 install -d -m 755 %{buildroot}/usr/lib/%{name}
-install -d -m 755 %{buildroot}/%{_bindir}/%{name}
 cp -r %{_sourcedir}/opt/%{name}/* %{buildroot}/usr/lib/%{name}
 #%define license_install_file %{_defaultlicensedir}/%{name}-%{version}/
 #install -d -m 755 "%{buildroot}%{dirname:%{license_install_file}}"
@@ -65,8 +64,8 @@ sed -i -e 's|"%{license_install_file}"||' -e '/^$/d' %{package_filelist}
 xdg-desktop-menu install /opt/alchemist/lib/alchemist-alchemist.desktop
 # Create a soft link from usr/bin to the application launcher
 ln -s "/usr/lib/%{name}/bin/%{name}" "%{buildroot}/%{_bindir}/%{name}"
-%preun
 
+%preun
 xdg-desktop-menu uninstall /opt/alchemist/lib/alchemist-alchemist.desktop
 
 %clean

@@ -164,7 +164,6 @@ jobs:
     outputs:
       repo-id: ${{ steps.staging-repo.outputs.MavenCentral }}
     steps:
-      - run: echo "may deploy ${{ needs.ci-preparation.outputs.may-deploy }}"
       - name: Checkout the repo
         uses: actions/checkout@v4.1.1
       - uses: DanySK/build-check-deploy-gradle-action@2.2.20
@@ -204,7 +203,7 @@ jobs:
     if: >-
       always() && (
         contains(needs.staging-repo.result, 'success') || (
-          contains(needs.*.result, 'skipped') && !needs.ci-preparation.outputs.may-deploy
+          contains(needs.staging-repo.result, 'skipped') && !needs.ci-preparation.outputs.may-deploy
         )
       )
     timeout-minutes: 120

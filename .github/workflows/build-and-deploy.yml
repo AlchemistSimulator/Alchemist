@@ -160,10 +160,11 @@ jobs:
     concurrency:
       group: staging-repo-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
-    if: ${{ needs.ci-preparation.outputs.may-deploy }}
+    if: needs.ci-preparation.outputs.may-deploy == 'true'
     outputs:
       repo-id: ${{ steps.staging-repo.outputs.MavenCentral }}
     steps:
+      - run: echo "may deploy ${{ needs.ci-preparation.outputs.may-deploy }}"
       - name: Checkout the repo
         uses: actions/checkout@v4.1.1
       - uses: DanySK/build-check-deploy-gradle-action@2.2.20

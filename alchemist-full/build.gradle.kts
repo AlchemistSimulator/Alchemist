@@ -196,6 +196,7 @@ validFormats.forEach { packaging: ValidPackaging ->
             icon = "${project.projectDir}/package-settings/logo.png"
             linuxShortcut = true
             linuxDebMaintainer = "Danilo Pianini"
+            linuxRpmLicenseType = "GPLv3"
         }
         windows {
             icon = "${project.projectDir}/package-settings/logo.ico"

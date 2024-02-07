@@ -35,7 +35,7 @@ package() {
     mkdir -p "${pkgdir}/usr/bin/"
 
     # Copy the application in usr/lib
-    cp -r "${srcdir}/usr/share/licenses/" "${pkgdir}/usr/share/alchemist/"
+    # cp -r "${srcdir}/usr/share/licenses/" "${pkgdir}/usr/share/alchemist/"
     cp -r "${srcdir}/opt/${pkgname}/" "${pkgdir}/usr/lib/"
 
     # Create a soft link from usr/bin to the application launcher

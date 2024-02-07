@@ -16,6 +16,7 @@ jobs:
       group: ci-preparation-${{ github.workflow }}-${{ github.event.number || github.ref }}
       cancel-in-progress: true
     outputs:
+      makepkg-image: ${{ steps.makepkg-image.outputs.image-name }}
       build-ref: ${{ steps.ci-preparation.outputs.build-ref }}
       force-version: ${{ steps.force-version.outputs.version }}
       java-version: ${{ steps.java-version.outputs.java-version }}
@@ -54,6 +55,9 @@ jobs:
           if [[ "${{ steps.compute-next-version.outputs.will-release }}" == "true" ]]; then
               echo 'version=-PforceVersion=${{ steps.compute-next-version.outputs.next-version }}' >> $GITHUB_OUTPUT
           fi
+      - name: fetch the image name for makepkg
+        id: makepkg-image
+        run: echo "image-name=$(grep 'FROM danysk/makepkg' < deps-utils/Dockerfile | sed 's/FROM //')" >> $GITHUB_OUTPUT
 
   # Testing and static analysis
   build:
@@ -362,14 +366,14 @@ jobs:
       - name: Test installation
         run: /opt/alchemist/bin/alchemist --help
 
-        # Test PKGBUILD for AUR release
-  test-aur-package:
+  # Test PKGBUILD for AUR release
+  verify-aur-package:
     needs:
       - ci-preparation
       - assemble-and-upload
     runs-on:  ubuntu-22.04
     container:
-      image: archlinux:base-devel-20240101.0.204074
+      image: ${{ needs.ci-preparation.outputs.makepkg-image }}
     concurrency:
       group: test-aur-release-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
@@ -377,11 +381,9 @@ jobs:
       - name: Setup arch
         run: |
           sudo pacman --noconfirm -Sy git namcap ruby sudo
-          useradd builduser -m
-          passwd -d builduser
-          echo "builduser ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
           chmod 777 .
-      - run: git config --system --add safe.directory /__w/Alchemist/Alchemist # https://github.com/actions/checkout/issues/1169
+      - name: Work around https://github.com/actions/checkout/issues/1169
+        run: git config --system --add safe.directory /__w/Alchemist/Alchemist
       - name: Download the PKGBUILD
         uses: actions/download-artifact@v4.1.2
         with:
@@ -446,7 +448,7 @@ jobs:
       - build
       - build-website
       - staging-repo
-      - test-aur-package
+      - verify-aur-package
       - test-linux-deb-installer
       - test-linux-rpm-installer
       - test-windows-msi-installer
@@ -506,6 +508,7 @@ jobs:
       - uses: DanySK/build-check-deploy-gradle-action@2.2.20
         env:
           STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
+          MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}
         with:
           java-version: ${{ needs.ci-preparation.outputs.java-version }}
           build-command: |
@@ -543,7 +546,7 @@ jobs:
       - ci-preparation
       - release
       - staging-repo
-      - test-aur-package
+      - verify-aur-package
       - test-linux-deb-installer
       - test-linux-rpm-installer
       - test-windows-msi-installer

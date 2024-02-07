@@ -50,7 +50,7 @@ git clone -v "https://aur.archlinux.org/${pkgname}.git" $aur_repo_dir
     cp -r "$main_repo_dir/$pkgbuild" $aur_repo_dir
     # Retrieve the version from the PKGBUILD
     version=$(< PKGBUILD grep pkgver | cut -d'=' -f 2)
-    makepkg --printsrcinfo > .SRCINFO
+    docker run --rm -it --workdir /pkgbuild -v "$aur_repo_dir:/pkgbuild" danysk/makepkg:1.0.0 makepkg --printsrcinfo > .SRCINFO
     echo "-- Committing the update to version $version"
 
     git add -fv PKGBUILD .SRCINFO

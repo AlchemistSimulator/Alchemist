@@ -1,7 +1,7 @@
 # Overridden by command-line arguments in jpackage
 Summary: alchemist
 Name: alchemist
-Version: 0.1.0
+Version: APPLICATION_VERSION
 Release: 1
 License: Unknown
 Vendor: Unknown
@@ -45,9 +45,9 @@ alchemist
 
 %install
 rm -rf %{buildroot}
-install -d -m 755 %{buildroot}/usr/lib/alchemist
-cp -r %{_sourcedir}/opt/alchemist/* %{buildroot}/usr/lib/alchemist
-ln -s "/usr/lib/alchemist/bin/alchemist" "%{buildroot}/usr/bin/alchemist"
+install -d -m 755 %{buildroot}/usr/lib/%{name}
+install -d -m 755 %{buildroot}/%{_bindir}/%{name}
+cp -r %{_sourcedir}/opt/%{name}/* %{buildroot}/usr/lib/%{name}
 %if "x/home/zimbrando/Projects/Alchemist/LICENSE.md" != "x"
   %define license_install_file %{_defaultlicensedir}/%{name}-%{version}/%{basename:/home/zimbrando/Projects/Alchemist/LICENSE.md}
   install -d -m 755 "%{buildroot}%{dirname:%{license_install_file}}"
@@ -69,6 +69,8 @@ sed -i -e 's/.*/%dir "&"/' %{package_filelist}
 
 %post
 xdg-desktop-menu install /opt/alchemist/lib/alchemist-alchemist.desktop
+# Create a soft link from usr/bin to the application launcher
+ln -s "/usr/lib/%{name}/bin/%{name}" "%{buildroot}/%{_bindir}/%{name}"
 
 %preun
 

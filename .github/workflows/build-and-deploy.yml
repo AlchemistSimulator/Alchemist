@@ -225,7 +225,7 @@ jobs:
             ./gradlew kotlinUpgradeYarnLock --parallel
           build-command: |
             # In case of issues with JPackage, run with --info
-            COMMAND='./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --info --parallel'
+            COMMAND='./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel'
             for i in 1 2 3 4 5; do
               $(echo $COMMAND) && break || sleep 5
               if [ "$i" = 5 ]; then

@@ -31,6 +31,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.guava)
     implementation(libs.jirf)
+    implementation(libs.kasechange)
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.mongodb)
     implementation(libs.snakeyaml)

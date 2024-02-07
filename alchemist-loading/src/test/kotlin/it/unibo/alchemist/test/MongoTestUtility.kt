@@ -43,7 +43,7 @@ internal fun withMongo(operation: () -> Unit) {
                 val mongod = Mongod.instance()
                     .withNet(Net.of("localhost", 27017, Network.localhostIsIPv6()).toTransition())
                     .withPlatform(platform.toTransition())
-                val runningState = mongod.start(Version.Main.V6_0)
+                val runningState = mongod.start(Version.Main.V7_0)
                 try {
                     operation()
                 } finally {

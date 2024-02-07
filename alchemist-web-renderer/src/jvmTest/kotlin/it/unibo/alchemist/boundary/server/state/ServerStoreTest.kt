@@ -33,14 +33,14 @@ class ServerStoreTest : StringSpec({
 
     "ServerState can be updated with a SetSimulation action" {
         webRendererTestEnvironments<Any, Nothing>().forEach {
-            serverStore.dispatch(SetSimulation(it.simulation))
-            serverStore.state.simulation shouldBe it.simulation
+            serverStore.dispatch(SetSimulation(it))
+            serverStore.state.simulation shouldBe it
         }
     }
 
     "ServerStore can be updated with a SetEnvironmentSurrogate action" {
         webRendererTestEnvironments<Any, Nothing>().forEach {
-            val envSurrogate = it.toEnvironmentSurrogate(toEmptyConcentration)
+            val envSurrogate = it.environment.toEnvironmentSurrogate(toEmptyConcentration)
             serverStore.dispatch(SetEnvironmentSurrogate(envSurrogate))
             serverStore.state.environmentSurrogate shouldBe envSurrogate
         }

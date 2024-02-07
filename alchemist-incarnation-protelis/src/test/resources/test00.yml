@@ -60,4 +60,7 @@ deployments:
       - *test
     programs:
       - *program
-      
+
+terminate:
+  - type: StepCount
+    parameters: 2000

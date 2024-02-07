@@ -54,4 +54,7 @@ internal class AwtEuclidean2DShapeFactory(
 
     override fun circle(radius: Double): Euclidean2DShape =
         AwtEuclidean2DShape(Ellipse2D.Double(-radius, -radius, radius * 2, radius * 2))
+
+    override fun ellipse(width: Double, height: Double): Euclidean2DShape =
+        AwtEuclidean2DShape(Ellipse2D.Double(-width / 2, -height / 2, width, height))
 }

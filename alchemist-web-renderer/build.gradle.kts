@@ -9,10 +9,8 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    application
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotest.multiplatform)
 }
@@ -87,39 +85,23 @@ kotlin {
     }
 }
 
-application {
-    mainClass.set("it.unibo.alchemist.Alchemist")
-}
-
 /**
  * Webpack task that generates the JS artifacts.
  */
 val webpackTask = tasks.named("jsBrowserProductionWebpack")
 
-tasks.named("run", JavaExec::class).configure {
-    classpath(
-        tasks.named("compileKotlinJvm"),
-        configurations.named("jvmRuntimeClasspath"),
-        webpackTask.map { task ->
-            task.outputs.files.map { file ->
-                file.parent
-            }
-        },
-    )
-}
-
-/**
- * Configure the [ShadowJar] task to work exactly like the "jvmJar" task of Kotlin Multiplatform, but also
+/*
+ * Configure the shadowJar task to work exactly like the "jvmJar" task of Kotlin Multiplatform, but also
  * include the JS artifacts by depending on the "jsBrowserProductionWebpack" task.
  */
-tasks.withType<ShadowJar>().configureEach {
-    val jvmJarTask = tasks.named("jvmJar")
-    from(webpackTask)
-    from(jvmJarTask)
-    from(tasks.named("jsBrowserDistribution"))
-    mustRunAfter(tasks.distTar, tasks.distZip)
-    archiveClassifier.set("all")
-}
+// tasks.withType<ShadowJar>().configureEach {
+//    val jvmJarTask = tasks.named("jvmJar")
+//    from(webpackTask)
+//    from(jvmJarTask)
+//    from(tasks.named("jsBrowserDistribution"))
+//    mustRunAfter(tasks.distTar, tasks.distZip)
+//    archiveClassifier.set("all")
+// }
 
 publishing.publications {
     withType<MavenPublication> {

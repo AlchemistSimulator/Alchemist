@@ -16,8 +16,6 @@ import Util.isInCI
 import Util.isMac
 import Util.isMultiplatform
 import Util.isWindows
-import Util.testShadowJar
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.danilopianini.gradle.mavencentral.JavadocJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.configurationcache.extensions.capitalized
@@ -25,6 +23,7 @@ import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.AbstractDokkaParentTask
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.time.Duration
 
 plugins {
     distribution
@@ -36,7 +35,6 @@ plugins {
     alias(libs.plugins.kotlin.qa)
     alias(libs.plugins.multiJvmTesting)
     alias(libs.plugins.publishOnCentral)
-    alias(libs.plugins.shadowJar)
     alias(libs.plugins.taskTree)
     alias(libs.plugins.hugo)
 }
@@ -44,34 +42,21 @@ plugins {
 val minJavaVersion: String by properties
 
 allprojects {
-
     with(rootProject.libs.plugins) {
         if (project.isMultiplatform) {
             apply(plugin = kotlin.multiplatform.id)
         } else {
             apply(plugin = kotlin.jvm.id)
+            apply(plugin = multiJvmTesting.id)
+            apply(plugin = java.qa.id)
         }
         apply(plugin = dokka.id)
         apply(plugin = gitSemVer.id)
-        apply(plugin = java.qa.id)
-        apply(plugin = multiJvmTesting.id)
         apply(plugin = kotlin.qa.id)
         apply(plugin = publishOnCentral.id)
-        apply(plugin = shadowJar.id)
         apply(plugin = taskTree.id)
     }
     apply(plugin = "distribution")
-
-    multiJvm {
-        jvmVersionForCompilation.set(minJavaVersion.toInt())
-        maximumSupportedJvmVersion.set(latestJava)
-        if (isInCI && (isWindows || isMac)) {
-            /*
-             * Reduce time in CI by running on fewer JVMs on slower or more limited instances.
-             */
-            testByDefaultWith(latestJava)
-        }
-    }
 
     repositories {
         google()
@@ -86,8 +71,70 @@ allprojects {
     }
 
     // JVM PROJECTS CONFIGURATIONS
-
     if (!project.isMultiplatform) {
+        // CODE QUALITY
+
+        javaQA {
+            checkstyle {
+                additionalConfiguration.set(
+                    """
+                    <module name="RegexpSingleline">
+                        <property name="severity" value="error" />
+                        <property name="format" value="Math\s*\.\s*random\s*\(\s*\)" />
+                        <property name="fileExtensions" value="java,xtend,scala,kt" />
+                        <property name="message"
+                                  value="Don't use Math.random() inside Alchemist. Breaks stuff." />
+                    </module>
+                    <module name="RegexpSingleline">
+                        <property name="severity" value="error" />
+                        <property name="format" value="class\s*\.\s*forName\s*\(" />
+                        <property name="fileExtensions" value="java,xtend,scala,kt" />
+                        <property name="message"
+                                  value="Use the library to load classes and resources. Breaks grid otherwise." />
+                    </module>
+                    <module name="RegexpSingleline">
+                        <property name="severity" value="error" />
+                        <property name="format" value="class\s*\.\s*getResource" />
+                        <property name="fileExtensions" value="java,xtend,scala,kt" />
+                        <property name="message"
+                                  value="Use the library to load classes and resources. Breaks grid otherwise." />
+                    </module>
+                    <module name="RegexpSingleline">
+                        <property name="severity" value="error" />
+                        <property name="format" value="class\s*\.\s*getClassLoader" />
+                        <property name="fileExtensions" value="java,xtend,scala,kt" />
+                        <property name="message"
+                                  value="Use the library to load classes and resources. Breaks grid otherwise." />
+                    </module>
+                    <module name="RegexpSingleline">
+                        <property name="severity" value="warning" />
+                        <property name="format" value="@author" />
+                        <property name="fileExtensions" value="java,xtend,scala,kt" />
+                        <property name="message"
+                                  value="Do not use @author. Changes and authors are tracked by the content manager." />
+                    </module>
+                    """.trimIndent(),
+                )
+                additionalSuppressions.set(
+                    """
+                    <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
+                    <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
+                    """.trimIndent(),
+                )
+            }
+        }
+
+        multiJvm {
+            jvmVersionForCompilation.set(minJavaVersion.toInt())
+            maximumSupportedJvmVersion.set(latestJava)
+            if (isInCI && (isWindows || isMac)) {
+                /*
+                 * Reduce time in CI by running on fewer JVMs on slower or more limited instances.
+                 */
+                testByDefaultWith(latestJava)
+            }
+        }
+
         dependencies {
             with(rootProject.libs) {
                 compileOnly(spotbugs.annotations)
@@ -109,6 +156,7 @@ allprojects {
         }
 
         tasks.withType<AbstractDokkaLeafTask>().configureEach {
+            timeout.set(Duration.ofMinutes(5))
             dokkaSourceSets.configureEach {
                 jdkVersion.set(multiJvm.jvmVersionForCompilation)
                 listOf("kotlin", "java")
@@ -201,58 +249,7 @@ allprojects {
             exceptionFormat = TestExceptionFormat.FULL
         }
         useJUnitPlatform()
-    }
-
-    // CODE QUALITY
-
-    javaQA {
-        checkstyle {
-            additionalConfiguration.set(
-                """
-                <module name="RegexpSingleline">
-                    <property name="severity" value="error" />
-                    <property name="format" value="Math\s*\.\s*random\s*\(\s*\)" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Don't use Math.random() inside Alchemist. Breaks stuff." />
-                </module>
-                <module name="RegexpSingleline">
-                    <property name="severity" value="error" />
-                    <property name="format" value="class\s*\.\s*forName\s*\(" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Use the library to load classes and resources. Breaks grid otherwise." />
-                </module>
-                <module name="RegexpSingleline">
-                    <property name="severity" value="error" />
-                    <property name="format" value="class\s*\.\s*getResource" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Use the library to load classes and resources. Breaks grid otherwise." />
-                </module>
-                <module name="RegexpSingleline">
-                    <property name="severity" value="error" />
-                    <property name="format" value="class\s*\.\s*getClassLoader" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Use the library to load classes and resources. Breaks grid otherwise." />
-                </module>
-                <module name="RegexpSingleline">
-                    <property name="severity" value="warning" />
-                    <property name="format" value="@author" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Do not use @author. Changes and authors are tracked by the content manager." />
-                </module>
-                """.trimIndent(),
-            )
-            additionalSuppressions.set(
-                """
-                <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
-                <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
-                """.trimIndent(),
-            )
-        }
+        maxHeapSize = "1g"
     }
 
     tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
@@ -299,52 +296,6 @@ allprojects {
                     roles.set(mutableSetOf("architect", "developer"))
                 }
             }
-        }
-    }
-
-    // Shadow Jar
-    tasks.withType<ShadowJar> {
-        manifest {
-            attributes(
-                mapOf(
-                    "Implementation-Title" to "Alchemist",
-                    "Implementation-Version" to rootProject.version,
-                    "Main-Class" to "it.unibo.alchemist.Alchemist",
-                    "Automatic-Module-Name" to "it.unibo.alchemist",
-                ),
-            )
-        }
-        exclude(
-            "ant_tasks/",
-            "about_files/",
-            "help/about/",
-            "build",
-            ".gradle",
-            "build.gradle",
-            "gradle",
-            "gradlew.bat",
-            "gradlew",
-        )
-        isZip64 = true
-        mergeServiceFiles()
-        destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })
-        val deleteOutput = tasks.register<Delete>("deleteOutputOf${name.capitalized()}") {
-            setDelete(this@withType)
-        }
-        if (isInCI && isWindows) {
-            // There is little space on the Windows CI, so we need to delete the output as soon as possible
-            this.finalizedBy(deleteOutput)
-        }
-        if ("full" in project.name || "incarnation" in project.name || project == rootProject) {
-            // Run the jar and check the output
-            val javaExecutable = javaToolchains.launcherFor {
-                languageVersion.set(JavaLanguageVersion.of(minJavaVersion))
-            }.map { it.executablePath.asFile.absolutePath }
-            val testShadowJar = testShadowJar(javaExecutable, archiveFile)
-            testShadowJar.get().dependsOn(this)
-            this.finalizedBy(testShadowJar)
-            deleteOutput.get().mustRunAfter(testShadowJar)
-            tasks.check.configure { dependsOn(testShadowJar) }
         }
     }
 

@@ -16,7 +16,7 @@ import org.apache.ignite.startup.cmdline.CommandLineStartup
  */
 class IgniteServerLauncher @JvmOverloads constructor(
     private val serverConfigPath: String? = null,
-) : SimulationLauncher() {
+) : DefaultLauncher() {
 
     override fun launch(loader: Loader) = CommandLineStartup.main(arrayOf(serverConfigPath))
 }

@@ -2,6 +2,7 @@ incarnation: protelis
 network-model:
   type: ConnectWithinDistance
   parameters: [10]
+
 deployments:
   - type: Circle
     parameters: [500, 0, 0, 50]
@@ -15,3 +16,9 @@ deployments:
           actions:
             - type: BrownianMove
               parameters: [1]
+
+monitors:
+  type: SwingGUI
+  parameters:
+    graphics:
+    failOnHeadless: false

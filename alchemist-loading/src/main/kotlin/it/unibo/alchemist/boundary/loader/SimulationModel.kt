@@ -21,7 +21,7 @@ import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
 import it.unibo.alchemist.boundary.extractors.MoleculeReader
 import it.unibo.alchemist.boundary.extractors.Time
-import it.unibo.alchemist.boundary.launchers.HeadlessSimulationLauncher
+import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.JavaType
@@ -212,11 +212,12 @@ internal object SimulationModel {
         variablesLeft?.validateVariableConsistencyRecursively(errors = collectedNonFatalFailures)
         val variables: Map<String, Variable<*>> = visitVariables(context, variablesLeft)
         logger.info("Variables: {}", variables)
-        val launcherDescriptor = injectedRoot[DocumentRoot.launcher]
-        val launcher: Launcher = when (launcherDescriptor) {
-            emptyMap<Nothing, Any>() -> HeadlessSimulationLauncher()
-            else -> visitBuilding<Launcher>(context, launcherDescriptor)?.getOrThrow() ?: HeadlessSimulationLauncher()
+        var launcherDescriptor = injectedRoot[DocumentRoot.launcher]
+        fun Map<*, *>.isJvmConstructorWithoutType() = containsKey(JavaType.parameters) && !containsKey(JavaType.type)
+        if (launcherDescriptor is Map<*, *> && launcherDescriptor.isJvmConstructorWithoutType()) {
+            launcherDescriptor = launcherDescriptor + (JavaType.type to DefaultLauncher::class.simpleName.orEmpty())
         }
+        val launcher: Launcher = visitBuilding<Launcher>(context, launcherDescriptor)?.getOrThrow() ?: DefaultLauncher()
         injectedRoot = inject(context, injectedRoot)
         val remoteDependencies = visitRecursively(
             context,
@@ -224,15 +225,15 @@ internal object SimulationModel {
         ) { visitBuilding<String>(context, it) }
         logger.info("Remote dependencies: {}", remoteDependencies)
         return object : LoadingSystem(context, injectedRoot) {
-            override fun getDependentVariables() = dependentVariables
-            override fun getVariables() = variables
-            override fun getConstants() = context.constants
-            override fun getRemoteDependencies() = remoteDependencies
-            override fun getLauncher(): Launcher = launcher
+            override val constants: Map<String, Any?> = context.constants
+            override val remoteDependencies: List<String> = remoteDependencies
+            override val launcher: Launcher = launcher
+            override val dependentVariables: Map<String, DependentVariable<*>> = dependentVariables
+            override val variables: Map<String, Variable<*>> = variables
         }
     }
 
-    internal fun <P : Position<P>, T : Any?> visitIncarnation(root: Any?): Incarnation<T, P> =
+    internal fun <P : Position<out P>, T : Any?> visitIncarnation(root: Any?): Incarnation<T, P> =
         SupportedIncarnations.get<T, P>(root.toString()).orElseThrow {
             IllegalArgumentException(
                 "Invalid incarnation descriptor: $root. " +

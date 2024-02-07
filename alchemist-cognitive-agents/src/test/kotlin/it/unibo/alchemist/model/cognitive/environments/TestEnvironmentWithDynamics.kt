@@ -35,18 +35,18 @@ class TestEnvironmentWithDynamics<T, P> : StringSpec({
             },
         )
     }
-    "Environemnt should allow physics update rate customization" {
-        val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate.yml")
+    "Environment should allow physics update rate customization" {
+        val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate.yml").environment
         environment.globalReactions.size shouldBe 1
         environment.globalReactions.first().rate shouldBe 1.5
     }
     "Ignore time distribution when updateRate is Specified" {
-        val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate2.yml")
+        val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate2.yml").environment
         environment.globalReactions.size shouldBe 1
         environment.globalReactions.first().rate shouldBe 0.5
     }
     "Customize rate with time-distribution" {
-        val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate3.yml")
+        val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate3.yml").environment
         environment.globalReactions.size shouldBe 1
         val globalReaction = environment.globalReactions.first()
         globalReaction.timeDistribution::class shouldBe ExponentialTime::class

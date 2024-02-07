@@ -8,10 +8,9 @@
  */
 package it.unibo.alchemist.model.biochemistry.environments;
 
-import it.unibo.alchemist.boundary.OutputMonitor;
-import it.unibo.alchemist.core.Engine;
-import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.boundary.LoadAlchemist;
+import it.unibo.alchemist.boundary.OutputMonitor;
+import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
@@ -22,6 +21,7 @@ import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironment;
 import it.unibo.alchemist.model.linkingrules.NoLinks;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.test.AlchemistTesting;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -750,11 +751,11 @@ class TestBioRect2DEnvironmentNoOverlap {
         final Map<String, Double> vars = Collections.emptyMap();
         final var res = ResourceLoader.getResource(resource);
         assertNotNull(res, "Missing test resource " + resource);
-        final Environment<Double, Euclidean2DPosition> env = LoadAlchemist.from(res)
-                .<Double, Euclidean2DPosition>getWith(vars)
-                .getEnvironment();
-        final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(env, 10000);
+        final Simulation<Double, Euclidean2DPosition> sim = LoadAlchemist.from(res).getWith(vars);
+        final Environment<Double, Euclidean2DPosition> env = sim.getEnvironment();
+        AlchemistTesting.terminatingAfterSteps(sim, 1_000);
         sim.addOutputMonitor(new OutputMonitor<>() {
+            @Serial
             private static final long serialVersionUID = 1L;
 
             @Override

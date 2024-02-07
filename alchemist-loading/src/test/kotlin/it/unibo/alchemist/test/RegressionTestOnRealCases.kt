@@ -14,8 +14,11 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.maps.haveSize
 import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.beOfType
 import it.unibo.alchemist.boundary.LoadAlchemist
+import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import org.kaikikm.threadresloader.ResourceLoader
 
 class RegressionTestOnRealCases : FreeSpec(
@@ -25,7 +28,17 @@ class RegressionTestOnRealCases : FreeSpec(
             loader.getDefault<Nothing, Nothing>() shouldNotBe null
             loader.variables should haveSize(3)
             loader.variables.keys shouldContain "algorithm"
-            loader.variables["algorithm"]!!.stream().count().toInt() shouldBeExactly 4 * 7 + 1
+            loader.variables.getValue("algorithm").stream().count().toInt() shouldBeExactly 4 * 7 + 1
+        }
+        "the default loader should be configurable with two parameters" {
+            val loader = LoadAlchemist.from(ResourceLoader.getResource("synthetic/launcherWithoutAutostart.yml"))
+            loader.getDefault<Nothing, Nothing>() shouldNotBe null
+            loader.launcher should beOfType<DefaultLauncher>()
+            (loader.launcher as DefaultLauncher).autoStart shouldBe false
+        }
+        "it should be possible to run a parallel batch" {
+            val loader = LoadAlchemist.from(ResourceLoader.getResource("synthetic/batch-boostrap.yml"))
+            loader.launch()
         }
     },
 )

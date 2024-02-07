@@ -8,7 +8,13 @@
 incarnation: sapere
 
 launcher:
-  type: GraphQLServerLauncher
+  type: DefaultLauncher
+  parameters:
+    batch: []
+    autostart: false
+
+monitors:
+  type: GraphQLServer
 
 network-model:
   type: ConnectWithinDistance

@@ -11,13 +11,12 @@ package it.unibo.alchemist.model.actions
 
 import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.test.createSimulation
-import it.unibo.alchemist.test.loadAlchemist
-import it.unibo.alchemist.test.runInCurrentThread
+import it.unibo.alchemist.test.AlchemistTesting.loadAlchemist
+import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 
 class TestRemoveNode<T, P : Position<P>> : StringSpec({
     "Nodes can be removed in a continous 2D space" {
-        val simulation = loadAlchemist<T, P>("remove.yml").createSimulation()
+        val simulation = loadAlchemist<T, P>("remove.yml")
         val simulationRun = simulation.runInCurrentThread()
         require(simulationRun.error.isEmpty) {
             throw simulationRun.error.get()

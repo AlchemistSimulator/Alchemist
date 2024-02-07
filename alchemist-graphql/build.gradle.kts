@@ -11,15 +11,12 @@ import Libs.alchemist
 import Libs.incarnation
 import com.apollographql.apollo3.gradle.internal.ApolloGenerateSourcesTask
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import io.gitlab.arturbosch.detekt.Detekt
 import java.io.File.separator
 
 plugins {
-    application
     alias(libs.plugins.kotest.multiplatform)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ktor)
     alias(libs.plugins.graphql.server)
     alias(libs.plugins.graphql.client)
 }
@@ -68,10 +65,6 @@ kotlin {
             }
         }
     }
-}
-
-application {
-    mainClass.set("it.unibo.alchemist.Alchemist")
 }
 
 graphql {
@@ -127,30 +120,18 @@ tasks.withType<ApolloGenerateSourcesTask>().configureEach {
  */
 val webpackTask = tasks.named("jsBrowserProductionWebpack")
 
-tasks.named("run", JavaExec::class).configure {
-    classpath(
-        tasks.named("compileKotlinJvm"),
-        configurations.named("jvmRuntimeClasspath"),
-        webpackTask.map { task ->
-            task.outputs.files.map { file ->
-                file.parent
-            }
-        },
-    )
-}
-
 /**
- * Configure the [ShadowJar] task to work exactly like the "jvmJar" task of Kotlin Multiplatform, but also
+ * Configure the shadowJar task to work exactly like the "jvmJar" task of Kotlin Multiplatform, but also
  * include the JS artifacts by depending on the "jsBrowserProductionWebpack" task.
  */
-tasks.withType<ShadowJar>().configureEach {
-    val jvmJarTask = tasks.named("jvmJar")
-    from(webpackTask)
-    from(jvmJarTask)
-    from(tasks.named("jsBrowserDistribution"))
-    mustRunAfter(tasks.distTar, tasks.distZip)
-    archiveClassifier.set("all")
-}
+// tasks.withType<ShadowJar>().configureEach {
+//    val jvmJarTask = tasks.named("jvmJar")
+//    from(webpackTask)
+//    from(jvmJarTask)
+//    from(tasks.named("jsBrowserDistribution"))
+//    mustRunAfter(tasks.distTar, tasks.distZip)
+//    archiveClassifier.set("all")
+// }
 
 fun PatternFilterable.excludeGenerated() = exclude { "build${separator}generated" in it.file.absolutePath }
 tasks.withType<Detekt>().configureEach { excludeGenerated() }

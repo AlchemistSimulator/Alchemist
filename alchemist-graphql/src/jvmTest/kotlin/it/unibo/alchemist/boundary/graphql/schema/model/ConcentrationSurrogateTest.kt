@@ -30,31 +30,33 @@ class ConcentrationSurrogateTest : StringSpec({
         val c3: Concentration<TestNonSerializableContent> = Concentration { TestNonSerializableContent(1, "a") }
         checkConcentrationContent(c3.content, c3.toGraphQLConcentrationSurrogate().content)
     }
-})
+}) {
+    companion object {
+        @Serializable
+        private data class TestSerializableContent(val a: Int, val b: String)
 
-@Serializable
-private data class TestSerializableContent(val a: Int, val b: String)
+        private data class TestNonSerializableContent(val a: Int, val b: String)
 
-private data class TestNonSerializableContent(val a: Int, val b: String)
+        fun <T : Any> checkConcentrationContent(c: T, cs: String) {
+            if (canSerialize(c)) {
+                checkJsonContent(c, cs)
+            } else {
+                checkGenericContent(c, cs)
+            }
+        }
 
-fun <T : Any> checkConcentrationContent(c: T, cs: String) {
-    if (canSerialize(c)) {
-        checkJsonContent(c, cs)
-    } else {
-        checkGenericContent(c, cs)
+        fun <T : Any> checkGenericContent(c: T, cs: String) {
+            encodeConcentrationContentToString(c) shouldBe cs
+        }
+
+        fun <T : Any> checkJsonContent(c: T, cs: String) {
+            val jsonContent = Json.Default.encodeToString(serializer(c::class.java), c)
+            jsonContent shouldBe cs
+            val content = Json.Default.decodeFromString(serializer(c::class.java), cs)
+            content shouldBe c
+        }
+
+        private fun <T : Any> canSerialize(content: T): Boolean =
+            runCatching { Json.Default.encodeToString(serializer(content::class.java), content) }.isSuccess
     }
 }
-
-fun <T : Any> checkGenericContent(c: T, cs: String) {
-    encodeConcentrationContentToString(c) shouldBe cs
-}
-
-fun <T : Any> checkJsonContent(c: T, cs: String) {
-    val jsonContent = Json.Default.encodeToString(serializer(c::class.java), c)
-    jsonContent shouldBe cs
-    val content = Json.Default.decodeFromString(serializer(c::class.java), cs)
-    content shouldBe c
-}
-
-private fun <T : Any> canSerialize(content: T): Boolean =
-    runCatching { Json.Default.encodeToString(serializer(content::class.java), content) }.isSuccess

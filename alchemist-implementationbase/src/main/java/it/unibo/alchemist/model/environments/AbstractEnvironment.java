@@ -305,20 +305,26 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     }
 
     @Override
+    @Nonnull
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     public final Simulation<T, P> getSimulation() {
-        return simulation;
+        return Objects.requireNonNull(
+            simulation,
+            "This environment is not attached to any simulation."
+        );
     }
 
     @Override
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
-    public final void setSimulation(final Simulation<T, P> s) {
-        if (simulation == null) {
-            simulation = s;
-        } else if (!simulation.equals(s)) {
+    public final void setSimulation(final Simulation<T, P> simulation) {
+        if (this.simulation == null) {
+            this.simulation = simulation;
+        } else if (!this.simulation.equals(simulation)) {
             throw new IllegalStateException(
-                "Inconsistent simulation configuration for " + this + ": simulation was set to " + simulation
-                    + "and then switched to " + s
+                "Inconsistent simulation configuration for " + this + ": simulation was set to "
+                    + this.simulation + " (id: " + System.identityHashCode(this.simulation) + ") "
+                    + "and then switched to "
+                    + simulation + " (id: " + System.identityHashCode(simulation) + ")"
             );
         }
     }
@@ -340,7 +346,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
      * @param action  the {@link Consumer} to execute
      */
     protected final void ifEngineAvailable(final Consumer<Simulation<T, P>> action) {
-        Optional.ofNullable(getSimulation()).ifPresent(action);
+        Optional.ofNullable(simulation).ifPresent(action);
     }
 
     private void invalidateCache() {

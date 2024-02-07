@@ -101,6 +101,7 @@ internal object DocumentRoot : SyntaxElement {
             )
         }
     }
+
     object Export : SyntaxElement {
         val data by OwnName
         override val validDescriptors = setOf(
@@ -185,18 +186,19 @@ internal object DocumentRoot : SyntaxElement {
     }
 
     val deployments by OwnName
+    val engine by OwnName
     val environment by OwnName
     val export by OwnName
     val incarnation by OwnName
     val launcher by OwnName
     val layers by OwnName
-    const val monitors = "monitors"
+    val monitors by OwnName
     const val linkingRule = "network-model"
-    const val engineConfiguration = "engine-configuration"
     const val remoteDependencies = "remote-dependencies"
     val seeds by OwnName
     val terminate by OwnName
     val variables by OwnName
+
     override val validDescriptors = setOf(
         validDescriptor {
             mandatory(incarnation)

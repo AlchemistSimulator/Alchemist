@@ -16,6 +16,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.test.AlchemistTesting.loadAlchemistFromResource
 import it.unibo.alchemist.util.ClassPathScanner
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -51,7 +52,7 @@ class TestKtVariable<T, P : Position<P>> : StringSpec({
         }
     }
     "test 'type' keyword clashes" {
-        loadAlchemist<Any, Nothing>("regression/2022-coordination-type-clash.yml") shouldNot beNull()
+        loadAlchemistFromResource("regression/2022-coordination-type-clash.yml") shouldNot beNull()
     }
     "test null values in bindings" {
         val simulation = loadAlchemistFromResource("regression/2022-coordination-null-bindings.yml")

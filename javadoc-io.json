@@ -43,9 +43,6 @@
     "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.8",
     "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.8/element-list"
   },
-  "com.apollographql.apollo3/apollo-runtime/4.0.0-beta.4": {
-    "first": "https://javadoc.io/doc/com.apollographql.apollo3/apollo-runtime/4.0.0-beta.4"
-  },
   "com.expediagroup/graphql-kotlin-hooks-provider/7.0.2": {
     "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/7.0.2"
   },
@@ -358,9 +355,6 @@
     "first": "https://javadoc.io/doc/io.jenetics/jpx/3.1.0",
     "second": "https://javadoc.io/doc/io.jenetics/jpx/3.1.0/element-list"
   },
-  "io.ktor/ktor-bom/2.3.7": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-bom/2.3.7"
-  },
   "it.unibo.scafi/scafi-core_2.13/1.1.7": {
     "first": "https://javadoc.io/doc/it.unibo.scafi/scafi-core_2.13/1.1.7"
   },
@@ -398,6 +392,9 @@
   "net.harawata/appdirs/1.2.2": {
     "first": "https://javadoc.io/doc/net.harawata/appdirs/1.2.2",
     "second": "https://javadoc.io/doc/net.harawata/appdirs/1.2.2/element-list"
+  },
+  "net.pearx.kasechange/kasechange/1.4.1": {
+    "first": "https://javadoc.io/doc/net.pearx.kasechange/kasechange/1.4.1"
   },
   "net.sf.trove4j/trove4j/3.0.3": {
     "first": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3",
@@ -537,9 +534,9 @@
     "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.16",
     "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.16/element-list"
   },
-  "org.danilopianini/jirf/0.4.17": {
-    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.17",
-    "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.17/element-list"
+  "org.danilopianini/jirf/0.4.18": {
+    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.18",
+    "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.18/element-list"
   },
   "org.danilopianini/jirf/0.4.5": {
     "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.5",
@@ -824,13 +821,17 @@
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.0.4",
     "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.0.4/element-list"
   },
+  "org.protelis/protelis-interpreter/17.3.11": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.11",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.11/element-list"
+  },
+  "org.protelis/protelis-interpreter/17.3.12": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.12",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.12/element-list"
+  },
   "org.protelis/protelis-interpreter/17.3.5": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.5",
     "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.5/element-list"
-  },
-  "org.protelis/protelis-interpreter/17.3.9": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.9",
-    "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.9/element-list"
   },
   "org.protelis/protelis-lang/17.0.0": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.0.0",
@@ -840,13 +841,17 @@
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.0.4",
     "second": "https://javadoc.io/doc/org.protelis/protelis-lang/17.0.4/package-list"
   },
+  "org.protelis/protelis-lang/17.3.11": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.11",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.11/package-list"
+  },
+  "org.protelis/protelis-lang/17.3.12": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.12",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.12/package-list"
+  },
   "org.protelis/protelis-lang/17.3.5": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.5",
     "second": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.5/package-list"
-  },
-  "org.protelis/protelis-lang/17.3.9": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.9",
-    "second": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.9/package-list"
   },
   "org.scala-lang/scala-compiler/2.13.10": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.10"
@@ -898,9 +903,13 @@
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.1",
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.1/element-list"
   },
-  "org.slf4j/slf4j-api/2.0.10": {
-    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.10",
-    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.10/element-list"
+  "org.slf4j/slf4j-api/2.0.11": {
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.11",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.11/element-list"
+  },
+  "org.slf4j/slf4j-api/2.0.12": {
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.12",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.12/element-list"
   },
   "org.slf4j/slf4j-api/2.0.2": {
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.2",

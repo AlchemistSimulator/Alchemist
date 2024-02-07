@@ -13,14 +13,14 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.longs.shouldBeGreaterThan
-import it.unibo.alchemist.boundary.InitializedEnvironment
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.exporters.GlobalExporter
 import it.unibo.alchemist.boundary.exporters.MongoDBExporter
-import it.unibo.alchemist.core.Engine
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
@@ -35,9 +35,7 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             assertNotNull(file)
             val loader = LoadAlchemist.from(file)
             assertNotNull(loader)
-            val initialized: InitializedEnvironment<T, P> = loader.getDefault()
-            val simulation = Engine(initialized.environment)
-            simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
+            val simulation: Simulation<T, P> = loader.getDefault()
             fun checkForErrors() = simulation.error.ifPresent { throw it }
             simulation.addOutputMonitor(object : OutputMonitor<T, P> {
                 override fun finished(environment: Environment<T, P>, time: Time, step: Long) = checkForErrors()
@@ -52,9 +50,11 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             simulation.play()
             simulation.run()
             checkForErrors()
-            val exporter = initialized.exporters.firstOrNull {
-                it is MongoDBExporter
-            }
+            val exporter = simulation.outputMonitors
+                .filterIsInstance<GlobalExporter<T, P>>()
+                .flatMap { it.exporters }
+                .apply { size shouldBeExactly 1 }
+                .firstOrNull { it is MongoDBExporter }
             require(exporter is MongoDBExporter)
             exporter.dataExtractors.size shouldBeGreaterThan 0
             val testClient: MongoClient = MongoClients.create(exporter.uri)

@@ -32,6 +32,12 @@ object Util {
     val isInCI get() = System.getenv("CI") == true.toString()
     val isWindows = Os.isFamily(Os.FAMILY_WINDOWS)
     val isMac = Os.isFamily(Os.FAMILY_MAC)
+    val isUnix = Os.isFamily(Os.FAMILY_UNIX)
+
+    fun commandExists(command: String) = System.getenv("PATH")
+        .split(File.pathSeparatorChar)
+        .any { path -> File(path, command).run { exists() && canExecute() } }
+
     val Project.currentCommitHash get(): String? =
         kotlin.runCatching { Git.open(rootProject.projectDir).repository.resolve("HEAD")?.name }.getOrNull()
 

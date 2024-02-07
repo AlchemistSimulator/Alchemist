@@ -9,13 +9,13 @@
 
 package it.unibo.alchemist.boundary.loader
 
-import it.unibo.alchemist.boundary.EnvironmentWithConfiguration
 import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Loader
+import it.unibo.alchemist.boundary.exporters.GlobalExporter
 import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot
-import it.unibo.alchemist.boundary.loader.util.NamedParametersConstructor
-import it.unibo.alchemist.core.EngineConfiguration
+import it.unibo.alchemist.core.Engine
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
@@ -33,15 +33,13 @@ import org.danilopianini.jirf.Factory
 import java.util.concurrent.Semaphore
 import java.util.function.Predicate
 
-private const val DEFAULT_ENGINE_CONFIGURATION_CLASS = "SequentialEngineConfiguration"
-
 internal abstract class LoadingSystem(
     private val originalContext: Context,
     private val originalRoot: Map<String, *>,
 ) : Loader {
 
-    override fun <T : Any?, P : Position<P>> getWith(values: Map<String, *>) =
-        SingleUseLoader(originalContext, originalRoot).environmentWith<T, P>(values)
+    override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> =
+        SingleUseLoader(originalContext, originalRoot).simulationWith(values)
 
     private inner class SingleUseLoader(originalContext: Context, private val originalRoot: Map<String, *>) {
 
@@ -49,7 +47,7 @@ internal abstract class LoadingSystem(
         private val mutex = Semaphore(1)
         private var consumed = false
 
-        fun <T : Any?, P : Position<P>> environmentWith(values: Map<String, *>): EnvironmentWithConfiguration<T, P> {
+        fun <T : Any?, P : Position<P>> simulationWith(values: Map<String, *>): Simulation<T, P> {
             try {
                 mutex.acquireUninterruptibly()
                 check(!consumed) {
@@ -146,17 +144,18 @@ internal abstract class LoadingSystem(
                 SimulationModel.visitSingleExporter(incarnation, context, it)
             }
             exporters.forEach { it.bindVariables(variableValues) }
-
-            // ENGINE CONFIGURATION
-            val engineConfigurationDescriptor = root[DocumentRoot.engineConfiguration]
-            val maybeEngineConfiguration =
-                SimulationModel.visitBuilding<EngineConfiguration>(context, engineConfigurationDescriptor)
-            val engineConfiguration = maybeEngineConfiguration
+            // ENGINE
+            val engineDescriptor = root[DocumentRoot.engine]
+            val engine: Simulation<T, P> = SimulationModel.visitBuilding<Simulation<T, P>>(context, engineDescriptor)
                 ?.getOrThrow()
-                ?: NamedParametersConstructor(type = DEFAULT_ENGINE_CONFIGURATION_CLASS)
-                    .buildAny<EngineConfiguration>(context.factory)
-                    .getOrThrow()
-            return EnvironmentWithConfiguration(environment, exporters, monitors, engineConfiguration)
+                ?: Engine(environment)
+            // Attach monitors
+            monitors.forEach(engine::addOutputMonitor)
+            // Attach data exporters
+            if (exporters.isNotEmpty()) {
+                engine.addOutputMonitor(GlobalExporter(exporters))
+            }
+            return engine
         }
 
         private fun <T, P : Position<P>> loadGlobalProgramsOnEnvironment(

@@ -3,23 +3,62 @@ on:
   workflow_call:
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  # Runs all tests
-  select-java-version:
-    concurrency:
-      group: ${{ github.workflow }}-select-java-version-${{ github.event.number || github.ref }}
-    outputs:
-        java-version: ${{ steps.java-version.outputs.java-version }}
+
+  # Prepare the environment for the build
+  ci-preparation:
     runs-on: ubuntu-22.04
+    concurrency:
+      group: ci-preparation-${{ github.workflow }}-${{ github.event.number || github.ref }}
+      cancel-in-progress: true
+    outputs:
+      build-ref: ${{ steps.ci-preparation.outputs.build-ref }}
+      force-version: ${{ steps.force-version.outputs.version }}
+      java-version: ${{ steps.java-version.outputs.java-version }}
+      may-deploy: ${{ steps.may-deploy.outputs.may-deploy }}
+      next-version: ${{ steps.compute-next-version.outputs.next-version }}
+      will-release: ${{ steps.compute-next-version.outputs.will-release }}
     steps:
+      - name: Compute the build ref
+        id: ci-preparation
+        run: echo "build-ref=${{ github.workflow }}-${{ github.event.number || github.ref }}" >> $GITHUB_OUTPUT
+      - name: Determine whether this build may run deployments
+        id: may-deploy
+        run: |
+          echo "may-deploy=${{
+            !github.event.repository.fork && (
+              github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+            )
+          }}" >> $GITHUB_OUTPUT
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - name: Compute Java version
+      - name: Compute the Java version
         id: java-version
         run: ruby -e 'puts("java-version=#{/^minJavaVersion\s*=\s*(\d+)$/.match(File.read("gradle.properties"))[1]}")' >> $GITHUB_OUTPUT
+      - name: Install Node
+        uses: actions/setup-node@v4.0.1
+        with:
+          node-version-file: package.json
+      - name: Compute the next release version
+        id: compute-next-version
+        uses: nicolasfara/precompute-semantic-release-version-action@1.0.2
+        with:
+          github-token: ${{ github.token }}
+      - name: Prepare a force version parameter for Gradle
+        id: force-version
+        run: |
+          if [[ "${{ steps.compute-next-version.outputs.will-release }}" == "true" ]]; then
+              echo 'version=-PforceVersion=${{ steps.compute-next-version.outputs.next-version }}' >> $GITHUB_OUTPUT
+          fi
+
+  # Testing and static analysis
   build:
     needs:
-      - select-java-version
+      - ci-preparation
     strategy:
       fail-fast: false
       matrix:
@@ -27,103 +66,61 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     concurrency:
-      group: ${{ github.workflow }}-build-${{ matrix.os }}-${{ github.event.number || github.ref }}
+      group: build-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.12
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
         with:
-          pre-build-command: ./gradlew kotlinUpgradeYarnLock --parallel
-          # check that all tasks used in subsequent phases are there
+          pre-build-command: true
           build-command: |
-            COMMAND="./gradlew \
-            build clean close \
-            hugoBuild \
-            performWebsiteStringReplacements \
-            publishKotlinOSSRHPublicationToGithubRepository \
-            release \
-            shadowJar \
-            uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs \
-            --dry-run
-            "
-            eval $COMMAND || eval $COMMAND
+            ./gradlew kotlinUpgradeYarnLock --parallel
           check-command: |
             ./gradlew check --parallel || ./gradlew check --parallel
           clean-command: |
             ./gradlew clean --parallel || ./gradlew clean --parallel || true
-          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
           should-run-codecov: ${{ contains('Linux', runner.os) }}
           should-deploy: false
-          should-validate-wrapper: ${{ contains('Linux', runner.os) }}
-  # Performs a dry-deployment if credentials are available
-  test-deploy:
-    needs:
-      - select-java-version
-    runs-on: ubuntu-22.04
-    if: >-
-      !github.event.repository.fork
-      && (
-        github.event_name != 'pull_request'
-        || github.event.pull_request.head.repo.full_name == github.repository
-      )
-    timeout-minutes: 120
-    concurrency:
-      group: ${{ github.workflow }}-test-deploy-${{ github.event.number || github.ref }}
-      cancel-in-progress: true
-    steps:
-      - name: Checkout
-        uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.12
-        with:
-          build-command: ./gradlew kotlinUpgradeYarnLock --parallel
-          check-command: true
-          deploy-command: |
-            COMMAND="./gradlew uploadJvm uploadJs uploadKotlinOSSRH uploadKotlinMultiplatform close drop --parallel"
-            eval "$COMMAND" || eval "$COMMAND" || eval "$COMMAND"
-          java-version: ${{ needs.select-java-version.outputs.java-version }}
-          should-run-codecov: false
-          should-deploy: true
           should-validate-wrapper: false
-          maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          signing-key: ${{ secrets.SIGNING_KEY }}
-          signing-password: ${{ secrets.SIGNING_PASSWORD }}
+
   # Builds the website and verifies link sanity
   build-website:
     needs:
-      - select-java-version
+      - ci-preparation
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     concurrency:
-      group: ${{ github.workflow }}-build-website-${{ github.event.number || github.ref }}
+      group: build-website-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.12
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
         with:
           build-command: |
             for i in 1 2 3 4 5; do
-              ./gradlew hugoBuild --parallel && break || sleep 120
+              ./gradlew ${{ needs.ci-preparation.outputs.force-version }} hugoBuild performWebsiteStringReplacements --parallel && break || sleep 120
               if [ "$i" = 5 ]; then
                 false
               fi
             done
           check-command: true
-          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
       - name: Tar files
         run: tar -cvf website.tar build/website
       - name: Upload website
-        uses: actions/upload-artifact@v4.0.0
+        uses: actions/upload-artifact@v4.3.1
         with:
-          name: website
+          name: website-${{ github.sha }}
           path: website.tar
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.12
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
         with:
-          build-command: |
+          build-command: ""
           check-command: |
             # Temporarily disable checks on kdoc/javadoc: too many bugs in Dokka.
             # See:
@@ -150,21 +147,310 @@ jobs:
                 false
               fi
             done
-          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
+
+  # Create a staging repository on Central
+  staging-repo:
+    runs-on: ubuntu-22.04
+    needs:
+      - ci-preparation
+    concurrency:
+      group: staging-repo-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: true
+    if: needs.ci-preparation.outputs.may-deploy
+    outputs:
+      repo-id: ${{ steps.staging-repo.outputs.MavenCentral }}
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4.1.1
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
+        with:
+          maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          should-run-codecov: false
+          should-deploy: true
+          build-command: true
+          check-command: true
+          deploy-command: |
+            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} createStagingRepositoryOnMavenCentral --parallel
+      - name: Save the staging repository ID
+        id: staging-repo
+        run: |
+          [[ -f build/staging-repo-ids.properties ]] || (
+            echo "Staging repositories ID file not found" &&
+            exit 1
+          )
+          REPO_IDS=$(cat build/staging-repo-ids.properties)
+          echo "Staging repositories IDs:\n$REPO_IDS"
+          echo $REPO_IDS >> $GITHUB_OUTPUT
+
+
+  # Assemble all artifacts and upload them
+  assemble-and-upload:
+    needs:
+      - ci-preparation
+      - staging-repo
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-2022, macos-12, ubuntu-22.04 ]
+    runs-on: ${{ matrix.os }}
+    # Run if:
+    # - The staging repository is ready
+    # - The staging repository cannot be created as there is no access to secrets
+    if: >-
+      always() && (
+        contains(needs.staging-repo.result, 'success') || (
+          contains(needs.*.result, 'skipped') && !needs.ci-preparation.outputs.may-deploy
+        )
+      )
+    timeout-minutes: 120
+    concurrency:
+      group: assemble-and-upload-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout with full history
+        uses: danysk/action-checkout@0.2.14
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
+        with:
+          signing-key: ${{ secrets.SIGNING_KEY }}
+          signing-password: ${{ secrets.SIGNING_PASSWORD }}
+          maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          should-run-codecov: false
+          should-deploy: ${{ contains('Linux', runner.os) && needs.ci-preparation.outputs.may-deploy }}
+          should-validate-wrapper: ${{ contains('Linux', runner.os) }}
+          pre-build-command: |
+            ./gradlew kotlinUpgradeYarnLock --parallel
+          build-command: |
+            # In case of issues with JPackage, run with --info
+            COMMAND='./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel'
+            for i in 1 2 3 4 5; do
+              $(echo $COMMAND) && break || sleep 5
+              if [ "$i" = 5 ]; then
+                false
+              fi
+            done
+          check-command: true
+          deploy-command: |
+            [ -n "${{ needs.staging-repo.outputs.repo-id }}" ] || (
+              echo "Staging repository ID not found" &&
+              exit 1
+            )
+            ./gradlew\
+              ${{ needs.ci-preparation.outputs.force-version }}\
+              -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
+              uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
+            ./gradlew\
+              ${{ needs.ci-preparation.outputs.force-version }}\
+              -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
+              uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
+            ./gradlew\
+              ${{ needs.ci-preparation.outputs.force-version }}\
+              -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
+              uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
+            #
+            # Drop the staging repository if the build is not a release
+            #
+            if [[ "${{ needs.ci-preparation.outputs.will-release }}" != "true" ]]; then
+              ./gradlew -PstagingRepositoryId=${{ needs.staging-repo.outputs.maven-central-repo-id }} drop --parallel
+            fi
+          clean-command: |
+            # Clean the build directory on Win and Mac
+            if [[ "${{ contains('Linux', runner.os) }}" == "false" ]]; then
+              rm -rf build/shadow/*
+            fi
+      - name: Upload fatjars built on Linux
+        if: ${{ runner.os == 'Linux' }}
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: fat-jars-${{ github.sha }}
+          path: build/shadow/*
+          if-no-files-found: error
+      - name: Upload the PKGBUILD
+        if: ${{ runner.os == 'Linux' }}
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: pkgbuild-${{ github.sha }}
+          path: build/pkgbuild/PKGBUILD
+          if-no-files-found: error
+      - name: Upload platform-specific packages
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: installer-package-${{ github.sha }}-${{ runner.os }}
+          path: build/package/*
+          if-no-files-found: error
+
+  test-windows-msi-installer:
+    needs:
+      - assemble-and-upload
+    runs-on: windows-2022
+    concurrency:
+      group: test-windows-msi-installer-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v4.1.2
+        with:
+          name: installer-package-${{ github.sha }}-${{ runner.os }}
+      - name: Install packages
+        shell: powershell
+        run: |
+          Get-ChildItem -Force | Format-Table -AutoSize
+          foreach ($file in Get-ChildItem -Filter *.msi) {
+            $log = "install.log"
+            $procMain = Start-Process "msiexec" "/i `"$file`" /qn /l*! `"$log`"" -NoNewWindow -PassThru
+            Start-Sleep -Seconds 1
+            $procLog = Start-Process "powershell" "Get-Content -Path `"$log`" -Wait" -NoNewWindow -PassThru 
+            $procMain.WaitForExit() 
+            $procLog.Kill()
+          }
+      - name: Print the logs
+        if: always()
+        run: cat install.log
+
+  test-linux-deb-installer:
+    needs:
+      - assemble-and-upload
+    runs-on: ubuntu-22.04
+    concurrency:
+      group: test-linux-deb-installer-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v4.1.2
+        with:
+          name: installer-package-${{ github.sha }}-${{ runner.os }}
+      - name: Work around xdg bug https://bugs.archlinux.org/task/33316
+        run: |
+          sudo mkdir /usr/share/desktop-directories/
+      - name: Install packages
+        run: |
+          ls -ahl
+          sudo apt update -y
+          sudo apt install gdebi-core
+          for installer in *.deb; do
+            sudo gdebi -n "$installer"
+          done
+      - name: Test installation
+        run: alchemist --help
+
+  test-linux-rpm-installer:
+    needs:
+      - assemble-and-upload
+    runs-on: ubuntu-22.04
+    container:
+      image: fedora:40
+    concurrency:
+      group: test-linux-rpm-installer-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v4.1.2
+        with:
+          name: installer-package-${{ github.sha }}-${{ runner.os }}
+      - name: Install packages
+        run: |
+          yum check-update || [ $? -eq 100 ]
+          for installer in *.rpm; do
+              yum -y localinstall "$installer"
+          done
+      - name: Test installation
+        run: /opt/alchemist/bin/alchemist --help
+
+        # Test PKGBUILD for AUR release
+  test-aur-package:
+    needs:
+      - ci-preparation
+      - assemble-and-upload
+    runs-on:  ubuntu-22.04
+    container:
+      image: archlinux:base-devel-20240101.0.204074
+    concurrency:
+      group: test-aur-release-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Setup arch
+        run: |
+          sudo pacman --noconfirm -Sy git namcap ruby sudo
+          useradd builduser -m
+          passwd -d builduser
+          echo "builduser ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
+          chmod 777 .
+      - run: git config --system --add safe.directory /__w/Alchemist/Alchemist # https://github.com/actions/checkout/issues/1169
+      - name: Download the PKGBUILD
+        uses: actions/download-artifact@v4.1.2
+        with:
+          pattern: pkgbuild-${{ github.sha }}
+          merge-multiple: true
+      - name: Check the PKGBUILD sanity
+        run: |
+          namcap PKGBUILD 2>&1
+          namcap PKGBUILD 2>&1 | awk 'END { exit (NR > 0 ? NR : 0) }'
+      - name: Download the RPM
+        uses: actions/download-artifact@v4.1.2
+        with:
+          pattern: installer-package-${{ github.sha }}-${{ runner.os }}
+          merge-multiple: true
+      - name: Replace the URL with the local rpm
+        run: |
+          ruby -e '
+            original_pkgbuild = File.read("PKGBUILD")
+            version = original_pkgbuild.match(/pkgver=(.*)/)[1]
+            pkgbuild_with_replaced_url = original_pkgbuild.gsub(
+              /source=(.*)/,
+              "source=(\"alchemist-#{version}-1.$CARCH.rpm\")"
+            )
+            File.write("PKGBUILD", pkgbuild_with_replaced_url)
+          '
+      - name: Makepkg
+        run: |
+          sudo -u builduser bash -c 'makepkg -sf --noconfirm'
+      - name: Check the package sanity
+        run: |
+          namcap *.pkg.tar* 2>&1 > namcap.log
+          cat namcap.log
+          ignored=(
+            "W: Referenced library 'libjvm.so' is an uninstalled dependency"
+            "W: Unused shared library '/usr/lib/libdl.so.2'"
+            "W: Unused shared library '/usr/lib/libm.so.6'"
+            "W: Unused shared library '/usr/lib/libnet.so'"
+            "W: Unused shared library '/usr/lib/libpthread.so.0'"
+            "W: Unused shared library '/usr/lib/librt.so.1'"
+            "lacks GNU_PROPERTY_X86_FEATURE_1_SHSTK"
+          )
+          for i in $ignored; do
+              echo "$i" >> ignored
+          done
+          ruby -e '
+            ignored = File.read("ignored").lines.map(&:chomp)
+            warnings = File.read("namcap.log").lines.reject { |line|
+              ignored.any? { |i| line.include?(i) }
+            }
+            puts warnings.join("\n")
+            exit warnings.size
+          '
+      - name: Test installation
+        run: |
+          sudo pacman -U --noconfirm *alchemist-*.pkg.tar*
+          alchemist --help
+
   # Performs a release if needed
   release:
+    needs:
+      - ci-preparation
+      - build
+      - build-website
+      - test-aur-package
+      - test-linux-deb-installer
+      - test-linux-rpm-installer
+      - test-windows-msi-installer
     concurrency:
       # Only one release job at a time per branch, as only master releases.
       # Strictly sequential.
-      group: release-${{ github.event.number || github.ref }}
-    needs:
-      - select-java-version
-      - build
-      - build-website
-      - test-deploy
+      group: release-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: false
     runs-on: ubuntu-22.04
     if: >-
       !github.event.repository.fork
@@ -174,7 +460,7 @@ jobs:
       )
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@v4.1.1
         with:
           submodules: recursive
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
@@ -188,19 +474,36 @@ jobs:
           repository: AlchemistSimulator/alchemistsimulator.github.io
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Download website artifact
-        uses: actions/download-artifact@v4.1.0
+        uses: actions/download-artifact@v4.1.2
         with:
-          name: website
-      - name: Find the version of Node from package.json
-        id: node-version
-        run: echo "version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
+          name: website-${{ github.sha }}
+      - name: Download packages
+        uses: actions/download-artifact@v4.1.2
+        with:
+          pattern: installer-package-${{ github.sha }}*
+          path: build/package/
+          merge-multiple: true
+      - name: Download fatJars
+        uses: actions/download-artifact@v4.1.2
+        with:
+          name: fat-jars-${{ github.sha }}
+          path: build/shadow/
+          merge-multiple: true
+      - name: Download the PKGBUILD
+        uses: actions/download-artifact@v4.1.2
+        with:
+          pattern: pkgbuild-${{ github.sha }}
+          path: pkgbuild/
+          merge-multiple: true
       - name: Install Node
         uses: actions/setup-node@v4.0.1
         with:
-          node-version: ${{ steps.node-version.outputs.version }}
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.12
+          node-version-file: package.json
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
+        env:
+          STAGING_REPO_ID: ${{ needs.staging-repo.outputs.maven-central-repo-id }}
         with:
-          java-version: ${{ needs.select-java-version.outputs.java-version }}
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
           build-command: |
             ls -ahl
             echo Copying the new website
@@ -224,13 +527,22 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
+          custom-secret-0: ${{ secrets.AUR_USERNAME }}
+          custom-secret-1: ${{ secrets.AUR_EMAIL }}
+          custom-secret-2: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
   success:
     runs-on: ubuntu-22.04
     needs:
+      - assemble-and-upload
       - build
       - build-website
+      - ci-preparation
       - release
-      - test-deploy
+      - staging-repo
+      - test-aur-package
+      - test-linux-deb-installer
+      - test-linux-rpm-installer
+      - test-windows-msi-installer
     if: >-
       always() && (
         contains(join(needs.*.result, ','), 'failure')

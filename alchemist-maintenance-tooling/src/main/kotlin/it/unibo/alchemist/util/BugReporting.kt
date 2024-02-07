@@ -28,7 +28,7 @@ object BugReporting {
             message +
                 """
                 
-                This is most likely a bug in in Alchemist. Please, open a report at:
+                This is likely a bug in in Alchemist. Please, open a report at:
                     --> https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
                 attaching the following information and the full stacktrace:
                 

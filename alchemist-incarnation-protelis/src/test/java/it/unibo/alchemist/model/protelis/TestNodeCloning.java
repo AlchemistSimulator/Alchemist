@@ -10,18 +10,17 @@ package it.unibo.alchemist.model.protelis;
 
 import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.OutputMonitor;
-import it.unibo.alchemist.core.Engine;
-import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.Loader;
-import it.unibo.alchemist.model.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.boundary.OutputMonitor;
+import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.Actionable;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
@@ -45,7 +44,6 @@ class TestNodeCloning<P extends Position<P>> {
     private static final Molecule SOURCEMOL = new SimpleMolecule("source");
     private static final Molecule ENABLEDMOL = new SimpleMolecule("enabled");
     private static final Molecule DATAMOL = new SimpleMolecule("data");
-    private static final long SIMULATED_STEPS = 5000;
     private static final long ENABLE_STEP = 50;
     private static final long ENABLE_CHECKS = ENABLE_STEP + 10;
     private Environment<Object, P> environment;
@@ -58,8 +56,8 @@ class TestNodeCloning<P extends Position<P>> {
     public void setUp() {
         final String pathYaml = "gradient.yml";
         final Loader loader = LoadAlchemist.from(ResourceLoader.getResource(pathYaml));
-        environment = loader.<Object, P>getWith(Collections.emptyMap()).getEnvironment();
-        simulation = new Engine<>(environment, SIMULATED_STEPS);
+        simulation = loader.getWith(Collections.emptyMap());
+        environment = simulation.getEnvironment();
     }
 
     private void makeNode(final double x, final double y, final boolean enabled, final boolean source) {

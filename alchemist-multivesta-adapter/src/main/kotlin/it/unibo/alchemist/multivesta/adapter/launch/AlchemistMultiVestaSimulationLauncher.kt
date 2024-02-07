@@ -10,7 +10,7 @@
 package it.unibo.alchemist.multivesta.adapter.launch
 
 import it.unibo.alchemist.boundary.Loader
-import it.unibo.alchemist.boundary.launchers.SimulationLauncher
+import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.multivesta.adapter.AlchemistMultiVesta
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Launches a single simulation run that can be controlled by MultiVesta.
  */
-class AlchemistMultiVestaSimulationLauncher : SimulationLauncher() {
+class AlchemistMultiVestaSimulationLauncher : DefaultLauncher() {
 
     private val logger = LoggerFactory.getLogger(AlchemistMultiVestaSimulationLauncher::class.java)
 
@@ -34,7 +34,7 @@ class AlchemistMultiVestaSimulationLauncher : SimulationLauncher() {
      * Launch the simulation and pause it immediately before step 0.
      */
     override fun launch(loader: Loader) {
-        simulation = prepareSimulation(loader, emptyMap<String, Any>())
+        simulation = loader.getDefault()
         logger.info("Simulation prepared")
         simulation.goToStep(-1) // configure the simulation to pause immediately before the first step
         Thread(simulation).start() // this will pause the simulation without executing any step

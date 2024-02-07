@@ -137,8 +137,13 @@ Instantiation is delegated to the [Java Implicit Reflective Factory](https://git
 
 **Type**: SpecMap
 
-The document contents at the root of the file. Builds an
-{{% api package="boundary" class="InitializedEnvironment" %}}.
+The document contents at the root of the file.
+Contains all the information required to buld a 
+{{% api package="boundary" class="Loader" %}},
+which, in turn, is able to spawn
+{{% api package="core" class="Simulation" %}}s
+through a
+{{% api package="boundary" class="Launcher" %}}.
 
 **(Multi)Spec**
 
@@ -478,15 +483,14 @@ Same as [parameters](#parameters)
 
 Builds a {{% api package="boundary" class="Launcher" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
-If unspecified, defaults to {{% api package="boundary.launchers" class="HeadlessSimulationLauncher" %}},
-and the simulation will be executed with no graphical interface attached.
+If unspecified, defaults to {{% api package="boundary.launchers" class="DefaultLauncher" %}},
+which runs the default simulation,
+unless the variable set on which the batch should be executed is specified.
 
-#### Examples
-
-* Creation of two {{% api class="Layer" %}}s
-  {{< code path="alchemist-loading/src/test/resources/synthetic/testlayer.yml" >}}
-* Creation of two {{% api package="model.layers" class="BidimensionalGaussianLayer" %}}s:
-  {{< code path="alchemist-cognitive-agents/src/test/resources/social-contagion.yml" >}}
+Customizing the launcher can be useful for implementing custom batch execution strategies,
+or "simulations of simulations",
+if the process requires multiple simulation "stages"
+(e.g., running a batch to train a neural network, then running another batch to test it).
 
 ---
 

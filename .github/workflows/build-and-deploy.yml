@@ -383,8 +383,7 @@ jobs:
           sudo pacman --noconfirm -Sy git namcap ruby sudo
           sudo chmod 777 .
           # Work around Unable to download artifact(s): EACCES: permission denied, open '/__w/_temp/...
-          sudo mkdir /__w
-          sudo chmod 777 /__w
+          sudo chmod -R 777 /__w
           # Work around https://github.com/actions/checkout/issues/1169
           # sudo git config --system --add safe.directory /__w/Alchemist/Alchemist
       - name: Download the PKGBUILD

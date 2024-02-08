@@ -164,7 +164,7 @@ jobs:
     concurrency:
       group: staging-repo-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
-    if: needs.ci-preparation.outputs.may-deploy
+    if: needs.ci-preparation.outputs.may-deploy == 'true'
     outputs:
       repo-id: ${{ steps.staging-repo.outputs.MavenCentral }}
     steps:
@@ -207,7 +207,7 @@ jobs:
     if: >-
       always() && (
         contains(needs.staging-repo.result, 'success') || (
-          contains(needs.*.result, 'skipped') && !needs.ci-preparation.outputs.may-deploy
+          contains(needs.staging-repo.result, 'skipped') && needs.ci-preparation.outputs.may-deploy == 'false'
         )
       )
     timeout-minutes: 120
@@ -223,13 +223,13 @@ jobs:
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           should-run-codecov: false
-          should-deploy: ${{ contains('Linux', runner.os) && needs.ci-preparation.outputs.may-deploy }}
+          should-deploy: ${{ contains('Linux', runner.os) && needs.ci-preparation.outputs.may-deploy == 'true' }}
           should-validate-wrapper: ${{ contains('Linux', runner.os) }}
           pre-build-command: |
             ./gradlew kotlinUpgradeYarnLock --parallel
           build-command: |
             # In case of issues with JPackage, run with --info
-            COMMAND='./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel'
+            COMMAND='./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --info --parallel'
             for i in 1 2 3 4 5; do
               $(echo $COMMAND) && break || sleep 5
               if [ "$i" = 5 ]; then
@@ -291,6 +291,8 @@ jobs:
       - assemble-and-upload
       - ci-preparation
     runs-on: windows-2022
+    if: >-
+      always() && contains(needs.*.result, 'success')
     concurrency:
       group: test-windows-msi-installer-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
@@ -320,6 +322,8 @@ jobs:
       - assemble-and-upload
       - ci-preparation
     runs-on: ubuntu-22.04
+    if: >-
+      always() && contains(needs.*.result, 'success')
     concurrency:
       group: test-linux-deb-installer-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
@@ -347,6 +351,8 @@ jobs:
       - assemble-and-upload
       - ci-preparation
     runs-on: ubuntu-22.04
+    if: >-
+      always() && contains(needs.*.result, 'success')
     container:
       image: fedora:40
     concurrency:
@@ -364,7 +370,7 @@ jobs:
               yum -y localinstall "$installer"
           done
       - name: Test installation
-        run: /opt/alchemist/bin/alchemist --help
+        run: alchemist --help
 
   # Test PKGBUILD for AUR release
   verify-aur-package:
@@ -372,6 +378,8 @@ jobs:
       - ci-preparation
       - assemble-and-upload
     runs-on:  ubuntu-22.04
+    if: >-
+      always() && contains(needs.*.result, 'success')
     container:
       image: ${{ needs.ci-preparation.outputs.makepkg-image }}
     concurrency:

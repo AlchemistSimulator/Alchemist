@@ -383,7 +383,7 @@ jobs:
           sudo pacman --noconfirm -Sy git namcap ruby sudo
           sudo chmod 777 .
       - name: Work around https://github.com/actions/checkout/issues/1169
-        run: git config --system --add safe.directory /__w/Alchemist/Alchemist
+        run: sudo git config --system --add safe.directory /__w/Alchemist/Alchemist
       - name: Download the PKGBUILD
         uses: actions/download-artifact@v4.1.2
         with:

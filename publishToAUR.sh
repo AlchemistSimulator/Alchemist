@@ -56,7 +56,7 @@ MAKEPKG_IMAGE="$(grep 'FROM danysk/makepkg' < deps-utils/Dockerfile | sed 's/FRO
     echo "AUR PUBLISHER: Reading the package version from PKGBUILD"
     version=$(< PKGBUILD grep pkgver | cut -d'=' -f 2 | tr -d ' ')
     echo "AUR PUBLISHER: Generate .SRCINFO for alchemist $version using $MAKEPKG_IMAGE"
-    docker run --rm -v "$aur_repo_dir:/pkg" "$MAKEPKG_IMAGE" makepkg --printsrcinfo > .SRCINFO
+    docker run --rm -v "$aur_repo_dir:/pkg:rw" "$MAKEPKG_IMAGE" makepkg --printsrcinfo > .SRCINFO
     echo "AUR PUBLISHER: Commit the update to version $version"
     git add -fv PKGBUILD .SRCINFO
     git commit -m "Update to version $version"

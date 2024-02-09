@@ -1,3 +1,20 @@
+## [30.1.4](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.3...30.1.4) (2024-02-09)
+
+
+### Bug Fixes
+
+* **aur:** use `sudo` to make the working directory writable ([7de22ec](https://github.com/AlchemistSimulator/Alchemist/commit/7de22ece74cef70417458f8db6a319e17e5d88de))
+* **release:** use a custom image to run makepkg ([0a992de](https://github.com/AlchemistSimulator/Alchemist/commit/0a992de0bd9c6906206ed9a0ec660f258f28e9e0))
+
+
+### Build and continuous integration
+
+* **aur:** configure git using sudo ([d92bb0c](https://github.com/AlchemistSimulator/Alchemist/commit/d92bb0cab01b14253ad9b51da47b8269a6869114))
+* **aur:** do not try to create `/__w` ([1e5dd17](https://github.com/AlchemistSimulator/Alchemist/commit/1e5dd178718c42a3ae5cf6658a50ebdc44d02534))
+* **aur:** try to make /__w writeable ([62a97c0](https://github.com/AlchemistSimulator/Alchemist/commit/62a97c0a50f943a5b82b1b1cf7b774ca8956ab4d))
+* **aur:** use root for all operations but makepkg ([fbf41f8](https://github.com/AlchemistSimulator/Alchemist/commit/fbf41f8de0efa4d217f94879072f7d3009f9bf41))
+* **deps:** update actions/setup-node action to v4.0.2 ([1e1e936](https://github.com/AlchemistSimulator/Alchemist/commit/1e1e9362a6db0f50a8d893148617a4e752345dee))
+
 ## [30.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.2...30.1.3) (2024-02-06)
 
 

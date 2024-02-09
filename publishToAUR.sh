@@ -51,7 +51,7 @@ git clone -v "https://aur.archlinux.org/${pkgname}.git" $aur_repo_dir
     # Retrieve the version from the PKGBUILD
     version=$(< PKGBUILD grep pkgver | cut -d'=' -f 2)
     echo "AUR PUBLISHER: read the image version to use"
-    MAKEPKG_IMAGE=$(grep 'FROM danysk/makepkg' < deps-utils/Dockerfile | sed 's/FROM //')"
+    MAKEPKG_IMAGE="$(grep 'FROM danysk/makepkg' < deps-utils/Dockerfile | sed 's/FROM //')"
     echo "AUR PUBLISHER: Generate .SRCINFO using $MAKEPKG_IMAGE"
     docker run --rm --workdir /pkgbuild -v "$aur_repo_dir:/pkgbuild" "$MAKEPKG_IMAGE" makepkg --printsrcinfo > .SRCINFO
     echo "AUR PUBLISHER: Commit the update to version $version"

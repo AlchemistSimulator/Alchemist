@@ -241,6 +241,10 @@
     "first": "https://javadoc.io/doc/commons-codec/commons-codec/1.16.0",
     "second": "https://javadoc.io/doc/commons-codec/commons-codec/1.16.0/package-list"
   },
+  "commons-codec/commons-codec/1.16.1": {
+    "first": "https://javadoc.io/doc/commons-codec/commons-codec/1.16.1",
+    "second": "https://javadoc.io/doc/commons-codec/commons-codec/1.16.1/element-list"
+  },
   "commons-io/commons-io/2.11.0": {
     "first": "https://javadoc.io/doc/commons-io/commons-io/2.11.0",
     "second": "https://javadoc.io/doc/commons-io/commons-io/2.11.0/package-list"

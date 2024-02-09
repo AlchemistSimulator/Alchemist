@@ -1,3 +1,10 @@
+## [30.1.9](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.8...30.1.9) (2024-02-09)
+
+
+### Bug Fixes
+
+* **aur:** mount `/pkg` read-write ([78b6ed7](https://github.com/AlchemistSimulator/Alchemist/commit/78b6ed786d584a6dc7c1fccb5a6ce3676a594458))
+
 ## [30.1.8](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.7...30.1.8) (2024-02-09)
 
 

@@ -1,3 +1,10 @@
+## [30.1.6](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.5...30.1.6) (2024-02-09)
+
+
+### Bug Fixes
+
+* **aur:** fix missing double quote in publication script ([7d65b36](https://github.com/AlchemistSimulator/Alchemist/commit/7d65b362a315a831a9cd2011b3af8e5f07ebb545))
+
 ## [30.1.5](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.4...30.1.5) (2024-02-09)
 
 

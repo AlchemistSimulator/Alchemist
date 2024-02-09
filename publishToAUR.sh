@@ -29,7 +29,7 @@ username="$2"
 email="$3"
 ssh_key="$4"
 
-echo "-- Setting up ssh configuration"
+echo "AUR PUBLISHER: Set up ssh"
 mkdir -p ~/.ssh
 touch ~/.ssh/known_hosts
 ssh-keyscan -v -t "rsa" aur.archlinux.org >> ~/.ssh/known_hosts
@@ -40,23 +40,22 @@ echo "Host aur.archlinux.org
     IdentityFile ~/.ssh/aur
     User $username" > ~/.ssh/config 
 
-echo "-- Cloning the AUR repository in $aur_repo_dir"
+echo "AUR PUBLISHER: Clone the AUR repository in $aur_repo_dir"
 git clone -v "https://aur.archlinux.org/${pkgname}.git" $aur_repo_dir
 
 (
-    cd $aur_repo_dir
+    cd "$aur_repo_dir"
     git config user.name "$username"
     git config user.email "$email"
-    cp -r "$main_repo_dir/$pkgbuild" $aur_repo_dir
+    cp -r "$main_repo_dir/$pkgbuild" "$aur_repo_dir"
     # Retrieve the version from the PKGBUILD
     version=$(< PKGBUILD grep pkgver | cut -d'=' -f 2)
-    docker run --rm -it --workdir /pkgbuild -v "$aur_repo_dir:/pkgbuild" danysk/makepkg:1.0.0 makepkg --printsrcinfo > .SRCINFO
-    echo "-- Committing the update to version $version"
-
+    echo "AUR PUBLISHER: Generate .SRCINFO"
+    docker run --rm --workdir /pkgbuild -v "$aur_repo_dir:/pkgbuild" danysk/makepkg:1.0.0 makepkg --printsrcinfo > .SRCINFO
+    echo "AUR PUBLISHER: Commit the update to version $version"
     git add -fv PKGBUILD .SRCINFO
     git commit -m "Update to version $version"
+    echo "AUR PUBLISHER: Publish version $version"
     git remote add aur "ssh://aur@aur.archlinux.org/${pkgname}.git"
-
-    echo "-- Publishing the version $version"
     git push -v aur master
 )

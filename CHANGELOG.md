@@ -1,3 +1,15 @@
+## [30.1.10](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.9...30.1.10) (2024-02-09)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.16 ([7ebaddf](https://github.com/AlchemistSimulator/Alchemist/commit/7ebaddf1794821b6552944da7b16e2c8c2ffe5c8))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([f596bee](https://github.com/AlchemistSimulator/Alchemist/commit/f596beeb3b78072f3bae5d1d4a3f89aa9b8b0e13))
+
 ## [30.1.9](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.8...30.1.9) (2024-02-09)
 
 

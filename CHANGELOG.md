@@ -1,3 +1,16 @@
+## [30.1.5](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.4...30.1.5) (2024-02-09)
+
+
+### Dependency updates
+
+* **deps:** update react to v18.2.0-pre.695 ([3d64b65](https://github.com/AlchemistSimulator/Alchemist/commit/3d64b65f0bce410d85f702d99a9f1232536507fe))
+
+
+### Bug Fixes
+
+* **aur:** do not use `-it` when generating ``.SRCINFO` via docker ([59e8048](https://github.com/AlchemistSimulator/Alchemist/commit/59e8048375e8a0ef0dac4e4a94013211cd18c100))
+* **aur:** read the image version to be used from the dependencies Dockerfile ([982e1ed](https://github.com/AlchemistSimulator/Alchemist/commit/982e1edd0ab91989c5bfbe0899e8161e68ca49cc))
+
 ## [30.1.4](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.3...30.1.4) (2024-02-09)
 
 

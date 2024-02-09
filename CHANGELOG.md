@@ -1,3 +1,15 @@
+## [30.1.7](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.6...30.1.7) (2024-02-09)
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 4847e37 ([5b90219](https://github.com/AlchemistSimulator/Alchemist/commit/5b90219e29978bb865396dffed073898848c3ceb))
+
+
+### Bug Fixes
+
+* **aur:** compute the docker image name before entering the AUR repo clone ([4ace345](https://github.com/AlchemistSimulator/Alchemist/commit/4ace345ac0cd64f4f2fc52ea2d04b3ee014411e9))
+
 ## [30.1.6](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.5...30.1.6) (2024-02-09)
 
 

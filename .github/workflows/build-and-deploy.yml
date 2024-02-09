@@ -223,7 +223,7 @@ jobs:
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           should-run-codecov: false
-          should-deploy: ${{ contains('Linux', runner.os) && needs.ci-preparation.outputs.may-deploy == 'true' }}
+          should-deploy: ${{ contains('Linux', runner.os) && needs.ci-preparation.outputs.may-deploy }}
           should-validate-wrapper: ${{ contains('Linux', runner.os) }}
           pre-build-command: |
             ./gradlew kotlinUpgradeYarnLock --parallel

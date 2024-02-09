@@ -1,3 +1,10 @@
+## [30.1.8](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.7...30.1.8) (2024-02-09)
+
+
+### Bug Fixes
+
+* **aur:** mount the PKGBUILD on `/pkg` ([ae12906](https://github.com/AlchemistSimulator/Alchemist/commit/ae12906d678878aa117adbb80c97ed4c62e9274b))
+
 ## [30.1.7](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.6...30.1.7) (2024-02-09)
 
 

@@ -45,18 +45,7 @@ install -d -m 755 %{buildroot}/usr/lib/%{name}
 
 cp -r %{_sourcedir}/opt/%{name} %{buildroot}/usr/lib/
 
-#%define license_install_file %{_defaultlicensedir}/%{name}-%{version}/
-#install -d -m 755 "%{buildroot}%{dirname:%{license_install_file}}"
-#install -m 644 "/home/zimbrando/Projects/Alchemist/LICENSE.md" "%{buildroot}%{license_install_file}"
-#(cd %{buildroot} && find . -type d) | sed -e 's/^\.//' -e '/^$/d' | sort > %{app_filelist}
-#{ rpm -ql filesystem || echo %{default_filesystem}; } | sort > %{filesystem_filelist}
-#comm -23 %{app_filelist} %{filesystem_filelist} > %{package_filelist}
-#sed -i -e 's/.*/%dir "&"/' %{package_filelist}
-#(cd %{buildroot} && find . -not -type d) | sed -e 's/^\.//' -e 's/.*/"&"/' >> %{package_filelist}
-#sed -i -e 's|"%{license_install_file}"||' -e '/^$/d' %{package_filelist}
-
 %files
-#%{_bindir}/%{name}
 /usr/lib/%{name}
 #%license "%{license_install_file}"
 

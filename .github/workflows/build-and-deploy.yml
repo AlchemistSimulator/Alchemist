@@ -382,16 +382,17 @@ jobs:
       always() && contains(needs.*.result, 'success')
     container:
       image: ${{ needs.ci-preparation.outputs.makepkg-image }}
+      options: --user root
     concurrency:
       group: test-aur-release-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Setup arch
         run: |
-          sudo pacman --noconfirm -Sy git namcap ruby sudo
+          pacman --noconfirm -Sy git namcap ruby sudo
           sudo chmod 777 .
           # Work around Unable to download artifact(s): EACCES: permission denied, open '/__w/_temp/...
-          sudo chmod -R 777 /__w
+          # sudo chmod -R 777 /__w
           # Work around https://github.com/actions/checkout/issues/1169
           # sudo git config --system --add safe.directory /__w/Alchemist/Alchemist
       - name: Download the PKGBUILD
@@ -421,7 +422,7 @@ jobs:
           '
       - name: Makepkg
         run: |
-          sudo -u builduser bash -c 'makepkg -sf --noconfirm'
+          sudo -u builder bash -c 'makepkg -sf --noconfirm'
       - name: Check the package sanity
         run: |
           namcap *.pkg.tar* 2>&1 > namcap.log
@@ -448,7 +449,7 @@ jobs:
           '
       - name: Test installation
         run: |
-          sudo pacman -U --noconfirm *alchemist-*.pkg.tar*
+          pacman -U --noconfirm *alchemist-*.pkg.tar*
           alchemist --help
 
   # Performs a release if needed

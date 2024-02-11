@@ -43,6 +43,9 @@ echo "Host aur.archlinux.org
 echo "AUR PUBLISHER: Clone the AUR repository in $aur_repo_dir"
 git clone -v "https://aur.archlinux.org/${pkgname}.git" $aur_repo_dir
 
+echo "AUR PUBLISHER: Make $aur_repo_dir writeable"
+chmod 777 $aur_repo_dir
+
 echo "AUR PUBLISHER: read the image version to use"
 MAKEPKG_IMAGE="$(grep 'FROM danysk/makepkg' < deps-utils/Dockerfile | sed 's/FROM //')"
 (

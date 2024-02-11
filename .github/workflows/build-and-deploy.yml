@@ -75,7 +75,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.1
         with:
           pre-build-command: true
           build-command: |
@@ -101,7 +101,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.1
         with:
           build-command: |
             for i in 1 2 3 4 5; do
@@ -122,7 +122,7 @@ jobs:
         with:
           name: website-${{ github.sha }}
           path: website.tar
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.1
         with:
           build-command: ""
           check-command: |
@@ -170,7 +170,7 @@ jobs:
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4.1.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.1
         with:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           should-run-codecov: false
@@ -217,7 +217,7 @@ jobs:
     steps:
       - name: Checkout with full history
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.1
         with:
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
@@ -508,7 +508,7 @@ jobs:
         uses: actions/setup-node@v4.0.2
         with:
           node-version-file: package.json
-      - uses: DanySK/build-check-deploy-gradle-action@2.2.20
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.1
         env:
           STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
           MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}

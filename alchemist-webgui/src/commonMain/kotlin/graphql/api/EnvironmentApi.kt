@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.Flow
 
 object EnvironmentApi {
 
-    suspend fun retrieveQuery(nodeId: Int = 0): Deferred<NodeQuery.Data?> = coroutineScope {
+    suspend fun nodeQuery(nodeId: Int = 0): Deferred<NodeQuery.Data?> = coroutineScope {
         async {
             ClientConnection.client.query(NodeQuery(id = Optional.present(nodeId))).execute().data
         }

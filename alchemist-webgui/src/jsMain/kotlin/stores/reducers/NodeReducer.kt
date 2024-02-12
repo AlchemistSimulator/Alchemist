@@ -7,11 +7,15 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package stores.states
+package stores.reducers
 
-import components.content.shared.CommonProperties.RenderProperties.DEFAULT_SCALE
+import stores.actions.NodeStateAction
+import stores.states.NodeState
 
-data class ScaleTranslateState(
-    var scale: Double = DEFAULT_SCALE,
-    var translate: Pair<Double, Double> = Pair(0.0, 0.0),
-)
+fun nodeReducer(state: NodeState, action: NodeStateAction): NodeState {
+    when (action) {
+        is NodeStateAction.SetNode -> {
+            return state.copy(node = action.node)
+        }
+    }
+}

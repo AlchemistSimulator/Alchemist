@@ -1,4 +1,5 @@
 import Libs.alchemist
+import Libs.incarnation
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
@@ -10,7 +11,6 @@ plugins {
     application
     alias(libs.plugins.kotest.multiplatform)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ktor)
     alias(libs.plugins.graphql.server)
     alias(libs.plugins.graphql.client)
 
@@ -22,33 +22,7 @@ repositories {
     mavenLocal()
 }
 
-/*dependencies {
-    implementation(alchemist("graphql"))
-    implementation(alchemist("api"))
-    implementation(alchemist("full"))
-
-    implementation(libs.apollo.runtime)
-    implementation(libs.kotlin.coroutines.core)
-    implementation(libs.kotlinx.serialization.json)
-
-    implementation(libs.ktor.server.websockets)
-    implementation(libs.bundles.graphql.server)
-    implementation(libs.bundles.ktor.server)
-
-    implementation(libs.kotest.runner)
-    implementation(libs.ktor.server.test.host)
-}*/
-
-/*application {
-    mainClass.set("it.unibo.alchemist.Alchemist")
-}*/
-
 val task by tasks.register<JavaExec>("runWEB") {
-    dependencies {
-        implementation(alchemist("graphql"))
-        implementation(alchemist("api"))
-        implementation(alchemist("full"))
-    }
     group = alchemistGroup
     description = "Launches simulation"
 
@@ -60,18 +34,16 @@ val task by tasks.register<JavaExec>("runWEB") {
 
     args("run", "C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/yaml/" + simulationFile.get())
 
-    doFirst {
-        val libsDir = "C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/Alchemist fork/Alchemist/alchemist-graphql/build/libs/"
-        classpath(
-            sourceSets["main"].runtimeClasspath,
-            fileTree(libsDir) {
-                include("**/*.jar")
-                include("**/*.klib")
-            },
-        )
-    }
-
-    // classpath(tasks.named("compileKotlinJvm"), configurations.named("jvmRuntimeClasspath"))
+    classpath(
+        tasks.named("compileKotlinJvm"),
+        configurations.named("jvmRuntimeClasspath"),
+        tasks.named("jsBrowserProductionWebpack").flatMap { it.outputs.files.elements },
+        tasks.named("jsBrowserDistribution").flatMap { it.outputs.files.elements },
+        project(":alchemist-graphql")
+            .tasks.named("generateAlchemist-graphqlApolloSources")
+            .flatMap { it.outputs.files.elements },
+    )
+    // dependsOn(tasks.named(":alchemist-graphql:generateAlchemist-graphqlApolloSources"))
 }
 
 kotlin {
@@ -146,20 +118,15 @@ kotlin {
             }
         }*/
 
-        /*val jvmMain by getting {
+        val jvmMain by getting {
             dependencies {
-                implementation(alchemist("graphql"))
+                implementation(incarnation("sapere"))
+                implementation(incarnation("protelis"))
+                implementation(alchemist("cognitive-agents"))
+                implementation("io.ktor:ktor-server-html-builder:2.3.8")
                 implementation(libs.bundles.ktor.server)
-                implementation(libs.logback)
-                implementation(libs.resourceloader)
-                implementation(libs.apollo.runtime)
-                implementation(libs.korim)
-                implementation(libs.kotlin.stdlib)
-                implementation(libs.kotlinx.serialization.json)
-                implementation(libs.ktor.client.core)
-                implementation(libs.redux.kotlin.threadsafe)
             }
-        }*/
+        }
 
         val jsMain by getting {
             dependencies {

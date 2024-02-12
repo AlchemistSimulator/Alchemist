@@ -7,6 +7,8 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package components.navbar
+package stores.states
 
-class NavTitle
+import it.unibo.alchemist.boundary.graphql.client.NodeQuery
+
+data class NodeState(val node: NodeQuery.Data? = null)

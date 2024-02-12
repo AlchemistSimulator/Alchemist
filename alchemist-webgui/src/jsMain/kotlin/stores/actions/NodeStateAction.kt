@@ -7,11 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package stores.states
+package stores.actions
 
-import components.content.shared.CommonProperties.RenderProperties.DEFAULT_SCALE
+import io.kvision.redux.RAction
+import it.unibo.alchemist.boundary.graphql.client.NodeQuery
 
-data class ScaleTranslateState(
-    var scale: Double = DEFAULT_SCALE,
-    var translate: Pair<Double, Double> = Pair(0.0, 0.0),
-)
+sealed class NodeStateAction : RAction {
+    data class SetNode(val node: NodeQuery.Data?) : NodeStateAction()
+}

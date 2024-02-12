@@ -13,20 +13,21 @@ import io.kvision.redux.createTypedReduxStore
 import io.kvision.state.ObservableValue
 import stores.reducers.scaleTranslateReducer
 import stores.states.ScaleTranslateState
+import utils.randomColor
 
 class CommonProperties {
 
     object RenderProperties {
-        private const val SCALE_ITERATIONS = 25
+        private const val SCALE_ITERATIONS = 100
         const val DEFUALT_NODE_RADIUS = 10.0
         const val DEFAULT_HEIGHT = 875.0
-        const val DEFAULT_WIDTH = 1375.0
+        const val DEFAULT_WIDTH = 1350.0 // 1375.0
         const val DEFAULT_SCALE = 1.0
         const val DEFAULT_START_POSITION = 0
-        const val DEFAULT_SCALE_RATIO = 0.8
-        const val DEFAULT_NODE_COLOR = "#FF0000"
+        const val DEFAULT_SCALE_RATIO = 0.9
         const val MIN_SCALE = 1.0
-        const val MAX_SCALE = MIN_SCALE * (1/DEFAULT_SCALE_RATIO) * SCALE_ITERATIONS
+        const val MAX_SCALE = MIN_SCALE * (1 / DEFAULT_SCALE_RATIO) * SCALE_ITERATIONS
+        val DEFAULT_NODE_COLOR = randomColor()
     }
 
     object Observables {

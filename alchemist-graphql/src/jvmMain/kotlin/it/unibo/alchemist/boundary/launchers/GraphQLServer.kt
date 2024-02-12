@@ -33,7 +33,7 @@ import kotlinx.coroutines.sync.Semaphore
  * By default, the server is stopped after the simulation terminates.
  * This behavior can be changed by setting [teardownOnSimulationTermination] to false.
  */
-class GraphQLServer<T, P : Position<out P>> @JvmOverloads constructor(
+open class GraphQLServer<T, P : Position<out P>> @JvmOverloads constructor(
     val environment: Environment<T, P>,
     val host: String = DefaultGraphQLSettings.DEFAULT_HOST,
     val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,

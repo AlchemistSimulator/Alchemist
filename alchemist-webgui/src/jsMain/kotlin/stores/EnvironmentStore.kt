@@ -11,7 +11,8 @@ package stores
 
 import graphql.api.EnvironmentApi
 import io.kvision.redux.createTypedReduxStore
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import stores.actions.EnvironmentStateAction
 import stores.reducers.environmentReducer
@@ -22,13 +23,12 @@ object EnvironmentStore {
     val store = createTypedReduxStore(::environmentReducer, EnvironmentState(mutableListOf()))
 
     fun callEnvironmentSubscription() {
-        MainScope().launch {
-            println("COROUTINE[callEnvironmentSubscription]: Started")
-            EnvironmentApi.environMentSubScription().collect { response ->
-
-                store.dispatch(EnvironmentStateAction.AddAllNodes(response.data!!.environment.nodeToPos.entries))
+        CoroutineScope(Dispatchers.Default).launch {
+            println("COROUTINE[callEnvironmentSubscription]: Environmnent subscription started")
+            EnvironmentApi.environMentSubScription().collect {
+                store.dispatch(EnvironmentStateAction.AddAllNodes(it.data?.environment?.nodeToPos!!.entries))
             }
-            println("COROUTINE[callEnvironmentSubscription]: Ended")
+            println("COROUTINE[callEnvironmentSubscription]: Environmnent subscription ended")
         }
     }
 }

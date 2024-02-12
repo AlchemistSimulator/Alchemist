@@ -195,7 +195,7 @@ jobs:
     if: >-
       always() && (
         contains(needs.staging-repo.result, 'success') || (
-          contains(needs.*.result, 'skipped') && !${{ fromJSON(needs.ci-preparation.outputs.may-deploy) }}
+          contains(needs.*.result, 'skipped') && ${{ !fromJSON(needs.ci-preparation.outputs.may-deploy) }}
         )
       )
     timeout-minutes: 120

@@ -19,7 +19,6 @@ import io.kvision.core.Color
 import io.kvision.core.FlexDirection
 import io.kvision.core.FlexWrap
 import io.kvision.core.JustifyContent
-import io.kvision.html.div
 import io.kvision.panel.SimplePanel
 import io.kvision.panel.flexPanel
 import io.kvision.panel.hPanel
@@ -58,7 +57,6 @@ open class Content(className: String = "") : SimplePanel(className = className) 
             ) {
                 width = 520.px
                 height = 95.perc
-                // border = Border(width = 1.px, BorderStyle.SOLID, Color("#ff0000"))
                 add(
                     SimulationIndicators(className = "simulation-indicators").apply {
                         width = 100.perc

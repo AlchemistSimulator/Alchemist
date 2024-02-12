@@ -16,6 +16,7 @@ jobs:
       group: ci-preparation-${{ github.workflow }}-${{ github.event.number || github.ref }}
       cancel-in-progress: true
     outputs:
+      makepkg-image: ${{ steps.makepkg-image.outputs.image-name }}
       build-ref: ${{ steps.ci-preparation.outputs.build-ref }}
       force-version: ${{ steps.force-version.outputs.version }}
       java-version: ${{ steps.java-version.outputs.java-version }}
@@ -40,7 +41,7 @@ jobs:
         id: java-version
         run: ruby -e 'puts("java-version=#{/^minJavaVersion\s*=\s*(\d+)$/.match(File.read("gradle.properties"))[1]}")' >> $GITHUB_OUTPUT
       - name: Install Node
-        uses: actions/setup-node@v4.0.1
+        uses: actions/setup-node@v4.0.2
         with:
           node-version-file: package.json
       - name: Compute the next release version
@@ -54,6 +55,9 @@ jobs:
           if [[ "${{ steps.compute-next-version.outputs.will-release }}" == "true" ]]; then
               echo 'version=-PforceVersion=${{ steps.compute-next-version.outputs.next-version }}' >> $GITHUB_OUTPUT
           fi
+      - name: fetch the image name for makepkg
+        id: makepkg-image
+        run: echo "image-name=$(grep 'FROM danysk/makepkg' < deps-utils/Dockerfile | sed 's/FROM //')" >> $GITHUB_OUTPUT
 
   # Testing and static analysis
   build:
@@ -254,7 +258,7 @@ jobs:
             # Drop the staging repository if the build is not a release
             #
             if [[ "${{ needs.ci-preparation.outputs.will-release }}" != "true" ]]; then
-              ./gradlew -PstagingRepositoryId=${{ needs.staging-repo.outputs.maven-central-repo-id }} drop --parallel
+              ./gradlew -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }} drop --parallel
             fi
           clean-command: |
             # Clean the build directory on Win and Mac
@@ -285,9 +289,10 @@ jobs:
   test-windows-msi-installer:
     needs:
       - assemble-and-upload
+      - ci-preparation
     runs-on: windows-2022
     concurrency:
-      group: test-windows-msi-installer-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      group: test-windows-msi-installer-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Download packages
@@ -313,9 +318,10 @@ jobs:
   test-linux-deb-installer:
     needs:
       - assemble-and-upload
+      - ci-preparation
     runs-on: ubuntu-22.04
     concurrency:
-      group: test-linux-deb-installer-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      group: test-linux-deb-installer-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Download packages
@@ -339,11 +345,12 @@ jobs:
   test-linux-rpm-installer:
     needs:
       - assemble-and-upload
+      - ci-preparation
     runs-on: ubuntu-22.04
     container:
       image: fedora:40
     concurrency:
-      group: test-linux-rpm-installer-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
+      group: test-linux-rpm-installer-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Download packages
@@ -359,26 +366,27 @@ jobs:
       - name: Test installation
         run: /opt/alchemist/bin/alchemist --help
 
-        # Test PKGBUILD for AUR release
-  test-aur-package:
+  # Test PKGBUILD for AUR release
+  verify-aur-package:
     needs:
       - ci-preparation
       - assemble-and-upload
     runs-on:  ubuntu-22.04
     container:
-      image: archlinux:base-devel-20240101.0.204074
+      image: ${{ needs.ci-preparation.outputs.makepkg-image }}
+      options: --user root
     concurrency:
       group: test-aur-release-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
     steps:
       - name: Setup arch
         run: |
-          sudo pacman --noconfirm -Sy git namcap ruby sudo
-          useradd builduser -m
-          passwd -d builduser
-          echo "builduser ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
-          chmod 777 .
-      - run: git config --system --add safe.directory /__w/Alchemist/Alchemist # https://github.com/actions/checkout/issues/1169
+          pacman --noconfirm -Sy git namcap ruby sudo
+          sudo chmod 777 .
+          # Work around Unable to download artifact(s): EACCES: permission denied, open '/__w/_temp/...
+          # sudo chmod -R 777 /__w
+          # Work around https://github.com/actions/checkout/issues/1169
+          # sudo git config --system --add safe.directory /__w/Alchemist/Alchemist
       - name: Download the PKGBUILD
         uses: actions/download-artifact@v4.1.2
         with:
@@ -406,7 +414,7 @@ jobs:
           '
       - name: Makepkg
         run: |
-          sudo -u builduser bash -c 'makepkg -sf --noconfirm'
+          sudo -u builder bash -c 'makepkg -sf --noconfirm'
       - name: Check the package sanity
         run: |
           namcap *.pkg.tar* 2>&1 > namcap.log
@@ -433,7 +441,7 @@ jobs:
           '
       - name: Test installation
         run: |
-          sudo pacman -U --noconfirm *alchemist-*.pkg.tar*
+          pacman -U --noconfirm *alchemist-*.pkg.tar*
           alchemist --help
 
   # Performs a release if needed
@@ -442,7 +450,8 @@ jobs:
       - ci-preparation
       - build
       - build-website
-      - test-aur-package
+      - staging-repo
+      - verify-aur-package
       - test-linux-deb-installer
       - test-linux-rpm-installer
       - test-windows-msi-installer
@@ -496,12 +505,13 @@ jobs:
           path: pkgbuild/
           merge-multiple: true
       - name: Install Node
-        uses: actions/setup-node@v4.0.1
+        uses: actions/setup-node@v4.0.2
         with:
           node-version-file: package.json
       - uses: DanySK/build-check-deploy-gradle-action@2.2.20
         env:
-          STAGING_REPO_ID: ${{ needs.staging-repo.outputs.maven-central-repo-id }}
+          STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
+          MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}
         with:
           java-version: ${{ needs.ci-preparation.outputs.java-version }}
           build-command: |
@@ -539,7 +549,7 @@ jobs:
       - ci-preparation
       - release
       - staging-repo
-      - test-aur-package
+      - verify-aur-package
       - test-linux-deb-installer
       - test-linux-rpm-installer
       - test-windows-msi-installer

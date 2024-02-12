@@ -43,7 +43,6 @@ val task by tasks.register<JavaExec>("runWEB") {
             .tasks.named("generateAlchemist-graphqlApolloSources")
             .flatMap { it.outputs.files.elements },
     )
-    // dependsOn(tasks.named(":alchemist-graphql:generateAlchemist-graphqlApolloSources"))
 }
 
 kotlin {

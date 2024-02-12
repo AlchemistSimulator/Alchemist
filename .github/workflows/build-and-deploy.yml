@@ -119,35 +119,39 @@ jobs:
         with:
           name: website-${{ github.sha }}
           path: website.tar
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.1
-        with:
-          retries-on-failure: 5
-          wait-between-retries: 3
-          build-command: ""
-          check-command: |
-            # Temporarily disable checks on kdoc/javadoc: too many bugs in Dokka.
-            # See:
-            # https://github.com/Kotlin/dokka/issues/2320
-            # https://github.com/Kotlin/dokka/issues/2321
-            # https://github.com/Kotlin/dokka/issues/2322
-            # https://github.com/Kotlin/dokka/issues/2323
-            # Once everything gets fixed, lychee could simply run on '/website/**/*.html'
-            FILES="$(
-              find build/website/ -name '*.html' |
-              grep -v /kdoc/ |
-              grep -v /javadoc/ |
-              grep -v /tags/ |
-              sed -e 's#^build##'
-            )"
-            for file in $FILES; do
-              # Ignore all meta tags containing absolute links
-              perl -i -pe 's/<meta.*\"http.*\".*>//g' "build/$file"
-            done
-            docker run --rm -v "$(pwd)/build/website:/website" -e GITHUB_TOKEN lycheeverse/lychee:0.10.3 $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 403,429,500,502,503
-          java-version: ${{ needs.ci-preparation.outputs.java-version }}
-          should-run-codecov: false
-          should-deploy: false
-          should-validate-wrapper: false
+      - run: |
+          # Temporarily disable checks on kdoc/javadoc: too many bugs in Dokka.
+          # See:
+          # https://github.com/Kotlin/dokka/issues/2320
+          # https://github.com/Kotlin/dokka/issues/2321
+          # https://github.com/Kotlin/dokka/issues/2322
+          # https://github.com/Kotlin/dokka/issues/2323
+          # Once everything gets fixed, lychee could simply run on '/website/**/*.html'
+          FILES="$(
+            find build/website/ -name '*.html' |
+            grep -v /kdoc/ |
+            grep -v /javadoc/ |
+            grep -v /tags/ |
+            sed -e 's#^build##'
+          )"
+          for file in $FILES; do
+            # Ignore all meta tags containing absolute links
+            perl -i -pe 's/<meta.*\"http.*\".*>//g' "build/$file"
+          done
+          for attempt in $(seq 1 5); do
+            echo "Attempt $attempt/5"
+            docker run\
+              --rm
+              -v "$(pwd)/build/website:/website"\
+              -e GITHUB_TOKEN\
+              lycheeverse/lychee:0.10.3\
+              $(echo "$FILES")\
+              --exclude-file /website/lycheeignore\
+              -m 100\
+              --accept 403,429,500,502,503\
+              && break || sleep 120
+            if [ "$attempt" = "${{ inputs.retries-on-failure}}" ]; then false; fi
+          done
 
   # Create a staging repository on Central
   staging-repo:

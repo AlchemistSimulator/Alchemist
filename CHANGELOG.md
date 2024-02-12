@@ -1,3 +1,67 @@
+## [30.1.11](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.10...30.1.11) (2024-02-12)
+
+
+### Dependency updates
+
+* **deps:** update dependency commons-codec:commons-codec to v1.16.1 ([68caece](https://github.com/AlchemistSimulator/Alchemist/commit/68caece30d7dc386a2d74806f7453d995eb54d3a))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 4a7871a ([dba6780](https://github.com/AlchemistSimulator/Alchemist/commit/dba67807d636c0a32bcb4a20f7c1b945917ffd91))
+* **deps:** update plugin kotlin-qa to v0.60.1 ([faf0e23](https://github.com/AlchemistSimulator/Alchemist/commit/faf0e2325b4d005e1e10d1f2b9f478acd6370ddd))
+* **deps:** update react to v18.2.0-pre.696 ([58b7a60](https://github.com/AlchemistSimulator/Alchemist/commit/58b7a60814db1a3f8bf7969d0ce667f06b7c9f04))
+* **deps:** update site/themes/hugo-theme-relearn digest to 4bc5529 ([04d9afc](https://github.com/AlchemistSimulator/Alchemist/commit/04d9afc190a6ca91ba27908dcfefe61dab7b419b))
+
+
+### Bug Fixes
+
+* **aur:** make the `PKGBUILD` directory writeable before running `makepkg` ([7f94d45](https://github.com/AlchemistSimulator/Alchemist/commit/7f94d457990e619450844047ff464eb16480e55c))
+
+
+### Build and continuous integration
+
+* **aur:** fix print and surround path with double quotes ([ad75919](https://github.com/AlchemistSimulator/Alchemist/commit/ad75919608427583c094ba496a008d31539d86c0))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([5588856](https://github.com/AlchemistSimulator/Alchemist/commit/5588856aaa14ee6254b1c6b325afe502efb48a3e))
+
+## [30.1.10](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.9...30.1.10) (2024-02-09)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.16 ([7ebaddf](https://github.com/AlchemistSimulator/Alchemist/commit/7ebaddf1794821b6552944da7b16e2c8c2ffe5c8))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([f596bee](https://github.com/AlchemistSimulator/Alchemist/commit/f596beeb3b78072f3bae5d1d4a3f89aa9b8b0e13))
+
+## [30.1.9](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.8...30.1.9) (2024-02-09)
+
+
+### Bug Fixes
+
+* **aur:** mount `/pkg` read-write ([78b6ed7](https://github.com/AlchemistSimulator/Alchemist/commit/78b6ed786d584a6dc7c1fccb5a6ce3676a594458))
+
+## [30.1.8](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.7...30.1.8) (2024-02-09)
+
+
+### Bug Fixes
+
+* **aur:** mount the PKGBUILD on `/pkg` ([ae12906](https://github.com/AlchemistSimulator/Alchemist/commit/ae12906d678878aa117adbb80c97ed4c62e9274b))
+
+## [30.1.7](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.6...30.1.7) (2024-02-09)
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 4847e37 ([5b90219](https://github.com/AlchemistSimulator/Alchemist/commit/5b90219e29978bb865396dffed073898848c3ceb))
+
+
+### Bug Fixes
+
+* **aur:** compute the docker image name before entering the AUR repo clone ([4ace345](https://github.com/AlchemistSimulator/Alchemist/commit/4ace345ac0cd64f4f2fc52ea2d04b3ee014411e9))
+
 ## [30.1.6](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.5...30.1.6) (2024-02-09)
 
 

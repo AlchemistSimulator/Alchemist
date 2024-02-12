@@ -195,7 +195,7 @@ jobs:
     if: >-
       always() && (
         contains(needs.staging-repo.result, 'success') || (
-          contains(needs.staging-repo.result, 'skipped') && needs.ci-preparation.outputs.may-deploy == 'false'
+          contains(needs.*.result, 'skipped') && !needs.ci-preparation.outputs.may-deploy
         )
       )
     timeout-minutes: 120

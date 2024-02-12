@@ -103,13 +103,10 @@ jobs:
         uses: danysk/action-checkout@0.2.14
       - uses: DanySK/build-check-deploy-gradle-action@2.4.1
         with:
+          retries-on-failure: 5
+          wait-between-retries: 120
           build-command: |
-            for i in 1 2 3 4 5; do
-              ./gradlew ${{ needs.ci-preparation.outputs.force-version }} hugoBuild performWebsiteStringReplacements --parallel && break || sleep 120
-              if [ "$i" = 5 ]; then
-                false
-              fi
-            done
+            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} hugoBuild performWebsiteStringReplacements --parallel && break
           check-command: true
           java-version: ${{ needs.ci-preparation.outputs.java-version }}
           should-run-codecov: false
@@ -124,6 +121,8 @@ jobs:
           path: website.tar
       - uses: DanySK/build-check-deploy-gradle-action@2.4.1
         with:
+          retries-on-failure: 5
+          wait-between-retries: 3
           build-command: ""
           check-command: |
             # Temporarily disable checks on kdoc/javadoc: too many bugs in Dokka.
@@ -144,13 +143,7 @@ jobs:
               # Ignore all meta tags containing absolute links
               perl -i -pe 's/<meta.*\"http.*\".*>//g' "build/$file"
             done
-            CHECK_LINKS="docker run --rm -v ""$(pwd)/build/website:/website"" -e GITHUB_TOKEN lycheeverse/lychee:0.10.3 $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 403,429,500,502,503"
-            for i in 1 2 3 4 5; do
-              $(echo $CHECK_LINKS) && break || sleep 30
-              if [ "$i" = 5 ]; then
-                false
-              fi
-            done
+            docker run --rm -v "$(pwd)/build/website:/website" -e GITHUB_TOKEN lycheeverse/lychee:0.10.3 $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 403,429,500,502,503
           java-version: ${{ needs.ci-preparation.outputs.java-version }}
           should-run-codecov: false
           should-deploy: false
@@ -228,28 +221,13 @@ jobs:
           pre-build-command: |
             ./gradlew kotlinUpgradeYarnLock --parallel
           build-command: |
-            # In case of issues with JPackage, run with --info
-            COMMAND='./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel'
-            for i in 1 2 3 4 5; do
-              $(echo $COMMAND) && break || sleep 5
-              if [ "$i" = 5 ]; then
-                false
-              fi
-            done
+            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel
           check-command: true
           deploy-command: |
             [ -n "${{ needs.staging-repo.outputs.repo-id }}" ] || (
               echo "Staging repository ID not found" &&
               exit 1
             )
-            ./gradlew\
-              ${{ needs.ci-preparation.outputs.force-version }}\
-              -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
-              uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
-            ./gradlew\
-              ${{ needs.ci-preparation.outputs.force-version }}\
-              -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
-              uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
             ./gradlew\
               ${{ needs.ci-preparation.outputs.force-version }}\
               -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\

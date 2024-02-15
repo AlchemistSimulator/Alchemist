@@ -11,15 +11,8 @@ import io.kvision.BootstrapCssModule
 import io.kvision.BootstrapIconsModule
 import io.kvision.BootstrapModule
 import io.kvision.BootstrapUploadModule
-import io.kvision.ChartModule
 import io.kvision.CoreModule
-import io.kvision.DatetimeModule
 import io.kvision.FontAwesomeModule
-import io.kvision.ImaskModule
-import io.kvision.MapsModule
-import io.kvision.RichTextModule
-import io.kvision.TabulatorCssBootstrapModule
-import io.kvision.TabulatorModule
 import io.kvision.ToastifyModule
 import io.kvision.TomSelectModule
 import io.kvision.module
@@ -36,18 +29,11 @@ fun main() {
         module.hot,
         BootstrapModule,
         BootstrapCssModule,
-        DatetimeModule,
-        RichTextModule,
         TomSelectModule,
         BootstrapUploadModule,
-        ImaskModule,
         ToastifyModule,
         FontAwesomeModule,
         BootstrapIconsModule,
-        ChartModule,
-        TabulatorModule,
-        TabulatorCssBootstrapModule,
-        MapsModule,
         CoreModule,
     )
 }

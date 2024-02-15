@@ -91,6 +91,7 @@ kotlin {
                 implementation(libs.kotlin.coroutines.core)
                 implementation(libs.apollo.runtime)
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.korim)
                 implementation(libs.redux.kotlin.threadsafe)
             }
         }

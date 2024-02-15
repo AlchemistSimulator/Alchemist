@@ -14,11 +14,19 @@ import io.kvision.html.Button
 import io.kvision.html.ButtonStyle
 import io.kvision.html.ButtonType
 import io.kvision.state.bind
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import stores.EnvironmentStore
 import stores.SimulationStatus
 import utils.SimState
 
+/**
+ * Class representing a custom play button for controlling simulation state.
+ * This class extends the Button class and provides functionality to play, pause, or terminate a simulation.
+ *
+ * @param text the text to be displayed on the button
+ */
 class PlayButton(text: String) : Button(text) {
 
     private var simulationStatus = SimState.TERMINATED
@@ -54,22 +62,23 @@ class PlayButton(text: String) : Button(text) {
         }
 
         onClick {
-            MainScope().launch {
-                println("Button clicked coroutine")
-
+            CoroutineScope(Dispatchers.Default).launch {
                 when (simulationStatus) {
                     SimState.READY -> {
                         SimulationControlApi.playSimulation()
+                        EnvironmentStore.callEnvironmentSubscription()
                     }
                     SimState.PAUSED -> {
-
                         SimulationControlApi.playSimulation()
+                        EnvironmentStore.callEnvironmentSubscription()
                     }
                     SimState.RUNNING -> {
                         SimulationControlApi.pauseSimulation()
+                        // EnvironmentStore.cancelSubscription()
                     }
                     else -> {
                         SimulationControlApi.terminateSimulation()
+                        // EnvironmentStore.cancelSubscription()
                     }
                 }
                 SimulationStatus.callGetStatus()

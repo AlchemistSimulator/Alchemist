@@ -26,6 +26,10 @@ import io.kvision.module
 import io.kvision.startApplication
 import ui.AppMain
 
+/**
+ * The application main entry point
+ *
+ * */
 fun main() {
     startApplication(
         ::AppMain,

@@ -13,10 +13,12 @@ import io.kvision.redux.createTypedReduxStore
 import io.kvision.state.ObservableValue
 import stores.reducers.scaleTranslateReducer
 import stores.states.ScaleTranslateState
-import utils.randomColor
 
 class CommonProperties {
 
+    /**
+     * Object containing properties related to the canvas context.
+     */
     object RenderProperties {
         private const val SCALE_ITERATIONS = 100
         const val DEFUALT_NODE_RADIUS = 10.0
@@ -26,16 +28,26 @@ class CommonProperties {
         const val DEFAULT_START_POSITION = 0
         const val DEFAULT_SCALE_RATIO = 0.9
         const val MIN_SCALE = 1.0
-        const val MAX_SCALE = MIN_SCALE * (1 / DEFAULT_SCALE_RATIO) * SCALE_ITERATIONS
-        val DEFAULT_NODE_COLOR = randomColor()
+        const val MAX_SCALE = MIN_SCALE * ((1 / DEFAULT_SCALE_RATIO) * SCALE_ITERATIONS + 1)
+        const val DEFAULT_NODE_COLOR = "#0F4AA2"
     }
 
+    /**
+     * Object containing observable properties.
+     */
     object Observables {
         val scaleTranslationStore = createTypedReduxStore(::scaleTranslateReducer, ScaleTranslateState())
         var nodesRadius: ObservableValue<Double> = ObservableValue(RenderProperties.DEFUALT_NODE_RADIUS)
     }
 
     object Utils {
+
+        /**
+         * Calculates the next scale value based on the specified threshold.
+         *
+         * @param threshold the threshold value used to determine the direction of scaling
+         * @return the next scale value calculated based on the threshold
+         */
         fun nextScale(threshold: Double): Double {
             return if (threshold > 0) {
                 Observables.scaleTranslationStore.getState().scale * RenderProperties.DEFAULT_SCALE_RATIO

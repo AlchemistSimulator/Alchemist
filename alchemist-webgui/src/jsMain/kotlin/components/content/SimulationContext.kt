@@ -9,7 +9,10 @@
 
 package components.content
 
-import components.content.shared.CommonProperties
+import components.content.shared.CommonProperties.Observables.nodesRadius
+import components.content.shared.CommonProperties.Observables.scaleTranslationStore
+import components.content.shared.CommonProperties.RenderProperties
+import components.content.shared.CommonProperties.Utils.nextScale
 import io.kvision.core.AlignItems
 import io.kvision.core.Background
 import io.kvision.core.BoxShadow
@@ -29,24 +32,39 @@ import io.kvision.panel.flexPanel
 import io.kvision.state.bind
 import io.kvision.utils.perc
 import io.kvision.utils.px
+import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.DOMRect
 import stores.EnvironmentStore
 import stores.actions.ScaleTranslateAction
 
+/**
+ * Class representing the simulation context in the application.
+ * This class extends SimplePanel and provides a UI component for rendering the simulation environment.
+ *
+ * @param className the CSS class name for styling the panel (optional)
+ */
 class SimulationContext(className: String = "") : SimplePanel(className = className) {
+
+    private lateinit var canvasCtxt: CanvasRenderingContext2D
 
     private var translatePos: Pair<Double, Double> = Pair(0.0, 0.0)
 
     private var startDragOffset: Pair<Double, Double> =
         Pair(
-            CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble(),
-            CommonProperties.RenderProperties.DEFAULT_START_POSITION.toDouble(),
+            RenderProperties.DEFAULT_START_POSITION.toDouble(),
+            RenderProperties.DEFAULT_START_POSITION.toDouble(),
         )
 
     init {
-        // border = Border(width = 1.px, BorderStyle.SOLID, Color("#ff0000"))
 
-        EnvironmentStore.callEnvironmentSubscription()
+        EnvironmentStore.callEnvironmentQuery()
+
+        // Workaround for node re-render as bind function seems to reload the whole object in the DOM
+        EnvironmentStore.store.subscribe { state ->
+            if (::canvasCtxt.isInitialized) {
+                canvasCtxt.redrawNodes(state.toListOfPairs())
+            }
+        }
 
         flexPanel(
             FlexDirection.COLUMN,
@@ -61,30 +79,33 @@ class SimulationContext(className: String = "") : SimplePanel(className = classN
                 lateinit var boundingRect: DOMRect
                 var mouseIsDown = false
 
-                canvasWidth = CommonProperties.RenderProperties.DEFAULT_WIDTH.toInt()
-                canvasHeight = CommonProperties.RenderProperties.DEFAULT_HEIGHT.toInt()
+                canvasWidth = RenderProperties.DEFAULT_WIDTH.toInt()
+                canvasHeight = RenderProperties.DEFAULT_HEIGHT.toInt()
                 borderRadius = CssSize(10, UNIT.px)
                 boxShadow = BoxShadow(0.px, 0.px, 5.px, 0.px, Color.rgba(0, 0, 0, (0.4 * 255).toInt()))
                 background = Background(color = Color.name(Col.WHITE))
 
-                addAfterCreateHook {
-
-                    bind(CommonProperties.Observables.scaleTranslationStore) { state ->
-                        context2D.redrawNodes(state.scale, state.translate)
-                    }
-
-                    bind(CommonProperties.Observables.nodesRadius) {
-                        context2D.redrawNodes()
-                    }
-
-                    bind(EnvironmentStore.store) {
-                        println("Bind[EnvironmentStore.store]: Redrawing nodes on store bind")
-                        context2D.redrawNodes()
-                    }
-                }
-
                 addAfterInsertHook {
                     boundingRect = getElement()!!.getBoundingClientRect()
+                    canvasCtxt = context2D
+
+                    // Sets the canvas to a centered position
+                    translatePos = Pair(RenderProperties.DEFAULT_WIDTH / 2, RenderProperties.DEFAULT_HEIGHT / 2)
+                    scaleTranslationStore.dispatch(ScaleTranslateAction.SetTranslation(translatePos))
+
+                    context2D.redrawNodes(EnvironmentStore.store.getState().toListOfPairs())
+
+                    bind(scaleTranslationStore) { state ->
+                        context2D.redrawNodes(
+                            EnvironmentStore.store.getState().toListOfPairs(),
+                            state.scale,
+                            state.translate,
+                        )
+                    }
+
+                    bind(nodesRadius) {
+                        context2D.redrawNodes(EnvironmentStore.store.getState().toListOfPairs())
+                    }
                 }
 
                 onClick {
@@ -94,11 +115,10 @@ class SimulationContext(className: String = "") : SimplePanel(className = classN
                 onEvent {
 
                     mousedown = { e ->
-                        cursor = Cursor.POINTER
                         mouseIsDown = true
                         startDragOffset = Pair(
-                            e.clientX - CommonProperties.Observables.scaleTranslationStore.getState().translate.first,
-                            e.clientY - CommonProperties.Observables.scaleTranslationStore.getState().translate.second,
+                            e.clientX - scaleTranslationStore.getState().translate.first,
+                            e.clientY - scaleTranslationStore.getState().translate.second,
                         )
                     }
 
@@ -107,7 +127,7 @@ class SimulationContext(className: String = "") : SimplePanel(className = classN
                             cursor = Cursor.GRABBING
                             translatePos = Pair(e.clientX - startDragOffset.first, e.clientY - startDragOffset.second)
 
-                            CommonProperties.Observables.scaleTranslationStore.dispatch(
+                            scaleTranslationStore.dispatch(
                                 ScaleTranslateAction.SetTranslation(translatePos),
                             )
                         }
@@ -120,12 +140,12 @@ class SimulationContext(className: String = "") : SimplePanel(className = classN
 
                     mousewheel = { e ->
                         e.preventDefault()
-                        val nextScale = CommonProperties.Utils.nextScale(e.deltaY)
+                        val nextScale = nextScale(e.deltaY)
 
-                        if (nextScale <= CommonProperties.RenderProperties.MAX_SCALE &&
-                            nextScale >= CommonProperties.RenderProperties.MIN_SCALE
+                        if (nextScale <= RenderProperties.MAX_SCALE &&
+                            nextScale >= RenderProperties.MIN_SCALE
                         ) {
-                            val currentState = CommonProperties.Observables.scaleTranslationStore.getState()
+                            val currentState = scaleTranslationStore.getState()
                             val scaleChangeFactor = nextScale / currentState.scale
 
                             val translationChangeX =
@@ -136,11 +156,11 @@ class SimulationContext(className: String = "") : SimplePanel(className = classN
 
                             translatePos = Pair(translationChangeX, translationChangeY)
 
-                            CommonProperties.Observables.scaleTranslationStore.dispatch(
+                            scaleTranslationStore.dispatch(
                                 ScaleTranslateAction.SetScale(nextScale),
 
                             )
-                            CommonProperties.Observables.scaleTranslationStore.dispatch(
+                            scaleTranslationStore.dispatch(
                                 ScaleTranslateAction.SetTranslation(
                                     Pair(
                                         currentState.translate.first + translationChangeX,

@@ -12,6 +12,15 @@ package stores.actions
 import io.kvision.redux.RAction
 import it.unibo.alchemist.boundary.graphql.client.SimulationStatusQuery
 
+/**
+ * Represents actions related to simulation in the application.
+ * This sealed class defines different types of actions as its subclasses.
+ */
 sealed class SimulationAction : RAction {
+
+    /**
+     * Action to set the simulation state.
+     * @param simulationState The new simulation state to set.
+     */
     data class SetSimulation(val simulationState: SimulationStatusQuery.Data?) : SimulationAction()
 }

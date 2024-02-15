@@ -9,6 +9,10 @@
 
 package utils
 
+/**
+ * Represents the possible states of a simulation. Intermediate enum for the simulation status.
+ *
+ */
 enum class SimState {
     /**
      * The simulation is being initialized.
@@ -37,14 +41,21 @@ enum class SimState {
     TERMINATED, ;
 
     companion object {
+
+        /**
+         * Converts a string representation of a simulation status to the corresponding SimState enum value.
+         *
+         * @param value the string representation of the simulation status
+         * @return the SimState enum value corresponding to the input string, or SimState.TERMINATED if the input is invalid
+         */
         fun toSimStatus(value: String?): SimState {
             return when (value) {
-                "INIT" -> SimState.INIT
-                "READY" -> SimState.READY
-                "PAUSED" -> SimState.PAUSED
-                "RUNNING" -> SimState.RUNNING
-                "TERMINATED" -> SimState.TERMINATED
-                else -> SimState.TERMINATED // Default to a reasonable value when the string is null or unknown
+                "INIT" -> INIT
+                "READY" -> READY
+                "PAUSED" -> PAUSED
+                "RUNNING" -> RUNNING
+                "TERMINATED" -> TERMINATED
+                else -> TERMINATED
             }
         }
     }

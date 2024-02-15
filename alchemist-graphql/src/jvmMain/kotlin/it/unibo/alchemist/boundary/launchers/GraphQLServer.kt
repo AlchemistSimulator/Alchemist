@@ -11,7 +11,6 @@ package it.unibo.alchemist.boundary.launchers
 
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.engine.stop
 import io.ktor.server.netty.Netty
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.graphql.monitor.EnvironmentSubscriptionMonitor
@@ -25,7 +24,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Semaphore
 
 /**
  * An [OutputMonitor] observing the [environment] through a GraphQL server listening on [host]:[port].

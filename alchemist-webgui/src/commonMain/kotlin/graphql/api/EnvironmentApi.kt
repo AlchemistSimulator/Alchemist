@@ -12,6 +12,7 @@ package graphql.api
 import client.ClientConnection
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Optional
+import it.unibo.alchemist.boundary.graphql.client.EnvironmentQuery
 import it.unibo.alchemist.boundary.graphql.client.EnvironmentSubscription
 import it.unibo.alchemist.boundary.graphql.client.NodeQuery
 import kotlinx.coroutines.Deferred
@@ -21,13 +22,35 @@ import kotlinx.coroutines.flow.Flow
 
 object EnvironmentApi {
 
+    /**
+     * Asynchronously queries a node with the specified ID from the server.
+     *
+     * @param nodeId the ID of the node to query (default value is 0 if not specified)
+     * @return a Deferred object representing the asynchronous result of the node query
+     */
     suspend fun nodeQuery(nodeId: Int = 0): Deferred<NodeQuery.Data?> = coroutineScope {
         async {
             ClientConnection.client.query(NodeQuery(id = Optional.present(nodeId))).execute().data
         }
     }
 
-    fun environMentSubScription(): Flow<ApolloResponse<EnvironmentSubscription.Data>> {
+    /**
+     * Subscribes to the environment subscription on the server and receives data updates.
+     *
+     * @return a Flow of ApolloResponse containing the data from the environment subscription
+     */
+    fun environmentSubscription(): Flow<ApolloResponse<EnvironmentSubscription.Data>> {
         return ClientConnection.client.subscription(EnvironmentSubscription()).toFlow()
+    }
+
+    /**
+     * Asynchronously queries environment data from the server.
+     *
+     * @return a Deferred object representing the asynchronous result of the environment query
+     */
+    suspend fun environmentQuery(): Deferred<EnvironmentQuery.Data?> = coroutineScope {
+        async {
+            ClientConnection.client.query(EnvironmentQuery()).execute().data
+        }
     }
 }

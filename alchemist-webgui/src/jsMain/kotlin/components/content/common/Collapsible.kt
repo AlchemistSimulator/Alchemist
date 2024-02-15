@@ -9,6 +9,13 @@ import io.kvision.panel.simplePanel
 import io.kvision.panel.vPanel
 import io.kvision.utils.perc
 
+/**
+ * DSL extension function that creates a collapsible container with a title and content panel.
+ *
+ * @param className the CSS class name for styling the container
+ * @param title the title of the collapsible container
+ * @param content a lambda function representing the content of the collapsible container
+ */
 fun Container.collapsible(
     className: String = "",
     title: String = "",

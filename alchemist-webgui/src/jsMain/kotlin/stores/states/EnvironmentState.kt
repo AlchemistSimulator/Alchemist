@@ -11,4 +11,18 @@ package stores.states
 
 import it.unibo.alchemist.boundary.graphql.client.EnvironmentSubscription
 
-data class EnvironmentState(val nodes: MutableList<EnvironmentSubscription.Entry>)
+/**
+ * Represents the state of the environment, including a list of nodes.
+ * @property nodes The list of nodes in the environment.
+ * @constructor Creates an EnvironmentState with the specified list of nodes.
+ */
+data class EnvironmentState(val nodes: MutableList<EnvironmentSubscription.Entry>) {
+
+    /**
+     * Converts the list of nodes to a list of pairs representing their coordinates.
+     * @return A list of pairs where each pair contains the x and y coordinates of a node.
+     */
+    fun toListOfPairs(): List<Pair<Double, Double>> {
+        return nodes.map { e -> Pair(e.position.coordinates[0], e.position.coordinates[1]) }
+    }
+}

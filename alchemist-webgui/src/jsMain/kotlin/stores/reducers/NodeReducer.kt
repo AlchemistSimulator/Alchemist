@@ -12,6 +12,12 @@ package stores.reducers
 import stores.actions.NodeStateAction
 import stores.states.NodeState
 
+/**
+ * Reduces the current state of the node based on the provided action.
+ * @param state The current state of the node.
+ * @param action The action to apply to the state.
+ * @return The new state of the node after applying the action.
+ */
 fun nodeReducer(state: NodeState, action: NodeStateAction): NodeState {
     when (action) {
         is NodeStateAction.SetNode -> {

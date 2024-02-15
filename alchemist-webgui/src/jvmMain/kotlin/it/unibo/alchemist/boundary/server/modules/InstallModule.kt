@@ -14,18 +14,16 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.cors.routing.CORS
 
+/**
+ * Installs the CORS module for the application.
+ *
+ */
 fun Application.installModule() {
-/*install(ContentNegotiation) {
-        json()
-    }*/
-
     install(CORS) {
+        allowSameOrigin
+        allowCredentials = true
         allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Post)
         anyHost()
     }
-
-/*install(Compression) {
-        gzip()
-    }*/
 }

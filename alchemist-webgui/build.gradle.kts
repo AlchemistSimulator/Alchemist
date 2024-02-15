@@ -22,17 +22,17 @@ repositories {
     mavenLocal()
 }
 
-val task by tasks.register<JavaExec>("runWEB") {
+val task by tasks.register<JavaExec>("runWebGui") {
     group = alchemistGroup
-    description = "Launches simulation"
+    description = "Launches simulation in a browser web interface"
 
     val simulationFile = project.objects.property(String::class.java)
 
-    simulationFile.set(project.findProperty("simulationFile") as String? ?: "C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/Alchemist fork/Alchemist/test.yml")
+    simulationFile.set(project.findProperty("simulationFile") as String? ?: "")
 
     mainClass.set("it.unibo.alchemist.Alchemist")
 
-    args("run", "C:/Users/Tiziano/Desktop/Tiziano/UNI/Test/yaml/" + simulationFile.get())
+    args("run", simulationFile.get())
 
     classpath(
         tasks.named("compileKotlinJvm"),
@@ -88,40 +88,19 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(alchemist("graphql"))
+                implementation(libs.kotlin.coroutines.core)
                 implementation(libs.apollo.runtime)
-                implementation(libs.korim)
                 implementation(libs.kotlin.stdlib)
-                implementation(libs.kotlinx.serialization.json)
-                implementation(libs.ktor.client.core)
                 implementation(libs.redux.kotlin.threadsafe)
             }
         }
-
-        /*val commonTest by getting {
-            dependencies {
-                implementation(alchemist("graphql"))
-                //implementation(alchemist("api"))
-                implementation(alchemist("full"))
-                implementation(libs.apollo.runtime)
-                implementation(libs.kotlin.coroutines.core)
-                implementation(libs.kotlin.stdlib)
-                implementation(libs.kotlinx.serialization.json)
-
-                implementation(libs.ktor.server.websockets)
-                implementation(libs.bundles.graphql.server)
-                implementation(libs.bundles.ktor.server)
-
-                implementation(libs.kotest.assertions)
-                implementation(libs.kotest.runner)
-                implementation(libs.ktor.server.test.host)
-            }
-        }*/
 
         val jvmMain by getting {
             dependencies {
                 implementation(incarnation("sapere"))
                 implementation(incarnation("protelis"))
                 implementation(alchemist("cognitive-agents"))
+                implementation(alchemist("full"))
                 implementation("io.ktor:ktor-server-html-builder:2.3.8")
                 implementation(libs.bundles.ktor.server)
             }
@@ -130,31 +109,23 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-js"))
+                implementation(libs.kotlin.coroutines.core)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
                 implementation(libs.apollo.runtime)
                 implementation(libs.bundles.ktor.client)
                 implementation(libs.bundles.kotlin.react)
 
                 implementation("io.kvision:kvision:$kvisionVersion")
                 implementation("io.kvision:kvision-bootstrap:$kvisionVersion")
-                implementation("io.kvision:kvision-datetime:$kvisionVersion")
                 implementation("io.kvision:kvision-richtext:$kvisionVersion")
                 implementation("io.kvision:kvision-tom-select:$kvisionVersion")
                 implementation("io.kvision:kvision-bootstrap-upload:$kvisionVersion")
-                implementation("io.kvision:kvision-imask:$kvisionVersion")
                 implementation("io.kvision:kvision-toastify:$kvisionVersion")
                 implementation("io.kvision:kvision-fontawesome:$kvisionVersion")
                 implementation("io.kvision:kvision-bootstrap-icons:$kvisionVersion")
-                implementation("io.kvision:kvision-pace:$kvisionVersion")
-                implementation("io.kvision:kvision-handlebars:$kvisionVersion")
-                implementation("io.kvision:kvision-chart:$kvisionVersion")
-                implementation("io.kvision:kvision-tabulator:$kvisionVersion")
-                implementation("io.kvision:kvision-maps:$kvisionVersion")
                 implementation("io.kvision:kvision-rest:$kvisionVersion")
-                implementation("io.kvision:kvision-jquery:$kvisionVersion")
-                implementation("io.kvision:kvision-routing-navigo-ng:$kvisionVersion")
                 implementation("io.kvision:kvision-state:$kvisionVersion")
                 implementation("io.kvision:kvision-state-flow:$kvisionVersion")
-                implementation("io.kvision:kvision-ballast:$kvisionVersion")
                 implementation("io.kvision:kvision-redux-kotlin:$kvisionVersion")
             }
         }

@@ -17,17 +17,25 @@ import stores.actions.SimulationAction
 import stores.reducers.simulationReducer
 import stores.states.SimulationState
 
+/**
+ * Provides access to the Redux store for simulation status-related state management.
+ */
 object SimulationStatus {
 
+    /**
+     * The Redux store for managing simulation status state, initialized with a default reducer and initial state.
+     */
     val simulationStore = createTypedReduxStore(::simulationReducer, SimulationState())
 
+    /**
+     * Asynchronously retrieves the simulation status and updates the simulation state in the store.
+     * Dispatches an action to update the simulation state in the store with the retrieved status data.
+     */
     fun callGetStatus() {
         MainScope().launch {
-            println("COROUTINE[CALLGETSTATUS]: Started")
             val result = SimulationControlApi.getSimulationStatus().await()
 
             simulationStore.dispatch(SimulationAction.SetSimulation(result))
-            println("COROUTINE[CALLGETSTATUS]: Ended")
         }
     }
 }

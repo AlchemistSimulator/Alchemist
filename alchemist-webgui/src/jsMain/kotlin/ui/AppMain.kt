@@ -14,7 +14,16 @@ import components.Content
 import io.kvision.Application
 import io.kvision.panel.root
 
+/**
+ * Represents the main entry point of the application.
+ * Extends the Application class to define the application lifecycle.
+ */
 class AppMain : Application() {
+
+    /**
+     * Override of the start method to initialize and configure the application.
+     * Sets up the root UI element and adds the Appbar and Content components to it.
+     */
     override fun start() {
         root(id = "root") {
             add(Appbar(className = "appbar-root"))

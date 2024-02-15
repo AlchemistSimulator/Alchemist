@@ -15,43 +15,42 @@ import it.unibo.alchemist.boundary.graphql.client.PlaySimulationMutation
 import it.unibo.alchemist.boundary.graphql.client.SimulationStatusQuery
 import it.unibo.alchemist.boundary.graphql.client.TerminateSimulationMutation
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
 
 object SimulationControlApi {
 
+    /**
+     * Asynchronously queries the status of the simulation from the server.
+     *
+     * @return a Deferred object representing the asynchronous result of the simulation status query
+     */
     suspend fun getSimulationStatus(): Deferred<SimulationStatusQuery.Data?> = coroutineScope {
         async {
             ClientConnection.client.query(SimulationStatusQuery()).execute().data
         }
     }
 
-    suspend fun pauseSimulation() = coroutineScope {
-        async {
-            withContext(Dispatchers.Default) {
-                ClientConnection.client.mutation(PauseSimulationMutation()).execute()
-                println("COROUTINE[pauseSimulation]: Paused the simulation")
-            }
-        }
+    /**
+     * Asynchronously pauses the simulation on the server.
+     */
+    suspend fun pauseSimulation(): PauseSimulationMutation.Data? {
+        return ClientConnection.client.mutation(PauseSimulationMutation()).execute().data
     }
 
-    suspend fun playSimulation() = coroutineScope {
-        async {
-            withContext(Dispatchers.Default) {
-                ClientConnection.client.mutation(PlaySimulationMutation()).execute()
-                println("COROUTINE[playSimulation]: Played the simulation")
-            }
-        }
+    /**
+     * Asynchronously resumes or starts the simulation on the server.
+     *
+     * @return the data object containing the result of the play simulation mutation
+     */
+    suspend fun playSimulation(): PlaySimulationMutation.Data? {
+        return ClientConnection.client.mutation(PlaySimulationMutation()).execute().data
     }
 
-    suspend fun terminateSimulation() = coroutineScope {
-        async {
-            withContext(Dispatchers.Default) {
-                ClientConnection.client.mutation(TerminateSimulationMutation()).execute()
-                println("COROUTINE[terminateSimulation]: Terminated the simulation")
-            }
-        }
+    /**
+     * Asynchronously terminates the simulation on the server.
+     */
+    suspend fun terminateSimulation(): TerminateSimulationMutation.Data? {
+        return ClientConnection.client.mutation(TerminateSimulationMutation()).execute().data
     }
 }

@@ -11,4 +11,9 @@ package stores.states
 
 import it.unibo.alchemist.boundary.graphql.client.SimulationStatusQuery
 
+/**
+ * Represents the state of a simulation, including its status data.
+ * @property status The status data of the simulation, represented by a SimulationStatusQuery.Data object. Defaults to null.
+ * @constructor Creates a SimulationState with the specified status data, which defaults to null.
+ */
 data class SimulationState(val status: SimulationStatusQuery.Data? = null)

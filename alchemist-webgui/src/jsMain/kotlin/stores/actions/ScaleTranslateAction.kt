@@ -11,7 +11,21 @@ package stores.actions
 
 import io.kvision.redux.RAction
 
+/**
+ * Represents actions related to scaling and translation in the application.
+ * This sealed class defines different types of actions as its subclasses.
+ */
 sealed class ScaleTranslateAction : RAction {
+
+    /**
+     * Action to set the scale value.
+     * @param scale The new scale value to set.
+     */
     data class SetScale(val scale: Double) : ScaleTranslateAction()
+
+    /**
+     * Action to set the translation values.
+     * @param translate The new translation pair to set, representing the (x, y) translation.
+     */
     data class SetTranslation(var translate: Pair<Double, Double>) : ScaleTranslateAction()
 }

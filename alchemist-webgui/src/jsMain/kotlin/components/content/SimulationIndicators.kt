@@ -9,7 +9,11 @@
 
 package components.content
 
-import components.content.shared.CommonProperties
+import components.content.shared.CommonProperties.Observables.nodesRadius
+import components.content.shared.CommonProperties.Observables.scaleTranslationStore
+import components.content.shared.CommonProperties.RenderProperties.DEFUALT_NODE_RADIUS
+import components.content.shared.CommonProperties.RenderProperties.MAX_SCALE
+import components.content.shared.CommonProperties.RenderProperties.MIN_SCALE
 import io.kvision.core.AlignItems
 import io.kvision.core.Background
 import io.kvision.core.BoxShadow
@@ -21,6 +25,7 @@ import io.kvision.core.JustifyContent
 import io.kvision.core.onInput
 import io.kvision.form.number.range
 import io.kvision.html.div
+import io.kvision.html.h5
 import io.kvision.html.p
 import io.kvision.panel.SimplePanel
 import io.kvision.panel.flexPanel
@@ -32,6 +37,12 @@ import io.kvision.utils.perc
 import io.kvision.utils.px
 import korlibs.math.roundDecimalPlaces
 
+/**
+ * Class representing simulation indicators in the application.
+ * This class extends SimplePanel and provides a UI component for displaying simulation context information.
+ *
+ * @param className the CSS class name for styling the panel (optional)
+ */
 class SimulationIndicators(className: String = "") : SimplePanel(className = className) {
 
     init {
@@ -49,11 +60,17 @@ class SimulationIndicators(className: String = "") : SimplePanel(className = cla
                 spacing = 5
                 width = 95.perc
 
-                div().bind(CommonProperties.Observables.scaleTranslationStore) { state ->
+                h5 {
+                    +"Context information"
+                    width = 100.perc
+                    height = 100.perc
+                }
+
+                div().bind(scaleTranslationStore) { state ->
                     +"Scale: ${state.scale.roundDecimalPlaces(2)}"
                 }
 
-                div().bind(CommonProperties.Observables.scaleTranslationStore) { state ->
+                div().bind(scaleTranslationStore) { state ->
 
                     div {
                         +"X translation: ${state.translate.first.roundDecimalPlaces(2)}"
@@ -66,33 +83,29 @@ class SimulationIndicators(className: String = "") : SimplePanel(className = cla
 
                 range {
                     label = "Node radius: $min ($min - $max)"
-                    min = CommonProperties.RenderProperties.DEFUALT_NODE_RADIUS
-                    max = CommonProperties.RenderProperties.DEFUALT_NODE_RADIUS * 10
+                    min = DEFUALT_NODE_RADIUS
+                    max = DEFUALT_NODE_RADIUS * 10
                     step = 1.0
-                    value = CommonProperties.RenderProperties.DEFUALT_NODE_RADIUS
+                    value = DEFUALT_NODE_RADIUS
                     onInput {
-                        CommonProperties.Observables.nodesRadius.value = getValue()!!.toDouble()
+                        nodesRadius.value = getValue()!!.toDouble()
                     }
-                }.bind(CommonProperties.Observables.nodesRadius) {
-                    label = "Node radius: ${CommonProperties.Observables.nodesRadius.value} ($min - $max)"
+                }.bind(nodesRadius) {
+                    label = "Node radius: ${nodesRadius.value} ($min - $max)"
                 }
 
-                /*div().bind(CommonProperties.Observables.nodesRadius) {
-                    +"Node radius: ${CommonProperties.Observables.nodesRadius.value}"
-                }*/
-
-                p(className = "scale-value").bind(CommonProperties.Observables.scaleTranslationStore) { state ->
-                    +"Zoom: ${((state.scale/CommonProperties.RenderProperties.MAX_SCALE) * 100).roundDecimalPlaces(0)}%"
+                p(className = "scale-value").bind(scaleTranslationStore) { state ->
+                    +"Zoom: ${((state.scale/MAX_SCALE) * 100).roundDecimalPlaces(0)}%"
                 }
 
                 progress(
-                    min = CommonProperties.RenderProperties.MIN_SCALE,
-                    max = CommonProperties.RenderProperties.MAX_SCALE,
+                    min = MIN_SCALE,
+                    max = MAX_SCALE,
                 ) {
                     progressNumeric {
                         striped = false
                     }
-                }.getFirstProgressBar()!!.bind(CommonProperties.Observables.scaleTranslationStore) { state ->
+                }.getFirstProgressBar()!!.bind(scaleTranslationStore) { state ->
                     value = state.scale
                 }
             }

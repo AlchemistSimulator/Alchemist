@@ -11,6 +11,16 @@ package utils
 
 import kotlin.random.Random
 
+/**
+ * Checks if the mouse pointer is over a node position within the given radius.
+ *
+ * @param mouseX The x-coordinate of the mouse pointer.
+ * @param mouseY The y-coordinate of the mouse pointer.
+ * @param nodeX The x-coordinate of the node position.
+ * @param nodeY The y-coordinate of the node position.
+ * @param radius The radius of the node.
+ * @return True if the mouse pointer is over the node position, false otherwise.
+ */
 fun isMouseOverNodePosition(mouseX: Double, mouseY: Double, nodeX: Double, nodeY: Double, radius: Double): Boolean {
     val dx = mouseX - nodeX
     val dy = mouseY - nodeY
@@ -18,6 +28,11 @@ fun isMouseOverNodePosition(mouseX: Double, mouseY: Double, nodeX: Double, nodeY
     return dx * dx + dy * dy <= radius * radius
 }
 
+/**
+ * Generates a random hexadecimal color string.
+ *
+ * @return A random hexadecimal color string.
+ */
 fun randomColor(): String {
     val letters = "0123456789ABCDEF"
     var color = "#"

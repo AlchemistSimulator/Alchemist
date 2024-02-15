@@ -34,6 +34,12 @@ import io.kvision.utils.perc
 import io.kvision.utils.px
 import stores.NodeStore
 
+/**
+ * Class representing the properties of a node in the application.
+ * This class extends SimplePanel and provides a UI component for displaying node information.
+ *
+ * @param className the CSS class name for styling the panel (optional)
+ */
 class NodeProperties(className: String = "") : SimplePanel(className = className) {
 
     init {
@@ -53,18 +59,16 @@ class NodeProperties(className: String = "") : SimplePanel(className = className
                 width = 95.perc
 
                 h5 {
-                    +"Node evaluation"
+                    +"Node inspection"
                     width = 100.perc
                     height = 100.perc
                 }
 
-                flexPanel(
-                    FlexDirection.ROW,
+                hPanel(
                     FlexWrap.NOWRAP,
                     JustifyContent.CENTER,
-                    AlignItems.STRETCH,
-                    AlignContent.CENTER,
-                    spacing = 5,
+                    AlignItems.START,
+                    spacing = 15,
                     className = "nodeinfo-header",
                 ) {
                     div {
@@ -72,21 +76,29 @@ class NodeProperties(className: String = "") : SimplePanel(className = className
                         height = 50.px
                         borderRadius = CssSize(height!!.first.toDouble() * 0.5, UNIT.px)
                         background = Background(Color(CommonProperties.RenderProperties.DEFAULT_NODE_COLOR))
-                        overflowWrap = OverflowWrap.ANYWHERE
                     }
+                    flexPanel(
+                        FlexDirection.ROW,
+                        FlexWrap.NOWRAP,
+                        JustifyContent.CENTER,
+                        AlignItems.STRETCH,
+                        AlignContent.CENTER,
+                        spacing = 5,
+                    ) {
+                        width = 95.perc
+                        div {
+                            width = 100.perc
+                            overflowWrap = OverflowWrap.ANYWHERE
+                        }.bind(NodeStore.nodeStore) {
+                            +"id: ${it.node?.environment?.nodeById?.id}"
+                        }
 
-                    div {
-                        width = 100.perc
-                        overflowWrap = OverflowWrap.ANYWHERE
-                    }.bind(NodeStore.nodeStore) {
-                        +"${it.node?.environment?.nodeById?.id}"
-                    }
-
-                    div {
-                        width = 100.perc
-                        overflowWrap = OverflowWrap.ANYWHERE
-                    }.bind(NodeStore.nodeStore) {
-                        +"${it.node?.nodePosition?.coordinates?.get(0)}, ${it.node?.nodePosition?.coordinates?.get(1)}"
+                        div {
+                            width = 100.perc
+                            overflowWrap = OverflowWrap.ANYWHERE
+                        }.bind(NodeStore.nodeStore) {
+                            +"X: ${it.node?.nodePosition?.coordinates?.get(0)}, Y:${it.node?.nodePosition?.coordinates?.get(1)}"
+                        }
                     }
                 }
 
@@ -115,12 +127,12 @@ class NodeProperties(className: String = "") : SimplePanel(className = className
                                 div {
                                     width = 50.perc
                                     overflowWrap = OverflowWrap.ANYWHERE
-                                    +it.molecule.name
+                                    +"Name: ${it.molecule.name}"
                                 }
                                 div {
                                     width = 50.perc
                                     overflowWrap = OverflowWrap.ANYWHERE
-                                    +it.concentration
+                                    +"Concentration: ${it.concentration}"
                                 }
                             }
                         }

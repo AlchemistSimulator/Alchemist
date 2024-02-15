@@ -12,6 +12,15 @@ package stores.actions
 import io.kvision.redux.RAction
 import it.unibo.alchemist.boundary.graphql.client.NodeQuery
 
+/**
+ * Represents actions that can be performed on the node state.
+ * This sealed class defines different types of actions as its subclasses.
+ */
 sealed class NodeStateAction : RAction {
+
+    /**
+     * Action to set a single node in the node state.
+     * @param node The node data to set.
+     */
     data class SetNode(val node: NodeQuery.Data?) : NodeStateAction()
 }

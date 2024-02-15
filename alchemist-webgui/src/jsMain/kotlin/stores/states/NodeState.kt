@@ -11,4 +11,9 @@ package stores.states
 
 import it.unibo.alchemist.boundary.graphql.client.NodeQuery
 
+/**
+ * Represents the state of a node, including its data retrieved from a NodeQuery.
+ * @property node The node data retrieved from a NodeQuery, or null if the node is not available.
+ * @constructor Creates a NodeState with the specified node data, which defaults to null.
+ */
 data class NodeState(val node: NodeQuery.Data? = null)

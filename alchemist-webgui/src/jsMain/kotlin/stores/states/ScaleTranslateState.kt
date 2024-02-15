@@ -11,6 +11,12 @@ package stores.states
 
 import components.content.shared.CommonProperties.RenderProperties.DEFAULT_SCALE
 
+/**
+ * Represents the state of scaling and translation in the canvas context.
+ * @property scale The scaling factor applied to the graphical elements. Defaults to DEFAULT_SCALE.
+ * @property translate The translation offset applied to the graphical elements, represented as a pair of (x, y) coordinates. Defaults to (0.0, 0.0).
+ * @constructor Creates a ScaleTranslateState with the specified scaling factor and translation offset, which default to DEFAULT_SCALE and (0.0, 0.0) respectively.
+ */
 data class ScaleTranslateState(
     var scale: Double = DEFAULT_SCALE,
     var translate: Pair<Double, Double> = Pair(0.0, 0.0),

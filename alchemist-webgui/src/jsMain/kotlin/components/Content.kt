@@ -16,26 +16,29 @@ import io.kvision.core.AlignItems
 import io.kvision.core.Background
 import io.kvision.core.Col
 import io.kvision.core.Color
-import io.kvision.core.FlexDirection
 import io.kvision.core.FlexWrap
 import io.kvision.core.JustifyContent
 import io.kvision.panel.SimplePanel
-import io.kvision.panel.flexPanel
 import io.kvision.panel.hPanel
+import io.kvision.panel.vPanel
 import io.kvision.utils.perc
 import io.kvision.utils.px
 
-open class Content(className: String = "") : SimplePanel(className = className) {
+/**
+ * Class representing the content panel of the application.
+ * This class extends the SimplePanel class and provides functionality to display simulation context,
+ * simulation indicators, and node properties within a structured layout.
+ *
+ * @param className the CSS class name to be applied to the content panel
+ */
+class Content(className: String = "") : SimplePanel(className = className) {
 
     init {
-
-        // val offcanvas = offcanvas("Lorem ipsum", OffPlacement.END, dark = true)
-        // offcanvas.show()
 
         hPanel(
             FlexWrap.NOWRAP,
             JustifyContent.CENTER,
-            AlignItems.CENTER,
+            AlignItems.FLEXSTART,
             spacing = 5,
 
         ) {
@@ -48,15 +51,14 @@ open class Content(className: String = "") : SimplePanel(className = className) 
                 },
             )
 
-            flexPanel(
-                FlexDirection.COLUMN,
-                FlexWrap.NOWRAP,
+            vPanel(
                 JustifyContent.START,
-                AlignItems.START,
+                AlignItems.CENTER,
                 spacing = 5,
             ) {
                 width = 520.px
                 height = 95.perc
+                marginTop = 12.px
                 add(
                     SimulationIndicators(className = "simulation-indicators").apply {
                         width = 100.perc

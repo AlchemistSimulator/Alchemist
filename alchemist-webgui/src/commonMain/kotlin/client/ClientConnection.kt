@@ -12,7 +12,13 @@ package client
 import it.unibo.alchemist.boundary.graphql.client.GraphQLClient
 import it.unibo.alchemist.boundary.graphql.client.GraphQLClientFactory
 
+/**
+ * Object representing the client connection to the GraphQL server.
+ */
 object ClientConnection {
 
+    /**
+     * The GraphQL client instance used for operations.
+     */
     val client: GraphQLClient = GraphQLClientFactory.subscriptionClient()
 }

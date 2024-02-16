@@ -265,7 +265,7 @@ jobs:
       - ci-preparation
     runs-on: windows-2022
     if: >-
-      always() && contains(needs.*.result, 'success')
+      always() && needs.assemble-and-upload.result == 'success'
     concurrency:
       group: test-windows-msi-installer-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
@@ -296,7 +296,7 @@ jobs:
       - ci-preparation
     runs-on: ubuntu-22.04
     if: >-
-      always() && contains(needs.*.result, 'success')
+      always() && needs.assemble-and-upload.result == 'success'
     concurrency:
       group: test-linux-deb-installer-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
@@ -325,7 +325,7 @@ jobs:
       - ci-preparation
     runs-on: ubuntu-22.04
     if: >-
-      always() && contains(needs.*.result, 'success')
+      always() && needs.assemble-and-upload.result == 'success'
     container:
       image: fedora:40
     concurrency:
@@ -352,7 +352,7 @@ jobs:
       - assemble-and-upload
     runs-on:  ubuntu-22.04
     if: >-
-      always() && contains(needs.*.result, 'success')
+      always() && needs.assemble-and-upload.result, 'success'
     container:
       image: ${{ needs.ci-preparation.outputs.makepkg-image }}
       options: --user root

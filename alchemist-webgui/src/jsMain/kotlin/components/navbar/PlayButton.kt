@@ -63,23 +63,12 @@ class PlayButton(text: String) : Button(text) {
 
         onClick {
             CoroutineScope(Dispatchers.Default).launch {
-                when (simulationStatus) {
-                    SimState.READY -> {
-                        SimulationControlApi.playSimulation()
-                        EnvironmentStore.callEnvironmentSubscription()
-                    }
-                    SimState.PAUSED -> {
-                        SimulationControlApi.playSimulation()
-                        EnvironmentStore.callEnvironmentSubscription()
-                    }
-                    SimState.RUNNING -> {
-                        SimulationControlApi.pauseSimulation()
-                        // EnvironmentStore.cancelSubscription()
-                    }
-                    else -> {
-                        SimulationControlApi.terminateSimulation()
-                        // EnvironmentStore.cancelSubscription()
-                    }
+                if (simulationStatus == SimState.READY || simulationStatus == SimState.PAUSED) {
+                    SimulationControlApi.playSimulation()
+                    EnvironmentStore.callEnvironmentSubscription()
+                } else if (simulationStatus == SimState.RUNNING) {
+                    SimulationControlApi.pauseSimulation()
+                    // EnvironmentStore.cancelSubscription()
                 }
                 SimulationStatus.callGetStatus()
             }

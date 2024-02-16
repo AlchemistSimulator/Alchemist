@@ -101,7 +101,6 @@ kotlin {
                 implementation(incarnation("sapere"))
                 implementation(incarnation("protelis"))
                 implementation(alchemist("cognitive-agents"))
-                implementation(alchemist("full"))
                 implementation("io.ktor:ktor-server-html-builder:2.3.8")
                 implementation(libs.bundles.ktor.server)
             }

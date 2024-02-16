@@ -352,7 +352,7 @@ jobs:
       - assemble-and-upload
     runs-on:  ubuntu-22.04
     if: >-
-      always() && needs.assemble-and-upload.result, 'success'
+      always() && needs.assemble-and-upload.result == 'success'
     container:
       image: ${{ needs.ci-preparation.outputs.makepkg-image }}
       options: --user root

@@ -714,6 +714,9 @@
   "org.jetbrains.kotlinx/kotlinx-serialization-json/1.6.2": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.6.2"
   },
+  "org.jetbrains.kotlinx/kotlinx-serialization-json/1.6.3": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.6.3"
+  },
   "org.jgrapht/jgrapht-core/1.5.1": {
     "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.1",
     "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.1/element-list"

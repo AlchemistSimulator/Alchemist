@@ -8,26 +8,27 @@
  */
 
 var publishCmd = `
-./gradlew kotlinUpgradeYarnLock || exit 2
-./gradlew performWebsiteStringReplacements || exit 3
-git -C build/website/ add . || exit 4
-git -C build/website/ commit -m "chore: update website to version \${nextRelease.version}" || exit 5
-git -C build/website/ push || exit 6
-RELEASE_ON_CENTRAL="./gradlew -PstagingRepositoryId=\${process.env.STAGING_REPO_ID} releaseStagingRepositoryOnMavenCentral"
-eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || exit 7
-./publishToAUR.sh pkgbuild/PKGBUILD "$CUSTOM_SECRET_0" "$CUSTOM_SECRET_1" "$CUSTOM_SECRET_2" || exit 8
+//./gradlew kotlinUpgradeYarnLock || exit 2
+//./gradlew performWebsiteStringReplacements || exit 3
+//git -C build/website/ add . || exit 4
+//git -C build/website/ commit -m "chore: update website to version \${nextRelease.version}" || exit 5
+//git -C build/website/ push || exit 6
+//RELEASE_ON_CENTRAL="./gradlew -PstagingRepositoryId=\${process.env.STAGING_REPO_ID} releaseStagingRepositoryOnMavenCentral"
+//eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || exit 7
+//./publishToAUR.sh pkgbuild/PKGBUILD "$CUSTOM_SECRET_0" "$CUSTOM_SECRET_1" "$CUSTOM_SECRET_2" || exit 8
+DEPLOY_WINGET=1
 `
 var config = require('semantic-release-preconfigured-conventional-commits');
 config.plugins.push(
     ["@semantic-release/exec", {
         "publishCmd": publishCmd,
     }],
-    ["@semantic-release/github", {
+    /*["@semantic-release/github", {
         "assets": [ 
             { "path": "build/shadow/*-all.jar" },
             { "path": "build/package/*"}
          ]
-    }],
+    }],*/
     "@semantic-release/git",
 )
 module.exports = config

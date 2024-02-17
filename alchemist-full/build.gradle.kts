@@ -203,6 +203,7 @@ validFormats.forEach { packaging: ValidPackaging ->
             winDirChooser = true
             winPerUserInstall = packaging.perUser
             winShortcutPrompt = true
+            winConsole = true
         }
         mac {
             icon = "${project.projectDir}/package-settings/logo.png"

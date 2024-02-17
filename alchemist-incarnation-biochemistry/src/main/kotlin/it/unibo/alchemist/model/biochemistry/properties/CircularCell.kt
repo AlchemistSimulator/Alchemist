@@ -29,5 +29,9 @@ class CircularCell @JvmOverloads constructor(
     CircularCellProperty,
     CellProperty<Euclidean2DPosition> by Cell(environment, node, junctions) {
 
+    init {
+        require(diameter >= 0) { "Diameter must be non-negative: $diameter" }
+    }
+
     override fun toString() = "${super.toString()}[diameter=$diameter]"
 }

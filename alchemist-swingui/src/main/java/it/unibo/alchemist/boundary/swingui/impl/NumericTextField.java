@@ -13,6 +13,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
+import java.io.Serial;
 import java.util.regex.Pattern;
 
 /**
@@ -20,14 +21,16 @@ import java.util.regex.Pattern;
 @Deprecated
 public final class NumericTextField extends JTextField {
 
+    @Serial
     private static final long serialVersionUID = 1556539674522648542L;
 
-    private static class NumericDocument extends PlainDocument {
+    private static final class NumericDocument extends PlainDocument {
 
+        @Serial
         private static final long serialVersionUID = 3063832505179925120L;
 
         // The regular expression to match input against (zero or more digits)
-        private static final String REGEX = "[\\+-]?\\d+";
+        private static final String REGEX = "[+-]?\\d+";
         private static final Pattern DIGITS = Pattern.compile(REGEX);
 
         @Override

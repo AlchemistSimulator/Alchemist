@@ -291,8 +291,9 @@ jobs:
         run: cat install.log
       - name: Test installation
         run: |
-          echo $PATH
-          echo $Path
+          Import-Module "$env:ChocolateyInstall/helpers/chocolateyInstaller.psm1"
+          refreshenv
+
           alchemist --help
 
   test-linux-deb-installer:

@@ -333,8 +333,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     }
                     return 0;
                 }
-            } else if (val instanceof Boolean) {
-                final Boolean cond = (Boolean) val;
+            } else if (val instanceof final Boolean cond) {
                 if (cond) {
                     return 1d;
                 } else {

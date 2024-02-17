@@ -286,9 +286,6 @@ jobs:
             $procMain.WaitForExit() 
             $procLog.Kill()
           }
-      - name: Print the logs
-        if: always()
-        run: cat install.log
       - name: Test installation
         shell: pwsh
         run: |
@@ -544,8 +541,8 @@ jobs:
       #    custom-secret-2: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
       - name: Run release
         run: |
-          npx install
-          npx semantic-release
+          npm install semantic-release
+          npm semantic-release
       - name: Test winget env
         run: |
           echo "VARIABLE: $DEPLOY_WINGET"

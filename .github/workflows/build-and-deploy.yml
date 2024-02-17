@@ -290,6 +290,7 @@ jobs:
         if: always()
         run: cat install.log
       - name: Test installation
+        shell: pwsh
         run: |
           Import-Module "$env:ChocolateyInstall/helpers/chocolateyInstaller.psm1"
           refreshenv

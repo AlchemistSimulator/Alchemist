@@ -267,8 +267,8 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     ) {
         final boolean isSend = "send".equalsIgnoreCase(parameter);
         final Reaction<Object> result = isSend
-                ? new ChemicalReaction<>(Objects.requireNonNull(node), Objects.requireNonNull(timeDistribution))
-                : new Event<>(node, timeDistribution);
+            ? new ChemicalReaction<>(Objects.requireNonNull(node), Objects.requireNonNull(timeDistribution))
+            : new Event<>(node, timeDistribution);
         if (parameter != null) {
             result.setActions(
                 Lists.newArrayList(

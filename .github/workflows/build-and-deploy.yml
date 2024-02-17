@@ -290,7 +290,10 @@ jobs:
         if: always()
         run: cat install.log
       - name: Test installation
-        run: alchemist --help
+        run: |
+          echo $PATH
+          echo $Path
+          alchemist --help
 
   test-linux-deb-installer:
     needs:

@@ -316,12 +316,10 @@ dependencies {
     // Depend on subprojects whose presence is necessary to run
     listOf("api", "engine", "loading").forEach { api(alchemist(it)) } // Execution requirements
     with(libs.apache.commons) {
-        implementation(cli)
         implementation(io)
         implementation(lang3)
     }
     implementation(libs.kotlin.cli)
-    implementation(libs.apache.commons.cli)
     implementation(libs.guava)
     implementation(libs.logback)
     testRuntimeOnly(incarnation("protelis"))

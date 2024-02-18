@@ -790,11 +790,11 @@ internal object SimulationModel {
         node: Node<T>?,
         context: Context,
         root: Any?,
-    ) = when (root) {
-        is Map<*, *> -> visitBuilding<TimeDistribution<T>>(context, root)?.getOrThrow()
-            ?: cantBuildWith<TimeDistribution<T>>(root)
-
-        else -> incarnation.createTimeDistribution(simulationRNG, environment, node, root?.toString())
+    ) = when {
+        root is Map<*, *> && root.containsKey(JavaType.type) ->
+            visitBuilding<TimeDistribution<T>>(context, root)?.getOrThrow() ?: cantBuildWith<TimeDistribution<T>>(root)
+        else ->
+            incarnation.createTimeDistribution(simulationRNG, environment, node, root)
     }
 
     private fun visitVariables(context: Context, root: Any?): Map<String, Variable<*>> = visitNamedRecursively(

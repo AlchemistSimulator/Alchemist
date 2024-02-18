@@ -57,7 +57,7 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
-                implementation(libs.kotest.assertions)
+                implementation(libs.kotest.assertions.core)
                 implementation(libs.kotest.runner)
                 implementation(libs.ktor.server.test.host)
                 implementation(alchemist("euclidean-geometry"))

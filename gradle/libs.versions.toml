@@ -68,7 +68,6 @@ kasechange = "net.pearx.kasechange:kasechange:1.4.1"
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 korim = "com.soywiz.korlibs.korim:korim:4.0.10"
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
@@ -146,7 +145,7 @@ scalacache = [ "scalacache-core", "scalacache-guava" ]
 scalatest = [ "scalatest", "scalatest-plusjunit" ]
 testing-compile = [
     "junit-api",
-    "kotest-assertions",
+    "kotest-assertions-core",
     "kotest-runner",
     "mockito-core"
 ]

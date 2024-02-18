@@ -68,7 +68,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            a {@link String} describing the object
      * @return a new {@link Node}
      */
-    Node<T> createNode(RandomGenerator randomGenerator, Environment<T, P> environment, @Nullable String parameter);
+    Node<T> createNode(RandomGenerator randomGenerator, Environment<T, P> environment, @Nullable Object parameter);
 
     /**
      * @param randomGenerator
@@ -83,10 +83,10 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      * @return a new {@link TimeDistribution}
      */
     TimeDistribution<T> createTimeDistribution(
-            RandomGenerator randomGenerator,
-            Environment<T, P> environment,
-            @Nullable Node<T> node,
-            @Nullable String parameter
+        RandomGenerator randomGenerator,
+        Environment<T, P> environment,
+        @Nullable Node<T> node,
+        @Nullable Object parameter
     );
 
     /**
@@ -103,11 +103,11 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      * @return a new {@link Reaction}
      */
     Reaction<T> createReaction(
-            RandomGenerator randomGenerator,
-            Environment<T, P> environment,
-            Node<T> node,
-            TimeDistribution<T> timeDistribution,
-            String parameter
+        RandomGenerator randomGenerator,
+        Environment<T, P> environment,
+        Node<T> node,
+        TimeDistribution<T> timeDistribution,
+        @Nullable Object parameter
     );
 
     /**
@@ -132,7 +132,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
         @Nullable Node<T> node,
         TimeDistribution<T> time,
         Actionable<T> actionable,
-        String additionalParameters
+        @Nullable Object additionalParameters
     );
 
     /**
@@ -157,6 +157,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
         @Nullable Node<T> node,
         TimeDistribution<T> time,
         Actionable<T> actionable,
-        String additionalParameters
+        @Nullable Object additionalParameters
     );
 }

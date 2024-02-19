@@ -28,7 +28,7 @@ class CommonProperties {
         const val DEFAULT_START_POSITION = 0
         const val DEFAULT_SCALE_RATIO = 0.9
         const val MIN_SCALE = 1.0
-        const val MAX_SCALE = MIN_SCALE * ((1 / DEFAULT_SCALE_RATIO) * SCALE_ITERATIONS + 1)
+        const val MAX_SCALE = MIN_SCALE * (1 / DEFAULT_SCALE_RATIO * SCALE_ITERATIONS)
         const val DEFAULT_NODE_COLOR = "#0F4AA2"
     }
 

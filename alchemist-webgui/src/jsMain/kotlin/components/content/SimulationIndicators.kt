@@ -95,7 +95,7 @@ class SimulationIndicators(className: String = "") : SimplePanel(className = cla
                 }
 
                 p(className = "scale-value").bind(scaleTranslationStore) { state ->
-                    +"Zoom: ${((state.scale/MAX_SCALE) * 100).roundDecimalPlaces(0)}%"
+                    +"Zoom: ${(state.scale/MAX_SCALE * 100).roundDecimalPlaces(0)}%"
                 }
 
                 progress(

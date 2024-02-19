@@ -8,7 +8,7 @@ defaults:
     shell: bash
 
 jobs:
-
+  
   # Prepare the environment for the build
   ci-preparation:
     runs-on: ubuntu-22.04
@@ -447,106 +447,128 @@ jobs:
   release:
     needs:
       - ci-preparation
-      #- build
-      #- build-website
-      #- staging-repo
-      #- verify-aur-package
-      #- test-linux-deb-installer
-      #- test-linux-rpm-installer
-      #- test-windows-msi-installer
+      - build
+      - build-website
+      - staging-repo
+      - verify-aur-package
+      - test-linux-deb-installer
+      - test-linux-rpm-installer
+      - test-windows-msi-installer
     concurrency:
       # Only one release job at a time per branch, as only master releases.
       # Strictly sequential.
       group: release-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: false
     runs-on: ubuntu-22.04
-    #if: >-
-    #  !github.event.repository.fork
-    #  && (
-    #    github.event_name != 'pull_request'
-    #    || github.event.pull_request.head.repo.full_name == github.repository
-    #  )
+    outputs:
+      winget-deploy: ${{ steps.deploy.outputs.winget-deploy }}
+    if: >-
+      !github.event.repository.fork
+      && (
+        github.event_name != 'pull_request'
+        || github.event.pull_request.head.repo.full_name == github.repository
+      )
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
         with:
           submodules: recursive
-      #    token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      #- name: Checkout the docs
-      #  if: contains(github.repository, 'AlchemistSimulator/Alchemist')
-      #  uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      #  with:
-      #    path: website
-      #    fetch-depth: 0
-      #    persist-credentials: true
-      #    repository: AlchemistSimulator/alchemistsimulator.github.io
-      #    token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      #- name: Download website artifact
-      #  uses: actions/download-artifact@v4.1.2
-      #  with:
-      #    name: website-${{ github.sha }}
-      #- name: Download packages
-      #  uses: actions/download-artifact@v4.1.2
-      #  with:
-      #    pattern: installer-package-${{ github.sha }}*
-      #    path: build/package/
-      #    merge-multiple: true
-      #- name: Download fatJars
-      #  uses: actions/download-artifact@v4.1.2
-      #  with:
-      #    name: fat-jars-${{ github.sha }}
-      #    path: build/shadow/
-      #    merge-multiple: true
-      #- name: Download the PKGBUILD
-      #  uses: actions/download-artifact@v4.1.2
-      #  with:
-      #    pattern: pkgbuild-${{ github.sha }}
-      #    path: pkgbuild/
-      #    merge-multiple: true
+          token: ${{ secrets.DEPLOYMENT_TOKEN }}
+      - name: Checkout the docs
+        if: contains(github.repository, 'AlchemistSimulator/Alchemist')
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          path: website
+          fetch-depth: 0
+          persist-credentials: true
+          repository: AlchemistSimulator/alchemistsimulator.github.io
+          token: ${{ secrets.DEPLOYMENT_TOKEN }}
+      - name: Download website artifact
+        uses: actions/download-artifact@v4.1.2
+        with:
+          name: website-${{ github.sha }}
+      - name: Download packages
+        uses: actions/download-artifact@v4.1.2
+        with:
+          pattern: installer-package-${{ github.sha }}*
+          path: build/package/
+          merge-multiple: true
+      - name: Download fatJars
+        uses: actions/download-artifact@v4.1.2
+        with:
+          name: fat-jars-${{ github.sha }}
+          path: build/shadow/
+          merge-multiple: true
+      - name: Download the PKGBUILD
+        uses: actions/download-artifact@v4.1.2
+        with:
+          pattern: pkgbuild-${{ github.sha }}
+          path: pkgbuild/
+          merge-multiple: true
       - name: Install Node
         uses: actions/setup-node@v4.0.2
         with:
           node-version-file: package.json
-      #- uses: DanySK/build-check-deploy-gradle-action@2.4.2
-      #  env:
-      #    STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
-      #    MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}
-      #  with:
-      #    java-version: ${{ needs.ci-preparation.outputs.java-version }}
-      #    build-command: |
-      #      ls -ahl
-      #      echo Copying the new website
-      #      tar -xf website.tar
-      #      echo Copying git information
-      #      mv website/.git build/website/.git
-      #      # git -C build/website/ status
-      #      echo Removing old website
-      #      rm -rf website
-      #      echo Adding changes to the stage
-      #      git -C build/website/ add .
-      #      # git -C build/website/ status
-      #    check-command: true
-      #    deploy-command: |
-      #      npm install
-      #      npx semantic-release
-      #    should-run-codecov: false
-      #    should-deploy: true
-      #    should-validate-wrapper: false
-      #    github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      #    maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-      #    signing-key: ${{ secrets.SIGNING_KEY }}
-      #    signing-password: ${{ secrets.SIGNING_PASSWORD }}
-      #    custom-secret-0: ${{ secrets.AUR_USERNAME }}
-      #    custom-secret-1: ${{ secrets.AUR_EMAIL }}
-      #    custom-secret-2: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
-      - name: Run release
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.2
+        id: deploy
+        env:
+          STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
+          MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}
+          CONTINUE_RELEASE: false
+        with:
+          java-version: ${{ needs.ci-preparation.outputs.java-version }}
+          build-command: |
+            ls -ahl
+            echo Copying the new website
+            tar -xf website.tar
+            echo Copying git information
+            mv website/.git build/website/.git
+            # git -C build/website/ status
+            echo Removing old website
+            rm -rf website
+            echo Adding changes to the stage
+            git -C build/website/ add .
+            # git -C build/website/ status
+          check-command: true
+          deploy-command: |
+            npm install
+            npx semantic-release
+            echo "winget-deploy=$CONTINUE_RELEASE" >> $GITHUB_OUTPUT
+          should-run-codecov: false
+          should-deploy: true
+          should-validate-wrapper: false
+          github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
+          maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          signing-key: ${{ secrets.SIGNING_KEY }}
+          signing-password: ${{ secrets.SIGNING_PASSWORD }}
+          custom-secret-0: ${{ secrets.AUR_USERNAME }}
+          custom-secret-1: ${{ secrets.AUR_EMAIL }}
+          custom-secret-2: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+
+  # Completes the release process for winget
+  release-winget:
+    needs:
+      - ci-preparation
+      - release
+    concurrency:
+      group: release-winget-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: false
+    runs-on: windows-2022
+    if: >-
+      !github.event.repository.fork
+      && (
+        github.event_name != 'pull_request'
+        || github.event.pull_request.head.repo.full_name == github.repository
+      )
+      && fromJSON(needs.release.outputs.winget-deploy)
+    steps:
+      - name: Install winget
+        uses: Cyberboss/install-winget@v1
+      - name: Update with wingetcreate
+        shell: pwsh
         run: |
-          npm install semantic-release
-          npm semantic-release
-      - name: Test winget env
-        run: |
-          echo "VARIABLE: $DEPLOY_WINGET"
-          
+          # Download winget create
+          Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe     
 
   success:
     runs-on: ubuntu-22.04

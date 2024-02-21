@@ -881,6 +881,9 @@
   "org.scala-lang/scala-compiler/2.13.12": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.12"
   },
+  "org.scala-lang/scala-compiler/2.13.13": {
+    "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.13"
+  },
   "org.scala-lang/scala-compiler/2.13.8": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.8"
   },
@@ -895,6 +898,9 @@
   },
   "org.scala-lang/scala-library/2.13.12": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.12"
+  },
+  "org.scala-lang/scala-library/2.13.13": {
+    "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.13"
   },
   "org.scala-lang/scala-library/2.13.8": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.8"

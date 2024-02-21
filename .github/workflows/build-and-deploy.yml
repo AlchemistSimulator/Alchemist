@@ -327,7 +327,7 @@ jobs:
     if: >-
       always() && needs.assemble-and-upload.result == 'success'
     container:
-      image: fedora:40
+      image: fedora:41
     concurrency:
       group: test-linux-rpm-installer-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true

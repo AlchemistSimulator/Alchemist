@@ -578,7 +578,7 @@ jobs:
         shell: pwsh
         run: |
           $version = "${{ needs.ci-preparation.outputs.next-version }}"
-          $packageVersion = $version.Substring(0, $version.IndexOf("-"))
+          $packageVersion = if ($version.IndexOf("-") -ne -1) { $version.Substring(0, $version.IndexOf("-")) } else { $version }
           $installerUrl = "https://github.com/AlchemistSimulator/Alchemist/releases/download/$packageVersion/alchemist-$packageVersion.msi"
           # $gitToken = ${{ secrets.GIT_AUTH_TOKEN }}
           echo $env:packageID $version $packageVersion $installerUrl

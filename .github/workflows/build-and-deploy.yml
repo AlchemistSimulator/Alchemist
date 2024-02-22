@@ -279,12 +279,7 @@ jobs:
         run: |
           Get-ChildItem -Force | Format-Table -AutoSize
           foreach ($file in Get-ChildItem -Filter *.msi) {
-            $log = "install.log"
             $procMain = Start-Process "msiexec" "/i `"$file`" /qn /l*! `"$log`"" -NoNewWindow -PassThru
-            Start-Sleep -Seconds 1
-            $procLog = Start-Process "powershell" "Get-Content -Path `"$log`" -Wait" -NoNewWindow -PassThru 
-            $procMain.WaitForExit() 
-            $procLog.Kill()
           }
       - name: Test installation
         shell: pwsh

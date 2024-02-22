@@ -571,8 +571,9 @@ jobs:
         run: Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe
       - name: Check package availability
         shell: pwsh
+        continue-on-error: true
         run: |
-          .\wingetcreate.exe show $packageID
+          .\wingetcreate.exe show $env:packageID
       - name: Update package
         shell: pwsh
         run: |
@@ -580,8 +581,8 @@ jobs:
           $packageVersion = $version.Substring(0, $version.IndexOf("-"))
           $installerUrl = "https://github.com/AlchemistSimulator/Alchemist/releases/download/$packageVersion/alchemist-$packageVersion.msi"
           # $gitToken = ${{ secrets.GIT_AUTH_TOKEN }}
-          echo $packageID $version $packageVersion $installerUrl
-          .\wingetcreate.exe update $packageID --version $packageVersion --urls "$installerUrl" --submit --token $gitToken
+          echo $env:packageID $version $packageVersion $installerUrl
+          .\wingetcreate.exe update $env:packageID --version $packageVersion --urls "$installerUrl" --submit --token $gitToken
       
 
   success:

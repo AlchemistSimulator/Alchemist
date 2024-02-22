@@ -8,7 +8,7 @@ defaults:
     shell: bash
 
 jobs:
-  
+
   # Prepare the environment for the build
   ci-preparation:
     runs-on: ubuntu-22.04
@@ -349,20 +349,6 @@ jobs:
       - name: Test installation
         run: alchemist --help
 
-  text-macos-pkg-installer:
-    needs:
-      - assemble-and-upload
-      - ci-preparation
-    runs-on: macos-12
-    concurrency:
-      group: test-macos-pkg-installer-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
-    steps:
-      - name: Download packages
-        uses: actions/download-artifact@v4.1.2
-        with:
-          name: installer-package-${{ github.sha }}-${{ runner.os }}
-    
   # Test PKGBUILD for AUR release
   verify-aur-package:
     needs:

@@ -541,7 +541,7 @@ jobs:
       cancel-in-progress: false
     runs-on: windows-2022
     env:
-      packageID: "Unibo.alchemist"
+      packageID: "Unibo.Alchemist"
     if: >-
       !github.event.repository.fork
       && (

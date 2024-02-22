@@ -549,26 +549,40 @@ jobs:
   release-winget:
     needs:
       - ci-preparation
-      - release
+#      - release
     concurrency:
       group: release-winget-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: false
     runs-on: windows-2022
-    if: >-
-      !github.event.repository.fork
-      && (
-        github.event_name != 'pull_request'
-        || github.event.pull_request.head.repo.full_name == github.repository
-      )
-      && fromJSON(needs.release.outputs.winget-deploy)
+    env:
+      packageID: "Unibo.alchemist"
+    #if: >-
+    #  !github.event.repository.fork
+    #  && (
+    #    github.event_name != 'pull_request'
+    #    || github.event.pull_request.head.repo.full_name == github.repository
+    #  )
+    #  && fromJSON(needs.release.outputs.winget-deploy)
     steps:
       - name: Install winget
         uses: Cyberboss/install-winget@v1
-      - name: Update with wingetcreate
+      - name: Install wingetcreate
+        shell: pwsh
+        run: Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe
+      - name: Check package availability
         shell: pwsh
         run: |
-          # Download winget create
-          Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe     
+          .\wingetcreate.exe show $packageID
+      - name: Update package
+        shell: pwsh
+        run: |
+          $version = "${{ needs.ci-preparation.outputs.next-version }}"
+          $packageVersion = $version.Substring(0, $version.IndexOf("-"))
+          $installerUrl = "https://github.com/AlchemistSimulator/Alchemist/releases/download/$packageVersion/alchemist-$packageVersion.msi"
+          # $gitToken = ${{ secrets.GIT_AUTH_TOKEN }}
+          echo $packageID $version $packageVersion $installerUrl
+          .\wingetcreate.exe update $packageID --version $packageVersion --urls "$installerUrl" --submit --token $gitToken
+      
 
   success:
     runs-on: ubuntu-22.04

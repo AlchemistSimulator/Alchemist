@@ -282,11 +282,11 @@ jobs:
             $procMain = Start-Process "msiexec" "/i `"$file`" /qn /l*! `"$log`"" -NoNewWindow -PassThru
           }
       - name: Test installation
-        shell: pwsh
+        shell: powershell
         run: |
           Import-Module "$env:ChocolateyInstall/helpers/chocolateyInstaller.psm1"
           refreshenv
-
+          echo $Path
           alchemist --help
 
   test-linux-deb-installer:

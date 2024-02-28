@@ -1,3 +1,76 @@
+## [31.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/31.0.0...31.0.1) (2024-02-20)
+
+
+### Bug Fixes
+
+* **loading:** pass down time distribution's arguments to incarnations without string conversions ([48965bc](https://github.com/AlchemistSimulator/Alchemist/commit/48965bc8dacf91dc5ba08c8631d54058b164b5fb))
+* move the legacy CLI interface to the multivesta adapter ([4e53c5b](https://github.com/AlchemistSimulator/Alchemist/commit/4e53c5ba025132c5d7c8b4cc8e2fd05c3ff32155))
+
+
+### Build and continuous integration
+
+* drop apache commons CLI from the main project ([9e49c02](https://github.com/AlchemistSimulator/Alchemist/commit/9e49c025393c43b9640ccc77189b28f2d52b8d1a))
+* remove duplicated library ([534a921](https://github.com/AlchemistSimulator/Alchemist/commit/534a9211381a29476fbed81b457496ed816c4665))
+* sort dokka version alphabetically ([4766c22](https://github.com/AlchemistSimulator/Alchemist/commit/4766c22ecd0176c4af4347ddb339676182504b90))
+
+## [31.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.11...31.0.0) (2024-02-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** add support for building nodes, reactions, conditions, and actions wth arbitrary objects at the `Incarnation` level
+
+### Features
+
+* **api:** add support for building nodes, reactions, conditions, and actions wth arbitrary objects at the `Incarnation` level ([3c70db4](https://github.com/AlchemistSimulator/Alchemist/commit/3c70db457e52f904436395d65e1e04faecba75c6))
+
+
+### Dependency updates
+
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.0 ([5e05201](https://github.com/AlchemistSimulator/Alchemist/commit/5e0520137301b5a724653fe5ec5064f887465c34))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-coroutines-core to v1.8.0 ([2128707](https://github.com/AlchemistSimulator/Alchemist/commit/2128707742c10254de98eb9e518fd16b0364151e))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.6.3 ([0c56e04](https://github.com/AlchemistSimulator/Alchemist/commit/0c56e040c6850eb5d56c16b3f837a8332c6b1d46))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 2a28c52 ([4cfe7a7](https://github.com/AlchemistSimulator/Alchemist/commit/4cfe7a7799c51cdaa9bafe874ea4077d8902978b))
+* **deps:** update external-resources/learning-scafi-alchemist digest to ec538fd ([ac34cb3](https://github.com/AlchemistSimulator/Alchemist/commit/ac34cb34889ee79a491719281db305c7a7c68a5c))
+* **deps:** update react to v18.2.0-pre.697 ([bc6ac0d](https://github.com/AlchemistSimulator/Alchemist/commit/bc6ac0dac4bbabf0a62d760ad280dafb3d27bbc7))
+* **deps:** update react to v18.2.0-pre.698 ([b6ebfaa](https://github.com/AlchemistSimulator/Alchemist/commit/b6ebfaa021beec5562ba494c9a2918b387072f6b))
+* **deps:** update site/themes/hugo-theme-relearn digest to 0754286 ([69d9bfd](https://github.com/AlchemistSimulator/Alchemist/commit/69d9bfdc2cf9938159da3ba572b58cd6ba5c57b6))
+* **deps:** update site/themes/hugo-theme-relearn digest to 0b9fae5 ([a840328](https://github.com/AlchemistSimulator/Alchemist/commit/a8403287623428a0ccd2989d118623316c238371))
+* **deps:** update site/themes/hugo-theme-relearn digest to 1d91cb1 ([4916fbf](https://github.com/AlchemistSimulator/Alchemist/commit/4916fbf106a6b2d55a8e9944372cf877267aba47))
+* **deps:** update site/themes/hugo-theme-relearn digest to 22a36ca ([47f0f62](https://github.com/AlchemistSimulator/Alchemist/commit/47f0f6215574aaee67a68dce37d50fdb9ee70e97))
+* **deps:** update site/themes/hugo-theme-relearn digest to 288c660 ([a5767f0](https://github.com/AlchemistSimulator/Alchemist/commit/a5767f0a3b980b87bb44a2e00b3446869ddc7b9e))
+* **deps:** update site/themes/hugo-theme-relearn digest to de97e8b ([f90f3d0](https://github.com/AlchemistSimulator/Alchemist/commit/f90f3d01e6a25a62ced5ae9b1d5ab058bcd3439c))
+
+
+### Bug Fixes
+
+* **biochemistry:** fail-fast on non-positive cell diameters ([a82dc53](https://github.com/AlchemistSimulator/Alchemist/commit/a82dc53d1327321f718d97fb128828cca90fa1fe))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.1 ([65a8769](https://github.com/AlchemistSimulator/Alchemist/commit/65a8769958dc4ac69459034b097fbba446e17bca))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.2 ([4ce3746](https://github.com/AlchemistSimulator/Alchemist/commit/4ce374648deb353135b3a31d3c03dfa52818dfde))
+* rpm installation with softlink and workflow fixes ([#3120](https://github.com/AlchemistSimulator/Alchemist/issues/3120)) ([645d6f9](https://github.com/AlchemistSimulator/Alchemist/commit/645d6f91ce4be5a5ea1958e677f053116ccee58e))
+* use the retry system builtin in the action ([855dcaa](https://github.com/AlchemistSimulator/Alchemist/commit/855dcaa7449e12661219170f9500ec8b0a1e1ae8))
+* **website:** do not use the gradle run action for checking the website ([740f17b](https://github.com/AlchemistSimulator/Alchemist/commit/740f17bab10a76aee1f635611553944e196d8b79))
+* **website:** write the docker command on a single line ([f124c9f](https://github.com/AlchemistSimulator/Alchemist/commit/f124c9f4931e6dc3c69ae76bb0899b211d420231))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([7597cad](https://github.com/AlchemistSimulator/Alchemist/commit/7597cad1fabdf0d20ce1576e99bde021b8f40102))
+* **build:** update the javadoc.io cache ([c5c3b9f](https://github.com/AlchemistSimulator/Alchemist/commit/c5c3b9fe54ec7515a029a787993501ad5eb711da))
+* **build:** update the javadoc.io cache ([e6bc602](https://github.com/AlchemistSimulator/Alchemist/commit/e6bc602dc6be8cc3e817f35f359f4f11bd1d3c6e))
+* **incarnation-sapere:** annotate `SapereIncarnation`'s `serialVersionUID` with `@Serial` ([68dafae](https://github.com/AlchemistSimulator/Alchemist/commit/68dafaef5de5c0d05c8c48aa615886afb10399fb))
+
+
+### Style improvements
+
+* **incarnation-protelis:** fix indentation in `ProtelisIncarnation` ([b0a7d78](https://github.com/AlchemistSimulator/Alchemist/commit/b0a7d785a1a079d550a6b211e8d9ec1fadd0400b))
+* **incarnation-protelis:** use modern java instanceof assignment in `ProtelisIncarnation` ([af875bc](https://github.com/AlchemistSimulator/Alchemist/commit/af875bc5c4532793206f26914d4e5e778eb7602e))
+* **swingui:** fix warnings in `NumericTextField` ([f0812dd](https://github.com/AlchemistSimulator/Alchemist/commit/f0812ddc53e20986fc116bacf22ab3d6af37db98))
+
 ## [30.1.11](https://github.com/AlchemistSimulator/Alchemist/compare/30.1.10...30.1.11) (2024-02-12)
 
 

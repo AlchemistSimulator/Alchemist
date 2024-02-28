@@ -99,11 +99,6 @@ val toDisable = listOf(
 ).map { it.name }
 tasks.matching { it.name in toDisable }.configureEach { enabled = false }
 
-// Default JPackageTask disabled to generate multiple packages
-tasks.jpackage {
-    enabled = false
-}
-
 sealed interface PackagingMethod
 data class ValidPackaging(val format: ImageType, val perUser: Boolean = false) : PackagingMethod {
     val name get() = format.formatName
@@ -195,13 +190,13 @@ validFormats.forEach { packaging: ValidPackaging ->
         destination = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path
         mainJar = tasks.shadowJar.get().archiveFileName.get()
         mainClass = application.mainClass.get()
-
         verbose = true
 
         linux {
             icon = "${project.projectDir}/package-settings/logo.png"
             linuxShortcut = true
             linuxDebMaintainer = "Danilo Pianini"
+            linuxRpmLicenseType = "GPLv3"
         }
         windows {
             icon = "${project.projectDir}/package-settings/logo.ico"

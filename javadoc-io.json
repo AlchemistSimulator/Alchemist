@@ -43,6 +43,12 @@
     "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.8",
     "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.8/element-list"
   },
+  "ch.qos.logback/logback-classic/1.5.0": {
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.0"
+  },
+  "ch.qos.logback/logback-classic/1.5.1": {
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.1"
+  },
   "com.expediagroup/graphql-kotlin-hooks-provider/7.0.2": {
     "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/7.0.2"
   },
@@ -285,6 +291,9 @@
   },
   "io.arrow-kt/arrow-core/1.2.1": {
     "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/1.2.1"
+  },
+  "io.arrow-kt/arrow-core/1.2.2": {
+    "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/1.2.2"
   },
   "io.github.classgraph/classgraph/4.8.138": {
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.138",
@@ -711,6 +720,9 @@
   "org.jetbrains.kotlinx/kotlinx-serialization-json/1.6.2": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.6.2"
   },
+  "org.jetbrains.kotlinx/kotlinx-serialization-json/1.6.3": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.6.3"
+  },
   "org.jgrapht/jgrapht-core/1.5.1": {
     "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.1",
     "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.1/element-list"
@@ -875,6 +887,9 @@
   "org.scala-lang/scala-compiler/2.13.12": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.12"
   },
+  "org.scala-lang/scala-compiler/2.13.13": {
+    "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.13"
+  },
   "org.scala-lang/scala-compiler/2.13.8": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.8"
   },
@@ -889,6 +904,9 @@
   },
   "org.scala-lang/scala-library/2.13.12": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.12"
+  },
+  "org.scala-lang/scala-library/2.13.13": {
+    "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.13"
   },
   "org.scala-lang/scala-library/2.13.8": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.8"

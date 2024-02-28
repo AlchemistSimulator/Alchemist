@@ -1,7 +1,8 @@
 [versions]
 antlr4 = "4.13.1"
 apollo ="4.0.0-beta.4"
-arrow = "1.2.1"
+arrow = "1.2.2"
+dokka = "1.9.10"
 graphhopper = "9.0-pre1"
 graphql = "7.0.2"
 graphstream = "2.0"
@@ -10,13 +11,12 @@ junit = "5.10.2"
 konf = "1.1.2"
 kotest = "5.8.0"
 ktor = "2.3.8"
-dokka = "1.9.10"
 kotlin = "1.9.22"
 mockito = "5.10.0"
 protelis = "17.3.16"
-react = "18.2.0-pre.697"
+react = "18.2.0-pre.705"
 scafi = "1.2.0"
-scala = "2.13.12"
+scala = "2.13.13"
 scalacache = "0.28.0"
 
 [libraries]
@@ -68,7 +68,6 @@ kasechange = "net.pearx.kasechange:kasechange:1.4.1"
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 korim = "com.soywiz.korlibs.korim:korim:4.0.10"
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
@@ -78,7 +77,7 @@ kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", versi
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
 kotlin-react = { module = "org.jetbrains.kotlin-wrappers:kotlin-react", version.ref = "react" }
 kotlin-react-dom = { module = "org.jetbrains.kotlin-wrappers:kotlin-react-dom", version.ref = "react" }
-kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2"
+kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
@@ -96,7 +95,7 @@ ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref 
 ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", version.ref = "ktor" }
 leafletmap = "org.danilopianini:de.saring.leafletmap:1.0.5"
 listset = "org.danilopianini:listset:0.3.9"
-logback = "ch.qos.logback:logback-classic:1.4.14"
+logback = "ch.qos.logback:logback-classic:1.5.1"
 mapsforge = "org.mapsforge:mapsforge-map-awt:0.20.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.3"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
@@ -146,7 +145,7 @@ scalacache = [ "scalacache-core", "scalacache-guava" ]
 scalatest = [ "scalatest", "scalatest-plusjunit" ]
 testing-compile = [
     "junit-api",
-    "kotest-assertions",
+    "kotest-assertions-core",
     "kotest-runner",
     "mockito-core"
 ]

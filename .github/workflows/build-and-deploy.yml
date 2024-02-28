@@ -75,7 +75,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.5
         with:
           pre-build-command: true
           build-command: |
@@ -101,7 +101,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.5
         with:
           retries-on-failure: 5
           wait-between-retries: 120
@@ -158,7 +158,7 @@ jobs:
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4.1.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.5
         with:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           should-run-codecov: false
@@ -205,7 +205,7 @@ jobs:
     steps:
       - name: Checkout with full history
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.5
         with:
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
@@ -271,7 +271,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Download packages
-        uses: actions/download-artifact@v4.1.2
+        uses: actions/download-artifact@v4.1.3
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
@@ -301,7 +301,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Download packages
-        uses: actions/download-artifact@v4.1.2
+        uses: actions/download-artifact@v4.1.3
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Work around xdg bug https://bugs.archlinux.org/task/33316
@@ -332,7 +332,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Download packages
-        uses: actions/download-artifact@v4.1.2
+        uses: actions/download-artifact@v4.1.3
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
@@ -368,7 +368,7 @@ jobs:
           # Work around https://github.com/actions/checkout/issues/1169
           # sudo git config --system --add safe.directory /__w/Alchemist/Alchemist
       - name: Download the PKGBUILD
-        uses: actions/download-artifact@v4.1.2
+        uses: actions/download-artifact@v4.1.3
         with:
           pattern: pkgbuild-${{ github.sha }}
           merge-multiple: true
@@ -377,7 +377,7 @@ jobs:
           namcap PKGBUILD 2>&1
           namcap PKGBUILD 2>&1 | awk 'END { exit (NR > 0 ? NR : 0) }'
       - name: Download the RPM
-        uses: actions/download-artifact@v4.1.2
+        uses: actions/download-artifact@v4.1.3
         with:
           pattern: installer-package-${{ github.sha }}-${{ runner.os }}
           merge-multiple: true
@@ -465,23 +465,23 @@ jobs:
           repository: AlchemistSimulator/alchemistsimulator.github.io
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Download website artifact
-        uses: actions/download-artifact@v4.1.2
+        uses: actions/download-artifact@v4.1.3
         with:
           name: website-${{ github.sha }}
       - name: Download packages
-        uses: actions/download-artifact@v4.1.2
+        uses: actions/download-artifact@v4.1.3
         with:
           pattern: installer-package-${{ github.sha }}*
           path: build/package/
           merge-multiple: true
       - name: Download fatJars
-        uses: actions/download-artifact@v4.1.2
+        uses: actions/download-artifact@v4.1.3
         with:
           name: fat-jars-${{ github.sha }}
           path: build/shadow/
           merge-multiple: true
       - name: Download the PKGBUILD
-        uses: actions/download-artifact@v4.1.2
+        uses: actions/download-artifact@v4.1.3
         with:
           pattern: pkgbuild-${{ github.sha }}
           path: pkgbuild/
@@ -492,6 +492,7 @@ jobs:
           node-version-file: package.json
       - uses: DanySK/build-check-deploy-gradle-action@2.4.2
         id: deploy
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.5
         env:
           STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
           MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}

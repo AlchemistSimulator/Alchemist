@@ -5,6 +5,5 @@ export:
       fileNameRoot: "test_export_interval"
       interval: 3.0
     data:
-      - time
       - molecule: "default_module:default_program"
         property: "N"

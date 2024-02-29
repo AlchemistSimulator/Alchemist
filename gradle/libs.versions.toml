@@ -1,7 +1,7 @@
 [versions]
 antlr4 = "4.13.1"
 apollo ="4.0.0-beta.4"
-arrow = "1.2.2"
+arrow = "1.2.3"
 dokka = "1.9.10"
 graphhopper = "9.0-pre1"
 graphql = "7.0.2"
@@ -99,7 +99,7 @@ logback = "ch.qos.logback:logback-classic:1.5.1"
 mapsforge = "org.mapsforge:mapsforge-map-awt:0.20.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.3"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-mongodb = "org.mongodb:mongodb-driver-sync:4.11.1"
+mongodb = "org.mongodb:mongodb-driver-sync:5.0.0"
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.2.50"
 protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }
 protelis-lang = { module = "org.protelis:protelis-lang", version.ref = "protelis" }
@@ -157,7 +157,7 @@ gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:3
 graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
 hugo = "io.github.fstaudt.hugo:0.7.0"
-java-qa = "org.danilopianini.gradle-java-qa:1.36.0"
+java-qa = "org.danilopianini.gradle-java-qa:1.37.0"
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

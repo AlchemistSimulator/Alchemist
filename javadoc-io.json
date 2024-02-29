@@ -295,6 +295,9 @@
   "io.arrow-kt/arrow-core/1.2.2": {
     "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/1.2.2"
   },
+  "io.arrow-kt/arrow-core/1.2.3": {
+    "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/1.2.3"
+  },
   "io.github.classgraph/classgraph/4.8.138": {
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.138",
     "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.138/package-list"
@@ -803,6 +806,10 @@
   },
   "org.mongodb/mongodb-driver-sync/4.9.1": {
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.9.1"
+  },
+  "org.mongodb/mongodb-driver-sync/5.0.0": {
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.0.0",
+    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.0.0/element-list"
   },
   "org.openjfx/javafx-base/11": {
     "first": "https://javadoc.io/doc/org.openjfx/javafx-base/11",

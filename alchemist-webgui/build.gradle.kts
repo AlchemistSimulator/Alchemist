@@ -144,3 +144,7 @@ tasks.named("runKtlintFormatOverCommonMainSourceSet").configure {
 tasks.named("runKtlintCheckOverCommonMainSourceSet").configure {
     dependsOn(tasks.named("kspCommonMainKotlinMetadata"))
 }
+
+tasks.named("sourcesJar").configure {
+    dependsOn("kspCommonMainKotlinMetadata")
+}

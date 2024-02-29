@@ -33,6 +33,8 @@ import it.unibo.alchemist.model.sapere.timedistributions.SAPEREExponentialTime;
 import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.random.RandomGenerator;
 
+import javax.annotation.Nullable;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -48,6 +50,7 @@ import java.util.regex.Pattern;
 public final class SAPEREIncarnation<P extends Position<? extends P>>
         implements Incarnation<List<ILsaMolecule>, P>, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final String CONDITION_GROUP = "condition";
     private static final String CONDITIONS_GROUP = "conditions";
@@ -153,9 +156,10 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
 
     @Override
     public ILsaNode createNode(
-            final RandomGenerator randomGenerator,
-            final Environment<List<ILsaMolecule>, P> environment,
-            final String parameter) {
+        final RandomGenerator randomGenerator,
+        final Environment<List<ILsaMolecule>, P> environment,
+        final @Nullable Object parameter
+    ) {
         return new LsaNode(environment);
     }
 
@@ -165,24 +169,22 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
 
     @Override
     public TimeDistribution<List<ILsaMolecule>> createTimeDistribution(
-            final RandomGenerator randomGenerator,
-            final Environment<List<ILsaMolecule>, P> environment,
-            final Node<List<ILsaMolecule>> node,
-            final String parameter) {
-        if (parameter == null || parameter.isEmpty()) {
+        final RandomGenerator randomGenerator,
+        final Environment<List<ILsaMolecule>, P> environment,
+        final Node<List<ILsaMolecule>> node,
+        final @Nullable Object parameter
+    ) {
+        if (parameter == null || parameter.toString().isEmpty()) {
             return defaultTD(randomGenerator);
         }
-        final String[] actualArgs = parameter.split(",");
-        switch (actualArgs.length) {
-        case 0:
-            return defaultTD(randomGenerator);
-        case 1:
-            return new SAPEREExponentialTime(actualArgs[0], randomGenerator);
-        case 2:
-            return new SAPEREExponentialTime(actualArgs[0], new DoubleTime(Double.parseDouble(actualArgs[1])), randomGenerator);
-        default:
-            throw new IllegalArgumentException(parameter + " could not be used");
-        }
+        final String[] actualArgs = parameter.toString().split(",");
+        return switch (actualArgs.length) {
+            case 0 -> defaultTD(randomGenerator);
+            case 1 -> new SAPEREExponentialTime(actualArgs[0], randomGenerator);
+            case 2 ->
+                new SAPEREExponentialTime(actualArgs[0], new DoubleTime(Double.parseDouble(actualArgs[1])), randomGenerator);
+            default -> throw new IllegalArgumentException(parameter + " could not be used");
+        };
     }
 
     @Override
@@ -191,10 +193,10 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
             final Environment<List<ILsaMolecule>, P> environment,
             final Node<List<ILsaMolecule>> node,
             final TimeDistribution<List<ILsaMolecule>> timeDistribution,
-            final String parameter) {
+            final @Nullable Object parameter) {
         final SAPEREReaction result = new SAPEREReaction(environment, (LsaNode) node, randomGenerator, timeDistribution);
-        if (parameter != null && !parameter.isEmpty()) {
-            final Matcher rMatcher = MATCH_REACTION.matcher(parameter);
+        if (parameter != null && !parameter.toString().isEmpty()) {
+            final Matcher rMatcher = MATCH_REACTION.matcher(parameter.toString());
             if (rMatcher.matches()) {
                 final List<Condition<List<ILsaMolecule>>> conditions = new LinkedList<>();
                 final String conditionsSpec = rMatcher.group(CONDITIONS_GROUP);
@@ -228,7 +230,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
                 result.setConditions(conditions);
                 result.setActions(actions);
             } else {
-                illegalSpec("must match regex " + REACTION_REGEX, parameter);
+                illegalSpec("must match regex " + REACTION_REGEX, parameter.toString());
             }
         }
         return result;
@@ -246,13 +248,17 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
         final Node<List<ILsaMolecule>> node,
         final TimeDistribution<List<ILsaMolecule>> time,
         final Actionable<List<ILsaMolecule>> reaction,
-        final String additionalParameters
+        final @Nullable Object additionalParameters
     ) {
         Objects.requireNonNull(additionalParameters, "The condition can't be null. Reaction:" + reaction);
-        if (additionalParameters.startsWith("+")) {
-            return new LsaNeighborhoodCondition((LsaNode) node, createMolecule(additionalParameters.substring(1)), environment);
+        if (additionalParameters.toString().startsWith("+")) {
+            return new LsaNeighborhoodCondition(
+                (LsaNode) node,
+                createMolecule(additionalParameters.toString().substring(1)),
+                environment
+            );
         }
-        return new LsaStandardCondition(createMolecule(additionalParameters), (LsaNode) node);
+        return new LsaStandardCondition(createMolecule(additionalParameters.toString()), (LsaNode) node);
     }
 
     @Override
@@ -262,24 +268,26 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
         final Node<List<ILsaMolecule>> node,
         final TimeDistribution<List<ILsaMolecule>> time,
         final Actionable<List<ILsaMolecule>> actionable,
-        final String additionalParameters
+        final @Nullable Object additionalParameters
     ) {
-        if (additionalParameters.startsWith("+")) {
+        Objects.requireNonNull(additionalParameters, "The action parameter can't be null. Actionable:" + actionable);
+        final var parameters = additionalParameters.toString();
+        if (parameters.startsWith("+")) {
             return new LsaRandomNeighborAction(
                 (LsaNode) node,
-                createMolecule(additionalParameters.substring(1)),
+                createMolecule(parameters.substring(1)),
                 environment,
                 randomGenerator
             );
         }
-        if (additionalParameters.startsWith("*")) {
+        if (parameters.startsWith("*")) {
             return new LsaAllNeighborsAction(
                 (LsaNode) node,
-                createMolecule(additionalParameters.substring(1)),
+                createMolecule(parameters.substring(1)),
                 environment
             );
         }
-        return new LsaStandardAction(createMolecule(additionalParameters), (LsaNode) node, randomGenerator);
+        return new LsaStandardAction(createMolecule(parameters), (LsaNode) node, randomGenerator);
     }
 
     @Override

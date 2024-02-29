@@ -54,6 +54,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.Serial;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Iterator;
@@ -133,16 +135,16 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         final Node<Object> node,
         final TimeDistribution<Object> time,
         final Actionable<Object> actionable,
-        final String additionalParameters
+        final @Nullable Object additionalParameters
     ) {
+        final String parameters = additionalParameters == null ? null : additionalParameters.toString();
         if (actionable instanceof Reaction) {
             Objects.requireNonNull(additionalParameters);
-            @SuppressWarnings("unchecked")
-            final var device = node.asPropertyOrNull(ProtelisDevice.class);
+            final ProtelisDevice<P> device = node.asPropertyOrNull(ProtelisDevice.class);
             if (device == null) {
                 throw new IllegalArgumentException("The node must be a " + ProtelisDevice.class.getSimpleName());
             }
-            if ("send".equalsIgnoreCase(additionalParameters)) {
+            if ("send".equalsIgnoreCase(parameters)) {
                 final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
                     .stream()
                     .flatMap(r -> r.getActions().stream())
@@ -169,7 +171,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                         environment,
                         device,
                         (Reaction<Object>) actionable,
-                        additionalParameters
+                        parameters
                     );
                 } catch (RuntimeException exception) { // NOPMD AvoidCatchingGenericException
                     throw new IllegalArgumentException(
@@ -209,7 +211,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         final Node<Object> node,
         final TimeDistribution<Object> time,
         final Actionable<Object> actionable,
-        final String additionalParameters
+        final @Nullable Object additionalParameters
     ) {
         if (actionable instanceof Reaction) {
             checkIsProtelisNode(node, "The node must have a " + ProtelisDevice.class.getSimpleName());
@@ -250,7 +252,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     public Node<Object> createNode(
         final RandomGenerator randomGenerator,
         final Environment<Object, P> environment,
-        final String parameter
+        final @Nullable Object parameter
     ) {
         final Node<Object> node = new GenericNode<>(this, environment);
         node.addProperty(new ProtelisDevice<>(environment, node));
@@ -263,12 +265,13 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         final Environment<Object, P> environment,
         final Node<Object> node,
         final TimeDistribution<Object> timeDistribution,
-        final String parameter
+        final @Nullable Object parameter
     ) {
-        final boolean isSend = "send".equalsIgnoreCase(parameter);
+        final String parameterString = parameter == null ? null : parameter.toString();
+        final boolean isSend = "send".equalsIgnoreCase(parameterString);
         final Reaction<Object> result = isSend
-                ? new ChemicalReaction<>(Objects.requireNonNull(node), Objects.requireNonNull(timeDistribution))
-                : new Event<>(node, timeDistribution);
+            ? new ChemicalReaction<>(Objects.requireNonNull(node), Objects.requireNonNull(timeDistribution))
+            : new Event<>(node, timeDistribution);
         if (parameter != null) {
             result.setActions(
                 Lists.newArrayList(
@@ -297,13 +300,14 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         final RandomGenerator randomGenerator,
         final Environment<Object, P> environment,
         final Node<Object> node,
-        final String parameter
+        final @Nullable Object parameter
     ) {
         if (parameter == null) {
             return new ExponentialTime<>(Double.POSITIVE_INFINITY, randomGenerator);
         }
         try {
-            final double frequency = Double.parseDouble(parameter);
+            final double frequency = parameter instanceof Number ? ((Number) parameter).doubleValue()
+                : Double.parseDouble(parameter.toString());
             return new DiracComb<>(new DoubleTime(randomGenerator.nextDouble() / frequency), frequency);
         } catch (final NumberFormatException e) {
             L.error("Unable to convert {} to a double", parameter);
@@ -333,8 +337,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     }
                     return 0;
                 }
-            } else if (val instanceof Boolean) {
-                final Boolean cond = (Boolean) val;
+            } else if (val instanceof final Boolean cond) {
                 if (cond) {
                     return 1d;
                 } else {
@@ -420,9 +423,8 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
         @Override
         @SuppressFBWarnings("EI_EXPOSE_REP")
-        @SuppressWarnings("unchecked")
         public DeviceUID getDeviceUID() {
-            final ProtelisDevice protelisProperty = node.asPropertyOrNull(ProtelisDevice.class);
+            final ProtelisDevice<?> protelisProperty = node.asPropertyOrNull(ProtelisDevice.class);
             return protelisProperty != null ? protelisProperty : NO_NODE_ID;
         }
 
@@ -548,6 +550,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     private static final class NoNode implements Node<Object> {
         public static final NoNode INSTANCE = new NoNode();
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private <A> A notImplemented() {

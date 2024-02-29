@@ -27,6 +27,11 @@ import it.unibo.alchemist.model.biochemistry.reactions.BiochemicalReactionBuilde
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import org.apache.commons.math3.random.RandomGenerator;
 
+import javax.annotation.Nullable;
+import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
+
 /**
  * Factory for the biochemistry incarnation entities.
  */
@@ -46,46 +51,57 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
     public Node<Double> createNode(
             final RandomGenerator randomGenerator,
             final Environment<Double, Euclidean2DPosition> environment,
-            final String parameter
+            final @Nullable Object parameter
     ) {
+        final double diameter = parameter == null ? 0
+            : parameter instanceof String ? Double.parseDouble((String) parameter)
+            : parameter instanceof Number ? ((Number) parameter).doubleValue()
+            : Double.NaN;
+        if (Double.isNaN(diameter)) {
+            throw new IllegalArgumentException("Invalid diameter: " + parameter);
+        }
         final Node<Double> node = new GenericNode<>(this, environment);
-        if (parameter == null || parameter.isEmpty()) {
+        if (diameter == 0) {
             node.addProperty(new CircularCell(environment, node));
         } else {
-            node.addProperty(new CircularCell(environment, node, Double.parseDouble(parameter)));
+            node.addProperty(new CircularCell(environment, node, diameter));
         }
         return node;
     }
 
     @Override
     public TimeDistribution<Double> createTimeDistribution(
-            final RandomGenerator randomGenerator,
-            final Environment<Double, Euclidean2DPosition> environment,
-            final Node<Double> node,
-            final String parameter
+        final RandomGenerator randomGenerator,
+        final Environment<Double, Euclidean2DPosition> environment,
+        final Node<Double> node,
+        final @Nullable Object parameter
     ) {
-        if (parameter == null || parameter.isEmpty()) {
-            return new ExponentialTime<>(1.0, randomGenerator);
+        final var parameterString = Objects.toString(parameter, "");
+        final double rate = parameter == null || parameterString.isEmpty() ? 1.0
+            : parameter instanceof Number ? ((Number) parameter).doubleValue()
+            : Double.parseDouble(parameterString);
+        if (Double.isNaN(rate)) {
+            throw new IllegalArgumentException("Invalid rate: " + parameter);
         }
-        try {
-            final double rate = Double.parseDouble(parameter);
-            return new ExponentialTime<>(rate, randomGenerator);
-        } catch (NumberFormatException e) {
-            return new ExponentialTime<>(1.0, randomGenerator);
-        }
+        return new ExponentialTime<>(rate, randomGenerator);
     }
 
     @Override
-    public Reaction<Double> createReaction(final RandomGenerator randomGenerator,
-                                           final Environment<Double, Euclidean2DPosition> environment,
-                                           final Node<Double> node,
-                                           final TimeDistribution<Double> timeDistribution,
-                                           final String parameter) {
+    public Reaction<Double> createReaction(
+        final RandomGenerator randomGenerator,
+        final Environment<Double, Euclidean2DPosition> environment,
+        final Node<Double> node,
+        final TimeDistribution<Double> timeDistribution,
+        final @Nullable Object parameter
+        ) {
         return new BiochemicalReactionBuilder<>(this, node, environment)
-                .randomGenerator(randomGenerator)
-                .timeDistribution(timeDistribution)
-                .program(parameter)
-                .build();
+            .randomGenerator(randomGenerator)
+            .timeDistribution(timeDistribution)
+            .program(
+                requireNonNull(parameter, "Biochemical reactions require String a parameter to get built")
+                    .toString()
+            )
+            .build();
     }
 
     @Override
@@ -95,7 +111,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final Node<Double> node,
         final TimeDistribution<Double> time,
         final Actionable<Double> actionable,
-        final String additionalParameters
+        final @Nullable Object additionalParameters
     ) {
         return null;
     }
@@ -107,7 +123,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final Node<Double> node,
         final TimeDistribution<Double> time,
         final Actionable<Double> actionable,
-        final String additionalParameters
+        final @Nullable Object additionalParameters
     ) {
         return null;
     }

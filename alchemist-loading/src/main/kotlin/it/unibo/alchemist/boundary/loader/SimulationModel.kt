@@ -69,7 +69,7 @@ import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Layer as LayerSynt
  */
 private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
 private typealias ReactionComponentFunction<T, P, R> =
-    (RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, String?) -> R
+    (RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, Any?) -> R
 
 /*
  * UTILITY FUNCTIONS
@@ -618,10 +618,9 @@ internal object SimulationModel {
         environment: Environment<T, P>,
         context: Context,
         root: Any?,
-    ): Node<T> = when (root) {
-        is CharSequence? -> incarnation.createNode(randomGenerator, environment, root?.toString())
-        is Map<*, *> -> visitBuilding<Node<T>>(context, root)?.getOrThrow()
-        else -> null
+    ): Node<T> = when {
+        root is Map<*, *> && root.containsKey(JavaType.type) -> visitBuilding<Node<T>>(context, root)?.getOrThrow()
+        else -> incarnation.createNode(randomGenerator, environment, root)
     } ?: cantBuildWith<Node<T>>(root)
 
     private fun visitParameters(context: Context, root: Any?): Either<List<*>, Map<String, *>> = when (root) {
@@ -637,6 +636,7 @@ internal object SimulationModel {
     }?.onFailure { logger.error("Unable to build a random generator: {}", it.message) }?.getOrThrow()
         ?: cantBuildWith<RandomGenerator>(root)
 
+    @Suppress("CyclomaticComplexMethod")
     fun <T, P : Position<P>> visitProgram(
         simulationRNG: RandomGenerator,
         incarnation: Incarnation<T, P>,
@@ -646,6 +646,9 @@ internal object SimulationModel {
         program: Map<*, *>,
     ): Result<Pair<List<PositionBasedFilter<P>>, Actionable<T>>>? =
         if (ProgramSyntax.validateDescriptor(program) || GlobalProgramSyntax.validateDescriptor(program)) {
+            /*
+             * Time distribution
+             */
             val timeDistribution: TimeDistribution<T> = visitTimeDistribution(
                 incarnation,
                 simulationRNG,
@@ -655,12 +658,45 @@ internal object SimulationModel {
                 program[ProgramSyntax.timeDistribution],
             )
             context.factory.registerSingleton(TimeDistribution::class.java, timeDistribution)
+            /*
+             * Actionable
+             */
             val actionable: Actionable<T> =
                 visitActionable(simulationRNG, incarnation, environment, node, timeDistribution, context, program)
-
             context.factory.registerSingleton(Actionable::class.java, actionable)
-            fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = runCatching {
-                makeWith(simulationRNG, environment, node, timeDistribution, actionable, parameter?.toString())
+
+            /*
+             * Support function implementing the lookup strategy for conditions and actions
+             */
+            fun <R : Any> visitIncarnationBuildable(
+                parameter: Any?,
+                incarnationFactory: ReactionComponentFunction<T, P, R>,
+                genericFactory: (Context, Any?) -> Result<R>?,
+            ): Result<R>? {
+                fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = runCatching {
+                    makeWith(simulationRNG, environment, node, timeDistribution, actionable, parameter)
+                }
+                return when (parameter) {
+                    is Map<*, *> ->
+                        /*
+                         * First try the generic factory if there is a type specified, in case of failure fallback to
+                         * the incarnation factory
+                         */
+                        genericFactory.takeIf { parameter.containsKey(JavaType.type) }
+                            ?.invoke(context, parameter)
+                            ?: create(parameter, incarnationFactory)
+                    is Iterable<*> -> {
+                        /*
+                         * Try with the generic factory first (it is recursive)
+                         */
+                        val firstAttempt = genericFactory(context, parameter)
+                        val exception = firstAttempt?.exceptionOrNull()
+                        val recovery = exception?.let { create(parameter, incarnationFactory) }
+                        recovery?.exceptionOrNull()?.addSuppressed(exception)
+                        recovery ?: firstAttempt
+                    }
+                    else -> create(parameter, incarnationFactory)
+                }
             }
 
             val filters = visitFilter<P>(context, program)
@@ -669,10 +705,7 @@ internal object SimulationModel {
                 program[ProgramSyntax.conditions] ?: emptyList<Any>(),
                 JavaType,
             ) {
-                when (it) {
-                    is CharSequence? -> create<Condition<T>>(it, incarnation::createCondition)
-                    else -> visitBuilding<Condition<T>>(context, it)
-                }
+                visitIncarnationBuildable(it, incarnation::createCondition, ::visitBuilding)
             }
             if (conditions.isNotEmpty()) {
                 actionable.conditions = actionable.conditions + conditions
@@ -682,10 +715,7 @@ internal object SimulationModel {
                 program[ProgramSyntax.actions] ?: emptyList<Any>(),
                 JavaType,
             ) {
-                when (it) {
-                    is CharSequence? -> create<Action<T>>(it, incarnation::createAction)
-                    else -> visitBuilding<Action<T>>(context, it)
-                }
+                visitIncarnationBuildable(it, incarnation::createAction, ::visitBuilding)
             }
             if (actions.isNotEmpty()) {
                 actionable.actions = actionable.actions + actions
@@ -705,13 +735,15 @@ internal object SimulationModel {
         timeDistribution: TimeDistribution<T>,
         context: Context,
         root: Map<*, *>,
-    ) = if (root.containsKey(ProgramSyntax.program)) {
-        val programDescriptor = root[ProgramSyntax.program]?.toString()
-        incarnation.createReaction(simulationRNG, environment, node, timeDistribution, programDescriptor)
-    } else if (node != null) {
-        visitBuilding<Reaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<Reaction<T>>(root)
-    } else {
-        visitBuilding<GlobalReaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<GlobalReaction<T>>(root)
+    ) = when {
+        root.containsKey(ProgramSyntax.program) ->
+            incarnation.createReaction(simulationRNG, environment, node, timeDistribution, root[ProgramSyntax.program])
+        node != null ->
+            // This is a node-local reaction
+            visitBuilding<Reaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<Reaction<T>>(root)
+        else ->
+            // A reaction with no node is a GlobalReaction
+            visitBuilding<GlobalReaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<GlobalReaction<T>>(root)
     }
 
     fun visitSeeds(context: Context, root: Any?): Seeds = when (root) {
@@ -758,11 +790,11 @@ internal object SimulationModel {
         node: Node<T>?,
         context: Context,
         root: Any?,
-    ) = when (root) {
-        is Map<*, *> -> visitBuilding<TimeDistribution<T>>(context, root)?.getOrThrow()
-            ?: cantBuildWith<TimeDistribution<T>>(root)
-
-        else -> incarnation.createTimeDistribution(simulationRNG, environment, node, root?.toString())
+    ) = when {
+        root is Map<*, *> && root.containsKey(JavaType.type) ->
+            visitBuilding<TimeDistribution<T>>(context, root)?.getOrThrow() ?: cantBuildWith<TimeDistribution<T>>(root)
+        else ->
+            incarnation.createTimeDistribution(simulationRNG, environment, node, root)
     }
 
     private fun visitVariables(context: Context, root: Any?): Map<String, Variable<*>> = visitNamedRecursively(

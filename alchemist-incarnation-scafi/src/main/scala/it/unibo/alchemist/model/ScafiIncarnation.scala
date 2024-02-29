@@ -46,7 +46,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       node: Node[T],
       time: TimeDistribution[T],
       reaction: Actionable[T],
-      param: String
+      param: Any
   ): Action[T] = runInScafiDeviceContext[T, Action[T]](
     node,
     message = s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property",
@@ -71,19 +71,20 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
         }
         new SendScafiMessage[T, P](environment, device, reaction.asInstanceOf[Reaction[T]], scafiProgramsList.head)
       } else {
+        require(param != null, "Unsupported program: null")
         new RunScafiProgram[T, P](
           notNull(environment, "environment"),
           notNull(node, "node"),
           notNull(reaction.asInstanceOf[Reaction[T]], "reaction"),
           notNull(randomGenerator, "random generator"),
-          notNull(param, "action parameter")
+          notNull(param.toString, "action parameter")
         )
       }
     }
   )
 
   /** NOTE: String v may be prefixed by "_" symbol to avoid caching the value resulting from its interpretation */
-  override def createConcentration(data: String) = {
+  override def createConcentration(data: String): T = {
     /*
      * TODO: support double-try parse in case of strings (to avoid "\"string\"" in the YAML file)
      */
@@ -99,7 +100,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       node: Node[T],
       time: TimeDistribution[T],
       reaction: Actionable[T],
-      parameters: String
+      parameters: Any
   ): Condition[T] = runInScafiDeviceContext[T, Condition[T]](
     node,
     message = s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property",
@@ -129,7 +130,11 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
   override def createMolecule(value: String): SimpleMolecule =
     new SimpleMolecule(notNull(value, "simple molecule name"))
 
-  override def createNode(randomGenerator: RandomGenerator, environment: Environment[T, P], parameters: String) = {
+  override def createNode(
+      randomGenerator: RandomGenerator,
+      environment: Environment[T, P],
+      parameters: Any
+  ): GenericNode[T] = {
     val scafiNode = new GenericNode[T](this, environment)
     scafiNode.addProperty(new ScafiDevice(scafiNode))
     scafiNode
@@ -140,9 +145,10 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       environment: Environment[T, P],
       node: Node[T],
       time: TimeDistribution[T],
-      parameters: String
+      parameters: Any
   ): Reaction[T] = {
-    val isSend = "send".equalsIgnoreCase(parameters)
+    val parameterString = Option(parameters).map(_.toString).orNull
+    val isSend = "send".equalsIgnoreCase(parameterString)
     val result: Reaction[T] =
       if (isSend) {
         new ChemicalReaction[T](
@@ -154,7 +160,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       }
     if (parameters != null) {
       result.setActions(
-        ListBuffer[Action[T]](createAction(randomGenerator, environment, node, time, result, parameters)).asJava
+        ListBuffer[Action[T]](createAction(randomGenerator, environment, node, time, result, parameterString)).asJava
       )
     }
     if (isSend) {
@@ -169,19 +175,19 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       randomGenerator: RandomGenerator,
       environment: Environment[T, P],
       node: Node[T],
-      parameters: String
+      parameters: Any
   ): TimeDistribution[T] = {
     if (parameters == null) return new ExponentialTime[T](Double.PositiveInfinity, randomGenerator)
     val frequency = toDouble(parameters)
-    if (frequency.isNaN()) {
+    if (frequency.isNaN) {
       throw new IllegalArgumentException(
         parameters + " is not a valid number, the time distribution could not be created."
       )
     }
-    new DiracComb(new DoubleTime(randomGenerator.nextDouble() / frequency), frequency);
+    new DiracComb(new DoubleTime(randomGenerator.nextDouble() / frequency), frequency)
   }
 
-  override def getProperty(node: Node[T], molecule: Molecule, propertyName: String) = {
+  override def getProperty(node: Node[T], molecule: Molecule, propertyName: String): Double = {
     val target = node.getConcentration(molecule)
     if (propertyName == null || propertyName.trim.isEmpty) {
       toDouble(target)
@@ -205,8 +211,8 @@ object ScafiIncarnationUtils {
 
   def allActions[T, P <: Position[P], C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
     for {
-      reaction: Reaction[T] <- node.getReactions().asScala
-      action: Action[T] <- reaction.getActions().asScala if klass.isInstance(action)
+      reaction: Reaction[T] <- node.getReactions.asScala
+      action: Action[T] <- reaction.getActions.asScala if klass.isInstance(action)
     } yield action.asInstanceOf[C]
 
   def allScafiProgramsFor[T, P <: Position[P]](node: Node[T]) =

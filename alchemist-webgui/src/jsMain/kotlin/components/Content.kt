@@ -9,9 +9,9 @@
 
 package components
 
+import components.content.ContextIndicators
 import components.content.NodeProperties
 import components.content.SimulationContext
-import components.content.SimulationIndicators
 import io.kvision.core.AlignItems
 import io.kvision.core.Background
 import io.kvision.core.Col
@@ -60,7 +60,7 @@ class Content(className: String = "") : SimplePanel(className = className) {
                 height = 95.perc
                 marginTop = 12.px
                 add(
-                    SimulationIndicators(className = "simulation-indicators").apply {
+                    ContextIndicators(className = "context-indicators").apply {
                         width = 100.perc
                         height = 100.perc
                     },

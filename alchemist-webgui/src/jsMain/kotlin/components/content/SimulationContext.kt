@@ -32,10 +32,15 @@ import io.kvision.panel.flexPanel
 import io.kvision.state.bind
 import io.kvision.utils.perc
 import io.kvision.utils.px
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.DOMRect
 import stores.EnvironmentStore
+import stores.SimulationStatus
 import stores.actions.ScaleTranslateAction
+import utils.SimState
 
 /**
  * Class representing the simulation context in the application.
@@ -63,6 +68,14 @@ class SimulationContext(className: String = "") : SimplePanel(className = classN
         EnvironmentStore.store.subscribe { state ->
             if (::canvasCtxt.isInitialized) {
                 canvasCtxt.redrawNodes(state.toListOfPairs())
+            }
+        }
+
+        SimulationStatus.simulationStore.subscribe { sim ->
+            if (SimState.toSimStatus(sim.status?.simulationStatus) == SimState.RUNNING) {
+                CoroutineScope(Dispatchers.Default).launch {
+                    EnvironmentStore.callEnvironmentSubscription()
+                }
             }
         }
 

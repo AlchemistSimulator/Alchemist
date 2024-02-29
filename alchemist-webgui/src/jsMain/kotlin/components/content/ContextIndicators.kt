@@ -43,7 +43,7 @@ import korlibs.math.roundDecimalPlaces
  *
  * @param className the CSS class name for styling the panel (optional)
  */
-class SimulationIndicators(className: String = "") : SimplePanel(className = className) {
+class ContextIndicators(className: String = "") : SimplePanel(className = className) {
 
     init {
         boxShadow = BoxShadow(0.px, 0.px, 5.px, 0.px, Color.rgba(0, 0, 0, (0.4 * 255).toInt()))

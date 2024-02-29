@@ -66,8 +66,8 @@ class NodeProperties(className: String = "") : SimplePanel(className = className
 
                 hPanel(
                     FlexWrap.NOWRAP,
-                    JustifyContent.CENTER,
-                    AlignItems.START,
+                    JustifyContent.SPACEEVENLY,
+                    AlignItems.CENTER,
                     spacing = 15,
                     className = "nodeinfo-header",
                 ) {

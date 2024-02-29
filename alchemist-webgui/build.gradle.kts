@@ -100,6 +100,7 @@ kotlin {
             dependencies {
                 implementation(incarnation("sapere"))
                 implementation(incarnation("protelis"))
+                implementation(alchemist("api"))
                 implementation(alchemist("cognitive-agents"))
                 implementation("io.ktor:ktor-server-html-builder:2.3.8")
                 implementation(libs.bundles.ktor.server)

@@ -556,11 +556,14 @@ jobs:
         shell: pwsh
         run: Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe
       - name: Check package availability
+        id: check
         shell: pwsh
+        continue-on-error: true
         run: |
           .\wingetcreate.exe show $env:packageID
       - name: Update package
         shell: pwsh
+        if: steps.check.outcome == 'success'
         run: |
           $version = "${{ needs.ci-preparation.outputs.next-version }}"
           $packageVersion = if ($version.IndexOf("-") -ne -1) { $version.Substring(0, $version.IndexOf("-")) } else { $version }
@@ -576,6 +579,7 @@ jobs:
       - build-website
       - ci-preparation
       - release
+      - release-winget
       - staging-repo
       - verify-aur-package
       - test-linux-deb-installer

@@ -279,14 +279,19 @@ jobs:
         run: |
           Get-ChildItem -Force | Format-Table -AutoSize
           foreach ($file in Get-ChildItem -Filter *.msi) {
+            $log = "install.log"
             $procMain = Start-Process "msiexec" "/i `"$file`" /qn /l*! `"$log`"" -NoNewWindow -PassThru
+            Start-Sleep -Seconds 1
+            $procLog = Start-Process "powershell" "Get-Content -Path `"$log`" -Wait" -NoNewWindow -PassThru 
+            $procMain.WaitForExit() 
+            $procLog.Kill()
           }
       - name: Test installation
-        shell: powershell
+        shell: pwsh
         run: |
           Import-Module "$env:ChocolateyInstall/helpers/chocolateyInstaller.psm1"
           refreshenv
-          echo $Path
+
           alchemist --help
 
   test-linux-deb-installer:

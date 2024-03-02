@@ -49,6 +49,9 @@
   "ch.qos.logback/logback-classic/1.5.1": {
     "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.1"
   },
+  "ch.qos.logback/logback-classic/1.5.2": {
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.2"
+  },
   "com.expediagroup/graphql-kotlin-hooks-provider/7.0.2": {
     "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/7.0.2"
   },

@@ -1,3 +1,20 @@
+## [31.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/31.0.3...31.0.4) (2024-03-05)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.18 ([e476561](https://github.com/AlchemistSimulator/Alchemist/commit/e4765613e4cec0e90559b3526a9043fa901fd79b))
+* **deps:** update external-resources/learning-scafi-alchemist digest to a991077 ([790cc07](https://github.com/AlchemistSimulator/Alchemist/commit/790cc079a9bcad86588464019961ba84655f85dc))
+* **deps:** update plugin kotlin-qa to v0.60.2 ([8717b58](https://github.com/AlchemistSimulator/Alchemist/commit/8717b584cb089f9189b3d5fc98cac5ee1ccc7518))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.2 ([f63e609](https://github.com/AlchemistSimulator/Alchemist/commit/f63e6099da49bcd78f144410270df6d6459a2f8a))
+* **deps:** update plugin publishoncentral to v5.0.24 ([e76ac96](https://github.com/AlchemistSimulator/Alchemist/commit/e76ac968b8068d766c1529d9e226af14efd48c91))
+* **deps:** update site/themes/hugo-theme-relearn digest to d81b4dd ([3a7b3e7](https://github.com/AlchemistSimulator/Alchemist/commit/3a7b3e7f0c352c138bc993980b6260b7be17f22e))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([2dc6f3b](https://github.com/AlchemistSimulator/Alchemist/commit/2dc6f3bd8d6d911370cd547b73c9e1ca83160ae5))
+
 ## [31.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/31.0.2...31.0.3) (2024-03-04)
 
 

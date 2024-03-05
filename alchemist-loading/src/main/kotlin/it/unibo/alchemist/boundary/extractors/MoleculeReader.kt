@@ -65,7 +65,7 @@ class MoleculeReader @JvmOverloads constructor(
         }
 
     private val shortProp = propertyText.takeIf(String::isEmpty)
-        ?: "${propertyText.substring(0..min(propertyText.length, SHORT_NAME_MAX_LENGTH))}@"
+        ?: "${propertyText.substring(0..<min(propertyText.length, SHORT_NAME_MAX_LENGTH))}@"
 
     private val singleColumnName: String = "$shortProp$moleculeName"
 

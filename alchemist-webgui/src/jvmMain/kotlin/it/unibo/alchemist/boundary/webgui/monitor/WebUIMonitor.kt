@@ -30,11 +30,13 @@ import it.unibo.alchemist.boundary.launchers.GraphQLServer as GraphQLServer
  * @param T The type of elements in the environment.
  * @param P The type of positions associated with elements in the environment.
  * @param environment The environment to monitor using the web UI.
+ * @param serverDispatcher The coroutine dispatcher for server operations.
  */
 class WebUIMonitor<T, P : Position<out P>> (
     environment: Environment<T, P>,
+    private val serverDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : GraphQLServer<T, P>(environment) {
-    private val serverDispatcher: CoroutineDispatcher = Dispatchers.Default
+
     private lateinit var webServer: ApplicationEngine
 
     override fun initialized(environment: Environment<Any, Nothing>) {

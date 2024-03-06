@@ -58,7 +58,12 @@ object EnvironmentStore {
                 ?.environment
                 ?.nodeToPos
                 ?.entries!!
-                .map { e -> EnvironmentSubscription.Entry(e.id, EnvironmentSubscription.Position(e.position.coordinates)) }
+                .map { e ->
+                    EnvironmentSubscription.Entry(
+                        e.id,
+                        EnvironmentSubscription.Position(e.position.coordinates),
+                    )
+                }
             store.dispatch(EnvironmentStateAction.AddAllNodes(result))
         }
     }

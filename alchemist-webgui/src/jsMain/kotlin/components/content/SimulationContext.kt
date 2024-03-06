@@ -60,6 +60,10 @@ class SimulationContext(className: String = "") : SimplePanel(className = classN
             RenderProperties.DEFAULT_START_POSITION.toDouble(),
         )
 
+    private object StyleParameters {
+        const val ALPHA_VALUE = (0.4 * 255).toInt()
+    }
+
     init {
 
         EnvironmentStore.callEnvironmentQuery()
@@ -95,7 +99,10 @@ class SimulationContext(className: String = "") : SimplePanel(className = classN
                 canvasWidth = RenderProperties.DEFAULT_WIDTH.toInt()
                 canvasHeight = RenderProperties.DEFAULT_HEIGHT.toInt()
                 borderRadius = CssSize(10, UNIT.px)
-                boxShadow = BoxShadow(0.px, 0.px, 5.px, 0.px, Color.rgba(0, 0, 0, (0.4 * 255).toInt()))
+                boxShadow = BoxShadow(
+                    0.px, 0.px, 5.px, 0.px,
+                    Color.rgba(0, 0, 0, StyleParameters.ALPHA_VALUE),
+                )
                 background = Background(color = Color.name(Col.WHITE))
 
                 addAfterInsertHook {

@@ -45,8 +45,12 @@ import korlibs.math.roundDecimalPlaces
  */
 class ContextIndicators(className: String = "") : SimplePanel(className = className) {
 
+    private object StyleParameters {
+        const val ALPHA_VALUE = (0.4 * 255).toInt()
+    }
+
     init {
-        boxShadow = BoxShadow(0.px, 0.px, 5.px, 0.px, Color.rgba(0, 0, 0, (0.4 * 255).toInt()))
+        boxShadow = BoxShadow(0.px, 0.px, 5.px, 0.px, Color.rgba(0, 0, 0, StyleParameters.ALPHA_VALUE))
         background = Background(Color.name(Col.WHITE))
         borderRadius = 10.px
         flexPanel(

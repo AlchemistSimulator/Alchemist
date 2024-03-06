@@ -20,7 +20,7 @@ import io.kvision.startApplication
 import ui.AppMain
 
 /**
- * The application main entry point
+ * The application main entry point.
  *
  * */
 fun main() {

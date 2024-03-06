@@ -18,12 +18,14 @@ import stores.states.ScaleTranslateState
  * @param action The action to apply to the state.
  * @return The new state of scale and translation after applying the action.
  */
-fun scaleTranslateReducer(state: ScaleTranslateState, action: ScaleTranslateAction): ScaleTranslateState = when (action) {
-    is ScaleTranslateAction.SetScale -> {
-        state.copy(scale = action.scale)
-    }
+fun scaleTranslateReducer(state: ScaleTranslateState, action: ScaleTranslateAction): ScaleTranslateState {
+    return when (action) {
+        is ScaleTranslateAction.SetScale -> {
+            state.copy(scale = action.scale)
+        }
 
-    is ScaleTranslateAction.SetTranslation -> {
-        state.copy(translate = action.translate)
+        is ScaleTranslateAction.SetTranslation -> {
+            state.copy(translate = action.translate)
+        }
     }
 }

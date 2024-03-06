@@ -42,9 +42,13 @@ import stores.NodeStore
  */
 class NodeProperties(className: String = "") : SimplePanel(className = className) {
 
+    private object StyleParameters {
+        const val ALPHA_VALUE = (0.4 * 255).toInt()
+    }
+
     init {
         borderRadius = CssSize(10, UNIT.px)
-        boxShadow = BoxShadow(0.px, 0.px, 5.px, 0.px, Color.rgba(0, 0, 0, (0.4 * 255).toInt()))
+        boxShadow = BoxShadow(0.px, 0.px, 5.px, 0.px, Color.rgba(0, 0, 0, StyleParameters.ALPHA_VALUE))
         background = Background(color = Color.name(Col.WHITE))
 
         flexPanel(
@@ -97,7 +101,8 @@ class NodeProperties(className: String = "") : SimplePanel(className = className
                             width = 100.perc
                             overflowWrap = OverflowWrap.ANYWHERE
                         }.bind(NodeStore.nodeStore) {
-                            +"X: ${it.node?.nodePosition?.coordinates?.get(0)}, Y:${it.node?.nodePosition?.coordinates?.get(1)}"
+                            val coords = it.node?.nodePosition?.coordinates
+                            +"X: ${coords?.get(0)}, Y:${coords?.get(1)}"
                         }
                     }
                 }

@@ -25,6 +25,10 @@ import io.kvision.state.bind
 import stores.SimulationStatus
 
 /**
+ * Spacing between elements in the flex panel.
+ */
+
+/**
  * Class representing the application's top navigation bar.
  *
  * @param className the CSS class name to be applied to the navigation bar
@@ -32,6 +36,10 @@ import stores.SimulationStatus
 class Appbar(className: String = "") : SimplePanel(className = className) {
 
     private val simulationFileName = ""
+
+    private object StyleParameters {
+        const val SPACING = 15
+    }
 
     init {
         navbar(
@@ -49,7 +57,7 @@ class Appbar(className: String = "") : SimplePanel(className = className) {
                 flexPanel {
                     flexDirection = FlexDirection.ROW
                     alignItems = AlignItems.CENTER
-                    spacing = 15
+                    spacing = StyleParameters.SPACING
                     div {
                         color = Color.name(Col.WHITE)
                     }.bind(SimulationStatus.simulationStore) { sim ->

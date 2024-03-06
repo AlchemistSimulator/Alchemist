@@ -17,11 +17,16 @@ RELEASE_ON_CENTRAL="./gradlew -PstagingRepositoryId=\${process.env.STAGING_REPO_
 eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || exit 7
 ./publishToAUR.sh pkgbuild/PKGBUILD "$CUSTOM_SECRET_0" "$CUSTOM_SECRET_1" "$CUSTOM_SECRET_2" || exit 8
 `
+
+var successCmd = `
+echo "winget-deploy=true" >> $GITHUB_OUTPUT
+`
+
 var config = require('semantic-release-preconfigured-conventional-commits');
 config.plugins.push(
     ["@semantic-release/exec", {
         "publishCmd": publishCmd,
-        "successCmd": "export CONTINUE_RELEASE=true"
+        "successCmd": successCmd
     }],
     ["@semantic-release/github", {
         "assets": [ 

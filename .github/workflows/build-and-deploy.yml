@@ -500,7 +500,6 @@ jobs:
         env:
           STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
           MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}
-          CONTINUE_RELEASE: false
         with:
           java-version: ${{ needs.ci-preparation.outputs.java-version }}
           build-command: |
@@ -519,7 +518,6 @@ jobs:
           deploy-command: |
             npm install
             npx semantic-release
-            echo "winget-deploy=$CONTINUE_RELEASE" >> $GITHUB_OUTPUT
           should-run-codecov: false
           should-deploy: true
           should-validate-wrapper: false

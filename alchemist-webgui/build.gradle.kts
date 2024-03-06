@@ -1,5 +1,6 @@
 import Libs.alchemist
 import Libs.incarnation
+import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
@@ -147,4 +148,10 @@ tasks.named("runKtlintCheckOverCommonMainSourceSet").configure {
 
 tasks.named("sourcesJar").configure {
     dependsOn("kspCommonMainKotlinMetadata")
+}
+
+tasks {
+    withType<AbstractGenerateClientTask>().configureEach {
+        enabled = false
+    }
 }

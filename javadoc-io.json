@@ -49,6 +49,12 @@
   "ch.qos.logback/logback-classic/1.5.1": {
     "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.1"
   },
+  "ch.qos.logback/logback-classic/1.5.2": {
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.2"
+  },
+  "ch.qos.logback/logback-classic/1.5.3": {
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.3"
+  },
   "com.expediagroup/graphql-kotlin-hooks-provider/7.0.2": {
     "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/7.0.2"
   },
@@ -362,6 +368,12 @@
   "io.github.classgraph/classgraph/4.8.165": {
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.165",
     "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.165/element-list"
+  },
+  "io.github.classgraph/classgraph/4.8.166": {
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.166"
+  },
+  "io.github.classgraph/classgraph/4.8.167": {
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.167"
   },
   "io.jenetics/jpx/2.3.0": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0",
@@ -858,6 +870,10 @@
   "org.protelis/protelis-interpreter/17.3.16": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.16"
   },
+  "org.protelis/protelis-interpreter/17.3.18": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.18",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.18/element-list"
+  },
   "org.protelis/protelis-interpreter/17.3.5": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.5",
     "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.5/element-list"
@@ -880,6 +896,9 @@
   },
   "org.protelis/protelis-lang/17.3.16": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.16"
+  },
+  "org.protelis/protelis-lang/17.3.18": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.18"
   },
   "org.protelis/protelis-lang/17.3.5": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.5",

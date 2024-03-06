@@ -49,6 +49,12 @@
   "ch.qos.logback/logback-classic/1.5.1": {
     "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.1"
   },
+  "ch.qos.logback/logback-classic/1.5.2": {
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.2"
+  },
+  "ch.qos.logback/logback-classic/1.5.3": {
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.3"
+  },
   "com.expediagroup/graphql-kotlin-hooks-provider/7.0.2": {
     "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/7.0.2"
   },
@@ -294,6 +300,9 @@
   },
   "io.arrow-kt/arrow-core/1.2.2": {
     "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/1.2.2"
+  },
+  "io.arrow-kt/arrow-core/1.2.3": {
+    "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/1.2.3"
   },
   "io.github.classgraph/classgraph/4.8.138": {
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.138",
@@ -804,6 +813,10 @@
   "org.mongodb/mongodb-driver-sync/4.9.1": {
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.9.1"
   },
+  "org.mongodb/mongodb-driver-sync/5.0.0": {
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.0.0",
+    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.0.0/element-list"
+  },
   "org.openjfx/javafx-base/11": {
     "first": "https://javadoc.io/doc/org.openjfx/javafx-base/11",
     "second": "https://javadoc.io/doc/org.openjfx/javafx-base/11/element-list"
@@ -851,6 +864,10 @@
   "org.protelis/protelis-interpreter/17.3.16": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.16"
   },
+  "org.protelis/protelis-interpreter/17.3.18": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.18",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.18/element-list"
+  },
   "org.protelis/protelis-interpreter/17.3.5": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.5",
     "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.5/element-list"
@@ -873,6 +890,9 @@
   },
   "org.protelis/protelis-lang/17.3.16": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.16"
+  },
+  "org.protelis/protelis-lang/17.3.18": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.18"
   },
   "org.protelis/protelis-lang/17.3.5": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.5",

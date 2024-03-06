@@ -1,0 +1,9 @@
+incarnation: protelis
+export:
+  - type: CSVExporter
+    parameters:
+      fileNameRoot: "test_export_interval"
+      interval: 3.0
+    data:
+      - molecule: "default_module:default_program"
+        property: "N"

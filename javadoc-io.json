@@ -699,6 +699,9 @@
   "org.jetbrains.kotlin/kotlin-stdlib/1.9.22": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/1.9.22"
   },
+  "org.jetbrains.kotlin/kotlin-stdlib/1.9.23": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/1.9.23"
+  },
   "org.jetbrains.kotlinx/kotlinx-cli/0.3.5": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-cli/0.3.5"
   },

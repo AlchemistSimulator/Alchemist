@@ -880,6 +880,9 @@
   "org.protelis/protelis-interpreter/17.3.19": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.19"
   },
+  "org.protelis/protelis-interpreter/17.3.20": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.20"
+  },
   "org.protelis/protelis-interpreter/17.3.5": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.5",
     "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.5/element-list"
@@ -908,6 +911,9 @@
   },
   "org.protelis/protelis-lang/17.3.19": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.19"
+  },
+  "org.protelis/protelis-lang/17.3.20": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.20"
   },
   "org.protelis/protelis-lang/17.3.5": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.5",

@@ -23,6 +23,7 @@
       "description": "Trigger a patch update on some dependencies",
       "matchPackageNames": [
         "org.jetbrains.kotlin.jvm",
+        "org.jetbrains.kotlin:kotlin-stdlib",
         "org.protelis:protelis-interpreter",
         "org.protelis:protelis-lang"
       ],

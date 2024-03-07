@@ -32,7 +32,7 @@ import it.unibo.alchemist.boundary.launchers.GraphQLServer as GraphQLServer
  * @param environment The environment to monitor using the web UI.
  * @param serverDispatcher The coroutine dispatcher for server operations.
  */
-class WebUIMonitor<T, P : Position<out P>> (
+class WebUIMonitor<T, P : Position<out P>> @JvmOverloads constructor(
     environment: Environment<T, P>,
     private val serverDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : GraphQLServer<T, P>(environment) {

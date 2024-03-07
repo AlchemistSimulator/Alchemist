@@ -20,10 +20,11 @@
       "semanticCommitType": "docs"
     },
     {
-      "description": "Trigger a patch update on some dependencies",
+      "description": "Identify some updates as core",
       "matchPackageNames": [
         "org.jetbrains.kotlin.jvm",
         "org.jetbrains.kotlin:kotlin-stdlib",
+        "org.protelis:protelis",
         "org.protelis:protelis-interpreter",
         "org.protelis:protelis-lang"
       ],

@@ -291,7 +291,6 @@ jobs:
         run: |
           Import-Module "$env:ChocolateyInstall/helpers/chocolateyInstaller.psm1"
           refreshenv
-
           alchemist --help
 
   test-linux-deb-installer:

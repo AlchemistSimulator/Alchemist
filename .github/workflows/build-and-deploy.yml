@@ -539,13 +539,7 @@ jobs:
     runs-on: windows-2022
     env:
       packageID: "Unibo.Alchemist"
-    if: >-
-      !github.event.repository.fork
-      && (
-        github.event_name != 'pull_request'
-        || github.event.pull_request.head.repo.full_name == github.repository
-      )
-      && fromJSON(needs.release.outputs.winget-deploy)
+    if: fromJSON(needs.release.outputs.winget-deploy)
     steps:
       - name: Install winget
         uses: Cyberboss/install-winget@v1

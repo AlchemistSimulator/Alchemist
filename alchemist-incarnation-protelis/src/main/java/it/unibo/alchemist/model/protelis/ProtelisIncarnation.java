@@ -74,7 +74,7 @@ import java.util.stream.Collectors;
  */
 public final class ProtelisIncarnation<P extends Position<P>> implements Incarnation<Object, P> {
 
-    private static final Logger L = LoggerFactory.getLogger(ProtelisIncarnation.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProtelisIncarnation.class);
 
     /**
      * The name that can be used in a property to refer to the extracted value.
@@ -187,16 +187,22 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     @Override
-    public Object createConcentration(final String s) {
+    public Object createConcentration(@Nullable final Object descriptor) {
         try {
-            final SynchronizedVM vm = new SynchronizedVM(new CacheKey(NoNode.INSTANCE, createMolecule(s), s));
-            return vm.runCycle();
+            if (descriptor != null) {
+                final var program = descriptor.toString();
+                final SynchronizedVM vm = new SynchronizedVM(
+                    new CacheKey(NoNode.INSTANCE, createMolecule(program), program)
+                );
+                return vm.runCycle();
+            }
         } catch (IllegalArgumentException e) {
             /*
-             * Not a valid program: inject the String itself
+             * Not a valid program: inject the Object itself
              */
-            return s;
+            LOGGER.warn("Invalid Protelis program injected as concentration:\n" + descriptor, e);
         }
+        return descriptor;
     }
 
     @Override
@@ -310,7 +316,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 : Double.parseDouble(parameter.toString());
             return new DiracComb<>(new DoubleTime(randomGenerator.nextDouble() / frequency), frequency);
         } catch (final NumberFormatException e) {
-            L.error("Unable to convert {} to a double", parameter);
+            LOGGER.error("Unable to convert {} to a double", parameter);
             throw e;
         }
     }
@@ -345,7 +351,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 }
             }
         } catch (ExecutionException | RuntimeException e) { // NOPMD: we never want getProperty to fail
-            L.error(
+            LOGGER.error(
                 "Intercepted interpreter exception when computing: \n"
                     + property + "\n"
                     + e.getMessage()
@@ -519,8 +525,8 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                             ProtelisLoader.parse(key.property.replace(VALUE_TOKEN, baseProgram)),
                             new DummyContext(key.node.get()));
                 } catch (RuntimeException ex) { // NOPMD AvoidCatchingGenericException
-                    L.warn("Program ignored as invalid: \n" + key.property);
-                    L.debug("Debug information", ex);
+                    LOGGER.warn("Program ignored as invalid: \n" + key.property);
+                    LOGGER.debug("Debug information", ex);
                 }
             }
             vm = Optional.ofNullable(myVM);

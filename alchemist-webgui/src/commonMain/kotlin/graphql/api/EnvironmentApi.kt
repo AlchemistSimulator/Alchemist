@@ -20,6 +20,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Provides a set of functions to interact with the environment API.
+ */
 object EnvironmentApi {
 
     /**

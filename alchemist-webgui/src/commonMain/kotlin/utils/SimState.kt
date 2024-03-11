@@ -46,7 +46,8 @@ enum class SimState {
          * Converts a string representation of a simulation status to the corresponding SimState enum value.
          *
          * @param value the string representation of the simulation status
-         * @return the SimState enum value corresponding to the input string, or SimState.TERMINATED if the input is invalid
+         * @return the SimState enum value corresponding to the input string, or [SimState.TERMINATED] if the input is
+         * invalid.
          */
         fun toSimStatus(value: String?): SimState {
             return when (value) {

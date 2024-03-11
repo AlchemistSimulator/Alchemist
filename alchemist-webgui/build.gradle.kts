@@ -127,12 +127,10 @@ fun PatternFilterable.excludeGenerated() = exclude { "build${File.separator}gene
 tasks.withType<Detekt>().configureEach { excludeGenerated() }
 ktlint { filter { excludeGenerated() } }
 
-tasks.named("runKtlintFormatOverCommonMainSourceSet").configure {
-    dependsOn(tasks.named("kspCommonMainKotlinMetadata"))
-}
-
-tasks.named("runKtlintCheckOverCommonMainSourceSet").configure {
-    dependsOn(tasks.named("kspCommonMainKotlinMetadata"))
+listOf("Check", "Format").forEach {
+    tasks.named("runKtlint${it}OverCommonMainSourceSet").configure {
+        dependsOn(tasks.named("kspCommonMainKotlinMetadata"))
+    }
 }
 
 tasks.named("sourcesJar").configure {

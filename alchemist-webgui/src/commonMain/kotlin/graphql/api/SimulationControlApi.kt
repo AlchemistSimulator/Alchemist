@@ -18,6 +18,9 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
+/**
+ * Provides a set of functions to interact with the simulation control API.
+ */
 object SimulationControlApi {
 
     /**

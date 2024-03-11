@@ -14,7 +14,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.graphql.server)
     alias(libs.plugins.graphql.client)
-
     id("io.kvision") version "7.3.1"
 }
 
@@ -52,36 +51,27 @@ kotlin {
     }
     js(IR) {
         browser {
-            runTask(
-                Action {
-                    mainOutputFileName = "alchemist-webgui.js"
-                    sourceMaps = false
-                    devServer = KotlinWebpackConfig.DevServer(
-                        open = false,
-                        port = 3000,
-                        proxy = mutableMapOf(
-                            "/kv/*" to "http://localhost:8080",
-                            "/kvws/*" to mapOf("target" to "ws://localhost:8080", "ws" to true),
-                        ),
-                        static = mutableListOf("${layout.buildDirectory.asFile.get()}/processedResources/js/main"),
-                    )
-                },
-            )
-
-            webpackTask(
-                Action {
-                    mainOutputFileName = "alchemist-webgui.js"
-                },
-            )
-
-            testTask(
-                Action {
-                    useKarma {
-                        useChromeHeadless()
-                    }
-                },
-            )
-
+            runTask {
+                mainOutputFileName = "alchemist-webgui.js"
+                sourceMaps = false
+                devServer = KotlinWebpackConfig.DevServer(
+                    open = false,
+                    port = 3000,
+                    proxy = mutableMapOf(
+                        "/kv/*" to "http://localhost:8080",
+                        "/kvws/*" to mapOf("target" to "ws://localhost:8080", "ws" to true),
+                    ),
+                    static = mutableListOf("${layout.buildDirectory.asFile.get()}/processedResources/js/main"),
+                )
+            }
+            webpackTask {
+                mainOutputFileName = "alchemist-webgui.js"
+            }
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                }
+            }
             binaries.executable()
         }
     }
@@ -116,7 +106,6 @@ kotlin {
                 implementation(libs.apollo.runtime)
                 implementation(libs.bundles.ktor.client)
                 implementation(libs.bundles.kotlin.react)
-
                 implementation("io.kvision:kvision:$kvisionVersion")
                 implementation("io.kvision:kvision-bootstrap:$kvisionVersion")
                 implementation("io.kvision:kvision-richtext:$kvisionVersion")
@@ -147,6 +136,10 @@ tasks.named("runKtlintCheckOverCommonMainSourceSet").configure {
 }
 
 tasks.named("sourcesJar").configure {
+    dependsOn("kspCommonMainKotlinMetadata")
+}
+
+tasks.withType<Detekt>().configureEach {
     dependsOn("kspCommonMainKotlinMetadata")
 }
 

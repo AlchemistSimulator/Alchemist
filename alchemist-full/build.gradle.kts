@@ -112,10 +112,7 @@ fun ImageType.disabledBecause(reason: String): List<DisabledPackaging> = listOf(
     DisabledPackaging("$formatName packaging disabled because $reason"),
 )
 fun ImageType.disabledOnNon(os: String): List<DisabledPackaging> = disabledBecause("unsupported non non-$os systems")
-fun ImageType.valid(): List<ValidPackaging> = listOf(ValidPackaging(this)) + when (this) {
-    MSI, EXE -> listOf(ValidPackaging(this, true))
-    else -> emptyList()
-}
+fun ImageType.valid(): List<ValidPackaging> = listOf(ValidPackaging(this))
 fun ImageType.validIfCommandExists(command: String): List<PackagingMethod> = when {
     commandExists(command) -> valid()
     else -> disabledBecause("the required command '$command' could not be found in PATH.")

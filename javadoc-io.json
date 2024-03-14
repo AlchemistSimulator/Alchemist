@@ -176,6 +176,10 @@
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.0.0-jre",
     "second": "https://javadoc.io/doc/com.google.guava/guava/33.0.0-jre/element-list"
   },
+  "com.google.guava/guava/33.1.0-jre": {
+    "first": "https://javadoc.io/doc/com.google.guava/guava/33.1.0-jre",
+    "second": "https://javadoc.io/doc/com.google.guava/guava/33.1.0-jre/element-list"
+  },
   "com.graphhopper/graphhopper-core/4.0": {
     "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/4.0",
     "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/4.0/package-list"
@@ -569,6 +573,9 @@
   "org.danilopianini/jirf/0.4.18": {
     "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.18",
     "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.18/element-list"
+  },
+  "org.danilopianini/jirf/0.4.19": {
+    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.19"
   },
   "org.danilopianini/jirf/0.4.5": {
     "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.5",

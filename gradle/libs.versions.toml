@@ -1,6 +1,6 @@
 [versions]
 antlr4 = "4.13.1"
-apollo ="4.0.0-beta.4"
+apollo ="4.0.0-beta.5"
 arrow = "1.2.3"
 dokka = "1.9.20"
 graphhopper = "9.0-pre1"
@@ -13,7 +13,7 @@ kotest = "5.8.1"
 ktor = "2.3.9"
 kotlin = "1.9.23"
 mockito = "5.11.0"
-protelis = "17.3.20"
+protelis = "17.3.21"
 react = "18.2.0-pre.713"
 scafi = "1.2.0"
 scala = "2.13.13"
@@ -48,7 +48,7 @@ graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstr
 groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.21"
 gson = "com.google.code.gson:gson:2.10.1"
 gson-extras = "org.danilopianini:gson-extras:1.2.0"
-guava = "com.google.guava:guava:33.0.0-jre"
+guava = "com.google.guava:guava:33.1.0-jre"
 ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "ignite" }
 ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "ignite" }
 ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "ignite" }
@@ -59,7 +59,7 @@ jgit = "org.eclipse.jgit:org.eclipse.jgit:6.9.0.202403050737-r"
 jgrapht-core = "org.jgrapht:jgrapht-core:1.5.2"
 jiconfont-javafx = "com.github.jiconfont:jiconfont-javafx:1.0.0"
 jiconfont-materialDesignIcons = "com.github.jiconfont:jiconfont-google_material_design_icons:2.2.0.2"
-jirf = "org.danilopianini:jirf:0.4.18"
+jirf = "org.danilopianini:jirf:0.4.19"
 jool = "org.jooq:jool:0.9.15"
 jpx = "io.jenetics:jpx:3.1.0"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }

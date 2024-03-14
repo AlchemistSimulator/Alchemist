@@ -176,6 +176,10 @@
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.0.0-jre",
     "second": "https://javadoc.io/doc/com.google.guava/guava/33.0.0-jre/element-list"
   },
+  "com.google.guava/guava/33.1.0-jre": {
+    "first": "https://javadoc.io/doc/com.google.guava/guava/33.1.0-jre",
+    "second": "https://javadoc.io/doc/com.google.guava/guava/33.1.0-jre/element-list"
+  },
   "com.graphhopper/graphhopper-core/4.0": {
     "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/4.0",
     "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/4.0/package-list"
@@ -570,6 +574,9 @@
     "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.18",
     "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.18/element-list"
   },
+  "org.danilopianini/jirf/0.4.19": {
+    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.19"
+  },
   "org.danilopianini/jirf/0.4.5": {
     "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.5",
     "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.5/element-list"
@@ -887,6 +894,10 @@
   "org.protelis/protelis-interpreter/17.3.20": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.20"
   },
+  "org.protelis/protelis-interpreter/17.3.21": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.21",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.21/element-list"
+  },
   "org.protelis/protelis-interpreter/17.3.5": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.5",
     "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.5/element-list"
@@ -918,6 +929,10 @@
   },
   "org.protelis/protelis-lang/17.3.20": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.20"
+  },
+  "org.protelis/protelis-lang/17.3.21": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.21",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.21/package-list"
   },
   "org.protelis/protelis-lang/17.3.5": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.5",

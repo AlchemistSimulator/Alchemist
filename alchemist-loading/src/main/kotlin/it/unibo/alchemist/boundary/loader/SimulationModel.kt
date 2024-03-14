@@ -215,7 +215,7 @@ internal object SimulationModel {
         var launcherDescriptor = injectedRoot[DocumentRoot.launcher]
         fun Map<*, *>.isJvmConstructorWithoutType() = containsKey(JavaType.parameters) && !containsKey(JavaType.type)
         if (launcherDescriptor is Map<*, *> && launcherDescriptor.isJvmConstructorWithoutType()) {
-            launcherDescriptor = launcherDescriptor + (JavaType.type to DefaultLauncher::class.simpleName.orEmpty())
+            launcherDescriptor += JavaType.type to DefaultLauncher::class.simpleName.orEmpty()
         }
         val launcher: Launcher = visitBuilding<Launcher>(context, launcherDescriptor)?.getOrThrow() ?: DefaultLauncher()
         injectedRoot = inject(context, injectedRoot)

@@ -1,3 +1,40 @@
+## [31.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/31.0.5...31.0.6) (2024-03-14)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.21 ([0c12268](https://github.com/AlchemistSimulator/Alchemist/commit/0c122680cd62d932131360b41ab394203eb44fbd))
+* **deps:** update dependency com.apollographql.apollo3:apollo-runtime to v4.0.0-beta.5 ([f227219](https://github.com/AlchemistSimulator/Alchemist/commit/f227219db76cc289758243893f649494351fc1d9))
+* **deps:** update dependency com.google.guava:guava to v33.1.0-jre ([5e7c490](https://github.com/AlchemistSimulator/Alchemist/commit/5e7c490f49fc40d1955f6fb5246b63c3ec6bc570))
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.168 ([88b4812](https://github.com/AlchemistSimulator/Alchemist/commit/88b48125a413a5cb20a018ade5a10589a22f088b))
+* **deps:** update dependency org.controlsfx:controlsfx to v11.2.1 ([95c846c](https://github.com/AlchemistSimulator/Alchemist/commit/95c846ce2cdcc40986a853fcddd2b0d7f3d5183c))
+* **deps:** update dependency org.danilopianini:jirf to v0.4.19 ([5aeff33](https://github.com/AlchemistSimulator/Alchemist/commit/5aeff33b3cf64741b861e33137c820fbf8e48336))
+* **deps:** update dependency org.eclipse.jgit:org.eclipse.jgit to v6.9.0.202403050737-r ([6d34b5f](https://github.com/AlchemistSimulator/Alchemist/commit/6d34b5f0a4ec320b0c5f06a90d41904c91e2572a))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 0b89586 ([a917a4c](https://github.com/AlchemistSimulator/Alchemist/commit/a917a4cdb2161e8b1148496c3edc541b643d34bf))
+* **deps:** update external-resources/learning-scafi-alchemist digest to b61c825 ([b31d4db](https://github.com/AlchemistSimulator/Alchemist/commit/b31d4db2822bc85345d556273888ed897b79f5b4))
+* **deps:** update kotest to v5.8.1 ([da9e4a0](https://github.com/AlchemistSimulator/Alchemist/commit/da9e4a0b2f4d013e50b1707de2076e55ad612c7c))
+* **deps:** update plugin gitsemver to v3.1.3 ([cc665a9](https://github.com/AlchemistSimulator/Alchemist/commit/cc665a9c4d217f40b34d479608762bbbe959b517))
+* **deps:** update plugin java-qa to v1.39.0 ([6f7a39f](https://github.com/AlchemistSimulator/Alchemist/commit/6f7a39f02f05a423abd33118fb123080b3762394))
+* **deps:** update react to v18.2.0-pre.711 ([074d986](https://github.com/AlchemistSimulator/Alchemist/commit/074d986bf654f3eebc203475d22253c4a6012321))
+* **deps:** update react to v18.2.0-pre.712 ([f0a1cc7](https://github.com/AlchemistSimulator/Alchemist/commit/f0a1cc7cd011fa3e1ea1fa67e97f772c6d05e9b8))
+* **deps:** update react to v18.2.0-pre.713 ([29133ad](https://github.com/AlchemistSimulator/Alchemist/commit/29133adccde676a5ec9741693f9f0e0a3134c194))
+* **deps:** update site/themes/hugo-theme-relearn digest to 91752cc ([2236ca7](https://github.com/AlchemistSimulator/Alchemist/commit/2236ca7022709c6d8beee4d55156f188c94d79f8))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.7 ([fd777e3](https://github.com/AlchemistSimulator/Alchemist/commit/fd777e36d5ef322082c4f0cc4063ede97ea3b81d))
+* **renovate:** make updates to `kotlin-stdlib` create `core-deps` PRs ([c62eea6](https://github.com/AlchemistSimulator/Alchemist/commit/c62eea66b7f95c01d7dbd2a2e2dc308653d97003))
+* **renovate:** mark `org.protelis:protelis` as a core dependency ([571d462](https://github.com/AlchemistSimulator/Alchemist/commit/571d4621571bd6dc39985ef361b780e86acc1b0f))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([35eb862](https://github.com/AlchemistSimulator/Alchemist/commit/35eb862434b9f619252940b2e429d387fc5045cb))
+* **build:** update the javadoc.io cache ([690829c](https://github.com/AlchemistSimulator/Alchemist/commit/690829c75e8a375347b03bf0c78cf0c83f927eb4))
+* **build:** update the javadoc.io cache ([5957d98](https://github.com/AlchemistSimulator/Alchemist/commit/5957d981b36fee84eed97e24d370e59c3a8803df))
+* **build:** update the javadoc.io cache ([aef5495](https://github.com/AlchemistSimulator/Alchemist/commit/aef5495bd451e7b7084ec25a29836231762362b6))
+
 ## [31.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/31.0.4...31.0.5) (2024-03-07)
 
 

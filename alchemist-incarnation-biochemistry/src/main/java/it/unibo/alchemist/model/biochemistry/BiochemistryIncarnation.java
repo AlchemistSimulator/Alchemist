@@ -129,11 +129,11 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
     }
 
     @Override
-    public Double createConcentration(final String s) {
-        if (s == null) { // default value
+    public Double createConcentration(@Nullable final Object descriptor) {
+        if (descriptor == null) { // default value
             return 1d;
         }
-        return Double.parseDouble(s);
+        return Double.parseDouble(descriptor.toString());
     }
 
     @Override

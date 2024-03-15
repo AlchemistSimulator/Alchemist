@@ -84,12 +84,13 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
   )
 
   /** NOTE: String v may be prefixed by "_" symbol to avoid caching the value resulting from its interpretation */
-  override def createConcentration(data: String): T = {
+  override def createConcentration(data: Any): T = {
     /*
      * TODO: support double-try parse in case of strings (to avoid "\"string\"" in the YAML file)
      */
-    val doCacheValue = !data.startsWith("_");
-    CachedInterpreter[AnyRef](if (doCacheValue) data else data.tail, doCacheValue).asInstanceOf[T]
+    val dataString = data.toString
+    val doCacheValue = !dataString.startsWith("_");
+    CachedInterpreter[AnyRef](if (doCacheValue) dataString else dataString.tail, doCacheValue).asInstanceOf[T]
   }
 
   override def createConcentration(): T = null.asInstanceOf[T]

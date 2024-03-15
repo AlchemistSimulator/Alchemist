@@ -24,7 +24,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      * Given a {@link Node}, a {@link Molecule} and a property expressed as
      * a {@link String}, returns a numeric value. If a numeric value is not
      * deducible, Double.NaN is returned.
-     * 
+     *
      * @param node
      *            the node
      * @param molecule
@@ -37,7 +37,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
 
     /**
      * Parses a {@link String}, and provides a {@link Molecule}.
-     * 
+     *
      * @param s
      *            the {@link String} to parse
      * @return an {@link Molecule} created parsing the passed {@link String}
@@ -46,11 +46,11 @@ public interface Incarnation<T, P extends Position<? extends P>> {
 
     /**
      * Creates a new concentration object of a specific concrete type.
-     * 
-     * @param s the {@link String} to parse
+     *
+     * @param descriptor the {@link String} to parse
      * @return a concentration of a certain concrete type
      */
-    T createConcentration(String s);
+    T createConcentration(@Nullable Object descriptor);
 
     /**
      * Creates a new concentration object of a specific concrete type.

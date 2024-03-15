@@ -1,3 +1,25 @@
+## [32.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/31.0.6...32.0.0) (2024-03-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* pass incarnations arbitrarily-typed concentrations (#3217)
+
+### Features
+
+* pass incarnations arbitrarily-typed concentrations ([#3217](https://github.com/AlchemistSimulator/Alchemist/issues/3217)) ([165087a](https://github.com/AlchemistSimulator/Alchemist/commit/165087a0c5ea8eb13fa21a31213ae03b2bc610ae))
+* **winget:** automatic release to winget packages ([#3150](https://github.com/AlchemistSimulator/Alchemist/issues/3150)) ([9d0c95c](https://github.com/AlchemistSimulator/Alchemist/commit/9d0c95c7bc8b6249f14486c2f0d88377ba2658f0))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 6594fb1 ([809d5c4](https://github.com/AlchemistSimulator/Alchemist/commit/809d5c4d396100a048c9700a4fadc984e9565d1d))
+
+
+### Style improvements
+
+* **loading:** simplify a map update in `SimulationModel` ([13fb502](https://github.com/AlchemistSimulator/Alchemist/commit/13fb502f728d644318ccde37ed31957a7a9e25fa))
+
 ## [31.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/31.0.5...31.0.6) (2024-03-14)
 
 

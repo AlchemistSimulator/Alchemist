@@ -75,7 +75,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.7
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.8
         with:
           pre-build-command: true
           build-command: |
@@ -101,7 +101,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.7
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.8
         with:
           retries-on-failure: 5
           wait-between-retries: 120
@@ -158,7 +158,7 @@ jobs:
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4.1.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.7
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.8
         with:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           should-run-codecov: false
@@ -205,7 +205,7 @@ jobs:
     steps:
       - name: Checkout with full history
         uses: danysk/action-checkout@0.2.14
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.7
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.8
         with:
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
@@ -286,9 +286,12 @@ jobs:
             $procMain.WaitForExit() 
             $procLog.Kill()
           }
-      - name: Print the logs
-        if: always()
-        run: cat install.log
+      - name: Test installation
+        shell: pwsh
+        run: |
+          Import-Module "$env:ChocolateyInstall/helpers/chocolateyInstaller.psm1"
+          refreshenv
+          alchemist --help
 
   test-linux-deb-installer:
     needs:
@@ -442,6 +445,8 @@ jobs:
       group: release-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: false
     runs-on: ubuntu-22.04
+    outputs:
+      winget-deploy: ${{ steps.deploy.outputs.winget-deploy }}
     if: >-
       !github.event.repository.fork
       && (
@@ -489,7 +494,8 @@ jobs:
         uses: actions/setup-node@v4.0.2
         with:
           node-version-file: package.json
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.7
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.8
+        id: deploy
         env:
           STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
           MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}
@@ -521,6 +527,38 @@ jobs:
           custom-secret-0: ${{ secrets.AUR_USERNAME }}
           custom-secret-1: ${{ secrets.AUR_EMAIL }}
           custom-secret-2: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+
+  # Completes the release process for winget
+  release-winget:
+    needs:
+      - ci-preparation
+      - release
+    concurrency:
+      group: release-winget-${{ needs.ci-preparation.outputs.build-ref }}
+      cancel-in-progress: false
+    runs-on: windows-2022
+    env:
+      packageID: "Unibo.Alchemist"
+    if: fromJSON(needs.release.outputs.winget-deploy)
+    steps:
+      - name: Install winget
+        uses: Cyberboss/install-winget@v1
+      - name: Install wingetcreate
+        shell: pwsh
+        run: Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe
+      - name: Check package availability
+        shell: pwsh
+        run: |
+          .\wingetcreate.exe show $env:packageID
+      - name: Update package
+        shell: pwsh
+        run: |
+          $version = "${{ needs.ci-preparation.outputs.next-version }}"
+          $packageVersion = if ($version.IndexOf("-") -ne -1) { $version.Substring(0, $version.IndexOf("-")) } else { $version }
+          $installerUrl = "https://github.com/AlchemistSimulator/Alchemist/releases/download/$packageVersion/alchemist-$packageVersion.msi"
+          $gitToken = ${{ github.token }}
+          .\wingetcreate.exe update $env:packageID --version $packageVersion --urls "$installerUrl" --submit --token $gitToken
+      
   success:
     runs-on: ubuntu-22.04
     needs:
@@ -529,6 +567,7 @@ jobs:
       - build-website
       - ci-preparation
       - release
+      - release-winget
       - staging-repo
       - verify-aur-package
       - test-linux-deb-installer

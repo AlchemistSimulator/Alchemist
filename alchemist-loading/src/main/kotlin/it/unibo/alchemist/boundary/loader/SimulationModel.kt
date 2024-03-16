@@ -416,7 +416,7 @@ internal object SimulationModel {
                 logger.debug("Molecule: {}", molecule)
                 val concentrationKey = DocumentRoot.Deployment.Contents.concentration
                 val concentrationMaker: () -> T = {
-                    element[concentrationKey]?.toString().let { incarnation.createConcentration(it) }
+                    incarnation.createConcentration(element[concentrationKey])
                 }
                 Result.success(Triple(filters, molecule, concentrationMaker))
             }

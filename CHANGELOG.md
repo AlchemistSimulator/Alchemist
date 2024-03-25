@@ -1,3 +1,24 @@
+## [32.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/32.0.0...32.0.1) (2024-03-25)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.23 ([4ef8436](https://github.com/AlchemistSimulator/Alchemist/commit/4ef843658d5448231d1c279a50d6ca42b22faf82))
+* **deps:** update dependency org.mapsforge:mapsforge-map-awt to v0.21.0 ([7bfe617](https://github.com/AlchemistSimulator/Alchemist/commit/7bfe617a7d463169431390f0e2c4bddaf91e388c))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 4f13e9e ([432c8c6](https://github.com/AlchemistSimulator/Alchemist/commit/432c8c631a86bc77dc76afdef70b82b3cc1ab829))
+* **deps:** update react to v18.2.0-pre.714 ([3519543](https://github.com/AlchemistSimulator/Alchemist/commit/3519543acd5820dc0f696ae403e682580575d56e))
+
+
+### Build and continuous integration
+
+* **aur:** use the pre-installed versions of namcap and sudo found in the `danysk/makepkg` docker image ([#3252](https://github.com/AlchemistSimulator/Alchemist/issues/3252)) ([ec9d7fc](https://github.com/AlchemistSimulator/Alchemist/commit/ec9d7fcec4699fbe849cd21345eba511e0dcab09))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.8 ([b90e1ba](https://github.com/AlchemistSimulator/Alchemist/commit/b90e1bae8c614b3825690ab5e932c37c16898a07))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([f2eba0c](https://github.com/AlchemistSimulator/Alchemist/commit/f2eba0c445e405d15fdfb0070fa847ceef4d5264))
+
 ## [32.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/31.0.6...32.0.0) (2024-03-15)
 
 

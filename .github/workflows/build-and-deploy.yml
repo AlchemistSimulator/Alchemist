@@ -152,7 +152,7 @@ jobs:
     concurrency:
       group: staging-repo-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: true
-    if: fromJSON(needs.ci-preparation.outputs.may-deploy) 
+    if: fromJSON(needs.ci-preparation.outputs.may-deploy)
     outputs:
       repo-id: ${{ steps.staging-repo.outputs.MavenCentral }}
     steps:
@@ -365,7 +365,7 @@ jobs:
     steps:
       - name: Setup arch
         run: |
-          pacman --noconfirm -Sy git namcap ruby sudo
+          pacman --noconfirm -Sy ruby
           sudo chmod 777 .
           # Work around Unable to download artifact(s): EACCES: permission denied, open '/__w/_temp/...
           # sudo chmod -R 777 /__w
@@ -558,7 +558,7 @@ jobs:
           $installerUrl = "https://github.com/AlchemistSimulator/Alchemist/releases/download/$packageVersion/alchemist-$packageVersion.msi"
           $gitToken = ${{ github.token }}
           .\wingetcreate.exe update $env:packageID --version $packageVersion --urls "$installerUrl" --submit --token $gitToken
-      
+
   success:
     runs-on: ubuntu-22.04
     needs:

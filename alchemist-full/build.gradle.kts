@@ -58,13 +58,11 @@ application {
     mainClass.set("it.unibo.alchemist.Alchemist")
 }
 
-fun Project.multiplatformClassPath(): FileCollection {
-    return this.tasks.named("compileKotlinJvm").get().outputs.files +
-        this.configurations.named("jvmRuntimeClasspath").get()
-}
-
 tasks.named("run", JavaExec::class) {
-    allprojects.map { it.multiplatformClassPath() }.forEach {
+    allprojects.map {
+        tasks.named("compileKotlinJvm").get().outputs.files +
+            configurations.named("jvmRuntimeClasspath").get()
+    }.forEach {
         classpath += it
     }
 }

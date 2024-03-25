@@ -58,6 +58,9 @@ application {
     mainClass.set("it.unibo.alchemist.Alchemist")
 }
 
+/**
+ * Add the runtime classpath of the multiplatform JVM projects to the run task
+ */
 tasks.named("run", JavaExec::class) {
     allprojects.map {
         tasks.named("compileKotlinJvm").get().outputs.files +
@@ -66,10 +69,6 @@ tasks.named("run", JavaExec::class) {
         classpath += it
     }
 }
-
-/**
- * Add the runtime classpath of the multiplatform JVM projects to the run task
- */
 
 // Shadow Jar
 tasks.withType<ShadowJar> {

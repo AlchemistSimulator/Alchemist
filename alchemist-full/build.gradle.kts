@@ -69,11 +69,6 @@ tasks.named("run", JavaExec::class) {
     }
 }
 
-tasks.named("jvmJar") {
-    allprojects.map { it.multiplatformClassPath() }.forEach {
-    }
-}
-
 /**
  * Add the runtime classpath of the multiplatform JVM projects to the run task
  */
@@ -101,7 +96,8 @@ tasks.withType<ShadowJar> {
         "gradlew.bat",
         "gradlew",
     )
-    from(tasks.named("jvmJar"))
+    from(tasks.named<Jar>("jvmJar").get())
+    configurations.add(project.configurations.named("jvmRuntimeClasspath").get())
     isZip64 = true
     mergeServiceFiles()
     destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })

@@ -37,7 +37,6 @@ plugins {
     alias(libs.plugins.publishOnCentral)
     alias(libs.plugins.taskTree)
     alias(libs.plugins.hugo)
-    alias(libs.plugins.shadowJar) apply false
 }
 
 val minJavaVersion: String by properties

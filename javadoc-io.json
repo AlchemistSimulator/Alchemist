@@ -609,6 +609,10 @@
     "first": "https://javadoc.io/doc/org.dyn4j/dyn4j/5.0.1",
     "second": "https://javadoc.io/doc/org.dyn4j/dyn4j/5.0.1/element-list"
   },
+  "org.dyn4j/dyn4j/5.0.2": {
+    "first": "https://javadoc.io/doc/org.dyn4j/dyn4j/5.0.2",
+    "second": "https://javadoc.io/doc/org.dyn4j/dyn4j/5.0.2/element-list"
+  },
   "org.graphstream/gs-algo/2.0": {
     "first": "https://javadoc.io/doc/org.graphstream/gs-algo/2.0",
     "second": "https://javadoc.io/doc/org.graphstream/gs-algo/2.0/element-list"

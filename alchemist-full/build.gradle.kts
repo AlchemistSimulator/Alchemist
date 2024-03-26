@@ -59,10 +59,11 @@ kotlin {
  * If unspecified, the classpath is not correctly built when including common code from MP dependencies,
  * resulting in runtime errors.
  */
-private fun mpClasspath(): FileCollection = listOf(
-    tasks.named("compileKotlinJvm").get().outputs.files +
-        configurations.named("jvmRuntimeClasspath").get(),
-).reduce(FileCollection::plus)
+private fun mpClasspath(): Provider<FileCollection> = tasks.named("compileKotlinJvm")
+    .map { it.outputs.files }
+    .flatMap { compileKtOutputs ->
+        configurations.named("jvmRuntimeClasspath").map { compileKtOutputs + it }
+    }
 
 application {
     mainClass.set("it.unibo.alchemist.Alchemist")
@@ -71,8 +72,8 @@ application {
 /**
  * Add the runtime classpath of the multiplatform JVM projects to the run task
  */
-tasks.run<JavaExec> {
-    classpath += mpClasspath()
+tasks.run.configure {
+    classpath += mpClasspath().get()
 }
 
 // Shadow Jar
@@ -285,77 +286,7 @@ validFormats.forEach { packaging: ValidPackaging ->
         }
         tasks.assemble.configure { dependsOn(generatePKGBUILD) }
     }
-//    tasks.register<Exec>("test${packagingTaskNameSuffix}PackageInstallation") {
-//        group = "Verification"
-//        description = "Tries to install locally the Alchemist installer created with $packaging"
-//        workingDir = rootProject.layout.buildDirectory.dir("package-${packaging.name}-install").get().asFile
-//        dependsOn(packagingTask)
-//        inputs.files(packagingTask)
-//        doLast {
-//            when (packaging.format) {
-//                MSI -> commandLine(
-//                    "msiexec",
-//                    "-i",
-//                    "${rootProject.name}-$actualVersion.msi",
-//                    "-quiet", "INSTALLDIR=${workingDir.path}")
-//                PKG -> commandLine(
-//                    "sudo",
-//                    "installer",
-//                    "-pkg",
-//                    "${rootProject.name}-$actualVersion.pkg",
-//                    "-target",
-//                    "/")
-//                else -> logger.warn("No testing in place yet for $packaging")
-//            }
-//        }
-//    }
 }
-
-// val deleteJpackageOutput by tasks.registering(Delete::class) {
-//    setDelete(project.file("build/package/install"))
-// }
-//
-// tasks.register<Exec>("testJpackageInstall") {
-//    isIgnoreExitValue = true
-//    workingDir = rootProject.file("build/package/")
-//    doFirst {
-//        val version = rootProject.version.toString().substringBefore('-')
-//        // Extract the packet
-//        when {
-//            isWindows -> Unit
-//            isMac -> commandLine("sudo", "installer", "-pkg", "${rootProject.name}-$version.pkg", "-target", "/")
-//            else -> {
-//                workingDir.resolve("install").mkdirs()
-//                commandLine("bsdtar", "-xf", "${rootProject.name}-$version-1.x86_64.rpm", "-C", "install")
-//            }
-//        }
-//    }
-//    doLast {
-//        // Check if package contains every file needed
-//        var execFiles: List<String>
-//        var appFiles: List<String>
-//        when {
-//            isWindows -> {
-//                execFiles = workingDir.resolve("install").listFiles().map { it.name }
-//                appFiles = workingDir.resolve("install/app").listFiles().map { it.name }
-//            }
-//            isMac -> {
-//                val root = File("/Applications/${rootProject.name}.app")
-//                execFiles = root.resolve("Contents/MacOS").listFiles().map { it.name }
-//                appFiles = root.resolve("Contents/app").listFiles().map { it.name }
-//            }
-//            else -> {
-//                execFiles = workingDir.resolve("install/opt/alchemist/bin").listFiles().map { it.name }
-//                appFiles = workingDir.resolve("install/opt/alchemist/lib/app").listFiles().map { it.name }
-//            }
-//        }
-//        require(rootProject.name in execFiles || "${rootProject.name}.exe" in execFiles)
-//        require(jpackageFull.get().mainJar in appFiles)
-//    }
-//    mustRunAfter(jpackageFull)
-//    finalizedBy(deleteJpackageOutput)
-// }
-//
 
 tasks.withType<AbstractArchiveTask> {
     duplicatesStrategy = DuplicatesStrategy.WARN

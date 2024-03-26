@@ -446,7 +446,7 @@ jobs:
       cancel-in-progress: false
     runs-on: ubuntu-22.04
     outputs:
-      winget-deploy: ${{ steps.deploy.outputs.winget-deploy }}
+      winget-deploy: ${{ steps.check-released.outputs.has-released }}
     if: >-
       !github.event.repository.fork
       && (
@@ -495,7 +495,6 @@ jobs:
         with:
           node-version-file: package.json
       - uses: DanySK/build-check-deploy-gradle-action@2.4.8
-        id: deploy
         env:
           STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
           MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}
@@ -527,6 +526,18 @@ jobs:
           custom-secret-0: ${{ secrets.AUR_USERNAME }}
           custom-secret-1: ${{ secrets.AUR_EMAIL }}
           custom-secret-2: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+      - name: Check if a release was performed
+        id: check-released
+        # if a file named "RELEASED" is present in the repository, write "true" to the "has-released" output
+        # Otherwise, write "false" to the same variable
+        run: |
+            if [ -f RELEASED ]; then
+                echo A relase was successfully performed
+                echo "has-released=true" >> "$GITHUB_OUTPUT"
+            else
+                echo No release was performed
+                echo "has-released=false" >> "$GITHUB_OUTPUT"
+            fi
 
   # Completes the release process for winget
   release-winget:

@@ -18,8 +18,9 @@ eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CENTRAL" || eval "$RELEASE_ON_CE
 ./publishToAUR.sh pkgbuild/PKGBUILD "$CUSTOM_SECRET_0" "$CUSTOM_SECRET_1" "$CUSTOM_SECRET_2" || exit 8
 `
 
+// This is then used by the workflow to signal success to release steps that need other operating systems to be executed
 var successCmd = `
-echo "winget-deploy=true" >> $GITHUB_OUTPUT
+touch RELEASED
 `
 
 var config = require('semantic-release-preconfigured-conventional-commits');

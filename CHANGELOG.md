@@ -1,3 +1,40 @@
+## [33.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/32.0.1...33.0.0) (2024-03-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* **fxui:** drop the experimental JavaFX UI, it has moved to its own dedicated project
+
+### Dependency updates
+
+* **deps:** drop unused dependency descriptors ([cf47c1a](https://github.com/AlchemistSimulator/Alchemist/commit/cf47c1a8970056172e9beaf68c6a253298dcc2bf))
+* **deps:** update dependency gradle to v8.7 ([6505f9d](https://github.com/AlchemistSimulator/Alchemist/commit/6505f9d957b7735dc8431476a4d10d46da379c29))
+* **deps:** update dependency org.dyn4j:dyn4j to v5.0.2 ([578c185](https://github.com/AlchemistSimulator/Alchemist/commit/578c185e8c5d621361177038b56e9d051133d139))
+* **deps:** update plugin gitsemver to v3.1.4 ([1f62ff9](https://github.com/AlchemistSimulator/Alchemist/commit/1f62ff9c82c5682f427de40798e5b54798ce6dde))
+* **deps:** update plugin kotlin-qa to v0.60.4 ([cb24518](https://github.com/AlchemistSimulator/Alchemist/commit/cb245183ca0131913a18037a942cab5cb8426f97))
+* **deps:** update plugin kotlin-qa to v0.61.0 ([e48bc4a](https://github.com/AlchemistSimulator/Alchemist/commit/e48bc4ae42b039a0b2c25fa45c1f3a3c3b94fc4b))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.4 ([bcf24a9](https://github.com/AlchemistSimulator/Alchemist/commit/bcf24a9591dc2164cd9660c916ea708827140dfe))
+* **deps:** update react to v18.2.0-pre.721 ([24cfc37](https://github.com/AlchemistSimulator/Alchemist/commit/24cfc3770e3956cdd32d583a794e7430c63293c7))
+* **deps:** update site/themes/hugo-theme-relearn digest to ff36532 ([45dcebd](https://github.com/AlchemistSimulator/Alchemist/commit/45dcebd7c4cece22764ca25233777b373f9c5ceb))
+
+
+### Bug Fixes
+
+* **full:** fix import of multiplatform subprojects ([#3253](https://github.com/AlchemistSimulator/Alchemist/issues/3253)) ([40726b4](https://github.com/AlchemistSimulator/Alchemist/commit/40726b4d3962b7a62aaeec663cc1c46907895d64))
+
+
+### Build and continuous integration
+
+* cleanup `javadoc-io.json` before regenerating it ([eb2e909](https://github.com/AlchemistSimulator/Alchemist/commit/eb2e909f9e62799fac07d56efb7287bd4d9775aa))
+* **deps:** update dependency macos github actions runner to v13 ([35f16a0](https://github.com/AlchemistSimulator/Alchemist/commit/35f16a05521010c6dbe86eaa188f3f1b027598d5))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([a67b476](https://github.com/AlchemistSimulator/Alchemist/commit/a67b4767912039f253a3b2914f6291fef64e4d69))
+* **build:** update the javadoc.io cache ([18d01ac](https://github.com/AlchemistSimulator/Alchemist/commit/18d01ac411e3c6ebf4bcdf7d78b5b6057b4ff0f7))
+* **fxui:** drop the experimental JavaFX UI, it has moved to its own dedicated project ([af9b319](https://github.com/AlchemistSimulator/Alchemist/commit/af9b31959aa361ad945a8d1b44d5e0e622fedfc5))
+
 ## [32.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/32.0.0...32.0.1) (2024-03-25)
 
 

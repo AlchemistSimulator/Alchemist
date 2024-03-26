@@ -23,7 +23,9 @@ uiDesigner.xml
 buildProfile/
 *.iml
 .idea/artifacts/
+.idea/copilot/
 .idea/libraries/
+.idea/ktfmt.xml
 .idea/workspace.xml
 .idea/codeStyleSettings.xml
 .idea/inspectionProfiles/profiles_settings.xml

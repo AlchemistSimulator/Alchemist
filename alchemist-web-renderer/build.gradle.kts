@@ -11,7 +11,6 @@ import Libs.alchemist
 import Libs.incarnation
 
 plugins {
-    application
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotest.multiplatform)
 }
@@ -23,6 +22,11 @@ kotlin {
     js(IR) {
         browser {
             binaries.executable()
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                }
+            }
         }
     }
     sourceSets {
@@ -86,26 +90,10 @@ kotlin {
     }
 }
 
-application {
-    mainClass.set("it.unibo.alchemist.Alchemist")
-}
-
 /**
  * Webpack task that generates the JS artifacts.
  */
 val webpackTask = tasks.named("jsBrowserProductionWebpack")
-
-tasks.named("run", JavaExec::class).configure {
-    classpath(
-        tasks.named("compileKotlinJvm"),
-        configurations.named("jvmRuntimeClasspath"),
-        webpackTask.map { task ->
-            task.outputs.files.map { file ->
-                file.parent
-            }
-        },
-    )
-}
 
 /*
  * Configure the shadowJar task to work exactly like the "jvmJar" task of Kotlin Multiplatform, but also

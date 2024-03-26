@@ -1,0 +1,12 @@
+query EnvironmentQuery {
+    environment{
+        nodeToPos{
+            entries{
+                id
+                position{
+                    coordinates
+                }
+            }
+        }
+    }
+}

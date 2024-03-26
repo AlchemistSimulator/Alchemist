@@ -41,6 +41,7 @@ include(
     "alchemist-swingui",
     "alchemist-fxui",
     "alchemist-web-renderer",
+    "alchemist-webgui",
 )
 rootProject.name = "alchemist"
 

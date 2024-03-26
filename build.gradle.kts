@@ -42,33 +42,21 @@ plugins {
 val minJavaVersion: String by properties
 
 allprojects {
-
     with(rootProject.libs.plugins) {
         if (project.isMultiplatform) {
             apply(plugin = kotlin.multiplatform.id)
         } else {
             apply(plugin = kotlin.jvm.id)
+            apply(plugin = multiJvmTesting.id)
+            apply(plugin = java.qa.id)
         }
         apply(plugin = dokka.id)
         apply(plugin = gitSemVer.id)
-        apply(plugin = java.qa.id)
-        apply(plugin = multiJvmTesting.id)
         apply(plugin = kotlin.qa.id)
         apply(plugin = publishOnCentral.id)
         apply(plugin = taskTree.id)
     }
     apply(plugin = "distribution")
-
-    multiJvm {
-        jvmVersionForCompilation.set(minJavaVersion.toInt())
-        maximumSupportedJvmVersion.set(latestJava)
-        if (isInCI && (isWindows || isMac)) {
-            /*
-             * Reduce time in CI by running on fewer JVMs on slower or more limited instances.
-             */
-            testByDefaultWith(latestJava)
-        }
-    }
 
     repositories {
         google()
@@ -83,8 +71,70 @@ allprojects {
     }
 
     // JVM PROJECTS CONFIGURATIONS
-
     if (!project.isMultiplatform) {
+        // CODE QUALITY
+
+        javaQA {
+            checkstyle {
+                additionalConfiguration.set(
+                    """
+                    <module name="RegexpSingleline">
+                        <property name="severity" value="error" />
+                        <property name="format" value="Math\s*\.\s*random\s*\(\s*\)" />
+                        <property name="fileExtensions" value="java,xtend,scala,kt" />
+                        <property name="message"
+                                  value="Don't use Math.random() inside Alchemist. Breaks stuff." />
+                    </module>
+                    <module name="RegexpSingleline">
+                        <property name="severity" value="error" />
+                        <property name="format" value="class\s*\.\s*forName\s*\(" />
+                        <property name="fileExtensions" value="java,xtend,scala,kt" />
+                        <property name="message"
+                                  value="Use the library to load classes and resources. Breaks grid otherwise." />
+                    </module>
+                    <module name="RegexpSingleline">
+                        <property name="severity" value="error" />
+                        <property name="format" value="class\s*\.\s*getResource" />
+                        <property name="fileExtensions" value="java,xtend,scala,kt" />
+                        <property name="message"
+                                  value="Use the library to load classes and resources. Breaks grid otherwise." />
+                    </module>
+                    <module name="RegexpSingleline">
+                        <property name="severity" value="error" />
+                        <property name="format" value="class\s*\.\s*getClassLoader" />
+                        <property name="fileExtensions" value="java,xtend,scala,kt" />
+                        <property name="message"
+                                  value="Use the library to load classes and resources. Breaks grid otherwise." />
+                    </module>
+                    <module name="RegexpSingleline">
+                        <property name="severity" value="warning" />
+                        <property name="format" value="@author" />
+                        <property name="fileExtensions" value="java,xtend,scala,kt" />
+                        <property name="message"
+                                  value="Do not use @author. Changes and authors are tracked by the content manager." />
+                    </module>
+                    """.trimIndent(),
+                )
+                additionalSuppressions.set(
+                    """
+                    <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
+                    <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
+                    """.trimIndent(),
+                )
+            }
+        }
+
+        multiJvm {
+            jvmVersionForCompilation.set(minJavaVersion.toInt())
+            maximumSupportedJvmVersion.set(latestJava)
+            if (isInCI && (isWindows || isMac)) {
+                /*
+                 * Reduce time in CI by running on fewer JVMs on slower or more limited instances.
+                 */
+                testByDefaultWith(latestJava)
+            }
+        }
+
         dependencies {
             with(rootProject.libs) {
                 compileOnly(spotbugs.annotations)
@@ -200,58 +250,6 @@ allprojects {
         }
         useJUnitPlatform()
         maxHeapSize = "1g"
-    }
-
-    // CODE QUALITY
-
-    javaQA {
-        checkstyle {
-            additionalConfiguration.set(
-                """
-                <module name="RegexpSingleline">
-                    <property name="severity" value="error" />
-                    <property name="format" value="Math\s*\.\s*random\s*\(\s*\)" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Don't use Math.random() inside Alchemist. Breaks stuff." />
-                </module>
-                <module name="RegexpSingleline">
-                    <property name="severity" value="error" />
-                    <property name="format" value="class\s*\.\s*forName\s*\(" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Use the library to load classes and resources. Breaks grid otherwise." />
-                </module>
-                <module name="RegexpSingleline">
-                    <property name="severity" value="error" />
-                    <property name="format" value="class\s*\.\s*getResource" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Use the library to load classes and resources. Breaks grid otherwise." />
-                </module>
-                <module name="RegexpSingleline">
-                    <property name="severity" value="error" />
-                    <property name="format" value="class\s*\.\s*getClassLoader" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Use the library to load classes and resources. Breaks grid otherwise." />
-                </module>
-                <module name="RegexpSingleline">
-                    <property name="severity" value="warning" />
-                    <property name="format" value="@author" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Do not use @author. Changes and authors are tracked by the content manager." />
-                </module>
-                """.trimIndent(),
-            )
-            additionalSuppressions.set(
-                """
-                <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
-                <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
-                """.trimIndent(),
-            )
-        }
     }
 
     tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {

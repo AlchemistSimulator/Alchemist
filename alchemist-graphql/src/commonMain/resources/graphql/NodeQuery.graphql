@@ -1,0 +1,30 @@
+query Node($id: Int! = 0){
+
+    environment{
+        nodeById(id: $id){
+            id
+            moleculeCount
+            contents{
+                size
+                entries{
+                    molecule{
+                        name
+                    }
+                    concentration
+                }
+            }
+            properties
+            reactions{
+                inputContext
+                outputContext
+                node{
+                    id
+                }
+            }
+        }
+    }
+
+    nodePosition(nodeId: $id) {
+        coordinates
+    }
+}

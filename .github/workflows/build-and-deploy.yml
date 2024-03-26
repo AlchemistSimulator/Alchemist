@@ -15,9 +15,6 @@ jobs:
   # Prepare the environment for the build
   ci-preparation:
     runs-on: ubuntu-22.04
-    concurrency:
-      group: ci-preparation-${{ github.workflow }}-${{ github.event.number || github.ref }}
-      cancel-in-progress: true
     outputs:
       makepkg-image: ${{ steps.makepkg-image.outputs.image-name }}
       build-ref: ${{ steps.ci-preparation.outputs.build-ref }}
@@ -72,9 +69,6 @@ jobs:
         os: [ windows-2022, macos-13, ubuntu-22.04 ]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
-    concurrency:
-      group: build-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
@@ -98,9 +92,6 @@ jobs:
       - ci-preparation
     runs-on: ubuntu-22.04
     timeout-minutes: 30
-    concurrency:
-      group: build-website-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.14
@@ -152,9 +143,6 @@ jobs:
     runs-on: ubuntu-22.04
     needs:
       - ci-preparation
-    concurrency:
-      group: staging-repo-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
     if: fromJSON(needs.ci-preparation.outputs.may-deploy)
     outputs:
       repo-id: ${{ steps.staging-repo.outputs.MavenCentral }}
@@ -202,9 +190,6 @@ jobs:
         )
       )
     timeout-minutes: 120
-    concurrency:
-      group: assemble-and-upload-${{ matrix.os }}-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
     steps:
       - name: Checkout with full history
         uses: danysk/action-checkout@0.2.14
@@ -269,9 +254,6 @@ jobs:
     runs-on: windows-2022
     if: >-
       always() && needs.assemble-and-upload.result == 'success'
-    concurrency:
-      group: test-windows-msi-installer-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
     steps:
       - name: Download packages
         uses: actions/download-artifact@v4.1.4
@@ -303,9 +285,6 @@ jobs:
     runs-on: ubuntu-22.04
     if: >-
       always() && needs.assemble-and-upload.result == 'success'
-    concurrency:
-      group: test-linux-deb-installer-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
     steps:
       - name: Download packages
         uses: actions/download-artifact@v4.1.4
@@ -334,9 +313,6 @@ jobs:
       always() && needs.assemble-and-upload.result == 'success'
     container:
       image: fedora:41
-    concurrency:
-      group: test-linux-rpm-installer-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
     steps:
       - name: Download packages
         uses: actions/download-artifact@v4.1.4
@@ -362,9 +338,6 @@ jobs:
     container:
       image: ${{ needs.ci-preparation.outputs.makepkg-image }}
       options: --user root
-    concurrency:
-      group: test-aur-release-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: true
     steps:
       - name: Setup arch
         run: |

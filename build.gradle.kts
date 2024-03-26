@@ -355,7 +355,6 @@ tasks {
          */
         removeChildTasks(
             allprojects.filter { it.isMultiplatform } + listOf(
-                alchemist("fxui"),
                 alchemist("swingui"),
             ),
         )

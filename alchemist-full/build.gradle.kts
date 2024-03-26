@@ -54,6 +54,16 @@ kotlin {
     }
 }
 
+/**
+ * @return a [FileCollection] containing the classpath of the multiplatform JVM projects.
+ * If unspecified, the classpath is not correctly built when including common code from MP dependencies,
+ * resulting in runtime errors.
+ */
+private fun mpClasspath(): FileCollection = listOf(
+    tasks.named("compileKotlinJvm").get().outputs.files +
+        configurations.named("jvmRuntimeClasspath").get(),
+).reduce(FileCollection::plus)
+
 application {
     mainClass.set("it.unibo.alchemist.Alchemist")
 }
@@ -61,13 +71,8 @@ application {
 /**
  * Add the runtime classpath of the multiplatform JVM projects to the run task
  */
-tasks.named("run", JavaExec::class) {
-    allprojects.map {
-        tasks.named("compileKotlinJvm").get().outputs.files +
-            configurations.named("jvmRuntimeClasspath").get()
-    }.forEach {
-        classpath += it
-    }
+tasks.run<JavaExec> {
+    classpath += mpClasspath()
 }
 
 // Shadow Jar
@@ -93,8 +98,7 @@ tasks.withType<ShadowJar> {
         "gradlew.bat",
         "gradlew",
     )
-    from(tasks.named<Jar>("jvmJar").get())
-    configurations.add(project.configurations.named("jvmRuntimeClasspath").get())
+    from(mpClasspath())
     isZip64 = true
     mergeServiceFiles()
     destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })

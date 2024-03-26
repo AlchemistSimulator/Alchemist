@@ -82,29 +82,29 @@ allprojects {
         }
     }
 
+    dependencies {
+        with(rootProject.libs) {
+            compileOnly(spotbugs.annotations)
+            implementation(resourceloader)
+            implementation(slf4j)
+            implementation(kotlin("stdlib-jdk8"))
+            implementation(kotlin("reflect"))
+            testCompileOnly(spotbugs.annotations)
+            // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt + Alchemist testing tooling
+            testImplementation(bundles.testing.compile)
+            testImplementation(alchemist("test"))
+            // Test runtime: Junit engine
+            testRuntimeOnly(bundles.testing.runtimeOnly)
+            // executable jar packaging
+        }
+        if ("incarnation" in project.name) {
+            runtimeOnly(rootProject)
+        }
+    }
+
     // JVM PROJECTS CONFIGURATIONS
 
     if (!project.isMultiplatform) {
-        dependencies {
-            with(rootProject.libs) {
-                compileOnly(spotbugs.annotations)
-                implementation(resourceloader)
-                implementation(slf4j)
-                implementation(kotlin("stdlib-jdk8"))
-                implementation(kotlin("reflect"))
-                testCompileOnly(spotbugs.annotations)
-                // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt + Alchemist testing tooling
-                testImplementation(bundles.testing.compile)
-                testImplementation(alchemist("test"))
-                // Test runtime: Junit engine
-                testRuntimeOnly(bundles.testing.runtimeOnly)
-                // executable jar packaging
-            }
-            if ("incarnation" in project.name) {
-                runtimeOnly(rootProject)
-            }
-        }
-
         tasks.withType<AbstractDokkaLeafTask>().configureEach {
             timeout.set(Duration.ofMinutes(5))
             dokkaSourceSets.configureEach {

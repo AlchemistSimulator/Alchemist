@@ -543,8 +543,7 @@ jobs:
           $version = "${{ needs.ci-preparation.outputs.next-version }}"
           $packageVersion = if ($version.IndexOf("-") -ne -1) { $version.Substring(0, $version.IndexOf("-")) } else { $version }
           $installerUrl = "https://github.com/AlchemistSimulator/Alchemist/releases/download/$packageVersion/alchemist-$packageVersion.msi"
-          $gitToken = ${{ github.token }}
-          .\wingetcreate.exe update $env:packageID --version $packageVersion --urls "$installerUrl" --submit --token $gitToken
+          .\wingetcreate.exe update $env:packageID --version $packageVersion --urls "$installerUrl" --submit --token $env:GITHUB_TOKEN
 
   success:
     runs-on: ubuntu-22.04

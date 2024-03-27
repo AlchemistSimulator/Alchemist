@@ -1,3 +1,22 @@
+## [33.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/33.0.1...33.0.2) (2024-03-27)
+
+
+### Dependency updates
+
+* **deps:** update gohugoio/hugo action to v0.124.1 ([4902de1](https://github.com/AlchemistSimulator/Alchemist/commit/4902de16bf17e8b16be3a1914983eba5e4e445b5))
+
+
+### Bug Fixes
+
+* **winget:** directly access the GitHub token from the `wingetcreate` call ([ae39521](https://github.com/AlchemistSimulator/Alchemist/commit/ae39521bb7adf3e2576df450a83356d8459acced))
+
+
+### Documentation
+
+* **website:** fix WARN  DEPRECATED usage of 'params.author' config parameter found, replace it with `params.author.name` in your hugo.toml; see https://mcshelby.github.io/hugo-theme-relearn/basics/migration[#5230](https://github.com/AlchemistSimulator/Alchemist/issues/5230) ([4f924bc](https://github.com/AlchemistSimulator/Alchemist/commit/4f924bcb872a437cbed0b1f80a902d2f1ca6df30))
+* **website:** fix WARN  deprecated: config: languages.en.landingpageurl: custom params on the language top level was deprecated in Hugo v0.112.0 and will be removed in a future release. Put the value below [languages.en.params]. See https://gohugo.io/content-management/multilingual/[#changes](https://github.com/AlchemistSimulator/Alchemist/issues/changes)-in-hugo-01120 ([47affe1](https://github.com/AlchemistSimulator/Alchemist/commit/47affe1fc8cc7a7c2b39eeabecd1a58ff35676fe)), closes [/gohugo.io/content-management/multilingual/#changes-in-hugo-01120](https://github.com/AlchemistSimulator//gohugo.io/content-management/multilingual//issues/changes-in-hugo-01120)
+* **website:** fix WARN DEPRECATED usage of 'json' output format found, use 'search' instead; see https://mcshelby.github.io/hugo-theme-relearn/basics/customization[#activate](https://github.com/AlchemistSimulator/Alchemist/issues/activate)-search ([99a6649](https://github.com/AlchemistSimulator/Alchemist/commit/99a66497dd214a809250d260931fe576ddc1913d))
+
 ## [33.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/33.0.0...33.0.1) (2024-03-27)
 
 

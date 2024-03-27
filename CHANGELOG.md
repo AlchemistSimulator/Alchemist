@@ -1,3 +1,24 @@
+## [33.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/33.0.0...33.0.1) (2024-03-27)
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to c88f6d5 ([f0e4943](https://github.com/AlchemistSimulator/Alchemist/commit/f0e4943e4038122451ad3139574359f9f5dcb214))
+* **deps:** update plugin java-qa to v1.41.0 ([836cb45](https://github.com/AlchemistSimulator/Alchemist/commit/836cb45e56529371e413bc931d515aa1edfc1b5d))
+* **deps:** update plugin publishoncentral to v5.0.26 ([742f0ae](https://github.com/AlchemistSimulator/Alchemist/commit/742f0ae61ee9b96db42e68b6185900b398baf111))
+
+
+### Bug Fixes
+
+* **release:** pass information about successful releases from semantic-release to the main workflow through files ([7530d45](https://github.com/AlchemistSimulator/Alchemist/commit/7530d45fe09d68afd306ab942e8cada8d4c6438f))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.11 ([6b6ac12](https://github.com/AlchemistSimulator/Alchemist/commit/6b6ac1261076062462ef1f829899987092f86d98))
+* quickly cancel workflows but on master ([5334508](https://github.com/AlchemistSimulator/Alchemist/commit/5334508f0eb9b0583d0efaecf9a6071b1349a5bf))
+* remove concurrency cancellations at the job level and keep only workflow-level cancellations ([d7cd7b1](https://github.com/AlchemistSimulator/Alchemist/commit/d7cd7b155ce4d0be94fbd27cfe9200ac76d5a4c3))
+
 ## [33.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/32.0.1...33.0.0) (2024-03-26)
 
 

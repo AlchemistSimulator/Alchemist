@@ -24,7 +24,7 @@ relativeURLs = true
   version = "!development preview!"
 
 [outputs]
-  home = ["HTML", "RSS", "JSON"] # add JSON to the home page to support lunr search
+  home = ['html', 'rss', 'search']
 
 [markup]
   [markup.highlight]

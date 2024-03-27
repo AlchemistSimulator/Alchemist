@@ -34,13 +34,16 @@ relativeURLs = true
 [markup.goldmark.renderer]
   unsafe= true
 
+[languages.en.params]
+  landingPageURL = "/"
+  landingPageName = "<i class='fas fa-home'></i> Home"
+
 [Languages]
   [Languages.en]
     title = "Documentation for the Alchemist Simulator"
     weight = 1
     languageName = "English"
-    landingPageURL = "/"
-    landingPageName = "<i class='fas fa-home'></i> Home"
+
 
   [[Languages.en.menu.shortcuts]]
     name = "<i class='fab fa-fw fa-github'></i> GitHub repo"

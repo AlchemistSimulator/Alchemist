@@ -1,3 +1,10 @@
+## [33.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/33.0.2...33.0.3) (2024-03-27)
+
+
+### Bug Fixes
+
+* **winget:** use the deployment-specific token to deploy with winget ([da084df](https://github.com/AlchemistSimulator/Alchemist/commit/da084dffcd23a303be44d03453ee3df044846250))
+
 ## [33.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/33.0.1...33.0.2) (2024-03-27)
 
 

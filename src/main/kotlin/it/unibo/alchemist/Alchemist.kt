@@ -49,7 +49,10 @@ object Alchemist {
         val parser = ArgParser("alchemist")
         val run = createRunCommand(parser)
         parser.subcommands(run)
-        parser.parse(args)
+        val actualArgs = args.takeIf { it.isNotEmpty() } ?: arrayOf("--help").also {
+            println("No valid arguments provided, showing help")
+        }
+        parser.parse(actualArgs)
     }
 
     @OptIn(ExperimentalCli::class)
@@ -58,9 +61,9 @@ object Alchemist {
 
             val simulationFile by parser.argument(
                 type = ArgType.String,
-                fullName = "simulation configuration file",
+                fullName = "simulation file",
                 description = """
-                File containing simulation configuration to be executed.
+                File with the simulation configuration.
                 """.trimIndent(),
             )
 

@@ -1,3 +1,10 @@
+## [33.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/33.0.3...33.0.4) (2024-03-27)
+
+
+### Bug Fixes
+
+* **cli:** when invoked with no arguments, print help and return 0 ([699c502](https://github.com/AlchemistSimulator/Alchemist/commit/699c502cafce0aad9cea961dd5c643ba10232a48))
+
 ## [33.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/33.0.2...33.0.3) (2024-03-27)
 
 

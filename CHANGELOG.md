@@ -1,3 +1,37 @@
+## [33.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/33.0.4...33.0.5) (2024-04-04)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.25 ([374a2b2](https://github.com/AlchemistSimulator/Alchemist/commit/374a2b230b61d59c4d666e0bbb25702777dcb728))
+* **deps:** update dependency commons-io:commons-io to v2.16.0 ([532b242](https://github.com/AlchemistSimulator/Alchemist/commit/532b242de457f5582ef8c0aafacd35ae359b8f4b))
+* **deps:** update dependency io.arrow-kt:arrow-core to v1.2.4 ([690e571](https://github.com/AlchemistSimulator/Alchemist/commit/690e571d534ccd0104bbb93fdb09a9f6acb2137c))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.0.1 ([228e89f](https://github.com/AlchemistSimulator/Alchemist/commit/228e89f3703bc81617efae7a64c7f4d5c57fbe07))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 2e444c9 ([9bcb813](https://github.com/AlchemistSimulator/Alchemist/commit/9bcb8138eeab6e0fc68caa76cd93a1701ddcbd87))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 829eb03 ([cd21c12](https://github.com/AlchemistSimulator/Alchemist/commit/cd21c123b1a48d50c6adb7c4695e9d9793f6d107))
+* **deps:** update node.js to 20.12 ([1474a6d](https://github.com/AlchemistSimulator/Alchemist/commit/1474a6d556feb8249f40bdb616826b9a6ef3bd9c))
+* **deps:** update plugin com.gradle.enterprise to v3.17 ([8bbb7f2](https://github.com/AlchemistSimulator/Alchemist/commit/8bbb7f269d4e5c50d4448c59b522f43d7a7e3503))
+* **deps:** update plugin hugo to v0.7.1 ([295bebd](https://github.com/AlchemistSimulator/Alchemist/commit/295bebd2eba027f3352b53eea0e8f1f5c50448d4))
+* **deps:** update plugin java-qa to v1.42.0 ([15e345d](https://github.com/AlchemistSimulator/Alchemist/commit/15e345df1f6386a7d54794379102b58ab0acd35d))
+* **deps:** update plugin multijvmtesting to v0.5.8 ([a60a8de](https://github.com/AlchemistSimulator/Alchemist/commit/a60a8de6e2787b7e377470568d9945cd060a88bb))
+* **deps:** update plugin tasktree to v3 ([079cb0a](https://github.com/AlchemistSimulator/Alchemist/commit/079cb0aa5f379294fbbb1e764a3d08c285c06e38))
+* **deps:** update react to v18.2.0-pre.722 ([edd325f](https://github.com/AlchemistSimulator/Alchemist/commit/edd325f55941d3c93b28169f570f3fd40759d90b))
+* **deps:** update react to v18.2.0-pre.723 ([f207d22](https://github.com/AlchemistSimulator/Alchemist/commit/f207d2278ce1cec308a289286c615a8e23931e3f))
+* **deps:** update site/themes/hugo-theme-relearn digest to 0b37d72 ([69ed9f4](https://github.com/AlchemistSimulator/Alchemist/commit/69ed9f4fbbb9eb5c4634d4bfa8a705ce0c41793b))
+* **deps:** update site/themes/hugo-theme-relearn digest to 8f13533 ([0a8c560](https://github.com/AlchemistSimulator/Alchemist/commit/0a8c560fbd2596c0617d7b6a8ebc5e9ea959622c))
+* **deps:** update site/themes/hugo-theme-relearn digest to aa94916 ([c367b15](https://github.com/AlchemistSimulator/Alchemist/commit/c367b15bf3b0614d39cbff6baa504146c5e657b7))
+* **deps:** update site/themes/hugo-theme-relearn digest to bd49d54 ([245844e](https://github.com/AlchemistSimulator/Alchemist/commit/245844ea2862ecb2aa728f416a1c1d75be388c8a))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([5932fc3](https://github.com/AlchemistSimulator/Alchemist/commit/5932fc39fa24e823d4abc12770ed8567aa20f975))
+* **build:** update the javadoc.io cache ([3be0b69](https://github.com/AlchemistSimulator/Alchemist/commit/3be0b69b51c54b4b30be4811321fcfbade0d5c71))
+* **build:** update the javadoc.io cache ([cb5d160](https://github.com/AlchemistSimulator/Alchemist/commit/cb5d160f47505d35fde0a1e3a0c003f234e81cf3))
+* **build:** update the javadoc.io cache ([a216d70](https://github.com/AlchemistSimulator/Alchemist/commit/a216d70556e4b0c91c64d08f89b1c0abc89f1cea))
+* **build:** update the javadoc.io cache ([705d8b2](https://github.com/AlchemistSimulator/Alchemist/commit/705d8b2792862586d5c92c5f952a4169d84f07b9))
+* **build:** update the javadoc.io cache ([c6c7ea8](https://github.com/AlchemistSimulator/Alchemist/commit/c6c7ea838748b08c567febeab6d3465f046b8929))
+
 ## [33.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/33.0.3...33.0.4) (2024-03-27)
 
 

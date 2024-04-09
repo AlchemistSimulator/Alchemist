@@ -33,6 +33,7 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.Serial;
 
 /**
  * Draws an orienting node's cognitive map.
@@ -49,6 +50,7 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
     /**
      */
     protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
+    @Serial
     private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "A")
     private RangedInteger alpha = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE / INITIAL_ALPHA_DIVIDER);
@@ -61,7 +63,7 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
     private Color colorCache = Color.RED;
     @Nullable
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
-    private transient NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, DefaultEdge> cognitiveMap;
+    private transient volatile NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, DefaultEdge> cognitiveMap;
 
     /**
      * @param graphics        graphics
@@ -101,10 +103,11 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
             final Environment<T, P> environment,
             final Wormhole2D<P> wormhole
     ) {
-        if (cognitiveMap != null) {
+        final var capturedCognitiveMap = cognitiveMap;
+        if (capturedCognitiveMap != null) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
             graphics2D.setColor(Color.RED);
-            cognitiveMap.vertexSet().stream()
+            capturedCognitiveMap.vertexSet().stream()
                     .map(r -> mapEnvEllipseToAwtShape(r, wormhole, environment))
                     .forEach(r -> {
                         graphics2D.setColor(colorCache);
@@ -112,22 +115,18 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
                         graphics2D.setColor(colorCache.brighter().brighter());
                         graphics2D.draw(r);
                     });
-            cognitiveMap.vertexSet().forEach(r -> {
+            capturedCognitiveMap.vertexSet().forEach(r -> {
                 final Point centroidFrom = wormhole.getViewPoint(
                         environment.makePosition(r.getCentroid().getX(), r.getCentroid().getY())
                 );
-                if (cognitiveMap != null) {
-                    cognitiveMap.outgoingEdgesOf(r).forEach(e -> {
-                        if (cognitiveMap != null) {
-                            final Euclidean2DPosition head = cognitiveMap.getEdgeTarget(e).getCentroid();
-                            final Point centroidTo = wormhole.getViewPoint(
-                                    environment.makePosition(head.getX(), head.getY())
-                            );
-                            graphics2D.setColor(colorCache);
-                            graphics2D.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
-                        }
-                    });
-                }
+                capturedCognitiveMap.outgoingEdgesOf(r).forEach(e -> {
+                    final Euclidean2DPosition head = capturedCognitiveMap.getEdgeTarget(e).getCentroid();
+                    final Point centroidTo = wormhole.getViewPoint(
+                            environment.makePosition(head.getX(), head.getY())
+                        );
+                    graphics2D.setColor(colorCache);
+                    graphics2D.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
+                });
             });
         }
     }

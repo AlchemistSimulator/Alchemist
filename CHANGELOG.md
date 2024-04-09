@@ -1,3 +1,22 @@
+## [33.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/33.0.6...33.0.7) (2024-04-09)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.26 ([0e0c7ac](https://github.com/AlchemistSimulator/Alchemist/commit/0e0c7ac2d2363cc7f42bbcb16e2e6e53050cf884))
+* **deps:** update external-resources/learning-scafi-alchemist digest to b87770c ([e3a8650](https://github.com/AlchemistSimulator/Alchemist/commit/e3a8650f4cd1ae4ca9ef6847711e1def59ad1c22))
+* **deps:** update plugin com.gradle.develocity to v3.17.1 ([2660281](https://github.com/AlchemistSimulator/Alchemist/commit/2660281c8bc892251c949a1aaa92dc09dcc8491e))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.4.13 ([3b3fee8](https://github.com/AlchemistSimulator/Alchemist/commit/3b3fee89e7c8d68b5660d265beea9cabb0ba475a))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([5c0b49b](https://github.com/AlchemistSimulator/Alchemist/commit/5c0b49ba89863059cc789d3a5c7664d4d2b97355))
+
 ## [33.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/33.0.5...33.0.6) (2024-04-09)
 
 

@@ -1,6 +1,7 @@
 {
   "ch.qos.logback/logback-classic/1.5.4": {
-    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.4"
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.4",
+    "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.4/element-list"
   },
   "com.expediagroup/graphql-kotlin-hooks-provider/7.0.2": {
     "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/7.0.2",
@@ -166,13 +167,11 @@
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.0.1",
     "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.0.1/element-list"
   },
-  "org.protelis/protelis-interpreter/17.3.25": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.25",
-    "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.25/element-list"
+  "org.protelis/protelis-interpreter/17.3.26": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.26"
   },
-  "org.protelis/protelis-lang/17.3.25": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.25",
-    "second": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.25/package-list"
+  "org.protelis/protelis-lang/17.3.26": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.26"
   },
   "org.scala-lang/scala-compiler/2.13.13": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.13"

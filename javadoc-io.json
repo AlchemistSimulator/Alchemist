@@ -168,10 +168,12 @@
     "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.0.1/element-list"
   },
   "org.protelis/protelis-interpreter/17.3.26": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.26"
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.26",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.26/element-list"
   },
   "org.protelis/protelis-lang/17.3.26": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.26"
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.26",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.26/package-list"
   },
   "org.scala-lang/scala-compiler/2.13.13": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.13"

@@ -89,7 +89,7 @@ ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor"
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", version.ref = "ktor" }
 listset = "org.danilopianini:listset:0.3.9"
-logback = "ch.qos.logback:logback-classic:1.5.4"
+logback = "ch.qos.logback:logback-classic:1.5.5"
 mapsforge = "org.mapsforge:mapsforge-map-awt:0.21.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.3"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }

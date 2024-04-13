@@ -3,13 +3,16 @@
     "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.5"
   },
   "com.expediagroup/graphql-kotlin-hooks-provider/7.1.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/7.1.0"
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/7.1.0",
+    "second": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/7.1.0/package-list"
   },
   "com.expediagroup/graphql-kotlin-ktor-server/7.1.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-ktor-server/7.1.0"
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-ktor-server/7.1.0",
+    "second": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-ktor-server/7.1.0/package-list"
   },
   "com.expediagroup/graphql-kotlin-server/7.1.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/7.1.0"
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/7.1.0",
+    "second": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/7.1.0/package-list"
   },
   "com.github.ben-manes.caffeine/caffeine/3.1.8": {
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.8",

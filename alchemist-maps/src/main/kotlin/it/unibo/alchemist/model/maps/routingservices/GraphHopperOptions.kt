@@ -104,6 +104,11 @@ class GraphHopperOptions private constructor(
         val allProfiles: List<Profile> = graphHopperCustomModels.map { it.profile }
 
         /**
+         * All the available [Profile]s in the runtime.
+         */
+        val allCustomModels: List<CustomModel> = graphHopperCustomModels.map { it.customModel }
+
+        /**
          * Default [GraphHopperOptions]: foot as vehicle, fastest as weighting, and dijkstrabi as algorithm.
          */
         val defaultOptions: GraphHopperOptions

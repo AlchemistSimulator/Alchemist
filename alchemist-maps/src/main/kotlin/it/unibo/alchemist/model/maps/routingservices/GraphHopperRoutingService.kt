@@ -16,6 +16,7 @@ import com.graphhopper.GHRequest
 import com.graphhopper.GraphHopper
 import com.graphhopper.routing.ev.SimpleBooleanEncodedValue
 import com.graphhopper.routing.util.AccessFilter
+import com.graphhopper.routing.weighting.custom.CustomModelParser
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Route
 import it.unibo.alchemist.model.RoutingService
@@ -159,6 +160,13 @@ class GraphHopperRoutingService @JvmOverloads constructor(
             .setElevation(false)
             .setGraphHopperLocation(internalWorkdir.absolutePath)
             .setProfiles(GraphHopperOptions.allProfiles)
+            .setEncodedValuesString(
+                GraphHopperOptions.allCustomModels
+                    .flatMap { model ->
+                        CustomModelParser.findVariablesForEncodedValuesString(model, { true }) { it }
+                    }
+                    .joinToString(separator = ", "),
+            )
             .importOrLoad()
 
         private fun InputStream.nameFromHash(): String =

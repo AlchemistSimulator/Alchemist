@@ -14,11 +14,8 @@ import com.github.benmanes.caffeine.cache.LoadingCache
 import com.google.common.hash.Hashing
 import com.graphhopper.GHRequest
 import com.graphhopper.GraphHopper
-import com.graphhopper.routing.ev.VehicleAccess
+import com.graphhopper.routing.ev.SimpleBooleanEncodedValue
 import com.graphhopper.routing.util.AccessFilter
-import com.graphhopper.routing.util.DefaultVehicleEncodedValuesFactory
-import com.graphhopper.routing.util.EncodingManager
-import com.graphhopper.util.PMap
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Route
 import it.unibo.alchemist.model.RoutingService
@@ -81,12 +78,9 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         } finally {
             lockfileLock.release()
         }
-        accessFilters = Caffeine.newBuilder().build {
+        accessFilters = Caffeine.newBuilder().maximumSize(1000L).build {
             AccessFilter.allEdges(
-                EncodingManager.start()
-                    .add(vehicleEncoder.createVehicleEncodedValues(it.profile.vehicle, emptyPMap))
-                    .build()
-                    .getBooleanEncodedValue(VehicleAccess.key(it.profile.vehicle)),
+                SimpleBooleanEncodedValue("${it.vehicleClass}_access", true),
             )
         }
     }
@@ -127,8 +121,6 @@ class GraphHopperRoutingService @JvmOverloads constructor(
     companion object {
         private val logger = LoggerFactory.getLogger(GraphHopperRoutingService::class.java)
         private val lockfileLock = Semaphore(1)
-        private val emptyPMap: PMap = PMap()
-        private val vehicleEncoder = DefaultVehicleEncodedValuesFactory()
 
         /**
          * See [GraphHopperOptions.defaultOptions].
@@ -172,10 +164,4 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         private fun InputStream.nameFromHash(): String =
             Base32().encodeAsString(Hashing.sha256().hashBytes(readAllBytes()).asBytes()).filter { it != '=' }
     }
-
-//    private class AlchemistGraphHopper : GraphHopper() {
-//        override fun createWeightingFactory() = WeightingFactory { profile, hints, disable ->
-//            FastestWeighting(geta, hints)
-//        }
-//    }
 }

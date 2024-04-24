@@ -13,6 +13,9 @@ bin/
 gradle.prefs
 gradle.xml
 
+# Hugo
+site/public
+
 # KDE
 .directory
 *.kate-swp

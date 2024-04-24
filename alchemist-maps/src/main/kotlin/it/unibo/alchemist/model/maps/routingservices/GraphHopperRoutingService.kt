@@ -9,12 +9,10 @@
 
 package it.unibo.alchemist.model.maps.routingservices
 
-import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.benmanes.caffeine.cache.LoadingCache
 import com.google.common.hash.Hashing
 import com.graphhopper.GHRequest
 import com.graphhopper.GraphHopper
-import com.graphhopper.routing.ev.SimpleBooleanEncodedValue
+import com.graphhopper.routing.ev.BooleanEncodedValue
 import com.graphhopper.routing.util.AccessFilter
 import com.graphhopper.routing.weighting.custom.CustomModelParser
 import it.unibo.alchemist.model.GeoPosition
@@ -46,7 +44,6 @@ class GraphHopperRoutingService @JvmOverloads constructor(
 ) : RoutingService<GeoPosition, GraphHopperOptions> {
 
     private val graphHopper: GraphHopper
-    private val accessFilters: LoadingCache<GraphHopperOptions, AccessFilter>
 
     init {
         val mapName = map.toExternalForm().split('/').last().takeWhile { it != '?' }
@@ -79,16 +76,20 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         } finally {
             lockfileLock.release()
         }
-        accessFilters = Caffeine.newBuilder().maximumSize(1000L).build {
-            AccessFilter.allEdges(
-                SimpleBooleanEncodedValue("${it.vehicleClass}_access", true),
-            )
-        }
     }
 
     override fun allowedPointClosestTo(position: GeoPosition, options: GraphHopperOptions): GeoPosition? {
         return graphHopper.locationIndex
-            .findClosest(position.latitude, position.longitude, accessFilters[options])
+            .findClosest(
+                position.latitude,
+                position.longitude,
+                AccessFilter.allEdges(
+                    graphHopper.encodingManager.getEncodedValue(
+                        "${options.vehicleClass}_access",
+                        BooleanEncodedValue::class.java,
+                    ),
+                ),
+            )
             .takeIf { it.isValid }
             ?.snappedPoint
             ?.let { LatLongPosition(it.lat, it.lon) }

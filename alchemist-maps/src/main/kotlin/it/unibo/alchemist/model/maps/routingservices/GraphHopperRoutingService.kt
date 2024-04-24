@@ -9,16 +9,12 @@
 
 package it.unibo.alchemist.model.maps.routingservices
 
-import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.benmanes.caffeine.cache.LoadingCache
 import com.google.common.hash.Hashing
 import com.graphhopper.GHRequest
 import com.graphhopper.GraphHopper
-import com.graphhopper.routing.ev.VehicleAccess
+import com.graphhopper.routing.ev.BooleanEncodedValue
 import com.graphhopper.routing.util.AccessFilter
-import com.graphhopper.routing.util.DefaultVehicleEncodedValuesFactory
-import com.graphhopper.routing.util.EncodingManager
-import com.graphhopper.util.PMap
+import com.graphhopper.routing.weighting.custom.CustomModelParser
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Route
 import it.unibo.alchemist.model.RoutingService
@@ -48,7 +44,6 @@ class GraphHopperRoutingService @JvmOverloads constructor(
 ) : RoutingService<GeoPosition, GraphHopperOptions> {
 
     private val graphHopper: GraphHopper
-    private val accessFilters: LoadingCache<GraphHopperOptions, AccessFilter>
 
     init {
         val mapName = map.toExternalForm().split('/').last().takeWhile { it != '?' }
@@ -81,19 +76,20 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         } finally {
             lockfileLock.release()
         }
-        accessFilters = Caffeine.newBuilder().build {
-            AccessFilter.allEdges(
-                EncodingManager.start()
-                    .add(vehicleEncoder.createVehicleEncodedValues(it.profile.vehicle, emptyPMap))
-                    .build()
-                    .getBooleanEncodedValue(VehicleAccess.key(it.profile.vehicle)),
-            )
-        }
     }
 
     override fun allowedPointClosestTo(position: GeoPosition, options: GraphHopperOptions): GeoPosition? {
         return graphHopper.locationIndex
-            .findClosest(position.latitude, position.longitude, accessFilters[options])
+            .findClosest(
+                position.latitude,
+                position.longitude,
+                AccessFilter.allEdges(
+                    graphHopper.encodingManager.getEncodedValue(
+                        "${options.vehicleClass}_access",
+                        BooleanEncodedValue::class.java,
+                    ),
+                ),
+            )
             .takeIf { it.isValid }
             ?.snappedPoint
             ?.let { LatLongPosition(it.lat, it.lon) }
@@ -127,8 +123,6 @@ class GraphHopperRoutingService @JvmOverloads constructor(
     companion object {
         private val logger = LoggerFactory.getLogger(GraphHopperRoutingService::class.java)
         private val lockfileLock = Semaphore(1)
-        private val emptyPMap: PMap = PMap()
-        private val vehicleEncoder = DefaultVehicleEncodedValuesFactory()
 
         /**
          * See [GraphHopperOptions.defaultOptions].
@@ -167,15 +161,16 @@ class GraphHopperRoutingService @JvmOverloads constructor(
             .setElevation(false)
             .setGraphHopperLocation(internalWorkdir.absolutePath)
             .setProfiles(GraphHopperOptions.allProfiles)
+            .setEncodedValuesString(
+                GraphHopperOptions.allCustomModels
+                    .flatMap { model ->
+                        CustomModelParser.findVariablesForEncodedValuesString(model, { true }) { it }
+                    }
+                    .joinToString(separator = ", "),
+            )
             .importOrLoad()
 
         private fun InputStream.nameFromHash(): String =
             Base32().encodeAsString(Hashing.sha256().hashBytes(readAllBytes()).asBytes()).filter { it != '=' }
     }
-
-//    private class AlchemistGraphHopper : GraphHopper() {
-//        override fun createWeightingFactory() = WeightingFactory { profile, hints, disable ->
-//            FastestWeighting(geta, hints)
-//        }
-//    }
 }

@@ -13,9 +13,9 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
 import com.graphhopper.config.Profile
 import com.graphhopper.routing.RoutingAlgorithm
-import com.graphhopper.routing.util.VehicleEncodedValuesFactory
 import com.graphhopper.routing.weighting.Weighting
 import com.graphhopper.util.CustomModel
+import com.graphhopper.util.GHUtility
 import com.graphhopper.util.Parameters.Algorithms.ALT_ROUTE
 import com.graphhopper.util.Parameters.Algorithms.ASTAR
 import com.graphhopper.util.Parameters.Algorithms.ASTAR_BI
@@ -27,34 +27,41 @@ import it.unibo.alchemist.model.RoutingServiceOptions
 
 /**
  * Available configuration options for routing through GraphHopper.
- * GraphHopper expects a valid [profile] (including information about vehicle and graph-weighting strategy) and
- * the selction of an [algorithm].
+ * GraphHopper expects a valid [profile] (including information about vehicle and graph-weighting strategy),
+ * a [vehicleClass] defining which roads are accessible by the vehicle,
+ * and the selction of an [algorithm].
  */
 class GraphHopperOptions private constructor(
     val profile: Profile,
+    val vehicleClass: String,
     val algorithm: String,
 ) : RoutingServiceOptions<GraphHopperOptions> {
 
-    private constructor(profile: String, algorithm: String) : this(
-        allProfiles.find { it.name == profile } ?: throw IllegalArgumentException(
-            "Invalid GraphHopper profile. Valid profiles are: ${allProfiles.map { it.name }}",
-        ),
+    private constructor(customModel: GraphHopperCustomModel, algorithm: String) : this(
+        customModel.profile,
+        customModel.vehicleClass,
         algorithm.takeIf { it in graphHopperAlgorithms } ?: throw IllegalArgumentException(
             "Invalid GraphHopper algorithm. Valid choices are: $graphHopperAlgorithms",
         ),
     )
 
+    private constructor(profile: String, algorithm: String) : this(
+        graphHopperCustomModels.find { it.name == profile } ?: throw IllegalArgumentException(
+            "Invalid GraphHopper profile. Valid profiles are: ${graphHopperCustomModels.map { it.name }}",
+        ),
+        algorithm,
+    )
+
     private constructor(info: Pair<String, String>) : this(info.first, info.second)
 
-    /**
-     * The GraphHopper weights to use.
-     * [distanceInfluence] is the number of seconds per km to penalize longer routes with.
-     */
-    private data class GraphHopperWeighting(
+    private data class GraphHopperCustomModel(
         val name: String,
-        val distanceInfluence: Double, // seconds per km to penalize longer routes with
+        val vehicleClass: String,
     ) {
-        val customModel: CustomModel = CustomModel().setDistanceInfluence(distanceInfluence)
+        val customModel: CustomModel by lazy { GHUtility.loadCustomModelFromJar("$name.json") }
+        val profile: Profile by lazy {
+            Profile(name).setWeighting("custom").setCustomModel(customModel)
+        }
     }
 
     companion object {
@@ -76,31 +83,30 @@ class GraphHopperOptions private constructor(
         )
 
         /**
-         * All the non-abstract subclasses of [VehicleEncodedValuesFactory] available in the runtime.
-         */
-        val graphHopperVehicles: List<String> = listOf(
-            VehicleEncodedValuesFactory.BIKE,
-            VehicleEncodedValuesFactory.CAR,
-            VehicleEncodedValuesFactory.FOOT,
-            VehicleEncodedValuesFactory.MOUNTAINBIKE,
-            VehicleEncodedValuesFactory.RACINGBIKE,
-            VehicleEncodedValuesFactory.ROADS,
-        )
-
-        /**
          * All the non-abstract subclasses of [Weighting] available in the runtime.
          */
-        private val graphHopperWeightings: List<GraphHopperWeighting> = listOf(
-            GraphHopperWeighting("fastest", 0.0),
-            GraphHopperWeighting("short_fastest", 30.0),
-            GraphHopperWeighting("shortest", 3600.0),
-        )
+        private val graphHopperCustomModels: List<GraphHopperCustomModel> = listOf(
+            "bike" to "bike",
+            "bus" to "bus",
+            "car" to "car",
+            "car4wd" to "car",
+            "foot" to "foot",
+            "hike" to "foot",
+            "motorcycle" to "car",
+            "mtb" to "mtb",
+            "racingbike" to "racingbike",
+            "truck" to "car",
+        ).map { (name, vehicleClass) -> GraphHopperCustomModel(name, vehicleClass) }
 
         /**
-         * All the available profiles for GraphHopper navigation.
+         * All the available [Profile]s in the runtime.
          */
-        val allProfiles: List<Profile> = graphHopperVehicles
-            .flatMap { vehicle -> graphHopperWeightings.map { weighting -> profileFor(vehicle, weighting) } }
+        val allProfiles: List<Profile> = graphHopperCustomModels.map { it.profile }
+
+        /**
+         * All the available [Profile]s in the runtime.
+         */
+        val allCustomModels: List<CustomModel> = graphHopperCustomModels.map { it.customModel }
 
         /**
          * Default [GraphHopperOptions]: foot as vehicle, fastest as weighting, and dijkstrabi as algorithm.
@@ -111,8 +117,7 @@ class GraphHopperOptions private constructor(
             fun error(subject: String) = "Unable to find any valid GraphHopper $subject. " +
                 "This is most likely due to using an unsupported version of GraphHopper"
             require(graphHopperAlgorithms.isNotEmpty()) { error("algorithm") }
-            require(graphHopperVehicles.isNotEmpty()) { error("vehicle") }
-            require(graphHopperWeightings.isNotEmpty()) { error("weighting") }
+            require(graphHopperCustomModels.isNotEmpty()) { error("custom model") }
             defaultOptions = optionsFor()
         }
 
@@ -128,18 +133,10 @@ class GraphHopperOptions private constructor(
          * and [algorithm] (default: dijstrabi).
          */
         @JvmOverloads
-        fun optionsFor(profile: String = "foot_fastest", algorithm: String = DIJKSTRA_BI): GraphHopperOptions {
+        fun optionsFor(profile: String = "foot", algorithm: String = DIJKSTRA_BI): GraphHopperOptions {
             return profiles.get(profile to algorithm) ?: throw IllegalArgumentException(
                 "The requested profile ($profile, $algorithm) could not be created.",
             )
         }
-
-        private fun profileFor(
-            vehicle: String,
-            weighting: GraphHopperWeighting,
-        ): Profile = Profile("${vehicle}_${weighting.name}")
-            .setVehicle(vehicle)
-            .setWeighting("custom")
-            .setCustomModel(weighting.customModel)
     }
 }

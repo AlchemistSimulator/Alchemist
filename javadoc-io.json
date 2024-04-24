@@ -37,9 +37,9 @@
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.1.0-jre",
     "second": "https://javadoc.io/doc/com.google.guava/guava/33.1.0-jre/element-list"
   },
-  "com.graphhopper/graphhopper-core/9.0-pre1": {
-    "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/9.0-pre1",
-    "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/9.0-pre1/element-list"
+  "com.graphhopper/graphhopper-core/9.0": {
+    "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/9.0",
+    "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/9.0/element-list"
   },
   "com.javadocmd/simplelatlng/1.4.0": {
     "first": "https://javadoc.io/doc/com.javadocmd/simplelatlng/1.4.0",
@@ -125,8 +125,7 @@
     "second": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9/package-list"
   },
   "org.danilopianini/thread-inheritable-resource-loader/0.3.6": {
-    "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.6",
-    "second": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.6/package-list"
+    "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.6"
   },
   "org.dyn4j/dyn4j/5.0.2": {
     "first": "https://javadoc.io/doc/org.dyn4j/dyn4j/5.0.2",
@@ -182,8 +181,7 @@
     "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.13"
   },
   "org.slf4j/slf4j-api/2.0.13": {
-    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.13",
-    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.13/element-list"
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.13"
   },
   "org.yaml/snakeyaml/2.2": {
     "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.2",

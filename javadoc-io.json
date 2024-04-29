@@ -175,11 +175,11 @@
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.26",
     "second": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.26/package-list"
   },
-  "org.scala-lang/scala-compiler/2.13.13": {
-    "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.13"
+  "org.scala-lang/scala-compiler/2.13.14": {
+    "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.14"
   },
-  "org.scala-lang/scala-library/2.13.13": {
-    "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.13"
+  "org.scala-lang/scala-library/2.13.14": {
+    "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.14"
   },
   "org.slf4j/slf4j-api/2.0.13": {
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.13",

@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.times.DoubleTime
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Semaphore
 import kotlin.jvm.optionals.getOrNull
 

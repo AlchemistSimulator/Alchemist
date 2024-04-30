@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.Position
 /**
  * Set of GraphQL queries to compute on nodes.
  */
-class NodeQueries<T, P : Position<out P>>(private val environment: Environment<T, P>) : Query {
+class NodeQueries<T, P : Position<out P>>(environment: Environment<T, P>) : Query {
 
     private val environmentSurrogate: EnvironmentSurrogate<T, P> = environment.toGraphQLEnvironmentSurrogate()
 

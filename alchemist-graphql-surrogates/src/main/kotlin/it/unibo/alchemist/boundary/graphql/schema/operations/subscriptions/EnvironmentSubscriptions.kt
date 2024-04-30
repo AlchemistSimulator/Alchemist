@@ -12,10 +12,13 @@ package it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.server.operations.Subscription
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.EnvironmentSurrogate
+import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.SimulationSurrogate
+import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLSimulationSurrogate
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.util.Environments.subscriptionMonitor
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
  * Exposes alchemist [it.unibo.alchemist.model.Environment] as a GraphQL subscription
@@ -24,6 +27,15 @@ import kotlinx.coroutines.flow.Flow
 class EnvironmentSubscriptions<T, P : Position<out P>>(environment: Environment<T, P>) : Subscription {
 
     private val environmentMonitor = environment.subscriptionMonitor()
+
+    /**
+     * Returns a [Flow] with the updated value of the
+     * [it.unibo.alchemist.boundary.graphql.schema.model.surrogates.SimulationSurrogate].
+     */
+    @GraphQLDescription("The simulation")
+    fun simulation(): Flow<SimulationSurrogate<T, P>> = environmentMonitor.eventFlow.map { env ->
+        env.origin.simulation.toGraphQLSimulationSurrogate()
+    }
 
     /**
      * Returns a [Flow] with the updated value of the

@@ -15,22 +15,17 @@ simulation, or to develop an Alchemist sub-module that uses the API service.
 
 ## Using GraphQL service inside Alchemist
 In order to attach the GraphQL API service to a simulation, you must specify
-the `GraphQLSimulationLauncher` in the simulation's YAML file, providing the
+the `GraphQLMonitor` in the simulation's YAML file, providing the
 server's host and port (if not specified, default URL is: `127.0.0.1:8081`) as
 shown in the following example:
 ```yml
-launcher:
-  type: GraphQLServerLauncher
+monitors:
+  type: GraphQLMonitor
   parameters:
     host: <my-custom-host>
     port: <my-custom-port>
 ```
 Once the YAML file is ready, the simulation can be started as usual.
-
-{{% notice warning %}}
-Note: At the current state, only one simulation at a time can be launched through the
-GraphQL simulation launcher.
-{{% /notice %}}
 
 ### Simulation's overview in the Web Browser
 Once the simulation is up and running, you can visit on your local web browser
@@ -79,7 +74,7 @@ explanation about the errors.
 {{% /notice %}}
 
 3. Run the Gradle task `./gradlew
-   :alchemist-graphql:generateAlchemist-graphqlApolloSources` in order to
+   :alchemist-graphql:generateApolloSources` in order to
    generate Kotlin's source code that represents the results of operations
    called in previously defined files.
 

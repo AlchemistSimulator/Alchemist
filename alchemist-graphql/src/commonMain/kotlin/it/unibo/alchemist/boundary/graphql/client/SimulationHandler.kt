@@ -49,7 +49,7 @@ class SimulationHandler(private val graphqlClient: GraphQLClient) {
     /**
      * Returns the status of the simulation.
      */
-    suspend fun status() = graphqlClient.query(SimulationStatusQuery()).execute().data?.simulationStatus
+    suspend fun status() = graphqlClient.query(SimulationStatusQuery()).execute().data?.simulation?.status
 
     private suspend fun handleSimulation(action: Mutation<*>) =
         graphqlClient.mutation(action).execute().data!!

@@ -11,7 +11,6 @@ package it.unibo.alchemist.boundary.launchers
 
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.engine.stop
 import io.ktor.server.netty.Netty
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.graphql.monitor.EnvironmentSubscriptionMonitor
@@ -25,7 +24,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Semaphore
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger(GraphQLMonitor::class.java)
 
 /**
  * An [OutputMonitor] observing the [environment] through a GraphQL server listening on [host]:[port].
@@ -33,7 +34,7 @@ import kotlinx.coroutines.sync.Semaphore
  * By default, the server is stopped after the simulation terminates.
  * This behavior can be changed by setting [teardownOnSimulationTermination] to false.
  */
-class GraphQLServer<T, P : Position<out P>> @JvmOverloads constructor(
+class GraphQLMonitor<T, P : Position<out P>> @JvmOverloads constructor(
     val environment: Environment<T, P>,
     val host: String = DefaultGraphQLSettings.DEFAULT_HOST,
     val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
@@ -59,6 +60,9 @@ class GraphQLServer<T, P : Position<out P>> @JvmOverloads constructor(
             },
             "alchemist-graphql-server@$host:$port",
         ).start()
+        runBlocking {
+            logger.info("Starting GraphQL server at $host:${server.resolvedConnectors().first().port}")
+        }
         mutex.acquireUninterruptibly()
     }
 
@@ -74,7 +78,7 @@ class GraphQLServer<T, P : Position<out P>> @JvmOverloads constructor(
             port = port,
             host = host,
             module = {
-                graphQLModule(this@GraphQLServer.environment)
+                graphQLModule(this@GraphQLMonitor.environment)
                 graphQLRoutingModule()
             },
         )

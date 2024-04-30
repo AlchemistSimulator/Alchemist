@@ -333,7 +333,7 @@ sealed class JVMConstructor(val typeName: String) {
         val creationResult = jirf.build(target.java, parameters)
         return creationResult.createdObject
             .orElseThrow { explainedFailure(jirf, target, originalParameters, creationResult) }
-            .also { creationResult.logErrors { message, arguments -> logger.info(message, *arguments) } }
+            .also { creationResult.logErrors { message, arguments -> logger.warn(message, *arguments) } }
     }
 
     companion object {

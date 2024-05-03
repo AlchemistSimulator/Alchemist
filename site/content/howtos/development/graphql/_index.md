@@ -7,15 +7,15 @@ summary = "How to create a new Query, Subscription, or Mutation using the GraphQ
 +++
 
 It is possible to integrate new queries, mutations, or subscriptions into the GraphQL API.
-This augmentation offers a more organized and anticipatable approach for interacting with the simulator,
-thanks to the strong typing and the schema definition.
+This augmentation offers a more organized and predictable approach for interacting with the simulator,
+thanks to static typing and schema definition.
 
 It is possible to use GraphQL APIs for the development of a module inside
 Alchemist.
 The `GraphQLClient` class will  take care of establishing a connection
-to the GraphQL server, validate and compute operations and give back their results.
+to the GraphQL server, validate and compute operations and return their results.
 This component has been  developed in a multiplatform environment, so that applications
-can lay on platforms like Android, iOS, Kotlin/JS or Kotlin/Native.
+can run on platforms like Android, iOS, Kotlin/JS or Kotlin/Native.
 
 #### Create a new Query, Mutation, or Subscription
 In order to create new queries, mutations, or subscriptions, follow these steps:
@@ -67,3 +67,4 @@ val client: GraphQLClient = GraphQLClientFactory.basicClient()
     GraphQL operation defined in the example above */
 val node: Node? = client.query(NodeQuery(nodeId = 10)).execute().data
 ```
+

@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.graphql.schema.operations.queries
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.server.operations.Query
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLEnvironmentSurrogate
+import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLSimulationSurrogate
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 
@@ -23,14 +24,13 @@ import it.unibo.alchemist.model.Position
 class EnvironmentQueries<T, P : Position<out P>>(private val environment: Environment<T, P>) : Query {
 
     /**
+     * Returns the actual state of the simulation.
+     */
+    fun simulation() = environment.simulation.toGraphQLSimulationSurrogate()
+
+    /**
      * Returns the actual state of the environment.
      */
     @GraphQLDescription("The actual state of the environment")
     fun environment() = this.environment.toGraphQLEnvironmentSurrogate()
-
-    /**
-     * Returns the status of the simulation.
-     */
-    @GraphQLDescription("The status of the simulation")
-    fun simulationStatus() = this.environment.simulation.status.toString()
 }

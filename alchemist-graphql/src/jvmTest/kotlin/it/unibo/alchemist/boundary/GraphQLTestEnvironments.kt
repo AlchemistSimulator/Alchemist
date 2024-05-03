@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary
 
 import it.unibo.alchemist.boundary.graphql.monitor.EnvironmentSubscriptionMonitor
-import it.unibo.alchemist.boundary.launchers.GraphQLServer
+import it.unibo.alchemist.boundary.monitors.GraphQLMonitor
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.util.ClassPathScanner
@@ -22,7 +22,7 @@ object GraphQLTestEnvironments {
             .map { LoadAlchemist.from(it) }
             .map { it.getDefault<T, P>() }
             .forEach { simulation ->
-                simulation.outputMonitors.find { it is GraphQLServer<*, *> }
+                simulation.outputMonitors.find { it is GraphQLMonitor<*, *> }
                 simulation.outputMonitors.find { it is EnvironmentSubscriptionMonitor<*, *> }
                 test(simulation.environment)
             }

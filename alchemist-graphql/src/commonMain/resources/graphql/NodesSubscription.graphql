@@ -1,0 +1,18 @@
+subscription NodesSubscription {
+    simulation {
+        status
+        time
+        environment {
+            nodes {
+                contents {
+                    entries {
+                        molecule {
+                            name
+                        }
+                        concentration
+                    }
+                }
+            }
+        }
+    }
+}

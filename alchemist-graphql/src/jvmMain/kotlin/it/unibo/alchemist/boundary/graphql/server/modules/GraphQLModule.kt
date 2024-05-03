@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.graphql.server.modules
 import com.expediagroup.graphql.generator.hooks.FlowSubscriptionSchemaGeneratorHooks
 import com.expediagroup.graphql.server.ktor.DefaultKtorGraphQLContextFactory
 import com.expediagroup.graphql.server.ktor.GraphQL
+import io.ktor.http.HttpMethod
 import io.ktor.serialization.jackson.JacksonWebsocketContentConverter
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -19,25 +20,26 @@ import io.ktor.server.plugins.compression.Compression
 import io.ktor.server.plugins.compression.gzip
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.websocket.WebSockets
-import io.ktor.server.websocket.pingPeriod
-import io.ktor.server.websocket.timeout
 import it.unibo.alchemist.boundary.graphql.schema.operations.mutations.SimulationControl
 import it.unibo.alchemist.boundary.graphql.schema.operations.queries.EnvironmentQueries
 import it.unibo.alchemist.boundary.graphql.schema.operations.queries.NodeQueries
 import it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions.EnvironmentSubscriptions
 import it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions.NodeSubscriptions
 import it.unibo.alchemist.model.Environment
-import java.time.Duration
-
-// The following values are referred to milliseconds.
-private const val DEFAULT_PING_PERIOD = 1000L
-private const val DEFAULT_TIMEOUT_DURATION = 10000L
 
 /**
  * Ktor module for enabling GraphQL on server.
  */
 fun Application.graphQLModule(environment: Environment<*, *>) {
     install(CORS) {
+        HttpMethod.DefaultMethods.forEach {
+            allowMethod(it)
+        }
+        allowOrigins { true }
+        allowNonSimpleContentTypes = true
+        allowCredentials = true
+        allowSameOrigin = true
+        allowHost("*", listOf("http", "https"))
         anyHost()
     }
 
@@ -46,8 +48,6 @@ fun Application.graphQLModule(environment: Environment<*, *>) {
     }
 
     install(WebSockets) {
-        pingPeriod = Duration.ofMillis(DEFAULT_PING_PERIOD)
-        timeout = Duration.ofMillis(DEFAULT_TIMEOUT_DURATION)
         maxFrameSize = Long.MAX_VALUE
         masking = false
         contentConverter = JacksonWebsocketContentConverter()

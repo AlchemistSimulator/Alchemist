@@ -14,7 +14,7 @@ launcher:
     autostart: false
 
 monitors:
-  type: GraphQLServer
+  type: GraphQLMonitor
 
 network-model:
   type: ConnectWithinDistance

@@ -1,3 +1,5 @@
 query SimulationStatus {
-    simulationStatus
+    simulation {
+        status
+    }
 }

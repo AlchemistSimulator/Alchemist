@@ -1,0 +1,10 @@
+subscription ConcentrationSubscription($moleculeName : String! ) {
+    simulation {
+        time
+        environment {
+            nodes{
+              getConcentration(molecule: { name: $moleculeName } )
+            }
+        }
+    }
+}

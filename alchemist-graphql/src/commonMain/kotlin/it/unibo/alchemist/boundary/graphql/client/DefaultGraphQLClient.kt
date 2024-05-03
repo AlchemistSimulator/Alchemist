@@ -25,24 +25,30 @@ import it.unibo.alchemist.boundary.graphql.utils.DefaultGraphQLSettings
  * @param port the port of the GraphQL server
  * @param enableSubscription whether to enable subscriptions or not
  */
-class DefaultGraphQLClient(
-    private val host: String = DefaultGraphQLSettings.DEFAULT_HOST,
-    private val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
+data class DefaultGraphQLClient(
+    override val host: String = DefaultGraphQLSettings.DEFAULT_HOST,
+    override val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
     private val enableSubscription: Boolean = false,
 ) : GraphQLClient {
+
     private val client: ApolloClient = ApolloClient.Builder()
-        .serverUrl("http://$host:$port/graphql")
+        .serverUrl(serverUrl())
         .apply {
             if (enableSubscription) {
                 subscriptionNetworkTransport(
                     WebSocketNetworkTransport.Builder()
-                        .serverUrl("ws://$host:$port/subscriptions")
+                        .serverUrl(subscriptionUrl())
                         .protocol(GraphQLWsProtocol.Factory())
                         .build(),
                 )
             }
         }
         .build()
+
+    override fun subscriptionUrl(): String {
+        check(enableSubscription) { "Subscription module is not enabled!" }
+        return "ws://$host:$port/subscriptions"
+    }
 
     override fun <D : Query.Data> query(query: Query<D>): ApolloCall<D> {
         return client.query(query)

@@ -1,3 +1,14 @@
+## [34.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/33.1.2...34.0.0) (2024-05-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **graphql:** add SimulationSurrogate and more support to subscriptions (#3386)
+
+### Features
+
+* **graphql:** add SimulationSurrogate and more support to subscriptions ([#3386](https://github.com/AlchemistSimulator/Alchemist/issues/3386)) ([ff41b16](https://github.com/AlchemistSimulator/Alchemist/commit/ff41b16c8da30751e36e7b971df1262d63c935ba))
+
 ## [33.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/33.1.1...33.1.2) (2024-05-03)
 
 

@@ -34,7 +34,8 @@
     "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.10.1/element-list"
   },
   "com.google.guava/guava/33.2.0-jre": {
-    "first": "https://javadoc.io/doc/com.google.guava/guava/33.2.0-jre"
+    "first": "https://javadoc.io/doc/com.google.guava/guava/33.2.0-jre",
+    "second": "https://javadoc.io/doc/com.google.guava/guava/33.2.0-jre/element-list"
   },
   "com.graphhopper/graphhopper-core/9.0": {
     "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/9.0",
@@ -93,8 +94,7 @@
     "second": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.14.0/element-list"
   },
   "org.apache.commons/commons-math3/3.6.1": {
-    "first": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1",
-    "second": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1/package-list"
+    "first": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1"
   },
   "org.apache.ignite/ignite-core/2.16.0": {
     "first": "https://javadoc.io/doc/org.apache.ignite/ignite-core/2.16.0",
@@ -166,13 +166,11 @@
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.1.0",
     "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.1.0/element-list"
   },
-  "org.protelis/protelis-interpreter/17.3.26": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.26",
-    "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.26/element-list"
+  "org.protelis/protelis-interpreter/17.3.27": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.27"
   },
-  "org.protelis/protelis-lang/17.3.26": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.26",
-    "second": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.26/package-list"
+  "org.protelis/protelis-lang/17.3.27": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.27"
   },
   "org.scala-lang/scala-compiler/2.13.14": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.14"

@@ -94,7 +94,8 @@
     "second": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.14.0/element-list"
   },
   "org.apache.commons/commons-math3/3.6.1": {
-    "first": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1"
+    "first": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1",
+    "second": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1/package-list"
   },
   "org.apache.ignite/ignite-core/2.16.0": {
     "first": "https://javadoc.io/doc/org.apache.ignite/ignite-core/2.16.0",

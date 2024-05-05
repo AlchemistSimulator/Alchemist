@@ -25,11 +25,13 @@ jobs:
             if git status | grep -P '^\s+modified:\s+javadoc-io\.json$'; then
               git add javadoc-io.json
               git commit -m 'chore(build): update the javadoc.io cache'
+              git pull --rebase
               git push
             fi
             if git status | grep -P '^\s+modified:\s+kotlin-js-store\/yarn\.lock$'; then
               git add kotlin-js-store/yarn.lock
               git commit -m 'chore(build): actualize the `yarn.lock` file'
+              git pull --rebase
               git push
             fi
           should-run-codecov: false

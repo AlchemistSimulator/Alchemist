@@ -18,7 +18,7 @@ jobs:
       - uses: DanySK/build-check-deploy-gradle-action@2.4.18
         with:
           pre-build-command: rm javadoc-io.json
-          build-command: ./gradlew kotlinUpgradeYarnLock dokkaHtmlCollector --parallel
+          build-command: ./gradlew kotlinUpgradeYarnLock dokkaHtmlCollector dokkaJavadocCollector --parallel
           check-command: |
             git config user.name 'Danilo Pianini [bot]'
             git config user.email 'danilo.pianini@gmail.com'

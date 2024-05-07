@@ -140,14 +140,14 @@
     "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0",
     "second": "https://javadoc.io/doc/org.graphstream/gs-core/2.0/element-list"
   },
-  "org.jetbrains.kotlin/kotlin-reflect/1.9.23": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.9.23"
+  "org.jetbrains.kotlin/kotlin-reflect/1.9.24": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.9.24"
   },
   "org.jetbrains.kotlin/kotlin-reflect/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/null"
   },
-  "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.9.23": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.9.23"
+  "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.9.24": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.9.24"
   },
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/null"

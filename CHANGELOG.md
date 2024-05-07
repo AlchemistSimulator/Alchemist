@@ -1,3 +1,25 @@
+## [34.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.1...34.0.2) (2024-05-07)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.28 ([e4e1c1d](https://github.com/AlchemistSimulator/Alchemist/commit/e4e1c1d0960753170fc747fc63968677f332d637))
+* **deps:** update external-resources/learning-scafi-alchemist digest to d68dfe6 ([ad3866a](https://github.com/AlchemistSimulator/Alchemist/commit/ad3866a48b5bfe05ed2d71193fdb7fecd615c751))
+* **deps:** update kotlin to v1.9.24 ([2afc04e](https://github.com/AlchemistSimulator/Alchemist/commit/2afc04e1d1dadf2c7edb4c302272d03451e5dc69))
+* **deps:** update plugin gitsemver to v3.1.5 ([b80e8aa](https://github.com/AlchemistSimulator/Alchemist/commit/b80e8aa856e5acc856478a70c9a759b0c2396c22))
+* **deps:** update plugin kotlin-qa to v0.61.1 ([757eff2](https://github.com/AlchemistSimulator/Alchemist/commit/757eff286ed238e3da4f07b26b57e6b88e8c88ce))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.5 ([aa87343](https://github.com/AlchemistSimulator/Alchemist/commit/aa87343f709a0705b08800a74f68f7238de113c6))
+* **deps:** update plugin publishoncentral to v5.1.1 ([b7851b3](https://github.com/AlchemistSimulator/Alchemist/commit/b7851b3c92cfef897f906c68e78fc60066aba7ba))
+* **deps:** update react to v18.3.1-pre.740 ([d237eba](https://github.com/AlchemistSimulator/Alchemist/commit/d237eba5e14a83b137d8a2ab6924a831048f6fb8))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([192608a](https://github.com/AlchemistSimulator/Alchemist/commit/192608ae2eda53d4aebbe582a306376edc6540c8))
+* **build:** update the javadoc.io cache ([d13d18f](https://github.com/AlchemistSimulator/Alchemist/commit/d13d18f87c2e0bfb2088c3826d3e2748df7a6f8a))
+* **build:** update the javadoc.io cache ([c3a180e](https://github.com/AlchemistSimulator/Alchemist/commit/c3a180e53464de67268faa8e68ff58f075be2c50))
+* **build:** update the javadoc.io cache ([92161b6](https://github.com/AlchemistSimulator/Alchemist/commit/92161b679b6befbbcb26e4e26bb3bf0beb7920bf))
+
 ## [34.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.0...34.0.1) (2024-05-05)
 
 

@@ -1,3 +1,39 @@
+## [34.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.3...34.0.4) (2024-05-10)
+
+
+### Dependency updates
+
+* **deps:** update dependency io.kotest.multiplatform to v5.9.0 ([c1b470d](https://github.com/AlchemistSimulator/Alchemist/commit/c1b470d6165660b13c3ab6401158d197c3e46d1d))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-coroutines-core to v1.8.1 ([c49b1a5](https://github.com/AlchemistSimulator/Alchemist/commit/c49b1a5b21b45fd2ff6d7cc21f984ebd1c9a0119))
+* **deps:** update external-resources/learning-scafi-alchemist digest to a6a98f2 ([d42a655](https://github.com/AlchemistSimulator/Alchemist/commit/d42a655d4acc5db7788d74162350e0fda8fc3580))
+* **deps:** update external-resources/learning-scafi-alchemist digest to b99ac0a ([c96951f](https://github.com/AlchemistSimulator/Alchemist/commit/c96951fd4dfe5aee2cfbabae5a3c74ce55939f11))
+* **deps:** update external-resources/learning-scafi-alchemist digest to ce0767f ([f985c2a](https://github.com/AlchemistSimulator/Alchemist/commit/f985c2a451432a9a539a5219cca7c551f245b889))
+* **deps:** update gohugoio/hugo action to v0.125.7 ([e41c67b](https://github.com/AlchemistSimulator/Alchemist/commit/e41c67b575abbb5c500de804d17a974771b133a4))
+* **deps:** update ktor to v2.3.11 ([afb3fb9](https://github.com/AlchemistSimulator/Alchemist/commit/afb3fb92b1579c14747fe27060fbaac091a2fc91))
+* **deps:** update node.js to 20.13 ([f63e537](https://github.com/AlchemistSimulator/Alchemist/commit/f63e5375c62f9fdafa7af34badeefbddfa39a651))
+* **deps:** update plugin com.gradle.develocity to v3.17.3 ([3bc8bfd](https://github.com/AlchemistSimulator/Alchemist/commit/3bc8bfd2000f0f225bf15d868186a7f0a1f6ea12))
+* **deps:** update react to v18.3.1-pre.741 ([046cd5a](https://github.com/AlchemistSimulator/Alchemist/commit/046cd5a364774dfefef571cabad363f039d46b7f))
+* **deps:** update react to v18.3.1-pre.742 ([3d9f39f](https://github.com/AlchemistSimulator/Alchemist/commit/3d9f39f88db68fb94e1c721493a0f253884587fd))
+* **deps:** update react to v18.3.1-pre.743 ([99d880f](https://github.com/AlchemistSimulator/Alchemist/commit/99d880f04f7a63ebee157e4b9312f79301bad6fd))
+* **deps:** update react to v18.3.1-pre.744 ([bc0551c](https://github.com/AlchemistSimulator/Alchemist/commit/bc0551cf966984f850e7dcb292af76ba8807ce92))
+
+
+### Documentation
+
+* **readme:** fix the CI/CD badge ([acdecd9](https://github.com/AlchemistSimulator/Alchemist/commit/acdecd9f052fa25b8768217961c7db2074f761a8))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v4.1.5 ([3f2872b](https://github.com/AlchemistSimulator/Alchemist/commit/3f2872bb911713124ca585d51059cc6462795e9d))
+* **deps:** update danysk/action-checkout action to v0.2.17 ([b952460](https://github.com/AlchemistSimulator/Alchemist/commit/b952460fe715f0844fe670d9fc779a0428f55198))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([474db45](https://github.com/AlchemistSimulator/Alchemist/commit/474db45f513a7f525b91952bd2d3ac90071ae3c7))
+* **build:** update the javadoc.io cache ([0bdfe50](https://github.com/AlchemistSimulator/Alchemist/commit/0bdfe506f894916f7d2021a8346a43e44f27e4bc))
+
 ## [34.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.2...34.0.3) (2024-05-07)
 
 

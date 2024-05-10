@@ -155,8 +155,8 @@
   "org.jetbrains.kotlin/kotlin-stdlib/1.9.24": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/1.9.24"
   },
-  "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.8.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.8.0"
+  "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.8.1": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.8.1"
   },
   "org.jetbrains.kotlinx/kotlinx-serialization-json/1.6.3": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.6.3"

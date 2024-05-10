@@ -8,7 +8,7 @@ The simulator is documented following the [DIVIO Documentation system](https://d
 we suggest visiting **[the Alchemist website](https://alchemistsimulator.github.io/)**,
 which contains all the project information.
 
-[![CI](https://github.com/AlchemistSimulator/Alchemist/actions/workflows/build-and-deploy.yml/badge.svg)](https://github.com/AlchemistSimulator/Alchemist/actions/workflows/build-and-deploy.yml)
+[![CI/CD](https://github.com/AlchemistSimulator/Alchemist/actions/workflows/dispatcher.yml/badge.svg)](https://github.com/AlchemistSimulator/Alchemist/actions/workflows/dispatcher.yml)
 [![Javadocs](https://www.javadoc.io/badge/it.unibo.alchemist/alchemist.svg)](https://www.javadoc.io/doc/it.unibo.alchemist/alchemist)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5222/badge)](https://bestpractices.coreinfrastructure.org/projects/5222)
 ![GitHub language count](https://img.shields.io/github/languages/count/AlchemistSimulator/Alchemist)

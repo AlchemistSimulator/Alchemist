@@ -1,3 +1,34 @@
+## [34.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.4...34.0.5) (2024-05-13)
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.13.1 ([cad702f](https://github.com/AlchemistSimulator/Alchemist/commit/cad702ffa62d105ad76ab63b360e8faa3d1c1175))
+* **deps:** update dependency org.mockito:mockito-core to v5.12.0 ([154ba9e](https://github.com/AlchemistSimulator/Alchemist/commit/154ba9e2fa772eb451cd59cff38644be2be173a3))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 7952522 ([c26e27c](https://github.com/AlchemistSimulator/Alchemist/commit/c26e27cb07befdda597dddce9206c2e0323209d7))
+* **deps:** update react to v18.3.1-pre.745 ([8ee6b02](https://github.com/AlchemistSimulator/Alchemist/commit/8ee6b025d33d2a0a7b44c52b54d71b143f9ed6fb))
+* **deps:** update react to v18.3.1-pre.746 ([b4cc28a](https://github.com/AlchemistSimulator/Alchemist/commit/b4cc28a17a880636589b9079958ae60cd58ffb91))
+* **deps:** update react to v18.3.1-pre.747 ([c5c3a21](https://github.com/AlchemistSimulator/Alchemist/commit/c5c3a21db12f73776e5955c36c599dd17cb094f7))
+
+
+### Bug Fixes
+
+* **loading:** fix potential target type duplication when fetching for subclasses in `JVMConstructor` ([5db2144](https://github.com/AlchemistSimulator/Alchemist/commit/5db2144ec8698126333d79c621ec85699648dece))
+* **loading:** fix the recursive construction of arbitrary types provided as constructor parameters ([6a1b5fc](https://github.com/AlchemistSimulator/Alchemist/commit/6a1b5fccba69b6a9d831764a2355de18f62cf8a4))
+* mark `TimeDistribution.cloneOnNewNode`'s parameters as `@Nonnull` ([5672f5f](https://github.com/AlchemistSimulator/Alchemist/commit/5672f5f301cf707f8cfd1a3e753d1ccf4b17f1ea))
+* mark `TimeDistribution.update`'s parameters as `@Nonnull` ([4466100](https://github.com/AlchemistSimulator/Alchemist/commit/44661004a6f0c883812cc08cee02d70e834effe3))
+
+
+### Tests
+
+* **loading:** add test with recursive construction of arbitrary types ([04853c8](https://github.com/AlchemistSimulator/Alchemist/commit/04853c8bac1e54493352e1c7ac74b23ac6f35d8d))
+
+
+### Style improvements
+
+* add missing `@Serial` annotation ([344575a](https://github.com/AlchemistSimulator/Alchemist/commit/344575ab7a585a72c34db6e18666a49252fe5d7f))
+* remove eol spaces ([9387500](https://github.com/AlchemistSimulator/Alchemist/commit/9387500e1b4f9d18e348b6da9a1f16bc57451661))
+
 ## [34.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.3...34.0.4) (2024-05-10)
 
 

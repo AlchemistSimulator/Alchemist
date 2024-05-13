@@ -13,6 +13,9 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 
+import javax.annotation.Nonnull;
+import java.io.Serial;
+
 /**
  * This class provides, through a template method pattern, an utility that
  * ensures that the distribution does not trigger events before its initial
@@ -48,10 +51,10 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
 
     @Override
     public final void update(
-            final Time currentTime,
+            final @Nonnull Time currentTime,
             final boolean hasBeenExecuted,
             final double additionalParameter,
-            final Environment<T, ?> environment
+            final @Nonnull Environment<T, ?> environment
     ) {
         if (!schedulable && currentTime.compareTo(startTime) >= 0) {
             /*

@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.model;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 /**
@@ -30,7 +31,12 @@ public interface TimeDistribution<T> extends Cloneable, Serializable {
      * @param environment
      *            the current environment
      */
-    void update(Time currentTime, boolean executed, double param, Environment<T, ?> environment);
+    void update(
+        @Nonnull Time currentTime,
+        boolean executed,
+        double param,
+        @Nonnull Environment<T, ?> environment
+    );
 
     /**
      * @return the next time at which the event will occur

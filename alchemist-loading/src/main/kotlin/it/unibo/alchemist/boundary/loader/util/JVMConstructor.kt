@@ -301,8 +301,9 @@ sealed class JVMConstructor(val typeName: String) {
                     val potentialJavaType = potentialType.type.jvmErasure.java
                     val subtypes = ClassPathScanner.subTypesOf(potentialJavaType) +
                         if (Modifier.isAbstract(potentialJavaType.modifiers)) emptyList() else listOf(potentialJavaType)
-                    val compatibleSubtypes = subtypes.filter {
-                        typeName == if (parameter.typeName.contains('.')) it.name else it.simpleName
+                    val compatibleSubtypes = subtypes.filter { subtype ->
+                        val subtypeName = if (parameter.typeName.contains('.')) subtype.name else subtype.simpleName
+                        parameter.typeName == subtypeName
                     }
                     when {
                         compatibleSubtypes.isEmpty() -> {
@@ -322,7 +323,8 @@ sealed class JVMConstructor(val typeName: String) {
                             )
                         }
                         else -> {
-                            listOf(buildAny(compatibleSubtypes.first(), jirf))
+                            val maybeParameter = parameter.buildAny(compatibleSubtypes.first(), jirf)
+                            listOf(maybeParameter.getOrThrow())
                         }
                     }
                 }

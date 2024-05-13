@@ -18,6 +18,8 @@ import it.unibo.alchemist.util.RealDistributions;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Time;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is able to use any distribution provided by Apache Math 3 as a
  * subclass of {@link RealDistribution}, blocking the execution if
@@ -136,7 +138,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
      * {@inheritDoc}
      */
     @Override
-    public AbstractDistribution<T> cloneOnNewNode(final Node<T> destination, final Time currentTime) {
+    public AbstractDistribution<T> cloneOnNewNode(final @Nonnull Node<T> destination, final @Nonnull Time currentTime) {
         return new AnyRealDistribution<>(currentTime, distribution);
     }
 

@@ -91,6 +91,6 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
     protected abstract void updateStatus(Time currentTime, boolean executed, double param, Environment<T, ?> environment);
 
     @Override
-    public abstract AbstractDistribution<T> cloneOnNewNode(Node<T> destination, Time currentTime);
+    public abstract AbstractDistribution<T> cloneOnNewNode(@Nonnull Node<T> destination, @Nonnull Time currentTime);
 
 }

@@ -17,6 +17,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Time;
 
+import javax.annotation.Nonnull;
+
 /**
  * Markovian events.
  * 
@@ -112,7 +114,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
      * @return a new ExponentialTime
      */
     @Override
-    public ExponentialTime<T> cloneOnNewNode(final Node<T> destination, final Time currentTime) {
+    public ExponentialTime<T> cloneOnNewNode(final @Nonnull Node<T> destination, final @Nonnull Time currentTime) {
         return new ExponentialTime<>(rate, Time.ZERO, randomGenerator);
     }
 

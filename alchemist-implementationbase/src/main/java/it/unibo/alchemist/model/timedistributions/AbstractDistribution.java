@@ -25,6 +25,7 @@ import java.io.Serial;
  */
 public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
 
+    @Serial
     private static final long serialVersionUID = -8906648194668569179L;
     private Time tau;
     private boolean schedulable;

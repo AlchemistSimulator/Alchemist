@@ -13,6 +13,8 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Time;
 
+import javax.annotation.Nonnull;
+
 /**
  * A DiracComb is a sequence of events that happen every fixed time interval.
  * 

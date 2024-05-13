@@ -18,6 +18,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.special.Gamma;
 import org.apache.commons.math3.util.FastMath;
 
+import javax.annotation.Nonnull;
+
 /**
  * Weibull distributed events.
  * 
@@ -166,7 +168,7 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
      * {@inheritDoc}
      */
     @Override
-    public WeibullTime<T> cloneOnNewNode(final Node<T> destination, final Time currentTime) {
+    public WeibullTime<T> cloneOnNewNode(final @Nonnull Node<T> destination, final @Nonnull Time currentTime) {
         return new WeibullTime<>(rand, dist, offset, currentTime);
     }
 }

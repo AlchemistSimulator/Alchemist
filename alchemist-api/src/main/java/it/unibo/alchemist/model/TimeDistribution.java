@@ -54,6 +54,9 @@ public interface TimeDistribution<T> extends Cloneable, Serializable {
      *            the time at which the cloning operation happened
      * @return an exact copy of this {@link TimeDistribution}
      */
-    TimeDistribution<T> cloneOnNewNode(Node<T> destination, Time currentTime);
+    TimeDistribution<T> cloneOnNewNode(
+        @Nonnull Node<T> destination,
+        @Nonnull Time currentTime
+    );
 
 }

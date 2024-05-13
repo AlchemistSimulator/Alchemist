@@ -13,6 +13,8 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Time;
 
+import javax.annotation.Nonnull;
+
 /**
  * @param <T>
  *            Concentration type
@@ -49,7 +51,7 @@ public final class Trigger<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public Trigger<T> cloneOnNewNode(final Node<T> destination, final Time currentTime) {
+    public Trigger<T> cloneOnNewNode(final @Nonnull Node<T> destination, final @Nonnull Time currentTime) {
         return new Trigger<>(getNextOccurence());
     }
 

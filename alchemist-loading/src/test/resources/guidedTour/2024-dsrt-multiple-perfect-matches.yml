@@ -1,0 +1,25 @@
+incarnation: protelis
+
+deployments:
+  - type: Point
+    parameters: [ 1.5, 0.5 ]
+    programs:
+      - time-distribution:
+          type: JaktaTimeDistribution
+          # Recursive construction of other types
+          parameters:
+            sense:
+              type: WeibullTime
+              parameters: [1, 1]
+            deliberate:
+              type: DiracComb
+              parameters: 0.1
+            act:
+              type: ExponentialTime
+              parameters: 1
+        program: |
+          1 + 1
+
+terminate:
+  - type: AfterTime
+    parameters: [ 0 ]

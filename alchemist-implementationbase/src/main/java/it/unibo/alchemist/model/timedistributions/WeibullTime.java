@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 
 /**
  * Weibull distributed events.
- * 
+ *
  * @param <T> concentration type
  */
 public class WeibullTime<T> extends AbstractDistribution<T> {
@@ -124,7 +124,7 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
 
     /**
      * Generates a {@link WeibullDistribution} given its mean and standard deviation.
-     * 
+     *
      * @param mean
      *            the mean
      * @param deviation

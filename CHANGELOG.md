@@ -1,3 +1,10 @@
+## [34.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.5...34.0.6) (2024-05-13)
+
+
+### Bug Fixes
+
+* **engine:** fix a bug in the removal of reactions with a global output context ([c296e2e](https://github.com/AlchemistSimulator/Alchemist/commit/c296e2e7c0ffda82e009986e3838c570c7972da5))
+
 ## [34.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.4...34.0.5) (2024-05-13)
 
 

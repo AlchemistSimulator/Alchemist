@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 /**
  * This interface represents a temporal distribution for any event.
- * 
+ *
  * @param <T>
  *            concentration type
  */
@@ -21,7 +21,7 @@ public interface TimeDistribution<T> extends Cloneable, Serializable {
 
     /**
      * Updates the internal status.
-     * 
+     *
      * @param currentTime
      *            current time
      * @param executed

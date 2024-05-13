@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 
 /**
  * Markovian events.
- * 
+ *
  * @param <T> concentration type
  */
 public class ExponentialTime<T> extends AbstractDistribution<T> {

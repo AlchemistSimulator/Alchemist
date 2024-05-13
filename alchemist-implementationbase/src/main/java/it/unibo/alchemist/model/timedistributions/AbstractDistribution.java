@@ -20,7 +20,7 @@ import java.io.Serial;
  * This class provides, through a template method pattern, an utility that
  * ensures that the distribution does not trigger events before its initial
  * scheduling time.
- * 
+ *
  * @param <T> concentration type
  */
 public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
@@ -41,7 +41,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
 
     /**
      * Allows subclasses to set the next putative time. Use with care.
-     * 
+     *
      * @param t
      *            the new time
      */
@@ -77,7 +77,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
 
     /**
      * Implement this method to update the distribution's internal status.
-     * 
+     *
      * @param currentTime
      *            current time
      * @param executed

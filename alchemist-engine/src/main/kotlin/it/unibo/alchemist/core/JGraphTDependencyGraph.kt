@@ -111,22 +111,22 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) :
     }
 
     override fun removeDependencies(reaction: Actionable<T>) {
-        check(graph.removeVertex(reaction)) {
-            BugReporting.reportBug(
-                "Reaction does not exists in the dependency graph.",
-                mapOf(
-                    "reaction" to reaction,
-                    "graph" to graph,
-                    "incarnation" to environment.incarnation,
-                    "environment" to environment,
-                ),
-            )
+        fun bugInfo() = mapOf(
+            "reaction" to reaction,
+            "graph" to graph,
+            "incarnation" to environment.incarnation,
+            "environment" to environment,
+        )
+        fun bug(message: String): Nothing =
+            BugReporting.reportBug(message, bugInfo())
+        if (!graph.removeVertex(reaction)) {
+            bug("Reaction does not exists in the dependency graph.")
         }
-        check(reaction.inputContext != Context.GLOBAL || inGlobals.remove(reaction)) {
-            "Inconsistent state: $reaction, with global input context, was not in the appropriate pool."
+        if (reaction.inputContext == Context.GLOBAL && !inGlobals.remove(reaction)) {
+            bug("Inconsistent state: $reaction, with global input context, was not in the appropriate pool.")
         }
-        check(reaction.outputContext != Context.GLOBAL || !outGlobals.remove(reaction)) {
-            "Inconsistent state: $reaction, with global output context, was not in the appropriate pool."
+        if (reaction.outputContext == Context.GLOBAL && !inGlobals.remove(reaction)) {
+            bug("Inconsistent state: $reaction, with global input context, was not in the appropriate pool.")
         }
         runtimeRemovalCache += reaction
     }

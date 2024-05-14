@@ -5,4 +5,4 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: gohugoio/hugo@v0.125.7
+      - uses: gohugoio/hugo@v0.126.0

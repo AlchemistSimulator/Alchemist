@@ -141,7 +141,7 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
         super.updateStatus(currentTime, executed, param, environment)
     }
 
-    override fun cloneOnNewNode(destination: Node<T>, currentTime: Time?): MoleculeControlledTimeDistribution<T> =
+    override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): MoleculeControlledTimeDistribution<T> =
         MoleculeControlledTimeDistribution(incarnation, destination, molecule, property, start, errorDistribution)
 
     companion object {

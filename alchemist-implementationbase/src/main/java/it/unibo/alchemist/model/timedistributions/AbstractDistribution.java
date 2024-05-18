@@ -13,15 +13,19 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 
+import javax.annotation.Nonnull;
+import java.io.Serial;
+
 /**
  * This class provides, through a template method pattern, an utility that
  * ensures that the distribution does not trigger events before its initial
  * scheduling time.
- * 
+ *
  * @param <T> concentration type
  */
 public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
 
+    @Serial
     private static final long serialVersionUID = -8906648194668569179L;
     private Time tau;
     private boolean schedulable;
@@ -38,7 +42,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
 
     /**
      * Allows subclasses to set the next putative time. Use with care.
-     * 
+     *
      * @param t
      *            the new time
      */
@@ -48,10 +52,10 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
 
     @Override
     public final void update(
-            final Time currentTime,
+            final @Nonnull Time currentTime,
             final boolean hasBeenExecuted,
             final double additionalParameter,
-            final Environment<T, ?> environment
+            final @Nonnull Environment<T, ?> environment
     ) {
         if (!schedulable && currentTime.compareTo(startTime) >= 0) {
             /*
@@ -74,7 +78,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
 
     /**
      * Implement this method to update the distribution's internal status.
-     * 
+     *
      * @param currentTime
      *            current time
      * @param executed
@@ -88,6 +92,6 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
     protected abstract void updateStatus(Time currentTime, boolean executed, double param, Environment<T, ?> environment);
 
     @Override
-    public abstract AbstractDistribution<T> cloneOnNewNode(Node<T> destination, Time currentTime);
+    public abstract AbstractDistribution<T> cloneOnNewNode(@Nonnull Node<T> destination, @Nonnull Time currentTime);
 
 }

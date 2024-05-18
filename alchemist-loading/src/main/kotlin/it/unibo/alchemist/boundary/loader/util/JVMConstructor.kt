@@ -153,8 +153,8 @@ internal data class TypeSearch<out T>(val typeName: String, val targetType: Clas
     private val packageName: String? = typeName.substringBeforeLast('.', "").takeIf { it.isNotEmpty() }
     private val isQualified get() = packageName != null
 
-    val subTypes: List<Class<out T>> by lazy {
-        val compatibleTypes = when (packageName) {
+    val subTypes: Collection<Class<out T>> by lazy {
+        val compatibleTypes: List<Class<out T>> = when (packageName) {
             null ->
                 when {
                     targetType.packageName.startsWith("it.unibo.alchemist") ->
@@ -163,7 +163,12 @@ internal data class TypeSearch<out T>(val typeName: String, val targetType: Clas
                 }
             else -> ClassPathScanner.subTypesOf(targetType, packageName)
         }
-        compatibleTypes + listOf(targetType).takeUnless { Modifier.isAbstract(targetType.modifiers) }.orEmpty()
+        when {
+            // The target type cannot be instanced, just return its concrete subclasses
+            Modifier.isAbstract(targetType.modifiers) -> compatibleTypes
+            // The target type can be instanced, return it and all its concrete subclasses
+            else -> mutableSetOf(targetType).apply { addAll(compatibleTypes) }
+        }
     }
 
     val perfectMatches: List<Class<out T>> by lazy {
@@ -296,8 +301,9 @@ sealed class JVMConstructor(val typeName: String) {
                     val potentialJavaType = potentialType.type.jvmErasure.java
                     val subtypes = ClassPathScanner.subTypesOf(potentialJavaType) +
                         if (Modifier.isAbstract(potentialJavaType.modifiers)) emptyList() else listOf(potentialJavaType)
-                    val compatibleSubtypes = subtypes.filter {
-                        typeName == if (parameter.typeName.contains('.')) it.name else it.simpleName
+                    val compatibleSubtypes = subtypes.filter { subtype ->
+                        val subtypeName = if (parameter.typeName.contains('.')) subtype.name else subtype.simpleName
+                        parameter.typeName == subtypeName
                     }
                     when {
                         compatibleSubtypes.isEmpty() -> {
@@ -317,7 +323,8 @@ sealed class JVMConstructor(val typeName: String) {
                             )
                         }
                         else -> {
-                            listOf(buildAny(compatibleSubtypes.first(), jirf))
+                            val maybeParameter = parameter.buildAny(compatibleSubtypes.first(), jirf)
+                            listOf(maybeParameter.getOrThrow())
                         }
                     }
                 }

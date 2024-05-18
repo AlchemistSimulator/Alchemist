@@ -13,9 +13,11 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Time;
 
+import javax.annotation.Nonnull;
+
 /**
  * A DiracComb is a sequence of events that happen every fixed time interval.
- * 
+ *
  * @param <T> concentration type
  */
 public class DiracComb<T> extends AbstractDistribution<T> {
@@ -60,7 +62,7 @@ public class DiracComb<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public final DiracComb<T> cloneOnNewNode(final Node<T> destination, final Time currentTime) {
+    public final DiracComb<T> cloneOnNewNode(final @Nonnull Node<T> destination, final @Nonnull Time currentTime) {
         return new DiracComb<>(currentTime, 1 / timeInterval);
     }
 

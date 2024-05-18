@@ -18,9 +18,11 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.special.Gamma;
 import org.apache.commons.math3.util.FastMath;
 
+import javax.annotation.Nonnull;
+
 /**
  * Weibull distributed events.
- * 
+ *
  * @param <T> concentration type
  */
 public class WeibullTime<T> extends AbstractDistribution<T> {
@@ -122,7 +124,7 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
 
     /**
      * Generates a {@link WeibullDistribution} given its mean and standard deviation.
-     * 
+     *
      * @param mean
      *            the mean
      * @param deviation
@@ -166,7 +168,7 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
      * {@inheritDoc}
      */
     @Override
-    public WeibullTime<T> cloneOnNewNode(final Node<T> destination, final Time currentTime) {
+    public WeibullTime<T> cloneOnNewNode(final @Nonnull Node<T> destination, final @Nonnull Time currentTime) {
         return new WeibullTime<>(rand, dist, offset, currentTime);
     }
 }

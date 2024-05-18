@@ -12,10 +12,10 @@ jobs:
       group: javadoc-io-${{ github.workflow }}-${{ github.event.number || github.ref }}
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.17
+        uses: danysk/action-checkout@0.2.18
         with:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.18
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.19
         with:
           pre-build-command: rm javadoc-io.json
           build-command: |

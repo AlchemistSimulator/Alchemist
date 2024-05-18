@@ -36,7 +36,7 @@ jobs:
             )
           }}" >> $GITHUB_OUTPUT
       - name: Checkout
-        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
       - name: Compute the Java version
         id: java-version
         run: ruby -e 'puts("java-version=#{/^minJavaVersion\s*=\s*(\d+)$/.match(File.read("gradle.properties"))[1]}")' >> $GITHUB_OUTPUT
@@ -71,8 +71,8 @@ jobs:
     timeout-minutes: 180
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.17
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.18
+        uses: danysk/action-checkout@0.2.18
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.19
         with:
           pre-build-command: true
           build-command: |
@@ -94,8 +94,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.17
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.18
+        uses: danysk/action-checkout@0.2.18
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.19
         with:
           retries-on-failure: 5
           wait-between-retries: 120
@@ -148,8 +148,8 @@ jobs:
       repo-id: ${{ steps.staging-repo.outputs.MavenCentral }}
     steps:
       - name: Checkout the repo
-        uses: actions/checkout@v4.1.5
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.18
+        uses: actions/checkout@v4.1.6
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.19
         with:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           should-run-codecov: false
@@ -192,8 +192,8 @@ jobs:
     timeout-minutes: 120
     steps:
       - name: Checkout with full history
-        uses: danysk/action-checkout@0.2.17
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.18
+        uses: danysk/action-checkout@0.2.18
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.19
         with:
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
@@ -431,13 +431,13 @@ jobs:
       )
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.5
+        uses: actions/checkout@v4.1.6
         with:
           submodules: recursive
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout the docs
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
-        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
           path: website
           fetch-depth: 0
@@ -470,7 +470,7 @@ jobs:
         uses: actions/setup-node@v4.0.2
         with:
           node-version-file: package.json
-      - uses: DanySK/build-check-deploy-gradle-action@2.4.18
+      - uses: DanySK/build-check-deploy-gradle-action@2.4.19
         env:
           STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
           MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}

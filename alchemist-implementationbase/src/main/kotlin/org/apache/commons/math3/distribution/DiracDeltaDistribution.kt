@@ -42,6 +42,7 @@ class DiracDeltaDistribution constructor(val value: Double) : RealDistribution, 
         else -> 1.0
     }
 
+    @Deprecated("Deprecated in Java", replaceWith = ReplaceWith("probability(x0, x1)"))
     override fun cumulativeProbability(x0: Double, x1: Double): Double = cumulativeProbability(maxOf(x0, x1))
 
     override fun inverseCumulativeProbability(p: Double) = Double.NaN
@@ -54,8 +55,18 @@ class DiracDeltaDistribution constructor(val value: Double) : RealDistribution, 
 
     override fun getSupportUpperBound() = inverseCumulativeProbability(1.0)
 
+    @Deprecated(
+        "Deprecated in Java",
+        replaceWith =
+        ReplaceWith("getSupporLowerBound().isFinite() && !density(getSupportLowerBound()).isNaN()"),
+    )
     override fun isSupportLowerBoundInclusive() = false
 
+    @Deprecated(
+        "Deprecated in Java",
+        replaceWith =
+        ReplaceWith("getSupportUpperBound().isFinite() && !density(getSupportUpperBound()).isNaN()"),
+    )
     override fun isSupportUpperBoundInclusive() = false
 
     override fun isSupportConnected() = false

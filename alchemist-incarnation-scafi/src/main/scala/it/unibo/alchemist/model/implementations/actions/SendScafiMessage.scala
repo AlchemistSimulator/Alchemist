@@ -32,7 +32,7 @@ class SendScafiMessage[T, P <: Position[P]](
    * with the same reaction programming, e.g. for morphogenesis.
    *
    * @param destinationNode
-   *   The node where to clone this { @link Action}
+   *   The node where to clone this {@link Action}
    * @param reaction
    *   The reaction to which the CURRENT action is assigned
    * @return

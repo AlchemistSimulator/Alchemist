@@ -39,7 +39,7 @@ sealed class DefaultRunScafiProgram[P <: Position[P]](
       reaction: Reaction[Any],
       randomGenerator: RandomGenerator,
       programName: String
-  ) = {
+  ) =
     this(
       environment,
       node,
@@ -48,7 +48,6 @@ sealed class DefaultRunScafiProgram[P <: Position[P]](
       programName,
       FastMath.nextUp(1.0 / reaction.getTimeDistribution.getRate)
     )
-  }
 }
 
 sealed class RunScafiProgram[T, P <: Position[P]](
@@ -66,7 +65,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
       reaction: Reaction[T],
       randomGenerator: RandomGenerator,
       programName: String
-  ) = {
+  ) =
     this(
       environment,
       node,
@@ -75,7 +74,6 @@ sealed class RunScafiProgram[T, P <: Position[P]](
       programName,
       FastMath.nextUp(1.0 / reaction.getTimeDistribution.getRate)
     )
-  }
 
   import RunScafiProgram.NeighborData
   val program =

@@ -18,11 +18,13 @@ import it.unibo.alchemist.model.times.DoubleTime
 
 @SuppressFBWarnings
 object PimpMyAlchemist {
+
   /** Wraps a Position, providing + and - operations. */
   implicit class RichPosition[P <: Position[P] with Vector[P]](position: P) {
     def -(p: P) = position.minus(p)
     def +(p: P) = position.plus(p)
   }
+
   /** Shortcut for DoubleTime.ZERO_TIME */
   implicit val zeroTime = Time.ZERO
   implicit def time2Double(time: Time): Double = time.toDouble()

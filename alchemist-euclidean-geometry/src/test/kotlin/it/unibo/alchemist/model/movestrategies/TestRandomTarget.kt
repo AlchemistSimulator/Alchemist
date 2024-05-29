@@ -29,6 +29,7 @@ private class DummyDistribution : RealDistribution {
 
     override fun cumulativeProbability(x: Double) = if (x > value) 1.0 else 0.0
 
+    @Deprecated("Deprecated in Java")
     override fun cumulativeProbability(x0: Double, x1: Double) = if (value > x0 && value < x1) 1.0 else 0.0
 
     override fun getNumericalMean() = 0.0
@@ -49,8 +50,10 @@ private class DummyDistribution : RealDistribution {
 
     override fun density(x: Double) = Double.NaN
 
+    @Deprecated("Deprecated in Java")
     override fun isSupportLowerBoundInclusive() = true
 
+    @Deprecated("Deprecated in Java")
     override fun isSupportUpperBoundInclusive() = true
 
     override fun getSupportLowerBound() = value

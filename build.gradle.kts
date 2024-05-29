@@ -188,12 +188,10 @@ allprojects {
     }
 
     tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            freeCompilerArgs = listOf(
-                "-Xjvm-default=all", // Enable default methods in Kt interfaces
-                // Context receivers temporarily disabled, as they are unsupported in Kotlin script
-                // "-Xcontext-receivers", // Enable context receivers
-            )
+        compilerOptions {
+            freeCompilerArgs.add("-Xjvm-default=all") // Enable default methods in Kt interfaces
+            // Context receivers temporarily disabled, as they are unsupported in Kotlin script
+            // "-Xcontext-receivers", // Enable context receivers
         }
     }
 

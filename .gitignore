@@ -20,6 +20,9 @@ site/public
 .directory
 *.kate-swp
 
+# Kotlin
+.kotlin/
+
 # Idea
 out/
 uiDesigner.xml

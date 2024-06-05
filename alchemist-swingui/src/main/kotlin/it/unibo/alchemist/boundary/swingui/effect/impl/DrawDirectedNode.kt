@@ -33,7 +33,10 @@ import kotlin.math.min
  */
 @Suppress("DEPRECATION")
 class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
+    @Transient
     private var positionsMemory: Map<Int, List<Pair<Position2D<*>, Double>>> = emptyMap()
+
+    @Transient
     private var lastDrawMemory: Map<Int, Int> = emptyMap()
 
     @ExportForGUI(nameToExport = "Track")

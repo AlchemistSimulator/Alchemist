@@ -1,3 +1,18 @@
+## [34.0.9](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.8...34.0.9) (2024-06-05)
+
+
+### Dependency updates
+
+* **deps:** update dependency com.apollographql.apollo3:apollo-runtime to v4.0.0-beta.7 ([767df7c](https://github.com/AlchemistSimulator/Alchemist/commit/767df7c44bca0d8a14dba9f6b6fa0d65c943125d))
+* **deps:** update external-resources/learning-scafi-alchemist digest to da15f1f ([bd99d7f](https://github.com/AlchemistSimulator/Alchemist/commit/bd99d7fea7f23ecc8ed92ab9aa96a12c5914d852))
+* **deps:** update gohugoio/hugo action to v0.127.0 ([4003f7d](https://github.com/AlchemistSimulator/Alchemist/commit/4003f7d5edd8d3bcb6a08e607dd445797d922a76))
+* **deps:** update plugin publishoncentral to v5.1.2 ([4666748](https://github.com/AlchemistSimulator/Alchemist/commit/4666748a6eed4da052dd8e28d656a6085d949cc6))
+
+
+### Bug Fixes
+
+* add @Transient to solve loading failure of DrawDirectedNode effect ([#3502](https://github.com/AlchemistSimulator/Alchemist/issues/3502)) ([60bc0e0](https://github.com/AlchemistSimulator/Alchemist/commit/60bc0e0c005a933ed324b91f8090649e3a10d34b))
+
 ## [34.0.8](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.7...34.0.8) (2024-06-05)
 
 

@@ -1,4 +1,4 @@
-Alchemist is Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the `pom.xml` file available for each
+Alchemist is Copyright (C) 2010-2024, Danilo Pianini and contributors listed in the `pom.xml` file available for each
 module from "The Central Repository", reachable from https://central.sonatype.com/.
 
 Alchemist is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License

@@ -1,3 +1,15 @@
+## [34.0.10](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.9...34.0.10) (2024-06-05)
+
+
+### Bug Fixes
+
+* **engine:** reactions with a global output context are now correctly removed ([#3500](https://github.com/AlchemistSimulator/Alchemist/issues/3500)) ([6e41b80](https://github.com/AlchemistSimulator/Alchemist/commit/6e41b802af6e6c31c3ee65b82e0642db5884eef6))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([682575a](https://github.com/AlchemistSimulator/Alchemist/commit/682575a51248433cdbfc8844f85d5e9f16e7fa8b))
+
 ## [34.0.9](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.8...34.0.9) (2024-06-05)
 
 

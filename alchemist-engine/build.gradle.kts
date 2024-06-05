@@ -38,6 +38,10 @@ publishing.publications {
         pom {
             contributors {
                 contributor {
+                    name.set("Martina Baiardi")
+                    email.set("m.baiardi@unibo.it")
+                }
+                contributor {
                     name.set("Andrea Placuzzi")
                     email.set("andrea.placuzzi@studio.unibo.it")
                 }

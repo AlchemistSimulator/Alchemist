@@ -125,7 +125,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) :
         if (reaction.inputContext == Context.GLOBAL && !inGlobals.remove(reaction)) {
             bug("Inconsistent state: $reaction, with global input context, was not in the appropriate pool.")
         }
-        if (reaction.outputContext == Context.GLOBAL && !inGlobals.remove(reaction)) {
+        if (reaction.outputContext == Context.GLOBAL && !outGlobals.remove(reaction)) {
             bug("Inconsistent state: $reaction, with global input context, was not in the appropriate pool.")
         }
         runtimeRemovalCache += reaction

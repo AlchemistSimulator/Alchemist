@@ -284,6 +284,7 @@ allprojects {
     publishOnCentral {
         projectDescription.set(extra["projectDescription"].toString())
         projectLongName.set(extra["projectLongName"].toString())
+        projectUrl.set("https://github.com/$repoSlug")
         licenseName.set("GPL 3.0 with linking exception")
         licenseUrl.set("https://github.com/$repoSlug/blob/develop/LICENSE.md")
         scmConnection.set("git:git@github.com:$repoSlug.git")

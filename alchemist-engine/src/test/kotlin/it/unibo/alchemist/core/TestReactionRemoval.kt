@@ -11,59 +11,60 @@ package it.unibo.alchemist.core
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.Context
+import it.unibo.alchemist.model.Context.GLOBAL
+import it.unibo.alchemist.model.Context.LOCAL
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
+import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.reactions.AbstractReaction
-import it.unibo.alchemist.model.reactions.ChemicalReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
-import it.unibo.alchemist.test.AlchemistTesting.createEmptyEnvironment
-import org.junit.jupiter.api.Assertions.fail
+import it.unibo.alchemist.model.times.DoubleTime
 
-class CustomReaction<T>(
-    customReactionNode: Node<T>,
-    customReactionTimeDistribution: TimeDistribution<T>,
-) : AbstractReaction<T>(customReactionNode, customReactionTimeDistribution) {
+class GlobalContextsReaction<T>(
+    node: Node<T>,
+    timeDistribution: TimeDistribution<T>,
+    inGlobal: Boolean,
+    outGlobal: Boolean,
+) : AbstractReaction<T>(node, timeDistribution) {
 
     init {
-        setInputContext(Context.GLOBAL)
-        setOutputContext(Context.GLOBAL)
+        setInputContext(if (inGlobal) GLOBAL else LOCAL)
+        setOutputContext(if (outGlobal) GLOBAL else LOCAL)
     }
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Reaction<T> =
-        makeClone { ChemicalReaction(node, timeDistribution.cloneOnNewNode(node, currentTime)) }
+    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Reaction<T> = TODO()
 
     override fun updateInternalStatus(currentTime: Time?, hasBeenExecuted: Boolean, environment: Environment<T, *>?) { }
 }
 
 class TestReactionRemoval : FreeSpec({
 
-    "A Reaction with input and output context set as GLOBAL can be deleted from the incarnation" {
-
-        val environment = createEmptyEnvironment<Any>()
+    "All possible combination of GLOBAL/LOCAL reactions as in/out context can be removed from simulation" {
+        val incarnation = BiochemistryIncarnation()
+        val environment = Continuous2DEnvironment(incarnation)
         val node = GenericNode(environment)
-        val timeDistribution = DiracComb<Any>(5.0)
-        node.addReaction(CustomReaction(node, timeDistribution))
-
-        environment.simulation.schedule {
-            val customReaction = CustomReaction(node, timeDistribution)
-            node.addReaction(customReaction)
-            environment.simulation.reactionAdded(customReaction)
-            customReaction.inputContext shouldBe Context.GLOBAL
-            customReaction.outputContext shouldBe Context.GLOBAL
-            environment.nodes.count() shouldBe 1
-            environment.nodes.first().reactions shouldBe customReaction
-            try {
-                node.removeReaction(customReaction)
-                environment.simulation.reactionRemoved(customReaction)
-                node.reactions.isEmpty() shouldBe true
-            } catch (e: Exception) {
-                fail(e)
-            }
+        val bools = listOf(true, false)
+        val customReactions = bools
+            .flatMap { first -> bools.map { first to it } }
+            .map { (input, out) -> GlobalContextsReaction(node, DiracComb(1.0), input, out) }
+        customReactions.forEach {
+            node.addReaction(it)
         }
+        environment.addTerminator { it.simulation.time > DoubleTime(10.0) }
+        environment.linkingRule = NoLinks()
+        environment.addNode(node, environment.makePosition(0, 0))
+        val engine = Engine(environment)
+        engine.play()
+        engine.schedule {
+            environment.removeNode(node)
+        }
+        engine.run()
+        engine.error.isEmpty shouldBe true
     }
 })

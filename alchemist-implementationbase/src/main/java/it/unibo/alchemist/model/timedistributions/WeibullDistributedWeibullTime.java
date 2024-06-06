@@ -96,7 +96,7 @@ public class WeibullDistributedWeibullTime<T> extends WeibullTime<T> {
 
     private static double weibullValue(final double mean, final double deviation, final RandomGenerator random) {
         if (deviation > 0) {
-            final WeibullDistribution dist = weibullFromMean(mean, deviation, random);
+            final WeibullDistribution dist = WeibullTime.Companion.weibullFromMean(mean, deviation, random);
             return dist.inverseCumulativeProbability(random.nextDouble());
         }
         return mean;

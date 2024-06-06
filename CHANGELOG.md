@@ -1,3 +1,10 @@
+## [34.0.13](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.12...34.0.13) (2024-06-06)
+
+
+### Bug Fixes
+
+* **implementationbase:** WeibullTime now generate times based on frequency as other time distributions ([#3512](https://github.com/AlchemistSimulator/Alchemist/issues/3512)) ([cbbb046](https://github.com/AlchemistSimulator/Alchemist/commit/cbbb0469e3e700bf07789076f612e89ca5151465))
+
 ## [34.0.12](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.11...34.0.12) (2024-06-06)
 
 

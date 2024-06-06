@@ -1,3 +1,21 @@
+## [34.0.11](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.10...34.0.11) (2024-06-06)
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to d32af5c ([890e762](https://github.com/AlchemistSimulator/Alchemist/commit/890e7629c2d731dbad67c1abbdafca18c1f81924))
+* **deps:** update external-resources/learning-scafi-alchemist digest to f69d693 ([aef0007](https://github.com/AlchemistSimulator/Alchemist/commit/aef000706fc43fcab36fb248471b812d5281223e))
+* **deps:** update plugin publishoncentral to v5.1.3 ([416af3b](https://github.com/AlchemistSimulator/Alchemist/commit/416af3b316249e8b215edd89d4b024dab8141ed1))
+* **deps:** update site/themes/hugo-theme-relearn digest to 6f24d34 ([8e10d82](https://github.com/AlchemistSimulator/Alchemist/commit/8e10d82a96e9b3e747389a7fc83546f6b0ebffc2))
+
+
+### Documentation
+
+* add [@anitvam](https://github.com/anitvam) to the engine contributors ([bb0f87f](https://github.com/AlchemistSimulator/Alchemist/commit/bb0f87f0372b7f44f429273df049ba51208b15e6))
+* fix the license URL ([80627d5](https://github.com/AlchemistSimulator/Alchemist/commit/80627d502e73530586521d86ffcfb6c3065a99d7))
+* fix the project URL, fixes [#3506](https://github.com/AlchemistSimulator/Alchemist/issues/3506) ([0f0ce8a](https://github.com/AlchemistSimulator/Alchemist/commit/0f0ce8a72d53774e546359e06ba7dd3cdf9254e9))
+* update the license copyright year ([eed001c](https://github.com/AlchemistSimulator/Alchemist/commit/eed001c5d92b27375d1c3f190016bff47eb4847e))
+
 ## [34.0.10](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.9...34.0.10) (2024-06-05)
 
 

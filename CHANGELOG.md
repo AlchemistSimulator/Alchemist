@@ -1,3 +1,17 @@
+## [34.0.12](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.11...34.0.12) (2024-06-06)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.35 ([7edac16](https://github.com/AlchemistSimulator/Alchemist/commit/7edac16619ad00347083038c9e666ab317fc9009))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 37738d8 ([734c114](https://github.com/AlchemistSimulator/Alchemist/commit/734c114524acd02bdc1ba2746c220d19873792b8))
+* **deps:** update plugin kotlin-qa to v0.62.3 ([34e4139](https://github.com/AlchemistSimulator/Alchemist/commit/34e4139bafbe5995b8d28a1a606df48a3c98a180))
+
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([14b7d5c](https://github.com/AlchemistSimulator/Alchemist/commit/14b7d5ca483c852b0b4710887656ce4770140443))
+
 ## [34.0.11](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.10...34.0.11) (2024-06-06)
 
 

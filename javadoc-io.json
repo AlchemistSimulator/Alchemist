@@ -170,7 +170,8 @@
     "second": "https://javadoc.io/doc/org.jooq/jool/0.9.15/element-list"
   },
   "org.mongodb/mongodb-driver-sync/5.1.1": {
-    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.1.1"
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.1.1",
+    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.1.1/element-list"
   },
   "org.protelis/protelis-interpreter/17.3.35": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.35",

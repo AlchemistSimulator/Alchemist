@@ -23,7 +23,7 @@ const successCmd = `
 touch RELEASED
 `;
 
-import config from 'semantic-release-preconfigured-conventional-commits';
+import config from 'semantic-release-preconfigured-conventional-commits' assert { type: "json" };
 config.plugins.push(
     ["@semantic-release/exec", {
         "publishCmd": publishCmd,

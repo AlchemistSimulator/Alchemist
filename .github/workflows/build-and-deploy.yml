@@ -41,7 +41,7 @@ jobs:
         id: java-version
         run: ruby -e 'puts("java-version=#{/^minJavaVersion\s*=\s*(\d+)$/.match(File.read("gradle.properties"))[1]}")' >> $GITHUB_OUTPUT
       - name: Install Node
-        uses: actions/setup-node@v4.0.2
+        uses: actions/setup-node@v4.0.3
         with:
           node-version-file: package.json
       - name: Compute the next release version
@@ -469,7 +469,7 @@ jobs:
           path: pkgbuild/
           merge-multiple: true
       - name: Install Node
-        uses: actions/setup-node@v4.0.2
+        uses: actions/setup-node@v4.0.3
         with:
           node-version-file: package.json
       - uses: DanySK/build-check-deploy-gradle-action@3.0.0

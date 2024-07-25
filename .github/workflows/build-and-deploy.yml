@@ -82,6 +82,7 @@ jobs:
           clean-command: |
             ./gradlew clean --parallel || ./gradlew clean --parallel || true
           java-version: ${{ needs.ci-preparation.outputs.java-version }}
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
           should-run-codecov: ${{ contains('Linux', runner.os) }}
           should-deploy: false
           should-validate-wrapper: false

@@ -16,6 +16,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.observation.MutableObservable0
 import java.util.Collections
 import java.util.Spliterator
 import java.util.concurrent.Semaphore
@@ -39,7 +40,7 @@ open class GenericNode<T> @JvmOverloads constructor(
      */
     val environment: Environment<T, *>,
     final override val id: Int = idFromEnv(environment),
-    final override val reactions: MutableList<Reaction<T>> = ArrayList(),
+    final override val reactions: MutableObservable0<List<Reaction<T>>> = MutableObservable0.of(emptyList()),
     /**
      * The node's molecules.
      */

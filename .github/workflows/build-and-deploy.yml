@@ -263,17 +263,21 @@ jobs:
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
-        shell: powershell
-        run: |
-          Get-ChildItem -Force | Format-Table -AutoSize
-          foreach ($file in Get-ChildItem -Filter *.msi) {
-            $log = "install.log"
-            $procMain = Start-Process "msiexec" "/i `"$file`" /qn /l*! `"$log`"" -NoNewWindow -PassThru
-            Start-Sleep -Seconds 1
-            $procLog = Start-Process "powershell" "Get-Content -Path `"$log`" -Wait" -NoNewWindow -PassThru 
-            $procMain.WaitForExit() 
-            $procLog.Kill()
-          }
+        uses: nick-fields/retry@v3.0.0
+        with:
+          timeout_minutes: 10
+          shell: powershell
+          max_attempts: 5
+          command: |
+            Get-ChildItem -Force | Format-Table -AutoSize
+            foreach ($file in Get-ChildItem -Filter *.msi) {
+              $log = "install.log"
+              $procMain = Start-Process "msiexec" "/i `"$file`" /qn /l*! `"$log`"" -NoNewWindow -PassThru
+              Start-Sleep -Seconds 1
+              $procLog = Start-Process "powershell" "Get-Content -Path `"$log`" -Wait" -NoNewWindow -PassThru 
+              $procMain.WaitForExit() 
+              $procLog.Kill()
+            }
       - name: Test installation
         shell: pwsh
         run: |

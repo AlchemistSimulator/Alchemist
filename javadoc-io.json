@@ -178,7 +178,8 @@
     "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.39/element-list"
   },
   "org.protelis/protelis-lang/17.3.39": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.39"
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.39",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-lang/17.3.39/package-list"
   },
   "org.scala-lang/scala-compiler/2.13.14": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.14"

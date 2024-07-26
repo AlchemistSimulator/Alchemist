@@ -55,7 +55,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * the molecule to check
      * @return true if the molecule is present, false otherwise
      */
-    operator fun contains(molecule: Molecule): Boolean
+    fun contains(molecule: Molecule): Boolean
 
     /**
      * Calculates the concentration of a molecule.

@@ -1,3 +1,15 @@
+## [34.0.18](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.17...34.0.18) (2024-07-31)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.43 ([5b9cffd](https://github.com/AlchemistSimulator/Alchemist/commit/5b9cffd24f0779e59b59a3229ce0873dc81d5193))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.94 ([13021a7](https://github.com/AlchemistSimulator/Alchemist/commit/13021a735b3a724f63ccf8b3ccfbe67280f9d0ba))
+* **deps:** update plugin kotlin-qa to v0.65.0 ([e2d8afe](https://github.com/AlchemistSimulator/Alchemist/commit/e2d8afeda0f2917b13e4bb80dbed2369088ab54e))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([868a017](https://github.com/AlchemistSimulator/Alchemist/commit/868a017816410f83bb632a3c54e52ff6b0cab1de))
+
 ## [34.0.17](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.16...34.0.17) (2024-07-31)
 
 ### Dependency updates

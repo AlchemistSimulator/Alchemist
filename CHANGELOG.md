@@ -1,3 +1,24 @@
+## [34.0.15](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.14...34.0.15) (2024-07-31)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.40 ([b5dba59](https://github.com/AlchemistSimulator/Alchemist/commit/b5dba5928379cdfcb848d696f23a490db856e7f4))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.93 ([5ae9cb9](https://github.com/AlchemistSimulator/Alchemist/commit/5ae9cb929f775c69671421227cabdd31186706a4))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 46921ae ([1385bfd](https://github.com/AlchemistSimulator/Alchemist/commit/1385bfd6f5d70072456dae8a86aa7ad708857c8e))
+* **deps:** update gohugoio/hugo action to v0.130.0 ([909d736](https://github.com/AlchemistSimulator/Alchemist/commit/909d736715dc4b6336ee2e298a8c704f6087c8bd))
+* **deps:** update node.js to 20.16 ([a5dc943](https://github.com/AlchemistSimulator/Alchemist/commit/a5dc9437596e7831ad1be7f1175797cc445fe974))
+* **deps:** update plugin kotlin-qa to v0.64.1 ([3392575](https://github.com/AlchemistSimulator/Alchemist/commit/33925751e578250be7e4cc55b17573a67b3ccbff))
+* **deps:** update react to v18.3.1-pre.783 ([0aefa31](https://github.com/AlchemistSimulator/Alchemist/commit/0aefa312a7714f1345cc79ee92f54590351de6bf))
+* **deps:** update react to v18.3.1-pre.784 ([38837e0](https://github.com/AlchemistSimulator/Alchemist/commit/38837e0bb75dd58885e1eb1ad2c5eafec3b11dab))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.0 ([506a7e3](https://github.com/AlchemistSimulator/Alchemist/commit/506a7e3c0bebc36208f8ec1aa7a063536eefcaca))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([7ba143d](https://github.com/AlchemistSimulator/Alchemist/commit/7ba143dba5a53004592a8b63d03fd9d6ab4a981f))
+
 ## [34.0.14](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.13...34.0.14) (2024-07-27)
 
 ### Dependency updates

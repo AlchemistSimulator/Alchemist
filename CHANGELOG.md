@@ -1,3 +1,15 @@
+## [34.0.19](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.18...34.0.19) (2024-08-01)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.3.44 ([efd2785](https://github.com/AlchemistSimulator/Alchemist/commit/efd2785ccfa1624241e55eb52b7b29624fdbd436))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.95 ([1809520](https://github.com/AlchemistSimulator/Alchemist/commit/1809520de4ed3ff63d0defe09c815814c4f33a39))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 57c2b6d ([73c281f](https://github.com/AlchemistSimulator/Alchemist/commit/73c281fc761166498c7881700f9310c11164046d))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([504ce27](https://github.com/AlchemistSimulator/Alchemist/commit/504ce277bbdb6a8cbeb084219d6593d78cb5c320))
+
 ## [34.0.18](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.17...34.0.18) (2024-07-31)
 
 ### Dependency updates

@@ -1,3 +1,29 @@
+## [34.0.20](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.19...34.0.20) (2024-08-05)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.5 ([f07e86e](https://github.com/AlchemistSimulator/Alchemist/commit/f07e86e342324995937dc8bfaa365692a4a20f3a))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 01abc64 ([5529acb](https://github.com/AlchemistSimulator/Alchemist/commit/5529acbe63ae4433633d622116c7940455f1c6b6))
+* **deps:** update external-resources/learning-scafi-alchemist digest to aef6032 ([663a9ea](https://github.com/AlchemistSimulator/Alchemist/commit/663a9eadade49b1915b1d8ac6bc548962e42862b))
+* **deps:** update external-resources/learning-scafi-alchemist digest to c6ec76e ([db71f89](https://github.com/AlchemistSimulator/Alchemist/commit/db71f891a6fe66d02b7d5d99a9eb85b5752f8d83))
+* **deps:** update gohugoio/hugo action to v0.131.0 ([a8729b2](https://github.com/AlchemistSimulator/Alchemist/commit/a8729b249577e339f2408aa16c9a84832e241e39))
+* **deps:** update plugin java-qa to v1.60.2 ([c03371e](https://github.com/AlchemistSimulator/Alchemist/commit/c03371e1f2a52eb08b3c64afa1e9ffe73513636d))
+* **deps:** update react to v18.3.1-pre.785 ([2c64c4a](https://github.com/AlchemistSimulator/Alchemist/commit/2c64c4a0fc38d78bbc7f91353b8f5f81127507f6))
+* **deps:** update site/themes/hugo-theme-relearn digest to 8b14837 ([796bebb](https://github.com/AlchemistSimulator/Alchemist/commit/796bebb947c9acbff76df494663089979b699685))
+* **deps:** update site/themes/hugo-theme-relearn digest to ef1d5cd ([26c8e98](https://github.com/AlchemistSimulator/Alchemist/commit/26c8e98838ec1e212ab6342bfb09757088c13d1d))
+
+### Revert previous changes
+
+* "chore(deps): update plugin java-qa to v1.60.2" ([#3653](https://github.com/AlchemistSimulator/Alchemist/issues/3653)) ([f5feb98](https://github.com/AlchemistSimulator/Alchemist/commit/f5feb988f74c73ce91c307017ed650ea469a2e3f))
+
+### Build and continuous integration
+
+* **renovate:** use `matchDepNames` instead of `matchPackageNames` ([a44bcdc](https://github.com/AlchemistSimulator/Alchemist/commit/a44bcdc121df931d47be913e9f1f44fea4bf0973))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([abb1882](https://github.com/AlchemistSimulator/Alchemist/commit/abb1882add0e3beda020e0938873d806fccb965f))
+
 ## [34.0.19](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.18...34.0.19) (2024-08-01)
 
 ### Dependency updates

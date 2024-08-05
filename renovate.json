@@ -6,7 +6,7 @@
   "packageRules": [
     {
       "description": "Trigger a minor update on some dependencies",
-      "matchPackageNames": [
+      "matchDepNames": [
         "org.apache.commons:commons-math3",
         "org.danilopianini:listset"
       ],
@@ -14,14 +14,14 @@
     },
     {
       "description": "Some updates should have type docs",
-      "matchPackageNames": [
+      "matchDepNames": [
         "org.jetbrains.dokka"
       ],
       "semanticCommitType": "docs"
     },
     {
       "description": "Identify some updates as core",
-      "matchPackageNames": [
+      "matchDepNames": [
         "org.jetbrains.kotlin.jvm",
         "org.jetbrains.kotlin:kotlin-stdlib",
         "org.protelis:protelis",

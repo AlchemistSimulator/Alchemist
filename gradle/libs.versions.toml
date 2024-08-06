@@ -156,7 +156,7 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.65.0"
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
-multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:1.2.2"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:1.2.3"
 publishOnCentral = "org.danilopianini.publish-on-central:5.1.4"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"
 scalatest = "com.github.maiflai.scalatest:0.32"

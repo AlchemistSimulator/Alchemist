@@ -186,9 +186,8 @@
   "org.scala-lang/scala-library/2.13.14": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.14"
   },
-  "org.slf4j/slf4j-api/2.0.14": {
-    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.14",
-    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.14/element-list"
+  "org.slf4j/slf4j-api/2.0.15": {
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.15"
   },
   "org.yaml/snakeyaml/2.2": {
     "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.2",

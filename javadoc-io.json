@@ -170,7 +170,8 @@
     "second": "https://javadoc.io/doc/org.jooq/jool/0.9.15/element-list"
   },
   "org.mongodb/mongodb-driver-sync/5.1.3": {
-    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.1.3"
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.1.3",
+    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.1.3/element-list"
   },
   "org.protelis/protelis-interpreter/17.3.44": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.44",
@@ -187,7 +188,8 @@
     "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.14"
   },
   "org.slf4j/slf4j-api/2.0.15": {
-    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.15"
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.15",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.15/element-list"
   },
   "org.yaml/snakeyaml/2.2": {
     "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.2",

@@ -6,3 +6,4 @@
 	path = external-resources/learning-scafi-alchemist
 	url = https://github.com/scafi/learning-scafi-alchemist.git
 	shallow = true
+	branch = 1.0.0

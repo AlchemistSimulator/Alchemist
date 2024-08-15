@@ -48,9 +48,8 @@
   "com.uchuhimo/konf/1.1.2": {
     "first": "https://javadoc.io/doc/com.uchuhimo/konf/1.1.2"
   },
-  "commons-cli/commons-cli/1.8.0": {
-    "first": "https://javadoc.io/doc/commons-cli/commons-cli/1.8.0",
-    "second": "https://javadoc.io/doc/commons-cli/commons-cli/1.8.0/element-list"
+  "commons-cli/commons-cli/1.9.0": {
+    "first": "https://javadoc.io/doc/commons-cli/commons-cli/1.9.0"
   },
   "commons-codec/commons-codec/1.17.1": {
     "first": "https://javadoc.io/doc/commons-codec/commons-codec/1.17.1",

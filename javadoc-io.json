@@ -33,9 +33,8 @@
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.11.0",
     "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.11.0/element-list"
   },
-  "com.google.guava/guava/33.2.1-jre": {
-    "first": "https://javadoc.io/doc/com.google.guava/guava/33.2.1-jre",
-    "second": "https://javadoc.io/doc/com.google.guava/guava/33.2.1-jre/element-list"
+  "com.google.guava/guava/33.3.0-jre": {
+    "first": "https://javadoc.io/doc/com.google.guava/guava/33.3.0-jre"
   },
   "com.graphhopper/graphhopper-core/9.1": {
     "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/9.1",

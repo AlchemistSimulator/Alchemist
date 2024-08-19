@@ -11,15 +11,24 @@ package it.unibo.alchemist.boundary.extractors
 
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
 
 /**
- * Exports the positions of all nodes in the environment, assuming [nodesCount] nodes.
+ * Exports the positions of all nodes in the environment.
  * The output is a table where for each node there are two columns, one for the x coordinate and one for the y coordinate.
+ *
+ * Note: this exporter is not designed to handle changes in the environment topology like node removal or addition.
  */
-class NodesPositions(private val nodesCount: Int) : AbstractDoubleExporter() {
-    override val columnNames: List<String> = (0 until nodesCount)
-        .flatMap { listOf(columnNameFormat(it, "x"), columnNameFormat(it, "y")) }
+class NodesPositions<T, P : Position<P>>(private val environment: Environment<T, P>) : AbstractDoubleExporter() {
+    override val columnNames: List<String> by lazy {
+        (0 until environment.nodeCount)
+            .flatMap { listOf(columnNameFormat(it, "x"), columnNameFormat(it, "y")) }
+    }
+    private val expectedNodesCount: Int by lazy { environment.nodeCount }
+    private val maxNodeId: Int by lazy {
+        environment.nodes.maxOfOrNull { it.id } ?: error("No nodes in the environment")
+    }
 
     override fun <T> extractData(
         environment: Environment<T, *>,
@@ -27,9 +36,7 @@ class NodesPositions(private val nodesCount: Int) : AbstractDoubleExporter() {
         time: Time,
         step: Long,
     ): Map<String, Double> {
-        require(nodesCount == environment.nodeCount) {
-            "The number of nodes in the environment is ${environment.nodeCount}, but $nodesCount was expected"
-        }
+        checkExtractCondition(environment)
         return environment.nodes
             .flatMap {
                 val nodeId = it.id
@@ -40,6 +47,21 @@ class NodesPositions(private val nodesCount: Int) : AbstractDoubleExporter() {
                 )
             }
             .toMap()
+    }
+
+    private fun <T> checkExtractCondition(environment: Environment<T, *>) {
+        require(expectedNodesCount == environment.nodeCount) {
+            "The number of nodes in the environment is ${environment.nodeCount}, but $expectedNodesCount was expected"
+        }
+        val currentMaxNodeId = environment.nodes.maxOfOrNull { it.id } ?: error("No nodes in the environment")
+        require(maxNodeId == currentMaxNodeId) {
+            """
+                The maximum node ID in the environment is $currentMaxNodeId, but $maxNodeId was expected.
+                
+                This is likely due to a change in the environment topology like a node removal or addition.
+                This exporter is not designed to handle such changes.
+            """.trimIndent()
+        }
     }
 
     companion object {

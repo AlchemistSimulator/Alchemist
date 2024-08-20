@@ -16,14 +16,17 @@ import it.unibo.alchemist.model.Time
 
 /**
  * Exports the positions of all nodes in the environment.
- * The output is a table where for each node there are two columns, one for the x coordinate and one for the y coordinate.
+ * The output is a table where, for each node, there is a column per dimension.
  *
  * Note: this exporter is not designed to handle changes in the environment topology like node removal or addition.
  */
 class NodesPositions<T, P : Position<P>>(private val environment: Environment<T, P>) : AbstractDoubleExporter() {
     override val columnNames: List<String> by lazy {
-        (0 until environment.nodeCount)
-            .flatMap { listOf(columnNameFormat(it, "x"), columnNameFormat(it, "y")) }
+        (0 until environment.nodeCount).flatMap { nodeId ->
+            (0 until environment.dimensions).map { dimensionIndex ->
+                columnNameFormat(nodeId, Dimension(dimensionIndex))
+            }
+        }
     }
     private val expectedNodesCount: Int by lazy { environment.nodeCount }
     private val maxNodeId: Int by lazy {
@@ -41,10 +44,9 @@ class NodesPositions<T, P : Position<P>>(private val environment: Environment<T,
             .flatMap {
                 val nodeId = it.id
                 val nodePosition = environment.getPosition(it)
-                listOf(
-                    columnNameFormat(nodeId, "x") to nodePosition.getCoordinate(0),
-                    columnNameFormat(nodeId, "y") to nodePosition.getCoordinate(1),
-                )
+                nodePosition.coordinates.mapIndexed { index, coordinate ->
+                    columnNameFormat(nodeId, Dimension(index)) to coordinate
+                }
             }
             .toMap()
     }
@@ -65,6 +67,13 @@ class NodesPositions<T, P : Position<P>>(private val environment: Environment<T,
     }
 
     companion object {
-        private fun columnNameFormat(nodeIndex: Int, coordinateName: String): String = "node-$nodeIndex@$coordinateName"
+
+        @JvmInline
+        private value class Dimension(val index: Int) {
+            val symbol: String get() = "xyzwvu".getOrNull(index)?.toString() ?: "d$index"
+        }
+
+        private fun columnNameFormat(nodeIndex: Int, dimension: Dimension): String =
+            "node-$nodeIndex-${dimension.symbol}"
     }
 }

@@ -276,6 +276,15 @@ allprojects {
         enabled = false
     }
 
+    /*
+     * Work around:
+     * Task ':...:dokkaJavadoc' uses this output of task ':...:jar' without declaring an explicit or implicit dependency.
+     * This can lead to incorrect results being produced, depending on what order the tasks are executed.
+     */
+    tasks.withType<AbstractDokkaLeafTask>().configureEach {
+        dependsOn(tasks.jar)
+    }
+
     if (isInCI) {
         signing {
             val signingKey: String? by project
@@ -417,11 +426,10 @@ tasks {
     }
 
     mapOf("javadoc" to dokkaJavadocCollector, "kdoc" to dokkaHtmlMultiModule, "plainkdoc" to dokkaHtmlCollector)
-        .mapValues { it.value.get() }
-        .forEach { (folder, task) ->
-            hugoBuild.configure { dependsOn(task) }
+        .forEach { (folder, taskContainer) ->
+            hugoBuild.configure { dependsOn(taskContainer) }
             val copyTask = register<Copy>("copy${folder.replaceFirstChar { it.titlecase() }}IntoWebsite") {
-                from(task.outputDirectory)
+                from(taskContainer.map { it.outputDirectory })
                 into(File(websiteDir, "reference/$folder"))
                 finalizedBy(performWebsiteStringReplacements)
             }

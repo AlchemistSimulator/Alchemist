@@ -27,6 +27,7 @@ import org.gradle.kotlin.dsl.withType
 import org.gradle.plugin.use.PluginDependency
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.net.URI
 import java.net.URL
 
 /**
@@ -50,7 +51,7 @@ object Util {
     private val gson = Gson().newBuilder().setPrettyPrinting().create()
     private val mapType = object : TypeToken<MutableMap<String, Pair<URL, URL?>>>() { }.type
 
-    private val javadocIO: MutableMap<String, Pair<URL, URL?>> = javadocIOcacheFile
+    private val javadocIO: MutableMap<String, Pair<URI, URI?>> = javadocIOcacheFile
         .takeIf(File::exists)
         ?.let { gson.fromJson(it.readText(), mapType) }
         ?: mutableMapOf()
@@ -60,7 +61,7 @@ object Util {
      *
      * @return a [Pair] with the URL as a first element, and the packageList URL as second element.
      */
-    fun Project.fetchJavadocIOForDependency(dependency: Dependency): Pair<URL, URL>? = dependency
+    fun Project.fetchJavadocIOForDependency(dependency: Dependency): Pair<URI, URI>? = dependency
         .takeIf { it is ExternalDependency }
         ?.run {
             synchronized(javadocIO) {
@@ -70,12 +71,12 @@ object Util {
                     logger.lifecycle("Checking javadoc.io for unknown dependency {}:{}:{}", group, name, version)
                     val urlString = "https://javadoc.io/doc/$descriptor"
                     val packageList = listOf("package-list", "element-list")
-                        .map { URL("$urlString/$it") }
-                        .firstOrNull { runCatching { it.openStream() }.isSuccess }
+                        .map { URI("$urlString/$it") }
+                        .firstOrNull { runCatching { it.toURL().openStream() }.isSuccess }
                     if (packageList == null) {
                         logger.lifecycle("javadoc.io has docs for {}:{}:{}! > {}", group, name, version, urlString)
                     }
-                    URL(urlString) to packageList
+                    URI(urlString) to packageList
                 }
                 if (javadocIO.size != size) {
                     logger.lifecycle("Caching javadoc.io information for {} at {}", descriptor, javadocIOURLs.first)

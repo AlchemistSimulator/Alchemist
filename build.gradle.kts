@@ -133,8 +133,8 @@ allprojects {
                         if (javadocIOURLs != null) {
                             val (javadoc, packageList) = javadocIOURLs
                             externalDocumentationLink {
-                                url.set(javadoc)
-                                packageListUrl.set(packageList)
+                                url.set(javadoc.toURL())
+                                packageListUrl.set(packageList.toURL())
                             }
                         }
                     }

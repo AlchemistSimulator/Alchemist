@@ -21,7 +21,6 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.VerificationTask
-import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugin.use.PluginDependency
@@ -94,7 +93,7 @@ object Util {
         jarFile.get().asFile.nameWithoutExtension
             .removeSuffix("-all")
             .removePrefix("alchemist-")
-            .capitalized()
+            .replaceFirstChar { it.titlecaseChar() }
             .replace(Regex("-([a-z])")) { it.groupValues[1].uppercase() }
             .replace("-", "")
         }ShadowJarOutput"

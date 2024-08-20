@@ -74,14 +74,12 @@ kotlin {
     }
 }
 
-publishing.publications {
-    withType<MavenPublication> {
-        pom {
-            contributors {
-                contributor {
-                    name.set("Angelo Filaseta")
-                    email.set("angelo.filaseta@studio.unibo.it")
-                }
+publishing.publications.withType<MavenPublication>().configureEach {
+    pom {
+        contributors {
+            contributor {
+                name.set("Angelo Filaseta")
+                email.set("angelo.filaseta@studio.unibo.it")
             }
         }
     }

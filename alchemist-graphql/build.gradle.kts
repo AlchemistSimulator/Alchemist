@@ -9,9 +9,9 @@
 
 import Libs.alchemist
 import Libs.incarnation
+import Util.allVerificationTasks
 import com.apollographql.apollo3.gradle.internal.ApolloGenerateSourcesTask
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
-import io.gitlab.arturbosch.detekt.Detekt
 import java.io.File.separator
 
 plugins {
@@ -110,13 +110,14 @@ apollo {
     }
 }
 
-tasks.withType<ApolloGenerateSourcesTask>().configureEach {
+val apolloGenerationTasks = tasks.withType<ApolloGenerateSourcesTask>()
+apolloGenerationTasks.configureEach {
     dependsOn(surrogates.tasks.named("graphqlGenerateSDL"))
 }
 
-fun PatternFilterable.excludeGenerated() = exclude { "build${separator}generated" in it.file.absolutePath }
-tasks.withType<Detekt>().configureEach { excludeGenerated() }
-ktlint { filter { excludeGenerated() } }
+tasks.allVerificationTasks.configureEach { dependsOn(apolloGenerationTasks) }
+
+ktlint { filter { exclude { "build${separator}generated" in it.file.absolutePath } } }
 
 publishing.publications {
     withType<MavenPublication> {

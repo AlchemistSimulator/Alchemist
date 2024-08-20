@@ -17,8 +17,13 @@ import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.SourceTask
+import org.gradle.api.tasks.TaskCollection
+import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.VerificationTask
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.withType
 import org.gradle.plugin.use.PluginDependency
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -140,4 +145,7 @@ object Util {
     val Project.isMultiplatform get() = listOf("common", "jvm", "js", "native").any { platform ->
         listOf("Main", "Test").any { suffix -> projectDir.resolve("src/${platform}${suffix}").exists() }
     }
+
+    val TaskContainer.allVerificationTasks get(): TaskCollection<SourceTask> =
+        this.withType<SourceTask>().matching { it is VerificationTask }
 }

@@ -9,6 +9,7 @@
 
 import Libs.alchemist
 import Libs.incarnation
+import Util.allVerificationTasks
 import Util.currentCommitHash
 import Util.fetchJavadocIOForDependency
 import Util.id
@@ -16,9 +17,9 @@ import Util.isInCI
 import Util.isMac
 import Util.isMultiplatform
 import Util.isWindows
+import com.github.spotbugs.snom.SpotBugsTask
 import org.danilopianini.gradle.mavencentral.JavadocJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.AbstractDokkaParentTask
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
@@ -258,7 +259,11 @@ allprojects {
         }
     }
 
-    tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
+    tasks.allVerificationTasks.configureEach {
+        exclude { "generated" in it.file.absolutePath }
+    }
+
+    tasks.withType<SpotBugsTask>().configureEach {
         reports {
             create("html") { enabled = true }
         }
@@ -371,7 +376,7 @@ tasks {
     val alchemistLogo = file("site/static/images/logo.svg")
     for (docTaskProvider in listOf<Provider<out AbstractDokkaParentTask>>(dokkaHtmlCollector, dokkaHtmlMultiModule)) {
         val docTask = docTaskProvider.get()
-        val copyLogo = register<Copy>("copyLogoFor${docTask.name.capitalized()}") {
+        val copyLogo = register<Copy>("copyLogoFor${ docTask.name.replaceFirstChar { it.titlecase() } }") {
             from(alchemistLogo)
             into(docTask.outputDirectory.map { File(it.asFile, "images") })
             rename("logo.svg", "logo-icon.svg")
@@ -415,7 +420,7 @@ tasks {
         .mapValues { it.value.get() }
         .forEach { (folder, task) ->
             hugoBuild.configure { dependsOn(task) }
-            val copyTask = register<Copy>("copy${folder.capitalized()}IntoWebsite") {
+            val copyTask = register<Copy>("copy${folder.replaceFirstChar { it.titlecase() }}IntoWebsite") {
                 from(task.outputDirectory)
                 into(File(websiteDir, "reference/$folder"))
                 finalizedBy(performWebsiteStringReplacements)

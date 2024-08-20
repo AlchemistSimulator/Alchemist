@@ -8,6 +8,7 @@
  */
 
 import Libs.alchemist
+import Util.allVerificationTasks
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.dokka.gradle.DokkaTask
@@ -85,21 +86,17 @@ tasks {
     }
 }
 
-val sourceSetsToCheck = listOf(project.sourceSets.main.get(), project.sourceSets.test.get())
-checkstyle {
-    sourceSets = sourceSetsToCheck
-}
-
-pmd {
-    sourceSets = sourceSetsToCheck
-}
-
-tasks.withType<Pmd> {
-    exclude("**/internal/biochemistry/dsl/**")
-}
-
 spotbugs {
-    onlyAnalyze.value(sourceSetsToCheck.map { it.toString() })
+    val sourcesToAnalyze = project.sourceSets.main.flatMap { main ->
+        project.sourceSets.test.map { test ->
+            listOf(main, test).map { it.toString() }
+        }
+    }
+    onlyAnalyze.set(sourcesToAnalyze)
+}
+
+tasks.allVerificationTasks.configureEach {
+    dependsOn(tasks.generateGrammarSource)
 }
 
 publishing.publications {

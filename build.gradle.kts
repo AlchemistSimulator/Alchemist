@@ -22,6 +22,7 @@ import org.danilopianini.gradle.mavencentral.JavadocJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.AbstractDokkaParentTask
+import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.time.Duration
@@ -281,7 +282,7 @@ allprojects {
      * Task ':...:dokkaJavadoc' uses this output of task ':...:jar' without declaring an explicit or implicit dependency.
      * This can lead to incorrect results being produced, depending on what order the tasks are executed.
      */
-    tasks.withType<AbstractDokkaLeafTask>().configureEach {
+    tasks.withType<AbstractDokkaTask>().configureEach {
         dependsOn(tasks.jar)
     }
 
@@ -435,4 +436,15 @@ tasks {
             }
             hugoBuild.configure { finalizedBy(copyTask) }
         }
+
+    /*
+     * Work around:
+     *
+     * Task ':dokka...Collector' uses this output of task ':<subproject>:jar'
+     * without declaring an explicit or implicit dependency.
+     * This can lead to incorrect results being produced, depending on what order the tasks are executed.
+     */
+    withType<AbstractDokkaParentTask>().configureEach {
+        dependsOn(subprojects.map { it.tasks.jar })
+    }
 }

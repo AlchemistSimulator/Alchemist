@@ -52,11 +52,11 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
     message = s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property",
     body = device => {
       if (param == "send") {
-        val alreadyDone = ScafiIncarnationUtils
+        val alreadyConfigured = ScafiIncarnationUtils
           .allActions[T, P, SendScafiMessage[T, P]](node, classOf[SendScafiMessage[T, P]])
           .map(_.program)
         val scafiProgramsList = ScafiIncarnationUtils.allScafiProgramsFor[T, P](node)
-        scafiProgramsList --= alreadyDone
+        scafiProgramsList --= alreadyConfigured
         if (scafiProgramsList.isEmpty) {
           throw new IllegalStateException(
             "There is no program requiring a " + classOf[SendScafiMessage[T, P]].getSimpleName + " action"
@@ -106,12 +106,12 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
     node,
     message = s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property",
     device => {
-      val alreadyDone = ScafiIncarnationUtils
+      val alreadyConfgiured = ScafiIncarnationUtils
         .allConditionsFor(node, classOf[ScafiComputationalRoundComplete[T]])
         .map(_.asInstanceOf[ScafiComputationalRoundComplete[T]])
         .map(_.program.asInstanceOf[RunScafiProgram[T, P]])
       val scafiProgramList: mutable.Buffer[RunScafiProgram[T, P]] = ScafiIncarnationUtils.allScafiProgramsFor(node)
-      scafiProgramList --= alreadyDone
+      scafiProgramList --= alreadyConfgiured
       if (scafiProgramList.isEmpty) {
         throw new IllegalStateException(
           "There is no program requiring a " +

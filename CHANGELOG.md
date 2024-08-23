@@ -1,3 +1,20 @@
+## [34.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.0...34.1.1) (2024-08-23)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.8 ([7b2894a](https://github.com/AlchemistSimulator/Alchemist/commit/7b2894a0f4a6a7d06bc087f76be2c23dbc148656))
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.17.0 ([2811964](https://github.com/AlchemistSimulator/Alchemist/commit/2811964c12cebf2ceb24a414fb03e061fb865ab7))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.98 ([b629802](https://github.com/AlchemistSimulator/Alchemist/commit/b6298028af003b8423fca05813ba10a0237c7b06))
+
+### Documentation
+
+* **website:** add description of the fieldVMC experiments proposed at ACSOS 2024 ([#3710](https://github.com/AlchemistSimulator/Alchemist/issues/3710)) ([eda5dae](https://github.com/AlchemistSimulator/Alchemist/commit/eda5dae43631ff8f195546d7c527a609af1f5933))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([95ed613](https://github.com/AlchemistSimulator/Alchemist/commit/95ed6139614357336bd8c3fd4c03f8ee313dde2f))
+* **site:** add acsos 2024 imageonomics shocase ([#3711](https://github.com/AlchemistSimulator/Alchemist/issues/3711)) ([2e07f21](https://github.com/AlchemistSimulator/Alchemist/commit/2e07f21617699d445106ad760ddd1a4cdec06321))
+
 ## [34.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/34.0.20...34.1.0) (2024-08-21)
 
 ### Features

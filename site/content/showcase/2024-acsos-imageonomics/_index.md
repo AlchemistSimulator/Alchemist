@@ -36,8 +36,8 @@ their behavior is well-documented, including recent drone studies.
 
 We place UAVs close together in a circular zone with a 200m radius,
 simulating the mission as starting from a random location in the operation area.
-The UAVs have a communication range of 1km and move at a maximum speed of 10 m/s.
-Their FoV is parametrized with R = 100m, B = 18m, β = 80°; these values were selected to match those of a
+The UAVs have a communication range of 1km and move at a maximum speed of {{< math >}}$10 \frac{m}{s}${{< /math >}}.
+Their FoV is parametrized with {{< math >}}$R = 100m${{< /math >}}, {{< math >}}$B = 18m${{< /math >}}, {{< math >}}$\beta = 80°${{< /math >}}; these values were selected to match those of a
 [commercially available quadcopter](https://archive.is/hVoJw).
 
 Periodically, with a frequency of 1Hz, the drones execute a

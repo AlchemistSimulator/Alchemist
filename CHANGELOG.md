@@ -1,3 +1,18 @@
+## [34.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.1...34.1.2) (2024-08-23)
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.99 ([228b671](https://github.com/AlchemistSimulator/Alchemist/commit/228b671531ba549f62def94c407d400753bbdb36))
+* **deps:** update react to v18.3.1-pre.796 ([9be3a13](https://github.com/AlchemistSimulator/Alchemist/commit/9be3a1308e12c3a68fdfba0854b7ab174aa77e08))
+
+### Documentation
+
+* **website:** enable mathjax ([#3714](https://github.com/AlchemistSimulator/Alchemist/issues/3714)) ([2bff78c](https://github.com/AlchemistSimulator/Alchemist/commit/2bff78c4332c58a7506d86c1efd2ec3c09714cb9))
+
+### Refactoring
+
+* **incarnation-scafi:** rename variable for clarity ([#3709](https://github.com/AlchemistSimulator/Alchemist/issues/3709)) ([8b0e4ad](https://github.com/AlchemistSimulator/Alchemist/commit/8b0e4adbc2bc4b465d3e619f7208ea6a426f2bf8))
+
 ## [34.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.0...34.1.1) (2024-08-23)
 
 ### Dependency updates

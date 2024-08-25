@@ -25,9 +25,8 @@
   "com.github.cb372/scalacache-guava_2.13/0.28.0": {
     "first": "https://javadoc.io/doc/com.github.cb372/scalacache-guava_2.13/0.28.0"
   },
-  "com.github.davidmoten/rtree/0.11": {
-    "first": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.11",
-    "second": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.11/package-list"
+  "com.github.davidmoten/rtree/0.12": {
+    "first": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12"
   },
   "com.google.code.gson/gson/2.11.0": {
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.11.0",

@@ -12,7 +12,8 @@
     "second": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-ktor-server/7.1.5/package-list"
   },
   "com.expediagroup/graphql-kotlin-server/7.1.5": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/7.1.5"
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/7.1.5",
+    "second": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/7.1.5/package-list"
   },
   "com.github.ben-manes.caffeine/caffeine/3.1.8": {
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.8",

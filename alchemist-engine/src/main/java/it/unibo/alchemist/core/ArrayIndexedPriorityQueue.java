@@ -134,8 +134,8 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
             final int tabulars = (int) (
                 Math.floor(Math.log(tree.size()) / Math.log(2)) - Math.floor(Math.log(i + 1) / Math.log(2))
             ) + 1;
-            sb.append("\t".repeat(Math.max(0, tabulars)));
-            sb.append(times.get(i));
+            sb.append("\t".repeat(Math.max(0, tabulars)))
+                .append(times.get(i));
             if (i == pow) {
                 exp++;
                 pow = pow + (int) Math.pow(2, exp);

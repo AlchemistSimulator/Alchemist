@@ -15,12 +15,15 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 
+import java.io.Serial;
+
 /**
  *
  * @param <T> concentration type
  */
 public final class SetLocalMoleculeConcentration<T> extends AbstractActionOnSingleMolecule<T> {
 
+    @Serial
     private static final long serialVersionUID = -197253027556270645L;
     private final T val;
 

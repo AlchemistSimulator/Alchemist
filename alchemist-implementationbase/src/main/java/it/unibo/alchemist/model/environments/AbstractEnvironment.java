@@ -37,6 +37,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -65,6 +66,7 @@ import java.util.stream.StreamSupport;
  */
 public abstract class AbstractEnvironment<T, P extends Position<P>> implements Environment<T, P> {
 
+    @Serial
     private static final long serialVersionUID = 0L;
     private final Map<Molecule, Layer<T, P>> layers = new LinkedHashMap<>();
     private final TIntObjectHashMap<Neighborhood<T>> neighCache = new TIntObjectHashMap<>();
@@ -413,6 +415,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return true;
     }
 
+    @Serial
     private void readObject(final ObjectInputStream in) throws ClassNotFoundException, IOException {
         in.defaultReadObject();
         final String name = in.readObject().toString();
@@ -583,6 +586,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         }
     }
 
+    @Serial
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
         out.writeObject(incarnation.getClass().getSimpleName());

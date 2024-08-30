@@ -35,7 +35,7 @@ Here's an example:
 
 When using the `EnvironmentWithDynamics`, any suitable {{%api class=Reaction %}} can be used,
 however, in order to take advantage of the physical micro-interactions between nodes such as avoidance, 
-pushing behavior and falls, derived from the work of [Pelechano et al.](https://bit.ly/3e3C7Tb) you need 
+pushing behavior and falls, derived from the work of [Pelechano et al.](https://doi.org/10.2312/SCA/SCA07/099-108) you need 
 to use the {{%api package=model.cognitive.reactions class=PhysicalBlendedSteering %}}.
 
 Here's an example:

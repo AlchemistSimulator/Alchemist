@@ -66,7 +66,7 @@ these are multiplied to get the final weight.
 ## Physical pedestrians
 
 Physical pedestrians are capable of pushing and bumping into each other.
-Physical pedestrians are inspired to [the work of Pelechano et al](https://bit.ly/3e3C7Tb).
+Physical pedestrians are inspired to [the work of Pelechano et al](https://doi.org/10.2312/SCA/SCA07/099-108).
 
 ## Further references
 [C. Natalie van der Wal, Daniel Formolo, Mark A. Robinson, Michael Minkov, Tibor Bosse\

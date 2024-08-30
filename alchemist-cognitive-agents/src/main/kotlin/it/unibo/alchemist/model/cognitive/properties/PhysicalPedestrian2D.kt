@@ -198,7 +198,8 @@ class PhysicalPedestrian2D<T>(
 
         /**
          * Fallen agent perception radius (in meters).
-         * For further information please refer to the work of [Pelechano et al](https://doi.org/10.2312/SCA/SCA07/099-108).
+         * For further information please refer to the work of
+         * [Pelechano et. al](https://doi.org/10.2312/SCA/SCA07/099-108).
          */
         private const val fallenAgentPerceptionRadius = 1.5
     }

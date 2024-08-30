@@ -1,3 +1,55 @@
+## [34.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.2...34.1.3) (2024-08-30)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.9 ([0b1ffff](https://github.com/AlchemistSimulator/Alchemist/commit/0b1ffffa5cc2b18baea9e0e198e98faa40cda8f8))
+* **deps:** update dependency com.github.davidmoten:rtree to v0.12 ([893d538](https://github.com/AlchemistSimulator/Alchemist/commit/893d5385a3a07ce4e5afd436ddcea8e3bb8240a1))
+* **deps:** update dependency org.apache.commons:commons-lang3 to v3.17.0 ([a6099a1](https://github.com/AlchemistSimulator/Alchemist/commit/a6099a16f8bbf065b450adfcd8a8e6fb76baed98))
+* **deps:** update dependency org.danilopianini:jirf to v0.4.25 ([c712f39](https://github.com/AlchemistSimulator/Alchemist/commit/c712f393af20f7af92da1cc33b57fcd821eb0911))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.7.2 ([b647882](https://github.com/AlchemistSimulator/Alchemist/commit/b6478826167204a7a779d3b604d040e802ccb8b7))
+* **deps:** update dependency org.mockito:mockito-core to v5.13.0 ([d86b733](https://github.com/AlchemistSimulator/Alchemist/commit/d86b7334a2a7a945050c358dba8c18bdebc74047))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.100 ([7a7ed23](https://github.com/AlchemistSimulator/Alchemist/commit/7a7ed233f99acae80baf119d2e968f73a81826d9))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.101 ([c5b7d7f](https://github.com/AlchemistSimulator/Alchemist/commit/c5b7d7f37ff66ac0077a2facdeabcf6fefa1e34c))
+* **deps:** update gohugoio/hugo action to v0.133.1 ([fbcff7b](https://github.com/AlchemistSimulator/Alchemist/commit/fbcff7b7fbb5e3052e789ec717386b735327663c))
+* **deps:** update graphql to v7.1.5 ([9e64c79](https://github.com/AlchemistSimulator/Alchemist/commit/9e64c795159fec0f7667e6f5d265bc4f99f7416b))
+* **deps:** update graphql to v8 ([3fe67c8](https://github.com/AlchemistSimulator/Alchemist/commit/3fe67c87df6e807398f8580fce4c08e388742165))
+* **deps:** update node.js to 20.17 ([1189d1a](https://github.com/AlchemistSimulator/Alchemist/commit/1189d1a692b5f334d02341a472f305b1ed583ee9))
+* **deps:** update react to v18.3.1-pre.797 ([531901e](https://github.com/AlchemistSimulator/Alchemist/commit/531901e974e6c06cb7a3f9df6e83e9d2b3cda288))
+* **deps:** update react to v18.3.1-pre.798 ([5da0081](https://github.com/AlchemistSimulator/Alchemist/commit/5da00813d61349fd1a6fbe5e3f6a6e5a925ee31e))
+* **deps:** update react to v18.3.1-pre.799 ([82fdb6b](https://github.com/AlchemistSimulator/Alchemist/commit/82fdb6b01146fabe4aad9734925ab9ff986e61c2))
+
+### Documentation
+
+* **website:** replace broken link with DOI reference ([a173999](https://github.com/AlchemistSimulator/Alchemist/commit/a173999f2191433834479c1483ba9e5aefb1e71e))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.4 ([17ccf03](https://github.com/AlchemistSimulator/Alchemist/commit/17ccf03953fe0d3f2f9e8ab1e26b0442a57d78bc))
+* **deps:** update fedora docker tag to v42 ([c1af05c](https://github.com/AlchemistSimulator/Alchemist/commit/c1af05c8fc2d9408d9baf53e9036199f9b758d1f))
+* drop disabled kotlin compiler option `allow-result-return-type` ([1f0861d](https://github.com/AlchemistSimulator/Alchemist/commit/1f0861da0f082f58e096c0df4ed11195572311c3))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([b9bee73](https://github.com/AlchemistSimulator/Alchemist/commit/b9bee73598203cd9b38d3e38d300b0a11dcf1126))
+* **build:** update the javadoc.io cache ([2133027](https://github.com/AlchemistSimulator/Alchemist/commit/2133027a92d845ea08b1e556a3a8b05c8d994c05))
+* **build:** update the javadoc.io cache ([bd2b5b8](https://github.com/AlchemistSimulator/Alchemist/commit/bd2b5b8b72ad0aaeaae7d97afa20754a0df416d6))
+* **build:** update the javadoc.io cache ([dbec437](https://github.com/AlchemistSimulator/Alchemist/commit/dbec4370e2bd983b9dc750528c374b8d31cc2950))
+* **build:** update the javadoc.io cache ([77a5d8a](https://github.com/AlchemistSimulator/Alchemist/commit/77a5d8a2130cbbf41099c5e819e8d93ed338c72b))
+* **build:** update the javadoc.io cache ([5570ce9](https://github.com/AlchemistSimulator/Alchemist/commit/5570ce946895a7c1886d4cf57d4fdd032c637f0d))
+* **build:** update the javadoc.io cache ([0e7c976](https://github.com/AlchemistSimulator/Alchemist/commit/0e7c976ef2330808ab9af9bf44ce1220f49db195))
+* **build:** update the javadoc.io cache ([9299a06](https://github.com/AlchemistSimulator/Alchemist/commit/9299a0637f29ebd1f41c12033124c68fe3c31a00))
+* **build:** update the javadoc.io cache ([71108b8](https://github.com/AlchemistSimulator/Alchemist/commit/71108b8e10c712fb51f1f3c5e0b33727362154ed))
+* **build:** update the javadoc.io cache ([cfce7ed](https://github.com/AlchemistSimulator/Alchemist/commit/cfce7ed5387f8d36d0630fd8fef7881d3ecc9233))
+
+### Style improvements
+
+* **cognitive-agents:** shorten long line ([a04706a](https://github.com/AlchemistSimulator/Alchemist/commit/a04706a16d825fc71797cda8eb36a4fe34068e1a))
+* **engine:** replace call with method chaining ([3d75f8a](https://github.com/AlchemistSimulator/Alchemist/commit/3d75f8a21578cc8a3de96dc33a6fe8667ab6240d))
+* **implementationbase:** annotate `AbstractEnvironment`'s serialization methods and fields with `@Serialize` ([fd8e1a9](https://github.com/AlchemistSimulator/Alchemist/commit/fd8e1a9ed3406eaa458412381f9e997ec0fb3351))
+* **implementationbase:** annotate field with `@Serial` ([21b98ea](https://github.com/AlchemistSimulator/Alchemist/commit/21b98eaa209d094040b8fc6c2d8cb85b2f2b6c2c))
+* **implementationbase:** improve readability in `AbstractEnvironment` ([379a2b5](https://github.com/AlchemistSimulator/Alchemist/commit/379a2b5a2196978e5de12b828bf6dea3f8fe077e))
+* **implementationbase:** replace explicit type arguments with a diamond ([e54e7fa](https://github.com/AlchemistSimulator/Alchemist/commit/e54e7fadbf5b2076b80bb6054049711968f71859))
+
 ## [34.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.1...34.1.2) (2024-08-23)
 
 ### Dependency updates

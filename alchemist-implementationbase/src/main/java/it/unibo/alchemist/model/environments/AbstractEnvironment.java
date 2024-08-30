@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -47,7 +46,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -557,11 +555,13 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
             /*
              * Add the node to all gained neighbors' neighborhoods
              */
-            for (final Node<T> newNeighbor: Sets.difference(newNeighborhood.getNeighbors(),
-                    Optional.ofNullable(oldNeighborhood)
-                            .map(Neighborhood::getNeighbors)
-                            .map(it -> (Set<? extends Node<T>>) it)
-                            .orElse(Collections.emptySet()))) {
+            final var newNeighbors = Sets.difference(
+                newNeighborhood.getNeighbors(),
+                Optional.ofNullable(oldNeighborhood)
+                    .map(Neighborhood::getNeighbors)
+                    .orElse(ListSets.emptyListSet())
+            );
+            for (final Node<T> newNeighbor: newNeighbors) {
                 neighCache.put(newNeighbor.getId(), neighCache.get(newNeighbor.getId()).add(node));
                 if (!isNewNode) {
                     ifEngineAvailable(s -> s.neighborAdded(node, newNeighbor));

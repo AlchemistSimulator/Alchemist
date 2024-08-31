@@ -114,7 +114,8 @@
     "second": "https://javadoc.io/doc/org.danilopianini/java-quadtree/0.2.1/package-list"
   },
   "org.danilopianini/jirf/0.4.25": {
-    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.25"
+    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.25",
+    "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.25/element-list"
   },
   "org.danilopianini/listset/0.3.9": {
     "first": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9",
@@ -187,8 +188,8 @@
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.16",
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.16/element-list"
   },
-  "org.yaml/snakeyaml/2.2": {
-    "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.2",
-    "second": "https://javadoc.io/doc/org.yaml/snakeyaml/2.2/element-list"
+  "org.yaml/snakeyaml/2.3": {
+    "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.3",
+    "second": "https://javadoc.io/doc/org.yaml/snakeyaml/2.3/element-list"
   }
 }

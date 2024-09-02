@@ -7,29 +7,24 @@
     {
       "description": "Trigger a minor update on some dependencies",
       "matchDepNames": [
-        "org.apache.commons:commons-math3",
-        "org.danilopianini:listset"
+        "^org\\.apache\\.commons:commons-math3$",
+        "^org\\.danilopianini:listset$"
       ],
       "semanticCommitScope": "api-deps"
     },
     {
       "description": "Some updates should have type docs",
       "matchDepNames": [
-        "org.jetbrains.dokka"
+        "^org\\.jetbrains\\.dokka.*"
       ],
       "semanticCommitType": "docs"
     },
     {
       "description": "Identify some updates as core",
       "matchDepNames": [
-        "org.jetbrains.kotlin.jvm",
-        "org.jetbrains.kotlin:kotlin-stdlib",
-        "org.protelis:protelis",
-        "org.protelis:protelis-interpreter",
-        "org.protelis:protelis-lang"
-      ],
-      "matchPackagePrefixes": [
-        "it.unibo.scafi"
+        "^it\\.unibo\\scafi:.*",
+        "^org\\.jetbrains\\.kotlin:.*",
+        "^org\\.protelis:.*"
       ],
       "semanticCommitScope": "core-deps"
     },

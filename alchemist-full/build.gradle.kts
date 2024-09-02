@@ -12,7 +12,6 @@ import Util.isWindows
 import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.google.common.hash.Hashing
-import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.daemon.common.toHexString
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import org.panteleyev.jpackage.ImageType
@@ -200,7 +199,8 @@ validFormats.forEach { packaging: ValidPackaging ->
             else -> version
         }
     }
-    val packagingTaskNameSuffix = "${packaging.name.capitalized()}${"PerUser".takeIf { packaging.perUser }.orEmpty()}"
+    val packagingTaskNameSuffix = packaging.name.replaceFirstChar { it.titlecase() } +
+        "PerUser".takeIf { packaging.perUser }.orEmpty()
     val packagingTask = tasks.register<JPackageTask>("jpackage$packagingTaskNameSuffix") {
         dependsOn(tasks.shadowJar)
 

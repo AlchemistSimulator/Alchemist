@@ -11,8 +11,8 @@ import Util.isMac
 import Util.isWindows
 import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.google.common.hash.Hashing
 import org.gradle.configurationcache.extensions.capitalized
-import org.jetbrains.kotlin.com.intellij.util.io.Murmur3_32Hash
 import org.jetbrains.kotlin.daemon.common.toHexString
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import org.panteleyev.jpackage.ImageType
@@ -30,6 +30,12 @@ plugins {
     application
     alias(libs.plugins.jpackage)
     alias(libs.plugins.shadowJar)
+}
+
+buildscript {
+    dependencies {
+        classpath(libs.guava)
+    }
 }
 
 kotlin {
@@ -168,11 +174,12 @@ disabledFormats.filterIsInstance<DisabledPackaging>().forEach { logger.warn(it.r
 val versionComponentExtractor = Regex("^(\\d+\\.\\d+\\.)(\\d+)(.*)$")
 private data class SemVerExtracted(val base: String, val patch: String, val suffix: String) {
     fun asMangledVersion(): String = "${base}0${patch}0${
-        if (suffix.isEmpty()) {
-            ""
-        } else {
-            val asBytes = suffix.toByteArray(StandardCharsets.UTF_8)
-            Murmur3_32Hash.MURMUR3_32.hashBytes(asBytes, 0, asBytes.size).toUInt().toString()
+        when {
+            suffix.isBlank() -> ""
+            else -> {
+                val asBytes = suffix.toByteArray(StandardCharsets.UTF_8)
+                Hashing.murmur3_32_fixed().hashBytes(asBytes).padToLong().toUInt().toString()
+            }
         }
     }"
 }

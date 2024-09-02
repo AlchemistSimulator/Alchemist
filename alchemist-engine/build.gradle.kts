@@ -58,9 +58,3 @@ publishing.publications {
         }
     }
 }
-
-tasks.compileTestKotlin.configure {
-    compilerOptions {
-        freeCompilerArgs.add("-Xcontext-receivers")
-    }
-}

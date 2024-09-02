@@ -10,7 +10,6 @@
 package it.unibo.alchemist.core
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.core.spec.style.scopes.StringSpecScope
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
@@ -24,43 +23,62 @@ import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 
-private fun <T> Incarnation<T, Euclidean2DPosition>.environment(
-    configuration: Environment<T, Euclidean2DPosition>.() -> Unit,
-): Environment<T, Euclidean2DPosition> = Continuous2DEnvironment(this@Incarnation).apply {
-    linkingRule = ConnectWithinDistance(1.0)
-    configuration()
+private data class RandomContext(val randomGenerator: RandomGenerator)
+
+private data class IncarnationContext<T>(
+    val randomGenerator: RandomGenerator,
+    val incarnation: Incarnation<T, Euclidean2DPosition>,
+) {
+
+    fun environment(
+        configuration: EnvironmentContext<T>.() -> Unit,
+    ): Environment<T, Euclidean2DPosition> = EnvironmentContext(
+        randomGenerator,
+        incarnation,
+        Continuous2DEnvironment(incarnation).apply {
+            linkingRule = ConnectWithinDistance(1.0)
+        },
+    ).apply(configuration).environment
 }
 
-context(RandomGenerator, Incarnation<T, Euclidean2DPosition>)
-private fun <T> Environment<T, Euclidean2DPosition>.node(
-    x: Number,
-    y: Number,
-    configuration: Node<T>.() -> Unit,
-): Node<T> = createNode(this@RandomGenerator, this, null).apply {
-    configuration()
-    addNode(this, makePosition(x, y))
+private data class EnvironmentContext<T>(
+    val randomGenerator: RandomGenerator,
+    val incarnation: Incarnation<T, Euclidean2DPosition>,
+    val environment: Environment<T, Euclidean2DPosition>,
+) {
+    fun Node<T>.reaction(configuration: String): Reaction<T> = incarnation.createReaction(
+        randomGenerator,
+        environment,
+        this,
+        ExponentialTime(1.0, randomGenerator),
+        configuration,
+    ).also { addReaction(it) }
+
+    fun node(
+        x: Number,
+        y: Number,
+        configuration: Node<T>.() -> Unit,
+    ): Node<T> = incarnation.createNode(randomGenerator, environment, null).apply {
+        configuration()
+        environment.addNode(this, environment.makePosition(x, y))
+    }
 }
 
-context(RandomGenerator, Incarnation<T, Euclidean2DPosition>, Environment<T, Euclidean2DPosition>)
-private fun <T> Node<T>.reaction(configuration: String): Reaction<T> = createReaction(
-    this@RandomGenerator,
-    this@Environment,
-    this,
-    ExponentialTime(1.0, this@RandomGenerator),
-    configuration,
-).also { addReaction(it) }
+private fun withRandom(randomGenerator: RandomGenerator, block: RandomContext.() -> Unit) {
+    RandomContext(randomGenerator).block()
+}
 
-context(Map<Int, Map<String, Reaction<Double>>>)
-private fun String.inNode(id: Int): Reaction<Double> = this@Map[id]!![this]!!
-
-context(StringSpecScope, Map<Int, Map<String, Reaction<Double>>>, DependencyGraph<Double>)
-private fun Reaction<Double>.mustHaveOutBoundDependencies(vararg dependencies: Reaction<Double>) =
-    outboundDependencies(this).toList() shouldContainExactlyInAnyOrder dependencies.toList()
+private fun <T> RandomContext.withIncarnation(
+    incarnation: Incarnation<T, Euclidean2DPosition>,
+    block: IncarnationContext<T>.() -> Unit,
+) {
+    IncarnationContext(randomGenerator, incarnation).block()
+}
 
 class TestDependencyGraph : StringSpec(
     {
-        with(MersenneTwister(10)) {
-            with(BiochemistryIncarnation()) {
+        withRandom(MersenneTwister(10)) {
+            withIncarnation(BiochemistryIncarnation()) {
                 val reactions: MutableMap<Int, Map<String, Reaction<Double>>> = mutableMapOf()
                 val environment = environment {
                     fun Node<Double>.configureNode(): Map<String, Reaction<Double>> = listOf(
@@ -72,28 +90,29 @@ class TestDependencyGraph : StringSpec(
                     node(0, 0) { reactions += id to configureNode() }
                     node(0.5, 0) { reactions += id to configureNode() }
                 }
-                with(reactions) {
-                    with(JGraphTDependencyGraph(environment)) {
-                        asSequence().flatMap { it.value.asSequence() }.map { it.value }.forEach {
-                            createDependencies(it)
-                        }
-                        "local reactions on separate nodes should be isolated" {
-                            (0..1).forEach { id ->
-                                "[a]-->[b]".inNode(id).mustHaveOutBoundDependencies(
-                                    "[a]-->[c]".inNode(id),
-                                    "[b]-->[c]".inNode(id),
-                                )
-                                "[a]-->[c]".inNode(id).mustHaveOutBoundDependencies(
-                                    "[a]-->[b]".inNode(id),
-                                    "[c]-->[b]".inNode(id),
-                                )
-                                "[b]-->[c]".inNode(id).mustHaveOutBoundDependencies(
-                                    "[c]-->[b]".inNode(id),
-                                )
-                                "[c]-->[b]".inNode(id).mustHaveOutBoundDependencies(
-                                    "[b]-->[c]".inNode(id),
-                                )
-                            }
+                fun String.inNode(id: Int): Reaction<Double> = reactions.getValue(id).getValue(this)
+                with(JGraphTDependencyGraph(environment)) {
+                    reactions.asSequence().flatMap { it.value.asSequence() }.map { it.value }.forEach {
+                        createDependencies(it)
+                    }
+                    fun Reaction<Double>.mustHaveOutBoundDependencies(vararg dependencies: Reaction<Double>) =
+                        outboundDependencies(this).toList() shouldContainExactlyInAnyOrder dependencies.toList()
+                    "local reactions on separate nodes should be isolated" {
+                        (0..1).forEach { id ->
+                            "[a]-->[b]".inNode(id).mustHaveOutBoundDependencies(
+                                "[a]-->[c]".inNode(id),
+                                "[b]-->[c]".inNode(id),
+                            )
+                            "[a]-->[c]".inNode(id).mustHaveOutBoundDependencies(
+                                "[a]-->[b]".inNode(id),
+                                "[c]-->[b]".inNode(id),
+                            )
+                            "[b]-->[c]".inNode(id).mustHaveOutBoundDependencies(
+                                "[c]-->[b]".inNode(id),
+                            )
+                            "[c]-->[b]".inNode(id).mustHaveOutBoundDependencies(
+                                "[b]-->[c]".inNode(id),
+                            )
                         }
                     }
                 }

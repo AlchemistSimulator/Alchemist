@@ -27,7 +27,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                compileOnly(libs.spotbugs.annotations)
                 implementation(libs.korim)
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.serialization.json)

@@ -50,7 +50,9 @@ class TestYAMLLoader {
     @Test
     void testAnyRealDistribution() {
         final Environment<?, ?> environment = testNoVar("synthetic/anyrealdistribution.yml").getEnvironment();
-        environment.forEach(n -> n.forEach(r -> assertInstanceOf(AnyRealDistribution.class, r.getTimeDistribution())));
+        environment.forEach(n ->
+            n.getReactions().forEach(r -> assertInstanceOf(AnyRealDistribution.class, r.getTimeDistribution()))
+        );
     }
 
     /**

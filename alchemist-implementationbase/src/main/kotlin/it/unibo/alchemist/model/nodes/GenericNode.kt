@@ -16,12 +16,9 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.observation.MutableObservable0
 import java.util.Collections
-import java.util.Spliterator
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.function.Consumer
 import javax.annotation.Nonnull
 
 /**
@@ -40,7 +37,7 @@ open class GenericNode<T> @JvmOverloads constructor(
      */
     val environment: Environment<T, *>,
     final override val id: Int = idFromEnv(environment),
-    final override val reactions: MutableObservable0<List<Reaction<T>>> = MutableObservable0.of(emptyList()),
+    final override val reactions: MutableList<Reaction<T>> = ArrayList(),
     /**
      * The node's molecules.
      */
@@ -73,11 +70,6 @@ open class GenericNode<T> @JvmOverloads constructor(
 
     final override fun equals(other: Any?): Boolean = other is Node<*> && other.id == id
 
-    /**
-     * Performs an [action] for every reaction.
-     */
-    final override fun forEach(action: Consumer<in Reaction<T>>) = reactions.forEach(action)
-
     override fun getConcentration(molecule: Molecule): T = molecules[molecule] ?: createT()
 
     override val contents: Map<Molecule, T> = Collections.unmodifiableMap(molecules)
@@ -85,8 +77,6 @@ open class GenericNode<T> @JvmOverloads constructor(
     override val moleculeCount: Int get() = molecules.size
 
     final override fun hashCode(): Int = id // TODO: better hashing
-
-    final override fun iterator(): Iterator<Reaction<T>> = reactions.iterator()
 
     final override fun removeConcentration(moleculeToRemove: Molecule) {
         if (molecules.remove(moleculeToRemove) == null) {
@@ -112,11 +102,6 @@ open class GenericNode<T> @JvmOverloads constructor(
             )
         }
     }
-
-    /**
-     * Returns the [reactions] [Spliterator].
-     */
-    final override fun spliterator(): Spliterator<Reaction<T>> = reactions.spliterator()
 
     override fun toString(): String = "Node$id{ properties: $properties, molecules: $molecules }"
 

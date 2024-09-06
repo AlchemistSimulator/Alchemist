@@ -19,7 +19,7 @@ import kotlin.reflect.jvm.jvmErasure
  *
  * This interface must be implemented in every realization of node
 </T> */
-interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
+interface Node<T> : Serializable, Comparable<Node<T>> {
     /**
      * Adds a reaction to this node.
      * The reaction is added only in the node,

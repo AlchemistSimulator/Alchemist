@@ -27,17 +27,17 @@ import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
-import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
-import it.unibo.alchemist.model.protelis.actions.SendToNeighbor;
-import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.nodes.GenericNode;
-import it.unibo.alchemist.protelis.properties.ProtelisDevice;
+import it.unibo.alchemist.model.protelis.actions.SendToNeighbor;
+import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.reactions.Event;
 import it.unibo.alchemist.model.timedistributions.DiracComb;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.times.DoubleTime;
+import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
+import it.unibo.alchemist.protelis.properties.ProtelisDevice;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -58,7 +58,6 @@ import javax.annotation.Nullable;
 import java.io.Serial;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -561,12 +560,6 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
         private <A> A notImplemented() {
             throw new UnsupportedOperationException("Method can't be invoked in this context.");
-        }
-
-        @Override
-        @Nonnull
-        public Iterator<Reaction<Object>> iterator() {
-            return notImplemented();
         }
 
         @Override

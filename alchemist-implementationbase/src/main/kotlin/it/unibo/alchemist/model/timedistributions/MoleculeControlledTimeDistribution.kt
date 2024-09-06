@@ -124,10 +124,6 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
         distributionParametrs = distributionParametrs,
     )
 
-    init {
-        val x by node.getConcentration(molecule)
-    }
-
     private var previousStep: Double? = null
 
     override fun updateStatus(currentTime: Time, executed: Boolean, param: Double, environment: Environment<T, *>) {

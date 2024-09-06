@@ -8,11 +8,7 @@
  */
 package it.unibo.alchemist.model.terminators
 
-import com.google.common.collect.Maps
-import com.google.common.collect.Table
-import com.google.common.collect.Tables
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import java.util.function.Predicate
@@ -46,9 +42,9 @@ data class StableForSteps<T>(
     private val checkInterval: Long,
     private val equalIntervals: Long,
 ) : Predicate<Environment<T, *>> {
+
     private var success: Long = 0
     private var positions: Map<Node<T>, Position<*>> = emptyMap()
-    private var contents = makeTable<T>(0)
 
     init {
         require(checkInterval > 0 && equalIntervals > 0) {
@@ -56,26 +52,23 @@ data class StableForSteps<T>(
         }
     }
 
+    // TODO: this is a memory leak and should be fixed once the set of nodes is observable
+    private val subscribedTo = mutableSetOf<Node<T>>()
+
     override fun test(environment: Environment<T, *>): Boolean {
         if (environment.getSimulation().getStep() % checkInterval == 0L) {
             val newPositions = environment.associateBy({ it }, { environment.getPosition(it) })
-            val newContents = makeTable<T>(environment.getNodeCount())
             environment.forEach { node ->
-                node.contents.forEach { molecule, concentration ->
-                    newContents.put(node, molecule, concentration)
+                if (node !in subscribedTo) {
+                    node.contents.onChange(this) { map, k, v ->
+                        success = 0
+                    }
+                    subscribedTo.add(node)
                 }
             }
-            success = if (newPositions == positions && newContents == contents) success + 1 else 0
+            success = if (newPositions == positions) success + 1 else 0
             positions = newPositions
-            contents = newContents
         }
         return success == equalIntervals
-    }
-
-    private companion object {
-        private fun <T> makeTable(size: Int): Table<Node<T>, Molecule, T> =
-            Tables.newCustomTable(Maps.newLinkedHashMapWithExpectedSize<Node<T>, Map<Molecule, T>>(size)) {
-                Maps.newLinkedHashMapWithExpectedSize(size)
-            }
     }
 }

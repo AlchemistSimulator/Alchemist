@@ -17,15 +17,15 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.neighborhoods.Neighborhoods
 
 /**
- * @param accessPointId the id of the access point.
+ * Connnects nodes within a given distance, but only if they are connected to the same access point,
+ * emulating a classic NAT.
+ *
+ * @param accessPointId the [Molecule] identifying the access points.
  */
 class ConnectViaAccessPoint<T, P : Position<P>>(
     radius: Double,
-    val accessPointId: Molecule,
-) : ConnectWithinDistance<T, P>(radius) {
-
-    private val Node<T>.isAccessPoint
-        get() = contains(accessPointId)
+    accessPointId: Molecule,
+) : AbstractAccessPointRule<T, P>(radius, accessPointId) {
 
     private fun Neighborhood<T>.closestAccessPoint(environment: Environment<T, P>): Node<T>? =
         asSequence().filter { it.isAccessPoint }.minByOrNull { environment.getDistanceBetweenNodes(center, it) }

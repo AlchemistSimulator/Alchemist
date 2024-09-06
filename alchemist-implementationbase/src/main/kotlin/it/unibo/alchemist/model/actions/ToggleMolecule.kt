@@ -8,6 +8,9 @@
  */
 package it.unibo.alchemist.model.actions
 
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.none
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
@@ -23,27 +26,22 @@ open class ToggleMolecule<T>(
     protected val molecule: Molecule,
     protected val concentration: T,
 ) : AbstractAction<T>(node) {
+
+    private var current: Option<T> = none()
+
+    init {
+        node.getConcentration(molecule).onChange(this) { current = it }
+    }
+
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>) = ToggleMolecule(node, molecule, concentration)
 
     /**
      * Toggles concentration.
      */
-    override fun execute() = if (isOn()) switchOff() else switchOn()
-
-    /**
-     * Returns true if it is on, already toggled.
-     */
-    protected fun isOn() = node.contains(molecule)
-
-    /**
-     * Switch off the molecule, or remove it.
-     */
-    private fun switchOff() = node.removeConcentration(molecule)
-
-    /**
-     * Switch on the molecule and set its concentration.
-     */
-    private fun switchOn() = node.setConcentration(molecule, concentration)
+    override fun execute() = when (current) {
+        None -> node.setConcentration(molecule, concentration)
+        else -> node.removeConcentration(molecule)
+    }
 
     override fun getContext() = Context.LOCAL
 }

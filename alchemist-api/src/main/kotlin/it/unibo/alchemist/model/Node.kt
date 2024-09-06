@@ -8,17 +8,17 @@
  */
 package it.unibo.alchemist.model
 
+import arrow.core.Option
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableMap
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
 
 /**
- * @param <T>
- * The type of the concentration
- *
- * This interface must be implemented in every realization of node
-</T> */
+ * A container of [Reaction]s and [Molecule]s.
+ */
 interface Node<T> : Serializable, Comparable<Node<T>> {
     /**
      * Adds a reaction to this node.
@@ -55,21 +55,17 @@ interface Node<T> : Serializable, Comparable<Node<T>> {
      * the molecule to check
      * @return true if the molecule is present, false otherwise
      */
-    fun contains(molecule: Molecule): Boolean
+    fun contains(molecule: Molecule): Observable<Boolean>
 
     /**
-     * Calculates the concentration of a molecule.
-     *
-     * @param molecule
-     * the molecule whose concentration will be returned
-     * @return the concentration of the molecule
+     * Returns an [Observable] tracking the value associated to the provided [Molecule].
      */
-    fun getConcentration(molecule: Molecule): T
+    fun getConcentration(molecule: Molecule): Observable<Option<T>>
 
     /**
      * @return the molecule corresponding to the i-th position
      */
-    val contents: Map<Molecule, T>
+    val contents: ObservableMap<Molecule, T>
 
     /**
      * @return an univocal id for this node in the environment
@@ -79,7 +75,7 @@ interface Node<T> : Serializable, Comparable<Node<T>> {
     /**
      * @return the count of different molecules in this node
      */
-    val moleculeCount: Int
+    val moleculeCount: Observable<Int>
 
     /**
      * @return a list of the node's properties/capabilities

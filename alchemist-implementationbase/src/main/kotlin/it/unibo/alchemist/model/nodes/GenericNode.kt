@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.model.nodes
 
+import arrow.core.Option
 import com.google.common.collect.MapMaker
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
@@ -16,7 +17,8 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
-import java.util.Collections
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableMutableMap
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicInteger
 import javax.annotation.Nonnull
@@ -33,7 +35,7 @@ open class GenericNode<T> @JvmOverloads constructor(
      */
     val incarnation: Incarnation<T, *>,
     /**
-     * The environment in which the node is places.
+     * The environment in which the node is placed.
      */
     val environment: Environment<T, *>,
     final override val id: Int = idFromEnv(environment),
@@ -41,7 +43,7 @@ open class GenericNode<T> @JvmOverloads constructor(
     /**
      * The node's molecules.
      */
-    val molecules: MutableMap<Molecule, T> = LinkedHashMap(),
+    final override val contents: ObservableMutableMap<Molecule, T> = ObservableMutableMap(),
     final override val properties: MutableList<NodeProperty<T>> = ArrayList(),
 ) : Node<T> {
 
@@ -53,35 +55,29 @@ open class GenericNode<T> @JvmOverloads constructor(
         reactions.add(reactionToAdd)
     }
 
-    override fun cloneNode(currentTime: Time): Node<T> = GenericNode(environment).also {
+    override fun cloneNode(currentTime: Time): Node<T> = GenericNode(
+        incarnation,
+        environment,
+        contents = contents.copy(),
+    ).also {
         this.properties.forEach { property -> it.addProperty(property.cloneOnNewNode(it)) }
-        this.contents.forEach(it::setConcentration)
         this.reactions.forEach { reaction -> it.addReaction(reaction.cloneOnNewNode(it, currentTime)) }
     }
 
     final override fun compareTo(@Nonnull other: Node<T>): Int = id.compareTo(other.id)
 
-    override fun contains(molecule: Molecule): Boolean = molecules.containsKey(molecule)
-
-    /**
-     * @return an empty concentration
-     */
-    protected open fun createT(): T = incarnation.createConcentration()
+    override fun contains(molecule: Molecule): Observable<Boolean> = contents[molecule].map { it.isSome() }
 
     final override fun equals(other: Any?): Boolean = other is Node<*> && other.id == id
 
-    override fun getConcentration(molecule: Molecule): T = molecules[molecule] ?: createT()
+    override fun getConcentration(molecule: Molecule): Observable<Option<T>> = contents[molecule]
 
-    override val contents: Map<Molecule, T> = Collections.unmodifiableMap(molecules)
-
-    override val moleculeCount: Int get() = molecules.size
+    override val moleculeCount: Observable<Int> = contents.map { it.size }
 
     final override fun hashCode(): Int = id // TODO: better hashing
 
     final override fun removeConcentration(moleculeToRemove: Molecule) {
-        if (molecules.remove(moleculeToRemove) == null) {
-            throw NoSuchElementException("$moleculeToRemove was not present in node $id")
-        }
+        contents.remove(moleculeToRemove)
     }
 
     final override fun removeReaction(reactionToRemove: Reaction<T>) {
@@ -89,7 +85,7 @@ open class GenericNode<T> @JvmOverloads constructor(
     }
 
     override fun setConcentration(molecule: Molecule, concentration: T) {
-        molecules[molecule] = concentration
+        contents[molecule] = concentration
     }
 
     final override fun addProperty(nodeProperty: NodeProperty<T>) {
@@ -103,7 +99,7 @@ open class GenericNode<T> @JvmOverloads constructor(
         }
     }
 
-    override fun toString(): String = "Node$id{ properties: $properties, molecules: $molecules }"
+    override fun toString(): String = "Node$id{ properties: $properties, molecules: $contents }"
 
     private companion object {
         private const val serialVersionUID = 2496775909028222278L

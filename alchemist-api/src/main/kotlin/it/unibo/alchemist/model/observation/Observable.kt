@@ -117,11 +117,12 @@ interface Observable<out T> {
 interface MutableObservable<T> : Observable<T> {
 
     /**
-     * Sets the value of this observable, notifying all subscribers.
+     * Sets the value of this observable, notifying all subscribers,
+     * and returns the old value.
      *
      * @param value the new value
      */
-    fun set(value: T)
+    fun replaceWith(value: T): T
 
     companion object {
 
@@ -141,9 +142,11 @@ interface MutableObservable<T> : Observable<T> {
                 callback(currentValue)
             }
 
-            override fun set(value: T) {
+            override fun replaceWith(value: T): T {
+                val previous = currentValue
                 currentValue = value
                 observingCallbacks.values.forEach { callbacks -> callbacks.forEach { it(value) } }
+                return previous
             }
         }
     }

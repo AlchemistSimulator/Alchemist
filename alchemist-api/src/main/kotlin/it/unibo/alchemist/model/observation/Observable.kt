@@ -9,10 +9,27 @@
 
 package it.unibo.alchemist.model.observation
 
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.none
+import arrow.core.some
 import java.util.WeakHashMap
 
+/**
+ * Represents an observable value.
+ *
+ * @param T the type of the value
+ */
 interface Observable<out T> {
 
+    /**
+     * Maps this observable to another one.
+     *
+     * @param R the type of the new observable
+     * @param transform the transformation function
+     * @return a new observable
+     */
     fun <R> map(transform: (T) -> R): Observable<R> = object : Observable<R> {
 
         private var transformed: R? = null
@@ -29,18 +46,91 @@ interface Observable<out T> {
         }
 
         override fun toString(): String =
-            "MappedObservable<${original.typeName}->${transformed.typeName}>($original -> $transformed)"
+            "MapObservable<${original.typeName}->${transformed.typeName}>($original -> $transformed)"
     }
 
+    /**
+     * Merges this observable with another one.
+     *
+     * @param O the type of the other observable
+     * @param R the type of the new observable
+     * @param other the other observable
+     * @param merge the merge function
+     * @return a new observable
+     */
+    fun <O, R> mergeWith(other: Observable<O>, merge: (T, O) -> R): Observable<R> = object : Observable<R> {
+
+        private var merged: R? = null
+        private var original: Option<T> = none()
+        private var otherValue: Option<O> = none()
+
+        override fun onChange(registrant: Any, callback: (R) -> Unit) {
+            fun update() {
+                val original = original
+                val otherValue = otherValue
+                original.onSome { v1 ->
+                    otherValue.onSome { v2 ->
+                        val result = merge(v1, v2)
+                        merged = result
+                        callback(result)
+                    }
+                }
+            }
+            this@Observable.onChange(registrant) { newValue ->
+                original = newValue.some()
+                update()
+            }
+            other.onChange(registrant) { newValue ->
+                otherValue = newValue.some()
+                update()
+            }
+        }
+
+        override fun toString(): String {
+            fun Option<*>.extract(): Any? = when (this) {
+                None -> null
+                is Some -> value
+            }
+            val original = original.extract()
+            val otherValue = otherValue.extract()
+            return "MergeObservable<${
+                original.typeName
+            }+${
+                otherValue.typeName
+            }->${
+                merged.typeName
+            }>($original + $other -> $merged)"
+        }
+    }
+
+    /**
+     * Subscribes to changes of this observable.
+     */
     fun onChange(registrant: Any, callback: (T) -> Unit)
 }
 
+/**
+ * Represents a mutable observable value.
+ *
+ * @param T the type of the value
+ */
 interface MutableObservable<T> : Observable<T> {
 
+    /**
+     * Sets the value of this observable, notifying all subscribers.
+     *
+     * @param value the new value
+     */
     fun set(value: T)
 
     companion object {
 
+        /**
+         * Creates a new observable with the given initial value.
+         *
+         * @param initial the initial value
+         * @return a new observable
+         */
         fun <T> observableOf(initial: T): MutableObservable<T> = object : MutableObservable<T> {
 
             private var currentValue: T = initial
@@ -48,6 +138,7 @@ interface MutableObservable<T> : Observable<T> {
 
             override fun onChange(registrant: Any, callback: (T) -> Unit) {
                 observingCallbacks.compute(registrant) { _, callbacks -> callbacks.orEmpty() + callback }
+                callback(currentValue)
             }
 
             override fun set(value: T) {

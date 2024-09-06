@@ -17,7 +17,10 @@ import java.util.WeakHashMap
 /**
  * Represents an observable map with keys of type [K] and values of type [V].
  */
-interface ObservableMap<K, out V> {
+interface ObservableMap<K, out V> : Observable<Map<K, V>> {
+
+    override fun onChange(registrant: Any, callback: (Map<K, V>) -> Unit) =
+        onChange(registrant) { map, _, _ -> callback(map) }
 
     /**
      * Registers the [subscriber] to be notified for any map change.
@@ -46,9 +49,28 @@ class ObservableMutableMap<K, V> : ObservableMap<K, V> {
     fun put(key: K, value: V) {
         val previous = backingMap.put(key, value)
         if (previous != value) {
-            getAsMutable(key).set(value.some())
+            getAsMutable(key).replaceWith(value.some())
             observers.values.forEach { callbacks ->
                 callbacks.forEach { it(backingMap, key.some(), value.some()) }
+            }
+        }
+    }
+
+    /**
+     * Puts the given [value] in the map at the given [key].
+     */
+    operator fun set(key: K, value: V) = put(key, value)
+
+    /**
+     * Removes the value associated to the given [key],
+     * notifying all subscribers to the map and all subscribers to the key.
+     */
+    fun remove(key: K) {
+        backingMap.remove(key)
+        val previousObservedValue = backingMapOfObservable[key]?.replaceWith(none()) ?: none()
+        if (previousObservedValue.isSome()) {
+            observers.values.forEach { callbacks ->
+                callbacks.forEach { it(backingMap, key.some(), none()) }
             }
         }
     }
@@ -59,6 +81,13 @@ class ObservableMutableMap<K, V> : ObservableMap<K, V> {
     }
 
     override operator fun get(key: K): Observable<Option<V>> = getAsMutable(key)
+
+    /**
+     * Returns a copy of this map with no observers.
+     */
+    fun copy() = ObservableMutableMap<K, V>().apply {
+        backingMap.putAll(this@ObservableMutableMap.backingMap)
+    }
 
     private fun getAsMutable(key: K): MutableObservable<Option<V>> =
         backingMapOfObservable.getOrPut(key) { MutableObservable.observableOf(none()) }

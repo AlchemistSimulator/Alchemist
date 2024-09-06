@@ -14,16 +14,19 @@ import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 
+import java.io.Serial;
+
 /**
  * LinkingRule which connects nodes whose euclidean distance is shorter than a
  * given radius.
- * 
+ *
  * @param <T>
  *            The type which describes the concentration of a molecule
  * @param <P>
  */
 public class ConnectWithinDistance<T, P extends Position<P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
 
+    @Serial
     private static final long serialVersionUID = -405055780667941773L;
     private final double range;
 

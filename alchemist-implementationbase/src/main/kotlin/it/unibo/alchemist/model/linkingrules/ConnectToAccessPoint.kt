@@ -21,11 +21,8 @@ import it.unibo.alchemist.model.neighborhoods.Neighborhoods
  */
 class ConnectToAccessPoint<T, P : Position<P>>(
     radius: Double,
-    val accessPointId: Molecule,
-) : ConnectWithinDistance<T, P>(radius) {
-
-    private val Node<T>.isAccessPoint
-        get() = contains(accessPointId)
+    accessPointId: Molecule,
+) : AbstractAccessPointRule<T, P>(radius, accessPointId) {
 
     override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>): Neighborhood<T> =
         super.computeNeighborhood(center, environment).run {

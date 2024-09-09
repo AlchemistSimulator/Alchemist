@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 
 /**
- * The condition is valid if the node contains the molecule.
+ * The condition is valid if the node contains the [molecule].
  */
 class ContainsMolecule<T>(
     node: Node<T>,

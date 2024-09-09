@@ -38,9 +38,11 @@ interface Observable<out T> {
         override fun onChange(registrant: Any, callback: (R) -> Unit) {
             this@Observable.onChange(registrant) { newValue ->
                 val transformed = transform(newValue)
-                callback(transformed).also {
-                    this.transformed = transformed
-                    this.original = newValue
+                if (transformed != this.transformed) {
+                    callback(transformed).also {
+                        this.transformed = transformed
+                        this.original = newValue
+                    }
                 }
             }
         }
@@ -142,11 +144,14 @@ interface MutableObservable<T> : Observable<T> {
                 callback(currentValue)
             }
 
-            override fun replaceWith(value: T): T {
-                val previous = currentValue
-                currentValue = value
-                observingCallbacks.values.forEach { callbacks -> callbacks.forEach { it(value) } }
-                return previous
+            override fun replaceWith(value: T): T = when {
+                value == currentValue -> currentValue
+                else -> {
+                    val previous = currentValue
+                    currentValue = value
+                    observingCallbacks.values.forEach { callbacks -> callbacks.forEach { it(value) } }
+                    previous
+                }
             }
         }
     }

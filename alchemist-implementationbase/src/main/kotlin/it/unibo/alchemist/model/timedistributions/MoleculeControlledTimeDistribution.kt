@@ -9,11 +9,14 @@
 
 package it.unibo.alchemist.model.timedistributions
 
+import arrow.core.Option
+import arrow.core.Some
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.util.RealDistributions
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
@@ -47,6 +50,21 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
 ) : AnyRealDistribution<T>(
     start,
     object : RealDistribution {
+
+        var currentValue: Double = 0.0
+
+        init {
+            registerListener(
+                registrant = this,
+                observable = node.getConcentration(molecule),
+                incarnation = incarnation,
+                node = node,
+                molecule = molecule,
+                property = property,
+            ) {
+                currentValue = it
+            }
+        }
 
         /*
          * Unknown values
@@ -82,8 +100,6 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
         override fun sample() = currentValue + (errorDistribution?.sample() ?: 0.0)
 
         override fun sample(sampleSize: Int): DoubleArray = DoubleArray(sampleSize) { sample() }
-
-        val currentValue get() = readCurrentValue(incarnation, node, molecule, property)
     },
 ) {
 
@@ -125,13 +141,26 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
     )
 
     private var previousStep: Double? = null
+    private var currentValue: Double = 0.0
+
+    init {
+        registerListener(
+            registrant = this,
+            observable = node.getConcentration(molecule),
+            incarnation = incarnation,
+            node = node,
+            molecule = molecule,
+            property = property,
+        ) {
+            currentValue = it
+        }
+    }
 
     override fun updateStatus(currentTime: Time, executed: Boolean, param: Double, environment: Environment<T, *>) {
-        val currentStep = readCurrentValue(incarnation, node, molecule, property)
         if (executed) {
-            previousStep = currentStep
+            previousStep = currentValue
         } else {
-            require(currentStep == previousStep) {
+            require(currentValue == previousStep) {
                 "Something nasty happened: molecule $molecule is being used as a scheduler, but " +
                     "some reaction other than the one using it for scheduling changed the concentration. " +
                     "This is unsupported and sends the simulator into an inconsistent state, " +
@@ -146,31 +175,33 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
 
     private companion object {
 
-        private fun <T> readCurrentValue(
-            incarnation: Incarnation<T, *>,
-            node: Node<T>,
+        private fun <X> registerListener(
+            registrant: Any,
+            observable: Observable<Option<X>>,
+            incarnation: Incarnation<X, *>,
+            node: Node<X>,
             molecule: Molecule,
             property: String?,
-        ): Double {
-            val currentValue = if (property != null) {
-                incarnation.getProperty(node, molecule, property)
-            } else {
-                when (val value = node.getConcentration(molecule)) {
-                    is Number -> value.toDouble()
-                    is String -> value.toDouble()
-                    is Time -> value.toDouble()
-                    null -> 0.0
-                    else -> error(
-                        "Expected a numeric value in $molecule at node ${node.id}, " +
-                            "but '$value' of type '${value.let { it::class.simpleName }}' was found instead",
-                    )
-                }
+            assignmentToPerform: (Double) -> Unit,
+        ) {
+            observable.onChange(registrant) { maybeValue ->
+                assignmentToPerform(
+                    when {
+                        property != null -> incarnation.getProperty(node, molecule, property)
+                        maybeValue is Some<*> -> when (val value = maybeValue.value) {
+                            is Number -> value.toDouble()
+                            is String -> value.toDouble()
+                            is Time -> value.toDouble()
+                            null -> 0.0
+                            else -> error(
+                                "Expected a numeric value in $molecule at node ${node.id}, " +
+                                    "but '$value' of type '${value.let { it::class.simpleName }}' was found instead",
+                            )
+                        }
+                        else -> 0.0
+                    },
+                )
             }
-            require(currentValue >= 0) {
-                "You requested to be scheduled with a delta of $currentValue in molecule $molecule at node ${node.id}" +
-                    ". Alchemist loves causality and won't let you go back in time"
-            }
-            return currentValue
         }
     }
 }

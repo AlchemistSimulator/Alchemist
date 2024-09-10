@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
  * This class represents a 2D continuous environment with spatial limitations.
  * Those limitations will prevent nodes to move in positions which are not
  * allowed.
- * 
+ *
  * @param <T> concentration type
  */
 public abstract class LimitedContinuos2D<T> extends ContinuousPhysics2DEnvironment<T> {
@@ -37,7 +37,7 @@ public abstract class LimitedContinuos2D<T> extends ContinuousPhysics2DEnvironme
      * {@inheritDoc}
      */
     @Override
-    public void moveNodeToPosition(@Nonnull final Node<T> node, final Euclidean2DPosition newPos) {
+    public void moveNodeToPosition(@Nonnull final Node<T> node, @Nonnull final Euclidean2DPosition newPos) {
         final double[] cur = getPosition(node).getCoordinates();
         final double[] np = newPos.getCoordinates();
         // Calculate the next position allowed
@@ -82,7 +82,7 @@ public abstract class LimitedContinuos2D<T> extends ContinuousPhysics2DEnvironme
     /**
      * Checks whether a position is allowed to be occupied by a node in this
      * environment.
-     * 
+     *
      * @param p
      *            the position to check
      * @return true if the position is allowed

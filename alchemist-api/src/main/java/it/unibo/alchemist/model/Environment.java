@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model;
 
 import it.unibo.alchemist.core.Simulation;
+import it.unibo.alchemist.model.observation.Observable;
 import org.danilopianini.util.ListSet;
 
 import javax.annotation.Nonnull;
@@ -126,7 +127,7 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      * @param center The node you want the neighbors to be found
      * @return the neighborhood
      */
-    Neighborhood<T> getNeighborhood(Node<T> center);
+    Observable<Neighborhood<T>> getNeighborhood(Node<T> center);
 
     /**
      * Allows to access a node known its id. Depending on the implementation, this method may or not be optimized
@@ -148,7 +149,7 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
     /**
      * @return the number of nodes currently in the environment
      */
-    int getNodeCount();
+    Observable<Integer> getNodeCount();
 
     /**
      * Given a node (center) this method returns a list of all the surroundings
@@ -191,7 +192,7 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      * @return The position
      */
     @Nonnull
-    P getPosition(Node<T> node);
+    Observable<P> getPosition(Node<T> node);
 
     /**
      * @return the current simulation, if present, or throws an
@@ -242,7 +243,6 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      * @param node     The node to move
      * @param position The absolute position in which this node will be moved.
      */
-    @Nonnull
     void moveNodeToPosition(@Nonnull Node<T> node, @Nonnull P position);
 
     /**

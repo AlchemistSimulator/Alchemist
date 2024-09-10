@@ -15,14 +15,16 @@ import it.unibo.alchemist.model.Position2D;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.FlexibleQuadTree;
 
+import javax.annotation.Nonnull;
+
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 
 /**
- * 
+ *
  * Models a bidimensional environment.
- * 
+ *
  * @param <T> concentration type
  * @param <P> {@link Position2D} type
  */
@@ -69,7 +71,7 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
 
     /**
      * Allows to extend the size of the environment by adding some object.
-     * 
+     *
      * @param startx
      *            minimum x position of the object
      * @param endx
@@ -98,7 +100,7 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
 
     /**
      * Updates the environment size to include the provided position.
-     * 
+     *
      * @param pos
      *            the position to include
      */
@@ -113,7 +115,7 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
      * moves towards some absolute position.
      */
     @Override
-    public void moveNodeToPosition(final Node<T> node, final P newpos) {
+    public void moveNodeToPosition(@Nonnull final Node<T> node, @Nonnull final P newpos) {
         includeObject(newpos);
         setPosition(node, newpos);
         updateNeighborhood(node, false);

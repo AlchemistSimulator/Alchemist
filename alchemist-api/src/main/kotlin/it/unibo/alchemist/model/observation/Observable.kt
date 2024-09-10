@@ -9,19 +9,28 @@
 
 package it.unibo.alchemist.model.observation
 
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.Some
-import arrow.core.none
-import arrow.core.some
-import java.util.WeakHashMap
-
 /**
  * Represents an observable value.
  *
  * @param T the type of the value
  */
 interface Observable<out T> {
+
+    /**
+     * Returns the current value of this observable
+     * without subscribing to changes.
+     */
+    val current: T
+
+    /**
+     * Subscribes to changes of this observable.
+     */
+    fun onChange(registrant: Any, callback: (T) -> Unit)
+
+    /**
+     * Stops watching the observable.
+     */
+    fun stopWatching(registrant: Any)
 
     /**
      * Maps this observable to another one.
@@ -32,23 +41,25 @@ interface Observable<out T> {
      */
     fun <R> map(transform: (T) -> R): Observable<R> = object : Observable<R> {
 
-        private var transformed: R? = null
-        private var original: T? = null
+        override var current: R = transform(this@Observable.current)
 
         override fun onChange(registrant: Any, callback: (R) -> Unit) {
+            callback(current)
             this@Observable.onChange(registrant) { newValue ->
                 val transformed = transform(newValue)
-                if (transformed != this.transformed) {
-                    callback(transformed).also {
-                        this.transformed = transformed
-                        this.original = newValue
-                    }
+                if (transformed != current) {
+                    current = transformed
+                    callback(transformed)
                 }
             }
         }
 
+        override fun stopWatching(registrant: Any) {
+            this@Observable.stopWatching(registrant)
+        }
+
         override fun toString(): String =
-            "MapObservable<${original.typeName}->${transformed.typeName}>($original -> $transformed)"
+            "MapObservable($current)[from: ${this@Observable}]"
     }
 
     /**
@@ -62,53 +73,27 @@ interface Observable<out T> {
      */
     fun <O, R> mergeWith(other: Observable<O>, merge: (T, O) -> R): Observable<R> = object : Observable<R> {
 
-        private var merged: R? = null
-        private var original: Option<T> = none()
-        private var otherValue: Option<O> = none()
+        override var current: R = merge(this@Observable.current, other.current)
 
         override fun onChange(registrant: Any, callback: (R) -> Unit) {
-            fun update() {
-                val original = original
-                val otherValue = otherValue
-                original.onSome { v1 ->
-                    otherValue.onSome { v2 ->
-                        val result = merge(v1, v2)
-                        merged = result
-                        callback(result)
+            callback(current)
+            listOf(this@Observable, other).forEach {
+                it.onChange(registrant) {
+                    val newValue = merge(this@Observable.current, other.current)
+                    if (newValue != current) {
+                        current = newValue
+                        callback(newValue)
                     }
                 }
             }
-            this@Observable.onChange(registrant) { newValue ->
-                original = newValue.some()
-                update()
-            }
-            other.onChange(registrant) { newValue ->
-                otherValue = newValue.some()
-                update()
-            }
         }
 
-        override fun toString(): String {
-            fun Option<*>.extract(): Any? = when (this) {
-                None -> null
-                is Some -> value
-            }
-            val original = original.extract()
-            val otherValue = otherValue.extract()
-            return "MergeObservable<${
-                original.typeName
-            }+${
-                otherValue.typeName
-            }->${
-                merged.typeName
-            }>($original + $other -> $merged)"
+        override fun stopWatching(registrant: Any) {
+            this@Observable.stopWatching(registrant)
         }
+
+        override fun toString() = "MergeObservable($current)[from: ${this@Observable}, other: $other]"
     }
-
-    /**
-     * Subscribes to changes of this observable.
-     */
-    fun onChange(registrant: Any, callback: (T) -> Unit)
 }
 
 /**
@@ -118,13 +103,15 @@ interface Observable<out T> {
  */
 interface MutableObservable<T> : Observable<T> {
 
+    override var current: T
+
     /**
      * Sets the value of this observable, notifying all subscribers,
      * and returns the old value.
-     *
-     * @param value the new value
      */
-    fun replaceWith(value: T): T
+    fun update(computeNewValue: (T) -> T): T = current.also {
+        current = computeNewValue(current)
+    }
 
     companion object {
 
@@ -136,22 +123,22 @@ interface MutableObservable<T> : Observable<T> {
          */
         fun <T> observableOf(initial: T): MutableObservable<T> = object : MutableObservable<T> {
 
-            private var currentValue: T = initial
-            private val observingCallbacks: WeakHashMap<Any, List<(T) -> Unit>> = WeakHashMap()
+            private val observingCallbacks: MutableMap<Any, List<(T) -> Unit>> = linkedMapOf()
+            override var current: T = initial
+                set(value) {
+                    if (value != field) {
+                        field = value
+                        observingCallbacks.values.forEach { callbacks -> callbacks.forEach { it(value) } }
+                    }
+                }
 
             override fun onChange(registrant: Any, callback: (T) -> Unit) {
+                callback(current)
                 observingCallbacks.compute(registrant) { _, callbacks -> callbacks.orEmpty() + callback }
-                callback(currentValue)
             }
 
-            override fun replaceWith(value: T): T = when {
-                value == currentValue -> currentValue
-                else -> {
-                    val previous = currentValue
-                    currentValue = value
-                    observingCallbacks.values.forEach { callbacks -> callbacks.forEach { it(value) } }
-                    previous
-                }
+            override fun stopWatching(registrant: Any) {
+                observingCallbacks.remove(registrant)
             }
         }
     }

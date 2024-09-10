@@ -9,13 +9,13 @@
 package it.unibo.alchemist.model.biochemistry.environments;
 
 import com.google.common.base.Optional;
-import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty;
+import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import java.util.Comparator;
 import java.util.stream.Stream;
 
 /**
- * Implements a limited environment supporting cells with a defined shape, 
+ * Implements a limited environment supporting cells with a defined shape,
  * avoiding any overlapping among them.
  */
 public final class BioRect2DEnvironmentNoOverlap
@@ -92,7 +92,7 @@ public final class BioRect2DEnvironmentNoOverlap
     }
 
     @Override
-    public void moveNodeToPosition(@Nonnull final Node<Double> node, final Euclidean2DPosition newPos) {
+    public void moveNodeToPosition(@Nonnull final Node<Double> node, @Nonnull final Euclidean2DPosition newPos) {
         final double[] cur = getPosition(node).getCoordinates();
         final double[] np = newPos.getCoordinates();
         final Euclidean2DPosition nextWithinLimts = super.next(cur[0], cur[1], np[0], np[1]);
@@ -155,8 +155,8 @@ public final class BioRect2DEnvironmentNoOverlap
         return getNodesWithinRange(newMidPoint, range).stream()
                 .filter(n -> !n.equals(nodeToMove) && n.asPropertyOrNull(CircularCellProperty.class) != null)
                 .filter(n -> selectNodes(n, nodeToMove, getPosition(nodeToMove), requestedPos, xVer, yVer))
-                .map(n -> getPositionIfNodeIsObstacle(nodeToMove, n, originalPos, oy, ox, ry, rx)) 
-                .filter(Optional::isPresent) 
+                .map(n -> getPositionIfNodeIsObstacle(nodeToMove, n, originalPos, oy, ox, ry, rx))
+                .filter(Optional::isPresent)
                 .map(Optional::get)
                 .min(Comparator.comparingDouble(p -> p.distanceTo(originalPos)))
                 .orElse(requestedPos);
@@ -172,7 +172,7 @@ public final class BioRect2DEnvironmentNoOverlap
     ) {
         // testing if node is between requested position and original position
         final Euclidean2DPosition nodePos = getPosition(node);
-        final Euclidean2DPosition nodeOrientationFromOrigin = new Euclidean2DPosition(nodePos.getX() - origin.getX(), 
+        final Euclidean2DPosition nodeOrientationFromOrigin = new Euclidean2DPosition(nodePos.getX() - origin.getX(),
                 nodePos.getY() - origin.getY());
         final double scalarProductResult1 = xVer * nodeOrientationFromOrigin.getX()
                 + yVer * nodeOrientationFromOrigin.getY();
@@ -203,7 +203,7 @@ public final class BioRect2DEnvironmentNoOverlap
         final double yr,
         final double xr
     ) {
-        // original position 
+        // original position
         final Euclidean2DPosition possibleObstaclePosition = getPosition(node);
         // coordinates of original position, requested position and of node's position
         final double yn = possibleObstaclePosition.getY();

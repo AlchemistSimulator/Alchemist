@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 plugins {
-    id("com.gradle.develocity") version "3.18"
+    id("com.gradle.develocity") version "3.18.1"
     id("org.danilopianini.gradle-pre-commit-git-hooks") version "2.0.10"
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }

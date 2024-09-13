@@ -26,7 +26,7 @@ import korlibs.math.geom.Point
  */
 class BitmapRenderer<in TS : Any, in PS : PositionSurrogate> : Renderer<TS, PS, Bitmap> {
 
-    companion object {
+    private companion object {
         private const val defaultNodeRadius = 0.1f
         private const val defaultHeight = 1000
         private const val defaultWidth = 1000

@@ -27,7 +27,7 @@ class Time @JvmOverloads constructor(precision: Int? = null) : AbstractDoubleExp
         step: Long,
     ): Map<String, Double> = mapOf(name to time.toDouble())
 
-    companion object {
+    private companion object {
         private const val name: String = "time"
     }
 }

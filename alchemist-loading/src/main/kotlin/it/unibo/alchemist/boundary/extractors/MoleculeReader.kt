@@ -45,7 +45,7 @@ class MoleculeReader @JvmOverloads constructor(
     precision: Int? = null,
 ) : AbstractDoubleExporter(precision) {
 
-    companion object {
+    private companion object {
         private const val SHORT_NAME_MAX_LENGTH = 5
     }
 

@@ -21,7 +21,7 @@ class ExecutionTime @JvmOverloads constructor(
     precision: Int? = null,
 ) : AbstractDoubleExporter(precision) {
 
-    companion object {
+    private companion object {
         private const val NANOS_TO_SEC: Double = 1e9
     }
     private val colName: String = "runningTime"

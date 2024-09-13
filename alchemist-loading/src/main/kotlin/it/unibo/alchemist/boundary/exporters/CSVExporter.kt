@@ -129,7 +129,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         }
     }
 
-    companion object {
+    private companion object {
         /**
          * Character used to separate comments from data on export files.
          */

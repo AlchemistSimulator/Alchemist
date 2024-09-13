@@ -66,7 +66,7 @@ class NodesPositions<T, P : Position<P>>(private val environment: Environment<T,
         }
     }
 
-    companion object {
+    private companion object {
 
         @JvmInline
         private value class Dimension(val index: Int) {

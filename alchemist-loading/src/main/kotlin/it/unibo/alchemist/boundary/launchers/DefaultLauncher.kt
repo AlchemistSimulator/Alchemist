@@ -109,7 +109,7 @@ open class DefaultLauncher @JvmOverloads constructor(
         }
     }
 
-    companion object {
+    protected companion object {
         /**
          * If no specific number of parallel threads to use is specified, this value is used.
          * Defaults to the number of logical cores detected by the JVM.

@@ -68,7 +68,7 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
         return document
     }
 
-    companion object {
+    private companion object {
         /**
          *  The default database if no name is specified.
          */

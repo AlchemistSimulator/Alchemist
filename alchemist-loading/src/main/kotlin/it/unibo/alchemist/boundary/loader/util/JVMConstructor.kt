@@ -142,7 +142,7 @@ class NamedParametersConstructor(
 
     override fun toString(): String = "$typeName($parametersMap)"
 
-    companion object {
+    private companion object {
         @JvmStatic
         private val logger = LoggerFactory.getLogger(NamedParametersConstructor::class.java)
     }
@@ -343,7 +343,7 @@ sealed class JVMConstructor(val typeName: String) {
             .also { creationResult.logErrors { message, arguments -> logger.warn(message, *arguments) } }
     }
 
-    companion object {
+    private companion object {
         @JvmStatic
         private val logger = LoggerFactory.getLogger(JVMConstructor::class.java)
 

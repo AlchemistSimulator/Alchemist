@@ -64,6 +64,9 @@ class GraphHopperOptions private constructor(
         }
     }
 
+    /**
+     * Utilities for GraphHopper routing.
+     */
     companion object {
 
         private val profiles: LoadingCache<Pair<String, String>, GraphHopperOptions> = Caffeine.newBuilder()

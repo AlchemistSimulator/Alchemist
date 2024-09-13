@@ -120,6 +120,9 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         TODO("On-the-fly parsing of navigation options is still to be implemented")
     }
 
+    /**
+     * Default valujes for GraphHopper.
+     */
     companion object {
         private val logger = LoggerFactory.getLogger(GraphHopperRoutingService::class.java)
         private val lockfileLock = Semaphore(1)

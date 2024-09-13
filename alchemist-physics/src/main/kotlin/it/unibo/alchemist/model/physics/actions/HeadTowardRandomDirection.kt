@@ -58,7 +58,7 @@ class HeadTowardRandomDirection<T>(
     @SuppressFBWarnings("SA_LOCAL_SELF_ASSIGNMENT")
     private fun Double.toDirection() = Euclidean2DPosition(cos(this), sin(this))
 
-    companion object {
+    private companion object {
         private const val PI_8 = Math.PI / 8
     }
 }

@@ -34,7 +34,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     Continuous2DEnvironment<T>(incarnation),
     Physics2DEnvironment<T> {
 
-    companion object {
+    private companion object {
         @JvmStatic private val serialVersionUID: Long = 1L
 
         private val adimensional =

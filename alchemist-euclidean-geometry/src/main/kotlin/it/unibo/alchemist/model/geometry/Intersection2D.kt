@@ -45,6 +45,9 @@ sealed class Intersection2D<out V> {
      */
     object InfinitePoints : Intersection2D<Nothing>()
 
+    /**
+     * Factory methods for [Intersection2D].
+     */
     companion object {
 
         /**

@@ -37,6 +37,9 @@ interface Euclidean2DEnvironment<T> : EuclideanEnvironment<T, Euclidean2DPositio
         return makePosition(coordinates[0].toDouble(), coordinates[1].toDouble())
     }
 
+    /**
+     * Constant values and utility methods for [Euclidean2DEnvironment].
+     */
     companion object {
         /**
          * The origin of this Euclidean environment: vector [0, 0].

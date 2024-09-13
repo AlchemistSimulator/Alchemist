@@ -62,6 +62,9 @@ class Euclidean2DPosition :
 
     override val zero: Euclidean2DPosition get() = Companion.zero
 
+    /**
+     * Constant values and utility methods for [Euclidean2DPosition].
+     */
     companion object {
         private const val serialVersionUID = 1L
 

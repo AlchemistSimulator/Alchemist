@@ -31,6 +31,9 @@ interface GeometricShapeFactory<S : Vector<S>, A : Transformation<S>> : Serializ
      */
     fun requireCompatible(shape: Shape<*, *>): Shape<S, A>
 
+    /**
+     * Factory methods for [Shape].
+     */
     companion object {
         /**
          * Retrieves a factory of [Shape] compatible with the given vector type.

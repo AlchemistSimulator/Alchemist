@@ -10,8 +10,6 @@
 package it.unibo.alchemist.model.geometry
 
 import it.unibo.alchemist.util.math.fuzzyEquals
-import java.lang.IllegalArgumentException
-import java.lang.UnsupportedOperationException
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -42,6 +40,9 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
     constructor(xIntercept: Double, createPoint: (Double, Double) -> P) :
         this(Double.NaN, Double.NaN, xIntercept, createPoint)
 
+    /**
+     * Factories, constants, and utility methods for [SlopeInterceptLine2D].
+     */
     companion object {
         /**
          * Creates a line from a non-degenerate [segment].

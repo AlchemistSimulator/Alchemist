@@ -253,7 +253,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         return name.toString() + "@" + node.id
     }
 
-    companion object {
+    private companion object {
         private const val serialVersionUID = 2L
     }
 }

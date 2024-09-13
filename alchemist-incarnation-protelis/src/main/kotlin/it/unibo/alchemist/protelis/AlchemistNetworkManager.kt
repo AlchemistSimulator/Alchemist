@@ -149,7 +149,7 @@ class AlchemistNetworkManager @JvmOverloads constructor(
         }
     }
 
-    companion object {
+    private companion object {
         private const val serialVersionUID = 2L
     }
 }

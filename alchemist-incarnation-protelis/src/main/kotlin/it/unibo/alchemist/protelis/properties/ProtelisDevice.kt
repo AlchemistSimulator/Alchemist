@@ -142,7 +142,7 @@ class ProtelisDevice<P : Position<P>> @JvmOverloads constructor(
 
     override fun toString(): String = "PtDevice${node.id}"
 
-    companion object {
+    private companion object {
         private const val serialVersionUID: Long = 1L
     }
 }

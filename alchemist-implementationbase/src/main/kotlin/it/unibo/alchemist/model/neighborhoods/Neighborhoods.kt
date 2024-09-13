@@ -15,22 +15,20 @@ import it.unibo.alchemist.model.Position
 /**
  * Contains utility functions for neighborhoods.
  */
-class Neighborhoods private constructor() {
-    companion object {
-        /**
-         * Creates a [SimpleNeighborhood].
-         *
-         * @param environment The environment of the neighborhood.
-         * @param center The center of the neighborhood.
-         * @param neighbors The neighbors in the neighborhood, defaults to empty.
-         *
-         * @return The newly created [SimpleNeighborhood].
-         */
-        @JvmStatic @JvmOverloads
-        fun <T, P : Position<P>> make(
-            environment: Environment<T, P>,
-            center: Node<T>,
-            neighbors: Iterable<Node<T>> = emptyList(),
-        ) = SimpleNeighborhood(environment, center, neighbors)
-    }
+object Neighborhoods {
+    /**
+     * Creates a [SimpleNeighborhood].
+     *
+     * @param environment The environment of the neighborhood.
+     * @param center The center of the neighborhood.
+     * @param neighbors The neighbors in the neighborhood, defaults to empty.
+     *
+     * @return The newly created [SimpleNeighborhood].
+     */
+    @JvmStatic @JvmOverloads
+    fun <T, P : Position<P>> make(
+        environment: Environment<T, P>,
+        center: Node<T>,
+        neighbors: Iterable<Node<T>> = emptyList(),
+    ) = SimpleNeighborhood(environment, center, neighbors)
 }

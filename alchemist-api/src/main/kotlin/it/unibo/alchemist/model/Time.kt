@@ -62,6 +62,9 @@ interface Time : Comparable<Time>, Serializable {
      */
     fun toDouble(): Double
 
+    /**
+     * Standard values for [Time].
+     */
     companion object {
         /**
          * Initial time.

@@ -94,6 +94,9 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
             surroundingPointAt(angle = it * Math.PI * 2 / count, distance = radius)
         }
 
+    /**
+     * Utility functions for [Vector2D].
+     */
     companion object {
         /**
          * Computes the z component of the cross product of the given vectors.

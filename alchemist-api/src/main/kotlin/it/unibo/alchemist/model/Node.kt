@@ -182,6 +182,9 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      */
     fun <C : NodeProperty<T>> asProperty(superType: Class<C>): C = asProperty(superType.kotlin)
 
+    /**
+     * Utilities for [Node]s.
+     */
     companion object {
         /**
          * returns a [NodeProperty] of the provided type [C].

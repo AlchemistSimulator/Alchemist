@@ -47,6 +47,9 @@ abstract class AbstractExporter<T, P : Position<P>> (
      */
     private var count = -1L
 
+    /**
+     * Contains the default values.
+     */
     companion object {
         /**
          * If no sampling interval is specified, this option value is used. Defaults to 1.0.

@@ -38,6 +38,9 @@ class GraphStreamSupport<T, P : Position<out P>>(
     val linkingRule: LinkingRule<T, P>,
     val deployment: Deployment<P>,
 ) {
+    /**
+     * Contains methods to generate a [GraphStreamSupport].
+     */
     companion object {
 
         private val generators = ClassPathScanner.subTypesOf<BaseGenerator>("org.graphstream")

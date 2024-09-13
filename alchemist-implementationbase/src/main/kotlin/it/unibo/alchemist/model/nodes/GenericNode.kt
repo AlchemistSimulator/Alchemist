@@ -119,7 +119,7 @@ open class GenericNode<T> @JvmOverloads constructor(
 
     override fun toString(): String = "Node$id{ properties: $properties, molecules: $molecules }"
 
-    companion object {
+    private companion object {
         private const val serialVersionUID = 2496775909028222278L
 
         private val IDGENERATOR = MapMaker().weakKeys().makeMap<Environment<*, *>, AtomicInteger>()

@@ -114,7 +114,7 @@ open class WeibullTime<T> private constructor(
         currentTime,
     )
 
-    companion object {
+    protected companion object {
         private const val PREFERRED_INVERSE_CUMULATIVE_ACCURACY = 1.0E-9
 
         /**

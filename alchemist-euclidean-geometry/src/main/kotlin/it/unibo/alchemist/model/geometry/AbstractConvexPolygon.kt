@@ -19,7 +19,7 @@ import java.awt.Shape as AwtShape
  */
 abstract class AbstractConvexPolygon : ConvexPolygon {
 
-    companion object {
+    private companion object {
         /**
          * @returns the sum of the distances between this segment's endpoints and [other].
          */

@@ -13,7 +13,6 @@ import it.unibo.alchemist.util.Doubles.fuzzyEquals
 import it.unibo.alchemist.util.Doubles.fuzzyIn
 import it.unibo.alchemist.util.Ranges.rangeFromUnordered
 import it.unibo.alchemist.util.math.fuzzyEquals
-import java.lang.UnsupportedOperationException
 
 /**
  * Defines a line segment in a cartesian plane, endpoints are included.
@@ -228,7 +227,7 @@ interface Segment2D<P : Vector2D<P>> {
         else -> null
     }
 
-    companion object {
+    private companion object {
         /**
          * Checks if two points are [fuzzyEquals].
          */

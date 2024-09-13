@@ -41,6 +41,9 @@ open class Explore<T, L : Euclidean2DConvexShape, R>(
     private val knownImpasseWeight: Double = DEFAULT_IMPASSE_WEIGHT,
 ) : NavigationStrategy2D<T, L, R, ConvexPolygon, Euclidean2DPassage> {
 
+    /**
+     * Contains the default constants.
+     */
     companion object {
         /**
          * Empirically found to work well (allows the pedestrian to avoid known impasses).

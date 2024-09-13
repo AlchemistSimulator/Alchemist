@@ -36,6 +36,9 @@ class Perceptive2D<T> @JvmOverloads constructor(
         FieldOfView2D(environment, node, defaultFieldOfViewDepth, defaultFieldOfViewAperture),
     )
 
+    /**
+     * Contains the default values for the field of view.
+     */
     companion object {
         /**
          * Default aperture of pedestrian's [fieldOfView].

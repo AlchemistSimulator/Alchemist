@@ -35,6 +35,9 @@ class Speed(age: Age, gender: Gender, randomGenerator: RandomGenerator) : Charac
      */
     val running = walking * 3
 
+    /**
+     * Default configurations.
+     */
     companion object {
         private val config = Config { addSpec(SpeedSpec) }.from.toml.resource(PARAMETERS_FILE)
         private val childMale: Double = config[SpeedSpec.childMale]

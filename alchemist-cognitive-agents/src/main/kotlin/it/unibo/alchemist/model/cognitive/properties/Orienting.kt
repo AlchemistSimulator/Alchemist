@@ -111,6 +111,9 @@ abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
 
     override fun toString() = "${super.toString()}[knoledgeDegree=$knowledgeDegree]"
 
+    /**
+     * Utility methods for [Graph]s.
+     */
     companion object {
 
         /**

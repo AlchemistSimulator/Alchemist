@@ -5,15 +5,37 @@ package it.unibo.alchemist.model.cognitive.impact.individual
  */
 enum class Age : Characteristic {
 
+    /**
+     * Young person, before [CHILD_THRESHOLD].
+     */
     CHILD,
+
+    /**
+     * Adult person, between [CHILD_THRESHOLD] and [ADULT_THRESHOLD].
+     */
     ADULT,
+
+    /**
+     * Old person, past [ADULT_THRESHOLD].
+     */
     ELDERLY,
     ;
 
+    /**
+     * Constants and factories.
+     */
     companion object {
 
-        private const val CHILD_THRESHOLD = 18
-        private const val ADULT_THRESHOLD = 60
+        /**
+         * The threshold for being considered a child.
+         */
+        const val CHILD_THRESHOLD = 18
+
+        /**
+         * The threshold for being considered an elderly.
+         */
+        const val ADULT_THRESHOLD = 60
+
         private const val CHILD_KEYWORD = "child"
         private const val ADULT_KEYWORD = "adult"
         private const val ELDERLY_KEYWORD = "elderly"

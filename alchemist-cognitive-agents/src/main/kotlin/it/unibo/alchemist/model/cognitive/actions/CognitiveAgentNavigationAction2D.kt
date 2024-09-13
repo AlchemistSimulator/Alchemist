@@ -47,6 +47,9 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
     pedestrian,
 ) {
 
+    /**
+     * Contains the default constants.
+     */
     companion object {
         /**
          * Empirically found to work well.

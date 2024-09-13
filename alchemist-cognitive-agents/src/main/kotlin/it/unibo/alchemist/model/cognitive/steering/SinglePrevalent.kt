@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.cognitive.NavigationAction
 import it.unibo.alchemist.model.cognitive.SteeringAction
 import it.unibo.alchemist.model.cognitive.SteeringStrategy
 import it.unibo.alchemist.model.cognitive.actions.NavigationAction2D
+import it.unibo.alchemist.model.cognitive.steering.SinglePrevalent.ExponentialSmoothing
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.ConvexPolygon
 import it.unibo.alchemist.model.geometry.Vector
@@ -75,6 +76,9 @@ class SinglePrevalent<T, N : ConvexPolygon>(
     private val delta: Double = DEFAULT_DELTA,
 ) : Weighted<T>(environment, node, { 0.0 }) {
 
+    /**
+     * Default values for the parameters.
+     */
     companion object {
         /**
          * On average, it was observed that this value allows the pedestrian not to get stuck in obstacles.

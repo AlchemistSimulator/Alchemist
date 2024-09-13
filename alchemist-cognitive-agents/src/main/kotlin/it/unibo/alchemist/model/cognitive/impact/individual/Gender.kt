@@ -5,10 +5,20 @@ package it.unibo.alchemist.model.cognitive.impact.individual
  */
 enum class Gender : Characteristic {
 
+    /**
+     * Male.
+     */
     MALE,
+
+    /**
+     * Female.
+     */
     FEMALE,
     ;
 
+    /**
+     * Factories for [Gender].
+     */
     companion object {
         private const val MALE_KEYWORD = "male"
         private const val FEMALE_KEYWORD = "female"

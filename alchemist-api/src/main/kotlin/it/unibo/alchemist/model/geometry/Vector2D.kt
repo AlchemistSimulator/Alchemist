@@ -90,7 +90,6 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
     // @JvmOverloads disabled due to https://youtrack.jetbrains.com/issue/KT-12224
     fun surrounding(radius: Double, count: Int = 12): List<P> = (1..count)
         .map {
-            @Suppress("UNCHECKED_CAST")
             surroundingPointAt(angle = it * Math.PI * 2 / count, distance = radius)
         }
 

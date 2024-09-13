@@ -141,7 +141,7 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
         }
     }
 
-    companion object {
+    private companion object {
         private const val SCALE_FACTOR = 0.8f
         private const val FALLBACK_X_SIZE = 800
         private const val FALLBACK_Y_SIZE = 600

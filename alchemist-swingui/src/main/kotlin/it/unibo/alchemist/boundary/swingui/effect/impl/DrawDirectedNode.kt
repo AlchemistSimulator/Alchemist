@@ -161,7 +161,7 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
         ?.let { atan2(it[0], it[1]) }
         ?: 0.0
 
-    companion object {
+    private companion object {
         private const val MAX_NODE_SIZE: Int = 20
 
         private const val MAX_TIMESPAN: Int = 100

@@ -87,7 +87,7 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) : JPanel(),
         }
     }
 
-    companion object {
+    private companion object {
         private const val MARGIN: Byte = 100
         private const val PROGRAM = " = Program ="
         private const val CONTENT = " = Content ="

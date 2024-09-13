@@ -81,7 +81,7 @@ class GPXLoader : GPSFileLoader {
         return GPSTraceImpl(points)
     }
 
-    companion object {
+    private companion object {
         private val EXTENSIONS = ImmutableSet.of("gpx")
     }
 }

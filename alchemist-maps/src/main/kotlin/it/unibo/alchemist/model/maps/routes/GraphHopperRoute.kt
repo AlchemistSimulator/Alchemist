@@ -90,7 +90,7 @@ class GraphHopperRoute(from: GeoPosition, to: GeoPosition, response: GHResponse)
         return points.size
     }
 
-    companion object {
+    private companion object {
         private const val serialVersionUID = 0L
 
         private fun GHPoint3D.asPosition() =

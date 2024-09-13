@@ -67,7 +67,7 @@ class EnvironmentMonitor<T, P, TS, PS> (
         this.stepDone(environment, null, time, step)
     }
 
-    companion object {
+    private companion object {
         private const val serialVersionUID: Long = 1L
     }
 }

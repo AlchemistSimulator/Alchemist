@@ -254,7 +254,7 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         }
     }
 
-    companion object {
+    private companion object {
         private val logger = LoggerFactory.getLogger(BatchEngine::class.java)
     }
 }

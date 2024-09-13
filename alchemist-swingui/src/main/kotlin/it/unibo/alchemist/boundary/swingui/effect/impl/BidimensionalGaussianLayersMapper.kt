@@ -61,6 +61,9 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
             .map { l -> Function { p: P -> l.getValue(p) } }
     }
 
+    /**
+     * Utilities for [BidimensionalGaussianLayersMapper]s.
+     */
     companion object {
         /**
          * The minumum value of any layer.

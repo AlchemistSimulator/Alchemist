@@ -27,6 +27,9 @@ data class EnvironmentSurrogate<out TS : Any, out PS : PositionSurrogate>(
     val dimensions: Int,
     val nodes: List<NodeSurrogate<TS, PS>>,
 ) {
+    /**
+     * Utility methods for [EnvironmentSurrogate].
+     */
     companion object {
         /**
          * @param <TS> the type of concentration.

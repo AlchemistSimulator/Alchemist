@@ -25,6 +25,10 @@ data class Response<C>(
     val code: HttpStatusCode = OK,
     val content: C,
 ) {
+
+    /**
+     * Utility functions.
+     */
     companion object {
         /**
          * Utility function to dry-run the response process.

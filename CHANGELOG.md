@@ -1,3 +1,92 @@
+## [34.1.4](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.3...34.1.4) (2024-09-13)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.10 ([fd3c5f4](https://github.com/AlchemistSimulator/Alchemist/commit/fd3c5f461d25e9b2b5b35726ecc7a2002825ca5a))
+* **deps:** update danysk/makepkg docker tag to v1.1.11 ([ffc9496](https://github.com/AlchemistSimulator/Alchemist/commit/ffc9496a336b79d1a8151548f28ebdb4b1c893fe))
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.8 ([0ad9aaf](https://github.com/AlchemistSimulator/Alchemist/commit/0ad9aafa71140faaad2d0c9826bb65aa9fad8b68))
+* **deps:** update dependency com.miglayout:miglayout-swing to v11.4.1 ([96660ff](https://github.com/AlchemistSimulator/Alchemist/commit/96660ffb3296720377589451578749a57d5833d1))
+* **deps:** update dependency com.miglayout:miglayout-swing to v11.4.2 ([e330db2](https://github.com/AlchemistSimulator/Alchemist/commit/e330db2f25fe156d41c6bb992f3c0279ae71870c))
+* **deps:** update dependency gradle to v8.10.1 ([47bb2fe](https://github.com/AlchemistSimulator/Alchemist/commit/47bb2fedeccd035e757c0647b9c63ff2ec4f1c9c))
+* **deps:** update dependency org.eclipse.jgit:org.eclipse.jgit to v7 ([d941620](https://github.com/AlchemistSimulator/Alchemist/commit/d941620ce2635f27afb322505fdbfac03b99b130))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.1.4 ([1e62b67](https://github.com/AlchemistSimulator/Alchemist/commit/1e62b67f30782339c93afa5a241a6c980c0f81c5))
+* **deps:** update dependency org.yaml:snakeyaml to v2.3 ([1223988](https://github.com/AlchemistSimulator/Alchemist/commit/1223988f4ed517ea9427d975381234f9f12c6a87))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.102 ([5d4fe18](https://github.com/AlchemistSimulator/Alchemist/commit/5d4fe18698c901989617cb10362289798e025a65))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.103 ([77fcfe1](https://github.com/AlchemistSimulator/Alchemist/commit/77fcfe12ec52fc4ab4eb4c3d73cb401d50b8ad8d))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.104 ([3ae225b](https://github.com/AlchemistSimulator/Alchemist/commit/3ae225be03d0d98647190be34a071e1f1da09021))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.105 ([97caab0](https://github.com/AlchemistSimulator/Alchemist/commit/97caab04dec17a85018aef951136ea18e8cf3068))
+* **deps:** update gohugoio/hugo action to v0.134.0 ([c595ad2](https://github.com/AlchemistSimulator/Alchemist/commit/c595ad21297533834f8f825ea0194f67f1fc93d3))
+* **deps:** update gohugoio/hugo action to v0.134.1 ([d54f960](https://github.com/AlchemistSimulator/Alchemist/commit/d54f9601abb7af9556f9110970ef33e4533c915c))
+* **deps:** update gohugoio/hugo action to v0.134.2 ([a547ded](https://github.com/AlchemistSimulator/Alchemist/commit/a547ded2002b145114f4edf30d2b601a9ae13009))
+* **deps:** update kotlin monorepo to v2.0.20 ([ba3bdb2](https://github.com/AlchemistSimulator/Alchemist/commit/ba3bdb265ea7b54fc66344d38238f26bea88e309))
+* **deps:** update npm to v10.8.3 ([ffe2e9c](https://github.com/AlchemistSimulator/Alchemist/commit/ffe2e9cafd2c1357392054194754f5b72054cbed))
+* **deps:** update plugin com.gradle.develocity to v3.18.1 ([d09cdc7](https://github.com/AlchemistSimulator/Alchemist/commit/d09cdc7431240b8c1c4c2c5d81500b87744bbb33))
+* **deps:** update plugin kotlin-qa to v0.66.0 ([e9f82a3](https://github.com/AlchemistSimulator/Alchemist/commit/e9f82a3ab1c29821e70fb0480d5061819d2242c6))
+* **deps:** update plugin kotlin-qa to v0.66.1 ([4091196](https://github.com/AlchemistSimulator/Alchemist/commit/409119646141f9ed65bb30d9145ef11c9efe6a68))
+* **deps:** update plugin multijvmtesting to v1.2.5 ([3464a3e](https://github.com/AlchemistSimulator/Alchemist/commit/3464a3e4aa1708ca43bc1cca40052785a3db7a15))
+* **deps:** update plugin multijvmtesting to v1.2.6 ([7edb95e](https://github.com/AlchemistSimulator/Alchemist/commit/7edb95e1ac82393f3c137b2e2af3975c6da3fc0c))
+* **deps:** update plugin multijvmtesting to v1.2.7 ([c20da95](https://github.com/AlchemistSimulator/Alchemist/commit/c20da9513d6b2fd02f2145b8487e780f3ffe3497))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.10 ([053d963](https://github.com/AlchemistSimulator/Alchemist/commit/053d9632ebcdf483386cb11858cc732c7e1bd7dd))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.12 ([4524207](https://github.com/AlchemistSimulator/Alchemist/commit/45242076ea677b73b9dd9b0614823778ae41ca54))
+* **deps:** update react to v18.3.1-pre.800 ([e365e3b](https://github.com/AlchemistSimulator/Alchemist/commit/e365e3bb2d0350eaa1883d72129ff2789bfe837f))
+* **deps:** update react to v18.3.1-pre.801 ([91a83ee](https://github.com/AlchemistSimulator/Alchemist/commit/91a83ee95844eb380c87d25546c1421d43a36d31))
+* **deps:** update react to v18.3.1-pre.802 ([5bf4f3a](https://github.com/AlchemistSimulator/Alchemist/commit/5bf4f3ad0919fe9bde2cd79d788618ea0b659cff))
+* **deps:** update react to v18.3.1-pre.803 ([4ee9a87](https://github.com/AlchemistSimulator/Alchemist/commit/4ee9a8738dac3aa21f26a263825cdc43052553af))
+* **deps:** update react to v18.3.1-pre.804 ([bca0926](https://github.com/AlchemistSimulator/Alchemist/commit/bca0926bc49af1141e4f7437e9cabaae7f0e474b))
+* **deps:** update react to v18.3.1-pre.805 ([9555c0d](https://github.com/AlchemistSimulator/Alchemist/commit/9555c0d0be5854241529c9b14f2d3af337eae0f3))
+
+### Documentation
+
+* **api:** document the companion objects ([7a6fd4b](https://github.com/AlchemistSimulator/Alchemist/commit/7a6fd4bce5fd695122dec5dfe1db44b2909f177d))
+* **cognitive-agents:** document public companions and enums ([4af8e62](https://github.com/AlchemistSimulator/Alchemist/commit/4af8e6223059624e8961f4cdaf136a090d62f754))
+* **cognitive-agents:** restrict the visibility of companions to the visibility of their most visible member ([2a7b79b](https://github.com/AlchemistSimulator/Alchemist/commit/2a7b79b722d30d637db4036412453d2355748f75))
+* **euclidean-geometry:** document public companions and enums ([06655f7](https://github.com/AlchemistSimulator/Alchemist/commit/06655f7eac7ba7ccf5068d97760826645bfbc550))
+* **loading:** document public companions and enums ([be983ab](https://github.com/AlchemistSimulator/Alchemist/commit/be983ab5e6ec3c1dddfb45ce718b8ada0c5d030e))
+* **maps:** document public companions and enums ([407b6e0](https://github.com/AlchemistSimulator/Alchemist/commit/407b6e07dafeb717195b3dddf11c5b97a17181fa))
+* **multivesta-adapter:** document public companions and enums ([a856398](https://github.com/AlchemistSimulator/Alchemist/commit/a856398e7128c03a403ac74a68567aed38376c13))
+* **swingui:** document public companions and enums ([37c8734](https://github.com/AlchemistSimulator/Alchemist/commit/37c8734cd1e7045f23edb18c69d87eae863e1ee0))
+* **web-render:** document public companions and enums ([c735b6e](https://github.com/AlchemistSimulator/Alchemist/commit/c735b6e3b36e2c92f8b0cb5e91a58bbe030a931e))
+
+### Build and continuous integration
+
+* **deps:** update actions/upload-artifact action to v4.4.0 ([8b56d4b](https://github.com/AlchemistSimulator/Alchemist/commit/8b56d4b84f249ac1f9f300934b465f91d7cc5693))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.5 ([2c3dfa5](https://github.com/AlchemistSimulator/Alchemist/commit/2c3dfa5d5e5babf8a72707a76faa73c521681407))
+* **full:** do not use `capitalized()` ([479ab62](https://github.com/AlchemistSimulator/Alchemist/commit/479ab628469651470d7437e943f547b34f6885cc))
+* **full:** use Guava hashing instead of `org.jetbrains.kotlin.com.intellij.util.io.Murmur3_32Hash` ([1d4ac63](https://github.com/AlchemistSimulator/Alchemist/commit/1d4ac63230cbad7f2f9b8e0c277c204e771a104e))
+* **renovate:** use `matchDepNames` instead of `matchPackageNames` ([03f469e](https://github.com/AlchemistSimulator/Alchemist/commit/03f469e5090def736cb3da23a5cb5885af9dca39))
+* roll back Gradle to 8.10 due to gradle/gradle[#30472](https://github.com/AlchemistSimulator/Alchemist/issues/30472) ([fb71ea2](https://github.com/AlchemistSimulator/Alchemist/commit/fb71ea26dd28a430efcd6d1a7412861ece6722bd))
+* **web-renderer:** remove useless spotbug lib in kotlin/js project ([244d644](https://github.com/AlchemistSimulator/Alchemist/commit/244d6441898906ce7ce82372480b60a27401a5ea))
+
+### General maintenance
+
+* **api:** remove commented annotation ([52c5695](https://github.com/AlchemistSimulator/Alchemist/commit/52c569560eb63fab9dca1986f77d7a8a76ad16fa))
+* **build:** actualize the `yarn.lock` file ([15d6fc2](https://github.com/AlchemistSimulator/Alchemist/commit/15d6fc2f0295abac6831ec1ba7f287754bd99eed))
+* **build:** update the javadoc.io cache ([6d63f94](https://github.com/AlchemistSimulator/Alchemist/commit/6d63f943ac5095a8ce3c0c303d1bd790e2db94bc))
+* **build:** update the javadoc.io cache ([5a5680b](https://github.com/AlchemistSimulator/Alchemist/commit/5a5680baa23bb7d96b14cbe8c4cf34b993b4dfa8))
+* **build:** update the javadoc.io cache ([0ae05b4](https://github.com/AlchemistSimulator/Alchemist/commit/0ae05b4d5b48ecb34703d2e989061b639452a4c3))
+* **build:** update the javadoc.io cache ([6c1f7f4](https://github.com/AlchemistSimulator/Alchemist/commit/6c1f7f4882ed027976f30d6f64cfce350a94b107))
+* **build:** update the javadoc.io cache ([1190861](https://github.com/AlchemistSimulator/Alchemist/commit/1190861aa08b988009faef6873662766615f65d5))
+* **engine:** drop context receivers (deprecated in Kotlin) ([44ff938](https://github.com/AlchemistSimulator/Alchemist/commit/44ff9380a5a009f9d442905f1740e09a68e778a0))
+* **engine:** drop context receivers (deprecated in Kotlin) ([c487c53](https://github.com/AlchemistSimulator/Alchemist/commit/c487c53efd5cbd7f6bd2817fa810cdb2b0332913))
+
+### Style improvements
+
+* **api:** remove unused suppression ([576f747](https://github.com/AlchemistSimulator/Alchemist/commit/576f7470d79fcfc8e19c6a8216a87f10dfecc4ab))
+
+### Refactoring
+
+* **engine:** restrict the visibility of companions to the visibility of their most visible member ([bc25f4a](https://github.com/AlchemistSimulator/Alchemist/commit/bc25f4a0617cbab0f8e185ec39e48b8d5268640d))
+* **euclidean-geometry:** restrict the visibility of companions to the visibility of their most visible member ([d559b16](https://github.com/AlchemistSimulator/Alchemist/commit/d559b16d8f66c74c3f933d502ddb04842c09fc92))
+* **implementationbase:** make `Neighborhoods` a regular object ([ae0af95](https://github.com/AlchemistSimulator/Alchemist/commit/ae0af95be0299139dac39f38e73bfb70b8a7cc6c))
+* **implementationbase:** restrict the visibility of companions to the visibility of their most visible member ([69b8e38](https://github.com/AlchemistSimulator/Alchemist/commit/69b8e388cdccae38aea1bc7c19629daf1040c938))
+* **incarnation-protelis:** restrict the visibility of companions to the visibility of their most visible member ([413d73d](https://github.com/AlchemistSimulator/Alchemist/commit/413d73dfd1af02f532b7d5c2640b272a4f329803))
+* **loading:** restrict the visibility of companions to the visibility of their most visible member ([b19868a](https://github.com/AlchemistSimulator/Alchemist/commit/b19868afa18069ff72893cc20e1a0707d12c4072))
+* **maps:** restrict the visibility of companions to the visibility of their most visible member ([10f5f0b](https://github.com/AlchemistSimulator/Alchemist/commit/10f5f0bd15a2c865ccf7c5df66bcdcb951a5b28b))
+* **physics:** restrict the visibility of companions to the visibility of their most visible member ([f5261ef](https://github.com/AlchemistSimulator/Alchemist/commit/f5261ef6e8fd526ac606dad0c93471388893344a))
+* **swingui:** restrict the visibility of companions to the visibility of their most visible member ([1c5b355](https://github.com/AlchemistSimulator/Alchemist/commit/1c5b3551cbe5decad362bfd27d17814aefa3358d))
+* **web-render:** restrict the visibility of companions to the visibility of their most visible member ([1274a48](https://github.com/AlchemistSimulator/Alchemist/commit/1274a48729cb123c49b9f8b7eea929b6b1cb3d0c))
+* **web-render:** restrict the visibility of companions to the visibility of their most visible member ([2d44731](https://github.com/AlchemistSimulator/Alchemist/commit/2d44731d1d5559938c48c3954c2b49ed51ce4cd3))
+
 ## [34.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.2...34.1.3) (2024-08-30)
 
 ### Dependency updates

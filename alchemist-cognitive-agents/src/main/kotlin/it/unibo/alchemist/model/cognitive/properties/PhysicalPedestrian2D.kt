@@ -173,7 +173,7 @@ class PhysicalPedestrian2D<T>(
     override fun toString() = "${super.toString()}[desiredSpaceThreshold=$desiredSpaceTreshold, " +
         "comfortRay=$comfortRay, isFallen=$isFallen]"
 
-    companion object {
+    private companion object {
         /**
          * Minimum value for normal state [comfortRay] (in meters).
          */

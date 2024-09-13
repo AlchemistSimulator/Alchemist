@@ -83,7 +83,7 @@ class PhysicalBlendedSteering<T>(
 
     private fun List<Euclidean2DPosition>.total() = this.fold(Euclidean2DPosition.zero) { acc, f -> acc + f }
 
-    companion object {
+    private companion object {
         private const val fallenAgentAvoidanceForceWeight = 0.5
     }
 }

@@ -26,7 +26,7 @@ class Compliance(age: Age, gender: Gender) : Characteristic {
         else -> elderlyFemale
     }
 
-    companion object {
+    private companion object {
         private val config = Config { addSpec(ComplianceSpec) }
             .from.toml.resource(PARAMETERS_FILE)
 

@@ -40,7 +40,7 @@ class Nearest<T>(
         }
     },
 ) {
-    companion object {
+    private companion object {
         /**
          * Picks the [SteeringActionWithTarget] whose target is nearest to the [node]'s current position, or the first
          * action of the list if none of them has a defined target. If the list is empty, null is returned.

@@ -31,7 +31,7 @@ class HelpAttitude(age: Age, gender: Gender) : Characteristic {
             if (sameGroup) it.first else it.second
         } ?: 0.0
 
-    companion object {
+    private companion object {
 
         private val config = Config {
             addSpec(HelpAttitudeSpec)

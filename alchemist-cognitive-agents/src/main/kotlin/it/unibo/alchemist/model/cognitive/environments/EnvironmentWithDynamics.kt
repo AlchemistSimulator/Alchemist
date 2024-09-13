@@ -181,7 +181,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     override fun makePosition(vararg coordinates: Double): Euclidean2DPosition =
         backingEnvironment.makePosition(*coordinates)
 
-    companion object {
+    private companion object {
 
         private fun <T> Physics2DEnvironment<T>.asEnvironmentWithObstacles(): PhysicsEnvWithObstacles<T> =
             if (this is EuclideanPhysics2DEnvironmentWithObstacles<*, T>) {

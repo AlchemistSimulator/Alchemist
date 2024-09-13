@@ -51,7 +51,7 @@ open class NavigationPrioritizedSteering<T, N : ConvexPolygon> @JvmOverloads con
     ),
 ) {
 
-    companion object {
+    private companion object {
         /**
          * @returns the only navigation action contained in the list or throws an exception.
          */

@@ -87,7 +87,6 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
      * @param count
      *          the number of positions to generate.
      */
-    // @JvmOverloads disabled due to https://youtrack.jetbrains.com/issue/KT-12224
     fun surrounding(radius: Double, count: Int = 12): List<P> = (1..count)
         .map {
             surroundingPointAt(angle = it * Math.PI * 2 / count, distance = radius)

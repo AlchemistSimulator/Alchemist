@@ -47,6 +47,9 @@ class MultiVestaExporter<T, P : Position<P>> @JvmOverloads constructor(
         values = values - environment.simulation
     }
 
+    /**
+     * Utilities for the MultiVesta exporter.
+     */
     companion object {
         private var values: Map<Simulation<*, *>, Map<String, Any>> = ConcurrentHashMap()
 

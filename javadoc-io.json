@@ -60,9 +60,8 @@
   "io.arrow-kt/arrow-core/1.2.4": {
     "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/1.2.4"
   },
-  "io.github.classgraph/classgraph/4.8.175": {
-    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.175",
-    "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.175/element-list"
+  "io.github.classgraph/classgraph/4.8.176": {
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.176"
   },
   "io.jenetics/jpx/3.1.0": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/3.1.0",

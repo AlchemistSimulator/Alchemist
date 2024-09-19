@@ -148,8 +148,8 @@
   "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.9.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.9.0"
   },
-  "org.jetbrains.kotlinx/kotlinx-serialization-json/1.7.2": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.7.2"
+  "org.jetbrains.kotlinx/kotlinx-serialization-json/1.7.3": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.7.3"
   },
   "org.jgrapht/jgrapht-core/1.5.2": {
     "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2",

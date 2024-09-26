@@ -14,7 +14,7 @@ concurrency:
 jobs:
   # Prepare the environment for the build
   ci-preparation:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       makepkg-image: ${{ steps.makepkg-image.outputs.image-name }}
       build-ref: ${{ steps.ci-preparation.outputs.build-ref }}
@@ -66,7 +66,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-2022, macos-14, ubuntu-22.04 ]
+        os: [ windows-2022, macos-14, ubuntu-24.04 ]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     steps:
@@ -91,7 +91,7 @@ jobs:
   build-website:
     needs:
       - ci-preparation
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - name: Checkout
@@ -141,7 +141,7 @@ jobs:
 
   # Create a staging repository on Central
   staging-repo:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs:
       - ci-preparation
     if: fromJSON(needs.ci-preparation.outputs.may-deploy)
@@ -180,7 +180,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-2022, macos-14, ubuntu-22.04 ]
+        os: [ windows-2022, macos-14, ubuntu-24.04 ]
     runs-on: ${{ matrix.os }}
     # Run if:
     # - The staging repository is ready
@@ -289,7 +289,7 @@ jobs:
     needs:
       - assemble-and-upload
       - ci-preparation
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: >-
       always() && needs.assemble-and-upload.result == 'success'
     steps:
@@ -315,7 +315,7 @@ jobs:
     needs:
       - assemble-and-upload
       - ci-preparation
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: >-
       always() && needs.assemble-and-upload.result == 'success'
     container:
@@ -339,7 +339,7 @@ jobs:
     needs:
       - ci-preparation
       - assemble-and-upload
-    runs-on:  ubuntu-22.04
+    runs-on:  ubuntu-24.04
     if: >-
       always() && needs.assemble-and-upload.result == 'success'
     container:
@@ -427,7 +427,7 @@ jobs:
       # Strictly sequential.
       group: release-${{ needs.ci-preparation.outputs.build-ref }}
       cancel-in-progress: false
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       winget-deploy: ${{ steps.check-released.outputs.has-released }}
     if: >-
@@ -555,7 +555,7 @@ jobs:
           .\wingetcreate.exe update $env:packageID --version $packageVersion --urls "$installerUrl" --submit --token $gitToken
 
   success:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs:
       - assemble-and-upload
       - build

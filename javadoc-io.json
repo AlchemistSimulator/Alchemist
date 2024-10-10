@@ -113,7 +113,8 @@
     "second": "https://javadoc.io/doc/org.danilopianini/java-quadtree/0.2.1/package-list"
   },
   "org.danilopianini/jirf/0.4.26": {
-    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.26"
+    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.26",
+    "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.26/element-list"
   },
   "org.danilopianini/listset/0.3.9": {
     "first": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9",
@@ -141,8 +142,8 @@
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/null"
   },
-  "org.jetbrains.kotlin/kotlin-stdlib/2.0.20": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.0.20"
+  "org.jetbrains.kotlin/kotlin-stdlib/2.0.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.0.21"
   },
   "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.9.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.9.0"
@@ -159,7 +160,8 @@
     "second": "https://javadoc.io/doc/org.jooq/jool/0.9.15/element-list"
   },
   "org.mongodb/mongodb-driver-sync/5.2.0": {
-    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.2.0"
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.2.0",
+    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.2.0/element-list"
   },
   "org.protelis/protelis-interpreter/17.3.47": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.3.47"

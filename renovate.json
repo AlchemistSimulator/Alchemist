@@ -15,7 +15,8 @@
     {
       "description": "Some updates should have type docs",
       "matchDepNames": [
-        "/^org\\.jetbrains\\.dokka.*/"
+        "/^org\\.jetbrains\\.dokka.*/",
+        "gohugoio/hugo"
       ],
       "semanticCommitType": "docs"
     },

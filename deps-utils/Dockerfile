@@ -1,1 +1,1 @@
-FROM danysk/makepkg:1.1.15
+FROM danysk/makepkg:1.1.16

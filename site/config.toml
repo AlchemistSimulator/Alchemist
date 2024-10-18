@@ -10,7 +10,6 @@ relativeURLs = true
 
 [params]
   editURL = "https://github.com/AlchemistSimulator/Alchemist/edit/master/site/content/"
-  description = "The Alchemist Simulator"
   author.name = "Danilo Pianini"
   showVisitedLinks = true
   disableBreadcrumb = false

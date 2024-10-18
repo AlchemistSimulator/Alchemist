@@ -2,7 +2,8 @@
 chapter = false
 pre = ""
 title = "The Alchemist Simulator"
-weight = 5
+description = "The Alchemist Simulator"
+weight = 1
 +++
 
 # ![logo](images/logo-text-path.svg)

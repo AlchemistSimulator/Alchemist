@@ -23,7 +23,7 @@ relativeURLs = true
   version = "!development preview!"
 
 [outputs]
-  home = ['html', 'rss', 'search']
+  home = ['html', 'rss', 'print']
 
 [markup]
   [markup.goldmark]

@@ -9,7 +9,7 @@ hidden = true
 
 From {{< cite doi="10.1109/MIC.2022.3216753" >}}
 
-{{< cite doi="10.1109/MIC.2022.3216753" bibtex=true >}}
+{{< cite doi="10.1109/MIC.2022.3216753" style=bibtex >}}
 
 Experiment publicly available at [https://github.com/cric96/experiment-2022-ieee-decentralised-system](https://github.com/cric96/experiment-2022-ieee-decentralised-system)
 

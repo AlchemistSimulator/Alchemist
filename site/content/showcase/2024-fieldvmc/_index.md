@@ -9,7 +9,7 @@ hidden = true
 
 [//]: # (From {{< cite doi="" >}})
 
-[//]: # ({{< cite doi="" bibtex=true >}})
+[//]: # ({{< cite doi="" style=bibtex >}})
 
 Simulation and detailed description publicly available at [https://github.com/angelacorte/vmc-experiments](https://github.com/angelacorte/vmc-experiments),
 related to the paper ``_An Aggregate Vascular Morphogenesis Controller for Engineered Self-Organising Spatial Structures_'' presented at ACSOS 2024 (DOI available soon).

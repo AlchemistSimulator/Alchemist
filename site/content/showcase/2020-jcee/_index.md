@@ -7,7 +7,7 @@ tags = ["experiment", "maps", "export", "protelis"]
 hidden = true
 +++
 
-Scientific publication: [https://doi.org/10.1016/j.compeleceng.2021.107580](https://doi.org/10.1016/j.compeleceng.2021.107580)
+Scientific publication: {{% cite doi="10.1016/j.compeleceng.2021.107580" %}}
 
 Experiment publicly available at [https://github.com/DanySK/Experiment-2021-JCEE-Optimal-Converge-Cast](https://github.com/DanySK/Experiment-2021-JCEE-Optimal-Converge-Cast)
 

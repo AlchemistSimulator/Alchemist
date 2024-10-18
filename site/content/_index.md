@@ -34,7 +34,7 @@ please add a reference to the following paper:
 
 Here is a BibTeX for LaTeX users:
 
-{{< cite bibtex=true >}}
+{{< cite style=bibtex >}}
 
 ## Index of contents
 

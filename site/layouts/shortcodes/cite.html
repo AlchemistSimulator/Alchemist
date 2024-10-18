@@ -1,17 +1,9 @@
-{{- $bibtex := .Get "bibtex" | default false -}}
+{{- $style := .Get "style" | default "apa" -}}
 {{- $doi := .Get "doi" | default "10.1057/jos.2012.27" -}}
-{{- $separator := .Get "separator" | default "#" -}}
-{{- if $bibtex }}
-    {{- $result := getCSV $separator (printf "https://doi.org/%s" $doi) (dict "Accept" "application/x-bibtex") -}}
-    {{- $sad := $result -}}
-    {{- $result = apply $result "index" "." 0 -}}
-    {{- $code := index $result 0 -}}
-    {{- range $line := (last (add (len $result) -1) $result) -}}
-        {{- $code = printf "%s\n%s" $code $line -}}
-    {{- end -}}
-    {{- highlight $code "bibtex" }}
-{{- else -}}
-    {{- $style := .Get "style" | default "apa" -}}
-    {{- $result := getCSV $separator (printf "https://doi.org/%s" $doi) (dict "Accept" (printf "text/x-bibliography; style=%s" $style)) -}}
-    <a href="https://doi.org/{{- $doi -}}">{{- index (index $result 0) 0 -}}</a>
-{{- end -}}
+{{- $elementId := print "cite-" $doi "-" $style | hash.XxHash -}}
+<div id="cite-{{- $elementId -}}" style="font-family:monospace;"></div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderCitation({{- $doi -}}, "{{- $style -}}", "cite-{{- $elementId -}}");
+    });
+</script>

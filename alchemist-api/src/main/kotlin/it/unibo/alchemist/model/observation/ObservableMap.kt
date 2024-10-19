@@ -12,20 +12,21 @@ package it.unibo.alchemist.model.observation
 import arrow.core.Option
 import arrow.core.none
 import arrow.core.some
-import java.util.WeakHashMap
 
 /**
  * Represents an observable map with keys of type [K] and values of type [V].
  */
 interface ObservableMap<K, out V> : Observable<Map<K, V>> {
 
-    override fun onChange(registrant: Any, callback: (Map<K, V>) -> Unit) =
-        onChange(registrant) { map, _, _, _ -> callback(map) }
+    override fun onChange(registrant: Any, callback: (Map<K, V>) -> Unit)
 
-    fun onChange(
-        registrant: Any,
-        callback: (map: Map<K, V>, key: Option<K>, previousValue: Option<V>, newValue: Option<V>) -> Unit,
-    )
+//    fun onChange(
+//        registrant: Any,
+//        key: K,
+//        callback: (previousValue: Option<V>, newValue: Option<V>) -> Unit
+//    )
+
+//    fun onNewKey(registrant: Any, callback: (K, V) -> Unit)
 
     /**
      * Returns an [Observable] of all changes to values associated to the provided [key].
@@ -38,9 +39,11 @@ interface ObservableMap<K, out V> : Observable<Map<K, V>> {
  */
 class ObservableMutableMap<K, V> : ObservableMap<K, V> {
 
-    override val current: MutableMap<K, V> = linkedMapOf()
+    private val backing: MutableMap<K, V> = linkedMapOf<K, V>()
     private val keyObservables: MutableMap<K, MutableObservable<Option<V>>> = linkedMapOf()
-    private val observers: WeakHashMap<Any, List<(Map<K, V>, Option<K>, Option<V>, Option<V>) -> Unit>> = WeakHashMap()
+    private val observers: MutableMap<Any, List<(Map<K, V>) -> Unit>> = linkedMapOf()
+
+    override val current: Map<K, V> get() = backing
 
     /**
      * Puts the given [value] in the map at the given [key],
@@ -54,14 +57,14 @@ class ObservableMutableMap<K, V> : ObservableMap<K, V> {
          * key is present with non-null value -> some(value)
          */
         val containedKey = current.containsKey(key)
-        val previous = current.put(key, value).let {
+        val previous = backing.put(key, value).let {
             @Suppress("UNCHECKED_CAST") // It can be null only if V is nullable
             if (containedKey) (it as V).some() else none()
         }
         if (previous != value) {
             getAsMutable(key).current = value.some()
             observers.values.forEach { callbacks ->
-                callbacks.forEach { it(current, key.some(), previous, value.some()) }
+                callbacks.forEach { it(current) }
             }
         }
     }
@@ -80,34 +83,51 @@ class ObservableMutableMap<K, V> : ObservableMap<K, V> {
      * notifying all subscribers to the map and all subscribers to the key.
      */
     fun remove(key: K) {
-        current.remove(key)
+        backing.remove(key)
         val previousObservedValue = keyObservables[key]?.update { none() } ?: none()
         if (previousObservedValue.isSome()) {
             observers.values.forEach { callbacks ->
-                callbacks.forEach { it(current, key.some(), previousObservedValue, none()) }
+                callbacks.forEach { it(current) }
             }
         }
     }
 
     override fun onChange(
         registrant: Any,
-        callback: (map: Map<K, V>, key: Option<K>, previousValue: Option<V>, newValue: Option<V>) -> Unit,
+        callback: (map: Map<K, V>) -> Unit,
     ) {
-        callback(current, none(), none(), none())
+        callback(current)
         observers.compute(registrant) { _, callbacks -> callbacks.orEmpty() + callback }
     }
 
     override fun stopWatching(registrant: Any) {
-        TODO("Not yet implemented")
+        observers.remove(registrant)
+        val iterator = keyObservables.iterator()
+        while (iterator.hasNext()) {
+            val (key, observable) = iterator.next()
+            observable.stopWatching(registrant)
+
+            if (observable.observingCallbacks.isEmpty()) {
+                iterator.remove()
+            }
+        }
     }
+
+//    override fun onChange(
+//        registrant: Any,
+//        key: K,
+//        callback: (Option<V>, Option<V>) -> Unit
+//    ) {
+//        TODO("Not yet implemented")
+//    }
 
     override operator fun get(key: K): Observable<Option<V>> = getAsMutable(key)
 
     /**
      * Returns a copy of this map with no observers.
      */
-    fun copy() = ObservableMutableMap<K, V>().apply {
-        current.putAll(this@ObservableMutableMap.current)
+    fun copy() = ObservableMutableMap<K, V>().let { newMap ->
+        current.entries.forEach { (k, v) -> newMap.put(k, v) }
     }
 
     private fun getAsMutable(key: K): MutableObservable<Option<V>> =

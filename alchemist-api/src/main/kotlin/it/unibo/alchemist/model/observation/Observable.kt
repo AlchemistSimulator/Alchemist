@@ -23,6 +23,11 @@ interface Observable<out T> {
     val current: T
 
     /**
+     * Returns the list of observers of this observable.
+     */
+    val observers: List<Any>
+
+    /**
      * Subscribes to changes of this observable.
      */
     fun onChange(registrant: Any, callback: (T) -> Unit)
@@ -42,10 +47,12 @@ interface Observable<out T> {
     fun <R> map(transform: (T) -> R): Observable<R> = object : Observable<R> {
 
         override var current: R = transform(this@Observable.current)
+        override var observers: List<Any> = listOf()
 
         override fun onChange(registrant: Any, callback: (R) -> Unit) {
             callback(current)
-            this@Observable.onChange(registrant) { newValue ->
+            observers += registrant
+            this@Observable.onChange(this to registrant) { newValue ->
                 val transformed = transform(newValue)
                 if (transformed != current) {
                     current = transformed
@@ -55,7 +62,8 @@ interface Observable<out T> {
         }
 
         override fun stopWatching(registrant: Any) {
-            this@Observable.stopWatching(registrant)
+            observers -= registrant
+            this@Observable.stopWatching(this to registrant)
         }
 
         override fun toString(): String =
@@ -74,11 +82,13 @@ interface Observable<out T> {
     fun <O, R> mergeWith(other: Observable<O>, merge: (T, O) -> R): Observable<R> = object : Observable<R> {
 
         override var current: R = merge(this@Observable.current, other.current)
+        override var observers: List<Any> = emptyList()
 
         override fun onChange(registrant: Any, callback: (R) -> Unit) {
             callback(current)
+            observers += registrant
             listOf(this@Observable, other).forEach {
-                it.onChange(registrant) {
+                it.onChange(this to registrant) {
                     val newValue = merge(this@Observable.current, other.current)
                     if (newValue != current) {
                         current = newValue
@@ -89,7 +99,8 @@ interface Observable<out T> {
         }
 
         override fun stopWatching(registrant: Any) {
-            this@Observable.stopWatching(registrant)
+            observers -= registrant
+            this@Observable.stopWatching(this to registrant)
         }
 
         override fun toString() = "MergeObservable($current)[from: ${this@Observable}, other: $other]"
@@ -124,6 +135,7 @@ interface MutableObservable<T> : Observable<T> {
         fun <T> observableOf(initial: T): MutableObservable<T> = object : MutableObservable<T> {
 
             private val observingCallbacks: MutableMap<Any, List<(T) -> Unit>> = linkedMapOf()
+
             override var current: T = initial
                 set(value) {
                     if (value != field) {
@@ -131,6 +143,8 @@ interface MutableObservable<T> : Observable<T> {
                         observingCallbacks.values.forEach { callbacks -> callbacks.forEach { it(value) } }
                     }
                 }
+
+            override val observers: List<Any> get() = observingCallbacks.keys.toList()
 
             override fun onChange(registrant: Any, callback: (T) -> Unit) {
                 callback(current)

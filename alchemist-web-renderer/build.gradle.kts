@@ -38,7 +38,6 @@ kotlin {
             dependencies {
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.kotest.framework.engine)
-                implementation(libs.kotest.framework.datatest)
                 implementation(libs.kotlin.test.common)
                 implementation(libs.kotlin.test.annotations)
             }

@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 import it.unibo.alchemist.model.geometry.Intersection2D
@@ -130,11 +131,11 @@ class TestSegment2DImpl : StringSpec() {
             horizontalSegment.toLine().let {
                 it.slope shouldBeAbout 0.0
                 it.yIntercept shouldBeAbout 2.0
-                it.xIntercept shouldBe Double.NaN
+                it.xIntercept.shouldBeNaN()
             }
             verticalSegment.toLine().let {
-                it.slope shouldBe Double.NaN
-                it.yIntercept shouldBe Double.NaN
+                it.slope.shouldBeNaN()
+                it.yIntercept.shouldBeNaN()
                 it.xIntercept shouldBeAbout 2.0
             }
             obliqueSegment.toLine().let {

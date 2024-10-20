@@ -3,7 +3,7 @@
 {{- $path := .Get "path" | default "README.md" -}}
 {{- $branch := .Get "branch" | default "master" -}}
 {{- $highlight := .Get "highlight" | default "true" -}}
-{{- $json := getJSON "https://api.github.com/repos/" $owner "/" $repo "/contents/" $path -}}
+{{- $json := resources.GetRemote "https://api.github.com/repos/" $owner "/" $repo "/contents/" $path | transform.Unmarshal -}}
 {{- $content := $json.content | base64Decode | htmlUnescape -}}
 {{- $content := split $content "\n" -}}
 {{- $start := .Get "from" | default "1" | int | add -1 }}

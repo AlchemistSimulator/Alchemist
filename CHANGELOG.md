@@ -1,3 +1,28 @@
+## [34.1.6](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.5...34.1.6) (2024-10-20)
+
+### Dependency updates
+
+* **deps:** drop kotest-framework-datatest ([9c162b6](https://github.com/AlchemistSimulator/Alchemist/commit/9c162b6878cff18c455de1f11881c48a218cfb33))
+* **deps:** update dependency io.kotest.multiplatform to v6 ([#3812](https://github.com/AlchemistSimulator/Alchemist/issues/3812)) ([7470ec5](https://github.com/AlchemistSimulator/Alchemist/commit/7470ec52f0e03cefa554419108da7bc80296b3d3))
+* **deps:** update plugin hugo to v0.9.0 ([5ddf3c4](https://github.com/AlchemistSimulator/Alchemist/commit/5ddf3c458b637f8a32773dc8f99bec652c63d89e))
+
+### Bug Fixes
+
+* **multivesta:** replace verbosity level `ALL` with `TRACE` ([9fd3e24](https://github.com/AlchemistSimulator/Alchemist/commit/9fd3e24e115e732d0a87ea1a141696aa0b08d6e6))
+* replace verbosity level `ALL` with `TRACE` ([44208c4](https://github.com/AlchemistSimulator/Alchemist/commit/44208c445dcc7905da6df8270433a14c2929f2b3))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.136.2 ([6320695](https://github.com/AlchemistSimulator/Alchemist/commit/6320695e210e2ce8fa1fdbb753e6c33e3f8c55dd))
+
+### Tests
+
+* **euclidean-geometry:** use `shouldBeNaN` instead of `shouldBe Double.NaN` ([f917a53](https://github.com/AlchemistSimulator/Alchemist/commit/f917a53dcb2ae125f6869c9b7f6cb2ba04d0fea5))
+
+### General maintenance
+
+* **website:** replace `GetJSON` with `resources.GetRemote` with `transform.Unmarshal` ([0839094](https://github.com/AlchemistSimulator/Alchemist/commit/0839094ec05eeb7ec49b6361253558aa9737fce3))
+
 ## [34.1.5](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.4...34.1.5) (2024-10-19)
 
 ### Dependency updates

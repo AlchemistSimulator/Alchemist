@@ -42,7 +42,7 @@ enum class Verbosity(val code: String, val logLevel: Level) {
     /**
      * ALL.
      */
-    ALL("all", Level.ALL),
+    ALL("all", Level.TRACE),
 
     /**
      * OFF.

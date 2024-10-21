@@ -499,6 +499,7 @@ jobs:
           deploy-command: |
             npm install
             npx semantic-release
+          retries-on-failure: 1
           should-run-codecov: false
           should-deploy: true
           should-validate-wrapper: false

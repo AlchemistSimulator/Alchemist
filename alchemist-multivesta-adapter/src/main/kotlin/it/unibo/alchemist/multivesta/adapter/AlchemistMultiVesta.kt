@@ -54,7 +54,7 @@ object AlchemistMultiVesta {
     private val logLevels = mapOf(
         "v" to Level.INFO,
         "vv" to Level.DEBUG,
-        "vvv" to Level.ALL,
+        "vvv" to Level.TRACE,
         "q" to Level.ERROR,
         "qq" to Level.OFF,
     )

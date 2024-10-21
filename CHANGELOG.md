@@ -1,3 +1,27 @@
+## [34.1.7](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.6...34.1.7) (2024-10-21)
+
+### Dependency updates
+
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.11 ([c8f7840](https://github.com/AlchemistSimulator/Alchemist/commit/c8f7840bf5cf78ab1356d669df36c8cd7c453aa9))
+* **deps:** update junit5 monorepo to v5.11.3 ([1947b18](https://github.com/AlchemistSimulator/Alchemist/commit/1947b18e628e87f221b67fa30b95c8965d65b78f))
+* **deps:** update react to v18.3.1-pre.820 ([5689b49](https://github.com/AlchemistSimulator/Alchemist/commit/5689b49ce8614bd0f38a5dcdafed860e357bf18e))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.136.3 ([4e37a67](https://github.com/AlchemistSimulator/Alchemist/commit/4e37a67360fc0fd76a7f4b0d17545417ac2b09c7))
+
+### Tests
+
+* **website:** add https://doi.org/10.2312/SCA/SCA07/099-108 to the link-check ignore list due to timeout errors ([c49ab96](https://github.com/AlchemistSimulator/Alchemist/commit/c49ab96ab9925e71cd39418b52768020729daf33))
+
+### Build and continuous integration
+
+* do not retry to release in case of failure. ([66695cb](https://github.com/AlchemistSimulator/Alchemist/commit/66695cbebbb094b4fd6c13a9b4b6437678764f74))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([c08677a](https://github.com/AlchemistSimulator/Alchemist/commit/c08677a82ab4841b2804073a3fdb9e427feb2dcc))
+
 ## [34.1.6](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.5...34.1.6) (2024-10-20)
 
 ### Dependency updates

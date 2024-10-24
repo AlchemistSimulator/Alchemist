@@ -9,9 +9,10 @@
 
 package it.unibo.alchemist.boundary.monitors
 
-import io.ktor.server.engine.ApplicationEngine
+import io.ktor.server.engine.EmbeddedServer
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.netty.NettyApplicationEngine
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.graphql.monitor.EnvironmentSubscriptionMonitor
 import it.unibo.alchemist.boundary.graphql.server.modules.graphQLModule
@@ -36,14 +37,14 @@ private val logger = LoggerFactory.getLogger(GraphQLMonitor::class.java)
  */
 class GraphQLMonitor<T, P : Position<out P>> @JvmOverloads constructor(
     val environment: Environment<T, P>,
-    val host: String = DefaultGraphQLSettings.DEFAULT_HOST,
-    val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
-    val teardownOnSimulationTermination: Boolean = true,
+    private val host: String = DefaultGraphQLSettings.DEFAULT_HOST,
+    private val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
+    private val teardownOnSimulationTermination: Boolean = true,
     private val serverDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : OutputMonitor<Any, Nothing> {
 
     private val subscriptionMonitor = EnvironmentSubscriptionMonitor<Any, Nothing>()
-    private lateinit var server: ApplicationEngine
+    private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
     override fun initialized(environment: Environment<Any, Nothing>) {
         environment.simulation.addOutputMonitor(subscriptionMonitor)
@@ -61,7 +62,7 @@ class GraphQLMonitor<T, P : Position<out P>> @JvmOverloads constructor(
             "alchemist-graphql-server@$host:$port",
         ).start()
         runBlocking {
-            logger.info("Starting GraphQL server at $host:${server.resolvedConnectors().first().port}")
+            logger.info("Starting GraphQL server at $host:${server.engine.resolvedConnectors().first().port}")
         }
         mutex.acquireUninterruptibly()
     }
@@ -72,14 +73,13 @@ class GraphQLMonitor<T, P : Position<out P>> @JvmOverloads constructor(
         }
     }
 
-    private fun makeServer(): ApplicationEngine =
-        embeddedServer(
-            Netty,
-            port = port,
-            host = host,
-            module = {
-                graphQLModule(this@GraphQLMonitor.environment)
-                graphQLRoutingModule()
-            },
-        )
+    private fun makeServer() = embeddedServer(
+        Netty,
+        port = port,
+        host = host,
+        module = {
+            graphQLModule(this@GraphQLMonitor.environment)
+            graphQLRoutingModule()
+        },
+    )
 }

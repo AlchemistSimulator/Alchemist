@@ -2,7 +2,7 @@
 	path = site/themes/hugo-theme-relearn
 	url = https://github.com/McShelby/hugo-theme-relearn.git
 	shallow = true
-	branch = 7.0.1
+	branch = 7.1.1
 [submodule "site/content/tutorials/scafi/learning-scafi-alchemist"]
 	path = external-resources/learning-scafi-alchemist
 	url = https://github.com/scafi/learning-scafi-alchemist.git

@@ -1,3 +1,37 @@
+## [34.1.10](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.9...34.1.10) (2024-11-04)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.17 ([4d508ca](https://github.com/AlchemistSimulator/Alchemist/commit/4d508ca6719478481361023206934bc41d0eb714))
+* **deps:** update danysk/makepkg docker tag to v1.1.18 ([19c32db](https://github.com/AlchemistSimulator/Alchemist/commit/19c32db23adde6f18639651205cee61e9aa3581f))
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.12 ([776dabc](https://github.com/AlchemistSimulator/Alchemist/commit/776dabc173ad4c5c1b67bd1cf724dcb8f7d858cc))
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.18.0 ([19e3f42](https://github.com/AlchemistSimulator/Alchemist/commit/19e3f4220a31eb5726db2479c13667ce18299d34))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.112 ([e12ae68](https://github.com/AlchemistSimulator/Alchemist/commit/e12ae68236784a5d2b44a060a2c09c19cfde5d1a))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.113 ([34f271a](https://github.com/AlchemistSimulator/Alchemist/commit/34f271ad9916aeb273e50a407cd52e83b1bbb395))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.114 ([c602aa2](https://github.com/AlchemistSimulator/Alchemist/commit/c602aa2bb1170e4ca865d6f5677e8c1db28c728a))
+* **deps:** update dependency site/themes/hugo-theme-relearn to v7.1.1 ([95cd3c5](https://github.com/AlchemistSimulator/Alchemist/commit/95cd3c55d0cc29f566fbd001e6410f1c80f5aad7))
+* **deps:** update graphql to v8.2.1 ([18714f9](https://github.com/AlchemistSimulator/Alchemist/commit/18714f98a08df66458348c624f96095bc47c529b))
+* **deps:** update plugin kotlin-qa to v0.69.0 ([b5a6173](https://github.com/AlchemistSimulator/Alchemist/commit/b5a61735e29bfa57ae426f784e799dbf7f808fdf))
+* **deps:** update react to v18.3.1-pre.821 ([0135ffd](https://github.com/AlchemistSimulator/Alchemist/commit/0135ffd650d593e044f59403d90d8510255de04c))
+* **deps:** update react to v18.3.1-pre.822 ([d0991f8](https://github.com/AlchemistSimulator/Alchemist/commit/d0991f8096a0c29779683176802adb66f1998235))
+* **deps:** update react to v18.3.1-pre.823 ([654e2c3](https://github.com/AlchemistSimulator/Alchemist/commit/654e2c3b6386372737f84a70b06c8f480ff78e1c))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.137.0 ([63fbd10](https://github.com/AlchemistSimulator/Alchemist/commit/63fbd108df034fcf49fd23d4e49a2d502f533394))
+
+### Build and continuous integration
+
+* **deps:** update actions/setup-node action to v4.1.0 ([380ba31](https://github.com/AlchemistSimulator/Alchemist/commit/380ba310dbfa689b8baf8b5bd336f2743293050d))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.12 ([c0ec7cf](https://github.com/AlchemistSimulator/Alchemist/commit/c0ec7cf96af36851bfd444915a83ca9c0b243070))
+* **renovate:**  use `with` when importing the configuration instead of `assert` ([69cf617](https://github.com/AlchemistSimulator/Alchemist/commit/69cf617c99326b8fe53ba92916d47061f0a2f8e3))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([229cda5](https://github.com/AlchemistSimulator/Alchemist/commit/229cda5ae8323563a59efa7504a0eb5a7cd6422c))
+* **build:** update the javadoc.io cache ([d77ebbd](https://github.com/AlchemistSimulator/Alchemist/commit/d77ebbdecdae7639b2e2c4c1c4a24a3cb47a5578))
+* **build:** update the javadoc.io cache ([a3ff4ec](https://github.com/AlchemistSimulator/Alchemist/commit/a3ff4ec51cc3d2c290be3b9874dae10c36b037b2))
+
 ## [34.1.9](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.8...34.1.9) (2024-10-24)
 
 ### Documentation

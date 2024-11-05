@@ -165,10 +165,11 @@ class GraphHopperRoutingService @JvmOverloads constructor(
             .setGraphHopperLocation(internalWorkdir.absolutePath)
             .setProfiles(GraphHopperOptions.allProfiles)
             .setEncodedValuesString(
-                GraphHopperOptions.allCustomModels
+                GraphHopperOptions.allCustomModels.asSequence()
                     .flatMap { model ->
                         CustomModelParser.findVariablesForEncodedValuesString(model, { true }) { it }
                     }
+                    .distinct()
                     .joinToString(separator = ", "),
             )
             .importOrLoad()

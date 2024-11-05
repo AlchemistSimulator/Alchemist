@@ -1,3 +1,18 @@
+## [34.1.11](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.10...34.1.11) (2024-11-05)
+
+### Dependency updates
+
+* **deps:** update dependency com.graphhopper:graphhopper-core to v10 ([#3873](https://github.com/AlchemistSimulator/Alchemist/issues/3873)) ([583c94d](https://github.com/AlchemistSimulator/Alchemist/commit/583c94de16a93fc1c27cdfe11a6b821a9257d011))
+* **deps:** update react to v18.3.1-pre.824 ([ec58ce7](https://github.com/AlchemistSimulator/Alchemist/commit/ec58ce7f8eeff4847c011edaa31e2225ed60b5a2))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.137.1 ([1443d8a](https://github.com/AlchemistSimulator/Alchemist/commit/1443d8a8a58072fb3cee2fb0727915b5d008b82b))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([ffb67ad](https://github.com/AlchemistSimulator/Alchemist/commit/ffb67ad5cbeaaa2e876e050510650f00b855f87d))
+
 ## [34.1.10](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.9...34.1.10) (2024-11-04)
 
 ### Dependency updates

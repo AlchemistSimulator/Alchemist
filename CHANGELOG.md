@@ -1,3 +1,23 @@
+## [34.1.13](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.12...34.1.13) (2024-11-08)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.4.0 ([#3884](https://github.com/AlchemistSimulator/Alchemist/issues/3884)) ([73f2c2f](https://github.com/AlchemistSimulator/Alchemist/commit/73f2c2f8ddc549c7dd7432efa8d15ebedc753d80))
+* **deps:** update danysk/makepkg docker tag to v1.1.19 ([#3881](https://github.com/AlchemistSimulator/Alchemist/issues/3881)) ([b7d44a5](https://github.com/AlchemistSimulator/Alchemist/commit/b7d44a5f112f6cc389af0b77f86c1cf447f8cb84))
+* **deps:** update dependency org.codehaus.groovy:groovy-jsr223 to v3.0.23 ([#3882](https://github.com/AlchemistSimulator/Alchemist/issues/3882)) ([aba92f9](https://github.com/AlchemistSimulator/Alchemist/commit/aba92f9ea7c49ca6ce9b3d76016c4a1f06bec64a))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.2.1 ([5dbad88](https://github.com/AlchemistSimulator/Alchemist/commit/5dbad88954b4fdb807b823792a7a696ef08b4bcc))
+* **deps:** update node.js to v22 ([ebaee7a](https://github.com/AlchemistSimulator/Alchemist/commit/ebaee7a6b4c1fbbfee1d9d7dfdc108455a4fc1f3))
+* **deps:** update plugin multijvmtesting to v1.3.0 ([#3883](https://github.com/AlchemistSimulator/Alchemist/issues/3883)) ([e4ad8ef](https://github.com/AlchemistSimulator/Alchemist/commit/e4ad8ef61f92c4bc0ee95658fbeb705291200075))
+
+### Build and continuous integration
+
+* **deps:** update nicolasfara/precompute-semantic-release-version-action action to v2.0.2 ([476790d](https://github.com/AlchemistSimulator/Alchemist/commit/476790d5e4428141f7158ecdbc78303755836313))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([5dd1854](https://github.com/AlchemistSimulator/Alchemist/commit/5dd1854676418d3739ecde1cea21a3b27f4396c9))
+* **build:** update the javadoc.io cache ([01342d6](https://github.com/AlchemistSimulator/Alchemist/commit/01342d64f702261f901acc487a253ba6e63d43be))
+
 ## [34.1.12](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.11...34.1.12) (2024-11-06)
 
 ### Dependency updates

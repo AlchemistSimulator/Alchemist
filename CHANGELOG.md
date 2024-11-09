@@ -1,3 +1,14 @@
+## [34.1.14](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.13...34.1.14) (2024-11-09)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.5.0 ([#3886](https://github.com/AlchemistSimulator/Alchemist/issues/3886)) ([e8f7463](https://github.com/AlchemistSimulator/Alchemist/commit/e8f7463fa4a6c0c99712a468377b2e385296805c))
+* **deps:** update react to v18.3.1-pre.826 ([#3885](https://github.com/AlchemistSimulator/Alchemist/issues/3885)) ([348c9b9](https://github.com/AlchemistSimulator/Alchemist/commit/348c9b9465aeb1ba18ed2a3e15ba9481a9317af2))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([1af9057](https://github.com/AlchemistSimulator/Alchemist/commit/1af9057c5a9d81c14004c896fbcdef91c9405bd9))
+
 ## [34.1.13](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.12...34.1.13) (2024-11-08)
 
 ### Dependency updates

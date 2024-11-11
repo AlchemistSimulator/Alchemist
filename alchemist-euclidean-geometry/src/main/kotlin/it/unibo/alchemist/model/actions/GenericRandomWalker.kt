@@ -32,7 +32,7 @@ open class GenericRandomWalker<T>(
     protected val randomGenerator: RandomGenerator,
     protected val speed: Double,
     protected val distanceDistribution: RealDistribution,
-) : AbstractEuclideanConfigurableMoveNode<T, Euclidean2DPosition>(
+) : EuclideanConfigurableMoveNode<T, Euclidean2DPosition>(
     environment,
     node,
     RoutingStrategy { p1, p2 ->

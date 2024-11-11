@@ -50,7 +50,8 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
      * @param speedSelectionStrategy
      *            the speed selection strategy
      */
-    protected AbstractConfigurableMoveNode(final Environment<T, P> environment,
+    protected AbstractConfigurableMoveNode(
+        final Environment<T, P> environment,
         final Node<T> node,
         final RoutingStrategy<T, P> routingStrategy,
         final TargetSelectionStrategy<T, P> target,

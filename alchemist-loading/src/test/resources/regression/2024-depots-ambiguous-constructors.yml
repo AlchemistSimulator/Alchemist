@@ -1,0 +1,18 @@
+incarnation: protelis
+
+deployments:
+  agent1:
+    type: Point
+    parameters: [-7, -6]
+    programs:
+      - time-distribution: 3
+        type: Event
+        actions:
+          - type: EuclideanConfigurableMoveNode
+            parameters:
+              routing-strategy:
+                type: StraightLine
+              target-selection-strategy:
+                type: GoTo
+                parameters: [7, 6]
+              speed: 0.005

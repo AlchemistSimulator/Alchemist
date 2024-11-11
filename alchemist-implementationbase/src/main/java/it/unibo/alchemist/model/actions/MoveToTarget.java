@@ -49,15 +49,20 @@ public final class MoveToTarget<T, P extends Position2D<P>> extends AbstractConf
      * @param speed
      *            the speed of the node
      */
-    public MoveToTarget(final Environment<T, P> environment,
-            final Node<T> node,
-            final Reaction<T> reaction,
-            final Molecule trackMolecule,
-            final double speed) {
-        super(environment, node,
-                (p1, p2) -> new PolygonalChain<>(ImmutableList.of(p1, p2)),
-                new FollowTarget<>(environment, node, trackMolecule),
-                new ConstantSpeed<>(reaction, speed));
+    public MoveToTarget(
+        final Environment<T, P> environment,
+        final Node<T> node,
+        final Reaction<T> reaction,
+        final Molecule trackMolecule,
+        final double speed
+    ) {
+        super(
+            environment,
+            node,
+            (p1, p2) -> new PolygonalChain<>(ImmutableList.of(p1, p2)),
+            new FollowTarget<>(environment, node, trackMolecule),
+            new ConstantSpeed<>(reaction, speed)
+        );
         this.trackMolecule = trackMolecule;
         this.speed = speed;
     }

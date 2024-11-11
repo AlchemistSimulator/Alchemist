@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
  * @param <T> Concentration type
  * @param <P> position type
  */
-class GoTo<T, P : Position<P>>(
+data class GoTo<T, P : Position<P>>(
     private val destination: P,
 ) : TargetSelectionStrategy<T, P> {
 

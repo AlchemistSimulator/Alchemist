@@ -12,6 +12,12 @@ import it.unibo.alchemist.model.routes.PolygonalChain
  * @param <T> Concentration type
  * @param <P> position type
  */
-open class StraightLine<T, P : Position<P>> : RoutingStrategy<T, P> {
+class StraightLine<T, P : Position<P>> : RoutingStrategy<T, P> {
     override fun computeRoute(currentPos: P, finalPos: P): Route<P> = PolygonalChain(currentPos, finalPos)
+
+    override fun toString(): String = "StraightLine"
+
+    override fun equals(other: Any?): Boolean = other is StraightLine<*, *>
+
+    override fun hashCode() = 1
 }

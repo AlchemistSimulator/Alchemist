@@ -1,3 +1,33 @@
+## [35.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.14...35.0.0) (2024-11-11)
+
+### ⚠ BREAKING CHANGES
+
+* **euclidean-geometry:** expose `EuclideanConfigurableMoveNode` as a base (non-abstract) class, add `GoTo` and `StraightLine` (#3890)
+
+### Features
+
+* **euclidean-geometry:** expose `EuclideanConfigurableMoveNode` as a base (non-abstract) class, add `GoTo` and `StraightLine` ([#3890](https://github.com/AlchemistSimulator/Alchemist/issues/3890)) ([2ead38c](https://github.com/AlchemistSimulator/Alchemist/commit/2ead38cb40dd5083068375645b4703cf3c81942a))
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.6.0 ([#3894](https://github.com/AlchemistSimulator/Alchemist/issues/3894)) ([710da72](https://github.com/AlchemistSimulator/Alchemist/commit/710da7250b58443b439fd3f867d8eec16be3a8af))
+* **deps:** update react to v18.3.1-pre.827 ([#3887](https://github.com/AlchemistSimulator/Alchemist/issues/3887)) ([dc3860d](https://github.com/AlchemistSimulator/Alchemist/commit/dc3860de739fe385708b4a6c3a96fdbbfd4f9aea))
+* **deps:** update react to v18.3.1-pre.828 ([#3888](https://github.com/AlchemistSimulator/Alchemist/issues/3888)) ([0e0ef60](https://github.com/AlchemistSimulator/Alchemist/commit/0e0ef60ffd0fd4d8f8fc8931804545505c9a0625))
+* **deps:** update react to v18.3.1-pre.829 ([#3889](https://github.com/AlchemistSimulator/Alchemist/issues/3889)) ([2be1151](https://github.com/AlchemistSimulator/Alchemist/commit/2be1151050aae83366f47be79dd2cd81a62e6ddb))
+
+### Bug Fixes
+
+* **loading:** do not fail loading if multiple constructors produce the same parameter ([#3893](https://github.com/AlchemistSimulator/Alchemist/issues/3893)) ([96a8853](https://github.com/AlchemistSimulator/Alchemist/commit/96a88536a97aaceb90816d255eb21c2e4955c74e))
+
+### Tests
+
+* **loading:** improve the fallback when running MongoDB tests on less-known Linux distributions ([a4c41bf](https://github.com/AlchemistSimulator/Alchemist/commit/a4c41bf3bbdb3e24023f7ec371c0111772472dbe))
+* **loading:** run tests on MongoDB v8 ([#3892](https://github.com/AlchemistSimulator/Alchemist/issues/3892)) ([640c377](https://github.com/AlchemistSimulator/Alchemist/commit/640c3774f0ace781ccc5ce2e987cba59e3d20c3d))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([1f755f1](https://github.com/AlchemistSimulator/Alchemist/commit/1f755f12f08dfabcb8fb84454927a0840ea31249))
+
 ## [34.1.14](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.13...34.1.14) (2024-11-09)
 
 ### Dependency updates

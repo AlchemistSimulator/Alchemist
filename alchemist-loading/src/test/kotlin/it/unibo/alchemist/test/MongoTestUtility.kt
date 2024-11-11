@@ -33,17 +33,17 @@ internal fun withMongo(operation: () -> Unit) {
         runCatching { Platform.detect(CommonOS.list()) }
             .onFailure { logger.warn("Failed to detect platform", it) }
             .onSuccess { detectedPlatform ->
-                val platform: Platform = detectedPlatform
-                    .takeUnless { it.operatingSystem() == CommonOS.Linux && it.distribution().isEmpty }
-                    ?: ImmutablePlatform.builder()
-                        .from(detectedPlatform)
-                        .distribution(LinuxDistribution.Ubuntu)
-                        .version(UbuntuVersion.Ubuntu_20_10)
-                        .build()
-                val mongod = Mongod.instance()
-                    .withNet(Net.of("localhost", 27017, Network.localhostIsIPv6()).toTransition())
-                    .withPlatform(platform.toTransition())
-                val runningState = mongod.start(Version.Main.V7_0)
+                val runningState = runCatching { startMongo(detectedPlatform) }.recover {
+                    logger.warn("Failed to start MongoDB on detected platform $detectedPlatform", it)
+                    logger.warn("Retrying with a default Linux configuration")
+                    startMongo(
+                        ImmutablePlatform.builder()
+                            .from(detectedPlatform)
+                            .distribution(LinuxDistribution.Ubuntu)
+                            .version(UbuntuVersion.Ubuntu_20_10)
+                            .build(),
+                    )
+                }.getOrThrow()
                 try {
                     operation()
                 } finally {
@@ -52,3 +52,8 @@ internal fun withMongo(operation: () -> Unit) {
             }
     }
 }
+
+private fun startMongo(platform: Platform) = Mongod.instance()
+    .withNet(Net.of("localhost", 27017, Network.localhostIsIPv6()).toTransition())
+    .withPlatform(platform.toTransition())
+    .start(Version.Main.V7_0)

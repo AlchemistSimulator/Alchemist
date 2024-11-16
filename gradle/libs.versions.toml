@@ -56,7 +56,7 @@ jgit = "org.eclipse.jgit:org.eclipse.jgit:7.0.0.202409031743-r"
 jgrapht-core = "org.jgrapht:jgrapht-core:1.5.2"
 jirf = "org.danilopianini:jirf:0.4.26"
 jool = "org.jooq:jool:0.9.15"
-jpx = "io.jenetics:jpx:3.1.0"
+jpx = "io.jenetics:jpx:3.2.0"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 kasechange = "net.pearx.kasechange:kasechange:1.4.1"

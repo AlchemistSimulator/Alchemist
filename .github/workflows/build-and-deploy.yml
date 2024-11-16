@@ -72,7 +72,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.22
-      - uses: DanySK/build-check-deploy-gradle-action@3.5.16
+      - uses: DanySK/build-check-deploy-gradle-action@3.5.17
         with:
           pre-build-command: true
           build-command: |
@@ -96,7 +96,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.22
-      - uses: DanySK/build-check-deploy-gradle-action@3.5.16
+      - uses: DanySK/build-check-deploy-gradle-action@3.5.17
         with:
           retries-on-failure: 5
           wait-between-retries: 120
@@ -150,7 +150,7 @@ jobs:
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4.2.2
-      - uses: DanySK/build-check-deploy-gradle-action@3.5.16
+      - uses: DanySK/build-check-deploy-gradle-action@3.5.17
         with:
           maven-central-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
@@ -195,7 +195,7 @@ jobs:
     steps:
       - name: Checkout with full history
         uses: danysk/action-checkout@0.2.22
-      - uses: DanySK/build-check-deploy-gradle-action@3.5.16
+      - uses: DanySK/build-check-deploy-gradle-action@3.5.17
         with:
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
@@ -477,7 +477,7 @@ jobs:
         uses: actions/setup-node@v4.1.0
         with:
           node-version-file: package.json
-      - uses: DanySK/build-check-deploy-gradle-action@3.5.16
+      - uses: DanySK/build-check-deploy-gradle-action@3.5.17
         env:
           STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
           MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}

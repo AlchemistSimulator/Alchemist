@@ -1,3 +1,42 @@
+## [35.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/35.0.0...35.0.1) (2024-11-18)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.20 ([#3903](https://github.com/AlchemistSimulator/Alchemist/issues/3903)) ([e6b8461](https://github.com/AlchemistSimulator/Alchemist/commit/e6b8461039c79d4c5ab201150c722477898e4db3))
+* **deps:** update danysk/makepkg docker tag to v1.1.21 ([#3905](https://github.com/AlchemistSimulator/Alchemist/issues/3905)) ([3cf8c39](https://github.com/AlchemistSimulator/Alchemist/commit/3cf8c3961e81ea4c70bf8a0fe47ec473fcc76e73))
+* **deps:** update dependency gradle to v8.11 ([#3891](https://github.com/AlchemistSimulator/Alchemist/issues/3891)) ([6547df6](https://github.com/AlchemistSimulator/Alchemist/commit/6547df60ca0f587cd6e48a1356a2061640af1c65))
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.179 ([#3895](https://github.com/AlchemistSimulator/Alchemist/issues/3895)) ([b255504](https://github.com/AlchemistSimulator/Alchemist/commit/b255504bdbb68197ce6a1c9b47b3d60ea03d9923))
+* **deps:** update dependency io.jenetics:jpx to v3.2.0 ([#3908](https://github.com/AlchemistSimulator/Alchemist/issues/3908)) ([d98121e](https://github.com/AlchemistSimulator/Alchemist/commit/d98121e3380af591fb6d35d503082826c1ad9f8e))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.115 ([#3897](https://github.com/AlchemistSimulator/Alchemist/issues/3897)) ([f0a0351](https://github.com/AlchemistSimulator/Alchemist/commit/f0a0351141dad8e8b027ab01f876b0f6391b5ef3))
+* **deps:** update plugin com.gradle.develocity to v3.18.2 ([#3900](https://github.com/AlchemistSimulator/Alchemist/issues/3900)) ([796f215](https://github.com/AlchemistSimulator/Alchemist/commit/796f215114e0778cfb0853ca1aa4f976eaadfa60))
+* **deps:** update plugin kotlin-qa to v0.70.0 ([#3910](https://github.com/AlchemistSimulator/Alchemist/issues/3910)) ([2265143](https://github.com/AlchemistSimulator/Alchemist/commit/22651431ec810dcc60231ef92720a461e9035360))
+* **deps:** update plugin kotlin-qa to v0.70.1 ([#3911](https://github.com/AlchemistSimulator/Alchemist/issues/3911)) ([72f34cc](https://github.com/AlchemistSimulator/Alchemist/commit/72f34cce329f6e8d4966003331b6b8bb52b8298e))
+* **deps:** update plugin multijvmtesting to v1.3.1 ([#3912](https://github.com/AlchemistSimulator/Alchemist/issues/3912)) ([5ebb417](https://github.com/AlchemistSimulator/Alchemist/commit/5ebb41704f795a63ec45765700b6b23480d79c9e))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.14 ([#3914](https://github.com/AlchemistSimulator/Alchemist/issues/3914)) ([ab9c37e](https://github.com/AlchemistSimulator/Alchemist/commit/ab9c37e048f86ce61d237c7f6b0e0d4d134cfc08))
+* **deps:** update plugin publishoncentral to v5.1.10 ([#3913](https://github.com/AlchemistSimulator/Alchemist/issues/3913)) ([722a72b](https://github.com/AlchemistSimulator/Alchemist/commit/722a72b6870f7035115dbd56ee51ce08717ab18d))
+* **deps:** update react to v18.3.1-pre.830 ([#3896](https://github.com/AlchemistSimulator/Alchemist/issues/3896)) ([bc0ce92](https://github.com/AlchemistSimulator/Alchemist/commit/bc0ce92db53dd65ebd0bcb114b9380aeed9440ef))
+* **deps:** update react to v18.3.1-pre.831 ([#3899](https://github.com/AlchemistSimulator/Alchemist/issues/3899)) ([5d4dd78](https://github.com/AlchemistSimulator/Alchemist/commit/5d4dd78551b001bbae1a2414715625989863854a))
+* **deps:** update react to v18.3.1-pre.832 ([#3904](https://github.com/AlchemistSimulator/Alchemist/issues/3904)) ([59e9c4e](https://github.com/AlchemistSimulator/Alchemist/commit/59e9c4e47872af0b7bfd28ab7d418763d89a6467))
+* **deps:** update react to v18.3.1-pre.833 ([#3909](https://github.com/AlchemistSimulator/Alchemist/issues/3909)) ([c504ac2](https://github.com/AlchemistSimulator/Alchemist/commit/c504ac24a4010c768da51ebd73e7d84406472b0a))
+* **deps:** update react to v18.3.1-pre.834 ([#3915](https://github.com/AlchemistSimulator/Alchemist/issues/3915)) ([5675159](https://github.com/AlchemistSimulator/Alchemist/commit/567515905f0651e4282fe4b3f39f71f1485ad756))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.139.0 ([#3933](https://github.com/AlchemistSimulator/Alchemist/issues/3933)) ([85d6e93](https://github.com/AlchemistSimulator/Alchemist/commit/85d6e93dd1be6ca796d54deaee6523cb5b1c66ed))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.13 ([#3898](https://github.com/AlchemistSimulator/Alchemist/issues/3898)) ([91831d2](https://github.com/AlchemistSimulator/Alchemist/commit/91831d2be5222f046a6a66efd25c5d474ae9822c))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.14 ([#3901](https://github.com/AlchemistSimulator/Alchemist/issues/3901)) ([d8e1ecc](https://github.com/AlchemistSimulator/Alchemist/commit/d8e1ecc38d79ae5c216113ecc4c39f90ac8647c3))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.15 ([#3902](https://github.com/AlchemistSimulator/Alchemist/issues/3902)) ([b3d65dc](https://github.com/AlchemistSimulator/Alchemist/commit/b3d65dc389e9ae0a83f23cab4793baf801e044c3))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.16 ([#3906](https://github.com/AlchemistSimulator/Alchemist/issues/3906)) ([f4b5d1b](https://github.com/AlchemistSimulator/Alchemist/commit/f4b5d1b83102f507289af735594dd2f4d37facee))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.17 ([#3907](https://github.com/AlchemistSimulator/Alchemist/issues/3907)) ([90db8df](https://github.com/AlchemistSimulator/Alchemist/commit/90db8df686b33b9b9eaf0716125967cecb035132))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([d12af82](https://github.com/AlchemistSimulator/Alchemist/commit/d12af8268ec6c54b2808db9318b039d4d0f3cdc3))
+* **build:** update the javadoc.io cache ([f27800d](https://github.com/AlchemistSimulator/Alchemist/commit/f27800dcfa90ff79c63c99edf2820c23ffe63cda))
+
 ## [35.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/34.1.14...35.0.0) (2024-11-11)
 
 ### ⚠ BREAKING CHANGES

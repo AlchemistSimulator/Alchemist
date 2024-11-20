@@ -155,12 +155,13 @@ jobs:
           maven-central-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           should-run-codecov: false
-          should-deploy: true
+          should-deploy: ${{ needs.ci-preparation.outputs.will-release }}
           build-command: true
           check-command: true
           deploy-command: |
             ./gradlew ${{ needs.ci-preparation.outputs.force-version }} createStagingRepositoryOnMavenCentral --parallel
       - name: Save the staging repository ID
+        if: needs.ci-preparation.outputs.will-release == 'true'
         id: staging-repo
         run: |
           [[ -f build/staging-repo-ids.properties ]] || (
@@ -202,7 +203,7 @@ jobs:
           maven-central-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           should-run-codecov: false
-          should-deploy: ${{ contains('Linux', runner.os) && needs.ci-preparation.outputs.may-deploy }}
+          should-deploy: ${{ contains('Linux', runner.os) && needs.ci-preparation.outputs.will-release }}
           should-validate-wrapper: ${{ contains('Linux', runner.os) }}
           pre-build-command: |
             ./gradlew kotlinUpgradeYarnLock --parallel

@@ -1,3 +1,14 @@
+## [35.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/35.0.2...35.0.3) (2024-11-23)
+
+### Dependency updates
+
+* **deps:** update react to v18.3.1-pre.835 ([#3954](https://github.com/AlchemistSimulator/Alchemist/issues/3954)) ([f9d16ac](https://github.com/AlchemistSimulator/Alchemist/commit/f9d16acedcec2de548c5130924421dd5fbf3f4cb))
+* **deps:** update react to v18.3.1-pre.836 ([#3955](https://github.com/AlchemistSimulator/Alchemist/issues/3955)) ([bc655d6](https://github.com/AlchemistSimulator/Alchemist/commit/bc655d6446d0b09835c94163d87dc62e9e69c85c))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.139.2 ([#3956](https://github.com/AlchemistSimulator/Alchemist/issues/3956)) ([efee78a](https://github.com/AlchemistSimulator/Alchemist/commit/efee78aa7dca10139fb9803c82e1fff34bc2bbe0))
+
 ## [35.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/35.0.1...35.0.2) (2024-11-22)
 
 ### Dependency updates

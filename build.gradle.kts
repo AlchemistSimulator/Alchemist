@@ -358,8 +358,9 @@ tasks.named("kotlinStoreYarnLock").configure {
 val websiteDir = project.layout.buildDirectory.map { it.dir("website").asFile }.get()
 
 hugo {
-    version = Regex("gohugoio/hugo@v([\\.\\-\\+\\w]+)")
-        .find(file("deps-utils/action.yml").readText())!!.groups[1]!!.value
+    version =
+        Regex("gohugoio/hugo@v([\\.\\-\\+\\w]+)")
+            .find(file("deps-utils/action.yml").readText())!!.groups[1]!!.value
 }
 
 tasks {
@@ -374,9 +375,10 @@ tasks {
          * Disabling individual partial tasks has been proven ineffective.
          */
         removeChildTasks(
-            allprojects.filter { it.isMultiplatform } + listOf(
-                alchemist("swingui"),
-            ),
+            allprojects.filter { it.isMultiplatform } +
+                listOf(
+                    alchemist("swingui"),
+                ),
         )
     }
 
@@ -386,11 +388,12 @@ tasks {
     val alchemistLogo = file("site/static/images/logo.svg")
     for (docTaskProvider in listOf<Provider<out AbstractDokkaParentTask>>(dokkaHtmlCollector, dokkaHtmlMultiModule)) {
         val docTask = docTaskProvider.get()
-        val copyLogo = register<Copy>("copyLogoFor${ docTask.name.replaceFirstChar { it.titlecase() } }") {
-            from(alchemistLogo)
-            into(docTask.outputDirectory.map { File(it.asFile, "images") })
-            rename("logo.svg", "logo-icon.svg")
-        }
+        val copyLogo =
+            register<Copy>("copyLogoFor${ docTask.name.replaceFirstChar { it.titlecase() } }") {
+                from(alchemistLogo)
+                into(docTask.outputDirectory.map { File(it.asFile, "images") })
+                rename("logo.svg", "logo-icon.svg")
+            }
         docTask.finalizedBy(copyLogo)
         hugoBuild.configure { mustRunAfter(copyLogo) }
     }
@@ -406,9 +409,10 @@ tasks {
             require(index.exists()) {
                 "file ${index.absolutePath} existed during configuration, but it has been deleted."
             }
-            val websiteReplacements = file("site/replacements").readLines()
-                .map { it.split("->") }
-                .map { it[0] to it[1] }
+            val websiteReplacements =
+                file("site/replacements").readLines()
+                    .map { it.split("->") }
+                    .map { it[0] to it[1] }
             val replacements: List<Pair<String, String>> =
                 websiteReplacements + ("!development preview!" to project.version.toString())
             index.parentFile.walkTopDown()
@@ -429,11 +433,12 @@ tasks {
     mapOf("javadoc" to dokkaJavadocCollector, "kdoc" to dokkaHtmlMultiModule, "plainkdoc" to dokkaHtmlCollector)
         .forEach { (folder, taskContainer) ->
             hugoBuild.configure { dependsOn(taskContainer) }
-            val copyTask = register<Copy>("copy${folder.replaceFirstChar { it.titlecase() }}IntoWebsite") {
-                from(taskContainer.map { it.outputDirectory })
-                into(File(websiteDir, "reference/$folder"))
-                finalizedBy(performWebsiteStringReplacements)
-            }
+            val copyTask =
+                register<Copy>("copy${folder.replaceFirstChar { it.titlecase() }}IntoWebsite") {
+                    from(taskContainer.map { it.outputDirectory })
+                    into(File(websiteDir, "reference/$folder"))
+                    finalizedBy(performWebsiteStringReplacements)
+                }
             hugoBuild.configure { finalizedBy(copyTask) }
         }
 

@@ -39,35 +39,36 @@ open class Polygon<P : Position2D<out P>>(
     nodes: Int,
     pointsInput: List<*>,
 ) : AbstractRandomDeployment<P>(environment, randomGenerator, nodes) {
-
-    private val points: List<Point2D> = pointsInput.map {
-        val error: () -> String = { "$it cannot get converted to Pair<out Number, out Number>" }
-        when (it) {
-            is Pair<*, *> -> {
-                require(it.first is Number && it.second is Number, error)
-                @Suppress("UNCHECKED_CAST")
-                it as Point2D
+    private val points: List<Point2D> =
+        pointsInput.map {
+            val error: () -> String = { "$it cannot get converted to Pair<out Number, out Number>" }
+            when (it) {
+                is Pair<*, *> -> {
+                    require(it.first is Number && it.second is Number, error)
+                    @Suppress("UNCHECKED_CAST")
+                    it as Point2D
+                }
+                is List<*> -> {
+                    require(it.size == 2 && it[0] is Number && it[1] is Number, error)
+                    Pair(it[0] as Number, it[1] as Number)
+                }
+                else -> throw IllegalArgumentException(error())
             }
-            is List<*> -> {
-                require(it.size == 2 && it[0] is Number && it[1] is Number, error)
-                Pair(it[0] as Number, it[1] as Number)
-            }
-            else -> throw IllegalArgumentException(error())
         }
-    }
 
     /**
      * The polygon in which positions are generated.
      */
-    protected val polygon: Area = Area(
-        Path2D.Double().apply {
-            moveTo(points.first().toPosition)
-            points.asSequence().drop(1).forEach {
-                lineTo(it.toPosition)
-            }
-            closePath()
-        },
-    )
+    protected val polygon: Area =
+        Area(
+            Path2D.Double().apply {
+                moveTo(points.first().toPosition)
+                points.asSequence().drop(1).forEach {
+                    lineTo(it.toPosition)
+                }
+                closePath()
+            },
+        )
 
     /**
      * The rectangular bounds of the polygon.
@@ -94,16 +95,17 @@ open class Polygon<P : Position2D<out P>>(
      * the node number
      * @return the position of the node
      */
-    final override fun indexToPosition(i: Int): P = bounds
-        .run {
-            val (x, y) = Pair(randomDouble(minX, maxX), randomDouble(minY, maxY))
-            if (isOnMaps) {
-                environment.makePosition(y, x) // Latitude, Longitude
-            } else {
-                environment.makePosition(x, y)
+    final override fun indexToPosition(i: Int): P =
+        bounds
+            .run {
+                val (x, y) = Pair(randomDouble(minX, maxX), randomDouble(minY, maxY))
+                if (isOnMaps) {
+                    environment.makePosition(y, x) // Latitude, Longitude
+                } else {
+                    environment.makePosition(x, y)
+                }
             }
-        }
-        .takeIf { polygon.contains(it) } ?: indexToPosition(i)
+            .takeIf { polygon.contains(it) } ?: indexToPosition(i)
 
     /**
      * Converts a Point2D to a [P].

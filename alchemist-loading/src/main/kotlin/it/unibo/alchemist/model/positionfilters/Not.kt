@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.PositionBasedFilter
  * Negates the [positionBasedFilter]'s test.
  * @param [positionBasedFilter] the filter to be negated.
  */
-class Not<P : Position<P>> (val positionBasedFilter: PositionBasedFilter<P>) : PositionBasedFilter<P> {
+class Not<P : Position<P>>(val positionBasedFilter: PositionBasedFilter<P>) : PositionBasedFilter<P> {
     /**
      * Returns true if [positionBasedFilter] is not satisfied.
      */

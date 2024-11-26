@@ -16,8 +16,11 @@ import kotlin.reflect.jvm.jvmName
  * Counts the number of distinct entries.
  */
 class CountDistinct : AbstractUnivariateStatistic() {
-
-    override fun evaluate(values: DoubleArray, begin: Int, length: Int) = values
+    override fun evaluate(
+        values: DoubleArray,
+        begin: Int,
+        length: Int,
+    ) = values
         .asSequence()
         .drop(begin)
         .take(length)

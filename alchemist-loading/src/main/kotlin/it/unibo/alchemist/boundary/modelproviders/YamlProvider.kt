@@ -20,7 +20,6 @@ import java.net.URL
  * Loads YAML files via SnakeYAML.
  */
 object YamlProvider : AlchemistModelProvider {
-
     private val loaderOptions: LoaderOptions = LoaderOptions().withMaxAliasesForCollections()
 
     override val fileExtensions: Regex = "[yY][aA]?[mM][lL]".toRegex()
@@ -44,7 +43,8 @@ object YamlProvider : AlchemistModelProvider {
         return this
     }
 
-    private fun LoaderOptions.withMaxAliasesForCollections(maxAliases: Int = Int.MAX_VALUE) = apply {
-        this.maxAliasesForCollections = maxAliases
-    }
+    private fun LoaderOptions.withMaxAliasesForCollections(maxAliases: Int = Int.MAX_VALUE) =
+        apply {
+            this.maxAliasesForCollections = maxAliases
+        }
 }

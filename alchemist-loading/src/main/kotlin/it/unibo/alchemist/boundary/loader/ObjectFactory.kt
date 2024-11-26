@@ -32,15 +32,15 @@ import org.apache.commons.math3.util.Pair as CommonsMathPair
  *
  */
 internal object ObjectFactory {
-
     fun makeBaseFactory(): Factory {
-        val factory = FactoryBuilder()
-            .withNarrowingConversions()
-            .withArrayBooleanIntConversions()
-            .withArrayListConversions(Array<String>::class.java, Array<Number>::class.java)
-            .withArrayNarrowingConversions()
-            .withAutomaticToString()
-            .build()
+        val factory =
+            FactoryBuilder()
+                .withNarrowingConversions()
+                .withArrayBooleanIntConversions()
+                .withArrayListConversions(Array<String>::class.java, Array<Number>::class.java)
+                .withArrayNarrowingConversions()
+                .withAutomaticToString()
+                .build()
         /*
          * Alchemist entities
          */

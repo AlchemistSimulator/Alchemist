@@ -13,14 +13,18 @@ internal class DescriptorBuilder {
     private var forbiddenKeys = emptySet<String>()
     private var mandatoryKeys = emptySet<String>()
     private var optionalKeys = emptySet<String>()
+
     fun forbidden(vararg names: String) {
         forbiddenKeys += names.toSet()
     }
+
     fun mandatory(vararg names: String) {
         mandatoryKeys += names.toSet()
     }
+
     fun optional(vararg names: String) {
         optionalKeys += names.toSet()
     }
+
     fun build() = SyntaxElement.ValidDescriptor(mandatoryKeys, optionalKeys, forbiddenKeys)
 }

@@ -36,25 +36,35 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             val loader = LoadAlchemist.from(file)
             assertNotNull(loader)
             val simulation: Simulation<T, P> = loader.getDefault()
+
             fun checkForErrors() = simulation.error.ifPresent { throw it }
-            simulation.addOutputMonitor(object : OutputMonitor<T, P> {
-                override fun finished(environment: Environment<T, P>, time: Time, step: Long) = checkForErrors()
-                override fun initialized(environment: Environment<T, P>) = checkForErrors()
-                override fun stepDone(
-                    environment: Environment<T, P>,
-                    reaction: Actionable<T>?,
-                    time: Time,
-                    step: Long,
-                ) = checkForErrors()
-            })
+            simulation.addOutputMonitor(
+                object : OutputMonitor<T, P> {
+                    override fun finished(
+                        environment: Environment<T, P>,
+                        time: Time,
+                        step: Long,
+                    ) = checkForErrors()
+
+                    override fun initialized(environment: Environment<T, P>) = checkForErrors()
+
+                    override fun stepDone(
+                        environment: Environment<T, P>,
+                        reaction: Actionable<T>?,
+                        time: Time,
+                        step: Long,
+                    ) = checkForErrors()
+                },
+            )
             simulation.play()
             simulation.run()
             checkForErrors()
-            val exporter = simulation.outputMonitors
-                .filterIsInstance<GlobalExporter<T, P>>()
-                .flatMap { it.exporters }
-                .apply { size shouldBeExactly 1 }
-                .firstOrNull { it is MongoDBExporter }
+            val exporter =
+                simulation.outputMonitors
+                    .filterIsInstance<GlobalExporter<T, P>>()
+                    .flatMap { it.exporters }
+                    .apply { size shouldBeExactly 1 }
+                    .firstOrNull { it is MongoDBExporter }
             require(exporter is MongoDBExporter)
             exporter.dataExtractors.size shouldBeGreaterThan 0
             val testClient: MongoClient = MongoClients.create(exporter.uri)

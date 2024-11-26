@@ -14,18 +14,19 @@ import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberProperties
 
 internal interface SyntaxElement {
-
-    val validKeys: List<String> get() = this::class.declaredMemberProperties
-        .filter { it.returnType == String::class.createType() }
-        .map { if (it.isConst) it.getter.call() else it.getter.call(this) }
-        .map { it.toString() }
+    val validKeys: List<String> get() =
+        this::class.declaredMemberProperties
+            .filter { it.returnType == String::class.createType() }
+            .map { if (it.isConst) it.getter.call() else it.getter.call(this) }
+            .map { it.toString() }
 
     val validDescriptors: Set<ValidDescriptor>
 
-    val guide get() = "Possible configurations are:" +
-        validDescriptors.foldIndexed("") { index, previous, element ->
-            "$previous\n## Option ${index + 1}:\n$element"
-        }
+    val guide get() =
+        "Possible configurations are:" +
+            validDescriptors.foldIndexed("") { index, previous, element ->
+                "$previous\n## Option ${index + 1}:\n$element"
+            }
 
     /**
      * Validates a candidate [descriptor] for a SyntaxElement.
@@ -36,11 +37,12 @@ internal interface SyntaxElement {
      * If none of the [validDescriptors] match, the function returns `false`.
      */
     fun validateDescriptor(descriptor: Map<*, *>): Boolean {
-        val publicKeys = descriptor.keys.asSequence()
-            .filterNotNull()
-            .map { it.toString() }
-            .filterNot { it.startsWith("_") }
-            .toSet()
+        val publicKeys =
+            descriptor.keys.asSequence()
+                .filterNotNull()
+                .map { it.toString() }
+                .filterNot { it.startsWith("_") }
+                .toSet()
         val problematicSegment by lazy {
             "Problematic segment:\n|" +
                 GsonBuilder().setPrettyPrinting().create().toJson(descriptor.mapValues { "..." })
@@ -79,6 +81,7 @@ internal interface SyntaxElement {
     ) {
         override fun toString(): String {
             fun Set<String>.lines() = joinToString(prefix = "\n  - ", separator = "\n  - ")
+
             fun Set<String>.describe(name: String) = if (this.isEmpty()) "" else "\n$name keys: ${this.lines()}"
             return mandatoryKeys.describe("required").drop(1) +
                 optionalKeys.describe("optional") +

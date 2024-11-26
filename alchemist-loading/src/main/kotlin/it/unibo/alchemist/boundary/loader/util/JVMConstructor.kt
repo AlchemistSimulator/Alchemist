@@ -30,8 +30,10 @@ class OrderedParametersConstructor(
     type: String,
     val parameters: List<*> = emptyList<Any?>(),
 ) : JVMConstructor(type) {
-
-    override fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*> = parameters
+    override fun <T : Any> parametersFor(
+        target: KClass<T>,
+        factory: Factory,
+    ): List<*> = parameters
 
     override fun toString(): String = "$typeName${parameters.joinToString(prefix = "(", postfix = ")")}"
 }
@@ -47,10 +49,10 @@ class NamedParametersConstructor(
     type: String,
     val parametersMap: Map<*, *> = emptyMap<Any?, Any?>(),
 ) : JVMConstructor(type) {
-
-    private fun List<OrderedParameters>.description() = joinToString(prefix = "\n- ", separator = "\n- ") {
-        it.namedParametersDescriptor()
-    }
+    private fun List<OrderedParameters>.description() =
+        joinToString(prefix = "\n- ", separator = "\n- ") {
+            it.namedParametersDescriptor()
+        }
 
     private inline infix fun Boolean.and(then: () -> Boolean): Boolean = if (this) then() else false
 
@@ -59,12 +61,16 @@ class NamedParametersConstructor(
     private fun String?.couldBeInterpretedAs(name: String?): Boolean =
         equals(name, ignoreCase = true) || this?.splitToWords()?.allLowerCase() == name?.splitToWords()?.allLowerCase()
 
-    override fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*> {
+    override fun <T : Any> parametersFor(
+        target: KClass<T>,
+        factory: Factory,
+    ): List<*> {
         val providedNames = parametersMap.map { it.key.toString() }
         val singletons = factory.singletonObjects.keys
-        val constructorsWithOrderedParameters = target.constructors.map { constructor ->
-            constructor.valueParameters.filterNot { it.type.jvmErasure.java in singletons }.sortedBy { it.index }
-        }
+        val constructorsWithOrderedParameters =
+            target.constructors.map { constructor ->
+                constructor.valueParameters.filterNot { it.type.jvmErasure.java in singletons }.sortedBy { it.index }
+            }
         val usableConstructors: Map<OrderedParameters, Map<String, String>> =
             constructorsWithOrderedParameters.mapNotNull { parameters ->
                 if (providedNames.size <= parameters.size) {
@@ -72,6 +78,7 @@ class NamedParametersConstructor(
                     val (optional, mandatory) = parameters.partition { it.isOptional }
                     val mandatoryNames = mandatory.map { it.name }
                     val requiredOptionals by lazy { optional.take(providedNames.size - mandatory.size).map { it.name } }
+
                     fun verifyParameterMatch(matchMethod: (List<String>).(List<String?>) -> Boolean) =
                         providedNames.matchMethod(mandatoryNames) and { providedNames.matchMethod(requiredOptionals) }
                     // Check for exact name match
@@ -81,16 +88,18 @@ class NamedParametersConstructor(
                     } else {
                         // Check for similar-enough non-ambiguous matches: kebab-case, snake_case, etc.
                         // convertedNames is a map between the actual parameter name and the provided name
-                        val convertedNames = providedNames.mapNotNull { providedName ->
-                            parameters.filter { it.name.couldBeInterpretedAs(providedName) }
-                                .takeIf { it.size == 1 }
-                                ?.first()
-                                ?.name
-                                ?.let { it to providedName }
-                        }.toMap()
-                        val worksIfNamesAreReplaced = convertedNames.keys.containsAll(mandatoryNames) and {
-                            convertedNames.keys.containsAll(requiredOptionals)
-                        }
+                        val convertedNames =
+                            providedNames.mapNotNull { providedName ->
+                                parameters.filter { it.name.couldBeInterpretedAs(providedName) }
+                                    .takeIf { it.size == 1 }
+                                    ?.first()
+                                    ?.name
+                                    ?.let { it to providedName }
+                            }.toMap()
+                        val worksIfNamesAreReplaced =
+                            convertedNames.keys.containsAll(mandatoryNames) and {
+                                convertedNames.keys.containsAll(requiredOptionals)
+                            }
                         if (worksIfNamesAreReplaced) {
                             parameters to convertedNames.filter { it.key != it.value }
                         } else {
@@ -102,10 +111,11 @@ class NamedParametersConstructor(
                 }
             }.toMap()
         // If at least one constructor is a perfect match, discard the ones requiring name replacement.
-        val preferredMatch = usableConstructors
-            .filterValues { replacements -> replacements.isEmpty() }
-            .takeIf { it.isNotEmpty() }
-            ?: usableConstructors
+        val preferredMatch =
+            usableConstructors
+                .filterValues { replacements -> replacements.isEmpty() }
+                .takeIf { it.isNotEmpty() }
+                ?: usableConstructors
         require(preferredMatch.isNotEmpty()) {
             """
             No constructor available for ${target.simpleName} with named parameters $providedNames.
@@ -135,10 +145,11 @@ class NamedParametersConstructor(
             .map { parametersMap[replacements.getOrDefault(it.name, it.name)] }
     }
 
-    private fun Collection<KParameter>.namedParametersDescriptor() = "$size-ary constructor: " +
-        filter { it.name != null }.joinToString {
-            "${it.name}:${it.type.jvmErasure.simpleName}${if (it.isOptional) "<optional>" else "" }"
-        }
+    private fun Collection<KParameter>.namedParametersDescriptor() =
+        "$size-ary constructor: " +
+            filter { it.name != null }.joinToString {
+                "${it.name}:${it.type.jvmErasure.simpleName}${if (it.isOptional) "<optional>" else "" }"
+            }
 
     override fun toString(): String = "$typeName($parametersMap)"
 
@@ -149,20 +160,20 @@ class NamedParametersConstructor(
 }
 
 internal data class TypeSearch<out T>(val typeName: String, val targetType: Class<out T>) {
-
     private val packageName: String? = typeName.substringBeforeLast('.', "").takeIf { it.isNotEmpty() }
     private val isQualified get() = packageName != null
 
     val subTypes: Collection<Class<out T>> by lazy {
-        val compatibleTypes: List<Class<out T>> = when (packageName) {
-            null ->
-                when {
-                    targetType.packageName.startsWith("it.unibo.alchemist") ->
-                        ClassPathScanner.subTypesOf(targetType, "it.unibo.alchemist")
-                    else -> ClassPathScanner.subTypesOf(targetType)
-                }
-            else -> ClassPathScanner.subTypesOf(targetType, packageName)
-        }
+        val compatibleTypes: List<Class<out T>> =
+            when (packageName) {
+                null ->
+                    when {
+                        targetType.packageName.startsWith("it.unibo.alchemist") ->
+                            ClassPathScanner.subTypesOf(targetType, "it.unibo.alchemist")
+                        else -> ClassPathScanner.subTypesOf(targetType)
+                    }
+                else -> ClassPathScanner.subTypesOf(targetType, packageName)
+            }
         when {
             // The target type cannot be instanced, just return its concrete subclasses
             Modifier.isAbstract(targetType.modifiers) -> compatibleTypes
@@ -191,11 +202,13 @@ internal data class TypeSearch<out T>(val typeName: String, val targetType: Clas
  * A constructor for a JVM class of type [typeName].
  */
 sealed class JVMConstructor(val typeName: String) {
-
     /**
      * provided a [target] class, extracts the parameters as an ordered list.
      */
-    protected abstract fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*>
+    protected abstract fun <T : Any> parametersFor(
+        target: KClass<T>,
+        factory: Factory,
+    ): List<*>
 
     /**
      * Provided a JIRF [factory], builds an instance of the requested type [T] or fails gracefully,
@@ -207,21 +220,25 @@ sealed class JVMConstructor(val typeName: String) {
      * Provided a JIRF [factory], builds an instance of the requested [type] T or fails gracefully,
      * returning a [Result<T>].
      */
-    fun <T : Any> buildAny(type: Class<out T>, factory: Factory): Result<T> {
+    fun <T : Any> buildAny(
+        type: Class<out T>,
+        factory: Factory,
+    ): Result<T> {
         val typeSearch = TypeSearch(typeName, type)
         val perfectMatches = typeSearch.perfectMatches
         return when (perfectMatches.size) {
             0 -> {
                 val subOptimalMatches = typeSearch.subOptimalMatches
                 when (subOptimalMatches.size) {
-                    0 -> Result.failure(
-                        IllegalStateException(
-                            """
+                    0 ->
+                        Result.failure(
+                            IllegalStateException(
+                                """
                             |No valid match for type $typeName among subtypes of ${type.simpleName}.
                             |Valid subtypes are: ${typeSearch.subTypes.map { it.simpleName }}
-                            """.trimMargin(),
-                        ),
-                    )
+                                """.trimMargin(),
+                            ),
+                        )
                     1 -> {
                         logger.warn(
                             "{} has been selected even though it is not a perfect match for {}",
@@ -230,43 +247,46 @@ sealed class JVMConstructor(val typeName: String) {
                         )
                         Result.success(newInstance(subOptimalMatches.first().kotlin, factory))
                     }
-                    else -> Result.failure(
-                        IllegalStateException(
-                            "Multiple matches for $typeName as subtype of ${type.simpleName}: " +
-                                "${perfectMatches.map { it.name }}. Disambiguation is required.",
-                        ),
-                    )
+                    else ->
+                        Result.failure(
+                            IllegalStateException(
+                                "Multiple matches for $typeName as subtype of ${type.simpleName}: " +
+                                    "${perfectMatches.map { it.name }}. Disambiguation is required.",
+                            ),
+                        )
                 }
             }
             1 -> runCatching { newInstance(perfectMatches.first().kotlin, factory) }
-            else -> Result.failure(
-                IllegalStateException("Multiple perfect matches for $typeName: ${perfectMatches.map { it.name }}"),
-            )
+            else ->
+                Result.failure(
+                    IllegalStateException("Multiple perfect matches for $typeName: ${perfectMatches.map { it.name }}"),
+                )
         }
     }
 
     private fun CreationResult<*>.logErrors(logger: (String, Array<Any?>) -> Unit) {
         for ((constructor, exception) in exceptions) {
-            val errorMessages = generateSequence<Pair<Throwable?, String?>>(
-                exception to exception.message,
-            ) { (outer, _) -> outer?.cause to outer?.cause?.message }
-                .takeWhile { it.first != null }
-                .filter { !it.second.isNullOrBlank() }
-                .map { (first, second) ->
-                    checkNotNull(first) {
-                        BugReporting.reportBug(
-                            "Bug in ${JVMConstructor::class.qualifiedName}",
-                            mapOf(
-                                "first" to first,
-                                "second" to second,
-                                "constructor" to constructor,
-                                "creation result" to this,
-                            ),
-                        )
+            val errorMessages =
+                generateSequence<Pair<Throwable?, String?>>(
+                    exception to exception.message,
+                ) { (outer, _) -> outer?.cause to outer?.cause?.message }
+                    .takeWhile { it.first != null }
+                    .filter { !it.second.isNullOrBlank() }
+                    .map { (first, second) ->
+                        checkNotNull(first) {
+                            BugReporting.reportBug(
+                                "Bug in ${JVMConstructor::class.qualifiedName}",
+                                mapOf(
+                                    "first" to first,
+                                    "second" to second,
+                                    "constructor" to constructor,
+                                    "creation result" to this,
+                                ),
+                            )
+                        }
+                        "${first::class.simpleName}: $second"
                     }
-                    "${first::class.simpleName}: $second"
-                }
-                .toList()
+                    .toList()
             logger(
                 "Constructor {} failed for {} ",
                 arrayOf(
@@ -278,7 +298,10 @@ sealed class JVMConstructor(val typeName: String) {
         }
     }
 
-    private fun <T : Any> newInstance(target: KClass<T>, jirf: Factory): T {
+    private fun <T : Any> newInstance(
+        target: KClass<T>,
+        jirf: Factory,
+    ): T {
         /*
          * preprocess parameters:
          *
@@ -293,41 +316,51 @@ sealed class JVMConstructor(val typeName: String) {
         val compatibleConstructors by lazy {
             target.constructors.filter { it.valueParameters.size >= originalParameters.size }
         }
-        val parameters = originalParameters.mapIndexed { index, parameter ->
-            if (parameter is JVMConstructor) {
-                val possibleMappings = compatibleConstructors.flatMap { constructor ->
-                    val mappedIndex = constructor.valueParameters.lastIndex - originalParameters.lastIndex + index
-                    val potentialType = constructor.valueParameters[mappedIndex]
-                    val potentialJavaType = potentialType.type.jvmErasure.java
-                    val subtypes = ClassPathScanner.subTypesOf(potentialJavaType) +
-                        if (Modifier.isAbstract(potentialJavaType.modifiers)) emptyList() else listOf(potentialJavaType)
-                    val compatibleSubtypes = subtypes.filter { subtype ->
-                        val subtypeName = if (parameter.typeName.contains('.')) subtype.name else subtype.simpleName
-                        parameter.typeName == subtypeName
-                    }
-                    when {
-                        compatibleSubtypes.isEmpty() -> {
-                            logger.warn(
-                                "Constructor {} discarded as {} is incompatible with parameter #{}:{}",
-                                constructor,
-                                parameter,
-                                mappedIndex,
-                                potentialType.type,
-                            )
-                            emptyList()
-                        }
-                        compatibleSubtypes.size > 1 -> {
-                            error(
-                                "Ambiguous mapping: $compatibleSubtypes all match the requested type $typeName for " +
-                                    "parameter #$mappedIndex:$potentialType of $constructor",
-                            )
-                        }
-                        else -> {
-                            val maybeParameter = parameter.buildAny(compatibleSubtypes.first(), jirf)
-                            listOf(maybeParameter.getOrThrow())
-                        }
-                    }
-                }.toSet() // remove duplicates
+        val parameters =
+            originalParameters.mapIndexed { index, parameter ->
+                if (parameter is JVMConstructor) {
+                    val possibleMappings =
+                        compatibleConstructors.flatMap { constructor ->
+                            val mappedIndex =
+                                constructor.valueParameters.lastIndex - originalParameters.lastIndex + index
+                            val potentialType = constructor.valueParameters[mappedIndex]
+                            val potentialJavaType = potentialType.type.jvmErasure.java
+                            val subtypes =
+                                ClassPathScanner.subTypesOf(potentialJavaType) +
+                                    when {
+                                        Modifier.isAbstract(potentialJavaType.modifiers) -> emptyList()
+                                        else -> listOf(potentialJavaType)
+                                    }
+                            val compatibleSubtypes =
+                                subtypes.filter { subtype ->
+                                    val subtypeName =
+                                        if (parameter.typeName.contains('.')) subtype.name else subtype.simpleName
+                                    parameter.typeName == subtypeName
+                                }
+                            when {
+                                compatibleSubtypes.isEmpty() -> {
+                                    logger.warn(
+                                        "Constructor {} discarded as {} is incompatible with parameter #{}:{}",
+                                        constructor,
+                                        parameter,
+                                        mappedIndex,
+                                        potentialType.type,
+                                    )
+                                    emptyList()
+                                }
+                                compatibleSubtypes.size > 1 -> {
+                                    error(
+                                        "Ambiguous mapping: $compatibleSubtypes all match" +
+                                            "the requested type $typeName" +
+                                            "for parameter #$mappedIndex:$potentialType of $constructor",
+                                    )
+                                }
+                                else -> {
+                                    val maybeParameter = parameter.buildAny(compatibleSubtypes.first(), jirf)
+                                    listOf(maybeParameter.getOrThrow())
+                                }
+                            }
+                        }.toSet() // remove duplicates
                 /*
                  * possibleMappings contains the possible instances that can be used as parameter.
                  * If none has been produced, no way has been found to build the parameter.
@@ -339,21 +372,22 @@ sealed class JVMConstructor(val typeName: String) {
                  * The last case is reported as an error, as objects built with the same procedure and parameters should
                  * be equal in general. However, this may change in the future.
                  */
-                when (possibleMappings.size) {
-                    0 -> error("Could not build parameter #$index defined as $parameter")
-                    1 -> possibleMappings.first()
-                    else -> error(
-                        """
-                        Parameter #$index '$parameter' produced ${possibleMappings.size} different instances:
-                        $possibleMappings
-                        A likely cause is that ${parameter.typeName} does not implement equals() and hashCode() properly
-                        """.trimIndent(),
-                    )
+                    when (possibleMappings.size) {
+                        0 -> error("Could not build parameter #$index defined as $parameter")
+                        1 -> possibleMappings.first()
+                        else ->
+                            error(
+                                """
+                                Parameter #$index '$parameter' produced ${possibleMappings.size} different instances:
+                                $possibleMappings
+                                A likely cause is that ${parameter.typeName} does not implement equals() and hashCode() properly
+                                """.trimIndent(),
+                            )
+                    }
+                } else {
+                    parameter
                 }
-            } else {
-                parameter
             }
-        }
         val creationResult = jirf.build(target.java, parameters)
         return creationResult.createdObject
             .orElseThrow { explainedFailure(jirf, target, originalParameters, creationResult) }
@@ -373,36 +407,40 @@ sealed class JVMConstructor(val typeName: String) {
             parameters: List<*>,
             creationResult: CreationResult<T>,
         ): Nothing {
-            val implicits = when {
-                jirf.singletonObjects.isEmpty() -> "|No singleton objects available in the context"
-                else ->
-                    """
+            val implicits =
+                when {
+                    jirf.singletonObjects.isEmpty() -> "|No singleton objects available in the context"
+                    else ->
+                        """
                     |Implicitly available singleton objects in the context: ${
-                        jirf.singletonObjects
-                            .map { (type, it) -> "|  * $it # associated to type ${type.simpleName}" }
-                            .joinToString(prefix = "\n", separator = ";\n", postfix = ".")
-                    }
+                            jirf.singletonObjects
+                                .map { (type, it) -> "|  * $it # associated to type ${type.simpleName}" }
+                                .joinToString(prefix = "\n", separator = ";\n", postfix = ".")
+                        }
                     """.trim()
-            }
+                }
             val exceptions = creationResult.exceptions.asSequence()
-            val exceptionsSummary = exceptions.mapIndexed { consIndex, (constructor, exception) ->
-                val causalChain = generateSequence<Throwable>(exception) { it.cause }
-                    .mapIndexed { index, cause ->
-                        val message = cause.takeIf { it is InstancingImpossibleException }?.message
-                            ?.replace("it.unibo.alchemist.model.interfaces.", "")
-                            ?.replace("it.unibo.alchemist.boundary.", "i.u.a.b.")
-                            ?.replace("it.unibo.alchemist.model.", "i.u.a.m.")
-                            ?.replace("it.unibo.alchemist.", "i.u.a.")
-                            ?.replace("java.lang.", "")
-                            ?.replace("kotlin.", "")
-                            ?: cause.message ?: "No message"
-                        "|    failure message ${index + 1} of ${cause::class.simpleName}: $message"
-                    }
-                val constructorName = constructor.shorterToString()
-                val intro = "${consIndex + 1}. Constructor $constructorName failed with the following exception(s):"
-                val causalChainString = causalChain.joinToString(separator = "\n")
-                "| $intro\n$causalChainString".trim()
-            }.joinToString(separator = "\n")
+            val exceptionsSummary =
+                exceptions.mapIndexed { consIndex, (constructor, exception) ->
+                    val causalChain =
+                        generateSequence<Throwable>(exception) { it.cause }
+                            .mapIndexed { index, cause ->
+                                val message =
+                                    cause.takeIf { it is InstancingImpossibleException }?.message
+                                        ?.replace("it.unibo.alchemist.model.interfaces.", "")
+                                        ?.replace("it.unibo.alchemist.boundary.", "i.u.a.b.")
+                                        ?.replace("it.unibo.alchemist.model.", "i.u.a.m.")
+                                        ?.replace("it.unibo.alchemist.", "i.u.a.")
+                                        ?.replace("java.lang.", "")
+                                        ?.replace("kotlin.", "")
+                                        ?: cause.message ?: "No message"
+                                "|    failure message ${index + 1} of ${cause::class.simpleName}: $message"
+                            }
+                    val constructorName = constructor.shorterToString()
+                    val intro = "${consIndex + 1}. Constructor $constructorName failed with the following exception(s):"
+                    val causalChainString = causalChain.joinToString(separator = "\n")
+                    "| $intro\n$causalChainString".trim()
+                }.joinToString(separator = "\n")
             val errorMessage =
                 """
                 |Could not create $this, requested as instance of ${target.simpleName}.

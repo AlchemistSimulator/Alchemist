@@ -37,12 +37,10 @@ internal abstract class LoadingSystem(
     private val originalContext: Context,
     private val originalRoot: Map<String, *>,
 ) : Loader {
-
     override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> =
         SingleUseLoader(originalContext, originalRoot).simulationWith(values)
 
     private inner class SingleUseLoader(originalContext: Context, private val originalRoot: Map<String, *>) {
-
         private val context: Context = originalContext.child()
         private val mutex = Semaphore(1)
         private var consumed = false
@@ -64,9 +62,10 @@ internal abstract class LoadingSystem(
             }
             var root = originalRoot
             // VARIABLE REIFICATION
-            val variableValues = variables.mapValues { (name, previous) ->
-                if (values.containsKey(name)) values[name] else previous.default
-            }
+            val variableValues =
+                variables.mapValues { (name, previous) ->
+                    if (values.containsKey(name)) values[name] else previous.default
+                }
             val knownValues: Map<String, Any?> = computeAllKnownValues(constants + variableValues)
             logger.debug("Known values: {}", knownValues)
             knownValues.forEach { (name, value) -> context.fixVariableValue(name, value) }
@@ -137,18 +136,20 @@ internal abstract class LoadingSystem(
                 logger.debug("Deployment descriptors: {}", deploymentDescriptors)
             }
             // EXPORTS
-            val exporters = SimulationModel.visitRecursively<Exporter<T, P>>(
-                context,
-                root.getOrEmpty(DocumentRoot.export),
-            ) {
-                SimulationModel.visitSingleExporter(incarnation, context, it)
-            }
+            val exporters =
+                SimulationModel.visitRecursively<Exporter<T, P>>(
+                    context,
+                    root.getOrEmpty(DocumentRoot.export),
+                ) {
+                    SimulationModel.visitSingleExporter(incarnation, context, it)
+                }
             exporters.forEach { it.bindVariables(variableValues) }
             // ENGINE
             val engineDescriptor = root[DocumentRoot.engine]
-            val engine: Simulation<T, P> = SimulationModel.visitBuilding<Simulation<T, P>>(context, engineDescriptor)
-                ?.getOrThrow()
-                ?: Engine(environment)
+            val engine: Simulation<T, P> =
+                SimulationModel.visitBuilding<Simulation<T, P>>(context, engineDescriptor)
+                    ?.getOrThrow()
+                    ?: Engine(environment)
             // Attach monitors
             monitors.forEach(engine::addOutputMonitor)
             // Attach data exporters
@@ -167,23 +168,25 @@ internal abstract class LoadingSystem(
             val environmentDescriptor = descriptor[DocumentRoot.environment]
             if (environmentDescriptor is Map<*, *>) {
                 val programDescriptor = environmentDescriptor.getOrEmpty(DocumentRoot.Environment.globalPrograms)
-                val globalPrograms = SimulationModel.visitRecursively(
-                    context,
-                    programDescriptor,
-                    DocumentRoot.Environment.GlobalProgram,
-                ) { program ->
-                    requireNotNull(program) {
-                        "null is not a valid program in $descriptor. ${DocumentRoot.Environment.GlobalProgram.guide}"
-                    }
-                    (program as? Map<*, *>)?.let {
-                        SimulationModel.visitProgram(randomGenerator, incarnation, environment, null, context, it)
-                            ?.onSuccess { (_, actionable) ->
-                                if (actionable is GlobalReaction) {
-                                    environment.addGlobalReaction(actionable)
+                val globalPrograms =
+                    SimulationModel.visitRecursively(
+                        context,
+                        programDescriptor,
+                        DocumentRoot.Environment.GlobalProgram,
+                    ) { program ->
+                        requireNotNull(program) {
+                            "null is not a valid program in $descriptor." +
+                                DocumentRoot.Environment.GlobalProgram.guide
+                        }
+                        (program as? Map<*, *>)?.let {
+                            SimulationModel.visitProgram(randomGenerator, incarnation, environment, null, context, it)
+                                ?.onSuccess { (_, actionable) ->
+                                    if (actionable is GlobalReaction) {
+                                        environment.addGlobalReaction(actionable)
+                                    }
                                 }
-                            }
+                        }
                     }
-                }
                 logger.debug("Global programs: {}", globalPrograms)
             }
         }
@@ -223,26 +226,27 @@ internal abstract class LoadingSystem(
             descriptor: Map<*, *>,
         ) {
             val programDescriptor = descriptor.getOrEmpty(DocumentRoot.Deployment.programs)
-            val programs = SimulationModel.visitRecursively(
-                context,
-                programDescriptor,
-                DocumentRoot.Deployment.Program,
-            ) { program ->
-                requireNotNull(program) {
-                    "null is not a valid program in $descriptor. ${DocumentRoot.Deployment.Program.guide}"
-                }
-                (program as? Map<*, *>)?.let {
-                    SimulationModel.visitProgram(randomGenerator, incarnation, environment, node, context, it)
-                        ?.onSuccess { (filters, actionable) ->
-                            if (
-                                actionable is Reaction &&
-                                (filters.isEmpty() || filters.any { shape -> nodePosition in shape })
-                            ) {
-                                node.addReaction(actionable)
+            val programs =
+                SimulationModel.visitRecursively(
+                    context,
+                    programDescriptor,
+                    DocumentRoot.Deployment.Program,
+                ) { program ->
+                    requireNotNull(program) {
+                        "null is not a valid program in $descriptor. ${DocumentRoot.Deployment.Program.guide}"
+                    }
+                    (program as? Map<*, *>)?.let {
+                        SimulationModel.visitProgram(randomGenerator, incarnation, environment, node, context, it)
+                            ?.onSuccess { (filters, actionable) ->
+                                if (
+                                    actionable is Reaction &&
+                                    (filters.isEmpty() || filters.any { shape -> nodePosition in shape })
+                                ) {
+                                    node.addReaction(actionable)
+                                }
                             }
-                        }
+                    }
                 }
-            }
             logger.debug("Programs: {}", programs)
         }
 
@@ -263,11 +267,12 @@ internal abstract class LoadingSystem(
             }
             // ADDITIONAL LINKING RULES
             deployment.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
-                val composedLinkingRule = when (val linkingRule = environment.linkingRule) {
-                    is NoLinks -> newLinkingRule
-                    is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
-                    else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
-                }
+                val composedLinkingRule =
+                    when (val linkingRule = environment.linkingRule) {
+                        is NoLinks -> newLinkingRule
+                        is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
+                        else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
+                    }
                 environment.linkingRule = composedLinkingRule
                 contextualize<LinkingRule<T, P>>(composedLinkingRule)
             }
@@ -337,10 +342,12 @@ internal abstract class LoadingSystem(
          * Contextualize dual operation.
          */
         private inline fun <reified T> decontextualize(target: T) = factory.deregisterSingleton(target)
+
         private inline fun <reified T, reified R> registerImplicit(noinline translator: (T) -> R) =
             factory.registerImplicit(T::class.java, R::class.java, translator)
 
         private fun Map<*, *>.getOrEmpty(key: String) = get(key) ?: emptyList<Any>()
+
         private fun Map<*, *>.getOrEmptyMap(key: String) = get(key) ?: emptyMap<String, Any>()
     }
 }

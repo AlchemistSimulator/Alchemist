@@ -24,7 +24,6 @@ import it.unibo.alchemist.model.Time
 class GlobalExporter<T, P : Position<P>>(
     val exporters: List<Exporter<T, P>>,
 ) : OutputMonitor<T, P> {
-
     @Override
     override fun initialized(environment: Environment<T, P>) {
         exporters.forEach {
@@ -32,14 +31,23 @@ class GlobalExporter<T, P : Position<P>>(
         }
     }
 
-    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    override fun stepDone(
+        environment: Environment<T, P>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ) {
         exporters.forEach {
             it.update(environment, reaction, time, step)
         }
     }
 
     @Override
-    override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
+    override fun finished(
+        environment: Environment<T, P>,
+        time: Time,
+        step: Long,
+    ) {
         exporters.forEach {
             it.close(environment, time, step)
         }

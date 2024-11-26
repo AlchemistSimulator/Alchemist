@@ -23,13 +23,14 @@ import org.bson.Document
  * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].
  * @param appendTime if true it will always generate a new Mongo document, false to overwrite.
  */
-class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
+class MongoDBExporter<T, P : Position<P>>
+@JvmOverloads
+constructor(
     val uri: String,
     val dbName: String = DEFAULT_DATABASE,
     val interval: Double = DEFAULT_INTERVAL,
     private val appendTime: Boolean = false,
 ) : AbstractExporter<T, P>(interval) {
-
     /**
      * The name of the collection related to the current simulation in execution.
      */
@@ -45,11 +46,20 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
         mongoService.createCollection(collectionName)
     }
 
-    override fun exportData(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    override fun exportData(
+        environment: Environment<T, P>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ) {
         mongoService.pushToDatabase(convertToDocument(environment, reaction, time, step))
     }
 
-    override fun close(environment: Environment<T, P>, time: Time, step: Long) {
+    override fun close(
+        environment: Environment<T, P>,
+        time: Time,
+        step: Long,
+    ) {
         mongoService.stopService()
     }
 

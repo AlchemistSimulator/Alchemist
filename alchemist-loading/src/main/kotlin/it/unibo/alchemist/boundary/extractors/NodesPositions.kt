@@ -58,22 +58,23 @@ class NodesPositions<T, P : Position<P>>(private val environment: Environment<T,
         val currentMaxNodeId = environment.nodes.maxOfOrNull { it.id } ?: error("No nodes in the environment")
         require(maxNodeId == currentMaxNodeId) {
             """
-                The maximum node ID in the environment is $currentMaxNodeId, but $maxNodeId was expected.
-                
-                This is likely due to a change in the environment topology like a node removal or addition.
-                This exporter is not designed to handle such changes.
+            The maximum node ID in the environment is $currentMaxNodeId, but $maxNodeId was expected.
+            
+            This is likely due to a change in the environment topology like a node removal or addition.
+            This exporter is not designed to handle such changes.
             """.trimIndent()
         }
     }
 
     private companion object {
-
         @JvmInline
         private value class Dimension(val index: Int) {
             val symbol: String get() = "xyzwvu".getOrNull(index)?.toString() ?: "d$index"
         }
 
-        private fun columnNameFormat(nodeIndex: Int, dimension: Dimension): String =
-            "node-$nodeIndex-${dimension.symbol}"
+        private fun columnNameFormat(
+            nodeIndex: Int,
+            dimension: Dimension,
+        ): String = "node-$nodeIndex-${dimension.symbol}"
     }
 }

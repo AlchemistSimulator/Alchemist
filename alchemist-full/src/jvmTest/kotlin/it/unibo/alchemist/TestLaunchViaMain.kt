@@ -56,7 +56,7 @@ class TestLaunchViaMain : StringSpec({
         private class LevelContext(val option: String? = null) {
             infix fun shouldLogAtLevel(level: Level) {
                 val output = launchWithLoggingOption(option)
-                Level.values().forEach {
+                Level.entries.forEach {
                     if (it.ordinal <= level.ordinal) {
                         output shouldContain it.name
                     } else {

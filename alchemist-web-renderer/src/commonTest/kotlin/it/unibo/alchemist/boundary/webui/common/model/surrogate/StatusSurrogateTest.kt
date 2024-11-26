@@ -26,7 +26,7 @@ class StatusSurrogateTest : StringSpec({
         )
 
     "StatusSurrogate are just INIT, READY, PAUSED, RUNNING and TERMINATED" {
-        val statuses = StatusSurrogate.values()
+        val statuses = StatusSurrogate.entries.toTypedArray()
         statuses.size shouldBe 5
         statuses.map { it }.containsAll(listOfValues) shouldBe true
     }

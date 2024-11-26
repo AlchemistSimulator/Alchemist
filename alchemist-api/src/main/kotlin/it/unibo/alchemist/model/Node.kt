@@ -122,7 +122,10 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param concentration
      * the concentration you want for mol
      */
-    fun setConcentration(molecule: Molecule, concentration: T)
+    fun setConcentration(
+        molecule: Molecule,
+        concentration: T,
+    )
 
     /**
      * Adds a capability to the node.
@@ -145,23 +148,24 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @return a capability of the provided type [C]
      */
     @Suppress("UNCHECKED_CAST")
-    fun <C : NodeProperty<T>> asPropertyOrNull(superType: KClass<in C>): C? = when {
-        properties.size <= 1 -> properties.firstOrNull()?.takeIfInstance(superType)
-        else -> {
-            val validProperties: List<C> = properties.mapNotNull { it.takeIfInstance(superType) }
-            when {
-                validProperties.size <= 1 -> validProperties.firstOrNull()
-                else -> {
-                    validProperties
-                        .mapNotNull { nodeProperty: NodeProperty<T> ->
-                            nodeProperty::class.distanceFrom(superType)?.let { nodeProperty to it }
-                        }
-                        .minByOrNull { it.second }
-                        ?.first as? C
+    fun <C : NodeProperty<T>> asPropertyOrNull(superType: KClass<in C>): C? =
+        when {
+            properties.size <= 1 -> properties.firstOrNull()?.takeIfInstance(superType)
+            else -> {
+                val validProperties: List<C> = properties.mapNotNull { it.takeIfInstance(superType) }
+                when {
+                    validProperties.size <= 1 -> validProperties.firstOrNull()
+                    else -> {
+                        validProperties
+                            .mapNotNull { nodeProperty: NodeProperty<T> ->
+                                nodeProperty::class.distanceFrom(superType)?.let { nodeProperty to it }
+                            }
+                            .minByOrNull { it.second }
+                            ?.first as? C
+                    }
                 }
             }
         }
-    }
 
     /**
      * returns a [NodeProperty] of the provided [superType] [C].
@@ -198,33 +202,39 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
          * @param [C] type of capability
          * @return if present, a capability of the provided type [C]
          */
-        inline fun <T, reified C : NodeProperty<T>> Node<T>.asPropertyOrNull(): C? = when {
-            properties.size <= 1 -> properties.firstOrNull() as? C
-            else -> {
-                val validProperties: List<C> = properties.filterIsInstance<C>()
-                when {
-                    validProperties.size <= 1 ->
-                        validProperties.firstOrNull()
-                    else ->
-                        validProperties
-                            .mapNotNull { nodeProperty: NodeProperty<T> ->
-                                nodeProperty::class.distanceFrom(C::class)?.let { nodeProperty to it }
-                            }
-                            .minByOrNull { it.second }
-                            ?.first as? C
+        inline fun <T, reified C : NodeProperty<T>> Node<T>.asPropertyOrNull(): C? =
+            when {
+                properties.size <= 1 -> properties.firstOrNull() as? C
+                else -> {
+                    val validProperties: List<C> = properties.filterIsInstance<C>()
+                    when {
+                        validProperties.size <= 1 ->
+                            validProperties.firstOrNull()
+                        else ->
+                            validProperties
+                                .mapNotNull { nodeProperty: NodeProperty<T> ->
+                                    nodeProperty::class.distanceFrom(C::class)?.let { nodeProperty to it }
+                                }
+                                .minByOrNull { it.second }
+                                ?.first as? C
+                    }
                 }
             }
-        }
 
         @JvmSynthetic @PublishedApi
-        internal fun KClass<*>.distanceFrom(superType: KClass<*>, depth: Int = 0): Int? = when {
-            !isSubclassOf(superType) -> null
-            superType == this -> depth
-            else -> supertypes.asSequence()
-                .map { it.jvmErasure }
-                .mapNotNull { it.distanceFrom(superType, depth + 1) }
-                .minOrNull()
-        }
+        internal fun KClass<*>.distanceFrom(
+            superType: KClass<*>,
+            depth: Int = 0,
+        ): Int? =
+            when {
+                !isSubclassOf(superType) -> null
+                superType == this -> depth
+                else ->
+                    supertypes.asSequence()
+                        .map { it.jvmErasure }
+                        .mapNotNull { it.distanceFrom(superType, depth + 1) }
+                        .minOrNull()
+            }
 
         @Suppress("UNCHECKED_CAST")
         private fun <T, C : NodeProperty<T>> NodeProperty<T>.takeIfInstance(type: KClass<in C>): C? =

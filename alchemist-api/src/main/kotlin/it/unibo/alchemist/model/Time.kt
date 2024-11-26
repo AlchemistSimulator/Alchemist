@@ -69,83 +69,89 @@ interface Time : Comparable<Time>, Serializable {
          * Initial time.
          */
         @JvmField
-        val ZERO: Time = object : Time {
-            override val isInfinite: Boolean = false
+        val ZERO: Time =
+            object : Time {
+                override val isInfinite: Boolean = false
 
-            override fun times(other: Double): Time =
-                takeIf { other.isFinite() } ?: error("Cannot multiply zero by $other")
+                override fun times(other: Double): Time =
+                    takeIf { other.isFinite() } ?: error("Cannot multiply zero by $other")
 
-            override fun minus(other: Time) = other.times(-1.0)
+                override fun minus(other: Time) = other.times(-1.0)
 
-            override fun plus(other: Time) = other
+                override fun plus(other: Time) = other
 
-            override fun toDouble() = 0.0
+                override fun toDouble() = 0.0
 
-            override operator fun compareTo(other: Time) = 0.0.compareTo(other.toDouble())
+                override operator fun compareTo(other: Time) = 0.0.compareTo(other.toDouble())
 
-            override fun equals(other: Any?) = other === this || other is Time && other.toDouble() == 0.0
+                override fun equals(other: Any?) = other === this || other is Time && other.toDouble() == 0.0
 
-            override fun hashCode() = 0.0.hashCode()
+                override fun hashCode() = 0.0.hashCode()
 
-            override fun toString() = "0"
-        }
+                override fun toString() = "0"
+            }
 
         /**
          * Indefinitely future time.
          */
         @JvmField
-        val INFINITY: Time = object : Time {
-            override val isInfinite = true
+        val INFINITY: Time =
+            object : Time {
+                override val isInfinite = true
 
-            override fun times(other: Double) = when {
-                other > 0.0 -> this
-                other < 0.0 -> NEGATIVE_INFINITY
-                else -> error("Cannot multiply $this by 0")
+                override fun times(other: Double) =
+                    when {
+                        other > 0.0 -> this
+                        other < 0.0 -> NEGATIVE_INFINITY
+                        else -> error("Cannot multiply $this by 0")
+                    }
+
+                override fun minus(other: Time) =
+                    takeUnless { other == this } ?: error("Cannot subtract an infinite time from $this")
+
+                override fun plus(other: Time) =
+                    takeUnless { other == NEGATIVE_INFINITY } ?: error("Cannot subtract an infinite time from $this")
+
+                override fun toDouble() = POSITIVE_INFINITY
+
+                override operator fun compareTo(other: Time) = POSITIVE_INFINITY.compareTo(other.toDouble())
+
+                override fun equals(other: Any?) =
+                    other === this || other is Time && other.toDouble() == POSITIVE_INFINITY
+
+                override fun hashCode() = POSITIVE_INFINITY.hashCode()
+
+                override fun toString() = "∞"
             }
-
-            override fun minus(other: Time) =
-                takeUnless { other == this } ?: error("Cannot subtract an infinite time from $this")
-
-            override fun plus(other: Time) =
-                takeUnless { other == NEGATIVE_INFINITY } ?: error("Cannot subtract an infinite time from $this")
-
-            override fun toDouble() = POSITIVE_INFINITY
-
-            override operator fun compareTo(other: Time) = POSITIVE_INFINITY.compareTo(other.toDouble())
-
-            override fun equals(other: Any?) = other === this || other is Time && other.toDouble() == POSITIVE_INFINITY
-
-            override fun hashCode() = POSITIVE_INFINITY.hashCode()
-
-            override fun toString() = "∞"
-        }
 
         /**
          * Indefinitely past time.
          */
         @JvmField
-        val NEGATIVE_INFINITY: Time = object : Time by INFINITY {
-            override fun times(other: Double) = when {
-                other > 0.0 -> this
-                other < 0.0 -> INFINITY
-                else -> error("Cannot multiply $this by 0")
+        val NEGATIVE_INFINITY: Time =
+            object : Time by INFINITY {
+                override fun times(other: Double) =
+                    when {
+                        other > 0.0 -> this
+                        other < 0.0 -> INFINITY
+                        else -> error("Cannot multiply $this by 0")
+                    }
+
+                override fun minus(other: Time) =
+                    takeUnless { other == this } ?: error("Cannot sum an infinite time to $this")
+
+                override fun plus(other: Time) =
+                    takeUnless { other == INFINITY } ?: error("Cannot sum an infinite time to $this")
+
+                override fun toDouble() = MINUS_INFINITY
+
+                override operator fun compareTo(other: Time) = MINUS_INFINITY.compareTo(other.toDouble())
+
+                override fun equals(other: Any?) = other === this || other is Time && other.toDouble() == MINUS_INFINITY
+
+                override fun hashCode() = MINUS_INFINITY.hashCode()
+
+                override fun toString() = "-∞"
             }
-
-            override fun minus(other: Time) =
-                takeUnless { other == this } ?: error("Cannot sum an infinite time to $this")
-
-            override fun plus(other: Time) =
-                takeUnless { other == INFINITY } ?: error("Cannot sum an infinite time to $this")
-
-            override fun toDouble() = MINUS_INFINITY
-
-            override operator fun compareTo(other: Time) = MINUS_INFINITY.compareTo(other.toDouble())
-
-            override fun equals(other: Any?) = other === this || other is Time && other.toDouble() == MINUS_INFINITY
-
-            override fun hashCode() = MINUS_INFINITY.hashCode()
-
-            override fun toString() = "-∞"
-        }
     }
 }

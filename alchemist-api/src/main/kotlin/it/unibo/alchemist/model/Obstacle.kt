@@ -36,7 +36,10 @@ interface Obstacle<V : Vector<V>> : Serializable {
      * @return the intersection point between the vector and the obstacle nearest
      * to the vector's starting point.
      */
-    fun next(start: V, end: V): V
+    fun next(
+        start: V,
+        end: V,
+    ): V
 
     /**
      * Given a vector (represented as a starting point and an end point), computes
@@ -50,5 +53,8 @@ interface Obstacle<V : Vector<V>> : Serializable {
      * @return the intersection point between the vector and the rectangle
      * nearest to the vector's starting point
      */
-    fun nearestIntersection(start: V, end: V): V
+    fun nearestIntersection(
+        start: V,
+        end: V,
+    ): V
 }

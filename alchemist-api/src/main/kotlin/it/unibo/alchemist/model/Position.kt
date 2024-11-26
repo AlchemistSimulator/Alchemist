@@ -19,7 +19,6 @@ import java.io.Serializable
  *            for specifying incrementally fine grained model elements.
  */
 interface Position<P : Position<P>> : Serializable {
-
     /**
      * Given a range, produces N coordinates, representing the N opposite
      * vertices of the hypercube having the current coordinate as center and

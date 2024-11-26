@@ -18,7 +18,6 @@ import java.io.Serializable
  * @param V the vector type for the space in which this obstacle is placed.
  */
 interface Obstacle<V : Vector<V>> : Serializable {
-
     /**
      * The id for this obstacle.
      */

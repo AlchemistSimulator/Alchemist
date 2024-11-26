@@ -9,7 +9,6 @@ import java.io.Serializable
  * @param <A> The transformations supported by the shapes in this space
  */
 interface Shape<S : Vector<S>, A : Transformation<S>> : Serializable {
-
     /**
      * The largest distance between any pair of vertices.
      */

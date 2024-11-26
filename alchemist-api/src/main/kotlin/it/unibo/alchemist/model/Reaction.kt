@@ -16,7 +16,6 @@ package it.unibo.alchemist.model
  * this interface.
 </T> */
 interface Reaction<T> : Actionable<T> {
-
     /**
      * The widest [Context] among [Condition]s, namely the
      * smallest [Context] in which the [Reaction] can read

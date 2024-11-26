@@ -18,7 +18,6 @@ import kotlin.math.sqrt
  * @param S self type to prevent vector operations between vectors of different spaces.
  */
 interface Vector<S : Vector<S>> {
-
     /**
      * The dimensions of the space this vector belongs to.
      */

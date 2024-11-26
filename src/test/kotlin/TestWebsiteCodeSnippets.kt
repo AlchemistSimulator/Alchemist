@@ -22,9 +22,10 @@ import it.unibo.alchemist.util.ClassPathScanner
 
 class TestWebsiteCodeSnippets : FreeSpec(
     {
-        val allSpecs = ClassPathScanner.resourcesMatching(".*", "website-snippets")
-            .also { it shouldNot beEmpty() }
-            .onEach { it shouldNot beNull() }
+        val allSpecs =
+            ClassPathScanner.resourcesMatching(".*", "website-snippets")
+                .also { it shouldNot beEmpty() }
+                .onEach { it shouldNot beNull() }
         allSpecs.forEach { url ->
             "snippet ${url.path.split("/").last()} should load correctly" - {
                 val simulation = LoadAlchemist.from(url).getDefault<Any, Nothing>()

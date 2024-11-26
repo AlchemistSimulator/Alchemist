@@ -24,7 +24,6 @@ class ArrayIndexedPriorityEpsilonBatchQueue<T>(
     private val epsilon: Double,
     private val delegate: ArrayIndexedPriorityQueue<T> = ArrayIndexedPriorityQueue(),
 ) : Scheduler<T> by delegate, BatchedScheduler<T> {
-
     @Suppress("ReturnCount")
     override fun getNextBatch(): List<Actionable<T>> {
         if (delegate.tree.isEmpty()) {

@@ -32,7 +32,6 @@ import java.util.stream.Collectors
  * @param <P> [Position] type
 </P></T> */
 class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
-
     private val outputReplayStrategy: OutputReplayStrategy
     private val executeLock = Any()
     private val updateLock = Any()
@@ -45,13 +44,15 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         this.outputReplayStrategy = outputReplayStrategy
     }
 
-    @JvmOverloads constructor(
+    @JvmOverloads
+    constructor(
         environment: Environment<T, P>,
         scheduler: BatchedScheduler<T>,
         outputReplayStrategy: String = "aggregate",
     ) : this(environment, outputReplayStrategy.toReplayStrategy(), scheduler)
 
-    @JvmOverloads constructor(
+    @JvmOverloads
+    constructor(
         environment: Environment<T, P>,
         scheduler: String,
         batchSizeOrEpsilon: Number,
@@ -83,11 +84,12 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
                 }
                 ArrayIndexedPriorityFixedBatchQueue(batchSize)
             }
-            else -> error(
-                """
-                Invalid scheduler $scheduler. Available choices: epsilon, fixed
-                """.trimIndent(),
-            )
+            else ->
+                error(
+                    """
+                    Invalid scheduler $scheduler. Available choices: epsilon, fixed
+                    """.trimIndent(),
+                )
         },
         outputReplayStrategy,
     )
@@ -123,8 +125,9 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
                 val futureResults = tasks.awaitAll()
                 val newStep = step + batchSize.toLong()
                 setCurrentStep(newStep)
-                val resultsOrderedByTime = futureResults
-                    .sortedWith(Comparator.comparing { result: TaskResult -> result.eventTime })
+                val resultsOrderedByTime =
+                    futureResults
+                        .sortedWith(Comparator.comparing { result: TaskResult -> result.eventTime })
                 setCurrentTime(if (maxSlidingWindowTime > time) maxSlidingWindowTime else time)
                 doStepDoneAllMonitors(resultsOrderedByTime)
             } catch (e: InterruptedException) {
@@ -134,10 +137,13 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         }
     }
 
-    private fun doStepDoneAllMonitors(resultsOrderedByTime: List<TaskResult>): Unit = when (outputReplayStrategy) {
-        is OutputReplayStrategy.Reply -> resultsOrderedByTime.forEach(::doStepDoneAllMonitors)
-        is OutputReplayStrategy.Aggregate -> doStepDoneAllMonitors(resultsOrderedByTime[resultsOrderedByTime.size - 1])
-    }
+    private fun doStepDoneAllMonitors(resultsOrderedByTime: List<TaskResult>): Unit =
+        when (outputReplayStrategy) {
+            is OutputReplayStrategy.Reply ->
+                resultsOrderedByTime.forEach(::doStepDoneAllMonitors)
+            is OutputReplayStrategy.Aggregate ->
+                doStepDoneAllMonitors(resultsOrderedByTime[resultsOrderedByTime.size - 1])
+        }
 
     private fun doStepDoneAllMonitors(result: TaskResult) {
         for (monitor: OutputMonitor<T, P> in monitors) {
@@ -145,7 +151,10 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         }
     }
 
-    private fun doEvent(nextEvent: Actionable<T>, slidingWindowTime: Time): TaskResult {
+    private fun doEvent(
+        nextEvent: Actionable<T>,
+        slidingWindowTime: Time,
+    ): TaskResult {
         validateEventExecutionTime(nextEvent, slidingWindowTime)
         val currentLocalTime = nextEvent.tau
         if (nextEvent.canExecute()) {
@@ -161,9 +170,13 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         return TaskResult(nextEvent, currentLocalTime)
     }
 
-    private fun validateEventExecutionTime(nextEvent: Actionable<T>, slidingWindowTime: Time) {
+    private fun validateEventExecutionTime(
+        nextEvent: Actionable<T>,
+        slidingWindowTime: Time,
+    ) {
         val scheduledTime = nextEvent.tau
-        if (!isEventTimeScheduledInFirstBatch(scheduledTime) && isEventScheduledBeforeCurrentTime(
+        if (!isEventTimeScheduledInFirstBatch(scheduledTime) &&
+            isEventScheduledBeforeCurrentTime(
                 scheduledTime,
                 slidingWindowTime,
             )
@@ -180,7 +193,10 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         return scheduledTime.toDouble() == 0.0
     }
 
-    private fun isEventScheduledBeforeCurrentTime(scheduledTime: Time, slidingWindowTime: Time): Boolean {
+    private fun isEventScheduledBeforeCurrentTime(
+        scheduledTime: Time,
+        slidingWindowTime: Time,
+    ): Boolean {
         return scheduledTime < slidingWindowTime
     }
 
@@ -203,10 +219,11 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
             if (!afterExecutionUpdates.isEmpty()) {
                 afterExecutionUpdates.forEach(Consumer<Update> { obj: Update -> obj.performChanges() })
                 afterExecutionUpdates.clear()
-                toUpdate = Sets.union(
-                    toUpdate,
-                    dependencyGraph.outboundDependencies(event),
-                )
+                toUpdate =
+                    Sets.union(
+                        toUpdate,
+                        dependencyGraph.outboundDependencies(event),
+                    )
             }
             toUpdate.forEach(Consumer { r: Actionable<T>? -> updateReaction(r) })
         }
@@ -226,7 +243,6 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
      * This interface represents the way outputs are replied. It is meant for internal use.
      */
     private sealed interface OutputReplayStrategy {
-
         val name: String get() = requireNotNull(this::class.simpleName).lowercase()
 
         /**
@@ -242,16 +258,17 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         /**
          * Converts a [String] to the corresponding [OutputReplayStrategy], based on the name.
          */
-        fun String.toReplayStrategy(): OutputReplayStrategy = when (this.lowercase()) {
-            Aggregate.name -> Aggregate
-            Reply.name -> Reply
-            else ->
-                error(
-                    """
-                    Invalid output reply strategy $this. Available choices: ${listOf(Aggregate, Reply).map { it.name }}    
-                    """.trimIndent(),
-                )
-        }
+        fun String.toReplayStrategy(): OutputReplayStrategy =
+            when (this.lowercase()) {
+                Aggregate.name -> Aggregate
+                Reply.name -> Reply
+                else ->
+                    error(
+                        """
+                        Invalid output reply strategy $this. Available choices: ${listOf(Aggregate, Reply).map { it.name }}    
+                        """.trimIndent(),
+                    )
+            }
     }
 
     private companion object {

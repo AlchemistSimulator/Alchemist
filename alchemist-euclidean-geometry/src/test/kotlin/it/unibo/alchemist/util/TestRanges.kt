@@ -17,15 +17,15 @@ import it.unibo.alchemist.util.Ranges.findExtremeCoordsOnX
 import it.unibo.alchemist.util.Ranges.findExtremeCoordsOnY
 
 class TestRanges : StringSpec() {
-
     init {
         "test findExtremeCoords" {
-            val list = listOf(
-                coords(1.0, 1.0),
-                coords(2.0, 2.0),
-                coords(3.0, 2.0),
-                coords(-1.0, 30.0),
-            )
+            val list =
+                listOf(
+                    coords(1.0, 1.0),
+                    coords(2.0, 2.0),
+                    coords(3.0, 2.0),
+                    coords(-1.0, 30.0),
+                )
             list.findExtremeCoordsOnX().coincidesWith(-1.0..3.0) shouldBe true
             list.findExtremeCoordsOnY().coincidesWith(1.0..30.0) shouldBe true
         }

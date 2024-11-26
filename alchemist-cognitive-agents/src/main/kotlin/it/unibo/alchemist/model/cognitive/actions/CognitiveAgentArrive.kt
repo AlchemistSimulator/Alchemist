@@ -47,7 +47,6 @@ open class CognitiveAgentArrive<T, P, A>(
     where P : Position<P>,
           P : Vector<P>,
           A : Transformation<P> {
-
     constructor(
         environment: Environment<T, P>,
         reaction: Reaction<T>,
@@ -64,15 +63,19 @@ open class CognitiveAgentArrive<T, P, A>(
         environment.makePosition(*coordinates),
     )
 
-    override val maxWalk: Double get() = with((currentPosition as Vector<P>).distanceTo(target)) {
-        when {
-            this < arrivalTolerance -> 0.0
-            this < decelerationRadius -> Speed.default * this / decelerationRadius / reaction.rate
-            else -> node.asProperty<T, PedestrianProperty<T>>().speed() / reaction.rate
+    override val maxWalk: Double get() =
+        with((currentPosition as Vector<P>).distanceTo(target)) {
+            when {
+                this < arrivalTolerance -> 0.0
+                this < decelerationRadius -> Speed.default * this / decelerationRadius / reaction.rate
+                else -> node.asProperty<T, PedestrianProperty<T>>().speed() / reaction.rate
+            }
         }
-    }
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentArrive<T, P, A> =
+    override fun cloneAction(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ): CognitiveAgentArrive<T, P, A> =
         CognitiveAgentArrive(
             environment,
             reaction,

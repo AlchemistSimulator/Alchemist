@@ -19,21 +19,22 @@ import it.unibo.alchemist.model.properties.AbstractNodeProperty
 /**
  * The [node] occupies a circular space with the provided radius.
  */
-class CircularArea<T> @JvmOverloads constructor(
-    /**
-     * The environment in witch the node moves.
-     */
-    val environment: Physics2DEnvironment<T>,
-    override val node: Node<T>,
-    /**
-     * The radius of this circular area.
-     */
-    val radius: Double = 0.3,
-) : AbstractNodeProperty<T>(node), OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
+class CircularArea<T>
+    @JvmOverloads
+    constructor(
+        /**
+         * The environment in witch the node moves.
+         */
+        val environment: Physics2DEnvironment<T>,
+        override val node: Node<T>,
+        /**
+         * The radius of this circular area.
+         */
+        val radius: Double = 0.3,
+    ) : AbstractNodeProperty<T>(node), OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
+        override val shape: Euclidean2DShape = environment.shapeFactory.circle(radius)
 
-    override val shape: Euclidean2DShape = environment.shapeFactory.circle(radius)
+        override fun cloneOnNewNode(node: Node<T>) = CircularArea(environment, node, shape.radius)
 
-    override fun cloneOnNewNode(node: Node<T>) = CircularArea(environment, node, shape.radius)
-
-    override fun toString() = "${super.toString()}[radius=$radius]"
-}
+        override fun toString() = "${super.toString()}[radius=$radius]"
+    }

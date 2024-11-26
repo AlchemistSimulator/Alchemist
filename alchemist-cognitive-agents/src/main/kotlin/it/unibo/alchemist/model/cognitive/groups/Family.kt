@@ -19,8 +19,8 @@ class Family<T>(
     comparator: Comparator<Node<T>> = Comparator { a, b -> a.id.compareTo(b.id) },
 ) : GenericGroup<T, Node<T>>(),
     GroupWithLeader<T, Node<T>> {
-
-    override val leader: Node<T> = checkNotNull(members.minWithOrNull(comparator)) {
-        "Can't determine a leader."
-    }
+    override val leader: Node<T> =
+        checkNotNull(members.minWithOrNull(comparator)) {
+            "Can't determine a leader."
+        }
 }

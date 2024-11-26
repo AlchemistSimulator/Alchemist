@@ -26,18 +26,21 @@ import kotlinx.serialization.encoding.encodeStructure
  * Serializer for [Bitmap32] class.
  */
 object Bitmap32Serializer : KSerializer<Bitmap32> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("Bitmap32") {
-        element<IntArray>("ints")
-        element<Int>("width")
-        element<Int>("height")
-    }
-
-    override fun serialize(encoder: Encoder, value: Bitmap32) =
-        encoder.encodeStructure(descriptor) {
-            encodeSerializableElement(descriptor, 0, IntArraySerializer(), value.ints)
-            encodeIntElement(descriptor, 1, value.width)
-            encodeIntElement(descriptor, 2, value.height)
+    override val descriptor: SerialDescriptor =
+        buildClassSerialDescriptor("Bitmap32") {
+            element<IntArray>("ints")
+            element<Int>("width")
+            element<Int>("height")
         }
+
+    override fun serialize(
+        encoder: Encoder,
+        value: Bitmap32,
+    ) = encoder.encodeStructure(descriptor) {
+        encodeSerializableElement(descriptor, 0, IntArraySerializer(), value.ints)
+        encodeIntElement(descriptor, 1, value.width)
+        encodeIntElement(descriptor, 2, value.height)
+    }
 
     override fun deserialize(decoder: Decoder): Bitmap32 =
         decoder.decodeStructure(descriptor) {

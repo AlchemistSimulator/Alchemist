@@ -13,7 +13,6 @@ package it.unibo.alchemist.boundary.webui.common.utility
  * Actions that can be performed on a simulation.
  */
 enum class Action {
-
     /**
      * The action used to start the Simulation.
      */

@@ -56,13 +56,20 @@ private class TestPosition(
     override val dimensions: Int = coordinates.size,
 ) : Position<Nothing> {
     override fun boundingBox(range: Double): List<Nothing> = error("Not implemented in tests")
+
     override fun getCoordinate(dimension: Int): Double = coordinates[dimension]
+
     override fun plus(other: DoubleArray): Nothing = error("Not implemented in tests")
+
     override fun minus(other: DoubleArray): Nothing = error("Not implemented in tests")
+
     override fun distanceTo(other: Nothing): Double = error("Not implemented in tests")
 }
 
-fun <P : Position<out P>>checkPositionSurrogate(position: P, positionSurrogate: PositionSurrogate) {
+fun <P : Position<out P>> checkPositionSurrogate(
+    position: P,
+    positionSurrogate: PositionSurrogate,
+) {
     position.dimensions shouldBe positionSurrogate.dimensions
     position.coordinates shouldBe positionSurrogate.coordinates
 

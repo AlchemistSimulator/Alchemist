@@ -20,22 +20,17 @@ import java.net.URL
  * Loads YAML files via SnakeYAML.
  */
 object YamlProvider : AlchemistModelProvider {
-
     private val loaderOptions: LoaderOptions = LoaderOptions().withMaxAliasesForCollections()
 
     override val fileExtensions: Regex = "[yY][aA]?[mM][lL]".toRegex()
 
-    override fun from(input: String): Map<String, Any> =
-        Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
+    override fun from(input: String): Map<String, Any> = Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
 
-    override fun from(input: Reader): Map<String, Any> =
-        Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
+    override fun from(input: Reader): Map<String, Any> = Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
 
-    override fun from(input: InputStream): Map<String, Any> =
-        Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
+    override fun from(input: InputStream): Map<String, Any> = Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
 
-    override fun from(input: URL): Map<String, Any> =
-        Yaml(loaderOptions).load<Map<String, Any>>(input.openStream()).checkNotNull(input)
+    override fun from(input: URL): Map<String, Any> = Yaml(loaderOptions).load<Map<String, Any>>(input.openStream()).checkNotNull(input)
 
     private inline fun <reified T> T?.checkNotNull(input: Any): T {
         requireNotNull(this) {
@@ -44,7 +39,8 @@ object YamlProvider : AlchemistModelProvider {
         return this
     }
 
-    private fun LoaderOptions.withMaxAliasesForCollections(maxAliases: Int = Int.MAX_VALUE) = apply {
-        this.maxAliasesForCollections = maxAliases
-    }
+    private fun LoaderOptions.withMaxAliasesForCollections(maxAliases: Int = Int.MAX_VALUE) =
+        apply {
+            this.maxAliasesForCollections = maxAliases
+        }
 }

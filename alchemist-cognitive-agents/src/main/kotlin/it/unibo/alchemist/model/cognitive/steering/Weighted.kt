@@ -33,7 +33,6 @@ open class Weighted<T>(
     private val node: Node<T>,
     private val weight: SteeringAction<T, Euclidean2DPosition>.() -> Double,
 ) : SteeringStrategy<T, Euclidean2DPosition> {
-
     /**
      * [actions] are partitioned in group steering actions and non-group steering actions. The overall next position
      * for each of these two sets of actions is computed via weighted sum. The resulting vectors are then summed
@@ -56,12 +55,13 @@ open class Weighted<T>(
                 ?: currPos
         }
 
-    private fun List<SteeringAction<T, Euclidean2DPosition>>.calculatePosition(): Euclidean2DPosition = when {
-        size > 1 ->
-            map { it.nextPosition() to it.weight() }.run {
-                val totalWeight = map { it.second }.sum()
-                map { it.first * (it.second / totalWeight) }.reduce { acc, pos -> acc + pos }
-            }
-        else -> firstOrNull()?.nextPosition() ?: environment.origin
-    }
+    private fun List<SteeringAction<T, Euclidean2DPosition>>.calculatePosition(): Euclidean2DPosition =
+        when {
+            size > 1 ->
+                map { it.nextPosition() to it.weight() }.run {
+                    val totalWeight = map { it.second }.sum()
+                    map { it.first * (it.second / totalWeight) }.reduce { acc, pos -> acc + pos }
+                }
+            else -> firstOrNull()?.nextPosition() ?: environment.origin
+        }
 }

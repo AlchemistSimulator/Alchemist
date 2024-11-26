@@ -13,7 +13,6 @@ package it.unibo.alchemist.util
  * Entrypoint for printing meaningful debug information in case of failed internal consistency checks.
  */
 object BugReporting {
-
     /**
      * This function throws exception and generates useful debug information,
      * as well as instructions on how to report the bug.
@@ -32,13 +31,15 @@ object BugReporting {
                     --> https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
                 attaching the following information and the full stacktrace:
                 
-                """.trimIndent() +
+                """.trimIndent()
+                    +
                 debugInformation.debugReport(),
         )
     }
 
-    private fun Map<String, Any?>.debugReport(): String = asIterable()
-        .joinToString(System.lineSeparator()) { (name, value) ->
-            "$name => ${value?.let { "$it --- type: ${it::class.simpleName}" } ?: "null" }"
-        }
+    private fun Map<String, Any?>.debugReport(): String =
+        asIterable()
+            .joinToString(System.lineSeparator()) { (name, value) ->
+                "$name => ${value?.let { "$it --- type: ${it::class.simpleName}" } ?: "null" }"
+            }
 }

@@ -24,19 +24,19 @@ import org.junit.jupiter.api.Test
  * and the replacement of edges.
  */
 class TestAwtMutableConvexPolygon {
-
     lateinit var polygon: AwtMutableConvexPolygon
 
     @BeforeEach
     fun setUp() {
-        polygon = AwtMutableConvexPolygon(
-            mutableListOf(
-                Euclidean2DPosition(0.0, 0.0),
-                Euclidean2DPosition(1.0, 0.0),
-                Euclidean2DPosition(1.0, 1.0),
-                Euclidean2DPosition(0.0, 1.0),
-            ),
-        )
+        polygon =
+            AwtMutableConvexPolygon(
+                mutableListOf(
+                    Euclidean2DPosition(0.0, 0.0),
+                    Euclidean2DPosition(1.0, 0.0),
+                    Euclidean2DPosition(1.0, 1.0),
+                    Euclidean2DPosition(0.0, 1.0),
+                ),
+            )
     }
 
     @Test
@@ -80,14 +80,15 @@ class TestAwtMutableConvexPolygon {
 
     @Test
     fun testAddVertex() {
-        val p = AwtMutableConvexPolygon(
-            mutableListOf(
-                Euclidean2DPosition(0.0, 0.0),
-                Euclidean2DPosition(1.0, 0.0),
-                Euclidean2DPosition(1.0, 1.0),
-                Euclidean2DPosition(0.0, 1.0),
-            ),
-        )
+        val p =
+            AwtMutableConvexPolygon(
+                mutableListOf(
+                    Euclidean2DPosition(0.0, 0.0),
+                    Euclidean2DPosition(1.0, 0.0),
+                    Euclidean2DPosition(1.0, 1.0),
+                    Euclidean2DPosition(0.0, 1.0),
+                ),
+            )
         assertTrue(p.addVertex(2, 1.5, 0.5))
         assertTrue(p.removeVertex(2))
         assertFalse(p.addVertex(2, 0.5, 0.5))
@@ -114,40 +115,46 @@ class TestAwtMutableConvexPolygon {
 
     @Test
     fun testReplaceEdge() {
-        var newEdge = Segment2DImpl(
-            Euclidean2DPosition(1.5, -0.5),
-            Euclidean2DPosition(1.5, 1.5),
-        )
+        var newEdge =
+            Segment2DImpl(
+                Euclidean2DPosition(1.5, -0.5),
+                Euclidean2DPosition(1.5, 1.5),
+            )
         assertTrue(polygon.replaceEdge(1, newEdge))
-        newEdge = Segment2DImpl(
-            Euclidean2DPosition(1.5, 1.5),
-            Euclidean2DPosition(1.5, -0.5),
-        )
+        newEdge =
+            Segment2DImpl(
+                Euclidean2DPosition(1.5, 1.5),
+                Euclidean2DPosition(1.5, -0.5),
+            )
         assertFalse(polygon.replaceEdge(1, newEdge))
-        newEdge = Segment2DImpl(
-            Euclidean2DPosition(0.5, 0.3),
-            Euclidean2DPosition(0.5, 0.6),
-        )
+        newEdge =
+            Segment2DImpl(
+                Euclidean2DPosition(0.5, 0.3),
+                Euclidean2DPosition(0.5, 0.6),
+            )
         assertTrue(polygon.replaceEdge(1, newEdge))
-        newEdge = Segment2DImpl(
-            Euclidean2DPosition(0.5, 0.3),
-            Euclidean2DPosition(0.5, 0.6),
-        )
+        newEdge =
+            Segment2DImpl(
+                Euclidean2DPosition(0.5, 0.3),
+                Euclidean2DPosition(0.5, 0.6),
+            )
         assertTrue(polygon.replaceEdge(1, newEdge))
-        polygon = AwtMutableConvexPolygon(
-            mutableListOf(
-                Euclidean2DPosition(0.0, 0.0),
-                Euclidean2DPosition(3.0, 0.0),
-                Euclidean2DPosition(4.0, 1.0),
-                Euclidean2DPosition(4.0, 2.0),
-                Euclidean2DPosition(3.0, 3.0),
-                Euclidean2DPosition(0.0, 3.0),
-            ),
-        )
-        newEdge = Segment2DImpl(
-            Euclidean2DPosition(-0.5, 1.0),
-            Euclidean2DPosition(-0.5, 2.0),
-        )
+        polygon =
+            AwtMutableConvexPolygon(
+                mutableListOf(
+                    Euclidean2DPosition(0.0, 0.0),
+                    Euclidean2DPosition(3.0, 0.0),
+                    Euclidean2DPosition(4.0, 1.0),
+                    Euclidean2DPosition(4.0, 2.0),
+                    Euclidean2DPosition(3.0, 3.0),
+                    Euclidean2DPosition(0.0, 3.0),
+                ),
+            )
+        newEdge =
+            Segment2DImpl(
+                Euclidean2DPosition(-0.5, 1.0),
+                Euclidean2DPosition(-0.5, 2.0),
+            )
         assertFalse(polygon.replaceEdge(1, newEdge))
     }
 }

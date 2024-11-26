@@ -22,7 +22,9 @@ import it.unibo.alchemist.model.maps.environments.OSMEnvironment
 import org.apache.commons.math3.random.MersenneTwister
 
 private const val DEPLOYMENT_SIZE = 10_000
+
 private fun <P : Position2D<P>> incarnation() = SupportedIncarnations.get<Any, P>("sapere").get()
+
 class TestPolygon : StringSpec({
     fun <T, P : Position2D<P>> Environment<T, P>.runTestWithCoordinates() {
         val randomGenerator = MersenneTwister(0)
@@ -39,8 +41,9 @@ class TestPolygon : StringSpec({
     }
 }) {
     companion object {
-        val points = Gson().fromJson<List<List<Double>>>(
-            """[
+        val points =
+            Gson().fromJson<List<List<Double>>>(
+                """[
                 [ 12.2504425, 45.2038121 ],
                 [ 12.2641754, 45.2207426 ],
                 [ 12.2806549, 45.2381516 ],
@@ -73,8 +76,8 @@ class TestPolygon : StringSpec({
                 [ 12.233963, 45.257972 ],
                 [ 12.2504425, 45.2038121 ]]
             """,
-            object : TypeToken<List<List<Double>>>() {}.type,
-        ).map { listOf(it[1], it[0]) }
+                object : TypeToken<List<List<Double>>>() {}.type,
+            ).map { listOf(it[1], it[0]) }
 
         val pointsPair = points.map { Pair(it[1], it[0]) }
     }

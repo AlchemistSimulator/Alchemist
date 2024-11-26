@@ -32,10 +32,14 @@ class CognitiveBehavior<T, V, A>(
     timeDistribution: TimeDistribution<T>,
 ) : AbstractReaction<T>(node, timeDistribution)
     where V : Vector<V>, A : Transformation<V> {
+    override fun cloneOnNewNode(
+        node: Node<T>,
+        currentTime: Time,
+    ) = CognitiveBehavior(node, timeDistribution)
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time) =
-        CognitiveBehavior(node, timeDistribution)
-
-    override fun updateInternalStatus(curTime: Time, executed: Boolean, environment: Environment<T, *>) =
-        node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.update(rate)
+    override fun updateInternalStatus(
+        curTime: Time,
+        executed: Boolean,
+        environment: Environment<T, *>,
+    ) = node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.update(rate)
 }

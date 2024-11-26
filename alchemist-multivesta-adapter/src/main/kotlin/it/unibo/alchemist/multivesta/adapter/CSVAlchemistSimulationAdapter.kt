@@ -32,11 +32,13 @@ open class CSVAlchemistSimulationAdapter(
 ) : AlchemistSimulationAdapter {
     private val alchemistStateObservations: List<AlchemistStateObservations>
     private var time = 0
+
     init {
-        val effectiveSeed = checkNotNull(SeedsManager.popNextAvailableSeed(seed)) {
-            "MultiVesta cannot reached the requested confidence level with the given delta. " +
-                "Try to increase the number of simulations or to decrease the delta/confidence."
-        }
+        val effectiveSeed =
+            checkNotNull(SeedsManager.popNextAvailableSeed(seed)) {
+                "MultiVesta cannot reached the requested confidence level with the given delta. " +
+                    "Try to increase the number of simulations or to decrease the delta/confidence."
+            }
         val filename = filenameForSeed(effectiveSeed)
         val simulationFile = File(rootOutputFiles, filename)
         alchemistStateObservations = AlchemistSimStatesLoader.fromCSV(simulationFile.absolutePath)

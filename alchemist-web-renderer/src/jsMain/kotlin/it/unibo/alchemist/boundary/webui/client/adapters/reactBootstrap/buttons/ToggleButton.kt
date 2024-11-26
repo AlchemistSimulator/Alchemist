@@ -28,7 +28,6 @@ external val ToggleButton: ComponentClass<ToggleButtonProps>
  * Props used to customize the ToggleButton.
  */
 external interface ToggleButtonProps : PropsWithChildren {
-
     /**
      * id props, required.
      */

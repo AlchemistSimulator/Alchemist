@@ -16,7 +16,6 @@ import java.io.Serializable
  * Generic factory for [Shape].
  */
 interface GeometricShapeFactory<S : Vector<S>, A : Transformation<S>> : Serializable {
-
     /**
      * A special shape which does not occupy space and does not intersect with any other, not even with itself.
      */
@@ -61,7 +60,9 @@ interface GeometricShapeFactory<S : Vector<S>, A : Transformation<S>> : Serializ
          */
         @JvmStatic
         @Suppress("UNCHECKED_CAST")
-        fun <S, A, F> getInstance(type: Class<F>): F
+        fun <S, A, F> getInstance(
+            type: Class<F>,
+        ): F
             where S : Vector<S>,
                   A : Transformation<S>,
                   F : GeometricShapeFactory<S, A> =

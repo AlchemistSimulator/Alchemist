@@ -24,7 +24,6 @@ import kotlinx.coroutines.Dispatchers
  * Update the application state using HTTP calls to the REST server.
  */
 class RESTUpdateStateStrategy : UpdateStateStrategy {
-
     /**
      * Retrieve the Environment in serialized form using the [EnvironmentApi].
      * The Environment will be rendered and saved in the

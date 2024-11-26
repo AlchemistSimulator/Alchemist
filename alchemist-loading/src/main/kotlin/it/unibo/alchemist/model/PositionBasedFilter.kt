@@ -16,7 +16,6 @@ import java.util.function.Predicate
  * is satisfied).
  */
 interface PositionBasedFilter<P : Position<P>> : Predicate<P>, (P) -> Boolean {
-
     /**
      * Checks if the [position] is inside the shape.
      * @return true if the position is inside the [PositionBasedFilter].

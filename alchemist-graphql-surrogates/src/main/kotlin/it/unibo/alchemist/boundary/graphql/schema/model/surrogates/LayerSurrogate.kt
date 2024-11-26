@@ -51,5 +51,4 @@ data class LayerSurrogate<T, P : Position<out P>>(
  * @param posMapping the position mapping function.
  * @return a [LayerSurrogate] for this [it.unibo.alchemist.model.Layer]
  */
-fun <T, P : Position<out P>> Layer<T, P>.toGraphQLLayerSurrogate(posMapping: (List<Number>) -> P) =
-    LayerSurrogate(this, posMapping)
+fun <T, P : Position<out P>> Layer<T, P>.toGraphQLLayerSurrogate(posMapping: (List<Number>) -> P) = LayerSurrogate(this, posMapping)

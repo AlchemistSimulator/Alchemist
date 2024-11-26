@@ -30,7 +30,6 @@ class PhysicalBlendedSteering<T>(
     override val pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
 ) : BlendedSteering<T>(environment, pedestrian, timeDistribution) {
-
     private var previouslyAppliedForce = Euclidean2DPosition.zero
 
     private val physics = node.asProperty<T, PhysicalPedestrian2D<T>>()

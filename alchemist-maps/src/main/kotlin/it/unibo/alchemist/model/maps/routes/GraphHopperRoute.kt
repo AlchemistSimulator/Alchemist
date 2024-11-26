@@ -52,11 +52,12 @@ class GraphHopperRoute(from: GeoPosition, to: GeoPosition, response: GHResponse)
             this.points = builder.build()
         } else {
             val firstError = errors.first()
-            val exception = IllegalArgumentException(
-                "Failure in the GraphHopper routing system when navigating from $from to $to, " +
-                    "received response:\n$response",
-                firstError,
-            )
+            val exception =
+                IllegalArgumentException(
+                    "Failure in the GraphHopper routing system when navigating from $from to $to, " +
+                        "received response:\n$response",
+                    firstError,
+                )
             errors.asSequence().drop(1).forEach { exception.addSuppressed(it) }
             throw exception
         }
@@ -93,7 +94,6 @@ class GraphHopperRoute(from: GeoPosition, to: GeoPosition, response: GHResponse)
     private companion object {
         private const val serialVersionUID = 0L
 
-        private fun GHPoint3D.asPosition() =
-            LatLongPosition(lat, lon)
+        private fun GHPoint3D.asPosition() = LatLongPosition(lat, lon)
     }
 }

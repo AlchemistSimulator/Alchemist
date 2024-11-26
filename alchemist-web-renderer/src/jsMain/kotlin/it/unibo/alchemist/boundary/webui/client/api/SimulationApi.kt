@@ -21,7 +21,6 @@ import it.unibo.alchemist.boundary.webui.common.utility.Routes
  * API to interact with the simulation using the Play Button.
  */
 object SimulationApi {
-
     /**
      * Get the simulation status as a [StatusSurrogate].
      */

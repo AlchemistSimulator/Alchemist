@@ -39,7 +39,6 @@ abstract class AbstractSteeringAction<T, P, A>(
     where P : Position<P>,
           P : Vector<P>,
           A : Transformation<P> {
-
     /**
      * The maximum distance the node can walk, this is a length.
      */
@@ -62,7 +61,10 @@ abstract class AbstractSteeringAction<T, P, A>(
      *            The reaction to which the CURRENT action is assigned
      * @return the cloned action
      */
-    abstract override fun cloneAction(node: Node<T>, reaction: Reaction<T>): AbstractSteeringAction<T, P, A>
+    abstract override fun cloneAction(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ): AbstractSteeringAction<T, P, A>
 
     /**
      * Ensures that the passed [node] has type [N].

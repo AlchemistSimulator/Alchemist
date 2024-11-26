@@ -43,17 +43,17 @@ open class Pursue<T, L : Euclidean2DConvexShape, R>(
      */
     protected open val destination: Euclidean2DPosition,
 ) : Explore<T, L, R>(action) {
-
     private lateinit var doorsRankings: Map<Euclidean2DPassage, Int>
 
-    override fun inNewRoom(newRoom: ConvexPolygon) = with(action) {
-        if (newRoom.contains(destination)) {
-            moveToFinal(destination)
-        } else {
-            doorsRankings = computeDoorsRankings(newRoom)
-            super.inNewRoom(newRoom)
+    override fun inNewRoom(newRoom: ConvexPolygon) =
+        with(action) {
+            if (newRoom.contains(destination)) {
+                moveToFinal(destination)
+            } else {
+                doorsRankings = computeDoorsRankings(newRoom)
+                super.inNewRoom(newRoom)
+            }
         }
-    }
 
     /**
      * Assigns a weight to a visible door (= passage). This weighting system is derived from the one
@@ -86,38 +86,41 @@ open class Pursue<T, L : Euclidean2DConvexShape, R>(
      * is built, then the shortest path between each door and the [destination] is computed and
      * each door is ranked consequently (the shorter the path, the lower the rank).
      */
-    protected open fun computeDoorsRankings(currentRoom: ConvexPolygon): Map<Euclidean2DPassage, Int> = with(action) {
-        val graph = DefaultUndirectedWeightedGraph<Euclidean2DPosition, DefaultEdge>(DefaultEdge::class.java)
+    protected open fun computeDoorsRankings(currentRoom: ConvexPolygon): Map<Euclidean2DPassage, Int> =
+        with(action) {
+            val graph = DefaultUndirectedWeightedGraph<Euclidean2DPosition, DefaultEdge>(DefaultEdge::class.java)
         /*
          * Maps each door's midpoint to the correspondent door object
          */
-        val doors = doorsInSight().map { it.passageShapeOnTail.midPoint to it }
-        (currentRoom.vertices() + doors.map { it.first } + destination).forEach { graph.addVertex(it) }
-        currentRoom.edges().forEach { side ->
+            val doors = doorsInSight().map { it.passageShapeOnTail.midPoint to it }
+            (currentRoom.vertices() + doors.map { it.first } + destination).forEach { graph.addVertex(it) }
+            currentRoom.edges().forEach { side ->
             /*
              * The midpoints of the doors lying on the side being considered
              */
-            val doorCenters = doors.map { it.first }
-                .filter { side.contains(it) }
-                .sortedBy { it.distanceTo(side.first) }
-                .toTypedArray()
-            mutableListOf(side.first, *doorCenters, side.second)
-                .zipWithNext()
-                .forEach {
-                    graph.addEdge(it.first, it.second)
-                    graph.setEdgeWeight(it.first, it.second, it.first.distanceTo(it.second))
-                }
-        }
-        graph.vertexSet().forEach {
-            if (it != destination && !currentRoom.intersects(Segment2DImpl(it, destination))) {
-                graph.addEdge(it, destination)
-                graph.setEdgeWeight(it, destination, it.distanceTo(destination))
+                val doorCenters =
+                    doors.map { it.first }
+                        .filter { side.contains(it) }
+                        .sortedBy { it.distanceTo(side.first) }
+                        .toTypedArray()
+                mutableListOf(side.first, *doorCenters, side.second)
+                    .zipWithNext()
+                    .forEach {
+                        graph.addEdge(it.first, it.second)
+                        graph.setEdgeWeight(it.first, it.second, it.first.distanceTo(it.second))
+                    }
             }
+            graph.vertexSet().forEach {
+                if (it != destination && !currentRoom.intersects(Segment2DImpl(it, destination))) {
+                    graph.addEdge(it, destination)
+                    graph.setEdgeWeight(it, destination, it.distanceTo(destination))
+                }
+            }
+            val dijkstra = DijkstraShortestPath(graph)
+            val sorted =
+                doors
+                    .sortedBy { (midPoint, _) -> dijkstra.getPath(midPoint, destination)?.weight }
+                    .map { it.second }
+            doorsInSight().map { it to sorted.indexOf(it) + 1 }.toMap()
         }
-        val dijkstra = DijkstraShortestPath(graph)
-        val sorted = doors
-            .sortedBy { (midPoint, _) -> dijkstra.getPath(midPoint, destination)?.weight }
-            .map { it.second }
-        doorsInSight().map { it to sorted.indexOf(it) + 1 }.toMap()
-    }
 }

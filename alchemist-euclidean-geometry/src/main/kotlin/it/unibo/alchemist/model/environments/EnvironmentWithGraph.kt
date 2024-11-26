@@ -29,7 +29,6 @@ interface EnvironmentWithGraph<W, T, P, A, N, E> : EnvironmentWithObstacles<W, T
           P : Position<P>, P : Vector<P>,
           A : Transformation<P>,
           N : ConvexShape<P, A> {
-
     /**
      * The navigation graph.
      */

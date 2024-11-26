@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 interface Environment2DWithObstacles<W : it.unibo.alchemist.model.Obstacle2D<Euclidean2DPosition>, T> :
     EnvironmentWithObstacles<W, T, Euclidean2DPosition>,
     Euclidean2DEnvironment<T> {
-
     /**
      * Given a point and a range, retrieves all the obstacles within.
      *
@@ -28,7 +27,10 @@ interface Environment2DWithObstacles<W : it.unibo.alchemist.model.Obstacle2D<Euc
      *              the range to scan
      * @return the list of obstacles
      */
-    fun getObstaclesInRange(center: Euclidean2DPosition, range: Double): List<W>
+    fun getObstaclesInRange(
+        center: Euclidean2DPosition,
+        range: Double,
+    ): List<W>
 
     /**
      * Given a point and a range, retrieves all the obstacles within.
@@ -44,7 +46,11 @@ interface Environment2DWithObstacles<W : it.unibo.alchemist.model.Obstacle2D<Euc
     /*
      * Maintained in order not to break older code.
      */
-    fun getObstaclesInRange(centerx: Double, centery: Double, range: Double): List<W>
+    fun getObstaclesInRange(
+        centerx: Double,
+        centery: Double,
+        range: Double,
+    ): List<W>
 
     /**
      * @return true if this environment has mobile obstacles, false if

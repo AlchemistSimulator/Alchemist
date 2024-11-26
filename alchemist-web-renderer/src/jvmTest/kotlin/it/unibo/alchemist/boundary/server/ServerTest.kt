@@ -27,10 +27,11 @@ open class ServerTest : StringSpec({
                 routingModule()
             }
             environment {
-                config = MapApplicationConfig(
-                    "ktor.deployment.port" to "80",
-                    "ktor.deployment.sslPort" to "7001",
-                )
+                config =
+                    MapApplicationConfig(
+                        "ktor.deployment.port" to "80",
+                        "ktor.deployment.sslPort" to "7001",
+                    )
             }
             mainRouteTest()
         }

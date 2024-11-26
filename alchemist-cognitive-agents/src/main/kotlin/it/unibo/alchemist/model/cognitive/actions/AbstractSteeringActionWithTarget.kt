@@ -37,7 +37,6 @@ abstract class AbstractSteeringActionWithTarget<T, P, A>(
     SteeringActionWithTarget<T, P>
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P> {
-
     constructor(
         environment: Environment<T, P>,
         reaction: Reaction<T>,

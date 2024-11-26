@@ -32,7 +32,6 @@ data class Euclidean2DPassage(
     val head: ConvexPolygon,
     val passageShapeOnTail: Segment2D<Euclidean2DPosition>,
 ) {
-
     init {
         with(passageShapeOnTail) {
             require(!passageShapeOnTail.isDegenerate) { "passage shape cannot be degenerate" }
@@ -84,7 +83,10 @@ data class Euclidean2DPassage(
     fun crossingPoints(position: Euclidean2DPosition): Pair<Euclidean2DPosition, Euclidean2DPosition> =
         crossingPointOnTail(position).let { Pair(it, crossingPointOnHead(it)) }
 
-    private fun <V : Vector2D<V>> linesIntersectionOrFail(segment1: Segment2D<V>, segment2: Segment2D<V>): V =
+    private fun <V : Vector2D<V>> linesIntersectionOrFail(
+        segment1: Segment2D<V>,
+        segment2: Segment2D<V>,
+    ): V =
         when (val intersection = segment1.toLine().intersect(segment2.toLine())) {
             is Intersection2D.SinglePoint -> intersection.point
             else -> BugReporting.reportBug("Bug in geometric engine, found in ${this::class.qualifiedName}")

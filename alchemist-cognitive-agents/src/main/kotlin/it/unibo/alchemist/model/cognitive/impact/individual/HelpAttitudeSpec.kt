@@ -17,14 +17,12 @@ private typealias DoublePair = Pair<Double, Double>
  * A specification of the parameters regarding help attitudes to load from a config file.
  */
 object HelpAttitudeSpec : ConfigSpec() {
-
     // CPD-OFF
 
     /**
      * Adult males' help attitudes.
      */
     object AdultMale : ConfigSpec() {
-
         /**
          * The attitude of an adult male to help a male child.
          */
@@ -60,7 +58,6 @@ object HelpAttitudeSpec : ConfigSpec() {
      * Adult females attitudes.
      */
     object AdultFemale : ConfigSpec() {
-
         /**
          * The attitude of an adult female to help a male child.
          */
@@ -96,7 +93,6 @@ object HelpAttitudeSpec : ConfigSpec() {
      * Elderly males attitudes.
      */
     object ElderlyMale : ConfigSpec() {
-
         /**
          * The attitude of an elderly male to help a male child.
          */
@@ -132,7 +128,6 @@ object HelpAttitudeSpec : ConfigSpec() {
      * Elderly females attitudes.
      */
     object ElderlyFemale : ConfigSpec() {
-
         /**
          * The attitude of an elderly female to help a male child.
          */

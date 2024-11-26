@@ -33,19 +33,22 @@ import java.util.Optional
 class TestGetPosition {
     private val environment: Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment(ProtelisIncarnation())
     private val randomGenerator = MersenneTwister(0)
-    private val node = ProtelisIncarnation<Euclidean2DPosition>()
-        .createNode(randomGenerator, environment, null)
-    private val reaction = Event(
-        node,
-        ExponentialTime(1.0, randomGenerator),
-    )
-    private val action = RunProtelisProgram(
-        randomGenerator,
-        environment,
-        node.asProperty(),
-        reaction,
-        "self.getCoordinates()",
-    )
+    private val node =
+        ProtelisIncarnation<Euclidean2DPosition>()
+            .createNode(randomGenerator, environment, null)
+    private val reaction =
+        Event(
+            node,
+            ExponentialTime(1.0, randomGenerator),
+        )
+    private val action =
+        RunProtelisProgram(
+            randomGenerator,
+            environment,
+            node.asProperty(),
+            reaction,
+            "self.getCoordinates()",
+        )
 
     @BeforeEach
     fun setUp() {
@@ -60,8 +63,14 @@ class TestGetPosition {
         val sim: Simulation<Any, Euclidean2DPosition> = Engine(environment).terminatingAfterSteps(100)
         sim.addOutputMonitor(
             object : OutputMonitor<Any, Euclidean2DPosition> {
-                override fun finished(environment: Environment<Any, Euclidean2DPosition>, time: Time, step: Long) = Unit
+                override fun finished(
+                    environment: Environment<Any, Euclidean2DPosition>,
+                    time: Time,
+                    step: Long,
+                ) = Unit
+
                 override fun initialized(environment: Environment<Any, Euclidean2DPosition>) = Unit
+
                 override fun stepDone(
                     environment: Environment<Any, Euclidean2DPosition>,
                     reaction: Actionable<Any>?,

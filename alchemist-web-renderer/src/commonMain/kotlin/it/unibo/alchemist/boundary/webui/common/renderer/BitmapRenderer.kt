@@ -25,7 +25,6 @@ import korlibs.math.geom.Point
  * @param <TS> the type of the concentration surrogate.
  */
 class BitmapRenderer<in TS : Any, in PS : PositionSurrogate> : Renderer<TS, PS, Bitmap> {
-
     private companion object {
         private const val defaultNodeRadius = 0.1f
         private const val defaultHeight = 1000
@@ -71,7 +70,10 @@ class BitmapRenderer<in TS : Any, in PS : PositionSurrogate> : Renderer<TS, PS, 
      * @param node the node surrogate to draw.
      * @param radius the radius of the node.
      */
-    private fun Context2d.alchemistNode(node: NodeSurrogate<TS, PS>, radius: Float) {
+    private fun Context2d.alchemistNode(
+        node: NodeSurrogate<TS, PS>,
+        radius: Float,
+    ) {
         beginPath()
         circle(node.position.toPoint(), radius)
         stroke()

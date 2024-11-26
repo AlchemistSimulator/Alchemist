@@ -15,7 +15,6 @@ import org.danilopianini.lang.MathUtils
  * Extension functions enriching [Double].
  */
 object Doubles {
-
     /**
      * Checks if two double values are fuzzy equal.
      */

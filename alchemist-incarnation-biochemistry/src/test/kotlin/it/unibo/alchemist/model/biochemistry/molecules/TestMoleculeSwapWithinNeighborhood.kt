@@ -61,10 +61,11 @@ class TestMoleculeSwapWithinNeighborhood : StringSpec({
     override suspend fun beforeTest(testCase: TestCase) {
         environment =
             BioRect2DEnvironment(INCARNATION)
-        nodes = Pair(
-            INCARNATION.createNode(RANDOM, environment, null),
-            INCARNATION.createNode(RANDOM, environment, null),
-        )
+        nodes =
+            Pair(
+                INCARNATION.createNode(RANDOM, environment, null),
+                INCARNATION.createNode(RANDOM, environment, null),
+            )
         environment.linkingRule = LINKING_RULE
         environment.addNode(nodes.first, INITIAL_POSITIONS.first)
         environment.addNode(nodes.second, INITIAL_POSITIONS.second)
@@ -99,14 +100,16 @@ private val Int.neighborConditions: Matcher<Reaction<Double>>
 private val Int.actions: Matcher<Reaction<Double>>
     get() = sizeMatcher("actions") { it.actions }
 
-private fun <T> Int.sizeMatcher(collectionName: String, collection: (Reaction<Double>) -> List<T>) =
-    object : Matcher<Reaction<Double>> {
-        override fun test(value: Reaction<Double>): MatcherResult {
-            val actualSize = collection.invoke(value).size
-            return MatcherResult(
-                actualSize == this@sizeMatcher,
-                { "reaction should have ${ this@sizeMatcher } $collectionName but it has $actualSize" },
-                { "reaction should not have ${ this@sizeMatcher } $collectionName conditions but it has" },
-            )
-        }
+private fun <T> Int.sizeMatcher(
+    collectionName: String,
+    collection: (Reaction<Double>) -> List<T>,
+) = object : Matcher<Reaction<Double>> {
+    override fun test(value: Reaction<Double>): MatcherResult {
+        val actualSize = collection.invoke(value).size
+        return MatcherResult(
+            actualSize == this@sizeMatcher,
+            { "reaction should have ${ this@sizeMatcher } $collectionName but it has $actualSize" },
+            { "reaction should not have ${ this@sizeMatcher } $collectionName conditions but it has" },
+        )
     }
+}

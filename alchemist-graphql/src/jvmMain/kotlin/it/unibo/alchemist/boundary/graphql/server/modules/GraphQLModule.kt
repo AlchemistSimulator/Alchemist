@@ -55,20 +55,24 @@ fun Application.graphQLModule(environment: Environment<*, *>) {
 
     install(GraphQL) {
         schema {
-            packages = listOf(
-                "it.unibo.alchemist.boundary.graphql.schema",
-            )
-            queries = listOf(
-                EnvironmentQueries(environment),
-                NodeQueries(environment),
-            )
-            mutations = listOf(
-                SimulationControl(environment),
-            )
-            subscriptions = listOf(
-                EnvironmentSubscriptions(environment),
-                NodeSubscriptions(environment),
-            )
+            packages =
+                listOf(
+                    "it.unibo.alchemist.boundary.graphql.schema",
+                )
+            queries =
+                listOf(
+                    EnvironmentQueries(environment),
+                    NodeQueries(environment),
+                )
+            mutations =
+                listOf(
+                    SimulationControl(environment),
+                )
+            subscriptions =
+                listOf(
+                    EnvironmentSubscriptions(environment),
+                    NodeSubscriptions(environment),
+                )
             hooks = FlowSubscriptionSchemaGeneratorHooks()
         }
 

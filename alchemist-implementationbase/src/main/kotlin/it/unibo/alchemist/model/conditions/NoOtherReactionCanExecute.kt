@@ -22,7 +22,6 @@ class NoOtherReactionCanExecute<T>(
     node: Node<T>,
     private val myReaction: Reaction<T>,
 ) : AbstractNonPropensityContributingCondition<T>(node) {
-
     init {
         require(
             node.reactions.asSequence()
@@ -35,7 +34,10 @@ class NoOtherReactionCanExecute<T>(
         }
     }
 
-    override fun cloneCondition(node: Node<T>, reaction: Reaction<T>) = NoOtherReactionCanExecute(node, myReaction)
+    override fun cloneCondition(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ) = NoOtherReactionCanExecute(node, myReaction)
 
     override fun getContext() = Context.LOCAL
 

@@ -28,13 +28,13 @@ import java.util.stream.Collectors
  * Class that reads GPS tracks from gpx files.
  */
 class GPXLoader : GPSFileLoader {
-
-    override fun readTrace(url: URL): List<GPSTrace> = url.openStream().use { stream ->
-        getGPX(stream)
-            .tracks()
-            .map { track: Track -> getTrace(Objects.requireNonNull(track, "GPS track not found")) }
-            .collect(Collectors.toList())
-    }
+    override fun readTrace(url: URL): List<GPSTrace> =
+        url.openStream().use { stream ->
+            getGPX(stream)
+                .tracks()
+                .map { track: Track -> getTrace(Objects.requireNonNull(track, "GPS track not found")) }
+                .collect(Collectors.toList())
+        }
 
     override fun supportedExtensions(): ImmutableSet<String> {
         return EXTENSIONS
@@ -64,20 +64,21 @@ class GPXLoader : GPSFileLoader {
         /*
          * Converts the Track points to Alchemist GPSPoints
          */
-        val points: List<GPSPointImpl> = track.segments()
-            .flatMap { segment -> segment.points() }
-            .map { wayPoint ->
-                val time = wayPoint.time.map { it.toEpochMilli() / 1000.0 }
-                check(time.isPresent) {
-                    "Track $track contains at least a waypoint without timestamp: $wayPoint"
+        val points: List<GPSPointImpl> =
+            track.segments()
+                .flatMap { segment -> segment.points() }
+                .map { wayPoint ->
+                    val time = wayPoint.time.map { it.toEpochMilli() / 1000.0 }
+                    check(time.isPresent) {
+                        "Track $track contains at least a waypoint without timestamp: $wayPoint"
+                    }
+                    GPSPointImpl(
+                        wayPoint.latitude.toDouble(),
+                        wayPoint.longitude.toDouble(),
+                        DoubleTime(time.get()),
+                    )
                 }
-                GPSPointImpl(
-                    wayPoint.latitude.toDouble(),
-                    wayPoint.longitude.toDouble(),
-                    DoubleTime(time.get()),
-                )
-            }
-            .collect(Collectors.toList())
+                .collect(Collectors.toList())
         return GPSTraceImpl(points)
     }
 

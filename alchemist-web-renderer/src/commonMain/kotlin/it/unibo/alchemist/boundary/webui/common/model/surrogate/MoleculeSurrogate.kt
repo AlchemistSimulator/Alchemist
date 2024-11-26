@@ -31,7 +31,10 @@ data class MoleculeSurrogate(val name: String)
 object MoleculeSurrogateSerializer : KSerializer<MoleculeSurrogate> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Molecule", PrimitiveKind.STRING)
 
-    override fun serialize(encoder: Encoder, value: MoleculeSurrogate) {
+    override fun serialize(
+        encoder: Encoder,
+        value: MoleculeSurrogate,
+    ) {
         encoder.encodeSerializableValue(String.serializer(), value.name)
     }
 

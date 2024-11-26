@@ -17,18 +17,18 @@ import org.apache.commons.math3.random.RandomGenerator
  *          the simulation {@link RandomGenerator}.
  */
 class Speed(age: Age, gender: Gender, randomGenerator: RandomGenerator) : Characteristic {
-
     /**
      * The walking speed of the agent.
      */
-    val walking = when {
-        age == Age.CHILD && gender == Gender.MALE -> childMale
-        age == Age.CHILD && gender == Gender.FEMALE -> childFemale
-        age == Age.ADULT && gender == Gender.MALE -> adultMale
-        age == Age.ADULT && gender == Gender.FEMALE -> adultFemale
-        age == Age.ELDERLY && gender == Gender.MALE -> elderlyMale
-        else -> elderlyFemale
-    } + randomGenerator.nextDouble(0.0, variance)
+    val walking =
+        when {
+            age == Age.CHILD && gender == Gender.MALE -> childMale
+            age == Age.CHILD && gender == Gender.FEMALE -> childFemale
+            age == Age.ADULT && gender == Gender.MALE -> adultMale
+            age == Age.ADULT && gender == Gender.FEMALE -> adultFemale
+            age == Age.ELDERLY && gender == Gender.MALE -> elderlyMale
+            else -> elderlyFemale
+        } + randomGenerator.nextDouble(0.0, variance)
 
     /**
      * The running speed of the agent.

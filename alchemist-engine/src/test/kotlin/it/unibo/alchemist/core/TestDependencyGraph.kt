@@ -29,16 +29,14 @@ private data class IncarnationContext<T>(
     val randomGenerator: RandomGenerator,
     val incarnation: Incarnation<T, Euclidean2DPosition>,
 ) {
-
-    fun environment(
-        configuration: EnvironmentContext<T>.() -> Unit,
-    ): Environment<T, Euclidean2DPosition> = EnvironmentContext(
-        randomGenerator,
-        incarnation,
-        Continuous2DEnvironment(incarnation).apply {
-            linkingRule = ConnectWithinDistance(1.0)
-        },
-    ).apply(configuration).environment
+    fun environment(configuration: EnvironmentContext<T>.() -> Unit): Environment<T, Euclidean2DPosition> =
+        EnvironmentContext(
+            randomGenerator,
+            incarnation,
+            Continuous2DEnvironment(incarnation).apply {
+                linkingRule = ConnectWithinDistance(1.0)
+            },
+        ).apply(configuration).environment
 }
 
 private data class EnvironmentContext<T>(
@@ -46,25 +44,30 @@ private data class EnvironmentContext<T>(
     val incarnation: Incarnation<T, Euclidean2DPosition>,
     val environment: Environment<T, Euclidean2DPosition>,
 ) {
-    fun Node<T>.reaction(configuration: String): Reaction<T> = incarnation.createReaction(
-        randomGenerator,
-        environment,
-        this,
-        ExponentialTime(1.0, randomGenerator),
-        configuration,
-    ).also { addReaction(it) }
+    fun Node<T>.reaction(configuration: String): Reaction<T> =
+        incarnation.createReaction(
+            randomGenerator,
+            environment,
+            this,
+            ExponentialTime(1.0, randomGenerator),
+            configuration,
+        ).also { addReaction(it) }
 
     fun node(
         x: Number,
         y: Number,
         configuration: Node<T>.() -> Unit,
-    ): Node<T> = incarnation.createNode(randomGenerator, environment, null).apply {
-        configuration()
-        environment.addNode(this, environment.makePosition(x, y))
-    }
+    ): Node<T> =
+        incarnation.createNode(randomGenerator, environment, null).apply {
+            configuration()
+            environment.addNode(this, environment.makePosition(x, y))
+        }
 }
 
-private fun withRandom(randomGenerator: RandomGenerator, block: RandomContext.() -> Unit) {
+private fun withRandom(
+    randomGenerator: RandomGenerator,
+    block: RandomContext.() -> Unit,
+) {
     RandomContext(randomGenerator).block()
 }
 
@@ -80,21 +83,25 @@ class TestDependencyGraph : StringSpec(
         withRandom(MersenneTwister(10)) {
             withIncarnation(BiochemistryIncarnation()) {
                 val reactions: MutableMap<Int, Map<String, Reaction<Double>>> = mutableMapOf()
-                val environment = environment {
-                    fun Node<Double>.configureNode(): Map<String, Reaction<Double>> = listOf(
-                        "[a]-->[b]",
-                        "[a]-->[c]",
-                        "[b]-->[c]",
-                        "[c]-->[b]",
-                    ).associateWith { reaction(it) }
-                    node(0, 0) { reactions += id to configureNode() }
-                    node(0.5, 0) { reactions += id to configureNode() }
-                }
+                val environment =
+                    environment {
+                        fun Node<Double>.configureNode(): Map<String, Reaction<Double>> =
+                            listOf(
+                                "[a]-->[b]",
+                                "[a]-->[c]",
+                                "[b]-->[c]",
+                                "[c]-->[b]",
+                            ).associateWith { reaction(it) }
+                        node(0, 0) { reactions += id to configureNode() }
+                        node(0.5, 0) { reactions += id to configureNode() }
+                    }
+
                 fun String.inNode(id: Int): Reaction<Double> = reactions.getValue(id).getValue(this)
                 with(JGraphTDependencyGraph(environment)) {
                     reactions.asSequence().flatMap { it.value.asSequence() }.map { it.value }.forEach {
                         createDependencies(it)
                     }
+
                     fun Reaction<Double>.mustHaveOutBoundDependencies(vararg dependencies: Reaction<Double>) =
                         outboundDependencies(this).toList() shouldContainExactlyInAnyOrder dependencies.toList()
                     "local reactions on separate nodes should be isolated" {

@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.PositionBasedFilter
  * @param positionBasedFilterA the first filter.
  * @param positionBasedFilterB the second filter.
  */
-data class Or<P : Position<P>> (
+data class Or<P : Position<P>>(
     val positionBasedFilterA: PositionBasedFilter<P>,
     val positionBasedFilterB: PositionBasedFilter<P>,
 ) : PositionBasedFilter<P> {

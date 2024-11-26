@@ -51,7 +51,10 @@ interface PhysicsEnvironment<T, P, A, F> : EuclideanEnvironment<T, P>
      * @param node The node
      * @param direction The direction vector.
      */
-    fun setHeading(node: Node<T>, direction: P)
+    fun setHeading(
+        node: Node<T>,
+        direction: P,
+    )
 
     /**
      * Gets the shape of a node relatively to its position and heading in the environment.

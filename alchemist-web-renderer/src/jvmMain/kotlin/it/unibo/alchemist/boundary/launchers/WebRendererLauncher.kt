@@ -24,7 +24,6 @@ import kotlinx.coroutines.runBlocking
  * A launcher that starts a REST server to allow the visualization of the simulation on a Browser.
  */
 class WebRendererLauncher : DefaultLauncher() {
-
     /**
      *  Prepares the simulation to be run, execute it in a coroutine and start the REST server by
      *  executing [EngineMain] using the application.conf configuration file.

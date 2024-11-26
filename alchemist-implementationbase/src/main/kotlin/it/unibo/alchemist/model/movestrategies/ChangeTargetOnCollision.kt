@@ -55,9 +55,10 @@ abstract class ChangeTargetOnCollision<T, P : Position<P>>(
      * By default if it hasn't moved (assuming it's because of an obstacle)
      * or or it has reached the previous, then choose another one.
      */
-    protected open fun shouldChangeTarget() = with(getCurrentPosition()) {
-        equals(lastNodePosition) || equals(targetPosition)
-    }
+    protected open fun shouldChangeTarget() =
+        with(getCurrentPosition()) {
+            equals(lastNodePosition) || equals(targetPosition)
+        }
 
     /**
      * The target selection strategy.
@@ -65,5 +66,8 @@ abstract class ChangeTargetOnCollision<T, P : Position<P>>(
      */
     protected abstract fun chooseTarget(): P
 
-    abstract override fun cloneIfNeeded(destination: Node<T>?, reaction: Reaction<T>?): ChangeTargetOnCollision<T, P>
+    abstract override fun cloneIfNeeded(
+        destination: Node<T>?,
+        reaction: Reaction<T>?,
+    ): ChangeTargetOnCollision<T, P>
 }

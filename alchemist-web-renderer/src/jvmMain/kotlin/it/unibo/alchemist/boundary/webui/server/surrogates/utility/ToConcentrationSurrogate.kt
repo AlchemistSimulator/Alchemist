@@ -15,7 +15,6 @@ import it.unibo.alchemist.boundary.webui.common.model.surrogate.EmptyConcentrati
  * A set of functions to map the concentrations to the corresponding surrogate classes.
  */
 object ToConcentrationSurrogate {
-
     /**
      * @return A function that maps any object to an [EmptyConcentrationSurrogate].
      */

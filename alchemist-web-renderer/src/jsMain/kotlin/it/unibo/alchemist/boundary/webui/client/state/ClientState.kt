@@ -49,9 +49,13 @@ data class ClientState(
  * @param action the action to perform.
  * @return the new state of the application.
  */
-fun rootReducer(state: ClientState, action: Any): ClientState = ClientState(
-    renderMode = renderModeReducer(state.renderMode, action),
-    playButton = playButtonReducer(state.playButton, action),
-    bitmap = bitmapReducer(state.bitmap, action),
-    statusSurrogate = statusSurrogateReducer(state.statusSurrogate, action),
-)
+fun rootReducer(
+    state: ClientState,
+    action: Any,
+): ClientState =
+    ClientState(
+        renderMode = renderModeReducer(state.renderMode, action),
+        playButton = playButtonReducer(state.playButton, action),
+        bitmap = bitmapReducer(state.bitmap, action),
+        statusSurrogate = statusSurrogateReducer(state.statusSurrogate, action),
+    )

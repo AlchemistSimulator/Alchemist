@@ -21,7 +21,6 @@ import org.bson.Document
  * Contains all the functions in order to use MongoDB Database.
  */
 class MongoService {
-
     private lateinit var client: MongoClient
     private lateinit var database: MongoDatabase
     private lateinit var collection: MongoCollection<Document>
@@ -30,9 +29,10 @@ class MongoService {
      *  Requires an active instance of MongoDB at the given uri.
      */
     fun startService(uri: String) {
-        val settings = MongoClientSettings.builder()
-            .applyConnectionString(ConnectionString(uri))
-            .build()
+        val settings =
+            MongoClientSettings.builder()
+                .applyConnectionString(ConnectionString(uri))
+                .build()
         client = MongoClients.create(settings)
     }
 

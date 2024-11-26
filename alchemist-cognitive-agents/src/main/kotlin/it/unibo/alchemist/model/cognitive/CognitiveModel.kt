@@ -13,7 +13,6 @@ package it.unibo.alchemist.model.cognitive
  * Theoretical model to describe the cognitive processes underlying in an agent.
  */
 interface CognitiveModel {
-
     /**
      * Value representing the current belief of the situation dangerousness.
      */

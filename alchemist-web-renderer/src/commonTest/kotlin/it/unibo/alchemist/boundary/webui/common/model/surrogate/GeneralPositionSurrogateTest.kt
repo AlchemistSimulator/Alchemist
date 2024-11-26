@@ -14,17 +14,17 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalSerializationApi::class)
 class GeneralPositionSurrogateTest : StringSpec({
 
-    val generalPositionSurrogate: PositionSurrogate = GeneralPositionSurrogate(
-        doubleArrayOf(5.0, 1.1, 6.0),
-        3,
-    )
+    val generalPositionSurrogate: PositionSurrogate =
+        GeneralPositionSurrogate(
+            doubleArrayOf(5.0, 1.1, 6.0),
+            3,
+        )
 
     "GeneralPositionSurrogate should have the correct number of coordinates" {
         generalPositionSurrogate.coordinates.size shouldBe 3

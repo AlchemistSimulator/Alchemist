@@ -40,14 +40,16 @@ class TestKtVariable<T, P : Position<P>> : StringSpec({
     }
     ClassPathScanner.resourcesMatching(".*", "regression/should-fail/kt-script").forEach { spec ->
         "test syntax errors in ${spec.file}" {
-            val exception = shouldThrow<RuntimeException> {
-                LoadAlchemist.from(spec).getDefault<Any, Nothing>()
-            }
-            val exceptions = generateSequence(exception, Throwable::cause).run {
-                // Avoid circular causes
-                val accumulator = mutableSetOf<Throwable>()
-                takeWhile { it !in accumulator }.onEach(accumulator::add)
-            }
+            val exception =
+                shouldThrow<RuntimeException> {
+                    LoadAlchemist.from(spec).getDefault<Any, Nothing>()
+                }
+            val exceptions =
+                generateSequence(exception, Throwable::cause).run {
+                    // Avoid circular causes
+                    val accumulator = mutableSetOf<Throwable>()
+                    takeWhile { it !in accumulator }.onEach(accumulator::add)
+                }
             exceptions.find { it is ScriptException } shouldNot beNull()
         }
     }

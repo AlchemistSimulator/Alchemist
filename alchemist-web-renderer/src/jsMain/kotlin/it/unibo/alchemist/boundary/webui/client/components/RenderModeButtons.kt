@@ -20,27 +20,28 @@ import react.Props
 /**
  * The button group that let the user decide which render mode to use.
  */
-val RenderModeButtons: FC<Props> = FC {
-    ToggleButtonGroup {
-        name = "toggle-render-mode"
-        onChange = { value ->
-            store.dispatch(SetRenderMode(value as RenderMode))
-        }
-        defaultValue = RenderMode.AUTO
-        ToggleButton {
-            id = "client-button"
-            value = RenderMode.CLIENT
-            +"Client"
-        }
-        ToggleButton {
-            id = "auto-button"
-            value = RenderMode.AUTO
-            +"Auto"
-        }
-        ToggleButton {
-            id = "server-button"
-            value = RenderMode.SERVER
-            +"Server"
+val RenderModeButtons: FC<Props> =
+    FC {
+        ToggleButtonGroup {
+            name = "toggle-render-mode"
+            onChange = { value ->
+                store.dispatch(SetRenderMode(value as RenderMode))
+            }
+            defaultValue = RenderMode.AUTO
+            ToggleButton {
+                id = "client-button"
+                value = RenderMode.CLIENT
+                +"Client"
+            }
+            ToggleButton {
+                id = "auto-button"
+                value = RenderMode.AUTO
+                +"Auto"
+            }
+            ToggleButton {
+                id = "server-button"
+                value = RenderMode.SERVER
+                +"Server"
+            }
         }
     }
-}

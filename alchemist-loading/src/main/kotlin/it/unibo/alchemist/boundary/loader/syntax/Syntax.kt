@@ -15,25 +15,28 @@ internal object DocumentRoot : SyntaxElement {
     object JavaType : SyntaxElement {
         val type by OwnName
         val parameters by OwnName
-        override val validDescriptors = setOf(
-            validDescriptor {
-                mandatory(type)
-                optional(parameters)
-            },
-        )
+        override val validDescriptors =
+            setOf(
+                validDescriptor {
+                    mandatory(type)
+                    optional(parameters)
+                },
+            )
     }
 
     object DependentVariable : SyntaxElement {
         val language by OwnName
         val formula by OwnName
         val timeout by OwnName
-        override val validDescriptors = JavaType.validDescriptors + setOf(
-            validDescriptor {
-                mandatory(formula)
-                optional(language)
-                optional(timeout)
-            },
-        )
+        override val validDescriptors =
+            JavaType.validDescriptors +
+                setOf(
+                    validDescriptor {
+                        mandatory(formula)
+                        optional(language)
+                        optional(timeout)
+                    },
+                )
     }
 
     object Deployment : SyntaxElement {
@@ -41,13 +44,14 @@ internal object DocumentRoot : SyntaxElement {
         val nodes by OwnName
         val properties by OwnName
         val programs by OwnName
-        override val validDescriptors = setOf(
-            validDescriptor {
-                mandatory(JavaType.type)
-                optional(JavaType.parameters, contents, properties, nodes, programs)
-                forbidden(Filter.filter)
-            },
-        )
+        override val validDescriptors =
+            setOf(
+                validDescriptor {
+                    mandatory(JavaType.type)
+                    optional(JavaType.parameters, contents, properties, nodes, programs)
+                    forbidden(Filter.filter)
+                },
+            )
 
         /*
          * in:
@@ -56,32 +60,35 @@ internal object DocumentRoot : SyntaxElement {
          */
         object Filter : SyntaxElement {
             const val filter = "in"
-            override val validDescriptors = setOf(
-                validDescriptor {
-                    mandatory(JavaType.type)
-                    optional(JavaType.parameters)
-                },
-            )
+            override val validDescriptors =
+                setOf(
+                    validDescriptor {
+                        mandatory(JavaType.type)
+                        optional(JavaType.parameters)
+                    },
+                )
         }
 
         object Property : SyntaxElement {
-            override val validDescriptors = setOf(
-                validDescriptor {
-                    mandatory(JavaType.type)
-                    optional(JavaType.parameters, Filter.filter)
-                },
-            )
+            override val validDescriptors =
+                setOf(
+                    validDescriptor {
+                        mandatory(JavaType.type)
+                        optional(JavaType.parameters, Filter.filter)
+                    },
+                )
         }
 
         object Contents : SyntaxElement {
             val molecule by OwnName
             val concentration by OwnName
-            override val validDescriptors = setOf(
-                validDescriptor {
-                    mandatory(molecule, concentration)
-                    optional(Filter.filter)
-                },
-            )
+            override val validDescriptors =
+                setOf(
+                    validDescriptor {
+                        mandatory(molecule, concentration)
+                        optional(Filter.filter)
+                    },
+                )
         }
 
         object Program : SyntaxElement {
@@ -89,24 +96,27 @@ internal object DocumentRoot : SyntaxElement {
             val actions by OwnName
             val conditions by OwnName
             const val timeDistribution = "time-distribution"
-            override val validDescriptors = setOf(
-                validDescriptor {
-                    mandatory(JavaType.type)
-                    optional(JavaType.parameters, Filter.filter, conditions, timeDistribution, actions)
-                },
-                validDescriptor {
-                    mandatory(program)
-                    optional(timeDistribution, Filter.filter)
-                },
-            )
+            override val validDescriptors =
+                setOf(
+                    validDescriptor {
+                        mandatory(JavaType.type)
+                        optional(JavaType.parameters, Filter.filter, conditions, timeDistribution, actions)
+                    },
+                    validDescriptor {
+                        mandatory(program)
+                        optional(timeDistribution, Filter.filter)
+                    },
+                )
         }
     }
 
     object Export : SyntaxElement {
         val data by OwnName
-        override val validDescriptors = setOf(
-            validDescriptor { mandatory(JavaType.type, JavaType.parameters, data) },
-        )
+        override val validDescriptors =
+            setOf(
+                validDescriptor { mandatory(JavaType.type, JavaType.parameters, data) },
+            )
+
         object Data : SyntaxElement {
             val time by OwnName
             val molecule by OwnName
@@ -114,65 +124,75 @@ internal object DocumentRoot : SyntaxElement {
             val aggregators by OwnName
             val precision by OwnName
             const val valueFilter = "value-filter"
-            override val validDescriptors = JavaType.validDescriptors + setOf(
-                validDescriptor {
-                    mandatory(time)
-                    optional(precision)
-                },
-                validDescriptor {
-                    mandatory(molecule)
-                    optional(property, aggregators, precision, valueFilter)
-                },
-            )
+            override val validDescriptors =
+                JavaType.validDescriptors +
+                    setOf(
+                        validDescriptor {
+                            mandatory(time)
+                            optional(precision)
+                        },
+                        validDescriptor {
+                            mandatory(molecule)
+                            optional(property, aggregators, precision, valueFilter)
+                        },
+                    )
         }
     }
 
     object Environment : SyntaxElement {
         const val globalPrograms = "global-programs"
+
         object GlobalProgram : SyntaxElement {
             val actions by OwnName
             val conditions by OwnName
             const val timeDistribution = "time-distribution"
-            override val validDescriptors = setOf(
-                validDescriptor {
-                    mandatory(JavaType.type)
-                    optional(JavaType.parameters, actions, conditions, timeDistribution)
-                },
-            )
+            override val validDescriptors =
+                setOf(
+                    validDescriptor {
+                        mandatory(JavaType.type)
+                        optional(JavaType.parameters, actions, conditions, timeDistribution)
+                    },
+                )
+
             override fun toString(): String = this::class.simpleName ?: this.javaClass.canonicalName
         }
-        override val validDescriptors = setOf(
-            validDescriptor {
-                optional(JavaType.parameters, globalPrograms)
-            },
-        )
+
+        override val validDescriptors =
+            setOf(
+                validDescriptor {
+                    optional(JavaType.parameters, globalPrograms)
+                },
+            )
     }
 
     object Layer : SyntaxElement {
         val molecule by OwnName
-        override val validDescriptors = setOf(
-            validDescriptor {
-                mandatory(JavaType.type, molecule)
-                optional(JavaType.parameters)
-            },
-        )
+        override val validDescriptors =
+            setOf(
+                validDescriptor {
+                    mandatory(JavaType.type, molecule)
+                    optional(JavaType.parameters)
+                },
+            )
     }
 
     object Monitor : SyntaxElement {
-        override val validDescriptors = setOf(
-            validDescriptor {
-                mandatory(JavaType.type)
-                optional(JavaType.parameters)
-            },
-        )
+        override val validDescriptors =
+            setOf(
+                validDescriptor {
+                    mandatory(JavaType.type)
+                    optional(JavaType.parameters)
+                },
+            )
     }
 
     object Seeds : SyntaxElement {
         val scenario by OwnName
         val simulation by OwnName
-        override val validDescriptors = setOf(
-            validDescriptor { optional(simulation, scenario) },
-        )
+        override val validDescriptors =
+            setOf(
+                validDescriptor { optional(simulation, scenario) },
+            )
     }
 
     object Variable : SyntaxElement {
@@ -180,9 +200,11 @@ internal object DocumentRoot : SyntaxElement {
         val max by OwnName
         val default by OwnName
         val step by OwnName
-        override val validDescriptors = JavaType.validDescriptors + setOf(
-            validDescriptor { mandatory(min, max, default, step) },
-        )
+        override val validDescriptors =
+            JavaType.validDescriptors +
+                setOf(
+                    validDescriptor { mandatory(min, max, default, step) },
+                )
     }
 
     val deployments by OwnName
@@ -199,16 +221,20 @@ internal object DocumentRoot : SyntaxElement {
     val terminate by OwnName
     val variables by OwnName
 
-    override val validDescriptors = setOf(
-        validDescriptor {
-            mandatory(incarnation)
-            optional(*validKeys.toTypedArray())
-        },
-    )
+    override val validDescriptors =
+        setOf(
+            validDescriptor {
+                mandatory(incarnation)
+                optional(*validKeys.toTypedArray())
+            },
+        )
 }
 
 internal object OwnName {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): String = property.name.lowercase()
+    operator fun getValue(
+        thisRef: Any?,
+        property: KProperty<*>,
+    ): String = property.name.lowercase()
 }
 
 private fun validDescriptor(configuration: DescriptorBuilder.() -> Unit): SyntaxElement.ValidDescriptor =

@@ -20,24 +20,24 @@ import org.kaikikm.threadresloader.ResourceLoader
  *
  */
 class TestImageEnvironment {
-
-    private val images = listOf(
-        "piantina1.png",
-        "planimetriabn1.png",
-        "piantina2.png",
-        "piantina3.png",
-        "piantina4.png",
-        "piantina5.png",
-        "piantina6.png",
-        "piantina7.png",
-        "piantina8.png",
-        "piantina9.png",
-        "Pastorello.png",
-        "Senzanome.png",
-        "duelocalioreno-pianta3.png",
-        "2rettangolo_nero.png",
-        "PlanimetriaChiaravalle1.png",
-    )
+    private val images =
+        listOf(
+            "piantina1.png",
+            "planimetriabn1.png",
+            "piantina2.png",
+            "piantina3.png",
+            "piantina4.png",
+            "piantina5.png",
+            "piantina6.png",
+            "piantina7.png",
+            "piantina8.png",
+            "piantina9.png",
+            "Pastorello.png",
+            "Senzanome.png",
+            "duelocalioreno-pianta3.png",
+            "2rettangolo_nero.png",
+            "PlanimetriaChiaravalle1.png",
+        )
 
     /**
      * Test the parsing of black and white images.

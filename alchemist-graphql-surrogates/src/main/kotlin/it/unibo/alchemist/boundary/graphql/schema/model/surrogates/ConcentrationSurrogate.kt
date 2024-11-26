@@ -34,5 +34,4 @@ data class ConcentrationSurrogate<T>(
  * @return a [ConcentrationSurrogate] for this [Concentration], storing the Json String representation of the
  * content, or its String representation if the Json serialization fails.
  */
-fun <T : Any> Concentration<T>.toGraphQLConcentrationSurrogate() =
-    ConcentrationSurrogate(this, encodeConcentrationContentToString(this))
+fun <T : Any> Concentration<T>.toGraphQLConcentrationSurrogate() = ConcentrationSurrogate(this, encodeConcentrationContentToString(this))

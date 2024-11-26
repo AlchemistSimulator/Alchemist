@@ -18,7 +18,11 @@ import it.unibo.alchemist.boundary.webui.common.model.RenderMode
  * @param action the action to perform.
  * @return the new render mode.
  */
-fun renderModeReducer(state: RenderMode, action: Any): RenderMode = when (action) {
-    is SetRenderMode -> action.renderMode
-    else -> state
-}
+fun renderModeReducer(
+    state: RenderMode,
+    action: Any,
+): RenderMode =
+    when (action) {
+        is SetRenderMode -> action.renderMode
+        else -> state
+    }

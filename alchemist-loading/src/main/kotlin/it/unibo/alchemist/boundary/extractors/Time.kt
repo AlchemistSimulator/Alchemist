@@ -16,18 +16,19 @@ import it.unibo.alchemist.model.Time
 /**
  * Exports a column with the current time.
  */
-class Time @JvmOverloads constructor(precision: Int? = null) : AbstractDoubleExporter(precision) {
+class Time
+    @JvmOverloads
+    constructor(precision: Int? = null) : AbstractDoubleExporter(precision) {
+        override val columnNames = listOf(name)
 
-    override val columnNames = listOf(name)
+        override fun <T> extractData(
+            environment: Environment<T, *>,
+            reaction: Actionable<T>?,
+            time: Time,
+            step: Long,
+        ): Map<String, Double> = mapOf(name to time.toDouble())
 
-    override fun <T> extractData(
-        environment: Environment<T, *>,
-        reaction: Actionable<T>?,
-        time: Time,
-        step: Long,
-    ): Map<String, Double> = mapOf(name to time.toDouble())
-
-    private companion object {
-        private const val name: String = "time"
+        private companion object {
+            private const val name: String = "time"
+        }
     }
-}

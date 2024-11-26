@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.Environment
  * A factory for [EnvironmentMonitor]s. Monitors are returned as [OutputMonitor].
  */
 object EnvironmentMonitorFactory {
-
     /**
      * Create an EnvironmentMonitor suitable for the given simulation, using a toConcentration function based on the
      * [it.unibo.alchemist.model.Incarnation]

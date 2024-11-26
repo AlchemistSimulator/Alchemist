@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.geometry.Vector
  */
 interface EuclideanEnvironment<T, P> :
     Environment<T, P> where P : Position<P>, P : Vector<P> {
-
     /**
      * This method moves a [node] in the environment toward some [direction]. If
      * node move is unsupported, it does nothing.
@@ -26,7 +25,10 @@ interface EuclideanEnvironment<T, P> :
      * {@link #moveNodeToPosition(Node, Position2D)}, as such, overriding that
      * method may suffice.
      */
-    fun moveNode(node: Node<T>, direction: P) {
+    fun moveNode(
+        node: Node<T>,
+        direction: P,
+    ) {
         val oldcoord = getPosition(node)
         moveNodeToPosition(node, oldcoord.plus(direction))
     }

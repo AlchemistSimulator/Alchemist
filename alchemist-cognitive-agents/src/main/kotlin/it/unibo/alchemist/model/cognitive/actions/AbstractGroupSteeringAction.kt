@@ -29,11 +29,11 @@ abstract class AbstractGroupSteeringAction<T, P, A>(
     where P : Position<P>,
           P : Vector<P>,
           A : Transformation<P> {
-
     /**
      * Computes the centroid of the [group] in absolute coordinates.
      */
-    protected fun centroid(): P = with(group()) {
-        map { environment.getPosition(it) }.reduce { acc, pos -> acc + pos } / size.toDouble()
-    }
+    protected fun centroid(): P =
+        with(group()) {
+            map { environment.getPosition(it) }.reduce { acc, pos -> acc + pos } / size.toDouble()
+        }
 }

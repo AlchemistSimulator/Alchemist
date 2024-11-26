@@ -26,13 +26,16 @@ import it.unibo.alchemist.test.startSimulation
 class TestFeelsTransmission<T> : StringSpec({
 
     "danger layer affects cognitive pedestrians" {
-        fun Environment<T, Euclidean2DPosition>.perceivedDanger() = nodes
-            .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel }
-            .sumOf { it.dangerBelief() }
-        fun Simulation<T, Euclidean2DPosition>.dangerIsLoaded() = this.also { _ ->
-            environment.nodes.mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.danger }
-                .forEach { it shouldNotBe null }
-        }
+        fun Environment<T, Euclidean2DPosition>.perceivedDanger() =
+            nodes
+                .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel }
+                .sumOf { it.dangerBelief() }
+
+        fun Simulation<T, Euclidean2DPosition>.dangerIsLoaded() =
+            this.also { _ ->
+                environment.nodes.mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.danger }
+                    .forEach { it shouldNotBe null }
+            }
         val aggregateDangerWithLayer =
             loadYamlSimulation<T, Euclidean2DPosition>("feels-transmission-with-layer.yml")
                 .also { it.environment.layers shouldNot beEmpty() }

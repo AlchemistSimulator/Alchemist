@@ -19,25 +19,30 @@ import it.unibo.alchemist.model.maps.positions.LatLongPosition
 
 class TestRouteSegments : StringSpec(
     {
-        val incarnation = SupportedIncarnations
-            .get<Any, GeoPosition>(SupportedIncarnations.getAvailableIncarnations().first())
-            .get()
-        val pharmacy = LatLongPosition(
-            44.14022881997589,
-            12.234464874617203,
-        )
-        val stadium = LatLongPosition(
-            44.140937161857074,
-            12.261716117329186,
-        )
-        val bertinoro = LatLongPosition(
-            44.14883128462208,
-            12.135307764053827,
-        )
-        val bulgarno = LatLongPosition(
-            44.13392232154526,
-            12.336352744054683,
-        )
+        val incarnation =
+            SupportedIncarnations
+                .get<Any, GeoPosition>(SupportedIncarnations.getAvailableIncarnations().first())
+                .get()
+        val pharmacy =
+            LatLongPosition(
+                44.14022881997589,
+                12.234464874617203,
+            )
+        val stadium =
+            LatLongPosition(
+                44.140937161857074,
+                12.261716117329186,
+            )
+        val bertinoro =
+            LatLongPosition(
+                44.14883128462208,
+                12.135307764053827,
+            )
+        val bulgarno =
+            LatLongPosition(
+                44.13392232154526,
+                12.336352744054683,
+            )
         with(
             OSMEnvironment(
                 incarnation,

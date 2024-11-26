@@ -18,7 +18,6 @@ import java.util.function.Predicate
  * @param endTime the end time.
  */
 data class AfterTime<T, P : Position<P>>(val endTime: Time) : Predicate<Environment<T, P>> {
-
     /**
      * Tries to access the simulation time from the [environment].
      * If the simulation is unaccessible, throws an exception.

@@ -43,11 +43,12 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
     private val trackEnabled: Boolean = true
 
     @ExportForGUI(nameToExport = "SnapshotSize")
-    private val snapshotSize: RangedInteger = RangedInteger(
-        MIN_SNAPSHOT_LENGTH,
-        MAX_SNAPSHOT_LENGTH,
-        DEFAULT_SNAPSHOT_LENGTH,
-    )
+    private val snapshotSize: RangedInteger =
+        RangedInteger(
+            MIN_SNAPSHOT_LENGTH,
+            MAX_SNAPSHOT_LENGTH,
+            DEFAULT_SNAPSHOT_LENGTH,
+        )
 
     @ExportForGUI(nameToExport = "SnapshotFrequency")
     private val timespan: RangedInteger = RangedInteger(1, MAX_TIMESPAN, CLOCK)
@@ -111,55 +112,71 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
                 Color(colorBase.red, colorBase.green, colorBase.blue, max(1, (alpha * (index + 1)).toInt()))
 
             @Suppress("UNCHECKED_CAST")
-            val transform = computeTransform(
-                wormhole2D.getViewPoint(position as P).x,
-                wormhole2D.getViewPoint(position).y,
-                nodeSize.`val`.toDouble(),
-                rotation,
-            )
+            val transform =
+                computeTransform(
+                    wormhole2D.getViewPoint(position as P).x,
+                    wormhole2D.getViewPoint(position).y,
+                    nodeSize.`val`.toDouble(),
+                    rotation,
+                )
             val transformedShape = transform.createTransformedShape(shape)
             graphics2D.color = colorFaded
             graphics2D.fill(transformedShape)
         }
     }
-    private fun computeTransform(x: Int, y: Int, size: Double, rotation: Double): AffineTransform =
+
+    private fun computeTransform(
+        x: Int,
+        y: Int,
+        size: Double,
+        rotation: Double,
+    ): AffineTransform =
         AffineTransform().apply {
             translate(x.toDouble(), y.toDouble())
             scale(size, size)
             rotate(rotation)
         }
 
-    private fun computeColorOrBlack(node: Node<*>, environment: Environment<*, *>): Color = node
-        .takeIf { it.contains(SimpleMolecule(colorMolecule)) }
-        ?.getConcentration(SimpleMolecule(colorMolecule))
-        ?.let { it as? Number }?.toDouble()
-        ?.let {
-            Color.getHSBColor(
-                (it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.toDouble())).toFloat(),
-                1f,
-                1f,
-            )
-        }
-        ?: Color.BLACK
+    private fun computeColorOrBlack(
+        node: Node<*>,
+        environment: Environment<*, *>,
+    ): Color =
+        node
+            .takeIf { it.contains(SimpleMolecule(colorMolecule)) }
+            ?.getConcentration(SimpleMolecule(colorMolecule))
+            ?.let { it as? Number }?.toDouble()
+            ?.let {
+                Color.getHSBColor(
+                    (it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.toDouble())).toFloat(),
+                    1f,
+                    1f,
+                )
+            }
+            ?: Color.BLACK
 
-    private fun <P : Position2D<P>, T> updateTrajectory(node: Node<T>, environment: Environment<T, P>) {
+    private fun <P : Position2D<P>, T> updateTrajectory(
+        node: Node<T>,
+        environment: Environment<T, P>,
+    ) {
         val positions = positionsMemory[node.id].orEmpty()
         val lastDraw = lastDrawMemory[node.id] ?: 0
         val roundedTime = environment.simulation.time.toDouble().toInt()
         if (roundedTime >= lastDraw) {
             lastDrawMemory = lastDrawMemory + (node.id to lastDraw + timespan.`val`)
-            val updatedPositions = (positions + (environment.getPosition(node) to rotation(node)))
-                .takeLast(MAX_SNAPSHOT_LENGTH)
+            val updatedPositions =
+                (positions + (environment.getPosition(node) to rotation(node)))
+                    .takeLast(MAX_SNAPSHOT_LENGTH)
             positionsMemory = positionsMemory +
                 (node.id to updatedPositions)
         }
     }
 
-    private fun <T> rotation(node: Node<T>): Double = node.takeIf { it.contains(SimpleMolecule(velocityMolecule)) }
-        ?.getConcentration(SimpleMolecule(velocityMolecule))
-        ?.let { it as? DoubleArray }
-        ?.let { atan2(it[0], it[1]) }
-        ?: 0.0
+    private fun <T> rotation(node: Node<T>): Double =
+        node.takeIf { it.contains(SimpleMolecule(velocityMolecule)) }
+            ?.getConcentration(SimpleMolecule(velocityMolecule))
+            ?.let { it as? DoubleArray }
+            ?.let { atan2(it[0], it[1]) }
+            ?: 0.0
 
     private companion object {
         private const val MAX_NODE_SIZE: Int = 20

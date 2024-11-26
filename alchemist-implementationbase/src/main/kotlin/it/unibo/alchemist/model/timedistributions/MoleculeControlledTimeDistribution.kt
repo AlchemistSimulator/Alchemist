@@ -37,140 +37,160 @@ import org.apache.commons.math3.random.RandomGenerator
  *   **must** always be greater than zero. It is thus recommended to use an [errorDistribution] whose
  *   support lower bound is zero or greater
  */
-class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
-    private val incarnation: Incarnation<T, *>,
-    val node: Node<T>,
-    val molecule: Molecule,
-    val property: String? = null,
-    val start: Time = Time.ZERO,
-    val errorDistribution: RealDistribution? = null,
-) : AnyRealDistribution<T>(
-    start,
-    object : RealDistribution {
-
+class MoleculeControlledTimeDistribution<T>
+    @JvmOverloads
+    constructor(
+        private val incarnation: Incarnation<T, *>,
+        val node: Node<T>,
+        val molecule: Molecule,
+        val property: String? = null,
+        val start: Time = Time.ZERO,
+        val errorDistribution: RealDistribution? = null,
+    ) : AnyRealDistribution<T>(
+            start,
+            object : RealDistribution {
         /*
          * Unknown values
          */
-        override fun probability(x: Double) = TODO()
-        override fun density(x: Double) = TODO()
-        override fun cumulativeProbability(x: Double) = TODO()
+                override fun probability(x: Double) = TODO()
 
-        @Deprecated(message = "Deprecated in Apache Commons")
-        override fun cumulativeProbability(x0: Double, x1: Double) = TODO()
-        override fun inverseCumulativeProbability(p: Double) = TODO()
-        override fun getNumericalVariance() = TODO()
-        override fun isSupportConnected() = TODO()
-        override fun reseedRandomGenerator(seed: Long) = TODO()
+                override fun density(x: Double) = TODO()
+
+                override fun cumulativeProbability(x: Double) = TODO()
+
+                @Deprecated(message = "Deprecated in Apache Commons")
+                override fun cumulativeProbability(
+                    x0: Double,
+                    x1: Double,
+                ) = TODO()
+
+                override fun inverseCumulativeProbability(p: Double) = TODO()
+
+                override fun getNumericalVariance() = TODO()
+
+                override fun isSupportConnected() = TODO()
+
+                override fun reseedRandomGenerator(seed: Long) = TODO()
 
         /*
          * Known values
          */
-        override fun getSupportLowerBound() = 0.0
-        override fun getSupportUpperBound() = Double.MAX_VALUE
+                override fun getSupportLowerBound() = 0.0
 
-        @Deprecated(message = "Deprecated in Apache Commons")
-        override fun isSupportLowerBoundInclusive() = true
+                override fun getSupportUpperBound() = Double.MAX_VALUE
 
-        @Deprecated(message = "Deprecated in Apache Commons")
-        override fun isSupportUpperBoundInclusive() = false
+                @Deprecated(message = "Deprecated in Apache Commons")
+                override fun isSupportLowerBoundInclusive() = true
+
+                @Deprecated(message = "Deprecated in Apache Commons")
+                override fun isSupportUpperBoundInclusive() = false
 
         /*
          * Computable stuff
          */
-        override fun getNumericalMean() = currentValue + (errorDistribution?.numericalMean ?: 0.0)
+                override fun getNumericalMean() = currentValue + (errorDistribution?.numericalMean ?: 0.0)
 
-        override fun sample() = currentValue + (errorDistribution?.sample() ?: 0.0)
+                override fun sample() = currentValue + (errorDistribution?.sample() ?: 0.0)
 
-        override fun sample(sampleSize: Int): DoubleArray = DoubleArray(sampleSize) { sample() }
+                override fun sample(sampleSize: Int): DoubleArray = DoubleArray(sampleSize) { sample() }
 
-        val currentValue get() = readCurrentValue(incarnation, node, molecule, property)
-    },
-) {
-
-    @JvmOverloads constructor(
-        incarnation: Incarnation<T, *>,
-        randomGenerator: RandomGenerator,
-        node: Node<T>,
-        molecule: Molecule,
-        property: String? = null,
-        start: Time = Time.ZERO,
-        distributionName: String,
-        vararg distributionParametrs: Double,
-    ) : this(
-        incarnation,
-        node,
-        molecule,
-        property,
-        start,
-        RealDistributions.makeRealDistribution(randomGenerator, distributionName, *distributionParametrs),
-    )
-
-    constructor(
-        incarnation: Incarnation<T, *>,
-        randomGenerator: RandomGenerator,
-        node: Node<T>,
-        molecule: Molecule,
-        start: Time = Time.ZERO,
-        distributionName: String,
-        vararg distributionParametrs: Double,
-    ) : this(
-        incarnation = incarnation,
-        randomGenerator = randomGenerator,
-        node = node,
-        molecule = molecule,
-        property = null,
-        start = start,
-        distributionName = distributionName,
-        distributionParametrs = distributionParametrs,
-    )
-
-    private var previousStep: Double? = null
-
-    override fun updateStatus(currentTime: Time, executed: Boolean, param: Double, environment: Environment<T, *>) {
-        val currentStep = readCurrentValue(incarnation, node, molecule, property)
-        if (executed) {
-            previousStep = currentStep
-        } else {
-            require(currentStep == previousStep) {
-                "Something nasty happened: molecule $molecule is being used as a scheduler, but " +
-                    "some reaction other than the one using it for scheduling changed the concentration. " +
-                    "This is unsupported and sends the simulator into an inconsistent state, " +
-                    "hence the simulation has been forcibly terminated."
-            }
-        }
-        super.updateStatus(currentTime, executed, param, environment)
-    }
-
-    override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): MoleculeControlledTimeDistribution<T> =
-        MoleculeControlledTimeDistribution(incarnation, destination, molecule, property, start, errorDistribution)
-
-    private companion object {
-
-        private fun <T> readCurrentValue(
+                val currentValue get() = readCurrentValue(incarnation, node, molecule, property)
+            },
+        ) {
+        @JvmOverloads
+        constructor(
             incarnation: Incarnation<T, *>,
+            randomGenerator: RandomGenerator,
             node: Node<T>,
             molecule: Molecule,
-            property: String?,
-        ): Double {
-            val currentValue = if (property != null) {
-                incarnation.getProperty(node, molecule, property)
+            property: String? = null,
+            start: Time = Time.ZERO,
+            distributionName: String,
+            vararg distributionParametrs: Double,
+        ) : this(
+            incarnation,
+            node,
+            molecule,
+            property,
+            start,
+            RealDistributions.makeRealDistribution(randomGenerator, distributionName, *distributionParametrs),
+        )
+
+        constructor(
+            incarnation: Incarnation<T, *>,
+            randomGenerator: RandomGenerator,
+            node: Node<T>,
+            molecule: Molecule,
+            start: Time = Time.ZERO,
+            distributionName: String,
+            vararg distributionParametrs: Double,
+        ) : this(
+            incarnation = incarnation,
+            randomGenerator = randomGenerator,
+            node = node,
+            molecule = molecule,
+            property = null,
+            start = start,
+            distributionName = distributionName,
+            distributionParametrs = distributionParametrs,
+        )
+
+        private var previousStep: Double? = null
+
+        override fun updateStatus(
+            currentTime: Time,
+            executed: Boolean,
+            param: Double,
+            environment: Environment<T, *>,
+        ) {
+            val currentStep = readCurrentValue(incarnation, node, molecule, property)
+            if (executed) {
+                previousStep = currentStep
             } else {
-                when (val value = node.getConcentration(molecule)) {
-                    is Number -> value.toDouble()
-                    is String -> value.toDouble()
-                    is Time -> value.toDouble()
-                    null -> 0.0
-                    else -> error(
-                        "Expected a numeric value in $molecule at node ${node.id}, " +
-                            "but '$value' of type '${value.let { it::class.simpleName }}' was found instead",
-                    )
+                require(currentStep == previousStep) {
+                    "Something nasty happened: molecule $molecule is being used as a scheduler, but " +
+                        "some reaction other than the one using it for scheduling changed the concentration. " +
+                        "This is unsupported and sends the simulator into an inconsistent state, " +
+                        "hence the simulation has been forcibly terminated."
                 }
             }
-            require(currentValue >= 0) {
-                "You requested to be scheduled with a delta of $currentValue in molecule $molecule at node ${node.id}" +
-                    ". Alchemist loves causality and won't let you go back in time"
+            super.updateStatus(currentTime, executed, param, environment)
+        }
+
+        override fun cloneOnNewNode(
+            destination: Node<T>,
+            currentTime: Time,
+        ): MoleculeControlledTimeDistribution<T> =
+            MoleculeControlledTimeDistribution(incarnation, destination, molecule, property, start, errorDistribution)
+
+        private companion object {
+            private fun <T> readCurrentValue(
+                incarnation: Incarnation<T, *>,
+                node: Node<T>,
+                molecule: Molecule,
+                property: String?,
+            ): Double {
+                val currentValue =
+                    if (property != null) {
+                        incarnation.getProperty(node, molecule, property)
+                    } else {
+                        when (val value = node.getConcentration(molecule)) {
+                            is Number -> value.toDouble()
+                            is String -> value.toDouble()
+                            is Time -> value.toDouble()
+                            null -> 0.0
+                            else ->
+                                error(
+                                    "Expected a numeric value in $molecule at node ${node.id}, " +
+                                        "but '$value' of type '${value.let { it::class.simpleName }}' was found instead",
+                                )
+                        }
+                    }
+                require(currentValue >= 0) {
+                    "You requested to be scheduled with a delta of $currentValue in molecule $molecule at node ${node.id}" +
+                        ". Alchemist loves causality and won't let you go back in time"
+                }
+                return currentValue
             }
-            return currentValue
         }
     }
-}

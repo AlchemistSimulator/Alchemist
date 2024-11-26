@@ -33,34 +33,39 @@ class ImpactModel(
     influencedBy: () -> List<CognitiveModel>,
     environmentalFactors: () -> Double,
 ) : CognitiveModel {
-
-    private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
-        BeliefDanger::class to
-            BeliefDanger(environmentalFactors, { characteristicLevel<Fear>() }, influencedBy),
-        Fear::class to Fear(
-            { characteristicLevel<DesireWalkRandomly>() },
-            { characteristicLevel<DesireEvacuate>() },
-            influencedBy,
-        ),
-        DesireEvacuate::class to DesireEvacuate(
-            compliance,
-            { characteristicLevel<BeliefDanger>() },
-            { characteristicLevel<Fear>() },
-        ),
-        DesireWalkRandomly::class to DesireWalkRandomly(
-            compliance,
-            { characteristicLevel<BeliefDanger>() },
-            { characteristicLevel<Fear>() },
-        ),
-        IntentionEvacuate::class to IntentionEvacuate(
-            { characteristicLevel<DesireWalkRandomly>() },
-            { characteristicLevel<DesireEvacuate>() },
-        ),
-        IntentionWalkRandomly::class to IntentionWalkRandomly(
-            { characteristicLevel<DesireWalkRandomly>() },
-            { characteristicLevel<DesireEvacuate>() },
-        ),
-    )
+    private val cognitiveCharacteristics =
+        linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
+            BeliefDanger::class to
+                BeliefDanger(environmentalFactors, { characteristicLevel<Fear>() }, influencedBy),
+            Fear::class to
+                Fear(
+                    { characteristicLevel<DesireWalkRandomly>() },
+                    { characteristicLevel<DesireEvacuate>() },
+                    influencedBy,
+                ),
+            DesireEvacuate::class to
+                DesireEvacuate(
+                    compliance,
+                    { characteristicLevel<BeliefDanger>() },
+                    { characteristicLevel<Fear>() },
+                ),
+            DesireWalkRandomly::class to
+                DesireWalkRandomly(
+                    compliance,
+                    { characteristicLevel<BeliefDanger>() },
+                    { characteristicLevel<Fear>() },
+                ),
+            IntentionEvacuate::class to
+                IntentionEvacuate(
+                    { characteristicLevel<DesireWalkRandomly>() },
+                    { characteristicLevel<DesireEvacuate>() },
+                ),
+            IntentionWalkRandomly::class to
+                IntentionWalkRandomly(
+                    { characteristicLevel<DesireWalkRandomly>() },
+                    { characteristicLevel<DesireEvacuate>() },
+                ),
+        )
 
     override fun dangerBelief() = characteristicLevel<BeliefDanger>()
 
@@ -70,8 +75,7 @@ class ImpactModel(
 
     override fun escapeIntention(): Double = characteristicLevel<IntentionEvacuate>()
 
-    override fun update(frequency: Double) =
-        cognitiveCharacteristics.values.forEach { it.update(frequency) }
+    override fun update(frequency: Double) = cognitiveCharacteristics.values.forEach { it.update(frequency) }
 
     private inline fun <reified C : CognitiveCharacteristic> characteristicLevel(): Double =
         cognitiveCharacteristics[C::class]?.level() ?: 0.0

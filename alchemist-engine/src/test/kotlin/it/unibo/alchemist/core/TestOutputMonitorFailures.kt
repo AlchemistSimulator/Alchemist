@@ -23,8 +23,7 @@ class TestOutputMonitorFailures : FreeSpec(
             "initialization" {
                 runTest(
                     object : OutputMonitor<Nothing, Euclidean2DPosition> {
-                        override fun initialized(environment: Environment<Nothing, Euclidean2DPosition>) =
-                            error("initialization failure")
+                        override fun initialized(environment: Environment<Nothing, Euclidean2DPosition>) = error("initialization failure")
                     },
                 )
             }

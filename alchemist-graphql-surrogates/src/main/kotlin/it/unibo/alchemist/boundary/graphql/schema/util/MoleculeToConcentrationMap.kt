@@ -37,8 +37,7 @@ data class MoleculeToConcentrationMap(
      * Custom indexing with a [MoleculeInput] object.
      * NB: key resolution is done by the wrapped [Molecule] name.
      */
-    @GraphQLIgnore operator fun get(input: MoleculeInput) =
-        originMap.filterKeys { it.name == input.name }.values.firstOrNull()
+    @GraphQLIgnore operator fun get(input: MoleculeInput) = originMap.filterKeys { it.name == input.name }.values.firstOrNull()
 }
 
 /**
@@ -56,7 +55,7 @@ data class MoleculeToConcentrationEntry(
 /**
  * Converts a [Map] of [Molecule]s and concentration of type [T] to a [MoleculeToConcentrationMap].
  */
-fun <T>Map<Molecule, T>.toMoleculeToConcentrationMap() =
+fun <T> Map<Molecule, T>.toMoleculeToConcentrationMap() =
     MoleculeToConcentrationMap(
         this.mapKeys { it.key.toGraphQLMoleculeSurrogate() }
             .mapValues { encodeConcentrationContentToString(it.value) },

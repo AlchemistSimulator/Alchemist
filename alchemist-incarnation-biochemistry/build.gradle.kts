@@ -72,26 +72,28 @@ tasks.generateTestGrammarSource {
 }
 
 tasks {
-    val needGrammarGeneration = listOf(
-        rootProject.tasks.withType<DokkaCollectorTask>(),
-        withType<Detekt>(),
-        withType<DokkaTask>(),
-        withType<DokkaTaskPartial>(),
-        withType<JavaCompile>(),
-        withType<KotlinCompile>(),
-        withType<KtLintCheckTask>(),
-    )
+    val needGrammarGeneration =
+        listOf(
+            rootProject.tasks.withType<DokkaCollectorTask>(),
+            withType<Detekt>(),
+            withType<DokkaTask>(),
+            withType<DokkaTaskPartial>(),
+            withType<JavaCompile>(),
+            withType<KotlinCompile>(),
+            withType<KtLintCheckTask>(),
+        )
     needGrammarGeneration.forEach {
         it.configureEach { dependsOn(generateGrammarSource) }
     }
 }
 
 spotbugs {
-    val sourcesToAnalyze = project.sourceSets.main.flatMap { main ->
-        project.sourceSets.test.map { test ->
-            listOf(main, test).map { it.toString() }
+    val sourcesToAnalyze =
+        project.sourceSets.main.flatMap { main ->
+            project.sourceSets.test.map { test ->
+                listOf(main, test).map { it.toString() }
+            }
         }
-    }
     onlyAnalyze.set(sourcesToAnalyze)
 }
 

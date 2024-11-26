@@ -14,7 +14,6 @@ package it.unibo.alchemist.boundary.webui.client.logic
  * should behave based on the state of the [it.unibo.alchemist.boundary.webui.common.model.RenderMode].
  */
 interface UpdateStateStrategy {
-
     /**
      * Update the application state, the client will do most of the computation.
      */

@@ -24,7 +24,6 @@ class GlobalTestReaction<T>(
     override val timeDistribution: TimeDistribution<T>,
     val environment: Environment<T, *>,
 ) : GlobalReaction<T> {
-
     override fun compareTo(other: Actionable<T>): Int = tau.compareTo(other.tau)
 
     override fun canExecute(): Boolean = conditions.all { it.isValid }
@@ -39,7 +38,14 @@ class GlobalTestReaction<T>(
 
     override val inboundDependencies: ListSet<out Dependency> = ListSets.emptyListSet()
 
-    override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
+    override fun update(
+        currentTime: Time,
+        hasBeenExecuted: Boolean,
+        environment: Environment<T, *>,
+    ) = Unit
 
-    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+    override fun initializationComplete(
+        atTime: Time,
+        environment: Environment<T, *>,
+    ) = Unit
 }

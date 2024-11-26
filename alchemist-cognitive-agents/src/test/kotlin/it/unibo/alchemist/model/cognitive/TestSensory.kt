@@ -47,14 +47,16 @@ class TestSensory<T> : StringSpec({
     }
 
     "field of view" {
-        val environment = ContinuousPhysics2DEnvironment<T>(
-            SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow(),
-        )
+        val environment =
+            ContinuousPhysics2DEnvironment<T>(
+                SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow(),
+            )
         val rand = MersenneTwister(1)
         environment.linkingRule = NoLinks()
-        val incarnation: Incarnation<T, Euclidean2DPosition> = SupportedIncarnations
-            .get<T, Euclidean2DPosition>(SupportedIncarnations.getAvailableIncarnations().first())
-            .get()
+        val incarnation: Incarnation<T, Euclidean2DPosition> =
+            SupportedIncarnations
+                .get<T, Euclidean2DPosition>(SupportedIncarnations.getAvailableIncarnations().first())
+                .get()
         val observed = createHomogeneousPedestrian(incarnation, rand, environment)
         val origin = Euclidean2DPosition(5.0, 5.0)
         environment.addNode(observed, origin)

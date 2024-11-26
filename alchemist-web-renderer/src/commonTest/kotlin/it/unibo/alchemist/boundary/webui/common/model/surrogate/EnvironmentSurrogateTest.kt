@@ -22,21 +22,22 @@ class EnvironmentSurrogateTest : StringSpec({
 
     val position = Position2DSurrogate(5.6, 8.42)
 
-    val nodesListSet = listOf(
-        NodeSurrogate(
-            0,
-            mapOf(
-                MoleculeSurrogate("test-0") to EmptyConcentrationSurrogate,
-                MoleculeSurrogate("test-1") to EmptyConcentrationSurrogate,
+    val nodesListSet =
+        listOf(
+            NodeSurrogate(
+                0,
+                mapOf(
+                    MoleculeSurrogate("test-0") to EmptyConcentrationSurrogate,
+                    MoleculeSurrogate("test-1") to EmptyConcentrationSurrogate,
+                ),
+                position,
             ),
-            position,
-        ),
-        NodeSurrogate(
-            1,
-            mapOf(MoleculeSurrogate("test-2") to EmptyConcentrationSurrogate),
-            position,
-        ),
-    )
+            NodeSurrogate(
+                1,
+                mapOf(MoleculeSurrogate("test-2") to EmptyConcentrationSurrogate),
+                position,
+            ),
+        )
 
     val envSurrogate: EnvironmentSurrogate<Any, PositionSurrogate> = EnvironmentSurrogate(2, nodesListSet)
 

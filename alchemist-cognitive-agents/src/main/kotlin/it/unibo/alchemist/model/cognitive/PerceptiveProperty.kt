@@ -16,7 +16,6 @@ import it.unibo.alchemist.model.physics.InfluenceSphere
  * The pedestrian's capability to influence other pedestrians.
  */
 interface PerceptiveProperty<T> : NodeProperty<T> {
-
     /**
      * The field of view of the pedestrian.
      */

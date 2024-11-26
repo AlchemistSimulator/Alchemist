@@ -31,7 +31,6 @@ class CognitiveAgentGoalOrientedExplore<T, L : Euclidean2DConvexShape, R>(
     override val pedestrian: PedestrianProperty<T>,
     vararg unknownDestinations: Number,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
-
     init {
         strategy = GoalOrientedExploration(this, unknownDestinations.toPositions(environment))
     }

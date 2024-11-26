@@ -45,8 +45,9 @@ class TestSimulationControl : FreeSpec(
                 with(environment.simulation) {
                     val firstJumpFuture = goToTime(firstJump)
                     play()
-                    val secondJump = firstJumpFuture
-                        .thenCompose { goToTime(nextJump) }
+                    val secondJump =
+                        firstJumpFuture
+                            .thenCompose { goToTime(nextJump) }
                     // concurrent w.r.t. second jump
                     firstJumpFuture.thenRun {
                         play()
@@ -63,6 +64,7 @@ class TestSimulationControl : FreeSpec(
 ) {
     companion object {
         val workerPool: ExecutorService = Executors.newCachedThreadPool()
+
         fun Environment<Nothing, *>.tickRate(delta: Double) {
             this.simulation.schedule {
                 this.addGlobalReaction(GlobalTestReaction(DiracComb(Time.ZERO, delta), this))

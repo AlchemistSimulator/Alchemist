@@ -18,7 +18,6 @@ class SpecificPositions(
     environment: Environment<*, *>,
     vararg positions: Iterable<Number>,
 ) : Deployment<Position<*>> {
-
     private val positions: List<Position<*>> = positions.map { environment.makePosition(*it.toList().toTypedArray()) }
 
     override fun stream() = positions.stream()

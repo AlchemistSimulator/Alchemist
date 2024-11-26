@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.util.ClassPathScanner
 
 object GraphQLTestEnvironments {
-    fun <T, P : Position<P>>loadTests(test: (Environment<T, P>) -> Unit) =
+    fun <T, P : Position<P>> loadTests(test: (Environment<T, P>) -> Unit) =
         ClassPathScanner.resourcesMatching(".*\\.yml", "it.unibo.alchemist.test.graphql")
             .asSequence()
             .map { LoadAlchemist.from(it) }

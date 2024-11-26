@@ -19,10 +19,9 @@ import it.unibo.alchemist.model.geometry.Vector
  * @param P the position and vector type for this environment.
  */
 interface EnvironmentWithObstacles<W, T, P> : EuclideanEnvironment<T, P> where
-      W : Obstacle<P>,
-      P : Position<P>,
-      P : Vector<P> {
-
+          W : Obstacle<P>,
+          P : Position<P>,
+          P : Vector<P> {
     /**
      * A list of all the obstacles in this environment.
      */
@@ -54,7 +53,10 @@ interface EnvironmentWithObstacles<W, T, P> : EuclideanEnvironment<T, P> where
      *              end position
      * @return true if the line connecting start and end touches an obstacle
      */
-    fun intersectsObstacle(start: P, end: P): Boolean
+    fun intersectsObstacle(
+        start: P,
+        end: P,
+    ): Boolean
 
     /**
      * This method must calculate the ABSOLUTE next allowed position given the
@@ -71,5 +73,8 @@ interface EnvironmentWithObstacles<W, T, P> : EuclideanEnvironment<T, P> where
      * @return the next allowed position, where the node can actually move. This
      * position MUST be considered as a vector whose start point is [current].
      */
-    fun next(current: P, desired: P): P
+    fun next(
+        current: P,
+        desired: P,
+    ): P
 }

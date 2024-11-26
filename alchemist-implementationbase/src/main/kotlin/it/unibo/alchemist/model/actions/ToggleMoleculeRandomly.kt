@@ -33,15 +33,16 @@ open class ToggleMoleculeRandomly<T>(
     concentration: T,
     private val odds: Double,
 ) : ToggleMolecule<T>(node, molecule, concentration) {
-
     init {
         require(odds in 0.0..1.0) {
             "Probability of toggling should in [0, 1], provided: $odds"
         }
     }
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
-        ToggleMoleculeRandomly(node, randomGenerator, molecule, concentration, odds)
+    override fun cloneAction(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ) = ToggleMoleculeRandomly(node, randomGenerator, molecule, concentration, odds)
 
     /**
      * Rolls the dice and toggles the molecule.

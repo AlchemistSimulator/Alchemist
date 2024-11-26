@@ -19,18 +19,19 @@ import org.apache.commons.math3.random.RandomGenerator
  * in the proximity of those already included in the environment.
  * Behaviour if there are no nodes already inserted is undefined.
  */
-class CloseToAlreadyDeployed<T, P : Position<P>> (
+class CloseToAlreadyDeployed<T, P : Position<P>>(
     randomGenerator: RandomGenerator,
     environment: Environment<T, P>,
     nodeCount: Int,
     variance: Double,
 ) : AbstractCloseTo<T, P>(randomGenerator, environment, nodeCount, variance) {
-    override val sources = environment.nodes.asSequence()
-        .map { environment.getPosition(it) }
-        .map {
-            when (it) {
-                is GeoPosition -> doubleArrayOf(it.latitude, it.longitude)
-                else -> it.coordinates
+    override val sources =
+        environment.nodes.asSequence()
+            .map { environment.getPosition(it) }
+            .map {
+                when (it) {
+                    is GeoPosition -> doubleArrayOf(it.latitude, it.longitude)
+                    else -> it.coordinates
+                }
             }
-        }
 }

@@ -25,7 +25,6 @@ import korlibs.image.bitmap.Bitmap
  * API to retrieve the Environment of the simulation.
  */
 object EnvironmentApi {
-
     /**
      * Get the environment of the simulation in a serialized form.
      * The client will use this to render the environment.

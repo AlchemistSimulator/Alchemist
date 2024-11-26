@@ -19,22 +19,23 @@ import react.FC
 /**
  * Modal used to show information about something that didn't work as expected.
  */
-val WarningModal: FC<WarningModalProps> = FC { props ->
-    Modal {
-        show = props.show
-        onHide = props.onHide
-        ModalHeader {
-            closeButton = true
-            ModalTitle {
-                className = "text-danger"
-                +props.title
+val WarningModal: FC<WarningModalProps> =
+    FC { props ->
+        Modal {
+            show = props.show
+            onHide = props.onHide
+            ModalHeader {
+                closeButton = true
+                ModalTitle {
+                    className = "text-danger"
+                    +props.title
+                }
+            }
+            ModalBody {
+                +props.message
             }
         }
-        ModalBody {
-            +props.message
-        }
     }
-}
 
 /**
  * Props used to customize the WarningModal.

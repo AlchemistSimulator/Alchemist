@@ -20,7 +20,6 @@ import it.unibo.alchemist.test.loadYamlSimulation
 import java.io.File
 
 object TestUtility {
-
     fun <T, P> webRendererTestEnvironments(): Set<Simulation<T, P>> where P : Position<P>, P : Vector<P> =
         this::class.java.classLoader.getResource("yaml")?.path?.let { path ->
             File(path).listFiles()?.map {

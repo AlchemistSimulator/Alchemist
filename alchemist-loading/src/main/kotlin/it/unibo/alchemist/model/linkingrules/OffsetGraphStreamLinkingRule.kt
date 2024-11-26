@@ -25,16 +25,19 @@ import kotlin.streams.toList
  */
 class OffsetGraphStreamLinkingRule<T, P : Position<P>>(val offset: Int, val graph: Graph) :
     LinkingRule<T, P> {
-
-    override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>): Neighborhood<T> {
+    override fun computeNeighborhood(
+        center: Node<T>,
+        environment: Environment<T, P>,
+    ): Neighborhood<T> {
         val actualId = center.id - offset
         val graphNode = if (graph.nodeCount > actualId) graph.getNode(actualId) else null
         val neighborsIds = graphNode?.neighborNodes()?.mapToInt { it.index + offset }?.toList().orEmpty()
-        val neighbors = if (neighborsIds.isEmpty()) {
-            emptySequence()
-        } else {
-            environment.nodes.asSequence().filter { it.id in neighborsIds }
-        }
+        val neighbors =
+            if (neighborsIds.isEmpty()) {
+                emptySequence()
+            } else {
+                environment.nodes.asSequence().filter { it.id in neighborsIds }
+            }
         return Neighborhoods.make(environment, center, neighbors.asIterable())
     }
 

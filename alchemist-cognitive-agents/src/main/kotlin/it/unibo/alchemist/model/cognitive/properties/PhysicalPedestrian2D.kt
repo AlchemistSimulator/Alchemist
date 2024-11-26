@@ -40,7 +40,6 @@ class PhysicalPedestrian2D<T>(
     val environment: Physics2DEnvironment<T>,
     override val node: Node<T>,
 ) : AbstractNodeProperty<T>(node), PhysicalPedestrian2D<T> {
-
     private val pedestrian by lazy { node.asProperty<T, PedestrianProperty<T>>() }
 
     override var isFallen: Boolean = false
@@ -62,18 +61,20 @@ class PhysicalPedestrian2D<T>(
 
     private var fallenAgentListeners: List<(Node<T>) -> Unit> = listOf()
 
-    override val comfortArea: Euclidean2DShape get() = environment
-        .shapeFactory
-        .circle(nodeShape.radius + comfortRay)
-        .transformed { origin(environment.getPosition(node)) }
+    override val comfortArea: Euclidean2DShape get() =
+        environment
+            .shapeFactory
+            .circle(nodeShape.radius + comfortRay)
+            .transformed { origin(environment.getPosition(node)) }
 
-    override val rectangleOfInfluence: Euclidean2DShape get() = environment
-        .shapeFactory
-        .rectangle(rectangleOfInfluenceDimensions.first, rectangleOfInfluenceDimensions.second)
-        .transformed {
-            rotate(environment.getHeading(node))
-            origin(node.position + environment.getHeading(node) * (rectangleOfInfluenceDimensions.first / 2.0))
-        }
+    override val rectangleOfInfluence: Euclidean2DShape get() =
+        environment
+            .shapeFactory
+            .rectangle(rectangleOfInfluenceDimensions.first, rectangleOfInfluenceDimensions.second)
+            .transformed {
+                rotate(environment.getHeading(node))
+                origin(node.position + environment.getHeading(node) * (rectangleOfInfluenceDimensions.first / 2.0))
+            }
 
     private val fallenAgentPerceptionArea
         get() = environment.shapeFactory.circle(fallenAgentPerceptionRadius).transformed { origin(node.position) }
@@ -90,9 +91,10 @@ class PhysicalPedestrian2D<T>(
     override fun shouldFall(pushingForces: List<Euclidean2DPosition>) =
         pushingForces.fold(Euclidean2DPosition.zero) { acc, f -> acc + f }.magnitude > pedestrian.runningSpeed
 
-    override fun repulsionForces(): List<Euclidean2DPosition> = collectForces(::repulse, comfortArea) {
-        !it.asProperty<T, PhysicalPedestrian2D<T>>().isFallen
-    }
+    override fun repulsionForces(): List<Euclidean2DPosition> =
+        collectForces(::repulse, comfortArea) {
+            !it.asProperty<T, PhysicalPedestrian2D<T>>().isFallen
+        }
 
     override fun repulse(other: Node<T>): Euclidean2DPosition {
         val myShape = nodeShape.transformed { origin(environment.getPosition(node)) }
@@ -113,17 +115,20 @@ class PhysicalPedestrian2D<T>(
         if (environment is Dynamics2DEnvironment) {
             val distanceVector = (node.position - other.position).let { Vector3D(it.x, it.y, 0.0) }
             val velocity = environment.getVelocity(node).let { Vector3D(it.x, it.y, 0.0) }
-            val tangentialForce = Vector3D
-                .crossProduct(distanceVector, velocity)
-                .crossProduct(distanceVector)
-                .let {
-                    check(it.z == 0.0) { "The cross product result should live on the 2D-plane" }
-                    Euclidean2DPosition(it.x, it.y)
-                }
-            val weightFactor = avoidanceDistanceWeight(other) * avoidanceDirectionWeight(
-                environment.getVelocity(node),
-                environment.getVelocity(other),
-            )
+            val tangentialForce =
+                Vector3D
+                    .crossProduct(distanceVector, velocity)
+                    .crossProduct(distanceVector)
+                    .let {
+                        check(it.z == 0.0) { "The cross product result should live on the 2D-plane" }
+                        Euclidean2DPosition(it.x, it.y)
+                    }
+            val weightFactor =
+                avoidanceDistanceWeight(other) *
+                    avoidanceDirectionWeight(
+                        environment.getVelocity(node),
+                        environment.getVelocity(other),
+                    )
             if (tangentialForce.magnitude > 0) {
                 return tangentialForce.normalized() * weightFactor
             }
@@ -136,11 +141,13 @@ class PhysicalPedestrian2D<T>(
         return weight * weight
     }
 
-    private fun avoidanceDirectionWeight(thisVelocity: Euclidean2DPosition, otherVelocity: Euclidean2DPosition) =
-        when {
-            thisVelocity.dot(otherVelocity) > 0 -> directionWeight
-            else -> directionWeight * 2
-        }
+    private fun avoidanceDirectionWeight(
+        thisVelocity: Euclidean2DPosition,
+        otherVelocity: Euclidean2DPosition,
+    ) = when {
+        thisVelocity.dot(otherVelocity) > 0 -> directionWeight
+        else -> directionWeight * 2
+    }
 
     override fun fallenAgentAvoidanceForces() =
         collectForces(::avoid, fallenAgentPerceptionArea) {
@@ -170,8 +177,9 @@ class PhysicalPedestrian2D<T>(
 
     override fun cloneOnNewNode(node: Node<T>) = PhysicalPedestrian2D(randomGenerator, environment, node)
 
-    override fun toString() = "${super.toString()}[desiredSpaceThreshold=$desiredSpaceTreshold, " +
-        "comfortRay=$comfortRay, isFallen=$isFallen]"
+    override fun toString() =
+        "${super.toString()}[desiredSpaceThreshold=$desiredSpaceTreshold, " +
+            "comfortRay=$comfortRay, isFallen=$isFallen]"
 
     private companion object {
         /**

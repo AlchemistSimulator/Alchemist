@@ -34,11 +34,12 @@ class CognitiveAgentCohesion<T, P, A>(
 ) : AbstractGroupSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P> {
-
     private val socialGroup = node.asProperty<T, SocialProperty<T>>().group.members
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentCohesion<T, P, A> =
-        CognitiveAgentCohesion(environment, reaction, node.pedestrianProperty)
+    override fun cloneAction(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ): CognitiveAgentCohesion<T, P, A> = CognitiveAgentCohesion(environment, reaction, node.pedestrianProperty)
 
     override fun nextPosition(): P = (centroid() - currentPosition).coerceAtMost(maxWalk)
 

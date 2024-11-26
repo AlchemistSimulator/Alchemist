@@ -16,7 +16,6 @@ import it.unibo.alchemist.model.Position
  * Container object for utility functions related to [Array]s.
  */
 object Arrays {
-
     /**
      * Converts an array of numbers representing positions to an actual list of positions. E.g. the array [2,3,4,5] in
      * a bidimensional environment would be transformed into a list containing positions (2,3) and (4,5).

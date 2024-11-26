@@ -15,7 +15,6 @@ package it.unibo.alchemist.model.geometry
  * This interface is meant to be extended.
  */
 interface Transformation<S : Vector<S>> {
-
     /**
      * Performs an absolute translation to the provided position.
      * @param position the new origin of the shape

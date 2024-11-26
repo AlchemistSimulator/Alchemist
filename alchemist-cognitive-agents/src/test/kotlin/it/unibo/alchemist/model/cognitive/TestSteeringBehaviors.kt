@@ -73,11 +73,12 @@ class TestSteeringBehaviors<T, P> : StringSpec({
                 },
             )
             nodesPositions.values.forEach { list ->
-                val paired = list.asSequence()
-                    .zipWithNext()
-                    .filter { it.first != it.second }
-                    .map { it.first.distanceTo(it.second) }
-                    .toList()
+                val paired =
+                    list.asSequence()
+                        .zipWithNext()
+                        .filter { it.first != it.second }
+                        .map { it.first.distanceTo(it.second) }
+                        .toList()
                 val comparator = { d1: Double, d2: Double ->
                     when {
                         abs(d2 - d1) < EPSILON -> 0

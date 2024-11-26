@@ -27,7 +27,6 @@ import kotlinx.coroutines.withContext
  * Logic of the Routes in the /environment path.
  */
 object EnvironmentRoute {
-
     /**
      * Route of type GET that retrieve current Environment.
      * The server will render the environment and send it to the client in an already rendered form.
@@ -52,9 +51,7 @@ object EnvironmentRoute {
         }
     }
 
-    private suspend fun renderedEnvironment(
-        dispatcher: CoroutineDispatcher = Dispatchers.Default,
-    ): String {
+    private suspend fun renderedEnvironment(dispatcher: CoroutineDispatcher = Dispatchers.Default): String {
         return withContext(dispatcher) {
             jsonFormat.encodeToString(
                 Bitmap32Serializer,

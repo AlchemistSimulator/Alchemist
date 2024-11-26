@@ -31,7 +31,6 @@ import it.unibo.alchemist.core.Status
  * Logic of the Routes in the /simulation path.
  */
 object SimulationRoute {
-
     /**
      * Route that retrieve the simulation status and return it to the client mapping it with the [toStatusSurrogate]
      * function.

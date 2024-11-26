@@ -44,6 +44,5 @@ class NodeSubscriptions<T, P : Position<out P>>(environment: Environment<T, P>) 
      * @return the neighborhood of the node with the given Id.
      */
     @GraphQLDescription("The neighborhood of a node in the simulation's environment")
-    fun neighborhood(nodeId: Int): Flow<NeighborhoodSurrogate<T>> =
-        environmentMonitor.eventFlow.map { it.getNeighborhood(nodeId) }
+    fun neighborhood(nodeId: Int): Flow<NeighborhoodSurrogate<T>> = environmentMonitor.eventFlow.map { it.getNeighborhood(nodeId) }
 }

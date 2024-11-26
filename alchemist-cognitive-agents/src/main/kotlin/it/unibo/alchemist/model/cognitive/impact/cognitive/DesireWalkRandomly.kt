@@ -15,7 +15,6 @@ class DesireWalkRandomly(
     private val dangerBelief: () -> Double,
     private val fear: () -> Double,
 ) : MentalCognitiveCharacteristic() {
-
     override fun combinationFunction() =
         compliance * (1 - maxOf(inhibitingWalkRandOmega * dangerBelief(), inhibitingWalkRandOmega * fear()))
 }

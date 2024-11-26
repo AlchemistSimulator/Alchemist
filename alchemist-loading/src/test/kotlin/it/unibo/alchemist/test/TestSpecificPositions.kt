@@ -24,9 +24,10 @@ class TestSpecificPositions : StringSpec({
     "Test 2D specific positions" {
         val coordinates = arrayOf(listOf(1.0, 3.0), listOf(15.0, 10.0), listOf(0.0, 20.0))
         val environment = Continuous2DEnvironment<Any>(incarnation())
-        val positions = SpecificPositions(environment, *coordinates)
-            .stream()
-            .collect(Collectors.toList())
+        val positions =
+            SpecificPositions(environment, *coordinates)
+                .stream()
+                .collect(Collectors.toList())
         positions shouldBe coordinates.map { environment.makePosition(*it.toTypedArray()) }
     }
     "Wrong number of coordinates should fail" {

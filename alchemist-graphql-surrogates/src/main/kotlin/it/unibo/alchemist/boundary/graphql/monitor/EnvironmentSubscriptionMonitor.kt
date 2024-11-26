@@ -28,10 +28,11 @@ import kotlinx.coroutines.flow.MutableSharedFlow
  * @param P the position
  */
 class EnvironmentSubscriptionMonitor<T, P : Position<out P>> : OutputMonitor<T, P> {
-    private val internalFlow = MutableSharedFlow<EnvironmentSurrogate<T, P>>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
+    private val internalFlow =
+        MutableSharedFlow<EnvironmentSurrogate<T, P>>(
+            replay = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        )
 
     /**
      * Returns a [Flow] that emits a new [EnvironmentSurrogate] each time the
@@ -39,11 +40,20 @@ class EnvironmentSubscriptionMonitor<T, P : Position<out P>> : OutputMonitor<T, 
      */
     val eventFlow: Flow<EnvironmentSurrogate<T, P>> get() = internalFlow
 
-    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    override fun stepDone(
+        environment: Environment<T, P>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ) {
         internalFlow.tryEmit(environment.toGraphQLEnvironmentSurrogate())
     }
 
-    override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
+    override fun finished(
+        environment: Environment<T, P>,
+        time: Time,
+        step: Long,
+    ) {
         this.stepDone(environment, null, time, step)
     }
 

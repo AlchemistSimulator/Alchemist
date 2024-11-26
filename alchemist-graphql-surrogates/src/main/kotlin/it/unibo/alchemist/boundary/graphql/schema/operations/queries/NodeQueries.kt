@@ -22,7 +22,6 @@ import it.unibo.alchemist.model.Position
  * Set of GraphQL queries to compute on nodes.
  */
 class NodeQueries<T, P : Position<out P>>(environment: Environment<T, P>) : Query {
-
     private val environmentSurrogate: EnvironmentSurrogate<T, P> = environment.toGraphQLEnvironmentSurrogate()
 
     /**
@@ -32,8 +31,7 @@ class NodeQueries<T, P : Position<out P>>(environment: Environment<T, P>) : Quer
      * @return the position in space of the given node
      */
     @GraphQLDescription("The position in space of the given node.")
-    fun nodePosition(nodeId: Int): PositionSurrogate? =
-        environmentSurrogate.nodeToPos()[nodeId]
+    fun nodePosition(nodeId: Int): PositionSurrogate? = environmentSurrogate.nodeToPos()[nodeId]
 
     /**
      * Returns the neighborhood with the provided node as a center.
@@ -42,6 +40,5 @@ class NodeQueries<T, P : Position<out P>>(environment: Environment<T, P>) : Quer
      * @return the neighborhood with this node as a center
      */
     @GraphQLDescription("The neighborhood which the given node is the center.")
-    fun neighborhood(nodeId: Int): NeighborhoodSurrogate<T> =
-        environmentSurrogate.getNeighborhood(nodeId)
+    fun neighborhood(nodeId: Int): NeighborhoodSurrogate<T> = environmentSurrogate.getNeighborhood(nodeId)
 }

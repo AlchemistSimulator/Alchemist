@@ -28,7 +28,6 @@ open class DynamicallyPursue<T, L : Euclidean2DConvexShape, R>(
     action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
     override var destination: Euclidean2DPosition,
 ) : Pursue<T, L, R>(action, destination) {
-
     /**
      * Changes the destination of the strategy. If [voidVolatileMemory] is true, the node's
      * volatile memory is set to zero. This has two effects:
@@ -36,7 +35,10 @@ open class DynamicallyPursue<T, L : Euclidean2DConvexShape, R>(
      * - rooms visited while pursuing the previous destination won't be penalised (= won't be avoided)
      * Defaults to false.
      */
-    fun setDestination(newDestination: Euclidean2DPosition, voidVolatileMemory: Boolean = false) {
+    fun setDestination(
+        newDestination: Euclidean2DPosition,
+        voidVolatileMemory: Boolean = false,
+    ) {
         destination = newDestination
         action.currentRoom?.let {
             /*

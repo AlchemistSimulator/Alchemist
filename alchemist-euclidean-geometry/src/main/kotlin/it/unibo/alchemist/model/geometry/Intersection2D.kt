@@ -15,7 +15,6 @@ package it.unibo.alchemist.model.geometry
  * The requirement is not explicitly enforced to allow the class to work covariantly.
  */
 sealed class Intersection2D<out V> {
-
     /**
      * List of intersection points (in case of infinite points this is empty).
      */
@@ -49,14 +48,14 @@ sealed class Intersection2D<out V> {
      * Factory methods for [Intersection2D].
      */
     companion object {
-
         /**
          * @returns the correct intersection object depending of the number of items in the list.
          */
-        fun <P : Vector2D<P>> create(points: List<P>): Intersection2D<P> = when {
-            points.isEmpty() -> None
-            points.size == 1 -> SinglePoint(points.first())
-            else -> MultiplePoints(points)
-        }
+        fun <P : Vector2D<P>> create(points: List<P>): Intersection2D<P> =
+            when {
+                points.isEmpty() -> None
+                points.size == 1 -> SinglePoint(points.first())
+                else -> MultiplePoints(points)
+            }
     }
 }

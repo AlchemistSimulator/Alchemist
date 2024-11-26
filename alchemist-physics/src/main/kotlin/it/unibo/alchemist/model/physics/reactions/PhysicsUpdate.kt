@@ -33,7 +33,6 @@ class PhysicsUpdate<T>(
     val environment: Dynamics2DEnvironment<T>,
     override val timeDistribution: TimeDistribution<T>,
 ) : GlobalReaction<T> {
-
     constructor(
         environment: Dynamics2DEnvironment<T>,
         updateRate: Double = 30.0,
@@ -62,7 +61,14 @@ class PhysicsUpdate<T>(
         timeDistribution.update(timeDistribution.nextOccurence, true, 1.0, environment)
     }
 
-    override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
+    override fun update(
+        currentTime: Time,
+        hasBeenExecuted: Boolean,
+        environment: Environment<T, *>,
+    ) = Unit
 
-    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+    override fun initializationComplete(
+        atTime: Time,
+        environment: Environment<T, *>,
+    ) = Unit
 }

@@ -31,13 +31,13 @@ class DistanceWeighted<T>(
      */
     private val defaultWeight: Double = 1.0,
 ) : Weighted<T>(
-    environment,
-    node,
-    {
-        if (this is SteeringActionWithTarget) {
-            targetDistanceTo(node, environment).let { if (it > 0.0) 1 / it else it }
-        } else {
-            defaultWeight
-        }
-    },
-)
+        environment,
+        node,
+        {
+            if (this is SteeringActionWithTarget) {
+                targetDistanceTo(node, environment).let { if (it > 0.0) 1 / it else it }
+            } else {
+                defaultWeight
+            }
+        },
+    )

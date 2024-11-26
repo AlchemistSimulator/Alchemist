@@ -30,7 +30,10 @@ interface Euclidean2DShapeFactory : GeometricShapeFactory<Euclidean2DPosition, E
      * @param height the height
      * @return the shape
      */
-    fun rectangle(width: Double, height: Double): Euclidean2DShape
+    fun rectangle(
+        width: Double,
+        height: Double,
+    ): Euclidean2DShape
 
     /**
      * A circle sector is the portion of a disk enclosed by two radii and an arc
@@ -43,7 +46,11 @@ interface Euclidean2DShapeFactory : GeometricShapeFactory<Euclidean2DPosition, E
      *                  It's used to determine the sector's heading.
      * @return the shape
      */
-    fun circleSector(radius: Double, angle: Double, heading: Double): Euclidean2DShape
+    fun circleSector(
+        radius: Double,
+        angle: Double,
+        heading: Double,
+    ): Euclidean2DShape
 
     /**
      * An ellipse extends in the first and second axis by its width and height.
@@ -51,5 +58,8 @@ interface Euclidean2DShapeFactory : GeometricShapeFactory<Euclidean2DPosition, E
      * @param height the height
      * @return the shape
      */
-    fun ellipse(width: Double, height: Double): Euclidean2DShape
+    fun ellipse(
+        width: Double,
+        height: Double,
+    ): Euclidean2DShape
 }

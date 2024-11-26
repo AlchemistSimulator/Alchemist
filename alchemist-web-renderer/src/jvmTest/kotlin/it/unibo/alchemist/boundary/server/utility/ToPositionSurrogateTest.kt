@@ -23,15 +23,22 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 class ToPositionSurrogateTest : StringSpec({
 
     "ToPositionSurrogate should map a Position to a GeneralPositionSurrogate" {
-        val alchemistPosition = object : Position<Nothing> {
-            override fun boundingBox(range: Double): List<Nothing> = error("Do not call, this is a test")
-            override val coordinates: DoubleArray get() = doubleArrayOf(1.001, 2.004, 5.67, 1.0, 2.0)
-            override fun getCoordinate(dimension: Int): Double = coordinates[dimension]
-            override val dimensions: Int get() = 5
-            override fun plus(other: DoubleArray): Nothing = error("Do not call, this is a test")
-            override fun minus(other: DoubleArray): Nothing = error("Do not call, this is a test")
-            override fun distanceTo(other: Nothing): Double = error("Do not call, this is a test")
-        }
+        val alchemistPosition =
+            object : Position<Nothing> {
+                override fun boundingBox(range: Double): List<Nothing> = error("Do not call, this is a test")
+
+                override val coordinates: DoubleArray get() = doubleArrayOf(1.001, 2.004, 5.67, 1.0, 2.0)
+
+                override fun getCoordinate(dimension: Int): Double = coordinates[dimension]
+
+                override val dimensions: Int get() = 5
+
+                override fun plus(other: DoubleArray): Nothing = error("Do not call, this is a test")
+
+                override fun minus(other: DoubleArray): Nothing = error("Do not call, this is a test")
+
+                override fun distanceTo(other: Nothing): Double = error("Do not call, this is a test")
+            }
         val positionSurrogate = toSuitablePositionSurrogate(alchemistPosition.dimensions)(alchemistPosition)
         if (positionSurrogate is GeneralPositionSurrogate) {
             checkToPositionSurrogate(alchemistPosition, positionSurrogate)
@@ -50,7 +57,11 @@ class ToPositionSurrogateTest : StringSpec({
         }
     }
 })
-fun <P : Position<out P>> checkToPositionSurrogate(position: P, positionSurrogate: PositionSurrogate) {
+
+fun <P : Position<out P>> checkToPositionSurrogate(
+    position: P,
+    positionSurrogate: PositionSurrogate,
+) {
     position.coordinates shouldBe positionSurrogate.coordinates
     position.dimensions shouldBe positionSurrogate.dimensions
     if (position is Position2D<*> && positionSurrogate is Position2DSurrogate) {

@@ -20,7 +20,6 @@ import it.unibo.alchemist.model.geometry.Vector
 class AdimensionalShape<S : Vector<S>, A : Transformation<S>>(
     override val centroid: S,
 ) : Shape<S, A> {
-
     override val diameter: Double = 0.0
 
     override fun intersects(other: Shape<S, A>) = false

@@ -13,7 +13,6 @@ package it.unibo.alchemist.model.cognitive.groups
  * Utility for shorter loading of groups within the Yaml files.
  */
 object GroupFactory {
-
     /**
      * Builds a new [Family].
      */

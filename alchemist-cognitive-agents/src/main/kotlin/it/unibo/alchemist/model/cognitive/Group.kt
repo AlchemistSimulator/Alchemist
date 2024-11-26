@@ -6,7 +6,6 @@ import it.unibo.alchemist.model.Node
  * A group of nodes.
  */
 interface Group<T> : MutableList<Node<T>> {
-
     /**
      * The list of pedestrians belonging to this group.
      */

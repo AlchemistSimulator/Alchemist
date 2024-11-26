@@ -18,7 +18,6 @@ import java.awt.Shape as AwtShape
  * An abstract [ConvexPolygon] providing a convexity test.
  */
 abstract class AbstractConvexPolygon : ConvexPolygon {
-
     private companion object {
         /**
          * @returns the sum of the distances between this segment's endpoints and [other].
@@ -36,19 +35,18 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
 
     override fun liesOnBoundary(vector: Euclidean2DPosition): Boolean = edges().any { it.contains(vector) }
 
-    override fun containsBoundaryIncluded(vector: Euclidean2DPosition): Boolean =
-        contains(vector) || liesOnBoundary(vector)
+    override fun containsBoundaryIncluded(vector: Euclidean2DPosition): Boolean = contains(vector) || liesOnBoundary(vector)
 
-    override fun containsBoundaryExcluded(vector: Euclidean2DPosition): Boolean =
-        contains(vector) && !liesOnBoundary(vector)
+    override fun containsBoundaryExcluded(vector: Euclidean2DPosition): Boolean = contains(vector) && !liesOnBoundary(vector)
 
     override fun contains(shape: AwtShape): Boolean = shape.vertices().all { containsBoundaryIncluded(it) }
 
     /*
      * It's important that intersects(Shape) does not consider adjacent shapes as intersecting.
      */
-    override fun isAdjacentTo(other: ConvexPolygon): Boolean = !intersects(other.asAwtShape()) &&
-        (other.vertices().any { liesOnBoundary(it) } || vertices().any { other.liesOnBoundary(it) })
+    override fun isAdjacentTo(other: ConvexPolygon): Boolean =
+        !intersects(other.asAwtShape()) &&
+            (other.vertices().any { liesOnBoundary(it) } || vertices().any { other.liesOnBoundary(it) })
 
     override fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition> =
         requireNotNull(
@@ -59,17 +57,20 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
         if (containsBoundaryExcluded(segment.first) || containsBoundaryExcluded(segment.second)) {
             return true
         }
-        val intersections = edges()
-            .map { it.intersect(segment) } // Either InfinitePoints, SinglePoint, or None
-            .filterNot { it is Intersection2D.None }
-            .asSequence()
+        val intersections =
+            edges()
+                .map { it.intersect(segment) } // Either InfinitePoints, SinglePoint, or None
+                .filterNot { it is Intersection2D.None }
+                .asSequence()
         // Lazily evaluated
-        val intersectionPoints = intersections
-            .filterIsInstance<Intersection2D.SinglePoint<Euclidean2DPosition>>()
-            .map { it.point }
-            .distinct()
+        val intersectionPoints =
+            intersections
+                .filterIsInstance<Intersection2D.SinglePoint<Euclidean2DPosition>>()
+                .map { it.point }
+                .distinct()
         return intersections.none { it is Intersection2D.InfinitePoints } && intersectionPoints.count() > 1
     }
+
     override fun toString(): String = javaClass.simpleName + vertices()
 
     /**
@@ -97,8 +98,7 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
      * Checks if the polygon is convex, assuming that every edge apart from the specified
      * ones does not cause self-intersection.
      */
-    protected fun isConvex(vararg modifiedEdges: Int) =
-        isBoundaryConvex() && modifiedEdges.none { causeSelfIntersection(it) }
+    protected fun isConvex(vararg modifiedEdges: Int) = isBoundaryConvex() && modifiedEdges.none { causeSelfIntersection(it) }
 
     /**
      * Checks if the polygon's boundary is convex. See [isConvex].

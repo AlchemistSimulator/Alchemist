@@ -19,11 +19,13 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  * This interface provides some hooks in order to be able to manage some of the node's physical state.
  */
 interface Dynamics2DEnvironment<T> : Physics2DEnvironment<T>, Euclidean2DEnvironment<T> {
-
     /**
      * Set [node]'s current linear velocity.
      */
-    fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition)
+    fun setVelocity(
+        node: Node<T>,
+        velocity: Euclidean2DPosition,
+    )
 
     /**
      * Get [node]'s current linear velocity.

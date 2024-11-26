@@ -32,9 +32,7 @@ open class GoalOrientedExploration<T, L : Euclidean2DConvexShape, R>(
     action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
     private val unknownDestinations: List<Euclidean2DPosition>,
 ) : Explore<T, L, R>(action) {
-
-    override fun inNewRoom(newRoom: ConvexPolygon) =
-        reachUnknownDestination(newRoom, orElse = { super.inNewRoom(newRoom) })
+    override fun inNewRoom(newRoom: ConvexPolygon) = reachUnknownDestination(newRoom, orElse = { super.inNewRoom(newRoom) })
 
     /**
      * If one or more unknown destinations are inside [newRoom] (= the room the node is into), the closest
@@ -42,7 +40,10 @@ open class GoalOrientedExploration<T, L : Euclidean2DConvexShape, R>(
      * related doors are weighted using [weightExit] and the one with minimum weight is crossed. [orElse] is
      * executed otherwise.
      */
-    protected open fun reachUnknownDestination(newRoom: ConvexPolygon, orElse: () -> Unit) = with(action) {
+    protected open fun reachUnknownDestination(
+        newRoom: ConvexPolygon,
+        orElse: () -> Unit,
+    ) = with(action) {
         unknownDestinations
             .filter { newRoom.contains(it) }
             .minByOrNull { it.distanceTo(pedestrianPosition) }
@@ -54,14 +55,14 @@ open class GoalOrientedExploration<T, L : Euclidean2DConvexShape, R>(
             ?: orElse()
     }
 
-    protected open fun Euclidean2DPassage.leadsToUnknownDestination(): Boolean =
-        unknownDestinations.any { head.contains(it) }
+    protected open fun Euclidean2DPassage.leadsToUnknownDestination(): Boolean = unknownDestinations.any { head.contains(it) }
 
     /**
      * Assigns a weight to a door (= passage) leading to an unknown destination (e.g. an exit).
      * By default, the exit's distance and its congestion are considered.
      */
-    protected open fun weightExit(door: Euclidean2DPassage): Double = with(door) {
-        distanceToPedestrian() * congestionFactor(head)
-    }
+    protected open fun weightExit(door: Euclidean2DPassage): Double =
+        with(door) {
+            distanceToPedestrian() * congestionFactor(head)
+        }
 }

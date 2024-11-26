@@ -40,47 +40,49 @@ external interface PlayButtonProps : Props {
 /**
  * Play Button component. Used to start and pause the simulation.
  */
-val PlayButton: FC<PlayButtonProps> = FC { props ->
+val PlayButton: FC<PlayButtonProps> =
+    FC { props ->
 
-    var showWarningModal: Boolean by useState(false)
-    var warningModalTitle: String by useState { "" }
-    var warningModalMessage: String by useState { "" }
+        var showWarningModal: Boolean by useState(false)
+        var warningModalTitle: String by useState { "" }
+        var warningModalMessage: String by useState { "" }
 
-    val isSimulationRunning: (StatusSurrogate) -> Boolean = { status ->
-        when (status) {
-            StatusSurrogate.RUNNING -> true
-            else -> false
-        }
-    }
-
-    Button {
-        disabled = when (props.status) {
-            StatusSurrogate.INIT -> true
-            StatusSurrogate.TERMINATED -> true
-            else -> false
-        }
-        variant = if (isSimulationRunning(props.status)) "danger" else "success"
-        onClick = {
-            scope.launch {
-                val response = if (isSimulationRunning(props.status)) pauseSimulation() else playSimulation()
-                if (response.status == HttpStatusCode.OK) {
-                    store.dispatch(
-                        SetPlayButton(if (isSimulationRunning(props.status)) PLAY else PAUSE),
-                    )
-                } else {
-                    warningModalTitle = "Error ${response.status}"
-                    warningModalMessage = response.body() ?: "Unknown error"
-                    showWarningModal = true
-                }
+        val isSimulationRunning: (StatusSurrogate) -> Boolean = { status ->
+            when (status) {
+                StatusSurrogate.RUNNING -> true
+                else -> false
             }
         }
-        +if (isSimulationRunning(props.status)) "Pause" else "Play"
-    }
 
-    WarningModal {
-        show = showWarningModal
-        onHide = { showWarningModal = false }
-        title = warningModalTitle
-        message = warningModalMessage
+        Button {
+            disabled =
+                when (props.status) {
+                    StatusSurrogate.INIT -> true
+                    StatusSurrogate.TERMINATED -> true
+                    else -> false
+                }
+            variant = if (isSimulationRunning(props.status)) "danger" else "success"
+            onClick = {
+                scope.launch {
+                    val response = if (isSimulationRunning(props.status)) pauseSimulation() else playSimulation()
+                    if (response.status == HttpStatusCode.OK) {
+                        store.dispatch(
+                            SetPlayButton(if (isSimulationRunning(props.status)) PLAY else PAUSE),
+                        )
+                    } else {
+                        warningModalTitle = "Error ${response.status}"
+                        warningModalMessage = response.body() ?: "Unknown error"
+                        showWarningModal = true
+                    }
+                }
+            }
+            +if (isSimulationRunning(props.status)) "Pause" else "Play"
+        }
+
+        WarningModal {
+            show = showWarningModal
+            onHide = { showWarningModal = false }
+            title = warningModalTitle
+            message = warningModalMessage
+        }
     }
-}

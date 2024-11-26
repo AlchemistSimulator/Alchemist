@@ -19,11 +19,12 @@ import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 class SimpleFunctionalTest : StringSpec(
     {
         "the gradient should propagate" {
-            val simulation = loadAlchemist<Any, Euclidean2DPosition>("gradient-on-a-line.yml")
-                .apply {
-                    environment.addTerminator(StepCount(100))
-                }
-                .runInCurrentThread()
+            val simulation =
+                loadAlchemist<Any, Euclidean2DPosition>("gradient-on-a-line.yml")
+                    .apply {
+                        environment.addTerminator(StepCount(100))
+                    }
+                    .runInCurrentThread()
             val valuesOfLastNode = simulation.environment.nodes.asSequence().find { it.id == 3 }?.contents?.values
             requireNotNull(valuesOfLastNode)
             valuesOfLastNode shouldContain 3.0

@@ -16,13 +16,15 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  * A bidimensional Euclidean space with any concentration type [T].
  */
 interface Euclidean2DEnvironment<T> : EuclideanEnvironment<T, Euclidean2DPosition> {
-
     override val origin: Euclidean2DPosition get() = Companion.origin
 
     /**
      * Creates a new [Euclidean2DPosition].
      */
-    fun makePosition(x: Double, y: Double): Euclidean2DPosition = Euclidean2DPosition(x, y)
+    fun makePosition(
+        x: Double,
+        y: Double,
+    ): Euclidean2DPosition = Euclidean2DPosition(x, y)
 
     /**
      * Creates a new [Euclidean2DPosition].

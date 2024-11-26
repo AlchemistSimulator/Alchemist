@@ -38,14 +38,17 @@ abstract class AbstractLayerAction(
     override val pedestrian: PedestrianProperty<Number>,
     protected val targetMolecule: Molecule,
 ) : AbstractSteeringAction<Number, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
-
-    abstract override fun cloneAction(node: Node<Number>, reaction: Reaction<Number>): AbstractLayerAction
+    abstract override fun cloneAction(
+        node: Node<Number>,
+        reaction: Reaction<Number>,
+    ): AbstractLayerAction
 
     /**
      * @returns the layer containing [targetMolecule] or fails.
      */
-    protected fun getLayerOrFail(): Layer<Number, Euclidean2DPosition> = environment.getLayer(targetMolecule)
-        .orElseThrow { IllegalStateException("no layer containing $targetMolecule") }
+    protected fun getLayerOrFail(): Layer<Number, Euclidean2DPosition> =
+        environment.getLayer(targetMolecule)
+            .orElseThrow { IllegalStateException("no layer containing $targetMolecule") }
 
     /**
      * @returns the center of the layer or null if there's no center.
@@ -56,6 +59,5 @@ abstract class AbstractLayerAction(
     /**
      * @returns the concentration of the layer in the given [position].
      */
-    protected fun <P : Position<P>> Layer<Number, P>.concentrationIn(position: P): Double =
-        getValue(position).toDouble()
+    protected fun <P : Position<P>> Layer<Number, P>.concentrationIn(position: P): Double = getValue(position).toDouble()
 }

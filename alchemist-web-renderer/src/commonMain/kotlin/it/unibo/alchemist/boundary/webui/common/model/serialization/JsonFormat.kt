@@ -18,9 +18,10 @@ import kotlinx.serialization.json.Json
  * An instance of [Json] that can be used to serialize and deserialize some concentration classes using open
  * polymorphism.
  */
-val jsonFormat = Json {
-    serializersModule = concentrationModule
-}
+val jsonFormat =
+    Json {
+        serializersModule = concentrationModule
+    }
 
 /**
  * Encode the EnvironmentSurrogate to a JSON string using the [EnvironmentSurrogate.polymorphicSerializer] to serialize
@@ -30,7 +31,9 @@ val jsonFormat = Json {
  * @param <PS> the type of [PositionSurrogate].
  * @return the JSON string.
  */
-inline fun <reified TS, reified PS> Json.encodeEnvironmentSurrogate(env: EnvironmentSurrogate<TS, PS>): String
+inline fun <reified TS, reified PS> Json.encodeEnvironmentSurrogate(
+    env: EnvironmentSurrogate<TS, PS>,
+): String
     where TS : Any, PS : PositionSurrogate = this.encodeToString(EnvironmentSurrogate.polymorphicSerializer(), env)
 
 /**

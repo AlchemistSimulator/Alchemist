@@ -43,7 +43,12 @@ class TestRectObstacle2D : StringSpec({
      * cut version obtained with [RectObstacle2D.next] is fuzzy equals to the original
      * vector.
      */
-    fun vectorShouldNotBeCut(startx: Double, starty: Double, endx: Double, endy: Double) {
+    fun vectorShouldNotBeCut(
+        startx: Double,
+        starty: Double,
+        endx: Double,
+        endy: Double,
+    ) {
         nextShouldBe(startx, starty, endx, endy, endx, endy)
     }
 

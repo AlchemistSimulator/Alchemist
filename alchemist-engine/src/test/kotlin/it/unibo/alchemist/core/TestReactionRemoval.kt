@@ -32,7 +32,6 @@ class GlobalContextsReaction<T>(
     inGlobal: Boolean,
     outGlobal: Boolean,
 ) : AbstractReaction<T>(node, timeDistribution) {
-
     init {
         setInputContext(if (inGlobal) GLOBAL else LOCAL)
         setOutputContext(if (outGlobal) GLOBAL else LOCAL)
@@ -40,10 +39,16 @@ class GlobalContextsReaction<T>(
 
     private fun notImplementedError(): Nothing = error("This code should not be reached for this test.")
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Reaction<T> = notImplementedError()
+    override fun cloneOnNewNode(
+        node: Node<T>,
+        currentTime: Time,
+    ): Reaction<T> = notImplementedError()
 
-    override fun updateInternalStatus(currentTime: Time?, hasBeenExecuted: Boolean, environment: Environment<T, *>?) =
-        notImplementedError()
+    override fun updateInternalStatus(
+        currentTime: Time?,
+        hasBeenExecuted: Boolean,
+        environment: Environment<T, *>?,
+    ) = notImplementedError()
 }
 
 class TestReactionRemoval : FreeSpec({
@@ -53,9 +58,10 @@ class TestReactionRemoval : FreeSpec({
         val environment = Continuous2DEnvironment(incarnation)
         val node = GenericNode(environment)
         val bools = listOf(true, false)
-        val customReactions = bools
-            .flatMap { first -> bools.map { first to it } }
-            .map { (input, out) -> GlobalContextsReaction(node, DiracComb(1.0), input, out) }
+        val customReactions =
+            bools
+                .flatMap { first -> bools.map { first to it } }
+                .map { (input, out) -> GlobalContextsReaction(node, DiracComb(1.0), input, out) }
         customReactions.forEach {
             node.addReaction(it)
         }

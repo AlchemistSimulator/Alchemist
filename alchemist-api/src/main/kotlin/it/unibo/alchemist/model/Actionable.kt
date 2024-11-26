@@ -16,7 +16,6 @@ import java.io.Serializable
  * A time-distributed entity with [inboundDependencies], [outboundDependencies] and an execution strategy.
  */
 sealed interface Actionable<T> : Comparable<Actionable<T>>, Serializable {
-
     /**
      * @return true if the reaction can be executed (namely, all the conditions
      * are satisfied).
@@ -40,7 +39,10 @@ sealed interface Actionable<T> : Comparable<Actionable<T>>, Serializable {
      * @param environment
      * the environment
      */
-    fun initializationComplete(atTime: Time, environment: Environment<T, *>)
+    fun initializationComplete(
+        atTime: Time,
+        environment: Environment<T, *>,
+    )
 
     /**
      *  The list of [Action]s of the [Reaction].
@@ -99,5 +101,9 @@ sealed interface Actionable<T> : Comparable<Actionable<T>>, Serializable {
      * @param environment
      * the current environment
      */
-    fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>)
+    fun update(
+        currentTime: Time,
+        hasBeenExecuted: Boolean,
+        environment: Environment<T, *>,
+    )
 }

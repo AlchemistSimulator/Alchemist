@@ -104,10 +104,14 @@ class TestRangeExtension : StringSpec({
         (1..5).subtractAll(listOf(2..4)).shouldContainRanges(1..2, 4..5)
     }
 
-    /* old tests below */
+    // old tests below
 
-    fun assertIntersectionIsNull(first: Double, second: Double, third: Double, fourth: Double) =
-        assertNull(rangeFromUnordered(first, second).intersect(rangeFromUnordered(third, fourth)))
+    fun assertIntersectionIsNull(
+        first: Double,
+        second: Double,
+        third: Double,
+        fourth: Double,
+    ) = assertNull(rangeFromUnordered(first, second).intersect(rangeFromUnordered(third, fourth)))
 
     fun assertIntersectionIs(
         first: Double,

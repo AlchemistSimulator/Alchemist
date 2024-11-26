@@ -6,7 +6,6 @@ import com.uchuhimo.konf.ConfigSpec
  * A specification of the parameters regarding compliance to load from a config file.
  */
 object ComplianceSpec : ConfigSpec() {
-
     /**
      * Compliance of a male child.
      */

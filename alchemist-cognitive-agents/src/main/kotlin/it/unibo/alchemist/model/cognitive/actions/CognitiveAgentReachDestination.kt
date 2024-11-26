@@ -39,7 +39,6 @@ class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
     override val pedestrian: PedestrianProperty<T>,
     vararg destinations: Number,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
-
     /**
      * Infers if a [destination] is known by the [navigatingNode]
      * (see [it.unibo.alchemist.model.cognitive.navigation.Pursue]). A destination is considered

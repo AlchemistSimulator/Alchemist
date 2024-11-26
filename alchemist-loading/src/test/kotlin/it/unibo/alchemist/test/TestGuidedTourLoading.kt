@@ -19,12 +19,12 @@ import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.util.ClassPathScanner
 import java.io.File
-import java.lang.RuntimeException
 import java.net.URL
 
-private val cache: LoadingCache<URL, Loader> = Caffeine.newBuilder().build {
-    LoadAlchemist.from(it)
-}
+private val cache: LoadingCache<URL, Loader> =
+    Caffeine.newBuilder().build {
+        LoadAlchemist.from(it)
+    }
 
 class TestGuidedTourLoading : FreeSpec(
     {

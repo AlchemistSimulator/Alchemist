@@ -25,7 +25,10 @@ interface EuclideanEnvironment<T, P> :
      * {@link #moveNodeToPosition(Node, Position2D)}, as such, overriding that
      * method may suffice.
      */
-    fun moveNode(node: Node<T>, direction: P) {
+    fun moveNode(
+        node: Node<T>,
+        direction: P,
+    ) {
         val oldcoord = getPosition(node)
         moveNodeToPosition(node, oldcoord.plus(direction))
     }

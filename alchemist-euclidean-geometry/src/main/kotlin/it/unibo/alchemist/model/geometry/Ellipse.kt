@@ -18,7 +18,6 @@ import java.awt.geom.Ellipse2D
 class Ellipse(
     private val ellipse: Ellipse2D,
 ) : Euclidean2DConvexShape, AwtShapeCompatible {
-
     private val euclideanShape = AwtEuclidean2DShape(ellipse)
 
     override val centroid = euclideanShape.centroid

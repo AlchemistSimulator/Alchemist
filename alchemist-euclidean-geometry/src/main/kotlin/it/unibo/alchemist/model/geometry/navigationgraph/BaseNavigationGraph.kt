@@ -40,11 +40,10 @@ open class BaseNavigationGraph<V, A, N, E>(
     where V : Vector<V>,
           A : Transformation<V>,
           N : ConvexShape<V, A> {
-
-    /*
-     * Allows to rapidly create a directed or undirected unweighted graph without
-     * self-loops and allowing multiple edges.
-     */
+              /*
+               * Allows to rapidly create a directed or undirected unweighted graph without
+               * self-loops and allowing multiple edges.
+               */
     constructor(edgeClass: Class<out E>, directed: Boolean) : this(
         null,
         SupplierUtil.createSupplier(edgeClass),

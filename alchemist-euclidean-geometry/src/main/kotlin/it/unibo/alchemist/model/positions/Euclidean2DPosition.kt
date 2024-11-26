@@ -54,7 +54,10 @@ class Euclidean2DPosition :
     }
 
     @Nonnull
-    override fun newFrom(x: Double, y: Double): Euclidean2DPosition {
+    override fun newFrom(
+        x: Double,
+        y: Double,
+    ): Euclidean2DPosition {
         return Euclidean2DPosition(x, y)
     }
 

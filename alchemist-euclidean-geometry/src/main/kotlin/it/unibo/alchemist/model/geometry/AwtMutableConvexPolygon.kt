@@ -26,7 +26,6 @@ open class AwtMutableConvexPolygon(
      */
     private val vertices: MutableList<Euclidean2DPosition>,
 ) : AbstractConvexPolygon(), MutableConvexPolygon {
-
     init {
         require(isConvex()) { "Given vertices do not represent a convex polygon" }
         /*
@@ -66,7 +65,11 @@ open class AwtMutableConvexPolygon(
 
     override fun edges(): List<Segment2D<Euclidean2DPosition>> = vertices.indices.map { getEdge(it) }
 
-    override fun addVertex(index: Int, x: Double, y: Double): Boolean {
+    override fun addVertex(
+        index: Int,
+        x: Double,
+        y: Double,
+    ): Boolean {
         vertices.add(index, Euclidean2DPosition(x, y))
         /*
          * Only the modified/new edges are passed, which vary depending
@@ -91,7 +94,11 @@ open class AwtMutableConvexPolygon(
         return false
     }
 
-    override fun moveVertex(index: Int, newX: Double, newY: Double): Boolean {
+    override fun moveVertex(
+        index: Int,
+        newX: Double,
+        newY: Double,
+    ): Boolean {
         val oldVertex = vertices[index]
         vertices[index] = Euclidean2DPosition(newX, newY)
         if (isConvex(circularPrevious(index), index)) {
@@ -102,7 +109,10 @@ open class AwtMutableConvexPolygon(
         return false
     }
 
-    override fun replaceEdge(index: Int, newEdge: Segment2D<Euclidean2DPosition>): Boolean {
+    override fun replaceEdge(
+        index: Int,
+        newEdge: Segment2D<Euclidean2DPosition>,
+    ): Boolean {
         val oldEdge = getEdge(index)
         vertices[index] = newEdge.first
         vertices[circularNext(index)] = newEdge.second
@@ -124,19 +134,21 @@ open class AwtMutableConvexPolygon(
      * Delegated to [java.awt.geom.Area], this is accurate and does not consider adjacent
      * shapes to be intersecting.
      */
-    override fun intersects(shape: Shape): Boolean = with(Area(asAwtShape())) {
-        intersect(Area(shape))
-        !isEmpty
-    }
+    override fun intersects(shape: Shape): Boolean =
+        with(Area(asAwtShape())) {
+            intersect(Area(shape))
+            !isEmpty
+        }
 
     /**
      * Delegated to [AwtEuclidean2DShape] unless [other] is [AwtShapeCompatible], in which case
      * [intersects] is used so as to guarantee maximum accuracy.
      */
-    override fun intersects(other: Euclidean2DShape) = when (other) {
-        is AwtShapeCompatible -> intersects(other.asAwtShape())
-        else -> getShape().intersects(other)
-    }
+    override fun intersects(other: Euclidean2DShape) =
+        when (other) {
+            is AwtShapeCompatible -> intersects(other.asAwtShape())
+            else -> getShape().intersects(other)
+        }
 
     override fun transformed(transformation: Euclidean2DTransformation.() -> Unit) =
         getShape().transformed(transformation) as Euclidean2DShape

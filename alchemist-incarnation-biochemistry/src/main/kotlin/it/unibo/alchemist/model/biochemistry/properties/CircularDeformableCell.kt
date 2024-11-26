@@ -20,7 +20,9 @@ import it.unibo.alchemist.model.properties.AbstractNodeProperty
 /**
  * Base implementation of a [CircularCellProperty].
  */
-class CircularDeformableCell @JvmOverloads constructor(
+class CircularDeformableCell
+@JvmOverloads
+constructor(
     environment: Environment<Double, Euclidean2DPosition>,
     override val node: Node<Double>,
     override val maximumDiameter: Double,

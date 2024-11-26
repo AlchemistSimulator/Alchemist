@@ -29,7 +29,9 @@ import javax.annotation.Nonnull
  *
  * @param <T> concentration type
 </T> */
-open class GenericNode<T> @JvmOverloads constructor(
+open class GenericNode<T>
+@JvmOverloads
+constructor(
     /**
      * simulation incarnation.
      */
@@ -54,13 +56,16 @@ open class GenericNode<T> @JvmOverloads constructor(
         reactions.add(reactionToAdd)
     }
 
-    override fun cloneNode(currentTime: Time): Node<T> = GenericNode(environment).also {
-        this.properties.forEach { property -> it.addProperty(property.cloneOnNewNode(it)) }
-        this.contents.forEach(it::setConcentration)
-        this.reactions.forEach { reaction -> it.addReaction(reaction.cloneOnNewNode(it, currentTime)) }
-    }
+    override fun cloneNode(currentTime: Time): Node<T> =
+        GenericNode(environment).also {
+            this.properties.forEach { property -> it.addProperty(property.cloneOnNewNode(it)) }
+            this.contents.forEach(it::setConcentration)
+            this.reactions.forEach { reaction -> it.addReaction(reaction.cloneOnNewNode(it, currentTime)) }
+        }
 
-    final override fun compareTo(@Nonnull other: Node<T>): Int = id.compareTo(other.id)
+    final override fun compareTo(
+        @Nonnull other: Node<T>,
+    ): Int = id.compareTo(other.id)
 
     override fun contains(molecule: Molecule): Boolean = molecules.containsKey(molecule)
 
@@ -96,7 +101,10 @@ open class GenericNode<T> @JvmOverloads constructor(
         reactions.remove(reactionToRemove)
     }
 
-    override fun setConcentration(molecule: Molecule, concentration: T) {
+    override fun setConcentration(
+        molecule: Molecule,
+        concentration: T,
+    ) {
         molecules[molecule] = concentration
     }
 

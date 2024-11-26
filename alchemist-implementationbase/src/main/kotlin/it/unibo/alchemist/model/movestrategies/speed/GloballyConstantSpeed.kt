@@ -23,6 +23,8 @@ class GloballyConstantSpeed<T, P : Position<P>>(
 ) : SpeedSelectionStrategy<T, P> {
     override fun getNodeMovementLength(target: P) = maxSpeed / reaction.timeDistribution.rate
 
-    override fun cloneIfNeeded(destination: Node<T>, reaction: Reaction<T>): GloballyConstantSpeed<T, P> =
-        GloballyConstantSpeed(reaction, maxSpeed)
+    override fun cloneIfNeeded(
+        destination: Node<T>,
+        reaction: Reaction<T>,
+    ): GloballyConstantSpeed<T, P> = GloballyConstantSpeed(reaction, maxSpeed)
 }

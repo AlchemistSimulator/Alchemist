@@ -77,7 +77,12 @@ open class WeibullTime<T> private constructor(
         start,
     )
 
-    override fun updateStatus(currentTime: Time, executed: Boolean, param: Double, environment: Environment<T?, *>?) {
+    override fun updateStatus(
+        currentTime: Time,
+        executed: Boolean,
+        param: Double,
+        environment: Environment<T?, *>?,
+    ) {
         if (executed) {
             this.setNextOccurrence(currentTime.plus(DoubleTime(1.0 / this.genSample())))
         }
@@ -106,12 +111,13 @@ open class WeibullTime<T> private constructor(
     override fun cloneOnNewNode(
         destination: Node<T?>,
         currentTime: Time,
-    ): WeibullTime<T?> = WeibullTime(
-        this.randomGenerator,
-        this.backingDistribution,
-        this.offset,
-        currentTime,
-    )
+    ): WeibullTime<T?> =
+        WeibullTime(
+            this.randomGenerator,
+            this.backingDistribution,
+            this.offset,
+            currentTime,
+        )
 
     protected companion object {
         private const val PREFERRED_INVERSE_CUMULATIVE_ACCURACY = 1.0E-9
@@ -127,7 +133,11 @@ open class WeibullTime<T> private constructor(
          *            the random generator
          * @return a new {@link WeibullDistribution}
          */
-        protected fun weibullFromMean(mean: Double, deviation: Double, random: RandomGenerator?): WeibullDistribution {
+        protected fun weibullFromMean(
+            mean: Double,
+            deviation: Double,
+            random: RandomGenerator?,
+        ): WeibullDistribution {
             val t = FastMath.log(deviation * deviation / (mean * mean) + 1.0)
             var kmin = 0.0
 

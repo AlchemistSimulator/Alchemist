@@ -24,11 +24,12 @@ object Iterables {
      * @param randomGenerator
      *          the simulation {@link RandomGenerator}.
      */
-    fun <R> Iterable<R>.shuffled(randomGenerator: RandomGenerator): Iterable<R> = toMutableList().apply {
-        for (i in size - 1 downTo 1) {
-            Collections.swap(this, i, randomGenerator.nextInt(i + 1))
+    fun <R> Iterable<R>.shuffled(randomGenerator: RandomGenerator): Iterable<R> =
+        toMutableList().apply {
+            for (i in size - 1 downTo 1) {
+                Collections.swap(this, i, randomGenerator.nextInt(i + 1))
+            }
         }
-    }
 
     /**
      * Returns a random element of the Iterable using the provided [randomGenerator].

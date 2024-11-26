@@ -29,7 +29,10 @@ class ConnectViaAccessPoint<T, P : Position<P>>(
     private fun Neighborhood<T>.closestAccessPoint(environment: Environment<T, P>): Node<T>? =
         asSequence().filter { it.isAccessPoint }.minByOrNull { environment.getDistanceBetweenNodes(center, it) }
 
-    override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>): Neighborhood<T> =
+    override fun computeNeighborhood(
+        center: Node<T>,
+        environment: Environment<T, P>,
+    ): Neighborhood<T> =
         super.computeNeighborhood(center, environment).run {
             if (!center.isAccessPoint) {
                 // Connect to closest access point and all nodes connected to the same AP

@@ -37,7 +37,9 @@ import org.apache.commons.math3.random.RandomGenerator
  *   **must** always be greater than zero. It is thus recommended to use an [errorDistribution] whose
  *   support lower bound is zero or greater
  */
-class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
+class MoleculeControlledTimeDistribution<T>
+@JvmOverloads
+constructor(
     private val incarnation: Incarnation<T, *>,
     val node: Node<T>,
     val molecule: Molecule,
@@ -51,20 +53,30 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
          * Unknown values
          */
         override fun probability(x: Double) = TODO()
+
         override fun density(x: Double) = TODO()
+
         override fun cumulativeProbability(x: Double) = TODO()
 
         @Deprecated(message = "Deprecated in Apache Commons")
-        override fun cumulativeProbability(x0: Double, x1: Double) = TODO()
+        override fun cumulativeProbability(
+            x0: Double,
+            x1: Double,
+        ) = TODO()
+
         override fun inverseCumulativeProbability(p: Double) = TODO()
+
         override fun getNumericalVariance() = TODO()
+
         override fun isSupportConnected() = TODO()
+
         override fun reseedRandomGenerator(seed: Long) = TODO()
 
         /*
          * Known values
          */
         override fun getSupportLowerBound() = 0.0
+
         override fun getSupportUpperBound() = Double.MAX_VALUE
 
         @Deprecated(message = "Deprecated in Apache Commons")
@@ -85,8 +97,8 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
         val currentValue get() = readCurrentValue(incarnation, node, molecule, property)
     },
 ) {
-
-    @JvmOverloads constructor(
+    @JvmOverloads
+    constructor(
         incarnation: Incarnation<T, *>,
         randomGenerator: RandomGenerator,
         node: Node<T>,
@@ -125,7 +137,12 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
 
     private var previousStep: Double? = null
 
-    override fun updateStatus(currentTime: Time, executed: Boolean, param: Double, environment: Environment<T, *>) {
+    override fun updateStatus(
+        currentTime: Time,
+        executed: Boolean,
+        param: Double,
+        environment: Environment<T, *>,
+    ) {
         val currentStep = readCurrentValue(incarnation, node, molecule, property)
         if (executed) {
             previousStep = currentStep
@@ -140,31 +157,35 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
         super.updateStatus(currentTime, executed, param, environment)
     }
 
-    override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): MoleculeControlledTimeDistribution<T> =
+    override fun cloneOnNewNode(
+        destination: Node<T>,
+        currentTime: Time,
+    ): MoleculeControlledTimeDistribution<T> =
         MoleculeControlledTimeDistribution(incarnation, destination, molecule, property, start, errorDistribution)
 
     private companion object {
-
         private fun <T> readCurrentValue(
             incarnation: Incarnation<T, *>,
             node: Node<T>,
             molecule: Molecule,
             property: String?,
         ): Double {
-            val currentValue = if (property != null) {
-                incarnation.getProperty(node, molecule, property)
-            } else {
-                when (val value = node.getConcentration(molecule)) {
-                    is Number -> value.toDouble()
-                    is String -> value.toDouble()
-                    is Time -> value.toDouble()
-                    null -> 0.0
-                    else -> error(
-                        "Expected a numeric value in $molecule at node ${node.id}, " +
-                            "but '$value' of type '${value.let { it::class.simpleName }}' was found instead",
-                    )
+            val currentValue =
+                if (property != null) {
+                    incarnation.getProperty(node, molecule, property)
+                } else {
+                    when (val value = node.getConcentration(molecule)) {
+                        is Number -> value.toDouble()
+                        is String -> value.toDouble()
+                        is Time -> value.toDouble()
+                        null -> 0.0
+                        else ->
+                            error(
+                                "Expected a numeric value in $molecule at node ${node.id}, " +
+                                    "but '$value' of type '${value.let { it::class.simpleName }}' was found instead",
+                            )
+                    }
                 }
-            }
             require(currentValue >= 0) {
                 "You requested to be scheduled with a delta of $currentValue in molecule $molecule at node ${node.id}" +
                     ". Alchemist loves causality and won't let you go back in time"

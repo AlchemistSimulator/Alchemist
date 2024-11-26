@@ -17,7 +17,8 @@ object Lists {
      * Takes the first [percentage] * size elements of the list.
      */
     @JvmStatic
-    fun <T> List<T>.takeFraction(percentage: Double): List<T> = check(percentage in 0.0..1.0).run {
-        take((percentage * size).toInt())
-    }
+    fun <T> List<T>.takeFraction(percentage: Double): List<T> =
+        check(percentage in 0.0..1.0).run {
+            take((percentage * size).toInt())
+        }
 }

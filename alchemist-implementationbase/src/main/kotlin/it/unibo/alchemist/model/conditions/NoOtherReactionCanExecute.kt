@@ -34,7 +34,10 @@ class NoOtherReactionCanExecute<T>(
         }
     }
 
-    override fun cloneCondition(node: Node<T>, reaction: Reaction<T>) = NoOtherReactionCanExecute(node, myReaction)
+    override fun cloneCondition(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ) = NoOtherReactionCanExecute(node, myReaction)
 
     override fun getContext() = Context.LOCAL
 

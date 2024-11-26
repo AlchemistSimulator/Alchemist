@@ -23,7 +23,10 @@ object RandomGenerators {
      * @param to
      *          the upper bound.
      */
-    fun RandomGenerator.nextDouble(from: Double, to: Double) = nextDouble() * (to - from) + from
+    fun RandomGenerator.nextDouble(
+        from: Double,
+        to: Double,
+    ) = nextDouble() * (to - from) + from
 
     /**
      * Generates a random value in 0..2π.

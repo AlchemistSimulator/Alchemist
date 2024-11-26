@@ -27,7 +27,6 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
     private val center: Node<T>,
     private val neighbors: ImmutableListSet<out Node<T>>,
 ) : Neighborhood<T> {
-
     internal constructor(
         environment: Environment<T, P>,
         center: Node<T>,

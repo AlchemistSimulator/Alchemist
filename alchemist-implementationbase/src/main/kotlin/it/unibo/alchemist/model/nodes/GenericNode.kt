@@ -46,7 +46,6 @@ open class GenericNode<T> @JvmOverloads constructor(
     val molecules: MutableMap<Molecule, T> = LinkedHashMap(),
     final override val properties: MutableList<NodeProperty<T>> = ArrayList(),
 ) : Node<T> {
-
     constructor(
         environment: Environment<T, *>,
     ) : this(environment.incarnation, environment)

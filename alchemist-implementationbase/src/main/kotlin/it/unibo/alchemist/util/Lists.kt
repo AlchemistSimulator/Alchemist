@@ -13,7 +13,6 @@ package it.unibo.alchemist.util
  * Container object for utility functions related to [List]s.
  */
 object Lists {
-
     /**
      * Takes the first [percentage] * size elements of the list.
      */

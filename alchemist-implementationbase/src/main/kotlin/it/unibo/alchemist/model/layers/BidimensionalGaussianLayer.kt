@@ -26,7 +26,6 @@ open class BidimensionalGaussianLayer<P : Position2D<P>> @JvmOverloads construct
     sigmaX: Double,
     sigmaY: Double = sigmaX,
 ) : Layer<Double, P> {
-
     /**
      * The function on which the layer is based.
      */

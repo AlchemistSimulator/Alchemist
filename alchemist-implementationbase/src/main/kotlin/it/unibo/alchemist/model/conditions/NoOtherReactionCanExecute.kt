@@ -22,7 +22,6 @@ class NoOtherReactionCanExecute<T>(
     node: Node<T>,
     private val myReaction: Reaction<T>,
 ) : AbstractNonPropensityContributingCondition<T>(node) {
-
     init {
         require(
             node.reactions.asSequence()

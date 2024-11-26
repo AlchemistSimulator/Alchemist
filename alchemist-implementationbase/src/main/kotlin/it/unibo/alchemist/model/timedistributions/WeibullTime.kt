@@ -20,7 +20,6 @@ open class WeibullTime<T> private constructor(
     private val offset: Double,
     start: Time,
 ) : AbstractDistribution<T?>(start) {
-
     /**
      * @param mean
      *            mean for this distribution

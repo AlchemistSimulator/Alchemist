@@ -56,8 +56,8 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     val retentionTime: Double,
     val packetLossDistance: RealDistribution?,
 ) : Action<Any> {
-
-    @JvmOverloads constructor(
+    @JvmOverloads
+    constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         device: ProtelisDevice<P>,
@@ -75,7 +75,8 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         packetLossDistance = null,
     )
 
-    @JvmOverloads constructor(
+    @JvmOverloads
+    constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         device: ProtelisDevice<P>,
@@ -92,14 +93,16 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         originalProgram = program.name,
         program = program,
         retentionTime = retentionTime,
-        packetLossDistance = RealDistributions.makeRealDistribution(
+        packetLossDistance =
+        RealDistributions.makeRealDistribution(
             randomGenerator,
             packetLossDistributionName,
             *packetLossDistributionParameters,
         ),
     )
 
-    @JvmOverloads constructor(
+    @JvmOverloads
+    constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         device: ProtelisDevice<P>,
@@ -117,7 +120,8 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         packetLossDistance = null,
     )
 
-    @JvmOverloads constructor(
+    @JvmOverloads
+    constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         device: ProtelisDevice<P>,
@@ -134,7 +138,8 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         originalProgram = program,
         retentionTime = retentionTime,
         program = ProtelisLoader.parse(program),
-        packetLossDistance = RealDistributions.makeRealDistribution(
+        packetLossDistance =
+        RealDistributions.makeRealDistribution(
             randomGenerator,
             packetLossDistributionName,
             *packetLossDistributionParameters,
@@ -153,12 +158,13 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     var isComputationalCycleComplete = false
         private set
 
-    private val name: Molecule = node.reactions.asSequence()
-        .flatMap { it.actions.asSequence() }
-        .filterIsInstance<RunProtelisProgram<*>>()
-        .map { it.program.name }
-        .count { it == program.name }
-        .let { otherCopies -> SimpleMolecule(program.name + if (otherCopies == 0) "" else "\$copy$otherCopies") }
+    private val name: Molecule =
+        node.reactions.asSequence()
+            .flatMap { it.actions.asSequence() }
+            .filterIsInstance<RunProtelisProgram<*>>()
+            .map { it.program.name }
+            .count { it == program.name }
+            .let { otherCopies -> SimpleMolecule(program.name + if (otherCopies == 0) "" else "\$copy$otherCopies") }
 
     private val networkManager = AlchemistNetworkManager(reaction, device, this, retentionTime, packetLossDistance)
 
@@ -168,13 +174,14 @@ class RunProtelisProgram<P : Position<P>> private constructor(
      * @return the current [AlchemistExecutionContext]
      */
     @Transient
-    var executionContext = AlchemistExecutionContext(
-        environment,
-        node,
-        reaction,
-        randomGenerator,
-        networkManager,
-    )
+    var executionContext =
+        AlchemistExecutionContext(
+            environment,
+            node,
+            reaction,
+            randomGenerator,
+            networkManager,
+        )
         private set
 
     @Transient
@@ -191,16 +198,20 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         return name
     }
 
-    override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>): RunProtelisProgram<P> = RunProtelisProgram(
-        randomGenerator,
-        environment,
-        node.asProperty(),
-        reaction,
-        originalProgram = originalProgram,
-        program = program, // TODO: this is broken until https://github.com/Protelis/Protelis/pull/676 gets merged
-        retentionTime = retentionTime,
-        packetLossDistance = packetLossDistance,
-    )
+    override fun cloneAction(
+        node: Node<Any>,
+        reaction: Reaction<Any>,
+    ): RunProtelisProgram<P> =
+        RunProtelisProgram(
+            randomGenerator,
+            environment,
+            node.asProperty(),
+            reaction,
+            originalProgram = originalProgram,
+            program = program, // TODO: this is broken until https://github.com/Protelis/Protelis/pull/676 gets merged
+            retentionTime = retentionTime,
+            packetLossDistance = packetLossDistance,
+        )
 
     override fun equals(other: Any?): Boolean {
         if (other === this) {
@@ -239,13 +250,14 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     @Suppress("UnusedPrivateMember")
     private fun readObject(stream: ObjectInputStream) {
         stream.defaultReadObject()
-        executionContext = AlchemistExecutionContext(
-            environment,
-            node,
-            reaction,
-            randomGenerator,
-            networkManager,
-        )
+        executionContext =
+            AlchemistExecutionContext(
+                environment,
+                node,
+                reaction,
+                randomGenerator,
+                networkManager,
+            )
         vm = ProtelisVM(program, executionContext)
     }
 

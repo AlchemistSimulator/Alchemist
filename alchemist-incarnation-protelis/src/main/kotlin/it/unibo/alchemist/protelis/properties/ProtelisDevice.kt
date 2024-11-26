@@ -23,12 +23,13 @@ import org.protelis.vm.ExecutionEnvironment
 /**
  * Base implementation of [ProtelisDevice]. Requires an [environment] to work.
  */
-class ProtelisDevice<P : Position<P>> @JvmOverloads constructor(
+class ProtelisDevice<P : Position<P>>
+@JvmOverloads
+constructor(
     val environment: Environment<Any, P>,
     override val node: Node<Any>,
     networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager> = mapOf(),
 ) : NodeProperty<Any>, ExecutionEnvironment, DeviceUID {
-
     private val incarnation: ProtelisIncarnation<*> =
         environment.incarnation as? ProtelisIncarnation<P>
             ?: ProtelisIncarnation.INSTANCE
@@ -52,38 +53,47 @@ class ProtelisDevice<P : Position<P>> @JvmOverloads constructor(
      * @param networkManager
      * the [AlchemistNetworkManager]
      */
-    fun addNetworkManger(program: RunProtelisProgram<*>, networkManager: AlchemistNetworkManager) {
+    fun addNetworkManger(
+        program: RunProtelisProgram<*>,
+        networkManager: AlchemistNetworkManager,
+    ) {
         networkManagers = networkManagers + (program to networkManager)
     }
 
     /**
      * Finds all the [RunProtelisProgram]s installed on this node.
      */
-    fun allProtelisPrograms(): List<RunProtelisProgram<*>> = node.reactions.asSequence()
-        .flatMap { it.actions }
-        .filterIsInstance<RunProtelisProgram<*>>()
-        .toList()
+    fun allProtelisPrograms(): List<RunProtelisProgram<*>> =
+        node.reactions.asSequence()
+            .flatMap { it.actions }
+            .filterIsInstance<RunProtelisProgram<*>>()
+            .toList()
 
     override fun cloneOnNewNode(node: Node<Any>) = ProtelisDevice(environment, node)
 
     /**
      * Returns the value associated with [id].
      */
-    override fun get(id: String): Any = incarnation.createMolecule(id).let { molecule ->
-        when {
-            node.contains(molecule) -> node.getConcentration(molecule)
-            else -> environment.getLayer(molecule).map { it.getValue(environment.getPosition(node)) }.orElseThrow {
-                IllegalArgumentException(
-                    "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists",
-                )
+    override fun get(id: String): Any =
+        incarnation.createMolecule(id).let { molecule ->
+            when {
+                node.contains(molecule) -> node.getConcentration(molecule)
+                else ->
+                    environment.getLayer(molecule).map { it.getValue(environment.getPosition(node)) }.orElseThrow {
+                        IllegalArgumentException(
+                            "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists",
+                        )
+                    }
             }
         }
-    }
 
     /**
      * Returns the value associated with [id].
      */
-    override fun get(id: String, defaultValue: Any): Any = get(id)
+    override fun get(
+        id: String,
+        defaultValue: Any,
+    ): Any = get(id)
 
     /**
      * @param program
@@ -91,9 +101,10 @@ class ProtelisDevice<P : Position<P>> @JvmOverloads constructor(
      * @return the [AlchemistNetworkManager] for this specific
      * [RunProtelisProgram]
      */
-    fun getNetworkManager(program: RunProtelisProgram<*>) = requireNotNull(networkManagers[program]) {
-        "No network manager found for $program"
-    }
+    fun getNetworkManager(program: RunProtelisProgram<*>) =
+        requireNotNull(networkManagers[program]) {
+            "No network manager found for $program"
+        }
 
     /**
      * Returns true if node contains [id].
@@ -103,7 +114,10 @@ class ProtelisDevice<P : Position<P>> @JvmOverloads constructor(
     /**
      * Stores a [value] associated with [key].
      */
-    override fun put(key: String, value: Any): Boolean {
+    override fun put(
+        key: String,
+        value: Any,
+    ): Boolean {
         node.setConcentration(incarnation.createMolecule(key), value)
         return true
     }
@@ -111,7 +125,10 @@ class ProtelisDevice<P : Position<P>> @JvmOverloads constructor(
     /**
      * Stores a [value] associated with [key].
      */
-    fun putField(key: String, value: Field<*>): Boolean {
+    fun putField(
+        key: String,
+        value: Field<*>,
+    ): Boolean {
         node.setConcentration(incarnation.createMolecule(key), value)
         return true
     }

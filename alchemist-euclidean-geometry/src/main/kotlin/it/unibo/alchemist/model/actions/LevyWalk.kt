@@ -21,13 +21,16 @@ import org.apache.commons.math3.random.RandomGenerator
  * and a random distance extracted from a [ParetoDistribution] of parameters [scale] and [shape].
  * Moves toward the targets at a constant [speed] and changes targets on collision.
  */
-class LevyWalk<T> @JvmOverloads constructor(
+class LevyWalk<T>
+@JvmOverloads
+constructor(
     node: Node<T>,
     reaction: Reaction<T>,
     environment: Environment<T, Euclidean2DPosition>,
     randomGenerator: RandomGenerator,
     speed: Double,
-    private val scale: Double = 1.0, // default parameters for the Pareto distribution
+    // default parameters for the Pareto distribution
+    private val scale: Double = 1.0,
     private val shape: Double = 1.0,
 ) : GenericRandomWalker<T>(
     node,
@@ -37,6 +40,8 @@ class LevyWalk<T> @JvmOverloads constructor(
     speed,
     ParetoDistribution(randomGenerator, scale, shape),
 ) {
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
-        LevyWalk(node, reaction, environment, randomGenerator, speed, scale, shape)
+    override fun cloneAction(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ) = LevyWalk(node, reaction, environment, randomGenerator, speed, scale, shape)
 }

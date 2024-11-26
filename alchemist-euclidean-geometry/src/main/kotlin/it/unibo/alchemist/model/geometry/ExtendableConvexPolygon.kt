@@ -13,7 +13,6 @@ package it.unibo.alchemist.model.geometry
  * A sophisticated [MutableConvexPolygon].
  */
 interface ExtendableConvexPolygon : MutableConvexPolygon {
-
     /**
      * Advances an edge in its normal direction.
      * @param index the index of the edge to advance (edge i connects vertices i and i+1)
@@ -22,7 +21,10 @@ interface ExtendableConvexPolygon : MutableConvexPolygon {
      * @returns true if the operation was performed successfully, false otherwise
      * (e.g. because it would have caused the loss of convexity)
      */
-    fun advanceEdge(index: Int, step: Double): Boolean
+    fun advanceEdge(
+        index: Int,
+        step: Double,
+    ): Boolean
 
     /**
      * Extends the polygon in each direction: each edge is given a chance to advance.

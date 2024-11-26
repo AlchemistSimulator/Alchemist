@@ -25,9 +25,10 @@ class TestNeighborhood {
     private fun createIntNode(
         incarnation: Incarnation<Int, Euclidean2DPosition>,
         environment: Environment<Int, Euclidean2DPosition>,
-    ): Node<Int> = object : GenericNode<Int>(incarnation, environment) {
-        override fun createT(): Int = 0
-    }
+    ): Node<Int> =
+        object : GenericNode<Int>(incarnation, environment) {
+            override fun createT(): Int = 0
+        }
 
     /**
      * Tests whether the clone function of the

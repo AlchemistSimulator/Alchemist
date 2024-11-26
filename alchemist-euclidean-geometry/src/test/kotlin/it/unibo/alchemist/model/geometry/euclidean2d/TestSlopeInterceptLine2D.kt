@@ -27,7 +27,12 @@ class TestSlopeInterceptLine2D : StringSpec() {
     private val verticalLine: Line2D<Euclidean2DPosition> = SlopeInterceptLine2D(2.0, ::coords)
     private val obliqueLine: Line2D<Euclidean2DPosition> = SlopeInterceptLine2D(1.0, 2.0, ::coords)
 
-    private fun line(x1: Double, y1: Double, x2: Double, y2: Double) = segment(x1, y1, x2, y2).toLine()
+    private fun line(
+        x1: Double,
+        y1: Double,
+        x2: Double,
+        y2: Double,
+    ) = segment(x1, y1, x2, y2).toLine()
 
     private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> intersectionShouldBe(
         line1: Line2D<P>,
@@ -38,14 +43,21 @@ class TestSlopeInterceptLine2D : StringSpec() {
         return intersection
     }
 
-    private fun <P : Vector2D<P>> shouldIntersectIn(line1: Line2D<P>, line2: Line2D<P>, expectedPoint: P) =
-        intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(line1, line2).point shouldBe expectedPoint
+    private fun <P : Vector2D<P>> shouldIntersectIn(
+        line1: Line2D<P>,
+        line2: Line2D<P>,
+        expectedPoint: P,
+    ) = intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(line1, line2).point shouldBe expectedPoint
 
-    private fun <P : Vector2D<P>> shouldNotIntersect(line1: Line2D<P>, line2: Line2D<P>) =
-        intersectionShouldBe<P, Intersection2D.None>(line1, line2)
+    private fun <P : Vector2D<P>> shouldNotIntersect(
+        line1: Line2D<P>,
+        line2: Line2D<P>,
+    ) = intersectionShouldBe<P, Intersection2D.None>(line1, line2)
 
-    private fun <P : Vector2D<P>> shouldCoincide(line1: Line2D<P>, line2: Line2D<P>) =
-        intersectionShouldBe<P, Intersection2D.InfinitePoints>(line1, line2)
+    private fun <P : Vector2D<P>> shouldCoincide(
+        line1: Line2D<P>,
+        line2: Line2D<P>,
+    ) = intersectionShouldBe<P, Intersection2D.InfinitePoints>(line1, line2)
 
     private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> intersectionShouldBe(
         line: Line2D<P>,
@@ -68,11 +80,18 @@ class TestSlopeInterceptLine2D : StringSpec() {
         intersection.points shouldContainExactlyInAnyOrder listOf(expectedPoint1, expectedPoint2)
     }
 
-    private fun <P : Vector2D<P>> shouldIntersectIn(line: Line2D<P>, center: P, radius: Double, expectedPoint: P) =
-        intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(line, center, radius).point shouldBe expectedPoint
+    private fun <P : Vector2D<P>> shouldIntersectIn(
+        line: Line2D<P>,
+        center: P,
+        radius: Double,
+        expectedPoint: P,
+    ) = intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(line, center, radius).point shouldBe expectedPoint
 
-    private fun <P : Vector2D<P>> shouldNotIntersect(line: Line2D<P>, center: P, radius: Double) =
-        intersectionShouldBe<P, Intersection2D.None>(line, center, radius)
+    private fun <P : Vector2D<P>> shouldNotIntersect(
+        line: Line2D<P>,
+        center: P,
+        radius: Double,
+    ) = intersectionShouldBe<P, Intersection2D.None>(line, center, radius)
 
     init {
         "test is horizontal" {

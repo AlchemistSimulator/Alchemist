@@ -30,7 +30,10 @@ private class DummyDistribution : RealDistribution {
     override fun cumulativeProbability(x: Double) = if (x > value) 1.0 else 0.0
 
     @Deprecated("Deprecated in Java")
-    override fun cumulativeProbability(x0: Double, x1: Double) = if (value > x0 && value < x1) 1.0 else 0.0
+    override fun cumulativeProbability(
+        x0: Double,
+        x1: Double,
+    ) = if (value > x0 && value < x1) 1.0 else 0.0
 
     override fun getNumericalMean() = 0.0
 
@@ -80,9 +83,10 @@ private class DummyRandomGenerator : RandomGenerator {
         value = seed.toDouble()
     }
 
-    override fun nextBytes(bytes: ByteArray) = bytes.forEachIndexed { idx, _ ->
-        bytes[idx] = value.toInt().toByte()
-    }
+    override fun nextBytes(bytes: ByteArray) =
+        bytes.forEachIndexed { idx, _ ->
+            bytes[idx] = value.toInt().toByte()
+        }
 
     override fun nextInt() = value.toInt()
 
@@ -108,13 +112,14 @@ class TestRandomTarget : StringSpec() {
         directionGenerator = DummyRandomGenerator()
         directionGenerator.value = 0.5
         distanceDistribution.value = 1.0
-        randomTarget = RandomTarget(
-            Continuous2DEnvironment(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow()),
-            { currentPosition },
-            ::Euclidean2DPosition,
-            directionGenerator,
-            distanceDistribution,
-        )
+        randomTarget =
+            RandomTarget(
+                Continuous2DEnvironment(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow()),
+                { currentPosition },
+                ::Euclidean2DPosition,
+                directionGenerator,
+                distanceDistribution,
+            )
     }
 
     init {

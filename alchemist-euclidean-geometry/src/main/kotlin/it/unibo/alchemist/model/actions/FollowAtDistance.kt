@@ -41,18 +41,19 @@ class FollowAtDistance<T>(
     private val distance: Double,
     private val speed: Double,
 ) : AbstractAction<T>(node) {
-
     private val speedStrategy = GloballyConstantSpeed<T, Euclidean2DPosition>(reaction, speed)
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
-        FollowAtDistance(
-            node,
-            reaction,
-            environment,
-            target,
-            distance,
-            speed,
-        )
+    override fun cloneAction(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ) = FollowAtDistance(
+        node,
+        reaction,
+        environment,
+        target,
+        distance,
+        speed,
+    )
 
     override fun execute() {
         node.getConcentration(target)?.also {
@@ -60,10 +61,11 @@ class FollowAtDistance<T>(
             val currentPosition = environment.getPosition(node)
             var destination = targetPosition.surroundingPointAt(currentPosition - targetPosition, distance)
             if (currentPosition != destination) { // avoid "bouncing"
-                val currentSpeed = min(
-                    speedStrategy.getNodeMovementLength(destination),
-                    currentPosition.distanceTo(destination),
-                )
+                val currentSpeed =
+                    min(
+                        speedStrategy.getNodeMovementLength(destination),
+                        currentPosition.distanceTo(destination),
+                    )
                 val direction = destination - currentPosition
                 val angle = direction.asAngle
                 destination = currentPosition +

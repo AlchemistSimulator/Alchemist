@@ -46,13 +46,15 @@ class ConstantDistanceRandomWalk<T>(
     speed,
     DiracDeltaDistribution(distance),
 ) {
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
-        ConstantDistanceRandomWalk(
-            node,
-            reaction,
-            environment,
-            randomGenerator,
-            distance,
-            speed,
-        )
+    override fun cloneAction(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ) = ConstantDistanceRandomWalk(
+        node,
+        reaction,
+        environment,
+        randomGenerator,
+        distance,
+        speed,
+    )
 }

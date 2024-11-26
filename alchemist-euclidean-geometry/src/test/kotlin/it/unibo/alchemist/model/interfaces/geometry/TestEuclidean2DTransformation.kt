@@ -29,23 +29,27 @@ class TestEuclidean2DTransformation : FreeSpec({
             .filter { it.value !is AdimensionalShape }
             .forEach {
                 it.key {
-                    var shape = it.value.transformed {
-                        origin(0.0, 0.0)
-                    }
+                    var shape =
+                        it.value.transformed {
+                            origin(0.0, 0.0)
+                        }
                     val reference = shape.centroid
-                    shape = shape.transformed {
-                        origin(0.0, 0.0)
-                    }
+                    shape =
+                        shape.transformed {
+                            origin(0.0, 0.0)
+                        }
                     reference.distanceTo(shape.centroid) shouldBe 0.0
-                    shape = shape.transformed {
-                        origin(0.0, 10.0)
-                    }
+                    shape =
+                        shape.transformed {
+                            origin(0.0, 10.0)
+                        }
                     reference.distanceTo(shape.centroid) shouldBe 10.0
-                    shape = shape.transformed {
-                        origin(10.0, 10.0)
-                        origin(3.0, 3.0)
-                        origin(6.0, 0.0)
-                    }
+                    shape =
+                        shape.transformed {
+                            origin(10.0, 10.0)
+                            origin(3.0, 3.0)
+                            origin(6.0, 0.0)
+                        }
                     reference.distanceTo(shape.centroid) shouldBe 6.0
                 }
             }

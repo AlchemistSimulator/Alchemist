@@ -13,7 +13,6 @@ package it.unibo.alchemist.model.geometry
  * Defines a straight line in a cartesian plane.
  */
 interface Line2D<P : Vector2D<P>> {
-
     /**
      * Indicates if the line is aligned to the x-axis.
      */
@@ -65,5 +64,8 @@ interface Line2D<P : Vector2D<P>> {
     /**
      * Intersects a line and a circle.
      */
-    fun intersectCircle(center: P, radius: Double): Intersection2D<P>
+    fun intersectCircle(
+        center: P,
+        radius: Double,
+    ): Intersection2D<P>
 }

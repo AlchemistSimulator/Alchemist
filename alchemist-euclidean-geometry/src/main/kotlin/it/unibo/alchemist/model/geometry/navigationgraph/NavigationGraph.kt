@@ -34,7 +34,6 @@ interface NavigationGraph<V, A, N, E> : org.jgrapht.Graph<N, E> where
       V : Vector<V>,
       A : Transformation<V>,
       N : ConvexShape<V, A> {
-
     /**
      * @returns the first node containing the specified [position], or null if no node containing it could be found.
      */

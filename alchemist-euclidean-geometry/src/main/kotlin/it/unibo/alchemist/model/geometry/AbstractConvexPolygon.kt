@@ -18,7 +18,6 @@ import java.awt.Shape as AwtShape
  * An abstract [ConvexPolygon] providing a convexity test.
  */
 abstract class AbstractConvexPolygon : ConvexPolygon {
-
     private companion object {
         /**
          * @returns the sum of the distances between this segment's endpoints and [other].
@@ -47,8 +46,9 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
     /*
      * It's important that intersects(Shape) does not consider adjacent shapes as intersecting.
      */
-    override fun isAdjacentTo(other: ConvexPolygon): Boolean = !intersects(other.asAwtShape()) &&
-        (other.vertices().any { liesOnBoundary(it) } || vertices().any { other.liesOnBoundary(it) })
+    override fun isAdjacentTo(other: ConvexPolygon): Boolean =
+        !intersects(other.asAwtShape()) &&
+            (other.vertices().any { liesOnBoundary(it) } || vertices().any { other.liesOnBoundary(it) })
 
     override fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition> =
         requireNotNull(
@@ -59,17 +59,20 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
         if (containsBoundaryExcluded(segment.first) || containsBoundaryExcluded(segment.second)) {
             return true
         }
-        val intersections = edges()
-            .map { it.intersect(segment) } // Either InfinitePoints, SinglePoint, or None
-            .filterNot { it is Intersection2D.None }
-            .asSequence()
+        val intersections =
+            edges()
+                .map { it.intersect(segment) } // Either InfinitePoints, SinglePoint, or None
+                .filterNot { it is Intersection2D.None }
+                .asSequence()
         // Lazily evaluated
-        val intersectionPoints = intersections
-            .filterIsInstance<Intersection2D.SinglePoint<Euclidean2DPosition>>()
-            .map { it.point }
-            .distinct()
+        val intersectionPoints =
+            intersections
+                .filterIsInstance<Intersection2D.SinglePoint<Euclidean2DPosition>>()
+                .map { it.point }
+                .distinct()
         return intersections.none { it is Intersection2D.InfinitePoints } && intersectionPoints.count() > 1
     }
+
     override fun toString(): String = javaClass.simpleName + vertices()
 
     /**

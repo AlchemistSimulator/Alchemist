@@ -47,7 +47,6 @@ import java.awt.Shape
  * the grown seeds.
  */
 object NaviGator {
-
     /**
      * @param origin
      *              the origin of the environment, defaults to (0,0).
@@ -78,10 +77,11 @@ object NaviGator {
         unity: Double = 1.0,
     ): Euclidean2DNavigationGraph {
         require(width > 0 && height > 0) { "width and height should be positive" }
-        val seeds = rooms
-            .map { createSeed(it.x, it.y, unity, origin, width, height, obstacles) }
-            .toMutableList()
-            .grow(obstacles, unity)
+        val seeds =
+            rooms
+                .map { createSeed(it.x, it.y, unity, origin, width, height, obstacles) }
+                .toMutableList()
+                .grow(obstacles, unity)
         val graph = DirectedEuclidean2DNavigationGraph(Euclidean2DPassage::class.java)
         seeds.forEach { graph.addVertex(it) }
         seeds.flatMap { seed ->
@@ -145,79 +145,89 @@ object NaviGator {
          * is axis-aligned, a DoubleInterval is sufficient to represent a portion of it.
          */
         remaining: ClosedRange<Double> = oldEdge.toRange(),
-    ): Collection<Euclidean2DPassage> = emptyList<Euclidean2DPassage>()
-        .takeIf { fuzzyEquals(remaining.start, remaining.endInclusive) }
-        ?: let { _ ->
+    ): Collection<Euclidean2DPassage> =
+        emptyList<Euclidean2DPassage>()
+            .takeIf { fuzzyEquals(remaining.start, remaining.endInclusive) }
+            ?: let { _ ->
             /*
              * ToInterval functions map a shape or polygon to the DoubleInterval relevant for
              * the intersection with the advancing edge.
              */
-            val polygonToInterval: (ExtendableConvexPolygon) -> ClosedRange<Double> = {
-                it.closestEdgeTo(oldEdge).toRange(oldEdge.isHorizontal)
-            }
-            val shapeToInterval: (Shape) -> ClosedRange<Double> = { shape ->
-                shape.vertices().let {
-                    if (oldEdge.isHorizontal) it.findExtremeCoordsOnX() else it.findExtremeCoordsOnY()
+                val polygonToInterval: (ExtendableConvexPolygon) -> ClosedRange<Double> = {
+                    it.closestEdgeTo(oldEdge).toRange(oldEdge.isHorizontal)
                 }
-            }
-            val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
-                seeds.filter {
+                val shapeToInterval: (Shape) -> ClosedRange<Double> = { shape ->
+                    shape.vertices().let {
+                        if (oldEdge.isHorizontal) it.findExtremeCoordsOnX() else it.findExtremeCoordsOnY()
+                    }
+                }
+                val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
+                    seeds.filter {
                     /*
                      * A seed is considered intersected if it intersects with the polygon and, in particular, with the
                      * remaining portion of the advancing edge. Similarly for obstacles below.
                      */
-                    it != this && it.intersects(asAwtShape()) && polygonToInterval(it).intersectsBoundsExcluded(
-                        remaining,
-                    )
+                        it != this && it.intersects(asAwtShape()) &&
+                            polygonToInterval(it).intersectsBoundsExcluded(
+                                remaining,
+                            )
+                    }
                 }
-            }
-            val intersectedObstacles: () -> List<Shape> = {
-                obstacles.filter {
-                    intersects(it) && shapeToInterval(it).intersectsBoundsExcluded(remaining)
+                val intersectedObstacles: () -> List<Shape> = {
+                    obstacles.filter {
+                        intersects(it) && shapeToInterval(it).intersectsBoundsExcluded(remaining)
+                    }
                 }
-            }
-            while (intersectedSeeds().isEmpty() && intersectedObstacles().isEmpty()) {
-                if (!advanceEdge(index, unity)) {
+                while (intersectedSeeds().isEmpty() && intersectedObstacles().isEmpty()) {
+                    if (!advanceEdge(index, unity)) {
                     /*
                      * Edge is out of the environment's boundaries.
                      */
-                    return emptyList()
+                        return emptyList()
+                    }
                 }
-            }
-            val newRemaining = remaining.subtractAll(
-                intersectedObstacles().map { shapeToInterval(it) },
-            )
-            val neighborToIntervals = intersectedSeeds().map { neighbor ->
+                val newRemaining =
+                    remaining.subtractAll(
+                        intersectedObstacles().map { shapeToInterval(it) },
+                    )
+                val neighborToIntervals =
+                    intersectedSeeds().map { neighbor ->
                 /*
                  * Maps each neighbor to a collection of intervals representing
                  * the portions of the advancing edge leading to that neighbor.
                  */
-                neighbor to newRemaining.mapNotNull { remaining ->
-                    polygonToInterval(neighbor).intersect(remaining)
-                }
-            }
-            val passages = neighborToIntervals.flatMap { (neighbor, intervals) ->
+                        neighbor to
+                            newRemaining.mapNotNull { remaining ->
+                                polygonToInterval(neighbor).intersect(remaining)
+                            }
+                    }
+                val passages =
+                    neighborToIntervals.flatMap { (neighbor, intervals) ->
                 /*
                  * Intervals should be mapped to actual segments, considering the
                  * coordinate we ignored so far of the oldEdge.
                  */
-                intervals.map {
-                    val passageShape = when {
-                        oldEdge.isHorizontal -> createSegment(it.start, oldEdge.first.y, x2 = it.endInclusive)
-                        else -> createSegment(oldEdge.first.x, it.start, y2 = it.endInclusive)
+                        intervals.map {
+                            val passageShape =
+                                when {
+                                    oldEdge.isHorizontal ->
+                                        createSegment(it.start, oldEdge.first.y, x2 = it.endInclusive)
+                                    else ->
+                                        createSegment(oldEdge.first.x, it.start, y2 = it.endInclusive)
+                                }
+                            Euclidean2DPassage(this, neighbor, passageShape)
+                        }
                     }
-                    Euclidean2DPassage(this, neighbor, passageShape)
-                }
-            }
-            return passages + newRemaining.flatMap {
+                return passages +
+                    newRemaining.flatMap {
                 /*
                  * The portions of edge that became passages won't be considered further.
                  */
-                it.subtractAll(neighborToIntervals.flatMap { (_, intervals) -> intervals })
-            }.flatMap {
-                findPassages(index, seeds, origin, width, height, obstacles, unity, oldEdge, it)
+                        it.subtractAll(neighborToIntervals.flatMap { (_, intervals) -> intervals })
+                    }.flatMap {
+                        findPassages(index, seeds, origin, width, height, obstacles, unity, oldEdge, it)
+                    }
             }
-        }
 
     private fun createSeed(
         x: Double,
@@ -244,6 +254,10 @@ object NaviGator {
     /**
      * Creates a [Segment2D]. [x2] defaults to [x1] and [y2] defaults to [y1].
      */
-    private fun createSegment(x1: Double, y1: Double, x2: Double = x1, y2: Double = y1) =
-        Segment2DImpl(Euclidean2DPosition(x1, y1), Euclidean2DPosition(x2, y2))
+    private fun createSegment(
+        x1: Double,
+        y1: Double,
+        x2: Double = x1,
+        y2: Double = y1,
+    ) = Segment2DImpl(Euclidean2DPosition(x1, y1), Euclidean2DPosition(x2, y2))
 }

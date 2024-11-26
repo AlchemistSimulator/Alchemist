@@ -64,11 +64,12 @@ kotlin {
  * If unspecified, the classpath is not correctly built when including common code from MP dependencies,
  * resulting in runtime errors.
  */
-private fun mpClasspath(): Provider<FileCollection> = tasks.named("compileKotlinJvm")
-    .map { it.outputs.files }
-    .flatMap { compileKtOutputs ->
-        configurations.named("jvmRuntimeClasspath").map { compileKtOutputs + it }
-    }
+private fun mpClasspath(): Provider<FileCollection> =
+    tasks.named("compileKotlinJvm")
+        .map { it.outputs.files }
+        .flatMap { compileKtOutputs ->
+            configurations.named("jvmRuntimeClasspath").map { compileKtOutputs + it }
+        }
 
 application {
     mainClass.set("it.unibo.alchemist.Alchemist")
@@ -110,9 +111,10 @@ tasks.withType<ShadowJar> {
     destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })
     // Run the jar and check the output
     val minJavaVersion: String by properties
-    val javaExecutable = javaToolchains
-        .launcherFor { languageVersion.set(JavaLanguageVersion.of(minJavaVersion)) }
-        .map { it.executablePath.asFile.absolutePath }
+    val javaExecutable =
+        javaToolchains
+            .launcherFor { languageVersion.set(JavaLanguageVersion.of(minJavaVersion)) }
+            .map { it.executablePath.asFile.absolutePath }
     val testShadowJar = testShadowJar(javaExecutable, archiveFile)
     testShadowJar.configure {
         dependsOn(this@withType)
@@ -122,124 +124,143 @@ tasks.withType<ShadowJar> {
 }
 
 // Disable distTar and distZip
-val toDisable = listOf(
-    tasks.distTar,
-    tasks.distZip,
-    tasks.jpackage,
-    tasks.shadowDistZip,
-    tasks.shadowDistTar,
-).map { it.name }
+val toDisable =
+    listOf(
+        tasks.distTar,
+        tasks.distZip,
+        tasks.jpackage,
+        tasks.shadowDistZip,
+        tasks.shadowDistTar,
+    ).map { it.name }
 tasks.matching { it.name in toDisable }.configureEach { enabled = false }
 
 sealed interface PackagingMethod
+
 data class ValidPackaging(val format: ImageType, val perUser: Boolean = false) : PackagingMethod {
     val name get() = format.formatName
 
     override fun toString() = "$name packaging${ " (userspace)".takeIf { perUser }.orEmpty() }"
 }
+
 data class DisabledPackaging(val reason: String) : PackagingMethod
 
 val ImageType.formatName get() = name.lowercase()
-fun ImageType.disabledBecause(reason: String): List<DisabledPackaging> = listOf(
-    DisabledPackaging("$formatName packaging disabled because $reason"),
-)
-fun ImageType.disabledOnNon(os: String): List<DisabledPackaging> = disabledBecause("unsupported non non-$os systems")
-fun ImageType.valid(): List<ValidPackaging> = listOf(ValidPackaging(this))
-fun ImageType.validIfCommandExists(command: String): List<PackagingMethod> = when {
-    commandExists(command) -> valid()
-    else -> disabledBecause("the required command '$command' could not be found in PATH.")
-}
 
-val packageRequirements: List<PackagingMethod> = ImageType.values().flatMap { format ->
-    when (format) {
-        EXE, MSI -> if (isWindows) format.valid() else format.disabledOnNon("Windows")
-        DMG, PKG -> if (isMac) format.valid() else format.disabledOnNon("MacOS")
-        DEB -> when {
-            isWindows || isMac -> format.disabledOnNon("Linux")
-            else -> format.validIfCommandExists("dpkg")
-        }
-        RPM -> when {
-            isWindows || isMac -> format.disabledOnNon("Linux")
-            else -> format.validIfCommandExists("rpmbuild")
-        }
-        else -> format.disabledBecause("it is currently not supported. If needed, open a feature request.")
+fun ImageType.disabledBecause(reason: String): List<DisabledPackaging> =
+    listOf(
+        DisabledPackaging("$formatName packaging disabled because $reason"),
+    )
+
+fun ImageType.disabledOnNon(os: String): List<DisabledPackaging> = disabledBecause("unsupported non non-$os systems")
+
+fun ImageType.valid(): List<ValidPackaging> = listOf(ValidPackaging(this))
+
+fun ImageType.validIfCommandExists(command: String): List<PackagingMethod> =
+    when {
+        commandExists(command) -> valid()
+        else -> disabledBecause("the required command '$command' could not be found in PATH.")
     }
-}
+
+val packageRequirements: List<PackagingMethod> =
+    ImageType.values().flatMap { format ->
+        when (format) {
+            EXE, MSI -> if (isWindows) format.valid() else format.disabledOnNon("Windows")
+            DMG, PKG -> if (isMac) format.valid() else format.disabledOnNon("MacOS")
+            DEB ->
+                when {
+                    isWindows || isMac -> format.disabledOnNon("Linux")
+                    else -> format.validIfCommandExists("dpkg")
+                }
+            RPM ->
+                when {
+                    isWindows || isMac -> format.disabledOnNon("Linux")
+                    else -> format.validIfCommandExists("rpmbuild")
+                }
+            else -> format.disabledBecause("it is currently not supported. If needed, open a feature request.")
+        }
+    }
 
 val (validFormats, disabledFormats) = packageRequirements.partitionIsInstance<PackagingMethod, ValidPackaging>()
 
 disabledFormats.filterIsInstance<DisabledPackaging>().forEach { logger.warn(it.reason) }
 
 val versionComponentExtractor = Regex("^(\\d+\\.\\d+\\.)(\\d+)(.*)$")
+
 private data class SemVerExtracted(val base: String, val patch: String, val suffix: String) {
-    fun asMangledVersion(): String = "${base}0${patch}0${
-        when {
-            suffix.isBlank() -> ""
-            else -> {
-                val asBytes = suffix.toByteArray(StandardCharsets.UTF_8)
-                Hashing.murmur3_32_fixed().hashBytes(asBytes).padToLong().toUInt().toString()
+    fun asMangledVersion(): String =
+        "${base}0${patch}0${
+            when {
+                suffix.isBlank() -> ""
+                else -> {
+                    val asBytes = suffix.toByteArray(StandardCharsets.UTF_8)
+                    Hashing.murmur3_32_fixed().hashBytes(asBytes).padToLong().toUInt().toString()
+                }
             }
-        }
-    }"
+        }"
 }
+
 private fun String.extractVersionComponents(): SemVerExtracted {
-    val (base, patch, suffix) = versionComponentExtractor.matchEntire(this)
-        ?.destructured
-        ?: error("Invalid version format: $this")
+    val (base, patch, suffix) =
+        versionComponentExtractor.matchEntire(this)
+            ?.destructured
+            ?: error("Invalid version format: $this")
     return SemVerExtracted(base, patch, suffix)
 }
 
 validFormats.forEach { packaging: ValidPackaging ->
     val baseVersion: Provider<String> = provider { rootProject.version.toString() }
-    val packageSpecificVersion = baseVersion.map { version ->
-        when (packaging.format) {
-            MSI, EXE -> version.substringBefore('-')
-            DMG, PKG -> version.extractVersionComponents().asMangledVersion()
-            RPM -> version.replace('-', '.')
-            else -> version
+    val packageSpecificVersion =
+        baseVersion.map { version ->
+            when (packaging.format) {
+                MSI, EXE -> version.substringBefore('-')
+                DMG, PKG -> version.extractVersionComponents().asMangledVersion()
+                RPM -> version.replace('-', '.')
+                else -> version
+            }
         }
-    }
-    val packagingTaskNameSuffix = packaging.name.replaceFirstChar { it.titlecase() } +
-        "PerUser".takeIf { packaging.perUser }.orEmpty()
-    val packagingTask = tasks.register<JPackageTask>("jpackage$packagingTaskNameSuffix") {
-        dependsOn(tasks.shadowJar)
+    val packagingTaskNameSuffix =
+        packaging.name.replaceFirstChar { it.titlecase() } +
+            "PerUser".takeIf { packaging.perUser }.orEmpty()
+    val packagingTask =
+        tasks.register<JPackageTask>("jpackage$packagingTaskNameSuffix") {
+            dependsOn(tasks.shadowJar)
 
-        group = "Distribution"
-        description = "Creates application bundle through jpackage using $packaging"
-        // General info
-        resourceDir = "$projectDir/package-settings"
-        appName = rootProject.name
-        appVersion = packageSpecificVersion.get()
-        copyright = "Danilo Pianini and the Alchemist contributors"
-        aboutUrl = "https://alchemistsimulator.github.io/"
-        appDescription = rootProject.description
-        licenseFile = "${rootProject.projectDir}/LICENSE.md"
+            group = "Distribution"
+            description = "Creates application bundle through jpackage using $packaging"
+            // General info
+            resourceDir = "$projectDir/package-settings"
+            appName = rootProject.name
+            appVersion = packageSpecificVersion.get()
+            copyright = "Danilo Pianini and the Alchemist contributors"
+            aboutUrl = "https://alchemistsimulator.github.io/"
+            appDescription = rootProject.description
+            licenseFile = "${rootProject.projectDir}/LICENSE.md"
 
-        type = packaging.format
-        input = tasks.shadowJar.get().archiveFile.get().asFile.parent
-        // Packaging settings
-        destination = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path
-        mainJar = tasks.shadowJar.get().archiveFileName.get()
-        mainClass = application.mainClass.get()
-        verbose = true
+            type = packaging.format
+            input = tasks.shadowJar.get().archiveFile.get().asFile.parent
+            // Packaging settings
+            destination = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path
+            mainJar = tasks.shadowJar.get().archiveFileName.get()
+            mainClass = application.mainClass.get()
+            verbose = true
 
-        linux {
-            icon = "${project.projectDir}/package-settings/logo.png"
-            linuxShortcut = true
-            linuxDebMaintainer = "Danilo Pianini"
-            linuxRpmLicenseType = "GPLv3"
+            linux {
+                icon = "${project.projectDir}/package-settings/logo.png"
+                linuxShortcut = true
+                linuxDebMaintainer = "Danilo Pianini"
+                linuxRpmLicenseType = "GPLv3"
+            }
+            windows {
+                icon = "${project.projectDir}/package-settings/logo.ico"
+                winDirChooser = true
+                winPerUserInstall = packaging.perUser
+                winShortcutPrompt = true
+                winConsole = true
+            }
+            mac {
+                icon = "${project.projectDir}/package-settings/logo.png"
+            }
         }
-        windows {
-            icon = "${project.projectDir}/package-settings/logo.ico"
-            winDirChooser = true
-            winPerUserInstall = packaging.perUser
-            winShortcutPrompt = true
-            winConsole = true
-        }
-        mac {
-            icon = "${project.projectDir}/package-settings/logo.png"
-        }
-    }
     tasks.assemble.configure { dependsOn(packagingTask) }
     // AUR Package based on the RPM distribution
     if (packaging.format == RPM) {
@@ -272,22 +293,24 @@ validFormats.forEach { packaging: ValidPackaging ->
                         md5.update(it.readNBytes(10 * 1024 * 1024))
                     }
                 }
-                val replacements = templateStrings.associateWith { key ->
-                    when {
-                        "VERSION" in key -> baseVersion.get().replace('-', '.')
-                        "RPM_URL" in key ->
-                            "https://github.com/AlchemistSimulator/Alchemist/releases/download/" +
-                                "${baseVersion.get()}/" +
-                                // Replace x86_64 with $CARCH to avoid namcap warnings
-                                rpmFileName.replace("x86_64", "\$CARCH")
-                        "RPM_MD5" in key -> md5.digest().toHexString()
-                        else -> error("Unknown PKGBUILD replacement key $key")
+                val replacements =
+                    templateStrings.associateWith { key ->
+                        when {
+                            "VERSION" in key -> baseVersion.get().replace('-', '.')
+                            "RPM_URL" in key ->
+                                "https://github.com/AlchemistSimulator/Alchemist/releases/download/" +
+                                    "${baseVersion.get()}/" +
+                                    // Replace x86_64 with $CARCH to avoid namcap warnings
+                                    rpmFileName.replace("x86_64", "\$CARCH")
+                            "RPM_MD5" in key -> md5.digest().toHexString()
+                            else -> error("Unknown PKGBUILD replacement key $key")
+                        }
                     }
-                }
-                val pkgbuildContent = replacements.toList().fold(template) { base, replacement ->
-                    val (key, actualValue) = replacement
-                    base.replace(key, actualValue)
-                }
+                val pkgbuildContent =
+                    replacements.toList().fold(template) { base, replacement ->
+                        val (key, actualValue) = replacement
+                        base.replace(key, actualValue)
+                    }
                 outputDir.resolve("PKGBUILD").writeText(pkgbuildContent)
             }
         }

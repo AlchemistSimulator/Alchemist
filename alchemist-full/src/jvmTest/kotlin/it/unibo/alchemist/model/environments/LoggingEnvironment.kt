@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory
 class LoggingEnvironment(
     incarnation: Incarnation<Any, Euclidean2DPosition>,
 ) : Continuous2DEnvironment<Any>(incarnation) {
-
     init {
         val logger = LoggerFactory.getLogger(LoggingEnvironment::class.java)
         logger.trace("TRACE MESSAGE")

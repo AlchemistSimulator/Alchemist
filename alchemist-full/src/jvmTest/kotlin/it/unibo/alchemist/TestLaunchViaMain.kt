@@ -40,7 +40,6 @@ class TestLaunchViaMain : StringSpec({
     }
 }) {
     companion object {
-
         private fun launchWithLoggingOption(option: String?): String {
             val writer = ByteArrayOutputStream()
             val systemOut = System.out

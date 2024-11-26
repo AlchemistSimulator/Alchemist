@@ -22,7 +22,9 @@ import kotlin.math.nextUp
 /**
  * Base implementation of a [CellProperty].
  */
-class Cell @JvmOverloads constructor(
+class Cell
+@JvmOverloads
+constructor(
     /**
      * The environment in which [node] is moving.
      */
@@ -30,16 +32,16 @@ class Cell @JvmOverloads constructor(
     override val node: Node<Double>,
     override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
 ) : AbstractNodeProperty<Double>(node), CellProperty<Euclidean2DPosition> {
-
     override var polarizationVersor: Euclidean2DPosition = Euclidean2DPosition.zero
 
     override fun addPolarizationVersor(versor: Euclidean2DPosition) {
         val tempCor = (polarizationVersor + versor.coordinates).coordinates
         val module = FastMath.hypot(tempCor[0], tempCor[1])
-        polarizationVersor = when (module) {
-            in 0.0.nextDown()..0.0.nextUp() -> Euclidean2DPosition.zero
-            else -> Euclidean2DPosition(tempCor[0] / module, tempCor[1] / module)
-        }
+        polarizationVersor =
+            when (module) {
+                in 0.0.nextDown()..0.0.nextUp() -> Euclidean2DPosition.zero
+                else -> Euclidean2DPosition(tempCor[0] / module, tempCor[1] / module)
+            }
     }
 
     override fun cloneOnNewNode(node: Node<Double>) = Cell(environment, node)

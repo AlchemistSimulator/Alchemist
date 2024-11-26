@@ -42,11 +42,12 @@ private val INCARNATION = BiochemistryIncarnation()
 private val BIOMOLECULE = INCARNATION.createMolecule("token")
 private val BIOMOLECULE_A = INCARNATION.createMolecule("A")
 private val BIOMOLECULE_B = INCARNATION.createMolecule("B")
-private val JUNCTION = Junction(
-    "A-B",
-    mapOf(Pair(BIOMOLECULE_A, 1.0)),
-    mapOf(Pair(BIOMOLECULE_B, 1.0)),
-)
+private val JUNCTION =
+    Junction(
+        "A-B",
+        mapOf(Pair(BIOMOLECULE_A, 1.0)),
+        mapOf(Pair(BIOMOLECULE_B, 1.0)),
+    )
 private val RANDOM = MersenneTwister()
 private val TIME = ExponentialTime<Double>(1.0, RANDOM)
 private val LINKING_RULE =
@@ -80,11 +81,12 @@ class TestNeighborhoodReactionsPropensities : StringSpec({
         centralNode = INCARNATION.createNode(RANDOM, environment, null)
         centralNode.setConcentration(BIOMOLECULE, 100.0)
         environment.addNode(centralNode, POSITION)
-        neighbors = 1.rangeTo(10)
-            .map { Pair(it * 10.0, INCARNATION.createNode(RANDOM, environment, null)) }
-            .onEach { it.second.setConcentration(BIOMOLECULE, it.first) }
-            .map { it.second }
-            .onEach { environment.addNode(it, POSITION) }
+        neighbors =
+            1.rangeTo(10)
+                .map { Pair(it * 10.0, INCARNATION.createNode(RANDOM, environment, null)) }
+                .onEach { it.second.setConcentration(BIOMOLECULE, it.first) }
+                .map { it.second }
+                .onEach { environment.addNode(it, POSITION) }
         environment.getNeighborhood(centralNode).neighbors.toList() shouldContainExactly neighbors.toList()
     }
 }
@@ -94,9 +96,10 @@ private fun testSimulation(reactionText: String) {
     centralNode.addReaction(reaction)
     environment.startSimulationWithoutParameters(
         stepDone = {
-            val checks = reaction.conditions
-                .filterIsInstance<AbstractNeighborCondition<Double>>()
-                .flatMap { it.validNeighbors.map { (node, value) -> Container(it, node, value) } }
+            val checks =
+                reaction.conditions
+                    .filterIsInstance<AbstractNeighborCondition<Double>>()
+                    .flatMap { it.validNeighbors.map { (node, value) -> Container(it, node, value) } }
             for (it in checks) {
                 it shouldHave it.expectedPropensity
             }
@@ -111,36 +114,44 @@ private data class Container(
 )
 
 private val Container.expectedPropensity: Matcher<Container>
-    get() = object : Matcher<Container> {
-        @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
-        override fun test(value: Container): MatcherResult {
-            val expectedPropensity = when (condition) {
-                is NeighborhoodPresent -> node.neighborhoodPresentPropensity
-                is JunctionPresentInCell -> node.junctionPresentPropensity
-                is BiomolPresentInNeighbor -> node.biomoleculeInNeighborPropensity
-                else -> error("Unknown neighbor condition")
+    get() =
+        object : Matcher<Container> {
+            @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
+            override fun test(value: Container): MatcherResult {
+                val expected =
+                    when (condition) {
+                        is NeighborhoodPresent -> node.neighborhoodPresentPropensity
+                        is JunctionPresentInCell -> node.junctionPresentPropensity
+                        is BiomolPresentInNeighbor -> node.biomoleculeInNeighborPropensity
+                        else -> error("Unknown neighbor condition")
+                    }
+                return MatcherResult(
+                    expected == propensity,
+                    { "node $node expected propensity $expected for condition $condition but has $propensity" },
+                    { "node $node should not have propensity $expected for condition $condition but it has" },
+                )
             }
-            return MatcherResult(
-                expectedPropensity == propensity,
-                { "node $node expected propensity $expectedPropensity for condition $condition but has $propensity" },
-                { "node $node should not have propensity $expectedPropensity for condition $condition but it has" },
-            )
         }
-    }
 
 private val Node<Double>.neighborhoodPresentPropensity: Double
     get() = checkCellNodeAndGetPropensity { 1.0 }
 
 private val Node<Double>.junctionPresentPropensity: Double
-    get() = checkCellNodeAndGetPropensity {
-        centralNode.asProperty<Double, CellProperty<Euclidean2DPosition>>()
-            .junctions.getOrDefault(JUNCTION, emptyMap()).getOrDefault(it, 0).toDouble()
-    }
+    get() =
+        checkCellNodeAndGetPropensity {
+            centralNode.asProperty<Double, CellProperty<Euclidean2DPosition>>()
+                .junctions.getOrDefault(JUNCTION, emptyMap()).getOrDefault(it, 0).toDouble()
+        }
 
 private val Node<Double>.biomoleculeInNeighborPropensity: Double
-    get() = checkCellNodeAndGetPropensity {
-        binomialCoefficientDouble(it.getConcentration(BIOMOLECULE).toInt(), BIOMOLECULE_NEEDED)
-    }
+    get() =
+        checkCellNodeAndGetPropensity {
+            binomialCoefficientDouble(it.getConcentration(BIOMOLECULE).toInt(), BIOMOLECULE_NEEDED)
+        }
 
 private fun Node<Double>.checkCellNodeAndGetPropensity(propensityFunction: (Node<Double>) -> Double) =
-    if (this.asPropertyOrNull(CellProperty::class) != null) { propensityFunction(this) } else { 0.0 }
+    if (this.asPropertyOrNull(CellProperty::class) != null) {
+        propensityFunction(this)
+    } else {
+        0.0
+    }

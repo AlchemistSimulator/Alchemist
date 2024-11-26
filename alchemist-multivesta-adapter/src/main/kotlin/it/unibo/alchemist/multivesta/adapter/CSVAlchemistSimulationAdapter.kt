@@ -15,7 +15,7 @@ import java.io.File
 /**
  * This is a [AlchemistSimulationAdapter] that loads an already executed simulation's data from a CSV file.
  * The file is chosen by randomly selecting a seed from the currently available seeds list and then
- * by applying the [filenameForSeed] function to the selected seed.
+ * by applying the `filenameForSeed` function to the selected seed.
  * The selected seed is then removed from the available seeds list.
  * @param seed the seed used to select the seed to use for the simulation,
  *        i.e. the seed given from MultiVesta

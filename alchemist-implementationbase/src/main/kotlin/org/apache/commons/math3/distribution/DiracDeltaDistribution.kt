@@ -23,7 +23,6 @@ import org.apache.commons.math3.random.RandomGenerator
  *
  */
 class DiracDeltaDistribution constructor(val value: Double) : RealDistribution, java.io.Serializable {
-
     /**
      * This constructor is meant for reflection compatibility only.
      * [randomGenerator] is unused.

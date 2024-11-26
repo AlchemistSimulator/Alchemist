@@ -33,7 +33,6 @@ open class ToggleMoleculeRandomly<T>(
     concentration: T,
     private val odds: Double,
 ) : ToggleMolecule<T>(node, molecule, concentration) {
-
     init {
         require(odds in 0.0..1.0) {
             "Probability of toggling should in [0, 1], provided: $odds"

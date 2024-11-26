@@ -22,7 +22,6 @@ import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
 data class GoTo<T, P : Position<P>>(
     private val destination: P,
 ) : TargetSelectionStrategy<T, P> {
-
     /**
      * @param environment: the environment executing the simulation,
      * @param destination: an indefinite number of [Number] values that indicates the coordinates of the destination.

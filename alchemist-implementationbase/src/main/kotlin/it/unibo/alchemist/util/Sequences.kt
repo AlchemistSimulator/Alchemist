@@ -13,7 +13,6 @@ package it.unibo.alchemist.util
  * Container object for utility functions related to [Sequence]s.
  */
 object Sequences {
-
     /**
      * Performs the cartesian product of two sequences.
      */

@@ -16,7 +16,6 @@ import java.util.Collections
  * Utilities that extend the functionality of [Iterable].
  */
 object Iterables {
-
     /**
      * Fisher–Yates shuffle algorithm
      * using a [RandomGenerator].

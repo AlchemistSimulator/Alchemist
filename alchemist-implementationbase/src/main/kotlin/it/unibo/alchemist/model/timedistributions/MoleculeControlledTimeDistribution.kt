@@ -47,7 +47,6 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
 ) : AnyRealDistribution<T>(
     start,
     object : RealDistribution {
-
         /*
          * Unknown values
          */

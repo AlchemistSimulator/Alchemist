@@ -15,7 +15,6 @@ import org.apache.commons.math3.random.RandomGenerator
  * Utilities that extend the functionality of [RandomGenerator].
  */
 object RandomGenerators {
-
     /**
      * Generate a random double between the given bounds.
      *

@@ -27,43 +27,49 @@ class AlchemistSimulationAdapterWithExtractor(
      */
     val extractor: Extractor<Any>,
 ) : AbstractAlchemistSimulationAdapter(simulation) {
-
     private var lastReaction: Actionable<Any>? = null
 
     init {
-        simulation.addOutputMonitor(object : OutputMonitor<Any, Nothing> {
-            override fun stepDone(
-                environment: Environment<Any, Nothing>,
-                reaction: Actionable<Any>?,
-                time: Time,
-                step: Long,
-            ) {
-                lastReaction = reaction
-            }
-        })
+        simulation.addOutputMonitor(
+            object : OutputMonitor<Any, Nothing> {
+                override fun stepDone(
+                    environment: Environment<Any, Nothing>,
+                    reaction: Actionable<Any>?,
+                    time: Time,
+                    step: Long,
+                ) {
+                    lastReaction = reaction
+                }
+            },
+        )
     }
 
-    override fun getObsValue(obs: String): Double = extractData()[obs]
-        ?: throw IllegalArgumentException("Observation $obs not found in the extractor")
+    override fun getObsValue(obs: String): Double =
+        extractData()[obs]
+            ?: throw IllegalArgumentException("Observation $obs not found in the extractor")
 
-    override fun getObsValue(obsId: Int): Double = when {
-        obsId < 0 -> throw IllegalArgumentException("Observation id $obsId is negative")
-        obsId == 0 -> simulation.time.numeric()
-        else -> extractData().entries.elementAt(obsId).value
-    }
+    override fun getObsValue(obsId: Int): Double =
+        when {
+            obsId < 0 -> throw IllegalArgumentException("Observation id $obsId is negative")
+            obsId == 0 -> simulation.time.numeric()
+            else -> extractData().entries.elementAt(obsId).value
+        }
 
-    private fun extractData(): Map<String, Double> = extractor
-        .extractData(simulation.environment, lastReaction, simulation.time, simulation.step)
-        .mapValues { it.value.toString().toDouble() }
+    private fun extractData(): Map<String, Double> =
+        extractor
+            .extractData(simulation.environment, lastReaction, simulation.time, simulation.step)
+            .mapValues { it.value.toString().toDouble() }
 
-    private inline fun <reified T : Number> Any.numeric(): T = when {
-        this is T -> this
-        this is Number -> when (T::class) {
-            Int::class -> toInt()
-            Double::class -> toDouble()
-            Long::class -> toLong()
+    private inline fun <reified T : Number> Any.numeric(): T =
+        when {
+            this is T -> this
+            this is Number ->
+                when (T::class) {
+                    Int::class -> toInt()
+                    Double::class -> toDouble()
+                    Long::class -> toLong()
+                    else -> TODO()
+                } as T
             else -> TODO()
-        } as T
-        else -> TODO()
-    }
+        }
 }

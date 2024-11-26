@@ -33,7 +33,6 @@ class ExperimentAlchemistSimulationAdapter(
     seed: Int,
     rootOutputFiles: File = File("data"),
 ) : CSVAlchemistSimulationAdapter(seed, rootOutputFiles, { "coord_deployment-${gridType}_seed-$it.0.csv" }) {
-
     /**
      * The type of grid used in the experiment.
      */

@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit
  * Launches a single simulation run that can be controlled by MultiVesta.
  */
 class AlchemistMultiVestaSimulationLauncher : DefaultLauncher() {
-
     private val logger = LoggerFactory.getLogger(AlchemistMultiVestaSimulationLauncher::class.java)
 
     /**

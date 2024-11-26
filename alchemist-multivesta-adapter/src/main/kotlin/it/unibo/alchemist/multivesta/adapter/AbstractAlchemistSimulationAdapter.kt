@@ -23,18 +23,18 @@ import java.util.concurrent.TimeUnit
 abstract class AbstractAlchemistSimulationAdapter(
     private val simulation: Simulation<Any, Nothing>,
 ) : AlchemistSimulationAdapter {
-
     private val logger = LoggerFactory.getLogger(AbstractAlchemistSimulationAdapter::class.java)
 
     final override fun getTime(): Double {
         return simulation.time.toDouble()
     }
 
-    final override fun rval(obs: String): Double = when (obs) {
-        "time" -> getTime()
-        "step" -> simulation.step.toDouble()
-        else -> getObsValue(obs)
-    }
+    final override fun rval(obs: String): Double =
+        when (obs) {
+            "time" -> getTime()
+            "step" -> simulation.step.toDouble()
+            else -> getObsValue(obs)
+        }
 
     final override fun rval(obsId: Int): Double = getObsValue(obsId)
 

@@ -24,7 +24,9 @@ import org.apache.commons.math3.random.RandomGenerator
  * Gaussian bivariate function and uses its probability density to deploy.
  * Higher [variance] spreads nodes farther away from the trace with higher probability.
  */
-class CloseToGPSTrace<T> @JvmOverloads constructor(
+class CloseToGPSTrace<T>
+@JvmOverloads
+constructor(
     randomGenerator: RandomGenerator,
     environment: Environment<T, GeoPosition>,
     nodeCount: Int,
@@ -36,18 +38,19 @@ class CloseToGPSTrace<T> @JvmOverloads constructor(
     normalizerClass: String,
     vararg normalizerArguments: Any,
 ) : AbstractCloseTo<T, GeoPosition>(randomGenerator, environment, nodeCount, variance) {
+    private val traces =
+        TraceLoader(
+            gpsFilePath,
+            normalizerClass,
+            *normalizerArguments,
+        )
 
-    private val traces = TraceLoader(
-        gpsFilePath,
-        normalizerClass,
-        *normalizerArguments,
-    )
-
-    override val sources = traces.asSequence()
-        .flatMap { trace ->
-            generateSequence(from) { it + interval }
-                .takeWhile { it <= to }
-                .map { trace.interpolate(it) }
-                .map { doubleArrayOf(it.latitude, it.longitude) }
-        }
+    override val sources =
+        traces.asSequence()
+            .flatMap { trace ->
+                generateSequence(from) { it + interval }
+                    .takeWhile { it <= to }
+                    .map { trace.interpolate(it) }
+                    .map { doubleArrayOf(it.latitude, it.longitude) }
+            }
 }

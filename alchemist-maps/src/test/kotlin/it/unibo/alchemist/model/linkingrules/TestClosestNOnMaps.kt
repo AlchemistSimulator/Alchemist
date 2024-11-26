@@ -16,10 +16,11 @@ import it.unibo.alchemist.model.nodes.GenericNode
 
 class TestClosestNOnMaps : StringSpec({
     "Use ClosestN on maps" {
-        val environment = OSMEnvironment(
-            SupportedIncarnations.get<Any, GeoPosition>("protelis").orElseGet { TODO() },
-            "maps/cesena.pbf",
-        )
+        val environment =
+            OSMEnvironment(
+                SupportedIncarnations.get<Any, GeoPosition>("protelis").orElseGet { TODO() },
+                "maps/cesena.pbf",
+            )
         environment.linkingRule = ClosestN(10)
         environment.addNode(
             object : GenericNode<Any>(environment) {

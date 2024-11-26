@@ -38,11 +38,15 @@ class RandomTargetInPolygonOnMap<T, O : RoutingServiceOptions<O>, S : RoutingSer
     { current, final -> PolygonalChain(current, final) },
     ConstantSpeed(reaction, speed),
     object : ChangeTargetOnCollision<T, GeoPosition>({ environment.getPosition(node) }) {
-        override fun chooseTarget() = positionGenerator.stream()
-            .findFirst()
-            .orElseThrow { IllegalStateException("Bug in Alchemist.") }
+        override fun chooseTarget() =
+            positionGenerator.stream()
+                .findFirst()
+                .orElseThrow { IllegalStateException("Bug in Alchemist.") }
 
-        override fun cloneIfNeeded(destination: Node<T>?, reaction: Reaction<T>?) = this
+        override fun cloneIfNeeded(
+            destination: Node<T>?,
+            reaction: Reaction<T>?,
+        ) = this
     },
 ) {
     constructor(

@@ -30,14 +30,16 @@ import java.util.concurrent.atomic.AtomicInteger
  * If [parallelism] is greater than 1, the simulations are run in parallel;
  * defaults to the number of logical cores detected by the JVM.
  */
-open class DefaultLauncher @JvmOverloads constructor(
+open class DefaultLauncher
+@JvmOverloads
+constructor(
     val batch: List<String> = emptyList(),
     val autoStart: Boolean = true,
     val showProgress: Boolean = true,
     val parallelism: Int = Runtime.getRuntime().availableProcessors(),
 ) : Launcher {
-
-    @JvmOverloads constructor(
+    @JvmOverloads
+    constructor(
         autoStart: Boolean,
         showProgress: Boolean = true,
         parallelism: Int = Runtime.getRuntime().availableProcessors(),
@@ -48,11 +50,12 @@ open class DefaultLauncher @JvmOverloads constructor(
      */
     @Synchronized
     override fun launch(loader: Loader) {
-        fun Simulation<*, *>.configured() = apply {
-            if (autoStart) {
-                play()
+        fun Simulation<*, *>.configured() =
+            apply {
+                if (autoStart) {
+                    play()
+                }
             }
-        }
         val instances = loader.variables.cartesianProductOf(batch)
         if (instances.isEmpty()) {
             BugReporting.reportBug(
@@ -73,9 +76,10 @@ open class DefaultLauncher @JvmOverloads constructor(
                 }
             else -> {
                 val workerId = AtomicInteger(0)
-                val executor = Executors.newFixedThreadPool(parallelism) {
-                    Thread(it, "Alchemist Pool $launchId worker ${workerId.getAndIncrement()}")
-                }
+                val executor =
+                    Executors.newFixedThreadPool(parallelism) {
+                        Thread(it, "Alchemist Pool $launchId worker ${workerId.getAndIncrement()}")
+                    }
                 val errorQueue = ConcurrentLinkedDeque<Throwable>()
                 instances.forEachIndexed { index, instance ->
                     executor.submit {
@@ -128,18 +132,19 @@ open class DefaultLauncher @JvmOverloads constructor(
             require(keys.containsAll(variables)) {
                 "Variables ${variables - keys} are not defined. Valid values are: $this"
             }
-            val variableValues = variables.map { variableName ->
-                this[variableName]
-                    ?.map { variableName to it }
-                    ?: BugReporting.reportBug(
-                        "Variable was supposed to be available, but it is not",
-                        mapOf(
-                            "variableName" to variableName,
-                            "requested variables" to variables,
-                            "available variables" to this,
-                        ),
-                    )
-            }.toList()
+            val variableValues =
+                variables.map { variableName ->
+                    this[variableName]
+                        ?.map { variableName to it }
+                        ?: BugReporting.reportBug(
+                            "Variable was supposed to be available, but it is not",
+                            mapOf(
+                                "variableName" to variableName,
+                                "requested variables" to variables,
+                                "available variables" to this,
+                            ),
+                        )
+                }.toList()
             return Lists.cartesianProduct(variableValues)
                 .map { it.toMap() }
                 .takeUnless { it.isEmpty() }

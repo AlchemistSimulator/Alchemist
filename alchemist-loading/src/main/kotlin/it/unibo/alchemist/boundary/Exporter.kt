@@ -20,7 +20,6 @@ import it.unibo.alchemist.model.Time
  * [P] is the position type, and
  */
 interface Exporter<T, P : Position<P>> {
-
     /**
      *  The List of [Extractor] used to export simulations data.
      */
@@ -46,11 +45,20 @@ interface Exporter<T, P : Position<P>> {
      * Main method used by exporters to export data.
      * This method is called at each step of the simulation.
      */
-    fun update(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long)
+    fun update(
+        environment: Environment<T, P>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    )
 
     /**
      * Close the export environment.
      * This method is called when the simulation finishes.
      */
-    fun close(environment: Environment<T, P>, time: Time, step: Long)
+    fun close(
+        environment: Environment<T, P>,
+        time: Time,
+        step: Long,
+    )
 }

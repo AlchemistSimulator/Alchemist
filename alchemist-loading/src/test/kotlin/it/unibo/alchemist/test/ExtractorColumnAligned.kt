@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.Time
  */
 class ExtractorColumnAligned : Extractor<Int> {
     override val columnNames = listOf("d", "c", "b", "a")
+
     override fun <T> extractData(
         environment: Environment<T, *>,
         reaction: Actionable<T>?,

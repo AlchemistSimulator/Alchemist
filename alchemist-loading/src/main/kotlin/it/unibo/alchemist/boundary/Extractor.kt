@@ -21,7 +21,6 @@ import it.unibo.alchemist.model.Time
  *
  */
 interface Extractor<out E : Any> {
-
     /**
      * Extracts properties from an environment. The returned map must either:
      *   - contain a single element,

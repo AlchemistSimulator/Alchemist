@@ -29,12 +29,13 @@ import kotlin.reflect.jvm.jvmName
  * @param formula the script that will get interpreted
  * @param timeout how long should the interpreter be allowed to compute before giving up, in ms. Defaults to 1000ms.
  */
-data class JSR223Variable @JvmOverloads constructor(
+data class JSR223Variable
+@JvmOverloads
+constructor(
     val language: String,
     val formula: String,
     val timeout: Long = 1000,
 ) : DependentVariable<Any?> {
-
     private val engine by lazy {
         with(ScriptEngineManager()) {
             getEngineByName(language)
@@ -66,32 +67,36 @@ data class JSR223Variable @JvmOverloads constructor(
      * if the value can not be computed, e.g. because there are
      * unassigned required variables
      */
-    override fun getWith(variables: Map<String, Any?>): Any? = synchronized(engine) {
-        runCatching {
-            runBlocking {
-                withTimeout(timeout) {
-                    engine.eval(formula, variables.asBindings())
+    override fun getWith(variables: Map<String, Any?>): Any? =
+        synchronized(engine) {
+            runCatching {
+                runBlocking {
+                    withTimeout(timeout) {
+                        engine.eval(formula, variables.asBindings())
+                    }
                 }
-            }
-        }.getOrElse { cause ->
-            val whatHappened = "A $language script evaluation failed"
-            val whyHappened = when (cause) {
-                is ScriptException -> "due to an error in the script: ${cause.message}"
-                is TimeoutCancellationException -> """
-                    because it reached its ${timeout}ms timeout.
-                    This is usually a sign that something is looping.
-                    Either make the script run faster, or allow for a longer time by specifiying a different
-                    `${DocumentRoot.DependentVariable.timeout}`.
-                """.trimIndent().replace(Regex("\\R"), "")
-                else -> """
+            }.getOrElse { cause ->
+                val whatHappened = "A $language script evaluation failed"
+                val whyHappened =
+                    when (cause) {
+                        is ScriptException -> "due to an error in the script: ${cause.message}"
+                        is TimeoutCancellationException ->
+                            """
+                                because it reached its ${timeout}ms timeout.
+                                This is usually a sign that something is looping.
+                                Either make the script run faster, or allow for a longer time by specifiying a different
+                                `${DocumentRoot.DependentVariable.timeout}`.
+                            """.trimIndent().replace(Regex("\\R"), "")
+                        else ->
+                            """
                     |for a reason unknown to Alchemist. 
                     |${cause::class.jvmName}: ${cause.message}"
-                """.trimMargin()
+                            """.trimMargin()
+                    }
+                val inspection = "context: $variables\nscript:\n$formula"
+                throw IllegalArgumentException("$whatHappened $whyHappened\n$inspection", cause)
             }
-            val inspection = "context: $variables\nscript:\n$formula"
-            throw IllegalArgumentException("$whatHappened $whyHappened\n$inspection", cause)
         }
-    }
 
     private fun Map<String, Any?>.asBindings(): Bindings = SimpleBindings(toMutableMap())
 }

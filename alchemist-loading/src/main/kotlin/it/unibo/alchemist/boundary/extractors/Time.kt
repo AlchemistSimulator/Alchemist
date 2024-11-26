@@ -16,8 +16,9 @@ import it.unibo.alchemist.model.Time
 /**
  * Exports a column with the current time.
  */
-class Time @JvmOverloads constructor(precision: Int? = null) : AbstractDoubleExporter(precision) {
-
+class Time
+@JvmOverloads
+constructor(precision: Int? = null) : AbstractDoubleExporter(precision) {
     override val columnNames = listOf(name)
 
     override fun <T> extractData(

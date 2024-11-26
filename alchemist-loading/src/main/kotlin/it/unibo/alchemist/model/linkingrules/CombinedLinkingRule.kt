@@ -22,10 +22,12 @@ import it.unibo.alchemist.model.neighborhoods.Neighborhoods
 class CombinedLinkingRule<T, P : Position<P>>(
     val subRules: List<LinkingRule<T, P>>,
 ) : LinkingRule<T, P> {
-
     private val isConsistent by lazy { subRules.all { it.isLocallyConsistent } }
 
-    override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>) = Neighborhoods.make(
+    override fun computeNeighborhood(
+        center: Node<T>,
+        environment: Environment<T, P>,
+    ) = Neighborhoods.make(
         environment,
         center,
         // Add all neigbours as per subrule

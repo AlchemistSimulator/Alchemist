@@ -16,9 +16,10 @@ import org.kaikikm.threadresloader.ResourceLoader
 
 class TestGlobalReactionLoading : FreeSpec({
     "environment should contain a global reaction" {
-        val environment = LoadAlchemist.from(ResourceLoader.getResource("testGlobalReactionLoading.yml"))
-            .getDefault<Nothing, Nothing>()
-            .environment
+        val environment =
+            LoadAlchemist.from(ResourceLoader.getResource("testGlobalReactionLoading.yml"))
+                .getDefault<Nothing, Nothing>()
+                .environment
         environment.globalReactions shouldHaveSize 1
     }
 })

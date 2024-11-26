@@ -36,7 +36,9 @@ import kotlin.math.min
  *            aggregating data. If an empty list is passed, then the values
  *            will be logged indipendently for each node.
  */
-class MoleculeReader @JvmOverloads constructor(
+class MoleculeReader
+@JvmOverloads
+constructor(
     moleculeName: String,
     private val property: String?,
     private val incarnation: Incarnation<*, *>,
@@ -44,18 +46,18 @@ class MoleculeReader @JvmOverloads constructor(
     aggregatorNames: List<String>,
     precision: Int? = null,
 ) : AbstractDoubleExporter(precision) {
-
     private companion object {
         private const val SHORT_NAME_MAX_LENGTH = 5
     }
 
     private val molecule: Molecule = incarnation.createMolecule(moleculeName)
 
-    private val aggregators: Map<String, UnivariateStatistic> = aggregatorNames
-        .associateWith { StatUtil.makeUnivariateStatistic(it) }
-        .filter { it.value.isPresent }
-        .map { it.key to it.value.get() }
-        .toMap()
+    private val aggregators: Map<String, UnivariateStatistic> =
+        aggregatorNames
+            .associateWith { StatUtil.makeUnivariateStatistic(it) }
+            .filter { it.value.isPresent }
+            .map { it.key to it.value.get() }
+            .toMap()
 
     private val propertyText =
         if (property.isNullOrEmpty()) {
@@ -64,14 +66,16 @@ class MoleculeReader @JvmOverloads constructor(
             property.replace("[^\\d\\w]*".toRegex(), "")
         }
 
-    private val shortProp = propertyText.takeIf(String::isEmpty)
-        ?: "${propertyText.substring(0..<min(propertyText.length, SHORT_NAME_MAX_LENGTH))}@"
+    private val shortProp =
+        propertyText.takeIf(String::isEmpty)
+            ?: "${propertyText.substring(0..<min(propertyText.length, SHORT_NAME_MAX_LENGTH))}@"
 
     private val singleColumnName: String = "$shortProp$moleculeName"
 
-    override val columnNames: List<String> = aggregators.keys.takeIf { it.isNotEmpty() }
-        ?.map { "$singleColumnName[$it]" }
-        ?: listOf("$singleColumnName@node-id")
+    override val columnNames: List<String> =
+        aggregators.keys.takeIf { it.isNotEmpty() }
+            ?.map { "$singleColumnName[$it]" }
+            ?: listOf("$singleColumnName@node-id")
 
     override fun <T> extractData(
         environment: Environment<T, *>,
@@ -81,9 +85,10 @@ class MoleculeReader @JvmOverloads constructor(
     ): Map<String, Double> {
         fun Node<T>.extractData() = environment.incarnation.getProperty(this, molecule, property)
         return when {
-            aggregators.isEmpty() -> environment.nodes.asSequence().map { node ->
-                "$singleColumnName@${node.id}" to node.extractData()
-            }.toMap()
+            aggregators.isEmpty() ->
+                environment.nodes.asSequence().map { node ->
+                    "$singleColumnName@${node.id}" to node.extractData()
+                }.toMap()
             else -> {
                 val filtered = environment.nodes.flatMap { filter.apply(it.extractData()) }.toDoubleArray()
                 aggregators.map { (aggregatorName, aggregator) ->

@@ -19,21 +19,23 @@ import org.kaikikm.threadresloader.ResourceLoader
 
 class TestGraphStream : FreeSpec({
     "the lobster deployment should" - {
-        val environment = LoadAlchemist.from(ResourceLoader.getResource("graphstream/testlobster.yml"))
-            .getDefault<Nothing, Nothing>()
-            .environment
+        val environment =
+            LoadAlchemist.from(ResourceLoader.getResource("graphstream/testlobster.yml"))
+                .getDefault<Nothing, Nothing>()
+                .environment
         "displace all nodes" - {
             environment.nodeCount shouldBeExactly 400
             "with neighbors closer than non-neighbors" {
                 environment.nodes.forEach { node ->
                     val neighborhood = environment.getNeighborhood(node)
-                    val averageDistances = environment.nodes.asSequence()
-                        .groupBy { it in neighborhood }
-                        .mapValues { (_, nodes) ->
-                            nodes.asSequence()
-                                .map { environment.getDistanceBetweenNodes(node, it) }
-                                .average()
-                        }
+                    val averageDistances =
+                        environment.nodes.asSequence()
+                            .groupBy { it in neighborhood }
+                            .mapValues { (_, nodes) ->
+                                nodes.asSequence()
+                                    .map { environment.getDistanceBetweenNodes(node, it) }
+                                    .average()
+                            }
                     val min = averageDistances[true] ?: Double.POSITIVE_INFINITY
                     val max = averageDistances[false] ?: Double.NEGATIVE_INFINITY
                     2 * min shouldBeLessThan max
@@ -41,8 +43,9 @@ class TestGraphStream : FreeSpec({
             }
         }
         "create links" - {
-            val neighborhoods = environment.nodes
-                .map { environment.getNeighborhood(it).neighbors }
+            val neighborhoods =
+                environment.nodes
+                    .map { environment.getNeighborhood(it).neighbors }
             neighborhoods.forEach { it.shouldNotBeEmpty() }
             "asymmetrically" {
                 println(neighborhoods)

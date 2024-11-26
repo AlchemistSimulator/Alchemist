@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.Time
  * Logs the number of nodes in the scenario.
  */
 class NumberOfNodes : Extractor<Int> {
-
     override val columnNames = listOf(name)
 
     override fun <T> extractData(

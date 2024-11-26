@@ -17,13 +17,15 @@ import it.unibo.alchemist.model.Time
  * An extractor which provides informations about the running time of the simulation.
  * Optionally, a [precision] (significant digits) can be provided.
  */
-class ExecutionTime @JvmOverloads constructor(
+class ExecutionTime
+@JvmOverloads
+constructor(
     precision: Int? = null,
 ) : AbstractDoubleExporter(precision) {
-
     private companion object {
         private const val NANOS_TO_SEC: Double = 1e9
     }
+
     private val colName: String = "runningTime"
     private var firstRun: Boolean = true
     private var initial: Long = 0L

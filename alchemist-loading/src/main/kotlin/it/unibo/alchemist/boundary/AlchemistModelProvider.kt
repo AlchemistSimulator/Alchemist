@@ -17,7 +17,6 @@ import java.net.URL
  * Translates inputs to a Map representing the Alchemist model.
  */
 interface AlchemistModelProvider {
-
     /**
      * A [Regex] matching the file extensions supported by this provider.
      */

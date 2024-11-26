@@ -42,36 +42,40 @@ class GraphStreamSupport<T, P : Position<out P>>(
      * Contains methods to generate a [GraphStreamSupport].
      */
     companion object {
-
         private val generators = ClassPathScanner.subTypesOf<BaseGenerator>("org.graphstream")
 
-        private val factory: Factory = FactoryBuilder()
-            .withAutoBoxing<Int>()
-            .withAutomaticToString()
-            .withArrayBoxing()
-            .withWideningConversions()
-            .withNarrowingConversions()
-            .build()
+        private val factory: Factory =
+            FactoryBuilder()
+                .withAutoBoxing<Int>()
+                .withAutomaticToString()
+                .withArrayBoxing()
+                .withWideningConversions()
+                .withNarrowingConversions()
+                .build()
 
-        private fun generateGenerator(generatorName: String, vararg parameters: Any): BaseGenerator {
+        private fun generateGenerator(
+            generatorName: String,
+            vararg parameters: Any,
+        ): BaseGenerator {
             val generatorClasses = findSuitableGeneratorsFor(generatorName)
             val parameterList = parameters.toList()
-            val created = generatorClasses.asSequence()
-                .map { synchronized(factory) { factory.build(it, parameterList) } }
-                .map { construction ->
-                    if (construction.createdObject.isPresent) {
-                        Either.Right(construction.createdObject.get())
-                    } else {
-                        Either.Left(construction.exceptions)
+            val created =
+                generatorClasses.asSequence()
+                    .map { synchronized(factory) { factory.build(it, parameterList) } }
+                    .map { construction ->
+                        if (construction.createdObject.isPresent) {
+                            Either.Right(construction.createdObject.get())
+                        } else {
+                            Either.Left(construction.exceptions)
+                        }
                     }
-                }
-                .reduceOrNull { a, b ->
-                    when {
-                        a is Either.Left && b is Either.Left -> Either.Left(a.value + b.value)
-                        a is Either.Right -> a
-                        else -> b
+                    .reduceOrNull { a, b ->
+                        when {
+                            a is Either.Left && b is Either.Left -> Either.Left(a.value + b.value)
+                            a is Either.Right -> a
+                            else -> b
+                        }
                     }
-                }
             return when (created) {
                 is Either.Left -> throw created.value.values.reduce { a, b -> a.also { it.addSuppressed(b) } }
                 is Either.Right -> created.value
@@ -85,14 +89,17 @@ class GraphStreamSupport<T, P : Position<out P>>(
 
         private fun findSuitableGeneratorsFor(generator: String) =
             with(generators) {
-                val exactMatch = find {
-                    it.simpleName == generator || it.simpleName == "${generator}Generator"
-                }
-                val match = when {
-                    exactMatch != null -> listOf(exactMatch)
-                    else ->
-                        filter { it.simpleName.startsWith(generator, ignoreCase = true) }.takeUnless { it.isEmpty() }
-                }
+                val exactMatch =
+                    find {
+                        it.simpleName == generator || it.simpleName == "${generator}Generator"
+                    }
+                val match =
+                    when {
+                        exactMatch != null -> listOf(exactMatch)
+                        else ->
+                            filter { it.simpleName.startsWith(generator, ignoreCase = true) }
+                                .takeUnless { it.isEmpty() }
+                    }
                 match ?: throw IllegalArgumentException(
                     "None of the candidates in ${map { it.simpleName }} matches requested generator $generator",
                 )
@@ -141,25 +148,28 @@ class GraphStreamSupport<T, P : Position<out P>>(
                 }
                 end()
             }
-            do { layout.compute() } while (layout.stabilization < max(layoutQuality, 0.0.nextUp()))
-            val originalCoordinates = graph.nodes()
-                .map { it.getAttribute("xyz") }
-                .map { coordinates ->
-                    require(coordinates is Array<*>) {
-                        "Unexpected type '${coordinates?.let { it::class }}', an array was expected"
+            do {
+                layout.compute()
+            } while (layout.stabilization < max(layoutQuality, 0.0.nextUp()))
+            val originalCoordinates =
+                graph.nodes()
+                    .map { it.getAttribute("xyz") }
+                    .map { coordinates ->
+                        require(coordinates is Array<*>) {
+                            "Unexpected type '${coordinates?.let { it::class }}', an array was expected"
+                        }
+                        coordinates.map { (it as Number).toDouble() }
                     }
-                    coordinates.map { (it as Number).toDouble() }
-                }
-                .map { coordinate -> coordinate.map { (it as Number).toDouble() }.toDoubleArray() }
-                .collect(Collectors.toList())
+                    .map { coordinate -> coordinate.map { (it as Number).toDouble() }.toDoubleArray() }
+                    .collect(Collectors.toList())
             val sum = originalCoordinates.reduce(MathArrays::ebeAdd)
             val sizes = DoubleArray(sum.size) { graph.nodeCount.toDouble() }
             val barycenter = ebeDivide(sum, sizes)
             val zooms = DoubleArray(sum.size) { zoom }
             val offsets = doubleArrayOf(offsetX, offsetY, offsetZ)
             val shift = ebeAdd(barycenter, offsets)
-            fun DoubleArray.zoomAndPan(): DoubleArray =
-                ebeAdd(shift, ebeMultiply(zooms, ebeSubtract(this, barycenter)))
+
+            fun DoubleArray.zoomAndPan(): DoubleArray = ebeAdd(shift, ebeMultiply(zooms, ebeSubtract(this, barycenter)))
             return GraphStreamSupport(OffsetGraphStreamLinkingRule<T, P>(environment.nodeCount, graph)) {
                 originalCoordinates.stream().map {
                     val shifted = it.zoomAndPan()

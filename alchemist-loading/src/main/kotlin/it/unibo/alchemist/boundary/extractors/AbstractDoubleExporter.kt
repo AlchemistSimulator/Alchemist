@@ -20,8 +20,9 @@ import java.util.Locale
  * Provided a [precision] representing the significant digits, formats doubles accordingly, using [Locale.ENGLISH].
  * If `null` is provided, returns the default conversion to string.
  */
-abstract class AbstractDoubleExporter @JvmOverloads constructor(val precision: Int? = null) : Extractor<Double> {
-
+abstract class AbstractDoubleExporter
+@JvmOverloads
+constructor(val precision: Int? = null) : Extractor<Double> {
     init {
         require(precision == null || precision > 0) {
             "Significant digits must be positive"
@@ -33,9 +34,10 @@ abstract class AbstractDoubleExporter @JvmOverloads constructor(val precision: I
     /**
      * Uses this formatter to format some Double-encoded [data].
      */
-    protected fun format(data: Double): String = precision?.run {
-        String.format(Locale.ENGLISH, formatString, data)
-    } ?: data.toString()
+    protected fun format(data: Double): String =
+        precision?.run {
+            String.format(Locale.ENGLISH, formatString, data)
+        } ?: data.toString()
 
     final override fun <T> extractDataAsText(
         environment: Environment<T, *>,

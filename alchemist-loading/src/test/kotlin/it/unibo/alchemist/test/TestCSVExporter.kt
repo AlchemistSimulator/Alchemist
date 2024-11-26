@@ -28,12 +28,14 @@ class TestCSVExporter<T, P : Position<P>> : FreeSpec({
     "CSV files" - {
         val simulation = loadAlchemist<T, P>("testCSVExporter.yml")
         simulation.runInCurrentThread()
-        val globalExporter = simulation.outputMonitors.filterIsInstance<GlobalExporter<T, P>>()
-            .let {
-                it.size shouldBe 1
-                it.first()
-            }
+        val globalExporter =
+            simulation.outputMonitors.filterIsInstance<GlobalExporter<T, P>>()
+                .let {
+                    it.size shouldBe 1
+                    it.first()
+                }
         globalExporter.exporters.size shouldBe 2
+
         suspend fun CSVExporter<T, P>.dataFile(prefix: String): File =
             File(exportPath)
                 .listFiles()
@@ -69,18 +71,19 @@ class TestCSVExporter<T, P : Position<P>> : FreeSpec({
         simulation.runInCurrentThread()
         val exporter = simulation.csvExporters().first()
         // Get the first line of the output produce by CSVExporter
-        val exporterFirstLine = File(exporter.exportPath).listFiles()
-            ?.first { it.name.startsWith("column-alignment") }
-            ?.readLines()
-            ?.dropWhile { !it.contains("d c b a") } // remove the lines before the column names
-            ?.drop(1) // I am not interested in column head
-            ?.first()
+        val exporterFirstLine =
+            File(exporter.exportPath).listFiles()
+                ?.first { it.name.startsWith("column-alignment") }
+                ?.readLines()
+                ?.dropWhile { !it.contains("d c b a") } // remove the lines before the column names
+                ?.drop(1) // I am not interested in column head
+                ?.first()
         exporterFirstLine.shouldNotBeNull()
         exporterFirstLine.shouldNotBeEmpty()
         exporterFirstLine.shouldContain("0 1 2 3")
     }
 }) {
-    /* common utility functions */
+    // common utility functions
     companion object {
         fun <T, P : Position<P>> Simulation<T, P>.csvExporters(): List<CSVExporter<T, P>> =
             outputMonitors.filterIsInstance<GlobalExporter<T, P>>()

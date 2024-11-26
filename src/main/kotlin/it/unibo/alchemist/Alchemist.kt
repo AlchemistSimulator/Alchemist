@@ -49,47 +49,50 @@ object Alchemist {
         val parser = ArgParser("alchemist")
         val run = createRunCommand(parser)
         parser.subcommands(run)
-        val actualArgs = args.takeIf { it.isNotEmpty() } ?: arrayOf("--help").also {
-            println("No valid arguments provided, showing help")
-        }
+        val actualArgs =
+            args.takeIf { it.isNotEmpty() } ?: arrayOf("--help").also {
+                println("No valid arguments provided, showing help")
+            }
         parser.parse(actualArgs)
     }
 
     @OptIn(ExperimentalCli::class)
     private fun createRunCommand(parser: ArgParser): Subcommand {
         class Run : Subcommand("run", "Run a simulation or a batch of simulations") {
-
             val simulationFile by parser.argument(
                 type = ArgType.String,
                 fullName = "simulation file",
-                description = """
-                File with the simulation configuration.
+                description =
+                """
+                    File with the simulation configuration.
                 """.trimIndent(),
             )
 
             val verbosity by parser.option(
                 type = ArgType.Choice<Verbosity>(),
                 fullName = "verbosity",
-                description = """
-                Simulation logging verbosity level. Choose one of the following values:
-               
-                - debug
-                - info
-                - warn
-                - error
-                - all
-                - off
-                
-                defaults to "warn"
+                description =
+                """
+                    Simulation logging verbosity level. Choose one of the following values:
+                    
+                    - debug
+                    - info
+                    - warn
+                    - error
+                    - all
+                    - off
+                    
+                    defaults to "warn"
                 """.trimIndent(),
             ).default(Verbosity.WARN)
 
             val overrides by parser.option(
                 type = ArgType.String,
                 fullName = "override",
-                description = """
-                Valid yaml files used to override simulation config,
-                files are applied sequentially.
+                description =
+                """
+                    Valid yaml files used to override simulation config,
+                    files are applied sequentially.
                 """.trimIndent(),
             ).multiple()
 
@@ -119,10 +122,14 @@ object Alchemist {
         }
     }
 
-    private fun createLoader(simulationFile: String, overrides: List<String>): Loader {
-        val url = ResourceLoader.getResource(simulationFile)
-            ?: File(simulationFile).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
-            ?: error("No classpath resource or file $simulationFile was found")
+    private fun createLoader(
+        simulationFile: String,
+        overrides: List<String>,
+    ): Loader {
+        val url =
+            ResourceLoader.getResource(simulationFile)
+                ?: File(simulationFile).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
+                ?: error("No classpath resource or file $simulationFile was found")
         return LoadAlchemist.from(
             url,
             overrides,
@@ -133,11 +140,11 @@ object Alchemist {
         require(SupportedIncarnations.getAvailableIncarnations().isNotEmpty()) {
             logger.error(
                 """
-                    Alchemist requires an incarnation to execute, but none was found in the classpath.
-                    Please refer to the alchemist manual at https://alchemistsimulator.github.io to learn more on
-                    how to include incarnations in your project.
-                    If you believe this is a bug, please open a report at:
-                    https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
+                Alchemist requires an incarnation to execute, but none was found in the classpath.
+                Please refer to the alchemist manual at https://alchemistsimulator.github.io to learn more on
+                how to include incarnations in your project.
+                If you believe this is a bug, please open a report at:
+                https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
                 """.trimIndent().trim().replace('\n', ' '),
             )
             "There are no incarnations in the classpath, no simulation can get executed"
@@ -161,9 +168,10 @@ object Alchemist {
         root.level = level
         root.addAppender(
             ConsoleAppender<ILoggingEvent?>().apply {
-                encoder = PatternLayoutEncoder().apply {
-                    pattern = "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n"
-                }
+                encoder =
+                    PatternLayoutEncoder().apply {
+                        pattern = "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n"
+                    }
             },
         )
     }
@@ -176,7 +184,11 @@ object Alchemist {
     }
 
     private enum class ExitStatus {
-        OK, INVALID_CLI, NO_LOGGER, NUMBER_FORMAT_ERROR, MULTIPLE_VERBOSITY
+        OK,
+        INVALID_CLI,
+        NO_LOGGER,
+        NUMBER_FORMAT_ERROR,
+        MULTIPLE_VERBOSITY,
     }
 
     /**

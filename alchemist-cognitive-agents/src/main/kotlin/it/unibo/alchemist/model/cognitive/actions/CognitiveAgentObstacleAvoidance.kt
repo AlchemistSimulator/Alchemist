@@ -36,33 +36,37 @@ class CognitiveAgentObstacleAvoidance<W : it.unibo.alchemist.model.Obstacle2D<Eu
     override val pedestrian: PedestrianProperty<T>,
     private val proximityRange: Double,
 ) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
-
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentObstacleAvoidance<W, T> {
+    override fun cloneAction(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ): CognitiveAgentObstacleAvoidance<W, T> {
         check(reaction is SteeringBehavior<T>) {
             "steering behavior needed but found ${this.reaction::class.run { simpleName ?: jvmName } }"
         }
         return CognitiveAgentObstacleAvoidance(environment, reaction, node.pedestrianProperty, proximityRange)
     }
 
-    override fun nextPosition(): Euclidean2DPosition = target().let { target ->
-        environment.getObstaclesInRange(currentPosition, proximityRange)
-            .asSequence()
-            .map { obstacle: W ->
-                obstacle.nearestIntersection(currentPosition, target) to obstacle.bounds2D
-            }
-            .minByOrNull { (intersection, _) -> currentPosition.distanceTo(intersection) }
-            ?.let { (intersection, bound) -> intersection to environment.makePosition(bound.centerX, bound.centerY) }
-            ?.let { (intersection, center) -> (intersection - center).coerceAtMost(maxWalk) }
+    override fun nextPosition(): Euclidean2DPosition =
+        target().let { target ->
+            environment.getObstaclesInRange(currentPosition, proximityRange)
+                .asSequence()
+                .map { obstacle: W ->
+                    obstacle.nearestIntersection(currentPosition, target) to obstacle.bounds2D
+                }
+                .minByOrNull { (intersection, _) -> currentPosition.distanceTo(intersection) }
+                ?.let { (intersect, bound) -> intersect to environment.makePosition(bound.centerX, bound.centerY) }
+                ?.let { (intersection, center) -> (intersection - center).coerceAtMost(maxWalk) }
             /*
              * Otherwise we just don't apply any repulsion force.
              */
-            ?: environment.origin
-    }
+                ?: environment.origin
+        }
 
     /**
      * Computes the target of the node, delegating to [reaction].steerStrategy.computeTarget.
      */
-    private fun target(): Euclidean2DPosition = with(reaction) {
-        steerStrategy.computeTarget(steerActions().filterNot { it is CognitiveAgentObstacleAvoidance<*, *> })
-    }
+    private fun target(): Euclidean2DPosition =
+        with(reaction) {
+            steerStrategy.computeTarget(steerActions().filterNot { it is CognitiveAgentObstacleAvoidance<*, *> })
+        }
 }

@@ -34,7 +34,6 @@ interface NavigationAction<T, P, A, L, R, N, E> : SteeringAction<T, P>
           A : Transformation<P>,
           L : ConvexShape<P, A>,
           N : ConvexShape<P, A> {
-
     /**
      * The owner of this action.
      */

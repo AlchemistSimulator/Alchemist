@@ -34,15 +34,18 @@ open class CognitiveAgentFollowLayer(
     override val pedestrian: PedestrianProperty<Number>,
     targetMolecule: Molecule,
 ) : AbstractLayerAction(euclidean, reaction, pedestrian, targetMolecule) {
-
-    private val followScalarField = getLayerOrFail().let { layer ->
-        CognitiveAgentFollowScalarField(environment, reaction, pedestrian, layer.center()) {
-            layer.concentrationIn(it)
+    private val followScalarField =
+        getLayerOrFail().let { layer ->
+            CognitiveAgentFollowScalarField(environment, reaction, pedestrian, layer.center()) {
+                layer.concentrationIn(it)
+            }
         }
-    }
 
     override fun nextPosition(): Euclidean2DPosition = followScalarField.nextPosition()
 
-    override fun cloneAction(node: Node<Number>, reaction: Reaction<Number>): CognitiveAgentFollowLayer =
+    override fun cloneAction(
+        node: Node<Number>,
+        reaction: Reaction<Number>,
+    ): CognitiveAgentFollowLayer =
         CognitiveAgentFollowLayer(environment, reaction, node.pedestrianProperty, targetMolecule)
 }

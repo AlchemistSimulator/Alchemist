@@ -6,7 +6,6 @@ import com.uchuhimo.konf.ConfigSpec
  * A specification of the parameters regarding speeds to load from a config file.
  */
 object SpeedSpec : ConfigSpec() {
-
     /**
      * The walking speed of a young male.
      */

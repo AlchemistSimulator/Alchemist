@@ -27,7 +27,6 @@ open class Filtered<T, P>(
     private val filter: List<SteeringAction<T, P>>.() -> List<SteeringAction<T, P>>,
 ) : SteeringStrategy<T, P> by steerStrategy
     where P : Position<P>, P : Vector<P> {
-
     /**
      * Delegated to [steerStrategy] after [filter]ing the given [actions].
      */

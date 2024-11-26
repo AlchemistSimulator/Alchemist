@@ -75,7 +75,6 @@ class SinglePrevalent<T, N : ConvexPolygon>(
      */
     private val delta: Double = DEFAULT_DELTA,
 ) : Weighted<T>(environment, node, { 0.0 }) {
-
     /**
      * Default values for the parameters.
      */
@@ -135,8 +134,11 @@ class SinglePrevalent<T, N : ConvexPolygon>(
     /**
      * Linearly combines the forces assigning [othersWeight] to [others] and unitary weight to [prevalent].
      */
-    private fun <V : Vector<V>> combine(prevalent: V, others: List<V>, othersWeight: Double): V =
-        (others.map { it * othersWeight } + prevalent).reduce { acc, force -> acc + force }
+    private fun <V : Vector<V>> combine(
+        prevalent: V,
+        others: List<V>,
+        othersWeight: Double,
+    ): V = (others.map { it * othersWeight } + prevalent).reduce { acc, force -> acc + force }
 
     /**
      * Exponential smoothing is a trivial way of smoothing signals.
@@ -147,7 +149,6 @@ class SinglePrevalent<T, N : ConvexPolygon>(
     private class ExponentialSmoothing<V : Vector<V>>(
         private val alpha: Double,
     ) {
-
         init {
             require(alpha in 0.0..1.0) { "alpha should be in [0,1]" }
         }

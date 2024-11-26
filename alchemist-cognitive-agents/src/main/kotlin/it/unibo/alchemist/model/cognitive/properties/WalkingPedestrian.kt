@@ -17,10 +17,11 @@ import it.unibo.alchemist.model.properties.AbstractNodeProperty
 /**
  * Implementation of a basic [WalkingPedestrianProperty].
  */
-data class WalkingPedestrian<T> @JvmOverloads constructor(
+data class WalkingPedestrian<T>
+@JvmOverloads
+constructor(
     override val node: Node<T>,
     override val walkingSpeed: Double = Speed.default,
 ) : AbstractNodeProperty<T>(node), WalkingPedestrianProperty<T> {
-
     override fun cloneOnNewNode(node: Node<T>) = WalkingPedestrian(node, walkingSpeed)
 }

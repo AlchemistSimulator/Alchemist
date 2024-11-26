@@ -33,7 +33,9 @@ import org.jgrapht.graph.DefaultEdge
 /**
  * Base implementation of a node's [OrientingProperty].
  */
-abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
+abstract class Orienting<T, P, A, N, L>
+@JvmOverloads
+constructor(
     /**
      * The simulation [RandomGenerator].
      */
@@ -53,7 +55,6 @@ abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
           A : Transformation<P>,
           L : ConvexShape<P, A>,
           N : ConvexShape<P, A> {
-
     override val volatileMemory: MutableMap<ConvexShape<P, A>, Int> = HashMap()
 
     override val cognitiveMap: NavigationGraph<P, A, L, DefaultEdge> by lazy {
@@ -61,12 +62,13 @@ abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
         /*
          * The rooms in which landmarks will be placed.
          */
-        val rooms = environmentGraph.vertexSet()
-            .filter { it.diameter > node.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape.diameter * minArea }
-            .shuffled(randomGenerator)
-            .toList()
-            .takeFraction(knowledgeDegree)
-            .toMutableList()
+        val rooms =
+            environmentGraph.vertexSet()
+                .filter { it.diameter > node.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape.diameter * minArea }
+                .shuffled(randomGenerator)
+                .toList()
+                .takeFraction(knowledgeDegree)
+                .toMutableList()
         /*
          * landmarks[i] will contain the landmark generated in rooms[i].
          */
@@ -115,7 +117,6 @@ abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
      * Utility methods for [Graph]s.
      */
     companion object {
-
         /**
          * Checks whether a path exists between [source] and [sink].
          * [DijkstraShortestPath] is used instead of [org.jgrapht.alg.connectivity.ConnectivityInspector.pathExists],
@@ -124,7 +125,9 @@ abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
          * As unweighted graphs have a default edge weight of 1.0, shortest path algorithms can always be applied
          * meaningfully.
          */
-        fun <V> Graph<V, *>.pathExists(source: V, sink: V): Boolean =
-            DijkstraShortestPath.findPathBetween(this, source, sink) != null
+        fun <V> Graph<V, *>.pathExists(
+            source: V,
+            sink: V,
+        ): Boolean = DijkstraShortestPath.findPathBetween(this, source, sink) != null
     }
 }

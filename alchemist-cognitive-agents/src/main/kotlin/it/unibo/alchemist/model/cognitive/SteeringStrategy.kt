@@ -16,7 +16,6 @@ import it.unibo.alchemist.model.Position
  * are combined to calculate the next position to move on.
  */
 interface SteeringStrategy<T, P : Position<P>> {
-
     /**
      * Computes the next position starting from the steering actions the node obey to,
      * in relative coordinates with respect to its current position.

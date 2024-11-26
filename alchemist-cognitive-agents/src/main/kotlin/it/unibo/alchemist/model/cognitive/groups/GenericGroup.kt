@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.cognitive.Group
 open class GenericGroup<T, N : Node<T>>(
     members: List<N> = mutableListOf(),
 ) : Group<T>, MutableList<Node<T>> by mutableListOf() {
-
     init {
         members.forEach { this.addMember(it) }
     }

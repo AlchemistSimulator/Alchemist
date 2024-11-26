@@ -26,7 +26,6 @@ interface OrientingAgent<V, A, L, R> where
       V : Vector<V>,
       A : Transformation<V>,
       L : ConvexShape<V, A> {
-
     /**
      * The knowledge degree of the agent concerning the environment. This is a Double value in [0, 1] describing the
      * percentage of environment the agent is familiar with prior to the start of the simulation (thus it does not

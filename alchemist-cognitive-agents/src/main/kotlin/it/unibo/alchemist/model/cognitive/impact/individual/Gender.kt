@@ -4,7 +4,6 @@ package it.unibo.alchemist.model.cognitive.impact.individual
  * An enum representing the different genders.
  */
 enum class Gender : Characteristic {
-
     /**
      * Male.
      */
@@ -29,10 +28,11 @@ enum class Gender : Characteristic {
          * @param gender
          *          the gender as a string.
          */
-        fun fromString(gender: String): Gender = when {
-            gender.equals(MALE_KEYWORD, ignoreCase = true) -> MALE
-            gender.equals(FEMALE_KEYWORD, ignoreCase = true) -> FEMALE
-            else -> throw IllegalArgumentException("$gender is not a valid gender")
-        }
+        fun fromString(gender: String): Gender =
+            when {
+                gender.equals(MALE_KEYWORD, ignoreCase = true) -> MALE
+                gender.equals(FEMALE_KEYWORD, ignoreCase = true) -> FEMALE
+                else -> throw IllegalArgumentException("$gender is not a valid gender")
+            }
     }
 }

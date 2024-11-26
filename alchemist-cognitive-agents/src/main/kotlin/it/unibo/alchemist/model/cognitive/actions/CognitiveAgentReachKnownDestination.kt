@@ -33,7 +33,6 @@ class CognitiveAgentReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
     override val pedestrian: PedestrianProperty<T>,
     vararg destinations: Number,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
-
     override var strategy: NavigationStrategy2D<T, L, R, ConvexPolygon, Euclidean2DPassage> by lazyMutable {
         ReachKnownDestination(this, destinations.toPositions(environment))
     }

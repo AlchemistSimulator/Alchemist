@@ -18,18 +18,17 @@ class Fear(
     private val desireEvacuate: () -> Double,
     private val influencialPeople: () -> List<CognitiveModel>,
 ) : MentalCognitiveCharacteristic() {
+    override fun combinationFunction() =
+        maxOf(
+            persistingOmega * currentLevel,
+            advancedLogistic(
+                advancedLogisticSigma,
+                advancedLogisticTau,
+                influencialPeople().aggregateFears(),
+                amplifyingFeelingOmega * desireEvacuate(),
+                inhibitingFeelingOmega * desireWalkRandomly(),
+            ),
+        )
 
-    override fun combinationFunction() = maxOf(
-        persistingOmega * currentLevel,
-        advancedLogistic(
-            advancedLogisticSigma,
-            advancedLogisticTau,
-            influencialPeople().aggregateFears(),
-            amplifyingFeelingOmega * desireEvacuate(),
-            inhibitingFeelingOmega * desireWalkRandomly(),
-        ),
-    )
-
-    private fun List<CognitiveModel>.aggregateFears() =
-        if (isEmpty()) 0.0 else sumOf { it.fear() } / this.size
+    private fun List<CognitiveModel>.aggregateFears() = if (isEmpty()) 0.0 else sumOf { it.fear() } / this.size
 }

@@ -34,7 +34,9 @@ import javax.imageio.ImageIO
  * marking each area of the environment with one or more pixels of a given color (defaults
  * to blue).
  */
-class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
+class ImageEnvironmentWithGraph<T>
+@JvmOverloads
+constructor(
     incarnation: Incarnation<T, Euclidean2DPosition>,
     path: String,
     zoom: Double = 1.0,
@@ -44,24 +46,25 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     roomsColor: Int = Color.BLUE.rgb,
 ) : ImageEnvironment<T>(incarnation, obstaclesColor, path, zoom, dx, dy),
     EuclideanPhysics2DEnvironmentWithGraph<RectObstacle2D<Euclidean2DPosition>, T, ConvexPolygon, Euclidean2DPassage> {
-
     override val graph: Euclidean2DNavigationGraph
 
     init {
         val resource = ResourceLoader.getResourceAsStream(path)
-        val img = if (resource == null) {
-            ImageIO.read(File(path))
-        } else {
-            ImageIO.read(resource)
-        }
+        val img =
+            if (resource == null) {
+                ImageIO.read(File(path))
+            } else {
+                ImageIO.read(resource)
+            }
         val obstacles = findMarkedRegions(obstaclesColor, img)
         val rooms = findMarkedRegions(roomsColor, img).map { Euclidean2DPosition(it.x, it.y) }
-        graph = generateNavigationGraph(
-            width = img.width.toDouble(),
-            height = img.height.toDouble(),
-            obstacles = obstacles,
-            rooms = rooms,
-        ).map { Euclidean2DPosition(it.x * zoom + dx, (img.height - it.y) * zoom + dy) }
+        graph =
+            generateNavigationGraph(
+                width = img.width.toDouble(),
+                height = img.height.toDouble(),
+                obstacles = obstacles,
+                rooms = rooms,
+            ).map { Euclidean2DPosition(it.x * zoom + dx, (img.height - it.y) * zoom + dy) }
     }
 
     private fun Euclidean2DNavigationGraph.map(

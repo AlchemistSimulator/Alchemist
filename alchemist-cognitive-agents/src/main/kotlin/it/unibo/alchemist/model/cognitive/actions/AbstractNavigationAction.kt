@@ -51,7 +51,6 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
           A : Transformation<P>,
           L : ConvexShape<P, A>,
           N : ConvexShape<P, A> {
-
     override val navigatingNode = node
 
     /**
@@ -129,36 +128,37 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
      */
     protected open fun updateCachedVariables() {
         pedestrianPosition = environment.getPosition(navigatingNode)
-        currentRoom = when {
-            (state == MOVING_TO_CROSSING_POINT_1 || state == MOVING_TO_FINAL) &&
-                previousRoom.orFail().contains(pedestrianPosition) ->
-                previousRoom
-            (state == MOVING_TO_CROSSING_POINT_2 || state == CROSSING_DOOR || state == NEW_ROOM) &&
-                expectedNewRoom?.contains(pedestrianPosition) ?: false ->
-                expectedNewRoom
-            else ->
-                environment.graph.vertexSet().firstOrNull { it.contains(pedestrianPosition) }
-        }
+        currentRoom =
+            when {
+                (state == MOVING_TO_CROSSING_POINT_1 || state == MOVING_TO_FINAL) &&
+                    previousRoom.orFail().contains(pedestrianPosition) ->
+                    previousRoom
+                (state == MOVING_TO_CROSSING_POINT_2 || state == CROSSING_DOOR || state == NEW_ROOM) &&
+                    expectedNewRoom?.contains(pedestrianPosition) ?: false ->
+                    expectedNewRoom
+                else ->
+                    environment.graph.vertexSet().firstOrNull { it.contains(pedestrianPosition) }
+            }
     }
 
     /**
      * Execute on navigation start.
      */
     protected open fun onStart() {
-        state = when {
-            currentRoom != null -> NEW_ROOM
+        state =
+            when {
+                currentRoom != null -> NEW_ROOM
             /*
              * If the node cannot locate itself inside any room on start, it simply won't move.
              */
-            else -> ARRIVED
-        }
+                else -> ARRIVED
+            }
     }
 
     /**
      * @returns all the doors (= passages/edges) outgoing from the current room.
      */
-    override fun doorsInSight(): List<E> =
-        currentRoom?.let { environment.graph.outgoingEdgesOf(it).toList() }.orEmpty()
+    override fun doorsInSight(): List<E> = currentRoom?.let { environment.graph.outgoingEdgesOf(it).toList() }.orEmpty()
 
     /**
      * The target of a directed edge of the environment's graph.
@@ -172,7 +172,10 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
      * - the second point must belong to the next room's boundary and will be pursued after
      * reaching the former one. [crossingPoints] may coincide if the two rooms are adjacent.
      */
-    protected open fun crossDoor(door: E, crossingPoints: Pair<P, P>) {
+    protected open fun crossDoor(
+        door: E,
+        crossingPoints: Pair<P, P>,
+    ) {
         require(doorsInSight().contains(door)) { "$door is not in sight" }
         state = MOVING_TO_CROSSING_POINT_1
         this.previousRoom = currentRoom.orFail()
@@ -195,34 +198,36 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
             }
         }
         if (desiredPosition.isReached()) {
-            state = when (state) {
-                MOVING_TO_CROSSING_POINT_1 ->
+            state =
+                when (state) {
+                    MOVING_TO_CROSSING_POINT_1 ->
                     /*
                      * Short-cut to save time.
                      */
-                    MOVING_TO_CROSSING_POINT_2
-                        .takeUnless { crossingPoints.orFail().run { first == second } }
-                        ?: CROSSING_DOOR
-                MOVING_TO_CROSSING_POINT_2 -> CROSSING_DOOR
-                MOVING_TO_FINAL -> ARRIVED
-                else -> state
-            }
+                        MOVING_TO_CROSSING_POINT_2
+                            .takeUnless { crossingPoints.orFail().run { first == second } }
+                            ?: CROSSING_DOOR
+                    MOVING_TO_CROSSING_POINT_2 -> CROSSING_DOOR
+                    MOVING_TO_FINAL -> ARRIVED
+                    else -> state
+                }
         }
     }
 
     /**
      * The position the node wants to reach.
      */
-    val desiredPosition: P get() = when (state) {
-        MOVING_TO_CROSSING_POINT_1 -> crossingPoints.orFail().first
-        MOVING_TO_CROSSING_POINT_2 -> crossingPoints.orFail().second
-        CROSSING_DOOR -> expectedNewRoom.orFail().centroid
-        MOVING_TO_FINAL -> finalDestination.orFail()
+    val desiredPosition: P get() =
+        when (state) {
+            MOVING_TO_CROSSING_POINT_1 -> crossingPoints.orFail().first
+            MOVING_TO_CROSSING_POINT_2 -> crossingPoints.orFail().second
+            CROSSING_DOOR -> expectedNewRoom.orFail().centroid
+            MOVING_TO_FINAL -> finalDestination.orFail()
         /*
          * Always up to date current position.
          */
-        else -> environment.getPosition(navigatingNode)
-    }
+            else -> environment.getPosition(navigatingNode)
+        }
 
     /**
      * Updates the internal state but does not move the node.
@@ -231,11 +236,12 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
         updateCachedVariables()
         when (state) {
             START -> onStart()
-            NEW_ROOM -> currentRoom.orFail().let {
-                navigatingNode.asProperty<T, OrientingProperty<T, P, A, L, N, E>>()
-                    .registerVisit(it)
-                strategy.inNewRoom(it)
-            }
+            NEW_ROOM ->
+                currentRoom.orFail().let {
+                    navigatingNode.asProperty<T, OrientingProperty<T, P, A, L, N, E>>()
+                        .registerVisit(it)
+                    strategy.inNewRoom(it)
+                }
             in MOVING_TO_CROSSING_POINT_1..MOVING_TO_FINAL -> moving()
             /*
              * Arrived.

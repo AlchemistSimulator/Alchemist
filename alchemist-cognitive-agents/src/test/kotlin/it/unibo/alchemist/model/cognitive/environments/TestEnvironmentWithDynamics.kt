@@ -53,9 +53,10 @@ class TestEnvironmentWithDynamics<T, P> : StringSpec({
         globalReaction.rate shouldBe 0.5
     }
     "PhysicsUpdate can be overriden only once" {
-        val environment = EnvironmentWithDynamics(
-            SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow(),
-        )
+        val environment =
+            EnvironmentWithDynamics(
+                SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow(),
+            )
         environment.addGlobalReaction(PhysicsUpdate(environment as Dynamics2DEnvironment<T>, 2.0))
         shouldThrow<IllegalArgumentException> {
             environment.addGlobalReaction(PhysicsUpdate(environment as Dynamics2DEnvironment<T>))

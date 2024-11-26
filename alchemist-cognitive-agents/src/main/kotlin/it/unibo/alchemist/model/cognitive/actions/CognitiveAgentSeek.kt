@@ -35,7 +35,6 @@ open class CognitiveAgentSeek<T, P, A>(
 ) : CognitiveAgentArrive<T, P, A>(environment, reaction, pedestrian, 0.0, 0.0, target)
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P> {
-
     constructor(
         environment: Environment<T, P>,
         reaction: Reaction<T>,
@@ -43,6 +42,8 @@ open class CognitiveAgentSeek<T, P, A>(
         vararg coordinates: Number,
     ) : this(environment, reaction, pedestrian, environment.makePosition(*coordinates))
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentSeek<T, P, A> =
-        CognitiveAgentSeek(environment, reaction, node.pedestrianProperty, target)
+    override fun cloneAction(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ): CognitiveAgentSeek<T, P, A> = CognitiveAgentSeek(environment, reaction, node.pedestrianProperty, target)
 }

@@ -27,7 +27,6 @@ class Sum<T>(
     override val node: Node<T>,
     override val nonPhysicalStrategy: SteeringStrategy<T, Euclidean2DPosition>,
 ) : PhysicalSteeringStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory> {
-
     private val nodePhysics = node.asProperty<T, PhysicalPedestrian2D<T>>()
 
     override fun computeNextPosition(overallIntentionalForce: Euclidean2DPosition): Euclidean2DPosition =

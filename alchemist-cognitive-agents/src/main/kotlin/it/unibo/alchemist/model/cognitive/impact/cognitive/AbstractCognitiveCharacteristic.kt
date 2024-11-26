@@ -10,7 +10,6 @@ import it.unibo.alchemist.util.math.logistic
  * The generic implementation of a cognitive characteristic.
  */
 abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
-
     /**
      * The current level of this characteristic.
      */
@@ -33,8 +32,9 @@ abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
      * These are described in the [IMPACT model](https://doi.org/10.1007/978-3-319-70647-4_11).
      */
     companion object {
-        private val config = Config { addSpec(CognitiveSpec) }
-            .from.toml.resource(PARAMETERS_FILE)
+        private val config =
+            Config { addSpec(CognitiveSpec) }
+                .from.toml.resource(PARAMETERS_FILE)
 
         /**
          * Capacity of sensing the danger.

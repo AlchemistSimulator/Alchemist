@@ -29,7 +29,6 @@ class CognitiveAgentExplore<T, L : Euclidean2DConvexShape, R>(
     reaction: Reaction<T>,
     override val pedestrian: PedestrianProperty<T>,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
-
     init {
         strategy = Explore(this)
     }

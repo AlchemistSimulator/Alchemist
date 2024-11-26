@@ -38,7 +38,6 @@ class CognitiveAgentFollowScalarField<T, P, A>(
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position2D<P>, P : Vector2D<P>,
           A : Transformation<P> {
-
     /**
      * @returns the next relative position reached by the node. The set of reachable positions is discretized
      * using [Vector2D.surrounding] from the current position (radius is [maxWalk]). If the scalar field has a
@@ -47,35 +46,42 @@ class CognitiveAgentFollowScalarField<T, P, A>(
      * maximum value is then selected: if its value is higher than the current one, the node moves there.
      * Otherwise, it doesn't move at all.
      */
-    override fun nextPosition(): P = currentPosition.let { currentPosition ->
-        val centerProjectedPositions = center?.let {
-            val direction = (center - currentPosition).coerceAtMost(maxWalk)
-            listOf(currentPosition + direction, currentPosition - direction)
+    override fun nextPosition(): P =
+        currentPosition.let { currentPosition ->
+            val centerProjectedPositions =
+                center?.let {
+                    val direction = (center - currentPosition).coerceAtMost(maxWalk)
+                    listOf(currentPosition + direction, currentPosition - direction)
+                }
+            (currentPosition.surrounding(maxWalk) + centerProjectedPositions.orEmpty())
+                .asSequence()
+                .enforceObstacles(currentPosition)
+                .enforceOthers()
+                /*
+                 * Next relative position.
+                 */
+                .maxOr(currentPosition) - currentPosition
         }
-        (currentPosition.surrounding(maxWalk) + centerProjectedPositions.orEmpty())
-            .asSequence()
-            .enforceObstacles(currentPosition)
-            .enforceOthers()
-            /*
-             * Next relative position.
-             */
-            .maxOr(currentPosition) - currentPosition
-    }
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
+    override fun cloneAction(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ): CognitiveAgentFollowScalarField<T, P, A> =
         CognitiveAgentFollowScalarField(environment, reaction, node.pedestrianProperty, center, valueIn)
 
-    private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> = when (environment) {
-        is EnvironmentWithObstacles<*, T, P> ->
-            map { (environment as EnvironmentWithObstacles<*, T, P>).next(currentPosition, it) }
-        else -> this
-    }
+    private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> =
+        when (environment) {
+            is EnvironmentWithObstacles<*, T, P> ->
+                map { (environment as EnvironmentWithObstacles<*, T, P>).next(currentPosition, it) }
+            else -> this
+        }
 
-    private fun Sequence<P>.enforceOthers(): Sequence<P> = when (environment) {
-        is PhysicsEnvironment<T, P, *, *> ->
-            map { (environment as PhysicsEnvironment<T, P, *, *>).farthestPositionReachable(node, it) }
-        else -> this
-    }
+    private fun Sequence<P>.enforceOthers(): Sequence<P> =
+        when (environment) {
+            is PhysicsEnvironment<T, P, *, *> ->
+                map { (environment as PhysicsEnvironment<T, P, *, *>).farthestPositionReachable(node, it) }
+            else -> this
+        }
 
     private fun Sequence<P>.maxOr(position: P): P =
         maxByOrNull { valueIn(it) }

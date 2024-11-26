@@ -14,12 +14,12 @@ class IntentionWalkRandomly(
     private val desireWalkRandomly: () -> Double,
     private val desireEvacuate: () -> Double,
 ) : BodyCognitiveCharacteristic() {
-
     override fun combinationFunction() =
-        desireEvacuate() * logistic(
-            logisticSigma,
-            logisticTau,
-            inhibitingIntentionOmega * desireEvacuate(),
-            amplifyingIntentionOmega * desireWalkRandomly(),
-        )
+        desireEvacuate() *
+            logistic(
+                logisticSigma,
+                logisticTau,
+                inhibitingIntentionOmega * desireEvacuate(),
+                amplifyingIntentionOmega * desireWalkRandomly(),
+            )
 }

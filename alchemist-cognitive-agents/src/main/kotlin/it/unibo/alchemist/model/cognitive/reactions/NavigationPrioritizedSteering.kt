@@ -25,7 +25,9 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  * @param T concentration type
  * @param N type of nodes of the environment's graph.
  */
-open class NavigationPrioritizedSteering<T, N : ConvexPolygon> @JvmOverloads constructor(
+open class NavigationPrioritizedSteering<T, N : ConvexPolygon>
+@JvmOverloads
+constructor(
     environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
     override val pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
@@ -50,17 +52,17 @@ open class NavigationPrioritizedSteering<T, N : ConvexPolygon> @JvmOverloads con
         alpha = alpha,
     ),
 ) {
-
     private companion object {
         /**
          * @returns the only navigation action contained in the list or throws an exception.
          */
-        private fun <T, M : ConvexPolygon> ActionList<T>.singleNavigationAction(): NaviAction<T, M> = this
-            .filterIsInstance<NaviAction<T, M>>()
-            .let {
-                check(it.size == 1) { "There should be exactly one navigation action" }
-                it.first()
-            }
+        private fun <T, M : ConvexPolygon> ActionList<T>.singleNavigationAction(): NaviAction<T, M> =
+            this
+                .filterIsInstance<NaviAction<T, M>>()
+                .let {
+                    check(it.size == 1) { "There should be exactly one navigation action" }
+                    it.first()
+                }
     }
 }
 

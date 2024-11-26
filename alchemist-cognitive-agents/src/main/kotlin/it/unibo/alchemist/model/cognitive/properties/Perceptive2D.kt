@@ -18,7 +18,9 @@ import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 /**
  * Base implementation of a pedestrian's capability to influence each other in a 2D space.
  */
-class Perceptive2D<T> @JvmOverloads constructor(
+class Perceptive2D<T>
+@JvmOverloads
+constructor(
     /**
      * The environment where [node] is moving.
      */
@@ -30,11 +32,12 @@ class Perceptive2D<T> @JvmOverloads constructor(
     node,
     fieldOfView,
 ) {
-    override fun cloneOnNewNode(node: Node<T>) = Perceptive2D(
-        environment,
-        node,
-        FieldOfView2D(environment, node, defaultFieldOfViewDepth, defaultFieldOfViewAperture),
-    )
+    override fun cloneOnNewNode(node: Node<T>) =
+        Perceptive2D(
+            environment,
+            node,
+            FieldOfView2D(environment, node, defaultFieldOfViewDepth, defaultFieldOfViewAperture),
+        )
 
     /**
      * Contains the default values for the field of view.

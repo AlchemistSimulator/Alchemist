@@ -23,11 +23,9 @@ import it.unibo.alchemist.model.geometry.Vector
 open class WantToEscape<T, S : Vector<S>, A : Transformation<S>>(
     node: Node<T>,
 ) : AbstractCondition<T>(node) {
-
     override fun getContext(): Context = Context.LOCAL
 
     override fun getPropensityContribution(): Double = 0.0
 
-    override fun isValid(): Boolean =
-        node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.wantsToEscape()
+    override fun isValid(): Boolean = node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.wantsToEscape()
 }

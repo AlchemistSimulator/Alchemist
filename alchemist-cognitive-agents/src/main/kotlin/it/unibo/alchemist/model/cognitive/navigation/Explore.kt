@@ -40,7 +40,6 @@ open class Explore<T, L : Euclidean2DConvexShape, R>(
      */
     private val knownImpasseWeight: Double = DEFAULT_IMPASSE_WEIGHT,
 ) : NavigationStrategy2D<T, L, R, ConvexPolygon, Euclidean2DPassage> {
-
     /**
      * Contains the default constants.
      */
@@ -64,9 +63,10 @@ open class Explore<T, L : Euclidean2DConvexShape, R>(
     /**
      * Computes the distance between the pedestrian and a visible passage.
      */
-    protected open fun Euclidean2DPassage.distanceToPedestrian(): Double = action.pedestrianPosition.let {
-        crossingPointOnTail(it).distanceTo(it)
-    }
+    protected open fun Euclidean2DPassage.distanceToPedestrian(): Double =
+        action.pedestrianPosition.let {
+            crossingPointOnTail(it).distanceTo(it)
+        }
 
     /**
      * The comparator used to determine which passage to cross, a nearest door heuristic
@@ -75,22 +75,24 @@ open class Explore<T, L : Euclidean2DConvexShape, R>(
     protected open val comparator: Comparator<in Euclidean2DPassage> =
         compareBy({ weight(it) }, { it.distanceToPedestrian() })
 
-    override fun inNewRoom(newRoom: ConvexPolygon) = with(action) {
-        doorsInSight().minWithOrNull(comparator)?.let { crossDoor(it) }
+    override fun inNewRoom(newRoom: ConvexPolygon) =
+        with(action) {
+            doorsInSight().minWithOrNull(comparator)?.let { crossDoor(it) }
             /*
              * Closed room.
              */
-            ?: stop()
-    }
+                ?: stop()
+        }
 
     /**
      * Assigns a weight to a visible door (= passage). This weighting system is derived from the one
      * by [Andresen et al.](https://doi.org/10.1080/23249935.2018.1432717/). By default, it comprises
      * three factors: [volatileMemoryFactor], [congestionFactor] and [impasseFactor].
      */
-    protected open fun weight(door: Euclidean2DPassage): Double = door.head.let {
-        volatileMemoryFactor(it) * congestionFactor(it) * impasseFactor(it)
-    }
+    protected open fun weight(door: Euclidean2DPassage): Double =
+        door.head.let {
+            volatileMemoryFactor(it) * congestionFactor(it) * impasseFactor(it)
+        }
 
     /**
      * Takes into account the information stored in the pedestrian's volatile memory. It is computed
@@ -120,13 +122,14 @@ open class Explore<T, L : Euclidean2DConvexShape, R>(
     /**
      * Area occupied by pedestrians / total area of this room. Falls in [0,1].
      */
-    protected open val ConvexPolygon.congestionLevel: Double get() = environment
-        .getNodesWithinRange(centroid, radius)
-        .asSequence()
-        .map { environment.getPosition(it) }
-        .count { contains(it) }
-        .let { it * node.area / area }
-        .coerceAtMost(1.0)
+    protected open val ConvexPolygon.congestionLevel: Double get() =
+        environment
+            .getNodesWithinRange(centroid, radius)
+            .asSequence()
+            .map { environment.getPosition(it) }
+            .count { contains(it) }
+            .let { it * node.area / area }
+            .coerceAtMost(1.0)
 
     /**
      * A rough estimation of the area of a [ConvexPolygon].

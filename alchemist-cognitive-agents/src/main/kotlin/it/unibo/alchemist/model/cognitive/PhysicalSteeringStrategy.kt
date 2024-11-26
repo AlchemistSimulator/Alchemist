@@ -25,7 +25,6 @@ interface PhysicalSteeringStrategy<T, P, A, F> : SteeringStrategy<T, P>
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P>,
           F : GeometricShapeFactory<P, A> {
-
     /**
      * The node to be moved.
      */

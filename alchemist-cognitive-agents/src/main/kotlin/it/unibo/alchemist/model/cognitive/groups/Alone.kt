@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.cognitive.groups
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.cognitive.Group
+
 /**
  * Group representing a node alone.
  */

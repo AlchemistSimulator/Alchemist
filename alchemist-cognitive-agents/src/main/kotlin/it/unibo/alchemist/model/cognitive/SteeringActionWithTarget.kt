@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.geometry.Vector
  * A [SteeringAction] with a defined target.
  */
 interface SteeringActionWithTarget<T, P> : SteeringAction<T, P> where P : Position<P>, P : Vector<P> {
-
     /**
      * The position the owner of this action moves towards, in absolute coordinates.
      */
@@ -27,6 +26,8 @@ interface SteeringActionWithTarget<T, P> : SteeringAction<T, P> where P : Positi
     /**
      * Computes the distance between this action's target and the given [node].
      */
-    fun targetDistanceTo(node: Node<T>, environment: Environment<T, P>): Double =
-        target().distanceTo(environment.getPosition(node))
+    fun targetDistanceTo(
+        node: Node<T>,
+        environment: Environment<T, P>,
+    ): Double = target().distanceTo(environment.getPosition(node))
 }

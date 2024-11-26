@@ -18,7 +18,9 @@ import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 /**
  * The node's [CognitiveModel].
  */
-class Cognitive2D<T> @JvmOverloads constructor(
+class Cognitive2D<T>
+@JvmOverloads
+constructor(
     /**
      * The environment in which the node moves.
      */

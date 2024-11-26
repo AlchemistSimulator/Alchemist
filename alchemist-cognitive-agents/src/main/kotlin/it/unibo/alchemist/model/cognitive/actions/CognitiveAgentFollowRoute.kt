@@ -31,7 +31,6 @@ class CognitiveAgentFollowRoute<T, L : Euclidean2DConvexShape, R>(
     override val pedestrian: PedestrianProperty<T>,
     vararg route: Number,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
-
     init {
         strategy = FollowRoute(this, route.toPositions(environment))
     }

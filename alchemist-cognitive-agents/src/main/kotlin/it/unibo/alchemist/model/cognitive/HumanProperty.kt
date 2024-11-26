@@ -21,7 +21,6 @@ import it.unibo.alchemist.model.geometry.Vector
  * A capability representing a pedestrian's individual characteristics.
  */
 interface HumanProperty<T, S : Vector<S>, A : Transformation<S>> : NodeProperty<T> {
-
     /**
      * The age of this pedestrian.
      */
@@ -52,6 +51,8 @@ interface HumanProperty<T, S : Vector<S>, A : Transformation<S>> : NodeProperty<
      *
      * @param toHelp The pedestrian who needs help.
      */
-    fun probabilityOfHelping(toHelp: HeterogeneousPedestrianModel<T, S, A>, isGroupMember: Boolean): Double =
-        helpAttitude.level(toHelp.age, toHelp.gender, isGroupMember)
+    fun probabilityOfHelping(
+        toHelp: HeterogeneousPedestrianModel<T, S, A>,
+        isGroupMember: Boolean,
+    ): Double = helpAttitude.level(toHelp.age, toHelp.gender, isGroupMember)
 }

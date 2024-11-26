@@ -38,7 +38,6 @@ open class CognitiveAgentSeek2D<T, P, A>(
     SteeringActionWithTarget<T, P>
     where P : Position2D<P>, P : Vector2D<P>,
           A : Transformation<P> {
-
     constructor(
         environment: EuclideanEnvironment<T, P>,
         reaction: Reaction<T>,
@@ -47,14 +46,17 @@ open class CognitiveAgentSeek2D<T, P, A>(
         y: Number,
     ) : this(environment, reaction, pedestrian, environment.makePosition(x, y))
 
-    private val followScalarField = CognitiveAgentFollowScalarField(environment, reaction, pedestrian, target) {
-        -it.distanceTo(target)
-    }
+    private val followScalarField =
+        CognitiveAgentFollowScalarField(environment, reaction, pedestrian, target) {
+            -it.distanceTo(target)
+        }
 
     override fun target(): P = target
 
     override fun nextPosition(): P = followScalarField.nextPosition()
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentSeek2D<T, P, A> =
-        CognitiveAgentSeek2D(environment, reaction, node.pedestrianProperty, target)
+    override fun cloneAction(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ): CognitiveAgentSeek2D<T, P, A> = CognitiveAgentSeek2D(environment, reaction, node.pedestrianProperty, target)
 }

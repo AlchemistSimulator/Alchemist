@@ -36,7 +36,6 @@ class GraphHopperOptions private constructor(
     val vehicleClass: String,
     val algorithm: String,
 ) : RoutingServiceOptions<GraphHopperOptions> {
-
     private constructor(customModel: GraphHopperCustomModel, algorithm: String) : this(
         customModel.profile,
         customModel.vehicleClass,
@@ -68,38 +67,40 @@ class GraphHopperOptions private constructor(
      * Utilities for GraphHopper routing.
      */
     companion object {
-
-        private val profiles: LoadingCache<Pair<String, String>, GraphHopperOptions> = Caffeine.newBuilder()
-            .build(::GraphHopperOptions)
+        private val profiles: LoadingCache<Pair<String, String>, GraphHopperOptions> =
+            Caffeine.newBuilder()
+                .build(::GraphHopperOptions)
 
         /**
          * All the non-abstract subclasses of [RoutingAlgorithm] available in the runtime.
          */
-        val graphHopperAlgorithms: List<String> = listOf(
-            ALT_ROUTE,
-            ASTAR,
-            ASTAR_BI,
-            DIJKSTRA,
-            DIJKSTRA_BI,
-            DIJKSTRA_ONE_TO_MANY,
-            ROUND_TRIP,
-        )
+        val graphHopperAlgorithms: List<String> =
+            listOf(
+                ALT_ROUTE,
+                ASTAR,
+                ASTAR_BI,
+                DIJKSTRA,
+                DIJKSTRA_BI,
+                DIJKSTRA_ONE_TO_MANY,
+                ROUND_TRIP,
+            )
 
         /**
          * All the non-abstract subclasses of [Weighting] available in the runtime.
          */
-        private val graphHopperCustomModels: List<GraphHopperCustomModel> = listOf(
-            "bike" to "bike",
-            "bus" to "bus",
-            "car" to "car",
-            "car4wd" to "car",
-            "foot" to "foot",
-            "hike" to "foot",
-            "motorcycle" to "car",
-            "mtb" to "mtb",
-            "racingbike" to "racingbike",
-            "truck" to "car",
-        ).map { (name, vehicleClass) -> GraphHopperCustomModel(name, vehicleClass) }
+        private val graphHopperCustomModels: List<GraphHopperCustomModel> =
+            listOf(
+                "bike" to "bike",
+                "bus" to "bus",
+                "car" to "car",
+                "car4wd" to "car",
+                "foot" to "foot",
+                "hike" to "foot",
+                "motorcycle" to "car",
+                "mtb" to "mtb",
+                "racingbike" to "racingbike",
+                "truck" to "car",
+            ).map { (name, vehicleClass) -> GraphHopperCustomModel(name, vehicleClass) }
 
         /**
          * All the available [Profile]s in the runtime.
@@ -117,8 +118,9 @@ class GraphHopperOptions private constructor(
         val defaultOptions: GraphHopperOptions
 
         init {
-            fun error(subject: String) = "Unable to find any valid GraphHopper $subject. " +
-                "This is most likely due to using an unsupported version of GraphHopper"
+            fun error(subject: String) =
+                "Unable to find any valid GraphHopper $subject. " +
+                    "This is most likely due to using an unsupported version of GraphHopper"
             require(graphHopperAlgorithms.isNotEmpty()) { error("algorithm") }
             require(graphHopperCustomModels.isNotEmpty()) { error("custom model") }
             defaultOptions = optionsFor()
@@ -128,15 +130,21 @@ class GraphHopperOptions private constructor(
          * Retrieves or creates the set of options for the required [vehicle] (default: foot),
          * [weighting] (default: fastest), and [algorithm] (default: dijstrabi).
          */
-        fun optionsFor(vehicle: String = "foot", weighting: String = "fastest", algorithm: String = DIJKSTRA_BI) =
-            optionsFor(profile = "${vehicle}_$weighting", algorithm)
+        fun optionsFor(
+            vehicle: String = "foot",
+            weighting: String = "fastest",
+            algorithm: String = DIJKSTRA_BI,
+        ) = optionsFor(profile = "${vehicle}_$weighting", algorithm)
 
         /**
          * Retrieves or creates the set of options for the required [profile] (default: foot_fastest)
          * and [algorithm] (default: dijstrabi).
          */
         @JvmOverloads
-        fun optionsFor(profile: String = "foot", algorithm: String = DIJKSTRA_BI): GraphHopperOptions {
+        fun optionsFor(
+            profile: String = "foot",
+            algorithm: String = DIJKSTRA_BI,
+        ): GraphHopperOptions {
             return profiles.get(profile to algorithm) ?: throw IllegalArgumentException(
                 "The requested profile ($profile, $algorithm) could not be created.",
             )

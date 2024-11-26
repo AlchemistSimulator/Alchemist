@@ -37,12 +37,13 @@ import kotlin.io.path.createTempDirectory
 /**
  * [RoutingService] implementation based on GraphHopper.
  */
-class GraphHopperRoutingService @JvmOverloads constructor(
+class GraphHopperRoutingService
+@JvmOverloads
+constructor(
     map: URL,
     workingDirectory: File = defaultWorkingDirectory(map.openStream()),
     override val defaultOptions: GraphHopperOptions = Companion.defaultOptions,
 ) : RoutingService<GeoPosition, GraphHopperOptions> {
-
     private val graphHopper: GraphHopper
 
     init {
@@ -56,29 +57,33 @@ class GraphHopperRoutingService @JvmOverloads constructor(
                         Files.copy(map.openStream(), mapFile.toPath())
                     }
                 }
-                graphHopper = runCatching { initNavigationSystem(mapFile, workingDirectory) }
-                    .recoverCatching { ex ->
-                        logger.warn(
-                            "Could not initialize with $mapFile (version conflict?): erasing cache and retrying",
-                            ex,
-                        )
-                        val corruptedContent = workingDirectory.listFiles()?.filterNot { it == mapFile }.orEmpty()
-                        corruptedContent.forEach {
-                            require(it.deleteRecursively()) {
-                                "Could not delete $$it. Something nasty is going on with your file system"
+                graphHopper =
+                    runCatching { initNavigationSystem(mapFile, workingDirectory) }
+                        .recoverCatching { ex ->
+                            logger.warn(
+                                "Could not initialize with $mapFile (version conflict?): erasing cache and retrying",
+                                ex,
+                            )
+                            val corruptedContent = workingDirectory.listFiles()?.filterNot { it == mapFile }.orEmpty()
+                            corruptedContent.forEach {
+                                require(it.deleteRecursively()) {
+                                    "Could not delete $$it. Something nasty is going on with your file system"
+                                }
                             }
+                            workingDirectory.mkdirs()
+                            initNavigationSystem(mapFile, workingDirectory)
                         }
-                        workingDirectory.mkdirs()
-                        initNavigationSystem(mapFile, workingDirectory)
-                    }
-                    .getOrThrow()
+                        .getOrThrow()
             }
         } finally {
             lockfileLock.release()
         }
     }
 
-    override fun allowedPointClosestTo(position: GeoPosition, options: GraphHopperOptions): GeoPosition? {
+    override fun allowedPointClosestTo(
+        position: GeoPosition,
+        options: GraphHopperOptions,
+    ): GeoPosition? {
         return graphHopper.locationIndex
             .findClosest(
                 position.latitude,
@@ -110,9 +115,10 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         }
         val naviStart = from.coerceToMap()
         val naviEnd = to.coerceToMap()
-        val request: GHRequest = GHRequest(naviStart.first, naviStart.second, naviEnd.first, naviEnd.second)
-            .setAlgorithm(options.algorithm)
-            .setProfile(options.profile.name)
+        val request: GHRequest =
+            GHRequest(naviStart.first, naviStart.second, naviEnd.first, naviEnd.second)
+                .setAlgorithm(options.algorithm)
+                .setProfile(options.profile.name)
         return GraphHopperRoute(from, to, graphHopper.route(request))
     }
 
@@ -136,13 +142,16 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         private fun defaultWorkingDirectory(map: InputStream): File {
             val code = map.nameFromHash()
             val appDirs = AppDirsFactory.getInstance()
-            val possibleLocations: Sequence<(String, String, String) -> String> = sequenceOf(
-                appDirs::getUserCacheDir,
-                appDirs::getUserDataDir,
-                appDirs::getUserConfigDir,
-                { app, version, _ -> createTempDirectory("$app-$version").absolutePathString() },
-                { app, version, _ -> File(Paths.get("").toFile(), "$app-$version").apply { mkdirs() }.absolutePath },
-            )
+            val possibleLocations: Sequence<(String, String, String) -> String> =
+                sequenceOf(
+                    appDirs::getUserCacheDir,
+                    appDirs::getUserDataDir,
+                    appDirs::getUserConfigDir,
+                    { app, version, _ -> createTempDirectory("$app-$version").absolutePathString() },
+                    { app, version, _ ->
+                        File(Paths.get("").toFile(), "$app-$version").apply { mkdirs() }.absolutePath
+                    },
+                )
             return possibleLocations.map { File(it("alchemist", "map-$code$", "it.unibo")) }.firstOrNull { folder ->
                 if (folder.exists()) {
                     (folder.isDirectory && folder.canWrite())
@@ -159,20 +168,21 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         private fun initNavigationSystem(
             mapFile: File,
             internalWorkdir: File,
-        ): GraphHopper = GraphHopper()
-            .setOSMFile(mapFile.absolutePath)
-            .setElevation(false)
-            .setGraphHopperLocation(internalWorkdir.absolutePath)
-            .setProfiles(GraphHopperOptions.allProfiles)
-            .setEncodedValuesString(
-                GraphHopperOptions.allCustomModels.asSequence()
-                    .flatMap { model ->
-                        CustomModelParser.findVariablesForEncodedValuesString(model, { true }) { it }
-                    }
-                    .distinct()
-                    .joinToString(separator = ", "),
-            )
-            .importOrLoad()
+        ): GraphHopper =
+            GraphHopper()
+                .setOSMFile(mapFile.absolutePath)
+                .setElevation(false)
+                .setGraphHopperLocation(internalWorkdir.absolutePath)
+                .setProfiles(GraphHopperOptions.allProfiles)
+                .setEncodedValuesString(
+                    GraphHopperOptions.allCustomModels.asSequence()
+                        .flatMap { model ->
+                            CustomModelParser.findVariablesForEncodedValuesString(model, { true }) { it }
+                        }
+                        .distinct()
+                        .joinToString(separator = ", "),
+                )
+                .importOrLoad()
 
         private fun InputStream.nameFromHash(): String =
             Base32().encodeAsString(Hashing.sha256().hashBytes(readAllBytes()).asBytes()).filter { it != '=' }

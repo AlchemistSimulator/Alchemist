@@ -14,7 +14,6 @@ package it.unibo.alchemist.multivesta.adapter
  * to interact with the simulation.
  */
 interface AlchemistSimulationAdapter {
-
     /**
      * Get the simulation time.
      */

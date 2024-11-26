@@ -51,24 +51,29 @@ object AlchemistMultiVesta {
     private const val YAML = 'y'
     private const val EXTRACTOR = 'e'
     private val logger = LoggerFactory.getLogger(AlchemistMultiVesta::class.java)
-    private val logLevels = mapOf(
-        "v" to Level.INFO,
-        "vv" to Level.DEBUG,
-        "vvv" to Level.TRACE,
-        "q" to Level.ERROR,
-        "qq" to Level.OFF,
-    )
+    private val logLevels =
+        mapOf(
+            "v" to Level.INFO,
+            "vv" to Level.DEBUG,
+            "vvv" to Level.TRACE,
+            "q" to Level.ERROR,
+            "qq" to Level.OFF,
+        )
 
     /**
      * Set this to false for testing purposes.
      */
     private const val isNormalExecution = true
 
-    private fun appendSeedsToYmlFile(seed: Int, configurationPath: String): String {
+    private fun appendSeedsToYmlFile(
+        seed: Int,
+        configurationPath: String,
+    ): String {
         try {
             val originalConfigFile = File(configurationPath)
-            val newConfigFilePath = originalConfigFile.parentFile.absolutePath + "/seeds/" +
-                originalConfigFile.nameWithoutExtension + "_seed_$seed.yml"
+            val newConfigFilePath =
+                originalConfigFile.parentFile.absolutePath + "/seeds/" +
+                    originalConfigFile.nameWithoutExtension + "_seed_$seed.yml"
             File(newConfigFilePath).parentFile.mkdirs()
             val writer = BufferedWriter(FileWriter(newConfigFilePath))
             val data = String(Files.readAllBytes(originalConfigFile.toPath()))
@@ -98,6 +103,7 @@ object AlchemistMultiVesta {
             "If the simulation has been already executed, this option allows to use a simulation adapter " +
                 "that loads the simulation from the output files",
         )
+
         fun printHelp() = HelpFormatter().printHelp("java -jar alchemist-redist-{version}.jar", opts)
         val parser: CommandLineParser = DefaultParser()
         try {
@@ -196,9 +202,10 @@ object AlchemistMultiVesta {
         root.level = level
         root.addAppender(
             ConsoleAppender<ILoggingEvent?>().apply {
-                encoder = PatternLayoutEncoder().apply {
-                    pattern = "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n"
-                }
+                encoder =
+                    PatternLayoutEncoder().apply {
+                        pattern = "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n"
+                    }
             },
         )
     }
@@ -210,7 +217,11 @@ object AlchemistMultiVesta {
         throw AlchemistWouldHaveExitedException(status.ordinal)
     }
 
-    private fun exitBecause(reason: String, status: ExitStatus, exception: Exception? = null): Nothing {
+    private fun exitBecause(
+        reason: String,
+        status: ExitStatus,
+        exception: Exception? = null,
+    ): Nothing {
         when (exception) {
             null -> logger.error(reason)
             else -> logger.error(reason, exception)
@@ -218,14 +229,18 @@ object AlchemistMultiVesta {
         exitWith(status)
     }
 
-    private fun createLoader(simulationFile: String, seed: Int?): Loader {
+    private fun createLoader(
+        simulationFile: String,
+        seed: Int?,
+    ): Loader {
         var newSimulationFile = simulationFile
         if (seed != null) {
             newSimulationFile = appendSeedsToYmlFile(seed, simulationFile)
         }
-        val url = ResourceLoader.getResource(newSimulationFile)
-            ?: File(newSimulationFile).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
-            ?: error("No classpath resource or file $newSimulationFile was found")
+        val url =
+            ResourceLoader.getResource(newSimulationFile)
+                ?: File(newSimulationFile).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
+                ?: error("No classpath resource or file $newSimulationFile was found")
         return LoadAlchemist.from(
             url,
         )
@@ -241,7 +256,13 @@ object AlchemistMultiVesta {
         get() = getOptionValue(EXTRACTOR)
 
     private enum class ExitStatus {
-        OK, INVALID_CLI, NO_LOGGER, NUMBER_FORMAT_ERROR, MULTIPLE_VERBOSITY, CLASS_NOT_FOUND, IO_ERROR
+        OK,
+        INVALID_CLI,
+        NO_LOGGER,
+        NUMBER_FORMAT_ERROR,
+        MULTIPLE_VERBOSITY,
+        CLASS_NOT_FOUND,
+        IO_ERROR,
     }
 
     /**

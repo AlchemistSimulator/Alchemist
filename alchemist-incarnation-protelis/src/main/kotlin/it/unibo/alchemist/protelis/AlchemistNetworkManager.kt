@@ -29,7 +29,9 @@ import java.util.Objects
  * only when [simulateMessageArrival] is called the transfer is
  * actually performed.
  */
-class AlchemistNetworkManager @JvmOverloads constructor(
+class AlchemistNetworkManager
+@JvmOverloads
+constructor(
     /**
      * This reaction stores the time at which the neighbor state is read.
      */
@@ -52,7 +54,6 @@ class AlchemistNetworkManager @JvmOverloads constructor(
      */
     val distanceLossDistribution: RealDistribution? = null,
 ) : NetworkManager, Serializable {
-
     private val environment: Environment<Any, *> = Objects.requireNonNull(program.environment)
     private val messages: MutableMap<DeviceUID, MessageInfo> = LinkedHashMap()
     private var toBeSent: Map<CodePath, Any> = emptyMap()
@@ -68,21 +69,19 @@ class AlchemistNetworkManager @JvmOverloads constructor(
         /*
          * If no time has passed, the last result is still valid, otherwise needs to be recomputed
          */
-        if (timeAtLastValidityCheck != currentTime) {
-            neighborState = if (messages.isEmpty()) {
-                ImmutableMap.of()
-            } else {
-                /*
-                 * If retentionTime is a number, use it. Otherwise clean messages of lost neighbors
-                 */
+        return when {
+            timeAtLastValidityCheck == currentTime -> neighborState
+            messages.isEmpty() -> ImmutableMap.of()
+            else -> {
                 val stateBuilder = ImmutableMap.builder<DeviceUID, Map<CodePath, Any>>()
                 val messagesIterator = messages.values.iterator()
                 val retainsNeighbors = retentionTime.isNaN()
-                val neighbors: Set<DeviceUID> = emptySet<DeviceUID>().takeUnless { retainsNeighbors }
-                    ?: environment.getNeighborhood(device.node)
-                        .neighbors
-                        .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
-                        .toSet()
+                val neighbors: Set<DeviceUID> =
+                    emptySet<DeviceUID>().takeUnless { retainsNeighbors }
+                        ?: environment.getNeighborhood(device.node)
+                            .neighbors
+                            .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
+                            .toSet()
                 while (messagesIterator.hasNext()) {
                     val message = messagesIterator.next()
                     if (retainsNeighbors && message.source in neighbors || currentTime - message.time < retentionTime) {
@@ -94,9 +93,10 @@ class AlchemistNetworkManager @JvmOverloads constructor(
                 }
                 stateBuilder.build()
             }
+        }.also {
             timeAtLastValidityCheck = currentTime
+            neighborState = it
         }
-        return neighborState
     }
 
     private fun receiveMessage(msg: MessageInfo) {

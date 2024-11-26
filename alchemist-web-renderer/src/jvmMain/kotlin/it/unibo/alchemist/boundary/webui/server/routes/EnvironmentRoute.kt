@@ -14,8 +14,8 @@ import io.ktor.server.routing.get
 import it.unibo.alchemist.boundary.webui.common.model.serialization.encodeEnvironmentSurrogate
 import it.unibo.alchemist.boundary.webui.common.model.serialization.jsonFormat
 import it.unibo.alchemist.boundary.webui.common.renderer.Bitmap32Serializer
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.environmentClientPath
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.environmentServerPath
+import it.unibo.alchemist.boundary.webui.common.utility.Routes.ENVIRONMENT_CLIENT_PATH
+import it.unibo.alchemist.boundary.webui.common.utility.Routes.ENVIRONMENT_SERVER_PATH
 import it.unibo.alchemist.boundary.webui.server.state.ServerStore.store
 import it.unibo.alchemist.boundary.webui.server.utility.Response
 import it.unibo.alchemist.boundary.webui.server.utility.Response.Companion.respond
@@ -34,7 +34,7 @@ object EnvironmentRoute {
      * 200 (OK) the Environment is sent to the client.
      */
     fun Route.environmentServerMode() {
-        get(environmentServerPath) {
+        get(ENVIRONMENT_SERVER_PATH) {
             respond(Response(content = renderedEnvironment()))
         }
     }
@@ -46,7 +46,7 @@ object EnvironmentRoute {
      * 200 (OK) the Environment is sent to the client.
      */
     fun Route.environmentClientMode() {
-        get(environmentClientPath) {
+        get(ENVIRONMENT_CLIENT_PATH) {
             respond(Response(content = jsonFormat.encodeEnvironmentSurrogate(store.state.environmentSurrogate)))
         }
     }

@@ -27,7 +27,7 @@ class Perceptive2D<T>
         val environment: Physics2DEnvironment<T>,
         override val node: Node<T>,
         override val fieldOfView: InfluenceSphere2D<T> =
-            FieldOfView2D(environment, node, defaultFieldOfViewDepth, defaultFieldOfViewAperture),
+            FieldOfView2D(environment, node, defaultFieldOfViewDepth, DEFAULT_FIELD_OF_VIEW_APERTURE),
     ) : PerceptiveProperty<T> by Perceptive(
             node,
             fieldOfView,
@@ -36,7 +36,7 @@ class Perceptive2D<T>
             Perceptive2D(
                 environment,
                 node,
-                FieldOfView2D(environment, node, defaultFieldOfViewDepth, defaultFieldOfViewAperture),
+                FieldOfView2D(environment, node, defaultFieldOfViewDepth, DEFAULT_FIELD_OF_VIEW_APERTURE),
             )
 
         /**
@@ -46,7 +46,7 @@ class Perceptive2D<T>
             /**
              * Default aperture of pedestrian's [fieldOfView].
              */
-            const val defaultFieldOfViewAperture = Math.PI / 180 * 80
+            const val DEFAULT_FIELD_OF_VIEW_APERTURE = Math.PI / 180 * 80
 
             /**
              * Default depth of pedestrian's [fieldOfView].

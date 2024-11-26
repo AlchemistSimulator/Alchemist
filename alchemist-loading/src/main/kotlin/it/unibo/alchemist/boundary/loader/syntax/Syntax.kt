@@ -49,7 +49,7 @@ internal object DocumentRoot : SyntaxElement {
                 validDescriptor {
                     mandatory(JavaType.type)
                     optional(JavaType.parameters, contents, properties, nodes, programs)
-                    forbidden(Filter.filter)
+                    forbidden(Filter.FILTER)
                 },
             )
 
@@ -59,7 +59,7 @@ internal object DocumentRoot : SyntaxElement {
          *     parameters: [...]
          */
         object Filter : SyntaxElement {
-            const val filter = "in"
+            const val FILTER = "in"
             override val validDescriptors =
                 setOf(
                     validDescriptor {
@@ -74,7 +74,7 @@ internal object DocumentRoot : SyntaxElement {
                 setOf(
                     validDescriptor {
                         mandatory(JavaType.type)
-                        optional(JavaType.parameters, Filter.filter)
+                        optional(JavaType.parameters, Filter.FILTER)
                     },
                 )
         }
@@ -86,7 +86,7 @@ internal object DocumentRoot : SyntaxElement {
                 setOf(
                     validDescriptor {
                         mandatory(molecule, concentration)
-                        optional(Filter.filter)
+                        optional(Filter.FILTER)
                     },
                 )
         }
@@ -95,16 +95,16 @@ internal object DocumentRoot : SyntaxElement {
             val program by OwnName
             val actions by OwnName
             val conditions by OwnName
-            const val timeDistribution = "time-distribution"
+            const val TIME_DISTRIBUTION = "time-distribution"
             override val validDescriptors =
                 setOf(
                     validDescriptor {
                         mandatory(JavaType.type)
-                        optional(JavaType.parameters, Filter.filter, conditions, timeDistribution, actions)
+                        optional(JavaType.parameters, Filter.FILTER, conditions, TIME_DISTRIBUTION, actions)
                     },
                     validDescriptor {
                         mandatory(program)
-                        optional(timeDistribution, Filter.filter)
+                        optional(TIME_DISTRIBUTION, Filter.FILTER)
                     },
                 )
         }
@@ -123,7 +123,7 @@ internal object DocumentRoot : SyntaxElement {
             val property by OwnName
             val aggregators by OwnName
             val precision by OwnName
-            const val valueFilter = "value-filter"
+            const val VALUE_FILTER = "value-filter"
             override val validDescriptors =
                 JavaType.validDescriptors +
                     setOf(
@@ -133,7 +133,7 @@ internal object DocumentRoot : SyntaxElement {
                         },
                         validDescriptor {
                             mandatory(molecule)
-                            optional(property, aggregators, precision, valueFilter)
+                            optional(property, aggregators, precision, VALUE_FILTER)
                         },
                     )
         }

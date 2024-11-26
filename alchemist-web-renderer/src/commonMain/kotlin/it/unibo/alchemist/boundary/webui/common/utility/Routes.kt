@@ -18,38 +18,38 @@ object Routes {
      * Base environment path, for all Environment related operations.
      * Those are operations that acts directly on the original Enviornment interface.
      */
-    private const val environmentPath: String = "/environment"
+    private const val ENVIRONMENT_PATH: String = "/environment"
 
     /**
      * Route to get an Environment in a serialized form that needs to be rendered by the client, as
      * [it.unibo.alchemist.boundary.webui.common.model.RenderMode.CLIENT] was requested.
      */
-    const val environmentClientPath: String = "$environmentPath/client"
+    const val ENVIRONMENT_CLIENT_PATH: String = "$ENVIRONMENT_PATH/client"
 
     /**
      * Route to get an Environment already renderer by the Server, as
      * [it.unibo.alchemist.boundary.webui.common.model.RenderMode.SERVER] was requested.
      */
-    const val environmentServerPath: String = "$environmentPath/server"
+    const val ENVIRONMENT_SERVER_PATH: String = "$ENVIRONMENT_PATH/server"
 
     /**
      * Base simulation path, for simulation related operations.
      * Those are operations that acts directly on the original Simulation interface.
      */
-    private const val simulationPath: String = "/simulation"
+    private const val SIMULATION_PATH: String = "/simulation"
 
     /**
      * Route to get the [it.unibo.alchemist.boundary.webui.common.model.surrogate.StatusSurrogate] of the simulation.
      */
-    const val simulationStatusPath: String = "$simulationPath/status"
+    const val SIMULATION_STATUS_PATH: String = "$SIMULATION_PATH/status"
 
     /**
      * Route to start the simulation.
      */
-    const val simulationPlayPath: String = "$simulationPath/play"
+    const val SIMULATION_PLAY_PATH: String = "$SIMULATION_PATH/play"
 
     /**
      * Route to pause the simulation.
      */
-    const val simulationPausePath: String = "$simulationPath/pause"
+    const val SIMULATION_PAUSE_PATH: String = "$SIMULATION_PATH/pause"
 }

@@ -63,7 +63,7 @@ object AlchemistMultiVesta {
     /**
      * Set this to false for testing purposes.
      */
-    private const val isNormalExecution = true
+    private const val IS_NORMAL_EXECUTION = true
 
     private fun appendSeedsToYmlFile(
         seed: Int,
@@ -211,7 +211,7 @@ object AlchemistMultiVesta {
     }
 
     private fun exitWith(status: ExitStatus): Nothing {
-        if (isNormalExecution) {
+        if (IS_NORMAL_EXECUTION) {
             exitProcess(status.ordinal)
         }
         throw AlchemistWouldHaveExitedException(status.ordinal)

@@ -440,7 +440,7 @@ internal object SimulationModel {
         context: Context,
         element: Map<*, *>,
     ): List<PositionBasedFilter<P>> {
-        val filterKey = DocumentRoot.Deployment.Filter.filter
+        val filterKey = DocumentRoot.Deployment.Filter.FILTER
         val positionBasedFilters =
             visitRecursively(context, element[filterKey] ?: emptyList<Any>()) { shape ->
                 visitBuilding<PositionBasedFilter<P>>(context, shape)
@@ -593,7 +593,7 @@ internal object SimulationModel {
                 } else {
                     val property = root[DocumentRoot.Export.Data.property]?.toString()
                     val filter: ExportFilter =
-                        root[DocumentRoot.Export.Data.valueFilter]?.let { CommonFilters.fromString(it.toString()) }
+                        root[DocumentRoot.Export.Data.VALUE_FILTER]?.let { CommonFilters.fromString(it.toString()) }
                             ?: CommonFilters.NOFILTER.filteringPolicy
                     val precision: Int? =
                         when (val digits = root[DocumentRoot.Export.Data.precision]) {
@@ -746,7 +746,7 @@ internal object SimulationModel {
                     environment,
                     node,
                     context,
-                    program[ProgramSyntax.timeDistribution],
+                    program[ProgramSyntax.TIME_DISTRIBUTION],
                 )
             context.factory.registerSingleton(TimeDistribution::class.java, timeDistribution)
             /*

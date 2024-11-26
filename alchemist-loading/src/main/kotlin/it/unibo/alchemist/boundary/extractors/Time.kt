@@ -19,16 +19,16 @@ import it.unibo.alchemist.model.Time
 class Time
     @JvmOverloads
     constructor(precision: Int? = null) : AbstractDoubleExporter(precision) {
-        override val columnNames = listOf(name)
+        override val columnNames = listOf(NAME)
 
         override fun <T> extractData(
             environment: Environment<T, *>,
             reaction: Actionable<T>?,
             time: Time,
             step: Long,
-        ): Map<String, Double> = mapOf(name to time.toDouble())
+        ): Map<String, Double> = mapOf(NAME to time.toDouble())
 
         private companion object {
-            private const val name: String = "time"
+            private const val NAME: String = "time"
         }
     }

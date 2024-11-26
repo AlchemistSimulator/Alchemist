@@ -17,9 +17,9 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.util.pipeline.PipelineContext
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.simulationPausePath
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.simulationPlayPath
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.simulationStatusPath
+import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_PAUSE_PATH
+import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_PLAY_PATH
+import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_STATUS_PATH
 import it.unibo.alchemist.boundary.webui.server.state.ServerStore.store
 import it.unibo.alchemist.boundary.webui.server.surrogates.utility.toStatusSurrogate
 import it.unibo.alchemist.boundary.webui.server.utility.Response
@@ -39,7 +39,7 @@ object SimulationRoute {
      * 500 (Server Error) if the Simulation was not loaded correctly.
      */
     fun Route.simulationStatus() {
-        get(simulationStatusPath) {
+        get(SIMULATION_STATUS_PATH) {
             store.state.simulation?.status?.toStatusSurrogate()?.let { status ->
                 respond(Response(OK, status))
             } ?: respond(Response(InternalServerError, "Simulation not loaded."))
@@ -54,7 +54,7 @@ object SimulationRoute {
      * 500 (Server Error) if the Simulation was not loaded correctly.
      */
     fun Route.simulationActionPlay() {
-        post(simulationPlayPath) {
+        post(SIMULATION_PLAY_PATH) {
             respondAction(Pair(Status.RUNNING, "The Simulation is already running.")) { simulation ->
                 simulation.play()
             }
@@ -69,7 +69,7 @@ object SimulationRoute {
      * 500 (Server Error) if the Simulation was not loaded correctly.
      */
     fun Route.simulationActionPause() {
-        post(simulationPausePath) {
+        post(SIMULATION_PAUSE_PATH) {
             respondAction(Pair(Status.PAUSED, "The Simulation is already paused.")) { simulation ->
                 simulation.pause()
             }

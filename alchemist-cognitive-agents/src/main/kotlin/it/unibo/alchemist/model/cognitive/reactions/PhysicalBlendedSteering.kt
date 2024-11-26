@@ -64,8 +64,8 @@ class PhysicalBlendedSteering<T>(
         var normalizedForce = if (force.magnitude > 0) force.normalized() else Euclidean2DPosition.zero
         var fallenAgentAvoidanceForce = physics.fallenAgentAvoidanceForces().total()
         if (fallenAgentAvoidanceForce.magnitude > 0) {
-            normalizedForce *= 1.0 - fallenAgentAvoidanceForceWeight
-            fallenAgentAvoidanceForce = fallenAgentAvoidanceForce.normalized() * fallenAgentAvoidanceForceWeight
+            normalizedForce *= 1.0 - FALLEN_AGENT_AVOIDANCE_FORCE_WEIGHT
+            fallenAgentAvoidanceForce = fallenAgentAvoidanceForce.normalized() * FALLEN_AGENT_AVOIDANCE_FORCE_WEIGHT
         }
         val repulsionForce = physics.repulsionForces().total()
         /*
@@ -83,6 +83,6 @@ class PhysicalBlendedSteering<T>(
     private fun List<Euclidean2DPosition>.total() = this.fold(Euclidean2DPosition.zero) { acc, f -> acc + f }
 
     private companion object {
-        private const val fallenAgentAvoidanceForceWeight = 0.5
+        private const val FALLEN_AGENT_AVOIDANCE_FORCE_WEIGHT = 0.5
     }
 }

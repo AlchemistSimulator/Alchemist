@@ -31,14 +31,14 @@ object EnvironmentApi {
      * @return the [EnvironmentSurrogate] retrieved by the server.
      */
     suspend fun getEnvironmentClient(): EnvironmentSurrogate<Any, PositionSurrogate> =
-        jsonFormat.decodeEnvironmentSurrogate(getEnvironment(Routes.environmentClientPath))
+        jsonFormat.decodeEnvironmentSurrogate(getEnvironment(Routes.ENVIRONMENT_CLIENT_PATH))
 
     /**
      * Get the environment of the simulation, already rendered by the server.
      * @return the [Bitmap] corresponding to the rendered environment.
      */
     suspend fun getEnvironmentServer(): Bitmap =
-        jsonFormat.decodeFromString(Bitmap32Serializer, getEnvironment(Routes.environmentServerPath))
+        jsonFormat.decodeFromString(Bitmap32Serializer, getEnvironment(Routes.ENVIRONMENT_SERVER_PATH))
 
     /**
      * Get the environment of the simulation in the form proposed by the path of retrieval.

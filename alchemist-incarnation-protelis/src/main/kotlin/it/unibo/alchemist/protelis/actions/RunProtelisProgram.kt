@@ -208,7 +208,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
             node.asProperty(),
             reaction,
             originalProgram = originalProgram,
-            program = program, // TODO: this is broken until https://github.com/Protelis/Protelis/pull/676 gets merged
+            program = program,
             retentionTime = retentionTime,
             packetLossDistance = packetLossDistance,
         )

@@ -31,7 +31,7 @@ import java.awt.geom.Point2D
  * A rectangular region is assumed, its [origin], [width] and [height] are to be specified. Both
  * [java.awt.Shape]s and [ConvexPolygon]s can be specified as obstacles (see [awtObstacles]
  * and [polygonalObstacles]).
- * This class is explicitly designed for the algorithm contained in [generateNavigationGraph].
+ * This class is explicitly designed for the algorithm contained in [NaviGator.generateNavigationGraph].
  * TODO(improve the quality of this class)
  */
 class ExtendableConvexPolygonInEnvironment(
@@ -53,7 +53,8 @@ class ExtendableConvexPolygonInEnvironment(
 ) : AwtMutableConvexPolygon(vertices), ExtendableConvexPolygon {
     /**
      * Obstacles represented as [ConvexPolygon]s, are assumed to be mutable but limited to the extension
-     * (i.e. they can only grow, not shrink). This is the behavior of seeds used by [generateNavigationGraph],
+     * (i.e. they can only grow, not shrink).
+     * This is the behavior of seeds used by [NaviGator.generateNavigationGraph],
      * making this assumption allows to cache useful data such as whether an edge can still advance or
      * an obstacle has already been encountered. This is a var but is assumed to be set only once before
      * starting to extend this polygon.

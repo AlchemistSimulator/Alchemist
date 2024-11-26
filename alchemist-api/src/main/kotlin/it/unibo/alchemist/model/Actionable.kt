@@ -16,7 +16,6 @@ import java.io.Serializable
  * A time-distributed entity with [inboundDependencies], [outboundDependencies] and an execution strategy.
  */
 sealed interface Actionable<T> : Comparable<Actionable<T>>, Serializable {
-
     /**
      * @return true if the reaction can be executed (namely, all the conditions
      * are satisfied).

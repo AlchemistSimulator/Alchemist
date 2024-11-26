@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.geometry.Vector
  */
 interface EuclideanEnvironment<T, P> :
     Environment<T, P> where P : Position<P>, P : Vector<P> {
-
     /**
      * This method moves a [node] in the environment toward some [direction]. If
      * node move is unsupported, it does nothing.

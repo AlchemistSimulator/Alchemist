@@ -156,9 +156,10 @@ private fun Any.validateVariableConsistencyRecursively(
         is Iterable<*> -> forEach { it?.validateVariableConsistencyRecursively(names, errors) }
         is SimulationModel.PlaceHolderForVariables -> {
             val message =
-                "Variable '$name' could not be evaluated as a constant, " + "but it is required to the definition of a variable along path ${
-                    names.joinToString("->")
-                }"
+                "Variable '$name' could not be evaluated as a constant, " +
+                    "but it is required to the definition of a variable along path ${
+                        names.joinToString("->")
+                    }"
             val related =
                 errors[name]?.mapIndexed { index, error -> "$index. ${error.message}" }?.distinct()
                     ?.joinToString(prefix = "Possibly related causes:\n", separator = "\n")

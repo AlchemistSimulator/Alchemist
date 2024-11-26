@@ -26,7 +26,7 @@ import it.unibo.alchemist.core.Status.TERMINATED
  */
 class TestStatus : StringSpec({
     "subsequent statuses should be reachable, previous ones should not" {
-        val allStatuses = Status.values().toSet()
+        val allStatuses = Status.entries.toSet()
         forAll(
             row(INIT, allStatuses),
             row(READY, allStatuses.minusElement(INIT)),

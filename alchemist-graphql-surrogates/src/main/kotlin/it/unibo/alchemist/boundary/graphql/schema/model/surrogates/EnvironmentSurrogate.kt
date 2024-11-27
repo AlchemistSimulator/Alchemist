@@ -100,7 +100,7 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
     ): NodeSurrogate<T>? {
         val newNode = origin.getNodeByID(nodeId).cloneNode(DoubleTime(time))
         val mutex = Semaphore(1, 1)
-        var isAdded: Boolean = false
+        var isAdded = false
         origin.simulation.schedule {
             try {
                 isAdded = origin.addNode(newNode, origin.makePosition(*position.coordinates.toTypedArray()))

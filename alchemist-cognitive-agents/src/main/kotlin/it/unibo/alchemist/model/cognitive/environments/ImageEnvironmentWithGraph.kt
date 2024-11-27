@@ -50,7 +50,7 @@ class ImageEnvironmentWithGraph<T>
             T,
             ConvexPolygon,
             Euclidean2DPassage,
-            > {
+        > {
         override val graph: Euclidean2DNavigationGraph
 
         init {

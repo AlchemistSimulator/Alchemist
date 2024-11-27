@@ -23,17 +23,15 @@ object BugReporting {
         message: String,
         debugInformation: Map<String, Any?> = mapOf(),
     ): Nothing {
-        error(
-            message +
-                """
-                
-                This is likely a bug in in Alchemist. Please, open a report at:
-                    --> https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
-                attaching the following information and the full stacktrace:
-                
-                """.trimIndent() +
-                debugInformation.debugReport(),
-        )
+        val description =
+            """
+            |
+            |This is likely a bug in in Alchemist. Please, open a report at:
+            |    --> https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
+            |attaching the following information and the full stacktrace:
+            |
+            """.trimMargin()
+        error(message + description + debugInformation.debugReport())
     }
 
     private fun Map<String, Any?>.debugReport(): String =

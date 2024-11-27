@@ -65,5 +65,5 @@ interface GraphQLClient {
     /**
      * Closes the client.
      */
-    fun close(): Unit
+    fun close()
 }

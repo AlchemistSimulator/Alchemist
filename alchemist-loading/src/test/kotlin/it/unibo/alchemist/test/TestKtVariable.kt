@@ -73,7 +73,6 @@ class TestKtVariable<T, P : Position<P>> : StringSpec({
         assertNotNull(file)
         val loader = LoadAlchemist.from(file)
         assertNotNull(loader.getWith<T, P>(emptyMap<String, String>()))
-        val seed = loader.variables["seed"]
-        seed shouldNot beNull()
+        loader.variables["seed"] shouldNot beNull()
     }
 })

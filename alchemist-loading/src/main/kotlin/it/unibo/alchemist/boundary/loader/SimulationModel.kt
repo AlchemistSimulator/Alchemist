@@ -156,9 +156,9 @@ private fun Any.validateVariableConsistencyRecursively(
         is Iterable<*> -> forEach { it?.validateVariableConsistencyRecursively(names, errors) }
         is SimulationModel.PlaceHolderForVariables -> {
             val message =
-                "Variable '$name' could not be evaluated as a constant, " + "but it is required to the definition of a variable along path ${
+                "Variable '$name' could not be evaluated as a constant, " +
+                    "but it is required to the definition of a variable along path " +
                     names.joinToString("->")
-                }"
             val related =
                 errors[name]?.mapIndexed { index, error -> "$index. ${error.message}" }?.distinct()
                     ?.joinToString(prefix = "Possibly related causes:\n", separator = "\n")
@@ -246,7 +246,7 @@ internal object SimulationModel {
         val remoteDependencies =
             visitRecursively(
                 context,
-                injectedRoot[DocumentRoot.remoteDependencies] ?: emptyMap<String, Any>(),
+                injectedRoot[DocumentRoot.REMOTE_DEPENDENCIES] ?: emptyMap<String, Any>(),
             ) { visitBuilding<String>(context, it) }
         logger.info("Remote dependencies: {}", remoteDependencies)
         return object : LoadingSystem(context, injectedRoot) {
@@ -286,7 +286,9 @@ internal object SimulationModel {
         context: Context,
         root: Map<String, *>,
     ): Map<String, Any> =
-        (replaceKnownRecursively(context, root) as Map<String, Any>).also { logger.debug("New model: {}", it) }
+        (replaceKnownRecursively(context, root) as Map<String, Any>).also {
+            logger.debug("New model: {}", it)
+        }
 
     private fun makeDefaultRandomGenerator(seed: Long) = MersenneTwister(seed)
 
@@ -443,7 +445,7 @@ internal object SimulationModel {
         context: Context,
         element: Map<*, *>,
     ): List<PositionBasedFilter<P>> {
-        val filterKey = DocumentRoot.Deployment.Filter.filter
+        val filterKey = DocumentRoot.Deployment.Filter.FILTER
         val positionBasedFilters =
             visitRecursively(context, element[filterKey] ?: emptyList<Any>()) { shape ->
                 visitBuilding<PositionBasedFilter<P>>(context, shape)
@@ -595,7 +597,7 @@ internal object SimulationModel {
                 } else {
                     val property = root[DocumentRoot.Export.Data.property]?.toString()
                     val filter: ExportFilter =
-                        root[DocumentRoot.Export.Data.valueFilter]?.let { CommonFilters.fromString(it.toString()) }
+                        root[DocumentRoot.Export.Data.VALUE_FILTER]?.let { CommonFilters.fromString(it.toString()) }
                             ?: CommonFilters.NOFILTER.filteringPolicy
                     val precision: Int? =
                         when (val digits = root[DocumentRoot.Export.Data.precision]) {
@@ -748,7 +750,7 @@ internal object SimulationModel {
                     environment,
                     node,
                     context,
-                    program[ProgramSyntax.timeDistribution],
+                    program[ProgramSyntax.TIME_DISTRIBUTION],
                 )
             context.factory.registerSingleton(TimeDistribution::class.java, timeDistribution)
             /*

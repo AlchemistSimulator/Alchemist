@@ -23,7 +23,6 @@ interface PhysicalProperty<T, P, A, F> : NodeProperty<T>
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P>,
           F : GeometricShapeFactory<P, A> {
-
     /**
      * @returns a list of vectors representing the physical forces acting on this node
      */

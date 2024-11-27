@@ -19,7 +19,6 @@ import it.unibo.alchemist.boundary.webui.common.model.surrogate.PositionSurrogat
  * @param <R> the type of the result, presumably a graphic representation, like a raster image or an SVG string.
  */
 interface Renderer<in TS : Any, in PS : PositionSurrogate, out R> {
-
     /**
      * Renders the [EnvironmentSurrogate].
      * @param environmentSurrogate the [EnvironmentSurrogate] to render.

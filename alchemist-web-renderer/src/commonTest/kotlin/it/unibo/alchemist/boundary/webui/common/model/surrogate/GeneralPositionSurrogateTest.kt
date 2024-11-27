@@ -21,10 +21,11 @@ import kotlinx.serialization.json.Json
 @OptIn(ExperimentalSerializationApi::class)
 class GeneralPositionSurrogateTest : StringSpec({
 
-    val generalPositionSurrogate: PositionSurrogate = GeneralPositionSurrogate(
-        doubleArrayOf(5.0, 1.1, 6.0),
-        3,
-    )
+    val generalPositionSurrogate: PositionSurrogate =
+        GeneralPositionSurrogate(
+            doubleArrayOf(5.0, 1.1, 6.0),
+            3,
+        )
 
     "GeneralPositionSurrogate should have the correct number of coordinates" {
         generalPositionSurrogate.coordinates.size shouldBe 3

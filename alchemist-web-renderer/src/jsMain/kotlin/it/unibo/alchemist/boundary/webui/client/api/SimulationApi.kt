@@ -21,25 +21,24 @@ import it.unibo.alchemist.boundary.webui.common.utility.Routes
  * API to interact with the simulation using the Play Button.
  */
 object SimulationApi {
-
     /**
      * Get the simulation status as a [StatusSurrogate].
      */
     suspend fun getSimulationStatus(): StatusSurrogate {
-        return client.get(endpoint + Routes.simulationStatusPath).body()
+        return client.get(endpoint + Routes.SIMULATION_STATUS_PATH).body()
     }
 
     /**
      * Plays the simulation.
      */
     suspend fun playSimulation(): HttpResponse {
-        return client.post(endpoint + Routes.simulationPlayPath)
+        return client.post(endpoint + Routes.SIMULATION_PLAY_PATH)
     }
 
     /**
      * Pauses the simulation.
      */
     suspend fun pauseSimulation(): HttpResponse {
-        return client.post(endpoint + Routes.simulationPausePath)
+        return client.post(endpoint + Routes.SIMULATION_PAUSE_PATH)
     }
 }

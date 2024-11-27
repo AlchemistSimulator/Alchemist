@@ -42,8 +42,7 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
         addProperty(CircularArea(environment, this, radius))
     }
 
-    private fun getNodeRadius(node: Node<Any>): Double =
-        node.asProperty<Any, AreaProperty<Any>>().shape.radius
+    private fun getNodeRadius(node: Node<Any>): Double = node.asProperty<Any, AreaProperty<Any>>().shape.radius
 
     override suspend fun beforeTest(testCase: TestCase) {
         super.beforeTest(testCase)

@@ -24,9 +24,9 @@ open class HeterogeneousPedestrian<T, S, A>(
     randomGenerator: RandomGenerator,
     node: Node<T>,
 ) : Pedestrian<T>(
-    randomGenerator,
-    node,
-) where S : Vector<S>, A : Transformation<S> {
+        randomGenerator,
+        node,
+    ) where S : Vector<S>, A : Transformation<S> {
     private val human by lazy { node.asProperty<T, HumanProperty<T, S, A>>() }
 
     override val walkingSpeed: Double get() = human.speed.walking

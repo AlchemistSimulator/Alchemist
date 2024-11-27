@@ -23,7 +23,6 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P>,
           F : GeometricShapeFactory<P, A> {
-
     /**
      * Whether the pedestrian has fallen and it is thus an obstacle.
      */

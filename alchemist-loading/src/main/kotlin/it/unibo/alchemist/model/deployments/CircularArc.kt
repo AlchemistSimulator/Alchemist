@@ -21,34 +21,34 @@ import kotlin.math.sin
  * Default values generate a uniform deployment on a circumference.
  */
 data class CircularArc<P : Position2D<P>>
-@JvmOverloads
-constructor(
-    val environment: Environment<*, P>,
-    val randomGenerator: RandomGenerator,
-    val nodeCount: Int,
-    val centerX: Double = 0.0,
-    val centerY: Double = 0.0,
-    val radius: Double = 1.0,
-    val radiusRandomness: Double = 0.0,
-    val angleRandomness: Double = 0.0,
-    val startAngle: Double = 0.0,
-    val endAngle: Double = 2 * PI,
-) : Deployment<P> {
-    private val step = (endAngle - startAngle) / nodeCount
+    @JvmOverloads
+    constructor(
+        val environment: Environment<*, P>,
+        val randomGenerator: RandomGenerator,
+        val nodeCount: Int,
+        val centerX: Double = 0.0,
+        val centerY: Double = 0.0,
+        val radius: Double = 1.0,
+        val radiusRandomness: Double = 0.0,
+        val angleRandomness: Double = 0.0,
+        val startAngle: Double = 0.0,
+        val endAngle: Double = 2 * PI,
+    ) : Deployment<P> {
+        private val step = (endAngle - startAngle) / nodeCount
 
-    /**
-     * @return a [Stream] over the positions of this [Deployment]
-     */
-    override fun stream(): Stream<P> =
-        IntStream.range(0, nodeCount)
-            .mapToDouble { step * it + startAngle } // actual angle
-            .mapToObj {
-                fun Double.randomized(magnitude: Double) = this * (1 + magnitude * randomGenerator.nextDouble())
-                val actualRadius = radius.randomized(radiusRandomness)
-                val actualAngle = it.randomized(angleRandomness)
-                environment.makePosition(
-                    centerX + actualRadius * sin(actualAngle),
-                    centerY + actualRadius * cos(actualAngle),
-                )
-            }
-}
+        /**
+         * @return a [Stream] over the positions of this [Deployment]
+         */
+        override fun stream(): Stream<P> =
+            IntStream.range(0, nodeCount)
+                .mapToDouble { step * it + startAngle } // actual angle
+                .mapToObj {
+                    fun Double.randomized(magnitude: Double) = this * (1 + magnitude * randomGenerator.nextDouble())
+                    val actualRadius = radius.randomized(radiusRandomness)
+                    val actualAngle = it.randomized(angleRandomness)
+                    environment.makePosition(
+                        centerX + actualRadius * sin(actualAngle),
+                        centerY + actualRadius * cos(actualAngle),
+                    )
+                }
+    }

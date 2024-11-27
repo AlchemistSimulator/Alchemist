@@ -19,7 +19,6 @@ import kotlinx.browser.window
  * Client used to make API call to the server.
  */
 object JsonClient {
-
     /**
      * Ktor endpoint. Used by the client to make API calls.
      */
@@ -28,9 +27,10 @@ object JsonClient {
     /**
      * Http client that will make the API call.
      */
-    val client: HttpClient = HttpClient {
-        install(ContentNegotiation) {
-            json(jsonFormat)
+    val client: HttpClient =
+        HttpClient {
+            install(ContentNegotiation) {
+                json(jsonFormat)
+            }
         }
-    }
 }

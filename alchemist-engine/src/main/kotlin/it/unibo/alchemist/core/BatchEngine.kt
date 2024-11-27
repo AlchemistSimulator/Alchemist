@@ -265,7 +265,10 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
                 else ->
                     error(
                         """
-                        Invalid output reply strategy $this. Available choices: ${listOf(Aggregate, Reply).map { it.name }}    
+                        Invalid output reply strategy $this. Available choices: ${listOf(
+                            Aggregate,
+                            Reply,
+                        ).map { it.name }}    
                         """.trimIndent(),
                     )
             }

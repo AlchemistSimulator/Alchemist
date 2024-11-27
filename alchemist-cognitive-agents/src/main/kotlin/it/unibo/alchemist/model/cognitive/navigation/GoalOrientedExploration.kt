@@ -57,7 +57,9 @@ open class GoalOrientedExploration<T, L : Euclidean2DConvexShape, R>(
     }
 
     protected open fun Euclidean2DPassage.leadsToUnknownDestination(): Boolean =
-        unknownDestinations.any { head.contains(it) }
+        unknownDestinations.any {
+            head.contains(it)
+        }
 
     /**
      * Assigns a weight to a door (= passage) leading to an unknown destination (e.g. an exit).

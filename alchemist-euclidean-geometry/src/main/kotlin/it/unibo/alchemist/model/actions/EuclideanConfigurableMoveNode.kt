@@ -39,12 +39,12 @@ open class EuclideanConfigurableMoveNode<T, P>(
     targetSelectionStrategy: TargetSelectionStrategy<T, P>,
     speedSelectionStrategy: SpeedSelectionStrategy<T, P>,
 ) : AbstractConfigurableMoveNode<T, P>(
-    environment,
-    node,
-    routingStrategy,
-    targetSelectionStrategy,
-    speedSelectionStrategy,
-) where P : Position<P>, P : Vector<P> {
+        environment,
+        node,
+        routingStrategy,
+        targetSelectionStrategy,
+        speedSelectionStrategy,
+    ) where P : Position<P>, P : Vector<P> {
     /**
      * @param environment the [Environment] which is executing the simulation
      * @param node the [Node] which is executing the current [Action]

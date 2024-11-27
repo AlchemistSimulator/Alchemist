@@ -11,18 +11,18 @@ package it.unibo.alchemist.boundary.webui.common.utility
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.environmentClientPath
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.environmentServerPath
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.simulationPausePath
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.simulationPlayPath
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.simulationStatusPath
+import it.unibo.alchemist.boundary.webui.common.utility.Routes.ENVIRONMENT_CLIENT_PATH
+import it.unibo.alchemist.boundary.webui.common.utility.Routes.ENVIRONMENT_SERVER_PATH
+import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_PAUSE_PATH
+import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_PLAY_PATH
+import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_STATUS_PATH
 
 class RoutesTest : StringSpec({
     "All the routes strings should be correct" {
-        environmentClientPath shouldBe "/environment/client"
-        environmentServerPath shouldBe "/environment/server"
-        simulationStatusPath shouldBe "/simulation/status"
-        simulationPlayPath shouldBe "/simulation/play"
-        simulationPausePath shouldBe "/simulation/pause"
+        ENVIRONMENT_CLIENT_PATH shouldBe "/environment/client"
+        ENVIRONMENT_SERVER_PATH shouldBe "/environment/server"
+        SIMULATION_STATUS_PATH shouldBe "/simulation/status"
+        SIMULATION_PLAY_PATH shouldBe "/simulation/play"
+        SIMULATION_PAUSE_PATH shouldBe "/simulation/pause"
     }
 })

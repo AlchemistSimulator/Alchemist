@@ -79,11 +79,9 @@ class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
 
                 override fun remove(element: Node<T>?) = BugReporting.reportBug("Not implemented")
 
-                override fun removeAll(elements: Collection<Node<T>>) =
-                    BugReporting.reportBug("Not implemented")
+                override fun removeAll(elements: Collection<Node<T>>) = BugReporting.reportBug("Not implemented")
 
-                override fun retainAll(elements: Collection<Node<T>>) =
-                    BugReporting.reportBug("Not implemented")
+                override fun retainAll(elements: Collection<Node<T>>) = BugReporting.reportBug("Not implemented")
 
                 override val size = environment.nodeCount - 1
 

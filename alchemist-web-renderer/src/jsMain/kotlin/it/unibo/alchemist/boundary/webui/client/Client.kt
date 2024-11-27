@@ -29,7 +29,8 @@ fun main() {
 /**
  * The App to render.
  */
-val App: FC<Props> = FC {
-    AppNavbar()
-    AppContent()
-}
+val App: FC<Props> =
+    FC {
+        AppNavbar()
+        AppContent()
+    }

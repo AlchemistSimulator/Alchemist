@@ -19,15 +19,15 @@ import kotlinx.serialization.modules.subclass
  * Object containing the [SerializersModule]s used by the web-renderer project.
  */
 object SerializationModules {
-
     /**
      * The [SerializersModule] used to serialize and deserialize all the possible Concentration types.
      */
     @OptIn(ExperimentalSerializationApi::class)
-    val concentrationModule = SerializersModule {
-        polymorphic(Any::class) {
-            subclass(EmptyConcentrationSurrogate::class)
-            defaultDeserializer { EmptyConcentrationSurrogate.serializer() }
+    val concentrationModule =
+        SerializersModule {
+            polymorphic(Any::class) {
+                subclass(EmptyConcentrationSurrogate::class)
+                defaultDeserializer { EmptyConcentrationSurrogate.serializer() }
+            }
         }
-    }
 }

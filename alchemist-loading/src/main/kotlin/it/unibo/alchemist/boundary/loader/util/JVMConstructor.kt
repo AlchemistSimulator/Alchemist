@@ -360,18 +360,20 @@ sealed class JVMConstructor(val typeName: String) {
                                     listOf(maybeParameter.getOrThrow())
                                 }
                             }
-                        }.toSet() // remove duplicates
-                /*
-                 * possibleMappings contains the possible instances that can be used as parameter.
-                 * If none has been produced, no way has been found to build the parameter.
-                 * If one has been produced, it is used.
-                 * If more than one has been produced, different constructors may have produced different objects.
-                 * Typically, the latter case is due to a bad implementation of equals() and hashCode()
-                 * in the parameter class, so that two objects created with the same specification are not equal.
-                 *
-                 * The last case is reported as an error, as objects built with the same procedure and parameters should
-                 * be equal in general. However, this may change in the future.
-                 */
+                            // remove duplicates
+                        }.toSet()
+                    /*
+                     * possibleMappings contains the possible instances that can be used as parameter.
+                     * If none has been produced, no way has been found to build the parameter.
+                     * If one has been produced, it is used.
+                     * If more than one has been produced, different constructors may have produced different objects.
+                     * Typically, the latter case is due to a bad implementation of equals() and hashCode()
+                     * in the parameter class, so that two objects created with the same specification are not equal.
+                     *
+                     * The last case is reported as an error, as objects built with
+                     * the same procedure and parameters should
+                     * be equal in general. However, this may change in the future.
+                     */
                     when (possibleMappings.size) {
                         0 -> error("Could not build parameter #$index defined as $parameter")
                         1 -> possibleMappings.first()

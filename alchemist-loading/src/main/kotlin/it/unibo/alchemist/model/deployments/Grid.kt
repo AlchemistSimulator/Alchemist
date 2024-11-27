@@ -46,38 +46,38 @@ import kotlin.math.ceil
  *            how shifted should be positions along columns
  */
 open class Grid
-@JvmOverloads
-constructor(
-    private val environment: Environment<*, *>,
-    private val randomGenerator: RandomGenerator,
-    private val xStart: Double,
-    private val yStart: Double,
-    private val xEnd: Double,
-    private val yEnd: Double,
-    private val xStep: Double,
-    private val yStep: Double,
-    private val xRand: Double = 0.0,
-    private val yRand: Double = 0.0,
-    private val xShift: Double = 0.0,
-    private val yShift: Double = 0.0,
-) : Deployment<Position<*>> {
-    override fun stream(): Stream<Position<*>> {
-        val positions =
-            (0 until stepCount(yStart, yEnd, yStep)).map { yn ->
-                val y = yStart + yStep * yn
-                (0 until stepCount(xStart, xEnd, xStep)).map { xn ->
-                    val x = xStart + xStep * xn
-                    val dx = xRand * (randomGenerator.nextDouble() - 0.5) + yn * xShift % xStep
-                    val dy = yRand * (randomGenerator.nextDouble() - 0.5) + xn * yShift % yStep
-                    environment.makePosition(x + dx, y + dy)
-                }
-            }.flatten()
-        return StreamSupport.stream(positions.spliterator(), false)
-    }
+    @JvmOverloads
+    constructor(
+        private val environment: Environment<*, *>,
+        private val randomGenerator: RandomGenerator,
+        private val xStart: Double,
+        private val yStart: Double,
+        private val xEnd: Double,
+        private val yEnd: Double,
+        private val xStep: Double,
+        private val yStep: Double,
+        private val xRand: Double = 0.0,
+        private val yRand: Double = 0.0,
+        private val xShift: Double = 0.0,
+        private val yShift: Double = 0.0,
+    ) : Deployment<Position<*>> {
+        override fun stream(): Stream<Position<*>> {
+            val positions =
+                (0 until stepCount(yStart, yEnd, yStep)).map { yn ->
+                    val y = yStart + yStep * yn
+                    (0 until stepCount(xStart, xEnd, xStep)).map { xn ->
+                        val x = xStart + xStep * xn
+                        val dx = xRand * (randomGenerator.nextDouble() - 0.5) + yn * xShift % xStep
+                        val dy = yRand * (randomGenerator.nextDouble() - 0.5) + xn * yShift % yStep
+                        environment.makePosition(x + dx, y + dy)
+                    }
+                }.flatten()
+            return StreamSupport.stream(positions.spliterator(), false)
+        }
 
-    private fun stepCount(
-        min: Double,
-        max: Double,
-        step: Double,
-    ): Int = ceil(abs((max - min) / step)).toInt()
-}
+        private fun stepCount(
+            min: Double,
+            max: Double,
+            step: Double,
+        ): Int = ceil(abs((max - min) / step)).toInt()
+    }

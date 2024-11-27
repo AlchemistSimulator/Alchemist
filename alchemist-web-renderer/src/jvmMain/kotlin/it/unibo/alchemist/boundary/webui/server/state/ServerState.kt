@@ -41,7 +41,8 @@ data class ServerState(
 fun rootReducer(
     state: ServerState,
     action: Any,
-): ServerState = ServerState(
-    simulation = simulationReducer(state.simulation, action),
-    environmentSurrogate = environmentSurrogateReducer(state.environmentSurrogate, action),
-)
+): ServerState =
+    ServerState(
+        simulation = simulationReducer(state.simulation, action),
+        environmentSurrogate = environmentSurrogateReducer(state.environmentSurrogate, action),
+    )

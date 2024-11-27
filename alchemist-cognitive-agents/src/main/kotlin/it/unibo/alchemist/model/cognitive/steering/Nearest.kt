@@ -30,16 +30,16 @@ class Nearest<T>(
     environment: Euclidean2DEnvironment<T>,
     node: Node<T>,
 ) : Filtered<T, Euclidean2DPosition>(
-    DistanceWeighted(environment, node),
-    {
-        partition { it is GroupSteeringAction<T, Euclidean2DPosition> }.let { (groupActions, otherActions) ->
-            listOfNotNull(
-                groupActions.pickNearestOrFirst(environment, node),
-                otherActions.pickNearestOrFirst(environment, node),
-            )
-        }
-    },
-) {
+        DistanceWeighted(environment, node),
+        {
+            partition { it is GroupSteeringAction<T, Euclidean2DPosition> }.let { (groupActions, otherActions) ->
+                listOfNotNull(
+                    groupActions.pickNearestOrFirst(environment, node),
+                    otherActions.pickNearestOrFirst(environment, node),
+                )
+            }
+        },
+    ) {
     private companion object {
         /**
          * Picks the [SteeringActionWithTarget] whose target is nearest to the [node]'s current position, or the first

@@ -21,26 +21,26 @@ import it.unibo.alchemist.model.properties.AbstractNodeProperty
  * Base implementation of a [CircularCellProperty].
  */
 class CircularDeformableCell
-@JvmOverloads
-constructor(
-    environment: Environment<Double, Euclidean2DPosition>,
-    override val node: Node<Double>,
-    override val maximumDiameter: Double,
-    override val rigidity: Double,
-    override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
-) : AbstractNodeProperty<Double>(node),
-    CircularDeformableCellProperty,
-    CircularCellProperty by CircularCell(
-        environment,
-        node,
-        maximumDiameter * rigidity,
-        junctions,
-    ) {
-    init {
-        require(rigidity in 0.0..1.0) {
-            "deformability must be between 0 and 1"
+    @JvmOverloads
+    constructor(
+        environment: Environment<Double, Euclidean2DPosition>,
+        override val node: Node<Double>,
+        override val maximumDiameter: Double,
+        override val rigidity: Double,
+        override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
+    ) : AbstractNodeProperty<Double>(node),
+        CircularDeformableCellProperty,
+        CircularCellProperty by CircularCell(
+            environment,
+            node,
+            maximumDiameter * rigidity,
+            junctions,
+        ) {
+        init {
+            require(rigidity in 0.0..1.0) {
+                "deformability must be between 0 and 1"
+            }
         }
-    }
 
-    override fun toString() = "${super.toString()}[maximumDiameter=$maximumDiameter, rigidity=$rigidity]"
-}
+        override fun toString() = "${super.toString()}[maximumDiameter=$maximumDiameter, rigidity=$rigidity]"
+    }

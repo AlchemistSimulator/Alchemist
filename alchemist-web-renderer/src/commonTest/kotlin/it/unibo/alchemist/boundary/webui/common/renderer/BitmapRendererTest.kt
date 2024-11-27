@@ -25,16 +25,17 @@ import korlibs.image.bitmap.Bitmap32
 
 class BitmapRendererTest : StringSpec({
 
-    val envSurrogate: EnvironmentSurrogate<Any, PositionSurrogate> = EnvironmentSurrogate(
-        2,
-        listOf(
-            NodeSurrogate(
-                0,
-                mapOf(MoleculeSurrogate("concentration") to EmptyConcentrationSurrogate),
-                Position2DSurrogate(5.6, 8.42),
+    val envSurrogate: EnvironmentSurrogate<Any, PositionSurrogate> =
+        EnvironmentSurrogate(
+            2,
+            listOf(
+                NodeSurrogate(
+                    0,
+                    mapOf(MoleculeSurrogate("concentration") to EmptyConcentrationSurrogate),
+                    Position2DSurrogate(5.6, 8.42),
+                ),
             ),
-        ),
-    )
+        )
 
     val renderer: Renderer<Any, PositionSurrogate, Bitmap> = BitmapRenderer()
 

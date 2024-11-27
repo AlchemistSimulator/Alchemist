@@ -37,64 +37,64 @@ import kotlin.math.min
  *            will be logged indipendently for each node.
  */
 class MoleculeReader
-@JvmOverloads
-constructor(
-    moleculeName: String,
-    private val property: String?,
-    private val incarnation: Incarnation<*, *>,
-    private val filter: ExportFilter,
-    aggregatorNames: List<String>,
-    precision: Int? = null,
-) : AbstractDoubleExporter(precision) {
-    private companion object {
-        private const val SHORT_NAME_MAX_LENGTH = 5
-    }
-
-    private val molecule: Molecule = incarnation.createMolecule(moleculeName)
-
-    private val aggregators: Map<String, UnivariateStatistic> =
-        aggregatorNames
-            .associateWith { StatUtil.makeUnivariateStatistic(it) }
-            .filter { it.value.isPresent }
-            .map { it.key to it.value.get() }
-            .toMap()
-
-    private val propertyText =
-        if (property.isNullOrEmpty()) {
-            ""
-        } else {
-            property.replace("[^\\d\\w]*".toRegex(), "")
+    @JvmOverloads
+    constructor(
+        moleculeName: String,
+        private val property: String?,
+        private val incarnation: Incarnation<*, *>,
+        private val filter: ExportFilter,
+        aggregatorNames: List<String>,
+        precision: Int? = null,
+    ) : AbstractDoubleExporter(precision) {
+        private companion object {
+            private const val SHORT_NAME_MAX_LENGTH = 5
         }
 
-    private val shortProp =
-        propertyText.takeIf(String::isEmpty)
-            ?: "${propertyText.substring(0..<min(propertyText.length, SHORT_NAME_MAX_LENGTH))}@"
+        private val molecule: Molecule = incarnation.createMolecule(moleculeName)
 
-    private val singleColumnName: String = "$shortProp$moleculeName"
+        private val aggregators: Map<String, UnivariateStatistic> =
+            aggregatorNames
+                .associateWith { StatUtil.makeUnivariateStatistic(it) }
+                .filter { it.value.isPresent }
+                .map { it.key to it.value.get() }
+                .toMap()
 
-    override val columnNames: List<String> =
-        aggregators.keys.takeIf { it.isNotEmpty() }
-            ?.map { "$singleColumnName[$it]" }
-            ?: listOf("$singleColumnName@node-id")
+        private val propertyText =
+            if (property.isNullOrEmpty()) {
+                ""
+            } else {
+                property.replace("[^\\d\\w]*".toRegex(), "")
+            }
 
-    override fun <T> extractData(
-        environment: Environment<T, *>,
-        reaction: Actionable<T>?,
-        time: Time,
-        step: Long,
-    ): Map<String, Double> {
-        fun Node<T>.extractData() = environment.incarnation.getProperty(this, molecule, property)
-        return when {
-            aggregators.isEmpty() ->
-                environment.nodes.asSequence().map { node ->
-                    "$singleColumnName@${node.id}" to node.extractData()
-                }.toMap()
-            else -> {
-                val filtered = environment.nodes.flatMap { filter.apply(it.extractData()) }.toDoubleArray()
-                aggregators.map { (aggregatorName, aggregator) ->
-                    "$singleColumnName[$aggregatorName]" to aggregator.evaluate(filtered)
-                }.toMap()
+        private val shortProp =
+            propertyText.takeIf(String::isEmpty)
+                ?: "${propertyText.substring(0..<min(propertyText.length, SHORT_NAME_MAX_LENGTH))}@"
+
+        private val singleColumnName: String = "$shortProp$moleculeName"
+
+        override val columnNames: List<String> =
+            aggregators.keys.takeIf { it.isNotEmpty() }
+                ?.map { "$singleColumnName[$it]" }
+                ?: listOf("$singleColumnName@node-id")
+
+        override fun <T> extractData(
+            environment: Environment<T, *>,
+            reaction: Actionable<T>?,
+            time: Time,
+            step: Long,
+        ): Map<String, Double> {
+            fun Node<T>.extractData() = environment.incarnation.getProperty(this, molecule, property)
+            return when {
+                aggregators.isEmpty() ->
+                    environment.nodes.asSequence().map { node ->
+                        "$singleColumnName@${node.id}" to node.extractData()
+                    }.toMap()
+                else -> {
+                    val filtered = environment.nodes.flatMap { filter.apply(it.extractData()) }.toDoubleArray()
+                    aggregators.map { (aggregatorName, aggregator) ->
+                        "$singleColumnName[$aggregatorName]" to aggregator.evaluate(filtered)
+                    }.toMap()
+                }
             }
         }
     }
-}

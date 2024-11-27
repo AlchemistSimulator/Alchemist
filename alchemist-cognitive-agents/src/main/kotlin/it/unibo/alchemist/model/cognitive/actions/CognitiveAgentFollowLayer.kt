@@ -47,5 +47,10 @@ open class CognitiveAgentFollowLayer(
         node: Node<Number>,
         reaction: Reaction<Number>,
     ): CognitiveAgentFollowLayer =
-        CognitiveAgentFollowLayer(environment, reaction, node.pedestrianProperty, targetMolecule)
+        CognitiveAgentFollowLayer(
+            environment,
+            reaction,
+            node.pedestrianProperty,
+            targetMolecule,
+        )
 }

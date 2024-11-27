@@ -63,16 +63,16 @@ object Alchemist {
                 type = ArgType.String,
                 fullName = "simulation file",
                 description =
-                """
+                    """
                     File with the simulation configuration.
-                """.trimIndent(),
+                    """.trimIndent(),
             )
 
             val verbosity by parser.option(
                 type = ArgType.Choice<Verbosity>(),
                 fullName = "verbosity",
                 description =
-                """
+                    """
                     Simulation logging verbosity level. Choose one of the following values:
                     
                     - debug
@@ -83,17 +83,17 @@ object Alchemist {
                     - off
                     
                     defaults to "warn"
-                """.trimIndent(),
+                    """.trimIndent(),
             ).default(Verbosity.WARN)
 
             val overrides by parser.option(
                 type = ArgType.String,
                 fullName = "override",
                 description =
-                """
+                    """
                     Valid yaml files used to override simulation config,
                     files are applied sequentially.
-                """.trimIndent(),
+                    """.trimIndent(),
             ).multiple()
 
             override fun execute() {

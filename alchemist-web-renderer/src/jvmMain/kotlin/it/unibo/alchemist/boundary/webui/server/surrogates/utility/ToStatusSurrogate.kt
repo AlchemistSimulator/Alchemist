@@ -15,10 +15,11 @@ import it.unibo.alchemist.core.Status
 /**
  * Map a [Status] to [StatusSurrogate].
  */
-fun Status.toStatusSurrogate(): StatusSurrogate = when (this) {
-    Status.INIT -> StatusSurrogate.INIT
-    Status.READY -> StatusSurrogate.READY
-    Status.PAUSED -> StatusSurrogate.PAUSED
-    Status.RUNNING -> StatusSurrogate.RUNNING
-    Status.TERMINATED -> StatusSurrogate.TERMINATED
-}
+fun Status.toStatusSurrogate(): StatusSurrogate =
+    when (this) {
+        Status.INIT -> StatusSurrogate.INIT
+        Status.READY -> StatusSurrogate.READY
+        Status.PAUSED -> StatusSurrogate.PAUSED
+        Status.RUNNING -> StatusSurrogate.RUNNING
+        Status.TERMINATED -> StatusSurrogate.TERMINATED
+    }

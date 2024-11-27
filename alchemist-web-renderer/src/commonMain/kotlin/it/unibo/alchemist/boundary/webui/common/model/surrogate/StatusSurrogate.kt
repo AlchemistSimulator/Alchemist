@@ -18,7 +18,6 @@ import kotlinx.serialization.Serializable
 @SerialName("Status")
 @Serializable
 enum class StatusSurrogate {
-
     /**
      * The simulation is being initialized.
      */

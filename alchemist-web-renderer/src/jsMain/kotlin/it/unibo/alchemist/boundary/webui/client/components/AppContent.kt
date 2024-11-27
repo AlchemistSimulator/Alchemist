@@ -31,26 +31,27 @@ private const val UPDATE_STATE_DELAY: Long = 100
 /**
  * The application main content section.
  */
-val AppContent: FC<Props> = FC {
+val AppContent: FC<Props> =
+    FC {
 
-    var bitmap: Bitmap? by useState(null)
+        var bitmap: Bitmap? by useState(null)
 
-    store.subscribe {
-        bitmap = store.state.bitmap
-    }
+        store.subscribe {
+            bitmap = store.state.bitmap
+        }
 
-    useEffectOnce {
-        scope.launch {
-            while (true) {
-                updateState(store.state.renderMode, RESTUpdateStateStrategy(), HwAutoRenderModeStrategy())
-                delay(UPDATE_STATE_DELAY)
+        useEffectOnce {
+            scope.launch {
+                while (true) {
+                    updateState(store.state.renderMode, RESTUpdateStateStrategy(), HwAutoRenderModeStrategy())
+                    delay(UPDATE_STATE_DELAY)
+                }
+            }
+        }
+
+        div {
+            img {
+                src = bitmap?.toHtmlNative()?.lazyCanvasElement?.toDataURL()
             }
         }
     }
-
-    div {
-        img {
-            src = bitmap?.toHtmlNative()?.lazyCanvasElement?.toDataURL()
-        }
-    }
-}

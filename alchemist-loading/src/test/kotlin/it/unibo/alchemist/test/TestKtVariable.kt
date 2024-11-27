@@ -64,4 +64,15 @@ class TestKtVariable<T, P : Position<P>> : StringSpec({
         val values = variable?.toList().orEmpty()
         values.forEach { it shouldBe "null" }
     }
+
+    // This is a regression test, when the simulation is loaded with formula defined inside a "seed" definition
+    // the simulation throws the exception:
+    // IllegalStateException: Invalid RandomGenerator specification: {min=1, max=2, step=1, default=1}: LinkedHashMap.
+    "simulation should load formula variables inside a RandomGenerator definition" {
+        val file = ResourceLoader.getResource("regression/testLoadFormulaVariables.yml")
+        assertNotNull(file)
+        val loader = LoadAlchemist.from(file)
+        assertNotNull(loader.getWith<T, P>(emptyMap<String, String>()))
+        loader.variables["seed"] shouldNot beNull()
+    }
 })

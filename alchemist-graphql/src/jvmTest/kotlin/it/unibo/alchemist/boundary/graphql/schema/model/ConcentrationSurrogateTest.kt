@@ -37,7 +37,10 @@ class ConcentrationSurrogateTest : StringSpec({
 
         private data class TestNonSerializableContent(val a: Int, val b: String)
 
-        fun <T : Any> checkConcentrationContent(c: T, cs: String) {
+        fun <T : Any> checkConcentrationContent(
+            c: T,
+            cs: String,
+        ) {
             if (canSerialize(c)) {
                 checkJsonContent(c, cs)
             } else {
@@ -45,11 +48,17 @@ class ConcentrationSurrogateTest : StringSpec({
             }
         }
 
-        fun <T : Any> checkGenericContent(c: T, cs: String) {
+        fun <T : Any> checkGenericContent(
+            c: T,
+            cs: String,
+        ) {
             encodeConcentrationContentToString(c) shouldBe cs
         }
 
-        fun <T : Any> checkJsonContent(c: T, cs: String) {
+        fun <T : Any> checkJsonContent(
+            c: T,
+            cs: String,
+        ) {
             val jsonContent = Json.Default.encodeToString(serializer(c::class.java), c)
             jsonContent shouldBe cs
             val content = Json.Default.decodeFromString(serializer(c::class.java), cs)

@@ -34,14 +34,15 @@ private val logger = LoggerFactory.getLogger(GraphQLMonitor::class.java)
  * By default, the server is stopped after the simulation terminates.
  * This behavior can be changed by setting [teardownOnSimulationTermination] to false.
  */
-class GraphQLMonitor<T, P : Position<out P>> @JvmOverloads constructor(
+class GraphQLMonitor<T, P : Position<out P>>
+@JvmOverloads
+constructor(
     val environment: Environment<T, P>,
     val host: String = DefaultGraphQLSettings.DEFAULT_HOST,
     val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
     val teardownOnSimulationTermination: Boolean = true,
     private val serverDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : OutputMonitor<Any, Nothing> {
-
     private val subscriptionMonitor = EnvironmentSubscriptionMonitor<Any, Nothing>()
     private lateinit var server: ApplicationEngine
 
@@ -66,7 +67,11 @@ class GraphQLMonitor<T, P : Position<out P>> @JvmOverloads constructor(
         mutex.acquireUninterruptibly()
     }
 
-    override fun finished(environment: Environment<Any, Nothing>, time: Time, step: Long) {
+    override fun finished(
+        environment: Environment<Any, Nothing>,
+        time: Time,
+        step: Long,
+    ) {
         if (teardownOnSimulationTermination) {
             server.stop()
         }

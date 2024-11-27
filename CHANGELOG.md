@@ -1,3 +1,18 @@
+## [36.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.0...36.0.1) (2024-11-27)
+
+### Dependency updates
+
+* **deps:** update react to v18.3.1-pre.839 ([#3962](https://github.com/AlchemistSimulator/Alchemist/issues/3962)) ([9d06e71](https://github.com/AlchemistSimulator/Alchemist/commit/9d06e7185e3d27733e76feb9c23874531adb1feb))
+
+### Bug Fixes
+
+* do not kick configuration keys just because their name matches a variable. This change adds support for calling variables `type`, `parameters`, `min`, `max`, `step`, `default`, etc. ([#3965](https://github.com/AlchemistSimulator/Alchemist/issues/3965)) ([87d09d1](https://github.com/AlchemistSimulator/Alchemist/commit/87d09d1d91cfe4fee288a3304182664d0971ee5f))
+* **graphql:** add client implementation in the test cp, required by generated code ([#3964](https://github.com/AlchemistSimulator/Alchemist/issues/3964)) ([300e6d7](https://github.com/AlchemistSimulator/Alchemist/commit/300e6d77c1492985be084b24b07c931cd9a846a6))
+
+### Style improvements
+
+* **loading:** replace scope function with a simpler Boolean ([1519e76](https://github.com/AlchemistSimulator/Alchemist/commit/1519e76aefc9b8fbab22c363c40230cd1ab9c45b))
+
 ## [36.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/35.0.3...36.0.0) (2024-11-27)
 
 ### ⚠ BREAKING CHANGES

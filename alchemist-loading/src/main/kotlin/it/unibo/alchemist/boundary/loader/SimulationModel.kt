@@ -576,9 +576,9 @@ internal object SimulationModel {
             logger.warn("No environment specified, defaulting to {}", Continuous2DEnvironment::class.simpleName)
             Continuous2DEnvironment(incarnation as Incarnation<T, Euclidean2DPosition>) as Environment<T, P>
         } else {
-            visitBuilding<Environment<T, P>>(context, root)?.getOrThrow() ?: cantBuildWith<Environment<T, P>>(
-                root, JavaType,
-            )
+            visitBuilding<Environment<T, P>>(context, root)
+                ?.getOrThrow()
+                ?: cantBuildWith<Environment<T, P>>(root, JavaType)
         }
 
     @Suppress("UNCHECKED_CAST", "CyclomaticComplexMethod")
@@ -883,7 +883,8 @@ internal object SimulationModel {
                     }
                 visitRandomGenerator(context, valueOf(DocumentRoot.Seeds.scenario)) to
                     visitRandomGenerator(
-                        context, valueOf(DocumentRoot.Seeds.simulation),
+                        context,
+                        valueOf(DocumentRoot.Seeds.simulation),
                     )
             }
 

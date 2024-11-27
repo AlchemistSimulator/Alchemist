@@ -24,29 +24,28 @@ class ArrayIndexedPriorityEpsilonBatchQueue<T>(
     private val epsilon: Double,
     private val delegate: ArrayIndexedPriorityQueue<T> = ArrayIndexedPriorityQueue(),
 ) : Scheduler<T> by delegate, BatchedScheduler<T> {
-    @Suppress("ReturnCount")
-    override fun getNextBatch(): List<Actionable<T>> {
-        if (delegate.tree.isEmpty()) {
-            return emptyList()
-        }
-        if (delegate.tree.size == 1) {
-            val result = mutableListOf<Actionable<T>>()
-            result.add(delegate.tree[0])
-            return result
-        }
-
-        val result = mutableListOf<Actionable<T>>()
-        val prev = delegate.tree[0]
-        result.add(prev)
-        for (next in delegate.tree.subList(1, delegate.tree.size)) {
-            if (abs(next.tau.toDouble() - prev.tau.toDouble()) >= epsilon) {
-                break
-            } else {
-                result.add(next)
+    override fun getNextBatch(): List<Actionable<T>> =
+        when {
+            delegate.tree.isEmpty() -> emptyList()
+            delegate.tree.size == 1 -> {
+                mutableListOf<Actionable<T>>().apply {
+                    add(delegate.tree[0])
+                }
+            }
+            else -> {
+                val result = mutableListOf<Actionable<T>>()
+                val prev = delegate.tree[0]
+                result.add(prev)
+                for (next in delegate.tree.subList(1, delegate.tree.size)) {
+                    if (abs(next.tau.toDouble() - prev.tau.toDouble()) >= epsilon) {
+                        break
+                    } else {
+                        result.add(next)
+                    }
+                }
+                result
             }
         }
-        return result
-    }
 
     override fun updateReaction(reaction: Actionable<T>) {
         synchronized(this) {

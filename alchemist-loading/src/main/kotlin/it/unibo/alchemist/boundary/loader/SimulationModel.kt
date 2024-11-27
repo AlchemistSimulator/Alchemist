@@ -132,7 +132,16 @@ private fun Any?.coerceToDouble(context: Context): Double =
 private fun Any?.removeKeysRecursively(keys: Set<Any>): Any? =
     when (this) {
         null -> null
-        is Map<*, *> -> (this - keys).mapValues { it.value.removeKeysRecursively(keys) }
+        is String -> this
+        is Map<*, *> -> {
+            val isAnObjectToBuild =
+                listOf(JavaType, DocumentRoot.DependentVariable, DocumentRoot.Variable)
+                    .any { it.validateDescriptor(this) }
+            when {
+                isAnObjectToBuild -> this
+                else -> (this - keys).mapValues { it.value.removeKeysRecursively(keys) }
+            }
+        }
         is Iterable<*> -> map { it.removeKeysRecursively(keys) }
         else -> this
     }

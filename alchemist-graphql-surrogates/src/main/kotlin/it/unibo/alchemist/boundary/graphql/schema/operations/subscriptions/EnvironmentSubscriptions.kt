@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.map
  * through [it.unibo.alchemist.boundary.graphql.schema.model.surrogates.EnvironmentSurrogate].
  */
 class EnvironmentSubscriptions<T, P : Position<out P>>(environment: Environment<T, P>) : Subscription {
-
     private val environmentMonitor = environment.subscriptionMonitor()
 
     /**
@@ -33,9 +32,10 @@ class EnvironmentSubscriptions<T, P : Position<out P>>(environment: Environment<
      * [it.unibo.alchemist.boundary.graphql.schema.model.surrogates.SimulationSurrogate].
      */
     @GraphQLDescription("The simulation")
-    fun simulation(): Flow<SimulationSurrogate<T, P>> = environmentMonitor.eventFlow.map { env ->
-        env.origin.simulation.toGraphQLSimulationSurrogate()
-    }
+    fun simulation(): Flow<SimulationSurrogate<T, P>> =
+        environmentMonitor.eventFlow.map { env ->
+            env.origin.simulation.toGraphQLSimulationSurrogate()
+        }
 
     /**
      * Returns a [Flow] with the updated value of the

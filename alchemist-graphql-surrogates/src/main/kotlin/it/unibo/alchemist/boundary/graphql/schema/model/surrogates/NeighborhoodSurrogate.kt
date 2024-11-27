@@ -20,7 +20,6 @@ import it.unibo.alchemist.model.Neighborhood
 data class NeighborhoodSurrogate<T>(
     @GraphQLIgnore override val origin: Neighborhood<T>,
 ) : GraphQLSurrogate<Neighborhood<T>>(origin) {
-
     /**
      * @return the size of this neighborhood.
      */

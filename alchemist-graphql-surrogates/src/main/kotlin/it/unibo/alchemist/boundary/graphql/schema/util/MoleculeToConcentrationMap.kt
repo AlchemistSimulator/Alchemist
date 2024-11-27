@@ -56,7 +56,7 @@ data class MoleculeToConcentrationEntry(
 /**
  * Converts a [Map] of [Molecule]s and concentration of type [T] to a [MoleculeToConcentrationMap].
  */
-fun <T>Map<Molecule, T>.toMoleculeToConcentrationMap() =
+fun <T> Map<Molecule, T>.toMoleculeToConcentrationMap() =
     MoleculeToConcentrationMap(
         this.mapKeys { it.key.toGraphQLMoleculeSurrogate() }
             .mapValues { encodeConcentrationContentToString(it.value) },

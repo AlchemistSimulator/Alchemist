@@ -28,10 +28,11 @@ object PositionSurrogateUtils {
      * @return the [PositionSurrogate] relative to the given position.
      */
     @GraphQLIgnore
-    fun toPositionSurrogate(position: Position<*>) = when (position.dimensions) {
-        2 -> Position2DSurrogate(position.coordinates[0], position.coordinates[1])
-        else -> GenericPositionSurrogate(position.coordinates.toList(), position.dimensions)
-    }
+    fun toPositionSurrogate(position: Position<*>) =
+        when (position.dimensions) {
+            2 -> Position2DSurrogate(position.coordinates[0], position.coordinates[1])
+            else -> GenericPositionSurrogate(position.coordinates.toList(), position.dimensions)
+        }
 
     /**
      * Converts a [PositionInput] to its relative [PositionSurrogate].
@@ -40,8 +41,9 @@ object PositionSurrogateUtils {
      * @return the [PositionSurrogate] relative to the given position.
      */
     @GraphQLIgnore
-    fun fromPositionInput(input: PositionInput) = when (input.dimensions) {
-        2 -> Position2DSurrogate(input.coordinates[0], input.coordinates[1])
-        else -> GenericPositionSurrogate(input.coordinates, input.dimensions)
-    }
+    fun fromPositionInput(input: PositionInput) =
+        when (input.dimensions) {
+            2 -> Position2DSurrogate(input.coordinates[0], input.coordinates[1])
+            else -> GenericPositionSurrogate(input.coordinates, input.dimensions)
+        }
 }

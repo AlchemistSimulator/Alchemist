@@ -1,3 +1,64 @@
+## [36.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/35.0.3...36.0.0) (2024-11-27)
+
+### ⚠ BREAKING CHANGES
+
+* use SCREAMING_SNAKE_CASE for constants
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.18.1 ([#3961](https://github.com/AlchemistSimulator/Alchemist/issues/3961)) ([fed8f47](https://github.com/AlchemistSimulator/Alchemist/commit/fed8f47cc14fd94a885b04d13a0aa6490f4259de))
+* **deps:** update npm to v10.9.1 ([#3958](https://github.com/AlchemistSimulator/Alchemist/issues/3958)) ([346ef37](https://github.com/AlchemistSimulator/Alchemist/commit/346ef37f1ce0a872481bca3a9106f53c2895a5de))
+* **deps:** update plugin kotlin-qa to v0.74.0 ([6121f72](https://github.com/AlchemistSimulator/Alchemist/commit/6121f72dfd10a31cbd1a558adbffef50a0b1c9dc))
+* **deps:** update react to v18.3.1-pre.837 ([#3957](https://github.com/AlchemistSimulator/Alchemist/issues/3957)) ([b503263](https://github.com/AlchemistSimulator/Alchemist/commit/b5032635c2dbc6e69cf0730cdac11a22e9f06e7a))
+* **deps:** update react to v18.3.1-pre.838 ([#3959](https://github.com/AlchemistSimulator/Alchemist/issues/3959)) ([fd014ba](https://github.com/AlchemistSimulator/Alchemist/commit/fd014ba8202dbd61cb78a6f46c4dd0f55e9bdf03))
+
+### Documentation
+
+* **euclidean-geometry:** fix dangling link ([567b2f0](https://github.com/AlchemistSimulator/Alchemist/commit/567b2f05a919bf0cab2e170755c9a718e7c2bf3a))
+* **multivesta-adapter:** remove dangling link ([87a14e1](https://github.com/AlchemistSimulator/Alchemist/commit/87a14e1885885e1b392fc4e1ed16b36a690db334))
+
+### Build and continuous integration
+
+* **graphql:** disable `graphqlGenerateTestClient`, as it was breaking the build. ([2f04f60](https://github.com/AlchemistSimulator/Alchemist/commit/2f04f60947e37eec84bdfce2c8f20263c1707762))
+
+### General maintenance
+
+* **implementationbase:** move Kotlin file in the appropriate folder ([ec760a8](https://github.com/AlchemistSimulator/Alchemist/commit/ec760a8e99035017e5f5169668782295d8acd044))
+* **implementationbase:** replace TODO() with bug reporting messages ([e57c681](https://github.com/AlchemistSimulator/Alchemist/commit/e57c6814088eff5b5ff879849620d974e933ee1a))
+* **incarnation-protelis:** remove TODO as Protelis/Protelis[#676](https://github.com/AlchemistSimulator/Alchemist/issues/676) has been merged in long ago ([299fc85](https://github.com/AlchemistSimulator/Alchemist/commit/299fc85ace61c6ce43ce2c10243a233947794d75))
+
+### Style improvements
+
+* **api:** apply Ktlint 1.0.0 formatting rules ([db89de2](https://github.com/AlchemistSimulator/Alchemist/commit/db89de2954431723f37f4cf6f1293e2fd626d204))
+* **api:** prefer enum `entries` over `values()` ([517d160](https://github.com/AlchemistSimulator/Alchemist/commit/517d160ee6441f6e9dcedb678b293ea0b6f567a2))
+* **api:** remove empty lines at class begin ([3e41251](https://github.com/AlchemistSimulator/Alchemist/commit/3e412515bb6cbdb0687c6e364f8097eb73237f1b))
+* **build:** apply Ktlint 1.0.0 formatting rules ([b4d2368](https://github.com/AlchemistSimulator/Alchemist/commit/b4d2368827d21f00fede9b617fc375ec68b6a3fa))
+* **cognitive-agents:** apply the formatter of Ktlint 1.0.0 ([b8a12e3](https://github.com/AlchemistSimulator/Alchemist/commit/b8a12e385e353e16d278d368dbf1340178d34e8f))
+* **engine:** apply the formatter of Ktlint 1.0.0 ([8738e1a](https://github.com/AlchemistSimulator/Alchemist/commit/8738e1ab2cbcbd4f3730c286b9cf2e5a9b21f74d))
+* **engine:** remove multiple returns from `ArrayIndexedPriorityEpsilonBatchQueue.getNextBatch()` ([9fe1ec7](https://github.com/AlchemistSimulator/Alchemist/commit/9fe1ec7ccdef2361ae58921db64791af738b6f72))
+* **euclidean-geometry:** apply the formatter of Ktlint 1.0.0 ([bf0584e](https://github.com/AlchemistSimulator/Alchemist/commit/bf0584efa480681a2ea4cebd46908dd3567c7bd7))
+* **full:** apply the formatter of Ktlint 1.0.0 ([77ea12c](https://github.com/AlchemistSimulator/Alchemist/commit/77ea12ce3124920432d27942c6fb13ccc5ccf350))
+* **full:** prefer enum `entries` over `values()` ([b093b30](https://github.com/AlchemistSimulator/Alchemist/commit/b093b307228a2e88385c1298226b385e5d0dfa5e))
+* **graphql-surrogates:** apply the formatter of Ktlint 1.0.0 ([a376b5d](https://github.com/AlchemistSimulator/Alchemist/commit/a376b5dc4fcfa1b06cc601230e454e33262d8f1a))
+* **graphql-surrogates:** remove redundant explicitly given type ([a1de929](https://github.com/AlchemistSimulator/Alchemist/commit/a1de929c87cc7f89483eb326e6ce63d43810b4ad))
+* **graphql:** apply the formatter of Ktlint 1.0.0 ([5c6f85c](https://github.com/AlchemistSimulator/Alchemist/commit/5c6f85c9ab22af68c9dcf791c92f60080318bdbf))
+* **graphql:** remove redundant `Unit` return type ([2ef760e](https://github.com/AlchemistSimulator/Alchemist/commit/2ef760e326beefe849986f05303e1a581f0cf81c))
+* **grid:** apply the formatter of Ktlint 1.0.0 ([a73f00f](https://github.com/AlchemistSimulator/Alchemist/commit/a73f00fede0b64384fd549ecffafc8b45905d932))
+* **implementationbase:** apply the formatter of Ktlint 1.0.0 ([cd013d2](https://github.com/AlchemistSimulator/Alchemist/commit/cd013d2e8c15877932d5ab39cd489ae9bb667ebe))
+* **implementationbase:** remove empty lines at class begin ([6c82ca9](https://github.com/AlchemistSimulator/Alchemist/commit/6c82ca9475cf63945ca77d47caaea46f4aca4bc1))
+* **incarnation-biochemistry:** apply the formatter of Ktlint 1.0.0 ([e4bc4a1](https://github.com/AlchemistSimulator/Alchemist/commit/e4bc4a16006ec565d0bb590ea119ab8bf203ce93))
+* **incarnation-protelis:** apply the formatter of Ktlint 1.0.0 ([c5aca83](https://github.com/AlchemistSimulator/Alchemist/commit/c5aca83c789119c735dec9d014e50c2d784990f0))
+* **incarnation-sapere:** apply the formatter of Ktlint 1.0.0 and move the Kotlin sources into the correct folder ([6c9b8fd](https://github.com/AlchemistSimulator/Alchemist/commit/6c9b8fd694b185d968173ad06026dd753d6c0dd5))
+* **loading:** apply the formatter of Ktlint 1.0.0 ([ae4e525](https://github.com/AlchemistSimulator/Alchemist/commit/ae4e525ba6c02945b51c0a190eaeff1e7476b2a8))
+* **main:** apply Ktlint 1.0.0 formatting rules ([73ebf5b](https://github.com/AlchemistSimulator/Alchemist/commit/73ebf5b2a85cf8e857574136c5c640946900178f))
+* **main:** remove empty lines at class begin ([8bc6de1](https://github.com/AlchemistSimulator/Alchemist/commit/8bc6de1906fff7b2ad778e88c22a6e462d7849f6))
+* **maintenance-tooling:** apply the formatter of Ktlint 1.0.0 ([d3fe98e](https://github.com/AlchemistSimulator/Alchemist/commit/d3fe98ed3bab10bfb6fb9bebfd479d0cea7283f3))
+* **maps:** apply the formatter of Ktlint 1.0.0 ([ce2ad4d](https://github.com/AlchemistSimulator/Alchemist/commit/ce2ad4d8fa75419cda43703aa5d4067057549d55))
+* **multivesta-adapter:** apply the formatter of Ktlint 1.0.0 ([a8ea93c](https://github.com/AlchemistSimulator/Alchemist/commit/a8ea93c3b1bfc00a87ceb968dcae7870443f9cbc))
+* use SCREAMING_SNAKE_CASE for constants ([0c06cb6](https://github.com/AlchemistSimulator/Alchemist/commit/0c06cb6cbe8e44bb8cd898294def58259ffcdbd7))
+* **web-renderer:** prefer enum `entries` over `values()` ([ca95d92](https://github.com/AlchemistSimulator/Alchemist/commit/ca95d926449f8c2d19e951306d7c950bc6a28bd3))
+* **web-renderer:** remove unused import ([a1d2a44](https://github.com/AlchemistSimulator/Alchemist/commit/a1d2a4440ab54042605500bb636120ce99c22849))
+
 ## [35.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/35.0.2...35.0.3) (2024-11-23)
 
 ### Dependency updates

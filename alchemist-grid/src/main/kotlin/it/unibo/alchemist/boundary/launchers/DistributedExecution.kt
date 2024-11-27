@@ -23,17 +23,18 @@ class DistributedExecution(
     private val variables: List<String> = emptyList(),
     private val distributedConfigPath: String?,
 ) : DefaultLauncher() {
-
     override fun launch(loader: Loader) {
-        val simulationConfig = LocalGeneralSimulationConfig(
-            loader,
-            Time.INFINITY,
-        )
+        val simulationConfig =
+            LocalGeneralSimulationConfig(
+                loader,
+                Time.INFINITY,
+            )
         val simConfigs = loader.variables.cartesianProductOf(variables).map(::SimulationConfigImpl)
-        val simulationSet = SimulationSetImpl(
-            simulationConfig,
-            simConfigs,
-        )
+        val simulationSet =
+            SimulationSetImpl(
+                simulationConfig,
+                simConfigs,
+            )
         val cluster =
             ClusterImpl(Paths.get(requireNotNull(distributedConfigPath) { "No remote configuration file" }))
         cluster.getWorkersSet(simulationSet.computeComplexity()).distributeSimulations(simulationSet)

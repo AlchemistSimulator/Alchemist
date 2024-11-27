@@ -20,7 +20,6 @@ import it.unibo.alchemist.model.Time
 data class TimeSurrogate(
     @GraphQLIgnore override val origin: Time,
 ) : GraphQLSurrogate<Time>(origin) {
-
     /**
      * The time represented as a double.
      */

@@ -25,7 +25,6 @@ data class NodeSurrogate<T>(
     @GraphQLIgnore override val origin: Node<T>,
     val id: Int = origin.id,
 ) : GraphQLSurrogate<Node<T>>(origin) {
-
     /**
      * The number of [Molecule]s in this node.
      */

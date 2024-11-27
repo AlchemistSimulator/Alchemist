@@ -47,7 +47,11 @@ class PhysicalPedestrian2D<T>(
 
     private val nodeShape by lazy { node.asProperty<T, AreaProperty<T>>().shape }
 
-    private val desiredSpaceTreshold: Double = randomGenerator.nextDouble(minimumSpaceTreshold, maximumSpaceThreshold)
+    private val desiredSpaceTreshold: Double =
+        randomGenerator.nextDouble(
+            MINIMUM_SPACE_THRESHOLD,
+            MAXIMUM_SPACE_THRESHOLD,
+        )
 
     private val cognitiveModel = node.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel
 
@@ -77,7 +81,7 @@ class PhysicalPedestrian2D<T>(
             }
 
     private val fallenAgentPerceptionArea
-        get() = environment.shapeFactory.circle(fallenAgentPerceptionRadius).transformed { origin(node.position) }
+        get() = environment.shapeFactory.circle(FALLEN_AGENT_PERCEPTION_RADIUS).transformed { origin(node.position) }
 
     private val Node<T>.position get() = environment.getPosition(this)
 
@@ -145,8 +149,8 @@ class PhysicalPedestrian2D<T>(
         thisVelocity: Euclidean2DPosition,
         otherVelocity: Euclidean2DPosition,
     ) = when {
-        thisVelocity.dot(otherVelocity) > 0 -> directionWeight
-        else -> directionWeight * 2
+        thisVelocity.dot(otherVelocity) > 0 -> DIRECTION_WEIGHT
+        else -> DIRECTION_WEIGHT * 2
     }
 
     override fun fallenAgentAvoidanceForces() =
@@ -185,12 +189,12 @@ class PhysicalPedestrian2D<T>(
         /**
          * Minimum value for normal state [comfortRay] (in meters).
          */
-        private const val minimumSpaceTreshold = 0.5
+        private const val MINIMUM_SPACE_THRESHOLD = 0.5
 
         /**
          * Maximum value for normal state [comfortRay] (in meters).
          */
-        private const val maximumSpaceThreshold = 1.0
+        private const val MAXIMUM_SPACE_THRESHOLD = 1.0
 
         /**
          * Dimension (in meters) of the rectangle of influence (width, height).
@@ -202,13 +206,13 @@ class PhysicalPedestrian2D<T>(
          * Direction tangential force weight factor for when two nodes are moving in the same direction.
          * See the work of [Pelechano et al](https://doi.org/10.2312/SCA/SCA07/099-108).
          */
-        private const val directionWeight = 1.2
+        private const val DIRECTION_WEIGHT = 1.2
 
         /**
          * Fallen agent perception radius (in meters).
          * For further information please refer to the work of
          * [Pelechano et. al](https://doi.org/10.2312/SCA/SCA07/099-108).
          */
-        private const val fallenAgentPerceptionRadius = 1.5
+        private const val FALLEN_AGENT_PERCEPTION_RADIUS = 1.5
     }
 }

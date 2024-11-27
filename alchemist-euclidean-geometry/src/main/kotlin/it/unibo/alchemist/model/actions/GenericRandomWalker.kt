@@ -33,19 +33,19 @@ open class GenericRandomWalker<T>(
     protected val speed: Double,
     protected val distanceDistribution: RealDistribution,
 ) : EuclideanConfigurableMoveNode<T, Euclidean2DPosition>(
-    environment,
-    node,
-    RoutingStrategy { p1, p2 ->
-        PolygonalChain(
-            listOf(
-                p1,
-                p2,
-            ),
-        )
-    },
-    RandomTarget(environment, node, randomGenerator, distanceDistribution),
-    GloballyConstantSpeed(reaction, speed),
-) {
+        environment,
+        node,
+        RoutingStrategy { p1, p2 ->
+            PolygonalChain(
+                listOf(
+                    p1,
+                    p2,
+                ),
+            )
+        },
+        RandomTarget(environment, node, randomGenerator, distanceDistribution),
+        GloballyConstantSpeed(reaction, speed),
+    ) {
     override fun cloneAction(
         node: Node<T>,
         reaction: Reaction<T>,

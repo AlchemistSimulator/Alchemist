@@ -18,16 +18,16 @@ import it.unibo.alchemist.model.Time
  * Logs the number of nodes in the scenario.
  */
 class NumberOfNodes : Extractor<Int> {
-    override val columnNames = listOf(name)
+    override val columnNames = listOf(NAME)
 
     override fun <T> extractData(
         environment: Environment<T, *>,
         reaction: Actionable<T>?,
         time: Time,
         step: Long,
-    ): Map<String, Int> = mapOf(name to environment.nodeCount)
+    ): Map<String, Int> = mapOf(NAME to environment.nodeCount)
 
     private companion object {
-        private const val name: String = "nodes"
+        private const val NAME: String = "nodes"
     }
 }

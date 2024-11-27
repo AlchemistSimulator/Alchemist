@@ -27,7 +27,6 @@ import java.util.stream.Stream
  * so the user does not have to set them by hand.
  */
 class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
-
     private var minAndMaxToBeSet = true
 
     override fun <T, P : Position2D<P>> prepare(
@@ -38,13 +37,14 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
         wormhole: Wormhole2D<P>,
     ) {
         if (minAndMaxToBeSet) {
-            val maxLayerValue = toDraw.stream()
-                .filter { l -> l is BidimensionalGaussianLayer }
-                .map { l -> l as BidimensionalGaussianLayer }
-                .map { l -> l.getValue(environment.makePosition(l.centerX, l.centerY)) }
-                .max { d1, d2 -> java.lang.Double.compare(d1, d2) }
-                .orElse(minimumLayerValue)
-            effect.minLayerValue = minimumLayerValue.toString()
+            val maxLayerValue =
+                toDraw.stream()
+                    .filter { l -> l is BidimensionalGaussianLayer }
+                    .map { l -> l as BidimensionalGaussianLayer }
+                    .map { l -> l.getValue(environment.makePosition(l.centerX, l.centerY)) }
+                    .max { d1, d2 -> java.lang.Double.compare(d1, d2) }
+                    .orElse(MINIMUM_LAYER_VALUE)
+            effect.minLayerValue = MINIMUM_LAYER_VALUE.toString()
             effect.maxLayerValue = maxLayerValue.toString()
             minAndMaxToBeSet = false
         }
@@ -68,6 +68,6 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
         /**
          * The minumum value of any layer.
          */
-        const val minimumLayerValue = 0.1
+        const val MINIMUM_LAYER_VALUE = 0.1
     }
 }

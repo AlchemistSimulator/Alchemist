@@ -20,32 +20,35 @@ class UpdateStateTest : StringSpec({
     var serverCount = 0
     var statusCount = 0
 
-    val updateStateStrategy = object : UpdateStateStrategy {
-        override suspend fun clientComputation() {
-            clientCount++
-        }
-
-        override suspend fun serverComputation() {
-            serverCount++
-        }
-
-        override suspend fun retrieveSimulationStatus() {
-            statusCount++
-        }
-    }
-
-    val autoStrategy = object : AutoRenderModeStrategy {
-        override fun invoke(): RenderMode =
-            if (clientCount >= serverCount) {
-                RenderMode.SERVER
-            } else {
-                RenderMode.CLIENT
+    val updateStateStrategy =
+        object : UpdateStateStrategy {
+            override suspend fun clientComputation() {
+                clientCount++
             }
-    }
 
-    val brokenAutoStrategy = object : AutoRenderModeStrategy {
-        override fun invoke(): RenderMode = RenderMode.AUTO
-    }
+            override suspend fun serverComputation() {
+                serverCount++
+            }
+
+            override suspend fun retrieveSimulationStatus() {
+                statusCount++
+            }
+        }
+
+    val autoStrategy =
+        object : AutoRenderModeStrategy {
+            override fun invoke(): RenderMode =
+                if (clientCount >= serverCount) {
+                    RenderMode.SERVER
+                } else {
+                    RenderMode.CLIENT
+                }
+        }
+
+    val brokenAutoStrategy =
+        object : AutoRenderModeStrategy {
+            override fun invoke(): RenderMode = RenderMode.AUTO
+        }
 
     "updateState should work using RenderMode.SERVER" {
         updateState(RenderMode.SERVER, updateStateStrategy, autoStrategy)

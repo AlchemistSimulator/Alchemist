@@ -39,13 +39,13 @@ class ConstantDistanceRandomWalk<T>(
     private val distance: Double,
     speed: Double,
 ) : GenericRandomWalker<T>(
-    node,
-    reaction,
-    environment,
-    randomGenerator,
-    speed,
-    DiracDeltaDistribution(distance),
-) {
+        node,
+        reaction,
+        environment,
+        randomGenerator,
+        speed,
+        DiracDeltaDistribution(distance),
+    ) {
     override fun cloneAction(
         node: Node<T>,
         reaction: Reaction<T>,

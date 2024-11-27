@@ -19,38 +19,38 @@ import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
  * Base implementation of a pedestrian's capability to influence each other in a 2D space.
  */
 class Perceptive2D<T>
-@JvmOverloads
-constructor(
-    /**
-     * The environment where [node] is moving.
-     */
-    val environment: Physics2DEnvironment<T>,
-    override val node: Node<T>,
-    override val fieldOfView: InfluenceSphere2D<T> =
-        FieldOfView2D(environment, node, defaultFieldOfViewDepth, defaultFieldOfViewAperture),
-) : PerceptiveProperty<T> by Perceptive(
-    node,
-    fieldOfView,
-) {
-    override fun cloneOnNewNode(node: Node<T>) =
-        Perceptive2D(
-            environment,
+    @JvmOverloads
+    constructor(
+        /**
+         * The environment where [node] is moving.
+         */
+        val environment: Physics2DEnvironment<T>,
+        override val node: Node<T>,
+        override val fieldOfView: InfluenceSphere2D<T> =
+            FieldOfView2D(environment, node, DEFAULT_FIELD_OF_VIEW_DEPTH, DEFAULT_FIELD_OF_VIEW_APERTURE),
+    ) : PerceptiveProperty<T> by Perceptive(
             node,
-            FieldOfView2D(environment, node, defaultFieldOfViewDepth, defaultFieldOfViewAperture),
-        )
-
-    /**
-     * Contains the default values for the field of view.
-     */
-    companion object {
-        /**
-         * Default aperture of pedestrian's [fieldOfView].
-         */
-        const val defaultFieldOfViewAperture = Math.PI / 180 * 80
+            fieldOfView,
+        ) {
+        override fun cloneOnNewNode(node: Node<T>) =
+            Perceptive2D(
+                environment,
+                node,
+                FieldOfView2D(environment, node, DEFAULT_FIELD_OF_VIEW_DEPTH, DEFAULT_FIELD_OF_VIEW_APERTURE),
+            )
 
         /**
-         * Default depth of pedestrian's [fieldOfView].
+         * Contains the default values for the field of view.
          */
-        const val defaultFieldOfViewDepth = 10.0
+        companion object {
+            /**
+             * Default aperture of pedestrian's [fieldOfView].
+             */
+            const val DEFAULT_FIELD_OF_VIEW_APERTURE = Math.PI / 180 * 80
+
+            /**
+             * Default depth of pedestrian's [fieldOfView].
+             */
+            const val DEFAULT_FIELD_OF_VIEW_DEPTH = 10.0
+        }
     }
-}

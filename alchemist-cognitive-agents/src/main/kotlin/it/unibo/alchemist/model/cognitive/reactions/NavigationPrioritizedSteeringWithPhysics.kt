@@ -23,20 +23,20 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  * [Sum] strategy is used to combine steering actions and physical forces.
  */
 class NavigationPrioritizedSteeringWithPhysics<T, N : ConvexPolygon>
-@JvmOverloads
-constructor(
-    environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, *>,
-    override val pedestrian: PedestrianProperty<T>,
-    timeDistribution: TimeDistribution<T>,
-    /**
-     * Tolerance angle in degrees (see [SinglePrevalent]).
-     */
-    toleranceAngle: Double = Math.toDegrees(SinglePrevalent.DEFAULT_TOLERANCE_ANGLE),
-    /**
-     * Alpha value for exponential smoothing (see [SinglePrevalent]).
-     */
-    alpha: Double = SinglePrevalent.DEFAULT_ALPHA,
-) : NavigationPrioritizedSteering<T, N>(environment, pedestrian, timeDistribution, toleranceAngle, alpha) {
-    override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> =
-        Sum(environment, node, super.steerStrategy)
-}
+    @JvmOverloads
+    constructor(
+        environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, *>,
+        override val pedestrian: PedestrianProperty<T>,
+        timeDistribution: TimeDistribution<T>,
+        /**
+         * Tolerance angle in degrees (see [SinglePrevalent]).
+         */
+        toleranceAngle: Double = Math.toDegrees(SinglePrevalent.DEFAULT_TOLERANCE_ANGLE),
+        /**
+         * Alpha value for exponential smoothing (see [SinglePrevalent]).
+         */
+        alpha: Double = SinglePrevalent.DEFAULT_ALPHA,
+    ) : NavigationPrioritizedSteering<T, N>(environment, pedestrian, timeDistribution, toleranceAngle, alpha) {
+        override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> =
+            Sum(environment, node, super.steerStrategy)
+    }

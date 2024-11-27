@@ -35,4 +35,7 @@ data class ConcentrationSurrogate<T>(
  * content, or its String representation if the Json serialization fails.
  */
 fun <T : Any> Concentration<T>.toGraphQLConcentrationSurrogate() =
-    ConcentrationSurrogate(this, encodeConcentrationContentToString(this))
+    ConcentrationSurrogate(
+        this,
+        encodeConcentrationContentToString(this),
+    )

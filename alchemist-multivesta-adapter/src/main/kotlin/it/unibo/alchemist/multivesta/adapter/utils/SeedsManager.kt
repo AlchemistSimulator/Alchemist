@@ -18,8 +18,8 @@ import kotlin.random.Random
  * simulation twice.
  */
 object SeedsManager {
-    private const val folder = "tmp"
-    private val availableSeedsPath = File("$folder/available_seeds.txt")
+    private const val FOLDER = "tmp"
+    private val availableSeedsPath = File("$FOLDER/available_seeds.txt")
 
     private val lock: FileLock = FileLock("seeds")
 

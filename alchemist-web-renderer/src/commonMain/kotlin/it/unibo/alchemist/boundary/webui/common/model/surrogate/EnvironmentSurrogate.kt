@@ -43,9 +43,10 @@ data class EnvironmentSurrogate<out TS : Any, out PS : PositionSurrogate>(
          * @return The most general polymorphic serializer for the [EnvironmentSurrogate] class, using [Any] and
          * [PositionSurrogate] as type parameters.
          */
-        fun polymorphicSerializer(): KSerializer<EnvironmentSurrogate<Any, PositionSurrogate>> = serializer(
-            PolymorphicSerializer(Any::class),
-            PositionSurrogate.serializer(),
-        )
+        fun polymorphicSerializer(): KSerializer<EnvironmentSurrogate<Any, PositionSurrogate>> =
+            serializer(
+                PolymorphicSerializer(Any::class),
+                PositionSurrogate.serializer(),
+            )
     }
 }

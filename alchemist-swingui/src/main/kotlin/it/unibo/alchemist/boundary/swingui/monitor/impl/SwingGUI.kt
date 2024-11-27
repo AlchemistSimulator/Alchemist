@@ -40,7 +40,6 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
     failOnHeadless: Boolean,
     private val main: Generic2DDisplay<T, P>,
 ) : GraphicalOutputMonitor<T, P> by main {
-
     private val headAttached: Boolean = !GraphicsEnvironment.isHeadless()
 
     /**
@@ -64,7 +63,8 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
      * @param graphics the effects file
      * @param closeOperation the type of close operation for this GUI
      */
-    @JvmOverloads constructor(
+    @JvmOverloads
+    constructor(
         environment: Environment<T, P>,
         graphics: String? = null,
         failOnHeadless: Boolean = false,
@@ -104,10 +104,10 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
             /*
              * Go on screen
              */
-            // frame.pack();
-            val size = GraphicsEnvironment.getLocalGraphicsEnvironment().screenDevices
-                .map { screen -> screen.displayMode }
-                .minByOrNull { it.area() }
+            val size =
+                GraphicsEnvironment.getLocalGraphicsEnvironment().screenDevices
+                    .map { screen -> screen.displayMode }
+                    .minByOrNull { it.area() }
             frame.size = size?.run { Dimension((width * SCALE_FACTOR).toInt(), (height * SCALE_FACTOR).toInt()) }
                 ?: Dimension(FALLBACK_X_SIZE, FALLBACK_Y_SIZE)
             frame.isLocationByPlatform = true
@@ -127,14 +127,23 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
         }
     }
 
-    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    override fun stepDone(
+        environment: Environment<T, P>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ) {
         if (headAttached) {
             timeStepMonitor.stepDone(environment, reaction, time, step)
             main.stepDone(environment, reaction, time, step)
         }
     }
 
-    override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
+    override fun finished(
+        environment: Environment<T, P>,
+        time: Time,
+        step: Long,
+    ) {
         if (headAttached) {
             timeStepMonitor.finished(environment, time, step)
             main.finished(environment, time, step)

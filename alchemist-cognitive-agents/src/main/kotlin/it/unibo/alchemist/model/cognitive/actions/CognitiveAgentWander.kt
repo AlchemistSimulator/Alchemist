@@ -46,15 +46,15 @@ open class CognitiveAgentWander<T>(
     protected val offset: Double,
     protected val radius: Double,
 ) : AbstractSteeringActionWithTarget<T, Euclidean2DPosition, Euclidean2DTransformation>(
-    environment,
-    reaction,
-    pedestrian,
-    TargetSelectionStrategy {
-        randomGenerator.position(
-            environment,
-        )
-    },
-) {
+        environment,
+        reaction,
+        pedestrian,
+        TargetSelectionStrategy {
+            randomGenerator.position(
+                environment,
+            )
+        },
+    ) {
     private val heading by lazy {
         environment.setHeading(node, randomGenerator.random2DVersor(environment));
         { environment.getHeading(node) }
@@ -85,6 +85,8 @@ private fun RandomGenerator.position(environment: Environment<*, Euclidean2DPosi
 /**
  * Generate a random Euclidean direction.
  */
-private fun <V> RandomGenerator.random2DVersor(environment: Environment<*, V>): V
+private fun <V> RandomGenerator.random2DVersor(
+    environment: Environment<*, V>,
+): V
     where V : Vector2D<V>, V : Position2D<V> =
     environment.makePosition(nextDouble(-1.0, 1.0), nextDouble(-1.0, 1.0))

@@ -17,7 +17,6 @@ import com.apollographql.apollo3.api.Mutation
  * @param graphqlClient the GraphQL client connected to the server
  */
 class SimulationHandler(private val graphqlClient: GraphQLClient) {
-
     /**
      * Pauses the simulation.
      */
@@ -38,9 +37,10 @@ class SimulationHandler(private val graphqlClient: GraphQLClient) {
      * Plays the simulation.
      */
     suspend fun play(): PlaySimulationMutation.Data {
-        val status = handleSimulation(
-            PlaySimulationMutation(),
-        ) as PlaySimulationMutation.Data
+        val status =
+            handleSimulation(
+                PlaySimulationMutation(),
+            ) as PlaySimulationMutation.Data
 
         check(status.play == "RUNNING") { status.play }
         return status
@@ -51,6 +51,5 @@ class SimulationHandler(private val graphqlClient: GraphQLClient) {
      */
     suspend fun status() = graphqlClient.query(SimulationStatusQuery()).execute().data?.simulation?.status
 
-    private suspend fun handleSimulation(action: Mutation<*>) =
-        graphqlClient.mutation(action).execute().data!!
+    private suspend fun handleSimulation(action: Mutation<*>) = graphqlClient.mutation(action).execute().data!!
 }

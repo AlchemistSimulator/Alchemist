@@ -19,7 +19,6 @@ import org.reduxkotlin.createStore
  * @see <a href="https://reduxkotlin.org/">ReduxKotlin Documentation</a>
  */
 object ClientStore {
-
     /**
      * The redux store of the client.
      */

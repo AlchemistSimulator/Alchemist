@@ -58,9 +58,10 @@ object AlchemistTesting {
      */
     @JvmStatic
     fun loadAlchemistFromResource(simulationResource: String): Loader {
-        val file = requireNotNull(ResourceLoader.getResource(simulationResource)) {
-            "$simulationResource could not be found in the classpath"
-        }
+        val file =
+            requireNotNull(ResourceLoader.getResource(simulationResource)) {
+                "$simulationResource could not be found in the classpath"
+            }
         return LoadAlchemist.from(file)
     }
 

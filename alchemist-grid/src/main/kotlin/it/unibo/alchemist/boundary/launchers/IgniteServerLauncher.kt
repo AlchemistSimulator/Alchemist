@@ -15,9 +15,9 @@ import org.apache.ignite.startup.cmdline.CommandLineStartup
  * Launches a service waiting for simulations to be sent over the network.
  */
 class IgniteServerLauncher
-@JvmOverloads
-constructor(
-    private val serverConfigPath: String? = null,
-) : DefaultLauncher() {
-    override fun launch(loader: Loader) = CommandLineStartup.main(arrayOf(serverConfigPath))
-}
+    @JvmOverloads
+    constructor(
+        private val serverConfigPath: String? = null,
+    ) : DefaultLauncher() {
+        override fun launch(loader: Loader) = CommandLineStartup.main(arrayOf(serverConfigPath))
+    }

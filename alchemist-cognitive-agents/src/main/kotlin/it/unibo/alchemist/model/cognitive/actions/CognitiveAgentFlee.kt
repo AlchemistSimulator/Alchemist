@@ -43,7 +43,12 @@ open class CognitiveAgentFlee<T, P, A>(
         node: Node<T>,
         reaction: Reaction<T>,
     ): CognitiveAgentFlee<T, P, A> =
-        CognitiveAgentFlee(environment, reaction, node.pedestrianProperty, *danger.coordinates)
+        CognitiveAgentFlee(
+            environment,
+            reaction,
+            node.pedestrianProperty,
+            *danger.coordinates,
+        )
 
     override fun nextPosition(): P = (currentPosition - danger).resized(maxWalk)
 }

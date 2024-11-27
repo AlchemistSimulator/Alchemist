@@ -102,7 +102,7 @@ internal abstract class LoadingSystem(
                 }
             // LINKING RULE
             val linkingRule =
-                SimulationModel.visitLinkingRule<P, T>(context, root.getOrEmptyMap(DocumentRoot.linkingRule))
+                SimulationModel.visitLinkingRule<P, T>(context, root.getOrEmptyMap(DocumentRoot.LINKING_RULES))
             environment.linkingRule = linkingRule
             contextualize(linkingRule)
             // MONITORS
@@ -167,7 +167,7 @@ internal abstract class LoadingSystem(
         ) {
             val environmentDescriptor = descriptor[DocumentRoot.environment]
             if (environmentDescriptor is Map<*, *>) {
-                val programDescriptor = environmentDescriptor.getOrEmpty(DocumentRoot.Environment.globalPrograms)
+                val programDescriptor = environmentDescriptor.getOrEmpty(DocumentRoot.Environment.GLOBAL_PROGRAMS)
                 val globalPrograms =
                     SimulationModel.visitRecursively(
                         context,

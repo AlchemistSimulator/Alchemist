@@ -61,14 +61,14 @@ class DiracDeltaDistribution constructor(val value: Double) : RealDistribution, 
     @Deprecated(
         "Deprecated in Java",
         replaceWith =
-        ReplaceWith("getSupporLowerBound().isFinite() && !density(getSupportLowerBound()).isNaN()"),
+            ReplaceWith("getSupporLowerBound().isFinite() && !density(getSupportLowerBound()).isNaN()"),
     )
     override fun isSupportLowerBoundInclusive() = false
 
     @Deprecated(
         "Deprecated in Java",
         replaceWith =
-        ReplaceWith("getSupportUpperBound().isFinite() && !density(getSupportUpperBound()).isNaN()"),
+            ReplaceWith("getSupportUpperBound().isFinite() && !density(getSupportUpperBound()).isNaN()"),
     )
     override fun isSupportUpperBoundInclusive() = false
 

@@ -42,10 +42,10 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
      */
     private val wallRepulsionFactor: Double = DEFAULT_WALL_REPULSION_FACTOR,
 ) : AbstractNavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>(
-    environment,
-    reaction,
-    pedestrian,
-) {
+        environment,
+        reaction,
+        pedestrian,
+    ) {
     /**
      * Contains the default constants.
      */

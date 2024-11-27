@@ -42,6 +42,7 @@ fun <T, P> Simulation<T, P>.startSimulation(
     apply {
         environment.addTerminator(StepCount(steps))
         check(environment is EuclideanEnvironment<*, *>)
+
         fun checkForErrors() = error.ifPresent { throw it }
         addOutputMonitor(
             object : OutputMonitor<T, P> {
@@ -49,11 +50,22 @@ fun <T, P> Simulation<T, P>.startSimulation(
                     checkForErrors()
                     onceInitialized(environment as EuclideanEnvironment<T, P>)
                 }
-                override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, t: Time, s: Long) {
+
+                override fun stepDone(
+                    environment: Environment<T, P>,
+                    reaction: Actionable<T>?,
+                    t: Time,
+                    s: Long,
+                ) {
                     checkForErrors()
                     atEachStep(environment as EuclideanEnvironment<T, P>, reaction, t, s)
                 }
-                override fun finished(environment: Environment<T, P>, t: Time, s: Long) {
+
+                override fun finished(
+                    environment: Environment<T, P>,
+                    t: Time,
+                    s: Long,
+                ) {
                     checkForErrors()
                     whenFinished(environment as EuclideanEnvironment<T, P>, t, s)
                 }

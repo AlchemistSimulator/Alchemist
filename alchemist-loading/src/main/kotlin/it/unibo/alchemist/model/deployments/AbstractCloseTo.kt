@@ -52,5 +52,5 @@ abstract class AbstractCloseTo<T, P : Position<P>> constructor(
                 .let { distribution ->
                     (0 until nodeCount).map { environment.makePosition(*distribution.sample().toTypedArray()) }
                 }.also { deployment = it }
-            ).stream()
+        ).stream()
 }

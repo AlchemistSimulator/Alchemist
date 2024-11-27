@@ -28,7 +28,6 @@ external val Button: ComponentClass<ButtonProps>
  * Props used to customize the Button.
  */
 external interface ButtonProps : PropsWithChildren {
-
     /**
      * active prop, false by default.
      */

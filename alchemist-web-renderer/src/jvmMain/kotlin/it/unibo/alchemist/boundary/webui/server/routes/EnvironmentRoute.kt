@@ -14,8 +14,8 @@ import io.ktor.server.routing.get
 import it.unibo.alchemist.boundary.webui.common.model.serialization.encodeEnvironmentSurrogate
 import it.unibo.alchemist.boundary.webui.common.model.serialization.jsonFormat
 import it.unibo.alchemist.boundary.webui.common.renderer.Bitmap32Serializer
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.environmentClientPath
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.environmentServerPath
+import it.unibo.alchemist.boundary.webui.common.utility.Routes.ENVIRONMENT_CLIENT_PATH
+import it.unibo.alchemist.boundary.webui.common.utility.Routes.ENVIRONMENT_SERVER_PATH
 import it.unibo.alchemist.boundary.webui.server.state.ServerStore.store
 import it.unibo.alchemist.boundary.webui.server.utility.Response
 import it.unibo.alchemist.boundary.webui.server.utility.Response.Companion.respond
@@ -27,7 +27,6 @@ import kotlinx.coroutines.withContext
  * Logic of the Routes in the /environment path.
  */
 object EnvironmentRoute {
-
     /**
      * Route of type GET that retrieve current Environment.
      * The server will render the environment and send it to the client in an already rendered form.
@@ -35,7 +34,7 @@ object EnvironmentRoute {
      * 200 (OK) the Environment is sent to the client.
      */
     fun Route.environmentServerMode() {
-        get(environmentServerPath) {
+        get(ENVIRONMENT_SERVER_PATH) {
             respond(Response(content = renderedEnvironment()))
         }
     }
@@ -47,14 +46,12 @@ object EnvironmentRoute {
      * 200 (OK) the Environment is sent to the client.
      */
     fun Route.environmentClientMode() {
-        get(environmentClientPath) {
+        get(ENVIRONMENT_CLIENT_PATH) {
             respond(Response(content = jsonFormat.encodeEnvironmentSurrogate(store.state.environmentSurrogate)))
         }
     }
 
-    private suspend fun renderedEnvironment(
-        dispatcher: CoroutineDispatcher = Dispatchers.Default,
-    ): String {
+    private suspend fun renderedEnvironment(dispatcher: CoroutineDispatcher = Dispatchers.Default): String {
         return withContext(dispatcher) {
             jsonFormat.encodeToString(
                 Bitmap32Serializer,

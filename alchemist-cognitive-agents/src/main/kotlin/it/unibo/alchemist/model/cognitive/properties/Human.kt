@@ -23,39 +23,39 @@ import org.apache.commons.math3.random.RandomGenerator
  * A pedestrian's individual characteristics.
  */
 class Human<T>
-@JvmOverloads
-constructor(
-    private val randomGenerator: RandomGenerator,
-    override val node: Node<T>,
-    override val age: Age,
-    override val gender: Gender,
-    override val speed: Speed = Speed(age, gender, randomGenerator),
-    override val compliance: Double = Compliance(age, gender).level,
-    override val helpAttitude: HelpAttitude = HelpAttitude(age, gender),
-) : AbstractNodeProperty<T>(node), Human2DProperty<T> {
     @JvmOverloads
     constructor(
-        randomGenerator: RandomGenerator,
-        node: Node<T>,
-        age: Any,
-        gender: String,
-        speed: Speed = Speed(Age.fromAny(age), Gender.fromString(gender), randomGenerator),
-        compliance: Double = Compliance(Age.fromAny(age), Gender.fromString(gender)).level,
-        helpAttitude: HelpAttitude = HelpAttitude(Age.fromAny(age), Gender.fromString(gender)),
-    ) : this(randomGenerator, node, Age.fromAny(age), Gender.fromString(gender), speed, compliance, helpAttitude)
+        private val randomGenerator: RandomGenerator,
+        override val node: Node<T>,
+        override val age: Age,
+        override val gender: Gender,
+        override val speed: Speed = Speed(age, gender, randomGenerator),
+        override val compliance: Double = Compliance(age, gender).level,
+        override val helpAttitude: HelpAttitude = HelpAttitude(age, gender),
+    ) : AbstractNodeProperty<T>(node), Human2DProperty<T> {
+        @JvmOverloads
+        constructor(
+            randomGenerator: RandomGenerator,
+            node: Node<T>,
+            age: Any,
+            gender: String,
+            speed: Speed = Speed(Age.fromAny(age), Gender.fromString(gender), randomGenerator),
+            compliance: Double = Compliance(Age.fromAny(age), Gender.fromString(gender)).level,
+            helpAttitude: HelpAttitude = HelpAttitude(Age.fromAny(age), Gender.fromString(gender)),
+        ) : this(randomGenerator, node, Age.fromAny(age), Gender.fromString(gender), speed, compliance, helpAttitude)
 
-    override fun cloneOnNewNode(node: Node<T>) =
-        Human(
-            randomGenerator,
-            node,
-            age,
-            gender,
-            speed,
-            compliance,
-            helpAttitude,
-        )
+        override fun cloneOnNewNode(node: Node<T>) =
+            Human(
+                randomGenerator,
+                node,
+                age,
+                gender,
+                speed,
+                compliance,
+                helpAttitude,
+            )
 
-    override fun toString() =
-        "${super.toString()}[age=$age, gender=$gender, speed=$speed, " +
-            "compliance=$compliance, helpAttitude=$helpAttitude]"
-}
+        override fun toString() =
+            "${super.toString()}[age=$age, gender=$gender, speed=$speed, " +
+                "compliance=$compliance, helpAttitude=$helpAttitude]"
+    }

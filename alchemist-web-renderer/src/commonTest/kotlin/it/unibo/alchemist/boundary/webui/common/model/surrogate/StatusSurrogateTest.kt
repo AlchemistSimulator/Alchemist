@@ -12,18 +12,18 @@ package it.unibo.alchemist.boundary.webui.common.model.surrogate
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.serialization.jsonFormat
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 
 class StatusSurrogateTest : StringSpec({
 
-    val listOfValues = listOf(
-        StatusSurrogate.INIT,
-        StatusSurrogate.READY,
-        StatusSurrogate.PAUSED,
-        StatusSurrogate.RUNNING,
-        StatusSurrogate.TERMINATED,
-    )
+    val listOfValues =
+        listOf(
+            StatusSurrogate.INIT,
+            StatusSurrogate.READY,
+            StatusSurrogate.PAUSED,
+            StatusSurrogate.RUNNING,
+            StatusSurrogate.TERMINATED,
+        )
 
     "StatusSurrogate are just INIT, READY, PAUSED, RUNNING and TERMINATED" {
         val statuses = StatusSurrogate.values()

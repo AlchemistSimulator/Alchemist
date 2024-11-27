@@ -20,23 +20,24 @@ import react.useState
 /**
  * The application Navbar.
  */
-val AppNavbar: FC<Props> = FC {
+val AppNavbar: FC<Props> =
+    FC {
 
-    var statusSurrogate: StatusSurrogate by useState { StatusSurrogate.INIT }
+        var statusSurrogate: StatusSurrogate by useState { StatusSurrogate.INIT }
 
-    store.subscribe {
-        statusSurrogate = store.state.statusSurrogate
-    }
-
-    Navbar {
-        bg = "dark"
-        variant = "dark"
-        NavbarBrand {
-            +"Alchemist Web Renderer"
+        store.subscribe {
+            statusSurrogate = store.state.statusSurrogate
         }
-        RenderModeButtons()
-        PlayButton {
-            status = statusSurrogate
+
+        Navbar {
+            bg = "dark"
+            variant = "dark"
+            NavbarBrand {
+                +"Alchemist Web Renderer"
+            }
+            RenderModeButtons()
+            PlayButton {
+                status = statusSurrogate
+            }
         }
     }
-}

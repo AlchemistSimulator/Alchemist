@@ -30,20 +30,20 @@ data class DefaultGraphQLClient(
     override val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
     private val enableSubscription: Boolean = false,
 ) : GraphQLClient {
-
-    private val client: ApolloClient = ApolloClient.Builder()
-        .serverUrl(serverUrl())
-        .apply {
-            if (enableSubscription) {
-                subscriptionNetworkTransport(
-                    WebSocketNetworkTransport.Builder()
-                        .serverUrl(subscriptionUrl())
-                        .protocol(GraphQLWsProtocol.Factory())
-                        .build(),
-                )
+    private val client: ApolloClient =
+        ApolloClient.Builder()
+            .serverUrl(serverUrl())
+            .apply {
+                if (enableSubscription) {
+                    subscriptionNetworkTransport(
+                        WebSocketNetworkTransport.Builder()
+                            .serverUrl(subscriptionUrl())
+                            .protocol(GraphQLWsProtocol.Factory())
+                            .build(),
+                    )
+                }
             }
-        }
-        .build()
+            .build()
 
     override fun subscriptionUrl(): String {
         check(enableSubscription) { "Subscription module is not enabled!" }

@@ -33,8 +33,9 @@ fun <T, P, TS, PS> Node<T>.toNodeSurrogate(
     toConcentrationSurrogate: (T) -> TS,
     toPositionSurrogate: (P) -> PS,
 ): NodeSurrogate<TS, PS>
-    where TS : Any, P : Position<out P>, PS : PositionSurrogate = NodeSurrogate(
-    id,
-    contents.map { it.key.toMoleculeSurrogate() to toConcentrationSurrogate(it.value) }.toMap(),
-    toPositionSurrogate(environment.getPosition(this)),
-)
+    where TS : Any, P : Position<out P>, PS : PositionSurrogate =
+    NodeSurrogate(
+        id,
+        contents.map { it.key.toMoleculeSurrogate() to toConcentrationSurrogate(it.value) }.toMap(),
+        toPositionSurrogate(environment.getPosition(this)),
+    )

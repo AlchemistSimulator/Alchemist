@@ -37,8 +37,8 @@ data class MoleculeToConcentrationMap(
      * Custom indexing with a [MoleculeInput] object.
      * NB: key resolution is done by the wrapped [Molecule] name.
      */
-    @GraphQLIgnore operator fun get(input: MoleculeInput) =
-        originMap.filterKeys { it.name == input.name }.values.firstOrNull()
+    @GraphQLIgnore
+    operator fun get(input: MoleculeInput) = originMap.filterKeys { it.name == input.name }.values.firstOrNull()
 }
 
 /**

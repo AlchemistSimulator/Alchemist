@@ -36,6 +36,7 @@ private val logger = LoggerFactory.getLogger(GraphQLMonitor::class.java)
  * This behavior can be changed by setting [teardownOnSimulationTermination] to false.
  */
 class GraphQLMonitor<T, P : Position<out P>>
+
 @JvmOverloads
 constructor(
     val environment: Environment<T, P>,
@@ -47,36 +48,36 @@ constructor(
     private val subscriptionMonitor = EnvironmentSubscriptionMonitor<Any, Nothing>()
     private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
-    override fun initialized(environment: Environment<Any, Nothing>) {
-        environment.simulation.addOutputMonitor(subscriptionMonitor)
-        server = makeServer()
-        val mutex = java.util.concurrent.Semaphore(0)
-        Thread(
-            {
-                runBlocking {
-                    launch(serverDispatcher) {
-                        mutex.release()
-                        server.start(wait = true)
+        override fun initialized(environment: Environment<Any, Nothing>) {
+            environment.simulation.addOutputMonitor(subscriptionMonitor)
+            server = makeServer()
+            val mutex = java.util.concurrent.Semaphore(0)
+            Thread(
+                {
+                    runBlocking {
+                        launch(serverDispatcher) {
+                            mutex.release()
+                            server.start(wait = true)
+                        }
                     }
-                }
-            },
-            "alchemist-graphql-server@$host:$port",
-        ).start()
-        runBlocking {
-            logger.info("Starting GraphQL server at $host:${server.engine.resolvedConnectors().first().port}")
+                },
+                "alchemist-graphql-server@$host:$port",
+            ).start()
+            runBlocking {
+                logger.info("Starting GraphQL server at $host:${server.engine.resolvedConnectors().first().port}")
+            }
+            mutex.acquireUninterruptibly()
         }
-        mutex.acquireUninterruptibly()
-    }
 
-    override fun finished(
-        environment: Environment<Any, Nothing>,
-        time: Time,
-        step: Long,
-    ) {
-        if (teardownOnSimulationTermination) {
-            server.stop()
+        override fun finished(
+            environment: Environment<Any, Nothing>,
+            time: Time,
+            step: Long,
+        ) {
+            if (teardownOnSimulationTermination) {
+                server.stop()
+            }
         }
-    }
 
     private fun makeServer() = embeddedServer(
         Netty,

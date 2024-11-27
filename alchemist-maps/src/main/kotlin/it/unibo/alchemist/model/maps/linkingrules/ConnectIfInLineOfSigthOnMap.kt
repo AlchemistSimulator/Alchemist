@@ -22,27 +22,27 @@ import kotlin.math.min
  * (wireless signals do not need to follow one-way roads).
  */
 class ConnectIfInLineOfSigthOnMap<T>
-@JvmOverloads
-constructor(
-    val maxRange: Double,
-    val tolerance: Double = 0.1,
-) : AbstractLocallyConsistentLinkingRule<T, GeoPosition>() {
-    override fun computeNeighborhood(
-        center: Node<T>,
-        environment: Environment<T, GeoPosition>,
-    ): Neighborhood<T> {
-        require(environment is MapEnvironment<T, *, *>) {
-            "Cannot operate of environments of type " + environment::class.simpleName
+    @JvmOverloads
+    constructor(
+        val maxRange: Double,
+        val tolerance: Double = 0.1,
+    ) : AbstractLocallyConsistentLinkingRule<T, GeoPosition>() {
+        override fun computeNeighborhood(
+            center: Node<T>,
+            environment: Environment<T, GeoPosition>,
+        ): Neighborhood<T> {
+            require(environment is MapEnvironment<T, *, *>) {
+                "Cannot operate of environments of type " + environment::class.simpleName
+            }
+            val inRange =
+                environment.getNodesWithinRange(center, maxRange)
+                    .filter { target ->
+                        val losDistance = environment.getDistanceBetweenNodes(center, target)
+                        val outbound = environment.computeRoute(center, target)
+                        val inbound = environment.computeRoute(target, center)
+                        val shortest = min(outbound.length(), inbound.length())
+                        shortest <= maxRange && abs(shortest - losDistance) < tolerance * shortest
+                    }
+            return Neighborhoods.make(environment, center, inRange)
         }
-        val inRange =
-            environment.getNodesWithinRange(center, maxRange)
-                .filter { target ->
-                    val losDistance = environment.getDistanceBetweenNodes(center, target)
-                    val outbound = environment.computeRoute(center, target)
-                    val inbound = environment.computeRoute(target, center)
-                    val shortest = min(outbound.length(), inbound.length())
-                    shortest <= maxRange && abs(shortest - losDistance) < tolerance * shortest
-                }
-        return Neighborhoods.make(environment, center, inRange)
     }
-}

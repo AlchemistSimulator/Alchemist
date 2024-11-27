@@ -31,12 +31,13 @@ class HeadTowardRandomDirection<T>(
     private val environment: Physics2DEnvironment<T>,
     private val randomGenerator: RandomGenerator,
 ) : AbstractAction<T>(node) {
-
     /**
      * {@inheritDoc}.
      */
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> =
-        HeadTowardRandomDirection(node, environment, randomGenerator)
+    override fun cloneAction(
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ): Action<T> = HeadTowardRandomDirection(node, environment, randomGenerator)
 
     /**
      * Changes the heading of the node randomly.

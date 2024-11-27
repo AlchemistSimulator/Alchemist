@@ -50,7 +50,11 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) : JPanel(),
 
     override fun actionPerformed(e: ActionEvent) = Unit
 
-    override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
+    override fun finished(
+        environment: Environment<T, P>,
+        time: Time,
+        step: Long,
+    ) {
         stepDone(environment, null, time, step)
     }
 
@@ -58,9 +62,15 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) : JPanel(),
         stepDone(environment, null, Time.ZERO, 0L)
     }
 
-    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    override fun stepDone(
+        environment: Environment<T, P>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ) {
         if (reaction == null || reaction is Reaction<*> && reaction.node == node) {
-            val content = """
+            val content =
+                """
                 |$POSITION
                 |${environment.getPosition(node)}
                 |
@@ -69,7 +79,7 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) : JPanel(),
                 |
                 |$PROGRAM
                 |${node.reactions.joinToString(System.lineSeparator()) { it.toString() }}
-            """.trimMargin()
+                """.trimMargin()
             stringLength = content.length + MARGIN
             currentText = content
             if (!updateIsScheduled.get()) {

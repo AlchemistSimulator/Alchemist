@@ -30,11 +30,12 @@ class ToNodeSurrogateTest<T, P> : StringSpec({
         webRendererTestEnvironments<T, P>().forEach {
             val environment: Environment<T, P> = it.environment
             val node: Node<T> = environment.nodes.first()
-            val nodeSurrogate = node.toNodeSurrogate(
-                environment,
-                toEmptyConcentration,
-                toSuitablePositionSurrogate(environment.dimensions),
-            )
+            val nodeSurrogate =
+                node.toNodeSurrogate(
+                    environment,
+                    toEmptyConcentration,
+                    toSuitablePositionSurrogate(environment.dimensions),
+                )
             checkToNodeSurrogate(environment, node, nodeSurrogate)
         }
     }

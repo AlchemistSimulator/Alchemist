@@ -24,7 +24,6 @@ data class Response<C>(
     val code: HttpStatusCode = OK,
     val content: C,
 ) {
-
     /**
      * Utility functions.
      */

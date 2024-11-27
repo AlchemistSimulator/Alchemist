@@ -54,6 +54,7 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
+                implementation(libs.graphql.client)
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.kotest.runner)
                 implementation(libs.ktor.server.test.host)
@@ -92,10 +93,6 @@ tasks.withType<AbstractGenerateClientTask>().configureEach {
             queryFileDirectory.set(file("src/commonMain/resources/graphql"))
         }
     }
-}
-
-tasks.graphqlGenerateTestClient.configure {
-    enabled = false // TODO: investigate why this breaks the build
 }
 
 val surrogates = project(":${project.name}-surrogates")

@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.util.BugReporting
 import org.danilopianini.util.ListSet
 
 /**
@@ -36,51 +37,53 @@ class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
 
         override fun getNeighbors() =
             object : ListSet<Node<T>> {
-                override fun get(index: Int) = TODO()
+                override fun get(index: Int) = BugReporting.reportBug("Not implemented")
 
-                override fun indexOf(element: Node<T>?) = TODO()
+                override fun indexOf(element: Node<T>?) = BugReporting.reportBug("Not implemented")
 
-                override fun lastIndexOf(element: Node<T>?) = TODO()
+                override fun lastIndexOf(element: Node<T>?) = BugReporting.reportBug("Not implemented")
 
                 override fun add(
                     index: Int,
                     element: Node<T>?,
-                ) = TODO()
+                ) = BugReporting.reportBug("Not implemented")
 
                 override fun addAll(
                     index: Int,
                     elements: Collection<Node<T>>,
-                ) = TODO()
+                ) = BugReporting.reportBug("Not implemented")
 
-                override fun listIterator() = TODO()
+                override fun listIterator() = BugReporting.reportBug("Not implemented")
 
-                override fun listIterator(index: Int) = TODO()
+                override fun listIterator(index: Int) = BugReporting.reportBug("Not implemented")
 
-                override fun removeAt(index: Int) = TODO()
+                override fun removeAt(index: Int) = BugReporting.reportBug("Not implemented")
 
                 override fun set(
                     index: Int,
                     element: Node<T>?,
-                ) = TODO()
+                ) = BugReporting.reportBug("Not implemented")
 
                 override fun subList(
                     fromIndex: Int,
                     toIndex: Int,
-                ) = TODO()
+                ) = BugReporting.reportBug("Not implemented")
 
-                override fun add(element: Node<T>?) = TODO()
+                override fun add(element: Node<T>?) = BugReporting.reportBug("Not implemented")
 
-                override fun addAll(elements: Collection<Node<T>>) = TODO()
+                override fun addAll(elements: Collection<Node<T>>) = BugReporting.reportBug("Not implemented")
 
-                override fun clear() = TODO()
+                override fun clear() = BugReporting.reportBug("Not implemented")
 
                 override fun iterator() = Iterators.filter(environment.nodes.iterator()) { it != center }
 
-                override fun remove(element: Node<T>?) = TODO()
+                override fun remove(element: Node<T>?) = BugReporting.reportBug("Not implemented")
 
-                override fun removeAll(elements: Collection<Node<T>>) = TODO()
+                override fun removeAll(elements: Collection<Node<T>>) =
+                    BugReporting.reportBug("Not implemented")
 
-                override fun retainAll(elements: Collection<Node<T>>) = TODO()
+                override fun retainAll(elements: Collection<Node<T>>) =
+                    BugReporting.reportBug("Not implemented")
 
                 override val size = environment.nodeCount - 1
 

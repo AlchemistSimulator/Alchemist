@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.util.BugReporting
 import it.unibo.alchemist.util.RealDistributions
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
@@ -52,25 +53,25 @@ constructor(
         /*
          * Unknown values
          */
-        override fun probability(x: Double) = TODO()
+        override fun probability(x: Double) = BugReporting.reportBug("Not implemented")
 
-        override fun density(x: Double) = TODO()
+        override fun density(x: Double) = BugReporting.reportBug("Not implemented")
 
-        override fun cumulativeProbability(x: Double) = TODO()
+        override fun cumulativeProbability(x: Double) = BugReporting.reportBug("Not implemented")
 
-        @Deprecated(message = "Deprecated in Apache Commons")
+        @Deprecated(message = "Deprecated in Apache Commons", replaceWith = ReplaceWith("probability(x0, x1)"))
         override fun cumulativeProbability(
             x0: Double,
             x1: Double,
-        ) = TODO()
+        ) = BugReporting.reportBug("Not implemented")
 
-        override fun inverseCumulativeProbability(p: Double) = TODO()
+        override fun inverseCumulativeProbability(p: Double) = BugReporting.reportBug("Not implemented")
 
-        override fun getNumericalVariance() = TODO()
+        override fun getNumericalVariance() = BugReporting.reportBug("Not implemented")
 
-        override fun isSupportConnected() = TODO()
+        override fun isSupportConnected() = BugReporting.reportBug("Not implemented")
 
-        override fun reseedRandomGenerator(seed: Long) = TODO()
+        override fun reseedRandomGenerator(seed: Long) = BugReporting.reportBug("Not implemented")
 
         /*
          * Known values
@@ -79,10 +80,10 @@ constructor(
 
         override fun getSupportUpperBound() = Double.MAX_VALUE
 
-        @Deprecated(message = "Deprecated in Apache Commons")
+        @Deprecated(message = "Deprecated in Apache Commons", replaceWith = ReplaceWith("error()"))
         override fun isSupportLowerBoundInclusive() = true
 
-        @Deprecated(message = "Deprecated in Apache Commons")
+        @Deprecated(message = "Deprecated in Apache Commons", replaceWith = ReplaceWith("error()"))
         override fun isSupportUpperBoundInclusive() = false
 
         /*

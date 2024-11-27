@@ -132,6 +132,7 @@ private fun Any?.coerceToDouble(context: Context): Double =
 private fun Any?.removeKeysRecursively(keys: Set<Any>): Any? =
     when (this) {
         null -> null
+        is String -> this
         is Map<*, *> -> (this - keys).mapValues { it.value.removeKeysRecursively(keys) }
         is Iterable<*> -> map { it.removeKeysRecursively(keys) }
         else -> this
@@ -152,7 +153,7 @@ private fun Any.validateVariableConsistencyRecursively(
                 key?.validateVariableConsistencyRecursively(names, errors)
                 value?.validateVariableConsistencyRecursively(names + key.toString(), errors)
             }
-
+        is String -> Unit
         is Iterable<*> -> forEach { it?.validateVariableConsistencyRecursively(names, errors) }
         is SimulationModel.PlaceHolderForVariables -> {
             val message =
@@ -164,7 +165,6 @@ private fun Any.validateVariableConsistencyRecursively(
                     ?.joinToString(prefix = "Possibly related causes:\n", separator = "\n")
             error("$message\n${related.orEmpty()}")
         }
-
         else -> Unit
     }
 
@@ -299,6 +299,7 @@ internal object SimulationModel {
         root: Any?,
     ): Any? =
         when (root) {
+            is String -> root
             is PlaceHolderForVariables -> context.lookup(root).also { logger.debug("Set {} = {}", root.name, it) }
             is Map<*, *> -> {
                 when (val lookup = context.lookup(root)) {
@@ -319,6 +320,7 @@ internal object SimulationModel {
         root: Any?,
     ): Any? =
         when (root) {
+            is String -> root
             is Iterable<*> -> root.map { visitParameter(context, it) }
             is Map<*, *> -> context.lookup(root) ?: visitJVMConstructor(context, root) ?: root
             else -> root
@@ -717,6 +719,7 @@ internal object SimulationModel {
     ): Either<List<*>, Map<String, *>> =
         when (root) {
             null -> Either.Left(emptyList<Any>())
+            is String -> Either.Left(listOf(visitParameter(context, root)))
             is Iterable<*> -> Either.Left(root.map { visitParameter(context, it) })
             is Map<*, *> -> Either.Right(root.map { it.key.toString() to visitParameter(context, it.value) }.toMap())
             else -> Either.Left(listOf(visitParameter(context, root)))
@@ -778,6 +781,7 @@ internal object SimulationModel {
                         makeWith(simulationRNG, environment, node, timeDistribution, actionable, parameter)
                     }
                 return when (parameter) {
+                    is String -> create(parameter, incarnationFactory)
                     is Map<*, *> ->
                         /*
                          * First try the generic factory if there is a type specified, in case of failure fallback to
@@ -1005,8 +1009,8 @@ internal object SimulationModel {
          * Defines the behavior in case of Iterable (recursion), Map (build or recursion), or other type (build as-is).
          */
         return when (root) {
+            is String -> forceVisit()
             is Iterable<*> -> root.flatMap { visitRecursively(evidence, context, it, syntax, error, visitSingle) }
-
             is Map<*, *> -> {
                 logger.debug("Trying to build a {} from {} (syntax: {})", evidence.simpleName, root, syntax)
 
@@ -1029,7 +1033,6 @@ internal object SimulationModel {
                     else -> recurse(null)
                 }
             }
-
             else -> forceVisit()
         }
     }
@@ -1053,11 +1056,11 @@ internal object SimulationModel {
         logger.debug("Visiting: {} searching for {}", root, evidence.simpleName)
         return when (root) {
             is Map<*, *> -> visitNamedRecursivelyFromMap(evidence, context, root, syntax, forceSuccess, visitSingle)
+            is String -> emptyMap()
             is Iterable<*> ->
                 root.flatMap {
                     visitNamedRecursively(evidence, context, it, syntax, forceSuccess, visitSingle).toList()
                 }.toMap()
-
             else -> emptyMap()
         }
     }
@@ -1091,6 +1094,7 @@ internal object SimulationModel {
 
             fun result() = visitSingle(key.toString(), value)?.map { listOf(key.toString() to it) }
             when (value) {
+                is String -> result()?.getOrThrow().orEmpty()
                 is Map<*, *> ->
                     when {
                         syntax.validateDescriptor(value) ->
@@ -1099,7 +1103,6 @@ internal object SimulationModel {
 
                         else -> recurse()
                     }
-
                 is Iterable<*> -> result()?.getOrNull() ?: recurse()
                 else -> result()?.getOrThrow().orEmpty()
             }

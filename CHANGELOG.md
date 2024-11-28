@@ -1,3 +1,13 @@
+## [36.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.1...36.0.2) (2024-11-28)
+
+### Performance improvements
+
+* **loading:** early-intercept `String`s, avoiding the loader to go through them as `Iterable`s ([#3966](https://github.com/AlchemistSimulator/Alchemist/issues/3966)) ([6668bb1](https://github.com/AlchemistSimulator/Alchemist/commit/6668bb15d8b1eb787b9bff88c916831a7ce15b72))
+
+### Tests
+
+* **loading:** test loading nested variables ([#3963](https://github.com/AlchemistSimulator/Alchemist/issues/3963)) ([28081c1](https://github.com/AlchemistSimulator/Alchemist/commit/28081c1da7eb9fa70a6e7ef544e58c68802b0b6e))
+
 ## [36.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.0...36.0.1) (2024-11-27)
 
 ### Dependency updates

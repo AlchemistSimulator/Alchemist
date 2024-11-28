@@ -1,0 +1,18 @@
+incarnation: sapere
+
+variables:
+  seed: &seed
+    min:
+      formula: 1
+      language: kotlin
+    max:
+      formula: 2
+      language: kotlin
+    step: 1
+    default:
+      formula: 1
+      language: kotlin
+
+seeds:
+  scenario: *seed
+  simulation: *seed

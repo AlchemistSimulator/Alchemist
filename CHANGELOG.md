@@ -1,3 +1,24 @@
+## [36.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.2...36.0.3) (2024-11-29)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.23 ([#3970](https://github.com/AlchemistSimulator/Alchemist/issues/3970)) ([1c6dda9](https://github.com/AlchemistSimulator/Alchemist/commit/1c6dda92fbf475bdcb803459928c76d8a3b68a07))
+* **deps:** update plugin kotlin-qa to v0.75.0 ([#3973](https://github.com/AlchemistSimulator/Alchemist/issues/3973)) ([f649b56](https://github.com/AlchemistSimulator/Alchemist/commit/f649b5627115df420f2921cbbf99bfa2e7f47949))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.139.3 ([#3972](https://github.com/AlchemistSimulator/Alchemist/issues/3972)) ([b54106b](https://github.com/AlchemistSimulator/Alchemist/commit/b54106b5334917d5f983d741695f0600c4e208de))
+
+## [36.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.1...36.0.2) (2024-11-28)
+
+### Performance improvements
+
+* **loading:** early-intercept `String`s, avoiding the loader to go through them as `Iterable`s ([#3966](https://github.com/AlchemistSimulator/Alchemist/issues/3966)) ([6668bb1](https://github.com/AlchemistSimulator/Alchemist/commit/6668bb15d8b1eb787b9bff88c916831a7ce15b72))
+
+### Tests
+
+* **loading:** test loading nested variables ([#3963](https://github.com/AlchemistSimulator/Alchemist/issues/3963)) ([28081c1](https://github.com/AlchemistSimulator/Alchemist/commit/28081c1da7eb9fa70a6e7ef544e58c68802b0b6e))
+
 ## [36.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.0...36.0.1) (2024-11-27)
 
 ### Dependency updates

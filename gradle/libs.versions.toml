@@ -53,7 +53,7 @@ ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "ignite"
 ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "ignite" }
 ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "ignite" }
 javalib-java7 = "org.danilopianini:javalib-java7:0.6.1"
-jgit = "org.eclipse.jgit:org.eclipse.jgit:7.0.0.202409031743-r"
+jgit = "org.eclipse.jgit:org.eclipse.jgit:7.1.0.202411261347-r"
 jgrapht-core = "org.jgrapht:jgrapht-core:1.5.2"
 jirf = "org.danilopianini:jirf:0.4.26"
 jool = "org.jooq:jool:0.9.15"

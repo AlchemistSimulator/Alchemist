@@ -57,8 +57,8 @@
     "first": "https://javadoc.io/doc/commons-io/commons-io/2.18.0",
     "second": "https://javadoc.io/doc/commons-io/commons-io/2.18.0/element-list"
   },
-  "io.arrow-kt/arrow-core/1.2.4": {
-    "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/1.2.4"
+  "io.arrow-kt/arrow-core/2.0.0": {
+    "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/2.0.0"
   },
   "io.github.classgraph/classgraph/4.8.179": {
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.179"

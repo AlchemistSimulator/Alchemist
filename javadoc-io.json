@@ -142,8 +142,8 @@
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/null"
   },
-  "org.jetbrains.kotlin/kotlin-stdlib/2.0.21": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.0.21"
+  "org.jetbrains.kotlin/kotlin-stdlib/2.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.1.0"
   },
   "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.9.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.9.0"

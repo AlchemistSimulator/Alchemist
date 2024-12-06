@@ -53,7 +53,8 @@ class AlchemistNetworkManager
          * the distribution connecting the distance to the packet loss.
          */
         val distanceLossDistribution: RealDistribution? = null,
-    ) : NetworkManager, Serializable {
+    ) : NetworkManager,
+        Serializable {
         private val environment: Environment<Any, *> = Objects.requireNonNull(program.environment)
         private val messages: MutableMap<DeviceUID, MessageInfo> = LinkedHashMap()
         private var toBeSent: Map<CodePath, Any> = emptyMap()
@@ -78,14 +79,16 @@ class AlchemistNetworkManager
                     val retainsNeighbors = retentionTime.isNaN()
                     val neighbors: Set<DeviceUID> =
                         emptySet<DeviceUID>().takeUnless { retainsNeighbors }
-                            ?: environment.getNeighborhood(device.node)
+                            ?: environment
+                                .getNeighborhood(device.node)
                                 .neighbors
                                 .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
                                 .toSet()
                     while (messagesIterator.hasNext()) {
                         val message = messagesIterator.next()
                         val messageIsValid =
-                            retainsNeighbors && message.source in neighbors ||
+                            retainsNeighbors &&
+                                message.source in neighbors ||
                                 currentTime - message.time < retentionTime
                         if (messageIsValid) {
                             stateBuilder.put(message.source, message.payload)
@@ -120,7 +123,8 @@ class AlchemistNetworkManager
         fun simulateMessageArrival(currentTime: Double) {
             if (toBeSent.isNotEmpty()) {
                 val msg = MessageInfo(currentTime, device, toBeSent)
-                environment.getNeighborhood(device.node)
+                environment
+                    .getNeighborhood(device.node)
                     .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
                     .forEach { neighborDevice ->
                         val destination = neighborDevice.getNetworkManager(program)

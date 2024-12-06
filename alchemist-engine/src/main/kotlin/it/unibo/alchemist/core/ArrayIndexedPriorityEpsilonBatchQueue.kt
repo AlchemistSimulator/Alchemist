@@ -23,7 +23,8 @@ import kotlin.math.abs
 class ArrayIndexedPriorityEpsilonBatchQueue<T>(
     private val epsilon: Double,
     private val delegate: ArrayIndexedPriorityQueue<T> = ArrayIndexedPriorityQueue(),
-) : Scheduler<T> by delegate, BatchedScheduler<T> {
+) : Scheduler<T> by delegate,
+    BatchedScheduler<T> {
     override fun getNextBatch(): List<Actionable<T>> =
         when {
             delegate.tree.isEmpty() -> emptyList()

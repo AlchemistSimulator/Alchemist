@@ -18,17 +18,18 @@ val ll10: Position<GeoPosition> = LatLongPosition(1, 0)
 val ll01: Position<GeoPosition> = LatLongPosition(0, 1)
 val ll11: Position<GeoPosition> = LatLongPosition(1, 1)
 
-class TestLatLongPosition : StringSpec({
-    "LatLongPositions should sum correctly" {
-        ll01 as GeoPosition + ll10 as GeoPosition shouldBe ll11
-        ll10 + ll01 shouldBe ll11
-        ll01 + ll10.coordinates shouldBe ll11
-        ll10 + ll01.coordinates shouldBe ll11
-    }
-    "LatLongPositions should subtract correctly" {
-        ll11 as GeoPosition - ll10 as GeoPosition shouldBe ll01
-        ll11 - ll01 as GeoPosition shouldBe ll10
-        ll11 - ll10.coordinates shouldBe ll01
-        ll11 - ll01.coordinates shouldBe ll10
-    }
-})
+class TestLatLongPosition :
+    StringSpec({
+        "LatLongPositions should sum correctly" {
+            ll01 as GeoPosition + ll10 as GeoPosition shouldBe ll11
+            ll10 + ll01 shouldBe ll11
+            ll01 + ll10.coordinates shouldBe ll11
+            ll10 + ll01.coordinates shouldBe ll11
+        }
+        "LatLongPositions should subtract correctly" {
+            ll11 as GeoPosition - ll10 as GeoPosition shouldBe ll01
+            ll11 - ll01 as GeoPosition shouldBe ll10
+            ll11 - ll10.coordinates shouldBe ll01
+            ll11 - ll01.coordinates shouldBe ll10
+        }
+    })

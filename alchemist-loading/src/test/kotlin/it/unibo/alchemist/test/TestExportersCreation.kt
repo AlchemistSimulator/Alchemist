@@ -19,21 +19,22 @@ import it.unibo.alchemist.model.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
 
-class TestExportersCreation<T, P : Position<P>> : StringSpec({
-    "test loading exporters" {
-        val file = ResourceLoader.getResource("testExporters.yml")
-        assertNotNull(file)
-        val loader = LoadAlchemist.from(file)
-        assertNotNull(loader)
-        val initialized: Simulation<T, P> = loader.getDefault()
-        val exporters: List<Exporter<T, P>> =
-            initialized.outputMonitors.filterIsInstance<GlobalExporter<T, P>>().flatMap { it.exporters }
-        exporters.size shouldBeGreaterThan 0
-        exporters.forEach {
-            it shouldNotBe null
+class TestExportersCreation<T, P : Position<P>> :
+    StringSpec({
+        "test loading exporters" {
+            val file = ResourceLoader.getResource("testExporters.yml")
+            assertNotNull(file)
+            val loader = LoadAlchemist.from(file)
+            assertNotNull(loader)
+            val initialized: Simulation<T, P> = loader.getDefault()
+            val exporters: List<Exporter<T, P>> =
+                initialized.outputMonitors.filterIsInstance<GlobalExporter<T, P>>().flatMap { it.exporters }
+            exporters.size shouldBeGreaterThan 0
+            exporters.forEach {
+                it shouldNotBe null
+            }
+            exporters.forEach {
+                it.dataExtractors.size shouldBeGreaterThan 0
+            }
         }
-        exporters.forEach {
-            it.dataExtractors.size shouldBeGreaterThan 0
-        }
-    }
-})
+    })

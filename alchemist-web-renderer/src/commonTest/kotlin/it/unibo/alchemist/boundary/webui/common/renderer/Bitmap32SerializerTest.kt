@@ -17,16 +17,17 @@ import korlibs.image.bitmap.Bitmap
 import korlibs.image.bitmap.Bitmap32
 import korlibs.image.paint.ColorPaint
 
-class Bitmap32SerializerTest : StringSpec({
-    "Bitmap32 should be serialized and deserialized correctly" {
-        val bmp: Bitmap = Bitmap32(1000, 1000, ColorPaint(0))
-        val serialized = jsonFormat.encodeToString(Bitmap32Serializer, bmp.toBMP32IfRequired())
-        val deserialized = jsonFormat.decodeFromString(Bitmap32Serializer, serialized)
-        deserialized.shouldBeInstanceOf<Bitmap32>()
-        check(bmp is Bitmap32)
-        deserialized.bounds shouldBe bmp.bounds
-        deserialized.height shouldBe bmp.height
-        deserialized.width shouldBe bmp.width
-        deserialized.ints shouldBe bmp.ints
-    }
-})
+class Bitmap32SerializerTest :
+    StringSpec({
+        "Bitmap32 should be serialized and deserialized correctly" {
+            val bmp: Bitmap = Bitmap32(1000, 1000, ColorPaint(0))
+            val serialized = jsonFormat.encodeToString(Bitmap32Serializer, bmp.toBMP32IfRequired())
+            val deserialized = jsonFormat.decodeFromString(Bitmap32Serializer, serialized)
+            deserialized.shouldBeInstanceOf<Bitmap32>()
+            check(bmp is Bitmap32)
+            deserialized.bounds shouldBe bmp.bounds
+            deserialized.height shouldBe bmp.height
+            deserialized.width shouldBe bmp.width
+            deserialized.ints shouldBe bmp.ints
+        }
+    })

@@ -29,7 +29,8 @@ import it.unibo.alchemist.model.geometry.Vector
  * @param N the type of nodes of the navigation graph provided by the [environment].
  * @param E the type of edges of the navigation graph provided by the [environment].
  */
-interface NavigationAction<T, P, A, L, R, N, E> : SteeringAction<T, P>
+interface NavigationAction<T, P, A, L, R, N, E> :
+    SteeringAction<T, P>
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P>,
           L : ConvexShape<P, A>,

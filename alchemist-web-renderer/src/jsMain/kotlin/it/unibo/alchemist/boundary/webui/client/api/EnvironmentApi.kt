@@ -45,7 +45,5 @@ object EnvironmentApi {
      * @param path the path of the environment retrieval.
      * @param <B> the type of the body of the response.
      */
-    private suspend inline fun <reified B> getEnvironment(path: String): B {
-        return client.get(endpoint + path).body()
-    }
+    private suspend inline fun <reified B> getEnvironment(path: String): B = client.get(endpoint + path).body()
 }

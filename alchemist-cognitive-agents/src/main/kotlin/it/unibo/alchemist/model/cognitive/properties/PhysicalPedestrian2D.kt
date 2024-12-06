@@ -39,7 +39,8 @@ class PhysicalPedestrian2D<T>(
      */
     val environment: Physics2DEnvironment<T>,
     override val node: Node<T>,
-) : AbstractNodeProperty<T>(node), PhysicalPedestrian2D<T> {
+) : AbstractNodeProperty<T>(node),
+    PhysicalPedestrian2D<T> {
     private val pedestrian by lazy { node.asProperty<T, PedestrianProperty<T>>() }
 
     override var isFallen: Boolean = false
@@ -166,7 +167,8 @@ class PhysicalPedestrian2D<T>(
         force: (node: Node<T>) -> Euclidean2DPosition,
         influenceArea: Euclidean2DShape,
         nodeFilter: (node: Node<T>) -> Boolean = { true },
-    ) = environment.getNodesWithin(influenceArea)
+    ) = environment
+        .getNodesWithin(influenceArea)
         .asSequence()
         .minusElement(node)
         .filter { environment.getShape(it) !is AdimensionalShape }

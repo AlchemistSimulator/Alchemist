@@ -20,33 +20,35 @@ import it.unibo.alchemist.util.ClassPathScanner
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-class TestWebsiteCodeSnippets : FreeSpec(
-    {
-        val allSpecs =
-            ClassPathScanner.resourcesMatching(".*", "website-snippets")
-                .also { it shouldNot beEmpty() }
-                .onEach { it shouldNot beNull() }
-        allSpecs.forEach { url ->
-            "snippet ${url.path.split("/").last()} should load correctly" - {
-                val simulation = LoadAlchemist.from(url).getDefault<Any, Nothing>()
-                simulation.shouldNotBeNull()
-                val environment = simulation.environment
-                environment.shouldNotBeNull()
-                if (url.readText().contains("deployments:")) {
-                    "and have deployed nodes" {
-                        environment.shouldNotBeEmpty()
-                        environment.nodes shouldNot beEmpty()
+class TestWebsiteCodeSnippets :
+    FreeSpec(
+        {
+            val allSpecs =
+                ClassPathScanner
+                    .resourcesMatching(".*", "website-snippets")
+                    .also { it shouldNot beEmpty() }
+                    .onEach { it shouldNot beNull() }
+            allSpecs.forEach { url ->
+                "snippet ${url.path.split("/").last()} should load correctly" - {
+                    val simulation = LoadAlchemist.from(url).getDefault<Any, Nothing>()
+                    simulation.shouldNotBeNull()
+                    val environment = simulation.environment
+                    environment.shouldNotBeNull()
+                    if (url.readText().contains("deployments:")) {
+                        "and have deployed nodes" {
+                            environment.shouldNotBeEmpty()
+                            environment.nodes shouldNot beEmpty()
+                        }
+                    } else {
+                        "and be empty" {
+                            environment.shouldBeEmpty()
+                        }
                     }
-                } else {
-                    "and be empty" {
-                        environment.shouldBeEmpty()
+                    "and execute a few steps without errors" {
+                        environment.addTerminator(StepCount(100))
+                        simulation.runInCurrentThread().error.shouldBeEmpty()
                     }
-                }
-                "and execute a few steps without errors" {
-                    environment.addTerminator(StepCount(100))
-                    simulation.runInCurrentThread().error.shouldBeEmpty()
                 }
             }
-        }
-    },
-)
+        },
+    )

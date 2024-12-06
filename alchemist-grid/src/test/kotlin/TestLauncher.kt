@@ -23,13 +23,14 @@ import java.net.URL
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-class TestLauncher : StringSpec({
-    "launcher should be correctly selected" {
-        val loader = LoadAlchemist.from(CONFIG_FILE)
-        val launcher = loader.launcher
-        launcher::class shouldBe IgniteServerLauncher::class
-    }
-}) {
+class TestLauncher :
+    StringSpec({
+        "launcher should be correctly selected" {
+            val loader = LoadAlchemist.from(CONFIG_FILE)
+            val launcher = loader.launcher
+            launcher::class shouldBe IgniteServerLauncher::class
+        }
+    }) {
     companion object {
         val CONFIG_FILE: URL = ResourceLoader.getResource("config/server-launcher.yml")
     }

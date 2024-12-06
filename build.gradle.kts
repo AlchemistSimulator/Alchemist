@@ -127,7 +127,8 @@ allprojects {
                             remoteLineSuffix.set("#L")
                         }
                     }
-                configurations.run { sequenceOf(api, implementation) }
+                configurations
+                    .run { sequenceOf(api, implementation) }
                     .flatMap { it.get().dependencies }
                     .forEach { dependency ->
                         val javadocIOURLs = fetchJavadocIOForDependency(dependency)
@@ -355,12 +356,17 @@ tasks.named("kotlinStoreYarnLock").configure {
 
 // WEBSITE
 
-val websiteDir = project.layout.buildDirectory.map { it.dir("website").asFile }.get()
+val websiteDir =
+    project.layout.buildDirectory
+        .map { it.dir("website").asFile }
+        .get()
 
 hugo {
     version =
         Regex("gohugoio/hugo@v([\\.\\-\\+\\w]+)")
-            .find(file("deps-utils/action.yml").readText())!!.groups[1]!!.value
+            .find(file("deps-utils/action.yml").readText())!!
+            .groups[1]!!
+            .value
 }
 
 tasks {
@@ -410,12 +416,14 @@ tasks {
                 "file ${index.absolutePath} existed during configuration, but it has been deleted."
             }
             val websiteReplacements =
-                file("site/replacements").readLines()
+                file("site/replacements")
+                    .readLines()
                     .map { it.split("->") }
                     .map { it[0] to it[1] }
             val replacements: List<Pair<String, String>> =
                 websiteReplacements + ("!development preview!" to project.version.toString())
-            index.parentFile.walkTopDown()
+            index.parentFile
+                .walkTopDown()
                 .filter { it.isFile && it.extension.matches(Regex("html?", RegexOption.IGNORE_CASE)) }
                 .forEach { page ->
                     val initialContents = page.readText()

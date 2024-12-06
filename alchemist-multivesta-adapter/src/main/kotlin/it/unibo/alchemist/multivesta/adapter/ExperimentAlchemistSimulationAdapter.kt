@@ -63,8 +63,6 @@ class ExperimentAlchemistSimulationAdapter(
         EXPONENTIAL("exp"),
         ;
 
-        override fun toString(): String {
-            return shortName
-        }
+        override fun toString(): String = shortName
     }
 }

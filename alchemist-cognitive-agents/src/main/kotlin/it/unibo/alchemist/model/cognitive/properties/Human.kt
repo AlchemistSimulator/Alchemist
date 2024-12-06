@@ -32,7 +32,8 @@ class Human<T>
         override val speed: Speed = Speed(age, gender, randomGenerator),
         override val compliance: Double = Compliance(age, gender).level,
         override val helpAttitude: HelpAttitude = HelpAttitude(age, gender),
-    ) : AbstractNodeProperty<T>(node), Human2DProperty<T> {
+    ) : AbstractNodeProperty<T>(node),
+        Human2DProperty<T> {
         @JvmOverloads
         constructor(
             randomGenerator: RandomGenerator,

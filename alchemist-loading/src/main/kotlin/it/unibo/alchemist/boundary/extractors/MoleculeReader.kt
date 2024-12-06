@@ -73,7 +73,8 @@ class MoleculeReader
         private val singleColumnName: String = "$shortProp$moleculeName"
 
         override val columnNames: List<String> =
-            aggregators.keys.takeIf { it.isNotEmpty() }
+            aggregators.keys
+                .takeIf { it.isNotEmpty() }
                 ?.map { "$singleColumnName[$it]" }
                 ?: listOf("$singleColumnName@node-id")
 
@@ -86,14 +87,17 @@ class MoleculeReader
             fun Node<T>.extractData() = environment.incarnation.getProperty(this, molecule, property)
             return when {
                 aggregators.isEmpty() ->
-                    environment.nodes.asSequence().map { node ->
-                        "$singleColumnName@${node.id}" to node.extractData()
-                    }.toMap()
+                    environment.nodes
+                        .asSequence()
+                        .map { node ->
+                            "$singleColumnName@${node.id}" to node.extractData()
+                        }.toMap()
                 else -> {
                     val filtered = environment.nodes.flatMap { filter.apply(it.extractData()) }.toDoubleArray()
-                    aggregators.map { (aggregatorName, aggregator) ->
-                        "$singleColumnName[$aggregatorName]" to aggregator.evaluate(filtered)
-                    }.toMap()
+                    aggregators
+                        .map { (aggregatorName, aggregator) ->
+                            "$singleColumnName[$aggregatorName]" to aggregator.evaluate(filtered)
+                        }.toMap()
                 }
             }
         }

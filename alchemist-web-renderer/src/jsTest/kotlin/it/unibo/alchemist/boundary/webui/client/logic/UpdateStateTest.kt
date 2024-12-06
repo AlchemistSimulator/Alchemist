@@ -14,66 +14,67 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.RenderMode
 
-class UpdateStateTest : StringSpec({
+class UpdateStateTest :
+    StringSpec({
 
-    var clientCount = 0
-    var serverCount = 0
-    var statusCount = 0
+        var clientCount = 0
+        var serverCount = 0
+        var statusCount = 0
 
-    val updateStateStrategy =
-        object : UpdateStateStrategy {
-            override suspend fun clientComputation() {
-                clientCount++
-            }
-
-            override suspend fun serverComputation() {
-                serverCount++
-            }
-
-            override suspend fun retrieveSimulationStatus() {
-                statusCount++
-            }
-        }
-
-    val autoStrategy =
-        object : AutoRenderModeStrategy {
-            override fun invoke(): RenderMode =
-                if (clientCount >= serverCount) {
-                    RenderMode.SERVER
-                } else {
-                    RenderMode.CLIENT
+        val updateStateStrategy =
+            object : UpdateStateStrategy {
+                override suspend fun clientComputation() {
+                    clientCount++
                 }
+
+                override suspend fun serverComputation() {
+                    serverCount++
+                }
+
+                override suspend fun retrieveSimulationStatus() {
+                    statusCount++
+                }
+            }
+
+        val autoStrategy =
+            object : AutoRenderModeStrategy {
+                override fun invoke(): RenderMode =
+                    if (clientCount >= serverCount) {
+                        RenderMode.SERVER
+                    } else {
+                        RenderMode.CLIENT
+                    }
+            }
+
+        val brokenAutoStrategy =
+            object : AutoRenderModeStrategy {
+                override fun invoke(): RenderMode = RenderMode.AUTO
+            }
+
+        "updateState should work using RenderMode.SERVER" {
+            updateState(RenderMode.SERVER, updateStateStrategy, autoStrategy)
+            statusCount shouldBe 1
+            clientCount shouldBe 0
+            serverCount shouldBe 1
         }
 
-    val brokenAutoStrategy =
-        object : AutoRenderModeStrategy {
-            override fun invoke(): RenderMode = RenderMode.AUTO
+        "updateState should work using RenderMode.CLIENT" {
+            updateState(RenderMode.CLIENT, updateStateStrategy, autoStrategy)
+            statusCount shouldBe 2
+            clientCount shouldBe 1
+            serverCount shouldBe 1
         }
 
-    "updateState should work using RenderMode.SERVER" {
-        updateState(RenderMode.SERVER, updateStateStrategy, autoStrategy)
-        statusCount shouldBe 1
-        clientCount shouldBe 0
-        serverCount shouldBe 1
-    }
-
-    "updateState should work using RenderMode.CLIENT" {
-        updateState(RenderMode.CLIENT, updateStateStrategy, autoStrategy)
-        statusCount shouldBe 2
-        clientCount shouldBe 1
-        serverCount shouldBe 1
-    }
-
-    "updateState should work using RenderMode.AUTO" {
-        updateState(RenderMode.AUTO, updateStateStrategy, autoStrategy)
-        statusCount shouldBe 3
-        clientCount shouldBe 1
-        serverCount shouldBe 2
-    }
-
-    "updateState should launch Exception using a broken autoStrategy" {
-        shouldThrow<IllegalStateException> {
-            updateState(RenderMode.AUTO, updateStateStrategy, brokenAutoStrategy)
+        "updateState should work using RenderMode.AUTO" {
+            updateState(RenderMode.AUTO, updateStateStrategy, autoStrategy)
+            statusCount shouldBe 3
+            clientCount shouldBe 1
+            serverCount shouldBe 2
         }
-    }
-})
+
+        "updateState should launch Exception using a broken autoStrategy" {
+            shouldThrow<IllegalStateException> {
+                updateState(RenderMode.AUTO, updateStateStrategy, brokenAutoStrategy)
+            }
+        }
+    })

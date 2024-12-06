@@ -189,16 +189,12 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         }
     }
 
-    private fun isEventTimeScheduledInFirstBatch(scheduledTime: Time): Boolean {
-        return scheduledTime.toDouble() == 0.0
-    }
+    private fun isEventTimeScheduledInFirstBatch(scheduledTime: Time): Boolean = scheduledTime.toDouble() == 0.0
 
     private fun isEventScheduledBeforeCurrentTime(
         scheduledTime: Time,
         slidingWindowTime: Time,
-    ): Boolean {
-        return scheduledTime < slidingWindowTime
-    }
+    ): Boolean = scheduledTime < slidingWindowTime
 
     private fun safeExecuteEvent(event: Actionable<T>) {
         synchronized(executeLock) {
@@ -237,7 +233,10 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         synchronized(this) { return super.newStatus(next) }
     }
 
-    private inner class TaskResult(val event: Actionable<T>, val eventTime: Time)
+    private inner class TaskResult(
+        val event: Actionable<T>,
+        val eventTime: Time,
+    )
 
     /**
      * This interface represents the way outputs are replied. It is meant for internal use.

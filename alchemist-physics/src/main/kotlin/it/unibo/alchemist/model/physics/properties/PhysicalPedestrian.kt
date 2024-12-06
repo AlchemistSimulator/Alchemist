@@ -19,7 +19,8 @@ import it.unibo.alchemist.model.geometry.Vector
 /**
  * A pedestrian's capability to experience physical forces.
  */
-interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
+interface PhysicalPedestrian<T, P, A, F> :
+    PhysicalProperty<T, P, A, F>
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P>,
           F : GeometricShapeFactory<P, A> {

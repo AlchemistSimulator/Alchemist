@@ -60,7 +60,8 @@ class GraphStreamSupport<T, P : Position<out P>>(
             val generatorClasses = findSuitableGeneratorsFor(generatorName)
             val parameterList = parameters.toList()
             val created =
-                generatorClasses.asSequence()
+                generatorClasses
+                    .asSequence()
                     .map { synchronized(factory) { factory.build(it, parameterList) } }
                     .map { construction ->
                         if (construction.createdObject.isPresent) {
@@ -68,8 +69,7 @@ class GraphStreamSupport<T, P : Position<out P>>(
                         } else {
                             Either.Left(construction.exceptions)
                         }
-                    }
-                    .reduceOrNull { a, b ->
+                    }.reduceOrNull { a, b ->
                         when {
                             a is Either.Left && b is Either.Left -> Either.Left(a.value + b.value)
                             a is Either.Right -> a
@@ -152,15 +152,15 @@ class GraphStreamSupport<T, P : Position<out P>>(
                 layout.compute()
             } while (layout.stabilization < max(layoutQuality, 0.0.nextUp()))
             val originalCoordinates =
-                graph.nodes()
+                graph
+                    .nodes()
                     .map { it.getAttribute("xyz") }
                     .map { coordinates ->
                         require(coordinates is Array<*>) {
                             "Unexpected type '${coordinates?.let { it::class }}', an array was expected"
                         }
                         coordinates.map { (it as Number).toDouble() }
-                    }
-                    .map { coordinate -> coordinate.map { (it as Number).toDouble() }.toDoubleArray() }
+                    }.map { coordinate -> coordinate.map { (it as Number).toDouble() }.toDoubleArray() }
                     .collect(Collectors.toList())
             val sum = originalCoordinates.reduce(MathArrays::ebeAdd)
             val sizes = DoubleArray(sum.size) { graph.nodeCount.toDouble() }

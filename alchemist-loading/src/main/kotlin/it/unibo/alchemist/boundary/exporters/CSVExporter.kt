@@ -43,7 +43,8 @@ class CSVExporter<T, P : Position<P>>
         private val fileNameRoot: String = "",
         val interval: Double = DEFAULT_INTERVAL,
         val exportPath: String =
-            createTempDirectory("alchemist-export").absolutePathString()
+            createTempDirectory("alchemist-export")
+                .absolutePathString()
                 .also {
                     logger.warn(
                         "No output folder specified but export required. Alchemist will export data in $it",
@@ -81,12 +82,13 @@ class CSVExporter<T, P : Position<P>>
                 println('#')
                 println("# The columns have the following meaning: ")
                 print("# ")
-                dataExtractors.flatMap {
-                    it.columnNames
-                }.forEach {
-                    print(it)
-                    print(" ")
-                }
+                dataExtractors
+                    .flatMap {
+                        it.columnNames
+                    }.forEach {
+                        print(it)
+                        print(" ")
+                    }
                 outputPrintStream.println()
             }
             exportData(environment, null, DoubleTime(), 0)

@@ -14,28 +14,29 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.serialization.jsonFormat
 import kotlinx.serialization.encodeToString
 
-class StatusSurrogateTest : StringSpec({
+class StatusSurrogateTest :
+    StringSpec({
 
-    val listOfValues =
-        listOf(
-            StatusSurrogate.INIT,
-            StatusSurrogate.READY,
-            StatusSurrogate.PAUSED,
-            StatusSurrogate.RUNNING,
-            StatusSurrogate.TERMINATED,
-        )
+        val listOfValues =
+            listOf(
+                StatusSurrogate.INIT,
+                StatusSurrogate.READY,
+                StatusSurrogate.PAUSED,
+                StatusSurrogate.RUNNING,
+                StatusSurrogate.TERMINATED,
+            )
 
-    "StatusSurrogate are just INIT, READY, PAUSED, RUNNING and TERMINATED" {
-        val statuses = StatusSurrogate.entries.toTypedArray()
-        statuses.size shouldBe 5
-        statuses.map { it }.containsAll(listOfValues) shouldBe true
-    }
-
-    "StatusSurrogate should be serializable and deserializable" {
-        listOfValues.forEach {
-            val ser = jsonFormat.encodeToString(it)
-            val des: StatusSurrogate = jsonFormat.decodeFromString(ser)
-            it shouldBe des
+        "StatusSurrogate are just INIT, READY, PAUSED, RUNNING and TERMINATED" {
+            val statuses = StatusSurrogate.entries.toTypedArray()
+            statuses.size shouldBe 5
+            statuses.map { it }.containsAll(listOfValues) shouldBe true
         }
-    }
-})
+
+        "StatusSurrogate should be serializable and deserializable" {
+            listOfValues.forEach {
+                val ser = jsonFormat.encodeToString(it)
+                val des: StatusSurrogate = jsonFormat.decodeFromString(ser)
+                it shouldBe des
+            }
+        }
+    })

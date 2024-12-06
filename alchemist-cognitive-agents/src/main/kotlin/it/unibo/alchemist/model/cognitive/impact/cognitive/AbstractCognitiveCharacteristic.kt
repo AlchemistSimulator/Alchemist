@@ -34,7 +34,8 @@ abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
     companion object {
         private val config =
             Config { addSpec(CognitiveSpec) }
-                .from.toml.resource(PARAMETERS_FILE)
+                .from.toml
+                .resource(PARAMETERS_FILE)
 
         /**
          * Capacity of sensing the danger.

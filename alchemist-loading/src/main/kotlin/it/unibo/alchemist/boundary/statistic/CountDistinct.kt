@@ -25,7 +25,8 @@ class CountDistinct : AbstractUnivariateStatistic() {
         .drop(begin)
         .take(length)
         .distinct()
-        .count().toDouble()
+        .count()
+        .toDouble()
 
     override fun copy() = this
 

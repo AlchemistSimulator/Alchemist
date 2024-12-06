@@ -72,44 +72,53 @@ class NamedParametersConstructor(
                 constructor.valueParameters.filterNot { it.type.jvmErasure.java in singletons }.sortedBy { it.index }
             }
         val usableConstructors: Map<OrderedParameters, Map<String, String>> =
-            constructorsWithOrderedParameters.mapNotNull { parameters ->
-                if (providedNames.size <= parameters.size) {
-                    // Parameter count must be compatible (as many or less parameters provided)
-                    val (optional, mandatory) = parameters.partition { it.isOptional }
-                    val mandatoryNames = mandatory.map { it.name }
-                    val requiredOptionals by lazy { optional.take(providedNames.size - mandatory.size).map { it.name } }
-
-                    fun verifyParameterMatch(matchMethod: (List<String>).(List<String?>) -> Boolean) =
-                        providedNames.matchMethod(mandatoryNames) and { providedNames.matchMethod(requiredOptionals) }
-                    // Check for exact name match
-                    val exactMatch = verifyParameterMatch(List<String>::containsAll)
-                    if (exactMatch) {
-                        parameters to emptyMap()
-                    } else {
-                        // Check for similar-enough non-ambiguous matches: kebab-case, snake_case, etc.
-                        // convertedNames is a map between the actual parameter name and the provided name
-                        val convertedNames =
-                            providedNames.mapNotNull { providedName ->
-                                parameters.filter { it.name.couldBeInterpretedAs(providedName) }
-                                    .takeIf { it.size == 1 }
-                                    ?.first()
-                                    ?.name
-                                    ?.let { it to providedName }
-                            }.toMap()
-                        val worksIfNamesAreReplaced =
-                            convertedNames.keys.containsAll(mandatoryNames) and {
-                                convertedNames.keys.containsAll(requiredOptionals)
-                            }
-                        if (worksIfNamesAreReplaced) {
-                            parameters to convertedNames.filter { it.key != it.value }
-                        } else {
-                            null
+            constructorsWithOrderedParameters
+                .mapNotNull { parameters ->
+                    if (providedNames.size <= parameters.size) {
+                        // Parameter count must be compatible (as many or less parameters provided)
+                        val (optional, mandatory) = parameters.partition { it.isOptional }
+                        val mandatoryNames = mandatory.map { it.name }
+                        val requiredOptionals by lazy {
+                            optional
+                                .take(
+                                    providedNames.size - mandatory.size,
+                                ).map { it.name }
                         }
+
+                        fun verifyParameterMatch(matchMethod: (List<String>).(List<String?>) -> Boolean) =
+                            providedNames.matchMethod(mandatoryNames) and
+                                { providedNames.matchMethod(requiredOptionals) }
+                        // Check for exact name match
+                        val exactMatch = verifyParameterMatch(List<String>::containsAll)
+                        if (exactMatch) {
+                            parameters to emptyMap()
+                        } else {
+                            // Check for similar-enough non-ambiguous matches: kebab-case, snake_case, etc.
+                            // convertedNames is a map between the actual parameter name and the provided name
+                            val convertedNames =
+                                providedNames
+                                    .mapNotNull { providedName ->
+                                        parameters
+                                            .filter { it.name.couldBeInterpretedAs(providedName) }
+                                            .takeIf { it.size == 1 }
+                                            ?.first()
+                                            ?.name
+                                            ?.let { it to providedName }
+                                    }.toMap()
+                            val worksIfNamesAreReplaced =
+                                convertedNames.keys.containsAll(mandatoryNames) and {
+                                    convertedNames.keys.containsAll(requiredOptionals)
+                                }
+                            if (worksIfNamesAreReplaced) {
+                                parameters to convertedNames.filter { it.key != it.value }
+                            } else {
+                                null
+                            }
+                        }
+                    } else {
+                        null
                     }
-                } else {
-                    null
-                }
-            }.toMap()
+                }.toMap()
         // If at least one constructor is a perfect match, discard the ones requiring name replacement.
         val preferredMatch =
             usableConstructors
@@ -159,7 +168,10 @@ class NamedParametersConstructor(
     }
 }
 
-internal data class TypeSearch<out T>(val typeName: String, val targetType: Class<out T>) {
+internal data class TypeSearch<out T>(
+    val typeName: String,
+    val targetType: Class<out T>,
+) {
     private val packageName: String? = typeName.substringBeforeLast('.', "").takeIf { it.isNotEmpty() }
     private val isQualified get() = packageName != null
 
@@ -201,7 +213,9 @@ internal data class TypeSearch<out T>(val typeName: String, val targetType: Clas
 /**
  * A constructor for a JVM class of type [typeName].
  */
-sealed class JVMConstructor(val typeName: String) {
+sealed class JVMConstructor(
+    val typeName: String,
+) {
     /**
      * provided a [target] class, extracts the parameters as an ordered list.
      */
@@ -285,8 +299,7 @@ sealed class JVMConstructor(val typeName: String) {
                             )
                         }
                         "${first::class.simpleName}: $second"
-                    }
-                    .toList()
+                    }.toList()
             logger(
                 "Constructor {} failed for {} ",
                 arrayOf(
@@ -320,48 +333,49 @@ sealed class JVMConstructor(val typeName: String) {
             originalParameters.mapIndexed { index, parameter ->
                 if (parameter is JVMConstructor) {
                     val possibleMappings =
-                        compatibleConstructors.flatMap { constructor ->
-                            val mappedIndex =
-                                constructor.valueParameters.lastIndex - originalParameters.lastIndex + index
-                            val potentialType = constructor.valueParameters[mappedIndex]
-                            val potentialJavaType = potentialType.type.jvmErasure.java
-                            val subtypes =
-                                ClassPathScanner.subTypesOf(potentialJavaType) +
-                                    when {
-                                        Modifier.isAbstract(potentialJavaType.modifiers) -> emptyList()
-                                        else -> listOf(potentialJavaType)
+                        compatibleConstructors
+                            .flatMap { constructor ->
+                                val mappedIndex =
+                                    constructor.valueParameters.lastIndex - originalParameters.lastIndex + index
+                                val potentialType = constructor.valueParameters[mappedIndex]
+                                val potentialJavaType = potentialType.type.jvmErasure.java
+                                val subtypes =
+                                    ClassPathScanner.subTypesOf(potentialJavaType) +
+                                        when {
+                                            Modifier.isAbstract(potentialJavaType.modifiers) -> emptyList()
+                                            else -> listOf(potentialJavaType)
+                                        }
+                                val compatibleSubtypes =
+                                    subtypes.filter { subtype ->
+                                        val subtypeName =
+                                            if (parameter.typeName.contains('.')) subtype.name else subtype.simpleName
+                                        parameter.typeName == subtypeName
                                     }
-                            val compatibleSubtypes =
-                                subtypes.filter { subtype ->
-                                    val subtypeName =
-                                        if (parameter.typeName.contains('.')) subtype.name else subtype.simpleName
-                                    parameter.typeName == subtypeName
+                                when {
+                                    compatibleSubtypes.isEmpty() -> {
+                                        logger.warn(
+                                            "Constructor {} discarded as {} is incompatible with parameter #{}:{}",
+                                            constructor,
+                                            parameter,
+                                            mappedIndex,
+                                            potentialType.type,
+                                        )
+                                        emptyList()
+                                    }
+                                    compatibleSubtypes.size > 1 -> {
+                                        error(
+                                            "Ambiguous mapping: $compatibleSubtypes all match" +
+                                                "the requested type $typeName" +
+                                                "for parameter #$mappedIndex:$potentialType of $constructor",
+                                        )
+                                    }
+                                    else -> {
+                                        val maybeParameter = parameter.buildAny(compatibleSubtypes.first(), jirf)
+                                        listOf(maybeParameter.getOrThrow())
+                                    }
                                 }
-                            when {
-                                compatibleSubtypes.isEmpty() -> {
-                                    logger.warn(
-                                        "Constructor {} discarded as {} is incompatible with parameter #{}:{}",
-                                        constructor,
-                                        parameter,
-                                        mappedIndex,
-                                        potentialType.type,
-                                    )
-                                    emptyList()
-                                }
-                                compatibleSubtypes.size > 1 -> {
-                                    error(
-                                        "Ambiguous mapping: $compatibleSubtypes all match" +
-                                            "the requested type $typeName" +
-                                            "for parameter #$mappedIndex:$potentialType of $constructor",
-                                    )
-                                }
-                                else -> {
-                                    val maybeParameter = parameter.buildAny(compatibleSubtypes.first(), jirf)
-                                    listOf(maybeParameter.getOrThrow())
-                                }
-                            }
-                            // remove duplicates
-                        }.toSet()
+                                // remove duplicates
+                            }.toSet()
                     /*
                      * possibleMappings contains the possible instances that can be used as parameter.
                      * If none has been produced, no way has been found to build the parameter.
@@ -423,26 +437,29 @@ sealed class JVMConstructor(val typeName: String) {
                 }
             val exceptions = creationResult.exceptions.asSequence()
             val exceptionsSummary =
-                exceptions.mapIndexed { consIndex, (constructor, exception) ->
-                    val causalChain =
-                        generateSequence<Throwable>(exception) { it.cause }
-                            .mapIndexed { index, cause ->
-                                val message =
-                                    cause.takeIf { it is InstancingImpossibleException }?.message
-                                        ?.replace("it.unibo.alchemist.model.interfaces.", "")
-                                        ?.replace("it.unibo.alchemist.boundary.", "i.u.a.b.")
-                                        ?.replace("it.unibo.alchemist.model.", "i.u.a.m.")
-                                        ?.replace("it.unibo.alchemist.", "i.u.a.")
-                                        ?.replace("java.lang.", "")
-                                        ?.replace("kotlin.", "")
-                                        ?: cause.message ?: "No message"
-                                "|    failure message ${index + 1} of ${cause::class.simpleName}: $message"
-                            }
-                    val constructorName = constructor.shorterToString()
-                    val intro = "${consIndex + 1}. Constructor $constructorName failed with the following exception(s):"
-                    val causalChainString = causalChain.joinToString(separator = "\n")
-                    "| $intro\n$causalChainString".trim()
-                }.joinToString(separator = "\n")
+                exceptions
+                    .mapIndexed { consIndex, (constructor, exception) ->
+                        val causalChain =
+                            generateSequence<Throwable>(exception) { it.cause }
+                                .mapIndexed { index, cause ->
+                                    val message =
+                                        cause
+                                            .takeIf { it is InstancingImpossibleException }
+                                            ?.message
+                                            ?.replace("it.unibo.alchemist.model.interfaces.", "")
+                                            ?.replace("it.unibo.alchemist.boundary.", "i.u.a.b.")
+                                            ?.replace("it.unibo.alchemist.model.", "i.u.a.m.")
+                                            ?.replace("it.unibo.alchemist.", "i.u.a.")
+                                            ?.replace("java.lang.", "")
+                                            ?.replace("kotlin.", "")
+                                            ?: cause.message ?: "No message"
+                                    "|    failure message ${index + 1} of ${cause::class.simpleName}: $message"
+                                }
+                        val constructorName = constructor.shorterToString()
+                        val intro = "${consIndex + 1}. Constructor $constructorName failed with exception(s):"
+                        val causalChainString = causalChain.joinToString(separator = "\n")
+                        "| $intro\n$causalChainString".trim()
+                    }.joinToString(separator = "\n")
             val errorMessage =
                 """
                 |Could not create $this, requested as instance of ${target.simpleName}.

@@ -20,43 +20,44 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
-class ToPositionSurrogateTest : StringSpec({
+class ToPositionSurrogateTest :
+    StringSpec({
 
-    "ToPositionSurrogate should map a Position to a GeneralPositionSurrogate" {
-        val alchemistPosition =
-            object : Position<Nothing> {
-                override fun boundingBox(range: Double): List<Nothing> = error("Do not call, this is a test")
+        "ToPositionSurrogate should map a Position to a GeneralPositionSurrogate" {
+            val alchemistPosition =
+                object : Position<Nothing> {
+                    override fun boundingBox(range: Double): List<Nothing> = error("Do not call, this is a test")
 
-                override val coordinates: DoubleArray get() = doubleArrayOf(1.001, 2.004, 5.67, 1.0, 2.0)
+                    override val coordinates: DoubleArray get() = doubleArrayOf(1.001, 2.004, 5.67, 1.0, 2.0)
 
-                override fun getCoordinate(dimension: Int): Double = coordinates[dimension]
+                    override fun getCoordinate(dimension: Int): Double = coordinates[dimension]
 
-                override val dimensions: Int get() = 5
+                    override val dimensions: Int get() = 5
 
-                override fun plus(other: DoubleArray): Nothing = error("Do not call, this is a test")
+                    override fun plus(other: DoubleArray): Nothing = error("Do not call, this is a test")
 
-                override fun minus(other: DoubleArray): Nothing = error("Do not call, this is a test")
+                    override fun minus(other: DoubleArray): Nothing = error("Do not call, this is a test")
 
-                override fun distanceTo(other: Nothing): Double = error("Do not call, this is a test")
+                    override fun distanceTo(other: Nothing): Double = error("Do not call, this is a test")
+                }
+            val positionSurrogate = toSuitablePositionSurrogate(alchemistPosition.dimensions)(alchemistPosition)
+            if (positionSurrogate is GeneralPositionSurrogate) {
+                checkToPositionSurrogate(alchemistPosition, positionSurrogate)
+            } else {
+                fail("$positionSurrogate type is incorrect")
             }
-        val positionSurrogate = toSuitablePositionSurrogate(alchemistPosition.dimensions)(alchemistPosition)
-        if (positionSurrogate is GeneralPositionSurrogate) {
-            checkToPositionSurrogate(alchemistPosition, positionSurrogate)
-        } else {
-            fail("$positionSurrogate type is incorrect")
         }
-    }
 
-    "ToPositionSurrogate should map a Position2D to a Position2DSurrogate" {
-        val alchemist2DPosition = Euclidean2DPosition(2.5, 5.8)
-        val position2DSurrogate = toSuitablePositionSurrogate(alchemist2DPosition.dimensions)(alchemist2DPosition)
-        if (position2DSurrogate is Position2DSurrogate) {
-            checkToPositionSurrogate(alchemist2DPosition, position2DSurrogate)
-        } else {
-            fail("$position2DSurrogate type is incorrect")
+        "ToPositionSurrogate should map a Position2D to a Position2DSurrogate" {
+            val alchemist2DPosition = Euclidean2DPosition(2.5, 5.8)
+            val position2DSurrogate = toSuitablePositionSurrogate(alchemist2DPosition.dimensions)(alchemist2DPosition)
+            if (position2DSurrogate is Position2DSurrogate) {
+                checkToPositionSurrogate(alchemist2DPosition, position2DSurrogate)
+            } else {
+                fail("$position2DSurrogate type is incorrect")
+            }
         }
-    }
-})
+    })
 
 fun <P : Position<out P>> checkToPositionSurrogate(
     position: P,

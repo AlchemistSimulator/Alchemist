@@ -30,7 +30,8 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  * @param N the type of nodes (or vertices).
  * @param E the type of edges.
  */
-interface NavigationGraph<V, A, N, E> : org.jgrapht.Graph<N, E> where
+interface NavigationGraph<V, A, N, E> :
+    org.jgrapht.Graph<N, E> where
           V : Vector<V>,
           A : Transformation<V>,
           N : ConvexShape<V, A> {

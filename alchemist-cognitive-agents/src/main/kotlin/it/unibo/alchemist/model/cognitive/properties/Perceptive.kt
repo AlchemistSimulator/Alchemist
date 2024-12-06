@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.properties.AbstractNodeProperty
 data class Perceptive<T>(
     override val node: Node<T>,
     override val fieldOfView: InfluenceSphere<T>,
-) : AbstractNodeProperty<T>(node), PerceptiveProperty<T> {
+) : AbstractNodeProperty<T>(node),
+    PerceptiveProperty<T> {
     override fun cloneOnNewNode(node: Node<T>) = Perceptive(node, fieldOfView)
 }

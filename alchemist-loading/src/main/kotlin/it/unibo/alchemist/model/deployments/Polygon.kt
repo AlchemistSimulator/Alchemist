@@ -104,8 +104,7 @@ open class Polygon<P : Position2D<out P>>(
                 } else {
                     environment.makePosition(x, y)
                 }
-            }
-            .takeIf { polygon.contains(it) } ?: indexToPosition(i)
+            }.takeIf { polygon.contains(it) } ?: indexToPosition(i)
 
     /**
      * Converts a Point2D to a [P].

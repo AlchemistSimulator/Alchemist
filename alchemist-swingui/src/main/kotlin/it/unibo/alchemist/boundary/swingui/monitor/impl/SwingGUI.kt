@@ -105,7 +105,9 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
              * Go on screen
              */
             val size =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().screenDevices
+                GraphicsEnvironment
+                    .getLocalGraphicsEnvironment()
+                    .screenDevices
                     .map { screen -> screen.displayMode }
                     .minByOrNull { it.area() }
             frame.size = size?.run { Dimension((width * SCALE_FACTOR).toInt(), (height * SCALE_FACTOR).toInt()) }

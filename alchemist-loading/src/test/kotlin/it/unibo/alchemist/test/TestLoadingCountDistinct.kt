@@ -15,11 +15,12 @@ import it.unibo.alchemist.util.StatUtil
 /**
  * Tests loading and executing CountDistinct.
  */
-class TestLoadingCountDistinct : StringSpec({
-    "CountDistinct should load and execute" {
-        val stat = StatUtil.makeUnivariateStatistic("countdistinct").get()
-        stat.evaluate(doubleArrayOf(1.0, 2.0, 3.0, 1.0)) shouldBeExactly 3.0
-        stat.evaluate((1..100).map(Int::toDouble).toDoubleArray()) shouldBeExactly 100.0
-        stat.evaluate((1..100).map(Int::toDouble).toDoubleArray(), 50, 1000) shouldBeExactly 50.0
-    }
-})
+class TestLoadingCountDistinct :
+    StringSpec({
+        "CountDistinct should load and execute" {
+            val stat = StatUtil.makeUnivariateStatistic("countdistinct").get()
+            stat.evaluate(doubleArrayOf(1.0, 2.0, 3.0, 1.0)) shouldBeExactly 3.0
+            stat.evaluate((1..100).map(Int::toDouble).toDoubleArray()) shouldBeExactly 100.0
+            stat.evaluate((1..100).map(Int::toDouble).toDoubleArray(), 50, 1000) shouldBeExactly 50.0
+        }
+    })

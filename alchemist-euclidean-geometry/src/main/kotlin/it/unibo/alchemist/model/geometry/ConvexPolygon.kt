@@ -16,7 +16,9 @@ import java.awt.Shape
  * A simple polygon (i.e. not self-intersecting and without holes) in which no
  * line segment between two points on the boundary ever goes outside the polygon.
  */
-interface ConvexPolygon : Euclidean2DConvexShape, AwtShapeCompatible {
+interface ConvexPolygon :
+    Euclidean2DConvexShape,
+    AwtShapeCompatible {
     /**
      * @returns the vertices of the polygon, sorted so that the polygon could
      * be obtained by connecting consecutive points in the list with a segment

@@ -15,7 +15,9 @@ import kotlin.Double.Companion.NEGATIVE_INFINITY as MINUS_INFINITY
 /**
  * Interface for time representation.
  */
-interface Time : Comparable<Time>, Serializable {
+interface Time :
+    Comparable<Time>,
+    Serializable {
     /**
      * Verifies if the [Time] is set at infinite, namely if the event will
      * never happen.

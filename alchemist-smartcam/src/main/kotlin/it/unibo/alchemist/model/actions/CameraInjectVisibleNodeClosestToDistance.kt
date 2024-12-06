@@ -59,7 +59,8 @@ class CameraInjectVisibleNodeClosestToDistance(
                         versor = environment.getHeading(node),
                         distance = distance,
                     )
-                nodes.map { it.position }
+                nodes
+                    .map { it.position }
                     .reduce { n1, n2 -> minBy(n1, n2) { it.distanceTo(myPosition) } }
                     .also { node.setConcentration(targetMolecule, it) }
             }

@@ -24,7 +24,8 @@ import it.unibo.alchemist.model.geometry.navigationgraph.NavigationGraph
  * whereas edges should represent doors and passages. This data structure is also known as
  * [navigation mesh](https://en.wikipedia.org/wiki/Navigation_mesh).
  */
-interface EnvironmentWithGraph<W, T, P, A, N, E> : EnvironmentWithObstacles<W, T, P>
+interface EnvironmentWithGraph<W, T, P, A, N, E> :
+    EnvironmentWithObstacles<W, T, P>
     where W : Obstacle<P>,
           P : Position<P>, P : Vector<P>,
           A : Transformation<P>,

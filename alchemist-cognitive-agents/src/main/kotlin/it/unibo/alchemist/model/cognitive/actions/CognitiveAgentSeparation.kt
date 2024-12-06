@@ -41,7 +41,8 @@ class CognitiveAgentSeparation<T>(
     override fun nextPosition(): Euclidean2DPosition = (currentPosition - centroid()).coerceAtMost(maxWalk)
 
     override fun group(): List<Node<T>> =
-        node.asProperty<T, PerceptiveProperty<T>>()
+        node
+            .asProperty<T, PerceptiveProperty<T>>()
             .fieldOfView
             .influentialNodes()
             .plusElement(node)

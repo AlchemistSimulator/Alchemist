@@ -130,7 +130,8 @@ class EnvironmentWithDynamics<T>
             addPhysicalProperties(nodeBody, node.asProperty<T, AreaProperty<T>>().shape.radius)
             nodeToBody[node] = nodeBody
             world.addBody(nodeBody)
-            node.asProperty<T, PhysicalPedestrian2D<T>>()
+            node
+                .asProperty<T, PhysicalPedestrian2D<T>>()
                 .onFall {
                 /*
                  * This disables collision response with the falling agent, as

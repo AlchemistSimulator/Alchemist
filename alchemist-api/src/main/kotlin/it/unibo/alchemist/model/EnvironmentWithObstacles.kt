@@ -18,7 +18,8 @@ import it.unibo.alchemist.model.geometry.Vector
  * @param T the concentration type.
  * @param P the position and vector type for this environment.
  */
-interface EnvironmentWithObstacles<W, T, P> : EuclideanEnvironment<T, P> where
+interface EnvironmentWithObstacles<W, T, P> :
+    EuclideanEnvironment<T, P> where
           W : Obstacle<P>,
           P : Position<P>,
           P : Vector<P> {

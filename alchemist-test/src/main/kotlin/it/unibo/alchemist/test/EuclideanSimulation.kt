@@ -88,5 +88,7 @@ fun <T, P> loadYamlSimulation(
     resource: String,
     vars: Map<String, Double> = emptyMap(),
 ): Simulation<T, P> where P : Position<P>, P : Vector<P> =
-    LoadAlchemist.from(ResourceLoader.getResource(resource)).getWith<T, P>(vars)
+    LoadAlchemist
+        .from(ResourceLoader.getResource(resource))
+        .getWith<T, P>(vars)
         .also { it.environment as? EuclideanEnvironment ?: error("Illegal kind of environment") }

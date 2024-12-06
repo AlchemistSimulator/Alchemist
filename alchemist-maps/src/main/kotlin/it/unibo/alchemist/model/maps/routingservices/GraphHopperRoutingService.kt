@@ -47,7 +47,12 @@ class GraphHopperRoutingService
         private val graphHopper: GraphHopper
 
         init {
-            val mapName = map.toExternalForm().split('/').last().takeWhile { it != '?' }
+            val mapName =
+                map
+                    .toExternalForm()
+                    .split('/')
+                    .last()
+                    .takeWhile { it != '?' }
             val mapFile = File(workingDirectory, mapName)
             lockfileLock.acquireUninterruptibly()
             try {
@@ -73,8 +78,7 @@ class GraphHopperRoutingService
                                 }
                                 workingDirectory.mkdirs()
                                 initNavigationSystem(mapFile, workingDirectory)
-                            }
-                            .getOrThrow()
+                            }.getOrThrow()
                 }
             } finally {
                 lockfileLock.release()
@@ -84,8 +88,8 @@ class GraphHopperRoutingService
         override fun allowedPointClosestTo(
             position: GeoPosition,
             options: GraphHopperOptions,
-        ): GeoPosition? {
-            return graphHopper.locationIndex
+        ): GeoPosition? =
+            graphHopper.locationIndex
                 .findClosest(
                     position.latitude,
                     position.longitude,
@@ -95,11 +99,9 @@ class GraphHopperRoutingService
                             BooleanEncodedValue::class.java,
                         ),
                     ),
-                )
-                .takeIf { it.isValid }
+                ).takeIf { it.isValid }
                 ?.snappedPoint
                 ?.let { LatLongPosition(it.lat, it.lon) }
-        }
 
         private fun GeoPosition.coerceToMap(): Pair<Double, Double> {
             val bounds = graphHopper.baseGraph.bounds
@@ -176,14 +178,13 @@ class GraphHopperRoutingService
                     .setGraphHopperLocation(internalWorkdir.absolutePath)
                     .setProfiles(GraphHopperOptions.allProfiles)
                     .setEncodedValuesString(
-                        GraphHopperOptions.allCustomModels.asSequence()
+                        GraphHopperOptions.allCustomModels
+                            .asSequence()
                             .flatMap { model ->
                                 CustomModelParser.findVariablesForEncodedValuesString(model, { true }) { it }
-                            }
-                            .distinct()
+                            }.distinct()
                             .joinToString(separator = ", "),
-                    )
-                    .importOrLoad()
+                    ).importOrLoad()
 
             private fun InputStream.nameFromHash(): String =
                 Base32().encodeAsString(Hashing.sha256().hashBytes(readAllBytes()).asBytes()).filter { it != '=' }

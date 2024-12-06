@@ -15,12 +15,13 @@ import it.unibo.alchemist.boundary.TestUtility.webRendererTestEnvironments
 import it.unibo.alchemist.boundary.webui.server.monitor.EnvironmentMonitor
 import it.unibo.alchemist.boundary.webui.server.monitor.EnvironmentMonitorFactory.makeEnvironmentMonitor
 
-class EnvironmentMonitorFactoryTest : StringSpec({
-    "EnvironmentMonitorFactory should create a monitor using different strategy" {
-        webRendererTestEnvironments<Any, Nothing>().forEach {
-            makeEnvironmentMonitor(it.environment).let { monitor ->
-                monitor::class shouldBe EnvironmentMonitor::class
+class EnvironmentMonitorFactoryTest :
+    StringSpec({
+        "EnvironmentMonitorFactory should create a monitor using different strategy" {
+            webRendererTestEnvironments<Any, Nothing>().forEach {
+                makeEnvironmentMonitor(it.environment).let { monitor ->
+                    monitor::class shouldBe EnvironmentMonitor::class
+                }
             }
         }
-    }
-})
+    })

@@ -12,7 +12,10 @@ import it.unibo.alchemist.model.cognitive.impact.PARAMETERS_FILE
  * @param gender
  *          the gender of the helper.
  */
-class HelpAttitude(age: Age, gender: Gender) : Characteristic {
+class HelpAttitude(
+    age: Age,
+    gender: Gender,
+) : Characteristic {
     private val helperRules = rules[age to gender]
 
     /**

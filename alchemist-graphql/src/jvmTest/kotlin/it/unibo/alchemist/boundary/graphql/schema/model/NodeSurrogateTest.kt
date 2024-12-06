@@ -23,15 +23,16 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.geometry.Vector
 
-class NodeSurrogateTest<T, P> : StringSpec({
-    "NodeSurrogate should map a Node to a GraphQL compliant object" {
-        GraphQLTestEnvironments.loadTests<T, P> {
-            it.nodes.forEach { node ->
-                checkNodeSurrogate<T, P>(node, node.toGraphQLNodeSurrogate())
+class NodeSurrogateTest<T, P> :
+    StringSpec({
+        "NodeSurrogate should map a Node to a GraphQL compliant object" {
+            GraphQLTestEnvironments.loadTests<T, P> {
+                it.nodes.forEach { node ->
+                    checkNodeSurrogate<T, P>(node, node.toGraphQLNodeSurrogate())
+                }
             }
         }
-    }
-}) where T : Any, P : Position<P>, P : Vector<P> {
+    }) where T : Any, P : Position<P>, P : Vector<P> {
     companion object {
         fun <T : Any, P> checkNodeSurrogate(
             node: Node<T>,

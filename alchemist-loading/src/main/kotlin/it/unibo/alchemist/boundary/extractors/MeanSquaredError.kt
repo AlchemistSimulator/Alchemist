@@ -54,7 +54,8 @@ class MeanSquaredError<T>
         )
 
         private val statistic: UnivariateStatistic =
-            StatUtil.makeUnivariateStatistic(statistics)
+            StatUtil
+                .makeUnivariateStatistic(statistics)
                 .orElseThrow { IllegalArgumentException("Could not create univariate statistic $statistics") }
         private val mReference: Molecule = incarnation.createMolecule(localCorrectValueMolecule)
         private val pReference: String = localCorrectValueProperty
@@ -89,7 +90,8 @@ class MeanSquaredError<T>
                         environment.nodes.map { incarnation.getProperty(it, mReference, pReference) }.toDoubleArray(),
                     )
             val mse: Double =
-                environment.nodes.parallelStream()
+                environment.nodes
+                    .parallelStream()
                     .mapToDouble { incarnation.getProperty(it, mActual, pActual) - value }
                     .map { it * it }
                     .average()

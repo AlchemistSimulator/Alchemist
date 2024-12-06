@@ -22,7 +22,9 @@ import java.util.Locale
  */
 abstract class AbstractDoubleExporter
     @JvmOverloads
-    constructor(val precision: Int? = null) : Extractor<Double> {
+    constructor(
+        val precision: Int? = null,
+    ) : Extractor<Double> {
         init {
             require(precision == null || precision > 0) {
                 "Significant digits must be positive"

@@ -13,18 +13,18 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.serialization.jsonFormat
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 
 @OptIn(ExperimentalSerializationApi::class)
-class EmptyConcentrationTest : StringSpec({
+class EmptyConcentrationTest :
+    StringSpec({
 
-    val emptyConcentration = EmptyConcentrationSurrogate
+        val emptyConcentration = EmptyConcentrationSurrogate
 
-    "EmptyConcentration should be serialized correctly" {
-        EmptyConcentrationSurrogate.serializer().descriptor.serialName shouldBe "EmptyConcentration"
-        val ser = jsonFormat.encodeToString(emptyConcentration)
-        val des: EmptyConcentrationSurrogate = jsonFormat.decodeFromString(ser)
-        des shouldBe emptyConcentration
-    }
-})
+        "EmptyConcentration should be serialized correctly" {
+            EmptyConcentrationSurrogate.serializer().descriptor.serialName shouldBe "EmptyConcentration"
+            val ser = jsonFormat.encodeToString(emptyConcentration)
+            val des: EmptyConcentrationSurrogate = jsonFormat.decodeFromString(ser)
+            des shouldBe emptyConcentration
+        }
+    })

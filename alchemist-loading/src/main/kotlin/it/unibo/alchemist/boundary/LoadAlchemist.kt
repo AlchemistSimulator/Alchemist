@@ -126,7 +126,5 @@ object LoadAlchemist {
     private fun applyOverrides(
         map: Map<String, *>,
         overrides: List<String> = emptyList(),
-    ): Map<String, *> {
-        return map.overrideAll(overrides)
-    }
+    ): Map<String, *> = map.overrideAll(overrides)
 }

@@ -23,56 +23,58 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
 import javax.script.ScriptException
 
-class TestKtVariable<T, P : Position<P>> : StringSpec({
-    "test loading a kotlin variable" {
-        val file = ResourceLoader.getResource("testktvar.yml")
-        assertNotNull(file)
-        val loader = LoadAlchemist.from(file)
-        assertNotNull(loader.getWith<T, P>(emptyMap<String, String>()))
-        loader.constants.let { variable ->
-            assertEquals(23, variable["a"])
-            val expectedTest2 = listOf("a", 5.5)
-            assertEquals(expectedTest2, variable["test2"])
-            val expectedTest = listOf(23, 5.5)
-            assertEquals(expectedTest, variable["test"])
-            assertEquals(expectedTest + expectedTest2, variable["test3"])
+class TestKtVariable<T, P : Position<P>> :
+    StringSpec({
+        "test loading a kotlin variable" {
+            val file = ResourceLoader.getResource("testktvar.yml")
+            assertNotNull(file)
+            val loader = LoadAlchemist.from(file)
+            assertNotNull(loader.getWith<T, P>(emptyMap<String, String>()))
+            loader.constants.let { variable ->
+                assertEquals(23, variable["a"])
+                val expectedTest2 = listOf("a", 5.5)
+                assertEquals(expectedTest2, variable["test2"])
+                val expectedTest = listOf(23, 5.5)
+                assertEquals(expectedTest, variable["test"])
+                assertEquals(expectedTest + expectedTest2, variable["test3"])
+            }
         }
-    }
-    ClassPathScanner.resourcesMatching(".*", "regression/should-fail/kt-script").forEach { spec ->
-        "test syntax errors in ${spec.file}" {
-            val exception =
-                shouldThrow<RuntimeException> {
-                    LoadAlchemist.from(spec).getDefault<Any, Nothing>()
-                }
-            val exceptions =
-                generateSequence(exception, Throwable::cause).run {
-                    // Avoid circular causes
-                    val accumulator = mutableSetOf<Throwable>()
-                    takeWhile { it !in accumulator }.onEach(accumulator::add)
-                }
-            exceptions.find { it is ScriptException } shouldNot beNull()
+        ClassPathScanner.resourcesMatching(".*", "regression/should-fail/kt-script").forEach { spec ->
+            "test syntax errors in ${spec.file}" {
+                val exception =
+                    shouldThrow<RuntimeException> {
+                        LoadAlchemist.from(spec).getDefault<Any, Nothing>()
+                    }
+                val exceptions =
+                    generateSequence(exception, Throwable::cause).run {
+                        // Avoid circular causes
+                        val accumulator = mutableSetOf<Throwable>()
+                        takeWhile { it !in accumulator }.onEach(accumulator::add)
+                    }
+                exceptions.find { it is ScriptException } shouldNot beNull()
+            }
         }
-    }
-    "test 'type' keyword clashes" {
-        loadAlchemistFromResource("regression/2022-coordination-type-clash.yml") shouldNot beNull()
-    }
-    "test null values in bindings" {
-        val simulation = loadAlchemistFromResource("regression/2022-coordination-null-bindings.yml")
-        simulation shouldNot beNull()
-        val variable = simulation.variables["result"]
-        variable shouldNot beNull()
-        val values = variable?.toList().orEmpty()
-        values.forEach { it shouldBe "null" }
-    }
+        "test 'type' keyword clashes" {
+            loadAlchemistFromResource("regression/2022-coordination-type-clash.yml") shouldNot beNull()
+        }
+        "test null values in bindings" {
+            val simulation = loadAlchemistFromResource("regression/2022-coordination-null-bindings.yml")
+            simulation shouldNot beNull()
+            val variable = simulation.variables["result"]
+            variable shouldNot beNull()
+            val values = variable?.toList().orEmpty()
+            values.forEach { it shouldBe "null" }
+        }
 
-    // This is a regression test, when the simulation is loaded with formula defined inside a "seed" definition
-    // the simulation throws the exception:
-    // IllegalStateException: Invalid RandomGenerator specification: {min=1, max=2, step=1, default=1}: LinkedHashMap.
-    "simulation should load formula variables inside a RandomGenerator definition" {
-        val file = ResourceLoader.getResource("regression/testLoadFormulaVariables.yml")
-        assertNotNull(file)
-        val loader = LoadAlchemist.from(file)
-        assertNotNull(loader.getWith<T, P>(emptyMap<String, String>()))
-        loader.variables["seed"] shouldNot beNull()
-    }
-})
+        // This is a regression test, when the simulation is loaded with formula defined inside a "seed" definition
+        // the simulation throws the exception:
+        // IllegalStateException: Invalid RandomGenerator specification:
+        // {min=1, max=2, step=1, default=1}: LinkedHashMap.
+        "simulation should load formula variables inside a RandomGenerator definition" {
+            val file = ResourceLoader.getResource("regression/testLoadFormulaVariables.yml")
+            assertNotNull(file)
+            val loader = LoadAlchemist.from(file)
+            assertNotNull(loader.getWith<T, P>(emptyMap<String, String>()))
+            loader.variables["seed"] shouldNot beNull()
+        }
+    })

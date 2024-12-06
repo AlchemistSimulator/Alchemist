@@ -39,7 +39,8 @@ class RandomTargetInPolygonOnMap<T, O : RoutingServiceOptions<O>, S : RoutingSer
         ConstantSpeed(reaction, speed),
         object : ChangeTargetOnCollision<T, GeoPosition>({ environment.getPosition(node) }) {
             override fun chooseTarget() =
-                positionGenerator.stream()
+                positionGenerator
+                    .stream()
                     .findFirst()
                     .orElseThrow { IllegalStateException("Bug in Alchemist.") }
 

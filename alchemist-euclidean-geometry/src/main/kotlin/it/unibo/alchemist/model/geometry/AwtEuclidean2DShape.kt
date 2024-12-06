@@ -20,7 +20,8 @@ import java.awt.geom.Point2D
 internal class AwtEuclidean2DShape(
     private val shape: java.awt.Shape,
     private val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0),
-) : Euclidean2DShape, AwtShapeCompatible {
+) : Euclidean2DShape,
+    AwtShapeCompatible {
     override val diameter: Double by lazy {
         val rect = shape.bounds2D
         Euclidean2DPosition(rect.minX, rect.minY).distanceTo(Euclidean2DPosition(rect.maxX, rect.maxY))

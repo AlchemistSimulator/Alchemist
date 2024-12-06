@@ -46,9 +46,7 @@ open class CSVAlchemistSimulationAdapter(
 
     override fun getTime(): Double = time.toDouble()
 
-    override fun rval(obs: String): Double {
-        return alchemistStateObservations[time].getObservation(obs)
-    }
+    override fun rval(obs: String): Double = alchemistStateObservations[time].getObservation(obs)
 
     override fun rval(obsId: Int): Double = alchemistStateObservations[time].getObservation(obsId)
 

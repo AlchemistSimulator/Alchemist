@@ -45,7 +45,8 @@ class TestImageEnvironment {
     @Test
     fun testLoadingImages() {
         val incarnation = SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseGet { TODO() }
-        images.asSequence()
+        images
+            .asSequence()
             .map { it to ResourceLoader.getResource("images/$it") }
             .map { it.second ?: error("Could not lead image ${it.first}") }
             .map { it.path }
@@ -54,8 +55,7 @@ class TestImageEnvironment {
                     ImageEnvironment<Any>(incarnation, it),
                     ImageEnvironment(incarnation, it, MAX, MAX, MAX),
                 )
-            }
-            .map { it.obstacles }
+            }.map { it.obstacles }
             .forEach { Assertions.assertTrue(it.isNotEmpty()) }
     }
 

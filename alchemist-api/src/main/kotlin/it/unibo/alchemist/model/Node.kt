@@ -19,7 +19,10 @@ import kotlin.reflect.jvm.jvmErasure
  *
  * This interface must be implemented in every realization of node
 </T> */
-interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
+interface Node<T> :
+    Serializable,
+    Iterable<Reaction<T>>,
+    Comparable<Node<T>> {
     /**
      * Adds a reaction to this node.
      * The reaction is added only in the node,
@@ -159,8 +162,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
                         validProperties
                             .mapNotNull { nodeProperty: NodeProperty<T> ->
                                 nodeProperty::class.distanceFrom(superType)?.let { nodeProperty to it }
-                            }
-                            .minByOrNull { it.second }
+                            }.minByOrNull { it.second }
                             ?.first as? C
                     }
                 }
@@ -214,8 +216,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
                             validProperties
                                 .mapNotNull { nodeProperty: NodeProperty<T> ->
                                     nodeProperty::class.distanceFrom(C::class)?.let { nodeProperty to it }
-                                }
-                                .minByOrNull { it.second }
+                                }.minByOrNull { it.second }
                                 ?.first as? C
                     }
                 }
@@ -230,7 +231,8 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
                 !isSubclassOf(superType) -> null
                 superType == this -> depth
                 else ->
-                    supertypes.asSequence()
+                    supertypes
+                        .asSequence()
                         .map { it.jvmErasure }
                         .mapNotNull { it.distanceFrom(superType, depth + 1) }
                         .minOrNull()

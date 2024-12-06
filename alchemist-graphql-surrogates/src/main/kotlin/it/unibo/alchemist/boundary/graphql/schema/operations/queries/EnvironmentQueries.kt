@@ -21,7 +21,9 @@ import it.unibo.alchemist.model.Position
  *
  * @param environment
  */
-class EnvironmentQueries<T, P : Position<out P>>(private val environment: Environment<T, P>) : Query {
+class EnvironmentQueries<T, P : Position<out P>>(
+    private val environment: Environment<T, P>,
+) : Query {
     /**
      * Returns the actual state of the simulation.
      */

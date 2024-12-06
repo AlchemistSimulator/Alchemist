@@ -19,28 +19,29 @@ import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import it.unibo.alchemist.test.AlchemistTesting.terminatingAfterSteps
 import org.apache.commons.math3.random.MersenneTwister
 
-class RegressionTest : StringSpec(
-    {
-        "reactions in format a --> *b should generate outgoing dependencies for both a and b" {
-            val twoOutGoingDependencies =
-                with(SAPEREIncarnation<Euclidean2DPosition>()) {
-                    with(Continuous2DEnvironment<List<ILsaMolecule>>(this)) {
-                        createReaction(
-                            MersenneTwister(),
-                            this,
-                            LsaNode(this),
-                            DiracComb(1.0),
-                            "{x} --> *{y}",
-                        )
+class RegressionTest :
+    StringSpec(
+        {
+            "reactions in format a --> *b should generate outgoing dependencies for both a and b" {
+                val twoOutGoingDependencies =
+                    with(SAPEREIncarnation<Euclidean2DPosition>()) {
+                        with(Continuous2DEnvironment<List<ILsaMolecule>>(this)) {
+                            createReaction(
+                                MersenneTwister(),
+                                this,
+                                LsaNode(this),
+                                DiracComb(1.0),
+                                "{x} --> *{y}",
+                            )
+                        }
                     }
-                }
-            twoOutGoingDependencies.outboundDependencies.size shouldBe 2
-            loadAlchemistFromResource("it/unibo/alchemist/regressions/bug1718.yml")
-                .getDefault<Any, Nothing>()
-                .terminatingAfterSteps(100)
-                .runInCurrentThread()
-                .error
-                .ifPresent { throw it }
-        }
-    },
-)
+                twoOutGoingDependencies.outboundDependencies.size shouldBe 2
+                loadAlchemistFromResource("it/unibo/alchemist/regressions/bug1718.yml")
+                    .getDefault<Any, Nothing>()
+                    .terminatingAfterSteps(100)
+                    .runInCurrentThread()
+                    .error
+                    .ifPresent { throw it }
+            }
+        },
+    )

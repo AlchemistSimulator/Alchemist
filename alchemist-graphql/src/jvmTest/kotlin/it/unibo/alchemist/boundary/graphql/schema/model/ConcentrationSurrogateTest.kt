@@ -18,24 +18,31 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 
-class ConcentrationSurrogateTest : StringSpec({
-    "ConcentrationSurrogate should map a Concentration to a GraphQL compliant object" {
-        // Basic concentration content test
-        val c1: Concentration<Double> = Concentration { 1.0 }
-        checkConcentrationContent(c1.content, c1.toGraphQLConcentrationSurrogate().content)
-        // Test with a serializable content
-        val c2: Concentration<TestSerializableContent> = Concentration { TestSerializableContent(1, "a") }
-        checkConcentrationContent(c2.content, c2.toGraphQLConcentrationSurrogate().content)
-        // Test with a non-serializable content
-        val c3: Concentration<TestNonSerializableContent> = Concentration { TestNonSerializableContent(1, "a") }
-        checkConcentrationContent(c3.content, c3.toGraphQLConcentrationSurrogate().content)
-    }
-}) {
+class ConcentrationSurrogateTest :
+    StringSpec({
+        "ConcentrationSurrogate should map a Concentration to a GraphQL compliant object" {
+            // Basic concentration content test
+            val c1: Concentration<Double> = Concentration { 1.0 }
+            checkConcentrationContent(c1.content, c1.toGraphQLConcentrationSurrogate().content)
+            // Test with a serializable content
+            val c2: Concentration<TestSerializableContent> = Concentration { TestSerializableContent(1, "a") }
+            checkConcentrationContent(c2.content, c2.toGraphQLConcentrationSurrogate().content)
+            // Test with a non-serializable content
+            val c3: Concentration<TestNonSerializableContent> = Concentration { TestNonSerializableContent(1, "a") }
+            checkConcentrationContent(c3.content, c3.toGraphQLConcentrationSurrogate().content)
+        }
+    }) {
     companion object {
         @Serializable
-        private data class TestSerializableContent(val a: Int, val b: String)
+        private data class TestSerializableContent(
+            val a: Int,
+            val b: String,
+        )
 
-        private data class TestNonSerializableContent(val a: Int, val b: String)
+        private data class TestNonSerializableContent(
+            val a: Int,
+            val b: String,
+        )
 
         fun <T : Any> checkConcentrationContent(
             c: T,

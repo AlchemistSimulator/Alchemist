@@ -20,7 +20,9 @@ import it.unibo.alchemist.model.Time
  *
  * Note: this exporter is not designed to handle changes in the environment topology like node removal or addition.
  */
-class NodesPositions<T, P : Position<P>>(private val environment: Environment<T, P>) : AbstractDoubleExporter() {
+class NodesPositions<T, P : Position<P>>(
+    private val environment: Environment<T, P>,
+) : AbstractDoubleExporter() {
     override val columnNames: List<String> by lazy {
         (0 until environment.nodeCount).flatMap { nodeId ->
             (0 until environment.dimensions).map { dimensionIndex ->
@@ -47,8 +49,7 @@ class NodesPositions<T, P : Position<P>>(private val environment: Environment<T,
                 nodePosition.coordinates.mapIndexed { index, coordinate ->
                     columnNameFormat(nodeId, Dimension(index)) to coordinate
                 }
-            }
-            .toMap()
+            }.toMap()
     }
 
     private fun <T> checkExtractCondition(environment: Environment<T, *>) {
@@ -68,7 +69,9 @@ class NodesPositions<T, P : Position<P>>(private val environment: Environment<T,
 
     private companion object {
         @JvmInline
-        private value class Dimension(val index: Int) {
+        private value class Dimension(
+            val index: Int,
+        ) {
             val symbol: String get() = "xyzwvu".getOrNull(index)?.toString() ?: "d$index"
         }
 

@@ -40,24 +40,25 @@ private val INITIAL_POSITIONS = Pair(Euclidean2DPosition(0.0, 0.0), Euclidean2DP
 private var environment: Environment<Double, Euclidean2DPosition> by Delegates.notNull()
 private var nodes: Pair<Node<Double>, Node<Double>> by Delegates.notNull()
 
-class TestMoleculeSwapWithinNeighborhood : StringSpec({
-    "send molecule to a neighbor" {
-        val reaction = INCARNATION.createReaction(RANDOM, environment, nodes.first, TIME, DIRECT_REACTION)
-        reaction shouldHave 2.conditions
-        reaction shouldHave 1.neighborConditions
-        reaction shouldHave 2.actions
-        nodes.first.addReaction(reaction)
-        testSimulation()
-    }
-    "pick molecule from a neighbor" {
-        val reaction = INCARNATION.createReaction(RANDOM, environment, nodes.second, TIME, INVERSE_REACTION)
-        reaction shouldHave 1.conditions
-        reaction shouldHave 1.neighborConditions
-        reaction shouldHave 2.actions
-        nodes.second.addReaction(reaction)
-        testSimulation()
-    }
-}) {
+class TestMoleculeSwapWithinNeighborhood :
+    StringSpec({
+        "send molecule to a neighbor" {
+            val reaction = INCARNATION.createReaction(RANDOM, environment, nodes.first, TIME, DIRECT_REACTION)
+            reaction shouldHave 2.conditions
+            reaction shouldHave 1.neighborConditions
+            reaction shouldHave 2.actions
+            nodes.first.addReaction(reaction)
+            testSimulation()
+        }
+        "pick molecule from a neighbor" {
+            val reaction = INCARNATION.createReaction(RANDOM, environment, nodes.second, TIME, INVERSE_REACTION)
+            reaction shouldHave 1.conditions
+            reaction shouldHave 1.neighborConditions
+            reaction shouldHave 2.actions
+            nodes.second.addReaction(reaction)
+            testSimulation()
+        }
+    }) {
     override suspend fun beforeTest(testCase: TestCase) {
         environment =
             BioRect2DEnvironment(INCARNATION)
@@ -80,10 +81,18 @@ private fun testSimulation() =
         initialized = {
             nodes.first.getConcentration(BIOMOLECULE) shouldBe 1.0
             nodes.second.getConcentration(BIOMOLECULE) shouldBe 0.0
-            nodes.toList().stream().mapToInt { it.reactions.count() }.sum() shouldBe 1
+            nodes
+                .toList()
+                .stream()
+                .mapToInt { it.reactions.count() }
+                .sum() shouldBe 1
         },
         stepDone = {
-            nodes.toList().stream().mapToDouble { it.getConcentration(BIOMOLECULE) }.sum() shouldBe 1.0
+            nodes
+                .toList()
+                .stream()
+                .mapToDouble { it.getConcentration(BIOMOLECULE) }
+                .sum() shouldBe 1.0
         },
         finished = {
             nodes.first.getConcentration(BIOMOLECULE) shouldBe 0.0

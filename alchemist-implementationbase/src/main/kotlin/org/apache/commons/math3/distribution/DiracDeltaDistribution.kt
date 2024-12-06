@@ -22,7 +22,10 @@ import org.apache.commons.math3.random.RandomGenerator
  * they work with a constant value (e.g., random walks with a constant step).
  *
  */
-class DiracDeltaDistribution constructor(val value: Double) : RealDistribution, java.io.Serializable {
+class DiracDeltaDistribution constructor(
+    val value: Double,
+) : RealDistribution,
+    java.io.Serializable {
     /**
      * This constructor is meant for reflection compatibility only.
      * [randomGenerator] is unused.

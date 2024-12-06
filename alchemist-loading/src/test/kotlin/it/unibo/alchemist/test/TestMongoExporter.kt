@@ -28,52 +28,53 @@ import it.unibo.alchemist.model.Time
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
 
-class TestMongoExporter<T, P : Position<P>> : StringSpec({
-    "test exporting data on MongoDB" {
-        withMongo {
-            val file = ResourceLoader.getResource("testMongoExporter.yml")
-            assertNotNull(file)
-            val loader = LoadAlchemist.from(file)
-            assertNotNull(loader)
-            val simulation: Simulation<T, P> = loader.getDefault()
+class TestMongoExporter<T, P : Position<P>> :
+    StringSpec({
+        "test exporting data on MongoDB" {
+            withMongo {
+                val file = ResourceLoader.getResource("testMongoExporter.yml")
+                assertNotNull(file)
+                val loader = LoadAlchemist.from(file)
+                assertNotNull(loader)
+                val simulation: Simulation<T, P> = loader.getDefault()
 
-            fun checkForErrors() = simulation.error.ifPresent { throw it }
-            simulation.addOutputMonitor(
-                object : OutputMonitor<T, P> {
-                    override fun finished(
-                        environment: Environment<T, P>,
-                        time: Time,
-                        step: Long,
-                    ) = checkForErrors()
+                fun checkForErrors() = simulation.error.ifPresent { throw it }
+                simulation.addOutputMonitor(
+                    object : OutputMonitor<T, P> {
+                        override fun finished(
+                            environment: Environment<T, P>,
+                            time: Time,
+                            step: Long,
+                        ) = checkForErrors()
 
-                    override fun initialized(environment: Environment<T, P>) = checkForErrors()
+                        override fun initialized(environment: Environment<T, P>) = checkForErrors()
 
-                    override fun stepDone(
-                        environment: Environment<T, P>,
-                        reaction: Actionable<T>?,
-                        time: Time,
-                        step: Long,
-                    ) = checkForErrors()
-                },
-            )
-            simulation.play()
-            simulation.run()
-            checkForErrors()
-            val exporter =
-                simulation.outputMonitors
-                    .filterIsInstance<GlobalExporter<T, P>>()
-                    .flatMap { it.exporters }
-                    .apply { size shouldBeExactly 1 }
-                    .firstOrNull { it is MongoDBExporter }
-            require(exporter is MongoDBExporter)
-            exporter.dataExtractors.size shouldBeGreaterThan 0
-            val testClient: MongoClient = MongoClients.create(exporter.uri)
-            val exportCollection = testClient.getDatabase(exporter.dbName).getCollection(exporter.collectionName)
-            exportCollection.countDocuments() shouldBeGreaterThan 0
-            val columns = exporter.dataExtractors.first().columnNames[0]
-            exportCollection.find().forEach { document ->
-                document.keys.shouldContainAll(columns)
+                        override fun stepDone(
+                            environment: Environment<T, P>,
+                            reaction: Actionable<T>?,
+                            time: Time,
+                            step: Long,
+                        ) = checkForErrors()
+                    },
+                )
+                simulation.play()
+                simulation.run()
+                checkForErrors()
+                val exporter =
+                    simulation.outputMonitors
+                        .filterIsInstance<GlobalExporter<T, P>>()
+                        .flatMap { it.exporters }
+                        .apply { size shouldBeExactly 1 }
+                        .firstOrNull { it is MongoDBExporter }
+                require(exporter is MongoDBExporter)
+                exporter.dataExtractors.size shouldBeGreaterThan 0
+                val testClient: MongoClient = MongoClients.create(exporter.uri)
+                val exportCollection = testClient.getDatabase(exporter.dbName).getCollection(exporter.collectionName)
+                exportCollection.countDocuments() shouldBeGreaterThan 0
+                val columns = exporter.dataExtractors.first().columnNames[0]
+                exportCollection.find().forEach { document ->
+                    document.keys.shouldContainAll(columns)
+                }
             }
         }
-    }
-})
+    })

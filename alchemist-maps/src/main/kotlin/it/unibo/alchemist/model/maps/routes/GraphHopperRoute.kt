@@ -20,8 +20,11 @@ import java.util.stream.Stream
 /**
  * Models a route on a map, built upon the information provided by a query to GraphHopper.
  */
-class GraphHopperRoute(from: GeoPosition, to: GeoPosition, response: GHResponse) :
-    TimedRoute<GeoPosition> {
+class GraphHopperRoute(
+    from: GeoPosition,
+    to: GeoPosition,
+    response: GHResponse,
+) : TimedRoute<GeoPosition> {
     private val distance: Double
     private val time: Double
     private val points: ImmutableList<GeoPosition>
@@ -63,33 +66,19 @@ class GraphHopperRoute(from: GeoPosition, to: GeoPosition, response: GHResponse)
         }
     }
 
-    override fun length(): Double {
-        return distance
-    }
+    override fun length(): Double = distance
 
-    override fun getPoint(step: Int): GeoPosition {
-        return points[step]
-    }
+    override fun getPoint(step: Int): GeoPosition = points[step]
 
-    override fun getPoints(): ImmutableList<GeoPosition> {
-        return points
-    }
+    override fun getPoints(): ImmutableList<GeoPosition> = points
 
-    override fun getTripTime(): Double {
-        return time
-    }
+    override fun getTripTime(): Double = time
 
-    override fun iterator(): MutableIterator<GeoPosition> {
-        return points.iterator()
-    }
+    override fun iterator(): MutableIterator<GeoPosition> = points.iterator()
 
-    override fun stream(): Stream<GeoPosition?> {
-        return points.stream()
-    }
+    override fun stream(): Stream<GeoPosition?> = points.stream()
 
-    override fun size(): Int {
-        return points.size
-    }
+    override fun size(): Int = points.size
 
     private companion object {
         private const val serialVersionUID = 0L

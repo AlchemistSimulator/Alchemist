@@ -48,12 +48,12 @@ class CognitiveAgentObstacleAvoidance<W : it.unibo.alchemist.model.Obstacle2D<Eu
 
     override fun nextPosition(): Euclidean2DPosition =
         target().let { target ->
-            environment.getObstaclesInRange(currentPosition, proximityRange)
+            environment
+                .getObstaclesInRange(currentPosition, proximityRange)
                 .asSequence()
                 .map { obstacle: W ->
                     obstacle.nearestIntersection(currentPosition, target) to obstacle.bounds2D
-                }
-                .minByOrNull { (intersection, _) -> currentPosition.distanceTo(intersection) }
+                }.minByOrNull { (intersection, _) -> currentPosition.distanceTo(intersection) }
                 ?.let { (intersect, bound) -> intersect to environment.makePosition(bound.centerX, bound.centerY) }
                 ?.let { (intersection, center) -> (intersection - center).coerceAtMost(maxWalk) }
             /*

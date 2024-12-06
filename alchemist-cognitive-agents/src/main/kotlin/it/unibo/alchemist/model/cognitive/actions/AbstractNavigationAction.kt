@@ -238,7 +238,8 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
             START -> onStart()
             NEW_ROOM ->
                 currentRoom.orFail().let {
-                    navigatingNode.asProperty<T, OrientingProperty<T, P, A, L, N, E>>()
+                    navigatingNode
+                        .asProperty<T, OrientingProperty<T, P, A, L, N, E>>()
                         .registerVisit(it)
                     strategy.inNewRoom(it)
                 }

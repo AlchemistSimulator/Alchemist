@@ -12,9 +12,10 @@ package it.unibo.alchemist.boundary.webui.common.state
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldNotBe
 
-class CommonStateTest : StringSpec({
-    "CommonState should be initialized with a default renderer" {
-        val state = CommonState()
-        state.renderer shouldNotBe null
-    }
-})
+class CommonStateTest :
+    StringSpec({
+        "CommonState should be initialized with a default renderer" {
+            val state = CommonState()
+            state.renderer shouldNotBe null
+        }
+    })

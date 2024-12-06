@@ -25,21 +25,22 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.Vector
 
-class ToNodeSurrogateTest<T, P> : StringSpec({
-    "ToNodeSurrogate should map a Node to a NodeSurrogate" {
-        webRendererTestEnvironments<T, P>().forEach {
-            val environment: Environment<T, P> = it.environment
-            val node: Node<T> = environment.nodes.first()
-            val nodeSurrogate =
-                node.toNodeSurrogate(
-                    environment,
-                    toEmptyConcentration,
-                    toSuitablePositionSurrogate(environment.dimensions),
-                )
-            checkToNodeSurrogate(environment, node, nodeSurrogate)
+class ToNodeSurrogateTest<T, P> :
+    StringSpec({
+        "ToNodeSurrogate should map a Node to a NodeSurrogate" {
+            webRendererTestEnvironments<T, P>().forEach {
+                val environment: Environment<T, P> = it.environment
+                val node: Node<T> = environment.nodes.first()
+                val nodeSurrogate =
+                    node.toNodeSurrogate(
+                        environment,
+                        toEmptyConcentration,
+                        toSuitablePositionSurrogate(environment.dimensions),
+                    )
+                checkToNodeSurrogate(environment, node, nodeSurrogate)
+            }
         }
-    }
-}) where T : Any, P : Position<P>, P : Vector<P>
+    }) where T : Any, P : Position<P>, P : Vector<P>
 
 fun <T, P, TS, PS> checkToNodeSurrogate(
     environment: Environment<T, P>,

@@ -21,17 +21,23 @@ import java.io.File
 
 object TestUtility {
     fun <T, P> webRendererTestEnvironments(): Set<Simulation<T, P>> where P : Position<P>, P : Vector<P> =
-        this::class.java.classLoader.getResource("yaml")?.path?.let { path ->
-            File(path).listFiles()?.map {
-                loadYamlSimulation<T, P>("yaml/${it.name}")
-            }?.toSet()
-        }.orEmpty()
+        this::class.java.classLoader
+            .getResource("yaml")
+            ?.path
+            ?.let { path ->
+                File(path)
+                    .listFiles()
+                    ?.map {
+                        loadYamlSimulation<T, P>("yaml/${it.name}")
+                    }?.toSet()
+            }.orEmpty()
 }
 
-class TestUtilityTest<T, P> : StringSpec({
-    "All the environment should be contained inside webRendererTestEnvironments" {
-        shouldNotThrow<NullPointerException> {
-            webRendererTestEnvironments<T, P>().size shouldNotBe 0
+class TestUtilityTest<T, P> :
+    StringSpec({
+        "All the environment should be contained inside webRendererTestEnvironments" {
+            shouldNotThrow<NullPointerException> {
+                webRendererTestEnvironments<T, P>().size shouldNotBe 0
+            }
         }
-    }
-}) where P : Position<P>, P : Vector<P>
+    }) where P : Position<P>, P : Vector<P>

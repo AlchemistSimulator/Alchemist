@@ -18,20 +18,21 @@ import it.unibo.alchemist.model.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
 
-class TestExportInterval<T, P : Position<P>> : StringSpec({
-    "test export interval" {
-        val file = ResourceLoader.getResource("testExportInterval.yml")
-        assertNotNull(file)
-        val loader = LoadAlchemist.from(file)
-        assertNotNull(loader)
-        val simulation: Simulation<T, P> = loader.getDefault()
-        val exporters = simulation.outputMonitors.filterIsInstance<GlobalExporter<T, P>>().flatMap { it.exporters }
-        exporters.size shouldBe 1
-        val exporter = exporters.first()
-        require(exporter is CSVExporter) {
-            "Invalid exporter of type '${exporter::class.simpleName}'"
+class TestExportInterval<T, P : Position<P>> :
+    StringSpec({
+        "test export interval" {
+            val file = ResourceLoader.getResource("testExportInterval.yml")
+            assertNotNull(file)
+            val loader = LoadAlchemist.from(file)
+            assertNotNull(loader)
+            val simulation: Simulation<T, P> = loader.getDefault()
+            val exporters = simulation.outputMonitors.filterIsInstance<GlobalExporter<T, P>>().flatMap { it.exporters }
+            exporters.size shouldBe 1
+            val exporter = exporters.first()
+            require(exporter is CSVExporter) {
+                "Invalid exporter of type '${exporter::class.simpleName}'"
+            }
+            exporter.interval shouldBe 3.0
+            exporter.interval::class shouldBe Double::class
         }
-        exporter.interval shouldBe 3.0
-        exporter.interval::class shouldBe Double::class
-    }
-})
+    })

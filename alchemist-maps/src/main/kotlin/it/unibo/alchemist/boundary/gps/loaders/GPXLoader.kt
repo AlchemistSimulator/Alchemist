@@ -36,19 +36,16 @@ class GPXLoader : GPSFileLoader {
                 .collect(Collectors.toList())
         }
 
-    override fun supportedExtensions(): ImmutableSet<String> {
-        return EXTENSIONS
-    }
+    override fun supportedExtensions(): ImmutableSet<String> = EXTENSIONS
 
-    private fun getGPX(stream: InputStream): GPX {
-        return try {
+    private fun getGPX(stream: InputStream): GPX =
+        try {
             GPX.Reader.DEFAULT.read(stream)
         } catch (e: IOException) {
             val realException = FileFormatException("Cannot read the GPX content. Please make sure it is a valid GPX.")
             realException.initCause(e)
             throw realException
         }
-    }
 
     private fun getTrace(track: Track): GPSTrace {
         /*
@@ -65,7 +62,8 @@ class GPXLoader : GPSFileLoader {
          * Converts the Track points to Alchemist GPSPoints
          */
         val points: List<GPSPointImpl> =
-            track.segments()
+            track
+                .segments()
                 .flatMap { segment -> segment.points() }
                 .map { wayPoint ->
                     val time = wayPoint.time.map { it.toEpochMilli() / 1000.0 }
@@ -77,8 +75,7 @@ class GPXLoader : GPSFileLoader {
                         wayPoint.longitude.toDouble(),
                         DoubleTime(time.get()),
                     )
-                }
-                .collect(Collectors.toList())
+                }.collect(Collectors.toList())
         return GPSTraceImpl(points)
     }
 

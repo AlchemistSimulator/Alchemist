@@ -57,23 +57,25 @@ private var environment: Environment<Double, Euclidean2DPosition> by Delegates.n
 private var centralNode: Node<Double> by Delegates.notNull()
 private var neighbors: List<Node<Double>> by Delegates.notNull()
 
-class TestNeighborhoodReactionsPropensities : StringSpec({
-    "test neighborhood present propensities" {
-        testSimulation(NEIGHBORHOOD_PRESENT_REACTION)
-    }
-    "test junction present propensities" {
-        0.rangeTo(9).forEach {
-            0.rangeTo(it).forEach { _ ->
-                centralNode.asProperty<Double, CellProperty<Euclidean2DPosition>>()
-                    .addJunction(JUNCTION, neighbors[it])
-            }
+class TestNeighborhoodReactionsPropensities :
+    StringSpec({
+        "test neighborhood present propensities" {
+            testSimulation(NEIGHBORHOOD_PRESENT_REACTION)
         }
-        testSimulation(JUNCTION_PRESENT_REACTION)
-    }
-    "test biomolecule in neighborhood propensities" {
-        testSimulation(BIOMOLECULE_IN_NEIGHBOR_REACTION)
-    }
-}) {
+        "test junction present propensities" {
+            0.rangeTo(9).forEach {
+                0.rangeTo(it).forEach { _ ->
+                    centralNode
+                        .asProperty<Double, CellProperty<Euclidean2DPosition>>()
+                        .addJunction(JUNCTION, neighbors[it])
+                }
+            }
+            testSimulation(JUNCTION_PRESENT_REACTION)
+        }
+        "test biomolecule in neighborhood propensities" {
+            testSimulation(BIOMOLECULE_IN_NEIGHBOR_REACTION)
+        }
+    }) {
     override suspend fun beforeTest(testCase: TestCase) {
         environment =
             BioRect2DEnvironment(INCARNATION)
@@ -82,7 +84,8 @@ class TestNeighborhoodReactionsPropensities : StringSpec({
         centralNode.setConcentration(BIOMOLECULE, 100.0)
         environment.addNode(centralNode, POSITION)
         neighbors =
-            1.rangeTo(10)
+            1
+                .rangeTo(10)
                 .map { Pair(it * 10.0, INCARNATION.createNode(RANDOM, environment, null)) }
                 .onEach { it.second.setConcentration(BIOMOLECULE, it.first) }
                 .map { it.second }
@@ -139,8 +142,12 @@ private val Node<Double>.neighborhoodPresentPropensity: Double
 private val Node<Double>.junctionPresentPropensity: Double
     get() =
         checkCellNodeAndGetPropensity {
-            centralNode.asProperty<Double, CellProperty<Euclidean2DPosition>>()
-                .junctions.getOrDefault(JUNCTION, emptyMap()).getOrDefault(it, 0).toDouble()
+            centralNode
+                .asProperty<Double, CellProperty<Euclidean2DPosition>>()
+                .junctions
+                .getOrDefault(JUNCTION, emptyMap())
+                .getOrDefault(it, 0)
+                .toDouble()
         }
 
 private val Node<Double>.biomoleculeInNeighborPropensity: Double

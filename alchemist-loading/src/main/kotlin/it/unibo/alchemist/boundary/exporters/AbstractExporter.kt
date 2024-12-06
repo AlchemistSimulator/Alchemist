@@ -79,7 +79,8 @@ abstract class AbstractExporter<T, P : Position<P>>(
      * Computes the [variablesDescriptor] and the [verboseVariablesDescriptor] provided the variables.
      */
     protected fun computeDescriptors(variables: Map<String, *>): Pair<String, String> =
-        variables.map { (name, value) -> "$name-$value" to "$name = $value" }
+        variables
+            .map { (name, value) -> "$name-$value" to "$name = $value" }
             .unzip()
             .run { first.joinToString("_") to second.joinToString(", ") }
 

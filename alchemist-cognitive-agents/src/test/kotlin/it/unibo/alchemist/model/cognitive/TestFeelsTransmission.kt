@@ -23,42 +23,44 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.test.loadYamlSimulation
 import it.unibo.alchemist.test.startSimulation
 
-class TestFeelsTransmission<T> : StringSpec({
+class TestFeelsTransmission<T> :
+    StringSpec({
 
-    "danger layer affects cognitive pedestrians" {
-        fun Environment<T, Euclidean2DPosition>.perceivedDanger() =
-            nodes
-                .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel }
-                .sumOf { it.dangerBelief() }
+        "danger layer affects cognitive pedestrians" {
+            fun Environment<T, Euclidean2DPosition>.perceivedDanger() =
+                nodes
+                    .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel }
+                    .sumOf { it.dangerBelief() }
 
-        fun Simulation<T, Euclidean2DPosition>.dangerIsLoaded() =
-            this.also { _ ->
-                environment.nodes.mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.danger }
-                    .forEach { it shouldNotBe null }
-            }
-        val aggregateDangerWithLayer =
-            loadYamlSimulation<T, Euclidean2DPosition>("feels-transmission-with-layer.yml")
-                .also { it.environment.layers shouldNot beEmpty() }
-                .dangerIsLoaded()
-                .startSimulation()
-        val aggregateDangerWithoutLayer =
-            loadYamlSimulation<T, Euclidean2DPosition>("feels-transmission-without-layer.yml")
-                .also { it.getEnvironment().layers should beEmpty() }
-                .startSimulation()
-        println("Without layer aggregate danger: $aggregateDangerWithoutLayer")
-        println("With layer aggregate danger: $aggregateDangerWithLayer")
-        aggregateDangerWithLayer.perceivedDanger() shouldBeGreaterThan aggregateDangerWithoutLayer.perceivedDanger()
-    }
-
-    "social contagion makes nodes evacuate despite they haven't directly seen the danger" {
-        loadYamlSimulation<T, Euclidean2DPosition>("social-contagion.yml").startSimulation(
-            steps = 8000,
-            whenFinished = { environment, _, _ ->
-                val reference = environment.makePosition(-50.0, 0.0)
-                environment.nodes.forEach {
-                    environment.getPosition(it).distanceTo(reference) shouldBeLessThan 13.0
+            fun Simulation<T, Euclidean2DPosition>.dangerIsLoaded() =
+                this.also { _ ->
+                    environment.nodes
+                        .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.danger }
+                        .forEach { it shouldNotBe null }
                 }
-            },
-        )
-    }
-})
+            val aggregateDangerWithLayer =
+                loadYamlSimulation<T, Euclidean2DPosition>("feels-transmission-with-layer.yml")
+                    .also { it.environment.layers shouldNot beEmpty() }
+                    .dangerIsLoaded()
+                    .startSimulation()
+            val aggregateDangerWithoutLayer =
+                loadYamlSimulation<T, Euclidean2DPosition>("feels-transmission-without-layer.yml")
+                    .also { it.getEnvironment().layers should beEmpty() }
+                    .startSimulation()
+            println("Without layer aggregate danger: $aggregateDangerWithoutLayer")
+            println("With layer aggregate danger: $aggregateDangerWithLayer")
+            aggregateDangerWithLayer.perceivedDanger() shouldBeGreaterThan aggregateDangerWithoutLayer.perceivedDanger()
+        }
+
+        "social contagion makes nodes evacuate despite they haven't directly seen the danger" {
+            loadYamlSimulation<T, Euclidean2DPosition>("social-contagion.yml").startSimulation(
+                steps = 8000,
+                whenFinished = { environment, _, _ ->
+                    val reference = environment.makePosition(-50.0, 0.0)
+                    environment.nodes.forEach {
+                        environment.getPosition(it).distanceTo(reference) shouldBeLessThan 13.0
+                    }
+                },
+            )
+        }
+    })

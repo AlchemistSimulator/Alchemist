@@ -22,6 +22,7 @@ data class RunningPedestrian<T>
     constructor(
         override val node: Node<T>,
         override val runningSpeed: Double = Speed.default * 3,
-    ) : AbstractNodeProperty<T>(node), RunningPedestrianProperty<T> {
+    ) : AbstractNodeProperty<T>(node),
+        RunningPedestrianProperty<T> {
         override fun cloneOnNewNode(node: Node<T>) = RunningPedestrian(node, runningSpeed)
     }

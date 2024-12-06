@@ -23,7 +23,9 @@ import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 
-private data class RandomContext(val randomGenerator: RandomGenerator)
+private data class RandomContext(
+    val randomGenerator: RandomGenerator,
+)
 
 private data class IncarnationContext<T>(
     val randomGenerator: RandomGenerator,
@@ -45,13 +47,14 @@ private data class EnvironmentContext<T>(
     val environment: Environment<T, Euclidean2DPosition>,
 ) {
     fun Node<T>.reaction(configuration: String): Reaction<T> =
-        incarnation.createReaction(
-            randomGenerator,
-            environment,
-            this,
-            ExponentialTime(1.0, randomGenerator),
-            configuration,
-        ).also { addReaction(it) }
+        incarnation
+            .createReaction(
+                randomGenerator,
+                environment,
+                this,
+                ExponentialTime(1.0, randomGenerator),
+                configuration,
+            ).also { addReaction(it) }
 
     fun node(
         x: Number,
@@ -78,52 +81,53 @@ private fun <T> RandomContext.withIncarnation(
     IncarnationContext(randomGenerator, incarnation).block()
 }
 
-class TestDependencyGraph : StringSpec(
-    {
-        withRandom(MersenneTwister(10)) {
-            withIncarnation(BiochemistryIncarnation()) {
-                val reactions: MutableMap<Int, Map<String, Reaction<Double>>> = mutableMapOf()
-                val environment =
-                    environment {
-                        fun Node<Double>.configureNode(): Map<String, Reaction<Double>> =
-                            listOf(
-                                "[a]-->[b]",
-                                "[a]-->[c]",
-                                "[b]-->[c]",
-                                "[c]-->[b]",
-                            ).associateWith { reaction(it) }
-                        node(0, 0) { reactions += id to configureNode() }
-                        node(0.5, 0) { reactions += id to configureNode() }
-                    }
+class TestDependencyGraph :
+    StringSpec(
+        {
+            withRandom(MersenneTwister(10)) {
+                withIncarnation(BiochemistryIncarnation()) {
+                    val reactions: MutableMap<Int, Map<String, Reaction<Double>>> = mutableMapOf()
+                    val environment =
+                        environment {
+                            fun Node<Double>.configureNode(): Map<String, Reaction<Double>> =
+                                listOf(
+                                    "[a]-->[b]",
+                                    "[a]-->[c]",
+                                    "[b]-->[c]",
+                                    "[c]-->[b]",
+                                ).associateWith { reaction(it) }
+                            node(0, 0) { reactions += id to configureNode() }
+                            node(0.5, 0) { reactions += id to configureNode() }
+                        }
 
-                fun String.inNode(id: Int): Reaction<Double> = reactions.getValue(id).getValue(this)
-                with(JGraphTDependencyGraph(environment)) {
-                    reactions.asSequence().flatMap { it.value.asSequence() }.map { it.value }.forEach {
-                        createDependencies(it)
-                    }
+                    fun String.inNode(id: Int): Reaction<Double> = reactions.getValue(id).getValue(this)
+                    with(JGraphTDependencyGraph(environment)) {
+                        reactions.asSequence().flatMap { it.value.asSequence() }.map { it.value }.forEach {
+                            createDependencies(it)
+                        }
 
-                    fun Reaction<Double>.mustHaveOutBoundDependencies(vararg dependencies: Reaction<Double>) =
-                        outboundDependencies(this).toList() shouldContainExactlyInAnyOrder dependencies.toList()
-                    "local reactions on separate nodes should be isolated" {
-                        (0..1).forEach { id ->
-                            "[a]-->[b]".inNode(id).mustHaveOutBoundDependencies(
-                                "[a]-->[c]".inNode(id),
-                                "[b]-->[c]".inNode(id),
-                            )
-                            "[a]-->[c]".inNode(id).mustHaveOutBoundDependencies(
-                                "[a]-->[b]".inNode(id),
-                                "[c]-->[b]".inNode(id),
-                            )
-                            "[b]-->[c]".inNode(id).mustHaveOutBoundDependencies(
-                                "[c]-->[b]".inNode(id),
-                            )
-                            "[c]-->[b]".inNode(id).mustHaveOutBoundDependencies(
-                                "[b]-->[c]".inNode(id),
-                            )
+                        fun Reaction<Double>.mustHaveOutBoundDependencies(vararg dependencies: Reaction<Double>) =
+                            outboundDependencies(this).toList() shouldContainExactlyInAnyOrder dependencies.toList()
+                        "local reactions on separate nodes should be isolated" {
+                            (0..1).forEach { id ->
+                                "[a]-->[b]".inNode(id).mustHaveOutBoundDependencies(
+                                    "[a]-->[c]".inNode(id),
+                                    "[b]-->[c]".inNode(id),
+                                )
+                                "[a]-->[c]".inNode(id).mustHaveOutBoundDependencies(
+                                    "[a]-->[b]".inNode(id),
+                                    "[c]-->[b]".inNode(id),
+                                )
+                                "[b]-->[c]".inNode(id).mustHaveOutBoundDependencies(
+                                    "[c]-->[b]".inNode(id),
+                                )
+                                "[c]-->[b]".inNode(id).mustHaveOutBoundDependencies(
+                                    "[b]-->[c]".inNode(id),
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
-    },
-)
+        },
+    )

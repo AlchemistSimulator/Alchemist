@@ -25,29 +25,30 @@ import it.unibo.alchemist.boundary.swingui.effect.impl.EffectSerializationFactor
 import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File
 
-class TestEffectLoading : StringSpec(
-    {
-        "effects with layers should be (de)serializable" {
-            val target =
-                DrawBidimensionalGaussianLayersGradient()
-            val tempFile = tempfile()
-            EffectSerializationFactory.effectToFile(tempFile, target)
-            println(tempFile.readText())
-            tempFile.shouldExist()
-            tempFile.shouldBeAFile()
-            tempFile.shouldNotBeEmpty()
-            EffectSerializationFactory.effectsFromFile(tempFile).shouldNotBeNull()
-        }
-        "legacy effects with layers should be deserializable" {
-            val target = ResourceLoader.getResource("layer.json")
-            target shouldNot beNull()
-            val file = File(target.file)
-            file.shouldExist()
-            file.shouldNotBeEmpty()
-            file.shouldBeAFile()
-            val effects = EffectSerializationFactory.effectsFromFile(file)
-            effects.shouldNotBeNull()
-            effects.size shouldBe 4
-        }
-    },
-)
+class TestEffectLoading :
+    StringSpec(
+        {
+            "effects with layers should be (de)serializable" {
+                val target =
+                    DrawBidimensionalGaussianLayersGradient()
+                val tempFile = tempfile()
+                EffectSerializationFactory.effectToFile(tempFile, target)
+                println(tempFile.readText())
+                tempFile.shouldExist()
+                tempFile.shouldBeAFile()
+                tempFile.shouldNotBeEmpty()
+                EffectSerializationFactory.effectsFromFile(tempFile).shouldNotBeNull()
+            }
+            "legacy effects with layers should be deserializable" {
+                val target = ResourceLoader.getResource("layer.json")
+                target shouldNot beNull()
+                val file = File(target.file)
+                file.shouldExist()
+                file.shouldNotBeEmpty()
+                file.shouldBeAFile()
+                val effects = EffectSerializationFactory.effectsFromFile(file)
+                effects.shouldNotBeNull()
+                effects.size shouldBe 4
+            }
+        },
+    )

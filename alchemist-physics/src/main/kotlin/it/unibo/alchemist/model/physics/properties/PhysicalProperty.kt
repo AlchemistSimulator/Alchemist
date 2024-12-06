@@ -19,7 +19,8 @@ import it.unibo.alchemist.model.physics.PhysicsEnvironment
 /**
  * A node's capability to experience physical forces.
  */
-interface PhysicalProperty<T, P, A, F> : NodeProperty<T>
+interface PhysicalProperty<T, P, A, F> :
+    NodeProperty<T>
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P>,
           F : GeometricShapeFactory<P, A> {

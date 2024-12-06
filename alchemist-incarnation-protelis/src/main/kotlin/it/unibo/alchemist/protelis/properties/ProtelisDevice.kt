@@ -29,7 +29,9 @@ class ProtelisDevice<P : Position<P>>
         val environment: Environment<Any, P>,
         override val node: Node<Any>,
         networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager> = mapOf(),
-    ) : NodeProperty<Any>, ExecutionEnvironment, DeviceUID {
+    ) : NodeProperty<Any>,
+        ExecutionEnvironment,
+        DeviceUID {
         private val incarnation: ProtelisIncarnation<*> =
             environment.incarnation as? ProtelisIncarnation<P>
                 ?: ProtelisIncarnation.INSTANCE
@@ -64,7 +66,8 @@ class ProtelisDevice<P : Position<P>>
          * Finds all the [RunProtelisProgram]s installed on this node.
          */
         fun allProtelisPrograms(): List<RunProtelisProgram<*>> =
-            node.reactions.asSequence()
+            node.reactions
+                .asSequence()
                 .flatMap { it.actions }
                 .filterIsInstance<RunProtelisProgram<*>>()
                 .toList()
@@ -145,7 +148,10 @@ class ProtelisDevice<P : Position<P>>
         /**
          * Return all stored variables names.
          */
-        override fun keySet(): Set<String> = node.contents.keys.mapNotNull { it.name }.toSet()
+        override fun keySet(): Set<String> =
+            node.contents.keys
+                .mapNotNull { it.name }
+                .toSet()
 
         /**
          * Called just after the VM is executed, to finalize information of the execution for the environment.

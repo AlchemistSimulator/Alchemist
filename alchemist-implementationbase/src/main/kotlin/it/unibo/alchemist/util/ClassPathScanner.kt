@@ -32,8 +32,8 @@ object ClassPathScanner {
                     } else {
                         scanResult.getSubclasses(scanData.superClass.name)
                     }
-                }
-                .filter { !it.isAbstract }.loadClasses()
+                }.filter { !it.isAbstract }
+                .loadClasses()
         }
 
     private fun classGraphForPackages(vararg inPackage: String): ClassGraph =
@@ -80,7 +80,8 @@ object ClassPathScanner {
         vararg inPackage: String,
     ): List<URL> =
         classGraphForPackages(*inPackage)
-            .scan().getResourcesMatchingPattern(Pattern.compile(regex))
+            .scan()
+            .getResourcesMatchingPattern(Pattern.compile(regex))
             .urLs
 
     /**
@@ -92,12 +93,17 @@ object ClassPathScanner {
         vararg inPackage: String,
     ): List<InputStream> = resourcesMatching(regex, *inPackage).map { it.openStream() }
 
-    private data class ScanData(val superClass: Class<*>, val inPackages: Array<out String>) {
+    private data class ScanData(
+        val superClass: Class<*>,
+        val inPackages: Array<out String>,
+    ) {
         val hashCode = Objects.hashCode(superClass, *inPackages)
 
         override fun equals(other: Any?) =
             other === this ||
-                other is ScanData && superClass == other.superClass && inPackages.contentEquals(other.inPackages)
+                other is ScanData &&
+                superClass == other.superClass &&
+                inPackages.contentEquals(other.inPackages)
 
         override fun hashCode(): Int = hashCode
 

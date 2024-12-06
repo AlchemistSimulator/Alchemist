@@ -13,23 +13,23 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.serialization.jsonFormat
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 
 @OptIn(ExperimentalSerializationApi::class)
-class MoleculeSurrogateTest : StringSpec({
+class MoleculeSurrogateTest :
+    StringSpec({
 
-    val moleculeSurrogate = MoleculeSurrogate("molecule")
+        val moleculeSurrogate = MoleculeSurrogate("molecule")
 
-    "MoleculeSurrogate should have the correct name" {
-        moleculeSurrogate.name shouldBe "molecule"
-    }
+        "MoleculeSurrogate should have the correct name" {
+            moleculeSurrogate.name shouldBe "molecule"
+        }
 
-    "MoleculeSurrogate should be serialized and deserialized correctly" {
-        MoleculeSurrogate.serializer().descriptor.serialName shouldBe "Molecule"
-        val serialized = jsonFormat.encodeToString(moleculeSurrogate)
-        serialized shouldBe "\"molecule\""
-        val deserialized: MoleculeSurrogate = jsonFormat.decodeFromString(serialized)
-        deserialized shouldBe moleculeSurrogate
-    }
-})
+        "MoleculeSurrogate should be serialized and deserialized correctly" {
+            MoleculeSurrogate.serializer().descriptor.serialName shouldBe "Molecule"
+            val serialized = jsonFormat.encodeToString(moleculeSurrogate)
+            serialized shouldBe "\"molecule\""
+            val deserialized: MoleculeSurrogate = jsonFormat.decodeFromString(serialized)
+            deserialized shouldBe moleculeSurrogate
+        }
+    })

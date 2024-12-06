@@ -21,24 +21,29 @@ import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import org.kaikikm.threadresloader.ResourceLoader
 
-class RegressionTestOnRealCases : FreeSpec(
-    {
-        "convoluted variable loading should work" {
-            val loader = LoadAlchemist.from(ResourceLoader.getResource("synthetic/convoluted_variables.yml"))
-            loader.getDefault<Nothing, Nothing>() shouldNotBe null
-            loader.variables should haveSize(3)
-            loader.variables.keys shouldContain "algorithm"
-            loader.variables.getValue("algorithm").stream().count().toInt() shouldBeExactly 4 * 7 + 1
-        }
-        "the default loader should be configurable with two parameters" {
-            val loader = LoadAlchemist.from(ResourceLoader.getResource("synthetic/launcherWithoutAutostart.yml"))
-            loader.getDefault<Nothing, Nothing>() shouldNotBe null
-            loader.launcher should beOfType<DefaultLauncher>()
-            (loader.launcher as DefaultLauncher).autoStart shouldBe false
-        }
-        "it should be possible to run a parallel batch" {
-            val loader = LoadAlchemist.from(ResourceLoader.getResource("synthetic/batch-boostrap.yml"))
-            loader.launch()
-        }
-    },
-)
+class RegressionTestOnRealCases :
+    FreeSpec(
+        {
+            "convoluted variable loading should work" {
+                val loader = LoadAlchemist.from(ResourceLoader.getResource("synthetic/convoluted_variables.yml"))
+                loader.getDefault<Nothing, Nothing>() shouldNotBe null
+                loader.variables should haveSize(3)
+                loader.variables.keys shouldContain "algorithm"
+                loader.variables
+                    .getValue("algorithm")
+                    .stream()
+                    .count()
+                    .toInt() shouldBeExactly 4 * 7 + 1
+            }
+            "the default loader should be configurable with two parameters" {
+                val loader = LoadAlchemist.from(ResourceLoader.getResource("synthetic/launcherWithoutAutostart.yml"))
+                loader.getDefault<Nothing, Nothing>() shouldNotBe null
+                loader.launcher should beOfType<DefaultLauncher>()
+                (loader.launcher as DefaultLauncher).autoStart shouldBe false
+            }
+            "it should be possible to run a parallel batch" {
+                val loader = LoadAlchemist.from(ResourceLoader.getResource("synthetic/batch-boostrap.yml"))
+                loader.launch()
+            }
+        },
+    )

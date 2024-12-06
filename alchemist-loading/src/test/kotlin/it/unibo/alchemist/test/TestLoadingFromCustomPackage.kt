@@ -17,10 +17,11 @@ import io.kotest.matchers.shouldNot
 import io.kotest.matchers.types.instanceOf
 import it.unibo.alchemist.test.AlchemistTesting.loadAlchemistFromResource
 
-class TestLoadingFromCustomPackage : StringSpec({
-    "classes in custom packages can be loaded" {
-        val loader = loadAlchemistFromResource("regression/2023-lmcs-custom-package-loading.yml")
-        loader shouldNot beNull()
-        loader.getDefault<Nothing, Nothing>().environment shouldBe instanceOf(MyTestEnv::class)
-    }
-})
+class TestLoadingFromCustomPackage :
+    StringSpec({
+        "classes in custom packages can be loaded" {
+            val loader = loadAlchemistFromResource("regression/2023-lmcs-custom-package-loading.yml")
+            loader shouldNot beNull()
+            loader.getDefault<Nothing, Nothing>().environment shouldBe instanceOf(MyTestEnv::class)
+        }
+    })

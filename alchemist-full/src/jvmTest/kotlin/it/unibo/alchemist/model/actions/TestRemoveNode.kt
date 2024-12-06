@@ -14,12 +14,13 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.test.AlchemistTesting.loadAlchemist
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 
-class TestRemoveNode<T, P : Position<P>> : StringSpec({
-    "Nodes can be removed in a continous 2D space" {
-        val simulation = loadAlchemist<T, P>("remove.yml")
-        val simulationRun = simulation.runInCurrentThread()
-        require(simulationRun.error.isEmpty) {
-            throw simulationRun.error.get()
+class TestRemoveNode<T, P : Position<P>> :
+    StringSpec({
+        "Nodes can be removed in a continous 2D space" {
+            val simulation = loadAlchemist<T, P>("remove.yml")
+            val simulationRun = simulation.runInCurrentThread()
+            require(simulationRun.error.isEmpty) {
+                throw simulationRun.error.get()
+            }
         }
-    }
-})
+    })

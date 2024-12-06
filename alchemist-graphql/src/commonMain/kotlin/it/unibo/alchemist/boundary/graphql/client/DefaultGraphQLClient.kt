@@ -31,32 +31,29 @@ data class DefaultGraphQLClient(
     private val enableSubscription: Boolean = false,
 ) : GraphQLClient {
     private val client: ApolloClient =
-        ApolloClient.Builder()
+        ApolloClient
+            .Builder()
             .serverUrl(serverUrl())
             .apply {
                 if (enableSubscription) {
                     subscriptionNetworkTransport(
-                        WebSocketNetworkTransport.Builder()
+                        WebSocketNetworkTransport
+                            .Builder()
                             .serverUrl(subscriptionUrl())
                             .protocol(GraphQLWsProtocol.Factory())
                             .build(),
                     )
                 }
-            }
-            .build()
+            }.build()
 
     override fun subscriptionUrl(): String {
         check(enableSubscription) { "Subscription module is not enabled!" }
         return "ws://$host:$port/subscriptions"
     }
 
-    override fun <D : Query.Data> query(query: Query<D>): ApolloCall<D> {
-        return client.query(query)
-    }
+    override fun <D : Query.Data> query(query: Query<D>): ApolloCall<D> = client.query(query)
 
-    override fun <D : Mutation.Data> mutation(mutation: Mutation<D>): ApolloCall<D> {
-        return client.mutation(mutation)
-    }
+    override fun <D : Mutation.Data> mutation(mutation: Mutation<D>): ApolloCall<D> = client.mutation(mutation)
 
     override fun <D : Subscription.Data> subscription(subscription: Subscription<D>): ApolloCall<D> {
         check(enableSubscription) { "Subscription module is not enabled!" }

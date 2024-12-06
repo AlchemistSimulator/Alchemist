@@ -25,9 +25,7 @@ abstract class AbstractAlchemistSimulationAdapter(
 ) : AlchemistSimulationAdapter {
     private val logger = LoggerFactory.getLogger(AbstractAlchemistSimulationAdapter::class.java)
 
-    final override fun getTime(): Double {
-        return simulation.time.toDouble()
-    }
+    final override fun getTime(): Double = simulation.time.toDouble()
 
     final override fun rval(obs: String): Double =
         when (obs) {

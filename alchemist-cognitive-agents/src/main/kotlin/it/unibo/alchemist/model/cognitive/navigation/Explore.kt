@@ -147,5 +147,8 @@ open class Explore<T, L : Euclidean2DConvexShape, R>(
      */
     protected open fun ConvexPolygon.isKnownImpasse(): Boolean =
         node.asProperty<T, OrientingProperty<T, *, *, *, *, *>>().volatileMemory.contains(this) &&
-            environment.graph.outgoingEdgesOf(this).distinct().count() <= 1
+            environment.graph
+                .outgoingEdgesOf(this)
+                .distinct()
+                .count() <= 1
 }

@@ -159,7 +159,8 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         private set
 
     private val name: Molecule =
-        node.reactions.asSequence()
+        node.reactions
+            .asSequence()
             .flatMap { it.actions.asSequence() }
             .filterIsInstance<RunProtelisProgram<*>>()
             .map { it.program.name }
@@ -194,9 +195,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     /**
      * @return the molecule associated with the execution of this program
      */
-    fun asMolecule(): Molecule {
-        return name
-    }
+    fun asMolecule(): Molecule = name
 
     override fun cloneAction(
         node: Node<Any>,
@@ -263,9 +262,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         vm = ProtelisVM(program, executionContext)
     }
 
-    override fun toString(): String {
-        return name.toString() + "@" + node.id
-    }
+    override fun toString(): String = name.toString() + "@" + node.id
 
     private companion object {
         private const val serialVersionUID = 2L

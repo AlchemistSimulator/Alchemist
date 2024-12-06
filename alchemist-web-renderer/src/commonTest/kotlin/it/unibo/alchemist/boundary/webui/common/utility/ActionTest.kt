@@ -12,10 +12,11 @@ package it.unibo.alchemist.boundary.webui.common.utility
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
-class ActionTest : StringSpec({
-    "SimulationAction are PLAY and PAUSE" {
-        val actions = Action.values()
-        actions.size shouldBe 2
-        actions.map { it }.containsAll(listOf(Action.PLAY, Action.PAUSE)) shouldBe true
-    }
-})
+class ActionTest :
+    StringSpec({
+        "SimulationAction are PLAY and PAUSE" {
+            val actions = Action.entries.toTypedArray()
+            actions.size shouldBe 2
+            actions.map { it }.containsAll(listOf(Action.PLAY, Action.PAUSE)) shouldBe true
+        }
+    })

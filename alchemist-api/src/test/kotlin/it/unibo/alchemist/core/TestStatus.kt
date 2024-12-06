@@ -24,24 +24,25 @@ import it.unibo.alchemist.core.Status.TERMINATED
 /**
  * Tests that the state machine is coherent.
  */
-class TestStatus : StringSpec({
-    "subsequent statuses should be reachable, previous ones should not" {
-        val allStatuses = Status.entries.toSet()
-        forAll(
-            row(INIT, allStatuses),
-            row(READY, allStatuses.minusElement(INIT)),
-            row(PAUSED, setOf(RUNNING, TERMINATED)),
-            row(RUNNING, setOf(PAUSED, TERMINATED)),
-            row(TERMINATED, emptySet()),
-        ) { initial, states ->
-            val reachable = states + initial
-            reachable.forEach { it should beReachableFrom(initial) }
-            allStatuses.minus(reachable).forEach {
-                it shouldNot beReachableFrom(initial)
+class TestStatus :
+    StringSpec({
+        "subsequent statuses should be reachable, previous ones should not" {
+            val allStatuses = Status.entries.toSet()
+            forAll(
+                row(INIT, allStatuses),
+                row(READY, allStatuses.minusElement(INIT)),
+                row(PAUSED, setOf(RUNNING, TERMINATED)),
+                row(RUNNING, setOf(PAUSED, TERMINATED)),
+                row(TERMINATED, emptySet()),
+            ) { initial, states ->
+                val reachable = states + initial
+                reachable.forEach { it should beReachableFrom(initial) }
+                allStatuses.minus(reachable).forEach {
+                    it shouldNot beReachableFrom(initial)
+                }
             }
         }
-    }
-}) {
+    }) {
     companion object {
         fun beReachableFrom(initial: Status) =
             object : Matcher<Status> {

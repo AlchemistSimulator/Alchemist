@@ -25,7 +25,8 @@ open class AwtMutableConvexPolygon(
      * Vertices must be sorted as indicated in [ConvexPolygon.vertices].
      */
     private val vertices: MutableList<Euclidean2DPosition>,
-) : AbstractConvexPolygon(), MutableConvexPolygon {
+) : AbstractConvexPolygon(),
+    MutableConvexPolygon {
     init {
         require(isConvex()) { "Given vertices do not represent a convex polygon" }
         /*

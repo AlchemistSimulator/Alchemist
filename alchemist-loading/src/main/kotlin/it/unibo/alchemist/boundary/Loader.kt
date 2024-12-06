@@ -57,9 +57,7 @@ interface Loader : Serializable {
      * @return an [Simulation] with all the variables set at their
      * default values
      </P></T> */
-    fun <T, P : Position<P>> getDefault(): Simulation<T, P> {
-        return getWith(emptyMap<String, Nothing>())
-    }
+    fun <T, P : Position<P>> getDefault(): Simulation<T, P> = getWith(emptyMap<String, Nothing>())
 
     /**
      * @param values a map specifying name-value bindings for the variables in this

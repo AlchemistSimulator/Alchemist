@@ -24,7 +24,8 @@ object Environments {
      */
     fun <T, P> Environment<T, P>.subscriptionMonitor(): EnvironmentSubscriptionMonitor<T, P>
         where P : Position<out P> =
-        this.simulation.outputMonitors.filterIsInstance<EnvironmentSubscriptionMonitor<T, P>>()
+        this.simulation.outputMonitors
+            .filterIsInstance<EnvironmentSubscriptionMonitor<T, P>>()
             .apply { check(size == 1) { "Only one subscription monitor is allowed" } }
             .first()
 }

@@ -19,21 +19,22 @@ import it.unibo.alchemist.boundary.webui.server.modules.routingModule
 /**
  * Test for Ktor Server.
  */
-open class ServerTest : StringSpec({
-    "Server Routes should behave correctly" {
-        testApplication {
-            application {
-                installModule()
-                routingModule()
+open class ServerTest :
+    StringSpec({
+        "Server Routes should behave correctly" {
+            testApplication {
+                application {
+                    installModule()
+                    routingModule()
+                }
+                environment {
+                    config =
+                        MapApplicationConfig(
+                            "ktor.deployment.port" to "80",
+                            "ktor.deployment.sslPort" to "7001",
+                        )
+                }
+                mainRouteTest()
             }
-            environment {
-                config =
-                    MapApplicationConfig(
-                        "ktor.deployment.port" to "80",
-                        "ktor.deployment.sslPort" to "7001",
-                    )
-            }
-            mainRouteTest()
         }
-    }
-})
+    })

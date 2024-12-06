@@ -100,7 +100,9 @@ private fun cantBuildWith(
         error(message)
     }
     val suppressed =
-        error.suppressed.takeIf { it.isNotEmpty() }?.joinToString { "  - ${it.message}\n" }
+        error.suppressed
+            .takeIf { it.isNotEmpty() }
+            ?.joinToString { "  - ${it.message}\n" }
             ?.let { "\nPreviously encountered non-fatal errors that may have caused this one as a consequence:\n$it" }
             .orEmpty()
     throw IllegalStateException("$message\nProximal cause: ${error.message}$suppressed", error)
@@ -169,7 +171,9 @@ private fun Any.validateVariableConsistencyRecursively(
                     "but it is required to the definition of a variable along path " +
                     names.joinToString("->")
             val related =
-                errors[name]?.mapIndexed { index, error -> "$index. ${error.message}" }?.distinct()
+                errors[name]
+                    ?.mapIndexed { index, error -> "$index. ${error.message}" }
+                    ?.distinct()
                     ?.joinToString(prefix = "Possibly related causes:\n", separator = "\n")
             error("$message\n${related.orEmpty()}")
         }
@@ -358,8 +362,7 @@ internal object SimulationModel {
                         )
                     }
                 }
-            }
-            ?.buildAny(context.factory)
+            }?.buildAny(context.factory)
 
     private fun <T> Iterable<T>.deepFlatten(): List<*> =
         flatMap {
@@ -430,11 +433,12 @@ internal object SimulationModel {
         val constant: Result<Constant<*>>? =
             when (root) {
                 is Map<*, *> -> {
-                    visitDependentVariable(name, context, root)?.mapCatching { it.getWith(context.constants) }
+                    visitDependentVariable(name, context, root)
+                        ?.mapCatching { it.getWith(context.constants) }
                         ?.onFailure {
                             logger.debug("Evaluation failed at {}, context {}:\n{}", root, context, it.message)
-                        }
-                        ?.onSuccess { context.registerConstant(name, root, it) }?.map { Constant(it) }
+                        }?.onSuccess { context.registerConstant(name, root, it) }
+                        ?.map { Constant(it) }
                 }
                 else -> null
             }
@@ -795,7 +799,8 @@ internal object SimulationModel {
                          * First try the generic factory if there is a type specified, in case of failure fallback to
                          * the incarnation factory
                          */
-                        genericFactory.takeIf { parameter.containsKey(JavaType.type) }
+                        genericFactory
+                            .takeIf { parameter.containsKey(JavaType.type) }
                             ?.invoke(context, parameter)
                             ?: create(parameter, incarnationFactory)
                     is Iterable<*> -> {
@@ -933,7 +938,8 @@ internal object SimulationModel {
         ) { name, element ->
             (element as? Map<*, *>?)
                 ?.takeIfNotAConstant(name, context)
-                ?.takeIf { DocumentRoot.Variable.validateDescriptor(element) }?.let { _ ->
+                ?.takeIf { DocumentRoot.Variable.validateDescriptor(element) }
+                ?.let { _ ->
                     fun Any?.toDouble(): Double = coerceToDouble(context)
                     val variable =
                         when (JavaType.type) {
@@ -943,7 +949,8 @@ internal object SimulationModel {
                                         logger.debug("Invalid variable: {} from {}: {}", name, element, it.message)
                                     }
                             else ->
-                                runCatching { // Must be a linear variable, or else fail
+                                runCatching {
+                                    // Must be a linear variable, or else fail
                                     LinearVariable(
                                         element[DocumentRoot.Variable.default].toDouble(),
                                         element[DocumentRoot.Variable.min].toDouble(),
@@ -1010,7 +1017,8 @@ internal object SimulationModel {
          * errors and throws it.
          */
         fun forceVisit(): List<T> =
-            tryVisit()?.map { listOf(it) }
+            tryVisit()
+                ?.map { listOf(it) }
                 ?.getOrElse { exception -> cantBuildWith(evidence, root, syntax, exception.populate()) }
                 ?: cantBuildWith(evidence, root, syntax, error)
         /*
@@ -1066,9 +1074,10 @@ internal object SimulationModel {
             is Map<*, *> -> visitNamedRecursivelyFromMap(evidence, context, root, syntax, forceSuccess, visitSingle)
             is String -> emptyMap()
             is Iterable<*> ->
-                root.flatMap {
-                    visitNamedRecursively(evidence, context, it, syntax, forceSuccess, visitSingle).toList()
-                }.toMap()
+                root
+                    .flatMap {
+                        visitNamedRecursively(evidence, context, it, syntax, forceSuccess, visitSingle).toList()
+                    }.toMap()
             else -> emptyMap()
         }
     }
@@ -1087,34 +1096,39 @@ internal object SimulationModel {
          */
         visitSingle: (String, Any?) -> Result<T>?,
     ): Map<String, T> =
-        root.flatMap { (key, value) ->
-            logger.debug("Visiting: {} searching for {}", root, evidence.simpleName)
+        root
+            .flatMap { (key, value) ->
+                logger.debug("Visiting: {} searching for {}", root, evidence.simpleName)
 
-            fun recurse(): List<Pair<String, T>> =
-                visitNamedRecursively(
-                    evidence,
-                    context,
-                    value,
-                    syntax,
-                    forceSuccess,
-                    visitSingle,
-                ).toList()
+                fun recurse(): List<Pair<String, T>> =
+                    visitNamedRecursively(
+                        evidence,
+                        context,
+                        value,
+                        syntax,
+                        forceSuccess,
+                        visitSingle,
+                    ).toList()
 
-            fun result() = visitSingle(key.toString(), value)?.map { listOf(key.toString() to it) }
-            when (value) {
-                is String -> result()?.getOrThrow().orEmpty()
-                is Map<*, *> ->
-                    when {
-                        syntax.validateDescriptor(value) ->
-                            result()?.getOrThrow()
-                                .whenNull(and = forceSuccess) { cantBuildWith(evidence, value) }.orEmpty()
+                fun result() = visitSingle(key.toString(), value)?.map { listOf(key.toString() to it) }
+                when (value) {
+                    is String -> result()?.getOrThrow().orEmpty()
+                    is Map<*, *> ->
+                        when {
+                            syntax.validateDescriptor(value) ->
+                                result()
+                                    ?.getOrThrow()
+                                    .whenNull(and = forceSuccess) { cantBuildWith(evidence, value) }
+                                    .orEmpty()
 
-                        else -> recurse()
-                    }
-                is Iterable<*> -> result()?.getOrNull() ?: recurse()
-                else -> result()?.getOrThrow().orEmpty()
-            }
-        }.toMap()
+                            else -> recurse()
+                        }
+                    is Iterable<*> -> result()?.getOrNull() ?: recurse()
+                    else -> result()?.getOrThrow().orEmpty()
+                }
+            }.toMap()
 
-    internal data class PlaceHolderForVariables(val name: String)
+    internal data class PlaceHolderForVariables(
+        val name: String,
+    )
 }

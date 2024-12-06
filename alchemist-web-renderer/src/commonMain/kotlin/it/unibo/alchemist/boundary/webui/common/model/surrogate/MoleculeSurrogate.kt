@@ -19,11 +19,13 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 /**
- * Surrogate class for the [it.unibo.alchemist.model.Molecule] interface.
+ * Surrogate class for the Molecule interface.
  * @param name the name of the molecule.
  */
 @Serializable(with = MoleculeSurrogateSerializer::class)
-data class MoleculeSurrogate(val name: String)
+data class MoleculeSurrogate(
+    val name: String,
+)
 
 /**
  * Custom serializer to map a molecule to a string, as in JSON non-primitive types aren't allowed in [Map] key position.

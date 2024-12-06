@@ -39,12 +39,10 @@ class WebRendererLauncher : DefaultLauncher() {
     private fun startServer(
         simulation: Simulation<Any, Nothing>,
         serverDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    ) {
-        return runBlocking {
-            launch(serverDispatcher) {
-                EngineMain.main(emptyArray())
-            }
-            simulation.run()
+    ) = runBlocking {
+        launch(serverDispatcher) {
+            EngineMain.main(emptyArray())
         }
+        simulation.run()
     }
 }

@@ -20,7 +20,8 @@ class BidimensionalGaussian(
     private val y0: Double,
     private val sigmaX: Double,
     private val sigmaY: Double,
-) : BivariateFunction, Serializable {
+) : BivariateFunction,
+    Serializable {
     override fun value(
         x: Double,
         y: Double,

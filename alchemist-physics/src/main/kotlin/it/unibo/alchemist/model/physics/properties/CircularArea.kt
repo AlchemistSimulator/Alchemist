@@ -31,7 +31,8 @@ class CircularArea<T>
          * The radius of this circular area.
          */
         val radius: Double = 0.3,
-    ) : AbstractNodeProperty<T>(node), OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
+    ) : AbstractNodeProperty<T>(node),
+        OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
         override val shape: Euclidean2DShape = environment.shapeFactory.circle(radius)
 
         override fun cloneOnNewNode(node: Node<T>) = CircularArea(environment, node, shape.radius)

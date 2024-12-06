@@ -17,7 +17,10 @@ import ch.qos.logback.classic.Level
  * @property code verbosity code
  * @property logLevel logging level mapping
  */
-enum class Verbosity(val code: String, val logLevel: Level) {
+enum class Verbosity(
+    val code: String,
+    val logLevel: Level,
+) {
     /**
      * Debug.
      */

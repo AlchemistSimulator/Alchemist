@@ -28,7 +28,9 @@ interface AutoRenderModeStrategy {
  * @param minHwConcurrency the recommended number of core to use for the Auto mode.
  * @return [RenderMode.CLIENT] if the hardware capacity is above the parameters, [RenderMode.SERVER] otherwise.
  */
-data class HwAutoRenderModeStrategy(val minHwConcurrency: Int = 4) : AutoRenderModeStrategy {
+data class HwAutoRenderModeStrategy(
+    val minHwConcurrency: Int = 4,
+) : AutoRenderModeStrategy {
     override fun invoke(): RenderMode =
         if (window.navigator.hardwareConcurrency.toInt() > minHwConcurrency) {
             RenderMode.CLIENT

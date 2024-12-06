@@ -15,4 +15,6 @@ import it.unibo.alchemist.core.Simulation
  * Redux action to set the [Simulation] of the application.
  * @param simulation the new [Simulation].
  */
-data class SetSimulation(val simulation: Simulation<Any, Nothing>?)
+data class SetSimulation(
+    val simulation: Simulation<Any, Nothing>?,
+)

@@ -49,7 +49,8 @@ open class Weighted<T>(
      */
     override fun computeTarget(actions: List<SteeringAction<T, Euclidean2DPosition>>): Euclidean2DPosition =
         environment.getPosition(node).let { currPos ->
-            actions.filterIsInstance<SteeringActionWithTarget<T, out Euclidean2DPosition>>()
+            actions
+                .filterIsInstance<SteeringActionWithTarget<T, out Euclidean2DPosition>>()
                 .map { it.target() }
                 .minByOrNull { it.distanceTo(currPos) }
                 ?: currPos
@@ -59,7 +60,7 @@ open class Weighted<T>(
         when {
             size > 1 ->
                 map { it.nextPosition() to it.weight() }.run {
-                    val totalWeight = map { it.second }.sum()
+                    val totalWeight = sumOf { it.second }
                     map { it.first * (it.second / totalWeight) }.reduce { acc, pos -> acc + pos }
                 }
             else -> firstOrNull()?.nextPosition() ?: environment.origin

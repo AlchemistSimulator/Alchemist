@@ -46,7 +46,8 @@ class CloseToGPSTrace<T>
             )
 
         override val sources =
-            traces.asSequence()
+            traces
+                .asSequence()
                 .flatMap { trace ->
                     generateSequence(from) { it + interval }
                         .takeWhile { it <= to }

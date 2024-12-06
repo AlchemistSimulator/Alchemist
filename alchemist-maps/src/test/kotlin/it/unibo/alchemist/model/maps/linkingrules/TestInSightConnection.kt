@@ -20,23 +20,25 @@ import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.maps.environments.OSMEnvironment
 import org.kaikikm.threadresloader.ResourceLoader
 
-class TestInSightConnection : StringSpec(
-    {
-        "environments with in-sight link on maps should be loadable" {
-            val environment =
-                LoadAlchemist.from(ResourceLoader.getResource("simulations/connect-sight.yml"))
-                    .getDefault<Nothing, GeoPosition>()
-                    .environment as OSMEnvironment
-            environment.nodeCount shouldBe 102
-            val node0 = environment.getNodeByID(0)
-            val node1 = environment.getNodeByID(1)
-            val rule = environment.linkingRule
-            rule shouldBe instanceOf<ConnectIfInLineOfSigthOnMap<*>>()
-            val maxRange = (rule as ConnectIfInLineOfSigthOnMap<*>).maxRange
-            environment.getDistanceBetweenNodes(node0, node1) shouldBeLessThan maxRange
-            val route = environment.computeRoute(node0, node1)
-            route.length() shouldBeGreaterThan maxRange
-            environment.getNeighborhood(node0).contains(node1).shouldBeFalse()
-        }
-    },
-)
+class TestInSightConnection :
+    StringSpec(
+        {
+            "environments with in-sight link on maps should be loadable" {
+                val environment =
+                    LoadAlchemist
+                        .from(ResourceLoader.getResource("simulations/connect-sight.yml"))
+                        .getDefault<Nothing, GeoPosition>()
+                        .environment as OSMEnvironment
+                environment.nodeCount shouldBe 102
+                val node0 = environment.getNodeByID(0)
+                val node1 = environment.getNodeByID(1)
+                val rule = environment.linkingRule
+                rule shouldBe instanceOf<ConnectIfInLineOfSigthOnMap<*>>()
+                val maxRange = (rule as ConnectIfInLineOfSigthOnMap<*>).maxRange
+                environment.getDistanceBetweenNodes(node0, node1) shouldBeLessThan maxRange
+                val route = environment.computeRoute(node0, node1)
+                route.length() shouldBeGreaterThan maxRange
+                environment.getNeighborhood(node0).contains(node1).shouldBeFalse()
+            }
+        },
+    )

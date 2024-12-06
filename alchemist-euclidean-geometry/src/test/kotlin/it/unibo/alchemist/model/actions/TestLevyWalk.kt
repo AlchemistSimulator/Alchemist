@@ -18,12 +18,16 @@ import org.kaikikm.threadresloader.ResourceLoader
 class TestLevyWalk : StringSpec() {
     init {
         "Test can load" {
-            LoadAlchemist.from(ResourceLoader.getResource("levywalk.yml"))
+            LoadAlchemist
+                .from(ResourceLoader.getResource("levywalk.yml"))
                 .getDefault<Any, Euclidean2DPosition>()
                 .environment
-                .nodes.first()
-                .reactions.first()
-                .actions.first()::class shouldBe LevyWalk::class
+                .nodes
+                .first()
+                .reactions
+                .first()
+                .actions
+                .first()::class shouldBe LevyWalk::class
         }
     }
 }

@@ -30,8 +30,9 @@ private typealias Edge<T> = Pair<Actionable<T>, Actionable<T>>
  *
  * @param <T> concentration type
  */
-class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) :
-    DependencyGraph<T> {
+class JGraphTDependencyGraph<T>(
+    private val environment: Environment<T, *>,
+) : DependencyGraph<T> {
     private val inGlobals = ArrayListSet<Actionable<T>>()
     private val outGlobals = ArrayListSet<Actionable<T>>()
     private val graph: DefaultDirectedGraph<Actionable<T>, Edge<T>> = DefaultDirectedGraph(null, null, false)
@@ -48,20 +49,24 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) :
         }
         val localReactions by lazy {
             if (newReaction is Reaction) {
-                newReaction.node.reactions.filter { allReactions.contains(it) }.asSequence()
+                newReaction.node.reactions
+                    .filter { allReactions.contains(it) }
+                    .asSequence()
             } else {
                 emptySequence()
             }
         }
         val neighborhoodReactions by lazy {
-            neighborhood.asSequence()
+            neighborhood
+                .asSequence()
                 .flatMap { it.reactions.asSequence() }
                 .filter { allReactions.contains(it) }
                 .toList()
                 .asSequence()
         }
         val extendedNeighborhoodReactions by lazy {
-            neighborhood.asSequence()
+            neighborhood
+                .asSequence()
                 // Neighbors of neighbors
                 .flatMap { it.neighborhood.asSequence() }
                 // No duplicates
@@ -148,7 +153,8 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) :
             // All the non-global reactions of the new neighbor
             n2NonGlobalReactions +
                 // Plus all the reactions of the new neighbor's neighbors with neighborhood output
-                (n2.neighborhood - setOf(n1) - n1.neighborhood).asSequence()
+                (n2.neighborhood - setOf(n1) - n1.neighborhood)
+                    .asSequence()
                     .flatMap { it.reactions.asSequence() }
                     .filter { it.outputContext == Context.NEIGHBORHOOD }
         }

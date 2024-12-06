@@ -49,7 +49,8 @@ abstract class Orienting<T, P, A, N, L>
          * them).
          */
         private val minArea: Double = 10.0,
-    ) : AbstractNodeProperty<T>(node), OrientingProperty<T, P, A, L, N, DefaultEdge>
+    ) : AbstractNodeProperty<T>(node),
+        OrientingProperty<T, P, A, L, N, DefaultEdge>
     where P : Position<P>,
           P : Vector<P>,
           A : Transformation<P>,
@@ -63,7 +64,8 @@ abstract class Orienting<T, P, A, N, L>
          * The rooms in which landmarks will be placed.
          */
         val rooms =
-            environmentGraph.vertexSet()
+            environmentGraph
+                .vertexSet()
                 .filter { it.diameter > node.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape.diameter * minArea }
                 .shuffled(randomGenerator)
                 .toList()

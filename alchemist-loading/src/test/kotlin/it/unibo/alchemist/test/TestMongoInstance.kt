@@ -18,18 +18,19 @@ import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
 import org.bson.Document
 
-class TestMongoInstance : StringSpec({
-    "test the local instance of mongo" {
-        withMongo {
-            val mongoClient: MongoClient = MongoClients.create()
-            mongoClient shouldNotBe null
-            val defaultDatabase: MongoDatabase = mongoClient.getDatabase("test")
-            defaultDatabase shouldNotBe null
-            val mongoCollection = mongoClient.getDatabase("test").getCollection("mongo-test-collection")
-            mongoCollection.insertOne(Document("name", "mongo-test-document"))
-            mongoCollection.countDocuments() shouldBeGreaterThan 0
-            mongoCollection.find(eq("name", "mongo-test-document")).count() shouldBeGreaterThan 0
-            mongoCollection.drop()
+class TestMongoInstance :
+    StringSpec({
+        "test the local instance of mongo" {
+            withMongo {
+                val mongoClient: MongoClient = MongoClients.create()
+                mongoClient shouldNotBe null
+                val defaultDatabase: MongoDatabase = mongoClient.getDatabase("test")
+                defaultDatabase shouldNotBe null
+                val mongoCollection = mongoClient.getDatabase("test").getCollection("mongo-test-collection")
+                mongoCollection.insertOne(Document("name", "mongo-test-document"))
+                mongoCollection.countDocuments() shouldBeGreaterThan 0
+                mongoCollection.find(eq("name", "mongo-test-document")).count() shouldBeGreaterThan 0
+                mongoCollection.drop()
+            }
         }
-    }
-})
+    })

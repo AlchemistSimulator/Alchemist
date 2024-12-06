@@ -15,14 +15,15 @@ import it.unibo.alchemist.boundary.webui.common.model.surrogate.MoleculeSurrogat
 import it.unibo.alchemist.boundary.webui.server.surrogates.utility.toMoleculeSurrogate
 import it.unibo.alchemist.model.Molecule
 
-class ToMoleculeSurrogateTest : StringSpec({
+class ToMoleculeSurrogateTest :
+    StringSpec({
 
-    val molecule = Molecule { "Alchemist Molecule" }
+        val molecule = Molecule { "Alchemist Molecule" }
 
-    "ToMoleculeSurrogate should map a Molecule to a MoleculeSurrogate" {
-        checkToMoleculeSurrogate(molecule, molecule.toMoleculeSurrogate())
-    }
-})
+        "ToMoleculeSurrogate should map a Molecule to a MoleculeSurrogate" {
+            checkToMoleculeSurrogate(molecule, molecule.toMoleculeSurrogate())
+        }
+    })
 
 fun checkToMoleculeSurrogate(
     molecule: Molecule,

@@ -24,7 +24,9 @@ import kotlinx.coroutines.flow.map
  * Exposes alchemist [it.unibo.alchemist.model.Environment] as a GraphQL subscription
  * through [it.unibo.alchemist.boundary.graphql.schema.model.surrogates.EnvironmentSurrogate].
  */
-class EnvironmentSubscriptions<T, P : Position<out P>>(environment: Environment<T, P>) : Subscription {
+class EnvironmentSubscriptions<T, P : Position<out P>>(
+    environment: Environment<T, P>,
+) : Subscription {
     private val environmentMonitor = environment.subscriptionMonitor()
 
     /**

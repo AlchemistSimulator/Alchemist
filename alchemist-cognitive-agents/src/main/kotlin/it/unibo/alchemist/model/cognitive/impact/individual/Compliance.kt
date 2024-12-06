@@ -12,7 +12,10 @@ import it.unibo.alchemist.model.cognitive.impact.PARAMETERS_FILE
  * @param gender
  *          the gender of the agent.
  */
-class Compliance(age: Age, gender: Gender) : Characteristic {
+class Compliance(
+    age: Age,
+    gender: Gender,
+) : Characteristic {
     /**
      * The calculated level of compliance.
      */
@@ -29,7 +32,8 @@ class Compliance(age: Age, gender: Gender) : Characteristic {
     private companion object {
         private val config =
             Config { addSpec(ComplianceSpec) }
-                .from.toml.resource(PARAMETERS_FILE)
+                .from.toml
+                .resource(PARAMETERS_FILE)
 
         private val childMale = config[ComplianceSpec.childMale]
         private val adultMale = config[ComplianceSpec.adultMale]

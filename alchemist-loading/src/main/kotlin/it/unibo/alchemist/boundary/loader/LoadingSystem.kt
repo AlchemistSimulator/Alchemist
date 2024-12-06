@@ -40,7 +40,10 @@ internal abstract class LoadingSystem(
     override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> =
         SingleUseLoader(originalContext, originalRoot).simulationWith(values)
 
-    private inner class SingleUseLoader(originalContext: Context, private val originalRoot: Map<String, *>) {
+    private inner class SingleUseLoader(
+        originalContext: Context,
+        private val originalRoot: Map<String, *>,
+    ) {
         private val context: Context = originalContext.child()
         private val mutex = Semaphore(1)
         private var consumed = false
@@ -89,7 +92,8 @@ internal abstract class LoadingSystem(
             // LAYERS
             val layers: List<Pair<Molecule, Layer<T, P>>> =
                 SimulationModel.visitLayers(incarnation, context, root[DocumentRoot.layers])
-            layers.groupBy { it.first }
+            layers
+                .groupBy { it.first }
                 .mapValues { (_, pair) -> pair.map { it.second } }
                 .forEach { (molecule, layers) ->
                     require(layers.size == 1) {
@@ -147,7 +151,8 @@ internal abstract class LoadingSystem(
             // ENGINE
             val engineDescriptor = root[DocumentRoot.engine]
             val engine: Simulation<T, P> =
-                SimulationModel.visitBuilding<Simulation<T, P>>(context, engineDescriptor)
+                SimulationModel
+                    .visitBuilding<Simulation<T, P>>(context, engineDescriptor)
                     ?.getOrThrow()
                     ?: Engine(environment)
             // Attach monitors
@@ -179,7 +184,8 @@ internal abstract class LoadingSystem(
                                 DocumentRoot.Environment.GlobalProgram.guide
                         }
                         (program as? Map<*, *>)?.let {
-                            SimulationModel.visitProgram(randomGenerator, incarnation, environment, null, context, it)
+                            SimulationModel
+                                .visitProgram(randomGenerator, incarnation, environment, null, context, it)
                                 ?.onSuccess { (_, actionable) ->
                                     if (actionable is GlobalReaction) {
                                         environment.addGlobalReaction(actionable)
@@ -197,7 +203,8 @@ internal abstract class LoadingSystem(
             nodePosition: P,
             descriptor: Map<*, *>,
         ) {
-            SimulationModel.visitContents(incarnation, context, descriptor)
+            SimulationModel
+                .visitContents(incarnation, context, descriptor)
                 .forEach { (filters, molecule, concentrationMaker) ->
                     if (filters.isEmpty() || filters.any { nodePosition in it }) {
                         val concentration = concentrationMaker()
@@ -212,7 +219,8 @@ internal abstract class LoadingSystem(
             nodePosition: P,
             descriptor: Map<*, *>,
         ) {
-            SimulationModel.visitProperty<T, P>(context, descriptor)
+            SimulationModel
+                .visitProperty<T, P>(context, descriptor)
                 .filter { (filters, _) -> filters.isEmpty() || filters.any { nodePosition in it } }
                 .forEach { (_, property) -> node.addProperty(property) }
         }
@@ -236,7 +244,8 @@ internal abstract class LoadingSystem(
                         "null is not a valid program in $descriptor. ${DocumentRoot.Deployment.Program.guide}"
                     }
                     (program as? Map<*, *>)?.let {
-                        SimulationModel.visitProgram(randomGenerator, incarnation, environment, node, context, it)
+                        SimulationModel
+                            .visitProgram(randomGenerator, incarnation, environment, node, context, it)
                             ?.onSuccess { (filters, actionable) ->
                                 if (
                                     actionable is Reaction &&
@@ -311,8 +320,7 @@ internal abstract class LoadingSystem(
                             assert(previousToVisitSize != toVisit.size)
                             logger.debug("Created {}: {}", name, variable)
                             knownValues[name] = result
-                        }
-                        .onFailure { exception ->
+                        }.onFailure { exception ->
                             failures.add(exception)
                             logger.debug("Could not create {}: {}", name, exception.message)
                         }

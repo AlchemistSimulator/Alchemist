@@ -35,8 +35,8 @@ open class BaseNavigationGraph<V, A, N, E>(
     vertexSupplier: Supplier<N>?,
     edgeSupplier: Supplier<E>?,
     graphType: GraphType,
-) : NavigationGraph<V, A, N, E>,
-    AbstractBaseGraph<N, E>(vertexSupplier, edgeSupplier, graphType)
+) : AbstractBaseGraph<N, E>(vertexSupplier, edgeSupplier, graphType),
+    NavigationGraph<V, A, N, E>
     where V : Vector<V>,
           A : Transformation<V>,
           N : ConvexShape<V, A> {
@@ -47,11 +47,16 @@ open class BaseNavigationGraph<V, A, N, E>(
     constructor(edgeClass: Class<out E>, directed: Boolean) : this(
         null,
         SupplierUtil.createSupplier(edgeClass),
-        DefaultGraphType.Builder().let {
-            when {
-                directed -> it.directed()
-                else -> it.undirected()
-            }
-        }.weighted(false).allowMultipleEdges(true).allowSelfLoops(false).build(),
+        DefaultGraphType
+            .Builder()
+            .let {
+                when {
+                    directed -> it.directed()
+                    else -> it.undirected()
+                }
+            }.weighted(false)
+            .allowMultipleEdges(true)
+            .allowSelfLoops(false)
+            .build(),
     )
 }

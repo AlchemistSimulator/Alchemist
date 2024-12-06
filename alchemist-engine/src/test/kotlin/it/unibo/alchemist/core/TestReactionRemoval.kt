@@ -51,29 +51,30 @@ class GlobalContextsReaction<T>(
     ) = notImplementedError()
 }
 
-class TestReactionRemoval : FreeSpec({
+class TestReactionRemoval :
+    FreeSpec({
 
-    "All possible combination of GLOBAL/LOCAL reactions as in/out context can be removed from simulation" {
-        val incarnation = BiochemistryIncarnation()
-        val environment = Continuous2DEnvironment(incarnation)
-        val node = GenericNode(environment)
-        val bools = listOf(true, false)
-        val customReactions =
-            bools
-                .flatMap { first -> bools.map { first to it } }
-                .map { (input, out) -> GlobalContextsReaction(node, DiracComb(1.0), input, out) }
-        customReactions.forEach {
-            node.addReaction(it)
+        "All possible combination of GLOBAL/LOCAL reactions as in/out context can be removed from simulation" {
+            val incarnation = BiochemistryIncarnation()
+            val environment = Continuous2DEnvironment(incarnation)
+            val node = GenericNode(environment)
+            val bools = listOf(true, false)
+            val customReactions =
+                bools
+                    .flatMap { first -> bools.map { first to it } }
+                    .map { (input, out) -> GlobalContextsReaction(node, DiracComb(1.0), input, out) }
+            customReactions.forEach {
+                node.addReaction(it)
+            }
+            environment.addTerminator { it.simulation.time > DoubleTime(10.0) }
+            environment.linkingRule = NoLinks()
+            environment.addNode(node, environment.makePosition(0, 0))
+            val engine = Engine(environment)
+            engine.play()
+            engine.schedule {
+                environment.removeNode(node)
+            }
+            engine.run()
+            engine.error.isEmpty shouldBe true
         }
-        environment.addTerminator { it.simulation.time > DoubleTime(10.0) }
-        environment.linkingRule = NoLinks()
-        environment.addNode(node, environment.makePosition(0, 0))
-        val engine = Engine(environment)
-        engine.play()
-        engine.schedule {
-            environment.removeNode(node)
-        }
-        engine.run()
-        engine.error.isEmpty shouldBe true
-    }
-})
+    })

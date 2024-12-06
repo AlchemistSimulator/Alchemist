@@ -49,10 +49,24 @@ kotlin {
                 }
             }
         }
+        val jvmMain by getting {
+            dependencies {
+                implementation(rootProject.libs.slf4j)
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(rootProject)
+                implementation(alchemist("loading"))
                 implementation(alchemist("physics"))
+                implementation(alchemist("test"))
+                implementation(rootProject.libs.kotest.assertions.core)
+                implementation(rootProject.libs.kotest.framework.engine)
+            }
+        }
+        val jvmTest by getting {
+            dependencies {
+                implementation(libs.kotest.runner)
             }
         }
     }

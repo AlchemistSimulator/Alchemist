@@ -1,3 +1,32 @@
+## [36.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.3...36.0.4) (2024-12-07)
+
+### Dependency updates
+
+* **core-deps:** update kotlin monorepo to v2.1.0 ([#3967](https://github.com/AlchemistSimulator/Alchemist/issues/3967)) ([299b8d4](https://github.com/AlchemistSimulator/Alchemist/commit/299b8d47f1743859d5ffb2a5afe1817f33272af4))
+* **deps:** update danysk/makepkg docker tag to v1.1.24 ([#3984](https://github.com/AlchemistSimulator/Alchemist/issues/3984)) ([f100244](https://github.com/AlchemistSimulator/Alchemist/commit/f10024442b1ed05ff613e89546f175938f432bc5))
+* **deps:** update dependency io.arrow-kt:arrow-core to v2 ([#3980](https://github.com/AlchemistSimulator/Alchemist/issues/3980)) ([68a09f5](https://github.com/AlchemistSimulator/Alchemist/commit/68a09f54194d654f8d5f26c56b46610ac8cd00b6))
+* **deps:** update dependency org.eclipse.jgit:org.eclipse.jgit to v7.1.0.202411261347-r ([#3977](https://github.com/AlchemistSimulator/Alchemist/issues/3977)) ([360a4ca](https://github.com/AlchemistSimulator/Alchemist/commit/360a4ca78b35765389ebf07059a36a190d6d1c99))
+* **deps:** update node.js to 22.12 ([#3978](https://github.com/AlchemistSimulator/Alchemist/issues/3978)) ([53a3164](https://github.com/AlchemistSimulator/Alchemist/commit/53a31649de0f8aa501d90fa0364c93ebcaa812c6))
+* **deps:** update plugin kotlin-qa to v0.77.1 ([f810527](https://github.com/AlchemistSimulator/Alchemist/commit/f8105270aebd6a50f1a163b6d3bb6d2ea36f9be6))
+* **deps:** update plugin multijvmtesting to v2 ([#3979](https://github.com/AlchemistSimulator/Alchemist/issues/3979)) ([6b23a34](https://github.com/AlchemistSimulator/Alchemist/commit/6b23a349d2d5e36616baf08f5df157524e24ab34))
+* **deps:** update plugin org.gradle.toolchains.foojay-resolver-convention to v0.9.0 ([#3975](https://github.com/AlchemistSimulator/Alchemist/issues/3975)) ([68af16a](https://github.com/AlchemistSimulator/Alchemist/commit/68af16a50890eb04d87b35e7883eaf37d579eb0a))
+* **deps:** update plugin publishoncentral to v6 ([#3976](https://github.com/AlchemistSimulator/Alchemist/issues/3976)) ([0fff9ed](https://github.com/AlchemistSimulator/Alchemist/commit/0fff9ed525e0f3f77ae140fb6f8b562c9cb11b97))
+* **deps:** update react to v19 ([#3986](https://github.com/AlchemistSimulator/Alchemist/issues/3986)) ([42a3955](https://github.com/AlchemistSimulator/Alchemist/commit/42a3955cae170ebcc0314b28cd270c474f9dc105))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.24 ([#3983](https://github.com/AlchemistSimulator/Alchemist/issues/3983)) ([6b81650](https://github.com/AlchemistSimulator/Alchemist/commit/6b81650689f9af32e12fe5621b88ea2927e9c3d8))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.25 ([#3985](https://github.com/AlchemistSimulator/Alchemist/issues/3985)) ([b19c330](https://github.com/AlchemistSimulator/Alchemist/commit/b19c330e348485465f14794f69cb84bf705ac86f))
+* disable PMD until pmd/pmd[#5096](https://github.com/AlchemistSimulator/Alchemist/issues/5096) is fixed ([839c5f1](https://github.com/AlchemistSimulator/Alchemist/commit/839c5f12a50ce81fc5c7b8d176ac2a9d46552713))
+* rationalize the build to improve the interoperation between kotlin-jvm and kotlin-mp projects ([891f398](https://github.com/AlchemistSimulator/Alchemist/commit/891f3982c1271371421cff8f232eca5291618083))
+* work around missing dokka task dependencies ([f51b894](https://github.com/AlchemistSimulator/Alchemist/commit/f51b894b41841e76eaa421d4acea4780de36e5cd))
+
+### General maintenance
+
+* **build:** actualize the `yarn.lock` file ([5f4f77f](https://github.com/AlchemistSimulator/Alchemist/commit/5f4f77f41f3a4487a7ffa35e77813bfe7fb7f8b3))
+* **build:** update the javadoc.io cache ([cb89f5f](https://github.com/AlchemistSimulator/Alchemist/commit/cb89f5f38226d027c2eeb548fb9df803a40dcc91))
+* **build:** update the javadoc.io cache ([04128c1](https://github.com/AlchemistSimulator/Alchemist/commit/04128c105f8f7bb34ffa2c4ae41aeb619de92db4))
+
 ## [36.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.2...36.0.3) (2024-11-29)
 
 ### Dependency updates

@@ -1,3 +1,13 @@
+## [36.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.4...36.0.5) (2024-12-07)
+
+### Dependency updates
+
+* **deps:** update react to v19.0.0-pre.846 ([#3969](https://github.com/AlchemistSimulator/Alchemist/issues/3969)) ([c7fdb5a](https://github.com/AlchemistSimulator/Alchemist/commit/c7fdb5a3a85c6505612265aba6b8fcafd8915878))
+
+### Bug Fixes
+
+* **graphql:** import the client dependencies correctly ([b575fe3](https://github.com/AlchemistSimulator/Alchemist/commit/b575fe32b9d73875d1e72756cc831d76d14ca393))
+
 ## [36.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.3...36.0.4) (2024-12-07)
 
 ### Dependency updates

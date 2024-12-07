@@ -248,7 +248,9 @@ allprojects {
      * This can lead to incorrect results being produced, depending on what order the tasks are executed.
      */
     tasks.withType<AbstractDokkaTask>().configureEach {
-        dependsOn(tasks.withType<org.gradle.jvm.tasks.Jar>().matching { it.name == "jar" })
+        allprojects.forEach { otherProject ->
+            dependsOn(otherProject.tasks.withType<org.gradle.jvm.tasks.Jar>().matching { it.name == "jar" })
+        }
     }
 
     if (isInCI) {

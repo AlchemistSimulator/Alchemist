@@ -47,6 +47,7 @@ kotlin {
                 api(alchemist("graphql-surrogates"))
                 implementation(rootProject)
                 implementation(alchemist("implementationbase"))
+                implementation(libs.graphql.client)
                 implementation(libs.ktor.server.websockets)
                 implementation(libs.bundles.graphql.server)
                 implementation(libs.bundles.ktor.server)
@@ -54,7 +55,6 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
-                implementation(libs.graphql.client)
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.kotest.runner)
                 implementation(libs.ktor.server.test.host)

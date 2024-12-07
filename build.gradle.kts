@@ -192,12 +192,6 @@ allprojects {
          */
         val dokkaHtmlCollector by rootProject.tasks.named("dokkaHtmlCollector")
         dokkaHtmlCollector.dependsOn(tasks.dokkaHtml)
-        /*
-         * On multiplatform projects, publish-on-central does not seem to bind compileCommonKotlin correctly.
-         */
-        tasks.withType<PublishToMavenRepository>().configureEach {
-            dependsOn(tasks.classes)
-        }
     }
 
     // COMPILE

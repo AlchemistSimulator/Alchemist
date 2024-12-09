@@ -1,3 +1,22 @@
+## [36.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.5...36.0.6) (2024-12-09)
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.116 ([#3991](https://github.com/AlchemistSimulator/Alchemist/issues/3991)) ([2c0eb75](https://github.com/AlchemistSimulator/Alchemist/commit/2c0eb7533b9b3f232b26cb72179f587f8e9405bf))
+* **deps:** update dependency site/themes/hugo-theme-relearn to v7.2.0 ([#3993](https://github.com/AlchemistSimulator/Alchemist/issues/3993)) ([a4ef478](https://github.com/AlchemistSimulator/Alchemist/commit/a4ef478980dbf10a1288318e1eeaeaa9465deb93))
+* **deps:** update npm to v10.9.2 ([#3992](https://github.com/AlchemistSimulator/Alchemist/issues/3992)) ([3ecfa09](https://github.com/AlchemistSimulator/Alchemist/commit/3ecfa0946e0c08f58bd6a42407a0521b35de0929))
+* **deps:** update plugin kotlin-qa to v0.78.0 ([#3996](https://github.com/AlchemistSimulator/Alchemist/issues/3996)) ([7f9dc99](https://github.com/AlchemistSimulator/Alchemist/commit/7f9dc99c331d8f49e4b9c4febeedac48c308431e))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.16 ([#3997](https://github.com/AlchemistSimulator/Alchemist/issues/3997)) ([d81eb88](https://github.com/AlchemistSimulator/Alchemist/commit/d81eb88dcb4c9940c4348f54e0977f9c9fb2a72d))
+* **deps:** update plugin publishoncentral to v6.0.1 ([#3990](https://github.com/AlchemistSimulator/Alchemist/issues/3990)) ([1491dae](https://github.com/AlchemistSimulator/Alchemist/commit/1491dae1a5a88b13f63db066aba57702e57c8370))
+* **deps:** update plugin publishoncentral to v7 ([#3994](https://github.com/AlchemistSimulator/Alchemist/issues/3994)) ([e4149b6](https://github.com/AlchemistSimulator/Alchemist/commit/e4149b686a698aec33c417b825e1b129cf3b308c))
+* **deps:** update react to v19.0.0-pre.847 ([#3995](https://github.com/AlchemistSimulator/Alchemist/issues/3995)) ([8db3d50](https://github.com/AlchemistSimulator/Alchemist/commit/8db3d50fd39c6ba0d05d2d115221ec535c607c70))
+* **deps:** update react to v19.0.0-pre.848 ([#3998](https://github.com/AlchemistSimulator/Alchemist/issues/3998)) ([17261ae](https://github.com/AlchemistSimulator/Alchemist/commit/17261aeb5d0580f1172a0f670e8b735af04080ec))
+* **deps:** update react to v19.0.0-pre.849 ([#3999](https://github.com/AlchemistSimulator/Alchemist/issues/3999)) ([030e0bd](https://github.com/AlchemistSimulator/Alchemist/commit/030e0bdc71c095d28f7f57411e8042fb1ebbc8a2))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.139.4 ([#4000](https://github.com/AlchemistSimulator/Alchemist/issues/4000)) ([c6a2396](https://github.com/AlchemistSimulator/Alchemist/commit/c6a239620066b16d86e5831194f704cb10babdd3))
+
 ## [36.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.4...36.0.5) (2024-12-07)
 
 ### Dependency updates

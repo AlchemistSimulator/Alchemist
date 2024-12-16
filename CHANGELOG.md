@@ -1,3 +1,23 @@
+## [36.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.6...36.0.7) (2024-12-16)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.25 ([#4008](https://github.com/AlchemistSimulator/Alchemist/issues/4008)) ([4bc4bd2](https://github.com/AlchemistSimulator/Alchemist/commit/4bc4bd2e1f90d2848b7fe870a433826a87cb8ca2))
+* **deps:** update dependency site/themes/hugo-theme-relearn to v7.2.1 ([#4003](https://github.com/AlchemistSimulator/Alchemist/issues/4003)) ([2059030](https://github.com/AlchemistSimulator/Alchemist/commit/20590308823707dac9a433b89e114f46d89a7cf7))
+* **deps:** update plugin com.gradle.develocity to v3.19 ([#4006](https://github.com/AlchemistSimulator/Alchemist/issues/4006)) ([51b2a88](https://github.com/AlchemistSimulator/Alchemist/commit/51b2a889433a0c1af5dba067b097b145fd1f316e))
+* **deps:** update plugin java-qa to v1.78.0 ([#4007](https://github.com/AlchemistSimulator/Alchemist/issues/4007)) ([3506bb5](https://github.com/AlchemistSimulator/Alchemist/commit/3506bb51725f0710535fe9c801a6e4ff3fcd1e20))
+* **deps:** update react to v19.0.0-pre.850 ([#4001](https://github.com/AlchemistSimulator/Alchemist/issues/4001)) ([b236281](https://github.com/AlchemistSimulator/Alchemist/commit/b2362814f2e026dfc4b715d6691d1ee75cd7b235))
+* **deps:** update react to v19.0.0-pre.851 ([#4002](https://github.com/AlchemistSimulator/Alchemist/issues/4002)) ([8cea3a8](https://github.com/AlchemistSimulator/Alchemist/commit/8cea3a8286eb7ed0a0510ffd5df97cf9c1a002ce))
+* **deps:** update react to v19.0.0-pre.852 ([#4005](https://github.com/AlchemistSimulator/Alchemist/issues/4005)) ([0341b91](https://github.com/AlchemistSimulator/Alchemist/commit/0341b91bce592d76d9d630d4c93cd73ef865d853))
+
+### Documentation
+
+* **deps:** update dependency org.jetbrains.dokka to v2 ([#4011](https://github.com/AlchemistSimulator/Alchemist/issues/4011)) ([2086c71](https://github.com/AlchemistSimulator/Alchemist/commit/2086c710207348433fab4130a6e822eea9862ff1))
+
+### Build and continuous integration
+
+* disable super type on a new line formatting (ktlint) ([#4004](https://github.com/AlchemistSimulator/Alchemist/issues/4004)) ([edea8fd](https://github.com/AlchemistSimulator/Alchemist/commit/edea8fdae564f00932742f782c9caaddfd81ec4f))
+
 ## [36.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.5...36.0.6) (2024-12-09)
 
 ### Dependency updates

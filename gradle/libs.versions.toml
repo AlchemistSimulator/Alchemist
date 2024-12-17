@@ -56,7 +56,7 @@ ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "ign
 javalib-java7 = "org.danilopianini:javalib-java7:0.6.1"
 jgit = "org.eclipse.jgit:org.eclipse.jgit:7.1.0.202411261347-r"
 jgrapht-core = "org.jgrapht:jgrapht-core:1.5.2"
-jirf = "org.danilopianini:jirf:0.4.26"
+jirf = "org.danilopianini:jirf:0.4.27"
 jool = "org.jooq:jool:0.9.15"
 jpx = "io.jenetics:jpx:3.2.0"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }

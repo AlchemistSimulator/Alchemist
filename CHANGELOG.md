@@ -1,3 +1,20 @@
+## [36.0.8](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.7...36.0.8) (2024-12-17)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.7.1 ([#4015](https://github.com/AlchemistSimulator/Alchemist/issues/4015)) ([0d65f49](https://github.com/AlchemistSimulator/Alchemist/commit/0d65f497b45c0d170663ba1ce4512ccec9eb4419))
+* **deps:** update dependency org.danilopianini:jirf to v0.4.27 ([#4017](https://github.com/AlchemistSimulator/Alchemist/issues/4017)) ([382932b](https://github.com/AlchemistSimulator/Alchemist/commit/382932b31bf1adb3c18b80530ee4c945f9b716bb))
+* **deps:** update junit5 monorepo to v5.11.4 ([#4010](https://github.com/AlchemistSimulator/Alchemist/issues/4010)) ([57975ff](https://github.com/AlchemistSimulator/Alchemist/commit/57975ff0ba001da6b1158c8b7d75857234db3b0d))
+* **deps:** update plugin multijvmtesting to v3.0.1 ([#4012](https://github.com/AlchemistSimulator/Alchemist/issues/4012)) ([3f20b32](https://github.com/AlchemistSimulator/Alchemist/commit/3f20b322685357be8f3a7303bc95f2b76ec0d15f))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.17 ([#4013](https://github.com/AlchemistSimulator/Alchemist/issues/4013)) ([8f187da](https://github.com/AlchemistSimulator/Alchemist/commit/8f187da42b1f1651a0132e621ab530f6b263e726))
+* **deps:** update plugin publishoncentral to v7.0.1 ([#4014](https://github.com/AlchemistSimulator/Alchemist/issues/4014)) ([711d661](https://github.com/AlchemistSimulator/Alchemist/commit/711d6614858c68e13ca28f020e00ef0ffbadbfc5))
+* **deps:** update react to v19.0.0-pre.853 ([#4018](https://github.com/AlchemistSimulator/Alchemist/issues/4018)) ([137ef34](https://github.com/AlchemistSimulator/Alchemist/commit/137ef341a0aba6770ebfdd97c81d7e7d6d768b9b))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([c76a4d4](https://github.com/AlchemistSimulator/Alchemist/commit/c76a4d4f4537eb8b94b2970c532a71dd9fbb5fbc))
+* **build:** update the javadoc.io cache ([accb07e](https://github.com/AlchemistSimulator/Alchemist/commit/accb07ebe76b8382154e5683edc33e8bfe5cae52))
+
 ## [36.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.6...36.0.7) (2024-12-16)
 
 ### Dependency updates

@@ -1,7 +1,6 @@
 {
-  "ch.qos.logback/logback-classic/1.5.12": {
-    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.12",
-    "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.12/element-list"
+  "ch.qos.logback/logback-classic/1.5.13": {
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.13"
   },
   "com.expediagroup/graphql-kotlin-hooks-provider/8.2.1": {
     "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/8.2.1"

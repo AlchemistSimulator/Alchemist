@@ -1,4 +1,7 @@
 [*.{kt,kts}]
 indent_size=4
 max_line_length = 120
+insert_final_newline = true
+
+[**/*{t,T}est/kotlin/**.kt]
 ktlint_standard_class-signature = disabled

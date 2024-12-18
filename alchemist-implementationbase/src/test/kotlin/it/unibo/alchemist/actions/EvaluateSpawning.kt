@@ -10,12 +10,10 @@
 package it.unibo.alchemist.actions
 
 import it.unibo.alchemist.device.properties.UpdateStatusProperty
-import it.unibo.alchemist.device.properties.UpdateStatusProperty.Status.FORWARD
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.AbstractAction
@@ -40,26 +38,13 @@ class EvaluateSpawning<T, P : Position<P>>(
     }
 
     override fun execute() {
-        val allNodes = environment.nodes.map { it to it.asProperty<T, UpdateStatusProperty<T, P>>() }
-        val nodesNotInForward = allNodes.filterNot { (_, s) -> s.currentStatus() == FORWARD }
-        if (nodesNotInForward.isEmpty()) {
-            spawn()
-        } else {
-            statusProperty.nextStatus()
-        }
-    }
-
-    override fun getContext(): Context? = Context.NEIGHBORHOOD
-
-    private fun spawn() {
         val localPosition = environment.getPosition(node).coordinates
         val coordinate = localPosition.map { it + random.nextDouble(-1.0, 1.0) }
         val spawningTime = environment.simulation.time + DoubleTime(random.nextDouble(0.0.nextUp(), 0.1))
         val cloneOfThis = node.cloneNode(spawningTime)
-        cloneOfThis.properties.find { property -> property is UpdateStatusProperty<*, *> }?.let {
-            (it as UpdateStatusProperty<*, *>).justSpawned()
-        }
         val updatedPosition = environment.makePosition(*coordinate.toList().toTypedArray())
         environment.addNode(cloneOfThis, updatedPosition)
     }
+
+    override fun getContext(): Context? = Context.NEIGHBORHOOD
 }

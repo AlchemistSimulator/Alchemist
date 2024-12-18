@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.exporters
 
-import com.google.common.base.Charsets
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position

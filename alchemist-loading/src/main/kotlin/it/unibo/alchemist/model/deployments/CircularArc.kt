@@ -40,7 +40,8 @@ data class CircularArc<P : Position2D<P>>
          * @return a [Stream] over the positions of this [Deployment]
          */
         override fun stream(): Stream<P> =
-            IntStream.range(0, nodeCount)
+            IntStream
+                .range(0, nodeCount)
                 .mapToDouble { step * it + startAngle } // actual angle
                 .mapToObj {
                     fun Double.randomized(magnitude: Double) = this * (1 + magnitude * randomGenerator.nextDouble())

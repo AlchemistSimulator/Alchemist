@@ -99,7 +99,8 @@ open class Pursue<T, L : Euclidean2DConvexShape, R>(
              * The midpoints of the doors lying on the side being considered
              */
                 val doorCenters =
-                    doors.map { it.first }
+                    doors
+                        .map { it.first }
                         .filter { side.contains(it) }
                         .sortedBy { it.distanceTo(side.first) }
                         .toTypedArray()
@@ -121,6 +122,6 @@ open class Pursue<T, L : Euclidean2DConvexShape, R>(
                 doors
                     .sortedBy { (midPoint, _) -> dijkstra.getPath(midPoint, destination)?.weight }
                     .map { it.second }
-            doorsInSight().map { it to sorted.indexOf(it) + 1 }.toMap()
+            doorsInSight().associate { it to sorted.indexOf(it) + 1 }
         }
 }

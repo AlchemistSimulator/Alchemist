@@ -26,7 +26,8 @@ class CloseToAlreadyDeployed<T, P : Position<P>>(
     variance: Double,
 ) : AbstractCloseTo<T, P>(randomGenerator, environment, nodeCount, variance) {
     override val sources =
-        environment.nodes.asSequence()
+        environment.nodes
+            .asSequence()
             .map { environment.getPosition(it) }
             .map {
                 when (it) {

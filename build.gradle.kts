@@ -84,29 +84,45 @@ allprojects {
         }
     }
 
-    dependencies {
-        with(rootProject.libs) {
-            compileOnly(spotbugs.annotations)
-            implementation(resourceloader)
-            implementation(slf4j)
-            implementation(kotlin("stdlib-jdk8"))
-            implementation(kotlin("reflect"))
-            testCompileOnly(spotbugs.annotations)
-            // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt + Alchemist testing tooling
-            testImplementation(bundles.testing.compile)
-            testImplementation(alchemist("test"))
-            // Test runtime: Junit engine
-            testRuntimeOnly(bundles.testing.runtimeOnly)
-            // executable jar packaging
-        }
-        if ("incarnation" in project.name) {
-            runtimeOnly(rootProject)
-        }
-    }
-
     // JVM PROJECTS CONFIGURATIONS
 
     if (!project.isMultiplatform) {
+        dependencies {
+            with(rootProject.libs) {
+                compileOnly(spotbugs.annotations)
+                implementation(resourceloader)
+                implementation(slf4j)
+                implementation(kotlin("stdlib-jdk8"))
+                implementation(kotlin("reflect"))
+                testCompileOnly(spotbugs.annotations)
+                // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt + Alchemist testing tooling
+                testImplementation(bundles.testing.compile)
+                testImplementation(alchemist("test"))
+                // Test runtime: Junit engine
+                testRuntimeOnly(bundles.testing.runtimeOnly)
+                // executable jar packaging
+            }
+            if ("incarnation" in project.name) {
+                runtimeOnly(rootProject)
+            }
+        }
+
+        javaQA {
+            checkstyle {
+                additionalConfiguration.set(rootProject.file("checkstyle-additional-config.xml").readText())
+                additionalSuppressions.set(
+                    """
+                    <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
+                    <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
+                    """.trimIndent(),
+                )
+            }
+            // TODO: enable PMD when this bug is fixed: https://github.com/pmd/pmd/issues/5096
+            tasks.withType<Pmd>().configureEach {
+                enabled = false
+            }
+        }
+
         tasks.withType<AbstractDokkaLeafTask>().configureEach {
             timeout.set(Duration.ofMinutes(5))
             dokkaSourceSets.configureEach {
@@ -127,7 +143,8 @@ allprojects {
                             remoteLineSuffix.set("#L")
                         }
                     }
-                configurations.run { sequenceOf(api, implementation) }
+                configurations
+                    .run { sequenceOf(api, implementation) }
                     .flatMap { it.get().dependencies }
                     .forEach { dependency ->
                         val javadocIOURLs = fetchJavadocIOForDependency(dependency)
@@ -175,12 +192,6 @@ allprojects {
          */
         val dokkaHtmlCollector by rootProject.tasks.named("dokkaHtmlCollector")
         dokkaHtmlCollector.dependsOn(tasks.dokkaHtml)
-        /*
-         * On multiplatform projects, publish-on-central does not seem to bind compileCommonKotlin correctly.
-         */
-        tasks.withType<PublishToMavenRepository>().configureEach {
-            dependsOn(tasks.classes)
-        }
     }
 
     // COMPILE
@@ -192,8 +203,6 @@ allprojects {
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
             freeCompilerArgs.add("-Xjvm-default=all") // Enable default methods in Kt interfaces
-            // Context receivers temporarily disabled, as they are unsupported in Kotlin script
-            // "-Xcontext-receivers", // Enable context receivers
         }
     }
 
@@ -209,56 +218,6 @@ allprojects {
     }
 
     // CODE QUALITY
-
-    javaQA {
-        checkstyle {
-            additionalConfiguration.set(
-                """
-                <module name="RegexpSingleline">
-                    <property name="severity" value="error" />
-                    <property name="format" value="Math\s*\.\s*random\s*\(\s*\)" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Don't use Math.random() inside Alchemist. Breaks stuff." />
-                </module>
-                <module name="RegexpSingleline">
-                    <property name="severity" value="error" />
-                    <property name="format" value="class\s*\.\s*forName\s*\(" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Use the library to load classes and resources. Breaks grid otherwise." />
-                </module>
-                <module name="RegexpSingleline">
-                    <property name="severity" value="error" />
-                    <property name="format" value="class\s*\.\s*getResource" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Use the library to load classes and resources. Breaks grid otherwise." />
-                </module>
-                <module name="RegexpSingleline">
-                    <property name="severity" value="error" />
-                    <property name="format" value="class\s*\.\s*getClassLoader" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Use the library to load classes and resources. Breaks grid otherwise." />
-                </module>
-                <module name="RegexpSingleline">
-                    <property name="severity" value="warning" />
-                    <property name="format" value="@author" />
-                    <property name="fileExtensions" value="java,xtend,scala,kt" />
-                    <property name="message"
-                              value="Do not use @author. Changes and authors are tracked by the content manager." />
-                </module>
-                """.trimIndent(),
-            )
-            additionalSuppressions.set(
-                """
-                <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
-                <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
-                """.trimIndent(),
-            )
-        }
-    }
 
     tasks.allVerificationTasks.configureEach {
         exclude { "generated" in it.file.absolutePath }
@@ -283,7 +242,9 @@ allprojects {
      * This can lead to incorrect results being produced, depending on what order the tasks are executed.
      */
     tasks.withType<AbstractDokkaTask>().configureEach {
-        dependsOn(tasks.jar)
+        allprojects.forEach { otherProject ->
+            dependsOn(otherProject.tasks.withType<org.gradle.jvm.tasks.Jar>().matching { it.name == "jar" })
+        }
     }
 
     if (isInCI) {
@@ -355,12 +316,17 @@ tasks.named("kotlinStoreYarnLock").configure {
 
 // WEBSITE
 
-val websiteDir = project.layout.buildDirectory.map { it.dir("website").asFile }.get()
+val websiteDir =
+    project.layout.buildDirectory
+        .map { it.dir("website").asFile }
+        .get()
 
 hugo {
     version =
         Regex("gohugoio/hugo@v([\\.\\-\\+\\w]+)")
-            .find(file("deps-utils/action.yml").readText())!!.groups[1]!!.value
+            .find(file("deps-utils/action.yml").readText())!!
+            .groups[1]!!
+            .value
 }
 
 tasks {
@@ -410,12 +376,14 @@ tasks {
                 "file ${index.absolutePath} existed during configuration, but it has been deleted."
             }
             val websiteReplacements =
-                file("site/replacements").readLines()
+                file("site/replacements")
+                    .readLines()
                     .map { it.split("->") }
                     .map { it[0] to it[1] }
             val replacements: List<Pair<String, String>> =
                 websiteReplacements + ("!development preview!" to project.version.toString())
-            index.parentFile.walkTopDown()
+            index.parentFile
+                .walkTopDown()
                 .filter { it.isFile && it.extension.matches(Regex("html?", RegexOption.IGNORE_CASE)) }
                 .forEach { page ->
                     val initialContents = page.readText()
@@ -441,15 +409,4 @@ tasks {
                 }
             hugoBuild.configure { finalizedBy(copyTask) }
         }
-
-    /*
-     * Work around:
-     *
-     * Task ':dokka...Collector' uses this output of task ':<subproject>:jar'
-     * without declaring an explicit or implicit dependency.
-     * This can lead to incorrect results being produced, depending on what order the tasks are executed.
-     */
-    withType<AbstractDokkaParentTask>().configureEach {
-        dependsOn(subprojects.map { it.tasks.jar })
-    }
 }

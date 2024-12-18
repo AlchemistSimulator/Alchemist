@@ -21,47 +21,48 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-class TestSimulationControl : FreeSpec(
-    {
-        "The progress of the simulation must be controllable" - {
-            "goToTime should move the simulation to the specified time" {
-                val environment = createEmptyEnvironment<Nothing>()
-                environment.tickRate(1.0)
-                val jump = DoubleTime(10.0)
-                with(environment.simulation) {
-                    val jumpFuture = goToTime(jump)
-                    play()
-                    workerPool.submit { run() }
-                    jumpFuture.get(1, TimeUnit.SECONDS)
-                    terminate()
-                    time shouldBe jump
-                }
-            }
-            "goToTime should work twice" {
-                val environment = createEmptyEnvironment<Nothing>()
-                environment.tickRate(1.0)
-                val firstJump = DoubleTime(10.0)
-                val nextJump = DoubleTime(20.0)
-                with(environment.simulation) {
-                    val firstJumpFuture = goToTime(firstJump)
-                    play()
-                    val secondJump =
-                        firstJumpFuture
-                            .thenCompose { goToTime(nextJump) }
-                    // concurrent w.r.t. second jump
-                    firstJumpFuture.thenRun {
+class TestSimulationControl :
+    FreeSpec(
+        {
+            "The progress of the simulation must be controllable" - {
+                "goToTime should move the simulation to the specified time" {
+                    val environment = createEmptyEnvironment<Nothing>()
+                    environment.tickRate(1.0)
+                    val jump = DoubleTime(10.0)
+                    with(environment.simulation) {
+                        val jumpFuture = goToTime(jump)
                         play()
+                        workerPool.submit { run() }
+                        jumpFuture.get(1, TimeUnit.SECONDS)
+                        terminate()
+                        time shouldBe jump
                     }
-                    firstJumpFuture.thenRun { time shouldBe firstJump }
-                    workerPool.submit { run() }
-                    secondJump.get(1, TimeUnit.SECONDS)
-                    terminate()
-                    time shouldBe nextJump
+                }
+                "goToTime should work twice" {
+                    val environment = createEmptyEnvironment<Nothing>()
+                    environment.tickRate(1.0)
+                    val firstJump = DoubleTime(10.0)
+                    val nextJump = DoubleTime(20.0)
+                    with(environment.simulation) {
+                        val firstJumpFuture = goToTime(firstJump)
+                        play()
+                        val secondJump =
+                            firstJumpFuture
+                                .thenCompose { goToTime(nextJump) }
+                        // concurrent w.r.t. second jump
+                        firstJumpFuture.thenRun {
+                            play()
+                        }
+                        firstJumpFuture.thenRun { time shouldBe firstJump }
+                        workerPool.submit { run() }
+                        secondJump.get(1, TimeUnit.SECONDS)
+                        terminate()
+                        time shouldBe nextJump
+                    }
                 }
             }
-        }
-    },
-) {
+        },
+    ) {
     companion object {
         val workerPool: ExecutorService = Executors.newCachedThreadPool()
 

@@ -15,7 +15,8 @@ import kotlin.reflect.full.declaredMemberProperties
 
 internal interface SyntaxElement {
     val validKeys: List<String> get() =
-        this::class.declaredMemberProperties
+        this::class
+            .declaredMemberProperties
             .filter { it.returnType == String::class.createType() }
             .map { if (it.isConst) it.getter.call() else it.getter.call(this) }
             .map { it.toString() }
@@ -38,7 +39,8 @@ internal interface SyntaxElement {
      */
     fun validateDescriptor(descriptor: Map<*, *>): Boolean {
         val publicKeys =
-            descriptor.keys.asSequence()
+            descriptor.keys
+                .asSequence()
                 .filterNotNull()
                 .map { it.toString() }
                 .filterNot { it.startsWith("_") }

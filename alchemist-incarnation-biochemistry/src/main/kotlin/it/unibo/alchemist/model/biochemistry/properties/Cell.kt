@@ -31,7 +31,8 @@ class Cell
         val environment: Environment<Double, Euclidean2DPosition>,
         override val node: Node<Double>,
         override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
-    ) : AbstractNodeProperty<Double>(node), CellProperty<Euclidean2DPosition> {
+    ) : AbstractNodeProperty<Double>(node),
+        CellProperty<Euclidean2DPosition> {
         override var polarizationVersor: Euclidean2DPosition = Euclidean2DPosition.zero
 
         override fun addPolarizationVersor(versor: Euclidean2DPosition) {

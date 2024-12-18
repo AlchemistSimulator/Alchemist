@@ -15,8 +15,7 @@ import it.unibo.alchemist.model.geometry.Vector
  * An Euclidean space, where [Position]s [P] are valid [Vector]s,
  * supporting any concentration type [T].
  */
-interface EuclideanEnvironment<T, P> :
-    Environment<T, P> where P : Position<P>, P : Vector<P> {
+interface EuclideanEnvironment<T, P> : Environment<T, P> where P : Position<P>, P : Vector<P> {
     /**
      * This method moves a [node] in the environment toward some [direction]. If
      * node move is unsupported, it does nothing.

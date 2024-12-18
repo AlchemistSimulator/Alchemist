@@ -49,11 +49,10 @@ class ChangeBiomolConcentrationInNeighbor(
         targetNode.setConcentration(molecule, targetNode.getConcentration(molecule) + deltaConcentration)
     }
 
-    override fun toString(): String {
-        return if (deltaConcentration >= 0) {
+    override fun toString(): String =
+        if (deltaConcentration >= 0) {
             "add $deltaConcentration of $molecule in neighbor "
         } else {
             "remove " + -deltaConcentration + " of " + molecule + " in neighbor "
         }
-    }
 }

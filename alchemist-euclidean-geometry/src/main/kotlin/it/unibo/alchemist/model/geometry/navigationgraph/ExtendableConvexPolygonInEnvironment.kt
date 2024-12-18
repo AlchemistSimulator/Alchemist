@@ -50,7 +50,8 @@ class ExtendableConvexPolygonInEnvironment(
      * (i.e. shapes without curved segments).
      */
     private val awtObstacles: List<Shape>,
-) : AwtMutableConvexPolygon(vertices), ExtendableConvexPolygon {
+) : AwtMutableConvexPolygon(vertices),
+    ExtendableConvexPolygon {
     /**
      * Obstacles represented as [ConvexPolygon]s, are assumed to be mutable but limited to the extension
      * (i.e. they can only grow, not shrink).
@@ -360,7 +361,8 @@ class ExtendableConvexPolygonInEnvironment(
     private fun edgesIntersect(
         e1: Segment2D<*>,
         e2: Segment2D<*>,
-    ) = Line2D.Double(e1.first.toPoint(), e1.second.toPoint())
+    ) = Line2D
+        .Double(e1.first.toPoint(), e1.second.toPoint())
         .intersectsLine(e2.first.x, e2.first.y, e2.second.x, e2.second.y)
 
     private val Vector2D<*>.toEuclidean get() =

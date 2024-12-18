@@ -16,11 +16,12 @@ import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.swingui.monitor.impl.SwingGUI
 import org.kaikikm.threadresloader.ResourceLoader
 
-class TestLoadSwingGUI : StringSpec(
-    {
-        "the Swing-based GUI should be loadable" {
-            val loader = LoadAlchemist.from(ResourceLoader.getResource("test.yml"))
-            loader.getDefault<Any, Nothing>().outputMonitors.first { it is SwingGUI }
-        }
-    },
-)
+class TestLoadSwingGUI :
+    StringSpec(
+        {
+            "the Swing-based GUI should be loadable" {
+                val loader = LoadAlchemist.from(ResourceLoader.getResource("test.yml"))
+                loader.getDefault<Any, Nothing>().outputMonitors.first { it is SwingGUI }
+            }
+        },
+    )

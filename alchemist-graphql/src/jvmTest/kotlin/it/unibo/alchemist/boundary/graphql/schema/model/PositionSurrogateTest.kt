@@ -18,38 +18,39 @@ import it.unibo.alchemist.boundary.graphql.schema.util.PositionSurrogateUtils
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Position2D
 
-class PositionSurrogateTest : StringSpec({
-    "A two dimensional position should should be mapped to the correct surrogate" {
-        val position2D = TestPosition(doubleArrayOf(1.0, 2.0))
-        val positionSurrogate = PositionSurrogateUtils.toPositionSurrogate(position2D)
-        if (positionSurrogate is Position2DSurrogate) {
-            checkPositionSurrogate(position2D, positionSurrogate)
-        } else {
-            error("PositionSurrogate is not converted properly!")
+class PositionSurrogateTest :
+    StringSpec({
+        "A two dimensional position should should be mapped to the correct surrogate" {
+            val position2D = TestPosition(doubleArrayOf(1.0, 2.0))
+            val positionSurrogate = PositionSurrogateUtils.toPositionSurrogate(position2D)
+            if (positionSurrogate is Position2DSurrogate) {
+                checkPositionSurrogate(position2D, positionSurrogate)
+            } else {
+                error("PositionSurrogate is not converted properly!")
+            }
         }
-    }
 
-    "A three dimensional position should should be mapped to the correct surrogate" {
-        val genericPosition = TestPosition(doubleArrayOf(1.0, 2.0, 3.0))
-        val positionSurrogate = PositionSurrogateUtils.toPositionSurrogate(genericPosition)
-        if (positionSurrogate is GenericPositionSurrogate) {
-            checkPositionSurrogate(genericPosition, positionSurrogate)
-        } else {
-            error("PositionSurrogate is not converted properly!")
+        "A three dimensional position should should be mapped to the correct surrogate" {
+            val genericPosition = TestPosition(doubleArrayOf(1.0, 2.0, 3.0))
+            val positionSurrogate = PositionSurrogateUtils.toPositionSurrogate(genericPosition)
+            if (positionSurrogate is GenericPositionSurrogate) {
+                checkPositionSurrogate(genericPosition, positionSurrogate)
+            } else {
+                error("PositionSurrogate is not converted properly!")
+            }
         }
-    }
 
-    "InputPosition should behave as expected" {
-        val position = TestPosition(doubleArrayOf(1.0, 2.0, 3.0))
-        val inputPosition = PositionSurrogateUtils.toPositionSurrogate(position).toInputPosition()
+        "InputPosition should behave as expected" {
+            val position = TestPosition(doubleArrayOf(1.0, 2.0, 3.0))
+            val inputPosition = PositionSurrogateUtils.toPositionSurrogate(position).toInputPosition()
 
-        position.dimensions shouldBe inputPosition.dimensions
-        position.coordinates shouldBe inputPosition.coordinates
+            position.dimensions shouldBe inputPosition.dimensions
+            position.coordinates shouldBe inputPosition.coordinates
 
-        val positionSurrogate = PositionSurrogateUtils.fromPositionInput(inputPosition)
-        checkPositionSurrogate(position, positionSurrogate)
-    }
-})
+            val positionSurrogate = PositionSurrogateUtils.fromPositionInput(inputPosition)
+            checkPositionSurrogate(position, positionSurrogate)
+        }
+    })
 
 private class TestPosition(
     override val coordinates: DoubleArray,

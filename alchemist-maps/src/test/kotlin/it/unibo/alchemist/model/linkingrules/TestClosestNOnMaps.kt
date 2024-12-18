@@ -14,19 +14,20 @@ import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.maps.environments.OSMEnvironment
 import it.unibo.alchemist.model.nodes.GenericNode
 
-class TestClosestNOnMaps : StringSpec({
-    "Use ClosestN on maps" {
-        val environment =
-            OSMEnvironment(
-                SupportedIncarnations.get<Any, GeoPosition>("protelis").orElseGet { TODO() },
-                "maps/cesena.pbf",
+class TestClosestNOnMaps :
+    StringSpec({
+        "Use ClosestN on maps" {
+            val environment =
+                OSMEnvironment(
+                    SupportedIncarnations.get<Any, GeoPosition>("protelis").orElseGet { TODO() },
+                    "maps/cesena.pbf",
+                )
+            environment.linkingRule = ClosestN(10)
+            environment.addNode(
+                object : GenericNode<Any>(environment) {
+                    override fun createT() = "Nothing"
+                },
+                environment.makePosition(44.139169, 12.237816),
             )
-        environment.linkingRule = ClosestN(10)
-        environment.addNode(
-            object : GenericNode<Any>(environment) {
-                override fun createT() = "Nothing"
-            },
-            environment.makePosition(44.139169, 12.237816),
-        )
-    }
-})
+        }
+    })

@@ -63,15 +63,16 @@ open class Grid
     ) : Deployment<Position<*>> {
         override fun stream(): Stream<Position<*>> {
             val positions =
-                (0 until stepCount(yStart, yEnd, yStep)).map { yn ->
-                    val y = yStart + yStep * yn
-                    (0 until stepCount(xStart, xEnd, xStep)).map { xn ->
-                        val x = xStart + xStep * xn
-                        val dx = xRand * (randomGenerator.nextDouble() - 0.5) + yn * xShift % xStep
-                        val dy = yRand * (randomGenerator.nextDouble() - 0.5) + xn * yShift % yStep
-                        environment.makePosition(x + dx, y + dy)
-                    }
-                }.flatten()
+                (0 until stepCount(yStart, yEnd, yStep))
+                    .map { yn ->
+                        val y = yStart + yStep * yn
+                        (0 until stepCount(xStart, xEnd, xStep)).map { xn ->
+                            val x = xStart + xStep * xn
+                            val dx = xRand * (randomGenerator.nextDouble() - 0.5) + yn * xShift % xStep
+                            val dy = yRand * (randomGenerator.nextDouble() - 0.5) + xn * yShift % yStep
+                            environment.makePosition(x + dx, y + dy)
+                        }
+                    }.flatten()
             return StreamSupport.stream(positions.spliterator(), false)
         }
 

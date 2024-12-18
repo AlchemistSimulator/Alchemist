@@ -28,14 +28,18 @@ sealed class Intersection2D<out V> {
     /**
      * Objects intersect in a single [point].
      */
-    data class SinglePoint<P : Vector2D<P>>(val point: P) : Intersection2D<P>() {
+    data class SinglePoint<P : Vector2D<P>>(
+        val point: P,
+    ) : Intersection2D<P>() {
         override val asList = listOf(point)
     }
 
     /**
      * Objects intersect in a discrete number of [points].
      */
-    data class MultiplePoints<P : Vector2D<P>>(val points: List<P>) : Intersection2D<P>() {
+    data class MultiplePoints<P : Vector2D<P>>(
+        val points: List<P>,
+    ) : Intersection2D<P>() {
         override val asList: List<P> get() = points
     }
 

@@ -22,27 +22,28 @@ import it.unibo.alchemist.boundary.webui.server.surrogates.utility.toEnvironment
 import org.reduxkotlin.Store
 import org.reduxkotlin.threadsafe.createThreadSafeStore
 
-class ServerStoreTest : StringSpec({
+class ServerStoreTest :
+    StringSpec({
 
-    val serverStore: Store<ServerState> = createThreadSafeStore(::rootReducer, ServerState())
+        val serverStore: Store<ServerState> = createThreadSafeStore(::rootReducer, ServerState())
 
-    "ServerStore should be empty at the beginning" {
-        serverStore.state.simulation shouldBe null
-        serverStore.state.environmentSurrogate shouldBe uninitializedEnvironment()
-    }
-
-    "ServerState can be updated with a SetSimulation action" {
-        webRendererTestEnvironments<Any, Nothing>().forEach {
-            serverStore.dispatch(SetSimulation(it))
-            serverStore.state.simulation shouldBe it
+        "ServerStore should be empty at the beginning" {
+            serverStore.state.simulation shouldBe null
+            serverStore.state.environmentSurrogate shouldBe uninitializedEnvironment()
         }
-    }
 
-    "ServerStore can be updated with a SetEnvironmentSurrogate action" {
-        webRendererTestEnvironments<Any, Nothing>().forEach {
-            val envSurrogate = it.environment.toEnvironmentSurrogate(toEmptyConcentration)
-            serverStore.dispatch(SetEnvironmentSurrogate(envSurrogate))
-            serverStore.state.environmentSurrogate shouldBe envSurrogate
+        "ServerState can be updated with a SetSimulation action" {
+            webRendererTestEnvironments<Any, Nothing>().forEach {
+                serverStore.dispatch(SetSimulation(it))
+                serverStore.state.simulation shouldBe it
+            }
         }
-    }
-})
+
+        "ServerStore can be updated with a SetEnvironmentSurrogate action" {
+            webRendererTestEnvironments<Any, Nothing>().forEach {
+                val envSurrogate = it.environment.toEnvironmentSurrogate(toEmptyConcentration)
+                serverStore.dispatch(SetEnvironmentSurrogate(envSurrogate))
+                serverStore.state.environmentSurrogate shouldBe envSurrogate
+            }
+        }
+    })

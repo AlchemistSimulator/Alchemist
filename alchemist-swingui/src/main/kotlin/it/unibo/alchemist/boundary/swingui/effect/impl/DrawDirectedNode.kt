@@ -144,7 +144,8 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
         node
             .takeIf { it.contains(SimpleMolecule(colorMolecule)) }
             ?.getConcentration(SimpleMolecule(colorMolecule))
-            ?.let { it as? Number }?.toDouble()
+            ?.let { it as? Number }
+            ?.toDouble()
             ?.let {
                 Color.getHSBColor(
                     (it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.toDouble())).toFloat(),
@@ -160,7 +161,10 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
     ) {
         val positions = positionsMemory[node.id].orEmpty()
         val lastDraw = lastDrawMemory[node.id] ?: 0
-        val roundedTime = environment.simulation.time.toDouble().toInt()
+        val roundedTime =
+            environment.simulation.time
+                .toDouble()
+                .toInt()
         if (roundedTime >= lastDraw) {
             lastDrawMemory = lastDrawMemory + (node.id to lastDraw + timespan.`val`)
             val updatedPositions =
@@ -172,7 +176,8 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
     }
 
     private fun <T> rotation(node: Node<T>): Double =
-        node.takeIf { it.contains(SimpleMolecule(velocityMolecule)) }
+        node
+            .takeIf { it.contains(SimpleMolecule(velocityMolecule)) }
             ?.getConcentration(SimpleMolecule(velocityMolecule))
             ?.let { it as? DoubleArray }
             ?.let { atan2(it[0], it[1]) }

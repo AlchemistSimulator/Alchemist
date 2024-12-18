@@ -21,7 +21,8 @@ import it.unibo.alchemist.model.geometry.Vector
  * [nonPhysicalStrategy]. The resulting intentional force is then combined with the physical ones to determine the
  * next position reached by [node].
  */
-interface PhysicalSteeringStrategy<T, P, A, F> : SteeringStrategy<T, P>
+interface PhysicalSteeringStrategy<T, P, A, F> :
+    SteeringStrategy<T, P>
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P>,
           F : GeometricShapeFactory<P, A> {

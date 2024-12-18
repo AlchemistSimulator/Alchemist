@@ -18,26 +18,27 @@ import it.unibo.alchemist.boundary.webui.server.state.ServerStore
 import it.unibo.alchemist.boundary.webui.server.state.actions.SetEnvironmentSurrogate
 import it.unibo.alchemist.model.Time
 
-class EnvironmentMonitorTest : StringSpec({
-    fun checkStep(action: () -> Unit) {
-        val initialEnvironment = ServerStore.store.state.environmentSurrogate
-        action()
-        initialEnvironment shouldNotBe ServerStore.store.state.environmentSurrogate
-        ServerStore.store.dispatch(SetEnvironmentSurrogate(EnvironmentSurrogate.uninitializedEnvironment()))
-    }
+class EnvironmentMonitorTest :
+    StringSpec({
+        fun checkStep(action: () -> Unit) {
+            val initialEnvironment = ServerStore.store.state.environmentSurrogate
+            action()
+            initialEnvironment shouldNotBe ServerStore.store.state.environmentSurrogate
+            ServerStore.store.dispatch(SetEnvironmentSurrogate(EnvironmentSurrogate.uninitializedEnvironment()))
+        }
 
-    "EnvironmentMonitor stepDone should work as expected" {
-        webRendererTestEnvironments<Any, Nothing>().forEach {
-            val environmentMonitor = makeEnvironmentMonitor(it.environment)
-            checkStep {
-                environmentMonitor.stepDone(it.environment, null, Time.ZERO, 111)
-            }
-            checkStep {
-                environmentMonitor.initialized(it.environment)
-            }
-            checkStep {
-                environmentMonitor.finished(it.environment, Time.ZERO, 222)
+        "EnvironmentMonitor stepDone should work as expected" {
+            webRendererTestEnvironments<Any, Nothing>().forEach {
+                val environmentMonitor = makeEnvironmentMonitor(it.environment)
+                checkStep {
+                    environmentMonitor.stepDone(it.environment, null, Time.ZERO, 111)
+                }
+                checkStep {
+                    environmentMonitor.initialized(it.environment)
+                }
+                checkStep {
+                    environmentMonitor.finished(it.environment, Time.ZERO, 222)
+                }
             }
         }
-    }
-})
+    })

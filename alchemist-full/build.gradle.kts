@@ -13,7 +13,6 @@ import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.google.common.hash.Hashing
 import org.jetbrains.kotlin.daemon.common.toHexString
-import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import org.panteleyev.jpackage.ImageType
 import org.panteleyev.jpackage.ImageType.DEB
 import org.panteleyev.jpackage.ImageType.DMG
@@ -50,10 +49,24 @@ kotlin {
                 }
             }
         }
+        val jvmMain by getting {
+            dependencies {
+                implementation(rootProject.libs.slf4j)
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(rootProject)
+                implementation(alchemist("loading"))
                 implementation(alchemist("physics"))
+                implementation(alchemist("test"))
+                implementation(rootProject.libs.kotest.assertions.core)
+                implementation(rootProject.libs.kotest.framework.engine)
+            }
+        }
+        val jvmTest by getting {
+            dependencies {
+                implementation(libs.kotest.runner)
             }
         }
     }
@@ -65,7 +78,8 @@ kotlin {
  * resulting in runtime errors.
  */
 private fun mpClasspath(): Provider<FileCollection> =
-    tasks.named("compileKotlinJvm")
+    tasks
+        .named("compileKotlinJvm")
         .map { it.outputs.files }
         .flatMap { compileKtOutputs ->
             configurations.named("jvmRuntimeClasspath").map { compileKtOutputs + it }
@@ -136,13 +150,18 @@ tasks.matching { it.name in toDisable }.configureEach { enabled = false }
 
 sealed interface PackagingMethod
 
-data class ValidPackaging(val format: ImageType, val perUser: Boolean = false) : PackagingMethod {
+data class ValidPackaging(
+    val format: ImageType,
+    val perUser: Boolean = false,
+) : PackagingMethod {
     val name get() = format.formatName
 
     override fun toString() = "$name packaging${ " (userspace)".takeIf { perUser }.orEmpty() }"
 }
 
-data class DisabledPackaging(val reason: String) : PackagingMethod
+data class DisabledPackaging(
+    val reason: String,
+) : PackagingMethod
 
 val ImageType.formatName get() = name.lowercase()
 
@@ -180,20 +199,29 @@ val packageRequirements: List<PackagingMethod> =
         }
     }
 
-val (validFormats, disabledFormats) = packageRequirements.partitionIsInstance<PackagingMethod, ValidPackaging>()
+val (validFormats, disabledFormats) = packageRequirements.partition { it is ValidPackaging }
 
 disabledFormats.filterIsInstance<DisabledPackaging>().forEach { logger.warn(it.reason) }
 
 val versionComponentExtractor = Regex("^(\\d+\\.\\d+\\.)(\\d+)(.*)$")
 
-private data class SemVerExtracted(val base: String, val patch: String, val suffix: String) {
+private data class SemVerExtracted(
+    val base: String,
+    val patch: String,
+    val suffix: String,
+) {
     fun asMangledVersion(): String =
         "${base}0${patch}0${
             when {
                 suffix.isBlank() -> ""
                 else -> {
                     val asBytes = suffix.toByteArray(StandardCharsets.UTF_8)
-                    Hashing.murmur3_32_fixed().hashBytes(asBytes).padToLong().toUInt().toString()
+                    Hashing
+                        .murmur3_32_fixed()
+                        .hashBytes(asBytes)
+                        .padToLong()
+                        .toUInt()
+                        .toString()
                 }
             }
         }"
@@ -201,13 +229,14 @@ private data class SemVerExtracted(val base: String, val patch: String, val suff
 
 private fun String.extractVersionComponents(): SemVerExtracted {
     val (base, patch, suffix) =
-        versionComponentExtractor.matchEntire(this)
+        versionComponentExtractor
+            .matchEntire(this)
             ?.destructured
             ?: error("Invalid version format: $this")
     return SemVerExtracted(base, patch, suffix)
 }
 
-validFormats.forEach { packaging: ValidPackaging ->
+validFormats.filterIsInstance<ValidPackaging>().forEach { packaging: ValidPackaging ->
     val baseVersion: Provider<String> = provider { rootProject.version.toString() }
     val packageSpecificVersion =
         baseVersion.map { version ->
@@ -237,10 +266,23 @@ validFormats.forEach { packaging: ValidPackaging ->
             licenseFile = "${rootProject.projectDir}/LICENSE.md"
 
             type = packaging.format
-            input = tasks.shadowJar.get().archiveFile.get().asFile.parent
+            input =
+                tasks.shadowJar
+                    .get()
+                    .archiveFile
+                    .get()
+                    .asFile.parent
             // Packaging settings
-            destination = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile.path
-            mainJar = tasks.shadowJar.get().archiveFileName.get()
+            destination =
+                rootProject.layout.buildDirectory
+                    .map { it.dir("package") }
+                    .get()
+                    .asFile.path
+            mainJar =
+                tasks.shadowJar
+                    .get()
+                    .archiveFileName
+                    .get()
             mainClass = application.mainClass.get()
             verbose = true
 
@@ -277,7 +319,11 @@ validFormats.forEach { packaging: ValidPackaging ->
                 templateStrings.forEach {
                     check(it in template) { "Corrupt PKGBUILD.template, missing $it" }
                 }
-                val outputDir = rootProject.layout.buildDirectory.map { it.dir("pkgbuild") }.get().asFile
+                val outputDir =
+                    rootProject.layout.buildDirectory
+                        .map { it.dir("pkgbuild") }
+                        .get()
+                        .asFile
                 if (!outputDir.mkdirs()) {
                     check(outputDir.exists() && outputDir.isDirectory) {
                         "Could not create output directory $outputDir, as it already exists and is not a directory"

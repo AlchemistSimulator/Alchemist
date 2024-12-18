@@ -23,36 +23,37 @@ import it.unibo.alchemist.boundary.webui.common.model.surrogate.PositionSurrogat
 import korlibs.image.bitmap.Bitmap
 import korlibs.image.bitmap.Bitmap32
 
-class BitmapRendererTest : StringSpec({
+class BitmapRendererTest :
+    StringSpec({
 
-    val envSurrogate: EnvironmentSurrogate<Any, PositionSurrogate> =
-        EnvironmentSurrogate(
-            2,
-            listOf(
-                NodeSurrogate(
-                    0,
-                    mapOf(MoleculeSurrogate("concentration") to EmptyConcentrationSurrogate),
-                    Position2DSurrogate(5.6, 8.42),
+        val envSurrogate: EnvironmentSurrogate<Any, PositionSurrogate> =
+            EnvironmentSurrogate(
+                2,
+                listOf(
+                    NodeSurrogate(
+                        0,
+                        mapOf(MoleculeSurrogate("concentration") to EmptyConcentrationSurrogate),
+                        Position2DSurrogate(5.6, 8.42),
+                    ),
                 ),
-            ),
-        )
+            )
 
-    val renderer: Renderer<Any, PositionSurrogate, Bitmap> = BitmapRenderer()
+        val renderer: Renderer<Any, PositionSurrogate, Bitmap> = BitmapRenderer()
 
-    "BitmapRenderer should output a Bitmap correctly" {
-        val bmp = renderer.render(envSurrogate)
-        bmp.shouldBeInstanceOf<Bitmap32>()
-        val encoded = jsonFormat.encodeToString(Bitmap32Serializer, bmp.toBMP32IfRequired())
-        val decoded = jsonFormat.decodeFromString(Bitmap32Serializer, encoded)
-        bmp.height shouldBe decoded.height
-        bmp.width shouldBe decoded.width
-        bmp.toBMP32().ints shouldBe decoded.ints
-    }
-
-    "BitmapRenderer can't work with Environments with != 2 dimensions" {
-        val mockEnv: EnvironmentSurrogate<Any, PositionSurrogate> = EnvironmentSurrogate(-1, listOf())
-        shouldThrow<IllegalArgumentException> {
-            renderer.render(mockEnv)
+        "BitmapRenderer should output a Bitmap correctly" {
+            val bmp = renderer.render(envSurrogate)
+            bmp.shouldBeInstanceOf<Bitmap32>()
+            val encoded = jsonFormat.encodeToString(Bitmap32Serializer, bmp.toBMP32IfRequired())
+            val decoded = jsonFormat.decodeFromString(Bitmap32Serializer, encoded)
+            bmp.height shouldBe decoded.height
+            bmp.width shouldBe decoded.width
+            bmp.toBMP32().ints shouldBe decoded.ints
         }
-    }
-})
+
+        "BitmapRenderer can't work with Environments with != 2 dimensions" {
+            val mockEnv: EnvironmentSurrogate<Any, PositionSurrogate> = EnvironmentSurrogate(-1, listOf())
+            shouldThrow<IllegalArgumentException> {
+                renderer.render(mockEnv)
+            }
+        }
+    })

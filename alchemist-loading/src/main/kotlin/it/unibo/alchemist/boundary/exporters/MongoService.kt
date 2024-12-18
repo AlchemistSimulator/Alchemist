@@ -30,7 +30,8 @@ class MongoService {
      */
     fun startService(uri: String) {
         val settings =
-            MongoClientSettings.builder()
+            MongoClientSettings
+                .builder()
                 .applyConnectionString(ConnectionString(uri))
                 .build()
         client = MongoClients.create(settings)

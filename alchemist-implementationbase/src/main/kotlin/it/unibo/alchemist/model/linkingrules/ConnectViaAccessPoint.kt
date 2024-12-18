@@ -60,8 +60,7 @@ class ConnectViaAccessPoint<T, P : Position<P>>(
                                     environment.getNeighborhood(neighbor).run {
                                         contains(center) || none { it.isAccessPoint }
                                     }
-                            }
-                            .asIterable(),
+                            }.asIterable(),
                     )
                 }
             }

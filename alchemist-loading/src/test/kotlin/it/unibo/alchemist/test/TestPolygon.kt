@@ -25,25 +25,27 @@ private const val DEPLOYMENT_SIZE = 10_000
 
 private fun <P : Position2D<P>> incarnation() = SupportedIncarnations.get<Any, P>("sapere").get()
 
-class TestPolygon : StringSpec({
-    fun <T, P : Position2D<P>> Environment<T, P>.runTestWithCoordinates() {
-        val randomGenerator = MersenneTwister(0)
-        val displacement = Polygon(this, randomGenerator, DEPLOYMENT_SIZE, points)
-        displacement.stream().count() shouldBe DEPLOYMENT_SIZE
-        val displacementPoints = Polygon(this, randomGenerator, DEPLOYMENT_SIZE, pointsPair)
-        displacementPoints.stream().count() shouldBe DEPLOYMENT_SIZE
-    }
-    "test deployment on 2D space" {
-        Continuous2DEnvironment<Any>(incarnation()).runTestWithCoordinates()
-    }
-    "test deployment on Venice lagoon" {
-        OSMEnvironment(incarnation(), "venezia.pbf").runTestWithCoordinates()
-    }
-}) {
+class TestPolygon :
+    StringSpec({
+        fun <T, P : Position2D<P>> Environment<T, P>.runTestWithCoordinates() {
+            val randomGenerator = MersenneTwister(0)
+            val displacement = Polygon(this, randomGenerator, DEPLOYMENT_SIZE, points)
+            displacement.stream().count() shouldBe DEPLOYMENT_SIZE
+            val displacementPoints = Polygon(this, randomGenerator, DEPLOYMENT_SIZE, pointsPair)
+            displacementPoints.stream().count() shouldBe DEPLOYMENT_SIZE
+        }
+        "test deployment on 2D space" {
+            Continuous2DEnvironment<Any>(incarnation()).runTestWithCoordinates()
+        }
+        "test deployment on Venice lagoon" {
+            OSMEnvironment(incarnation(), "venezia.pbf").runTestWithCoordinates()
+        }
+    }) {
     companion object {
         val points =
-            Gson().fromJson<List<List<Double>>>(
-                """[
+            Gson()
+                .fromJson<List<List<Double>>>(
+                    """[
                 [ 12.2504425, 45.2038121 ],
                 [ 12.2641754, 45.2207426 ],
                 [ 12.2806549, 45.2381516 ],
@@ -76,8 +78,8 @@ class TestPolygon : StringSpec({
                 [ 12.233963, 45.257972 ],
                 [ 12.2504425, 45.2038121 ]]
             """,
-                object : TypeToken<List<List<Double>>>() {}.type,
-            ).map { listOf(it[1], it[0]) }
+                    object : TypeToken<List<List<Double>>>() {}.type,
+                ).map { listOf(it[1], it[0]) }
 
         val pointsPair = points.map { Pair(it[1], it[0]) }
     }

@@ -68,7 +68,8 @@ class GraphHopperOptions private constructor(
      */
     companion object {
         private val profiles: LoadingCache<Pair<String, String>, GraphHopperOptions> =
-            Caffeine.newBuilder()
+            Caffeine
+                .newBuilder()
                 .build(::GraphHopperOptions)
 
         /**
@@ -144,10 +145,9 @@ class GraphHopperOptions private constructor(
         fun optionsFor(
             profile: String = "foot",
             algorithm: String = DIJKSTRA_BI,
-        ): GraphHopperOptions {
-            return profiles.get(profile to algorithm) ?: throw IllegalArgumentException(
+        ): GraphHopperOptions =
+            profiles.get(profile to algorithm) ?: throw IllegalArgumentException(
                 "The requested profile ($profile, $algorithm) could not be created.",
             )
-        }
     }
 }

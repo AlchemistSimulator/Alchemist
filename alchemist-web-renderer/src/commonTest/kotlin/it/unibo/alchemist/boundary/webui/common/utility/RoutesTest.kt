@@ -17,12 +17,13 @@ import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_PAUSE_
 import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_PLAY_PATH
 import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_STATUS_PATH
 
-class RoutesTest : StringSpec({
-    "All the routes strings should be correct" {
-        ENVIRONMENT_CLIENT_PATH shouldBe "/environment/client"
-        ENVIRONMENT_SERVER_PATH shouldBe "/environment/server"
-        SIMULATION_STATUS_PATH shouldBe "/simulation/status"
-        SIMULATION_PLAY_PATH shouldBe "/simulation/play"
-        SIMULATION_PAUSE_PATH shouldBe "/simulation/pause"
-    }
-})
+class RoutesTest :
+    StringSpec({
+        "All the routes strings should be correct" {
+            ENVIRONMENT_CLIENT_PATH shouldBe "/environment/client"
+            ENVIRONMENT_SERVER_PATH shouldBe "/environment/server"
+            SIMULATION_STATUS_PATH shouldBe "/simulation/status"
+            SIMULATION_PLAY_PATH shouldBe "/simulation/play"
+            SIMULATION_PAUSE_PATH shouldBe "/simulation/pause"
+        }
+    })

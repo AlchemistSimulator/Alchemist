@@ -31,7 +31,11 @@ import javax.swing.SwingUtilities
  * @param T concentration type.
  */
 @Deprecated("This class is deprecated anyway")
-class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) : JPanel(), OutputMonitor<T, P>, ActionListener {
+class NodeTracker<T, P : Position<out P>>(
+    private val node: Node<T>,
+) : JPanel(),
+    OutputMonitor<T, P>,
+    ActionListener {
     private val jTextArea = JTextArea(AREA_SIZE / 2, AREA_SIZE)
     private var stringLength = Byte.MAX_VALUE.toInt()
     private val updateIsScheduled = AtomicBoolean(false)

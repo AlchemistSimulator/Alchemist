@@ -30,8 +30,9 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 /**
  * Implementation of [Physics2DEnvironment].
  */
-open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPosition>) :
-    Continuous2DEnvironment<T>(incarnation),
+open class ContinuousPhysics2DEnvironment<T>(
+    incarnation: Incarnation<T, Euclidean2DPosition>,
+) : Continuous2DEnvironment<T>(incarnation),
     Physics2DEnvironment<T> {
     private companion object {
         @JvmStatic private val serialVersionUID: Long = 1L
@@ -98,7 +99,8 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
         nodeToHeading.remove(node)
         val occupiesSpaceProperty = node.asPropertyOrNull<T, AreaProperty<T>>()
         if (occupiesSpaceProperty != null && largestShapeDiameter <= occupiesSpaceProperty.shape.diameter) {
-            largestShapeDiameter = nodes.asSequence()
+            largestShapeDiameter = nodes
+                .asSequence()
                 .filter { getShape(it) != adimensional }
                 .map { getShape(it) }
                 .map { it.diameter }
@@ -162,8 +164,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
         return nodesOnPath
             .flatMap { other ->
                 desiredMovement.intersectCircle(other.centroid, other.radius + hitboxRadius).asList
-            }
-            .minByOrNull { currentPosition.distanceTo(it) }
+            }.minByOrNull { currentPosition.distanceTo(it) }
             ?: desiredPosition
     }
 
@@ -176,12 +177,12 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
         desiredMovement: Segment2D<*>,
     ): List<Node<T>> =
         with(getShape(node)) {
-            shapeFactory.rectangle(desiredMovement.length + diameter, diameter)
+            shapeFactory
+                .rectangle(desiredMovement.length + diameter, diameter)
                 .transformed {
                     desiredMovement.midPoint.let { origin(it.x, it.y) }
                     rotate(desiredMovement.toVector.asAngle)
-                }
-                .let { movementArea ->
+                }.let { movementArea ->
                     getNodesWithin(movementArea)
                         .minusElement(node)
                 }

@@ -17,15 +17,18 @@ import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import it.unibo.alchemist.test.AlchemistTesting.terminatingAfterSteps
 import it.unibo.alchemist.util.ClassPathScanner
 
-class TestCasesThatShouldJustRun : StringSpec(
-    {
-        ClassPathScanner.resourcesMatching(".+\\.ya?ml", "shouldrun").forEach {
-            "simulation at ${it.path} should run" {
-                LoadAlchemist.from(it).getDefault<Any, Nothing>()
-                    .terminatingAfterSteps(100)
-                    .runInCurrentThread()
-                    .error shouldNot bePresent()
+class TestCasesThatShouldJustRun :
+    StringSpec(
+        {
+            ClassPathScanner.resourcesMatching(".+\\.ya?ml", "shouldrun").forEach {
+                "simulation at ${it.path} should run" {
+                    LoadAlchemist
+                        .from(it)
+                        .getDefault<Any, Nothing>()
+                        .terminatingAfterSteps(100)
+                        .runInCurrentThread()
+                        .error shouldNot bePresent()
+                }
             }
-        }
-    },
-)
+        },
+    )

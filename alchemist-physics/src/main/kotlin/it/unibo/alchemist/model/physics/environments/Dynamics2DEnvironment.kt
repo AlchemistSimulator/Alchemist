@@ -18,7 +18,9 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  * collision detection and response.
  * This interface provides some hooks in order to be able to manage some of the node's physical state.
  */
-interface Dynamics2DEnvironment<T> : Physics2DEnvironment<T>, Euclidean2DEnvironment<T> {
+interface Dynamics2DEnvironment<T> :
+    Physics2DEnvironment<T>,
+    Euclidean2DEnvironment<T> {
     /**
      * Set [node]'s current linear velocity.
      */

@@ -24,7 +24,8 @@ data class Social<T>
     constructor(
         override val node: Node<T>,
         override val group: Group<T> = Alone(node),
-    ) : AbstractNodeProperty<T>(node), SocialProperty<T> {
+    ) : AbstractNodeProperty<T>(node),
+        SocialProperty<T> {
         override fun cloneOnNewNode(node: Node<T>) = Social(node, GenericGroup(listOf(node)))
 
         override fun toString(): String = "${super.toString()}$group"

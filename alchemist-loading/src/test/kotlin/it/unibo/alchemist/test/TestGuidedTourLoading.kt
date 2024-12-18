@@ -19,7 +19,6 @@ import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.util.ClassPathScanner
 import java.io.File
-import java.lang.RuntimeException
 import java.net.URL
 
 private val cache: LoadingCache<URL, Loader> =
@@ -27,23 +26,24 @@ private val cache: LoadingCache<URL, Loader> =
         LoadAlchemist.from(it)
     }
 
-class TestGuidedTourLoading : FreeSpec(
-    {
-        ClassPathScanner.resourcesMatching(".*\\.[yY][aA]?[mM][lL]", "guidedTour").forEach { yaml ->
-            "${File(yaml.file).name} should load with default parameters" {
-                cache.get(yaml)?.getDefault<Any, Nothing>() shouldNotBe null
+class TestGuidedTourLoading :
+    FreeSpec(
+        {
+            ClassPathScanner.resourcesMatching(".*\\.[yY][aA]?[mM][lL]", "guidedTour").forEach { yaml ->
+                "${File(yaml.file).name} should load with default parameters" {
+                    cache.get(yaml)?.getDefault<Any, Nothing>() shouldNotBe null
+                }
             }
-        }
-        ClassPathScanner.resourcesMatching(".*[Vv]ariable.*\\.yml", "guidedTour").forEach { yaml ->
-            "${File(yaml.file).name} should actually define variables" {
-                val parsed = cache.get(yaml)!!
-                (parsed.variables + parsed.dependentVariables).size shouldBeGreaterThan 0
+            ClassPathScanner.resourcesMatching(".*[Vv]ariable.*\\.yml", "guidedTour").forEach { yaml ->
+                "${File(yaml.file).name} should actually define variables" {
+                    val parsed = cache.get(yaml)!!
+                    (parsed.variables + parsed.dependentVariables).size shouldBeGreaterThan 0
+                }
             }
-        }
-        ClassPathScanner.resourcesMatching(".*\\.[yY][aA]?[mM][lL]", "failures").forEach { yaml ->
-            "${File(yaml.file).name} should not load" {
-                shouldThrow<RuntimeException> { LoadAlchemist.from(yaml).getDefault<Any, Nothing>() }
+            ClassPathScanner.resourcesMatching(".*\\.[yY][aA]?[mM][lL]", "failures").forEach { yaml ->
+                "${File(yaml.file).name} should not load" {
+                    shouldThrow<RuntimeException> { LoadAlchemist.from(yaml).getDefault<Any, Nothing>() }
+                }
             }
-        }
-    },
-)
+        },
+    )

@@ -14,13 +14,14 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.EmptyConcentrationSurrogate
 import kotlinx.serialization.PolymorphicSerializer
 
-class JsonFormatTest : StringSpec({
+class JsonFormatTest :
+    StringSpec({
 
-    "Polymorphic serialization and deserialization should work for EmptyConcentration" {
-        val concentration: Any = EmptyConcentrationSurrogate
-        val serialized = jsonFormat.encodeToString(PolymorphicSerializer(Any::class), concentration)
-        serialized.contains("type") shouldBe true
-        val deserialized = jsonFormat.decodeFromString(PolymorphicSerializer(Any::class), serialized)
-        deserialized shouldBe EmptyConcentrationSurrogate
-    }
-})
+        "Polymorphic serialization and deserialization should work for EmptyConcentration" {
+            val concentration: Any = EmptyConcentrationSurrogate
+            val serialized = jsonFormat.encodeToString(PolymorphicSerializer(Any::class), concentration)
+            serialized.contains("type") shouldBe true
+            val deserialized = jsonFormat.decodeFromString(PolymorphicSerializer(Any::class), serialized)
+            deserialized shouldBe EmptyConcentrationSurrogate
+        }
+    })

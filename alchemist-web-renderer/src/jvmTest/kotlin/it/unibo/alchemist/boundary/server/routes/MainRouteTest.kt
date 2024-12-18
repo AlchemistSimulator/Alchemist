@@ -18,5 +18,8 @@ import io.ktor.server.testing.ApplicationTestBuilder
 suspend fun ApplicationTestBuilder.mainRouteTest() {
     val response = client.get("/")
     response.status shouldBe HttpStatusCode.OK
-    response.bodyAsText() shouldBe this::class.java.classLoader.getResource("index.html")?.readText()
+    response.bodyAsText() shouldBe
+        this::class.java.classLoader
+            .getResource("index.html")
+            ?.readText()
 }

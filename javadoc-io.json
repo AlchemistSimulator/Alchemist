@@ -57,8 +57,8 @@
     "first": "https://javadoc.io/doc/commons-io/commons-io/2.18.0",
     "second": "https://javadoc.io/doc/commons-io/commons-io/2.18.0/element-list"
   },
-  "io.arrow-kt/arrow-core/1.2.4": {
-    "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/1.2.4"
+  "io.arrow-kt/arrow-core/2.0.0": {
+    "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/2.0.0"
   },
   "io.github.classgraph/classgraph/4.8.179": {
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.179"
@@ -112,9 +112,8 @@
     "first": "https://javadoc.io/doc/org.danilopianini/java-quadtree/0.2.1",
     "second": "https://javadoc.io/doc/org.danilopianini/java-quadtree/0.2.1/package-list"
   },
-  "org.danilopianini/jirf/0.4.26": {
-    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.26",
-    "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.26/element-list"
+  "org.danilopianini/jirf/0.4.27": {
+    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.27"
   },
   "org.danilopianini/listset/0.3.9": {
     "first": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9",
@@ -142,8 +141,8 @@
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/null"
   },
-  "org.jetbrains.kotlin/kotlin-stdlib/2.0.21": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.0.21"
+  "org.jetbrains.kotlin/kotlin-stdlib/2.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.1.0"
   },
   "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.9.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.9.0"
@@ -162,11 +161,11 @@
   "org.mongodb/mongodb-driver-sync/5.2.1": {
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.2.1"
   },
-  "org.protelis/protelis-interpreter/17.7.0": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.7.0"
+  "org.protelis/protelis-interpreter/17.7.1": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.7.1"
   },
-  "org.protelis/protelis-lang/17.7.0": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.7.0"
+  "org.protelis/protelis-lang/17.7.1": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.7.1"
   },
   "org.scala-lang/scala-compiler/2.13.15": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.15"

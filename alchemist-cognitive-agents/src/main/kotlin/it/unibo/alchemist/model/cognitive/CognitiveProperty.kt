@@ -32,8 +32,10 @@ interface CognitiveProperty<T> : NodeProperty<T> {
      * The mind model of all people considered influential for this cognitive pedestrian.
      */
     fun influentialPeople(): List<CognitiveModel> =
-        node.asProperty<T, PerceptiveProperty<T>>()
-            .senses.flatMap { it.value.influentialNodes() }
+        node
+            .asProperty<T, PerceptiveProperty<T>>()
+            .senses
+            .flatMap { it.value.influentialNodes() }
             .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>() }
             .map { it.cognitiveModel }
 }

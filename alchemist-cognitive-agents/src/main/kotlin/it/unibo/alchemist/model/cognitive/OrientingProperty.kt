@@ -20,7 +20,8 @@ import it.unibo.alchemist.model.geometry.navigationgraph.NavigationGraph
 /**
  * A node's capability to orient.
  */
-interface OrientingProperty<T, P, A, L, N, E> : NodeProperty<T>
+interface OrientingProperty<T, P, A, L, N, E> :
+    NodeProperty<T>
     where P : Position<P>,
           P : Vector<P>,
           A : Transformation<P>,

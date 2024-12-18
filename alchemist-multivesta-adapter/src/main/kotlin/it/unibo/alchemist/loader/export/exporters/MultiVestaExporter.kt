@@ -42,11 +42,12 @@ class MultiVestaExporter<T, P : Position<P>>
             logger.info("Exporting data for time $time")
             values = values + (
                 environment.simulation to
-                    dataExtractors.flatMap { extractor ->
-                        extractor.extractData(environment, reaction, time, step).map { (dataLabel, dataValue) ->
-                            dataLabel to dataValue
-                        }
-                    }.toMap()
+                    dataExtractors
+                        .flatMap { extractor ->
+                            extractor.extractData(environment, reaction, time, step).map { (dataLabel, dataValue) ->
+                                dataLabel to dataValue
+                            }
+                        }.toMap()
             )
         }
 

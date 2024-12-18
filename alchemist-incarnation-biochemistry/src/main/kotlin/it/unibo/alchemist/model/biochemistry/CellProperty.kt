@@ -88,16 +88,13 @@ interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
     /**
      * Returns a set of [Node]s which are linked with the current node by a junction of the type [junction].
      */
-    fun getNeighborLinkWithJunction(junction: Junction): Set<Node<Double>> {
-        return junctions.getOrElse(junction) { LinkedHashMap() }.keys
-    }
+    fun getNeighborLinkWithJunction(junction: Junction): Set<Node<Double>> =
+        junctions.getOrElse(junction) { LinkedHashMap() }.keys
 
     /**
      * Returns set of [Node]s which are linked by a junction with the current [node].
      */
-    fun getAllNodesLinkWithJunction(): Set<Node<Double>> {
-        return junctions.values.flatMap { it.keys }.toSet()
-    }
+    fun getAllNodesLinkWithJunction(): Set<Node<Double>> = junctions.values.flatMap { it.keys }.toSet()
 
     /**
      * The total number of junctions presents in this [node].

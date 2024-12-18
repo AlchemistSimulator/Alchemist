@@ -35,7 +35,8 @@ class ConnectIfInLineOfSigthOnMap<T>
                 "Cannot operate of environments of type " + environment::class.simpleName
             }
             val inRange =
-                environment.getNodesWithinRange(center, maxRange)
+                environment
+                    .getNodesWithinRange(center, maxRange)
                     .filter { target ->
                         val losDistance = environment.getDistanceBetweenNodes(center, target)
                         val outbound = environment.computeRoute(center, target)

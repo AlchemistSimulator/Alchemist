@@ -84,20 +84,23 @@ object NaviGator {
                 .grow(obstacles, unity)
         val graph = DirectedEuclidean2DNavigationGraph(Euclidean2DPassage::class.java)
         seeds.forEach { graph.addVertex(it) }
-        seeds.flatMap { seed ->
-            seed.edges().mapIndexed { index, edge ->
-                if (edge.isHorizontal || edge.isVertical) {
-                    val passages = seed.findPassages(index, seeds, origin, width, height, obstacles, unity)
+        seeds
+            .flatMap { seed ->
+                seed
+                    .edges()
+                    .mapIndexed { index, edge ->
+                        if (edge.isHorizontal || edge.isVertical) {
+                            val passages = seed.findPassages(index, seeds, origin, width, height, obstacles, unity)
                     /*
                      * Moves the edge back to its previous position as findCrossings modified it.
                      */
-                    seed.replaceEdge(index, edge)
-                    passages
-                } else {
-                    emptyList()
-                }
-            }.flatten()
-        }.forEach { graph.addEdge(it.tail, it.head, it) }
+                            seed.replaceEdge(index, edge)
+                            passages
+                        } else {
+                            emptyList()
+                        }
+                    }.flatten()
+            }.forEach { graph.addEdge(it.tail, it.head, it) }
 
         return graph
     }
@@ -167,7 +170,8 @@ object NaviGator {
                      * A seed is considered intersected if it intersects with the polygon and, in particular, with the
                      * remaining portion of the advancing edge. Similarly for obstacles below.
                      */
-                        it != this && it.intersects(asAwtShape()) &&
+                        it != this &&
+                            it.intersects(asAwtShape()) &&
                             polygonToInterval(it).intersectsBoundsExcluded(
                                 remaining,
                             )
@@ -219,14 +223,15 @@ object NaviGator {
                         }
                     }
                 return passages +
-                    newRemaining.flatMap {
+                    newRemaining
+                        .flatMap {
                 /*
                  * The portions of edge that became passages won't be considered further.
                  */
-                        it.subtractAll(neighborToIntervals.flatMap { (_, intervals) -> intervals })
-                    }.flatMap {
-                        findPassages(index, seeds, origin, width, height, obstacles, unity, oldEdge, it)
-                    }
+                            it.subtractAll(neighborToIntervals.flatMap { (_, intervals) -> intervals })
+                        }.flatMap {
+                            findPassages(index, seeds, origin, width, height, obstacles, unity, oldEdge, it)
+                        }
             }
 
     private fun createSeed(

@@ -24,21 +24,15 @@ object SimulationApi {
     /**
      * Get the simulation status as a [StatusSurrogate].
      */
-    suspend fun getSimulationStatus(): StatusSurrogate {
-        return client.get(endpoint + Routes.SIMULATION_STATUS_PATH).body()
-    }
+    suspend fun getSimulationStatus(): StatusSurrogate = client.get(endpoint + Routes.SIMULATION_STATUS_PATH).body()
 
     /**
      * Plays the simulation.
      */
-    suspend fun playSimulation(): HttpResponse {
-        return client.post(endpoint + Routes.SIMULATION_PLAY_PATH)
-    }
+    suspend fun playSimulation(): HttpResponse = client.post(endpoint + Routes.SIMULATION_PLAY_PATH)
 
     /**
      * Pauses the simulation.
      */
-    suspend fun pauseSimulation(): HttpResponse {
-        return client.post(endpoint + Routes.SIMULATION_PAUSE_PATH)
-    }
+    suspend fun pauseSimulation(): HttpResponse = client.post(endpoint + Routes.SIMULATION_PAUSE_PATH)
 }

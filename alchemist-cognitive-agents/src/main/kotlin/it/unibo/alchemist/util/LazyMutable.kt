@@ -15,7 +15,9 @@ import kotlin.reflect.KProperty
 /**
  * A delegate allowing to lazily initialise a non-null mutable variable (= var).
  */
-class LazyMutable<T>(private val initializer: () -> T) : ReadWriteProperty<Any?, T> {
+class LazyMutable<T>(
+    private val initializer: () -> T,
+) : ReadWriteProperty<Any?, T> {
     private var value: T? = null
 
     override fun getValue(

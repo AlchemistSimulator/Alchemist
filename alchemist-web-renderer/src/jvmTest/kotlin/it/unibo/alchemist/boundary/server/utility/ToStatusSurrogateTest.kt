@@ -15,12 +15,13 @@ import it.unibo.alchemist.boundary.webui.common.model.surrogate.StatusSurrogate
 import it.unibo.alchemist.boundary.webui.server.surrogates.utility.toStatusSurrogate
 import it.unibo.alchemist.core.Status
 
-class ToStatusSurrogateTest : StringSpec({
-    "ToStatusSurrogate should map a Status to a StatusSurrogate" {
-        Status.INIT.toStatusSurrogate() shouldBe StatusSurrogate.INIT
-        Status.READY.toStatusSurrogate() shouldBe StatusSurrogate.READY
-        Status.PAUSED.toStatusSurrogate() shouldBe StatusSurrogate.PAUSED
-        Status.RUNNING.toStatusSurrogate() shouldBe StatusSurrogate.RUNNING
-        Status.TERMINATED.toStatusSurrogate() shouldBe StatusSurrogate.TERMINATED
-    }
-})
+class ToStatusSurrogateTest :
+    StringSpec({
+        "ToStatusSurrogate should map a Status to a StatusSurrogate" {
+            Status.INIT.toStatusSurrogate() shouldBe StatusSurrogate.INIT
+            Status.READY.toStatusSurrogate() shouldBe StatusSurrogate.READY
+            Status.PAUSED.toStatusSurrogate() shouldBe StatusSurrogate.PAUSED
+            Status.RUNNING.toStatusSurrogate() shouldBe StatusSurrogate.RUNNING
+            Status.TERMINATED.toStatusSurrogate() shouldBe StatusSurrogate.TERMINATED
+        }
+    })

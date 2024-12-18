@@ -24,7 +24,8 @@ class NoOtherReactionCanExecute<T>(
 ) : AbstractNonPropensityContributingCondition<T>(node) {
     init {
         require(
-            node.reactions.asSequence()
+            node.reactions
+                .asSequence()
                 .flatMap { it.conditions }
                 .none { it is NoOtherReactionCanExecute<T> },
         ) {

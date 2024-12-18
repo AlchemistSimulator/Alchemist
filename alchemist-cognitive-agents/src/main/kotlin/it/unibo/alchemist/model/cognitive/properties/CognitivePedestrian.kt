@@ -25,11 +25,10 @@ class CognitivePedestrian<T, S, A>(
     where S : Vector<S>, A : Transformation<S> {
     private val cognitiveModel by lazy { node.asProperty<T, CognitiveProperty<T>>().cognitiveModel }
 
-    override fun speed(): Double {
-        return if (cognitiveModel.wantsToEscape()) {
+    override fun speed(): Double =
+        if (cognitiveModel.wantsToEscape()) {
             runningSpeed * minOf(cognitiveModel.escapeIntention(), 1.0)
         } else {
             walkingSpeed * minOf(cognitiveModel.remainIntention(), 1.0)
         }
-    }
 }

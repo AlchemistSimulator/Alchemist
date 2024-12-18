@@ -72,7 +72,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.22
-      - uses: DanySK/build-check-deploy-gradle-action@3.5.23
+      - uses: DanySK/build-check-deploy-gradle-action@3.5.27
         with:
           pre-build-command: true
           build-command: |
@@ -96,7 +96,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.22
-      - uses: DanySK/build-check-deploy-gradle-action@3.5.23
+      - uses: DanySK/build-check-deploy-gradle-action@3.5.27
         with:
           retries-on-failure: 5
           wait-between-retries: 120
@@ -110,7 +110,7 @@ jobs:
       - name: Tar files
         run: tar -cvf website.tar build/website
       - name: Upload website
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v4.5.0
         with:
           name: website-${{ github.sha }}
           path: website.tar
@@ -150,7 +150,7 @@ jobs:
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4.2.2
-      - uses: DanySK/build-check-deploy-gradle-action@3.5.23
+      - uses: DanySK/build-check-deploy-gradle-action@3.5.27
         with:
           maven-central-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
@@ -196,7 +196,7 @@ jobs:
     steps:
       - name: Checkout with full history
         uses: danysk/action-checkout@0.2.22
-      - uses: DanySK/build-check-deploy-gradle-action@3.5.23
+      - uses: DanySK/build-check-deploy-gradle-action@3.5.27
         with:
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
@@ -232,20 +232,20 @@ jobs:
             fi
       - name: Upload fatjars built on Linux
         if: ${{ runner.os == 'Linux' }}
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v4.5.0
         with:
           name: fat-jars-${{ github.sha }}
           path: build/shadow/*
           if-no-files-found: error
       - name: Upload the PKGBUILD
         if: ${{ runner.os == 'Linux' }}
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v4.5.0
         with:
           name: pkgbuild-${{ github.sha }}
           path: build/pkgbuild/PKGBUILD
           if-no-files-found: error
       - name: Upload platform-specific packages
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v4.5.0
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
           path: build/package/*
@@ -478,7 +478,7 @@ jobs:
         uses: actions/setup-node@v4.1.0
         with:
           node-version-file: package.json
-      - uses: DanySK/build-check-deploy-gradle-action@3.5.23
+      - uses: DanySK/build-check-deploy-gradle-action@3.5.27
         env:
           STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
           MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}

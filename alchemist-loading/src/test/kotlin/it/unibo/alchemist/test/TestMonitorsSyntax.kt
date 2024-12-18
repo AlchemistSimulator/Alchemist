@@ -18,20 +18,21 @@ import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.test.AlchemistTesting.loadAlchemist
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 
-class TestMonitorsSyntax<T, P : Position<P>> : FreeSpec(
-    {
-        "output monitor can be specified via YAML" {
-            val simulation = loadAlchemist<T, P>("testmonitors.yml")
-            simulation.environment.addTerminator(AfterTime(DoubleTime(1.0)))
-            val monitor = simulation.outputMonitors.first()
-            simulation.runInCurrentThread()
-            when (monitor) {
-                is SimpleMonitor -> {
-                    monitor.initialized shouldBe true
-                    monitor.finished shouldBe true
+class TestMonitorsSyntax<T, P : Position<P>> :
+    FreeSpec(
+        {
+            "output monitor can be specified via YAML" {
+                val simulation = loadAlchemist<T, P>("testmonitors.yml")
+                simulation.environment.addTerminator(AfterTime(DoubleTime(1.0)))
+                val monitor = simulation.outputMonitors.first()
+                simulation.runInCurrentThread()
+                when (monitor) {
+                    is SimpleMonitor -> {
+                        monitor.initialized shouldBe true
+                        monitor.finished shouldBe true
+                    }
+                    else -> error("Unexpected monitor type")
                 }
-                else -> error("Unexpected monitor type")
             }
-        }
-    },
-)
+        },
+    )

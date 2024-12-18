@@ -20,32 +20,33 @@ import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.test.loadYamlSimulation
 import it.unibo.alchemist.test.startSimulation
 
-class TestPedestriansLoading<T, P, A> : StringSpec({
+class TestPedestriansLoading<T, P, A> :
+    StringSpec({
 
-    "homogeneous pedestrians loading" {
-        loadYamlSimulation<T, P>("homogeneous-pedestrians.yml").startSimulation()
-    }
-
-    "heterogeneous pedestrians loading" {
-        loadYamlSimulation<T, P>("heterogeneous-pedestrians.yml").startSimulation()
-    }
-
-    "cognitive pedestrians loading" {
-        loadYamlSimulation<T, P>("cognitive-pedestrians.yml").startSimulation()
-    }
-
-    "can't give non-cognitive pedestrians cognitive characteristics" {
-        shouldThrow<RuntimeException> {
-            loadYamlSimulation<T, P>("cant-give-cognitive-to-heterogeneous.yml").startSimulation()
-            fail("An heterogeneous pedestrian can't have cognitive capabilities")
+        "homogeneous pedestrians loading" {
+            loadYamlSimulation<T, P>("homogeneous-pedestrians.yml").startSimulation()
         }
-    }
 
-    "groups of pedestrians loading" {
-        loadYamlSimulation<T, P>("groups.yml").startSimulation(
-            onceInitialized = { environment ->
-                environment.nodes.forEach { it.asPropertyOrNull<T, SocialProperty<T>>().shouldNotBeNull() }
-            },
-        )
-    }
-}) where P : Position<P>, P : Vector<P>, A : Transformation<P>
+        "heterogeneous pedestrians loading" {
+            loadYamlSimulation<T, P>("heterogeneous-pedestrians.yml").startSimulation()
+        }
+
+        "cognitive pedestrians loading" {
+            loadYamlSimulation<T, P>("cognitive-pedestrians.yml").startSimulation()
+        }
+
+        "can't give non-cognitive pedestrians cognitive characteristics" {
+            shouldThrow<RuntimeException> {
+                loadYamlSimulation<T, P>("cant-give-cognitive-to-heterogeneous.yml").startSimulation()
+                fail("An heterogeneous pedestrian can't have cognitive capabilities")
+            }
+        }
+
+        "groups of pedestrians loading" {
+            loadYamlSimulation<T, P>("groups.yml").startSimulation(
+                onceInitialized = { environment ->
+                    environment.nodes.forEach { it.asPropertyOrNull<T, SocialProperty<T>>().shouldNotBeNull() }
+                },
+            )
+        }
+    }) where P : Position<P>, P : Vector<P>, A : Transformation<P>

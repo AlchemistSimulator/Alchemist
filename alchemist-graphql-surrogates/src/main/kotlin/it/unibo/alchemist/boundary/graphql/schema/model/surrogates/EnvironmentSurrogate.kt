@@ -38,7 +38,8 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * Subsequent updates should be made whenever the [Environment.addLayer] is called.
      */
     private val moleculeToLayer: Map<Molecule, Layer<T, P>?> =
-        origin.nodes.map { it.contents.keys }
+        origin.nodes
+            .map { it.contents.keys }
             .flatten()
             .distinct()
             .associateWith { origin.getLayer(it).getOrNull() }

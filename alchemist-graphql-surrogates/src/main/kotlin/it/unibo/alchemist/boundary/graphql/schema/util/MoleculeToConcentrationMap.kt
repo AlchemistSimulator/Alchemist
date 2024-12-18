@@ -58,6 +58,7 @@ data class MoleculeToConcentrationEntry(
  */
 fun <T> Map<Molecule, T>.toMoleculeToConcentrationMap() =
     MoleculeToConcentrationMap(
-        this.mapKeys { it.key.toGraphQLMoleculeSurrogate() }
+        this
+            .mapKeys { it.key.toGraphQLMoleculeSurrogate() }
             .mapValues { encodeConcentrationContentToString(it.value) },
     )

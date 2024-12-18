@@ -32,7 +32,8 @@ data class Cognitive<T, P, A, F>
         private val environment: PhysicsEnvironment<T, P, A, F>,
         override val node: Node<T>,
         override val danger: Molecule? = null,
-    ) : AbstractNodeProperty<T>(node), CognitiveProperty<T>
+    ) : AbstractNodeProperty<T>(node),
+        CognitiveProperty<T>
     where P : Position<P>,
           P : Vector<P>,
           A : Transformation<P>,
@@ -42,7 +43,8 @@ data class Cognitive<T, P, A, F>
             node.asProperty<T, HumanProperty<T, P, A>>().compliance,
             ::influentialPeople,
         ) {
-            environment.getLayer(danger)
+            environment
+                .getLayer(danger)
                 .map { it.getValue(environment.getPosition(node)) as Double }
                 .orElse(0.0)
         }

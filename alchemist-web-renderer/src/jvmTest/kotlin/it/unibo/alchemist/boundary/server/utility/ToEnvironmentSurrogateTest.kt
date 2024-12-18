@@ -19,26 +19,27 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.Vector
 import org.junit.jupiter.api.fail
 
-class ToEnvironmentSurrogateTest<T, P> : StringSpec({
+class ToEnvironmentSurrogateTest<T, P> :
+    StringSpec({
 
-    "ToEnvironmentSurrogate should map an Environment to an EnvironmentSurrogate" {
-        webRendererTestEnvironments<T, P>().forEach {
-            val environment = it.environment
-            val environmentSurrogate =
-                environment.toEnvironmentSurrogate(
-                    toEmptyConcentration,
-                    toSuitablePositionSurrogate(environment.dimensions),
-                )
-            environment.dimensions shouldBe environmentSurrogate.dimensions
-            environment.nodes.size shouldBe environmentSurrogate.nodes.size
-            environment.nodes.forEach { node ->
-                val surrogateNode = environmentSurrogate.nodes.find { surrogateNode -> node.id == surrogateNode.id }
-                if (surrogateNode != null) {
-                    checkToNodeSurrogate(environment, node, surrogateNode)
-                } else {
-                    fail("Can't find a corresponding SurrogateNode")
+        "ToEnvironmentSurrogate should map an Environment to an EnvironmentSurrogate" {
+            webRendererTestEnvironments<T, P>().forEach {
+                val environment = it.environment
+                val environmentSurrogate =
+                    environment.toEnvironmentSurrogate(
+                        toEmptyConcentration,
+                        toSuitablePositionSurrogate(environment.dimensions),
+                    )
+                environment.dimensions shouldBe environmentSurrogate.dimensions
+                environment.nodes.size shouldBe environmentSurrogate.nodes.size
+                environment.nodes.forEach { node ->
+                    val surrogateNode = environmentSurrogate.nodes.find { surrogateNode -> node.id == surrogateNode.id }
+                    if (surrogateNode != null) {
+                        checkToNodeSurrogate(environment, node, surrogateNode)
+                    } else {
+                        fail("Can't find a corresponding SurrogateNode")
+                    }
                 }
             }
         }
-    }
-})where T : Any, P : Position<P>, P : Vector<P>
+    })where T : Any, P : Position<P>, P : Vector<P>

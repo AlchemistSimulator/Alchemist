@@ -88,13 +88,11 @@ open class DefaultLauncher
                                     simulation.run()
                                     simulation.error.ifPresent { throw it }
                                     logger.info("Simulation with {} completed successfully", instance)
-                                }
-                                .onFailure {
+                                }.onFailure {
                                     logger.error("Failure for simulation with $instance", it)
                                     errorQueue.add(it)
                                     executor.shutdownNow()
-                                }
-                                .onSuccess {
+                                }.onSuccess {
                                     if (showProgress) {
                                         logger.info("Simulation {} of {} completed", index + 1, instances.size)
                                     }
@@ -133,19 +131,21 @@ open class DefaultLauncher
                     "Variables ${variables - keys} are not defined. Valid values are: $this"
                 }
                 val variableValues =
-                    variables.map { variableName ->
-                        this[variableName]
-                            ?.map { variableName to it }
-                            ?: BugReporting.reportBug(
-                                "Variable was supposed to be available, but it is not",
-                                mapOf(
-                                    "variableName" to variableName,
-                                    "requested variables" to variables,
-                                    "available variables" to this,
-                                ),
-                            )
-                    }.toList()
-                return Lists.cartesianProduct(variableValues)
+                    variables
+                        .map { variableName ->
+                            this[variableName]
+                                ?.map { variableName to it }
+                                ?: BugReporting.reportBug(
+                                    "Variable was supposed to be available, but it is not",
+                                    mapOf(
+                                        "variableName" to variableName,
+                                        "requested variables" to variables,
+                                        "available variables" to this,
+                                    ),
+                                )
+                        }.toList()
+                return Lists
+                    .cartesianProduct(variableValues)
                     .map { it.toMap() }
                     .takeUnless { it.isEmpty() }
                     ?: listOf(emptyMap())

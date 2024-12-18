@@ -18,7 +18,9 @@ import it.unibo.alchemist.model.Time
  */
 class Time
     @JvmOverloads
-    constructor(precision: Int? = null) : AbstractDoubleExporter(precision) {
+    constructor(
+        precision: Int? = null,
+    ) : AbstractDoubleExporter(precision) {
         override val columnNames = listOf(NAME)
 
         override fun <T> extractData(

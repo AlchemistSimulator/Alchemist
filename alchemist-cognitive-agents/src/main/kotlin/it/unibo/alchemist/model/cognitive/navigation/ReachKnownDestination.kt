@@ -53,7 +53,8 @@ open class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
                     .map { it to it.distanceTo(currPos) }
                     .minByOrNull { it.second }
                     ?: throw IllegalArgumentException("internal error: destinations can't be empty at this point")
-            destinations.asSequence()
+            destinations
+                .asSequence()
                 .sortedBy { it.distanceTo(currPos) }
                 .map { it to findKnownPathTo(it) }
                 .filter { (_, path) ->
@@ -64,8 +65,7 @@ open class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
                      * because otherwise it's more convenient to just pursue the latter).
                      */
                     path.isNotEmpty() && currPos.distanceTo(path.first().centroid) < distanceToClosestDest
-                }
-                .map { (destination, path) -> path.map { it.centroid } + destination }
+                }.map { (destination, path) -> path.map { it.centroid } + destination }
                 .firstOrNull() ?: listOf(closestDest)
         }
         setDestination(route[0])
@@ -107,8 +107,7 @@ open class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
                      * introduced.
                      */
                         BFSShortestPath(this).getPath(start, end)?.vertexList
-                    }
-                    .firstOrNull()
+                    }.firstOrNull()
                     .orEmpty()
             }
         }
@@ -127,7 +126,10 @@ open class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
         endRoom: ConvexPolygon,
     ): Sequence<Pair<L, L>> {
         val landmarksIn: (room: ConvexPolygon) -> Sequence<L> = { room ->
-            orientingCapability.cognitiveMap.vertexSet().asSequence().filter { room.contains(it.centroid) }
+            orientingCapability.cognitiveMap
+                .vertexSet()
+                .asSequence()
+                .filter { room.contains(it.centroid) }
         }
         val landmarksInAny: (rooms: List<ConvexPolygon>) -> Sequence<L> = { rooms ->
             rooms.asSequence().flatMap(landmarksIn)

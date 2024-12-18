@@ -20,33 +20,34 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import org.kaikikm.threadresloader.ResourceLoader
 
-class TestAfterTime : FreeSpec(
-    {
-        "simulation with AfterTime terminator should end" {
-            val simulation: Simulation<Nothing, Nothing> =
-                LoadAlchemist.from(ResourceLoader.getResource("termination.yml")).getDefault()
-            simulation.addOutputMonitor(
-                object : OutputMonitor<Nothing, Nothing> {
-                    override fun finished(
-                        environment: Environment<Nothing, Nothing>,
-                        time: Time,
-                        step: Long,
-                    ) = Unit
+class TestAfterTime :
+    FreeSpec(
+        {
+            "simulation with AfterTime terminator should end" {
+                val simulation: Simulation<Nothing, Nothing> =
+                    LoadAlchemist.from(ResourceLoader.getResource("termination.yml")).getDefault()
+                simulation.addOutputMonitor(
+                    object : OutputMonitor<Nothing, Nothing> {
+                        override fun finished(
+                            environment: Environment<Nothing, Nothing>,
+                            time: Time,
+                            step: Long,
+                        ) = Unit
 
-                    override fun initialized(environment: Environment<Nothing, Nothing>) = Unit
+                        override fun initialized(environment: Environment<Nothing, Nothing>) = Unit
 
-                    override fun stepDone(
-                        environment: Environment<Nothing, Nothing>,
-                        reaction: Actionable<Nothing>?,
-                        time: Time,
-                        step: Long,
-                    ) {
-                        time.toDouble() shouldBeLessThan 2.0
-                    }
-                },
-            )
-            simulation.runInCurrentThread()
-            simulation.error.ifPresent { throw it }
-        }
-    },
-)
+                        override fun stepDone(
+                            environment: Environment<Nothing, Nothing>,
+                            reaction: Actionable<Nothing>?,
+                            time: Time,
+                            step: Long,
+                        ) {
+                            time.toDouble() shouldBeLessThan 2.0
+                        }
+                    },
+                )
+                simulation.runInCurrentThread()
+                simulation.error.ifPresent { throw it }
+            }
+        },
+    )

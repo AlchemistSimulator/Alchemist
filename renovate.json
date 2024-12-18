@@ -23,7 +23,7 @@
     {
       "description": "Identify some updates as core",
       "matchDepNames": [
-        "/^it\\.unibo\\scafi:.*/",
+        "/^it\\.unibo\\.scafi:.*/",
         "/^org\\.jetbrains\\.kotlin:.*/",
         "/^org\\.protelis:.*/"
       ],

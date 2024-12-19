@@ -27,7 +27,6 @@ import org.gradle.plugin.use.PluginDependency
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URI
-import java.net.URL
 
 /**
  * Collector of imperative code.
@@ -48,7 +47,7 @@ object Util {
 
     private val javadocIOcacheFile = File("javadoc-io.json")
     private val gson = Gson().newBuilder().setPrettyPrinting().create()
-    private val mapType = object : TypeToken<MutableMap<String, Pair<URL, URL?>>>() { }.type
+    private val mapType = object : TypeToken<MutableMap<String, Pair<URI, URI?>>>() { }.type
 
     private val javadocIO: MutableMap<String, Pair<URI, URI?>> = javadocIOcacheFile
         .takeIf(File::exists)

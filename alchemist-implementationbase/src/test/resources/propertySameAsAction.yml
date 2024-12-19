@@ -1,0 +1,33 @@
+variables:
+  seed: &seed
+    min: 0
+    max: 2
+    step: 1
+    default: 1
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: 5.01
+
+seeds:
+  scenario: *seed
+  simulation: *seed
+
+incarnation: protelis
+
+_pool: &program
+  - time-distribution:
+      type: DiracComb
+      parameters: [ 0, 1 ]
+    type: Event
+    actions:
+      - type: EvaluateSpawning
+        parameters: [ ]
+
+deployments:
+  - type: Point
+    parameters: [0, 0]
+    programs:
+      - *program
+    properties:
+      - type: it.unibo.alchemist.device.properties.UpdateStatusProperty

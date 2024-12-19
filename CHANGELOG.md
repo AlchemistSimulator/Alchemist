@@ -1,3 +1,32 @@
+## [36.0.10](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.9...36.0.10) (2024-12-19)
+
+### Dependency updates
+
+* **core-deps:** update dependency it.unibo.scafi:scafi-core_2.13 to v1.4.0 ([#4027](https://github.com/AlchemistSimulator/Alchemist/issues/4027)) ([eadb81e](https://github.com/AlchemistSimulator/Alchemist/commit/eadb81efe6788eed78401640bb4c8a624b953b9a))
+* **core-deps:** update dependency it.unibo.scafi:scafi-core_2.13 to v1.5.0 ([#4028](https://github.com/AlchemistSimulator/Alchemist/issues/4028)) ([044b36f](https://github.com/AlchemistSimulator/Alchemist/commit/044b36f4389efddbc8bec60c12f6f09537cc7155))
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.13 ([#4026](https://github.com/AlchemistSimulator/Alchemist/issues/4026)) ([71aabd6](https://github.com/AlchemistSimulator/Alchemist/commit/71aabd6dd221e6d46d517c639685ce41205d9dca))
+* **deps:** update dependency com.google.guava:guava to v33.4.0-jre ([#4016](https://github.com/AlchemistSimulator/Alchemist/issues/4016)) ([18f763c](https://github.com/AlchemistSimulator/Alchemist/commit/18f763cb12116f4510509f9415770c9e187aefa5))
+
+### Build and continuous integration
+
+* **deps:** update actions/upload-artifact action to v4.5.0 ([#4020](https://github.com/AlchemistSimulator/Alchemist/issues/4020)) ([7b291c6](https://github.com/AlchemistSimulator/Alchemist/commit/7b291c6afcd72a1a092dd7cf6c316baef771af0d))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.26 ([#4021](https://github.com/AlchemistSimulator/Alchemist/issues/4021)) ([f3f1e83](https://github.com/AlchemistSimulator/Alchemist/commit/f3f1e83246eca702c1adfb36d18eb785ea546ce0))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.27 ([#4022](https://github.com/AlchemistSimulator/Alchemist/issues/4022)) ([bae0b30](https://github.com/AlchemistSimulator/Alchemist/commit/bae0b301bbf775ebae9281756cd1cb933f7f2a97))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.5.28 ([#4029](https://github.com/AlchemistSimulator/Alchemist/issues/4029)) ([a3482be](https://github.com/AlchemistSimulator/Alchemist/commit/a3482bec2a0dfaec6c516e7279292627346261c0))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([55308d1](https://github.com/AlchemistSimulator/Alchemist/commit/55308d14deb2a973f407d6d865c86139119bcdc3))
+* **build:** update the javadoc.io cache ([6b59846](https://github.com/AlchemistSimulator/Alchemist/commit/6b59846f61298d3ba19a277561d03791ad3ace14))
+* **build:** update the javadoc.io cache ([ff51fd4](https://github.com/AlchemistSimulator/Alchemist/commit/ff51fd4c9de897cd378bb1f75c39f464b8a59ca5))
+* **build:** update the javadoc.io cache ([45890a5](https://github.com/AlchemistSimulator/Alchemist/commit/45890a587be659c18151ca4d9600dfa6e2984091))
+* **loading:** remove dependency on Guava's `Charsets` ([#4025](https://github.com/AlchemistSimulator/Alchemist/issues/4025)) ([f78b22a](https://github.com/AlchemistSimulator/Alchemist/commit/f78b22a2401b41ac707c16d8e7b9ad3e5aabf897))
+* **renovate:** fix matching of scafi ([613f86c](https://github.com/AlchemistSimulator/Alchemist/commit/613f86cc2f5f304c9035661ac010e61ffe26947e))
+
+### Style improvements
+
+* disable `ktlint_standard_class-signature` only on kotlin tests, as per [@paul-dingemans](https://github.com/paul-dingemans)' suggestion in pinterest/ktlint[#2902](https://github.com/AlchemistSimulator/Alchemist/issues/2902) ([#4024](https://github.com/AlchemistSimulator/Alchemist/issues/4024)) ([7252966](https://github.com/AlchemistSimulator/Alchemist/commit/7252966da1ad8d69254e1eaac38224f86ebaed22))
+
 ## [36.0.9](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.8...36.0.9) (2024-12-17)
 
 ### Documentation

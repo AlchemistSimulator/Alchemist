@@ -1,6 +1,6 @@
 {
-  "ch.qos.logback/logback-classic/1.5.13": {
-    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.13"
+  "ch.qos.logback/logback-classic/1.5.14": {
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.14"
   },
   "com.expediagroup/graphql-kotlin-hooks-provider/8.2.1": {
     "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/8.2.1"

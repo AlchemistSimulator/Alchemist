@@ -1,3 +1,14 @@
+## [36.0.11](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.10...36.0.11) (2024-12-19)
+
+### Dependency updates
+
+* **core-deps:** update dependency it.unibo.scafi:scafi-core_2.13 to v1.6.0 ([#4031](https://github.com/AlchemistSimulator/Alchemist/issues/4031)) ([87c3a0c](https://github.com/AlchemistSimulator/Alchemist/commit/87c3a0c7e268acd62689e5cc793eebd55d47ccea))
+* **deps:** update plugin java-qa to v1.79.0 ([#4030](https://github.com/AlchemistSimulator/Alchemist/issues/4030)) ([dabe2c5](https://github.com/AlchemistSimulator/Alchemist/commit/dabe2c541e52146edc9acaf0ed0eced63873f929))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([27e5fe5](https://github.com/AlchemistSimulator/Alchemist/commit/27e5fe5266716910bbfa2d4d32f4e84ea42bdf22))
+
 ## [36.0.10](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.9...36.0.10) (2024-12-19)
 
 ### Dependency updates

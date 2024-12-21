@@ -117,10 +117,6 @@ allprojects {
                     """.trimIndent(),
                 )
             }
-            // TODO: enable PMD when this bug is fixed: https://github.com/pmd/pmd/issues/5096
-            tasks.withType<Pmd>().configureEach {
-                enabled = false
-            }
         }
 
         tasks.withType<AbstractDokkaLeafTask>().configureEach {

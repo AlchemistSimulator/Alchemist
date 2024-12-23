@@ -1,3 +1,32 @@
+## [36.0.12](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.11...36.0.12) (2024-12-23)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.26 ([#4038](https://github.com/AlchemistSimulator/Alchemist/issues/4038)) ([efd99da](https://github.com/AlchemistSimulator/Alchemist/commit/efd99da041a6332b1f8807510a89bb842e1a15a5))
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.14 ([#4032](https://github.com/AlchemistSimulator/Alchemist/issues/4032)) ([3eea229](https://github.com/AlchemistSimulator/Alchemist/commit/3eea229f8ac15b91e165bcda9ebc41c4e9de35a0))
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.15 ([#4044](https://github.com/AlchemistSimulator/Alchemist/issues/4044)) ([242335a](https://github.com/AlchemistSimulator/Alchemist/commit/242335a1f1aa6cd4e31c99dfb75c75652bf3153d))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.117 ([#4045](https://github.com/AlchemistSimulator/Alchemist/issues/4045)) ([36311f0](https://github.com/AlchemistSimulator/Alchemist/commit/36311f03c137fe13a475bf3da75df6b8e75641c7))
+* **deps:** update npm to v11 ([#4034](https://github.com/AlchemistSimulator/Alchemist/issues/4034)) ([398a03a](https://github.com/AlchemistSimulator/Alchemist/commit/398a03af3fcb29fa3bb5c5498c303fbb0affe771))
+* **deps:** update plugin multijvmtesting to v3.0.2 ([#4041](https://github.com/AlchemistSimulator/Alchemist/issues/4041)) ([db3734e](https://github.com/AlchemistSimulator/Alchemist/commit/db3734ec9e3f0c98354b6caabc455317b80622b1))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.18 ([#4043](https://github.com/AlchemistSimulator/Alchemist/issues/4043)) ([94d0254](https://github.com/AlchemistSimulator/Alchemist/commit/94d0254ee00bbe428397bb8c003c06f7e211df8f))
+* **deps:** update plugin publishoncentral to v7.0.2 ([#4033](https://github.com/AlchemistSimulator/Alchemist/issues/4033)) ([dfd485a](https://github.com/AlchemistSimulator/Alchemist/commit/dfd485a34e34a9fd44227470d0fba8a8b982be97))
+* **deps:** update plugin publishoncentral to v7.0.3 ([#4039](https://github.com/AlchemistSimulator/Alchemist/issues/4039)) ([34a452d](https://github.com/AlchemistSimulator/Alchemist/commit/34a452da3af95628e46a0913265f85cd43db2cd1))
+* **deps:** update plugin publishoncentral to v7.0.4 ([#4042](https://github.com/AlchemistSimulator/Alchemist/issues/4042)) ([d178f88](https://github.com/AlchemistSimulator/Alchemist/commit/d178f885908d68c990bb6fd0e141ad2fc3680c36))
+* **deps:** update react to v19.0.0-pre.854 ([#4036](https://github.com/AlchemistSimulator/Alchemist/issues/4036)) ([c673ffa](https://github.com/AlchemistSimulator/Alchemist/commit/c673ffab19366824cd84d8a52160d042e13ebfdd))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.140.1 ([#4047](https://github.com/AlchemistSimulator/Alchemist/issues/4047)) ([fe1abb3](https://github.com/AlchemistSimulator/Alchemist/commit/fe1abb3a1f4ad77fc51f3685ac7df4d5ad521e8b))
+
+### Build and continuous integration
+
+* fix broken type of map for the javadoc.io cache ([#4035](https://github.com/AlchemistSimulator/Alchemist/issues/4035)) ([871def0](https://github.com/AlchemistSimulator/Alchemist/commit/871def02aa6da637c55e9913d5158c02634d552d))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([06eedc3](https://github.com/AlchemistSimulator/Alchemist/commit/06eedc34cefb7207658386c106d4eb16be84ab04))
+* **build:** update the javadoc.io cache ([17fcd05](https://github.com/AlchemistSimulator/Alchemist/commit/17fcd058df26c7d268dfe0061d547ca184cf66a4))
+
 ## [36.0.11](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.10...36.0.11) (2024-12-19)
 
 ### Dependency updates

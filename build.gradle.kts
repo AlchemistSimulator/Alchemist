@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.time.Duration
 
 plugins {
-    distribution
     alias(libs.plugins.dokka)
     alias(libs.plugins.gitSemVer)
     alias(libs.plugins.java.qa)
@@ -59,7 +58,6 @@ allprojects {
         apply(plugin = publishOnCentral.id)
         apply(plugin = taskTree.id)
     }
-    apply(plugin = "distribution")
 
     multiJvm {
         jvmVersionForCompilation.set(minJavaVersion.toInt())
@@ -172,15 +170,6 @@ allprojects {
             dependsOn(dokka)
             from(dokka.outputDirectory)
         }
-        publishing {
-            publications {
-                publications.withType<MavenPublication>().configureEach {
-                    if ("OSSRH" !in name) {
-                        artifact(tasks.javadocJar)
-                    }
-                }
-            }
-        }
         /*
          * This is a workaround for the following Gradle error,
          * and should be removed as soon as possible.
@@ -283,9 +272,9 @@ allprojects {
     }
 
     // Disable distribution tasks that just clutter the build
-    listOf(tasks.distZip, tasks.distTar).forEach {
-        it.configure { enabled = false }
-    }
+//    listOf(tasks.distZip, tasks.distTar).forEach {
+//        it.configure { enabled = false }
+//    }
 }
 
 /*

@@ -1,3 +1,27 @@
+## [36.0.13](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.12...36.0.13) (2024-12-28)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.27 ([#4053](https://github.com/AlchemistSimulator/Alchemist/issues/4053)) ([f762831](https://github.com/AlchemistSimulator/Alchemist/commit/f7628317b2a21d8af662c2938c4f21d5c1cdead7))
+* **deps:** update plugin java-qa to v1.80.0 ([#4050](https://github.com/AlchemistSimulator/Alchemist/issues/4050)) ([7624add](https://github.com/AlchemistSimulator/Alchemist/commit/7624addecfe0bcb8b1eeadcb97b63cde480d2a3e))
+* **deps:** update plugin multijvmtesting to v3.0.3 ([#4049](https://github.com/AlchemistSimulator/Alchemist/issues/4049)) ([2870467](https://github.com/AlchemistSimulator/Alchemist/commit/2870467f553a4a118bff12a3e095e159d86a00ae))
+* **deps:** update plugin multijvmtesting to v3.1.1 ([#4051](https://github.com/AlchemistSimulator/Alchemist/issues/4051)) ([1fb8475](https://github.com/AlchemistSimulator/Alchemist/commit/1fb847597f99ac13db6443bfc97945c80b70d943))
+* **deps:** update plugin multijvmtesting to v3.1.2 ([#4052](https://github.com/AlchemistSimulator/Alchemist/issues/4052)) ([8c8df8d](https://github.com/AlchemistSimulator/Alchemist/commit/8c8df8d20659588cd784c45687166adaba862923))
+
+### Documentation
+
+* fix missing code import in the YAML specification page ([ddb14e8](https://github.com/AlchemistSimulator/Alchemist/commit/ddb14e811cebab39df07152ce595183c5f3f5012))
+
+### Build and continuous integration
+
+* disable the `distribution` plugin ([#4048](https://github.com/AlchemistSimulator/Alchemist/issues/4048)) ([d130b47](https://github.com/AlchemistSimulator/Alchemist/commit/d130b47a5385f99713083b071f9f7d64c0d8ed29))
+* **sapere-mathexp:** use modern Kotlin syntax to disable javadoc errors ([7712d9e](https://github.com/AlchemistSimulator/Alchemist/commit/7712d9ef498edfd72b64b15e7148c93d70417a36))
+* **sapere-mathexp:** use task configuration avoidance ([7769865](https://github.com/AlchemistSimulator/Alchemist/commit/7769865f557092d36f7e6837edddda7676aa9d1e))
+
+### General maintenance
+
+* **sapere-mathexp:** remove dangling HTTP link ([ea8bcc1](https://github.com/AlchemistSimulator/Alchemist/commit/ea8bcc1c571b4d48a2fa5f41a3c8934c9f26c1a1))
+
 ## [36.0.12](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.11...36.0.12) (2024-12-23)
 
 ### Dependency updates

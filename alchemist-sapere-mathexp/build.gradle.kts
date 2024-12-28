@@ -15,7 +15,7 @@ dependencies {
 }
 
 listOf(Pmd::class, Checkstyle::class, SpotBugsTask::class, Cpd::class).forEach {
-    tasks.withType(it) {
+    tasks.withType(it).configureEach {
         enabled = false
         ignoreFailures = true
     }

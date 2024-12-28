@@ -22,7 +22,7 @@ listOf(Pmd::class, Checkstyle::class, SpotBugsTask::class, Cpd::class).forEach {
 }
 
 tasks.javadoc {
-    setFailOnError(false)
+    isFailOnError = false
 }
 
 publishing.publications {

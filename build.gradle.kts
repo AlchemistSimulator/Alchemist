@@ -174,7 +174,7 @@ dependencies {
     testRuntimeOnly(alchemist("physics"))
 
     // Dokka dependencies
-    subprojects.forEach { dokka(it) }
+    allprojects.forEach { dokka(it) }
 }
 
 tasks.matching { it.name == "kotlinStoreYarnLock" }.configureEach {
@@ -213,16 +213,38 @@ tasks.hugoBuild.configure {
     finalizedBy(copyDokkaInTheWebsite)
 }
 
-val performWebsiteStringReplacements by tasks.registering {
-    val index = File(websiteDir, "index.html")
-    mustRunAfter(copyDokkaInTheWebsite)
-    if (!index.exists()) {
-        logger.lifecycle("${index.absolutePath} does not exist")
-        dependsOn(copyDokkaInTheWebsite)
-    }
+val fixLinksToDokka by tasks.registering {
+    dependsOn(copyDokkaInTheWebsite)
     doLast {
+        val brokenLinkRegex =
+            Regex(
+                """/reference/kdoc/alchemist/(?<target>\w+(?:\.\w+)*/(?:-|\w)+)""",
+            )
+        val modules = checkNotNull(websiteDir.resolve("reference").resolve("kdoc").listFiles())
+        websiteDir
+            .walkTopDown()
+            .filter { file ->
+                file.isFile &&
+                    file.extension == "html" &&
+                    file.useLines { lines -> lines.any { brokenLinkRegex.containsMatchIn(it) } }
+            }.forEach { problematicFile ->
+                val newContent =
+                    problematicFile.readText().replace(brokenLinkRegex) { match ->
+                        val (target) = match.destructured
+                        val actualModule = modules.first { it.resolve(target).run { exists() && isDirectory } }.name
+                        "/reference/kdoc/$actualModule/$target"
+                    }
+                problematicFile.writeText(newContent)
+            }
+    }
+}
+
+val performWebsiteStringReplacements by tasks.registering {
+    dependsOn(fixLinksToDokka)
+    doLast {
+        val index = File(websiteDir, "index.html")
         require(index.exists()) {
-            "file ${index.absolutePath} existed during configuration, but it has been deleted."
+            "file ${index.absolutePath} has been deleted."
         }
         val websiteReplacements =
             file("site/replacements")

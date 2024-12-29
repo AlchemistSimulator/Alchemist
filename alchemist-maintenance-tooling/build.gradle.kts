@@ -9,3 +9,14 @@
 plugins {
     id("kotlin-multiplatform-convention")
 }
+
+kotlin {
+    js {
+        browser {
+            binaries.library()
+        }
+        nodejs {
+            binaries.library()
+        }
+    }
+}

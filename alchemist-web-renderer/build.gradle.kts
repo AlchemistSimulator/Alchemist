@@ -17,6 +17,14 @@ plugins {
 }
 
 kotlin {
+    js {
+        browser {
+            binaries.executable()
+        }
+        nodejs {
+            binaries.executable()
+        }
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {

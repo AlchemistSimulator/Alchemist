@@ -177,8 +177,8 @@ dependencies {
     subprojects.forEach { dokka(it) }
 }
 
-tasks.named("kotlinStoreYarnLock").configure {
-    dependsOn("kotlinUpgradeYarnLock")
+tasks.matching { it.name == "kotlinStoreYarnLock" }.configureEach {
+    dependsOn(rootProject.tasks.named("kotlinUpgradeYarnLock"))
 }
 
 // WEBSITE

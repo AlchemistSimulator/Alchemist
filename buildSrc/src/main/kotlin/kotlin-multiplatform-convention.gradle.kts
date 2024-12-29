@@ -1,4 +1,6 @@
 import Libs.alchemist
+import org.jetbrains.kotlin.gradle.targets.js.ir.DefaultIncrementalSyncTask
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 plugins {
     kotlin("multiplatform")
@@ -12,16 +14,9 @@ kotlin {
         }
     }
     js {
-        browser {
-            binaries.executable()
-            binaries.library()
-        }
-        nodejs() {
-            binaries.executable()
-            binaries.library()
-        }
+        browser()
+        nodejs()
     }
-
     sourceSets {
         val commonTest by getting {
             dependencies {
@@ -43,8 +38,4 @@ kotlin {
             }
         }
     }
-}
-
-rootProject.tasks.named("kotlinStoreYarnLock").configure {
-    dependsOn(rootProject.tasks.named("kotlinUpgradeYarnLock"))
 }

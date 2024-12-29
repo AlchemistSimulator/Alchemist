@@ -23,10 +23,14 @@ plugins {
 }
 
 kotlin {
-    jvm { withJava() }
-    js(IR) {
-        browser()
-        binaries.executable()
+    jvm()
+    js {
+        browser {
+            binaries.library()
+        }
+        nodejs {
+            binaries.library()
+        }
     }
     sourceSets {
         val commonMain by getting {

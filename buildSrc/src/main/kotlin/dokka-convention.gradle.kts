@@ -66,6 +66,7 @@ dokka {
             customAssets.from(rootProject.file("site/static/images/logo.svg"))
             customStyleSheets.from(rootProject.file("site/logo-styles.css"))
             footerMessage.set("(c) Danilo Pianini and contributors listed in the Alchemist build files")
+            homepageLink = "https://alchemistsimulator.github.io/"
         }
     }
 }

@@ -214,7 +214,7 @@ jobs:
             ./gradlew\
               ${{ needs.ci-preparation.outputs.force-version }}\
               -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
-              uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
+              uploadOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
             #
             # Drop the staging repository if the build is not a release
             #

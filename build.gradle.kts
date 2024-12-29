@@ -10,29 +10,19 @@
 import Libs.alchemist
 import Libs.incarnation
 import Util.allVerificationTasks
-import Util.currentCommitHash
-import Util.fetchJavadocIOForDependency
 import Util.id
 import Util.isInCI
 import Util.isMac
-import Util.isMultiplatform
 import Util.isWindows
 import com.github.spotbugs.snom.SpotBugsTask
-import org.danilopianini.gradle.mavencentral.JavadocJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
-import org.jetbrains.dokka.gradle.AbstractDokkaParentTask
 import org.jetbrains.dokka.gradle.AbstractDokkaTask
-import org.jetbrains.dokka.gradle.DokkaCollectorTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.time.Duration
+import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
 
 plugins {
-    alias(libs.plugins.dokka)
+    id("kotlin-jvm-convention")
     alias(libs.plugins.gitSemVer)
     alias(libs.plugins.java.qa)
-    alias(libs.plugins.kotlin.multiplatform) apply false
-    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.qa)
     alias(libs.plugins.multiJvmTesting)
     alias(libs.plugins.publishOnCentral)
@@ -45,12 +35,6 @@ val minJavaVersion: String by properties
 allprojects {
 
     with(rootProject.libs.plugins) {
-        if (project.isMultiplatform) {
-            apply(plugin = kotlin.multiplatform.id)
-        } else {
-            apply(plugin = kotlin.jvm.id)
-        }
-        apply(plugin = dokka.id)
         apply(plugin = gitSemVer.id)
         apply(plugin = java.qa.id)
         apply(plugin = multiJvmTesting.id)
@@ -73,125 +57,21 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        // for tornadofx 2.0.0 snapshot release
-        maven {
-            url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-            content {
-                includeGroup("no.tornado")
-            }
-        }
     }
 
-    // JVM PROJECTS CONFIGURATIONS
-
-    if (!project.isMultiplatform) {
-        dependencies {
-            with(rootProject.libs) {
-                compileOnly(spotbugs.annotations)
-                implementation(resourceloader)
-                implementation(slf4j)
-                implementation(kotlin("stdlib-jdk8"))
-                implementation(kotlin("reflect"))
-                testCompileOnly(spotbugs.annotations)
-                // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt + Alchemist testing tooling
-                testImplementation(bundles.testing.compile)
-                testImplementation(alchemist("test"))
-                // Test runtime: Junit engine
-                testRuntimeOnly(bundles.testing.runtimeOnly)
-                // executable jar packaging
-            }
-            if ("incarnation" in project.name) {
-                runtimeOnly(rootProject)
-            }
+    javaQA {
+        checkstyle {
+            additionalConfiguration.set(rootProject.file("checkstyle-additional-config.xml").readText())
+            additionalSuppressions.set(
+                """
+                <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
+                <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
+                """.trimIndent(),
+            )
         }
-
-        javaQA {
-            checkstyle {
-                additionalConfiguration.set(rootProject.file("checkstyle-additional-config.xml").readText())
-                additionalSuppressions.set(
-                    """
-                    <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
-                    <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
-                    """.trimIndent(),
-                )
-            }
-            // TODO: enable PMD when this bug is fixed: https://github.com/pmd/pmd/issues/5096
-            tasks.withType<Pmd>().configureEach {
-                enabled = false
-            }
-        }
-
-        tasks.withType<AbstractDokkaLeafTask>().configureEach {
-            timeout.set(Duration.ofMinutes(5))
-            dokkaSourceSets.configureEach {
-                jdkVersion.set(multiJvm.jvmVersionForCompilation)
-                listOf("kotlin", "java")
-                    .flatMap { listOf("main/$it", "commonMain/$it", "jsMain/$it", "jvmMain/$it") }
-                    .map { "src/$it" }
-                    .associateWith { File(projectDir, it) }
-                    .filterValues { it.exists() }
-                    .forEach { (path, file) ->
-                        sourceLink {
-                            localDirectory.set(file)
-                            val project = if (project == rootProject) "" else project.name
-                            val url = "https://github.com/AlchemistSimulator/Alchemist/${
-                                currentCommitHash?.let { "tree/$it" } ?: "blob/master"
-                            }/$project/$path"
-                            remoteUrl.set(uri(url).toURL())
-                            remoteLineSuffix.set("#L")
-                        }
-                    }
-                configurations
-                    .run { sequenceOf(api, implementation) }
-                    .flatMap { it.get().dependencies }
-                    .forEach { dependency ->
-                        val javadocIOURLs = fetchJavadocIOForDependency(dependency)
-                        if (javadocIOURLs != null) {
-                            val (javadoc, packageList) = javadocIOURLs
-                            externalDocumentationLink {
-                                url.set(javadoc.toURL())
-                                packageListUrl.set(packageList.toURL())
-                            }
-                        }
-                    }
-            }
-            failOnWarning.set(true)
-        }
-    }
-
-    // MULTIPLATFORM PROJECTS CONFIGURATIONS
-
-    if (project.isMultiplatform) {
-        tasks.dokkaJavadoc {
+        // TODO: enable PMD when this bug is fixed: https://github.com/pmd/pmd/issues/5096
+        tasks.withType<Pmd>().configureEach {
             enabled = false
-        }
-        tasks.withType<JavadocJar>().configureEach {
-            val dokka = tasks.dokkaHtml.get()
-            dependsOn(dokka)
-            from(dokka.outputDirectory)
-        }
-        /*
-         * This is a workaround for the following Gradle error,
-         * and should be removed as soon as possible.
-         *
-         * * What went wrong:
-         * Execution failed for task ':dokkaHtmlCollector'.
-         * > Could not determine the dependencies of null.
-         * > Current thread does not hold the state lock for project ':alchemist-web-renderer'
-         */
-        val dokkaHtmlCollector by rootProject.tasks.named("dokkaHtmlCollector")
-        dokkaHtmlCollector.dependsOn(tasks.dokkaHtml)
-    }
-
-    // COMPILE
-
-    tasks.withType<JavaCompile>().configureEach {
-        options.encoding = "UTF-8"
-    }
-
-    tasks.withType<KotlinCompile>().configureEach {
-        compilerOptions {
-            freeCompilerArgs.add("-Xjvm-default=all") // Enable default methods in Kt interfaces
         }
     }
 
@@ -270,11 +150,6 @@ allprojects {
             }
         }
     }
-
-    // Disable distribution tasks that just clutter the build
-//    listOf(tasks.distZip, tasks.distTar).forEach {
-//        it.configure { enabled = false }
-//    }
 }
 
 /*
@@ -297,6 +172,9 @@ dependencies {
     testRuntimeOnly(incarnation("biochemistry"))
     testRuntimeOnly(alchemist("cognitive-agents"))
     testRuntimeOnly(alchemist("physics"))
+
+    // Dokka dependencies
+    subprojects.forEach { dokka(it) }
 }
 
 tasks.named("kotlinStoreYarnLock").configure {
@@ -318,84 +196,57 @@ hugo {
             .value
 }
 
-tasks {
-    hugoBuild {
-        outputDirectory = websiteDir
-    }
+val copyDokkaInTheWebsite by tasks.registering(Copy::class) {
+    dependsOn(tasks.withType<DokkaBaseTask>())
+    dependsOn(tasks.hugoBuild)
+    tasks.hugoBuild
+    from(
+        dokka.dokkaPublications.html
+            .get()
+            .outputDirectory,
+    )
+    into(File(websiteDir, "reference/kdoc"))
+}
 
-// Exclude the UI and Multiplatform packages from the collector documentation.
-    withType<DokkaCollectorTask>().configureEach {
-        /*
-         * Although the method is deprecated, no valid alternative has been implemented yet.
-         * Disabling individual partial tasks has been proven ineffective.
-         */
-        removeChildTasks(
-            allprojects.filter { it.isMultiplatform } +
-                listOf(
-                    alchemist("swingui"),
-                ),
-        )
-    }
+tasks.hugoBuild.configure {
+    outputDirectory = websiteDir
+    finalizedBy(copyDokkaInTheWebsite)
+}
 
-    /**
-     * Use the alchemist logo in the documentation.
-     */
-    val alchemistLogo = file("site/static/images/logo.svg")
-    for (docTaskProvider in listOf<Provider<out AbstractDokkaParentTask>>(dokkaHtmlCollector, dokkaHtmlMultiModule)) {
-        val docTask = docTaskProvider.get()
-        val copyLogo =
-            register<Copy>("copyLogoFor${ docTask.name.replaceFirstChar { it.titlecase() } }") {
-                from(alchemistLogo)
-                into(docTask.outputDirectory.map { File(it.asFile, "images") })
-                rename("logo.svg", "logo-icon.svg")
-            }
-        docTask.finalizedBy(copyLogo)
-        hugoBuild.configure { mustRunAfter(copyLogo) }
+val performWebsiteStringReplacements by tasks.registering {
+    val index = File(websiteDir, "index.html")
+    mustRunAfter(copyDokkaInTheWebsite)
+    if (!index.exists()) {
+        logger.lifecycle("${index.absolutePath} does not exist")
+        dependsOn(copyDokkaInTheWebsite)
     }
-
-    val performWebsiteStringReplacements by registering {
-        val index = File(websiteDir, "index.html")
-        mustRunAfter(hugoBuild)
-        if (!index.exists()) {
-            logger.lifecycle("${index.absolutePath} does not exist")
-            dependsOn(hugoBuild)
+    doLast {
+        require(index.exists()) {
+            "file ${index.absolutePath} existed during configuration, but it has been deleted."
         }
-        doLast {
-            require(index.exists()) {
-                "file ${index.absolutePath} existed during configuration, but it has been deleted."
-            }
-            val websiteReplacements =
-                file("site/replacements")
-                    .readLines()
-                    .map { it.split("->") }
-                    .map { it[0] to it[1] }
-            val replacements: List<Pair<String, String>> =
-                websiteReplacements + ("!development preview!" to project.version.toString())
-            index.parentFile
-                .walkTopDown()
-                .filter { it.isFile && it.extension.matches(Regex("html?", RegexOption.IGNORE_CASE)) }
-                .forEach { page ->
-                    val initialContents = page.readText()
-                    var text = initialContents
-                    for ((toreplace, replacement) in replacements) {
-                        text = text.replace(toreplace, replacement)
-                    }
-                    if (initialContents != text) {
-                        page.writeText(text)
-                    }
+        val websiteReplacements =
+            file("site/replacements")
+                .readLines()
+                .map { it.split("->") }
+                .map { it[0] to it[1] }
+        val replacements: List<Pair<String, String>> =
+            websiteReplacements + ("!development preview!" to project.version.toString())
+        index.parentFile
+            .walkTopDown()
+            .filter { it.isFile && it.extension.matches(Regex("html?", RegexOption.IGNORE_CASE)) }
+            .forEach { page ->
+                val initialContents = page.readText()
+                var text = initialContents
+                for ((toreplace, replacement) in replacements) {
+                    text = text.replace(toreplace, replacement)
                 }
-        }
-    }
-
-    mapOf("javadoc" to dokkaJavadocCollector, "kdoc" to dokkaHtmlMultiModule, "plainkdoc" to dokkaHtmlCollector)
-        .forEach { (folder, taskContainer) ->
-            hugoBuild.configure { dependsOn(taskContainer) }
-            val copyTask =
-                register<Copy>("copy${folder.replaceFirstChar { it.titlecase() }}IntoWebsite") {
-                    from(taskContainer.map { it.outputDirectory })
-                    into(File(websiteDir, "reference/$folder"))
-                    finalizedBy(performWebsiteStringReplacements)
+                if (initialContents != text) {
+                    page.writeText(text)
                 }
-            hugoBuild.configure { finalizedBy(copyTask) }
-        }
+            }
+    }
+}
+
+copyDokkaInTheWebsite.configure {
+    finalizedBy(performWebsiteStringReplacements)
 }

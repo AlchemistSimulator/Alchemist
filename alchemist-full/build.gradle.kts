@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 
 plugins {
+    id("kotlin-jvm-convention")
     application
     alias(libs.plugins.jpackage)
     alias(libs.plugins.shadowJar)
@@ -36,64 +37,19 @@ buildscript {
     }
 }
 
-kotlin {
-    jvm {
-        withJava()
+dependencies {
+    runtimeOnly(rootProject)
+    rootProject.subprojects.filterNot { it == project }.forEach {
+        runtimeOnly(it)
     }
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                runtimeOnly(rootProject)
-                rootProject.subprojects.filterNot { it == project }.forEach {
-                    runtimeOnly(it)
-                }
-            }
-        }
-        val jvmMain by getting {
-            dependencies {
-                implementation(rootProject.libs.slf4j)
-            }
-        }
-        val commonTest by getting {
-            dependencies {
-                implementation(rootProject)
-                implementation(alchemist("loading"))
-                implementation(alchemist("physics"))
-                implementation(alchemist("test"))
-                implementation(rootProject.libs.kotest.assertions.core)
-                implementation(rootProject.libs.kotest.framework.engine)
-            }
-        }
-        val jvmTest by getting {
-            dependencies {
-                implementation(libs.kotest.runner)
-            }
-        }
-    }
+    testImplementation(rootProject.libs.slf4j)
+    testImplementation(rootProject)
+    testImplementation(alchemist("loading"))
+    testImplementation(alchemist("physics"))
 }
-
-/**
- * @return a [FileCollection] containing the classpath of the multiplatform JVM projects.
- * If unspecified, the classpath is not correctly built when including common code from MP dependencies,
- * resulting in runtime errors.
- */
-private fun mpClasspath(): Provider<FileCollection> =
-    tasks
-        .named("compileKotlinJvm")
-        .map { it.outputs.files }
-        .flatMap { compileKtOutputs ->
-            configurations.named("jvmRuntimeClasspath").map { compileKtOutputs + it }
-        }
 
 application {
     mainClass.set("it.unibo.alchemist.Alchemist")
-}
-
-/**
- * Add the runtime classpath of the multiplatform JVM projects to the run task
- */
-tasks.run.configure {
-    classpath += mpClasspath().get()
 }
 
 // Shadow Jar
@@ -119,7 +75,6 @@ tasks.withType<ShadowJar> {
         "gradlew.bat",
         "gradlew",
     )
-    from(mpClasspath())
     isZip64 = true
     mergeServiceFiles()
     destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })

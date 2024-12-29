@@ -10,6 +10,10 @@
 import Libs.alchemist
 import Libs.incarnation
 
+plugins {
+    id("kotlin-jvm-convention")
+}
+
 dependencies {
     api(alchemist("api"))
 

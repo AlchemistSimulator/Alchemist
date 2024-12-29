@@ -6,11 +6,16 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+plugins {
+    id("dokka-convention")
+    id("kotlin-jvm-convention")
+}
 
 dependencies {
     api(libs.apache.commons.math3)
     api(libs.jool)
     api(libs.listset)
+    implementation(libs.kotlin.reflect)
 }
 
 publishing.publications {

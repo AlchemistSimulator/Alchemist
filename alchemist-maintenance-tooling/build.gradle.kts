@@ -6,3 +6,6 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+plugins {
+    id("kotlin-multiplatform-convention")
+}

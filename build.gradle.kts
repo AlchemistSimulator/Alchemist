@@ -174,7 +174,7 @@ dependencies {
     testRuntimeOnly(alchemist("physics"))
 
     // Dokka dependencies
-    allprojects.forEach { dokka(it) }
+    subprojects.forEach { dokka(it) }
 }
 
 tasks.matching { it.name == "kotlinStoreYarnLock" }.configureEach {

@@ -23,9 +23,23 @@ kotlin {
     }
 
     sourceSets {
+        val commonTest by getting {
+            dependencies {
+                val `kotest-assertions-core` by catalog
+                val `kotest-framework-engine` by catalog
+                implementation(`kotest-assertions-core`)
+                implementation(`kotest-framework-engine`)
+            }
+        }
         val jvmMain by getting {
             dependencies {
                 implementation(alchemist("api"))
+            }
+        }
+        val jvmTest by getting {
+            dependencies {
+                val `kotest-runner` by catalog
+                implementation(`kotest-runner`)
             }
         }
     }

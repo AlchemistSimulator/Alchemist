@@ -15,11 +15,6 @@ plugins {
     id("dokka-convention")
 }
 
-val catalog = object : ReadOnlyProperty<Any?, Provider<MinimalExternalModuleDependency>> {
-    override operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-        extensions.getByType<VersionCatalogsExtension>().named("libs").findLibrary(property.name).get()
-}
-
 dependencies {
     val jsr305 by catalog
     val slf4j by catalog

@@ -7,10 +7,6 @@ defaults:
   run:
     shell: bash
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
-  cancel-in-progress: ${{ !contains(github.ref, 'master') }}
-
 jobs:
   # Prepare the environment for the build
   ci-preparation:
@@ -423,11 +419,6 @@ jobs:
       - test-linux-deb-installer
       - test-linux-rpm-installer
       - test-windows-msi-installer
-    concurrency:
-      # Only one release job at a time per branch, as only master releases.
-      # Strictly sequential.
-      group: release-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: false
     runs-on: ubuntu-24.04
     outputs:
       winget-deploy: ${{ steps.check-released.outputs.has-released }}
@@ -530,9 +521,6 @@ jobs:
     needs:
       - ci-preparation
       - release
-    concurrency:
-      group: release-winget-${{ needs.ci-preparation.outputs.build-ref }}
-      cancel-in-progress: false
     runs-on: windows-2022
     env:
       packageID: "Unibo.Alchemist"

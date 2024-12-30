@@ -120,8 +120,7 @@ jobs:
           # Once everything gets fixed, lychee could simply run on '/website/**/*.html'
           FILES="$(
             find build/website/ -name '*.html' |
-            grep -v /kdoc/ |
-            grep -v /javadoc/ |
+            grep -v /kdoc-modules/ |
             grep -v /tags/ |
             sed -e 's#^build##'
           )"

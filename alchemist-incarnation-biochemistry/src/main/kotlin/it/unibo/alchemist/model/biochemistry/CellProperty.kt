@@ -97,7 +97,7 @@ interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
     fun getAllNodesLinkWithJunction(): Set<Node<Double>> = junctions.values.flatMap { it.keys }.toSet()
 
     /**
-     * The total number of junctions presents in this [node].
+     * The total number of junctions in this [node].
      */
     val junctionsCount: Int
         get() = junctions.values.flatMap { it.values }.sum()

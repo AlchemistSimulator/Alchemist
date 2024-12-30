@@ -14,6 +14,8 @@ import org.eclipse.jgit.api.Git
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalDependency
+import org.gradle.api.artifacts.MinimalExternalModuleDependency
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
@@ -21,12 +23,15 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.VerificationTask
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugin.use.PluginDependency
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URI
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 /**
  * Collector of imperative code.
@@ -147,4 +152,9 @@ object Util {
 
     val TaskContainer.allVerificationTasks get(): TaskCollection<SourceTask> =
         this.withType<SourceTask>().matching { it is VerificationTask }
+}
+
+val Project.catalog get() = object : ReadOnlyProperty<Any?, Provider<MinimalExternalModuleDependency>> {
+    override operator fun getValue(thisRef: Any?, property: KProperty<*>) =
+        extensions.getByType<VersionCatalogsExtension>().named("libs").findLibrary(property.name).get()
 }

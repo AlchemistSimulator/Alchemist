@@ -18,13 +18,19 @@ import Libs.alchemist
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
+plugins {
+    id("kotlin-jvm-convention")
+}
+
 dependencies {
     api(alchemist("api"))
     api(alchemist("engine"))
     api(alchemist("loading"))
+    api(libs.bundles.testing.compile)
+    implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))
     implementation(alchemist("physics"))
-    testImplementation(alchemist("test"))
+    runtimeOnly(libs.bundles.testing.runtimeOnly)
 }
 
 publishing.publications {

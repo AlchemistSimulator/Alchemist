@@ -40,4 +40,6 @@ data class JaktaTimeDistribution(
             "${this::class.simpleName} is not meant to be used directly, but to host custom time distributions" +
                 " for the sense, deliberate, and act phases of the JaKtA lifecycle.",
         )
+
+    override fun toString(): String = "JaktaTimeDistribution(sense=$sense, deliberate=$deliberate, act=$act)"
 }

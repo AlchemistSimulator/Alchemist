@@ -10,6 +10,10 @@
 import com.github.spotbugs.snom.SpotBugsTask
 import de.aaschmid.gradle.plugins.cpd.Cpd
 
+plugins {
+    id("kotlin-jvm-convention")
+}
+
 dependencies {
     implementation(libs.boilerplate)
 }

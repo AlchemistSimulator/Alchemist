@@ -17,6 +17,10 @@ import Libs.incarnation
  * GNU General Public License) with a linking exception)
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
+plugins {
+    id("kotlin-jvm-convention")
+}
+
 dependencies {
     api(alchemist("api"))
     api(alchemist("implementationbase"))
@@ -32,6 +36,7 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.jirf)
     implementation(libs.kasechange)
+    implementation(libs.kotlin.reflect)
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.mongodb)
     implementation(libs.snakeyaml)

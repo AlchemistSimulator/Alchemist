@@ -10,23 +10,16 @@
 import Libs.alchemist
 import Util.allVerificationTasks
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.dokka.gradle.DokkaCollectorTask
-import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import org.gradle.jvm.tasks.Jar
+import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask
 import org.jlleitschuh.gradle.ktlint.tasks.KtLintFormatTask
 
-/*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
- *
- * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception,
- * as described in the file LICENSE in the Alchemist distribution"s top directory.
- */
-
 plugins {
     antlr
+    id("kotlin-jvm-convention")
 }
 
 dependencies {
@@ -65,24 +58,22 @@ tasks.generateGrammarSource.configure {
     arguments = arguments + listOf("-visitor", "-package", destination, "-long-messages")
 }
 
-tasks.sourcesJar.configure { dependsOn(tasks.generateGrammarSource) }
-tasks.withType<KtLintFormatTask>().configureEach { dependsOn(tasks.generateGrammarSource) }
 tasks.generateTestGrammarSource {
     enabled = false
 }
 
+// Ensure that the grammar is generated before any task that needs it
 tasks {
-    val needGrammarGeneration =
-        listOf(
-            rootProject.tasks.withType<DokkaCollectorTask>(),
-            withType<Detekt>(),
-            withType<DokkaTask>(),
-            withType<DokkaTaskPartial>(),
-            withType<JavaCompile>(),
-            withType<KotlinCompile>(),
-            withType<KtLintCheckTask>(),
-        )
-    needGrammarGeneration.forEach {
+    listOf(
+        withType<Detekt>(),
+        withType<JavaCompile>(),
+        withType<KotlinCompile>(),
+        withType<KtLintCheckTask>(),
+        withType<KotlinCompilationTask<*>>(),
+        withType<DokkaBaseTask>(),
+        withType<Jar>(),
+        withType<KtLintFormatTask>(),
+    ).forEach {
         it.configureEach { dependsOn(generateGrammarSource) }
     }
 }

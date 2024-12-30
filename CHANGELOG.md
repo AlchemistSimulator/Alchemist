@@ -1,3 +1,19 @@
+## [36.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.13...36.1.0) (2024-12-30)
+
+### Features
+
+* enable Dokka v2 ([#4056](https://github.com/AlchemistSimulator/Alchemist/issues/4056)) ([c8e3565](https://github.com/AlchemistSimulator/Alchemist/commit/c8e3565a2c1c783eaf51ca05f092985623ec342d)), closes [Kotlin/dokka#3979](https://github.com/Kotlin/dokka/issues/3979)
+
+### Dependency updates
+
+* **deps:** update plugin java-qa to v1.81.0 ([#4054](https://github.com/AlchemistSimulator/Alchemist/issues/4054)) ([49bda56](https://github.com/AlchemistSimulator/Alchemist/commit/49bda561a644c346ab756dfcc567e3f4a586ac32))
+* **deps:** update plugin java-qa to v1.82.0 ([#4055](https://github.com/AlchemistSimulator/Alchemist/issues/4055)) ([fe63220](https://github.com/AlchemistSimulator/Alchemist/commit/fe63220e0cae9713172564c3b915bd121a29ccc3))
+
+### Build and continuous integration
+
+* move the CI concurrency management to the dispatcher workflow ([#4058](https://github.com/AlchemistSimulator/Alchemist/issues/4058)) ([353e5dc](https://github.com/AlchemistSimulator/Alchemist/commit/353e5dcec9dab8e1bb956acbbe0c352ac5ce5370))
+* pin the version of ubuntu in the dispatcher workflow ([#4057](https://github.com/AlchemistSimulator/Alchemist/issues/4057)) ([b1daac5](https://github.com/AlchemistSimulator/Alchemist/commit/b1daac5c7c235ea51a50a76af35466eeb6b8776c))
+
 ## [36.0.13](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.12...36.0.13) (2024-12-28)
 
 ### Dependency updates

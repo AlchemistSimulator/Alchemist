@@ -41,6 +41,7 @@ dependencies {
     runtimeOnly(rootProject)
     rootProject.subprojects.filterNot { it == project }.forEach {
         runtimeOnly(it)
+        dokka(it)
     }
     testImplementation(rootProject.libs.slf4j)
     testImplementation(rootProject)

@@ -18,6 +18,7 @@ import com.github.spotbugs.snom.SpotBugsTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
+import java.io.FileFilter
 
 plugins {
     id("kotlin-jvm-convention")
@@ -172,19 +173,43 @@ dependencies {
     testRuntimeOnly(incarnation("biochemistry"))
     testRuntimeOnly(alchemist("cognitive-agents"))
     testRuntimeOnly(alchemist("physics"))
-
-    // Dokka dependencies
-    subprojects.forEach { dokka(it) }
 }
 
 tasks.matching { it.name == "kotlinStoreYarnLock" }.configureEach {
     dependsOn(rootProject.tasks.named("kotlinUpgradeYarnLock"))
 }
 
+dokka {
+    dokkaSourceSets.register("alldocs") {
+        val submodules =
+            checkNotNull(
+                project.rootDir.listFiles(FileFilter { it.name.startsWith("alchemist-") }),
+            )
+        val allSourceDirs =
+            submodules
+                .asSequence()
+                .map { it.resolve("src") }
+                .onEach { check(it.isDirectory) }
+                .flatMap { sourceFolder ->
+                    sourceFolder
+                        .listFiles(FileFilter { it.name.contains("main", ignoreCase = true) })
+                        .orEmpty()
+                        .asSequence()
+                }.onEach { check(it.isDirectory) }
+                .flatMap { sourceSetFolder ->
+                    sourceSetFolder
+                        .listFiles(FileFilter { it.name in listOf("java", "kotlin") })
+                        .orEmpty()
+                        .asSequence()
+                }.toList()
+        sourceRoots.setFrom(allSourceDirs)
+    }
+}
+
 // WEBSITE
 
 val websiteDir =
-    project.layout.buildDirectory
+    rootProject.layout.buildDirectory
         .map { it.dir("website").asFile }
         .get()
 
@@ -196,51 +221,28 @@ hugo {
             .value
 }
 
-val copyDokkaInTheWebsite by tasks.registering(Copy::class) {
-    dependsOn(tasks.withType<DokkaBaseTask>())
-    dependsOn(tasks.hugoBuild)
-    tasks.hugoBuild
-    from(
-        dokka.dokkaPublications.html
-            .get()
-            .outputDirectory,
-    )
-    into(File(websiteDir, "reference/kdoc"))
-}
+fun Project.dokkaCopyTask(destination: String): Copy.() -> Unit =
+    {
+        dependsOn(tasks.withType<DokkaBaseTask>())
+        dependsOn(rootProject.tasks.hugoBuild)
+        from(
+            dokka.dokkaPublications.html
+                .get()
+                .outputDirectory,
+        )
+        into(File(websiteDir, "reference/$destination"))
+    }
+
+val copyGlobalDokkaInTheWebsite by tasks.registering(Copy::class, dokkaCopyTask("kdoc"))
+val copyModuleDokkaInTheWebsite by tasks.registering(Copy::class, alchemist("full").dokkaCopyTask("kdoc-modules"))
 
 tasks.hugoBuild.configure {
     outputDirectory = websiteDir
-    finalizedBy(copyDokkaInTheWebsite)
-}
-
-val fixLinksToDokka by tasks.registering {
-    dependsOn(copyDokkaInTheWebsite)
-    doLast {
-        val brokenLinkRegex =
-            Regex(
-                """/reference/kdoc/alchemist/(?<target>\w+(?:\.\w+)*/(?:-|\w)+)""",
-            )
-        val modules = checkNotNull(websiteDir.resolve("reference").resolve("kdoc").listFiles())
-        websiteDir
-            .walkTopDown()
-            .filter { file ->
-                file.isFile &&
-                    file.extension == "html" &&
-                    file.useLines { lines -> lines.any { brokenLinkRegex.containsMatchIn(it) } }
-            }.forEach { problematicFile ->
-                val newContent =
-                    problematicFile.readText().replace(brokenLinkRegex) { match ->
-                        val (target) = match.destructured
-                        val actualModule = modules.first { it.resolve(target).run { exists() && isDirectory } }.name
-                        "/reference/kdoc/$actualModule/$target"
-                    }
-                problematicFile.writeText(newContent)
-            }
-    }
+    finalizedBy(copyGlobalDokkaInTheWebsite, copyModuleDokkaInTheWebsite)
 }
 
 val performWebsiteStringReplacements by tasks.registering {
-    dependsOn(fixLinksToDokka)
+    dependsOn(copyGlobalDokkaInTheWebsite, copyModuleDokkaInTheWebsite)
     doLast {
         val index = File(websiteDir, "index.html")
         require(index.exists()) {
@@ -269,6 +271,6 @@ val performWebsiteStringReplacements by tasks.registering {
     }
 }
 
-copyDokkaInTheWebsite.configure {
+tasks.hugoBuild.configure {
     finalizedBy(performWebsiteStringReplacements)
 }

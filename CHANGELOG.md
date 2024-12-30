@@ -1,3 +1,14 @@
+## [36.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/36.1.0...36.1.1) (2024-12-30)
+
+### Dependency updates
+
+* **deps:** update plugin java-qa to v1.82.1 ([#4060](https://github.com/AlchemistSimulator/Alchemist/issues/4060)) ([c805024](https://github.com/AlchemistSimulator/Alchemist/commit/c805024c5e42bb923ba2daf4b278398a8aeb4adc))
+* **deps:** update plugin publishoncentral to v7.0.5-dev0u-2beaa0a ([#4059](https://github.com/AlchemistSimulator/Alchemist/issues/4059)) ([ca6b049](https://github.com/AlchemistSimulator/Alchemist/commit/ca6b04922bd312e2a5859384e76adb780fa386a1))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.140.2 ([#4061](https://github.com/AlchemistSimulator/Alchemist/issues/4061)) ([17ba4a3](https://github.com/AlchemistSimulator/Alchemist/commit/17ba4a35c759362fa63533facb6d726bfc518267))
+
 ## [36.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/36.0.13...36.1.0) (2024-12-30)
 
 ### Features

@@ -120,8 +120,7 @@ jobs:
           # Once everything gets fixed, lychee could simply run on '/website/**/*.html'
           FILES="$(
             find build/website/ -name '*.html' |
-            grep -v /kdoc/ |
-            grep -v /javadoc/ |
+            grep -v /kdoc-modules/ |
             grep -v /tags/ |
             sed -e 's#^build##'
           )"
@@ -132,7 +131,7 @@ jobs:
           for attempt in $(seq 1 5); do
             echo "Attempt $attempt/5"
             docker run --rm -v "$(pwd)/build/website:/website" -e GITHUB_TOKEN lycheeverse/lychee:0.10.3 $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 403,429,500,502,503 && break
-            if [ "$attempt" = "${{ inputs.retries-on-failure}}" ]; then false; else sleep 120; fi
+            if [ "$attempt" = "5" ]; then exit 1; else sleep 120; fi
           done
 
   # Create a staging repository on Central
@@ -214,7 +213,7 @@ jobs:
             ./gradlew\
               ${{ needs.ci-preparation.outputs.force-version }}\
               -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
-              uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
+              uploadOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
             #
             # Drop the staging repository if the build is not a release
             #

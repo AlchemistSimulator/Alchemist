@@ -9,6 +9,9 @@
 
 package it.unibo.alchemist.util
 
+import kotlin.jvm.JvmOverloads
+import kotlin.jvm.JvmStatic
+
 /**
  * Entrypoint for printing meaningful debug information in case of failed internal consistency checks.
  */
@@ -36,7 +39,7 @@ object BugReporting {
 
     private fun Map<String, Any?>.debugReport(): String =
         asIterable()
-            .joinToString(System.lineSeparator()) { (name, value) ->
+            .joinToString("\n") { (name, value) ->
                 "$name => ${value?.let { "$it --- type: ${it::class.simpleName}" } ?: "null" }"
             }
 }

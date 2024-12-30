@@ -12,6 +12,7 @@ import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    id("kotlin-jvm-convention")
     alias(libs.plugins.graphql.server)
 }
 

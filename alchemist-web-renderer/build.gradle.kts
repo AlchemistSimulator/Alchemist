@@ -11,16 +11,17 @@ import Libs.alchemist
 import Libs.incarnation
 
 plugins {
+    id("kotlin-multiplatform-convention")
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotest.multiplatform)
 }
 
 kotlin {
-    jvm {
-        withJava()
-    }
-    js(IR) {
+    js {
         browser {
+            binaries.executable()
+        }
+        nodejs {
             binaries.executable()
         }
     }

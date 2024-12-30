@@ -1,6 +1,6 @@
 +++
 pre = "<strong>"
-title = "KDoc API (per-module)"
+title = "API Docs"
 post = "</strong>"
 weight = 2
 summary = "KDoc API docs. Captures both Java and Kotlin API abstractions."

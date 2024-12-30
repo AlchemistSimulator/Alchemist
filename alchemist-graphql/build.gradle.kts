@@ -15,6 +15,7 @@ import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
 import java.io.File.separator
 
 plugins {
+    id("kotlin-multiplatform-convention")
     alias(libs.plugins.kotest.multiplatform)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.graphql.server)
@@ -22,10 +23,14 @@ plugins {
 }
 
 kotlin {
-    jvm { withJava() }
-    js(IR) {
-        browser()
-        binaries.executable()
+    jvm()
+    js {
+        browser {
+            binaries.library()
+        }
+        nodejs {
+            binaries.library()
+        }
     }
     sourceSets {
         val commonMain by getting {
@@ -104,6 +109,7 @@ val surrogates = project(":${project.name}-surrogates")
 apollo {
     service(name) {
         generateKotlinModels.set(true)
+        generateSourcesDuringGradleSync.set(true)
         packageName.set("it.unibo.alchemist.boundary.graphql.client")
         schemaFiles.from(surrogates.layout.buildDirectory.file("schema.graphql"))
         srcDir("src/commonMain/resources/graphql")

@@ -63,6 +63,8 @@ jpx = "io.jenetics:jpx:3.2.0"
 jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit-platform-engine = "org.junit.platform:junit-platform-engine:1.11.3"
+junit-platform-launcher = "org.junit.platform:junit-platform-launcher:1.11.3"
 kasechange = "net.pearx.kasechange:kasechange:1.4.1"
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 korim = "com.soywiz.korlibs.korim:korim:4.0.10"
@@ -112,7 +114,7 @@ scala-library = { module = "org.scala-lang:scala-library", version.ref = "scala"
 scalacache-core = { module = "com.github.cb372:scalacache-core_2.13", version.ref = "scalacache" }
 scalacache-guava = { module = "com.github.cb372:scalacache-guava_2.13", version.ref = "scalacache" }
 scalatest = "org.scalatest:scalatest_2.13:3.3.0-SNAP4"
-scalatest-plusjunit = "org.scalatestplus:scalatestplus-junit_2.13:1.0.0-SNAP9"
+scalatest-junit = "org.scalatestplus:junit-5-11_2.13:3.2.19.0"
 simplelatlng = "com.javadocmd:simplelatlng:1.4.0"
 slf4j = "org.slf4j:slf4j-api:2.0.16"
 snakeyaml = "org.yaml:snakeyaml:2.3"
@@ -140,7 +142,7 @@ ktor-server = [
 protelis = [ "protelis-interpreter", "protelis-lang" ]
 scala = [ "scala-compiler", "scala-library" ]
 scalacache = [ "scalacache-core", "scalacache-guava" ]
-scalatest = [ "scalatest", "scalatest-plusjunit" ]
+scalatest = [ "scalatest", "scalatest-junit", "junit-platform-engine", "junit-platform-launcher" ]
 testing-compile = [
     "junit-api",
     "kotest-assertions-core",
@@ -162,7 +164,6 @@ ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:3.1.2"
 publishOnCentral = "org.danilopianini.publish-on-central:7.0.5-dev0u-2beaa0a"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"
-scalatest = "com.github.maiflai.scalatest:0.32"
 shadowJar = "com.github.johnrengelman.shadow:8.1.1"
 taskTree = "com.dorongold.task-tree:4.0.0"
 jpackage = "org.panteleyev.jpackageplugin:1.6.0"

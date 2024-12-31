@@ -18,7 +18,6 @@ import Libs.alchemist
  */
 plugins {
     scala
-    alias(libs.plugins.scalatest)
     alias(libs.plugins.scalafmt)
 }
 
@@ -38,10 +37,6 @@ dependencies {
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("loading"))
     testImplementation(libs.bundles.scalatest)
-}
-
-tasks.withType<ScalaCompile> {
-    targetCompatibility = "1.8"
 }
 
 publishing.publications {
@@ -64,8 +59,23 @@ publishing.publications {
     }
 }
 
-tasks.withType<Test> {
-    reports {
-        html.required.set(false)
+tasks {
+    withType<ScalaCompile> {
+        targetCompatibility = "1.8"
+    }
+
+    withType<Test> {
+        reports {
+            html.required.set(false)
+        }
+    }
+
+    test {
+        useJUnitPlatform {
+            includeEngines("scalatest")
+            testLogging {
+                events("passed", "skipped", "failed")
+            }
+        }
     }
 }

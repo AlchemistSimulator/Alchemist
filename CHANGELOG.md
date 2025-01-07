@@ -1,3 +1,26 @@
+## [36.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/36.1.1...36.1.2) (2025-01-07)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.28 ([#4069](https://github.com/AlchemistSimulator/Alchemist/issues/4069)) ([374940e](https://github.com/AlchemistSimulator/Alchemist/commit/374940efaba5dc3b0d27ef01cd5a95d7a4e51d80))
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.16 ([#4068](https://github.com/AlchemistSimulator/Alchemist/issues/4068)) ([f904951](https://github.com/AlchemistSimulator/Alchemist/commit/f904951b53ce7d12fe47b4aaeb688fce01c1b3be))
+* **deps:** update dependency commons-codec:commons-codec to v1.17.2 ([#4071](https://github.com/AlchemistSimulator/Alchemist/issues/4071)) ([501f854](https://github.com/AlchemistSimulator/Alchemist/commit/501f8549e5055264d6f823878817618b38cec33b))
+* **deps:** update dependency gradle to v8.12 ([#4040](https://github.com/AlchemistSimulator/Alchemist/issues/4040)) ([ff654b3](https://github.com/AlchemistSimulator/Alchemist/commit/ff654b3fbe4627eda865cb34af8ccb37140894aa))
+* **deps:** update dependency net.harawata:appdirs to v1.3.0 ([#4064](https://github.com/AlchemistSimulator/Alchemist/issues/4064)) ([e52f1c4](https://github.com/AlchemistSimulator/Alchemist/commit/e52f1c4973378df786112e44f3a3272d6f33c53a))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.8.0 ([#4070](https://github.com/AlchemistSimulator/Alchemist/issues/4070)) ([72417ae](https://github.com/AlchemistSimulator/Alchemist/commit/72417aec8eda2b6b255566b39f57917f53952621))
+* **deps:** update dependency org.mockito:mockito-core to v5.15.2 ([#4065](https://github.com/AlchemistSimulator/Alchemist/issues/4065)) ([1ae186d](https://github.com/AlchemistSimulator/Alchemist/commit/1ae186d3d01f8e5f934966b2fad82ab42720045b))
+* **deps:** update dependency site/themes/hugo-theme-relearn to v7.3.1 ([#4067](https://github.com/AlchemistSimulator/Alchemist/issues/4067)) ([7db1053](https://github.com/AlchemistSimulator/Alchemist/commit/7db105354ee728dc3d16a9a70dd456cb7fdd7077))
+* **deps:** update junit5 monorepo to v1.11.4 ([#4063](https://github.com/AlchemistSimulator/Alchemist/issues/4063)) ([d14be16](https://github.com/AlchemistSimulator/Alchemist/commit/d14be16da3ba0633a285054d6b32d9e83581d985))
+* **deps:** update plugin java-qa to v1.82.2 ([#4066](https://github.com/AlchemistSimulator/Alchemist/issues/4066)) ([347fbfe](https://github.com/AlchemistSimulator/Alchemist/commit/347fbfe5e2fc00fd7ed0963e59613c4a382542f0))
+
+### Bug Fixes
+
+* **website:** make the release process lighter ([b3d5261](https://github.com/AlchemistSimulator/Alchemist/commit/b3d5261ed28fb67f2891310c3ceea3a5f86d9483))
+
+### Build and continuous integration
+
+* remove com.github.maiflai.scalatest gradle plugin preventing the update of gradle 8.12 ([#4062](https://github.com/AlchemistSimulator/Alchemist/issues/4062)) ([7767a5f](https://github.com/AlchemistSimulator/Alchemist/commit/7767a5f3cef0ad35748f31e124c5bc60a55848aa))
+
 ## [36.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/36.1.0...36.1.1) (2024-12-30)
 
 ### Dependency updates

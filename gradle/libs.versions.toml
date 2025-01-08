@@ -161,7 +161,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.78.0"
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:3.1.2"
-publishOnCentral = "org.danilopianini.publish-on-central:7.0.5-dev0u-2beaa0a"
+publishOnCentral = "org.danilopianini.publish-on-central:7.0.5-dev0w-f7d1ad3"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"
 shadowJar = "com.github.johnrengelman.shadow:8.1.1"
 taskTree = "com.dorongold.task-tree:4.0.0"

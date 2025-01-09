@@ -1,3 +1,22 @@
+## [36.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/36.1.2...36.1.3) (2025-01-09)
+
+### Dependency updates
+
+* **deps:** update dependency io.jenetics:jpx to v3.2.1 ([#4082](https://github.com/AlchemistSimulator/Alchemist/issues/4082)) ([6f7887b](https://github.com/AlchemistSimulator/Alchemist/commit/6f7887bcfab472cf0001774f0b5f9f207b73314d))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.118 ([#4079](https://github.com/AlchemistSimulator/Alchemist/issues/4079)) ([a9450b9](https://github.com/AlchemistSimulator/Alchemist/commit/a9450b9051b56cf8639d897fbe4c59d3d4ea1387))
+* **deps:** update node.js to 22.13 ([#4077](https://github.com/AlchemistSimulator/Alchemist/issues/4077)) ([79e2a9f](https://github.com/AlchemistSimulator/Alchemist/commit/79e2a9fdabfcc0c03335a647e1a2f64c98b1a324))
+* **deps:** update plugin publishoncentral to v7.0.5-dev0w-f7d1ad3 ([#4076](https://github.com/AlchemistSimulator/Alchemist/issues/4076)) ([a3fa6b3](https://github.com/AlchemistSimulator/Alchemist/commit/a3fa6b39da9e337837bee940e4dee8e07b665e7e))
+* **deps:** update plugin publishoncentral to v8 ([#4078](https://github.com/AlchemistSimulator/Alchemist/issues/4078)) ([67f577a](https://github.com/AlchemistSimulator/Alchemist/commit/67f577acb6c1f214f021d4136d2c003eeae1d0e1))
+
+### Bug Fixes
+
+* restore all missing dependencies of published JVM modules ([#4081](https://github.com/AlchemistSimulator/Alchemist/issues/4081)) ([9d999a4](https://github.com/AlchemistSimulator/Alchemist/commit/9d999a4af86e7e3a166a76c0cc6f85d7ca2cc169))
+
+### Build and continuous integration
+
+* **deps:** update dependency ubuntu github actions runner to v24 ([deeb6fb](https://github.com/AlchemistSimulator/Alchemist/commit/deeb6fb0ede0c4b86daa5a50594a016d0fc17cb2))
+* pin the version of ubuntu in the ancillary files updater ([#4073](https://github.com/AlchemistSimulator/Alchemist/issues/4073)) ([db28289](https://github.com/AlchemistSimulator/Alchemist/commit/db28289dedfc74a2a2c42e2e21c947cfb9f285e2))
+
 ## [36.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/36.1.1...36.1.2) (2025-01-07)
 
 ### Dependency updates

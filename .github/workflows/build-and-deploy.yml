@@ -145,11 +145,12 @@ jobs:
     steps:
       - id: create-staging-repo
         name: Create a staging repository
-        uses: danysk/action-create-ossrh-staging-repo@1.0.1
+        uses: danysk/action-create-ossrh-staging-repo@1.1.0
         with:
           group-id: "it.unibo.alchemist"
           maven-central-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          repo-description: "Alchemist ${{ needs.ci-preparation.outputs.next-version }}"
 
   # Assemble all artifacts and upload them
   assemble-and-upload:

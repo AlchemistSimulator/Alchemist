@@ -19,7 +19,6 @@ import react.FC
 /**
  * Modal used to show information about something that didn't work as expected.
  */
-
 val WarningModal: FC<WarningModalProps> =
     FC { props ->
         Modal {

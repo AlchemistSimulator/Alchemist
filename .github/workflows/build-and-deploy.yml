@@ -141,32 +141,16 @@ jobs:
       - ci-preparation
     if: fromJSON(needs.ci-preparation.outputs.may-deploy)
     outputs:
-      repo-id: ${{ steps.staging-repo.outputs.MavenCentral }}
+      repo-id: ${{ steps.create-staging-repo.outputs.staging-repo-id }}
     steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v4.2.2
-      - uses: DanySK/build-check-deploy-gradle-action@3.5.28
+      - id: create-staging-repo
+        name: Create a staging repository
+        uses: danysk/action-create-ossrh-staging-repo@1.1.0
         with:
+          group-id: "it.unibo.alchemist"
           maven-central-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          should-run-codecov: false
-          should-deploy: ${{ needs.ci-preparation.outputs.will-release }}
-          build-command: true
-          check-command: true
-          deploy-command: |
-            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} createStagingRepositoryOnMavenCentral --parallel
-      - name: Save the staging repository ID
-        if: needs.ci-preparation.outputs.will-release == 'true'
-        id: staging-repo
-        run: |
-          [[ -f build/staging-repo-ids.properties ]] || (
-            echo "Staging repositories ID file not found" &&
-            exit 1
-          )
-          REPO_IDS=$(cat build/staging-repo-ids.properties)
-          echo "Staging repositories IDs:\n$REPO_IDS"
-          echo $REPO_IDS >> $GITHUB_OUTPUT
-
+          repo-description: "Alchemist ${{ needs.ci-preparation.outputs.next-version }}"
 
   # Assemble all artifacts and upload them
   assemble-and-upload:
@@ -214,12 +198,6 @@ jobs:
               ${{ needs.ci-preparation.outputs.force-version }}\
               -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
               uploadOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
-            #
-            # Drop the staging repository if the build is not a release
-            #
-            if [[ "${{ needs.ci-preparation.outputs.will-release }}" != "true" ]]; then
-              ./gradlew -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }} drop --parallel
-            fi
           clean-command: |
             # Clean the build directory on Win and Mac
             if [[ "${{ contains('Linux', runner.os) }}" == "false" ]]; then
@@ -542,6 +520,20 @@ jobs:
           $installerUrl = "https://github.com/AlchemistSimulator/Alchemist/releases/download/$packageVersion/alchemist-$packageVersion.msi"
           $gitToken = "${{ secrets.DEPLOYMENT_TOKEN }}"
           .\wingetcreate.exe update $env:packageID --version $packageVersion --urls "$installerUrl" --submit --token $gitToken
+
+  drop-staging-repo:
+    needs:
+      - staging-repo
+      - release
+    runs-on: ubuntu-24.04
+    if: always() && !(contains(needs.staging-repo.result, 'failure') || contains(needs.staging-repo.result, 'cancelled'))
+    steps:
+      - name: Drop staging repository
+        uses: danysk/action-drop-ossrh-staging-repo@1.0.3
+        with:
+          repo-id: ${{ needs.staging-repo.outputs.repo-id }}
+          maven-central-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
 
   success:
     runs-on: ubuntu-24.04

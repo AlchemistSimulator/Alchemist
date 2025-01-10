@@ -42,22 +42,22 @@ class MoleculeReader
         moleculeName: String,
         private val property: String?,
         private val incarnation: Incarnation<*, *>,
-        private val filter: ExportFilter,
+        private val filter: String?,
         aggregatorNames: List<String>,
         precision: Int? = null,
-    ) : AbstractDoubleExporter(precision) {
+    ) : AbstractAggregationDoubleExporter(filter, aggregatorNames, precision) {
         private companion object {
             private const val SHORT_NAME_MAX_LENGTH = 5
         }
 
         private val molecule: Molecule = incarnation.createMolecule(moleculeName)
 
-        private val aggregators: Map<String, UnivariateStatistic> =
-            aggregatorNames
-                .associateWith { StatUtil.makeUnivariateStatistic(it) }
-                .filter { it.value.isPresent }
-                .map { it.key to it.value.get() }
-                .toMap()
+//        private val aggregators: Map<String, UnivariateStatistic> =
+//            aggregatorNames
+//                .associateWith { StatUtil.makeUnivariateStatistic(it) }
+//                .filter { it.value.isPresent }
+//                .map { it.key to it.value.get() }
+//                .toMap()
 
         private val propertyText =
             if (property.isNullOrEmpty()) {

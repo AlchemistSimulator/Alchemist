@@ -16,7 +16,7 @@ mockito = "5.15.2"
 protelis = "17.7.1"
 react = "19.0.0-pre.854"
 scafi = "1.6.0"
-scala = "2.13.15"
+scala = "2.13.16"
 scalacache = "0.28.0"
 
 [libraries]

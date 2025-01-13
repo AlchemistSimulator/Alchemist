@@ -17,6 +17,12 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.util.StatUtil
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
 
+/**
+ * Aggregation of data extracted from the environment.
+ * The data is filtered and then aggregated using the provided aggregators.
+ * Provided a [filter] and a list of [aggregatorNames], extracts data from the environment,
+ * filters it, and then aggregates it.
+ */
 abstract class AbstractAggregatingDoubleExporter
     @JvmOverloads
     constructor(

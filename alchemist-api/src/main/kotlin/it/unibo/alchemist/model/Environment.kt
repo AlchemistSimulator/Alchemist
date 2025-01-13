@@ -1,58 +1,43 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model;
 
-import it.unibo.alchemist.core.Simulation;
-import org.danilopianini.util.ListSet;
+package it.unibo.alchemist.model
 
-import javax.annotation.Nonnull;
-import java.io.Serializable;
-import java.util.Optional;
-import java.util.function.Predicate;
+import it.unibo.alchemist.core.Simulation
+import org.jetbrains.annotations.NotNull
+import java.io.Serializable
+import java.util.Optional
+import java.util.function.Predicate
 
-/**
- * Interface for an environment. Every environment must implement this
- * specification.
- *
- * @param <P> Concentration type
- * @param <T> Position type
- */
-public interface Environment<T, P extends Position<? extends P>> extends Serializable, Iterable<Node<T>> {
+interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
 
     /**
-     * Add a {@link Layer} to the {@link Environment}.
-     *
-     * @param m the {@link Molecule} of the {@link Layer}
-     * @param l the {@link Layer}
+     * Add a [layer] identified by [molecule] to the [Environment].
      */
-    void addLayer(Molecule m, Layer<T, P> l);
+    fun addLayer(molecule: Molecule, layer: Layer<T, P>)
 
     /**
-     * Add a {@link GlobalReaction} to the {@link Environment}.
-     *
-     * @param reaction the {@link GlobalReaction} to add.
+     * Add a [reaction] to the [Environment].
      */
-    void addGlobalReaction(GlobalReaction<T> reaction);
+    fun addGlobalReaction(reaction: GlobalReaction<T>)
 
     /**
-     * Remove a {@link GlobalReaction} from the {@link Environment}.
-     *
-     * @param reaction {@link GlobalReaction} to remove.
+     * Remove a [reaction] from the [Environment].
      */
-    void removeGlobalReaction(GlobalReaction<T> reaction);
+    fun removeGlobalReaction(reaction: GlobalReaction<T>)
 
     /**
      * Get the {@link Environment}'s {@link GlobalReaction}s.
      *
      * @return the list of {@link GlobalReaction}s in this {@link Environment}.
      */
-    ListSet<GlobalReaction<T>> getGlobalReactions();
+    fun getGlobalReactions(): Set<GlobalReaction<T>>
 
     /**
      * This method allows to add a new node to this environment. The environment
@@ -63,35 +48,31 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      * @param p    The position where to place it
      * @return true if node is added in the environment
      */
-    boolean addNode(Node<T> node, P p);
+    fun addNode(node: Node<T>, position: P): Boolean
 
     /**
      * @param terminator a {@link Predicate} indicating whether the simulation should
      *                   be considered finished
      */
-    void addTerminator(Predicate<Environment<T, P>> terminator);
+    fun addTerminator(terminator: Predicate<Environment<T, P>>)
 
     /**
      * The number of dimensions of this environment.
      *
      * @return the number of dimensions of this environment
      */
-    int getDimensions();
+    fun getDimensions(): Int
 
     /**
-     * Measures the distance between two nodes in the environment.
-     *
-     * @param n1 the first node
-     * @param n2 the second node
-     * @return the distance between the two nodes
+     * Measures the distance between two nodes ([n1], [n2] in the environment.
      */
-    double getDistanceBetweenNodes(Node<T> n1, Node<T> n2);
+    fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double
 
     /**
      * @return the {@link Incarnation} used to initialize the entities of this {@link Environment}, if it has been set.
      */
-    @Nonnull
-    Incarnation<T, P> getIncarnation();
+    @NotNull
+    fun getIncarnation(): Incarnation<T, P>
 
     /**
      * Get the layer associate to the given molecule. If no Layer is associated
@@ -101,32 +82,29 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      * @return the {@link Optional} containing the {@link Layer} associated with
      * the requested molecule
      */
-    Optional<Layer<T, P>> getLayer(Molecule m);
+    fun getLayer(molecule: Molecule): Optional<Layer<T, P>>
 
     /**
      * Return all the Layers in this {@link Environment}.
      *
      * @return a {@link ListSet} of {@link Layer}.
      */
-    ListSet<Layer<T, P>> getLayers();
+    fun getLayers(): Set<Layer<T, P>>
 
     /**
-     * @return the current linking rule
+     * Returns the current linking rule.
      */
-    LinkingRule<T, P> getLinkingRule();
+    fun getLinkingRule(): LinkingRule<T, P>
 
     /**
-     * @param rule the rule to set
+     * Set the [rule] passed as new [LinkingRule] of the environment.
      */
-    void setLinkingRule(LinkingRule<T, P> rule);
+    fun setLinkingRule(rule: LinkingRule<T, P>)
 
     /**
-     * Given a node, this method returns its neighborhood.
-     *
-     * @param center The node you want the neighbors to be found
-     * @return the neighborhood
+     * Given a [node], this method returns its neighborhood.
      */
-    Neighborhood<T> getNeighborhood(Node<T> center);
+    fun getNeighborhood(node: Node<T>): Neighborhood<T>
 
     /**
      * Allows to access a node known its id. Depending on the implementation, this method may or not be optimized
@@ -136,33 +114,29 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      * @return the node with that id, or null if it does not exist in this
      * environment
      */
-    Node<T> getNodeByID(int id);
+    fun getNodeByID(id: Int): Node<T>
 
     /**
      * All the nodes that exist in current environment.
      *
      * @return All the nodes that exist in current environment
      */
-    ListSet<Node<T>> getNodes();
+    fun getNodes(): Set<Node<T>>
 
     /**
-     * @return the number of nodes currently in the environment
+     * Returns the number of nodes currently in the environment.
      */
-    int getNodeCount();
+    fun getNodeCount(): Int
 
     /**
-     * Given a node (center) this method returns a list of all the surroundings
-     * nodes within the given range. Note that this method (depending on the
+     * Given a [node] this method returns a list of all the surroundings
+     * nodes within the given [range]. Note that this method (depending on the
      * implementation) might be not optimized and it's consequently <b>much</b>
      * better to use {@link Environment#getNeighborhood(Node)} and filter the
      * neighborhood if you are sure that all the nodes within the range are
      * connected to the center.
-     *
-     * @param center the node to consider as center
-     * @param range  the exploration range
-     * @return the list of nodes within the range
      */
-    ListSet<Node<T>> getNodesWithinRange(Node<T> center, double range);
+    fun getNodesWithinRange(node: Node<T>, range: Double): Collection<Node<T>>
 
     /**
      * Given a {@link Position}(center) this method returns a list of all the
@@ -173,7 +147,7 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      * @param range  the exploration range
      * @return the list of nodes within the range
      */
-    ListSet<Node<T>> getNodesWithinRange(P center, double range);
+    fun getNodesWithinRange(position: P, range: Double): Collection<Node<T>>
 
     /**
      * This method allows to know which are the smallest coordinates
@@ -182,7 +156,7 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      * @return an array of length getDimensions() containing the smallest
      * coordinates for each dimension.
      */
-    double[] getOffset();
+    fun getOffset(): DoubleArray
 
     /**
      * Calculates the position of a node.
@@ -190,19 +164,19 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      * @param node the node you want to know the position
      * @return The position
      */
-    @Nonnull
-    P getPosition(Node<T> node);
+    @NotNull
+    fun getPosition(node: Node<T>): P
 
     /**
      * @return the current simulation, if present, or throws an
      * {@link IllegalStateException} otherwise
      */
-    Simulation<T, P> getSimulation();
+    fun getSimulation(): Simulation<T, P>
 
     /**
      * @param s the simulation
      */
-    void setSimulation(Simulation<T, P> s);
+    fun setSimulation(simulation: Simulation<T, P>)
 
     /**
      * This method returns the size of the environment as an array of length
@@ -212,7 +186,7 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      *
      * @return the size of this environment
      */
-    double[] getSize();
+    fun getSize(): DoubleArray
 
     /**
      * This method returns the size of the environment as an array of length
@@ -222,18 +196,18 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      *
      * @return the size of this environment
      */
-    double[] getSizeInDistanceUnits();
+    fun getSizeInDistanceUnits(): DoubleArray
 
     /**
      * @return true if all the terminators are true
      */
-    boolean isTerminated();
+    fun isTerminated(): Boolean
 
     /**
      * @param coordinates the coordinates of the point
      * @return a {@link Position} compatible with this environment
      */
-    P makePosition(Number... coordinates);
+    fun makePosition(coordinates: DoubleArray): P
 
     /**
      * This method moves a node in the environment to some position. If node
@@ -242,8 +216,8 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      * @param node     The node to move
      * @param position The absolute position in which this node will be moved.
      */
-    @Nonnull
-    void moveNodeToPosition(@Nonnull Node<T> node, @Nonnull P position);
+    @NotNull
+    fun moveNodeToPosition(@NotNull node: Node<T>, @NotNull position: P)
 
     /**
      * This method allows to remove a node. If node removal is unsupported, it
@@ -251,6 +225,5 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      *
      * @param node the node to remove
      */
-    void removeNode(Node<T> node);
-
+    fun removeNode(node: Node<T>)
 }

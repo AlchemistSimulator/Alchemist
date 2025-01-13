@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.extractors
 
+import it.unibo.alchemist.boundary.ExportFilter
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
@@ -39,10 +40,10 @@ class MoleculeReader
         moleculeName: String,
         private val property: String?,
         private val incarnation: Incarnation<*, *>,
-        private val filter: String?,
+        private val filter: ExportFilter,
         aggregatorNames: List<String>,
         precision: Int? = null,
-    ) : AbstractAggregationDoubleExporter(filter, aggregatorNames, precision) {
+    ) : AbstractAggregatingDoubleExporter(filter, aggregatorNames, precision) {
         private companion object {
             private const val SHORT_NAME_MAX_LENGTH = 5
         }

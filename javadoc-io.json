@@ -1,7 +1,4 @@
 {
-  "ch.qos.logback/logback-classic/1.5.15": {
-    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.15"
-  },
   "ch.qos.logback/logback-classic/1.5.16": {
     "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.16",
     "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.16/element-list"
@@ -36,12 +33,6 @@
   "com.github.ben-manes.caffeine/caffeine/3.1.8": {
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.8",
     "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.8/element-list"
-  },
-  "com.github.cb372/scalacache-core_2.13/0.28.0": {
-    "first": "https://javadoc.io/doc/com.github.cb372/scalacache-core_2.13/0.28.0"
-  },
-  "com.github.cb372/scalacache-guava_2.13/0.28.0": {
-    "first": "https://javadoc.io/doc/com.github.cb372/scalacache-guava_2.13/0.28.0"
   },
   "com.github.davidmoten/rtree/0.12": {
     "first": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12",
@@ -79,9 +70,6 @@
     "first": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2",
     "second": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2/element-list"
   },
-  "com.pinterest.ktlint/ktlint-cli/1.5.0": {
-    "first": "https://javadoc.io/doc/com.pinterest.ktlint/ktlint-cli/1.5.0"
-  },
   "com.pinterest.ktlint/ktlint-ruleset-standard/1.5.0": {
     "first": "https://javadoc.io/doc/com.pinterest.ktlint/ktlint-ruleset-standard/1.5.0"
   },
@@ -95,12 +83,9 @@
     "first": "https://javadoc.io/doc/commons-cli/commons-cli/1.9.0",
     "second": "https://javadoc.io/doc/commons-cli/commons-cli/1.9.0/element-list"
   },
-  "commons-codec/commons-codec/1.17.1": {
-    "first": "https://javadoc.io/doc/commons-codec/commons-codec/1.17.1",
-    "second": "https://javadoc.io/doc/commons-codec/commons-codec/1.17.1/element-list"
-  },
   "commons-codec/commons-codec/1.17.2": {
-    "first": "https://javadoc.io/doc/commons-codec/commons-codec/1.17.2"
+    "first": "https://javadoc.io/doc/commons-codec/commons-codec/1.17.2",
+    "second": "https://javadoc.io/doc/commons-codec/commons-codec/1.17.2/element-list"
   },
   "commons-io/commons-io/2.18.0": {
     "first": "https://javadoc.io/doc/commons-io/commons-io/2.18.0",
@@ -117,17 +102,12 @@
     "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/2.0.0"
   },
   "io.github.classgraph/classgraph/4.8.179": {
-    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.179"
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.179",
+    "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.179/element-list"
   },
-  "io.github.detekt.sarif4k/sarif4k/0.5.0": {
-    "first": "https://javadoc.io/doc/io.github.detekt.sarif4k/sarif4k/0.5.0"
-  },
-  "io.github.oshai/kotlin-logging/5.1.0": {
-    "first": "https://javadoc.io/doc/io.github.oshai/kotlin-logging/5.1.0"
-  },
-  "io.jenetics/jpx/3.2.0": {
-    "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.0",
-    "second": "https://javadoc.io/doc/io.jenetics/jpx/3.2.0/element-list"
+  "io.jenetics/jpx/3.2.1": {
+    "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1",
+    "second": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1/element-list"
   },
   "io.kotest/kotest-assertions-core/6.0.0.M1": {
     "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-core/6.0.0.M1"
@@ -180,19 +160,12 @@
   "io.ktor/ktor-server-websockets-jvm/2.3.13": {
     "first": "https://javadoc.io/doc/io.ktor/ktor-server-websockets-jvm/2.3.13"
   },
-  "it.unibo.scafi/scafi-core_2.13/1.6.0": {
-    "first": "https://javadoc.io/doc/it.unibo.scafi/scafi-core_2.13/1.6.0"
-  },
   "it.unimi.dsi/dsiutils/2.7.3": {
     "first": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.3",
     "second": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.3/element-list"
   },
   "net.anwiba.commons.swing.icons/org.oxygen.oxygen-icons/4.13.0-1.2.50": {
     "first": "https://javadoc.io/doc/net.anwiba.commons.swing.icons/org.oxygen.oxygen-icons/4.13.0-1.2.50"
-  },
-  "net.harawata/appdirs/1.2.2": {
-    "first": "https://javadoc.io/doc/net.harawata/appdirs/1.2.2",
-    "second": "https://javadoc.io/doc/net.harawata/appdirs/1.2.2/element-list"
   },
   "net.harawata/appdirs/1.3.0": {
     "first": "https://javadoc.io/doc/net.harawata/appdirs/1.3.0",
@@ -318,9 +291,6 @@
   "org.jetbrains.kotlin/kotlin-reflect/2.1.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/2.1.0"
   },
-  "org.jetbrains.kotlin/kotlin-reflect/null": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/null"
-  },
   "org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.1.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.1.0"
   },
@@ -329,9 +299,6 @@
   },
   "org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.1.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.1.0"
-  },
-  "org.jetbrains.kotlin/kotlin-stdlib-jdk8/null": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/null"
   },
   "org.jetbrains.kotlin/kotlin-stdlib/2.1.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.1.0"
@@ -351,9 +318,6 @@
   "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.9.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.9.0"
   },
-  "org.jetbrains.kotlinx/kotlinx-serialization-json/1.7.3": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.7.3"
-  },
   "org.jetbrains.kotlinx/kotlinx-serialization-json/1.8.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.8.0"
   },
@@ -370,22 +334,20 @@
     "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/5.11.4/package-list"
   },
   "org.junit.jupiter/junit-jupiter-engine/5.11.4": {
-    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.11.4"
+    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.11.4",
+    "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.11.4/package-list"
   },
   "org.mapsforge/mapsforge-map-awt/0.21.0": {
     "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.21.0",
     "second": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.21.0/element-list"
   },
-  "org.mockito/mockito-core/5.14.2": {
-    "first": "https://javadoc.io/doc/org.mockito/mockito-core/5.14.2",
-    "second": "https://javadoc.io/doc/org.mockito/mockito-core/5.14.2/element-list"
-  },
   "org.mockito/mockito-core/5.15.2": {
     "first": "https://javadoc.io/doc/org.mockito/mockito-core/5.15.2",
     "second": "https://javadoc.io/doc/org.mockito/mockito-core/5.15.2/element-list"
   },
-  "org.mongodb/mongodb-driver-sync/5.2.1": {
-    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.2.1"
+  "org.mongodb/mongodb-driver-sync/5.3.0": {
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.3.0",
+    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.3.0/element-list"
   },
   "org.protelis/protelis-interpreter/17.7.1": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.7.1"
@@ -396,11 +358,8 @@
   "org.reduxkotlin/redux-kotlin-threadsafe/0.6.1": {
     "first": "https://javadoc.io/doc/org.reduxkotlin/redux-kotlin-threadsafe/0.6.1"
   },
-  "org.scala-lang/scala-compiler/2.13.15": {
-    "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.15"
-  },
-  "org.scala-lang/scala-library/2.13.15": {
-    "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.15"
+  "org.scala-lang/scala-compiler/2.13.16": {
+    "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.16"
   },
   "org.slf4j/slf4j-api/2.0.16": {
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.16",

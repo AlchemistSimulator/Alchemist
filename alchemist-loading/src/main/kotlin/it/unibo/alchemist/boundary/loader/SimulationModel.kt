@@ -11,14 +11,12 @@ package it.unibo.alchemist.boundary.loader
 
 import arrow.core.Either
 import it.unibo.alchemist.boundary.DependentVariable
-import it.unibo.alchemist.boundary.ExportFilter
 import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Extractor
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.Variable
-import it.unibo.alchemist.boundary.exportfilters.CommonFilters
 import it.unibo.alchemist.boundary.extractors.MoleculeReader
 import it.unibo.alchemist.boundary.extractors.Time
 import it.unibo.alchemist.boundary.launchers.DefaultLauncher
@@ -612,9 +610,8 @@ internal object SimulationModel {
                     visitBuilding<Extractor<E>>(context, root)
                 } else {
                     val property = root[DocumentRoot.Export.Data.property]?.toString()
-                    val filter: ExportFilter =
-                        root[DocumentRoot.Export.Data.VALUE_FILTER]?.let { CommonFilters.fromString(it.toString()) }
-                            ?: CommonFilters.NOFILTER.filteringPolicy
+                    val filter: String =
+                        root[DocumentRoot.Export.Data.VALUE_FILTER].toString()
                     val precision: Int? =
                         when (val digits = root[DocumentRoot.Export.Data.precision]) {
                             null -> null

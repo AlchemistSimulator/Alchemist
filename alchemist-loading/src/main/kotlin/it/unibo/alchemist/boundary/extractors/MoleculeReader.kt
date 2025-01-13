@@ -9,15 +9,12 @@
 
 package it.unibo.alchemist.boundary.extractors
 
-import it.unibo.alchemist.boundary.ExportFilter
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.util.StatUtil
-import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
 import kotlin.math.min
 
 /**
@@ -52,13 +49,6 @@ class MoleculeReader
 
         private val molecule: Molecule = incarnation.createMolecule(moleculeName)
 
-//        private val aggregators: Map<String, UnivariateStatistic> =
-//            aggregatorNames
-//                .associateWith { StatUtil.makeUnivariateStatistic(it) }
-//                .filter { it.value.isPresent }
-//                .map { it.key to it.value.get() }
-//                .toMap()
-
         private val propertyText =
             if (property.isNullOrEmpty()) {
                 ""
@@ -72,12 +62,6 @@ class MoleculeReader
 
         private val singleColumnName: String = "$shortProp$moleculeName"
 
-        override val columnNames: List<String> =
-            aggregators.keys
-                .takeIf { it.isNotEmpty() }
-                ?.map { "$singleColumnName[$it]" }
-                ?: listOf("$singleColumnName@node-id")
-
         override fun <T> extractData(
             environment: Environment<T, *>,
             reaction: Actionable<T>?,
@@ -85,20 +69,6 @@ class MoleculeReader
             step: Long,
         ): Map<String, Double> {
             fun Node<T>.extractData() = environment.incarnation.getProperty(this, molecule, property)
-            return when {
-                aggregators.isEmpty() ->
-                    environment.nodes
-                        .asSequence()
-                        .map { node ->
-                            "$singleColumnName@${node.id}" to node.extractData()
-                        }.toMap()
-                else -> {
-                    val filtered = environment.nodes.flatMap { filter.apply(it.extractData()) }.toDoubleArray()
-                    aggregators
-                        .map { (aggregatorName, aggregator) ->
-                            "$singleColumnName[$aggregatorName]" to aggregator.evaluate(filtered)
-                        }.toMap()
-                }
-            }
+            return environment.nodes.associate { n -> "$singleColumnName@${n.id}" to n.extractData() }
         }
     }

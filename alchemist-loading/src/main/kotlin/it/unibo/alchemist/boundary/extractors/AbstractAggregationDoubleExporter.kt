@@ -20,7 +20,7 @@ import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
 abstract class AbstractAggregationDoubleExporter(
     private val filter: String?,
     aggregatorNames: List<String>,
-    precision: Int? = null
+    precision: Int? = null,
 ) : AbstractDoubleExporter(precision) {
     private companion object {
         private const val NAME = "aggregator"
@@ -33,32 +33,29 @@ abstract class AbstractAggregationDoubleExporter(
             .map { it.key to it.value.get() }
             .toMap()
 
-    private val singleColumnName: String = "$NAME"
-
     override val columnNames: List<String> =
         aggregators.keys
             .takeIf { it.isNotEmpty() }
-            ?.map { "$singleColumnName[$it]" }
-            ?: listOf("$singleColumnName@node-id")
+            ?.map { "$NAME[$it]" }
+            ?: listOf("$NAME@node-id")
 
-    private fun associateFilter(filter: String): ExportFilter = CommonFilters.valueOf(filter).filteringPolicy //?: "Selected filter $filter is not valid."
+    private fun associateFilter(filter: String): ExportFilter =
+        CommonFilters.fromString(filter) ?: CommonFilters.NOFILTER.filteringPolicy
 
     override fun <T> extractData(
         environment: Environment<T, *>,
         reaction: Actionable<T>?,
         time: Time,
-        step: Long
+        step: Long,
     ): Map<String, Double> {
         val actualFilter = associateFilter(filter.toString())
-        val filtered = extractDataAsText(environment, reaction, time, step)
-            .flatMap { actualFilter.apply(it.value.toDouble()) }
-            .toDoubleArray()
-        return aggregators.map { (aggregatorName, aggregator) ->
-            "$singleColumnName[$aggregatorName]" to aggregator.evaluate(filtered)
-        }.toMap()
-//        val filtered = environment.nodes
-//            .map { n -> environment.getNeighborhood(n).size() }
-//            .flatMap { t -> actualFilter.apply(t.toDouble()) }
-//            .toDoubleArray()
+        val filtered =
+            extractDataAsText(environment, reaction, time, step)
+                .flatMap { actualFilter.apply(it.value.toDouble()) }
+                .toDoubleArray()
+        return aggregators
+            .map { (aggregatorName, aggregator) ->
+                "$NAME[$aggregatorName]" to aggregator.evaluate(filtered)
+            }.toMap()
     }
 }

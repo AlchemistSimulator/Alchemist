@@ -19,7 +19,7 @@ jobs:
         with:
           pre-build-command: rm javadoc-io.json
           build-command: |
-            ./gradlew dokkaHtmlCollector dokkaJavadocCollector --parallel --dry-run
+            ./gradlew dokkaGeneratePublicationHtml dokkaJavadocCollector --parallel --dry-run
             ./gradlew kotlinUpgradeYarnLock --parallel
           check-command: |
             git config user.name 'Danilo Pianini [bot]'

@@ -33,66 +33,52 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
     fun removeGlobalReaction(reaction: GlobalReaction<T>)
 
     /**
-     * Get the {@link Environment}'s {@link GlobalReaction}s.
-     *
-     * @return the list of {@link GlobalReaction}s in this {@link Environment}.
+     * Get the [GlobalReaction]s in this [Environment].
      */
     fun getGlobalReactions(): Set<GlobalReaction<T>>
 
     /**
-     * This method allows to add a new node to this environment. The environment
-     * is responsible to call the right method of the simulation in order to
+     * This method allows to add a new [node] to this environment in a specific [position].
+     * The environment is responsible to call the right method of the simulation in order to
      * ensure that the reaction is properly scheduled.
-     *
-     * @param node The node to add
-     * @param p    The position where to place it
-     * @return true if node is added in the environment
+     * The function returns true if the node is added to the environment.
      */
     fun addNode(node: Node<T>, position: P): Boolean
 
     /**
-     * @param terminator a {@link Predicate} indicating whether the simulation should
-     *                   be considered finished
+     * Add a [terminator] indicating whether the simulation should be considered finished.
      */
     fun addTerminator(terminator: Predicate<Environment<T, P>>)
 
     /**
      * The number of dimensions of this environment.
-     *
-     * @return the number of dimensions of this environment
      */
     fun getDimensions(): Int
 
     /**
-     * Measures the distance between two nodes ([n1], [n2] in the environment.
+     * Measures the distance between two nodes ([n1], [n2]) in the environment.
      */
     fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double
 
     /**
-     * @return the {@link Incarnation} used to initialize the entities of this {@link Environment}, if it has been set.
+     * Return the [Incarnation] used to initialize the entities of this [Environment], if it has been set.
      */
     @NotNull
     fun getIncarnation(): Incarnation<T, P>
 
     /**
-     * Get the layer associate to the given molecule. If no Layer is associated
+     * Get the [Layer] associate to the given [molecule]. If no Layer is associated
      * with the given molecule, return an empty optional.
-     *
-     * @param m the {@link Molecule}
-     * @return the {@link Optional} containing the {@link Layer} associated with
-     * the requested molecule
      */
     fun getLayer(molecule: Molecule): Optional<Layer<T, P>>
 
     /**
-     * Return all the Layers in this {@link Environment}.
-     *
-     * @return a {@link ListSet} of {@link Layer}.
+     * Return all the [Layer]s in this [Environment].
      */
     fun getLayers(): Set<Layer<T, P>>
 
     /**
-     * Returns the current linking rule.
+     * Returns the current [LinkingRule].
      */
     fun getLinkingRule(): LinkingRule<T, P>
 
@@ -107,24 +93,19 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
     fun getNeighborhood(node: Node<T>): Neighborhood<T>
 
     /**
-     * Allows to access a node known its id. Depending on the implementation, this method may or not be optimized
+     * Allows to access a [Node] in this [Environment] known its [id].
+     * Depending on the implementation, this method may or not be optimized
      * (namely, id could run in constant or linear time with the number of nodes).
-     *
-     * @param id the node's ID
-     * @return the node with that id, or null if it does not exist in this
-     * environment
      */
     fun getNodeByID(id: Int): Node<T>
 
     /**
-     * All the nodes that exist in current environment.
-     *
-     * @return All the nodes that exist in current environment
+     * Returns all the [Node]s that exist in current [Environment].
      */
     fun getNodes(): Set<Node<T>>
 
     /**
-     * Returns the number of nodes currently in the environment.
+     * Returns the number of [Node]s currently in the [Environment].
      */
     fun getNodeCount(): Int
 
@@ -139,91 +120,73 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
     fun getNodesWithinRange(node: Node<T>, range: Double): Collection<Node<T>>
 
     /**
-     * Given a {@link Position}(center) this method returns a list of all the
-     * surroundings nodes within the given range. Note that this method
+     * Given a [position] this method returns a list of all the
+     * surroundings nodes within the given [range]. Note that this method
      * (depending on the implementation) might be not optimized.
-     *
-     * @param center the {@link Position} to consider as center
-     * @param range  the exploration range
-     * @return the list of nodes within the range
      */
     fun getNodesWithinRange(position: P, range: Double): Collection<Node<T>>
 
     /**
      * This method allows to know which are the smallest coordinates
      * represented.
-     *
-     * @return an array of length getDimensions() containing the smallest
+     * Return an array of length getDimensions() containing the smallest
      * coordinates for each dimension.
      */
     fun getOffset(): DoubleArray
 
     /**
-     * Calculates the position of a node.
-     *
-     * @param node the node you want to know the position
-     * @return The position
+     * Calculates the position of a [node].
      */
     @NotNull
     fun getPosition(node: Node<T>): P
 
     /**
-     * @return the current simulation, if present, or throws an
-     * {@link IllegalStateException} otherwise
+     * Return the current [Simulation], if present, or throws an [IllegalStateException] otherwise
      */
     fun getSimulation(): Simulation<T, P>
 
     /**
-     * @param s the simulation
+     * Set the [simulation] given as current.
      */
     fun setSimulation(simulation: Simulation<T, P>)
 
     /**
      * This method returns the size of the environment as an array of length
-     * {@link #getDimensions()}. This method must return distance measured with
+     * getDimensions(). This method must return distance measured with
      * the same unit used by the positions. No non-euclidean distance metrics
      * are allowed.
-     *
-     * @return the size of this environment
      */
     fun getSize(): DoubleArray
 
     /**
      * This method returns the size of the environment as an array of length
-     * {@link #getDimensions()}. This method must return distance measured with
-     * the same unit used for measuring distances. It may or may not return the
-     * same result of {@link #getSize()}
-     *
-     * @return the size of this environment
+     * getDimensions(). This method must return distance measured with
+     * the same unit used for measuring distances.
+     * It may or may not return the same result of getSize().
      */
     fun getSizeInDistanceUnits(): DoubleArray
 
     /**
-     * @return true if all the terminators are true
+     * Returns true if all the terminators are true
      */
     fun isTerminated(): Boolean
 
     /**
-     * @param coordinates the coordinates of the point
-     * @return a {@link Position} compatible with this environment
+     * Given the [coordinates] of the point,
+     * returns a [Position] compatible with this environment.
      */
     fun makePosition(coordinates: DoubleArray): P
 
     /**
-     * This method moves a node in the environment to some position. If node
-     * move is unsupported, it does nothing.
-     *
-     * @param node     The node to move
-     * @param position The absolute position in which this node will be moved.
+     * This method moves a [node] in the environment to some [position].
+     * If node move is unsupported, it does nothing.
      */
     @NotNull
     fun moveNodeToPosition(@NotNull node: Node<T>, @NotNull position: P)
 
     /**
-     * This method allows to remove a node. If node removal is unsupported, it
-     * does nothing.
-     *
-     * @param node the node to remove
+     * This method allows to remove a [node].
+     * If node removal is unsupported, it does nothing.
      */
     fun removeNode(node: Node<T>)
 }

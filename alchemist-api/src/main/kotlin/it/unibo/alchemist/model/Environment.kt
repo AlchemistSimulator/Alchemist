@@ -10,17 +10,27 @@
 package it.unibo.alchemist.model
 
 import it.unibo.alchemist.core.Simulation
+import org.danilopianini.util.ListSet
 import org.jetbrains.annotations.NotNull
 import java.io.Serializable
 import java.util.Optional
 import java.util.function.Predicate
 
-interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
-
+/**
+ * Interface for an environment.
+ * Every environment must implement this specification.
+ * [T] is the [Concentration] type, [P] is the [Position] type.
+ */
+interface Environment<T, P : Position<out P>> :
+    Serializable,
+    Iterable<Node<T>> {
     /**
      * Add a [layer] identified by [molecule] to the [Environment].
      */
-    fun addLayer(molecule: Molecule, layer: Layer<T, P>)
+    fun addLayer(
+        molecule: Molecule,
+        layer: Layer<T, P>,
+    )
 
     /**
      * Add a [reaction] to the [Environment].
@@ -43,7 +53,10 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
      * ensure that the reaction is properly scheduled.
      * The function returns true if the node is added to the environment.
      */
-    fun addNode(node: Node<T>, position: P): Boolean
+    fun addNode(
+        node: Node<T>,
+        position: P,
+    ): Boolean
 
     /**
      * Add a [terminator] indicating whether the simulation should be considered finished.
@@ -58,7 +71,10 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
     /**
      * Measures the distance between two nodes ([n1], [n2]) in the environment.
      */
-    fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double
+    fun getDistanceBetweenNodes(
+        n1: Node<T>,
+        n2: Node<T>,
+    ): Double
 
     /**
      * Return the [Incarnation] used to initialize the entities of this [Environment], if it has been set.
@@ -69,7 +85,7 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
      * Get the [Layer] associate to the given [molecule]. If no Layer is associated
      * with the given molecule, return an empty optional.
      */
-    fun getLayer(molecule: Molecule): Optional<Layer<T, P>>
+    fun getLayer(molecule: Molecule?): Optional<Layer<T, P>>
 
     /**
      * Return all the [Layer]s in this [Environment].
@@ -116,14 +132,20 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
      * neighborhood if you are sure that all the nodes within the range are
      * connected to the center.
      */
-    fun getNodesWithinRange(node: Node<T>, range: Double): Collection<Node<T>>
+    fun getNodesWithinRange(
+        node: Node<T>,
+        range: Double,
+    ): ListSet<Node<T>>
 
     /**
      * Given a [position] this method returns a list of all the
      * surroundings nodes within the given [range]. Note that this method
      * (depending on the implementation) might be not optimized.
      */
-    fun getNodesWithinRange(position: P, range: Double): Collection<Node<T>>
+    fun getNodesWithinRange(
+        position: P,
+        range: Double,
+    ): ListSet<Node<T>>
 
     /**
      * This method allows to know which are the smallest coordinates
@@ -139,7 +161,7 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
     fun getPosition(node: Node<T>): P
 
     /**
-     * Return the current [Simulation], if present, or throws an [IllegalStateException] otherwise
+     * Return the current [Simulation], if present, or throws an [IllegalStateException] otherwise.
      */
     val simulation: Simulation<T, P>
 
@@ -164,7 +186,7 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
     val sizeInDistanceUnits: DoubleArray
 
     /**
-     * Returns true if all the terminators are true
+     * Returns true if all the terminators are true.
      */
     val isTerminated: Boolean
 
@@ -172,13 +194,22 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
      * Given the [coordinates] of the point,
      * returns a [Position] compatible with this environment.
      */
-    fun makePosition(coordinates: DoubleArray): P
+    fun makePosition(vararg coordinates: Number): P
+
+    /**
+     * Given the [coordinates] of the point,
+     * returns a [Position] compatible with this environment.
+     */
+    fun makePosition(coordinates: List<Number>): P = makePosition(*coordinates.toTypedArray())
 
     /**
      * This method moves a [node] in the environment to some [position].
      * If node move is unsupported, it does nothing.
      */
-    fun moveNodeToPosition(@NotNull node: Node<T>, @NotNull position: P)
+    fun moveNodeToPosition(
+        @NotNull node: Node<T>,
+        @NotNull position: P,
+    )
 
     /**
      * This method allows to remove a [node].

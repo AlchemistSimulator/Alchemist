@@ -33,12 +33,7 @@ interface EuclideanEnvironment<T, P> : Environment<T, P> where P : Position<P>, 
     }
 
     /**
-     * Creates a [Position] compatible with this environment given its [coordinates].
-     */
-    fun makePosition(vararg coordinates: Double): P
-
-    /**
      * Create a position corresponding to the origin of this environment.
      */
-    val origin: P get() = makePosition(*DoubleArray(dimensions).toTypedArray())
+    val origin: P get() = makePosition(*DoubleArray(dimensions))
 }

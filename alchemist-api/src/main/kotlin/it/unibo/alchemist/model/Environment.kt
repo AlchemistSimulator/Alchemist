@@ -35,7 +35,7 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
     /**
      * Get the [GlobalReaction]s in this [Environment].
      */
-    fun getGlobalReactions(): Set<GlobalReaction<T>>
+    val globalReactions: Set<GlobalReaction<T>>
 
     /**
      * This method allows to add a new [node] to this environment in a specific [position].
@@ -53,7 +53,7 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
     /**
      * The number of dimensions of this environment.
      */
-    fun getDimensions(): Int
+    val dimensions: Int
 
     /**
      * Measures the distance between two nodes ([n1], [n2]) in the environment.
@@ -63,8 +63,7 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
     /**
      * Return the [Incarnation] used to initialize the entities of this [Environment], if it has been set.
      */
-    @NotNull
-    fun getIncarnation(): Incarnation<T, P>
+    val incarnation: Incarnation<T, P>
 
     /**
      * Get the [Layer] associate to the given [molecule]. If no Layer is associated
@@ -75,12 +74,12 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
     /**
      * Return all the [Layer]s in this [Environment].
      */
-    fun getLayers(): Set<Layer<T, P>>
+    val layers: Set<Layer<T, P>>
 
     /**
      * Returns the current [LinkingRule].
      */
-    fun getLinkingRule(): LinkingRule<T, P>
+    val linkingRule: LinkingRule<T, P>
 
     /**
      * Set the [rule] passed as new [LinkingRule] of the environment.
@@ -102,12 +101,12 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
     /**
      * Returns all the [Node]s that exist in current [Environment].
      */
-    fun getNodes(): Set<Node<T>>
+    val nodes: Set<Node<T>>
 
     /**
      * Returns the number of [Node]s currently in the [Environment].
      */
-    fun getNodeCount(): Int
+    val nodeCount: Int
 
     /**
      * Given a [node] this method returns a list of all the surroundings
@@ -132,18 +131,17 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
      * Return an array of length getDimensions() containing the smallest
      * coordinates for each dimension.
      */
-    fun getOffset(): DoubleArray
+    val offset: DoubleArray
 
     /**
      * Calculates the position of a [node].
      */
-    @NotNull
     fun getPosition(node: Node<T>): P
 
     /**
      * Return the current [Simulation], if present, or throws an [IllegalStateException] otherwise
      */
-    fun getSimulation(): Simulation<T, P>
+    val simulation: Simulation<T, P>
 
     /**
      * Set the [simulation] given as current.
@@ -151,12 +149,11 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
     fun setSimulation(simulation: Simulation<T, P>)
 
     /**
-     * This method returns the size of the environment as an array of length
-     * getDimensions(). This method must return distance measured with
-     * the same unit used by the positions. No non-euclidean distance metrics
-     * are allowed.
+     * The size of the environment as an array of length getDimensions().
+     * This method must return distance measured with the same unit used by the positions.
+     * No non-euclidean distance metrics are allowed.
      */
-    fun getSize(): DoubleArray
+    val size: DoubleArray
 
     /**
      * This method returns the size of the environment as an array of length
@@ -164,12 +161,12 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
      * the same unit used for measuring distances.
      * It may or may not return the same result of getSize().
      */
-    fun getSizeInDistanceUnits(): DoubleArray
+    val sizeInDistanceUnits: DoubleArray
 
     /**
      * Returns true if all the terminators are true
      */
-    fun isTerminated(): Boolean
+    val isTerminated: Boolean
 
     /**
      * Given the [coordinates] of the point,
@@ -181,7 +178,6 @@ interface Environment<T, P : Position<P>> : Serializable, Iterable<Node<T>> {
      * This method moves a [node] in the environment to some [position].
      * If node move is unsupported, it does nothing.
      */
-    @NotNull
     fun moveNodeToPosition(@NotNull node: Node<T>, @NotNull position: P)
 
     /**

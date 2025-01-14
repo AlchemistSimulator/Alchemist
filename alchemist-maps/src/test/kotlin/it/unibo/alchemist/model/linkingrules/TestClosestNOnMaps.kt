@@ -22,7 +22,7 @@ class TestClosestNOnMaps :
                     SupportedIncarnations.get<Any, GeoPosition>("protelis").orElseGet { TODO() },
                     "maps/cesena.pbf",
                 )
-            environment.linkingRule = ClosestN(10)
+            environment.setLinkingRule(ClosestN(10))
             environment.addNode(
                 object : GenericNode<Any>(environment) {
                     override fun createT() = "Nothing"

@@ -107,7 +107,7 @@ internal abstract class LoadingSystem(
             // LINKING RULE
             val linkingRule =
                 SimulationModel.visitLinkingRule<P, T>(context, root.getOrEmptyMap(DocumentRoot.LINKING_RULES))
-            environment.linkingRule = linkingRule
+            environment.setLinkingRule(linkingRule)
             contextualize(linkingRule)
             // MONITORS
             val monitors = SimulationModel.visitOutputMonitors<P, T>(context, root[DocumentRoot.monitors])
@@ -282,7 +282,7 @@ internal abstract class LoadingSystem(
                         is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
                         else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
                     }
-                environment.linkingRule = composedLinkingRule
+                environment.setLinkingRule(composedLinkingRule)
                 contextualize<LinkingRule<T, P>>(composedLinkingRule)
             }
             deployment.stream().forEach { position ->

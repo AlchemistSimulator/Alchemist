@@ -67,7 +67,7 @@ class TestReactionRemoval :
                 node.addReaction(it)
             }
             environment.addTerminator { it.simulation.time > DoubleTime(10.0) }
-            environment.linkingRule = NoLinks()
+            environment.setLinkingRule(NoLinks())
             environment.addNode(node, environment.makePosition(0, 0))
             val engine = Engine(environment)
             engine.play()

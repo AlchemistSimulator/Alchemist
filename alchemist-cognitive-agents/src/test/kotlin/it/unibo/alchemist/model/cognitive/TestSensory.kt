@@ -53,7 +53,7 @@ class TestSensory<T> :
                     SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow(),
                 )
             val rand = MersenneTwister(1)
-            environment.linkingRule = NoLinks()
+            environment.setLinkingRule(NoLinks())
             val incarnation: Incarnation<T, Euclidean2DPosition> =
                 SupportedIncarnations
                     .get<T, Euclidean2DPosition>(SupportedIncarnations.getAvailableIncarnations().first())

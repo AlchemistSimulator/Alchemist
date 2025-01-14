@@ -67,7 +67,7 @@ class TestMoleculeSwapWithinNeighborhood :
                 INCARNATION.createNode(RANDOM, environment, null),
                 INCARNATION.createNode(RANDOM, environment, null),
             )
-        environment.linkingRule = LINKING_RULE
+        environment.setLinkingRule(LINKING_RULE)
         environment.addNode(nodes.first, INITIAL_POSITIONS.first)
         environment.addNode(nodes.second, INITIAL_POSITIONS.second)
         environment.getNeighborhood(nodes.first).neighbors shouldContain nodes.second

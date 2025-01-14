@@ -52,7 +52,7 @@ class TestGetPosition {
 
     @BeforeEach
     fun setUp() {
-        environment.linkingRule = NoLinks()
+        environment.setLinkingRule(NoLinks())
         reaction.actions = listOf(action)
         node.addReaction(reaction)
         environment.addNode(node, environment.makePosition(1, 1))

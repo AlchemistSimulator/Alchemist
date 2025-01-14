@@ -23,5 +23,6 @@ import java.util.function.Predicate
 data class StepCount<T, P : Position<P>>(
     val lastStep: Long,
 ) : Predicate<Environment<T, P>> {
-    override fun test(environment: Environment<T, P>): Boolean = environment.simulation.step.let { it >= lastStep }
+    override fun test(environment: Environment<T, P>): Boolean =
+        environment.simulation?.step?.let { it >= lastStep } ?: false
 }

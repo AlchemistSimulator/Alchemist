@@ -163,7 +163,7 @@ interface Environment<T, P : Position<out P>> :
     /**
      * Return the current [Simulation], if present, or throws an [IllegalStateException] otherwise.
      */
-    val simulation: Simulation<T, P>
+    val simulation: Simulation<T, P>?
 
     /**
      * Set the [simulation] given as current.

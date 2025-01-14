@@ -26,7 +26,7 @@ data class AfterTime<T, P : Position<P>>(
      * Otherwise, reads the current time, and flips to true once it got past the provided [endTime].
      */
     override fun test(environment: Environment<T, P>): Boolean =
-        checkNotNull(environment.simulation.time?.let { it >= endTime }) {
+        checkNotNull(environment.simulation?.time?.let { it >= endTime }) {
             "No simulation available for environment $environment, unable to read time."
         }
 }

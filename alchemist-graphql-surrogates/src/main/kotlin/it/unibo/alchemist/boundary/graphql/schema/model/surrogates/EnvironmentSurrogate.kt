@@ -59,7 +59,7 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
     fun layers() =
         origin.layers.map {
             it.toGraphQLLayerSurrogate { coordinates ->
-                origin.makePosition(*coordinates.toTypedArray())
+                origin.makePosition(coordinates)
             }
         }
 
@@ -104,7 +104,11 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
         var isAdded = false
         origin.simulation.schedule {
             try {
-                isAdded = origin.addNode(newNode, origin.makePosition(*position.coordinates.toTypedArray()))
+                isAdded =
+                    origin.addNode(
+                        newNode,
+                        origin.makePosition(position.coordinates),
+                    )
             } finally {
                 mutex.release()
             }
@@ -122,7 +126,7 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
     @GraphQLDescription("The layer associated with the molecule represented by the given MoleculeInput")
     fun getLayer(m: MoleculeInput): LayerSurrogate<T, P>? =
         getLayerFromMoleculeInput(m)?.toGraphQLLayerSurrogate { coordinates ->
-            origin.makePosition(*coordinates.toTypedArray())
+            origin.makePosition(coordinates)
         }
 
     /**

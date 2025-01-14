@@ -35,5 +35,5 @@ interface EuclideanEnvironment<T, P> : Environment<T, P> where P : Position<P>, 
     /**
      * Create a position corresponding to the origin of this environment.
      */
-    val origin: P get() = makePosition(*DoubleArray(dimensions))
+    val origin: P get() = makePosition(generateSequence { 0 }.take(dimensions).toList())
 }

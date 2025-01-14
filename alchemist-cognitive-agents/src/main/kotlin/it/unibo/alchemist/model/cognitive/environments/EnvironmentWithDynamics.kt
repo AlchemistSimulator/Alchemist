@@ -199,10 +199,11 @@ class EnvironmentWithDynamics<T>
 
         override val origin: Euclidean2DPosition get() = backingEnvironment.origin
 
-        override fun makePosition(vararg coordinates: Double): Euclidean2DPosition =
-            backingEnvironment.makePosition(
-                *coordinates,
-            )
+        override fun makePosition(vararg coordinates: Number): Euclidean2DPosition =
+            backingEnvironment.makePosition(*coordinates)
+
+        override fun makePosition(coordinates: List<Number>): Euclidean2DPosition =
+            backingEnvironment.makePosition(coordinates)
 
         private companion object {
             private fun <T> Physics2DEnvironment<T>.asEnvironmentWithObstacles(): PhysicsEnvWithObstacles<T> =
@@ -243,18 +244,14 @@ class EnvironmentWithDynamics<T>
                         override fun addObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) =
                             error("This Environment instance does not support adding obstacles")
 
-                        override fun makePosition(vararg coordinates: Double) =
-                            this@asEnvironmentWithObstacles.makePosition(
-                                *coordinates,
-                            )
-
-                        override fun makePosition(vararg coordinates: Number) =
-                            this@asEnvironmentWithObstacles.makePosition(
-                                *coordinates,
-                            )
-
                         override val origin
                             get() = this@asEnvironmentWithObstacles.origin
+
+                        override fun makePosition(vararg coordinates: Number): Euclidean2DPosition =
+                            super<Physics2DEnvironment>.makePosition(*coordinates)
+
+                        override fun makePosition(coordinates: List<Number>): Euclidean2DPosition =
+                            super<Physics2DEnvironment>.makePosition(coordinates)
                     }
                 }
         }

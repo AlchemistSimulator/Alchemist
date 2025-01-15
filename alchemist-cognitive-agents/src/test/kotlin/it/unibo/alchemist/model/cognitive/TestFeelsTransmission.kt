@@ -18,6 +18,7 @@ import io.kotest.matchers.shouldNot
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.test.loadYamlSimulation
 import it.unibo.alchemist.test.startSimulation

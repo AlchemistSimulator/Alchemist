@@ -91,7 +91,7 @@ class TestYAMLLoader {
         final var simulation = testNoVar("synthetic/testlayer.yml");
         @SuppressWarnings("unchecked")
         final Environment<Object, P> environment = (Environment<Object, P>) simulation.getEnvironment();
-        final Set<Layer<Object, P>> layers = environment.getLayers();
+        final Set<Layer<Object, P>> layers = environment.layers;
         assertFalse(layers.isEmpty());
         assertEquals(2, layers.size());
         assertEquals(2L, layers.stream()
@@ -165,7 +165,7 @@ class TestYAMLLoader {
 
     @Test
     void testMaxAliases() {
-        assertFalse(testNoVar("yamlAliases/aliases.yml").getEnvironment().getNodes().isEmpty());
+        assertFalse(testNoVar("yamlAliases/aliases.yml").getEnvironment().nodes.isEmpty());
     }
 
     private static <T, P extends Position<P>> Simulation<T, P> testLoading(

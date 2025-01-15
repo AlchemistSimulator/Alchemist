@@ -36,7 +36,7 @@ private data class IncarnationContext<T>(
             randomGenerator,
             incarnation,
             Continuous2DEnvironment(incarnation).apply {
-                setLinkingRule(ConnectWithinDistance(1.0))
+                linkingRule = ConnectWithinDistance(1.0)
             },
         ).apply(configuration).environment
 }

@@ -13,17 +13,18 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.primitives.Doubles;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.util.BugReporting;
-import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.LinkingRule;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
+import it.unibo.alchemist.util.BugReporting;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.stream.SmallestN;
 import org.jooq.lambda.tuple.Tuple2;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -34,12 +35,13 @@ import java.util.stream.Stream;
 /**
  * Non local-consistent rule that connect the closest N nodes together.
  * Two nodes get connected if either one belongs to the set of the ten devices closest to the other.
- * 
+ *
  * @param <T> Concentration type
  * @param <P> {@link Position} type
  */
 public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
 
+    @Serial
     private static final long serialVersionUID = 2L;
     private static final double CONNECTION_RANGE_TOLERANCE = 1.1;
     private final int n, expectedNodes, maxNodes;
@@ -108,7 +110,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
                         /*
                          * ...select those for which I'm on the closest n
                          */
-                        .filter(node -> 
+                        .filter(node ->
                                 !center.equals(node)
                                 && closestN(node, environment).anyMatch(center::equals)
                         )
@@ -169,7 +171,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
 
     /**
      * This method always return true. Subclasses can override it.
-     * 
+     *
      * @param node
      *            the node
      * @return true if the node is enabled (can be linked).
@@ -180,7 +182,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
 
     /**
      * Gets the communication range of a node.
-     * 
+     *
      * @param environment
      *            the environment
      * @param center
@@ -213,7 +215,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
 
     /**
      * Sets a communication range for a node. Used for optimization purposes.
-     * 
+     *
      * @param center
      *            the node
      * @param range

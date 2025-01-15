@@ -82,10 +82,8 @@ class ProtelisDevice<P : Position<P>>
                 when {
                     node.contains(molecule) -> node.getConcentration(molecule)
                     else ->
-                        environment.getLayer(molecule).map { it.getValue(environment.getPosition(node)) }.orElseThrow {
-                            IllegalArgumentException(
-                                "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists",
-                            )
+                        checkNotNull(environment.getLayer(molecule)?.getValue(environment.getPosition(node))) {
+                            "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists"
                         }
                 }
             }

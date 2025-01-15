@@ -43,10 +43,10 @@ data class Cognitive<T, P, A, F>
             node.asProperty<T, HumanProperty<T, P, A>>().compliance,
             ::influentialPeople,
         ) {
-            environment
-                .getLayer(danger)
-                .map { it.getValue(environment.getPosition(node)) as Double }
-                .orElse(0.0)
+            when (danger) {
+                null -> 0.0
+                else -> environment.getLayer(danger)?.getValue(environment.getPosition(node)) as? Double ?: 0.0
+            }
         }
     }
 

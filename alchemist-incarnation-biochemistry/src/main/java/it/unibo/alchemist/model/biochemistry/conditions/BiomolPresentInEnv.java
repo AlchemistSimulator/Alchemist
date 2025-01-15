@@ -9,35 +9,36 @@
 
 package it.unibo.alchemist.model.biochemistry.conditions;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import it.unibo.alchemist.model.Reaction;
-import org.apache.commons.math3.util.CombinatoricsUtils;
-import org.apache.commons.math3.util.FastMath;
-
-import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
+import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
+import org.apache.commons.math3.util.CombinatoricsUtils;
+import org.apache.commons.math3.util.FastMath;
+
+import javax.annotation.Nullable;
+import java.io.Serial;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @param <P> Position type
  */
 public final class BiomolPresentInEnv<P extends Position<? extends P>> extends GenericMoleculePresent<Double> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final Environment<Double, P> environment;
 
     /**
-     * Initialize condition for extra-cellular environment, implemented as a set
+     * Initialize condition for extracellular environment, implemented as a set
      * of {@link EnvironmentNode}.
-     * 
+     *
      * @param biomolecule
      *            the {@link Biomolecule} which the condition is about.
      * @param concentration
@@ -64,7 +65,7 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
             return 0;
         }
         return CombinatoricsUtils.binomialCoefficientDouble(
-                (int) FastMath.round(totalQuantity), 
+                (int) FastMath.round(totalQuantity),
                 (int) FastMath.round(getQuantity())
             );
     }
@@ -79,7 +80,7 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
                 .collect(Collectors.toList());
     }
 
-    @Override 
+    @Override
     public BiomolPresentInEnv<P> cloneCondition(final Node<Double> node, final Reaction<Double> r) {
         return new BiomolPresentInEnv<>(environment, node, getBiomolecule(), getQuantity());
     }
@@ -107,9 +108,9 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
                     .sum();
         }
         double quantityInLayers = 0;
-        final Optional<Layer<Double, P>> layer = environment.getLayer(getBiomolecule());
-        if (layer.isPresent()) {
-            quantityInLayers = layer.get().getValue(environment.getPosition(getNode()));
+        final @Nullable Layer<Double, P> layer = environment.getLayer(getBiomolecule());
+        if (layer != null) {
+            quantityInLayers = layer.getValue(environment.getPosition(getNode()));
         }
         return quantityInEnvNodes + quantityInLayers;
     }

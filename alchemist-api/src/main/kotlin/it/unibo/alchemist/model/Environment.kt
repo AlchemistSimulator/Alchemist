@@ -11,10 +11,7 @@ package it.unibo.alchemist.model
 
 import it.unibo.alchemist.core.Simulation
 import org.danilopianini.util.ListSet
-import org.jetbrains.annotations.NotNull
 import java.io.Serializable
-import java.util.Optional
-import java.util.function.Predicate
 
 /**
  * Interface for an environment.
@@ -25,7 +22,7 @@ interface Environment<T, P : Position<out P>> :
     Serializable,
     Iterable<Node<T>> {
     /**
-     * Add a [layer] identified by [molecule] to the [Environment].
+     * Add a [Layer] to the [Environment].
      */
     fun addLayer(
         molecule: Molecule,
@@ -33,19 +30,19 @@ interface Environment<T, P : Position<out P>> :
     )
 
     /**
-     * Add a [reaction] to the [Environment].
+     * Add a [GlobalReaction] to the [Environment].
      */
     fun addGlobalReaction(reaction: GlobalReaction<T>)
 
     /**
-     * Remove a [reaction] from the [Environment].
+     * Remove a [GlobalReaction] from the [Environment].
      */
     fun removeGlobalReaction(reaction: GlobalReaction<T>)
 
     /**
-     * Get the [GlobalReaction]s in this [Environment].
+     * Get the [Environment]'s [GlobalReaction]s.
      */
-    val globalReactions: Set<GlobalReaction<T>>
+    val globalReactions: ListSet<GlobalReaction<T>>
 
     /**
      * This method allows to add a new [node] to this environment in a specific [position].
@@ -61,7 +58,7 @@ interface Environment<T, P : Position<out P>> :
     /**
      * Add a [terminator] indicating whether the simulation should be considered finished.
      */
-    fun addTerminator(terminator: Predicate<Environment<T, P>>)
+    fun addTerminator(terminator: TerminationPredicate<T, P>)
 
     /**
      * The number of dimensions of this environment.
@@ -69,7 +66,7 @@ interface Environment<T, P : Position<out P>> :
     val dimensions: Int
 
     /**
-     * Measures the distance between two nodes ([n1], [n2]) in the environment.
+     * Measures the distance between two nodes  ([n1], [n2]) in the environment.
      */
     fun getDistanceBetweenNodes(
         n1: Node<T>,
@@ -83,24 +80,19 @@ interface Environment<T, P : Position<out P>> :
 
     /**
      * Get the [Layer] associate to the given [molecule]. If no Layer is associated
-     * with the given molecule, return an empty optional.
+     * with the given molecule, return `null`.
      */
-    fun getLayer(molecule: Molecule?): Optional<Layer<T, P>>
+    fun getLayer(molecule: Molecule): Layer<T, P>?
 
     /**
-     * Return all the [Layer]s in this [Environment].
+     * Return all the Layers in this [Environment].
      */
-    val layers: Set<Layer<T, P>>
+    val layers: ListSet<Layer<T, P>>
 
     /**
      * Returns the current [LinkingRule].
      */
-    val linkingRule: LinkingRule<T, P>
-
-    /**
-     * Set the [rule] passed as new [LinkingRule] of the environment.
-     */
-    fun setLinkingRule(rule: LinkingRule<T, P>)
+    var linkingRule: LinkingRule<T, P>
 
     /**
      * Given a [node], this method returns its neighborhood.
@@ -117,7 +109,7 @@ interface Environment<T, P : Position<out P>> :
     /**
      * Returns all the [Node]s that exist in current [Environment].
      */
-    val nodes: Set<Node<T>>
+    val nodes: ListSet<Node<T>>
 
     /**
      * Returns the number of [Node]s currently in the [Environment].
@@ -127,8 +119,8 @@ interface Environment<T, P : Position<out P>> :
     /**
      * Given a [node] this method returns a list of all the surroundings
      * nodes within the given [range]. Note that this method (depending on the
-     * implementation) might be not optimized and it's consequently <b>much</b>
-     * better to use {@link Environment#getNeighborhood(Node)} and filter the
+     * implementation) might be not optimized, and it's consequently **much**
+     * better to use [Environment.getNeighborhood] and filter the
      * neighborhood if you are sure that all the nodes within the range are
      * connected to the center.
      */
@@ -148,9 +140,8 @@ interface Environment<T, P : Position<out P>> :
     ): ListSet<Node<T>>
 
     /**
-     * This method allows to know which are the smallest coordinates
-     * represented.
-     * Return an array of length getDimensions() containing the smallest
+     * This method allows to know which are the smallest coordinates represented.
+     * Return an array of length [dimensions] containing the smallest
      * coordinates for each dimension.
      */
     val offset: DoubleArray
@@ -163,12 +154,12 @@ interface Environment<T, P : Position<out P>> :
     /**
      * Return the current [Simulation], if present, or throws an [IllegalStateException] otherwise.
      */
-    val simulation: Simulation<T, P>?
+    var simulation: Simulation<T, P>
 
     /**
-     * Set the [simulation] given as current.
+     * Return the current [Simulation], if present, or `null` otherwise.
      */
-    fun setSimulation(simulation: Simulation<T, P>)
+    val simulationOrNull: Simulation<T, P>?
 
     /**
      * The size of the environment as an array of length getDimensions().
@@ -179,14 +170,14 @@ interface Environment<T, P : Position<out P>> :
 
     /**
      * This method returns the size of the environment as an array of length
-     * getDimensions(). This method must return distance measured with
-     * the same unit used for measuring distances.
-     * It may or may not return the same result of getSize().
+     * [.getDimensions]. This method must return distance measured with
+     * the same unit used for measuring distances. It may or may not return the
+     * same result of [.getSize].
      */
     val sizeInDistanceUnits: DoubleArray
 
     /**
-     * Returns true if all the terminators are true.
+     * Return true if all the terminators are true.
      */
     val isTerminated: Boolean
 
@@ -207,8 +198,8 @@ interface Environment<T, P : Position<out P>> :
      * If node move is unsupported, it does nothing.
      */
     fun moveNodeToPosition(
-        @NotNull node: Node<T>,
-        @NotNull position: P,
+        node: Node<T>,
+        position: P,
     )
 
     /**

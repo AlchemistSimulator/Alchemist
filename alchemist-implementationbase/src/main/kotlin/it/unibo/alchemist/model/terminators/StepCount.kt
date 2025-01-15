@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.terminators
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
-import java.util.function.Predicate
+import it.unibo.alchemist.model.TerminationPredicate
 
 /**
  * Terminates the simulation after a given number of steps.
@@ -22,7 +22,6 @@ import java.util.function.Predicate
  */
 data class StepCount<T, P : Position<P>>(
     val lastStep: Long,
-) : Predicate<Environment<T, P>> {
-    override fun test(environment: Environment<T, P>): Boolean =
-        environment.simulation?.step?.let { it >= lastStep } ?: false
+) : TerminationPredicate<T, P> {
+    override fun invoke(environment: Environment<T, P>): Boolean = environment.simulation.step >= lastStep
 }

@@ -122,7 +122,7 @@ class TestBioRect2DEnvironmentNoOverlap {
     private Euclidean2DEnvironment<Double> environment;
 
     private Node<Double> createNode(final double diameter) {
-        return environment.getIncarnation().createNode(new MersenneTwister(), environment, Double.toString(diameter));
+        return environment.incarnation.createNode(new MersenneTwister(), environment, Double.toString(diameter));
     }
 
     /**
@@ -198,7 +198,7 @@ class TestBioRect2DEnvironmentNoOverlap {
     }
 
     private void verifyNotAdded(final Node<Double> node) {
-        assertFalse(environment.getNodes().contains(node));
+        assertFalse(environment.nodes.contains(node));
     }
 
     private void verifyAdded(final Node<Double> node, @Nonnull final Position<?> expected) {
@@ -783,7 +783,7 @@ class TestBioRect2DEnvironmentNoOverlap {
             }
 
             private Stream<Node<Double>> getNodes() {
-                return env.getNodes().stream().filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null);
+                return env.nodes.stream().filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null);
             }
 
             private boolean thereIsOverlap(final Environment<Double, Euclidean2DPosition> env) {
@@ -824,7 +824,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         final Node<T> node,
         final boolean shouldBePresent
     ) {
-        final var isInEnvironment = environment.getNodes().contains(node);
+        final var isInEnvironment = environment.nodes.contains(node);
         if (shouldBePresent) {
             assertTrue(isInEnvironment, () -> "node " + node + " is not in the environment");
             final var position = environment.getPosition(node);

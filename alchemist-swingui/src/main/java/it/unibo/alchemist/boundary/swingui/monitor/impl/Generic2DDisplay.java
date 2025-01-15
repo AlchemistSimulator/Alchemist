@@ -256,7 +256,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         bindKey(KeyEvent.VK_D, () -> {
             if (status == ViewStatus.SELECTING_NODES) {
                 status = ViewStatus.DELETING_NODES;
-                final Simulation<T, P> sim = currentEnv.getSimulation();
+                final Simulation<T, P> sim = currentEnv.simulation;
                 for (final Node<T> n : selectedNodes) {
                     sim.schedule(() -> currentEnv.removeNode(n));
                 }
@@ -266,7 +266,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         });
         bindKey(KeyEvent.VK_M, () -> setMarkCloserNode(!isCloserNodeMarked()));
         bindKey(KeyEvent.VK_L, () -> setDrawLinks(!paintLinks));
-        bindKey(KeyEvent.VK_P, () -> Optional.ofNullable(currentEnv.getSimulation())
+        bindKey(KeyEvent.VK_P, () -> Optional.ofNullable(currentEnv.simulation)
                 .ifPresent(sim -> {
                     if (sim.getStatus() == Status.RUNNING) {
                         sim.pause();
@@ -699,7 +699,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             accessData();
             positions.clear();
             neighbors.clear();
-            environment.getNodes().parallelStream().forEach(node -> {
+            environment.nodes.parallelStream().forEach(node -> {
                 positions.put(node, environment.getPosition(node));
                 neighbors.put(node, environment.getNeighborhood(node));
             });
@@ -740,7 +740,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             if (isCloserNodeMarked() && nearest != null && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
                 final NodeTracker<T, P> monitor = new NodeTracker<>(nearest);
                 monitor.stepDone(currentEnv, null, new DoubleTime(lastTime), st);
-                final Simulation<T, P> sim = currentEnv.getSimulation();
+                final Simulation<T, P> sim = currentEnv.simulation;
                 final JFrame frame = makeFrame("Tracker for node " + nearest.getId(), monitor);
                 if (sim != null) {
                     sim.addOutputMonitor(monitor);
@@ -752,7 +752,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                     });
                 }
             } else if (status == ViewStatus.CLONING_NODES && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
-                final Simulation<T, P> engine = currentEnv.getSimulation();
+                final Simulation<T, P> engine = currentEnv.simulation;
                 final P envEnding = wormhole.getEnvPoint(e.getPoint());
                 engine.schedule(() -> {
                     final Collection<Node<T>> newNodes = new ArrayList<>(selectedNodes.size());
@@ -842,8 +842,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             if (SwingUtilities.isLeftMouseButton(e) && isDraggingMouse) {
                 endingPoint = e.getPoint();
                 if (status == ViewStatus.MOVING_SELECTED_NODES && originPoint != null) {
-                    if (currentEnv.getDimensions() == 2) {
-                        final Simulation<T, P> engine = currentEnv.getSimulation();
+                    if (currentEnv.dimensions == 2) {
+                        final Simulation<T, P> engine = currentEnv.simulation;
                         if (engine != null) {
                             final P envEnding = wormhole.getEnvPoint(endingPoint);
                             final P envOrigin = wormhole.getEnvPoint(originPoint);

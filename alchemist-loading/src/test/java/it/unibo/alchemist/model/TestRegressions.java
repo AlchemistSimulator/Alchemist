@@ -63,12 +63,12 @@ class TestRegressions {
             .from(ResourceLoader.getResource("testCustomExport.yml"))
             .getDefault()
             .getEnvironment();
-        assertNotNull(environment.getIncarnation());
+        assertNotNull(environment.incarnation);
         final byte[] serialized = SerializationUtils.serialize(environment);
         assertNotNull(serialized);
         final Object deserialized = SerializationUtils.deserialize(SerializationUtils.serialize(environment));
         assertNotNull(deserialized);
         assertEquals(environment.getClass(), deserialized.getClass());
-        assertNotNull(((Environment<?, ?>) deserialized).getIncarnation());
+        assertNotNull(((Environment<?, ?>) deserialized).incarnation);
     }
 }

@@ -283,7 +283,7 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      * @param start the node from which the BFS starts.
      * @return a map where keys are nodes and values are their distances from the start node.
      */
-    default Map<Node<T>, Integer> breadthFirstSearch(Node<T> start) {
+    private Map<Node<T>, Integer> breadthFirstSearch(Node<T> start) {
         Map<Node<T>, Integer> distances = new HashMap<>();
         Deque<Node<T>> queue = new ArrayDeque<>();
 

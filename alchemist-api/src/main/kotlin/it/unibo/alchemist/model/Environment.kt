@@ -61,6 +61,11 @@ interface Environment<T, P : Position<out P>> :
     fun addTerminator(terminator: TerminationPredicate<T, P>)
 
     /**
+     * Add a [terminator] indicating whether the simulation should be considered finished.
+     */
+    fun addTerminator(terminator: (Environment<T, P>) -> Boolean) = addTerminator(TerminationPredicate(terminator))
+
+    /**
      * The number of dimensions of this environment.
      */
     val dimensions: Int

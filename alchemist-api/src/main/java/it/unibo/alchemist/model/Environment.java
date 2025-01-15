@@ -13,6 +13,10 @@ import org.danilopianini.util.ListSet;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -253,4 +257,50 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      */
     void removeNode(Node<T> node);
 
+    /**
+     * Computes the diameter of the network.
+     * The diameter is the longest shortest path between any two nodes.
+     *
+     * @return the diameter of the network as integer.
+     */
+    default int getNetworkDiameter() {
+        int diameter = 0;
+        for (Node<T> node : getNodes()) {
+            Map<Node<T>, Integer> distances = breadthFirstSearch(node);
+            int maxDistanceFromNode = distances.values().stream()
+                .max(Integer::compareTo)
+                .orElse(0);
+            diameter = Math.max(diameter, maxDistanceFromNode);
+        }
+
+        return diameter;
+    }
+
+    /**
+     * Performs a breadth-first search (BFS) starting from a given node.
+     * Computes the shortest distance from the start node to all other reachable nodes.
+     *
+     * @param start the node from which the BFS starts.
+     * @return a map where keys are nodes and values are their distances from the start node.
+     */
+    default Map<Node<T>, Integer> breadthFirstSearch(Node<T> start) {
+        Map<Node<T>, Integer> distances = new HashMap<>();
+        Deque<Node<T>> queue = new ArrayDeque<>();
+
+        distances.put(start, 0);
+        queue.add(start);
+
+        while (!queue.isEmpty()) {
+            Node<T> current = queue.removeFirst();
+            int currentDistance = distances.getOrDefault(current, 0);
+
+            for (Node<T> neighbor : getNeighborhood(current)) {
+                if (!distances.containsKey(neighbor)) {
+                    distances.put(neighbor, currentDistance + 1);
+                    queue.add(neighbor);
+                }
+            }
+        }
+        return distances;
+    }
 }

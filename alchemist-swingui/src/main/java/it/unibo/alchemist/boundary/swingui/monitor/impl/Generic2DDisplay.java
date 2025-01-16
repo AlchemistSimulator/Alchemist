@@ -742,7 +742,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 monitor.stepDone(currentEnv, null, new DoubleTime(lastTime), st);
                 final Simulation<T, P> sim = currentEnv.getSimulation();
                 final JFrame frame = makeFrame("Tracker for node " + nearest.getId(), monitor);
-                if (sim != null) {
+                if (currentEnv.getSimulationOrNull() != null) {
                     sim.addOutputMonitor(monitor);
                     frame.addWindowListener(new WindowAdapter() {
                         @Override
@@ -843,7 +843,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 endingPoint = e.getPoint();
                 if (status == ViewStatus.MOVING_SELECTED_NODES && originPoint != null) {
                     if (currentEnv.getDimensions() == 2) {
-                        final Simulation<T, P> engine = currentEnv.getSimulation();
+                        final Simulation<T, P> engine = currentEnv.getSimulationOrNull();
                         if (engine != null) {
                             final P envEnding = wormhole.getEnvPoint(endingPoint);
                             final P envOrigin = wormhole.getEnvPoint(originPoint);

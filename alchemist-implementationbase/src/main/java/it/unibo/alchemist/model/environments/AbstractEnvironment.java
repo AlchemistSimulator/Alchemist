@@ -348,6 +348,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
      */
     @Override
     @Nullable
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     public Simulation<T, P> getSimulationOrNull() {
         return simulation;
     }

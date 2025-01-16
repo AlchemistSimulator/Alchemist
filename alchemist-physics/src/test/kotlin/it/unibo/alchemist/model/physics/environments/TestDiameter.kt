@@ -14,16 +14,11 @@ import io.kotest.core.test.TestCase
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.physics.properties.AreaProperty
 import it.unibo.alchemist.model.physics.properties.CircularArea
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.util.Doubles.fuzzyEquals
-
-private infix fun Double.shouldBeAbout(other: Double) = fuzzyEquals(other) shouldBe true
 
 class TestDiameter : StringSpec() {
     private lateinit var env: Physics2DEnvironment<Any>
@@ -39,8 +34,6 @@ class TestDiameter : StringSpec() {
     ) = GenericNode(incarnation, environment).apply {
         addProperty(CircularArea(environment, this, radius))
     }
-
-    private fun getNodeRadius(node: Node<Any>): Double = node.asProperty<Any, AreaProperty<Any>>().shape.radius
 
     override suspend fun beforeTest(testCase: TestCase) {
         super.beforeTest(testCase)

@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.GeoPosition;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.core.util.MercatorProjection;
-import org.mapsforge.map.model.IMapViewPosition;
+import org.mapsforge.map.model.MapViewPosition;
 
 import java.awt.Component;
 import java.awt.Point;
@@ -28,7 +28,7 @@ import static it.unibo.alchemist.boundary.ui.impl.PointAdapter.from;
  *
  */
 public final class MapWormhole extends WormholeSwing<GeoPosition> {
-    private final IMapViewPosition mapModel;
+    private final MapViewPosition mapModel;
     /**
      * Maximum zoom.
      */
@@ -44,10 +44,10 @@ public final class MapWormhole extends WormholeSwing<GeoPosition> {
      * @param comp
      *            the controlled {@link Component}
      * @param m
-     *            the {@link IMapViewPosition}
+     *            the {@link MapViewPosition}
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
-    public MapWormhole(final Environment<?, GeoPosition> environment, final Component comp, final IMapViewPosition m) {
+    public MapWormhole(final Environment<?, GeoPosition> environment, final Component comp, final MapViewPosition m) {
         super(environment, comp);
         mapModel = m;
         super.setMode(Mode.MAP);

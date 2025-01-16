@@ -91,7 +91,7 @@ class TestYAMLLoader {
         final var simulation = testNoVar("synthetic/testlayer.yml");
         @SuppressWarnings("unchecked")
         final Environment<Object, P> environment = (Environment<Object, P>) simulation.getEnvironment();
-        final Set<Layer<Object, P>> layers = environment.layers;
+        final Set<Layer<Object, P>> layers = environment.getLayers();
         assertFalse(layers.isEmpty());
         assertEquals(2, layers.size());
         assertEquals(2L, layers.stream()
@@ -100,11 +100,11 @@ class TestYAMLLoader {
         final Incarnation<?, ?> inc = SupportedIncarnations.get("sapere").orElseThrow(
                 () -> new IllegalStateException("No SAPERE incarnation available"));
         final Molecule a = inc.createMolecule("A");
-        assertTrue(environment.getLayer(a).isPresent());
-        assertInstanceOf(StepLayer.class, environment.getLayer(a).get());
+        assertNotNull(environment.getLayer(a));
+        assertInstanceOf(StepLayer.class, environment.getLayer(a));
         final Molecule b = inc.createMolecule("B");
-        assertTrue(environment.getLayer(b).isPresent());
-        assertInstanceOf(StepLayer.class, environment.getLayer(b).get());
+        assertNotNull(environment.getLayer(b));
+        assertInstanceOf(StepLayer.class, environment.getLayer(b));
     }
 
     /**
@@ -165,7 +165,7 @@ class TestYAMLLoader {
 
     @Test
     void testMaxAliases() {
-        assertFalse(testNoVar("yamlAliases/aliases.yml").getEnvironment().nodes.isEmpty());
+        assertFalse(testNoVar("yamlAliases/aliases.yml").getEnvironment().getNodes().isEmpty());
     }
 
     private static <T, P extends Position<P>> Simulation<T, P> testLoading(

@@ -79,7 +79,7 @@ class TestNeighborhoodReactionsPropensities :
     override suspend fun beforeTest(testCase: TestCase) {
         environment =
             BioRect2DEnvironment(INCARNATION)
-        environment.setLinkingRule(LINKING_RULE)
+        environment.linkingRule = LINKING_RULE
         centralNode = INCARNATION.createNode(RANDOM, environment, null)
         centralNode.setConcentration(BIOMOLECULE, 100.0)
         environment.addNode(centralNode, POSITION)

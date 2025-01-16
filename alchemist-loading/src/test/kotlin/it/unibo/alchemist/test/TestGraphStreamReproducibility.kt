@@ -49,7 +49,7 @@ class TestGraphStreamReproducibility :
                                     layoutQuality = 0.1,
                                     parameters = parameters.toTypedArray(),
                                 )
-                            environment.setLinkingRule(graphStream.linkingRule)
+                            environment.linkingRule = graphStream.linkingRule
                             graphStream.deployment.forEach {
                                 environment.addNode(
                                     object : GenericNode<Any>(environment) {

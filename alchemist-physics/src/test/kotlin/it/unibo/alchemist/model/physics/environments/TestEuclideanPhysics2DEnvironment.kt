@@ -48,7 +48,7 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
         super.beforeTest(testCase)
         val incarnation = SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow()
         environment = ContinuousPhysics2DEnvironment(incarnation)
-        environment.setLinkingRule(NoLinks())
+        environment.linkingRule = NoLinks()
         node1 = createCircleNode(incarnation, environment, DEFAULT_SHAPE_SIZE / 2)
         node2 = createCircleNode(incarnation, environment, DEFAULT_SHAPE_SIZE / 2)
         node3 = createCircleNode(incarnation, environment, DEFAULT_SHAPE_SIZE / 2)

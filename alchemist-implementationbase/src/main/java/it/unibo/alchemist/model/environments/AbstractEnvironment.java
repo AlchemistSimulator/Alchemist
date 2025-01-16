@@ -158,6 +158,10 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return false;
     }
 
+    /**
+     * Adds to the simulation a predicate that determines whether a simulation should be terminated.
+     * @param terminator the termination predicate.
+     */
     @Override
     public void addTerminator(@NotNull final TerminationPredicate<T, P> terminator) {
         this.terminator = this.terminator.or(terminator);

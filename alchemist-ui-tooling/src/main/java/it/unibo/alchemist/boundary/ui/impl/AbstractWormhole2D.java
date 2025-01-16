@@ -222,8 +222,8 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         final var size = getViewSize();
         final PointAdapter<P> viewCenter = from(size.getWidth() / 2, size.getHeight() / 2);
         final var zoom = getEnvRatio() <= getViewRatio()
-            ? Math.max(1, getView().getHeight()) / getEnvironment().size[1]
-            : Math.max(1, getView().getWidth()) / getEnvironment().size[0];
+            ? Math.max(1, getView().getHeight()) / getEnvironment().getSize()[1]
+            : Math.max(1, getView().getWidth()) / getEnvironment().getSize()[0];
         final var adjustedZoom = getEnvRatio() <= getViewRatio()
             ? zoom * (1 - ZOOM_FACTOR) : zoom * (1 + ZOOM_FACTOR);
         zoomOnPoint(viewCenter.toPoint(), adjustedZoom);
@@ -245,8 +245,8 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
      */
     @Override
     public void center() {
-        final double[] off = getEnvironment().offset;
-        final double[] size = getEnvironment().size;
+        final double[] off = getEnvironment().getOffset();
+        final double[] size = getEnvironment().getSize();
         final PointAdapter<P> center = Double.isNaN(off[0]) || Double.isNaN(off[1]) || size[0] <= 0 || size[1] <= 0
                 ? from(0, 0)
                 : from(off[0] + size[0] / 2, off[1] + size[1] / 2);
@@ -381,7 +381,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
      * @see Environment#getSize()
      */
     protected double getEnvRatio() {
-        final double[] size = environment.size;
+        final double[] size = environment.getSize();
         return size[0] / size[1];
     }
 
@@ -406,7 +406,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         if (mode == Mode.ISOMETRIC) {
             return 1d;
         } else if (mode == Mode.ADAPT_TO_VIEW) {
-            return getViewSize().getWidth() / environment.size[0];
+            return getViewSize().getWidth() / environment.getSize()[0];
         } else {
             return hRate;
         }
@@ -424,7 +424,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         if (mode == Mode.ISOMETRIC) {
             return 1d;
         } else if (mode == Mode.ADAPT_TO_VIEW) {
-            return getViewSize().getHeight() / environment.size[1];
+            return getViewSize().getHeight() / environment.getSize()[1];
         } else {
             return vRate;
         }

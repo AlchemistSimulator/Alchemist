@@ -86,15 +86,15 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     ) {
         if (layerFilter && (molecule == null || molString != molStringCached)) {
             molStringCached = molString;
-            molecule = environment.incarnation.createMolecule(molString);
+            molecule = environment.getIncarnation().createMolecule(molString);
         }
         colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
         graphics2D.setColor(colorCache);
         final List<Layer<T, P>> toDraw = new ArrayList<>();
-        if (layerFilter && molecule != null && environment.getLayer(molecule).isPresent()) {
-            toDraw.add(environment.getLayer(molecule).get());
+        if (layerFilter && molecule != null && environment.getLayer(molecule) != null) {
+            toDraw.add(environment.getLayer(molecule));
         } else {
-            toDraw.addAll(environment.layers);
+            toDraw.addAll(environment.getLayers());
         }
         if (!toDraw.isEmpty()) {
             drawLayers(toDraw, environment, graphics2D, wormhole);

@@ -41,9 +41,8 @@
   "com.github.spotbugs/spotbugs-annotations/4.9.0": {
     "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.0"
   },
-  "com.github.spotbugs/spotbugs/4.8.6": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.8.6",
-    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.8.6/element-list"
+  "com.github.spotbugs/spotbugs/4.9.0": {
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.0"
   },
   "com.google.code.findbugs/jsr305/3.0.2": {
     "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2",

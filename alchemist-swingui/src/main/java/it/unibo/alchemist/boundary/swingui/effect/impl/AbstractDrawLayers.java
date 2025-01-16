@@ -91,8 +91,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
         colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
         graphics2D.setColor(colorCache);
         final List<Layer<T, P>> toDraw = new ArrayList<>();
-        if (layerFilter && molecule != null && environment.getLayer(molecule).isPresent()) {
-            toDraw.add(environment.getLayer(molecule).get());
+        if (layerFilter && molecule != null && environment.getLayer(molecule) != null) {
+            toDraw.add(environment.getLayer(molecule));
         } else {
             toDraw.addAll(environment.getLayers());
         }

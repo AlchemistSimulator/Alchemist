@@ -26,12 +26,12 @@ import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
 import java.util.concurrent.Semaphore
-import java.util.function.Predicate
 
 internal abstract class LoadingSystem(
     private val originalContext: Context,
@@ -129,7 +129,7 @@ internal abstract class LoadingSystem(
                     }
                 }
             setCurrentRandomGenerator(simulationRNG)
-            val terminators: List<Predicate<Environment<T, P>>> =
+            val terminators: List<TerminationPredicate<T, P>> =
                 SimulationModel.visitRecursively(context, root.getOrEmpty(DocumentRoot.terminate)) { terminator ->
                     (terminator as? Map<*, *>)?.let { SimulationModel.visitBuilding(context, it) }
                 }

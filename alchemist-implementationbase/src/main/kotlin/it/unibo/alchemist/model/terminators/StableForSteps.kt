@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.TerminationPredicate
 import java.util.function.Predicate
 
 /**
@@ -45,7 +46,7 @@ import java.util.function.Predicate
 data class StableForSteps<T>(
     private val checkInterval: Long,
     private val equalIntervals: Long,
-) : Predicate<Environment<T, *>> {
+) : TerminationPredicate<T, Position<*>> {
     private var success: Long = 0
     private var positions: Map<Node<T>, Position<*>> = emptyMap()
     private var contents = makeTable<T>(0)
@@ -56,10 +57,10 @@ data class StableForSteps<T>(
         }
     }
 
-    override fun test(environment: Environment<T, *>): Boolean {
-        if (environment.getSimulation().getStep() % checkInterval == 0L) {
+    override fun invoke(environment: Environment<T, Position<*>>): Boolean {
+        if (environment.simulation.step % checkInterval == 0L) {
             val newPositions = environment.associateBy({ it }, { environment.getPosition(it) })
-            val newContents = makeTable<T>(environment.getNodeCount())
+            val newContents = makeTable<T>(environment.nodeCount)
             environment.forEach { node ->
                 node.contents.forEach { molecule, concentration ->
                     newContents.put(node, molecule, concentration)

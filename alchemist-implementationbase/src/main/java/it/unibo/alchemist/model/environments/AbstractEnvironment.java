@@ -16,7 +16,6 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.GlobalReaction;
 import it.unibo.alchemist.model.Incarnation;
@@ -26,19 +25,22 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.SupportedIncarnations;
+import it.unibo.alchemist.model.TerminationPredicate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.danilopianini.util.ArrayListSet;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
 import org.danilopianini.util.SpatialIndex;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -49,7 +51,6 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -78,8 +79,8 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     private transient LoadingCache<ImmutablePair<P, Double>, ListSet<Node<T>>> cache;
     private transient Incarnation<T, P> incarnation;
     private LinkingRule<T, P> rule;
-    private transient Simulation<T, P> simulation;
-    private SerializablePredicate<T, P> terminator = c -> false;
+    private transient @Nullable Simulation<T, P> simulation;
+    private TerminationPredicate<T, P> terminator = c -> false;
 
     /**
      * @param incarnation the incarnation to be used.
@@ -96,9 +97,9 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     }
 
     @Override
-    public final void addLayer(final Molecule m, final Layer<T, P> l) {
-        if (layers.put(m, l) != null) {
-            throw new IllegalStateException("Two layers have been associated to " + m);
+    public final void addLayer(@Nonnull final Molecule molecule, @Nonnull final Layer<T, P> layer) {
+        if (layers.put(molecule, layer) != null) {
+            throw new IllegalStateException("Two layers have been associated to " + molecule);
         }
     }
 
@@ -106,7 +107,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
      * {@inheritDoc}
      */
     @Override
-    public void addGlobalReaction(final GlobalReaction<T> reaction) {
+    public void addGlobalReaction(@Nonnull final GlobalReaction<T> reaction) {
         globalReactions.add(reaction);
         ifEngineAvailable(simulation -> simulation.reactionAdded(reaction));
     }
@@ -115,7 +116,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
      * {@inheritDoc}
      */
     @Override
-    public void removeGlobalReaction(final GlobalReaction<T> reaction) {
+    public void removeGlobalReaction(@Nonnull final GlobalReaction<T> reaction) {
         globalReactions.remove(reaction);
         ifEngineAvailable(simulation -> simulation.reactionRemoved(reaction));
     }
@@ -123,13 +124,14 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public ListSet<GlobalReaction<T>> getGlobalReactions() {
         return ListSets.unmodifiableListSet(globalReactions);
     }
 
     @Override
-    public final boolean addNode(final Node<T> node, final P p) {
+    public final boolean addNode(@Nonnull final Node<T> node, @Nonnull final P p) {
         if (nodeShouldBeAdded(node, p)) {
             final P actualPosition = computeActualInsertionPosition(node, p);
             setPosition(node, actualPosition);
@@ -156,9 +158,13 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return false;
     }
 
+    /**
+     * Adds to the simulation a predicate that determines whether a simulation should be terminated.
+     * @param terminator the termination predicate.
+     */
     @Override
-    public final void addTerminator(final Predicate<Environment<T, P>> terminator) {
-        this.terminator = this.terminator.orPredicate(terminator);
+    public void addTerminator(@NotNull final TerminationPredicate<T, P> terminator) {
+        this.terminator = this.terminator.or(terminator);
     }
 
     /**
@@ -202,7 +208,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     }
 
     @Override
-    public final double getDistanceBetweenNodes(final Node<T> n1, final Node<T> n2) {
+    public final double getDistanceBetweenNodes(@Nonnull final Node<T> n1, @Nonnull final Node<T> n2) {
         return getPosition(n1).distanceTo(getPosition(n2));
     }
 
@@ -212,39 +218,44 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return incarnation;
     }
 
+    @Nullable
     @Override
-    public final Optional<Layer<T, P>> getLayer(final Molecule m) {
-        return Optional.ofNullable(layers.get(m));
+    public final Layer<T, P> getLayer(@Nonnull final Molecule molecule) {
+        return layers.get(molecule);
     }
 
+    @Nonnull
     @Override
     public final ListSet<Layer<T, P>> getLayers() {
         return new ArrayListSet<>(layers.values());
     }
 
+    @Nonnull
     @Override
     public final LinkingRule<T, P> getLinkingRule() {
         return rule;
     }
 
     @Override
-    public final void setLinkingRule(final LinkingRule<T, P> r) {
-        rule = Objects.requireNonNull(r);
+    public final void setLinkingRule(@Nonnull final LinkingRule<T, P> rule) {
+        this.rule = Objects.requireNonNull(rule);
     }
 
+    @Nonnull
     @Override
-    public final Neighborhood<T> getNeighborhood(@Nonnull final Node<T> center) {
-        final Neighborhood<T> result = neighCache.get(Objects.requireNonNull(center).getId());
+    public final Neighborhood<T> getNeighborhood(@Nonnull final Node<T> node) {
+        final Neighborhood<T> result = neighCache.get(Objects.requireNonNull(node).getId());
         if (result == null) {
-            if (getNodes().contains(center)) {
+            if (getNodes().contains(node)) {
                 throw new IllegalStateException("The environment state is inconsistent. "
-                        + center + " is among the nodes, but apparently has no position.");
+                        + node + " is among the nodes, but apparently has no position.");
             }
-            throw new IllegalArgumentException(center + " is not part of the environment.");
+            throw new IllegalArgumentException(node + " is not part of the environment.");
         }
         return result;
     }
 
+    @Nonnull
     @Override
     public final Node<T> getNodeByID(final int id) {
         return (nodes.size() > 1000 ? nodes.parallelStream() : nodes.stream())
@@ -253,6 +264,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
                 .orElseThrow(() -> new IllegalArgumentException("Node with id " + id + "does not exist in environment"));
     }
 
+    @Nonnull
     @Override
     public final ListSet<Node<T>> getNodes() {
         return ListSets.unmodifiableListSet(nodes);
@@ -263,30 +275,32 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return nodes.size();
     }
 
+    @Nonnull
     @Override
-    public final ListSet<Node<T>> getNodesWithinRange(final Node<T> center, final double range) {
-        final P centerPosition = getPosition(center);
+    public final ListSet<Node<T>> getNodesWithinRange(@Nonnull final Node<T> node, final double range) {
+        final P centerPosition = getPosition(node);
         final ListSet<Node<T>> res = new LinkedListSet<>(getAllNodesInRange(centerPosition, range));
-        if (!res.remove(center)) {
+        if (!res.remove(node)) {
             throw new IllegalStateException("Either the provided range (" + range + ") is too small"
                     + " for queries to work without losses of precision, or the environment is an inconsistent state."
-                    + " Node " + center + " located at " + centerPosition + " was the query center, but within range "
+                    + " Node " + node + " located at " + centerPosition + " was the query center, but within range "
                     + range + " only nodes " + res + " were found in the environment.");
         }
         return res;
     }
 
+    @Nonnull
     @Override
-    public final ListSet<Node<T>> getNodesWithinRange(final P center, final double range) {
+    public final ListSet<Node<T>> getNodesWithinRange(@Nonnull final P position, final double range) {
         /*
          * Collect every node in range
          */
-        return getAllNodesInRange(center, range);
+        return getAllNodesInRange(position, range);
     }
 
     @Nonnull
     @Override
-    public final P getPosition(final Node<T> node) {
+    public final P getPosition(@Nonnull final Node<T> node) {
         final var position = nodeToPos.get(Objects.requireNonNull(node).getId());
         if (position == null) {
             final var nodeExists = nodes.contains(node);
@@ -316,7 +330,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
 
     @Override
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
-    public final void setSimulation(final Simulation<T, P> simulation) {
+    public final void setSimulation(@Nonnull final Simulation<T, P> simulation) {
         if (this.simulation == null) {
             this.simulation = simulation;
         } else if (!this.simulation.equals(simulation)) {
@@ -330,11 +344,22 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Nullable
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
+    public Simulation<T, P> getSimulationOrNull() {
+        return simulation;
+    }
+
+    /**
      * Override this method if units measuring distance do not match with units used
      * for coordinates. For instance, if your space is non-Euclidean, or if you are
      * using polar coordinates. A notable example is using geographical
      * latitude-longitude as y-x coordinates and meters as distance measure.
      */
+    @Nonnull
     @Override
     public double[] getSizeInDistanceUnits() {
         return getSize();
@@ -401,7 +426,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     protected void nodeRemoved(final Node<T> node, final Neighborhood<T> neighborhood) { }
 
     /**
-     * Allows subclasses to determine whether or not a {@link Node} should
+     * Allows subclasses to determine whether a {@link Node} should
      * actually get added to this environment.
      *
      * @param node
@@ -590,13 +615,6 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
         out.writeObject(incarnation.getClass().getSimpleName());
-    }
-
-    @FunctionalInterface
-    private interface SerializablePredicate<T, P extends Position<P>> extends Predicate<Environment<T, P>>, Serializable {
-        default SerializablePredicate<T, P> orPredicate(final Predicate<Environment<T, P>> other) {
-            return e -> this.test(e) || other.test(e);
-        }
     }
 
     private final class Operation {

@@ -22,5 +22,7 @@ object Arrays {
      */
     @JvmStatic
     fun <P : Position<P>> Array<out Number>.toPositions(environment: Environment<*, P>): List<P> =
-        toList().chunked(environment.dimensions) { environment.makePosition(*it.toTypedArray()) }
+        toList().chunked(environment.dimensions) {
+            environment.makePosition(it)
+        }
 }

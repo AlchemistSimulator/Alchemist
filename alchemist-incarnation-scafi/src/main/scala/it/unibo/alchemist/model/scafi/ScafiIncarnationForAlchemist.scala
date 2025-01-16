@@ -73,17 +73,16 @@ object ScafiIncarnationForAlchemist
     implicit private def optionalToOption[E](optional: Optional[E]): Option[E] =
       if (optional.isPresent) Some(optional.get()) else None
 
-    private def findInLayers[A](name: String): Option[A] = {
-      val layer: Option[Layer[Any, Position[_]]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
+    private def findInLayers[A](name: String): A = {
+      val layer: Layer[Any, Position[_]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
       val node = alchemistEnvironment.getNodeByID(mid())
       layer
-        .map(l => l.getValue(alchemistEnvironment.getPosition(node)))
-        .map(value => Try(value.asInstanceOf[A]))
-        .collect { case Success(value) => value }
+        .getValue(alchemistEnvironment.getPosition(node))
+        .asInstanceOf[A]
     }
 
     def senseEnvData[A](name: String): A =
-      findInLayers[A](name).get
+      findInLayers[A](name)
   }
 
   /**

@@ -11,16 +11,16 @@ package it.unibo.alchemist.model.maps.environments;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.GeoPosition;
+import it.unibo.alchemist.model.Incarnation;
+import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Route;
 import it.unibo.alchemist.model.environments.Abstract2DEnvironment;
+import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.maps.positions.LatLongPosition;
 import it.unibo.alchemist.model.maps.routingservices.GraphHopperOptions;
 import it.unibo.alchemist.model.maps.routingservices.GraphHopperRoutingService;
-import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.Incarnation;
-import it.unibo.alchemist.model.maps.MapEnvironment;
-import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Route;
 import org.jooq.lambda.Unchecked;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.Serial;
 import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
@@ -62,6 +63,7 @@ public final class OSMEnvironment<T>
      */
     public static final boolean DEFAULT_FORCE_STREETS = false;
     private static final Logger L = LoggerFactory.getLogger(OSMEnvironment.class);
+    @Serial
     private static final long serialVersionUID = 1L;
     /**
      * Alchemist's temp dir.
@@ -291,6 +293,7 @@ public final class OSMEnvironment<T>
         return getNavigator();
     }
 
+    @Nonnull
     @Override
     public double[] getSizeInDistanceUnits() {
         final double minlat = getMinLatitude();
@@ -316,6 +319,7 @@ public final class OSMEnvironment<T>
         return new double[] { sizex, sizey };
     }
 
+    @Nonnull
     @Override
     public GeoPosition makePosition(final Number... coordinates) {
         if (coordinates.length != 2) {
@@ -393,8 +397,7 @@ public final class OSMEnvironment<T>
 
         @Override
         public boolean equals(final Object obj) {
-            if (obj instanceof OSMEnvironment.CacheEntry) {
-                final OSMEnvironment<?>.CacheEntry other = (OSMEnvironment<?>.CacheEntry) obj;
+            if (obj instanceof final OSMEnvironment<?>.CacheEntry other) {
                 return options.equals(other.options) && apprStart.equals(other.apprStart) && apprEnd.equals(other.apprEnd);
             }
             return false;

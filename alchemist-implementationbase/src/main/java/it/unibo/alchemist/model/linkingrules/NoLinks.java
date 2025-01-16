@@ -8,11 +8,13 @@
  */
 package it.unibo.alchemist.model.linkingrules;
 
-import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
+
+import java.io.Serial;
 
 /**
  * This rule guarantees that no links are created at all.
@@ -24,6 +26,7 @@ import it.unibo.alchemist.model.Position;
  */
 public class NoLinks<T, P extends Position<P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
 
+    @Serial
     private static final long serialVersionUID = -711043794655618585L;
 
     @Override

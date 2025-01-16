@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -100,11 +99,11 @@ class TestYAMLLoader {
         final Incarnation<?, ?> inc = SupportedIncarnations.get("sapere").orElseThrow(
                 () -> new IllegalStateException("No SAPERE incarnation available"));
         final Molecule a = inc.createMolecule("A");
-        assertTrue(environment.getLayer(a).isPresent());
-        assertInstanceOf(StepLayer.class, environment.getLayer(a).get());
+        assertNotNull(environment.getLayer(a));
+        assertInstanceOf(StepLayer.class, environment.getLayer(a));
         final Molecule b = inc.createMolecule("B");
-        assertTrue(environment.getLayer(b).isPresent());
-        assertInstanceOf(StepLayer.class, environment.getLayer(b).get());
+        assertNotNull(environment.getLayer(b));
+        assertInstanceOf(StepLayer.class, environment.getLayer(b));
     }
 
     /**

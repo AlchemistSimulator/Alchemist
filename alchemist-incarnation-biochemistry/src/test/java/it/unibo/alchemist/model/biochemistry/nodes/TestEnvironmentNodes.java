@@ -248,8 +248,7 @@ final class TestEnvironmentNodes {
      */
     @Test
     void testEnv3() {
-        final double conAInCell = TestEnvironmentNodes.<Double, Euclidean2DPosition>testNoVar("testEnv3.yml")
-            .getNodes()
+        final double conAInCell = TestEnvironmentNodes.<Double, Euclidean2DPosition>testNoVar("testEnv3.yml").getNodes()
             .stream()
             .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
             .findAny()
@@ -270,8 +269,7 @@ final class TestEnvironmentNodes {
      */
     @Test
     void testEnv4() {
-        final double conAInCell = TestEnvironmentNodes.<Double, Euclidean2DPosition>testNoVar("testEnv4.yml")
-            .getNodes()
+        final double conAInCell = TestEnvironmentNodes.<Double, Euclidean2DPosition>testNoVar("testEnv4.yml").getNodes()
             .stream()
             .parallel()
             .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)

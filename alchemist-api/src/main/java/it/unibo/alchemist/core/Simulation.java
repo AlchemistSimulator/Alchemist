@@ -99,7 +99,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     /**
      * This method must get called in case a communication link connecting two
      * nodes gets created during the simulation. This method provides dependency
-     * and scheduling times re-computation for all the reactions interested by
+     * and scheduling times re-computation for all the reactions interested in
      * such change.
      *
      * @param node the node
@@ -108,9 +108,9 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     void neighborAdded(Node<T> node, Node<T> n);
 
     /**
-     * This method must get called in case a a communication link connecting two
+     * This method must get called in case a communication link connecting two
      * nodes gets broken during the simulation. This method provides dependency
-     * and scheduling times re-computation for all the reactions interested by
+     * and scheduling times re-computation for all the reactions interested in
      * such change.
      *
      * @param node the node

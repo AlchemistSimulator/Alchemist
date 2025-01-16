@@ -11,22 +11,14 @@ package it.unibo.alchemist.model.terminators
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.Time
-import java.util.function.Predicate
 
 /**
  * @param endTime the end time.
  */
 data class AfterTime<T, P : Position<P>>(
     val endTime: Time,
-) : Predicate<Environment<T, P>> {
-    /**
-     * Tries to access the simulation time from the [environment].
-     * If the simulation is unaccessible, throws an exception.
-     * Otherwise, reads the current time, and flips to true once it got past the provided [endTime].
-     */
-    override fun test(environment: Environment<T, P>): Boolean =
-        checkNotNull(environment.simulation?.time?.let { it >= endTime }) {
-            "No simulation available for environment $environment, unable to read time."
-        }
+) : TerminationPredicate<T, P> {
+    override fun invoke(environment: Environment<T, P>) = environment.simulation.time >= endTime
 }

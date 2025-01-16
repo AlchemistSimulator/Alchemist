@@ -49,7 +49,7 @@ object Anys {
                                 )
                         }
                     }
-                environment.makePosition(*numbers.toTypedArray())
+                environment.makePosition(numbers)
             }
             is Point2D -> {
                 check(environment.dimensions == 2) {

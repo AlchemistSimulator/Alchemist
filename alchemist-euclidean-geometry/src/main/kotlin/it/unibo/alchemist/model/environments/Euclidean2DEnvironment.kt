@@ -29,15 +29,26 @@ interface Euclidean2DEnvironment<T> : EuclideanEnvironment<T, Euclidean2DPositio
     /**
      * Creates a new [Euclidean2DPosition].
      */
-    override fun makePosition(vararg coordinates: Double): Euclidean2DPosition {
+    override fun makePosition(vararg coordinates: Number): Euclidean2DPosition {
         require(coordinates.size == 2) { "Illegal coordinates (required 2): ${coordinates.contentToString()}" }
         return makePosition(coordinates[0], coordinates[1])
     }
 
-    override fun makePosition(vararg coordinates: Number): Euclidean2DPosition {
-        require(coordinates.size == 2) { "Illegal coordinates (required 2): ${coordinates.contentToString()}" }
-        return makePosition(coordinates[0].toDouble(), coordinates[1].toDouble())
+    /**
+     * Creates a new [Euclidean2DPosition].
+     */
+    override fun makePosition(coordinates: List<Number>): Euclidean2DPosition {
+        require(coordinates.size == 2) { "Illegal coordinates (required 2): $coordinates" }
+        return makePosition(coordinates[0], coordinates[1])
     }
+
+    /**
+     * Creates a new [Euclidean2DPosition].
+     */
+    fun makePosition(
+        x: Number,
+        y: Number,
+    ) = Euclidean2DPosition(x.toDouble(), y.toDouble())
 
     /**
      * Constant values and utility methods for [Euclidean2DEnvironment].

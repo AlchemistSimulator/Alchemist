@@ -47,9 +47,7 @@ abstract class AbstractLayerAction(
      * @returns the layer containing [targetMolecule] or fails.
      */
     protected fun getLayerOrFail(): Layer<Number, Euclidean2DPosition> =
-        environment
-            .getLayer(targetMolecule)
-            .orElseThrow { IllegalStateException("no layer containing $targetMolecule") }
+        checkNotNull(environment.getLayer(targetMolecule)) { "no layer containing $targetMolecule" }
 
     /**
      * @returns the center of the layer or null if there's no center.

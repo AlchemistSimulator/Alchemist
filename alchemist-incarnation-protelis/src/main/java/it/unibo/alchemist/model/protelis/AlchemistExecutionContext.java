@@ -13,18 +13,18 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.hash.Hashing;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.maps.positions.LatLongPosition;
-import it.unibo.alchemist.protelis.properties.ProtelisDevice;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Position2D;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.maps.MapEnvironment;
+import it.unibo.alchemist.model.maps.positions.LatLongPosition;
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
+import it.unibo.alchemist.protelis.properties.ProtelisDevice;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -149,7 +149,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     /**
      * Computes the distance between two nodes, through
      * {@link Environment#getDistanceBetweenNodes(Node, Node)}.
-     * 
+     *
      * @param target
      *            the target device
      * @return the distance
@@ -164,7 +164,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     /**
      * Computes the distance between two nodes, through
      * {@link Environment#getDistanceBetweenNodes(Node, Node)}.
-     * 
+     *
      * @param target
      *            the target device
      * @return the distance
@@ -178,8 +178,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
         if (this == obj) {
             return true;
         }
-        if (obj instanceof AlchemistExecutionContext) {
-            final AlchemistExecutionContext<?> ctx = (AlchemistExecutionContext<?>) obj;
+        if (obj instanceof final AlchemistExecutionContext<?> ctx) {
             return node.equals(ctx.node)
                 && environment.equals(ctx.environment)
                 && reaction.equals(ctx.reaction)
@@ -268,8 +267,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
         final boolean useRoutesAsDistances = environment instanceof MapEnvironment && node.contains(USE_ROUTES_AS_DISTANCES);
         return buildFieldWithPosition(p -> {
             if (useRoutesAsDistances) {
-                if (p instanceof GeoPosition) {
-                    final GeoPosition destination = (GeoPosition) p;
+                if (p instanceof final GeoPosition destination) {
                     if (node.contains(APPROXIMATE_NBR_RANGE)) {
                         try {
                             final double tolerance = (double) node.getConcentration(APPROXIMATE_NBR_RANGE);
@@ -300,8 +298,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     public Field<Tuple> nbrVector() {
         return buildFieldWithPosition(p -> {
             final P diff = getDevicePosition().minus(p.getCoordinates());
-            if (diff instanceof Position2D) {
-                final Position2D<?> vector = (Position2D<?>) diff;
+            if (diff instanceof final Position2D<?> vector) {
                 return DatatypeFactory.createTuple(vector.getX(), vector.getY());
             }
             throw new NotImplementedException("Protelis support for 3D environments not ready yet.");
@@ -315,7 +312,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
 
     /**
      * Computes the distance along a map. Requires a {@link MapEnvironment}.
-     * 
+     *
      * @param dest
      *            the destination, in form of a destination node
      * @return the distance on a map
@@ -326,7 +323,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
 
     /**
      * Computes the distance along a map. Requires a {@link MapEnvironment}.
-     * 
+     *
      * @param dest
      *            the destination, in form of {@link Node} ID. Non
      *            integer numbers will be cast to integers by
@@ -339,7 +336,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
 
     /**
      * Computes the distance along a map. Requires a {@link MapEnvironment}.
-     * 
+     *
      * @param dest
      *            the destination
      * @return the distance on a map
@@ -355,7 +352,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
 
     /**
      * Computes the distance along a map. Requires a {@link MapEnvironment}.
-     * 
+     *
      * @param dest
      *            the destination, as a {@link Tuple} of two values: [latitude,
      *            longitude]

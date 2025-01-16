@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /**
- * Exposes alchemist [it.unibo.alchemist.model.Environment] as a GraphQL subscription
+ * Exposes alchemist [Environment] as a GraphQL subscription
  * through [it.unibo.alchemist.boundary.graphql.schema.model.surrogates.EnvironmentSurrogate].
  */
 class EnvironmentSubscriptions<T, P : Position<out P>>(

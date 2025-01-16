@@ -40,6 +40,7 @@ include(
     "alchemist-ui-tooling",
     "alchemist-swingui",
     "alchemist-web-renderer",
+    "alchemist-composeui",
 )
 rootProject.name = "alchemist"
 

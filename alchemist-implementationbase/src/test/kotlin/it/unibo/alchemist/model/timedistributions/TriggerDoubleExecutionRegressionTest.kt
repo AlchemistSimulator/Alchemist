@@ -16,10 +16,19 @@ import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import org.kaikikm.threadresloader.ResourceLoader
 
 class TriggerDoubleExecutionRegressionTest : FreeSpec({
-    "a trigger should not be executed twice" {
+    fun startAlchemistFromResource(resource: String) {
         val simulation: Simulation<Nothing, Nothing> =
-            LoadAlchemist.from(ResourceLoader.getResource("triggerDoubleExecution.yml")).getDefault()
+            LoadAlchemist.from(ResourceLoader.getResource(resource)).getDefault()
         simulation.runInCurrentThread()
         simulation.error.ifPresent { throw it }
+    }
+    "a trigger should not be executed twice" {
+        startAlchemistFromResource("triggerDoubleExecution.yml")
+    }
+    "two independent triggers, scheduled in different times, should execute once each" {
+        startAlchemistFromResource("multipleIndependentTriggers.yml")
+    }
+    "a single triger with other actions, should execute once" {
+        startAlchemistFromResource("singleTriggerAndOtherActions.yml")
     }
 })

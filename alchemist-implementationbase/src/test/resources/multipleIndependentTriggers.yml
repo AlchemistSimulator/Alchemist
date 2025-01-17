@@ -5,12 +5,19 @@ network-model:
   parameters: [30]
 
 deployments:
-  - type: Rectangle
-    parameters: [100, 62, 15, 95, 200]
+  - type: Point
+    parameters: [0, 0]
     programs:
       - time-distribution:
           type: Trigger
-          parameters: [0]
+          parameters: [1]
+        type: Event
+        actions:
+          - type: TestTriggerAction
+            parameters: []
+      - time-distribution:
+          type: Trigger
+          parameters: [5]
         type: Event
         actions:
           - type: TestTriggerAction
@@ -18,4 +25,4 @@ deployments:
 
 terminate:
   - type: AfterTime
-    parameters: 1
+    parameters: 10

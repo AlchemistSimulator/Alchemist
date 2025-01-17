@@ -9,36 +9,30 @@
 
 package it.unibo.alchemist.model.timedistributions
 
+import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.reactions.AbstractReaction
+import it.unibo.alchemist.model.actions.AbstractLocalAction
 
-class TestTriggerReaction<T, P : Position<P>>(
+class TestTriggerAction<T, P : Position<P>>(
     environment: Environment<T, P>,
-    timeDistribution: TimeDistribution<T>,
     node: Node<T>,
-) : AbstractReaction<T>(node, timeDistribution) {
+) : AbstractLocalAction<T>(node) {
     private var executed = false
 
-    override fun updateInternalStatus(
-        currentTime: Time?,
-        hasBeenExecuted: Boolean,
-        environment: Environment<T?, *>?,
-    ) {
+    override fun cloneAction(
+        node: Node<T?>?,
+        reaction: Reaction<T?>?,
+    ): Action<T?>? {
+        TODO("Not yet implemented")
+    }
+
+    override fun execute() {
         when (executed) {
             true -> throw IllegalStateException("Reaction already executed")
             false -> executed = true
         }
-    }
-
-    override fun cloneOnNewNode(
-        node: Node<T?>,
-        currentTime: Time,
-    ): Reaction<T?> {
-        TODO("Not yet implemented")
     }
 }

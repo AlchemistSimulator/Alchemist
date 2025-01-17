@@ -26,6 +26,8 @@ interface Time :
      */
     val isInfinite: Boolean get() = toDouble().isInfinite()
 
+    val isFinite: Boolean get() = toDouble().isFinite()
+
     /**
      * Allows to multiply this [Time] for a constant.
      *

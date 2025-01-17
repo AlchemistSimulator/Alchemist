@@ -212,4 +212,37 @@ interface Environment<T, P : Position<out P>> :
      * If node removal is unsupported, it does nothing.
      */
     fun removeNode(node: Node<T>)
+
+    /**
+     * Computes the diameter of the network.
+     * The diameter is the longest shortest path between any two nodes.
+     */
+    fun networkDiameter(): Int {
+        var diameter = 0
+        for (node in nodes) {
+            val maxDistanceFromNode = bfs(node).values.maxOrNull() ?: 0
+            diameter = maxOf(diameter, maxDistanceFromNode)
+        }
+        return diameter
+    }
+
+    /**
+     * Performs a breadth-first search (BFS) starting from a [start] node.
+     * Computes the shortest distance from the start node to all other reachable nodes.
+     */
+    private fun bfs(start: Node<T>): Map<Node<T>, Int> {
+        val distances: MutableMap<Node<T>, Int> = mutableMapOf(start to 0)
+        val queue: ArrayDeque<Node<T>> = ArrayDeque(listOf(start))
+        while (queue.isNotEmpty()) {
+            val current = queue.removeFirst()
+            val currentDistance = distances[current] ?: 0
+            for (neighbor in getNeighborhood(current)) {
+                if (neighbor !in distances) {
+                    distances[neighbor] = currentDistance + 1
+                    queue.add(neighbor)
+                }
+            }
+        }
+        return distances
+    }
 }

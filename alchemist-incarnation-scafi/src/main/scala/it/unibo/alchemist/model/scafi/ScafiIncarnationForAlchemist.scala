@@ -7,8 +7,10 @@
  */
 package it.unibo.alchemist.model.scafi
 
+import it.unibo.alchemist.model
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+
 import java.util.Optional
 import it.unibo.alchemist.model.implementations.nodes.NodeManager
 import it.unibo.alchemist.model.molecules.SimpleMolecule
@@ -20,7 +22,8 @@ import it.unibo.scafi.space.{BasicSpatialAbstraction, Point2D, Point3D}
 import it.unibo.scafi.time.BasicTimeAbstraction
 import org.apache.commons.math3.random.RandomGenerator
 
-import scala.util.{Random, Success, Try}
+import scala.language.implicitConversions
+import scala.util.Random
 
 object ScafiIncarnationForAlchemist
     extends BasicAbstractIncarnation
@@ -28,7 +31,7 @@ object ScafiIncarnationForAlchemist
     with BasicTimeAbstraction
     with BasicSpatialAbstraction {
   override type P = Point3D
-  implicit override val idBounded = Builtins.Bounded.of_i
+  implicit override val idBounded: ScafiIncarnationForAlchemist.Builtins.Bounded[Int] = Builtins.Bounded.of_i
 
   val LSNS_ALCHEMIST_NODE_MANAGER = "manager"
   val LSNS_ALCHEMIST_ENVIRONMENT = "environment"
@@ -39,7 +42,7 @@ object ScafiIncarnationForAlchemist
   val NBR_ALCHEMIST_DELAY = "alchemistNbrDelay"
   val NBR_ALCHEMIST_LAG = "alchemistNbrLag"
 
-  class AlchemistRandomWrapper(val randomGenerator: RandomGenerator) extends Random {
+  private class AlchemistRandomWrapper(val randomGenerator: RandomGenerator) extends Random {
     override def nextBoolean(): Boolean = randomGenerator.nextBoolean()
     override def nextDouble(): Double = randomGenerator.nextDouble()
     override def nextInt(): Int = randomGenerator.nextInt()
@@ -52,23 +55,24 @@ object ScafiIncarnationForAlchemist
   }
 
   trait ScafiAlchemistSupport { self: AggregateProgram with StandardSensors =>
-    def node = sense[NodeManager](LSNS_ALCHEMIST_NODE_MANAGER)
+    def node: NodeManager = sense[NodeManager](LSNS_ALCHEMIST_NODE_MANAGER)
 
-    def alchemistCoordinates = sense[Array[Double]](LSNS_ALCHEMIST_COORDINATES)
+    def alchemistCoordinates: Array[Double] = sense[Array[Double]](LSNS_ALCHEMIST_COORDINATES)
 
     def alchemistDeltaTime(whenNan: Double = Double.NaN): Double = {
       val dt = sense[DoubleTime](LSNS_ALCHEMIST_DELTA_TIME).toDouble
       if (dt.isNaN) whenNan else dt
     }
 
-    def alchemistTimestamp = sense[it.unibo.alchemist.model.Time](LSNS_ALCHEMIST_TIMESTAMP)
+    def alchemistTimestamp: model.Time = sense[it.unibo.alchemist.model.Time](LSNS_ALCHEMIST_TIMESTAMP)
 
-    def alchemistRandomGen = sense[RandomGenerator](LSNS_ALCHEMIST_RANDOM)
-    lazy val randomGen: Random = new AlchemistRandomWrapper(alchemistRandomGen)
+    def alchemistRandomGen: RandomGenerator = sense[RandomGenerator](LSNS_ALCHEMIST_RANDOM)
+    private lazy val randomGen: Random = new AlchemistRandomWrapper(alchemistRandomGen)
     override def randomGenerator(): Random = randomGen
     override def nextRandom(): Double = alchemistRandomGen.nextDouble()
 
-    def alchemistEnvironment = sense[Environment[Any, Position[_]]](LSNS_ALCHEMIST_ENVIRONMENT)
+    def alchemistEnvironment: Environment[Any, Position[_]] =
+      sense[Environment[Any, Position[_]]](LSNS_ALCHEMIST_ENVIRONMENT)
 
     implicit private def optionalToOption[E](optional: Optional[E]): Option[E] =
       if (optional.isPresent) Some(optional.get()) else None

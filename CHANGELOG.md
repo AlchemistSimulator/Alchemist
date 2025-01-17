@@ -1,3 +1,49 @@
+## [37.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/36.1.3...37.0.0) (2025-01-17)
+
+### ⚠ BREAKING CHANGES
+
+* write `Environment` in Kotlin, introduce `TerminationPredicate`, improve simulation access from environments, use nullables for `Layer` access (#4105)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.29 ([#4086](https://github.com/AlchemistSimulator/Alchemist/issues/4086)) ([8dc2974](https://github.com/AlchemistSimulator/Alchemist/commit/8dc2974d31689c75003f2b1a816784e7eae6ce0e))
+* **deps:** update danysk/makepkg docker tag to v1.1.30 ([#4094](https://github.com/AlchemistSimulator/Alchemist/issues/4094)) ([d94d957](https://github.com/AlchemistSimulator/Alchemist/commit/d94d95779513a74c014762302d7f069cb67167d1))
+* **deps:** update danysk/makepkg docker tag to v1.1.31 ([#4108](https://github.com/AlchemistSimulator/Alchemist/issues/4108)) ([7625ff4](https://github.com/AlchemistSimulator/Alchemist/commit/7625ff45998cd77f5301f4f63337da6bb46fa7e3))
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.9.0 ([#4100](https://github.com/AlchemistSimulator/Alchemist/issues/4100)) ([1b249c4](https://github.com/AlchemistSimulator/Alchemist/commit/1b249c450ad253c8e6e1fa9157315bceb85245f8))
+* **deps:** update dependency org.mapsforge:mapsforge-map-awt to v0.23.0 ([#4102](https://github.com/AlchemistSimulator/Alchemist/issues/4102)) ([f78ec3a](https://github.com/AlchemistSimulator/Alchemist/commit/f78ec3a9b3eb18dfc106de25b2f739fe8bab6891))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.3.0 ([#4092](https://github.com/AlchemistSimulator/Alchemist/issues/4092)) ([50726a4](https://github.com/AlchemistSimulator/Alchemist/commit/50726a4e247c198e81f3eac812d7b6d1dc081d5d))
+* **deps:** update dependency scalafmt to v3.8.4 ([#4095](https://github.com/AlchemistSimulator/Alchemist/issues/4095)) ([41dace0](https://github.com/AlchemistSimulator/Alchemist/commit/41dace09c88626361670d196010ec015f034e298))
+* **deps:** update dependency scalafmt to v3.8.5 ([#4106](https://github.com/AlchemistSimulator/Alchemist/issues/4106)) ([61d495c](https://github.com/AlchemistSimulator/Alchemist/commit/61d495ce9c86df454d99f9d0ad2611675b4a9aab))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.119 ([#4093](https://github.com/AlchemistSimulator/Alchemist/issues/4093)) ([be9e560](https://github.com/AlchemistSimulator/Alchemist/commit/be9e5605d0716aa3c9a7977829601874d07609ba))
+* **deps:** update plugin java-qa to v1.83.0 ([#4085](https://github.com/AlchemistSimulator/Alchemist/issues/4085)) ([0c6a7aa](https://github.com/AlchemistSimulator/Alchemist/commit/0c6a7aaab80551d8f278af3691a676f12890d57b))
+* **deps:** update plugin java-qa to v1.84.0 ([#4087](https://github.com/AlchemistSimulator/Alchemist/issues/4087)) ([dc00791](https://github.com/AlchemistSimulator/Alchemist/commit/dc007919c505995bfad154a9bfdae55bcf4e623b))
+* **deps:** update plugin java-qa to v1.85.0 ([#4101](https://github.com/AlchemistSimulator/Alchemist/issues/4101)) ([18cde4f](https://github.com/AlchemistSimulator/Alchemist/commit/18cde4fd01d58fe9113c100ce927d453f09e2447))
+* **deps:** update plugin java-qa to v1.86.0 ([#4103](https://github.com/AlchemistSimulator/Alchemist/issues/4103)) ([4f1f16a](https://github.com/AlchemistSimulator/Alchemist/commit/4f1f16a978442ba026525e99ebf72ede02ca8310))
+* **deps:** update plugin java-qa to v1.87.0 ([#4109](https://github.com/AlchemistSimulator/Alchemist/issues/4109)) ([8610511](https://github.com/AlchemistSimulator/Alchemist/commit/8610511569a3d33485b2f5b52b5e6551ba78e156))
+* **deps:** update plugin publishoncentral to v8.0.1 ([#4084](https://github.com/AlchemistSimulator/Alchemist/issues/4084)) ([e77ecad](https://github.com/AlchemistSimulator/Alchemist/commit/e77ecadb6d38c82a176c6812889f76eda9878eff))
+* **deps:** update scala to v2.13.16 ([#4091](https://github.com/AlchemistSimulator/Alchemist/issues/4091)) ([36c9bb7](https://github.com/AlchemistSimulator/Alchemist/commit/36c9bb7c06e079e961bdc0763e9b181bb2067d90))
+
+### Build and continuous integration
+
+* create the staging repo using dedicated actions ([#4083](https://github.com/AlchemistSimulator/Alchemist/issues/4083)) ([6132ddb](https://github.com/AlchemistSimulator/Alchemist/commit/6132ddbc6b3becfde83752a8347f5f5c4dad0c1a))
+* **deps:** update actions/upload-artifact action to v4.6.0 ([#4090](https://github.com/AlchemistSimulator/Alchemist/issues/4090)) ([dda394f](https://github.com/AlchemistSimulator/Alchemist/commit/dda394f9f7498516920c36aa0b5d08fd45a8b185))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.7.0 ([#4089](https://github.com/AlchemistSimulator/Alchemist/issues/4089)) ([ffb379c](https://github.com/AlchemistSimulator/Alchemist/commit/ffb379c3b1717dcfaa880f9be2a2929224a907c4))
+* fix release command syntax error ([c1da110](https://github.com/AlchemistSimulator/Alchemist/commit/c1da110f71d3c8950cae41e7e910d96a8086358e))
+* remove no longer existing javadoc collector task ([13b40ec](https://github.com/AlchemistSimulator/Alchemist/commit/13b40ec5bafaa271de8d2a2d3012a91193865743))
+* update the dokka task name when generating ancillary files ([#4097](https://github.com/AlchemistSimulator/Alchemist/issues/4097)) ([230870d](https://github.com/AlchemistSimulator/Alchemist/commit/230870d4083c7a7043de7561038da1ed45931744))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([843b773](https://github.com/AlchemistSimulator/Alchemist/commit/843b7735a51ecc59b096e848dd624e1ddd35e1ba))
+* **build:** update the javadoc.io cache ([dd90d7a](https://github.com/AlchemistSimulator/Alchemist/commit/dd90d7a5607903fba8502f100e4905b2f3b4ec0c))
+* **build:** update the javadoc.io cache ([f1658e8](https://github.com/AlchemistSimulator/Alchemist/commit/f1658e8ec87f461b7c27b2377f7b0e0898adc274))
+* **build:** update the javadoc.io cache ([52c75ee](https://github.com/AlchemistSimulator/Alchemist/commit/52c75eee30552a13ac63dd0be5036fa4904d4f62))
+* **build:** update the javadoc.io cache ([ab46933](https://github.com/AlchemistSimulator/Alchemist/commit/ab46933d13a8d906eab9397705f73586188bcacf))
+
+### Refactoring
+
+* write `Environment` in Kotlin, introduce `TerminationPredicate`, improve simulation access from environments, use nullables for `Layer` access ([#4105](https://github.com/AlchemistSimulator/Alchemist/issues/4105)) ([ddcafe9](https://github.com/AlchemistSimulator/Alchemist/commit/ddcafe96a6a2027ebfc994e9cb841d120376d139))
+
 ## [36.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/36.1.2...36.1.3) (2025-01-09)
 
 ### Dependency updates

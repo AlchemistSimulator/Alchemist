@@ -36,17 +36,16 @@ private val logger = LoggerFactory.getLogger(GraphQLMonitor::class.java)
  * This behavior can be changed by setting [teardownOnSimulationTermination] to false.
  */
 class GraphQLMonitor<T, P : Position<out P>>
-
-@JvmOverloads
-constructor(
-    val environment: Environment<T, P>,
-    private val host: String = DefaultGraphQLSettings.DEFAULT_HOST,
-    private val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
-    private val teardownOnSimulationTermination: Boolean = true,
-    private val serverDispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : OutputMonitor<Any, Nothing> {
-    private val subscriptionMonitor = EnvironmentSubscriptionMonitor<Any, Nothing>()
-    private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
+    @JvmOverloads
+    constructor(
+        val environment: Environment<T, P>,
+        private val host: String = DefaultGraphQLSettings.DEFAULT_HOST,
+        private val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
+        private val teardownOnSimulationTermination: Boolean = true,
+        private val serverDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    ) : OutputMonitor<Any, Nothing> {
+        private val subscriptionMonitor = EnvironmentSubscriptionMonitor<Any, Nothing>()
+        private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
         override fun initialized(environment: Environment<Any, Nothing>) {
             environment.simulation.addOutputMonitor(subscriptionMonitor)
@@ -79,13 +78,14 @@ constructor(
             }
         }
 
-    private fun makeServer() = embeddedServer(
-        Netty,
-        port = port,
-        host = host,
-        module = {
-            graphQLModule(this@GraphQLMonitor.environment)
-            graphQLRoutingModule()
-        },
-    )
-}
+        private fun makeServer() =
+            embeddedServer(
+                Netty,
+                port = port,
+                host = host,
+                module = {
+                    graphQLModule(this@GraphQLMonitor.environment)
+                    graphQLRoutingModule()
+                },
+            )
+    }

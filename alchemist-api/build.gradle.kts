@@ -1,3 +1,6 @@
+import Libs.alchemist
+import Libs.incarnation
+
 /*
  * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
@@ -16,6 +19,10 @@ dependencies {
     api(libs.jool)
     api(libs.listset)
     implementation(libs.kotlin.reflect)
+
+    testImplementation(alchemist("euclidean-geometry"))
+    testImplementation(alchemist("physics"))
+    testRuntimeOnly(incarnation("protelis"))
 }
 
 publishing.publications {

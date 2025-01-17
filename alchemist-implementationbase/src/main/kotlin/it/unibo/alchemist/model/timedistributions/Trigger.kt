@@ -37,6 +37,9 @@ class Trigger<T>(
         currentTime: Time,
     ): AbstractDistribution<T> = Trigger(nextOccurence)
 
+    /**
+     * Static constants for [Trigger] class.
+     */
     companion object {
         private const val serialVersionUID = 5207992119302525618L
     }

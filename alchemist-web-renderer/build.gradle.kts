@@ -30,6 +30,7 @@ kotlin {
             dependencies {
                 implementation(libs.korim)
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.atomicfu.runtime)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.ktor.client.core)
                 implementation(libs.redux.kotlin.threadsafe)

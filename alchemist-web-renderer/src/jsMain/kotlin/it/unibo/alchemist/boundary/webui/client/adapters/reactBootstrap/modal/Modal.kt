@@ -12,7 +12,7 @@
 
 package it.unibo.alchemist.boundary.webui.client.adapters.reactBootstrap.modal
 
-import react.ComponentClass
+import react.FC
 import react.PropsWithChildren
 
 /**
@@ -22,7 +22,7 @@ import react.PropsWithChildren
  */
 
 @JsName("default")
-external val Modal: ComponentClass<ModalProps>
+external val Modal: FC<ModalProps>
 
 /**
  * Props used to customize the Modal.

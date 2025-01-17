@@ -11,12 +11,12 @@ package it.unibo.alchemist.boundary.webui.client
 
 import it.unibo.alchemist.boundary.webui.client.components.AppContent
 import it.unibo.alchemist.boundary.webui.client.components.AppNavbar
-import kotlinx.browser.document
 import react.FC
 import react.Props
 import react.create
 import react.dom.client.createRoot
 import web.dom.Element
+import web.dom.document
 
 /**
  * The entry point of the Kotlin/JS application. Find the root element and render the App.

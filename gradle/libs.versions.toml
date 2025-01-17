@@ -14,7 +14,7 @@ kotlin = "2.1.0"
 ktor = "3.0.0"
 mockito = "5.15.2"
 protelis = "17.7.1"
-react = "19.0.0-pre.854"
+react = "2025.1.1-19.0.0"
 scafi = "1.6.0"
 scala = "2.13.16"
 scalacache = "0.28.0"
@@ -79,6 +79,7 @@ kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotatio
 kotlin-react = { module = "org.jetbrains.kotlin-wrappers:kotlin-react", version.ref = "react" }
 kotlin-react-dom = { module = "org.jetbrains.kotlin-wrappers:kotlin-react-dom", version.ref = "react" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlinx-atomicfu-runtime ="org.jetbrains.kotlin:kotlinx-atomicfu-runtime:2.1.0"
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }

@@ -272,11 +272,11 @@
   "org.jetbrains.dokka/templating-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/19.0.0-pre.854": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/19.0.0-pre.854"
+  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.1.1-19.0.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.1.1-19.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/19.0.0-pre.854": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/19.0.0-pre.854"
+  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.1.1-19.0.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.1.1-19.0.0"
   },
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"
@@ -310,6 +310,9 @@
   },
   "org.jetbrains.kotlin/kotlin-test/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test/null"
+  },
+  "org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.1.0"
   },
   "org.jetbrains.kotlinx/kotlinx-cli/0.3.6": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-cli/0.3.6"

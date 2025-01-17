@@ -30,7 +30,6 @@ kotlin {
             dependencies {
                 implementation(libs.korim)
                 implementation(libs.kotlin.stdlib)
-                implementation(libs.kotlinx.atomicfu.runtime)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.ktor.client.core)
                 implementation(libs.redux.kotlin.threadsafe)
@@ -68,6 +67,7 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.ktor.client)
                 implementation(libs.bundles.kotlin.react)
+                implementation(libs.kotlinx.atomicfu.runtime)
                 implementation(npm("react-bootstrap", "2.5.0"))
             }
         }

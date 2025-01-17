@@ -191,13 +191,13 @@ jobs:
           check-command: true
           deploy-command: |
             [ -n "${{ needs.staging-repo.outputs.repo-id }}" ] || (
-              echo "Staging repository ID not found" &&
+              echo "Staging repository ID not found"
               exit 1
             )
             ./gradlew\
               ${{ needs.ci-preparation.outputs.force-version }}\
               -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
-              uploadOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel || \
+              uploadOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel
           clean-command: |
             # Clean the build directory on Win and Mac
             if [[ "${{ contains('Linux', runner.os) }}" == "false" ]]; then

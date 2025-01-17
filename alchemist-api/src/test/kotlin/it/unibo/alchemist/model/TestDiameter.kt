@@ -7,16 +7,15 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.physics.environments
+package it.unibo.alchemist.model
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCase
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.Incarnation
-import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
+import it.unibo.alchemist.model.physics.environments.ContinuousPhysics2DEnvironment
+import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.physics.properties.CircularArea
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
@@ -50,14 +49,14 @@ class TestDiameter : StringSpec() {
         "An environment with just one node has diameter as 0" {
             env.addNode(node1, Euclidean2DPosition(0.0, 0.0))
             env.nodes.size shouldBe 1
-            env.networkDiameter shouldBe 0
+            env.networkDiameter() shouldBe 0
         }
 
         "Two connected nodes increase the diameter of the network to 1" {
             env.addNode(node1, Euclidean2DPosition(0.0, 0.0))
             env.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
             env.nodes.size shouldBe 2
-            env.networkDiameter shouldBe 1
+            env.networkDiameter() shouldBe 1
         }
 
         "With thre fully connected nodes the maximum distance between two nodes is still 1" {
@@ -65,7 +64,7 @@ class TestDiameter : StringSpec() {
             env.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
             env.addNode(node3, Euclidean2DPosition(0.0, 3 * DEFAULT_SHAPE_SIZE))
             env.nodes.size shouldBe 3
-            env.networkDiameter shouldBe 1
+            env.networkDiameter() shouldBe 1
         }
 
         "A network with three nodes with just one neighbor each, has 2 as diameter" {
@@ -73,7 +72,7 @@ class TestDiameter : StringSpec() {
             env.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
             env.addNode(node3, Euclidean2DPosition(6 * DEFAULT_SHAPE_SIZE, 0.0))
             env.nodes.size shouldBe 3
-            env.networkDiameter shouldBe 2
+            env.networkDiameter() shouldBe 2
         }
 
         "A four-node network maintains a diameter of 2" {
@@ -82,7 +81,7 @@ class TestDiameter : StringSpec() {
             env.addNode(node3, Euclidean2DPosition(6 * DEFAULT_SHAPE_SIZE, 0.0))
             env.addNode(node4, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 2 * DEFAULT_SHAPE_SIZE))
             env.nodes.size shouldBe 4
-            env.networkDiameter shouldBe 2
+            env.networkDiameter() shouldBe 2
         }
 
         "A network of three nodes where one node is isolated has a diameter of 1" {
@@ -90,7 +89,7 @@ class TestDiameter : StringSpec() {
             env.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
             env.addNode(node3, Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 0.0))
             env.nodes.size shouldBe 3
-            env.networkDiameter shouldBe 1
+            env.networkDiameter() shouldBe 1
         }
     }
 

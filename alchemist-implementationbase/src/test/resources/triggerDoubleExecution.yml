@@ -4,19 +4,15 @@ network-model:
   type: ConnectWithinDistance
   parameters: [30]
 
-environment:
-  type: Continuous2DEnvironment
-  parameters: []
-  global-programs:
-    - time-distribution:
-        type: Trigger
-        parameters: [0]
-      type: TestTriggerReaction
-      parameters: []
-
 deployments:
   - type: Rectangle
     parameters: [100, 62, 15, 95, 200]
+    programs:
+      - time-distribution:
+          type: Trigger
+          parameters: [0]
+        type: TestTriggerReaction
+        parameters: []
 
 terminate:
   - type: AfterTime

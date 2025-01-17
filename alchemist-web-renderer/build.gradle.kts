@@ -67,6 +67,7 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.ktor.client)
                 implementation(libs.bundles.kotlin.react)
+                implementation(libs.kotlinx.atomicfu.runtime)
                 implementation(npm("react-bootstrap", "2.5.0"))
             }
         }

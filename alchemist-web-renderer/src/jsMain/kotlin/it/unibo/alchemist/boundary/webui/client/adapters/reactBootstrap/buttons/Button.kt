@@ -12,7 +12,7 @@
 
 package it.unibo.alchemist.boundary.webui.client.adapters.reactBootstrap.buttons
 
-import react.ComponentClass
+import react.FC
 import react.PropsWithChildren
 
 /**
@@ -22,7 +22,7 @@ import react.PropsWithChildren
  */
 
 @JsName("default")
-external val Button: ComponentClass<ButtonProps>
+external val Button: FC<ButtonProps>
 
 /**
  * Props used to customize the Button.

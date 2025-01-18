@@ -12,6 +12,9 @@ package it.unibo.alchemist.boundary.composeui
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
+/**
+ * Main entry point of the application.
+ */
 fun main() =
     application {
         Window(

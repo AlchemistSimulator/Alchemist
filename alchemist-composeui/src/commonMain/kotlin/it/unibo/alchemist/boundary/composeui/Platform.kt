@@ -9,4 +9,7 @@
 
 package it.unibo.alchemist.boundary.composeui
 
+/**
+ * This will be implemented by each target.
+ */
 expect fun getPlatform(): String

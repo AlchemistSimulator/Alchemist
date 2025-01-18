@@ -7,6 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
+import de.aaschmid.gradle.plugins.cpd.Cpd
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -89,6 +90,14 @@ compose.desktop {
     }
 }
 
-fun PatternFilterable.excludeGenerated() = exclude { "build${separator}generated" in it.file.absolutePath }
-tasks.withType<Detekt>().configureEach { excludeGenerated() }
-ktlint { filter { excludeGenerated() } }
+tasks {
+    fun PatternFilterable.excludeGenerated() = exclude { "build${separator}generated" in it.file.absolutePath }
+    withType<Detekt>().configureEach { excludeGenerated() }
+    ktlint { filter { excludeGenerated() } }
+    withType<Cpd> {
+        dependsOn(generateComposeResClass, generateExpectResourceCollectorsForCommonMain)
+        listOf("Jvm", "WasmJs").forEach { target ->
+            dependsOn(named("generateActualResourceCollectorsFor${target}Main"))
+        }
+    }
+}

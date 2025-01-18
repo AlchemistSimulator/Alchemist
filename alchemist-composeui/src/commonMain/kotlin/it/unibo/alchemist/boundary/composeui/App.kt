@@ -24,6 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
+/**
+ * Compose example.
+ */
 @Composable
 @Preview
 fun app() {

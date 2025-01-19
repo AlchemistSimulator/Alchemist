@@ -9,4 +9,7 @@
 
 package it.unibo.alchemist.boundary.composeui
 
+/**
+ * Returns a string representing the WASM/JS platform.
+ */
 actual fun getPlatform() = "Hello WASM/JS"

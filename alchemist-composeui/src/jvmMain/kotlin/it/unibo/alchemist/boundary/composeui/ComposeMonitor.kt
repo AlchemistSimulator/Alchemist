@@ -11,16 +11,21 @@ package it.unibo.alchemist.boundary.composeui
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.model.Environment
 
 /**
- * Loads the compose application inside a wrapper Java application.
+ * Monitor extension that uses JVM Compose UI to display the simulation.
  */
-fun main() =
-    application {
-        Window(
-            onCloseRequest = ::exitApplication,
-            title = "Alchemist",
-        ) {
-            app()
+class ComposeMonitor : OutputMonitor<Any, Nothing> {
+    override fun initialized(environment: Environment<Any, Nothing>) {
+        application {
+            Window(
+                onCloseRequest = { },
+                title = "Alchemist",
+            ) {
+                app()
+            }
         }
     }
+}

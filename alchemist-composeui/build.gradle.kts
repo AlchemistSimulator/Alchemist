@@ -7,9 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
+import Libs.alchemist
 import de.aaschmid.gradle.plugins.cpd.Cpd
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.io.File.separator
@@ -50,6 +50,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+                implementation(alchemist("api"))
             }
         }
 
@@ -74,18 +75,6 @@ publishing.publications.withType<MavenPublication>().configureEach {
                 name.set("Tommaso Bailetti")
                 email.set("tommaso.bailetti@studio.unibo.it")
             }
-        }
-    }
-}
-
-compose.desktop {
-    application {
-        mainClass = "it.unibo.alchemist.boundary.composeui.MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "it.unibo.alchemist.boundary.composeui"
-            packageVersion = "1.0.0"
         }
     }
 }

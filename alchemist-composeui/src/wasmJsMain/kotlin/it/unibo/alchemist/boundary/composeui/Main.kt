@@ -14,7 +14,8 @@ import androidx.compose.ui.window.ComposeViewport
 import kotlinx.browser.document
 
 /**
- * Main entry point of the JS App.
+ * Main entry point that loads the compose generic application in the browser.
+ * Even if not documented, this loading process needs an index.html file to load up the produced JavaScript.
  */
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {

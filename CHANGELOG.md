@@ -1,3 +1,18 @@
+## [37.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/37.0.0...37.0.1) (2025-01-17)
+
+### Dependency updates
+
+* **deps:** update react to v2025.1.3-19.0.0 ([#4046](https://github.com/AlchemistSimulator/Alchemist/issues/4046)) ([4faefa4](https://github.com/AlchemistSimulator/Alchemist/commit/4faefa48ced9253a2c71f6ddc21b28e32cf5f645))
+
+### Bug Fixes
+
+* **web-renderer:** migrate to react  v2025 ([#4080](https://github.com/AlchemistSimulator/Alchemist/issues/4080)) ([49d745c](https://github.com/AlchemistSimulator/Alchemist/commit/49d745c78bed5a56f408cee5d70d896a8ec3acf0))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([310a191](https://github.com/AlchemistSimulator/Alchemist/commit/310a191b13f1be1ed5374f417d15acdfd14babbe))
+* **build:** update the javadoc.io cache ([6cde7ca](https://github.com/AlchemistSimulator/Alchemist/commit/6cde7cae5c32fab891d98d8560b0daa17ebbfa00))
+
 ## [37.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/36.1.3...37.0.0) (2025-01-17)
 
 ### ⚠ BREAKING CHANGES

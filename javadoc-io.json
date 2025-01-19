@@ -57,9 +57,8 @@
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.4.0-jre",
     "second": "https://javadoc.io/doc/com.google.guava/guava/33.4.0-jre/element-list"
   },
-  "com.graphhopper/graphhopper-core/10.0": {
-    "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/10.0",
-    "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/10.0/element-list"
+  "com.graphhopper/graphhopper-core/10.1": {
+    "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/10.1"
   },
   "com.javadocmd/simplelatlng/1.4.0": {
     "first": "https://javadoc.io/doc/com.javadocmd/simplelatlng/1.4.0",

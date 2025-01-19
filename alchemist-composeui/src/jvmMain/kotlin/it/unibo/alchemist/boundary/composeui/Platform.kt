@@ -9,4 +9,7 @@
 
 package it.unibo.alchemist.boundary.composeui
 
+/**
+ * Returns the java version.
+ */
 actual fun getPlatform() = "Hello Java ${System.getProperty("java.version")}"

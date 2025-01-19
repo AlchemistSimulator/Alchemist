@@ -10,6 +10,7 @@
 package it.unibo.alchemist.boundary.composeui
 
 /**
- * This will be implemented by each target.
+ * Platform-specific function to get the platform name.
+ * This method will probably end like Japan after the second world war.
  */
 expect fun getPlatform(): String

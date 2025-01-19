@@ -9,8 +9,4 @@
 
 package it.unibo.alchemist.boundary.composeui
 
-/**
- * Platform-specific function to get the platform name.
- * This method will probably end like Japan after the second world war.
- */
 actual fun getPlatform() = "Hello Java ${System.getProperty("java.version")}"

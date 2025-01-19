@@ -13,7 +13,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
 /**
- * Main entry point of the application.
+ * Loads the compose application inside a wrapper Java application.
  */
 fun main() =
     application {

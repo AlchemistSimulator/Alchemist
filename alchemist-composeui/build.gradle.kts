@@ -17,8 +17,8 @@ import java.io.File.separator
 plugins {
     id("kotlin-multiplatform-convention") apply false
     kotlin("multiplatform")
-    alias(libs.plugins.composeMultiplatform)
-    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {

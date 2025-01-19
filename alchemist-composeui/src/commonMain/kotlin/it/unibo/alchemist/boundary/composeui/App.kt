@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
- * Compose example.
+ * Application entry point, this will be rendered the same in all the platforms.
  */
 @Composable
 @Preview

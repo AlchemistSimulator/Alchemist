@@ -17,21 +17,19 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.AbstractLocalAction
 
 class TestTriggerAction<T, P : Position<P>>(
-    environment: Environment<T, P>,
+    private val environment: Environment<T, P>,
     node: Node<T>,
 ) : AbstractLocalAction<T>(node) {
     private var executed = false
 
     override fun cloneAction(
-        node: Node<T?>?,
-        reaction: Reaction<T?>?,
-    ): Action<T?>? {
-        TODO("Not yet implemented")
-    }
+        node: Node<T>,
+        reaction: Reaction<T>,
+    ): Action<T> = TestTriggerAction(environment, node)
 
     override fun execute() {
         when (executed) {
-            true -> throw IllegalStateException("Reaction already executed")
+            true -> error("Reaction already executed")
             false -> executed = true
         }
     }

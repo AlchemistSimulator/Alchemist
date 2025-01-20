@@ -14,12 +14,12 @@ package it.unibo.alchemist.model
  */
 interface Subnetwork<T> {
     /**
-     * The nodes that belongs to this [Subnetwork]
+     * The nodes that belongs to this [Subnetwork].
      */
     val nodes: Set<Node<T>>
 
     /**
-     * The diameter of the [Subnetwork]
+     * The diameter of the [Subnetwork].
      */
     val diameter: Int
 

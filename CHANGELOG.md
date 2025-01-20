@@ -1,3 +1,17 @@
+## [37.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.0...37.1.1) (2025-01-20)
+
+### Dependency updates
+
+* **deps:** update dependency com.graphhopper:graphhopper-core to v10.2 ([#4116](https://github.com/AlchemistSimulator/Alchemist/issues/4116)) ([3015157](https://github.com/AlchemistSimulator/Alchemist/commit/30151570ee49fcabb3ca413c5a49ceac94aeb719))
+
+### Bug Fixes
+
+* **incarnation-scafi:** solve many Scala warnings ([51ae7e1](https://github.com/AlchemistSimulator/Alchemist/commit/51ae7e176950307027082948186189aa77ebcd07))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([f787acf](https://github.com/AlchemistSimulator/Alchemist/commit/f787acf97ec2f115e36b93325b86e1d9216953be))
+
 ## [37.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/37.0.1...37.1.0) (2025-01-20)
 
 ### Features

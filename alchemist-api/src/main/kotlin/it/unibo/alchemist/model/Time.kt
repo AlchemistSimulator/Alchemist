@@ -27,6 +27,13 @@ interface Time :
     val isInfinite: Boolean get() = toDouble().isInfinite()
 
     /**
+     * Verifies if the [Time] is set at finite, namely if the event will happen.
+     *
+     * @return true if the [Time] is finite
+     */
+    val isFinite: Boolean get() = toDouble().isFinite()
+
+    /**
      * Allows to multiply this [Time] for a constant.
      *
      * @param other

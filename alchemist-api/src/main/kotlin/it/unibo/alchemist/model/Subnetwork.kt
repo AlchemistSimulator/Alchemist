@@ -12,9 +12,19 @@ package it.unibo.alchemist.model
 /**
  * The [nodes] inside a subnetwork and relative [diameter].
  */
-data class Subnetwork<T>(
-    val nodes: Set<Node<T>>,
-    val diameter: Int,
-) {
+interface Subnetwork<T> {
+    /**
+     * The nodes that belongs to this [Subnetwork]
+     */
+    val nodes: Set<Node<T>>
+
+    /**
+     * The diameter of the [Subnetwork]
+     */
+    val diameter: Int
+
+    /**
+     * Returns true whether the [Subnetwork] contains the [node] passed as input.
+     */
     fun contains(node: Node<T>): Boolean = nodes.contains(node)
 }

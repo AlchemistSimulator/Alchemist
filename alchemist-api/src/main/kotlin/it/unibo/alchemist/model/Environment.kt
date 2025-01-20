@@ -222,7 +222,11 @@ interface Environment<T, P : Position<out P>> :
         nodes.fold(mutableSetOf<Subnetwork<T>>()) { diameters, node ->
             if (diameters.none { it.contains(node) }) {
                 val distances = bfs(node)
-                diameters += Subnetwork(distances.keys, distances.values.maxOrNull() ?: 0)
+                diameters +=
+                    object : Subnetwork<T> {
+                        override val nodes: Set<Node<T>> = distances.keys
+                        override val diameter: Int = distances.values.maxOrNull() ?: 0
+                    }
             }
             diameters
         }

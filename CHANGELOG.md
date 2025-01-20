@@ -1,3 +1,19 @@
+## [37.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/37.0.1...37.1.0) (2025-01-20)
+
+### Features
+
+* add `Time.isFinite` and block the engine from executing events scheduled for infinite time ([#4098](https://github.com/AlchemistSimulator/Alchemist/issues/4098)) ([9109fb5](https://github.com/AlchemistSimulator/Alchemist/commit/9109fb5d07cf0786358f07b51fef07e8a325ff10))
+
+### Dependency updates
+
+* **deps:** update dependency com.graphhopper:graphhopper-core to v10.1 ([#4114](https://github.com/AlchemistSimulator/Alchemist/issues/4114)) ([4cdab9f](https://github.com/AlchemistSimulator/Alchemist/commit/4cdab9ff6ad56b2718010bb7564413da0e138532))
+* **deps:** update react to v2025.1.4-19.0.0 ([#4112](https://github.com/AlchemistSimulator/Alchemist/issues/4112)) ([517fe70](https://github.com/AlchemistSimulator/Alchemist/commit/517fe70280dea1b10d28e672aceb9ddc108ce6d3))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([5ac6f21](https://github.com/AlchemistSimulator/Alchemist/commit/5ac6f210961eee50889db8b8bad68470a8eac836))
+* **build:** update the javadoc.io cache ([5f472b5](https://github.com/AlchemistSimulator/Alchemist/commit/5f472b54fb282126b844fff933275835dd9e0511))
+
 ## [37.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/37.0.0...37.0.1) (2025-01-17)
 
 ### Dependency updates

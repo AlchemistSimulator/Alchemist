@@ -214,17 +214,30 @@ interface Environment<T, P : Position<out P>> :
     fun removeNode(node: Node<T>)
 
     /**
-     * Computes the diameter of the network.
+     * Computes the diameter of the subnetworks of the environment.
      * The diameter is the longest shortest path between any two nodes.
+     * Returns a [Set] containing the [Subnetwork]s.
      */
-    fun networkDiameter(): Int {
-        var diameter = 0
-        for (node in nodes) {
-            val maxDistanceFromNode = bfs(node).values.maxOrNull() ?: 0
-            diameter = maxOf(diameter, maxDistanceFromNode)
+    fun networksDiameter(): Set<Subnetwork<T>> =
+        nodes.fold(mutableSetOf<Subnetwork<T>>()) { diameters, node ->
+            if (diameters.none { it.contains(node) }) {
+                val distances = bfs(node)
+                diameters += Subnetwork(distances.keys, distances.values.maxOrNull() ?: 0)
+            }
+            diameters
         }
-        return diameter
-    }
+
+    /**
+     * Returns true the network is segmented, false otherwise.
+     */
+    val isNetworkSegmented: Boolean
+        get() = networksDiameter().size > 1
+
+    /**
+     * Computes the network diameter of the segment containing [node].
+     */
+    fun networkDiameter(node: Node<T>): Int =
+        networksDiameter().firstOrNull { subnetwork -> subnetwork.contains(node) }?.diameter ?: 0
 
     /**
      * Performs a breadth-first search (BFS) starting from a [start] node.

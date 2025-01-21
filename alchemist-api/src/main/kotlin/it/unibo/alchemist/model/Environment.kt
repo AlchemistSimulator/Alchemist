@@ -218,7 +218,7 @@ interface Environment<T, P : Position<out P>> :
      * The diameter is the longest shortest path between any two nodes.
      * Returns a [Set] containing the [Subnetwork]s.
      */
-    fun networksDiameter(): Set<Subnetwork<T>> =
+    fun allDiameters(): Set<Subnetwork<T>> =
         nodes.fold(mutableSetOf<Subnetwork<T>>()) { diameters, node ->
             if (diameters.none { it.contains(node) }) {
                 val distances = bfs(node)
@@ -235,13 +235,14 @@ interface Environment<T, P : Position<out P>> :
      * Returns true the network is segmented, false otherwise.
      */
     val isNetworkSegmented: Boolean
-        get() = networksDiameter().size > 1
+        get() = allDiameters().size > 1
 
     /**
      * Computes the network diameter of the segment containing [node].
      */
     fun networkDiameter(node: Node<T>): Int =
-        networksDiameter().firstOrNull { subnetwork -> subnetwork.contains(node) }?.diameter ?: 0
+        bfs(node).size
+//        allDiameters().firstOrNull { subnetwork -> subnetwork.contains(node) }?.diameter ?: 0
 
     /**
      * Performs a breadth-first search (BFS) starting from a [start] node.
@@ -261,5 +262,25 @@ interface Environment<T, P : Position<out P>> :
             }
         }
         return distances
+    }
+
+    /**
+     * The [nodes] inside a subnetwork and relative [diameter].
+     */
+    interface Subnetwork<T> {
+        /**
+         * The nodes that belongs to this [Subnetwork].
+         */
+        val nodes: Set<Node<T>>
+
+        /**
+         * The diameter of the [Subnetwork].
+         */
+        val diameter: Int
+
+        /**
+         * Returns true whether the [Subnetwork] contains the [node] passed as input.
+         */
+        fun contains(node: Node<T>): Boolean = nodes.contains(node)
     }
 }

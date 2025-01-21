@@ -241,7 +241,7 @@ interface Environment<T, P : Position<out P>> :
      * Computes the network diameter of the segment containing [node].
      */
     fun networkDiameter(node: Node<T>): Int =
-        bfs(node).size
+        bfs(node)[node] ?: 0
 //        allDiameters().firstOrNull { subnetwork -> subnetwork.contains(node) }?.diameter ?: 0
 
     /**

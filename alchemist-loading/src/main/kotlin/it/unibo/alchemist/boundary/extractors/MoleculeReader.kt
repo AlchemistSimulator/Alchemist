@@ -43,7 +43,7 @@ class MoleculeReader
         private val filter: ExportFilter,
         aggregatorNames: List<String>,
         precision: Int? = null,
-    ) : AbstractAggregatingDoubleExporter(filter, aggregatorNames, precision) {
+    ) : AggregatingDoubleExporter(filter, aggregatorNames, precision) {
         private companion object {
             private const val SHORT_NAME_MAX_LENGTH = 5
         }

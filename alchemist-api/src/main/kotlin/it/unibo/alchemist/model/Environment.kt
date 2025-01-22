@@ -12,6 +12,8 @@ package it.unibo.alchemist.model
 import it.unibo.alchemist.core.Simulation
 import org.danilopianini.util.ListSet
 import java.io.Serializable
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Interface for an environment.
@@ -218,18 +220,60 @@ interface Environment<T, P : Position<out P>> :
      * The diameter is the longest shortest path between any two nodes.
      * Returns a [Set] containing the [Subnetwork]s.
      */
-    fun allDiameters(): Set<Subnetwork<T>> =
-        nodes.fold(mutableSetOf<Subnetwork<T>>()) { diameters, node ->
-            if (diameters.none { it.contains(node) }) {
-                val distances = bfs(node)
-                diameters +=
-                    object : Subnetwork<T> {
-                        override val nodes: Set<Node<T>> = distances.keys
-                        override val diameter: Int = distances.values.maxOrNull() ?: 0
-                    }
-            }
-            diameters
+    fun allDiameters(): Set<Subnetwork<T>> {
+        data class SubNetwork<T>(override val nodes: Set<Node<T>>, override val diameter: Int) : Subnetwork<T>
+        val subnets = mutableSetOf<SubNetwork<T>>()
+        val toExplore = nodes.toMutableSet()
+        while (toExplore.isNotEmpty()) {
+            val visiting = toExplore.first()
+
         }
+        return subnets
+    }
+//        nodes.fold(mutableSetOf<Subnetwork<T>>()) { diameters, node ->
+//            if (diameters.none { it.contains(node) }) {
+//                val distances = bfs(node)
+//                diameters += SubNetwork(distances.keys, distances.values.maxOrNull() ?: 0)
+//            }
+//            diameters
+//        }
+
+    /**
+     * Computes all the minimum distances using the Floyd–Warshall algorithm
+     */
+    fun floydWarshall(computeDistance: (Node<T>, Node<T>) -> Double = { _, _ -> 1.0 }) {
+        val nodes = nodes.toList()
+        /*
+         * The distances matrix is a triangular matrix stored in a flat array.
+         */
+        val distances = DoubleArray(nodeCount * nodeCount / 2) { Double.POSITIVE_INFINITY }
+        fun indexOf(a: Int, b: Int): Int = min(a, b).let { min ->
+            require(min >= 0) { "Invalid index $min" }
+            min * (2 * nodeCount - min - 1) / 2 + max(a, b).also { max ->
+                require(max < nodeCount) { "Invalid index $max" }
+            }
+        }
+        operator fun DoubleArray.get(i: Int, j: Int) = this[indexOf(i, j)]
+        operator fun DoubleArray.set(i: Int, j: Int, value: Double) {
+            this[indexOf(i, j)] = value
+        }
+        /*
+         * Distance with self is always zero
+         */
+        for (i in 0 until nodeCount) {
+            distances[i, i] = 0.0
+        }
+        for (cycle in 0 until nodeCount) {
+            for (i in 0 until nodeCount) {
+                for (j in i + 1 until nodeCount) {
+                    if (distances[i, j] > distances[i, cycle] + distances[cycle, j]) {
+                        distances[i, j] = distances[i, cycle] + distances[cycle, j]
+                    }
+//                    distances[i, j] = computeDistance(nodes[i], nodes[j])
+                }
+            }
+        }
+    }
 
     /**
      * Returns true the network is segmented, false otherwise.

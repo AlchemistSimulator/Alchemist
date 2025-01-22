@@ -121,8 +121,8 @@ class TestDiameter : StringSpec() {
             env.networkDiameter(node3) shouldBe 0
             val subnetworks = env.allDiameters()
             subnetworks shouldHaveSize 2
-            subnetworks.firstOrNull { sub -> sub.contains(node1) }?.diameter shouldBe 1
-            subnetworks.firstOrNull { sub -> sub.contains(node3) }?.diameter shouldBe 0
+            subnetworks.find { it.contains(node1) }?.diameter shouldBe 1
+            subnetworks.find { it.contains(node3) }?.diameter shouldBe 0
         }
     }
 

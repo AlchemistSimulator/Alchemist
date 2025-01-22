@@ -17,6 +17,7 @@ import Libs.alchemist
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
 plugins {
+    `java-library`
     scala
     alias(libs.plugins.scalafmt)
 }

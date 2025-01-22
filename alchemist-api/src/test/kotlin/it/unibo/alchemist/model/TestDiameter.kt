@@ -46,6 +46,7 @@ class TestDiameter : StringSpec() {
         vararg nodes: Node<Any>,
     ) {
         env.isNetworkSegmented shouldBe false
+        env.nodes.size shouldBe nodes.size
         nodes.forEach { node ->
             env.networkDiameter(node) shouldBe expected
         }
@@ -68,7 +69,6 @@ class TestDiameter : StringSpec() {
     init {
         "An environment with just one node has diameter as 0" {
             addNodeToEnv(node1 to Euclidean2DPosition(0.0, 0.0))
-            env.nodes.size shouldBe 1
             verifyUnifiedNetworkDiameter(expected = 0, node1)
         }
 
@@ -77,7 +77,6 @@ class TestDiameter : StringSpec() {
                 node1 to Euclidean2DPosition(0.0, 0.0),
                 node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
             )
-            env.nodes.size shouldBe 2
             verifyUnifiedNetworkDiameter(expected = 1, node1, node2)
         }
 
@@ -87,7 +86,6 @@ class TestDiameter : StringSpec() {
                 node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
                 node3 to Euclidean2DPosition(0.0, 3 * DEFAULT_SHAPE_SIZE),
             )
-            env.nodes.size shouldBe 3
             verifyUnifiedNetworkDiameter(expected = 1, node1, node2, node3)
         }
 
@@ -97,7 +95,6 @@ class TestDiameter : StringSpec() {
                 node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
                 node3 to Euclidean2DPosition(6 * DEFAULT_SHAPE_SIZE, 0.0),
             )
-            env.nodes.size shouldBe 3
             verifyUnifiedNetworkDiameter(expected = 2, node1, node2, node3)
         }
 
@@ -108,7 +105,6 @@ class TestDiameter : StringSpec() {
                 node3 to Euclidean2DPosition(6 * DEFAULT_SHAPE_SIZE, 0.0),
                 node4 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 2 * DEFAULT_SHAPE_SIZE),
             )
-            env.nodes.size shouldBe 4
             verifyUnifiedNetworkDiameter(expected = 2, node1, node2, node3, node4)
         }
 

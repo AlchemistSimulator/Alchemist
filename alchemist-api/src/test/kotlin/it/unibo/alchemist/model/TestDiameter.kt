@@ -11,7 +11,6 @@ package it.unibo.alchemist.model
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCase
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
@@ -36,6 +35,25 @@ class TestDiameter : StringSpec() {
         addProperty(CircularArea(environment, this, radius))
     }
 
+    private fun addNodeToEnv(vararg nodePos: Pair<Node<Any>, Euclidean2DPosition>) {
+        nodePos.forEach { (node, position) ->
+            env.addNode(node, position)
+        }
+    }
+
+    private fun verifyUnifiedNetworkDiameter(
+        expected: Int,
+        vararg nodes: Node<Any>,
+    ) {
+        env.isNetworkSegmented shouldBe false
+        nodes.forEach { node ->
+            env.networkDiameter(node) shouldBe expected
+        }
+        env.allDiameters().forEach { subnetwork ->
+            subnetwork.diameter shouldBe expected
+        }
+    }
+
     override suspend fun beforeTest(testCase: TestCase) {
         super.beforeTest(testCase)
         val incarnation = SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow()
@@ -49,87 +67,57 @@ class TestDiameter : StringSpec() {
 
     init {
         "An environment with just one node has diameter as 0" {
-            env.addNode(node1, Euclidean2DPosition(0.0, 0.0))
+            addNodeToEnv(node1 to Euclidean2DPosition(0.0, 0.0))
             env.nodes.size shouldBe 1
-            env.networkDiameter(node1) shouldBe 0
-            env.allDiameters() shouldHaveSize 1
-            val subnetwork = env.allDiameters().firstOrNull { subnetwork -> subnetwork.contains(node1) }
-            env.isNetworkSegmented shouldBe false
-            subnetwork?.diameter shouldBe 0
+            verifyUnifiedNetworkDiameter(expected = 0, node1)
         }
 
         "Two connected nodes increase the diameter of the network to 1" {
-            env.addNode(node1, Euclidean2DPosition(0.0, 0.0))
-            env.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
+            addNodeToEnv(
+                node1 to Euclidean2DPosition(0.0, 0.0),
+                node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
+            )
             env.nodes.size shouldBe 2
-            env.networkDiameter(node1) shouldBe 1
-            env.networkDiameter(node2) shouldBe 1
-            val subnetworks = env.allDiameters()
-            subnetworks shouldHaveSize 1
-            val subnetwork = subnetworks.firstOrNull { subnetwork -> subnetwork.contains(node1) }
-            subnetwork?.nodes?.shouldContain(node2)
-            env.isNetworkSegmented shouldBe false
-            subnetwork?.diameter shouldBe 1
+            verifyUnifiedNetworkDiameter(expected = 1, node1, node2)
         }
 
-        "With thre fully connected nodes the maximum distance between two nodes is still 1" {
-            env.addNode(node1, Euclidean2DPosition(0.0, 0.0))
-            env.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
-            env.addNode(node3, Euclidean2DPosition(0.0, 3 * DEFAULT_SHAPE_SIZE))
+        "With three fully connected nodes the maximum distance between two nodes is still 1" {
+            addNodeToEnv(
+                node1 to Euclidean2DPosition(0.0, 0.0),
+                node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
+                node3 to Euclidean2DPosition(0.0, 3 * DEFAULT_SHAPE_SIZE),
+            )
             env.nodes.size shouldBe 3
-            env.networkDiameter(node1) shouldBe 1
-            env.networkDiameter(node2) shouldBe 1
-            env.networkDiameter(node3) shouldBe 1
-            val subnetworks = env.allDiameters()
-            subnetworks shouldHaveSize 1
-            val subnetwork = subnetworks.firstOrNull { subnetwork -> subnetwork.contains(node1) }
-            subnetwork?.nodes?.shouldContain(node2)
-            subnetwork?.nodes?.shouldContain(node3)
-            env.isNetworkSegmented shouldBe false
-            subnetwork?.diameter shouldBe 1
+            verifyUnifiedNetworkDiameter(expected = 1, node1, node2, node3)
         }
 
         "A network with three nodes with just one neighbor each, has 2 as diameter" {
-            env.addNode(node1, Euclidean2DPosition(0.0, 0.0))
-            env.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
-            env.addNode(node3, Euclidean2DPosition(6 * DEFAULT_SHAPE_SIZE, 0.0))
+            addNodeToEnv(
+                node1 to Euclidean2DPosition(0.0, 0.0),
+                node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
+                node3 to Euclidean2DPosition(6 * DEFAULT_SHAPE_SIZE, 0.0),
+            )
             env.nodes.size shouldBe 3
-            env.networkDiameter(node1) shouldBe 2
-            env.networkDiameter(node2) shouldBe 2
-            env.networkDiameter(node3) shouldBe 2
-            val subnetworks = env.allDiameters()
-            subnetworks shouldHaveSize 1
-            val subnetwork = subnetworks.firstOrNull { subnetwork -> subnetwork.contains(node1) }
-            subnetwork?.nodes?.shouldContain(node2)
-            subnetwork?.nodes?.shouldContain(node3)
-            env.isNetworkSegmented shouldBe false
-            subnetwork?.diameter shouldBe 2
+            verifyUnifiedNetworkDiameter(expected = 2, node1, node2, node3)
         }
 
         "A four connected nodes network maintains a diameter of 2" {
-            env.addNode(node1, Euclidean2DPosition(0.0, 0.0))
-            env.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
-            env.addNode(node3, Euclidean2DPosition(6 * DEFAULT_SHAPE_SIZE, 0.0))
-            env.addNode(node4, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 2 * DEFAULT_SHAPE_SIZE))
+            addNodeToEnv(
+                node1 to Euclidean2DPosition(0.0, 0.0),
+                node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
+                node3 to Euclidean2DPosition(6 * DEFAULT_SHAPE_SIZE, 0.0),
+                node4 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 2 * DEFAULT_SHAPE_SIZE),
+            )
             env.nodes.size shouldBe 4
-            env.networkDiameter(node1) shouldBe 2
-            env.networkDiameter(node2) shouldBe 2
-            env.networkDiameter(node3) shouldBe 2
-            env.networkDiameter(node4) shouldBe 2
-            val subnetworks = env.allDiameters()
-            subnetworks shouldHaveSize 1
-            val subnetwork = subnetworks.firstOrNull { subnetwork -> subnetwork.contains(node1) }
-            subnetwork?.nodes?.shouldContain(node2)
-            subnetwork?.nodes?.shouldContain(node3)
-            subnetwork?.nodes?.shouldContain(node4)
-            env.isNetworkSegmented shouldBe false
-            subnetwork?.diameter shouldBe 2
+            verifyUnifiedNetworkDiameter(expected = 2, node1, node2, node3, node4)
         }
 
         "A network of three nodes where one node is isolated should have different diameters" {
-            env.addNode(node1, Euclidean2DPosition(0.0, 0.0))
-            env.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
-            env.addNode(node3, Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 0.0))
+            addNodeToEnv(
+                node1 to Euclidean2DPosition(0.0, 0.0),
+                node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
+                node3 to Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 0.0),
+            )
             env.nodes.size shouldBe 3
             env.isNetworkSegmented shouldBe true
             env.networkDiameter(node1) shouldBe 1

@@ -24,11 +24,12 @@ plugins {
 dependencies {
     compileOnly(libs.spotbugs.annotations)
 
+    api(libs.scafi.core)
+
     implementation(alchemist("api"))
     implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))
     implementation(alchemist("physics"))
-    api(libs.scafi.core)
     implementation(libs.resourceloader)
     implementation(libs.bundles.scala)
     implementation(libs.bundles.scalacache)

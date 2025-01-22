@@ -1,3 +1,19 @@
+## [37.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.1...37.1.2) (2025-01-22)
+
+### Dependency updates
+
+* **deps:** update dependency com.github.ben-manes.caffeine:caffeine to v3.2.0 ([#4113](https://github.com/AlchemistSimulator/Alchemist/issues/4113)) ([c0fbe9d](https://github.com/AlchemistSimulator/Alchemist/commit/c0fbe9da6bf3dad17373be6106e3d7822261a304))
+* **deps:** update react to v2025.1.5-19.0.0 ([#4117](https://github.com/AlchemistSimulator/Alchemist/issues/4117)) ([2047edb](https://github.com/AlchemistSimulator/Alchemist/commit/2047edbb265cc7f1e5e9ab12ccbd6f11dbec687a))
+
+### Bug Fixes
+
+* **incarnation-scafi:** promote Scafi as `api` dependency to simplify the construction of custom Scafi examples ([#4118](https://github.com/AlchemistSimulator/Alchemist/issues/4118)) ([7b66169](https://github.com/AlchemistSimulator/Alchemist/commit/7b66169226eae2a293de2b7d4fb83bf525c259c6))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([e743d46](https://github.com/AlchemistSimulator/Alchemist/commit/e743d46fb27869edbaf4e54dd75fdc5915c1f700))
+* **build:** update the javadoc.io cache ([b4071af](https://github.com/AlchemistSimulator/Alchemist/commit/b4071afcae0ad443c09e55dc17b61f81dfd3934c))
+
 ## [37.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.0...37.1.1) (2025-01-20)
 
 ### Dependency updates

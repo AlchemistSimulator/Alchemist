@@ -17,6 +17,7 @@ import Libs.alchemist
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
 plugins {
+    `java-library`
     scala
     alias(libs.plugins.scalafmt)
 }
@@ -24,11 +25,12 @@ plugins {
 dependencies {
     compileOnly(libs.spotbugs.annotations)
 
+    api(libs.scafi.core)
+
     implementation(alchemist("api"))
     implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))
     implementation(alchemist("physics"))
-    implementation(libs.scafi.core)
     implementation(libs.resourceloader)
     implementation(libs.bundles.scala)
     implementation(libs.bundles.scalacache)

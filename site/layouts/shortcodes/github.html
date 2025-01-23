@@ -3,9 +3,9 @@
 {{- $path := .Get "path" | default "README.md" -}}
 {{- $branch := .Get "branch" | default "master" -}}
 {{- $highlight := .Get "highlight" | default "true" -}}
-{{- $json := resources.GetRemote "https://api.github.com/repos/" $owner "/" $repo "/contents/" $path | transform.Unmarshal -}}
-{{- $content := $json.content | base64Decode | htmlUnescape -}}
-{{- $content := split $content "\n" -}}
+{{- $url := printf "https://raw.githubusercontent.com/%s/%s/%s/%s" $owner $repo $branch $path -}}
+{{- $data := resources.GetRemote $url -}}
+{{- $content := split $data.Content "\n" -}}
 {{- $start := .Get "from" | default "1" | int | add -1 }}
 {{- $end := .Get "to" | default (len $content) | int }}
 {{- $end := sub $end $start }}

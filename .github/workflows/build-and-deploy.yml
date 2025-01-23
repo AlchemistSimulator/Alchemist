@@ -168,7 +168,7 @@ jobs:
     if: >-
       always() && (
         contains(needs.staging-repo.result, 'success') || (
-          contains(needs.*.result, 'skipped') && !fromJSON(needs.ci-preparation.outputs.may-deploy)
+          contains(needs.staging-repo.result, 'skipped') && !fromJSON(needs.ci-preparation.outputs.may-deploy)
         )
       )
     timeout-minutes: 120
@@ -182,7 +182,7 @@ jobs:
           maven-central-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           should-run-codecov: false
-          should-deploy: ${{ contains('Linux', runner.os) && needs.ci-preparation.outputs.will-release }}
+          should-deploy: ${{ contains('Linux', runner.os) && fromJSON(needs.ci-preparation.outputs.may-deploy) }}
           should-validate-wrapper: ${{ contains('Linux', runner.os) }}
           pre-build-command: |
             ./gradlew kotlinUpgradeYarnLock --parallel

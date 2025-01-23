@@ -1,3 +1,26 @@
+## [37.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.2...37.1.3) (2025-01-23)
+
+### Dependency updates
+
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.3.1 ([#4121](https://github.com/AlchemistSimulator/Alchemist/issues/4121)) ([5925d6c](https://github.com/AlchemistSimulator/Alchemist/commit/5925d6ce6c5bb9798e5d9ab9978a07aa88d3fbd9))
+* **deps:** update dependency scalafmt to v3.8.6 ([#4123](https://github.com/AlchemistSimulator/Alchemist/issues/4123)) ([76cbd52](https://github.com/AlchemistSimulator/Alchemist/commit/76cbd527298cd6fb4894c3e58e65f2775d6625e3))
+* **deps:** update plugin com.gradle.develocity to v3.19.1 ([#4122](https://github.com/AlchemistSimulator/Alchemist/issues/4122)) ([1583bc6](https://github.com/AlchemistSimulator/Alchemist/commit/1583bc62421a27f122dd58d1a7348ae1f0569f49))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.141.0 ([#4104](https://github.com/AlchemistSimulator/Alchemist/issues/4104)) ([f4f81e2](https://github.com/AlchemistSimulator/Alchemist/commit/f4f81e2fa7ac10c0b7d935604b2effe77f759f0a))
+* **deps:** update gohugoio/hugo action to v0.142.0 ([#4119](https://github.com/AlchemistSimulator/Alchemist/issues/4119)) ([844c89e](https://github.com/AlchemistSimulator/Alchemist/commit/844c89e2cbcbf19c709fac3b9234794ba67c668b))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.7.1 ([#4120](https://github.com/AlchemistSimulator/Alchemist/issues/4120)) ([b7554e6](https://github.com/AlchemistSimulator/Alchemist/commit/b7554e61af65e2df493355d7c15a6603ca0a484d))
+* don't run the OSSRH deployment on forks ([885ff7e](https://github.com/AlchemistSimulator/Alchemist/commit/885ff7e3042f05d0311e7755bb1f1bdbd876a08e))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([893a974](https://github.com/AlchemistSimulator/Alchemist/commit/893a974c6366ed4581c2c28bdf347ad158c6733a))
+* **website:** improve the way code is imported from GitHub ([7d99445](https://github.com/AlchemistSimulator/Alchemist/commit/7d994451c5033babc3c7aba34a4e17444ff23a58))
+
 ## [37.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.1...37.1.2) (2025-01-22)
 
 ### Dependency updates

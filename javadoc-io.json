@@ -345,9 +345,8 @@
     "first": "https://javadoc.io/doc/org.mockito/mockito-core/5.15.2",
     "second": "https://javadoc.io/doc/org.mockito/mockito-core/5.15.2/element-list"
   },
-  "org.mongodb/mongodb-driver-sync/5.3.0": {
-    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.3.0",
-    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.3.0/element-list"
+  "org.mongodb/mongodb-driver-sync/5.3.1": {
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.3.1"
   },
   "org.protelis/protelis-interpreter/17.7.1": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.7.1"

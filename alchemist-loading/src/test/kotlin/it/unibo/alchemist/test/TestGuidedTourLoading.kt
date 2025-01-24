@@ -31,12 +31,12 @@ class TestGuidedTourLoading :
         {
             ClassPathScanner.resourcesMatching(".*\\.[yY][aA]?[mM][lL]", "guidedTour").forEach { yaml ->
                 "${File(yaml.file).name} should load with default parameters" {
-                    cache.get(yaml)?.getDefault<Any, Nothing>() shouldNotBe null
+                    cache.get(yaml).getDefault<Any, Nothing>() shouldNotBe null
                 }
             }
             ClassPathScanner.resourcesMatching(".*[Vv]ariable.*\\.yml", "guidedTour").forEach { yaml ->
                 "${File(yaml.file).name} should actually define variables" {
-                    val parsed = cache.get(yaml)!!
+                    val parsed = cache.get(yaml)
                     (parsed.variables + parsed.dependentVariables).size shouldBeGreaterThan 0
                 }
             }

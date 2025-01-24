@@ -1,3 +1,72 @@
+## [37.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.2...37.1.3) (2025-01-23)
+
+### Dependency updates
+
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.3.1 ([#4121](https://github.com/AlchemistSimulator/Alchemist/issues/4121)) ([5925d6c](https://github.com/AlchemistSimulator/Alchemist/commit/5925d6ce6c5bb9798e5d9ab9978a07aa88d3fbd9))
+* **deps:** update dependency scalafmt to v3.8.6 ([#4123](https://github.com/AlchemistSimulator/Alchemist/issues/4123)) ([76cbd52](https://github.com/AlchemistSimulator/Alchemist/commit/76cbd527298cd6fb4894c3e58e65f2775d6625e3))
+* **deps:** update plugin com.gradle.develocity to v3.19.1 ([#4122](https://github.com/AlchemistSimulator/Alchemist/issues/4122)) ([1583bc6](https://github.com/AlchemistSimulator/Alchemist/commit/1583bc62421a27f122dd58d1a7348ae1f0569f49))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.141.0 ([#4104](https://github.com/AlchemistSimulator/Alchemist/issues/4104)) ([f4f81e2](https://github.com/AlchemistSimulator/Alchemist/commit/f4f81e2fa7ac10c0b7d935604b2effe77f759f0a))
+* **deps:** update gohugoio/hugo action to v0.142.0 ([#4119](https://github.com/AlchemistSimulator/Alchemist/issues/4119)) ([844c89e](https://github.com/AlchemistSimulator/Alchemist/commit/844c89e2cbcbf19c709fac3b9234794ba67c668b))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.7.1 ([#4120](https://github.com/AlchemistSimulator/Alchemist/issues/4120)) ([b7554e6](https://github.com/AlchemistSimulator/Alchemist/commit/b7554e61af65e2df493355d7c15a6603ca0a484d))
+* don't run the OSSRH deployment on forks ([885ff7e](https://github.com/AlchemistSimulator/Alchemist/commit/885ff7e3042f05d0311e7755bb1f1bdbd876a08e))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([893a974](https://github.com/AlchemistSimulator/Alchemist/commit/893a974c6366ed4581c2c28bdf347ad158c6733a))
+* **website:** improve the way code is imported from GitHub ([7d99445](https://github.com/AlchemistSimulator/Alchemist/commit/7d994451c5033babc3c7aba34a4e17444ff23a58))
+
+## [37.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.1...37.1.2) (2025-01-22)
+
+### Dependency updates
+
+* **deps:** update dependency com.github.ben-manes.caffeine:caffeine to v3.2.0 ([#4113](https://github.com/AlchemistSimulator/Alchemist/issues/4113)) ([c0fbe9d](https://github.com/AlchemistSimulator/Alchemist/commit/c0fbe9da6bf3dad17373be6106e3d7822261a304))
+* **deps:** update react to v2025.1.5-19.0.0 ([#4117](https://github.com/AlchemistSimulator/Alchemist/issues/4117)) ([2047edb](https://github.com/AlchemistSimulator/Alchemist/commit/2047edbb265cc7f1e5e9ab12ccbd6f11dbec687a))
+
+### Bug Fixes
+
+* **incarnation-scafi:** promote Scafi as `api` dependency to simplify the construction of custom Scafi examples ([#4118](https://github.com/AlchemistSimulator/Alchemist/issues/4118)) ([7b66169](https://github.com/AlchemistSimulator/Alchemist/commit/7b66169226eae2a293de2b7d4fb83bf525c259c6))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([e743d46](https://github.com/AlchemistSimulator/Alchemist/commit/e743d46fb27869edbaf4e54dd75fdc5915c1f700))
+* **build:** update the javadoc.io cache ([b4071af](https://github.com/AlchemistSimulator/Alchemist/commit/b4071afcae0ad443c09e55dc17b61f81dfd3934c))
+
+## [37.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.0...37.1.1) (2025-01-20)
+
+### Dependency updates
+
+* **deps:** update dependency com.graphhopper:graphhopper-core to v10.2 ([#4116](https://github.com/AlchemistSimulator/Alchemist/issues/4116)) ([3015157](https://github.com/AlchemistSimulator/Alchemist/commit/30151570ee49fcabb3ca413c5a49ceac94aeb719))
+
+### Bug Fixes
+
+* **incarnation-scafi:** solve many Scala warnings ([51ae7e1](https://github.com/AlchemistSimulator/Alchemist/commit/51ae7e176950307027082948186189aa77ebcd07))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([f787acf](https://github.com/AlchemistSimulator/Alchemist/commit/f787acf97ec2f115e36b93325b86e1d9216953be))
+
+## [37.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/37.0.1...37.1.0) (2025-01-20)
+
+### Features
+
+* add `Time.isFinite` and block the engine from executing events scheduled for infinite time ([#4098](https://github.com/AlchemistSimulator/Alchemist/issues/4098)) ([9109fb5](https://github.com/AlchemistSimulator/Alchemist/commit/9109fb5d07cf0786358f07b51fef07e8a325ff10))
+
+### Dependency updates
+
+* **deps:** update dependency com.graphhopper:graphhopper-core to v10.1 ([#4114](https://github.com/AlchemistSimulator/Alchemist/issues/4114)) ([4cdab9f](https://github.com/AlchemistSimulator/Alchemist/commit/4cdab9ff6ad56b2718010bb7564413da0e138532))
+* **deps:** update react to v2025.1.4-19.0.0 ([#4112](https://github.com/AlchemistSimulator/Alchemist/issues/4112)) ([517fe70](https://github.com/AlchemistSimulator/Alchemist/commit/517fe70280dea1b10d28e672aceb9ddc108ce6d3))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([5ac6f21](https://github.com/AlchemistSimulator/Alchemist/commit/5ac6f210961eee50889db8b8bad68470a8eac836))
+* **build:** update the javadoc.io cache ([5f472b5](https://github.com/AlchemistSimulator/Alchemist/commit/5f472b54fb282126b844fff933275835dd9e0511))
+
 ## [37.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/37.0.0...37.0.1) (2025-01-17)
 
 ### Dependency updates

@@ -166,7 +166,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                 );
             }
             setCurrentTime(scheduledTime);
-            if (nextEvent.canExecute()) {
+            if (scheduledTime.isFinite() && nextEvent.canExecute()) {
                 /*
                  * This must be taken before execution, because the reaction
                  * might remove itself (or its node) from the environment.

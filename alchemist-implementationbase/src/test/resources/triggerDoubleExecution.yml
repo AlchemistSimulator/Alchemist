@@ -1,0 +1,21 @@
+incarnation: protelis
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [30]
+
+deployments:
+  - type: Rectangle
+    parameters: [100, 62, 15, 95, 200]
+    programs:
+      - time-distribution:
+          type: Trigger
+          parameters: [0]
+        type: Event
+        actions:
+          - type: TestTriggerAction
+            parameters: []
+
+terminate:
+  - type: AfterTime
+    parameters: 1

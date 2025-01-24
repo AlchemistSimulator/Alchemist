@@ -12,11 +12,10 @@ package it.unibo.alchemist.boundary.webui.server.routes
 import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.OK
-import io.ktor.server.application.ApplicationCall
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
-import io.ktor.util.pipeline.PipelineContext
 import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_PAUSE_PATH
 import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_PLAY_PATH
 import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_STATUS_PATH
@@ -82,7 +81,7 @@ object SimulationRoute {
      * is the error message.
      * @param action the action to execute on the simulation.
      */
-    private suspend fun PipelineContext<Unit, ApplicationCall>.respondAction(
+    private suspend fun RoutingContext.respondAction(
         additionalCheck: Pair<Status, String>,
         action: (Simulation<Any, Nothing>) -> Unit,
     ) {

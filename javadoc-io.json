@@ -9,26 +9,26 @@
   "com.apollographql.apollo3/apollo-runtime/4.0.0-beta.7": {
     "first": "https://javadoc.io/doc/com.apollographql.apollo3/apollo-runtime/4.0.0-beta.7"
   },
-  "com.expediagroup/graphql-kotlin-client-generator/8.2.1": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client-generator/8.2.1"
+  "com.expediagroup/graphql-kotlin-client-generator/8.3.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client-generator/8.3.0"
   },
-  "com.expediagroup/graphql-kotlin-client/8.2.1": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client/8.2.1"
+  "com.expediagroup/graphql-kotlin-client/8.3.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client/8.3.0"
   },
-  "com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.2.1": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.2.1"
+  "com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.3.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.3.0"
   },
-  "com.expediagroup/graphql-kotlin-hooks-provider/8.2.1": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/8.2.1"
+  "com.expediagroup/graphql-kotlin-hooks-provider/8.3.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/8.3.0"
   },
-  "com.expediagroup/graphql-kotlin-ktor-server/8.2.1": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-ktor-server/8.2.1"
+  "com.expediagroup/graphql-kotlin-ktor-server/8.3.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-ktor-server/8.3.0"
   },
-  "com.expediagroup/graphql-kotlin-sdl-generator/8.2.1": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-sdl-generator/8.2.1"
+  "com.expediagroup/graphql-kotlin-sdl-generator/8.3.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-sdl-generator/8.3.0"
   },
-  "com.expediagroup/graphql-kotlin-server/8.2.1": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/8.2.1"
+  "com.expediagroup/graphql-kotlin-server/8.3.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/8.3.0"
   },
   "com.github.ben-manes.caffeine/caffeine/3.2.0": {
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.2.0",
@@ -119,44 +119,44 @@
   "io.kotest/kotest-runner-junit5-jvm/6.0.0.M1": {
     "first": "https://javadoc.io/doc/io.kotest/kotest-runner-junit5-jvm/6.0.0.M1"
   },
-  "io.ktor/ktor-client-content-negotiation/2.3.13": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-client-content-negotiation/2.3.13"
+  "io.ktor/ktor-client-content-negotiation/3.0.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-client-content-negotiation/3.0.0"
   },
-  "io.ktor/ktor-client-core/2.3.13": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-client-core/2.3.13"
+  "io.ktor/ktor-client-core/3.0.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-client-core/3.0.0"
   },
-  "io.ktor/ktor-client-js/2.3.13": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-client-js/2.3.13"
+  "io.ktor/ktor-client-js/3.0.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-client-js/3.0.0"
   },
-  "io.ktor/ktor-serialization-jackson/2.3.13": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization-jackson/2.3.13"
+  "io.ktor/ktor-serialization-jackson/3.0.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization-jackson/3.0.0"
   },
-  "io.ktor/ktor-serialization-kotlinx-json/2.3.13": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization-kotlinx-json/2.3.13"
+  "io.ktor/ktor-serialization-kotlinx-json/3.0.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization-kotlinx-json/3.0.0"
   },
-  "io.ktor/ktor-serialization/2.3.13": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization/2.3.13"
+  "io.ktor/ktor-serialization/3.0.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization/3.0.0"
   },
-  "io.ktor/ktor-server-compression/2.3.13": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-compression/2.3.13"
+  "io.ktor/ktor-server-compression/3.0.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-compression/3.0.0"
   },
-  "io.ktor/ktor-server-content-negotiation/2.3.13": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-content-negotiation/2.3.13"
+  "io.ktor/ktor-server-content-negotiation/3.0.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-content-negotiation/3.0.0"
   },
-  "io.ktor/ktor-server-core-jvm/2.3.13": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-core-jvm/2.3.13"
+  "io.ktor/ktor-server-core-jvm/3.0.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-core-jvm/3.0.0"
   },
-  "io.ktor/ktor-server-cors/2.3.13": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-cors/2.3.13"
+  "io.ktor/ktor-server-cors/3.0.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-cors/3.0.0"
   },
-  "io.ktor/ktor-server-netty/2.3.13": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-netty/2.3.13"
+  "io.ktor/ktor-server-netty/3.0.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-netty/3.0.0"
   },
-  "io.ktor/ktor-server-test-host/2.3.13": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-test-host/2.3.13"
+  "io.ktor/ktor-server-test-host/3.0.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-test-host/3.0.0"
   },
-  "io.ktor/ktor-server-websockets-jvm/2.3.13": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-websockets-jvm/2.3.13"
+  "io.ktor/ktor-server-websockets-jvm/3.0.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-websockets-jvm/3.0.0"
   },
   "it.unimi.dsi/dsiutils/2.7.3": {
     "first": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.3",

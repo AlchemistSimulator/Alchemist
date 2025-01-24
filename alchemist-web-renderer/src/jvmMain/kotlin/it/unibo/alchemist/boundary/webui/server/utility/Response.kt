@@ -11,10 +11,9 @@ package it.unibo.alchemist.boundary.webui.server.utility
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.HttpStatusCode.Companion.OK
-import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.response.respond
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.server.routing.RoutingContext
 
 /**
  * Class representing an HTTP response.
@@ -32,7 +31,7 @@ data class Response<C>(
         /**
          * Utility function to dry-run the response process.
          */
-        suspend inline fun <reified C : Any> PipelineContext<Unit, ApplicationCall>.respond(response: Response<C>) {
+        suspend inline fun <reified C : Any> RoutingContext.respond(response: Response<C>) {
             call.respond(response.code, response.content)
         }
     }

@@ -347,11 +347,11 @@
   "org.mongodb/mongodb-driver-sync/5.3.1": {
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.3.1"
   },
-  "org.protelis/protelis-interpreter/17.7.1": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.7.1"
+  "org.protelis/protelis-interpreter/17.7.2": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.7.2"
   },
-  "org.protelis/protelis-lang/17.7.1": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.7.1"
+  "org.protelis/protelis-lang/17.7.2": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.7.2"
   },
   "org.reduxkotlin/redux-kotlin-threadsafe/0.6.1": {
     "first": "https://javadoc.io/doc/org.reduxkotlin/redux-kotlin-threadsafe/0.6.1"

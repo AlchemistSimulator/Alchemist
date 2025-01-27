@@ -1,3 +1,20 @@
+## [37.1.6](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.5...37.1.6) (2025-01-27)
+
+### Dependency updates
+
+* **core-deps:** update kotlin monorepo to v2.1.10 ([#4148](https://github.com/AlchemistSimulator/Alchemist/issues/4148)) ([07f6189](https://github.com/AlchemistSimulator/Alchemist/commit/07f6189c8c848bd921b439916683b9442acb7e6d))
+* **deps:** update dependency site/themes/hugo-theme-relearn to v7.3.2 ([#4143](https://github.com/AlchemistSimulator/Alchemist/issues/4143)) ([7e62ec8](https://github.com/AlchemistSimulator/Alchemist/commit/7e62ec8aae866c3e135dca7607ea1234975c0cc0))
+* **deps:** update plugin java-qa to v1.89.0 ([#4145](https://github.com/AlchemistSimulator/Alchemist/issues/4145)) ([ae0111a](https://github.com/AlchemistSimulator/Alchemist/commit/ae0111a5586048dc87123e22ddd1bac28ed67518))
+
+### Build and continuous integration
+
+* accept response 420 when checking for link integrity ([362710d](https://github.com/AlchemistSimulator/Alchemist/commit/362710dddebcaed3e576e907e82f6d9161ed922e))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.7.6 ([#4142](https://github.com/AlchemistSimulator/Alchemist/issues/4142)) ([1b1c1e6](https://github.com/AlchemistSimulator/Alchemist/commit/1b1c1e6939cf1cf01bfbce85003829ac0d3ce4be))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([fc498fb](https://github.com/AlchemistSimulator/Alchemist/commit/fc498fbc12016a50531eb7b972ec55e7b33693ac))
+
 ## [37.1.5](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.4...37.1.5) (2025-01-26)
 
 ### Dependency updates

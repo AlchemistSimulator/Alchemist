@@ -279,38 +279,38 @@
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"
   },
-  "org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.0"
+  "org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.10"
   },
-  "org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.0"
+  "org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.10"
   },
-  "org.jetbrains.kotlin/kotlin-reflect/2.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/2.1.0"
+  "org.jetbrains.kotlin/kotlin-reflect/2.1.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/2.1.10"
   },
-  "org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.1.0"
+  "org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.1.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.1.10"
   },
   "org.jetbrains.kotlin/kotlin-scripting-jsr223/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-scripting-jsr223/null"
   },
-  "org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.1.0"
+  "org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.1.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.1.10"
   },
-  "org.jetbrains.kotlin/kotlin-stdlib/2.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.1.0"
+  "org.jetbrains.kotlin/kotlin-stdlib/2.1.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.1.10"
   },
-  "org.jetbrains.kotlin/kotlin-test-annotations-common/2.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test-annotations-common/2.1.0"
+  "org.jetbrains.kotlin/kotlin-test-annotations-common/2.1.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test-annotations-common/2.1.10"
   },
-  "org.jetbrains.kotlin/kotlin-test-common/2.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test-common/2.1.0"
+  "org.jetbrains.kotlin/kotlin-test-common/2.1.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test-common/2.1.10"
   },
   "org.jetbrains.kotlin/kotlin-test/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test/null"
   },
-  "org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.1.0"
+  "org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.1.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.1.10"
   },
   "org.jetbrains.kotlinx/kotlinx-cli/0.3.6": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-cli/0.3.6"

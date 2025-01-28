@@ -31,7 +31,7 @@ jobs:
           echo 'github.repository = ${{ github.repository }}'
           echo 'github.head_ref = ${{ github.head_ref }}'
   dispatcher:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     # This filter blocks all pull-request builds that also have a branch build.
     # Called workflows inherit the event, so, internally the workflow can distinguish.
     # If the event is not a pull request, then the build should run

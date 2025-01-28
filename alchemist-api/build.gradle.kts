@@ -19,6 +19,7 @@ dependencies {
     api(libs.jool)
     api(libs.listset)
     implementation(libs.kotlin.reflect)
+    implementation(libs.symmetric.matrix)
 
     testImplementation(alchemist("euclidean-geometry"))
     testImplementation(alchemist("physics"))

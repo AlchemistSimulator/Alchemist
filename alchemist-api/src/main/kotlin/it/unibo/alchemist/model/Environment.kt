@@ -10,6 +10,8 @@
 package it.unibo.alchemist.model
 
 import it.unibo.alchemist.core.Simulation
+import org.danilopianini.symmetricmatrix.MutableDoubleSymmetricMatrix
+import org.danilopianini.symmetricmatrix.SymmetricMatrix
 import org.danilopianini.util.ListSet
 import java.io.Serializable
 import kotlin.math.max
@@ -238,41 +240,48 @@ interface Environment<T, P : Position<out P>> :
 //            diameters
 //        }
 
+    fun shortestHopPaths() = shortestPaths { n1, n2 ->
+        when {
+            n1 == n2 -> 0.0
+            getNeighborhood(n1).contains(n2) -> 1.0
+            else -> Double.POSITIVE_INFINITY
+        }
+    }
+
     /**
      * Computes all the minimum distances using the Floyd–Warshall algorithm
      */
-    fun floydWarshall(computeDistance: (Node<T>, Node<T>) -> Double = { _, _ -> 1.0 }) {
+    fun shortestPaths(
+        computeDistance: (Node<T>, Node<T>) -> Double = { n1, n2 ->
+            when {
+                n1 == n2 -> 0.0
+                getNeighborhood(n1).contains(n2) -> getDistanceBetweenNodes(n1, n2)
+                else -> Double.POSITIVE_INFINITY
+            }
+        }
+    ): Map<Pair<Node<T>, Node<T>>, Double> {
         val nodes = nodes.toList()
         /*
          * The distances matrix is a triangular matrix stored in a flat array.
          */
-        val distances = DoubleArray(nodeCount * nodeCount / 2) { Double.POSITIVE_INFINITY }
-        fun indexOf(a: Int, b: Int): Int = min(a, b).let { min ->
-            require(min >= 0) { "Invalid index $min" }
-            min * (2 * nodeCount - min - 1) / 2 + max(a, b).also { max ->
-                require(max < nodeCount) { "Invalid index $max" }
+        val distances = MutableDoubleSymmetricMatrix(nodeCount)
+        for (i in 0 until nodeCount) {
+            for (j in i + 1 until nodeCount) {
+                distances[i, j] = computeDistance(nodes[i], nodes[j])
             }
         }
-        operator fun DoubleArray.get(i: Int, j: Int) = this[indexOf(i, j)]
-        operator fun DoubleArray.set(i: Int, j: Int, value: Double) {
-            this[indexOf(i, j)] = value
-        }
-        /*
-         * Distance with self is always zero
-         */
-        for (i in 0 until nodeCount) {
-            distances[i, i] = 0.0
-        }
+        val result = LinkedHashMap<Pair<Node<T>, Node<T>>, Double>(nodes.size * (nodes.size + 1) / 2, 1.0f)
         for (cycle in 0 until nodeCount) {
             for (i in 0 until nodeCount) {
                 for (j in i + 1 until nodeCount) {
                     if (distances[i, j] > distances[i, cycle] + distances[cycle, j]) {
                         distances[i, j] = distances[i, cycle] + distances[cycle, j]
+                        result.put(nodes[i] to nodes[j], distances[i, j])
                     }
-//                    distances[i, j] = computeDistance(nodes[i], nodes[j])
                 }
             }
         }
+        return result
     }
 
     /**

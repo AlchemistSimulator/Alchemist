@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.symmetric.matrix)
 
     testImplementation(alchemist("euclidean-geometry"))
+    testImplementation(libs.kotlin.test)
     testImplementation(alchemist("physics"))
     testRuntimeOnly(incarnation("protelis"))
 }

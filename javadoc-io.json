@@ -49,9 +49,9 @@
     "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2",
     "second": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2/package-list"
   },
-  "com.google.code.gson/gson/2.11.0": {
-    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.11.0",
-    "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.11.0/element-list"
+  "com.google.code.gson/gson/2.12.0": {
+    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.12.0",
+    "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.12.0/element-list"
   },
   "com.google.guava/guava/33.4.0-jre": {
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.4.0-jre",

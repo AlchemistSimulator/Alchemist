@@ -338,7 +338,8 @@
     "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.11.4/package-list"
   },
   "org.mapsforge/mapsforge-map-awt/0.23.0": {
-    "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.23.0"
+    "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.23.0",
+    "second": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.23.0/element-list"
   },
   "org.mockito/mockito-core/5.15.2": {
     "first": "https://javadoc.io/doc/org.mockito/mockito-core/5.15.2",

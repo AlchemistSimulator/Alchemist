@@ -51,7 +51,7 @@ class TestDiameter {
         nodes.forEach { node ->
             assertEquals(expected, env.networkDiameter(node))
         }
-        env.allDiameters().forEach { subnetwork ->
+        env.allHopDiameters().forEach { subnetwork ->
             assertEquals<Double>(expected, subnetwork.diameter)
         }
     }
@@ -89,7 +89,7 @@ class TestDiameter {
             node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
             node3 to Euclidean2DPosition(0.0, 3 * DEFAULT_SHAPE_SIZE),
         )
-        env.allDiameters()
+        env.allHopDiameters()
         verifyUnifiedNetworkDiameter(expected = 1.0, node1, node2, node3)
     }
 
@@ -122,12 +122,12 @@ class TestDiameter {
             node3 to Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 0.0),
         )
         assertEquals(3, env.nodes.size)
-        println(env.allDiameters())
+        println(env.allHopDiameters())
         assertTrue(env.isNetworkSegmented)
         assertEquals(1.0, env.networkDiameter(node1))
         assertEquals(1.0, env.networkDiameter(node2))
         assertEquals(0.0, env.networkDiameter(node3))
-        val subnetworks = env.allDiameters()
+        val subnetworks = env.allHopDiameters()
         assertEquals(2, subnetworks.size)
         assertEquals(1.0, subnetworks.find { it.contains(node1) }?.diameter)
         assertEquals(0.0, subnetworks.find { it.contains(node3) }?.diameter)
@@ -142,13 +142,13 @@ class TestDiameter {
             node4 to Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 3.0),
         )
         assertEquals(4, env.nodes.size)
-        println(env.allDiameters())
+        println(env.allHopDiameters())
         assertTrue(env.isNetworkSegmented)
         assertEquals(1.0, env.networkDiameter(node1))
         assertEquals(1.0, env.networkDiameter(node2))
         assertEquals(1.0, env.networkDiameter(node3))
         assertEquals(1.0, env.networkDiameter(node4))
-        val subnetworks = env.allDiameters()
+        val subnetworks = env.allHopDiameters()
         assertEquals(2, subnetworks.size)
         assertEquals(1.0, subnetworks.find { it.contains(node1) }?.diameter)
         assertEquals(1.0, subnetworks.find { it.contains(node3) }?.diameter)

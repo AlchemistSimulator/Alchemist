@@ -219,11 +219,11 @@ interface Environment<T, P : Position<out P>> :
      * The diameter is the longest shortest path between any two nodes.
      * Returns a [Set] containing the [Subnetwork]s.
      */
-    fun allDiameters(): Set<Subnetwork<T>> {
+    fun allHopDiameters(): Set<Subnetwork<T>> {
         data class SubNetwork<T>(override val nodes: Set<Node<T>>, override val diameter: Double) : Subnetwork<T>
         val subnets = mutableSetOf<SubNetwork<T>>()
         val paths = shortestHopPaths()
-        val visited = nodes.toMutableSet()
+        val toVisit = nodes.toMutableSet()
         paths.forEach { (n1, n2), diameter ->
             val subnetwork = subnets.find { s -> s.contains(n1) || s.contains(n2) }
             val newSubnet = when {
@@ -235,11 +235,11 @@ interface Environment<T, P : Position<out P>> :
                 }
                 else -> SubNetwork(setOf(n1, n2), diameter)
             }
-            visited.removeAll(setOf(n1, n2))
+            toVisit.removeAll(setOf(n1, n2))
             subnets.add(newSubnet)
         }
-        if (visited.isNotEmpty()) {
-            visited.forEach { n -> subnets.add(SubNetwork(setOf(n), 0.0)) }
+        if (toVisit.isNotEmpty()) {
+            toVisit.forEach { n -> subnets.add(SubNetwork(setOf(n), 0.0)) }
         }
         return subnets
     }
@@ -269,19 +269,20 @@ interface Environment<T, P : Position<out P>> :
          * The distances matrix is a triangular matrix stored in a flat array.
          */
         val distances = MutableDoubleSymmetricMatrix(nodeCount)
+        val result = LinkedHashMap<Pair<Node<T>, Node<T>>, Double>(nodes.size * (nodes.size + 1) / 2, 1.0f)
         for (i in 0 until nodeCount) {
             for (j in i + 1 until nodeCount) {
                 distances[i, j] = computeDistance(nodes[i], nodes[j])
+                if (distances[i, j].isFinite()) {
+                    result.put(nodes[i] to nodes[j], distances[i, j])
+                }
             }
         }
-        val result = LinkedHashMap<Pair<Node<T>, Node<T>>, Double>(nodes.size * (nodes.size + 1) / 2, 1.0f)
         for (cycle in 0 until nodeCount) {
             for (i in 0 until nodeCount) {
                 for (j in i + 1 until nodeCount) {
                     if (distances[i, j] > distances[i, cycle] + distances[cycle, j]) {
                         distances[i, j] = distances[i, cycle] + distances[cycle, j]
-                    }
-                    if (distances[i, j] != Double.POSITIVE_INFINITY) {
                         result.put(nodes[i] to nodes[j], distances[i, j])
                     }
                 }
@@ -294,13 +295,13 @@ interface Environment<T, P : Position<out P>> :
      * Returns true the network is segmented, false otherwise.
      */
     val isNetworkSegmented: Boolean
-        get() = allDiameters().size > 1
+        get() = allHopDiameters().size > 1
 
     /**
      * Computes the network diameter of the segment containing [node].
      */
     fun networkDiameter(node: Node<T>): Double =
-        allDiameters().find { it.nodes.contains(node)}?.diameter ?: 0.0
+        allHopDiameters().find { it.nodes.contains(node)}?.diameter ?: 0.0
 //        (getNeighborhood(node).map { n -> bfs(n).values.max() } + bfs(node).values.max()).maxOrNull() ?: 0
 
     /**

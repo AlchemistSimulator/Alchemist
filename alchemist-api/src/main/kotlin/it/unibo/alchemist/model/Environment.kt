@@ -11,11 +11,8 @@ package it.unibo.alchemist.model
 
 import it.unibo.alchemist.core.Simulation
 import org.danilopianini.symmetricmatrix.MutableDoubleSymmetricMatrix
-import org.danilopianini.symmetricmatrix.SymmetricMatrix
 import org.danilopianini.util.ListSet
 import java.io.Serializable
-import kotlin.math.max
-import kotlin.math.min
 
 /**
  * Interface for an environment.
@@ -223,22 +220,29 @@ interface Environment<T, P : Position<out P>> :
      * Returns a [Set] containing the [Subnetwork]s.
      */
     fun allDiameters(): Set<Subnetwork<T>> {
-        data class SubNetwork<T>(override val nodes: Set<Node<T>>, override val diameter: Int) : Subnetwork<T>
+        data class SubNetwork<T>(override val nodes: Set<Node<T>>, override val diameter: Double) : Subnetwork<T>
         val subnets = mutableSetOf<SubNetwork<T>>()
-        val toExplore = nodes.toMutableSet()
-        while (toExplore.isNotEmpty()) {
-            val visiting = toExplore.first()
-
+        val paths = shortestHopPaths()
+        val visited = nodes.toMutableSet()
+        paths.forEach { (n1, n2), diameter ->
+            val subnetwork = subnets.find { s -> s.contains(n1) || s.contains(n2) }
+            val newSubnet = when {
+                subnetwork != null -> { // already exists a subnetwork containing n1 or n2
+                    val newNodes = subnetwork.merge(n1, n2)
+                    val newDiameter = if (subnetwork.diameter > diameter) subnetwork.diameter else diameter
+                    subnets.remove(subnetwork)
+                    SubNetwork(newNodes, newDiameter)
+                }
+                else -> SubNetwork(setOf(n1, n2), diameter)
+            }
+            visited.removeAll(setOf(n1, n2))
+            subnets.add(newSubnet)
+        }
+        if (visited.isNotEmpty()) {
+            visited.forEach { n -> subnets.add(SubNetwork(setOf(n), 0.0)) }
         }
         return subnets
     }
-//        nodes.fold(mutableSetOf<Subnetwork<T>>()) { diameters, node ->
-//            if (diameters.none { it.contains(node) }) {
-//                val distances = bfs(node)
-//                diameters += SubNetwork(distances.keys, distances.values.maxOrNull() ?: 0)
-//            }
-//            diameters
-//        }
 
     fun shortestHopPaths() = shortestPaths { n1, n2 ->
         when {
@@ -276,6 +280,8 @@ interface Environment<T, P : Position<out P>> :
                 for (j in i + 1 until nodeCount) {
                     if (distances[i, j] > distances[i, cycle] + distances[cycle, j]) {
                         distances[i, j] = distances[i, cycle] + distances[cycle, j]
+                    }
+                    if (distances[i, j] != Double.POSITIVE_INFINITY) {
                         result.put(nodes[i] to nodes[j], distances[i, j])
                     }
                 }
@@ -293,8 +299,9 @@ interface Environment<T, P : Position<out P>> :
     /**
      * Computes the network diameter of the segment containing [node].
      */
-    fun networkDiameter(node: Node<T>): Int =
-        (getNeighborhood(node).map { n -> bfs(n).values.max() } + bfs(node).values.max()).maxOrNull() ?: 0
+    fun networkDiameter(node: Node<T>): Double =
+        allDiameters().find { it.nodes.contains(node)}?.diameter ?: 0.0
+//        (getNeighborhood(node).map { n -> bfs(n).values.max() } + bfs(node).values.max()).maxOrNull() ?: 0
 
     /**
      * Performs a breadth-first search (BFS) starting from a [start] node.
@@ -328,11 +335,17 @@ interface Environment<T, P : Position<out P>> :
         /**
          * The diameter of the [Subnetwork].
          */
-        val diameter: Int
+        val diameter: Double
 
         /**
          * Returns true whether the [Subnetwork] contains the [node] passed as input.
          */
         fun contains(node: Node<T>): Boolean = nodes.contains(node)
+
+        fun merge(other: Set<Node<T>>): Set<Node<T>> =
+            nodes.toMutableSet().also { it.addAll(other)}
+
+        fun merge(vararg other: Node<T>): Set<Node<T>> =
+            nodes.toMutableSet().also { it.addAll(other)}
     }
 }

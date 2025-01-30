@@ -231,21 +231,23 @@ interface Environment<T, P : Position<out P>> :
 
         while (toVisit.isNotEmpty()) {
             val visiting = toVisit.first().also { toVisit.remove(it) }
-            val visitSub = subnetworks.find { it.contains(visiting) } // to check if it is already in a subnetwork
             if (toVisit.isNotEmpty()) {
-                val dist = paths[visiting to toVisit.first()]
-                if (dist == null && visitSub == null) { // they are in two different subnetworks
-                    subnetworks.add(SubNetwork(NaN, visiting))
-                } else if (dist != null) { // they are in the same subnetwork
-                    if(visitSub != null) { // should check if visiting is already in a subnetwork
-                        val diameter = if (dist > visitSub.diameter) dist else visitSub.diameter
-                        subnetworks.remove(visitSub)
-                        subnetworks.add(SubNetwork(diameter = diameter, visitSub.merge(visiting, toVisit.first())))
-                    } else {
-                        subnetworks.add(SubNetwork(dist, visiting, toVisit.first()))
+                toVisit.forEach { node ->
+                    val visitSub = subnetworks.find { it.contains(visiting) } // to check if it is already in a subnetwork
+                    val dist = paths[visiting to node]
+                    if (dist == null && visitSub == null) { // they are in two different subnetworks
+                        subnetworks.add(SubNetwork(NaN, visiting))
+                    } else if (dist != null) { // they are in the same subnetwork
+                        if(visitSub != null) { // should check if visiting is already in a subnetwork
+                            val diameter = if (dist > visitSub.diameter) dist else visitSub.diameter
+                            subnetworks.remove(visitSub)
+                            subnetworks.add(SubNetwork(diameter = diameter, visitSub.merge(visiting, node)))
+                        } else {
+                            subnetworks.add(SubNetwork(dist, visiting, node))
+                        }
                     }
                 }
-            } else if(visitSub == null) { // last node but not in a subnetwork
+            } else if(subnetworks.find { it.contains(visiting) } == null) { // last node but not in a subnetwork
                 subnetworks.add(SubNetwork(NaN, visiting))
             } // if it is the last node, but it is already in a subnetwork no problem
         }

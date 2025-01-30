@@ -98,14 +98,25 @@ class TestDiameter {
     fun testThreeNodesInRow() {
         addNodeToEnv(
             node1 to Euclidean2DPosition(0.0, 0.0),
-            node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
-            node3 to Euclidean2DPosition(6 * DEFAULT_SHAPE_SIZE, 0.0),
+            node2 to Euclidean2DPosition(4 * DEFAULT_SHAPE_SIZE, 0.0),
+            node3 to Euclidean2DPosition(8 * DEFAULT_SHAPE_SIZE, 0.0),
         )
         verifyUnifiedNetworkDiameter(expected = 2.0, node1, node2, node3)
     }
 
     @Test
-    fun testFourConnectedNodesDiameter() {
+    fun testFourNodesWithTwoNeighbors() {
+        addNodeToEnv(
+            node1 to Euclidean2DPosition(0.0, 0.0),
+            node2 to Euclidean2DPosition(5 * DEFAULT_SHAPE_SIZE, 0.0),
+            node3 to Euclidean2DPosition(0.0, 5 * DEFAULT_SHAPE_SIZE),
+            node4 to Euclidean2DPosition(5 * DEFAULT_SHAPE_SIZE, 5 * DEFAULT_SHAPE_SIZE),
+        )
+        verifyUnifiedNetworkDiameter(expected = 2.0, node1, node2, node3, node4)
+    }
+
+    @Test
+    fun testFourNodesWithThreeNeighbors() {
         addNodeToEnv(
             node1 to Euclidean2DPosition(0.0, 0.0),
             node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),

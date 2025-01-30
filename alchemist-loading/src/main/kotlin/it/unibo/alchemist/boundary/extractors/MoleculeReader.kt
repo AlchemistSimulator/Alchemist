@@ -63,7 +63,7 @@ class MoleculeReader
 
         private val singleColumnName: String = "$shortProp$moleculeName"
 
-        override fun <T> extractData(
+        override fun <T> getData(
             environment: Environment<T, *>,
             reaction: Actionable<T>?,
             time: Time,

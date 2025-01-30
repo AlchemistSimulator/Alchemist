@@ -57,19 +57,28 @@ abstract class AbstractAggregatingDoubleExporter
                 ?.map { "$NAME[$it]" }
                 ?: listOf("$NAME@node-id")
 
-        override fun <T> extractData(
+        final override fun <T> extractData(
             environment: Environment<T, *>,
             reaction: Actionable<T>?,
             time: Time,
             step: Long,
         ): Map<String, Double> {
             val filtered =
-                extractDataAsText(environment, reaction, time, step)
-                    .flatMap { filter.apply(it.value.toDouble()) }
-                    .toDoubleArray()
+                getData(environment, reaction, time, step)
+                    .flatMap { (_, values) -> filter.apply(values) }
             return aggregators
                 .map { (aggregatorName, aggregator) ->
-                    "$NAME[$aggregatorName]" to aggregator.evaluate(filtered)
+                    "$NAME[$aggregatorName]" to aggregator.evaluate(filtered.toDoubleArray())
                 }.toMap()
         }
+
+        /**
+         * Delegated to the concrete implementation to extract data from the environment.
+         */
+        abstract fun <T> getData(
+            environment: Environment<T, *>,
+            reaction: Actionable<T>?,
+            time: Time,
+            step: Long,
+        ): Map<String, Double>
     }

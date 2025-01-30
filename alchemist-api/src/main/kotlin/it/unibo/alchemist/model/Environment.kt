@@ -21,6 +21,7 @@ import kotlin.Double.Companion.POSITIVE_INFINITY
  * Every environment must implement this specification.
  * [T] is the [Concentration] type, [P] is the [Position] type.
  */
+@Suppress("TooManyFunctions")
 interface Environment<T, P : Position<out P>> :
     Serializable,
     Iterable<Node<T>> {
@@ -221,8 +222,12 @@ interface Environment<T, P : Position<out P>> :
      * The diameter is the longest shortest path between any two nodes.
      * Returns a [Set] containing the [Subnetwork]s.
      */
+    @Suppress("NestedBlockDepth")
     fun allHopDiameters(): Set<Subnetwork<T>> {
-        data class SubNetwork<T>(override val diameter: Double, override val nodes: Set<Node<T>>) : Subnetwork<T> {
+        data class SubNetwork<T>(
+            override val diameter: Double,
+            override val nodes: Set<Node<T>>,
+        ) : Subnetwork<T> {
             constructor(diameter: Double, vararg nodes: Node<T>) : this(diameter, nodes.toSet())
         }
         val subnetworks = mutableSetOf<SubNetwork<T>>()
@@ -233,12 +238,12 @@ interface Environment<T, P : Position<out P>> :
             val visiting = toVisit.first().also { toVisit.remove(it) }
             if (toVisit.isNotEmpty()) {
                 toVisit.forEach { node ->
-                    val visitSub = subnetworks.find { it.contains(visiting) } // to check if it is already in a subnetwork
+                    val visitSub = subnetworks.find { it.contains(visiting) } // if it is already in a subnetwork
                     val dist = paths[visiting to node]
                     if (dist == null && visitSub == null) { // they are in two different subnetworks
                         subnetworks.add(SubNetwork(NaN, visiting))
                     } else if (dist != null) { // they are in the same subnetwork
-                        if(visitSub != null) { // should check if visiting is already in a subnetwork
+                        if (visitSub != null) { // should check if visiting is already in a subnetwork
                             val diameter = if (dist > visitSub.diameter) dist else visitSub.diameter
                             subnetworks.remove(visitSub)
                             subnetworks.add(SubNetwork(diameter = diameter, visitSub.merge(visiting, node)))
@@ -247,38 +252,27 @@ interface Environment<T, P : Position<out P>> :
                         }
                     }
                 }
-            } else if(subnetworks.find { it.contains(visiting) } == null) { // last node but not in a subnetwork
+            } else if (subnetworks.none { it.contains(visiting) }) { // last node but not in a subnetwork
                 subnetworks.add(SubNetwork(NaN, visiting))
             } // if it is the last node, but it is already in a subnetwork no problem
         }
-
-//        paths.forEach { (n1, n2), diameter ->
-//            val sub = subnetworks.find { s -> s.contains(n1) || s.contains(n2) }
-//            val newSubnet = when {
-//                sub != null -> { // already exists a subnetwork containing n1 or n2
-//                    val newNodes = sub.add(n1, n2)
-//                    val newDiameter = if (sub.diameter > diameter) sub.diameter else diameter
-//                    subnetworks.remove(sub)
-//                    SubNetwork(newDiameter, newNodes)
-//                }
-//                else -> SubNetwork(diameter, n1, n2)
-//            }
-//            toVisit.removeAll(setOf(n1, n2))
-//            subnetworks.add(newSubnet)
-//        }
         return subnetworks
     }
 
-    fun shortestHopPaths() = shortestPaths { n1, n2 ->
-        when {
-            n1 == n2 -> 0.0
-            getNeighborhood(n1).contains(n2) -> 1.0
-            else -> POSITIVE_INFINITY
+    /**
+     * Calculates the shortest paths using the Floyd-Warshall algorithm calculating the Hop Distance between nodes.
+     */
+    fun shortestHopPaths() =
+        shortestPaths { n1, n2 ->
+            when {
+                n1 == n2 -> 0.0
+                getNeighborhood(n1).contains(n2) -> 1.0
+                else -> POSITIVE_INFINITY
+            }
         }
-    }
 
     /**
-     * Computes all the minimum distances using the Floyd–Warshall algorithm
+     * Computes all the minimum distances using the Floyd–Warshall algorithm.
      */
     fun shortestPaths(
         computeDistance: (Node<T>, Node<T>) -> Double = { n1, n2 ->
@@ -287,7 +281,7 @@ interface Environment<T, P : Position<out P>> :
                 getNeighborhood(n1).contains(n2) -> getDistanceBetweenNodes(n1, n2)
                 else -> POSITIVE_INFINITY
             }
-        }
+        },
     ): Map<Pair<Node<T>, Node<T>>, Double> {
         val nodes = nodes.toList()
         /*
@@ -326,8 +320,7 @@ interface Environment<T, P : Position<out P>> :
      * Computes the network diameter of the segment containing [node].
      * Returns [Nan] if the network is segmented.
      */
-    fun networkDiameter(node: Node<T>): Double =
-        allHopDiameters().find { it.contains(node) }!!.diameter
+    fun networkDiameter(node: Node<T>): Double = allHopDiameters().find { it.contains(node) }?.diameter ?: NaN
 
     /**
      * Performs a breadth-first search (BFS) starting from a [start] node.
@@ -368,10 +361,14 @@ interface Environment<T, P : Position<out P>> :
          */
         fun contains(node: Node<T>): Boolean = nodes.contains(node)
 
-        fun merge(others: Set<Node<T>>): Set<Node<T>> =
-            nodes.toMutableSet().also { it.addAll(others)}
+        /**
+         * Merges the nodes present in the subnetwork with a new set of [others] nodes.
+         */
+        fun merge(others: Set<Node<T>>): Set<Node<T>> = nodes.toMutableSet().also { it.addAll(others) }
 
-        fun merge(vararg others: Node<T>): Set<Node<T>> =
-            nodes.toMutableSet().also { it.addAll(others)}
+        /**
+         * Merges the nodes present in the subnetwork with a new set of [others] nodes.
+         */
+        fun merge(vararg others: Node<T>): Set<Node<T>> = nodes.toMutableSet().also { it.addAll(others) }
     }
 }

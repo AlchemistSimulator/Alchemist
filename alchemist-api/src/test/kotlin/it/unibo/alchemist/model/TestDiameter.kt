@@ -9,8 +9,6 @@
 
 package it.unibo.alchemist.model
 
-import kotlin.test.BeforeTest
-import kotlin.test.Test
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.physics.environments.ContinuousPhysics2DEnvironment
@@ -18,6 +16,8 @@ import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.physics.properties.CircularArea
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.Double.Companion.NaN
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

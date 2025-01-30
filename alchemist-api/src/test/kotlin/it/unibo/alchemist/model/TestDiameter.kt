@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.physics.environments.ContinuousPhysics2DEnvironm
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.physics.properties.CircularArea
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import kotlin.Double.Companion.NaN
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -70,7 +71,7 @@ class TestDiameter {
     @Test
     fun testSingleNodeDiameter() {
         addNodeToEnv(node1 to Euclidean2DPosition(0.0, 0.0))
-        verifyUnifiedNetworkDiameter(expected = 0.0, node1)
+        verifyUnifiedNetworkDiameter(expected = NaN, node1)
     }
 
     @Test
@@ -94,7 +95,7 @@ class TestDiameter {
     }
 
     @Test
-    fun testThreeNodesWithOneNeighborEachDiameter() {
+    fun testThreeNodesInRow() {
         addNodeToEnv(
             node1 to Euclidean2DPosition(0.0, 0.0),
             node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
@@ -126,11 +127,11 @@ class TestDiameter {
         assertTrue(env.isNetworkSegmented)
         assertEquals(1.0, env.networkDiameter(node1))
         assertEquals(1.0, env.networkDiameter(node2))
-        assertEquals(0.0, env.networkDiameter(node3))
+        assertEquals(NaN, env.networkDiameter(node3))
         val subnetworks = env.allHopDiameters()
         assertEquals(2, subnetworks.size)
         assertEquals(1.0, subnetworks.find { it.contains(node1) }?.diameter)
-        assertEquals(0.0, subnetworks.find { it.contains(node3) }?.diameter)
+        assertEquals(NaN, subnetworks.find { it.contains(node3) }?.diameter)
     }
 
     @Test

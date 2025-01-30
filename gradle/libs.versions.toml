@@ -48,7 +48,7 @@ graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstr
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
 groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.23"
 gson = "com.google.code.gson:gson:2.12.0"
-gson-extras = "org.danilopianini:gson-extras:2.0.0"
+gson-extras = "org.danilopianini:gson-extras:3.0.0"
 guava = "com.google.guava:guava:33.4.0-jre"
 ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "ignite" }
 ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "ignite" }

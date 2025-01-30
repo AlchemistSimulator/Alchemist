@@ -23,7 +23,7 @@ import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
  * Provided a [filter] and a list of [aggregatorNames], extracts data from the environment,
  * filters it, and then aggregates it.
  */
-open class AggregatingDoubleExporter
+abstract class AbstractAggregatingDoubleExporter
     @JvmOverloads
     constructor(
         private val filter: ExportFilter = CommonFilters.NOFILTER.filteringPolicy,

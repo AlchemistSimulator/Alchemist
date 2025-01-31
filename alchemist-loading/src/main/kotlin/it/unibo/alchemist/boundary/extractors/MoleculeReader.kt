@@ -37,7 +37,7 @@ import kotlin.math.min
 class MoleculeReader
     @JvmOverloads
     constructor(
-        moleculeName: String,
+        private val moleculeName: String,
         private val property: String?,
         private val incarnation: Incarnation<*, *>,
         private val filter: ExportFilter,
@@ -47,6 +47,9 @@ class MoleculeReader
         private companion object {
             private const val SHORT_NAME_MAX_LENGTH = 5
         }
+
+        override val colunmName: String
+            get() = "$shortProp${moleculeName}"
 
         private val molecule: Molecule = incarnation.createMolecule(moleculeName)
 
@@ -61,15 +64,13 @@ class MoleculeReader
             propertyText.takeIf(String::isEmpty)
                 ?: "${propertyText.substring(0..<min(propertyText.length, SHORT_NAME_MAX_LENGTH))}@"
 
-        private val singleColumnName: String = "$shortProp$moleculeName"
-
         override fun <T> getData(
             environment: Environment<T, *>,
             reaction: Actionable<T>?,
             time: Time,
             step: Long,
-        ): Map<String, Double> {
+        ): Map<Node<T>, Double> {
             fun Node<T>.extractData() = environment.incarnation.getProperty(this, molecule, property)
-            return environment.nodes.associate { n -> "$singleColumnName@${n.id}" to n.extractData() }
+            return environment.nodes.associateWith { it.extractData() }.toMap()
         }
     }

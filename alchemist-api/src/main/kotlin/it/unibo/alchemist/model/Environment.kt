@@ -10,14 +10,18 @@
 package it.unibo.alchemist.model
 
 import it.unibo.alchemist.core.Simulation
+import org.danilopianini.symmetricmatrix.MutableDoubleSymmetricMatrix
 import org.danilopianini.util.ListSet
 import java.io.Serializable
+import kotlin.Double.Companion.NaN
+import kotlin.Double.Companion.POSITIVE_INFINITY
 
 /**
  * Interface for an environment.
  * Every environment must implement this specification.
  * [T] is the [Concentration] type, [P] is the [Position] type.
  */
+@Suppress("TooManyFunctions")
 interface Environment<T, P : Position<out P>> :
     Serializable,
     Iterable<Node<T>> {
@@ -212,4 +216,159 @@ interface Environment<T, P : Position<out P>> :
      * If node removal is unsupported, it does nothing.
      */
     fun removeNode(node: Node<T>)
+
+    /**
+     * Computes the diameter of the subnetworks of the environment.
+     * The diameter is the longest shortest path between any two nodes.
+     * Returns a [Set] containing the [Subnetwork]s.
+     */
+    @Suppress("NestedBlockDepth")
+    fun allHopDiameters(): Set<Subnetwork<T>> {
+        data class SubNetwork<T>(
+            override val diameter: Double,
+            override val nodes: Set<Node<T>>,
+        ) : Subnetwork<T> {
+            constructor(diameter: Double, vararg nodes: Node<T>) : this(diameter, nodes.toSet())
+        }
+        val subnetworks = mutableSetOf<SubNetwork<T>>()
+        val toVisit = nodes.toMutableSet()
+        val paths = shortestHopPaths()
+
+        while (toVisit.isNotEmpty()) {
+            val visiting = toVisit.first().also { toVisit.remove(it) }
+            if (toVisit.isNotEmpty()) {
+                toVisit.forEach { node ->
+                    val visitSub = subnetworks.find { it.contains(visiting) } // if it is already in a subnetwork
+                    val dist = paths[visiting to node]
+                    if (dist == null && visitSub == null) { // they are in two different subnetworks
+                        subnetworks.add(SubNetwork(NaN, visiting))
+                    } else if (dist != null) { // they are in the same subnetwork
+                        if (visitSub != null) { // should check if visiting is already in a subnetwork
+                            val diameter = if (dist > visitSub.diameter) dist else visitSub.diameter
+                            subnetworks.remove(visitSub)
+                            subnetworks.add(SubNetwork(diameter = diameter, visitSub.merge(visiting, node)))
+                        } else {
+                            subnetworks.add(SubNetwork(dist, visiting, node))
+                        }
+                    }
+                }
+            } else if (subnetworks.none { it.contains(visiting) }) { // last node but not in a subnetwork
+                subnetworks.add(SubNetwork(NaN, visiting))
+            } // if it is the last node, but it is already in a subnetwork no problem
+        }
+        return subnetworks
+    }
+
+    /**
+     * Calculates the shortest paths using the Floyd-Warshall algorithm calculating the Hop Distance between nodes.
+     */
+    fun shortestHopPaths() =
+        shortestPaths { n1, n2 ->
+            when {
+                n1 == n2 -> 0.0
+                getNeighborhood(n1).contains(n2) -> 1.0
+                else -> POSITIVE_INFINITY
+            }
+        }
+
+    /**
+     * Computes all the minimum distances using the Floyd–Warshall algorithm.
+     */
+    fun shortestPaths(
+        computeDistance: (Node<T>, Node<T>) -> Double = { n1, n2 ->
+            when {
+                n1 == n2 -> 0.0
+                getNeighborhood(n1).contains(n2) -> getDistanceBetweenNodes(n1, n2)
+                else -> POSITIVE_INFINITY
+            }
+        },
+    ): Map<Pair<Node<T>, Node<T>>, Double> {
+        val nodes = nodes.toList()
+        /*
+         * The distances matrix is a triangular matrix stored in a flat array.
+         */
+        val distances = MutableDoubleSymmetricMatrix(nodeCount)
+        val result = LinkedHashMap<Pair<Node<T>, Node<T>>, Double>(nodes.size * (nodes.size + 1) / 2, 1.0f)
+        for (i in 0 until nodeCount) {
+            for (j in i + 1 until nodeCount) {
+                distances[i, j] = computeDistance(nodes[i], nodes[j])
+                if (distances[i, j].isFinite()) {
+                    result.put(nodes[i] to nodes[j], distances[i, j])
+                }
+            }
+        }
+        for (cycle in 0 until nodeCount) {
+            for (i in 0 until nodeCount) {
+                for (j in i + 1 until nodeCount) {
+                    if (distances[i, j] > distances[i, cycle] + distances[cycle, j]) {
+                        distances[i, j] = distances[i, cycle] + distances[cycle, j]
+                        result.put(nodes[i] to nodes[j], distances[i, j])
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    /**
+     * Returns true the network is segmented, false otherwise.
+     */
+    val isNetworkSegmented: Boolean
+        get() = allHopDiameters().size > 1
+
+    /**
+     * Computes the network diameter of the segment containing [node].
+     * Returns [Nan] if the network is segmented.
+     */
+    fun networkDiameter(node: Node<T>): Double = allHopDiameters().find { it.contains(node) }?.diameter ?: NaN
+
+    /**
+     * Performs a breadth-first search (BFS) starting from a [start] node.
+     * Computes the shortest distance from the start node to all other reachable nodes.
+     */
+    private fun bfs(start: Node<T>): Map<Node<T>, Int> {
+        val distances: MutableMap<Node<T>, Int> = mutableMapOf(start to 0)
+        val queue: ArrayDeque<Node<T>> = ArrayDeque(listOf(start))
+        while (queue.isNotEmpty()) {
+            val current = queue.removeFirst()
+            val currentDistance = distances[current] ?: 0
+            for (neighbor in getNeighborhood(current)) {
+                if (neighbor !in distances) {
+                    distances[neighbor] = currentDistance + 1
+                    queue.add(neighbor)
+                }
+            }
+        }
+        return distances
+    }
+
+    /**
+     * The [nodes] inside a subnetwork and relative [diameter].
+     */
+    interface Subnetwork<T> {
+        /**
+         * The nodes that belongs to this [Subnetwork].
+         */
+        val nodes: Set<Node<T>>
+
+        /**
+         * The diameter of the [Subnetwork].
+         */
+        val diameter: Double
+
+        /**
+         * Returns true whether the [Subnetwork] contains the [node] passed as input.
+         */
+        fun contains(node: Node<T>): Boolean = nodes.contains(node)
+
+        /**
+         * Merges the nodes present in the subnetwork with a new set of [others] nodes.
+         */
+        fun merge(others: Set<Node<T>>): Set<Node<T>> = nodes.toMutableSet().also { it.addAll(others) }
+
+        /**
+         * Merges the nodes present in the subnetwork with a new set of [others] nodes.
+         */
+        fun merge(vararg others: Node<T>): Set<Node<T>> = nodes.toMutableSet().also { it.addAll(others) }
+    }
 }

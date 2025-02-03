@@ -25,66 +25,68 @@ import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
  * filters it, and then aggregates it.
  */
 abstract class AbstractAggregatingDoubleExporter
-@JvmOverloads
-constructor(
-    private val filter: ExportFilter = CommonFilters.NOFILTER.filteringPolicy,
-    aggregatorNames: List<String>,
-    precision: Int? = null,
-) : AbstractDoubleExporter(precision) {
+    @JvmOverloads
     constructor(
-        name: String,
-        filter: String?,
+        private val filter: ExportFilter = CommonFilters.NOFILTER.filteringPolicy,
         aggregatorNames: List<String>,
         precision: Int? = null,
-    ) : this(
-        filter = CommonFilters.fromString(filter),
-        aggregatorNames = aggregatorNames,
-        precision = null,
-    )
+    ) : AbstractDoubleExporter(precision) {
+        constructor(
+            name: String,
+            filter: String?,
+            aggregatorNames: List<String>,
+            precision: Int? = null,
+        ) : this(
+            filter = CommonFilters.fromString(filter),
+            aggregatorNames = aggregatorNames,
+            precision = null,
+        )
 
-    private val aggregators: Map<String, UnivariateStatistic> =
-        aggregatorNames
-            .associateWith { StatUtil.makeUnivariateStatistic(it) }
-            .filter { it.value.isPresent }
-            .map { it.key to it.value.get() }
-            .toMap()
+        private val aggregators: Map<String, UnivariateStatistic> =
+            aggregatorNames
+                .associateWith { StatUtil.makeUnivariateStatistic(it) }
+                .filter { it.value.isPresent }
+                .map { it.key to it.value.get() }
+                .toMap()
 
-    override val columnNames: List<String> =
-        aggregators.keys
-            .takeIf { it.isNotEmpty() }
-            ?.map { "$colunmName[$it]" }
-            ?: listOf("$colunmName@node-id")
+        override val columnNames: List<String> =
+            aggregators.keys
+                .takeIf { it.isNotEmpty() }
+                ?.map { "$colunmName[$it]" }
+                ?: listOf("$colunmName@node-id")
 
-    final override fun <T> extractData(
-        environment: Environment<T, *>,
-        reaction: Actionable<T>?,
-        time: Time,
-        step: Long,
-    ): Map<String, Double> {
-        val filtered: Map<Node<T>, Double> =
-            getData(environment, reaction, time, step).mapValues { (key, value) -> filter.apply(value) }
-//                .flatMap { (key, value) -> filter.apply(value) }
-//                .toDoubleArray()
-        return when {
-            aggregators.isEmpty() ->
-                filtered.associate { value: Double -> colunmName to value }
-            else ->
-                aggregators
-                    .map { (aggregatorName, aggregator) ->
-                        "$colunmName[$aggregatorName]" to aggregator.evaluate(filtered)
-                    }.toMap()
-        }
+        final override fun <T> extractData(
+            environment: Environment<T, *>,
+            reaction: Actionable<T>?,
+            time: Time,
+            step: Long,
+        ): Map<String, Double> =
+            when {
+                aggregators.isEmpty() ->
+                    getData(environment, reaction, time, step)
+                        .mapKeys { (key, _) -> "$colunmName@${key.id}" }
+                else -> {
+                    val data =
+                        getData(environment, reaction, time, step)
+                            .values
+                            .flatMap { filter.apply(it) }
+                            .toDoubleArray()
+                    aggregators
+                        .map { (aggregator, statistics) ->
+                            "$colunmName[$aggregator]" to statistics.evaluate(data)
+                        }.toMap()
+                }
+            }
+
+        abstract val colunmName: String
+
+        /**
+         * Delegated to the concrete implementation to extract data from the environment.
+         */
+        abstract fun <T> getData(
+            environment: Environment<T, *>,
+            reaction: Actionable<T>?,
+            time: Time,
+            step: Long,
+        ): Map<Node<T>, Double>
     }
-
-    abstract val colunmName: String
-
-    /**
-     * Delegated to the concrete implementation to extract data from the environment.
-     */
-    abstract fun <T> getData(
-        environment: Environment<T, *>,
-        reaction: Actionable<T>?,
-        time: Time,
-        step: Long,
-    ): Map<Node<T>, Double>
-}

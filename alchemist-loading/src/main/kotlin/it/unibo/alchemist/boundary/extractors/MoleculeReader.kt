@@ -49,7 +49,7 @@ class MoleculeReader
         }
 
         override val colunmName: String
-            get() = "$shortProp${moleculeName}"
+            get() = "$shortProp$moleculeName"
 
         private val molecule: Molecule = incarnation.createMolecule(moleculeName)
 

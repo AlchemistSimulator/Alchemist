@@ -9,11 +9,10 @@
 
 package it.unibo.alchemist.model
 
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.physics.environments.ContinuousPhysics2DEnvironment
-import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
-import it.unibo.alchemist.model.physics.properties.CircularArea
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.Double.Companion.NaN
 import kotlin.test.BeforeTest
@@ -23,19 +22,16 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class TestDiameter {
-    private lateinit var env: Physics2DEnvironment<Any>
+    private lateinit var env: Euclidean2DEnvironment<Any>
+    private lateinit var node0: Node<Any>
     private lateinit var node1: Node<Any>
     private lateinit var node2: Node<Any>
     private lateinit var node3: Node<Any>
-    private lateinit var node4: Node<Any>
 
-    private fun createCircleNode(
+    private fun createNode(
         incarnation: Incarnation<Any, Euclidean2DPosition>,
-        environment: Physics2DEnvironment<Any>,
-        radius: Double,
-    ) = GenericNode(incarnation, environment).apply {
-        addProperty(CircularArea(environment, this, radius))
-    }
+        environment: Euclidean2DEnvironment<Any>,
+    ) = GenericNode(incarnation, environment)
 
     private fun addNodeToEnv(vararg nodePos: Pair<Node<Any>, Euclidean2DPosition>) {
         nodePos.forEach { (node, position) ->
@@ -50,7 +46,7 @@ class TestDiameter {
         assertFalse(env.isNetworkSegmented)
         assertEquals(nodes.size, env.nodes.size)
         nodes.forEach { node ->
-            assertEquals(expected, env.networkDiameter(node))
+            assertEquals(expected, env.networkDiameterByHopDistance(node))
         }
         env.allHopDiameters().forEach { subnetwork ->
             assertEquals<Double>(expected, subnetwork.diameter)
@@ -60,110 +56,108 @@ class TestDiameter {
     @BeforeTest
     fun beforeTest() {
         val incarnation = SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow()
-        env = ContinuousPhysics2DEnvironment(incarnation)
+        env = Continuous2DEnvironment(incarnation)
         env.linkingRule = ConnectWithinDistance(5.0)
-        node1 = createCircleNode(incarnation, env, DEFAULT_SHAPE_SIZE / 2)
-        node2 = createCircleNode(incarnation, env, DEFAULT_SHAPE_SIZE / 2)
-        node3 = createCircleNode(incarnation, env, DEFAULT_SHAPE_SIZE / 2)
-        node4 = createCircleNode(incarnation, env, DEFAULT_SHAPE_SIZE / 2)
+        node0 = createNode(incarnation, env)
+        node1 = createNode(incarnation, env)
+        node2 = createNode(incarnation, env)
+        node3 = createNode(incarnation, env)
     }
 
     @Test
     fun testSingleNodeDiameter() {
-        addNodeToEnv(node1 to Euclidean2DPosition(0.0, 0.0))
-        verifyUnifiedNetworkDiameter(expected = NaN, node1)
+        addNodeToEnv(node0 to Euclidean2DPosition(0.0, 0.0))
+        verifyUnifiedNetworkDiameter(expected = NaN, node0)
     }
 
     @Test
     fun testTwoConnectedNodesDiameter() {
         addNodeToEnv(
-            node1 to Euclidean2DPosition(0.0, 0.0),
-            node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
+            node0 to Euclidean2DPosition(0.0, 0.0),
+            node1 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
         )
-        verifyUnifiedNetworkDiameter(expected = 1.0, node1, node2)
+        verifyUnifiedNetworkDiameter(expected = 1.0, node0, node1)
     }
 
     @Test
     fun testThreeFullyConnectedNodesDiameter() {
         addNodeToEnv(
-            node1 to Euclidean2DPosition(0.0, 0.0),
-            node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
-            node3 to Euclidean2DPosition(0.0, 3 * DEFAULT_SHAPE_SIZE),
+            node0 to Euclidean2DPosition(0.0, 0.0),
+            node1 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
+            node2 to Euclidean2DPosition(0.0, 3 * DEFAULT_SHAPE_SIZE),
         )
         env.allHopDiameters()
-        verifyUnifiedNetworkDiameter(expected = 1.0, node1, node2, node3)
+        verifyUnifiedNetworkDiameter(expected = 1.0, node0, node1, node2)
     }
 
     @Test
     fun testThreeNodesInRow() {
         addNodeToEnv(
-            node1 to Euclidean2DPosition(0.0, 0.0),
-            node2 to Euclidean2DPosition(4 * DEFAULT_SHAPE_SIZE, 0.0),
-            node3 to Euclidean2DPosition(8 * DEFAULT_SHAPE_SIZE, 0.0),
+            node0 to Euclidean2DPosition(0.0, 0.0),
+            node1 to Euclidean2DPosition(4 * DEFAULT_SHAPE_SIZE, 0.0),
+            node2 to Euclidean2DPosition(8 * DEFAULT_SHAPE_SIZE, 0.0),
         )
-        verifyUnifiedNetworkDiameter(expected = 2.0, node1, node2, node3)
+        verifyUnifiedNetworkDiameter(expected = 2.0, node0, node1, node2)
     }
 
     @Test
     fun testFourNodesWithTwoNeighbors() {
         addNodeToEnv(
-            node1 to Euclidean2DPosition(0.0, 0.0),
-            node2 to Euclidean2DPosition(5 * DEFAULT_SHAPE_SIZE, 0.0),
-            node3 to Euclidean2DPosition(0.0, 5 * DEFAULT_SHAPE_SIZE),
-            node4 to Euclidean2DPosition(5 * DEFAULT_SHAPE_SIZE, 5 * DEFAULT_SHAPE_SIZE),
+            node0 to Euclidean2DPosition(0.0, 0.0),
+            node1 to Euclidean2DPosition(5 * DEFAULT_SHAPE_SIZE, 0.0),
+            node2 to Euclidean2DPosition(0.0, 5 * DEFAULT_SHAPE_SIZE),
+            node3 to Euclidean2DPosition(5 * DEFAULT_SHAPE_SIZE, 5 * DEFAULT_SHAPE_SIZE),
         )
-        verifyUnifiedNetworkDiameter(expected = 2.0, node1, node2, node3, node4)
+        verifyUnifiedNetworkDiameter(expected = 2.0, node0, node1, node2, node3)
     }
 
     @Test
     fun testFourNodesWithThreeNeighbors() {
         addNodeToEnv(
-            node1 to Euclidean2DPosition(0.0, 0.0),
-            node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
-            node3 to Euclidean2DPosition(6 * DEFAULT_SHAPE_SIZE, 0.0),
-            node4 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 2 * DEFAULT_SHAPE_SIZE),
+            node0 to Euclidean2DPosition(0.0, 0.0),
+            node1 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
+            node2 to Euclidean2DPosition(6 * DEFAULT_SHAPE_SIZE, 0.0),
+            node3 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 2 * DEFAULT_SHAPE_SIZE),
         )
-        verifyUnifiedNetworkDiameter(expected = 2.0, node1, node2, node3, node4)
+        verifyUnifiedNetworkDiameter(expected = 2.0, node0, node1, node2, node3)
     }
 
     @Test
     fun testIsolatedNodeDiameter() {
         addNodeToEnv(
-            node1 to Euclidean2DPosition(0.0, 0.0),
-            node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
-            node3 to Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 0.0),
+            node0 to Euclidean2DPosition(0.0, 0.0),
+            node1 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
+            node2 to Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 0.0),
         )
         assertEquals(3, env.nodes.size)
-        println(env.allHopDiameters())
         assertTrue(env.isNetworkSegmented)
-        assertEquals(1.0, env.networkDiameter(node1))
-        assertEquals(1.0, env.networkDiameter(node2))
-        assertEquals(NaN, env.networkDiameter(node3))
+        assertEquals(1.0, env.networkDiameterByHopDistance(node0))
+        assertEquals(1.0, env.networkDiameterByHopDistance(node1))
+        assertEquals(NaN, env.networkDiameterByHopDistance(node2))
         val subnetworks = env.allHopDiameters()
         assertEquals(2, subnetworks.size)
-        assertEquals(1.0, subnetworks.find { it.contains(node1) }?.diameter)
-        assertEquals(NaN, subnetworks.find { it.contains(node3) }?.diameter)
+        assertEquals(1.0, subnetworks.find { it.contains(node0) }?.diameter)
+        assertEquals(NaN, subnetworks.find { it.contains(node2) }?.diameter)
     }
 
     @Test
     fun testTwoSubnetworksWithSameDiameter() {
         addNodeToEnv(
-            node1 to Euclidean2DPosition(0.0, 0.0),
-            node2 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
-            node3 to Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 0.0),
-            node4 to Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 3.0),
+            node0 to Euclidean2DPosition(0.0, 0.0),
+            node1 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
+            node2 to Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 0.0),
+            node3 to Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 3.0),
         )
         assertEquals(4, env.nodes.size)
-        println(env.allHopDiameters())
         assertTrue(env.isNetworkSegmented)
-        assertEquals(1.0, env.networkDiameter(node1))
-        assertEquals(1.0, env.networkDiameter(node2))
-        assertEquals(1.0, env.networkDiameter(node3))
-        assertEquals(1.0, env.networkDiameter(node4))
+        assertEquals(1.0, env.networkDiameterByHopDistance(node0))
+        assertEquals(1.0, env.networkDiameterByHopDistance(node1))
+        assertEquals(1.0, env.networkDiameterByHopDistance(node2))
+        assertEquals(1.0, env.networkDiameterByHopDistance(node3))
         val subnetworks = env.allHopDiameters()
         assertEquals(2, subnetworks.size)
-        assertEquals(1.0, subnetworks.find { it.contains(node1) }?.diameter)
-        assertEquals(1.0, subnetworks.find { it.contains(node3) }?.diameter)
+        assertEquals(1.0, subnetworks.find { it.contains(node0) }?.diameter)
+        assertEquals(1.0, subnetworks.find { it.contains(node2) }?.diameter)
     }
 
     companion object {

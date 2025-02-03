@@ -32,7 +32,6 @@ abstract class AbstractAggregatingDoubleExporter
         precision: Int? = null,
     ) : AbstractDoubleExporter(precision) {
         constructor(
-            name: String,
             filter: String?,
             aggregatorNames: List<String>,
             precision: Int? = null,
@@ -78,6 +77,9 @@ abstract class AbstractAggregatingDoubleExporter
                 }
             }
 
+        /**
+         * The name of the column in the output file.
+         */
         abstract val colunmName: String
 
         /**

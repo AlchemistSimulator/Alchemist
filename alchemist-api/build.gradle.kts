@@ -23,7 +23,6 @@ dependencies {
 
     testImplementation(alchemist("euclidean-geometry"))
     testImplementation(libs.kotlin.test)
-    testImplementation(alchemist("physics"))
     testRuntimeOnly(incarnation("protelis"))
 }
 

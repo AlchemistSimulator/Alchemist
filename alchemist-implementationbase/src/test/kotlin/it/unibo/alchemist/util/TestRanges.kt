@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 /**
  * Contains tests concerning [ClosedRange] extension functions.
  */
-class TestRangeExtension :
+class TestRanges :
     StringSpec({
 
         infix fun <T : Comparable<T>> ClosedRange<T>?.rangeShouldBe(other: ClosedRange<T>) {

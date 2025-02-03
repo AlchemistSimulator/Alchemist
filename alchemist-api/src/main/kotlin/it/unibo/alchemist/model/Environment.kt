@@ -219,11 +219,20 @@ interface Environment<T, P : Position<out P>> :
 
     /**
      * Computes the diameter of the subnetworks of the environment.
+     * The diameter is the longest shortest path between any two nodes,
+     * evaluated using the [shortestHopPaths] method.
+     * Returns a [Set] containing the [Subnetwork]s.
+     */
+    fun allHopDiameters(): Set<Subnetwork<T>> = allDiameters { shortestHopPaths() }
+
+    /**
+     * Computes the diameter of the subnetworks of the environment.
      * The diameter is the longest shortest path between any two nodes.
      * Returns a [Set] containing the [Subnetwork]s.
      */
-    @Suppress("NestedBlockDepth")
-    fun allHopDiameters(): Set<Subnetwork<T>> {
+    fun allDiameters(
+        evaluatePaths: () -> Map<Pair<Node<T>, Node<T>>, Double> = { shortestPaths() },
+    ): Set<Subnetwork<T>> {
         data class SubNetwork<T>(
             override val diameter: Double,
             override val nodes: Set<Node<T>>,
@@ -231,30 +240,26 @@ interface Environment<T, P : Position<out P>> :
             constructor(diameter: Double, vararg nodes: Node<T>) : this(diameter, nodes.toSet())
         }
         val subnetworks = mutableSetOf<SubNetwork<T>>()
-        val toVisit = nodes.toMutableSet()
-        val paths = shortestHopPaths()
-
-        while (toVisit.isNotEmpty()) {
-            val visiting = toVisit.first().also { toVisit.remove(it) }
-            if (toVisit.isNotEmpty()) {
-                toVisit.forEach { node ->
-                    val visitSub = subnetworks.find { it.contains(visiting) } // if it is already in a subnetwork
-                    val dist = paths[visiting to node]
-                    if (dist == null && visitSub == null) { // they are in two different subnetworks
-                        subnetworks.add(SubNetwork(NaN, visiting))
-                    } else if (dist != null) { // they are in the same subnetwork
-                        if (visitSub != null) { // should check if visiting is already in a subnetwork
-                            val diameter = if (dist > visitSub.diameter) dist else visitSub.diameter
-                            subnetworks.remove(visitSub)
-                            subnetworks.add(SubNetwork(diameter = diameter, visitSub.merge(visiting, node)))
-                        } else {
-                            subnetworks.add(SubNetwork(dist, visiting, node))
-                        }
-                    }
+        val paths = evaluatePaths()
+        for (i in 0 until nodes.size) {
+            for (j in i until nodes.size) {
+                val distance = paths[nodes[i] to nodes[j]]
+                if (distance != null) { // they are in the same subnetwork
+                    val subnet =
+                        subnetworks
+                            .filter { it.contains(nodes[i]) || it.contains(nodes[j]) }
+                            .also { subs -> subs.forEach { subnetworks.remove(it) } }
+                            .fold(SubNetwork(NaN, emptySet<Node<T>>())) { acc, next ->
+                                val dist = if (acc.diameter > next.diameter) acc.diameter else next.diameter
+                                SubNetwork(dist, acc.merge(next.nodes))
+                            }
+                    val diameter = if (subnet.diameter > distance) subnet.diameter else distance
+                    subnetworks.add(SubNetwork(diameter, subnet.merge(nodes[i], nodes[j])))
+                } else { // they are in two different subnetworks, or it is the same node
+                    if (subnetworks.none { it.contains(nodes[i]) }) subnetworks.add(SubNetwork(NaN, nodes[i]))
+                    if (subnetworks.none { it.contains(nodes[j]) }) subnetworks.add(SubNetwork(NaN, nodes[j]))
                 }
-            } else if (subnetworks.none { it.contains(visiting) }) { // last node but not in a subnetwork
-                subnetworks.add(SubNetwork(NaN, visiting))
-            } // if it is the last node, but it is already in a subnetwork no problem
+            }
         }
         return subnetworks
     }
@@ -318,29 +323,16 @@ interface Environment<T, P : Position<out P>> :
 
     /**
      * Computes the network diameter of the segment containing [node].
-     * Returns [Nan] if the network is segmented.
+     * Returns [Nan] if the network is composed of a single node.
      */
-    fun networkDiameter(node: Node<T>): Double = allHopDiameters().find { it.contains(node) }?.diameter ?: NaN
+    fun networkDiameterByHopDistance(node: Node<T>): Double =
+        allHopDiameters().find { it.contains(node) }?.diameter ?: NaN
 
     /**
-     * Performs a breadth-first search (BFS) starting from a [start] node.
-     * Computes the shortest distance from the start node to all other reachable nodes.
+     * Returns the diameter of the network if it is not segmented,
+     * [Nan] otherwise.
      */
-    private fun bfs(start: Node<T>): Map<Node<T>, Int> {
-        val distances: MutableMap<Node<T>, Int> = mutableMapOf(start to 0)
-        val queue: ArrayDeque<Node<T>> = ArrayDeque(listOf(start))
-        while (queue.isNotEmpty()) {
-            val current = queue.removeFirst()
-            val currentDistance = distances[current] ?: 0
-            for (neighbor in getNeighborhood(current)) {
-                if (neighbor !in distances) {
-                    distances[neighbor] = currentDistance + 1
-                    queue.add(neighbor)
-                }
-            }
-        }
-        return distances
-    }
+    fun networkDiameterByHopDistance(): Double = if (isNetworkSegmented) NaN else allHopDiameters().first().diameter
 
     /**
      * The [nodes] inside a subnetwork and relative [diameter].

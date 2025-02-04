@@ -26,7 +26,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class TestEnvironmentsDiameter {
-
     private fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =
         Continuous2DEnvironment(ProtelisIncarnation()).apply {
             linkingRule = ConnectWithinDistance(5.0)
@@ -47,7 +46,10 @@ class TestEnvironmentsDiameter {
     private infix fun <T> Environment<T, *>.mustHaveMoreSubnetworks(expected: Int) =
         assertEquals<Int>(expected, allSubNetworksWithHopDistance().size)
 
-    private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveDiameter(index: Int, expected: Double) = {
+    private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveDiameter(
+        index: Int,
+        expected: Double,
+    ) = {
         require(index < nodes.size)
         assertEquals<Double>(expected, allSubNetworksByNodeWithHopDistance()[nodes[index]]?.diameter!!)
     }

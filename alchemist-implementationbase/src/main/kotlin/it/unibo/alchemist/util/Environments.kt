@@ -82,7 +82,15 @@ object Environments {
         }
         val subnetworks = mutableMapOf<Node<T>, Network<T>>()
 
-        fun subnetOf(node: Node<T>): Network<T> = subnetworks.getOrPut(node) { SubNetwork(node) }
+        fun subnetOf(
+            distance: Double,
+            node: Node<T>,
+        ): Network<T> =
+            subnetworks[node]
+                .let { subnet ->
+                    val result = SubNetwork(distance, node)
+                    if (subnet == null) result else result + subnet
+                }
         val paths = allShortestPaths(computeDistance)
         for (i in 0 until nodes.size) {
             val reference = nodes[i]
@@ -90,7 +98,7 @@ object Environments {
                 val target = nodes[j]
                 val distance = paths[reference to target]
                 if (distance != null && distance.isFinite()) {
-                    val merger = subnetOf(reference) + subnetOf(target)
+                    val merger = subnetOf(distance, reference) + subnetOf(distance, target)
                     subnetworks[reference] = merger
                     subnetworks[target] = merger
                 }
@@ -129,20 +137,20 @@ object Environments {
         val distances = MutableDoubleSymmetricMatrix(nodeCount)
         val result = LinkedHashMap<Pair<Node<T>, Node<T>>, Double>(nodes.size * (nodes.size + 1) / 2, 1.0f)
         for (i in 0 until nodeCount) {
-            for (j in i + 1 until nodeCount) {
+            for (j in i until nodeCount) {
                 distances[i, j] = computeDistance(nodes[i], nodes[j])
                 if (distances[i, j].isFinite()) {
                     result.put(nodes[i] to nodes[j], distances[i, j])
                 }
             }
         }
-        for (cycle in 0 until nodeCount) {
-            result.put(nodes[cycle].let { node -> node to node }, 0.0)
+        for (intermediate in 0 until nodeCount) {
             for (i in 0 until nodeCount) {
                 for (j in i + 1 until nodeCount) {
-                    if (distances[i, j] > distances[i, cycle] + distances[cycle, j]) {
-                        distances[i, j] = distances[i, cycle] + distances[cycle, j]
-                        result.put(nodes[i] to nodes[j], distances[i, j])
+                    val throughIntermediate = distances[i, intermediate] + distances[intermediate, j]
+                    if (distances[i, j] > throughIntermediate) {
+                        distances[i, j] = throughIntermediate
+                        result.put(nodes[i] to nodes[j], throughIntermediate)
                     }
                 }
             }
@@ -188,6 +196,5 @@ object Environments {
     /**
      * Returns the diameter of the network in environment units if it is not segmented, and [NaN] otherwise.
      */
-    fun Environment<*, *>.networkDiameter(): Double =
-        allSubNetworks().singleOrNull()?.diameter ?: NaN
+    fun Environment<*, *>.networkDiameter(): Double = allSubNetworks().singleOrNull()?.diameter ?: NaN
 }

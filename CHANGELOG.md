@@ -1,3 +1,23 @@
+## [37.1.8](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.7...37.1.8) (2025-02-04)
+
+### Dependency updates
+
+* **deps:** update react to v2025.2.1-19.0.0 ([#4173](https://github.com/AlchemistSimulator/Alchemist/issues/4173)) ([178569e](https://github.com/AlchemistSimulator/Alchemist/commit/178569e3ece469141ed0ea977940cd7ebd631c7a))
+* **deps:** update react to v2025.2.2-19.0.0 ([#4175](https://github.com/AlchemistSimulator/Alchemist/issues/4175)) ([c425858](https://github.com/AlchemistSimulator/Alchemist/commit/c425858c539caa7d488f931a4a1f60450c56fe15))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.143.1 ([#4176](https://github.com/AlchemistSimulator/Alchemist/issues/4176)) ([d613e10](https://github.com/AlchemistSimulator/Alchemist/commit/d613e109409e26615172cd021012aa8f02dc7ddc))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([d3546bb](https://github.com/AlchemistSimulator/Alchemist/commit/d3546bb84450ec89ba34536eca084850d2f21a95))
+* **build:** update the javadoc.io cache ([47e60fd](https://github.com/AlchemistSimulator/Alchemist/commit/47e60fd2d4ff3a9bb0d2db469adf514c48afd96f))
+
+### Refactoring
+
+* **loading:** embed exporter aggregating logic into a dedicated `abstract class` ([#4096](https://github.com/AlchemistSimulator/Alchemist/issues/4096)) ([ebac215](https://github.com/AlchemistSimulator/Alchemist/commit/ebac215c974caf2899700f3dd74e22d17701ac61))
+
 ## [37.1.7](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.6...37.1.7) (2025-02-02)
 
 ### Dependency updates

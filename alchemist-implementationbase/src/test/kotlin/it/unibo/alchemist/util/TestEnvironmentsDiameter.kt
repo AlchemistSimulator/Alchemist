@@ -9,17 +9,17 @@
 
 package it.unibo.alchemist.util
 
-import io.kotest.mpp.env
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.protelis.ProtelisIncarnation
+import it.unibo.alchemist.util.Environments.allSubNetworksByNodeWithHopDistance
 import it.unibo.alchemist.util.Environments.allSubNetworksWithHopDistance
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
-import it.unibo.alchemist.util.Environments.networkDiameterByHopDistance
 import it.unibo.alchemist.util.Environments.networkDiameter
+import it.unibo.alchemist.util.Environments.networkDiameterByHopDistance
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -44,98 +44,53 @@ class TestEnvironmentsDiameter {
         assertTrue(networkDiameterByHopDistance().isNaN())
     }
 
+    private infix fun <T> Environment<T, *>.mustHaveMoreSubnetworks(expected: Int) =
+        assertEquals<Int>(expected, allSubNetworksWithHopDistance().size)
+
+    private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveDiameter(index: Int, expected: Double) = {
+        require(index < nodes.size)
+        assertEquals<Double>(expected, allSubNetworksByNodeWithHopDistance()[nodes[index]]?.diameter!!)
+    }
+
     @Test
-    fun `environments with a single node have diameter 0`() {
+    fun `environments with a single node have diameter 0`() =
         environmentWithNodesAt(0.0 to 0.0) mustNotBeSegmentedAndHaveHopDiameter 0.0
+
+    @Test
+    fun `two connected nodes should have hop diameter 1`() =
+        environmentWithNodesAt(0.0 to 0.0, 3.0 to 0.0) mustNotBeSegmentedAndHaveHopDiameter 1.0
+
+    @Test
+    fun `a triangle has hop diameter 1`() =
+        environmentWithNodesAt(0.0 to 0.0, 3.0 to 0.0, 0.0 to 3.0) mustNotBeSegmentedAndHaveHopDiameter 1.0
+
+    @Test
+    fun `three nodes in a row have hop diameter 2`() =
+        environmentWithNodesAt(0.0 to 0.0, 4.0 to 0.0, 8.0 to 0.0) mustNotBeSegmentedAndHaveHopDiameter 2.0
+
+    @Test
+    fun `four nodes connected in a square should have hop diameter 2`() =
+        environmentWithNodesAt(0.0 to 0.0, 5.0 to 0.0, 0.0 to 5.0, 5.0 to 5.0) mustNotBeSegmentedAndHaveHopDiameter 2.0
+
+    @Test
+    fun `four nodes in a triangle should have hop diameter 2`() =
+        environmentWithNodesAt(0.0 to 0.0, 3.0 to 0.0, 6.0 to 0.0, 3.0 to 2.0) mustNotBeSegmentedAndHaveHopDiameter 2.0
+
+    @Test
+    fun `a network of three nodes with one isolated should be considered segmented`() {
+        val environment = environmentWithNodesAt(0.0 to 0.0, 3.0 to 0.0, 10.0 to 0.0)
+        environment.mustBeSegmented()
+        environment mustHaveMoreSubnetworks 2
+        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(0, 1.0)
+        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(2, 0.0)
     }
 
     @Test
-    fun `two connected nodes should have hop diameter 1`() {
-        environmentWithNodesAt(0.0 to 0.0, 3.0 to 0.0) mustNotBeSegmentedAndHaveHopDiameter(1.0)
-    }
-
-    @Test
-    fun `a triangle has hop diameter 1`() {
-        addNodeToEnv(
-            node0 to Euclidean2DPosition(0.0, 0.0),
-            node1 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
-            node2 to Euclidean2DPosition(0.0, 3 * DEFAULT_SHAPE_SIZE),
-        )
-        env.allHopDiameters()
-        mustNotBeSegmentedAndHaveHopDiameter(expected = 1.0, node0, node1, node2)
-    }
-
-    @Test
-    fun testThreeNodesInRow() {
-        addNodeToEnv(
-            node0 to Euclidean2DPosition(0.0, 0.0),
-            node1 to Euclidean2DPosition(4 * DEFAULT_SHAPE_SIZE, 0.0),
-            node2 to Euclidean2DPosition(8 * DEFAULT_SHAPE_SIZE, 0.0),
-        )
-        mustNotBeSegmentedAndHaveHopDiameter(expected = 2.0, node0, node1, node2)
-    }
-
-    @Test
-    fun testFourNodesWithTwoNeighbors() {
-        addNodeToEnv(
-            node0 to Euclidean2DPosition(0.0, 0.0),
-            node1 to Euclidean2DPosition(5 * DEFAULT_SHAPE_SIZE, 0.0),
-            node2 to Euclidean2DPosition(0.0, 5 * DEFAULT_SHAPE_SIZE),
-            node3 to Euclidean2DPosition(5 * DEFAULT_SHAPE_SIZE, 5 * DEFAULT_SHAPE_SIZE),
-        )
-        mustNotBeSegmentedAndHaveHopDiameter(expected = 2.0, node0, node1, node2, node3)
-    }
-
-    @Test
-    fun testFourNodesWithThreeNeighbors() {
-        addNodeToEnv(
-            node0 to Euclidean2DPosition(0.0, 0.0),
-            node1 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
-            node2 to Euclidean2DPosition(6 * DEFAULT_SHAPE_SIZE, 0.0),
-            node3 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 2 * DEFAULT_SHAPE_SIZE),
-        )
-        mustNotBeSegmentedAndHaveHopDiameter(expected = 2.0, node0, node1, node2, node3)
-    }
-
-    @Test
-    fun testIsolatedNodeDiameter() {
-        addNodeToEnv(
-            node0 to Euclidean2DPosition(0.0, 0.0),
-            node1 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
-            node2 to Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 0.0),
-        )
-        assertEquals(3, env.nodes.size)
-        assertTrue(env.isNetworkSegmented)
-        assertEquals(1.0, env.networkDiameterByHopDistance(node0))
-        assertEquals(1.0, env.networkDiameterByHopDistance(node1))
-        assertEquals(Double.Companion.NaN, env.networkDiameterByHopDistance(node2))
-        val subnetworks = env.allHopDiameters()
-        assertEquals(2, subnetworks.size)
-        assertEquals(1.0, subnetworks.find { it.contains(node0) }?.diameter)
-        assertEquals(Double.Companion.NaN, subnetworks.find { it.contains(node2) }?.diameter)
-    }
-
-    @Test
-    fun testTwoSubnetworksWithSameDiameter() {
-        addNodeToEnv(
-            node0 to Euclidean2DPosition(0.0, 0.0),
-            node1 to Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0),
-            node2 to Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 0.0),
-            node3 to Euclidean2DPosition(10 * DEFAULT_SHAPE_SIZE, 3.0),
-        )
-        assertEquals(4, env.nodes.size)
-        assertTrue(env.isNetworkSegmented)
-        assertEquals(1.0, env.networkDiameterByHopDistance(node0))
-        assertEquals(1.0, env.networkDiameterByHopDistance(node1))
-        assertEquals(1.0, env.networkDiameterByHopDistance(node2))
-        assertEquals(1.0, env.networkDiameterByHopDistance(node3))
-        val subnetworks = env.allHopDiameters()
-        assertEquals(2, subnetworks.size)
-        assertEquals(1.0, subnetworks.find { it.contains(node0) }?.diameter)
-        assertEquals(1.0, subnetworks.find { it.contains(node2) }?.diameter)
-    }
-
-    companion object {
-        private const val DEFAULT_SHAPE_SIZE: Double = 1.0
+    fun `a network of four nodes connected by two should be considered segmented with the same diameter`() {
+        val environment = environmentWithNodesAt(0.0 to 0.0, 3.0 to 0.0, 10.0 to 0.0, 10.0 to 3.0)
+        environment.mustBeSegmented()
+        environment mustHaveMoreSubnetworks 2
+        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(0, 1.0)
+        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(2, 1.0)
     }
 }

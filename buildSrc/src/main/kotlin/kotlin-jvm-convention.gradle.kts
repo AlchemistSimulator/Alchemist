@@ -13,6 +13,7 @@ import kotlin.reflect.KProperty
 plugins {
     kotlin("jvm")
     id("dokka-convention")
+    id("power-assert-convention")
 }
 
 dependencies {

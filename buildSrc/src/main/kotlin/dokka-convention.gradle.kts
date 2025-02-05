@@ -1,6 +1,5 @@
 import Util.currentCommitHash
 import Util.fetchJavadocIOForDependency
-import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
 import java.time.Duration
 

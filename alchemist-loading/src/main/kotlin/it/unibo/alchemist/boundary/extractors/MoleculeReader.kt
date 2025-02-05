@@ -48,21 +48,24 @@ class MoleculeReader
             private const val SHORT_NAME_MAX_LENGTH = 5
         }
 
-        override val colunmName: String
-            get() = "$shortProp$moleculeName"
+        override val columnName: String
+
+        init {
+            val propertyText =
+                if (property.isNullOrEmpty()) {
+                    ""
+                } else {
+                    property.replace("\\W*".toRegex(), "")
+                }
+
+            val shortProp: String =
+                propertyText.takeIf(String::isEmpty)
+                    ?: "${propertyText.substring(0..<min(propertyText.length, SHORT_NAME_MAX_LENGTH))}@"
+
+            columnName = "$shortProp$moleculeName"
+        }
 
         private val molecule: Molecule = incarnation.createMolecule(moleculeName)
-
-        private val propertyText =
-            if (property.isNullOrEmpty()) {
-                ""
-            } else {
-                property.replace("[^\\d\\w]*".toRegex(), "")
-            }
-
-        private val shortProp =
-            propertyText.takeIf(String::isEmpty)
-                ?: "${propertyText.substring(0..<min(propertyText.length, SHORT_NAME_MAX_LENGTH))}@"
 
         override fun <T> getData(
             environment: Environment<T, *>,

@@ -113,7 +113,7 @@ object Environments {
      * Returns a [Set] containing the [Subnetwork]s.
      */
     fun <T> Environment<T, *>.allSubNetworks(
-        computeDistance: (Node<T>, Node<T>) -> Double = { n1, n2 -> getDistanceBetweenNodes(n1, n2) },
+        computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
     ): Set<Network<T>> = allSubNetworksByNode(computeDistance).values.toSet()
 
     /**

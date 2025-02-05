@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.protelis.ProtelisIncarnation
 import it.unibo.alchemist.util.Environments.allSubNetworksByNodeWithHopDistance
 import it.unibo.alchemist.util.Environments.allSubNetworksWithHopDistance
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
+import it.unibo.alchemist.util.Environments.networkDiameter
 import it.unibo.alchemist.util.Environments.networkDiameterByHopDistance
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -25,12 +26,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class TestEnvironmentsDiameter {
-    private fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =
-        Continuous2DEnvironment(ProtelisIncarnation()).apply {
-            linkingRule = ConnectWithinDistance(5.0)
-            positions.forEach { (x, y) -> addNode(GenericNode(ProtelisIncarnation(), this), Euclidean2DPosition(x, y)) }
-        }
-
     private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveHopDiameter(expected: Double) {
         assertFalse(isNetworkSegmented())
         assertEquals<Double>(expected, allSubNetworksWithHopDistance().single().diameter)
@@ -38,11 +33,17 @@ class TestEnvironmentsDiameter {
 
     private fun <T> Environment<T, *>.mustBeSegmented() {
         assertTrue(isNetworkSegmented())
+        assertTrue(networkDiameter().isNaN())
         assertTrue(networkDiameterByHopDistance().isNaN())
     }
 
-    private infix fun <T> Environment<T, *>.mustHaveMoreSubnetworks(expected: Int) =
-        assertEquals<Int>(expected, allSubNetworksWithHopDistance().size)
+    private infix fun <T> Environment<T, *>.mustHave(expected: Subnetworks) =
+        assertEquals<Int>(expected.count, allSubNetworksWithHopDistance().size)
+
+    fun Int.subnetworks(): Subnetworks = Subnetworks(this)
+
+    @JvmInline
+    value class Subnetworks(val count: Int)
 
     private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveDiameter(
         index: Int,
@@ -54,43 +55,54 @@ class TestEnvironmentsDiameter {
 
     @Test
     fun `environments with a single node have diameter 0`() =
-        environmentWithNodesAt(0.0 to 0.0) mustNotBeSegmentedAndHaveHopDiameter 0.0
+        environmentWithNodesAt(ORIGIN) mustNotBeSegmentedAndHaveHopDiameter 0.0
 
     @Test
     fun `two connected nodes should have hop diameter 1`() =
-        environmentWithNodesAt(0.0 to 0.0, 3.0 to 0.0) mustNotBeSegmentedAndHaveHopDiameter 1.0
+        environmentWithNodesAt(ORIGIN, 3.0 to 0.0) mustNotBeSegmentedAndHaveHopDiameter 1.0
 
     @Test
     fun `a triangle has hop diameter 1`() =
-        environmentWithNodesAt(0.0 to 0.0, 3.0 to 0.0, 0.0 to 3.0) mustNotBeSegmentedAndHaveHopDiameter 1.0
+        environmentWithNodesAt(ORIGIN, 3.0 to 0.0, 0.0 to 3.0) mustNotBeSegmentedAndHaveHopDiameter 1.0
 
     @Test
     fun `three nodes in a row have hop diameter 2`() =
-        environmentWithNodesAt(0.0 to 0.0, 4.0 to 0.0, 8.0 to 0.0) mustNotBeSegmentedAndHaveHopDiameter 2.0
+        environmentWithNodesAt(ORIGIN, 4.0 to 0.0, 8.0 to 0.0) mustNotBeSegmentedAndHaveHopDiameter 2.0
 
     @Test
     fun `four nodes connected in a square should have hop diameter 2`() =
-        environmentWithNodesAt(0.0 to 0.0, 5.0 to 0.0, 0.0 to 5.0, 5.0 to 5.0) mustNotBeSegmentedAndHaveHopDiameter 2.0
+        environmentWithNodesAt(ORIGIN, 5.0 to 0.0, 0.0 to 5.0, 5.0 to 5.0) mustNotBeSegmentedAndHaveHopDiameter 2.0
 
     @Test
     fun `four nodes in a triangle should have hop diameter 2`() =
-        environmentWithNodesAt(0.0 to 0.0, 3.0 to 0.0, 6.0 to 0.0, 3.0 to 2.0) mustNotBeSegmentedAndHaveHopDiameter 2.0
+        environmentWithNodesAt(ORIGIN, 3.0 to 0.0, 6.0 to 0.0, 3.0 to 2.0) mustNotBeSegmentedAndHaveHopDiameter 2.0
 
     @Test
     fun `a network of three nodes with one isolated should be considered segmented`() {
-        val environment = environmentWithNodesAt(0.0 to 0.0, 3.0 to 0.0, 10.0 to 0.0)
+        val environment = environmentWithNodesAt(ORIGIN, 3.0 to 0.0, 10.0 to 0.0)
         environment.mustBeSegmented()
-        environment mustHaveMoreSubnetworks 2
+        environment mustHave 2.subnetworks()
         environment.specificNodeInASegmentedNetworkShouldHaveDiameter(0, 1.0)
         environment.specificNodeInASegmentedNetworkShouldHaveDiameter(2, 0.0)
     }
 
     @Test
     fun `a network of four nodes connected by two should be considered segmented with the same diameter`() {
-        val environment = environmentWithNodesAt(0.0 to 0.0, 3.0 to 0.0, 10.0 to 0.0, 10.0 to 3.0)
+        val environment = environmentWithNodesAt(ORIGIN, 3.0 to 0.0, 10.0 to 0.0, 10.0 to 3.0)
         environment.mustBeSegmented()
-        environment mustHaveMoreSubnetworks 2
+        environment mustHave 2.subnetworks()
         environment.specificNodeInASegmentedNetworkShouldHaveDiameter(0, 1.0)
         environment.specificNodeInASegmentedNetworkShouldHaveDiameter(2, 1.0)
+    }
+
+    companion object {
+
+        val ORIGIN = 0.0 to 0.0
+
+        private fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =
+            Continuous2DEnvironment(ProtelisIncarnation()).apply {
+                linkingRule = ConnectWithinDistance(5.0)
+                positions.forEach { (x, y) -> addNode(GenericNode(ProtelisIncarnation(), this), Euclidean2DPosition(x, y)) }
+            }
     }
 }

@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.protelis.ProtelisIncarnation
 import it.unibo.alchemist.util.Environments.allSubNetworksByNodeWithHopDistance
 import it.unibo.alchemist.util.Environments.allSubNetworksWithHopDistance
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
-import it.unibo.alchemist.util.Environments.networkDiameter
 import it.unibo.alchemist.util.Environments.networkDiameterByHopDistance
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -39,7 +38,6 @@ class TestEnvironmentsDiameter {
 
     private fun <T> Environment<T, *>.mustBeSegmented() {
         assertTrue(isNetworkSegmented())
-        assertTrue(networkDiameter().isNaN())
         assertTrue(networkDiameterByHopDistance().isNaN())
     }
 

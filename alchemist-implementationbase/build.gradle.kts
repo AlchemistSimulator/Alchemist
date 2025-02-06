@@ -30,10 +30,10 @@ dependencies {
     implementation(libs.trove4j)
 
     testImplementation(alchemist("loading"))
-    testImplementation(alchemist("engine"))
+    testImplementation(alchemist("test"))
+//    testImplementation(alchemist("engine"))
     testImplementation(alchemist("euclidean-geometry"))
     testImplementation(incarnation("protelis"))
-    testImplementation(libs.kotlin.test)
 }
 
 publishing.publications {

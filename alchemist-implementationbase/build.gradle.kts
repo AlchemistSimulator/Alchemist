@@ -7,6 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 import Libs.alchemist
+import Libs.incarnation
 
 plugins {
     id("kotlin-jvm-convention")
@@ -25,11 +26,14 @@ dependencies {
     implementation(libs.classgraph)
     implementation(libs.guava)
     implementation(libs.jgrapht.core)
+    implementation(libs.symmetric.matrix)
     implementation(libs.trove4j)
 
     testImplementation(alchemist("loading"))
     testImplementation(alchemist("engine"))
-    testImplementation(alchemist("incarnation-protelis"))
+    testImplementation(alchemist("euclidean-geometry"))
+    testImplementation(incarnation("protelis"))
+    testImplementation(libs.kotlin.test)
 }
 
 publishing.publications {

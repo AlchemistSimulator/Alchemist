@@ -45,8 +45,8 @@ interface Environment<T, P : Position<out P>> :
     val globalReactions: ListSet<GlobalReaction<T>>
 
     /**
-     * This method allows to add a new [node] to this environment in a specific [position].
-     * The environment is responsible to call the right method of the simulation in order to
+     * Adds a new [node] to this environment in a specific [position].
+     * The environment is responsible for calling the right method of the simulation to
      * ensure that the reaction is properly scheduled.
      * The function returns true if the node is added to the environment.
      */
@@ -105,8 +105,8 @@ interface Environment<T, P : Position<out P>> :
     fun getNeighborhood(node: Node<T>): Neighborhood<T>
 
     /**
-     * Allows to access a [Node] in this [Environment] known its [id].
-     * Depending on the implementation, this method may or not be optimized
+     * Allows accessing a [Node] in this [Environment] known its [id].
+     * Depending on the implementation, this method may or may not be optimized
      * (namely, id could run in constant or linear time with the number of nodes).
      */
     fun getNodeByID(id: Int): Node<T>
@@ -122,7 +122,7 @@ interface Environment<T, P : Position<out P>> :
     val nodeCount: Int
 
     /**
-     * Given a [node] this method returns a list of all the surroundings
+     * Given a [node] this method returns a list of all the surrounding
      * nodes within the given [range]. Note that this method (depending on the
      * implementation) might be not optimized, and it's consequently **much**
      * better to use [Environment.getNeighborhood] and filter the
@@ -136,7 +136,8 @@ interface Environment<T, P : Position<out P>> :
 
     /**
      * Given a [position] this method returns a list of all the
-     * surroundings nodes within the given [range]. Note that this method
+     * surrounding nodes within the given [range].
+     * Note that this method
      * (depending on the implementation) might be not optimized.
      */
     fun getNodesWithinRange(
@@ -200,7 +201,7 @@ interface Environment<T, P : Position<out P>> :
 
     /**
      * This method moves a [node] in the environment to some [position].
-     * If node move is unsupported, it does nothing.
+     * If node movement is unsupported, it does nothing.
      */
     fun moveNodeToPosition(
         node: Node<T>,
@@ -208,7 +209,7 @@ interface Environment<T, P : Position<out P>> :
     )
 
     /**
-     * This method allows to remove a [node].
+     * Removes [node].
      * If node removal is unsupported, it does nothing.
      */
     fun removeNode(node: Node<T>)

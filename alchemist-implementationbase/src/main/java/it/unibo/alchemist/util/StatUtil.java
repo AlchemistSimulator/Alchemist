@@ -51,4 +51,10 @@ public final class StatUtil {
             });
     }
 
+    public static Set<String> availableStatistics() {
+        return STATISTICS.stream()
+            .map(Class::getSimpleName)
+            .collect(ImmutableSet.toImmutableSet());
+    }
+
 }

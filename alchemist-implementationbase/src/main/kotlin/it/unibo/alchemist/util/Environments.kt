@@ -81,6 +81,7 @@ object Environments {
                 SubNetwork(max(diameter, otherNetwork.diameter), nodes + otherNetwork.nodes)
         }
         val subnetworks = mutableMapOf<Node<T>, Network<T>>()
+        val toVisit = nodes.toMutableSet()
 
         fun subnetOf(
             distance: Double,
@@ -99,8 +100,16 @@ object Environments {
                 val distance = paths[reference to target]
                 if (distance != null && distance.isFinite()) {
                     val merger = subnetOf(distance, reference) + subnetOf(distance, target)
-                    subnetworks[reference] = merger
                     subnetworks[target] = merger
+                }
+            }
+        }
+        while (toVisit.isNotEmpty()) {
+            val current = toVisit.last().also { toVisit.remove(it) }
+            val subnet = subnetworks[current] ?: SubNetwork(current)
+            subnetworks.forEach { key, entry ->
+                if (entry.containsAtLeastOneOf(subnet.nodes)) {
+                    subnetworks[key] = subnet + entry
                 }
             }
         }

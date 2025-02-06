@@ -41,6 +41,11 @@ abstract class AbstractAggregatingDoubleExporter
             precision = null,
         )
 
+        /**
+         * The name of the column in the output file.
+         */
+        abstract val columnName: String
+
         private val aggregators: Map<String, UnivariateStatistic> =
             aggregatorNames
                 .associateWith { StatUtil.makeUnivariateStatistic(it) }
@@ -48,11 +53,12 @@ abstract class AbstractAggregatingDoubleExporter
                 .map { it.key to it.value.get() }
                 .toMap()
 
-        override val columnNames: List<String> =
+        override val columnNames: List<String> by lazy {
             aggregators.keys
                 .takeIf { it.isNotEmpty() }
-                ?.map { "$colunmName[$it]" }
-                ?: listOf("$colunmName@node-id")
+                ?.map { "$columnName[$it]" }
+                ?: listOf("$columnName@node-id")
+        }
 
         final override fun <T> extractData(
             environment: Environment<T, *>,
@@ -63,7 +69,7 @@ abstract class AbstractAggregatingDoubleExporter
             when {
                 aggregators.isEmpty() ->
                     getData(environment, reaction, time, step)
-                        .mapKeys { (key, _) -> "$colunmName@${key.id}" }
+                        .mapKeys { (key, _) -> "$columnName@${key.id}" }
                 else -> {
                     val data =
                         getData(environment, reaction, time, step)
@@ -72,15 +78,10 @@ abstract class AbstractAggregatingDoubleExporter
                             .toDoubleArray()
                     aggregators
                         .map { (aggregator, statistics) ->
-                            "$colunmName[$aggregator]" to statistics.evaluate(data)
+                            "$columnName[$aggregator]" to statistics.evaluate(data)
                         }.toMap()
                 }
             }
-
-        /**
-         * The name of the column in the output file.
-         */
-        abstract val colunmName: String
 
         /**
          * Delegated to the concrete implementation to extract data from the environment.

@@ -1,3 +1,13 @@
+## [37.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.9...37.2.0) (2025-02-06)
+
+### Features
+
+* **implementationbase:** add utilities to compute shortest paths and network diameters ([108cc46](https://github.com/AlchemistSimulator/Alchemist/commit/108cc46e72887722e6bac664fe69b399730a0fbd))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([5f97bea](https://github.com/AlchemistSimulator/Alchemist/commit/5f97bea460028b029404aec5057335c8f5d264e0))
+
 ## [37.1.9](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.8...37.1.9) (2025-02-06)
 
 ### Bug Fixes

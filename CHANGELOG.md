@@ -1,3 +1,18 @@
+## [37.1.9](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.8...37.1.9) (2025-02-06)
+
+### Bug Fixes
+
+* **loading:** ensure columnName is initialized before use with lazy delegation ([#4178](https://github.com/AlchemistSimulator/Alchemist/issues/4178)) ([b62fd75](https://github.com/AlchemistSimulator/Alchemist/commit/b62fd75094ce1cb76aae6f9059dc4b9716bcf53b))
+
+### Build and continuous integration
+
+* drop unused imports ([a927074](https://github.com/AlchemistSimulator/Alchemist/commit/a9270741f20202f350baa5a1731e242425261572))
+* enable power assert ([9de31a4](https://github.com/AlchemistSimulator/Alchemist/commit/9de31a4aeb9246d172c2f39fbc2c171dff86335c))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([65cd0f7](https://github.com/AlchemistSimulator/Alchemist/commit/65cd0f772c6b7d6f1ff270a6e91de05b710f2606))
+
 ## [37.1.8](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.7...37.1.8) (2025-02-04)
 
 ### Dependency updates

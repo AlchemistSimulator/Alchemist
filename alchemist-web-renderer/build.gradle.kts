@@ -39,8 +39,6 @@ kotlin {
             dependencies {
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.kotest.framework.engine)
-                implementation(libs.kotlin.test.common)
-                implementation(libs.kotlin.test.annotations)
             }
         }
         val jvmMain by getting {

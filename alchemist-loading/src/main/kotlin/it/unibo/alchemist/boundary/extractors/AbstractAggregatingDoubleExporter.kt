@@ -23,6 +23,8 @@ import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
  * The data is filtered and then aggregated using the provided aggregators.
  * Provided a [filter] and a list of [aggregatorNames] and a [name], extracts data from the environment,
  * filters it, and then aggregates it.
+ * Available aggregators can be found at this
+ * [link](https://javadoc.io/doc/org.apache.commons/commons-math3/latest/org/apache/commons/math3/stat/descriptive/UnivariateStatistic.html).
  */
 abstract class AbstractAggregatingDoubleExporter
     @JvmOverloads
@@ -47,11 +49,13 @@ abstract class AbstractAggregatingDoubleExporter
         abstract val columnName: String
 
         private val aggregators: Map<String, UnivariateStatistic> =
-            aggregatorNames
-                .associateWith { StatUtil.makeUnivariateStatistic(it) }
-                .filter { it.value.isPresent }
-                .map { it.key to it.value.get() }
-                .toMap()
+            aggregatorNames.associateWith {
+                StatUtil.makeUnivariateStatistic(it).orElseThrow {
+                    IllegalArgumentException(
+                        "Unknown statistic $it. Available statistics are: ${StatUtil.availableStatistics()}",
+                    )
+                }
+            }
 
         override val columnNames: List<String> by lazy {
             aggregators.keys

@@ -25,7 +25,17 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class TestEnvironmentsDiameter {
+object TestEnvironmentsDiameter {
+    val ORIGIN = 0.0 to 0.0
+
+    private fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =
+        Continuous2DEnvironment(ProtelisIncarnation()).apply {
+            linkingRule = ConnectWithinDistance(5.0)
+            positions.forEach { (x, y) ->
+                addNode(GenericNode(ProtelisIncarnation(), this), Euclidean2DPosition(x, y))
+            }
+        }
+
     private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveHopDiameter(expected: Double) {
         assertFalse(isNetworkSegmented())
         assertEquals<Double>(expected, allSubNetworksWithHopDistance().single().diameter)
@@ -93,17 +103,5 @@ class TestEnvironmentsDiameter {
         environment mustHave 2.subnetworks()
         environment.specificNodeInASegmentedNetworkShouldHaveDiameter(0, 1.0)
         environment.specificNodeInASegmentedNetworkShouldHaveDiameter(2, 1.0)
-    }
-
-    companion object {
-        val ORIGIN = 0.0 to 0.0
-
-        private fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =
-            Continuous2DEnvironment(ProtelisIncarnation()).apply {
-                linkingRule = ConnectWithinDistance(5.0)
-                positions.forEach { (x, y) ->
-                    addNode(GenericNode(ProtelisIncarnation(), this), Euclidean2DPosition(x, y))
-                }
-            }
     }
 }

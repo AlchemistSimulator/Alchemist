@@ -96,7 +96,6 @@ class TestEnvironmentsDiameter {
     }
 
     companion object {
-
         val ORIGIN = 0.0 to 0.0
 
         private fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =

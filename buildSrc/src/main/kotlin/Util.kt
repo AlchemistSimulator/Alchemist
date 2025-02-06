@@ -156,5 +156,8 @@ object Util {
 
 val Project.catalog get() = object : ReadOnlyProperty<Any?, Provider<MinimalExternalModuleDependency>> {
     override operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-        extensions.getByType<VersionCatalogsExtension>().named("libs").findLibrary(property.name).get()
+        extensions.getByType<VersionCatalogsExtension>()
+            .named("libs")
+            .findLibrary(property.name.replace(Regex("[A-Z]")) { "-${it.value.lowercase()}" })
+            .get()
 }

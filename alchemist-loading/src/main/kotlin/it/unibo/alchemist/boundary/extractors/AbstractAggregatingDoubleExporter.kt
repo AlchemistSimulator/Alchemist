@@ -23,9 +23,8 @@ import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
  * The data is filtered and then aggregated using the provided aggregators.
  * Provided a [filter] and a list of [aggregatorNames] and a [name], extracts data from the environment,
  * filters it, and then aggregates it.
- * Available aggregators are: AbstractStorelessUnivariateStatistic, AbstractUnivariateStatistic, GeometricMean,
- * Kurtosis, Max, Mean, Median, Min, Percentile, Product, PSquarePercentile, SecondMoment, SemiVariance,
- * Skewness, StandardDeviation, Sum, SumOfLogs, SumOfSquares, Variance.
+ * Available aggregators can be found at this
+ * [link](https://javadoc.io/doc/org.apache.commons/commons-math3/latest/org/apache/commons/math3/stat/descriptive/UnivariateStatistic.html).
  */
 abstract class AbstractAggregatingDoubleExporter
     @JvmOverloads

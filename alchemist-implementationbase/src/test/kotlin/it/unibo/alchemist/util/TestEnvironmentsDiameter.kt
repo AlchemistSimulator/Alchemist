@@ -95,15 +95,48 @@ class TestEnvironmentsDiameter {
         environment.specificNodeInASegmentedNetworkShouldHaveDiameter(2, 1.0)
     }
 
+    @Test
+    fun `a network of three nodes added dynamically and not in order should adapt accordingly`() {
+        val environment = environmentWithNodesAt(ORIGIN)
+        environment mustNotBeSegmentedAndHaveHopDiameter 0.0
+        environment addNodeAt (1.0 to 4.0)
+        environment mustNotBeSegmentedAndHaveHopDiameter 1.0
+        environment addNodeAt (4.0 to -2.0)
+        environment mustNotBeSegmentedAndHaveHopDiameter 2.0
+    }
+
+    @Test
+    fun `two sparse subnetworks should be considered segmented`() {
+        val environment =
+            environmentWithNodesAt(
+                ORIGIN,
+                12.0 to 12.0,
+                0.0 to 6.0,
+                12.0 to 14.0,
+                -3.0 to 3.0,
+                9.0 to 15.0,
+                3.0 to 3.0,
+                15.0 to 15.0,
+            )
+        environment.mustBeSegmented()
+        environment mustHave 2.subnetworks()
+        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(0, 2.0)
+        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(1, 1.0)
+    }
+
     companion object {
         val ORIGIN = 0.0 to 0.0
+
+        private infix fun Environment<Any, Euclidean2DPosition>.addNodeAt(coordinates: Pair<Double, Double>) =
+            addNode(
+                GenericNode(ProtelisIncarnation(), this),
+                Euclidean2DPosition(coordinates.first, coordinates.second),
+            )
 
         private fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =
             Continuous2DEnvironment(ProtelisIncarnation()).apply {
                 linkingRule = ConnectWithinDistance(5.0)
-                positions.forEach { (x, y) ->
-                    addNode(GenericNode(ProtelisIncarnation(), this), Euclidean2DPosition(x, y))
-                }
+                positions.forEach { addNodeAt(it) }
             }
     }
 }

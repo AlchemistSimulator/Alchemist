@@ -284,6 +284,9 @@
   "org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.10"
   },
+  "org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.1.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.1.10"
+  },
   "org.jetbrains.kotlin/kotlin-reflect/2.1.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/2.1.10"
   },

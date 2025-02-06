@@ -31,7 +31,6 @@ dependencies {
 
     testImplementation(alchemist("loading"))
     testImplementation(alchemist("test"))
-//    testImplementation(alchemist("engine"))
     testImplementation(alchemist("euclidean-geometry"))
     testImplementation(incarnation("protelis"))
 }

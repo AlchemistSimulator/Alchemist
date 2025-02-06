@@ -1,6 +1,4 @@
 import Libs.alchemist
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 /*
  * Copyright (C) 2010-2024, Danilo Pianini and contributors
@@ -13,6 +11,7 @@ import kotlin.reflect.KProperty
 plugins {
     kotlin("jvm")
     id("dokka-convention")
+    id("power-assert-convention")
 }
 
 dependencies {

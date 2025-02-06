@@ -1,10 +1,9 @@
 import Libs.alchemist
-import org.jetbrains.kotlin.gradle.targets.js.ir.DefaultIncrementalSyncTask
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 plugins {
     kotlin("multiplatform")
     id("dokka-convention")
+    id("power-assert-convention")
 }
 
 kotlin {

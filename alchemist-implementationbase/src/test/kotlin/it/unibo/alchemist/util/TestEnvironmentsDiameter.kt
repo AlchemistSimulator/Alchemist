@@ -102,7 +102,9 @@ class TestEnvironmentsDiameter {
         private fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =
             Continuous2DEnvironment(ProtelisIncarnation()).apply {
                 linkingRule = ConnectWithinDistance(5.0)
-                positions.forEach { (x, y) -> addNode(GenericNode(ProtelisIncarnation(), this), Euclidean2DPosition(x, y)) }
+                positions.forEach { (x, y) ->
+                    addNode(GenericNode(ProtelisIncarnation(), this), Euclidean2DPosition(x, y))
+                }
             }
     }
 }

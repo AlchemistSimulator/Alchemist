@@ -305,12 +305,6 @@
   "org.jetbrains.kotlin/kotlin-stdlib/2.1.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.1.10"
   },
-  "org.jetbrains.kotlin/kotlin-test-annotations-common/2.1.10": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test-annotations-common/2.1.10"
-  },
-  "org.jetbrains.kotlin/kotlin-test-common/2.1.10": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test-common/2.1.10"
-  },
   "org.jetbrains.kotlin/kotlin-test/2.1.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test/2.1.10"
   },

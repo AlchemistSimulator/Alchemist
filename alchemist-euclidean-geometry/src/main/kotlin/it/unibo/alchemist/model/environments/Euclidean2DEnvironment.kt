@@ -34,6 +34,11 @@ interface Euclidean2DEnvironment<T> : EuclideanEnvironment<T, Euclidean2DPositio
         return makePosition(coordinates[0], coordinates[1])
     }
 
+    override fun makePosition(vararg coordinates: Double): Euclidean2DPosition {
+        require(coordinates.size == 2) { "Illegal coordinates (required 2): ${coordinates.contentToString()}" }
+        return makePosition(coordinates[0], coordinates[1])
+    }
+
     /**
      * Creates a new [Euclidean2DPosition].
      */

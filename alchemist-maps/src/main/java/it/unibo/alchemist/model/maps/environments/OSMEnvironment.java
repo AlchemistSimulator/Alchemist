@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.maps.positions.LatLongPosition;
 import it.unibo.alchemist.model.maps.routingservices.GraphHopperOptions;
 import it.unibo.alchemist.model.maps.routingservices.GraphHopperRoutingService;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.Unchecked;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
@@ -324,9 +325,22 @@ public final class OSMEnvironment<T>
     public GeoPosition makePosition(final Number... coordinates) {
         if (coordinates.length != 2) {
             throw new IllegalArgumentException(
-                    getClass().getSimpleName() + " only supports bi-dimensional coordinates (latitude, longitude)");
+                getClass().getSimpleName() + " only supports bi-dimensional coordinates (latitude, longitude)"
+            );
         }
         return new LatLongPosition(coordinates[0].doubleValue(), coordinates[1].doubleValue());
+    }
+
+    @Override
+    @NotNull
+    public GeoPosition makePosition(@NotNull final double[] coordinates) {
+        if (coordinates.length != 2) {
+            throw new IllegalArgumentException(
+                getClass().getSimpleName() + " only supports bi-dimensional coordinates (latitude, longitude)"
+            );
+        }
+
+        return new LatLongPosition(coordinates[0], coordinates[1]);
     }
 
     /**

@@ -202,6 +202,9 @@ class EnvironmentWithDynamics<T>
         override fun makePosition(vararg coordinates: Number): Euclidean2DPosition =
             backingEnvironment.makePosition(*coordinates)
 
+        override fun makePosition(coordinates: DoubleArray): Euclidean2DPosition =
+            backingEnvironment.makePosition(coordinates)
+
         override fun makePosition(coordinates: List<Number>): Euclidean2DPosition =
             backingEnvironment.makePosition(coordinates)
 
@@ -249,6 +252,9 @@ class EnvironmentWithDynamics<T>
 
                         override fun makePosition(vararg coordinates: Number): Euclidean2DPosition =
                             super<Physics2DEnvironment>.makePosition(*coordinates)
+
+                        override fun makePosition(coordinates: DoubleArray): Euclidean2DPosition =
+                            super<Physics2DEnvironment>.makePosition(coordinates)
 
                         override fun makePosition(coordinates: List<Number>): Euclidean2DPosition =
                             super<Physics2DEnvironment>.makePosition(coordinates)

@@ -197,6 +197,12 @@ interface Environment<T, P : Position<out P>> :
      * Given the [coordinates] of the point,
      * returns a [Position] compatible with this environment.
      */
+    fun makePosition(coordinates: DoubleArray): P
+
+    /**
+     * Given the [coordinates] of the point,
+     * returns a [Position] compatible with this environment.
+     */
     fun makePosition(coordinates: List<Number>): P = makePosition(*coordinates.toTypedArray())
 
     /**

@@ -64,24 +64,7 @@ object Environments {
     fun <T> Environment<T, *>.allSubNetworksByNode(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
     ): Map<Node<T>, Network<T>> {
-        data class SubNetwork<T>(
-            override val diameter: Double,
-            override val nodes: Set<Node<T>>,
-        ) : Network<T> {
-            init {
-                require(nodes.isNotEmpty())
-                require(diameter.isFinite() && diameter >= 0.0)
-            }
-
-            constructor(diameter: Double, vararg nodes: Node<T>) : this(diameter, nodes.toSet())
-
-            constructor(node: Node<T>) : this(0.0, setOf(node))
-
-            override fun plus(otherNetwork: Network<T>): Network<T> =
-                SubNetwork(max(diameter, otherNetwork.diameter), nodes + otherNetwork.nodes)
-        }
         val subnetworks = mutableMapOf<Node<T>, Network<T>>()
-        val toVisit = nodes.toMutableSet()
 
         fun subnetOf(
             distance: Double,
@@ -104,13 +87,15 @@ object Environments {
                 }
             }
         }
+        // Update all the subnetworks with the last evaluated, that is the most complete
+        val toVisit = nodes.toMutableSet()
         while (toVisit.isNotEmpty()) {
-            val current = toVisit.last().also { toVisit.remove(it) }
-            val subnet = subnetworks[current] ?: SubNetwork(current)
-            subnetworks.forEach { key, entry ->
-                if (entry.containsAtLeastOneOf(subnet.nodes)) {
-                    subnetworks[key] = subnet + entry
-                }
+            val current = toVisit.last().also { toVisit -= it }
+            val subnet = subnetworks.getValue(current)
+            // For each node in the current subnet, update the subnetworks related to each node
+            subnet.nodes.forEach { node ->
+                toVisit -= node
+                subnetworks[node] = subnet
             }
         }
         return subnetworks
@@ -206,4 +191,21 @@ object Environments {
      * Returns the diameter of the network in environment units if it is not segmented, and [NaN] otherwise.
      */
     fun Environment<*, *>.networkDiameter(): Double = allSubNetworks().singleOrNull()?.diameter ?: NaN
+
+    private data class SubNetwork<T>(
+        override val diameter: Double,
+        override val nodes: Set<Node<T>>,
+    ) : Network<T> {
+        init {
+            require(nodes.isNotEmpty())
+            require(diameter.isFinite() && diameter >= 0.0)
+        }
+
+        constructor(diameter: Double, vararg nodes: Node<T>) : this(diameter, nodes.toSet())
+
+        constructor(node: Node<T>) : this(0.0, setOf(node))
+
+        override fun plus(otherNetwork: Network<T>): Network<T> =
+            SubNetwork(max(diameter, otherNetwork.diameter), nodes + otherNetwork.nodes)
+    }
 }

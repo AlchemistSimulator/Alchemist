@@ -21,10 +21,9 @@ import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
 /**
  * Aggregation of data extracted from the environment.
  * The data is filtered and then aggregated using the provided aggregators.
- * Provided a [filter] and a list of [aggregatorNames] and a [name], extracts data from the environment,
- * filters it, and then aggregates it.
- * Available aggregators can be found at this
- * [link](https://javadoc.io/doc/org.apache.commons/commons-math3/latest/org/apache/commons/math3/stat/descriptive/UnivariateStatistic.html).
+ * Provided a [filter] and a list of [aggregatorNames] and a [precision],
+ * extracts data from the environment, filters it, and then aggregates it.
+ * Available aggregators can be found at this [site](http://bit.ly/40MWWvt).
  */
 abstract class AbstractAggregatingDoubleExporter
     @JvmOverloads

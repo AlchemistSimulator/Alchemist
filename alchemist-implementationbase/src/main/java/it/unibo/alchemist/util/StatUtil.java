@@ -51,4 +51,13 @@ public final class StatUtil {
             });
     }
 
+    /**
+    * @return all the available statistics at {@link UnivariateStatistic}.
+    */
+    public static Set<String> availableStatistics() {
+        return STATISTICS.stream()
+            .map(Class::getSimpleName)
+            .collect(ImmutableSet.toImmutableSet());
+    }
+
 }

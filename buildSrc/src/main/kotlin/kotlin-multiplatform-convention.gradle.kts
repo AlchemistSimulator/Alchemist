@@ -19,10 +19,12 @@ kotlin {
     sourceSets {
         val commonTest by getting {
             dependencies {
-                val `kotest-assertions-core` by catalog
-                val `kotest-framework-engine` by catalog
-                implementation(`kotest-assertions-core`)
-                implementation(`kotest-framework-engine`)
+                val kotlinTest by catalog
+                val kotestAssertionsCore by catalog
+                val kotestFrameworkEngine by catalog
+                implementation(kotlinTest)
+                implementation(kotestAssertionsCore)
+                implementation(kotestFrameworkEngine)
             }
         }
         val jvmMain by getting {

@@ -25,7 +25,21 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class TestEnvironmentsDiameter {
+object TestEnvironmentsDiameter {
+    val ORIGIN = 0.0 to 0.0
+
+    private infix fun Environment<Any, Euclidean2DPosition>.addNodeAt(coordinates: Pair<Double, Double>) =
+        addNode(
+            GenericNode(ProtelisIncarnation(), this),
+            Euclidean2DPosition(coordinates.first, coordinates.second),
+        )
+
+    private fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =
+        Continuous2DEnvironment(ProtelisIncarnation()).apply {
+            linkingRule = ConnectWithinDistance(5.0)
+            positions.forEach { addNodeAt(it) }
+        }
+
     private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveHopDiameter(expected: Double) {
         assertFalse(isNetworkSegmented())
         assertEquals<Double>(expected, allSubNetworksWithHopDistance().single().diameter)
@@ -122,21 +136,5 @@ class TestEnvironmentsDiameter {
         environment mustHave 2.subnetworks()
         environment.specificNodeInASegmentedNetworkShouldHaveDiameter(0, 2.0)
         environment.specificNodeInASegmentedNetworkShouldHaveDiameter(1, 1.0)
-    }
-
-    companion object {
-        val ORIGIN = 0.0 to 0.0
-
-        private infix fun Environment<Any, Euclidean2DPosition>.addNodeAt(coordinates: Pair<Double, Double>) =
-            addNode(
-                GenericNode(ProtelisIncarnation(), this),
-                Euclidean2DPosition(coordinates.first, coordinates.second),
-            )
-
-        private fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =
-            Continuous2DEnvironment(ProtelisIncarnation()).apply {
-                linkingRule = ConnectWithinDistance(5.0)
-                positions.forEach { addNodeAt(it) }
-            }
     }
 }

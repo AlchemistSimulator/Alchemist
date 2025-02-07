@@ -1,3 +1,14 @@
+## [37.2.1](https://github.com/AlchemistSimulator/Alchemist/compare/37.2.0...37.2.1) (2025-02-07)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.34 ([#4183](https://github.com/AlchemistSimulator/Alchemist/issues/4183)) ([8c957d9](https://github.com/AlchemistSimulator/Alchemist/commit/8c957d9a29955b7fe74ca31487e444608f3cac63))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.120 ([#4182](https://github.com/AlchemistSimulator/Alchemist/issues/4182)) ([70788f0](https://github.com/AlchemistSimulator/Alchemist/commit/70788f0b4d325f3ecd9fee171b073616a579c5ba))
+
+### Bug Fixes
+
+* **implementationbase:** fix subnetwork computation in networks where nodes are non-sorted ([25c24ab](https://github.com/AlchemistSimulator/Alchemist/commit/25c24abccce5fa56ac13001a4db2ccb7116c5989))
+
 ## [37.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/37.1.9...37.2.0) (2025-02-06)
 
 ### Features

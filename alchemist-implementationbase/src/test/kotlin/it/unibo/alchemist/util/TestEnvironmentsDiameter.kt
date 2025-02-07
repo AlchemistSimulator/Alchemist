@@ -27,7 +27,7 @@ import kotlin.test.assertTrue
 
 object TestEnvironmentsDiameter {
     val ORIGIN = 0.0 to 0.0
-  
+
     private infix fun Environment<Any, Euclidean2DPosition>.addNodeAt(coordinates: Pair<Double, Double>) =
         addNode(
             GenericNode(ProtelisIncarnation(), this),

@@ -1,3 +1,21 @@
+## [37.3.0](https://github.com/AlchemistSimulator/Alchemist/compare/37.2.1...37.3.0) (2025-02-07)
+
+### Features
+
+* **api:** add `Environment.makePosition(coordinates: DoubleArray)` ([4a6be46](https://github.com/AlchemistSimulator/Alchemist/commit/4a6be465625436c8dc9d9b82ddc53d51bac7a966))
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.121 ([#4184](https://github.com/AlchemistSimulator/Alchemist/issues/4184)) ([3ec24bb](https://github.com/AlchemistSimulator/Alchemist/commit/3ec24bbbc3abf099514b5cadb01725d25567b490))
+
+### Bug Fixes
+
+* **loading:** fail-fast when non-existing statistics are requested ([#4180](https://github.com/AlchemistSimulator/Alchemist/issues/4180)) ([0fa0d62](https://github.com/AlchemistSimulator/Alchemist/commit/0fa0d623faa20a2fafaa43543be941bcec7baa34))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([9eab945](https://github.com/AlchemistSimulator/Alchemist/commit/9eab9450e1b2466aa7b23c07f4bd1c629807570f))
+
 ## [37.2.1](https://github.com/AlchemistSimulator/Alchemist/compare/37.2.0...37.2.1) (2025-02-07)
 
 ### Dependency updates

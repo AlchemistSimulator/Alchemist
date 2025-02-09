@@ -39,7 +39,8 @@
     "second": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12/package-list"
   },
   "com.github.spotbugs/spotbugs-annotations/4.9.1": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.1"
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.1",
+    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.1/element-list"
   },
   "com.github.spotbugs/spotbugs/4.9.0": {
     "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.0"
@@ -57,7 +58,8 @@
     "second": "https://javadoc.io/doc/com.google.guava/guava/33.4.0-jre/element-list"
   },
   "com.graphhopper/graphhopper-core/10.2": {
-    "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/10.2"
+    "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/10.2",
+    "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/10.2/element-list"
   },
   "com.javadocmd/simplelatlng/1.4.0": {
     "first": "https://javadoc.io/doc/com.javadocmd/simplelatlng/1.4.0",
@@ -270,11 +272,11 @@
   "org.jetbrains.dokka/templating-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.2.2-19.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.2.2-19.0.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.2.3-19.0.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.2.3-19.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.2.2-19.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.2.2-19.0.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.2.3-19.0.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.2.3-19.0.0"
   },
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"

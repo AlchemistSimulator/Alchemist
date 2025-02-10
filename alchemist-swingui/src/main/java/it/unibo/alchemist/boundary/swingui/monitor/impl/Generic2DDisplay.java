@@ -136,7 +136,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private List<? extends Obstacle2D<?>> obstacles;
     private final ConcurrentMap<Node<T>, P> positions = new ConcurrentHashMap<>();
     private boolean realTime;
-    private int st;
+    private int currentStep;
     private long timeInit = System.currentTimeMillis();
     private transient Wormhole2D<P> wormhole;
     private transient ZoomManager zoomManager;
@@ -277,8 +277,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                     }
                 }));
         bindKey(KeyEvent.VK_R, () -> setRealTime(!isRealTime()));
-        bindKey(KeyEvent.VK_LEFT, () -> setStep(Math.max(1, st - Math.max(st / 10, 1))));
-        bindKey(KeyEvent.VK_RIGHT, () -> setStep(Math.max(st, st + Math.max(st / 10, 1))));
+        bindKey(KeyEvent.VK_LEFT, () -> setStep(Math.max(1, currentStep - Math.max(currentStep / 10, 1))));
+        bindKey(KeyEvent.VK_RIGHT, () -> setStep(Math.max(currentStep, currentStep + Math.max(currentStep / 10, 1))));
     }
 
     private void accessData() {
@@ -472,7 +472,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     @Override
     public final int getStep() {
-        return st;
+        return currentStep;
     }
 
     /**
@@ -619,7 +619,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         if (step <= 0) {
             throw new IllegalArgumentException("The parameter must be a positive integer");
         }
-        st = step;
+        currentStep = step;
     }
 
     /**
@@ -660,7 +660,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                     update(environment, time);
                 }
             }
-        } else if (st < 1 || step % st == 0) {
+        } else if (currentStep < 1 || step % currentStep == 0) {
             if (isRealTime()) {
                 if (lastTime + TIME_STEP > time.toDouble()) {
                     return;
@@ -741,7 +741,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             setMouseTooltipTo(e.getX(), e.getY());
             if (isCloserNodeMarked() && nearest != null && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
                 final NodeTracker<T, P> monitor = new NodeTracker<>(nearest);
-                monitor.stepDone(currentEnv, null, new DoubleTime(lastTime), st);
+                monitor.stepDone(currentEnv, null, new DoubleTime(lastTime), currentStep);
                 final Simulation<T, P> sim = currentEnv.getSimulation();
                 final JFrame frame = makeFrame("Tracker for node " + nearest.getId(), monitor);
                 if (currentEnv.getSimulationOrNull() != null) {

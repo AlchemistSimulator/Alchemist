@@ -20,7 +20,6 @@ include(
     "alchemist-full",
     "alchemist-graphql",
     "alchemist-graphql-surrogates",
-    "alchemist-grid",
     "alchemist-implementationbase",
     "alchemist-incarnation-protelis",
     "alchemist-incarnation-sapere",

@@ -200,18 +200,6 @@
     "first": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1",
     "second": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1/package-list"
   },
-  "org.apache.ignite/ignite-core/2.16.0": {
-    "first": "https://javadoc.io/doc/org.apache.ignite/ignite-core/2.16.0",
-    "second": "https://javadoc.io/doc/org.apache.ignite/ignite-core/2.16.0/package-list"
-  },
-  "org.apache.ignite/ignite-indexing/2.16.0": {
-    "first": "https://javadoc.io/doc/org.apache.ignite/ignite-indexing/2.16.0",
-    "second": "https://javadoc.io/doc/org.apache.ignite/ignite-indexing/2.16.0/package-list"
-  },
-  "org.apache.ignite/ignite-spring/2.16.0": {
-    "first": "https://javadoc.io/doc/org.apache.ignite/ignite-spring/2.16.0",
-    "second": "https://javadoc.io/doc/org.apache.ignite/ignite-spring/2.16.0/package-list"
-  },
   "org.codehaus.groovy/groovy-jsr223/3.0.23": {
     "first": "https://javadoc.io/doc/org.codehaus.groovy/groovy-jsr223/3.0.23",
     "second": "https://javadoc.io/doc/org.codehaus.groovy/groovy-jsr223/3.0.23/element-list"

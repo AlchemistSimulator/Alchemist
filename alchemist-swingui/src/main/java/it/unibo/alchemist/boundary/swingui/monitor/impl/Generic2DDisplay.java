@@ -268,7 +268,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         });
         bindKey(KeyEvent.VK_M, () -> setMarkCloserNode(!isCloserNodeMarked()));
         bindKey(KeyEvent.VK_L, () -> setDrawLinks(!paintLinks));
-        bindKey(KeyEvent.VK_P, () -> Optional.ofNullable(currentEnv.getSimulation())
+        bindKey(KeyEvent.VK_P, () -> Optional.of(currentEnv.getSimulation())
                 .ifPresent(sim -> {
                     if (sim.getStatus() == Status.RUNNING) {
                         sim.pause();

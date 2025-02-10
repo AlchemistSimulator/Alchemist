@@ -23,8 +23,6 @@ import it.unibo.alchemist.boundary.wormhole.impl.AngleManagerImpl;
 import it.unibo.alchemist.boundary.wormhole.impl.WormholeSwing;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.core.Status;
-import it.unibo.alchemist.model.environments.Environment2DWithObstacles;
-import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
@@ -32,6 +30,8 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Obstacle2D;
 import it.unibo.alchemist.model.Position2D;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.environments.Environment2DWithObstacles;
+import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.util.Pair;
 import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
@@ -82,7 +82,7 @@ import static it.unibo.alchemist.boundary.ui.impl.PointAdapter.from;
 /**
  * Base-class for each display able a graphically represent a 2D space
  * and simulation.
- * 
+ *
  * @param <T> Concentration type
  * @param <P> {@link Position2D} type
  */
@@ -127,7 +127,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private volatile boolean firstTime = true;
     private boolean paintLinks;
     private transient Optional<Node<T>> hooked = Optional.empty();
-    private double lastTime;
+    private volatile double lastTime;
     private int mouseX, mouseY;
     private Node<T> nearest;
     private final ConcurrentMap<Node<T>, Neighborhood<T>> neighbors = new ConcurrentHashMap<>();
@@ -632,7 +632,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     /**
      * Lets child-classes change the zoom manager.
-     * 
+     *
      * @param zm
      *            an {@link ZoomManager}
      */

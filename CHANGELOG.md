@@ -1,3 +1,21 @@
+## [38.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/37.3.1...38.0.0) (2025-02-10)
+
+### ⚠ BREAKING CHANGES
+
+* **grid:** drop alchemist-grid from the main project. Grid remains available as a separate project at https://github.com/AlchemistSimulator/alchemist-grid (#4192)
+
+### Tests
+
+* migrate tests requiring a pre-test setup from kotest to kotlin.test ([#4193](https://github.com/AlchemistSimulator/Alchemist/issues/4193)) ([f339b5c](https://github.com/AlchemistSimulator/Alchemist/commit/f339b5ca74d6bc342cc793bb2a21d2c0b17b6cf7))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([48b80e7](https://github.com/AlchemistSimulator/Alchemist/commit/48b80e7e66bddd948001e64ae6de1662dba78521))
+
+### Refactoring
+
+* **grid:** drop alchemist-grid from the main project. Grid remains available as a separate project at https://github.com/AlchemistSimulator/alchemist-grid ([#4192](https://github.com/AlchemistSimulator/Alchemist/issues/4192)) ([c27076d](https://github.com/AlchemistSimulator/Alchemist/commit/c27076d4d3a0a0826995be46c47b12a11c3c42cb))
+
 ## [37.3.1](https://github.com/AlchemistSimulator/Alchemist/compare/37.3.0...37.3.1) (2025-02-10)
 
 ### Dependency updates

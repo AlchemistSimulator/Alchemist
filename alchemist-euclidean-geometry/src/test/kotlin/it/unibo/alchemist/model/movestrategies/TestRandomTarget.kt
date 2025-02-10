@@ -9,16 +9,16 @@
 
 package it.unibo.alchemist.model.movestrategies
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.core.test.TestCase
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.math.abs
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 private fun Double.equalityTest(other: Double) = abs(this - other) < 0.0001
 
@@ -99,14 +99,14 @@ private class DummyRandomGenerator : RandomGenerator {
     override fun nextLong() = value.toLong()
 }
 
-class TestRandomTarget : StringSpec() {
+class TestRandomTarget {
     private lateinit var randomTarget: RandomTarget<Any>
     private lateinit var currentPosition: Euclidean2DPosition
     private lateinit var distanceDistribution: DummyDistribution
     private lateinit var directionGenerator: DummyRandomGenerator
 
-    override suspend fun beforeTest(testCase: TestCase) {
-        super.beforeTest(testCase)
+    @BeforeEach
+    fun setUp() {
         currentPosition = Euclidean2DPosition(0.0, 0.0)
         distanceDistribution = DummyDistribution()
         directionGenerator = DummyRandomGenerator()
@@ -122,29 +122,29 @@ class TestRandomTarget : StringSpec() {
             )
     }
 
-    init {
-        "Should change distance according to the distribution" {
-            val target = randomTarget.target.distanceTo(currentPosition)
-            randomTarget.target.distanceTo(currentPosition) shouldBe target
-            randomTarget.target.distanceTo(currentPosition) shouldBe target
-            distanceDistribution.value = 2.0
-            val newTarget = randomTarget.target.distanceTo(currentPosition)
-            randomTarget.target.distanceTo(currentPosition) shouldNotBe target
-            randomTarget.target.distanceTo(currentPosition) shouldBe newTarget
-            directionGenerator.value = 1.0
-            randomTarget.target.distanceTo(currentPosition) shouldBe newTarget
-        }
+    @Test
+    fun `RandomTarget should change distance according to the distribution`() {
+        val target = randomTarget.target.distanceTo(currentPosition)
+        assertEquals(target, randomTarget.target.distanceTo(currentPosition))
+        assertEquals(target, randomTarget.target.distanceTo(currentPosition))
+        distanceDistribution.value = 2.0
+        val newTarget = randomTarget.target.distanceTo(currentPosition)
+        assertNotEquals(target, newTarget)
+        assertEquals(newTarget, randomTarget.target.distanceTo(currentPosition))
+        directionGenerator.value = 1.0
+        assertEquals(newTarget, randomTarget.target.distanceTo(currentPosition))
+    }
 
-        "Should change direction according to the generator" {
-            val target = randomTarget.target.asAngle
-            randomTarget.target.asAngle shouldBe target
-            randomTarget.target.asAngle shouldBe target
-            directionGenerator.value = 1.0
-            val newTarget = randomTarget.target.asAngle
-            randomTarget.target.asAngle shouldNotBe target
-            randomTarget.target.asAngle shouldBe newTarget
-            distanceDistribution.value = 2.0
-            randomTarget.target.asAngle shouldBe newTarget
-        }
+    @Test
+    fun `RandomTarget should change direction according to the generator`() {
+        val target = randomTarget.target.asAngle
+        assertEquals(target, randomTarget.target.asAngle)
+        assertEquals(target, randomTarget.target.asAngle)
+        directionGenerator.value = 1.0
+        val newTarget = randomTarget.target.asAngle
+        assertNotEquals(target, newTarget)
+        assertEquals(newTarget, randomTarget.target.asAngle)
+        distanceDistribution.value = 2.0
+        assertEquals(newTarget, randomTarget.target.asAngle)
     }
 }

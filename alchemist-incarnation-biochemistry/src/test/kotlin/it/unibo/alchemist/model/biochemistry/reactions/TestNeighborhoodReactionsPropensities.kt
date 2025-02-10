@@ -8,13 +8,6 @@
  */
 package it.unibo.alchemist.model.biochemistry.reactions
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.core.test.TestCase
-import io.kotest.matchers.Matcher
-import io.kotest.matchers.MatcherResult
-import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.shouldHave
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
@@ -32,7 +25,10 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.properties.Delegates
+import kotlin.test.assertEquals
 
 private const val BIOMOLECULE_NEEDED = 5
 private const val NEIGHBORHOOD_PRESENT_REACTION = "[5 token] --> [5 token in neighbor]"
@@ -50,47 +46,49 @@ private val JUNCTION =
     )
 private val RANDOM = MersenneTwister()
 private val TIME = ExponentialTime<Double>(1.0, RANDOM)
-private val LINKING_RULE =
-    ConnectWithinDistance<Double, Euclidean2DPosition>(5.0)
+private val LINKING_RULE = ConnectWithinDistance<Double, Euclidean2DPosition>(5.0)
 private val POSITION = Euclidean2DPosition(0.0, 0.0)
 private var environment: Environment<Double, Euclidean2DPosition> by Delegates.notNull()
 private var centralNode: Node<Double> by Delegates.notNull()
 private var neighbors: List<Node<Double>> by Delegates.notNull()
 
-class TestNeighborhoodReactionsPropensities :
-    StringSpec({
-        "test neighborhood present propensities" {
-            testSimulation(NEIGHBORHOOD_PRESENT_REACTION)
-        }
-        "test junction present propensities" {
-            0.rangeTo(9).forEach {
-                0.rangeTo(it).forEach { _ ->
-                    centralNode
-                        .asProperty<Double, CellProperty<Euclidean2DPosition>>()
-                        .addJunction(JUNCTION, neighbors[it])
-                }
-            }
-            testSimulation(JUNCTION_PRESENT_REACTION)
-        }
-        "test biomolecule in neighborhood propensities" {
-            testSimulation(BIOMOLECULE_IN_NEIGHBOR_REACTION)
-        }
-    }) {
-    override suspend fun beforeTest(testCase: TestCase) {
-        environment =
-            BioRect2DEnvironment(INCARNATION)
+class TestNeighborhoodReactionsPropensities {
+    @BeforeEach
+    fun setUp() {
+        environment = BioRect2DEnvironment(INCARNATION)
         environment.linkingRule = LINKING_RULE
         centralNode = INCARNATION.createNode(RANDOM, environment, null)
         centralNode.setConcentration(BIOMOLECULE, 100.0)
         environment.addNode(centralNode, POSITION)
         neighbors =
-            1
-                .rangeTo(10)
+            (1..10)
                 .map { Pair(it * 10.0, INCARNATION.createNode(RANDOM, environment, null)) }
                 .onEach { it.second.setConcentration(BIOMOLECULE, it.first) }
                 .map { it.second }
                 .onEach { environment.addNode(it, POSITION) }
-        environment.getNeighborhood(centralNode).neighbors.toList() shouldContainExactly neighbors.toList()
+        assertEquals(neighbors.toList(), environment.getNeighborhood(centralNode).neighbors.toList())
+    }
+
+    @Test
+    fun `the propensity of a reaction sending molecules to a neighbor should be neighbor-sensitive`() {
+        testSimulation(NEIGHBORHOOD_PRESENT_REACTION)
+    }
+
+    @Test
+    fun `the propensity of a reaction requiring a junction should consider the junctions count`() {
+        for (i in 0..9) {
+            repeat(i + 1) {
+                centralNode
+                    .asProperty<Double, CellProperty<Euclidean2DPosition>>()
+                    .addJunction(JUNCTION, neighbors[i])
+            }
+        }
+        testSimulation(JUNCTION_PRESENT_REACTION)
+    }
+
+    @Test
+    fun `the propensity of a reaction reading molecules from neighbors should be neighbor-sensitive`() {
+        testSimulation(BIOMOLECULE_IN_NEIGHBOR_REACTION)
     }
 }
 
@@ -104,7 +102,7 @@ private fun testSimulation(reactionText: String) {
                     .filterIsInstance<AbstractNeighborCondition<Double>>()
                     .flatMap { it.validNeighbors.map { (node, value) -> Container(it, node, value) } }
             for (it in checks) {
-                it shouldHave it.expectedPropensity
+                assertEquals(it.expectedPropensity, it.propensity)
             }
         },
     )
@@ -116,24 +114,13 @@ private data class Container(
     val propensity: Double,
 )
 
-private val Container.expectedPropensity: Matcher<Container>
+private val Container.expectedPropensity: Double
     get() =
-        object : Matcher<Container> {
-            @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
-            override fun test(value: Container): MatcherResult {
-                val expected =
-                    when (condition) {
-                        is NeighborhoodPresent -> node.neighborhoodPresentPropensity
-                        is JunctionPresentInCell -> node.junctionPresentPropensity
-                        is BiomolPresentInNeighbor -> node.biomoleculeInNeighborPropensity
-                        else -> error("Unknown neighbor condition")
-                    }
-                return MatcherResult(
-                    expected == propensity,
-                    { "node $node expected propensity $expected for condition $condition but has $propensity" },
-                    { "node $node should not have propensity $expected for condition $condition but it has" },
-                )
-            }
+        when (condition) {
+            is NeighborhoodPresent -> node.neighborhoodPresentPropensity
+            is JunctionPresentInCell -> node.junctionPresentPropensity
+            is BiomolPresentInNeighbor -> node.biomoleculeInNeighborPropensity
+            else -> error("Unknown neighbor condition")
         }
 
 private val Node<Double>.neighborhoodPresentPropensity: Double

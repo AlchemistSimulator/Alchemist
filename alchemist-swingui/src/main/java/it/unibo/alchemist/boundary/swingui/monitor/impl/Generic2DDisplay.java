@@ -136,7 +136,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private List<? extends Obstacle2D<?>> obstacles;
     private final ConcurrentMap<Node<T>, P> positions = new ConcurrentHashMap<>();
     private volatile boolean realTime;
-    private int currentStep;
+    private volatile int currentStep;
     private long timeInit = System.currentTimeMillis();
     private transient Wormhole2D<P> wormhole;
     private transient ZoomManager zoomManager;

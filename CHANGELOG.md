@@ -1,3 +1,37 @@
+## [37.3.1](https://github.com/AlchemistSimulator/Alchemist/compare/37.3.0...37.3.1) (2025-02-10)
+
+### Dependency updates
+
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.9.1 ([#4185](https://github.com/AlchemistSimulator/Alchemist/issues/4185)) ([60dbf83](https://github.com/AlchemistSimulator/Alchemist/commit/60dbf8337ca0b6b7125a41f39d36e17cd48cdd7d))
+* **deps:** update dependency it.unimi.dsi:dsiutils to v2.7.4 ([#4186](https://github.com/AlchemistSimulator/Alchemist/issues/4186)) ([6a80d84](https://github.com/AlchemistSimulator/Alchemist/commit/6a80d8406ea9e1319447c513b1c8506cd71f2a45))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.122 ([#4187](https://github.com/AlchemistSimulator/Alchemist/issues/4187)) ([bd22e8b](https://github.com/AlchemistSimulator/Alchemist/commit/bd22e8badb5bb01433bedc3bf3b0e8377c53693c))
+* **deps:** update plugin java-qa to v1.92.0 ([#4188](https://github.com/AlchemistSimulator/Alchemist/issues/4188)) ([44c35cc](https://github.com/AlchemistSimulator/Alchemist/commit/44c35cc2e9c2482a8f95ebb62863ea91ebf0e79b))
+* **deps:** update plugin java-qa to v1.93.0 ([#4191](https://github.com/AlchemistSimulator/Alchemist/issues/4191)) ([77ef994](https://github.com/AlchemistSimulator/Alchemist/commit/77ef9942a4b6baecc70d8bcc171f8cf0f11512d7))
+* **deps:** update react to v2025.2.3-19.0.0 (patch) ([#4189](https://github.com/AlchemistSimulator/Alchemist/issues/4189)) ([0d10788](https://github.com/AlchemistSimulator/Alchemist/commit/0d1078831239075aeb1a6d76cdcc247340233faf))
+* **deps:** update react to v2025.2.4-19.0.0 (patch) ([#4190](https://github.com/AlchemistSimulator/Alchemist/issues/4190)) ([02efe78](https://github.com/AlchemistSimulator/Alchemist/commit/02efe78131a6d731c390c1565a863cca7b2a5586))
+
+### Bug Fixes
+
+* **swingui:** mark `Generic2DDisplay.currentStep` as `volatile` ([851782a](https://github.com/AlchemistSimulator/Alchemist/commit/851782a94844a80e891b778a23e3f04f0e9fb79d))
+* **swingui:** mark `Generic2DDisplay.lastTime` as `volatile` ([b02b9d1](https://github.com/AlchemistSimulator/Alchemist/commit/b02b9d17c72cea36095ac8318140f0322d738ff3)), closes [/docs.oracle.com/javase/specs/jls/se8/html/jls-17.html#jls-17](https://github.com/AlchemistSimulator//docs.oracle.com/javase/specs/jls/se8/html/jls-17.html/issues/jls-17)
+* **swingui:** mark `Generic2DDisplay.paintLinks` as `volatile` ([7bc8408](https://github.com/AlchemistSimulator/Alchemist/commit/7bc84081623873073298f4bd65244da0688e9c8e))
+* **swingui:** mark `Generic2DDisplay.realTime` as `volatile` ([e2def70](https://github.com/AlchemistSimulator/Alchemist/commit/e2def707f0ad1a46ee2c303e8fe557b8fda640e3))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([d509ac1](https://github.com/AlchemistSimulator/Alchemist/commit/d509ac19087cf47dce647c6788529756daa71ada))
+* **build:** update the javadoc.io cache ([67ca5e1](https://github.com/AlchemistSimulator/Alchemist/commit/67ca5e1218a71c6247c4d62e02f688b2c0567920))
+* **build:** update the javadoc.io cache ([3cb5d85](https://github.com/AlchemistSimulator/Alchemist/commit/3cb5d85a65e726cd7a9dbf465dfe408a9942008a))
+* **build:** update the javadoc.io cache ([a1f80c3](https://github.com/AlchemistSimulator/Alchemist/commit/a1f80c31fe2716942e502d1d55dfad2ada8758ea))
+* **build:** update the javadoc.io cache ([6ce9483](https://github.com/AlchemistSimulator/Alchemist/commit/6ce9483208532b66b526ab385615a76042075965))
+* **build:** update the javadoc.io cache ([eac8e96](https://github.com/AlchemistSimulator/Alchemist/commit/eac8e96ef1efdb413b43c99dcbc3ad7ae710302c))
+
+### Style improvements
+
+* **swingui:** annotate `serialVersionUID` with @Serial in `Generic2DDisplay` ([cb6380e](https://github.com/AlchemistSimulator/Alchemist/commit/cb6380ee5613a925ea6c359527c5af99f3a36ab3))
+* **swingui:** rename `Generic2DDisplay.st` to `Generic2DDisplay.currentStep` ([7daf3fd](https://github.com/AlchemistSimulator/Alchemist/commit/7daf3fdbae2689ccc3cd847f0e42626bf7d36ce9))
+* **swingui:** replace `Optional.ofNullable()` with non-null argument with `Optional.of()` in `Generic2DDisplay` ([d1d7aaa](https://github.com/AlchemistSimulator/Alchemist/commit/d1d7aaa0fa29ae61226689b964be02d6927e49a3))
+
 ## [37.3.0](https://github.com/AlchemistSimulator/Alchemist/compare/37.2.1...37.3.0) (2025-02-07)
 
 ### Features

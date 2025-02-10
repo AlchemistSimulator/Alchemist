@@ -127,7 +127,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private Environment<T, P> currentEnv;
     private List<Effect> effectStack;
     private volatile boolean firstTime = true;
-    private boolean paintLinks;
+    private volatile boolean paintLinks;
     private transient Optional<Node<T>> hooked = Optional.empty();
     private volatile double lastTime;
     private int mouseX, mouseY;

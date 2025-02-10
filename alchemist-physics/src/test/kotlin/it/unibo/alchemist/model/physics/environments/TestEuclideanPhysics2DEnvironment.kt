@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-private infix fun Double.shouldBeAbout(other: Double) = assertTrue(fuzzyEquals(other))
+private fun Double.shouldBeAbout(other: Double) = assertTrue(fuzzyEquals(other))
 
 class TestEuclideanPhysics2DEnvironment {
     private lateinit var environment: Physics2DEnvironment<Any>
@@ -66,7 +66,7 @@ class TestEuclideanPhysics2DEnvironment {
         environment.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
         environment.moveNodeToPosition(node2, environment.getPosition(node1))
         val distance = environment.getPosition(node1).distanceTo(environment.getPosition(node2))
-        distance shouldBeAbout (getNodeRadius(node1) + getNodeRadius(node2))
+        distance.shouldBeAbout(getNodeRadius(node1) + getNodeRadius(node2))
     }
 
     @Test
@@ -91,9 +91,12 @@ class TestEuclideanPhysics2DEnvironment {
         environment.addNode(node1, Euclidean2DPosition(2.0, 2.0))
         environment.addNode(node2, Euclidean2DPosition(6.0, 2.0))
         val target = Euclidean2DPosition(8.0, 2.0)
+        val node2toTarget = environment.getPosition(node2).distanceTo(target)
         environment.moveNodeToPosition(node1, target)
-        environment.getPosition(node1).distanceTo(target) shouldBeAbout
-            (environment.getPosition(node2).distanceTo(target) + getNodeRadius(node1) + getNodeRadius(node2))
+        environment
+            .getPosition(node1)
+            .distanceTo(target)
+            .shouldBeAbout(node2toTarget + getNodeRadius(node1) + getNodeRadius(node2))
     }
 
     @Test

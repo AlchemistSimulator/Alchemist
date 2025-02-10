@@ -62,6 +62,7 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -117,6 +118,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      * How big (in pixels) the selected node should appear.
      */
     protected static final byte SELECTED_NODE_DRAWING_SIZE = 16, SELECTED_NODE_INTERNAL_SIZE = 10;
+    @Serial
     private static final long serialVersionUID = 511631766719686842L;
 
     private final Semaphore mapConsistencyMutex = new Semaphore(1);
@@ -909,6 +911,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         final Object binder = "Key: " + key;
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(key, 0), binder);
         getActionMap().put(binder, new AbstractAction() {
+            @Serial
             private static final long serialVersionUID = 7927420406960259675L;
             @Override
             public void actionPerformed(final ActionEvent e) {

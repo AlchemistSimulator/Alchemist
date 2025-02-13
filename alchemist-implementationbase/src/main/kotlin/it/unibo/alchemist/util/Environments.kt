@@ -130,11 +130,7 @@ object Environments {
                 (source == other.target && target == other.source)
         }
 
-        override fun hashCode(): Int {
-            var result = source.hashCode()
-            result = 31 * result + target.hashCode()
-            return result
-        }
+        override fun hashCode(): Int = source.hashCode() + target.hashCode()
     }
 
     /**

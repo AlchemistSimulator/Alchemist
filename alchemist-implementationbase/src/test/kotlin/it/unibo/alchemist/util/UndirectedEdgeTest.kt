@@ -26,6 +26,7 @@ class UndirectedEdgeTest {
             val node2 = GenericNode(ProtelisIncarnation(), this)
             assertEquals(UndirectedEdge(node1, node2), UndirectedEdge(node1, node2))
             assertEquals(UndirectedEdge(node1, node2), UndirectedEdge(node2, node1))
+            assertEquals(UndirectedEdge(node1, node2).hashCode(), UndirectedEdge(node2, node1).hashCode())
         }
     }
 }

@@ -3,7 +3,7 @@
     "semantic-release-preconfigured-conventional-commits": "1.1.122"
   },
   "engines": {
-    "node": "22.13",
+    "node": "22.14",
     "npm": ">=3.0.0"
   }
 }

@@ -123,12 +123,10 @@ object Environments {
         val source: Node<T>,
         val target: Node<T>,
     ) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is UndirectedEdge<*>) return false
-            return (source == other.source && target == other.target) ||
-                (source == other.target && target == other.source)
-        }
+        override fun equals(other: Any?): Boolean =
+            this === other ||
+                other is UndirectedEdge<*> &&
+                (source == other.source && target == other.target || source == other.target && target == other.source)
 
         override fun hashCode(): Int = source.hashCode() + target.hashCode()
     }

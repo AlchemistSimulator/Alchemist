@@ -87,7 +87,7 @@ object Environments {
                 }
             }
         }
-        // Update all the subnetworks with the last evaluated, that is the most complete
+        // Update all the subnetworks with the last evaluated; that is the most complete
         val toVisit = nodes.toMutableSet()
         while (toVisit.isNotEmpty()) {
             val current = toVisit.last().also { toVisit -= it }

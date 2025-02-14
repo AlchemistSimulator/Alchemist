@@ -39,27 +39,27 @@ object Environments {
         neighborDistanceMetric { n1, n2 -> getDistanceBetweenNodes(n1, n2) }
 
     /**
-     * Computes the diameter of the subnetworks of the environment.
+     * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes,
      * evaluated using the [allShortestHopPaths] method.
-     * Returns a [Set] containing the [Subnetwork]s.
+     * Returns a [Set] containing the [SubNetwork]s.
      */
     fun <T> Environment<T, *>.allSubNetworksByNodeWithHopDistance(): Map<Node<T>, Network<T>> =
         allSubNetworksByNode(hopDistance())
 
     /**
-     * Computes the diameter of the subnetworks of the environment.
+     * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes,
      * evaluated using the [allShortestHopPaths] method.
-     * Returns a [Set] containing the [Subnetwork]s.
+     * Returns a [Set] containing the [SubNetwork]s.
      */
     fun <T> Environment<T, *>.allSubNetworksWithHopDistance(): Set<Network<T>> =
         allSubNetworksByNodeWithHopDistance().values.toSet()
 
     /**
-     * Computes the diameter of the subnetworks of the environment.
+     * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes.
-     * Returns a [Set] containing the [Subnetwork]s.
+     * Returns a [Set] containing the [SubNetwork]s.
      */
     fun <T> Environment<T, *>.allSubNetworksByNode(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
@@ -80,14 +80,14 @@ object Environments {
             val reference = nodes[i]
             for (j in i until nodes.size) {
                 val target = nodes[j]
-                val distance = paths[reference to target]
+                val distance = paths[UndirectedEdge(reference, target)]
                 if (distance != null && distance.isFinite()) {
                     val merger = subnetOf(distance, reference) + subnetOf(distance, target)
                     subnetworks[target] = merger
                 }
             }
         }
-        // Update all the subnetworks with the last evaluated, that is the most complete
+        // Update all the subnetworks with the last evaluated; that is the most complete
         val toVisit = nodes.toMutableSet()
         while (toVisit.isNotEmpty()) {
             val current = toVisit.last().also { toVisit -= it }
@@ -102,9 +102,9 @@ object Environments {
     }
 
     /**
-     * Computes the diameter of the subnetworks of the environment.
+     * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes.
-     * Returns a [Set] containing the [Subnetwork]s.
+     * Returns a [Set] containing the [SubNetwork]s.
      */
     fun <T> Environment<T, *>.allSubNetworks(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
@@ -116,25 +116,41 @@ object Environments {
     fun <T> Environment<T, *>.allShortestHopPaths() = allShortestPaths(hopDistance())
 
     /**
-     * Computes all the minimum distances using the Floyd–Warshall algorithm.
+     * Represents an undirected edge between the [source] and the [target] nodes.
+     * The order of the nodes does not matter.
+     */
+    data class UndirectedEdge<T>(
+        val source: Node<T>,
+        val target: Node<T>,
+    ) {
+        override fun equals(other: Any?): Boolean =
+            this === other ||
+                other is UndirectedEdge<*> &&
+                (source == other.source && target == other.target || source == other.target && target == other.source)
+
+        override fun hashCode(): Int = source.hashCode() + target.hashCode()
+    }
+
+    /**
+     * Computes all the minimum distances with the provided metric using the Floyd–Warshall algorithm.
      */
     fun <T> Environment<T, *>.allShortestPaths(
         computeDistance: (Node<T>, Node<T>) -> Double =
             neighborDistanceMetric { n1, n2 ->
                 getDistanceBetweenNodes(n1, n2)
             },
-    ): Map<Pair<Node<T>, Node<T>>, Double> {
+    ): Map<UndirectedEdge<T>, Double> {
         val nodes = nodes.toList()
         /*
          * The distance matrix is a triangular matrix stored in a flat array.
          */
         val distances = MutableDoubleSymmetricMatrix(nodeCount)
-        val result = LinkedHashMap<Pair<Node<T>, Node<T>>, Double>(nodes.size * (nodes.size + 1) / 2, 1.0f)
+        val result = LinkedHashMap<UndirectedEdge<T>, Double>(nodes.size * (nodes.size + 1) / 2, 1.0f)
         for (i in 0 until nodeCount) {
             for (j in i until nodeCount) {
                 distances[i, j] = computeDistance(nodes[i], nodes[j])
                 if (distances[i, j].isFinite()) {
-                    result.put(nodes[i] to nodes[j], distances[i, j])
+                    result.put(UndirectedEdge(nodes[i], nodes[j]), distances[i, j])
                 }
             }
         }
@@ -144,7 +160,7 @@ object Environments {
                     val throughIntermediate = distances[i, intermediate] + distances[intermediate, j]
                     if (distances[i, j] > throughIntermediate) {
                         distances[i, j] = throughIntermediate
-                        result.put(nodes[i] to nodes[j], throughIntermediate)
+                        result.put(UndirectedEdge(nodes[i], nodes[j]), throughIntermediate)
                     }
                 }
             }

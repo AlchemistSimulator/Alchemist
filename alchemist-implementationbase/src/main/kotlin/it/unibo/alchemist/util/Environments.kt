@@ -39,27 +39,27 @@ object Environments {
         neighborDistanceMetric { n1, n2 -> getDistanceBetweenNodes(n1, n2) }
 
     /**
-     * Computes the diameter of the subnetworks of the environment.
+     * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes,
      * evaluated using the [allShortestHopPaths] method.
-     * Returns a [Set] containing the [Subnetwork]s.
+     * Returns a [Set] containing the [SubNetwork]s.
      */
     fun <T> Environment<T, *>.allSubNetworksByNodeWithHopDistance(): Map<Node<T>, Network<T>> =
         allSubNetworksByNode(hopDistance())
 
     /**
-     * Computes the diameter of the subnetworks of the environment.
+     * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes,
      * evaluated using the [allShortestHopPaths] method.
-     * Returns a [Set] containing the [Subnetwork]s.
+     * Returns a [Set] containing the [SubNetwork]s.
      */
     fun <T> Environment<T, *>.allSubNetworksWithHopDistance(): Set<Network<T>> =
         allSubNetworksByNodeWithHopDistance().values.toSet()
 
     /**
-     * Computes the diameter of the subnetworks of the environment.
+     * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes.
-     * Returns a [Set] containing the [Subnetwork]s.
+     * Returns a [Set] containing the [SubNetwork]s.
      */
     fun <T> Environment<T, *>.allSubNetworksByNode(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
@@ -102,9 +102,9 @@ object Environments {
     }
 
     /**
-     * Computes the diameter of the subnetworks of the environment.
+     * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes.
-     * Returns a [Set] containing the [Subnetwork]s.
+     * Returns a [Set] containing the [SubNetwork]s.
      */
     fun <T> Environment<T, *>.allSubNetworks(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
@@ -134,7 +134,7 @@ object Environments {
     }
 
     /**
-     * Computes all the minimum distances using the Floyd–Warshall algorithm.
+     * Computes all the minimum distances with the provided metric using the Floyd–Warshall algorithm.
      */
     fun <T> Environment<T, *>.allShortestPaths(
         computeDistance: (Node<T>, Node<T>) -> Double =

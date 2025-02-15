@@ -360,8 +360,8 @@
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.0",
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.0/element-list"
   },
-  "org.yaml/snakeyaml/2.3": {
-    "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.3",
-    "second": "https://javadoc.io/doc/org.yaml/snakeyaml/2.3/element-list"
+  "org.yaml/snakeyaml/2.4": {
+    "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.4",
+    "second": "https://javadoc.io/doc/org.yaml/snakeyaml/2.4/element-list"
   }
 }

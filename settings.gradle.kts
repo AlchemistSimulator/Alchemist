@@ -14,6 +14,7 @@ plugins {
 
 include(
     "alchemist-api",
+    "alchemist-composeui",
     "alchemist-cognitive-agents",
     "alchemist-engine",
     "alchemist-euclidean-geometry",
@@ -39,7 +40,6 @@ include(
     "alchemist-ui-tooling",
     "alchemist-swingui",
     "alchemist-web-renderer",
-    "alchemist-composeui",
 )
 rootProject.name = "alchemist"
 

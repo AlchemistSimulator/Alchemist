@@ -7,50 +7,34 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-import Libs.alchemist
+import Util.withWasm
 import de.aaschmid.gradle.plugins.cpd.Cpd
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.io.File.separator
 
 plugins {
-    id("kotlin-multiplatform-convention") apply false
-    kotlin("multiplatform")
+    id("kotlin-multiplatform-convention")
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
+    withWasm("alchemist-composeui")
+    js {
         moduleName = "alchemist-composeui"
         browser {
-            val projectDirPath = project.projectDir.path
             commonWebpackConfig {
                 outputFileName = "alchemist-composeui.js"
-                devServer =
-                    (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                        static =
-                            (static ?: mutableListOf()).apply {
-                                // Serve sources to debug inside browser
-                                add(projectDirPath)
-                            }
-                    }
             }
         }
         binaries.executable()
-    }
-
-    jvm {
-        withJava()
+        useEsModules()
     }
 
     sourceSets {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation(alchemist("api"))
             }
         }
 
@@ -65,13 +49,19 @@ kotlin {
                 implementation(libs.androidx.lifecycle.runtime.compose)
             }
         }
+
+        val jsMain by getting {
+            dependencies {
+                implementation(compose.html.core)
+            }
+        }
     }
 }
 
 publishing.publications.withType<MavenPublication>().configureEach {
     pom {
-        contributors {
-            contributor {
+        developers {
+            developer {
                 name.set("Tommaso Bailetti")
                 email.set("tommaso.bailetti@studio.unibo.it")
             }
@@ -85,7 +75,7 @@ tasks {
     ktlint { filter { excludeGenerated() } }
     withType<Cpd> {
         dependsOn(generateComposeResClass, generateExpectResourceCollectorsForCommonMain)
-        listOf("Jvm", "WasmJs").forEach { target ->
+        listOf("Jvm", "WasmJs", "Js").forEach { target ->
             dependsOn(named("generateActualResourceCollectorsFor${target}Main"))
         }
     }

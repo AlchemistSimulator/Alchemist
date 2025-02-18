@@ -9,25 +9,22 @@
 
 package it.unibo.alchemist.boundary.composeui
 
-import androidx.compose.runtime.Composable
-import org.jetbrains.compose.web.dom.Text
-import org.jetbrains.compose.web.renderComposable
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.window.ComposeViewport
+import kotlinx.browser.document
+import org.jetbrains.compose.resources.configureWebResources
 
 /**
  * Main entry point that loads the compose generic application in the browser.
  * Even if not documented, this loading process needs an index.html file to load up the produced JavaScript.
  */
+@OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    renderComposable(rootElementId = "root") {
-        // this will build but fail at runtime
-        app()
+    configureWebResources {
+        resourcePathMapping { path -> "./$path" }
     }
-}
-
-/**
- * This is working if put in place of "app" in the main function.
- */
-@Composable
-fun test() {
-    Text(getPlatform())
+    val body = document.body ?: error("No body found in the `index.html` resource file.")
+    ComposeViewport(body) {
+        textComposable()
+    }
 }

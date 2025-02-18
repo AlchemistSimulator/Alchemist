@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.composeui
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import kotlinx.browser.document
+import org.jetbrains.compose.resources.configureWebResources
 
 /**
  * Main entry point that loads the compose generic application in the browser.
@@ -19,7 +20,11 @@ import kotlinx.browser.document
  */
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    ComposeViewport(checkNotNull(document.body) { "No body tag found in index.html" }) {
-        app()
+    configureWebResources {
+        resourcePathMapping { path -> "./$path" }
+    }
+    val body = document.body ?: error("No body found in the `index.html` resource file.")
+    ComposeViewport(body) {
+        textComposable()
     }
 }

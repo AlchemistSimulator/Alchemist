@@ -7,9 +7,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-import Util.withWasm
 import de.aaschmid.gradle.plugins.cpd.Cpd
 import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.io.File.separator
 
 plugins {
@@ -18,17 +19,31 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+val modName = "alchemist-composeui"
+
 kotlin {
-    withWasm("alchemist-composeui")
-    js {
-        moduleName = "alchemist-composeui"
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        moduleName = modName
         browser {
+            val rootDirPath = project.rootDir.path
+            val projectDirPath = project.projectDir.path
             commonWebpackConfig {
-                outputFileName = "alchemist-composeui.js"
+                outputFileName = "$modName.js"
+                devServer =
+                    (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                        static =
+                            (static ?: mutableListOf()).apply {
+                                // Serve sources to debug inside browser
+                                add(rootDirPath)
+                                add(projectDirPath)
+                            }
+                    }
             }
         }
         binaries.executable()
-        useEsModules()
+    }
+    js {
     }
 
     sourceSets {
@@ -50,10 +65,15 @@ kotlin {
             }
         }
 
+        val commonWebMain by creating {
+            dependsOn(commonMain)
+        }
+
         val jsMain by getting {
-            dependencies {
-                implementation(compose.html.core)
-            }
+            dependsOn(commonWebMain)
+        }
+        val wasmJsMain by getting {
+            dependsOn(commonWebMain)
         }
     }
 }

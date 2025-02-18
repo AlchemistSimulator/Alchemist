@@ -29,6 +29,7 @@ import org.gradle.kotlin.dsl.withType
 import org.gradle.plugin.use.PluginDependency
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -183,36 +184,46 @@ object Util {
     val TaskContainer.allVerificationTasks get(): TaskCollection<SourceTask> =
         this.withType<SourceTask>().matching { it is VerificationTask }
 
-    fun KotlinMultiplatformExtension.withJs() {
-        js {
-            browser {
-                binaries.library()
-            }
-            nodejs {
-                binaries.library()
+    private fun KotlinJsTargetDsl.webConfiguration(webModuleName: String) {
+        moduleName = webModuleName
+        browser {
+            commonWebpackConfig {
+                outputFileName = "$moduleName.js"
+                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                    static = (static ?: mutableListOf()).apply {
+                        // Serve sources to debug inside browser
+                        add(project.rootDir.path)
+                        add(project.projectDir.path)
+                    }
+                }
             }
         }
+        binaries.library()
     }
 
-    fun KotlinMultiplatformExtension.withWasm(wasmModuleName: String) {
-        @OptIn(ExperimentalWasmDsl::class)
+    fun KotlinMultiplatformExtension.withJs(jsModuleName: String = project.name) = js {
+        webConfiguration(jsModuleName)
+        nodejs()
+        useEsModules()
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    fun KotlinMultiplatformExtension.withWasm(wasmModuleName: String) = {
         wasmJs {
             moduleName = wasmModuleName
             browser {
-                val projectDirPath = project.projectDir.path
                 commonWebpackConfig {
                     outputFileName = "$wasmModuleName.js"
-                    devServer =
-                        (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                            static =
-                                (static ?: mutableListOf()).apply {
-                                    // Serve sources to debug inside browser
-                                    add(projectDirPath)
-                                }
+                    devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                        static = (static ?: mutableListOf()).apply {
+                            // Serve sources to debug inside browser
+                            add(project.rootDir.path)
+                            add(project.projectDir.path)
                         }
+                    }
                 }
             }
-            binaries.executable()
+            binaries.library()
         }
     }
 }

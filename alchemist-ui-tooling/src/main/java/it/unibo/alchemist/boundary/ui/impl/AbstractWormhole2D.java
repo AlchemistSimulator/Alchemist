@@ -160,8 +160,9 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     public void setZoom(final double zoom) {
         if (zoom <= 0) {
             this.zoom = 0d;
+        } else {
+            this.zoom = zoom;
         }
-        this.zoom = zoom;
     }
 
     /**

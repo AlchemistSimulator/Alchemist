@@ -1,3 +1,14 @@
+## [38.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/38.0.1...38.0.2) (2025-02-18)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.36 ([#4211](https://github.com/AlchemistSimulator/Alchemist/issues/4211)) ([09a5d63](https://github.com/AlchemistSimulator/Alchemist/commit/09a5d6357796f2d62496309fe237b1588934ddbc))
+* **deps:** update dependency site/themes/hugo-theme-relearn to v7.4.0 ([#4212](https://github.com/AlchemistSimulator/Alchemist/issues/4212)) ([680c3d1](https://github.com/AlchemistSimulator/Alchemist/commit/680c3d1a7135a7ecb89f646ea84f499541cb1619))
+
+### Bug Fixes
+
+* **swingui:** forbid negative zooming ([037ad29](https://github.com/AlchemistSimulator/Alchemist/commit/037ad295b831d73a3f71abfaf7797f606025b6b9))
+
 ## [38.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/38.0.0...38.0.1) (2025-02-17)
 
 ### Dependency updates

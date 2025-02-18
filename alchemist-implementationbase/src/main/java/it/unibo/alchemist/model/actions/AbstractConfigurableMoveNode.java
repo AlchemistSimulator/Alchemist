@@ -158,7 +158,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
     }
 
     /**
-     * Resets the current route, e.g., because the target has been reached
+     * Resets the current route, e.g., because the target has been reached.
      */
     protected final void resetRoute() {
         route = null;

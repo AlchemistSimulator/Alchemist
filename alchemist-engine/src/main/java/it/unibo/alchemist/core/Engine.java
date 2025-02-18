@@ -830,12 +830,23 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         }
     }
 
+    /**
+     * Synchronization helper.
+     */
     protected final class SynchBox {
 
         private final AtomicInteger queueLength = new AtomicInteger();
         private final Condition statusReached = statusLock.newCondition();
         private final Condition allReleased = statusLock.newCondition();
 
+        /**
+         * Waits for the provided status until a timeout expires.
+         *
+         * @param next the status to wait for
+         * @param timeout how many time units to wait at most
+         * @param tu the time unit
+         * @return the reached status
+         */
         public Status waitFor(final Status next, final long timeout, final TimeUnit tu) {
             return doOnStatus(() -> {
                 boolean notTimedOut = true;
@@ -855,6 +866,9 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
             });
         }
 
+        /**
+         * Release all locks.
+         */
         public void releaseAll() {
             doOnStatus(() -> {
                 while (queueLength.get() != 0) {

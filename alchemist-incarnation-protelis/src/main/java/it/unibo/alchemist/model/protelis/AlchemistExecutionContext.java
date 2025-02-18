@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.protelis;
 
 import com.google.common.cache.CacheBuilder;
@@ -49,7 +50,6 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     extends AbstractExecutionContext<AlchemistExecutionContext<P>>
     implements SpatiallyEmbeddedDevice<Double>, LocalizedDevice, TimeAwareDevice<Number> {
 
-    private static final String INTENTIONAL = "This is intentional";
     /**
      * Put this {@link Molecule} inside nodes that should compute distances using routes.
      * It only makes sense in case the environment is a {@link MapEnvironment}
@@ -60,6 +60,8 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      * It only makes sense in case the environment is a {@link MapEnvironment}
      */
     public static final Molecule APPROXIMATE_NBR_RANGE = new SimpleMolecule("APPROXIMATE_NBR_RANGE");
+
+    private static final String INTENTIONAL = "This is intentional";
 
     @SuppressWarnings("unchecked")
     private final LoadingCache<P, Double> cache = CacheBuilder.newBuilder()
@@ -314,7 +316,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      * Computes the distance along a map. Requires a {@link MapEnvironment}.
      *
      * @param dest
-     *            the destination, in form of a destination node
+     *            the destination, in the form of a destination node
      * @return the distance on a map
      */
     public double routingDistance(final Node<Object> dest) {
@@ -325,8 +327,8 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      * Computes the distance along a map. Requires a {@link MapEnvironment}.
      *
      * @param dest
-     *            the destination, in form of {@link Node} ID. Non
-     *            integer numbers will be cast to integers by
+     *            the destination, in form of {@link Node} ID.
+     *            Non-integer numbers will be cast to integers by
      *            {@link Number#intValue()}.
      * @return the distance on a map
      */
@@ -345,7 +347,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     public double routingDistance(final GeoPosition dest) {
         try {
             return cache.get((P) dest);
-        } catch (ExecutionException e) {
+        } catch (final ExecutionException e) {
             throw new IllegalStateException(e);
         }
     }

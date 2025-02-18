@@ -6,17 +6,20 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.movestrategies.speed;
 
 import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
+import it.unibo.alchemist.model.maps.MapEnvironment;
+
+import java.io.Serial;
 
 /**
- * This {@link TraceDependantSpeed} strategy computes the remaining distance by
+ * This {@link AbstractTraceDependantSpeed} strategy computes the remaining distance by
  * relying on maps data for the selected {@link RoutingServiceOptions}.
  *
  * @param <T> Concentration type
@@ -24,8 +27,9 @@ import it.unibo.alchemist.model.RoutingServiceOptions;
  * @param <S> {@link RoutingService} type
  */
 public final class RoutingTraceDependantSpeed<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
-    extends TraceDependantSpeed<T, O, S> {
+    extends AbstractTraceDependantSpeed<T, O, S> {
 
+    @Serial
     private static final long serialVersionUID = -2195494825891818353L;
     private final O options;
 

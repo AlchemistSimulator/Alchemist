@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.deployments;
 
 import it.unibo.alchemist.boundary.gps.loaders.TraceLoader;
@@ -27,7 +28,7 @@ public final class FromGPSTrace implements Deployment<GeoPosition> {
 
     /**
      * @param nodeCount
-     *            number of node request
+     *            number of node requests
      * @param path
      *            path with the gps tracks
      * @param cycle

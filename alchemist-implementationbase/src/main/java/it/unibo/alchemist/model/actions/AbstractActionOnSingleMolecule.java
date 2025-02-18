@@ -12,25 +12,28 @@ package it.unibo.alchemist.model.actions;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 
+import java.io.Serial;
+
 /**
  * This class offers the basic structures to provide operations with numeric
  * concentrations on a single molecule.
- * 
+ *
  * @param <T> concentration type
  */
 public abstract class AbstractActionOnSingleMolecule<T> extends AbstractAction<T> {
 
+    @Serial
     private static final long serialVersionUID = 5506733553861927362L;
     private final Molecule mol;
 
     /**
-     * Call this constructor in the subclasses in order to automatically
+     * Call this constructor in the subclasses to automatically
      * instance the node, the molecules and the dependency managing facilities.
-     * 
+     *
      * @param node
      *            the node this action belongs to
      * @param molecule
-     *            the molecule which whose concentration will be modified y the
+     *            the molecule which whose concentration will be modified by the
      *            execution of this action
      */
     protected AbstractActionOnSingleMolecule(final Node<T> node,
@@ -41,7 +44,7 @@ public abstract class AbstractActionOnSingleMolecule<T> extends AbstractAction<T
     }
 
     /**
-     * @return the molecule which whose concentration will be modified y the
+     * @return the molecule which whose concentration will be modified by the
      *         execution of this action
      */
     public Molecule getMolecule() {

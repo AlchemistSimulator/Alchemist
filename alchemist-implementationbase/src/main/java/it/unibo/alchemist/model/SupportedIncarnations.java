@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model;
 
 import it.unibo.alchemist.util.ClassPathScanner;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * This enum interfaces the generic components of the graphical interface with
  * the specific incarnation details.
- * 
+ *
  */
 @SuppressWarnings("unchecked")
 public final class SupportedIncarnations {
@@ -50,7 +51,7 @@ public final class SupportedIncarnations {
 
     /**
      * Fetches an incarnation whose name matches the supplied string.
-     * 
+     *
      * @param s
      *            the name of the {@link Incarnation}
      * @param <T>

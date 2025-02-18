@@ -6,32 +6,34 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.actions;
 
-import org.apache.commons.math3.random.RandomGenerator;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
+import org.apache.commons.math3.random.RandomGenerator;
 
+import java.io.Serial;
 import java.util.List;
 
-
-
 /**
- * The execution involves all neighbours. The molecule can be different from a
- * neighbor to the other, because some special Variable (#D) are specific for
- * each node. This is why N molecules are instanced if there are N neighbours.
- * 
+ * The execution involves all neighbors.
+ * The molecule can be different from a
+ * neighbor to the other because some special Variable (#D) is specific for
+ * each node.
+ * This is why N molecules are instanced if there are N neighbors.
  */
 public final class LsaAllNeighborsAction extends LsaRandomNeighborAction {
 
+    @Serial
     private static final long serialVersionUID = -4798752202640197182L;
 
     /**
      * @param node
      *            the node in which the reaction is programmed
      * @param molecule
-     *            the lsa which is involved
+     *            the LSA
      * @param environment
      *            the current environment
      */
@@ -47,7 +49,7 @@ public final class LsaAllNeighborsAction extends LsaRandomNeighborAction {
      * @param node
      *            the node in which the reaction is programmed
      * @param molecule
-     *            the lsa which is involved
+     *            the LSA
      * @param environment
      *            the current environment
      * @param randomGenerator

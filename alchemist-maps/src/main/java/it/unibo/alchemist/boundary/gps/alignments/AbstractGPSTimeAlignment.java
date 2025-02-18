@@ -6,17 +6,17 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.gps.alignments;
+
+import com.google.common.collect.ImmutableList;
+import it.unibo.alchemist.boundary.gps.GPSTimeAlignment;
+import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.maps.GPSTrace;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-
-import com.google.common.collect.ImmutableList;
-
-import it.unibo.alchemist.boundary.gps.GPSTimeAlignment;
-import it.unibo.alchemist.model.maps.GPSTrace;
-import it.unibo.alchemist.model.Time;
 
 /**
  *
@@ -24,27 +24,27 @@ import it.unibo.alchemist.model.Time;
 public abstract class AbstractGPSTimeAlignment implements GPSTimeAlignment {
 
     private final SinglePointBehavior policy;
+
     /**
-     * Define the behavior for trace with single point.
+     * Define the behavior for trace with a single point.
      */
     protected enum SinglePointBehavior {
         /**
-         * retain trace with single point.
+         * retain traces with a single point.
          */
         RETAIN_SINGLE_POINTS,
         /**
-         * discard trace with single point.
+         * discard traces with a single point.
          */
         DISCARD_SINGLE_POINTS,
         /**
-         * throw exception for trace trace with single point.
+         * throw exception for traces with a single point.
          */
         THROW_EXCEPTION_ON_SINGLE_POINTS
     }
 
     /**
-     * 
-     * @param policy define policy for trace with single point
+     * @param policy define policy for traces with a single point
      */
     protected AbstractGPSTimeAlignment(final SinglePointBehavior policy) {
         this.policy = policy;
@@ -71,7 +71,6 @@ public abstract class AbstractGPSTimeAlignment implements GPSTimeAlignment {
     }
 
     /**
-     * 
      * @param allTraces all {@link GPSTrace} to normalize
      * @param currentTrace current {@link GPSTrace} to normalize
      * @return the time from which the trace should begin

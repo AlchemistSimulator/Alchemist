@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.actions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Action;
+import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.Reaction;
 import java.io.Serial;
 
 /**
- *
  * @param <T> concentration type
  */
 public final class SetLocalMoleculeConcentration<T> extends AbstractActionOnSingleMolecule<T> {

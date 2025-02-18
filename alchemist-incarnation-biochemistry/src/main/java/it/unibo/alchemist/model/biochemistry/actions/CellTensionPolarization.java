@@ -6,23 +6,24 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.actions;
 
-import it.unibo.alchemist.model.actions.AbstractAction;
-import it.unibo.alchemist.model.biochemistry.properties.CircularDeformableCell;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Context;
-import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.actions.AbstractAction;
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty;
+import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells;
+import it.unibo.alchemist.model.biochemistry.properties.CircularDeformableCell;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Models the tension polarization of {@link CircularDeformableCell}
@@ -30,12 +31,12 @@ import java.util.stream.Collectors;
  */
 public final class CellTensionPolarization extends AbstractAction<Double> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final EnvironmentSupportingDeformableCells<Euclidean2DPosition> environment;
     private final CircularDeformableCellProperty deformableCell;
 
     /**
-     * 
      * @param node the node
      * @param environment the environment
      */
@@ -69,13 +70,13 @@ public final class CellTensionPolarization extends AbstractAction<Double> {
 
     @Override
     public void execute() {
-        // get node position as array
+        // get node position as an array
         final double[] nodePosistion = environment.getPosition(getNode()).getCoordinates();
         // initializing resulting versor
         final double[] resultingVersor = new double[nodePosistion.length];
         // declaring a variable for the node where this action is set, to have faster access
         final Node<Double> thisNode = getNode();
-        // transforming each node around in a vector (Position) 
+        // transforming each node around in a vector (Position)
         final List<Euclidean2DPosition> pushForces = environment.getNodesWithinRange(
                 thisNode,
                 environment.getMaxDiameterAmongCircularDeformableCells()).stream()
@@ -84,12 +85,12 @@ public final class CellTensionPolarization extends AbstractAction<Double> {
                     final CircularCellProperty circularCell = getCircularCell(node);
                     if (!Objects.isNull(circularCell)) {
                         // computing for each cell the max distance among which can't be overlapping
-                        double maxDistance;
+                        final double maxDistance;
                         if (isDeformableCell(node)) {
-                            // for deformable cell is maxRad + maxRad
+                             // for deformable cell is maxRad + maxRad
                              maxDistance = deformableCell.getMaximumRadius() + getDeformableCell(node).getMaximumRadius();
                         } else {
-                            // for simple cells is maxRad + rad
+                             // for simple cells is maxRad + rad
                              maxDistance = deformableCell.getMaximumRadius() + circularCell.getRadius();
                         }
                         // check
@@ -100,8 +101,8 @@ public final class CellTensionPolarization extends AbstractAction<Double> {
                     }
                 })
                 .map(node -> {
-                    // position of node n as array
-                    final double[] nPos =  environment.getPosition(node).getCoordinates();
+                    // position of node n as an array
+                    final double[] nPos = environment.getPosition(node).getCoordinates();
                     // max radius of n
                     final double localNodeMaxRadius;
                     // min radius of n
@@ -137,15 +138,15 @@ public final class CellTensionPolarization extends AbstractAction<Double> {
                             return environment.makePosition(0, 0);
                         }
                         propensityVector = new double[]{
-                                intensity * (propensityVector[0] / module),
-                                intensity * (propensityVector[1] / module)
+                            intensity * (propensityVector[0] / module),
+                            intensity * (propensityVector[1] / module),
                         };
                         return environment.makePosition(propensityVector[0], propensityVector[1]);
                     } else {
                         return environment.makePosition(0, 0);
-                    } 
+                    }
                 })
-                .collect(Collectors.toList());
+                .toList();
         if (pushForces.isEmpty()) {
             deformableCell.addPolarizationVersor(environment.makePosition(0, 0));
         } else {

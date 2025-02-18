@@ -6,13 +6,14 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.boundary.swingui.tape.impl.AbstractJTapeSection;
 import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeFeatureStack;
 import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeGroup;
 import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeMainFeature;
-import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeSection;
 
 import javax.swing.Icon;
 import javax.swing.JSlider;
@@ -22,18 +23,21 @@ import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.Serial;
 
 import static it.unibo.alchemist.boundary.swingui.impl.LocalizedResourceBundle.getString;
 
 /**
+ * @deprecated The entire Swing UI is deprecated and is set to be replaced with a modern UI
  */
 @SuppressFBWarnings(
-        value = { "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" },
+        value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR",
         justification = "This class is final"
 )
 @Deprecated
 public final class ReactivityPanel extends JTapeGroup implements ItemListener {
 
+    @Serial
     private static final long serialVersionUID = 6688803192091760332L;
 
     private static final int SLIDE_MAX = 20;
@@ -63,19 +67,17 @@ public final class ReactivityPanel extends JTapeGroup implements ItemListener {
          */
         REAL_TIME,
         /**
-         * The GUI update frequency is user defined. Use the slider.
+         * The GUI update frequency is user-defined. Use the slider.
          */
         USER_SELECTED,
     }
 
     /**
-     * 
+     *
      */
     public ReactivityPanel() {
         super(UI_REACTIVITY);
         slider.setPreferredSize(new Dimension(SLIDE_SIZE, slider.getHeight()));
-        // setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        // button = new JButton(max);
         final Icon max = AlchemistSwingUI.loadScaledImage("/status/user-online.png");
         btnMax = new JToggleButton(MAX_REACTIVITY, max, true);
         final Icon real = AlchemistSwingUI.loadScaledImage("/status/user-invisible.png");
@@ -90,12 +92,12 @@ public final class ReactivityPanel extends JTapeGroup implements ItemListener {
         btnUser.addItemListener(this);
         slider.setEnabled(false);
 
-        final JTapeSection stack1 = new JTapeFeatureStack();
+        final AbstractJTapeSection stack1 = new JTapeFeatureStack();
         stack1.registerFeature(btnMax);
         stack1.registerFeature(btnReal);
-        final JTapeSection buttMF = new JTapeMainFeature();
+        final AbstractJTapeSection buttMF = new JTapeMainFeature();
         buttMF.registerFeature(btnUser);
-        final JTapeSection sliderMF = new JTapeMainFeature();
+        final AbstractJTapeSection sliderMF = new JTapeMainFeature();
         sliderMF.registerFeature(slider);
 
         registerSection(stack1);
@@ -105,7 +107,7 @@ public final class ReactivityPanel extends JTapeGroup implements ItemListener {
 
     /**
      * See {@link JToggleButton#addActionListener(ActionListener)}.
-     * 
+     *
      * @param l
      *            the {@link ActionListener} to add
      */
@@ -162,7 +164,7 @@ public final class ReactivityPanel extends JTapeGroup implements ItemListener {
 
     /**
      * Sets the command name for the action event fired by this component.
-     * 
+     *
      * @param c
      *            the action command
      */

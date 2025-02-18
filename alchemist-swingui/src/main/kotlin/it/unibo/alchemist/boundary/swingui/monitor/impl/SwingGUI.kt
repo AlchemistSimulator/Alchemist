@@ -31,6 +31,8 @@ import javax.swing.JPanel
 /**
  * Creates a Swing-based graphical interface for the provided [environment].
  * The actual implementation of the [main] display is chosen based on the type of [environment]
+ *
+ * @deprecated The Entire Swing UI is deprecated and is set to be replaced with a modern UI
  */
 @Deprecated("The Swing UI must be replaced by a web UI")
 class SwingGUI<T, P : Position2D<P>> private constructor(
@@ -46,7 +48,7 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
      * Builds a single-use graphical interface.
      *
      * @param environment the simulation for this GUI
-     * @param graphicsFile the effects file
+     * @param graphicsFile the effect file
      * @param closeOperation the type of close operation for this GUI
      */
     constructor(
@@ -60,7 +62,7 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
      * Builds a single-use graphical interface.
      *
      * @param environment the simulation for this GUI
-     * @param graphics the effects file
+     * @param graphics the effect file
      * @param closeOperation the type of close operation for this GUI
      */
     @JvmOverloads

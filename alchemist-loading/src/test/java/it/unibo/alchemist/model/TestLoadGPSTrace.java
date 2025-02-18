@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model;
 
 import it.unibo.alchemist.boundary.LoadAlchemist;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * A series of tests checking that our Yaml Loader is working as expected.
+ * A series of tests checking that our YAML Loader is working as expected.
  */
 @SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
 class TestLoadGPSTrace {
@@ -49,6 +50,11 @@ class TestLoadGPSTrace {
 
     private static final LatLongPosition START_5 = new LatLongPosition(48.233093, 16.418);
     private static final LatLongPosition ARRIVE_5 = new LatLongPosition(48.207733, 16.36331);
+    /*
+     * max distance allowed between real and ideal arrival (1 cm)
+     */
+    private static final double DELTA = 1e-2;
+
     static {
         START_ARRIVE_POSITION.put(START_1, ARRIVE_1);
         START_ARRIVE_POSITION.put(START_2, ARRIVE_2);
@@ -56,11 +62,7 @@ class TestLoadGPSTrace {
         START_ARRIVE_POSITION.put(START_4, ARRIVE_4);
         START_ARRIVE_POSITION.put(START_5, ARRIVE_5);
     }
-    /*
-     * max distance allowed between real and ideal arrive (1cm)
-     */
-    private static final double DELTA = 1e-2;
-    private static final int TIME_TO_REACH = 30550;
+
     /**
      * Test the ability to inject variables.
      *
@@ -124,7 +126,7 @@ class TestLoadGPSTrace {
         });
         simulation.play();
         simulation.run();
-        simulation.getError().ifPresent(Unchecked.consumer(e ->  {
+        simulation.getError().ifPresent(Unchecked.consumer(e -> {
             throw e;
         }));
     }

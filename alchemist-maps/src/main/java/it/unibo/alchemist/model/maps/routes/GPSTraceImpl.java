@@ -6,30 +6,30 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.routes;
 
-import java.util.List;
-
-import it.unibo.alchemist.model.routes.PolygonalChain;
-import org.apache.commons.math3.util.Pair;
-
 import com.google.common.collect.ImmutableList;
-
-import it.unibo.alchemist.model.maps.GPSPoint;
-import it.unibo.alchemist.model.maps.GPSTrace;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.maps.GPSPoint;
+import it.unibo.alchemist.model.maps.GPSTrace;
+import it.unibo.alchemist.model.routes.PolygonalChain;
 import it.unibo.alchemist.utils.Maps;
+import org.apache.commons.math3.util.Pair;
+
+import java.io.Serial;
+import java.util.List;
 
 /**
  * Implementation of a {@link GPSTrace}.
  */
 public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
      * @param trace
      *            GPS points
      */

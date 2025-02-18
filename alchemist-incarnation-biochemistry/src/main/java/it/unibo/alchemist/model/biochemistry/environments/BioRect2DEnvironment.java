@@ -9,23 +9,25 @@
 
 package it.unibo.alchemist.model.biochemistry.environments;
 
-import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
-import it.unibo.alchemist.model.biochemistry.molecules.Junction;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
-import it.unibo.alchemist.model.physics.environments.LimitedContinuos2D;
+import it.unibo.alchemist.model.biochemistry.molecules.Junction;
+import it.unibo.alchemist.model.physics.environments.AbstractLimitedContinuos2D;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.Map;
 
 /**
  */
-public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
+public class BioRect2DEnvironment extends AbstractLimitedContinuos2D<Double> {
 
+    @Serial
     private static final long serialVersionUID = -2952112972706738682L;
     private static final Logger L = LoggerFactory.getLogger(BioRect2DEnvironment.class);
 
@@ -36,6 +38,7 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
 
     /**
      * Builds a BioRect2DEnvironment with given bounds.
+     *
      * @param incarnation the current {@link BiochemistryIncarnation}
      * @param minX minimum X coordinate
      * @param maxX maximum X coordinate
@@ -82,7 +85,8 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
 
     @Override
     protected final Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
-        double x, y;
+        final double x;
+        final double y;
         if (nx > maxX) {
             x = maxX;
         } else {

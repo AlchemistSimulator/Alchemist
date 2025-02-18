@@ -6,18 +6,20 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.protelis.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.actions.AbstractAction;
-import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
-import it.unibo.alchemist.protelis.properties.ProtelisDevice;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.actions.AbstractAction;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
+import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
+import it.unibo.alchemist.protelis.properties.ProtelisDevice;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,6 +27,7 @@ import java.util.Objects;
  */
 public final class SendToNeighbor extends AbstractAction<Object> {
 
+    @Serial
     private static final long serialVersionUID = -8826563176323247613L;
     private final RunProtelisProgram<?> program;
     private final Reaction<Object> reaction;
@@ -46,18 +49,18 @@ public final class SendToNeighbor extends AbstractAction<Object> {
     }
 
     @Override
-    public SendToNeighbor cloneAction(final Node<Object> node, final Reaction<Object> reaction) {
-        final ProtelisDevice device = node.asPropertyOrNull(ProtelisDevice.class);
+    public SendToNeighbor cloneAction(final Node<Object> newNode, final Reaction<Object> newReaction) {
+        final ProtelisDevice<?> device = newNode.asPropertyOrNull(ProtelisDevice.class);
         if (device != null) {
             final List<RunProtelisProgram<?>> possibleRefs = device.allProtelisPrograms();
             if (possibleRefs.size() == 1) {
-                return new SendToNeighbor(node, this.reaction, possibleRefs.get(0));
+                return new SendToNeighbor(newNode, this.reaction, possibleRefs.get(0));
             }
             throw new IllegalStateException(
                 "There must be one and one only unconfigured " + RunProtelisProgram.class.getSimpleName()
             );
         }
-        throw new IllegalStateException(getClass().getSimpleName() + " cannot get cloned on a node with a missing "
+        throw new IllegalStateException(getClass().getSimpleName() + " cannot get cloned on a new node with a missing "
                 + ProtelisDevice.class.getSimpleName());
     }
 
@@ -68,7 +71,9 @@ public final class SendToNeighbor extends AbstractAction<Object> {
 
     @Override
     public void execute() {
-        final AlchemistNetworkManager mgr = getNode().asProperty(ProtelisDevice.class).getNetworkManager(program);
+        @SuppressWarnings("unchecked")
+        final ProtelisDevice<?> protelisDevice = getNode().asProperty(ProtelisDevice.class);
+        final AlchemistNetworkManager mgr = protelisDevice.getNetworkManager(program);
         Objects.requireNonNull(mgr);
         mgr.simulateMessageArrival(reaction.getTau().toDouble());
         program.prepareForComputationalCycle();

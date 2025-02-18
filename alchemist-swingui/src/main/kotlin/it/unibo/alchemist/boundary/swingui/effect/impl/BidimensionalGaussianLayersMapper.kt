@@ -7,6 +7,8 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
+@file:Suppress("DEPRECATION")
+
 package it.unibo.alchemist.boundary.swingui.effect.impl
 
 import it.unibo.alchemist.boundary.swingui.effect.api.LayerToFunctionMapper
@@ -26,11 +28,12 @@ import java.util.stream.Stream
  * This class also manages to infer optimal min and max layer values automatically
  * so the user does not have to set them by hand.
  */
+@Deprecated("The entire Swing UI is deprecated and is set to be replaced with a modern UI")
 class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
     private var minAndMaxToBeSet = true
 
     override fun <T, P : Position2D<P>> prepare(
-        effect: DrawLayersValues,
+        effect: AbstractDrawLayersValues,
         toDraw: Collection<Layer<T, P>>,
         environment: Environment<T, P>,
         g: Graphics2D,

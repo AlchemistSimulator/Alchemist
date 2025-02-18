@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.monitor.impl;
 
 import it.unibo.alchemist.boundary.ui.impl.LinearZoomManager;
@@ -32,16 +33,20 @@ import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.io.File;
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Graphical 2D display of an environments that uses a map.
+ * Graphical 2D display of environments that uses a map.
  *
  * @param <T> the {@link Concentration} type
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
+
+    @Serial
     private static final long serialVersionUID = 8593507198560560646L;
     private static final GraphicFactory GRAPHIC_FACTORY = AwtGraphicFactory.INSTANCE;
     private static final int IN_MEMORY_TILES = 256;
@@ -52,6 +57,7 @@ public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     static {
         InitMapsForge.initAgent();
     }
+
     /**
      * Default constructor.
      */
@@ -82,10 +88,6 @@ public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
                 GRAPHIC_FACTORY);
         tdl.setDisplayModel(model.displayModel);
         return tdl;
-    }
-
-    @Override
-    protected void drawBackground(final Graphics2D g) {
     }
 
     @Override

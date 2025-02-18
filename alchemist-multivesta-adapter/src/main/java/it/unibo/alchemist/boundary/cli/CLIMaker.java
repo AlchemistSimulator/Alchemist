@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.cli;
 
 import com.google.common.math.DoubleMath;
@@ -22,14 +23,16 @@ import java.util.stream.Collectors;
  * This support class generates a CLI interface backed by a property file.
  */
 public final class CLIMaker {
+
     private static final Properties SYNTAX;
     private static final Options OPTIONS = new Options();
+
     static {
         final String base = CLIMaker.class.getPackage().getName().replace('.', '/');
         final Properties syntax = new Properties();
         try {
             syntax.load(ResourceLoader.getResourceAsStream(base + "/CLI.properties"));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException(e);
         }
         SYNTAX = syntax;
@@ -62,10 +65,10 @@ public final class CLIMaker {
                             }
                             break;
                         case "argName":
-                           optBuilder.argName(optionValue); 
+                           optBuilder.argName(optionValue);
                            break;
                         case "separator":
-                            optBuilder.valueSeparator(optionValue.charAt(0)); 
+                            optBuilder.valueSeparator(optionValue.charAt(0));
                             break;
                         default: throw new IllegalStateException("Could not understand what " + optionFeature + " is.");
                     }
@@ -74,12 +77,12 @@ public final class CLIMaker {
             }).forEachOrdered(OPTIONS::addOption);
     }
 
+    private CLIMaker() { }
+
     /**
      * @return an Apache {@link Options} object
      */
     public static Options getOptions() {
         return OPTIONS;
     }
-
-    private CLIMaker() { }
 }

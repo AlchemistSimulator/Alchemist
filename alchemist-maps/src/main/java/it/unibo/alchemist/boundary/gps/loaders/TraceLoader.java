@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.gps.loaders;
 
 import com.google.common.collect.ImmutableList;
@@ -51,8 +52,6 @@ public final class TraceLoader implements Iterable<GPSTrace> {
             .flatMap(l -> l.supportedExtensions().stream()
                     .map(ext -> new Tuple2<>(ext.toLowerCase(Locale.US), l)))
             .collect(Collectors.toMap(Tuple2::v1, Tuple2::v2));
-    private final boolean cyclic;
-    private final ImmutableList<GPSTrace> traces;
     private static final Factory FACTORY = new FactoryBuilder()
         .withWideningConversions()
         .withNarrowingConversions()
@@ -62,14 +61,16 @@ public final class TraceLoader implements Iterable<GPSTrace> {
             ClassPathScanner.subTypesOf(GPSTimeAlignment.class);
     private static final Semaphore MUTEX = new Semaphore(1);
 
+    private final boolean cyclic;
+    private final ImmutableList<GPSTrace> traces;
+
     /**
-     * 
      * @param path
      *            path with the gps tracks
      * @param cycle
-     *            true if considering list of GPSTrace cycle, default false
+     *            true if considering a list of GPSTrace cycle, default false
      * @param normalizer
-     *            normalizer to use for normalize time
+     *            normalizer to use for normalizing time
      * @throws IOException in case of I/O errors
      */
     public TraceLoader(final String path, final boolean cycle, final GPSTimeAlignment normalizer) throws IOException {
@@ -78,11 +79,10 @@ public final class TraceLoader implements Iterable<GPSTrace> {
     }
 
     /**
-     * 
      * @param path
      *            path with the gps tracks
      * @param cycle
-     *            true if considering list of GPSTrace cycle, default false
+     *            true if considering a list of GPSTrace cycle, default false
      * @param timeNormalizerClass
      *            class to use to normalize time
      * @param normalizerArgs
@@ -99,19 +99,17 @@ public final class TraceLoader implements Iterable<GPSTrace> {
     }
 
     /**
-     * 
      * @param path
      *            path with the gps tracks
      * @param normalizer
-     *            normalizer to use for normalize time
+     *            normalizer to use for normalizing time
      * @throws IOException in case of I/O errors
      */
-    public TraceLoader(final String path, final GPSTimeAlignment normalizer) throws IOException  {
+    public TraceLoader(final String path, final GPSTimeAlignment normalizer) throws IOException {
         this(path, false, normalizer);
     }
 
     /**
-     * 
      * @param path
      *            path with the gps tracks
      * @param timeNormalizerClass
@@ -136,13 +134,13 @@ public final class TraceLoader implements Iterable<GPSTrace> {
 
     private List<GPSTrace> loadTraces(final String path) throws IOException {
         /*
-         * check if path is a directory or a file
+         * check if the path is a directory or a file
          */
         final boolean isDirectory = runOnPathsStream(path, s -> s.allMatch(line -> ResourceLoader.getResource(line) != null));
 
         if (isDirectory) {
             /*
-             * if path is a directory, call this method recursively on all of its file 
+             * if the path is a directory, call this method recursively on all of its file
              */
             return runOnPathsStream(path, s -> s
                     .map(CheckedFunction.unchecked(this::loadTraces))
@@ -165,18 +163,17 @@ public final class TraceLoader implements Iterable<GPSTrace> {
                  * invoke the loader to load all tracks in the file
                  */
                 return fileLoader.readTrace(ResourceLoader.getResource(path));
-            }  catch (FileFormatException e) {
+            } catch (final FileFormatException e) {
                 throw new IllegalStateException(
                     "Loader: " + LOADER.get(extensionFile).getClass().getSimpleName()
                         + " can't load file: " + path + ", plese make sure it is a " + extensionFile + "file?",
                     e
                 );
-            } 
+            }
         }
     }
 
     /**
-     * 
      * @return the number of traces loaded, Optional.empty() if cyclic
      */
     public Optional<Integer> size() {
@@ -219,7 +216,7 @@ public final class TraceLoader implements Iterable<GPSTrace> {
         );
         try (BufferedReader in = new BufferedReader(new InputStreamReader(resourceStream, StandardCharsets.UTF_8))) {
             return op.apply(in.lines().map(line -> path + "/" + line));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalArgumentException("error reading lines of: " + path, e);
         }
     }

@@ -10,19 +10,20 @@
 package it.unibo.alchemist.model.biochemistry.reactions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.biochemistry.actions.AbstractNeighborAction;
-import it.unibo.alchemist.model.biochemistry.conditions.AbstractNeighborCondition;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.model.biochemistry.actions.AbstractNeighborAction;
+import it.unibo.alchemist.model.biochemistry.conditions.AbstractNeighborCondition;
 import it.unibo.alchemist.model.reactions.ChemicalReaction;
 import org.apache.commons.math3.distribution.EnumeratedDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +32,12 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
-/** 
+/**
  * A biochemical Reaction.
  */
 public final class BiochemicalReaction extends ChemicalReaction<Double> {
 
+    @Serial
     private static final long serialVersionUID = 3849210665619933894L;
     private final Environment<Double, ?> environment;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All subclasses are actually serializable")
@@ -44,9 +46,9 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
     /*
      * Check if at least a neighbor condition is present in the reaction.
      * It is used when a neighbor action is present:
-     * - If a neighbor condition AND a neighbor action are present, the target node for the action must be 
+     * - If a neighbor condition AND a neighbor action are present, the target node for the action must be
      *   calculated.
-     * - If only neighbor actions are present the target node must be randomly choose.
+     * - If only neighbor actions are present, the target node must be randomly chosen.
      */
     private boolean neighborConditionsPresent;
 
@@ -77,11 +79,11 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
         return new BiochemicalReaction(node, getTimeDistribution().cloneOnNewNode(node, currentTime), environment, random);
     }
 
-    @Override 
+    @Override
     protected void updateInternalStatus(
-            final Time currentTime,
-            final boolean hasBeenExecuted,
-            final Environment<Double, ?> environment
+        final Time currentTime,
+        final boolean hasBeenExecuted,
+        final Environment<Double, ?> currentEnvironment
     ) {
         if (neighborConditionsPresent) {
             validNeighbors = getConditions().stream()
@@ -96,10 +98,10 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
                         "At least a neighbor condition is present, but the mapping was empty"
                 ));
         }
-        super.updateInternalStatus(currentTime, hasBeenExecuted, environment);
+        super.updateInternalStatus(currentTime, hasBeenExecuted, currentEnvironment);
     }
 
-    @Override 
+    @Override
     public void execute() {
         if (neighborConditionsPresent) {
             final List<Pair<Node<Double>, Double>> neighborsList = validNeighbors.entrySet().stream()
@@ -127,14 +129,7 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
         neighborConditionsPresent = conditions.stream().anyMatch(it -> it instanceof AbstractNeighborCondition);
     }
 
-    private static final class Container {
-        private final Node<Double> node;
-        private final Double propensity1;
-        private final Double propensity2;
-        private Container(final Node<Double> node, final Double propensity1, final Double propensity2) {
-            this.node = node;
-            this.propensity1 = propensity1;
-            this.propensity2 = propensity2;
-        }
+    private record Container(Node<Double> node, Double propensity1, Double propensity2) {
+
     }
 }

@@ -11,15 +11,18 @@ package it.unibo.alchemist.model.biochemistry.conditions;
 
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
+
+import java.io.Serial;
+
 /**
  *
  */
 public class BiomolPresentInCell extends GenericMoleculePresent<Double> {
 
+    @Serial
     private static final long serialVersionUID = -5772829360637946655L;
 
     /**
-     * 
      * @param biomol the molecule
      * @param concentration the concentration
      * @param node the node

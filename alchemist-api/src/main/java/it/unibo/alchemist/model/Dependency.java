@@ -39,6 +39,7 @@ public interface Dependency extends Serializable {
         public boolean dependsOn(final Dependency dependency) {
             return equals(dependency) || dependency instanceof Molecule;
         }
+
         @Override
         public String toString() {
             return "Every_molecule";
@@ -58,7 +59,7 @@ public interface Dependency extends Serializable {
     /**
      * Determines whether this dependency depends on the provided dependency.
      * The default behavior requires equality.
-     * 
+     *
      * @param dependency
      *            the dependency
      * @return true if this dependency generates a dependency with the provided one

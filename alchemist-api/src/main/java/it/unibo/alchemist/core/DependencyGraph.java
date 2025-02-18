@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.core;
 
 import it.unibo.alchemist.model.Actionable;
@@ -13,7 +14,7 @@ import it.unibo.alchemist.model.Node;
 import org.danilopianini.util.ListSet;
 
 /**
- * This interface allows to separate the usage of a dependency graph from its
+ * This interface allows separating the usage of a dependency graph from its
  * implementation.
  *
  * @param <T>
@@ -43,9 +44,8 @@ public interface DependencyGraph<T> {
     void createDependencies(Actionable<T> reactionHandler);
 
     /**
-     * This method removes all the dependencies (both in and out dependencies) for a
-     * given reaction handler. This method is meant to be used in order to keep the
-     * dependencies clean when removing a reaction.
+     * This method removes all the dependencies (both in and out dependencies) for a given reaction handler.
+     * This method is meant to be used to keep the dependencies clean when removing a reaction.
      *
      * @param reactionHandler the reaction handler whose dependencies will be deleted.
      */
@@ -66,12 +66,13 @@ public interface DependencyGraph<T> {
      * Returns the set of reactions that may be influenced by the provided reaction.
      *
      * @param reaction the input reaction
-     * @return the set of reactions that may be influenced by the provided reaction
+     * @return the {@link java.util.Set} of reactions that may be influenced by the provided reaction
      */
     ListSet<Actionable<T>> outboundDependencies(Actionable<T> reaction);
 
     /**
-     * @return the set of all reactions with a {@link it.unibo.alchemist.model.Context#GLOBAL} input context
+     * @return the {@link java.util.Set} of all reactions
+     *     with a {@link it.unibo.alchemist.model.Context#GLOBAL} input context
      */
     ListSet<Actionable<T>> globalInputContextReactions();
 }

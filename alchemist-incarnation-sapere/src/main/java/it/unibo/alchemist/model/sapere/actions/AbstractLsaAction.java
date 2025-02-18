@@ -6,25 +6,27 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.actions;
 
 import com.google.common.collect.Sets;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.actions.AbstractAction;
+import it.unibo.alchemist.model.sapere.ILsaAction;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
 import it.unibo.alchemist.model.sapere.dsl.impl.ListTreeNode;
 import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
 import it.unibo.alchemist.model.sapere.dsl.impl.Type;
-import it.unibo.alchemist.model.sapere.dsl.IExpression;
-import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
-import it.unibo.alchemist.model.actions.AbstractAction;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaAction;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaNode;
-import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
 import org.danilopianini.lang.HashString;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +36,8 @@ import java.util.Set;
 /**
  *
  */
-public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule>> implements ILsaAction {
+public abstract class AbstractLsaAction extends AbstractAction<List<ILsaMolecule>> implements ILsaAction {
+    @Serial
     private static final long serialVersionUID = 4158296120349274343L;
     private Map<HashString, ITreeNode<?>> matches;
     private List<ILsaNode> nodes;
@@ -45,7 +48,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      * @param m
      *            the modified molecule
      */
-    public LsaAbstractAction(final ILsaNode node, final List<ILsaMolecule> m) {
+    public AbstractLsaAction(final ILsaNode node, final List<ILsaMolecule> m) {
         super(node);
         for (final ILsaMolecule mol : m) {
             declareDependencyTo(mol);
@@ -54,7 +57,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * Used to add a new match to the matches map.
-     * 
+     *
      * @param key
      *            the variable
      * @param value
@@ -66,7 +69,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * Used to add a new match to the matches map.
-     * 
+     *
      * @param key
      *            the variable
      * @param value
@@ -89,7 +92,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * Used to add a new match to the matches map.
-     * 
+     *
      * @param key
      *            the variable
      * @param value
@@ -101,7 +104,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * Used to add a new match to the matches map.
-     * 
+     *
      * @param key
      *            the variable
      * @param value
@@ -113,7 +116,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * Used to add a new match to the matches map.
-     * 
+     *
      * @param key
      *            the variable
      * @param value
@@ -128,7 +131,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * Used to add a new match to the matches map.
-     * 
+     *
      * @param key
      *            the variable
      * @param value
@@ -140,7 +143,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * Used to add a new match to the matches map.
-     * 
+     *
      * @param key
      *            the variable
      * @param value
@@ -153,12 +156,12 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     /**
      * Given an LSA template, allocates all the variables using the current
      * matches. The allocations may or not produce an instance: it does only if
-     * all the variable within the LSA have a corresponding entry in the matches
+     * all the variables within the LSA have a corresponding entry in the matches
      * map.
-     * 
+     *
      * @param template
      *            the LSA template
-     * @return the template with all the the variables instanced
+     * @return the template with all the variables instanced
      */
     protected List<IExpression> allocateVars(final ILsaMolecule template) {
         return template.allocateVar(getMatches());
@@ -167,24 +170,24 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     /**
      * Same of {@link #allocateVars(ILsaMolecule)}, but also builds an
      * ILsaMolecule.
-     * 
+     *
      * @param template
      *            the LSA template
-     * @return the template with all the the variables instanced
+     * @return the template with all the variables instanced
      */
     protected ILsaMolecule allocateVarsAndBuildLSA(final ILsaMolecule template) {
         return new LsaMolecule(template.allocateVar(getMatches()));
     }
 
     @Override
-    public abstract LsaAbstractAction cloneAction(Node<List<ILsaMolecule>> node, Reaction<List<ILsaMolecule>> reaction);
+    public abstract AbstractLsaAction cloneAction(Node<List<ILsaMolecule>> node, Reaction<List<ILsaMolecule>> reaction);
 
     /**
      * This method allows subclasses to access a field of an LSA (supposed to be
-     * a computable expression or a number) and have back its VALUE as Double.
+     * a computable expression or a number) and have backed its VALUE as Double.
      * Hides some low-level details. If a molecule template is passed, it will
-     * be istanced using the current matches.
-     * 
+     * be instanced using the current matches.
+     *
      * @param mol
      *            the molecule (or molecule template)
      * @param argNumber
@@ -197,10 +200,10 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * This method allows subclasses to access a field of an LSA (supposed to be
-     * a computable expression or a number) and have back its VALUE as Double.
+     * a computable expression or a number) and have backed its VALUE as Double.
      * Hides some low-level details. If a molecule template is passed, it will
      * be instanced using the current matches.
-     * 
+     *
      * @param mol
      *            the molecule (or molecule template)
      * @param argNumber
@@ -213,10 +216,10 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * This method allows subclasses to access a field of an LSA (supposed to be
-     * a computable expression or a number) and have back its VALUE as Double.
+     * a computable expression or a number) and have backed its VALUE as Double.
      * Hides some low-level details. If a molecule template is passed, it will
      * be instanced using the current matches.
-     * 
+     *
      * @param mol
      *            the molecule (or molecule template)
      * @param argNumber
@@ -229,10 +232,10 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * This method allows subclasses to access a field of an LSA (supposed to be
-     * a computable expression or a number) and have back its VALUE as Double.
+     * a computable expression or a number) and have backed its VALUE as Double.
      * Hides some low-level details. If a molecule template is passed, it will
      * be instanced using the current matches.
-     * 
+     *
      * @param mol
      *            the molecule (or molecule template)
      * @param argNumber
@@ -245,10 +248,10 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * This method allows subclasses to access a field of an LSA (supposed to be
-     * a computable expression or a number) and have back its VALUE as Integer.
+     * a computable expression or a number) and have backed its VALUE as Integer.
      * Hides some low-level details. If a molecule template is passed, it will
      * be instanced using the current matches.
-     * 
+     *
      * @param mol
      *            the molecule (or molecule template)
      * @param argNumber
@@ -261,10 +264,10 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * This method allows subclasses to access a field of an LSA (supposed to be
-     * a computable expression or a number) and have back its VALUE as Object.
+     * a computable expression or a number) and have backed its VALUE as Object.
      * Hides some low-level details. If a molecule template is passed, it will
      * be instanced using the current matches.
-     * 
+     *
      * @param mol
      *            the molecule (or molecule template)
      * @param argNumber
@@ -277,10 +280,10 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * This method allows subclasses to access a field of an LSA (supposed to be
-     * a computable expression or a number) and have back its VALUE as String.
+     * a computable expression or a number) and have backed its VALUE as String.
      * Hides some low-level details. If a molecule template is passed, it will
      * be instanced using the current matches.
-     * 
+     *
      * @param mol
      *            the molecule (or molecule template)
      * @param argNumber
@@ -293,10 +296,10 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * This method allows subclasses to access a field of an LSA (supposed to be
-     * a computable expression or a number) and have back its VALUE as String.
+     * a computable expression or a number) and have backed its VALUE as String.
      * Hides some low-level details. If a molecule template is passed, it will
      * be instanced using the current matches.
-     * 
+     *
      * @param mol
      *            the molecule (or molecule template)
      * @param argNumber
@@ -311,7 +314,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      * Accesses an LSA space and retrieves a molecule matching template. It can
      * use the template as-is or instance its variables with the current matches
      * before accessing the space.
-     * 
+     *
      * @param n
      *            the node to access
      * @param template
@@ -324,56 +327,56 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     /**
-     * Given a variable, allows to access to its associated value.
-     * 
-     * @param var
+     * Given a variable, allows accessing to its associated value.
+     *
+     * @param variable
      *            the variable
-     * @return the value associated to the variable
+     * @return the value associated with the variable
      */
-    protected ITreeNode<?> getMatch(final HashString var) {
-        return matches.get(var);
+    protected ITreeNode<?> getMatch(final HashString variable) {
+        return matches.get(variable);
     }
 
     /**
-     * Given a variable, allows to access to its associated value.
-     * 
+     * Given a variable, allows accessing to its associated value.
+     *
      * @param s
      *            the variable
-     * @return the value associated to the variable
+     * @return the value associated with the variable
      */
     protected ITreeNode<?> getMatch(final String s) {
         return getMatch(new HashString(s));
     }
 
     /**
-     * Given a variable, allows to access to its associated value as double.
+     * Given a variable, allows accessing to its associated value as double.
      * Note that this might fail if you try to access a value which is not
      * numeric through this method.
-     * 
+     *
      * @param s
      *            the variable
-     * @return the double value associated to the variable
+     * @return the double value associated with the variable
      */
     protected double getMatchAsDouble(final HashString s) {
         return ((NumTreeNode) getMatch(s)).getData();
     }
 
     /**
-     * Given a variable, allows to access to its associated value as double.
+     * Given a variable, allows accessing to its associated value as double.
      * Note that this might fail if you try to access a value which is not
      * numeric through this method.
-     * 
+     *
      * @param s
      *            the variable
-     * @return the double value associated to the variable
+     * @return the double value associated with the variable
      */
     protected double getMatchAsDouble(final String s) {
         return ((NumTreeNode) getMatch(s)).getData();
     }
 
     /**
-     * Given a variable, allows to access to its associated value as String.
-     * 
+     * Given a variable, allows accessing to its associated value as String.
+     *
      * @param s
      *            the variable
      * @return its String representation
@@ -383,8 +386,8 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     /**
-     * Given a variable, allows to access to its associated value as String.
-     * 
+     * Given a variable, allows accessing to its associated value as String.
+     *
      * @param s
      *            the variable
      * @return its String representation
@@ -416,7 +419,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * Injects an LSA in a node.
-     * 
+     *
      * @param n
      *            the destination
      * @param m
@@ -428,7 +431,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * Injects an ILsaMolecule locally.
-     * 
+     *
      * @param m
      *            the molecule to inject. Must be instanced: no variables, no
      *            comparators, no operations of any kind.
@@ -447,9 +450,9 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     /**
-     * Given an an LSA template, an argument number and some new data, sets the
+     * Given an LSA template, an argument number and some new data, sets the
      * argument in the given position as the passed value.
-     * 
+     *
      * @param template
      *            the original LSA template
      * @param data
@@ -464,9 +467,9 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     /**
-     * Given an an LSA template, an argument number and some new data, sets the
+     * Given an LSA template, an argument number and some new data, sets the
      * argument in the given position as the passed value.
-     * 
+     *
      * @param template
      *            the original LSA template
      * @param data
@@ -485,9 +488,9 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * Sets #D.
-     * 
+     *
      * @param d
-     *            the value associated to #D
+     *            the value associated with #D
      */
     protected void setSyntheticD(final double d) {
         matches.put(LsaMolecule.SYN_D, new NumTreeNode(d));
@@ -495,9 +498,9 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * Sets #ROUTE.
-     * 
+     *
      * @param d
-     *            the value associated to #ROUTE
+     *            the value associated with #ROUTE
      */
     protected void setSyntheticRoute(final double d) {
         matches.put(LsaMolecule.SYN_ROUTE, new NumTreeNode(d));
@@ -505,7 +508,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     /**
      * Sets #NEIGH equal to the passed node list.
-     * 
+     *
      * @param list
      *            the list of nodes to use
      */

@@ -6,26 +6,29 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.deployments;
 
-import org.apache.commons.math3.random.RandomGenerator;
+package it.unibo.alchemist.model.deployments;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Position;
+import org.apache.commons.math3.random.RandomGenerator;
+
 import javax.annotation.Nonnull;
 
 /**
- *
  * @param <P> position type
  */
 public class Rectangle<P extends Position<? extends P>> extends AbstractRandomDeployment<P> {
 
-    private final double x, y, width, height;
+    private final double x;
+    private final double y;
+    private final double width;
+    private final double height;
 
     /**
-     * @param pm
+     * @param environment
      *            the {@link Environment}
-     * @param rand
+     * @param randomGenerator
      *            the {@link RandomGenerator}
      * @param nodes
      *            the number of nodes
@@ -38,11 +41,16 @@ public class Rectangle<P extends Position<? extends P>> extends AbstractRandomDe
      * @param sizeY
      *            y size
      */
-    public Rectangle(final Environment<?, P> pm, final RandomGenerator rand,
-            final int nodes,
-            final double x, final double y,
-            final double sizeX, final double sizeY) {
-        super(pm, rand, nodes);
+    public Rectangle(
+        final Environment<?, P> environment,
+        final RandomGenerator randomGenerator,
+        final int nodes,
+        final double x,
+        final double y,
+        final double sizeX,
+        final double sizeY
+    ) {
+        super(environment, randomGenerator, nodes);
         this.x = x;
         this.y = y;
         this.width = sizeX;

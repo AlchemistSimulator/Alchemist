@@ -6,24 +6,25 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.conditions;
 
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.conditions.AbstractCondition;
+import it.unibo.alchemist.model.sapere.ILsaCondition;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.sapere.dsl.impl.ListTreeNode;
 import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
 import it.unibo.alchemist.model.sapere.dsl.impl.Type;
 import it.unibo.alchemist.model.sapere.dsl.impl.UIDNode;
-import it.unibo.alchemist.model.sapere.dsl.IExpression;
-import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
-import it.unibo.alchemist.model.conditions.AbstractCondition;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaCondition;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaNode;
-import it.unibo.alchemist.model.Node;
-
-import it.unibo.alchemist.model.Reaction;
 import org.danilopianini.lang.HashString;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,17 +36,18 @@ import java.util.Set;
 
 /**
  */
-public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMolecule>> implements ILsaCondition {
+public abstract class AbstractLsaCondition extends AbstractCondition<List<ILsaMolecule>> implements ILsaCondition {
 
+    @Serial
     private static final long serialVersionUID = -5633486241371700913L;
 
     /**
      * @param node
      *            the node hosting this action
      * @param m
-     *            the set of molecules on which this actions act
+     *            the set of molecules on which this action acts
      */
-    public LsaAbstractCondition(final ILsaNode node, final Set<ILsaMolecule> m) {
+    public AbstractLsaCondition(final ILsaNode node, final Set<ILsaMolecule> m) {
         super(node);
         for (final ILsaMolecule mol : m) {
             declareDependencyOn(mol);
@@ -61,7 +63,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
     }
 
     @Override
-    public abstract LsaAbstractCondition cloneCondition(Node<List<ILsaMolecule>> node, Reaction<List<ILsaMolecule>> reaction);
+    public abstract AbstractLsaCondition cloneCondition(Node<List<ILsaMolecule>> node, Reaction<List<ILsaMolecule>> reaction);
 
     /**
      * @param partialInstance
@@ -74,7 +76,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      * @param alreadyRemoved
      *            the list of the molecules already removed from this node.
      * @return the list of molecules in this LSA space that match the
-     *         partialInstance, excluding all those which have been already
+     *         partialInstance excluding all those which have been already
      *         removed.
      */
     protected static List<ILsaMolecule> calculateMatches(
@@ -127,8 +129,8 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
             if (template.matches(matched)) {
                 /*
                  * If a match is found, the matched LSA must be added to the
-                 * list of removed items corresponding to the match, the matches
-                 * map must be created, the map should be added to the possible
+                 * list of removed items corresponding to the match.
+                 * The matches map must be created, the map should be added to the possible
                  * matches list, and the index must not be increased.
                  */
                 final Map<HashString, ITreeNode<?>> matches = new HashMap<>(matched.argsNumber() * 2 + 1, 1f);
@@ -146,8 +148,8 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
 
     /**
      * Updates the matches map by adding the mapping between the variables of
-     * template and the contents of instance.
-     * 
+     * the template and the contents of instance.
+     *
      * @param map
      *            : the map to update
      * @param instance
@@ -191,9 +193,9 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
                      */
                     final Set<ITreeNode<?>> molList = ((ListTreeNode) molarg.getAST().getRoot()).getData();
                     final Iterator<ITreeNode<?>> instList = ((ListTreeNode) instarg.getAST().getRoot()).getData().iterator();
-                    for (final ITreeNode<?> var : molList) {
-                        if (var.getType() == Type.VAR) {
-                            map.put(var.toHashString(), instList.next());
+                    for (final ITreeNode<?> variable : molList) {
+                        if (variable.getType() == Type.VAR) {
+                            map.put(variable.toHashString(), instList.next());
                         }
                     }
                 }
@@ -216,7 +218,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      *            The list of all the valid matches. If more than one valid
      *            match has been found, new entries will be added
      * @param alreadyRemoved
-     *            the map of the lists of molecules already removed from each
+     *            the map of the molecule lists already removed from each
      *            node for the current match
      * @param retrieved
      *            the list of all the maps that lists the molecules removed from
@@ -267,9 +269,9 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
     }
 
     /**
-     * This has to be used to incorporate new matches when the they are
+     * This has to be used to incorporate new matches when they are
      * node-specific and available for multiple nodes.
-     * 
+     *
      * @param otherMatchesMap
      *            Other matches map
      * @param oldMatches
@@ -280,7 +282,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      *            The list of all the valid matches. If more than one valid
      *            match has been found, new entries will be added
      * @param alreadyRemoved
-     *            the map of the lists of molecules already removed from each
+     *            the map of molecule lists already removed from each
      *            node for the current match
      * @param retrieved
      *            the list of all the maps that lists the molecules removed from

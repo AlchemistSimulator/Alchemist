@@ -19,82 +19,92 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package it.unibo.alchemist.boundary.swingui.tape.impl;
 
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.io.Serial;
+import java.util.Objects;
 
 /**
- * 
- * A vertical layout manager similar to java.awt.FlowLayout. Like FlowLayout
+ * A vertical layout manager similar to java.awt.FlowLayout.
+ * Like FlowLayout
  * components do not expand to fill available space except when the horizontal
  * getAlignment() is <code>BOTH</code> in which case components are stretched
- * horizontally. Unlike FlowLayout, components will not wrap to form another
- * column if there isn't enough space vertically. VerticalLayout can optionally
+ * horizontally.
+ * Unlike FlowLayout, components will not wrap to form another
+ * column if there isn't enough space vertically.
+ * VerticalLayout can optionally
  * getAnchor() components to the top or bottom of the display area or center
  * them between the top and bottom.
- * 
+ *
+ * <p>
  * Revision date 12th July 2001
- * 
- *         Homepage:www.kagi.com/equitysoft - Based on 'FlexLayout' in Java
- *         class libraries Vol 2 Chan/Lee Addison-Wesley 1998
+ *
+ * <p>
+ *         Homepage: www.kagi.com/equitysoft - Based on 'FlexLayout' in Java
+ *         class libraries Volume 2 Chan/Lee Addison-Wesley 1998
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 @SuppressWarnings("CPD-START")
-public final class HorizontalFlowLayout extends AFlowLayout {
+public final class HorizontalFlowLayout extends AbstractFlowLayout {
 
     /**
-     * 
+     *
      */
+    @Serial
     private static final long serialVersionUID = 5625120689939529161L;
-    private static final int DEFAULTVGAP = 5;
+    private static final int DEFAULT_V_GAP = 5;
 
     /**
-     * Constructs an instance of VerticalLayout with a vertical vgap of 5
+     * Constructs an instance of VerticalLayout with a vertical vGap of 5
      * pixels, horizontal centering and anchored to the top of the display area.
-     * 
-     * @param ordered true if should be ordered
+     *
+     * @param ordered true if you should be ordered
      */
     //CHECKSTYLE:OFF
     public HorizontalFlowLayout(final boolean ordered) {
-        this(DEFAULTVGAP, CENTER, TOP, ordered);
+        this(DEFAULT_V_GAP, CENTER, TOP, ordered);
     }
     //CHECKSTYLE:ON
 
     /**
      * Constructs a VerticalLayout instance with horizontal centering, anchored
-     * to the top with the specified vgap.
-     * 
-     * @param hgap An int value indicating the vertical seperation of the
+     * to the top with the specified vGap.
+     *
+     * @param hGap An int value indicating the vertical separation of the
      *            components
      * @param ordered true if the components must be ordered
      */
-    public HorizontalFlowLayout(final int hgap, final boolean ordered) {
-        this(hgap, CENTER, TOP, ordered);
+    public HorizontalFlowLayout(final int hGap, final boolean ordered) {
+        this(hGap, CENTER, TOP, ordered);
     }
 
     /**
      * Constructs a VerticalLayout instance anchored to the top with the
-     * specified hgap and horizontal alignment.
-     * 
-     * @param hgap An int value indicating the vertical seperation of the
+     * specified hGap and horizontal alignment.
+     *
+     * @param hGap An int value indicating the vertical separation of the
      *            components
      * @param align An int value which is one of
      *            <code>RIGHT, LEFT, CENTER, BOTH</code> for the horizontal
      *            getAlignment().
      * @param ordered true if the components must be ordered
      */
-    public HorizontalFlowLayout(final int hgap, final int align, final boolean ordered) {
-        this(hgap, align, RIGHT, ordered);
+    public HorizontalFlowLayout(final int hGap, final int align, final boolean ordered) {
+        this(hGap, align, RIGHT, ordered);
     }
 
     /**
-     * Constructs a VerticalLayout instance with the specified vgap, horizontal
+     * Constructs a VerticalLayout instance with the specified vGap, horizontal
      * getAlignment() and anchoring.
-     * 
-     * @param hgap An int value indicating the vertical seperation of the
+     *
+     * @param hGap An int value indicating the vertical separation of the
      *            components
      * @param align An int value which is one of
      *            <code>RIGHT, LEFT, CENTER, BOTH</code> for the horizontal
@@ -105,8 +115,8 @@ public final class HorizontalFlowLayout extends AFlowLayout {
      *            minimum necessary.
      * @param ordered true if the components must be ordered
      */
-    public HorizontalFlowLayout(final int hgap, final int align, final int anchor, final boolean ordered) {
-        super(hgap, align, anchor, ordered);
+    public HorizontalFlowLayout(final int hGap, final int align, final int anchor, final boolean ordered) {
+        super(hGap, align, anchor, ordered);
     }
 
     @Override
@@ -119,12 +129,12 @@ public final class HorizontalFlowLayout extends AFlowLayout {
             int x = 0;
             // work out the total size
             for (int i = 0; i < n; i++) {
-                final Component c = isOrdered() ? getComponentsList().get(i) : parent.getComponent(i); // parent.getComponent(i);
+                final Component c = isOrdered() ? Objects.requireNonNull(getComponentsList()).get(i) : parent.getComponent(i);
                 final Dimension d = c.getPreferredSize();
                 // y += d.height + getGap();
                 x += d.width + getGap();
             }
-            // y -= getGap(); // otherwise there's a vgap too many
+            // y -= getGap(); // otherwise there's a vGap too many
             x -= getGap();
             // Work out the getAnchor() paint
             if (getAnchor() == LEFT) {
@@ -139,7 +149,7 @@ public final class HorizontalFlowLayout extends AFlowLayout {
             }
             // do layout
             for (int i = 0; i < n; i++) {
-                final Component c = isOrdered() ? getComponentsList().get(i) : parent.getComponent(i); // parent.getComponent(i);
+                final Component c = isOrdered() ? Objects.requireNonNull(getComponentsList()).get(i) : parent.getComponent(i);
                 final Dimension d = c.getPreferredSize();
                 // int x = insets.left;
                 int y = insets.top;

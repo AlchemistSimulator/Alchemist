@@ -9,26 +9,28 @@
 
 package it.unibo.alchemist.model.biochemistry.actions;
 
-import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
-import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
+import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
+import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 import org.apache.commons.math3.random.RandomGenerator;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Objects;
 
 /**
  * Represent the action of removing a junction between the current node and a neighbor.
- * This action only remove the junction reference inside this node, the neighbor totally ignore 
+ * This action only removes the junction reference inside this node; the neighbor totally ignores
  * that a junction has been removed.
  * This is a part of the junction removal process.
  * See {@link RemoveJunctionInNeighbor} for the other part of the process
  */
 public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> { // TODO try local
 
+    @Serial
     private static final long serialVersionUID = 3565077605882164314L;
 
     private final Junction jun;
@@ -36,7 +38,6 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
     private final CellProperty<?> cell;
 
     /**
-     * 
      * @param junction the junction
      * @param node the node where the action is performed
      * @param environment the environment
@@ -62,21 +63,22 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
     }
 
     @Override
-    public RemoveJunctionInCell cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        return new RemoveJunctionInCell(environment, node, jun, getRandomGenerator());
+    public RemoveJunctionInCell cloneAction(final Node<Double> newNode, final Reaction<Double> newReaction) {
+        return new RemoveJunctionInCell(environment, newNode, jun, getRandomGenerator());
     }
 
     /**
-     * If no target node is given DO NOTHING. The junction can not be removed.
+     * If no target node is given, DO NOTHING. The junction cannot be removed.
      */
     @Override
     public void execute() { }
 
     /**
-     * Removes the junction that links the node where this action is executed and the target node. 
+     * Removes the junction that links the node where this action is executed and the target node.
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public void execute(final Node<Double> targetNode) { 
+    public void execute(final Node<Double> targetNode) {
         if (targetNode.asPropertyOrNull(CellProperty.class) != null) {
             cell.removeJunction(jun, targetNode);
         } else {
@@ -86,7 +88,7 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
         }
     }
 
-    @Override 
+    @Override
     public String toString() {
         return "remove junction " + jun.toString() + " in cell";
     }

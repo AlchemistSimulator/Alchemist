@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.movestrategies;
 
 import it.unibo.alchemist.model.Node;
@@ -37,7 +38,7 @@ public interface SpeedSelectionStrategy<T, P extends Position<? extends P>> exte
      * @param reaction the {@link Reaction} where strategy is being cloned
      *
      * @return A copy of the strategy if the strategy is stateful, and this object otherwise.
-     * The default implementation assumes a stateless strategy.
+     *     The default implementation assumes a stateless strategy.
      */
     default SpeedSelectionStrategy<T, P> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
         return this;

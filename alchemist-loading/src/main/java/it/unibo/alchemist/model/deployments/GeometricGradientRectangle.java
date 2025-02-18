@@ -6,14 +6,14 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.deployments;
 
-import org.apache.commons.math3.distribution.ExponentialDistribution;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.util.FastMath;
+package it.unibo.alchemist.model.deployments;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Position;
+import org.apache.commons.math3.distribution.ExponentialDistribution;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.FastMath;
 
 import javax.annotation.Nonnull;
 
@@ -25,14 +25,17 @@ import javax.annotation.Nonnull;
 public final class GeometricGradientRectangle<P extends Position<? extends P>> extends Rectangle<P> {
 
     private final ExponentialDistribution exp;
-    private final double bound, size;
+    private final double bound;
+    private final double size;
     private final int steps;
-    private final boolean continuous, horizontal, increasing;
+    private final boolean continuous;
+    private final boolean horizontal;
+    private final boolean increasing;
 
     /**
      * Use this constructor to displace multiple groups of devices with
      * exponentially varied density along an axis.
-     * 
+     *
      * @param environment
      *            {@link Environment}
      * @param randomGenerator
@@ -43,9 +46,9 @@ public final class GeometricGradientRectangle<P extends Position<? extends P>> e
      *            start x position
      * @param y
      *            start y position
-     * @param sizex
+     * @param sizeX
      *            width
-     * @param sizey
+     * @param sizeY
      *            height
      * @param lambda
      *            the lambda parameter of the exponential. The actual lambda is
@@ -66,20 +69,20 @@ public final class GeometricGradientRectangle<P extends Position<? extends P>> e
         final int nodes,
         final double x,
         final double y,
-        final double sizex,
-        final double sizey,
+        final double sizeX,
+        final double sizeY,
         final double lambda,
         final int steps,
         final boolean horizontal,
         final boolean increasing
     ) {
-        this(randomGenerator, environment, nodes, x, y, sizex, sizey, lambda, false, steps, horizontal, increasing);
+        this(randomGenerator, environment, nodes, x, y, sizeX, sizeY, lambda, false, steps, horizontal, increasing);
     }
 
     /**
      * Use this constructor to displace devices with an exponentially varied
      * density along an axis.
-     * 
+     *
      * @param environment
      *            {@link Environment}
      * @param randomGenerator
@@ -90,9 +93,9 @@ public final class GeometricGradientRectangle<P extends Position<? extends P>> e
      *            start x position
      * @param y
      *            start y position
-     * @param sizex
+     * @param sizeX
      *            width
-     * @param sizey
+     * @param sizeY
      *            height
      * @param lambda
      *            the lambda parameter of the exponential. The actual lambda is
@@ -109,13 +112,13 @@ public final class GeometricGradientRectangle<P extends Position<? extends P>> e
         final int nodes,
         final double x,
         final double y,
-        final double sizex,
-        final double sizey,
+        final double sizeX,
+        final double sizeY,
         final double lambda,
         final boolean horizontal,
         final boolean increasing
     ) {
-        this(randomGenerator, environment, nodes, x, y, sizex, sizey, lambda, true, Integer.MIN_VALUE, horizontal, increasing);
+        this(randomGenerator, environment, nodes, x, y, sizeX, sizeY, lambda, true, Integer.MIN_VALUE, horizontal, increasing);
     }
 
     private GeometricGradientRectangle(

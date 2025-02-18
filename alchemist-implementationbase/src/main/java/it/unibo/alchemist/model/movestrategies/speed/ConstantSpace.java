@@ -6,13 +6,16 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.movestrategies.speed;
 
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 
+import java.io.Serial;
+
 /**
- * This strategy makes the node move every time of a fixed amount of space.
+ * This strategy makes the node move every time of a fixed amount in space.
  *
  * @param <T> Concentration type
  * @param <P> Position type
@@ -20,6 +23,7 @@ import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
  */
 public final class ConstantSpace<T, P extends Position<P>> implements SpeedSelectionStrategy<T, P> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final double space;
 

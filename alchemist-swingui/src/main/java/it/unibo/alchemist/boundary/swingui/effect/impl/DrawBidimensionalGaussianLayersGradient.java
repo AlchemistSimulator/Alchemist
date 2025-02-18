@@ -11,13 +11,19 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 
 import it.unibo.alchemist.model.layers.BidimensionalGaussianLayer;
 
+import java.io.Serial;
+
 /**
  * Draw a gradient in the background of the gui for
  * {@link  BidimensionalGaussianLayer}s
  * values. It ignores any other layer.
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
-public class DrawBidimensionalGaussianLayersGradient extends DrawLayersGradient {
+@Deprecated
+public class DrawBidimensionalGaussianLayersGradient extends AbstractDrawLayersGradient {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

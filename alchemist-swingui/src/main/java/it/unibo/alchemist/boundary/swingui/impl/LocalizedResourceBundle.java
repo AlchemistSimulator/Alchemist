@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.impl;
 
 import java.util.Locale;
@@ -32,7 +33,7 @@ public final class LocalizedResourceBundle {
     /**
      * @param resourceBundle
      *            the resource bundle to load (fully qualified name)
-     * 
+     *
      * @return a ResourceBundle using the current {@link Locale} (if available),
      *         falling back to {@link Locale#US} in case no localized bundle is
      *         available.
@@ -40,14 +41,14 @@ public final class LocalizedResourceBundle {
     public static ResourceBundle get(final String resourceBundle) {
         try {
             return ResourceBundle.getBundle(resourceBundle);
-        } catch (MissingResourceException e) {
+        } catch (final MissingResourceException e) {
             return ResourceBundle.getBundle(resourceBundle, Locale.US);
         }
     }
 
     /**
      * Looks up on the property files and returns the correct String.
-     * 
+     *
      * @param key
      *            the key
      * @return the String

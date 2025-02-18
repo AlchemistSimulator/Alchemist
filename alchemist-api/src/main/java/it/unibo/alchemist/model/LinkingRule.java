@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model;
 
 import java.io.Serializable;
@@ -13,7 +14,7 @@ import java.io.Serializable;
 /**
  * An interface that represent an auto-linking logic for nodes within an
  * environment.
- * 
+ *
  * @param <T>
  *            The type which describes the concentration of a molecule
  * @param <P>
@@ -23,7 +24,7 @@ public interface LinkingRule<T, P extends Position<? extends P>> extends Seriali
 
     /**
      * Produces a new neighborhood for specified node considering its position.
-     * 
+     *
      * @param center
      *            the node to recompute
      * @param environment
@@ -38,10 +39,11 @@ public interface LinkingRule<T, P extends Position<? extends P>> extends Seriali
      * closest 10 nodes must be evaluated multiple times to get to the correct
      * result (this is because a change in one neighbor may require a
      * disconnection from another node to maintain exactly 10 connections).
-     * 
+     *
+     * <p>
      * Most rules do not need such machinery (e.g., connecting to nodes within
      * some statically defined range).
-     * 
+     *
      * @return true if this rule does not need to be recursively re-applied to
      *         neighbors to ensure global consistency.
      */

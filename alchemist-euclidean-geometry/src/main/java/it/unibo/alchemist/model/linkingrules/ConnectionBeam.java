@@ -6,8 +6,8 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.linkingrules;
 
+package it.unibo.alchemist.model.linkingrules;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
@@ -22,6 +22,7 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,11 +39,12 @@ import static org.apache.commons.math3.util.FastMath.sin;
  * least one path entirely inside the beam that connects the two nodes. This
  * rule is ideal for environments with obstacles, where the user wants some
  * tolerance in connection breaking.
- * 
+ *
  * @param <T> concentration type
  */
 public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2DPosition> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final int COORDS = 6;
     private final double beamWidth;
@@ -69,7 +71,7 @@ public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2
             }
             oenv = (Euclidean2DEnvironmentWithObstacles<?, T>) environment;
             obstacles.reset();
-            oenv.getObstacles().forEach((obs) -> {
+            oenv.getObstacles().forEach(obs -> {
                 /*
                  * Doubles are prone to approximation errors. Use nextAfter to get rid of them
                  */
@@ -84,7 +86,7 @@ public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2
         if (!normal.isEmpty()) {
             final Euclidean2DPosition cp = environment.getPosition(center);
             final List<Node<T>> neighs = normal.getNeighbors().stream()
-                .filter((neigh) -> {
+                .filter(neigh -> {
                     final Euclidean2DPosition np = environment.getPosition(neigh);
                     return !oenv.intersectsObstacle(cp, np) || projectedBeamOvercomesObstacle(cp, np);
                 })
@@ -138,18 +140,18 @@ public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2
         final double[] coords = new double[COORDS];
         while (!pi.isDone()) {
             switch (pi.currentSegment(coords)) {
-            case PathIterator.SEG_MOVETO :
+            case PathIterator.SEG_MOVETO:
                 curpath = new Path2D.Double();
                 curpath.moveTo(coords[0], coords[1]);
                 break;
-            case PathIterator.SEG_LINETO :
+            case PathIterator.SEG_LINETO:
                 curpath.lineTo(coords[0], coords[1]);
                 break;
-            case PathIterator.SEG_CLOSE :
+            case PathIterator.SEG_CLOSE:
                 curpath.closePath();
                 subareas.add(curpath);
                 break;
-            default : throw new IllegalArgumentException();
+            default: throw new IllegalArgumentException();
             }
             pi.next();
         }
@@ -164,6 +166,7 @@ public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2
         return false;
     }
 
+    @Serial
     private void readObject(final ObjectInputStream o) throws ClassNotFoundException, IOException {
         o.defaultReadObject();
         oenv = null;

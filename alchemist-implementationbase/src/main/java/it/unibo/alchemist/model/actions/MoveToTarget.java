@@ -6,17 +6,20 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.actions;
 
 import com.google.common.collect.ImmutableList;
-import it.unibo.alchemist.model.movestrategies.speed.ConstantSpeed;
-import it.unibo.alchemist.model.movestrategies.target.FollowTarget;
-import it.unibo.alchemist.model.routes.PolygonalChain;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position2D;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.movestrategies.speed.ConstantSpeed;
+import it.unibo.alchemist.model.movestrategies.target.FollowTarget;
+import it.unibo.alchemist.model.routes.PolygonalChain;
+
+import java.io.Serial;
 
 import static org.apache.commons.math3.util.FastMath.atan2;
 import static org.apache.commons.math3.util.FastMath.cos;
@@ -32,6 +35,7 @@ import static org.apache.commons.math3.util.FastMath.sin;
  */
 public final class MoveToTarget<T, P extends Position2D<P>> extends AbstractConfigurableMoveNode<T, P> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final Molecule trackMolecule;
     private final double speed;

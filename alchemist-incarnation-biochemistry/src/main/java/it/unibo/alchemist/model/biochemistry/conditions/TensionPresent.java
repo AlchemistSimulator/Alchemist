@@ -6,17 +6,19 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.conditions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Context;
-import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
-import it.unibo.alchemist.model.conditions.AbstractCondition;
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty;
+import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells;
+import it.unibo.alchemist.model.conditions.AbstractCondition;
 
+import java.io.Serial;
 import java.util.stream.Stream;
 
 /**
@@ -25,11 +27,11 @@ import java.util.stream.Stream;
 @SuppressFBWarnings("FE_FLOATING_POINT")
 public final class TensionPresent extends AbstractCondition<Double> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final EnvironmentSupportingDeformableCells<?> environment;
 
     /**
-     *
      * @param node the node
      * @param environment the environment
      */
@@ -43,8 +45,7 @@ public final class TensionPresent extends AbstractCondition<Double> {
         if (node.asPropertyOrNull(CircularDeformableCellProperty.class) != null) {
             return new TensionPresent(environment, node);
         }
-        throw new IllegalArgumentException("Node must have a "
-                + CircularDeformableCellProperty.class.getSimpleName());
+        throw new IllegalArgumentException("Node must have a " + CircularDeformableCellProperty.class.getSimpleName());
     }
 
     @Override
@@ -96,7 +97,7 @@ public final class TensionPresent extends AbstractCondition<Double> {
                         ? Stream.of(n)
                         : Stream.empty())
                 .anyMatch(n -> {
-                    final double maxDN =  thisNode.asProperty(CircularDeformableCellProperty.class)
+                    final double maxDN = thisNode.asProperty(CircularDeformableCellProperty.class)
                             .getMaximumRadius();
                     if (n.asPropertyOrNull(CircularDeformableCellProperty.class) != null) {
                         return environment.getDistanceBetweenNodes(n, thisNode)

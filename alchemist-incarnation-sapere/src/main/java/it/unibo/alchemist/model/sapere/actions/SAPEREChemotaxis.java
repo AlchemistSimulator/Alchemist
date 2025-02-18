@@ -6,13 +6,15 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.actions;
 
 import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
-import it.unibo.alchemist.model.Position;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -21,8 +23,9 @@ import java.util.List;
  *
  * @param <P> position type
  */
-public final class SAPEREChemotaxis<P extends Position<P>> extends SAPERENeighborAgent<P> {
+public final class SAPEREChemotaxis<P extends Position<P>> extends AbstractSAPERENeighborAgent<P> {
 
+    @Serial
     private static final long serialVersionUID = -4845100315774422690L;
     private final int idPosition;
     private final ILsaMolecule response;
@@ -30,7 +33,7 @@ public final class SAPEREChemotaxis<P extends Position<P>> extends SAPERENeighbo
 
     /**
      * Builds a new SAPEREChemotaxis.
-     * 
+     *
      * @param environment
      *            the environment
      * @param node

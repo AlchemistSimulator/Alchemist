@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.ui.api;
 
 import it.unibo.alchemist.model.Position2D;
@@ -15,9 +16,10 @@ import java.awt.geom.Dimension2D;
 
 /**
  * A Wormhole (in this context) is an entity that "connects" two worlds: the
- * "environment" and the "view". Above all it provides services to convert
+ * "environment" and the "view".
+ * Above all, it provides services to convert
  * coordinates from the "environment-space" to the "view-space".
- * <code>IWormhole2D</code> is the type of a wormhole whose both environment and
+ * <code>Wormhole2D</code> is the type a wormhole whose environment and
  * view are bi-dimensional spaces. <br>
  * <br>
  * <strong>Terminology:</strong> <br>
@@ -30,13 +32,14 @@ import java.awt.geom.Dimension2D;
  * environment-space.<br>
  * - "View" before a point's name =&gt; it refers to a point into the view-space.<br>
  * - "Position" is the point of the view-space every transformation applied to
- * the environment refers to: e.g. if I want to move the environment, I have to
+ * the environment refers to: e.g., if I want to move the environment, I have to
  * change the position; it is also the point the environment rotates around.<br>
  * - "EnvOffset" is the vector from (0; 0) into env-space to the left-bottom
- * corner of the part of the environment we want to render. E.g. if I am
- * representing a map with Earth-coordinates (16; 48), the intersection between
+ * corner of the part of the environment we want to render.
+ * E.g., if I am
+ * representing a map with Earth coordinates (16; 48), the intersection between
  * the prime meridian and the equator is (0; 0), so I have to set the envOffset
- * to (16; 48) in order to see the "beginning" of the map on the left-bottom
+ * to (16; 48) to see the "beginning" of the map on the left-bottom
  * corner of the view.<br>
  *
  * @param <P> position type
@@ -45,7 +48,7 @@ public interface Wormhole2D<P extends Position2D<? extends P>> {
 
     /**
      * Wormhole mode.
-     * 
+     *
      */
     enum Mode {
         /**
@@ -54,11 +57,11 @@ public interface Wormhole2D<P extends Position2D<? extends P>> {
         ISOMETRIC,
 
         /**
-         * Stretch to adapt to view.
+         * Stretch to adapt to the view.
          */
         ADAPT_TO_VIEW,
         /**
-         * Stretch is defined by user.
+         * User-defined Stretch.
          */
         SETTABLE,
         /**
@@ -69,7 +72,7 @@ public interface Wormhole2D<P extends Position2D<? extends P>> {
 
     /**
      * Converts a point from the view-space to the env-space.
-     * 
+     *
      * @param viewPoint
      *            is the {@link Point} object whose coordinates are from
      *            view-space
@@ -79,14 +82,14 @@ public interface Wormhole2D<P extends Position2D<? extends P>> {
 
     /**
      * Gets the rendering mode.
-     * 
+     *
      * @return a {@link Wormhole2D.Mode} value
      */
     Mode getMode();
 
     /**
      * Converts a point from the env-space to the view-space.
-     * 
+     *
      * @param envPoint
      *            is the {@link Position2D} object whose coordinates are from
      *            env-space
@@ -96,7 +99,7 @@ public interface Wormhole2D<P extends Position2D<? extends P>> {
 
     /**
      * Gets the Position.
-     * 
+     *
      * @return a {@link Point} object representing the Position
      */
     Point getViewPosition();
@@ -111,15 +114,15 @@ public interface Wormhole2D<P extends Position2D<? extends P>> {
 
     /**
      * Gets the zoom factor.
-     * 
+     *
      * @return a <code>double</code> representing the zoom factor
      */
     double getZoom();
 
     /**
-     * Check if a point of the view-space is "visible", i.e. it is inside the
+     * Check if a point of the view-space is "visible", i.e., it is inside the
      * view.
-     * 
+     *
      * @param viewPoint
      *            is the {@link Point} to check
      * @return <code>true</code> if it is visible, <code>false</code> instead
@@ -128,7 +131,7 @@ public interface Wormhole2D<P extends Position2D<? extends P>> {
 
     /**
      * Rotates around a point into the view-space.
-     * 
+     *
      * @param p
      *            is the {@link Point}
      * @param a
@@ -139,7 +142,7 @@ public interface Wormhole2D<P extends Position2D<? extends P>> {
     /**
      * Sets the position to the view-point corresponding to
      * <code>envPoint</code>.
-     * 
+     *
      * @param envPoint
      *            is the {@link Position2D} object representing the new position
      *            with env-coordinates
@@ -147,14 +150,14 @@ public interface Wormhole2D<P extends Position2D<? extends P>> {
     void setEnvPosition(P envPoint);
 
     /**
-     * Automatically sets the zoom rate in order to make the environment
+     * Automatically sets the zoom rate to make the environment
      * entirely visible on the view.
      */
     void optimalZoom();
 
     /**
      * Rotates the environment around the Position.
-     * 
+     *
      * @param rad
      *            is the <code>double</code> value representing the angle
      *            expressed with radians
@@ -163,7 +166,7 @@ public interface Wormhole2D<P extends Position2D<? extends P>> {
 
     /**
      * Sets the Position to <code>viewPoint</code>.
-     * 
+     *
      * @param viewPoint
      *            is the {@link Point} object representing the new position
      *            with view-coordinates
@@ -172,7 +175,7 @@ public interface Wormhole2D<P extends Position2D<? extends P>> {
 
     /**
      * Changes the zoom factor.
-     * 
+     *
      * @param value
      *            is the <code>double</code> value representing the new zoom
      */
@@ -180,7 +183,7 @@ public interface Wormhole2D<P extends Position2D<? extends P>> {
 
     /**
      * Zooms on a point into the view-space.
-     * 
+     *
      * @param p
      *            is the {@link Point}
      * @param z
@@ -189,7 +192,7 @@ public interface Wormhole2D<P extends Position2D<? extends P>> {
     void zoomOnPoint(Point p, double z);
 
     /**
-     * Points the center of the view on the center of the environment.
+     * Points the center of the view in the center of the environment.
      */
     void center();
 }

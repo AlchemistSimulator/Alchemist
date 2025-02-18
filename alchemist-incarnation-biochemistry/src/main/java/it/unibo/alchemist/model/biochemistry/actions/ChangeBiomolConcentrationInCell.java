@@ -9,22 +9,24 @@
 
 package it.unibo.alchemist.model.biochemistry.actions;
 
-import it.unibo.alchemist.model.actions.AbstractActionOnSingleMolecule;
-import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.actions.AbstractActionOnSingleMolecule;
+import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
+
+import java.io.Serial;
 
 /**
  *
  */
 public final class ChangeBiomolConcentrationInCell extends AbstractActionOnSingleMolecule<Double> {
 
+    @Serial
     private static final long serialVersionUID = 5569613886926615012L;
     private final double deltaC;
 
     /**
-     * 
      * @param biomolecule the molecule
      * @param deltaConcentration the change in concentration
      * @param node the node
@@ -55,14 +57,14 @@ public final class ChangeBiomolConcentrationInCell extends AbstractActionOnSingl
 
     @Override
     public Context getContext() {
-        return Context.LOCAL; 
+        return Context.LOCAL;
     }
 
     @Override
     public String toString() {
          if (deltaC >= 0) {
              return getMolecule().getName() + "+" + deltaC;
-         }  else {
+         } else {
              return getMolecule().getName() + deltaC;
          }
     }

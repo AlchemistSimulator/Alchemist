@@ -9,18 +9,19 @@
 
 package it.unibo.alchemist.model.sapere.nodes;
 
-import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
-import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
-import it.unibo.alchemist.model.sapere.dsl.IExpression;
-import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.nodes.GenericNode;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
+import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
+import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,9 +32,12 @@ import java.util.Map;
  * This class realizes a node with LSA concentration.
  */
 public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements ILsaNode {
+
+    @Serial
     private static final long serialVersionUID = -2167025208984968645L;
-    private final List<ILsaMolecule> instances = new ArrayList<>();
     private static final ILsaMolecule ZEROMOL = new LsaMolecule("0");
+
+    private final List<ILsaMolecule> instances = new ArrayList<>();
 
     /**
      * @param environment
@@ -45,8 +49,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
 
     @Override
     public boolean contains(@Nonnull final Molecule molecule) {
-        if (molecule instanceof ILsaMolecule) {
-            final ILsaMolecule toMatch = (ILsaMolecule) molecule;
+        if (molecule instanceof final ILsaMolecule toMatch) {
             return instances.stream().anyMatch(mol -> mol.matches(toMatch));
         }
         return false;
@@ -65,10 +68,9 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
 
     @Override
     public List<ILsaMolecule> getConcentration(@Nonnull final Molecule m) {
-        if (!(m instanceof ILsaMolecule)) {
+        if (!(m instanceof final ILsaMolecule mol)) {
             throw new IllegalArgumentException(m + " is not a compatible molecule type");
         }
-        final ILsaMolecule mol = (ILsaMolecule) m;
         final ArrayList<ILsaMolecule> listMol = new ArrayList<>();
         for (final ILsaMolecule instance : instances) {
             if (mol.matches(instance)) {
@@ -128,8 +130,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
 
     @Override
     public void setConcentration(@Nonnull final Molecule molecule, final List<ILsaMolecule> c) {
-        if (molecule instanceof ILsaMolecule) {
-            final ILsaMolecule il = (ILsaMolecule) molecule;
+        if (molecule instanceof final ILsaMolecule il) {
             setConcentration(il);
         } else {
             throw new IllegalArgumentException(molecule + " is not a compatible molecule type");

@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps;
 
 import it.unibo.alchemist.model.BenchmarkableEnvironment;
@@ -24,11 +25,11 @@ public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends
         extends BenchmarkableEnvironment<T, GeoPosition> {
 
     /**
-     * This method relies on the map data, and computes a route towards some
+     * This method relies on the map data and computes a route towards some
      * absolute coordinate solving a TSP problem. It's up to the specific
      * {@link it.unibo.alchemist.model.Action} calling this method to effectively move nodes along the
-     * path. It uses the fastest path as metric.
-     * 
+     * path. It uses the fastest path as a metric.
+     *
      * @param node
      *            The start node
      * @param node2
@@ -39,11 +40,11 @@ public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends
     Route<GeoPosition> computeRoute(Node<T> node, Node<T> node2);
 
     /**
-     * This method relies on the map data, and computes a route towards some
+     * This method relies on the map data and computes a route towards some
      * absolute coordinate solving a TSP problem. It's up to the specific
      * {@link it.unibo.alchemist.model.Action} calling this method to effectively move nodes along the
      * path.
-     * 
+     *
      * @param node
      *            The {@link Node} to move
      * @param coord
@@ -54,11 +55,11 @@ public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends
     Route<GeoPosition> computeRoute(Node<T> node, GeoPosition coord);
 
     /**
-     * This method relies on the map data, and computes a route towards some
+     * This method relies on the map data and computes a route towards some
      * absolute coordinate solving a TSP problem. It's up to the specific
      * {@link it.unibo.alchemist.model.Action} calling this method to effectively move nodes along the
      * path.
-     * 
+     *
      * @param node
      *            The {@link Node} to move
      * @param coord
@@ -71,14 +72,14 @@ public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends
     Route<GeoPosition> computeRoute(Node<T> node, GeoPosition coord, O options);
 
     /**
-     * This method relies on the map data, and computes a route towards some
+     * This method relies on the map data and computes a route towards some
      * absolute coordinate solving a TSP problem. It's up to the specific
      * {@link it.unibo.alchemist.model.Action} calling this method to effectively move nodes along the
      * path.
-     * 
+     *
      * @param p1
      *            start position
-     * 
+     *
      * @param p2
      *            end position The absolute coordinate where this node wants to
      *            move to
@@ -88,20 +89,20 @@ public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends
     Route<GeoPosition> computeRoute(GeoPosition p1, GeoPosition p2);
 
     /**
-     * This method relies on the map data, and computes a route towards some
+     * This method relies on the map data and computes a route towards some
      * absolute coordinate solving a TSP problem. It's up to the specific
      * {@link it.unibo.alchemist.model.Action} calling this method to effectively move nodes along the
      * path.
-     * 
+     *
      * @param from
      *            start position
-     * 
+     *
      * @param to
      *            end position The absolute coordinate where this node wants to
      *            move to
      * @param options
      *            options to use. Different vehicles may use different paths,
-     *            e.g. pedestrians can't go along a highway, but can walk the
+     *            e.g., pedestrians can't go along a highway but can walk the
      *            parks
      * @return A {@link Route} object describing the path the node should
      *         follow

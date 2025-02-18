@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.reactions;
 
 import gnu.trove.impl.Constants;
@@ -14,32 +15,33 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntDoubleHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
-import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
-import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
-import it.unibo.alchemist.model.sapere.dsl.impl.Type;
-import it.unibo.alchemist.model.sapere.dsl.IExpression;
-import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
-import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaNode;
-import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.reactions.AbstractReaction;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
+import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.Type;
+import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.danilopianini.lang.HashString;
 import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.ListSet;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,6 +58,7 @@ import java.util.Objects;
 public final class SAPEREGradient<P extends Position<P>> extends AbstractReaction<List<ILsaMolecule>> {
 
     private static final List<ILsaMolecule> EMPTY_LIST = Collections.unmodifiableList(new ArrayList<>(0));
+    @Serial
     private static final long serialVersionUID = 8362443887879500016L;
     private static final IExpression ZERO_NODE = new Expression(new NumTreeNode(0d));
 
@@ -76,13 +79,16 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             -1,
             Double.NaN
     );
-    private final ILsaMolecule source, gradient, gradientExpr, context;
+    private final ILsaMolecule source;
+    private final ILsaMolecule gradient;
+    private final ILsaMolecule gradientExpr;
+    private final ILsaMolecule context;
     private List<? extends ILsaMolecule> sourceCache;
     private final double threshold;
 
     /**
      * Builds a new SAPERE Gradient.
-     * 
+     *
      * @param environment
      *            the current environment
      * @param node
@@ -91,7 +97,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      *            a template ILsaMolecule representing the source
      * @param gradientTemplate
      *            a template ILsaMolecule representing the gradient. ALL the
-     *            variables MUST be the same of sourceTemplate: no un-instanced
+     *            variables MUST be the same of sourceTemplate: no non-instanced
      *            variables are admitted when inserting tuples into nodes
      * @param valuePosition
      *            the point at which the computation of the new values should be
@@ -100,13 +106,13 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      *            values before this one, instead, will be used to distinct
      *            different gradients
      * @param expression
-     *            the expression to use in order to calculate the new gradient
+     *            the expression to use to calculate the new gradient
      *            value. #T and #D are admitted, plus every variable present in
      *            the gradient before valuePosition, and every variable matched
      *            by the contextTemplate
      * @param contextTemplate
      *            a template ILsaMolecule. It can be used to match some contents
-     *            of the local node in order to have local information to use
+     *            of the local node to have local information to use
      *            in the gradient value computation
      * @param gradThreshold
      *            if the value of the gradient grows above this threshold, the
@@ -143,8 +149,10 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         grexp.set(argPosition, exp);
         gradientExpr = new LsaMolecule(grexp);
         /*
-         * Dependency management: this reaction depends on the value of source in this node, the value of gradient in
-         * the neighbors, and the value of the context locally. Moreover, the value may change if the neighborhood
+         * Dependency management:
+         * this reaction depends on the value of the source in this node, the value of gradient in
+         * the neighbors, and the value of the context locally.
+         * Moreover, the value may change if the neighborhood
          * changes, or if the node moves.
          */
         addOutboundDependency(gradient);
@@ -164,10 +172,12 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     }
 
     /**
-     * Builds a new SAPERE Gradient. This constructor is slower, and is provided
-     * for compatibility with the YAML-based Alchemist loader. It should be
+     * Builds a new SAPERE Gradient.
+     * This constructor is slower and is provided
+     * for compatibility with the YAML-based Alchemist loader.
+     * It should be
      * avoided when possible, by relying on the other constructor instead.
-     * 
+     *
      * @param environment
      *            the current environment
      * @param node
@@ -176,7 +186,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      *            a template ILsaMolecule representing the source
      * @param gradientTemplate
      *            a template ILsaMolecule representing the gradient. ALL the
-     *            variables MUST be the same of sourceTemplate: no un-instanced
+     *            variables MUST be the same of sourceTemplate: no non-instanced
      *            variables are admitted when inserting tuples into nodes
      * @param valuePosition
      *            the point at which the computation of the new values should be
@@ -185,13 +195,13 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      *            values before this one, instead, will be used to distinct
      *            different gradients
      * @param expression
-     *            the expression to use in order to calculate the new gradient
+     *            the expression to use to calculate the new gradient
      *            value. #T and #D are admitted, plus every variable present in
      *            the gradient before valuePosition, and every variable matched
      *            by the contextTemplate
      * @param contextTemplate
      *            a template ILsaMolecule. It can be used to match some contents
-     *            of the local node in order to have local information to use
+     *            of the local node to have local information to use
      *            in the gradient value computation
      * @param gradThreshold
      *            if the value of the gradient grows above this threshold, the
@@ -319,7 +329,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             gradCache.forEachEntry(new Cleaner(createdFromSource, filteredGradCache));
         }
         /*
-         * Gradients in neighborhood must be discovered
+         * Gradients in the neighborhood must be discovered
          */
         final List<ILsaMolecule> gradientsFound = new ArrayList<>();
         final GradientSearch gradSearch = new GradientSearch(gradientsFound, matches);
@@ -354,21 +364,21 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
 
     @Override
     protected void updateInternalStatus(
-            final Time currentTime,
-            final boolean hasBeenExecuted,
-            final Environment<List<ILsaMolecule>, ?> environment
+        final Time currentTime,
+        final boolean hasBeenExecuted,
+        final Environment<List<ILsaMolecule>, ?> currentEnvironment
     ) {
         /*
          * It makes sense to reschedule the reaction if:
-         * 
+         *
          * the source has changed
-         * 
+         *
          * the contextual information has changed
-         * 
+         *
          * the neighbors have moved
-         * 
+         *
          * the gradients in the neighborhood have changed
-         * 
+         *
          * my position is changed
          */
         final List<? extends ILsaMolecule> sourceCacheTemp = getNode().getConcentration(source);
@@ -524,6 +534,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     }
 
     private static class SGFakeConditionAction implements Action<List<ILsaMolecule>>, Condition<List<ILsaMolecule>> {
+        @Serial
         private static final long serialVersionUID = 1L;
         private static final ListSet<Dependency> DEPENDENCY = ImmutableListSet.of(Dependency.EVERYTHING);
         private final Molecule mol;

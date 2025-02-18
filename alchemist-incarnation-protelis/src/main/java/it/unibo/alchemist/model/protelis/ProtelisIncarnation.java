@@ -27,17 +27,17 @@ import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
-import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
-import it.unibo.alchemist.model.protelis.actions.SendToNeighbor;
-import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.nodes.GenericNode;
-import it.unibo.alchemist.protelis.properties.ProtelisDevice;
+import it.unibo.alchemist.model.protelis.actions.SendToNeighbor;
+import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.reactions.Event;
 import it.unibo.alchemist.model.timedistributions.DiracComb;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.times.DoubleTime;
+import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
+import it.unibo.alchemist.protelis.properties.ProtelisDevice;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -74,17 +74,18 @@ import java.util.stream.Collectors;
  */
 public final class ProtelisIncarnation<P extends Position<P>> implements Incarnation<Object, P> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProtelisIncarnation.class);
-
     /**
      * The name that can be used in a property to refer to the extracted value.
      */
     public static final String VALUE_TOKEN = "<value>";
     /**
-     * Statically-referenceable instance. This incarnation *can* work as a singleton, and doing so may save some
-     * memory. However, it is not strictly a singleton (multiple instances do not do harm).
+     * Statically referencable instance.
+     * This incarnation *can* work as a singleton, and doing so may save some memory.
+     * However, it is not strictly a singleton (multiple instances do not do harm).
      */
     public static final ProtelisIncarnation<?> INSTANCE = new ProtelisIncarnation<>();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProtelisIncarnation.class);
 
     private final LoadingCache<CacheKey, SynchronizedVM> cache = CacheBuilder
         .newBuilder()
@@ -173,7 +174,9 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                         (Reaction<Object>) actionable,
                         parameters
                     );
-                } catch (RuntimeException exception) { // NOPMD AvoidCatchingGenericException
+                    // CHECKSTYLE: IllegalCatch OFF
+                } catch (final RuntimeException exception) { // NOPMD AvoidCatchingGenericException
+                    // CHECKSTYLE: IllegalCatch ON
                     throw new IllegalArgumentException(
                         "Could not create the requested Protelis program: " + additionalParameters,
                         exception
@@ -196,11 +199,11 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 );
                 return vm.runCycle();
             }
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             /*
              * Not a valid program: inject the Object itself
              */
-            LOGGER.warn("Invalid Protelis program injected as concentration:\n" + descriptor, e);
+            LOGGER.warn("Invalid Protelis program injected as concentration:\n{}", descriptor, e);
         }
         return descriptor;
     }
@@ -350,12 +353,10 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     return 0d;
                 }
             }
-        } catch (ExecutionException | RuntimeException e) { // NOPMD: we never want getProperty to fail
-            LOGGER.error(
-                "Intercepted interpreter exception when computing: \n"
-                    + property + "\n"
-                    + e.getMessage()
-            );
+            // CHECKSTYLE: IllegalCatch OFF
+        } catch (ExecutionException | RuntimeException e) { // NOPMD: we never want `getProperty` to fail
+            // CHECKSTYLE: IllegalCatch ON
+            LOGGER.error("Intercepted interpreter exception when computing: \n{}\n{}", property, e.getMessage());
         }
         return Double.NaN;
     }
@@ -453,7 +454,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     /**
      * An {@link ExecutionEnvironment} that can read and shadow the content of a
      * Node, but cannot modify it. This is used to prevent badly written
-     * properties to interact with the simulation flow.
+     * properties from interacting with the simulation flow.
      */
     public static final class ProtectedExecutionEnvironment implements ExecutionEnvironment {
         private final Node<?> node;
@@ -524,8 +525,10 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     myVM = new ProtelisVM(
                             ProtelisLoader.parse(key.property.replace(VALUE_TOKEN, baseProgram)),
                             new DummyContext(key.node.get()));
-                } catch (RuntimeException ex) { // NOPMD AvoidCatchingGenericException
-                    LOGGER.warn("Program ignored as invalid: \n" + key.property);
+                    // CHECKSTYLE: IllegalCatch OFF
+                } catch (final RuntimeException ex) { // NOPMD AvoidCatchingGenericException
+                    // CHECKSTYLE: IllegalCatch ON
+                    LOGGER.warn("Program ignored as invalid: \n{}", key.property);
                     LOGGER.debug("Debug information", ex);
                 }
             }
@@ -641,7 +644,6 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         public int hashCode() {
             return -1;
         }
-
 
         @Override
         public void addProperty(@NotNull final NodeProperty<Object> nodeProperty) {

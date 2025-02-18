@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.effect.impl;
 
 import com.google.common.base.Charsets;
@@ -40,6 +41,7 @@ import java.util.List;
 /**
  * Serialize Alchemist effects from/to file in human readable format.
  *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 public final class EffectSerializationFactory {
@@ -51,11 +53,13 @@ public final class EffectSerializationFactory {
             .registerTypeHierarchyAdapter(
                 CollectionWithCurrentElement.class,
                 new TypeAdapter<ImmutableCollectionWithCurrentElement<?>>() {
+
                     @Override
                     public void write(final JsonWriter out, final ImmutableCollectionWithCurrentElement<?> value)
                             throws IOException {
                         out.value(value.getCurrent().toString());
                     }
+
                     @Override
                     public ImmutableCollectionWithCurrentElement<?> read(final JsonReader in) throws IOException {
                         return new ImmutableCollectionWithCurrentElement<>(
@@ -68,6 +72,7 @@ public final class EffectSerializationFactory {
             .registerTypeHierarchyAdapter(
                 Color.class,
                 new TypeAdapter<Color>() {
+
                     @Override
                     public void write(final JsonWriter out, final Color value) throws IOException {
                         out.beginObject();
@@ -75,6 +80,7 @@ public final class EffectSerializationFactory {
                         out.value(value.getRGB());
                         out.endObject();
                     }
+
                     @Override
                     public Color read(final JsonReader in) throws IOException {
                         in.beginObject();
@@ -117,7 +123,7 @@ public final class EffectSerializationFactory {
      * Get a list of effects from the specified file. Try to deserialize a JSON
      * file at first. If this operation is not successful (for the sake of
      * backward compatibility) try to deserialize a binary file.
-     * 
+     *
      * @param effectFile
      *            Source file
      * @return List of the effects collected from the file
@@ -135,7 +141,7 @@ public final class EffectSerializationFactory {
 
     /**
      * Write the given effect to the destination file.
-     * 
+     *
      * @param effectFile
      *            Destination file
      * @param effect
@@ -149,7 +155,7 @@ public final class EffectSerializationFactory {
 
     /**
      * Write the given effects to the destination file.
-     * 
+     *
      * @param effectFile
      *            Destination file
      * @param effects

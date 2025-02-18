@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.effect.api;
 
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
@@ -18,15 +19,15 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.Serializable;
 
-
 /**
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 public interface Effect extends Serializable {
 
     /**
      * Applies the effect.
-     * 
+     *
      * @param graphic
      *            Graphics2D to use
      * @param node
@@ -52,7 +53,6 @@ public interface Effect extends Serializable {
      * @param environment      environment
      * @param wormhole the wormhole used to map environment's coords to screen coords
      */
-    @SuppressWarnings("deprecation")
     default <T, P extends Position2D<P>> void apply(
             final Graphics2D g,
             final Node<T> n,

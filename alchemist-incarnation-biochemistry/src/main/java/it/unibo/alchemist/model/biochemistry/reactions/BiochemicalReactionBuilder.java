@@ -9,8 +9,18 @@
 
 package it.unibo.alchemist.model.biochemistry.reactions;
 
-import it.unibo.alchemist.model.biochemistry.BiochemistryParseException;
+import it.unibo.alchemist.model.Action;
+import it.unibo.alchemist.model.Condition;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Incarnation;
+import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
+import it.unibo.alchemist.model.biochemistry.BiochemistryParseException;
+import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.actions.AddJunctionInCell;
 import it.unibo.alchemist.model.biochemistry.actions.AddJunctionInNeighbor;
 import it.unibo.alchemist.model.biochemistry.actions.ChangeBiomolConcentrationInCell;
@@ -24,26 +34,16 @@ import it.unibo.alchemist.model.biochemistry.conditions.BiomolPresentInNeighbor;
 import it.unibo.alchemist.model.biochemistry.conditions.EnvPresent;
 import it.unibo.alchemist.model.biochemistry.conditions.JunctionPresentInCell;
 import it.unibo.alchemist.model.biochemistry.conditions.NeighborhoodPresent;
-import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
-import it.unibo.alchemist.model.biochemistry.molecules.Junction;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.Action;
-import it.unibo.alchemist.model.Condition;
-import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Incarnation;
-import it.unibo.alchemist.model.Molecule;
-import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.Reaction;
-import it.unibo.alchemist.model.TimeDistribution;
-import it.unibo.alchemist.model.geometry.Vector;
-import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.dsl.BiochemistrydslBaseVisitor;
 import it.unibo.alchemist.model.biochemistry.dsl.BiochemistrydslLexer;
 import it.unibo.alchemist.model.biochemistry.dsl.BiochemistrydslParser;
 import it.unibo.alchemist.model.biochemistry.dsl.BiochemistrydslParser.ArgListContext;
 import it.unibo.alchemist.model.biochemistry.dsl.BiochemistrydslParser.BiochemicalReactionRightElemContext;
 import it.unibo.alchemist.model.biochemistry.dsl.BiochemistrydslParser.BiomoleculeContext;
+import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
+import it.unibo.alchemist.model.biochemistry.molecules.Junction;
+import it.unibo.alchemist.model.geometry.Vector;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -82,9 +82,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
     private TimeDistribution<Double> time;
     private String reactionString;
 
-
     /**
      * Construct a builder for biochemical reactions.
+     *
      * @param incarnation the current incarnation
      * @param currentNode the node where the reaction is placed.
      * @param environment the environment.
@@ -101,9 +101,10 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 
     /**
      * Builds the chemical reaction.
+     *
      * @return a chemical reaction based on the given program
      */
-    public Reaction<Double> build()  {
+    public Reaction<Double> build() {
         checkReaction();
         final BiochemistrydslLexer lexer = new BiochemistrydslLexer(CharStreams.fromString(reactionString));
         final BiochemistrydslParser parser = new BiochemistrydslParser(new CommonTokenStream(lexer));
@@ -128,6 +129,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 
     /**
      * Set the reaction to the passed program string.
+     *
      * @param program the string version of this reaction
      * @return .
      */
@@ -138,6 +140,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 
     /**
      * set the random generator to the passed object.
+     *
      * @param rg the random generator.
      * @return .
      */
@@ -148,6 +151,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 
     /**
      * Set the time distribution to the passed object.
+     *
      * @param td the time distribution
      * @return .
      */
@@ -220,7 +224,8 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 final Class<O> clazz = (Class<O>) ResourceLoader.classForName(className);
                 final ArgListContext lctx = context.argList();
                 final List<Object> params = new ArrayList<>();
-                if (lctx != null) { // if null there are no parameters, so params must be an empty List (as it is, actually)
+                if (lctx != null) {
+                    // if null, there are no parameters, so params must be an empty List (as it is, actually)
                     lctx.arg().forEach(arg ->
                             params.add((arg.decimal() != null)
                                     ? Double.parseDouble(arg.decimal().getText())
@@ -228,12 +233,12 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                     );
                 }
                 return factory.build(clazz, params).getCreatedObjectOrThrowException();
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 throw new IllegalStateException("cannot instance " + className + ", class not found", e);
             }
         }
 
-        @Override 
+        @Override
         public Reaction<Double> visitBiochemicalReaction(final BiochemistrydslParser.BiochemicalReactionContext context) {
             visit(context.biochemicalReactionLeft());
             visit(context.biochemicalReactionRight());
@@ -244,13 +249,13 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 visit(context.customReactionType());
             }
             /*
-             * if the reaction has at least one neighbor action but no neighbor condition 
-             * add the neighborhoodPresent condition.
-             * This is necessary because if the node which contain this reaction don't have
-             * a neighborhood and the reaction is valid (all conditions are valid) the neighbor action
-             * is undefined, and can lead to unwanted behavior.
+             * If the reaction has at least one neighbor action but no neighbor condition
+             * adds the neighborhoodPresent condition.
+             * This is necessary because if the node that contains this reaction doesn't have
+             * a neighborhood and the reaction is valid (all conditions are valid), the neighbor action
+             * is undefined and can lead to unwanted behavior.
              */
-            if (neighborActionPresent && biomolConditionsInNeighbor.isEmpty()) { 
+            if (neighborActionPresent && biomolConditionsInNeighbor.isEmpty()) {
                 conditionList.add(new NeighborhoodPresent<>(environment, node));
             }
             if (envActionPresent && !envConditionPresent) {
@@ -400,7 +405,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             return reaction;
         }
 
-        @Override 
+        @Override
         public Reaction<Double> visitCustomCondition(final BiochemistrydslParser.CustomConditionContext context) {
             conditionList.add(createObject(context.javaConstructor(), CONDITIONS_PACKAGE));
             return reaction;
@@ -439,7 +444,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             if (!junctionList.remove(j)) {
                 /*
                  * the junction is not present in the list,
-                 * witch means that this junction is undefined
+                 * which means that this junction is undefined
                  * (e.g. [junction A-B] --> [junction C-D]
                  */
                 throw new BiochemistryParseException("The junction " + j + " is not present in conditions.\n"
@@ -465,7 +470,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitTerminal(final TerminalNode node) {
+        public Reaction<Double> visitTerminal(final TerminalNode terminalNode) {
             return reaction;
         }
 
@@ -473,7 +478,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             return new Biomolecule(ctx.name.getText());
         }
 
-        // create the concentration of a biomolecule from a bio-molecular context
+        // create the concentration of a biomolecule from a biomolecular context
         private static double createConcentration(final BiomoleculeContext ctx) {
             return (ctx.concentration() == null) ? 1.0 : Double.parseDouble(ctx.concentration().POSDOUBLE().getText());
         }
@@ -496,8 +501,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 
         private static void insertInMap(final Map<Biomolecule, Double> map, final Biomolecule mol, final double conc) {
             if (map.containsKey(mol)) {
-                final double oldConc = map.get(mol);
-                map.put(mol, oldConc + conc);
+                map.compute(mol, (k, oldConc) -> Objects.requireNonNull(oldConc) + conc);
             } else {
                 map.put(mol, conc);
             }
@@ -519,15 +523,16 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public void reportAmbiguity(final Parser recognizer, 
-                final DFA dfa, 
+        public void reportAmbiguity(final Parser recognizer,
+                final DFA dfa,
                 final int startIndex,
                 final int stopIndex,
                 final boolean exact,
-                final BitSet ambigAlts, 
+                final BitSet ambigAlts,
                 final ATNConfigSet configs) {
             throw new BiochemistryParseException("report ambiguity in " + reaction);
         }
+
         @Override
         public void reportAttemptingFullContext(final Parser recognizer,
                 final DFA dfa,
@@ -537,9 +542,10 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 final ATNConfigSet configs) {
             throw new BiochemistryParseException("report attempting full context in " + reaction);
         }
+
         @Override
         public void reportContextSensitivity(final Parser recognizer,
-                final DFA dfa, 
+                final DFA dfa,
                 final int startIndex,
                 final int stopIndex,
                 final int prediction,
@@ -549,7 +555,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 
         @Override
         public void syntaxError(final Recognizer<?, ?> recognizer,
-                final Object offendingSymbol, 
+                final Object offendingSymbol,
                 final int line,
                 final int charPositionInLine,
                 final String message,

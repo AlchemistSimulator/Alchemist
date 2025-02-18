@@ -9,30 +9,31 @@
 
 package it.unibo.alchemist.model.sapere.actions;
 
-import it.unibo.alchemist.model.maps.actions.MoveOnMap;
-import it.unibo.alchemist.model.maps.movestrategies.routing.OnStreets;
-import it.unibo.alchemist.model.movestrategies.speed.InteractWithOthers;
-import it.unibo.alchemist.model.maps.routingservices.GraphHopperOptions;
-import it.unibo.alchemist.model.maps.routingservices.GraphHopperRoutingService;
 import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaNode;
-import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.maps.MapEnvironment;
+import it.unibo.alchemist.model.maps.actions.MoveOnMap;
+import it.unibo.alchemist.model.maps.movestrategies.routing.OnStreets;
+import it.unibo.alchemist.model.maps.routingservices.GraphHopperOptions;
+import it.unibo.alchemist.model.maps.routingservices.GraphHopperRoutingService;
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy;
+import it.unibo.alchemist.model.movestrategies.speed.InteractWithOthers;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
 
+import java.io.Serial;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
-
 
 /**
  */
 public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> {
 
+    @Serial
     private static final long serialVersionUID = 2429200360671138611L;
 
     /**
@@ -105,10 +106,18 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
         );
     }
 
+    private static ILsaMolecule ensureIsSAPERE(final Molecule m) {
+        if (m instanceof ILsaMolecule) {
+            return (ILsaMolecule) m;
+        }
+        throw new IllegalArgumentException(m + " is not a valid SAPERE LSA");
+    }
+
     private static final class NextTargetStrategy<T> implements TargetSelectionStrategy<T, GeoPosition> {
         /**
-         * 
+         *
          */
+        @Serial
         private static final long serialVersionUID = -618772546563562484L;
         private final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment;
         private final Node<List<ILsaMolecule>> node;
@@ -118,10 +127,10 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
         private GeoPosition curPos;
 
         NextTargetStrategy(
-                final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment,
-                final Node<List<ILsaMolecule>> n,
-                final Molecule patt,
-                final int pos
+            final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment,
+            final Node<List<ILsaMolecule>> n,
+            final Molecule patt,
+            final int pos
         ) {
             this.environment = requireNonNull(environment);
             node = requireNonNull(n);
@@ -132,13 +141,11 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
 
         @Override
         public GeoPosition getTarget() {
-            final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment =
-                    this.environment;
             final List<ILsaMolecule> matches = node.getConcentration(template);
             /*
              * If there is no gradient and: - there is no goal, or - the goal
              * has already been reached
-             * 
+             *
              * then remain still.
              */
             final GeoPosition currentPosition = environment.getPosition(node);
@@ -150,13 +157,12 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
             }
             final int nid = ((Double) matches.get(0).getArg(argPos).getRootNodeData()).intValue();
             /*
-             * If current target node has moved, destination should be
-             * re-computed.
+             * If the current target node has moved, the destination should be re-computed.
              */
             final Position<?> curNodeActualPos = environment.getPosition(curNode);
             if (curNode.equals(node)
-                    || !curPos.equals(curNodeActualPos)
-                    || environment.getNeighborhood(node).contains(curNode)) {
+                || !curPos.equals(curNodeActualPos)
+                || environment.getNeighborhood(node).contains(curNode)) {
                 /*
                  * Update target
                  */
@@ -166,12 +172,4 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
             return curPos;
         }
     }
-
-    private static ILsaMolecule ensureIsSAPERE(final Molecule m) {
-        if (m instanceof ILsaMolecule) {
-            return (ILsaMolecule) m;
-        }
-        throw new IllegalArgumentException(m + " is not a valid SAPERE LSA");
-    }
-
 }

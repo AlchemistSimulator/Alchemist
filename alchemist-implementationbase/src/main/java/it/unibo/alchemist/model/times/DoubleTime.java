@@ -6,23 +6,26 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.times;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Time;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 
 /**
  *         This class is meant to provide a reasonably fast time implementation.
- *         Should be suitable for most usages, but it inherits the problem of
- *         the loss of precision of double numbers when comparing big numbers
+ *         Should be suitable for most usages, but it inherits the problem precision loss
+ *         of double numbers when comparing big numbers
  *         with low numbers. It could become a real problem with long
  *         simulations.
- * 
+ *
  */
 public final class DoubleTime implements Time {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final double t;
 
@@ -35,7 +38,7 @@ public final class DoubleTime implements Time {
 
     /**
      * Builds a new DoubleTime starting from the specified value.
-     * 
+     *
      * @param val
      *            the starting value of the time.
      */
@@ -66,8 +69,8 @@ public final class DoubleTime implements Time {
 
     @Override
     @Nonnull
-    public Time times(final double var) {
-        return new DoubleTime(t * var);
+    public Time times(final double other) {
+        return new DoubleTime(t * other);
     }
 
     @Override

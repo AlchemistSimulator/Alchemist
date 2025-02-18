@@ -13,15 +13,15 @@ import java.io.Serializable;
 
 /**
  * This interface is a wrapper for concentrations.
- * 
- * @param <T> 
+ *
+ * @param <T> concentration type
  */
 @FunctionalInterface
 public interface Concentration<T> extends Serializable {
 
     /**
-     * Allows to access the content of the concentration.
-     * 
+     * Allows accessing the content of the concentration.
+     *
      * @return the actual content of the concentration
      */
     T getContent();

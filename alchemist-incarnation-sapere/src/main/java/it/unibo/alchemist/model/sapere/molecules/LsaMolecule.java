@@ -6,22 +6,24 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.molecules;
 
+import it.unibo.alchemist.model.Dependency;
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
 import it.unibo.alchemist.model.sapere.dsl.impl.ExpressionFactory;
 import it.unibo.alchemist.model.sapere.dsl.impl.ListTreeNode;
 import it.unibo.alchemist.model.sapere.dsl.impl.Type;
 import it.unibo.alchemist.model.sapere.dsl.impl.VarTreeNode;
-import it.unibo.alchemist.model.sapere.dsl.IExpression;
-import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
-import it.unibo.alchemist.model.Dependency;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import org.danilopianini.lang.HashString;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,14 +37,10 @@ import java.util.function.Consumer;
 /**
  *         This class realizes an LsaMolecule, where arguments are of type
  *         Expression.
- * 
+ *
  */
 public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
-    private static final String OPEN_SYMBOL = "<", CLOSE_SYMBOL = ">", SEPARATOR = ", ";
-    private static final long serialVersionUID = -2727376723102146271L;
-    private static final Map<HashString, ITreeNode<?>> SMAP =
-            Collections.unmodifiableMap(new LinkedHashMap<>(0, 1f));
     /**
      * Synthetic property representing the distance.
      */
@@ -82,8 +80,17 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
      */
     public static final HashString SYN_T = new HashString("#T");
 
+    @Serial
+    private static final long serialVersionUID = -2727376723102146271L;
+    private static final String OPEN_SYMBOL = "<";
+    private static final String CLOSE_SYMBOL = ">";
+    private static final String SEPARATOR = ", ";
+    private static final Map<HashString, ITreeNode<?>> SMAP =
+        Collections.unmodifiableMap(new LinkedHashMap<>(0, 1f));
+
     private final List<IExpression> args;
-    private final boolean duplicateVars, instance;
+    private final boolean duplicateVars;
+    private final boolean instance;
     @Nullable
     private HashString repr;
 
@@ -97,7 +104,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     /**
      * Builds a new LsaMolecule by interpreting a list of IExpressions.
      * Dramatically faster than parsing, slower than copy.
-     * 
+     *
      * @param listArgs
      *            the list of IExpressions
      */
@@ -125,19 +132,18 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     /**
      * Very fast constructor, produces a copy of an LsaMolecule. Use whenever
      * possible.
-     * 
+     *
      * @param m
      *            the LsaMolecule to copy
      */
-    @SuppressWarnings("CopyConstructorMissesField")
     public LsaMolecule(final LsaMolecule m) {
         this(m.args, m.toHashString(), m.duplicateVars, m.instance);
     }
 
     /**
-     * Builds a LsaMolecule by parsing the passed String. Slow, use only if
-     * strictly needed.
-     * 
+     * Builds an LsaMolecule by parsing the passed String.
+     * Slow, use only if strictly needed.
+     *
      * @param argsString
      *            the String to parse
      */
@@ -146,14 +152,14 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     }
 
     /**
-     * Builds a LsaMolecule by parsing the passed String. Slow, use only if
-     * strictly needed.
-     * 
+     * Builds an LsaMolecule by parsing the passed String.
+     * Slow, use only if strictly needed.
+     *
      * @param argsString
      *            the String to parse
      * @param description
      *            a String to append at the end of the LSA. This is a special
-     *            item, and can carry any type of String. It will be treated
+     *            item and can carry any type of String. It will be treated
      *            internally as a single literal or variable
      */
     public LsaMolecule(final String argsString, final String description) {
@@ -190,8 +196,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     @Override
     public boolean dependsOn(final Dependency m) {
-        if (m instanceof ILsaMolecule) {
-            final ILsaMolecule mol = (ILsaMolecule) m;
+        if (m instanceof final ILsaMolecule mol) {
             if (mol.argsNumber() != argsNumber()) {
                 return false;
             }
@@ -261,7 +266,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
             ) {
                 return true; // case <def:N > 5> == <N>
             } else if (argument.getRootNodeType() != molArgument.getRootNodeType()
-                    || !(argument.getRootNodeData().equals(molArgument.getRootNodeData()))
+                    || !argument.getRootNodeData().equals(molArgument.getRootNodeData())
             ) {
                 return false;
             }
@@ -294,10 +299,12 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
         if (argsNumber() != mol.size()) {
             return false;
         }
-        final Map<HashString, ITreeNode<?>> map = duplicateVars || duplicateVariables ? new HashMap<>(argsNumber(), 1f) : SMAP;
+        final Map<HashString, ITreeNode<?>> map = new HashMap<>(
+            duplicateVars || duplicateVariables ? new HashMap<>(argsNumber(), 1f) : SMAP
+        );
         for (int i = 0; i < argsNumber(); i++) {
             /*
-             * Call matchwith of Expression
+             * Call match-with of Expression
              */
             final IExpression a = args.get(i);
             final IExpression tomatch = mol.get(i);
@@ -333,7 +340,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
             final IExpression a = args.get(i);
             final IExpression tomatch = mol.getArg(i);
             /*
-             * If the comparison between arguments make no sense (e.g. two
+             * If the comparison between arguments makes no sense (e.g., two
              * different atoms) or the passed is a variable (and consequently,
              * more generic), then return false
              */
@@ -371,7 +378,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     private static List<IExpression> buildArgsDesc(final String argsString, final String description) {
         final String[] listArgs = argsString.split(",");
-        final boolean hasDescription = description != null && description.length() > 0;
+        final boolean hasDescription = description != null && !description.isEmpty();
         final List<IExpression> args = new ArrayList<>(listArgs.length + (hasDescription ? 1 : 0));
         for (final String listArg : listArgs) {
             args.add(new Expression(listArg));

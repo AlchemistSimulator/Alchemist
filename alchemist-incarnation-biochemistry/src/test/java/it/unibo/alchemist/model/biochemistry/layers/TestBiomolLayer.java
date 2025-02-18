@@ -6,26 +6,27 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.layers;
 
 import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.core.Engine;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
-import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment;
-import it.unibo.alchemist.model.layers.StepLayer;
-import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.timedistributions.DiracComb;
-import it.unibo.alchemist.model.times.DoubleTime;
-import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Actionable;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
+import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment;
+import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
+import it.unibo.alchemist.model.layers.StepLayer;
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.timedistributions.DiracComb;
+import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.test.AlchemistTesting;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,7 @@ import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -74,6 +76,7 @@ class TestBiomolLayer {
         AlchemistTesting.terminatingAfterSteps(sim, 1_000);
         sim.play();
         sim.addOutputMonitor(new OutputMonitor<>() {
+            @Serial
             private static final long serialVersionUID = 0L;
 
             @Override

@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.gps.loaders;
 
 import com.google.common.collect.ImmutableList;
@@ -38,7 +39,7 @@ class TestGPSLoader {
     private static final String DIRECTORY_WITH_FILES = BASE_OK_TEST + "sub1/";
     private static final String DIRECTORY_WITH_SUBDIRECTORIES = BASE_OK_TEST;
     /*
-     * Test file with wrong extension
+     * Test file with the wrong extension
      */
     private static final String WRONG_EXTENSION = BASE_NOT_OK_TEST + "wrong_extension";
     /*
@@ -46,15 +47,15 @@ class TestGPSLoader {
      */
     private static final String UNRECOGNIZED_EXTENSION = BASE_NOT_OK_TEST + "unrecognized_extension";
     /*
-     * Test track without segment.
+     * Test track without a segment.
      */
     private static final String NO_SEGMENTS = BASE_NOT_OK_TEST + "no_segments";
     /*
-     * Test track with empty segment.
+     * Test track with an empty segment.
      */
     private static final String EMPTY_SEGMENT = BASE_NOT_OK_TEST + "empty_segments";
     /*
-     * Test track with any point without time.
+     * Test track at any point without time.
      */
     private static final String POINT_WITHOUT_TIME = BASE_NOT_OK_TEST + "point_without_time";
     private static final String CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE = "AlignToFirstTrace";
@@ -69,7 +70,7 @@ class TestGPSLoader {
     private static final int TOTAL_POINTS = 12_196;
 
     /**
-     * 
+     *
      */
     @BeforeEach
     public void setUp() {
@@ -80,6 +81,7 @@ class TestGPSLoader {
 
     /**
      * Tests traces alignment.
+     *
      * @throws IOException causes failure
      */
     @Test
@@ -89,7 +91,7 @@ class TestGPSLoader {
         }
         assertEquals(3, new TraceLoader(DIRECTORY_WITH_FILES, CLASS_TIME_ALIGNMENT_TO_TIME, 0.0, false, false)
             .size().orElseThrow(unexpectedCyclicTrace()));
-        final TraceLoader loaderGpx = new TraceLoader(DIRECTORY_WITH_SUBDIRECTORIES, true,  ALIGNMENT);
+        final TraceLoader loaderGpx = new TraceLoader(DIRECTORY_WITH_SUBDIRECTORIES, true, ALIGNMENT);
         final Iterator<GPSTrace> trace2 = loaderGpx.iterator();
         int points = 0;
         for (int i = 0; i < NUM_MAX_TRACES; i++) {
@@ -100,11 +102,12 @@ class TestGPSLoader {
             }
         }
         assertTrue(trace2.hasNext());
-        assertEquals(points, TOTAL_POINTS);
+        assertEquals(TOTAL_POINTS, points);
     }
 
     /**
      * Tests error reporting.
+     *
      * @throws IOException causes failure
      */
     @Test

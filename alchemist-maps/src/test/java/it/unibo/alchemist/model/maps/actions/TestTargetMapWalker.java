@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.actions;
 
 import com.google.common.collect.Lists;
@@ -33,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-
 
 /**
  */
@@ -75,7 +75,7 @@ class TestTargetMapWalker {
             reaction.setActions(Lists.newArrayList(new TargetMapWalker<>(environment, node, reaction, TRACK, INTERACTING)));
             node.addReaction(reaction);
             environment.addNode(node, STARTPOSITION);
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             e.printStackTrace(); // NOPMD
             fail(e.getMessage());
         }
@@ -89,7 +89,7 @@ class TestTargetMapWalker {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testNoPosition() {
@@ -106,7 +106,7 @@ class TestTargetMapWalker {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testPosition() {
@@ -124,7 +124,7 @@ class TestTargetMapWalker {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testIterableDouble() {
@@ -142,7 +142,7 @@ class TestTargetMapWalker {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testIterableStrings() {
@@ -161,7 +161,7 @@ class TestTargetMapWalker {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testStrings01() {
@@ -179,7 +179,7 @@ class TestTargetMapWalker {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testStrings02() {
@@ -197,7 +197,7 @@ class TestTargetMapWalker {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testStrings03() {
@@ -215,7 +215,7 @@ class TestTargetMapWalker {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testStrings04() {
@@ -231,7 +231,4 @@ class TestTargetMapWalker {
          */
         assertEquals(ENDPOSITION, environment.getPosition(node));
     }
-
-
-
 }

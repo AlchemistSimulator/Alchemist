@@ -6,26 +6,29 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.timedistributions;
 
+import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.distribution.WeibullDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import it.unibo.alchemist.model.Time;
+import java.io.Serial;
 
 /**
- * Weibull distributed events, with different (Weibull distributed) mean.
- * 
+ * Weibull distributed events with different (Weibull distributed) mean.
+ *
  * @param <T> concentration type
  */
 public class WeibullDistributedWeibullTime<T> extends WeibullTime<T> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
      * @param mean
-     *            mean time interval across the network
+     *            average time interval across the network
      * @param deviceDeviation
      *            standard deviation of time intervals in each device
      * @param networkDeviation
@@ -44,7 +47,7 @@ public class WeibullDistributedWeibullTime<T> extends WeibullTime<T> {
 
     /**
      * @param mean
-     *            mean time interval across the network
+     *            average time interval across the network
      * @param deviceDeviation
      *            standard deviation of time intervals in each device
      * @param networkDeviation
@@ -66,7 +69,7 @@ public class WeibullDistributedWeibullTime<T> extends WeibullTime<T> {
 
     /**
      * @param mean
-     *            mean time interval across the network
+     *            average time interval across the network
      * @param deviceDeviation
      *            standard deviation of time intervals in each device
      * @param networkDeviation

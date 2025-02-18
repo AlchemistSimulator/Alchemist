@@ -14,7 +14,6 @@ import java.util.Collection;
 /**
  *  An isoline (also contour line, isopleth, or isarithm) of a function of two variables is a
  *  curve along which the function has a constant value, so that the curve joins points of equal value.
- *
  *  Here the curve is approximated as a collection of 2D segments.
  */
 public interface Isoline {

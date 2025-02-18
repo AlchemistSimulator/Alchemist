@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.movestrategies.speed;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -13,6 +14,8 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
+
+import java.io.Serial;
 
 /**
  * This strategy makes the node move at an average constant speed, which is
@@ -23,13 +26,14 @@ import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
  *
  * @param <T> Concentration type
  * @param <P> Position type
- * 
+ *
  */
 public final class ConstantSpeed<T, P extends Position<P>> implements SpeedSelectionStrategy<T, P> {
 
+    @Serial
     private static final long serialVersionUID = 1746429998480123049L;
     private final double speed;
-    private final Reaction<?> reaction;
+    private final Reaction<?> referenceReaction;
 
     /**
      * @param reaction
@@ -43,12 +47,12 @@ public final class ConstantSpeed<T, P extends Position<P>> implements SpeedSelec
             throw new IllegalArgumentException("Speed must be positive");
         }
         this.speed = speed;
-        this.reaction = reaction;
+        this.referenceReaction = reaction;
     }
 
     @Override
     public double getNodeMovementLength(final P target) {
-        return speed / reaction.getRate();
+        return speed / referenceReaction.getRate();
     }
 
     @Override

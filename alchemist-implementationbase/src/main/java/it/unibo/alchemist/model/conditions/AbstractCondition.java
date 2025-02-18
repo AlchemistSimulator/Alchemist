@@ -19,15 +19,15 @@ import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.Objects;
 
-
 /**
- *
  * @param <T> concentration type
  */
 public abstract class AbstractCondition<T> implements Condition<T> {
 
+    @Serial
     private static final long serialVersionUID = -1610947908159507754L;
     private final ListSet<Dependency> influencing = new LinkedListSet<>();
     private final Node<T> node;
@@ -42,7 +42,8 @@ public abstract class AbstractCondition<T> implements Condition<T> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
+     * <p>
      * How to override: if you intend your condition to be potentially changed by
      * any change in the context, return null.
      */
@@ -53,7 +54,8 @@ public abstract class AbstractCondition<T> implements Condition<T> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
+     * <p>
      * Override if your {@link Condition} can return a more specific type of node.
      * The typical way is to cast the call to super.getNode().
      */
@@ -72,16 +74,16 @@ public abstract class AbstractCondition<T> implements Condition<T> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
+     *  <p>
      * How to override: create a new action of your concrete subtype.
      */
     @Override
-    public Condition<T> cloneCondition(final Node<T> node, final Reaction<T> reaction) {
+    public Condition<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
         throw new UnsupportedOperationException(getClass().getSimpleName() + " has no support for cloning.");
     }
 
     /**
-     *
      * @return the simple class name
      */
     @Override

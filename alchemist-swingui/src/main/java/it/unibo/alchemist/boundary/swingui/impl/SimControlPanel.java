@@ -6,19 +6,21 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.impl;
 
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.boundary.swingui.tape.impl.AbstractJTapeSection;
 import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeFeatureStack;
 import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeGroup;
 import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeMainFeature;
-import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeSection;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.core.Status;
 
 import java.awt.event.ActionListener;
+import java.io.Serial;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,12 +30,14 @@ import java.util.Set;
 /**
  * This class maintains multiple control panels for controlling a simulation,
  * ensuring that they are coherently updated.
- * 
+ *
+ * @deprecated The entire Swing UI is deprecated and is set to be replaced with a modern UI
  */
 @Deprecated
 @SuppressFBWarnings
 public final class SimControlPanel extends JTapeGroup {
 
+    @Serial
     private static final long serialVersionUID = 8245609434257107323L;
     private static final Map<Simulation<?, ?>, Set<SimControlPanel>> SIMCONTROLMAP = new MapMaker()
             .weakKeys().makeMap();
@@ -41,12 +45,36 @@ public final class SimControlPanel extends JTapeGroup {
     private final Map<SimControlCommand, SimControlButton> map = new EnumMap<>(SimControlCommand.class);
     private Simulation<?, ?> simulation;
 
-    private static synchronized void addActionListener(final SimControlPanel cmd, final ActionListener l) {
-        for (final SimControlPanel scp : getSiblings(cmd)) {
-            for (final SimControlButton b : scp.map.values()) {
-                b.addActionListener(l);
+    /**
+     * Builds a new BaseSimControlPanel.
+     */
+    private SimControlPanel() {
+        super(LocalizedResourceBundle.getString("controls"));
+        // setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        final AbstractJTapeSection mfplay = new JTapeMainFeature();
+        final AbstractJTapeSection s = new JTapeFeatureStack();
+        final AbstractJTapeSection mfstop = new JTapeMainFeature();
+        for (final SimControlCommand scc : SimControlCommand.values()) {
+            final SimControlButton but = scc.createButton();
+            map.put(scc, but);
+            // add(but);
+            if (scc == SimControlCommand.PLAY) {
+                mfplay.registerFeature(but);
+                // playButt = but;
+            } else if (scc == SimControlCommand.STOP) {
+                mfstop.registerFeature(but);
+            } else {
+                s.registerFeature(but);
             }
         }
+        registerSection(mfplay);
+        registerSection(mfstop);
+        registerSection(s);
+    }
+
+    private SimControlPanel(final Simulation<?, ?> sim) {
+        this();
+        setSimulation(sim);
     }
 
     private static synchronized void checkOldAndRemove() {
@@ -62,8 +90,7 @@ public final class SimControlPanel extends JTapeGroup {
     }
 
     /**
-     * @param sim
-     *            the simulation, null values allowed.
+     * @param sim the simulation. `null` values allowed.
      * @return a new SimControlPanel
      */
     public static SimControlPanel createControlPanel(final Simulation<?, ?> sim) {
@@ -89,14 +116,32 @@ public final class SimControlPanel extends JTapeGroup {
         }
     }
 
+    /**
+     * @param cmd
+     *            the command corresponding to the button
+     * @param enabled
+     *            true if you want the button to be enabled, false otherwise
+     */
+    public void setButtonEnabled(final SimControlCommand cmd, final boolean enabled) {
+        setButtonEnabled(this, cmd, enabled);
+    }
+
     private static synchronized void setButtonEnabled(
-            final SimControlPanel pan,
-            final SimControlCommand cmd,
-            final boolean enabled
+        final SimControlPanel pan,
+        final SimControlCommand cmd,
+        final boolean enabled
     ) {
         for (final SimControlPanel scp : getSiblings(pan)) {
             scp.map.get(cmd).setEnabled(enabled);
         }
+    }
+
+    /**
+     * @param sim
+     *            the simulation to set
+     */
+    public void setSimulation(final Simulation<?, ?> sim) {
+        setSimulation(this, sim);
     }
 
     private static synchronized void setSimulation(final SimControlPanel scp, final Simulation<?, ?> sim) {
@@ -138,6 +183,13 @@ public final class SimControlPanel extends JTapeGroup {
         }
     }
 
+    /**
+     * To be called when this control panel will be no longer useful.
+     */
+    public void shutdown() {
+        shutdown(this);
+    }
+
     private static synchronized void shutdown(final SimControlPanel scp) {
         if (scp.simulation != null) {
             final Set<SimControlPanel> scset = SIMCONTROLMAP.get(scp.simulation);
@@ -150,41 +202,17 @@ public final class SimControlPanel extends JTapeGroup {
         removeAllActionListeners(scp);
     }
 
-    /**
-     * Builds a new BaseSimControlPanel.
-     */
-    private SimControlPanel() {
-        super(LocalizedResourceBundle.getString("controls"));
-        // setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        final JTapeSection mfplay = new JTapeMainFeature();
-        final JTapeSection s = new JTapeFeatureStack();
-        final JTapeSection mfstop = new JTapeMainFeature();
-        for (final SimControlCommand scc : SimControlCommand.values()) {
-            final SimControlButton but = scc.createButton();
-            map.put(scc, but);
-            // add(but);
-            if (scc == SimControlCommand.PLAY) {
-                mfplay.registerFeature(but);
-                // playButt = but;
-            } else if (scc == SimControlCommand.STOP) {
-                mfstop.registerFeature(but);
-            } else {
-                s.registerFeature(but);
+    private static synchronized void addActionListener(final SimControlPanel cmd, final ActionListener l) {
+        for (final SimControlPanel scp : getSiblings(cmd)) {
+            for (final SimControlButton b : scp.map.values()) {
+                b.addActionListener(l);
             }
         }
-        registerSection(mfplay);
-        registerSection(mfstop);
-        registerSection(s);
-    }
-
-    private SimControlPanel(final Simulation<?, ?> sim) {
-        this();
-        setSimulation(sim);
     }
 
     /**
      * See {@link SimControlButton#addActionListener(ActionListener)}.
-     * 
+     *
      * @param l
      *            the {@link ActionListener} to add
      */
@@ -209,16 +237,6 @@ public final class SimControlPanel extends JTapeGroup {
         return down;
     }
 
-    /**
-     * @param cmd
-     *            the command corresponding to the button
-     * @param enabled
-     *            true if you want the button to be enabled, false otherwise
-     */
-    public void setButtonEnabled(final SimControlCommand cmd, final boolean enabled) {
-        setButtonEnabled(this, cmd, enabled);
-    }
-
     @Override
     public synchronized void setEnabled(final boolean e) {
         super.setEnabled(e);
@@ -226,21 +244,6 @@ public final class SimControlPanel extends JTapeGroup {
             b.setEnabled(e);
         }
         checkOldAndRemove();
-    }
-
-    /**
-     * @param sim
-     *            the simulation to set
-     */
-    public void setSimulation(final Simulation<?, ?> sim) {
-        setSimulation(this, sim);
-    }
-
-    /**
-     * To be called when this control panel will be no longer useful.
-     */
-    public void shutdown() {
-        shutdown(this);
     }
 
     @Override

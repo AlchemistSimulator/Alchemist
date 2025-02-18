@@ -50,6 +50,7 @@ public interface IsolinesFinder {
      * {@link IsolinesFinder#findIsolines(BinaryOperator, Number, Number, Number, Number, Collection)},
      * with the difference that it allows you to specify the diagonal of the rectangular region, instead of the four
      * vertexes separately.
+     *
      * @param function        - the function for which to calculate the isolines
      * @param diagonal - the diagonal of the rectangular space within which isolines will be calculated
      * @param levels   - collection containing the levels of the isolines that will be calculated

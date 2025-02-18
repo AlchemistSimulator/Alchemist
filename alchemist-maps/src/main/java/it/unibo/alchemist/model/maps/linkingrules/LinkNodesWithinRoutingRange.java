@@ -6,16 +6,18 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.linkingrules;
 
-import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.linkingrules.AbstractLocallyConsistentLinkingRule;
+import it.unibo.alchemist.model.maps.MapEnvironment;
+import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,6 +27,7 @@ import java.util.stream.Stream;
  */
 public final class LinkNodesWithinRoutingRange<T> extends AbstractLocallyConsistentLinkingRule<T, GeoPosition> {
 
+    @Serial
     private static final long serialVersionUID = 726751817489962367L;
     private final double range;
 
@@ -37,8 +40,7 @@ public final class LinkNodesWithinRoutingRange<T> extends AbstractLocallyConsist
 
     @Override
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, GeoPosition> environment) {
-        if (environment instanceof MapEnvironment) {
-            final MapEnvironment<T, ?, ?> menv = (MapEnvironment<T, ?, ?>) environment;
+        if (environment instanceof final MapEnvironment<T, ?, ?> menv) {
             final Stream<Node<T>> stream = menv.getNodesWithinRange(center, range).parallelStream();
             final List<Node<T>> filtered = stream
                     .filter(node -> menv.computeRoute(center, node).length() < range)

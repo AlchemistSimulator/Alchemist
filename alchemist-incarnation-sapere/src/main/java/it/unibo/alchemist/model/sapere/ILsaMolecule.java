@@ -6,17 +6,16 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere;
 
+import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
+import org.danilopianini.lang.HashString;
 
 import java.util.List;
 import java.util.Map;
-
-import it.unibo.alchemist.model.Molecule;
-import org.danilopianini.lang.HashString;
-
 
 /**
  */
@@ -35,9 +34,9 @@ public interface ILsaMolecule extends Molecule, Iterable<IExpression>, Comparabl
     int argsNumber();
 
     /**
-     * @return true if the molecule arguments match with mol arguments.
      * @param mol
      *            the ILsaMolecule to compare.
+     * @return true if the molecule arguments match with mol arguments.
      */
     @Override
     boolean equals(Object mol);
@@ -51,7 +50,7 @@ public interface ILsaMolecule extends Molecule, Iterable<IExpression>, Comparabl
     /**
      * @param i
      *            : position of the argument to get
-     * @return the Expression represent the argument i.
+     * @return the Expression represents the argument i.
      */
     IExpression getArg(int i);
 
@@ -69,8 +68,7 @@ public interface ILsaMolecule extends Molecule, Iterable<IExpression>, Comparabl
     boolean isIdenticalTo(ILsaMolecule mol);
 
     /**
-     * @return true if the molecule is an instance (not variable in the
-     *         argouments).
+     * @return true if the molecule is an instance (not variable in the arguments).
      */
     boolean isIstance();
 

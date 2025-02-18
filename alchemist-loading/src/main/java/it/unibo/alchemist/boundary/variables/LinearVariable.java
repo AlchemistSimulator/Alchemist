@@ -6,11 +6,13 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.variables;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
@@ -18,11 +20,15 @@ import java.util.stream.Stream;
  * This class represents a linear variable, namely a variable whose values span
  * linearly between minimum and maximum.
  */
-public final class LinearVariable extends PrintableVariable<Double> {
+public final class LinearVariable extends AbstractPrintableVariable<Double> {
 
+    @Serial
     private static final long serialVersionUID = 2462199794377640948L;
     private static final Logger L = LoggerFactory.getLogger(LinearVariable.class);
-    private final double min, max, step, def;
+    private final double min;
+    private final double max;
+    private final double step;
+    private final double def;
 
     /**
      * @param def default value

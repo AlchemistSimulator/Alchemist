@@ -13,17 +13,18 @@ import it.unibo.alchemist.model.Actionable;
 
 /**
  * The type which describes the concentration of a molecule
- * 
+ *
+ * <p>
  * This interface is meant to be implemented by the data structure(s) which must
  * manage the reactions.
- * 
+ *
  * @param <T> concentration type
  */
 public interface Scheduler<T> {
 
     /**
      * Adds a reaction to the data structure.
-     * 
+     *
      * @param reaction
      *            the reaction to be added
      */
@@ -31,7 +32,7 @@ public interface Scheduler<T> {
 
     /**
      * Allows to access the next reaction to be executed.
-     * 
+     *
      * @return the next reaction to be executed
      */
     Actionable<T> getNext();
@@ -39,7 +40,7 @@ public interface Scheduler<T> {
     /**
      * Removes a reaction from the structure. If the reaction is not present,
      * nothing is done and an Exception is thrown.
-     * 
+     *
      * @param reaction
      *            the reaction to be removed
      */
@@ -48,7 +49,7 @@ public interface Scheduler<T> {
     /**
      * Notifies the structure that the reaction r has changed. The whole
      * structure will be rearranged to ensure consistency.
-     * 
+     *
      * @param reaction
      *            the reaction which has changed
      */

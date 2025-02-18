@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model;
 
 /**
@@ -20,7 +21,7 @@ public interface BenchmarkableEnvironment<T, P extends Position<? extends P>> ex
      * Call this method to tell this environment that it should record its performances.
      * Please note that some environments might ignore this message if this method is not called before
      * starting using the environment itself.
-     * 
+     *
      */
     void enableBenchmark();
 

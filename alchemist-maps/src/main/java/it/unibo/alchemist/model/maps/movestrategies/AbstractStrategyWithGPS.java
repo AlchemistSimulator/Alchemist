@@ -6,12 +6,13 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.maps.movestrategies;
 
-import java.util.Objects;
+package it.unibo.alchemist.model.maps.movestrategies;
 
 import it.unibo.alchemist.model.maps.GPSTrace;
 import it.unibo.alchemist.model.maps.ObjectWithGPS;
+
+import java.util.Objects;
 
 /**
  * basic move strategy that use a {@link GPSTrace}.
@@ -21,7 +22,6 @@ public abstract class AbstractStrategyWithGPS implements ObjectWithGPS {
     private GPSTrace trace;
 
     /**
-     * 
      * @return the {@link GPSTrace} used from this strategy
      */
     protected GPSTrace getTrace() {

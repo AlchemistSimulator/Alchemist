@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.ui.api;
 
 import java.awt.Point;
@@ -18,7 +19,7 @@ import java.awt.Point;
 public interface PointerSpeed {
     /**
      * Gets the pointer's current position.
-     * 
+     *
      * @return a {@link Point} instance representing the pointer's current
      *         position
      */
@@ -26,7 +27,7 @@ public interface PointerSpeed {
 
     /**
      * Gets the pointer's old position.
-     * 
+     *
      * @return a {@link Point} instance representing the pointer's old
      *         position
      */
@@ -34,7 +35,7 @@ public interface PointerSpeed {
 
     /**
      * Gets the vector [current position - old position].
-     * 
+     *
      * @return a {@link Point} instance whose coordinates are [cP.x - oP.x;
      *         cP.y - cP.y]
      */
@@ -43,7 +44,7 @@ public interface PointerSpeed {
     /**
      * Sets the pointer's current position and, consequently, updates the old
      * one.
-     * 
+     *
      * @param point
      *            is the {@link Point} instance representing the pointer's
      *            current position

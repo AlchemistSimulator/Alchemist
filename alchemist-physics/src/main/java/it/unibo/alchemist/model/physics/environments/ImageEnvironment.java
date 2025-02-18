@@ -6,13 +6,14 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.physics.environments;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.obstacles.RectObstacle2D;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.Incarnation;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import javax.imageio.ImageIO;
@@ -22,17 +23,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * This environment loads an image from the file system, and marks as obstacles all the pixels of a given color.
- * 
+ *
  * @param <T> concentration type
  */
 public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
 
-    private static final long serialVersionUID = 7820304584505654721L;
     /**
      * Default color to be parsed as obstacle.
      */
@@ -49,6 +50,9 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
      * Default Y starting position.
      */
     public static final double DEFAULT_DELTA_Y = 0d;
+
+    @Serial
+    private static final long serialVersionUID = 7820304584505654721L;
 
     /**
      * @param incarnation the incarnation to be used.
@@ -197,7 +201,7 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
         for (int y = s[1]; y < img.getHeight(); y++) {
             for (int x = initx; x < img.getWidth(); x++) {
                 if (!bmat[x][y] && img.getRGB(x, y) == color) {
-                    return new int[] { x, y };
+                    return new int[] {x, y};
                 }
             }
             /*
@@ -231,7 +235,7 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
         while (y < img.getHeight() && lineIsIncluded(y, s[0], x, color, img, bmat)) {
             y++;
         }
-        return new int[] { x, y };
+        return new int[] {x, y};
     }
 
     private static boolean lineIsIncluded(

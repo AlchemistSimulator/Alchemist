@@ -27,7 +27,6 @@ class Segment2DImpl implements Segment2D {
         this.y2 = y2;
     }
 
-
     @Override
     public Number getX1() {
         return x1;

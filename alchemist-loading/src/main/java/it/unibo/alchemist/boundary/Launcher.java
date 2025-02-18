@@ -16,6 +16,7 @@ public interface Launcher {
 
     /**
      * Launches the simulation.
+     *
      * @param loader loader
      */
     void launch(Loader loader);

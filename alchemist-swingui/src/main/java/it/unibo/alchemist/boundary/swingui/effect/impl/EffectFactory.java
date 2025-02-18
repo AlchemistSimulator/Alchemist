@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.effect.impl;
 
 import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
@@ -13,9 +14,13 @@ import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import java.lang.reflect.InvocationTargetException;
 
 /**
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 public final class EffectFactory {
+
+    private EffectFactory() {
+    }
 
     /**
      * @return the effect which is inserted by default
@@ -26,7 +31,7 @@ public final class EffectFactory {
 
     /**
      * Given a class, builds the corresponding effect.
-     * 
+     *
      * @param effect
      *            the effect class
      * @return a new effect
@@ -37,9 +42,6 @@ public final class EffectFactory {
         } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new IllegalArgumentException("The effect must have a parameterless constructor " + effect.getSimpleName(), e);
         }
-    }
-
-    private EffectFactory() {
     }
 
 }

@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.positionfilters;
 
 import it.unibo.alchemist.model.GeoPosition;
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TestRectangleFilter {
 
     /**
-     * 
+     *
      */
     @Test
     void test() {

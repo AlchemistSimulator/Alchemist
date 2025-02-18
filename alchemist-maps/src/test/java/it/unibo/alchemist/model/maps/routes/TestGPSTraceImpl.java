@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.routes;
 
 import com.google.common.collect.ImmutableList;
@@ -19,7 +20,7 @@ import org.junit.jupiter.api.Test;
 class TestGPSTraceImpl {
 
     /**
-     * 
+     *
      */
     @Test
     void testConstructionWithList() {

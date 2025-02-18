@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry;
 
 import it.unibo.alchemist.model.Environment;
@@ -48,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 class TestIncarnation {
 
     private static final BiochemistryIncarnation INCARNATION = new BiochemistryIncarnation();
+    private static final String ABCDEF = "abcdef";
     private Node<Double> node;
     private Environment<Double, Euclidean2DPosition> environment;
     private RandomGenerator rand;
@@ -76,10 +78,10 @@ class TestIncarnation {
         makeMol("C");
         makeMol("H");
         makeMol("OH");
-        makeMol("abcdef");
+        makeMol(ABCDEF);
 
         assertEquals(makeMol("Cl"), makeMol("Cl"));
-        assertEquals(makeMol("abcdef"), makeMol("abcdef"));
+        assertEquals(makeMol(ABCDEF), makeMol(ABCDEF));
         assertNotEquals(makeMol("X"), makeMol("Y"));
         assertNotEquals(makeMol("abc"), makeMol("Abc"));
     }
@@ -88,14 +90,14 @@ class TestIncarnation {
         return (int) target.stream().filter(t -> t.getClass().equals(clazz)).count();
     }
 
-    private void testR(final String param, 
-            final int nCond, 
-            final int nAct, 
+    private void testR(final String param,
+            final int nCond,
+            final int nAct,
             final int nCellCond,
             final int nCellAct,
             final int nNeighCond,
             final int nNeighAct,
-            final int nEnvCond, 
+            final int nEnvCond,
             final int nEnvAct) { // TODO custom conditions and actions
         final Reaction<Double> r = INCARNATION.createReaction(rand, environment, node, time, param);
         assertNotNull(r);
@@ -158,13 +160,13 @@ class TestIncarnation {
         testR("[A] + [B in neighbor] --> [junction A-B]", 2, 4, 1, 2, 1, 2, 0, 0);
         testR("[A + 3B] + [C in neighbor] + [D in env] --> [junction A:3B-C] + [D in env]", 4, 7, 2, 3, 1, 2, 1, 2);
         testR("[junction A-B] + [A in cell] --> [A in env]", 2, 4, 2, 2, 0, 1, 0, 1);
-        // the junction is not removed like a biomolecule if the same junction is present in the right side.
+        // the junction is not removed like a biomolecule if the same junction is present on the right side.
         testR("[A in env] + [B + 2C] + [junction A-B] --> [junction A-B] + [D in neighbor]", 4, 4, 3, 2, 0, 1, 1, 1);
-        // the junctions will be removed, because they are not present in the right side.
+        // the junctions will be removed because they are not present on the right side.
         testR("[junction A-B] + [junction C-D] --> [A in env]", 2, 5, 2, 2, 0, 2, 0, 1);
         testR("[junction A-B] --> [junction A-B] + [A in cell]", 1, 1, 1, 1, 0, 0, 0, 0);
         testR("[A + B] --> [it.unibo.alchemist.model.actions.BrownianMove(0.1)]", 2, 3, 2, 2, 0, 0, 0, 0);
-        // if a custom condition is used the molecules present in the custom condition will NOT be removed.
+        // if a custom condition is used, the molecules present in the custom condition will NOT be removed.
         testR("[] --> [B in env] if BiomolPresentInCell(A, 2)", 2, 1, 1, 0, 0, 0, 0, 1);
         testR(
             "[A] + [B in neighbor] + [C in env] "
@@ -174,22 +176,22 @@ class TestIncarnation {
         // CHECKSTYLE: MagicNumber ON
         testNoR("[A] + [B in neighbor] --> [junction A-C]"); // C is not present in conditions
         testNoR("[A] + [B in neighbor] --> [junction A-2B]"); // only one molecule B is present in conditions
-        // A is in cell an B is in neighbor. Correct syntax is junction A-B
+        // A is in a cell a B is in a neighbor. Correct syntax is junction A-B
         testNoR("[A] + [B in neighbor] --> [junction B-A]");
         testNoR("[A + B] + [C in neighbor] --> [junction AB-C]"); // AB is considered one molecule. Use A:B
-        // only 3 molecules of B can be used for create the junction
+        // only 3 molecules of B can be used to create the junction
         testNoR("[A + 3B] + [C in neighbor] --> [junction 4B-C]");
-        // molecules in environment cannot be included in junctions
+        // molecules in the environment cannot be included in junctions
         testNoR("[A] + [B in neighbor] + [C in env] --> [junction A-B:C]");
-        // cannot have a new junction in the right side if is present a junction in the left side
+        // cannot have a new junction on the right side if is present a junction on the left side
         testNoR("[junction A-B] --> [junction C-D]");
-        // cannot create junctions with junctions conditions
+        // cannot create junctions with junction conditions
         testNoR("[A] + [B in neighbor] + [junction X-Y] --> [junction A-B]");
         testNoR("[junction A-B] --> [junction B-A]"); // junction A-B != junction B-A
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testCreateNode() {

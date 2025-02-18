@@ -34,25 +34,26 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Graphic component to handle effects.
- * 
+ *
  * @param <T>
- *            is the type for the concentration
+ *            the type for the concentration
+ * @deprecated The entire Swing UI is deprecated and is scheduled to be replaced with a modern UI.
  */
 @Deprecated
 @SuppressFBWarnings(justification = "This class is deprecated anyway")
 public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
 
-    /**
-     * 
-     */
+    @Serial
     private static final long serialVersionUID = 5687806032498247246L;
-    private static final String EXT = ".json", DESC = "Alchemist Effect Stack in JSON format";
+    private static final String EXT = ".json";
+    private static final String DESC = "Alchemist Effect Stack in JSON format";
     private static final String EFFECT_TAB = LocalizedResourceBundle.getString("effect_tab");
     private static final String EFFECTS_GROUP = LocalizedResourceBundle.getString("effects_group");
     private static final String DRAW_LINKS = LocalizedResourceBundle.getString("draw_links");
@@ -64,13 +65,18 @@ public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
     private final GraphicalOutputMonitor<T, ?> main;
     private final List<ActionListener> listeners = new LinkedList<>();
     private final JTapeFeatureStack stackSec;
-    private final JButton addEffectButton, remEffectButton, saveButton, loadButton, moveLeftButton, moveRightButton;
+    private final JButton addEffectButton;
+    private final JButton remEffectButton;
+    private final JButton saveButton;
+    private final JButton loadButton;
+    private final JButton moveLeftButton;
+    private final JButton moveRightButton;
     private File currentDirectory = new File(System.getProperty("user.home"));
     private JEffectRepresentation<T> selected;
 
     /**
      * Initialize the component.
-     * 
+     *
      * @param main
      *            the target {@link GraphicalOutputMonitor}
      * @param displayPaintLinks
@@ -84,14 +90,14 @@ public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
         final JTapeGroup effectsGroup = new JTapeGroup(EFFECTS_GROUP);
         if (displayPaintLinks) {
             final JTapeGroup showGroup = new JTapeGroup(DRAW_LINKS);
-            final JTapeSection showLinksSec = new JTapeMainFeature();
+            final AbstractJTapeSection showLinksSec = new JTapeMainFeature();
             final JToggleButton paintLinksButton = new JToggleButton(DRAW_LINKS);
             paintLinksButton.addActionListener(e -> main.setDrawLinks(paintLinksButton.isSelected()));
             showLinksSec.registerFeature(paintLinksButton);
             showGroup.registerSection(showLinksSec);
             registerGroup(showGroup);
         }
-        final JTapeSection saveLoadSec = new JTapeFeatureStack(JTapeFeatureStack.Type.VERTICAL_STACK);
+        final AbstractJTapeSection saveLoadSec = new JTapeFeatureStack(JTapeFeatureStack.Type.VERTICAL_STACK);
         saveButton = new JButton(SAVE_TEXT);
         saveButton.addActionListener(e -> save(makeFileChooser()));
         loadButton = new JButton(LOAD_TEXT);
@@ -99,7 +105,7 @@ public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
         saveLoadSec.registerFeature(saveButton);
         saveLoadSec.registerFeature(loadButton);
         effectsGroup.registerSection(saveLoadSec);
-        final JTapeSection addRemSec = new JTapeFeatureStack(JTapeFeatureStack.Type.VERTICAL_STACK);
+        final AbstractJTapeSection addRemSec = new JTapeFeatureStack(JTapeFeatureStack.Type.VERTICAL_STACK);
         addEffectButton = new JButton(ADD_EFFECT);
         addEffectButton.addActionListener(e -> {
             final EffectBuilder eb = new EffectBuilder();
@@ -125,7 +131,7 @@ public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
         addRemSec.registerFeature(addEffectButton);
         addRemSec.registerFeature(remEffectButton);
         effectsGroup.registerSection(addRemSec);
-        final JTapeSection moveSec = new JTapeFeatureStack(JTapeFeatureStack.Type.VERTICAL_STACK);
+        final AbstractJTapeSection moveSec = new JTapeFeatureStack(JTapeFeatureStack.Type.VERTICAL_STACK);
         moveLeftButton = new JButton("<");
         moveLeftButton.addActionListener(e -> moveSelectedLeft());
         moveRightButton = new JButton(">");
@@ -150,7 +156,7 @@ public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
 
     /**
      * See {@link JToggleButton#addActionListener(ActionListener)}.
-     * 
+     *
      * @param al
      *            the {@link ActionListener} to add
      */
@@ -160,7 +166,7 @@ public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
 
     /**
      * Adds a new {@link Effect} to this stack.
-     * 
+     *
      * @param e
      *            the {@link Effect} to add
      */
@@ -214,7 +220,7 @@ public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
     /**
      * Decreases the priority of the selected effect.
      */
-    protected void moveSelectedLeft() {
+    private void moveSelectedLeft() {
         if (selected != null) {
             final List<Component> l = stackSec.getOrderedComponents();
             final int index = l.indexOf(selected);
@@ -228,7 +234,7 @@ public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
     /**
      * Increases the priority of the selected effect.
      */
-    protected void moveSelectedRight() {
+    private void moveSelectedRight() {
         if (selected != null) {
             final List<Component> l = stackSec.getOrderedComponents();
             final int index = l.indexOf(selected);
@@ -246,7 +252,7 @@ public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
 
     /**
      * Sets a new effect stack.
-     * 
+     *
      * @param effects
      *            is a {@link List} of effects
      */
@@ -297,8 +303,8 @@ public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
                 final File f = fc.getSelectedFile();
                 final File fileToWrite = f.getName().endsWith(EXT) ? f : new File(f.getAbsolutePath() + EXT);
                 EffectSerializationFactory.effectsToFile(fileToWrite, getEffects());
-            } catch (final IOException e1) {
-                GUIUtilities.errorMessage(e1);
+            } catch (final IOException e) {
+                GUIUtilities.errorMessage(e);
             }
         }
     }

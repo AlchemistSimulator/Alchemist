@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.environments;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -78,9 +79,9 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     private final SpatialIndex<Node<T>> spatialIndex;
     private transient LoadingCache<ImmutablePair<P, Double>, ListSet<Node<T>>> cache;
     private transient Incarnation<T, P> incarnation;
-    private LinkingRule<T, P> rule;
+    private LinkingRule<T, P> linkingRule;
     private transient @Nullable Simulation<T, P> simulation;
-    private TerminationPredicate<T, P> terminator = c -> false;
+    private TerminationPredicate<T, P> terminationPredicate = c -> false;
 
     /**
      * @param incarnation the incarnation to be used.
@@ -109,7 +110,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     @Override
     public void addGlobalReaction(@Nonnull final GlobalReaction<T> reaction) {
         globalReactions.add(reaction);
-        ifEngineAvailable(simulation -> simulation.reactionAdded(reaction));
+        ifEngineAvailable(it -> it.reactionAdded(reaction));
     }
 
     /**
@@ -118,7 +119,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     @Override
     public void removeGlobalReaction(@Nonnull final GlobalReaction<T> reaction) {
         globalReactions.remove(reaction);
-        ifEngineAvailable(simulation -> simulation.reactionRemoved(reaction));
+        ifEngineAvailable(it -> it.reactionRemoved(reaction));
     }
 
     /**
@@ -160,11 +161,12 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
 
     /**
      * Adds to the simulation a predicate that determines whether a simulation should be terminated.
+     *
      * @param terminator the termination predicate.
      */
     @Override
     public void addTerminator(@NotNull final TerminationPredicate<T, P> terminator) {
-        this.terminator = this.terminator.or(terminator);
+        this.terminationPredicate = this.terminationPredicate.or(terminator);
     }
 
     /**
@@ -233,12 +235,12 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     @Nonnull
     @Override
     public final LinkingRule<T, P> getLinkingRule() {
-        return rule;
+        return linkingRule;
     }
 
     @Override
     public final void setLinkingRule(@Nonnull final LinkingRule<T, P> rule) {
-        this.rule = Objects.requireNonNull(rule);
+        this.linkingRule = Objects.requireNonNull(rule);
     }
 
     @Nonnull
@@ -382,7 +384,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
 
     @Override
     public final boolean isTerminated() {
-        return terminator.test(this);
+        return terminationPredicate.test(this);
     }
 
     @Nonnull
@@ -450,7 +452,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     }
 
     private Queue<Operation> recursiveOperation(final Node<T> origin) {
-        final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(origin), this);
+        final Neighborhood<T> newNeighborhood = linkingRule.computeNeighborhood(Objects.requireNonNull(origin), this);
         final Neighborhood<T> oldNeighborhood = neighCache.put(origin.getId(), newNeighborhood);
         return toQueue(origin, oldNeighborhood, newNeighborhood);
     }
@@ -461,7 +463,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         } else {
             ifEngineAvailable(s -> s.neighborRemoved(origin, destination));
         }
-        final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(destination), this);
+        final Neighborhood<T> newNeighborhood = linkingRule.computeNeighborhood(Objects.requireNonNull(destination), this);
         final Neighborhood<T> oldNeighborhood = neighCache.put(destination.getId(), newNeighborhood);
         return toQueue(destination, oldNeighborhood, newNeighborhood);
     }
@@ -561,8 +563,8 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
          * normally considered global. This because for each node which is
          * detached, all the dependencies are updated, ensuring soundness.
          */
-        if (Objects.requireNonNull(rule, "No linking rule / network model set.").isLocallyConsistent()) {
-            final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(node), this);
+        if (Objects.requireNonNull(linkingRule, "No linking rule / network model set.").isLocallyConsistent()) {
+            final Neighborhood<T> newNeighborhood = linkingRule.computeNeighborhood(Objects.requireNonNull(node), this);
             final Neighborhood<T> oldNeighborhood = neighCache.put(node.getId(), newNeighborhood);
             /*
              * Remove the node from all lost neighbors' neighborhoods.
@@ -621,11 +623,13 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         private final Node<T> destination;
         private final boolean isAdd;
         private final Node<T> origin;
+
         private Operation(final Node<T> origin, final Node<T> destination, final boolean isAdd) {
             this.origin = origin;
             this.destination = destination;
             this.isAdd = isAdd;
         }
+
         @Override
         public String toString() {
             return origin + (isAdd ? " discovered " : " lost ") + destination;

@@ -27,10 +27,8 @@ import static it.unibo.alchemist.boundary.ui.impl.PointAdapter.from;
 
 /**
  * Partial, abstract, implementation for the interface {@link Wormhole2D}.
- *
  * This implementation considers the particular case of the view as an entity into the
  * sceern-space: the y-axis grows on the bottom side of the screen.
- *
  * This abstract class is independent from the 2D graphical component wrapped.
  *
  * @param <P> the position type
@@ -50,7 +48,6 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
 
     /**
      * Wormhole constructor for any {@link ViewPort}.
-     *
      * Initializes a new instance directly setting the size of both view and
      * environment, and the offset too.
      *
@@ -222,11 +219,11 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     public void optimalZoom() {
         final var size = getViewSize();
         final PointAdapter<P> viewCenter = from(size.getWidth() / 2, size.getHeight() / 2);
-        final var zoom = getEnvRatio() <= getViewRatio()
+        final var zoomRatio = getEnvRatio() <= getViewRatio()
             ? Math.max(1, getView().getHeight()) / getEnvironment().getSize()[1]
             : Math.max(1, getView().getWidth()) / getEnvironment().getSize()[0];
         final var adjustedZoom = getEnvRatio() <= getViewRatio()
-            ? zoom * (1 - ZOOM_FACTOR) : zoom * (1 + ZOOM_FACTOR);
+            ? zoomRatio * (1 - ZOOM_FACTOR) : zoomRatio * (1 + ZOOM_FACTOR);
         zoomOnPoint(viewCenter.toPoint(), adjustedZoom);
     }
 
@@ -318,21 +315,21 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         final AffineTransform t;
         if (getMode() == Mode.ISOMETRIC) {
             t = new AffineTransform(
-                    getZoom(),
-                    0d,
-                    0d,
-                    -getZoom(),
-                    getViewPosition().getX(),
-                    getViewPosition().getY()
+                getZoom(),
+                0d,
+                0d,
+                -getZoom(),
+                getViewPosition().getX(),
+                getViewPosition().getY()
             );
         } else {
             t = new AffineTransform(
-                    getZoom() * getHRate(),
-                    0d,
-                    0d,
-                    -getZoom() * getVRate(),
-                    getViewPosition().getX(),
-                    getViewPosition().getY()
+                getZoom() * getHRate(),
+                0d,
+                0d,
+                -getZoom() * getVRate(),
+                getViewPosition().getX(),
+                getViewPosition().getY()
             );
         }
         t.concatenate(AffineTransform.getRotateInstance(getRotation()));
@@ -397,11 +394,9 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
 
     /**
      * Gets the viewWidth / envWidth ratio.
-     *
      * NI = Not Isometric.
      *
-     * @return a {@code double} value representing the horizontal ratio for
-     * Not Isometric mode
+     * @return a {@code double} value representing the horizontal ratio for not-isometric mode
      */
     protected double getNIHorizontalRatio() {
         if (mode == Mode.ISOMETRIC) {
@@ -415,11 +410,9 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
 
     /**
      * Gets the viewHeight / envHeight ratio.
-     *
      * NI = Not Isometric.
      *
-     * @return a <code>double</code> value representing the vertical ratio for
-     * Not Isometric mode
+     * @return a <code>double</code> value representing the vertical ratio for non-isometric mode
      */
     protected double getNIVerticalRatio() {
         if (mode == Mode.ISOMETRIC) {

@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -13,12 +14,15 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionListener;
+import java.io.Serial;
 
 /**
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 public abstract class AbstractMenu extends JMenu implements ActionListener {
 
+    @Serial
     private static final long serialVersionUID = 5209455686362711386L;
 
     /**

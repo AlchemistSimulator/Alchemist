@@ -6,24 +6,27 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.linkingrules;
 
-import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
+
+import java.io.Serial;
 
 /**
- * LinkingRule which connects nodes whose euclidean distance is shorter than a
+ * {@link it.unibo.alchemist.model.LinkingRule} which connects nodes whose Euclidean distance is shorter than a
  * given radius.
- * 
- * @param <T>
- *            The type which describes the concentration of a molecule
- * @param <P>
+ *
+ * @param <T> Concentration type
+ * @param <P> Position type
  */
 public class ConnectWithinDistance<T, P extends Position<P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
 
+    @Serial
     private static final long serialVersionUID = -405055780667941773L;
     private final double range;
 

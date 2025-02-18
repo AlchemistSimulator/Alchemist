@@ -6,35 +6,38 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.environments;
 
 import com.google.common.base.Optional;
-import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty;
+import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
 /**
- * Implements a limited environment supporting cells with a defined shape, 
+ * Implements a limited environment supporting cells with a defined shape,
  * avoiding any overlapping among them.
  */
 public final class BioRect2DEnvironmentNoOverlap
         extends BioRect2DEnvironment
         implements EnvironmentSupportingDeformableCells<Euclidean2DPosition> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final Logger L = LoggerFactory.getLogger(BioRect2DEnvironmentNoOverlap.class);
     private Optional<Node<Double>> biggestCellWithCircularArea = Optional.absent();
@@ -92,7 +95,7 @@ public final class BioRect2DEnvironmentNoOverlap
     }
 
     @Override
-    public void moveNodeToPosition(@Nonnull final Node<Double> node, final Euclidean2DPosition newPos) {
+    public void moveNodeToPosition(@Nonnull final Node<Double> node, @Nonnull final Euclidean2DPosition newPos) {
         final double[] cur = getPosition(node).getCoordinates();
         final double[] np = newPos.getCoordinates();
         final Euclidean2DPosition nextWithinLimts = super.next(cur[0], cur[1], np[0], np[1]);
@@ -109,13 +112,14 @@ public final class BioRect2DEnvironmentNoOverlap
     }
 
     /*
-     *  finds the first position, in requested direction (requestedPos - originalPos), that can be occupied by the cell.
+     * finds the first position, in the requested direction (requestedPos - originalPos),
+     * that can be occupied by the cell.
      */
     private Euclidean2DPosition findNearestFreePosition(
             final Node<Double> nodeToMove,
             final Euclidean2DPosition originalPos,
             final Euclidean2DPosition requestedPos) {
-        // get the maximum range depending by cellular shape
+        // get the maximum range depending on cellular shape
         final double maxDiameter = getMaxDiameterAmongCellWithCircularShape();
         final double distanceToReq = originalPos.distanceTo(requestedPos);
         if (maxDiameter == 0d || distanceToReq == 0) {
@@ -124,7 +128,7 @@ public final class BioRect2DEnvironmentNoOverlap
         final double distanceToScan = distanceToReq + nodeToMove
                 .asProperty(CircularCellProperty.class).getRadius() + (maxDiameter / 2);
         final double halfDistance = distanceToScan / 2;
-        // compute position of the midpoint between originalPos and a point at distance distanceToScan
+        // compute the position of the midpoint between originalPos and a point at distance distanceToScan
         final double rx = requestedPos.getX();
         final double ox = originalPos.getX();
         final double xVec = rx - ox;
@@ -155,8 +159,8 @@ public final class BioRect2DEnvironmentNoOverlap
         return getNodesWithinRange(newMidPoint, range).stream()
                 .filter(n -> !n.equals(nodeToMove) && n.asPropertyOrNull(CircularCellProperty.class) != null)
                 .filter(n -> selectNodes(n, nodeToMove, getPosition(nodeToMove), requestedPos, xVer, yVer))
-                .map(n -> getPositionIfNodeIsObstacle(nodeToMove, n, originalPos, oy, ox, ry, rx)) 
-                .filter(Optional::isPresent) 
+                .map(n -> getPositionIfNodeIsObstacle(nodeToMove, n, originalPos, oy, ox, ry, rx))
+                .filter(Optional::isPresent)
                 .map(Optional::get)
                 .min(Comparator.comparingDouble(p -> p.distanceTo(originalPos)))
                 .orElse(requestedPos);
@@ -172,11 +176,11 @@ public final class BioRect2DEnvironmentNoOverlap
     ) {
         // testing if node is between requested position and original position
         final Euclidean2DPosition nodePos = getPosition(node);
-        final Euclidean2DPosition nodeOrientationFromOrigin = new Euclidean2DPosition(nodePos.getX() - origin.getX(), 
+        final Euclidean2DPosition nodeOrientationFromOrigin = new Euclidean2DPosition(nodePos.getX() - origin.getX(),
                 nodePos.getY() - origin.getY());
         final double scalarProductResult1 = xVer * nodeOrientationFromOrigin.getX()
                 + yVer * nodeOrientationFromOrigin.getY();
-        // testing if node is near enough to requested position to be an obstacle
+        // testing if the node is near enough to the requested position to be an obstacle
         final Euclidean2DPosition oppositeVersor = new Euclidean2DPosition(-xVer, -yVer);
         final Euclidean2DPosition nodeOrientationFromReq = new Euclidean2DPosition(
                 nodePos.getX() - requestedPos.getX(),
@@ -193,7 +197,7 @@ public final class BioRect2DEnvironmentNoOverlap
         return scalarProductResult1 >= 0;
     }
 
-    // returns the Optional containing the position of the node, if it's an obstacle for movement
+    // returns the Optional containing the position of the node if it's an obstacle for movement
     private Optional<Euclidean2DPosition> getPositionIfNodeIsObstacle(
         final Node<Double> nodeToMove,
         final Node<Double> node,
@@ -203,7 +207,7 @@ public final class BioRect2DEnvironmentNoOverlap
         final double yr,
         final double xr
     ) {
-        // original position 
+        // original position
         final Euclidean2DPosition possibleObstaclePosition = getPosition(node);
         // coordinates of original position, requested position and of node's position
         final double yn = possibleObstaclePosition.getY();
@@ -227,28 +231,28 @@ public final class BioRect2DEnvironmentNoOverlap
             // computes parameter of straight line, perpendicular to the previous, passing through the cell
             final double m2 = -1 / m1;
             final double q2 = yn - m2 * xn;
-            // compute intersection between this two straight lines
+            // compute the intersection between these two straight lines
             xIntersect = (q2 - q1) / (m1 - m2);
             yIntersect = m2 * xIntersect + q2;
         }
         final Euclidean2DPosition intersection = new Euclidean2DPosition(xIntersect, yIntersect);
         // computes distance between the cell and the first straight line
         final double cat = intersection.distanceTo(possibleObstaclePosition);
-        // if cat is bigger than cellRange, actual cell isn't an obstacle for the cellular movement
+        // if `cat` is bigger than cellRange, actual cell isn't an obstacle for the cellular movement
         if (cat >= cellRange) {
             // so returns an empty optional
             return Optional.absent();
         }
-        // otherwise, compute the maximum practicable distance for the cell
-        final double module =  FastMath.sqrt(FastMath.pow(yIntersect - yo, 2) + FastMath.pow(xIntersect - xo, 2));
-        if (module == 0) { // if module == 0 the translation is 0, so return originalPos
+        // otherwise, compute the maximum possible distance for the cell
+        final double module = FastMath.sqrt(FastMath.pow(yIntersect - yo, 2) + FastMath.pow(xIntersect - xo, 2));
+        if (module == 0) { // if module == 0, the translation is 0, so return originalPos
             return Optional.of(originalPos);
         }
-        // compute the versor relative to requested direction of cell movement
+        // compute the versor relative to the requested direction of cell movement
         final double cat2 = FastMath.sqrt(FastMath.pow(cellRange, 2) - FastMath.pow(cat, 2));
-        final double distToSum  = originalPos.distanceTo(intersection) - cat2;
+        final double distToSum = originalPos.distanceTo(intersection) - cat2;
         final Euclidean2DPosition versor = new Euclidean2DPosition((xIntersect - xo) / module, (yIntersect - yo) / module);
-        // computes vector representing the practicable movement
+        // computes a vector representing the possible movement
         final Euclidean2DPosition vectorToSum = new Euclidean2DPosition(distToSum * versor.getX(), distToSum * versor.getY());
         // returns the right position of the cell
         final Euclidean2DPosition result = originalPos.plus(vectorToSum);
@@ -313,16 +317,16 @@ public final class BioRect2DEnvironmentNoOverlap
                                         (double) diameterToCompare.invoke(c1),
                                         (double) diameterToCompare.invoke(c2)
                                 );
-                            } catch (IllegalAccessException e) {
+                            } catch (final IllegalAccessException e) {
                                 L.error("Method not accessible");
                                 return 0;
-                            } catch (IllegalArgumentException e) {
+                            } catch (final IllegalArgumentException e) {
                                 L.error("Wrong parameter types, or wrong parameters' number");
                                 return 0;
-                            } catch (InvocationTargetException e) {
+                            } catch (final InvocationTargetException e) {
                                 L.error("Invoked method throwed an exception");
                                 return 0;
-                            } catch (ExceptionInInitializerError e) {
+                            } catch (final ExceptionInInitializerError e) {
                                 L.error("Initialization failed");
                                 return 0;
                             }
@@ -331,10 +335,12 @@ public final class BioRect2DEnvironmentNoOverlap
                                 "Return type of method " + diameterToCompare.getName() + " should be double"
                             );
                         }
-                    } catch (NoSuchMethodException e) {
-                        L.error("Method "
-                                + (isDeformable ? "getMaxDiameter" : "getDiameter")
-                                + "not foung in class " + cellClass.getName());
+                    } catch (final NoSuchMethodException e) {
+                        L.error(
+                            "Method {}not foung in class {}",
+                            isDeformable ? "getMaxDiameter" : "getDiameter",
+                            cellClass.getName()
+                        );
                         return 0;
                     }
                 })

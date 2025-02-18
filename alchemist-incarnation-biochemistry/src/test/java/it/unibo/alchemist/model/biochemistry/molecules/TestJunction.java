@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.molecules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -52,7 +53,7 @@ class TestJunction {
     }
 
     /**
-     * Various test cases for junctions management.
+     * Various test cases for junction management.
      */
     @Test
     void test() {
@@ -68,9 +69,9 @@ class TestJunction {
         assertFalse(getCell(node2).containsJunction(j1)); // this is just for this test, normally node2 contain j1
         assertFalse(getCell(node3).containsJunction(j1));
 
-        assertEquals(getCell(node1).getJunctionsCount(), 1);
-        assertEquals(getCell(node2).getJunctionsCount(), 0);
-        assertEquals(getCell(node3).getJunctionsCount(), 0);
+        assertEquals(1, getCell(node1).getJunctionsCount());
+        assertEquals(0, getCell(node2).getJunctionsCount());
+        assertEquals(0, getCell(node3).getJunctionsCount());
 
         final Junction j2 = new Junction(jBase);
         getCell(node1).addJunction(j2, node3);
@@ -79,39 +80,39 @@ class TestJunction {
         assertFalse(getCell(node2).containsJunction(j2));
         assertFalse(getCell(node3).containsJunction(j2)); // this is just for this test, normally node3 contains j2
 
-        assertEquals(getCell(node1).getJunctionsCount(), 2);
-        assertEquals(getCell(node2).getJunctionsCount(), 0);
+        assertEquals(2, getCell(node1).getJunctionsCount());
+        assertEquals(0, getCell(node2).getJunctionsCount());
         final CellProperty<Euclidean2DPosition> b = getCell(node3);
-        assertEquals(b.getJunctionsCount(), 0);
-        //CHECKSTYLE:OFF magicnumber
+        assertEquals(0, b.getJunctionsCount());
+        //CHECKSTYLE:OFF MagicNumber
         final int totJ = 123;
-        //CHECKSTYLE:ON magicnumber
-        for (int i = 0; i < totJ; i++) { // add many identical junction to node 2
+        //CHECKSTYLE:ON MagicNumber
+        for (int i = 0; i < totJ; i++) { // add many identical junctions to node 2
             final Junction jtmp = new Junction(jBase);
             getCell(node2).addJunction(jtmp, node3);
         }
-        /* Situation Summary: 
+        /* Situation Summary:
          * node1: 1 junction A-B with node2, 1 junction A-B with node3
          * node2: totJ junction A-B with node3
          * node3: nothing
          */
-        assertEquals(getCell(node1).getJunctionsCount(), 2);
-        assertEquals(getCell(node2).getJunctionsCount(), totJ);
-        assertEquals(getCell(node3).getJunctionsCount(), 0);
+        assertEquals(2, getCell(node1).getJunctionsCount());
+        assertEquals(totJ, getCell(node2).getJunctionsCount());
+        assertEquals(0, getCell(node3).getJunctionsCount());
         /* **** Remove junctions **** */
         // TODO ? note that molecule in the junction is not placed in cell after destruction. It is not implemented yet.
-        getCell(node1).removeJunction(jBase, node2); // remove a junction of the type A-B which has node2 as neighbor
-        assertEquals(getCell(node1).getJunctionsCount(), 1);
-        assertEquals(getCell(node2).getJunctionsCount(), totJ);
-        assertEquals(getCell(node3).getJunctionsCount(), 0);
-        getCell(node1).removeJunction(jBase, node2); // do nothing, because node1 hasn't any junction with node2 now
-        assertEquals(getCell(node1).getJunctionsCount(), 1);
-        assertEquals(getCell(node2).getJunctionsCount(), totJ);
-        assertEquals(getCell(node3).getJunctionsCount(), 0);
+        getCell(node1).removeJunction(jBase, node2); // remove a junction of the type A-B which has node2 as a neighbor
+        assertEquals(1, getCell(node1).getJunctionsCount());
+        assertEquals(totJ, getCell(node2).getJunctionsCount());
+        assertEquals(0, getCell(node3).getJunctionsCount());
+        getCell(node1).removeJunction(jBase, node2); // do nothing because node1 hasn't any junction with node2 now
+        assertEquals(1, getCell(node1).getJunctionsCount());
+        assertEquals(totJ, getCell(node2).getJunctionsCount());
+        assertEquals(0, getCell(node3).getJunctionsCount());
         getCell(node1).removeJunction(jBase, node3); // remove the last junction of node1
-        assertEquals(getCell(node1).getJunctionsCount(), 0);
-        assertEquals(getCell(node2).getJunctionsCount(), totJ);
-        assertEquals(getCell(node3).getJunctionsCount(), 0);
+        assertEquals(0, getCell(node1).getJunctionsCount());
+        assertEquals(totJ, getCell(node2).getJunctionsCount());
+        assertEquals(0, getCell(node3).getJunctionsCount());
 
         final Map<Biomolecule, Double> mapD1 = new HashMap<>(1);
         final Map<Biomolecule, Double> mapD2 = new HashMap<>(1);
@@ -121,7 +122,7 @@ class TestJunction {
         final Junction jDiff = new Junction("C-D", mapD1, mapD2);
 
         getCell(node2).removeJunction(jDiff, node3); // do nothing because node2 hasn't a junction C-D
-        assertEquals(getCell(node2).getJunctionsCount(), totJ);
+        assertEquals(totJ, getCell(node2).getJunctionsCount());
     }
 
 }

@@ -12,15 +12,15 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position2D;
 import it.unibo.alchemist.model.cognitive.environments.ImageEnvironmentWithGraph;
 import it.unibo.alchemist.model.geometry.ConvexPolygon;
 import it.unibo.alchemist.model.geometry.Segment2D;
 import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DPassage;
 import it.unibo.alchemist.model.geometry.navigationgraph.NavigationGraph;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Position2D;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
 import org.slf4j.Logger;
@@ -35,7 +35,10 @@ import java.io.Serial;
 
 /**
  * Draws the navigation graph of an {@link ImageEnvironmentWithGraph}.
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
+@Deprecated
 @SuppressFBWarnings("EI_EXPOSE_REP")
 public class DrawNavigationGraph extends AbstractDrawOnce {
 
@@ -50,8 +53,7 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
     /**
      *
      */
-    @SuppressWarnings("deprecation")
-    protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
+    protected static final Logger L = LoggerFactory.getLogger(DrawNavigationGraph.class);
     @Serial
     private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "A")

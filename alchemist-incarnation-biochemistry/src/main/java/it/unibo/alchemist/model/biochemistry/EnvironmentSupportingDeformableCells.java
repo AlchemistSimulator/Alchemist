@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry;
 
 import it.unibo.alchemist.model.Environment;
@@ -19,8 +20,7 @@ import it.unibo.alchemist.model.Position;
 public interface EnvironmentSupportingDeformableCells<P extends Position<? extends P>> extends Environment<Double, P> {
 
     /**
-     * 
-     * @return the biggest among the deformable cell's diameter, when not stressed. 
+     * @return the biggest among the deformable cell's diameter, when not stressed.
      */
     double getMaxDiameterAmongCircularDeformableCells();
 }

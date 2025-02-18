@@ -6,46 +6,48 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.actions;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.EuclideanEnvironment;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
 
+import java.io.Serial;
 import java.util.List;
-
 
 /**
  * @param <P> {@link Position} type
  */
-public abstract class SAPEREMoveNodeAgent<P extends Position<? extends P>> extends SAPERELocalAgent {
+public abstract class AbstractSAPEREMoveNodeAgent<P extends Position<? extends P>> extends AbstractSAPERELocalAgent {
 
+    @Serial
     private static final long serialVersionUID = 1202282862490424016L;
     private final Environment<List<ILsaMolecule>, P> environment;
 
     /**
      * Creates a new SAPERE Local Agent stub. If you use this constructor, you
-     * must be sure that your agent does not modify any molecule (e.g. an agent
+     * must be sure that your agent does not modify any molecule (e.g., an agent
      * that just moves a node).
-     * 
+     *
      * @param environment
      *            The current environment
      * @param node
      *            The node in which this agent stays
      */
-    public SAPEREMoveNodeAgent(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node) {
+    public AbstractSAPEREMoveNodeAgent(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node) {
         super(node);
         this.environment = environment;
     }
 
     /**
-     * Creates a new SAPERE Local Agent stub. Use this constructor if you agent
-     * modifies a molecule (locally!)
-     * 
+     * Creates a new SAPERE Local Agent stub.
+     * Use this constructor if your agent modifies a molecule (locally!)
+     *
      * @param environment
      *            The current environment
      * @param node
@@ -53,7 +55,7 @@ public abstract class SAPEREMoveNodeAgent<P extends Position<? extends P>> exten
      * @param molecule
      *            The modified molecule template
      */
-    public SAPEREMoveNodeAgent(
+    public AbstractSAPEREMoveNodeAgent(
             final Environment<List<ILsaMolecule>, P> environment,
             final ILsaNode node,
             final ILsaMolecule molecule

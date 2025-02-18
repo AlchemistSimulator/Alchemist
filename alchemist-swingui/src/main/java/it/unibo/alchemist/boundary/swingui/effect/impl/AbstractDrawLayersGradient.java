@@ -21,23 +21,29 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Dimension2D;
+import java.io.Serial;
 import java.util.function.Function;
 
 /**
- * Draw layers values as background in the gui. The higher is the layer
+ * Draw layers values as a background in the gui.
+ * The higher is the layer
  * concentration in a point, the higher is the alpha channel for the background
  * in that point.
- *
  * The user must specify:
  * - the number of samples for each side, basically more samples correspond to a smoother
  * and more detailed background
  * - the min layer value
  * - the max layer value
  *
- * The purpose and structure of this class is similar to {@link DrawLayersIsolines}.
+ * <p>
+ * The purpose and structure of this class is similar to {@link AbstractrDrawLayersIsolines}.
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
-public abstract class DrawLayersGradient extends DrawLayersValues {
+@Deprecated
+public abstract class AbstractDrawLayersGradient extends AbstractDrawLayersValues {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final int MIN_SAMPLES = 10;
     private static final int MAX_SAMPLES = 400;
@@ -47,7 +53,7 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
     /**
      * @param mapper the {@link LayerToFunctionMapper} converting a layer into a function.
      */
-    protected DrawLayersGradient(final LayerToFunctionMapper mapper) {
+    protected AbstractDrawLayersGradient(final LayerToFunctionMapper mapper) {
         super(mapper);
     }
 
@@ -64,7 +70,7 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
         if (minOrMaxLayerValuesNeedsToBeUpdated()) {
             updateMinAndMaxLayerValues();
         }
-        // to draw the gradient, we simply divide the screen into cells, then we
+        // To draw the gradient, we simply divide the screen into cells, then we
         // visit each cell and determine its value by interpolating the values
         // at the corners. We then map such value to a color and fill the cell
         // with that color
@@ -130,17 +136,17 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
     }
 
     /**
-     * Map x from [xmin, xmax] to [ymin, ymax].
+     * Map x from [xMin, xMax] to [yMin, yMax].
      *
      * @param x    - x
-     * @param xmin - the lower bound of the actual x scale (included)
-     * @param xmax - the upper bound of the actual x scale (included)
-     * @param ymin - the lower bound of the new x scale (included)
-     * @param ymax - the upper bound of the new x scale (included)
+     * @param xMin - the lower bound of the actual x scale (included)
+     * @param xMax - the upper bound of the actual x scale (included)
+     * @param yMin - the lower bound of the new x scale (included)
+     * @param yMax - the upper bound of the new x scale (included)
      *
      * @return the new value for x
      */
-    public static double map(final double x, final double xmin, final double xmax, final double ymin, final double ymax) {
-        return (x - xmin) / (xmax - xmin) * (ymax - ymin) + ymin;
+    public static double map(final double x, final double xMin, final double xMax, final double yMin, final double yMax) {
+        return (x - xMin) / (xMax - xMin) * (yMax - yMin) + yMin;
     }
 }

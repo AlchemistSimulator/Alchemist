@@ -6,20 +6,23 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
 /**
- * A variable simulation value, that provides a range of values for batches, and
+ * A variable simulation value that provides a range of values for batches, and
  * a default value for single-shot runs.
  *
  * @param <V> value typ of the variable
  */
 public interface Variable<V extends Serializable> extends Serializable, Iterable<V> {
 
+    @Nonnull
     @Override
     default Iterator<V> iterator() {
         return stream().iterator();
@@ -38,7 +41,7 @@ public interface Variable<V extends Serializable> extends Serializable, Iterable
     V getDefault();
 
     /**
-     * @return a view of the values of this variable as {@link Stream}.
+     * @return all values of this variable as {@link Stream}.
      */
     Stream<V> stream();
 

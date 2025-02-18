@@ -6,20 +6,23 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.boundary.variables;
 
-import java.io.Serializable;
-import java.util.stream.Stream;
+package it.unibo.alchemist.boundary.variables;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.ListSet;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.stream.Stream;
+
 /**
  * A variable spanning over an arbitrary set of values.
  */
-public final class ArbitraryVariable extends PrintableVariable<Serializable> {
+public final class ArbitraryVariable extends AbstractPrintableVariable<Serializable> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final Serializable def;
     private final ListSet<? extends Serializable> vals;

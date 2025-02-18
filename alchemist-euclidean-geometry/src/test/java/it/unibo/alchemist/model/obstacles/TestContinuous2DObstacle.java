@@ -6,16 +6,17 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.obstacles;
 
-import it.unibo.alchemist.model.SupportedIncarnations;
-import it.unibo.alchemist.model.linkingrules.NoLinks;
-import it.unibo.alchemist.model.nodes.GenericNode;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.SupportedIncarnations;
+import it.unibo.alchemist.model.linkingrules.NoLinks;
+import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.physics.environments.Continuous2DObstacles;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.commons.math3.util.FastMath.nextAfter;
@@ -41,7 +42,7 @@ class TestContinuous2DObstacle {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void test() {
@@ -62,23 +63,23 @@ class TestContinuous2DObstacle {
         );
 
         environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(0, 0));
-        assertEquals(environment.getNodeCount(), 1);
+        assertEquals(1, environment.getNodeCount());
         environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(1, 1));
-        assertEquals(environment.getNodeCount(), 1);
+        assertEquals(1, environment.getNodeCount());
         // CHECKSTYLE: MagicNumber OFF
         environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(1.5, 0.5));
-        assertEquals(environment.getNodeCount(), 1);
+        assertEquals(1, environment.getNodeCount());
         environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(1, 5));
-        assertEquals(environment.getNodeCount(), 1);
+        assertEquals(1, environment.getNodeCount());
         environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(1, 2.999));
-        assertEquals(environment.getNodeCount(), 2);
-        assertEquals(environment.getObstaclesInRange(0d, 0d, 100d).size(), 2);
-        assertEquals(environment.getObstaclesInRange(0d, 0d, 1d).size(), 1);
-        assertEquals(environment.getObstaclesInRange(0d, 0d, 1d).get(0), R1021);
-        assertEquals(environment.getObstaclesInRange(1d, 5d, 1d).size(), 1);
-        assertEquals(environment.getObstaclesInRange(1d, 5d, 1d).get(0), R0527);
+        assertEquals(2, environment.getNodeCount());
+        assertEquals(2, environment.getObstaclesInRange(0d, 0d, 100d).size());
+        assertEquals(1, environment.getObstaclesInRange(0d, 0d, 1d).size());
+        assertEquals(R1021, environment.getObstaclesInRange(0d, 0d, 1d).get(0));
+        assertEquals(1, environment.getObstaclesInRange(1d, 5d, 1d).size());
+        assertEquals(R0527, environment.getObstaclesInRange(1d, 5d, 1d).get(0));
         // CHECKSTYLE: MagicNumber ON
-        assertEquals(environment.getObstaclesInRange(0d, 0d, 0.5d).size(), 0);
+        assertEquals(0, environment.getObstaclesInRange(0d, 0d, 0.5d).size());
     }
 
 }

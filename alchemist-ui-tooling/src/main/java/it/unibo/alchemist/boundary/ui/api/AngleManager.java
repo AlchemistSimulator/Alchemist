@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.ui.api;
 
 /**
@@ -17,7 +18,7 @@ package it.unibo.alchemist.boundary.ui.api;
 public interface AngleManager extends SlideInputManager {
     /**
      * Gets the angle.
-     * 
+     *
      * @return a <code>double</code> value representing an angle in radians
      */
     double getAngle();

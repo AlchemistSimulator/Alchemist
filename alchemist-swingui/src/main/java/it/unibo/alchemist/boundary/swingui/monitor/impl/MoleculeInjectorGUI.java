@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.monitor.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -31,6 +32,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,21 +42,24 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This class raises a new JPanel which allows to graphically inject a new molecule
+ * This class raises a new JPanel which allows graphically injecting a new molecule
  * inside a node (or a group of nodes) or to modify the value of a certain molecule.
  *
  * @param <T> concentration type
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 @SuppressWarnings("unchecked")
 @SuppressFBWarnings(
-    value = { "SE_TRANSIENT_FIELD_NOT_RESTORED",  "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" },
+    value = { "SE_TRANSIENT_FIELD_NOT_RESTORED", "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" },
     justification =
         "This class is not meant to get serialized."
         + " This class is final."
 )
 public final class MoleculeInjectorGUI<T> extends JPanel {
 
+    @Serial
     private static final long serialVersionUID = -375286112397911525L;
     private static final Logger L = LoggerFactory.getLogger(MoleculeInjectorGUI.class);
     private static final List<Incarnation<?, ?>> INCARNATIONS = new LinkedList<>();
@@ -62,7 +67,7 @@ public final class MoleculeInjectorGUI<T> extends JPanel {
     static {
         final var incarnations = ClassPathScanner.subTypesOf(Incarnation.class).stream()
             .map(it -> (Class<? extends Incarnation<?, ?>>) it)
-            .collect(Collectors.toList());
+            .toList();
         for (final Class<? extends Incarnation<?, ?>> clazz: incarnations) {
             try {
                 INCARNATIONS.add(clazz.getDeclaredConstructor().newInstance());
@@ -168,6 +173,7 @@ public final class MoleculeInjectorGUI<T> extends JPanel {
             for (final Node<T> n : affectedNodes) {
                 try {
                     n.setConcentration(currentInc.createMolecule(mol), currentInc.createConcentration(conc));
+                    // CHECKSTYLE: IllegalCatch OFF
                 } catch (Exception | AbstractMethodError e) { // NOPMD
                     L.error("Unable to set new concentration: ", e);
                 }

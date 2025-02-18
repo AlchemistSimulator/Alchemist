@@ -10,7 +10,6 @@
 package it.unibo.alchemist.boundary.swingui.effect.isolines.impl;
 
 import conrec.Conrec;
-import it.unibo.alchemist.boundary.swingui.effect.impl.DrawShape;
 import it.unibo.alchemist.boundary.swingui.effect.isolines.api.Isoline;
 import it.unibo.alchemist.boundary.swingui.effect.isolines.api.IsolinesFactory;
 import it.unibo.alchemist.boundary.swingui.effect.isolines.api.IsolinesFinder;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
 public class ConrecIsolinesFinder implements IsolinesFinder {
 
     private static final int SAMPLES = 100; // for each dimension
-    private static final Logger L = LoggerFactory.getLogger(DrawShape.class);
+    private static final Logger L = LoggerFactory.getLogger(ConrecIsolinesFinder.class);
     private final IsolinesFactory factory;
 
     /**
@@ -66,10 +65,10 @@ public class ConrecIsolinesFinder implements IsolinesFinder {
         final double startY = y1.doubleValue();
         final double endX = x2.doubleValue();
         final double endY = y2.doubleValue();
-        // the rectangular region defined by start and end is continuous,
-        // this means we will sample a discrete amount of points in that region.
+        // The rectangular region defined by start and end is continuous;
+        // this means we will sample a discrete number of points in that region.
         // How many points will be sampled on each side is defined by SAMPLE,
-        // step is the distance between two of these points
+        // a step is the distance between two and these points
         final double stepX = (endX - startX) / SAMPLES;
         final double stepY = (endY - startY) / SAMPLES;
         // indexes for accessing x, y and d arrays
@@ -77,7 +76,7 @@ public class ConrecIsolinesFinder implements IsolinesFinder {
         final int jlb = 0;
         final int iub = SAMPLES;
         final int jub = SAMPLES;
-        // x and y contains respectively the x and y coordinates of the sampling points
+        // x and y respectively contain the x and y coordinates of the sampling points
         final double[] x = new double[iub + 1]; // +1 because iub, jub are included
         final double[] y = new double[jub + 1];
         for (int i = ilb; i <= iub; i++) {
@@ -122,9 +121,11 @@ public class ConrecIsolinesFinder implements IsolinesFinder {
                     levels.size(),
                     levels.stream().mapToDouble(Number::doubleValue).toArray()
             );
-        } catch (Exception e) { // NOPMD
+            // CHECKSTYLE: IllegalCatch OFF
+        } catch (final Exception e) { // NOPMD
+            // CHECKSTYLE: IllegalCatch ON
             // this is horrible but necessary
-            L.warn("couldn't find isolines, conrec threw an exception: " + e.getMessage());
+            L.warn("couldn't find isolines, conrec threw an exception: {}", e.getMessage());
         }
         return isolines.entrySet().stream()
                 .map(entry -> factory.makeIsoline(entry.getKey(), entry.getValue())).collect(Collectors.toList());

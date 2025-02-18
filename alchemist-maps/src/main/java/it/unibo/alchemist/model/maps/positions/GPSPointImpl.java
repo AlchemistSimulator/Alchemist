@@ -6,24 +6,27 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.positions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.maps.GPSPoint;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.maps.GPSPoint;
 import org.danilopianini.util.Hashes;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.List;
 
 /**
  */
 public final class GPSPointImpl implements GPSPoint {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final LatLongPosition repr;
-    private final Time t;
+    private final Time time;
 
     /**
      * @param latitude
@@ -38,19 +41,19 @@ public final class GPSPointImpl implements GPSPoint {
     }
 
     /**
-     * @param latlong
+     * @param latLongPosition
      *            latitude and longitude
      * @param time
      *            time
      */
-    public GPSPointImpl(final LatLongPosition latlong, final Time time) {
-        this.repr = latlong;
-        this.t = time;
+    public GPSPointImpl(final LatLongPosition latLongPosition, final Time time) {
+        this.repr = latLongPosition;
+        this.time = time;
     }
 
     @Override
-    public GPSPointImpl addTime(final Time t) {
-        return new GPSPointImpl(repr, this.t.plus(t));
+    public GPSPointImpl addTime(final Time shift) {
+        return new GPSPointImpl(repr, this.time.plus(shift));
     }
 
     @Override
@@ -61,7 +64,7 @@ public final class GPSPointImpl implements GPSPoint {
 
     @Override
     public int compareTo(final GPSPoint p) {
-        return (int) Math.signum(t.toDouble() - p.getTime().toDouble());
+        return (int) Math.signum(time.toDouble() - p.getTime().toDouble());
     }
 
     @Override
@@ -70,9 +73,8 @@ public final class GPSPointImpl implements GPSPoint {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof GPSPointImpl) {
-            final GPSPointImpl pt = (GPSPointImpl) obj;
-            return pt.getTime().equals(t) && repr.equals(pt.repr);
+        if (obj instanceof final GPSPointImpl pt) {
+            return pt.getTime().equals(time) && repr.equals(pt.repr);
         }
         return false;
     }
@@ -135,7 +137,7 @@ public final class GPSPointImpl implements GPSPoint {
 
     @Override
     public Time getTime() {
-        return t;
+        return time;
     }
 
     @Override
@@ -150,16 +152,16 @@ public final class GPSPointImpl implements GPSPoint {
 
     @Override
     public int hashCode() {
-        return Hashes.hash32(repr, t);
+        return Hashes.hash32(repr, time);
     }
 
     @Override
     public GPSPointImpl subtractTime(final Time t) {
-        return new GPSPointImpl(repr, this.t.minus(t));
+        return new GPSPointImpl(repr, this.time.minus(t));
     }
 
     @Override
     public String toString() {
-        return "[" + repr.getLatitude() + "," + repr.getLongitude() + "]@" + t;
+        return "[" + repr.getLatitude() + "," + repr.getLongitude() + "]@" + time;
     }
 }

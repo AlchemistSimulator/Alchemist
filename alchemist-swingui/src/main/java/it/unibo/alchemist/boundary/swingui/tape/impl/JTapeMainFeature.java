@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.tape.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -14,19 +15,21 @@ import javax.swing.SpringLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.io.Serial;
 
 /**
- *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
-public final class JTapeMainFeature extends JTapeSection {
+public final class JTapeMainFeature extends AbstractJTapeSection {
 
+    @Serial
     private static final long serialVersionUID = -3756166558195051145L;
     private final SpringLayout springLayout; // NOPMD: this class is not intended to be serialized
 
     /**
-     * 
+     *
      */
     public JTapeMainFeature() {
         super();
@@ -38,7 +41,7 @@ public final class JTapeMainFeature extends JTapeSection {
     }
 
     /**
-     * 
+     *
      */
     @Override
     public boolean registerFeature(final Component c) {

@@ -15,24 +15,26 @@ import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 
 /**
  * This reaction completely ignores the propensity conditioning of the
  * conditions, and tries to run every time the {@link TimeDistribution} wants
  * to.
- * 
+ *
  * @param <T> concentration type
  */
 public final class Event<T> extends AbstractReaction<T> {
 
+    @Serial
     private static final long serialVersionUID = -1640973841645383193L;
 
     /**
      * @param node the node this {@link Event} belongs to
-     * @param timedist the {@link TimeDistribution} this event should use
+     * @param timeDistribution the {@link TimeDistribution} this event should use
      */
-    public Event(final Node<T> node, final TimeDistribution<T> timedist) {
-        super(node, timedist);
+    public Event(final Node<T> node, final TimeDistribution<T> timeDistribution) {
+        super(node, timeDistribution);
     }
 
     @Override

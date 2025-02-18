@@ -6,29 +6,32 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.conditions;
 
 import com.google.common.collect.Sets;
-import it.unibo.alchemist.model.sapere.dsl.IExpression;
-import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.Context;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import org.danilopianini.lang.HashString;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * simple LSA-condition (example: &lt;grad,X,1&gt;). Search an instance of a template
- * in a node. The LSAMolecule matched, if exist, will not be deleted from the
- * node Lsa-space . It can be deleted from the reaction, if necessary.
+ * Simple LSA-condition (example: &lt;grad, X,1&gt;). Search an instance of a template in a node.
+ * The LSAMolecule matched, if existed, will not be deleted from the node Lsa-space.
+ * It can be deleted from the reaction, if necessary.
  */
-public class LsaStandardCondition extends LsaAbstractCondition {
+public class LsaStandardCondition extends AbstractLsaCondition {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final ILsaMolecule molecule;
@@ -36,14 +39,14 @@ public class LsaStandardCondition extends LsaAbstractCondition {
 
     /**
      * Builds an LsaStandardCondition.
-     * 
+     *
      * @param mol
-     *            the molecole whose presence must be tested
+     *            the molecule whose presence must be tested
      * @param n
      *            the node in which this condition will act
      */
     public LsaStandardCondition(final ILsaMolecule mol, final ILsaNode n) {
-        super(n, Sets.newHashSet(new ILsaMolecule[] { mol }));
+        super(n, Sets.newHashSet(new ILsaMolecule[] {mol}));
         molecule = mol;
     }
 
@@ -51,8 +54,11 @@ public class LsaStandardCondition extends LsaAbstractCondition {
      * {@inheritDoc}
      */
     @Override
-    public LsaStandardCondition cloneCondition(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> r) {
-        return new LsaStandardCondition(molecule, (ILsaNode) node);
+    public LsaStandardCondition cloneCondition(
+        final Node<List<ILsaMolecule>> newNode,
+        final Reaction<List<ILsaMolecule>> newReaction
+    ) {
+        return new LsaStandardCondition(molecule, (ILsaNode) newNode);
     }
 
     /**
@@ -89,15 +95,15 @@ public class LsaStandardCondition extends LsaAbstractCondition {
             final boolean dups = molecule.hasDuplicateVariables();
             /*
              * There are three possibilities:
-             * 
+             *
              * 1 - No valid combinations are found. It implies that this match
              * and the relative entry in newSpaces should be deleted.
-             * 
+             *
              * 2 - Only a single valid match is found. Both matches and
              * newSpaces must be modified.
-             * 
+             *
              * 3 - After two, other valid matches are found. In this case, a new
-             * entry in matchesList and newSpaces should be created.
+             * entry in `matchesList` and newSpaces should be created.
              */
             final List<ILsaMolecule> otherMatches = calculateMatches(
                 partialInstance,
@@ -153,9 +159,9 @@ public class LsaStandardCondition extends LsaAbstractCondition {
     }
 
     /**
-     * Allows to set the validity value for this condition by subclasses. Handle
-     * with care.
-     * 
+     * Allows setting the validity value for this condition by subclasses.
+     * Handle with care.
+     *
      * @param isValid
      *            true if this condition is valid
      * @return the value which is passed.

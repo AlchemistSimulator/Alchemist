@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.actions;
 
 import it.unibo.alchemist.model.Environment;
@@ -16,6 +17,7 @@ import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy;
 
+import java.io.Serial;
 import java.util.Objects;
 
 /**
@@ -28,6 +30,7 @@ import java.util.Objects;
  */
 public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final TargetSelectionStrategy<T, P> targetSelectionStrategy;
     private final SpeedSelectionStrategy<T, P> speedSelectionStrategy;
@@ -37,8 +40,8 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
     private int curStep;
 
     /**
-     * Builds a new move node action. By default the movements are relative.
-     * 
+     * Builds a new move node action. By default, the movements are relative.
+     *
      * @param environment
      *            The environment where to move
      * @param node
@@ -137,8 +140,8 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
 
     /**
      * Given a start position (current), a desired target position (target), and a maximum walkable distance (maxWalk),
-     * this method computes the actual position reached by the moving node, in absolute or relative coordinates
-     * depending on the value of isAbsolute in the constructor.
+     * this method computes the actual position reached by the moving node.
+     * The method can work in absolute or relative coordinates depending on the value of isAbsolute in the constructor.
      *
      * @param current the current position of the node
      * @param target the target that should be reached
@@ -155,7 +158,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
     }
 
     /**
-     * Resets the current route, e.g. because the target has been reached
+     * Resets the current route, e.g., because the target has been reached
      */
     protected final void resetRoute() {
         route = null;

@@ -9,12 +9,13 @@
 
 package it.unibo.alchemist.model.biochemistry.conditions;
 
-import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
+import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 
+import java.io.Serial;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -22,6 +23,7 @@ import java.util.Objects;
  */
 public final class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
+    @Serial
     private static final long serialVersionUID = 4213307452790768059L;
 
     private final Junction junction;
@@ -29,7 +31,6 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
     private final CellProperty<?> cell;
 
     /**
-     * 
      * @param junction the junction
      * @param node the node
      * @param environment the environment
@@ -52,21 +53,21 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
     }
 
     @Override
-    public JunctionPresentInCell cloneCondition(final Node<Double> node, final Reaction<Double> r) {
-        return new JunctionPresentInCell(environment, node, junction);
+    public JunctionPresentInCell cloneCondition(final Node<Double> newNode, final Reaction<Double> newReaction) {
+        return new JunctionPresentInCell(environment, newNode, junction);
     }
 
     @Override
     protected double getNeighborPropensity(final Node<Double> neighbor) {
         // the neighbor's propensity is computed as the number of junctions it has
         return cell.getJunctions()
-                .getOrDefault(junction, Collections.emptyMap())
-                .getOrDefault(neighbor, 0);
+            .getOrDefault(junction, Collections.emptyMap())
+            .getOrDefault(neighbor, 0);
     }
 
     @Override
     public String toString() {
-        return "junction " +  junction.toString() + " present ";
+        return "junction " + junction.toString() + " present ";
     }
 
 }

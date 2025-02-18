@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -15,6 +16,8 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 
+import java.io.Serial;
+
 /**
  * Removes the current node from the environment.
  *
@@ -22,9 +25,7 @@ import it.unibo.alchemist.model.Reaction;
  */
 public final class RemoveNode<T> extends AbstractAction<T> {
 
-    /**
-     * 
-     */
+    @Serial
     private static final long serialVersionUID = -7358217984854060148L;
     private final Environment<T, ?> environment;
 
@@ -60,7 +61,7 @@ public final class RemoveNode<T> extends AbstractAction<T> {
     /**
      * @return the current environment
      */
-    protected Environment<T, ?> getEnvironment() {
+    private Environment<T, ?> getEnvironment() {
         return environment;
     }
 

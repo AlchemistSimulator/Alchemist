@@ -6,21 +6,22 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.conditions;
 
-import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
-import it.unibo.alchemist.model.sapere.dsl.IExpression;
-import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
-import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
-import it.unibo.alchemist.model.Node;
-
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
+import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.danilopianini.lang.HashString;
 
+import java.io.Serial;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,11 +29,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  */
 public final class LsaNeighborhoodCondition extends LsaStandardCondition {
 
+    @Serial
     private static final long serialVersionUID = 5472803597473997104L;
     private final Environment<List<ILsaMolecule>, ?> environment;
 
@@ -67,8 +68,8 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
         if (matchesList.isEmpty()) {
             /*
              * This is the first condition. It must create all the matches.
-             * 
-             * To create them, it must check every neighbor, and create the
+             *
+             * To create them, it must check every neighbor and create the
              * matches for each of them.
              */
             int lastSize = 0;
@@ -80,7 +81,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                      * This neighbor has the LSA we are checking for, so new
                      * matches have been created. For each of them, we must add
                      * the selected node special property, in order for the
-                     * actions on single neighbor to be correctly bound.
+                     * actions on a single neighbor to be correctly bound.
                      */
                     final NumTreeNode nodeId = new NumTreeNode(neigh.getId());
                     for (; lastSize < matchesList.size(); lastSize++) {
@@ -89,7 +90,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                     i++;
                 } else {
                     /*
-                     * This neighbor is not valid, and thus should be removed
+                     * This neighbor is not valid and thus should be removed
                      * from the validNodes list.
                      */
                     validNodes.remove(i);
@@ -114,7 +115,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
             /*
              * There is a chance that other Neighborhood conditions have been
              * run before. Thus, it is mandatory to check if the selected node
-             * match has been instanced, and in case just run on that node.
+             * match has been instanced, and in case run on that node.
              */
             final ITreeNode<?> node = matches.get(LsaMolecule.SYN_SELECTED);
             if (node != null) {
@@ -122,11 +123,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                 for (int j = validNodes.size() - 1; j >= 0; j--) {
                     final ILsaNode n = validNodes.get(j);
                     if (n.getId() == id) {
-                        List<ILsaMolecule> alreadyRemoved = alreadyRemovedMap.get(n);
-                        if (alreadyRemoved == null) {
-                            alreadyRemoved = new ArrayList<>();
-                            alreadyRemovedMap.put(n, alreadyRemoved);
-                        }
+                        List<ILsaMolecule> alreadyRemoved = alreadyRemovedMap.computeIfAbsent(n, k -> new ArrayList<>());
                         final List<ILsaMolecule> otherMatches =
                                 calculateMatches(partialInstance, dups, n.getLsaSpace(), alreadyRemoved);
                         if (otherMatches.isEmpty()) {
@@ -161,11 +158,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                 final Map<ILsaNode, List<ILsaMolecule>> matchesPerNode = new HashMap<>();
                 for (int j = validNodes.size() - 1; j >= 0; j--) {
                     final ILsaNode n = validNodes.get(j);
-                    List<ILsaMolecule> alreadyRemoved = alreadyRemovedMap.get(n);
-                    if (alreadyRemoved == null) {
-                        alreadyRemoved = new ArrayList<>();
-                        alreadyRemovedMap.put(n, alreadyRemoved);
-                    }
+                    List<ILsaMolecule> alreadyRemoved = alreadyRemovedMap.computeIfAbsent(n, k -> new ArrayList<>());
                     final List<ILsaMolecule> otherMatches =
                             calculateMatches(partialInstance, dups, n.getLsaSpace(), alreadyRemoved);
                     if (!otherMatches.isEmpty()) {
@@ -200,7 +193,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * alice.alchemist.model.implementations.conditions.LsaStandardCondition
      * #getContext()
@@ -210,16 +203,9 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
         return Context.NEIGHBORHOOD;
     }
 
-    /**
-     * @return the current environment
-     */
-    protected Environment<List<ILsaMolecule>, ?> getEnvironment() {
-        return environment;
-    }
-
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * alice.alchemist.model.implementations.conditions.LsaStandardCondition
      * #toString()

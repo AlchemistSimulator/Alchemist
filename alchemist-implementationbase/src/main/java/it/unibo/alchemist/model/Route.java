@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * @param <P> type of Position followed by {@link Route} 
+ * @param <P> type of Position followed by {@link Route}
  */
 public interface Route<P extends Position<?>> extends Iterable<P>, Serializable {
 
@@ -36,7 +36,6 @@ public interface Route<P extends Position<?>> extends Iterable<P>, Serializable 
     List<P> getPoints();
 
     /**
-     * 
      * @return the route as stream of {@link Position}
      */
     Stream<P> stream();

@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.deployments;
 
 import it.unibo.alchemist.model.SupportedIncarnations;
@@ -33,7 +34,7 @@ class TestGrid {
 
     // CHECKSTYLE: MagicNumber OFF
     /**
-     * 
+     *
      */
     @Test
     void testVerticalLine() {
@@ -42,7 +43,7 @@ class TestGrid {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testHorizontalLine() {
@@ -50,7 +51,7 @@ class TestGrid {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testEmpty() {
@@ -58,7 +59,7 @@ class TestGrid {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void test1x1() {
@@ -66,7 +67,7 @@ class TestGrid {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void test10x10() {
@@ -86,7 +87,7 @@ class TestGrid {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void test10x10negative() {

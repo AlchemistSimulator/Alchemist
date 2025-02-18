@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere;
 
 import it.unibo.alchemist.model.Environment;
@@ -51,7 +52,7 @@ final class TestIncarnation {
     }
 
     /**
-     * 
+     *
      */
     @BeforeEach
     public void setUp() {
@@ -130,7 +131,7 @@ final class TestIncarnation {
         try {
             incarnation.createReaction(randomGenerator, environment, node, timeDistribution, param);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             assertFalse(e.getMessage().isEmpty());
         }
     }

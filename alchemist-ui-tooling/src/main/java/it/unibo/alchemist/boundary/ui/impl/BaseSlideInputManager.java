@@ -6,34 +6,34 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.ui.impl;
 
 import it.unibo.alchemist.boundary.ui.api.SlideInputManager;
 
 /**
  * <code>ASlideInputManager</code> is the base class for any class whose aim is
- * to handle the the sliding of any physical/virtual device/control.
- * 
- * 
+ * to handle the sliding of any physical/virtual device/control.
  */
-public class AbstractSlideInputManager implements SlideInputManager {
+public class BaseSlideInputManager implements SlideInputManager {
 
     private double value;
-    private final double min, max;
+    private final double min;
+    private final double max;
 
     /**
      * Creates a new <code>ASlideInputManager</code> with the value in input.
      * <br>
      * This is useful if you want to have an initial output.
-     * 
+     *
      * @param initialValue
-     *            is the hypothetical initial amound of 'slides'
+     *            is the hypothetical initial number of 'slides'
      * @param min
      *            the minimum allowed
      * @param max
      *            the maximum allowed
      */
-    public AbstractSlideInputManager(final double initialValue, final double min, final double max) {
+    public BaseSlideInputManager(final double initialValue, final double min, final double max) {
         value = initialValue;
         this.min = min;
         this.max = max;
@@ -46,8 +46,8 @@ public class AbstractSlideInputManager implements SlideInputManager {
 
     /**
      * Allow any child class to see the current value.
-     * 
-     * @return the current amount of 'slides'
+     *
+     * @return the current number of 'slides'
      */
     protected double getValue() {
         return value;
@@ -60,12 +60,12 @@ public class AbstractSlideInputManager implements SlideInputManager {
 
     /**
      * Allow any child class to modify the value directly.
-     * 
+     *
      * @param val
      *            is the new value
      */
     protected void setValue(final double val) {
-        value = val < min ? min : val > max ? max : val;
+        value = val < min ? min : Math.min(val, max);
     }
 
 }

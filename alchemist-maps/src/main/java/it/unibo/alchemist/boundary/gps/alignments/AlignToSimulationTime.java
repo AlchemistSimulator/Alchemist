@@ -6,20 +6,21 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.gps.alignments;
 
-import java.util.List;
-
-import it.unibo.alchemist.model.maps.GPSTrace;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.maps.GPSTrace;
+
+import java.util.List;
 
 /**
  * Aligns all traces at the initial simulation time.
  * If you have two traces, the first trace start with time = 2 and second point with time = 5,
- * the second trace start with time = 4 and second point with time = 6,
- * the result will be: 
+ * the second trace starts with time = 4 and second point with time = 6,
+ * the result will be:
  * - first trace start with time = 0 and second point with time = 3
- * - second trace start with time = 0 and second point with time = 2
+ * - second trace starts with time = 0 and second point with time = 2
  */
 public final class AlignToSimulationTime extends AbstractGPSTimeAlignment {
 
@@ -27,7 +28,7 @@ public final class AlignToSimulationTime extends AbstractGPSTimeAlignment {
 
     /**
      * Default empty constructor, builds a AlignToSimulationTime with RETAIN_SINGLE_POINTS
-     * behavior for trace with single point.
+     * behavior for trace with a single point.
      */
     public AlignToSimulationTime() {
         super(POLICY);

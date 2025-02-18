@@ -6,10 +6,12 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.variables;
 
 import org.apache.commons.math3.util.FastMath;
 
+import java.io.Serial;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -21,12 +23,14 @@ import java.util.stream.Stream;
  * [1, ~3.16, 10, ~31.62 100].
  * Both min and max must be strictly bigger than 0.
  */
-public final class GeometricVariable extends PrintableVariable<Double> {
+public final class GeometricVariable extends AbstractPrintableVariable<Double> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final double def;
     private final int maxSamples;
-    private final double min, max;
+    private final double min;
+    private final double max;
 
     /**
      * @param def

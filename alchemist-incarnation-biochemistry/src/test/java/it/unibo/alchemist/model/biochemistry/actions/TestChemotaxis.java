@@ -6,22 +6,23 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.actions;
 
-import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
-import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironmentNoOverlap;
-import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
-import it.unibo.alchemist.model.biochemistry.nodes.EnvironmentNodeImpl;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
+import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
+import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironmentNoOverlap;
+import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
+import it.unibo.alchemist.model.biochemistry.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
@@ -52,7 +53,7 @@ class TestChemotaxis {
     private TimeDistribution<Double> time;
 
     /**
-     * 
+     *
      */
     @BeforeEach
     public void setUp() {
@@ -70,15 +71,15 @@ class TestChemotaxis {
     }
 
     /**
-     * Testing if cell is polarized correctly.
+     * Testing if the cell is polarized correctly.
      */
     @Test
     void testChemotacticPolarization1() {
-        final Euclidean2DPosition p1 =  new Euclidean2DPosition(0, 0);
+        final Euclidean2DPosition p1 = new Euclidean2DPosition(0, 0);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
-        final Euclidean2DPosition p3 =  new Euclidean2DPosition(0, 1);
-        final Euclidean2DPosition p4 =  new Euclidean2DPosition(1, 1);
-        final Euclidean2DPosition p5 =  new Euclidean2DPosition(0.5, 0.5);
+        final Euclidean2DPosition p3 = new Euclidean2DPosition(0, 1);
+        final Euclidean2DPosition p4 = new Euclidean2DPosition(1, 1);
+        final Euclidean2DPosition p5 = new Euclidean2DPosition(0.5, 0.5);
         environment.addNode(envNode1, p1);
         environment.addNode(envNode2, p2);
         environment.addNode(envNode3, p3);
@@ -102,15 +103,15 @@ class TestChemotaxis {
     }
 
     /**
-     * Testing if cell is polarized correctly.
+     * Testing if the cell is polarized correctly.
      */
     @Test
     void testChemotacticPolarization2() {
-        final Euclidean2DPosition p1 =  new Euclidean2DPosition(0, 0);
+        final Euclidean2DPosition p1 = new Euclidean2DPosition(0, 0);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
-        final Euclidean2DPosition p3 =  new Euclidean2DPosition(0, 1);
-        final Euclidean2DPosition p4 =  new Euclidean2DPosition(3, 3);
-        final Euclidean2DPosition p5 =  new Euclidean2DPosition(0.5, 0.5);
+        final Euclidean2DPosition p3 = new Euclidean2DPosition(0, 1);
+        final Euclidean2DPosition p4 = new Euclidean2DPosition(3, 3);
+        final Euclidean2DPosition p5 = new Euclidean2DPosition(0.5, 0.5);
         environment.addNode(envNode1, p1);
         environment.addNode(envNode2, p2);
         environment.addNode(envNode3, p3);
@@ -123,26 +124,26 @@ class TestChemotaxis {
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
         r.execute();
-        assertEquals(cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(0),
-                0,
+        assertEquals(0,
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(0),
                 PRECISION
                 );
-        assertEquals(cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(1),
-                0,
+        assertEquals(0,
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(1),
                 PRECISION
                 );
     }
 
     /**
-     * Testing if cell is polarized correctly.
+     * Testing if the cell is polarized correctly.
      */
     @Test
     void testChemotacticPolarization3() {
-        final Euclidean2DPosition p1 =  new Euclidean2DPosition(0, 0);
+        final Euclidean2DPosition p1 = new Euclidean2DPosition(0, 0);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
-        final Euclidean2DPosition p3 =  new Euclidean2DPosition(0, 1);
-        final Euclidean2DPosition p4 =  new Euclidean2DPosition(1, 1);
-        final Euclidean2DPosition p5 =  new Euclidean2DPosition(0.5, 0.5);
+        final Euclidean2DPosition p3 = new Euclidean2DPosition(0, 1);
+        final Euclidean2DPosition p4 = new Euclidean2DPosition(1, 1);
+        final Euclidean2DPosition p5 = new Euclidean2DPosition(0.5, 0.5);
         environment.addNode(envNode1, p1);
         environment.addNode(envNode2, p2);
         environment.addNode(envNode3, p3);
@@ -152,18 +153,18 @@ class TestChemotaxis {
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
         r.execute();
-        assertEquals(cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(0),
-                0,
-                PRECISION
-                );
-        assertEquals(cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(1),
-                0,
-                PRECISION
-                );
+        assertEquals(0,
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(0),
+            PRECISION
+        );
+        assertEquals(0,
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(1),
+            PRECISION
+        );
     }
 
     /**
-     * Testing if cell is polarized correctly.
+     * Testing if the cell is polarized correctly.
      */
     @Test
     void testChemotacticPolarization4() {
@@ -173,18 +174,18 @@ class TestChemotaxis {
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
         r.execute();
-        assertEquals(cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(0),
-                0,
+        assertEquals(0,
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(0),
                 PRECISION
                 );
-        assertEquals(cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(1),
-                0,
+        assertEquals(0,
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(1),
                 PRECISION
                 );
     }
 
     /**
-     * Testing if cell is polarized correctly.
+     * Testing if the cell is polarized correctly.
      */
     @Test
     void testChemotacticPolarization5() {
@@ -206,18 +207,18 @@ class TestChemotaxis {
         );
         r1.execute();
         r2.execute();
-        assertEquals(cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(0),
-                0,
+        assertEquals(0,
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(0),
                 PRECISION
                 );
-        assertEquals(cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(1),
-                0,
+        assertEquals(0,
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(1),
                 PRECISION
                 );
     }
 
     /**
-     * Testing if cell moves according to the given polarization.
+     * Testing if the cell moves, according to the given polarization.
      */
     @Test
     void testChemotacticMove1() {
@@ -247,7 +248,7 @@ class TestChemotaxis {
     }
 
     /**
-     * Testing if cell moves according to the given polarization.
+     * Testing if the cell moves, according to the given polarization.
      */
     @Test
     void testChemotacticMove2() {
@@ -282,7 +283,7 @@ class TestChemotaxis {
     }
 
     /**
-     * Testing if cell moves according to the given polarization.
+     * Testing if the cell moves, according to the given polarization.
      */
     @Test
     void testChemotacticMove3() {

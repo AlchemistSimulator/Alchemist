@@ -6,15 +6,16 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.monitor.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.OutputMonitor;
-import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.times.DoubleTime;
 
 import javax.annotation.Nonnull;
 import javax.swing.Box;
@@ -27,24 +28,30 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.Serial;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static it.unibo.alchemist.boundary.swingui.impl.AlchemistSwingUI.DEFAULT_ICON_SIZE;
 import static it.unibo.alchemist.boundary.swingui.impl.AlchemistSwingUI.loadScaledImage;
 
 /**
- *
  * @param <P> position type
  * @param <T>
  *            Concentration type
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
 public final class TimeStepMonitor<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P> {
 
+    @Serial
     private static final long serialVersionUID = 5818408644038869442L;
-    private static final String BLANK = "", FINISHED = " (finished)";
-    private static final int BORDER = 10, WIDTH = 200, HEIGHT = DEFAULT_ICON_SIZE + BORDER;
+    private static final String BLANK = "";
+    private static final String FINISHED = " (finished)";
+    private static final int BORDER = 10;
+    private static final int WIDTH = 200;
+    private static final int HEIGHT = DEFAULT_ICON_SIZE + BORDER;
     private static final byte ICON_SIZE = DEFAULT_ICON_SIZE / 2;
     private boolean isFinished;
     private final JLabel s;

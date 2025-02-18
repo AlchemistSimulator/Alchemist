@@ -6,15 +6,16 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.effect.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import it.unibo.alchemist.boundary.swingui.impl.ColorChannel;
-import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.SupportedIncarnations;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.CollectionWithCurrentElement;
 import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
@@ -26,9 +27,11 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.io.Serial;
 import java.util.Set;
 
 /**
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 @SuppressFBWarnings
@@ -40,8 +43,9 @@ public final class DrawShape implements Effect {
     private static final int MIN_SCALE = 0;
     private static final int PROPERTY_SCALE = 10;
     private static final int SCALE_DIFF = MAX_SCALE - MIN_SCALE;
-    private static final int SCALE_INITIAL = (SCALE_DIFF) / 2 + MIN_SCALE;
+    private static final int SCALE_INITIAL = SCALE_DIFF / 2 + MIN_SCALE;
     private static final Logger L = LoggerFactory.getLogger(DrawShape.class);
+    @Serial
     private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "Incarnation to use")
     private CollectionWithCurrentElement<String> curIncarnation;
@@ -92,6 +96,7 @@ public final class DrawShape implements Effect {
     )
     private transient CollectionWithCurrentElement<String> prevIncarnation;
     private transient Incarnation<?, ?> incarnation;
+
     /**
      * Builds a new {@link DrawShape} effect.
      */
@@ -108,6 +113,7 @@ public final class DrawShape implements Effect {
 
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
+    @Deprecated
     public void apply(final Graphics2D g, final Node<?> n, final int x, final int y) {
         if (molString != molStringCached // NOPMD: pointer comparison is wanted here
                 || incarnation == null
@@ -128,7 +134,7 @@ public final class DrawShape implements Effect {
             }
         }
         if (!molFilter || molecule != null && n.contains(molecule)) {
-            final double ks = (scaleFactor.getVal() - MIN_SCALE) * 2 / (double) (SCALE_DIFF);
+            final double ks = (scaleFactor.getVal() - MIN_SCALE) * 2 / (double) SCALE_DIFF;
             final int sizex = size.getVal();
             final int startx = x - sizex / 2;
             final int sizey = (int) Math.ceil(sizex * ks);
@@ -389,7 +395,6 @@ public final class DrawShape implements Effect {
     public void setMolFilter(final boolean mol) {
         this.molFilter = mol;
     }
-
 
     /**
      * @return molPropertyFilter

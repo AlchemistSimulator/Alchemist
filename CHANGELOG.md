@@ -1,3 +1,32 @@
+## [39.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/38.0.3...39.0.0) (2025-02-19)
+
+### ⚠ BREAKING CHANGES
+
+* massive refactor to apply modern code styles to the Java part of the codebase (#4214)
+
+### Dependency updates
+
+* **deps:** update plugin com.gradle.develocity to v3.19.2 ([#4215](https://github.com/AlchemistSimulator/Alchemist/issues/4215)) ([c280ff0](https://github.com/AlchemistSimulator/Alchemist/commit/c280ff0263dacf9a89dd09e31dd16efa1259d589))
+* **deps:** update plugin java-qa to v1.97.2 ([#4209](https://github.com/AlchemistSimulator/Alchemist/issues/4209)) ([35b243a](https://github.com/AlchemistSimulator/Alchemist/commit/35b243a3e82d3f2b37f90fd7f592aa2417612cfb))
+* **deps:** update react to v2025.2.6-19.0.0 (patch) ([#4216](https://github.com/AlchemistSimulator/Alchemist/issues/4216)) ([b04d254](https://github.com/AlchemistSimulator/Alchemist/commit/b04d2544527ce21168724f7ea3cab48a59b3e7de))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.144.2 ([#4217](https://github.com/AlchemistSimulator/Alchemist/issues/4217)) ([1a897f9](https://github.com/AlchemistSimulator/Alchemist/commit/1a897f9c8b4c8d75234d104d1187f943466619ea))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([a584eed](https://github.com/AlchemistSimulator/Alchemist/commit/a584eedccfb781a723159999cdb7014b7278335a))
+
+### Style improvements
+
+* **api:** fix comment indentation in `Condition` ([7964a11](https://github.com/AlchemistSimulator/Alchemist/commit/7964a1108588724a803f0829a8c1c8cfac53c879))
+* **incarnation-sapere:** add missing `final`s ([b3d10f1](https://github.com/AlchemistSimulator/Alchemist/commit/b3d10f152328a9f0ec69a37eb08e9ae34e7551fc))
+
+### Refactoring
+
+* massive refactor to apply modern code styles to the Java part of the codebase ([#4214](https://github.com/AlchemistSimulator/Alchemist/issues/4214)) ([5ff4b5b](https://github.com/AlchemistSimulator/Alchemist/commit/5ff4b5b7de1f866a32eb1d3191839e4befdc8627))
+
 ## [38.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/38.0.2...38.0.3) (2025-02-18)
 
 ### Documentation

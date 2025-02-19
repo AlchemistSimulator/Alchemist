@@ -123,7 +123,8 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                 for (int j = validNodes.size() - 1; j >= 0; j--) {
                     final ILsaNode n = validNodes.get(j);
                     if (n.getId() == id) {
-                        List<ILsaMolecule> alreadyRemoved = alreadyRemovedMap.computeIfAbsent(n, k -> new ArrayList<>());
+                        final List<ILsaMolecule> alreadyRemoved =
+                            alreadyRemovedMap.computeIfAbsent(n, k -> new ArrayList<>());
                         final List<ILsaMolecule> otherMatches =
                                 calculateMatches(partialInstance, dups, n.getLsaSpace(), alreadyRemoved);
                         if (otherMatches.isEmpty()) {
@@ -158,7 +159,8 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                 final Map<ILsaNode, List<ILsaMolecule>> matchesPerNode = new HashMap<>();
                 for (int j = validNodes.size() - 1; j >= 0; j--) {
                     final ILsaNode n = validNodes.get(j);
-                    List<ILsaMolecule> alreadyRemoved = alreadyRemovedMap.computeIfAbsent(n, k -> new ArrayList<>());
+                    final List<ILsaMolecule> alreadyRemoved =
+                        alreadyRemovedMap.computeIfAbsent(n, k -> new ArrayList<>());
                     final List<ILsaMolecule> otherMatches =
                             calculateMatches(partialInstance, dups, n.getLsaSpace(), alreadyRemoved);
                     if (!otherMatches.isEmpty()) {

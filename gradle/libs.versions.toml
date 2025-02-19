@@ -155,7 +155,7 @@ gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:4
 graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
 hugo = "io.github.fstaudt.hugo:0.9.0"
-java-qa = "org.danilopianini.gradle-java-qa:1.95.1"
+java-qa = "org.danilopianini.gradle-java-qa:1.97.2"
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.78.0"

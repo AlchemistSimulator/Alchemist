@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.protelis;
 
 import com.google.common.collect.Maps;
@@ -32,7 +33,7 @@ import java.util.concurrent.FutureTask;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * A series of tests checking that our Yaml Loader is working as expected.
+ * A series of tests checking that our YAML Loader is working as expected.
  */
 class TestInSimulator {
 
@@ -53,7 +54,7 @@ class TestInSimulator {
     }
 
     /**
-     * Test the ability to load a Protelis module from classpath.
+     * Test the ability to load a Protelis module from a classpath.
      */
     @Test
     void testLoadProtelisModule() {
@@ -61,7 +62,9 @@ class TestInSimulator {
     }
 
     /**
-     * Test the ability to load Protelis modules that are dynamically added and removed from classpath in a multithreaded system.
+     * Test the ability
+     * to load Protelis modules that are dynamically added
+     * and removed from the classpath in a multithreaded system.
      *
      * @throws IOException causes failure
      * @throws URISyntaxException causes failure
@@ -120,10 +123,10 @@ class TestInSimulator {
     private static <T, P extends Position<P>> void testLoading(final String resource, final Map<String, Double> vars) {
         final var res = ResourceLoader.getResource(resource);
         assertNotNull(res, "Missing test resource " + resource);
-        final Simulation<T, P> simulation = LoadAlchemist.from(res).<T, P>getWith(vars);
+        final Simulation<T, P> simulation = LoadAlchemist.from(res).getWith(vars);
         simulation.play();
         simulation.run();
-        simulation.getError().ifPresent(Unchecked.consumer(e ->  {
+        simulation.getError().ifPresent(Unchecked.consumer(e -> {
             throw e;
         }));
     }

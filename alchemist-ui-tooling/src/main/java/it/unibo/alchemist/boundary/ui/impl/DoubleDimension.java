@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.ui.impl;
 
 import java.awt.geom.Dimension2D;
@@ -13,7 +14,7 @@ import java.awt.geom.Dimension2D;
 /**
  * Implementation of the {@link Dimension2D} abstract class with double
  * precision.
- * 
+ *
  */
 public final class DoubleDimension extends Dimension2D {
 
@@ -32,7 +33,7 @@ public final class DoubleDimension extends Dimension2D {
      * Initializes a new <code>DoubleDimension</code> instance using another
      * {@link Dimension2D} object's data.<br>
      * No side effects.
-     * 
+     *
      * @param d
      *            is the objects used to get the data
      */
@@ -42,7 +43,7 @@ public final class DoubleDimension extends Dimension2D {
 
     /**
      * Initializes a new <code>DoubleDimension</code> using raw data.
-     * 
+     *
      * @param w
      *            is the <code>double</code> containing the width
      * @param h
@@ -58,7 +59,7 @@ public final class DoubleDimension extends Dimension2D {
      * Initializes a new <code>DoubleDimension</code> through an array of
      * numbers.<br>
      * d[0] is width, d[1] is height, other elements will be ignored.
-     * 
+     *
      * @param d
      *            is a mono-dimensional array of {@link Number}.
      */

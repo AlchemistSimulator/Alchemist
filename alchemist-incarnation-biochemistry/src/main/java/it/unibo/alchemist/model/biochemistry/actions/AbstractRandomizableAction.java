@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -13,15 +14,16 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.actions.AbstractAction;
 import org.apache.commons.math3.random.RandomGenerator;
 
+import java.io.Serial;
+
 /**
  * @param <T> concentration type
  */
 public abstract class AbstractRandomizableAction<T> extends AbstractAction<T> {
 
-    /**
-     * 
-     */
+    @Serial
     private static final long serialVersionUID = 1L;
+
     @SuppressFBWarnings(
             value = "SE_BAD_FIELD",
             justification = "All provided RandomGenerator implementations are actually Serializable"
@@ -29,7 +31,6 @@ public abstract class AbstractRandomizableAction<T> extends AbstractAction<T> {
     private final RandomGenerator rand;
 
     /**
-     * 
      * @param node the {@link Node}
      * @param random the {@link RandomGenerator}
      */
@@ -39,7 +40,6 @@ public abstract class AbstractRandomizableAction<T> extends AbstractAction<T> {
     }
 
     /**
-     * 
      * @return the random generator to use in this class.
      */
     protected RandomGenerator getRandomGenerator() {

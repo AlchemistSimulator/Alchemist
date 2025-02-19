@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.environments;
 
 import it.unibo.alchemist.boundary.LoadAlchemist;
@@ -54,6 +55,7 @@ class TestBioRect2DEnvironmentNoOverlap {
 
     /**
      * The test seems to work for values of delta up to 2*10^(-8)
+     *
      * <p>
      * As future changes in the core can vary the sensibility of floating point operations, leading to an undesired
      * test failure, the value has been set to the next order of magnitude.
@@ -109,6 +111,11 @@ class TestBioRect2DEnvironmentNoOverlap {
     private static final Euclidean2DPosition NODE_POS13_2 = new Euclidean2DPosition(-5, 5);
     private static final Euclidean2DPosition NODE_POS13_3 = new Euclidean2DPosition(-5, -5);
     private static final Euclidean2DPosition NODE_POS13_4 = new Euclidean2DPosition(5, -5);
+    private static final String NODE = "node ";
+    private static final String CELL_TO_MOVE_3_IS_IN_POSITION = "cellToMove3 is in position: ";
+    private static final String SHOULD_BE_EMPTY_BUT_IS = "Should be empty but is : ";
+    private static final String CELL_TO_MOVE_5_IS_IN_POSITION = "cellToMove5 is in position: ";
+    private static final String CELL_TO_MOVE_4_IS_IN_POSITION = "cellToMove4 is in position: ";
     private final Euclidean2DPosition originalPos = new Euclidean2DPosition(0, 0);
     private Node<Double> ng1;
     private Node<Double> ng2;
@@ -143,7 +150,7 @@ class TestBioRect2DEnvironmentNoOverlap {
     }
 
     /**
-     * Testing if the node are correctly added, given their dimension in space.
+     * Testing if the nodes are correctly added, given their dimension in space.
      */
     @Test
     void testAddNode() {
@@ -219,8 +226,8 @@ class TestBioRect2DEnvironmentNoOverlap {
         environment.addNode(c1, p1);
         environment.moveNode(cellToMove1, POSITION_TO_MOVE1);
         assertEquals(
-                environment.getPosition(cellToMove1),
-                EXPECTED_POS1,
+            EXPECTED_POS1,
+            environment.getPosition(cellToMove1),
                 "cellToMove1 is in position: " + environment.getPosition(cellToMove1)
         );
         environment.removeNode(cellToMove1);
@@ -242,8 +249,8 @@ class TestBioRect2DEnvironmentNoOverlap {
         environment.addNode(c3, p3);
         environment.moveNode(cellToMove2, POSITION_TO_MOVE2);
         assertEquals(
-                environment.getPosition(cellToMove2),
-                EXPECTED_POS2,
+            EXPECTED_POS2,
+            environment.getPosition(cellToMove2),
                 "cellToMove2 is in position: " + environment.getPosition(cellToMove2)
         );
         environment.removeNode(cellToMove2);
@@ -265,7 +272,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         assertEquals(
                 environment.getPosition(cellToMove3),
                 originalPos,
-                "cellToMove3 is in position: " + environment.getPosition(cellToMove3)
+                CELL_TO_MOVE_3_IS_IN_POSITION + environment.getPosition(cellToMove3)
         );
         environment.removeNode(cellToMove3);
         environment.removeNode(c4);
@@ -287,9 +294,9 @@ class TestBioRect2DEnvironmentNoOverlap {
         environment.addNode(c5, p5);
         environment.moveNode(cellToMove4, POSITION_TO_MOVE4);
         assertNotEquals(
-                environment.getPosition(cellToMove4),
-                POSITION_TO_MOVE4,
-                "cellToMove4 is in position: " + environment.getPosition(cellToMove4)
+            POSITION_TO_MOVE4,
+            environment.getPosition(cellToMove4),
+                CELL_TO_MOVE_4_IS_IN_POSITION + environment.getPosition(cellToMove4)
         );
         environment.removeNode(cellToMove4);
         environment.removeNode(c5);
@@ -307,9 +314,9 @@ class TestBioRect2DEnvironmentNoOverlap {
         environment.addNode(c6, p6);
         environment.moveNode(cellToMove5, POSITION_TO_MOVE5);
         assertEquals(
-                environment.getPosition(cellToMove5),
-                POSITION_TO_MOVE5,
-                "cellToMove5 is in position: " + environment.getPosition(cellToMove5)
+            POSITION_TO_MOVE5,
+            environment.getPosition(cellToMove5),
+                CELL_TO_MOVE_5_IS_IN_POSITION + environment.getPosition(cellToMove5)
         );
         environment.removeNode(cellToMove5);
         environment.removeNode(c6);
@@ -327,8 +334,8 @@ class TestBioRect2DEnvironmentNoOverlap {
         environment.addNode(c7, p7);
         environment.moveNode(cellToMove6, POSITION_TO_MOVE6);
         assertEquals(
-                environment.getPosition(cellToMove6),
-                EXPECTED_POS6,
+            EXPECTED_POS6,
+            environment.getPosition(cellToMove6),
                 "cellToMove6 is in position: " + environment.getPosition(cellToMove6)
         );
         environment.removeNode(cellToMove6);
@@ -374,7 +381,7 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
 
     /**
-     * Testing if the node are correctly added, given their dimension in space.
+     * Testing if the nodes are correctly added, given their dimension in space.
      */
     @Test
     void testAddDifferentDiam1() {
@@ -392,7 +399,7 @@ class TestBioRect2DEnvironmentNoOverlap {
     }
 
     /**
-     * Testing if the node are correctly added, given their dimension in space.
+     * Testing if the nodes are correctly added, given their dimension in space.
      */
     @Test
     void testAddDifferentDiam2() {
@@ -418,7 +425,7 @@ class TestBioRect2DEnvironmentNoOverlap {
     }
 
     /**
-     * Testing if the node are correctly added, given their dimension in space.
+     * Testing if the nodes are correctly added, given their dimension in space.
      */
     @Test
     void testAddDifferentDiam3() {
@@ -487,14 +494,14 @@ class TestBioRect2DEnvironmentNoOverlap {
         environment.addNode(ng1, p1);
         environment.moveNode(cellToMove3, pd);
         assertTrueJUnit4(
-            "cellToMove3 is in position: " + environment.getPosition(cellToMove3),
+            CELL_TO_MOVE_3_IS_IN_POSITION + environment.getPosition(cellToMove3),
             EXPECTED_POS_DIFFDIAM3_1.equals(environment.getPosition(cellToMove3))
         );
         environment.removeNode(ng1);
         environment.addNode(nm1, p1);
         environment.moveNode(cellToMove3, pd);
         assertTrueJUnit4(
-            "cellToMove3 is in position: " + environment.getPosition(cellToMove3),
+            CELL_TO_MOVE_3_IS_IN_POSITION + environment.getPosition(cellToMove3),
             EXPECTED_POS_DIFFDIAM3_2.equals(environment.getPosition(cellToMove3))
         );
     }
@@ -512,14 +519,14 @@ class TestBioRect2DEnvironmentNoOverlap {
         environment.addNode(ng1, p1);
         environment.moveNode(cellToMove4, pd);
         assertTrueJUnit4(
-            "cellToMove4 is in position: " + environment.getPosition(cellToMove4),
+            CELL_TO_MOVE_4_IS_IN_POSITION + environment.getPosition(cellToMove4),
             EXPECTED_POS_DIFFDIAM4_1.equals(environment.getPosition(cellToMove4))
         );
         environment.removeNode(ng1);
         environment.addNode(nm1, p1);
         environment.moveNode(cellToMove4, pd);
         assertTrueJUnit4(
-            "cellToMove4 is in position: " + environment.getPosition(cellToMove4),
+            CELL_TO_MOVE_4_IS_IN_POSITION + environment.getPosition(cellToMove4),
             EXPECTED_POS_DIFFDIAM4_2.equals(environment.getPosition(cellToMove4))
         );
     }
@@ -539,7 +546,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         assertNotEquals(
                 environment.getPosition(cellToMove5),
                 pd,
-                "cellToMove5 is in position: " + environment.getPosition(cellToMove5)
+                CELL_TO_MOVE_5_IS_IN_POSITION + environment.getPosition(cellToMove5)
         );
         environment.removeNode(ng1);
         environment.addNode(nm1, p1);
@@ -547,7 +554,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         assertNotEquals(
                 environment.getPosition(cellToMove5),
                 pd,
-                "cellToMove5 is in position: " + environment.getPosition(cellToMove5)
+                CELL_TO_MOVE_5_IS_IN_POSITION + environment.getPosition(cellToMove5)
         );
     }
 
@@ -608,7 +615,8 @@ class TestBioRect2DEnvironmentNoOverlap {
     }
 
     /**
-     * Testing if node moves respecting dimension of all the others and if moving two times the cell the neighborhood is
+     * Testing if the node moves respecting dimension of all the others,
+     * and if moving two times the cell, the neighborhood is
      * correctly updated.
      */
     @Test
@@ -657,7 +665,7 @@ class TestBioRect2DEnvironmentNoOverlap {
 
     private List<Node<Double>> getOverlappingNodes(final Node<Double> node) {
         final double diameter = node.asProperty(CircularCellProperty.class).getDiameter();
-        return  environment.getNodesWithinRange(node, diameter).stream()
+        return environment.getNodesWithinRange(node, diameter).stream()
                 .filter(n -> environment.getDistanceBetweenNodes(node, n) < diameter)
                 .collect(Collectors.toList());
     }
@@ -682,8 +690,10 @@ class TestBioRect2DEnvironmentNoOverlap {
         environment.addNode(c4, NODE_POS11_4);
         final Euclidean2DPosition pd = new Euclidean2DPosition(5.0, -1.8431210525510544);
         environment.moveNodeToPosition(c1, pd);
-        assertTrueJUnit4("Should be empty but is : " + mapToNodePositions(getOverlappingNodes(c1)),
-                environment.getNodesWithinRange(c1, diameter - DELTA).isEmpty());
+        assertTrueJUnit4(
+            SHOULD_BE_EMPTY_BUT_IS + mapToNodePositions(getOverlappingNodes(c1)),
+                environment.getNodesWithinRange(c1, diameter - DELTA).isEmpty()
+        );
     }
 
     /**
@@ -703,7 +713,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         final Euclidean2DPosition pd = new Euclidean2DPosition(5.3, -1.8431210525510544);
         environment.moveNodeToPosition(c1, pd);
         assertTrueJUnit4(
-                "Should be empty but is : " + mapToNodePositions(getOverlappingNodes(c1)),
+                SHOULD_BE_EMPTY_BUT_IS + mapToNodePositions(getOverlappingNodes(c1)),
                 environment.getNodesWithinRange(c1, diameter).isEmpty()
         );
     }
@@ -727,7 +737,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         environment.moveNodeToPosition(c2, pd);
         environment.moveNodeToPosition(c3, pd);
         environment.moveNodeToPosition(c4, pd);
-        assertTrueJUnit4("Should be empty but is : " + mapToNodePositions(getOverlappingNodes(c1)),
+        assertTrueJUnit4(SHOULD_BE_EMPTY_BUT_IS + mapToNodePositions(getOverlappingNodes(c1)),
                 environment.getNodesWithinRange(c1, diameter).isEmpty());
     }
 
@@ -826,17 +836,16 @@ class TestBioRect2DEnvironmentNoOverlap {
     ) {
         final var isInEnvironment = environment.getNodes().contains(node);
         if (shouldBePresent) {
-            assertTrue(isInEnvironment, () -> "node " + node + " is not in the environment");
+            assertTrue(isInEnvironment, () -> NODE + node + " is not in the environment");
             final var position = environment.getPosition(node);
-            assertNotNull(position, () -> "node " + node + " has no valid position");
+            assertNotNull(position, () -> NODE + node + " has no valid position");
         } else {
             assertFalse(
                 isInEnvironment,
-                () -> "node " + node + " is in the environment at position " + environment.getPosition(node)
+                () -> NODE + node + " is in the environment at position " + environment.getPosition(node)
             );
         }
     }
-
 
     private static void assertTrueJUnit4(final String msg, final boolean res) {
         assertTrue(res, msg);

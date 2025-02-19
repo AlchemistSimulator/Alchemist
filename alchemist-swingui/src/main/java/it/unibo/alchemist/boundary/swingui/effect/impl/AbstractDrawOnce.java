@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.Position2D;
 
 import javax.annotation.Nullable;
 import java.awt.Graphics2D;
+import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -24,9 +25,13 @@ import java.util.Optional;
  * class for effects that do not need to be redrawn for each node.
  * In other words, this effect will be applied for a single node
  * instead of redrawing for all of them.
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
+@Deprecated
 public abstract class AbstractDrawOnce implements Effect {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     @Nullable
     private Integer markerNodeID;
@@ -67,6 +72,7 @@ public abstract class AbstractDrawOnce implements Effect {
 
     /**
      * Draws the effect, this method is called only for a single a node of the environment.
+     *
      * @param graphics2D Graphics2D
      * @param node Node
      * @param environment environment

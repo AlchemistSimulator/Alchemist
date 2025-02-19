@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.environments;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -37,10 +38,12 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class serves as template for more specific implementations of
- * environments using a map. It encloses the navigation logic, but leaves the
- * subclasses to decide how to provide map data (e.g. loading from disk or rely
- * on online services). The data is then stored in-memory for performance
+ * This class serves as a template for more specific implementations of
+ * environments using a map.
+ * It encloses the navigation logic but leaves the
+ * subclasses to decide how to provide map data (e.g., loading from disk or relying
+ * on online services).
+ * The data is then stored in-memory for performance
  * reasons.
  *
  * @param <T> concentration type
@@ -50,7 +53,7 @@ public final class OSMEnvironment<T>
     implements MapEnvironment<T, GraphHopperOptions, GraphHopperRoutingService> {
 
     /**
-     * The default value for approximating the positions comparison.
+     * The default value for approximating the position comparison.
      */
     public static final int DEFAULT_APPROXIMATION = 0;
 
@@ -60,7 +63,7 @@ public final class OSMEnvironment<T>
     public static final boolean DEFAULT_ON_STREETS = true;
 
     /**
-     * The default value for the discard of nodes too far from streets option.
+     * The default value for the discard of nodes too far from streets.
      */
     public static final boolean DEFAULT_FORCE_STREETS = false;
     private static final Logger L = LoggerFactory.getLogger(OSMEnvironment.class);
@@ -69,14 +72,14 @@ public final class OSMEnvironment<T>
     /**
      * Alchemist's temp dir.
      */
-    private final boolean forceStreets, onlyStreet;
+    private final boolean forceStreets;
+    private final boolean onlyStreet;
     @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "Re-loaded automatically")
     @Nullable private transient GraphHopperRoutingService navigator;
     @Nullable private transient LoadingCache<CacheEntry, Route<GeoPosition>> routecache;
     private boolean benchmarking;
     private final int approximation;
     private final String mapFile;
-
 
     /**
      * Builds a new {@link OSMEnvironment} without an actual backing map.
@@ -90,6 +93,7 @@ public final class OSMEnvironment<T>
 
     /**
      * Builds a new {@link OSMEnvironment}, with nodes not forced on streets.
+     *
      * @param incarnation the incarnation to be used.
      * @param file
      *            the file path where the map data is stored
@@ -138,12 +142,10 @@ public final class OSMEnvironment<T>
      *            any format (xml, osm, pbf). The map will be processed, optimized
      *            and stored for future use.
      * @param approximation
-     *            the amount of ciphers of the IEEE 754 encoded
+     *            the symbols of IEEE 754-encoded
      *            position that may be discarded when comparing two positions,
-     *            allowing a quicker retrieval of the route between two position,
-     *            since the cache may already contain a similar route  which
-     *            can be considered to be the same route, according to
-     *            the level of precision determined by this value
+     *            allowing quicker retrieval of the route between two positions
+     *            via cache.
      */
     public OSMEnvironment(final Incarnation<T, GeoPosition> incarnation, final String file, final int approximation) {
         this(incarnation, file, approximation, DEFAULT_ON_STREETS, DEFAULT_FORCE_STREETS);
@@ -156,12 +158,10 @@ public final class OSMEnvironment<T>
      *            any format (xml, osm, pbf). The map will be processed, optimized
      *            and stored for future use.
      * @param approximation
-     *            the amount of ciphers of the IEEE 754 encoded
+     *            the symbols of IEEE 754-encoded
      *            position that may be discarded when comparing two positions,
-     *            allowing a quicker retrieval of the route between two position,
-     *            since the cache may already contain a similar route  which
-     *            can be considered to be the same route, according to
-     *            the level of precision determined by this value
+     *            allowing quicker retrieval of the route between two positions
+     *            via cache.
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
      *            desired {@link Position}.
@@ -305,7 +305,7 @@ public final class OSMEnvironment<T>
                 || Double.isNaN(maxlat)
                 || Double.isNaN(minlon)
                 || Double.isNaN(maxlon)) {
-            return new double[] { Double.NaN, Double.NaN };
+            return new double[] {Double.NaN, Double.NaN};
         }
         final GeoPosition minmin = new LatLongPosition(minlat, minlon);
         final GeoPosition minmax = new LatLongPosition(minlat, maxlon);
@@ -317,7 +317,7 @@ public final class OSMEnvironment<T>
          */
         final double sizex = Math.max(minmin.distanceTo(minmax), maxmax.distanceTo(maxmin));
         final double sizey = Math.max(minmin.distanceTo(maxmin), maxmax.distanceTo(minmax));
-        return new double[] { sizex, sizey };
+        return new double[] {sizex, sizey};
     }
 
     @Nonnull
@@ -345,8 +345,8 @@ public final class OSMEnvironment<T>
 
     /**
      * There is a single case in which nodes are discarded: if there are no traces
-     * for this node and nodes are required to lay on streets, but the navigation
-     * engine can not resolve any such position.
+     * for this node and nodes are required to lie on streets, but the navigation
+     * engine cannot resolve any such position.
      */
     @Override
     protected boolean nodeShouldBeAdded(final Node<T> node, final GeoPosition position) {
@@ -379,7 +379,6 @@ public final class OSMEnvironment<T>
         }
         return navigator;
     }
-
 
     private final class CacheEntry {
 

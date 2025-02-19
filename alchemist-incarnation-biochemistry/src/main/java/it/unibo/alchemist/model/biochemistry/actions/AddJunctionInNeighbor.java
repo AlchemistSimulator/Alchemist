@@ -6,31 +6,36 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.actions;
 
-import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
+import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 import org.apache.commons.math3.random.RandomGenerator;
+
+import java.io.Serial;
 
 /**
  * Represent the action of add a junction between a neighbor and the current node.
- * This action only create the junction reference inside the neighbor, the current node totally ignore 
+ * This action only creates the junction reference inside the neighbor; the current node totally ignores
  * that a junction has been created.
  * This is a part of the junction creation process.
  * See {@link AddJunctionInCell} for the other part of the process
+ *
  * @param <P> Position type
  */
 public final class AddJunctionInNeighbor<P extends Position<? extends P>> extends AbstractNeighborAction<Double> {
 
+    @Serial
     private static final long serialVersionUID = 8670229402770243539L;
 
     private final Junction jun;
+
     /**
-     * 
      * @param junction the junction
      * @param node the current node which contains this action. It is NOT the node where the junction will be created.
      * @param environment the environment
@@ -49,18 +54,19 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
 
     @SuppressWarnings("unchecked")
     @Override
-    public AddJunctionInNeighbor<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        if (node.asPropertyOrNull(CellProperty.class) != null) {
+    public AddJunctionInNeighbor<P> cloneAction(final Node<Double> newNode, final Reaction<Double> newReaction) {
+        if (newNode.asPropertyOrNull(CellProperty.class) != null) {
             return new AddJunctionInNeighbor<>(
                     (Environment<Double, P>) getEnvironment(),
-                    node,
+                newNode,
                     jun, getRandomGenerator());
         }
         throw new IllegalArgumentException("Node must have a " + CellProperty.class.getSimpleName());
     }
 
     /**
-     * If no target node is given DO NOTHING. The junction can not be created.
+     * If no target node is given, DO NOTHING. The junction cannot be created.
+     *
      * @throws UnsupportedOperationException if this method is called.
      */
     @Override
@@ -69,7 +75,7 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     }
 
     /**
-     * Create the junction that links the target node and the node when this action is executed. 
+     * Create the junction that links the target node and the node when this action is executed.
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -82,7 +88,7 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
         }
     }
 
-    @Override 
+    @Override
     public String toString() {
         return "add junction " + jun.toString() + " in neighbor";
     }

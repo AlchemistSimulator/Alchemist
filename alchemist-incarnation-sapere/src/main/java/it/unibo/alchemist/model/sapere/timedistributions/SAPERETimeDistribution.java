@@ -6,20 +6,21 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.timedistributions;
+
+import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
+import org.danilopianini.lang.HashString;
 
 import java.util.List;
 import java.util.Map;
 
-import it.unibo.alchemist.model.sapere.dsl.IExpression;
-import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.TimeDistribution;
-import org.danilopianini.lang.HashString;
-
 /**
  * Interface for TimeDistribution that need matches.
- * 
+ *
  */
 public interface SAPERETimeDistribution extends TimeDistribution<List<ILsaMolecule>> {
 

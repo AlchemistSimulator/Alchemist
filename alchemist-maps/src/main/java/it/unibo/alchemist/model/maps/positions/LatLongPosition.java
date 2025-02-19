@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.positions;
 
 import com.google.common.collect.Lists;
@@ -16,6 +17,7 @@ import it.unibo.alchemist.model.GeoPosition;
 import org.danilopianini.util.Hashes;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.List;
 import java.util.function.BinaryOperator;
 
@@ -32,7 +34,7 @@ import static org.apache.commons.math3.util.FastMath.toRadians;
 /**
  * Unmodifiable state version of {@link LatLng}, also implementing the
  * {@link GeoPosition} interface.
- * 
+ *
  */
 public final class LatLongPosition implements GeoPosition {
 
@@ -49,6 +51,7 @@ public final class LatLongPosition implements GeoPosition {
     private static final double MIN_LAT = Math.toRadians(-90d); // -PI/2
     private static final double MIN_LON = Math.toRadians(-180d); // -PI
 
+    @Serial
     private static final long serialVersionUID = -8972065367390749356L;
 
     private final DistanceFormula df;
@@ -189,8 +192,7 @@ public final class LatLongPosition implements GeoPosition {
     @Override
     @SuppressFBWarnings(justification = "Exact floating point equality is required here.")
     public boolean equals(final Object obj) {
-        if (obj instanceof LatLongPosition) {
-            final LatLongPosition llp = (LatLongPosition) obj;
+        if (obj instanceof final LatLongPosition llp) {
             return getLatitude() == llp.getLatitude() && getLongitude() == llp.getLongitude();
         }
         return false;
@@ -199,7 +201,7 @@ public final class LatLongPosition implements GeoPosition {
     @Override
     @Nonnull
     public double[] getCoordinates() {
-        return new double[] { getLatitude(), getLongitude() };
+        return new double[] {getLatitude(), getLongitude()};
     }
 
     @Override
@@ -280,11 +282,10 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     /**
-     * <p>
-     * This "distance" function is mostly for internal use. Most users will
+     * This "distance" function is mostly for internal use.
+     * Most users will
      * simply rely upon {@link #distance(LatLng, LatLng, LengthUnit, DistanceFormula)}
-     * </p>
-     * 
+     *
      * <p>
      * Yields the internal angle for an arc between two points on the surface of
      * a sphere in radians. This angle is in the plane of the great circle
@@ -292,7 +293,7 @@ public final class LatLongPosition implements GeoPosition {
      * and the center of the Earth. Multiply this value by the sphere's radius
      * to get the length of the arc.
      * </p>
-     * 
+     *
      * @param point1
      *            the first point
      * @param point2
@@ -327,12 +328,12 @@ public final class LatLongPosition implements GeoPosition {
     /**
      * Possible methods to compute the distance between two latitude-longitude
      * points.
-     * 
+     *
      */
     public enum DistanceFormula {
 
         /**
-         * 
+         *
          */
         EQUIRECTANGULAR, HAVERSINE, SPHERICAL_COSINES
     }

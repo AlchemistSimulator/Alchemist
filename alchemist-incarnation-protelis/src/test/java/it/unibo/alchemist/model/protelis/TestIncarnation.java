@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.protelis;
 
 import it.unibo.alchemist.model.Action;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -36,10 +38,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 class TestIncarnation {
 
     private static final ProtelisIncarnation<Euclidean2DPosition> INCARNATION = new ProtelisIncarnation<>();
+    private static final String SEND = "send";
 
     /**
-     * Tests the ability of {@link ProtelisIncarnation} of properly building a
-     * Alchemist entities for running Protelis.
+     * Tests the ability of {@link ProtelisIncarnation} of properly building an
+     * Alchemist entity for running Protelis.
      */
     @Test
     void testBuild() {
@@ -56,13 +59,13 @@ class TestIncarnation {
         assertEquals(3d, standard.getRate(), Double.MIN_VALUE);
         final Reaction<Object> generic = INCARNATION.createReaction(rng, environment, node, standard, null);
         assertNotNull(generic);
-        assertTrue(generic instanceof Event);
+        assertInstanceOf(Event.class, generic);
         final Reaction<Object> program = INCARNATION.createReaction(rng, environment, node, standard, "nbr(1)");
         testIsProtelisProgram(program);
         final Reaction<Object> program2 = INCARNATION.createReaction(rng, environment, node, standard, "testprotelis:test");
         testIsProtelisProgram(program2);
         try {
-            INCARNATION.createReaction(rng, environment, node, standard, "send");
+            INCARNATION.createReaction(rng, environment, node, standard, SEND);
             fail();
         } catch (final IllegalStateException e) {
             assertNotNull(e.getMessage());
@@ -70,40 +73,40 @@ class TestIncarnation {
         node.addReaction(program);
         node.addReaction(program2);
         try {
-            INCARNATION.createReaction(rng, environment, node, standard, "send");
+            INCARNATION.createReaction(rng, environment, node, standard, SEND);
             fail();
         } catch (final IllegalStateException e) {
             assertNotNull(e.getMessage());
         }
         node.removeReaction(program2);
-        final Reaction<Object> send = INCARNATION.createReaction(rng, environment, node, standard, "send");
+        final Reaction<Object> send = INCARNATION.createReaction(rng, environment, node, standard, SEND);
         testIsSendToNeighbor(send);
     }
 
     private static void testIsProtelisProgram(final Reaction<Object> program) {
         assertNotNull(program);
-        assertTrue(program instanceof Event);
+        assertInstanceOf(Event.class, program);
         assertTrue(program.getConditions().isEmpty());
         assertFalse(program.getActions().isEmpty());
         assertEquals(1, program.getActions().size());
         final Action<Object> prog = program.getActions().get(0);
         assertNotNull(prog);
-        assertTrue(prog instanceof RunProtelisProgram);
+        assertInstanceOf(RunProtelisProgram.class, prog);
     }
 
     private static void testIsSendToNeighbor(final Reaction<Object> program) {
         assertNotNull(program);
-        assertTrue(program instanceof ChemicalReaction);
+        assertInstanceOf(ChemicalReaction.class, program);
         assertFalse(program.getConditions().isEmpty());
         assertEquals(1, program.getConditions().size());
         final Condition<Object> check = program.getConditions().get(0);
         assertNotNull(check);
-        assertTrue(check instanceof ComputationalRoundComplete);
+        assertInstanceOf(ComputationalRoundComplete.class, check);
         assertFalse(program.getActions().isEmpty());
         assertEquals(1, program.getActions().size());
         final Action<Object> prog = program.getActions().get(0);
         assertNotNull(prog);
-        assertTrue(prog instanceof SendToNeighbor);
+        assertInstanceOf(SendToNeighbor.class, prog);
     }
 
     /**

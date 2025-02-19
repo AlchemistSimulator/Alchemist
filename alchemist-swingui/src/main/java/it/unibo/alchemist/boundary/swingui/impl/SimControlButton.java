@@ -6,20 +6,24 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.impl;
 
 import javax.swing.JButton;
+import java.io.Serial;
 
 /**
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 public class SimControlButton extends JButton {
 
+    @Serial
     private static final long serialVersionUID = 5772261651038729446L;
 
     /**
      * Builds a new Button.
-     * 
+     *
      * @param imagePath
      *            Path to the image to use
      * @param command

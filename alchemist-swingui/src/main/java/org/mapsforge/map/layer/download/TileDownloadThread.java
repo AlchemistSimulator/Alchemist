@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package org.mapsforge.map.layer.download;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -58,7 +59,7 @@ class TileDownloadThread extends PausableThread {
         if (!this.tileCache.containsKey(downloadJob)) {
             try {
                 tileCache.put(downloadJob, downloadTile(downloadJob));
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace(); // NOPMD
             }
         }
@@ -80,7 +81,7 @@ class TileDownloadThread extends PausableThread {
         TileBitmap bitmap;
         try {
             bitmap = tileDownloader.downloadImage();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             final BufferedImage img = ImageIO.read(ResourceLoader.getResourceAsStream("other/nointernet.png"));
             bitmap = new AwtTileBitmap(img);
         }

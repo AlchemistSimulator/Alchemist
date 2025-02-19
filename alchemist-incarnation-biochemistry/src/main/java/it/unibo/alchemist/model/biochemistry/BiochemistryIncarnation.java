@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.biochemistry;
 
-
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Condition;
@@ -20,10 +19,10 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
-import it.unibo.alchemist.model.nodes.GenericNode;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.biochemistry.properties.CircularCell;
 import it.unibo.alchemist.model.biochemistry.reactions.BiochemicalReactionBuilder;
+import it.unibo.alchemist.model.nodes.GenericNode;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import org.apache.commons.math3.random.RandomGenerator;
 

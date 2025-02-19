@@ -6,26 +6,28 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.actions;
 
-import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
+import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 
+import java.io.Serial;
 import java.util.List;
-
 
 /**
  * A SAPERE Agent that modifies something on neighboring nodes.
  *
  * @param <P> position type
  */
-public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREAgent {
+public abstract class AbstractSAPERENeighborAgent<P extends Position<P>> extends AbstractSAPEREAgent {
 
+    @Serial
     private static final long serialVersionUID = 8720614570156227036L;
     private final Environment<List<ILsaMolecule>, P> environment;
 
@@ -33,7 +35,7 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
      * Creates a new SAPERE Neighbor Agent stub. If you use this constructor,
      * you must be sure that your agent only modifies molecules matching the
      * template passed as m1.
-     * 
+     *
      * @param environment
      *            The current environment
      * @param node
@@ -41,7 +43,11 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
      * @param m1
      *            The molecule template it modifies
      */
-    public SAPERENeighborAgent(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node, final ILsaMolecule m1) {
+    public AbstractSAPERENeighborAgent(
+        final Environment<List<ILsaMolecule>, P> environment,
+        final ILsaNode node,
+        final ILsaMolecule m1
+    ) {
         super(node, m1);
         this.environment = environment;
     }
@@ -50,7 +56,7 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
      * Creates a new SAPERE Agent stub. If you use this constructor, you must be
      * sure that your agent only modifies molecules matching the template passed
      * as m1 and/or the template passed in m2.
-     * 
+     *
      * @param environment
      *            The current environment
      * @param node
@@ -60,7 +66,7 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
      * @param m2
      *            The second molecule template it modifies
      */
-    public SAPERENeighborAgent(
+    public AbstractSAPERENeighborAgent(
             final Environment<List<ILsaMolecule>, P> environment,
             final ILsaNode node,
             final ILsaMolecule m1,
@@ -74,7 +80,7 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
      * Creates a new SAPERE Agent stub. If you use this constructor, you must be
      * sure that your agent only modifies molecules matching the template passed
      * as m1 and/or the template passed in m2 and/or the template passed in m3.
-     * 
+     *
      * @param environment
      *            The current environment
      * @param node
@@ -86,7 +92,7 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
      * @param m3
      *            The third molecule template it modifies
      */
-    public SAPERENeighborAgent(
+    public AbstractSAPERENeighborAgent(
             final Environment<List<ILsaMolecule>, P> environment,
             final ILsaNode node, final ILsaMolecule m1,
             final ILsaMolecule m2,
@@ -98,7 +104,7 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see alice.alchemist.model.interfaces.Action#getContext()
      */
     @Override

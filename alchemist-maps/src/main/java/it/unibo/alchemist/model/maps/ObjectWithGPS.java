@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps;
 
 /**
@@ -14,7 +15,6 @@ package it.unibo.alchemist.model.maps;
 public interface ObjectWithGPS {
 
     /**
-     * 
      * @param trace the {@link GPSTrace} to follow
      */
     void setTrace(GPSTrace trace);

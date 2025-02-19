@@ -15,12 +15,14 @@ import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 
 /**
  * @param <T> concentration type
  */
 public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
 
+    @Serial
     private static final long serialVersionUID = 585211392057392723L;
     private static final int SIZE = 10;
     private static final int LOWER = 3;
@@ -63,7 +65,7 @@ public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
     /**
      * Given the old position of a node and the requested one, this method
      * computes the nearest allowed point.
-     * 
+     *
      * @param ox
      *            old x coordinate
      * @param oy
@@ -81,7 +83,7 @@ public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
     /**
      * Given the old position of a node and the requested one, this method
      * computes the nearest allowed point. Static method.
-     * 
+     *
      * @param ox
      *            old x coordinate
      * @param oy

@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.util;
 
 import com.google.common.collect.ImmutableSet;
@@ -52,8 +53,8 @@ public final class StatUtil {
     }
 
     /**
-    * @return all the available statistics at {@link UnivariateStatistic}.
-    */
+     * @return all the available statistics at {@link UnivariateStatistic}.
+     */
     public static Set<String> availableStatistics() {
         return STATISTICS.stream()
             .map(Class::getSimpleName)

@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.conditions;
 
 import it.unibo.alchemist.model.Condition;
@@ -14,15 +15,17 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 
+import java.io.Serial;
 import java.util.Objects;
 
 /**
- * A condition that is valid iff a molecule has exactly the desired concentration.
- * 
+ * A condition that is valid if and only if a molecule has exactly the desired concentration.
+ *
  * @param <T> concentration type
  */
 public final class MoleculeHasConcentration<T> extends AbstractCondition<T> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final Molecule mol;
     private final T value;
@@ -43,8 +46,8 @@ public final class MoleculeHasConcentration<T> extends AbstractCondition<T> {
     }
 
     @Override
-    public Condition<T> cloneCondition(final Node<T> node, final Reaction<T> reaction) {
-        return new MoleculeHasConcentration<>(node, mol, value);
+    public Condition<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
+        return new MoleculeHasConcentration<>(newNode, mol, value);
     }
 
     @Override

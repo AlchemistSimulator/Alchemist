@@ -6,23 +6,25 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.actions;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gps.loaders.TraceLoader;
-import it.unibo.alchemist.model.maps.GPSTrace;
 import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.maps.ObjectWithGPS;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
+import it.unibo.alchemist.model.maps.GPSTrace;
+import it.unibo.alchemist.model.maps.MapEnvironment;
+import it.unibo.alchemist.model.maps.ObjectWithGPS;
 import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
@@ -31,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 import static java.util.Objects.requireNonNull;
 
 /**
- * basic action that follow a {@link GPSTrace}.
+ * basic action that follows a {@link GPSTrace}.
  *
  * @param <T> Concentration type
  * @param <O> {@link RoutingServiceOptions} type
@@ -41,6 +43,7 @@ import static java.util.Objects.requireNonNull;
 public class MoveOnMapWithGPS<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
     extends MoveOnMap<T, O, S> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final LoadingCache<TraceRef, TraceLoader> TRACE_LOADER_CACHE = Caffeine.newBuilder()
         .expireAfterAccess(10, TimeUnit.MINUTES)
@@ -52,7 +55,6 @@ public class MoveOnMapWithGPS<T, O extends RoutingServiceOptions<O>, S extends R
     private final GPSTrace trace;
 
     /**
-     * 
      * @param environment
      *            the environment
      * @param node
@@ -64,14 +66,14 @@ public class MoveOnMapWithGPS<T, O extends RoutingServiceOptions<O>, S extends R
      * @param targetSelectionStrategy
      *            {@link TargetSelectionStrategy}
      * @param path
-     *            resource(file, directory, ...) with GPS trace
+     *            resource (file, directory, ...) with GPS trace
      * @param cycle
      *            true if the traces have to be distributed cyclically
      * @param normalizer
      *            name of the class that implement the strategy to normalize the
      *            time
      * @param normalizerArgs
-     *            Args to build normalize
+     *            Args to build the normalizer
      */
     public MoveOnMapWithGPS(final MapEnvironment<T, O, S> environment,
         final Node<T> node,
@@ -94,7 +96,6 @@ public class MoveOnMapWithGPS<T, O extends RoutingServiceOptions<O>, S extends R
     }
 
     /**
-     * 
      * @param environment
      *            the environment
      * @param node
@@ -130,18 +131,17 @@ public class MoveOnMapWithGPS<T, O extends RoutingServiceOptions<O>, S extends R
     }
 
     /**
-     * 
      * @param environment
      *            the environment
      * @param path
-     *            resource(file, directory, ...) with GPS trace
+     *            resource (file, directory, ...) with GPS trace
      * @param cycle
      *            true if the traces have to be distributed cyclically
      * @param normalizer
      *            name of the class that implement the strategy to normalize the
      *            time
      * @param normalizerArgs
-     *            Args to build normalize
+     *            Args to build the normalizer
      * @return the GPSTrace
      */
     public static GPSTrace traceFor(
@@ -168,7 +168,6 @@ public class MoveOnMapWithGPS<T, O extends RoutingServiceOptions<O>, S extends R
     }
 
     /**
-     * 
      * @return {@link GPSTrace} followed by this action
      */
     protected GPSTrace getTrace() {
@@ -177,7 +176,8 @@ public class MoveOnMapWithGPS<T, O extends RoutingServiceOptions<O>, S extends R
 
     private static final class TraceRef {
 
-        private final String path, normalizer;
+        private final String path;
+        private final String normalizer;
         private final boolean cycle;
         private final Object[] args;
         private int hash;
@@ -187,7 +187,7 @@ public class MoveOnMapWithGPS<T, O extends RoutingServiceOptions<O>, S extends R
             final boolean cycle,
             final String normalizer,
             final Object... args
-        ) { // NOPMD: array is stored directly by purpose.
+        ) { // NOPMD: array stored directly by purpose.
             this.path = path;
             this.cycle = cycle;
             this.normalizer = normalizer;
@@ -204,8 +204,7 @@ public class MoveOnMapWithGPS<T, O extends RoutingServiceOptions<O>, S extends R
 
         @Override
         public boolean equals(final Object obj) {
-            if (obj instanceof TraceRef) {
-                final TraceRef ck = (TraceRef) obj;
+            if (obj instanceof final TraceRef ck) {
                 return path.equals(ck.path)
                         && normalizer.equals(ck.normalizer)
                         && cycle == ck.cycle

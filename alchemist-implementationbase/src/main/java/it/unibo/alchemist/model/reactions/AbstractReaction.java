@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.reactions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -28,6 +29,7 @@ import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -39,8 +41,8 @@ import java.util.stream.Stream;
 /**
  * The type which describes the concentration of a molecule.
  * This class offers a partial implementation of Reaction. In particular, it
- * allows to write new reaction specifying only which distribution time to adopt
- * 
+ * allows writing new reaction specifying only which distribution time to adopt
+ *
  * @param <T> concentration type
  */
 public abstract class AbstractReaction<T> implements Reaction<T> {
@@ -51,11 +53,13 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      */
     private static final byte MARGIN = 20;
     private static final ListSet<Dependency> EVERYTHING = ImmutableListSet.of(Dependency.EVERYTHING);
+    @Serial
     private static final long serialVersionUID = 1L;
     private final int hash;
     private List<? extends Action<T>> actions = new ArrayList<>(0);
     private List<? extends Condition<T>> conditions = new ArrayList<>(0);
-    private Context incontext = Context.LOCAL, outcontext = Context.LOCAL;
+    private Context incontext = Context.LOCAL;
+    private Context outcontext = Context.LOCAL;
     private ListSet<Dependency> outbound = new LinkedListSet<>();
     private ListSet<Dependency> inbound = new LinkedListSet<>();
     private int stringLength = Byte.MAX_VALUE;
@@ -64,7 +68,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     /**
      * Builds a new reaction, starting at time t.
-     * 
+     *
      * @param node
      *            the node this reaction belongs to
      * @param timeDistribution
@@ -125,7 +129,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     /**
-     * The default execution iterates all the actions in order and executes them. Override to change the behaviour.
+     * The default execution iterates all the actions in order and executes them. Override to change the behavior.
      */
     @Override
     public void execute() {
@@ -135,7 +139,8 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     /**
-     * Override only if you need to implement extremely tricky behaviours. Must be overridden along with
+     * Override only if you need to implement extremely tricky behaviors.
+     * Must be overridden along with
      * {@link #setActions(List)}.
      *
      * @return the list of {@link Action}s.
@@ -147,7 +152,8 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     /**
-     * Override only if you need to implement extremely tricky behaviours. Must be overridden along with
+     * Override only if you need to implement extremely tricky behaviors.
+     * Must be overridden along with
      * {@link #setConditions(List)}.
      *
      * @return the list of {@link Condition}s.
@@ -219,8 +225,8 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     public void initializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) { }
 
     /**
-     * This method provides facility to clone reactions. Given a constructor in
-     * form of a {@link Supplier}, it populates the actions and conditions with
+     * This method provides the facility to clone reactions.
+     * Given a constructor in form of a {@link Supplier}, it populates the actions and conditions with
      * cloned version of the ones registered in this reaction.
      *
      * @param builder
@@ -267,7 +273,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     /**
-     * This should get overridden only if very tricky behaviours are implemented, such that the default Alchemist
+     * This should get overridden only if very tricky behaviors are implemented, such that the default Alchemist
      * action addition model is no longer usable. Must be overridden along with {@link #getActions()}.
      *
      * @param actions the actions to set
@@ -280,7 +286,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     /**
-     * This should get overridden only if very tricky behaviours are implemented, such that the default Alchemist
+     * This should get overridden only if very tricky behaviors are implemented, such that the default Alchemist
      * condition addition model is no longer usable. Must be overridden along with {@link #getConditions()}.
      *
      * @param conditions the actions to set
@@ -294,7 +300,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     /**
      * Used by subclasses to set their input context.
-     * 
+     *
      * @param c
      *            the new input context
      */
@@ -304,7 +310,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     /**
      * Used by subclasses to set their output context.
-     * 
+     *
      * @param c
      *            the new input context
      */
@@ -314,7 +320,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     /**
      * @return the default implementation returns a String in the form
-     * className@timeScheduled[Conditions]-rate-&gt;[Actions]
+     *     className@timeScheduled[Conditions]-rate-&gt;[Actions]
      */
     @Override
     public String toString() {
@@ -346,7 +352,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * This method gets called as soon as
      * {@link #update(Time, boolean, Environment)} is called. It is useful to
      * update the internal status of the reaction.
-     * 
+     *
      * @param currentTime
      *            the current simulation time
      * @param hasBeenExecuted
@@ -367,7 +373,6 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     public final Node<T> getNode() {
         return node;
     }
-
 
     private static <E> ListSet<E> optionallyImmodifiableView(final ListSet<E> in) {
         return in == null ? null : ListSets.unmodifiableListSet(in);

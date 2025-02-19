@@ -6,14 +6,16 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.timedistributions;
 
-import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.times.DoubleTime;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 
 /**
  * A DiracComb is a sequence of events that happen every fixed time interval.
@@ -22,6 +24,7 @@ import javax.annotation.Nonnull;
  */
 public class DiracComb<T> extends AbstractDistribution<T> {
 
+    @Serial
     private static final long serialVersionUID = -5382454244629122722L;
 
     private final double timeInterval;
@@ -30,7 +33,7 @@ public class DiracComb<T> extends AbstractDistribution<T> {
      * @param start
      *            initial time
      * @param rate
-     *            how many events should happen per time unit
+     *            the number of events should happen per time unit
      */
     public DiracComb(final Time start, final double rate) {
         super(start);
@@ -39,7 +42,7 @@ public class DiracComb<T> extends AbstractDistribution<T> {
 
     /**
      * @param rate
-     *            how many events should happen per time unit
+     *            the number of events should happen per time unit
      */
     public DiracComb(final double rate) {
         this(new DoubleTime(), rate);

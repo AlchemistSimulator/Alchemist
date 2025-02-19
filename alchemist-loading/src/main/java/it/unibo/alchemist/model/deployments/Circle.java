@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.deployments;
 
 import it.unibo.alchemist.model.Environment;
@@ -24,7 +25,9 @@ import static org.apache.commons.math3.util.FastMath.sqrt;
  */
 public final class Circle<P extends Position<? extends P>> extends AbstractRandomDeployment<P> {
 
-    private final double centerX, centerY, radius;
+    private final double centerX;
+    private final double centerY;
+    private final double radius;
 
     /**
      * @param pm

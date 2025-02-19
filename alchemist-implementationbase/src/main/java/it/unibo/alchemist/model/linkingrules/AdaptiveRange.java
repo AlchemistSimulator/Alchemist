@@ -6,17 +6,19 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.linkingrules;
 
 import gnu.trove.map.TIntDoubleMap;
 import gnu.trove.map.hash.TIntDoubleHashMap;
-import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 import org.danilopianini.util.ListSet;
 
+import java.io.Serial;
 import java.util.stream.Collectors;
 
 /**
@@ -40,9 +42,13 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
      * Default minimum range.
      */
     public static final double DEFAULT_MINRANGE = 1d;
+    @Serial
     private static final long serialVersionUID = 8301318269785386062L;
-    private final double defaultAdjustment, minRange, maxRange;
-    private final int n, t;
+    private final double defaultAdjustment;
+    private final double minRange;
+    private final double maxRange;
+    private final int targetNeighborCount;
+    private final int maxTolerance;
     private final TIntDoubleMap ranges = new TIntDoubleHashMap();
 
     /**
@@ -89,8 +95,8 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
             final double adjustment
     ) {
         super(radius);
-        n = Math.max(num, 0);
-        t = tolerance;
+        targetNeighborCount = Math.max(num, 0);
+        maxTolerance = tolerance;
         defaultAdjustment = adjustment;
         minRange = minrange;
         maxRange = maxrange;
@@ -178,9 +184,9 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
         final Neighborhood<T> neigh = Neighborhoods.make(environment, center, potentialNeighs.stream()
                 .filter(neighbor -> !conditionForRemoval(environment, center, neighbor, curRange, ranges.get(neighbor.getId())))
                 .collect(Collectors.toList()));
-        if (neigh.size() > n + t) {
+        if (neigh.size() > targetNeighborCount + maxTolerance) {
             ranges.put(center.getId(), Math.max(curRange - defaultAdjustment, minRange));
-        } else if (neigh.size() < Math.max(1, n - t)) {
+        } else if (neigh.size() < Math.max(1, targetNeighborCount - maxTolerance)) {
             ranges.put(center.getId(), Math.min(curRange + defaultAdjustment, maxRange));
         }
         return neigh;
@@ -193,7 +199,7 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
      * should be removed or not, and must return true if the node should not be inserted in the neighborhood.
      * This implementation checks that the actual distance between the nodes is shorter
      * than the communication range of the neighbor.
-     * 
+     *
      * @param environment the current environment
      * @param center the current node
      * @param neighbor the neighbor to test

@@ -6,10 +6,11 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary;
 
-import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Actionable;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Time;
 
@@ -18,7 +19,6 @@ import javax.annotation.Nullable;
 import java.io.Serializable;
 
 /**
- * 
  * An interface for the visualization of the simulation.
  *
  * @param <T> Concentration Type
@@ -33,7 +33,7 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * flow which will execute this method. A new thread could have been spawned or
      * the same flow of the simulation may execute this method. This depends on the
      * specific {@link it.unibo.alchemist.core.Simulation} implementation.
-     * 
+     *
      * @param environment
      *            The current environment
      * @param time
@@ -65,7 +65,7 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * which will execute this method. A new thread could have been spawned or the
      * same flow of the simulation may execute this method. This depends on the
      * specific {@link it.unibo.alchemist.core.Simulation} implementation.
-     * 
+     *
      * @param environment
      *            The current environment
      * @param reaction

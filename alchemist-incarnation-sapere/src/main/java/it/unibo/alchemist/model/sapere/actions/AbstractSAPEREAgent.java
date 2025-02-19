@@ -6,54 +6,57 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.actions;
 
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
 
 /**
  */
-public abstract class SAPEREAgent extends LsaAbstractAction {
+public abstract class AbstractSAPEREAgent extends AbstractLsaAction {
 
+    @Serial
     private static final long serialVersionUID = -471112895569621229L;
 
     /**
      * Creates a new SAPERE Agent stub. If you use this constructor, you must be
-     * sure that your agent does not modify any molecule (e.g. an agent that
+     * sure that your agent does not modify any molecule (e.g., an agent that
      * just moves a node).
-     * 
+     *
      * @param node
      *            The node in which this agent stays
      */
-    public SAPEREAgent(final ILsaNode node) {
-        super(node, new ArrayList<ILsaMolecule>(0));
+    public AbstractSAPEREAgent(final ILsaNode node) {
+        super(node, new ArrayList<>(0));
     }
 
     /**
      * Creates a new SAPERE Agent stub. If you use this constructor, you must be
      * sure that your agent only modifies molecules matching the template passed as m1.
-     * 
+     *
      * @param node
      *            The node in which this agent stays
      * @param m1
      *            The molecule template it modifies
      */
-    public SAPEREAgent(final ILsaNode node, final ILsaMolecule m1) {
-        super(node, Arrays.asList(new ILsaMolecule[] { m1 }));
+    public AbstractSAPEREAgent(final ILsaNode node, final ILsaMolecule m1) {
+        super(node, Collections.singletonList(m1));
     }
 
     /**
      * Creates a new SAPERE Agent stub. If you use this constructor, you must be
      * sure that your agent only modifies molecules matching the template passed
      * as m1 and/or the template passed in m2.
-     * 
+     *
      * @param node
      *            The node in which this agent stays
      * @param m1
@@ -61,15 +64,15 @@ public abstract class SAPEREAgent extends LsaAbstractAction {
      * @param m2
      *            The second molecule template it modifies
      */
-    public SAPEREAgent(final ILsaNode node, final ILsaMolecule m1, final ILsaMolecule m2) {
-        super(node, Arrays.asList(new ILsaMolecule[] { m1, m2 }));
+    public AbstractSAPEREAgent(final ILsaNode node, final ILsaMolecule m1, final ILsaMolecule m2) {
+        super(node, Arrays.asList(m1, m2));
     }
 
     /**
      * Creates a new SAPERE Agent stub. If you use this constructor, you must be
      * sure that your agent only modifies molecules matching the template passed
      * as m1 and/or the template passed in m2 and/or the template passed in m3.
-     * 
+     *
      * @param node
      *            The node in which this agent stays
      * @param m1
@@ -79,8 +82,8 @@ public abstract class SAPEREAgent extends LsaAbstractAction {
      * @param m3
      *            The third molecule template it modifies
      */
-    public SAPEREAgent(final ILsaNode node, final ILsaMolecule m1, final ILsaMolecule m2, final ILsaMolecule m3) {
-        super(node, Arrays.asList(new ILsaMolecule[] { m1, m2, m3 }));
+    public AbstractSAPEREAgent(final ILsaNode node, final ILsaMolecule m1, final ILsaMolecule m2, final ILsaMolecule m3) {
+        super(node, Arrays.asList(m1, m2, m3));
     }
 
     /**
@@ -95,7 +98,7 @@ public abstract class SAPEREAgent extends LsaAbstractAction {
      * {@inheritDoc}
      */
     @Override
-    public SAPEREAgent cloneAction(
+    public AbstractSAPEREAgent cloneAction(
             final Node<List<ILsaMolecule>> node,
             final Reaction<List<ILsaMolecule>> reaction
     ) {

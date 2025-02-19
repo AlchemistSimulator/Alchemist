@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.effect.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -29,12 +30,13 @@ import javax.swing.SwingConstants;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serial;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-
 /**
+ * @deprecated The entire Swing UI is deprecated and is scheduled to be replaced with a modern UI.
  */
 @Deprecated
 @SuppressFBWarnings(
@@ -43,6 +45,7 @@ import java.util.concurrent.CountDownLatch;
 )
 public final class EffectBuilder extends JFrame implements ActionListener {
 
+    @Serial
     private static final long serialVersionUID = -5030318714404946998L;
     private static final List<Class<? extends Effect>> EFFECTS = ClassPathScanner.subTypesOf(Effect.class, "it.unibo.alchemist");
     private static final Logger L = LoggerFactory.getLogger(EffectBuilder.class);
@@ -97,7 +100,7 @@ public final class EffectBuilder extends JFrame implements ActionListener {
         try {
             barrier.await();
         } catch (final InterruptedException e) {
-            L.error("Bug in " + getClass(), e);
+            L.error("Bug in {}", getClass(), e);
         }
         return (Class<? extends Effect>) effectBox.getSelectedItem();
     }

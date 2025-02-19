@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.actions;
 
 import it.unibo.alchemist.model.Environment;
@@ -13,11 +14,12 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position2D;
 import it.unibo.alchemist.model.Reaction;
 
+import java.io.Serial;
+
 /**
  * Moves the node along the x axis up to coordinate {@link #getMaxX()},
  * with steps of size {@link #getDeltaX()}.
  * Once {@link #getMaxX()} is reached, the nodes gets teleported back to {@link #getMinX()}.
- *
  * Somewhat, it mimics the movement a node would have in a cylindrical environment.
  *
  * @param <T>
@@ -27,8 +29,11 @@ import it.unibo.alchemist.model.Reaction;
  */
 public final class MoveForwardAndTeleport<T, P extends Position2D<P>> extends AbstractMoveNode<T, P> {
 
+    @Serial
     private static final long serialVersionUID = 6853946136578807021L;
-    private final double dx, minx, maxx;
+    private final double dx;
+    private final double minx;
+    private final double maxx;
     private double y = Double.NaN;
 
     /**

@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.ui.impl;
 
 import it.unibo.alchemist.boundary.ui.api.ZoomManager;
@@ -13,15 +14,16 @@ import it.unibo.alchemist.boundary.ui.api.ZoomManager;
 /**
  * A {@link LinearZoomManager} converts the sliding of any physical/virtual
  * device/control into a zoom rate through a linear function.<br>
- * Zoom = amount of slides * rate.
+ * Zoom = number of slides * rate.
  */
-public final class LinearZoomManager extends AbstractSlideInputManager implements ZoomManager {
+public final class LinearZoomManager extends BaseSlideInputManager implements ZoomManager {
+
     private final double rate;
 
     /**
      * Same of {@link #LinearZoomManager(double, double, double, double)} but
      * rate is 1, and minimum and maximum are +/- {@link Double#MAX_VALUE}.
-     * 
+     *
      * @param z
      *            is the desired initial zoom
      */
@@ -32,7 +34,7 @@ public final class LinearZoomManager extends AbstractSlideInputManager implement
     /**
      * Initialize a new {@link LinearZoomManager} instance with the parameters
      * in input.
-     * 
+     *
      * @param zoom
      *            is the desired initial zoom
      * @param rate
@@ -44,7 +46,7 @@ public final class LinearZoomManager extends AbstractSlideInputManager implement
      */
     public LinearZoomManager(final double zoom, final double rate, final double min, final double max) {
         super(zoom / rate, min, max);
-        if (rate == 0 || rate < Double.MIN_NORMAL) {
+        if (rate < Double.MIN_NORMAL) {
             throw new IllegalStateException();
         }
         this.rate = rate;

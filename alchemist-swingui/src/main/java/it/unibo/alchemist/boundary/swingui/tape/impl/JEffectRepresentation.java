@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.tape.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -25,6 +26,7 @@ import java.awt.Point;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
+import java.io.Serial;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,14 +34,16 @@ import java.util.List;
  * Representation of an {@link Effect}. Useful to let the user interact with an
  * effect (create/edit). Effects are relative to a
  * {@link GraphicalOutputMonitor} instance.
- * 
+ *
  * @param <T>
- *            is the type for the concentration
+ *            concentration type
+ * @deprecated The entire Swing UI is deprecated and is planned to be replaced with a modern UI.
  */
 @Deprecated
 @SuppressFBWarnings(value = { "SE_BAD_FIELD", "EI_EXPOSE_REP2" }, justification = "This class is not meant to get serialized")
 public final class JEffectRepresentation<T> extends JTapeFeatureStack implements ItemSelectable {
 
+    @Serial
     private static final long serialVersionUID = -6875167656425950159L;
     private static final Logger L = LoggerFactory.getLogger(JEffectRepresentation.class);
     private final Effect effect;
@@ -78,8 +82,8 @@ public final class JEffectRepresentation<T> extends JTapeFeatureStack implements
                         SwingUtilities.convertPointToScreen(p, JEffectRepresentation.this);
                         mod.setLocation(p);
                         mod.setVisible(true);
-                    } catch (final IllegalAccessException e1) {
-                        L.error("Cannot modify the frame target object", e1);
+                    } catch (final IllegalAccessException illegalAccess) {
+                        L.error("Cannot modify the frame target object", illegalAccess);
                     }
                 } else {
                     setSelected(false);
@@ -130,7 +134,7 @@ public final class JEffectRepresentation<T> extends JTapeFeatureStack implements
 
     /**
      * Gets the represented effects.
-     * 
+     *
      * @return an {@link Effect}
      */
     public Effect getEffect() {
@@ -140,7 +144,7 @@ public final class JEffectRepresentation<T> extends JTapeFeatureStack implements
     @Override
     public Object[] getSelectedObjects() {
         if (selected) {
-            return new Object[] { this };
+            return new Object[] {this};
         } else {
             return null; // NOPMD: superclass' documentation: "returns the selected items or null if no items are selected"
         }
@@ -148,7 +152,7 @@ public final class JEffectRepresentation<T> extends JTapeFeatureStack implements
 
     /**
      * Check if the representation is selected.
-     * 
+     *
      * @return a <code>boolean</code> value
      */
     public boolean isSelected() {

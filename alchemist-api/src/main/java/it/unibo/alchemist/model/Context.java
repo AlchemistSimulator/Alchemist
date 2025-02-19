@@ -19,7 +19,7 @@ package it.unibo.alchemist.model;
  * determine dependencies among reactions. See
  * <a href= "https://ieeexplore.ieee.org/document/6078316/" >
  * this paper</a> for further information about the usage of contexts.
- * 
+ *
  */
 public enum Context {
     /**
@@ -36,12 +36,12 @@ public enum Context {
     NEIGHBORHOOD;
 
     /**
-     *
      * @param c1 context to compare
      * @param c2 other context to compare
-     * @return the wider (more general) between the two: if either one is {@link #GLOBAL}, then {@link #GLOBAL} is
-     * returned. Otherwise, if either one is {@link #NEIGHBORHOOD}, {@link #NEIGHBORHOOD} is returned. Otherwise,
-     * {@link #LOCAL} is returned.
+     * @return the wider (more general) between the two:
+     *      if either one is {@link #GLOBAL}, then {@link #GLOBAL} is returned.
+     *      Otherwise, if either one is {@link #NEIGHBORHOOD}, {@link #NEIGHBORHOOD} is returned.
+     *      Otherwise, {@link #LOCAL} is returned.
      */
     public static Context getWider(final Context c1, final Context c2) {
         if (c1 == GLOBAL || c2 == GLOBAL) {

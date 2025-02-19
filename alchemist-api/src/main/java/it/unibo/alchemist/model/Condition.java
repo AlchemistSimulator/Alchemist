@@ -6,27 +6,27 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model;
 
+import it.unibo.alchemist.core.Simulation;
 import org.danilopianini.util.ListSet;
 
 import java.io.Serializable;
 
 /**
+ * A condition.
+ *
  * @param <T>
- *            The type which describes the concentration of a molecule
- * 
- *            Interface of a condition. Every condition must implement this
- *            interface.
- * 
+ *    The type which describes the concentration of a molecule
  */
 public interface Condition<T> extends Serializable {
 
     /**
-     * This method allows to clone this action on a new node. It may result
+     * This method allows cloning this action on a new node. It may result
      * useful to support runtime creation of nodes with the same reaction
-     * programming, e.g. for morphogenesis.
-     * 
+     * programming, e.g., for morphogenesis.
+     *
      * @param node
      *            The node where to clone this {@link Condition}
      * @param reaction
@@ -62,7 +62,7 @@ public interface Condition<T> extends Serializable {
     double getPropensityContribution();
 
     /**
-     * @return true if the condition is satisfied in current environment.
+     * @return true if the condition is satisfied in the current environment.
      */
     boolean isValid();
 

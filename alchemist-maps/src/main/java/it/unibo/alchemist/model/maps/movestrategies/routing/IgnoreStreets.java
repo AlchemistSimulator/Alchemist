@@ -6,12 +6,15 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.movestrategies.routing;
 
-import it.unibo.alchemist.model.routes.PolygonalChain;
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.Route;
+import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
+import it.unibo.alchemist.model.routes.PolygonalChain;
+
+import java.io.Serial;
 
 /**
  * This strategy ignores any information about the map, and connects the
@@ -23,6 +26,7 @@ import it.unibo.alchemist.model.Route;
  */
 public final class IgnoreStreets<T, P extends Position<P>> implements RoutingStrategy<T, P> {
 
+    @Serial
     private static final long serialVersionUID = 2678088737744440021L;
 
     @Override

@@ -6,25 +6,27 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.actions;
 
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.maps.actions.MoveOnMap;
-import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
-import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.maps.movestrategies.routing.OnStreets;
-import it.unibo.alchemist.model.movestrategies.speed.InteractWithOthers;
 import it.unibo.alchemist.model.maps.movestrategies.target.FollowTrace;
 import it.unibo.alchemist.model.maps.routingservices.GraphHopperOptions;
 import it.unibo.alchemist.model.maps.routingservices.GraphHopperRoutingService;
+import it.unibo.alchemist.model.movestrategies.speed.InteractWithOthers;
 import it.unibo.alchemist.model.sapere.ILsaAction;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
-import it.unibo.alchemist.model.maps.MapEnvironment;
-import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
+import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.danilopianini.lang.HashString;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +40,7 @@ public final class SAPEREWalker
      * The default molecule that identifies an interacting object.
      */
     public static final ILsaMolecule DEFAULT_INTERACTING_TAG = new LsaMolecule("person");
+    @Serial
     private static final long serialVersionUID = 8533918846332597708L;
 
     /**

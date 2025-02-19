@@ -6,8 +6,10 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.stream.Stream;
@@ -23,6 +25,7 @@ public interface Deployment<P extends Position<? extends P>> extends Iterable<P>
      */
     Stream<P> stream();
 
+    @Nonnull
     @Override
     default Iterator<P> iterator() {
         return stream().iterator();
@@ -33,7 +36,7 @@ public interface Deployment<P extends Position<? extends P>> extends Iterable<P>
      *
      * @param <T> concentration type of the {@link LinkingRule}
      * @return null if the deployment has no associated {@link LinkingRule},
-     * and an instance of the {@link LinkingRule} otherwise
+     *     and an instance of the {@link LinkingRule} otherwise
      */
     @Nullable
     default <T> LinkingRule<T, P> getAssociatedLinkingRule() {

@@ -28,6 +28,7 @@ public final class EnvironmentNodeImpl extends GenericNode<Double> implements En
 
     /**
      * Create a new environment node.
+     *
      * @param incarnation the simulation incarnation
      * @param environment the environment
      */
@@ -37,6 +38,7 @@ public final class EnvironmentNodeImpl extends GenericNode<Double> implements En
 
     /**
      * Create a new environment node.
+     *
      * @param environment the environment
      */
     public EnvironmentNodeImpl(final Environment<Double, ?> environment) {

@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model;
 
 import it.unibo.alchemist.boundary.LoadAlchemist;
@@ -33,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * A series of tests checking that our Yaml Loader is working as expected.
+ * A series of tests checking that our YAML Loader is working as expected.
  */
 class TestYAMLLoader {
 
     /*
-     * To run a single test, just change from "any two digits" to the exact test
+     * To run a single test, change from "any two digits" to the exact test
      * number. Yay!
      */
     private static final String ISAC_REGEX = ".*/\\d{2}-.*\\.yml";
@@ -72,7 +73,7 @@ class TestYAMLLoader {
     /**
      * Tests the whole laboratory lesson of the UniBo course
      * "Engineering of Adaptive Software Systems".
-     * Useful as regression test.
+     * Useful as a regression test.
      */
     @Test
     void testISAC2016Lab() {
@@ -132,7 +133,7 @@ class TestYAMLLoader {
     }
 
     /**
-     * Test variables with same structure but different names.
+     * Test variables with the same structure but different names.
      */
     @Test
     void testVariableContentClash() {
@@ -140,7 +141,7 @@ class TestYAMLLoader {
     }
 
     /**
-     * Test variables with same structure but different names.
+     * Test variables with the same structure but different names.
      */
     @Test
     void testScalaVar() {
@@ -158,8 +159,8 @@ class TestYAMLLoader {
         assertNotNull(is);
         final Loader loader = LoadAlchemist.from(is);
         final List<String> dependencies = loader.getRemoteDependencies();
-        assertEquals(dependencies.size(), 2);
-        assertEquals(dependencies.get(0), "dependencies_test.txt");
+        assertEquals(2, dependencies.size());
+        assertEquals("dependencies_test.txt", dependencies.get(0));
     }
 
     @Test
@@ -175,9 +176,6 @@ class TestYAMLLoader {
         final Simulation<T, P> simulation = LoadAlchemist.from(resource, YamlProvider.INSTANCE).getWith(vars);
         simulation.getEnvironment().addTerminator(new StepCount<>(1_000)); // Was working with 10_000
         simulation.play();
-//        if (!java.awt.GraphicsEnvironment.isHeadless()) {
-//            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(simulation);
-//        }
         simulation.run();
         simulation.getError().ifPresent(e -> fail(e.getMessage()));
         return simulation;

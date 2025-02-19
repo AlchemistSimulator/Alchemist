@@ -6,20 +6,23 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.timedistributions;
 
+import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import it.unibo.alchemist.model.Time;
+import java.io.Serial;
 
 /**
  * A {@link DiracComb} whose rate is determined (uniformly) randomly within the provided bounds.
- * 
+ *
  * @param <T> concentration type
  */
 public class RandomDiracComb<T> extends DiracComb<T> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

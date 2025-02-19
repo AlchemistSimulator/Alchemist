@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.impl;
 
 import javax.swing.JTextField;
@@ -17,12 +18,18 @@ import java.io.Serial;
 import java.util.regex.Pattern;
 
 /**
+ * @deprecated The entire Swing UI is deprecated and is set to be replaced with a modern UI
  */
 @Deprecated
 public final class NumericTextField extends JTextField {
 
     @Serial
     private static final long serialVersionUID = 1556539674522648542L;
+
+    @Override
+    protected Document createDefaultModel() {
+        return new NumericDocument();
+    }
 
     private static final class NumericDocument extends PlainDocument {
 
@@ -42,8 +49,4 @@ public final class NumericTextField extends JTextField {
         }
     }
 
-    @Override
-    protected Document createDefaultModel() {
-        return new NumericDocument();
-    }
 }

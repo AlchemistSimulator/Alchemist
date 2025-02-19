@@ -6,34 +6,36 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.reactions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
-import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
-import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
-import it.unibo.alchemist.model.sapere.timedistributions.SAPERETimeDistribution;
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.sapere.ILsaAction;
-import it.unibo.alchemist.model.sapere.ILsaCondition;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.reactions.AbstractReaction;
+import it.unibo.alchemist.model.sapere.ILsaAction;
+import it.unibo.alchemist.model.sapere.ILsaCondition;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
+import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
+import it.unibo.alchemist.model.sapere.timedistributions.SAPERETimeDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 import org.danilopianini.util.ArrayListSet;
 import org.danilopianini.util.ListSet;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,6 +53,7 @@ import static java.util.stream.Stream.concat;
 @SuppressWarnings("unchecked")
 public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final Environment<List<ILsaMolecule>, ?> environment;
@@ -70,38 +73,6 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     private List<ILsaNode> validNodes = new ArrayList<>(0);
 
     /**
-     * This method screens the lsaMolecule list, deleting all molecule which can
-     * be covered from another one more generic.
-     * 
-     * @param moleculeList
-     *            List of lsaMolecule to screen
-     */
-    private static void screen(final List<Dependency> moleculeList) {
-        /*
-         * PHASE 1: generalize the list
-         */
-        for (int i = 0; i < moleculeList.size(); i++) { // NOPMD: this loop has side effects
-            moleculeList.add(((ILsaMolecule) moleculeList.remove(0)).generalize());
-        }
-        /*
-         * PHASE2: compare one-by-one
-         */
-        for (int i = moleculeList.size() - 1; i > 0; i--) {
-            for (int p = i - 1; p >= 0; p--) {
-                final ILsaMolecule m1 = (ILsaMolecule) moleculeList.get(i);
-                final ILsaMolecule m2 = (ILsaMolecule) moleculeList.get(p);
-                if (m2.equals(m1) || m2.moreGenericOf(m1)) {
-                    moleculeList.remove(i);
-                    i--;
-                } else if (m1.moreGenericOf(m2)) {
-                    moleculeList.remove(p);
-                    i--;
-                }
-            }
-        }
-    }
-
-    /**
      * @param environment
      *            the current environment
      * @param node
@@ -112,10 +83,10 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
      *            Time Distribution
      */
     public SAPEREReaction(
-            final Environment<List<ILsaMolecule>, ?> environment,
-            final ILsaNode node,
-            final RandomGenerator randomGenerator,
-            final TimeDistribution<List<ILsaMolecule>> timeDistribution
+        final Environment<List<ILsaMolecule>, ?> environment,
+        final ILsaNode node,
+        final RandomGenerator randomGenerator,
+        final TimeDistribution<List<ILsaMolecule>> timeDistribution
     ) {
         super(node, timeDistribution);
         if (getTimeDistribution() instanceof SAPERETimeDistribution) {
@@ -173,8 +144,8 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         }
         final Position<?> nodePosCache = modifiesOnlyLocally ? environment.getPosition(getNode()) : null;
         final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally
-                ? new ArrayList<>(getLsaNode().getLsaSpace())
-                : null;
+            ? new ArrayList<>(getLsaNode().getLsaSpace())
+            : null;
         Map<HashString, ITreeNode<?>> matches = null;
         Map<ILsaNode, List<ILsaMolecule>> toRemove = null;
         /*
@@ -251,9 +222,9 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
 
     @Override
     protected void updateInternalStatus(
-            final Time currentTime,
-            final boolean hasBeenExecuted,
-            final Environment<List<ILsaMolecule>, ?> environment
+        final Time currentTime,
+        final boolean hasBeenExecuted,
+        final Environment<List<ILsaMolecule>, ?> currentEnvironment
     ) {
         if (emptyExecution) {
             emptyExecution = false;
@@ -355,4 +326,35 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         outboundDependencies.forEach(this::addOutboundDependency);
     }
 
+    /**
+     * This method screens the lsaMolecule list, deleting all molecule which can
+     * be covered from another one more generic.
+     *
+     * @param moleculeList
+     *            List of lsaMolecule to screen
+     */
+    private static void screen(final List<Dependency> moleculeList) {
+        /*
+         * PHASE 1: generalize the list
+         */
+        for (int i = 0; i < moleculeList.size(); i++) { // NOPMD: this loop has side effects
+            moleculeList.add(((ILsaMolecule) moleculeList.remove(0)).generalize());
+        }
+        /*
+         * PHASE2: compare one-by-one
+         */
+        for (int i = moleculeList.size() - 1; i > 0; i--) {
+            for (int p = i - 1; p >= 0; p--) {
+                final ILsaMolecule m1 = (ILsaMolecule) moleculeList.get(i);
+                final ILsaMolecule m2 = (ILsaMolecule) moleculeList.get(p);
+                if (m2.equals(m1) || m2.moreGenericOf(m1)) {
+                    moleculeList.remove(i);
+                    i--;
+                } else if (m1.moreGenericOf(m2)) {
+                    moleculeList.remove(p);
+                    i--;
+                }
+            }
+        }
+    }
 }

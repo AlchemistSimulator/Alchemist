@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.positionfilters;
 
 import it.unibo.alchemist.model.GeoPosition;
@@ -24,7 +25,7 @@ class TestCircleFilter {
     private final PositionBasedFilter<GeoPosition> s = new Circle<>(0, 0, 1);
 
     /**
-     * 
+     *
      */
     @Test
     void test() {

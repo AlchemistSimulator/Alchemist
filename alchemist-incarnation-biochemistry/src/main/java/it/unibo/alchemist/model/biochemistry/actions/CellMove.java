@@ -6,16 +6,18 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.actions;
 
-import it.unibo.alchemist.model.actions.AbstractMoveNode;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.actions.AbstractMoveNode;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 
+import java.io.Serial;
 import java.util.Objects;
 
 /**
@@ -23,18 +25,19 @@ import java.util.Objects;
  */
 public final class CellMove extends AbstractMoveNode<Double, Euclidean2DPosition> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final boolean inPercent;
     private final double delta;
     private final CellProperty<Euclidean2DPosition> cell;
 
     /**
-     * Initialize an Action that move the cell of a given space delta, which can be expressed in percent of the cell's
-     * diameter or in absolute.
+     * Initialize an {@link it.unibo.alchemist.model.Action} that moves the cell of a given space delta,
+     * which can be expressed in percentage of the cell's diameter or in absolute.
      * If the cell has diameter 0, the only way to express delta is absolute.
      * There's no way to decide the direction of the cell by this {@link it.unibo.alchemist.model.Action}.
      * This is inferred by the polarization vector contained in the cell.
-     * 
+     *
      * @param environment the {@link Environment}
      * @param node the {@link Node} in which the {@link it.unibo.alchemist.model.Action} is contained.
      *             This can be only a CellNode.

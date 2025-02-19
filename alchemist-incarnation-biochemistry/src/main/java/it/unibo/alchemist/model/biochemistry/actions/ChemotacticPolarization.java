@@ -6,20 +6,22 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.actions;
 
+import it.unibo.alchemist.model.Context;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.actions.AbstractAction;
+import it.unibo.alchemist.model.biochemistry.CellProperty;
+import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.biochemistry.properties.Cell;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.Context;
-import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
-import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
-import it.unibo.alchemist.model.biochemistry.CellProperty;
 import org.apache.commons.math3.util.FastMath;
 
+import java.io.Serial;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
  */
 public final class ChemotacticPolarization extends AbstractAction<Double> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final Environment<Double, Euclidean2DPosition> environment;
     private final Biomolecule biomolecule;
@@ -37,13 +40,12 @@ public final class ChemotacticPolarization extends AbstractAction<Double> {
     private final CellProperty<Euclidean2DPosition> cell;
 
     /**
-     * 
      * @param environment the environment
      * @param node the node
      * @param biomolecule biomolecule's name
-     * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction of
-     *                  the highest concentration of biomolecule in neighborhood; if it's false, the versor will be
-     *                   directed in the exactly opposite direction.
+     * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed towards
+     *     the highest concentration of biomolecule in the neighborhood; if it's false, the versor will be
+     *     directed in the exactly opposite direction.
      */
     public ChemotacticPolarization(
             final Environment<Double, Euclidean2DPosition> environment,
@@ -69,12 +71,14 @@ public final class ChemotacticPolarization extends AbstractAction<Double> {
 
     /**
      * Initialize a polarization activity regulated by environmental concentration of a molecule.
+     *
      * @param environment the environment
      * @param node the node
      * @param biomolecule biomolecule's name
-     * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction
-     *                   of the highest concentration of biomolecule in neighborhood; if it's false, the versor will
-     *                   be directed in the exactly the opposite direction.
+     * @param ascendGrad if that parameter is true,
+     *     the polarization versor of the cell will be directed towards the highest concentration
+     *     of biomolecule in the neighborhood;
+     *     if it's false, the versor will be directed in the opposite direction.
      */
     public ChemotacticPolarization(
             final Environment<Double, Euclidean2DPosition> environment,
@@ -84,7 +88,6 @@ public final class ChemotacticPolarization extends AbstractAction<Double> {
     ) {
         this(environment, node, new Biomolecule(biomolecule), ascendGrad);
     }
-
 
     @Override
     public ChemotacticPolarization cloneAction(final Node<Double> node, final Reaction<Double> reaction) {

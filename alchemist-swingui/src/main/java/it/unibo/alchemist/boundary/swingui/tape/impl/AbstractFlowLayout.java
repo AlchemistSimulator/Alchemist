@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.tape.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -15,27 +16,26 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
- *
+ * @deprecated The entire Swing UI is deprecated and is scheduled to be replaced with a modern UI.
  */
 @Deprecated
 @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "Class is deprecated anyway")
-public abstract class AFlowLayout implements LayoutManager, Serializable {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+public abstract class AbstractFlowLayout implements LayoutManager, Serializable {
+
     /**
      * The horizontal alignment constant that designates centering. Also used to
      * designate center anchoring.
      */
     public static final int CENTER = 0;
     /**
-     * The horizontal alignment constant that designates right justification.
+     * The horizontal alignment constant that designates the right justification.
      */
     public static final int RIGHT = 1;
     /**
@@ -54,22 +54,22 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
      */
     public static final int TOP = 1;
 
-    private int gap; // the vertical vgap between components...defaults to 5
-    private int alignment; // LEFT, RIGHT, CENTER or BOTH...how the components
-                            // are justified
-    private int anchor; // TOP, BOTTOM or CENTER ...where are the components
-                        // positioned in an overlarge space
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    private int gap; // the vertical gap between components...defaults to 5
+    private int alignment; // LEFT, RIGHT, CENTER or BOTH...how the components are justified
+    private int anchor; // TOP, BOTTOM or CENTER ...where are the components positioned in an overlarge space
     private final @Nullable List<Component> compOrder;
 
     /**
-     * 
-     * @param hgap the vertical gap between components
+     * @param hGap the vertical gap between components
      * @param alignment how the components are justified
      * @param anchor where the components are positioned
      * @param ordered true if the components must be ordered
      */
-    public AFlowLayout(final int hgap, final int alignment, final int anchor, final boolean ordered) {
-        this.gap = hgap;
+    public AbstractFlowLayout(final int hGap, final int alignment, final int anchor, final boolean ordered) {
+        this.gap = hGap;
         this.alignment = alignment;
         this.anchor = anchor;
         compOrder = ordered ? new ArrayList<>() : null;
@@ -78,12 +78,11 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
     @Override
     public final void addLayoutComponent(final String name, final Component comp) {
         if (isOrdered()) {
-            getComponentsList().add(comp);
+            Objects.requireNonNull(getComponentsList()).add(comp);
         }
     }
 
     /**
-     * 
      * @return the current alignment
      */
     protected int getAlignment() {
@@ -91,7 +90,6 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
     }
 
     /**
-     * 
      * @return the current anchor
      */
     protected int getAnchor() {
@@ -99,13 +97,12 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
     }
 
     /**
-     * 
      * @param c the component you want to know the order
      * @return the order
      */
     public int getComponentOrder(final Component c) {
         if (isOrdered()) {
-            return compOrder.indexOf(c);
+            return Objects.requireNonNull(compOrder).indexOf(c);
         } else {
             final int n = c.getParent().getComponentCount();
             final Component[] components = c.getParent().getComponents();
@@ -119,7 +116,6 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
     }
 
     /**
-     * 
      * @return a list with the ordered components
      */
     public List<Component> getComponentsList() {
@@ -127,7 +123,6 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
     }
 
     /**
-     * 
      * @return the current gap
      */
     protected int getGap() {
@@ -135,7 +130,6 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
     }
 
     /**
-     *
      * @return true if the components are ordered
      */
     public boolean isOrdered() {
@@ -147,7 +141,7 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
 
     /**
      * Calculates the size dimensions for the specified container, given the components it contains.
-     * 
+     *
      * @param parent the component to be laid out.
      * @param minimum true if the returned dimension is the minimum one
      * @return a Dimension with the desired size
@@ -167,12 +161,11 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
     @Override
     public final void removeLayoutComponent(final Component comp) {
         if (isOrdered()) {
-            getComponentsList().remove(comp);
+            Objects.requireNonNull(getComponentsList()).remove(comp);
         }
     }
 
     /**
-     * 
      * @param alignment the new alignment
      */
     protected void setAlignment(final int alignment) {
@@ -180,7 +173,6 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
     }
 
     /**
-     * 
      * @param anchor the new anchor
      */
     protected void setAnchor(final int anchor) {
@@ -188,7 +180,6 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
     }
 
     /**
-     * 
      * @param c the component you want to order
      * @param order the position of the component
      */
@@ -196,14 +187,13 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
         if (!isOrdered()) {
             throw new IllegalStateException();
         }
-        final Component temp = compOrder.get(order);
+        final Component temp = Objects.requireNonNull(compOrder).get(order);
         final int old = compOrder.indexOf(c);
         compOrder.set(order, c);
         compOrder.set(old, temp);
     }
 
     /**
-     * 
      * @param gap the new gap
      */
     protected void setGap(final int gap) {

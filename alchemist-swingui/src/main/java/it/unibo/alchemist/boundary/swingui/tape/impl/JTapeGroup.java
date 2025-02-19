@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.tape.impl;
 
 import net.miginfocom.swing.MigLayout;
@@ -15,17 +16,18 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.io.Serial;
 
 /**
- * A {@link JTapeGroup} is a set of {@link JTapeSection} identified by a common
+ * A {@link JTapeGroup} is a set of {@link AbstractJTapeSection} identified by a common
  * description.
- * 
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 public class JTapeGroup extends JPanel {
-    /**
-     * 
-     */
+
+    @Serial
     private static final long serialVersionUID = 1066617411250906275L;
     private static final int DESC_TEXT_SIZE = 8;
     private final JLabel lblDescription;
@@ -34,7 +36,7 @@ public class JTapeGroup extends JPanel {
 
     /**
      * Initializes a new {@link JTapeGroup} with the description in input.
-     * 
+     *
      * @param d
      *            is a {@link String}
      */
@@ -54,7 +56,7 @@ public class JTapeGroup extends JPanel {
 
     /**
      * Gets the description.
-     * 
+     *
      * @return a {@link String}
      */
     public String getDescription() {
@@ -63,12 +65,12 @@ public class JTapeGroup extends JPanel {
 
     /**
      * Adds a section to the current group.
-     * 
+     *
      * @param section
-     *            is the {@link JTapeSection} to add
+     *            is the {@link AbstractJTapeSection} to add
      * @return <code>true</code>
      */
-    public boolean registerSection(final JTapeSection section) {
+    public boolean registerSection(final AbstractJTapeSection section) {
         layoutString = layoutString + "[fill]";
         contentPanel.setLayout(new MigLayout("", layoutString, "[grow,fill]"));
         contentPanel.add(section, "cell " + contentPanel.getComponentCount() + " 0,grow");
@@ -77,7 +79,7 @@ public class JTapeGroup extends JPanel {
 
     /**
      * Sets the description.
-     * 
+     *
      * @param d
      *            is a {@link String}
      */

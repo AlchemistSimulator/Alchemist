@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.Position;
 import org.apache.commons.math3.util.MathArrays;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.Objects;
  */
 public abstract class AbstractPosition<P extends Position<P>> implements Position<P> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final @Nonnull double[] c;
     private int hash;
@@ -128,7 +130,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
     }
 
     /**
-     * Same as {@link #plus(double[])}, with the internal representation of other.
+     * Same as {@link #plus(double[])}, with the internal representation of others.
      *
      * @param other the other position
      * @return a new position with the coordinates summed with the other
@@ -145,7 +147,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
     }
 
     /**
-     * Same as {@link #minus(double[])}, with the internal representation of other.
+     * Same as {@link #minus(double[])}, with the internal representation of others.
      *
      * @param other the other position
      * @return a new position with the coordinates summed with the other
@@ -164,7 +166,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
     /**
      * Calls an internal constructor of subclasses that provides a way to instance a
      * new position given its coordinates.
-     * 
+     *
      * @param coordinates
      *            the coordinates
      * @return a new position (with correct subtype)

@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.core;
 
 import com.google.common.collect.ImmutableList;
@@ -62,6 +63,10 @@ import static it.unibo.alchemist.core.Status.TERMINATED;
  */
 public class Engine<T, P extends Position<? extends P>> implements Simulation<T, P> {
 
+    // This class must intercept and throw even memory management errors
+    // CHECKSTYLE: IllegalThrows OFF
+    // CHECKSTYLE: IllegalCatch OFF
+
     /**
      * Logger.
      */
@@ -98,10 +103,10 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
      * Builds a simulation for a given environment. By default, it uses a
      * DependencyGraph and an IndexedPriorityBatchQueue internally. If you want to
      * use your own implementations of {@link DependencyGraph} and
-     * {@link Scheduler} interfaces, don'maxTime use this constructor.
+     * {@link Scheduler} interfaces, don't maxTime use this constructor.
      *
-     * @param environment         maxTime
-     *                  he environment at the initial time
+     * @param environment
+     *                  the environment at the initial time
      * @param scheduler the scheduler implementation to be used
      */
     @SuppressFBWarnings(
@@ -168,7 +173,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
             setCurrentTime(scheduledTime);
             if (scheduledTime.isFinite() && nextEvent.canExecute()) {
                 /*
-                 * This must be taken before execution, because the reaction
+                 * This must be taken before execution because the reaction
                  * might remove itself (or its node) from the environment.
                  */
                 nextEvent.getConditions().forEach(it.unibo.alchemist.model.Condition::reactionReady);
@@ -272,7 +277,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
             try {
                 nextCommand = commands.take();
                 processCommand(nextCommand);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 LOGGER.debug("Look! A spurious wakeup! :-)");
             }
         }
@@ -378,7 +383,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         reactionChanged(new ReactionRemoval(reactionToRemove));
     }
 
-    private void reactionChanged(final UpdateOnReaction update) {
+    private void reactionChanged(final AbstractUpdateOnReaction update) {
         checkCaller();
         afterExecutionUpdates.add(update);
     }
@@ -446,7 +451,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                         idleProcessSingleCommand();
                     }
                 }
-            } catch (Throwable e) { // NOPMD: forced by CheckedRunnable
+            } catch (final Throwable e) { // NOPMD: forced by CheckedRunnable
                 error = Optional.of(e);
                 LOGGER.error("The simulation engine crashed.", e);
             } finally {
@@ -456,9 +461,9 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                     for (final OutputMonitor<T, P> m : monitors) {
                         m.finished(environment, getTime(), getStep());
                     }
-                } catch (Throwable e) { //NOPMD: we need to catch everything
+                } catch (final Throwable e) { //NOPMD: we need to catch everything
                     error.ifPresentOrElse(
-                        error -> error.addSuppressed(e),
+                        it -> it.addSuppressed(e),
                         () -> error = Optional.of(e)
                     );
                 }
@@ -468,7 +473,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     }
 
     /**
-     * Override this to execute something after simulation run.
+     * Override this to execute something after a simulation run.
      */
     protected void afterRun() {
         // do nothing, leave for override...
@@ -479,7 +484,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         addOutputMonitor(new OutputMonitor<>() {
 
             @Override
-            public void initialized(@Nonnull final Environment<T, P> environment) {
+            public void initialized(@Nonnull final Environment<T, P> initializedEnvironment) {
                 if (condition.getAsBoolean()) {
                     monitors.remove(this);
                     pause().thenRun(() -> future.complete(null));
@@ -488,12 +493,12 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
             @Override
             public void stepDone(
-                @Nonnull final Environment<T, P> environment,
+                @Nonnull final Environment<T, P> targetEnvironment,
                 @Nullable final Actionable<T> reaction,
                 @Nonnull final Time time,
                 final long step
             ) {
-                initialized(environment);
+                initialized(targetEnvironment);
             }
         });
         return future;
@@ -545,15 +550,15 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         }
     }
 
-    private SynchBox lockForStatus(final Status status) {
-        final var statusLock = statusLocks.get(status);
-        if (statusLock == null) {
+    private SynchBox lockForStatus(final Status futureStatus) {
+        final var statusLockSnapshot = statusLocks.get(futureStatus);
+        if (statusLockSnapshot == null) {
             throw new IllegalStateException(
                 "Inconsistent state, the Alchemist engine tried to synchronize on a non-existing lock"
-                    + "searching for status: " + status + ", available locks: " + statusLocks
+                    + "searching for status: " + futureStatus + ", available locks: " + statusLocks
             );
         }
-        return statusLock;
+        return statusLockSnapshot;
     }
 
     /**
@@ -623,7 +628,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     }
 
     /**
-     * thread safe. Updates current time
+     * Thread safe. Updates current time
      *
      * @param currentTime new current time
      */
@@ -632,7 +637,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     }
 
     /**
-     * thread safe. Updates current step.
+     * Thread safe. Updates current step.
      *
      * @param currentStep new current step
      */
@@ -723,11 +728,11 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         }
     }
 
-    private abstract class UpdateOnReaction extends Update {
+    private abstract class AbstractUpdateOnReaction extends Update {
 
         private final Actionable<T> sourceActionable;
 
-        private UpdateOnReaction(final Actionable<T> sourceActionable) {
+        private AbstractUpdateOnReaction(final Actionable<T> sourceActionable) {
             this.sourceActionable = sourceActionable;
         }
 
@@ -741,7 +746,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         }
     }
 
-    private final class ReactionRemoval extends UpdateOnReaction {
+    private final class ReactionRemoval extends AbstractUpdateOnReaction {
 
         private ReactionRemoval(final Actionable<T> source) {
             super(source);
@@ -754,7 +759,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         }
     }
 
-    private final class ReactionAddition extends UpdateOnReaction {
+    private final class ReactionAddition extends AbstractUpdateOnReaction {
 
         private ReactionAddition(final Actionable<T> source) {
             super(source);
@@ -825,12 +830,23 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         }
     }
 
-    private final class SynchBox {
+    /**
+     * Synchronization helper.
+     */
+    protected final class SynchBox {
 
         private final AtomicInteger queueLength = new AtomicInteger();
         private final Condition statusReached = statusLock.newCondition();
         private final Condition allReleased = statusLock.newCondition();
 
+        /**
+         * Waits for the provided status until a timeout expires.
+         *
+         * @param next the status to wait for
+         * @param timeout how many time units to wait at most
+         * @param tu the time unit
+         * @return the reached status
+         */
         public Status waitFor(final Status next, final long timeout, final TimeUnit tu) {
             return doOnStatus(() -> {
                 boolean notTimedOut = true;
@@ -839,7 +855,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                         queueLength.getAndIncrement();
                         notTimedOut = statusReached.await(timeout, tu);
                         queueLength.getAndDecrement();
-                    } catch (InterruptedException e) {
+                    } catch (final InterruptedException e) {
                         LOGGER.info("Spurious wakeup?", e);
                     }
                 }
@@ -850,6 +866,9 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
             });
         }
 
+        /**
+         * Release all locks.
+         */
         public void releaseAll() {
             doOnStatus(() -> {
                 while (queueLength.get() != 0) {

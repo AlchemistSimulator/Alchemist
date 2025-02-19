@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.routes;
 
 import com.google.common.collect.ImmutableList;
@@ -15,6 +16,7 @@ import it.unibo.alchemist.model.Route;
 import org.danilopianini.util.Hashes;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -22,11 +24,12 @@ import java.util.stream.Stream;
 
 /**
  * Abstract route implementation.
- * 
+ *
  * @param <P> the type of position that the route is composed
  */
 public class PolygonalChain<P extends Position<?>> implements Route<P> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private double distance = Double.NaN;
     private int hash;
@@ -47,7 +50,7 @@ public class PolygonalChain<P extends Position<?>> implements Route<P> {
      *            the positions this route traverses
      */
     public PolygonalChain(final List<P> positions) {
-        if (Objects.requireNonNull(positions).size() == 0) {
+        if (Objects.requireNonNull(positions).isEmpty()) {
             throw new IllegalArgumentException("At least one point is required for creating a Route");
         }
         this.positions = positions instanceof ImmutableList
@@ -60,9 +63,9 @@ public class PolygonalChain<P extends Position<?>> implements Route<P> {
      *            first position
      * @param p2
      *            second position
-     * @return the distance between p1 and p2
      * @param <U>
      *            upper {@link Position} type, used internally
+     * @return the distance between the provided positions
      */
     @SuppressWarnings("unchecked")
     protected <U extends Position<U>> double computeDistance(final P p1, final P p2) {

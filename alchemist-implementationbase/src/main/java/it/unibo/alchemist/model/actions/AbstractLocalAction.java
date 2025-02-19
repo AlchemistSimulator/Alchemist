@@ -6,10 +6,13 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.actions;
 
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
+
+import java.io.Serial;
 
 /**
  * @param <T> concentration type
@@ -17,6 +20,7 @@ import it.unibo.alchemist.model.Node;
  */
 public abstract class AbstractLocalAction<T> extends AbstractAction<T> {
 
+    @Serial
     private static final long serialVersionUID = -2347988094066090756L;
 
     /**

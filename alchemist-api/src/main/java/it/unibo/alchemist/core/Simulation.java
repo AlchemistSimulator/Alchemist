@@ -9,21 +9,20 @@
 
 package it.unibo.alchemist.core;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-
-import it.unibo.alchemist.model.Actionable;
-import it.unibo.alchemist.model.Reaction;
-import org.jooq.lambda.fi.lang.CheckedRunnable;
-
 import it.unibo.alchemist.boundary.OutputMonitor;
+import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
+import org.jooq.lambda.fi.lang.CheckedRunnable;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This interface forces simulations to be independent threads, and make them
@@ -176,6 +175,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      * Adds a reaction during the simulation to the scheduler and start to execute it.
      * The reaction addition is not propagated in the {@link Node} entity.
      * To do that call also the method {@link Node#addReaction(Reaction)}.
+     *
      * @param reactionToAdd the reaction to add
      */
     void reactionAdded(Actionable<T> reactionToAdd);
@@ -184,6 +184,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      * Removes a reaction during the simulation from the scheduler and stop to execute it.
      * The reaction removal is not propagated in the {@link Node} entity.
      * To do that call also the method {@link Node#removeReaction(Reaction)}.
+     *
      * @param reactionToRemove the reaction to remove
      */
     void reactionRemoved(Actionable<T> reactionToRemove);

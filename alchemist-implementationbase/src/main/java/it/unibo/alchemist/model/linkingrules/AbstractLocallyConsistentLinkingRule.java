@@ -6,10 +6,13 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.linkingrules;
 
 import it.unibo.alchemist.model.LinkingRule;
 import it.unibo.alchemist.model.Position;
+
+import java.io.Serial;
 
 /**
  * @param <T>
@@ -19,6 +22,7 @@ import it.unibo.alchemist.model.Position;
  */
 public abstract class AbstractLocallyConsistentLinkingRule<T, P extends Position<? extends P>> implements LinkingRule<T, P> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Override

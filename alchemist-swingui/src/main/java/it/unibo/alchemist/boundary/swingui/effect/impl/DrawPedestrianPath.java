@@ -22,12 +22,16 @@ import org.slf4j.LoggerFactory;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Draws the paths took by pedestrians.
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
+@Deprecated
 @SuppressFBWarnings("EI_EXPOSE_REP")
 public class DrawPedestrianPath extends AbstractDrawOnce {
 
@@ -39,11 +43,12 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
     protected static final int INITIAL_ALPHA_DIVIDER = 3;
     /**
      */
-    protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
+    protected static final Logger L = LoggerFactory.getLogger(DrawPedestrianPath.class);
     /**
      * The paths will be drawn as circles of this diameter.
      */
     protected static final int DIAMETER = 5;
+    @Serial
     private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "A")
     private RangedInteger alpha = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE / INITIAL_ALPHA_DIVIDER);
@@ -56,7 +61,7 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
     private Color colorCache = Color.BLUE;
     @ExportForGUI(nameToExport = "to be drawn")
     private boolean toBeDrawn = true;
-    private final List<Position2D> path = new ArrayList<>();
+    private final List<Position2D<?>> path = new ArrayList<>();
 
     /**
      * @param graphics2D        graphics

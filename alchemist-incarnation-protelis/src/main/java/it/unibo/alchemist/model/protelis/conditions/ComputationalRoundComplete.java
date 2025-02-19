@@ -6,21 +6,24 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.protelis.conditions;
 
-import it.unibo.alchemist.model.conditions.AbstractCondition;
-import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
-import it.unibo.alchemist.protelis.properties.ProtelisDevice;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.conditions.AbstractCondition;
+import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
+import it.unibo.alchemist.protelis.properties.ProtelisDevice;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
  */
 public final class ComputationalRoundComplete extends AbstractCondition<Object> {
 
+    @Serial
     private static final long serialVersionUID = -4113718948444451107L;
 
     private final RunProtelisProgram<?> program;
@@ -39,7 +42,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
 
     @Override
     public ComputationalRoundComplete cloneCondition(final Node<Object> node, final Reaction<Object> reaction) {
-        final ProtelisDevice device = node.asPropertyOrNull(ProtelisDevice.class);
+        final ProtelisDevice<?> device = node.asPropertyOrNull(ProtelisDevice.class);
         if (device != null) {
             final List<RunProtelisProgram<?>> possibleRefs = device.allProtelisPrograms();
             if (possibleRefs.size() == 1) {

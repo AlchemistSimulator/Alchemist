@@ -6,18 +6,19 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.timedistributions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Time;
-
 import javax.annotation.Nonnull;
+import java.io.Serial;
 
 /**
  * Markovian events.
@@ -26,6 +27,7 @@ import javax.annotation.Nonnull;
  */
 public class ExponentialTime<T> extends AbstractDistribution<T> {
 
+    @Serial
     private static final long serialVersionUID = 5216987069271114818L;
     private double oldPropensity = -1;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the random engines provided by Apache are Serializable")
@@ -71,7 +73,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
             update(newpropensity, true, currentTime);
         } else if (oldPropensity != 0 && newpropensity != 0) {
             update(newpropensity, executed, currentTime);
-        } else if (oldPropensity != 0 && newpropensity == 0) {
+        } else if (oldPropensity != 0) {
             setNextOccurrence(Time.INFINITY);
         }
         oldPropensity = newpropensity;
@@ -119,7 +121,6 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
     }
 
     /**
-     *
      * @return the rate of the reaction
      */
     @Override

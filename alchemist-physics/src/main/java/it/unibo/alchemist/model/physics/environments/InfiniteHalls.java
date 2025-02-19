@@ -12,20 +12,33 @@ package it.unibo.alchemist.model.physics.environments;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 
+import java.io.Serial;
+
 /**
  * @param <T> concentration type
  */
-public final class InfiniteHalls<T> extends LimitedContinuos2D<T> {
+public final class InfiniteHalls<T> extends AbstractLimitedContinuos2D<T> {
 
+    @Serial
     private static final long serialVersionUID = -7481116157809902856L;
     private static final double DEFAULT_SIZE = 10;
-    private static final double[] BORDERS = { 0.89, 0.39, 0.51, 0.09, 0.81 };
-    private static final int EXI = 0, CII = 1, CFI = 2, SII = 3, SFI = 4;
-    private final double s, ex, ci, cf, si, sf;
+    private static final double[] BORDERS = {0.89, 0.39, 0.51, 0.09, 0.81};
+    private static final int EXI = 0;
+    private static final int CII = 1;
+    private static final int CFI = 2;
+    private static final int SII = 3;
+    private static final int SFI = 4;
+    private final double s;
+    private final double ex;
+    private final double ci;
+    private final double cf;
+    private final double si;
+    private final double sf;
     private boolean doorsOpen;
 
     /**
      * Default builder. Builds halls of size 10 with open doors.
+     *
      * @param incarnation the incarnation to be used.
      */
     public InfiniteHalls(final Incarnation<T, Euclidean2DPosition> incarnation) {
@@ -97,14 +110,14 @@ public final class InfiniteHalls<T> extends LimitedContinuos2D<T> {
     }
 
     /**
-     * @return Other corridor initial margin
+     * @return Another corridor initial margin
      */
     public double getSi() {
         return si;
     }
 
     /**
-     * @return Other corridor initial margin
+     * @return Another corridor initial margin
      */
     public double getSf() {
         return sf;
@@ -112,7 +125,7 @@ public final class InfiniteHalls<T> extends LimitedContinuos2D<T> {
 
     /**
      * Checks whether a position is allowed or not.
-     * 
+     *
      * @param xp
      *            the x coordinate
      * @param yp
@@ -195,7 +208,7 @@ public final class InfiniteHalls<T> extends LimitedContinuos2D<T> {
     }
 
     /**
-     * @return true if the room has 4 open accesses, false otherwise
+     * @return true if the room has four open accesses, false otherwise
      */
     public boolean isDoorsOpen() {
         return doorsOpen;

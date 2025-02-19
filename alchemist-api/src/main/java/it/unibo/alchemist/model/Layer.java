@@ -6,12 +6,12 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model;
 
 import java.io.Serializable;
 
 /**
- * 
  * Interface for static layer, containing a substance or a molecule with a
  * spatial distribution.
  *
@@ -24,7 +24,6 @@ import java.io.Serializable;
 public interface Layer<T, P extends Position<? extends P>> extends Serializable {
 
     /**
-     * 
      * @param p
      *            the {@link Position}.
      * @return the value in the requested {@link Position}.

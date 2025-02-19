@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.deployments;
 
 import it.unibo.alchemist.model.Deployment;
@@ -22,7 +23,8 @@ import java.util.stream.Stream;
  */
 public final class Point<P extends Position<? extends P>> implements Deployment<P> {
 
-    private final double x, y;
+    private final double x;
+    private final double y;
     private final BiFunction<Double, Double, P> positionMaker;
 
     /**

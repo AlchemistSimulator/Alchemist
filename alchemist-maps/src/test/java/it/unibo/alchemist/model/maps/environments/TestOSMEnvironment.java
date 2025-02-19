@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.environments;
 
 import it.unibo.alchemist.model.GeoPosition;
@@ -18,17 +19,17 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- *
  */
 class TestOSMEnvironment {
 
+    // CHECKSTYLE: IllegalThrows OFF
+
     /**
      * Tests for parallel creation of {@link OSMEnvironment}.
-     * 
+     *
      * @throws Throwable if any exception occurs, it gets re-thrown, making the test fail.
      */
     @Test
@@ -42,7 +43,7 @@ class TestOSMEnvironment {
                 return true;
             })
             .map(executor::submit)
-            .collect(Collectors.toList());
+            .toList();
         executor.shutdown();
         for (final Future<Object> result: futureResults) {
             final Object actualResult = result.get();

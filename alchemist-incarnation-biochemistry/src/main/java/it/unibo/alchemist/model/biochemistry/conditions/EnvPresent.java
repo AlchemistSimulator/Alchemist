@@ -6,29 +6,32 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.conditions;
 
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
 
+import java.io.Serial;
+
 /**
- * 
+ *
  *
  */
 public final class EnvPresent extends AbstractCondition<Double> {
 
     /**
-     * 
+     *
      */
+    @Serial
     private static final long serialVersionUID = 1L;
     private final Environment<Double, ?> environment;
 
     /**
-     * 
      * @param node the node
      * @param environment the environment
      */
@@ -38,8 +41,8 @@ public final class EnvPresent extends AbstractCondition<Double> {
     }
 
     @Override
-    public EnvPresent cloneCondition(final Node<Double> node, final Reaction<Double> reaction) {
-        return new EnvPresent(environment, node);
+    public EnvPresent cloneCondition(final Node<Double> newNode, final Reaction<Double> newReaction) {
+        return new EnvPresent(environment, newNode);
     }
 
     @Override

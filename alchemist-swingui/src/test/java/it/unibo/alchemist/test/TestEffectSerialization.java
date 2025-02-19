@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
@@ -25,7 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test effect serialization.
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
+@Deprecated
 class TestEffectSerialization {
 
     private static final String FILEPATH;
@@ -34,7 +38,7 @@ class TestEffectSerialization {
     static {
         try {
             FILEPATH = Files.createTempDirectory("alchemist").toAbsolutePath() + File.separator + "test.aes";
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -43,11 +47,11 @@ class TestEffectSerialization {
 
     /**
      * Make sure that effects can be (de) serialized with Gson.
-     * 
+     *
      * @throws IOException
      *             in case of errors
      * @throws ClassNotFoundException
-     *             if some very serious bug happen
+     *             if some very serious bug happens
      */
     @Test
     void testGsonEffectSerialization() throws IOException, ClassNotFoundException {
@@ -57,11 +61,11 @@ class TestEffectSerialization {
 
     /**
      * Make sure that effects can be (de) serialized.
-     * 
+     *
      * @throws IOException
      *             in case of errors
      * @throws ClassNotFoundException
-     *             if some very serious bug happen
+     *             if some very serious bug happens
      */
     @Test
     void testDefaultEffectSerialization() throws IOException, ClassNotFoundException {

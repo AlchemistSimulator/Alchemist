@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.physics.environments;
 
 import it.unibo.alchemist.model.Incarnation;
@@ -13,23 +14,24 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 
 /**
  * This class represents a 2D continuous environment with spatial limitations.
- * Those limitations will prevent nodes to move in positions which are not
+ * Those limitations will prevent nodes from moving in positions which are not
  * allowed.
- * 
+ *
  * @param <T> concentration type
  */
-public abstract class LimitedContinuos2D<T> extends ContinuousPhysics2DEnvironment<T> {
+public abstract class AbstractLimitedContinuos2D<T> extends ContinuousPhysics2DEnvironment<T> {
 
+    @Serial
     private static final long serialVersionUID = -7838255122589911058L;
-
 
     /**
      * @param incarnation the current incarnation.
      */
-    public LimitedContinuos2D(final Incarnation<T, Euclidean2DPosition> incarnation) {
+    public AbstractLimitedContinuos2D(final Incarnation<T, Euclidean2DPosition> incarnation) {
         super(incarnation);
     }
 
@@ -37,7 +39,7 @@ public abstract class LimitedContinuos2D<T> extends ContinuousPhysics2DEnvironme
      * {@inheritDoc}
      */
     @Override
-    public void moveNodeToPosition(@Nonnull final Node<T> node, final Euclidean2DPosition newPos) {
+    public void moveNodeToPosition(@Nonnull final Node<T> node, @Nonnull final Euclidean2DPosition newPos) {
         final double[] cur = getPosition(node).getCoordinates();
         final double[] np = newPos.getCoordinates();
         // Calculate the next position allowed
@@ -57,7 +59,7 @@ public abstract class LimitedContinuos2D<T> extends ContinuousPhysics2DEnvironme
     }
 
     /**
-     * This method must calculate the ABSOLUTE next allowed position given the
+     * This method must calculate the ABSOLUTE next-allowed position given the
      * current position and the position in which the node wants to move. For
      * example, if your node is in position [2,3], wants to move to [3,4] but
      * the next allowed position (because, e.g., of physical obstacles) is
@@ -82,7 +84,7 @@ public abstract class LimitedContinuos2D<T> extends ContinuousPhysics2DEnvironme
     /**
      * Checks whether a position is allowed to be occupied by a node in this
      * environment.
-     * 
+     *
      * @param p
      *            the position to check
      * @return true if the position is allowed

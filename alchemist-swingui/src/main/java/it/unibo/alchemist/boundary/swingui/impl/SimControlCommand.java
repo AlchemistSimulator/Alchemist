@@ -6,33 +6,36 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.impl;
 
 import static it.unibo.alchemist.boundary.swingui.impl.LocalizedResourceBundle.getString;
 
 /**
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 public enum SimControlCommand {
 
     /**
-     * 
+     *
      */
     PLAY("/actions/media-playback-start.png", getString("play")),
     /**
-     * 
+     *
      */
     STEP("/actions/media-skip-forward.png", getString("step")),
     /**
-     * 
+     *
      */
     PAUSE("/actions/media-playback-pause.png", getString("pause")),
     /**
-     * 
+     *
      */
     STOP("/actions/media-playback-stop.png", getString("stop"));
 
-    private final String icon, tt;
+    private final String icon;
+    private final String tt;
 
     SimControlCommand(final String iconPath, final String tooltip) {
         icon = iconPath;
@@ -48,7 +51,7 @@ public enum SimControlCommand {
 
     /**
      * Compares this enum to a String.
-     * 
+     *
      * @param s
      *            the String
      * @return true if the String representation of this enum is equal to the

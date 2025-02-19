@@ -18,26 +18,26 @@ import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 
-
 /**
  * An abstract class facility with some generic methods implemented.
- * 
+ *
  * @param <T> concentration type
  */
 public abstract class AbstractAction<T> implements Action<T> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final ListSet<Dependency> dependencies = new LinkedListSet<>();
     @Nonnull
     private final Node<T> node;
 
     /**
-     * Call this constructor in the subclasses in order to automatically
-     * instance the node.
-     * 
+     * Call this constructor in the subclasses to automatically instance the node.
+     *
      * @param node
      *            the node this action belongs to
      */
@@ -47,10 +47,9 @@ public abstract class AbstractAction<T> implements Action<T> {
     }
 
     /**
-     * Allows to add an Molecule to the set of molecules which are modified by
-     * this action. This method must be called in the constructor, and not
-     * during the execution.
-     * 
+     * Allows adding a Molecule to the set of molecules which are modified by this action.
+     * This method must be called in the constructor and not during the execution.
+     *
      * @param m
      *            the molecule which will be modified
      */
@@ -71,7 +70,8 @@ public abstract class AbstractAction<T> implements Action<T> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
+     * <p>
      * How to override: if you intend your action to influence any reaction with
      * compatible context, return null.
      */
@@ -91,6 +91,7 @@ public abstract class AbstractAction<T> implements Action<T> {
 
     /**
      * Checks if the molecule is contained in this node.
+     *
      * @param molecule the molecule
      *
      * @return true if the local node contains the molecule.
@@ -101,7 +102,7 @@ public abstract class AbstractAction<T> implements Action<T> {
 
     /**
      * Deletes a molecule entirely in the local node.
-     * 
+     *
      * @param molecule molecule
      */
     protected final void removeConcentration(final Molecule molecule) {
@@ -110,7 +111,7 @@ public abstract class AbstractAction<T> implements Action<T> {
 
     /**
      * Sets the concentration locally.
-     * 
+     *
      * @param molecule
      *            molecule
      * @param concentration

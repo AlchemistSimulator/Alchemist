@@ -12,13 +12,14 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 import it.unibo.alchemist.boundary.swingui.effect.api.FunctionDrawer;
 import it.unibo.alchemist.boundary.swingui.effect.api.LayerToFunctionMapper;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Position2D;
 import org.danilopianini.view.ExportForGUI;
 
 import java.awt.Graphics2D;
+import java.io.Serial;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -27,21 +28,30 @@ import java.util.function.Function;
  * values in different points of the view. One effect could draw isolines,
  * whereas another could represent different values with a gradient.
  *
+ * <p>
  * Normally, drawing a layer's values only makes sense for "numerical" layers
- * (i.e. layers for which the values are {@link Number}s). However, one could have
+ * (i.e., layers for which the values are {@link Number}s).
+ * However, one could have
  * a "non-numerical" layer whose
  * {@link Layer#getValue(Position)}
- * return type is an object from which a value can be extracted somehow. In the end,
+ * return type is an object from which a value can be extracted somehow.
+ * In the end,
  * drawing a layer's values makes sense as long as there is a way to map
- * those values to Numbers. More generally, a {@link LayerToFunctionMapper} is needed.
+ * those values to Numbers.
+ * More generally, a {@link LayerToFunctionMapper} is needed.
  * As this class is not aware of which mapper to use, this responsibility is left to subclasses.
  *
+ * <p>
  * When drawing layers values, it can be important to know the min and max
  * layer values that will be drawn. This class declares gui controls
  * that allow the user to specify such boundaries.
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
-public abstract class DrawLayersValues extends AbstractDrawLayers implements FunctionDrawer {
+@Deprecated
+public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implements FunctionDrawer {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "Min layer value")
     private String minLayerValue = "0.0";
@@ -53,7 +63,7 @@ public abstract class DrawLayersValues extends AbstractDrawLayers implements Fun
     private Double maxLayerValueDouble = Double.parseDouble(maxLayerValueCached);
     private final LayerToFunctionMapper mapper;
 
-    DrawLayersValues(final LayerToFunctionMapper mapper) {
+    AbstractDrawLayersValues(final LayerToFunctionMapper mapper) {
         this.mapper = mapper;
     }
 
@@ -83,7 +93,7 @@ public abstract class DrawLayersValues extends AbstractDrawLayers implements Fun
     );
 
     /**
-     * @return a boolean representing whether or not min and max layer values should be updated
+     * @return a boolean representing whether min and max layer values should be updated
      */
     protected boolean minOrMaxLayerValuesNeedsToBeUpdated() {
         return !minLayerValueCached.equals(minLayerValue) || !maxLayerValueCached.equals(maxLayerValue);
@@ -98,8 +108,8 @@ public abstract class DrawLayersValues extends AbstractDrawLayers implements Fun
         try {
             minLayerValueDouble = Double.parseDouble(minLayerValueCached);
             maxLayerValueDouble = Double.parseDouble(maxLayerValueCached);
-        } catch (NumberFormatException e) {
-            L.warn(minLayerValue + " or " + maxLayerValue + " are not valid values");
+        } catch (final NumberFormatException e) {
+            L.warn("{} or {} are not valid values", minLayerValue, maxLayerValue);
         }
     }
 

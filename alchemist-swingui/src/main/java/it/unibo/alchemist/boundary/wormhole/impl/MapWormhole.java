@@ -6,13 +6,14 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.wormhole.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.ui.impl.PointAdapter;
-import it.unibo.alchemist.model.maps.positions.LatLongPosition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.GeoPosition;
+import it.unibo.alchemist.model.maps.positions.LatLongPosition;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.core.util.MercatorProjection;
 import org.mapsforge.map.model.MapViewPosition;
@@ -28,12 +29,15 @@ import static it.unibo.alchemist.boundary.ui.impl.PointAdapter.from;
  *
  */
 public final class MapWormhole extends WormholeSwing<GeoPosition> {
-    private final MapViewPosition mapModel;
+
     /**
      * Maximum zoom.
      */
     public static final byte MAX_ZOOM = 18;
+
     private static final long MAPSFORGE_TILE_SIZE = 256;
+
+    private final MapViewPosition mapModel;
 
     /**
      * Initializes a new {@link MapWormhole} copying the state of the one in
@@ -121,7 +125,7 @@ public final class MapWormhole extends WormholeSwing<GeoPosition> {
         LatLong center;
         try {
             center = new LatLong(ep.getLatitude(), ep.getLongitude());
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             center = new LatLong(0, 0);
         }
         mapModel.setCenter(center);

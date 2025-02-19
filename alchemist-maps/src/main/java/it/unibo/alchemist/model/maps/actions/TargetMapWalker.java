@@ -6,26 +6,27 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.actions;
 
 import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.maps.movestrategies.routing.OnStreets;
-import it.unibo.alchemist.model.maps.movestrategies.target.FollowTargetOnMap;
-import it.unibo.alchemist.model.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.movestrategies.speed.ConstantSpeed;
-import it.unibo.alchemist.model.movestrategies.speed.InteractWithOthers;
-import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
+import it.unibo.alchemist.model.maps.MapEnvironment;
+import it.unibo.alchemist.model.maps.movestrategies.routing.OnStreets;
+import it.unibo.alchemist.model.maps.movestrategies.target.FollowTargetOnMap;
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
+import it.unibo.alchemist.model.movestrategies.speed.ConstantSpeed;
+import it.unibo.alchemist.model.movestrategies.speed.InteractWithOthers;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.Serial;
 
 /**
- *
  * @param <T> Concentration type
  * @param <O> {@link RoutingServiceOptions} type
  * @param <S> {@link RoutingService} type
@@ -46,6 +47,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      */
     public static final double DEFAULT_INTERACTION = 0;
 
+    @Serial
     private static final long serialVersionUID = 5097382908560832035L;
 
     /**
@@ -60,17 +62,17 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
      *            it will be used as-is. If it is an {@link Iterable}, the first
-     *            two values (if they are present and they are numbers, or
+     *            two values (if they are present, and they are numbers, or
      *            Strings parse-able to numbers) will be used to create a new
      *            {@link GeoPosition}. Otherwise, the {@link Object} bound
      *            to this {@link Molecule} will be converted to a String, and
      *            the String will be parsed using the float regular expression
      *            matcher in Javalib.
      * @param interactingMolecule
-     *            the molecule that decides wether or not a node is physically
+     *            the molecule that decides whether a node is physically
      *            interacting with the node in which this action is executed,
      *            slowing this node down. The node will be considered
-     *            "interacting" if such molecule is present, regardless its
+     *            "interacting" if such a molecule is present, regardless of its
      *            value.
      * @param speed
      *            the speed at which this {@link MoveOnMap} will move
@@ -114,17 +116,17 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
      *            it will be used as-is. If it is an {@link Iterable}, the first
-     *            two values (if they are present and they are numbers, or
+     *            two values (if they are present, and they are numbers, or
      *            Strings parse-able to numbers) will be used to create a new
      *            {@link GeoPosition}. Otherwise, the {@link Object} bound
      *            to this {@link Molecule} will be converted to a String, and
      *            the String will be parsed using the float regular expression
      *            matcher in Javalib.
      * @param interactingMolecule
-     *            the molecule that decides wether or not a node is physically
+     *            the molecule that decides whether a node is physically
      *            interacting with the node in which this action is executed,
      *            slowing this node down. The node will be considered
-     *            "interacting" if such molecule is present, regardless its
+     *            "interacting" if such a molecule is present, regardless of its
      *            value.
      * @param speed
      *            the speed at which this {@link MoveOnMap} will move
@@ -153,17 +155,17 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
      *            it will be used as-is. If it is an {@link Iterable}, the first
-     *            two values (if they are present and they are numbers, or
+     *            two values (if they are present, and they are numbers, or
      *            Strings parse-able to numbers) will be used to create a new
      *            {@link GeoPosition}. Otherwise, the {@link Object} bound
      *            to this {@link Molecule} will be converted to a String, and
      *            the String will be parsed using the float regular expression
      *            matcher in Javalib.
      * @param interactingMolecule
-     *            the molecule that decides wether or not a node is physically
+     *            the molecule that decides whether a node is physically
      *            interacting with the node in which this action is executed,
      *            slowing this node down. The node will be considered
-     *            "interacting" if such molecule is present, regardless its
+     *            "interacting" if such a molecule is present, regardless of its
      *            value.
      */
     public TargetMapWalker(
@@ -188,17 +190,17 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
      *            it will be used as-is. If it is an {@link Iterable}, the first
-     *            two values (if they are present and they are numbers, or
+     *            two values (if they are present, and they are numbers, or
      *            Strings parse-able to numbers) will be used to create a new
      *            {@link GeoPosition}. Otherwise, the {@link Object} bound
      *            to this {@link Molecule} will be converted to a String, and
      *            the String will be parsed using the float regular expression
      *            matcher in Javalib.
      * @param interactingMolecule
-     *            the molecule that decides wether or not a node is physically
+     *            the molecule that decides whether a node is physically
      *            interacting with the node in which this action is executed,
      *            slowing this node down. The node will be considered
-     *            "interacting" if such molecule is present, regardless its
+     *            "interacting" if such a molecule is present, regardless of its
      *            value.
      * @param speed
      *            the speed at which this {@link MoveOnMap} will move
@@ -242,7 +244,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
      *            it will be used as-is. If it is an {@link Iterable}, the first
-     *            two values (if they are present and they are numbers, or
+     *            two values (if they are present, and they are numbers, or
      *            Strings parse-able to numbers) will be used to create a new
      *            {@link GeoPosition}. Otherwise, the {@link Object} bound
      *            to this {@link Molecule} will be converted to a String, and
@@ -272,7 +274,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
      *            it will be used as-is. If it is an {@link Iterable}, the first
-     *            two values (if they are present and they are numbers, or
+     *            two values (if they are present, and they are numbers, or
      *            Strings parse-able to numbers) will be used to create a new
      *            {@link GeoPosition}. Otherwise, the {@link Object} bound
      *            to this {@link Molecule} will be converted to a String, and
@@ -283,7 +285,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
             final MapEnvironment<T, O, S> environment,
             final Node<T> node,
             final Reaction<T> reaction,
-            final String trackMolecule) { 
+            final String trackMolecule) {
         this(environment, node, reaction, trackMolecule, DEFAULT_SPEED);
     }
 

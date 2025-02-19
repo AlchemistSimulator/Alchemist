@@ -5,14 +5,14 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.utils;
 
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
-
-import it.unibo.alchemist.model.maps.positions.LatLongPosition;
 import it.unibo.alchemist.model.GeoPosition;
+import it.unibo.alchemist.model.maps.positions.LatLongPosition;
 
 /**
  */
@@ -23,7 +23,7 @@ public final class Maps {
 
     /**
      * Returns the distance in meters.
-     * 
+     *
      * @param p1
      *            First point
      * @param p2
@@ -78,7 +78,7 @@ public final class Maps {
 
     /**
      * Converts {@link GeoPosition} to {@link LatLng}.
-     * 
+     *
      * @param p
      *            the {@link GeoPosition}
      * @return a {@link LatLng}
@@ -89,7 +89,7 @@ public final class Maps {
 
     /**
      * Converts {@link LatLng} to {@link LatLongPosition}.
-     * 
+     *
      * @param p
      *            {@link LatLng}
      * @return a {@link LatLongPosition}

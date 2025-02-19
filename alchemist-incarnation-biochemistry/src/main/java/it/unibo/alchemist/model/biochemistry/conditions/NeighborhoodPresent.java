@@ -14,18 +14,22 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 
+import java.io.Serial;
+
 /**
- * A condition is valid if the node has a neighborhood, formally if the node has at least one node 
+ * A condition is valid if the node has a neighborhood, formally if the node has at least one node
  * connected by a linking rule.
  *
  * @param <T> The concentration type.
  */
 public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
 
+    @Serial
     private static final long serialVersionUID = 689059297366332946L;
 
     /**
      * Create the condition.
+     *
      * @param node the node
      * @param environment the current environment.
      */
@@ -34,14 +38,14 @@ public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
     }
 
     @Override
-    public NeighborhoodPresent<T> cloneCondition(final Node<T> node, final Reaction<T> r) {
-        return new NeighborhoodPresent<>(getEnvironment(), node);
+    public NeighborhoodPresent<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
+        return new NeighborhoodPresent<>(getEnvironment(), newNode);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected double getNeighborPropensity(final Node<T> neighbor) {
-        // to be eligible (p = 1) a neighbor just needs to be instance of CellNode
+        // to be eligible (p = 1), a neighbor just needs to be an instance of CellNode
         return neighbor.asPropertyOrNull(CellProperty.class) != null ? 1d : 0d;
     }
 

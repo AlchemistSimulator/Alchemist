@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.gps.alignments;
 
 import com.google.common.collect.ImmutableList;
@@ -53,7 +54,7 @@ class TestNormalizer {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testNoAlignment() {
@@ -68,7 +69,7 @@ class TestNormalizer {
         testRequiredWalkTime(traces);
 
         /*
-         * Test final time 
+         * Test final time
          */
         assertEquals(TRACE_1_POINT_3.getTime().toDouble(), traces.get(0).getFinalTime().toDouble(), DELTA);
         assertEquals(TRACE_2_POINT_3.getTime().toDouble(), traces.get(1).getFinalTime().toDouble(), DELTA);
@@ -76,7 +77,7 @@ class TestNormalizer {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testAlignToFirstTrace() {
@@ -84,7 +85,7 @@ class TestNormalizer {
         /*
          * Test start time
          */
-        assertEquals(TRACE_1_POINT_1.getTime().toDouble() - TRACE_2_POINT_1.getTime().toDouble(), 
+        assertEquals(TRACE_1_POINT_1.getTime().toDouble() - TRACE_2_POINT_1.getTime().toDouble(),
                 traces.get(0).getStartTime().toDouble(), DELTA);
         assertEquals(TRACE_2_POINT_1.getTime().toDouble() - TRACE_2_POINT_1.getTime().toDouble(),
                 traces.get(1).getStartTime().toDouble(), DELTA);
@@ -94,7 +95,7 @@ class TestNormalizer {
         testRequiredWalkTime(traces);
 
         /*
-         * Test final time 
+         * Test final time
          */
         assertEquals(TRACE_1_POINT_3.getTime().toDouble() - TRACE_2_POINT_1.getTime().toDouble(),
                 traces.get(0).getFinalTime().toDouble(), DELTA);
@@ -105,7 +106,7 @@ class TestNormalizer {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testAlignToSimulationTime() {
@@ -120,7 +121,7 @@ class TestNormalizer {
         testRequiredWalkTime(traces);
 
         /*
-         * Test final time 
+         * Test final time
          */
         assertEquals(TRACE_1_POINT_3.getTime().toDouble() - TRACE_1_POINT_1.getTime().toDouble(),
                 traces.get(0).getFinalTime().toDouble(), DELTA);
@@ -131,7 +132,7 @@ class TestNormalizer {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testAlignToTimeRetainSinglePoint() {
@@ -140,11 +141,11 @@ class TestNormalizer {
         /*
          * Test start time
          */
-        assertEquals(findNextTime(TRACE_1, time).toDouble() - time.toDouble(), 
+        assertEquals(findNextTime(TRACE_1, time).toDouble() - time.toDouble(),
                 traces.get(0).getStartTime().toDouble(), DELTA);
-        assertEquals(findNextTime(TRACE_2, time).toDouble() - time.toDouble(), 
+        assertEquals(findNextTime(TRACE_2, time).toDouble() - time.toDouble(),
                 traces.get(1).getStartTime().toDouble(), DELTA);
-        assertEquals(findNextTime(TRACE_3, time).toDouble() - time.toDouble(), 
+        assertEquals(findNextTime(TRACE_3, time).toDouble() - time.toDouble(),
                 traces.get(2).getStartTime().toDouble(), DELTA);
         /*
          * Test the time required to walk the trace
@@ -156,7 +157,7 @@ class TestNormalizer {
         assertEquals(TRACE_3_POINT_3.getTime().toDouble() - findNextTime(TRACE_3, time).toDouble(),
                 traces.get(2).getTripTime(), DELTA);
         /*
-         * Test final time 
+         * Test final time
          */
         assertEquals(TRACE_1_POINT_3.getTime().toDouble() - time.toDouble(),
                 traces.get(0).getFinalTime().toDouble(), DELTA);
@@ -167,7 +168,7 @@ class TestNormalizer {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testAlignToTimeDiscardSinglePoint() {
@@ -180,9 +181,9 @@ class TestNormalizer {
         /*
          * Test start time
          */
-        assertEquals(findNextTime(TRACE_1, time).toDouble() - time.toDouble(), 
+        assertEquals(findNextTime(TRACE_1, time).toDouble() - time.toDouble(),
                 traces.get(0).getStartTime().toDouble(), DELTA);
-        assertEquals(findNextTime(TRACE_3, time).toDouble() - time.toDouble(), 
+        assertEquals(findNextTime(TRACE_3, time).toDouble() - time.toDouble(),
                 traces.get(1).getStartTime().toDouble(), DELTA);
 
         /*
@@ -193,7 +194,7 @@ class TestNormalizer {
         assertEquals(TRACE_3_POINT_3.getTime().toDouble() - findNextTime(TRACE_3, time).toDouble(),
                 traces.get(1).getTripTime(), DELTA);
         /*
-         * Test final time 
+         * Test final time
          */
         assertEquals(TRACE_1_POINT_3.getTime().toDouble() - time.toDouble(),
                 traces.get(0).getFinalTime().toDouble(), DELTA);
@@ -202,43 +203,43 @@ class TestNormalizer {
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testAlignToTimeThrowExceptionOnSinglePoint() {
         final Time time = new DoubleTime(4.0);
         try {
             new AlignToTime(time, true, true).alignTime(TRACES);
-            fail("not throw exception");
-        } catch (IllegalStateException e) {
+            fail();
+        } catch (final IllegalStateException e) {
             assertFalse(e.getMessage().isEmpty());
         }
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testAlignToTimeNegativeTime() {
         final Time time = new DoubleTime(-4.0);
         try {
             new AlignToTime(time, true, true);
-            fail("not throw exception");
-        } catch (IllegalArgumentException e) {
+            fail();
+        } catch (final IllegalArgumentException e) {
             assertFalse(e.getMessage().isEmpty());
         }
     }
 
     /**
-     * 
+     *
      */
     @Test
     void testAlignToTimeWrongPolicy() {
         final Time time = new DoubleTime(4.0);
         try {
             new AlignToTime(time, false, true).alignTime(TRACES);
-            fail("not throw exception");
-        } catch (IllegalArgumentException e) {
+            fail();
+        } catch (final IllegalArgumentException e) {
             assertFalse(e.getMessage().isEmpty());
         }
     }

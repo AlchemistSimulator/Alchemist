@@ -19,15 +19,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package it.unibo.alchemist.boundary.swingui.tape.impl;
 
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.io.Serial;
+import java.util.Objects;
 
 /**
- * 
  * A vertical layout manager similar to java.awt.FlowLayout. Like FlowLayout
  * components do not expand to fill available space except when the horizontal
  * alignment is <code>BOTH</code> in which case components are stretched
@@ -35,25 +37,30 @@ import java.awt.Insets;
  * column if there isn't enough space vertically. VerticalLayout can optionally
  * anchor components to the top or bottom of the display area or center them
  * between the top and bottom.
- * 
+ *
+ * <p>
  * Revision date 12th July 2001
- * 
- *         Homepage:www.kagi.com/equitysoft - Based on 'FlexLayout' in Java
- *         class libraries Vol 2 Chan/Lee Addison-Wesley 1998
+ *
+ * <p>
+ *         Homepage: www.kagi.com/equitysoft - Based on 'FlexLayout' in Java
+ *         class libraries Volume 2 Chan/Lee Addison-Wesley 1998
+ *
+ * @deprecated The entire Swing UI is deprecated and is set to be replaced with a modern UI
  */
 @Deprecated
 @SuppressWarnings("CPD-START")
-public final class VerticalFlowLayout extends AFlowLayout {
+public final class VerticalFlowLayout extends AbstractFlowLayout {
     /**
-     * 
+     *
      */
+    @Serial
     private static final long serialVersionUID = -4226183812841326639L;
     private static final int DEFAULTVGAP = 5;
 
     /**
-     * Constructs an instance of VerticalLayout with a vertical vgap of 5
+     * Constructs an instance of VerticalLayout with a vertical gap of 5
      * pixels, horizontal centering and anchored to the top of the display area.
-     * 
+     *
      * @param ordered true if the components must be ordered
      */
     public VerticalFlowLayout(final boolean ordered) {
@@ -62,21 +69,21 @@ public final class VerticalFlowLayout extends AFlowLayout {
 
     /**
      * Constructs a VerticalLayout instance with horizontal centering, anchored
-     * to the top with the specified vgap.
-     * 
-     * @param vgap An int value indicating the vertical seperation of the components
+     * to the top with the specified gap.
+     *
+     * @param vGap An int value indicating the vertical separation of the components
      * @param ordered true if the components must be ordered
      */
-    public VerticalFlowLayout(final int vgap, final boolean ordered) {
-        this(vgap, CENTER, TOP, ordered);
+    public VerticalFlowLayout(final int vGap, final boolean ordered) {
+        this(vGap, CENTER, TOP, ordered);
     }
 
     /**
      * Constructs a VerticalLayout instance anchored to the top with the
-     * specified vgap and horizontal alignment.
-     * 
-     * @param vgap
-     *            An int value indicating the vertical seperation of the
+     * specified `vGap` and horizontal alignment.
+     *
+     * @param vGap
+     *            An int value indicating the vertical separation of the
      *            components
      * @param alignment
      *            An int value which is one of
@@ -84,16 +91,16 @@ public final class VerticalFlowLayout extends AFlowLayout {
      *            alignment.
      * @param ordered true if the components must be ordered
      */
-    public VerticalFlowLayout(final int vgap, final int alignment, final boolean ordered) {
-        this(vgap, alignment, TOP, ordered);
+    public VerticalFlowLayout(final int vGap, final int alignment, final boolean ordered) {
+        this(vGap, alignment, TOP, ordered);
     }
 
     /**
-     * Constructs a VerticalLayout instance with the specified vgap, horizontal
+     * Constructs a VerticalLayout instance with the specified vGap, horizontal
      * alignment and anchoring.
-     * 
-     * @param vgap
-     *            An int value indicating the vertical seperation of the
+     *
+     * @param vGap
+     *            An int value indicating the vertical separation of the
      *            components
      * @param alignment
      *            An int value which is one of
@@ -105,8 +112,8 @@ public final class VerticalFlowLayout extends AFlowLayout {
      *            area exceeds the minimum necessary.
      * @param ordered true if the components must be ordered
      */
-    public VerticalFlowLayout(final int vgap, final int alignment, final int anchor, final boolean ordered) {
-        super(vgap, alignment, anchor, ordered);
+    public VerticalFlowLayout(final int vGap, final int alignment, final int anchor, final boolean ordered) {
+        super(vGap, alignment, anchor, ordered);
     }
 
     /**
@@ -121,11 +128,11 @@ public final class VerticalFlowLayout extends AFlowLayout {
             int y = 0;
             // work out the total size
             for (int i = 0; i < n; i++) {
-                final Component c = isOrdered() ? getComponentsList().get(i) : parent.getComponent(i); // parent.getComponent(i);
+                final Component c = isOrdered() ? Objects.requireNonNull(getComponentsList()).get(i) : parent.getComponent(i);
                 final Dimension d = c.getPreferredSize();
                 y += d.height + getGap();
             }
-            y -= getGap(); // otherwise there's a vgap too many
+            y -= getGap(); // otherwise there are `vGap` too many
             // Work out the anchor paint
             if (getAnchor() == TOP) {
                 y = insets.top;
@@ -136,7 +143,7 @@ public final class VerticalFlowLayout extends AFlowLayout {
             }
             // do layout
             for (int i = 0; i < n; i++) {
-                final Component c = isOrdered() ? getComponentsList().get(i) : parent.getComponent(i); // parent.getComponent(i);
+                final Component c = isOrdered() ? Objects.requireNonNull(getComponentsList()).get(i) : parent.getComponent(i);
                 final Dimension d = c.getPreferredSize();
                 int x = insets.left;
                 int wid = d.width;

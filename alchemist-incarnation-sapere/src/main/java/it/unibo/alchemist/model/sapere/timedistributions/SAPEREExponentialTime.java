@@ -6,19 +6,20 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.timedistributions;
 
-import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
+import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
-import org.apache.commons.math3.random.RandomGenerator;
-
 import it.unibo.alchemist.model.times.DoubleTime;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.Time;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 
+import java.io.Serial;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
@@ -30,13 +31,11 @@ import java.util.concurrent.Semaphore;
 /**
  * Allows for a Markovian event whose lambda is computed dynamically using a
  * rate equation.
- * 
+ *
  */
 public final class SAPEREExponentialTime extends ExponentialTime<List<ILsaMolecule>> implements SAPERETimeDistribution {
 
-    /**
-     * 
-     */
+    @Serial
     private static final long serialVersionUID = -687039899173488373L;
     private static final String F_PATTERN = "###.######################";
     private static final DecimalFormat FORMAT = new DecimalFormat(F_PATTERN, DecimalFormatSymbols.getInstance(Locale.ENGLISH));
@@ -71,7 +70,7 @@ public final class SAPEREExponentialTime extends ExponentialTime<List<ILsaMolecu
         boolean numeric = true;
         try {
             temp = Double.parseDouble(Objects.requireNonNull(rateEquation));
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             numeric = false;
         }
         numericRate = numeric;

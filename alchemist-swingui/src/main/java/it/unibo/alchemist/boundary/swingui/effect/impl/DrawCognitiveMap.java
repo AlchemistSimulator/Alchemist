@@ -12,14 +12,14 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.environments.Environment2DWithObstacles;
-import it.unibo.alchemist.model.geometry.Ellipse;
-import it.unibo.alchemist.model.geometry.navigationgraph.NavigationGraph;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position2D;
 import it.unibo.alchemist.model.cognitive.OrientingProperty;
+import it.unibo.alchemist.model.environments.Environment2DWithObstacles;
+import it.unibo.alchemist.model.geometry.Ellipse;
+import it.unibo.alchemist.model.geometry.navigationgraph.NavigationGraph;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
 import org.jgrapht.graph.DefaultEdge;
@@ -37,8 +37,11 @@ import java.io.Serial;
 
 /**
  * Draws an orienting node's cognitive map.
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @SuppressFBWarnings("EI_EXPOSE_REP")
+@Deprecated
 public class DrawCognitiveMap extends AbstractDrawOnce {
 
     /**

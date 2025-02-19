@@ -6,27 +6,28 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.conditions;
 
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-
 import com.google.common.base.Optional;
-
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 
+import javax.annotation.Nonnull;
+import java.io.Serial;
+import java.util.Objects;
+
 /**
  * A condition that holds true only if the tracked {@link Molecule} changed its
  * {@link it.unibo.alchemist.model.Concentration}.
- * 
+ *
  * @param <T> concentration type
  */
 public final class ConcentrationChanged<T> extends AbstractCondition<T> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final Molecule target;
     @Nonnull
@@ -46,8 +47,8 @@ public final class ConcentrationChanged<T> extends AbstractCondition<T> {
     }
 
     @Override
-    public ConcentrationChanged<T> cloneCondition(final Node<T> node, final Reaction<T> reaction) {
-        return new ConcentrationChanged<>(node, target);
+    public ConcentrationChanged<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
+        return new ConcentrationChanged<>(newNode, target);
     }
 
     @Override

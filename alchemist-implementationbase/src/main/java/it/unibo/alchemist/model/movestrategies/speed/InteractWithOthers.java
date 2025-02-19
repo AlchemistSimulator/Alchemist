@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.movestrategies.speed;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -16,6 +17,7 @@ import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -29,12 +31,15 @@ import java.util.Objects;
  */
 public final class InteractWithOthers<T, P extends Position<? extends P>> implements SpeedSelectionStrategy<T, P> {
 
+    @Serial
     private static final long serialVersionUID = -1900168887685703120L;
     private static final double MINIMUM_DISTANCE_WALKED = 1;
     private final Environment<T, P> environment;
     private final Node<T> node;
     private final Molecule interactingMolecule;
-    private final double radius, interaction, speed;
+    private final double radius;
+    private final double interaction;
+    private final double speed;
 
     /**
      * @param environment

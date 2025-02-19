@@ -6,56 +6,57 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.tape.impl;
 
 import java.awt.Component;
+import java.io.Serial;
 import java.util.List;
 
 /**
- * 
- * 
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
-public class JTapeFeatureStack extends JTapeSection {
+public class JTapeFeatureStack extends AbstractJTapeSection {
 
+    @Serial
     private static final long serialVersionUID = -6600427004858078324L;
 
     private final Type type;
 
     /**
-     * 
-     * 
+     *
+     *
      */
     public enum Type {
         /**
-         * 
+         *
          */
         HORIZONTAL_STACK,
 
         /**
-         * 
+         *
          */
         VERTICAL_STACK
     }
 
     /**
-     * 
+     *
      */
     public JTapeFeatureStack() {
         this(Type.VERTICAL_STACK);
     }
 
     /**
-     * 
      * @param t the type
      */
     public JTapeFeatureStack(final Type t) {
         super();
         type = t;
         if (type == Type.VERTICAL_STACK) {
-            setLayout(new VerticalFlowLayout(0, AFlowLayout.BOTH, AFlowLayout.TOP, true));
+            setLayout(new VerticalFlowLayout(0, AbstractFlowLayout.BOTH, AbstractFlowLayout.TOP, true));
         } else if (type == Type.HORIZONTAL_STACK) {
-            setLayout(new HorizontalFlowLayout(0, AFlowLayout.BOTH, AFlowLayout.LEFT, true));
+            setLayout(new HorizontalFlowLayout(0, AbstractFlowLayout.BOTH, AbstractFlowLayout.LEFT, true));
         }
     }
 
@@ -70,15 +71,14 @@ public class JTapeFeatureStack extends JTapeSection {
     }
 
     /**
-     * 
+     * {@inheritDoc}
      */
     @Override
-    public AFlowLayout getLayout() {
-        return (AFlowLayout) super.getLayout();
+    public AbstractFlowLayout getLayout() {
+        return (AbstractFlowLayout) super.getLayout();
     }
 
     /**
-     * 
      * @return the ordered components
      */
     public List<Component> getOrderedComponents() {
@@ -86,7 +86,6 @@ public class JTapeFeatureStack extends JTapeSection {
     }
 
     /**
-     * 
      * @return the type
      */
     public Type getType() {

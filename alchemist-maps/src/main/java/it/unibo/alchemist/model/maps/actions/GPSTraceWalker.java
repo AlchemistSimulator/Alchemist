@@ -9,19 +9,21 @@
 
 package it.unibo.alchemist.model.maps.actions;
 
-import it.unibo.alchemist.model.maps.movestrategies.routing.OnStreets;
-import it.unibo.alchemist.model.maps.movestrategies.speed.RoutingTraceDependantSpeed;
-import it.unibo.alchemist.model.maps.movestrategies.target.FollowTrace;
-import it.unibo.alchemist.model.maps.GPSTrace;
 import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
+import it.unibo.alchemist.model.maps.GPSTrace;
+import it.unibo.alchemist.model.maps.MapEnvironment;
+import it.unibo.alchemist.model.maps.movestrategies.routing.OnStreets;
+import it.unibo.alchemist.model.maps.movestrategies.speed.RoutingTraceDependantSpeed;
+import it.unibo.alchemist.model.maps.movestrategies.target.FollowTrace;
 import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy;
+
+import java.io.Serial;
 
 /**
  * A walker that follows a trace. The trace is mandatory.
@@ -33,10 +35,10 @@ import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy;
 public final class GPSTraceWalker<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
     extends MoveOnMapWithGPS<T, O, S> {
 
+    @Serial
     private static final long serialVersionUID = -6495138719085165782L;
 
     /**
-     *
      * @param environment
      *            the environment
      * @param node
@@ -46,14 +48,14 @@ public final class GPSTraceWalker<T, O extends RoutingServiceOptions<O>, S exten
      * @param options
      *            options for the computation of routes
      * @param path
-     *            resource(file, directory, ...) with GPS trace
+     *            resource (file, directory, ...) with GPS trace
      * @param cycle
      *            true if the traces have to be distributed cyclically
      * @param normalizer
      *            name of the class that implement the strategy to normalize the
      *            time
      * @param normalizerArgs
-     *            Args to build normalize
+     *            Args to build the normalizer
      */
     public GPSTraceWalker(
             final MapEnvironment<T, O, S> environment,
@@ -75,7 +77,6 @@ public final class GPSTraceWalker<T, O extends RoutingServiceOptions<O>, S exten
     }
 
     /**
-     *
      * @param environment
      *            the environment
      * @param node
@@ -83,14 +84,14 @@ public final class GPSTraceWalker<T, O extends RoutingServiceOptions<O>, S exten
      * @param reaction
      *            the reaction
      * @param path
-     *            resource(file, directory, ...) with GPS trace
+     *            resource (file, directory, ...) with GPS trace
      * @param cycle
      *            true if the traces have to be distributed cyclically
      * @param normalizer
      *            name of the class that implement the strategy to normalize the
      *            time
      * @param normalizerArgs
-     *            Args to build normalize
+     *            Args to build the normalizer
      */
     public GPSTraceWalker(
         final MapEnvironment<T, O, S> environment,

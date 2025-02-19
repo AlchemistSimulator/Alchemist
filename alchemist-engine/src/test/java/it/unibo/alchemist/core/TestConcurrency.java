@@ -6,18 +6,18 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.core;
 
+package it.unibo.alchemist.core;
 
 import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Incarnation;
+import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.linkingrules.NoLinks;
 import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.reactions.Event;
 import it.unibo.alchemist.model.terminators.StepCount;
 import it.unibo.alchemist.model.timedistributions.DiracComb;
@@ -63,7 +63,6 @@ class TestConcurrency {
     }
 
     /**
-     *
      * Test if the status of a {@link Engine} changes as expected.
      *
      * @throws InterruptedException fails

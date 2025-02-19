@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.properties;
 
 import it.unibo.alchemist.model.Environment;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * 
+ *
  *
  */
 class TestDeformableCell {
@@ -45,7 +46,7 @@ class TestDeformableCell {
     private static final Euclidean2DPosition CELL_POS1_1 = new Euclidean2DPosition(0, 0);
     private static final Euclidean2DPosition CELL_POS1_2 = new Euclidean2DPosition(0, 0.75);
     private static final Euclidean2DPosition CELL_POS1_3 = new Euclidean2DPosition(0, -1);
-    private static final Euclidean2DPosition CELL_POS1_4 = new Euclidean2DPosition(0,  0);
+    private static final Euclidean2DPosition CELL_POS1_4 = new Euclidean2DPosition(0, 0);
     private static final Euclidean2DPosition CELL_POS2_1 = new Euclidean2DPosition(0, 0);
     private static final Euclidean2DPosition CELL_POS2_2 = new Euclidean2DPosition(4, 4);
     private static final Euclidean2DPosition CELL_POS2_3 = new Euclidean2DPosition(0, -4);
@@ -79,7 +80,7 @@ class TestDeformableCell {
     private TimeDistribution<Double> time;
 
     private Node<Double> createDeformableCell(final double maxDiameter, final double rigidity) {
-        final Node<Double> node =  new GenericNode<>(incarnation, environment);
+        final Node<Double> node = new GenericNode<>(incarnation, environment);
         node.addProperty(
             new CircularDeformableCell(environment, node, maxDiameter, rigidity)
         );
@@ -87,7 +88,7 @@ class TestDeformableCell {
     }
 
     /**
-     * 
+     *
      */
     @BeforeEach
     public void setUp() {
@@ -118,7 +119,7 @@ class TestDeformableCell {
     }
 
     /**
-     * Testing if Environment updates correctly after node's remotion.
+     * Testing if the Environment updates correctly after the node's removal.
      */
     @Test
     void testAddAndRemoveNode() {
@@ -127,10 +128,10 @@ class TestDeformableCell {
         environment.addNode(cellNode3, CELL_POS2_3);
         environment.addNode(cellNode4, CELL_POS2_4);
         assertEquals(
-                3d,
-                ((EnvironmentSupportingDeformableCells<Euclidean2DPosition>) environment)
-                        .getMaxDiameterAmongCircularDeformableCells(),
-                PRECISION
+            3d,
+            ((EnvironmentSupportingDeformableCells<Euclidean2DPosition>) environment)
+                    .getMaxDiameterAmongCircularDeformableCells(),
+            PRECISION
         );
         environment.removeNode(cellNode1);
         environment.removeNode(cellNode2);
@@ -381,7 +382,7 @@ class TestDeformableCell {
     }
 
     /**
-     * Test if cell, in motion, stops when meets another cell.
+     * Test if a cell, in motion, stops when meets another cell.
      */
     @Test
     void testMoveNode1() {
@@ -389,8 +390,8 @@ class TestDeformableCell {
         environment.addNode(cellNode2, CELL_POS_MOV1);
         environment.moveNodeToPosition(cellNode1, new Euclidean2DPosition(0, 10));
         assertEquals(
-                environment.getPosition(cellNode1),
-                EXPECTED_POS_MOV1,
+            EXPECTED_POS_MOV1,
+            environment.getPosition(cellNode1),
                 "Position of cellNode1 = " + environment.getPosition(cellNode1)
         );
     }

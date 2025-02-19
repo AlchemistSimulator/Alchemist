@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.protelis;
 
 import com.google.common.collect.ImmutableMap;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 import java.util.Collections;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -39,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
 @SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
+// CHECKSTYLE: IllegalThrows OFF
 class TestNodeCloning<P extends Position<P>> {
 
     private static final Molecule SOURCEMOL = new SimpleMolecule("source");
@@ -49,7 +52,7 @@ class TestNodeCloning<P extends Position<P>> {
     private Environment<Object, P> environment;
     private Simulation<Object, P> simulation;
 
-    /***
+    /**
      * Prepare the simulation.
      */
     @BeforeEach
@@ -67,9 +70,9 @@ class TestNodeCloning<P extends Position<P>> {
         environment.addNode(node1, environment.makePosition(x, y));
     }
 
-    /***
+    /**
      * Tests that gradient values are consistent and stable.
-     * 
+     *
      * @throws Throwable in case of simulation errors
      */
     @Test
@@ -91,10 +94,11 @@ class TestNodeCloning<P extends Position<P>> {
         final BiFunction<Integer, Integer, Double> distance =
                 (a, b) -> environment.getDistanceBetweenNodes(nid.apply(a), nid.apply(b));
         simulation.addOutputMonitor(new OutputMonitor<>() {
+            @Serial
             private static final long serialVersionUID = 1L;
             @Override
             public void stepDone(
-                    @Nonnull final Environment<Object, P> environment,
+                    @Nonnull final Environment<Object, P> currentEnvironment,
                     final Actionable<Object> reaction,
                     @Nonnull final Time time,
                     final long step
@@ -104,13 +108,8 @@ class TestNodeCloning<P extends Position<P>> {
                         nid.apply(1), distance.apply(2, 1),
                         nid.apply(0), distance.apply(2, 1) + distance.apply(1, 0),
                         nid.apply(3), distance.apply(2, 1) + distance.apply(1, 0) + distance.apply(0, 3));
-//                System.out.println("step: " + step + ", time: " + time + " --- " + expectations);
-//                System.out.println("Just executed: " + r.getClass().getSimpleName() + "@" + r.getNode());
-//                for (Node<Object> n: env) {
-//                    System.out.println(n + ": " + n.getConcentration(DATAMOL));
-//                }
                 if (step == ENABLE_STEP) {
-                    simulation.schedule(() -> environment.getNodeByID(3).setConcentration(ENABLEDMOL, true));
+                    simulation.schedule(() -> currentEnvironment.getNodeByID(3).setConcentration(ENABLEDMOL, true));
                 }
                 if (step > ENABLE_CHECKS) {
                     expectations.forEach((node, expected) -> assertEquals(expected, node.getConcentration(DATAMOL)));

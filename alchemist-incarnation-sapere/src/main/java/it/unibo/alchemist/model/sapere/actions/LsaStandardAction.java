@@ -6,39 +6,40 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.sapere.dsl.impl.ConstTreeNode;
-import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
-import it.unibo.alchemist.model.sapere.dsl.IExpression;
-import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
-import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.Context;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.ConstTreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
+import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-
 /**
- * This action add LsaMolecule in a single node.
- * 
- * 
+ * This action adds an LsaMolecule in a single node.
  */
-public class LsaStandardAction extends LsaAbstractAction {
+public class LsaStandardAction extends AbstractLsaAction {
 
+    @Serial
     private static final long serialVersionUID = -7034948679002996913L;
     private static final Logger L = LoggerFactory.getLogger(LsaStandardAction.class);
-    private final boolean initRand, initNode;
+    private final boolean initRand;
+    private final boolean initNode;
     private final ILsaMolecule mol;
     private final ITreeNode<?> nodeId;
     @SuppressFBWarnings(
@@ -48,8 +49,8 @@ public class LsaStandardAction extends LsaAbstractAction {
     private final RandomGenerator rand;
 
     /**
-     * Builds a new local action, withouth any RandomGenerator. #RANDOM.
-     * 
+     * Builds a new local action, without any RandomGenerator. #RANDOM.
+     *
      * @param n
      *            The source node
      * @param m
@@ -62,7 +63,7 @@ public class LsaStandardAction extends LsaAbstractAction {
 
     /**
      * Builds a new local action.
-     * 
+     *
      * @param n
      *            The source node
      * @param m
@@ -79,8 +80,11 @@ public class LsaStandardAction extends LsaAbstractAction {
         initRand = molString.contains(LsaMolecule.SYN_RAND);
         initNode = molString.contains(LsaMolecule.SYN_NODE_ID);
         if (initRand && random == null) {
-            L.warn(LsaMolecule.SYN_RAND + " is used in " + m
-                    + ", but the RandomGenerator has not been initialized. This WILL lead to problems.");
+            L.warn(
+                "{} is used in {}, but the RandomGenerator has not been initialized. This WILL lead to problems.",
+                LsaMolecule.SYN_RAND,
+                m
+            );
         }
         nodeId = initNode ? new ConstTreeNode(new HashString("node" + n.getId())) : null;
     }
@@ -118,7 +122,7 @@ public class LsaStandardAction extends LsaAbstractAction {
 
     /**
      * Executes on the passed node.
-     * 
+     *
      * @param node
      *            the node where to execute
      */

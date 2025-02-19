@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -38,9 +39,12 @@ import java.util.List;
  * - it declares gui controls for the selection of the color to use
  * - it declares gui controls for the selection of a filter, used to filter the layers to draw.
  * In particular, it allows the user to specify a molecule, meaning that only the layer
- * containing such molecule will be drawn (otherwise the effect is applied to all layers)
+ * containing such a molecule will be drawn (otherwise the effect is applied to all layers)
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @SuppressFBWarnings("EI_EXPOSE_REP")
+@Deprecated
 public abstract class AbstractDrawLayers extends AbstractDrawOnce implements DrawLayers {
 
     /**
@@ -51,7 +55,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     protected static final int INITIAL_ALPHA_DIVIDER = 2;
     /**
      */
-    protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
+    protected static final Logger L = LoggerFactory.getLogger(AbstractDrawLayers.class);
+    @Serial
     private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "Draw only layer containing a molecule")
     private boolean layerFilter;
@@ -72,10 +77,11 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     @Nullable
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Object molStringCached;
+
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings({"PMD.CompareObjectsWithEquals"})
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     protected <T, P extends Position2D<P>> void draw(
@@ -121,14 +127,14 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     );
 
     /**
-     * @return a boolean representing whether or not layer filter is on
+     * @return a boolean representing whether layer filter is on
      */
     public boolean isLayerFilter() {
         return layerFilter;
     }
 
     /**
-     * @param layerFilter a boolean representing whether or not layer filter must be on
+     * @param layerFilter a boolean representing whether layer filter must be on
      */
     public void setLayerFilter(final boolean layerFilter) {
         this.layerFilter = layerFilter;

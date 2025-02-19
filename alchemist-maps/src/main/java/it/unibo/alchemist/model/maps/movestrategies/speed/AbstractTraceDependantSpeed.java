@@ -6,37 +6,40 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.movestrategies.speed;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.maps.movestrategies.AbstractStrategyWithGPS;
-import it.unibo.alchemist.model.maps.GPSPoint;
 import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.maps.GPSPoint;
+import it.unibo.alchemist.model.maps.MapEnvironment;
+import it.unibo.alchemist.model.maps.movestrategies.AbstractStrategyWithGPS;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 
+import java.io.Serial;
 import java.util.Objects;
 
 /**
  * This strategy dynamically tries to move the node adjusting its speed to
- * synchronize the reaction rate and the traces data.
+ * synchronize the reaction rate and the traces' data.
  *
  * @param <T> Concentration type
  * @param <O> {@link RoutingServiceOptions} type
  * @param <S> {@link RoutingService} type
  */
-public abstract class TraceDependantSpeed<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
+public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
     extends AbstractStrategyWithGPS
     implements SpeedSelectionStrategy<T, GeoPosition> {
 
+    @Serial
     private static final long serialVersionUID = 8021140539083062866L;
     private final Reaction<T> reaction;
-    private final MapEnvironment<T, O, S> environment;
+    private final MapEnvironment<T, O, S> mapEnvironment;
     private final Node<T> node;
 
     /**
@@ -48,8 +51,12 @@ public abstract class TraceDependantSpeed<T, O extends RoutingServiceOptions<O>,
      *            the reaction
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is made by purpose")
-    public TraceDependantSpeed(final MapEnvironment<T, O, S> environment, final Node<T> node, final Reaction<T> reaction) {
-        this.environment = Objects.requireNonNull(environment);
+    public AbstractTraceDependantSpeed(
+        final MapEnvironment<T, O, S> environment,
+        final Node<T> node,
+        final Reaction<T> reaction
+    ) {
+        this.mapEnvironment = Objects.requireNonNull(environment);
         this.node = Objects.requireNonNull(node);
         this.reaction = Objects.requireNonNull(reaction);
     }
@@ -65,7 +72,7 @@ public abstract class TraceDependantSpeed<T, O extends RoutingServiceOptions<O>,
         }
         final double frequency = reaction.getRate();
         final double steps = (expArrival - curTime) * frequency;
-        return computeDistance(environment, node, target) / steps;
+        return computeDistance(mapEnvironment, node, target) / steps;
     }
 
     /**
@@ -85,10 +92,9 @@ public abstract class TraceDependantSpeed<T, O extends RoutingServiceOptions<O>,
     );
 
     /**
-     *
      * @return the environment
      */
     protected MapEnvironment<T, O, S> getEnvironment() {
-        return environment;
+        return mapEnvironment;
     }
 }

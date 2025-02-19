@@ -6,25 +6,28 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.actions;
 
-import it.unibo.alchemist.model.Reaction;
-import org.apache.commons.math3.random.RandomGenerator;
+package it.unibo.alchemist.model.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
+import org.apache.commons.math3.random.RandomGenerator;
+
+import java.io.Serial;
 
 /**
  * Moves the node randomly.
- * 
+ *
  * @param <T> Concentration type
  * @param <P> {@link Position} type
  */
 public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
+    @Serial
     private static final long serialVersionUID = -904100978119782403L;
     private final double range;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the random engines provided by Apache are Serializable")
@@ -66,19 +69,4 @@ public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNo
     private double genRandom() {
         return randomGenerator.nextFloat() - 0.5;
     }
-
-    /**
-     * @return the movement radius
-     */
-    protected double getRadius() {
-        return range;
-    }
-
-    /**
-     * @return the {@link RandomGenerator}
-     */
-    protected RandomGenerator getRandomGenerator() {
-        return randomGenerator;
-    }
-
 }

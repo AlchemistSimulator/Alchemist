@@ -6,17 +6,19 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.actions;
 
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
+import java.io.Serial;
 import java.util.Objects;
 
 /**
@@ -24,6 +26,7 @@ import java.util.Objects;
  */
 public final class RandomPolarization extends AbstractRandomizableAction<Double> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final Environment<Double, Euclidean2DPosition> environment;
     private final CellProperty<Euclidean2DPosition> cell;
@@ -48,13 +51,13 @@ public final class RandomPolarization extends AbstractRandomizableAction<Double>
     }
 
     /**
-     * 
+     *
      */
     @Override
     public void execute() {
         final double x = getRandomGenerator().nextFloat() - 0.5;
         final double y = getRandomGenerator().nextFloat() - 0.5;
-        Euclidean2DPosition randomVersor;
+        final Euclidean2DPosition randomVersor;
         if (x == 0) {
             randomVersor = new Euclidean2DPosition(0, 1);
         } else if (y == 0) {
@@ -71,7 +74,7 @@ public final class RandomPolarization extends AbstractRandomizableAction<Double>
     }
 
     /**
-     * 
+     *
      */
     @Override
     public Context getContext() {

@@ -6,31 +6,32 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.actions;
 
-import it.unibo.alchemist.model.sapere.dsl.impl.AST;
-import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
-import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
-import it.unibo.alchemist.model.sapere.dsl.IExpression;
-import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
-import it.unibo.alchemist.model.sapere.nodes.LsaNode;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.impl.AST;
+import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
+import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
+import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
+import it.unibo.alchemist.model.sapere.nodes.LsaNode;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- *
  * @param <P> position type
  */
-public final class LsaAscendingGradientDist<P extends Position<P>> extends SAPERENeighborAgent<P> {
+public final class LsaAscendingGradientDist<P extends Position<P>> extends AbstractSAPERENeighborAgent<P> {
 
+    @Serial
     private static final long serialVersionUID = 7719580008466360029L;
     private static final ILsaMolecule MOLGRAD = new LsaMolecule("grad, req, Type, Distance, Time");
     private static final ILsaMolecule MOLRESPONSE = new LsaMolecule("response, Req, Ser, MD, D");
@@ -75,7 +76,7 @@ public final class LsaAscendingGradientDist<P extends Position<P>> extends SAPER
             final double newdistance = distance + olddistance;
             l.add(new Expression(new AST(new NumTreeNode(newdistance))));
             final LsaMolecule mol = new LsaMolecule(l);
-            (targetPositions.get(targetPositions.size() - 1)).setConcentration(mol);
+            targetPositions.get(targetPositions.size() - 1).setConcentration(mol);
         }
 
     }

@@ -21,6 +21,7 @@ import org.danilopianini.view.ExportForGUI;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Dimension2D;
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
@@ -29,19 +30,25 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Draw layers isolines. The user must specify:
- * - the number of isolines to draw
+ * Draw layers iso lines.
+ * The user must specify:
+ * - the number of iso lines to draw
  * - the min layer value
  * - the max layer value
  * - the distribution, used to space isoline values between min and max
  *
- * This class defines the {@link DrawLayersIsolines#drawFunction(Function, Environment, Graphics2D, Wormhole2D)}
- * method, which is capable of drawing a layer's isolines given a function.
+ * <p>
+ * This class defines the {@link AbstractrDrawLayersIsolines#drawFunction(Function, Environment, Graphics2D, Wormhole2D)}
+ * method, which is capable of drawing a layer's iso lines given a function.
  * The only responsibility left to subclasses is to provide a {@link LayerToFunctionMapper}.
+ *
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @SuppressFBWarnings("EI_EXPOSE_REP")
-public abstract class DrawLayersIsolines extends DrawLayersValues {
+@Deprecated
+public abstract class AbstractrDrawLayersIsolines extends AbstractDrawLayersValues {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final int MAX_NUMBER_OF_ISOLINES = 50;
     @ExportForGUI(nameToExport = "Number of isolines")
@@ -55,17 +62,17 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
     private Collection<Number> levels;
 
     /**
-     * The algorithm used to extract isolines.
+     * The algorithm used to extract iso lines.
      */
     private final IsolinesFinder algorithm;
 
     /**
      * Every class extending this one should call this constructor.
      *
-     * @param algorithm - the algorithm used to extract isolines
+     * @param algorithm - the algorithm used to extract iso lines
      * @param mapper - the function converting a layer to a function
      */
-    public DrawLayersIsolines(final IsolinesFinder algorithm, final LayerToFunctionMapper mapper) {
+    public AbstractrDrawLayersIsolines(final IsolinesFinder algorithm, final LayerToFunctionMapper mapper) {
         super(mapper);
         Objects.requireNonNull(algorithm);
         this.algorithm = algorithm;
@@ -129,17 +136,17 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
     }
 
     /**
-     * @return the number of isolines
+     * @return the number of iso lines
      */
     public RangedInteger getNumberOfIsolines() {
         return nOfIsolines;
     }
 
     /**
-     * @param nOfIsolines the number of isolines
+     * @param isolines the number of isolines
      */
-    public void setNumberOfIsolines(final RangedInteger nOfIsolines) {
-        this.nOfIsolines = nOfIsolines;
+    public void setNumberOfIsolines(final RangedInteger isolines) {
+        this.nOfIsolines = isolines;
     }
 
     /**
@@ -192,14 +199,14 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
     }
 
     /**
-     * generates n logarithmically-spaced points between d1 and d2 using the
+     * generates n logarithmically spaced points between d1 and d2 using the
      * provided base.
      *
      * @param d1 The min value
      * @param d2 The max value
-     * @param n The number of points to generated
+     * @param n The number of points to generate
      * @param base the logarithmic base to use
-     * @return an array of lineraly space points.
+     * @return an array of linearly space points.
      */
     public static double[] logspace(final double d1, final double d2, final int n, final double base) {
         final double[] y = new double[n];
@@ -212,12 +219,12 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
     }
 
     /**
-     * generates n linearly-spaced points between d1 and d2.
+     * generates n linearly spaced points between d1 and d2.
      *
      * @param d1 The min value
      * @param d2 The max value
-     * @param n The number of points to generated
-     * @return an array of lineraly space points.
+     * @param n The number of points to generate
+     * @return an array of linearly space points.
      */
     public static double[] linspace(final double d1, final double d2, final int n) {
         final double[] y = new double[n];

@@ -9,9 +9,6 @@
 
 package it.unibo.alchemist.model.biochemistry.conditions;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
@@ -19,21 +16,26 @@ import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import java.io.Serial;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
- * Represents a condition on a neighbor. Formally this conditions is satisfied
- * if at least one neighbor satisfy the condition.
- * 
+ * Represents a condition on a neighbor.
+ * Formally, this condition is satisfied
+ * if at least one neighbor satisfies the condition.
+ *
  * @param <T>
  *            the concentration type.
  */
 public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> {
 
+    @Serial
     private static final long serialVersionUID = 1133243697147282024L;
 
     private final Environment<T, ?> environment;
 
     /**
-     * 
      * @param node
      *            the node hosting this condition
      * @param environment
@@ -45,7 +47,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     }
 
     @Override
-    public abstract AbstractNeighborCondition<T> cloneCondition(Node<T> node, Reaction<T> reaction);
+    public abstract AbstractNeighborCondition<T> cloneCondition(Node<T> newNode, Reaction<T> newReaction);
 
     @Override
     public final Context getContext() {
@@ -60,7 +62,8 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     }
 
     /**
-     * Override if desired behavior differs. Default is returning the sum of the neighbor's propensities
+     * Override if the desired behavior differs. Default is returning the sum of the neighbor's propensities
+     *
      * @return the sum of the neighbor's propensities
      */
     @Override
@@ -70,11 +73,11 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     }
 
     /**
-     * Searches in the given neighborhood which nodes satisfy the condition, and
+     * Searches in the given neighborhood which nodes satisfy the condition and
      * returns a list of valid neighbors. NOTE, it is NOT guaranteed that this
      * method checks if the passed neighborhood is the actual neighborhood of the
-     * node. Make sure the passed neighborhood is up to date for avoid problems.
-     * 
+     * node. Make sure the passed neighborhood is up to date to avoid problems.
+     *
      * @return a map of neighbors which satisfy the condition and their propensity
      */
     public final Map<Node<T>, Double> getValidNeighbors() {
@@ -87,7 +90,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     /**
      * Given a node, which is supposed to be in the neighborhood of the current node, the function computes a double
      * value representing the propensity of the neighbor to be the chosen one for the reaction to be executed.
-     * The value returned must be 0 if the neighbor is not eligible for the reaction due to this condition.
+     * The value returned must be `0` if the neighbor is not eligible for the reaction due to this condition.
      * This value could be used to compute the reaction's propensity, but the main usage is to give a rate to
      * every neighbor and randomly choose one of them.
      *

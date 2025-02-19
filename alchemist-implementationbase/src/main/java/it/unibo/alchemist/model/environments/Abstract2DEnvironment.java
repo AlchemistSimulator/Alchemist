@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.environments;
 
 import it.unibo.alchemist.model.Incarnation;
@@ -15,25 +16,28 @@ import it.unibo.alchemist.model.Position2D;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.FlexibleQuadTree;
 
+import javax.annotation.Nonnull;
+import java.io.Serial;
+
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 
 /**
- * 
  * Models a bidimensional environment.
- * 
+ *
  * @param <T> concentration type
  * @param <P> {@link Position2D} type
  */
 public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends AbstractEnvironment<T, P> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    private double minX = POSITIVE_INFINITY,
-        maxX = NEGATIVE_INFINITY,
-        minY = POSITIVE_INFINITY,
-        maxY = NEGATIVE_INFINITY;
+    private double minX = POSITIVE_INFINITY;
+    private double maxX = NEGATIVE_INFINITY;
+    private double minY = POSITIVE_INFINITY;
+    private double maxY = NEGATIVE_INFINITY;
 
     /**
      * @param incarnation the incarnation to be used.
@@ -57,19 +61,21 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
         return 2;
     }
 
+    @Nonnull
     @Override
     public final double[] getOffset() {
-        return new double[] { minX <= maxX ? minX : NaN, minY <= maxY ? minY : NaN };
+        return new double[] {minX <= maxX ? minX : NaN, minY <= maxY ? minY : NaN};
     }
 
+    @Nonnull
     @Override
     public final double[] getSize() {
-        return new double[] { Math.max(0, maxX - minX), Math.max(0, maxY - minY) };
+        return new double[] {Math.max(0, maxX - minX), Math.max(0, maxY - minY)};
     }
 
     /**
      * Allows to extend the size of the environment by adding some object.
-     * 
+     *
      * @param startx
      *            minimum x position of the object
      * @param endx
@@ -98,7 +104,7 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
 
     /**
      * Updates the environment size to include the provided position.
-     * 
+     *
      * @param pos
      *            the position to include
      */
@@ -113,7 +119,7 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
      * moves towards some absolute position.
      */
     @Override
-    public void moveNodeToPosition(final Node<T> node, final P newpos) {
+    public void moveNodeToPosition(@Nonnull final Node<T> node, @Nonnull final P newpos) {
         includeObject(newpos);
         setPosition(node, newpos);
         updateNeighborhood(node, false);

@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model;
 
 import org.danilopianini.util.ListSet;
@@ -13,11 +14,8 @@ import org.danilopianini.util.ListSet;
 import java.io.Serializable;
 
 /**
- * The type which describes the concentration of a molecule
- * 
- * Interface for a neighborhood. When implementing it in a real class, please
- * remember to correctly implement also the equals method inherited from Object.
- * 
+ * A neighborhood, namely the set of nodes to which a "central" node is connected to.
+ *
  * @param <T> concentration type
  */
 public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<T>> {
@@ -32,7 +30,7 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
 
     /**
      * Verifies if a node is contained inside a neighborhood.
-     * 
+     *
      * @param n
      *            the node to be searched
      * @return true if n belongs to this neighborhood
@@ -40,18 +38,18 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
     boolean contains(Node<T> n);
 
     /**
-     * Allows to access the central node.
-     * 
+     * Allows accessing the central node.
+     *
      * @return the central node, namely the node whose neighbors are represented by
      *         this structure.
      */
     Node<T> getCenter();
 
     /**
-     * Allows to directly access every node in the neighborhood. A change of this
-     * List will be reflected in the neighborhood.
-     * 
-     * @return the list of the neighbors
+     * Allows directly accessing every node in the neighborhood.
+     * A change of this List will be reflected in the neighborhood.
+     *
+     * @return the {@link java.util.List} of the neighbors
      */
     ListSet<? extends Node<T>> getNeighbors();
 

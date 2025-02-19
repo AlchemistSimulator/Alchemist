@@ -12,19 +12,22 @@ package it.unibo.alchemist.model.biochemistry.conditions;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
-
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 
+import java.io.Serial;
+
 /**
  * This class implements a condition which checks if a molecule is present or
  * not.
+ *
  * @param <T> the concentration type
  */
 public class GenericMoleculePresent<T extends Number> extends
     AbstractCondition<T> {
 
+    @Serial
     private static final long serialVersionUID = -7400434133059391639L;
     private final Molecule molecule;
     private final T qty;
@@ -32,10 +35,10 @@ public class GenericMoleculePresent<T extends Number> extends
     /**
      * Builds a new condition, which checks if the molecule exists or not inside
      * the node n.
-     * 
+     *
      * @param mol the molecule whose presence should be checked
      * @param n the current node
-     * @param quantity the amount of molecules which should be present. Must be positive.
+     * @param quantity the number of molecules which should be present. Must be positive.
      */
     public GenericMoleculePresent(final Node<T> n, final Molecule mol, final T quantity) {
         super(n);
@@ -77,15 +80,16 @@ public class GenericMoleculePresent<T extends Number> extends
      * {@inheritDoc}
      */
     @Override
-    public GenericMoleculePresent<T> cloneCondition(final Node<T> node, final Reaction<T> reaction) {
-        return new GenericMoleculePresent<>(node, molecule, qty);
+    public GenericMoleculePresent<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
+        return new GenericMoleculePresent<>(newNode, molecule, qty);
     }
 
     /**
      * Propensity influence is computed through the binomial coefficient. See
-     * Bernardo, Degano, Zavattaro - Formal Methods for Computational Systems
-     * Biology for the formulae.
-     * 
+     * <a href="https://doi.org/10.1007/978-3-540-68894-5">
+     * Bernardo, Degano, Zavattaro - Formal Methods for Computational Systems Biology
+     * </a>.
+     *
      * @return the propensity influence
      */
     @Override
@@ -99,8 +103,8 @@ public class GenericMoleculePresent<T extends Number> extends
     }
 
     /**
-     * Allows to access the threshold.
-     * 
+     * Allows accessing the threshold.
+     *
      * @return the current threshold
      */
     public T getQuantity() {
@@ -108,8 +112,8 @@ public class GenericMoleculePresent<T extends Number> extends
     }
 
     /**
-     * Allows to access the molecule.
-     * 
+     * Allows accessing the molecule.
+     *
      * @return the current molecule
      */
     public Molecule getMolecule() {

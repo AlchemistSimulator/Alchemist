@@ -6,12 +6,14 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.biochemistry.molecules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 
+import java.io.Serial;
 import java.util.Collections;
 import java.util.Map;
 
@@ -21,20 +23,22 @@ import java.util.Map;
 @SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
 public final class Junction extends SimpleMolecule {
 
+    @Serial
     private static final long serialVersionUID = -5538036651435573599L;
 
     private final Map<Biomolecule, Double> moleculesInCurrentNode;
     private final Map<Biomolecule, Double> moleculesInNeighborNode;
+
     /**
-     * Build a junction.
+     * Builds a junction.
+     *
      * @param name the name of the junction.
-     * @param moleculesInCurrentNode 
-     *  A map of molecules (with their concentration)
-     *  which was in the current node.
-     *  When the junction is removed the molecules will be released in the current node.
+     * @param moleculesInCurrentNode
+     *     A map of molecules (with their concentration) which was in the current node.
+     *     When the junction is removed, the molecules will be released in the current node.
      * @param moleculesInNeighborNode
-     *  A map of molecules (with their concentration) which was in the current node.
-     *  When the junction is removed the molecules will be released in the current node.
+     *     A map of molecules (with their concentration) which was in the current node.
+     *     When the junction is removed, the molecules will be released in the current node.
      */
     public Junction(
             final String name,
@@ -48,6 +52,7 @@ public final class Junction extends SimpleMolecule {
 
     /**
      * Builds a junction from another junction.
+     *
      * @param toClone the junction to clone.
      */
     public Junction(final Junction toClone) {
@@ -69,7 +74,8 @@ public final class Junction extends SimpleMolecule {
     }
 
     /**
-     * Return the reversed junction of the current junction. E.g. junction A-B return junction B-A
+     * Return the reversed junction of the current junction. E.g., junction A-B return junction B-A
+     *
      * @return the reversed junction
      */
     public Junction reverse() {

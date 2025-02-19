@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.positions;
 
 import com.javadocmd.simplelatlng.LatLng;
@@ -24,7 +25,7 @@ class TestLatLongPositionJava {
     private static final LatLng INVERCAGILL = new LatLng(-46.412_652, 168.368_963);
 
     /**
-     * 
+     *
      */
     @Test
     void testDistance() {

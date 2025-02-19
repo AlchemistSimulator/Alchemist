@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.api;
 
 import it.unibo.alchemist.boundary.OutputMonitor;
@@ -19,6 +20,7 @@ import java.util.List;
  *
  * @param <P> position type
  * @param <T> concentration type
+ * @deprecated The entire Swing UI is planned to be replaced my a modern UI.
  */
 @Deprecated
 public interface GraphicalOutputMonitor<T, P extends Position<? extends P>> extends OutputMonitor<T, P> {

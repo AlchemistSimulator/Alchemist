@@ -13,15 +13,15 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 
+import java.io.Serial;
+
 /**
  * @param <T> the concentration type
  */
 public final class GenericMoleculeUnderLevel<T extends Number> extends
         GenericMoleculePresent<T> {
 
-    /**
-     * 
-     */
+    @Serial
     private static final long serialVersionUID = -5646651431692309010L;
 
     /**
@@ -42,8 +42,8 @@ public final class GenericMoleculeUnderLevel<T extends Number> extends
     }
 
     @Override
-    public GenericMoleculeUnderLevel<T> cloneCondition(final Node<T> node, final Reaction<T> r) {
-        return new GenericMoleculeUnderLevel<>(node, getMolecule(), getQuantity());
+    public GenericMoleculeUnderLevel<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
+        return new GenericMoleculeUnderLevel<>(newNode, getMolecule(), getQuantity());
     }
 
     /**

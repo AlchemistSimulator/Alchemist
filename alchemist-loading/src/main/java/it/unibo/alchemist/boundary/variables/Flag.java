@@ -6,8 +6,10 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.variables;
 
+import java.io.Serial;
 import java.util.stream.Stream;
 
 /**
@@ -15,8 +17,9 @@ import java.util.stream.Stream;
  * variable just outputs 0 and 1. This is equivalent to a {@link LinearVariable}
  * with two samples ranging from 0 to 1.
  */
-public final class Flag extends PrintableVariable<Boolean> {
+public final class Flag extends AbstractPrintableVariable<Boolean> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final boolean defVal;
 

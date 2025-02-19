@@ -6,10 +6,12 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.variables;
 
 import it.unibo.alchemist.boundary.DependentVariable;
 
+import java.io.Serial;
 import java.util.Map;
 
 /**
@@ -17,6 +19,7 @@ import java.util.Map;
  */
 public final class NumericConstant implements DependentVariable<Number> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private final Number internal;
 

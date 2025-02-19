@@ -16,15 +16,18 @@ import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 import org.apache.commons.math3.random.RandomGenerator;
 
+import java.io.Serial;
+
 /**
  * Represent the action of add a junction between the current node and a neighbor.
- * This action only create the junction reference inside this node, the neighbor totally ignore 
+ * This action only creates the junction reference inside this node; the neighbor totally ignores
  * that a junction has been created.
  * This is a part of the junction creation process.
  * See {@link AddJunctionInNeighbor} for the other part of the process
  */
 public final class AddJunctionInCell extends AbstractNeighborAction<Double> { // TODO try with local
 
+    @Serial
     private static final long serialVersionUID = -7074995950043793067L;
 
     private final Junction junction;
@@ -49,12 +52,13 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
     }
 
     @Override
-    public AddJunctionInCell cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        return new AddJunctionInCell(getEnvironment(), node, junction, getRandomGenerator());
+    public AddJunctionInCell cloneAction(final Node<Double> newNode, final Reaction<Double> newReaction) {
+        return new AddJunctionInCell(getEnvironment(), newNode, junction, getRandomGenerator());
     }
 
     /**
-     * If no target node is given DO NOTHING. The junction can not be created.
+     * If no target node is given, DO NOTHING. The junction cannot be created.
+     *
      * @throws UnsupportedOperationException if this method is called.
      */
     @Override
@@ -63,11 +67,11 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
     }
 
     /**
-     * Create the junction that links the node where this action is executed and the target node. 
+     * Create the junction that links the node where this action is executed and the target node.
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void execute(final Node<Double> targetNode) { 
+    public void execute(final Node<Double> targetNode) {
         if (targetNode.asPropertyOrNull(CellProperty.class) != null) {
             getNode().asProperty(CellProperty.class).addJunction(junction, targetNode);
         } else {
@@ -76,7 +80,7 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
         }
     }
 
-    @Override 
+    @Override
     public String toString() {
         return "add junction " + junction.toString() + " in node";
     }

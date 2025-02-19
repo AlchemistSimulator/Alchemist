@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.physics.environments;
 
 import com.github.davidmoten.rtree.Entry;
@@ -22,16 +23,18 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * @param <T> concentration type
  */
-public class Continuous2DObstacles<T> extends LimitedContinuos2D<T>
+public class Continuous2DObstacles<T> extends AbstractLimitedContinuos2D<T>
     implements EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T> {
 
     private static final double TOLERANCE_MULTIPLIER = 0.01;
+    @Serial
     private static final long serialVersionUID = 69931743897405107L;
     private transient RTree<RectObstacle2D<Euclidean2DPosition>, Rectangle> rtree = RTree.create();
 
@@ -131,8 +134,7 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T>
             for (int i = 0; i < l.size(); i++) {
                 shortest = l.get(i).next(new Euclidean2DPosition(ox, oy), new Euclidean2DPosition(fx, fy));
                 /*
-                 * If one of the dimensions is limited, such limit must be
-                 * retained!
+                 * If one of the dimensions is limited, such a limit must be retained!
                  */
                 final double sfx = shortest.getX();
                 final double sfy = shortest.getY();
@@ -185,11 +187,13 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T>
         return Geometries.rectangle(o.getMinX(), o.getMinY(), o.getMaxX(), o.getMaxY());
     }
 
+    @Serial
     private void writeObject(final ObjectOutputStream o) throws IOException {
         o.defaultWriteObject();
         o.writeObject(getObstacles());
     }
 
+    @Serial
     @SuppressWarnings("unchecked")
     private void readObject(final ObjectInputStream o) throws ClassNotFoundException, IOException {
         o.defaultReadObject();

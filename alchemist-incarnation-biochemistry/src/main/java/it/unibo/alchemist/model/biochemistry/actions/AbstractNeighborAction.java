@@ -17,18 +17,21 @@ import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.util.Iterables;
 import org.apache.commons.math3.random.RandomGenerator;
 
+import java.io.Serial;
+
 /**
  * Represents an action on a neighbor.
+ *
  * @param <T> the concentration type.
  */
 public abstract class AbstractNeighborAction<T> extends AbstractRandomizableAction<T> {
 
+    @Serial
     private static final long serialVersionUID = -2287346030993830896L;
     private final Environment<T, ?> environment;
     private final Node<T> node;
 
     /**
-     * 
      * @param node the current node
      * @param environment the environment
      * @param randomGenerator the random generator
@@ -44,7 +47,7 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
     }
 
     @Override
-    public abstract AbstractNeighborAction<T> cloneAction(Node<T> node, Reaction<T> reaction);
+    public abstract AbstractNeighborAction<T> cloneAction(Node<T> newNode, Reaction<T> newReaction);
 
     /**
      * Execute the action on a random neighbor if the node has a neighborhood. Otherwise do nothing.
@@ -59,8 +62,9 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
 
     /**
      * Execute the action on the given target node.
-     * NOTE, it is NOT guaranteed that this method checks if the target node is in the actual neighborhood 
+     * NOTE, it is NOT guaranteed that this method checks if the target node is in the actual neighborhood
      * of the node.
+     *
      * @param targetNode the node where the action will be execute
      */
     public abstract void execute(Node<T> targetNode);

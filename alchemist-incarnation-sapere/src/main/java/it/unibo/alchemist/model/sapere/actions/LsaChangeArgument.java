@@ -6,27 +6,28 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.sapere.dsl.impl.ConstTreeNode;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.ConstTreeNode;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.List;
 
-
 /**
  */
-public final class LsaChangeArgument extends SAPERELocalAgent {
+public final class LsaChangeArgument extends AbstractSAPERELocalAgent {
 
+    @Serial
     private static final long serialVersionUID = -7128058274012426458L;
     private static final HashString OLD = new HashString("OldType");
-    private final Environment<List<ILsaMolecule>, ?> environment;
     @SuppressFBWarnings(
             value = "SE_BAD_FIELD",
             justification = "All provided RandomGenerator implementations are actually Serializable"
@@ -36,13 +37,14 @@ public final class LsaChangeArgument extends SAPERELocalAgent {
     private final String[] listT;
 
     /**
-     * Builds a new action that test neighbors which contain in their lsaSpace
-     * an lsaMolecule matching {target,Type}. The effect of this Action is to
-     * add to the matches map the variable PreferredType (the most present type
-     * in neighborhood). The execution has no effect on influenced molecule of
+     * Builds a new action that tests neighbors which contain in their lsaSpace
+     * an lsaMolecule matching {target, Type}.
+     * The effect of this Action is to
+     * add to the matches map the variable PreferredType (the most present type in the neighborhood).
+     * The execution has no effect on influenced molecule of
      * reaction.
-     * 
-     * 
+     *
+     *
      * @param environment
      *            The environment to use
      * @param node
@@ -63,7 +65,6 @@ public final class LsaChangeArgument extends SAPERELocalAgent {
     ) {
         super(node);
         rnd = random;
-        this.environment = environment;
         newTargetVar = new HashString(targetVariable);
         listT = Arrays.copyOf(listTarget, listTarget.length);
     }
@@ -85,19 +86,4 @@ public final class LsaChangeArgument extends SAPERELocalAgent {
     public String toString() {
         return "Find " + newTargetVar;
     }
-
-    /**
-     * @return the current environment
-     */
-    protected Environment<List<ILsaMolecule>, ?> getEnvironment() {
-        return environment;
-    }
-
-    /**
-     * @return a random integer
-     */
-    protected double random() {
-        return rnd.nextInt();
-    }
-
 }

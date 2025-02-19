@@ -7,9 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
+@file:Suppress("DEPRECATION")
+
 package it.unibo.alchemist.boundary.swingui.effect.api
 
-import it.unibo.alchemist.boundary.swingui.effect.impl.DrawLayersValues
+import it.unibo.alchemist.boundary.swingui.effect.impl.AbstractDrawLayersValues
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Layer
@@ -22,12 +24,13 @@ import java.util.stream.Stream
 /**
  * Defines an object capable of mapping a Layer<T, P> to a Function<* in P, * out Number>.
  */
+@Deprecated("The entire Swing UI is deprecated and is set to be replaced with a modern UI")
 interface LayerToFunctionMapper : Serializable {
     /**
      * Prepare the mapping (if necessary).
      */
     fun <T, P : Position2D<P>> prepare(
-        effect: DrawLayersValues,
+        effect: AbstractDrawLayersValues,
         toDraw: Collection<Layer<T, P>>,
         environment: Environment<T, P>,
         g: Graphics2D,

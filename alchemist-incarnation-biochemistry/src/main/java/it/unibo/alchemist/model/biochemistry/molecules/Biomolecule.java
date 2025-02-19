@@ -11,16 +11,19 @@ package it.unibo.alchemist.model.biochemistry.molecules;
 
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 
+import java.io.Serial;
+
 /**
  *
  */
-
 public class Biomolecule extends SimpleMolecule {
 
+    @Serial
     private static final long serialVersionUID = 8666013848795443487L;
 
     /**
      * Create a new biomolecule.
+     *
      * @param name  the molecule name
      */
     public Biomolecule(final CharSequence name) {

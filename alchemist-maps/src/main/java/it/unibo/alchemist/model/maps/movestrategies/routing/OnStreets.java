@@ -6,14 +6,17 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.maps.movestrategies.routing;
 
 import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Route;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
+import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
+
+import java.io.Serial;
 
 /**
  * This strategy computes a route along streets allowed for a selected
@@ -26,6 +29,7 @@ import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
 public final class OnStreets<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
     implements RoutingStrategy<T, GeoPosition> {
 
+    @Serial
     private static final long serialVersionUID = 9041363003794088201L;
     private final MapEnvironment<T, O, S> environment;
     private final O options;

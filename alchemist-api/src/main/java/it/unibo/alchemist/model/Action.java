@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model;
 
 import org.danilopianini.util.ListSet;
@@ -18,7 +19,7 @@ import java.io.Serializable;
  *            The type which describes the concentration of a molecule
  *            The interface of an action. Every action must implement this
  *            interface.
- * 
+ *
  */
 public interface Action<T> extends Serializable {
 
@@ -26,7 +27,7 @@ public interface Action<T> extends Serializable {
      * This method allows to clone this action on a new node. It may result
      * useful to support runtime creation of nodes with the same reaction
      * programming, e.g. for morphogenesis.
-     * 
+     *
      * @param node
      *            The node where to clone this {@link Action}
      * @param reaction

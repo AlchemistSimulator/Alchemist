@@ -27,7 +27,7 @@ public class WormholeSwing<P extends Position2D<? extends P>> extends AbstractWo
     /**
      * @param environment the environment
      * @param component the {@link it.unibo.alchemist.boundary.ui.api.ViewPort}
-     *   of the UI used for implementing the wormhole
+     *     of the UI used for implementing the wormhole
      */
     public WormholeSwing(final Environment<?, P> environment, final Component component) {
         super(

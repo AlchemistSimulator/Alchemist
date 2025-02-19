@@ -6,14 +6,15 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.protelis;
 
 import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.Loader;
-import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
-import it.unibo.alchemist.protelis.properties.ProtelisDevice;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
+import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
+import it.unibo.alchemist.protelis.properties.ProtelisDevice;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
@@ -28,22 +29,27 @@ import java.util.stream.StreamSupport;
 class TestTOMACS {
 
     /**
-     * 
+     *
      */
     @Test
     @SuppressWarnings("unchecked")
     void testCustomRetainTimeLoading() {
         final Loader loader = LoadAlchemist.from(ResourceLoader.getResource("tomacs.yml"));
-        Assertions.assertTrue(StreamSupport.stream(loader.getDefault().getEnvironment().spliterator(), false)
-            .flatMap(n -> n.getReactions().stream()
-                .map(Reaction::getActions)
-                .flatMap(Collection::stream)
-                .filter(a -> a instanceof RunProtelisProgram)
-                .map(a -> (RunProtelisProgram<?>) a)
-                .map(a -> n.asProperty(ProtelisDevice.class).getNetworkManager(a)))
-            .mapToDouble(AlchemistNetworkManager::getRetentionTime)
-            .peek(d -> Assertions.assertTrue(Double.isFinite(d)))
-            .count() > 0);
+        Assertions.assertTrue(
+            StreamSupport.stream(loader.getDefault().getEnvironment().spliterator(), false)
+                .flatMap(n ->
+                    n.getReactions().stream()
+                        .map(Reaction::getActions)
+                        .flatMap(Collection::stream)
+                        .filter(a -> a instanceof RunProtelisProgram)
+                        .map(a -> (RunProtelisProgram<?>) a)
+                        .map(a -> n.asProperty(ProtelisDevice.class).getNetworkManager(a))
+                )
+                .mapToDouble(AlchemistNetworkManager::getRetentionTime)
+                .peek(d -> Assertions.assertTrue(Double.isFinite(d)))
+                .findAny()
+                .isPresent()
+        );
     }
 
 }

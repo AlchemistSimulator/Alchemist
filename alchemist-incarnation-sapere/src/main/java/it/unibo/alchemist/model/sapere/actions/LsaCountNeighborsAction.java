@@ -6,27 +6,29 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
-import it.unibo.alchemist.model.sapere.dsl.IExpression;
-import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
+import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 
+import java.io.Serial;
 import java.util.List;
-
 
 /**
  */
-public final class LsaCountNeighborsAction extends SAPERELocalAgent {
+public final class LsaCountNeighborsAction extends AbstractSAPERELocalAgent {
 
+    @Serial
     private static final long serialVersionUID = -7128058274012426458L;
     private final HashString countVarName;
     private final Environment<List<ILsaMolecule>, ?> environment;
@@ -39,7 +41,7 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
      * an lsaMolecule matching mol. The effect of this Action is to add to the
      * matches list the variable countVar. The execution has no effect on the
      * set of influenced molecules for the reaction.
-     * 
+     *
      * @param environment
      *            The environment to use
      * @param node
@@ -49,7 +51,7 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
      *            space.
      * @param countVar
      *            The String representing the name of the counting var. (to add
-     *            to matches map)
+     *            to a matches map)
      * @param rand
      *            Random engine
      */
@@ -72,7 +74,7 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
      * an lsaMolecule matching mol. The effect of this Action is to add to the
      * matches list the variable countVar. The execution has no effect on the
      * set of influenced molecules for the reaction.
-     * 
+     *
      * @param environment
      *            The environment to use
      * @param node
@@ -82,7 +84,7 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
      *            space.
      * @param countVar
      *            The String representing the name of the counting var. (to add
-     *            to matches map)
+     *            to the matches map)
      * @param rand
      *            Random engine
      */
@@ -98,7 +100,7 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * alice.alchemist.model.implementations.actions.SAPEREAgent#cloneOnNewNode
      * (alice.alchemist.model.interfaces.Node,
@@ -113,11 +115,10 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
     public void execute() {
         final List<IExpression> l = mol.allocateVar(getMatches());
         Double num = 0.0;
-        if (environment.getNeighborhood(getNode()) != null) {
-            for (final Node<List<ILsaMolecule>> nod : environment.getNeighborhood(getNode()).getNeighbors()) {
-                if (nod.getConcentration(new LsaMolecule(l)).size() != 0) {
-                    num++;
-                }
+        environment.getNeighborhood(getNode());
+        for (final Node<List<ILsaMolecule>> nod : environment.getNeighborhood(getNode()).getNeighbors()) {
+            if (!nod.getConcentration(new LsaMolecule(l)).isEmpty()) {
+                num++;
             }
         }
         getMatches().put(countVarName, new NumTreeNode(num));
@@ -126,20 +127,13 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
     /**
      * @return the current environment
      */
-    protected Environment<List<ILsaMolecule>, ?> getEnvironment() {
+    private Environment<List<ILsaMolecule>, ?> getEnvironment() {
         return environment;
-    }
-
-    /**
-     * @return a new random double
-     */
-    protected double random() {
-        return rnd.nextDouble();
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see alice.alchemist.model.implementations.actions.SAPEREAgent#toString()
      */
     @Override

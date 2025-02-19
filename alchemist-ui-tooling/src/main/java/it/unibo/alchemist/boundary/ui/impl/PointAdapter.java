@@ -6,15 +6,17 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.ui.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Position2D;
+import it.unibo.alchemist.model.maps.MapEnvironment;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -25,8 +27,10 @@ import java.util.Objects;
  */
 public final class PointAdapter<P extends Position2D<? extends P>> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4144646922749713533L;
-    private final double x, y;
+    private final double x;
+    private final double y;
     @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "Recomputed in case of necessity")
     private transient int hash;
     private transient P pos;
@@ -151,7 +155,7 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
      *            the {@link it.unibo.alchemist.model.Position}
      * @param <P>
      *            Position type
-     * 
+     *
      * @return a {@link PointAdapter}
      */
     @SuppressWarnings("unchecked")

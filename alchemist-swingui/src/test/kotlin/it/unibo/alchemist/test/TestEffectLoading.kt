@@ -25,6 +25,7 @@ import it.unibo.alchemist.boundary.swingui.effect.impl.EffectSerializationFactor
 import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File
 
+@Deprecated("The entire Swing UI is deprecated and is set to be replaced with a modern UI")
 class TestEffectLoading :
     StringSpec(
         {

@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.sapere;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -19,13 +20,13 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
-import it.unibo.alchemist.model.sapere.dsl.impl.Type;
-import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.sapere.actions.LsaAllNeighborsAction;
 import it.unibo.alchemist.model.sapere.actions.LsaRandomNeighborAction;
 import it.unibo.alchemist.model.sapere.actions.LsaStandardAction;
 import it.unibo.alchemist.model.sapere.conditions.LsaNeighborhoodCondition;
 import it.unibo.alchemist.model.sapere.conditions.LsaStandardCondition;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.impl.Type;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.sapere.nodes.LsaNode;
 import it.unibo.alchemist.model.sapere.reactions.SAPEREReaction;
@@ -44,7 +45,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @param <P> position type
  */
 public final class SAPEREIncarnation<P extends Position<? extends P>>

@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.boundary.swingui.monitor.impl;
 
 import com.google.common.collect.ImmutableList;
@@ -86,6 +87,7 @@ import static it.unibo.alchemist.boundary.ui.impl.PointAdapter.from;
  *
  * @param <T> Concentration type
  * @param <P> {@link Position2D} type
+ * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
@@ -95,6 +97,14 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      * The default frame rate.
      */
     public static final byte DEFAULT_FRAME_RATE = 25;
+    /**
+     * How big (in pixels) the selected node should appear.
+     */
+    protected static final byte SELECTED_NODE_DRAWING_SIZE = 16;
+    /**
+     * How big (in pixels) the selected node should appear.
+     */
+    protected static final byte SELECTED_NODE_INTERNAL_SIZE = 10;
     private static final String OPENGL = "sun.java2d.opengl";
     private static final double TIME_STEP = 1d / DEFAULT_FRAME_RATE;
     private static final double FREEDOM_RADIUS = 1d;
@@ -104,6 +114,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      *
      */
     private static final long PAUSE_DETECTION_THRESHOLD = 200;
+    @Serial
+    private static final long serialVersionUID = 511631766719686842L;
 
     static {
         /*
@@ -114,13 +126,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         }
     }
 
-    /**
-     * How big (in pixels) the selected node should appear.
-     */
-    protected static final byte SELECTED_NODE_DRAWING_SIZE = 16, SELECTED_NODE_INTERNAL_SIZE = 10;
-    @Serial
-    private static final long serialVersionUID = 511631766719686842L;
-
     private final Semaphore mapConsistencyMutex = new Semaphore(1);
     private final transient PointerSpeed mouseMovement = new PointerSpeedImpl();
     private transient AngleManagerImpl angleManager;
@@ -130,7 +135,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private volatile boolean paintLinks;
     private transient Optional<Node<T>> hooked = Optional.empty();
     private volatile double lastTime;
-    private int mouseX, mouseY;
+    private int mouseX;
+    private int mouseY;
     private Node<T> nearest;
     private final ConcurrentMap<Node<T>, Neighborhood<T>> neighbors = new ConcurrentHashMap<>();
     private List<? extends Obstacle2D<?>> obstacles;
@@ -204,6 +210,15 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         if (frameEditor != null) {
             frameEditor.accept(frame);
         }
+    }
+
+    private static JFrame makeFrame(final String title, final JPanel content) {
+        final JFrame frame = new JFrame(title);
+        frame.getContentPane().add(content);
+        frame.setLocationByPlatform(true);
+        frame.pack();
+        frame.setVisible(true);
+        return frame;
     }
 
     /**
@@ -729,6 +744,31 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 .hasMobileObstacles();
     }
 
+    private void bindKey(final int key, final Runnable fun) {
+        final Object binder = "Key: " + key;
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(key, 0), binder);
+        getActionMap().put(binder, new AbstractAction() {
+            @Serial
+            private static final long serialVersionUID = 7927420406960259675L;
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                fun.run();
+            }
+        });
+    }
+
+    private static boolean isInsideRectangle(
+            final Point viewPoint,
+            final int rx,
+            final int ry,
+            final int width,
+            final int height
+    ) {
+        final double x = viewPoint.getX();
+        final double y = viewPoint.getY();
+        return x >= rx && x <= rx + width && y >= ry && y <= ry + height;
+    }
+
     /**
      * Custom listener for {@link MouseEvent}s.
      */
@@ -766,10 +806,12 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                             currentEnv.addNode(n, envEnding);
                         }
                         update(currentEnv, engine.getTime());
+                        // CHECKSTYLE: IllegalCatch OFF
                     } catch (final RuntimeException exp) { // NOPMD
+                        // CHECKSTYLE: IllegalCatch ON
                         final String title = "Node cloning error";
                         final String message = "One or more of your nodes do not support cloning, the debug information is:\n"
-                                + LangUtils.stackTraceToString(exp);
+                            + LangUtils.stackTraceToString(exp);
                         JOptionPane.showMessageDialog(Generic2DDisplay.this, message, title, JOptionPane.ERROR_MESSAGE);
                     }
                 });
@@ -798,8 +840,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 if (hooked.isEmpty() && isNotInteracting()) {
                     final Point previous = wormhole.getViewPosition();
                     wormhole.setViewPosition(
-                            from(previous)
-                                    .sum(from(mouseMovement.getVariation())).toPoint());
+                        from(previous)
+                            .sum(from(mouseMovement.getVariation())).toPoint());
                 }
             } else if (SwingUtilities.isRightMouseButton(e) && angleManager != null && wormhole.getMode() != Mode.MAP) {
                 angleManager.inc(mouseMovement.getVariation().getX());
@@ -830,7 +872,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         @Override
         public void mousePressed(final MouseEvent e) {
             if (SwingUtilities.isLeftMouseButton(e)
-                    && (status == ViewStatus.MOVING_SELECTED_NODES || status == ViewStatus.SELECTING_NODES)
+                && (status == ViewStatus.MOVING_SELECTED_NODES || status == ViewStatus.SELECTING_NODES)
             ) {
                 isDraggingMouse = true;
                 originPoint = e.getPoint();
@@ -896,40 +938,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             }
         }
 
-    }
-
-    private static JFrame makeFrame(final String title, final JPanel content) {
-        final JFrame frame = new JFrame(title);
-        frame.getContentPane().add(content);
-        frame.setLocationByPlatform(true);
-        frame.pack();
-        frame.setVisible(true);
-        return frame;
-    }
-
-    private void bindKey(final int key, final Runnable fun) {
-        final Object binder = "Key: " + key;
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(key, 0), binder);
-        getActionMap().put(binder, new AbstractAction() {
-            @Serial
-            private static final long serialVersionUID = 7927420406960259675L;
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                fun.run();
-            }
-        });
-    }
-
-    private static boolean isInsideRectangle(
-            final Point viewPoint,
-            final int rx,
-            final int ry,
-            final int width,
-            final int height
-    ) {
-        final double x = viewPoint.getX();
-        final double y = viewPoint.getY();
-        return x >= rx && x <= rx + width && y >= ry && y <= ry + height;
     }
 
     private enum ViewStatus {

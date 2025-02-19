@@ -6,19 +6,20 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.timedistributions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.times.DoubleTime;
+import it.unibo.alchemist.util.RealDistributions;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.util.RealDistributions;
-import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Time;
-
 import javax.annotation.Nonnull;
+import java.io.Serial;
 
 /**
  * This class is able to use any distribution provided by Apache Math 3 as a
@@ -31,9 +32,7 @@ import javax.annotation.Nonnull;
  */
 public class AnyRealDistribution<T> extends AbstractDistribution<T> {
 
-    /**
-     *
-     */
+    @Serial
     private static final long serialVersionUID = 1L;
     @SuppressFBWarnings(
         value = "SE_BAD_FIELD",
@@ -46,7 +45,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
      * @param rng
      *            the {@link RandomGenerator}
      * @param distribution
-     *            the distribution name (case insensitive). Must be mappable to an entity implementing {@link RealDistribution}
+     *            the distribution name (case-insensitive). Must be mappable to an entity implementing {@link RealDistribution}
      * @param parameters
      *            the parameters for the distribution
      */
@@ -60,7 +59,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
      * @param rng
      *            the {@link RandomGenerator}
      * @param distribution
-     *            the distribution name (case insensitive). Must be mappable to an entity implementing {@link RealDistribution}
+     *            the distribution name (case-insensitive). Must be mappable to an entity implementing {@link RealDistribution}
      * @param parameters
      *            the parameters for the distribution
      */
@@ -103,7 +102,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
 
     /**
      * This method can be overridden to implement further controls.
-     * Subclasses should still call super.updateStatus, though.
+     * Subclasses should still be called super.updateStatus, though.
      * {@inheritDoc}
      */
     @Override
@@ -143,7 +142,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
     }
 
     /**
-     * @return the interanl {@link RealDistribution}
+     * @return the internal {@link RealDistribution}
      */
     protected final RealDistribution getDistribution() {
         return distribution;

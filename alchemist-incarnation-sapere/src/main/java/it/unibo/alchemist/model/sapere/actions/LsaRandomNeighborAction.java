@@ -6,39 +6,48 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.sapere.actions;
 
-import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
-import it.unibo.alchemist.model.Reaction;
-import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
-import org.apache.commons.math3.random.RandomGenerator;
+package it.unibo.alchemist.model.sapere.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.Route;
+import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
-import it.unibo.alchemist.model.maps.MapEnvironment;
-import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Route;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
+import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
+import org.apache.commons.math3.random.RandomGenerator;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
  */
 public class LsaRandomNeighborAction extends LsaStandardAction {
+
+    @Serial
     private static final long serialVersionUID = -7128058274012426458L;
+
     private final Environment<List<ILsaMolecule>, ?> environment;
     private final MapEnvironment<List<ILsaMolecule>, ?, ?> menv;
-    private final boolean initO, initD, initNeigh, initRoute, mapEnv;
+    private final boolean initO;
+    private final boolean initD;
+    private final boolean initNeigh;
+    private final boolean initRoute;
+    private final boolean mapEnv;
     @SuppressFBWarnings(
             value = "SE_BAD_FIELD",
-            justification = "All provided RandomGenerator implementations are actually Serializable"
+            justification = "All provided RandomGenerator implementations are Serializable"
     )
     private final RandomGenerator randomEngine;
 
     /**
-     * Builds a new action in a neighborhood. es: +&lt;id,X,n&gt; This class extend
+     * Builds a new action in a neighborhood.
+     * Es: +&lt;id, X, n&gt; This class extends
      * LsaAbstractAction.
      *
      * @param environment
@@ -50,7 +59,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
      *            space.
      * @param randomGenerator
      *            the random engine
-     * 
+     *
      */
     @SuppressWarnings("unchecked")
     public LsaRandomNeighborAction(
@@ -92,7 +101,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
             final ITreeNode<?> nodeId = getMatches().get(LsaMolecule.SYN_SELECTED);
             if (nodeId == null) {
                 /*
-                 * Just choose a random neighbor among those valid
+                 * Choose a random neighbor among those valid
                  */
                 final ILsaNode node = nodes.get(Math.abs(randomEngine.nextInt() % nodes.size()));
                 setSynthectics(node);
@@ -136,9 +145,9 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
 
     /**
      * Sets the synthetic variables.
-     * 
+     *
      * @param node
-     *            the node to use as reference (e.g. for computing the distance)
+     *            the node to use as reference (e.g., for computing the distance)
      */
     protected void setSynthectics(final ILsaNode node) {
         /*

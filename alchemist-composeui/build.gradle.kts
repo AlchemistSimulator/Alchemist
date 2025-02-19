@@ -1,67 +1,57 @@
-/*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
- * listed, for each module, in the respective subproject's build.gradle.kts file.
- *
- * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception,
- * as described in the file LICENSE in the Alchemist distribution's top directory.
- */
-
-import de.aaschmid.gradle.plugins.cpd.Cpd
-import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import java.io.File.separator
 
 plugins {
     id("kotlin-multiplatform-convention")
+    kotlin("multiplatform")
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
 }
 
-val modName = "alchemist-composeui"
+repositories {
+    google()
+    mavenCentral()
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+}
+
+val webModuleName = "alchemist-composeui"
 
 kotlin {
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        moduleName = modName
+
+    js {
+        moduleName = webModuleName
         browser {
-            val rootDirPath = project.rootDir.path
-            val projectDirPath = project.projectDir.path
             commonWebpackConfig {
-                outputFileName = "$modName.js"
-                devServer =
-                    (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                        static =
-                            (static ?: mutableListOf()).apply {
-                                // Serve sources to debug inside browser
-                                add(rootDirPath)
-                                add(projectDirPath)
-                            }
+                outputFileName = "$webModuleName.js"
+            }
+        }
+        binaries.executable()
+        useEsModules()
+    }
+
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs {
+        moduleName = "$webModuleName.js"
+        browser {
+            commonWebpackConfig {
+                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                    static = (static ?: mutableListOf()).apply {
+                        // Serve sources to debug inside browser
+                        add(rootProject.path)
                     }
+                }
             }
         }
         binaries.executable()
     }
-    js {
-    }
 
     sourceSets {
-        val jvmMain by getting {
-            dependencies {
-                implementation(compose.desktop.currentOs)
-            }
-        }
-
         val commonMain by getting {
             dependencies {
                 implementation(compose.runtime)
+                implementation(compose.ui)
                 implementation(compose.foundation)
                 implementation(compose.material)
-                implementation(compose.ui)
                 implementation(compose.components.resources)
-                implementation(compose.components.uiToolingPreview)
-                implementation(libs.androidx.lifecycle.runtime.compose)
             }
         }
 

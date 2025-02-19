@@ -18,7 +18,7 @@ import java.io.Serializable;
  * A condition.
  *
  * @param <T>
- *    The type which describes the concentration of a molecule
+ *     The type which describes the concentration of a molecule
  */
 public interface Condition<T> extends Serializable {
 

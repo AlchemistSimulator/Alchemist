@@ -221,7 +221,8 @@
     "second": "https://javadoc.io/doc/org.danilopianini/javalib-java7/0.6.1/package-list"
   },
   "org.danilopianini/jirf/0.4.27": {
-    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.27"
+    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.27",
+    "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.27/element-list"
   },
   "org.danilopianini/kotlin-symmetric-matrix/1.1.2": {
     "first": "https://javadoc.io/doc/org.danilopianini/kotlin-symmetric-matrix/1.1.2"

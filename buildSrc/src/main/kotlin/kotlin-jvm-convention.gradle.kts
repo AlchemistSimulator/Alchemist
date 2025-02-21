@@ -12,6 +12,7 @@ plugins {
     kotlin("jvm")
     id("dokka-convention")
     id("power-assert-convention")
+    id("static-analysis-convention")
 }
 
 dependencies {

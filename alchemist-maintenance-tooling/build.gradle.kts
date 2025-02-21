@@ -7,12 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-import Util.withJs
-
 plugins {
     id("kotlin-multiplatform-convention")
 }
 
-kotlin {
-    withJs()
-}

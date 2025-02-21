@@ -9,7 +9,6 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import Util.withJs
 
 plugins {
     id("kotlin-multiplatform-convention")
@@ -18,15 +17,12 @@ plugins {
 }
 
 kotlin {
-    withJs()
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(libs.korim)
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.ktor.client.core)
-                implementation(libs.redux.kotlin.threadsafe)
             }
         }
         val commonTest by getting {
@@ -42,6 +38,7 @@ kotlin {
                 implementation(rootProject)
                 implementation(libs.bundles.ktor.server)
                 implementation(libs.logback)
+                implementation(libs.redux.kotlin.threadsafe)
                 implementation(libs.resourceloader)
             }
         }
@@ -59,7 +56,9 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.ktor.client)
                 implementation(libs.bundles.kotlin.react)
+                implementation(libs.korim)
                 implementation(libs.kotlinx.atomicfu.runtime)
+                implementation(libs.redux.kotlin.threadsafe)
                 implementation(npm("react-bootstrap", "2.5.0"))
             }
         }

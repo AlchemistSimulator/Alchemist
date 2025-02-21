@@ -9,7 +9,6 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import Util.allVerificationTasks
 import Util.id
 import Util.isInCI
 import Util.isMac
@@ -23,8 +22,6 @@ import java.io.FileFilter
 plugins {
     id("kotlin-jvm-convention")
     alias(libs.plugins.gitSemVer)
-    alias(libs.plugins.java.qa)
-    alias(libs.plugins.kotlin.qa)
     alias(libs.plugins.multiJvmTesting)
     alias(libs.plugins.publishOnCentral)
     alias(libs.plugins.taskTree)
@@ -37,9 +34,7 @@ allprojects {
 
     with(rootProject.libs.plugins) {
         apply(plugin = gitSemVer.id)
-        apply(plugin = java.qa.id)
         apply(plugin = multiJvmTesting.id)
-        apply(plugin = kotlin.qa.id)
         apply(plugin = publishOnCentral.id)
         apply(plugin = taskTree.id)
     }
@@ -60,37 +55,15 @@ allprojects {
         mavenCentral()
     }
 
-    javaQA {
-        checkstyle {
-            additionalConfiguration.set(rootProject.file("checkstyle-additional-config.xml").readText())
-            additionalSuppressions.set(
-                """
-                <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
-                <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
-                """.trimIndent(),
-            )
-        }
-        // TODO: enable PMD when this bug is fixed: https://github.com/pmd/pmd/issues/5096
-        tasks.withType<Pmd>().configureEach {
-            enabled = false
-        }
-    }
-
     // TEST AND COVERAGE
 
     tasks.withType<Test>().configureEach {
         testLogging {
-            events("passed", "skipped", "failed", "standardError")
+            events("passed", "skipped", "failed")
             exceptionFormat = TestExceptionFormat.FULL
         }
         useJUnitPlatform()
         maxHeapSize = "1g"
-    }
-
-    // CODE QUALITY
-
-    tasks.allVerificationTasks.configureEach {
-        exclude { "generated" in it.file.absolutePath }
     }
 
     tasks.withType<SpotBugsTask>().configureEach {

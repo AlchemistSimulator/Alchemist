@@ -10,10 +10,8 @@
 import Libs.alchemist
 import Libs.incarnation
 import Util.allVerificationTasks
-import Util.withJs
 import com.apollographql.apollo3.gradle.internal.ApolloGenerateSourcesTask
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
-import java.io.File.separator
 
 plugins {
     id("kotlin-multiplatform-convention")
@@ -24,8 +22,6 @@ plugins {
 }
 
 kotlin {
-    jvm()
-    withJs()
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -119,8 +115,6 @@ apolloGenerationTasks.configureEach {
 }
 
 tasks.allVerificationTasks.configureEach { dependsOn(apolloGenerationTasks) }
-
-ktlint { filter { exclude { "build${separator}generated" in it.file.absolutePath } } }
 
 publishing.publications {
     withType<MavenPublication> {

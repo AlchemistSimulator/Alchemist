@@ -183,49 +183,6 @@ object Util {
 
     val TaskContainer.allVerificationTasks get(): TaskCollection<SourceTask> =
         this.withType<SourceTask>().matching { it is VerificationTask }
-
-    private fun KotlinJsTargetDsl.webConfiguration(webModuleName: String) {
-        moduleName = webModuleName
-        browser {
-            commonWebpackConfig {
-                outputFileName = "$moduleName.js"
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(project.rootDir.path)
-                        add(project.projectDir.path)
-                    }
-                }
-            }
-        }
-        binaries.library()
-    }
-
-    fun KotlinMultiplatformExtension.withJs(jsModuleName: String = project.name) = js {
-        webConfiguration(jsModuleName)
-        nodejs()
-        useEsModules()
-    }
-
-    @OptIn(ExperimentalWasmDsl::class)
-    fun KotlinMultiplatformExtension.withWasm(wasmModuleName: String) = {
-        wasmJs {
-            moduleName = wasmModuleName
-            browser {
-                commonWebpackConfig {
-                    outputFileName = "$wasmModuleName.js"
-                    devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                        static = (static ?: mutableListOf()).apply {
-                            // Serve sources to debug inside browser
-                            add(project.rootDir.path)
-                            add(project.projectDir.path)
-                        }
-                    }
-                }
-            }
-            binaries.library()
-        }
-    }
 }
 
 val Project.catalog get() =

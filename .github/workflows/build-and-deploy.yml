@@ -106,7 +106,7 @@ jobs:
       - name: Tar files
         run: tar -cvf website.tar build/website
       - name: Upload website
-        uses: actions/upload-artifact@v4.6.0
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: website-${{ github.sha }}
           path: website.tar
@@ -205,20 +205,20 @@ jobs:
             fi
       - name: Upload fatjars built on Linux
         if: ${{ runner.os == 'Linux' }}
-        uses: actions/upload-artifact@v4.6.0
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: fat-jars-${{ github.sha }}
           path: build/shadow/*
           if-no-files-found: error
       - name: Upload the PKGBUILD
         if: ${{ runner.os == 'Linux' }}
-        uses: actions/upload-artifact@v4.6.0
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: pkgbuild-${{ github.sha }}
           path: build/pkgbuild/PKGBUILD
           if-no-files-found: error
       - name: Upload platform-specific packages
-        uses: actions/upload-artifact@v4.6.0
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
           path: build/package/*

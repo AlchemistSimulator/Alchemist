@@ -237,7 +237,7 @@ jobs:
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
-        uses: nick-fields/retry@v3.0.1
+        uses: nick-fields/retry@v3.0.2
         with:
           timeout_minutes: 10
           shell: powershell

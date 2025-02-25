@@ -113,7 +113,7 @@ scalacache-guava = { module = "com.github.cb372:scalacache-guava_2.13", version.
 scalatest = "org.scalatest:scalatest_2.13:3.3.0-SNAP4"
 scalatest-junit = "org.scalatestplus:junit-5-11_2.13:3.2.19.0"
 simplelatlng = "com.javadocmd:simplelatlng:1.4.0"
-slf4j = "org.slf4j:slf4j-api:2.0.16"
+slf4j = "org.slf4j:slf4j-api:2.0.17"
 snakeyaml = "org.yaml:snakeyaml:2.4"
 spotbugs-annotations = "com.github.spotbugs:spotbugs-annotations:4.9.1"
 symmetric-matrix = "org.danilopianini:kotlin-symmetric-matrix:1.1.2"

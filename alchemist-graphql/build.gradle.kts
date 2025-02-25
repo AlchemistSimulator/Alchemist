@@ -10,6 +10,7 @@
 import Libs.alchemist
 import Libs.incarnation
 import Util.allVerificationTasks
+import Util.withJs
 import com.apollographql.apollo3.gradle.internal.ApolloGenerateSourcesTask
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
 import java.io.File.separator
@@ -24,14 +25,7 @@ plugins {
 
 kotlin {
     jvm()
-    js {
-        browser {
-            binaries.library()
-        }
-        nodejs {
-            binaries.library()
-        }
-    }
+    withJs()
     sourceSets {
         val commonMain by getting {
             dependencies {

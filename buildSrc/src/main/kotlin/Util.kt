@@ -27,6 +27,9 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugin.use.PluginDependency
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URI
@@ -37,70 +40,96 @@ import kotlin.reflect.KProperty
  * Collector of imperative code.
  */
 object Util {
-
     val isInCI get() = System.getenv("CI") == true.toString()
     val isWindows = Os.isFamily(Os.FAMILY_WINDOWS)
     val isMac = Os.isFamily(Os.FAMILY_MAC)
     val isUnix = Os.isFamily(Os.FAMILY_UNIX)
 
-    fun commandExists(command: String) = System.getenv("PATH")
-        .split(File.pathSeparatorChar)
-        .any { path -> File(path, command).run { exists() && canExecute() } }
+    fun commandExists(command: String) =
+        System
+            .getenv("PATH")
+            .split(File.pathSeparatorChar)
+            .any { path -> File(path, command).run { exists() && canExecute() } }
 
     val Project.currentCommitHash get(): String? =
-        kotlin.runCatching { Git.open(rootProject.projectDir).repository.resolve("HEAD")?.name }.getOrNull()
+        kotlin
+            .runCatching {
+                Git
+                    .open(rootProject.projectDir)
+                    .repository
+                    .resolve("HEAD")
+                    ?.name
+            }.getOrNull()
 
     private val javadocIOcacheFile = File("javadoc-io.json")
     private val gson = Gson().newBuilder().setPrettyPrinting().create()
     private val mapType = object : TypeToken<MutableMap<String, Pair<URI, URI?>>>() { }.type
 
-    private val javadocIO: MutableMap<String, Pair<URI, URI?>> = javadocIOcacheFile
-        .takeIf(File::exists)
-        ?.let { gson.fromJson(it.readText(), mapType) }
-        ?: mutableMapOf()
+    private val javadocIO: MutableMap<String, Pair<URI, URI?>> =
+        javadocIOcacheFile
+            .takeIf(File::exists)
+            ?.let { gson.fromJson(it.readText(), mapType) }
+            ?: mutableMapOf()
 
     /**
      * If available, finds the URL of the documentation on javadoc.io for [dependency].
      *
      * @return a [Pair] with the URL as a first element, and the packageList URL as second element.
      */
-    fun Project.fetchJavadocIOForDependency(dependency: Dependency): Pair<URI, URI>? = dependency
-        .takeIf { it is ExternalDependency }
-        ?.run {
-            synchronized(javadocIO) {
-                val size = javadocIO.size
-                val descriptor = "$group/$name/$version"
-                val javadocIOURLs = javadocIO.getOrPut(descriptor) {
-                    logger.lifecycle("Checking javadoc.io for unknown dependency {}:{}:{}", group, name, version)
-                    val urlString = "https://javadoc.io/doc/$descriptor"
-                    val packageList = listOf("package-list", "element-list")
-                        .map { URI("$urlString/$it") }
-                        .firstOrNull { runCatching { it.toURL().openStream() }.isSuccess }
-                    if (packageList == null) {
-                        logger.lifecycle("javadoc.io has docs for {}:{}:{}! > {}", group, name, version, urlString)
+    fun Project.fetchJavadocIOForDependency(dependency: Dependency): Pair<URI, URI>? =
+        dependency
+            .takeIf { it is ExternalDependency }
+            ?.run {
+                synchronized(javadocIO) {
+                    val size = javadocIO.size
+                    val descriptor = "$group/$name/$version"
+                    val javadocIOURLs =
+                        javadocIO.getOrPut(descriptor) {
+                            logger.lifecycle(
+                                "Checking javadoc.io for unknown dependency {}:{}:{}",
+                                group,
+                                name,
+                                version,
+                            )
+                            val urlString = "https://javadoc.io/doc/$descriptor"
+                            val packageList =
+                                listOf("package-list", "element-list")
+                                    .map { URI("$urlString/$it") }
+                                    .firstOrNull { runCatching { it.toURL().openStream() }.isSuccess }
+                            if (packageList == null) {
+                                logger.lifecycle(
+                                    "javadoc.io has docs for {}:{}:{}! > {}",
+                                    group,
+                                    name,
+                                    version,
+                                    urlString,
+                                )
+                            }
+                            URI(urlString) to packageList
+                        }
+                    if (javadocIO.size != size) {
+                        logger.lifecycle("Caching javadoc.io information for {} at {}", descriptor, javadocIOURLs.first)
+                        javadocIOcacheFile.writeText(gson.toJson(javadocIO.toSortedMap()))
                     }
-                    URI(urlString) to packageList
+                    javadocIOURLs.second?.let { javadocIOURLs.first to it }
                 }
-                if (javadocIO.size != size) {
-                    logger.lifecycle("Caching javadoc.io information for {} at {}", descriptor, javadocIOURLs.first)
-                    javadocIOcacheFile.writeText(gson.toJson(javadocIO.toSortedMap()))
-                }
-                javadocIOURLs.second?.let { javadocIOURLs.first to it }
             }
-        }
 
     /**
      * Verifies that the generated shadow jar displays the help, and that SLF4J is not falling back to NOP.
      */
-    fun Project.testShadowJar(javaExecutable: Provider<String>, jarFile: Provider<RegularFile>) = tasks.register<Exec>(
+    fun Project.testShadowJar(
+        javaExecutable: Provider<String>,
+        jarFile: Provider<RegularFile>,
+    ) = tasks.register<Exec>(
         "test${
-        jarFile.get().asFile.nameWithoutExtension
-            .removeSuffix("-all")
-            .removePrefix("alchemist-")
-            .replaceFirstChar { it.titlecaseChar() }
-            .replace(Regex("-([a-z])")) { it.groupValues[1].uppercase() }
-            .replace("-", "")
-        }ShadowJarOutput"
+            jarFile.get().asFile.nameWithoutExtension
+                .removeSuffix("-all")
+                .removePrefix("alchemist-")
+                .replaceFirstChar { it.titlecaseChar() }
+                .replace(Regex("-([a-z])")) { it.groupValues[1].uppercase() }
+                .replace("-", "")
+        }ShadowJarOutput",
     ) {
         group = "Verification"
         description = "Verifies the terminal output correctness when printing the help via ${jarFile.get().asFile.name}"
@@ -146,18 +175,56 @@ object Util {
      *  Check if the project contains at least one of the multiplatform most common sourceSets,
      *  if so, assume it is a multiplatform project.
      */
-    val Project.isMultiplatform get() = listOf("common", "jvm", "js", "native").any { platform ->
-        listOf("Main", "Test").any { suffix -> projectDir.resolve("src/${platform}${suffix}").exists() }
-    }
+    val Project.isMultiplatform get() =
+        listOf("common", "jvm", "js", "native").any { platform ->
+            listOf("Main", "Test").any { suffix -> projectDir.resolve("src/${platform}$suffix").exists() }
+        }
 
     val TaskContainer.allVerificationTasks get(): TaskCollection<SourceTask> =
         this.withType<SourceTask>().matching { it is VerificationTask }
+
+    fun KotlinMultiplatformExtension.withJs() {
+        js {
+            browser {
+                binaries.library()
+            }
+            nodejs {
+                binaries.library()
+            }
+        }
+    }
+
+    fun KotlinMultiplatformExtension.withWasm(wasmModuleName: String) {
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmJs {
+            moduleName = wasmModuleName
+            browser {
+                val projectDirPath = project.projectDir.path
+                commonWebpackConfig {
+                    outputFileName = "$wasmModuleName.js"
+                    devServer =
+                        (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                            static =
+                                (static ?: mutableListOf()).apply {
+                                    // Serve sources to debug inside browser
+                                    add(projectDirPath)
+                                }
+                        }
+                }
+            }
+            binaries.executable()
+        }
+    }
 }
 
-val Project.catalog get() = object : ReadOnlyProperty<Any?, Provider<MinimalExternalModuleDependency>> {
-    override operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-        extensions.getByType<VersionCatalogsExtension>()
+val Project.catalog get() =
+    object : ReadOnlyProperty<Any?, Provider<MinimalExternalModuleDependency>> {
+        override operator fun getValue(
+            thisRef: Any?,
+            property: KProperty<*>,
+        ) = extensions
+            .getByType<VersionCatalogsExtension>()
             .named("libs")
             .findLibrary(property.name.replace(Regex("[A-Z]")) { "-${it.value.lowercase()}" })
             .get()
-}
+    }

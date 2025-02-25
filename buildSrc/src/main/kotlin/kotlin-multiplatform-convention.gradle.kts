@@ -12,10 +12,7 @@ kotlin {
             freeCompilerArgs.add("-Xjvm-default=all") // Enable default methods in Kt interfaces
         }
     }
-    js {
-        browser()
-        nodejs()
-    }
+
     sourceSets {
         val commonTest by getting {
             dependencies {

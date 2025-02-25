@@ -9,6 +9,7 @@
 
 import Libs.alchemist
 import Libs.incarnation
+import Util.withJs
 
 plugins {
     id("kotlin-multiplatform-convention")
@@ -17,14 +18,7 @@ plugins {
 }
 
 kotlin {
-    js {
-        browser {
-            binaries.executable()
-        }
-        nodejs {
-            binaries.executable()
-        }
-    }
+    withJs()
     sourceSets {
         val commonMain by getting {
             dependencies {

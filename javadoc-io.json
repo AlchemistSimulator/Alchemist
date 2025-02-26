@@ -165,9 +165,8 @@
   "net.anwiba.commons.swing.icons/org.oxygen.oxygen-icons/4.13.0-1.2.50": {
     "first": "https://javadoc.io/doc/net.anwiba.commons.swing.icons/org.oxygen.oxygen-icons/4.13.0-1.2.50"
   },
-  "net.harawata/appdirs/1.3.0": {
-    "first": "https://javadoc.io/doc/net.harawata/appdirs/1.3.0",
-    "second": "https://javadoc.io/doc/net.harawata/appdirs/1.3.0/element-list"
+  "net.harawata/appdirs/1.4.0": {
+    "first": "https://javadoc.io/doc/net.harawata/appdirs/1.4.0"
   },
   "net.pearx.kasechange/kasechange/1.4.1": {
     "first": "https://javadoc.io/doc/net.pearx.kasechange/kasechange/1.4.1"

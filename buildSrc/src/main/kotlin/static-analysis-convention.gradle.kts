@@ -15,7 +15,24 @@ plugins {
     id("org.danilopianini.gradle-java-qa")
 }
 
+javaQA {
+    checkstyle {
+        additionalConfiguration.set(rootProject.file("checkstyle-additional-config.xml").readText())
+        additionalSuppressions.set(
+            """
+                <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
+                <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
+                """.trimIndent(),
+        )
+    }
+    // TODO: enable PMD when this bug is fixed: https://github.com/pmd/pmd/issues/5096
+    tasks.withType<Pmd>().configureEach {
+        enabled = false
+    }
+}
+
 tasks.allVerificationTasks.configureEach {
+    println(this.name)
     exclude("**/generated/**")
 }
 
@@ -36,23 +53,6 @@ tasks.withType<Cpd>().configureEach {
         }
     )
 }
-
-javaQA {
-    checkstyle {
-        additionalConfiguration.set(rootProject.file("checkstyle-additional-config.xml").readText())
-        additionalSuppressions.set(
-            """
-                <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
-                <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
-                """.trimIndent(),
-        )
-    }
-    // TODO: enable PMD when this bug is fixed: https://github.com/pmd/pmd/issues/5096
-    tasks.withType<Pmd>().configureEach {
-        enabled = false
-    }
-}
-
 
 
 

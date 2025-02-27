@@ -172,15 +172,6 @@ object Util {
      */
     val Provider<PluginDependency>.id: String get() = get().pluginId
 
-    /**
-     *  Check if the project contains at least one of the multiplatform most common sourceSets,
-     *  if so, assume it is a multiplatform project.
-     */
-    val Project.isMultiplatform get() =
-        listOf("common", "jvm", "js", "native").any { platform ->
-            listOf("Main", "Test").any { suffix -> projectDir.resolve("src/${platform}$suffix").exists() }
-        }
-
     val TaskContainer.allVerificationTasks get(): TaskCollection<SourceTask> =
         this.withType<SourceTask>().matching { it is VerificationTask }
 }

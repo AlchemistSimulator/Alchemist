@@ -5,8 +5,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-
-
+import Util.webCommonConfiguration
 
 plugins {
     kotlin("multiplatform")
@@ -23,34 +22,9 @@ kotlin {
         }
     }
 
-    fun KotlinJsTargetDsl.devServer() {
-        browser {
-            commonWebpackConfig {
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf())
-                }
-            }
-        }
-    }
-
-    fun KotlinJsTargetDsl.webCommonConfiguration() {
-        moduleName = project.name
-        browser {
-            commonWebpackConfig {
-                outputFileName = "$moduleName.js"
-            }
-        }
-        binaries.executable()
-    }
-
     js {
         webCommonConfiguration()
         useEsModules()
-    }
-
-    wasmJs {
-        webCommonConfiguration()
-        devServer()
     }
 
     sourceSets {

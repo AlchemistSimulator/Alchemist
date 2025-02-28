@@ -1,3 +1,6 @@
+import Util.devServer
+import Util.webCommonConfiguration
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.DefaultIncrementalSyncTask
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
@@ -17,6 +20,13 @@ plugins {
 }
 
 kotlin {
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        webCommonConfiguration()
+        devServer()
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {

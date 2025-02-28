@@ -27,6 +27,8 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugin.use.PluginDependency
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URI
@@ -172,8 +174,33 @@ object Util {
      * @return all the tasks performing static verification on the ain the project.
      */
     val TaskContainer.allVerificationTasks get(): TaskCollection<SourceTask> {
-
         return this.withType<SourceTask>().matching { it is VerificationTask }
+    }
+
+    /**
+     * Configure a Dev Server for Web targets.
+     */
+    fun KotlinJsTargetDsl.devServer() {
+        browser {
+            commonWebpackConfig {
+                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                    static = (static ?: mutableListOf())
+                }
+            }
+        }
+    }
+
+    /**
+     *  Common configuration for Web targets.
+     */
+    fun KotlinJsTargetDsl.webCommonConfiguration() {
+        moduleName = project.name
+        browser {
+            commonWebpackConfig {
+                outputFileName = "$moduleName.js"
+            }
+        }
+        binaries.executable()
     }
 }
 

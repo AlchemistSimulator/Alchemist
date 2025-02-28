@@ -55,7 +55,5 @@ private val generationTasks get(): TaskCollection<Task> = tasks.matching { task 
 }
 
 tasks.withType<Cpd>().configureEach {
-    generationTasks.forEach {
-        dependsOn(it)
-    }
+    dependsOn(generationTasks)
 }

@@ -7,8 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-import Util.allVerificationTasks
 import de.aaschmid.gradle.plugins.cpd.Cpd
+import org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask
+import Util.allVerificationTasks
+import gradle.kotlin.dsl.accessors._1fb18e6b44f6c16f71a01af678f813e8.ktlint
+import org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask
 
 plugins {
     id("org.danilopianini.gradle-kotlin-qa")
@@ -31,28 +34,28 @@ javaQA {
     }
 }
 
-tasks.allVerificationTasks.configureEach {
-    println(this.name)
-    exclude("**/generated/**")
+fun PatternFilterable.excludeGenerated() {
+    exclude { "/generated/" in it.file.absolutePath }
 }
 
-private val generationTaskNames = listOf(
-    "Actual",
-    "Compose",
-    "Expect",
-).map {
-    "generate$it"
+tasks.allVerificationTasks.configureEach {
+    excludeGenerated()
+}
+
+ktlint {
+    filter{
+        excludeGenerated()
+    }
+}
+
+private val generationTasks get(): TaskCollection<Task> = tasks.matching { task ->
+    listOf("Actual", "Compose", "Expect").map { "generate$it" }.any {
+        it in task.name
+    }
 }
 
 tasks.withType<Cpd>().configureEach {
-    dependsOn(
-        tasks.matching { task ->
-            generationTaskNames.any {
-                it in task.name
-            }
-        }
-    )
+    generationTasks.forEach {
+        dependsOn(it)
+    }
 }
-
-
-

@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.targets.js.ir.DefaultIncrementalSyncTask
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+
 /*
  * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
@@ -38,6 +41,6 @@ publishing.publications.withType<MavenPublication>().configureEach {
     }
 }
 
-tasks.wasmJsProductionExecutableCompileSync {
-    dependsOn(tasks.jsBrowserProductionWebpack)
+tasks.withType<KotlinWebpack>().configureEach {
+    this.dependsOn(tasks.withType<DefaultIncrementalSyncTask>())
 }

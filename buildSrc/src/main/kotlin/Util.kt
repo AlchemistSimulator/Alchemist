@@ -27,10 +27,6 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugin.use.PluginDependency
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URI
@@ -172,8 +168,13 @@ object Util {
      */
     val Provider<PluginDependency>.id: String get() = get().pluginId
 
-    val TaskContainer.allVerificationTasks get(): TaskCollection<SourceTask> =
-        this.withType<SourceTask>().matching { it is VerificationTask }
+    /**
+     * @return all the tasks performing static verification on the ain the project.
+     */
+    val TaskContainer.allVerificationTasks get(): TaskCollection<SourceTask> {
+
+        return this.withType<SourceTask>().matching { it is VerificationTask }
+    }
 }
 
 val Project.catalog get() =

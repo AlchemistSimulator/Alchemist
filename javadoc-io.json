@@ -244,6 +244,33 @@
     "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0",
     "second": "https://javadoc.io/doc/org.graphstream/gs-core/2.0/element-list"
   },
+  "org.jetbrains.androidx.lifecycle/lifecycle-runtime-compose/2.8.4": {
+    "first": "https://javadoc.io/doc/org.jetbrains.androidx.lifecycle/lifecycle-runtime-compose/2.8.4"
+  },
+  "org.jetbrains.compose.components/components-resources/1.7.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.components/components-resources/1.7.0"
+  },
+  "org.jetbrains.compose.components/components-ui-tooling-preview/1.7.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.components/components-ui-tooling-preview/1.7.0"
+  },
+  "org.jetbrains.compose.desktop/desktop-jvm-linux-x64/1.7.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.desktop/desktop-jvm-linux-x64/1.7.0"
+  },
+  "org.jetbrains.compose.foundation/foundation/1.7.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.foundation/foundation/1.7.0"
+  },
+  "org.jetbrains.compose.html/html-core/1.7.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.html/html-core/1.7.0"
+  },
+  "org.jetbrains.compose.material/material/1.7.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.material/material/1.7.0"
+  },
+  "org.jetbrains.compose.runtime/runtime/1.7.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.runtime/runtime/1.7.0"
+  },
+  "org.jetbrains.compose.ui/ui/1.7.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.ui/ui/1.7.0"
+  },
   "org.jetbrains.dokka/all-modules-page-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/all-modules-page-plugin/2.0.0"
   },
@@ -270,6 +297,9 @@
   },
   "org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.10"
+  },
+  "org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.1.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.1.10"
   },
   "org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.10"

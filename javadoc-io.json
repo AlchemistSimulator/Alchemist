@@ -175,9 +175,6 @@
     "first": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3",
     "second": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3/package-list"
   },
-  "net.sourceforge.pmd/pmd-dist/7.10.0": {
-    "first": "https://javadoc.io/doc/net.sourceforge.pmd/pmd-dist/7.10.0"
-  },
   "net.sourceforge.pmd/pmd-dist/7.8.0": {
     "first": "https://javadoc.io/doc/net.sourceforge.pmd/pmd-dist/7.8.0"
   },

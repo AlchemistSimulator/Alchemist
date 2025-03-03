@@ -24,7 +24,6 @@ kotlin {
 
     js {
         webCommonConfiguration()
-        useEsModules()
     }
 
     sourceSets {

@@ -175,6 +175,9 @@
     "first": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3",
     "second": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3/package-list"
   },
+  "net.sourceforge.pmd/pmd-dist/7.10.0": {
+    "first": "https://javadoc.io/doc/net.sourceforge.pmd/pmd-dist/7.10.0"
+  },
   "net.sourceforge.pmd/pmd-dist/7.8.0": {
     "first": "https://javadoc.io/doc/net.sourceforge.pmd/pmd-dist/7.8.0"
   },
@@ -244,32 +247,20 @@
     "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0",
     "second": "https://javadoc.io/doc/org.graphstream/gs-core/2.0/element-list"
   },
-  "org.jetbrains.androidx.lifecycle/lifecycle-runtime-compose/2.8.4": {
-    "first": "https://javadoc.io/doc/org.jetbrains.androidx.lifecycle/lifecycle-runtime-compose/2.8.4"
+  "org.jetbrains.compose.components/components-resources/1.7.3": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.components/components-resources/1.7.3"
   },
-  "org.jetbrains.compose.components/components-resources/1.7.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.compose.components/components-resources/1.7.0"
+  "org.jetbrains.compose.foundation/foundation/1.7.3": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.foundation/foundation/1.7.3"
   },
-  "org.jetbrains.compose.components/components-ui-tooling-preview/1.7.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.compose.components/components-ui-tooling-preview/1.7.0"
+  "org.jetbrains.compose.material/material/1.7.3": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.material/material/1.7.3"
   },
-  "org.jetbrains.compose.desktop/desktop-jvm-linux-x64/1.7.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.compose.desktop/desktop-jvm-linux-x64/1.7.0"
+  "org.jetbrains.compose.runtime/runtime/1.7.3": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.runtime/runtime/1.7.3"
   },
-  "org.jetbrains.compose.foundation/foundation/1.7.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.compose.foundation/foundation/1.7.0"
-  },
-  "org.jetbrains.compose.html/html-core/1.7.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.compose.html/html-core/1.7.0"
-  },
-  "org.jetbrains.compose.material/material/1.7.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.compose.material/material/1.7.0"
-  },
-  "org.jetbrains.compose.runtime/runtime/1.7.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.compose.runtime/runtime/1.7.0"
-  },
-  "org.jetbrains.compose.ui/ui/1.7.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.compose.ui/ui/1.7.0"
+  "org.jetbrains.compose.ui/ui/1.7.3": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.ui/ui/1.7.3"
   },
   "org.jetbrains.dokka/all-modules-page-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/all-modules-page-plugin/2.0.0"
@@ -372,7 +363,8 @@
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.7.2"
   },
   "org.protelis/protelis-lang/17.7.2": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.7.2"
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.7.2",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-lang/17.7.2/package-list"
   },
   "org.reduxkotlin/redux-kotlin-threadsafe/0.6.1": {
     "first": "https://javadoc.io/doc/org.reduxkotlin/redux-kotlin-threadsafe/0.6.1"

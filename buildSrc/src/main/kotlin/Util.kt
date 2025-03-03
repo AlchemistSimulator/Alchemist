@@ -23,6 +23,7 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.VerificationTask
+import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
@@ -201,6 +202,14 @@ object Util {
             }
         }
         binaries.executable()
+    }
+
+    /**
+     * Excludes generated files from [PatternFilterable].
+     * Mainly used to exclude generated files from static analysis.
+     */
+    fun PatternFilterable.excludeGenerated() {
+        exclude { "generated" in it.file.absolutePath }
     }
 }
 

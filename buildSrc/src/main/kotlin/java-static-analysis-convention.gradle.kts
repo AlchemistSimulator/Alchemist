@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -7,14 +7,13 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-import de.aaschmid.gradle.plugins.cpd.Cpd
-import org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask
-import Util.allVerificationTasks
-import gradle.kotlin.dsl.accessors._1fb18e6b44f6c16f71a01af678f813e8.ktlint
-import org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask
+import Libs.alchemist
+import org.gradle.api.plugins.quality.Pmd
+import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.withType
 
 plugins {
-    id("org.danilopianini.gradle-kotlin-qa")
+    id("common-static-analysis-convention")
     id("org.danilopianini.gradle-java-qa")
 }
 
@@ -32,28 +31,4 @@ javaQA {
     tasks.withType<Pmd>().configureEach {
         enabled = false
     }
-}
-
-fun PatternFilterable.excludeGenerated() {
-    exclude { "generated" in it.file.absolutePath }
-}
-
-tasks.allVerificationTasks.configureEach {
-    excludeGenerated()
-}
-
-ktlint {
-    filter{
-        excludeGenerated()
-    }
-}
-
-private val generationTasks get(): TaskCollection<Task> = tasks.matching { task ->
-    listOf("Actual", "Compose", "Expect").map { "generate$it" }.any {
-        it in task.name
-    }
-}
-
-tasks.withType<Cpd>().configureEach {
-    dependsOn(generationTasks)
 }

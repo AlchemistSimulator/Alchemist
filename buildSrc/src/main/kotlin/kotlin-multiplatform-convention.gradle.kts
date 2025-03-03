@@ -9,9 +9,10 @@ import Util.webCommonConfiguration
 
 plugins {
     kotlin("multiplatform")
+    id("common-static-analysis-convention")
     id("dokka-convention")
+    id("kotlin-static-analysis-convention")
     id("power-assert-convention")
-    id("static-analysis-convention")
 }
 
 @OptIn(ExperimentalWasmDsl::class)

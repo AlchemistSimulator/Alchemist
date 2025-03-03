@@ -1,7 +1,9 @@
 [versions]
+androidx-lifecycle = "2.8.4"
 antlr4 = "4.13.2"
 apollo ="4.0.0-beta.7"
 arrow = "2.0.1"
+compose-multiplatform = "1.7.3"
 dokka = "2.0.0"
 graphql = "8.3.0"
 graphhopper = "10.2"
@@ -19,6 +21,7 @@ scala = "2.13.16"
 scalacache = "0.28.0"
 
 [libraries]
+androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 antlr4 = { module = "org.antlr:antlr4", version.ref = "antlr4" }
 antlr4-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr4" }
 apache-commons-cli = "commons-cli:commons-cli:1.9.0"
@@ -50,6 +53,7 @@ gson = "com.google.code.gson:gson:2.12.1"
 gson-extras = "org.danilopianini:gson-extras:3.1.0"
 guava = "com.google.guava:guava:33.4.0-jre"
 javalib-java7 = "org.danilopianini:javalib-java7:0.6.1"
+java-quality-assurance-plugin = "org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin:1.95.1"
 jgit = "org.eclipse.jgit:org.eclipse.jgit:7.1.0.202411261347-r"
 jgrapht-core = "org.jgrapht:jgrapht-core:1.5.2"
 jirf = "org.danilopianini:jirf:0.4.27"
@@ -73,6 +77,7 @@ kotlin-multiplatform-plugin = { module = "org.jetbrains.kotlin.multiplatform:org
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
 kotlin-power-assert-plugin = { module = "org.jetbrains.kotlin.plugin.power-assert:org.jetbrains.kotlin.plugin.power-assert.gradle.plugin", version.ref = "kotlin" }
+kotlin-quality-assurance-plugin = "org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin:0.78.0"
 kotlin-react = { module = "org.jetbrains.kotlin-wrappers:kotlin-react", version.ref = "react" }
 kotlin-react-dom = { module = "org.jetbrains.kotlin-wrappers:kotlin-react-dom", version.ref = "react" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
@@ -151,6 +156,8 @@ testing-compile = [
 testing-runtimeOnly = [ "junit-engine" ]
 
 [plugins]
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:4.0.2"
 graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
@@ -158,7 +165,6 @@ hugo = "io.github.fstaudt.hugo:0.9.0"
 java-qa = "org.danilopianini.gradle-java-qa:1.100.0"
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.78.0"
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:3.2.3"
 publishOnCentral = "org.danilopianini.publish-on-central:8.0.3"

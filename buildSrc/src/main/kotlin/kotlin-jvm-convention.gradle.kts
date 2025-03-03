@@ -10,7 +10,11 @@ import Libs.alchemist
  */
 plugins {
     kotlin("jvm")
+    id("common-static-analysis-convention")
     id("dokka-convention")
+    id("java-static-analysis-convention")
+    id("kotlin-static-analysis-convention")
+    id("org.danilopianini.gradle-java-qa")
     id("power-assert-convention")
 }
 

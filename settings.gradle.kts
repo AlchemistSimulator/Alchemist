@@ -14,6 +14,7 @@ plugins {
 
 include(
     "alchemist-api",
+    "alchemist-composeui",
     "alchemist-cognitive-agents",
     "alchemist-engine",
     "alchemist-euclidean-geometry",

@@ -1,21 +1,32 @@
 import Libs.alchemist
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import Util.webCommonConfiguration
 
 plugins {
     kotlin("multiplatform")
+    id("common-static-analysis-convention")
     id("dokka-convention")
+    id("kotlin-static-analysis-convention")
     id("power-assert-convention")
 }
 
+@OptIn(ExperimentalWasmDsl::class)
 kotlin {
     jvm {
         compilerOptions {
             freeCompilerArgs.add("-Xjvm-default=all") // Enable default methods in Kt interfaces
         }
     }
+
     js {
-        browser()
-        nodejs()
+        webCommonConfiguration()
     }
+
     sourceSets {
         val commonTest by getting {
             dependencies {

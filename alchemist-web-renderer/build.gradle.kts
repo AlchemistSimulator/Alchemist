@@ -17,20 +17,12 @@ plugins {
 }
 
 kotlin {
-    js {
-        browser {
-            binaries.executable()
-        }
-        nodejs {
-            binaries.executable()
-        }
-    }
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(libs.korim)
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.korim)
                 implementation(libs.ktor.client.core)
                 implementation(libs.redux.kotlin.threadsafe)
             }

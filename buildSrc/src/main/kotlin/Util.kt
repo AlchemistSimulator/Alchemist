@@ -184,7 +184,7 @@ object Util {
         browser {
             commonWebpackConfig {
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf())
+                    static = static ?: mutableListOf()
                 }
             }
         }

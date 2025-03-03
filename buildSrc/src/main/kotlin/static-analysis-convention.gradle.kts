@@ -35,7 +35,7 @@ javaQA {
 }
 
 fun PatternFilterable.excludeGenerated() {
-    exclude { "/generated/" in it.file.absolutePath }
+    exclude { "generated" in it.file.absolutePath }
 }
 
 tasks.allVerificationTasks.configureEach {

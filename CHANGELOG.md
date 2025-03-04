@@ -1,3 +1,9 @@
+## [40.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/40.0.0...40.1.0) (2025-03-04)
+
+### Features
+
+* **api:** make vectors destructurable ([d271731](https://github.com/AlchemistSimulator/Alchemist/commit/d27173189e3f8c4ecba5ab93dce2a83fe388ea68))
+
 ## [40.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/39.0.1...40.0.0) (2025-03-04)
 
 ### ⚠ BREAKING CHANGES

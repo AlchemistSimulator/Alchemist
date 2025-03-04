@@ -36,6 +36,16 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
     val asAngle: Double get() = atan2(y, x)
 
     /**
+     * x coordinate.
+     */
+    operator fun component1() = x
+
+    /**
+     * y coordinate.
+     */
+    operator fun component2() = y
+
+    /**
      * Dot product between bidimensional vectors.
      */
     override fun dot(other: P) = x * other.x + y * other.y

@@ -1,20 +1,20 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.protelis
+package it.unibo.alchemist.model.protelis
 
 import com.google.common.collect.ImmutableMap
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.protelis.actions.RunProtelisProgram
-import it.unibo.alchemist.protelis.properties.ProtelisDevice
+import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
+import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
 import org.apache.commons.math3.distribution.RealDistribution
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.vm.CodePath

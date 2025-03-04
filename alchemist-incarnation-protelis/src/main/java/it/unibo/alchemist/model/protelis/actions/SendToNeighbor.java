@@ -14,9 +14,8 @@ import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.actions.AbstractAction;
-import it.unibo.alchemist.protelis.AlchemistNetworkManager;
-import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
-import it.unibo.alchemist.protelis.properties.ProtelisDevice;
+import it.unibo.alchemist.model.protelis.AlchemistNetworkManager;
+import it.unibo.alchemist.model.protelis.properties.ProtelisDevice;
 
 import javax.annotation.Nonnull;
 import java.io.Serial;

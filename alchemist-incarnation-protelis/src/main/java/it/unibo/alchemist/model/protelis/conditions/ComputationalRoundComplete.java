@@ -13,8 +13,8 @@ import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
-import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
-import it.unibo.alchemist.protelis.properties.ProtelisDevice;
+import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram;
+import it.unibo.alchemist.model.protelis.properties.ProtelisDevice;
 
 import java.io.Serial;
 import java.util.List;

@@ -18,9 +18,9 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
-import it.unibo.alchemist.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import it.unibo.alchemist.test.AlchemistTesting.terminatingAfterSteps
 import org.apache.commons.math3.random.MersenneTwister

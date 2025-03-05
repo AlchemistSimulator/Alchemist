@@ -159,7 +159,8 @@
     "first": "https://javadoc.io/doc/io.ktor/ktor-server-websockets-jvm/3.1.1"
   },
   "it.unimi.dsi/dsiutils/2.7.4": {
-    "first": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.4"
+    "first": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.4",
+    "second": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.4/element-list"
   },
   "net.anwiba.commons.swing.icons/org.oxygen.oxygen-icons/4.13.0-1.2.50": {
     "first": "https://javadoc.io/doc/net.anwiba.commons.swing.icons/org.oxygen.oxygen-icons/4.13.0-1.2.50"
@@ -199,7 +200,8 @@
     "second": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1/package-list"
   },
   "org.codehaus.groovy/groovy-jsr223/3.0.24": {
-    "first": "https://javadoc.io/doc/org.codehaus.groovy/groovy-jsr223/3.0.24"
+    "first": "https://javadoc.io/doc/org.codehaus.groovy/groovy-jsr223/3.0.24",
+    "second": "https://javadoc.io/doc/org.codehaus.groovy/groovy-jsr223/3.0.24/element-list"
   },
   "org.danilopianini/boilerplate/0.2.2": {
     "first": "https://javadoc.io/doc/org.danilopianini/boilerplate/0.2.2"
@@ -274,11 +276,11 @@
   "org.jetbrains.dokka/templating-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.4-19.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.4-19.0.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.5-19.0.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.5-19.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.4-19.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.4-19.0.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.5-19.0.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.5-19.0.0"
   },
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"

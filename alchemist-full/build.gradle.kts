@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main(project"s alchemist/build.gradle file.
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
- * as described in the file LICENSE in the Alchemist distribution"s top directory.
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 import Libs.alchemist
 import Util.commandExists
@@ -106,35 +107,28 @@ tasks.matching { it.name in toDisable }.configureEach { enabled = false }
 
 sealed interface PackagingMethod
 
-data class ValidPackaging(
-    val format: ImageType,
-    val perUser: Boolean = false,
-) : PackagingMethod {
+data class ValidPackaging(val format: ImageType, val perUser: Boolean = false) : PackagingMethod {
     val name get() = format.formatName
 
     override fun toString() = "$name packaging${ " (userspace)".takeIf { perUser }.orEmpty() }"
 }
 
-data class DisabledPackaging(
-    val reason: String,
-) : PackagingMethod
+data class DisabledPackaging(val reason: String) : PackagingMethod
 
 val ImageType.formatName get() = name.lowercase()
 
-fun ImageType.disabledBecause(reason: String): List<DisabledPackaging> =
-    listOf(
-        DisabledPackaging("$formatName packaging disabled because $reason"),
-    )
+fun ImageType.disabledBecause(reason: String): List<DisabledPackaging> = listOf(
+    DisabledPackaging("$formatName packaging disabled because $reason"),
+)
 
 fun ImageType.disabledOnNon(os: String): List<DisabledPackaging> = disabledBecause("unsupported non non-$os systems")
 
 fun ImageType.valid(): List<ValidPackaging> = listOf(ValidPackaging(this))
 
-fun ImageType.validIfCommandExists(command: String): List<PackagingMethod> =
-    when {
-        commandExists(command) -> valid()
-        else -> disabledBecause("the required command '$command' could not be found in PATH.")
-    }
+fun ImageType.validIfCommandExists(command: String): List<PackagingMethod> = when {
+    commandExists(command) -> valid()
+    else -> disabledBecause("the required command '$command' could not be found in PATH.")
+}
 
 val packageRequirements: List<PackagingMethod> =
     ImageType.values().flatMap { format ->
@@ -161,26 +155,16 @@ disabledFormats.filterIsInstance<DisabledPackaging>().forEach { logger.warn(it.r
 
 val versionComponentExtractor = Regex("^(\\d+\\.\\d+\\.)(\\d+)(.*)$")
 
-private data class SemVerExtracted(
-    val base: String,
-    val patch: String,
-    val suffix: String,
-) {
-    fun asMangledVersion(): String =
-        "${base}0${patch}0${
-            when {
-                suffix.isBlank() -> ""
-                else -> {
-                    val asBytes = suffix.toByteArray(StandardCharsets.UTF_8)
-                    Hashing
-                        .murmur3_32_fixed()
-                        .hashBytes(asBytes)
-                        .padToLong()
-                        .toUInt()
-                        .toString()
-                }
+private data class SemVerExtracted(val base: String, val patch: String, val suffix: String) {
+    fun asMangledVersion(): String = "${base}0${patch}0${
+        when {
+            suffix.isBlank() -> ""
+            else -> {
+                val asBytes = suffix.toByteArray(StandardCharsets.UTF_8)
+                Hashing.murmur3_32_fixed().hashBytes(asBytes).padToLong().toUInt().toString()
             }
-        }"
+        }
+    }"
 }
 
 private fun String.extractVersionComponents(): SemVerExtracted {

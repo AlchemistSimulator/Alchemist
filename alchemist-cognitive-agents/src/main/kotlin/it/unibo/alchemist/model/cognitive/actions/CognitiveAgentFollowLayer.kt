@@ -43,10 +43,7 @@ open class CognitiveAgentFollowLayer(
 
     override fun nextPosition(): Euclidean2DPosition = followScalarField.nextPosition()
 
-    override fun cloneAction(
-        node: Node<Number>,
-        reaction: Reaction<Number>,
-    ): CognitiveAgentFollowLayer =
+    override fun cloneAction(node: Node<Number>, reaction: Reaction<Number>): CognitiveAgentFollowLayer =
         CognitiveAgentFollowLayer(
             environment,
             reaction,

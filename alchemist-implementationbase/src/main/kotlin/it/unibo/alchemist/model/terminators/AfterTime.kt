@@ -17,8 +17,6 @@ import it.unibo.alchemist.model.Time
 /**
  * @param endTime the end time.
  */
-data class AfterTime<T, P : Position<P>>(
-    val endTime: Time,
-) : TerminationPredicate<T, P> {
+data class AfterTime<T, P : Position<P>>(val endTime: Time) : TerminationPredicate<T, P> {
     override fun invoke(environment: Environment<T, P>) = environment.simulation.time >= endTime
 }

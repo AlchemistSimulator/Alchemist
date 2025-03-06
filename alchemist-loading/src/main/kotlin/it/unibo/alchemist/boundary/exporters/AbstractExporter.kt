@@ -22,9 +22,7 @@ import it.unibo.alchemist.model.Time
  * Abstract implementation of a [Exporter].
  * @param samplingInterval the sampling time, defaults to [DEFAULT_INTERVAL].
  */
-abstract class AbstractExporter<T, P : Position<P>>(
-    private val samplingInterval: Double,
-) : Exporter<T, P> {
+abstract class AbstractExporter<T, P : Position<P>>(private val samplingInterval: Double) : Exporter<T, P> {
     final override lateinit var dataExtractors: List<Extractor<*>>
         private set
 
@@ -78,23 +76,17 @@ abstract class AbstractExporter<T, P : Position<P>>(
     /**
      * Computes the [variablesDescriptor] and the [verboseVariablesDescriptor] provided the variables.
      */
-    protected fun computeDescriptors(variables: Map<String, *>): Pair<String, String> =
-        variables
-            .map { (name, value) -> "$name-$value" to "$name = $value" }
-            .unzip()
-            .run { first.joinToString("_") to second.joinToString(", ") }
+    protected fun computeDescriptors(variables: Map<String, *>): Pair<String, String> = variables
+        .map { (name, value) -> "$name-$value" to "$name = $value" }
+        .unzip()
+        .run { first.joinToString("_") to second.joinToString(", ") }
 
     /**
      *  Every step of the simulation check if is time to export data depending on the sampling interval.
      *  Converts the division of the current time and the interval to Long in order to export data only
      *  when the difference between steps is as big as the sampling interval.
      */
-    final override fun update(
-        environment: Environment<T, P>,
-        reaction: Actionable<T>?,
-        time: Time,
-        step: Long,
-    ) {
+    final override fun update(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
         val curSample: Long = (time.toDouble() / samplingInterval).toLong()
         if (curSample > count) {
             count = curSample
@@ -105,10 +97,5 @@ abstract class AbstractExporter<T, P : Position<P>>(
     /**
      * Delegates the concrete implementation of this method to his subclasses.
      */
-    abstract fun exportData(
-        environment: Environment<T, P>,
-        reaction: Actionable<T>?,
-        time: Time,
-        step: Long,
-    )
+    abstract fun exportData(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long)
 }

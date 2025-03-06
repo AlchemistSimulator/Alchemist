@@ -65,10 +65,7 @@ object AlchemistMultiVesta {
      */
     private const val IS_NORMAL_EXECUTION = true
 
-    private fun appendSeedsToYmlFile(
-        seed: Int,
-        configurationPath: String,
-    ): String {
+    private fun appendSeedsToYmlFile(seed: Int, configurationPath: String): String {
         try {
             val originalConfigFile = File(configurationPath)
             val newConfigFilePath =
@@ -217,11 +214,7 @@ object AlchemistMultiVesta {
         throw AlchemistWouldHaveExitedException(status.ordinal)
     }
 
-    private fun exitBecause(
-        reason: String,
-        status: ExitStatus,
-        exception: Exception? = null,
-    ): Nothing {
+    private fun exitBecause(reason: String, status: ExitStatus, exception: Exception? = null): Nothing {
         when (exception) {
             null -> logger.error(reason)
             else -> logger.error(reason, exception)
@@ -229,10 +222,7 @@ object AlchemistMultiVesta {
         exitWith(status)
     }
 
-    private fun createLoader(
-        simulationFile: String,
-        seed: Int?,
-    ): Loader {
+    private fun createLoader(simulationFile: String, seed: Int?): Loader {
         var newSimulationFile = simulationFile
         if (seed != null) {
             newSimulationFile = appendSeedsToYmlFile(seed, simulationFile)
@@ -269,7 +259,6 @@ object AlchemistMultiVesta {
      * This exception is thrown in place of calling [System.exit] when the simulator is used in debug mode.
      * The [exitStatus] returns the exit status the execution would have had.
      */
-    data class AlchemistWouldHaveExitedException(
-        val exitStatus: Int,
-    ) : RuntimeException("Alchemist would have exited with $exitStatus")
+    data class AlchemistWouldHaveExitedException(val exitStatus: Int) :
+        RuntimeException("Alchemist would have exited with $exitStatus")
 }

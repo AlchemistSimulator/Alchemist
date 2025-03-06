@@ -22,10 +22,7 @@ import it.unibo.alchemist.model.routes.PolygonalChain
  * @param <P> position type
  */
 class StraightLine<T, P : Position<P>> : RoutingStrategy<T, P> {
-    override fun computeRoute(
-        currentPos: P,
-        finalPos: P,
-    ): Route<P> = PolygonalChain(currentPos, finalPos)
+    override fun computeRoute(currentPos: P, finalPos: P): Route<P> = PolygonalChain(currentPos, finalPos)
 
     override fun toString(): String = "StraightLine"
 

@@ -25,33 +25,33 @@ import org.apache.commons.math3.random.RandomGenerator
  * Higher [variance] spreads nodes farther away from the trace with higher probability.
  */
 class CloseToGPSTrace<T>
-    @JvmOverloads
-    constructor(
-        randomGenerator: RandomGenerator,
-        environment: Environment<T, GeoPosition>,
-        nodeCount: Int,
-        variance: Double,
-        private val from: Time = Time.ZERO,
-        private val interval: Time = DoubleTime(1.0),
-        val to: Time = Time.INFINITY,
-        gpsFilePath: String,
-        normalizerClass: String,
-        vararg normalizerArguments: Any,
-    ) : AbstractCloseTo<T, GeoPosition>(randomGenerator, environment, nodeCount, variance) {
-        private val traces =
-            TraceLoader(
-                gpsFilePath,
-                normalizerClass,
-                *normalizerArguments,
-            )
+@JvmOverloads
+constructor(
+    randomGenerator: RandomGenerator,
+    environment: Environment<T, GeoPosition>,
+    nodeCount: Int,
+    variance: Double,
+    private val from: Time = Time.ZERO,
+    private val interval: Time = DoubleTime(1.0),
+    val to: Time = Time.INFINITY,
+    gpsFilePath: String,
+    normalizerClass: String,
+    vararg normalizerArguments: Any,
+) : AbstractCloseTo<T, GeoPosition>(randomGenerator, environment, nodeCount, variance) {
+    private val traces =
+        TraceLoader(
+            gpsFilePath,
+            normalizerClass,
+            *normalizerArguments,
+        )
 
-        override val sources =
-            traces
-                .asSequence()
-                .flatMap { trace ->
-                    generateSequence(from) { it + interval }
-                        .takeWhile { it <= to }
-                        .map { trace.interpolate(it) }
-                        .map { doubleArrayOf(it.latitude, it.longitude) }
-                }
-    }
+    override val sources =
+        traces
+            .asSequence()
+            .flatMap { trace ->
+                generateSequence(from) { it + interval }
+                    .takeWhile { it <= to }
+                    .map { trace.interpolate(it) }
+                    .map { doubleArrayOf(it.latitude, it.longitude) }
+            }
+}

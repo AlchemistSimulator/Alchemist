@@ -31,11 +31,8 @@ import it.unibo.alchemist.model.RoutingServiceOptions
  * a [vehicleClass] defining which roads are accessible by the vehicle,
  * and the selction of an [algorithm].
  */
-class GraphHopperOptions private constructor(
-    val profile: Profile,
-    val vehicleClass: String,
-    val algorithm: String,
-) : RoutingServiceOptions<GraphHopperOptions> {
+class GraphHopperOptions private constructor(val profile: Profile, val vehicleClass: String, val algorithm: String) :
+    RoutingServiceOptions<GraphHopperOptions> {
     private constructor(customModel: GraphHopperCustomModel, algorithm: String) : this(
         customModel.profile,
         customModel.vehicleClass,
@@ -53,10 +50,7 @@ class GraphHopperOptions private constructor(
 
     private constructor(info: Pair<String, String>) : this(info.first, info.second)
 
-    private data class GraphHopperCustomModel(
-        val name: String,
-        val vehicleClass: String,
-    ) {
+    private data class GraphHopperCustomModel(val name: String, val vehicleClass: String) {
         val customModel: CustomModel by lazy { GHUtility.loadCustomModelFromJar("$name.json") }
         val profile: Profile by lazy {
             Profile(name).setWeighting("custom").setCustomModel(customModel)
@@ -119,9 +113,8 @@ class GraphHopperOptions private constructor(
         val defaultOptions: GraphHopperOptions
 
         init {
-            fun error(subject: String) =
-                "Unable to find any valid GraphHopper $subject. " +
-                    "This is most likely due to using an unsupported version of GraphHopper"
+            fun error(subject: String) = "Unable to find any valid GraphHopper $subject. " +
+                "This is most likely due to using an unsupported version of GraphHopper"
             require(graphHopperAlgorithms.isNotEmpty()) { error("algorithm") }
             require(graphHopperCustomModels.isNotEmpty()) { error("custom model") }
             defaultOptions = optionsFor()
@@ -131,21 +124,15 @@ class GraphHopperOptions private constructor(
          * Retrieves or creates the set of options for the required [vehicle] (default: foot),
          * [weighting] (default: fastest), and [algorithm] (default: dijstrabi).
          */
-        fun optionsFor(
-            vehicle: String = "foot",
-            weighting: String = "fastest",
-            algorithm: String = DIJKSTRA_BI,
-        ) = optionsFor(profile = "${vehicle}_$weighting", algorithm)
+        fun optionsFor(vehicle: String = "foot", weighting: String = "fastest", algorithm: String = DIJKSTRA_BI) =
+            optionsFor(profile = "${vehicle}_$weighting", algorithm)
 
         /**
          * Retrieves or creates the set of options for the required [profile] (default: foot_fastest)
          * and [algorithm] (default: dijstrabi).
          */
         @JvmOverloads
-        fun optionsFor(
-            profile: String = "foot",
-            algorithm: String = DIJKSTRA_BI,
-        ): GraphHopperOptions =
+        fun optionsFor(profile: String = "foot", algorithm: String = DIJKSTRA_BI): GraphHopperOptions =
             profiles.get(profile to algorithm) ?: throw IllegalArgumentException(
                 "The requested profile ($profile, $algorithm) could not be created.",
             )

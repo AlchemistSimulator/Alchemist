@@ -38,12 +38,11 @@ class TestCSVExporter<T, P : Position<P>> :
                     }
             globalExporter.exporters.size shouldBe 2
 
-            suspend fun CSVExporter<T, P>.dataFile(prefix: String): File =
-                File(exportPath)
-                    .listFiles()
-                    ?.find { it.name.startsWith(prefix) && it.extension == fileExtension }
-                    .run { shouldNotBeNull() }
-                    .apply { "with prefix $prefix should exist" { shouldExist() } }
+            suspend fun CSVExporter<T, P>.dataFile(prefix: String): File = File(exportPath)
+                .listFiles()
+                ?.find { it.name.startsWith(prefix) && it.extension == fileExtension }
+                .run { shouldNotBeNull() }
+                .apply { "with prefix $prefix should exist" { shouldExist() } }
             val outputFile = simulation.csvExporters().first().dataFile("00-testing_csv_export_")
             "should exist when CSV export is enabled" {
                 outputFile.shouldNotBeNull()
@@ -89,12 +88,11 @@ class TestCSVExporter<T, P : Position<P>> :
     }) {
     // common utility functions
     companion object {
-        fun <T, P : Position<P>> Simulation<T, P>.csvExporters(): List<CSVExporter<T, P>> =
-            outputMonitors
-                .filterIsInstance<GlobalExporter<T, P>>()
-                .also { check(it.size == 1) }
-                .first()
-                .exporters
-                .filterIsInstance<CSVExporter<T, P>>()
+        fun <T, P : Position<P>> Simulation<T, P>.csvExporters(): List<CSVExporter<T, P>> = outputMonitors
+            .filterIsInstance<GlobalExporter<T, P>>()
+            .also { check(it.size == 1) }
+            .first()
+            .exporters
+            .filterIsInstance<CSVExporter<T, P>>()
     }
 }

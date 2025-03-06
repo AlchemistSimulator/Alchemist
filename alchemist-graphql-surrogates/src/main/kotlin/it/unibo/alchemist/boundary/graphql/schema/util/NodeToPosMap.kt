@@ -27,10 +27,9 @@ data class NodeToPosMap(
      * @return the list of entries in this map.
      */
     @GraphQLDescription("The list of pairs NodeId-Position")
-    fun entries(): List<NodeToPosEntry> =
-        originMap.map { (id, position) ->
-            NodeToPosEntry(id, position)
-        }
+    fun entries(): List<NodeToPosEntry> = originMap.map { (id, position) ->
+        NodeToPosEntry(id, position)
+    }
 }
 
 /**
@@ -40,17 +39,13 @@ data class NodeToPosMap(
  * @param position the node's position
  */
 @GraphQLDescription("The pair NodeId-Position")
-data class NodeToPosEntry(
-    val id: Int,
-    val position: PositionSurrogate,
-)
+data class NodeToPosEntry(val id: Int, val position: PositionSurrogate)
 
 /**
  * Converts a [Map] of [it.unibo.alchemist.model.Node]s' ids and their position to a [NodeToPosMap].
  *
  * @return the [NodeToPosMap] representing the given [Map]
  */
-fun <P : Position<out P>> Map<Int, P>.toNodeToPosMap() =
-    NodeToPosMap(
-        this.mapValues { PositionSurrogateUtils.toPositionSurrogate(it.value) },
-    )
+fun <P : Position<out P>> Map<Int, P>.toNodeToPosMap() = NodeToPosMap(
+    this.mapValues { PositionSurrogateUtils.toPositionSurrogate(it.value) },
+)

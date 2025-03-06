@@ -20,10 +20,8 @@ import org.apache.commons.math3.random.RandomGenerator
  * A heterogeneous pedestrian's movement capability.
  * Note: to use this capability the node must already have a [HumanProperty].
  */
-open class HeterogeneousPedestrian<T, S, A>(
-    randomGenerator: RandomGenerator,
-    node: Node<T>,
-) : Pedestrian<T>(
+open class HeterogeneousPedestrian<T, S, A>(randomGenerator: RandomGenerator, node: Node<T>) :
+    Pedestrian<T>(
         randomGenerator,
         node,
     ) where S : Vector<S>, A : Transformation<S> {

@@ -46,9 +46,8 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
     /*
      * It's important that intersects(Shape) does not consider adjacent shapes as intersecting.
      */
-    override fun isAdjacentTo(other: ConvexPolygon): Boolean =
-        !intersects(other.asAwtShape()) &&
-            (other.vertices().any { liesOnBoundary(it) } || vertices().any { other.liesOnBoundary(it) })
+    override fun isAdjacentTo(other: ConvexPolygon): Boolean = !intersects(other.asAwtShape()) &&
+        (other.vertices().any { liesOnBoundary(it) } || vertices().any { other.liesOnBoundary(it) })
 
     override fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition> =
         requireNotNull(

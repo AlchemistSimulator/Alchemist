@@ -18,11 +18,7 @@ import it.unibo.alchemist.boundary.webui.common.model.surrogate.StatusSurrogate
  * @param action the action to perform.
  * @return the new [StatusSurrogate].
  */
-fun statusSurrogateReducer(
-    state: StatusSurrogate,
-    action: Any,
-): StatusSurrogate =
-    when (action) {
-        is SetStatusSurrogate -> action.statusSurrogate
-        else -> state
-    }
+fun statusSurrogateReducer(state: StatusSurrogate, action: Any): StatusSurrogate = when (action) {
+    is SetStatusSurrogate -> action.statusSurrogate
+    else -> state
+}

@@ -24,21 +24,15 @@ import java.util.Objects
  * the reaction
  * @param protelisProgram the [RunProtelisProgram] whose data will be sent
  */
-class SendToNeighbor(
-    node: Node<Any>,
-    reaction: Reaction<Any>,
-    val protelisProgram: RunProtelisProgram<*>,
-) : AbstractAction<Any>(node) {
+class SendToNeighbor(node: Node<Any>, reaction: Reaction<Any>, val protelisProgram: RunProtelisProgram<*>) :
+    AbstractAction<Any>(node) {
     private val reaction: Reaction<Any> = Objects.requireNonNull<Reaction<Any>>(reaction)
 
     init {
         declareDependencyTo(protelisProgram.asMolecule())
     }
 
-    override fun cloneAction(
-        newNode: Node<Any>,
-        newReaction: Reaction<Any>,
-    ): SendToNeighbor {
+    override fun cloneAction(newNode: Node<Any>, newReaction: Reaction<Any>): SendToNeighbor {
         val device: ProtelisDevice<*> = newNode.asProperty()
         val possibleRefs: List<RunProtelisProgram<*>> = device.allProtelisPrograms()
         check(possibleRefs.size == 1) {

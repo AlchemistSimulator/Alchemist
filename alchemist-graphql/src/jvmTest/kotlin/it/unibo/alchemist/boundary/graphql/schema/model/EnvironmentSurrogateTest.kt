@@ -49,10 +49,7 @@ class EnvironmentSurrogateTest<T, P> :
         }
     }) where T : Any, P : Position<P>, P : Vector<P> {
     companion object {
-        private fun <T> checkNeighborhood(
-            n: Neighborhood<T>,
-            ns: NeighborhoodSurrogate<T>,
-        ) {
+        private fun <T> checkNeighborhood(n: Neighborhood<T>, ns: NeighborhoodSurrogate<T>) {
             n.size() shouldBe ns.size
             n.isEmpty shouldBe ns.isEmpty()
             n.center.toGraphQLNodeSurrogate() shouldBe ns.getCenter()

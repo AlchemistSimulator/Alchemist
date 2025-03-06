@@ -46,31 +46,23 @@ private data class EnvironmentContext<T>(
     val incarnation: Incarnation<T, Euclidean2DPosition>,
     val environment: Environment<T, Euclidean2DPosition>,
 ) {
-    fun Node<T>.reaction(configuration: String): Reaction<T> =
-        incarnation
-            .createReaction(
-                randomGenerator,
-                environment,
-                this,
-                ExponentialTime(1.0, randomGenerator),
-                configuration,
-            ).also { addReaction(it) }
+    fun Node<T>.reaction(configuration: String): Reaction<T> = incarnation
+        .createReaction(
+            randomGenerator,
+            environment,
+            this,
+            ExponentialTime(1.0, randomGenerator),
+            configuration,
+        ).also { addReaction(it) }
 
-    fun node(
-        x: Number,
-        y: Number,
-        configuration: Node<T>.() -> Unit,
-    ): Node<T> =
+    fun node(x: Number, y: Number, configuration: Node<T>.() -> Unit): Node<T> =
         incarnation.createNode(randomGenerator, environment, null).apply {
             configuration()
             environment.addNode(this, environment.makePosition(x, y))
         }
 }
 
-private fun withRandom(
-    randomGenerator: RandomGenerator,
-    block: RandomContext.() -> Unit,
-) {
+private fun withRandom(randomGenerator: RandomGenerator, block: RandomContext.() -> Unit) {
     RandomContext(randomGenerator).block()
 }
 
@@ -89,13 +81,12 @@ class TestDependencyGraph :
                     val reactions: MutableMap<Int, Map<String, Reaction<Double>>> = mutableMapOf()
                     val environment =
                         environment {
-                            fun Node<Double>.configureNode(): Map<String, Reaction<Double>> =
-                                listOf(
-                                    "[a]-->[b]",
-                                    "[a]-->[c]",
-                                    "[b]-->[c]",
-                                    "[c]-->[b]",
-                                ).associateWith { reaction(it) }
+                            fun Node<Double>.configureNode(): Map<String, Reaction<Double>> = listOf(
+                                "[a]-->[b]",
+                                "[a]-->[c]",
+                                "[b]-->[c]",
+                                "[c]-->[b]",
+                            ).associateWith { reaction(it) }
                             node(0, 0) { reactions += id to configureNode() }
                             node(0.5, 0) { reactions += id to configureNode() }
                         }

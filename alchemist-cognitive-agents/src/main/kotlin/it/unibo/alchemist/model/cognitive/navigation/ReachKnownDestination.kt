@@ -83,34 +83,33 @@ open class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
      * from the pedestrian's position than the destination itself it's just more convenient to pursue the latter.
      * If the cognitive map is empty the path will be empty as well.
      */
-    private fun findKnownPathTo(destination: Euclidean2DPosition): List<L> =
-        with(orientingCapability.cognitiveMap) {
-            emptyList<L>().takeIf { vertexSet().isEmpty() } ?: let {
-                val currPos = environment.getPosition(node)
-                val currRoom = environment.graph.nodeContaining(currPos)
-                val destRoom = environment.graph.nodeContaining(destination)
-                if (currRoom == null || destRoom == null) {
-                    return emptyList()
-                }
-                val sequence =
-                    buildSequence(currRoom, destRoom) +
-                        vertexSet().asSequence().let { landmarks ->
-                            landmarks.cartesianProduct(landmarks).sortedBy { (start, end) ->
-                                start.centroid.distanceTo(currPos) + end.centroid.distanceTo(destination)
-                            }
+    private fun findKnownPathTo(destination: Euclidean2DPosition): List<L> = with(orientingCapability.cognitiveMap) {
+        emptyList<L>().takeIf { vertexSet().isEmpty() } ?: let {
+            val currPos = environment.getPosition(node)
+            val currRoom = environment.graph.nodeContaining(currPos)
+            val destRoom = environment.graph.nodeContaining(destination)
+            if (currRoom == null || destRoom == null) {
+                return emptyList()
+            }
+            val sequence =
+                buildSequence(currRoom, destRoom) +
+                    vertexSet().asSequence().let { landmarks ->
+                        landmarks.cartesianProduct(landmarks).sortedBy { (start, end) ->
+                            start.centroid.distanceTo(currPos) + end.centroid.distanceTo(destination)
                         }
-                sequence
-                    .mapNotNull { (start, end) ->
+                    }
+            sequence
+                .mapNotNull { (start, end) ->
                     /*
                      * At present the cognitive map is a MST, so there's a single path between each pair of nodes,
                      * in the future things may change and a policy deciding which path to pick may (need to) be
                      * introduced.
                      */
-                        BFSShortestPath(this).getPath(start, end)?.vertexList
-                    }.firstOrNull()
-                    .orEmpty()
-            }
+                    BFSShortestPath(this).getPath(start, end)?.vertexList
+                }.firstOrNull()
+                .orEmpty()
         }
+    }
 
     /**
      * @returns a sequence of pairs of landmarks, for each pair the first element is contained in [startRoom] or
@@ -121,10 +120,7 @@ open class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
      * - pairs where the first landmark is adjacent to [startRoom] and the second landmark is inside [endRoom],
      * - pairs where the first landmark is adjacent to [startRoom] and the second landmark is adjacent to [endRoom].
      */
-    private fun buildSequence(
-        startRoom: ConvexPolygon,
-        endRoom: ConvexPolygon,
-    ): Sequence<Pair<L, L>> {
+    private fun buildSequence(startRoom: ConvexPolygon, endRoom: ConvexPolygon): Sequence<Pair<L, L>> {
         val landmarksIn: (room: ConvexPolygon) -> Sequence<L> = { room ->
             orientingCapability.cognitiveMap
                 .vertexSet()
@@ -147,11 +143,7 @@ open class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
     /**
      * A [waypoint] is considered reached when inside [currentRoom] or in an adjacent room.
      */
-    override fun isReached(
-        waypoint: Euclidean2DPosition,
-        currentRoom: ConvexPolygon,
-    ): Boolean =
-        with(action) {
-            super.isReached(waypoint, currentRoom) || doorsInSight().map { it.head }.any { it.contains(waypoint) }
-        }
+    override fun isReached(waypoint: Euclidean2DPosition, currentRoom: ConvexPolygon): Boolean = with(action) {
+        super.isReached(waypoint, currentRoom) || doorsInSight().map { it.head }.any { it.contains(waypoint) }
+    }
 }

@@ -23,11 +23,7 @@ class SimpleMonitor<T, P> : OutputMonitor<T, P> where P : Position<P> {
         initialized = true
     }
 
-    override fun finished(
-        environment: Environment<T, P>,
-        time: Time,
-        step: Long,
-    ) {
+    override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
         super.finished(environment, time, step)
         finished = true
     }

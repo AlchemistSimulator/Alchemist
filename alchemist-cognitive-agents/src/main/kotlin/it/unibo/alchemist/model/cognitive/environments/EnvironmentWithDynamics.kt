@@ -44,31 +44,31 @@ private typealias PhysicsEnvWithObstacles<T> =
  * the [Continuous2DEnvironment] will be used.
  */
 class EnvironmentWithDynamics<T>
-    @JvmOverloads
-    constructor(
-        incarnation: Incarnation<T, Euclidean2DPosition>,
-        path: String? = null,
-        zoom: Double = 1.0,
-        dx: Double = 0.0,
-        dy: Double = 0.0,
-        obstaclesColor: Int = Color.BLACK.rgb,
-        roomsColor: Int = Color.BLUE.rgb,
-        private val backingEnvironment: Physics2DEnvironment<T> =
-            path?.let {
-                ImageEnvironmentWithGraph(incarnation, it, zoom, dx, dy, obstaclesColor, roomsColor)
-            } ?: ContinuousPhysics2DEnvironment(incarnation),
-    ) : Dynamics2DEnvironment<T>,
-        PhysicsEnvWithObstacles<T> by backingEnvironment.asEnvironmentWithObstacles() {
-        private val world: World<PhysicsBody> = World()
+@JvmOverloads
+constructor(
+    incarnation: Incarnation<T, Euclidean2DPosition>,
+    path: String? = null,
+    zoom: Double = 1.0,
+    dx: Double = 0.0,
+    dy: Double = 0.0,
+    obstaclesColor: Int = Color.BLACK.rgb,
+    roomsColor: Int = Color.BLUE.rgb,
+    private val backingEnvironment: Physics2DEnvironment<T> =
+        path?.let {
+            ImageEnvironmentWithGraph(incarnation, it, zoom, dx, dy, obstaclesColor, roomsColor)
+        } ?: ContinuousPhysics2DEnvironment(incarnation),
+) : Dynamics2DEnvironment<T>,
+    PhysicsEnvWithObstacles<T> by backingEnvironment.asEnvironmentWithObstacles() {
+    private val world: World<PhysicsBody> = World()
 
-        private val nodeToBody: MutableMap<Node<T>, PhysicsBody> = mutableMapOf()
+    private val nodeToBody: MutableMap<Node<T>, PhysicsBody> = mutableMapOf()
 
-        private var physicsUpdate = PhysicsUpdate(this, 1.0)
+    private var physicsUpdate = PhysicsUpdate(this, 1.0)
 
-        private var physicsUpdateHasBeenOverriden: Boolean
+    private var physicsUpdateHasBeenOverriden: Boolean
 
-        init {
-            world.gravity = World.ZERO_GRAVITY
+    init {
+        world.gravity = World.ZERO_GRAVITY
         /*
          * This flag is defaulted to true. The engine automatically detects
          * whether a node body stops (its linear velocity is below a certain threshold)
@@ -79,186 +79,164 @@ class EnvironmentWithDynamics<T>
          *
          * For further references: https://dyn4j.org/pages/advanced.html
          */
-            world.settings.isAtRestDetectionEnabled = false
-            addGlobalReaction(physicsUpdate)
-            physicsUpdateHasBeenOverriden = false
-            obstacles.forEach { obstacle ->
-                addObstacleToWorld(obstacle)
+        world.settings.isAtRestDetectionEnabled = false
+        addGlobalReaction(physicsUpdate)
+        physicsUpdateHasBeenOverriden = false
+        obstacles.forEach { obstacle ->
+            addObstacleToWorld(obstacle)
+        }
+    }
+
+    override fun addGlobalReaction(reaction: GlobalReaction<T>) {
+        if (reaction is PhysicsUpdate) {
+            require(!physicsUpdateHasBeenOverriden) {
+                "${PhysicsUpdate::class.simpleName} reaction had been already overriden"
             }
+            removeGlobalReaction(physicsUpdate)
+            physicsUpdateHasBeenOverriden = true
+            physicsUpdate = reaction
         }
+        backingEnvironment.addGlobalReaction(reaction)
+    }
 
-        override fun addGlobalReaction(reaction: GlobalReaction<T>) {
-            if (reaction is PhysicsUpdate) {
-                require(!physicsUpdateHasBeenOverriden) {
-                    "${PhysicsUpdate::class.simpleName} reaction had been already overriden"
-                }
-                removeGlobalReaction(physicsUpdate)
-                physicsUpdateHasBeenOverriden = true
-                physicsUpdate = reaction
+    private fun addObstacleToWorld(obstacle: RectObstacle2D<Euclidean2DPosition>) {
+        val obstacleBody = Body()
+        obstacleBody.addFixture(Rectangle(obstacle.width, obstacle.height))
+        obstacleBody.setMass(MassType.INFINITE)
+        obstacleBody.transform =
+            Transform().apply {
+                translate(obstacle.center)
             }
-            backingEnvironment.addGlobalReaction(reaction)
+        world.addBody(obstacleBody)
+    }
+
+    private val RectObstacle2D<Euclidean2DPosition>.center get() =
+        Vector2(minX + (maxX - minX) / 2, minY + (maxY - minY) / 2)
+
+    override fun addNode(node: Node<T>, position: Euclidean2DPosition): Boolean {
+        if (backingEnvironment.addNode(node, position)) {
+            addNodeBody(node)
+            moveNodeBodyToPosition(node, position)
+            return true
         }
+        return false
+    }
 
-        private fun addObstacleToWorld(obstacle: RectObstacle2D<Euclidean2DPosition>) {
-            val obstacleBody = Body()
-            obstacleBody.addFixture(Rectangle(obstacle.width, obstacle.height))
-            obstacleBody.setMass(MassType.INFINITE)
-            obstacleBody.transform =
-                Transform().apply {
-                    translate(obstacle.center)
-                }
-            world.addBody(obstacleBody)
-        }
-
-        private val RectObstacle2D<Euclidean2DPosition>.center get() =
-            Vector2(minX + (maxX - minX) / 2, minY + (maxY - minY) / 2)
-
-        override fun addNode(
-            node: Node<T>,
-            position: Euclidean2DPosition,
-        ): Boolean {
-            if (backingEnvironment.addNode(node, position)) {
-                addNodeBody(node)
-                moveNodeBodyToPosition(node, position)
-                return true
-            }
-            return false
-        }
-
-        private fun addNodeBody(node: Node<T>) {
-            val nodeBody = Body()
-            addPhysicalProperties(nodeBody, node.asProperty<T, AreaProperty<T>>().shape.radius)
-            nodeToBody[node] = nodeBody
-            world.addBody(nodeBody)
-            node
-                .asProperty<T, PhysicalPedestrian2D<T>>()
-                .onFall {
+    private fun addNodeBody(node: Node<T>) {
+        val nodeBody = Body()
+        addPhysicalProperties(nodeBody, node.asProperty<T, AreaProperty<T>>().shape.radius)
+        nodeToBody[node] = nodeBody
+        world.addBody(nodeBody)
+        node
+            .asProperty<T, PhysicalPedestrian2D<T>>()
+            .onFall {
                 /*
                  * This disables collision response with the falling agent, as
                  * overlapping is allowed in this case.
                  * Agents approaching a falling agent will be subject to a
                  * proper avoidance force. see the PhysicalPedestrian interface.
                  */
-                    nodeToBody[it]?.isEnabled = false
-                }
-        }
+                nodeToBody[it]?.isEnabled = false
+            }
+    }
 
-        private fun moveNodeBodyToPosition(
-            node: Node<T>,
-            position: Euclidean2DPosition,
-        ) {
-            nodeToBody[node]?.transform =
-                Transform().apply {
-                    translate(position.x, position.y)
-                }
-        }
+    private fun moveNodeBodyToPosition(node: Node<T>, position: Euclidean2DPosition) {
+        nodeToBody[node]?.transform =
+            Transform().apply {
+                translate(position.x, position.y)
+            }
+    }
 
-        override fun moveNode(
-            node: Node<T>,
-            direction: Euclidean2DPosition,
-        ) {
-            backingEnvironment.moveNode(node, direction)
-            moveNodeBodyToPosition(node, backingEnvironment.getPosition(node))
-        }
+    override fun moveNode(node: Node<T>, direction: Euclidean2DPosition) {
+        backingEnvironment.moveNode(node, direction)
+        moveNodeBodyToPosition(node, backingEnvironment.getPosition(node))
+    }
 
-        private fun addPhysicalProperties(
-            body: PhysicsBody,
-            radius: Double,
-        ) {
-            body.addFixture(Circle(radius))
-            body.setMass(MassType.NORMAL)
-        }
+    private fun addPhysicalProperties(body: PhysicsBody, radius: Double) {
+        body.addFixture(Circle(radius))
+        body.setMass(MassType.NORMAL)
+    }
 
-        override fun setVelocity(
-            node: Node<T>,
-            velocity: Euclidean2DPosition,
-        ) = nodeToBody[node]?.let { it.linearVelocity = Vector2(velocity.x, velocity.y) }
+    override fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition) =
+        nodeToBody[node]?.let { it.linearVelocity = Vector2(velocity.x, velocity.y) }
             ?: error("Unable to update $node physical state. Check if it was added to this environment.")
 
-        override fun getVelocity(node: Node<T>) =
-            nodeToBody[node]?.let {
-                Euclidean2DPosition(it.linearVelocity.x, it.linearVelocity.y)
-            } ?: this.origin
+    override fun getVelocity(node: Node<T>) = nodeToBody[node]?.let {
+        Euclidean2DPosition(it.linearVelocity.x, it.linearVelocity.y)
+    } ?: this.origin
 
-        override fun updatePhysics(elapsedTime: Double) {
-            world.update(elapsedTime, Int.MAX_VALUE)
+    override fun updatePhysics(elapsedTime: Double) {
+        world.update(elapsedTime, Int.MAX_VALUE)
         /*
          * Make world and environment position consistent
          */
-            nodeToBody.forEach { (node, body) ->
-                moveNodeToPosition(node, body.position)
-            }
-        }
-
-        override fun getPosition(node: Node<T>): Euclidean2DPosition =
-            nodeToBody[node]?.position
-                ?: throw IllegalArgumentException("Unable to find $node's position in the environment.")
-
-        private val PhysicsBody.position get() =
-            Euclidean2DPosition(this.transform.translationX, this.transform.translationY)
-
-        override val origin: Euclidean2DPosition get() = backingEnvironment.origin
-
-        override fun makePosition(vararg coordinates: Number): Euclidean2DPosition =
-            backingEnvironment.makePosition(*coordinates)
-
-        override fun makePosition(coordinates: DoubleArray): Euclidean2DPosition =
-            backingEnvironment.makePosition(coordinates)
-
-        override fun makePosition(coordinates: List<Number>): Euclidean2DPosition =
-            backingEnvironment.makePosition(coordinates)
-
-        private companion object {
-            private fun <T> Physics2DEnvironment<T>.asEnvironmentWithObstacles(): PhysicsEnvWithObstacles<T> =
-                if (this is EuclideanPhysics2DEnvironmentWithObstacles<*, T>) {
-                    @Suppress("UNCHECKED_CAST")
-                    this as EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T>
-                } else {
-                    object : Physics2DEnvironment<T> by this, PhysicsEnvWithObstacles<T> {
-                        override fun getObstaclesInRange(
-                            center: Euclidean2DPosition,
-                            range: Double,
-                        ): List<RectObstacle2D<Euclidean2DPosition>> = emptyList()
-
-                        override fun getObstaclesInRange(
-                            centerx: Double,
-                            centery: Double,
-                            range: Double,
-                        ): List<RectObstacle2D<Euclidean2DPosition>> = emptyList()
-
-                        override fun hasMobileObstacles() = false
-
-                        override val obstacles: List<RectObstacle2D<Euclidean2DPosition>>
-                            get() = emptyList()
-
-                        override fun intersectsObstacle(
-                            start: Euclidean2DPosition,
-                            end: Euclidean2DPosition,
-                        ) = false
-
-                        override fun next(
-                            current: Euclidean2DPosition,
-                            desired: Euclidean2DPosition,
-                        ) = desired
-
-                        override fun removeObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) =
-                            error("This Environment instance does not support obstacle removal")
-
-                        override fun addObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) =
-                            error("This Environment instance does not support adding obstacles")
-
-                        override val origin
-                            get() = this@asEnvironmentWithObstacles.origin
-
-                        override fun makePosition(vararg coordinates: Number): Euclidean2DPosition =
-                            super<Physics2DEnvironment>.makePosition(*coordinates)
-
-                        override fun makePosition(coordinates: DoubleArray): Euclidean2DPosition =
-                            super<Physics2DEnvironment>.makePosition(coordinates)
-
-                        override fun makePosition(coordinates: List<Number>): Euclidean2DPosition =
-                            super<Physics2DEnvironment>.makePosition(coordinates)
-                    }
-                }
+        nodeToBody.forEach { (node, body) ->
+            moveNodeToPosition(node, body.position)
         }
     }
+
+    override fun getPosition(node: Node<T>): Euclidean2DPosition = nodeToBody[node]?.position
+        ?: throw IllegalArgumentException("Unable to find $node's position in the environment.")
+
+    private val PhysicsBody.position get() =
+        Euclidean2DPosition(this.transform.translationX, this.transform.translationY)
+
+    override val origin: Euclidean2DPosition get() = backingEnvironment.origin
+
+    override fun makePosition(vararg coordinates: Number): Euclidean2DPosition =
+        backingEnvironment.makePosition(*coordinates)
+
+    override fun makePosition(coordinates: DoubleArray): Euclidean2DPosition =
+        backingEnvironment.makePosition(coordinates)
+
+    override fun makePosition(coordinates: List<Number>): Euclidean2DPosition =
+        backingEnvironment.makePosition(coordinates)
+
+    private companion object {
+        private fun <T> Physics2DEnvironment<T>.asEnvironmentWithObstacles(): PhysicsEnvWithObstacles<T> =
+            if (this is EuclideanPhysics2DEnvironmentWithObstacles<*, T>) {
+                @Suppress("UNCHECKED_CAST")
+                this as EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T>
+            } else {
+                object : Physics2DEnvironment<T> by this, PhysicsEnvWithObstacles<T> {
+                    override fun getObstaclesInRange(
+                        center: Euclidean2DPosition,
+                        range: Double,
+                    ): List<RectObstacle2D<Euclidean2DPosition>> = emptyList()
+
+                    override fun getObstaclesInRange(
+                        centerx: Double,
+                        centery: Double,
+                        range: Double,
+                    ): List<RectObstacle2D<Euclidean2DPosition>> = emptyList()
+
+                    override fun hasMobileObstacles() = false
+
+                    override val obstacles: List<RectObstacle2D<Euclidean2DPosition>>
+                        get() = emptyList()
+
+                    override fun intersectsObstacle(start: Euclidean2DPosition, end: Euclidean2DPosition) = false
+
+                    override fun next(current: Euclidean2DPosition, desired: Euclidean2DPosition) = desired
+
+                    override fun removeObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) =
+                        error("This Environment instance does not support obstacle removal")
+
+                    override fun addObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) =
+                        error("This Environment instance does not support adding obstacles")
+
+                    override val origin
+                        get() = this@asEnvironmentWithObstacles.origin
+
+                    override fun makePosition(vararg coordinates: Number): Euclidean2DPosition =
+                        super<Physics2DEnvironment>.makePosition(*coordinates)
+
+                    override fun makePosition(coordinates: DoubleArray): Euclidean2DPosition =
+                        super<Physics2DEnvironment>.makePosition(coordinates)
+
+                    override fun makePosition(coordinates: List<Number>): Euclidean2DPosition =
+                        super<Physics2DEnvironment>.makePosition(coordinates)
+                }
+            }
+    }
+}

@@ -34,10 +34,7 @@ class NodeSurrogateTest<T, P> :
         }
     }) where T : Any, P : Position<P>, P : Vector<P> {
     companion object {
-        fun <T : Any, P> checkNodeSurrogate(
-            node: Node<T>,
-            nodeSurrogate: NodeSurrogate<T>,
-        ) {
+        fun <T : Any, P> checkNodeSurrogate(node: Node<T>, nodeSurrogate: NodeSurrogate<T>) {
             node.id shouldBe nodeSurrogate.id
             node.moleculeCount shouldBe nodeSurrogate.moleculeCount
 
@@ -59,10 +56,7 @@ class NodeSurrogateTest<T, P> :
             }
         }
 
-        fun <T> checkReactionSurrogate(
-            reaction: Reaction<T>,
-            reactionSurrogate: ReactionSurrogate<T>,
-        ) {
+        fun <T> checkReactionSurrogate(reaction: Reaction<T>, reactionSurrogate: ReactionSurrogate<T>) {
             reaction.inputContext shouldBe reactionSurrogate.inputContext
             reaction.outputContext shouldBe reactionSurrogate.outputContext
             reaction.node.toGraphQLNodeSurrogate() shouldBe reactionSurrogate.node

@@ -21,30 +21,27 @@ import java.util.Locale
  * If `null` is provided, returns the default conversion to string.
  */
 abstract class AbstractDoubleExporter
-    @JvmOverloads
-    constructor(
-        val precision: Int? = null,
-    ) : Extractor<Double> {
-        init {
-            require(precision == null || precision > 0) {
-                "Significant digits must be positive"
-            }
+@JvmOverloads
+constructor(val precision: Int? = null) : Extractor<Double> {
+    init {
+        require(precision == null || precision > 0) {
+            "Significant digits must be positive"
         }
-
-        private val formatString = "%.${precision}g"
-
-        /**
-         * Uses this formatter to format some Double-encoded [data].
-         */
-        protected fun format(data: Double): String =
-            precision?.run {
-                String.format(Locale.ENGLISH, formatString, data)
-            } ?: data.toString()
-
-        final override fun <T> extractDataAsText(
-            environment: Environment<T, *>,
-            reaction: Actionable<T>?,
-            time: Time,
-            step: Long,
-        ): Map<String, String> = extractData(environment, reaction, time, step).mapValues { format(it.value) }
     }
+
+    private val formatString = "%.${precision}g"
+
+    /**
+     * Uses this formatter to format some Double-encoded [data].
+     */
+    protected fun format(data: Double): String = precision?.run {
+        String.format(Locale.ENGLISH, formatString, data)
+    } ?: data.toString()
+
+    final override fun <T> extractDataAsText(
+        environment: Environment<T, *>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ): Map<String, String> = extractData(environment, reaction, time, step).mapValues { format(it.value) }
+}

@@ -61,14 +61,7 @@ class PhysicsUpdate<T>(
         timeDistribution.update(timeDistribution.nextOccurence, true, 1.0, environment)
     }
 
-    override fun update(
-        currentTime: Time,
-        hasBeenExecuted: Boolean,
-        environment: Environment<T, *>,
-    ) = Unit
+    override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
 
-    override fun initializationComplete(
-        atTime: Time,
-        environment: Environment<T, *>,
-    ) = Unit
+    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
 }

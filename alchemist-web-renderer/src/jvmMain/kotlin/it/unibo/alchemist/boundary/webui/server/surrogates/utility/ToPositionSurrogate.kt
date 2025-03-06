@@ -22,11 +22,10 @@ object ToPositionSurrogate {
     /**
      * @return the most suitable function to maps the [it.unibo.alchemist.model.Position].
      */
-    fun toSuitablePositionSurrogate(dimensions: Int): (Position<*>) -> PositionSurrogate =
-        when (dimensions) {
-            2 -> toPosition2DSurrogate
-            else -> toGeneralPositionSurrogate
-        }
+    fun toSuitablePositionSurrogate(dimensions: Int): (Position<*>) -> PositionSurrogate = when (dimensions) {
+        2 -> toPosition2DSurrogate
+        else -> toGeneralPositionSurrogate
+    }
 
     /**
      * @return A function that maps a [it.unibo.alchemist.model.Position] to a

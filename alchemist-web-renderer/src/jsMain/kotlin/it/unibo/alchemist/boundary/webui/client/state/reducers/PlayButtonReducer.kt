@@ -18,11 +18,7 @@ import it.unibo.alchemist.boundary.webui.common.utility.Action
  * @param action the action to perform.
  * @return the new simulation play button state.
  */
-fun playButtonReducer(
-    simulationAction: Action,
-    action: Any,
-): Action =
-    when (action) {
-        is SetPlayButton -> action.action
-        else -> simulationAction
-    }
+fun playButtonReducer(simulationAction: Action, action: Any): Action = when (action) {
+    is SetPlayButton -> action.action
+    else -> simulationAction
+}

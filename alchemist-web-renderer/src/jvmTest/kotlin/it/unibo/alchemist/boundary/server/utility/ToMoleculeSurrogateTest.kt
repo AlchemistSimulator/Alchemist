@@ -25,9 +25,6 @@ class ToMoleculeSurrogateTest :
         }
     })
 
-fun checkToMoleculeSurrogate(
-    molecule: Molecule,
-    moleculeSurrogate: MoleculeSurrogate,
-) {
+fun checkToMoleculeSurrogate(molecule: Molecule, moleculeSurrogate: MoleculeSurrogate) {
     molecule.name shouldBe moleculeSurrogate.name
 }

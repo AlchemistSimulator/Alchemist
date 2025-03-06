@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -44,32 +44,28 @@ class AlchemistSimulationAdapterWithExtractor(
         )
     }
 
-    override fun getObsValue(obs: String): Double =
-        extractData()[obs]
-            ?: throw IllegalArgumentException("Observation $obs not found in the extractor")
+    override fun getObsValue(obs: String): Double = extractData()[obs]
+        ?: throw IllegalArgumentException("Observation $obs not found in the extractor")
 
-    override fun getObsValue(obsId: Int): Double =
-        when {
-            obsId < 0 -> throw IllegalArgumentException("Observation id $obsId is negative")
-            obsId == 0 -> simulation.time.numeric()
-            else -> extractData().entries.elementAt(obsId).value
-        }
+    override fun getObsValue(obsId: Int): Double = when {
+        obsId < 0 -> throw IllegalArgumentException("Observation id $obsId is negative")
+        obsId == 0 -> simulation.time.numeric()
+        else -> extractData().entries.elementAt(obsId).value
+    }
 
-    private fun extractData(): Map<String, Double> =
-        extractor
-            .extractData(simulation.environment, lastReaction, simulation.time, simulation.step)
-            .mapValues { it.value.toString().toDouble() }
+    private fun extractData(): Map<String, Double> = extractor
+        .extractData(simulation.environment, lastReaction, simulation.time, simulation.step)
+        .mapValues { it.value.toString().toDouble() }
 
-    private inline fun <reified T : Number> Any.numeric(): T =
-        when {
-            this is T -> this
-            this is Number ->
-                when (T::class) {
-                    Int::class -> toInt()
-                    Double::class -> toDouble()
-                    Long::class -> toLong()
-                    else -> TODO()
-                } as T
+    private inline fun <reified T : Number> Any.numeric(): T = when (this) {
+        is T -> this
+        is Number -> when (T::class) {
+            Int::class -> toInt()
+            Double::class -> toDouble()
+            Long::class -> toLong()
             else -> TODO()
-        }
+        } as T
+
+        else -> TODO()
+    }
 }

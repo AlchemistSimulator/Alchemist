@@ -41,10 +41,7 @@ open class GoalOrientedExploration<T, L : Euclidean2DConvexShape, R>(
      * related doors are weighted using [weightExit] and the one with minimum weight is crossed. [orElse] is
      * executed otherwise.
      */
-    protected open fun reachUnknownDestination(
-        newRoom: ConvexPolygon,
-        orElse: () -> Unit,
-    ) = with(action) {
+    protected open fun reachUnknownDestination(newRoom: ConvexPolygon, orElse: () -> Unit) = with(action) {
         unknownDestinations
             .filter { newRoom.contains(it) }
             .minByOrNull { it.distanceTo(pedestrianPosition) }
@@ -56,17 +53,15 @@ open class GoalOrientedExploration<T, L : Euclidean2DConvexShape, R>(
             ?: orElse()
     }
 
-    protected open fun Euclidean2DPassage.leadsToUnknownDestination(): Boolean =
-        unknownDestinations.any {
-            head.contains(it)
-        }
+    protected open fun Euclidean2DPassage.leadsToUnknownDestination(): Boolean = unknownDestinations.any {
+        head.contains(it)
+    }
 
     /**
      * Assigns a weight to a door (= passage) leading to an unknown destination (e.g. an exit).
      * By default, the exit's distance and its congestion are considered.
      */
-    protected open fun weightExit(door: Euclidean2DPassage): Double =
-        with(door) {
-            distanceToPedestrian() * congestionFactor(head)
-        }
+    protected open fun weightExit(door: Euclidean2DPassage): Double = with(door) {
+        distanceToPedestrian() * congestionFactor(head)
+    }
 }

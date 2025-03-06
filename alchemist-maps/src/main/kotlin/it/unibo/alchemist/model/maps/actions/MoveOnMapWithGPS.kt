@@ -62,24 +62,18 @@ open class MoveOnMapWithGPS<T, O : RoutingServiceOptions<O>, S : RoutingService<
             .forEach { it.setTrace(trace) }
     }
 
-    private class TraceRef(
-        val path: String,
-        val cycle: Boolean,
-        val normalizer: String,
-        vararg val args: Any?,
-    ) {
+    private class TraceRef(val path: String, val cycle: Boolean, val normalizer: String, vararg val args: Any?) {
         private val hash by lazy { Objects.hash(path, normalizer, cycle, args.contentHashCode()) }
 
         override fun hashCode(): Int = hash
 
-        override fun equals(other: Any?) =
-            this === other ||
-                (
-                    other is TraceRef &&
-                        path == other.path &&
-                        normalizer == other.normalizer &&
-                        cycle == other.cycle &&
-                        args.contentDeepEquals(other.args)
+        override fun equals(other: Any?) = this === other ||
+            (
+                other is TraceRef &&
+                    path == other.path &&
+                    normalizer == other.normalizer &&
+                    cycle == other.cycle &&
+                    args.contentDeepEquals(other.args)
                 )
 
         override fun toString(): String =

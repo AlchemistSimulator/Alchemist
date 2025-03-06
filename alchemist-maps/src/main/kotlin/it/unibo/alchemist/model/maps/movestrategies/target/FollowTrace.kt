@@ -21,9 +21,8 @@ import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
  *
  *
  */
-class FollowTrace<T>(
-    private val reaction: Reaction<*>,
-) : AbstractStrategyWithGPS(),
+class FollowTrace<T>(private val reaction: Reaction<*>) :
+    AbstractStrategyWithGPS(),
     TargetSelectionStrategy<T, GeoPosition> {
     override fun getTarget(): GPSPoint? {
         val time = reaction.tau
@@ -31,10 +30,7 @@ class FollowTrace<T>(
         return trace.getNextPosition(time)
     }
 
-    override fun cloneIfNeeded(
-        destination: Node<T>,
-        reaction: Reaction<T>,
-    ): FollowTrace<T> = FollowTrace(reaction)
+    override fun cloneIfNeeded(destination: Node<T>, reaction: Reaction<T>): FollowTrace<T> = FollowTrace(reaction)
 
     private companion object {
         private const val serialVersionUID = 2L

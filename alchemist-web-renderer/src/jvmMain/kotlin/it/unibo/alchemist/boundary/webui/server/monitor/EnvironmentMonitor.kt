@@ -42,12 +42,7 @@ class EnvironmentMonitor<T, P, TS, PS>(
      * @param time the current time.
      * @param step the current step.
      */
-    override fun stepDone(
-        environment: Environment<T, P>,
-        reaction: Actionable<T>?,
-        time: Time,
-        step: Long,
-    ) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
         val newEnvironmentSurrogate: EnvironmentSurrogate<Any, PositionSurrogate> =
             environment.toEnvironmentSurrogate(toConcentrationSurrogate, toPositionSurrogate)
         store.dispatch(SetEnvironmentSurrogate(newEnvironmentSurrogate))
@@ -67,11 +62,7 @@ class EnvironmentMonitor<T, P, TS, PS>(
      * @param time the final time.
      * @param step the final step.
      */
-    override fun finished(
-        environment: Environment<T, P>,
-        time: Time,
-        step: Long,
-    ) {
+    override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
         this.stepDone(environment, null, time, step)
     }
 

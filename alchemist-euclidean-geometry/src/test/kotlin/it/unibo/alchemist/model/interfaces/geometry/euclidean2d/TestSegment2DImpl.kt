@@ -43,21 +43,14 @@ class TestSegment2DImpl : StringSpec() {
         return intersection
     }
 
-    private fun <P : Vector2D<P>> shouldIntersectIn(
-        segment1: Segment2D<P>,
-        segment2: Segment2D<P>,
-        expectedPoint: P,
-    ) = intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(segment1, segment2).point shouldBe expectedPoint
+    private fun <P : Vector2D<P>> shouldIntersectIn(segment1: Segment2D<P>, segment2: Segment2D<P>, expectedPoint: P) =
+        intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(segment1, segment2).point shouldBe expectedPoint
 
-    private fun <P : Vector2D<P>> shouldNotIntersect(
-        segment1: Segment2D<P>,
-        segment2: Segment2D<P>,
-    ) = intersectionShouldBe<P, Intersection2D.None>(segment1, segment2)
+    private fun <P : Vector2D<P>> shouldNotIntersect(segment1: Segment2D<P>, segment2: Segment2D<P>) =
+        intersectionShouldBe<P, Intersection2D.None>(segment1, segment2)
 
-    private fun <P : Vector2D<P>> shouldOverlap(
-        segment1: Segment2D<P>,
-        segment2: Segment2D<P>,
-    ) = intersectionShouldBe<P, Intersection2D.InfinitePoints>(segment1, segment2)
+    private fun <P : Vector2D<P>> shouldOverlap(segment1: Segment2D<P>, segment2: Segment2D<P>) =
+        intersectionShouldBe<P, Intersection2D.InfinitePoints>(segment1, segment2)
 
     private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> intersectionShouldBe(
         segment: Segment2D<P>,
@@ -87,11 +80,8 @@ class TestSegment2DImpl : StringSpec() {
         expectedPoint: P,
     ) = intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(segment, center, radius).point shouldBe expectedPoint
 
-    private fun <P : Vector2D<P>> shouldNotIntersect(
-        segment: Segment2D<P>,
-        center: P,
-        radius: Double,
-    ) = intersectionShouldBe<P, Intersection2D.None>(segment, center, radius)
+    private fun <P : Vector2D<P>> shouldNotIntersect(segment: Segment2D<P>, center: P, radius: Double) =
+        intersectionShouldBe<P, Intersection2D.None>(segment, center, radius)
 
     init {
         "test length" {

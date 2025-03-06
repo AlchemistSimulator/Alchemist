@@ -24,14 +24,13 @@ import kotlin.math.max
 object Environments {
     private fun <T> Environment<T, *>.neighborDistanceMetric(
         computeDistance: (Node<T>, Node<T>) -> Double,
-    ): (Node<T>, Node<T>) -> Double =
-        { n1, n2 ->
-            when {
-                n1 == n2 -> 0.0
-                n2 in getNeighborhood(n1) -> computeDistance(n1, n2)
-                else -> POSITIVE_INFINITY
-            }
+    ): (Node<T>, Node<T>) -> Double = { n1, n2 ->
+        when {
+            n1 == n2 -> 0.0
+            n2 in getNeighborhood(n1) -> computeDistance(n1, n2)
+            else -> POSITIVE_INFINITY
         }
+    }
 
     private fun <T> Environment<T, *>.hopDistance() = neighborDistanceMetric { n1, n2 -> 1.0 }
 
@@ -66,15 +65,11 @@ object Environments {
     ): Map<Node<T>, Network<T>> {
         val subnetworks = mutableMapOf<Node<T>, Network<T>>()
 
-        fun subnetOf(
-            distance: Double,
-            node: Node<T>,
-        ): Network<T> =
-            subnetworks[node]
-                .let { subnet ->
-                    val result = SubNetwork(distance, node)
-                    if (subnet == null) result else result + subnet
-                }
+        fun subnetOf(distance: Double, node: Node<T>): Network<T> = subnetworks[node]
+            .let { subnet ->
+                val result = SubNetwork(distance, node)
+                if (subnet == null) result else result + subnet
+            }
         val paths = allShortestPaths(computeDistance)
         for (i in 0 until nodes.size) {
             val reference = nodes[i]
@@ -119,14 +114,10 @@ object Environments {
      * Represents an undirected edge between the [source] and the [target] nodes.
      * The order of the nodes does not matter.
      */
-    data class UndirectedEdge<T>(
-        val source: Node<T>,
-        val target: Node<T>,
-    ) {
-        override fun equals(other: Any?): Boolean =
-            this === other ||
-                other is UndirectedEdge<*> &&
-                (source == other.source && target == other.target || source == other.target && target == other.source)
+    data class UndirectedEdge<T>(val source: Node<T>, val target: Node<T>) {
+        override fun equals(other: Any?): Boolean = this === other ||
+            other is UndirectedEdge<*> &&
+            (source == other.source && target == other.target || source == other.target && target == other.source)
 
         override fun hashCode(): Int = source.hashCode() + target.hashCode()
     }
@@ -208,10 +199,7 @@ object Environments {
      */
     fun Environment<*, *>.networkDiameter(): Double = allSubNetworks().singleOrNull()?.diameter ?: NaN
 
-    private data class SubNetwork<T>(
-        override val diameter: Double,
-        override val nodes: Set<Node<T>>,
-    ) : Network<T> {
+    private data class SubNetwork<T>(override val diameter: Double, override val nodes: Set<Node<T>>) : Network<T> {
         init {
             require(nodes.isNotEmpty())
             require(diameter.isFinite() && diameter >= 0.0)

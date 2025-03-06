@@ -26,14 +26,8 @@ import kotlin.reflect.jvm.jvmErasure
 /**
  * A [JVMConstructor] whose [parameters] are an ordered list (common case for any JVM language).
  */
-class OrderedParametersConstructor(
-    type: String,
-    val parameters: List<*> = emptyList<Any?>(),
-) : JVMConstructor(type) {
-    override fun <T : Any> parametersFor(
-        target: KClass<T>,
-        factory: Factory,
-    ): List<*> = parameters
+class OrderedParametersConstructor(type: String, val parameters: List<*> = emptyList<Any?>()) : JVMConstructor(type) {
+    override fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*> = parameters
 
     override fun toString(): String = "$typeName${parameters.joinToString(prefix = "(", postfix = ")")}"
 }
@@ -45,14 +39,11 @@ private typealias OrderedParameters = List<KParameter>
  * and hence stored in a [parametersMap]
  * (no pure Java class works with named parameters now, Kotlin-only).
  */
-class NamedParametersConstructor(
-    type: String,
-    val parametersMap: Map<*, *> = emptyMap<Any?, Any?>(),
-) : JVMConstructor(type) {
-    private fun List<OrderedParameters>.description() =
-        joinToString(prefix = "\n- ", separator = "\n- ") {
-            it.namedParametersDescriptor()
-        }
+class NamedParametersConstructor(type: String, val parametersMap: Map<*, *> = emptyMap<Any?, Any?>()) :
+    JVMConstructor(type) {
+    private fun List<OrderedParameters>.description() = joinToString(prefix = "\n- ", separator = "\n- ") {
+        it.namedParametersDescriptor()
+    }
 
     private inline infix fun Boolean.and(then: () -> Boolean): Boolean = if (this) then() else false
 
@@ -61,10 +52,7 @@ class NamedParametersConstructor(
     private fun String?.couldBeInterpretedAs(name: String?): Boolean =
         equals(name, ignoreCase = true) || this?.splitToWords()?.allLowerCase() == name?.splitToWords()?.allLowerCase()
 
-    override fun <T : Any> parametersFor(
-        target: KClass<T>,
-        factory: Factory,
-    ): List<*> {
+    override fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*> {
         val providedNames = parametersMap.map { it.key.toString() }
         val singletons = factory.singletonObjects.keys
         val constructorsWithOrderedParameters =
@@ -154,11 +142,10 @@ class NamedParametersConstructor(
             .map { parametersMap[replacements.getOrDefault(it.name, it.name)] }
     }
 
-    private fun Collection<KParameter>.namedParametersDescriptor() =
-        "$size-ary constructor: " +
-            filter { it.name != null }.joinToString {
-                "${it.name}:${it.type.jvmErasure.simpleName}${if (it.isOptional) "<optional>" else "" }"
-            }
+    private fun Collection<KParameter>.namedParametersDescriptor() = "$size-ary constructor: " +
+        filter { it.name != null }.joinToString {
+            "${it.name}:${it.type.jvmErasure.simpleName}${if (it.isOptional) "<optional>" else "" }"
+        }
 
     override fun toString(): String = "$typeName($parametersMap)"
 
@@ -168,10 +155,7 @@ class NamedParametersConstructor(
     }
 }
 
-internal data class TypeSearch<out T>(
-    val typeName: String,
-    val targetType: Class<out T>,
-) {
+internal data class TypeSearch<out T>(val typeName: String, val targetType: Class<out T>) {
     private val packageName: String? = typeName.substringBeforeLast('.', "").takeIf { it.isNotEmpty() }
     private val isQualified get() = packageName != null
 
@@ -213,16 +197,11 @@ internal data class TypeSearch<out T>(
 /**
  * A constructor for a JVM class of type [typeName].
  */
-sealed class JVMConstructor(
-    val typeName: String,
-) {
+sealed class JVMConstructor(val typeName: String) {
     /**
      * provided a [target] class, extracts the parameters as an ordered list.
      */
-    protected abstract fun <T : Any> parametersFor(
-        target: KClass<T>,
-        factory: Factory,
-    ): List<*>
+    protected abstract fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*>
 
     /**
      * Provided a JIRF [factory], builds an instance of the requested type [T] or fails gracefully,
@@ -234,10 +213,7 @@ sealed class JVMConstructor(
      * Provided a JIRF [factory], builds an instance of the requested [type] T or fails gracefully,
      * returning a [Result<T>].
      */
-    fun <T : Any> buildAny(
-        type: Class<out T>,
-        factory: Factory,
-    ): Result<T> {
+    fun <T : Any> buildAny(type: Class<out T>, factory: Factory): Result<T> {
         val typeSearch = TypeSearch(typeName, type)
         val perfectMatches = typeSearch.perfectMatches
         return when (perfectMatches.size) {
@@ -311,10 +287,7 @@ sealed class JVMConstructor(
         }
     }
 
-    private fun <T : Any> newInstance(
-        target: KClass<T>,
-        jirf: Factory,
-    ): T {
+    private fun <T : Any> newInstance(target: KClass<T>, jirf: Factory): T {
         /*
          * preprocess parameters:
          *

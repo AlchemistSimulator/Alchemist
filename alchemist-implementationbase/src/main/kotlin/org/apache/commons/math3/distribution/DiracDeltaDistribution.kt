@@ -22,9 +22,8 @@ import org.apache.commons.math3.random.RandomGenerator
  * they work with a constant value (e.g., random walks with a constant step).
  *
  */
-class DiracDeltaDistribution constructor(
-    val value: Double,
-) : RealDistribution,
+class DiracDeltaDistribution constructor(val value: Double) :
+    RealDistribution,
     java.io.Serializable {
     /**
      * This constructor is meant for reflection compatibility only.
@@ -39,17 +38,13 @@ class DiracDeltaDistribution constructor(
 
     override fun density(x: Double) = if (x == value) Double.NaN else 0.0
 
-    override fun cumulativeProbability(x: Double): Double =
-        when {
-            x < value -> 0.0
-            else -> 1.0
-        }
+    override fun cumulativeProbability(x: Double): Double = when {
+        x < value -> 0.0
+        else -> 1.0
+    }
 
     @Deprecated("Deprecated in Java", replaceWith = ReplaceWith("probability(x0, x1)"))
-    override fun cumulativeProbability(
-        x0: Double,
-        x1: Double,
-    ): Double = cumulativeProbability(maxOf(x0, x1))
+    override fun cumulativeProbability(x0: Double, x1: Double): Double = cumulativeProbability(maxOf(x0, x1))
 
     override fun inverseCumulativeProbability(p: Double) = Double.NaN
 
@@ -64,14 +59,14 @@ class DiracDeltaDistribution constructor(
     @Deprecated(
         "Deprecated in Java",
         replaceWith =
-            ReplaceWith("getSupporLowerBound().isFinite() && !density(getSupportLowerBound()).isNaN()"),
+        ReplaceWith("getSupporLowerBound().isFinite() && !density(getSupportLowerBound()).isNaN()"),
     )
     override fun isSupportLowerBoundInclusive() = false
 
     @Deprecated(
         "Deprecated in Java",
         replaceWith =
-            ReplaceWith("getSupportUpperBound().isFinite() && !density(getSupportUpperBound()).isNaN()"),
+        ReplaceWith("getSupportUpperBound().isFinite() && !density(getSupportUpperBound()).isNaN()"),
     )
     override fun isSupportUpperBoundInclusive() = false
 

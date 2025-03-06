@@ -21,18 +21,18 @@ import it.unibo.alchemist.model.properties.AbstractNodeProperty
  * Base implementation of a [CircularCellProperty].
  */
 class CircularCell
-    @JvmOverloads
-    constructor(
-        environment: Environment<Double, Euclidean2DPosition>,
-        override val node: Node<Double>,
-        override val diameter: Double = 0.0,
-        override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
-    ) : AbstractNodeProperty<Double>(node),
-        CircularCellProperty,
-        CellProperty<Euclidean2DPosition> by Cell(environment, node, junctions) {
-        init {
-            require(diameter >= 0) { "Diameter must be non-negative: $diameter" }
-        }
-
-        override fun toString() = "${super.toString()}[diameter=$diameter]"
+@JvmOverloads
+constructor(
+    environment: Environment<Double, Euclidean2DPosition>,
+    override val node: Node<Double>,
+    override val diameter: Double = 0.0,
+    override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
+) : AbstractNodeProperty<Double>(node),
+    CircularCellProperty,
+    CellProperty<Euclidean2DPosition> by Cell(environment, node, junctions) {
+    init {
+        require(diameter >= 0) { "Diameter must be non-negative: $diameter" }
     }
+
+    override fun toString() = "${super.toString()}[diameter=$diameter]"
+}

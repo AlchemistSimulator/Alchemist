@@ -24,23 +24,16 @@ import java.awt.geom.Rectangle2D
 class TestAbstractConvexPolygon :
     StringSpec({
 
-        fun createPolygon(vararg coords: Euclidean2DPosition): MutableConvexPolygon =
-            AwtMutableConvexPolygon(
-                coords.toMutableList(),
-            )
+        fun createPolygon(vararg coords: Euclidean2DPosition): MutableConvexPolygon = AwtMutableConvexPolygon(
+            coords.toMutableList(),
+        )
 
-        fun createRectangle(
-            x: Double,
-            y: Double,
-            width: Double,
-            height: Double,
-        ): MutableConvexPolygon =
-            createPolygon(
-                coords(x, y),
-                coords(x + width, y),
-                coords(x + width, y + height),
-                coords(x, y + height),
-            )
+        fun createRectangle(x: Double, y: Double, width: Double, height: Double): MutableConvexPolygon = createPolygon(
+            coords(x, y),
+            coords(x + width, y),
+            coords(x + width, y + height),
+            coords(x, y + height),
+        )
 
         val polygon = createRectangle(1.0, 1.0, 5.0, 5.0)
 

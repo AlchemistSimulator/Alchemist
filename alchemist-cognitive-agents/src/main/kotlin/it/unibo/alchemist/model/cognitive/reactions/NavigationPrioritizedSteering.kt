@@ -26,45 +26,44 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  * @param N type of nodes of the environment's graph.
  */
 open class NavigationPrioritizedSteering<T, N : ConvexPolygon>
-    @JvmOverloads
-    constructor(
-        environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
-        override val pedestrian: PedestrianProperty<T>,
-        timeDistribution: TimeDistribution<T>,
+@JvmOverloads
+constructor(
+    environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
+    override val pedestrian: PedestrianProperty<T>,
+    timeDistribution: TimeDistribution<T>,
+    /**
+     * Tolerance angle in degrees (see [SinglePrevalent]).
+     */
+    toleranceAngle: Double = Math.toDegrees(SinglePrevalent.DEFAULT_TOLERANCE_ANGLE),
+    /**
+     * Alpha value for exponential smoothing (see [SinglePrevalent]).
+     */
+    alpha: Double = SinglePrevalent.DEFAULT_ALPHA,
+) : SteeringBehavior<T>(
+    environment,
+    pedestrian,
+    timeDistribution,
+    SinglePrevalent(
+        environment,
+        pedestrian.node,
+        prevalent = { singleNavigationAction() },
+        maxWalk = { pedestrian.speed() / timeDistribution.rate },
+        toleranceAngle = Math.toRadians(toleranceAngle),
+        alpha = alpha,
+    ),
+) {
+    private companion object {
         /**
-         * Tolerance angle in degrees (see [SinglePrevalent]).
+         * @returns the only navigation action contained in the list or throws an exception.
          */
-        toleranceAngle: Double = Math.toDegrees(SinglePrevalent.DEFAULT_TOLERANCE_ANGLE),
-        /**
-         * Alpha value for exponential smoothing (see [SinglePrevalent]).
-         */
-        alpha: Double = SinglePrevalent.DEFAULT_ALPHA,
-    ) : SteeringBehavior<T>(
-            environment,
-            pedestrian,
-            timeDistribution,
-            SinglePrevalent(
-                environment,
-                pedestrian.node,
-                prevalent = { singleNavigationAction() },
-                maxWalk = { pedestrian.speed() / timeDistribution.rate },
-                toleranceAngle = Math.toRadians(toleranceAngle),
-                alpha = alpha,
-            ),
-        ) {
-        private companion object {
-            /**
-             * @returns the only navigation action contained in the list or throws an exception.
-             */
-            private fun <T, M : ConvexPolygon> ActionList<T>.singleNavigationAction(): NaviAction<T, M> =
-                this
-                    .filterIsInstance<NaviAction<T, M>>()
-                    .let {
-                        check(it.size == 1) { "There should be exactly one navigation action" }
-                        it.first()
-                    }
-        }
+        private fun <T, M : ConvexPolygon> ActionList<T>.singleNavigationAction(): NaviAction<T, M> = this
+            .filterIsInstance<NaviAction<T, M>>()
+            .let {
+                check(it.size == 1) { "There should be exactly one navigation action" }
+                it.first()
+            }
     }
+}
 
 /*
  * Just for readability.

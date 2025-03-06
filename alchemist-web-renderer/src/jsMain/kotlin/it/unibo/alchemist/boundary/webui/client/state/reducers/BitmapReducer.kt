@@ -18,11 +18,7 @@ import korlibs.image.bitmap.Bitmap
  * @param action the action to perform.
  * @return the new bitmap.
  */
-fun bitmapReducer(
-    state: Bitmap?,
-    action: Any,
-): Bitmap? =
-    when (action) {
-        is SetBitmap -> action.bitmap
-        else -> state
-    }
+fun bitmapReducer(state: Bitmap?, action: Any): Bitmap? = when (action) {
+    is SetBitmap -> action.bitmap
+    else -> state
+}

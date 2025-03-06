@@ -40,16 +40,15 @@ private suspend fun updateEnvironment(
     renderMode: RenderMode,
     updateStateStrategy: UpdateStateStrategy,
     autoStrategy: AutoRenderModeStrategy,
-): Unit =
-    when (renderMode) {
-        RenderMode.CLIENT -> updateStateStrategy.clientComputation()
-        RenderMode.SERVER -> updateStateStrategy.serverComputation()
-        RenderMode.AUTO ->
-            updateEnvironment(
-                autoStrategy(),
-                updateStateStrategy,
-                object : AutoRenderModeStrategy {
-                    override fun invoke(): RenderMode = error("Auto mode cannot be returned here.")
-                },
-            )
-    }
+): Unit = when (renderMode) {
+    RenderMode.CLIENT -> updateStateStrategy.clientComputation()
+    RenderMode.SERVER -> updateStateStrategy.serverComputation()
+    RenderMode.AUTO ->
+        updateEnvironment(
+            autoStrategy(),
+            updateStateStrategy,
+            object : AutoRenderModeStrategy {
+                override fun invoke(): RenderMode = error("Auto mode cannot be returned here.")
+            },
+        )
+}

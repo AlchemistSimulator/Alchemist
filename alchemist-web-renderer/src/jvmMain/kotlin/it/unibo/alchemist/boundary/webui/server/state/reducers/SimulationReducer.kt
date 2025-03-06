@@ -18,11 +18,7 @@ import it.unibo.alchemist.core.Simulation
  * @param action the requested action.
  * @return the new [it.unibo.alchemist.core.Simulation].
  */
-fun simulationReducer(
-    state: Simulation<Any, Nothing>?,
-    action: Any,
-): Simulation<Any, Nothing>? =
-    when (action) {
-        is SetSimulation -> action.simulation
-        else -> state
-    }
+fun simulationReducer(state: Simulation<Any, Nothing>?, action: Any): Simulation<Any, Nothing>? = when (action) {
+    is SetSimulation -> action.simulation
+    else -> state
+}

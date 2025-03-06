@@ -22,10 +22,7 @@ object BugReporting {
      */
     @JvmStatic
     @JvmOverloads
-    fun reportBug(
-        message: String,
-        debugInformation: Map<String, Any?> = mapOf(),
-    ): Nothing {
+    fun reportBug(message: String, debugInformation: Map<String, Any?> = mapOf()): Nothing {
         val description =
             """
             |
@@ -37,9 +34,8 @@ object BugReporting {
         error(message + description + debugInformation.debugReport())
     }
 
-    private fun Map<String, Any?>.debugReport(): String =
-        asIterable()
-            .joinToString("\n") { (name, value) ->
-                "$name => ${value?.let { "$it --- type: ${it::class.simpleName}" } ?: "null" }"
-            }
+    private fun Map<String, Any?>.debugReport(): String = asIterable()
+        .joinToString("\n") { (name, value) ->
+            "$name => ${value?.let { "$it --- type: ${it::class.simpleName}" } ?: "null" }"
+        }
 }

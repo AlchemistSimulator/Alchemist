@@ -76,11 +76,7 @@ class ExtendableConvexPolygonInEnvironment(
     private val growthDirections: MutableList<Pair<Euclidean2DPosition?, Euclidean2DPosition?>?> =
         MutableList(vertices.size) { null }
 
-    override fun addVertex(
-        index: Int,
-        x: Double,
-        y: Double,
-    ): Boolean {
+    override fun addVertex(index: Int, x: Double, y: Double): Boolean {
         val oldEdge = getEdge(circularPrevious(index))
         if (super.addVertex(index, x, y)) {
             addCacheAt(index)
@@ -100,11 +96,7 @@ class ExtendableConvexPolygonInEnvironment(
         return false
     }
 
-    override fun moveVertex(
-        index: Int,
-        newX: Double,
-        newY: Double,
-    ): Boolean {
+    override fun moveVertex(index: Int, newX: Double, newY: Double): Boolean {
         val modifiedEdges =
             listOf(circularPrevious(index), index)
                 .map { it to getEdge(it) }
@@ -115,10 +107,7 @@ class ExtendableConvexPolygonInEnvironment(
         return false
     }
 
-    override fun replaceEdge(
-        index: Int,
-        newEdge: Segment2D<Euclidean2DPosition>,
-    ): Boolean {
+    override fun replaceEdge(index: Int, newEdge: Segment2D<Euclidean2DPosition>): Boolean {
         val modifiedEdges =
             listOf(circularPrevious(index), index, circularNext(index))
                 .map { it to getEdge(it) }
@@ -150,10 +139,7 @@ class ExtendableConvexPolygonInEnvironment(
      * is to be voided if the slope of the edge changes). This method accepts the index of a modified edge
      * and the old edge and applies different policies to decide if each cache should be voided.
      */
-    private fun voidCacheAt(
-        index: Int,
-        old: Segment2D<Euclidean2DPosition>,
-    ) {
+    private fun voidCacheAt(index: Int, old: Segment2D<Euclidean2DPosition>) {
         val new = getEdge(index)
         canEdgeAdvance[index] = true
         if (!old.isParallelTo(new) && !(old.isDegenerate || new.isDegenerate)) {
@@ -169,11 +155,7 @@ class ExtendableConvexPolygonInEnvironment(
      * The polygon is prevented from growing out of the environment's boundaries, but not from
      * intersecting obstacles.
      */
-    override fun advanceEdge(
-        index: Int,
-        step: Double,
-    ): Boolean =
-        true.takeIf { step == 0.0 } ?: run {
+    override fun advanceEdge(index: Int, step: Double): Boolean = true.takeIf { step == 0.0 } ?: run {
             /*
              * Note that even when growth direction is modified the edge still advances in its normal direction.
              * What has been modified are the individual growth directions of its endpoints, which means its
@@ -182,46 +164,43 @@ class ExtendableConvexPolygonInEnvironment(
              * edge actually advance in its normal direction), we need to resize the directions of growth
              * of the endpoints so that their component in the direction normal to the edge is equal to step.
              */
-            val edge = getEdge(index)
-            if (edge.isDegenerate) {
-                return false
+        val edge = getEdge(index)
+        if (edge.isDegenerate) {
+            return false
+        }
+        if (normals[index] == null) {
+            normals[index] = computeNormal(index, edge)
+        }
+        val normal = checkNotNull(normals[index]) { "internal error: no normal found" }
+        cacheGrowthDirection(index, normal)
+        val toMovementVector: (Euclidean2DPosition?).() -> Euclidean2DPosition = {
+            requireNotNull(this) {
+                "internal error: no growth direction found"
+            }.let {
+                val length = findLength(it, normal, step)
+                require(length.isFinite()) { "internal error: invalid length" }
+                it.resized(length)
             }
-            if (normals[index] == null) {
-                normals[index] = computeNormal(index, edge)
-            }
-            val normal = checkNotNull(normals[index]) { "internal error: no normal found" }
-            cacheGrowthDirection(index, normal)
-            val toMovementVector: (Euclidean2DPosition?).() -> Euclidean2DPosition = {
-                requireNotNull(this) {
-                    "internal error: no growth direction found"
-                }.let {
-                    val length = findLength(it, normal, step)
-                    require(length.isFinite()) { "internal error: invalid length" }
-                    it.resized(length)
-                }
-            }
-            val firstMovement = growthDirections[index]?.first.toMovementVector()
-            val secondMovement = growthDirections[index]?.second.toMovementVector()
+        }
+        val firstMovement = growthDirections[index]?.first.toMovementVector()
+        val secondMovement = growthDirections[index]?.second.toMovementVector()
         /*
          * super method is used in order to avoid voiding useful cache
          */
-            if (super.replaceEdge(index, edge.copyWith(edge.first + firstMovement, edge.second + secondMovement))) {
-                if (getEdge(index).isInRectangle(origin, width, height)) {
-                    return true
-                }
-                super.replaceEdge(index, edge)
+        if (super.replaceEdge(index, edge.copyWith(edge.first + firstMovement, edge.second + secondMovement))) {
+            if (getEdge(index).isInRectangle(origin, width, height)) {
+                return true
             }
-            return false
+            super.replaceEdge(index, edge)
         }
+        return false
+    }
 
     /**
      * Computes the normal vector to the specified edge, taking care that its verse allows to extend
      * the polygon and not shrink it (this is all about figuring out in which verse the polygon extends).
      */
-    private fun computeNormal(
-        index: Int,
-        edge: Segment2D<Euclidean2DPosition> = getEdge(index),
-    ): Euclidean2DPosition {
+    private fun computeNormal(index: Int, edge: Segment2D<Euclidean2DPosition> = getEdge(index)): Euclidean2DPosition {
         val curr = edge.toVector
         val prev = getEdge(circularPrevious(index)).toVector
         val normal = curr.normal().normalized()
@@ -234,10 +213,7 @@ class ExtendableConvexPolygonInEnvironment(
     /**
      * Caches the growth directions of both the vertices of the specified edge if they're not cached yet.
      */
-    private fun cacheGrowthDirection(
-        index: Int,
-        normal: Euclidean2DPosition,
-    ) {
+    private fun cacheGrowthDirection(index: Int, normal: Euclidean2DPosition) {
         val growthDirection = growthDirections[index]
         if (growthDirection?.first == null || growthDirection.second == null) {
             if (growthDirection == null) {
@@ -258,11 +234,7 @@ class ExtendableConvexPolygonInEnvironment(
      * is equal to a certain quantity q. In order to do so, we need to know the length of the new
      * vector a'. This method computes that quantity. [bUnit] is b of unitary magnitude.
      */
-    private fun findLength(
-        a: Euclidean2DPosition,
-        bUnit: Euclidean2DPosition,
-        q: Double,
-    ) = q / a.dot(bUnit)
+    private fun findLength(a: Euclidean2DPosition, bUnit: Euclidean2DPosition, q: Double) = q / a.dot(bUnit)
 
     /**
      * Extends the polygon in each direction of a quantity equal to [step].
@@ -309,13 +281,10 @@ class ExtendableConvexPolygonInEnvironment(
      * Checks whether we are in advanced case. See [extend]. The index of the
      * growing edge and the step of growth should be provided as well.
      */
-    private fun isAdvancedCase(
-        obstacle: Shape,
-        index: Int,
-        step: Double,
-    ) = obstacle.vertices().none { containsBoundaryIncluded(it) } &&
-        vertices.count { obstacle.contains(it.toPoint()) } == 1 &&
-        !firstIntrudedEdge(obstacle, index, step).isParallelTo(getEdge(index))
+    private fun isAdvancedCase(obstacle: Shape, index: Int, step: Double) =
+        obstacle.vertices().none { containsBoundaryIncluded(it) } &&
+            vertices.count { obstacle.contains(it.toPoint()) } == 1 &&
+            !firstIntrudedEdge(obstacle, index, step).isParallelTo(getEdge(index))
 
     /*
      * During the advancement of an edge, multiple edges of an obstacle may be
@@ -324,11 +293,7 @@ class ExtendableConvexPolygonInEnvironment(
      * advancement). The index of the growing edge and the step of growth should
      * be provided as well.
      */
-    private fun firstIntrudedEdge(
-        obstacle: Shape,
-        index: Int,
-        step: Double,
-    ): Segment2D<Euclidean2DPosition> {
+    private fun firstIntrudedEdge(obstacle: Shape, index: Int, step: Double): Segment2D<Euclidean2DPosition> {
         var intrudingVertex = getEdge(index).first
         var growthDirection = growthDirections[index]?.first
         if (!obstacle.contains(intrudingVertex.toPoint())) {
@@ -348,20 +313,14 @@ class ExtendableConvexPolygonInEnvironment(
     /*
      * Finds the edges of the obstacle intersecting with the given edge of the polygon.
      */
-    private fun findIntersectingEdges(
-        obstacle: Shape,
-        e: Segment2D<Euclidean2DPosition>,
-    ) = obstacle.vertices().run {
+    private fun findIntersectingEdges(obstacle: Shape, e: Segment2D<Euclidean2DPosition>) = obstacle.vertices().run {
         mapIndexed { i, v -> Segment2DImpl(v, this[(i + 1) % size]) }.filter { edgesIntersect(it, e) }
     }
 
     /*
      * Delegates the check to java.awt.geom.Line2D.
      */
-    private fun edgesIntersect(
-        e1: Segment2D<*>,
-        e2: Segment2D<*>,
-    ) = Line2D
+    private fun edgesIntersect(e1: Segment2D<*>, e2: Segment2D<*>) = Line2D
         .Double(e1.first.toPoint(), e1.second.toPoint())
         .intersectsLine(e2.first.x, e2.first.y, e2.second.x, e2.second.y)
 
@@ -374,11 +333,7 @@ class ExtendableConvexPolygonInEnvironment(
     /*
      * Adjusts the growth directions in the advanced case. See [extend].
      */
-    private fun adjustGrowth(
-        obstacle: Shape,
-        indexOfAdvancingEdge: Int,
-        step: Double,
-    ) {
+    private fun adjustGrowth(obstacle: Shape, indexOfAdvancingEdge: Int, step: Double) {
         val indexOfIntrudingV = vertices.indexOfFirst { obstacle.contains(it.toPoint()) }
         // intersecting edges
         val polygonEdge1 = getEdge(indexOfIntrudingV)
@@ -412,11 +367,7 @@ class ExtendableConvexPolygonInEnvironment(
         modifyGrowthDirection(circularPrevious(indexOfIntrudingV), d2, false)
     }
 
-    private fun modifyGrowthDirection(
-        i: Int,
-        newD: Euclidean2DPosition,
-        first: Boolean,
-    ) {
+    private fun modifyGrowthDirection(i: Int, newD: Euclidean2DPosition, first: Boolean) {
         val d = growthDirections[i]
         if (d == null) {
             growthDirections[i] = if (first) Pair(newD, null) else Pair(null, newD)

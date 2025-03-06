@@ -30,73 +30,72 @@ import kotlin.reflect.jvm.jvmName
  * @param timeout how long should the interpreter be allowed to compute before giving up, in ms. Defaults to 1000ms.
  */
 data class JSR223Variable
-    @JvmOverloads
-    constructor(
-        val language: String,
-        val formula: String,
-        val timeout: Long = 1000,
-    ) : DependentVariable<Any?> {
-        private val engine by lazy {
-            with(ScriptEngineManager()) {
-                getEngineByName(language)
-                    ?: getEngineByExtension(language)
-                    ?: getEngineByMimeType(language)
-                    ?: throw IllegalArgumentException(
-                        "$language is not an available language. Your environment supports the following languages: ${
-                            engineFactories.joinToString(
-                                separator = System.lineSeparator(),
-                                prefix = System.lineSeparator(),
-                            ) {
-                                " - ${it.languageName}, " +
-                                    "aka ${it.extensions + it.mimeTypes} " +
-                                    "(${it.languageVersion} on ${it.engineName} ${it.engineVersion})"
-                            }
-                        }",
-                    )
-            }
-        }
-
-        /**
-         * Given the current controlled variables, computes the current values for
-         * this variable.
-         *
-         * @param variables
-         * a mapping between variable names and values
-         * @return the value for this value
-         * @throws IllegalStateException
-         * if the value can not be computed, e.g. because there are
-         * unassigned required variables
-         */
-        override fun getWith(variables: Map<String, Any?>): Any? =
-            synchronized(engine) {
-                runCatching {
-                    runBlocking {
-                        withTimeout(timeout) {
-                            engine.eval(formula, variables.asBindings())
+@JvmOverloads
+constructor(
+    val language: String,
+    val formula: String,
+    val timeout: Long = 1000,
+) : DependentVariable<Any?> {
+    private val engine by lazy {
+        with(ScriptEngineManager()) {
+            getEngineByName(language)
+                ?: getEngineByExtension(language)
+                ?: getEngineByMimeType(language)
+                ?: throw IllegalArgumentException(
+                    "$language is not an available language. Your environment supports the following languages: ${
+                        engineFactories.joinToString(
+                            separator = System.lineSeparator(),
+                            prefix = System.lineSeparator(),
+                        ) {
+                            " - ${it.languageName}, " +
+                                "aka ${it.extensions + it.mimeTypes} " +
+                                "(${it.languageVersion} on ${it.engineName} ${it.engineVersion})"
                         }
-                    }
-                }.getOrElse { cause ->
-                    val whatHappened = "A $language script evaluation failed"
-                    val whyHappened =
-                        when (cause) {
-                            is ScriptException -> "due to an error in the script: ${cause.message}"
-                            is TimeoutCancellationException ->
-                                """
+                    }",
+                )
+        }
+    }
+
+    /**
+     * Given the current controlled variables, computes the current values for
+     * this variable.
+     *
+     * @param variables
+     * a mapping between variable names and values
+     * @return the value for this value
+     * @throws IllegalStateException
+     * if the value can not be computed, e.g. because there are
+     * unassigned required variables
+     */
+    override fun getWith(variables: Map<String, Any?>): Any? = synchronized(engine) {
+        runCatching {
+            runBlocking {
+                withTimeout(timeout) {
+                    engine.eval(formula, variables.asBindings())
+                }
+            }
+        }.getOrElse { cause ->
+            val whatHappened = "A $language script evaluation failed"
+            val whyHappened =
+                when (cause) {
+                    is ScriptException -> "due to an error in the script: ${cause.message}"
+                    is TimeoutCancellationException ->
+                        """
                                 because it reached its ${timeout}ms timeout.
                                 This is usually a sign that something is looping.
                                 Either make the script run faster, or allow for a longer time by specifiying a different
                                 `${DocumentRoot.DependentVariable.timeout}`.
-                                """.trimIndent().replace(Regex("\\R"), "")
-                            else ->
-                                """
+                        """.trimIndent().replace(Regex("\\R"), "")
+                    else ->
+                        """
                     |for a reason unknown to Alchemist. 
                     |${cause::class.jvmName}: ${cause.message}"
-                                """.trimMargin()
-                        }
-                    val inspection = "context: $variables\nscript:\n$formula"
-                    throw IllegalArgumentException("$whatHappened $whyHappened\n$inspection", cause)
+                        """.trimMargin()
                 }
-            }
-
-        private fun Map<String, Any?>.asBindings(): Bindings = SimpleBindings(toMutableMap())
+            val inspection = "context: $variables\nscript:\n$formula"
+            throw IllegalArgumentException("$whatHappened $whyHappened\n$inspection", cause)
+        }
     }
+
+    private fun Map<String, Any?>.asBindings(): Bindings = SimpleBindings(toMutableMap())
+}

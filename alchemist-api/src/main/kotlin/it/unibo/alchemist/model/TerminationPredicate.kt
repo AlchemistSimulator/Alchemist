@@ -31,8 +31,7 @@ fun interface TerminationPredicate<T, P : Position<out P>> :
     /**
      * Builds a predicate that is true if both `this` and the [other] predicate are true.
      */
-    fun or(other: TerminationPredicate<T, P>): TerminationPredicate<T, P> =
-        TerminationPredicate<T, P> {
-            this(it) || other(it)
-        }
+    fun or(other: TerminationPredicate<T, P>): TerminationPredicate<T, P> = TerminationPredicate<T, P> {
+        this(it) || other(it)
+    }
 }

@@ -19,10 +19,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 @SerialName("Position2D")
-data class Position2DSurrogate(
-    val x: Double,
-    val y: Double,
-) : PositionSurrogate {
+data class Position2DSurrogate(val x: Double, val y: Double) : PositionSurrogate {
     override val coordinates: DoubleArray = doubleArrayOf(x, y)
     override val dimensions: Int = 2
 }

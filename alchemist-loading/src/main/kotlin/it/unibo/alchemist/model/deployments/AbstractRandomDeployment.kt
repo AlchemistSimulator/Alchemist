@@ -46,10 +46,8 @@ abstract class AbstractRandomDeployment<P : Position<out P>>(
      * maximum value
      * @return a random uniformly distributed in such range
      */
-    protected fun randomDouble(
-        from: Double,
-        to: Double,
-    ): Double = randomGenerator.nextDouble() * Math.abs(to - from) + Math.min(from, to)
+    protected fun randomDouble(from: Double, to: Double): Double =
+        randomGenerator.nextDouble() * Math.abs(to - from) + Math.min(from, to)
 
     /**
      * @return a random double in the [0, 1] interval
@@ -63,10 +61,8 @@ abstract class AbstractRandomDeployment<P : Position<out P>>(
      * maximum value (exclusive)
      * @return a random uniformly distributed in such range
      */
-    protected fun randomInt(
-        from: Int,
-        toExclusive: Int,
-    ): Int = randomGenerator.nextInt(Math.abs(toExclusive - from)) + Math.min(from, toExclusive)
+    protected fun randomInt(from: Int, toExclusive: Int): Int =
+        randomGenerator.nextInt(Math.abs(toExclusive - from)) + Math.min(from, toExclusive)
 
     /**
      * @param i

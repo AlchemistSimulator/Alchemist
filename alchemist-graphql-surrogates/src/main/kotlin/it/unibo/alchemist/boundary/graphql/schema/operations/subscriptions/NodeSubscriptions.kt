@@ -24,9 +24,7 @@ import kotlinx.coroutines.flow.map
  *
  * @param environment the environment.
  */
-class NodeSubscriptions<T, P : Position<out P>>(
-    environment: Environment<T, P>,
-) : Subscription {
+class NodeSubscriptions<T, P : Position<out P>>(environment: Environment<T, P>) : Subscription {
     private val environmentMonitor = environment.subscriptionMonitor()
 
     /**

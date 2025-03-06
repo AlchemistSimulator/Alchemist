@@ -30,10 +30,9 @@ object EnvironmentMonitorFactory {
      * @param environment the environment of the simulation.
      * @return the [OutputMonitor].
      */
-    fun makeEnvironmentMonitor(environment: Environment<*, *>): OutputMonitor<Any, Nothing> =
-        EnvironmentMonitor(
-            // TODO change to correct implementation depending on the incarnation
-            toEmptyConcentration,
-            toSuitablePositionSurrogate(environment.dimensions),
-        )
+    fun makeEnvironmentMonitor(environment: Environment<*, *>): OutputMonitor<Any, Nothing> = EnvironmentMonitor(
+        // TODO change to correct implementation depending on the incarnation
+        toEmptyConcentration,
+        toSuitablePositionSurrogate(environment.dimensions),
+    )
 }

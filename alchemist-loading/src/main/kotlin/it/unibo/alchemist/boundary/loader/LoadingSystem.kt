@@ -33,17 +33,12 @@ import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
 import java.util.concurrent.Semaphore
 
-internal abstract class LoadingSystem(
-    private val originalContext: Context,
-    private val originalRoot: Map<String, *>,
-) : Loader {
+internal abstract class LoadingSystem(private val originalContext: Context, private val originalRoot: Map<String, *>) :
+    Loader {
     override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> =
         SingleUseLoader(originalContext, originalRoot).simulationWith(values)
 
-    private inner class SingleUseLoader(
-        originalContext: Context,
-        private val originalRoot: Map<String, *>,
-    ) {
+    private inner class SingleUseLoader(originalContext: Context, private val originalRoot: Map<String, *>) {
         private val context: Context = originalContext.child()
         private val mutex = Semaphore(1)
         private var consumed = false
@@ -214,11 +209,7 @@ internal abstract class LoadingSystem(
                 }
         }
 
-        private fun <T, P : Position<P>> loadPropertiesOnNode(
-            node: Node<T>,
-            nodePosition: P,
-            descriptor: Map<*, *>,
-        ) {
+        private fun <T, P : Position<P>> loadPropertiesOnNode(node: Node<T>, nodePosition: P, descriptor: Map<*, *>) {
             SimulationModel
                 .visitProperty<T, P>(context, descriptor)
                 .filter { (filters, _) -> filters.isEmpty() || filters.any { nodePosition in it } }

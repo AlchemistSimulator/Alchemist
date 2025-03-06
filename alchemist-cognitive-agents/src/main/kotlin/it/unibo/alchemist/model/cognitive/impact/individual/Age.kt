@@ -44,12 +44,11 @@ enum class Age : Characteristic {
          * @param age
          *          the age in years.
          */
-        fun fromYears(age: Int): Age =
-            when {
-                age < CHILD_THRESHOLD -> CHILD
-                age < ADULT_THRESHOLD -> ADULT
-                else -> ELDERLY
-            }
+        fun fromYears(age: Int): Age = when {
+            age < CHILD_THRESHOLD -> CHILD
+            age < ADULT_THRESHOLD -> ADULT
+            else -> ELDERLY
+        }
 
         /**
          * Returns the corresponding age in this enum given a string resembling it.
@@ -57,13 +56,12 @@ enum class Age : Characteristic {
          * @param age
          *          the age as a string.
          */
-        fun fromString(age: String): Age =
-            when {
-                age.equals(CHILD_KEYWORD, ignoreCase = true) -> CHILD
-                age.equals(ADULT_KEYWORD, ignoreCase = true) -> ADULT
-                age.equals(ELDERLY_KEYWORD, ignoreCase = true) -> ELDERLY
-                else -> throw IllegalArgumentException("'$age' is not a valid age")
-            }
+        fun fromString(age: String): Age = when {
+            age.equals(CHILD_KEYWORD, ignoreCase = true) -> CHILD
+            age.equals(ADULT_KEYWORD, ignoreCase = true) -> ADULT
+            age.equals(ELDERLY_KEYWORD, ignoreCase = true) -> ELDERLY
+            else -> throw IllegalArgumentException("'$age' is not a valid age")
+        }
 
         /**
          * Returns the corresponding age in this enum given a string resembling it.
@@ -71,11 +69,10 @@ enum class Age : Characteristic {
          * @param age
          *          the age as a string.
          */
-        fun fromAny(age: Any): Age =
-            when (age) {
-                is String -> fromString(age)
-                is Number -> fromYears(age.toInt())
-                else -> throw IllegalArgumentException("$age:${age::class.simpleName} is not a valid age")
-            }
+        fun fromAny(age: Any): Age = when (age) {
+            is String -> fromString(age)
+            is Number -> fromYears(age.toInt())
+            else -> throw IllegalArgumentException("$age:${age::class.simpleName} is not a valid age")
+        }
     }
 }

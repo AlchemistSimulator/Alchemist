@@ -20,6 +20,4 @@ import korlibs.image.bitmap.Bitmap
  * @param renderer the [Renderer] that renders an
  * [it.unibo.alchemist.boundary.webui.common.model.surrogate.EnvironmentSurrogate].
  */
-open class CommonState(
-    val renderer: Renderer<Any, PositionSurrogate, Bitmap> = BitmapRenderer(),
-)
+open class CommonState(val renderer: Renderer<Any, PositionSurrogate, Bitmap> = BitmapRenderer())

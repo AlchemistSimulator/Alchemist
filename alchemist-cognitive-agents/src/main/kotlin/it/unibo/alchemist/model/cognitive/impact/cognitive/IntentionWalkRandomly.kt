@@ -10,16 +10,13 @@ import it.unibo.alchemist.util.math.logistic
  * @param desireEvacuate
  *          the desire to evacuate of the agent owning this characteristic.
  */
-class IntentionWalkRandomly(
-    private val desireWalkRandomly: () -> Double,
-    private val desireEvacuate: () -> Double,
-) : BodyCognitiveCharacteristic() {
-    override fun combinationFunction() =
-        desireEvacuate() *
-            logistic(
-                logisticSigma,
-                logisticTau,
-                inhibitingIntentionOmega * desireEvacuate(),
-                amplifyingIntentionOmega * desireWalkRandomly(),
-            )
+class IntentionWalkRandomly(private val desireWalkRandomly: () -> Double, private val desireEvacuate: () -> Double) :
+    BodyCognitiveCharacteristic() {
+    override fun combinationFunction() = desireEvacuate() *
+        logistic(
+            logisticSigma,
+            logisticTau,
+            inhibitingIntentionOmega * desireEvacuate(),
+            amplifyingIntentionOmega * desireWalkRandomly(),
+        )
 }

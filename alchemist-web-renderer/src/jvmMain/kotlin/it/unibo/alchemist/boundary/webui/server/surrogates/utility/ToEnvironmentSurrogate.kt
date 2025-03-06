@@ -28,13 +28,12 @@ fun <T, P, TS, PS> Environment<T, P>.toEnvironmentSurrogate(
     toConcentrationSurrogate: (T) -> TS,
     toPositionSurrogate: (P) -> PS,
 ): EnvironmentSurrogate<TS, PS>
-    where TS : Any, P : Position<out P>, PS : PositionSurrogate =
-    EnvironmentSurrogate(
-        dimensions,
-        nodes.map {
-            it.toNodeSurrogate<T, P, TS, PS>(this, toConcentrationSurrogate, toPositionSurrogate)
-        },
-    )
+    where TS : Any, P : Position<out P>, PS : PositionSurrogate = EnvironmentSurrogate(
+    dimensions,
+    nodes.map {
+        it.toNodeSurrogate<T, P, TS, PS>(this, toConcentrationSurrogate, toPositionSurrogate)
+    },
+)
 
 /**
  * A function that maps an [Environment] to its surrogate class ([EnvironmentSurrogate]). Use the
@@ -47,8 +46,7 @@ fun <T, P, TS, PS> Environment<T, P>.toEnvironmentSurrogate(
 fun <T, P, TS> Environment<T, P>.toEnvironmentSurrogate(
     toConcentrationSurrogate: (T) -> TS,
 ): EnvironmentSurrogate<TS, PositionSurrogate>
-    where TS : Any, P : Position<out P> =
-    toEnvironmentSurrogate(
-        toConcentrationSurrogate,
-        toSuitablePositionSurrogate(this.dimensions),
-    )
+    where TS : Any, P : Position<out P> = toEnvironmentSurrogate(
+    toConcentrationSurrogate,
+    toSuitablePositionSurrogate(this.dimensions),
+)

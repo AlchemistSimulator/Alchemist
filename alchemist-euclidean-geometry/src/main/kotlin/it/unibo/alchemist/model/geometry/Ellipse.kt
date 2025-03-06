@@ -15,9 +15,8 @@ import java.awt.geom.Ellipse2D
 /**
  * Adapter of [java.awt.geom.Ellipse2D] to [Euclidean2DConvexShape].
  */
-class Ellipse(
-    private val ellipse: Ellipse2D,
-) : Euclidean2DConvexShape,
+class Ellipse(private val ellipse: Ellipse2D) :
+    Euclidean2DConvexShape,
     AwtShapeCompatible {
     private val euclideanShape = AwtEuclidean2DShape(ellipse)
 

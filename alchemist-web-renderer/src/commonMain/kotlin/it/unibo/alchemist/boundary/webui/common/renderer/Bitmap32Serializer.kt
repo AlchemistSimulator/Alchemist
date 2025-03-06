@@ -33,29 +33,25 @@ object Bitmap32Serializer : KSerializer<Bitmap32> {
             element<Int>("height")
         }
 
-    override fun serialize(
-        encoder: Encoder,
-        value: Bitmap32,
-    ) = encoder.encodeStructure(descriptor) {
+    override fun serialize(encoder: Encoder, value: Bitmap32) = encoder.encodeStructure(descriptor) {
         encodeSerializableElement(descriptor, 0, IntArraySerializer(), value.ints)
         encodeIntElement(descriptor, 1, value.width)
         encodeIntElement(descriptor, 2, value.height)
     }
 
-    override fun deserialize(decoder: Decoder): Bitmap32 =
-        decoder.decodeStructure(descriptor) {
-            var ints = intArrayOf()
-            var width = -1
-            var height = -1
-            while (true) {
-                when (val index = decodeElementIndex(descriptor)) {
-                    0 -> ints = decodeSerializableElement(descriptor, 0, IntArraySerializer())
-                    1 -> width = decodeIntElement(descriptor, 1)
-                    2 -> height = decodeIntElement(descriptor, 2)
-                    CompositeDecoder.DECODE_DONE -> break
-                    else -> error("Unexpected index: $index")
-                }
+    override fun deserialize(decoder: Decoder): Bitmap32 = decoder.decodeStructure(descriptor) {
+        var ints = intArrayOf()
+        var width = -1
+        var height = -1
+        while (true) {
+            when (val index = decodeElementIndex(descriptor)) {
+                0 -> ints = decodeSerializableElement(descriptor, 0, IntArraySerializer())
+                1 -> width = decodeIntElement(descriptor, 1)
+                2 -> height = decodeIntElement(descriptor, 2)
+                CompositeDecoder.DECODE_DONE -> break
+                else -> error("Unexpected index: $index")
             }
-            Bitmap32(width, height, RgbaArray(ints))
         }
+        Bitmap32(width, height, RgbaArray(ints))
+    }
 }

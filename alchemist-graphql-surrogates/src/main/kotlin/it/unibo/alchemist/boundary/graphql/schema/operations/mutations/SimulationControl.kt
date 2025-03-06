@@ -19,9 +19,7 @@ import it.unibo.alchemist.model.Position
 /**
  * A [SimulationControl] provides GraphQL [Mutation] for manipulating the current simulation.
  */
-class SimulationControl<T, P : Position<out P>>(
-    private val environment: Environment<T, P>,
-) : Mutation {
+class SimulationControl<T, P : Position<out P>>(private val environment: Environment<T, P>) : Mutation {
     /**
      * Play the simulation.
      */
@@ -40,12 +38,10 @@ class SimulationControl<T, P : Position<out P>>(
     @GraphQLDescription("Terminate the simulation")
     fun terminate(): String = executeAction(Simulation<T, P>::terminate, Status.TERMINATED)
 
-    private fun executeAction(
-        action: Simulation<T, P>.() -> Unit,
-        status: Status,
-    ) = runCatching { this.environment.simulation.apply { action() } }
-        .fold(
-            onSuccess = { status.toString() },
-            onFailure = { it.message.toString() },
-        )
+    private fun executeAction(action: Simulation<T, P>.() -> Unit, status: Status) =
+        runCatching { this.environment.simulation.apply { action() } }
+            .fold(
+                onSuccess = { status.toString() },
+                onFailure = { it.message.toString() },
+            )
 }

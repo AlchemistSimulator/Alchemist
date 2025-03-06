@@ -25,11 +25,8 @@ import java.io.File
  *                        (the file must be in the [rootOutputFiles] folder)
  * @throws IllegalStateException if the available seeds list is empty
  */
-open class CSVAlchemistSimulationAdapter(
-    val seed: Int,
-    val rootOutputFiles: File,
-    filenameForSeed: (Int) -> String,
-) : AlchemistSimulationAdapter {
+open class CSVAlchemistSimulationAdapter(val seed: Int, val rootOutputFiles: File, filenameForSeed: (Int) -> String) :
+    AlchemistSimulationAdapter {
     private val alchemistStateObservations: List<AlchemistStateObservations>
     private var time = 0
 

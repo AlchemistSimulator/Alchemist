@@ -49,39 +49,36 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
 
     override fun toString() = "$center links: $neighbors"
 
-    override fun equals(other: Any?): Boolean =
-        other is SimpleNeighborhood<*, *> &&
-            other.environment == environment &&
-            other.center == center &&
-            other.neighbors == neighbors
+    override fun equals(other: Any?): Boolean = other is SimpleNeighborhood<*, *> &&
+        other.environment == environment &&
+        other.center == center &&
+        other.neighbors == neighbors
 
     override fun hashCode(): Int = Hashes.hash32(environment, center, neighbors)
 
-    override fun add(node: Node<T>) =
-        SimpleNeighborhood(
-            environment,
-            center,
-            Iterable {
-                object : Iterator<Node<T>> {
-                    val previousNodes = neighbors.iterator()
-                    var nodeReady = true
+    override fun add(node: Node<T>) = SimpleNeighborhood(
+        environment,
+        center,
+        Iterable {
+            object : Iterator<Node<T>> {
+                val previousNodes = neighbors.iterator()
+                var nodeReady = true
 
-                    override fun hasNext() = nodeReady
+                override fun hasNext() = nodeReady
 
-                    override fun next() =
-                        if (previousNodes.hasNext()) {
-                            previousNodes.next()
-                        } else {
-                            if (nodeReady) {
-                                nodeReady = false
-                                node
-                            } else {
-                                throw NoSuchElementException("No other elements.")
-                            }
-                        }
+                override fun next() = if (previousNodes.hasNext()) {
+                    previousNodes.next()
+                } else {
+                    if (nodeReady) {
+                        nodeReady = false
+                        node
+                    } else {
+                        throw NoSuchElementException("No other elements.")
+                    }
                 }
-            },
-        )
+            }
+        },
+    )
 
     override fun remove(node: Node<T>): Neighborhood<T> {
         require(node in this) {
@@ -95,36 +92,34 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
                     val base = neighbors.iterator()
                     var lookahead = updateLookAhead()
 
-                    fun updateLookAhead(): Node<T>? =
-                        if (base.hasNext()) {
-                            val maybeNext = base.next()
-                            if (maybeNext == node) {
-                                updateLookAhead()
-                            } else {
-                                maybeNext
-                            }
+                    fun updateLookAhead(): Node<T>? = if (base.hasNext()) {
+                        val maybeNext = base.next()
+                        if (maybeNext == node) {
+                            updateLookAhead()
                         } else {
-                            null
+                            maybeNext
                         }
+                    } else {
+                        null
+                    }
 
                     override fun hasNext() = lookahead !== null
 
-                    override fun next() =
-                        if (hasNext()) {
-                            val result =
-                                lookahead ?: reportBug(
-                                    "Neighborhood iterator failure in ${this::class.qualifiedName}",
-                                    mapOf(
-                                        "base" to base,
-                                        "lookahead" to lookahead,
-                                        "hasNext" to hasNext(),
-                                    ),
-                                )
-                            lookahead = updateLookAhead()
-                            result
-                        } else {
-                            throw NoSuchElementException("No other elements.")
-                        }
+                    override fun next() = if (hasNext()) {
+                        val result =
+                            lookahead ?: reportBug(
+                                "Neighborhood iterator failure in ${this::class.qualifiedName}",
+                                mapOf(
+                                    "base" to base,
+                                    "lookahead" to lookahead,
+                                    "hasNext" to hasNext(),
+                                ),
+                            )
+                        lookahead = updateLookAhead()
+                        result
+                    } else {
+                        throw NoSuchElementException("No other elements.")
+                    }
                 }
             },
         )

@@ -34,10 +34,7 @@ import kotlin.math.nextUp
 /**
  * Support class for GraphStream, composed of a [linkingRule] and a [deployment].
  */
-class GraphStreamSupport<T, P : Position<out P>>(
-    val linkingRule: LinkingRule<T, P>,
-    val deployment: Deployment<P>,
-) {
+class GraphStreamSupport<T, P : Position<out P>>(val linkingRule: LinkingRule<T, P>, val deployment: Deployment<P>) {
     /**
      * Contains methods to generate a [GraphStreamSupport].
      */
@@ -53,10 +50,7 @@ class GraphStreamSupport<T, P : Position<out P>>(
                 .withNarrowingConversions()
                 .build()
 
-        private fun generateGenerator(
-            generatorName: String,
-            vararg parameters: Any,
-        ): BaseGenerator {
+        private fun generateGenerator(generatorName: String, vararg parameters: Any): BaseGenerator {
             val generatorClasses = findSuitableGeneratorsFor(generatorName)
             val parameterList = parameters.toList()
             val created =
@@ -87,23 +81,22 @@ class GraphStreamSupport<T, P : Position<out P>>(
             }
         }
 
-        private fun findSuitableGeneratorsFor(generator: String) =
-            with(generators) {
-                val exactMatch =
-                    find {
-                        it.simpleName == generator || it.simpleName == "${generator}Generator"
-                    }
-                val match =
-                    when {
-                        exactMatch != null -> listOf(exactMatch)
-                        else ->
-                            filter { it.simpleName.startsWith(generator, ignoreCase = true) }
-                                .takeUnless { it.isEmpty() }
-                    }
-                match ?: throw IllegalArgumentException(
-                    "None of the candidates in ${map { it.simpleName }} matches requested generator $generator",
-                )
-            }
+        private fun findSuitableGeneratorsFor(generator: String) = with(generators) {
+            val exactMatch =
+                find {
+                    it.simpleName == generator || it.simpleName == "${generator}Generator"
+                }
+            val match =
+                when {
+                    exactMatch != null -> listOf(exactMatch)
+                    else ->
+                        filter { it.simpleName.startsWith(generator, ignoreCase = true) }
+                            .takeUnless { it.isEmpty() }
+                }
+            match ?: throw IllegalArgumentException(
+                "None of the candidates in ${map { it.simpleName }} matches requested generator $generator",
+            )
+        }
 
         /**
          * Given an [environment], the [nodeCount] to be displaced,

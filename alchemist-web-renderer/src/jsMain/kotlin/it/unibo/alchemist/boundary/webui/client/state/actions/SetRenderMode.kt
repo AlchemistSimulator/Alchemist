@@ -15,6 +15,4 @@ import it.unibo.alchemist.boundary.webui.common.model.RenderMode
  * Redux action to set the Render Mode of the application.
  * @param renderMode the new render mode.
  */
-data class SetRenderMode(
-    val renderMode: RenderMode,
-)
+data class SetRenderMode(val renderMode: RenderMode)

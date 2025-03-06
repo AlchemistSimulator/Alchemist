@@ -38,10 +38,7 @@ abstract class AbstractLayerAction(
     override val pedestrian: PedestrianProperty<Number>,
     protected val targetMolecule: Molecule,
 ) : AbstractSteeringAction<Number, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
-    abstract override fun cloneAction(
-        node: Node<Number>,
-        reaction: Reaction<Number>,
-    ): AbstractLayerAction
+    abstract override fun cloneAction(node: Node<Number>, reaction: Reaction<Number>): AbstractLayerAction
 
     /**
      * @returns the layer containing [targetMolecule] or fails.

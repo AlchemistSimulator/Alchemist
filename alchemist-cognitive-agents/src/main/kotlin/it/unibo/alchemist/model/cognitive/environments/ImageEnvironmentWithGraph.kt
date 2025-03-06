@@ -35,60 +35,60 @@ import javax.imageio.ImageIO
  * to blue).
  */
 class ImageEnvironmentWithGraph<T>
-    @JvmOverloads
-    constructor(
-        incarnation: Incarnation<T, Euclidean2DPosition>,
-        path: String,
-        zoom: Double = 1.0,
-        dx: Double = 0.0,
-        dy: Double = 0.0,
-        obstaclesColor: Int = Color.BLACK.rgb,
-        roomsColor: Int = Color.BLUE.rgb,
-    ) : ImageEnvironment<T>(incarnation, obstaclesColor, path, zoom, dx, dy),
-        EuclideanPhysics2DEnvironmentWithGraph<
-            RectObstacle2D<Euclidean2DPosition>,
-            T,
-            ConvexPolygon,
-            Euclidean2DPassage,
+@JvmOverloads
+constructor(
+    incarnation: Incarnation<T, Euclidean2DPosition>,
+    path: String,
+    zoom: Double = 1.0,
+    dx: Double = 0.0,
+    dy: Double = 0.0,
+    obstaclesColor: Int = Color.BLACK.rgb,
+    roomsColor: Int = Color.BLUE.rgb,
+) : ImageEnvironment<T>(incarnation, obstaclesColor, path, zoom, dx, dy),
+    EuclideanPhysics2DEnvironmentWithGraph<
+        RectObstacle2D<Euclidean2DPosition>,
+        T,
+        ConvexPolygon,
+        Euclidean2DPassage,
         > {
-        override val graph: Euclidean2DNavigationGraph
+    override val graph: Euclidean2DNavigationGraph
 
-        init {
-            val resource = ResourceLoader.getResourceAsStream(path)
-            val img =
-                if (resource == null) {
-                    ImageIO.read(File(path))
-                } else {
-                    ImageIO.read(resource)
-                }
-            val obstacles = findMarkedRegions(obstaclesColor, img)
-            val rooms = findMarkedRegions(roomsColor, img).map { Euclidean2DPosition(it.minX, it.minY) }
-            graph =
-                generateNavigationGraph(
-                    width = img.width.toDouble(),
-                    height = img.height.toDouble(),
-                    obstacles = obstacles,
-                    rooms = rooms,
-                ).map { Euclidean2DPosition(it.x * zoom + dx, (img.height - it.y) * zoom + dy) }
-        }
-
-        private fun Euclidean2DNavigationGraph.map(
-            mapper: (Euclidean2DPosition) -> Euclidean2DPosition,
-        ): Euclidean2DNavigationGraph {
-            val newGraph = DirectedEuclidean2DNavigationGraph(Euclidean2DPassage::class.java)
-            vertexSet().forEach { newGraph.addVertex(it.mapPolygon(mapper)) }
-            edgeSet().forEach {
-                val mappedTail = it.tail.mapPolygon(mapper)
-                val mappedHead = it.head.mapPolygon(mapper)
-                val mappedShape = it.passageShapeOnTail.mapSegment(mapper)
-                newGraph.addEdge(mappedTail, mappedHead, Euclidean2DPassage(mappedTail, mappedHead, mappedShape))
+    init {
+        val resource = ResourceLoader.getResourceAsStream(path)
+        val img =
+            if (resource == null) {
+                ImageIO.read(File(path))
+            } else {
+                ImageIO.read(resource)
             }
-            return newGraph
-        }
-
-        private fun <V : Vector2D<V>> Segment2D<V>.mapSegment(mapper: (V) -> V): Segment2D<V> =
-            copyWith(mapper.invoke(first), mapper.invoke(second))
-
-        private fun ConvexPolygon.mapPolygon(mapper: (Euclidean2DPosition) -> Euclidean2DPosition) =
-            AwtMutableConvexPolygon(vertices().map(mapper).toMutableList())
+        val obstacles = findMarkedRegions(obstaclesColor, img)
+        val rooms = findMarkedRegions(roomsColor, img).map { Euclidean2DPosition(it.minX, it.minY) }
+        graph =
+            generateNavigationGraph(
+                width = img.width.toDouble(),
+                height = img.height.toDouble(),
+                obstacles = obstacles,
+                rooms = rooms,
+            ).map { Euclidean2DPosition(it.x * zoom + dx, (img.height - it.y) * zoom + dy) }
     }
+
+    private fun Euclidean2DNavigationGraph.map(
+        mapper: (Euclidean2DPosition) -> Euclidean2DPosition,
+    ): Euclidean2DNavigationGraph {
+        val newGraph = DirectedEuclidean2DNavigationGraph(Euclidean2DPassage::class.java)
+        vertexSet().forEach { newGraph.addVertex(it.mapPolygon(mapper)) }
+        edgeSet().forEach {
+            val mappedTail = it.tail.mapPolygon(mapper)
+            val mappedHead = it.head.mapPolygon(mapper)
+            val mappedShape = it.passageShapeOnTail.mapSegment(mapper)
+            newGraph.addEdge(mappedTail, mappedHead, Euclidean2DPassage(mappedTail, mappedHead, mappedShape))
+        }
+        return newGraph
+    }
+
+    private fun <V : Vector2D<V>> Segment2D<V>.mapSegment(mapper: (V) -> V): Segment2D<V> =
+        copyWith(mapper.invoke(first), mapper.invoke(second))
+
+    private fun ConvexPolygon.mapPolygon(mapper: (Euclidean2DPosition) -> Euclidean2DPosition) =
+        AwtMutableConvexPolygon(vertices().map(mapper).toMutableList())
+}

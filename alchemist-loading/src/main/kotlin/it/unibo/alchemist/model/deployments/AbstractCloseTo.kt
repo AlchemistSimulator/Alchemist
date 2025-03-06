@@ -35,22 +35,20 @@ abstract class AbstractCloseTo<T, P : Position<P>> constructor(
 
     private var deployment: Collection<P>? = null
 
-    protected open fun covarianceMatrix(dimensions: Int): Array<out DoubleArray> =
-        Array(dimensions) { index ->
-            DoubleArray(dimensions) { if (it == index) variance else 0.0 }
-        }
+    protected open fun covarianceMatrix(dimensions: Int): Array<out DoubleArray> = Array(dimensions) { index ->
+        DoubleArray(dimensions) { if (it == index) variance else 0.0 }
+    }
 
     protected abstract val sources: Sequence<DoubleArray>
 
-    final override fun stream(): Stream<P> =
-        (
-            deployment ?: sources
-                .map { MultivariateNormalDistribution(randomGenerator, it, covarianceMatrix(it.size)) }
-                .map { Pair(1.0, it) }
-                .toList()
-                .let { MixtureMultivariateNormalDistribution(randomGenerator, it) }
-                .let { distribution ->
-                    (0 until nodeCount).map { environment.makePosition(*distribution.sample().toTypedArray()) }
-                }.also { deployment = it }
+    final override fun stream(): Stream<P> = (
+        deployment ?: sources
+            .map { MultivariateNormalDistribution(randomGenerator, it, covarianceMatrix(it.size)) }
+            .map { Pair(1.0, it) }
+            .toList()
+            .let { MixtureMultivariateNormalDistribution(randomGenerator, it) }
+            .let { distribution ->
+                (0 until nodeCount).map { environment.makePosition(*distribution.sample().toTypedArray()) }
+            }.also { deployment = it }
         ).stream()
 }

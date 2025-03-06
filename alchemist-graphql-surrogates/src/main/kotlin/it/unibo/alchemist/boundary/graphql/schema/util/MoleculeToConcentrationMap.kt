@@ -28,10 +28,9 @@ data class MoleculeToConcentrationMap(
      * @return the list of entries in this map.
      */
     @GraphQLDescription("The list of pairs Molecule-Concentration")
-    fun entries(): List<MoleculeToConcentrationEntry> =
-        originMap.map { (molecule, concentration) ->
-            MoleculeToConcentrationEntry(molecule, concentration)
-        }
+    fun entries(): List<MoleculeToConcentrationEntry> = originMap.map { (molecule, concentration) ->
+        MoleculeToConcentrationEntry(molecule, concentration)
+    }
 
     /**
      * Custom indexing with a [MoleculeInput] object.
@@ -48,17 +47,13 @@ data class MoleculeToConcentrationMap(
  * @param concentration the concentration of the molecule
  */
 @GraphQLDescription("A pair Molecule-Concentration")
-data class MoleculeToConcentrationEntry(
-    val molecule: MoleculeSurrogate,
-    val concentration: String,
-)
+data class MoleculeToConcentrationEntry(val molecule: MoleculeSurrogate, val concentration: String)
 
 /**
  * Converts a [Map] of [Molecule]s and concentration of type [T] to a [MoleculeToConcentrationMap].
  */
-fun <T> Map<Molecule, T>.toMoleculeToConcentrationMap() =
-    MoleculeToConcentrationMap(
-        this
-            .mapKeys { it.key.toGraphQLMoleculeSurrogate() }
-            .mapValues { encodeConcentrationContentToString(it.value) },
-    )
+fun <T> Map<Molecule, T>.toMoleculeToConcentrationMap() = MoleculeToConcentrationMap(
+    this
+        .mapKeys { it.key.toGraphQLMoleculeSurrogate() }
+        .mapValues { encodeConcentrationContentToString(it.value) },
+)

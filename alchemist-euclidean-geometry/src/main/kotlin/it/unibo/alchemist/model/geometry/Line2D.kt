@@ -64,8 +64,5 @@ interface Line2D<P : Vector2D<P>> {
     /**
      * Intersects a line and a circle.
      */
-    fun intersectCircle(
-        center: P,
-        radius: Double,
-    ): Intersection2D<P>
+    fun intersectCircle(center: P, radius: Double): Intersection2D<P>
 }

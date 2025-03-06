@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.cognitive.Group
 /**
  * Group representing a node alone.
  */
-class Alone<T>(
-    node: Node<T>,
-) : Group<T>,
+class Alone<T>(node: Node<T>) :
+    Group<T>,
     MutableList<Node<T>> by mutableListOf(node)

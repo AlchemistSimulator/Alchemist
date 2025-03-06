@@ -55,8 +55,6 @@ open class CognitiveAgentSeek2D<T, P, A>(
 
     override fun nextPosition(): P = followScalarField.nextPosition()
 
-    override fun cloneAction(
-        node: Node<T>,
-        reaction: Reaction<T>,
-    ): CognitiveAgentSeek2D<T, P, A> = CognitiveAgentSeek2D(environment, reaction, node.pedestrianProperty, target)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentSeek2D<T, P, A> =
+        CognitiveAgentSeek2D(environment, reaction, node.pedestrianProperty, target)
 }

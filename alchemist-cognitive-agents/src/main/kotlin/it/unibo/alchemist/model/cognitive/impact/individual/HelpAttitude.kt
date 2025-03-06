@@ -12,10 +12,7 @@ import it.unibo.alchemist.model.cognitive.impact.PARAMETERS_FILE
  * @param gender
  *          the gender of the helper.
  */
-class HelpAttitude(
-    age: Age,
-    gender: Gender,
-) : Characteristic {
+class HelpAttitude(age: Age, gender: Gender) : Characteristic {
     private val helperRules = rules[age to gender]
 
     /**
@@ -28,11 +25,7 @@ class HelpAttitude(
      * @param sameGroup
      *          whether or not the two agents belong to the same group.
      */
-    fun level(
-        toHelpAge: Age,
-        toHelpGender: Gender,
-        sameGroup: Boolean,
-    ): Double =
+    fun level(toHelpAge: Age, toHelpGender: Gender, sameGroup: Boolean): Double =
         helperRules?.get(toHelpAge to toHelpGender)?.let {
             if (sameGroup) it.first else it.second
         } ?: 0.0

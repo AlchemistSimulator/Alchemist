@@ -63,9 +63,9 @@ object Alchemist {
                 type = ArgType.String,
                 fullName = "simulation file",
                 description =
-                    """
+                """
                     File with the simulation configuration.
-                    """.trimIndent(),
+                """.trimIndent(),
             )
 
             val verbosity by parser
@@ -73,7 +73,7 @@ object Alchemist {
                     type = ArgType.Choice<Verbosity>(),
                     fullName = "verbosity",
                     description =
-                        """
+                    """
                         Simulation logging verbosity level. Choose one of the following values:
                         
                         - debug
@@ -84,7 +84,7 @@ object Alchemist {
                         - off
                         
                         defaults to "warn"
-                        """.trimIndent(),
+                    """.trimIndent(),
                 ).default(Verbosity.WARN)
 
             val overrides by parser
@@ -92,10 +92,10 @@ object Alchemist {
                     type = ArgType.String,
                     fullName = "override",
                     description =
-                        """
+                    """
                         Valid yaml files used to override simulation config,
                         files are applied sequentially.
-                        """.trimIndent(),
+                    """.trimIndent(),
                 ).multiple()
 
             override fun execute() {
@@ -105,11 +105,7 @@ object Alchemist {
         return Run()
     }
 
-    private fun executeSimlation(
-        simulationFile: String,
-        verbosity: Verbosity,
-        overrides: List<String>,
-    ) {
+    private fun executeSimlation(simulationFile: String, verbosity: Verbosity, overrides: List<String>) {
         validateOutputModule()
         validateIncarnations()
         setVerbosity(verbosity)
@@ -124,10 +120,7 @@ object Alchemist {
         }
     }
 
-    private fun createLoader(
-        simulationFile: String,
-        overrides: List<String>,
-    ): Loader {
+    private fun createLoader(simulationFile: String, overrides: List<String>): Loader {
         val url =
             ResourceLoader.getResource(simulationFile)
                 ?: File(simulationFile).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
@@ -199,7 +192,6 @@ object Alchemist {
      *
      * @property exitStatus exit status
      */
-    data class AlchemistWouldHaveExitedException(
-        val exitStatus: Int,
-    ) : RuntimeException("Alchemist would have exited with $exitStatus")
+    data class AlchemistWouldHaveExitedException(val exitStatus: Int) :
+        RuntimeException("Alchemist would have exited with $exitStatus")
 }

@@ -20,10 +20,7 @@ import io.ktor.server.routing.RoutingContext
  * @param code the [HttpStatusCode].
  * @param content the content of the message.
  */
-data class Response<C>(
-    val code: HttpStatusCode = OK,
-    val content: C,
-) {
+data class Response<C>(val code: HttpStatusCode = OK, val content: C) {
     /**
      * Utility functions.
      */

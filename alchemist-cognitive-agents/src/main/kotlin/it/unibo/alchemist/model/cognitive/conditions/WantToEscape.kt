@@ -20,9 +20,7 @@ import it.unibo.alchemist.model.geometry.Vector
 /**
  * The intention of the pedestrian to evacuate or not.
  */
-open class WantToEscape<T, S : Vector<S>, A : Transformation<S>>(
-    node: Node<T>,
-) : AbstractCondition<T>(node) {
+open class WantToEscape<T, S : Vector<S>, A : Transformation<S>>(node: Node<T>) : AbstractCondition<T>(node) {
     override fun getContext(): Context = Context.LOCAL
 
     override fun getPropensityContribution(): Double = 0.0

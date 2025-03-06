@@ -30,9 +30,7 @@ private typealias Edge<T> = Pair<Actionable<T>, Actionable<T>>
  *
  * @param <T> concentration type
  */
-class JGraphTDependencyGraph<T>(
-    private val environment: Environment<T, *>,
-) : DependencyGraph<T> {
+class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : DependencyGraph<T> {
     private val inGlobals = ArrayListSet<Actionable<T>>()
     private val outGlobals = ArrayListSet<Actionable<T>>()
     private val graph: DefaultDirectedGraph<Actionable<T>, Edge<T>> = DefaultDirectedGraph(null, null, false)
@@ -82,20 +80,19 @@ class JGraphTDependencyGraph<T>(
         fun Context.candidates(
             oppositeGlobal: Sequence<Actionable<T>>,
             oppositeContext: Actionable<T>.() -> Context,
-        ): Sequence<Actionable<T>> =
-            when (this) {
-                Context.LOCAL ->
-                    oppositeGlobal +
-                        localReactions +
-                        neighborhoodReactions.filter { it.oppositeContext() == Context.NEIGHBORHOOD }
-                Context.NEIGHBORHOOD ->
-                    oppositeGlobal +
-                        localReactions +
-                        neighborhoodReactions +
-                        extendedNeighborhoodReactions.filter { it.oppositeContext() == Context.NEIGHBORHOOD }
-                Context.GLOBAL ->
-                    allReactions.asSequence()
-            }
+        ): Sequence<Actionable<T>> = when (this) {
+            Context.LOCAL ->
+                oppositeGlobal +
+                    localReactions +
+                    neighborhoodReactions.filter { it.oppositeContext() == Context.NEIGHBORHOOD }
+            Context.NEIGHBORHOOD ->
+                oppositeGlobal +
+                    localReactions +
+                    neighborhoodReactions +
+                    extendedNeighborhoodReactions.filter { it.oppositeContext() == Context.NEIGHBORHOOD }
+            Context.GLOBAL ->
+                allReactions.asSequence()
+        }
         val inboundCandidates: Sequence<Actionable<T>> =
             newReaction.inputContext.candidates(outGlobals.asSequence()) { outputContext }
         val outboundCandidates: Sequence<Actionable<T>> =
@@ -118,13 +115,12 @@ class JGraphTDependencyGraph<T>(
     }
 
     override fun removeDependencies(reaction: Actionable<T>) {
-        fun bugInfo() =
-            mapOf(
-                "reaction" to reaction,
-                "graph" to graph,
-                "incarnation" to environment.incarnation,
-                "environment" to environment,
-            )
+        fun bugInfo() = mapOf(
+            "reaction" to reaction,
+            "graph" to graph,
+            "incarnation" to environment.incarnation,
+            "environment" to environment,
+        )
 
         fun bug(message: String): Nothing = BugReporting.reportBug(message, bugInfo())
         if (!graph.removeVertex(reaction)) {
@@ -139,10 +135,7 @@ class JGraphTDependencyGraph<T>(
         runtimeRemovalCache += reaction
     }
 
-    private fun addNeighborDirected(
-        n1: Node<T>,
-        n2: Node<T>,
-    ) {
+    private fun addNeighborDirected(n1: Node<T>, n2: Node<T>) {
         val n2NonGlobalReactions: Iterable<Reaction<T>> by lazy {
             n2.reactions.filterNot { it.outputContext == Context.GLOBAL }
         }
@@ -171,10 +164,7 @@ class JGraphTDependencyGraph<T>(
     }
 
     /** @see [DependencyGraph.addNeighbor] */
-    override fun addNeighbor(
-        n1: Node<T>,
-        n2: Node<T>,
-    ) {
+    override fun addNeighbor(n1: Node<T>, n2: Node<T>) {
         addNeighborDirected(n1, n2)
         addNeighborDirected(n2, n1)
     }
@@ -186,10 +176,7 @@ class JGraphTDependencyGraph<T>(
      *   plus those with input neighborhood in the n2's neighborhood that is no longer part of [n1] neighborhood
      * - reactions with global output are unmodified
      */
-    private fun removeNeighborDirected(
-        n1: Node<T>,
-        n2: Node<T>,
-    ) {
+    private fun removeNeighborDirected(n1: Node<T>, n2: Node<T>) {
         val n2NonGlobalReactions by lazy { n2.reactions.filterNot { it.inputContext == Context.GLOBAL } }
         val n2NeighborhoodReactions by lazy { n2NonGlobalReactions.filter { it.inputContext == Context.NEIGHBORHOOD } }
         val neighborOutputInfluencers by lazy {
@@ -214,10 +201,7 @@ class JGraphTDependencyGraph<T>(
         }
     }
 
-    override fun removeNeighbor(
-        n1: Node<T>,
-        n2: Node<T>,
-    ) {
+    override fun removeNeighbor(n1: Node<T>, n2: Node<T>) {
         removeNeighborDirected(n1, n2)
         removeNeighborDirected(n2, n1)
     }
@@ -249,12 +233,11 @@ class JGraphTDependencyGraph<T>(
 
     private val Actionable<T>.node: Node<T> get() = checkNotNull(this as? Reaction).node
 
-    private fun Actionable<T>.dependsOn(other: Actionable<T>) =
-        inboundDependencies.any { inbound ->
-            other.outboundDependencies.any { outbound ->
-                inbound.dependsOn(outbound) || outbound.makesDependent(inbound)
-            }
+    private fun Actionable<T>.dependsOn(other: Actionable<T>) = inboundDependencies.any { inbound ->
+        other.outboundDependencies.any { outbound ->
+            inbound.dependsOn(outbound) || outbound.makesDependent(inbound)
         }
+    }
 
     private val Node<T>.neighborhood get() = environment.getNeighborhood(this).neighbors
 

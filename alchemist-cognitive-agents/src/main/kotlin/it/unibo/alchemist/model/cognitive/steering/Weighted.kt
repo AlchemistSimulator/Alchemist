@@ -56,13 +56,12 @@ open class Weighted<T>(
                 ?: currPos
         }
 
-    private fun List<SteeringAction<T, Euclidean2DPosition>>.calculatePosition(): Euclidean2DPosition =
-        when {
-            size > 1 ->
-                map { it.nextPosition() to it.weight() }.run {
-                    val totalWeight = sumOf { it.second }
-                    map { it.first * (it.second / totalWeight) }.reduce { acc, pos -> acc + pos }
-                }
-            else -> firstOrNull()?.nextPosition() ?: environment.origin
-        }
+    private fun List<SteeringAction<T, Euclidean2DPosition>>.calculatePosition(): Euclidean2DPosition = when {
+        size > 1 ->
+            map { it.nextPosition() to it.weight() }.run {
+                val totalWeight = sumOf { it.second }
+                map { it.first * (it.second / totalWeight) }.reduce { acc, pos -> acc + pos }
+            }
+        else -> firstOrNull()?.nextPosition() ?: environment.origin
+    }
 }

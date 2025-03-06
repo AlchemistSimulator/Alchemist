@@ -21,10 +21,7 @@ interface Euclidean2DEnvironment<T> : EuclideanEnvironment<T, Euclidean2DPositio
     /**
      * Creates a new [Euclidean2DPosition].
      */
-    fun makePosition(
-        x: Double,
-        y: Double,
-    ): Euclidean2DPosition = Euclidean2DPosition(x, y)
+    fun makePosition(x: Double, y: Double): Euclidean2DPosition = Euclidean2DPosition(x, y)
 
     /**
      * Creates a new [Euclidean2DPosition].
@@ -50,10 +47,7 @@ interface Euclidean2DEnvironment<T> : EuclideanEnvironment<T, Euclidean2DPositio
     /**
      * Creates a new [Euclidean2DPosition].
      */
-    fun makePosition(
-        x: Number,
-        y: Number,
-    ) = Euclidean2DPosition(x.toDouble(), y.toDouble())
+    fun makePosition(x: Number, y: Number) = Euclidean2DPosition(x.toDouble(), y.toDouble())
 
     /**
      * Constant values and utility methods for [Euclidean2DEnvironment].

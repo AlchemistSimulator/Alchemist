@@ -50,16 +50,15 @@ data class Euclidean2DPassage(
      * Provided the [position] of an agent that may want to cross this passage, this method computes the point
      * belonging to [passageShapeOnTail] which is more convenient to cross. Note that the agent must be inside [tail].
      */
-    fun crossingPointOnTail(position: Euclidean2DPosition): Euclidean2DPosition =
-        with(passageShapeOnTail) {
-            require(tail.containsBoundaryIncluded(position)) { "$position is not inside $tail" }
-            val idealMovement = Segment2DImpl(position, head.centroid)
+    fun crossingPointOnTail(position: Euclidean2DPosition): Euclidean2DPosition = with(passageShapeOnTail) {
+        require(tail.containsBoundaryIncluded(position)) { "$position is not inside $tail" }
+        val idealMovement = Segment2DImpl(position, head.centroid)
             /*
              * The crossing point is computed as the point belonging to the passage which is closest to the
              * intersection of the lines defined by the ideal movement and the passage itself.
              */
-            closestPointTo(linesIntersectionOrFail(this, idealMovement))
-        }
+        closestPointTo(linesIntersectionOrFail(this, idealMovement))
+    }
 
     /**
      * Provided the [crossingPointOnTail] that an agent has reached (or will reach), this method computes the point
@@ -69,12 +68,11 @@ data class Euclidean2DPassage(
      * Note that the returned point may not be formally contained in [head] depending on the definition of insideness
      * used by [ConvexPolygon.contains], prefer using [ConvexPolygon.containsBoundaryIncluded].
      */
-    fun crossingPointOnHead(crossingPointOnTail: Euclidean2DPosition): Euclidean2DPosition =
-        with(crossingPointOnTail) {
-            require(tail.containsBoundaryIncluded(this)) { "$crossingPointOnTail is not contained in $tail" }
-            val movement = Segment2DImpl(this, this + passageShapeOnTail.toVector.normal())
-            linesIntersectionOrFail(movement, headClosestEdge)
-        }
+    fun crossingPointOnHead(crossingPointOnTail: Euclidean2DPosition): Euclidean2DPosition = with(crossingPointOnTail) {
+        require(tail.containsBoundaryIncluded(this)) { "$crossingPointOnTail is not contained in $tail" }
+        val movement = Segment2DImpl(this, this + passageShapeOnTail.toVector.normal())
+        linesIntersectionOrFail(movement, headClosestEdge)
+    }
 
     /**
      * Provided the [position] of an agent that may want to cross this passage, this method returns a pair containing
@@ -83,10 +81,7 @@ data class Euclidean2DPassage(
     fun crossingPoints(position: Euclidean2DPosition): Pair<Euclidean2DPosition, Euclidean2DPosition> =
         crossingPointOnTail(position).let { Pair(it, crossingPointOnHead(it)) }
 
-    private fun <V : Vector2D<V>> linesIntersectionOrFail(
-        segment1: Segment2D<V>,
-        segment2: Segment2D<V>,
-    ): V =
+    private fun <V : Vector2D<V>> linesIntersectionOrFail(segment1: Segment2D<V>, segment2: Segment2D<V>): V =
         when (val intersection = segment1.toLine().intersect(segment2.toLine())) {
             is Intersection2D.SinglePoint -> intersection.point
             else -> BugReporting.reportBug("Bug in geometric engine, found in ${this::class.qualifiedName}")

@@ -17,9 +17,7 @@ import it.unibo.alchemist.model.geometry.Vector
  * A special shape which does not occupy space and does not intersect with any other, not even with itself.
  * It also ignores any transformation.
  */
-class AdimensionalShape<S : Vector<S>, A : Transformation<S>>(
-    override val centroid: S,
-) : Shape<S, A> {
+class AdimensionalShape<S : Vector<S>, A : Transformation<S>>(override val centroid: S) : Shape<S, A> {
     override val diameter: Double = 0.0
 
     override fun intersects(other: Shape<S, A>) = false

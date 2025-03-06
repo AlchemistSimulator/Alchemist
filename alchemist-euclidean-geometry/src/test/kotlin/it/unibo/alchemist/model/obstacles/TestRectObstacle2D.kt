@@ -95,14 +95,7 @@ class TestRectObstacle2D :
          * endpoint of the cut version obtained with [RectObstacle2D.next] is fuzzy equals
          * to the expected (nextx, nexty).
          */
-        fun nextShouldBe(
-            startx: Double,
-            starty: Double,
-            endx: Double,
-            endy: Double,
-            nextx: Double,
-            nexty: Double,
-        ) {
+        fun nextShouldBe(startx: Double, starty: Double, endx: Double, endy: Double, nextx: Double, nexty: Double) {
             val next = obstacle.next(coords(startx, starty), coords(endx, endy))
             fuzzyEquals(next.x, nextx) shouldBe true
             fuzzyEquals(next.y, nexty) shouldBe true
@@ -113,12 +106,7 @@ class TestRectObstacle2D :
          * cut version obtained with [RectObstacle2D.next] is fuzzy equals to the original
          * vector.
          */
-        fun vectorShouldNotBeCut(
-            startx: Double,
-            starty: Double,
-            endx: Double,
-            endy: Double,
-        ) {
+        fun vectorShouldNotBeCut(startx: Double, starty: Double, endx: Double, endy: Double) {
             nextShouldBe(startx, starty, endx, endy, endx, endy)
         }
     }

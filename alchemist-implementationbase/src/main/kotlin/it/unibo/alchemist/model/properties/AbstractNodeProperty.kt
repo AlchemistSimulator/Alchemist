@@ -16,8 +16,6 @@ import kotlin.reflect.jvm.jvmName
 /**
  *
  */
-abstract class AbstractNodeProperty<T>(
-    override val node: Node<T>,
-) : NodeProperty<T> {
+abstract class AbstractNodeProperty<T>(override val node: Node<T>) : NodeProperty<T> {
     override fun toString(): String = with(this::class) { simpleName ?: qualifiedName ?: jvmName }
 }

@@ -67,10 +67,7 @@ private class TestPosition(
     override fun distanceTo(other: Nothing): Double = error("Not implemented in tests")
 }
 
-fun <P : Position<out P>> checkPositionSurrogate(
-    position: P,
-    positionSurrogate: PositionSurrogate,
-) {
+fun <P : Position<out P>> checkPositionSurrogate(position: P, positionSurrogate: PositionSurrogate) {
     position.dimensions shouldBe positionSurrogate.dimensions
     position.coordinates shouldBe positionSurrogate.coordinates
 

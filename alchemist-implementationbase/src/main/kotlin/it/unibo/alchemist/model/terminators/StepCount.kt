@@ -20,8 +20,6 @@ import it.unibo.alchemist.model.TerminationPredicate
  *
  * @param lastStep the last step.
  */
-data class StepCount<T, P : Position<P>>(
-    val lastStep: Long,
-) : TerminationPredicate<T, P> {
+data class StepCount<T, P : Position<P>>(val lastStep: Long) : TerminationPredicate<T, P> {
     override fun invoke(environment: Environment<T, P>): Boolean = environment.simulation.step >= lastStep
 }

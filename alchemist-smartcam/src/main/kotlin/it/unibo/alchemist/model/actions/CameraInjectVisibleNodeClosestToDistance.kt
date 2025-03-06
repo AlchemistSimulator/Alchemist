@@ -33,10 +33,8 @@ class CameraInjectVisibleNodeClosestToDistance(
     private val visionMolecule: Molecule,
     private val targetMolecule: Molecule,
 ) : AbstractAction<Any>(node) {
-    override fun cloneAction(
-        node: Node<Any>,
-        reaction: Reaction<Any>,
-    ) = CameraInjectVisibleNodeClosestToDistance(node, environment, distance, visionMolecule, targetMolecule)
+    override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>) =
+        CameraInjectVisibleNodeClosestToDistance(node, environment, distance, visionMolecule, targetMolecule)
 
     override fun execute() {
         if (node.contains(visionMolecule)) {
@@ -69,11 +67,7 @@ class CameraInjectVisibleNodeClosestToDistance(
 
     override fun getContext() = Context.LOCAL
 
-    private fun <T> minBy(
-        a: T,
-        b: T,
-        mapper: (T) -> Double,
-    ) = with(mapper(a)) {
+    private fun <T> minBy(a: T, b: T, mapper: (T) -> Double) = with(mapper(a)) {
         if (min(this, mapper(b)) < this) return b else a
     }
 }

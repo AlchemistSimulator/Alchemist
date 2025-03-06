@@ -17,18 +17,11 @@ fun <T, P : Position<out P>> Environment<T, P>.startSimulation(
             object : OutputMonitor<T, P> {
                 override fun initialized(environment: Environment<T, P>) = initialized.invoke(environment)
 
-                override fun stepDone(
-                    environment: Environment<T, P>,
-                    reaction: Actionable<T>?,
-                    t: Time,
-                    s: Long,
-                ) = stepDone.invoke(environment, reaction, t, s)
+                override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, t: Time, s: Long) =
+                    stepDone.invoke(environment, reaction, t, s)
 
-                override fun finished(
-                    environment: Environment<T, P>,
-                    t: Time,
-                    s: Long,
-                ) = finished.invoke(environment, t, s)
+                override fun finished(environment: Environment<T, P>, t: Time, s: Long) =
+                    finished.invoke(environment, t, s)
             },
         )
         play()

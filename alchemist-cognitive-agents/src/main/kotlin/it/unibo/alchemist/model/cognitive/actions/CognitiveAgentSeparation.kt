@@ -33,17 +33,14 @@ class CognitiveAgentSeparation<T>(
     reaction: Reaction<T>,
     override val pedestrian: PedestrianProperty<T>,
 ) : AbstractGroupSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
-    override fun cloneAction(
-        node: Node<T>,
-        reaction: Reaction<T>,
-    ): CognitiveAgentSeparation<T> = CognitiveAgentSeparation(environment, reaction, node.pedestrianProperty)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentSeparation<T> =
+        CognitiveAgentSeparation(environment, reaction, node.pedestrianProperty)
 
     override fun nextPosition(): Euclidean2DPosition = (currentPosition - centroid()).coerceAtMost(maxWalk)
 
-    override fun group(): List<Node<T>> =
-        node
-            .asProperty<T, PerceptiveProperty<T>>()
-            .fieldOfView
-            .influentialNodes()
-            .plusElement(node)
+    override fun group(): List<Node<T>> = node
+        .asProperty<T, PerceptiveProperty<T>>()
+        .fieldOfView
+        .influentialNodes()
+        .plusElement(node)
 }

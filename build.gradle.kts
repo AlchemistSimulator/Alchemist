@@ -194,17 +194,16 @@ hugo {
             .value
 }
 
-fun Project.dokkaCopyTask(destination: String): Copy.() -> Unit =
-    {
-        dependsOn(tasks.withType<DokkaBaseTask>())
-        dependsOn(rootProject.tasks.hugoBuild)
-        from(
-            dokka.dokkaPublications.html
-                .get()
-                .outputDirectory,
-        )
-        into(File(websiteDir, "reference/$destination"))
-    }
+fun Project.dokkaCopyTask(destination: String): Copy.() -> Unit = {
+    dependsOn(tasks.withType<DokkaBaseTask>())
+    dependsOn(rootProject.tasks.hugoBuild)
+    from(
+        dokka.dokkaPublications.html
+            .get()
+            .outputDirectory,
+    )
+    into(File(websiteDir, "reference/$destination"))
+}
 
 val copyGlobalDokkaInTheWebsite by tasks.registering(Copy::class, dokkaCopyTask("kdoc"))
 val copyModuleDokkaInTheWebsite by tasks.registering(Copy::class, alchemist("full").dokkaCopyTask("kdoc-modules"))

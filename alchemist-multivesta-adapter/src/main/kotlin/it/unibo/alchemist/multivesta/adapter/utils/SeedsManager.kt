@@ -36,17 +36,16 @@ object SeedsManager {
      * @param seed the seed used to randomize the selection
      * @return a random seed from the list of available seeds
      */
-    fun popNextAvailableSeed(seed: Int): Int? =
-        lock.doWithLock {
-            val availableSeeds =
-                availableSeedsPath
-                    .readText()
-                    .split(" ")
-                    .map { it.toIntOrNull() }
-                    .toMutableList()
-            availableSeeds.randomOrNull(Random(seed))?.also {
-                availableSeeds.remove(it)
-                availableSeedsPath.writeText(availableSeeds.joinToString(" "))
-            }
+    fun popNextAvailableSeed(seed: Int): Int? = lock.doWithLock {
+        val availableSeeds =
+            availableSeedsPath
+                .readText()
+                .split(" ")
+                .map { it.toIntOrNull() }
+                .toMutableList()
+        availableSeeds.randomOrNull(Random(seed))?.also {
+            availableSeeds.remove(it)
+            availableSeedsPath.writeText(availableSeeds.joinToString(" "))
         }
+    }
 }

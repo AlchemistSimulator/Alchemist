@@ -18,9 +18,8 @@ import it.unibo.alchemist.model.geometry.Vector
  * same pair of vertices and without self-loops (i.e. edges connecting a node to
  * itself).
  */
-class DirectedNavigationGraph<V, A, N, E>(
-    edgeClass: Class<out E>,
-) : BaseNavigationGraph<V, A, N, E>(edgeClass, true)
+class DirectedNavigationGraph<V, A, N, E>(edgeClass: Class<out E>) :
+    BaseNavigationGraph<V, A, N, E>(edgeClass, true)
     where V : Vector<V>,
           A : Transformation<V>,
           N : ConvexShape<V, A>

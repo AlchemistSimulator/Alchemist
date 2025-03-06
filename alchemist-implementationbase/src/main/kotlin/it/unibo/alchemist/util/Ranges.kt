@@ -20,10 +20,8 @@ object Ranges {
     /**
      * Creates a [ClosedRange] from a couple of unordered values.
      */
-    fun <T : Comparable<T>> rangeFromUnordered(
-        bound1: T,
-        bound2: T,
-    ): ClosedRange<T> = ObjectUtils.min(bound1, bound2)..ObjectUtils.max(bound1, bound2)
+    fun <T : Comparable<T>> rangeFromUnordered(bound1: T, bound2: T): ClosedRange<T> =
+        ObjectUtils.min(bound1, bound2)..ObjectUtils.max(bound1, bound2)
 
     /**
      * Checks whether two ranges coincide. It's a different way of checking if they're equals,
@@ -57,11 +55,10 @@ object Ranges {
      * Finds the intersection between two ranges, the resulting range may feature a single value
      * (if the ranges only share an endpoint) or can be null, if they don't intersect at all.
      */
-    fun <T : Comparable<T>> ClosedRange<T>.intersect(other: ClosedRange<T>): ClosedRange<T>? =
-        when {
-            intersects(other) -> unsafeIntersect(other)
-            else -> null
-        }
+    fun <T : Comparable<T>> ClosedRange<T>.intersect(other: ClosedRange<T>): ClosedRange<T>? = when {
+        intersects(other) -> unsafeIntersect(other)
+        else -> null
+    }
 
     /**
      * Checks whether two ranges intersect, excluding their bounds (i.e., excluding both
@@ -76,23 +73,21 @@ object Ranges {
      * the current range is contained in the [other] one), a list featuring a single element,
      * or a list featuring two elements (e.g. if the current range contains the [other] one).
      */
-    infix operator fun <T : Comparable<T>> ClosedRange<T>.minus(other: ClosedRange<T>): List<ClosedRange<T>> =
-        when {
-            other.contains(this) -> emptyList()
-            !intersects(other) -> listOf(this)
-            start >= other.start -> listOf(rangeFromUnordered(endInclusive, other.endInclusive))
-            endInclusive <= other.endInclusive -> listOf(rangeFromUnordered(start, other.start))
-            else -> listOf(rangeFromUnordered(start, other.start), rangeFromUnordered(endInclusive, other.endInclusive))
-        }
+    infix operator fun <T : Comparable<T>> ClosedRange<T>.minus(other: ClosedRange<T>): List<ClosedRange<T>> = when {
+        other.contains(this) -> emptyList()
+        !intersects(other) -> listOf(this)
+        start >= other.start -> listOf(rangeFromUnordered(endInclusive, other.endInclusive))
+        endInclusive <= other.endInclusive -> listOf(rangeFromUnordered(start, other.start))
+        else -> listOf(rangeFromUnordered(start, other.start), rangeFromUnordered(endInclusive, other.endInclusive))
+    }
 
     /**
      * Subtracts all the given ranges from the current one. See [ClosedRange.minus].
      */
-    fun <T : Comparable<T>> ClosedRange<T>.subtractAll(others: List<ClosedRange<T>>): List<ClosedRange<T>> =
-        when {
-            others.isEmpty() -> listOf(this)
-            else -> (this - others.first()).flatMap { it.subtractAll(others.drop(1)) }
-        }
+    fun <T : Comparable<T>> ClosedRange<T>.subtractAll(others: List<ClosedRange<T>>): List<ClosedRange<T>> = when {
+        others.isEmpty() -> listOf(this)
+        else -> (this - others.first()).flatMap { it.subtractAll(others.drop(1)) }
+    }
 
     /**
      * Given a non-empty list of points represented as vectors, this method finds the extreme

@@ -47,7 +47,7 @@ public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPST
 
     @Override
     public GPSTraceImpl startAt(final Time time) {
-        final List<GPSPoint> filtered = stream()
+        final List<GPSPoint> filtered = getPoints().stream()
             .map(p -> p.subtractTime(time))
             .filter(pt -> pt.getTime().toDouble() >= 0)
             .collect(ImmutableList.toImmutableList());

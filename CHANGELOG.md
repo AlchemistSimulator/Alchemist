@@ -1,3 +1,41 @@
+## [40.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/40.1.0...40.1.1) (2025-03-06)
+
+### Dependency updates
+
+* **deps:** update dependency org.jetbrains.kotlin-wrappers:kotlin-react to v2025.3.4-19.0.0 ([#4265](https://github.com/AlchemistSimulator/Alchemist/issues/4265)) ([f6a4aa9](https://github.com/AlchemistSimulator/Alchemist/commit/f6a4aa969adc9e3396b79edda9bf05655b53cf15))
+* **deps:** update dependency site/themes/hugo-theme-relearn to v7.5.0 ([#4264](https://github.com/AlchemistSimulator/Alchemist/issues/4264)) ([e115bb6](https://github.com/AlchemistSimulator/Alchemist/commit/e115bb6ec5130e33a766cc80576631e2b7f492b5))
+* **deps:** update react to v2025.3.5-19.0.0 (patch) ([#4266](https://github.com/AlchemistSimulator/Alchemist/issues/4266)) ([e5616ea](https://github.com/AlchemistSimulator/Alchemist/commit/e5616ea472a828badc0c15a7143ec15d7d2262de))
+* **deps:** update react to v2025.3.6-19.0.0 (patch) ([#4268](https://github.com/AlchemistSimulator/Alchemist/issues/4268)) ([ba06f20](https://github.com/AlchemistSimulator/Alchemist/commit/ba06f20af4b22f964e11eed748e1c7b751ba81aa))
+
+### Documentation
+
+* **api:** fix typo ([f727534](https://github.com/AlchemistSimulator/Alchemist/commit/f727534cb56fa7bd42812bb6866b2aea6d6c88c8))
+
+### Tests
+
+* **loading:** auto-detect the latest available LTS version of Ubuntu in embed-mongo and use that for testing on Linux ([62140ee](https://github.com/AlchemistSimulator/Alchemist/commit/62140ee166612e993f66773cd981622098098dbd))
+* **loading:** fix shadowed lambda parameter `it` in `MongoTestUtility` ([adcf562](https://github.com/AlchemistSimulator/Alchemist/commit/adcf562539cfd088aa1c61233e773806fa7237e3))
+
+### Build and continuous integration
+
+* add kotlinx-coroutines-test and mockk to the test suite ([8a8a96b](https://github.com/AlchemistSimulator/Alchemist/commit/8a8a96b3553a3f1584a301cec51694cb1d1cab66))
+* inject maintenance-tooling everywhere ([0b815d2](https://github.com/AlchemistSimulator/Alchemist/commit/0b815d2a8d617bf4aa633678cefa50bb738c34d3))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([d576435](https://github.com/AlchemistSimulator/Alchemist/commit/d5764353f575e94ba75b62b9af32967748709475))
+* **build:** update the javadoc.io cache ([bdab5a4](https://github.com/AlchemistSimulator/Alchemist/commit/bdab5a4477f6937fbd6b88c5f0ca498789eb32f0))
+* **build:** update the javadoc.io cache ([c47020d](https://github.com/AlchemistSimulator/Alchemist/commit/c47020d54271037f77499b89e969643c36bd445f))
+* **build:** update the javadoc.io cache ([10a9307](https://github.com/AlchemistSimulator/Alchemist/commit/10a9307f43bb4373105f5481bda3d5f4c4ed7c10))
+* **build:** update the javadoc.io cache ([d2e31e6](https://github.com/AlchemistSimulator/Alchemist/commit/d2e31e6f780812cf19d5cd56e7d2479dea43f177))
+* **gitignore:** ignore the jvm crash dumps ([ff9266d](https://github.com/AlchemistSimulator/Alchemist/commit/ff9266de9fcc77388536e64c811b880aadae5c16))
+* **idea:** add dictionary term ([ab264de](https://github.com/AlchemistSimulator/Alchemist/commit/ab264de597e3553e0288b5300a8becb79c99d903))
+
+### Style improvements
+
+* **euclidean-geometry:** move comment ([5f058be](https://github.com/AlchemistSimulator/Alchemist/commit/5f058be02ec2570f237fbca20d8c91b94176f397))
+* **loading:** move comment ([c0f3b68](https://github.com/AlchemistSimulator/Alchemist/commit/c0f3b680d82005088774981a28725275e3ec6a26))
+
 ## [40.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/40.0.0...40.1.0) (2025-03-04)
 
 ### Features

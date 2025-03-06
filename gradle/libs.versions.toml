@@ -12,6 +12,7 @@ junit = "5.12.0"
 konf = "1.1.2"
 kotest = "6.0.0.M2"
 kotlin = "2.1.10"
+kotlinx-coroutines = "1.10.1"
 ktor = "3.1.1"
 mockito = "5.16.0"
 protelis = "17.7.2"
@@ -71,7 +72,8 @@ kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
 kotlin-cli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.6"
-kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1"
+kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlin-jvm-plugin = { module = "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin", version.ref = "kotlin" }
 kotlin-multiplatform-plugin = { module = "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -103,6 +105,7 @@ logback = "ch.qos.logback:logback-classic:1.5.17"
 mapsforge = "org.mapsforge:mapsforge-map-awt:0.24.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.4.2"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockk = "io.mockk:mockk:1.13.17"
 mongodb = "org.mongodb:mongodb-driver-sync:5.3.1"
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.2.50"
 protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }
@@ -150,8 +153,10 @@ testing-compile = [
     "junit-api",
     "kotest-assertions-core",
     "kotest-runner",
+    "kotlin-coroutines-test",
     "kotlin-test",
-    "mockito-core"
+    "mockito-core",
+    "mockk",
 ]
 testing-runtimeOnly = [ "junit-engine" ]
 

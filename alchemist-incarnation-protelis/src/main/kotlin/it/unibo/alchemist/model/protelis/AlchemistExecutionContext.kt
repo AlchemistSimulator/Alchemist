@@ -41,7 +41,7 @@ import java.util.function.Function
  * @param <P> position type
 */
 class AlchemistExecutionContext<P : Position<P>>
-    /**
+/**
      * @param environmentAccess the simulation [it.unibo.alchemist.model.Environment]
      * @param node the local [it.unibo.alchemist.model.Node]
      * @param protelisDevice the local [it.unibo.alchemist.model.protelis.properties.ProtelisDevice]

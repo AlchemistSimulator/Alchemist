@@ -158,6 +158,9 @@
   "io.ktor/ktor-server-websockets-jvm/3.1.1": {
     "first": "https://javadoc.io/doc/io.ktor/ktor-server-websockets-jvm/3.1.1"
   },
+  "io.mockk/mockk/1.13.17": {
+    "first": "https://javadoc.io/doc/io.mockk/mockk/1.13.17"
+  },
   "it.unimi.dsi/dsiutils/2.7.4": {
     "first": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.4",
     "second": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.4/element-list"
@@ -326,6 +329,9 @@
   },
   "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.10.1": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.10.1"
+  },
+  "org.jetbrains.kotlinx/kotlinx-coroutines-test/1.10.1": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-test/1.10.1"
   },
   "org.jetbrains.kotlinx/kotlinx-serialization-json/1.8.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.8.0"

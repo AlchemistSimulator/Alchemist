@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.maps.TimedRoute
 import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import java.util.concurrent.TimeUnit
-import java.util.stream.Stream
 
 /**
  * Models a route on a map, built upon the information provided by a query to GraphHopper.
@@ -27,7 +26,7 @@ class GraphHopperRoute(
 ) : TimedRoute<GeoPosition> {
     private val distance: Double
     private val time: Double
-    private val points: ImmutableList<GeoPosition>
+    override val points: ImmutableList<GeoPosition>
 
     init {
         val errors = response.errors
@@ -70,13 +69,9 @@ class GraphHopperRoute(
 
     override fun getPoint(step: Int): GeoPosition = points[step]
 
-    override fun getPoints(): ImmutableList<GeoPosition> = points
-
     override fun getTripTime(): Double = time
 
     override fun iterator(): MutableIterator<GeoPosition> = points.iterator()
-
-    override fun stream(): Stream<GeoPosition?> = points.stream()
 
     override fun size(): Int = points.size
 

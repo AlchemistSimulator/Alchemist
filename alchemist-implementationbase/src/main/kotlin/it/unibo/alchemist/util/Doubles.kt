@@ -20,16 +20,17 @@ object Doubles {
      */
     fun Double.fuzzyEquals(other: Double): Boolean = MathUtils.fuzzyEquals(this, other)
 
+    /*
+     * Tried to use fuzzyGreaterEquals and fuzzySmallerEquals,
+     * throws NoSuchMethodException at runtime, don't know why.
+     */
+
     /**
      * Checks if a double value is fuzzy contained in a range.
      * @param range the range
      * @returns true if the value is (fuzzy) contained in the range
      */
     infix fun Double.fuzzyIn(range: ClosedRange<Double>): Boolean =
-        /*
-         * Tried to use fuzzyGreaterEquals and fuzzySmallerEquals,
-         * throws NoSuchMethodException at runtime, don't know why.
-         */
         (MathUtils.fuzzyEquals(this, range.start) || this >= range.start) &&
             (MathUtils.fuzzyEquals(this, range.endInclusive) || this <= range.endInclusive)
 }

@@ -22,8 +22,8 @@ interface Position<P : Position<P>> : Serializable {
     /**
      * Given a range, produces N coordinates, representing the N opposite
      * vertices of the hypercube having the current coordinate as center and
-     * circumscribing the N-sphere defined by the range. In the case of two
-     * dimensional coordinates, it must return the opposite vertices of the
+     * circumscribing the N-sphere defined by the range. In the case of
+     * bidimensional coordinates, it must return the opposite vertices of the
      * square circumscribing the circle with center in this position and radius
      * range.
      *

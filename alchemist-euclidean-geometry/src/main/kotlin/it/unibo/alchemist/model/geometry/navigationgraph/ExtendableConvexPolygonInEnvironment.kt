@@ -377,8 +377,4 @@ class ExtendableConvexPolygonInEnvironment(
     }
 
     private fun Vector2D<*>.toPoint() = Point2D.Double(x, y)
-
-    override fun equals(other: Any?) = super.equals(other)
-
-    override fun hashCode() = super.hashCode()
 }

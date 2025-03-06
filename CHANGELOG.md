@@ -1,3 +1,37 @@
+## [40.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/40.1.1...40.1.2) (2025-03-06)
+
+### Bug Fixes
+
+* **api:** fix the Java serialization of `TerminationPredicate`s ([9077dad](https://github.com/AlchemistSimulator/Alchemist/commit/9077dadb5422705f286292d7e9c70e0875143280))
+
+### Tests
+
+* **api:** add a serialization test for TerminationPredicates ([3c2f56e](https://github.com/AlchemistSimulator/Alchemist/commit/3c2f56e12691b1a6a9fd1463a9a29d3af6b26201))
+* **cognitive-agents:** migrate `TestFeelsTransmission` from Kotest to kotlin.test ([039706a](https://github.com/AlchemistSimulator/Alchemist/commit/039706a5c9d6a7a1e0acbf5727b8b4c8e56795cd))
+* **cognitive-agents:** migrate `TestPedestriansLoading` from Kotest to kotlin.test ([e772bdd](https://github.com/AlchemistSimulator/Alchemist/commit/e772bdd94dcc134944a9a17b6078ecf31d1d4b11))
+* **full:** migrate `TestLaunchViaMain` from Kotest to kotlin.test ([cf68038](https://github.com/AlchemistSimulator/Alchemist/commit/cf68038f7d2e4a32cd0a7a5e569f79bdb159229a))
+* **incarnation-protelis:** migrate `TestNodeCloning` from Java to Kotlin ([89cccbf](https://github.com/AlchemistSimulator/Alchemist/commit/89cccbf1840094767754bcdb16b1f89ff35b95c1))
+* **maps:** migrate `TestTargetMapWalker` from Java to Kotlin ([78b829a](https://github.com/AlchemistSimulator/Alchemist/commit/78b829a9706797f70810240f9077c457f91e6539))
+* migrate `TestWebsiteCodeSnippets` from Kotest to kotlin.test ([703bb76](https://github.com/AlchemistSimulator/Alchemist/commit/703bb76e84b23ad7eef377f4bcf63638c271f2ee))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([5c0b7eb](https://github.com/AlchemistSimulator/Alchemist/commit/5c0b7eb95dd2d32e1513299bff76aa726b66fb2b))
+* **implementationbase:** migrate `ConstantSpeed` from Java to Kotlin ([e2fa760](https://github.com/AlchemistSimulator/Alchemist/commit/e2fa76069fa3929a177db41875d0e7d1138ff8be))
+* **implementationbase:** migrate `FollowTarget` from Java to Kotlin ([d8d2d46](https://github.com/AlchemistSimulator/Alchemist/commit/d8d2d465a6b8ab8355b9990fa8faf56187fd7151))
+* **implementationbase:** migrate `Route` and `PolygonalChain` from Java to Kotlin ([8dc9d42](https://github.com/AlchemistSimulator/Alchemist/commit/8dc9d421e5267c3c9824688667523e72bb9af426))
+* **incarnation-protelis:** migrate `ProtelisIncarnation` from Java to Kotlin ([6ffd922](https://github.com/AlchemistSimulator/Alchemist/commit/6ffd922252833fe68503f9b42e07f4b93aa7a100))
+* **incarnation-protelis:** migrate `SendToNeighbor` from Java to Kotlin ([ccb268b](https://github.com/AlchemistSimulator/Alchemist/commit/ccb268b2e727431442c5d545204416294e8ef175))
+* **maps:** fix `GraphHopperRoute` ([47de6d0](https://github.com/AlchemistSimulator/Alchemist/commit/47de6d06d280bd4f9a88916e149887cd947becce))
+* **maps:** migrate `FollowTrace` from Java to Kotlin ([ed98466](https://github.com/AlchemistSimulator/Alchemist/commit/ed9846657164ef236653ecdb47a748fd778401a9))
+* **maps:** migrate `MoveOnMapWithGPS` from Java to Kotlin ([167d716](https://github.com/AlchemistSimulator/Alchemist/commit/167d716855c4799ff112c0cf9006516045766a7d))
+* migrate `RectObstacle2D` and `AbstractEnvironment` from Java to Kotlin ([a56fb41](https://github.com/AlchemistSimulator/Alchemist/commit/a56fb41350994dcdd315619e567fa2df19c2694d))
+
+### Style improvements
+
+* adopt the IntelliJ Idea code style for ktlint ([#4269](https://github.com/AlchemistSimulator/Alchemist/issues/4269)) ([b68e92c](https://github.com/AlchemistSimulator/Alchemist/commit/b68e92cea3c11676a33d6fa2a0af1097e3793542))
+* **maps:** clearly indicate the stream source in `GPSTraceImpl` ([780cd5c](https://github.com/AlchemistSimulator/Alchemist/commit/780cd5ce82d1a70cd5903898c10c3283907115c6))
+
 ## [40.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/40.1.0...40.1.1) (2025-03-06)
 
 ### Dependency updates

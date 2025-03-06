@@ -1,11 +1,6 @@
 import Libs.alchemist
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import Util.webCommonConfiguration
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     kotlin("multiplatform")
@@ -28,6 +23,16 @@ kotlin {
     }
 
     sourceSets {
+        val alchemistApi = alchemist("api")
+        val alchemistMaintenanceTooling = alchemist("maintenance-tooling")
+        val isNotRootRootProject = project != alchemistMaintenanceTooling && project != alchemistApi
+        val commonMain by getting {
+            dependencies {
+                if (isNotRootRootProject) {
+                    implementation(alchemist("maintenance-tooling"))
+                }
+            }
+        }
         val commonTest by getting {
             dependencies {
                 val kotlinTest by catalog
@@ -40,7 +45,9 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation(alchemist("api"))
+                if (isNotRootRootProject) {
+                    implementation(alchemistApi)
+                }
             }
         }
         val jvmTest by getting {

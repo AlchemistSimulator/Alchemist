@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
@@ -9,4 +13,12 @@
 
 plugins {
     id("kotlin-multiplatform-convention")
+}
+
+kotlin {
+    wasmJs {
+        browser()
+        nodejs()
+        d8()
+    }
 }

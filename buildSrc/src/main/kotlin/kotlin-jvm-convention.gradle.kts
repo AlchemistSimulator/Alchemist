@@ -25,8 +25,10 @@ dependencies {
     val resourceloader by catalog
 
     val alchemistApi = alchemist("api")
-    if (project != alchemistApi) {
+    val alchemistMaintenanceTooling = alchemist("maintenance-tooling")
+    if (project != alchemistApi && project != alchemistMaintenanceTooling) {
         api(alchemistApi)
+        implementation(alchemistMaintenanceTooling)
     }
 
     compileOnly(jsr305)

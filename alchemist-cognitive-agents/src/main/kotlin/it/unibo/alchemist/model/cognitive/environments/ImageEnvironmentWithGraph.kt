@@ -62,7 +62,7 @@ class ImageEnvironmentWithGraph<T>
                     ImageIO.read(resource)
                 }
             val obstacles = findMarkedRegions(obstaclesColor, img)
-            val rooms = findMarkedRegions(roomsColor, img).map { Euclidean2DPosition(it.x, it.y) }
+            val rooms = findMarkedRegions(roomsColor, img).map { Euclidean2DPosition(it.minX, it.minY) }
             graph =
                 generateNavigationGraph(
                     width = img.width.toDouble(),

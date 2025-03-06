@@ -256,10 +256,10 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
     private static RectObstacle2D<Euclidean2DPosition> mapToEnv(
             final RectObstacle2D<Euclidean2DPosition> obs, final double zoom, final double dx, final double dy, final int h) {
         return new RectObstacle2D<>(
-                obs.x * zoom + dx,
-                (h - obs.y) * zoom + dy,
-                obs.width * zoom,
-                -obs.height * zoom);
+                obs.getMinX() * zoom + dx,
+                (h - obs.getMinY()) * zoom + dy,
+                obs.getWidth() * zoom,
+                -obs.getHeight() * zoom);
     }
 
 }

@@ -37,8 +37,8 @@ internal fun withMongo(operation: () -> Unit) {
             .onSuccess { detectedPlatform ->
                 val runningState =
                     runCatching { startMongo(detectedPlatform) }
-                        .recover {
-                            logger.warn("Failed to start MongoDB on detected platform $detectedPlatform", it)
+                        .recover { mongoError ->
+                            logger.warn("Failed to start MongoDB on detected platform $detectedPlatform", mongoError)
                             logger.warn("Retrying with a default Linux configuration")
                             startMongo(
                                 ImmutablePlatform

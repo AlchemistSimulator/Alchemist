@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model
 
-import it.unibo.alchemist.model.TerminationPredicate.Companion.invoke
 import java.io.Serializable
 
 /**
@@ -19,7 +18,7 @@ import java.io.Serializable
  * @param T the type of the concentration
  * @param P the type of the position
  */
-interface TerminationPredicate<T, P : Position<out P>> :
+fun interface TerminationPredicate<T, P : Position<out P>> :
     (Environment<T, P>) -> Boolean,
     Serializable {
     override fun invoke(environment: Environment<T, P>): Boolean
@@ -36,21 +35,4 @@ interface TerminationPredicate<T, P : Position<out P>> :
         TerminationPredicate<T, P> {
             this(it) || other(it)
         }
-
-    /**
-     * Factory for [TerminationPredicate] instances.
-     */
-    companion object {
-        /**
-         * Creates a [TerminationPredicate] from a predicate.
-         * @param predicate the predicate to use
-         * @return a [TerminationPredicate] that uses the given predicate
-         */
-        operator fun <T, P : Position<out P>> invoke(
-            predicate: (Environment<T, P>) -> Boolean,
-        ): TerminationPredicate<T, P> =
-            object : TerminationPredicate<T, P> {
-                override fun invoke(environment: Environment<T, P>): Boolean = predicate(environment)
-            }
-    }
 }

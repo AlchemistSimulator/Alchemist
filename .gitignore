@@ -47,15 +47,17 @@ buildProfile/
 .DS_Store
 
 # Other
+node_modules/
+.kotlintest/
+**/*.kotlintest*/*
 *.cache-main
 *.cache-tests
-**/*.kotlintest*/*
-.kotlintest/
-modules.xml
-scala_compiler.xml
-compiler.xml
-misc.xml
-.name
-node_modules/
-.vscode
 .hugo_build.lock
+.name
+.vscode
+compiler.xml
+hs_err_pid*.log
+misc.xml
+modules.xml
+replay_pid*.log
+scala_compiler.xml

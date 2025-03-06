@@ -173,15 +173,15 @@ class ExtendableConvexPolygonInEnvironment(
         index: Int,
         step: Double,
     ): Boolean =
-        /*
-         * Note that even when growth direction is modified the edge still advances in its normal direction.
-         * What has been modified are the individual growth directions of its endpoints, which means its
-         * slope will be preserved but not its length.
-         * In order to guarantee that the advanced edge is always parallel to the old one (i.e. that the
-         * edge actually advance in its normal direction), we need to resize the directions of growth
-         * of the endpoints so that their component in the direction normal to the edge is equal to step.
-         */
         true.takeIf { step == 0.0 } ?: run {
+            /*
+             * Note that even when growth direction is modified the edge still advances in its normal direction.
+             * What has been modified are the individual growth directions of its endpoints, which means its
+             * slope will be preserved but not its length.
+             * In order to guarantee that the advanced edge is always parallel to the old one (i.e. that the
+             * edge actually advance in its normal direction), we need to resize the directions of growth
+             * of the endpoints so that their component in the direction normal to the edge is equal to step.
+             */
             val edge = getEdge(index)
             if (edge.isDegenerate) {
                 return false

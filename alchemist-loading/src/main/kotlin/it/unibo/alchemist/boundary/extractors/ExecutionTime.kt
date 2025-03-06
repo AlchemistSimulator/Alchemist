@@ -18,35 +18,33 @@ import it.unibo.alchemist.model.Time
  * Optionally, a [precision] (significant digits) can be provided.
  */
 class ExecutionTime
-    @JvmOverloads
-    constructor(
-        precision: Int? = null,
-    ) : AbstractDoubleExporter(precision) {
-        private companion object {
-            private const val NANOS_TO_SEC: Double = 1e9
-        }
-
-        private val colName: String = "runningTime"
-        private var firstRun: Boolean = true
-        private var initial: Long = 0L
-        private var lastStep: Long = 0L
-
-        override fun <T> extractData(
-            environment: Environment<T, *>,
-            reaction: Actionable<T>?,
-            time: Time,
-            step: Long,
-        ): Map<String, Double> {
-            if (lastStep > step) {
-                firstRun = true
-            }
-            if (firstRun) {
-                firstRun = false
-                initial = System.nanoTime()
-            }
-            lastStep = step
-            return mapOf(colName to ((System.nanoTime() - initial) / NANOS_TO_SEC))
-        }
-
-        override val columnNames = listOf(colName)
+@JvmOverloads
+constructor(precision: Int? = null) : AbstractDoubleExporter(precision) {
+    private companion object {
+        private const val NANOS_TO_SEC: Double = 1e9
     }
+
+    private val colName: String = "runningTime"
+    private var firstRun: Boolean = true
+    private var initial: Long = 0L
+    private var lastStep: Long = 0L
+
+    override fun <T> extractData(
+        environment: Environment<T, *>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ): Map<String, Double> {
+        if (lastStep > step) {
+            firstRun = true
+        }
+        if (firstRun) {
+            firstRun = false
+            initial = System.nanoTime()
+        }
+        lastStep = step
+        return mapOf(colName to ((System.nanoTime() - initial) / NANOS_TO_SEC))
+    }
+
+    override val columnNames = listOf(colName)
+}

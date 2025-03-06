@@ -38,43 +38,33 @@ fun <T, P> Simulation<T, P>.startSimulation(
     atEachStep: (EuclideanEnvironment<T, P>, Actionable<T>?, Time, Long) -> Unit = { _, _, _, _ -> },
     whenFinished: (EuclideanEnvironment<T, P>, Time, Long) -> Unit = { _, _, _ -> },
     steps: Long = 10000,
-) where P : Position<P>, P : Vector<P> =
-    apply {
-        environment.addTerminator(StepCount(steps))
-        check(environment is EuclideanEnvironment<*, *>)
+) where P : Position<P>, P : Vector<P> = apply {
+    environment.addTerminator(StepCount(steps))
+    check(environment is EuclideanEnvironment<*, *>)
 
-        fun checkForErrors() = error.ifPresent { throw it }
-        addOutputMonitor(
-            object : OutputMonitor<T, P> {
-                override fun initialized(environment: Environment<T, P>) {
-                    checkForErrors()
-                    onceInitialized(environment as EuclideanEnvironment<T, P>)
-                }
+    fun checkForErrors() = error.ifPresent { throw it }
+    addOutputMonitor(
+        object : OutputMonitor<T, P> {
+            override fun initialized(environment: Environment<T, P>) {
+                checkForErrors()
+                onceInitialized(environment as EuclideanEnvironment<T, P>)
+            }
 
-                override fun stepDone(
-                    environment: Environment<T, P>,
-                    reaction: Actionable<T>?,
-                    t: Time,
-                    s: Long,
-                ) {
-                    checkForErrors()
-                    atEachStep(environment as EuclideanEnvironment<T, P>, reaction, t, s)
-                }
+            override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, t: Time, s: Long) {
+                checkForErrors()
+                atEachStep(environment as EuclideanEnvironment<T, P>, reaction, t, s)
+            }
 
-                override fun finished(
-                    environment: Environment<T, P>,
-                    t: Time,
-                    s: Long,
-                ) {
-                    checkForErrors()
-                    whenFinished(environment as EuclideanEnvironment<T, P>, t, s)
-                }
-            },
-        )
-        play()
-        run()
-        checkForErrors()
-    }.environment as EuclideanEnvironment<T, P>
+            override fun finished(environment: Environment<T, P>, t: Time, s: Long) {
+                checkForErrors()
+                whenFinished(environment as EuclideanEnvironment<T, P>, t, s)
+            }
+        },
+    )
+    play()
+    run()
+    checkForErrors()
+}.environment as EuclideanEnvironment<T, P>
 
 /**
  * Loads a simulation from a YAML file.
@@ -87,8 +77,7 @@ fun <T, P> Simulation<T, P>.startSimulation(
 fun <T, P> loadYamlSimulation(
     resource: String,
     vars: Map<String, Double> = emptyMap(),
-): Simulation<T, P> where P : Position<P>, P : Vector<P> =
-    LoadAlchemist
-        .from(ResourceLoader.getResource(resource))
-        .getWith<T, P>(vars)
-        .also { it.environment as? EuclideanEnvironment ?: error("Illegal kind of environment") }
+): Simulation<T, P> where P : Position<P>, P : Vector<P> = LoadAlchemist
+    .from(ResourceLoader.getResource(resource))
+    .getWith<T, P>(vars)
+    .also { it.environment as? EuclideanEnvironment ?: error("Illegal kind of environment") }

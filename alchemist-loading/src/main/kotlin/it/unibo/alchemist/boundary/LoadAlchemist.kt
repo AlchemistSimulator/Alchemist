@@ -24,22 +24,17 @@ import kotlin.reflect.jvm.jvmName
 object LoadAlchemist {
     private val packageExtractor = Regex("""((?:\w|\.)+)\.\w+$""")
 
-    private inline fun <reified T> extractPackageFrom() =
-        packageExtractor
-            .matchEntire(T::class.jvmName)
-            ?.let { it.groupValues[1] }
-            ?: error("Cannot extract package from ${T::class.jvmName}")
+    private inline fun <reified T> extractPackageFrom() = packageExtractor
+        .matchEntire(T::class.jvmName)
+        ?.let { it.groupValues[1] }
+        ?: error("Cannot extract package from ${T::class.jvmName}")
 
     /**
      * Load from an [input] [String] with overrides.
      */
     @JvmStatic
     @JvmOverloads
-    fun from(
-        input: String,
-        model: AlchemistModelProvider,
-        overrides: List<String> = emptyList(),
-    ): Loader =
+    fun from(input: String, model: AlchemistModelProvider, overrides: List<String> = emptyList()): Loader =
         SimulationModel.fromMap(
             applyOverrides(model.from(input), overrides),
         )
@@ -49,11 +44,7 @@ object LoadAlchemist {
      */
     @JvmStatic
     @JvmOverloads
-    fun from(
-        reader: Reader,
-        model: AlchemistModelProvider,
-        overrides: List<String> = emptyList(),
-    ): Loader =
+    fun from(reader: Reader, model: AlchemistModelProvider, overrides: List<String> = emptyList()): Loader =
         SimulationModel.fromMap(
             applyOverrides(model.from(reader), overrides),
         )
@@ -63,11 +54,7 @@ object LoadAlchemist {
      */
     @JvmStatic
     @JvmOverloads
-    fun from(
-        stream: InputStream,
-        model: AlchemistModelProvider,
-        overrides: List<String> = emptyList(),
-    ): Loader =
+    fun from(stream: InputStream, model: AlchemistModelProvider, overrides: List<String> = emptyList()): Loader =
         SimulationModel.fromMap(
             applyOverrides(model.from(stream), overrides),
         )
@@ -77,54 +64,41 @@ object LoadAlchemist {
      */
     @JvmStatic
     @JvmOverloads
-    fun from(
-        url: URL,
-        model: AlchemistModelProvider,
-        overrides: List<String> = emptyList(),
-    ): Loader = SimulationModel.fromMap(applyOverrides(model.from(url), overrides))
+    fun from(url: URL, model: AlchemistModelProvider, overrides: List<String> = emptyList()): Loader =
+        SimulationModel.fromMap(applyOverrides(model.from(url), overrides))
 
     /**
      * Load from an [url] with overrides.
      */
     @JvmStatic
     @JvmOverloads
-    fun from(
-        url: URL,
-        overrides: List<String> = emptyList(),
-    ): Loader = from(url, modelForExtension(url.path.takeLastWhile { it != '.' }), overrides)
+    fun from(url: URL, overrides: List<String> = emptyList()): Loader =
+        from(url, modelForExtension(url.path.takeLastWhile { it != '.' }), overrides)
 
     /**
      * Load from a [file] with overrides.
      */
     @JvmStatic
     @JvmOverloads
-    fun from(
-        file: File,
-        overrides: List<String> = emptyList(),
-    ): Loader = from(file.inputStream(), modelForExtension(file.extension), overrides)
+    fun from(file: File, overrides: List<String> = emptyList()): Loader =
+        from(file.inputStream(), modelForExtension(file.extension), overrides)
 
     /**
      * Load from a [string] with overrides.
      */
     @JvmStatic
     @JvmOverloads
-    fun from(
-        string: String,
-        overrides: List<String> = emptyList(),
-    ): Loader = from(File(string), overrides)
+    fun from(string: String, overrides: List<String> = emptyList()): Loader = from(File(string), overrides)
 
     @JvmStatic
-    private fun modelForExtension(extension: String) =
-        ClassPathScanner
-            .subTypesOf<AlchemistModelProvider>(extractPackageFrom<LoadAlchemist>())
-            .mapNotNull { it.kotlin.objectInstance }
-            .filter { it.fileExtensions.matches(extension) }
-            .also { require(it.size == 1) { "None or conflicting loaders for extension $extension: $it" } }
-            .first()
+    private fun modelForExtension(extension: String) = ClassPathScanner
+        .subTypesOf<AlchemistModelProvider>(extractPackageFrom<LoadAlchemist>())
+        .mapNotNull { it.kotlin.objectInstance }
+        .filter { it.fileExtensions.matches(extension) }
+        .also { require(it.size == 1) { "None or conflicting loaders for extension $extension: $it" } }
+        .first()
 
     @JvmStatic
-    private fun applyOverrides(
-        map: Map<String, *>,
-        overrides: List<String> = emptyList(),
-    ): Map<String, *> = map.overrideAll(overrides)
+    private fun applyOverrides(map: Map<String, *>, overrides: List<String> = emptyList()): Map<String, *> =
+        map.overrideAll(overrides)
 }

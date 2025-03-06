@@ -70,10 +70,7 @@ class BitmapRenderer<in TS : Any, in PS : PositionSurrogate> : Renderer<TS, PS, 
      * @param node the node surrogate to draw.
      * @param radius the radius of the node.
      */
-    private fun Context2d.alchemistNode(
-        node: NodeSurrogate<TS, PS>,
-        radius: Float,
-    ) {
+    private fun Context2d.alchemistNode(node: NodeSurrogate<TS, PS>, radius: Float) {
         beginPath()
         circle(node.position.toPoint(), radius)
         stroke()

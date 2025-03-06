@@ -55,12 +55,11 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * @return the layers in this environment.
      */
     @GraphQLDescription("The layers in this environment")
-    fun layers() =
-        origin.layers.map {
-            it.toGraphQLLayerSurrogate { coordinates ->
-                origin.makePosition(coordinates)
-            }
+    fun layers() = origin.layers.map {
+        it.toGraphQLLayerSurrogate { coordinates ->
+            origin.makePosition(coordinates)
         }
+    }
 
     /**
      * Returns the node with the given id.
@@ -93,11 +92,7 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * @return true if the node has been cloned, false otherwise
      */
     @GraphQLDescription("Clone the node associated with the given id to the specified position")
-    suspend fun cloneNode(
-        nodeId: Int,
-        position: PositionInput,
-        time: Double,
-    ): NodeSurrogate<T>? {
+    suspend fun cloneNode(nodeId: Int, position: PositionInput, time: Double): NodeSurrogate<T>? {
         val newNode = origin.getNodeByID(nodeId).cloneNode(DoubleTime(time))
         val mutex = Semaphore(1, 1)
         var isAdded = false

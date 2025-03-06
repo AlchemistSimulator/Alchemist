@@ -25,28 +25,27 @@ class ArrayIndexedPriorityEpsilonBatchQueue<T>(
     private val delegate: ArrayIndexedPriorityQueue<T> = ArrayIndexedPriorityQueue(),
 ) : Scheduler<T> by delegate,
     BatchedScheduler<T> {
-    override fun getNextBatch(): List<Actionable<T>> =
-        when {
-            delegate.tree.isEmpty() -> emptyList()
-            delegate.tree.size == 1 -> {
-                mutableListOf<Actionable<T>>().apply {
-                    add(delegate.tree[0])
-                }
-            }
-            else -> {
-                val result = mutableListOf<Actionable<T>>()
-                val prev = delegate.tree[0]
-                result.add(prev)
-                for (next in delegate.tree.subList(1, delegate.tree.size)) {
-                    if (abs(next.tau.toDouble() - prev.tau.toDouble()) >= epsilon) {
-                        break
-                    } else {
-                        result.add(next)
-                    }
-                }
-                result
+    override fun getNextBatch(): List<Actionable<T>> = when {
+        delegate.tree.isEmpty() -> emptyList()
+        delegate.tree.size == 1 -> {
+            mutableListOf<Actionable<T>>().apply {
+                add(delegate.tree[0])
             }
         }
+        else -> {
+            val result = mutableListOf<Actionable<T>>()
+            val prev = delegate.tree[0]
+            result.add(prev)
+            for (next in delegate.tree.subList(1, delegate.tree.size)) {
+                if (abs(next.tau.toDouble() - prev.tau.toDouble()) >= epsilon) {
+                    break
+                } else {
+                    result.add(next)
+                }
+            }
+            result
+        }
+    }
 
     override fun updateReaction(reaction: Actionable<T>) {
         synchronized(this) {

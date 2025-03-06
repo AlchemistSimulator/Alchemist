@@ -28,24 +28,22 @@ import java.util.stream.Collectors
  * Class that reads GPS tracks from gpx files.
  */
 class GPXLoader : GPSFileLoader {
-    override fun readTrace(url: URL): List<GPSTrace> =
-        url.openStream().use { stream ->
-            getGPX(stream)
-                .tracks()
-                .map { track: Track -> getTrace(Objects.requireNonNull(track, "GPS track not found")) }
-                .collect(Collectors.toList())
-        }
+    override fun readTrace(url: URL): List<GPSTrace> = url.openStream().use { stream ->
+        getGPX(stream)
+            .tracks()
+            .map { track: Track -> getTrace(Objects.requireNonNull(track, "GPS track not found")) }
+            .collect(Collectors.toList())
+    }
 
     override fun supportedExtensions(): ImmutableSet<String> = EXTENSIONS
 
-    private fun getGPX(stream: InputStream): GPX =
-        try {
-            GPX.Reader.DEFAULT.read(stream)
-        } catch (e: IOException) {
-            val realException = FileFormatException("Cannot read the GPX content. Please make sure it is a valid GPX.")
-            realException.initCause(e)
-            throw realException
-        }
+    private fun getGPX(stream: InputStream): GPX = try {
+        GPX.Reader.DEFAULT.read(stream)
+    } catch (e: IOException) {
+        val realException = FileFormatException("Cannot read the GPX content. Please make sure it is a valid GPX.")
+        realException.initCause(e)
+        throw realException
+    }
 
     private fun getTrace(track: Track): GPSTrace {
         /*

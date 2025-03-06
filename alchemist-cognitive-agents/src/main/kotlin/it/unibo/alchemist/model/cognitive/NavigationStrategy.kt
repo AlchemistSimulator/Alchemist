@@ -51,9 +51,5 @@ interface NavigationStrategy<T, P, A, L, R, N, E>
      * This is called in place of [inNewRoom] when the node ends up in an unexpected room while moving.
      * By default, unexpected rooms are treated just like expected ones.
      */
-    fun inUnexpectedNewRoom(
-        previousRoom: N,
-        expectedNewRoom: N,
-        actualNewRoom: N,
-    ) = inNewRoom(actualNewRoom)
+    fun inUnexpectedNewRoom(previousRoom: N, expectedNewRoom: N, actualNewRoom: N) = inNewRoom(actualNewRoom)
 }

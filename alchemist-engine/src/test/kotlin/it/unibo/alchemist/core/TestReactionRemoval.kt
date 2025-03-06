@@ -39,16 +39,10 @@ class GlobalContextsReaction<T>(
 
     private fun notImplementedError(): Nothing = error("This code should not be reached for this test.")
 
-    override fun cloneOnNewNode(
-        node: Node<T>,
-        currentTime: Time,
-    ): Reaction<T> = notImplementedError()
+    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Reaction<T> = notImplementedError()
 
-    override fun updateInternalStatus(
-        currentTime: Time?,
-        hasBeenExecuted: Boolean,
-        environment: Environment<T, *>?,
-    ) = notImplementedError()
+    override fun updateInternalStatus(currentTime: Time?, hasBeenExecuted: Boolean, environment: Environment<T, *>?) =
+        notImplementedError()
 }
 
 class TestReactionRemoval :

@@ -28,11 +28,10 @@ import kotlin.test.assertTrue
 object TestEnvironmentsDiameter {
     val ORIGIN = 0.0 to 0.0
 
-    private infix fun Environment<Any, Euclidean2DPosition>.addNodeAt(coordinates: Pair<Double, Double>) =
-        addNode(
-            GenericNode(ProtelisIncarnation(), this),
-            Euclidean2DPosition(coordinates.first, coordinates.second),
-        )
+    private infix fun Environment<Any, Euclidean2DPosition>.addNodeAt(coordinates: Pair<Double, Double>) = addNode(
+        GenericNode(ProtelisIncarnation(), this),
+        Euclidean2DPosition(coordinates.first, coordinates.second),
+    )
 
     private fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =
         Continuous2DEnvironment(ProtelisIncarnation()).apply {
@@ -59,13 +58,11 @@ object TestEnvironmentsDiameter {
     @JvmInline
     value class Subnetworks(val count: Int)
 
-    private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveDiameter(
-        index: Int,
-        expected: Double,
-    ) = {
-        require(index < nodes.size)
-        assertEquals<Double>(expected, allSubNetworksByNodeWithHopDistance()[nodes[index]]?.diameter!!)
-    }
+    private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveDiameter(index: Int, expected: Double) =
+        {
+            require(index < nodes.size)
+            assertEquals<Double>(expected, allSubNetworksByNodeWithHopDistance()[nodes[index]]?.diameter!!)
+        }
 
     @Test
     fun `environments with a single node have diameter 0`() =

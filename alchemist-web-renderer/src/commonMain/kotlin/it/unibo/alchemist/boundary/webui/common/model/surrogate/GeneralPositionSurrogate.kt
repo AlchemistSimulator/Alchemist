@@ -20,10 +20,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 @SerialName("Position")
-data class GeneralPositionSurrogate(
-    override val coordinates: DoubleArray,
-    override val dimensions: Int,
-) : PositionSurrogate {
+data class GeneralPositionSurrogate(override val coordinates: DoubleArray, override val dimensions: Int) :
+    PositionSurrogate {
     init {
         require(coordinates.size == dimensions) {
             "The number of coordinates must be equal to the number of dimensions."

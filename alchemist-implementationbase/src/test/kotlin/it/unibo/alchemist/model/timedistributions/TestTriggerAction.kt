@@ -22,10 +22,7 @@ class TestTriggerAction<T, P : Position<P>>(
 ) : AbstractLocalAction<T>(node) {
     private var executed = false
 
-    override fun cloneAction(
-        node: Node<T>,
-        reaction: Reaction<T>,
-    ): Action<T> = TestTriggerAction(environment, node)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> = TestTriggerAction(environment, node)
 
     override fun execute() {
         when (executed) {

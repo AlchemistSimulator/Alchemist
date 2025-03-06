@@ -74,21 +74,20 @@ class TestMoleculeSwapWithinNeighborhood {
     }
 }
 
-private fun testSimulation() =
-    environment.startSimulationWithoutParameters(
-        initialized = {
-            assertEquals(1.0, nodes.first.getConcentration(BIOMOLECULE))
-            assertEquals(0.0, nodes.second.getConcentration(BIOMOLECULE))
-            assertEquals(1, nodes.toList().sumOf { it.reactions.count() })
-        },
-        stepDone = {
-            assertEquals(1.0, nodes.toList().sumOf { it.getConcentration(BIOMOLECULE) })
-        },
-        finished = {
-            assertEquals(0.0, nodes.first.getConcentration(BIOMOLECULE))
-            assertEquals(1.0, nodes.second.getConcentration(BIOMOLECULE))
-        },
-    )
+private fun testSimulation() = environment.startSimulationWithoutParameters(
+    initialized = {
+        assertEquals(1.0, nodes.first.getConcentration(BIOMOLECULE))
+        assertEquals(0.0, nodes.second.getConcentration(BIOMOLECULE))
+        assertEquals(1, nodes.toList().sumOf { it.reactions.count() })
+    },
+    stepDone = {
+        assertEquals(1.0, nodes.toList().sumOf { it.getConcentration(BIOMOLECULE) })
+    },
+    finished = {
+        assertEquals(0.0, nodes.first.getConcentration(BIOMOLECULE))
+        assertEquals(1.0, nodes.second.getConcentration(BIOMOLECULE))
+    },
+)
 
 private val Reaction<Double>.neighborConditions: List<AbstractNeighborCondition<*>>
     get() = conditions.filterIsInstance<AbstractNeighborCondition<*>>()

@@ -57,11 +57,10 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
     override fun <T, P : Position2D<P>> map(layers: Collection<Layer<T, P>>): Collection<Function<in P, out Number>> =
         map(layers.stream()).collect(Collectors.toList())
 
-    override fun <T, P : Position2D<P>> map(layers: Stream<Layer<T, P>>): Stream<Function<in P, out Number>> =
-        layers
-            .filter { l -> l is BidimensionalGaussianLayer }
-            .map { l -> l as BidimensionalGaussianLayer }
-            .map { l -> Function { p: P -> l.getValue(p) } }
+    override fun <T, P : Position2D<P>> map(layers: Stream<Layer<T, P>>): Stream<Function<in P, out Number>> = layers
+        .filter { l -> l is BidimensionalGaussianLayer }
+        .map { l -> l as BidimensionalGaussianLayer }
+        .map { l -> Function { p: P -> l.getValue(p) } }
 
     /**
      * Utilities for [BidimensionalGaussianLayersMapper]s.

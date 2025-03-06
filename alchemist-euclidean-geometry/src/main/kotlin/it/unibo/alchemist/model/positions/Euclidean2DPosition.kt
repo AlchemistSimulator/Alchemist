@@ -52,10 +52,7 @@ class Euclidean2DPosition :
     override fun normal(): Euclidean2DPosition = Euclidean2DPosition(-y, x)
 
     @Nonnull
-    override fun newFrom(
-        x: Double,
-        y: Double,
-    ): Euclidean2DPosition = Euclidean2DPosition(x, y)
+    override fun newFrom(x: Double, y: Double): Euclidean2DPosition = Euclidean2DPosition(x, y)
 
     override fun times(other: Double) = Euclidean2DPosition(x * other, y * other)
 

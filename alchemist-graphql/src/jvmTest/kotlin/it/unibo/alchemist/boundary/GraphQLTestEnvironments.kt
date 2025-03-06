@@ -16,15 +16,14 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.util.ClassPathScanner
 
 object GraphQLTestEnvironments {
-    fun <T, P : Position<P>> loadTests(test: (Environment<T, P>) -> Unit) =
-        ClassPathScanner
-            .resourcesMatching(".*\\.yml", "it.unibo.alchemist.test.graphql")
-            .asSequence()
-            .map { LoadAlchemist.from(it) }
-            .map { it.getDefault<T, P>() }
-            .forEach { simulation ->
-                simulation.outputMonitors.find { it is GraphQLMonitor<*, *> }
-                simulation.outputMonitors.find { it is EnvironmentSubscriptionMonitor<*, *> }
-                test(simulation.environment)
-            }
+    fun <T, P : Position<P>> loadTests(test: (Environment<T, P>) -> Unit) = ClassPathScanner
+        .resourcesMatching(".*\\.yml", "it.unibo.alchemist.test.graphql")
+        .asSequence()
+        .map { LoadAlchemist.from(it) }
+        .map { it.getDefault<T, P>() }
+        .forEach { simulation ->
+            simulation.outputMonitors.find { it is GraphQLMonitor<*, *> }
+            simulation.outputMonitors.find { it is EnvironmentSubscriptionMonitor<*, *> }
+            test(simulation.environment)
+        }
 }

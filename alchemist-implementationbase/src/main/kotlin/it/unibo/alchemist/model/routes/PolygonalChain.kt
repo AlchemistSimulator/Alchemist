@@ -19,9 +19,7 @@ import kotlin.reflect.full.isSuperclassOf
  *
  * @param <P> the type of position that the route is composed
  */
-open class PolygonalChain<P : Position<*>>(
-    override val points: List<P>,
-) : Route<P> {
+open class PolygonalChain<P : Position<*>>(override val points: List<P>) : Route<P> {
     private var distance = Double.NaN
     private var hash = 0
 
@@ -41,9 +39,8 @@ open class PolygonalChain<P : Position<*>>(
     override fun equals(other: Any?): Boolean =
         other === this || other is PolygonalChain<*> && this::class == other::class && points == other.points
 
-    override fun getPoint(step: Int): P =
-        points.getOrNull(step)
-            ?: error("$step is not a valid point number for this route (length ${size()})")
+    override fun getPoint(step: Int): P = points.getOrNull(step)
+        ?: error("$step is not a valid point number for this route (length ${size()})")
 
     override fun hashCode(): Int {
         if (hash == 0) {

@@ -36,56 +36,51 @@ private val logger = LoggerFactory.getLogger(GraphQLMonitor::class.java)
  * This behavior can be changed by setting [teardownOnSimulationTermination] to false.
  */
 class GraphQLMonitor<T, P : Position<out P>>
-    @JvmOverloads
-    constructor(
-        val environment: Environment<T, P>,
-        private val host: String = DefaultGraphQLSettings.DEFAULT_HOST,
-        private val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
-        private val teardownOnSimulationTermination: Boolean = true,
-        private val serverDispatcher: CoroutineDispatcher = Dispatchers.Default,
-    ) : OutputMonitor<Any, Nothing> {
-        private val subscriptionMonitor = EnvironmentSubscriptionMonitor<Any, Nothing>()
-        private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
+@JvmOverloads
+constructor(
+    val environment: Environment<T, P>,
+    private val host: String = DefaultGraphQLSettings.DEFAULT_HOST,
+    private val port: Int = DefaultGraphQLSettings.DEFAULT_PORT,
+    private val teardownOnSimulationTermination: Boolean = true,
+    private val serverDispatcher: CoroutineDispatcher = Dispatchers.Default,
+) : OutputMonitor<Any, Nothing> {
+    private val subscriptionMonitor = EnvironmentSubscriptionMonitor<Any, Nothing>()
+    private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
-        override fun initialized(environment: Environment<Any, Nothing>) {
-            environment.simulation.addOutputMonitor(subscriptionMonitor)
-            server = makeServer()
-            val mutex = java.util.concurrent.Semaphore(0)
-            Thread(
-                {
-                    runBlocking {
-                        launch(serverDispatcher) {
-                            mutex.release()
-                            server.start(wait = true)
-                        }
+    override fun initialized(environment: Environment<Any, Nothing>) {
+        environment.simulation.addOutputMonitor(subscriptionMonitor)
+        server = makeServer()
+        val mutex = java.util.concurrent.Semaphore(0)
+        Thread(
+            {
+                runBlocking {
+                    launch(serverDispatcher) {
+                        mutex.release()
+                        server.start(wait = true)
                     }
-                },
-                "alchemist-graphql-server@$host:$port",
-            ).start()
-            runBlocking {
-                logger.info("Starting GraphQL server at $host:${server.engine.resolvedConnectors().first().port}")
-            }
-            mutex.acquireUninterruptibly()
+                }
+            },
+            "alchemist-graphql-server@$host:$port",
+        ).start()
+        runBlocking {
+            logger.info("Starting GraphQL server at $host:${server.engine.resolvedConnectors().first().port}")
         }
-
-        override fun finished(
-            environment: Environment<Any, Nothing>,
-            time: Time,
-            step: Long,
-        ) {
-            if (teardownOnSimulationTermination) {
-                server.stop()
-            }
-        }
-
-        private fun makeServer() =
-            embeddedServer(
-                Netty,
-                port = port,
-                host = host,
-                module = {
-                    graphQLModule(this@GraphQLMonitor.environment)
-                    graphQLRoutingModule()
-                },
-            )
+        mutex.acquireUninterruptibly()
     }
+
+    override fun finished(environment: Environment<Any, Nothing>, time: Time, step: Long) {
+        if (teardownOnSimulationTermination) {
+            server.stop()
+        }
+    }
+
+    private fun makeServer() = embeddedServer(
+        Netty,
+        port = port,
+        host = host,
+        module = {
+            graphQLModule(this@GraphQLMonitor.environment)
+            graphQLRoutingModule()
+        },
+    )
+}

@@ -39,16 +39,12 @@ open class CognitiveAgentFlee<T, P, A>(
           A : Transformation<P> {
     private val danger: P = environment.makePosition(*coords.toTypedArray())
 
-    override fun cloneAction(
-        node: Node<T>,
-        reaction: Reaction<T>,
-    ): CognitiveAgentFlee<T, P, A> =
-        CognitiveAgentFlee(
-            environment,
-            reaction,
-            node.pedestrianProperty,
-            *danger.coordinates,
-        )
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentFlee<T, P, A> = CognitiveAgentFlee(
+        environment,
+        reaction,
+        node.pedestrianProperty,
+        *danger.coordinates,
+    )
 
     override fun nextPosition(): P = (currentPosition - danger).resized(maxWalk)
 }

@@ -31,9 +31,8 @@ import javax.swing.SwingUtilities
  * @param T concentration type.
  */
 @Deprecated("This class is deprecated anyway")
-class NodeTracker<T, P : Position<out P>>(
-    private val node: Node<T>,
-) : JPanel(),
+class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) :
+    JPanel(),
     OutputMonitor<T, P>,
     ActionListener {
     private val jTextArea = JTextArea(AREA_SIZE / 2, AREA_SIZE)
@@ -54,11 +53,7 @@ class NodeTracker<T, P : Position<out P>>(
 
     override fun actionPerformed(e: ActionEvent) = Unit
 
-    override fun finished(
-        environment: Environment<T, P>,
-        time: Time,
-        step: Long,
-    ) {
+    override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
         stepDone(environment, null, time, step)
     }
 
@@ -66,12 +61,7 @@ class NodeTracker<T, P : Position<out P>>(
         stepDone(environment, null, Time.ZERO, 0L)
     }
 
-    override fun stepDone(
-        environment: Environment<T, P>,
-        reaction: Actionable<T>?,
-        time: Time,
-        step: Long,
-    ) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
         if (reaction == null || reaction is Reaction<*> && reaction.node == node) {
             val content =
                 """

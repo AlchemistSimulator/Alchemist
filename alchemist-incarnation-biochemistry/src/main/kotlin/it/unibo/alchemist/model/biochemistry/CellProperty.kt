@@ -28,10 +28,7 @@ interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
      * [junction] the junction.
      * [neighbor] the neighbor node at the other side of the junction.
      */
-    fun addJunction(
-        junction: Junction,
-        neighbor: Node<Double>,
-    ) {
+    fun addJunction(junction: Junction, neighbor: Node<Double>) {
         if (containsJunction(junction)) {
             junctions[junction]?.let {
                 if (it.containsKey(neighbor)) {
@@ -60,10 +57,7 @@ interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
      *
      * [neighbor] the node at the other side of the junction.
      */
-    fun removeJunction(
-        junction: Junction,
-        neighbor: Node<Double>,
-    ) {
+    fun removeJunction(junction: Junction, neighbor: Node<Double>) {
         if (containsJunction(junction)) {
             val inner: MutableMap<Node<Double>, Int>? = junctions[junction]
             inner?.let {

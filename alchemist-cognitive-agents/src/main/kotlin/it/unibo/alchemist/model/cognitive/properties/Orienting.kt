@@ -34,23 +34,23 @@ import org.jgrapht.graph.DefaultEdge
  * Base implementation of a node's [OrientingProperty].
  */
 abstract class Orienting<T, P, A, N, L>
-    @JvmOverloads
-    constructor(
-        /**
-         * The simulation [RandomGenerator].
-         */
-        val randomGenerator: RandomGenerator,
-        override val environment: EnvironmentWithGraph<*, T, P, A, N, DefaultEdge>,
-        override val node: Node<T>,
-        override val knowledgeDegree: Double,
-        /**
-         * Environment's areas whose diameter is smaller than ([minArea] * the diameter of this pedestrian) will be
-         * regarded as too small and discarded when generating the cognitive map (i.e. no landmark will be placed inside
-         * them).
-         */
-        private val minArea: Double = 10.0,
-    ) : AbstractNodeProperty<T>(node),
-        OrientingProperty<T, P, A, L, N, DefaultEdge>
+@JvmOverloads
+constructor(
+    /**
+     * The simulation [RandomGenerator].
+     */
+    val randomGenerator: RandomGenerator,
+    override val environment: EnvironmentWithGraph<*, T, P, A, N, DefaultEdge>,
+    override val node: Node<T>,
+    override val knowledgeDegree: Double,
+    /**
+     * Environment's areas whose diameter is smaller than ([minArea] * the diameter of this pedestrian) will be
+     * regarded as too small and discarded when generating the cognitive map (i.e. no landmark will be placed inside
+     * them).
+     */
+    private val minArea: Double = 10.0,
+) : AbstractNodeProperty<T>(node),
+    OrientingProperty<T, P, A, L, N, DefaultEdge>
     where P : Position<P>,
           P : Vector<P>,
           A : Transformation<P>,
@@ -127,9 +127,7 @@ abstract class Orienting<T, P, A, N, L>
          * As unweighted graphs have a default edge weight of 1.0, shortest path algorithms can always be applied
          * meaningfully.
          */
-        fun <V> Graph<V, *>.pathExists(
-            source: V,
-            sink: V,
-        ): Boolean = DijkstraShortestPath.findPathBetween(this, source, sink) != null
+        fun <V> Graph<V, *>.pathExists(source: V, sink: V): Boolean =
+            DijkstraShortestPath.findPathBetween(this, source, sink) != null
     }
 }

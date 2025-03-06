@@ -16,26 +16,17 @@ import it.unibo.alchemist.model.times.DoubleTime
 /**
  * A trigger that fires at a given [time].
  */
-class Trigger<T>(
-    time: Time,
-) : AbstractDistribution<T>(time) {
+class Trigger<T>(time: Time) : AbstractDistribution<T>(time) {
     override fun getRate(): Double = Double.Companion.NaN
 
-    override fun updateStatus(
-        currentTime: Time?,
-        executed: Boolean,
-        param: Double,
-        environment: Environment<T, *>,
-    ) {
+    override fun updateStatus(currentTime: Time?, executed: Boolean, param: Double, environment: Environment<T, *>) {
         if (executed) {
             setNextOccurrence(DoubleTime(Double.Companion.POSITIVE_INFINITY))
         }
     }
 
-    override fun cloneOnNewNode(
-        destination: Node<T>,
-        currentTime: Time,
-    ): AbstractDistribution<T> = Trigger(nextOccurence)
+    override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): AbstractDistribution<T> =
+        Trigger(nextOccurence)
 
     /**
      * Static constants for [Trigger] class.

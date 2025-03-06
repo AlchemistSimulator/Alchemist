@@ -73,9 +73,8 @@ internal fun withMongo(operation: () -> Unit) {
     }
 }
 
-private fun startMongo(platform: Platform) =
-    Mongod
-        .instance()
-        .withNet(Net.of("localhost", 27017, Network.localhostIsIPv6()).toTransition())
-        .withPlatform(platform.toTransition())
-        .start(Version.Main.V8_0)
+private fun startMongo(platform: Platform) = Mongod
+    .instance()
+    .withNet(Net.of("localhost", 27017, Network.localhostIsIPv6()).toTransition())
+    .withPlatform(platform.toTransition())
+    .start(Version.Main.V8_0)

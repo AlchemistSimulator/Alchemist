@@ -21,31 +21,30 @@ import kotlin.time.Duration.Companion.minutes
 
 class TestWebsiteCodeSnippets {
     @Test
-    fun `All website code snippets should load and execute correctly`() =
-        runTest(timeout = 30.minutes) {
-            val allSpecs = ClassPathScanner.resourcesMatching(".*", "website-snippets")
-            assertFalse(allSpecs.isEmpty(), "No website snippets found")
-            allSpecs
-                .map { url ->
-                    launch {
-                        assertNotNull(url, "Resource URL should not be null")
-                        val snippetName = url.path.split("/").last()
-                        println("Testing snippet: $snippetName")
-                        val simulation = LoadAlchemist.from(url).getDefault<Any, Nothing>()
-                        assertNotNull(simulation, "Simulation should load correctly")
-                        val environment = simulation.environment
-                        assertNotNull(environment, "Environment should not be null")
-                        if (url.readText().contains("deployments:")) {
-                            assertFalse(environment.nodes.isEmpty(), "Expected deployed nodes but found none")
-                        } else {
-                            assertTrue(environment.nodes.isEmpty(), "Expected an empty environment but found nodes")
-                        }
-                        environment.addTerminator(StepCount(100))
-                        val errorContainer = simulation.runInCurrentThread().error
-                        assertTrue(errorContainer.isEmpty, "Simulation encountered errors: $errorContainer")
+    fun `All website code snippets should load and execute correctly`() = runTest(timeout = 30.minutes) {
+        val allSpecs = ClassPathScanner.resourcesMatching(".*", "website-snippets")
+        assertFalse(allSpecs.isEmpty(), "No website snippets found")
+        allSpecs
+            .map { url ->
+                launch {
+                    assertNotNull(url, "Resource URL should not be null")
+                    val snippetName = url.path.split("/").last()
+                    println("Testing snippet: $snippetName")
+                    val simulation = LoadAlchemist.from(url).getDefault<Any, Nothing>()
+                    assertNotNull(simulation, "Simulation should load correctly")
+                    val environment = simulation.environment
+                    assertNotNull(environment, "Environment should not be null")
+                    if (url.readText().contains("deployments:")) {
+                        assertFalse(environment.nodes.isEmpty(), "Expected deployed nodes but found none")
+                    } else {
+                        assertTrue(environment.nodes.isEmpty(), "Expected an empty environment but found nodes")
                     }
-                }.forEach {
-                    it.join()
+                    environment.addTerminator(StepCount(100))
+                    val errorContainer = simulation.runInCurrentThread().error
+                    assertTrue(errorContainer.isEmpty, "Simulation encountered errors: $errorContainer")
                 }
-        }
+            }.forEach {
+                it.join()
+            }
+    }
 }

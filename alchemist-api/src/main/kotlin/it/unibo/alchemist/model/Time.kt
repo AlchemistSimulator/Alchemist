@@ -108,12 +108,11 @@ interface Time :
             object : Time {
                 override val isInfinite = true
 
-                override fun times(other: Double) =
-                    when {
-                        other > 0.0 -> this
-                        other < 0.0 -> NEGATIVE_INFINITY
-                        else -> error("Cannot multiply $this by 0")
-                    }
+                override fun times(other: Double) = when {
+                    other > 0.0 -> this
+                    other < 0.0 -> NEGATIVE_INFINITY
+                    else -> error("Cannot multiply $this by 0")
+                }
 
                 override fun minus(other: Time) =
                     takeUnless { other == this } ?: error("Cannot subtract an infinite time from $this")
@@ -139,12 +138,11 @@ interface Time :
         @JvmField
         val NEGATIVE_INFINITY: Time =
             object : Time by INFINITY {
-                override fun times(other: Double) =
-                    when {
-                        other > 0.0 -> this
-                        other < 0.0 -> INFINITY
-                        else -> error("Cannot multiply $this by 0")
-                    }
+                override fun times(other: Double) = when {
+                    other > 0.0 -> this
+                    other < 0.0 -> INFINITY
+                    else -> error("Cannot multiply $this by 0")
+                }
 
                 override fun minus(other: Time) =
                     takeUnless { other == this } ?: error("Cannot sum an infinite time to $this")

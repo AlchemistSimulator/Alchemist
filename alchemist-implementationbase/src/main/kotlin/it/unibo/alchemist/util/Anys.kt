@@ -34,32 +34,31 @@ object Anys {
      * Tries to convert a concentration [T] into a valid position of type [P] descriptor.
      * Types are bound to the [environment] types.
      */
-    inline fun <T, reified P : Position<P>> T.toPosition(environment: Environment<T, P>): P =
-        when (this) {
-            is P -> this
-            is Iterable<*> -> {
-                val numbers =
-                    this.map {
-                        when (it) {
-                            is Number -> it
-                            else ->
-                                error(
-                                    "The Iterable '$this' being converted to position must contain only Numbers, " +
-                                        "but element '$it' has type ${it?.javaClass?.name ?: "null"}",
-                                )
-                        }
+    inline fun <T, reified P : Position<P>> T.toPosition(environment: Environment<T, P>): P = when (this) {
+        is P -> this
+        is Iterable<*> -> {
+            val numbers =
+                this.map {
+                    when (it) {
+                        is Number -> it
+                        else ->
+                            error(
+                                "The Iterable '$this' being converted to position must contain only Numbers, " +
+                                    "but element '$it' has type ${it?.javaClass?.name ?: "null"}",
+                            )
                     }
-                environment.makePosition(numbers)
-            }
-            is Point2D -> {
-                check(environment.dimensions == 2) {
-                    "Cannot convert the bidimensional Point2D ($x, $y) to a ${environment.dimensions}-D position"
                 }
-                environment.makePosition(x, y)
-            }
-            else ->
-                throw IllegalArgumentException(
-                    "$this (type: ${if (this is Any) this.javaClass else null}) can't get converted to a Position",
-                )
+            environment.makePosition(numbers)
         }
+        is Point2D -> {
+            check(environment.dimensions == 2) {
+                "Cannot convert the bidimensional Point2D ($x, $y) to a ${environment.dimensions}-D position"
+            }
+            environment.makePosition(x, y)
+        }
+        else ->
+            throw IllegalArgumentException(
+                "$this (type: ${if (this is Any) this.javaClass else null}) can't get converted to a Position",
+            )
+    }
 }

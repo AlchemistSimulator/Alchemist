@@ -19,13 +19,12 @@ class BeliefDanger(
     private val fear: () -> Double,
     private val influencialPeople: () -> List<CognitiveModel>,
 ) : MentalCognitiveCharacteristic() {
-    override fun combinationFunction(): Double =
-        maxOf(
-            sensingOmega * zoneDangerousness(),
-            persistingOmega * level(),
-            (affectiveBiasingOmega * fear() + influencialPeople().aggregateDangerBeliefs()) /
-                (affectiveBiasingOmega + 1),
-        )
+    override fun combinationFunction(): Double = maxOf(
+        sensingOmega * zoneDangerousness(),
+        persistingOmega * level(),
+        (affectiveBiasingOmega * fear() + influencialPeople().aggregateDangerBeliefs()) /
+            (affectiveBiasingOmega + 1),
+    )
 
     private fun List<CognitiveModel>.aggregateDangerBeliefs() =
         if (isEmpty()) 0.0 else sumOf { it.dangerBelief() } / size

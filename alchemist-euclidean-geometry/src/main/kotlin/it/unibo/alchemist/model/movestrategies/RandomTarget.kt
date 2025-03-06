@@ -50,20 +50,17 @@ class RandomTarget<T>(
         distanceDistribution,
     )
 
-    override fun chooseTarget() =
-        with(directionRng.nextDouble(0.0, 2 * PI)) {
-            val distance = distanceDistribution.sample()
-            val current = getCurrentPosition()
-            val delta = makePosition(distance * cos(this), distance * sin(this))
-            val desired = current + delta
-            when (environment) {
-                is Environment2DWithObstacles<*, T> -> environment.next(current, desired)
-                else -> desired
-            }
+    override fun chooseTarget() = with(directionRng.nextDouble(0.0, 2 * PI)) {
+        val distance = distanceDistribution.sample()
+        val current = getCurrentPosition()
+        val delta = makePosition(distance * cos(this), distance * sin(this))
+        val desired = current + delta
+        when (environment) {
+            is Environment2DWithObstacles<*, T> -> environment.next(current, desired)
+            else -> desired
         }
+    }
 
-    override fun cloneIfNeeded(
-        destination: Node<T>?,
-        reaction: Reaction<T>?,
-    ): RandomTarget<T> = RandomTarget(environment, getCurrentPosition, makePosition, directionRng, distanceDistribution)
+    override fun cloneIfNeeded(destination: Node<T>?, reaction: Reaction<T>?): RandomTarget<T> =
+        RandomTarget(environment, getCurrentPosition, makePosition, directionRng, distanceDistribution)
 }

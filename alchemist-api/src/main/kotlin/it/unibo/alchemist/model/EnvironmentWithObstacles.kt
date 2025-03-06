@@ -54,10 +54,7 @@ interface EnvironmentWithObstacles<W, T, P> :
      *              end position
      * @return true if the line connecting start and end touches an obstacle
      */
-    fun intersectsObstacle(
-        start: P,
-        end: P,
-    ): Boolean
+    fun intersectsObstacle(start: P, end: P): Boolean
 
     /**
      * This method must calculate the ABSOLUTE next allowed position given the
@@ -74,8 +71,5 @@ interface EnvironmentWithObstacles<W, T, P> :
      * @return the next allowed position, where the node can actually move. This
      * position MUST be considered as a vector whose start point is [current].
      */
-    fun next(
-        current: P,
-        desired: P,
-    ): P
+    fun next(current: P, desired: P): P
 }

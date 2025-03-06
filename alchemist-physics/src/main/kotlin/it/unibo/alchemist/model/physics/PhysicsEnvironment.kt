@@ -52,10 +52,7 @@ interface PhysicsEnvironment<T, P, A, F> :
      * @param node The node
      * @param direction The direction vector.
      */
-    fun setHeading(
-        node: Node<T>,
-        direction: P,
-    )
+    fun setHeading(node: Node<T>, direction: P)
 
     /**
      * Gets the shape of a node relatively to its position and heading in the environment.
@@ -80,9 +77,5 @@ interface PhysicsEnvironment<T, P, A, F> :
      * hitbox of radius equal to its shape's radius (shapeless nodes can't cause overlapping). The client can specify
      * a different radius for the hitbox of the moving node.
      */
-    fun farthestPositionReachable(
-        node: Node<T>,
-        desiredPosition: P,
-        hitboxRadius: Double = getShape(node).radius,
-    ): P
+    fun farthestPositionReachable(node: Node<T>, desiredPosition: P, hitboxRadius: Double = getShape(node).radius): P
 }

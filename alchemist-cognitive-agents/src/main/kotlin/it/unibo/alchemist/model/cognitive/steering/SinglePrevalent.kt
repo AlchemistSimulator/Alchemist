@@ -103,42 +103,38 @@ class SinglePrevalent<T, N : ConvexPolygon>(
 
     private val expSmoothing = ExponentialSmoothing<Euclidean2DPosition>(alpha)
 
-    override fun computeNextPosition(actions: SteeringActions<T>): Euclidean2DPosition =
-        with(actions.prevalent()) {
-            val prevalentForce = this.nextPosition()
-            val leadsOutsideCurrentRoom: Euclidean2DPosition.() -> Boolean = {
-                checkNotNull(currentRoom) { "currentRoom should be defined" }
-                    .let { !it.containsBoundaryIncluded(pedestrianPosition + this) }
-            }
-            if (prevalentForce == environment.origin ||
-                currentRoom == null ||
-                prevalentForce.leadsOutsideCurrentRoom()
-            ) {
-                return prevalentForce
-            }
-            val otherForces = (actions - this).map { it.nextPosition() }
-            val isInToleranceSector: Euclidean2DPosition.() -> Boolean = {
-                magnitude > 0.0 && angleBetween(prevalentForce) <= toleranceAngle && !leadsOutsideCurrentRoom()
-            }
-            var othersWeight = 1.0
-            var resulting = combine(prevalentForce, otherForces, othersWeight)
-            while (!resulting.isInToleranceSector() && othersWeight >= 0) {
-                othersWeight -= delta
-                resulting = combine(prevalentForce, otherForces, othersWeight)
-            }
-            resulting = resulting.takeIf { othersWeight > 0 } ?: prevalentForce
-            (expSmoothing.apply(resulting).takeIf { !it.leadsOutsideCurrentRoom() } ?: resulting)
-                .coerceIn(maxWalk() * maxWalkRatio, maxWalk())
+    override fun computeNextPosition(actions: SteeringActions<T>): Euclidean2DPosition = with(actions.prevalent()) {
+        val prevalentForce = this.nextPosition()
+        val leadsOutsideCurrentRoom: Euclidean2DPosition.() -> Boolean = {
+            checkNotNull(currentRoom) { "currentRoom should be defined" }
+                .let { !it.containsBoundaryIncluded(pedestrianPosition + this) }
         }
+        if (prevalentForce == environment.origin ||
+            currentRoom == null ||
+            prevalentForce.leadsOutsideCurrentRoom()
+        ) {
+            return prevalentForce
+        }
+        val otherForces = (actions - this).map { it.nextPosition() }
+        val isInToleranceSector: Euclidean2DPosition.() -> Boolean = {
+            magnitude > 0.0 && angleBetween(prevalentForce) <= toleranceAngle && !leadsOutsideCurrentRoom()
+        }
+        var othersWeight = 1.0
+        var resulting = combine(prevalentForce, otherForces, othersWeight)
+        while (!resulting.isInToleranceSector() && othersWeight >= 0) {
+            othersWeight -= delta
+            resulting = combine(prevalentForce, otherForces, othersWeight)
+        }
+        resulting = resulting.takeIf { othersWeight > 0 } ?: prevalentForce
+        (expSmoothing.apply(resulting).takeIf { !it.leadsOutsideCurrentRoom() } ?: resulting)
+            .coerceIn(maxWalk() * maxWalkRatio, maxWalk())
+    }
 
     /**
      * Linearly combines the forces assigning [othersWeight] to [others] and unitary weight to [prevalent].
      */
-    private fun <V : Vector<V>> combine(
-        prevalent: V,
-        others: List<V>,
-        othersWeight: Double,
-    ): V = (others.map { it * othersWeight } + prevalent).reduce { acc, force -> acc + force }
+    private fun <V : Vector<V>> combine(prevalent: V, others: List<V>, othersWeight: Double): V =
+        (others.map { it * othersWeight } + prevalent).reduce { acc, force -> acc + force }
 
     /**
      * Exponential smoothing is a trivial way of smoothing signals.
@@ -146,9 +142,7 @@ class SinglePrevalent<T, N : ConvexPolygon>(
      * s(t) = alpha * g(t) + (1 - alpha) * s(t-1)
      * s(0) = g(0)
      */
-    private class ExponentialSmoothing<V : Vector<V>>(
-        private val alpha: Double,
-    ) {
+    private class ExponentialSmoothing<V : Vector<V>>(private val alpha: Double) {
         init {
             require(alpha in 0.0..1.0) { "alpha should be in [0,1]" }
         }

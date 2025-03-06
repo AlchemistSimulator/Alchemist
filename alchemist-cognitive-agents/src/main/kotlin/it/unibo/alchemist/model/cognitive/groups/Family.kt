@@ -15,9 +15,8 @@ import it.unibo.alchemist.model.cognitive.GroupWithLeader
 /**
  * A [Family] is modeled as a group of pedestrians with a leader.
  */
-class Family<T>(
-    comparator: Comparator<Node<T>> = Comparator { a, b -> a.id.compareTo(b.id) },
-) : GenericGroup<T, Node<T>>(),
+class Family<T>(comparator: Comparator<Node<T>> = Comparator { a, b -> a.id.compareTo(b.id) }) :
+    GenericGroup<T, Node<T>>(),
     GroupWithLeader<T, Node<T>> {
     override val leader: Node<T> =
         checkNotNull(members.minWithOrNull(comparator)) {

@@ -24,64 +24,55 @@ import org.bson.Document
  * @param appendTime if true it will always generate a new Mongo document, false to overwrite.
  */
 class MongoDBExporter<T, P : Position<P>>
-    @JvmOverloads
-    constructor(
-        val uri: String,
-        val dbName: String = DEFAULT_DATABASE,
-        val interval: Double = DEFAULT_INTERVAL,
-        private val appendTime: Boolean = false,
-    ) : AbstractExporter<T, P>(interval) {
-        /**
-         * The name of the collection related to the current simulation in execution.
-         */
-        lateinit var collectionName: String
-            private set
+@JvmOverloads
+constructor(
+    val uri: String,
+    val dbName: String = DEFAULT_DATABASE,
+    val interval: Double = DEFAULT_INTERVAL,
+    private val appendTime: Boolean = false,
+) : AbstractExporter<T, P>(interval) {
+    /**
+     * The name of the collection related to the current simulation in execution.
+     */
+    lateinit var collectionName: String
+        private set
 
-        private val mongoService: MongoService = MongoService()
+    private val mongoService: MongoService = MongoService()
 
-        override fun setup(environment: Environment<T, P>) {
-            collectionName = "$variablesDescriptor${"".takeUnless { appendTime } ?: System.currentTimeMillis()}"
-            mongoService.startService(uri)
-            mongoService.connectToDB(dbName)
-            mongoService.createCollection(collectionName)
-        }
-
-        override fun exportData(
-            environment: Environment<T, P>,
-            reaction: Actionable<T>?,
-            time: Time,
-            step: Long,
-        ) {
-            mongoService.pushToDatabase(convertToDocument(environment, reaction, time, step))
-        }
-
-        override fun close(
-            environment: Environment<T, P>,
-            time: Time,
-            step: Long,
-        ) {
-            mongoService.stopService()
-        }
-
-        private fun convertToDocument(
-            environment: Environment<T, P>,
-            reaction: Actionable<T>?,
-            time: Time,
-            step: Long,
-        ): Document {
-            val document = Document()
-            dataExtractors.forEach { extractor ->
-                extractor.extractData(environment, reaction, time, step).forEach { (dataLabel, dataValue) ->
-                    document.append(dataLabel, dataValue)
-                }
-            }
-            return document
-        }
-
-        private companion object {
-            /**
-             *  The default database if no name is specified.
-             */
-            private const val DEFAULT_DATABASE = "test"
-        }
+    override fun setup(environment: Environment<T, P>) {
+        collectionName = "$variablesDescriptor${"".takeUnless { appendTime } ?: System.currentTimeMillis()}"
+        mongoService.startService(uri)
+        mongoService.connectToDB(dbName)
+        mongoService.createCollection(collectionName)
     }
+
+    override fun exportData(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+        mongoService.pushToDatabase(convertToDocument(environment, reaction, time, step))
+    }
+
+    override fun close(environment: Environment<T, P>, time: Time, step: Long) {
+        mongoService.stopService()
+    }
+
+    private fun convertToDocument(
+        environment: Environment<T, P>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ): Document {
+        val document = Document()
+        dataExtractors.forEach { extractor ->
+            extractor.extractData(environment, reaction, time, step).forEach { (dataLabel, dataValue) ->
+                document.append(dataLabel, dataValue)
+            }
+        }
+        return document
+    }
+
+    private companion object {
+        /**
+         *  The default database if no name is specified.
+         */
+        private const val DEFAULT_DATABASE = "test"
+    }
+}

@@ -30,9 +30,8 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 /**
  * Implementation of [Physics2DEnvironment].
  */
-open class ContinuousPhysics2DEnvironment<T>(
-    incarnation: Incarnation<T, Euclidean2DPosition>,
-) : Continuous2DEnvironment<T>(incarnation),
+open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPosition>) :
+    Continuous2DEnvironment<T>(incarnation),
     Physics2DEnvironment<T> {
     private companion object {
         @JvmStatic private val serialVersionUID: Long = 1L
@@ -53,34 +52,25 @@ open class ContinuousPhysics2DEnvironment<T>(
             node.asPropertyOrNull<T, AreaProperty<T>>()?.shape ?: adimensional
         }
 
-    override fun getNodesWithin(shape: Euclidean2DShape): List<Node<T>> =
-        when {
-            shape.diameter + largestShapeDiameter <= 0 -> emptyList()
-            else ->
-                getNodesWithinRange(shape.centroid, (shape.diameter + largestShapeDiameter) / 2)
-                    .filter { shape.intersects(getShape(it)) }
-        }
+    override fun getNodesWithin(shape: Euclidean2DShape): List<Node<T>> = when {
+        shape.diameter + largestShapeDiameter <= 0 -> emptyList()
+        else ->
+            getNodesWithinRange(shape.centroid, (shape.diameter + largestShapeDiameter) / 2)
+                .filter { shape.intersects(getShape(it)) }
+    }
 
     override fun getHeading(node: Node<T>) = nodeToHeading.getOrPut(node) { defaultHeading }
 
-    override fun setHeading(
-        node: Node<T>,
-        direction: Euclidean2DPosition,
-    ) {
+    override fun setHeading(node: Node<T>, direction: Euclidean2DPosition) {
         nodeToHeading[node] = direction
     }
 
-    override fun getShape(node: Node<T>): Euclidean2DShape =
-        shapefulNodes[node].transformed {
-            origin(getPosition(node))
-            rotate(getHeading(node))
-        }
+    override fun getShape(node: Node<T>): Euclidean2DShape = shapefulNodes[node].transformed {
+        origin(getPosition(node))
+        rotate(getHeading(node))
+    }
 
-    override fun nodeAdded(
-        node: Node<T>,
-        position: Euclidean2DPosition,
-        neighborhood: Neighborhood<T>,
-    ) {
+    override fun nodeAdded(node: Node<T>, position: Euclidean2DPosition, neighborhood: Neighborhood<T>) {
         super.nodeAdded(node, position, neighborhood)
         val shape = getShape(node)
         if (shape != adimensional && shape.diameter > largestShapeDiameter) {
@@ -91,10 +81,7 @@ open class ContinuousPhysics2DEnvironment<T>(
     /**
      * {@inheritDoc}.
      */
-    override fun nodeRemoved(
-        node: Node<T>,
-        neighborhood: Neighborhood<T>,
-    ) {
+    override fun nodeRemoved(node: Node<T>, neighborhood: Neighborhood<T>) {
         super.nodeRemoved(node, neighborhood)
         nodeToHeading.remove(node)
         val occupiesSpaceProperty = node.asPropertyOrNull<T, AreaProperty<T>>()
@@ -112,34 +99,28 @@ open class ContinuousPhysics2DEnvironment<T>(
      * Moves the [node] to the [farthestPositionReachable] towards the desired [newPosition]. If the node is shapeless,
      * it is simply moved to [newPosition].
      */
-    override fun moveNodeToPosition(
-        node: Node<T>,
-        newPosition: Euclidean2DPosition,
-    ) = if (getShape(node) != adimensional) {
-        super.moveNodeToPosition(node, farthestPositionReachable(node, newPosition))
-    } else {
-        super.moveNodeToPosition(node, newPosition)
-    }
+    override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) =
+        if (getShape(node) != adimensional) {
+            super.moveNodeToPosition(node, farthestPositionReachable(node, newPosition))
+        } else {
+            super.moveNodeToPosition(node, newPosition)
+        }
 
     /**
      * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's
      * limits.
      */
-    override fun nodeShouldBeAdded(
-        node: Node<T>,
-        position: Euclidean2DPosition,
-    ): Boolean = node.canFitIn(position)
+    override fun nodeShouldBeAdded(node: Node<T>, position: Euclidean2DPosition): Boolean = node.canFitIn(position)
 
     /**
      * Creates an euclidean position from the given coordinates.
      * @param coordinates coordinates array
      * @return Euclidean2DPosition
      */
-    override fun makePosition(vararg coordinates: Number) =
-        with(coordinates) {
-            require(size == 2)
-            Euclidean2DPosition(coordinates[0].toDouble(), coordinates[1].toDouble())
-        }
+    override fun makePosition(vararg coordinates: Number) = with(coordinates) {
+        require(size == 2)
+        Euclidean2DPosition(coordinates[0].toDouble(), coordinates[1].toDouble())
+    }
 
     override fun farthestPositionReachable(
         node: Node<T>,
@@ -172,21 +153,17 @@ open class ContinuousPhysics2DEnvironment<T>(
      * @returns all nodes that the given [node] would collide with while performing the [desiredMovement].
      * Such segment should connect the [node]'s current position and its desired position.
      */
-    private fun nodesOnPath(
-        node: Node<T>,
-        desiredMovement: Segment2D<*>,
-    ): List<Node<T>> =
-        with(getShape(node)) {
-            shapeFactory
-                .rectangle(desiredMovement.length + diameter, diameter)
-                .transformed {
-                    desiredMovement.midPoint.let { origin(it.x, it.y) }
-                    rotate(desiredMovement.toVector.asAngle)
-                }.let { movementArea ->
-                    getNodesWithin(movementArea)
-                        .minusElement(node)
-                }
-        }
+    private fun nodesOnPath(node: Node<T>, desiredMovement: Segment2D<*>): List<Node<T>> = with(getShape(node)) {
+        shapeFactory
+            .rectangle(desiredMovement.length + diameter, diameter)
+            .transformed {
+                desiredMovement.midPoint.let { origin(it.x, it.y) }
+                rotate(desiredMovement.toVector.asAngle)
+            }.let { movementArea ->
+                getNodesWithin(movementArea)
+                    .minusElement(node)
+            }
+    }
 
     /**
      * Checks if a node doesn't overlap with any other node in the environment (see [overlappingNodes]). If the
@@ -201,10 +178,7 @@ open class ContinuousPhysics2DEnvironment<T>(
      * @returns the nodes in this environment whose shape intersects this node's shape. The [position] of this
      * node must be specified as it may not have been added in the environment yet.
      */
-    private fun Node<T>.overlappingNodes(
-        nodeShape: Euclidean2DShape,
-        position: Euclidean2DPosition,
-    ): List<Node<T>> =
+    private fun Node<T>.overlappingNodes(nodeShape: Euclidean2DShape, position: Euclidean2DPosition): List<Node<T>> =
         getNodesWithin(shapeFactory.requireCompatible(nodeShape).transformed { origin(position) })
             .minusElement(this)
 }

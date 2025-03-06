@@ -42,11 +42,10 @@ internal class TestTargetMapWalker {
         environment.addNode(node, STARTPOSITION)
     }
 
-    private fun run() =
-        repeat(STEPS) {
-            reaction.execute()
-            reaction.update(reaction.tau, true, environment)
-        }
+    private fun run() = repeat(STEPS) {
+        reaction.execute()
+        reaction.update(reaction.tau, true, environment)
+    }
 
     @Test
     fun `Node should not move if no position is set`() {

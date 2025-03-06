@@ -96,10 +96,9 @@ class PhysicalPedestrian2D<T>(
     override fun shouldFall(pushingForces: List<Euclidean2DPosition>) =
         pushingForces.fold(Euclidean2DPosition.zero) { acc, f -> acc + f }.magnitude > pedestrian.runningSpeed
 
-    override fun repulsionForces(): List<Euclidean2DPosition> =
-        collectForces(::repulse, comfortArea) {
-            !it.asProperty<T, PhysicalPedestrian2D<T>>().isFallen
-        }
+    override fun repulsionForces(): List<Euclidean2DPosition> = collectForces(::repulse, comfortArea) {
+        !it.asProperty<T, PhysicalPedestrian2D<T>>().isFallen
+    }
 
     override fun repulse(other: Node<T>): Euclidean2DPosition {
         val myShape = nodeShape.transformed { origin(environment.getPosition(node)) }
@@ -146,18 +145,14 @@ class PhysicalPedestrian2D<T>(
         return weight * weight
     }
 
-    private fun avoidanceDirectionWeight(
-        thisVelocity: Euclidean2DPosition,
-        otherVelocity: Euclidean2DPosition,
-    ) = when {
+    private fun avoidanceDirectionWeight(thisVelocity: Euclidean2DPosition, otherVelocity: Euclidean2DPosition) = when {
         thisVelocity.dot(otherVelocity) > 0 -> DIRECTION_WEIGHT
         else -> DIRECTION_WEIGHT * 2
     }
 
-    override fun fallenAgentAvoidanceForces() =
-        collectForces(::avoid, fallenAgentPerceptionArea) {
-            it.asProperty<T, PhysicalPedestrian2D<T>>().isFallen
-        }
+    override fun fallenAgentAvoidanceForces() = collectForces(::avoid, fallenAgentPerceptionArea) {
+        it.asProperty<T, PhysicalPedestrian2D<T>>().isFallen
+    }
 
     override fun onFall(listener: (Node<T>) -> Unit) {
         fallenAgentListeners += listener
@@ -183,9 +178,8 @@ class PhysicalPedestrian2D<T>(
 
     override fun cloneOnNewNode(node: Node<T>) = PhysicalPedestrian2D(randomGenerator, environment, node)
 
-    override fun toString() =
-        "${super.toString()}[desiredSpaceThreshold=$desiredSpaceTreshold, " +
-            "comfortRay=$comfortRay, isFallen=$isFallen]"
+    override fun toString() = "${super.toString()}[desiredSpaceThreshold=$desiredSpaceTreshold, " +
+        "comfortRay=$comfortRay, isFallen=$isFallen]"
 
     private companion object {
         /**

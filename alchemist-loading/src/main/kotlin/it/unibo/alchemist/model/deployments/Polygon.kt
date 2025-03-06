@@ -95,16 +95,15 @@ open class Polygon<P : Position2D<out P>>(
      * the node number
      * @return the position of the node
      */
-    final override fun indexToPosition(i: Int): P =
-        bounds
-            .run {
-                val (x, y) = Pair(randomDouble(minX, maxX), randomDouble(minY, maxY))
-                if (isOnMaps) {
-                    environment.makePosition(y, x) // Latitude, Longitude
-                } else {
-                    environment.makePosition(x, y)
-                }
-            }.takeIf { polygon.contains(it) } ?: indexToPosition(i)
+    final override fun indexToPosition(i: Int): P = bounds
+        .run {
+            val (x, y) = Pair(randomDouble(minX, maxX), randomDouble(minY, maxY))
+            if (isOnMaps) {
+                environment.makePosition(y, x) // Latitude, Longitude
+            } else {
+                environment.makePosition(x, y)
+            }
+        }.takeIf { polygon.contains(it) } ?: indexToPosition(i)
 
     /**
      * Converts a Point2D to a [P].

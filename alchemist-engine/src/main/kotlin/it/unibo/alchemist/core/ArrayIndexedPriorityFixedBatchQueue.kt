@@ -22,12 +22,11 @@ class ArrayIndexedPriorityFixedBatchQueue<T>(
     private val delegate: ArrayIndexedPriorityQueue<T> = ArrayIndexedPriorityQueue(),
 ) : Scheduler<T> by delegate,
     BatchedScheduler<T> {
-    override fun getNextBatch(): List<Actionable<T>> =
-        if (delegate.tree.isNotEmpty()) {
-            delegate.tree.subList(0, delegate.tree.size.coerceAtMost(batchSize))
-        } else {
-            emptyList()
-        }
+    override fun getNextBatch(): List<Actionable<T>> = if (delegate.tree.isNotEmpty()) {
+        delegate.tree.subList(0, delegate.tree.size.coerceAtMost(batchSize))
+    } else {
+        emptyList()
+    }
 
     override fun updateReaction(reaction: Actionable<T>) {
         synchronized(this) {

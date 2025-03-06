@@ -26,10 +26,7 @@ object AlchemistSimStatesLoader {
      * @param separator the separator used in the file
      * @return the list of simulation states
      */
-    fun fromCSV(
-        filepath: String,
-        separator: String = " ",
-    ): List<AlchemistStateObservations> {
+    fun fromCSV(filepath: String, separator: String = " "): List<AlchemistStateObservations> {
         logger.info("Reading file $filepath")
         val fields: List<String>
         val simStates: List<AlchemistStateObservations>
@@ -41,10 +38,7 @@ object AlchemistSimStatesLoader {
         return Collections.unmodifiableList(simStates)
     }
 
-    private fun parseHeader(
-        reader: BufferedReader,
-        separator: String,
-    ): List<String> {
+    private fun parseHeader(reader: BufferedReader, separator: String): List<String> {
         var line: String?
         while (reader.readLine().also { line = it?.trim() } != null && line?.startsWith("#") == true) {
             if (line?.contains("meaning") == true) {

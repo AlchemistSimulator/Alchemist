@@ -20,19 +20,17 @@ import java.util.concurrent.TimeUnit
  * This is an adapter that allow MultiVesta to interact with Alchemist.
  * @param simulation the simulation to be wrapped.
  */
-abstract class AbstractAlchemistSimulationAdapter(
-    private val simulation: Simulation<Any, Nothing>,
-) : AlchemistSimulationAdapter {
+abstract class AbstractAlchemistSimulationAdapter(private val simulation: Simulation<Any, Nothing>) :
+    AlchemistSimulationAdapter {
     private val logger = LoggerFactory.getLogger(AbstractAlchemistSimulationAdapter::class.java)
 
     final override fun getTime(): Double = simulation.time.toDouble()
 
-    final override fun rval(obs: String): Double =
-        when (obs) {
-            "time" -> getTime()
-            "step" -> simulation.step.toDouble()
-            else -> getObsValue(obs)
-        }
+    final override fun rval(obs: String): Double = when (obs) {
+        "time" -> getTime()
+        "step" -> simulation.step.toDouble()
+        else -> getObsValue(obs)
+    }
 
     final override fun rval(obsId: Int): Double = getObsValue(obsId)
 

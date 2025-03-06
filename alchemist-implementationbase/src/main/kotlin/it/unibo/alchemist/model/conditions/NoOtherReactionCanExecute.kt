@@ -18,10 +18,8 @@ import it.unibo.alchemist.model.Reaction
  * This condition can be used only in a single reaction per node,
  * as multiple instances would lead to undecidable situations.
  */
-class NoOtherReactionCanExecute<T>(
-    node: Node<T>,
-    private val myReaction: Reaction<T>,
-) : AbstractNonPropensityContributingCondition<T>(node) {
+class NoOtherReactionCanExecute<T>(node: Node<T>, private val myReaction: Reaction<T>) :
+    AbstractNonPropensityContributingCondition<T>(node) {
     init {
         require(
             node.reactions
@@ -35,17 +33,14 @@ class NoOtherReactionCanExecute<T>(
         }
     }
 
-    override fun cloneCondition(
-        newNode: Node<T>,
-        newReaction: Reaction<T>,
-    ) = NoOtherReactionCanExecute(newNode, myReaction)
+    override fun cloneCondition(newNode: Node<T>, newReaction: Reaction<T>) =
+        NoOtherReactionCanExecute(newNode, myReaction)
 
     override fun getContext() = Context.LOCAL
 
-    override fun isValid() =
-        node.reactions
-            .asSequence()
-            .filterNot { it == myReaction }
-            .filter { it.conditions.isNotEmpty() }
-            .none { it.canExecute() }
+    override fun isValid() = node.reactions
+        .asSequence()
+        .filterNot { it == myReaction }
+        .filter { it.conditions.isNotEmpty() }
+        .none { it.canExecute() }
 }

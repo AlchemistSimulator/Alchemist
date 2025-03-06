@@ -12,10 +12,7 @@ import it.unibo.alchemist.model.cognitive.impact.PARAMETERS_FILE
  * @param gender
  *          the gender of the agent.
  */
-class Compliance(
-    age: Age,
-    gender: Gender,
-) : Characteristic {
+class Compliance(age: Age, gender: Gender) : Characteristic {
     /**
      * The calculated level of compliance.
      */

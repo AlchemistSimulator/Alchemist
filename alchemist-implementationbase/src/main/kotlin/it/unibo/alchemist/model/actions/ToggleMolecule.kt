@@ -18,15 +18,9 @@ import it.unibo.alchemist.model.Reaction
  * * if it is present, then it's removed from [node];
  * * otherwise, it is inserted in [node] with the provided [concentration].
  */
-open class ToggleMolecule<T>(
-    node: Node<T>,
-    protected val molecule: Molecule,
-    protected val concentration: T,
-) : AbstractAction<T>(node) {
-    override fun cloneAction(
-        node: Node<T>,
-        reaction: Reaction<T>,
-    ) = ToggleMolecule(node, molecule, concentration)
+open class ToggleMolecule<T>(node: Node<T>, protected val molecule: Molecule, protected val concentration: T) :
+    AbstractAction<T>(node) {
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) = ToggleMolecule(node, molecule, concentration)
 
     /**
      * Toggles concentration.

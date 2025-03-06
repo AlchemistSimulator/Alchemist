@@ -24,9 +24,5 @@ import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
  * @param aperture
  *          the amplitude of the field of view in radians.
  */
-class FieldOfView2D<T>(
-    environment: Physics2DEnvironment<T>,
-    owner: Node<T>,
-    distance: Double,
-    aperture: Double,
-) : InfluenceSphere2D<T>(environment, owner, environment.shapeFactory.circleSector(distance, aperture, 0.0))
+class FieldOfView2D<T>(environment: Physics2DEnvironment<T>, owner: Node<T>, distance: Double, aperture: Double) :
+    InfluenceSphere2D<T>(environment, owner, environment.shapeFactory.circleSector(distance, aperture, 0.0))

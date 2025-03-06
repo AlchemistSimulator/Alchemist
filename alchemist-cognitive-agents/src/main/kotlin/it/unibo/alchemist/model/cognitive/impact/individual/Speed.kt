@@ -16,11 +16,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param randomGenerator
  *          the simulation {@link RandomGenerator}.
  */
-class Speed(
-    age: Age,
-    gender: Gender,
-    randomGenerator: RandomGenerator,
-) : Characteristic {
+class Speed(age: Age, gender: Gender, randomGenerator: RandomGenerator) : Characteristic {
     /**
      * The walking speed of the agent.
      */

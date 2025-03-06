@@ -23,9 +23,7 @@ import kotlinx.serialization.encoding.Encoder
  * @param name the name of the molecule.
  */
 @Serializable(with = MoleculeSurrogateSerializer::class)
-data class MoleculeSurrogate(
-    val name: String,
-)
+data class MoleculeSurrogate(val name: String)
 
 /**
  * Custom serializer to map a molecule to a string, as in JSON non-primitive types aren't allowed in [Map] key position.
@@ -33,10 +31,7 @@ data class MoleculeSurrogate(
 object MoleculeSurrogateSerializer : KSerializer<MoleculeSurrogate> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Molecule", PrimitiveKind.STRING)
 
-    override fun serialize(
-        encoder: Encoder,
-        value: MoleculeSurrogate,
-    ) {
+    override fun serialize(encoder: Encoder, value: MoleculeSurrogate) {
         encoder.encodeSerializableValue(String.serializer(), value.name)
     }
 

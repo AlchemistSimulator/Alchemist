@@ -1,11 +1,12 @@
 [*.{kt,kts}]
 indent_size=4
-max_line_length = 120
 insert_final_newline = true
+ktlint_code_style=intellij_idea
+max_line_length = 120
 
 # Do not apply the general rule to generated files
 [**/generated/**/*.{kt,kts}]
-indent_size=unset
+indent_size = unset
 max_line_length = unset
 insert_final_newline = unset
 

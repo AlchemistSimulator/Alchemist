@@ -19,11 +19,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Models a route on a map, built upon the information provided by a query to GraphHopper.
  */
-class GraphHopperRoute(
-    from: GeoPosition,
-    to: GeoPosition,
-    response: GHResponse,
-) : TimedRoute<GeoPosition> {
+class GraphHopperRoute(from: GeoPosition, to: GeoPosition, response: GHResponse) : TimedRoute<GeoPosition> {
     private val distance: Double
     private val time: Double
     override val points: ImmutableList<GeoPosition>

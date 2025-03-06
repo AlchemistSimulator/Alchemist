@@ -38,11 +38,7 @@ data class ServerState(
  * @param state the old server state.
  * @param action the action to be applied.
  */
-fun rootReducer(
-    state: ServerState,
-    action: Any,
-): ServerState =
-    ServerState(
-        simulation = simulationReducer(state.simulation, action),
-        environmentSurrogate = environmentSurrogateReducer(state.environmentSurrogate, action),
-    )
+fun rootReducer(state: ServerState, action: Any): ServerState = ServerState(
+    simulation = simulationReducer(state.simulation, action),
+    environmentSurrogate = environmentSurrogateReducer(state.environmentSurrogate, action),
+)

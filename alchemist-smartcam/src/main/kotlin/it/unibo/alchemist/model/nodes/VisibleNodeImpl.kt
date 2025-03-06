@@ -16,10 +16,7 @@ import it.unibo.alchemist.model.VisibleNode
 /**
  * Basic implementation of [VisibleNode].
  */
-class VisibleNodeImpl<T, P : Position<P>>(
-    override val node: Node<T>,
-    override val position: P,
-) : VisibleNode<T, P> {
+class VisibleNodeImpl<T, P : Position<P>>(override val node: Node<T>, override val position: P) : VisibleNode<T, P> {
     override fun equals(other: Any?) = other is VisibleNodeImpl<*, *> && other.node == node
 
     override fun hashCode() = node.hashCode()

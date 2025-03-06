@@ -172,10 +172,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
      * - the second point must belong to the next room's boundary and will be pursued after
      * reaching the former one. [crossingPoints] may coincide if the two rooms are adjacent.
      */
-    protected open fun crossDoor(
-        door: E,
-        crossingPoints: Pair<P, P>,
-    ) {
+    protected open fun crossDoor(door: E, crossingPoints: Pair<P, P>) {
         require(doorsInSight().contains(door)) { "$door is not in sight" }
         state = MOVING_TO_CROSSING_POINT_1
         this.previousRoom = currentRoom.orFail()

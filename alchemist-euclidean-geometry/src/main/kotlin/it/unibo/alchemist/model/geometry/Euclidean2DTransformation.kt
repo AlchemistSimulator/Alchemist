@@ -33,8 +33,5 @@ interface Euclidean2DTransformation : Transformation<Euclidean2DPosition> {
     /**
      * Changes origin.
      */
-    fun origin(
-        x: Double,
-        y: Double,
-    ) = origin(Euclidean2DPosition(x, y))
+    fun origin(x: Double, y: Double) = origin(Euclidean2DPosition(x, y))
 }

@@ -28,11 +28,7 @@ class TestAfterTime :
                     LoadAlchemist.from(ResourceLoader.getResource("termination.yml")).getDefault()
                 simulation.addOutputMonitor(
                     object : OutputMonitor<Nothing, Nothing> {
-                        override fun finished(
-                            environment: Environment<Nothing, Nothing>,
-                            time: Time,
-                            step: Long,
-                        ) = Unit
+                        override fun finished(environment: Environment<Nothing, Nothing>, time: Time, step: Long) = Unit
 
                         override fun initialized(environment: Environment<Nothing, Nothing>) = Unit
 

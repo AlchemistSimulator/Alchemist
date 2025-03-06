@@ -39,12 +39,12 @@ open class EuclideanConfigurableMoveNode<T, P>(
     targetSelectionStrategy: TargetSelectionStrategy<T, P>,
     speedSelectionStrategy: SpeedSelectionStrategy<T, P>,
 ) : AbstractConfigurableMoveNode<T, P>(
-        environment,
-        node,
-        routingStrategy,
-        targetSelectionStrategy,
-        speedSelectionStrategy,
-    ) where P : Position<P>, P : Vector<P> {
+    environment,
+    node,
+    routingStrategy,
+    targetSelectionStrategy,
+    speedSelectionStrategy,
+) where P : Position<P>, P : Vector<P> {
     /**
      * @param environment the [Environment] which is executing the simulation
      * @param node the [Node] which is executing the current [Action]
@@ -73,21 +73,14 @@ open class EuclideanConfigurableMoveNode<T, P>(
      * @returns the next relative position reached by the node. If [maxWalk] is greater than the distance to
      * the [target], the node positions precisely on [target] without going farther.
      */
-    override fun interpolatePositions(
-        current: P,
-        target: P,
-        maxWalk: Double,
-    ): P = (target - current).coerceAtMost(maxWalk)
+    override fun interpolatePositions(current: P, target: P, maxWalk: Double): P =
+        (target - current).coerceAtMost(maxWalk)
 
-    override fun cloneAction(
-        node: Node<T>,
-        reaction: Reaction<T>,
-    ): Action<T> =
-        EuclideanConfigurableMoveNode(
-            environment,
-            node,
-            routingStrategy,
-            targetSelectionStrategy,
-            speedSelectionStrategy,
-        )
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> = EuclideanConfigurableMoveNode(
+        environment,
+        node,
+        routingStrategy,
+        targetSelectionStrategy,
+        speedSelectionStrategy,
+    )
 }

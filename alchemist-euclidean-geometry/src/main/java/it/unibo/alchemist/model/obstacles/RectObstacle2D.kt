@@ -26,9 +26,8 @@ import kotlin.math.nextTowards
  *
  * @param <V> [Vector2D] type
 </V> */
-class RectObstacle2D<V : Vector2D<V>> private constructor(
-    private val backend: java.awt.geom.Rectangle2D.Double,
-) : Obstacle2D<V>,
+class RectObstacle2D<V : Vector2D<V>> private constructor(private val backend: java.awt.geom.Rectangle2D.Double) :
+    Obstacle2D<V>,
     java.awt.Shape by backend {
     override val id: Int = System.identityHashCode(this)
 
@@ -72,10 +71,7 @@ class RectObstacle2D<V : Vector2D<V>> private constructor(
             .Double(min(x, x + w), min(y, y + h), abs(w), abs(h)),
     )
 
-    override fun next(
-        start: V,
-        end: V,
-    ): V {
+    override fun next(start: V, end: V): V {
         val (startx, starty) = start
         val (endx, endy) = end
         val onBorders = enforceBorders(startx, starty, endx, endy)
@@ -98,12 +94,7 @@ class RectObstacle2D<V : Vector2D<V>> private constructor(
         return start.newFrom(finalCoordinates[0], finalCoordinates[1])
     }
 
-    private fun enforceBorders(
-        startx: Double,
-        starty: Double,
-        endx: Double,
-        endy: Double,
-    ): DoubleArray? {
+    private fun enforceBorders(startx: Double, starty: Double, endx: Double, endy: Double): DoubleArray? {
         if (!isInsideObstacle(startx, starty)) return null
 
         val onLeftBorder = fuzzyEquals(startx, minX)
@@ -138,14 +129,10 @@ class RectObstacle2D<V : Vector2D<V>> private constructor(
         }
     }
 
-    private fun isInsideObstacle(
-        x: Double,
-        y: Double,
-    ): Boolean =
-        fuzzyGreaterEquals(y, minY) &&
-            fuzzyGreaterEquals(maxY, y) &&
-            fuzzyGreaterEquals(x, minX) &&
-            fuzzyGreaterEquals(maxX, x)
+    private fun isInsideObstacle(x: Double, y: Double): Boolean = fuzzyGreaterEquals(y, minY) &&
+        fuzzyGreaterEquals(maxY, y) &&
+        fuzzyGreaterEquals(x, minX) &&
+        fuzzyGreaterEquals(maxX, x)
 
     private fun isOnCorner(
         onLeftBorder: Boolean,
@@ -196,10 +183,7 @@ class RectObstacle2D<V : Vector2D<V>> private constructor(
         return res
     }
 
-    override fun nearestIntersection(
-        start: V,
-        end: V,
-    ): V {
+    override fun nearestIntersection(start: V, end: V): V {
         val startx = start.x
         val starty = start.y
         val endx = end.x
@@ -218,10 +202,7 @@ class RectObstacle2D<V : Vector2D<V>> private constructor(
         return start.newFrom(intersectionSide2[0], intersectionSide2[1])
     }
 
-    override fun contains(
-        x: Double,
-        y: Double,
-    ): Boolean = x >= minX && y >= minY && x <= maxX && y <= maxY
+    override fun contains(x: Double, y: Double): Boolean = x >= minX && y >= minY && x <= maxX && y <= maxY
 
     override fun toString(): String = "[$minX,$minY -> $maxX,$maxY]"
 
@@ -282,11 +263,7 @@ class RectObstacle2D<V : Vector2D<V>> private constructor(
             }
         }
 
-        private fun intersectionOutOfRange(
-            intersection: Double,
-            start: Double,
-            end: Double,
-        ): Boolean {
+        private fun intersectionOutOfRange(intersection: Double, start: Double, end: Double): Boolean {
             val min = min(start, end)
             val max = max(start, end)
             return !fuzzyGreaterEquals(intersection, min) || !fuzzyGreaterEquals(max, intersection)

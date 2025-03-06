@@ -28,11 +28,8 @@ const val PARAMETERS_FILE = "it/unibo/alchemist/model/cognitive/impact/config.to
  * Agent-based evacuation model with social contagion mechanisms.
  * More information can be found [here](https://doi.org/10.1007/978-3-319-70647-4_11).
  */
-class ImpactModel(
-    compliance: Double,
-    influencedBy: () -> List<CognitiveModel>,
-    environmentalFactors: () -> Double,
-) : CognitiveModel {
+class ImpactModel(compliance: Double, influencedBy: () -> List<CognitiveModel>, environmentalFactors: () -> Double) :
+    CognitiveModel {
     private val cognitiveCharacteristics =
         linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
             BeliefDanger::class to

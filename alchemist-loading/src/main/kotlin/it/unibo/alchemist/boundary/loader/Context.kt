@@ -27,11 +27,7 @@ internal data class Context constructor(
 
     fun child(): Context = Context(namedLookup = this.namedLookup)
 
-    fun registerConstant(
-        name: String,
-        representation: Map<*, *>,
-        value: Any?,
-    ) {
+    fun registerConstant(name: String, representation: Map<*, *>, value: Any?) {
         logger.debug("Injecting constant {} with value {} represented by {}", name, value, representation)
         if (constants.containsKey(name)) {
             val previous = elementLookup[representation]
@@ -50,19 +46,13 @@ internal data class Context constructor(
         backingConstants[name] = value
     }
 
-    fun registerVariable(
-        name: String,
-        representation: Map<*, *>,
-    ) {
+    fun registerVariable(name: String, representation: Map<*, *>) {
         logger.debug("Injecting variable {} represented by {}", name, representation)
         namedLookup[name] = representation
         elementLookup[representation] = SimulationModel.PlaceHolderForVariables(name)
     }
 
-    fun fixVariableValue(
-        name: String,
-        value: Any?,
-    ) {
+    fun fixVariableValue(name: String, value: Any?) {
         val key =
             requireNotNull(namedLookup[name]) {
                 """

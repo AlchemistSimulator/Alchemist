@@ -19,10 +19,8 @@ import it.unibo.alchemist.model.Molecule
  * @param name the name of the molecule.
  */
 @GraphQLDescription("A molecule with an associated name")
-data class MoleculeSurrogate(
-    @GraphQLIgnore override val origin: Molecule,
-    val name: String = origin.name,
-) : GraphQLSurrogate<Molecule>(origin)
+data class MoleculeSurrogate(@GraphQLIgnore override val origin: Molecule, val name: String = origin.name) :
+    GraphQLSurrogate<Molecule>(origin)
 
 /**
  * Converts a [Molecule] to a [MoleculeSurrogate].
@@ -38,6 +36,4 @@ fun Molecule.toGraphQLMoleculeSurrogate() = MoleculeSurrogate(this)
  * @param name the name of the molecule.
  */
 @GraphQLDescription("A molecule with an associated name, used as input object")
-data class MoleculeInput(
-    val name: String,
-)
+data class MoleculeInput(val name: String)

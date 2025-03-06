@@ -33,21 +33,16 @@ import org.apache.commons.collections4.queue.CircularFifoQueue
 class TestOrientingBehavior<T, P> :
     StringSpec({
 
-        fun Iterable<Node<T>>.orienting() =
-            filter {
-                it.asPropertyOrNull<T, OrientingProperty<T, P, *, *, *, *>>() !=
-                    null
-            }
+        fun Iterable<Node<T>>.orienting() = filter {
+            it.asPropertyOrNull<T, OrientingProperty<T, P, *, *, *, *>>() !=
+                null
+        }
 
         /**
          * Asserts that the distance of each pedestrian from the target position specified
          * with [coords] is less than the given [tolerance].
          */
-        fun assertPedestriansReached(
-            environment: Environment<T, P>,
-            tolerance: Double,
-            vararg coords: Number,
-        ) {
+        fun assertPedestriansReached(environment: Environment<T, P>, tolerance: Double, vararg coords: Number) {
             val target = environment.makePosition(*coords)
             environment.nodes
                 .orienting()
@@ -59,12 +54,7 @@ class TestOrientingBehavior<T, P> :
          * asserts that the distance of each pedestrian from the target position specified
          * with [coords] is less than the given [tolerance].
          */
-        fun runSimulation(
-            simulation: String,
-            tolerance: Double,
-            steps: Long,
-            vararg coords: Number,
-        ) {
+        fun runSimulation(simulation: String, tolerance: Double, steps: Long, vararg coords: Number) {
             loadYamlSimulation<T, P>(simulation).startSimulation(
                 onceInitialized = { it.nodes shouldNot beEmpty() },
                 whenFinished = { environment, _, _ -> assertPedestriansReached(environment, tolerance, *coords) },

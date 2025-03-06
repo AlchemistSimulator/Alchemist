@@ -13,9 +13,7 @@ package it.unibo.alchemist.multivesta.adapter
  * Represents the state of an Alchemist simulation at a given time.
  * @param time the time at which the state is referred to.
  */
-class AlchemistStateObservations(
-    val time: Double,
-) {
+class AlchemistStateObservations(val time: Double) {
     private val observations: MutableMap<String, Double> = mutableMapOf()
 
     /**
@@ -23,21 +21,17 @@ class AlchemistStateObservations(
      * @param name the name of the observation
      * @param value the value for such observation
      */
-    fun addObservation(
-        name: String,
-        value: Double,
-    ) {
+    fun addObservation(name: String, value: Double) {
         observations[name] = value
     }
 
     /**
      * Returns the value of the observation with the given name.
      */
-    fun getObservation(name: String): Double =
-        when (name) {
-            "time", "step" -> time
-            else -> observations[name] ?: throw IllegalArgumentException("Observation $name not found")
-        }
+    fun getObservation(name: String): Double = when (name) {
+        "time", "step" -> time
+        else -> observations[name] ?: throw IllegalArgumentException("Observation $name not found")
+    }
 
     /**
      * Returns the value of the observation with the given id.

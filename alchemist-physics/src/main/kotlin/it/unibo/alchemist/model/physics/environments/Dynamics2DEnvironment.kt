@@ -24,10 +24,7 @@ interface Dynamics2DEnvironment<T> :
     /**
      * Set [node]'s current linear velocity.
      */
-    fun setVelocity(
-        node: Node<T>,
-        velocity: Euclidean2DPosition,
-    )
+    fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition)
 
     /**
      * Get [node]'s current linear velocity.

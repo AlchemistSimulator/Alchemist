@@ -18,10 +18,7 @@ import it.unibo.alchemist.model.molecules.SimpleMolecule
 class DummyAction(
     node: Node<Int>,
 ) : AbstractLocalAction<Int>(node) {
-    override fun cloneAction(
-        node: Node<Int>,
-        reaction: Reaction<Int>,
-    ): Action<Int> = DummyAction(node)
+    override fun cloneAction(node: Node<Int>, reaction: Reaction<Int>): Action<Int> = DummyAction(node)
 
     override fun execute() {
         // Do nothing, this is a dummy action

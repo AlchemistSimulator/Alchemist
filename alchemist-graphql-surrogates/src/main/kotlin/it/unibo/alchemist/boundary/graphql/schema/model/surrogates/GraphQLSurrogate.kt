@@ -16,6 +16,4 @@ import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
  * Each surrogate has an [origin] object, which is the alchemist object that the surrogate represents.
  * @param T The type of the alchemist object that the surrogate represents.
  */
-open class GraphQLSurrogate<T>(
-    @GraphQLIgnore open val origin: T,
-)
+open class GraphQLSurrogate<T>(@GraphQLIgnore open val origin: T)

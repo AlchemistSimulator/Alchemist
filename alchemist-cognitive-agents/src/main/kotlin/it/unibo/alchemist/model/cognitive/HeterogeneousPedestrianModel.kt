@@ -47,8 +47,6 @@ data class HeterogeneousPedestrianModel<T, S : Vector<S>, A : Transformation<S>>
      *
      * @param toHelp The pedestrian who needs help.
      */
-    fun probabilityOfHelping(
-        toHelp: HeterogeneousPedestrianModel<T, S, A>,
-        isGroupMember: Boolean,
-    ): Double = helpAttitude.level(toHelp.age, toHelp.gender, isGroupMember)
+    fun probabilityOfHelping(toHelp: HeterogeneousPedestrianModel<T, S, A>, isGroupMember: Boolean): Double =
+        helpAttitude.level(toHelp.age, toHelp.gender, isGroupMember)
 }

@@ -19,9 +19,7 @@ import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
  * @param <T> Concentration type
  * @param <P> position type
  */
-data class GoTo<T, P : Position<P>>(
-    private val destination: P,
-) : TargetSelectionStrategy<T, P> {
+data class GoTo<T, P : Position<P>>(private val destination: P) : TargetSelectionStrategy<T, P> {
     /**
      * @param environment: the environment executing the simulation,
      * @param destination: an indefinite number of [Number] values that indicates the coordinates of the destination.

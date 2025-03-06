@@ -67,9 +67,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build(
                 object : CacheLoader<CacheKey, SynchronizedVM>() {
-                    override fun load(
-                        @Nonnull key: CacheKey,
-                    ): SynchronizedVM = SynchronizedVM(requireNotNull(key))
+                    override fun load(@Nonnull key: CacheKey): SynchronizedVM = SynchronizedVM(requireNotNull(key))
                 },
             )
 
@@ -117,15 +115,14 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         }
     }
 
-    override fun createConcentration(descriptor: Any?): Any? =
-        try {
-            descriptor?.toString()?.let { program ->
-                SynchronizedVM(CacheKey(NoNode, createMolecule(program), program)).runCycle()
-            } ?: descriptor
-        } catch (e: IllegalArgumentException) {
-            LOGGER.warn("Invalid Protelis program injected as concentration:\n{}", descriptor, e)
-            descriptor
-        }
+    override fun createConcentration(descriptor: Any?): Any? = try {
+        descriptor?.toString()?.let { program ->
+            SynchronizedVM(CacheKey(NoNode, createMolecule(program), program)).runCycle()
+        } ?: descriptor
+    } catch (e: IllegalArgumentException) {
+        LOGGER.warn("Invalid Protelis program injected as concentration:\n{}", descriptor, e)
+        descriptor
+    }
 
     override fun createConcentration(): Any? = null
 
@@ -177,10 +174,9 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         parameter: Any?,
-    ): Node<Any> =
-        GenericNode<Any>(this, environment).apply {
-            addProperty(ProtelisDevice(environment, this))
-        }
+    ): Node<Any> = GenericNode<Any>(this, environment).apply {
+        addProperty(ProtelisDevice(environment, this))
+    }
 
     override fun createReaction(
         randomGenerator: RandomGenerator,
@@ -216,22 +212,17 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         environment: Environment<Any, P>,
         node: Node<Any>?,
         parameter: Any?,
-    ): TimeDistribution<Any> =
-        try {
-            val frequency =
-                parameter?.let { (it as? Number)?.toDouble() ?: it.toString().toDouble() }
-                    ?: return ExponentialTime(Double.POSITIVE_INFINITY, randomGenerator)
-            DiracComb(DoubleTime(randomGenerator.nextDouble() / frequency), frequency)
-        } catch (e: NumberFormatException) {
-            LOGGER.error("Unable to convert {} to a double", parameter)
-            throw e
-        }
+    ): TimeDistribution<Any> = try {
+        val frequency =
+            parameter?.let { (it as? Number)?.toDouble() ?: it.toString().toDouble() }
+                ?: return ExponentialTime(Double.POSITIVE_INFINITY, randomGenerator)
+        DiracComb(DoubleTime(randomGenerator.nextDouble() / frequency), frequency)
+    } catch (e: NumberFormatException) {
+        LOGGER.error("Unable to convert {} to a double", parameter)
+        throw e
+    }
 
-    override fun getProperty(
-        node: Node<Any>,
-        molecule: Molecule,
-        property: String?,
-    ): Double =
+    override fun getProperty(node: Node<Any>, molecule: Molecule, property: String?): Double =
         @Suppress("TooGenericExceptionCaught")
         try {
             val vm = cache.get(CacheKey(requireNotNull(node), requireNotNull(molecule), property.orEmpty()))
@@ -248,11 +239,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
     override fun toString(): String = this::class.simpleName ?: this::class.java.simpleName
 
-    private class CacheKey(
-        node: Node<Any>,
-        val molecule: Molecule,
-        val property: String,
-    ) {
+    private class CacheKey(node: Node<Any>, val molecule: Molecule, val property: String) {
         private val nodeRef = WeakReference(node)
         private val hash = Objects.hash(molecule, property, node)
 
@@ -261,11 +248,10 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
                 "Memory management issue: a Protelis node has been garbage-collected while still in use."
             }
 
-        override fun equals(other: Any?) =
-            other is CacheKey &&
-                other.nodeRef.get() === nodeRef.get() &&
-                other.molecule == molecule &&
-                other.property == property
+        override fun equals(other: Any?) = other is CacheKey &&
+            other.nodeRef.get() === nodeRef.get() &&
+            other.molecule == molecule &&
+            other.property == property
 
         override fun hashCode(): Int = hash
     }
@@ -273,9 +259,8 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
     /**
      * An [org.protelis.vm.ExecutionContext] that operates over a node but does not modify it.
      */
-    private class DummyContext(
-        private val node: Node<Any>,
-    ) : AbstractExecutionContext<DummyContext?>(
+    private class DummyContext(private val node: Node<Any>) :
+        AbstractExecutionContext<DummyContext?>(
             ProtectedExecutionEnvironment(node),
             object : NetworkManager {
                 override fun getNeighborState(): Map<DeviceUID, Map<CodePath, Any>> = emptyMap()
@@ -289,11 +274,10 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override fun instance(): DummyContext = this
 
-        override fun nextRandomDouble(): Double =
-            MUTEX.run {
-                acquireUninterruptibly()
-                RNG.nextDouble().also { release() }
-            }
+        override fun nextRandomDouble(): Double = MUTEX.run {
+            acquireUninterruptibly()
+            RNG.nextDouble().also { release() }
+        }
 
         companion object {
             private val MUTEX = Semaphore(1)
@@ -312,44 +296,35 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
      * properties from interacting with the simulation flow.
      */
     class ProtectedExecutionEnvironment
-        /**
-         * @param node the [Node]
-         */
-        @SuppressFBWarnings(value = ["EI_EXPOSE_REP2"], justification = "This is intentional")
-        constructor(
-            private val node: Node<*>,
-        ) : ExecutionEnvironment {
-            private val shadow: ExecutionEnvironment = SimpleExecutionEnvironment()
+    /**
+     * @param node the [Node]
+     */
+    @SuppressFBWarnings(value = ["EI_EXPOSE_REP2"], justification = "This is intentional")
+    constructor(
+        private val node: Node<*>,
+    ) : ExecutionEnvironment {
+        private val shadow: ExecutionEnvironment = SimpleExecutionEnvironment()
 
-            override fun commit() = Unit
+        override fun commit() = Unit
 
-            override fun get(id: String): Any? = shadow[id, node.getConcentration(SimpleMolecule(id))]
+        override fun get(id: String): Any? = shadow[id, node.getConcentration(SimpleMolecule(id))]
 
-            override fun get(
-                id: String,
-                defaultValue: Any,
-            ): Any = get(id) ?: defaultValue
+        override fun get(id: String, defaultValue: Any): Any = get(id) ?: defaultValue
 
-            override fun has(id: String): Boolean = shadow.has(id) || node.contains(SimpleMolecule(id))
+        override fun has(id: String): Boolean = shadow.has(id) || node.contains(SimpleMolecule(id))
 
-            override fun put(
-                id: String,
-                v: Any,
-            ): Boolean = shadow.put(id, v)
+        override fun put(id: String, v: Any): Boolean = shadow.put(id, v)
 
-            override fun remove(id: String): Any? = shadow.remove(id)
+        override fun remove(id: String): Any? = shadow.remove(id)
 
-            override fun setup() = Unit
+        override fun setup() = Unit
 
-            override fun keySet(): Set<String> =
-                node.contents.keys
-                    .map { it.getName() }
-                    .toSet() + shadow.keySet()
-        }
+        override fun keySet(): Set<String> = node.contents.keys
+            .map { it.getName() }
+            .toSet() + shadow.keySet()
+    }
 
-    private class SynchronizedVM(
-        val key: CacheKey,
-    ) {
+    private class SynchronizedVM(val key: CacheKey) {
         val mutex = Semaphore(1)
         val vm: Optional<ProtelisVM> =
             key.property
@@ -397,9 +372,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override fun iterator(): MutableIterator<Reaction<Any>> = notImplemented<MutableIterator<Reaction<Any>>>()
 
-        override fun compareTo(
-            @Nonnull o: Node<Any>,
-        ): Int = notImplemented()
+        override fun compareTo(@Nonnull o: Node<Any>): Int = notImplemented()
 
         override fun addReaction(r: Reaction<Any>) = notImplemented<Unit>()
 
@@ -413,10 +386,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override fun removeReaction(r: Reaction<Any>) = notImplemented<Unit>()
 
-        override fun setConcentration(
-            molecule: Molecule,
-            concentration: Any,
-        ) = notImplemented<Unit>()
+        override fun setConcentration(molecule: Molecule, concentration: Any) = notImplemented<Unit>()
 
         override fun equals(obj: Any?): Boolean = obj === this
 
@@ -453,16 +423,15 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         private fun getIncomplete(
             protelisNode: Node<*>,
             alreadyDone: Set<RunProtelisProgram<*>>,
-        ): List<RunProtelisProgram<*>> =
-            protelisNode.reactions
-                .asSequence()
-                // Get the actions
-                .flatMap { it.actions.asSequence() }
-                // Get only the ProtelisPrograms
-                .filterIsInstance<RunProtelisProgram<*>>()
-                // Retain only those ProtelisPrograms that have no associated ComputationalRoundComplete.
-                // Only one should be available.
-                .filter { !alreadyDone.contains(it) }
-                .toList()
+        ): List<RunProtelisProgram<*>> = protelisNode.reactions
+            .asSequence()
+            // Get the actions
+            .flatMap { it.actions.asSequence() }
+            // Get only the ProtelisPrograms
+            .filterIsInstance<RunProtelisProgram<*>>()
+            // Retain only those ProtelisPrograms that have no associated ComputationalRoundComplete.
+            // Only one should be available.
+            .filter { !alreadyDone.contains(it) }
+            .toList()
     }
 }

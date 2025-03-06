@@ -27,13 +27,13 @@ import it.unibo.alchemist.model.properties.AbstractNodeProperty
  * The node's [CognitiveModel].
  */
 data class Cognitive<T, P, A, F>
-    @JvmOverloads
-    constructor(
-        private val environment: PhysicsEnvironment<T, P, A, F>,
-        override val node: Node<T>,
-        override val danger: Molecule? = null,
-    ) : AbstractNodeProperty<T>(node),
-        CognitiveProperty<T>
+@JvmOverloads
+constructor(
+    private val environment: PhysicsEnvironment<T, P, A, F>,
+    override val node: Node<T>,
+    override val danger: Molecule? = null,
+) : AbstractNodeProperty<T>(node),
+    CognitiveProperty<T>
     where P : Position<P>,
           P : Vector<P>,
           A : Transformation<P>,

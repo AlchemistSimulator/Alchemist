@@ -38,10 +38,7 @@ open class FollowTarget<T, P : Position<P>>(
      * @param y second coordinate extracted from the target concentration
      * @return a [Position] built using such parameters
      */
-    protected open fun createPosition(
-        x: Double,
-        y: Double,
-    ): P = environment.makePosition(x, y)
+    protected open fun createPosition(x: Double, y: Double): P = environment.makePosition(x, y)
 
     /**
      * the current position.
@@ -96,26 +93,22 @@ open class FollowTarget<T, P : Position<P>>(
         }
     }
 
-    private fun conversionError(value: Any?): Nothing =
-        error(
-            "${this::class.simpleName} tried to convert " +
-                "$this (${value?.let { it::class.simpleName}}) to a Number, but failed",
-        )
+    private fun conversionError(value: Any?): Nothing = error(
+        "${this::class.simpleName} tried to convert " +
+            "$this (${value?.let { it::class.simpleName}}) to a Number, but failed",
+    )
 
     /**
      * Tries to convert an object to Double, handling exceptions safely.
      */
-    private fun Any?.toNumber(): Number =
-        when (this) {
-            is Number -> this
-            is CharSequence -> toString().toDoubleOrNull()
-            else -> null
-        } ?: conversionError(this)
+    private fun Any?.toNumber(): Number = when (this) {
+        is Number -> this
+        is CharSequence -> toString().toDoubleOrNull()
+        else -> null
+    } ?: conversionError(this)
 
-    override fun cloneIfNeeded(
-        destination: Node<T>,
-        reaction: Reaction<T>,
-    ): FollowTarget<T, P> = FollowTarget(environment, destination, this.targetMolecule)
+    override fun cloneIfNeeded(destination: Node<T>, reaction: Reaction<T>): FollowTarget<T, P> =
+        FollowTarget(environment, destination, this.targetMolecule)
 
     private companion object {
         private const val serialVersionUID = -446053307821810438L

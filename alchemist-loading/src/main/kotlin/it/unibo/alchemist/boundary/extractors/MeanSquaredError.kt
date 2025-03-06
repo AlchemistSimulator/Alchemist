@@ -28,74 +28,74 @@ import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
  * @param <T> concentration type
  */
 class MeanSquaredError<T>
-    @JvmOverloads
+@JvmOverloads
+constructor(
+    incarnation: Incarnation<T, *>,
+    localCorrectValueMolecule: String,
+    localCorrectValueProperty: String = "",
+    statistics: String,
+    localValueMolecule: String,
+    localValueProperty: String = "",
+    precision: Int? = null,
+) : AbstractDoubleExporter(precision) {
     constructor(
         incarnation: Incarnation<T, *>,
         localCorrectValueMolecule: String,
-        localCorrectValueProperty: String = "",
         statistics: String,
         localValueMolecule: String,
-        localValueProperty: String = "",
-        precision: Int? = null,
-    ) : AbstractDoubleExporter(precision) {
-        constructor(
-            incarnation: Incarnation<T, *>,
-            localCorrectValueMolecule: String,
-            statistics: String,
-            localValueMolecule: String,
-            precision: Int,
-        ) : this(
-            incarnation = incarnation,
-            localCorrectValueMolecule = localCorrectValueMolecule,
-            statistics = statistics,
-            localValueMolecule = localValueMolecule,
-            localValueProperty = "",
-            precision = precision,
-        )
+        precision: Int,
+    ) : this(
+        incarnation = incarnation,
+        localCorrectValueMolecule = localCorrectValueMolecule,
+        statistics = statistics,
+        localValueMolecule = localValueMolecule,
+        localValueProperty = "",
+        precision = precision,
+    )
 
-        private val statistic: UnivariateStatistic =
-            StatUtil
-                .makeUnivariateStatistic(statistics)
-                .orElseThrow { IllegalArgumentException("Could not create univariate statistic $statistics") }
-        private val mReference: Molecule = incarnation.createMolecule(localCorrectValueMolecule)
-        private val pReference: String = localCorrectValueProperty
-        private val pActual: String = localValueProperty
-        private val mActual: Molecule = incarnation.createMolecule(localValueMolecule)
-        private val name: String =
-            with(StringBuilder("MSE(")) {
-                append(statistics)
-                append('(')
-                if (pReference.isNotEmpty()) {
-                    append(pReference).append('@')
-                }
-                append(localCorrectValueMolecule).append("),")
-                if (pActual.isNotEmpty()) {
-                    append(pActual).append('@')
-                }
-                append(localValueMolecule).append(')')
-                toString()
+    private val statistic: UnivariateStatistic =
+        StatUtil
+            .makeUnivariateStatistic(statistics)
+            .orElseThrow { IllegalArgumentException("Could not create univariate statistic $statistics") }
+    private val mReference: Molecule = incarnation.createMolecule(localCorrectValueMolecule)
+    private val pReference: String = localCorrectValueProperty
+    private val pActual: String = localValueProperty
+    private val mActual: Molecule = incarnation.createMolecule(localValueMolecule)
+    private val name: String =
+        with(StringBuilder("MSE(")) {
+            append(statistics)
+            append('(')
+            if (pReference.isNotEmpty()) {
+                append(pReference).append('@')
             }
-        override val columnNames = listOf(name)
-
-        override fun <T> extractData(
-            environment: Environment<T, *>,
-            reaction: Actionable<T>?,
-            time: Time,
-            step: Long,
-        ): Map<String, Double> {
-            val incarnation: Incarnation<T, *> = environment.incarnation
-            val value: Double =
-                statistic
-                    .evaluate(
-                        environment.nodes.map { incarnation.getProperty(it, mReference, pReference) }.toDoubleArray(),
-                    )
-            val mse: Double =
-                environment.nodes
-                    .parallelStream()
-                    .mapToDouble { incarnation.getProperty(it, mActual, pActual) - value }
-                    .map { it * it }
-                    .average()
-                    .orElse(Double.NaN)
-            return mapOf(name to mse)
+            append(localCorrectValueMolecule).append("),")
+            if (pActual.isNotEmpty()) {
+                append(pActual).append('@')
+            }
+            append(localValueMolecule).append(')')
+            toString()
         }
+    override val columnNames = listOf(name)
+
+    override fun <T> extractData(
+        environment: Environment<T, *>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ): Map<String, Double> {
+        val incarnation: Incarnation<T, *> = environment.incarnation
+        val value: Double =
+            statistic
+                .evaluate(
+                    environment.nodes.map { incarnation.getProperty(it, mReference, pReference) }.toDoubleArray(),
+                )
+        val mse: Double =
+            environment.nodes
+                .parallelStream()
+                .mapToDouble { incarnation.getProperty(it, mActual, pActual) - value }
+                .map { it * it }
+                .average()
+                .orElse(Double.NaN)
+        return mapOf(name to mse)
     }
+}

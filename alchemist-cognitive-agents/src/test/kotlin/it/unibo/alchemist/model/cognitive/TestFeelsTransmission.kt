@@ -21,17 +21,15 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class TestFeelsTransmission<T> {
-    private fun Environment<T, Euclidean2DPosition>.perceivedDanger(): Double =
-        nodes
-            .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel }
-            .sumOf { it.dangerBelief() }
+    private fun Environment<T, Euclidean2DPosition>.perceivedDanger(): Double = nodes
+        .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel }
+        .sumOf { it.dangerBelief() }
 
-    private fun Simulation<T, Euclidean2DPosition>.dangerIsLoaded(): Simulation<T, Euclidean2DPosition> =
-        apply {
-            environment.nodes
-                .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.danger }
-                .forEach { assertNotNull(it, "Danger property should be loaded") }
-        }
+    private fun Simulation<T, Euclidean2DPosition>.dangerIsLoaded(): Simulation<T, Euclidean2DPosition> = apply {
+        environment.nodes
+            .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.danger }
+            .forEach { assertNotNull(it, "Danger property should be loaded") }
+    }
 
     @Test
     fun `Danger layer affects cognitive pedestrians`() {

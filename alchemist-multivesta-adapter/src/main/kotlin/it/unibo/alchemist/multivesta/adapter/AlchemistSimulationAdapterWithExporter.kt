@@ -16,18 +16,13 @@ import it.unibo.alchemist.loader.export.exporters.MultiVestaExporter.Companion.g
  * This is an adapter that allow MultiVesta to interact with Alchemist.
  * @param simulation the simulation to be wrapped.
  */
-class AlchemistSimulationAdapterWithExporter(
-    private val simulation: Simulation<Any, Nothing>,
-) : AbstractAlchemistSimulationAdapter(simulation) {
+class AlchemistSimulationAdapterWithExporter(private val simulation: Simulation<Any, Nothing>) :
+    AbstractAlchemistSimulationAdapter(simulation) {
     override fun getObsValue(obs: String): Double = obsValueToDouble(obs, getValue(simulation, obs))
 
     override fun getObsValue(obsId: Int): Double = obsValueToDouble(obsId, getValue(simulation, obsId))
 
-    private fun obsValueToDouble(
-        obs: Any,
-        value: Any?,
-    ): Double =
-        checkNotNull(value) {
-            "The observation value for $obs is null"
-        }.toString().toDouble()
+    private fun obsValueToDouble(obs: Any, value: Any?): Double = checkNotNull(value) {
+        "The observation value for $obs is null"
+    }.toString().toDouble()
 }

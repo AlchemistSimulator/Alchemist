@@ -40,19 +40,18 @@ open class ReachDestination<T, L : Euclidean2DConvexShape, R>(
      */
     private val unknownDestinations: List<Euclidean2DPosition> = emptyList(),
 ) : GoalOrientedExploration<T, L, R>(
-        action,
+    action,
     /*
      * This may seem strange, but as stated above if we found a destination along the way (either known
      * or unknown), we want to approach it and leave the route we're following.
      */
-        knownDestinations + unknownDestinations,
-    ) {
+    knownDestinations + unknownDestinations,
+) {
     private val reachKnownDestination: ReachKnownDestination<T, L, R>? =
         knownDestinations.takeIf { it.isNotEmpty() }?.let { ReachKnownDestination(action, it) }
 
-    override fun inNewRoom(newRoom: ConvexPolygon) =
-        when (reachKnownDestination) {
-            null -> super.inNewRoom(newRoom)
-            else -> reachUnknownDestination(newRoom, orElse = { reachKnownDestination.inNewRoom(newRoom) })
-        }
+    override fun inNewRoom(newRoom: ConvexPolygon) = when (reachKnownDestination) {
+        null -> super.inNewRoom(newRoom)
+        else -> reachUnknownDestination(newRoom, orElse = { reachKnownDestination.inNewRoom(newRoom) })
+    }
 }

@@ -46,31 +46,28 @@ open class CognitiveAgentWander<T>(
     protected val offset: Double,
     protected val radius: Double,
 ) : AbstractSteeringActionWithTarget<T, Euclidean2DPosition, Euclidean2DTransformation>(
-        environment,
-        reaction,
-        pedestrian,
-        TargetSelectionStrategy {
-            randomGenerator.position(
-                environment,
-            )
-        },
-    ) {
+    environment,
+    reaction,
+    pedestrian,
+    TargetSelectionStrategy {
+        randomGenerator.position(
+            environment,
+        )
+    },
+) {
     private val heading by lazy {
         environment.setHeading(node, randomGenerator.random2DVersor(environment));
         { environment.getHeading(node) }
     }
 
-    override fun nextPosition(): Euclidean2DPosition =
-        heading()
-            .resized(offset)
-            .surrounding(radius)
-            .randomElement(randomGenerator)
-            .coerceAtMost(maxWalk)
+    override fun nextPosition(): Euclidean2DPosition = heading()
+        .resized(offset)
+        .surrounding(radius)
+        .randomElement(randomGenerator)
+        .coerceAtMost(maxWalk)
 
-    override fun cloneAction(
-        node: Node<T>,
-        reaction: Reaction<T>,
-    ) = CognitiveAgentWander(environment, reaction, node.pedestrianProperty, randomGenerator, offset, radius)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
+        CognitiveAgentWander(environment, reaction, node.pedestrianProperty, randomGenerator, offset, radius)
 }
 
 /**

@@ -17,10 +17,7 @@ import java.util.function.Supplier
 /**
  * A file lock that uses the local filesystem.
  */
-class FileLock(
-    name: String,
-    folder: String = "tmp",
-) {
+class FileLock(name: String, folder: String = "tmp") {
     private val lockFile: File
 
     init {

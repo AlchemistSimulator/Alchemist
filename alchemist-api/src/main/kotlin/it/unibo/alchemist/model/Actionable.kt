@@ -41,10 +41,7 @@ sealed interface Actionable<T> :
      * @param environment
      * the environment
      */
-    fun initializationComplete(
-        atTime: Time,
-        environment: Environment<T, *>,
-    )
+    fun initializationComplete(atTime: Time, environment: Environment<T, *>)
 
     /**
      *  The list of [Action]s of the [Reaction].
@@ -103,9 +100,5 @@ sealed interface Actionable<T> :
      * @param environment
      * the current environment
      */
-    fun update(
-        currentTime: Time,
-        hasBeenExecuted: Boolean,
-        environment: Environment<T, *>,
-    )
+    fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>)
 }

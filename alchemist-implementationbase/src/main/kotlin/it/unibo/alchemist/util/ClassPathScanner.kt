@@ -36,14 +36,13 @@ object ClassPathScanner {
                 .loadClasses()
         }
 
-    private fun classGraphForPackages(vararg inPackage: String): ClassGraph =
-        ClassGraph()
-            .apply {
-                // WHITELIST package
-                acceptPackages(*inPackage)
-                // BLACKLIST package
-                rejectPackages("org.gradle")
-            }
+    private fun classGraphForPackages(vararg inPackage: String): ClassGraph = ClassGraph()
+        .apply {
+            // WHITELIST package
+            acceptPackages(*inPackage)
+            // BLACKLIST package
+            rejectPackages("org.gradle")
+        }
 
     /**
      * This function loads all subtypes of the provided Java class that can be discovered on the current classpath.
@@ -53,14 +52,10 @@ object ClassPathScanner {
      */
     @JvmStatic
     @Suppress("UNCHECKED_CAST")
-    fun <T> subTypesOf(
-        superClass: Class<T>,
-        vararg inPackage: String,
-    ): List<Class<out T>> =
-        when {
-            Modifier.isFinal(superClass.modifiers) -> listOf(superClass)
-            else -> loader[ScanData(superClass, inPackage)] as List<Class<out T>>
-        }
+    fun <T> subTypesOf(superClass: Class<T>, vararg inPackage: String): List<Class<out T>> = when {
+        Modifier.isFinal(superClass.modifiers) -> listOf(superClass)
+        else -> loader[ScanData(superClass, inPackage)] as List<Class<out T>>
+    }
 
     /**
      * This function loads all subtypes of the provided Java class that can be discovered on the current classpath.
@@ -75,35 +70,25 @@ object ClassPathScanner {
      * transformation to use them.
      */
     @JvmStatic
-    fun resourcesMatching(
-        regex: String,
-        vararg inPackage: String,
-    ): List<URL> =
-        classGraphForPackages(*inPackage)
-            .scan()
-            .getResourcesMatchingPattern(Pattern.compile(regex))
-            .urLs
+    fun resourcesMatching(regex: String, vararg inPackage: String): List<URL> = classGraphForPackages(*inPackage)
+        .scan()
+        .getResourcesMatchingPattern(Pattern.compile(regex))
+        .urLs
 
     /**
      * This function returns a list of all the resources in a certain (optional) package matching a regular expression.
      */
     @JvmStatic
-    fun resourcesMatchingAsStream(
-        regex: String,
-        vararg inPackage: String,
-    ): List<InputStream> = resourcesMatching(regex, *inPackage).map { it.openStream() }
+    fun resourcesMatchingAsStream(regex: String, vararg inPackage: String): List<InputStream> =
+        resourcesMatching(regex, *inPackage).map { it.openStream() }
 
-    private data class ScanData(
-        val superClass: Class<*>,
-        val inPackages: Array<out String>,
-    ) {
+    private data class ScanData(val superClass: Class<*>, val inPackages: Array<out String>) {
         val hashCode = Objects.hashCode(superClass, *inPackages)
 
-        override fun equals(other: Any?) =
-            other === this ||
-                other is ScanData &&
-                superClass == other.superClass &&
-                inPackages.contentEquals(other.inPackages)
+        override fun equals(other: Any?) = other === this ||
+            other is ScanData &&
+            superClass == other.superClass &&
+            inPackages.contentEquals(other.inPackages)
 
         override fun hashCode(): Int = hashCode
 

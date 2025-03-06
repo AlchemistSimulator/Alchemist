@@ -125,40 +125,28 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
         }
     }
 
-    private fun computeTransform(
-        x: Int,
-        y: Int,
-        size: Double,
-        rotation: Double,
-    ): AffineTransform =
+    private fun computeTransform(x: Int, y: Int, size: Double, rotation: Double): AffineTransform =
         AffineTransform().apply {
             translate(x.toDouble(), y.toDouble())
             scale(size, size)
             rotate(rotation)
         }
 
-    private fun computeColorOrBlack(
-        node: Node<*>,
-        environment: Environment<*, *>,
-    ): Color =
-        node
-            .takeIf { it.contains(SimpleMolecule(colorMolecule)) }
-            ?.getConcentration(SimpleMolecule(colorMolecule))
-            ?.let { it as? Number }
-            ?.toDouble()
-            ?.let {
-                Color.getHSBColor(
-                    (it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.toDouble())).toFloat(),
-                    1f,
-                    1f,
-                )
-            }
-            ?: Color.BLACK
+    private fun computeColorOrBlack(node: Node<*>, environment: Environment<*, *>): Color = node
+        .takeIf { it.contains(SimpleMolecule(colorMolecule)) }
+        ?.getConcentration(SimpleMolecule(colorMolecule))
+        ?.let { it as? Number }
+        ?.toDouble()
+        ?.let {
+            Color.getHSBColor(
+                (it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.toDouble())).toFloat(),
+                1f,
+                1f,
+            )
+        }
+        ?: Color.BLACK
 
-    private fun <P : Position2D<P>, T> updateTrajectory(
-        node: Node<T>,
-        environment: Environment<T, P>,
-    ) {
+    private fun <P : Position2D<P>, T> updateTrajectory(node: Node<T>, environment: Environment<T, P>) {
         val positions = positionsMemory[node.id].orEmpty()
         val lastDraw = lastDrawMemory[node.id] ?: 0
         val roundedTime =
@@ -175,13 +163,12 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
         }
     }
 
-    private fun <T> rotation(node: Node<T>): Double =
-        node
-            .takeIf { it.contains(SimpleMolecule(velocityMolecule)) }
-            ?.getConcentration(SimpleMolecule(velocityMolecule))
-            ?.let { it as? DoubleArray }
-            ?.let { atan2(it[0], it[1]) }
-            ?: 0.0
+    private fun <T> rotation(node: Node<T>): Double = node
+        .takeIf { it.contains(SimpleMolecule(velocityMolecule)) }
+        ?.getConcentration(SimpleMolecule(velocityMolecule))
+        ?.let { it as? DoubleArray }
+        ?.let { atan2(it[0], it[1]) }
+        ?: 0.0
 
     private companion object {
         private const val MAX_NODE_SIZE: Int = 20

@@ -61,10 +61,7 @@ abstract class AbstractSteeringAction<T, P, A>(
      *            The reaction to which the CURRENT action is assigned
      * @return the cloned action
      */
-    abstract override fun cloneAction(
-        node: Node<T>,
-        reaction: Reaction<T>,
-    ): AbstractSteeringAction<T, P, A>
+    abstract override fun cloneAction(node: Node<T>, reaction: Reaction<T>): AbstractSteeringAction<T, P, A>
 
     /**
      * Ensures that the passed [node] has type [N].

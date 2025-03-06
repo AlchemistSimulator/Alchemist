@@ -107,12 +107,8 @@ class TestRanges :
 
         // old tests below
 
-        fun assertIntersectionIsNull(
-            first: Double,
-            second: Double,
-            third: Double,
-            fourth: Double,
-        ) = assertNull(rangeFromUnordered(first, second).intersect(rangeFromUnordered(third, fourth)))
+        fun assertIntersectionIsNull(first: Double, second: Double, third: Double, fourth: Double) =
+            assertNull(rangeFromUnordered(first, second).intersect(rangeFromUnordered(third, fourth)))
 
         fun assertIntersectionIs(
             first: Double,

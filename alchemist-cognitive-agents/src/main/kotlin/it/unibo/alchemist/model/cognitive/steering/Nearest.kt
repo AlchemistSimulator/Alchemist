@@ -26,10 +26,8 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  * @param node
  *          the owner of the steering action this strategy belongs to.
  */
-class Nearest<T>(
-    environment: Euclidean2DEnvironment<T>,
-    node: Node<T>,
-) : Filtered<T, Euclidean2DPosition>(
+class Nearest<T>(environment: Euclidean2DEnvironment<T>, node: Node<T>) :
+    Filtered<T, Euclidean2DPosition>(
         DistanceWeighted(environment, node),
         {
             partition { it is GroupSteeringAction<T, Euclidean2DPosition> }.let { (groupActions, otherActions) ->

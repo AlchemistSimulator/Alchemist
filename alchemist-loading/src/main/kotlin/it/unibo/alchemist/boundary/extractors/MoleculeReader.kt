@@ -35,45 +35,45 @@ import kotlin.math.min
  *            will be logged indipendently for each node.
  */
 class MoleculeReader
-    @JvmOverloads
-    constructor(
-        private val moleculeName: String,
-        private val property: String?,
-        private val incarnation: Incarnation<*, *>,
-        private val filter: ExportFilter,
-        aggregatorNames: List<String>,
-        precision: Int? = null,
-    ) : AbstractAggregatingDoubleExporter(filter, aggregatorNames, precision) {
-        private companion object {
-            private const val SHORT_NAME_MAX_LENGTH = 5
-        }
-
-        override val columnName: String
-
-        init {
-            val propertyText =
-                if (property.isNullOrEmpty()) {
-                    ""
-                } else {
-                    property.replace("\\W*".toRegex(), "")
-                }
-
-            val shortProp: String =
-                propertyText.takeIf(String::isEmpty)
-                    ?: "${propertyText.substring(0..<min(propertyText.length, SHORT_NAME_MAX_LENGTH))}@"
-
-            columnName = "$shortProp$moleculeName"
-        }
-
-        private val molecule: Molecule = incarnation.createMolecule(moleculeName)
-
-        override fun <T> getData(
-            environment: Environment<T, *>,
-            reaction: Actionable<T>?,
-            time: Time,
-            step: Long,
-        ): Map<Node<T>, Double> {
-            fun Node<T>.extractData() = environment.incarnation.getProperty(this, molecule, property)
-            return environment.nodes.associateWith { it.extractData() }.toMap()
-        }
+@JvmOverloads
+constructor(
+    private val moleculeName: String,
+    private val property: String?,
+    private val incarnation: Incarnation<*, *>,
+    private val filter: ExportFilter,
+    aggregatorNames: List<String>,
+    precision: Int? = null,
+) : AbstractAggregatingDoubleExporter(filter, aggregatorNames, precision) {
+    private companion object {
+        private const val SHORT_NAME_MAX_LENGTH = 5
     }
+
+    override val columnName: String
+
+    init {
+        val propertyText =
+            if (property.isNullOrEmpty()) {
+                ""
+            } else {
+                property.replace("\\W*".toRegex(), "")
+            }
+
+        val shortProp: String =
+            propertyText.takeIf(String::isEmpty)
+                ?: "${propertyText.substring(0..<min(propertyText.length, SHORT_NAME_MAX_LENGTH))}@"
+
+        columnName = "$shortProp$moleculeName"
+    }
+
+    private val molecule: Molecule = incarnation.createMolecule(moleculeName)
+
+    override fun <T> getData(
+        environment: Environment<T, *>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ): Map<Node<T>, Double> {
+        fun Node<T>.extractData() = environment.incarnation.getProperty(this, molecule, property)
+        return environment.nodes.associateWith { it.extractData() }.toMap()
+    }
+}

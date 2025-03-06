@@ -27,19 +27,11 @@ import it.unibo.alchemist.model.reactions.AbstractReaction
  * @param timeDistribution
  *          the time distribution according to this the reaction executes.
  */
-class CognitiveBehavior<T, V, A>(
-    node: Node<T>,
-    timeDistribution: TimeDistribution<T>,
-) : AbstractReaction<T>(node, timeDistribution)
+class CognitiveBehavior<T, V, A>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
+    AbstractReaction<T>(node, timeDistribution)
     where V : Vector<V>, A : Transformation<V> {
-    override fun cloneOnNewNode(
-        node: Node<T>,
-        currentTime: Time,
-    ) = CognitiveBehavior(node, timeDistribution)
+    override fun cloneOnNewNode(node: Node<T>, currentTime: Time) = CognitiveBehavior(node, timeDistribution)
 
-    override fun updateInternalStatus(
-        curTime: Time,
-        executed: Boolean,
-        environment: Environment<T, *>,
-    ) = node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.update(rate)
+    override fun updateInternalStatus(curTime: Time, executed: Boolean, environment: Environment<T, *>) =
+        node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.update(rate)
 }

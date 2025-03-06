@@ -26,73 +26,72 @@ import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
  * Available aggregators can be found at this [site](http://bit.ly/40MWWvt).
  */
 abstract class AbstractAggregatingDoubleExporter
-    @JvmOverloads
+@JvmOverloads
+constructor(
+    private val filter: ExportFilter = CommonFilters.NOFILTER.filteringPolicy,
+    aggregatorNames: List<String>,
+    precision: Int? = null,
+) : AbstractDoubleExporter(precision) {
     constructor(
-        private val filter: ExportFilter = CommonFilters.NOFILTER.filteringPolicy,
+        filter: String?,
         aggregatorNames: List<String>,
         precision: Int? = null,
-    ) : AbstractDoubleExporter(precision) {
-        constructor(
-            filter: String?,
-            aggregatorNames: List<String>,
-            precision: Int? = null,
-        ) : this(
-            filter = CommonFilters.fromString(filter),
-            aggregatorNames = aggregatorNames,
-            precision = null,
-        )
+    ) : this(
+        filter = CommonFilters.fromString(filter),
+        aggregatorNames = aggregatorNames,
+        precision = null,
+    )
 
-        /**
-         * The name of the column in the output file.
-         */
-        abstract val columnName: String
+    /**
+     * The name of the column in the output file.
+     */
+    abstract val columnName: String
 
-        private val aggregators: Map<String, UnivariateStatistic> =
-            aggregatorNames.associateWith {
-                StatUtil.makeUnivariateStatistic(it).orElseThrow {
-                    IllegalArgumentException(
-                        "Unknown statistic $it. Available statistics are: ${StatUtil.availableStatistics()}",
-                    )
-                }
+    private val aggregators: Map<String, UnivariateStatistic> =
+        aggregatorNames.associateWith {
+            StatUtil.makeUnivariateStatistic(it).orElseThrow {
+                IllegalArgumentException(
+                    "Unknown statistic $it. Available statistics are: ${StatUtil.availableStatistics()}",
+                )
             }
-
-        override val columnNames: List<String> by lazy {
-            aggregators.keys
-                .takeIf { it.isNotEmpty() }
-                ?.map { "$columnName[$it]" }
-                ?: listOf("$columnName@node-id")
         }
 
-        final override fun <T> extractData(
-            environment: Environment<T, *>,
-            reaction: Actionable<T>?,
-            time: Time,
-            step: Long,
-        ): Map<String, Double> =
-            when {
-                aggregators.isEmpty() ->
-                    getData(environment, reaction, time, step)
-                        .mapKeys { (key, _) -> "$columnName@${key.id}" }
-                else -> {
-                    val data =
-                        getData(environment, reaction, time, step)
-                            .values
-                            .flatMap { filter.apply(it) }
-                            .toDoubleArray()
-                    aggregators
-                        .map { (aggregator, statistics) ->
-                            "$columnName[$aggregator]" to statistics.evaluate(data)
-                        }.toMap()
-                }
-            }
-
-        /**
-         * Delegated to the concrete implementation to extract data from the environment.
-         */
-        abstract fun <T> getData(
-            environment: Environment<T, *>,
-            reaction: Actionable<T>?,
-            time: Time,
-            step: Long,
-        ): Map<Node<T>, Double>
+    override val columnNames: List<String> by lazy {
+        aggregators.keys
+            .takeIf { it.isNotEmpty() }
+            ?.map { "$columnName[$it]" }
+            ?: listOf("$columnName@node-id")
     }
+
+    final override fun <T> extractData(
+        environment: Environment<T, *>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ): Map<String, Double> = when {
+        aggregators.isEmpty() ->
+            getData(environment, reaction, time, step)
+                .mapKeys { (key, _) -> "$columnName@${key.id}" }
+        else -> {
+            val data =
+                getData(environment, reaction, time, step)
+                    .values
+                    .flatMap { filter.apply(it) }
+                    .toDoubleArray()
+            aggregators
+                .map { (aggregator, statistics) ->
+                    "$columnName[$aggregator]" to statistics.evaluate(data)
+                }.toMap()
+        }
+    }
+
+    /**
+     * Delegated to the concrete implementation to extract data from the environment.
+     */
+    abstract fun <T> getData(
+        environment: Environment<T, *>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ): Map<Node<T>, Double>
+}

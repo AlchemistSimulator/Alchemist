@@ -110,10 +110,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         this.incarnation = requireNotNull(incarnation)
     }
 
-    override fun addLayer(
-        molecule: Molecule,
-        layer: Layer<T, P>,
-    ) {
+    override fun addLayer(molecule: Molecule, layer: Layer<T, P>) {
         check(_layers.put(molecule, layer) == null) { "Two layers have been associated to $molecule" }
     }
 
@@ -127,23 +124,19 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         ifEngineAvailable { it.reactionRemoved(reaction) }
     }
 
-    override fun addNode(
-        node: Node<T>,
-        p: P,
-    ): Boolean =
-        when {
-            nodeShouldBeAdded(node, p) -> {
-                val actualPosition = computeActualInsertionPosition(node, p)
-                setPosition(node, actualPosition)
-                require(_nodes.add(node)) { "Node with id ${node.id} was already existing in this environment." }
-                spatialIndex.insert(node, *actualPosition.coordinates)
-                updateNeighborhood(node, true)
-                ifEngineAvailable { it.nodeAdded(node) }
-                nodeAdded(node, p, getNeighborhood(node))
-                true
-            }
-            else -> false
+    override fun addNode(node: Node<T>, p: P): Boolean = when {
+        nodeShouldBeAdded(node, p) -> {
+            val actualPosition = computeActualInsertionPosition(node, p)
+            setPosition(node, actualPosition)
+            require(_nodes.add(node)) { "Node with id ${node.id} was already existing in this environment." }
+            spatialIndex.insert(node, *actualPosition.coordinates)
+            updateNeighborhood(node, true)
+            ifEngineAvailable { it.nodeAdded(node) }
+            nodeAdded(node, p, getNeighborhood(node))
+            true
         }
+        else -> false
+    }
 
     /**
      * Adds to the simulation a predicate that determines whether a simulation should be terminated.
@@ -164,10 +157,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * the original (requested) position
      * @return the actual position where the node should be located
      */
-    protected abstract fun computeActualInsertionPosition(
-        node: Node<T>,
-        p: P,
-    ): P
+    protected abstract fun computeActualInsertionPosition(node: Node<T>, p: P): P
 
     override fun forEach(action: Consumer<in Node<T>?>?) {
         nodes.forEach(action)
@@ -177,17 +167,13 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         center: Node<T>,
         oldNeighborhood: Neighborhood<T>?,
         newNeighborhood: Neighborhood<T>,
-    ): Sequence<Operation<T>> =
-        newNeighborhood
-            .getNeighbors()
-            .asSequence()
-            .filterNot { it in (oldNeighborhood ?: emptySet()) || getNeighborhood(it).contains(center) }
-            .map { Operation(center, it, true) }
+    ): Sequence<Operation<T>> = newNeighborhood
+        .getNeighbors()
+        .asSequence()
+        .filterNot { it in (oldNeighborhood ?: emptySet()) || getNeighborhood(it).contains(center) }
+        .map { Operation(center, it, true) }
 
-    private fun getAllNodesInRange(
-        center: P,
-        range: Double,
-    ): List<Node<T>> {
+    private fun getAllNodesInRange(center: P, range: Double): List<Node<T>> {
         require(range > 0) { "Range query must be positive (provided: $range)" }
         val validCache =
             cache ?: Caffeine
@@ -198,10 +184,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         return validCache[center to range]
     }
 
-    override fun getDistanceBetweenNodes(
-        n1: Node<T>,
-        n2: Node<T>,
-    ): Double = getPosition(n1).distanceTo(getPosition(n2))
+    override fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double = getPosition(n1).distanceTo(getPosition(n2))
 
     override fun getLayer(molecule: Molecule): Layer<T, P>? = _layers[molecule]
 
@@ -218,10 +201,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     override fun getNodeByID(id: Int): Node<T> = nodes.first { n: Node<T> -> n.id == id }
 
-    override fun getNodesWithinRange(
-        node: Node<T>,
-        range: Double,
-    ): ListSet<Node<T>> {
+    override fun getNodesWithinRange(node: Node<T>, range: Double): ListSet<Node<T>> {
         val centerPosition = getPosition(node)
         val res = LinkedListSet(getAllNodesInRange(centerPosition, range))
         check(res.remove(node)) {
@@ -232,25 +212,21 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         return res
     }
 
-    override fun getNodesWithinRange(
-        position: P,
-        range: Double,
-    ): ListSet<Node<T>> {
+    override fun getNodesWithinRange(position: P, range: Double): ListSet<Node<T>> {
         /*
          * Collect every node in range
          */
         return ImmutableListSet.copyOf(getAllNodesInRange(position, range))
     }
 
-    override fun getPosition(node: Node<T>): P =
-        requireNotNull(nodeToPos[node.id]) {
-            check(!nodes.contains(node)) {
-                "Node $node is registered in the environment but has no position. " +
-                    "This could be a bug in Alchemist. Please open an issue at: " +
-                    "https://github.com/AlchemistSimulator/Alchemist/issues/new/choose"
-            }
-            "Node $node: ${node.javaClass.simpleName} does not exist in the environment."
+    override fun getPosition(node: Node<T>): P = requireNotNull(nodeToPos[node.id]) {
+        check(!nodes.contains(node)) {
+            "Node $node is registered in the environment but has no position. " +
+                "This could be a bug in Alchemist. Please open an issue at: " +
+                "https://github.com/AlchemistSimulator/Alchemist/issues/new/choose"
         }
+        "Node $node: ${node.javaClass.simpleName} does not exist in the environment."
+    }
 
     /**
      * Override this property if units measuring distance do not match with units used
@@ -280,13 +256,12 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         center: Node<T>,
         oldNeighborhood: Neighborhood<T>?,
         newNeighborhood: Neighborhood<T>,
-    ): Sequence<Operation<T>> =
-        oldNeighborhood
-            ?.neighbors
-            ?.asSequence()
-            ?.filter { neigh -> !newNeighborhood.contains(neigh) && getNeighborhood(neigh).contains(center) }
-            ?.map { neigh -> Operation(center, neigh, isAdd = false) }
-            .orEmpty()
+    ): Sequence<Operation<T>> = oldNeighborhood
+        ?.neighbors
+        ?.asSequence()
+        ?.filter { neigh -> !newNeighborhood.contains(neigh) && getNeighborhood(neigh).contains(center) }
+        ?.map { neigh -> Operation(center, neigh, isAdd = false) }
+        .orEmpty()
 
     /**
      * This method gets called once a node has been added, and its neighborhood has been computed and memorized.
@@ -295,11 +270,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * @param position the position of the node
      * @param neighborhood the current neighborhood of the node
      */
-    protected abstract fun nodeAdded(
-        node: Node<T>,
-        position: P,
-        neighborhood: Neighborhood<T>,
-    )
+    protected abstract fun nodeAdded(node: Node<T>, position: P, neighborhood: Neighborhood<T>)
 
     /**
      * This method gets called once a node has been removed.
@@ -310,10 +281,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * the OLD neighborhood of the node (it is no longer in sync with
      * the [Environment] status)
      */
-    protected open fun nodeRemoved(
-        node: Node<T>,
-        neighborhood: Neighborhood<T>,
-    ) {}
+    protected open fun nodeRemoved(node: Node<T>, neighborhood: Neighborhood<T>) {}
 
     /**
      * Allows subclasses to determine whether a [Node] should
@@ -323,10 +291,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * @param p the original (requested) position
      * @return true if the node should be added to this environment, false otherwise
      */
-    protected open fun nodeShouldBeAdded(
-        node: Node<T>,
-        p: P,
-    ): Boolean = true
+    protected open fun nodeShouldBeAdded(node: Node<T>, p: P): Boolean = true
 
     @Serial
     private fun readObject(inputStream: ObjectInputStream) {
@@ -344,11 +309,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         return toQueue(origin, oldNeighborhood, newNeighborhood)
     }
 
-    private fun recursiveOperation(
-        origin: Node<T>,
-        destination: Node<T>,
-        isAdd: Boolean,
-    ): Sequence<Operation<T>> {
+    private fun recursiveOperation(origin: Node<T>, destination: Node<T>, isAdd: Boolean): Sequence<Operation<T>> {
         requireNotNull(destination) { "Destination node cannot be null." }
         ifEngineAvailable {
             if (isAdd) {
@@ -373,13 +334,9 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         nodeRemoved(node, neigh)
     }
 
-    private fun runQuery(
-        center: P,
-        range: Double,
-    ): List<Node<T>> =
-        spatialIndex
-            .query(*center.boundingBox(range).map { it.coordinates }.toTypedArray())
-            .filter { getPosition(it).distanceTo(center) <= range }
+    private fun runQuery(center: P, range: Double): List<Node<T>> = spatialIndex
+        .query(*center.boundingBox(range).map { it.coordinates }.toTypedArray())
+        .filter { getPosition(it).distanceTo(center) <= range }
 
     /**
      * Adds or updates a node's position in the position map.
@@ -387,10 +344,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * @param n the node
      * @param p its new position
      */
-    protected fun setPosition(
-        n: Node<T>,
-        p: P,
-    ) {
+    protected fun setPosition(n: Node<T>, p: P) {
         val pos = nodeToPos.put(n.id, p)
         if (p != pos) {
             invalidateCache()
@@ -406,9 +360,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         center: Node<T>,
         oldNeighborhood: Neighborhood<T>?,
         newNeighborhood: Neighborhood<T>,
-    ): Sequence<Operation<T>> =
-        lostNeighbors(center, oldNeighborhood, newNeighborhood) +
-            foundNeighbors(center, oldNeighborhood, newNeighborhood)
+    ): Sequence<Operation<T>> = lostNeighbors(center, oldNeighborhood, newNeighborhood) +
+        foundNeighbors(center, oldNeighborhood, newNeighborhood)
 
     /**
      * Not used internally. Override as you please.
@@ -422,10 +375,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * @param node the moved node
      * @param isNewNode true if the node is new, false otherwise
      */
-    protected fun updateNeighborhood(
-        node: Node<T>,
-        isNewNode: Boolean,
-    ) {
+    protected fun updateNeighborhood(node: Node<T>, isNewNode: Boolean) {
         if (linkingRule.isLocallyConsistent()) {
             val newNeighborhood = linkingRule.computeNeighborhood(node, this)
             val oldNeighborhood: Neighborhood<T>? = neighCache.put(node.id, newNeighborhood)
@@ -469,11 +419,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         out.writeObject(incarnation.javaClass.getSimpleName())
     }
 
-    private data class Operation<T>(
-        val origin: Node<T>,
-        val destination: Node<T>,
-        val isAdd: Boolean,
-    ) {
+    private data class Operation<T>(val origin: Node<T>, val destination: Node<T>, val isAdd: Boolean) {
         override fun toString(): String = origin.toString() + (if (isAdd) " discovered " else " lost ") + destination
     }
 

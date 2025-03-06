@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -28,13 +28,9 @@ interface AutoRenderModeStrategy {
  * @param minHwConcurrency the recommended number of core to use for the Auto mode.
  * @return [RenderMode.CLIENT] if the hardware capacity is above the parameters, [RenderMode.SERVER] otherwise.
  */
-data class HwAutoRenderModeStrategy(
-    val minHwConcurrency: Int = 4,
-) : AutoRenderModeStrategy {
-    override fun invoke(): RenderMode =
-        if (window.navigator.hardwareConcurrency.toInt() > minHwConcurrency) {
-            RenderMode.CLIENT
-        } else {
-            RenderMode.SERVER
-        }
+data class HwAutoRenderModeStrategy(val minHwConcurrency: Int = 4) : AutoRenderModeStrategy {
+    override fun invoke(): RenderMode = when {
+        window.navigator.hardwareConcurrency.toInt() > minHwConcurrency -> RenderMode.CLIENT
+        else -> RenderMode.SERVER
+    }
 }

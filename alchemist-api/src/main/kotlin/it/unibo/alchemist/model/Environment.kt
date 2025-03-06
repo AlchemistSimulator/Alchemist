@@ -24,10 +24,7 @@ interface Environment<T, P : Position<out P>> :
     /**
      * Add a [Layer] to the [Environment].
      */
-    fun addLayer(
-        molecule: Molecule,
-        layer: Layer<T, P>,
-    )
+    fun addLayer(molecule: Molecule, layer: Layer<T, P>)
 
     /**
      * Add a [GlobalReaction] to the [Environment].
@@ -50,10 +47,7 @@ interface Environment<T, P : Position<out P>> :
      * ensure that the reaction is properly scheduled.
      * The function returns true if the node is added to the environment.
      */
-    fun addNode(
-        node: Node<T>,
-        position: P,
-    ): Boolean
+    fun addNode(node: Node<T>, position: P): Boolean
 
     /**
      * Add a [terminator] indicating whether the simulation should be considered finished.
@@ -73,10 +67,7 @@ interface Environment<T, P : Position<out P>> :
     /**
      * Measures the distance between two nodes  ([n1], [n2]) in the environment.
      */
-    fun getDistanceBetweenNodes(
-        n1: Node<T>,
-        n2: Node<T>,
-    ): Double
+    fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double
 
     /**
      * Return the [Incarnation] used to initialize the entities of this [Environment], if it has been set.
@@ -129,10 +120,7 @@ interface Environment<T, P : Position<out P>> :
      * neighborhood if you are sure that all the nodes within the range are
      * connected to the center.
      */
-    fun getNodesWithinRange(
-        node: Node<T>,
-        range: Double,
-    ): ListSet<Node<T>>
+    fun getNodesWithinRange(node: Node<T>, range: Double): ListSet<Node<T>>
 
     /**
      * Given a [position] this method returns a list of all the
@@ -140,10 +128,7 @@ interface Environment<T, P : Position<out P>> :
      * Note that this method
      * (depending on the implementation) might be not optimized.
      */
-    fun getNodesWithinRange(
-        position: P,
-        range: Double,
-    ): ListSet<Node<T>>
+    fun getNodesWithinRange(position: P, range: Double): ListSet<Node<T>>
 
     /**
      * This method allows to know which are the smallest coordinates represented.
@@ -209,10 +194,7 @@ interface Environment<T, P : Position<out P>> :
      * This method moves a [node] in the environment to some [position].
      * If node movement is unsupported, it does nothing.
      */
-    fun moveNodeToPosition(
-        node: Node<T>,
-        position: P,
-    )
+    fun moveNodeToPosition(node: Node<T>, position: P)
 
     /**
      * Removes [node].

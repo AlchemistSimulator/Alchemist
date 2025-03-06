@@ -27,22 +27,15 @@ private const val DOUBLE_EQUALITY_EPSILON = 10e-12
  * @param sigma Steepness parameter of the logistic function.
  * @param tau Threshold parameter of the logistic function.
  */
-fun logistic(
-    sigma: Double,
-    tau: Double,
-    vararg parameters: Double,
-) = 1 / (1 + E.pow(-sigma * (parameters.sum() - tau)))
+fun logistic(sigma: Double, tau: Double, vararg parameters: Double) = 1 / (1 + E.pow(-sigma * (parameters.sum() - tau)))
 
 /**
  *
  * @param sigma Steepness parameter of the advanced logistic function.
  * @param tau Threshold parameter of the advanced logistic function.
  */
-fun advancedLogistic(
-    sigma: Double,
-    tau: Double,
-    vararg parameters: Double,
-) = logistic(sigma, tau, *parameters) - 1 / (1 + E.pow(sigma * tau)) * (1 + E.pow(-sigma * tau))
+fun advancedLogistic(sigma: Double, tau: Double, vararg parameters: Double) =
+    logistic(sigma, tau, *parameters) - 1 / (1 + E.pow(sigma * tau)) * (1 + E.pow(-sigma * tau))
 
 /**
  * @param reference the value
@@ -50,11 +43,8 @@ fun advancedLogistic(
  * @param v2 second value to compare to
  * @return v1 if val is closer to v1 than to v2, v2 otherwise
  */
-fun closestTo(
-    reference: Double,
-    v1: Double,
-    v2: Double,
-): Double = if (abs(v1 - reference) < abs(v2 - reference)) v1 else v2
+fun closestTo(reference: Double, v1: Double, v2: Double): Double =
+    if (abs(v1 - reference) < abs(v2 - reference)) v1 else v2
 
 /**
  * Compares two double values, taking care of computing a relative error
@@ -67,10 +57,7 @@ fun closestTo(
  * @return true if the double are equals with a precision order of
  * DOUBLE_EQUALITY_EPSILON
  */
-fun fuzzyEquals(
-    a: Double,
-    b: Double,
-): Boolean = abs(a - b) <= DOUBLE_EQUALITY_EPSILON * max(abs(a), abs(b))
+fun fuzzyEquals(a: Double, b: Double): Boolean = abs(a - b) <= DOUBLE_EQUALITY_EPSILON * max(abs(a), abs(b))
 
 /**
  * Compares two double values, taking care of computing a relative error
@@ -82,10 +69,7 @@ fun fuzzyEquals(
  * second double
  * @return true if a >= b, or if fuzzyEquals(a, b).
  */
-fun fuzzyGreaterEquals(
-    a: Double,
-    b: Double,
-): Boolean = a >= b || fuzzyEquals(a, b)
+fun fuzzyGreaterEquals(a: Double, b: Double): Boolean = a >= b || fuzzyEquals(a, b)
 
 /**
  * Compares two double values, taking care of computing a relative error
@@ -97,7 +81,4 @@ fun fuzzyGreaterEquals(
  * second double
  * @return true if a <= b, or if fuzzyEquals(a, b).
  */
-fun fuzzySmallerEquals(
-    a: Double,
-    b: Double,
-): Boolean = a <= b || fuzzyEquals(a, b)
+fun fuzzySmallerEquals(a: Double, b: Double): Boolean = a <= b || fuzzyEquals(a, b)

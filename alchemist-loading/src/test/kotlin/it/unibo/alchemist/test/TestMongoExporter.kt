@@ -41,11 +41,7 @@ class TestMongoExporter<T, P : Position<P>> :
                 fun checkForErrors() = simulation.error.ifPresent { throw it }
                 simulation.addOutputMonitor(
                     object : OutputMonitor<T, P> {
-                        override fun finished(
-                            environment: Environment<T, P>,
-                            time: Time,
-                            step: Long,
-                        ) = checkForErrors()
+                        override fun finished(environment: Environment<T, P>, time: Time, step: Long) = checkForErrors()
 
                         override fun initialized(environment: Environment<T, P>) = checkForErrors()
 

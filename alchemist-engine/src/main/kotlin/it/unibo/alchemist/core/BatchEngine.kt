@@ -137,13 +137,12 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         }
     }
 
-    private fun doStepDoneAllMonitors(resultsOrderedByTime: List<TaskResult>): Unit =
-        when (outputReplayStrategy) {
-            is OutputReplayStrategy.Reply ->
-                resultsOrderedByTime.forEach(::doStepDoneAllMonitors)
-            is OutputReplayStrategy.Aggregate ->
-                doStepDoneAllMonitors(resultsOrderedByTime[resultsOrderedByTime.size - 1])
-        }
+    private fun doStepDoneAllMonitors(resultsOrderedByTime: List<TaskResult>): Unit = when (outputReplayStrategy) {
+        is OutputReplayStrategy.Reply ->
+            resultsOrderedByTime.forEach(::doStepDoneAllMonitors)
+        is OutputReplayStrategy.Aggregate ->
+            doStepDoneAllMonitors(resultsOrderedByTime[resultsOrderedByTime.size - 1])
+    }
 
     private fun doStepDoneAllMonitors(result: TaskResult) {
         for (monitor: OutputMonitor<T, P> in monitors) {
@@ -151,10 +150,7 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         }
     }
 
-    private fun doEvent(
-        nextEvent: Actionable<T>,
-        slidingWindowTime: Time,
-    ): TaskResult {
+    private fun doEvent(nextEvent: Actionable<T>, slidingWindowTime: Time): TaskResult {
         validateEventExecutionTime(nextEvent, slidingWindowTime)
         val currentLocalTime = nextEvent.tau
         if (nextEvent.canExecute()) {
@@ -170,10 +166,7 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         return TaskResult(nextEvent, currentLocalTime)
     }
 
-    private fun validateEventExecutionTime(
-        nextEvent: Actionable<T>,
-        slidingWindowTime: Time,
-    ) {
+    private fun validateEventExecutionTime(nextEvent: Actionable<T>, slidingWindowTime: Time) {
         val scheduledTime = nextEvent.tau
         if (!isEventTimeScheduledInFirstBatch(scheduledTime) &&
             isEventScheduledBeforeCurrentTime(
@@ -191,10 +184,8 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
 
     private fun isEventTimeScheduledInFirstBatch(scheduledTime: Time): Boolean = scheduledTime.toDouble() == 0.0
 
-    private fun isEventScheduledBeforeCurrentTime(
-        scheduledTime: Time,
-        slidingWindowTime: Time,
-    ): Boolean = scheduledTime < slidingWindowTime
+    private fun isEventScheduledBeforeCurrentTime(scheduledTime: Time, slidingWindowTime: Time): Boolean =
+        scheduledTime < slidingWindowTime
 
     private fun safeExecuteEvent(event: Actionable<T>) {
         synchronized(executeLock) {
@@ -233,10 +224,7 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         synchronized(this) { return super.newStatus(next) }
     }
 
-    private inner class TaskResult(
-        val event: Actionable<T>,
-        val eventTime: Time,
-    )
+    private inner class TaskResult(val event: Actionable<T>, val eventTime: Time)
 
     /**
      * This interface represents the way outputs are replied. It is meant for internal use.
@@ -257,20 +245,19 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         /**
          * Converts a [String] to the corresponding [OutputReplayStrategy], based on the name.
          */
-        fun String.toReplayStrategy(): OutputReplayStrategy =
-            when (this.lowercase()) {
-                Aggregate.name -> Aggregate
-                Reply.name -> Reply
-                else ->
-                    error(
-                        """
+        fun String.toReplayStrategy(): OutputReplayStrategy = when (this.lowercase()) {
+            Aggregate.name -> Aggregate
+            Reply.name -> Reply
+            else ->
+                error(
+                    """
                         Invalid output reply strategy $this. Available choices: ${listOf(
-                            Aggregate,
-                            Reply,
-                        ).map { it.name }}    
-                        """.trimIndent(),
-                    )
-            }
+                        Aggregate,
+                        Reply,
+                    ).map { it.name }}    
+                    """.trimIndent(),
+                )
+        }
     }
 
     private companion object {

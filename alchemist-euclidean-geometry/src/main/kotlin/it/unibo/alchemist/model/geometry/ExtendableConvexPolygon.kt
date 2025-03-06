@@ -21,10 +21,7 @@ interface ExtendableConvexPolygon : MutableConvexPolygon {
      * @returns true if the operation was performed successfully, false otherwise
      * (e.g. because it would have caused the loss of convexity)
      */
-    fun advanceEdge(
-        index: Int,
-        step: Double,
-    ): Boolean
+    fun advanceEdge(index: Int, step: Double): Boolean
 
     /**
      * Extends the polygon in each direction: each edge is given a chance to advance.

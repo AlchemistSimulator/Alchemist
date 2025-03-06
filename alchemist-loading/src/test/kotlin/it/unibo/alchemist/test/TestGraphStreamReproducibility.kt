@@ -37,32 +37,31 @@ class TestGraphStreamReproducibility :
                     val generator = MersenneTwister(1)
                     val ids = generateSequence { generator.nextLong() }.take(10).toList()
 
-                    fun generateGraphs(): List<EnvironmentDisplacement> =
-                        ids.map { uniqueId ->
-                            val environment = Continuous2DEnvironment<Any>(incarnation)
-                            val graphStream =
-                                GraphStreamSupport.generateGraphStream(
-                                    environment = environment,
-                                    nodeCount = 100,
-                                    generatorName = graphType,
-                                    uniqueId = uniqueId,
-                                    layoutQuality = 0.1,
-                                    parameters = parameters.toTypedArray(),
-                                )
-                            environment.linkingRule = graphStream.linkingRule
-                            graphStream.deployment.forEach {
-                                environment.addNode(
-                                    object : GenericNode<Any>(environment) {
-                                        override fun createT(): Any = Any()
-                                    },
-                                    it,
-                                )
-                            }
-                            environment.nodes.map { node ->
-                                environment.getPosition(node).coordinates.toList() to
-                                    environment.getNeighborhood(node).neighbors.map { it.id }
-                            }
+                    fun generateGraphs(): List<EnvironmentDisplacement> = ids.map { uniqueId ->
+                        val environment = Continuous2DEnvironment<Any>(incarnation)
+                        val graphStream =
+                            GraphStreamSupport.generateGraphStream(
+                                environment = environment,
+                                nodeCount = 100,
+                                generatorName = graphType,
+                                uniqueId = uniqueId,
+                                layoutQuality = 0.1,
+                                parameters = parameters.toTypedArray(),
+                            )
+                        environment.linkingRule = graphStream.linkingRule
+                        graphStream.deployment.forEach {
+                            environment.addNode(
+                                object : GenericNode<Any>(environment) {
+                                    override fun createT(): Any = Any()
+                                },
+                                it,
+                            )
                         }
+                        environment.nodes.map { node ->
+                            environment.getPosition(node).coordinates.toList() to
+                                environment.getNeighborhood(node).neighbors.map { it.id }
+                        }
+                    }
                     val graphs1 = generateGraphs()
                     "with different seeds should differ" {
                         graphs1.distinct().size shouldBe graphs1.size

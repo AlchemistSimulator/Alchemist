@@ -15,6 +15,4 @@ import it.unibo.alchemist.boundary.webui.common.utility.Action
  * Redux action to set the Simulation state of the application and switch between Play and pause.
  * @param action the new simulation action to set.
  */
-data class SetPlayButton(
-    val action: Action,
-)
+data class SetPlayButton(val action: Action)

@@ -85,8 +85,6 @@ open class FollowRoute<T, L : Euclidean2DConvexShape, R> constructor(
     /**
      * Checks if the given [waypoint] is reached (as stated above, if it's inside [currentRoom]).
      */
-    protected open fun isReached(
-        waypoint: Euclidean2DPosition,
-        currentRoom: ConvexPolygon,
-    ): Boolean = currentRoom.contains(waypoint)
+    protected open fun isReached(waypoint: Euclidean2DPosition, currentRoom: ConvexPolygon): Boolean =
+        currentRoom.contains(waypoint)
 }

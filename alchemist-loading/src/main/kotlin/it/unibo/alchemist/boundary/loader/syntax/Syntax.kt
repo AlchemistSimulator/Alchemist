@@ -231,10 +231,7 @@ internal object DocumentRoot : SyntaxElement {
 }
 
 internal object OwnName {
-    operator fun getValue(
-        thisRef: Any?,
-        property: KProperty<*>,
-    ): String = property.name.lowercase()
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): String = property.name.lowercase()
 }
 
 private fun validDescriptor(configuration: DescriptorBuilder.() -> Unit): SyntaxElement.ValidDescriptor =

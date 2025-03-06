@@ -18,10 +18,7 @@ import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
  * @param size the size of the wrapped map
  */
 @GraphQLIgnore
-open class GraphQLMap<K, V>(
-    open val originMap: Map<K, V>,
-    open val size: Int,
-) {
+open class GraphQLMap<K, V>(open val originMap: Map<K, V>, open val size: Int) {
     /**
      * Custom indexing with the key of the wrapped [Map].
      */

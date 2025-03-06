@@ -38,12 +38,11 @@ class UpdateStateTest :
 
         val autoStrategy =
             object : AutoRenderModeStrategy {
-                override fun invoke(): RenderMode =
-                    if (clientCount >= serverCount) {
-                        RenderMode.SERVER
-                    } else {
-                        RenderMode.CLIENT
-                    }
+                override fun invoke(): RenderMode = if (clientCount >= serverCount) {
+                    RenderMode.SERVER
+                } else {
+                    RenderMode.CLIENT
+                }
             }
 
         val brokenAutoStrategy =

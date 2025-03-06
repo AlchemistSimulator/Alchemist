@@ -12,12 +12,6 @@ package it.unibo.alchemist.model.geometry
 /**
  * Implementation of a [Segment2D].
  */
-data class Segment2DImpl<P : Vector2D<P>>(
-    override val first: P,
-    override val second: P,
-) : Segment2D<P> {
-    override fun copyWith(
-        first: P,
-        second: P,
-    ): Segment2D<P> = copy(first = first, second = second)
+data class Segment2DImpl<P : Vector2D<P>>(override val first: P, override val second: P) : Segment2D<P> {
+    override fun copyWith(first: P, second: P): Segment2D<P> = copy(first = first, second = second)
 }

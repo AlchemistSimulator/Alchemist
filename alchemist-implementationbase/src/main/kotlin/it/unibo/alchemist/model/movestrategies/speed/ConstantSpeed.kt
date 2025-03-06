@@ -24,10 +24,8 @@ import java.io.Serial
  * @param <T> Concentration type
  * @param <P> Position type
  */
-class ConstantSpeed<T, P : Position<P>>(
-    private val reaction: Reaction<*>,
-    private val speed: Double,
-) : SpeedSelectionStrategy<T, P> {
+class ConstantSpeed<T, P : Position<P>>(private val reaction: Reaction<*>, private val speed: Double) :
+    SpeedSelectionStrategy<T, P> {
     /**
      * @param reaction the reaction
      * @param speed the speed, in meters/second
@@ -38,10 +36,8 @@ class ConstantSpeed<T, P : Position<P>>(
 
     override fun getNodeMovementLength(target: P?): Double = speed / reaction.rate
 
-    override fun cloneIfNeeded(
-        destination: Node<T>,
-        reaction: Reaction<T>,
-    ): ConstantSpeed<T, P> = ConstantSpeed(reaction, speed)
+    override fun cloneIfNeeded(destination: Node<T>, reaction: Reaction<T>): ConstantSpeed<T, P> =
+        ConstantSpeed(reaction, speed)
 
     private companion object {
         @Serial

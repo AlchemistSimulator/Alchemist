@@ -33,23 +33,19 @@ class RandomTargetInPolygonOnMap<T, O : RoutingServiceOptions<O>, S : RoutingSer
     speed: Double,
     val positionGenerator: Polygon<GeoPosition>,
 ) : MoveOnMap<T, O, S>(
-        environment,
-        node,
-        { current, final -> PolygonalChain(current, final) },
-        ConstantSpeed(reaction, speed),
-        object : ChangeTargetOnCollision<T, GeoPosition>({ environment.getPosition(node) }) {
-            override fun chooseTarget() =
-                positionGenerator
-                    .stream()
-                    .findFirst()
-                    .orElseThrow { IllegalStateException("Bug in Alchemist.") }
+    environment,
+    node,
+    { current, final -> PolygonalChain(current, final) },
+    ConstantSpeed(reaction, speed),
+    object : ChangeTargetOnCollision<T, GeoPosition>({ environment.getPosition(node) }) {
+        override fun chooseTarget() = positionGenerator
+            .stream()
+            .findFirst()
+            .orElseThrow { IllegalStateException("Bug in Alchemist.") }
 
-            override fun cloneIfNeeded(
-                destination: Node<T>?,
-                reaction: Reaction<T>?,
-            ) = this
-        },
-    ) {
+        override fun cloneIfNeeded(destination: Node<T>?, reaction: Reaction<T>?) = this
+    },
+) {
     constructor(
         randomGenerator: RandomGenerator,
         environment: MapEnvironment<T, O, S>,

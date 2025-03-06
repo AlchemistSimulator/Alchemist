@@ -31,11 +31,10 @@ internal class AwtEuclidean2DShape(
         Euclidean2DPosition(shape.bounds2D.centerX, shape.bounds2D.centerY)
     }
 
-    override fun transformed(transformation: Euclidean2DTransformation.() -> Unit) =
-        with(MyTransformation()) {
-            transformation.invoke(this)
-            apply()
-        }
+    override fun transformed(transformation: Euclidean2DTransformation.() -> Unit) = with(MyTransformation()) {
+        transformation.invoke(this)
+        apply()
+    }
 
     override fun asAwtShape() = AffineTransform().createTransformedShape(shape)!!
 
@@ -47,18 +46,17 @@ internal class AwtEuclidean2DShape(
     /**
      * Bounding boxes are used, allowing some inaccuracy.
      */
-    override fun intersects(other: Euclidean2DShape) =
-        when (other) {
+    override fun intersects(other: Euclidean2DShape) = when (other) {
             /*
              checking for other.shape.intersects(shape.bounds2D) means that every shape becomes a rectangle.
              not checking for it results in paradoxes like shape.intersects(other) != other.intersects(shape).
              The asymmetry is tolerated in favour of a half-good implementation.
              */
-            is AwtEuclidean2DShape -> shape.intersects(other.shape.bounds2D)
-            // || other.shape.intersects(shape.bounds2D)
-            is AdimensionalShape -> false
-            else -> throw UnsupportedOperationException("AwtEuclidean2DShape only works with other AwtEuclidean2DShape")
-        }
+        is AwtEuclidean2DShape -> shape.intersects(other.shape.bounds2D)
+        // || other.shape.intersects(shape.bounds2D)
+        is AdimensionalShape -> false
+        else -> throw UnsupportedOperationException("AwtEuclidean2DShape only works with other AwtEuclidean2DShape")
+    }
 
     private inner class MyTransformation : Euclidean2DTransformation {
         private val transform = AffineTransform()

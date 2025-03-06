@@ -35,10 +35,7 @@ open class DynamicallyPursue<T, L : Euclidean2DConvexShape, R>(
      * - rooms visited while pursuing the previous destination won't be penalised (= won't be avoided)
      * Defaults to false.
      */
-    fun setDestination(
-        newDestination: Euclidean2DPosition,
-        voidVolatileMemory: Boolean = false,
-    ) {
+    fun setDestination(newDestination: Euclidean2DPosition, voidVolatileMemory: Boolean = false) {
         destination = newDestination
         action.currentRoom?.let {
             /*

@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 /**
  * Implementation of [Euclidean2DEnvironment].
  */
-open class Continuous2DEnvironment<T>(
-    incarnation: Incarnation<T, Euclidean2DPosition>,
-) : Abstract2DEnvironment<T, Euclidean2DPosition>(incarnation),
+open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPosition>) :
+    Abstract2DEnvironment<T, Euclidean2DPosition>(incarnation),
     Euclidean2DEnvironment<T>

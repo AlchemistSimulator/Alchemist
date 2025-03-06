@@ -15,6 +15,4 @@ import korlibs.image.bitmap.Bitmap
  * Redux action to set the bitmap to display.
  * @param bitmap the new bitmap to set.
  */
-data class SetBitmap(
-    val bitmap: Bitmap?,
-)
+data class SetBitmap(val bitmap: Bitmap?)

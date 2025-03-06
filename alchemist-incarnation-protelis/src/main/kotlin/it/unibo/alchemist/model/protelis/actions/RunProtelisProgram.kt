@@ -94,11 +94,11 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         program = program,
         retentionTime = retentionTime,
         packetLossDistance =
-            RealDistributions.makeRealDistribution(
-                randomGenerator,
-                packetLossDistributionName,
-                *packetLossDistributionParameters,
-            ),
+        RealDistributions.makeRealDistribution(
+            randomGenerator,
+            packetLossDistributionName,
+            *packetLossDistributionParameters,
+        ),
     )
 
     @JvmOverloads
@@ -139,11 +139,11 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         retentionTime = retentionTime,
         program = ProtelisLoader.parse(program),
         packetLossDistance =
-            RealDistributions.makeRealDistribution(
-                randomGenerator,
-                packetLossDistributionName,
-                *packetLossDistributionParameters,
-            ),
+        RealDistributions.makeRealDistribution(
+            randomGenerator,
+            packetLossDistributionName,
+            *packetLossDistributionParameters,
+        ),
     )
 
     /**
@@ -197,20 +197,16 @@ class RunProtelisProgram<P : Position<P>> private constructor(
      */
     fun asMolecule(): Molecule = name
 
-    override fun cloneAction(
-        node: Node<Any>,
-        reaction: Reaction<Any>,
-    ): RunProtelisProgram<P> =
-        RunProtelisProgram(
-            randomGenerator,
-            environment,
-            node.asProperty(),
-            reaction,
-            originalProgram = originalProgram,
-            program = program,
-            retentionTime = retentionTime,
-            packetLossDistance = packetLossDistance,
-        )
+    override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>): RunProtelisProgram<P> = RunProtelisProgram(
+        randomGenerator,
+        environment,
+        node.asProperty(),
+        reaction,
+        originalProgram = originalProgram,
+        program = program,
+        retentionTime = retentionTime,
+        packetLossDistance = packetLossDistance,
+    )
 
     override fun equals(other: Any?): Boolean {
         if (other === this) {
@@ -234,10 +230,9 @@ class RunProtelisProgram<P : Position<P>> private constructor(
      */
     override fun getContext() = Context.LOCAL
 
-    override fun getOutboundDependencies(): ImmutableListSet<Dependency> =
-        ImmutableListSet.of(
-            Dependency.EVERY_MOLECULE,
-        )
+    override fun getOutboundDependencies(): ImmutableListSet<Dependency> = ImmutableListSet.of(
+        Dependency.EVERY_MOLECULE,
+    )
 
     override fun hashCode() = name.hashCode()
 

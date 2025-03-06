@@ -242,27 +242,22 @@ object NaviGator {
         width: Double,
         height: Double,
         obstacles: List<Shape>,
-    ): ExtendableConvexPolygonInEnvironment =
-        ExtendableConvexPolygonInEnvironment(
-            mutableListOf(
-                Euclidean2DPosition(x, y),
-                Euclidean2DPosition(x + side, y),
-                Euclidean2DPosition(x + side, y + side),
-                Euclidean2DPosition(x, y + side),
-            ),
-            origin,
-            width,
-            height,
-            obstacles,
-        )
+    ): ExtendableConvexPolygonInEnvironment = ExtendableConvexPolygonInEnvironment(
+        mutableListOf(
+            Euclidean2DPosition(x, y),
+            Euclidean2DPosition(x + side, y),
+            Euclidean2DPosition(x + side, y + side),
+            Euclidean2DPosition(x, y + side),
+        ),
+        origin,
+        width,
+        height,
+        obstacles,
+    )
 
     /**
      * Creates a [Segment2D]. [x2] defaults to [x1] and [y2] defaults to [y1].
      */
-    private fun createSegment(
-        x1: Double,
-        y1: Double,
-        x2: Double = x1,
-        y2: Double = y1,
-    ) = Segment2DImpl(Euclidean2DPosition(x1, y1), Euclidean2DPosition(x2, y2))
+    private fun createSegment(x1: Double, y1: Double, x2: Double = x1, y2: Double = y1) =
+        Segment2DImpl(Euclidean2DPosition(x1, y1), Euclidean2DPosition(x2, y2))
 }

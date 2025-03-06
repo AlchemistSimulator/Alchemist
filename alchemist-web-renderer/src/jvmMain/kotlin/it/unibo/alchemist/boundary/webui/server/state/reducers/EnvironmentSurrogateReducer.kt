@@ -21,8 +21,7 @@ import it.unibo.alchemist.boundary.webui.server.state.actions.SetEnvironmentSurr
 fun environmentSurrogateReducer(
     state: EnvironmentSurrogate<Any, PositionSurrogate>,
     action: Any,
-): EnvironmentSurrogate<Any, PositionSurrogate> =
-    when (action) {
-        is SetEnvironmentSurrogate<*, *> -> action.environmentSurrogate
-        else -> state
-    }
+): EnvironmentSurrogate<Any, PositionSurrogate> = when (action) {
+    is SetEnvironmentSurrogate<*, *> -> action.environmentSurrogate
+    else -> state
+}

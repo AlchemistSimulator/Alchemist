@@ -59,10 +59,7 @@ class ToPositionSurrogateTest :
         }
     })
 
-fun <P : Position<out P>> checkToPositionSurrogate(
-    position: P,
-    positionSurrogate: PositionSurrogate,
-) {
+fun <P : Position<out P>> checkToPositionSurrogate(position: P, positionSurrogate: PositionSurrogate) {
     position.coordinates shouldBe positionSurrogate.coordinates
     position.dimensions shouldBe positionSurrogate.dimensions
     if (position is Position2D<*> && positionSurrogate is Position2DSurrogate) {

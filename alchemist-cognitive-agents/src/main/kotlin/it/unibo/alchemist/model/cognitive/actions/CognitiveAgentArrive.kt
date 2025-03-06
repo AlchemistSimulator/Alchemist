@@ -72,10 +72,7 @@ open class CognitiveAgentArrive<T, P, A>(
             }
         }
 
-    override fun cloneAction(
-        node: Node<T>,
-        reaction: Reaction<T>,
-    ): CognitiveAgentArrive<T, P, A> =
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentArrive<T, P, A> =
         CognitiveAgentArrive(
             environment,
             reaction,

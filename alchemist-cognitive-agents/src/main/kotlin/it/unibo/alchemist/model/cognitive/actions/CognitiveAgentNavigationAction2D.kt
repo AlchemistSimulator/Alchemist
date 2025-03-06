@@ -42,10 +42,10 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
      */
     private val wallRepulsionFactor: Double = DEFAULT_WALL_REPULSION_FACTOR,
 ) : AbstractNavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>(
-        environment,
-        reaction,
-        pedestrian,
-    ) {
+    environment,
+    reaction,
+    pedestrian,
+) {
     /**
      * Contains the default constants.
      */
@@ -77,10 +77,9 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
         this.targetDoor = door
     }
 
-    private fun computeCrossingPoints(door: Euclidean2DPassage) =
-        door
-            .copy(passageShapeOnTail = door.passageShapeOnTail.shrunk(wallRepulsionFactor))
-            .crossingPoints(pedestrianPosition)
+    private fun computeCrossingPoints(door: Euclidean2DPassage) = door
+        .copy(passageShapeOnTail = door.passageShapeOnTail.shrunk(wallRepulsionFactor))
+        .crossingPoints(pedestrianPosition)
 
     override fun moving() {
         super.moving()
@@ -98,10 +97,7 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
         return CognitiveAgentSeek2D(environment, reaction, pedestrian, desiredPosition).nextPosition
     }
 
-    override fun cloneAction(
-        node: Node<T>,
-        reaction: Reaction<T>,
-    ): CognitiveAgentNavigationAction2D<T, L, R> {
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentNavigationAction2D<T, L, R> {
         val clone =
             CognitiveAgentNavigationAction2D<T, L, R>(
                 environment,

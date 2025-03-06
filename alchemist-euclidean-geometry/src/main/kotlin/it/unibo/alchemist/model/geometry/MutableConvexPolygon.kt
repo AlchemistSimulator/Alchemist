@@ -23,11 +23,7 @@ interface MutableConvexPolygon : ConvexPolygon {
      * @returns true if the operation was performed successfully, false otherwise
      * (e.g. because it would have caused the loss of convexity)
      */
-    fun addVertex(
-        index: Int,
-        x: Double,
-        y: Double,
-    ): Boolean
+    fun addVertex(index: Int, x: Double, y: Double): Boolean
 
     /**
      * Removes a vertex from the polygon.
@@ -45,11 +41,7 @@ interface MutableConvexPolygon : ConvexPolygon {
      * @returns true if the operation was performed successfully, false otherwise
      * (e.g. because it would have caused the loss of convexity)
      */
-    fun moveVertex(
-        index: Int,
-        newX: Double,
-        newY: Double,
-    ): Boolean
+    fun moveVertex(index: Int, newX: Double, newY: Double): Boolean
 
     /**
      * Replaces an edge of the polygon.
@@ -58,8 +50,5 @@ interface MutableConvexPolygon : ConvexPolygon {
      * @returns true if the operation was performed successfully, false otherwise
      * (e.g. because it would have caused the loss of convexity)
      */
-    fun replaceEdge(
-        index: Int,
-        newEdge: Segment2D<Euclidean2DPosition>,
-    ): Boolean
+    fun replaceEdge(index: Int, newEdge: Segment2D<Euclidean2DPosition>): Boolean
 }

@@ -19,15 +19,15 @@ import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
  * The node's [CognitiveModel].
  */
 class Cognitive2D<T>
-    @JvmOverloads
-    constructor(
-        /**
-         * The environment in which the node moves.
-         */
-        environment: Physics2DEnvironment<T>,
-        node: Node<T>,
-        /**
-         * The molecule associated with danger in the environment.
-         */
-        danger: Molecule? = null,
-    ) : CognitiveProperty<T> by Cognitive(environment, node, danger)
+@JvmOverloads
+constructor(
+    /**
+     * The environment in which the node moves.
+     */
+    environment: Physics2DEnvironment<T>,
+    node: Node<T>,
+    /**
+     * The molecule associated with danger in the environment.
+     */
+    danger: Molecule? = null,
+) : CognitiveProperty<T> by Cognitive(environment, node, danger)

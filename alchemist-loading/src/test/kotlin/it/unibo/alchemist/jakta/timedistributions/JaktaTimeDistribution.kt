@@ -19,27 +19,19 @@ data class JaktaTimeDistribution(
     val deliberate: TimeDistribution<Any?>,
     val act: TimeDistribution<Any?>,
 ) : TimeDistribution<Any?> {
-    override fun update(
-        currentTime: Time,
-        executed: Boolean,
-        param: Double,
-        environment: Environment<Any?, *>,
-    ) = doNotUse()
+    override fun update(currentTime: Time, executed: Boolean, param: Double, environment: Environment<Any?, *>) =
+        doNotUse()
 
     override fun getNextOccurence(): Time = doNotUse()
 
     override fun getRate(): Double = doNotUse()
 
-    override fun cloneOnNewNode(
-        destination: Node<Any?>,
-        currentTime: Time,
-    ): TimeDistribution<Any?> = doNotUse()
+    override fun cloneOnNewNode(destination: Node<Any?>, currentTime: Time): TimeDistribution<Any?> = doNotUse()
 
-    private fun doNotUse(): Nothing =
-        error(
-            "${this::class.simpleName} is not meant to be used directly, but to host custom time distributions" +
-                " for the sense, deliberate, and act phases of the JaKtA lifecycle.",
-        )
+    private fun doNotUse(): Nothing = error(
+        "${this::class.simpleName} is not meant to be used directly, but to host custom time distributions" +
+            " for the sense, deliberate, and act phases of the JaKtA lifecycle.",
+    )
 
     override fun toString(): String = "JaktaTimeDistribution(sense=$sense, deliberate=$deliberate, act=$act)"
 }

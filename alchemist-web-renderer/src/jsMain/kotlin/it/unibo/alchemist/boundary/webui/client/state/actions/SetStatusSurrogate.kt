@@ -15,6 +15,4 @@ import it.unibo.alchemist.boundary.webui.common.model.surrogate.StatusSurrogate
  * Redux action to set the [StatusSurrogate] of the application.
  * @param statusSurrogate the new [StatusSurrogate].
  */
-data class SetStatusSurrogate(
-    val statusSurrogate: StatusSurrogate,
-)
+data class SetStatusSurrogate(val statusSurrogate: StatusSurrogate)

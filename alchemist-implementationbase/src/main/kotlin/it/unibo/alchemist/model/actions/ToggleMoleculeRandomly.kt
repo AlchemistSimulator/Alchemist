@@ -39,10 +39,8 @@ open class ToggleMoleculeRandomly<T>(
         }
     }
 
-    override fun cloneAction(
-        node: Node<T>,
-        reaction: Reaction<T>,
-    ) = ToggleMoleculeRandomly(node, randomGenerator, molecule, concentration, odds)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
+        ToggleMoleculeRandomly(node, randomGenerator, molecule, concentration, odds)
 
     /**
      * Rolls the dice and toggles the molecule.

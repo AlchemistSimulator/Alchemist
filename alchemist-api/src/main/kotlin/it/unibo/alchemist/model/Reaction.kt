@@ -46,8 +46,5 @@ interface Reaction<T> : Actionable<T> {
      * the time at which the clone is created (required to correctly clone the [TimeDistribution]s)
      * @return the cloned action
      */
-    fun cloneOnNewNode(
-        node: Node<T>,
-        currentTime: Time,
-    ): Reaction<T>
+    fun cloneOnNewNode(node: Node<T>, currentTime: Time): Reaction<T>
 }

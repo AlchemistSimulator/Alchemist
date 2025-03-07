@@ -1,3 +1,24 @@
+## [40.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/40.1.2...40.1.3) (2025-03-07)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.39 ([#4272](https://github.com/AlchemistSimulator/Alchemist/issues/4272)) ([f7314d9](https://github.com/AlchemistSimulator/Alchemist/commit/f7314d940613d45ff2dd2f42ccb214834e80097f))
+* **deps:** update dependency org.mapsforge:mapsforge-map-awt to v0.24.1 ([#4273](https://github.com/AlchemistSimulator/Alchemist/issues/4273)) ([48da1ca](https://github.com/AlchemistSimulator/Alchemist/commit/48da1ca5196ef143971002f8df6aac2ee0f76de5))
+* **deps:** update dependency scalafmt to v3.9.3 ([#4271](https://github.com/AlchemistSimulator/Alchemist/issues/4271)) ([0f9404f](https://github.com/AlchemistSimulator/Alchemist/commit/0f9404f570814bb42a1c4907718a52d448c2dbe4))
+
+### Bug Fixes
+
+* `FollowTrace.getTarget()` never returns `null` ([d2960f6](https://github.com/AlchemistSimulator/Alchemist/commit/d2960f67c484ad189ff0cc6bff76508d4b3fcc11))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([739480a](https://github.com/AlchemistSimulator/Alchemist/commit/739480a638200227daa16b7341db860189bd28ca))
+* **build:** update the javadoc.io cache ([06aecbe](https://github.com/AlchemistSimulator/Alchemist/commit/06aecbee4946570818e82bf1c762ec40265b9963))
+
+### Style improvements
+
+* **euclidean-geometry:** remove useless equals and hashCode in `ExtendableConvexPolygonEnvironment` ([#4270](https://github.com/AlchemistSimulator/Alchemist/issues/4270)) ([6db4162](https://github.com/AlchemistSimulator/Alchemist/commit/6db416281dccb5dfa10b85574804204d2019cc87))
+
 ## [40.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/40.1.1...40.1.2) (2025-03-06)
 
 ### Bug Fixes

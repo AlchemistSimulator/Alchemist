@@ -281,11 +281,11 @@
   "org.jetbrains.dokka/templating-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.6-19.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.6-19.0.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.7-19.0.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.7-19.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.6-19.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.6-19.0.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.7-19.0.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.7-19.0.0"
   },
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"
@@ -366,7 +366,8 @@
     "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.3.1/element-list"
   },
   "org.protelis/protelis-interpreter/17.7.2": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.7.2"
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.7.2",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.7.2/element-list"
   },
   "org.protelis/protelis-lang/17.7.2": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.7.2",

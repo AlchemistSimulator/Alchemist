@@ -9,19 +9,21 @@
 
 package it.unibo.alchemist.boundary.composeui
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import it.unibo.alchemist.boundary.composeui.viewmodels.SimulationStatusViewModel
 
 /**
  * Application entry point, this will be rendered the same in all the platforms.
@@ -29,17 +31,23 @@ import androidx.compose.ui.Modifier
 @Composable
 fun app() {
     MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { getPlatform() }
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Compose: $greeting")
-                }
-            }
+            simulationStatus()
+        }
+    }
+}
+
+@Composable
+fun simulationStatus(viewModel: SimulationStatusViewModel = viewModel { SimulationStatusViewModel() }) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    Text("Simulation status: ${uiState.status}")
+    Text("Simulation time: ${uiState.time}")
+    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        Button(onClick = { viewModel.pause() }) {
+            Text("Pause")
+        }
+        Button(onClick = { viewModel.play() }) {
+            Text("Play")
         }
     }
 }

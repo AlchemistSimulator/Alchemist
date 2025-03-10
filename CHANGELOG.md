@@ -1,3 +1,23 @@
+## [41.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/40.1.3...41.0.0) (2025-03-10)
+
+### ⚠ BREAKING CHANGES
+
+* **engine:** migrate `Engine` to Kotlin
+
+### Dependency updates
+
+* **deps:** update plugin tasktree to v4.0.1 ([#4275](https://github.com/AlchemistSimulator/Alchemist/issues/4275)) ([8d8038d](https://github.com/AlchemistSimulator/Alchemist/commit/8d8038d1083acad944f6c82a06077e771d282e11))
+* **deps:** update react to v2025.3.7-19.0.0 (patch) ([#4274](https://github.com/AlchemistSimulator/Alchemist/issues/4274)) ([bb6f0cc](https://github.com/AlchemistSimulator/Alchemist/commit/bb6f0cce49cc39574d3dd60ad8d387f138d103db))
+* **deps:** update react to v2025.3.8-19.0.0 (patch) ([#4277](https://github.com/AlchemistSimulator/Alchemist/issues/4277)) ([e8ad0bf](https://github.com/AlchemistSimulator/Alchemist/commit/e8ad0bffeec2a49b367eb8799142cf8e4d03801c))
+* **deps:** update react to v2025.3.9-19.0.0 (patch) ([#4278](https://github.com/AlchemistSimulator/Alchemist/issues/4278)) ([ebf9640](https://github.com/AlchemistSimulator/Alchemist/commit/ebf96405759864d562f3a82f4f3c34d8ef37e748))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([b3aba96](https://github.com/AlchemistSimulator/Alchemist/commit/b3aba9643c625fbbccdf819c6f607d98cda23af6))
+* **build:** update the javadoc.io cache ([841579b](https://github.com/AlchemistSimulator/Alchemist/commit/841579b6901998de52f2a9b0cff9a796ad493fff))
+* **build:** update the javadoc.io cache ([ba626f0](https://github.com/AlchemistSimulator/Alchemist/commit/ba626f0a3e76635c8cde298762caadc373ef3e11))
+* **engine:** migrate `Engine` to Kotlin ([896695f](https://github.com/AlchemistSimulator/Alchemist/commit/896695f9326d2ee397d7f1f59aabb42c2ac40784))
+
 ## [40.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/40.1.2...40.1.3) (2025-03-07)
 
 ### Dependency updates

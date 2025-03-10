@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
+import kotlin.Unit;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 
 import java.util.List;
@@ -84,7 +85,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      *
      * @return a {@link CompletableFuture} that will be completed when the steps are executed
      */
-    CompletableFuture<Void> goToStep(long steps);
+    CompletableFuture<Unit> goToStep(long steps);
 
     /**
      * Executes the simulation until the target time is reached, then pauses it.
@@ -93,7 +94,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      *
      * @return a {@link CompletableFuture} that will be completed when the target time is reached
      */
-    CompletableFuture<Void> goToTime(Time t);
+    CompletableFuture<Unit> goToTime(Time t);
 
     /**
      * This method must get called in case a communication link connecting two
@@ -161,7 +162,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      *
      * @return a {@link CompletableFuture} that will be completed when the simulation is paused
      */
-    CompletableFuture<Void> pause();
+    CompletableFuture<Unit> pause();
 
     /**
      * Sends a play command to the simulation.
@@ -169,7 +170,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      *
      * @return a {@link CompletableFuture} that will be completed when the simulation is played
      */
-    CompletableFuture<Void> play();
+    CompletableFuture<Unit> play();
 
     /**
      * Adds a reaction during the simulation to the scheduler and start to execute it.
@@ -215,7 +216,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      *
      * @return a {@link CompletableFuture} that will be completed when the simulation is terminated
      */
-    CompletableFuture<Void> terminate();
+    CompletableFuture<Unit> terminate();
 
     /**
      * Suspends the caller until the simulation reaches the selected {@link Status} or the timeout ends.

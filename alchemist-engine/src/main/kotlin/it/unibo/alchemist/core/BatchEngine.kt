@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -20,7 +20,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CompletableFuture
-import java.util.function.Consumer
 import java.util.function.Function
 import java.util.stream.Collectors
 
@@ -63,7 +62,7 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
             scheduler.contains("epsilon", ignoreCase = true) -> {
                 val epsilon = batchSizeOrEpsilon.toDouble()
                 if (batchSizeOrEpsilon !is Double) {
-                    logger.warn(
+                    LOGGER.warn(
                         "Requested epsilon-batch scheduler, expected a double but got epsilon={} ({}). Coercing to {}",
                         batchSizeOrEpsilon,
                         batchSizeOrEpsilon::class.simpleName,
@@ -75,7 +74,7 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
             scheduler.equals("fixed", ignoreCase = true) -> {
                 val batchSize = batchSizeOrEpsilon.toInt()
                 if (batchSizeOrEpsilon !is Int) {
-                    logger.warn(
+                    LOGGER.warn(
                         "Fixed-batch scheduler requested, expected an integer size but got {} ({}). Coercing to {}",
                         batchSizeOrEpsilon,
                         batchSizeOrEpsilon::class.simpleName,
@@ -124,11 +123,11 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
             try {
                 val futureResults = tasks.awaitAll()
                 val newStep = step + batchSize.toLong()
-                setCurrentStep(newStep)
+                currentStep = newStep
                 val resultsOrderedByTime =
                     futureResults
                         .sortedWith(Comparator.comparing { result: TaskResult -> result.eventTime })
-                setCurrentTime(if (maxSlidingWindowTime > time) maxSlidingWindowTime else time)
+                currentTime = if (maxSlidingWindowTime > time) maxSlidingWindowTime else time
                 doStepDoneAllMonitors(resultsOrderedByTime)
             } catch (e: InterruptedException) {
                 LOGGER.error(e.message, e)
@@ -204,7 +203,7 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         synchronized(updateLock) {
             var toUpdate: Set<Actionable<T>> = dependencyGraph.outboundDependencies(event)
             if (!afterExecutionUpdates.isEmpty()) {
-                afterExecutionUpdates.forEach(Consumer<Update> { obj: Update -> obj.performChanges() })
+                afterExecutionUpdates.forEach { it.performChanges() }
                 afterExecutionUpdates.clear()
                 toUpdate =
                     Sets.union(
@@ -212,7 +211,7 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
                         dependencyGraph.outboundDependencies(event),
                     )
             }
-            toUpdate.forEach(Consumer { r: Actionable<T>? -> updateReaction(r) })
+            toUpdate.forEach { updateReaction(it) }
         }
     }
 
@@ -220,7 +219,7 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
      * Safely set simulation status.
      */
     @SuppressWarnings("ForbiddenVoid")
-    override fun newStatus(next: Status): CompletableFuture<Void> {
+    override fun newStatus(next: Status): CompletableFuture<Unit> {
         synchronized(this) { return super.newStatus(next) }
     }
 
@@ -261,6 +260,6 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
     }
 
     private companion object {
-        private val logger = LoggerFactory.getLogger(BatchEngine::class.java)
+        private val LOGGER = LoggerFactory.getLogger(BatchEngine::class.java)
     }
 }

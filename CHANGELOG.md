@@ -1,3 +1,13 @@
+## [42.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/41.0.0...42.0.0) (2025-03-10)
+
+### ⚠ BREAKING CHANGES
+
+* **engine:** migrate `AbstractLimitedContinuous2D` and `Continuous2DObstacles` to Kotlin
+
+### General maintenance
+
+* **engine:** migrate `AbstractLimitedContinuous2D` and `Continuous2DObstacles` to Kotlin ([3b4cdac](https://github.com/AlchemistSimulator/Alchemist/commit/3b4cdac095675ea00e222fe9f3592f0b19f99cb8))
+
 ## [41.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/40.1.3...41.0.0) (2025-03-10)
 
 ### ⚠ BREAKING CHANGES

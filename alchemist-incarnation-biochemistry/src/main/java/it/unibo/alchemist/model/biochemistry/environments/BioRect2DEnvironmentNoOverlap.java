@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -95,9 +95,9 @@ public final class BioRect2DEnvironmentNoOverlap
     }
 
     @Override
-    public void moveNodeToPosition(@Nonnull final Node<Double> node, @Nonnull final Euclidean2DPosition newPos) {
+    public void moveNodeToPosition(@Nonnull final Node<Double> node, @Nonnull final Euclidean2DPosition newPosition) {
         final double[] cur = getPosition(node).getCoordinates();
-        final double[] np = newPos.getCoordinates();
+        final double[] np = newPosition.getCoordinates();
         final Euclidean2DPosition nextWithinLimts = super.next(cur[0], cur[1], np[0], np[1]);
         if (node.asPropertyOrNull(CircularCellProperty.class) != null) {
             final Euclidean2DPosition nextPos = findNearestFreePosition(

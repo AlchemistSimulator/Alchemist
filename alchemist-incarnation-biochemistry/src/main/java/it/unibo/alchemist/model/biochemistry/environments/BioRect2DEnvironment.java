@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.molecules.Junction;
-import it.unibo.alchemist.model.physics.environments.AbstractLimitedContinuos2D;
+import it.unibo.alchemist.model.physics.environments.AbstractLimitedContinuous2D;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ import java.util.Map;
 
 /**
  */
-public class BioRect2DEnvironment extends AbstractLimitedContinuos2D<Double> {
+public class BioRect2DEnvironment extends AbstractLimitedContinuous2D<Double> {
 
     @Serial
     private static final long serialVersionUID = -2952112972706738682L;
@@ -83,6 +83,7 @@ public class BioRect2DEnvironment extends AbstractLimitedContinuos2D<Double> {
         );
     }
 
+    @Nonnull
     @Override
     protected final Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
         final double x;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -17,7 +17,7 @@ import java.io.Serial;
 /**
  * @param <T> concentration type
  */
-public final class InfiniteHalls<T> extends AbstractLimitedContinuos2D<T> {
+public final class InfiniteHalls<T> extends AbstractLimitedContinuous2D<T> {
 
     @Serial
     private static final long serialVersionUID = -7481116157809902856L;

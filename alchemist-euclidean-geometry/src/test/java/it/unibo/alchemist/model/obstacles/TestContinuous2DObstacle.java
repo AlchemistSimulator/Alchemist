@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -53,13 +53,18 @@ class TestContinuous2DObstacle {
         environment.addObstacle(R0527);
 
         assertEquals(
-                new Euclidean2DPosition(nextAfter(1.0, 0.0), nextAfter(1.0, 0.0)),
-                environment.next(0, 0, 1, 1)
+            new Euclidean2DPosition(nextAfter(1.0, 0.0), nextAfter(1.0, 0.0)),
+            environment.next(new Euclidean2DPosition(0, 0), new Euclidean2DPosition(1, 1))
         );
-        assertEquals(new Euclidean2DPosition(0, 0), environment.next(1, 1, 0, 0));
         assertEquals(
-                new Euclidean2DPosition(nextAfter(1.0, 0.0), nextAfter(0.5, 0.0)),
-                environment.next(0, 0, 2, 1)
+            new Euclidean2DPosition(0, 0),
+            environment.next(new Euclidean2DPosition(1, 1), new Euclidean2DPosition(0, 0)));
+        assertEquals(
+            new Euclidean2DPosition(nextAfter(1.0, 0.0), nextAfter(0.5, 0.0)),
+            environment.next(
+                new Euclidean2DPosition(0, 0),
+                new Euclidean2DPosition(2, 1)
+            )
         );
 
         environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(0, 0));

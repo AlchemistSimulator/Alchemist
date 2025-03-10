@@ -215,7 +215,8 @@
     "first": "https://javadoc.io/doc/org.danilopianini/conrec/0.1.0"
   },
   "org.danilopianini/gson-extras/3.1.0": {
-    "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.1.0"
+    "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.1.0",
+    "second": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.1.0/package-list"
   },
   "org.danilopianini/java-quadtree/1.0.0": {
     "first": "https://javadoc.io/doc/org.danilopianini/java-quadtree/1.0.0"
@@ -281,11 +282,11 @@
   "org.jetbrains.dokka/templating-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.8-19.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.8-19.0.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.9-19.0.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.9-19.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.8-19.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.8-19.0.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.9-19.0.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.9-19.0.0"
   },
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"

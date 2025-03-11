@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.swingui.monitor.impl;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
@@ -42,7 +41,6 @@ import static it.unibo.alchemist.boundary.swingui.impl.AlchemistSwingUI.loadScal
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
-@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
 public final class TimeStepMonitor<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P> {
 
     @Serial

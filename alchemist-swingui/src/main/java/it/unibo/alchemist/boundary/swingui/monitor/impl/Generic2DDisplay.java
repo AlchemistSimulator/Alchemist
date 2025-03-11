@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -165,7 +165,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      *
      * @param step number of steps to let pass without re-drawing
      */
-    @SuppressFBWarnings("MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR")
     public Generic2DDisplay(final int step) {
         super();
         if (!"true".equals(System.getProperty(OPENGL))) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -72,7 +72,6 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
      * @param <P>      position type
      */
     @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
-    @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     protected <T, P extends Position2D<P>> void draw(
             final Graphics2D graphics2D,

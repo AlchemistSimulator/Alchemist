@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -9,7 +9,6 @@
 
 package org.mapsforge.map.layer.download;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.mapsforge.core.graphics.GraphicFactory;
 import org.mapsforge.core.graphics.TileBitmap;
@@ -52,7 +51,6 @@ class TileDownloadThread extends PausableThread {
     }
 
     @Override
-    @SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST_OF_RETURN_VALUE", justification = "false positive")
     protected void doWork() throws InterruptedException {
         final DownloadJob downloadJob = this.jobQueue.get();
         this.layer.requestRedraw();

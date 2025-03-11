@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -39,10 +39,7 @@ import java.util.concurrent.CountDownLatch;
  * @deprecated The entire Swing UI is deprecated and is scheduled to be replaced with a modern UI.
  */
 @Deprecated
-@SuppressFBWarnings(
-    value = { "SE_BAD_FIELD", "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" },
-    justification = "This class is not meant to get serialized, and it is final"
-)
+@SuppressFBWarnings("SE_BAD_FIELD")
 public final class EffectBuilder extends JFrame implements ActionListener {
 
     @Serial

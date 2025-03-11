@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -18,7 +18,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import it.unibo.alchemist.boundary.swingui.effect.api.LayerToFunctionMapper;
 import it.unibo.alchemist.model.SupportedIncarnations;
@@ -132,7 +131,6 @@ public final class EffectSerializationFactory {
      * @throws ClassNotFoundException
      *             In case the serialized binary object is not an effect
      */
-    @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION", justification = "RuntimeException is willingly caught")
     public static List<Effect> effectsFromFile(final File effectFile) throws IOException, ClassNotFoundException {
         try (Reader fr = new InputStreamReader(new FileInputStream(effectFile), Charsets.UTF_8)) {
             return GSON.fromJson(fr, new TypeToken<List<Effect>>() { }.getType());

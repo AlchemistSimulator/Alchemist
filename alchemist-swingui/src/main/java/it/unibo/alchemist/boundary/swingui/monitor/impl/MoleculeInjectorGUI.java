@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -52,10 +52,8 @@ import java.util.stream.Collectors;
 @Deprecated
 @SuppressWarnings("unchecked")
 @SuppressFBWarnings(
-    value = { "SE_TRANSIENT_FIELD_NOT_RESTORED", "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" },
-    justification =
-        "This class is not meant to get serialized."
-        + " This class is final."
+    value = "SE_TRANSIENT_FIELD_NOT_RESTORED",
+    justification = "This class is not meant to get serialized."
 )
 public final class MoleculeInjectorGUI<T> extends JPanel {
 

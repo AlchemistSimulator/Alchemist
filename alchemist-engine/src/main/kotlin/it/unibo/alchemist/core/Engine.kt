@@ -343,6 +343,12 @@ open class Engine<T, P : Position<out P>>(
         monitors.remove(op)
     }
 
+    private fun processCommandsWhileIn(status: Status) {
+        while (this.status == status) {
+            processCommand(commands.take())
+        }
+    }
+
     /**
      * Runs the simulation.
      */
@@ -357,11 +363,15 @@ open class Engine<T, P : Position<out P>>(
                 status = Status.READY
                 LOGGER.trace("Thread {} started running.", Thread.currentThread().id)
                 monitors.forEach { it.initialized(environment) }
-                while (status == Status.READY) processCommand(commands.take())
+                processCommandsWhileIn(Status.READY)
                 while (status != Status.TERMINATED && time < Time.INFINITY) {
-                    while (commands.isNotEmpty()) processCommand(commands.poll()!!)
-                    if (status == Status.RUNNING) doStep()
-                    while (status == Status.PAUSED) processCommand(commands.take())
+                    while (commands.isNotEmpty()) {
+                        processCommand(commands.poll())
+                    }
+                    if (status == Status.RUNNING) {
+                        doStep()
+                    }
+                    processCommandsWhileIn(Status.PAUSED)
                 }
             } catch (e: Throwable) { // NOPMD: forced by CheckedRunnable
                 error = Optional.of(e)

@@ -11,7 +11,7 @@ import java.io.ObjectOutputStream
 
 class TestTerminationPredicateSerialization {
     @Test
-    fun `test TerminationPredicate is serializable`() {
+    fun `termination predicates can be serialized and deserialized`() {
         // Create a predicate that checks if the environment has more than 100 nodes
         val originalPredicate: TerminationPredicate<Int, Position<*>> =
             TerminationPredicate { env -> env.nodeCount > 100 }

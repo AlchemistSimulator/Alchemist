@@ -1,3 +1,30 @@
+## [42.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/42.0.0...42.0.1) (2025-03-12)
+
+### Dependency updates
+
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.103.0 ([3f02601](https://github.com/AlchemistSimulator/Alchemist/commit/3f02601c5715120261b0896929cbcb28cb1acd5e))
+* **deps:** update react to v2025.3.10-19.0.0 (patch) ([#4279](https://github.com/AlchemistSimulator/Alchemist/issues/4279)) ([1c183ca](https://github.com/AlchemistSimulator/Alchemist/commit/1c183ca1923cb28846899535cf56e2886131960c))
+
+### Bug Fixes
+
+* **api:** make `Transformation` a `fun interface` ([6127478](https://github.com/AlchemistSimulator/Alchemist/commit/612747849063008fd5d2369d2dd3b5cc1d4c6d4e))
+
+### Tests
+
+* **api:** improve test name ([dcc397e](https://github.com/AlchemistSimulator/Alchemist/commit/dcc397ed0a392cf8ca8f3e029b85a655c7fee15a))
+* **api:** improve test name ([1c47ccc](https://github.com/AlchemistSimulator/Alchemist/commit/1c47cccfd53f0736a98e2f3fdd4542ce88f27ad5))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([3776932](https://github.com/AlchemistSimulator/Alchemist/commit/37769327a1acae429175f40c979df4d24f06ac5c))
+* **build:** update the javadoc.io cache ([2030646](https://github.com/AlchemistSimulator/Alchemist/commit/20306463fbddf87bb8ef53a5468c3566c6717dd2))
+* **maps:** migrate `GPSPointImpl` to Kotlin ([f49a99c](https://github.com/AlchemistSimulator/Alchemist/commit/f49a99ca55d41818977a60552ded2edae8650d46))
+
+### Style improvements
+
+* **cognitive-agents:** convert local extension property to local extension function ([9dc6205](https://github.com/AlchemistSimulator/Alchemist/commit/9dc6205049f770cc05b01e6f6cc7c2eab8da4681))
+* **engine:** improve `Engine.run` ([045a2e1](https://github.com/AlchemistSimulator/Alchemist/commit/045a2e10d965e02722dc34c6e3a9c336229b6ef4))
+
 ## [42.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/41.0.0...42.0.0) (2025-03-10)
 
 ### ⚠ BREAKING CHANGES

@@ -116,11 +116,10 @@ class SinglePrevalent<T, N : ConvexPolygon>(
             return prevalentForce
         }
         val otherForces = (actions - this).map { it.nextPosition() }
-        val isInToleranceSector: Euclidean2DPosition.() -> Boolean = {
-            magnitude > 0.0 && angleBetween(prevalentForce) <= toleranceAngle && !leadsOutsideCurrentRoom()
-        }
         var othersWeight = 1.0
         var resulting = combine(prevalentForce, otherForces, othersWeight)
+        fun Euclidean2DPosition.isInToleranceSector(): Boolean =
+            magnitude > 0.0 && angleBetween(prevalentForce) <= toleranceAngle && !leadsOutsideCurrentRoom()
         while (!resulting.isInToleranceSector() && othersWeight >= 0) {
             othersWeight -= delta
             resulting = combine(prevalentForce, otherForces, othersWeight)

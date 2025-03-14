@@ -10,8 +10,11 @@
 import Libs.alchemist
 import Libs.incarnation
 import Util.allVerificationTasks
+import Util.devServer
+import Util.webCommonConfiguration
 import com.apollographql.apollo3.gradle.internal.ApolloGenerateSourcesTask
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     id("kotlin-multiplatform-convention")
@@ -22,6 +25,13 @@ plugins {
 }
 
 kotlin {
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        webCommonConfiguration()
+        devServer()
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {

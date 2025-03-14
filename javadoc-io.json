@@ -347,13 +347,11 @@
     "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15",
     "second": "https://javadoc.io/doc/org.jooq/jool/0.9.15/element-list"
   },
-  "org.junit.jupiter/junit-jupiter-api/5.12.0": {
-    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/5.12.0",
-    "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/5.12.0/package-list"
+  "org.junit.jupiter/junit-jupiter-api/5.12.1": {
+    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/5.12.1"
   },
-  "org.junit.jupiter/junit-jupiter-engine/5.12.0": {
-    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.12.0",
-    "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.12.0/package-list"
+  "org.junit.jupiter/junit-jupiter-engine/5.12.1": {
+    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.12.1"
   },
   "org.mapsforge/mapsforge-map-awt/0.24.1": {
     "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.24.1",

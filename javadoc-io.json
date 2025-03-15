@@ -38,9 +38,8 @@
     "first": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12",
     "second": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12/package-list"
   },
-  "com.github.spotbugs/spotbugs-annotations/4.9.2": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.2",
-    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.2/element-list"
+  "com.github.spotbugs/spotbugs-annotations/4.9.3": {
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.3"
   },
   "com.github.spotbugs/spotbugs/4.9.2": {
     "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.2",

@@ -86,7 +86,7 @@ object TestEnvironmentsDiameter {
 
     @Test
     fun `four nodes in a triangle should have hop diameter 2`() =
-        environmentWithNodesAt(ORIGIN, 3.0 to 0.0, 6.0 to 0.0, 3.0 to 2.0) mustNotBeSegmentedAndHaveHopDiameter 2.0
+        environmentWithNodesAt(ORIGIN, 3.0 to 0.0, 6.0 to 0.0, 3.0 to 3.0) mustNotBeSegmentedAndHaveHopDiameter 2.0
 
     @Test
     fun `a network of three nodes with one isolated should be considered segmented`() {
@@ -133,5 +133,26 @@ object TestEnvironmentsDiameter {
         environment mustHave 2.subnetworks()
         environment.specificNodeInASegmentedNetworkShouldHaveDiameter(0, 2.0)
         environment.specificNodeInASegmentedNetworkShouldHaveDiameter(1, 1.0)
+    }
+
+    @Test
+    fun `three sparse subnetworks should be considered segmented`() {
+        val environment =
+            environmentWithNodesAt(
+                ORIGIN,
+                12.0 to 12.0,
+                0.0 to 6.0,
+                12.0 to 14.0,
+                -3.0 to 3.0,
+                9.0 to 15.0,
+                3.0 to 3.0,
+                15.0 to 15.0,
+                25.0 to 25.0,
+            )
+        environment.mustBeSegmented()
+        environment mustHave 3.subnetworks()
+        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(0, 2.0)
+        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(1, 1.0)
+        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(environment.nodeCount - 1, 0.0)
     }
 }

@@ -76,14 +76,18 @@ object Environments {
             val indexOfCurrent = nodes.indexOf(current)
             toVisit -= current
             val valuesInColumn = paths.column(indexOfCurrent)
-            val subNetwork: Pair<Double, List<Node<T>>> = valuesInColumn.foldIndexed(0.0 to emptyList<Node<T>>()) { index, accumulator, checking ->
-                if (checking.isFinite()) {
-                    val node = nodes[index]
-                    val checkingColumn = paths.column(index)
-                    toVisit -= node
-                    max(accumulator.first, checkingColumn.filter { it.isFinite()}.max()) to accumulator.second.plus<Node<T>>(node)
-                } else accumulator
-            }
+            val subNetwork: Pair<Double, List<Node<T>>> =
+                valuesInColumn.foldIndexed(0.0 to emptyList<Node<T>>()) { index, accumulator, checking ->
+                    if (checking.isFinite()) {
+                        val node = nodes[index]
+                        val checkingColumn = paths.column(index)
+                        toVisit -= node
+                        max(accumulator.first, checkingColumn.filter { it.isFinite() }.max()) to
+                            accumulator.second.plus<Node<T>>(node)
+                    } else {
+                        accumulator
+                    }
+                }
             subnetworks.add(SubNetwork<T>(subNetwork.first, subNetwork.second))
         }
         return subnetworks.toSet()
@@ -140,12 +144,7 @@ object Environments {
      */
     fun <T> Environment<T, *>.isNetworkSegmented(): Boolean {
         val explored = mutableSetOf<Node<T>>()
-        val toExplore: MutableSet<Node<T>> =
-            nodes
-                .firstOrNull()
-                ?.let { setOf(it) }
-                .orEmpty()
-                .toMutableSet()
+        val toExplore: MutableSet<Node<T>> = nodes.firstOrNull()?.let { setOf(it) }.orEmpty().toMutableSet()
         while (toExplore.isNotEmpty()) {
             val current = toExplore.first()
             explored += current
@@ -160,7 +159,7 @@ object Environments {
      * Computes the network diameter of the segment containing [node].
      */
     fun <T> Environment<T, *>.networkDiameterByHopDistance(node: Node<T>): Double =
-        requireNotNull(allSubNetworksByNodeWithHopDistance()[node]){
+        requireNotNull(allSubNetworksByNodeWithHopDistance()[node]) {
             "Subnetwork for $node cannot be computed: is it part of the environment?"
         }.diameter
 
@@ -186,7 +185,7 @@ object Environments {
         constructor(diameter: Double, nodes: Collection<Node<T>>) : this(diameter, nodes.toSet())
 
         override fun plus(otherNetwork: Network<T>): Network<T> {
-            val ns =  nodes.toList() + otherNetwork.nodes.toList()
+            val ns = nodes.toList() + otherNetwork.nodes.toList()
             return SubNetwork(max(diameter, otherNetwork.diameter), ns)
         }
     }

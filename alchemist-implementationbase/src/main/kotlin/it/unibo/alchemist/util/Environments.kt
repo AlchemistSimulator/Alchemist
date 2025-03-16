@@ -67,51 +67,24 @@ object Environments {
     fun <T> Environment<T, *>.allSubNetworksByNode(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
     ): Set<Network<T>> {
-//    ): Map<Node<T>, Network<T>> {
-//        val subnetworks = mutableMapOf<Node<T>, Network<T>>()
         val subnetworks = mutableListOf<Network<T>>()
-
-//        fun subnetOf(distance: Double, node: Node<T>): Network<T> = subnetworks[node]
-//            .let { subnet ->
-//                val result = SubNetwork(distance, node)
-//                if (subnet == null) result else result + subnet
-//            }
         val paths = allShortestPaths(computeDistance)
-//        for (i in 0 until nodes.size) {
-//            val reference = nodes[i]
-//            for (j in i until nodes.size) {
-//                val target = nodes[j]
-//                val distance = paths[i, j]
-////                val distance = paths[UndirectedEdge(reference, target)]
-//                if (distance.isFinite()) {
-//                    val merger = subnetOf(distance, reference) + subnetOf(distance, target)
-//                    subnetworks[target] = merger
-//                }
-//            }
-//        }
         // Update all the subnetworks with the last evaluated; that is the most complete
         val toVisit = nodes.toMutableSet()
         while (toVisit.isNotEmpty()) {
-            val current = toVisit.last()
+            val current = toVisit.first()
             val indexOfCurrent = nodes.indexOf(current)
-//            val current = toVisit.last().also { toVisit -= it }
+            toVisit -= current
             val valuesInColumn = paths.column(indexOfCurrent)
-            val subNetwork: List<Node<T>> = valuesInColumn.foldIndexed(emptyList<Node<T>>()) { index, accumulator, checking ->
+            val subNetwork: Pair<Double, List<Node<T>>> = valuesInColumn.foldIndexed(0.0 to emptyList<Node<T>>()) { index, accumulator, checking ->
                 if (checking.isFinite()) {
                     val node = nodes[index]
+                    val checkingColumn = paths.column(index)
                     toVisit -= node
-                    accumulator.plus<Node<T>>(node)
+                    max(accumulator.first, checkingColumn.filter { it.isFinite()}.max()) to accumulator.second.plus<Node<T>>(node)
                 } else accumulator
             }
-            val subnetDiameter = valuesInColumn.filter { it.isFinite() }.max()
-            subnetworks.add(SubNetwork<T>(subnetDiameter, subNetwork))
-
-//            val subnet = subnetworks.getValue(current)
-//            // For each node in the current subnet, update the subnetworks related to each node
-//            subnet.nodes.forEach { node ->
-//                toVisit -= node
-//                subnetworks[node] = subnet
-//            }
+            subnetworks.add(SubNetwork<T>(subNetwork.first, subNetwork.second))
         }
         return subnetworks.toSet()
     }
@@ -124,27 +97,11 @@ object Environments {
     fun <T> Environment<T, *>.allSubNetworks(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
     ): Set<Network<T>> = allSubNetworksByNode(computeDistance)
-//    ): Set<Network<T>> = allSubNetworksByNode(computeDistance).values.toSet()
 
     /**
      * Calculates the shortest paths using the Floyd-Warshall algorithm calculating the Hop Distance between nodes.
      */
     fun <T> Environment<T, *>.allShortestHopPaths() = allShortestPaths(hopDistance())
-
-    /**
-     * Represents an undirected edge between the [source] and the [target] nodes.
-     * The order of the nodes does not matter.
-     */
-    data class UndirectedEdge<T>(val source: Node<T>, val target: Node<T>) {
-
-        private val hash by lazy { source.hashCode() + target.hashCode() }
-
-        override fun equals(other: Any?): Boolean = this === other ||
-            other is UndirectedEdge<*> &&
-            (source == other.source && target == other.target || source == other.target && target == other.source)
-
-        override fun hashCode(): Int = hash
-    }
 
     /**
      * Computes all the minimum distances with the provided metric using the Floyd–Warshall algorithm.
@@ -163,9 +120,6 @@ object Environments {
         for (i in 0 until nodeCount) {
             for (j in i until nodeCount) {
                 distances[i, j] = computeDistance(nodes[i], nodes[j])
-//                if (distances[i, j].isFinite()) {
-//                    result.put(UndirectedEdge(nodes[i], nodes[j]), distances[i, j])
-//                }
             }
         }
         for (intermediate in 0 until nodeCount) {
@@ -174,20 +128,10 @@ object Environments {
                     val throughIntermediate = distances[i, intermediate] + distances[intermediate, j]
                     if (distances[i, j] > throughIntermediate) {
                         distances[i, j] = throughIntermediate
-//                        result.put(UndirectedEdge(nodes[i], nodes[j]), throughIntermediate)
                     }
                 }
             }
         }
-//        val result = LinkedHashMap<UndirectedEdge<T>, Double>(nodes.size * (nodes.size + 1) / 2, 1.0f)
-//        for (i in 0 until nodeCount) {
-//            for (j in i until nodeCount) {
-//                val v = distances[i, j]
-//                if (v.isFinite()) {
-//                    result.put(UndirectedEdge(nodes[i], nodes[j]), v)
-//                }
-//            }
-//        }
         return distances
     }
 
@@ -219,9 +163,6 @@ object Environments {
         requireNotNull(allSubNetworksByNodeWithHopDistance()[node]){
             "Subnetwork for $node cannot be computed: is it part of the environment?"
         }.diameter
-//        requireNotNull(allSubNetworksByNodeWithHopDistance().first<Network<T>> { it.nodes.contains(node) }) {
-//            "Subnetwork for $node cannot be computed: is it part of the environment?"
-//        }.diameter
 
     /**
      * Returns the hop-distance diameter of the network if it is not segmented, and [NaN] otherwise.
@@ -244,14 +185,9 @@ object Environments {
 
         constructor(diameter: Double, nodes: Collection<Node<T>>) : this(diameter, nodes.toSet())
 
-        constructor(node: Node<T>) : this(0.0, mutableSetOf(node))
-
         override fun plus(otherNetwork: Network<T>): Network<T> {
             val ns =  nodes.toList() + otherNetwork.nodes.toList()
             return SubNetwork(max(diameter, otherNetwork.diameter), ns)
         }
-
-//            nodes.addAll(otherNetwork.nodes)
-//            SubNetwork(max(diameter, otherNetwork.diameter), nodes + otherNetwork.nodes)
     }
 }

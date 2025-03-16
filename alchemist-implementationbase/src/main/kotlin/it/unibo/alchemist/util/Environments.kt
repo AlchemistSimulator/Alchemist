@@ -92,7 +92,7 @@ object Environments {
     /**
      * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes.
-     * Returns a [Set] containing the [SubNetwork]s.
+     * Returns a [Map] containing the [SubNetwork] related to each [Node] of the environment.
      */
     fun <T> Environment<T, *>.allSubNetworksByNode(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),

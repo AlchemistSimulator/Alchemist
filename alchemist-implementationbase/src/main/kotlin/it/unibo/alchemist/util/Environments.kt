@@ -61,18 +61,18 @@ object Environments {
      * The diameter is the longest shortest path between any two nodes.
      * Returns a [Set] containing the [SubNetwork]s.
      */
-    fun <T> Environment<T, *>.allSubNetworks(
+    fun <T> Environment<T, *>.allSubNetworksByNode(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
-    ): Set<Network<T>> {
+    ): Map<Node<T>, Network<T>> {
         val subnetworks = arrayOfNulls<MutableNetwork<T>>(nodeCount)
-        val result = mutableSetOf<Network<T>>()
+        val result = mutableMapOf<Node<T>, Network<T>>()
         val paths = allShortestPaths(computeDistance)
         // Update all the subnetworks with the last evaluated; that is the most complete
         nodes.forEachIndexed { centerIndex, centerNode ->
             when (val subnetwork = subnetworks[centerIndex]) {
                 null -> {
                     val newSubnetwork = MutableNetwork(0.0, mutableListOf(centerNode))
-                    result.add(newSubnetwork)
+                    result.put(centerNode, newSubnetwork)
                     val centerRow = paths.row(centerIndex)
                     for (potentialNeighborIndex in centerIndex + 1 until nodeCount) {
                         val distanceToNeighbor = centerRow[potentialNeighborIndex]
@@ -104,13 +104,9 @@ object Environments {
      * The diameter is the longest shortest path between any two nodes.
      * Returns a [Map] containing the [SubNetwork] related to each [Node] of the environment.
      */
-    fun <T> Environment<T, *>.allSubNetworksByNode(
+    fun <T> Environment<T, *>.allSubNetworks(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
-    ): Map<Node<T>, Network<T>> = allSubNetworks(computeDistance).let { subnetworks ->
-        nodes.associateWith { node ->
-            subnetworks.first { it.nodes.contains(node) }
-        }
-    }
+    ): Set<Network<T>> = allSubNetworksByNode(computeDistance).values.toSet()
 
     /**
      * Calculates the shortest paths using the Floyd-Warshall algorithm calculating the Hop Distance between nodes.

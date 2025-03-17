@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.protelis.ProtelisIncarnation
-import it.unibo.alchemist.util.Environments.allSubNetworks
 import it.unibo.alchemist.util.Environments.allSubNetworksByNode
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
 import it.unibo.alchemist.util.Environments.networkDiameter
@@ -41,7 +40,10 @@ object TestEnvironmentsDiameter {
     private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveDiameter(expected: Double) {
         assertFalse(isNetworkSegmented())
         // round to the first two decimals
-        assertEquals<Double>(expected, String.format("%.2f", allSubNetworks().single().diameter).toDouble())
+        assertEquals<Double>(
+            expected,
+            String.format("%.2f", allSubNetworksByNode().values.single().diameter).toDouble(),
+        )
     }
 
     private fun <T> Environment<T, *>.mustBeSegmented() {
@@ -50,7 +52,7 @@ object TestEnvironmentsDiameter {
     }
 
     private infix fun <T> Environment<T, *>.mustHave(expected: Subnetworks) =
-        assertEquals<Int>(expected.count, allSubNetworks().size)
+        assertEquals<Int>(expected.count, allSubNetworksByNode().size)
 
     fun Int.subnetworks(): Subnetworks = Subnetworks(this)
 

@@ -63,30 +63,39 @@ object Environments {
     fun <T> Environment<T, *>.allSubNetworks(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
     ): Set<Network<T>> {
-        val subnetworks = mutableListOf<Network<T>>()
+        val subnetworks = arrayOfNulls<MutableNetwork<T>>(nodeCount)
+        val result = mutableSetOf<Network<T>>()
         val paths = allShortestPaths(computeDistance)
         // Update all the subnetworks with the last evaluated; that is the most complete
-        val toVisit = nodes.toMutableSet()
-        while (toVisit.isNotEmpty()) {
-            val current = toVisit.first()
-            val indexOfCurrent = nodes.indexOf(current)
-            toVisit -= current
-            val valuesInColumn = paths.column(indexOfCurrent)
-            val subNetwork: Pair<Double, List<Node<T>>> =
-                valuesInColumn.foldIndexed(0.0 to emptyList<Node<T>>()) { index, accumulator, checking ->
-                    if (checking.isFinite()) {
-                        val node = nodes[index]
-                        val checkingColumn = paths.column(index)
-                        toVisit -= node
-                        max(accumulator.first, checkingColumn.filter { it.isFinite() }.max()) to
-                            accumulator.second.plus<Node<T>>(node)
-                    } else {
-                        accumulator
+        nodes.forEachIndexed { centerIndex, centerNode ->
+            when (val subnetwork = subnetworks[centerIndex]) {
+                null -> {
+                    val newSubnetwork = MutableNetwork(0.0, mutableListOf(centerNode))
+                    result.add(newSubnetwork)
+                    val centerRow = paths.row(centerIndex)
+                    for (potentialNeighborIndex in (centerIndex + 1) until nodeCount) {
+                        val distanceToNeighbor = centerRow[potentialNeighborIndex]
+                        if (distanceToNeighbor.isFinite()) {
+                            newSubnetwork.diameter = max(newSubnetwork.diameter, distanceToNeighbor)
+                            newSubnetwork.neighbors += nodes[potentialNeighborIndex]
+                            subnetworks[potentialNeighborIndex] = newSubnetwork
+                        }
                     }
                 }
-            subnetworks.add(SubNetwork<T>(subNetwork.first, subNetwork.second))
+                else -> {
+                    // The subnetwork is already computed
+                    subnetwork.diameter = max(
+                        subnetwork.diameter,
+                        paths.row(centerIndex).asSequence()
+                            .drop(centerIndex + 1)
+                            .filter { it.isFinite() }
+                            .maxOrNull()
+                            ?: 0.0,
+                    )
+                }
+            }
         }
-        return subnetworks.toSet()
+        return result
     }
 
     /**
@@ -183,5 +192,10 @@ object Environments {
         constructor(diameter: Double, vararg nodes: Node<T>) : this(diameter, nodes.toSet())
 
         constructor(diameter: Double, nodes: Collection<Node<T>>) : this(diameter, nodes.toSet())
+    }
+
+    private data class MutableNetwork<T>(override var diameter: Double, val neighbors: MutableList<Node<T>>) :
+        Network<T> {
+        override val nodes: Set<Node<T>> by lazy { neighbors.toSet() }
     }
 }

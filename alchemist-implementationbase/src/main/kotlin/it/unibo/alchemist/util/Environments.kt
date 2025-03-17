@@ -74,7 +74,7 @@ object Environments {
                     val newSubnetwork = MutableNetwork(0.0, mutableListOf(centerNode))
                     result.add(newSubnetwork)
                     val centerRow = paths.row(centerIndex)
-                    for (potentialNeighborIndex in (centerIndex + 1) until nodeCount) {
+                    for (potentialNeighborIndex in centerIndex + 1 until nodeCount) {
                         val distanceToNeighbor = centerRow[potentialNeighborIndex]
                         if (distanceToNeighbor.isFinite()) {
                             newSubnetwork.diameter = max(newSubnetwork.diameter, distanceToNeighbor)
@@ -183,17 +183,6 @@ object Environments {
      * Returns the diameter of the network in environment units if it is not segmented, and [NaN] otherwise.
      */
     fun Environment<*, *>.networkDiameter(): Double = allSubNetworks().singleOrNull()?.diameter ?: NaN
-
-    private data class SubNetwork<T>(override val diameter: Double, override val nodes: Set<Node<T>>) : Network<T> {
-        init {
-            require(nodes.isNotEmpty())
-            require(diameter.isFinite() && diameter >= 0.0)
-        }
-
-        constructor(diameter: Double, vararg nodes: Node<T>) : this(diameter, nodes.toSet())
-
-        constructor(diameter: Double, nodes: Collection<Node<T>>) : this(diameter, nodes.toSet())
-    }
 
     private data class MutableNetwork<T>(override var diameter: Double, val neighbors: MutableList<Node<T>>) :
         Network<T> {

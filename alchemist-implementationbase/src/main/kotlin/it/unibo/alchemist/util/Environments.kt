@@ -110,7 +110,7 @@ object Environments {
     /**
      * Computes all the minimum distances with the provided metric using the Floyd–Warshall algorithm.
      */
-    fun <T> Environment<T, *>.allShortestPaths(
+    private fun <T> Environment<T, *>.allShortestPaths(
         computeDistance: (Node<T>, Node<T>) -> Double =
             neighborDistanceMetric { n1, n2 ->
                 getDistanceBetweenNodes(n1, n2)

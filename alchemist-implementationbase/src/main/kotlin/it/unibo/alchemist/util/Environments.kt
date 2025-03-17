@@ -96,7 +96,7 @@ object Environments {
      */
     fun <T> Environment<T, *>.allSubNetworksByNode(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
-    ): Map<Node<T>, Network<T>> = allSubNetworks(hopDistance()).let { subnetworks ->
+    ): Map<Node<T>, Network<T>> = allSubNetworks(computeDistance).let { subnetworks ->
         nodes.associateWith { node ->
             subnetworks.first { it.nodes.contains(node) }
         }
@@ -183,10 +183,5 @@ object Environments {
         constructor(diameter: Double, vararg nodes: Node<T>) : this(diameter, nodes.toSet())
 
         constructor(diameter: Double, nodes: Collection<Node<T>>) : this(diameter, nodes.toSet())
-
-        override fun plus(otherNetwork: Network<T>): Network<T> {
-            val ns = nodes.toList() + otherNetwork.nodes.toList()
-            return SubNetwork(max(diameter, otherNetwork.diameter), ns)
-        }
     }
 }

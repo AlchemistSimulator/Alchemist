@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Network
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.util.Environments.allShortestHopPaths
 import org.danilopianini.symmetricmatrix.MutableDoubleSymmetricMatrix
+import org.danilopianini.symmetricmatrix.SymmetricMatrix
 import kotlin.Double.Companion.NaN
 import kotlin.Double.Companion.POSITIVE_INFINITY
 import kotlin.math.max
@@ -124,7 +125,7 @@ object Environments {
             neighborDistanceMetric { n1, n2 ->
                 getDistanceBetweenNodes(n1, n2)
             },
-    ): MutableDoubleSymmetricMatrix {
+    ): SymmetricMatrix<Double> {
         val nodes = nodes.toList()
         /*
          * The distance matrix is a triangular matrix stored in a flat array.

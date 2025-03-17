@@ -26,7 +26,7 @@ interface Network<T> {
     /**
      * Returns true whether the [Network] contains the [node] passed as input.
      */
-    operator fun contains(node: Node<T>): Boolean = nodes.contains(node)
+    operator fun contains(node: Node<T>): Boolean = node in nodes
 
     /**
      * Returns true whether the [Network] contains at least one of the [nodes] passed as input.

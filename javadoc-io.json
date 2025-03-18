@@ -8,26 +8,26 @@
   "com.apollographql.apollo3/apollo-runtime/4.0.0-beta.7": {
     "first": "https://javadoc.io/doc/com.apollographql.apollo3/apollo-runtime/4.0.0-beta.7"
   },
-  "com.expediagroup/graphql-kotlin-client-generator/8.3.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client-generator/8.3.0"
+  "com.expediagroup/graphql-kotlin-client-generator/8.4.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client-generator/8.4.0"
   },
-  "com.expediagroup/graphql-kotlin-client/8.3.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client/8.3.0"
+  "com.expediagroup/graphql-kotlin-client/8.4.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client/8.4.0"
   },
-  "com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.3.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.3.0"
+  "com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.4.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.4.0"
   },
-  "com.expediagroup/graphql-kotlin-hooks-provider/8.3.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/8.3.0"
+  "com.expediagroup/graphql-kotlin-hooks-provider/8.4.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/8.4.0"
   },
-  "com.expediagroup/graphql-kotlin-ktor-server/8.3.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-ktor-server/8.3.0"
+  "com.expediagroup/graphql-kotlin-ktor-server/8.4.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-ktor-server/8.4.0"
   },
-  "com.expediagroup/graphql-kotlin-sdl-generator/8.3.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-sdl-generator/8.3.0"
+  "com.expediagroup/graphql-kotlin-sdl-generator/8.4.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-sdl-generator/8.4.0"
   },
-  "com.expediagroup/graphql-kotlin-server/8.3.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/8.3.0"
+  "com.expediagroup/graphql-kotlin-server/8.4.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/8.4.0"
   },
   "com.github.ben-manes.caffeine/caffeine/3.2.0": {
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.2.0",
@@ -347,7 +347,8 @@
     "second": "https://javadoc.io/doc/org.jooq/jool/0.9.15/element-list"
   },
   "org.junit.jupiter/junit-jupiter-api/5.12.1": {
-    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/5.12.1"
+    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/5.12.1",
+    "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/5.12.1/package-list"
   },
   "org.junit.jupiter/junit-jupiter-engine/5.12.1": {
     "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.12.1"

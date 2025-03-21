@@ -41,7 +41,7 @@ conrec = "org.danilopianini:conrec:0.1.0"
 dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 dyn4j = "org.dyn4j:dyn4j:5.0.2"
 dsiutils = "it.unimi.dsi:dsiutils:2.7.4"
-embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.18.1"
+embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.19.0"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphql-client = { module = "com.expediagroup:graphql-kotlin-client", version.ref = "graphql" }
 graphql-hooks-provider = { module = "com.expediagroup:graphql-kotlin-hooks-provider", version.ref = "graphql" }

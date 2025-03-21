@@ -162,7 +162,11 @@ dokka {
             submodules
                 .asSequence()
                 .map { it.resolve("src") }
-                .onEach { check(it.isDirectory) }
+                .onEach {
+                    check(it.isDirectory) {
+                        "Expected a directory, found a file: ${it.absolutePath}"
+                    }
+                }
                 .flatMap { sourceFolder ->
                     sourceFolder
                         .listFiles(FileFilter { it.name.contains("main", ignoreCase = true) })

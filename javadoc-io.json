@@ -57,6 +57,10 @@
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.4.0-jre",
     "second": "https://javadoc.io/doc/com.google.guava/guava/33.4.0-jre/element-list"
   },
+  "com.google.guava/guava/33.4.5-jre": {
+    "first": "https://javadoc.io/doc/com.google.guava/guava/33.4.5-jre",
+    "second": "https://javadoc.io/doc/com.google.guava/guava/33.4.5-jre/element-list"
+  },
   "com.graphhopper/graphhopper-core/10.2": {
     "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/10.2",
     "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/10.2/element-list"
@@ -68,6 +72,9 @@
   "com.miglayout/miglayout-swing/11.4.2": {
     "first": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2",
     "second": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2/element-list"
+  },
+  "com.pinterest.ktlint/ktlint-cli/1.5.0": {
+    "first": "https://javadoc.io/doc/com.pinterest.ktlint/ktlint-cli/1.5.0"
   },
   "com.pinterest.ktlint/ktlint-ruleset-standard/1.5.0": {
     "first": "https://javadoc.io/doc/com.pinterest.ktlint/ktlint-ruleset-standard/1.5.0"
@@ -103,6 +110,15 @@
   "io.github.classgraph/classgraph/4.8.179": {
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.179",
     "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.179/element-list"
+  },
+  "io.github.detekt.sarif4k/sarif4k/0.5.0": {
+    "first": "https://javadoc.io/doc/io.github.detekt.sarif4k/sarif4k/0.5.0"
+  },
+  "io.github.oshai/kotlin-logging/5.1.0": {
+    "first": "https://javadoc.io/doc/io.github.oshai/kotlin-logging/5.1.0"
+  },
+  "io.gitlab.arturbosch.detekt/detekt-cli/1.23.7": {
+    "first": "https://javadoc.io/doc/io.gitlab.arturbosch.detekt/detekt-cli/1.23.7"
   },
   "io.jenetics/jpx/3.2.1": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1",
@@ -250,6 +266,10 @@
     "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0",
     "second": "https://javadoc.io/doc/org.graphstream/gs-core/2.0/element-list"
   },
+  "org.jacoco/org.jacoco.agent/0.8.12": {
+    "first": "https://javadoc.io/doc/org.jacoco/org.jacoco.agent/0.8.12",
+    "second": "https://javadoc.io/doc/org.jacoco/org.jacoco.agent/0.8.12/package-list"
+  },
   "org.jetbrains.compose.components/components-resources/1.7.3": {
     "first": "https://javadoc.io/doc/org.jetbrains.compose.components/components-resources/1.7.3"
   },
@@ -336,6 +356,9 @@
   },
   "org.jetbrains.kotlinx/kotlinx-serialization-json/1.8.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.8.0"
+  },
+  "org.jetbrains.skiko/skiko-js-wasm-runtime/0.8.18": {
+    "first": "https://javadoc.io/doc/org.jetbrains.skiko/skiko-js-wasm-runtime/0.8.18"
   },
   "org.jgrapht/jgrapht-core/1.5.2": {
     "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2",

@@ -38,9 +38,9 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
 
     private var rtree: RTree<RectObstacle2D<Euclidean2DPosition>, Rectangle> = RTree.create()
 
-    override fun addObstacle(o: RectObstacle2D<Euclidean2DPosition>) {
-        rtree = rtree.add(o, toGeometry(o))
-        includeObject(o.minX, o.maxX, o.minY, o.maxY)
+    override fun addObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) {
+        rtree = rtree.add(obstacle, toGeometry(obstacle))
+        includeObject(obstacle.minX, obstacle.maxX, obstacle.minY, obstacle.maxY)
     }
 
     override val obstacles: List<RectObstacle2D<Euclidean2DPosition>> get() =
@@ -70,8 +70,8 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
         }
     }
 
-    override fun isAllowed(p: Euclidean2DPosition): Boolean =
-        rtree.search(Geometries.point(p.x, p.y)).isEmpty.toBlocking().single()
+    override fun isAllowed(position: Euclidean2DPosition): Boolean =
+        rtree.search(Geometries.point(position.x, position.y)).isEmpty.toBlocking().single()
 
     override fun next(current: Euclidean2DPosition, desired: Euclidean2DPosition): Euclidean2DPosition =
         next(current.x, current.y, desired.x, desired.y)
@@ -124,9 +124,9 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
             .single()
     }
 
-    override fun removeObstacle(o: RectObstacle2D<Euclidean2DPosition>): Boolean {
+    override fun removeObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>): Boolean {
         val initialSize = rtree.size()
-        rtree = rtree.delete(o, toGeometry(o))
+        rtree = rtree.delete(obstacle, toGeometry(obstacle))
         return rtree.size() == initialSize - 1
     }
 

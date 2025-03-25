@@ -1,3 +1,85 @@
+## [42.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/42.0.1...42.0.2) (2025-03-25)
+
+### Dependency updates
+
+* **core-deps:** update kotlin monorepo to v2.1.20 (patch) ([#4300](https://github.com/AlchemistSimulator/Alchemist/issues/4300)) ([ff41965](https://github.com/AlchemistSimulator/Alchemist/commit/ff419655385732b7abb9342814a1ffb32a81ac13))
+* **core-deps:** update protelis to v17.7.3 (patch) ([#4323](https://github.com/AlchemistSimulator/Alchemist/issues/4323)) ([ff4098c](https://github.com/AlchemistSimulator/Alchemist/commit/ff4098ce8da6786ea0fdf7f6291923541cc4f121))
+* **deps:** update danysk/makepkg docker tag to v1.1.40 ([#4305](https://github.com/AlchemistSimulator/Alchemist/issues/4305)) ([1ddc871](https://github.com/AlchemistSimulator/Alchemist/commit/1ddc871714c90ef51ce5c579af1d6d780007adb1))
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.18 ([#4291](https://github.com/AlchemistSimulator/Alchemist/issues/4291)) ([5c61dbc](https://github.com/AlchemistSimulator/Alchemist/commit/5c61dbcbead9f6122318f73ece52e4c74966bd75))
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.9.3 ([#4283](https://github.com/AlchemistSimulator/Alchemist/issues/4283)) ([ebdb83f](https://github.com/AlchemistSimulator/Alchemist/commit/ebdb83fdb02a39ca3790403c8ceb05870577d9cc))
+* **deps:** update dependency com.google.guava:guava to v33.4.5-jre ([8a6e661](https://github.com/AlchemistSimulator/Alchemist/commit/8a6e661aab318538c8c549c5b7faea5252287be7))
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.19.0 ([#4307](https://github.com/AlchemistSimulator/Alchemist/issues/4307)) ([cead8cf](https://github.com/AlchemistSimulator/Alchemist/commit/cead8cf56dea9a883779d1587f33060d8c6530b1))
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.20.0 ([#4309](https://github.com/AlchemistSimulator/Alchemist/issues/4309)) ([04e89ee](https://github.com/AlchemistSimulator/Alchemist/commit/04e89eeb0a5fe8781d554cb1cdbe5203dcf32fc1))
+* **deps:** update dependency org.danilopianini:jirf to v0.4.28 ([#4298](https://github.com/AlchemistSimulator/Alchemist/issues/4298)) ([6772ebe](https://github.com/AlchemistSimulator/Alchemist/commit/6772ebece0964fd8d0306e60134f94624c69a666))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.104.0 ([#4284](https://github.com/AlchemistSimulator/Alchemist/issues/4284)) ([1ed062a](https://github.com/AlchemistSimulator/Alchemist/commit/1ed062a21670801406eb2fefb545e8be76e64065))
+* **deps:** update dependency org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin to v0.82.0 ([#4318](https://github.com/AlchemistSimulator/Alchemist/issues/4318)) ([c98d5be](https://github.com/AlchemistSimulator/Alchemist/commit/c98d5be98d7c0b53a2ad343cee6a9d5a44cdefb3))
+* **deps:** update dependency org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin to v0.84.1 ([#4320](https://github.com/AlchemistSimulator/Alchemist/issues/4320)) ([83d5920](https://github.com/AlchemistSimulator/Alchemist/commit/83d59206d3ec8be7de67531eaae27019b8b7024a))
+* **deps:** update dependency org.eclipse.jgit:org.eclipse.jgit to v7.2.0.202503040940-r ([#4304](https://github.com/AlchemistSimulator/Alchemist/issues/4304)) ([3cd7442](https://github.com/AlchemistSimulator/Alchemist/commit/3cd74429151bdb6c152afa86b7538602093fd363))
+* **deps:** update dependency org.jetbrains.kotlin-wrappers:kotlin-react-dom to v2025.3.15-19.0.0 ([#4289](https://github.com/AlchemistSimulator/Alchemist/issues/4289)) ([92f94da](https://github.com/AlchemistSimulator/Alchemist/commit/92f94daf57a1f53bce408a14e2a9c88053e83807))
+* **deps:** update dependency org.mockito:mockito-core to v5.16.1 ([#4286](https://github.com/AlchemistSimulator/Alchemist/issues/4286)) ([95e1d2b](https://github.com/AlchemistSimulator/Alchemist/commit/95e1d2b7e30ee757e6c671fb834765df0c1f7e7f))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.4.0 ([#4306](https://github.com/AlchemistSimulator/Alchemist/issues/4306)) ([6be212e](https://github.com/AlchemistSimulator/Alchemist/commit/6be212e95f9700d344106806b6a229b68a47e1b4))
+* **deps:** update dependency scalafmt to v3.9.4 ([#4280](https://github.com/AlchemistSimulator/Alchemist/issues/4280)) ([5242eb6](https://github.com/AlchemistSimulator/Alchemist/commit/5242eb67500ffc5861a9bd73205dbc33e3a8fb64))
+* **deps:** update dependency site/themes/hugo-theme-relearn to v7.6.0 ([#4321](https://github.com/AlchemistSimulator/Alchemist/issues/4321)) ([dd96a39](https://github.com/AlchemistSimulator/Alchemist/commit/dd96a3950073abc9cd89edd4fc4acc5d23825627))
+* **deps:** update graphql to v8.4.0 (minor) ([#4293](https://github.com/AlchemistSimulator/Alchemist/issues/4293)) ([71b00f9](https://github.com/AlchemistSimulator/Alchemist/commit/71b00f9c3c36e7940f3cd4fb1f8dc50877c5c12b))
+* **deps:** update junit5 monorepo (patch) ([#4282](https://github.com/AlchemistSimulator/Alchemist/issues/4282)) ([c339b8c](https://github.com/AlchemistSimulator/Alchemist/commit/c339b8c7d534d9a8ea7feb38748cd70e78bfe7ca))
+* **deps:** update plugin multijvmtesting to v3.2.4 ([#4302](https://github.com/AlchemistSimulator/Alchemist/issues/4302)) ([e1c3def](https://github.com/AlchemistSimulator/Alchemist/commit/e1c3defd4747a1cbe566b1f2a6266e35469ef23d))
+* **deps:** update plugin multijvmtesting to v3.3.0 ([#4313](https://github.com/AlchemistSimulator/Alchemist/issues/4313)) ([87c96d7](https://github.com/AlchemistSimulator/Alchemist/commit/87c96d750c1556f904cc3694f1018bd0b77df776))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.22 ([#4310](https://github.com/AlchemistSimulator/Alchemist/issues/4310)) ([8c797c5](https://github.com/AlchemistSimulator/Alchemist/commit/8c797c5423187a57407b682d7451980ea245a1f9))
+* **deps:** update plugin publishoncentral to v8.0.5 ([#4311](https://github.com/AlchemistSimulator/Alchemist/issues/4311)) ([1643096](https://github.com/AlchemistSimulator/Alchemist/commit/1643096145c55f1353ebe502e3cb8f753ee69070))
+* **deps:** update react to v2025.3.12-19.0.0 (patch) ([#4281](https://github.com/AlchemistSimulator/Alchemist/issues/4281)) ([5d6e503](https://github.com/AlchemistSimulator/Alchemist/commit/5d6e503d40d6e34cdfb92ddcc0a371cf025dd6b7))
+* **deps:** update react to v2025.3.13-19.0.0 (patch) ([#4285](https://github.com/AlchemistSimulator/Alchemist/issues/4285)) ([699cbb8](https://github.com/AlchemistSimulator/Alchemist/commit/699cbb876e132964c0fe98a9e01a59bde7bf4316))
+* **deps:** update react to v2025.3.14-19.0.0 (patch) ([#4287](https://github.com/AlchemistSimulator/Alchemist/issues/4287)) ([7331ba1](https://github.com/AlchemistSimulator/Alchemist/commit/7331ba182147b707ae40ee29f9d3b2c3483e6a00))
+* **deps:** update react to v2025.3.16-19.0.0 (patch) ([#4294](https://github.com/AlchemistSimulator/Alchemist/issues/4294)) ([2a7fdbf](https://github.com/AlchemistSimulator/Alchemist/commit/2a7fdbf0d41917687d8c9ab48e3a590dac8a20b4))
+* **deps:** update react to v2025.3.17-19.0.0 (patch) ([#4303](https://github.com/AlchemistSimulator/Alchemist/issues/4303)) ([3019956](https://github.com/AlchemistSimulator/Alchemist/commit/30199568670dcf2a6eed97756c309014c1c0201f))
+* **deps:** update react to v2025.3.18-19.0.0 (patch) ([#4308](https://github.com/AlchemistSimulator/Alchemist/issues/4308)) ([376153c](https://github.com/AlchemistSimulator/Alchemist/commit/376153cab0b84436d843b0c0656b879698f8c30e))
+* **deps:** update react to v2025.3.19-19.0.0 (patch) ([#4312](https://github.com/AlchemistSimulator/Alchemist/issues/4312)) ([f6ce733](https://github.com/AlchemistSimulator/Alchemist/commit/f6ce733324988bf76c1168859e9633ad05a1ffac))
+
+### Bug Fixes
+
+* enforce parameter name coherence to avoid problems when calling functions with named arguments ([#4314](https://github.com/AlchemistSimulator/Alchemist/issues/4314)) ([569f2a4](https://github.com/AlchemistSimulator/Alchemist/commit/569f2a419e9e98d3d1a14cd71c283c2f693f1fcc))
+
+### Tests
+
+* **incarnation-protelis:** replace star projection with the correct type parameter ([7afd140](https://github.com/AlchemistSimulator/Alchemist/commit/7afd140139062e547e3aceb425ef98343a7a50ce))
+
+### Build and continuous integration
+
+* clarify errors when src is not a folder ([57b0da5](https://github.com/AlchemistSimulator/Alchemist/commit/57b0da5cf82254b55675e1d959bafb02fe87de78))
+* **deps:** update actions/download-artifact action to v4.2.0 ([#4292](https://github.com/AlchemistSimulator/Alchemist/issues/4292)) ([1e7449e](https://github.com/AlchemistSimulator/Alchemist/commit/1e7449e9fd660fc1ea7067ed719348b91fc8073d))
+* **deps:** update actions/download-artifact action to v4.2.1 ([#4295](https://github.com/AlchemistSimulator/Alchemist/issues/4295)) ([c54ba0c](https://github.com/AlchemistSimulator/Alchemist/commit/c54ba0c4c0ab1af29ef34808595a003e4f0031a6))
+* **deps:** update actions/setup-node action to v4.3.0 ([#4290](https://github.com/AlchemistSimulator/Alchemist/issues/4290)) ([35cb80e](https://github.com/AlchemistSimulator/Alchemist/commit/35cb80e3d2f5f7c54da2a97a3f82d5eb4ae10774))
+* **deps:** update actions/upload-artifact action to v4.6.2 ([#4296](https://github.com/AlchemistSimulator/Alchemist/issues/4296)) ([41f4ad6](https://github.com/AlchemistSimulator/Alchemist/commit/41f4ad6e6da2e02ae788f02a3911e771b557a380))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.7.13 ([#4299](https://github.com/AlchemistSimulator/Alchemist/issues/4299)) ([8cc1900](https://github.com/AlchemistSimulator/Alchemist/commit/8cc19002ff9e5866bcee4c3edc1dd425cd787daa))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([3b2fe1d](https://github.com/AlchemistSimulator/Alchemist/commit/3b2fe1d9ec60c6d1f69bcf6608476f15efcfed33))
+* **build:** update the javadoc.io cache ([ae47317](https://github.com/AlchemistSimulator/Alchemist/commit/ae473171adfc0c441b197adf2f38ffdfb2c3674c))
+* **build:** update the javadoc.io cache ([63cd519](https://github.com/AlchemistSimulator/Alchemist/commit/63cd51904f40c079dff2deb401a373d08ffaa336))
+* **build:** update the javadoc.io cache ([9f1c211](https://github.com/AlchemistSimulator/Alchemist/commit/9f1c211ed77eea8678e321d4ec411c91012a3a61))
+* **build:** update the javadoc.io cache ([147e39b](https://github.com/AlchemistSimulator/Alchemist/commit/147e39b5ee92e6b8d9d4bfef438cad80a7b20747))
+* **build:** update the javadoc.io cache ([d215fa8](https://github.com/AlchemistSimulator/Alchemist/commit/d215fa806e2cfeba57fd851cd70c944101b2ad42))
+* **build:** update the javadoc.io cache ([95b365b](https://github.com/AlchemistSimulator/Alchemist/commit/95b365bad2856ac35ae92e654491badfdc786080))
+* **build:** update the javadoc.io cache ([363f8ad](https://github.com/AlchemistSimulator/Alchemist/commit/363f8adf5e73c0e22f302eb2e96507fca38865b3))
+* **build:** update the javadoc.io cache ([0016aef](https://github.com/AlchemistSimulator/Alchemist/commit/0016aef3a52958e05bb3c94ad2c0e148a3e1c808))
+* **build:** update the javadoc.io cache ([2643896](https://github.com/AlchemistSimulator/Alchemist/commit/26438964c701f3f6a0751c860ba02965edcde0a1))
+* **build:** update the javadoc.io cache ([b50a159](https://github.com/AlchemistSimulator/Alchemist/commit/b50a15988bd6ba682dd1ed7f7ac5f35e44564be9))
+* **build:** update the javadoc.io cache ([ed5dfd2](https://github.com/AlchemistSimulator/Alchemist/commit/ed5dfd21f96ddeadb576dab6394e208c232f94f1))
+* **build:** update the javadoc.io cache ([e870116](https://github.com/AlchemistSimulator/Alchemist/commit/e8701166c01ae0f6fa2fad5b99ca4e98d9c77e11))
+* **build:** update the javadoc.io cache ([7965b4f](https://github.com/AlchemistSimulator/Alchemist/commit/7965b4f1aee9b7018126c08dd839185b0ae6372f))
+* **build:** update the javadoc.io cache ([6f0caa1](https://github.com/AlchemistSimulator/Alchemist/commit/6f0caa16116448bb1a3ecf131e55b1296c08af23))
+* **build:** update the javadoc.io cache ([812ec36](https://github.com/AlchemistSimulator/Alchemist/commit/812ec36f0428924cb1678314ad8aff0a436f8bb8))
+* **build:** update the javadoc.io cache ([5bdee68](https://github.com/AlchemistSimulator/Alchemist/commit/5bdee689c670810a116ca7aa47d97f742096c0b6))
+* **build:** update the javadoc.io cache ([80e99da](https://github.com/AlchemistSimulator/Alchemist/commit/80e99da0aaa4699af069c409a1c272444f6875c9))
+* **build:** update the javadoc.io cache ([568a733](https://github.com/AlchemistSimulator/Alchemist/commit/568a73334dc395a342c78590ac0fb5692ed9c7e1))
+* **build:** update the javadoc.io cache ([3c8df68](https://github.com/AlchemistSimulator/Alchemist/commit/3c8df68636594bce0b168f5db64b8d49d6bbef05))
+* **build:** update the javadoc.io cache ([ced5d13](https://github.com/AlchemistSimulator/Alchemist/commit/ced5d13bc4ee5767410bcba5a347a6836734ca9d))
+* **build:** update the javadoc.io cache ([395a81f](https://github.com/AlchemistSimulator/Alchemist/commit/395a81f2550621cab6f8746019ea788ae9b06ab4))
+* **build:** update the javadoc.io cache ([35846c0](https://github.com/AlchemistSimulator/Alchemist/commit/35846c0d20e31f8c426c3818e75da7fbc4bc33b5))
+* **build:** update the javadoc.io cache ([b37b45e](https://github.com/AlchemistSimulator/Alchemist/commit/b37b45e53cc76e7e899c2e4dcf98ad3192f9ad29))
+* **build:** update the javadoc.io cache ([3f8463a](https://github.com/AlchemistSimulator/Alchemist/commit/3f8463a6661c44eef475b35c4affcbcefac9d377))
+* **build:** update the javadoc.io cache ([571bf3d](https://github.com/AlchemistSimulator/Alchemist/commit/571bf3dc291c29a787772a8b79f87fddf75ddddb))
+
 ## [42.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/42.0.0...42.0.1) (2025-03-12)
 
 ### Dependency updates

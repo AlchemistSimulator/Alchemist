@@ -22,7 +22,7 @@ import org.kaikikm.threadresloader.ResourceLoader
 
 /** Tests node cloning. */
 internal class TestNodeCloning<P : Position<P>> {
-    private fun Environment<Any, *>.makeNode(x: Double, y: Double, enabled: Boolean, source: Boolean) {
+    private fun Environment<Any, P>.makeNode(x: Double, y: Double, enabled: Boolean, source: Boolean) {
         getNodeByID(0).cloneNode(Time.ZERO).apply {
             setConcentration(SOURCEMOL, source)
             setConcentration(ENABLEDMOL, enabled)

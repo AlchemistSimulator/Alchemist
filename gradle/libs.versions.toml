@@ -11,7 +11,7 @@ graphstream = "2.0"
 junit = "5.12.1"
 konf = "1.1.2"
 kotest = "6.0.0.M2"
-kotlin = "2.1.10"
+kotlin = "2.1.20"
 kotlinx-coroutines = "1.10.1"
 ktor = "3.1.1"
 mockito = "5.16.1"
@@ -83,7 +83,7 @@ kotlin-quality-assurance-plugin = "org.danilopianini.gradle-kotlin-qa:org.danilo
 kotlin-react = { module = "org.jetbrains.kotlin-wrappers:kotlin-react", version.ref = "react" }
 kotlin-react-dom = { module = "org.jetbrains.kotlin-wrappers:kotlin-react-dom", version.ref = "react" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
-kotlinx-atomicfu-runtime ="org.jetbrains.kotlin:kotlinx-atomicfu-runtime:2.1.10"
+kotlinx-atomicfu-runtime ="org.jetbrains.kotlin:kotlinx-atomicfu-runtime:2.1.20"
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }

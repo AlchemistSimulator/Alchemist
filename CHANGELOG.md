@@ -1,3 +1,15 @@
+## [42.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/42.0.2...42.0.3) (2025-03-25)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.7.4 (patch) ([#4324](https://github.com/AlchemistSimulator/Alchemist/issues/4324)) ([b635866](https://github.com/AlchemistSimulator/Alchemist/commit/b6358667ef8c09b481ffeb5fccd60a7ed7571e36))
+* **deps:** update dependency org.danilopianini:java-quadtree to v1.0.1 ([#4322](https://github.com/AlchemistSimulator/Alchemist/issues/4322)) ([98c0955](https://github.com/AlchemistSimulator/Alchemist/commit/98c09556316e5bb7f557b688caf42c866893ab59))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([938e1d5](https://github.com/AlchemistSimulator/Alchemist/commit/938e1d532dc4f58da97e8ee5b55727933e335555))
+* **build:** update the javadoc.io cache ([8ee0b43](https://github.com/AlchemistSimulator/Alchemist/commit/8ee0b43137cffd737a1059e7050a1186e3234f1c))
+
 ## [42.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/42.0.1...42.0.2) (2025-03-25)
 
 ### Dependency updates

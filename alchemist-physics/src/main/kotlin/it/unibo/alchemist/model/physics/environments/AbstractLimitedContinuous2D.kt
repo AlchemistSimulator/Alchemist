@@ -33,8 +33,8 @@ abstract class AbstractLimitedContinuous2D<T>(incarnation: Incarnation<T, Euclid
         super.moveNodeToPosition(node, next(curX, curY, newX, newY))
     }
 
-    override fun nodeShouldBeAdded(node: Node<T>, p: Euclidean2DPosition): Boolean =
-        isAllowed(p) && super.nodeShouldBeAdded(node, p)
+    override fun nodeShouldBeAdded(node: Node<T>, position: Euclidean2DPosition): Boolean =
+        isAllowed(position) && super.nodeShouldBeAdded(node, position)
 
     /**
      * Computes the closest allowed position a node can move to.

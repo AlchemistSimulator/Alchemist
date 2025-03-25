@@ -190,8 +190,9 @@ public final class OSMEnvironment<T>
         this.approximation = approximation;
     }
 
+    @Nonnull
     @Override
-    protected GeoPosition computeActualInsertionPosition(final Node<T> node, final GeoPosition position) {
+    protected GeoPosition computeActualInsertionPosition(@Nonnull final Node<T> node, @Nonnull final GeoPosition position) {
         /*
          * If it must be located on streets, query the navigation engine for a street
          * point. Otherwise, put it where it is declared.
@@ -349,8 +350,10 @@ public final class OSMEnvironment<T>
      * engine cannot resolve any such position.
      */
     @Override
-    protected boolean nodeShouldBeAdded(final Node<T> node, final GeoPosition position) {
-        assert node != null;
+    protected boolean nodeShouldBeAdded(
+        @Nonnull final Node<T> node,
+        @Nonnull final GeoPosition position
+    ) {
         return !onlyStreet || getNavigator().allowedPointClosestTo(position) != null;
     }
 

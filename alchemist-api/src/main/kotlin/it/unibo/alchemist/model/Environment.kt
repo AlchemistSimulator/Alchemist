@@ -191,10 +191,10 @@ interface Environment<T, P : Position<out P>> :
     fun makePosition(coordinates: List<Number>): P = makePosition(*coordinates.toTypedArray())
 
     /**
-     * This method moves a [node] in the environment to some [position].
+     * This method moves a [node] in the environment to some [newPosition].
      * If node movement is unsupported, it does nothing.
      */
-    fun moveNodeToPosition(node: Node<T>, position: P)
+    fun moveNodeToPosition(node: Node<T>, newPosition: P)
 
     /**
      * Removes [node].

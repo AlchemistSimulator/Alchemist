@@ -72,8 +72,8 @@ public final class BioRect2DEnvironmentNoOverlap
     }
 
     @Override
-    protected boolean nodeShouldBeAdded(@Nonnull final Node<Double> node, @Nonnull final Euclidean2DPosition p) {
-        final boolean isWithinLimits = super.nodeShouldBeAdded(node, p);
+    protected boolean nodeShouldBeAdded(@Nonnull final Node<Double> node, @Nonnull final Euclidean2DPosition position) {
+        final boolean isWithinLimits = super.nodeShouldBeAdded(node, position);
         if (isWithinLimits) {
             if (node.asPropertyOrNull(CircularCellProperty.class) != null) {
                 double range = getMaxDiameterAmongCellWithCircularShape();
@@ -82,9 +82,9 @@ public final class BioRect2DEnvironmentNoOverlap
                 }
                 final double nodeRadius = node.asProperty(CircularCellProperty.class).getRadius();
                 return range <= 0
-                        || getNodesWithinRange(p, range).stream()
+                        || getNodesWithinRange(position, range).stream()
                             .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
-                            .noneMatch(n -> getPosition(n).distanceTo(p) < nodeRadius
+                            .noneMatch(n -> getPosition(n).distanceTo(position) < nodeRadius
                                     + n.asProperty(CircularCellProperty.class).getRadius());
             } else {
                 return true;

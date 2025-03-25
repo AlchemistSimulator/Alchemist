@@ -150,13 +150,13 @@ constructor(
     fun distanceTo(target: Int): Double =
         environmentAccess.getDistanceBetweenNodes(node, environmentAccess.getNodeByID(target))
 
-    override fun equals(obj: Any?) = this === obj ||
-        obj is AlchemistExecutionContext<*> &&
+    override fun equals(other: Any?) = this === other ||
+        other is AlchemistExecutionContext<*> &&
         (
-            node == obj.node &&
-                this.environmentAccess == obj.environmentAccess &&
-                reaction == obj.reaction &&
-                randomGenerator == obj.randomGenerator
+            node == other.node &&
+                this.environmentAccess == other.environmentAccess &&
+                reaction == other.reaction &&
+                randomGenerator == other.randomGenerator
             )
 
     override fun getCoordinates(): Tuple = DatatypeFactory.createTuple(this.devicePosition.coordinates.toList())
@@ -181,7 +181,7 @@ constructor(
         return hash
     }
 
-    override fun instance(): AlchemistExecutionContext<P> = AlchemistExecutionContext<P>(
+    override fun instance(): AlchemistExecutionContext<P> = AlchemistExecutionContext(
         this.environmentAccess,
         node,
         reaction,
@@ -192,17 +192,17 @@ constructor(
     /**
      * @return The same behavior of MIT Proto's nbrdelay (forward view).
      */
-    override fun nbrDelay(): Field<Number> = buildField<Number, Number>({ it }, deltaTime)
+    override fun nbrDelay(): Field<Number> = buildField({ it }, deltaTime)
 
-    override fun nbrLag(): Field<Number> = buildField<Double, Number>(
-        { time: Double -> getCurrentTime().toDouble() - time },
-        getCurrentTime().toDouble(),
+    override fun nbrLag(): Field<Number> = buildField(
+        { time: Double -> getCurrentTime() - time },
+        getCurrentTime(),
     )
 
     override fun nbrRange(): Field<Double> {
         val useRoutesAsDistances =
             this.environmentAccess is MapEnvironment<*, *, *> && node.contains(USE_ROUTES_AS_DISTANCES)
-        return buildFieldWithPosition<Double> { p: P ->
+        return buildFieldWithPosition { p: P ->
             if (useRoutesAsDistances) {
                 check(p is GeoPosition) {
                     "Illegal position type: " + p::class.simpleName + " " + p

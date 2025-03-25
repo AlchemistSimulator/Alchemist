@@ -51,8 +51,9 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
      * position a node gets inserted in (e.g. to restrict the areas in which a node
      * can be)
      */
+    @Nonnull
     @Override
-    protected P computeActualInsertionPosition(final Node<T> node, final P p) {
+    protected P computeActualInsertionPosition(@Nonnull final Node<T> node, @Nonnull final P p) {
         return p;
     }
 
@@ -119,9 +120,9 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
      * moves towards some absolute position.
      */
     @Override
-    public void moveNodeToPosition(@Nonnull final Node<T> node, @Nonnull final P newpos) {
-        includeObject(newpos);
-        setPosition(node, newpos);
+    public void moveNodeToPosition(@Nonnull final Node<T> node, @Nonnull final P newPosition) {
+        includeObject(newPosition);
+        setPosition(node, newPosition);
         updateNeighborhood(node, false);
         ifEngineAvailable(sim -> sim.nodeMoved(node));
     }
@@ -132,7 +133,11 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
      * environment bounds are updated considering the newly included object.
      */
     @Override
-    protected void nodeAdded(final Node<T> node, final P position, final Neighborhood<T> neighborhood) {
+    protected void nodeAdded(
+        @Nonnull final Node<T> node,
+        @Nonnull final P position,
+        @Nonnull final Neighborhood<T> neighborhood
+    ) {
         /*
          * Size update
          */

@@ -52,9 +52,9 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     incarnation: Incarnation<T, P>,
     internalIndex: SpatialIndex<Node<T>>,
 ) : Environment<T, P> {
-    private val _nodes: ListSet<Node<T>> = ArrayListSet<Node<T>>()
+    private val _nodes: ListSet<Node<T>> = ArrayListSet()
     private val _globalReactions = ArrayListSet<GlobalReaction<T>>()
-    private val _layers: MutableMap<Molecule, Layer<T, P>> = LinkedHashMap<Molecule, Layer<T, P>>()
+    private val _layers: MutableMap<Molecule, Layer<T, P>> = LinkedHashMap()
     private val neighCache = TIntObjectHashMap<Neighborhood<T>>()
     private val nodeToPos = TIntObjectHashMap<P>()
     private val spatialIndex: SpatialIndex<Node<T>> = requireNotNull(internalIndex)
@@ -100,12 +100,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     private var terminationPredicate: TerminationPredicate<T, P> = TerminationPredicate { false }
 
-    /**
-     * @param incarnation the incarnation to be used.
-     * @param internalIndex
-     * the [SpatialIndex] to use in order to efficiently
-     * retrieve nodes.
-     */
     init {
         this.incarnation = requireNotNull(incarnation)
     }
@@ -124,15 +118,15 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         ifEngineAvailable { it.reactionRemoved(reaction) }
     }
 
-    override fun addNode(node: Node<T>, p: P): Boolean = when {
-        nodeShouldBeAdded(node, p) -> {
-            val actualPosition = computeActualInsertionPosition(node, p)
+    override fun addNode(node: Node<T>, position: P): Boolean = when {
+        nodeShouldBeAdded(node, position) -> {
+            val actualPosition = computeActualInsertionPosition(node, position)
             setPosition(node, actualPosition)
             require(_nodes.add(node)) { "Node with id ${node.id} was already existing in this environment." }
             spatialIndex.insert(node, *actualPosition.coordinates)
             updateNeighborhood(node, true)
             ifEngineAvailable { it.nodeAdded(node) }
-            nodeAdded(node, p, getNeighborhood(node))
+            nodeAdded(node, position, getNeighborhood(node))
             true
         }
         else -> false
@@ -175,6 +169,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     private fun getAllNodesInRange(center: P, range: Double): List<Node<T>> {
         require(range > 0) { "Range query must be positive (provided: $range)" }
+        @Suppress("UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS")
         val validCache =
             cache ?: Caffeine
                 .newBuilder()
@@ -288,10 +283,10 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * actually get added to this environment.
      *
      * @param node the node
-     * @param p the original (requested) position
+     * @param position the original (requested) position
      * @return true if the node should be added to this environment, false otherwise
      */
-    protected open fun nodeShouldBeAdded(node: Node<T>, p: P): Boolean = true
+    protected open fun nodeShouldBeAdded(node: Node<T>, position: P): Boolean = true
 
     @Serial
     private fun readObject(inputStream: ObjectInputStream) {
@@ -304,7 +299,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     }
 
     private fun recursiveOperation(origin: Node<T>): Sequence<Operation<T>> {
-        val newNeighborhood = linkingRule.computeNeighborhood(Objects.requireNonNull<Node<T>?>(origin), this)
+        val newNeighborhood = linkingRule.computeNeighborhood(Objects.requireNonNull(origin), this)
         val oldNeighborhood: Neighborhood<T>? = neighCache.put(origin.id, newNeighborhood)
         return toQueue(origin, oldNeighborhood, newNeighborhood)
     }

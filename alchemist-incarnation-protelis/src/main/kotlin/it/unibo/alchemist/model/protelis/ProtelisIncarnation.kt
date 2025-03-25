@@ -84,8 +84,11 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             "The provided actionable must be an instance of ${Reaction::class.simpleName}"
         }
         requireNotNull(additionalParameters)
+        requireNotNull(node) {
+            "Global protelis programs are not supported"
+        }
         val device =
-            requireNotNull(node?.asProperty<Any, ProtelisDevice<P>>()) {
+            requireNotNull(node.asProperty<Any, ProtelisDevice<P>>()) {
                 "The node must be a ${ProtelisDevice::class.simpleName}"
             }
         return if (parameters.equals("send", ignoreCase = true)) {
@@ -213,10 +216,12 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         node: Node<Any>?,
         parameter: Any?,
     ): TimeDistribution<Any> = try {
-        val frequency =
-            parameter?.let { (it as? Number)?.toDouble() ?: it.toString().toDouble() }
-                ?: return ExponentialTime(Double.POSITIVE_INFINITY, randomGenerator)
-        DiracComb(DoubleTime(randomGenerator.nextDouble() / frequency), frequency)
+        val frequency = parameter
+            ?.let { (it as? Number)?.toDouble() ?: it.toString().toDouble() }
+        when (frequency) {
+            null -> ExponentialTime(Double.POSITIVE_INFINITY, randomGenerator)
+            else -> DiracComb(DoubleTime(randomGenerator.nextDouble() / frequency), frequency)
+        }
     } catch (e: NumberFormatException) {
         LOGGER.error("Unable to convert {} to a double", parameter)
         throw e
@@ -372,23 +377,23 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override fun iterator(): MutableIterator<Reaction<Any>> = notImplemented<MutableIterator<Reaction<Any>>>()
 
-        override fun compareTo(@Nonnull o: Node<Any>): Int = notImplemented()
+        override fun compareTo(@Nonnull other: Node<Any>): Int = notImplemented()
 
-        override fun addReaction(r: Reaction<Any>) = notImplemented<Unit>()
+        override fun addReaction(reactionToAdd: Reaction<Any>) = notImplemented<Unit>()
 
         override fun cloneNode(currentTime: Time): Node<Any> = notImplemented()
 
-        override fun contains(mol: Molecule): Boolean = notImplemented()
+        override fun contains(molecule: Molecule): Boolean = notImplemented()
 
-        override fun getConcentration(mol: Molecule): Any = notImplemented()
+        override fun getConcentration(molecule: Molecule): Any = notImplemented()
 
-        override fun removeConcentration(mol: Molecule) = notImplemented<Unit>()
+        override fun removeConcentration(moleculeToRemove: Molecule) = notImplemented<Unit>()
 
-        override fun removeReaction(r: Reaction<Any>) = notImplemented<Unit>()
+        override fun removeReaction(reactionToRemove: Reaction<Any>) = notImplemented<Unit>()
 
         override fun setConcentration(molecule: Molecule, concentration: Any) = notImplemented<Unit>()
 
-        override fun equals(obj: Any?): Boolean = obj === this
+        override fun equals(other: Any?): Boolean = other === this
 
         override fun hashCode(): Int = -1
 

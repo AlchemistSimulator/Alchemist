@@ -365,11 +365,11 @@
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.4.0",
     "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.4.0/element-list"
   },
-  "org.protelis/protelis-interpreter/17.7.4": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.7.4"
+  "org.protelis/protelis-interpreter/17.7.5": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.7.5"
   },
-  "org.protelis/protelis-lang/17.7.4": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.7.4"
+  "org.protelis/protelis-lang/17.7.5": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.7.5"
   },
   "org.reduxkotlin/redux-kotlin-threadsafe/0.6.1": {
     "first": "https://javadoc.io/doc/org.reduxkotlin/redux-kotlin-threadsafe/0.6.1"

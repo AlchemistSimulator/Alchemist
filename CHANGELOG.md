@@ -1,3 +1,19 @@
+## [42.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/42.0.3...42.0.4) (2025-03-26)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17.7.5 (patch) ([#4325](https://github.com/AlchemistSimulator/Alchemist/issues/4325)) ([c0fa1e2](https://github.com/AlchemistSimulator/Alchemist/commit/c0fa1e2d1bf0563267232191e6707281f00be8c6))
+* **deps:** update dependency org.danilopianini:jirf to v0.4.29 ([#4326](https://github.com/AlchemistSimulator/Alchemist/issues/4326)) ([e808408](https://github.com/AlchemistSimulator/Alchemist/commit/e8084080fc9d50775af1084219c3c9744a787860))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.7.14 ([#4327](https://github.com/AlchemistSimulator/Alchemist/issues/4327)) ([427b697](https://github.com/AlchemistSimulator/Alchemist/commit/427b697e2b59aa850c6068e3c0ac11b2b0d1acf7))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([15cf037](https://github.com/AlchemistSimulator/Alchemist/commit/15cf0374ff27525a57f3b4f486ad0f56e1e9b48b))
+* **build:** update the javadoc.io cache ([bcaf5bf](https://github.com/AlchemistSimulator/Alchemist/commit/bcaf5bf696f2f6374bf15033c63c9054279745fd))
+
 ## [42.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/42.0.2...42.0.3) (2025-03-25)
 
 ### Dependency updates

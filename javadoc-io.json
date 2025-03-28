@@ -181,8 +181,8 @@
     "first": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3",
     "second": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3/package-list"
   },
-  "net.sourceforge.pmd/pmd-dist/7.11.0": {
-    "first": "https://javadoc.io/doc/net.sourceforge.pmd/pmd-dist/7.11.0"
+  "net.sourceforge.pmd/pmd-dist/7.12.0": {
+    "first": "https://javadoc.io/doc/net.sourceforge.pmd/pmd-dist/7.12.0"
   },
   "org.antlr/antlr4-runtime/4.13.2": {
     "first": "https://javadoc.io/doc/org.antlr/antlr4-runtime/4.13.2",

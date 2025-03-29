@@ -281,11 +281,11 @@
   "org.jetbrains.dokka/templating-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.20-19.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.20-19.0.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.21-19.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.3.21-19.1.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.20-19.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.20-19.0.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.21-19.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.3.21-19.1.0"
   },
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"

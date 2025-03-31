@@ -109,17 +109,17 @@
     "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1",
     "second": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1/element-list"
   },
-  "io.kotest/kotest-assertions-core/6.0.0.M2": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-core/6.0.0.M2"
+  "io.kotest/kotest-assertions-core/6.0.0.M3": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-core/6.0.0.M3"
   },
-  "io.kotest/kotest-framework-engine/6.0.0.M2": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-engine/6.0.0.M2"
+  "io.kotest/kotest-framework-engine/6.0.0.M3": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-engine/6.0.0.M3"
   },
-  "io.kotest/kotest-framework-multiplatform-plugin-embeddable-compiler/6.0.0.M2": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-multiplatform-plugin-embeddable-compiler/6.0.0.M2"
+  "io.kotest/kotest-framework-multiplatform-plugin-embeddable-compiler/6.0.0.M3": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-multiplatform-plugin-embeddable-compiler/6.0.0.M3"
   },
-  "io.kotest/kotest-runner-junit5-jvm/6.0.0.M2": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-runner-junit5-jvm/6.0.0.M2"
+  "io.kotest/kotest-runner-junit5-jvm/6.0.0.M3": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-runner-junit5-jvm/6.0.0.M3"
   },
   "io.ktor/ktor-client-content-negotiation/3.1.2": {
     "first": "https://javadoc.io/doc/io.ktor/ktor-client-content-negotiation/3.1.2"

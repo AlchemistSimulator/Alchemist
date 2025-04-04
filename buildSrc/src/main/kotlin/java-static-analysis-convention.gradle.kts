@@ -7,11 +7,6 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-import Libs.alchemist
-import org.gradle.api.plugins.quality.Pmd
-import org.gradle.kotlin.dsl.kotlin
-import org.gradle.kotlin.dsl.withType
-
 plugins {
     id("common-static-analysis-convention")
     id("org.danilopianini.gradle-java-qa")

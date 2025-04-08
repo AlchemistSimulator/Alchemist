@@ -171,7 +171,7 @@ kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" 
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:3.3.0"
-publishOnCentral = "org.danilopianini.publish-on-central:8.0.5"
+publishOnCentral = "org.danilopianini.publish-on-central:8.0.6"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"
 shadowJar = "com.github.johnrengelman.shadow:8.1.1"
 taskTree = "com.dorongold.task-tree:4.0.1"

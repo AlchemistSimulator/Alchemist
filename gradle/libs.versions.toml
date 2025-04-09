@@ -105,7 +105,7 @@ logback = "ch.qos.logback:logback-classic:1.5.18"
 mapsforge = "org.mapsforge:mapsforge-map-awt:0.25.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.4.2"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-mockk = "io.mockk:mockk:1.13.17"
+mockk = "io.mockk:mockk:1.14.0"
 mongodb = "org.mongodb:mongodb-driver-sync:5.4.0"
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.2.50"
 protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }

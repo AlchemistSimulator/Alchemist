@@ -54,9 +54,9 @@
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.12.1",
     "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.12.1/element-list"
   },
-  "com.google.guava/guava/33.4.7-android": {
-    "first": "https://javadoc.io/doc/com.google.guava/guava/33.4.7-android",
-    "second": "https://javadoc.io/doc/com.google.guava/guava/33.4.7-android/element-list"
+  "com.google.guava/guava/33.4.7-jre": {
+    "first": "https://javadoc.io/doc/com.google.guava/guava/33.4.7-jre",
+    "second": "https://javadoc.io/doc/com.google.guava/guava/33.4.7-jre/element-list"
   },
   "com.graphhopper/graphhopper-core/10.2": {
     "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/10.2",

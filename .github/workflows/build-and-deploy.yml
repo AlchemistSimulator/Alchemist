@@ -228,7 +228,7 @@ jobs:
     needs:
       - assemble-and-upload
       - ci-preparation
-    runs-on: windows-2022
+    runs-on: windows-2025
     if: >-
       always() && needs.assemble-and-upload.result == 'success'
     steps:
@@ -498,7 +498,7 @@ jobs:
     needs:
       - ci-preparation
       - release
-    runs-on: windows-2022
+    runs-on: windows-2025
     env:
       packageID: "Unibo.Alchemist"
     if: fromJSON(needs.release.outputs.winget-deploy)

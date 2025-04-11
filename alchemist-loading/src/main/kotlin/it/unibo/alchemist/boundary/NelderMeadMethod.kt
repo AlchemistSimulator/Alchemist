@@ -40,13 +40,13 @@ class NelderMeadMethod(
     private val rho: Double, // Contraction coefficient
     private val sigma: Double, // Shrink coefficient
     executorService: ExecutorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()),
-    private val objective: (List<Double>) -> Future<Double>
+    private val objective: (List<Double>) -> Future<Double>,
 ) {
 
     private val cache = Caffeine.newBuilder().executor(executorService)
         .build<List<Double>, Future<Double>> { coordinates ->
             objective(coordinates)
-    }
+        }
 
     /**
      * Apply the Nelder-Mead optimization method to the given [simplex] and [objective] function.
@@ -62,7 +62,8 @@ class NelderMeadMethod(
             "All vertices of the initial simplex must have the same number of dimensions"
         }
         var symplexUpdated = simplex
-        repeat(maxIterations) { //iteration ->
+        repeat(maxIterations) {
+            // iteration ->
             // Sort simplex by function values
             val sortedSimplex = symplexUpdated
                 .map { it to cache[it.valuesToList()] }
@@ -111,10 +112,11 @@ class NelderMeadMethod(
                             sortedSimplex.map { vertex ->
                                 Vertex(
                                     vertex.keys().associateWith { key ->
-                                        val index = bestVertex.keys().indexOf(key) // Find the index corresponding to the key
+                                        // Find the index corresponding to the key
+                                        val index = bestVertex.keys().indexOf(key)
                                         val oldValue = bestVertex[index]
                                         oldValue + sigma * (vertex[index] - oldValue) // Apply shrink transformation
-                                    }
+                                    },
                                 )
                             }
                         }
@@ -133,12 +135,13 @@ class NelderMeadMethod(
     private fun List<Double>.mapCentroid(coefficient: Double, values: List<Double>): List<Double> =
         mapIndexed { index, value -> value + coefficient * (values[index] - value) }
 
-    private fun List<Vertex>.updateLastVertex(newVertex: List<Double>): List<Vertex> =
-        mapIndexed { index, vertex ->
-            if (index == size - 1) {
-                Vertex(vertex.keys().associateWith { newVertex[vertex.keys().indexOf(it)] })
-            } else vertex
+    private fun List<Vertex>.updateLastVertex(newVertex: List<Double>): List<Vertex> = mapIndexed { index, vertex ->
+        if (index == size - 1) {
+            Vertex(vertex.keys().associateWith { newVertex[vertex.keys().indexOf(it)] })
+        } else {
+            vertex
         }
+    }
 
     companion object {
         operator fun Future<Double>.compareTo(other: Future<Double>): Int = get().compareTo(other.get())

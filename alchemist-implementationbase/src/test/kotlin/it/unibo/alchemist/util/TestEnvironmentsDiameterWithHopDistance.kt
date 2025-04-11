@@ -21,11 +21,13 @@ object TestEnvironmentsDiameterWithHopDistance {
     private infix fun <T> Environment<T, *>.withHopDistanceMustHave(expected: Subnetworks) =
         assertEquals<Int>(expected.count, allSubNetworksWithHopDistance().size)
 
-    private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveHopDiameter(index: Int, expected: Double) =
-        {
-            require(index < nodes.size)
-            assertEquals<Double>(expected, allSubNetworksByNodeWithHopDistance()[nodes[index]]?.diameter!!)
-        }
+    private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveHopDiameter(
+        index: Int,
+        expected: Double,
+    ) = {
+        require(index < nodes.size)
+        assertEquals<Double>(expected, allSubNetworksByNodeWithHopDistance()[nodes[index]]?.diameter!!)
+    }
 
     private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveHopDiameter(expected: Double) {
         assertFalse(isNetworkSegmented())
@@ -37,69 +39,71 @@ object TestEnvironmentsDiameterWithHopDistance {
         singleNodeEnvironment mustNotBeSegmentedAndHaveHopDiameter 0.0
 
     @Test
-    fun `two connected nodes should have hop diameter 1`() =
-         twoConnectedNodes mustNotBeSegmentedAndHaveHopDiameter 1.0
+    fun `two connected nodes should have hop diameter 1`() = twoConnectedNodes mustNotBeSegmentedAndHaveHopDiameter 1.0
 
     @Test
-    fun `a triangle has hop diameter 1`() =
-        nodesInATriangle mustNotBeSegmentedAndHaveHopDiameter 1.0
+    fun `a triangle has hop diameter 1`() = nodesInATriangle mustNotBeSegmentedAndHaveHopDiameter 1.0
 
     @Test
-    fun `three nodes in a row have hop diameter 2`() =
-        threeNodesInARow mustNotBeSegmentedAndHaveHopDiameter 2.0
+    fun `three nodes in a row have hop diameter 2`() = threeNodesInARow mustNotBeSegmentedAndHaveHopDiameter 2.0
 
     @Test
     fun `four nodes connected in a square should have hop diameter 2`() =
-         fourNodesInASquare mustNotBeSegmentedAndHaveHopDiameter 2.0
+        fourNodesInASquare mustNotBeSegmentedAndHaveHopDiameter 2.0
 
     @Test
     fun `four nodes in a triangle should have hop diameter 2`() =
-         fourNodesInATriangle mustNotBeSegmentedAndHaveHopDiameter 2.0
+        fourNodesInATriangle mustNotBeSegmentedAndHaveHopDiameter 2.0
 
     @Test
     fun `a network of three nodes with one isolated should be considered segmented`() {
-        val environment = twoConnectedNodesAndOneIsolated
-        environment.mustBeSegmented()
-        environment withHopDistanceMustHave 2.subnetworks()
-        environment.specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 1.0)
-        environment.specificNodeInASegmentedNetworkShouldHaveHopDiameter(2, 0.0)
+        with(twoConnectedNodesAndOneIsolated) {
+            mustBeSegmented()
+            withHopDistanceMustHave(2.subnetworks())
+            specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 1.0)
+            specificNodeInASegmentedNetworkShouldHaveHopDiameter(2, 0.0)
+        }
     }
 
     @Test
     fun `a network of four nodes connected by two should be considered segmented with the same diameter`() {
-        val environment = twoSubnetworksWithTwoNodesEach
-        environment.mustBeSegmented()
-        environment withHopDistanceMustHave 2.subnetworks()
-        environment.specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 1.0)
-        environment.specificNodeInASegmentedNetworkShouldHaveHopDiameter(2, 1.0)
+        with(twoSubnetworksWithTwoNodesEach) {
+            mustBeSegmented()
+            withHopDistanceMustHave(2.subnetworks())
+            specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 1.0)
+            specificNodeInASegmentedNetworkShouldHaveHopDiameter(2, 1.0)
+        }
     }
 
     @Test
     fun `a network of three nodes added dynamically and not in order should adapt accordingly`() {
-        val environment = singleNodeEnvironment
-        environment mustNotBeSegmentedAndHaveHopDiameter 0.0
-        environment addNodeAt (1.0 to 4.0)
-        environment mustNotBeSegmentedAndHaveHopDiameter 1.0
-        environment addNodeAt (4.0 to -2.0)
-        environment mustNotBeSegmentedAndHaveHopDiameter 2.0
+        with(singleNodeEnvironment) {
+            mustNotBeSegmentedAndHaveHopDiameter(expected = 0.0)
+            addNodeAt(1.0 to 4.0)
+            mustNotBeSegmentedAndHaveHopDiameter(expected = 1.0)
+            addNodeAt(4.0 to -2.0)
+            mustNotBeSegmentedAndHaveHopDiameter(expected = 2.0)
+        }
     }
 
     @Test
     fun `two sparse subnetworks should be considered segmented`() {
-        val environment = twoSparseSubnetworks
-        environment.mustBeSegmented()
-        environment withHopDistanceMustHave 2.subnetworks()
-        environment.specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 2.0)
-        environment.specificNodeInASegmentedNetworkShouldHaveHopDiameter(1, 1.0)
+        with(twoSparseSubnetworks) {
+            mustBeSegmented()
+            withHopDistanceMustHave(2.subnetworks())
+            specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 2.0)
+            specificNodeInASegmentedNetworkShouldHaveHopDiameter(1, 1.0)
+        }
     }
 
     @Test
     fun `three sparse subnetworks should be considered segmented`() {
-        val environment = threeSparseSubnetworks
-        environment.mustBeSegmented()
-        environment withHopDistanceMustHave 3.subnetworks()
-        environment.specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 2.0)
-        environment.specificNodeInASegmentedNetworkShouldHaveHopDiameter(1, 1.0)
-        environment.specificNodeInASegmentedNetworkShouldHaveHopDiameter(environment.nodeCount - 1, 0.0)
+        with(threeSparseSubnetworks) {
+            mustBeSegmented()
+            withHopDistanceMustHave(3.subnetworks())
+            specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 2.0)
+            specificNodeInASegmentedNetworkShouldHaveHopDiameter(1, 1.0)
+            specificNodeInASegmentedNetworkShouldHaveHopDiameter(nodeCount - 1, 0.0)
+        }
     }
 }

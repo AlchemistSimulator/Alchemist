@@ -10,7 +10,6 @@
 package it.unibo.alchemist.util
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Network
 import it.unibo.alchemist.util.Environments.allSubNetworksByNode
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
 import org.junit.jupiter.api.Test
@@ -25,13 +24,12 @@ object TestEnvironmentsDiameter {
 
     private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveDiameter(expected: Double) {
         assertFalse(isNetworkSegmented())
-        // round to the first two decimals
         assertEquals<Double>(
             expected,
             allSubNetworksByNode().values.single().diameter.roundToTwoDecimals(),
         )
     }
-    
+
     private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveDiameter(index: Int, expected: Double) {
         require(index < nodes.size)
         assertEquals<Double>(
@@ -40,32 +38,27 @@ object TestEnvironmentsDiameter {
         )
     }
 
-    private fun Double.roundToTwoDecimals(): Double =
-        BigDecimal(this).setScale(2, RoundingMode.HALF_UP).toDouble()
+    private fun Double.roundToTwoDecimals(): Double = BigDecimal(this).setScale(2, RoundingMode.HALF_UP).toDouble()
 
     @Test
     fun `environments with a single node have diameter 0`() =
         singleNodeEnvironment mustNotBeSegmentedAndHaveDiameter 0.0
 
     @Test
-    fun `two connected nodes should have hop diameter 3`() =
-        twoConnectedNodes mustNotBeSegmentedAndHaveDiameter 3.0
+    fun `two connected nodes should have diameter 3`() = twoConnectedNodes mustNotBeSegmentedAndHaveDiameter 3.0
 
     @Test
-    fun `a triangle has diameter 1`() =
-        nodesInATriangle mustNotBeSegmentedAndHaveDiameter 4.24
+    fun `a triangle formation network is not segmented`() = nodesInATriangle mustNotBeSegmentedAndHaveDiameter 4.24
 
     @Test
-    fun `three nodes in a row have diameter 8`() =
-        threeNodesInARow mustNotBeSegmentedAndHaveDiameter 8.0
+    fun `three nodes in a row have diameter 8`() = threeNodesInARow mustNotBeSegmentedAndHaveDiameter 8.0
 
     @Test
-    fun `four nodes connected in a square should have diameter 2`() =
-       fourNodesInASquare mustNotBeSegmentedAndHaveDiameter 10.0
+    fun `four nodes connected in a square should have diameter 10`() =
+        fourNodesInASquare mustNotBeSegmentedAndHaveDiameter 10.0
 
     @Test
-    fun `four nodes in a triangle should have hop diameter 2`() =
-        fourNodesInATriangle mustNotBeSegmentedAndHaveDiameter 6.0
+    fun `four nodes in a triangle should have diameter 6`() = fourNodesInATriangle mustNotBeSegmentedAndHaveDiameter 6.0
 
     @Test
     fun `a network of three nodes with one isolated should be considered segmented`() {
@@ -91,9 +84,9 @@ object TestEnvironmentsDiameter {
     fun `a network of three nodes added dynamically and not in order should adapt accordingly`() =
         with(singleNodeEnvironment) {
             mustNotBeSegmentedAndHaveDiameter(expected = 0.0)
-            addNodeAt (1.0 to 4.0)
+            addNodeAt(1.0 to 4.0)
             mustNotBeSegmentedAndHaveDiameter(expected = 4.12)
-            addNodeAt (-4.0 to -2.0)
+            addNodeAt(-4.0 to -2.0)
             mustNotBeSegmentedAndHaveDiameter(expected = 8.60)
         }
 
@@ -102,8 +95,8 @@ object TestEnvironmentsDiameter {
         with(twoSparseSubnetworks) {
             mustBeSegmented()
             mustHave(2.subnetworks())
-            specificNodeInASegmentedNetworkShouldHaveDiameter(0, 5.0)
-            specificNodeInASegmentedNetworkShouldHaveDiameter(1, 10.0)
+            specificNodeInASegmentedNetworkShouldHaveDiameter(0, 8.49)
+            specificNodeInASegmentedNetworkShouldHaveDiameter(1, 6.32)
         }
     }
 
@@ -112,8 +105,8 @@ object TestEnvironmentsDiameter {
         with(threeSparseSubnetworks) {
             mustBeSegmented()
             mustHave(3.subnetworks())
-            specificNodeInASegmentedNetworkShouldHaveDiameter(0, 5.0)
-            specificNodeInASegmentedNetworkShouldHaveDiameter(1, 10.0)
+            specificNodeInASegmentedNetworkShouldHaveDiameter(0, 8.49)
+            specificNodeInASegmentedNetworkShouldHaveDiameter(1, 6.32)
             specificNodeInASegmentedNetworkShouldHaveDiameter(nodeCount - 1, 0.0)
         }
     }

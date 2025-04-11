@@ -38,8 +38,10 @@ dependencies {
     implementation(libs.kasechange)
     implementation(libs.kotlin.reflect)
     implementation(libs.kotlin.coroutines.core)
+    implementation(libs.rrmxmx)
     implementation(libs.mongodb)
     implementation(libs.snakeyaml)
+    implementation(libs.caffeine)
 
     runtimeOnly(libs.groovy.jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))

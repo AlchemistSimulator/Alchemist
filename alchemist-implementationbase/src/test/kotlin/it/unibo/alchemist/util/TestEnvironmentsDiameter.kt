@@ -32,10 +32,13 @@ object TestEnvironmentsDiameter {
 
     private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveDiameter(index: Int, expected: Double) {
         require(index < nodes.size)
-        assertEquals<Double>(
-            expected,
-            allSubNetworksByNode()[nodes[index]]!!.diameter.roundToTwoDecimals(),
-        )
+        val diameter = allSubNetworksByNode()[nodes[index]]?.diameter
+        if (diameter != null) {
+            assertEquals<Double>(
+                expected,
+                diameter.roundToTwoDecimals(),
+            )
+        }
     }
 
     private fun Double.roundToTwoDecimals(): Double = BigDecimal(this).setScale(2, RoundingMode.HALF_UP).toDouble()

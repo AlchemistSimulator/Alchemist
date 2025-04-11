@@ -35,7 +35,7 @@ object TestEnvironmentsDiameterWithHopDistance {
     }
 
     @Test
-    fun `environments with a single node have diameter 0`() =
+    fun `environment with a single node have diameter 0`() =
         singleNodeEnvironment mustNotBeSegmentedAndHaveHopDiameter 0.0
 
     @Test

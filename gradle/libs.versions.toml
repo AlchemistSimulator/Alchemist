@@ -50,7 +50,7 @@ graphql-server-ktor = { module = "com.expediagroup:graphql-kotlin-ktor-server", 
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
 groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.24"
-gson = "com.google.code.gson:gson:2.12.1"
+gson = "com.google.code.gson:gson:2.13.0"
 gson-extras = "org.danilopianini:gson-extras:3.2.0"
 guava = "com.google.guava:guava:33.4.7-jre"
 javalib-java7 = "org.danilopianini:javalib-java7:0.6.1"

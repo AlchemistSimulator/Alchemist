@@ -20,11 +20,6 @@ import it.unibo.alchemist.util.Environments.networkDiameter
 import kotlin.test.assertTrue
 
 /**
- * The origin of the coordinate system.
- */
-val ORIGIN = 0.0 to 0.0
-
-/**
  * Adds a node to the environment at the specified [coordinates].
  */
 infix fun Environment<Any, Euclidean2DPosition>.addNodeAt(coordinates: Pair<Double, Double>) = addNode(
@@ -59,6 +54,11 @@ fun Int.subnetworks(): Subnetworks = Subnetworks(this)
  */
 @JvmInline
 value class Subnetworks(val count: Int)
+
+/**
+ * The origin of the coordinate system.
+ */
+val ORIGIN = 0.0 to 0.0
 
 /**
  * Represents a network composed of one node.

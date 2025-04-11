@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Network
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.util.Environments.allShortestHopPaths
 import org.danilopianini.symmetricmatrix.MutableDoubleSymmetricMatrix
+import org.danilopianini.symmetricmatrix.SymmetricMatrix
 import kotlin.Double.Companion.NaN
 import kotlin.Double.Companion.POSITIVE_INFINITY
 import kotlin.math.max
@@ -63,43 +64,45 @@ object Environments {
     fun <T> Environment<T, *>.allSubNetworksByNode(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
     ): Map<Node<T>, Network<T>> {
-        val subnetworks = mutableMapOf<Node<T>, Network<T>>()
-
-        fun subnetOf(distance: Double, node: Node<T>): Network<T> = subnetworks[node]
-            .let { subnet ->
-                val result = SubNetwork(distance, node)
-                if (subnet == null) result else result + subnet
-            }
+        val subnetworks = arrayOfNulls<MutableNetwork<T>>(nodeCount)
+        val result = mutableMapOf<Node<T>, Network<T>>()
         val paths = allShortestPaths(computeDistance)
-        for (i in 0 until nodes.size) {
-            val reference = nodes[i]
-            for (j in i until nodes.size) {
-                val target = nodes[j]
-                val distance = paths[UndirectedEdge(reference, target)]
-                if (distance != null && distance.isFinite()) {
-                    val merger = subnetOf(distance, reference) + subnetOf(distance, target)
-                    subnetworks[target] = merger
+        // Update all the subnetworks with the last evaluated; that is the most complete
+        nodes.forEachIndexed { centerIndex, centerNode ->
+            when (val subnetwork = subnetworks[centerIndex]) {
+                null -> {
+                    val newSubnetwork = MutableNetwork(0.0, mutableListOf(centerNode))
+                    result.put(centerNode, newSubnetwork)
+                    val centerRow = paths.row(centerIndex)
+                    for (potentialNeighborIndex in centerIndex + 1 until nodeCount) {
+                        val distanceToNeighbor = centerRow[potentialNeighborIndex]
+                        if (distanceToNeighbor.isFinite()) {
+                            newSubnetwork.diameter = max(newSubnetwork.diameter, distanceToNeighbor)
+                            newSubnetwork.neighbors += nodes[potentialNeighborIndex]
+                            subnetworks[potentialNeighborIndex] = newSubnetwork
+                        }
+                    }
+                }
+                else -> {
+                    // The subnetwork is already computed
+                    subnetwork.diameter = max(
+                        subnetwork.diameter,
+                        paths.row(centerIndex).asSequence()
+                            .drop(centerIndex + 1)
+                            .filter { it.isFinite() }
+                            .maxOrNull()
+                            ?: 0.0,
+                    )
                 }
             }
         }
-        // Update all the subnetworks with the last evaluated; that is the most complete
-        val toVisit = nodes.toMutableSet()
-        while (toVisit.isNotEmpty()) {
-            val current = toVisit.last().also { toVisit -= it }
-            val subnet = subnetworks.getValue(current)
-            // For each node in the current subnet, update the subnetworks related to each node
-            subnet.nodes.forEach { node ->
-                toVisit -= node
-                subnetworks[node] = subnet
-            }
-        }
-        return subnetworks
+        return result
     }
 
     /**
      * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes.
-     * Returns a [Set] containing the [SubNetwork]s.
+     * Returns a [Map] containing the [SubNetwork] related to each [Node] of the environment.
      */
     fun <T> Environment<T, *>.allSubNetworks(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
@@ -111,38 +114,22 @@ object Environments {
     fun <T> Environment<T, *>.allShortestHopPaths() = allShortestPaths(hopDistance())
 
     /**
-     * Represents an undirected edge between the [source] and the [target] nodes.
-     * The order of the nodes does not matter.
-     */
-    data class UndirectedEdge<T>(val source: Node<T>, val target: Node<T>) {
-        override fun equals(other: Any?): Boolean = this === other ||
-            other is UndirectedEdge<*> &&
-            (source == other.source && target == other.target || source == other.target && target == other.source)
-
-        override fun hashCode(): Int = source.hashCode() + target.hashCode()
-    }
-
-    /**
      * Computes all the minimum distances with the provided metric using the Floyd–Warshall algorithm.
      */
-    fun <T> Environment<T, *>.allShortestPaths(
+    private fun <T> Environment<T, *>.allShortestPaths(
         computeDistance: (Node<T>, Node<T>) -> Double =
             neighborDistanceMetric { n1, n2 ->
                 getDistanceBetweenNodes(n1, n2)
             },
-    ): Map<UndirectedEdge<T>, Double> {
+    ): SymmetricMatrix<Double> {
         val nodes = nodes.toList()
         /*
          * The distance matrix is a triangular matrix stored in a flat array.
          */
         val distances = MutableDoubleSymmetricMatrix(nodeCount)
-        val result = LinkedHashMap<UndirectedEdge<T>, Double>(nodes.size * (nodes.size + 1) / 2, 1.0f)
         for (i in 0 until nodeCount) {
             for (j in i until nodeCount) {
                 distances[i, j] = computeDistance(nodes[i], nodes[j])
-                if (distances[i, j].isFinite()) {
-                    result.put(UndirectedEdge(nodes[i], nodes[j]), distances[i, j])
-                }
             }
         }
         for (intermediate in 0 until nodeCount) {
@@ -151,12 +138,11 @@ object Environments {
                     val throughIntermediate = distances[i, intermediate] + distances[intermediate, j]
                     if (distances[i, j] > throughIntermediate) {
                         distances[i, j] = throughIntermediate
-                        result.put(UndirectedEdge(nodes[i], nodes[j]), throughIntermediate)
                     }
                 }
             }
         }
-        return result
+        return distances
     }
 
     /**
@@ -164,12 +150,7 @@ object Environments {
      */
     fun <T> Environment<T, *>.isNetworkSegmented(): Boolean {
         val explored = mutableSetOf<Node<T>>()
-        val toExplore: MutableSet<Node<T>> =
-            nodes
-                .firstOrNull()
-                ?.let { setOf(it) }
-                .orEmpty()
-                .toMutableSet()
+        val toExplore: MutableSet<Node<T>> = nodes.firstOrNull()?.let { setOf(it) }.orEmpty().toMutableSet()
         while (toExplore.isNotEmpty()) {
             val current = toExplore.first()
             explored += current
@@ -199,17 +180,8 @@ object Environments {
      */
     fun Environment<*, *>.networkDiameter(): Double = allSubNetworks().singleOrNull()?.diameter ?: NaN
 
-    private data class SubNetwork<T>(override val diameter: Double, override val nodes: Set<Node<T>>) : Network<T> {
-        init {
-            require(nodes.isNotEmpty())
-            require(diameter.isFinite() && diameter >= 0.0)
-        }
-
-        constructor(diameter: Double, vararg nodes: Node<T>) : this(diameter, nodes.toSet())
-
-        constructor(node: Node<T>) : this(0.0, setOf(node))
-
-        override fun plus(otherNetwork: Network<T>): Network<T> =
-            SubNetwork(max(diameter, otherNetwork.diameter), nodes + otherNetwork.nodes)
+    private data class MutableNetwork<T>(override var diameter: Double, val neighbors: MutableList<Node<T>>) :
+        Network<T> {
+        override val nodes: Set<Node<T>> by lazy { neighbors.toSet() }
     }
 }

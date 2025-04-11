@@ -10,9 +10,12 @@
 package it.unibo.alchemist.util
 
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Network
 import it.unibo.alchemist.util.Environments.allSubNetworksByNode
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
+import java.math.RoundingMode
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
@@ -25,19 +28,20 @@ object TestEnvironmentsDiameter {
         // round to the first two decimals
         assertEquals<Double>(
             expected,
-            String.format("%.2f", allSubNetworksByNode().values.single().diameter).toDouble(),
+            allSubNetworksByNode().values.single().diameter.roundToTwoDecimals(),
         )
     }
     
-    private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveDiameter(index: Int, expected: Double) =
-        {
-            require(index < nodes.size)
-            // round to the first two decimals
-            assertEquals<Double>(
-                expected,
-                String.format("%.2f", allSubNetworksByNode()[nodes[index]]?.diameter!!).toDouble(),
-            )
-        }
+    private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveDiameter(index: Int, expected: Double) {
+        require(index < nodes.size)
+        assertEquals<Double>(
+            expected,
+            allSubNetworksByNode()[nodes[index]]!!.diameter.roundToTwoDecimals(),
+        )
+    }
+
+    private fun Double.roundToTwoDecimals(): Double =
+        BigDecimal(this).setScale(2, RoundingMode.HALF_UP).toDouble()
 
     @Test
     fun `environments with a single node have diameter 0`() =
@@ -65,48 +69,52 @@ object TestEnvironmentsDiameter {
 
     @Test
     fun `a network of three nodes with one isolated should be considered segmented`() {
-        val environment = twoConnectedNodesAndOneIsolated
-        environment.mustBeSegmented()
-        environment mustHave 2.subnetworks()
-        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(0, 3.0)
-        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(2, 0.0)
+        with(twoConnectedNodesAndOneIsolated) {
+            mustBeSegmented()
+            mustHave(2.subnetworks())
+            specificNodeInASegmentedNetworkShouldHaveDiameter(0, 3.0)
+            specificNodeInASegmentedNetworkShouldHaveDiameter(2, 0.0)
+        }
     }
 
     @Test
     fun `a network of four nodes connected by two should be considered segmented with the same diameter`() {
-        val environment = twoSubnetworksWithTwoNodesEach
-        environment.mustBeSegmented()
-        environment mustHave 2.subnetworks()
-        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(0, 3.0)
-        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(2, 3.0)
+        with(twoSubnetworksWithTwoNodesEach) {
+            mustBeSegmented()
+            mustHave(2.subnetworks())
+            specificNodeInASegmentedNetworkShouldHaveDiameter(0, 3.0)
+            specificNodeInASegmentedNetworkShouldHaveDiameter(2, 3.0)
+        }
     }
 
     @Test
-    fun `a network of three nodes added dynamically and not in order should adapt accordingly`() {
-        val environment = singleNodeEnvironment
-        environment mustNotBeSegmentedAndHaveDiameter 0.0
-        environment addNodeAt (1.0 to 4.0)
-        environment mustNotBeSegmentedAndHaveDiameter 4.12
-        environment addNodeAt (-4.0 to -2.0)
-        environment mustNotBeSegmentedAndHaveDiameter 8.60
-    }
+    fun `a network of three nodes added dynamically and not in order should adapt accordingly`() =
+        with(singleNodeEnvironment) {
+            mustNotBeSegmentedAndHaveDiameter(expected = 0.0)
+            addNodeAt (1.0 to 4.0)
+            mustNotBeSegmentedAndHaveDiameter(expected = 4.12)
+            addNodeAt (-4.0 to -2.0)
+            mustNotBeSegmentedAndHaveDiameter(expected = 8.60)
+        }
 
     @Test
     fun `two sparse subnetworks should be considered segmented`() {
-        val environment = twoSparseSubnetworks
-        environment.mustBeSegmented()
-        environment mustHave 2.subnetworks()
-        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(0, 5.0)
-        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(1, 10.0)
+        with(twoSparseSubnetworks) {
+            mustBeSegmented()
+            mustHave(2.subnetworks())
+            specificNodeInASegmentedNetworkShouldHaveDiameter(0, 5.0)
+            specificNodeInASegmentedNetworkShouldHaveDiameter(1, 10.0)
+        }
     }
 
     @Test
     fun `three sparse subnetworks should be considered segmented`() {
-        val environment = threeSparseSubnetworks
-        environment.mustBeSegmented()
-        environment mustHave 3.subnetworks()
-        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(0, 5.0)
-        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(1, 10.0)
-        environment.specificNodeInASegmentedNetworkShouldHaveDiameter(environment.nodeCount - 1, 0.0)
+        with(threeSparseSubnetworks) {
+            mustBeSegmented()
+            mustHave(3.subnetworks())
+            specificNodeInASegmentedNetworkShouldHaveDiameter(0, 5.0)
+            specificNodeInASegmentedNetworkShouldHaveDiameter(1, 10.0)
+            specificNodeInASegmentedNetworkShouldHaveDiameter(nodeCount - 1, 0.0)
+        }
     }
 }

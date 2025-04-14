@@ -11,7 +11,7 @@ import it.unibo.alchemist.util.Environments.networkDiameterByHopDistance
  */
 class NetworkHopDiameter : Extractor<Double> {
     private companion object {
-        private const val NAME: String = "network-diameter"
+        private const val NAME: String = "network-hop-diameter"
     }
 
     override val columnNames: List<String> = listOf(NAME)

@@ -9,26 +9,26 @@
   "com.apollographql.apollo3/apollo-runtime/4.0.0-beta.7": {
     "first": "https://javadoc.io/doc/com.apollographql.apollo3/apollo-runtime/4.0.0-beta.7"
   },
-  "com.expediagroup/graphql-kotlin-client-generator/8.4.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client-generator/8.4.0"
+  "com.expediagroup/graphql-kotlin-client-generator/8.5.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client-generator/8.5.0"
   },
-  "com.expediagroup/graphql-kotlin-client/8.4.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client/8.4.0"
+  "com.expediagroup/graphql-kotlin-client/8.5.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client/8.5.0"
   },
-  "com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.4.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.4.0"
+  "com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.5.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.5.0"
   },
-  "com.expediagroup/graphql-kotlin-hooks-provider/8.4.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/8.4.0"
+  "com.expediagroup/graphql-kotlin-hooks-provider/8.5.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/8.5.0"
   },
-  "com.expediagroup/graphql-kotlin-ktor-server/8.4.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-ktor-server/8.4.0"
+  "com.expediagroup/graphql-kotlin-ktor-server/8.5.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-ktor-server/8.5.0"
   },
-  "com.expediagroup/graphql-kotlin-sdl-generator/8.4.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-sdl-generator/8.4.0"
+  "com.expediagroup/graphql-kotlin-sdl-generator/8.5.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-sdl-generator/8.5.0"
   },
-  "com.expediagroup/graphql-kotlin-server/8.4.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/8.4.0"
+  "com.expediagroup/graphql-kotlin-server/8.5.0": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/8.5.0"
   },
   "com.github.ben-manes.caffeine/caffeine/3.2.0": {
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.2.0",
@@ -50,9 +50,9 @@
     "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2",
     "second": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2/package-list"
   },
-  "com.google.code.gson/gson/2.12.1": {
-    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.12.1",
-    "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.12.1/element-list"
+  "com.google.code.gson/gson/2.13.0": {
+    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.0",
+    "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.0/element-list"
   },
   "com.google.guava/guava/33.4.7-jre": {
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.4.7-jre",
@@ -87,9 +87,9 @@
     "first": "https://javadoc.io/doc/commons-codec/commons-codec/1.18.0",
     "second": "https://javadoc.io/doc/commons-codec/commons-codec/1.18.0/element-list"
   },
-  "commons-io/commons-io/2.18.0": {
-    "first": "https://javadoc.io/doc/commons-io/commons-io/2.18.0",
-    "second": "https://javadoc.io/doc/commons-io/commons-io/2.18.0/element-list"
+  "commons-io/commons-io/2.19.0": {
+    "first": "https://javadoc.io/doc/commons-io/commons-io/2.19.0",
+    "second": "https://javadoc.io/doc/commons-io/commons-io/2.19.0/element-list"
   },
   "de.flapdoodle.embed/de.flapdoodle.embed.mongo/4.20.0": {
     "first": "https://javadoc.io/doc/de.flapdoodle.embed/de.flapdoodle.embed.mongo/4.20.0",
@@ -214,9 +214,8 @@
   "org.danilopianini/conrec/0.1.0": {
     "first": "https://javadoc.io/doc/org.danilopianini/conrec/0.1.0"
   },
-  "org.danilopianini/gson-extras/3.1.0": {
-    "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.1.0",
-    "second": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.1.0/package-list"
+  "org.danilopianini/gson-extras/3.2.0": {
+    "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.2.0"
   },
   "org.danilopianini/java-quadtree/1.0.1": {
     "first": "https://javadoc.io/doc/org.danilopianini/java-quadtree/1.0.1"
@@ -281,11 +280,11 @@
   "org.jetbrains.dokka/templating-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.4.8-19.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.4.8-19.1.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.4.10-19.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.4.10-19.1.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.4.8-19.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.4.8-19.1.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.4.10-19.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.4.10-19.1.0"
   },
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"
@@ -346,12 +345,11 @@
     "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15",
     "second": "https://javadoc.io/doc/org.jooq/jool/0.9.15/element-list"
   },
-  "org.junit.jupiter/junit-jupiter-api/5.12.1": {
-    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/5.12.1",
-    "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/5.12.1/package-list"
+  "org.junit.jupiter/junit-jupiter-api/5.12.2": {
+    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/5.12.2"
   },
-  "org.junit.jupiter/junit-jupiter-engine/5.12.1": {
-    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.12.1"
+  "org.junit.jupiter/junit-jupiter-engine/5.12.2": {
+    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.12.2"
   },
   "org.mapsforge/mapsforge-map-awt/0.25.0": {
     "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.25.0"

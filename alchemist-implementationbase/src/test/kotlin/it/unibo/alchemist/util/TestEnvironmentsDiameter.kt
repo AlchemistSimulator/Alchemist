@@ -45,7 +45,7 @@ object TestEnvironmentsDiameter {
 
     @Test
     fun `environments with a single node have diameter 0`() =
-        singleNodeEnvironment mustNotBeSegmentedAndHaveDiameter 0.0
+        singleNodeEnvironment() mustNotBeSegmentedAndHaveDiameter 0.0
 
     @Test
     fun `two connected nodes should have diameter 3`() = twoConnectedNodes mustNotBeSegmentedAndHaveDiameter 3.0
@@ -85,7 +85,7 @@ object TestEnvironmentsDiameter {
 
     @Test
     fun `a network of three nodes added dynamically and not in order should adapt accordingly`() =
-        with(singleNodeEnvironment) {
+        with(singleNodeEnvironment()) {
             mustNotBeSegmentedAndHaveDiameter(expected = 0.0)
             addNodeAt(1.0 to 4.0)
             mustNotBeSegmentedAndHaveDiameter(expected = 4.12)

@@ -36,7 +36,7 @@ object TestEnvironmentsDiameterWithHopDistance {
 
     @Test
     fun `environment with a single node have diameter 0`() =
-        singleNodeEnvironment mustNotBeSegmentedAndHaveHopDiameter 0.0
+        singleNodeEnvironment() mustNotBeSegmentedAndHaveHopDiameter 0.0
 
     @Test
     fun `two connected nodes should have hop diameter 1`() = twoConnectedNodes mustNotBeSegmentedAndHaveHopDiameter 1.0
@@ -77,7 +77,7 @@ object TestEnvironmentsDiameterWithHopDistance {
 
     @Test
     fun `a network of three nodes added dynamically and not in order should adapt accordingly`() {
-        with(singleNodeEnvironment) {
+        with(singleNodeEnvironment()) {
             mustNotBeSegmentedAndHaveHopDiameter(expected = 0.0)
             addNodeAt(1.0 to 4.0)
             mustNotBeSegmentedAndHaveHopDiameter(expected = 1.0)

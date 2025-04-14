@@ -63,7 +63,7 @@ val ORIGIN = 0.0 to 0.0
 /**
  * Represents a network composed of one node.
  */
-val singleNodeEnvironment = environmentWithNodesAt(ORIGIN)
+fun singleNodeEnvironment() = environmentWithNodesAt(ORIGIN)
 
 /**
  * Represents a network composed of two connected nodes.

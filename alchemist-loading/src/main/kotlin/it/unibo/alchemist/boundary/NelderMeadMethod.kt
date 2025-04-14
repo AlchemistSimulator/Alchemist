@@ -1,9 +1,41 @@
-package it.unibo.common
+package it.unibo.alchemist.boundary
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
+
+/**
+ * A vertex of the simplex in the Nelder-Mead method.
+ */
+@JvmInline
+value class Vertex(private val vertex: Map<String, Double>) {
+    /**
+     * Returns amount of dimensions of the vertex.
+     */
+    val size: Int
+        get() = vertex.size
+
+    /**
+     * Returns the values of the vertex as a list.
+     */
+    fun valuesToList(): List<Double> = vertex.values.toList()
+
+    /**
+     * Returns the keys of the vertex as a set.
+     */
+    fun keys(): Set<String> = vertex.keys
+
+    /**
+     * Returns the value of the vertex at the given index.
+     */
+    operator fun get(index: Int) = valuesToList()[index]
+
+    /**
+     * Returns the key of the vertex at the given index.
+     */
+    fun keyAt(index: Int) = vertex.keys.elementAt(index)
+}
 
 /**
  * Nelder-Mead optimization method.
@@ -17,20 +49,6 @@ import java.util.concurrent.Future
  * - [maxIterations]: Maximum number of iterations;
  * - [tolerance]: Termination condition (small variation in function values).
  */
-@JvmInline
-value class Vertex(private val vertex: Map<String, Double>) {
-    val size: Int
-        get() = vertex.size
-
-    fun valuesToList(): List<Double> = vertex.values.toList()
-
-    fun keys(): Set<String> = vertex.keys
-
-    operator fun get(index: Int) = valuesToList()[index]
-
-    fun keyAt(index: Int) = vertex.keys.elementAt(index)
-}
-
 class NelderMeadMethod(
     val simplex: List<Vertex>,
     private val maxIterations: Int,
@@ -86,8 +104,8 @@ class NelderMeadMethod(
                 "Invalid objective function return value for reflection with $reflected = $reflectedValue.\n" +
                     "Check the objective function implementation, the result should be a finite number."
             }
-            if (!reflectedValue.get().isFinite()) {
-                throw IllegalStateException("Invalid objective function return value for reflection")
+            check (!reflectedValue.get().isFinite()) {
+                error("Invalid objective function return value for reflection")
             }
             val newSimplex = when {
                 reflectedValue < bestValue -> { // expansion
@@ -143,9 +161,23 @@ class NelderMeadMethod(
         }
     }
 
+    /**
+     * This companion object contains the comparison operators for [Future] of [Double] objects and [Double]s.
+     */
     companion object {
+        /**
+         * Compares two [Future] of [Double] objects.
+         */
         operator fun Future<Double>.compareTo(other: Future<Double>): Int = get().compareTo(other.get())
+
+        /**
+         * Compares a [Future] of [Double] object with a [Double].
+         */
         operator fun Future<Double>.compareTo(other: Double): Int = get().compareTo(other)
+
+        /**
+         * Compares a [Double] with a [Future] of [Double] object.
+         */
         operator fun Double.compareTo(other: Future<Double>): Int = compareTo(other.get())
     }
 }

@@ -4,8 +4,8 @@ import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.model.Environment
-import it.unibo.common.NelderMeadMethod
-import it.unibo.common.Vertex
+import it.unibo.alchemist.boundary.NelderMeadMethod
+import it.unibo.alchemist.boundary.Vertex
 import org.danilopianini.rrmxmx.RrmxmxRandom
 import org.danilopianini.rrmxmx.RrmxmxRandom.Companion.DEFAULT_SEED
 import java.io.File
@@ -21,6 +21,15 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.Int.Companion.MAX_VALUE
 
+/**
+ * Alchemist launcher for the Nelder-Mead method optimization.
+ * This launcher optimize the [variables] of the simulation by a given [objectiveFunction].
+ * The optimization is done by the Nelder-Mead method, which is a derivative-free optimization algorithm.
+ * The optimization is done in parallel.
+ * The optimization is done for a given number of [repetitions] of the [seedName] and [maxIterations].
+ * The optimization is done with a given [tolerance], under which the optimization stops,
+ * and also the [alpha], [gamma], [rho] and [sigma] parameters of the Nelder-Mead method.
+ */
 class NelderMeadLauncher
 @JvmOverloads
 constructor(

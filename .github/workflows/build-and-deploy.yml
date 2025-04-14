@@ -503,8 +503,6 @@ jobs:
       packageID: "Unibo.Alchemist"
     if: fromJSON(needs.release.outputs.winget-deploy)
     steps:
-      - name: Install winget
-        uses: Cyberboss/install-winget@v1
       - name: Install wingetcreate
         shell: pwsh
         run: Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe

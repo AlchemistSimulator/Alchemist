@@ -2,14 +2,16 @@ package it.unibo.alchemist.boundary.launchers
 
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.Loader
-import it.unibo.alchemist.boundary.Variable
-import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.boundary.NelderMeadMethod
+import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.boundary.Vertex
+import it.unibo.alchemist.model.Environment
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 import org.danilopianini.rrmxmx.RrmxmxRandom
 import org.danilopianini.rrmxmx.RrmxmxRandom.Companion.DEFAULT_SEED
 import java.io.File
-import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.util.concurrent.Callable
 import java.util.concurrent.ConcurrentLinkedDeque
@@ -28,11 +30,13 @@ import kotlin.Int.Companion.MAX_VALUE
  * The optimization is done in parallel for a given number of [repetitions] of the [seedName] and [maxIterations].
  * It will stop when the [tolerance] is reached.
  * The [alpha], [gamma], [rho] and [sigma] parameters are the standard values for the Nelder-Mead method.
- * The result of the optimization is written into `data/NelderMeadMethod` folder as a CSV file.
+ * The result of the optimization is written into `[outputPath]` folder in [outputFileName] as a JSON file.
  */
 class NelderMeadLauncher
 @JvmOverloads
 constructor(
+    private val outputPath: String = "data",
+    private val outputFileName: String = "nelderMead",
     private val objectiveFunction: Environment<*, *>.() -> Double,
     private val variables: List<String> = emptyList(),
     private val seedName: String,
@@ -45,6 +49,7 @@ constructor(
     private val rho: Double = 0.5, // standard value for the contraction in Nelder-Mead method
     private val sigma: Double = 0.5, // standard value for the shrink in Nelder-Mead method
 ) : Launcher {
+    @OptIn(ExperimentalSerializationApi::class)
     @Synchronized
     override fun launch(loader: Loader) {
         require(loader.variables.isNotEmpty() || variables.isNotEmpty()) {
@@ -90,27 +95,21 @@ constructor(
                     futureValues.map { it.get() }.average()
                 },
             )
-        }.also {
-            // write the result into a csv with as name the variables and the date of execution
-            val outputPath =
-                Paths.get("").toAbsolutePath().toString() + "${File.separator}data${File.separator}NelderMeadMethod"
+        }.also { result ->
             // if not exists create the directory
             File(outputPath).mkdirs()
-            val outputFile =
-                File(
-                    "$outputPath${File.separator}${variables.joinToString(
-                        "_",
-                    )}_maxIter${maxIterations}_${seedName}s${seeds.max()}_${LocalDateTime.now().toString().replace(
-                        ":",
-                        "-",
-                    )}.csv",
-                )
-            val outputContent = buildString {
-                append(variables.joinToString(" "))
-                append("\n")
-                append(it.entries.joinToString(" ") { it.value.toString() })
-                append("\n")
-            }
+            val outputFile = File(
+                "$outputPath${File.separator}${outputFileName}" +
+                    "_${LocalDateTime.now().toString().replace(":", "-")}.json",
+            )
+            val outputContent = buildJsonObject {
+                put(seedName, JsonPrimitive(repetitions))
+                put("variables", buildJsonObject {
+                    variables.forEach { variable ->
+                        put(variable, JsonPrimitive(result[variable]))
+                    }
+                })
+            }.toString()
             outputFile.writeText(outputContent)
         }
         executor.shutdown()

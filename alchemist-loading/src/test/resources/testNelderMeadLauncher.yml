@@ -1,0 +1,45 @@
+variables:
+  goal: &goal
+    formula: |
+      it.unibo.alchemist.test.Goal()
+    language: kotlin
+  width: &width
+    type: LinearVariable
+    parameters: [ 1, 1, 20, 1 ]
+  height: &height
+    type: LinearVariable
+    parameters: [ 1, 1, 20, 1 ]
+  seed: &seed
+    min: 0
+    max: 0
+    step: 1
+    default: 0
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [ 5 ]
+
+seeds:
+  scenario: *seed
+  simulation: *seed
+
+incarnation: protelis
+
+deployments:
+  - type: Grid
+    parameters: [0, 0, *width, *height, 1, 1]
+
+terminate:
+  type: AfterTime
+  parameters: [5]
+
+launcher:
+  type: NelderMeadLauncher
+  parameters: {
+    outputPath: "src/test/resources/testNelderMeadResults",
+    outputFileName: "testNelderMeadLauncher",
+    objectiveFunction: *goal,
+    variables: [ "width", "height" ],
+    seedName: "seed",
+    repetitions: 1,
+  }

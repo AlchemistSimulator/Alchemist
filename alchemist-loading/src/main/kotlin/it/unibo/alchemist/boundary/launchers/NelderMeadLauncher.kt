@@ -25,10 +25,10 @@ import kotlin.Int.Companion.MAX_VALUE
  * Alchemist launcher for the Nelder-Mead method optimization.
  * This launcher optimize the [variables] of the simulation by a given [objectiveFunction].
  * The optimization is done by the Nelder-Mead method, which is a derivative-free optimization algorithm.
- * The optimization is done in parallel.
- * The optimization is done for a given number of [repetitions] of the [seedName] and [maxIterations].
- * The optimization is done with a given [tolerance], under which the optimization stops,
- * and also the [alpha], [gamma], [rho] and [sigma] parameters of the Nelder-Mead method.
+ * The optimization is done in parallel for a given number of [repetitions] of the [seedName] and [maxIterations].
+ * It will stop when the [tolerance] is reached.
+ * The [alpha], [gamma], [rho] and [sigma] parameters are the standard values for the Nelder-Mead method.
+ * The result of the optimization is written into `data/NelderMeadMethod` folder as a CSV file.
  */
 class NelderMeadLauncher
 @JvmOverloads

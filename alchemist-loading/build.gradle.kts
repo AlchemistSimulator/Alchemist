@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.kasechange)
     implementation(libs.kotlin.reflect)
     implementation(libs.kotlin.coroutines.core)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.rrmxmx)
     implementation(libs.mongodb)
     implementation(libs.snakeyaml)
@@ -52,6 +53,7 @@ dependencies {
     testImplementation(libs.appdirs)
     testImplementation(libs.caffeine)
     testImplementation(libs.embedmongo)
+    testImplementation(libs.kotlin.test)
 
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("protelis"))

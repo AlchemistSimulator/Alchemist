@@ -36,7 +36,7 @@ class EnvironmentSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<
             assertEquals(envWrapper.nodes.size, envSurrogate.nodes().size)
             envWrapper.nodes.forEach { node ->
                 val nodeSurrogate = envSurrogate.nodeById(node.id)
-                checkNodeSurrogate<T, P>(node, nodeSurrogate)
+                checkNodeSurrogate(node, nodeSurrogate)
                 checkPositionSurrogate(envWrapper.getPosition(node), envSurrogate.nodeToPos()[node.id]!!)
                 checkNeighborhood(envWrapper.getNeighborhood(node), envSurrogate.getNeighborhood(node.id))
             }

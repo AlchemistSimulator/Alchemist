@@ -25,9 +25,7 @@ class SystemEnvVariable @JvmOverloads constructor(
 
     override fun getWith(variables: MutableMap<String, Any>?): Serializable = when (val value = System.getenv(name)) {
         null -> defaultValue ?: error("Environment variable '$name' is not set and no default value is provided.")
-        else -> {
-            converters.mapNotNull { it(value) }.firstOrNull() ?: value
-        }
+        else -> converters.mapNotNull { it(value) }.firstOrNull() ?: value
     }
 
     private companion object {

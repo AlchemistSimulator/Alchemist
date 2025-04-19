@@ -9,40 +9,42 @@
 
 package it.unibo.alchemist.boundary.graphql.schema.model
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLConcentrationSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.util.encodeConcentrationContentToString
 import it.unibo.alchemist.model.Concentration
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
+import java.util.concurrent.TimeUnit
+import kotlin.test.assertEquals
 
-class ConcentrationSurrogateTest :
-    StringSpec({
-        "ConcentrationSurrogate should map a Concentration to a GraphQL compliant object" {
-            // Basic concentration content test
-            val c1: Concentration<Double> = Concentration { 1.0 }
-            checkConcentrationContent(c1.content, c1.toGraphQLConcentrationSurrogate().content)
-            // Test with a serializable content
-            val c2: Concentration<TestSerializableContent> = Concentration { TestSerializableContent(1, "a") }
-            checkConcentrationContent(c2.content, c2.toGraphQLConcentrationSurrogate().content)
-            // Test with a non-serializable content
-            val c3: Concentration<TestNonSerializableContent> = Concentration { TestNonSerializableContent(1, "a") }
-            checkConcentrationContent(c3.content, c3.toGraphQLConcentrationSurrogate().content)
-        }
-    }) {
+class ConcentrationSurrogateTest {
+
+    @Test
+    @Timeout(value = 10, unit = TimeUnit.SECONDS)
+    fun `ConcentrationSurrogate should map a Concentration to a GraphQL compliant object`() {
+        // Basic concentration content test
+        val c1: Concentration<Double> = Concentration { 1.0 }
+        checkConcentrationContent(c1.content, c1.toGraphQLConcentrationSurrogate().content)
+        // Test with a serializable content
+        val c2: Concentration<TestSerializableContent> = Concentration { TestSerializableContent(1, "a") }
+        checkConcentrationContent(c2.content, c2.toGraphQLConcentrationSurrogate().content)
+        // Test with a non-serializable content
+        val c3: Concentration<TestNonSerializableContent> = Concentration { TestNonSerializableContent(1, "a") }
+        checkConcentrationContent(c3.content, c3.toGraphQLConcentrationSurrogate().content)
+    }
+
+    @Serializable
+    private data class TestSerializableContent(val a: Int, val b: String)
+
+    private data class TestNonSerializableContent(val a: Int, val b: String)
+
     companion object {
-        @Serializable
-        private data class TestSerializableContent(
-            val a: Int,
-            val b: String,
-        )
 
-        private data class TestNonSerializableContent(
-            val a: Int,
-            val b: String,
-        )
+        private fun <T : Any> canSerialize(content: T): Boolean =
+            runCatching { Json.Default.encodeToString(serializer(content::class.java), content) }.isSuccess
 
         fun <T : Any> checkConcentrationContent(c: T, cs: String) {
             if (canSerialize(c)) {
@@ -52,18 +54,15 @@ class ConcentrationSurrogateTest :
             }
         }
 
-        fun <T : Any> checkGenericContent(c: T, cs: String) {
-            encodeConcentrationContentToString(c) shouldBe cs
+        private fun <T : Any> checkGenericContent(c: T, cs: String) {
+            assertEquals(encodeConcentrationContentToString(c), cs, "Expected generic content encoding to match")
         }
 
-        fun <T : Any> checkJsonContent(c: T, cs: String) {
+        private fun <T : Any> checkJsonContent(c: T, cs: String) {
             val jsonContent = Json.Default.encodeToString(serializer(c::class.java), c)
-            jsonContent shouldBe cs
+            assertEquals(jsonContent, cs, "Expected JSON content encoding to match")
             val content = Json.Default.decodeFromString(serializer(c::class.java), cs)
-            content shouldBe c
+            assertEquals(content, c, "Expected decoded content to match original")
         }
-
-        private fun <T : Any> canSerialize(content: T): Boolean =
-            runCatching { Json.Default.encodeToString(serializer(content::class.java), content) }.isSuccess
     }
 }

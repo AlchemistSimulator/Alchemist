@@ -60,6 +60,11 @@ tasks.withType<Test> {
     maxHeapSize = "1500m"
 }
 
+tasks.withType<Test>().configureEach {
+    // for changing the default JVM args
+    jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
+}
+
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions {
         freeCompilerArgs.addAll(

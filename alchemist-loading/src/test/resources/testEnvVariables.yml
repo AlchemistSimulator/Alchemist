@@ -1,0 +1,9 @@
+variables:
+  envWithDefault:
+    type: SystemEnvVariable
+    parameters: [value, 0]
+
+  env:
+    type: SystemEnvVariable
+    parameters: [anyValue]
+incarnation: sapere

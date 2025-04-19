@@ -166,7 +166,7 @@ compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-m
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:5.1.1"
 graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
-hugo = "io.github.fstaudt.hugo:0.9.0"
+hugo = "io.github.fstaudt.hugo:0.10.0"
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -32,7 +32,7 @@ class EnvironmentSurrogateTest<T, P> :
                 it.nodes.size shouldBe envSurrogate.nodes().size
                 it.nodes.forEach { node ->
                     val nodeSurrogate = envSurrogate.nodeById(node.id)
-                    checkNodeSurrogate<T, P>(node, nodeSurrogate)
+                    checkNodeSurrogate(node, nodeSurrogate)
                     checkPositionSurrogate(it.getPosition(node), envSurrogate.nodeToPos()[node.id]!!)
                     checkNeighborhood(it.getNeighborhood(node), envSurrogate.getNeighborhood(node.id))
                 }

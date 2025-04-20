@@ -280,11 +280,11 @@
   "org.jetbrains.dokka/templating-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.4.14-19.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.4.14-19.1.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.4.15-19.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.4.15-19.1.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.4.14-19.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.4.14-19.1.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.4.15-19.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.4.15-19.1.0"
   },
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"
@@ -350,7 +350,8 @@
     "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/5.12.2/package-list"
   },
   "org.junit.jupiter/junit-jupiter-engine/5.12.2": {
-    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.12.2"
+    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.12.2",
+    "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.12.2/package-list"
   },
   "org.mapsforge/mapsforge-map-awt/0.25.0": {
     "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.25.0"

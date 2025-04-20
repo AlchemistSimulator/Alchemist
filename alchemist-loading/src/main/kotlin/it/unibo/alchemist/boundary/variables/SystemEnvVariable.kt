@@ -28,6 +28,9 @@ class SystemEnvVariable @JvmOverloads constructor(
         else -> converters.mapNotNull { it(value) }.firstOrNull() ?: value
     }
 
+    /**
+     * Expose the function used to load the environment variable.
+     */
     companion object {
         private val converters: Sequence<(String) -> Serializable?> = sequenceOf(
             String::toBooleanStrictOrNull,
@@ -39,6 +42,11 @@ class SystemEnvVariable @JvmOverloads constructor(
             String::toBigDecimalOrNull,
         )
 
+        /**
+         * Load the value of an environment variable.
+         * @param name the name of the environment variable
+         * @return the value of the environment variable, or null if it is not set
+         */
         fun loadFromEnv(name: String): String? = System.getenv(name)
     }
 }

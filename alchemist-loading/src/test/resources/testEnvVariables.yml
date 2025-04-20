@@ -6,4 +6,9 @@ variables:
   env:
     type: SystemEnvVariable
     parameters: [anyValue]
+
+  seed:
+    min: 0
+    max: env
+    default: 0
 incarnation: sapere

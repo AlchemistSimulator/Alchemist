@@ -10,27 +10,34 @@
 package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.extensions.system.withEnvironment
+import io.mockk.every
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
 import it.unibo.alchemist.boundary.LoadAlchemist
+import it.unibo.alchemist.boundary.variables.SystemEnvVariable
 import it.unibo.alchemist.model.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.assertThrows
 import org.kaikikm.threadresloader.ResourceLoader
+
 class TestEnvVariables<T, P : Position<P>> :
     StringSpec({
         val resourceFile = "testEnvVariables.yml"
 
         fun verifyEnvironmentVariable(environment: Map<String, String>, variableName: String, expectedValue: Any) {
-            withEnvironment(environment) {
-                val file = ResourceLoader.getResource(resourceFile)
-                assertNotNull(file)
-                val loader = LoadAlchemist.from(file)
-                assertNotNull(loader.getWith<T, P>(emptyMap<String, T>()))
-                loader.variables.let { variables ->
-                    assertEquals(expectedValue, variables[variableName]?.toList()?.first())
-                }
+            mockkObject(SystemEnvVariable.Companion)
+            environment.forEach { (key, value) ->
+                every { SystemEnvVariable.Companion.loadFromEnv(key) } returns value
             }
+            val file = ResourceLoader.getResource(resourceFile)
+            assertNotNull(file)
+            val loader = LoadAlchemist.from(file)
+            assertNotNull(loader.getWith<T, P>(emptyMap<String, T>()))
+            loader.constants[variableName]?.let { constant ->
+                assertEquals(expectedValue, constant)
+            }
+            unmockkObject(SystemEnvVariable.Companion)
         }
 
         "test alchemist should support system env variables" {
@@ -73,12 +80,12 @@ class TestEnvVariables<T, P : Position<P>> :
             )
         }
 
-        "test alchemist should launch and exception when an environment value is not set and has not default" {
+        "test alchemist should throw an exception when an environment value is not set and has not default" {
             val file = ResourceLoader.getResource(resourceFile)
             assertNotNull(file)
             assertThrows<IllegalStateException> {
                 val loader = LoadAlchemist.from(file)
-                loader.getWith<T, P>(emptyMap<String, T>())
+                loader.getDefault<T, P>()
             }
         }
     })

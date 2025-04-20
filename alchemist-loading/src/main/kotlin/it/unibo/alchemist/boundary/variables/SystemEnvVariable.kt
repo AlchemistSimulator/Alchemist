@@ -23,13 +23,13 @@ class SystemEnvVariable @JvmOverloads constructor(
     private val defaultValue: Serializable? = null,
 ) : DependentVariable<Serializable> {
 
-    override fun getWith(variables: MutableMap<String, Any>?): Serializable = when (val value = System.getenv(name)) {
+    override fun getWith(variables: MutableMap<String, Any>?): Serializable = when (val value = loadFromEnv(name)) {
         null -> defaultValue ?: error("Environment variable '$name' is not set and no default value is provided.")
         else -> converters.mapNotNull { it(value) }.firstOrNull() ?: value
     }
 
-    private companion object {
-        val converters: Sequence<(String) -> Serializable?> = sequenceOf(
+    companion object {
+        private val converters: Sequence<(String) -> Serializable?> = sequenceOf(
             String::toBooleanStrictOrNull,
             String::toIntOrNull,
             String::toDoubleOrNull,
@@ -38,5 +38,7 @@ class SystemEnvVariable @JvmOverloads constructor(
             String::toBigIntegerOrNull,
             String::toBigDecimalOrNull,
         )
+
+        fun loadFromEnv(name: String): String? = System.getenv(name)
     }
 }

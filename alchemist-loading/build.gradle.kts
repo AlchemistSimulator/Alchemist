@@ -50,8 +50,6 @@ dependencies {
     testImplementation(libs.appdirs)
     testImplementation(libs.caffeine)
     testImplementation(libs.embedmongo)
-    testImplementation(libs.kotest.extension)
-
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("protelis"))
 }

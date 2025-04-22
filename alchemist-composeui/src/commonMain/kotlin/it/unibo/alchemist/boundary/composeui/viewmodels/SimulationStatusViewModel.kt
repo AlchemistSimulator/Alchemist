@@ -12,9 +12,10 @@ package it.unibo.alchemist.boundary.composeui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import it.unibo.alchemist.boundary.graphql.client.GraphQLClientFactory
-import it.unibo.alchemist.boundary.graphql.client.NodesSubscription
 import it.unibo.alchemist.boundary.graphql.client.PauseSimulationMutation
 import it.unibo.alchemist.boundary.graphql.client.PlaySimulationMutation
+import it.unibo.alchemist.boundary.graphql.client.SimulationStatusQuery
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -46,17 +47,21 @@ class SimulationStatusViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            client.subscription(NodesSubscription())
-                .toFlow()
-                .collect { res ->
-                    _uiState.update {
-                        val data = res.dataOrThrow()
-                        SimulationState(
-                            status = data.simulation.status,
-                            time = data.simulation.time,
-                        )
+            while (true) {
+                client.query(SimulationStatusQuery())
+                    .toFlow()
+                    .collect { response ->
+                        response.data?.let { data ->
+                            _uiState.update {
+                                SimulationState(
+                                    status = data.simulation.status,
+                                    time = data.simulation.time,
+                                )
+                            }
+                        }
                     }
-                }
+                delay(50)
+            }
         }
     }
 }

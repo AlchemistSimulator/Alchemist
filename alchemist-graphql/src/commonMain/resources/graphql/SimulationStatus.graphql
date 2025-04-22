@@ -1,5 +1,6 @@
 query SimulationStatus {
     simulation {
+        time
         status
     }
 }

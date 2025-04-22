@@ -18,7 +18,7 @@ constructor(
     private val timeIntervalToCheck: Time = ZERO,
     private val equalTimes: Long,
     private val metricsToCheck: (Environment<T, Position<*>>) -> Map<String, T>,
-): TerminationPredicate<T, Position<*>> {
+) : TerminationPredicate<T, Position<*>> {
     private var timeStabilitySuccess: Time = ZERO
     private var lastChecked: Time = ZERO
     private var equalSuccess: Long = 0
@@ -35,28 +35,29 @@ constructor(
         val checkedInterval = simulationTime - lastChecked
         return when {
             checkedInterval >= timeIntervalToCheck -> {
-                val metrics: Map<String, T> = metricsToCheck(environment)
-                require(metrics.isNotEmpty()) {
-                    "There should be at least one metric to check."
+                val metrics: Map<String, T> = metricsToCheck(environment).also {
+                    require(it.isNotEmpty()) { "There should be at least one metric to check." }
                 }
                 lastChecked = simulationTime
                 when {
                     lastUpdatedMetrics == metrics -> {
                         timeStabilitySuccess += checkedInterval
-                        if(timeStabilitySuccess >= stableForTime) {
-                            timeStabilitySuccess = ZERO
-                            ++equalSuccess >= equalTimes
-                        } else false
+                        if (timeStabilitySuccess >= stableForTime) timeStabilitySuccess = ZERO
+                        ++equalSuccess >= equalTimes
                     }
                     else -> {
-                        timeStabilitySuccess = ZERO
-                        equalSuccess = 0
-                        lastUpdatedMetrics = metrics
+                        reset(metrics)
                         false
                     }
                 }
             }
             else -> false
         }
+    }
+
+    private fun reset(metrics: Map<String, T>) {
+        timeStabilitySuccess = ZERO
+        equalSuccess = 0
+        lastUpdatedMetrics = metrics
     }
 }

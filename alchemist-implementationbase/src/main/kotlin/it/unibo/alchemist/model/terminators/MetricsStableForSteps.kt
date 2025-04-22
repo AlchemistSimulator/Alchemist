@@ -32,11 +32,15 @@ class MetricsStableForSteps<T>(
                 ++equalSuccess >= equalInterval
             }
             else -> {
-                stepsChecked = 0
-                equalSuccess = 0
-                lastUpdatedMetrics = metrics
+                reset(metrics)
                 false
             }
         }
+    }
+
+    private fun reset(metrics: Map<String, T>) {
+        stepsChecked = 0
+        equalSuccess = 0
+        lastUpdatedMetrics = metrics
     }
 }

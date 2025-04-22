@@ -192,9 +192,9 @@
     "first": "https://javadoc.io/doc/org.antlr/antlr4/4.13.2",
     "second": "https://javadoc.io/doc/org.antlr/antlr4/4.13.2/element-list"
   },
-  "org.apache.commons/commons-collections4/4.4": {
-    "first": "https://javadoc.io/doc/org.apache.commons/commons-collections4/4.4",
-    "second": "https://javadoc.io/doc/org.apache.commons/commons-collections4/4.4/package-list"
+  "org.apache.commons/commons-collections4/4.5.0": {
+    "first": "https://javadoc.io/doc/org.apache.commons/commons-collections4/4.5.0",
+    "second": "https://javadoc.io/doc/org.apache.commons/commons-collections4/4.5.0/element-list"
   },
   "org.apache.commons/commons-lang3/3.17.0": {
     "first": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.17.0",

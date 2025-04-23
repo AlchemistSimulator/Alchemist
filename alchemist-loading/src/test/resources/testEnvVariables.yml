@@ -1,0 +1,14 @@
+variables:
+  envWithDefault:
+    type: SystemEnvVariable
+    parameters: [value, 0]
+
+  env:
+    type: SystemEnvVariable
+    parameters: [anyValue]
+
+  seed:
+    min: 0
+    max: env
+    default: 0
+incarnation: sapere

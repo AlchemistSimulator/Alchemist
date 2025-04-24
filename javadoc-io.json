@@ -51,7 +51,8 @@
     "second": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2/package-list"
   },
   "com.google.code.gson/gson/2.13.1": {
-    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.1"
+    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.1",
+    "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.1/element-list"
   },
   "com.google.guava/guava/33.4.8-jre": {
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.4.8-jre",
@@ -213,8 +214,8 @@
   "org.danilopianini/conrec/0.1.0": {
     "first": "https://javadoc.io/doc/org.danilopianini/conrec/0.1.0"
   },
-  "org.danilopianini/gson-extras/3.2.0": {
-    "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.2.0"
+  "org.danilopianini/gson-extras/3.3.0": {
+    "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.3.0"
   },
   "org.danilopianini/java-quadtree/1.0.1": {
     "first": "https://javadoc.io/doc/org.danilopianini/java-quadtree/1.0.1"

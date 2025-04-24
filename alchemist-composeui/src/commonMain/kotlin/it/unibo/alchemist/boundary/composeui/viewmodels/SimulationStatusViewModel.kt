@@ -21,10 +21,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class SimulationState(val status: String = "Loading", val time: Double = 0.0)
+enum class SimulationStatus {
+    Init,
+    Ready,
+    Paused,
+    Running,
+    Terminated,
+}
 
 class SimulationStatusViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(SimulationState())
+    private val _uiState = MutableStateFlow(SimulationStatus.Init)
     val uiState = _uiState.asStateFlow()
 
     // TODO: parameterize the host and port and separate client in different file
@@ -53,10 +59,15 @@ class SimulationStatusViewModel : ViewModel() {
                     .collect { response ->
                         response.data?.let { data ->
                             _uiState.update {
-                                SimulationState(
-                                    status = data.simulation.status,
-                                    time = data.simulation.time,
-                                )
+                                // True correlation can be achieved only moving
+                                // alchemist-api Status enum class to commonMain
+                                when (data.simulation.status) {
+                                    "READY" -> SimulationStatus.Ready
+                                    "PAUSED" -> SimulationStatus.Paused
+                                    "RUNNING" -> SimulationStatus.Running
+                                    "TERMINATED" -> SimulationStatus.Terminated
+                                    else -> SimulationStatus.Init
+                                }
                             }
                         }
                     }

@@ -10,11 +10,11 @@
 package it.unibo.alchemist.boundary.composeui
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,12 +27,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.apollographql.apollo3.api.Error
 import it.unibo.alchemist.boundary.composeui.viewmodels.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.viewmodels.SimulationStatusViewModel
 
@@ -41,22 +40,27 @@ import it.unibo.alchemist.boundary.composeui.viewmodels.SimulationStatusViewMode
  */
 @Composable
 fun app(viewModel: SimulationStatusViewModel = viewModel { SimulationStatusViewModel() }) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val simulationStatus by viewModel.simulationStatus.collectAsStateWithLifecycle()
+    val time by viewModel.time.collectAsStateWithLifecycle()
+    val errors by viewModel.errors.collectAsStateWithLifecycle()
     Scaffold(
-        topBar = { topBar(uiState) },
+        topBar = { topBar(simulationStatus) },
     ) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding).padding(horizontal = 8.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            controlButton(uiState, viewModel::play, viewModel::pause)
+            controlButton(simulationStatus, viewModel::play, viewModel::pause)
             OutlinedCard(
+                modifier = Modifier.fillMaxSize(),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface,
                 ),
                 border = BorderStroke(1.dp, Color.Black),
             ) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text("Time: $time")
+                    errorDialog(viewModel::monitor, errors)
                 }
             }
         }
@@ -98,12 +102,22 @@ fun controlButton(status: SimulationStatus, resume: () -> Unit, pause: () -> Uni
     }
 }
 
-/**
- * Node graphical representation.
- */
 @Composable
-fun node(drawScope: DrawScope, id: Int) {
-    val x = (drawScope.size.width / 2) + (id * 10)
-    val y = (drawScope.size.height / 2) + (id * 10)
-    drawScope.drawCircle(Color.White, radius = 10f, center = Offset(x, y))
+fun errorDialog(dismiss: () -> Unit, errors: List<Error>?) {
+    if (!errors.isNullOrEmpty()) {
+        AlertDialog(
+            onDismissRequest = dismiss,
+            title = { Text("Error") },
+            text = {
+                for (error in errors) {
+                    Text(error.message)
+                }
+            },
+            confirmButton = {
+                Button(onClick = dismiss) {
+                    Text("OK")
+                }
+            },
+        )
+    }
 }

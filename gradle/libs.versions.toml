@@ -51,7 +51,7 @@ graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstr
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
 groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.24"
 gson = "com.google.code.gson:gson:2.13.1"
-gson-extras = "org.danilopianini:gson-extras:3.2.0"
+gson-extras = "org.danilopianini:gson-extras:3.3.0"
 guava = "com.google.guava:guava:33.4.8-jre"
 javalib-java7 = "org.danilopianini:javalib-java7:0.6.1"
 java-quality-assurance-plugin = "org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin:1.109.0"

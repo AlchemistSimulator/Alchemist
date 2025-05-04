@@ -13,11 +13,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo3.api.Error
 import it.unibo.alchemist.boundary.graphql.client.GraphQLClientFactory
-import it.unibo.alchemist.boundary.graphql.client.NodesSubscription
 import it.unibo.alchemist.boundary.graphql.client.PauseSimulationMutation
 import it.unibo.alchemist.boundary.graphql.client.PlaySimulationMutation
-import it.unibo.alchemist.boundary.graphql.client.SimulationStatusQuery
-import kotlinx.coroutines.delay
+import it.unibo.alchemist.boundary.graphql.client.SimulationSubscription
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -31,18 +29,15 @@ enum class SimulationStatus {
     Terminated,
 }
 
-var i = 0
-var j = 0
+data class Node(val id: Int, val coordinates: List<Double>)
 
-class SimulationStatusViewModel : ViewModel() {
-    private val _simulationStatus = MutableStateFlow(SimulationStatus.Init)
-    val simulationStatus = _simulationStatus.asStateFlow()
-
-    private val _time = MutableStateFlow(0.0)
-    val time = _time.asStateFlow()
-    private var tempTime = 0.0
-
+class SimulationViewModel : ViewModel() {
+    private val _nodes = MutableStateFlow<List<Node>>(emptyList())
+    private val _status = MutableStateFlow(SimulationStatus.Init)
     private val _errors = MutableStateFlow<List<Error>>(emptyList())
+
+    val nodes = _nodes.asStateFlow()
+    val status = _status.asStateFlow()
     val errors = _errors.asStateFlow()
 
     // TODO: parameterize the host and port and separate client in different file
@@ -63,10 +58,10 @@ class SimulationStatusViewModel : ViewModel() {
         }
     }
 
-    fun monitor() {
+    fun fetch() {
         _errors.value = emptyList()
         viewModelScope.launch {
-            client.subscription(NodesSubscription())
+            client.subscription(SimulationSubscription())
                 .toFlow()
                 .collect { response ->
                     if (response.hasErrors()) {
@@ -74,14 +69,21 @@ class SimulationStatusViewModel : ViewModel() {
                             _errors.update { errors }
                         }
                     }
-                    i++
-                    println("data received $i")
-                    if (i > 99) {
-                        i = 0
-                        j++
-                        println("fetching data $j")
-                        response.data?.let { data ->
-                            _time.value = data.simulation.time
+                    response.data?.let { data ->
+                        _status.update {
+                            when (data.simulation.status) {
+                                "READY" -> SimulationStatus.Ready
+                                "PAUSED" -> SimulationStatus.Paused
+                                "RUNNING" -> SimulationStatus.Running
+                                "TERMINATED" -> SimulationStatus.Terminated
+                                else -> SimulationStatus.Init
+                            }
+                        }
+                        _nodes.value = data.simulation.environment.nodeToPos.entries.map {
+                            Node(
+                                id = it.id,
+                                coordinates = it.position.coordinates,
+                            )
                         }
                     }
                 }
@@ -89,28 +91,6 @@ class SimulationStatusViewModel : ViewModel() {
     }
 
     init {
-        monitor()
-        viewModelScope.launch {
-            while (true) {
-                client.query(SimulationStatusQuery())
-                    .toFlow()
-                    .collect { response ->
-                        response.data?.let { data ->
-                            _simulationStatus.update {
-                                // True correlation can be achieved only moving
-                                // alchemist-api Status enum class to commonMain
-                                when (data.simulation.status) {
-                                    "READY" -> SimulationStatus.Ready
-                                    "PAUSED" -> SimulationStatus.Paused
-                                    "RUNNING" -> SimulationStatus.Running
-                                    "TERMINATED" -> SimulationStatus.Terminated
-                                    else -> SimulationStatus.Init
-                                }
-                            }
-                        }
-                    }
-                delay(50)
-            }
-        }
+        fetch()
     }
 }

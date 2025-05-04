@@ -33,24 +33,24 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.apollographql.apollo3.api.Error
 import it.unibo.alchemist.boundary.composeui.viewmodels.SimulationStatus
-import it.unibo.alchemist.boundary.composeui.viewmodels.SimulationStatusViewModel
+import it.unibo.alchemist.boundary.composeui.viewmodels.SimulationViewModel
 
 /**
  * Application entry point, this will be rendered the same in all the platforms.
  */
 @Composable
-fun app(viewModel: SimulationStatusViewModel = viewModel { SimulationStatusViewModel() }) {
-    val simulationStatus by viewModel.simulationStatus.collectAsStateWithLifecycle()
-    val time by viewModel.time.collectAsStateWithLifecycle()
+fun app(viewModel: SimulationViewModel = viewModel { SimulationViewModel() }) {
+    val status by viewModel.status.collectAsStateWithLifecycle()
     val errors by viewModel.errors.collectAsStateWithLifecycle()
+    val nodes by viewModel.nodes.collectAsStateWithLifecycle()
     Scaffold(
-        topBar = { topBar(simulationStatus) },
+        topBar = { topBar(status) },
     ) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding).padding(horizontal = 8.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            controlButton(simulationStatus, viewModel::play, viewModel::pause)
+            controlButton(status, viewModel::play, viewModel::pause)
             OutlinedCard(
                 modifier = Modifier.fillMaxSize(),
                 colors = CardDefaults.cardColors(
@@ -59,8 +59,10 @@ fun app(viewModel: SimulationStatusViewModel = viewModel { SimulationStatusViewM
                 border = BorderStroke(1.dp, Color.Black),
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("Time: $time")
-                    errorDialog(viewModel::monitor, errors)
+                    errorDialog(viewModel::fetch, errors)
+                    for (node in nodes) {
+                        nodeDrawer(node.id)
+                    }
                 }
             }
         }
@@ -102,6 +104,9 @@ fun controlButton(status: SimulationStatus, resume: () -> Unit, pause: () -> Uni
     }
 }
 
+/**
+ * Display the error dialog, currently used to circumvent the null issue we're facing when subscribing to simulation.
+ */
 @Composable
 fun errorDialog(dismiss: () -> Unit, errors: List<Error>?) {
     if (!errors.isNullOrEmpty()) {

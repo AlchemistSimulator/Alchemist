@@ -4,32 +4,42 @@ import it.unibo.alchemist.boundary.Extractor
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Time
+import kotlin.Double.Companion.NaN
 
 /**
  * Exporter for the network centroid coordinates.
- * The x and y coordinates are the average of the x and y coordinates of the nodes in the network,
+ * The x and y coordinates are the average of the x and y coordinates of all the nodes in the network,
  * note that negative coordinates are possible.
  */
 class NetworkCentroid : Extractor<Double> {
     private companion object {
         private const val NAME: String = "network-centroid"
+        const val ORIGIN = 0.0
     }
 
     override val columnNames: List<String>
-        get() = listOf<String>("$NAME-xCoord", "$NAME-yCoord")
+        get() = listOf<String>("X", "Y", "Z").map { "$NAME-$it" }
 
     override fun <T> extractData(
         environment: Environment<T, *>,
         reaction: Actionable<T>?,
         time: Time,
         step: Long,
-    ): Map<String, Double> =
-        environment.networkHub().toList().mapIndexed { index, value -> "$NAME@$index" to value }.toMap()
+    ): Map<String, Double> = when (environment.nodeCount == 0) {
+        true -> columnNames.associate { it to NaN }
+        else ->
+            environment.networkHub().toList().mapIndexed { index, value ->
+                columnNames[index] to value
+            }.take(environment.dimensions).toMap()
+    }
 
-    private fun <T> Environment<T, *>.networkHub(): Pair<Double, Double> = fold(0.0 to 0.0) { acc, next ->
-        val nodePos = this.getPosition(next).coordinates // Note that negative positions can occur
-        acc.first + nodePos[0] to acc.second + nodePos[1]
-    }.let { sum ->
-        sum.first / this.nodeCount to sum.second / this.nodeCount
+    private fun <T> Environment<T, *>.networkHub(): List<Double> {
+        val sums = DoubleArray(dimensions) { ORIGIN }
+        forEach { node ->
+            getPosition(node).coordinates.forEachIndexed { index, value ->
+                sums[index] += value
+            }
+        }
+        return sums.map { it / nodeCount }
     }
 }

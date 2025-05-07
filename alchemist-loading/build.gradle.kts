@@ -54,7 +54,6 @@ dependencies {
     testImplementation(libs.caffeine)
     testImplementation(libs.embedmongo)
     testImplementation(libs.kotlin.test)
-
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("protelis"))
 }
@@ -62,6 +61,11 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
     maxHeapSize = "1500m"
+}
+
+tasks.withType<Test>().configureEach {
+    // for changing the default JVM args
+    jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {

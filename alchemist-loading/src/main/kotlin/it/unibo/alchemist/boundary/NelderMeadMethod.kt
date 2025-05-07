@@ -71,9 +71,9 @@ class NelderMeadMethod(
                 "Invalid objective function return value for reflection with $reflected = $reflectedValue.\n" +
                     "Check the objective function implementation, the result should be a finite number."
             }
-            check (!reflectedValue.get().isFinite()) {
-                error("Invalid objective function return value for reflection")
-            }
+//            check (!reflectedValue.get().isFinite()) {
+//                error("Invalid objective function return value for reflection")
+//            }
             val newSimplex = when {
                 reflectedValue < bestValue -> { // expansion
                     val expanded: List<Double> = centroid.mapCentroid(gamma, reflected)

@@ -12,10 +12,13 @@ package it.unibo.alchemist.test
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.core.Status
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import org.kaikikm.threadresloader.ResourceLoader
+import java.awt.geom.QuadCurve2D
 import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
@@ -55,7 +58,12 @@ class TestNelderMeadLauncher() {
                 println("inputs are $inputs")
                 loader.launch(DefaultLauncher())
                 val optimizedSimulation = loader.getWith<Any, Nothing>(inputs)
-                assertTrue(optimizedSimulation.environment.nodeCount in 75..85)
+                val node = optimizedSimulation.environment.nodes[0]
+                val nodepos: Position<*> = optimizedSimulation.environment.getPosition(node)
+                println("node position is $nodepos")
+                nodepos.coordinates.forEachIndexed { index, value ->
+                    assertEquals(0.0, value)
+                }
             }
         }
     }
@@ -81,23 +89,31 @@ class TestNelderMeadLauncher() {
 //            }
 //        }
         loader.launch(DefaultLauncher())
-        val customVars = mapOf("width" to 8.0, "height" to 10.0)
+        val customVars = mapOf("zoom" to 0.001)
         val optimizedSimulation = loader.getWith<Any, Nothing>(customVars)
         optimizedSimulation.play()
         optimizedSimulation.run()
-        assertTrue(optimizedSimulation.environment.nodeCount in 75..85)
+        val node = optimizedSimulation.environment.nodes[0]
+        val nodepos: Position<*> = optimizedSimulation.environment.getPosition(node)
+        println("node position is $nodepos")
+        assertEquals(DoubleArray(2) { 2.2 }.toList(), nodepos.coordinates.toList())
     }
 }
 
 /**
  * The goal for the optimization.
  */
-class Goal : (Environment<*, *>) -> Double {
+class Goal<T> : (Environment<T, *>) -> Double {
     /**
-     * The target number of nodes.
+     * The target position of the node.
      */
-    val target = 81
+    val target = DoubleArray(2) { 2.2 }
 
-    override fun invoke(env: Environment<*, *>): Double = target.toDouble() - env.nodeCount
+    override fun invoke(env: Environment<T, *>): Double {
+        val node: Node<T> = env.nodes[0]
+        env.nodes.mapIndexed { idx, node -> env.getPosition(node) }
+        val nodePosition = env.getPosition(node).coordinates
+        return target.mapIndexed { index, value -> value - nodePosition[index] }.sum()
+    }
 }
 

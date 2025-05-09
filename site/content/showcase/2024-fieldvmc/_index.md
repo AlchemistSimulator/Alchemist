@@ -11,8 +11,8 @@ hidden = true
 
 [//]: # ({{< cite doi="" style=bibtex >}})
 
-Simulation and detailed description publicly available at [https://github.com/angelacorte/vmc-experiments](https://github.com/angelacorte/vmc-experiments),
-related to the paper ``_An Aggregate Vascular Morphogenesis Controller for Engineered Self-Organising Spatial Structures_'' presented at ACSOS 2024 (DOI available soon).
+Simulation and detailed description publicly available at [https://github.com/angelacorte/vmc-experiments](https://github.com/angelacorte/vmc-experiments) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13172244.svg)](https://doi.org/10.5281/zenodo.13172244).
+Related to the paper ``_An Aggregate Vascular Morphogenesis Controller for Engineered Self-Organising Spatial Structures_'' presented at ACSOS 2024 (DOI: [10.1109/ACSOS61780.2024.00032](https://doi.org/10.1109/ACSOS61780.2024.00032)).
 
 ## Abstract
 In the field of evolutionary computing, the concept of Vascular Morphogenesis Controller (VMC) has been proposed in to model the growth of artificial structures over time.

@@ -1,0 +1,166 @@
+package it.unibo.alchemist.boundary.launchers
+
+import it.unibo.alchemist.boundary.Launcher
+import it.unibo.alchemist.boundary.Loader
+import it.unibo.alchemist.boundary.NelderMeadMethod
+import it.unibo.alchemist.boundary.Variable
+import it.unibo.alchemist.boundary.Vertex
+import it.unibo.alchemist.model.Environment
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import org.danilopianini.rrmxmx.RrmxmxRandom
+import org.danilopianini.rrmxmx.RrmxmxRandom.Companion.DEFAULT_SEED
+import java.io.File
+import java.time.LocalDateTime
+import java.util.concurrent.Callable
+import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.Int.Companion.MAX_VALUE
+
+/**
+ * Alchemist launcher for the Nelder-Mead method optimization.
+ * This launcher optimize the [variables] of the simulation by a given [objectiveFunction].
+ * The optimization is done by the Nelder-Mead method, which is a derivative-free optimization algorithm.
+ * The optimization is done in parallel for a given number of [repetitions] of the [seedName] and [maxIterations].
+ * It will stop when the [tolerance] is reached.
+ * The [alpha], [gamma], [rho] and [sigma] parameters are the standard values for the Nelder-Mead method.
+ * The result of the optimization is written into `[outputPath]` folder in [outputFileName] as a JSON file.
+ */
+class NelderMeadLauncher
+@JvmOverloads
+constructor(
+    private val outputPath: String = "data",
+    private val outputFileName: String = "nelderMead",
+    private val objectiveFunction: Environment<*, *>.() -> Double,
+    private val variables: List<String> = emptyList(),
+    private val seedName: String,
+    private val repetitions: Int = 1,
+    private val maxIterations: Int = MAX_VALUE,
+    private val seed: ULong = DEFAULT_SEED,
+    private val tolerance: Double = 1e-6,
+    private val alpha: Double = 1.0, // standard value for the reflection in Nelder-Mead method
+    private val gamma: Double = 2.0, // standard value for the expansion in Nelder-Mead method
+    private val rho: Double = 0.5, // standard value for the contraction in Nelder-Mead method
+    private val sigma: Double = 0.5, // standard value for the shrink in Nelder-Mead method
+) : Launcher {
+    @OptIn(ExperimentalSerializationApi::class)
+    @Synchronized
+    override fun launch(loader: Loader) {
+        require(loader.variables.isNotEmpty() || variables.isNotEmpty()) {
+            "No variables found, can not optimize anything."
+        }
+        val simplexVertices: List<Map<String, Double>> = generateSymplexVertices(loader.variables)
+        val seeds: List<Int> =
+            loader.variables[seedName]
+                ?.stream()
+                ?.map {
+                    check(it is Number) { "Seed must be a number. $it is not." }
+                    it.toInt()
+                }?.toList()
+                ?.take(repetitions) ?: listOf(repetitions)
+        val executorID = AtomicInteger(0)
+        val executor =
+            Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()) {
+                Thread(it, "Alchemist Nelder Mead worker #${executorID.getAndIncrement()}")
+            }
+        val errorQueue = ConcurrentLinkedDeque<Throwable>()
+        loader.executeWithNelderMead(simplexVertices, executor) { vertex ->
+            val futureValues = seeds.map<Int, Future<Double>> { currentSeed ->
+                // associate keys to vertex values
+                val simulationParameters = variables
+                    .associateWith { vertex[variables.indexOf(it)] } + (seedName to currentSeed)
+                check(loader.variables.keys == simulationParameters.keys) {
+                    "Variables do not match: ${loader.variables.keys} != ${simulationParameters.keys}"
+                }
+                executor.submit<Double>(
+                    Callable {
+                        val simulation = loader.getWith<Any?, Nothing>(simulationParameters)
+                        simulation.play()
+                        simulation.run()
+                        if (simulation.error.isPresent) {
+                            errorQueue.add(simulation.error.get())
+                        }
+                        objectiveFunction(simulation.environment)
+                    },
+                )
+            }
+            ForkJoinPool.commonPool().submit(
+                Callable {
+                    futureValues.map { it.get() }.average()
+                },
+            )
+        }.also { result ->
+            // if not exists create the directory
+            File(outputPath).mkdirs()
+            val outputFile = File(
+                "$outputPath${File.separator}${outputFileName}" +
+                    "_${LocalDateTime.now().toString().replace(":", "-")}.json",
+            )
+            val outputContent = buildJsonObject {
+                put(seedName, JsonPrimitive(repetitions))
+                put("variables", buildJsonObject {
+                    variables.forEach { variable ->
+                        put(variable, JsonPrimitive(result[variable]))
+                    }
+                })
+            }.toString()
+            outputFile.writeText(outputContent)
+        }
+        executor.shutdown()
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS)
+        if (errorQueue.isNotEmpty()) {
+            throw errorQueue.reduce { previous, other ->
+                previous.addSuppressed(other)
+                previous
+            }
+        }
+    }
+
+    private fun Loader.executeWithNelderMead(
+        simplexVertices: List<Map<String, Double>>,
+        executorService: ExecutorService,
+        executeFunction: (List<Double>) -> Future<Double>,
+    ): Map<String, Double> = NelderMeadMethod(
+        simplex = simplexVertices.map { Vertex(it) },
+        maxIterations = maxIterations,
+        tolerance = tolerance,
+        alpha = alpha,
+        gamma = gamma,
+        rho = rho,
+        sigma = sigma,
+        executorService = executorService,
+        objective = executeFunction,
+    ).optimize()
+        .let { result ->
+            this@NelderMeadLauncher.variables.associateWith {
+                result[this@NelderMeadLauncher.variables.indexOf(it)]
+            }
+        }
+
+    private fun generateSymplexVertices(loaderVariables: Map<String, Variable<*>>): List<Map<String, Double>> {
+        val randomGenerator = RrmxmxRandom(seed)
+        val instances: Map<String, ClosedRange<Double>> =
+            variables.associateWith { varName ->
+                val variable = loaderVariables.getValue(varName)
+                val allValues =
+                    variable
+                        .stream()
+                        .map {
+                            check(it is Number) {
+                                "All variables to optimize must be Numbers. $varName has value $it."
+                            }
+                            it.toDouble()
+                        }.toList()
+                allValues.min()..allValues.max()
+            }
+        return (0..variables.size).map {
+            instances.mapValues { (_, range) -> randomGenerator.nextDouble(range.start, range.endInclusive) }
+        }
+    }
+}

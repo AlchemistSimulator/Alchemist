@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
@@ -58,7 +60,12 @@ fun app(viewModel: SimulationViewModel = viewModel { SimulationViewModel() }) {
                 ),
                 border = BorderStroke(1.dp, Color.Black),
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.verticalScroll(
+                        rememberScrollState(),
+                    ),
+                ) {
                     errorDialog(viewModel::fetch, errors)
                     for (node in nodes) {
                         nodeDrawer(node.id)

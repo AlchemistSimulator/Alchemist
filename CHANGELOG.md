@@ -1,3 +1,13 @@
+## [42.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/42.1.1...42.2.0) (2025-05-14)
+
+### Features
+
+* **loading:** add several new network extractors ([#4377](https://github.com/AlchemistSimulator/Alchemist/issues/4377)) ([3f86a61](https://github.com/AlchemistSimulator/Alchemist/commit/3f86a616a461838f0c9e3c241255eea59fb77951))
+
+### Dependency updates
+
+* **deps:** update dependency org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin to v0.86.2 ([#4455](https://github.com/AlchemistSimulator/Alchemist/issues/4455)) ([61f6930](https://github.com/AlchemistSimulator/Alchemist/commit/61f6930ab0564e21d11ea90014c9d3203124a45d))
+
 ## [42.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/42.1.0...42.1.1) (2025-05-14)
 
 ### Dependency updates

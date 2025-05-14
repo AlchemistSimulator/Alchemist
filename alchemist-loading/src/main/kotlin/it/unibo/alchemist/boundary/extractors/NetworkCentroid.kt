@@ -25,8 +25,8 @@ class NetworkCentroid : Extractor<Double> {
         reaction: Actionable<T>?,
         time: Time,
         step: Long,
-    ): Map<String, Double> = when (environment.nodeCount == 0) {
-        true -> columnNames.associate { it to NaN }
+    ): Map<String, Double> = when (environment.nodeCount) {
+        0 -> columnNames.associate { it to NaN }
         else ->
             environment.networkHub().toList().mapIndexed { index, value ->
                 columnNames[index] to value

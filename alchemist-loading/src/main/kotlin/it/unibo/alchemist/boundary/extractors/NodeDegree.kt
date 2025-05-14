@@ -15,10 +15,6 @@ class NodeDegree
 @JvmOverloads
 constructor(filter: ExportFilter, aggregators: List<String>, precision: Int = 2) :
     AbstractAggregatingDoubleExporter(filter, aggregators, precision) {
-    private companion object {
-        private const val NAME = "nodes-degree"
-    }
-
     override val columnName: String = NAME
 
     override fun <T> getData(
@@ -28,5 +24,9 @@ constructor(filter: ExportFilter, aggregators: List<String>, precision: Int = 2)
         step: Long,
     ): Map<Node<T>, Double> = environment.nodes.associateWith { node ->
         environment.getNeighborhood(node).size().toDouble()
+    }
+
+    private companion object {
+        private const val NAME = "nodes-degree"
     }
 }

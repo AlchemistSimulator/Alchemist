@@ -2,7 +2,7 @@
 androidx-lifecycle = "2.8.4"
 antlr4 = "4.13.2"
 apollo ="4.0.0-beta.7"
-arrow = "2.1.1"
+arrow = "2.1.2"
 compose-multiplatform = "1.8.0"
 dokka = "2.0.0"
 graphql = "9.0.0-alpha.8"

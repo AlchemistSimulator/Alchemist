@@ -7,7 +7,6 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.Time.Companion.INFINITY
 import it.unibo.alchemist.model.Time.Companion.ZERO
 import kotlin.Long.Companion.MAX_VALUE
-import kotlin.require
 
 /**
  * [stableForTotalSteps] for how many steps the [metricsToCheck] should be stable,
@@ -16,24 +15,39 @@ import kotlin.require
  * [stableForTotalTime] for how much time the [metricsToCheck] should be stable,
  * zero if taking into account just the steps.
  * [checkTimeInterval] every time-step it should check, if zero it checks at every invocation.
- * Both [stableForTotalSteps] and [stableForTotalTime] can be used together to check for stability.
  */
 class StableMetrics<T>(
-    private val stableForTotalSteps: Long,
-    private val checkStepInterval: Long,
-    private val stableForTotalTime: Time,
-    private val checkTimeInterval: Time,
+    private val stableForTotalSteps: Long, // total steps to be stable
+    private val checkStepInterval: Long, // steps interval to check
+    private val stableForTotalTime: Time, // total time to be stable
+    private val checkTimeInterval: Time, // time interval to check
     private val metricsToCheck: (Environment<T, Position<*>>) -> Map<String, T>,
 ) : TerminationPredicate<T, Position<*>> {
-    // steps-related checks
-    private var lastStepsChecked: Long = 0
-    private var stableSteps: Long = 0
-    private var lastUpdatedMetricsSteps: Map<String, T> = emptyMap()
+    constructor(
+        stableForTotalSteps: Long,
+        checkStepInterval: Long,
+        metricsToCheck: (Environment<T, Position<*>>) -> Map<String, T>,
+    ) : this(
+        stableForTotalSteps = stableForTotalSteps,
+        checkStepInterval = checkStepInterval,
+        stableForTotalTime = ZERO,
+        checkTimeInterval = ZERO,
+        metricsToCheck = metricsToCheck,
+    )
+    constructor(
+        stableForTotalTime: Time,
+        checkTimeInterval: Time,
+        metricsToCheck: (Environment<T, Position<*>>) -> Map<String, T>,
+    ) : this(
+        stableForTotalSteps = 0,
+        checkStepInterval = 0,
+        stableForTotalTime = stableForTotalTime,
+        checkTimeInterval = checkTimeInterval,
+        metricsToCheck = metricsToCheck,
+    )
 
-    // time-related checks
-    private var lastTimeChecked: Time = ZERO
-    private var stableTime: Time = ZERO
-    private var lastUpdatedMetricsTime: Map<String, T> = emptyMap()
+    private val stepTracker by lazy { StepMetricTracker() }
+    private val timeTracker by lazy { TimeMetricTracker() }
     init {
         require((stableForTotalTime > ZERO) || (stableForTotalSteps > 0)) {
             "At least one of the stability conditions (stableForTime or stableForSteps) must be greater than zero."
@@ -47,36 +61,41 @@ class StableMetrics<T>(
     }
 
     override fun invoke(environment: Environment<T, Position<*>>): Boolean = when {
-        stableForTotalTime > ZERO && stableForTotalSteps > 0 -> {
-            val timeStable = checkTime(environment)
-            val stepStable = checkSteps(environment)
-            timeStable && stepStable
+        stableForTotalTime > DEFAULT_TIME && stableForTotalSteps > DEFAULT_STEP -> {
+            val stableSteps = checkStability(environment, stepTracker, STEP_MAX_VALUE, DEFAULT_STEP)
+            val stableTime = checkStability(environment, timeTracker, TIME_MAX_VALUE, DEFAULT_TIME)
+            stableTime && stableSteps
         }
-        stableForTotalTime > ZERO -> checkTime(environment)
-        stableForTotalSteps > 0 -> checkSteps(environment)
-        else -> error("This should never happen, at least one of the stability conditions must be greater than zero.")
+        stableForTotalTime > DEFAULT_TIME ->
+            checkStability(environment, timeTracker, TIME_MAX_VALUE, DEFAULT_TIME)
+        stableForTotalSteps > DEFAULT_STEP ->
+            checkStability(environment, stepTracker, STEP_MAX_VALUE, DEFAULT_STEP)
+        else -> error("This should never happen.")
     }
 
-    private fun checkSteps(environment: Environment<T, Position<*>>): Boolean {
-        require(stableForTotalSteps > 0) { "Steps check and equal interval must be positive." }
-        val currentStep = environment.simulation.step
-        val checkedStepsInterval = currentStep - lastStepsChecked
+    private fun <Type : Comparable<Type>> checkStability(
+        env: Environment<T, Position<*>>,
+        tracker: MetricTracker<T, Type>,
+        maxValue: Type,
+        defaultValue: Type,
+    ): Boolean = with(tracker) {
+        val current = current(env)
+        val interval = evaluateInterval(current)
         return when {
-            stableSteps == MAX_VALUE -> true
-            checkedStepsInterval >= checkStepInterval -> {
-                // update the last checked step and get the current metrics
-                lastStepsChecked = currentStep
-                val currentMetrics = metricsToCheck(environment).also {
+            stableValue >= maxValue -> true
+            shouldBeChecked(interval) -> {
+                lastChecked = current
+                val currentMetrics = metricsToCheck(env).also {
                     require(it.isNotEmpty()) { "There should be at least one metric to check." }
                 }
                 when {
-                    lastUpdatedMetricsSteps == currentMetrics -> { // metrics are the same as before = stable
-                        stableSteps += checkedStepsInterval
-                        return (stableSteps >= stableForTotalSteps).also { if (it) stableSteps = MAX_VALUE }
+                    currentMetrics == lastMetrics -> {
+                        increaseStability(interval)
+                        return (stableValue >= totalStability).also { if (it) stableValue = maxValue }
                     }
-                    else -> { // reset the counters
-                        stableSteps = 0
-                        lastUpdatedMetricsSteps = currentMetrics
+                    else -> {
+                        stableValue = defaultValue
+                        lastMetrics = currentMetrics
                         false
                     }
                 }
@@ -85,30 +104,48 @@ class StableMetrics<T>(
         }
     }
 
-    private fun checkTime(environment: Environment<T, Position<*>>): Boolean {
-        require(stableForTotalTime > ZERO) { "The amount of time to check the stability should be more than zero." }
-        val currentTime = environment.simulation.time
-        val checkedTimeInterval = currentTime - lastTimeChecked
-        return when {
-            stableTime == INFINITY -> true
-            checkedTimeInterval >= checkTimeInterval -> {
-                lastTimeChecked = currentTime
-                val currentMetrics = metricsToCheck(environment).also {
-                    require(it.isNotEmpty()) { "There should be at least one metric to check." }
-                }
-                when {
-                    lastUpdatedMetricsTime == currentMetrics -> { // metrics are the same as before = stable
-                        stableTime += checkedTimeInterval
-                        return (stableTime >= stableForTotalTime).also { if (it) stableTime = INFINITY }
-                    }
-                    else -> { // reset the counters
-                        stableTime = ZERO
-                        lastUpdatedMetricsTime = currentMetrics
-                        false
-                    }
-                }
-            }
-            else -> false
+    private interface MetricTracker<T, Type : Comparable<Type>> {
+        var lastChecked: Type
+        var stableValue: Type
+        var lastMetrics: Map<String, T>
+        val totalStability: Type
+        val checkInterval: Type
+        fun current(env: Environment<T, Position<*>>): Type
+        fun evaluateInterval(current: Type): Type
+        fun shouldBeChecked(interval: Type): Boolean = interval >= checkInterval
+        fun increaseStability(interval: Type)
+    }
+
+    private inner class StepMetricTracker : MetricTracker<T, Long> {
+        override var lastChecked = DEFAULT_STEP
+        override var stableValue = DEFAULT_STEP
+        override var lastMetrics: Map<String, T> = emptyMap()
+        override val totalStability = stableForTotalSteps
+        override val checkInterval = checkStepInterval
+        override fun current(env: Environment<T, Position<*>>): Long = env.simulation.step
+        override fun evaluateInterval(current: Long): Long = current - lastChecked
+        override fun increaseStability(interval: Long) {
+            stableValue += interval
         }
+    }
+
+    private inner class TimeMetricTracker : MetricTracker<T, Time> {
+        override var lastChecked = DEFAULT_TIME
+        override var stableValue = DEFAULT_TIME
+        override var lastMetrics: Map<String, T> = emptyMap()
+        override val totalStability = stableForTotalTime
+        override val checkInterval = checkTimeInterval
+        override fun current(env: Environment<T, Position<*>>): Time = env.simulation.time
+        override fun evaluateInterval(current: Time): Time = current - lastChecked
+        override fun increaseStability(interval: Time) {
+            stableValue += interval
+        }
+    }
+
+    companion object {
+        const val STEP_MAX_VALUE: Long = MAX_VALUE
+        const val DEFAULT_STEP: Long = 0L
+        val DEFAULT_TIME: Time = ZERO
+        val TIME_MAX_VALUE: Time = INFINITY
     }
 }

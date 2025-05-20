@@ -9,26 +9,26 @@
   "com.apollographql.apollo3/apollo-runtime/4.0.0-beta.7": {
     "first": "https://javadoc.io/doc/com.apollographql.apollo3/apollo-runtime/4.0.0-beta.7"
   },
-  "com.expediagroup/graphql-kotlin-client-generator/8.5.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client-generator/8.5.0"
+  "com.expediagroup/graphql-kotlin-client-generator/9.0.0-alpha.8": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client-generator/9.0.0-alpha.8"
   },
-  "com.expediagroup/graphql-kotlin-client/8.5.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client/8.5.0"
+  "com.expediagroup/graphql-kotlin-client/9.0.0-alpha.8": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-client/9.0.0-alpha.8"
   },
-  "com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.5.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-graalvm-metadata-generator/8.5.0"
+  "com.expediagroup/graphql-kotlin-graalvm-metadata-generator/9.0.0-alpha.8": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-graalvm-metadata-generator/9.0.0-alpha.8"
   },
-  "com.expediagroup/graphql-kotlin-hooks-provider/8.5.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/8.5.0"
+  "com.expediagroup/graphql-kotlin-hooks-provider/9.0.0-alpha.8": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-hooks-provider/9.0.0-alpha.8"
   },
-  "com.expediagroup/graphql-kotlin-ktor-server/8.5.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-ktor-server/8.5.0"
+  "com.expediagroup/graphql-kotlin-ktor-server/9.0.0-alpha.8": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-ktor-server/9.0.0-alpha.8"
   },
-  "com.expediagroup/graphql-kotlin-sdl-generator/8.5.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-sdl-generator/8.5.0"
+  "com.expediagroup/graphql-kotlin-sdl-generator/9.0.0-alpha.8": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-sdl-generator/9.0.0-alpha.8"
   },
-  "com.expediagroup/graphql-kotlin-server/8.5.0": {
-    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/8.5.0"
+  "com.expediagroup/graphql-kotlin-server/9.0.0-alpha.8": {
+    "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/9.0.0-alpha.8"
   },
   "com.github.ben-manes.caffeine/caffeine/3.2.0": {
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.2.0",
@@ -70,8 +70,8 @@
     "first": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2",
     "second": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2/element-list"
   },
-  "com.pinterest.ktlint/ktlint-ruleset-standard/1.5.0": {
-    "first": "https://javadoc.io/doc/com.pinterest.ktlint/ktlint-ruleset-standard/1.5.0"
+  "com.pinterest.ktlint/ktlint-ruleset-standard/1.6.0": {
+    "first": "https://javadoc.io/doc/com.pinterest.ktlint/ktlint-ruleset-standard/1.6.0"
   },
   "com.soywiz.korlibs.korim/korim/4.0.10": {
     "first": "https://javadoc.io/doc/com.soywiz.korlibs.korim/korim/4.0.10"
@@ -98,8 +98,8 @@
   "guru.nidi.com.kitfox/svgSalamander/1.1.3": {
     "first": "https://javadoc.io/doc/guru.nidi.com.kitfox/svgSalamander/1.1.3"
   },
-  "io.arrow-kt/arrow-core/2.1.1": {
-    "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/2.1.1"
+  "io.arrow-kt/arrow-core/2.1.2": {
+    "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/2.1.2"
   },
   "io.github.classgraph/classgraph/4.8.179": {
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.179",
@@ -280,50 +280,50 @@
   "org.jetbrains.dokka/templating-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.5.3-19.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.5.3-19.1.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.5.8-19.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.5.8-19.1.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.5.3-19.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.5.3-19.1.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.5.8-19.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.5.8-19.1.0"
   },
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"
   },
-  "org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.20": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.20"
+  "org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.21"
   },
-  "org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.1.20": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.1.20"
+  "org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.1.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.1.21"
   },
-  "org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.20": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.20"
+  "org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.21"
   },
-  "org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.1.20": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.1.20"
+  "org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.1.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.1.21"
   },
-  "org.jetbrains.kotlin/kotlin-reflect/2.1.20": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/2.1.20"
+  "org.jetbrains.kotlin/kotlin-reflect/2.1.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/2.1.21"
   },
-  "org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.1.20": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.1.20"
+  "org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.1.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.1.21"
   },
   "org.jetbrains.kotlin/kotlin-scripting-jsr223/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-scripting-jsr223/null"
   },
-  "org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.1.20": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.1.20"
+  "org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.1.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.1.21"
   },
-  "org.jetbrains.kotlin/kotlin-stdlib/2.1.20": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.1.20"
+  "org.jetbrains.kotlin/kotlin-stdlib/2.1.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.1.21"
   },
-  "org.jetbrains.kotlin/kotlin-test/2.1.20": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test/2.1.20"
+  "org.jetbrains.kotlin/kotlin-test/2.1.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test/2.1.21"
   },
   "org.jetbrains.kotlin/kotlin-test/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test/null"
   },
-  "org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.1.20": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.1.20"
+  "org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.1.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.1.21"
   },
   "org.jetbrains.kotlinx/kotlinx-cli/0.3.6": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-cli/0.3.6"
@@ -360,15 +360,15 @@
     "first": "https://javadoc.io/doc/org.mockito/mockito-core/5.17.0",
     "second": "https://javadoc.io/doc/org.mockito/mockito-core/5.17.0/element-list"
   },
-  "org.mongodb/mongodb-driver-sync/5.4.0": {
-    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.4.0",
-    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.4.0/element-list"
+  "org.mongodb/mongodb-driver-sync/5.5.0": {
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.5.0",
+    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.5.0/element-list"
   },
-  "org.protelis/protelis-interpreter/18.0.4": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.0.4"
+  "org.protelis/protelis-interpreter/18.0.5": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.0.5"
   },
-  "org.protelis/protelis-lang/18.0.4": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/18.0.4"
+  "org.protelis/protelis-lang/18.0.5": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/18.0.5"
   },
   "org.reduxkotlin/redux-kotlin-threadsafe/0.6.1": {
     "first": "https://javadoc.io/doc/org.reduxkotlin/redux-kotlin-threadsafe/0.6.1"

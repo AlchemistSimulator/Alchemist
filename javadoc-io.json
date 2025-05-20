@@ -264,11 +264,14 @@
   "org.jetbrains.androidx.lifecycle/lifecycle-viewmodel-compose/2.9.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.androidx.lifecycle/lifecycle-viewmodel-compose/2.9.0"
   },
-  "org.jetbrains.compose.desktop/desktop-jvm-linux-x64/1.8.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.compose.desktop/desktop-jvm-linux-x64/1.8.0"
-  },
   "org.jetbrains.compose.runtime/runtime/1.8.1": {
     "first": "https://javadoc.io/doc/org.jetbrains.compose.runtime/runtime/1.8.1"
+  },
+  "org.jetbrains.compose.desktop/desktop-jvm-linux-x64/1.8.1": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.desktop/desktop-jvm-linux-x64/1.8.1"
+  },
+  "org.jetbrains.compose.material3/material3/1.8.1": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.material3/material3/1.8.1"
   },
   "org.jetbrains.compose.ui/ui/1.8.1": {
     "first": "https://javadoc.io/doc/org.jetbrains.compose.ui/ui/1.8.1"

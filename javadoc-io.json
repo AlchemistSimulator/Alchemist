@@ -364,11 +364,11 @@
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.5.0",
     "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.5.0/element-list"
   },
-  "org.protelis/protelis-interpreter/18.0.5": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.0.5"
+  "org.protelis/protelis-interpreter/18.0.7": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.0.7"
   },
-  "org.protelis/protelis-lang/18.0.5": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/18.0.5"
+  "org.protelis/protelis-lang/18.0.7": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/18.0.7"
   },
   "org.reduxkotlin/redux-kotlin-threadsafe/0.6.1": {
     "first": "https://javadoc.io/doc/org.reduxkotlin/redux-kotlin-threadsafe/0.6.1"

@@ -2,6 +2,7 @@
 indent_size=4
 insert_final_newline = true
 ktlint_code_style=intellij_idea
+ktlint_function_naming_ignore_when_annotated_with = Composable
 max_line_length = 120
 
 # Do not apply the general rule to generated files

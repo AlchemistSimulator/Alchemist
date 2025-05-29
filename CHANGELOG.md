@@ -1,3 +1,26 @@
+## [42.2.2](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.1...42.2.2) (2025-05-29)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v18.1.0 (minor) ([#4492](https://github.com/AlchemistSimulator/Alchemist/issues/4492)) ([ce9d253](https://github.com/AlchemistSimulator/Alchemist/commit/ce9d253fa65396a393f4f1d1184eb38fed9a0e9a))
+* **deps:** update dependency org.codehaus.groovy:groovy-jsr223 to v3.0.25 ([#4490](https://github.com/AlchemistSimulator/Alchemist/issues/4490)) ([48ce003](https://github.com/AlchemistSimulator/Alchemist/commit/48ce0032c0c0ee62f562df00b6934f4db5de78b1))
+* **deps:** update dependency org.danilopianini:kotlin-symmetric-matrix to v1.1.3 ([#4493](https://github.com/AlchemistSimulator/Alchemist/issues/4493)) ([a543672](https://github.com/AlchemistSimulator/Alchemist/commit/a543672c905a43c9757ed634da113c8e27ef8f60))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.116.0 ([#4494](https://github.com/AlchemistSimulator/Alchemist/issues/4494)) ([92f0655](https://github.com/AlchemistSimulator/Alchemist/commit/92f0655dec7bdb40f74b4531f2afc475e8a76f89))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.131 ([#4488](https://github.com/AlchemistSimulator/Alchemist/issues/4488)) ([185675e](https://github.com/AlchemistSimulator/Alchemist/commit/185675e2e4a72c2d4fa0d2063d0833eba8bc1d63))
+* **deps:** update plugin com.gradle.develocity to v4.0.2 ([#4491](https://github.com/AlchemistSimulator/Alchemist/issues/4491)) ([9953ae5](https://github.com/AlchemistSimulator/Alchemist/commit/9953ae5ebf1cd5a7313a3d41f0d9747aa1864690))
+* **deps:** update plugin multijvmtesting to v3.5.0 ([#4495](https://github.com/AlchemistSimulator/Alchemist/issues/4495)) ([12b0d49](https://github.com/AlchemistSimulator/Alchemist/commit/12b0d49c38bfb327a098757b1ea92f2839c1b0b8))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([12ecea1](https://github.com/AlchemistSimulator/Alchemist/commit/12ecea1195e46b1b6225cf3ce1a0bd535afb003c))
+* **build:** update the javadoc.io cache ([75d06ef](https://github.com/AlchemistSimulator/Alchemist/commit/75d06efed0a7b4a8b34ecb74f458ff28d79023d9))
+* **build:** update the javadoc.io cache ([4666e19](https://github.com/AlchemistSimulator/Alchemist/commit/4666e19a5754d1180242403ae392f256e320e75b))
+* **build:** update the javadoc.io cache ([611a1d0](https://github.com/AlchemistSimulator/Alchemist/commit/611a1d09e4c252897103d231bf9f62845263ece5))
+
+### Style improvements
+
+* ignore lowercase naming when using Compose ([#4489](https://github.com/AlchemistSimulator/Alchemist/issues/4489)) ([e21f878](https://github.com/AlchemistSimulator/Alchemist/commit/e21f878d1559273983e4081406773720b25bf639))
+
 ## [42.2.1](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.0...42.2.1) (2025-05-23)
 
 ### Dependency updates

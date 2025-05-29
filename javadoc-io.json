@@ -214,7 +214,8 @@
     "first": "https://javadoc.io/doc/org.danilopianini/conrec/0.1.0"
   },
   "org.danilopianini/gson-extras/3.3.0": {
-    "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.3.0"
+    "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.3.0",
+    "second": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.3.0/package-list"
   },
   "org.danilopianini/java-quadtree/1.0.1": {
     "first": "https://javadoc.io/doc/org.danilopianini/java-quadtree/1.0.1"

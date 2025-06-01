@@ -41,18 +41,18 @@ import it.unibo.alchemist.boundary.composeui.viewmodels.SimulationViewModel
  * Application entry point, this will be rendered the same in all the platforms.
  */
 @Composable
-fun app(viewModel: SimulationViewModel = viewModel { SimulationViewModel() }) {
+fun App(viewModel: SimulationViewModel = viewModel { SimulationViewModel() }) {
     val status by viewModel.status.collectAsStateWithLifecycle()
     val errors by viewModel.errors.collectAsStateWithLifecycle()
     val nodes by viewModel.nodes.collectAsStateWithLifecycle()
     Scaffold(
-        topBar = { topBar(status) },
+        topBar = { TopBar(status) },
     ) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding).padding(horizontal = 8.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            controlButton(status, viewModel::play, viewModel::pause)
+            ControlButton(status, viewModel::play, viewModel::pause)
             OutlinedCard(
                 modifier = Modifier.fillMaxSize(),
                 colors = CardDefaults.cardColors(
@@ -66,9 +66,11 @@ fun app(viewModel: SimulationViewModel = viewModel { SimulationViewModel() }) {
                         rememberScrollState(),
                     ),
                 ) {
-                    errorDialog(viewModel::fetch, errors)
+                    if (errors.isNotEmpty()) {
+                        ErrorDialog(viewModel::fetch, errors)
+                    }
                     for (node in nodes) {
-                        nodeDrawer(node.id)
+                        NodeDrawer(node.id)
                     }
                 }
             }
@@ -81,7 +83,7 @@ fun app(viewModel: SimulationViewModel = viewModel { SimulationViewModel() }) {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun topBar(status: SimulationStatus) {
+fun TopBar(status: SimulationStatus) {
     TopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -99,7 +101,7 @@ fun topBar(status: SimulationStatus) {
  * Button to control the simulation.
  */
 @Composable
-fun controlButton(status: SimulationStatus, resume: () -> Unit, pause: () -> Unit) {
+fun ControlButton(status: SimulationStatus, resume: () -> Unit, pause: () -> Unit) {
     if (status == SimulationStatus.Running) {
         Button(onClick = { pause() }) {
             Text("Pause", modifier = Modifier.padding(8.dp))
@@ -115,21 +117,19 @@ fun controlButton(status: SimulationStatus, resume: () -> Unit, pause: () -> Uni
  * Display the error dialog, currently used to circumvent the null issue we're facing when subscribing to simulation.
  */
 @Composable
-fun errorDialog(dismiss: () -> Unit, errors: List<Error>?) {
-    if (!errors.isNullOrEmpty()) {
-        AlertDialog(
-            onDismissRequest = dismiss,
-            title = { Text("Error") },
-            text = {
-                for (error in errors) {
-                    Text(error.message)
-                }
-            },
-            confirmButton = {
-                Button(onClick = dismiss) {
-                    Text("OK")
-                }
-            },
-        )
-    }
+fun ErrorDialog(dismiss: () -> Unit, errors: List<Error>) {
+    AlertDialog(
+        onDismissRequest = dismiss,
+        title = { Text("Error") },
+        text = {
+            for (error in errors) {
+                Text(error.message)
+            }
+        },
+        confirmButton = {
+            Button(onClick = dismiss) {
+                Text("OK")
+            }
+        },
+    )
 }

@@ -29,12 +29,7 @@ class ComposeMonitor : OutputMonitor<Any, Nothing> {
             runBlocking {
                 launch {
                     awaitApplication {
-                        Window(
-                            onCloseRequest = ::exitApplication,
-                            title = "Alchemist",
-                        ) {
-                            app()
-                        }
+                        Window(onCloseRequest = ::exitApplication, title = "Alchemist") { App() }
                     }
                 }
             }

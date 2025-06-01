@@ -31,6 +31,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(alchemist("graphql"))
                 implementation(compose.runtime)
                 implementation(compose.ui)
                 implementation(compose.foundation)
@@ -39,7 +40,6 @@ kotlin {
                 implementation(libs.androidx.lifecycle.runtime.compose)
                 implementation(libs.androidx.lifecycle.viewmodel.compose)
                 implementation(libs.apollo.runtime)
-                api(alchemist("graphql"))
             }
         }
 

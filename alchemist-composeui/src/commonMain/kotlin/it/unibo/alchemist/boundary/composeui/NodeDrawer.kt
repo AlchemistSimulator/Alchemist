@@ -20,7 +20,7 @@ import it.unibo.alchemist.boundary.composeui.viewmodels.NodeViewModel
  * Display the information of a node, subscribing to its own channel for data.
  */
 @Composable
-fun nodeDrawer(nodeId: Int) {
+fun NodeDrawer(nodeId: Int) {
     val nodeModel: NodeViewModel = viewModel(key = "node-$nodeId") { NodeViewModel(nodeId) }
     val nodeInfo by nodeModel.nodeInfo.collectAsStateWithLifecycle()
     Text("Node $nodeId: $nodeInfo")

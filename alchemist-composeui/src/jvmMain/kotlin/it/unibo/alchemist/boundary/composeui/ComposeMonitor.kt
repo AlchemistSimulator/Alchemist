@@ -10,21 +10,28 @@
 package it.unibo.alchemist.boundary.composeui
 
 import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
+import androidx.compose.ui.window.awaitApplication
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.model.Environment
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlin.concurrent.thread
 
 /**
  * Monitor extension that uses JVM Compose UI to display the simulation.
  */
 class ComposeMonitor : OutputMonitor<Any, Nothing> {
     override fun initialized(environment: Environment<Any, Nothing>) {
-        application {
-            Window(
-                onCloseRequest = { },
-                title = "Alchemist",
-            ) {
-                app()
+        thread(
+            name = "ComposeMonitor",
+            isDaemon = true,
+        ) {
+            runBlocking {
+                launch {
+                    awaitApplication {
+                        Window(onCloseRequest = ::exitApplication, title = "Alchemist") { App() }
+                    }
+                }
             }
         }
     }

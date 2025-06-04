@@ -1,3 +1,4 @@
+import Libs.alchemist
 import Util.devServer
 import Util.webCommonConfiguration
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -30,11 +31,22 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(alchemist("graphql"))
                 implementation(compose.runtime)
                 implementation(compose.ui)
                 implementation(compose.foundation)
-                implementation(compose.material)
+                implementation(compose.material3)
                 implementation(compose.components.resources)
+                implementation(libs.androidx.lifecycle.runtime.compose)
+                implementation(libs.androidx.lifecycle.viewmodel.compose)
+                implementation(libs.apollo.runtime)
+            }
+        }
+
+        val jvmMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlin.coroutines.swing)
             }
         }
     }

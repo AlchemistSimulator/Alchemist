@@ -1,0 +1,16 @@
+subscription SimulationSubscription {
+    simulation {
+        status
+        environment {
+            nodeToPos {
+                entries {
+                    id
+                    position {
+                        coordinates
+                        dimensions
+                    }
+                }
+            }
+        }
+    }
+}

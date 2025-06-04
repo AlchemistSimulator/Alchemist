@@ -19,6 +19,6 @@ import kotlinx.browser.document
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     ComposeViewport(checkNotNull(document.body)) {
-        app()
+        App()
     }
 }

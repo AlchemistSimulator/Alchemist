@@ -249,14 +249,23 @@
     "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0",
     "second": "https://javadoc.io/doc/org.graphstream/gs-core/2.0/element-list"
   },
+  "org.jetbrains.androidx.lifecycle/lifecycle-runtime-compose/2.9.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.androidx.lifecycle/lifecycle-runtime-compose/2.9.0"
+  },
+  "org.jetbrains.androidx.lifecycle/lifecycle-viewmodel-compose/2.9.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.androidx.lifecycle/lifecycle-viewmodel-compose/2.9.0"
+  },
   "org.jetbrains.compose.components/components-resources/1.8.1": {
     "first": "https://javadoc.io/doc/org.jetbrains.compose.components/components-resources/1.8.1"
+  },
+  "org.jetbrains.compose.desktop/desktop-jvm-linux-x64/1.8.1": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.desktop/desktop-jvm-linux-x64/1.8.1"
   },
   "org.jetbrains.compose.foundation/foundation/1.8.1": {
     "first": "https://javadoc.io/doc/org.jetbrains.compose.foundation/foundation/1.8.1"
   },
-  "org.jetbrains.compose.material/material/1.8.1": {
-    "first": "https://javadoc.io/doc/org.jetbrains.compose.material/material/1.8.1"
+  "org.jetbrains.compose.material3/material3/1.8.1": {
+    "first": "https://javadoc.io/doc/org.jetbrains.compose.material3/material3/1.8.1"
   },
   "org.jetbrains.compose.runtime/runtime/1.8.1": {
     "first": "https://javadoc.io/doc/org.jetbrains.compose.runtime/runtime/1.8.1"
@@ -329,6 +338,9 @@
   },
   "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.10.2": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.10.2"
+  },
+  "org.jetbrains.kotlinx/kotlinx-coroutines-swing/1.10.2": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-swing/1.10.2"
   },
   "org.jetbrains.kotlinx/kotlinx-coroutines-test/1.10.2": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-test/1.10.2"

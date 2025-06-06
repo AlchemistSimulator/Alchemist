@@ -1,0 +1,54 @@
+variables:
+  #  goal: &goal
+  #    formula: |
+  #      it.unibo.alchemist.test.Goal<Double>()
+  #    language: kotlin
+  zoom: &zoom
+    type: LinearVariable
+    parameters: [ 1, 0.001, 1, 0.01 ]
+  seed: &seed
+    min: 0
+    max: 0
+    step: 1
+    default: 0
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [ 5 ]
+
+seeds:
+  scenario: *seed
+  simulation: *seed
+
+incarnation: protelis
+
+environment: { type: ImageEnvironment, parameters: [images/base.png, 0.01, 0, 0] }
+
+_program-pools:
+  move: &move
+    - time-distribution: { type: ExponentialTime, parameters: [1] }
+      type: Event
+      actions: { type: FollowAtDistance, parameters: [destination, 0, 1] }
+
+deployments:
+  - type: Point
+    parameters: [0.1, 0.1]
+    programs: [*move]
+    contents:
+      - molecule: destination
+        concentration: [ 2, 2 ]
+
+terminate:
+  type: AfterTime
+  parameters: [10]
+
+#launcher:
+#  type: NelderMeadLauncher
+#  parameters: {
+#    outputPath: "src/test/resources/testNelderMeadResults",
+#    outputFileName: "testNelderMeadLauncher",
+#    objectiveFunction: *goal,
+#    variables: [ "zoom" ],
+#    seedName: "seed",
+#    repetitions: 1,
+#  }

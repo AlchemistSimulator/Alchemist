@@ -7,9 +7,9 @@
  */
 package it.unibo.alchemist.util.math
 
+import java.io.Serializable
 import org.apache.commons.math3.analysis.BivariateFunction
 import org.apache.commons.math3.util.FastMath.exp
-import java.io.Serializable
 
 /**
  * A 2D gaussian function.

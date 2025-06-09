@@ -17,8 +17,8 @@ import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.deployments.SpecificPositions
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import org.kaikikm.threadresloader.ResourceLoader
 import java.util.stream.Collectors
+import org.kaikikm.threadresloader.ResourceLoader
 
 class TestSpecificPositions :
     StringSpec({

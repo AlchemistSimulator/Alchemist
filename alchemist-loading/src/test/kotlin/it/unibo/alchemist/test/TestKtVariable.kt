@@ -18,10 +18,10 @@ import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.test.AlchemistTesting.loadAlchemistFromResource
 import it.unibo.alchemist.util.ClassPathScanner
+import javax.script.ScriptException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
-import javax.script.ScriptException
 
 class TestKtVariable<T, P : Position<P>> :
     StringSpec({

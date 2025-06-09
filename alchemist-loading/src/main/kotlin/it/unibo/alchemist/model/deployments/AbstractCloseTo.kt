@@ -11,11 +11,11 @@ package it.unibo.alchemist.model.deployments
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import java.util.stream.Stream
 import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution
 import org.apache.commons.math3.random.RandomGenerator
 import org.apache.commons.math3.util.Pair
-import java.util.stream.Stream
 
 /**
  * A generic [Deployment] that displaces a certain [nodeCount] of nodes in the proximity of a number of [sources].

@@ -22,9 +22,9 @@ import it.unibo.alchemist.model.geometry.euclidean2d.Segments.segment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.util.Doubles.fuzzyEquals
 import it.unibo.alchemist.util.Ranges.coincidesWith
-import org.junit.jupiter.api.assertThrows
 import kotlin.math.pow
 import kotlin.math.sqrt
+import org.junit.jupiter.api.assertThrows
 
 private infix fun Double.shouldBeAbout(other: Double) = fuzzyEquals(other) shouldBe true
 

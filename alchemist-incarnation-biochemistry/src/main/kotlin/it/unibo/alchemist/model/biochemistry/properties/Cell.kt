@@ -15,9 +15,9 @@ import it.unibo.alchemist.model.biochemistry.CellProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.properties.AbstractNodeProperty
-import org.apache.commons.math3.util.FastMath
 import kotlin.math.nextDown
 import kotlin.math.nextUp
+import org.apache.commons.math3.util.FastMath
 
 /**
  * Base implementation of a [CellProperty].

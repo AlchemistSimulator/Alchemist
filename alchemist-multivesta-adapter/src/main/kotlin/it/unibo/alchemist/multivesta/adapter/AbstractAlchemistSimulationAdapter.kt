@@ -13,8 +13,8 @@ import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.times.DoubleTime
-import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
+import org.slf4j.LoggerFactory
 
 /**
  * This is an adapter that allow MultiVesta to interact with Alchemist.

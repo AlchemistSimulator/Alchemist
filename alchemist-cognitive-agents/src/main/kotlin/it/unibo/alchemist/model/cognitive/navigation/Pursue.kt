@@ -16,10 +16,10 @@ import it.unibo.alchemist.model.geometry.Euclidean2DConvexShape
 import it.unibo.alchemist.model.geometry.Segment2DImpl
 import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DPassage
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import kotlin.math.pow
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DefaultUndirectedWeightedGraph
-import kotlin.math.pow
 
 /**
  * A [NavigationStrategy] allowing to pursue a known (static) [destination] without knowing any

@@ -12,6 +12,7 @@ package it.unibo.alchemist.test
 import de.flapdoodle.embed.mongo.config.Net
 import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.mongo.transitions.Mongod
+import de.flapdoodle.net.Net as Network
 import de.flapdoodle.os.CommonOS
 import de.flapdoodle.os.ImmutablePlatform
 import de.flapdoodle.os.Platform
@@ -21,7 +22,6 @@ import de.flapdoodle.reverse.StateID
 import de.flapdoodle.reverse.transitions.Start
 import it.unibo.alchemist.util.BugReporting
 import org.slf4j.LoggerFactory
-import de.flapdoodle.net.Net as Network
 
 private val logger by lazy { LoggerFactory.getLogger("TestsWithMongoDB") }
 private val UBUNTU_VERSION_EXTRACTOR = Regex("""^\w+_(\d\d)_(\d\d)$""")

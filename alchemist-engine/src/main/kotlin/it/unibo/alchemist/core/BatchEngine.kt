@@ -15,13 +15,13 @@ import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
+import java.util.concurrent.CompletableFuture
+import java.util.function.Function
+import java.util.stream.Collectors
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
-import java.util.concurrent.CompletableFuture
-import java.util.function.Function
-import java.util.stream.Collectors
 
 /**
  * This class implements a simulation. It offers a wide number of static

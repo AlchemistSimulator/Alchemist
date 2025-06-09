@@ -16,14 +16,14 @@ import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.terminators.StepCount
 import it.unibo.alchemist.model.timedistributions.DiracComb
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 /**
  * This class tests some basic Commands, like pause and start.

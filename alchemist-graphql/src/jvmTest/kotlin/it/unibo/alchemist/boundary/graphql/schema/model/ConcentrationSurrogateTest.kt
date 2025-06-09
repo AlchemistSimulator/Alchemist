@@ -12,13 +12,13 @@ package it.unibo.alchemist.boundary.graphql.schema.model
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLConcentrationSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.util.encodeConcentrationContentToString
 import it.unibo.alchemist.model.Concentration
+import java.util.concurrent.TimeUnit
+import kotlin.test.assertEquals
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
-import java.util.concurrent.TimeUnit
-import kotlin.test.assertEquals
 
 class ConcentrationSurrogateTest {
 

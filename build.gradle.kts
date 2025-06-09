@@ -14,10 +14,10 @@ import Util.isInCI
 import Util.isMac
 import Util.isWindows
 import com.github.spotbugs.snom.SpotBugsTask
+import java.io.FileFilter
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
-import java.io.FileFilter
 
 plugins {
     id("kotlin-jvm-convention")

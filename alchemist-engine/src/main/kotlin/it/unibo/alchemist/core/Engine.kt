@@ -20,9 +20,6 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
-import org.jooq.lambda.fi.lang.CheckedRunnable
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.util.ArrayDeque
 import java.util.Optional
 import java.util.Queue
@@ -36,6 +33,9 @@ import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import java.util.function.BooleanSupplier
+import org.jooq.lambda.fi.lang.CheckedRunnable
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Represents a simulation engine that manages execution and scheduling.

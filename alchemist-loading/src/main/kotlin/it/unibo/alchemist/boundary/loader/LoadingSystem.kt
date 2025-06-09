@@ -29,9 +29,9 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.linkingrules.NoLinks
+import java.util.concurrent.Semaphore
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
-import java.util.concurrent.Semaphore
 
 internal abstract class LoadingSystem(private val originalContext: Context, private val originalRoot: Map<String, *>) :
     Loader {

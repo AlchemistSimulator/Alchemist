@@ -11,11 +11,11 @@ package it.unibo.alchemist.model.deployments
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
-import org.apache.commons.math3.random.RandomGenerator
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
 import kotlin.math.abs
 import kotlin.math.ceil
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * A (possibly randomized) grid of nodes.

@@ -15,12 +15,12 @@ import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.util.BugReporting
-import org.slf4j.LoggerFactory
 import java.io.Serializable
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
+import org.slf4j.LoggerFactory
 
 /**
  * The default launcher for simulations.

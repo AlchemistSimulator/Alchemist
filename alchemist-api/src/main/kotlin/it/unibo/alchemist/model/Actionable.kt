@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model
 
-import org.danilopianini.util.ListSet
 import java.io.Serializable
+import org.danilopianini.util.ListSet
 
 /**
  * A time-distributed entity with [inboundDependencies], [outboundDependencies] and an execution strategy.

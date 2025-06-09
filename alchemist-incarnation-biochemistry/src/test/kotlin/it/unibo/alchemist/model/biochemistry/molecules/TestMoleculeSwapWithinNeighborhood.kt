@@ -18,12 +18,12 @@ import it.unibo.alchemist.model.biochemistry.startSimulationWithoutParameters
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
-import org.apache.commons.math3.random.MersenneTwister
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.apache.commons.math3.random.MersenneTwister
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 private const val DIRECT_REACTION = "[token] --> [token in neighbor]"
 private const val INVERSE_REACTION = "[token in neighbor] --> [token]"

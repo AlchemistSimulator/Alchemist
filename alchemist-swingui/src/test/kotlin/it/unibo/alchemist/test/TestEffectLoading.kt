@@ -22,8 +22,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
 import it.unibo.alchemist.boundary.swingui.effect.impl.DrawBidimensionalGaussianLayersGradient
 import it.unibo.alchemist.boundary.swingui.effect.impl.EffectSerializationFactory
-import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File
+import org.kaikikm.threadresloader.ResourceLoader
 
 @Deprecated("The entire Swing UI is deprecated and is set to be replaced with a modern UI")
 class TestEffectLoading :

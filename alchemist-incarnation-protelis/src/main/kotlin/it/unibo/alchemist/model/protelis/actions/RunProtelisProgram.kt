@@ -22,13 +22,13 @@ import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.model.protelis.AlchemistNetworkManager
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
 import it.unibo.alchemist.util.RealDistributions
+import java.io.ObjectInputStream
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.util.ImmutableListSet
 import org.protelis.lang.ProtelisLoader
 import org.protelis.vm.ProtelisProgram
 import org.protelis.vm.ProtelisVM
-import java.io.ObjectInputStream
 
 /**
  * An [Action] that executes a Protelis program.

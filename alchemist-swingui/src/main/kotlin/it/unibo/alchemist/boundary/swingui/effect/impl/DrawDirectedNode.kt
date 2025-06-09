@@ -14,8 +14,6 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.molecules.SimpleMolecule
-import org.danilopianini.lang.RangedInteger
-import org.danilopianini.view.ExportForGUI
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.Point
@@ -25,6 +23,8 @@ import java.awt.geom.AffineTransform
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
+import org.danilopianini.lang.RangedInteger
+import org.danilopianini.view.ExportForGUI
 
 /**
  * This effect draws a node as a directed arrow.

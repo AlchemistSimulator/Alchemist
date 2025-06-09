@@ -22,6 +22,12 @@ import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.multivesta.adapter.launch.AlchemistMultiVestaSimulationLauncher
 import it.unibo.alchemist.multivesta.adapter.multivesta.MultiVestaEntryPoint
 import it.unibo.alchemist.multivesta.adapter.utils.SeedsManager
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
+import java.nio.file.Files
+import kotlin.system.exitProcess
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.CommandLineParser
 import org.apache.commons.cli.DefaultParser
@@ -30,12 +36,6 @@ import org.apache.commons.cli.ParseException
 import org.kaikikm.threadresloader.ResourceLoader
 import org.slf4j.LoggerFactory
 import org.slf4j.helpers.NOPLoggerFactory
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileWriter
-import java.io.IOException
-import java.nio.file.Files
-import kotlin.system.exitProcess
 
 /**
  * Starts Alchemist.

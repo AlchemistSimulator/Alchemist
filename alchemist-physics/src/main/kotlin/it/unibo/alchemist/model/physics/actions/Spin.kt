@@ -14,9 +14,9 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
-import org.apache.commons.math3.util.FastMath.toRadians
 import kotlin.math.cos
 import kotlin.math.sin
+import org.apache.commons.math3.util.FastMath.toRadians
 
 /**
  * Spins a [node] around itself at [angularSpeedDegrees] normalized according to the speed of the [reaction].

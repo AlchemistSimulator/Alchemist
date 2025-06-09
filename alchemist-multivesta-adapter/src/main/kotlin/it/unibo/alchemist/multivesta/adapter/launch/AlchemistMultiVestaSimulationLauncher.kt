@@ -14,8 +14,8 @@ import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.multivesta.adapter.AlchemistMultiVesta
-import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
+import org.slf4j.LoggerFactory
 
 /**
  * Launches a single simulation run that can be controlled by MultiVesta.

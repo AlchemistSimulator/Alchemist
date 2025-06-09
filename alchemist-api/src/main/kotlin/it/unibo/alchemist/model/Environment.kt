@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model
 
 import it.unibo.alchemist.core.Simulation
-import org.danilopianini.util.ListSet
 import java.io.Serializable
+import org.danilopianini.util.ListSet
 
 /**
  * Interface for an environment.

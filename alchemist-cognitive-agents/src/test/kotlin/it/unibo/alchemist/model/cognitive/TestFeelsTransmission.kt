@@ -15,10 +15,10 @@ import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.test.loadYamlSimulation
 import it.unibo.alchemist.test.startSimulation
-import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import org.junit.jupiter.api.Test
 
 class TestFeelsTransmission<T> {
     private fun Environment<T, Euclidean2DPosition>.perceivedDanger(): Double = nodes

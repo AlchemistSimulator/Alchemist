@@ -13,9 +13,9 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.util.Environments.allSubNetworksByNodeWithHopDistance
 import it.unibo.alchemist.util.Environments.allSubNetworksWithHopDistance
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
-import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import org.junit.jupiter.api.Test
 
 object TestEnvironmentsDiameterWithHopDistance {
     private infix fun <T> Environment<T, *>.withHopDistanceMustHave(expected: Subnetworks) =

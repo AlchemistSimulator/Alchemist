@@ -13,11 +13,11 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Network
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.util.Environments.allShortestHopPaths
-import org.danilopianini.symmetricmatrix.MutableDoubleSymmetricMatrix
-import org.danilopianini.symmetricmatrix.SymmetricMatrix
 import kotlin.Double.Companion.NaN
 import kotlin.Double.Companion.POSITIVE_INFINITY
 import kotlin.math.max
+import org.danilopianini.symmetricmatrix.MutableDoubleSymmetricMatrix
+import org.danilopianini.symmetricmatrix.SymmetricMatrix
 
 /**
  * Extensions functions of generic environments.

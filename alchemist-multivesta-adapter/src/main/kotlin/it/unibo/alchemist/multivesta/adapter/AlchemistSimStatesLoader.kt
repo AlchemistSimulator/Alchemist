@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.multivesta.adapter
 
-import org.slf4j.LoggerFactory
 import java.io.BufferedReader
 import java.io.FileReader
 import java.util.Collections
+import org.slf4j.LoggerFactory
 
 /**
  * This object is used to load the simulation states from the relative output file.

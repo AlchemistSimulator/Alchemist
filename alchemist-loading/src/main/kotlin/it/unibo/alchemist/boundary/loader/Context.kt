@@ -10,8 +10,8 @@
 package it.unibo.alchemist.boundary.loader
 
 import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
-import org.danilopianini.jirf.Factory
 import java.util.Collections.unmodifiableMap
+import org.danilopianini.jirf.Factory
 
 internal data class Context constructor(
     private val namedLookup: MutableMap<String, Map<*, *>>,

@@ -3,12 +3,12 @@ package it.unibo.alchemist.model.deployments
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position2D
-import org.apache.commons.math3.random.RandomGenerator
 import java.util.stream.IntStream
 import java.util.stream.Stream
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Displaces the nodes in the [environment] in a circular arc, given a [nodeCount],

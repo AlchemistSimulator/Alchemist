@@ -15,11 +15,11 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.environments.Environment2DWithObstacles
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.util.RandomGenerators.nextDouble
-import org.apache.commons.math3.distribution.RealDistribution
-import org.apache.commons.math3.random.RandomGenerator
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
+import org.apache.commons.math3.distribution.RealDistribution
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Selects a target based on a random direction extracted from [directionRng],

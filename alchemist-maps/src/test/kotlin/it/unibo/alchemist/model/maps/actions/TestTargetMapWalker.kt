@@ -20,11 +20,11 @@ import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.timedistributions.DiracComb
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import org.apache.commons.math3.random.MersenneTwister
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 internal class TestTargetMapWalker {
     private lateinit var environment: OSMEnvironment<Any>

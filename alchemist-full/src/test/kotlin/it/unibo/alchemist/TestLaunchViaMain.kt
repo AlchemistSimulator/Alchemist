@@ -9,13 +9,13 @@
 
 package it.unibo.alchemist
 
-import org.junit.jupiter.api.Test
-import org.slf4j.event.Level
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import java.nio.charset.StandardCharsets.UTF_8
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import org.junit.jupiter.api.Test
+import org.slf4j.event.Level
 
 /**
  * Tests the execution of the Alchemist main. It triggers a VM exit and must get launched in its own JVM.

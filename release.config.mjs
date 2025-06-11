@@ -11,7 +11,7 @@ const publishCmd = `
 git -C build/website/ add . || exit 4
 git -C build/website/ commit -m "chore: update website to version \${nextRelease.version}" || exit 5
 git -C build/website/ push || exit 6
-./gradlew kotlinUpgradeYarnLock -PstagingRepositoryId=\${process.env.STAGING_REPO_ID} releaseStagingRepositoryOnMavenCentral || exit 7
+./gradlew kotlinUpgradeYarnLock releaseMavenCentralPortalPublication || exit 7
 ./publishToAUR.sh pkgbuild/PKGBUILD "$CUSTOM_SECRET_0" "$CUSTOM_SECRET_1" "$CUSTOM_SECRET_2" || exit 8
 `;
 

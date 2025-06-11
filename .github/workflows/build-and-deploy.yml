@@ -397,7 +397,6 @@ jobs:
         with:
           java-version: ${{ needs.ci-preparation.outputs.java-version }}
           build-command: |
-            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} publishAllPublicationsToProjectLocalRepository zipMavenCentralPortalPublication validate drop
             ls -ahl
             echo Copying the new website
             tar -xf website.tar
@@ -411,6 +410,7 @@ jobs:
             # git -C build/website/ status
           check-command: true
           deploy-command: |
+            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} kotlinUpgradeYarnLock publishAllPublicationsToProjectLocalRepository zipMavenCentralPortalPublication validate drop
             npm install
             npx semantic-release
           retries-on-failure: 1

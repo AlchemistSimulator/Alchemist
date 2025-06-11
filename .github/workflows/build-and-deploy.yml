@@ -67,16 +67,11 @@ jobs:
     timeout-minutes: 180
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.22
+        uses: actions/checkout@v4.2.2
       - uses: DanySK/build-check-deploy-gradle-action@3.7.20
         with:
-          pre-build-command: true
-          build-command: |
-            ./gradlew kotlinUpgradeYarnLock --parallel
-          check-command: |
-            ./gradlew check --parallel || ./gradlew check --parallel
-          clean-command: |
-            ./gradlew clean --parallel || ./gradlew clean --parallel || true
+          pre-build-command: ./gradlew kotlinUpgradeYarnLock
+          build-command: true
           java-version: ${{ needs.ci-preparation.outputs.java-version }}
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
           should-run-codecov: ${{ contains('Linux', runner.os) }}
@@ -134,29 +129,10 @@ jobs:
             if [ "$attempt" = "5" ]; then exit 1; else sleep 120; fi
           done
 
-  # Create a staging repository on Central
-  staging-repo:
-    runs-on: ubuntu-24.04
-    needs:
-      - ci-preparation
-    if: fromJSON(needs.ci-preparation.outputs.may-deploy)
-    outputs:
-      repo-id: ${{ steps.create-staging-repo.outputs.staging-repo-id }}
-    steps:
-      - id: create-staging-repo
-        name: Create a staging repository
-        uses: danysk/action-create-ossrh-staging-repo@1.1.0
-        with:
-          group-id: "it.unibo.alchemist"
-          maven-central-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          repo-description: "Alchemist ${{ needs.ci-preparation.outputs.next-version }}"
-
-  # Assemble all artifacts and upload them
+ # Assemble all artifacts and upload them
   assemble-and-upload:
     needs:
       - ci-preparation
-      - staging-repo
     strategy:
       fail-fast: false
       matrix:
@@ -179,25 +155,14 @@ jobs:
         with:
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
-          maven-central-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           should-run-codecov: false
-          should-deploy: ${{ contains('Linux', runner.os) && fromJSON(needs.ci-preparation.outputs.may-deploy) }}
+          should-deploy: false
           should-validate-wrapper: ${{ contains('Linux', runner.os) }}
           pre-build-command: |
-            ./gradlew kotlinUpgradeYarnLock --parallel
+            ./gradlew kotlinUpgradeYarnLock
           build-command: |
-            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble --parallel
+            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} assemble
           check-command: true
-          deploy-command: |
-            [ -n "${{ needs.staging-repo.outputs.repo-id }}" ] || (
-              echo "Staging repository ID not found"
-              exit 1
-            )
-            ./gradlew\
-              ${{ needs.ci-preparation.outputs.force-version }}\
-              -PstagingRepositoryId=${{ needs.staging-repo.outputs.repo-id }}\
-              uploadOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel
           clean-command: |
             # Clean the build directory on Win and Mac
             if [[ "${{ contains('Linux', runner.os) }}" == "false" ]]; then
@@ -391,7 +356,6 @@ jobs:
       - ci-preparation
       - build
       - build-website
-      - staging-repo
       - verify-aur-package
       - test-linux-deb-installer
       - test-linux-rpm-installer
@@ -453,6 +417,7 @@ jobs:
         with:
           java-version: ${{ needs.ci-preparation.outputs.java-version }}
           build-command: |
+            ./gradlew publishAllPublicationsToProjectLocalRepository zipMavenCentralPortalPublication validate
             ls -ahl
             echo Copying the new website
             tar -xf website.tar
@@ -519,19 +484,6 @@ jobs:
           $gitToken = "${{ secrets.DEPLOYMENT_TOKEN }}"
           .\wingetcreate.exe update $env:packageID --version $packageVersion --urls "$installerUrl" --submit --token $gitToken
 
-  drop-staging-repo:
-    needs:
-      - staging-repo
-      - release
-    runs-on: ubuntu-24.04
-    if: always() && !(contains(needs.staging-repo.result, 'failure') || contains(needs.staging-repo.result, 'cancelled'))
-    steps:
-      - name: Drop staging repository
-        uses: danysk/action-drop-ossrh-staging-repo@1.0.3
-        with:
-          repo-id: ${{ needs.staging-repo.outputs.repo-id }}
-          maven-central-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
 
   success:
     runs-on: ubuntu-24.04
@@ -542,7 +494,6 @@ jobs:
       - ci-preparation
       - release
       - release-winget
-      - staging-repo
       - verify-aur-package
       - test-linux-deb-installer
       - test-linux-rpm-installer

@@ -309,7 +309,7 @@ tasks.withType<AbstractArchiveTask> {
 }
 
 publishing.publications {
-    withType<MavenPublication> {
+    withType<MavenPublication>().configureEach {
         pom {
             contributors {
                 contributor {
@@ -317,6 +317,15 @@ publishing.publications {
                     email.set("angelo.filaseta@studio.unibo.it")
                 }
             }
+        }
+    }
+}
+
+afterEvaluate {
+    components.withType<AdhocComponentWithVariants>().named("java").configure {
+        // Shadow creates a "shadowRuntimeElements" configuration which is added as a variant
+        withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
+            skip()
         }
     }
 }

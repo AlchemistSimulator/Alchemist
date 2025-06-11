@@ -362,6 +362,7 @@ jobs:
         with:
           path: website
           fetch-depth: 0
+          fetch-tags: 'true'
           persist-credentials: true
           repository: AlchemistSimulator/alchemistsimulator.github.io
           token: ${{ secrets.DEPLOYMENT_TOKEN }}

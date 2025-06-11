@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.util.GraphStreamSupport
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * A deployment based on a [GraphStream](https://graphstream-project.org) graph.
+ * A deployment based on a [GraphStream](https://github.com/graphstream) graph.
  */
 class GraphStreamDeployment<P>(
     private val createLinks: Boolean,

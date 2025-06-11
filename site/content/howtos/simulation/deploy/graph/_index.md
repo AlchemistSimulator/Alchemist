@@ -7,7 +7,7 @@ summary = "Deployment of nodes into arbitrary graphs."
 
 ![Arbitrary graphs](/images/simulator/graphstream.png)
 
-Alchemist supports [Graphstream](https://graphstream-project.org/)-based deployments,
+Alchemist supports [Graphstream](https://github.com/graphstream/)-based deployments,
 allowing for rich graphs to be used as node deployments.
 
 Deployments of this kind can be instanced through

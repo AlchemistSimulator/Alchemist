@@ -138,15 +138,6 @@ jobs:
       matrix:
         os: [ windows-2025, macos-14, ubuntu-24.04 ]
     runs-on: ${{ matrix.os }}
-    # Run if:
-    # - The staging repository is ready
-    # - The staging repository cannot be created as there is no access to secrets
-    if: >-
-      always() && (
-        contains(needs.staging-repo.result, 'success') || (
-          contains(needs.staging-repo.result, 'skipped') && !fromJSON(needs.ci-preparation.outputs.may-deploy)
-        )
-      )
     timeout-minutes: 120
     steps:
       - name: Checkout with full history
@@ -412,7 +403,6 @@ jobs:
           node-version-file: package.json
       - uses: DanySK/build-check-deploy-gradle-action@3.7.20
         env:
-          STAGING_REPO_ID: ${{ needs.staging-repo.outputs.repo-id }}
           MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}
         with:
           java-version: ${{ needs.ci-preparation.outputs.java-version }}

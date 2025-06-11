@@ -16,21 +16,11 @@ jobs:
       build-ref: ${{ steps.ci-preparation.outputs.build-ref }}
       force-version: ${{ steps.force-version.outputs.version }}
       java-version: ${{ steps.java-version.outputs.java-version }}
-      may-deploy: ${{ steps.may-deploy.outputs.may-deploy }}
       next-version: ${{ steps.compute-next-version.outputs.next-version }}
-      will-release: ${{ steps.compute-next-version.outputs.will-release }}
     steps:
       - name: Compute the build ref
         id: ci-preparation
         run: echo "build-ref=${{ github.workflow }}-${{ github.event.number || github.ref }}" >> $GITHUB_OUTPUT
-      - name: Determine whether this build may run deployments
-        id: may-deploy
-        run: |
-          echo "may-deploy=${{
-            !github.event.repository.fork && (
-              github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-            )
-          }}" >> $GITHUB_OUTPUT
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Compute the Java version
@@ -407,7 +397,7 @@ jobs:
         with:
           java-version: ${{ needs.ci-preparation.outputs.java-version }}
           build-command: |
-            ./gradlew publishAllPublicationsToProjectLocalRepository zipMavenCentralPortalPublication validate
+            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} publishAllPublicationsToProjectLocalRepository zipMavenCentralPortalPublication validate
             ls -ahl
             echo Copying the new website
             tar -xf website.tar
@@ -473,7 +463,6 @@ jobs:
           $installerUrl = "https://github.com/AlchemistSimulator/Alchemist/releases/download/$packageVersion/alchemist-$packageVersion.msi"
           $gitToken = "${{ secrets.DEPLOYMENT_TOKEN }}"
           .\wingetcreate.exe update $env:packageID --version $packageVersion --urls "$installerUrl" --submit --token $gitToken
-
 
   success:
     runs-on: ubuntu-24.04

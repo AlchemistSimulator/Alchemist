@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.util
 
-import org.apache.commons.math3.random.RandomGenerator
 import java.util.Collections
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Utilities that extend the functionality of [Iterable].

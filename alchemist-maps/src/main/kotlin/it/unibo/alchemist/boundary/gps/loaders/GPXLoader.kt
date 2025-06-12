@@ -17,12 +17,12 @@ import it.unibo.alchemist.model.maps.GPSTrace
 import it.unibo.alchemist.model.maps.positions.GPSPointImpl
 import it.unibo.alchemist.model.maps.routes.GPSTraceImpl
 import it.unibo.alchemist.model.times.DoubleTime
-import org.openstreetmap.osmosis.osmbinary.file.FileFormatException
 import java.io.IOException
 import java.io.InputStream
 import java.net.URL
 import java.util.Objects
 import java.util.stream.Collectors
+import org.openstreetmap.osmosis.osmbinary.file.FileFormatException
 
 /**
  * Class that reads GPS tracks from gpx files.

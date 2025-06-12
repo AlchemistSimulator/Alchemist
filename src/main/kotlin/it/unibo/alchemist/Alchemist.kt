@@ -17,6 +17,7 @@ import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.config.Verbosity
 import it.unibo.alchemist.model.SupportedIncarnations
+import java.io.File
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
@@ -26,7 +27,6 @@ import kotlinx.cli.multiple
 import org.kaikikm.threadresloader.ResourceLoader
 import org.slf4j.LoggerFactory
 import org.slf4j.helpers.NOPLoggerFactory
-import java.io.File
 
 /**
  * Starts Alchemist.

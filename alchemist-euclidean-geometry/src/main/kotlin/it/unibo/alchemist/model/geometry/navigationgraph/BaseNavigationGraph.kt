@@ -12,11 +12,11 @@ package it.unibo.alchemist.model.geometry.navigationgraph
 import it.unibo.alchemist.model.geometry.ConvexShape
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
+import java.util.function.Supplier
 import org.jgrapht.GraphType
 import org.jgrapht.graph.AbstractBaseGraph
 import org.jgrapht.graph.DefaultGraphType
 import org.jgrapht.util.SupplierUtil
-import java.util.function.Supplier
 
 /**
  * An implementation of [NavigationGraph], deriving from [AbstractBaseGraph].

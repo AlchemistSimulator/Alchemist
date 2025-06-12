@@ -16,12 +16,12 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.util.Anys.toPosition
-import org.apache.commons.math3.util.FastMath.toRadians
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sign
 import kotlin.math.sin
+import org.apache.commons.math3.util.FastMath.toRadians
 
 /**
  * Reads the target's absolute coordinates from the [target] molecule

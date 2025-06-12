@@ -23,12 +23,12 @@ import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import it.unibo.alchemist.test.AlchemistTesting.terminatingAfterSteps
+import java.util.Optional
 import org.apache.commons.math3.random.MersenneTwister
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.protelis.lang.datatype.DatatypeFactory
-import java.util.Optional
 
 class TestGetPosition {
     private val environment: Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment(ProtelisIncarnation())

@@ -9,10 +9,11 @@
 
 package it.unibo.alchemist.model.geometry
 
+import it.unibo.alchemist.model.geometry.AbstractConvexPolygon.Companion.cumulativeDistanceTo
 import it.unibo.alchemist.model.geometry.util.AwtShapes.vertices
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import kotlin.math.min
 import java.awt.Shape as AwtShape
+import kotlin.math.min
 
 /**
  * An abstract [ConvexPolygon] providing a convexity test.

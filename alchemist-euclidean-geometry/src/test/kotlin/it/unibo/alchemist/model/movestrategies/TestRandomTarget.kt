@@ -12,13 +12,13 @@ package it.unibo.alchemist.model.movestrategies
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import kotlin.math.abs
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.math.abs
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 
 private fun Double.equalityTest(other: Double) = abs(this - other) < 0.0001
 

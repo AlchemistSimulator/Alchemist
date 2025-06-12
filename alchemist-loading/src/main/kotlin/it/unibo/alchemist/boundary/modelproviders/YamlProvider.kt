@@ -10,11 +10,11 @@
 package it.unibo.alchemist.boundary.modelproviders
 
 import it.unibo.alchemist.boundary.AlchemistModelProvider
-import org.yaml.snakeyaml.LoaderOptions
-import org.yaml.snakeyaml.Yaml
 import java.io.InputStream
 import java.io.Reader
 import java.net.URL
+import org.yaml.snakeyaml.LoaderOptions
+import org.yaml.snakeyaml.Yaml
 
 /**
  * Loads YAML files via SnakeYAML.

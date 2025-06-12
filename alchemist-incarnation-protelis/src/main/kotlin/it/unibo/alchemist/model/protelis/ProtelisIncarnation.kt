@@ -37,6 +37,13 @@ import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.times.DoubleTime
+import java.io.Serial
+import java.lang.ref.WeakReference
+import java.util.Objects
+import java.util.Optional
+import java.util.concurrent.Semaphore
+import java.util.concurrent.TimeUnit
+import javax.annotation.Nonnull
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 import org.protelis.lang.ProtelisLoader
@@ -49,13 +56,6 @@ import org.protelis.vm.impl.AbstractExecutionContext
 import org.protelis.vm.impl.SimpleExecutionEnvironment
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.Serial
-import java.lang.ref.WeakReference
-import java.util.Objects
-import java.util.Optional
-import java.util.concurrent.Semaphore
-import java.util.concurrent.TimeUnit
-import javax.annotation.Nonnull
 
 /**
  * @param <P> position type

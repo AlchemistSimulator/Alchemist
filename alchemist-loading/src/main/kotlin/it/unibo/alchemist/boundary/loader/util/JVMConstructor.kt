@@ -11,17 +11,17 @@ package it.unibo.alchemist.boundary.loader.util
 
 import it.unibo.alchemist.util.BugReporting
 import it.unibo.alchemist.util.ClassPathScanner
-import net.pearx.kasechange.splitToWords
-import org.danilopianini.jirf.CreationResult
-import org.danilopianini.jirf.Factory
-import org.danilopianini.jirf.InstancingImpossibleException
-import org.slf4j.LoggerFactory
 import java.lang.reflect.Constructor
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
+import net.pearx.kasechange.splitToWords
+import org.danilopianini.jirf.CreationResult
+import org.danilopianini.jirf.Factory
+import org.danilopianini.jirf.InstancingImpossibleException
+import org.slf4j.LoggerFactory
 
 /**
  * A [JVMConstructor] whose [parameters] are an ordered list (common case for any JVM language).

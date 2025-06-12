@@ -15,8 +15,8 @@ import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.neighborhoods.Neighborhoods
-import org.graphstream.graph.Graph
 import kotlin.streams.toList
+import org.graphstream.graph.Graph
 
 /**
  * A [LinkingRule] that statically connects nodes as they were configured by GraphStream.

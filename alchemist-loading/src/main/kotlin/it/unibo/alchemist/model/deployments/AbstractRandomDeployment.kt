@@ -10,9 +10,9 @@ package it.unibo.alchemist.model.deployments
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
-import org.apache.commons.math3.random.RandomGenerator
 import java.util.stream.IntStream
 import java.util.stream.Stream
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * @param environment

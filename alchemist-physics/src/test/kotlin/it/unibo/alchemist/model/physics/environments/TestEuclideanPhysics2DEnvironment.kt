@@ -19,10 +19,10 @@ import it.unibo.alchemist.model.physics.properties.AreaProperty
 import it.unibo.alchemist.model.physics.properties.CircularArea
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.util.Doubles.fuzzyEquals
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 private fun Double.shouldBeAbout(other: Double) = assertTrue(fuzzyEquals(other))
 

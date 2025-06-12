@@ -19,10 +19,10 @@ import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
 import it.unibo.alchemist.model.physics.properties.AreaProperty
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.util.RandomGenerators.nextDouble
-import org.apache.commons.math3.random.RandomGenerator
-import org.jgrapht.graph.DefaultEdge
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
+import org.apache.commons.math3.random.RandomGenerator
+import org.jgrapht.graph.DefaultEdge
 
 /**
  * Basic implementation of a node's [OrientingProperty] in a 2D space.

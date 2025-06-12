@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.boundary.statistic
 
-import org.apache.commons.math3.stat.descriptive.AbstractUnivariateStatistic
 import kotlin.reflect.jvm.jvmName
+import org.apache.commons.math3.stat.descriptive.AbstractUnivariateStatistic
 
 /**
  * Counts the number of distinct entries.

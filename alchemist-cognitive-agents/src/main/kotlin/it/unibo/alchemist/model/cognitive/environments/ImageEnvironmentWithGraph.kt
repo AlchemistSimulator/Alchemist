@@ -22,10 +22,10 @@ import it.unibo.alchemist.model.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.physics.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.physics.environments.ImageEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import org.kaikikm.threadresloader.ResourceLoader
 import java.awt.Color
 import java.io.File
 import javax.imageio.ImageIO
+import org.kaikikm.threadresloader.ResourceLoader
 
 /**
  * An [ImageEnvironment] providing an [Euclidean2DNavigationGraph].

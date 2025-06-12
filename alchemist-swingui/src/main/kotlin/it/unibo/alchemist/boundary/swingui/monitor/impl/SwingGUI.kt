@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.maps.MapEnvironment
-import org.slf4j.LoggerFactory
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.DisplayMode
@@ -27,6 +26,7 @@ import java.io.File
 import javax.swing.BoxLayout
 import javax.swing.JFrame
 import javax.swing.JPanel
+import org.slf4j.LoggerFactory
 
 /**
  * Creates a Swing-based graphical interface for the provided [environment].

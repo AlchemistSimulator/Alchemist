@@ -12,10 +12,10 @@ package it.unibo.alchemist.model.deployments
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Position2D
-import org.apache.commons.math3.random.RandomGenerator
 import java.awt.geom.Area
 import java.awt.geom.Path2D
 import java.awt.geom.Rectangle2D
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Alias for using pairs as bidimensional points.

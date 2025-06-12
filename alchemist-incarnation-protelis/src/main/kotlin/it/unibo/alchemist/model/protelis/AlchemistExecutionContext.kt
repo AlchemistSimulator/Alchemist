@@ -25,6 +25,8 @@ import it.unibo.alchemist.model.maps.MapEnvironment
 import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
+import java.util.concurrent.TimeUnit
+import java.util.function.Function
 import org.apache.commons.math3.random.RandomGenerator
 import org.protelis.lang.datatype.DatatypeFactory
 import org.protelis.lang.datatype.DeviceUID
@@ -34,8 +36,6 @@ import org.protelis.vm.LocalizedDevice
 import org.protelis.vm.SpatiallyEmbeddedDevice
 import org.protelis.vm.TimeAwareDevice
 import org.protelis.vm.impl.AbstractExecutionContext
-import java.util.concurrent.TimeUnit
-import java.util.function.Function
 
 /**
  * @param <P> position type

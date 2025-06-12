@@ -9,8 +9,8 @@
 package it.unibo.alchemist.model
 
 import java.io.Serializable
-import kotlin.Double.Companion.POSITIVE_INFINITY
 import kotlin.Double.Companion.NEGATIVE_INFINITY as MINUS_INFINITY
+import kotlin.Double.Companion.POSITIVE_INFINITY
 
 /**
  * Interface for time representation.

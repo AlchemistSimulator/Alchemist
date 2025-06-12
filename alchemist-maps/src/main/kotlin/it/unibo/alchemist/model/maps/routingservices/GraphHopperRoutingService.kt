@@ -21,9 +21,6 @@ import it.unibo.alchemist.model.RoutingService
 import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.model.maps.routes.GraphHopperRoute
 import it.unibo.alchemist.model.routes.PolygonalChain
-import net.harawata.appdirs.AppDirsFactory
-import org.apache.commons.codec.binary.Base32
-import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.InputStream
 import java.io.RandomAccessFile
@@ -33,6 +30,9 @@ import java.nio.file.Paths
 import java.util.concurrent.Semaphore
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempDirectory
+import net.harawata.appdirs.AppDirsFactory
+import org.apache.commons.codec.binary.Base32
+import org.slf4j.LoggerFactory
 
 /**
  * [RoutingService] implementation based on GraphHopper.

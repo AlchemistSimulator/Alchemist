@@ -18,11 +18,11 @@ import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.geometry.Vector
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Timeout
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 
 class EnvironmentSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<P> {
 

@@ -13,6 +13,8 @@ import Util.isWindows
 import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.google.common.hash.Hashing
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 import org.jetbrains.kotlin.daemon.common.toHexString
 import org.panteleyev.jpackage.ImageType
 import org.panteleyev.jpackage.ImageType.DEB
@@ -22,8 +24,6 @@ import org.panteleyev.jpackage.ImageType.MSI
 import org.panteleyev.jpackage.ImageType.PKG
 import org.panteleyev.jpackage.ImageType.RPM
 import org.panteleyev.jpackage.JPackageTask
-import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
 
 plugins {
     id("kotlin-jvm-convention")

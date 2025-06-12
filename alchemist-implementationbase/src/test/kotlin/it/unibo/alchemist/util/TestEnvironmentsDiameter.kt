@@ -12,11 +12,11 @@ package it.unibo.alchemist.util
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.util.Environments.allSubNetworksByNode
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
-import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import org.junit.jupiter.api.Test
 
 object TestEnvironmentsDiameter {
     private infix fun <T> Environment<T, *>.mustHave(expected: Subnetworks) =

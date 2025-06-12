@@ -24,7 +24,13 @@ import it.unibo.alchemist.boundary.extractors.Time
 import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot
+import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.DependentVariable.formula as formulaKey
+import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.DependentVariable.language as languageKey
+import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.DependentVariable.timeout as timeoutKey
+import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Deployment.Program as ProgramSyntax
+import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Environment.GlobalProgram as GlobalProgramSyntax
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.JavaType
+import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Layer as LayerSyntax
 import it.unibo.alchemist.boundary.loader.syntax.SyntaxElement
 import it.unibo.alchemist.boundary.loader.util.JVMConstructor
 import it.unibo.alchemist.boundary.loader.util.NamedParametersConstructor
@@ -53,16 +59,10 @@ import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import org.apache.commons.math3.random.MersenneTwister
-import org.apache.commons.math3.random.RandomGenerator
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.DependentVariable.formula as formulaKey
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.DependentVariable.language as languageKey
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.DependentVariable.timeout as timeoutKey
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Deployment.Program as ProgramSyntax
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Environment.GlobalProgram as GlobalProgramSyntax
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Layer as LayerSyntax
+import org.apache.commons.math3.random.MersenneTwister
+import org.apache.commons.math3.random.RandomGenerator
 
 /*
  * UTILITY ALIASES

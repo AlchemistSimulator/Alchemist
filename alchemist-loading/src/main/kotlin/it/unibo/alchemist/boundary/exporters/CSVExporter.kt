@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.util.BugReporting
-import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.PrintStream
 import java.text.SimpleDateFormat
@@ -26,6 +25,7 @@ import java.util.TimeZone
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempDirectory
 import kotlin.reflect.KClass
+import org.slf4j.LoggerFactory
 
 /**
  * Writes on file data provided by a number of {@link Extractor}s. Produces a

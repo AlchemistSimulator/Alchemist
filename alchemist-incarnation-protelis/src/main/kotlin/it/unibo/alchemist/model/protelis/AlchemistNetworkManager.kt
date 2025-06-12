@@ -15,13 +15,13 @@ import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
+import java.io.Serializable
+import java.util.Collections
+import java.util.Objects
 import org.apache.commons.math3.distribution.RealDistribution
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.vm.CodePath
 import org.protelis.vm.NetworkManager
-import java.io.Serializable
-import java.util.Collections
-import java.util.Objects
 
 /**
  * Emulates a [NetworkManager]. This particular network manager does not

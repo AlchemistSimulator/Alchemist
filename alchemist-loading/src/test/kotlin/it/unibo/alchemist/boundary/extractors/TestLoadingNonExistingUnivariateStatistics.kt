@@ -11,9 +11,9 @@ package it.unibo.alchemist.boundary.extractors
 
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
 import it.unibo.alchemist.model.SupportedIncarnations
+import kotlin.test.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.assertNotNull
 
 class TestLoadingNonExistingUnivariateStatistics {
     @Test

@@ -13,12 +13,12 @@ import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.util.math.closestTo
 import it.unibo.alchemist.util.math.fuzzyEquals
 import it.unibo.alchemist.util.math.fuzzyGreaterEquals
-import org.apache.commons.math3.util.MathArrays
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.nextTowards
+import org.apache.commons.math3.util.MathArrays
 
 /**
  * This class implements a rectangular obstacle, whose sides are parallel to the

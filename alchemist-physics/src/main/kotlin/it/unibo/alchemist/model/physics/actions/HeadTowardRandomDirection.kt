@@ -17,10 +17,10 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import org.apache.commons.math3.random.RandomGenerator
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Changes the heading of [node] randomly.

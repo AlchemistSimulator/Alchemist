@@ -11,10 +11,10 @@ package it.unibo.alchemist.model.geometry
 
 import it.unibo.alchemist.model.geometry.shapes.AdimensionalShape
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import org.apache.commons.math3.util.FastMath.toDegrees
 import java.awt.geom.Arc2D
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
+import org.apache.commons.math3.util.FastMath.toDegrees
 
 internal class AwtEuclidean2DShapeFactory(override val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0)) :
     AbstractShapeFactory<Euclidean2DPosition, Euclidean2DTransformation>(),

@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.physics.properties.AreaProperty
 import it.unibo.alchemist.model.physics.properties.PhysicalPedestrian2D
 import it.unibo.alchemist.model.physics.reactions.PhysicsUpdate
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import java.awt.Color
 import org.dyn4j.dynamics.Body
 import org.dyn4j.dynamics.PhysicsBody
 import org.dyn4j.geometry.Circle
@@ -31,7 +32,6 @@ import org.dyn4j.geometry.Rectangle
 import org.dyn4j.geometry.Transform
 import org.dyn4j.geometry.Vector2
 import org.dyn4j.world.World
-import java.awt.Color
 
 private typealias PhysicsEnvWithObstacles<T> =
     EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T>

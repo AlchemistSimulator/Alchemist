@@ -26,18 +26,18 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.linkingrules.NoLinks
-import org.danilopianini.util.ArrayListSet
-import org.danilopianini.util.ImmutableListSet
-import org.danilopianini.util.LinkedListSet
-import org.danilopianini.util.ListSet
-import org.danilopianini.util.ListSets
-import org.danilopianini.util.SpatialIndex
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serial
 import java.util.Objects
 import java.util.Spliterator
 import java.util.function.Consumer
+import org.danilopianini.util.ArrayListSet
+import org.danilopianini.util.ImmutableListSet
+import org.danilopianini.util.LinkedListSet
+import org.danilopianini.util.ListSet
+import org.danilopianini.util.ListSets
+import org.danilopianini.util.SpatialIndex
 
 /**
  * Very generic and basic implementation for an environment. Basically, only

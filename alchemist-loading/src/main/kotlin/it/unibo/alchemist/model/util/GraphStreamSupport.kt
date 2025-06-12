@@ -17,6 +17,9 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.linkingrules.OffsetGraphStreamLinkingRule
 import it.unibo.alchemist.util.ClassPathScanner
 import it.unimi.dsi.util.SplitMix64Random
+import java.util.stream.Collectors
+import kotlin.math.max
+import kotlin.math.nextUp
 import org.apache.commons.math3.util.MathArrays
 import org.apache.commons.math3.util.MathArrays.ebeAdd
 import org.apache.commons.math3.util.MathArrays.ebeDivide
@@ -27,9 +30,6 @@ import org.danilopianini.jirf.FactoryBuilder
 import org.graphstream.algorithm.generator.BaseGenerator
 import org.graphstream.graph.implementations.SingleGraph
 import org.graphstream.ui.layout.springbox.implementations.SpringBox
-import java.util.stream.Collectors
-import kotlin.math.max
-import kotlin.math.nextUp
 
 /**
  * Support class for GraphStream, composed of a [linkingRule] and a [deployment].

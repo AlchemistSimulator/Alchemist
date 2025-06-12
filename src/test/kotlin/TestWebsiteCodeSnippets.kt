@@ -2,13 +2,13 @@ import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.model.terminators.StepCount
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import it.unibo.alchemist.util.ClassPathScanner
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
 
 /*
  * Copyright (C) 2010-2021, Danilo Pianini and contributors

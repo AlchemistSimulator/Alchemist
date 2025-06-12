@@ -15,11 +15,11 @@ import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.PositionSurro
 import it.unibo.alchemist.boundary.graphql.schema.util.PositionSurrogateUtils
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Position2D
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Timeout
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 
 class PositionSurrogateTest {
 

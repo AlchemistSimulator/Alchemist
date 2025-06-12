@@ -11,14 +11,14 @@ package it.unibo.alchemist.boundary.variables
 
 import it.unibo.alchemist.boundary.DependentVariable
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
 import javax.script.Bindings
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 import javax.script.SimpleBindings
 import kotlin.reflect.jvm.jvmName
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 
 /**
  * This variable loads any [JSR-233](https://archive.is/PGdk8) language available in the classpath.

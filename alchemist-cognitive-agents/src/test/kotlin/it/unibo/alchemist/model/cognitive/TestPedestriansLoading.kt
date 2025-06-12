@@ -15,10 +15,10 @@ import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.test.loadYamlSimulation
 import it.unibo.alchemist.test.startSimulation
-import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.fail
+import org.junit.jupiter.api.Test
 
 class TestPedestriansLoading<T, P, A> where P : Position<P>, P : Vector<P>, A : Transformation<P> {
     @Test

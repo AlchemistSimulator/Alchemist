@@ -16,8 +16,6 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
 import org.danilopianini.util.regex.Patterns
 import org.slf4j.LoggerFactory
-import kotlin.CharSequence
-import kotlin.Number
 
 /**
  * This strategy reads the value of a "target" molecule and tries to interpret

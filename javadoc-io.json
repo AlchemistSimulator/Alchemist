@@ -379,9 +379,9 @@
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17",
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17/element-list"
   },
-  "org.slf4j/slf4j-simple/2.0.0": {
-    "first": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.0",
-    "second": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.0/element-list"
+  "org.slf4j/slf4j-simple/2.0.17": {
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17/element-list"
   },
   "org.yaml/snakeyaml/2.4": {
     "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.4",

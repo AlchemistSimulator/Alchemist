@@ -413,7 +413,7 @@ jobs:
             # git -C build/website/ status
           check-command: true
           deploy-command: |
-            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} kotlinUpgradeYarnLock publishAllPublicationsToProjectLocalRepository zipMavenCentralPortalPublication validate drop
+            ./gradlew ${{ needs.ci-preparation.outputs.force-version }} kotlinUpgradeYarnLock publishAllPublicationsToProjectLocalRepository zipMavenCentralPortalPublication
             npm install
             npx semantic-release
           retries-on-failure: 1

@@ -1,0 +1,17 @@
+subscription NodeInfo($id: Int!) {
+    environment {
+        nodeById(id: $id) {
+            id
+            moleculeCount
+            properties
+            contents {
+                entries {
+                    concentration
+                    molecule {
+                        name
+                    }
+                }
+            }
+        }
+    }
+}

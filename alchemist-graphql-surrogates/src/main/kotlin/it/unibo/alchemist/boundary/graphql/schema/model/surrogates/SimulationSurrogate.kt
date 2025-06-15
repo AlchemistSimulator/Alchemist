@@ -35,6 +35,12 @@ data class SimulationSurrogate<T, P : Position<out P>>(@GraphQLIgnore override v
     fun time(): Double = origin.time.toDouble()
 
     /**
+     * The step at which the simulation is.
+     */
+    @GraphQLDescription("The step at which the simulation is")
+    fun step(): String = origin.step.toString()
+
+    /**
      * The environment of the simulation.
      */
     @GraphQLDescription("The environment of the simulation")

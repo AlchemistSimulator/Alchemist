@@ -21,7 +21,7 @@ import org.jetbrains.skiko.wasm.onWasmReady
 fun main() {
     onWasmReady {
         ComposeViewport(checkNotNull(document.body)) {
-            app()
+            App()
         }
     }
 }

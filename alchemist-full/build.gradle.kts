@@ -190,7 +190,11 @@ private val rpmFileProvider = rpmFileName.map { packageDestinationDir.resolve(it
 val generatePKGBUILD by tasks.registering {
     group = "Distribution"
     description = "Generates a valid PKGBUILD by replacing values in the template file"
-    enabled = false
+    if (validFormats.none { it is ValidPackaging && it.format == RPM }) {
+        logger.lifecycle("No RPM packaging available, skipping PKGBUILD generation")
+        enabled = false
+    }
+    dependsOn(tasks.withType<JPackageTask>())
     doLast {
         val inputFile = file("${project.projectDir}/PKGBUILD.template")
         val template = inputFile.readText()
@@ -244,12 +248,6 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
         description = "Creates application bundle through jpackage using $packaging"
         // Dependencies
         dependsOn(tasks.shadowJar)
-        tasks.assemble.configure { dependsOn(this@register) }
-        generatePKGBUILD.configure { dependsOn(this@register) }
-        if (packaging.format == RPM) {
-            logger.info("RPM packaging supported, enabling PKGBUILD support as well")
-            generatePKGBUILD.configure { enabled = true }
-        }
         // General info
         resourceDir = projectDir.resolve("package-settings")
         appName = rootProject.name
@@ -283,6 +281,8 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
         }
     }
 }
+
+tasks.assemble.configure { dependsOn(packageTasks) }
 
 tasks.withType<AbstractArchiveTask> {
     duplicatesStrategy = DuplicatesStrategy.WARN

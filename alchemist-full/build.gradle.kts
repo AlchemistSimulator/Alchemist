@@ -176,133 +176,113 @@ private fun String.extractVersionComponents(): SemVerExtracted {
     return SemVerExtracted(base, patch, suffix)
 }
 
-validFormats.filterIsInstance<ValidPackaging>().forEach { packaging: ValidPackaging ->
-    val baseVersion: Provider<String> = provider { rootProject.version.toString() }
-    val packageSpecificVersion =
-        baseVersion.map { version ->
-            when (packaging.format) {
-                MSI, EXE -> version.substringBefore('-')
-                DMG, PKG -> version.extractVersionComponents().asMangledVersion()
-                RPM -> version.replace('-', '.')
-                else -> version
+private val packageDestinationDir = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile
+private val baseVersion: Provider<String> = provider { rootProject.version.toString() }
+private fun ImageType.formatVersion(version: String): String = when (this) {
+    MSI, EXE -> version.substringBefore('-')
+    DMG, PKG -> version.extractVersionComponents().asMangledVersion()
+    RPM -> version.replace('-', '.')
+    else -> version
+}
+private val rpmFileName = baseVersion.map { "${rootProject.name}-${RPM.formatVersion(it)}-1.x86_64.rpm" }
+private val rpmFileProvider = rpmFileName.map { packageDestinationDir.resolve(it) }
+
+val generatePKGBUILD by tasks.registering {
+    group = "Distribution"
+    description = "Generates a valid PKGBUILD by replacing values in the template file"
+    if (validFormats.none { it is ValidPackaging && it.format == RPM }) {
+        logger.lifecycle("No RPM packaging available, skipping PKGBUILD generation")
+        enabled = false
+    }
+    dependsOn(tasks.withType<JPackageTask>())
+    doLast {
+        val inputFile = file("${project.projectDir}/PKGBUILD.template")
+        val template = inputFile.readText()
+        val templateStrings = listOf("VERSION", "RPM_URL", "RPM_MD5").map { "%ALCHEMIST_$it%" }
+        templateStrings.forEach {
+            check(it in template) { "Corrupt PKGBUILD.template, missing $it" }
+        }
+        val outputDir = rootProject.layout.buildDirectory.map { it.dir("pkgbuild") }.get().asFile
+        if (!outputDir.mkdirs()) {
+            check(outputDir.exists() && outputDir.isDirectory) {
+                "Could not create output directory $outputDir, as it already exists and is not a directory"
             }
         }
-    val packagingTaskNameSuffix =
-        packaging.name.replaceFirstChar { it.titlecase() } +
-            "PerUser".takeIf { packaging.perUser }.orEmpty()
-    val packagingTask =
-        tasks.register<JPackageTask>("jpackage$packagingTaskNameSuffix") {
-            dependsOn(tasks.shadowJar)
-
-            group = "Distribution"
-            description = "Creates application bundle through jpackage using $packaging"
-            // General info
-            resourceDir = "$projectDir/package-settings"
-            appName = rootProject.name
-            appVersion = packageSpecificVersion.get()
-            copyright = "Danilo Pianini and the Alchemist contributors"
-            aboutUrl = "https://alchemistsimulator.github.io/"
-            appDescription = rootProject.description
-            licenseFile = "${rootProject.projectDir}/LICENSE.md"
-
-            type = packaging.format
-            input =
-                tasks.shadowJar
-                    .get()
-                    .archiveFile
-                    .get()
-                    .asFile.parent
-            // Packaging settings
-            destination =
-                rootProject.layout.buildDirectory
-                    .map { it.dir("package") }
-                    .get()
-                    .asFile.path
-            mainJar =
-                tasks.shadowJar
-                    .get()
-                    .archiveFileName
-                    .get()
-            mainClass = application.mainClass.get()
-            verbose = true
-
-            linux {
-                icon = "${project.projectDir}/package-settings/logo.png"
-                linuxShortcut = true
-                linuxDebMaintainer = "Danilo Pianini"
-                linuxRpmLicenseType = "GPLv3"
-            }
-            windows {
-                icon = "${project.projectDir}/package-settings/logo.ico"
-                winDirChooser = true
-                winPerUserInstall = packaging.perUser
-                winShortcutPrompt = true
-                winConsole = true
-            }
-            mac {
-                icon = "${project.projectDir}/package-settings/logo.png"
+        val rpmFile = rpmFileProvider.get()
+        check(rpmFile.exists()) { "Could not find $rpmFileName in ${rpmFile.parentFile}" }
+        check(rpmFile.isFile) { "$rpmFileName is a directory" }
+        val md5 = MessageDigest.getInstance("MD5")
+        rpmFile.inputStream().use {
+            while (it.available() > 0) {
+                md5.update(it.readNBytes(10 * 1024 * 1024))
             }
         }
-    tasks.assemble.configure { dependsOn(packagingTask) }
-    // AUR Package based on the RPM distribution
-    if (packaging.format == RPM) {
-        logger.info("RPM packaging supported, enabling PKGBUILD support as well")
-        val generatePKGBUILD by tasks.registering {
-            group = "Distribution"
-            description = "Generates a valid PKGBUILD by replacing values in the template file"
-            dependsOn(packagingTask)
-            inputs.files(packagingTask)
-            doLast {
-                val inputFile = file("${project.projectDir}/PKGBUILD.template")
-                val template = inputFile.readText()
-                val templateStrings = listOf("VERSION", "RPM_URL", "RPM_MD5").map { "%ALCHEMIST_$it%" }
-                templateStrings.forEach {
-                    check(it in template) { "Corrupt PKGBUILD.template, missing $it" }
-                }
-                val outputDir =
-                    rootProject.layout.buildDirectory
-                        .map { it.dir("pkgbuild") }
-                        .get()
-                        .asFile
-                if (!outputDir.mkdirs()) {
-                    check(outputDir.exists() && outputDir.isDirectory) {
-                        "Could not create output directory $outputDir, as it already exists and is not a directory"
-                    }
-                }
-                val rpmFileName = "${rootProject.name}-${packageSpecificVersion.get()}-1.x86_64.rpm"
-                val rpmFile = packagingTask.map { File(it.destination).resolve(rpmFileName) }.get()
-                check(rpmFile.exists()) { "Could not find $rpmFileName in ${rpmFile.parentFile}" }
-                check(rpmFile.isFile) { "$rpmFileName is a directory" }
-                val md5 = MessageDigest.getInstance("MD5")
-                rpmFile.inputStream().use {
-                    while (it.available() > 0) {
-                        md5.update(it.readNBytes(10 * 1024 * 1024))
-                    }
-                }
-                val replacements =
-                    templateStrings.associateWith { key ->
-                        when {
-                            "VERSION" in key -> baseVersion.get().replace('-', '.')
-                            "RPM_URL" in key ->
-                                "https://github.com/AlchemistSimulator/Alchemist/releases/download/" +
-                                    "${baseVersion.get()}/" +
-                                    // Replace x86_64 with $CARCH to avoid namcap warnings
-                                    rpmFileName.replace("x86_64", "\$CARCH")
-                            "RPM_MD5" in key -> md5.digest().toHexString()
-                            else -> error("Unknown PKGBUILD replacement key $key")
-                        }
-                    }
-                val pkgbuildContent =
-                    replacements.toList().fold(template) { base, replacement ->
-                        val (key, actualValue) = replacement
-                        base.replace(key, actualValue)
-                    }
-                outputDir.resolve("PKGBUILD").writeText(pkgbuildContent)
+        val replacements = templateStrings.associateWith { key ->
+            when {
+                "VERSION" in key -> baseVersion.get().replace('-', '.')
+                "RPM_URL" in key ->
+                    "https://github.com/AlchemistSimulator/Alchemist/releases/download/" +
+                        "${baseVersion.get()}/" +
+                        // Replace x86_64 with $CARCH to avoid namcap warnings
+                        rpmFileName.get().replace("x86_64", "\$CARCH")
+                "RPM_MD5" in key -> md5.digest().toHexString()
+                else -> error("Unknown PKGBUILD replacement key $key")
             }
         }
-        tasks.assemble.configure { dependsOn(generatePKGBUILD) }
+        val pkgbuildContent = replacements.toList().fold(template) { base, replacement ->
+            val (key, actualValue) = replacement
+            base.replace(key, actualValue)
+        }
+        outputDir.resolve("PKGBUILD").writeText(pkgbuildContent)
     }
 }
+tasks.assemble.configure { dependsOn(generatePKGBUILD) }
+
+val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packaging: ValidPackaging ->
+    val packageSpecificVersion = baseVersion.map { packaging.format.formatVersion(it) }
+    val packagingTaskNameSuffix = packaging.name.replaceFirstChar { it.titlecase() } +
+        "PerUser".takeIf { packaging.perUser }.orEmpty()
+    val rpmFile = rpmFileName.map { packageDestinationDir.resolve(it) }
+    tasks.register<JPackageTask>("jpackage$packagingTaskNameSuffix") {
+        group = "Distribution"
+        description = "Creates application bundle through jpackage using $packaging"
+        // Dependencies
+        dependsOn(tasks.shadowJar)
+        // General info
+        resourceDir = projectDir.resolve("package-settings")
+        appName = rootProject.name
+        appVersion = packageSpecificVersion.get()
+        copyright = "Danilo Pianini and the Alchemist contributors"
+        aboutUrl = "https://alchemistsimulator.github.io/"
+        appDescription = rootProject.description
+        licenseFile = rootProject.projectDir.resolve("LICENSE.md")
+        type = packaging.format
+        input = tasks.shadowJar.get().archiveFile.get().asFile.parentFile
+        // Packaging settings
+        destination = packageDestinationDir
+        mainJar = tasks.shadowJar.get().archiveFileName.get()
+        mainClass = application.mainClass.get()
+        verbose = true
+        linux {
+            icon = project.projectDir.resolve("package-settings/logo.png")
+            linuxShortcut = true
+            linuxDebMaintainer = "Danilo Pianini"
+            linuxRpmLicenseType = "GPLv3"
+        }
+        windows {
+            icon = project.projectDir.resolve("package-settings/logo.ico")
+            winDirChooser = true
+            winPerUserInstall = packaging.perUser
+            winShortcutPrompt = true
+            winConsole = true
+        }
+        mac {
+            icon = project.projectDir.resolve("package-settings/logo.png")
+        }
+    }
+}
+
+tasks.assemble.configure { dependsOn(packageTasks) }
 
 tasks.withType<AbstractArchiveTask> {
     duplicatesStrategy = DuplicatesStrategy.WARN

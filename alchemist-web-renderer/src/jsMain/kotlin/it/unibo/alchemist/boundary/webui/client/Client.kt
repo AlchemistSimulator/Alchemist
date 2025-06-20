@@ -16,13 +16,14 @@ import react.Props
 import react.create
 import react.dom.client.createRoot
 import web.dom.Element
+import web.dom.ElementId
 import web.dom.document
 
 /**
  * The entry point of the Kotlin/JS application. Find the root element and render the App.
  */
 fun main() {
-    val container = document.getElementById("root") ?: error("Couldn't find container!")
+    val container = document.getElementById(ElementId("root")) ?: error("Couldn't find container!")
     createRoot(container.unsafeCast<Element>()).render(App.create())
 }
 

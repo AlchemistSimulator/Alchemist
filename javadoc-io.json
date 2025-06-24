@@ -101,9 +101,9 @@
   "io.arrow-kt/arrow-core/2.1.2": {
     "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/2.1.2"
   },
-  "io.github.classgraph/classgraph/4.8.179": {
-    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.179",
-    "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.179/element-list"
+  "io.github.classgraph/classgraph/4.8.180": {
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.180",
+    "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.180/package-list"
   },
   "io.jenetics/jpx/3.2.1": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1",

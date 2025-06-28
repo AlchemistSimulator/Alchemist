@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.Position
  * @param P the position
  */
 @GraphQLDescription("The simulation")
-data class SimulationSurrogate<T, P : Position<out P>>(@GraphQLIgnore override val origin: Simulation<T, P>) :
+data class SimulationSurrogate<T, P : Position<out P>>(@param:GraphQLIgnore override val origin: Simulation<T, P>) :
     GraphQLSurrogate<Simulation<T, P>>(origin) {
     /**
      * The time of the simulation.

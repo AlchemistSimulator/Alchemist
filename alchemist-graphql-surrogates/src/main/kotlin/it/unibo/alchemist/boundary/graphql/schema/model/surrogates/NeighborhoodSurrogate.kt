@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.Neighborhood
  * A GraphQL surrogate for a [Neighborhood].
  */
 @GraphQLDescription("A neighborhood of nodes")
-data class NeighborhoodSurrogate<T>(@GraphQLIgnore override val origin: Neighborhood<T>) :
+data class NeighborhoodSurrogate<T>(@param:GraphQLIgnore override val origin: Neighborhood<T>) :
     GraphQLSurrogate<Neighborhood<T>>(origin) {
     /**
      * @return the size of this neighborhood.

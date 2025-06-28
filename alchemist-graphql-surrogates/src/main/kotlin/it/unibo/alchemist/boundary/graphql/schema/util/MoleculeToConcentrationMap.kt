@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.Molecule
  */
 @GraphQLDescription("A map storing molecules and their concentrations")
 data class MoleculeToConcentrationMap(
-    @GraphQLIgnore override val originMap: Map<MoleculeSurrogate, String>,
+    @param:GraphQLIgnore override val originMap: Map<MoleculeSurrogate, String>,
     override val size: Int = originMap.size,
 ) : GraphQLMap<MoleculeSurrogate, String>(originMap, size) {
     /**

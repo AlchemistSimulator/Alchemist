@@ -171,13 +171,13 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         )
     }
 
-    override fun createMolecule(s: String?): Molecule = SimpleMolecule(Objects.requireNonNull<String?>(s))
+    override fun createMolecule(s: String): Molecule = SimpleMolecule(s)
 
     override fun createNode(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         parameter: Any?,
-    ): Node<Any> = GenericNode<Any>(this, environment).apply {
+    ): Node<Any> = GenericNode(this, environment).apply {
         addProperty(ProtelisDevice(environment, this))
     }
 
@@ -375,7 +375,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override val reactions: List<Reaction<Any>> = emptyList()
 
-        override fun iterator(): MutableIterator<Reaction<Any>> = notImplemented<MutableIterator<Reaction<Any>>>()
+        override fun iterator(): MutableIterator<Reaction<Any>> = notImplemented()
 
         override fun compareTo(@Nonnull other: Node<Any>): Int = notImplemented()
 

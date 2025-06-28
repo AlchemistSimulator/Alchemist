@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.Node
  * @param id The id of the node.
  */
 @GraphQLDescription("A node in the environment")
-data class NodeSurrogate<T>(@GraphQLIgnore override val origin: Node<T>, val id: Int = origin.id) :
+data class NodeSurrogate<T>(@param:GraphQLIgnore override val origin: Node<T>, val id: Int = origin.id) :
     GraphQLSurrogate<Node<T>>(origin) {
     /**
      * The number of [Molecule]s in this node.

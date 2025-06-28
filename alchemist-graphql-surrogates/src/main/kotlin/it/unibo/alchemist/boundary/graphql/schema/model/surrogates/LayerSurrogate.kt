@@ -28,8 +28,8 @@ import it.unibo.alchemist.model.Position
  */
 @GraphQLDescription("A layer containing a substance or a molecule with a spatial distribution")
 data class LayerSurrogate<T, P : Position<out P>>(
-    @GraphQLIgnore override val origin: Layer<T, P>,
-    @GraphQLIgnore val posMapping: (List<Number>) -> P,
+    @param:GraphQLIgnore override val origin: Layer<T, P>,
+    @param:GraphQLIgnore val posMapping: (List<Number>) -> P,
 ) : GraphQLSurrogate<Layer<T, P>>(origin) {
     /**
      * Returns the value of the layer at the given position.

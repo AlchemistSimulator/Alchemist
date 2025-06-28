@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.Position
  */
 @GraphQLDescription("Map of nodes' ids and their position")
 data class NodeToPosMap(
-    @GraphQLIgnore override val originMap: Map<Int, PositionSurrogate>,
+    @param:GraphQLIgnore override val originMap: Map<Int, PositionSurrogate>,
     override val size: Int = originMap.size,
 ) : GraphQLMap<Int, PositionSurrogate>(originMap, size) {
     /**

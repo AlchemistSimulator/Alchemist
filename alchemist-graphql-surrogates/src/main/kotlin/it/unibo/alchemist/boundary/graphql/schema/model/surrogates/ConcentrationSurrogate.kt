@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.Concentration
  */
 @GraphQLDescription("The concentration of a molecule, represented as a Json String or its string representation.")
 data class ConcentrationSurrogate<T>(
-    @GraphQLIgnore override val origin: Concentration<T>,
+    @param:GraphQLIgnore override val origin: Concentration<T>,
     /**
      * The content of the concentration of type [T], represented as a Json String.
      */

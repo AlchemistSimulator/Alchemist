@@ -28,7 +28,7 @@ import kotlinx.coroutines.sync.Semaphore
  */
 @GraphQLDescription("The simulation environment")
 data class EnvironmentSurrogate<T, P : Position<out P>>(
-    @GraphQLIgnore override val origin: Environment<T, P>,
+    @param:GraphQLIgnore override val origin: Environment<T, P>,
     val dimensions: Int = origin.dimensions,
 ) : GraphQLSurrogate<Environment<T, P>>(origin) {
     /**

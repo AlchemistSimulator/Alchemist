@@ -70,9 +70,6 @@
     "first": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2",
     "second": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2/element-list"
   },
-  "com.pinterest.ktlint/ktlint-cli/1.6.0": {
-    "first": "https://javadoc.io/doc/com.pinterest.ktlint/ktlint-cli/1.6.0"
-  },
   "com.pinterest.ktlint/ktlint-ruleset-standard/1.6.0": {
     "first": "https://javadoc.io/doc/com.pinterest.ktlint/ktlint-ruleset-standard/1.6.0"
   },
@@ -107,15 +104,6 @@
   "io.github.classgraph/classgraph/4.8.180": {
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.180",
     "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.180/package-list"
-  },
-  "io.github.detekt.sarif4k/sarif4k/0.5.0": {
-    "first": "https://javadoc.io/doc/io.github.detekt.sarif4k/sarif4k/0.5.0"
-  },
-  "io.github.oshai/kotlin-logging/5.1.0": {
-    "first": "https://javadoc.io/doc/io.github.oshai/kotlin-logging/5.1.0"
-  },
-  "io.gitlab.arturbosch.detekt/detekt-cli/1.23.8": {
-    "first": "https://javadoc.io/doc/io.gitlab.arturbosch.detekt/detekt-cli/1.23.8"
   },
   "io.jenetics/jpx/3.2.1": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1",
@@ -262,10 +250,6 @@
     "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0",
     "second": "https://javadoc.io/doc/org.graphstream/gs-core/2.0/element-list"
   },
-  "org.jacoco/org.jacoco.agent/0.8.13": {
-    "first": "https://javadoc.io/doc/org.jacoco/org.jacoco.agent/0.8.13",
-    "second": "https://javadoc.io/doc/org.jacoco/org.jacoco.agent/0.8.13/package-list"
-  },
   "org.jetbrains.compose.components/components-resources/1.8.2": {
     "first": "https://javadoc.io/doc/org.jetbrains.compose.components/components-resources/1.8.2"
   },
@@ -296,14 +280,8 @@
   "org.jetbrains.dokka/templating-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.6.14-19.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.6.14-19.1.0"
-  },
   "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.6.9-19.1.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.6.9-19.1.0"
-  },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.6.14-19.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.6.14-19.1.0"
   },
   "org.jetbrains.kotlin-wrappers/kotlin-react/2025.6.9-19.1.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.6.9-19.1.0"
@@ -311,38 +289,20 @@
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"
   },
-  "org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.21": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.21"
-  },
   "org.jetbrains.kotlin/kotlin-compiler-embeddable/2.2.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.2.0"
-  },
-  "org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.1.21": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.1.21"
   },
   "org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.2.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.2.0"
   },
-  "org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.21": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-dom-api-compat/2.1.21"
-  },
   "org.jetbrains.kotlin/kotlin-dom-api-compat/2.2.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-dom-api-compat/2.2.0"
-  },
-  "org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.1.21": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.1.21"
   },
   "org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.2.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.2.0"
   },
-  "org.jetbrains.kotlin/kotlin-reflect/2.1.21": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/2.1.21"
-  },
   "org.jetbrains.kotlin/kotlin-reflect/2.2.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/2.2.0"
-  },
-  "org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.1.21": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.1.21"
   },
   "org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.2.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.2.0"
@@ -350,20 +310,11 @@
   "org.jetbrains.kotlin/kotlin-scripting-jsr223/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-scripting-jsr223/null"
   },
-  "org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.1.21": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.1.21"
-  },
   "org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.2.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.2.0"
   },
-  "org.jetbrains.kotlin/kotlin-stdlib/2.1.21": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.1.21"
-  },
   "org.jetbrains.kotlin/kotlin-stdlib/2.2.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.2.0"
-  },
-  "org.jetbrains.kotlin/kotlin-test/2.1.21": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test/2.1.21"
   },
   "org.jetbrains.kotlin/kotlin-test/2.2.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test/2.2.0"
@@ -371,8 +322,8 @@
   "org.jetbrains.kotlin/kotlin-test/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test/null"
   },
-  "org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.1.21": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.1.21"
+  "org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.2.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.2.0"
   },
   "org.jetbrains.kotlinx/kotlinx-cli/0.3.6": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-cli/0.3.6"
@@ -385,12 +336,6 @@
   },
   "org.jetbrains.kotlinx/kotlinx-serialization-json/1.8.1": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.8.1"
-  },
-  "org.jetbrains.kotlinx/kotlinx-serialization-json/1.9.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.9.0"
-  },
-  "org.jetbrains.skiko/skiko-js-wasm-runtime/0.9.4.2": {
-    "first": "https://javadoc.io/doc/org.jetbrains.skiko/skiko-js-wasm-runtime/0.9.4.2"
   },
   "org.jgrapht/jgrapht-core/1.5.2": {
     "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2",

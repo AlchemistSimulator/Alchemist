@@ -1,53 +1,56 @@
-/*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
- * listed, for each module, in the respective subproject's build.gradle.kts file.
- *
- * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception,
- * as described in the file LICENSE in the Alchemist distribution's top directory.
- */
-
-package it.unibo.alchemist.boundary.webui.common.model.surrogate
-
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.boundary.webui.common.model.surrogate.MoleculeSurrogate
+import it.unibo.alchemist.boundary.webui.common.model.surrogate.NodeSurrogate
+import it.unibo.alchemist.boundary.webui.common.model.surrogate.Position2DSurrogate
+import it.unibo.alchemist.boundary.webui.common.model.surrogate.PositionSurrogate
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalSerializationApi::class)
-class NodeSurrogateTest :
-    StringSpec({
+class NodeSurrogateTest {
 
-        val mapping = mapOf(MoleculeSurrogate("test-0") to 0, MoleculeSurrogate("test-1") to 1)
+    private val mapping = mapOf(
+        MoleculeSurrogate("test-0") to 0,
+        MoleculeSurrogate("test-1") to 1,
+    )
 
-        val nodePosition = Position2DSurrogate(5.6, 1.2)
+    private val nodePosition = Position2DSurrogate(5.6, 1.2)
 
-        val nodeSurrogate = NodeSurrogate(29, mapping, nodePosition)
+    private val nodeSurrogate = NodeSurrogate(
+        id = 29,
+        contents = mapping,
+        position = nodePosition,
+    )
 
-        "NodeSurrogate should have the correct id" {
-            nodeSurrogate.id shouldBe 29
-        }
+    @Test
+    fun `node surrogates should have the correct id`() {
+        assertEquals(29, nodeSurrogate.id, "NodeSurrogate.id should match constructor argument")
+    }
 
-        "NodeSurrogate should have contents" {
-            nodeSurrogate.contents[MoleculeSurrogate("test-0")] shouldBe 0
-            nodeSurrogate.contents[MoleculeSurrogate("test-1")] shouldBe 1
-            nodeSurrogate.contents.size shouldBe 2
-        }
+    @Test
+    fun `node surrogates should have the correct contents`() {
+        assertEquals(0, nodeSurrogate.contents[MoleculeSurrogate("test-0")], "Content for 'test-0' should be 0")
+        assertEquals(1, nodeSurrogate.contents[MoleculeSurrogate("test-1")], "Content for 'test-1' should be 1")
+        assertEquals(2, nodeSurrogate.contents.size, "Contents map size should be 2")
+    }
 
-        "NodeSurrogate should have a position" {
-            nodeSurrogate.position shouldBe nodePosition
-        }
+    @Test
+    fun `node surrogates should have the correct position`() {
+        assertEquals(nodePosition, nodeSurrogate.position, "NodeSurrogate.position should match constructor argument")
+    }
 
-        "NodeSurrogate should be serialized correctly" {
-            NodeSurrogate
-                .serializer(
-                    Int.serializer(),
-                    PositionSurrogate.serializer(),
-                ).descriptor.serialName shouldBe "Node"
-            val serialized = Json.encodeToString(nodeSurrogate)
-            val deserialized: NodeSurrogate<Int, Position2DSurrogate> = Json.decodeFromString(serialized)
-            deserialized shouldBe nodeSurrogate
-        }
-    })
+    @Test
+    fun `node surrogates should serialize and deserialize correctly`() {
+        val descriptorName = NodeSurrogate
+            .serializer(Int.serializer(), PositionSurrogate.serializer())
+            .descriptor
+            .serialName
+        assertEquals("Node", descriptorName, "Serializer serialName should be 'Node'")
+        val serialized = Json.encodeToString(nodeSurrogate)
+        val deserialized: NodeSurrogate<Int, Position2DSurrogate> =
+            Json.decodeFromString(serialized)
+        assertEquals(nodeSurrogate, deserialized, "Deserialized surrogate should equal the original")
+    }
+}

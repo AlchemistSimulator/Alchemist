@@ -9,60 +9,72 @@
 
 package it.unibo.alchemist.boundary.webui.common.model.surrogate
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertNotEquals
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalSerializationApi::class)
-class GeneralPositionSurrogateTest :
-    StringSpec({
+class GeneralPositionSurrogateTest {
 
-        val generalPositionSurrogate: PositionSurrogate =
-            GeneralPositionSurrogate(
-                doubleArrayOf(5.0, 1.1, 6.0),
-                3,
-            )
+    private val generalPositionSurrogate: PositionSurrogate = GeneralPositionSurrogate(
+        doubleArrayOf(5.0, 1.1, 6.0),
+        3,
+    )
 
-        "GeneralPositionSurrogate should have the correct number of coordinates" {
-            generalPositionSurrogate.coordinates.size shouldBe 3
+    @Test
+    fun `GeneralPositionSurrogate should have the correct number of coordinates`() {
+        assertEquals(3, generalPositionSurrogate.coordinates.size)
+    }
+
+    @Test
+    fun `GeneralPositionSurrogate should have the correct number of dimensions`() {
+        assertEquals(3, generalPositionSurrogate.dimensions)
+    }
+
+    @Test
+    fun `GeneralPositionSurrogate should have the correct coordinates`() {
+        val coords = generalPositionSurrogate.coordinates
+        assertEquals(5.0, coords[0])
+        assertEquals(1.1, coords[1])
+        assertEquals(6.0, coords[2])
+    }
+
+    @Test
+    fun `GeneralPositionSurrogate should fail on creation if coordinates size is different from dimensions`() {
+        assertFailsWith<IllegalArgumentException> {
+            GeneralPositionSurrogate(doubleArrayOf(5.0, 1.1), 3)
         }
+    }
 
-        "GeneralPositionSurrogate should have the correct number of dimensions" {
-            generalPositionSurrogate.dimensions shouldBe 3
-        }
+    @Test
+    fun `GeneralPositionSurrogate hashCode and equals should work as expected`() {
+        val pos1 = GeneralPositionSurrogate(doubleArrayOf(1.0, 2.8, 3.0), 3)
+        val pos2 = GeneralPositionSurrogate(doubleArrayOf(1.0, 2.8, 3.0), 3)
+        val pos3 = GeneralPositionSurrogate(doubleArrayOf(1.0), 1)
+        // Equal objects
+        assertEquals(pos1.hashCode(), pos2.hashCode())
+        assertEquals(pos1, pos2)
+        // Unequal objects
+        assertNotEquals(pos1.hashCode(), pos3.hashCode())
+        assertNotEquals(pos2.hashCode(), pos3.hashCode())
+        assertNotEquals(pos1, pos3)
+        assertNotEquals(pos2, pos3)
+    }
 
-        "GeneralPositionSurrogate should have the correct coordinates" {
-            generalPositionSurrogate.coordinates[0] shouldBe 5.0
-            generalPositionSurrogate.coordinates[1] shouldBe 1.1
-            generalPositionSurrogate.coordinates[2] shouldBe 6.0
-        }
-
-        "GeneralPositionSurrogate should fail on creation if coordinates size is different from dimensions" {
-            shouldThrow<IllegalArgumentException> {
-                GeneralPositionSurrogate(doubleArrayOf(5.0, 1.1), 3)
-            }
-        }
-
-        "GeneralPositionSurrogate hashCode and equals should work as expected" {
-            val pos1 = GeneralPositionSurrogate(doubleArrayOf(1.0, 2.8, 3.0), 3)
-            val pos2 = GeneralPositionSurrogate(doubleArrayOf(1.0, 2.8, 3.0), 3)
-            val pos3 = GeneralPositionSurrogate(doubleArrayOf(1.0), 1)
-            pos1.hashCode() shouldBe pos2.hashCode()
-            pos1.hashCode() shouldNotBe pos3.hashCode()
-            pos2.hashCode() shouldNotBe pos3.hashCode()
-            (pos1 == pos2) shouldBe true
-            (pos1 == pos3) shouldBe false
-            (pos2 == pos3) shouldBe false
-        }
-
-        "GeneralPositionSurrogate should be serialized and deserialized correctly" {
-            GeneralPositionSurrogate.serializer().descriptor.serialName shouldBe "Position"
-            val serialized = Json.encodeToString(generalPositionSurrogate)
-            val deserializedPolymorphic = Json.decodeFromString<PositionSurrogate>(serialized)
-            deserializedPolymorphic shouldBe generalPositionSurrogate
-        }
-    })
+    @Test
+    fun `GeneralPositionSurrogate should be serialized and deserialized correctly`() {
+        // Check serialName
+        assertEquals(
+            "Position",
+            GeneralPositionSurrogate.serializer().descriptor.serialName,
+        )
+        // Round-trip
+        val serialized = Json.encodeToString(generalPositionSurrogate)
+        val deserializedPolymorphic = Json.decodeFromString<PositionSurrogate>(serialized)
+        assertEquals(generalPositionSurrogate, deserializedPolymorphic)
+    }
+}

@@ -9,15 +9,19 @@
 
 package it.unibo.alchemist.boundary.webui.common.model
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class RenderModeTest :
-    StringSpec({
-        "RenderMode are just CLIENT, SERVER and AUTO" {
-            val renderModes = RenderMode.entries.toTypedArray()
-            renderModes.size shouldBe 3
-            renderModes.map { it }.containsAll(listOf(RenderMode.CLIENT, RenderMode.SERVER, RenderMode.AUTO)) shouldBe
-                true
-        }
-    })
+class RenderModeTest {
+
+    @Test
+    fun `RenderMode are just CLIENT, SERVER and AUTO`() {
+        val renderModes = RenderMode.entries.toList()
+        assertEquals(3, renderModes.size, "There should be exactly three render modes")
+        assertTrue(
+            renderModes.containsAll(listOf(RenderMode.CLIENT, RenderMode.SERVER, RenderMode.AUTO)),
+            "Expected render modes to contain CLIENT, SERVER, and AUTO",
+        )
+    }
+}

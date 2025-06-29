@@ -9,34 +9,37 @@
 
 package it.unibo.alchemist.boundary.webui.common.model.surrogate
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.serialization.jsonFormat
-import kotlinx.serialization.encodeToString
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class StatusSurrogateTest :
-    StringSpec({
+class StatusSurrogateTest {
 
-        val listOfValues =
-            listOf(
-                StatusSurrogate.INIT,
-                StatusSurrogate.READY,
-                StatusSurrogate.PAUSED,
-                StatusSurrogate.RUNNING,
-                StatusSurrogate.TERMINATED,
-            )
+    private val listOfValues = listOf(
+        StatusSurrogate.INIT,
+        StatusSurrogate.READY,
+        StatusSurrogate.PAUSED,
+        StatusSurrogate.RUNNING,
+        StatusSurrogate.TERMINATED,
+    )
 
-        "StatusSurrogate are just INIT, READY, PAUSED, RUNNING and TERMINATED" {
-            val statuses = StatusSurrogate.entries.toTypedArray()
-            statuses.size shouldBe 5
-            statuses.map { it }.containsAll(listOfValues) shouldBe true
+    @Test
+    fun `status surrogates should include exactly INIT, READY, PAUSED, RUNNING and TERMINATED`() {
+        val statuses = StatusSurrogate.entries.toList()
+        assertEquals(5, statuses.size, "There should be exactly five status surrogates")
+        assertTrue(
+            statuses.containsAll(listOfValues),
+            "Expected status surrogates to contain $listOfValues, but was $statuses",
+        )
+    }
+
+    @Test
+    fun `status surrogates should be serializable and deserializable`() {
+        listOfValues.forEach { status ->
+            val ser = jsonFormat.encodeToString(status)
+            val des: StatusSurrogate = jsonFormat.decodeFromString(ser)
+            assertEquals(status, des, "Deserialized value should equal original for status $status")
         }
-
-        "StatusSurrogate should be serializable and deserializable" {
-            listOfValues.forEach {
-                val ser = jsonFormat.encodeToString(it)
-                val des: StatusSurrogate = jsonFormat.decodeFromString(ser)
-                it shouldBe des
-            }
-        }
-    })
+    }
+}

@@ -9,14 +9,19 @@
 
 package it.unibo.alchemist.boundary.webui.common.utility
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class ActionTest :
-    StringSpec({
-        "SimulationAction are PLAY and PAUSE" {
-            val actions = Action.entries.toTypedArray()
-            actions.size shouldBe 2
-            actions.map { it }.containsAll(listOf(Action.PLAY, Action.PAUSE)) shouldBe true
-        }
-    })
+class ActionTest {
+
+    @Test
+    fun `SimulationAction are PLAY and PAUSE`() {
+        val actions = Action.entries.toList()
+        assertEquals(2, actions.size, "There should be exactly two simulation actions")
+        assertTrue(
+            actions.containsAll(listOf(Action.PLAY, Action.PAUSE)),
+            "Expected actions to contain PLAY and PAUSE",
+        )
+    }
+}

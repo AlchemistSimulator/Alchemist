@@ -9,10 +9,6 @@
 
 package it.unibo.alchemist.boundary.webui.common.renderer
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.alchemist.boundary.webui.common.model.serialization.jsonFormat
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.EmptyConcentrationSurrogate
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.EnvironmentSurrogate
@@ -22,38 +18,46 @@ import it.unibo.alchemist.boundary.webui.common.model.surrogate.Position2DSurrog
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.PositionSurrogate
 import korlibs.image.bitmap.Bitmap
 import korlibs.image.bitmap.Bitmap32
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
-class BitmapRendererTest :
-    StringSpec({
+class BitmapRendererTest {
 
-        val envSurrogate: EnvironmentSurrogate<Any, PositionSurrogate> =
-            EnvironmentSurrogate(
-                2,
-                listOf(
-                    NodeSurrogate(
-                        0,
-                        mapOf(MoleculeSurrogate("concentration") to EmptyConcentrationSurrogate),
-                        Position2DSurrogate(5.6, 8.42),
-                    ),
+    private val envSurrogate: EnvironmentSurrogate<Any, PositionSurrogate> =
+        EnvironmentSurrogate(
+            dimensions = 2,
+            nodes = listOf(
+                NodeSurrogate(
+                    id = 0,
+                    contents = mapOf(MoleculeSurrogate("concentration") to EmptyConcentrationSurrogate),
+                    position = Position2DSurrogate(5.6, 8.42),
                 ),
-            )
+            ),
+        )
 
-        val renderer: Renderer<Any, PositionSurrogate, Bitmap> = BitmapRenderer()
+    private val renderer: Renderer<Any, PositionSurrogate, Bitmap> = BitmapRenderer()
 
-        "BitmapRenderer should output a Bitmap correctly" {
-            val bmp = renderer.render(envSurrogate)
-            bmp.shouldBeInstanceOf<Bitmap32>()
-            val encoded = jsonFormat.encodeToString(Bitmap32Serializer, bmp.toBMP32IfRequired())
-            val decoded = jsonFormat.decodeFromString(Bitmap32Serializer, encoded)
-            bmp.height shouldBe decoded.height
-            bmp.width shouldBe decoded.width
-            bmp.toBMP32().ints shouldBe decoded.ints
+    @Test
+    fun `bitmap renderer should output a Bitmap32 correctly`() {
+        val bmp = renderer.render(envSurrogate)
+        assertTrue(bmp is Bitmap32, "Expected a Bitmap32 output")
+        val encoded = jsonFormat.encodeToString(Bitmap32Serializer, (bmp as Bitmap32).toBMP32IfRequired())
+        val decoded = jsonFormat.decodeFromString(Bitmap32Serializer, encoded) as Bitmap32
+        assertEquals(bmp.height, decoded.height, "Height should match after serialization round-trip")
+        assertEquals(bmp.width, decoded.width, "Width should match after serialization round-trip")
+        assertEquals(bmp.ints.toList(), decoded.ints.toList(), "Pixel data should match after round-trip")
+    }
+
+    @Test
+    fun `bitmap renderer should throw on non-2D environments`() {
+        val mockEnv = EnvironmentSurrogate<Any, PositionSurrogate>(
+            dimensions = -1,
+            nodes = emptyList(),
+        )
+        assertFailsWith<IllegalArgumentException> {
+            renderer.render(mockEnv)
         }
-
-        "BitmapRenderer can't work with Environments with != 2 dimensions" {
-            val mockEnv: EnvironmentSurrogate<Any, PositionSurrogate> = EnvironmentSurrogate(-1, listOf())
-            shouldThrow<IllegalArgumentException> {
-                renderer.render(mockEnv)
-            }
-        }
-    })
+    }
+}

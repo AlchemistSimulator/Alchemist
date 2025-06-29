@@ -10,7 +10,7 @@
 import de.aaschmid.gradle.plugins.cpd.Cpd
 import Util.allVerificationTasks
 import Util.excludeGenerated
-import gradle.kotlin.dsl.accessors._4e9289ed14a3aef8a61b23bcfde3b7cf.ktlint
+import gradle.kotlin.dsl.accessors._13a5ad2fddec19c0c6a581e10fd2411a.ktlint
 
 plugins {
     id("common-static-analysis-convention")

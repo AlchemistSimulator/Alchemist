@@ -228,11 +228,15 @@ constructor(
                     override val origin
                         get() = this@asEnvironmentWithObstacles.origin
 
-                    override fun makePosition(vararg coordinates: Number): Euclidean2DPosition =
-                        super<Physics2DEnvironment>.makePosition(*coordinates)
+                    override fun makePosition(vararg coordinates: Number): Euclidean2DPosition {
+                        require(coordinates.size == 2) {
+                            "Wrong number of coordinates for ${this::class.simpleName}: ${coordinates.toList()}"
+                        }
+                        return Euclidean2DPosition(coordinates[0].toDouble(), coordinates[1].toDouble())
+                    }
 
                     override fun makePosition(coordinates: DoubleArray): Euclidean2DPosition =
-                        super<Physics2DEnvironment>.makePosition(coordinates)
+                        Euclidean2DPosition(coordinates)
 
                     override fun makePosition(coordinates: List<Number>): Euclidean2DPosition =
                         super<Physics2DEnvironment>.makePosition(coordinates)

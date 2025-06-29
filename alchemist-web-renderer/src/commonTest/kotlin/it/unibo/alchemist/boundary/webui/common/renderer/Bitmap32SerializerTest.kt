@@ -9,25 +9,31 @@
 
 package it.unibo.alchemist.boundary.webui.common.renderer
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.alchemist.boundary.webui.common.model.serialization.jsonFormat
 import korlibs.image.bitmap.Bitmap
 import korlibs.image.bitmap.Bitmap32
 import korlibs.image.paint.ColorPaint
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class Bitmap32SerializerTest :
-    StringSpec({
-        "Bitmap32 should be serialized and deserialized correctly" {
-            val bmp: Bitmap = Bitmap32(1000, 1000, ColorPaint(0))
-            val serialized = jsonFormat.encodeToString(Bitmap32Serializer, bmp.toBMP32IfRequired())
-            val deserialized = jsonFormat.decodeFromString(Bitmap32Serializer, serialized)
-            deserialized.shouldBeInstanceOf<Bitmap32>()
-            check(bmp is Bitmap32)
-            deserialized.bounds shouldBe bmp.bounds
-            deserialized.height shouldBe bmp.height
-            deserialized.width shouldBe bmp.width
-            deserialized.ints shouldBe bmp.ints
-        }
-    })
+class Bitmap32SerializerTest {
+
+    @Test
+    fun `bitmap32 should serialize and deserialize correctly`() {
+        // Create a Bitmap32 and treat it as Bitmap
+        val bmp: Bitmap = Bitmap32(1000, 1000, ColorPaint(0))
+        // Ensure the original is indeed a Bitmap32
+        assertTrue(bmp is Bitmap32, "Original bitmap should be a Bitmap32")
+
+        // Serialize via the polymorphic Bitmap32Serializer
+        val serialized = jsonFormat.encodeToString(Bitmap32Serializer, bmp.toBMP32IfRequired())
+        // Deserialize back
+        val deserialized: Bitmap32 = jsonFormat.decodeFromString(Bitmap32Serializer, serialized)
+        // Now check that key properties match
+        assertEquals(bmp.bounds, deserialized.bounds, "Bounds should match after round-trip")
+        assertEquals(bmp.width, deserialized.width, "Width should match after round-trip")
+        assertEquals(bmp.height, deserialized.height, "Height should match after round-trip")
+        assertEquals(bmp.ints.toList(), deserialized.ints.toList(), "Pixel data should match after round-trip")
+    }
+}

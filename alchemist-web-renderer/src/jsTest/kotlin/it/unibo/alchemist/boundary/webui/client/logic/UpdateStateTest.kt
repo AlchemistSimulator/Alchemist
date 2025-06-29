@@ -9,71 +9,59 @@
 
 package it.unibo.alchemist.boundary.webui.client.logic
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.RenderMode
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlinx.coroutines.test.runTest
 
-class UpdateStateTest :
-    StringSpec({
+class UpdateStateTest {
 
-        var clientCount = 0
-        var serverCount = 0
-        var statusCount = 0
+    private var clientCount = 0
+    private var serverCount = 0
+    private var statusCount = 0
 
-        val updateStateStrategy =
-            object : UpdateStateStrategy {
-                override suspend fun clientComputation() {
-                    clientCount++
-                }
-
-                override suspend fun serverComputation() {
-                    serverCount++
-                }
-
-                override suspend fun retrieveSimulationStatus() {
-                    statusCount++
-                }
-            }
-
-        val autoStrategy =
-            object : AutoRenderModeStrategy {
-                override fun invoke(): RenderMode = if (clientCount >= serverCount) {
-                    RenderMode.SERVER
-                } else {
-                    RenderMode.CLIENT
-                }
-            }
-
-        val brokenAutoStrategy =
-            object : AutoRenderModeStrategy {
-                override fun invoke(): RenderMode = RenderMode.AUTO
-            }
-
-        "updateState should work using RenderMode.SERVER" {
-            updateState(RenderMode.SERVER, updateStateStrategy, autoStrategy)
-            statusCount shouldBe 1
-            clientCount shouldBe 0
-            serverCount shouldBe 1
+    val updateStateStrategy = object : UpdateStateStrategy {
+        override suspend fun clientComputation() {
+            clientCount++
         }
 
-        "updateState should work using RenderMode.CLIENT" {
-            updateState(RenderMode.CLIENT, updateStateStrategy, autoStrategy)
-            statusCount shouldBe 2
-            clientCount shouldBe 1
-            serverCount shouldBe 1
+        override suspend fun serverComputation() {
+            serverCount++
         }
 
-        "updateState should work using RenderMode.AUTO" {
-            updateState(RenderMode.AUTO, updateStateStrategy, autoStrategy)
-            statusCount shouldBe 3
-            clientCount shouldBe 1
-            serverCount shouldBe 2
+        override suspend fun retrieveSimulationStatus() {
+            statusCount++
         }
+    }
 
-        "updateState should launch Exception using a broken autoStrategy" {
-            shouldThrow<IllegalStateException> {
-                updateState(RenderMode.AUTO, updateStateStrategy, brokenAutoStrategy)
-            }
+    val autoStrategy = object : AutoRenderModeStrategy {
+        override fun invoke(): RenderMode = when {
+            clientCount >= serverCount -> RenderMode.SERVER
+            else -> RenderMode.CLIENT
         }
-    })
+    }
+
+    private val brokenAutoStrategy = object : AutoRenderModeStrategy {
+        override fun invoke(): RenderMode = RenderMode.AUTO
+    }
+
+    @Test
+    fun `updateState should work using all render modes`() = runTest {
+        updateState(RenderMode.SERVER, updateStateStrategy, autoStrategy)
+        assertEquals(1, statusCount, "retrieveSimulationStatus should be called once")
+        assertEquals(0, clientCount, "clientComputation should not be called")
+        assertEquals(1, serverCount, "serverComputation should be called once")
+        updateState(RenderMode.CLIENT, updateStateStrategy, autoStrategy)
+        assertEquals(2, statusCount, "retrieveSimulationStatus count should accumulate")
+        assertEquals(1, clientCount, "clientComputation should be called once")
+        assertEquals(1, serverCount, "serverComputation count should remain")
+        updateState(RenderMode.AUTO, updateStateStrategy, autoStrategy)
+        assertEquals(3, statusCount, "retrieveSimulationStatus count should accumulate")
+        assertEquals(1, clientCount, "clientComputation count should remain")
+        assertEquals(2, serverCount, "serverComputation should be called again")
+        assertFailsWith<IllegalStateException> {
+            updateState(RenderMode.AUTO, updateStateStrategy, brokenAutoStrategy)
+        }
+    }
+}

@@ -9,27 +9,31 @@
 
 package it.unibo.alchemist.boundary.webui.common.model.surrogate
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.serialization.jsonFormat
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 
 @OptIn(ExperimentalSerializationApi::class)
-class MoleculeSurrogateTest :
-    StringSpec({
+class MoleculeSurrogateTest {
 
-        val moleculeSurrogate = MoleculeSurrogate("molecule")
+    private val moleculeSurrogate = MoleculeSurrogate("molecule")
 
-        "MoleculeSurrogate should have the correct name" {
-            moleculeSurrogate.name shouldBe "molecule"
-        }
+    @Test
+    fun `molecule surrogate should have the correct name`() {
+        assertEquals("molecule", moleculeSurrogate.name, "MoleculeSurrogate.name should match constructor argument")
+    }
 
-        "MoleculeSurrogate should be serialized and deserialized correctly" {
-            MoleculeSurrogate.serializer().descriptor.serialName shouldBe "Molecule"
-            val serialized = jsonFormat.encodeToString(moleculeSurrogate)
-            serialized shouldBe "\"molecule\""
-            val deserialized: MoleculeSurrogate = jsonFormat.decodeFromString(serialized)
-            deserialized shouldBe moleculeSurrogate
-        }
-    })
+    @Test
+    fun `molecule surrogate should serialize and deserialize correctly`() {
+        // Verify serialName
+        val serialName = MoleculeSurrogate.serializer().descriptor.serialName
+        assertEquals("Molecule", serialName, "Serializer serialName should be 'Molecule'")
+        // Round-trip serialization
+        val serialized = jsonFormat.encodeToString(moleculeSurrogate)
+        assertEquals("\"molecule\"", serialized, "Serialized JSON should be the raw string '\"molecule\"'")
+        val deserialized: MoleculeSurrogate = jsonFormat.decodeFromString(serialized)
+        assertEquals(moleculeSurrogate, deserialized, "Deserialized surrogate should equal the original")
+    }
+}

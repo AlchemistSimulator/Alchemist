@@ -9,22 +9,30 @@
 
 package it.unibo.alchemist.boundary.webui.common.model.surrogate
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.serialization.jsonFormat
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
 
 @OptIn(ExperimentalSerializationApi::class)
-class EmptyConcentrationTest :
-    StringSpec({
+class EmptyConcentrationTest {
 
+    @Test
+    fun `EmptyConcentration should be serialized correctly`() {
         val emptyConcentration = EmptyConcentrationSurrogate
-
-        "EmptyConcentration should be serialized correctly" {
-            EmptyConcentrationSurrogate.serializer().descriptor.serialName shouldBe "EmptyConcentration"
-            val ser = jsonFormat.encodeToString(emptyConcentration)
-            val des: EmptyConcentrationSurrogate = jsonFormat.decodeFromString(ser)
-            des shouldBe emptyConcentration
-        }
-    })
+        // Check serializer name
+        assertEquals(
+            "EmptyConcentration",
+            EmptyConcentrationSurrogate.serializer().descriptor.serialName,
+            "Serializer serialName should be 'EmptyConcentration'",
+        )
+        // Perform round-trip serialization
+        val ser = jsonFormat.encodeToString(emptyConcentration)
+        val des: EmptyConcentrationSurrogate = jsonFormat.decodeFromString(ser)
+        assertEquals(
+            emptyConcentration,
+            des,
+            "Deserialized object should equal the original EmptyConcentrationSurrogate",
+        )
+    }
+}

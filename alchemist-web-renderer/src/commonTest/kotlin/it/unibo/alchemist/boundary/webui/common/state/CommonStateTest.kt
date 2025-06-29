@@ -9,13 +9,14 @@
 
 package it.unibo.alchemist.boundary.webui.common.state
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldNotBe
+import kotlin.test.Test
+import kotlin.test.assertNotNull
 
-class CommonStateTest :
-    StringSpec({
-        "CommonState should be initialized with a default renderer" {
-            val state = CommonState()
-            state.renderer shouldNotBe null
-        }
-    })
+class CommonStateTest {
+
+    @Test
+    fun `common state should be initialized with a default renderer`() {
+        val state = CommonState()
+        assertNotNull(state.renderer, "CommonState.renderer should not be null")
+    }
+}

@@ -9,48 +9,71 @@
 
 package it.unibo.alchemist.boundary.webui.common.model.surrogate
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalSerializationApi::class)
-class Position2DSurrogateTest :
-    StringSpec({
+class Position2DSurrogateTest {
 
-        val positionSurrogate: PositionSurrogate = Position2DSurrogate(5.012345, 1.0000000001)
+    private val positionSurrogate: PositionSurrogate = Position2DSurrogate(5.012345, 1.0000000001)
 
-        "Position2DSurrogate should have the correct number of coordinates" {
-            positionSurrogate.coordinates.size shouldBe 2
-        }
+    @Test
+    fun `position 2d surrogates should have the correct number of coordinates`() {
+        assertEquals(
+            2,
+            positionSurrogate.coordinates.size,
+            "Expected exactly two coordinates",
+        )
+    }
 
-        "Position2DSurrogate should have the correct number of dimensions" {
-            positionSurrogate.dimensions shouldBe 2
-        }
+    @Test
+    fun `position 2d surrogates should have the correct number of dimensions`() {
+        assertEquals(
+            2,
+            positionSurrogate.dimensions,
+            "Expected dimensions property to be 2",
+        )
+    }
 
-        "Position2DSurrogate should have the correct coordinates" {
-            positionSurrogate.coordinates[0] shouldBe 5.012345
-            positionSurrogate.coordinates[1] shouldBe 1.0000000001
-        }
+    @Test
+    fun `position 2d surrogates should have the correct coordinates`() {
+        val coords = positionSurrogate.coordinates
+        assertEquals(5.012345, coords[0], "First coordinate mismatch")
+        assertEquals(1.0000000001, coords[1], "Second coordinate mismatch")
+    }
 
-        "Position2DSurrogate hashCode and equals should work as expected" {
-            val pos1 = Position2DSurrogate(1.0, 2.8)
-            val pos2 = Position2DSurrogate(1.0, 2.8)
-            val pos3 = Position2DSurrogate(2.0, 2.8)
-            pos1.hashCode() shouldBe pos2.hashCode()
-            pos1.hashCode() shouldNotBe pos3.hashCode()
-            pos2.hashCode() shouldNotBe pos3.hashCode()
-            (pos1 == pos2) shouldBe true
-            (pos1 == pos3) shouldBe false
-            (pos2 == pos3) shouldBe false
-        }
+    @Test
+    fun `position 2d surrogates hashCode and equals should work as expected`() {
+        val pos1 = Position2DSurrogate(1.0, 2.8)
+        val pos2 = Position2DSurrogate(1.0, 2.8)
+        val pos3 = Position2DSurrogate(2.0, 2.8)
+        // hashCode
+        assertEquals(pos1.hashCode(), pos2.hashCode(), "Equal objects must have same hashCode")
+        assertNotEquals(pos1.hashCode(), pos3.hashCode(), "Different objects should have different hashCodes")
+        assertNotEquals(pos2.hashCode(), pos3.hashCode(), "Different objects should have different hashCodes")
+        // equals
+        assertTrue(pos1 == pos2, "pos1 should equal pos2")
+        assertTrue(pos1 != pos3, "pos1 should not equal pos3")
+        assertTrue(pos2 != pos3, "pos2 should not equal pos3")
+    }
 
-        "Position2DSurrogate should be serialized correctly" {
-            Position2DSurrogate.serializer().descriptor.serialName shouldBe "Position2D"
-            val serialized = Json.encodeToString(positionSurrogate)
-            val deserializedPolymorphic = Json.decodeFromString<PositionSurrogate>(serialized)
-            deserializedPolymorphic shouldBe positionSurrogate
-        }
-    })
+    @Test
+    fun `position 2d surrogates should be serialized and deserialized correctly`() {
+        // Verify serialName
+        val serialName = Position2DSurrogate.serializer().descriptor.serialName
+        assertEquals("Position2D", serialName, "Serializer serialName should be 'Position2D'")
+        // Round-trip serialization
+        val serialized = Json.encodeToString(positionSurrogate)
+        val deserialized = Json.decodeFromString<PositionSurrogate>(serialized)
+        assertEquals(
+            positionSurrogate,
+            deserialized,
+            "Deserialized Position2DSurrogate should equal the original",
+        )
+    }
+}

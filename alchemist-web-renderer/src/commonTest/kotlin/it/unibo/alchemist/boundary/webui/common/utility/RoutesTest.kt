@@ -9,21 +9,17 @@
 
 package it.unibo.alchemist.boundary.webui.common.utility
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.ENVIRONMENT_CLIENT_PATH
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.ENVIRONMENT_SERVER_PATH
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_PAUSE_PATH
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_PLAY_PATH
-import it.unibo.alchemist.boundary.webui.common.utility.Routes.SIMULATION_STATUS_PATH
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
-class RoutesTest :
-    StringSpec({
-        "All the routes strings should be correct" {
-            ENVIRONMENT_CLIENT_PATH shouldBe "/environment/client"
-            ENVIRONMENT_SERVER_PATH shouldBe "/environment/server"
-            SIMULATION_STATUS_PATH shouldBe "/simulation/status"
-            SIMULATION_PLAY_PATH shouldBe "/simulation/play"
-            SIMULATION_PAUSE_PATH shouldBe "/simulation/pause"
-        }
-    })
+class RoutesTest {
+
+    @Test
+    fun `all the routes strings should be correct`() {
+        assertEquals("/environment/client", Routes.ENVIRONMENT_CLIENT_PATH)
+        assertEquals("/environment/server", Routes.ENVIRONMENT_SERVER_PATH)
+        assertEquals("/simulation/status", Routes.SIMULATION_STATUS_PATH)
+        assertEquals("/simulation/play", Routes.SIMULATION_PLAY_PATH)
+        assertEquals("/simulation/pause", Routes.SIMULATION_PAUSE_PATH)
+    }
+}

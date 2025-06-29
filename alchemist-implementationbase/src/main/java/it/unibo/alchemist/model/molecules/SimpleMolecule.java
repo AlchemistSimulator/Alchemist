@@ -34,7 +34,15 @@ public class SimpleMolecule implements Molecule {
      *            the molecule name
      */
     public SimpleMolecule(@Nonnull final CharSequence name) {
-        this.n = Objects.requireNonNull(name).toString().intern();
+        this(Objects.requireNonNull(name).toString().intern());
+    }
+
+    /**
+     * @param name
+     *            the molecule name
+     */
+    public SimpleMolecule(@Nonnull final String name) {
+        this.n = Objects.requireNonNull(name);
     }
 
     /**

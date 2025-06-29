@@ -29,8 +29,8 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                implementation(libs.kotest.assertions.core)
-                implementation(libs.kotest.framework.engine)
+                implementation(libs.kotlin.test)
+                implementation(libs.kotlin.coroutines.test)
             }
         }
         val jvmMain by getting {
@@ -45,8 +45,6 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
-                implementation(libs.kotest.assertions.core)
-                implementation(libs.kotest.runner)
                 implementation(libs.ktor.server.test.host)
                 implementation(alchemist("euclidean-geometry"))
                 implementation(alchemist("implementationbase"))
@@ -59,6 +57,7 @@ kotlin {
                 implementation(libs.bundles.kotlin.react)
                 implementation(libs.kotlinx.atomicfu.runtime)
                 implementation(npm("react-bootstrap", "2.5.0"))
+                implementation(libs.kotlin.coroutines.test)
             }
         }
     }

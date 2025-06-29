@@ -195,10 +195,10 @@ object Util {
      *  Common configuration for Web targets.
      */
     fun KotlinJsTargetDsl.webCommonConfiguration() {
-        moduleName = project.name
+        outputModuleName.set(project.name)
         browser {
             commonWebpackConfig {
-                outputFileName = "$moduleName.js"
+                outputFileName = "${project.name}.js"
             }
         }
         binaries.executable()

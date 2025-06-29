@@ -9,56 +9,63 @@
 
 package it.unibo.alchemist.boundary.webui.common.model.surrogate
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.serialization.decodeEnvironmentSurrogate
 import it.unibo.alchemist.boundary.webui.common.model.serialization.encodeEnvironmentSurrogate
 import it.unibo.alchemist.boundary.webui.common.model.serialization.jsonFormat
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.builtins.serializer
 
 @OptIn(ExperimentalSerializationApi::class)
-class EnvironmentSurrogateTest :
-    StringSpec({
+class EnvironmentSurrogateTest {
 
-        val position = Position2DSurrogate(5.6, 8.42)
+    private val position = Position2DSurrogate(5.6, 8.42)
 
-        val nodesListSet =
-            listOf(
-                NodeSurrogate(
-                    0,
-                    mapOf(
-                        MoleculeSurrogate("test-0") to EmptyConcentrationSurrogate,
-                        MoleculeSurrogate("test-1") to EmptyConcentrationSurrogate,
-                    ),
-                    position,
-                ),
-                NodeSurrogate(
-                    1,
-                    mapOf(MoleculeSurrogate("test-2") to EmptyConcentrationSurrogate),
-                    position,
-                ),
-            )
+    private val nodesList = listOf(
+        NodeSurrogate(
+            id = 0,
+            contents = mapOf(
+                MoleculeSurrogate("test-0") to EmptyConcentrationSurrogate,
+                MoleculeSurrogate("test-1") to EmptyConcentrationSurrogate,
+            ),
+            position = position,
+        ),
+        NodeSurrogate(
+            id = 1,
+            contents = mapOf(
+                MoleculeSurrogate("test-2") to EmptyConcentrationSurrogate,
+            ),
+            position = position,
+        ),
+    )
 
-        val envSurrogate: EnvironmentSurrogate<Any, PositionSurrogate> = EnvironmentSurrogate(2, nodesListSet)
+    private val envSurrogate: EnvironmentSurrogate<Any, PositionSurrogate> =
+        EnvironmentSurrogate(dimensions = 2, nodes = nodesList)
 
-        "EnvironmentSurrogate should have the correct dimensions" {
-            envSurrogate.dimensions shouldBe 2
-        }
+    @Test
+    fun `dimensions should be correct`() {
+        assertEquals(2, envSurrogate.dimensions, "EnvironmentSurrogate.dimensions should match")
+    }
 
-        "EnvironmentSurrogate should have the correct nodes" {
-            envSurrogate.nodes.size shouldBe 2
-            envSurrogate.nodes shouldBe nodesListSet
-        }
+    @Test
+    fun `nodes should be correct`() {
+        assertEquals(2, envSurrogate.nodes.size, "EnvironmentSurrogate should contain two nodes")
+        assertEquals(nodesList, envSurrogate.nodes, "EnvironmentSurrogate.nodes should match the provided list")
+    }
 
-        "EnvironmentSurrogate serialization and deserialization should work" {
-            EnvironmentSurrogate
-                .serializer(
-                    Int.serializer(),
-                    PositionSurrogate.serializer(),
-                ).descriptor.serialName shouldBe "Environment"
-            val serialized = jsonFormat.encodeEnvironmentSurrogate(envSurrogate)
-            val deserializedPolymorphic = jsonFormat.decodeEnvironmentSurrogate(serialized)
-            deserializedPolymorphic shouldBe envSurrogate
-        }
-    })
+    @Test
+    fun `serialization and deserialization should round-trip successfully`() {
+        // Check serializer name
+        val descriptorName = EnvironmentSurrogate
+            .serializer(Int.serializer(), PositionSurrogate.serializer())
+            .descriptor
+            .serialName
+        assertEquals("Environment", descriptorName, "Serializer serialName should be 'Environment'")
+
+        // Round-trip
+        val serialized = jsonFormat.encodeEnvironmentSurrogate(envSurrogate)
+        val deserialized = jsonFormat.decodeEnvironmentSurrogate(serialized)
+        assertEquals(envSurrogate, deserialized, "Deserialized surrogate should equal the original")
+    }
+}

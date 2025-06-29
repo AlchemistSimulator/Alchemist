@@ -9,19 +9,28 @@
 
 package it.unibo.alchemist.boundary.webui.common.model.serialization
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.EmptyConcentrationSurrogate
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlinx.serialization.PolymorphicSerializer
 
-class JsonFormatTest :
-    StringSpec({
+class JsonFormatTest {
 
-        "Polymorphic serialization and deserialization should work for EmptyConcentration" {
-            val concentration: Any = EmptyConcentrationSurrogate
-            val serialized = jsonFormat.encodeToString(PolymorphicSerializer(Any::class), concentration)
-            serialized.contains("type") shouldBe true
-            val deserialized = jsonFormat.decodeFromString(PolymorphicSerializer(Any::class), serialized)
-            deserialized shouldBe EmptyConcentrationSurrogate
-        }
-    })
+    @Test
+    fun `polymorphic serialization and deserialization should work for EmptyConcentrationSurrogate`() {
+        val concentration: Any = EmptyConcentrationSurrogate
+        val serializer = PolymorphicSerializer(Any::class)
+        val serialized = jsonFormat.encodeToString(serializer, concentration)
+        assertTrue(
+            serialized.contains("type"),
+            "Expected serialized JSON to include a \"type\" discriminator, but was: $serialized",
+        )
+        val deserialized = jsonFormat.decodeFromString(serializer, serialized)
+        assertEquals(
+            EmptyConcentrationSurrogate,
+            deserialized,
+            "Expected deserialized object to equal EmptyConcentrationSurrogate",
+        )
+    }
+}

@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.Reaction
  */
 @GraphQLDescription("A generic reaction")
 data class ReactionSurrogate<T>(
-    @GraphQLIgnore override val origin: Reaction<T>,
+    @param:GraphQLIgnore override val origin: Reaction<T>,
     val inputContext: Context = origin.inputContext,
     val outputContext: Context = origin.outputContext,
     val node: NodeSurrogate<T> = origin.node.toGraphQLNodeSurrogate(),

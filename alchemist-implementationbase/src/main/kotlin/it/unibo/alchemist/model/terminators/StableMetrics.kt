@@ -142,10 +142,28 @@ class StableMetrics<T>(
         }
     }
 
+    /**
+     * Companion object for StableMetrics.
+     *
+     * Provides constants relevant to the stability checks, such as maximum
+     * and default values for steps and time.
+     */
     companion object {
+        /**
+         * The maximum value for steps, used to determine when the step stability is reached.
+         */
         const val STEP_MAX_VALUE: Long = MAX_VALUE
+        /**
+         * The default value for steps, used when no stability is required.
+         */
         const val DEFAULT_STEP: Long = 0L
-        val DEFAULT_TIME: Time = ZERO
+        /**
+         * The maximum value for time, used to determine when the time stability is reached.
+         */
         val TIME_MAX_VALUE: Time = INFINITY
+        /**
+         * The default time value, used when no stability is required.
+         */
+        val DEFAULT_TIME: Time = ZERO
     }
 }

@@ -49,7 +49,7 @@ class StableMetrics<T>(
     private val stepTracker by lazy { StepMetricTracker() }
     private val timeTracker by lazy { TimeMetricTracker() }
     init {
-        require((stableForTotalTime > ZERO) || (stableForTotalSteps > 0)) {
+        require(stableForTotalTime > ZERO || (stableForTotalSteps > 0)) {
             "At least one of the stability conditions (stableForTime or stableForSteps) must be greater than zero."
         }
         require(checkTimeInterval <= stableForTotalTime) {

@@ -234,9 +234,8 @@
     "first": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9",
     "second": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9/package-list"
   },
-  "org.danilopianini/thread-inheritable-resource-loader/0.3.7": {
-    "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.7",
-    "second": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.7/package-list"
+  "org.danilopianini/thread-inheritable-resource-loader/0.3.8": {
+    "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.8"
   },
   "org.dyn4j/dyn4j/5.0.2": {
     "first": "https://javadoc.io/doc/org.dyn4j/dyn4j/5.0.2",
@@ -368,7 +367,8 @@
     "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.1.1/element-list"
   },
   "org.protelis/protelis-lang/18.1.1": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/18.1.1"
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/18.1.1",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-lang/18.1.1/package-list"
   },
   "org.reduxkotlin/redux-kotlin-threadsafe/0.6.1": {
     "first": "https://javadoc.io/doc/org.reduxkotlin/redux-kotlin-threadsafe/0.6.1"

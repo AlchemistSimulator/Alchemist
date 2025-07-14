@@ -153,14 +153,17 @@ class StableMetrics<T>(
          * The maximum value for steps, used to determine when the step stability is reached.
          */
         const val STEP_MAX_VALUE: Long = MAX_VALUE
+
         /**
          * The default value for steps, used when no stability is required.
          */
         const val DEFAULT_STEP: Long = 0L
+
         /**
          * The maximum value for time, used to determine when the time stability is reached.
          */
         val TIME_MAX_VALUE: Time = INFINITY
+
         /**
          * The default time value, used when no stability is required.
          */

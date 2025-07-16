@@ -160,8 +160,8 @@
   "io.ktor/ktor-server-websockets-jvm/3.2.2": {
     "first": "https://javadoc.io/doc/io.ktor/ktor-server-websockets-jvm/3.2.2"
   },
-  "io.mockk/mockk/1.14.4": {
-    "first": "https://javadoc.io/doc/io.mockk/mockk/1.14.4"
+  "io.mockk/mockk/1.14.5": {
+    "first": "https://javadoc.io/doc/io.mockk/mockk/1.14.5"
   },
   "it.unimi.dsi/dsiutils/2.7.4": {
     "first": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.4",

@@ -1,3 +1,15 @@
+## [42.2.7](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.6...42.2.7) (2025-07-23)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v18.2.0 (minor) ([#4620](https://github.com/AlchemistSimulator/Alchemist/issues/4620)) ([5ed04f6](https://github.com/AlchemistSimulator/Alchemist/commit/5ed04f6617c94b59c77d19b6aaa312a270f87639))
+* **deps:** update dependency commons-codec:commons-codec to v1.19.0 ([#4619](https://github.com/AlchemistSimulator/Alchemist/issues/4619)) ([5ded063](https://github.com/AlchemistSimulator/Alchemist/commit/5ded06305714a5097f8af1051a416eb3fb915a74))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([b1785c8](https://github.com/AlchemistSimulator/Alchemist/commit/b1785c85caa23db928a0e9dcee72a5e0854a27bb))
+* **build:** update the javadoc.io cache ([559082e](https://github.com/AlchemistSimulator/Alchemist/commit/559082e42009e4cc708f8cc7bfdbcfec722f531b))
+
 ## [42.2.6](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.5...42.2.6) (2025-07-22)
 
 ### Dependency updates

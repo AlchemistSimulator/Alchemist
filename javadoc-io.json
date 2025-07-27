@@ -102,7 +102,8 @@
     "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/2.1.2"
   },
   "io.github.classgraph/classgraph/4.8.181": {
-    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.181"
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.181",
+    "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.181/package-list"
   },
   "io.jenetics/jpx/3.2.1": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1",
@@ -280,11 +281,11 @@
   "org.jetbrains.dokka/templating-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.7.11-19.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.7.11-19.1.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.7.14-19.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.7.14-19.1.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.7.11-19.1.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.7.11-19.1.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.7.14-19.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.7.14-19.1.0"
   },
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"

@@ -1,3 +1,18 @@
+## [42.2.8](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.7...42.2.8) (2025-07-27)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v1.1.59 ([#4622](https://github.com/AlchemistSimulator/Alchemist/issues/4622)) ([0adcf26](https://github.com/AlchemistSimulator/Alchemist/commit/0adcf2640eb524e4607a3a6dc96d5c6caf396817))
+* **deps:** update react to v2025.7.14-19.1.0 (patch) ([#4621](https://github.com/AlchemistSimulator/Alchemist/issues/4621)) ([3fb74a4](https://github.com/AlchemistSimulator/Alchemist/commit/3fb74a4959146461395bad816275c0acc97fe32f))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.148.2 ([#4625](https://github.com/AlchemistSimulator/Alchemist/issues/4625)) ([f533406](https://github.com/AlchemistSimulator/Alchemist/commit/f5334060a4f6abe047aea7464109163be31f660e))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([fba2027](https://github.com/AlchemistSimulator/Alchemist/commit/fba20279ae48671d08b10d615cdf50544e63a0d6))
+
 ## [42.2.7](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.6...42.2.7) (2025-07-23)
 
 ### Dependency updates

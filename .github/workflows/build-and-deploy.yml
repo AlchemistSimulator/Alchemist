@@ -58,7 +58,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.1
+      - uses: DanySK/build-check-deploy-gradle-action@4.0.2
         with:
           pre-build-command: ./gradlew kotlinUpgradeYarnLock
           build-command: true
@@ -77,7 +77,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.22
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.1
+      - uses: DanySK/build-check-deploy-gradle-action@4.0.2
         with:
           retries-on-failure: 5
           wait-between-retries: 120
@@ -132,7 +132,7 @@ jobs:
     steps:
       - name: Checkout with full history
         uses: danysk/action-checkout@0.2.22
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.1
+      - uses: DanySK/build-check-deploy-gradle-action@4.0.2
         with:
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
@@ -394,7 +394,7 @@ jobs:
         uses: actions/setup-node@v4.4.0
         with:
           node-version-file: package.json
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.1
+      - uses: DanySK/build-check-deploy-gradle-action@4.0.2
         env:
           MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}
         with:

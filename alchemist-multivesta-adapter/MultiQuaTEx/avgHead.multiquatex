@@ -1,7 +1,0 @@
-obsAtStep(what,step) =
- if ( s.rval("step") == step )
-   then s.rval(what)
-   else # obsAtStep(what,step)
- fi ;
-eval parametric(E[ obsAtStep("heads",x)], x, 1, 1, 50);
-

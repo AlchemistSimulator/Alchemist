@@ -154,58 +154,38 @@ tasks.matching { it.name == "kotlinStoreYarnLock" }.configureEach {
 
 dokka {
     dokkaSourceSets.register("alldocs") {
-        val submodules =
-            checkNotNull(
-                project.rootDir.listFiles(FileFilter { it.name.startsWith("alchemist-") }),
-            )
-        val allSourceDirs =
-            submodules
-                .asSequence()
-                .map { it.resolve("src") }
-                .onEach {
-                    check(it.isDirectory) {
-                        "Expected a directory, found a file: ${it.absolutePath}"
-                    }
-                }
-                .flatMap { sourceFolder ->
-                    sourceFolder
-                        .listFiles(FileFilter { it.name.contains("main", ignoreCase = true) })
-                        .orEmpty()
-                        .asSequence()
-                }.onEach { check(it.isDirectory) }
-                .flatMap { sourceSetFolder ->
-                    sourceSetFolder
-                        .listFiles(FileFilter { it.name in listOf("java", "kotlin") })
-                        .orEmpty()
-                        .asSequence()
-                }.toList()
+        val submodules = checkNotNull(project.rootDir.listFiles(FileFilter { it.name.startsWith("alchemist-") }))
+        val allSourceDirs = submodules.asSequence()
+            .map { it.resolve("src") }
+            .onEach { check(it.isDirectory) { "Expected a directory, found a file: ${it.absolutePath}" } }
+            .flatMap { sourceFolder ->
+                sourceFolder.listFiles(FileFilter { it.name.contains("main", ignoreCase = true) })
+                    .orEmpty()
+                    .asSequence()
+            }.onEach { check(it.isDirectory) }
+            .flatMap { sourceSetFolder ->
+                sourceSetFolder.listFiles(FileFilter { it.name in listOf("java", "kotlin") })
+                    .orEmpty()
+                    .asSequence()
+            }.toList()
         sourceRoots.setFrom(allSourceDirs)
     }
 }
 
 // WEBSITE
 
-val websiteDir =
-    rootProject.layout.buildDirectory
-        .map { it.dir("website").asFile }
-        .get()
+val websiteDir = rootProject.layout.buildDirectory.map { it.dir("website").asFile }.get()
 
 hugo {
-    version =
-        Regex("gohugoio/hugo@v([\\.\\-\\+\\w]+)")
-            .find(file("deps-utils/action.yml").readText())!!
-            .groups[1]!!
-            .value
+    version = Regex("gohugoio/hugo@v([\\.\\-\\+\\w]+)").find(file("deps-utils/action.yml").readText())!!
+        .groups[1]!!
+        .value
 }
 
 fun Project.dokkaCopyTask(destination: String): Copy.() -> Unit = {
     dependsOn(tasks.withType<DokkaBaseTask>())
     dependsOn(rootProject.tasks.hugoBuild)
-    from(
-        dokka.dokkaPublications.html
-            .get()
-            .outputDirectory,
-    )
+    from(dokka.dokkaPublications.html.get().outputDirectory)
     into(File(websiteDir, "reference/$destination"))
 }
 
@@ -224,15 +204,10 @@ val performWebsiteStringReplacements by tasks.registering {
         require(index.exists()) {
             "file ${index.absolutePath} has been deleted."
         }
-        val websiteReplacements =
-            file("site/replacements")
-                .readLines()
-                .map { it.split("->") }
-                .map { it[0] to it[1] }
+        val websiteReplacements = file("site/replacements").readLines().map { it.split("->") }.map { it[0] to it[1] }
         val replacements: List<Pair<String, String>> =
             websiteReplacements + ("!development preview!" to project.version.toString())
-        index.parentFile
-            .walkTopDown()
+        index.parentFile.walkTopDown()
             .filter { it.isFile && it.extension.matches(Regex("html?", RegexOption.IGNORE_CASE)) }
             .forEach { page ->
                 val initialContents = page.readText()

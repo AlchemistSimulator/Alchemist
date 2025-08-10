@@ -63,7 +63,7 @@ publishing.publications {
 
 tasks {
     withType<ScalaCompile> {
-        targetCompatibility = "1.8"
+        targetCompatibility = multiJvm.jvmVersionForCompilation.get().toString()
     }
 
     withType<Test> {

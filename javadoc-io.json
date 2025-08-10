@@ -69,8 +69,8 @@
     "first": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2",
     "second": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2/element-list"
   },
-  "com.pinterest.ktlint/ktlint-ruleset-standard/1.6.0": {
-    "first": "https://javadoc.io/doc/com.pinterest.ktlint/ktlint-ruleset-standard/1.6.0"
+  "com.pinterest.ktlint/ktlint-ruleset-standard/1.7.1": {
+    "first": "https://javadoc.io/doc/com.pinterest.ktlint/ktlint-ruleset-standard/1.7.1"
   },
   "com.soywiz.korlibs.korim/korim/4.0.10": {
     "first": "https://javadoc.io/doc/com.soywiz.korlibs.korim/korim/4.0.10"
@@ -175,8 +175,8 @@
     "first": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3",
     "second": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3/package-list"
   },
-  "net.sourceforge.pmd/pmd-dist/7.14.0": {
-    "first": "https://javadoc.io/doc/net.sourceforge.pmd/pmd-dist/7.14.0"
+  "net.sourceforge.pmd/pmd-dist/7.16.0": {
+    "first": "https://javadoc.io/doc/net.sourceforge.pmd/pmd-dist/7.16.0"
   },
   "org.antlr/antlr4-runtime/4.13.2": {
     "first": "https://javadoc.io/doc/org.antlr/antlr4-runtime/4.13.2",

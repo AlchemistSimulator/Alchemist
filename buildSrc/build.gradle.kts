@@ -7,15 +7,13 @@ repositories {
     gradlePluginPortal()
 }
 
-with(extensions.getByType<VersionCatalogsExtension>().named("libs")) {
-    dependencies {
-        implementation(findLibrary("dokka-gradle-plugin").get())
-        implementation(findLibrary("gson").get())
-        implementation(findLibrary("java-quality-assurance-plugin").get())
-        implementation(findLibrary("jgit").get())
-        implementation(findLibrary("kotlin-jvm-plugin").get())
-        implementation(findLibrary("kotlin-multiplatform-plugin").get())
-        implementation(findLibrary("kotlin-power-assert-plugin").get())
-        implementation(findLibrary("kotlin-quality-assurance-plugin").get())
-    }
+dependencies {
+    implementation(libs.dokka.gradle.plugin)
+    implementation(libs.gson)
+    implementation(libs.java.quality.assurance.plugin)
+    implementation(libs.jgit)
+    implementation(libs.kotlin.jvm.plugin)
+    implementation(libs.kotlin.multiplatform.plugin)
+    implementation(libs.kotlin.power.assert.plugin)
+    implementation(libs.kotlin.quality.assurance.plugin)
 }

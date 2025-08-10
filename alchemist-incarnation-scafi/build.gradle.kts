@@ -62,17 +62,17 @@ publishing.publications {
 }
 
 tasks {
-    withType<ScalaCompile> {
-        targetCompatibility = "1.8"
+    withType<ScalaCompile>().configureEach {
+        targetCompatibility = multiJvm.jvmVersionForCompilation.get().toString()
     }
 
-    withType<Test> {
+    withType<Test>().configureEach {
         reports {
             html.required.set(false)
         }
     }
 
-    test {
+    test.configure {
         useJUnitPlatform {
             includeEngines("scalatest")
             testLogging {

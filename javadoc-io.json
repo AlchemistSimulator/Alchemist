@@ -38,9 +38,8 @@
     "first": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12",
     "second": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12/package-list"
   },
-  "com.github.spotbugs/spotbugs-annotations/4.9.3": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.3",
-    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.3/element-list"
+  "com.github.spotbugs/spotbugs-annotations/4.9.4": {
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.4"
   },
   "com.github.spotbugs/spotbugs/4.9.3": {
     "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.3",
@@ -277,11 +276,11 @@
   "org.jetbrains.dokka/templating-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.8.6-19.1.1": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.8.6-19.1.1"
+  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.8.8-19.1.1": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.8.8-19.1.1"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.8.6-19.1.1": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.8.6-19.1.1"
+  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.8.8-19.1.1": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.8.8-19.1.1"
   },
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"

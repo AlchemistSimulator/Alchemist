@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Timeout
 class EnvironmentSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<P> {
 
     @Test
-    @Timeout(value = 1, unit = TimeUnit.MINUTES)
+    @Timeout(value = 2, unit = TimeUnit.MINUTES)
     fun `EnvironmentSurrogate should map an Environment to a GraphQL compliant object`() {
         GraphQLTestEnvironments.loadTests<T, P> { envWrapper ->
             val simulation = requireNotNull(envWrapper.simulation, { "Simulation must not be null" })

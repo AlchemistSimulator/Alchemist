@@ -1,6 +1,9 @@
 import Libs.alchemist
 import Util.webCommonConfiguration
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+import org.jetbrains.kotlin.gradle.tasks.IncrementalSyncTask
 
 plugins {
     kotlin("multiplatform")
@@ -58,3 +61,11 @@ kotlin {
         }
     }
 }
+
+inline fun <reified T: Task> bindToIncrementalSync() {
+    tasks.withType<T>().configureEach {
+        dependsOn(tasks.withType<IncrementalSyncTask>())
+    }
+}
+bindToIncrementalSync<KotlinWebpack>()
+bindToIncrementalSync<KotlinJsTest>()

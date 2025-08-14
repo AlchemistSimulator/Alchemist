@@ -169,7 +169,7 @@ hugo = "io.github.fstaudt.hugo:0.10.0"
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
-multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.0.1"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.0.2"
 publishOnCentral = "org.danilopianini.publish-on-central:9.1.2"
 scalafmt = "cz.augi.gradle.scalafmt:1.21.5"
 shadowJar = "com.gradleup.shadow:9.0.1"

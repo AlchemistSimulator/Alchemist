@@ -39,7 +39,8 @@
     "second": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12/package-list"
   },
   "com.github.spotbugs/spotbugs-annotations/4.9.4": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.4"
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.4",
+    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.4/element-list"
   },
   "com.github.spotbugs/spotbugs/4.9.4": {
     "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.4",
@@ -352,9 +353,8 @@
     "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.25.0",
     "second": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.25.0/element-list"
   },
-  "org.mockito/mockito-core/5.18.0": {
-    "first": "https://javadoc.io/doc/org.mockito/mockito-core/5.18.0",
-    "second": "https://javadoc.io/doc/org.mockito/mockito-core/5.18.0/element-list"
+  "org.mockito/mockito-core/5.19.0": {
+    "first": "https://javadoc.io/doc/org.mockito/mockito-core/5.19.0"
   },
   "org.mongodb/mongodb-driver-sync/5.5.1": {
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.5.1",

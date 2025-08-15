@@ -172,6 +172,6 @@ ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.1.0"
 publishOnCentral = "org.danilopianini.publish-on-central:9.1.3"
 scalafmt = "cz.augi.gradle.scalafmt:1.21.5"
-shadowJar = "com.gradleup.shadow:9.0.1"
+shadowJar = "com.gradleup.shadow:9.0.2"
 taskTree = "com.dorongold.task-tree:4.0.1"
 jpackage = "org.panteleyev.jpackageplugin:1.7.3"

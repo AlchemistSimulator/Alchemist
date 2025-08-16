@@ -20,7 +20,7 @@ jobs:
           pre-build-command: rm javadoc-io.json
           build-command: |
             ./gradlew dokkaGeneratePublicationHtml --parallel --dry-run
-            ./gradlew kotlinUpgradeYarnLock --parallel
+            ./gradlew kotlinUpgradeYarnLock kotlinWasmUpgradeYarnLock --parallel
           check-command: |
             git config user.name 'Danilo Pianini [bot]'
             git config user.email 'danilo.pianini@gmail.com'

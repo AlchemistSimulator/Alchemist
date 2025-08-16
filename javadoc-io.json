@@ -222,7 +222,8 @@
     "second": "https://javadoc.io/doc/org.danilopianini/javalib-java7/0.6.1/package-list"
   },
   "org.danilopianini/jirf/0.4.34": {
-    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.34"
+    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.34",
+    "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.34/element-list"
   },
   "org.danilopianini/kotlin-symmetric-matrix/1.1.6": {
     "first": "https://javadoc.io/doc/org.danilopianini/kotlin-symmetric-matrix/1.1.6"
@@ -347,14 +348,16 @@
     "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/5.13.4/package-list"
   },
   "org.junit.jupiter/junit-jupiter-engine/5.13.4": {
-    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.13.4"
+    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.13.4",
+    "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/5.13.4/package-list"
   },
   "org.mapsforge/mapsforge-map-awt/0.25.0": {
     "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.25.0",
     "second": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.25.0/element-list"
   },
   "org.mockito/mockito-core/5.19.0": {
-    "first": "https://javadoc.io/doc/org.mockito/mockito-core/5.19.0"
+    "first": "https://javadoc.io/doc/org.mockito/mockito-core/5.19.0",
+    "second": "https://javadoc.io/doc/org.mockito/mockito-core/5.19.0/element-list"
   },
   "org.mongodb/mongodb-driver-sync/5.5.1": {
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.5.1",

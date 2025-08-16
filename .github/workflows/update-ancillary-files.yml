@@ -20,7 +20,7 @@ jobs:
           pre-build-command: rm javadoc-io.json
           build-command: |
             ./gradlew dokkaGeneratePublicationHtml --parallel --dry-run
-            ./gradlew kotlinUpgradeYarnLock --parallel
+            ./gradlew kotlinUpgradeYarnLock kotlinWasmUpgradeYarnLock --parallel
           check-command: |
             git config user.name 'Danilo Pianini [bot]'
             git config user.email 'danilo.pianini@gmail.com'
@@ -30,9 +30,9 @@ jobs:
               git pull --rebase
               git push
             fi
-            if git status | grep -P '^\s+modified:\s+kotlin-js-store\/yarn\.lock$'; then
-              git add kotlin-js-store/yarn.lock
-              git commit -m 'chore(build): actualize the `yarn.lock` file'
+            if ! git diff --quiet -- kotlin-js-store; then
+              git add kotlin-js-store
+              git commit -m 'chore(build): actualize the Kotlin JS store'
               git pull --rebase
               git push
             fi

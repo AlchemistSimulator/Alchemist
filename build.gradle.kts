@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -150,6 +150,10 @@ dependencies {
 
 tasks.matching { it.name == "kotlinStoreYarnLock" }.configureEach {
     dependsOn(rootProject.tasks.named("kotlinUpgradeYarnLock"))
+}
+
+tasks.matching { it.name == "kotlinWasmStoreYarnLock" }.configureEach {
+    dependsOn(rootProject.tasks.named("kotlinWasmUpgradeYarnLock"))
 }
 
 dokka {

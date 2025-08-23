@@ -367,7 +367,8 @@
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.2.2"
   },
   "org.protelis/protelis-lang/18.2.2": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/18.2.2"
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/18.2.2",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-lang/18.2.2/package-list"
   },
   "org.reduxkotlin/redux-kotlin-threadsafe/0.6.1": {
     "first": "https://javadoc.io/doc/org.reduxkotlin/redux-kotlin-threadsafe/0.6.1"

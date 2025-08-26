@@ -163,14 +163,10 @@ dokka {
             .map { it.resolve("src") }
             .onEach { check(it.isDirectory) { "Expected a directory, found a file: ${it.absolutePath}" } }
             .flatMap { sourceFolder ->
-                sourceFolder.listFiles(FileFilter { it.name.contains("main", ignoreCase = true) })
-                    .orEmpty()
-                    .asSequence()
+                sourceFolder.listFiles { it.name.contains("main", ignoreCase = true) }.orEmpty().asSequence()
             }.onEach { check(it.isDirectory) }
             .flatMap { sourceSetFolder ->
-                sourceSetFolder.listFiles(FileFilter { it.name in listOf("java", "kotlin") })
-                    .orEmpty()
-                    .asSequence()
+                sourceSetFolder.listFiles { it.name in listOf("java", "kotlin") }.orEmpty().asSequence()
             }.toList()
         sourceRoots.setFrom(allSourceDirs)
     }

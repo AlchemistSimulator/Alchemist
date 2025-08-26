@@ -132,7 +132,7 @@ fun ImageType.validIfCommandExists(command: String): List<PackagingMethod> = whe
 }
 
 val packageRequirements: List<PackagingMethod> =
-    ImageType.values().flatMap { format ->
+    ImageType.entries.flatMap { format ->
         when (format) {
             EXE, MSI -> if (isWindows) format.valid() else format.disabledOnNon("Windows")
             DMG, PKG -> if (isMac) format.valid() else format.disabledOnNon("MacOS")

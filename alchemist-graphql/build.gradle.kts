@@ -69,18 +69,12 @@ kotlin {
 
 graphql {
     schema {
-        packages =
-            listOf(
-                "it.unibo.alchemist.boundary.graphql",
-            )
+        packages = listOf("it.unibo.alchemist.boundary.graphql")
     }
 }
 
 tasks.withType<AbstractGenerateClientTask>().configureEach {
-    val graphQLGenerateSDL =
-        project(":${project.name}-surrogates")
-            .tasks
-            .named("graphqlGenerateSDL")
+    val graphQLGenerateSDL = project(":${project.name}-surrogates").tasks.named("graphqlGenerateSDL")
     dependsOn(graphQLGenerateSDL)
     schemaFile.convention(
         graphQLGenerateSDL

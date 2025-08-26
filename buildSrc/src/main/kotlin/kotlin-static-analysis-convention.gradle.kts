@@ -7,17 +7,17 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-import de.aaschmid.gradle.plugins.cpd.Cpd
 import Util.excludeGenerated
-import gradle.kotlin.dsl.accessors._0bab511c0467aa19fa2193ea27917418.ktlint
+import de.aaschmid.gradle.plugins.cpd.Cpd
+import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 plugins {
     id("common-static-analysis-convention")
     id("org.danilopianini.gradle-kotlin-qa")
 }
 
-ktlint {
-    filter{
+extensions.getByName<KtlintExtension>("ktlint").apply {
+    filter {
         excludeGenerated()
     }
 }

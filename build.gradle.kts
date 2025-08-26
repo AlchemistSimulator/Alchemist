@@ -14,7 +14,6 @@ import Util.isInCI
 import Util.isMac
 import Util.isWindows
 import com.github.spotbugs.snom.SpotBugsTask
-import java.io.FileFilter
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
@@ -158,7 +157,7 @@ tasks.matching { it.name == "kotlinWasmStoreYarnLock" }.configureEach {
 
 dokka {
     dokkaSourceSets.register("alldocs") {
-        val submodules = checkNotNull(project.rootDir.listFiles(FileFilter { it.name.startsWith("alchemist-") }))
+        val submodules = checkNotNull(project.rootDir.listFiles { it.name.startsWith("alchemist-") })
         val allSourceDirs = submodules.asSequence()
             .map { it.resolve("src") }
             .onEach { check(it.isDirectory) { "Expected a directory, found a file: ${it.absolutePath}" } }

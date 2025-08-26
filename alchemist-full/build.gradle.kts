@@ -79,6 +79,7 @@ tasks.withType<ShadowJar> {
     )
     isZip64 = true
     mergeServiceFiles()
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })
     // Run the jar and check the output
     val minJavaVersion: String by properties

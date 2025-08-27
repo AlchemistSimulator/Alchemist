@@ -223,7 +223,7 @@ val generatePKGBUILD by tasks.registering {
                     "https://github.com/AlchemistSimulator/Alchemist/releases/download/" +
                         "${baseVersion.get()}/" +
                         // Replace x86_64 with $CARCH to avoid namcap warnings
-                        rpmFileName.get().replace("x86_64", "\$CARCH")
+                        rpmFileName.get().replace("x86_64", $$"$CARCH")
                 "RPM_MD5" in key -> md5.digest().toHexString()
                 else -> error("Unknown PKGBUILD replacement key $key")
             }

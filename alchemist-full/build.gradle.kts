@@ -95,14 +95,9 @@ tasks.withType<ShadowJar> {
 }
 
 // Disable distTar and distZip
-val toDisable =
-    listOf(
-        tasks.distTar,
-        tasks.distZip,
-        tasks.jpackage,
-        tasks.shadowDistZip,
-        tasks.shadowDistTar,
-    ).map { it.name }
+val toDisable = with(tasks) {
+    listOf(distTar, distZip, jpackage, shadowDistZip, shadowDistTar).map { it.name }
+}
 tasks.matching { it.name in toDisable }.configureEach { enabled = false }
 
 sealed interface PackagingMethod

@@ -175,7 +175,7 @@ private fun String.extractVersionComponents(): SemVerExtracted {
     return SemVerExtracted(base, patch, suffix)
 }
 
-private val packageDestinationDir = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile
+private val packageDestinationDir = rootProject.layout.buildDirectory.dir("package").directoryProperty
 private val baseVersion: Provider<String> = provider { rootProject.version.toString() }
 private fun ImageType.formatVersion(version: String): String = when (this) {
     MSI, EXE -> version.substringBefore('-')
@@ -183,8 +183,11 @@ private fun ImageType.formatVersion(version: String): String = when (this) {
     RPM -> version.replace('-', '.')
     else -> version
 }
-private val rpmFileName = baseVersion.map { "${rootProject.name}-${RPM.formatVersion(it)}-1.x86_64.rpm" }
-private val rpmFileProvider = rpmFileName.map { packageDestinationDir.resolve(it) }
+private val rpmFileName: Provider<String> =
+    baseVersion.map { "${rootProject.name}-${RPM.formatVersion(it)}-1.x86_64.rpm" }
+private val rpmFileProvider: RegularFileProperty = rpmFileName.flatMap { fileName ->
+    packageDestinationDir.file(fileName)
+}.fileProperty
 
 val generatePKGBUILD by tasks.registering {
     group = "Distribution"
@@ -207,7 +210,7 @@ val generatePKGBUILD by tasks.registering {
                 "Could not create output directory $outputDir, as it already exists and is not a directory"
             }
         }
-        val rpmFile = rpmFileProvider.get()
+        val rpmFile = rpmFileProvider.get().asFile
         check(rpmFile.exists()) { "Could not find $rpmFileName in ${rpmFile.parentFile}" }
         check(rpmFile.isFile) { "$rpmFileName is a directory" }
         val md5 = MessageDigest.getInstance("MD5")
@@ -241,7 +244,6 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
     val packageSpecificVersion = baseVersion.map { packaging.format.formatVersion(it) }
     val packagingTaskNameSuffix = packaging.name.replaceFirstChar { it.titlecase() } +
         "PerUser".takeIf { packaging.perUser }.orEmpty()
-    val rpmFile = rpmFileName.map { packageDestinationDir.resolve(it) }
     tasks.register<JPackageTask>("jpackage$packagingTaskNameSuffix") {
         group = "Distribution"
         description = "Creates application bundle through jpackage using $packaging"
@@ -256,27 +258,27 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
         appDescription = rootProject.description
         licenseFile = rootProject.projectDir.resolve("LICENSE.md")
         type = packaging.format
-        input = tasks.shadowJar.get().archiveFile.get().asFile.parentFile
+        input = tasks.shadowJar.flatMap { shadowTask -> shadowTask.archiveFile.map { it.asFile.parentFile } }
         // Packaging settings
         destination = packageDestinationDir
-        mainJar = tasks.shadowJar.get().archiveFileName.get()
+        mainJar = tasks.shadowJar.flatMap { it.archiveFileName }
         mainClass = application.mainClass.get()
         verbose = true
+        runtimeImage = javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(multiJvm.latestLts)
+            vendor = JvmVendorSpec.ADOPTIUM
+        }.map { it.metadata.installationPath }
+        icon = project.projectDir.resolve("package-settings/logo.png")
         linux {
-            icon = project.projectDir.resolve("package-settings/logo.png")
             linuxShortcut = true
             linuxDebMaintainer = "Danilo Pianini"
             linuxRpmLicenseType = "GPLv3"
         }
         windows {
-            icon = project.projectDir.resolve("package-settings/logo.ico")
             winDirChooser = true
             winPerUserInstall = packaging.perUser
             winShortcutPrompt = true
             winConsole = true
-        }
-        mac {
-            icon = project.projectDir.resolve("package-settings/logo.png")
         }
     }
 }
@@ -307,4 +309,13 @@ afterEvaluate {
             skip()
         }
     }
+}
+
+private val Provider<Directory>.directoryProperty get(): DirectoryProperty = objects.directoryProperty().also {
+    it.set(this)
+    it.disallowChanges()
+}
+private val Provider<RegularFile>.fileProperty get(): RegularFileProperty = objects.fileProperty().also {
+    it.set(this)
+    it.disallowChanges()
 }

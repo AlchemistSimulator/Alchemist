@@ -1,3 +1,13 @@
+## [42.2.14](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.13...42.2.14) (2025-08-27)
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.149.0 ([#4732](https://github.com/AlchemistSimulator/Alchemist/issues/4732)) ([819fb32](https://github.com/AlchemistSimulator/Alchemist/commit/819fb328372a3801a379259aec242e3ee5abf1b1))
+
+### Build and continuous integration
+
+* **full:** improve the build file format ([#4729](https://github.com/AlchemistSimulator/Alchemist/issues/4729)) ([1032059](https://github.com/AlchemistSimulator/Alchemist/commit/10320594297dd804e236670cf685f74064d5f595))
+
 ## [42.2.13](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.12...42.2.13) (2025-08-27)
 
 ### Bug Fixes

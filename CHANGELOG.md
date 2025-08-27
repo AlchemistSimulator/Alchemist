@@ -1,3 +1,9 @@
+## [42.2.13](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.12...42.2.13) (2025-08-27)
+
+### Bug Fixes
+
+* **release:** improve the copyright notice on redistributable packages ([#4730](https://github.com/AlchemistSimulator/Alchemist/issues/4730)) ([dfc8321](https://github.com/AlchemistSimulator/Alchemist/commit/dfc8321fb845e2e7f773788d35fb09f844d32bcd))
+
 ## [42.2.12](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.11...42.2.12) (2025-08-27)
 
 ### Dependency updates

@@ -10,7 +10,7 @@ graphhopper = "10.2"
 graphstream = "2.0"
 junit = "5.13.4"
 konf = "1.1.2"
-kotest = "6.0.0.M3"
+kotest = "6.0.1"
 kotlin = "2.2.10"
 kotlinx-coroutines = "1.10.2"
 ktor = "3.2.3"
@@ -67,7 +67,9 @@ junit-platform-launcher = "org.junit.platform:junit-platform-launcher:1.13.4"
 kasechange = "net.pearx.kasechange:kasechange:1.4.1"
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 korim = "com.soywiz.korlibs.korim:korim:4.0.10"
+kotest-plugin = { module = "io.kotest:io.kotest.gradle.plugin", version.ref = "kotest" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-assertions-table = { module = "io.kotest:kotest-assertions-table", version.ref = "kotest" }
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
 kotlin-cli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.6"
@@ -86,6 +88,7 @@ kotlinx-atomicfu-runtime = { module = "org.jetbrains.kotlin:kotlinx-atomicfu-run
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ksp-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version = "2.2.10-2.0.2" }
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-serialization", version.ref = "ktor" }
@@ -151,6 +154,7 @@ scalatest = [ "scalatest", "scalatest-junit", "junit-platform-engine", "junit-pl
 testing-compile = [
     "junit-api",
     "kotest-assertions-core",
+    "kotest-assertions-table",
     "kotest-runner",
     "kotlin-coroutines-test",
     "kotlin-test",
@@ -166,7 +170,6 @@ gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:7
 graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
 hugo = "io.github.fstaudt.hugo:0.10.0"
-kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.1.0"

@@ -9,13 +9,12 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import Util.allVerificationTasks
 import com.apollographql.apollo3.gradle.internal.ApolloGenerateSourcesTask
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
+import it.unibo.alchemist.build.allVerificationTasks
 
 plugins {
     id("kotlin-multiplatform-convention")
-    alias(libs.plugins.kotest.multiplatform)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.graphql.server)
     alias(libs.plugins.graphql.client)

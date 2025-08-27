@@ -9,11 +9,11 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import Util.id
-import Util.isInCI
-import Util.isMac
-import Util.isWindows
 import com.github.spotbugs.snom.SpotBugsTask
+import it.unibo.alchemist.build.id
+import it.unibo.alchemist.build.isInCI
+import it.unibo.alchemist.build.isMac
+import it.unibo.alchemist.build.isWindows
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask

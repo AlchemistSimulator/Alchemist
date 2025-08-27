@@ -7,20 +7,16 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-import Util.excludeGenerated
 import de.aaschmid.gradle.plugins.cpd.Cpd
+import it.unibo.alchemist.build.allVerificationTasks
+import it.unibo.alchemist.build.excludeGenerated
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 plugins {
-    id("common-static-analysis-convention")
     id("org.danilopianini.gradle-kotlin-qa")
 }
 
-extensions.getByName<KtlintExtension>("ktlint").apply {
-    filter {
-        excludeGenerated()
-    }
-}
+extensions.getByName<KtlintExtension>("ktlint").apply { filter { excludeGenerated() } }
 
 private val kmpGenerationTasks get(): TaskCollection<Task> = tasks.matching { task ->
     listOf("Actual", "Compose", "Expect").map { "generate$it" }.any {
@@ -31,3 +27,5 @@ private val kmpGenerationTasks get(): TaskCollection<Task> = tasks.matching { ta
 tasks.withType<Cpd>().configureEach {
     dependsOn(kmpGenerationTasks)
 }
+
+tasks.allVerificationTasks.configureEach { excludeGenerated() }

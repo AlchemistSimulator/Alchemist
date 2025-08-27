@@ -8,8 +8,8 @@
  */
 
 import Libs.alchemist
-import Util.allVerificationTasks
 import io.gitlab.arturbosch.detekt.Detekt
+import it.unibo.alchemist.build.allVerificationTasks
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask

@@ -7,9 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-import Util.excludeGenerated
-import Util.allVerificationTasks
+package it.unibo.alchemist.build
 
-tasks.allVerificationTasks.configureEach {
-    excludeGenerated()
-}
+import org.gradle.api.provider.Provider
+import org.gradle.plugin.use.PluginDependency
+
+/**
+ * Directly accesses the plugin id.
+ */
+val Provider<PluginDependency>.id: String get() = get().pluginId

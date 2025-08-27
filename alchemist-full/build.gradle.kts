@@ -83,10 +83,8 @@ tasks.withType<ShadowJar> {
     destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })
     // Run the jar and check the output
     val minJavaVersion: String by properties
-    val javaExecutable =
-        javaToolchains
-            .launcherFor { languageVersion.set(JavaLanguageVersion.of(minJavaVersion)) }
-            .map { it.executablePath.asFile.absolutePath }
+    val javaExecutable = javaToolchains.launcherFor { languageVersion.set(JavaLanguageVersion.of(minJavaVersion)) }
+        .map { it.executablePath.asFile.absolutePath }
     val testShadowJar = testShadowJar(javaExecutable, archiveFile)
     testShadowJar.configure {
         dependsOn(this@withType)

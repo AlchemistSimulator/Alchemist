@@ -1,3 +1,34 @@
+## [42.2.12](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.11...42.2.12) (2025-08-27)
+
+### Dependency updates
+
+* **deps:** update react to v2025.8.20-19.1.1 (patch) ([#4728](https://github.com/AlchemistSimulator/Alchemist/issues/4728)) ([0e1bd6a](https://github.com/AlchemistSimulator/Alchemist/commit/0e1bd6a1b50186542df7a89ff49db005644c934b))
+
+### Performance improvements
+
+* **full:** embed the latest LTS JVM in the redistributable package ([#4731](https://github.com/AlchemistSimulator/Alchemist/issues/4731)) ([c62684d](https://github.com/AlchemistSimulator/Alchemist/commit/c62684d5247038597dbb2adbb087096781d958d7))
+
+### Tests
+
+* replace Kotest's `fail` with JUnit's or kotlin.test's versions ([#4724](https://github.com/AlchemistSimulator/Alchemist/issues/4724)) ([09aa598](https://github.com/AlchemistSimulator/Alchemist/commit/09aa5983edb46f2b85b74508ff9c2a7a2741d028))
+
+### Build and continuous integration
+
+* **full:** improve the build file indentation ([#4721](https://github.com/AlchemistSimulator/Alchemist/issues/4721)) ([6fa8cbf](https://github.com/AlchemistSimulator/Alchemist/commit/6fa8cbff4fe6d4843c5a2e8ded0e3b2a3b20a4fb))
+* **full:** replace `Enum.values()` with `Enum.entries` ([#4720](https://github.com/AlchemistSimulator/Alchemist/issues/4720)) ([f0b84eb](https://github.com/AlchemistSimulator/Alchemist/commit/f0b84eb6a232ba5af5d7a03ba78a2b4eddfd729f))
+* **full:** set `duplicatesStrategy = DuplicatesStrategy.INCLUDE` for shadowJar ([#4718](https://github.com/AlchemistSimulator/Alchemist/issues/4718)) ([3fd6319](https://github.com/AlchemistSimulator/Alchemist/commit/3fd631926992d929c806f8dd213d44297f69b554))
+* **full:** use multi-dollar interpolation to avoid dollar-symbol escaping ([#4719](https://github.com/AlchemistSimulator/Alchemist/issues/4719)) ([d9a6d17](https://github.com/AlchemistSimulator/Alchemist/commit/d9a6d171cb89540552d6c103c66675ffaaa2480b))
+* **graphql:** improve the build file indentation ([#4722](https://github.com/AlchemistSimulator/Alchemist/issues/4722)) ([e19dba0](https://github.com/AlchemistSimulator/Alchemist/commit/e19dba0544a3fd02ba785ac91e40611d58308050))
+* refer the commit hash in place of the tag for DanySK/build-check-deploy-gradle-action ([#4726](https://github.com/AlchemistSimulator/Alchemist/issues/4726)) ([de6da18](https://github.com/AlchemistSimulator/Alchemist/commit/de6da18e1543507cbb20d8c8ec540ecc446d6666))
+* refer the commit hash instead of the tag for DanySK/action-checkout ([#4727](https://github.com/AlchemistSimulator/Alchemist/issues/4727)) ([940a3e9](https://github.com/AlchemistSimulator/Alchemist/commit/940a3e96ea6ff752f55b1e1d22f9b6d3d1c56c72))
+* remove redundant SAM constructors ([#4723](https://github.com/AlchemistSimulator/Alchemist/issues/4723)) ([d267adb](https://github.com/AlchemistSimulator/Alchemist/commit/d267adbb742ab0c80f264d372d2f8827f2f928ed))
+* replace fragile access to generated gradle accessor with a search by name ([#4717](https://github.com/AlchemistSimulator/Alchemist/issues/4717)) ([8c0533e](https://github.com/AlchemistSimulator/Alchemist/commit/8c0533ebd565b08ae129a750a6761c1d4d48002d))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([875f99b](https://github.com/AlchemistSimulator/Alchemist/commit/875f99ba19c85271eede8ded41fa4935e418158d))
+* **build:** update the javadoc.io cache ([7d01e20](https://github.com/AlchemistSimulator/Alchemist/commit/7d01e20e21cd8793db6100c8996b9c63de8a4d8b))
+
 ## [42.2.11](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.10...42.2.11) (2025-08-25)
 
 ### Dependency updates

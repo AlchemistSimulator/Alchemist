@@ -15,6 +15,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.google.common.hash.Hashing
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import java.time.LocalDateTime
 import org.jetbrains.kotlin.daemon.common.toHexString
 import org.panteleyev.jpackage.ImageType
 import org.panteleyev.jpackage.ImageType.DEB
@@ -253,7 +254,7 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
         resourceDir = projectDir.resolve("package-settings")
         appName = rootProject.name
         appVersion = packageSpecificVersion.get()
-        copyright = "Danilo Pianini and the Alchemist contributors"
+        copyright = "Copyright (c) ${LocalDateTime.now().year} Danilo Pianini and the Alchemist contributors"
         aboutUrl = "https://alchemistsimulator.github.io/"
         appDescription = rootProject.description
         licenseFile = rootProject.projectDir.resolve("LICENSE.md")

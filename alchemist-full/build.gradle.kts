@@ -7,12 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 import Libs.alchemist
-import Util.commandExists
-import Util.isMac
-import Util.isWindows
-import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.google.common.hash.Hashing
+import it.unibo.alchemist.build.commandExists
+import it.unibo.alchemist.build.isMac
+import it.unibo.alchemist.build.isWindows
+import it.unibo.alchemist.build.testShadowJar
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.time.LocalDateTime

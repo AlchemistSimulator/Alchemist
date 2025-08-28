@@ -1,8 +1,6 @@
-import Util.devServer
-import Util.webCommonConfiguration
+import it.unibo.alchemist.build.devServer
+import it.unibo.alchemist.build.webCommonConfiguration
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.ir.DefaultIncrementalSyncTask
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 /*
  * Copyright (C) 2010-2025, Danilo Pianini and contributors
@@ -49,8 +47,4 @@ publishing.publications.withType<MavenPublication>().configureEach {
             }
         }
     }
-}
-
-tasks.withType<KotlinWebpack>().configureEach {
-    this.dependsOn(tasks.withType<DefaultIncrementalSyncTask>())
 }

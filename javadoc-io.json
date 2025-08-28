@@ -54,6 +54,24 @@
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.1",
     "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.1/element-list"
   },
+  "com.google.devtools.ksp/symbol-processing-api/2.2.0-2.0.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.0-2.0.2"
+  },
+  "com.google.devtools.ksp/symbol-processing-api/2.2.10-2.0.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.10-2.0.2"
+  },
+  "com.google.devtools.ksp/symbol-processing-cmdline/2.2.0-2.0.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-cmdline/2.2.0-2.0.2"
+  },
+  "com.google.devtools.ksp/symbol-processing-cmdline/2.2.10-2.0.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-cmdline/2.2.10-2.0.2"
+  },
+  "com.google.devtools.ksp/symbol-processing/2.2.0-2.0.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.2.0-2.0.2"
+  },
+  "com.google.devtools.ksp/symbol-processing/2.2.10-2.0.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.2.10-2.0.2"
+  },
   "com.google.guava/guava/33.4.8-jre": {
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.4.8-jre",
     "second": "https://javadoc.io/doc/com.google.guava/guava/33.4.8-jre/element-list"
@@ -69,6 +87,9 @@
   "com.miglayout/miglayout-swing/11.4.2": {
     "first": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2",
     "second": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2/element-list"
+  },
+  "com.pinterest.ktlint/ktlint-cli/1.7.1": {
+    "first": "https://javadoc.io/doc/com.pinterest.ktlint/ktlint-cli/1.7.1"
   },
   "com.pinterest.ktlint/ktlint-ruleset-standard/1.7.1": {
     "first": "https://javadoc.io/doc/com.pinterest.ktlint/ktlint-ruleset-standard/1.7.1"
@@ -101,6 +122,15 @@
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.181",
     "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.181/package-list"
   },
+  "io.github.detekt.sarif4k/sarif4k/0.5.0": {
+    "first": "https://javadoc.io/doc/io.github.detekt.sarif4k/sarif4k/0.5.0"
+  },
+  "io.github.oshai/kotlin-logging/5.1.0": {
+    "first": "https://javadoc.io/doc/io.github.oshai/kotlin-logging/5.1.0"
+  },
+  "io.gitlab.arturbosch.detekt/detekt-cli/1.23.8": {
+    "first": "https://javadoc.io/doc/io.gitlab.arturbosch.detekt/detekt-cli/1.23.8"
+  },
   "io.jenetics/jpx/3.2.1": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1",
     "second": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1/element-list"
@@ -108,14 +138,29 @@
   "io.kotest/kotest-assertions-core/6.0.0.M3": {
     "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-core/6.0.0.M3"
   },
+  "io.kotest/kotest-assertions-core/6.0.1": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-core/6.0.1"
+  },
+  "io.kotest/kotest-assertions-table/6.0.1": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-table/6.0.1"
+  },
   "io.kotest/kotest-framework-engine/6.0.0.M3": {
     "first": "https://javadoc.io/doc/io.kotest/kotest-framework-engine/6.0.0.M3"
+  },
+  "io.kotest/kotest-framework-engine/6.0.1": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-engine/6.0.1"
   },
   "io.kotest/kotest-framework-multiplatform-plugin-embeddable-compiler/6.0.0.M3": {
     "first": "https://javadoc.io/doc/io.kotest/kotest-framework-multiplatform-plugin-embeddable-compiler/6.0.0.M3"
   },
+  "io.kotest/kotest-framework-symbol-processor/6.0.1": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-symbol-processor/6.0.1"
+  },
   "io.kotest/kotest-runner-junit5-jvm/6.0.0.M3": {
     "first": "https://javadoc.io/doc/io.kotest/kotest-runner-junit5-jvm/6.0.0.M3"
+  },
+  "io.kotest/kotest-runner-junit5-jvm/6.0.1": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-runner-junit5-jvm/6.0.1"
   },
   "io.ktor/ktor-client-content-negotiation/3.2.3": {
     "first": "https://javadoc.io/doc/io.ktor/ktor-client-content-negotiation/3.2.3"
@@ -249,6 +294,10 @@
     "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0",
     "second": "https://javadoc.io/doc/org.graphstream/gs-core/2.0/element-list"
   },
+  "org.jacoco/org.jacoco.agent/0.8.13": {
+    "first": "https://javadoc.io/doc/org.jacoco/org.jacoco.agent/0.8.13",
+    "second": "https://javadoc.io/doc/org.jacoco/org.jacoco.agent/0.8.13/package-list"
+  },
   "org.jetbrains.compose.components/components-resources/1.8.2": {
     "first": "https://javadoc.io/doc/org.jetbrains.compose.components/components-resources/1.8.2"
   },
@@ -335,6 +384,9 @@
   },
   "org.jetbrains.kotlinx/kotlinx-serialization-json/1.9.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.9.0"
+  },
+  "org.jetbrains.skiko/skiko-js-wasm-runtime/0.9.4.2": {
+    "first": "https://javadoc.io/doc/org.jetbrains.skiko/skiko-js-wasm-runtime/0.9.4.2"
   },
   "org.jgrapht/jgrapht-core/1.5.2": {
     "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2",

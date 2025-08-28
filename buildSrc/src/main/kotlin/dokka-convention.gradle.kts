@@ -1,7 +1,7 @@
-import Util.currentCommitHash
-import Util.fetchJavadocIOForDependency
-import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
+import it.unibo.alchemist.build.currentCommitHash
+import it.unibo.alchemist.build.fetchJavadocIOForDependency
 import java.time.Duration
+import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
 
 /*
  * Copyright (C) 2010-2024, Danilo Pianini and contributors

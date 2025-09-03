@@ -114,20 +114,20 @@
     "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1",
     "second": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1/element-list"
   },
-  "io.kotest/kotest-assertions-core/6.0.1": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-core/6.0.1"
+  "io.kotest/kotest-assertions-core/6.0.2": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-core/6.0.2"
   },
-  "io.kotest/kotest-assertions-table/6.0.1": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-table/6.0.1"
+  "io.kotest/kotest-assertions-table/6.0.2": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-table/6.0.2"
   },
-  "io.kotest/kotest-framework-engine/6.0.1": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-engine/6.0.1"
+  "io.kotest/kotest-framework-engine/6.0.2": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-engine/6.0.2"
   },
-  "io.kotest/kotest-framework-symbol-processor/6.0.1": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-symbol-processor/6.0.1"
+  "io.kotest/kotest-framework-symbol-processor/6.0.2": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-symbol-processor/6.0.2"
   },
-  "io.kotest/kotest-runner-junit5-jvm/6.0.1": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-runner-junit5-jvm/6.0.1"
+  "io.kotest/kotest-runner-junit5-jvm/6.0.2": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-runner-junit5-jvm/6.0.2"
   },
   "io.ktor/ktor-client-content-negotiation/3.2.3": {
     "first": "https://javadoc.io/doc/io.ktor/ktor-client-content-negotiation/3.2.3"

@@ -21,8 +21,10 @@ class TestDeployments {
     fun testDeployments() {
         val loader = simulation {
             incarnation = Incarnation.SAPERE
-            deployments {
-                point(0.0, 0.0)
+            environment(getDefault()) {
+                deployments {
+                    Point(environment, 0.0, 0.0)
+                }
             }
         }
 
@@ -33,11 +35,12 @@ class TestDeployments {
     fun testMultipleDeployments() {
         val loader = simulation {
             incarnation = Incarnation.SAPERE
-            deployments {
-                val point = Point(environment, 0.0, 0.0)
-                deploy(point)
-
-                point(1.0, 1.0)
+            environment(getDefault()) {
+                deployments {
+                    val point = Point(environment, 0.0, 0.0)
+                    deploy(point)
+                    deploy(Point(environment, 1.0, 1.0))
+                }
             }
         }
 
@@ -48,19 +51,20 @@ class TestDeployments {
     fun testGridDeployment() {
         val loader = simulation {
             incarnation = Incarnation.SAPERE
-            deployments {
-                val grid = Grid(
-                    environment,
-                    generator,
-                    1.0,
-                    1.0,
-                    5.0,
-                    5.0,
-                    1.0,
-                    1.0,
-                )
-                deploy(grid)
-                grid(1.0, 1.0, 5.0, 5.0, 1.0, 1.0)
+            environment(getDefault()) {
+                deployments {
+                    val grid = Grid(
+                        environment,
+                        generator,
+                        1.0,
+                        1.0,
+                        5.0,
+                        5.0,
+                        1.0,
+                        1.0,
+                    )
+                    deploy(grid)
+                }
             }
         }
 

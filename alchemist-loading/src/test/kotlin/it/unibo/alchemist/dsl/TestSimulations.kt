@@ -11,14 +11,27 @@ package it.unibo.alchemist.dsl
 
 import it.unibo.alchemist.boundary.dsl.model.Incarnation
 import it.unibo.alchemist.boundary.dsl.simulation
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import org.junit.jupiter.api.Test
 
-class TestLoader {
+class TestSimulations {
 
     @Test
-    fun testDsl() {
+    fun testIncarnation() {
         val loader = simulation {
             incarnation = Incarnation.SAPERE
+        }
+
+        loader.launch(loader.launcher)
+    }
+
+    @Test
+    fun testLinkingRule() {
+        val loader = simulation {
+            incarnation = Incarnation.SAPERE
+            environment(getDefault()) {
+                networkModel = ConnectWithinDistance(5.0)
+            }
         }
 
         loader.launch(loader.launcher)

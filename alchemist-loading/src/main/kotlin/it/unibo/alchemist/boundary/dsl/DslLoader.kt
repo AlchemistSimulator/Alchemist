@@ -22,9 +22,9 @@ abstract class DslLoader(private val ctx: SimulationContext) : Loader {
     override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> {
         val incarnation = SupportedIncarnations.get<T, P>(ctx.incarnation.name).get()
         val randomGenerator = MersenneTwister(0)
-        val environment = ctx.environment as Environment<T, P>
+        val environment = ctx.envCtx?.environment as Environment<T, P>
         // Get deployments and add nodes
-        val deployments = ctx.ctxDeploy.deployments
+        val deployments = ctx.envCtx?.ctxDeploy?.deployments ?: emptyList()
         deployments.forEach { deployment ->
             deployment.forEach { position ->
                 val node = incarnation.createNode(

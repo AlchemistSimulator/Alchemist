@@ -4,28 +4,29 @@ import it.unibo.alchemist.boundary.DependentVariable
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
-import it.unibo.alchemist.boundary.dsl.model.DeploymentsContext
+import it.unibo.alchemist.boundary.dsl.model.EnvironmentContext
 import it.unibo.alchemist.boundary.dsl.model.Incarnation as Inc
 import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import kotlin.jvm.optionals.getOrElse
 
 class SimulationContext {
     var incarnation: Inc = Inc.SAPERE
-    var environment: Environment<*, *> = defaultEnvironment()
-    val ctxDeploy: DeploymentsContext = DeploymentsContext(this)
+    var envCtx: EnvironmentContext<*, *>? = null
 
-    @Suppress("UNCHECKED_CAST")
-    private fun defaultEnvironment(): Environment<*, Euclidean2DPosition> {
-        val inc = SupportedIncarnations.get<Any, Euclidean2DPosition>(incarnation.name).get()
-        return Continuous2DEnvironment(inc)
+    fun getDefault(): Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment(this.getIncarnation())
+    fun <T, P : Position<P>> environment(env: Environment<T, P>, block: EnvironmentContext<T, P>.() -> Unit) {
+        envCtx = EnvironmentContext(this, env).apply(block)
     }
-
-    fun deployments(block: DeploymentsContext.() -> Unit) {
-        ctxDeploy.apply(block)
-    }
+    internal fun <T, P : Position<P>> getIncarnation(): Incarnation<T, P> =
+        SupportedIncarnations.get<T, P>(incarnation.name).getOrElse {
+            throw IllegalArgumentException("Incarnation $incarnation not supported for the given types")
+        }
 }
 
 fun createLoader(simBuilder: SimulationContext): Loader = object : DslLoader(simBuilder) {

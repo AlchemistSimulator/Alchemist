@@ -11,7 +11,6 @@ package it.unibo.alchemist.dsl
 
 import it.unibo.alchemist.boundary.dsl.model.Incarnation
 import it.unibo.alchemist.boundary.dsl.simulation
-import it.unibo.alchemist.model.SupportedIncarnations
 import org.junit.jupiter.api.Test
 
 class TestLoader {

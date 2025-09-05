@@ -1,10 +1,19 @@
-package it.unibo.alchemist.boundary.dsl
+/*
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
+package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.boundary.DependentVariable
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
-import it.unibo.alchemist.boundary.dsl.model.EnvironmentContext
+import it.unibo.alchemist.boundary.dsl.DslLoader
 import it.unibo.alchemist.boundary.dsl.model.Incarnation as Inc
 import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.model.Environment
@@ -25,7 +34,7 @@ class SimulationContext {
     }
     internal fun <T, P : Position<P>> getIncarnation(): Incarnation<T, P> =
         SupportedIncarnations.get<T, P>(incarnation.name).getOrElse {
-            throw IllegalArgumentException("Incarnation $incarnation not supported for the given types")
+            throw IllegalArgumentException("Incarnation $incarnation not supported")
         }
 }
 

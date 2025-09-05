@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.dsl.model
 
-import it.unibo.alchemist.boundary.dsl.SimulationContext
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.LinkingRule
@@ -19,7 +18,14 @@ import it.unibo.alchemist.model.linkingrules.NoLinks
 
 class EnvironmentContext<T, P : Position<P>>(private val ctx: SimulationContext, env: Environment<T, P>) {
     val environment: Environment<T, P> = env
-    var networkModel: LinkingRule<T, P> = NoLinks<T, P>()
+    private var _networkModel: LinkingRule<T, P> = NoLinks()
+    var networkModel: LinkingRule<T, P>
+        get() = _networkModel
+        set(value) {
+            _networkModel = value
+            environment.linkingRule = value
+        }
+
     val ctxDeploy: DeploymentsContext<T, P> = DeploymentsContext(this)
 
     val incarnation: Incarnation<T, P>

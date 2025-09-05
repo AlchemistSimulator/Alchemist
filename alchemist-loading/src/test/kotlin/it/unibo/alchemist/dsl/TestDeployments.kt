@@ -10,7 +10,7 @@
 package it.unibo.alchemist.dsl
 
 import it.unibo.alchemist.boundary.dsl.model.Incarnation
-import it.unibo.alchemist.boundary.dsl.simulation
+import it.unibo.alchemist.boundary.dsl.model.simulation
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
 import org.junit.jupiter.api.Test
@@ -23,7 +23,8 @@ class TestDeployments {
             incarnation = Incarnation.SAPERE
             environment(getDefault()) {
                 deployments {
-                    Point(environment, 0.0, 0.0)
+                    val p = Point(environment, 0.0, 0.0)
+                    deploy(p)
                 }
             }
         }
@@ -67,7 +68,6 @@ class TestDeployments {
                 }
             }
         }
-
         loader.launch(loader.launcher)
     }
 }

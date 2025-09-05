@@ -1,0 +1,11 @@
+incarnation: sapere
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [5]
+  
+deployments:
+  - type: Point
+    parameters: [0, 0]
+  - type: Point
+    parameters: [0, 1]

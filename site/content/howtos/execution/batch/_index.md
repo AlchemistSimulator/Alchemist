@@ -16,25 +16,6 @@ the circle radius also. Instead of re-writing the configuration file over-and-ov
 for each parameter combination, Alchemist offers the possibility to write the
 configuration once, and it will then derive a batch of simulations from the same configuration.
 
-## Building the Simulator
-
-Before running batch simulations, you need to build the Alchemist simulator:
-
-```bash
-./gradlew assemble --parallel
-```
-
-This command will:
-- Download all required dependencies
-- Compile the entire project
-- Create the executable JAR file in `./build/shadow/alchemist-full-*-all.jar`
-- Take approximately 13 minutes on the first build
-
-{{% notice info %}}
-The build process requires significant time and memory. Do not cancel the build prematurely.
-Set your timeout to at least 20 minutes for the first build.
-{{% /notice %}}
-
 ## Configuring batch simulations
 
 To exploit this mechanism, you must declare the "parameters"
@@ -118,52 +99,11 @@ For example, with:
 
 The simulator will execute 3 × 3 = 9 different simulation configurations.
 
-## Migration from legacy CLI
-
-{{% notice warning %}}
-The legacy CLI options `-b` and `-var` have been deprecated and migrated to launcher configuration.
-Update your scripts to use the new launcher-based approach shown above.
-{{% /notice %}}
-
-Old approach (deprecated):
-```bash
-# This no longer works
-java -jar alchemist.jar run simulation.yml -b -var nodeCount -var range
-```
-
-New approach:
-```yaml
-# In your simulation.yml file
-launcher:
-  parameters:
-    batch: [nodeCount, range]
-```
-```bash
-java -jar ./build/shadow/alchemist-full-*-all.jar run simulation.yml
-```
-
 ## Complete working example
 
 Here's a complete simulation file that demonstrates batch execution with the modern launcher configuration:
 
 {{< code path="src/test/resources/website-snippets/batch-complete-example.yml" >}}
-
-To run this example:
-
-1. **Build the simulator:**
-   ```bash
-   ./gradlew assemble --parallel
-   ```
-
-2. **Run the batch simulation:**
-   ```bash
-   java -jar ./build/shadow/alchemist-full-*-all.jar run src/test/resources/website-snippets/batch-complete-example.yml
-   ```
-
-3. **For headless execution (no GUI):**
-   ```bash
-   CI=true java -jar ./build/shadow/alchemist-full-*-all.jar run src/test/resources/website-snippets/batch-complete-example.yml
-   ```
 
 This will execute 3 × 3 = 9 different simulation configurations:
 - `nodeCount`: [5, 10, 15]

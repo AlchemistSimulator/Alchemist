@@ -32,7 +32,6 @@ object GoToTimeRegressionTest {
     fun `monitors should not interfere with subsequent goToTime calls`() {
         val environment = createEmptyEnvironment<Nothing>()
         environment.tickRate(1.0)
-
         with(environment.simulation) {
             // First goToTime to 5.0
             val firstTarget = DoubleTime(5.0)
@@ -40,30 +39,23 @@ object GoToTimeRegressionTest {
             play()
             workerPool.submit { run() }
             firstJump.get(3, TimeUnit.SECONDS)
-
             val timeAfterFirst = time
             assertTrue(timeAfterFirst.toDouble() >= firstTarget.toDouble())
-
             // Second goToTime to 15.0 - this should work without old monitor interference
             val secondTarget = DoubleTime(15.0)
             val secondJump = goToTime(secondTarget)
             play()
             secondJump.get(3, TimeUnit.SECONDS)
-
             val timeAfterSecond = time
             assertTrue(timeAfterSecond.toDouble() >= secondTarget.toDouble())
-
             // Third goToTime to 25.0 - testing multiple sequential calls
             val thirdTarget = DoubleTime(25.0)
             val thirdJump = goToTime(thirdTarget)
             play()
             thirdJump.get(3, TimeUnit.SECONDS)
-
             val timeAfterThird = time
             assertTrue(timeAfterThird.toDouble() >= thirdTarget.toDouble())
-
             terminate()
-
             // Verify final state
             assertEquals(thirdTarget, time)
         }
@@ -73,27 +65,20 @@ object GoToTimeRegressionTest {
     fun `monitor count should remain stable across multiple goToTime calls`() {
         val environment = createEmptyEnvironment<Nothing>()
         environment.tickRate(1.0)
-
         with(environment.simulation) {
             val initialMonitorCount = outputMonitors.size
-
             // First jump
             val firstJump = goToTime(DoubleTime(5.0))
             play()
             workerPool.submit { run() }
             firstJump.get(3, TimeUnit.SECONDS)
-
             val afterFirstCount = outputMonitors.size
-
             // Second jump
             val secondJump = goToTime(DoubleTime(10.0))
             play()
             secondJump.get(3, TimeUnit.SECONDS)
-
             val afterSecondCount = outputMonitors.size
-
             terminate()
-
             // Monitor count should return to initial state
             // (may have +/- 1 due to internal simulation monitors, but should be stable)
             assertEquals(initialMonitorCount, afterFirstCount)

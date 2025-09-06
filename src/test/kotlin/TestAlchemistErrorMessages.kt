@@ -24,8 +24,8 @@ class TestAlchemistErrorMessages {
         Alchemist.enableTestMode()
         // Create a temporary directory
         val tempDir = File.createTempFile("test_dir", null)
-        tempDir.delete()
-        tempDir.mkdir()
+        assertTrue(tempDir.delete(), "Failed to delete temporary file")
+        assertTrue(tempDir.mkdir(), "Failed to create temporary directory")
         tempDir.deleteOnExit()
         try {
             // This should throw an exception with an improved error message
@@ -40,7 +40,7 @@ class TestAlchemistErrorMessages {
                 "Error message should mention that a directory was provided instead of a file. Got: $errorMessage",
             )
         } finally {
-            tempDir.delete()
+            assertTrue(tempDir.delete(), "Failed to clean up temporary directory")
         }
     }
 

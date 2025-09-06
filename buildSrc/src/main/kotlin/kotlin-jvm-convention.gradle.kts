@@ -56,12 +56,7 @@ kotlin {
 javaQA {
     checkstyle {
         additionalConfiguration.set(rootProject.file("checkstyle-additional-config.xml").readText())
-        additionalSuppressions.set(
-            """
-                <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
-                <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
-                """.trimIndent(),
-        )
+        additionalSuppressions.set(rootProject.file("checkstyle-suppressions.xml").readText())
     }
     // enable PMD when this bug is fixed: https://github.com/pmd/pmd/issues/5096
     tasks.withType<Pmd>().configureEach {

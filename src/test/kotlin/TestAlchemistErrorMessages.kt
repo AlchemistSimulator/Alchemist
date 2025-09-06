@@ -22,21 +22,18 @@ class TestAlchemistErrorMessages {
     fun `should provide clear error when directory is provided instead of file`() {
         // Enable test mode to prevent System.exit
         Alchemist.enableTestMode()
-
         // Create a temporary directory
         val tempDir = File.createTempFile("test_dir", null)
         tempDir.delete()
         tempDir.mkdir()
         tempDir.deleteOnExit()
-
         try {
             // This should throw an exception with an improved error message
             val exception = assertThrows<Exception> {
                 Alchemist.main(arrayOf("run", tempDir.absolutePath))
             }
-
             // The error message should indicate that a directory was provided instead of a file
-            val errorMessage = exception.message ?: ""
+            val errorMessage = exception.message.orEmpty()
             assertTrue(
                 errorMessage.contains("directory") &&
                     (errorMessage.contains("file") || errorMessage.contains("expected")),
@@ -51,16 +48,13 @@ class TestAlchemistErrorMessages {
     fun `should provide clear error when non-existent file is provided`() {
         // Enable test mode to prevent System.exit
         Alchemist.enableTestMode()
-
         val nonExistentFile = "/path/to/nonexistent/file.yml"
-
         // This should throw an exception
         val exception = assertThrows<Exception> {
             Alchemist.main(arrayOf("run", nonExistentFile))
         }
-
         // The error message should mention that the file was not found
-        val errorMessage = exception.message ?: ""
+        val errorMessage = exception.message.orEmpty()
         assertTrue(
             errorMessage.contains("not found") || errorMessage.contains("No classpath resource"),
             "Error message should mention that the file was not found. Got: $errorMessage",

@@ -167,7 +167,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
             .count { it == program.name }
             .let { otherCopies -> SimpleMolecule(program.name + if (otherCopies == 0) "" else "\$copy$otherCopies") }
 
-    private val networkManager = AlchemistNetworkManager(reaction, device, this, retentionTime, packetLossDistance)
+    private val networkManager = device.createNetworkManager(this, reaction, retentionTime, packetLossDistance)
 
     /**
      * Provides an access to the underlying [org.protelis.vm.ExecutionContext].
@@ -175,22 +175,11 @@ class RunProtelisProgram<P : Position<P>> private constructor(
      * @return the current [AlchemistExecutionContext]
      */
     @Transient
-    var executionContext =
-        AlchemistExecutionContext(
-            environment,
-            node,
-            reaction,
-            randomGenerator,
-            networkManager,
-        )
+    var executionContext = device.createExecutionContext(this, reaction, randomGenerator, networkManager)
         private set
 
     @Transient
     private var vm: ProtelisVM = ProtelisVM(program, executionContext)
-
-    init {
-        device.addNetworkManger(this, networkManager)
-    }
 
     /**
      * @return the molecule associated with the execution of this program
@@ -246,14 +235,9 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     @Suppress("UnusedPrivateMember")
     private fun readObject(stream: ObjectInputStream) {
         stream.defaultReadObject()
-        executionContext =
-            AlchemistExecutionContext(
-                environment,
-                node,
-                reaction,
-                randomGenerator,
-                networkManager,
-            )
+        // After deserialization, recreate the components using the device
+        val recreatedNetworkManager = device.createNetworkManager(this, reaction, retentionTime, packetLossDistance)
+        executionContext = device.createExecutionContext(this, reaction, randomGenerator, recreatedNetworkManager)
         vm = ProtelisVM(program, executionContext)
     }
 

@@ -13,9 +13,13 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.model.protelis.AlchemistNetworkManager
 import it.unibo.alchemist.model.protelis.ProtelisIncarnation
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
+import org.apache.commons.math3.distribution.RealDistribution
+import org.apache.commons.math3.random.RandomGenerator
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.Field
 import org.protelis.vm.ExecutionEnvironment
@@ -48,13 +52,75 @@ constructor(
         private set
 
     /**
+     * All the [AlchemistExecutionContext]s in this node.
+     */
+    private var executionContexts: Map<RunProtelisProgram<*>, AlchemistExecutionContext<P>> = mapOf()
+
+    /**
+     * Creates a new [AlchemistNetworkManager] for the given program.
+     *
+     * @param program the [RunProtelisProgram]
+     * @param reaction the [Reaction] hosting the program
+     * @param retentionTime the message retention time
+     * @param packetLossDistance the packet loss distribution
+     * @return the created [AlchemistNetworkManager]
+     */
+    fun createNetworkManager(
+        program: RunProtelisProgram<*>,
+        reaction: Reaction<Any>,
+        retentionTime: Double,
+        packetLossDistance: RealDistribution?,
+    ): AlchemistNetworkManager {
+        val networkManager = AlchemistNetworkManager(reaction, this, program, retentionTime, packetLossDistance)
+        networkManagers = networkManagers + (program to networkManager)
+        return networkManager
+    }
+
+    /**
+     * Creates a new [AlchemistExecutionContext] for the given program.
+     *
+     * @param program the [RunProtelisProgram]
+     * @param reaction the [Reaction] hosting the program
+     * @param randomGenerator the [RandomGenerator] for this simulation
+     * @param networkManager the [AlchemistNetworkManager] to be used
+     * @return the created [AlchemistExecutionContext]
+     */
+    fun createExecutionContext(
+        program: RunProtelisProgram<*>,
+        reaction: Reaction<Any>,
+        randomGenerator: RandomGenerator,
+        networkManager: AlchemistNetworkManager,
+    ): AlchemistExecutionContext<P> {
+        val executionContext = AlchemistExecutionContext(
+            environment,
+            node,
+            this,
+            reaction,
+            randomGenerator,
+            networkManager,
+        )
+        executionContexts = executionContexts + (program to executionContext)
+        return executionContext
+    }
+
+    /**
+     * Gets the [AlchemistExecutionContext] for the given program.
+     *
+     * @param program the [RunProtelisProgram]
+     * @return the [AlchemistExecutionContext] or null if not found
+     */
+    fun getExecutionContext(program: RunProtelisProgram<*>): AlchemistExecutionContext<P>? = executionContexts[program]
+
+    /**
      * Adds a new [AlchemistNetworkManager].
      *
      * @param program
      * the [RunProtelisProgram]
      * @param networkManager
      * the [AlchemistNetworkManager]
+     * @deprecated Use createNetworkManager instead for better encapsulation
      */
+    @Deprecated("Use createNetworkManager instead", ReplaceWith("createNetworkManager"))
     fun addNetworkManger(program: RunProtelisProgram<*>, networkManager: AlchemistNetworkManager) {
         networkManagers = networkManagers + (program to networkManager)
     }
@@ -68,7 +134,7 @@ constructor(
         .filterIsInstance<RunProtelisProgram<*>>()
         .toList()
 
-    override fun cloneOnNewNode(node: Node<Any>) = ProtelisDevice(environment, node)
+    override fun cloneOnNewNode(node: Node<Any>) = ProtelisDevice(environment, node, networkManagers)
 
     /**
      * Returns the value associated with [id].

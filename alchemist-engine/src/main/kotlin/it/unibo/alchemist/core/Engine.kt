@@ -400,12 +400,12 @@ open class Engine<T, P : Position<out P>>(
      */
     private fun pauseWhen(condition: BooleanSupplier): CompletableFuture<Unit> {
         val future = CompletableFuture<Unit>()
-        addOutputMonitor(object : OutputMonitor<T, P> {
+        val monitor = object : OutputMonitor<T, P> {
+            @Volatile
+            private var hasTriggered = false
+
             override fun initialized(initializedEnvironment: Environment<T, P>) {
-                if (condition.asBoolean) {
-                    monitors.remove(this)
-                    pause().thenRun { future.complete(null) }
-                }
+                checkConditionAndPause()
             }
             override fun stepDone(
                 targetEnvironment: Environment<T, P>,
@@ -413,9 +413,18 @@ open class Engine<T, P : Position<out P>>(
                 time: Time,
                 step: Long,
             ) {
-                initialized(targetEnvironment)
+                checkConditionAndPause()
             }
-        })
+
+            private fun checkConditionAndPause() {
+                if (!hasTriggered && condition.asBoolean) {
+                    hasTriggered = true
+                    monitors.remove(this)
+                    pause().thenRun { future.complete(null) }
+                }
+            }
+        }
+        addOutputMonitor(monitor)
         return future
     }
 

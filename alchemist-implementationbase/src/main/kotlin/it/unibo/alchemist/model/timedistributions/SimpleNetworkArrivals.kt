@@ -199,16 +199,6 @@ class SimpleNetworkArrivals<T> private constructor(
             time = currentTime + propagationDelay + packetSize / bandwidth
         }
         setNextOccurrence(time)
-//        if (executed) {
-//            time = curTime + propagationDelay + packetSize / bandwidth
-//            genTime = time
-//        } else {
-//            if (rate > 0) {
-//                time = maxOf(curTime, genTime)
-//            } else {
-//                time = DoubleTime.INFINITE_TIME
-//            }
-//        }
     }
 
     override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): SimpleNetworkArrivals<T> =

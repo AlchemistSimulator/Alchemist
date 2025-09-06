@@ -6,6 +6,10 @@ ktlint_code_style=intellij_idea
 ktlint_function_naming_ignore_when_annotated_with = Composable
 max_line_length = 120
 
+# Style preference: avoid empty lines within methods
+# Empty lines should be used to separate logical sections between methods/classes,
+# but not within method bodies for better code density and readability
+
 # Do not apply the general rule to generated files
 [**/generated/**/*.{kt,kts}]
 indent_size = unset

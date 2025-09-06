@@ -11,6 +11,7 @@ The Alchemist Simulator is a multi-module Gradle project written in Kotlin/Java 
 - Uses Gradle 9.0.0 with Kotlin DSL
 - Environment comes pre-configured with Java 17 OpenJDK
 - **NEVER** try to install different Java versions - the environment already has what you need
+- **Submodules required for Hugo builds**: Run `git submodule update --init --recursive` before building website
 
 ### Core Build Commands
 Execute these commands from the repository root:
@@ -35,15 +36,16 @@ Execute these commands from the repository root:
 
 - **Build website documentation:**
   ```bash
+  git submodule update --init --recursive
   ./gradlew hugoBuild --parallel
   ```
-  **NOTE:** This command currently fails due to Hugo configuration issues with unknown "print" output format. Use alternative documentation commands or fix the Hugo config in `site/config.toml`.
+  **NOTE:** Requires submodules to be initialized first. Takes approximately 6-7 minutes.
 
 - **Preview website locally:**
   ```bash
+  git submodule update --init --recursive
   ./gradlew hugo --command=serve
   ```
-  **NOTE:** May also fail due to the same Hugo configuration issue.
 
 ### Running the Simulator
 After building the project, you can run simulations:
@@ -68,6 +70,9 @@ After building the project, you can run simulations:
 - **Bootstrap sequence:** The project is self-contained - just run the build commands above
 - **Clean build:** If needed, run `./gradlew clean` before building
 - **Gradle daemon:** The first build will be slower as it downloads dependencies and sets up the Gradle daemon
+- **Pre-commit hooks:** The project automatically installs Git hooks that run ktlint, checkScalafmt on every commit
+- **Commit format:** All commits must follow [Conventional Commits](https://www.conventionalcommits.org/) format (fix:, feat:, etc.)
+- **Commit timing:** Commits take extra time due to automatic linting/formatting checks
 
 ## Validation
 
@@ -102,7 +107,7 @@ After building the project, you can run simulations:
 - **Gradle build cache** is enabled for performance
 - **Parallel execution** is enabled and recommended (always use `--parallel`)
 - **Memory requirements:** Build requires significant memory (configured for 4GB max heap)
-- **Hugo website build** currently has configuration issues - avoid unless fixing the config
+- **Website builds:** Require submodules to be initialized first (`git submodule update --init --recursive`)
 
 ## Project Structure
 
@@ -140,9 +145,21 @@ The project builds a complete simulator. After building:
 
 ### Working with Documentation
 - Documentation source is in `site/content/` using Hugo format
-- Build with `./gradlew hugoBuild --parallel`
+- **Initialize submodules first:** `git submodule update --init --recursive`
+- Build with `./gradlew hugoBuild --parallel` (takes ~6-7 minutes)
 - Serve locally with `./gradlew hugo --command=serve`
 - Documentation includes tutorials, how-to guides, and API references
+
+### Git Workflow and Commits
+- **Pre-commit hooks:** Automatically installed, run ktlint and scalafmt on every commit
+- **Commit timing:** Commits take additional time due to automatic linting/formatting checks
+- **Commit format:** Must follow [Conventional Commits](https://www.conventionalcommits.org/) format:
+  - `fix:` for bug fixes
+  - `feat:` for new features  
+  - `chore:` for maintenance tasks
+  - `docs:` for documentation changes
+  - Example: `fix(api): resolve null pointer exception in loading module`
+- **Submodules:** Initialize with `git submodule update --init --recursive` when needed for website builds
 
 ## Performance Expectations
 
@@ -150,7 +167,7 @@ The project builds a complete simulator. After building:
 - **Clean assemble:** 13 minutes
 - **Test execution:** 7 minutes
 - **Full quality check:** 20 minutes
-- **Website build:** Currently fails due to config issues
+- **Website build:** 6-7 minutes (requires submodules initialized)
 - **Incremental builds:** Significantly faster with Gradle caching
 
 ### Resource Requirements
@@ -166,7 +183,9 @@ The project builds a complete simulator. After building:
 - **Test failures:** Some tests may be timing-sensitive; re-run if you encounter intermittent failures
 - **Gradle daemon issues:** If builds behave strangely, try `./gradlew --stop` to restart the daemon
 - **Simulation execution errors:** Some incarnations (like Protelis) may have dependency issues in certain environments
-- **Hugo website build failures:** Known issue with "print" output format in `site/config.toml`
+- **Hugo website build failures:** Require submodules initialization first with `git submodule update --init --recursive`
+- **Slow commits:** Pre-commit hooks automatically run ktlint and scalafmt - this is normal and required
+- **Commit message format errors:** All commits must follow [Conventional Commits](https://www.conventionalcommits.org/) format (e.g., `fix:`, `feat:`, `chore:`)
 
 ### Simulation-Specific Issues
 - **GUI in headless environments:** Always use `CI=true` environment variable to disable GUI components

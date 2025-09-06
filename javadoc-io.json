@@ -348,6 +348,9 @@
   "org.jetbrains.kotlinx/kotlinx-serialization-json/1.9.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.9.0"
   },
+  "org.jetbrains.skiko/skiko-js-wasm-runtime/0.9.4.2": {
+    "first": "https://javadoc.io/doc/org.jetbrains.skiko/skiko-js-wasm-runtime/0.9.4.2"
+  },
   "org.jgrapht/jgrapht-core/1.5.2": {
     "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2",
     "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2/element-list"

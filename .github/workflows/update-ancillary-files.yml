@@ -15,7 +15,7 @@ jobs:
         uses: danysk/action-checkout@691c39b8c95afa68ab368def403db850341dc773 # 0.2.24
         with:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      - uses: DanySK/build-check-deploy-gradle-action@34090754388a13138fee87e50771790ac89ac7ff # 4.0.5
+      - uses: DanySK/build-check-deploy-gradle-action@c5af5bb927c8e58fa73d39708ed709d8dfc88527 # 4.0.6
         with:
           pre-build-command: rm javadoc-io.json
           build-command: |

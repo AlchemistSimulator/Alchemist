@@ -26,7 +26,7 @@ import org.graphstream.graph.Graph
 class OffsetGraphStreamLinkingRule<T, P : Position<P>>(val offset: Int, val graph: Graph) : LinkingRule<T, P> {
     override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>): Neighborhood<T> {
         val actualId = center.id - offset
-        val graphNode = if (graph.nodeCount > actualId) graph.getNode(actualId) else null
+        val graphNode = if (actualId >= 0 && actualId < graph.nodeCount) graph.getNode(actualId) else null
         val neighborsIds =
             graphNode
                 ?.neighborNodes()

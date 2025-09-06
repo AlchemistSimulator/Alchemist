@@ -403,7 +403,7 @@ open class Engine<T, P : Position<out P>>(
         val monitor = object : OutputMonitor<T, P> {
             @Volatile
             private var hasTriggered = false
-            
+
             override fun initialized(initializedEnvironment: Environment<T, P>) {
                 checkConditionAndPause()
             }
@@ -415,7 +415,7 @@ open class Engine<T, P : Position<out P>>(
             ) {
                 checkConditionAndPause()
             }
-            
+
             private fun checkConditionAndPause() {
                 if (!hasTriggered && condition.asBoolean) {
                     hasTriggered = true

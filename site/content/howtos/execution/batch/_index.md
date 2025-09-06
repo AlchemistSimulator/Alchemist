@@ -8,20 +8,39 @@ summary = "Execute multiple instances of a simulation with different parameters"
 In some cases you may need to test the same simulation configuration
 with different *parameters*. Suppose for example that you want to see what
 happens when you place a bunch of pedestrian in a circle 
-(for sake of semplicity we'll ignore their behavior).
+(for sake of simplicity we'll ignore their behavior).
 You may want to 
 observe the scenario with 50 pedestrians placed in a 5 meters radius circle.
 Then you may like to observe it with 100 pedestrian and perhaps by changing 
 the circle radius also. Instead of re-writing the configuration file over-and-over
 for each parameter combination, Alchemist offers the possibility to write the
-configuration once, and it will then derive a batch of simulations.the same configuration
+configuration once, and it will then derive a batch of simulations from the same configuration.
 
-## Launching batch simulations
+## Building the Simulator
+
+Before running batch simulations, you need to build the Alchemist simulator:
+
+```bash
+./gradlew assemble --parallel
+```
+
+This command will:
+- Download all required dependencies
+- Compile the entire project
+- Create the executable JAR file in `./build/shadow/alchemist-full-*-all.jar`
+- Take approximately 13 minutes on the first build
+
+{{% notice info %}}
+The build process requires significant time and memory. Do not cancel the build prematurely.
+Set your timeout to at least 20 minutes for the first build.
+{{% /notice %}}
+
+## Configuring batch simulations
 
 To exploit this mechanism, you must declare the "parameters"
 as **variables**. In our example, they would be the *number of pedestrian* and
 the *radius of the circle* where to place them. Let's write the configuration file,
-specifing that we want to test the simulation with 10, 30, 50, 70, 90 pedestrians
+specifying that we want to test the simulation with 10, 30, 50, 70, 90 pedestrians
 and a 5, 10, 15 meters circle radius:
 
 {{< code path="src/test/resources/website-snippets/batch-pedestrian-simulation.yml" >}}
@@ -32,10 +51,122 @@ You may also want to learn how to [export data](/howtos/simulation/export/)
 and specifying [termination criteria](/howtos/execution/termination/).
 {{% /notice %}}
 
-Now we can launch the batch of simulations by providing the simulator the following command-line arguments:
-* `-b`: enable batch mode
-* `-var pedestrianNumber`: all values of variable `pedestrianNumber` will be tested
-* `-var circleRadius`: all values of variable `circleRadius` will be tested
+## Running batch simulations
 
-Under the hood, the simulator will compute the cartesian product of the all possible values of the variables selected with the `-var` option.
-Variables not selected for the batch will have their default value.
+### Using the launcher configuration (recommended)
+
+The modern approach to running batch simulations is to configure the launcher directly 
+in your simulation file. Add a `launcher` section specifying which variables to batch:
+
+```yaml
+# Your simulation configuration with variables
+variables:
+  nodeCount: &nodeCount
+    type: LinearVariable
+    parameters: [5, 5, 15, 10]  # Start: 5, Step: 5, End: 15, Default: 10
+  range: &range
+    type: LinearVariable  
+    parameters: [1, 1, 3, 2]    # Start: 1, Step: 1, End: 3, Default: 2
+
+# Configure the launcher for batch execution
+launcher:
+  parameters:
+    batch: [nodeCount, range]
+
+# Rest of your simulation configuration...
+deployments:
+  - type: Circle
+    parameters: [*nodeCount, 0, 0, 5]
+    # ... rest of configuration
+```
+
+Then run the simulation with:
+
+```bash
+java -jar ./build/shadow/alchemist-full-*-all.jar run simulation.yml
+```
+
+### Using command-line variable overrides
+
+Alternatively, you can specify batch variables from the command line using the `--override` option:
+
+```bash
+java -jar ./build/shadow/alchemist-full-*-all.jar run simulation.yml --override "
+launcher:
+  parameters:
+    batch: [nodeCount, range]
+"
+```
+
+### Headless execution
+
+For automated or server environments, use headless mode:
+
+```bash
+CI=true java -jar ./build/shadow/alchemist-full-*-all.jar run simulation.yml
+```
+
+### Understanding batch execution
+
+Under the hood, the simulator will compute the cartesian product of all possible values 
+of the variables specified in the `batch` list. Variables not included in the batch 
+will use their default value.
+
+For example, with:
+- `nodeCount`: [5, 10, 15] (3 values)
+- `range`: [1, 2, 3] (3 values)
+
+The simulator will execute 3 × 3 = 9 different simulation configurations.
+
+## Migration from legacy CLI
+
+{{% notice warning %}}
+The legacy CLI options `-b` and `-var` have been deprecated and migrated to launcher configuration.
+Update your scripts to use the new launcher-based approach shown above.
+{{% /notice %}}
+
+Old approach (deprecated):
+```bash
+# This no longer works
+java -jar alchemist.jar run simulation.yml -b -var nodeCount -var range
+```
+
+New approach:
+```yaml
+# In your simulation.yml file
+launcher:
+  parameters:
+    batch: [nodeCount, range]
+```
+```bash
+java -jar ./build/shadow/alchemist-full-*-all.jar run simulation.yml
+```
+
+## Complete working example
+
+Here's a complete simulation file that demonstrates batch execution with the modern launcher configuration:
+
+{{< code path="src/test/resources/website-snippets/batch-complete-example.yml" >}}
+
+To run this example:
+
+1. **Build the simulator:**
+   ```bash
+   ./gradlew assemble --parallel
+   ```
+
+2. **Run the batch simulation:**
+   ```bash
+   java -jar ./build/shadow/alchemist-full-*-all.jar run src/test/resources/website-snippets/batch-complete-example.yml
+   ```
+
+3. **For headless execution (no GUI):**
+   ```bash
+   CI=true java -jar ./build/shadow/alchemist-full-*-all.jar run src/test/resources/website-snippets/batch-complete-example.yml
+   ```
+
+This will execute 3 × 3 = 9 different simulation configurations:
+- `nodeCount`: [5, 10, 15]
+- `range`: [1, 2, 3]
+
+Results will be exported to CSV files with the naming pattern `batch_results_*.csv`.

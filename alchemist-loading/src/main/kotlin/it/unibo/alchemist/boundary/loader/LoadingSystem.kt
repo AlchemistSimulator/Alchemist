@@ -134,6 +134,8 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
             } else {
                 logger.debug("Deployment descriptors: {}", deploymentDescriptors)
             }
+            // VALIDATION: Check for missing send actions in Protelis/Scafi nodes
+            validateCommunicationConfiguration(environment)
             // EXPORTS
             val exporters =
                 SimulationModel.visitRecursively<Exporter<T, P>>(
@@ -348,5 +350,39 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
         private fun Map<*, *>.getOrEmpty(key: String) = get(key) ?: emptyList<Any>()
 
         private fun Map<*, *>.getOrEmptyMap(key: String) = get(key) ?: emptyMap<String, Any>()
+
+        /**
+         * Validates that Protelis and Scafi nodes have the necessary "send" actions to enable communication.
+         * Warns if nodes are missing the send actions that would prevent them from communicating.
+         */
+        private fun <T, P : Position<P>> validateCommunicationConfiguration(environment: Environment<T, P>) {
+            environment.nodes.forEach { node ->
+                val isProtelisNode = node.properties.any { property ->
+                    property.javaClass.name.contains("ProtelisDevice")
+                }
+                val isScafiNode = node.properties.any { property ->
+                    property.javaClass.name.contains("ScafiDevice")
+                }
+
+                if (isProtelisNode || isScafiNode) {
+                    val hasSendAction = node.reactions.any { reaction ->
+                        reaction.actions.any { action ->
+                            val actionClassName = action.javaClass.name
+                            actionClassName.contains("SendToNeighbor") || actionClassName.contains("SendScafiMessage")
+                        }
+                    }
+
+                    if (!hasSendAction) {
+                        val nodeType = if (isProtelisNode) "Protelis" else "Scafi"
+                        logger.warn(
+                            "$nodeType node {} is missing a 'send' action. " +
+                                "This node will not be able to communicate with neighboring nodes. " +
+                                "Consider adding a reaction with 'send' action to enable communication.",
+                            node.id,
+                        )
+                    }
+                }
+            }
+        }
     }
 }

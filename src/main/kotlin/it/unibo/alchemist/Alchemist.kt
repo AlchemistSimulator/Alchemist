@@ -123,9 +123,9 @@ object Alchemist {
     private fun createLoader(simulationFile: String, overrides: List<String>): Loader {
         val url = ResourceLoader.getResource(simulationFile) ?: run {
             when (val file = File(simulationFile)) {
-                file.isDirectory() -> error("Expected a simulation file, but $simulationFile is a directory")
-                file.isFile -> file.toURI().toURL()
-                !file.exists() -> error("No classpath resource or file $simulationFile was found")
+                file.takeIf { it.isDirectory() } -> error("Expected a simulation file, but $simulationFile is a directory")
+                file.takeIf { it.isFile } -> file.toURI().toURL()
+                file.takeIf { !it.exists() } -> error("No classpath resource or file $simulationFile was found")
                 else -> error("No classpath resource or file $simulationFile was found")
             }
         }

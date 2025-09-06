@@ -267,7 +267,14 @@ internal object SimulationModel {
                 visitBuilding<LinkingRule<T, P>>(localContext, element)
             }
         return when {
-            linkingRules.isEmpty() -> NoLinks()
+            linkingRules.isEmpty() -> {
+                logger.warn(
+                    "No network model specified: nodes will not be able to communicate with each other. " +
+                    "Consider adding a 'network-model' section to your simulation configuration " +
+                    "or adding send/receive actions in your programs to enable communication."
+                )
+                NoLinks()
+            }
             linkingRules.size == 1 -> linkingRules.first()
             else -> CombinedLinkingRule(linkingRules)
         }

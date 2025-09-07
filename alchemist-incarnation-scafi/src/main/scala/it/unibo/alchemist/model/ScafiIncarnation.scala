@@ -72,13 +72,16 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
         new SendScafiMessage[T, P](environment, device, reaction.asInstanceOf[Reaction[T]], scafiProgramsList.head)
       } else {
         require(param != null, "Unsupported program: null")
-        new RunScafiProgram[T, P](
+        val action = new RunScafiProgram[T, P](
           notNull(environment, "environment"),
           notNull(node, "node"),
           notNull(reaction.asInstanceOf[Reaction[T]], "reaction"),
           notNull(randomGenerator, "random generator"),
           notNull(param.toString, "action parameter")
         )
+        // Trigger validation immediately
+        device.validateCommunicationConfiguration()
+        action
       }
     }
   )

@@ -1,3 +1,26 @@
+## [42.2.17](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.16...42.2.17) (2025-09-07)
+
+### Dependency updates
+
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.135.0 ([#4762](https://github.com/AlchemistSimulator/Alchemist/issues/4762)) ([9da9f28](https://github.com/AlchemistSimulator/Alchemist/commit/9da9f280cd1bfec6e3f8cbdb3484df2703b31640))
+* **deps:** update react to v2025.9.3-19.1.1 (patch) ([#4759](https://github.com/AlchemistSimulator/Alchemist/issues/4759)) ([6b50e20](https://github.com/AlchemistSimulator/Alchemist/commit/6b50e200068088f61ecb57aca4fd486514a695d5))
+
+### Bug Fixes
+
+* **loading:** fix Simulation interaction with mixed graphstream / non-gs deployments ([#4758](https://github.com/AlchemistSimulator/Alchemist/issues/4758)) ([1d44a2c](https://github.com/AlchemistSimulator/Alchemist/commit/1d44a2cbf0c7e5139a63bf1af8a665b87d4c9af7))
+
+### Build and continuous integration
+
+* **copilot:** update copilot-instructions with style guidelines ([860504c](https://github.com/AlchemistSimulator/Alchemist/commit/860504c829215b9770ff4a63fd50dcbe59548c7e))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.6 ([#4760](https://github.com/AlchemistSimulator/Alchemist/issues/4760)) ([2924136](https://github.com/AlchemistSimulator/Alchemist/commit/29241368d82a34d9dc1b83d15514e5e628f5fd8f))
+* onboard copilot agent ([#4750](https://github.com/AlchemistSimulator/Alchemist/issues/4750)) ([7c41837](https://github.com/AlchemistSimulator/Alchemist/commit/7c41837f4493032c1dfdb47105f0e4467f0ccdcb))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([e983eb7](https://github.com/AlchemistSimulator/Alchemist/commit/e983eb77a5a18024baab3a969fcc2c1ee7592275))
+* **build:** update the javadoc.io cache ([272b2fc](https://github.com/AlchemistSimulator/Alchemist/commit/272b2fc9e65b7b7794424c883e8d80f963651fd0))
+* **build:** update the javadoc.io cache ([0f29415](https://github.com/AlchemistSimulator/Alchemist/commit/0f294157134a430809898e4ca025c37c38022a2c))
+
 ## [42.2.16](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.15...42.2.16) (2025-09-06)
 
 ### Dependency updates

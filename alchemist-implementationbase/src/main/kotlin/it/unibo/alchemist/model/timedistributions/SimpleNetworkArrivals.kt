@@ -188,10 +188,8 @@ class SimpleNetworkArrivals<T> private constructor(
             ?: incarnation.getProperty(node, propagationDelayMolecule, propagationDelayProperty)
 
     override fun updateStatus(currentTime: Time, executed: Boolean, rate: Double, environment: Environment<T, *>) {
-        // TODO: once the infrastructure of events and time distributions has been refactored, this must be rethought of
         /*
-         * executed e rate = 0 -> eseguita
-         *
+         * To be revised once we have a better infrastructure of events and time distributions
          */
         if (rate == 0.0) {
             time = Time.INFINITY

@@ -57,59 +57,45 @@ constructor(
     private var executionContexts: Map<RunProtelisProgram<*>, AlchemistExecutionContext<P>> = mapOf()
 
     /**
-     * Creates a new [AlchemistNetworkManager] for the given program.
+     * Gets or creates the [AlchemistNetworkManager] for the given program.
+     * Creates the network manager lazily if it doesn't exist.
      *
      * @param program the [RunProtelisProgram]
-     * @param reaction the [Reaction] hosting the program
-     * @param retentionTime the message retention time
-     * @param packetLossDistance the packet loss distribution
-     * @return the created [AlchemistNetworkManager]
+     * @return the [AlchemistNetworkManager] for the program
      */
-    fun createNetworkManager(
-        program: RunProtelisProgram<*>,
-        reaction: Reaction<Any>,
-        retentionTime: Double,
-        packetLossDistance: RealDistribution?,
-    ): AlchemistNetworkManager {
-        val networkManager = AlchemistNetworkManager(reaction, this, program, retentionTime, packetLossDistance)
-        networkManagers = networkManagers + (program to networkManager)
-        return networkManager
-    }
-
-    /**
-     * Creates a new [AlchemistExecutionContext] for the given program.
-     *
-     * @param program the [RunProtelisProgram]
-     * @param reaction the [Reaction] hosting the program
-     * @param randomGenerator the [RandomGenerator] for this simulation
-     * @param networkManager the [AlchemistNetworkManager] to be used
-     * @return the created [AlchemistExecutionContext]
-     */
-    fun createExecutionContext(
-        program: RunProtelisProgram<*>,
-        reaction: Reaction<Any>,
-        randomGenerator: RandomGenerator,
-        networkManager: AlchemistNetworkManager,
-    ): AlchemistExecutionContext<P> {
-        val executionContext = AlchemistExecutionContext(
-            environment,
-            node,
+    fun networkManagerOf(program: RunProtelisProgram<*>): AlchemistNetworkManager = networkManagers[program] ?: run {
+        val networkManager = AlchemistNetworkManager(
+            program.reaction,
             this,
-            reaction,
-            randomGenerator,
-            networkManager,
+            program,
+            program.retentionTime,
+            program.packetLossDistance,
         )
-        executionContexts = executionContexts + (program to executionContext)
-        return executionContext
+        networkManagers = networkManagers + (program to networkManager)
+        networkManager
     }
 
     /**
-     * Gets the [AlchemistExecutionContext] for the given program.
+     * Gets or creates the [AlchemistExecutionContext] for the given program.
+     * Creates the execution context lazily if it doesn't exist.
      *
      * @param program the [RunProtelisProgram]
-     * @return the [AlchemistExecutionContext] or null if not found
+     * @return the [AlchemistExecutionContext] for the program
      */
-    fun getExecutionContext(program: RunProtelisProgram<*>): AlchemistExecutionContext<P>? = executionContexts[program]
+    fun executionContextOf(program: RunProtelisProgram<*>): AlchemistExecutionContext<P> =
+        executionContexts[program] ?: run {
+            val networkManager = networkManagerOf(program)
+            val executionContext = AlchemistExecutionContext(
+                environment,
+                node,
+                this,
+                program.reaction,
+                program.randomGenerator,
+                networkManager,
+            )
+            executionContexts = executionContexts + (program to executionContext)
+            executionContext
+        }
 
     /**
      * Adds a new [AlchemistNetworkManager].
@@ -118,9 +104,9 @@ constructor(
      * the [RunProtelisProgram]
      * @param networkManager
      * the [AlchemistNetworkManager]
-     * @deprecated Use createNetworkManager instead for better encapsulation
+     * @deprecated Use networkManagerOf instead for better encapsulation
      */
-    @Deprecated("Use createNetworkManager instead", ReplaceWith("createNetworkManager"))
+    @Deprecated("Use networkManagerOf instead", ReplaceWith("networkManagerOf"))
     fun addNetworkManger(program: RunProtelisProgram<*>, networkManager: AlchemistNetworkManager) {
         networkManagers = networkManagers + (program to networkManager)
     }
@@ -134,7 +120,7 @@ constructor(
         .filterIsInstance<RunProtelisProgram<*>>()
         .toList()
 
-    override fun cloneOnNewNode(node: Node<Any>) = ProtelisDevice(environment, node, networkManagers)
+    override fun cloneOnNewNode(node: Node<Any>) = ProtelisDevice(environment, node)
 
     /**
      * Returns the value associated with [id].
@@ -160,9 +146,7 @@ constructor(
      * @return the [AlchemistNetworkManager] for this specific
      * [RunProtelisProgram]
      */
-    fun getNetworkManager(program: RunProtelisProgram<*>) = requireNotNull(networkManagers[program]) {
-        "No network manager found for $program"
-    }
+    fun getNetworkManager(program: RunProtelisProgram<*>) = networkManagerOf(program)
 
     /**
      * Returns true if node contains [id].

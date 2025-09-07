@@ -10,9 +10,41 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.{Node, NodeProperty}
+import it.unibo.alchemist.model.implementations.actions.{RunScafiProgram, SendScafiMessage}
+import org.slf4j.LoggerFactory
+import scala.jdk.CollectionConverters._
 
 class ScafiDevice[E](node: Node[E]) extends NodeProperty[E] {
   override def getNode: Node[E] = node
 
   override def cloneOnNewNode(node: Node[E]): NodeProperty[E] = new ScafiDevice[E](node)
+
+  /**
+   * Validates that the node has the required send actions for communication. Warns the user if ScafiDevice nodes are
+   * missing SendScafiMessage actions.
+   */
+  def validateCommunicationConfiguration(): Unit = {
+    val hasScafiPrograms = node.getReactions.asScala
+      .flatMap(_.getActions.asScala)
+      .exists(_.isInstanceOf[RunScafiProgram[_, _]])
+
+    if (hasScafiPrograms) {
+      val hasSendAction = node.getReactions.asScala
+        .flatMap(_.getActions.asScala)
+        .exists(_.isInstanceOf[SendScafiMessage[_, _]])
+
+      if (!hasSendAction) {
+        ScafiDevice.LOGGER.warn(
+          "Scafi node {} is missing a 'send' action. This node will not be able to " +
+            "communicate with neighboring nodes. Consider adding a reaction with 'send' action " +
+            "to enable communication.",
+          node.getId
+        )
+      }
+    }
+  }
+}
+
+object ScafiDevice {
+  private val LOGGER = LoggerFactory.getLogger(classOf[ScafiDevice[_]])
 }

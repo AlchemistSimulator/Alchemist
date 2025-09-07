@@ -74,8 +74,9 @@ After building the project, you can run simulations:
 - **Commit format:** All commits must follow [Conventional Commits](https://www.conventionalcommits.org/) format (fix:, feat:, etc.)
 - **Commit timing:** Commits take extra time due to automatic linting/formatting checks
 
-## Style
+## Style and coding
 - Style preference: avoid empty lines within methods. Empty lines should be used to separate logical sections between methods/classes, but not within method bodies for better code density and readability
+- When possible, prefer kotlin.test over kotest
 
 ## Validation
 

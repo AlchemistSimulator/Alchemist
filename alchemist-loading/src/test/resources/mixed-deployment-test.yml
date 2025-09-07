@@ -1,0 +1,24 @@
+incarnation: protelis
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [1]
+
+_programs: &programs
+  - time-distribution: 1
+    program: "org:protelis:tutorial:distanceTo"
+  - program: send
+
+deployments:
+  - type: Grid
+    parameters: [-5, -5, 5, 5, 0.5, 0.5, 0.2, 0.2]
+    contents:
+      - molecule: "source"
+        concentration: true
+        in:
+          type: Circle
+          parameters: [0, 0, 0.3]          
+    programs: *programs
+  - type: GraphStreamDeployment
+    parameters: [200, 4, 4, 0.5, "Lobster", [10, 4]]
+    programs: *programs

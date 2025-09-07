@@ -1,3 +1,24 @@
+## [42.3.0](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.17...42.3.0) (2025-09-07)
+
+### Features
+
+* import SimpleNetworkArrivals time distribution from experiment repository ([#4755](https://github.com/AlchemistSimulator/Alchemist/issues/4755)) ([b05cbf2](https://github.com/AlchemistSimulator/Alchemist/commit/b05cbf2aee2e9e7be8b490487f17b26a07c1216f))
+
+### Bug Fixes
+
+* **engine:** make `goToTime` work multiple times ([#4753](https://github.com/AlchemistSimulator/Alchemist/issues/4753)) ([7739ac9](https://github.com/AlchemistSimulator/Alchemist/commit/7739ac92bab4f007a09144de0e945c308052f6b6))
+* warn when Protelis/Scafi nodes are missing send actions ([#4757](https://github.com/AlchemistSimulator/Alchemist/issues/4757)) ([a700205](https://github.com/AlchemistSimulator/Alchemist/commit/a700205f91e8961d882713e0596e441a48b0cd51))
+
+### Build and continuous integration
+
+* **copilot:** revise style and coding section in instructions ([e2ed051](https://github.com/AlchemistSimulator/Alchemist/commit/e2ed051b3b58b40d7b00065ef17283219d3a4090))
+* **copilot:** update pull request instructions in documentation ([60d23c7](https://github.com/AlchemistSimulator/Alchemist/commit/60d23c790c421bcc3a97fe4a0bb1e131d9a73b1d))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([edc4568](https://github.com/AlchemistSimulator/Alchemist/commit/edc4568d1ada8d5537d1904548c324c30d2a22f0))
+* **build:** update the javadoc.io cache ([aa4c376](https://github.com/AlchemistSimulator/Alchemist/commit/aa4c37613c48ca17fc2d8cbff49a3815033f040f))
+
 ## [42.2.17](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.16...42.2.17) (2025-09-07)
 
 ### Dependency updates

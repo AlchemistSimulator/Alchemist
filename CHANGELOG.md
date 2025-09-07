@@ -1,3 +1,13 @@
+## [42.3.1](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.0...42.3.1) (2025-09-07)
+
+### Bug Fixes
+
+* **cli:** improve error messages for incorrect file paths ([#4756](https://github.com/AlchemistSimulator/Alchemist/issues/4756)) ([818d0d7](https://github.com/AlchemistSimulator/Alchemist/commit/818d0d7cd84e6678e2567f194fb5c8114b0a5c63))
+
+### Documentation
+
+* **website:** add comprehensive batch simulation documentation with build instructions ([#4752](https://github.com/AlchemistSimulator/Alchemist/issues/4752)) ([719c021](https://github.com/AlchemistSimulator/Alchemist/commit/719c02181fbba6934e6e43c34cd80057e8d3149d))
+
 ## [42.3.0](https://github.com/AlchemistSimulator/Alchemist/compare/42.2.17...42.3.0) (2025-09-07)
 
 ### Features

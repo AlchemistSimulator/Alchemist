@@ -164,6 +164,8 @@ The project builds a complete simulator. After building:
   - `docs:` for documentation changes
   - Example: `fix(api): resolve null pointer exception in loading module`
 - **Submodules:** Initialize with `git submodule update --init --recursive` when needed for website builds
+- **Pull requests:** PR titles should be named using conventional commits to simplify squashing
+- **Pull request labels:** the `auto-rebase-update` label should be always applied to the PRs
 
 ## Performance Expectations
 

@@ -1,3 +1,17 @@
+## [42.3.2](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.1...42.3.2) (2025-09-08)
+
+### Dependency updates
+
+* **deps:** update kotest to v6.0.3 (patch) ([#4763](https://github.com/AlchemistSimulator/Alchemist/issues/4763)) ([ba3725a](https://github.com/AlchemistSimulator/Alchemist/commit/ba3725a836f2fd51951e15fe810dd7ec22b56d2b))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.150.0 ([#4764](https://github.com/AlchemistSimulator/Alchemist/issues/4764)) ([9bb52d3](https://github.com/AlchemistSimulator/Alchemist/commit/9bb52d3bbfa4d0227a6edfd7fc15c6a15a6fa99d))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([f925819](https://github.com/AlchemistSimulator/Alchemist/commit/f925819a2a6c338b7f90051db11d9743e4287807))
+
 ## [42.3.1](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.0...42.3.1) (2025-09-07)
 
 ### Bug Fixes

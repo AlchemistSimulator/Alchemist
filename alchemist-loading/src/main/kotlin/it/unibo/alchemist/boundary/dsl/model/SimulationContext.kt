@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.SupportedIncarnations
+import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
@@ -66,6 +67,10 @@ class EnvironmentContext<T, P : Position<P>>(val ctx: SimulationContext<T>, val 
 
     fun deployments(block: DeploymentsContext<T, P>.() -> Unit) {
         DeploymentsContext(this).apply(block)
+    }
+    infix fun addTerminator(predicate: TerminationPredicate<*, *>) {
+        @Suppress("UNCHECKED_CAST")
+        environment.addTerminator(predicate as TerminationPredicate<T, P>)
     }
 }
 

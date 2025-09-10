@@ -12,6 +12,7 @@ import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.kaikikm.threadresloader.ResourceLoader
@@ -105,15 +106,14 @@ object LoaderComparisonHelper {
             "Node counts should match",
         )
 
-        // TODO: Commented out position comparison due to random generator differences
         // Compare node positions
-        // val dslPositions = dslEnv.nodes.map { dslEnv.getPosition(it) }.toSet()
-        // val yamlPositions = yamlEnv.nodes.map { yamlEnv.getPosition(it) }.toSet()
-        // assertEquals(
-        //     yamlPositions,
-        //     dslPositions,
-        //     "$description: Node positions should match"
-        // )
+        val dslPositions = dslEnv.nodes.map { dslEnv.getPosition(it) }.toSet()
+        val yamlPositions = yamlEnv.nodes.map { yamlEnv.getPosition(it) }.toSet()
+        assertEquals(
+            yamlPositions,
+            dslPositions,
+            "Node positions should match",
+        )
 
         // Compare node contents (molecules and concentrations)
         compareNodeContents(dslEnv, yamlEnv)
@@ -124,6 +124,9 @@ object LoaderComparisonHelper {
             dslEnv.linkingRule::class,
             "Linking rule types should match",
         )
+
+        // Compare programs (reactions)
+        comparePrograms(dslEnv, yamlEnv)
     }
 
     /**
@@ -155,6 +158,138 @@ object LoaderComparisonHelper {
             dslContents,
             "All node contents (molecules and concentrations) should match",
         )
+    }
+
+    /**
+     * Compares programs between environments
+     */
+    private fun <T, P : Position<P>> comparePrograms(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
+        println("Comparing programs...")
+
+        // Compare global reactions
+        compareGlobalReactions(dslEnv, yamlEnv)
+
+        // Compare node reactions
+        compareNodeReactions(dslEnv, yamlEnv)
+    }
+
+    /**
+     * Compares global reactions
+     */
+    private fun <T, P : Position<P>> compareGlobalReactions(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
+        println("Comparing global reactions...")
+
+        val dslGlobalReactions = dslEnv.globalReactions.toList()
+        val yamlGlobalReactions = yamlEnv.globalReactions.toList()
+
+        assertEquals(
+            yamlGlobalReactions.size,
+            dslGlobalReactions.size,
+            "Global reactions count should match",
+        )
+
+        // Compare global reaction types
+        val dslGlobalTypes = dslGlobalReactions.map { it::class }.sortedBy { it.simpleName }
+        val yamlGlobalTypes = yamlGlobalReactions.map { it::class }.sortedBy { it.simpleName }
+
+        assertEquals(
+            yamlGlobalTypes,
+            dslGlobalTypes,
+            "Global reaction types should match",
+        )
+    }
+
+    /**
+     * Compares node reactions (programs)
+     */
+    private fun <T, P : Position<P>> compareNodeReactions(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
+        println("Comparing node reactions...")
+
+        val dslNodes = dslEnv.nodes.toList()
+        val yamlNodes = yamlEnv.nodes.toList()
+
+        // Compare total reaction counts
+        val dslTotalReactions = dslNodes.sumOf { it.reactions.size }
+        val yamlTotalReactions = yamlNodes.sumOf { it.reactions.size }
+
+        assertEquals(
+            yamlTotalReactions,
+            dslTotalReactions,
+            "Total node reactions count should match",
+        )
+
+        // Compare reaction types across all nodes
+        val dslReactionTypes = dslNodes.flatMap { it.reactions }.map { it::class }.sortedBy { it.simpleName }
+        val yamlReactionTypes = yamlNodes.flatMap { it.reactions }.map { it::class }.sortedBy { it.simpleName }
+
+        assertEquals(
+            yamlReactionTypes,
+            dslReactionTypes,
+            "Node reaction types should match",
+        )
+
+        // Compare reaction programs (conditions and actions)
+        compareReactionPrograms(dslNodes, yamlNodes)
+    }
+
+    /**
+     * Compares reaction programs by comparing their string representations and dependencies
+     */
+    private fun <T> compareReactionPrograms(dslNodes: List<Node<T>>, yamlNodes: List<Node<T>>) {
+        println("Comparing reaction programs...")
+
+        // Compare total reactions count
+        val dslTotalReactions = dslNodes.sumOf { it.reactions.size }
+        val yamlTotalReactions = yamlNodes.sumOf { it.reactions.size }
+
+        assertEquals(
+            yamlTotalReactions,
+            dslTotalReactions,
+            "Total reactions count should match",
+        )
+
+        // Compare reactions by their string representations and dependencies
+        val dslReactions = dslNodes.flatMap { it.reactions }.map { reaction ->
+            ReactionInfo(
+                reactionString = try {
+                    reaction.toString()
+                } catch (e: Exception) {
+                    "<error in toString()>"
+                },
+                inboundDependencies = reaction.inboundDependencies.map { it.toString() }.sorted(),
+                outboundDependencies = reaction.outboundDependencies.map { it.toString() }.sorted(),
+            )
+        }.sortedBy { it.toString() }
+
+        val yamlReactions = yamlNodes.flatMap { it.reactions }.map { reaction ->
+            ReactionInfo(
+                reactionString = try {
+                    reaction.toString()
+                } catch (e: Exception) {
+                    "<error in toString()>"
+                },
+                inboundDependencies = reaction.inboundDependencies.map { it.toString() }.sorted(),
+                outboundDependencies = reaction.outboundDependencies.map { it.toString() }.sorted(),
+            )
+        }.sortedBy { it.toString() }
+
+        assertEquals(
+            yamlReactions,
+            dslReactions,
+            "Reaction string representations and dependencies should match",
+        )
+    }
+
+    /**
+     * Data class to represent reaction information for comparison
+     */
+    private data class ReactionInfo(
+        val reactionString: String,
+        val inboundDependencies: List<String>,
+        val outboundDependencies: List<String>,
+    ) {
+        override fun toString(): String =
+            "Reaction(string='$reactionString', inbound=$inboundDependencies, outbound=$outboundDependencies)"
     }
 
     /**

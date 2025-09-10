@@ -314,6 +314,8 @@ object LoaderComparisonHelper {
             dslMonitorTypes.sortedBy { it.simpleName },
             "Output monitor types should match",
         )
+
+        // How to compare terminators...?
     }
 }
 

@@ -9,56 +9,149 @@
 
 package it.unibo.alchemist.boundary.dsl.model
 
+import it.unibo.alchemist.model.Action
+import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Deployment
+import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.PositionBasedFilter
+import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.TimeDistribution
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 
-class DeploymentsContext<T, P : Position<P>>(private val ctx: EnvironmentContext<T, P>) {
-    var deployments: MutableList<Deployment<P>> = mutableListOf()
+class DeploymentsContext<T, P : Position<P>>(ctx: EnvironmentContext<T, P>) {
     var generator: RandomGenerator = MersenneTwister(10)
+    val environment: Environment<*, *> = ctx.environment as Environment<*, *>
+    val env = ctx.environment
+    private val inc = ctx.incarnation
 
-    fun deploy(deployment: Deployment<*>, block: ContentsContext.() -> Unit) {
+    fun deploy(deployment: Deployment<*>, block: DeploymentContext.() -> Unit) {
         @Suppress("UNCHECKED_CAST")
-        deployments.add(deployment as Deployment<P>)
-        addNodes(deployment)
-        ContentsContext().apply(block)
+        addNodes(deployment as Deployment<P>)
+        DeploymentContext().apply(block)
     }
-    private fun addNodes(deployment: Deployment<P>) {
-        deployment.forEach { position ->
-            val node = ctx.incarnation.createNode(
-                generator,
-                ctx.environment,
-                null,
-            )
-            ctx.environment.addNode(node, position)
-        }
-    }
-
     fun deploy(deployment: Deployment<*>) {
         @Suppress("UNCHECKED_CAST")
         this.deploy(deployment) {}
     }
-    inner class ContentsContext {
-        fun all(block: ContentContext<T>.() -> Unit) {
-            val c = ContentContext<T>().apply(block)
-            ctx.environment.nodes.forEach { node ->
-                applyToNode(node, c)
+    private fun addNodes(deployment: Deployment<P>) {
+        deployment.forEach { position ->
+            val node = inc.createNode(
+                generator,
+                env,
+                null,
+            )
+            env.addNode(node, position)
+        }
+    }
+
+    inner class DeploymentContext {
+        fun all(block: ContentContext.() -> Unit) {
+            val c = ContentContext().apply(block)
+            applyToNodes(env.nodes, c)
+        }
+        fun inside(filter: PositionBasedFilter<*>, block: ContentContext.() -> Unit) {
+            @Suppress("UNCHECKED_CAST")
+            val filter = filter as PositionBasedFilter<P>
+            val c = ContentContext().apply(block)
+            applyToNodes(
+                env.nodes.filter { node ->
+                    filter.contains(env.getPosition(node))
+                },
+                c,
+            )
+        }
+        fun programs(block: ProgramsContext.() -> Unit) {
+            ProgramsContext().apply(block)
+        }
+        private fun applyToNodes(nodes: Collection<Node<T>>, content: ContentContext) {
+            nodes.forEach { node ->
+                val mol = inc.createMolecule(
+                    content.molecule
+                        ?: error("Molecule not specified"),
+                )
+                val conc = inc.createConcentration(content.concentration)
+                node.setConcentration(mol, conc)
             }
         }
-        private fun applyToNode(node: Node<T>, content: ContentContext<T>) {
-            val mol = ctx.incarnation.createMolecule(
-                content.molecule
-                    ?: error("Molecule not specified"),
-            )
-            val conc = ctx.incarnation.createConcentration(content.concentration)
-            node.setConcentration(mol, conc)
-        }
 
-        inner class ContentContext<T> {
+        inner class ContentContext {
             var molecule: String? = null
             var concentration: T? = null
+        }
+        inner class ProgramsContext {
+            val programs: MutableList<ProgramContext.() -> Unit> = mutableListOf()
+            fun all(block: ProgramContext.() -> Unit) {
+                programs.add(block)
+                applyToNodes(env.nodes, block)
+            }
+            fun inside(filter: PositionBasedFilter<P>, block: ProgramContext.() -> Unit) {
+                programs.add(block)
+                applyToNodes(
+                    env.nodes.filter { node ->
+                        filter.contains(env.getPosition(node))
+                    },
+                    block,
+                )
+            }
+
+            private fun applyToNodes(nodes: Collection<Node<T>>, program: ProgramContext.() -> Unit) {
+                nodes.forEach { node ->
+                    val c = ProgramContext(node).apply(program)
+                    val timeDistribution = c.timeDistribution
+                        ?: inc.createTimeDistribution(
+                            generator,
+                            env,
+                            node,
+                            null,
+                        )
+                    val r = when {
+                        c.reaction != null -> {
+                            // User provided a custom reaction object
+                            c.reaction!!
+                        }
+                        else -> {
+                            // Create a basic reaction with custom actions/conditions
+                            inc.createReaction(
+                                generator,
+                                env,
+                                node,
+                                timeDistribution,
+                                c.program,
+                            )
+                        }
+                    }
+                    r.actions = r.actions + c.actions.map { it() }
+                    r.conditions = r.conditions + c.conditions.map { it() }
+                    node.addReaction(r)
+                }
+            }
+            inner class ProgramContext(val node: Node<T>) {
+                var program: String? = null
+                var actions: Collection<() -> Action<T>> = emptyList()
+                var conditions: Collection<() -> Condition<T>> = emptyList()
+                var timeDistribution: TimeDistribution<T>? = null
+                var reaction: Reaction<T>? = null
+                fun timeDistribution(td: String) {
+                    timeDistribution = inc.createTimeDistribution(
+                        generator,
+                        env,
+                        node,
+                        td,
+                    )
+                }
+                fun addAction(block: () -> Action<T>) {
+                    actions = actions + block
+                }
+                fun addCondition(block: () -> Condition<T>) {
+                    conditions = conditions + block
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                operator fun <T> TimeDistribution<*>.unaryPlus(): TimeDistribution<T> = this as TimeDistribution<T>
+            }
         }
     }
 }

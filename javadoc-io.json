@@ -54,14 +54,14 @@
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.1",
     "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.1/element-list"
   },
-  "com.google.devtools.ksp/symbol-processing-api/2.2.10-2.0.2": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.10-2.0.2"
+  "com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2"
   },
-  "com.google.devtools.ksp/symbol-processing-cmdline/2.2.10-2.0.2": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-cmdline/2.2.10-2.0.2"
+  "com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.2"
   },
-  "com.google.devtools.ksp/symbol-processing/2.2.10-2.0.2": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.2.10-2.0.2"
+  "com.google.devtools.ksp/symbol-processing/2.2.20-2.0.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.2.20-2.0.2"
   },
   "com.google.guava/guava/33.4.8-jre": {
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.4.8-jre",

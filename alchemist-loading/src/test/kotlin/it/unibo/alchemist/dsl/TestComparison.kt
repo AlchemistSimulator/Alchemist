@@ -9,112 +9,53 @@
 
 package it.unibo.alchemist.dsl
 
-import io.kotest.assertions.shouldFail
-import it.unibo.alchemist.boundary.dsl.model.Incarnation
-import it.unibo.alchemist.boundary.dsl.model.simulation
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.deployments.Circle
-import it.unibo.alchemist.model.deployments.Grid
-import it.unibo.alchemist.model.deployments.Point
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
-import org.apache.commons.math3.random.MersenneTwister
 import org.junit.jupiter.api.Test
 
 class TestComparison {
 
     @Test
     fun <T, P : Position<P>> test01Nodes() {
-        val loader = simulation {
-            incarnation = Incarnation.SAPERE
-            environment(getDefault()) {
-                networkModel = ConnectWithinDistance(5.0)
-                deployments {
-                    deploy(Point(environment, 0.0, 0.0))
-                    deploy(Point(environment, 0.0, 1.0))
-                }
-            }
-        }
-
-        loader.shouldEqual("isac/01-nodes.yml")
+        DslLoaderFunctions.test01Nodes<T, P>().shouldEqual("dsl/01-nodes.yml")
     }
 
     @Test
     fun <T, P : Position<P>> test02ManyNodes() {
-        val loader = simulation {
-            incarnation = Incarnation.SAPERE
-            environment(getDefault()) {
-                networkModel = ConnectWithinDistance(5.0)
-                deployments {
-                    generator = MersenneTwister(10)
-                    val cirle = Circle(
-                        environment,
-                        generator,
-                        1000,
-                        0.0,
-                        0.0,
-                        10.0,
-                    )
-                    deploy(cirle)
-                }
-            }
-        }
-
-        loader.shouldEqual("dsl/02-manynodes.yml")
+        DslLoaderFunctions.test02ManyNodes<T, P>().shouldEqual("dsl/02-manynodes.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> testShouldFail() {
-        val loader = simulation {
-            incarnation = Incarnation.SAPERE
-            environment(getDefault()) {
-                networkModel = ConnectWithinDistance(5.0)
-                deployments {
-                    val grid = Grid(
-                        environment,
-                        generator,
-                        -5.0,
-                        -6.0, // different from the yml file
-                        5.0,
-                        5.0,
-                        0.25,
-                        0.25,
-                        0.0,
-                        0.0,
-                    )
-                    deploy(grid)
-                }
-            }
-        }
-        shouldFail {
-            loader.shouldEqual("dsl/03-grid.yml")
-        }
+    fun <T, P : Position<P>> test03Grid() {
+        DslLoaderFunctions.test03Grid<T, P>().shouldEqual("dsl/03-grid.yml")
     }
 
     @Test
     fun <T, P : Position<P>> test05Content() {
-        val loader = simulation {
-            incarnation = Incarnation.SAPERE
-            environment(getDefault()) {
-                networkModel = ConnectWithinDistance(5.0)
-                deployments {
-                    val hello = "hello"
-                    deploy(
-                        Grid(
-                            environment, generator,
-                            -5.0,
-                            -5.0,
-                            5.0,
-                            5.0,
-                            0.25, 0.25, 0.1, 0.1,
-                        ),
-                    ) {
-                        all {
-                            molecule = hello
-                        }
-                    }
-                }
-            }
-        }
-        loader.shouldEqual("dsl/05-content.yml")
+        DslLoaderFunctions.test05Content<T, P>().shouldEqual("dsl/05-content.yml")
+    }
+
+    @Test
+    fun <T, P : Position<P>> test06ContentFiltered() {
+        DslLoaderFunctions.test06ContentFiltered<T, P>().shouldEqual("dsl/06-filters.yml")
+    }
+
+    @Test
+    fun <T, P : Position<P>> test07Programs() {
+        DslLoaderFunctions.test07Programs<T, P>().shouldEqual("dsl/07-program.yml")
+    }
+
+    @Test
+    fun <T, P : Position<P>> test08ProtelisPrograms() {
+        DslLoaderFunctions.test08ProtelisPrograms<T, P>().shouldEqual("dsl/08-protelisprogram.yml")
+    }
+
+    @Test
+    fun <T, P : Position<P>> test09TimeDistribution() {
+        DslLoaderFunctions.test09TimeDistribution<T, P>().shouldEqual("dsl/09-timedistribution.yml")
+    }
+
+    @Test
+    fun <T, P : Position<P>> test10Environment() {
+        DslLoaderFunctions.test10Environment<T, P>().shouldEqual("dsl/10-environment.yml")
     }
 }

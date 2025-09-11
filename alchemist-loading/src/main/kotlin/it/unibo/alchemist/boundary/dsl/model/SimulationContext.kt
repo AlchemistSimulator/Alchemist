@@ -27,30 +27,7 @@ import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.jvm.optionals.getOrElse
 
-class SimulationContext<T> {
-    var incarnation: Incarnation<T, *>? = null
-    var environment: Environment<T, *>? = null
-
-    @Suppress("UNCHECKED_CAST")
-    val default: Environment<T, Euclidean2DPosition> by lazy {
-        require(incarnation != null) {
-            "Incarnation must be set before accessing default environment"
-        }
-        Continuous2DEnvironment(incarnation as Incarnation<T, Euclidean2DPosition>)
-    }
-
-    fun <C : Position<C>> environment(env: Environment<T, C>, block: EnvironmentContext<T, C>.() -> Unit) {
-        this.environment = env
-        EnvironmentContext(this, env).apply(block)
-    }
-    fun environment(block: EnvironmentContext<T, Euclidean2DPosition>.() -> Unit) {
-        val env = default
-        this.environment = default
-        EnvironmentContext(this, env).apply(block)
-    }
-}
-
-class EnvironmentContext<T, P : Position<P>>(val ctx: SimulationContext<T>, val environment: Environment<T, P>) {
+class SimulationContext<T, P : Position<P>>(val incarnation: Incarnation<T, P>, val environment: Environment<T, P>) {
 
     private var _networkModel: LinkingRule<T, P> = NoLinks()
     var networkModel: LinkingRule<T, P>
@@ -59,11 +36,6 @@ class EnvironmentContext<T, P : Position<P>>(val ctx: SimulationContext<T>, val 
             _networkModel = value
             environment.linkingRule = value
         }
-
-    @Suppress("UNCHECKED_CAST")
-    val incarnation: Incarnation<T, P>
-        get() = ctx.incarnation as? Incarnation<T, P>
-            ?: error("Incarnation not defined or of the wrong type")
 
     fun deployments(block: DeploymentsContext<T, P>.() -> Unit) {
         DeploymentsContext(this).apply(block)
@@ -74,7 +46,7 @@ class EnvironmentContext<T, P : Position<P>>(val ctx: SimulationContext<T>, val 
     }
 }
 
-fun <T, P : Position<P>> createLoader(simBuilder: SimulationContext<T>): Loader = object : DslLoader(simBuilder) {
+fun <T, P : Position<P>> createLoader(simBuilder: SimulationContext<T, P>): Loader = object : DslLoader(simBuilder) {
     override val constants: Map<String, Any?> = emptyMap()
     override val dependentVariables: Map<String, DependentVariable<*>> = emptyMap()
     override val variables: Map<String, Variable<*>> = emptyMap()
@@ -86,14 +58,21 @@ fun <T, P : Position<P>> Inc.incarnation(): Incarnation<T, P> = SupportedIncarna
     throw IllegalArgumentException("Incarnation $this not supported")
 }
 
-fun <T, P : Position<P>> simulation(incarnation: Incarnation<T, P>, block: SimulationContext<T>.() -> Unit): Loader {
-    val sim = SimulationContext<T>().apply {
-        this.incarnation = incarnation
-    }.apply(block)
+fun <T, P : Position<P>> simulation(
+    incarnation: Incarnation<T, P>,
+    environment: Environment<T, P>,
+    block: SimulationContext<T, P>.() -> Unit,
+): Loader {
+    val sim = SimulationContext(incarnation, environment).apply(block)
     return createLoader(sim)
 }
 
-fun simulation(block: SimulationContext<Any>.() -> Unit): Loader {
-    val sim = SimulationContext<Any>().apply(block)
+fun <T, P : Position<P>> simulation(
+    incarnation: Incarnation<T, P>,
+    block: SimulationContext<T, Euclidean2DPosition>.() -> Unit,
+): Loader {
+    @Suppress("UNCHECKED_CAST")
+    val defaultEnv = Continuous2DEnvironment(incarnation as Incarnation<T, Euclidean2DPosition>)
+    val sim = SimulationContext(incarnation, defaultEnv).apply(block)
     return createLoader(sim)
 }

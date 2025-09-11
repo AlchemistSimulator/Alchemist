@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.dsl.model
 import it.unibo.alchemist.boundary.DependentVariable
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.Loader
+import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.boundary.dsl.DslLoader
 import it.unibo.alchemist.boundary.dsl.model.Incarnation as Inc
@@ -28,7 +29,7 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.jvm.optionals.getOrElse
 
 class SimulationContext<T, P : Position<P>>(val incarnation: Incarnation<T, P>, val environment: Environment<T, P>) {
-
+    var monitors: List<OutputMonitor<T, P>> = emptyList()
     private var _networkModel: LinkingRule<T, P> = NoLinks()
     var networkModel: LinkingRule<T, P>
         get() = _networkModel
@@ -40,9 +41,12 @@ class SimulationContext<T, P : Position<P>>(val incarnation: Incarnation<T, P>, 
     fun deployments(block: DeploymentsContext<T, P>.() -> Unit) {
         DeploymentsContext(this).apply(block)
     }
-    infix fun addTerminator(predicate: TerminationPredicate<*, *>) {
+    fun addTerminator(predicate: TerminationPredicate<*, *>) {
         @Suppress("UNCHECKED_CAST")
         environment.addTerminator(predicate as TerminationPredicate<T, P>)
+    }
+    fun addMonitor(monitor: OutputMonitor<T, P>) {
+        monitors = monitors + (monitor)
     }
 }
 

@@ -7,8 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
+@file:Suppress("UNCHECKED_CAST")
+
 package it.unibo.alchemist.dsl
 
+import another.location.SimpleMonitor
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.dsl.model.Incarnation.PROTELIS
 import it.unibo.alchemist.boundary.dsl.model.Incarnation.SAPERE
@@ -248,6 +251,13 @@ object DslLoaderFunctions {
                     }
                 }
             }
+        }
+    }
+
+    fun <T, P : Position<P>> test11monitors(): Loader {
+        val incarnation = SAPERE.incarnation<T, P>()
+        return simulation(incarnation) {
+            addMonitor(SimpleMonitor())
         }
     }
 }

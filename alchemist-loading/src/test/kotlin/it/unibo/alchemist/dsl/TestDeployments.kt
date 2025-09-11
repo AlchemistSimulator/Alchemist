@@ -23,11 +23,9 @@ class TestDeployments {
     fun testDeployments() {
         val incarnation = Incarnation.SAPERE.incarnation<Any, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
-            environment {
-                deployments {
-                    val p = Point(environment, 0.0, 0.0)
-                    deploy(p)
-                }
+            deployments {
+                val p = Point(environment, 0.0, 0.0)
+                deploy(p)
             }
         }
 
@@ -38,12 +36,10 @@ class TestDeployments {
     fun testMultipleDeployments() {
         val incarnation = Incarnation.SAPERE.incarnation<Any, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
-            environment {
-                deployments {
-                    val point = Point(environment, 0.0, 0.0)
-                    deploy(point)
-                    deploy(Point(environment, 1.0, 1.0))
-                }
+            deployments {
+                val point = Point(environment, 0.0, 0.0)
+                deploy(point)
+                deploy(Point(environment, 1.0, 1.0))
             }
         }
 
@@ -54,20 +50,18 @@ class TestDeployments {
     fun testGridDeployment() {
         val incarnation = Incarnation.SAPERE.incarnation<Any, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
-            environment {
-                deployments {
-                    val grid = Grid(
-                        environment,
-                        generator,
-                        1.0,
-                        1.0,
-                        5.0,
-                        5.0,
-                        1.0,
-                        1.0,
-                    )
-                    deploy(grid)
-                }
+            deployments {
+                val grid = Grid(
+                    environment,
+                    generator,
+                    1.0,
+                    1.0,
+                    5.0,
+                    5.0,
+                    1.0,
+                    1.0,
+                )
+                deploy(grid)
             }
         }
         loader.launch(loader.launcher)

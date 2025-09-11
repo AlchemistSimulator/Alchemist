@@ -30,9 +30,7 @@ class TestSimulations {
     fun testLinkingRule() {
         val incarnation = Incarnation.SAPERE.incarnation<Any, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
-            environment {
-                networkModel = ConnectWithinDistance(5.0)
-            }
+            networkModel = ConnectWithinDistance(5.0)
         }
         loader.launch(loader.launcher)
     }

@@ -1,0 +1,4 @@
+incarnation: sapere
+
+monitors:
+  - type: another.location.SimpleMonitor

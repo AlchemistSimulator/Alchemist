@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.TimeDistribution
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 
-class DeploymentsContext<T, P : Position<P>>(ctx: EnvironmentContext<T, P>) {
+class DeploymentsContext<T, P : Position<P>>(ctx: SimulationContext<T, P>) {
     var generator: RandomGenerator = MersenneTwister(10)
     val environment: Environment<*, *> = ctx.environment as Environment<*, *>
     val env = ctx.environment

@@ -22,14 +22,11 @@ class TestContents {
     fun testAll() {
         val incarnation = SAPERE.incarnation<Any, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
-            environment {
-                deployments {
-                    val p = Point(environment, 0.0, 0.0)
-                    deploy(p) {
-                        all {
-                            molecule = "test"
-                            concentration = 1.0
-                        }
+            deployments {
+                deploy(Point(environment, 0.0, 0.0)) {
+                    all {
+                        molecule = "test"
+                        concentration = 1.0
                     }
                 }
             }

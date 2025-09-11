@@ -16,7 +16,7 @@ import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 
-abstract class DslLoader(private val ctx: SimulationContext<*>) : Loader {
+abstract class DslLoader(private val ctx: SimulationContext<*, *>) : Loader {
     @Suppress("UNCHECKED_CAST")
     override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> {
         val environment = ctx.environment as Environment<T, P>

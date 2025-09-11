@@ -127,6 +127,9 @@ object LoaderComparisonHelper {
 
         // Compare programs (reactions)
         comparePrograms(dslEnv, yamlEnv)
+
+        // Compare layers
+        compareLayers(dslEnv, yamlEnv)
     }
 
     /**
@@ -316,6 +319,81 @@ object LoaderComparisonHelper {
         )
 
         // How to compare terminators...?
+    }
+
+    /**
+     * Compares layers between environments
+     */
+    private fun <T, P : Position<P>> compareLayers(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
+        println("Comparing layers...")
+
+        // Simplified check
+        // If two layers have different molecules this test does not detect it.
+
+        // Compare layer counts
+        assertEquals(
+            yamlEnv.layers.size,
+            dslEnv.layers.size,
+            "Layer counts should match",
+        )
+
+        // Compare layer types
+        val dslLayerTypes = dslEnv.layers.map { it::class }.sortedBy { it.simpleName }
+        val yamlLayerTypes = yamlEnv.layers.map { it::class }.sortedBy { it.simpleName }
+
+        assertEquals(
+            yamlLayerTypes,
+            dslLayerTypes,
+            "Layer types should match",
+        )
+
+        // Compare layer values at sample positions
+        compareLayerValues(dslEnv, yamlEnv)
+    }
+
+    /**
+     * Compares layer values at sample positions
+     */
+    private fun <T, P : Position<P>> compareLayerValues(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
+        println("Comparing layer values...")
+
+        // Sample positions to test layer values
+        val samplePositions = mutableListOf<P>()
+
+        // Add positions from both environments' nodes
+        samplePositions.addAll(dslEnv.nodes.map { dslEnv.getPosition(it) })
+        samplePositions.addAll(yamlEnv.nodes.map { yamlEnv.getPosition(it) })
+
+        // Remove duplicates
+        val uniquePositions = samplePositions.distinct()
+
+        if (uniquePositions.isNotEmpty()) {
+            for (position in uniquePositions) {
+                val dslLayerValues = dslEnv.layers.map { (it.getValue(position)) }
+                val yamlLayerValues = yamlEnv.layers.map { it.getValue(position) }
+                // Convert all values to Double for comparison to handle Int vs Double differences
+                val dslDoubleValues = dslLayerValues.map { value ->
+                    when (value) {
+                        is Number -> value.toDouble()
+                        else -> value.toString().toDoubleOrNull() ?: 0.0
+                    }
+                }
+                val yamlDoubleValues = yamlLayerValues.map { value ->
+                    when (value) {
+                        is Number -> value.toDouble()
+                        else -> value.toString().toDoubleOrNull() ?: 0.0
+                    }
+                }
+
+                assertEquals(
+                    dslDoubleValues,
+                    yamlDoubleValues,
+                    "Layer values at position $position should match",
+                )
+            }
+        } else {
+            println("Skipping layer value comparison - no valid positions found")
+        }
     }
 }
 

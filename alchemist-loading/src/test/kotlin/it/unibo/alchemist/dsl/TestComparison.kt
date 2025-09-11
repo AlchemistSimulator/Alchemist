@@ -63,4 +63,9 @@ class TestComparison {
     fun <T, P : Position<P>> test11Monitors() {
         DslLoaderFunctions.test11monitors<T, P>().shouldEqual("dsl/11-monitors.yml")
     }
+
+    @Test
+    fun <T, P : Position<P>> test12Layers() {
+        DslLoaderFunctions.test12Layers<T, P>().shouldEqual("dsl/12-layers.yml")
+    }
 }

@@ -23,11 +23,14 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.deployments.Circle
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.layers.StepLayer
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.maps.actions.ReproduceGPSTrace
 import it.unibo.alchemist.model.maps.deployments.FromGPSTrace
 import it.unibo.alchemist.model.maps.environments.OSMEnvironment
 import it.unibo.alchemist.model.positionfilters.Rectangle
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.terminators.StableForSteps
 import it.unibo.alchemist.model.timedistributions.DiracComb
@@ -258,6 +261,33 @@ object DslLoaderFunctions {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
             addMonitor(SimpleMonitor())
+        }
+    }
+    fun <T, P : Position<P>> test12Layers(): Loader {
+        val incarnation = SAPERE.incarnation<Double, Euclidean2DPosition>()
+        val env = Continuous2DEnvironment(incarnation)
+        return simulation(incarnation, env) {
+            layer {
+                molecule = "A"
+                layer = StepLayer(2.0, 2.0, 100.0, 0.0)
+            }
+            layer {
+                molecule = "B"
+                layer = StepLayer(-2.0, -2.0, 0.0, 100.0)
+            }
+            deployments {
+                deploy(
+                    Grid(
+                        environment, generator,
+                        -5.0, -5.0, 5.0, 5.0, 0.25,
+                        0.1, 0.1,
+                    ),
+                ) {
+                    all {
+                        molecule = "a"
+                    }
+                }
+            }
         }
     }
 }

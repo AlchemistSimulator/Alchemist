@@ -19,6 +19,7 @@ import it.unibo.alchemist.boundary.dsl.model.Incarnation as Inc
 import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.SupportedIncarnations
@@ -30,6 +31,7 @@ import kotlin.jvm.optionals.getOrElse
 
 class SimulationContext<T, P : Position<P>>(val incarnation: Incarnation<T, P>, val environment: Environment<T, P>) {
     var monitors: List<OutputMonitor<T, P>> = emptyList()
+    private val layers: MutableMap<String, Layer<T, P>> = HashMap()
     private var _networkModel: LinkingRule<T, P> = NoLinks()
     var networkModel: LinkingRule<T, P>
         get() = _networkModel
@@ -47,6 +49,18 @@ class SimulationContext<T, P : Position<P>>(val incarnation: Incarnation<T, P>, 
     }
     fun addMonitor(monitor: OutputMonitor<T, P>) {
         monitors = monitors + (monitor)
+    }
+    fun layer(block: LayerContext<T, P>.() -> Unit) {
+        val l = LayerContext(this).apply(block)
+        require(l.layer != null) { "Layer must be specified" }
+        require(l.molecule != null) { "Molecule must be specified" }
+        require(!this.layers.containsKey(l.molecule)) {
+            "Inconsistent layer definition for molecule ${l.molecule}. " +
+                "There must be a single layer per molecule"
+        }
+        val molecule = incarnation.createMolecule(l.molecule)
+        layers[l.molecule!!] = l.layer!!
+        environment.addLayer(molecule, l.layer!!)
     }
 }
 

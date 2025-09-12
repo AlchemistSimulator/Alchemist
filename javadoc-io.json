@@ -303,20 +303,38 @@
   "org.jetbrains.kotlin/kotlin-compiler-embeddable/2.2.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.2.10"
   },
+  "org.jetbrains.kotlin/kotlin-compiler-embeddable/2.2.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.2.20"
+  },
   "org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.2.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.2.10"
+  },
+  "org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.2.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.2.20"
   },
   "org.jetbrains.kotlin/kotlin-dom-api-compat/2.2.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-dom-api-compat/2.2.10"
   },
+  "org.jetbrains.kotlin/kotlin-dom-api-compat/2.2.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-dom-api-compat/2.2.20"
+  },
   "org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.2.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.2.10"
+  },
+  "org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.2.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-power-assert-compiler-plugin-embeddable/2.2.20"
   },
   "org.jetbrains.kotlin/kotlin-reflect/2.2.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/2.2.10"
   },
+  "org.jetbrains.kotlin/kotlin-reflect/2.2.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/2.2.20"
+  },
   "org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.2.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.2.10"
+  },
+  "org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.2.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-scripting-compiler-embeddable/2.2.20"
   },
   "org.jetbrains.kotlin/kotlin-scripting-jsr223/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-scripting-jsr223/null"
@@ -324,17 +342,29 @@
   "org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.2.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.2.10"
   },
+  "org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.2.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-serialization-compiler-plugin-embeddable/2.2.20"
+  },
   "org.jetbrains.kotlin/kotlin-stdlib/2.2.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.2.10"
   },
+  "org.jetbrains.kotlin/kotlin-stdlib/2.2.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib/2.2.20"
+  },
   "org.jetbrains.kotlin/kotlin-test/2.2.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test/2.2.10"
+  },
+  "org.jetbrains.kotlin/kotlin-test/2.2.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test/2.2.20"
   },
   "org.jetbrains.kotlin/kotlin-test/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-test/null"
   },
   "org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.2.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.2.10"
+  },
+  "org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.2.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlinx-atomicfu-runtime/2.2.20"
   },
   "org.jetbrains.kotlinx/kotlinx-cli/0.3.6": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-cli/0.3.6"
@@ -347,6 +377,9 @@
   },
   "org.jetbrains.kotlinx/kotlinx-serialization-json/1.9.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.9.0"
+  },
+  "org.jetbrains.skiko/skiko-js-wasm-runtime/0.9.4.2": {
+    "first": "https://javadoc.io/doc/org.jetbrains.skiko/skiko-js-wasm-runtime/0.9.4.2"
   },
   "org.jgrapht/jgrapht-core/1.5.2": {
     "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2",

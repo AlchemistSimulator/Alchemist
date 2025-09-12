@@ -60,6 +60,7 @@ constructor(
         override fun cumulativeProbability(x: Double) = BugReporting.reportBug("Not implemented")
 
         @Deprecated(message = "Deprecated in Apache Commons", replaceWith = ReplaceWith("probability(x0, x1)"))
+        @Suppress("OVERRIDE_DEPRECATION")
         override fun cumulativeProbability(x0: Double, x1: Double) = BugReporting.reportBug("Not implemented")
 
         override fun inverseCumulativeProbability(p: Double) = BugReporting.reportBug("Not implemented")
@@ -78,9 +79,11 @@ constructor(
         override fun getSupportUpperBound() = Double.MAX_VALUE
 
         @Deprecated(message = "Deprecated in Apache Commons", replaceWith = ReplaceWith("error()"))
+        @Suppress("OVERRIDE_DEPRECATION")
         override fun isSupportLowerBoundInclusive() = true
 
         @Deprecated(message = "Deprecated in Apache Commons", replaceWith = ReplaceWith("error()"))
+        @Suppress("OVERRIDE_DEPRECATION")
         override fun isSupportUpperBoundInclusive() = false
 
         /*

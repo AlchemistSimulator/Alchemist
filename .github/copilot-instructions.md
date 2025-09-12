@@ -77,6 +77,7 @@ After building the project, you can run simulations:
 ## Style and coding
 - Style preference: avoid empty lines within methods. Empty lines should be used to separate logical sections between methods/classes, but not within method bodies for better code density and readability
 - When possible, prefer kotlin.test over kotest
+- Suppressing warnings should be the last resort, only false positive can be suppressed
 
 ## Validation
 

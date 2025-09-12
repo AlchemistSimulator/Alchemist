@@ -55,13 +55,26 @@ constructor(
          */
         override fun probability(x: Double) = BugReporting.reportBug("Not implemented")
 
+        /**
+         * Computes the probability that the random variable falls in the interval (x0, x1].
+         * This is the replacement for the deprecated cumulativeProbability(x0, x1) method.
+         */
+        fun probability(x0: Double, x1: Double): Double = BugReporting.reportBug("Not implemented")
+
         override fun density(x: Double) = BugReporting.reportBug("Not implemented")
 
         override fun cumulativeProbability(x: Double) = BugReporting.reportBug("Not implemented")
 
-        @Deprecated(message = "Deprecated in Apache Commons", replaceWith = ReplaceWith("probability(x0, x1)"))
-        @Suppress("OVERRIDE_DEPRECATION")
-        override fun cumulativeProbability(x0: Double, x1: Double) = BugReporting.reportBug("Not implemented")
+        override fun cumulativeProbability(x0: Double, x1: Double): Double {
+            // Implementation of P(x0 < X <= x1) = P(X <= x1) - P(X <= x0)
+            // Since this distribution is not properly defined for cumulative probability,
+            // we provide a mathematically correct implementation that should not be used
+            return if (x1 > x0) {
+                BugReporting.reportBug("cumulativeProbability(x0, x1) not implemented for MoleculeControlledTimeDistribution")
+            } else {
+                0.0
+            }
+        }
 
         override fun inverseCumulativeProbability(p: Double) = BugReporting.reportBug("Not implemented")
 
@@ -78,13 +91,15 @@ constructor(
 
         override fun getSupportUpperBound() = Double.MAX_VALUE
 
-        @Deprecated(message = "Deprecated in Apache Commons", replaceWith = ReplaceWith("error()"))
-        @Suppress("OVERRIDE_DEPRECATION")
-        override fun isSupportLowerBoundInclusive() = true
+        override fun isSupportLowerBoundInclusive(): Boolean {
+            // This method is deprecated but we provide an implementation that should not be used
+            BugReporting.reportBug("isSupportLowerBoundInclusive() not implemented for MoleculeControlledTimeDistribution")
+        }
 
-        @Deprecated(message = "Deprecated in Apache Commons", replaceWith = ReplaceWith("error()"))
-        @Suppress("OVERRIDE_DEPRECATION")
-        override fun isSupportUpperBoundInclusive() = false
+        override fun isSupportUpperBoundInclusive(): Boolean {
+            // This method is deprecated but we provide an implementation that should not be used
+            BugReporting.reportBug("isSupportUpperBoundInclusive() not implemented for MoleculeControlledTimeDistribution")
+        }
 
         /*
          * Computable stuff

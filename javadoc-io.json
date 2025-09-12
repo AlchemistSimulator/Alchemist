@@ -50,18 +50,18 @@
     "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2",
     "second": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2/package-list"
   },
-  "com.google.code.gson/gson/2.13.1": {
-    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.1",
-    "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.1/element-list"
+  "com.google.code.gson/gson/2.13.2": {
+    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2",
+    "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2/element-list"
   },
-  "com.google.devtools.ksp/symbol-processing-api/2.2.10-2.0.2": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.10-2.0.2"
+  "com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2"
   },
-  "com.google.devtools.ksp/symbol-processing-cmdline/2.2.10-2.0.2": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-cmdline/2.2.10-2.0.2"
+  "com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.2"
   },
-  "com.google.devtools.ksp/symbol-processing/2.2.10-2.0.2": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.2.10-2.0.2"
+  "com.google.devtools.ksp/symbol-processing/2.2.20-2.0.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.2.20-2.0.2"
   },
   "com.google.guava/guava/33.4.8-jre": {
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.4.8-jre",
@@ -114,59 +114,59 @@
     "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1",
     "second": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1/element-list"
   },
-  "io.kotest/kotest-assertions-core/6.0.2": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-core/6.0.2"
+  "io.kotest/kotest-assertions-core/6.0.3": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-core/6.0.3"
   },
-  "io.kotest/kotest-assertions-table/6.0.2": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-table/6.0.2"
+  "io.kotest/kotest-assertions-table/6.0.3": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-table/6.0.3"
   },
-  "io.kotest/kotest-framework-engine/6.0.2": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-engine/6.0.2"
+  "io.kotest/kotest-framework-engine/6.0.3": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-engine/6.0.3"
   },
-  "io.kotest/kotest-framework-symbol-processor/6.0.2": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-symbol-processor/6.0.2"
+  "io.kotest/kotest-framework-symbol-processor/6.0.3": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-framework-symbol-processor/6.0.3"
   },
-  "io.kotest/kotest-runner-junit5-jvm/6.0.2": {
-    "first": "https://javadoc.io/doc/io.kotest/kotest-runner-junit5-jvm/6.0.2"
+  "io.kotest/kotest-runner-junit5-jvm/6.0.3": {
+    "first": "https://javadoc.io/doc/io.kotest/kotest-runner-junit5-jvm/6.0.3"
   },
-  "io.ktor/ktor-client-content-negotiation/3.2.3": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-client-content-negotiation/3.2.3"
+  "io.ktor/ktor-client-content-negotiation/3.3.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-client-content-negotiation/3.3.0"
   },
-  "io.ktor/ktor-client-core/3.2.3": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-client-core/3.2.3"
+  "io.ktor/ktor-client-core/3.3.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-client-core/3.3.0"
   },
-  "io.ktor/ktor-client-js/3.2.3": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-client-js/3.2.3"
+  "io.ktor/ktor-client-js/3.3.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-client-js/3.3.0"
   },
-  "io.ktor/ktor-serialization-jackson/3.2.3": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization-jackson/3.2.3"
+  "io.ktor/ktor-serialization-jackson/3.3.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization-jackson/3.3.0"
   },
-  "io.ktor/ktor-serialization-kotlinx-json/3.2.3": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization-kotlinx-json/3.2.3"
+  "io.ktor/ktor-serialization-kotlinx-json/3.3.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization-kotlinx-json/3.3.0"
   },
-  "io.ktor/ktor-serialization/3.2.3": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization/3.2.3"
+  "io.ktor/ktor-serialization/3.3.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization/3.3.0"
   },
-  "io.ktor/ktor-server-compression/3.2.3": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-compression/3.2.3"
+  "io.ktor/ktor-server-compression/3.3.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-compression/3.3.0"
   },
-  "io.ktor/ktor-server-content-negotiation/3.2.3": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-content-negotiation/3.2.3"
+  "io.ktor/ktor-server-content-negotiation/3.3.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-content-negotiation/3.3.0"
   },
-  "io.ktor/ktor-server-core-jvm/3.2.3": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-core-jvm/3.2.3"
+  "io.ktor/ktor-server-core-jvm/3.3.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-core-jvm/3.3.0"
   },
-  "io.ktor/ktor-server-cors/3.2.3": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-cors/3.2.3"
+  "io.ktor/ktor-server-cors/3.3.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-cors/3.3.0"
   },
-  "io.ktor/ktor-server-netty/3.2.3": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-netty/3.2.3"
+  "io.ktor/ktor-server-netty/3.3.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-netty/3.3.0"
   },
-  "io.ktor/ktor-server-test-host/3.2.3": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-test-host/3.2.3"
+  "io.ktor/ktor-server-test-host/3.3.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-test-host/3.3.0"
   },
-  "io.ktor/ktor-server-websockets-jvm/3.2.3": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-websockets-jvm/3.2.3"
+  "io.ktor/ktor-server-websockets-jvm/3.3.0": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-websockets-jvm/3.3.0"
   },
   "io.mockk/mockk/1.14.5": {
     "first": "https://javadoc.io/doc/io.mockk/mockk/1.14.5"
@@ -238,8 +238,8 @@
     "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.34",
     "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.34/element-list"
   },
-  "org.danilopianini/kotlin-symmetric-matrix/1.1.6": {
-    "first": "https://javadoc.io/doc/org.danilopianini/kotlin-symmetric-matrix/1.1.6"
+  "org.danilopianini/kotlin-symmetric-matrix/1.1.7": {
+    "first": "https://javadoc.io/doc/org.danilopianini/kotlin-symmetric-matrix/1.1.7"
   },
   "org.danilopianini/listset/0.3.9": {
     "first": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9",
@@ -291,11 +291,11 @@
   "org.jetbrains.dokka/templating-plugin/2.0.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.9.2-19.1.1": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.9.2-19.1.1"
+  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.9.4-19.1.1": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.9.4-19.1.1"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.9.2-19.1.1": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.9.2-19.1.1"
+  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.9.4-19.1.1": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.9.4-19.1.1"
   },
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"
@@ -375,15 +375,15 @@
     "first": "https://javadoc.io/doc/org.mockito/mockito-core/5.19.0",
     "second": "https://javadoc.io/doc/org.mockito/mockito-core/5.19.0/element-list"
   },
-  "org.mongodb/mongodb-driver-sync/5.5.1": {
-    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.5.1",
-    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.5.1/element-list"
+  "org.mongodb/mongodb-driver-sync/5.6.0": {
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.0",
+    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.0/element-list"
   },
-  "org.protelis/protelis-interpreter/18.4.0": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.4.0"
+  "org.protelis/protelis-interpreter/18.4.1": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.4.1"
   },
-  "org.protelis/protelis-lang/18.4.0": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/18.4.0"
+  "org.protelis/protelis-lang/18.4.1": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/18.4.1"
   },
   "org.reduxkotlin/redux-kotlin-threadsafe/0.6.1": {
     "first": "https://javadoc.io/doc/org.reduxkotlin/redux-kotlin-threadsafe/0.6.1"

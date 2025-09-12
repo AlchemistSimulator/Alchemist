@@ -18,11 +18,11 @@ import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.model.protelis.AlchemistNetworkManager
 import it.unibo.alchemist.model.protelis.ProtelisIncarnation
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
-import org.apache.commons.math3.distribution.RealDistribution
-import org.apache.commons.math3.random.RandomGenerator
+import it.unibo.alchemist.model.protelis.actions.SendToNeighbor
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.Field
 import org.protelis.vm.ExecutionEnvironment
+import org.slf4j.LoggerFactory
 
 /**
  * Base implementation of [ProtelisDevice]. Requires an [environment] to work.
@@ -193,11 +193,37 @@ constructor(
     /**
      * Called just before the VM is executed, to enable and preparations needed in the environment.
      */
-    override fun setup() { /* Nothing to do */ }
+    override fun setup() {
+        validateCommunicationConfiguration()
+    }
+
+    /**
+     * Validates that the node has the required send actions for communication.
+     * Warns the user if ProtelisDevice nodes are missing SendToNeighbor actions.
+     */
+    private fun validateCommunicationConfiguration() {
+        val hasProtelisPrograms = allProtelisPrograms().isNotEmpty()
+        if (hasProtelisPrograms) {
+            val hasSendAction = node.reactions
+                .asSequence()
+                .flatMap { it.actions }
+                .any { it is SendToNeighbor }
+
+            if (!hasSendAction) {
+                LOGGER.warn(
+                    "Protelis node {} is missing a 'send' action. This node will not be able to " +
+                        "communicate with neighboring nodes. Consider adding a reaction with 'send' action " +
+                        "to enable communication.",
+                    node.id,
+                )
+            }
+        }
+    }
 
     override fun toString(): String = "PtDevice${node.id}"
 
     private companion object {
         private const val serialVersionUID: Long = 1L
+        private val LOGGER = LoggerFactory.getLogger(ProtelisDevice::class.java)
     }
 }

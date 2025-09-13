@@ -1,3 +1,31 @@
+## [42.3.4](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.3...42.3.4) (2025-09-13)
+
+### Dependency updates
+
+* **core-deps:** update Kotlin version to 2.2.20, working around https://youtrack.jetbrains.com/issue/KT-80974/False-positive-deprecation-warning-on-overrides-in-Kotlin-2.2.20 ([18f9f86](https://github.com/AlchemistSimulator/Alchemist/commit/18f9f8680595c78a59b54cbe3d8c7b3e17dcc09e))
+* **deps:** update danysk/makepkg docker tag to v2.0.3 ([#4784](https://github.com/AlchemistSimulator/Alchemist/issues/4784)) ([f55205a](https://github.com/AlchemistSimulator/Alchemist/commit/f55205a6cd2da21157f5783efdab80500d31868e))
+* **deps:** update dependency com.google.code.gson:gson to v2.13.2 ([#4776](https://github.com/AlchemistSimulator/Alchemist/issues/4776)) ([02411ac](https://github.com/AlchemistSimulator/Alchemist/commit/02411ac69268b67b06620840af6498906780f4c5))
+* **deps:** update dependency com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin to v2.2.20-2.0.2 ([#4777](https://github.com/AlchemistSimulator/Alchemist/issues/4777)) ([ca2364c](https://github.com/AlchemistSimulator/Alchemist/commit/ca2364c175d160aa43ff3668e6a47680f6fc99d0))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.6.0 ([#4780](https://github.com/AlchemistSimulator/Alchemist/issues/4780)) ([fac28b5](https://github.com/AlchemistSimulator/Alchemist/commit/fac28b527f9efe4a037d9a9b9130a9d04badd73e))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.142 ([#4779](https://github.com/AlchemistSimulator/Alchemist/issues/4779)) ([481ad56](https://github.com/AlchemistSimulator/Alchemist/commit/481ad56466acab21a4f2d44e40a6527236a78da8))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.143 ([#4785](https://github.com/AlchemistSimulator/Alchemist/issues/4785)) ([6a2224b](https://github.com/AlchemistSimulator/Alchemist/commit/6a2224b8b2d67594f16e792992abf0123a1957ac))
+* **deps:** update dependency site/themes/hugo-theme-relearn to v8.0.1 ([#4782](https://github.com/AlchemistSimulator/Alchemist/issues/4782)) ([a117a9e](https://github.com/AlchemistSimulator/Alchemist/commit/a117a9e65c50cf983e7021ae771f0167776e096a))
+* **deps:** update ktor monorepo to v3.3.0 (minor) ([#4781](https://github.com/AlchemistSimulator/Alchemist/issues/4781)) ([0d642c9](https://github.com/AlchemistSimulator/Alchemist/commit/0d642c9132bb9ccd4d2c736191795e9d2386bb3e))
+
+### Build and continuous integration
+
+* **copilot:** don't suppress warnings so lightly ([618e7d1](https://github.com/AlchemistSimulator/Alchemist/commit/618e7d1c44b657bf573050b4b18b27c520a33df3))
+* **deps:** update fedora docker tag to v44 ([#4786](https://github.com/AlchemistSimulator/Alchemist/issues/4786)) ([7f150b3](https://github.com/AlchemistSimulator/Alchemist/commit/7f150b3a0675723044637d9ec7dc7382a844f169))
+* **renovate:** update regex for JetBrains Kotlin dependencies ([db7c258](https://github.com/AlchemistSimulator/Alchemist/commit/db7c258b6ac9f4ebdb7ac6093633662a4a5474f8))
+
+### General maintenance
+
+* **build:** actualize the Kotlin JS store ([3db9f61](https://github.com/AlchemistSimulator/Alchemist/commit/3db9f617118f09d478a8f7465d452fa976a236d1))
+* **build:** update the javadoc.io cache ([fd51c5a](https://github.com/AlchemistSimulator/Alchemist/commit/fd51c5afabbef4c7ac2cc498b816998f34b40d58))
+* **build:** update the javadoc.io cache ([d3f651c](https://github.com/AlchemistSimulator/Alchemist/commit/d3f651c91b9c5915f21993ab9921995fb5141eb6))
+* **build:** update the javadoc.io cache ([ea1bdfb](https://github.com/AlchemistSimulator/Alchemist/commit/ea1bdfb613092e518e39d4126a4d4c9d7907d9cd))
+* **build:** update the javadoc.io cache ([9011745](https://github.com/AlchemistSimulator/Alchemist/commit/9011745e5c4f18a2329cdeb96d150c9ecd14433b))
+
 ## [42.3.3](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.2...42.3.3) (2025-09-10)
 
 ### Dependency updates

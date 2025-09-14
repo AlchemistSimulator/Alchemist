@@ -69,6 +69,7 @@ class LsaNodeGraphQLConcurrencyTest<T, P> where T : Any, P : Position<P>, P : Ve
                         throw e
                     } catch (e: Exception) {
                         // Other exceptions are acceptable in this test context
+                        println("Reader thread caught non-CME exception: ${e::class.simpleName}")
                     } finally {
                         latch.countDown()
                     }
@@ -91,12 +92,14 @@ class LsaNodeGraphQLConcurrencyTest<T, P> where T : Any, P : Position<P>, P : Ve
                                 }
                             } catch (e: Exception) {
                                 // Expected in some cases during concurrent access
+                                println("Writer operation caught exception: ${e::class.simpleName}")
                             }
 
                             successfulWrites.incrementAndGet()
                         }
                     } catch (e: Exception) {
                         // Exceptions during writes are acceptable for this test
+                        println("Writer thread caught exception: ${e::class.simpleName}")
                     } finally {
                         latch.countDown()
                     }

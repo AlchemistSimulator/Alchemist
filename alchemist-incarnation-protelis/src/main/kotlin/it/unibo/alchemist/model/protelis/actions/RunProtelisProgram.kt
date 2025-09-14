@@ -167,8 +167,6 @@ class RunProtelisProgram<P : Position<P>> private constructor(
             .count { it == program.name }
             .let { otherCopies -> SimpleMolecule(program.name + if (otherCopies == 0) "" else "\$copy$otherCopies") }
 
-    private val networkManager = device.networkManagerOf(this)
-
     /**
      * Provides an access to the underlying [org.protelis.vm.ExecutionContext].
      *

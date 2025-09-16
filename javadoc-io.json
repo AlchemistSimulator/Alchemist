@@ -41,9 +41,8 @@
   "com.github.spotbugs/spotbugs-annotations/4.9.5": {
     "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.5"
   },
-  "com.github.spotbugs/spotbugs/4.9.4": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.4",
-    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.4/element-list"
+  "com.github.spotbugs/spotbugs/4.9.5": {
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.5"
   },
   "com.google.code.findbugs/jsr305/3.0.2": {
     "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2",
@@ -54,7 +53,8 @@
     "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2/element-list"
   },
   "com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2"
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2",
+    "second": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2/package-list"
   },
   "com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.2": {
     "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.2"

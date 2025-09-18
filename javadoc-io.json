@@ -64,7 +64,8 @@
     "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.2.20-2.0.2"
   },
   "com.google.guava/guava/33.5.0-jre": {
-    "first": "https://javadoc.io/doc/com.google.guava/guava/33.5.0-jre"
+    "first": "https://javadoc.io/doc/com.google.guava/guava/33.5.0-jre",
+    "second": "https://javadoc.io/doc/com.google.guava/guava/33.5.0-jre/element-list"
   },
   "com.graphhopper/graphhopper-core/10.2": {
     "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/10.2",

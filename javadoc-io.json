@@ -367,9 +367,9 @@
     "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.25.0",
     "second": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.25.0/element-list"
   },
-  "org.mockito/mockito-core/5.19.0": {
-    "first": "https://javadoc.io/doc/org.mockito/mockito-core/5.19.0",
-    "second": "https://javadoc.io/doc/org.mockito/mockito-core/5.19.0/element-list"
+  "org.mockito/mockito-core/5.20.0": {
+    "first": "https://javadoc.io/doc/org.mockito/mockito-core/5.20.0",
+    "second": "https://javadoc.io/doc/org.mockito/mockito-core/5.20.0/element-list"
   },
   "org.mongodb/mongodb-driver-sync/5.6.0": {
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.0",

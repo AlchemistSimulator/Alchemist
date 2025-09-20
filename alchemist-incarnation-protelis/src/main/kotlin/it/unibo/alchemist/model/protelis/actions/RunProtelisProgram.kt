@@ -167,30 +167,17 @@ class RunProtelisProgram<P : Position<P>> private constructor(
             .count { it == program.name }
             .let { otherCopies -> SimpleMolecule(program.name + if (otherCopies == 0) "" else "\$copy$otherCopies") }
 
-    private val networkManager = AlchemistNetworkManager(reaction, device, this, retentionTime, packetLossDistance)
-
     /**
      * Provides an access to the underlying [org.protelis.vm.ExecutionContext].
      *
      * @return the current [AlchemistExecutionContext]
      */
     @Transient
-    var executionContext =
-        AlchemistExecutionContext(
-            environment,
-            node,
-            reaction,
-            randomGenerator,
-            networkManager,
-        )
+    var executionContext = device.executionContextOf(this)
         private set
 
     @Transient
     private var vm: ProtelisVM = ProtelisVM(program, executionContext)
-
-    init {
-        device.addNetworkManger(this, networkManager)
-    }
 
     /**
      * @return the molecule associated with the execution of this program
@@ -246,14 +233,8 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     @Suppress("UnusedPrivateMember")
     private fun readObject(stream: ObjectInputStream) {
         stream.defaultReadObject()
-        executionContext =
-            AlchemistExecutionContext(
-                environment,
-                node,
-                reaction,
-                randomGenerator,
-                networkManager,
-            )
+        // After deserialization, recreate the components using the device
+        executionContext = device.executionContextOf(this)
         vm = ProtelisVM(program, executionContext)
     }
 

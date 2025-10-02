@@ -39,12 +39,10 @@
     "second": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12/package-list"
   },
   "com.github.spotbugs/spotbugs-annotations/4.9.6": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6",
-    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6/element-list"
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6"
   },
   "com.github.spotbugs/spotbugs/4.9.6": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6",
-    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6/element-list"
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6"
   },
   "com.google.code.findbugs/jsr305/3.0.2": {
     "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2",
@@ -65,8 +63,7 @@
     "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.2.20-2.0.2"
   },
   "com.google.guava/guava/33.5.0-jre": {
-    "first": "https://javadoc.io/doc/com.google.guava/guava/33.5.0-jre",
-    "second": "https://javadoc.io/doc/com.google.guava/guava/33.5.0-jre/element-list"
+    "first": "https://javadoc.io/doc/com.google.guava/guava/33.5.0-jre"
   },
   "com.graphhopper/graphhopper-core/10.2": {
     "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/10.2",
@@ -194,7 +191,8 @@
     "first": "https://javadoc.io/doc/net.sourceforge.pmd/pmd-dist/7.17.0"
   },
   "org.antlr/antlr4-runtime/4.13.2": {
-    "first": "https://javadoc.io/doc/org.antlr/antlr4-runtime/4.13.2"
+    "first": "https://javadoc.io/doc/org.antlr/antlr4-runtime/4.13.2",
+    "second": "https://javadoc.io/doc/org.antlr/antlr4-runtime/4.13.2/element-list"
   },
   "org.antlr/antlr4/4.13.2": {
     "first": "https://javadoc.io/doc/org.antlr/antlr4/4.13.2",
@@ -397,6 +395,7 @@
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17/element-list"
   },
   "org.yaml/snakeyaml/2.5": {
-    "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.5"
+    "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.5",
+    "second": "https://javadoc.io/doc/org.yaml/snakeyaml/2.5/element-list"
   }
 }

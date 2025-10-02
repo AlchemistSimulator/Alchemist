@@ -73,7 +73,8 @@
     "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/10.2/element-list"
   },
   "com.javadocmd/simplelatlng/1.4.0": {
-    "first": "https://javadoc.io/doc/com.javadocmd/simplelatlng/1.4.0"
+    "first": "https://javadoc.io/doc/com.javadocmd/simplelatlng/1.4.0",
+    "second": "https://javadoc.io/doc/com.javadocmd/simplelatlng/1.4.0/package-list"
   },
   "com.miglayout/miglayout-swing/11.4.2": {
     "first": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2",
@@ -224,7 +225,8 @@
     "second": "https://javadoc.io/doc/org.danilopianini/conrec/0.1.1/package-list"
   },
   "org.danilopianini/gson-extras/3.3.0": {
-    "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.3.0"
+    "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.3.0",
+    "second": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.3.0/package-list"
   },
   "org.danilopianini/java-quadtree/1.0.2": {
     "first": "https://javadoc.io/doc/org.danilopianini/java-quadtree/1.0.2"
@@ -351,7 +353,8 @@
     "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2/element-list"
   },
   "org.jooq/jool/0.9.15": {
-    "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15"
+    "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15",
+    "second": "https://javadoc.io/doc/org.jooq/jool/0.9.15/element-list"
   },
   "org.junit.jupiter/junit-jupiter-api/6.0.0": {
     "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/6.0.0",

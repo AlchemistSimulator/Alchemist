@@ -1,6 +1,7 @@
 {
   "ch.qos.logback/logback-classic/1.5.19": {
-    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19"
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19",
+    "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19/element-list"
   },
   "com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7": {
     "first": "https://javadoc.io/doc/com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7"
@@ -46,7 +47,8 @@
     "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6/element-list"
   },
   "com.google.code.findbugs/jsr305/3.0.2": {
-    "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2"
+    "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2",
+    "second": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2/package-list"
   },
   "com.google.code.gson/gson/2.13.2": {
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2",
@@ -96,7 +98,8 @@
     "second": "https://javadoc.io/doc/commons-io/commons-io/2.20.0/element-list"
   },
   "de.flapdoodle.embed/de.flapdoodle.embed.mongo/4.21.0": {
-    "first": "https://javadoc.io/doc/de.flapdoodle.embed/de.flapdoodle.embed.mongo/4.21.0"
+    "first": "https://javadoc.io/doc/de.flapdoodle.embed/de.flapdoodle.embed.mongo/4.21.0",
+    "second": "https://javadoc.io/doc/de.flapdoodle.embed/de.flapdoodle.embed.mongo/4.21.0/package-list"
   },
   "guru.nidi.com.kitfox/svgSalamander/1.1.3": {
     "first": "https://javadoc.io/doc/guru.nidi.com.kitfox/svgSalamander/1.1.3"
@@ -109,7 +112,8 @@
     "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.181/package-list"
   },
   "io.jenetics/jpx/3.2.1": {
-    "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1"
+    "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1",
+    "second": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1/element-list"
   },
   "io.kotest/kotest-assertions-core/6.0.3": {
     "first": "https://javadoc.io/doc/io.kotest/kotest-assertions-core/6.0.3"
@@ -254,7 +258,8 @@
     "second": "https://javadoc.io/doc/org.graphstream/gs-algo/2.0/element-list"
   },
   "org.graphstream/gs-core/2.0": {
-    "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0"
+    "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0",
+    "second": "https://javadoc.io/doc/org.graphstream/gs-core/2.0/element-list"
   },
   "org.jetbrains.compose.components/components-resources/1.9.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.compose.components/components-resources/1.9.0"
@@ -344,7 +349,8 @@
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.9.0"
   },
   "org.jgrapht/jgrapht-core/1.5.2": {
-    "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2"
+    "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2",
+    "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2/element-list"
   },
   "org.jooq/jool/0.9.15": {
     "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15",
@@ -371,7 +377,8 @@
     "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.0/element-list"
   },
   "org.protelis/protelis-interpreter/18.4.2": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.4.2"
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.4.2",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.4.2/element-list"
   },
   "org.protelis/protelis-lang/18.4.2": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-lang/18.4.2"
@@ -383,7 +390,8 @@
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.17"
   },
   "org.slf4j/slf4j-api/2.0.17": {
-    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17"
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17/element-list"
   },
   "org.slf4j/slf4j-simple/2.0.17": {
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17",

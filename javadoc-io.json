@@ -1,6 +1,7 @@
 {
   "ch.qos.logback/logback-classic/1.5.19": {
-    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19"
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19",
+    "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19/element-list"
   },
   "com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7": {
     "first": "https://javadoc.io/doc/com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7"
@@ -393,7 +394,8 @@
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17/element-list"
   },
   "org.slf4j/slf4j-simple/2.0.17": {
-    "first": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17"
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17/element-list"
   },
   "org.yaml/snakeyaml/2.5": {
     "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.5",

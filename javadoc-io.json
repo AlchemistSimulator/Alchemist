@@ -1,7 +1,6 @@
 {
   "ch.qos.logback/logback-classic/1.5.19": {
-    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19",
-    "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19/element-list"
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19"
   },
   "com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7": {
     "first": "https://javadoc.io/doc/com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7"
@@ -47,8 +46,7 @@
     "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6/element-list"
   },
   "com.google.code.findbugs/jsr305/3.0.2": {
-    "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2",
-    "second": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2/package-list"
+    "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2"
   },
   "com.google.code.gson/gson/2.13.2": {
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2",
@@ -225,8 +223,7 @@
     "second": "https://javadoc.io/doc/org.danilopianini/conrec/0.1.1/package-list"
   },
   "org.danilopianini/gson-extras/3.3.0": {
-    "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.3.0",
-    "second": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.3.0/package-list"
+    "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/3.3.0"
   },
   "org.danilopianini/java-quadtree/1.0.2": {
     "first": "https://javadoc.io/doc/org.danilopianini/java-quadtree/1.0.2"
@@ -349,8 +346,7 @@
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-serialization-json/1.9.0"
   },
   "org.jgrapht/jgrapht-core/1.5.2": {
-    "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2",
-    "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2/element-list"
+    "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2"
   },
   "org.jooq/jool/0.9.15": {
     "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15",
@@ -358,7 +354,7 @@
   },
   "org.junit.jupiter/junit-jupiter-api/6.0.0": {
     "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/6.0.0",
-    "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/6.0.0/package-list"
+    "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/6.0.0/element-list"
   },
   "org.junit.jupiter/junit-jupiter-engine/6.0.0": {
     "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/6.0.0",
@@ -398,7 +394,6 @@
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17/element-list"
   },
   "org.yaml/snakeyaml/2.5": {
-    "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.5",
-    "second": "https://javadoc.io/doc/org.yaml/snakeyaml/2.5/element-list"
+    "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.5"
   }
 }

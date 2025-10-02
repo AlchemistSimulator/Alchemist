@@ -1,7 +1,6 @@
 {
   "ch.qos.logback/logback-classic/1.5.19": {
-    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19",
-    "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19/element-list"
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19"
   },
   "com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7": {
     "first": "https://javadoc.io/doc/com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7"
@@ -206,7 +205,8 @@
     "second": "https://javadoc.io/doc/org.apache.commons/commons-collections4/4.5.0/element-list"
   },
   "org.apache.commons/commons-lang3/3.19.0": {
-    "first": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.19.0"
+    "first": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.19.0",
+    "second": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.19.0/element-list"
   },
   "org.apache.commons/commons-math3/3.6.1": {
     "first": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1",
@@ -393,8 +393,7 @@
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17/element-list"
   },
   "org.slf4j/slf4j-simple/2.0.17": {
-    "first": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17",
-    "second": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17/element-list"
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17"
   },
   "org.yaml/snakeyaml/2.5": {
     "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.5",

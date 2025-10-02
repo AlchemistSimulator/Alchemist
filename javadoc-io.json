@@ -39,7 +39,8 @@
     "second": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12/package-list"
   },
   "com.github.spotbugs/spotbugs-annotations/4.9.6": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6"
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6",
+    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6/element-list"
   },
   "com.github.spotbugs/spotbugs/4.9.6": {
     "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6",
@@ -50,11 +51,11 @@
     "second": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2/package-list"
   },
   "com.google.code.gson/gson/2.13.2": {
-    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2",
-    "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2/element-list"
+    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2"
   },
   "com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2"
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2",
+    "second": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2/package-list"
   },
   "com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.2": {
     "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.2"
@@ -185,8 +186,7 @@
     "first": "https://javadoc.io/doc/net.pearx.kasechange/kasechange/1.4.1"
   },
   "net.sf.trove4j/trove4j/3.0.3": {
-    "first": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3",
-    "second": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3/package-list"
+    "first": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3"
   },
   "net.sourceforge.pmd/pmd-dist/7.17.0": {
     "first": "https://javadoc.io/doc/net.sourceforge.pmd/pmd-dist/7.17.0"
@@ -252,8 +252,7 @@
     "second": "https://javadoc.io/doc/org.dyn4j/dyn4j/5.0.2/element-list"
   },
   "org.graphstream/gs-algo/2.0": {
-    "first": "https://javadoc.io/doc/org.graphstream/gs-algo/2.0",
-    "second": "https://javadoc.io/doc/org.graphstream/gs-algo/2.0/element-list"
+    "first": "https://javadoc.io/doc/org.graphstream/gs-algo/2.0"
   },
   "org.graphstream/gs-core/2.0": {
     "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0",
@@ -371,7 +370,8 @@
     "second": "https://javadoc.io/doc/org.mockito/mockito-core/5.20.0/element-list"
   },
   "org.mongodb/mongodb-driver-sync/5.6.0": {
-    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.0"
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.0",
+    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.0/element-list"
   },
   "org.protelis/protelis-interpreter/18.4.2": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.4.2",
@@ -387,7 +387,8 @@
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.17"
   },
   "org.slf4j/slf4j-api/2.0.17": {
-    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17"
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17/element-list"
   },
   "org.slf4j/slf4j-simple/2.0.17": {
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17",

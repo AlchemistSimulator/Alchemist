@@ -39,8 +39,7 @@
     "second": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12/package-list"
   },
   "com.github.spotbugs/spotbugs-annotations/4.9.6": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6",
-    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6/element-list"
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6"
   },
   "com.github.spotbugs/spotbugs/4.9.6": {
     "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6",
@@ -55,8 +54,7 @@
     "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2/element-list"
   },
   "com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2",
-    "second": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2/package-list"
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2"
   },
   "com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.2": {
     "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.2"
@@ -373,8 +371,7 @@
     "second": "https://javadoc.io/doc/org.mockito/mockito-core/5.20.0/element-list"
   },
   "org.mongodb/mongodb-driver-sync/5.6.0": {
-    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.0",
-    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.0/element-list"
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.0"
   },
   "org.protelis/protelis-interpreter/18.4.2": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.4.2",
@@ -390,8 +387,7 @@
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.17"
   },
   "org.slf4j/slf4j-api/2.0.17": {
-    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17",
-    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17/element-list"
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17"
   },
   "org.slf4j/slf4j-simple/2.0.17": {
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17",

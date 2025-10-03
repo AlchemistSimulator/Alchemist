@@ -51,7 +51,8 @@
     "second": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2/package-list"
   },
   "com.google.code.gson/gson/2.13.2": {
-    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2"
+    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2",
+    "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2/element-list"
   },
   "com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2": {
     "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2",
@@ -186,7 +187,8 @@
     "first": "https://javadoc.io/doc/net.pearx.kasechange/kasechange/1.4.1"
   },
   "net.sf.trove4j/trove4j/3.0.3": {
-    "first": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3"
+    "first": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3",
+    "second": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3/package-list"
   },
   "net.sourceforge.pmd/pmd-dist/7.17.0": {
     "first": "https://javadoc.io/doc/net.sourceforge.pmd/pmd-dist/7.17.0"

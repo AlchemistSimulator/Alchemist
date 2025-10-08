@@ -39,8 +39,7 @@
     "second": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12/package-list"
   },
   "com.github.spotbugs/spotbugs-annotations/4.9.6": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6",
-    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6/element-list"
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6"
   },
   "com.github.spotbugs/spotbugs/4.9.6": {
     "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6",
@@ -376,12 +375,11 @@
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.0",
     "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.0/element-list"
   },
-  "org.protelis/protelis-interpreter/18.4.2": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.4.2",
-    "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.4.2/element-list"
+  "org.protelis/protelis-interpreter/18.4.3": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.4.3"
   },
-  "org.protelis/protelis-lang/18.4.2": {
-    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/18.4.2"
+  "org.protelis/protelis-lang/18.4.3": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/18.4.3"
   },
   "org.reduxkotlin/redux-kotlin-threadsafe/0.6.1": {
     "first": "https://javadoc.io/doc/org.reduxkotlin/redux-kotlin-threadsafe/0.6.1"

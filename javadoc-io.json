@@ -1,7 +1,6 @@
 {
   "ch.qos.logback/logback-classic/1.5.19": {
-    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19",
-    "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19/element-list"
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19"
   },
   "com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7": {
     "first": "https://javadoc.io/doc/com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7"
@@ -39,8 +38,7 @@
     "second": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12/package-list"
   },
   "com.github.spotbugs/spotbugs-annotations/4.9.6": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6",
-    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6/element-list"
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6"
   },
   "com.github.spotbugs/spotbugs/4.9.6": {
     "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6",
@@ -107,7 +105,8 @@
     "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/2.1.2"
   },
   "io.github.classgraph/classgraph/4.8.181": {
-    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.181"
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.181",
+    "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.181/package-list"
   },
   "io.jenetics/jpx/3.2.1": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1",
@@ -178,8 +177,7 @@
     "first": "https://javadoc.io/doc/net.anwiba.commons.swing.icons/org.oxygen.oxygen-icons/4.13.0-1.2.50"
   },
   "net.harawata/appdirs/1.4.0": {
-    "first": "https://javadoc.io/doc/net.harawata/appdirs/1.4.0",
-    "second": "https://javadoc.io/doc/net.harawata/appdirs/1.4.0/package-list"
+    "first": "https://javadoc.io/doc/net.harawata/appdirs/1.4.0"
   },
   "net.pearx.kasechange/kasechange/1.4.1": {
     "first": "https://javadoc.io/doc/net.pearx.kasechange/kasechange/1.4.1"

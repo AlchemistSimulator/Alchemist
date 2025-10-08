@@ -107,8 +107,7 @@
     "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/2.1.2"
   },
   "io.github.classgraph/classgraph/4.8.181": {
-    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.181",
-    "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.181/package-list"
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.181"
   },
   "io.jenetics/jpx/3.2.1": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1",
@@ -205,7 +204,8 @@
     "second": "https://javadoc.io/doc/org.apache.commons/commons-collections4/4.5.0/element-list"
   },
   "org.apache.commons/commons-lang3/3.19.0": {
-    "first": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.19.0"
+    "first": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.19.0",
+    "second": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.19.0/element-list"
   },
   "org.apache.commons/commons-math3/3.6.1": {
     "first": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1",

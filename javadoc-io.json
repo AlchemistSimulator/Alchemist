@@ -129,44 +129,44 @@
   "io.kotest/kotest-runner-junit5-jvm/6.0.3": {
     "first": "https://javadoc.io/doc/io.kotest/kotest-runner-junit5-jvm/6.0.3"
   },
-  "io.ktor/ktor-client-content-negotiation/3.3.0": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-client-content-negotiation/3.3.0"
+  "io.ktor/ktor-client-content-negotiation/3.3.1": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-client-content-negotiation/3.3.1"
   },
-  "io.ktor/ktor-client-core/3.3.0": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-client-core/3.3.0"
+  "io.ktor/ktor-client-core/3.3.1": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-client-core/3.3.1"
   },
-  "io.ktor/ktor-client-js/3.3.0": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-client-js/3.3.0"
+  "io.ktor/ktor-client-js/3.3.1": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-client-js/3.3.1"
   },
-  "io.ktor/ktor-serialization-jackson/3.3.0": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization-jackson/3.3.0"
+  "io.ktor/ktor-serialization-jackson/3.3.1": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization-jackson/3.3.1"
   },
-  "io.ktor/ktor-serialization-kotlinx-json/3.3.0": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization-kotlinx-json/3.3.0"
+  "io.ktor/ktor-serialization-kotlinx-json/3.3.1": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization-kotlinx-json/3.3.1"
   },
-  "io.ktor/ktor-serialization/3.3.0": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization/3.3.0"
+  "io.ktor/ktor-serialization/3.3.1": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-serialization/3.3.1"
   },
-  "io.ktor/ktor-server-compression/3.3.0": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-compression/3.3.0"
+  "io.ktor/ktor-server-compression/3.3.1": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-compression/3.3.1"
   },
-  "io.ktor/ktor-server-content-negotiation/3.3.0": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-content-negotiation/3.3.0"
+  "io.ktor/ktor-server-content-negotiation/3.3.1": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-content-negotiation/3.3.1"
   },
-  "io.ktor/ktor-server-core-jvm/3.3.0": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-core-jvm/3.3.0"
+  "io.ktor/ktor-server-core-jvm/3.3.1": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-core-jvm/3.3.1"
   },
-  "io.ktor/ktor-server-cors/3.3.0": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-cors/3.3.0"
+  "io.ktor/ktor-server-cors/3.3.1": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-cors/3.3.1"
   },
-  "io.ktor/ktor-server-netty/3.3.0": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-netty/3.3.0"
+  "io.ktor/ktor-server-netty/3.3.1": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-netty/3.3.1"
   },
-  "io.ktor/ktor-server-test-host/3.3.0": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-test-host/3.3.0"
+  "io.ktor/ktor-server-test-host/3.3.1": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-test-host/3.3.1"
   },
-  "io.ktor/ktor-server-websockets-jvm/3.3.0": {
-    "first": "https://javadoc.io/doc/io.ktor/ktor-server-websockets-jvm/3.3.0"
+  "io.ktor/ktor-server-websockets-jvm/3.3.1": {
+    "first": "https://javadoc.io/doc/io.ktor/ktor-server-websockets-jvm/3.3.1"
   },
   "io.mockk/mockk/1.14.6": {
     "first": "https://javadoc.io/doc/io.mockk/mockk/1.14.6"
@@ -246,8 +246,7 @@
     "second": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9/package-list"
   },
   "org.danilopianini/thread-inheritable-resource-loader/0.3.8": {
-    "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.8",
-    "second": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.8/package-list"
+    "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.8"
   },
   "org.dyn4j/dyn4j/5.0.2": {
     "first": "https://javadoc.io/doc/org.dyn4j/dyn4j/5.0.2",

@@ -205,7 +205,8 @@
     "second": "https://javadoc.io/doc/org.apache.commons/commons-collections4/4.5.0/element-list"
   },
   "org.apache.commons/commons-lang3/3.19.0": {
-    "first": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.19.0"
+    "first": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.19.0",
+    "second": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.19.0/element-list"
   },
   "org.apache.commons/commons-math3/3.6.1": {
     "first": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1",
@@ -241,8 +242,7 @@
     "first": "https://javadoc.io/doc/org.danilopianini/kotlin-symmetric-matrix/1.1.7"
   },
   "org.danilopianini/listset/0.3.9": {
-    "first": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9",
-    "second": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9/package-list"
+    "first": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9"
   },
   "org.danilopianini/thread-inheritable-resource-loader/0.3.8": {
     "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.8",
@@ -352,8 +352,7 @@
     "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2/element-list"
   },
   "org.jooq/jool/0.9.15": {
-    "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15",
-    "second": "https://javadoc.io/doc/org.jooq/jool/0.9.15/element-list"
+    "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15"
   },
   "org.junit.jupiter/junit-jupiter-api/6.0.0": {
     "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/6.0.0",

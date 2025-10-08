@@ -31,8 +31,7 @@
     "first": "https://javadoc.io/doc/com.expediagroup/graphql-kotlin-server/9.0.0-alpha.8"
   },
   "com.github.ben-manes.caffeine/caffeine/3.2.2": {
-    "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.2.2",
-    "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.2.2/element-list"
+    "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.2.2"
   },
   "com.github.davidmoten/rtree/0.12": {
     "first": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12",

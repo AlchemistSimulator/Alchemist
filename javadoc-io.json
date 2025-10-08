@@ -54,15 +54,14 @@
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2",
     "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2/element-list"
   },
-  "com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2",
-    "second": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.2/package-list"
+  "com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.4": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.2.20-2.0.4"
   },
-  "com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.2": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.2"
+  "com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.4": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-cmdline/2.2.20-2.0.4"
   },
-  "com.google.devtools.ksp/symbol-processing/2.2.20-2.0.2": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.2.20-2.0.2"
+  "com.google.devtools.ksp/symbol-processing/2.2.20-2.0.4": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.2.20-2.0.4"
   },
   "com.google.guava/guava/33.5.0-jre": {
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.5.0-jre",
@@ -206,8 +205,7 @@
     "second": "https://javadoc.io/doc/org.apache.commons/commons-collections4/4.5.0/element-list"
   },
   "org.apache.commons/commons-lang3/3.19.0": {
-    "first": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.19.0",
-    "second": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.19.0/element-list"
+    "first": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.19.0"
   },
   "org.apache.commons/commons-math3/3.6.1": {
     "first": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1",
@@ -236,7 +234,8 @@
     "second": "https://javadoc.io/doc/org.danilopianini/javalib-java7/0.6.1/package-list"
   },
   "org.danilopianini/jirf/0.4.36": {
-    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.36"
+    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.36",
+    "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.36/element-list"
   },
   "org.danilopianini/kotlin-symmetric-matrix/1.1.7": {
     "first": "https://javadoc.io/doc/org.danilopianini/kotlin-symmetric-matrix/1.1.7"

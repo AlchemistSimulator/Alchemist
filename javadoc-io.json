@@ -47,7 +47,8 @@
     "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6/element-list"
   },
   "com.google.code.findbugs/jsr305/3.0.2": {
-    "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2"
+    "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2",
+    "second": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2/package-list"
   },
   "com.google.code.gson/gson/2.13.2": {
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2",
@@ -75,8 +76,7 @@
     "second": "https://javadoc.io/doc/com.javadocmd/simplelatlng/1.4.0/package-list"
   },
   "com.miglayout/miglayout-swing/11.4.2": {
-    "first": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2",
-    "second": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2/element-list"
+    "first": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.4.2"
   },
   "com.pinterest.ktlint/ktlint-ruleset-standard/1.7.1": {
     "first": "https://javadoc.io/doc/com.pinterest.ktlint/ktlint-ruleset-standard/1.7.1"
@@ -88,8 +88,7 @@
     "first": "https://javadoc.io/doc/com.uchuhimo/konf/1.1.2"
   },
   "commons-codec/commons-codec/1.19.0": {
-    "first": "https://javadoc.io/doc/commons-codec/commons-codec/1.19.0",
-    "second": "https://javadoc.io/doc/commons-codec/commons-codec/1.19.0/element-list"
+    "first": "https://javadoc.io/doc/commons-codec/commons-codec/1.19.0"
   },
   "commons-io/commons-io/2.20.0": {
     "first": "https://javadoc.io/doc/commons-io/commons-io/2.20.0",

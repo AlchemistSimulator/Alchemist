@@ -41,18 +41,15 @@ class LsaNodeConcurrencyTest {
         final SAPEREIncarnation<Euclidean2DPosition> incarnation = new SAPEREIncarnation<>();
         final Environment<List<ILsaMolecule>, Euclidean2DPosition> environment = new Continuous2DEnvironment<>(incarnation);
         final LsaNode node = new LsaNode(environment);
-
         // Add some initial molecules
         for (int i = 0; i < 10; i++) {
             node.setConcentration(new LsaMolecule("molecule" + i));
         }
-
         final int numberOfThreads = 10;
         final int numberOfOperations = 100;
         final ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
         final CountDownLatch latch = new CountDownLatch(numberOfThreads);
         final AtomicBoolean exceptionOccurred = new AtomicBoolean(false);
-
         // Start threads that modify the node while others read from it
         for (int i = 0; i < numberOfThreads; i++) {
             final int threadId = i;
@@ -90,15 +87,12 @@ class LsaNodeConcurrencyTest {
                 }
             });
         }
-
         // Wait for all threads to complete
         final int timeoutSeconds = 30;
         assertTrue(latch.await(timeoutSeconds, TimeUnit.SECONDS), "Test should complete within 30 seconds");
         executor.shutdown();
-
         // No exceptions should have occurred (especially no ConcurrentModificationException)
         assertFalse(exceptionOccurred.get(), "No exceptions should occur during concurrent access");
-
         // Verify the node is still in a valid state
         final Map<Molecule, List<ILsaMolecule>> finalContents = node.getContents();
         assertNotNull(finalContents);
@@ -111,23 +105,18 @@ class LsaNodeConcurrencyTest {
         final Environment<List<ILsaMolecule>, Euclidean2DPosition> environment = new Continuous2DEnvironment<>(incarnation);
         final LsaNode node = new LsaNode(environment);
         final ILsaMolecule testMolecule = new LsaMolecule("test");
-
         // Test basic operations still work correctly
         assertEquals(0, node.getMoleculeCount());
         assertFalse(node.contains(testMolecule));
-
         node.setConcentration(testMolecule);
         assertEquals(1, node.getMoleculeCount());
         assertTrue(node.contains(testMolecule));
-
         final Map<Molecule, List<ILsaMolecule>> contents = node.getContents();
         assertNotNull(contents);
         assertEquals(1, contents.size());
-
         final List<ILsaMolecule> lsaSpace = node.getLsaSpace();
         assertNotNull(lsaSpace);
         assertEquals(1, lsaSpace.size());
-
         assertTrue(node.removeConcentration(testMolecule));
         assertEquals(0, node.getMoleculeCount());
         assertFalse(node.contains(testMolecule));

@@ -14,7 +14,7 @@ hidden = true
 Simulation and detailed description publicly available at:
 - [https://github.com/domm99/experiments-2025-lmcs-field-based-FL](https://github.com/domm99/experiments-2025-lmcs-field-based-FL) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17328680.svg)](https://doi.org/10.5281/zenodo.17328680).
 
-- [https://github.com/domm99/experiments-2025-iot-self-federated-learning]() [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17328674.svg)](https://doi.org/10.5281/zenodo.17328674).
+- [https://github.com/domm99/experiments-2025-iot-self-federated-learning](https://github.com/domm99/experiments-2025-iot-self-federated-learning) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17328674.svg)](https://doi.org/10.5281/zenodo.17328674).
 
 Related to the papers:
 

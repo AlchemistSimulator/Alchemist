@@ -36,6 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class LsaNodeConcurrencyTest {
 
+    private static final int MIN_MOLECULES = 5;
+    private static final int TIMEOUT_SECONDS = 30;
+
     @Test
     void testConcurrentGetContentsAndModification() throws InterruptedException {
         final SAPEREIncarnation<Euclidean2DPosition> incarnation = new SAPEREIncarnation<>();
@@ -69,8 +72,7 @@ class LsaNodeConcurrencyTest {
                             final ILsaMolecule newMolecule = new LsaMolecule("thread" + threadId + "_" + j);
                             node.setConcentration(newMolecule);
                             // Sometimes remove molecules to simulate real concurrent modification
-                            final int minMolecules = 5;
-                            if (j % 10 == 0 && node.getMoleculeCount() > minMolecules) {
+                            if (j % 10 == 0 && node.getMoleculeCount() > MIN_MOLECULES) {
                                 try {
                                     node.removeConcentration(newMolecule);
                                 } catch (final IllegalStateException e) {
@@ -88,8 +90,7 @@ class LsaNodeConcurrencyTest {
             });
         }
         // Wait for all threads to complete
-        final int timeoutSeconds = 30;
-        assertTrue(latch.await(timeoutSeconds, TimeUnit.SECONDS), "Test should complete within 30 seconds");
+        assertTrue(latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "Test should complete within 30 seconds");
         executor.shutdown();
         // No exceptions should have occurred (especially no ConcurrentModificationException)
         assertFalse(exceptionOccurred.get(), "No exceptions should occur during concurrent access");

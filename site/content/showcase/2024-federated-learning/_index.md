@@ -43,7 +43,7 @@ Devices in spatial proximity exchange model parameters through local diffusion p
 - **Hierarchical aggregation**: aggregation occurs at multiple levels based on spatial zones  
 - **Field coordination primitives**: implemented via ScaFi over Alchemist, using constructs like diffusion, convergence, and feedback loops  
 - **Datasets used**: MNIST, FashionMNIST, Extended MNIST  
-- **Simulation parameters**: (qui puoi inserire il numero di nodi, il raggio di comunicazione, numero di round, etc.)
+- **Simulation parameters**: (here you can insert the number of nodes, communication radius, number of rounds, etc.)
 
 #### Key Outcomes  
 - Accuracy under IID settings comparable to centralized FedAvg  

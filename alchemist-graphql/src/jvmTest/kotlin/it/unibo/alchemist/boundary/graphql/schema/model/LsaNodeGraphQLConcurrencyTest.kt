@@ -34,19 +34,14 @@ class LsaNodeGraphQLConcurrencyTest<T, P> where T : Any, P : Position<P>, P : Ve
     fun `GraphQL node contents access should not cause ConcurrentModificationException during simulation`() {
         GraphQLTestEnvironments.loadTests<T, P> { environment ->
             val nodes = environment.nodes.filterIsInstance<LsaNode>()
-
             // Skip test if no SAPERE nodes are available
-            if (nodes.isEmpty()) {
-                return@loadTests
-            }
-
+            check(nodes.isNotEmpty())
             val threadCount = 20
             val operationsPerThread = 500
             val latch = CountDownLatch(threadCount * 2) // Double for both reader and writer threads
             val exceptions = AtomicInteger(0)
             val successfulReads = AtomicInteger(0)
             val successfulWrites = AtomicInteger(0)
-
             // Start reader threads that simulate GraphQL subscription access
             repeat(threadCount) {
                 Thread {
@@ -55,13 +50,10 @@ class LsaNodeGraphQLConcurrencyTest<T, P> where T : Any, P : Position<P>, P : Ve
                             // This is what GraphQL does when accessing node contents
                             val randomNode = nodes.random()
                             val nodeSurrogate = randomNode.toGraphQLNodeSurrogate()
-
                             // This calls LsaNode.getContents() which was causing ConcurrentModificationException
                             val contents = nodeSurrogate.contents()
-
                             // Verify we can access the size safely
                             contents.size
-
                             successfulReads.incrementAndGet()
                         }
                     } catch (e: ConcurrentModificationException) {
@@ -75,7 +67,6 @@ class LsaNodeGraphQLConcurrencyTest<T, P> where T : Any, P : Position<P>, P : Ve
                     }
                 }.start()
             }
-
             // Start writer threads that simulate simulation reactions modifying nodes
             repeat(threadCount) {
                 Thread {
@@ -83,7 +74,6 @@ class LsaNodeGraphQLConcurrencyTest<T, P> where T : Any, P : Position<P>, P : Ve
                         repeat(operationsPerThread) {
                             // Simulate reactions modifying node contents
                             val randomNode = nodes.random()
-
                             // This modifies the instances collection, potentially causing race conditions
                             try {
                                 val firstMolecule = randomNode.lsaSpace.firstOrNull()
@@ -94,7 +84,6 @@ class LsaNodeGraphQLConcurrencyTest<T, P> where T : Any, P : Position<P>, P : Ve
                                 // Expected in some cases during concurrent access
                                 println("Writer operation caught exception: ${e::class.simpleName}")
                             }
-
                             successfulWrites.incrementAndGet()
                         }
                     } catch (e: Exception) {
@@ -105,17 +94,13 @@ class LsaNodeGraphQLConcurrencyTest<T, P> where T : Any, P : Position<P>, P : Ve
                     }
                 }.start()
             }
-
             // Wait for all threads to complete
             assertTrue(latch.await(90, TimeUnit.SECONDS), "Test should complete within timeout")
-
             // The key assertion: no ConcurrentModificationException should occur
             assertEquals(0, exceptions.get(), "No ConcurrentModificationException should occur with the fix")
-
             // Verify that operations actually happened
             assertTrue(successfulReads.get() > 0, "Should have successful reads")
             assertTrue(successfulWrites.get() > 0, "Should have successful writes")
-
             println("Test completed successfully:")
             println("- Successful reads: ${successfulReads.get()}")
             println("- Successful writes: ${successfulWrites.get()}")

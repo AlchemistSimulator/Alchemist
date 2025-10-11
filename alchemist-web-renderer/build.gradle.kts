@@ -17,6 +17,15 @@ plugins {
 }
 
 kotlin {
+    js {
+        browser {
+            testTask {
+                useMocha {
+                    timeout = "20s"
+                }
+            }
+        }
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {

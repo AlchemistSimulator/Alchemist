@@ -88,6 +88,6 @@ Devices autonomously cluster into self-federations based on both spatial proximi
   </div>
   <div style="flex: 1 0 32%; text-align: center; margin-bottom: 1em;">
     <img src="images/10.png" alt="Learning again" style="width: 100%;" />
-    <div>Learning.</div>
+    <div>Learning resumes.</div>
   </div>
 </div>

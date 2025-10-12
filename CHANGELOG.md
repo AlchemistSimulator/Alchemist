@@ -1,3 +1,34 @@
+## [42.3.9](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.8...42.3.9) (2025-10-12)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v2.0.7 ([#4855](https://github.com/AlchemistSimulator/Alchemist/issues/4855)) ([77b54b5](https://github.com/AlchemistSimulator/Alchemist/commit/77b54b55063e3262fc40ce68086b29f3e650b94c))
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.184 ([#4856](https://github.com/AlchemistSimulator/Alchemist/issues/4856)) ([0604ed0](https://github.com/AlchemistSimulator/Alchemist/commit/0604ed0221758033445d5b6c9f220d1b396e6a91))
+* **deps:** update dependency net.harawata:appdirs to v1.5.0 ([#4862](https://github.com/AlchemistSimulator/Alchemist/issues/4862)) ([f8fb90a](https://github.com/AlchemistSimulator/Alchemist/commit/f8fb90ab4c3db39dccd15538466db7b9a0d433a3))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.144.0 ([#4861](https://github.com/AlchemistSimulator/Alchemist/issues/4861)) ([539d860](https://github.com/AlchemistSimulator/Alchemist/commit/539d860b1c436cb7abe86c51a8487cf108c6005c))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.145.0 ([#4863](https://github.com/AlchemistSimulator/Alchemist/issues/4863)) ([f00853a](https://github.com/AlchemistSimulator/Alchemist/commit/f00853a0ff8e72315f1c6ca33ab183ac4b3cf3b9))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.6.1 ([#4847](https://github.com/AlchemistSimulator/Alchemist/issues/4847)) ([64c07f2](https://github.com/AlchemistSimulator/Alchemist/commit/64c07f217fea49492dc50dcc7189d58cc42ed2db))
+* **deps:** update react to v2025.10.5-19.2.0 (patch) ([#4858](https://github.com/AlchemistSimulator/Alchemist/issues/4858)) ([d3b4403](https://github.com/AlchemistSimulator/Alchemist/commit/d3b4403ee872c9fca5cc9ccd4a8e52943acbc9f4))
+
+### Documentation
+
+* add macroswarm showcase ([#4857](https://github.com/AlchemistSimulator/Alchemist/issues/4857)) ([e06cf12](https://github.com/AlchemistSimulator/Alchemist/commit/e06cf122cc9d8e6218ce9dd4220babb912ef3ab3))
+* **website:** add "Federated Learning for Large Scale Distributed Systems" in the showcase ([#4860](https://github.com/AlchemistSimulator/Alchemist/issues/4860)) ([5801f46](https://github.com/AlchemistSimulator/Alchemist/commit/5801f46c95938f938361c89173a01108d0752960))
+* **website:** add scarlib to the showcase ([#4851](https://github.com/AlchemistSimulator/Alchemist/issues/4851)) ([053369a](https://github.com/AlchemistSimulator/Alchemist/commit/053369accf7a5a70867d4fd52a6fac7173af4285))
+
+### Build and continuous integration
+
+* **web-renderer:** raise Mocha test timeout for Kotlin JS browser tests to 20 seconds ([#4859](https://github.com/AlchemistSimulator/Alchemist/issues/4859)) ([7e91770](https://github.com/AlchemistSimulator/Alchemist/commit/7e91770fbb7922eb04e015f91abc0850ef690dee))
+
+### General maintenance
+
+* **build:** actualize the Kotlin JS store ([b56d9d9](https://github.com/AlchemistSimulator/Alchemist/commit/b56d9d91dc72554358a3dd3d3d407e1b2121fd1a))
+* **build:** update the javadoc.io cache ([a3fb105](https://github.com/AlchemistSimulator/Alchemist/commit/a3fb10500bdf0209cc2bc35b221a48dc21a69ce4))
+* **build:** update the javadoc.io cache ([8a61949](https://github.com/AlchemistSimulator/Alchemist/commit/8a61949e5f231e3e5a49dd758191208fe417e5f3))
+* **build:** update the javadoc.io cache ([bb8d10a](https://github.com/AlchemistSimulator/Alchemist/commit/bb8d10a3d2539d2c98bed0c69f79559939baf534))
+* **build:** update the javadoc.io cache ([70c51a6](https://github.com/AlchemistSimulator/Alchemist/commit/70c51a636381c8bdd51ba7e4fb8d08558f581680))
+* **build:** update the javadoc.io cache ([3c37cdb](https://github.com/AlchemistSimulator/Alchemist/commit/3c37cdb5876caa45fe8e374627a48e813ec1c79f))
+
 ## [42.3.8](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.7...42.3.8) (2025-10-10)
 
 ### Dependency updates

@@ -50,7 +50,9 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @Override
     public boolean contains(@Nonnull final Molecule molecule) {
         if (molecule instanceof final ILsaMolecule toMatch) {
-            return instances.stream().anyMatch(mol -> mol.matches(toMatch));
+            synchronized (instances) {
+                return instances.stream().anyMatch(mol -> mol.matches(toMatch));
+            }
         }
         return false;
     }
@@ -63,7 +65,9 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
 
     @Override
     public int getMoleculeCount() {
-        return instances.size();
+        synchronized (instances) {
+            return instances.size();
+        }
     }
 
     @Override
@@ -72,9 +76,11 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
             throw new IllegalArgumentException(m + " is not a compatible molecule type");
         }
         final ArrayList<ILsaMolecule> listMol = new ArrayList<>();
-        for (final ILsaMolecule instance : instances) {
-            if (mol.matches(instance)) {
-                listMol.add(instance);
+        synchronized (instances) {
+            for (final ILsaMolecule instance : instances) {
+                if (mol.matches(instance)) {
+                    listMol.add(instance);
+                }
             }
         }
         return listMol;
@@ -83,8 +89,13 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @Override
     @Nonnull
     public Map<Molecule, List<ILsaMolecule>> getContents() {
-        final Map<Molecule, List<ILsaMolecule>> res = new HashMap<>(instances.size(), 1.0f);
-        for (final ILsaMolecule m : instances) {
+        // Create a defensive copy to avoid ConcurrentModificationException
+        final List<ILsaMolecule> instancesCopy;
+        synchronized (instances) {
+            instancesCopy = new ArrayList<>(instances);
+        }
+        final Map<Molecule, List<ILsaMolecule>> res = new HashMap<>(instancesCopy.size(), 1.0f);
+        for (final ILsaMolecule m : instancesCopy) {
             final List<ILsaMolecule> l;
             if (res.containsKey(m)) {
                 /*
@@ -105,15 +116,19 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
 
     @Override
     public List<ILsaMolecule> getLsaSpace() {
-        return Collections.unmodifiableList(instances);
+        synchronized (instances) {
+            return Collections.unmodifiableList(new ArrayList<>(instances));
+        }
     }
 
     @Override
     public boolean removeConcentration(final ILsaMolecule matchedInstance) {
-        for (int i = 0; i < instances.size(); i++) {
-            if (matchedInstance.matches(instances.get(i))) {
-                instances.remove(i);
-                return true;
+        synchronized (instances) {
+            for (int i = 0; i < instances.size(); i++) {
+                if (matchedInstance.matches(instances.get(i))) {
+                    instances.remove(i);
+                    return true;
+                }
             }
         }
         throw new IllegalStateException("Tried to remove missing " + matchedInstance + " from " + this);
@@ -122,7 +137,9 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @Override
     public void setConcentration(final ILsaMolecule inst) {
         if (inst.isIstance()) {
-            instances.add(inst);
+            synchronized (instances) {
+                instances.add(inst);
+            }
         } else {
             throw new IllegalStateException("Tried to insert uninstanced " + inst + " into " + this);
         }

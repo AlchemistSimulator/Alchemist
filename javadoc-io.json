@@ -1,7 +1,6 @@
 {
   "ch.qos.logback/logback-classic/1.5.19": {
-    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19",
-    "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19/element-list"
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19"
   },
   "com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7": {
     "first": "https://javadoc.io/doc/com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7"
@@ -245,8 +244,7 @@
     "second": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9/package-list"
   },
   "org.danilopianini/thread-inheritable-resource-loader/0.3.8": {
-    "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.8",
-    "second": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.8/package-list"
+    "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.8"
   },
   "org.dyn4j/dyn4j/5.0.2": {
     "first": "https://javadoc.io/doc/org.dyn4j/dyn4j/5.0.2",
@@ -352,8 +350,7 @@
     "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2/element-list"
   },
   "org.jooq/jool/0.9.15": {
-    "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15",
-    "second": "https://javadoc.io/doc/org.jooq/jool/0.9.15/element-list"
+    "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15"
   },
   "org.junit.jupiter/junit-jupiter-api/6.0.0": {
     "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/6.0.0",
@@ -388,7 +385,8 @@
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.17"
   },
   "org.slf4j/slf4j-api/2.0.17": {
-    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17"
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17/element-list"
   },
   "org.slf4j/slf4j-simple/2.0.17": {
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17",

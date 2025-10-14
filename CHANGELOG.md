@@ -1,3 +1,22 @@
+## [42.3.10](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.9...42.3.10) (2025-10-14)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v2.0.8 ([#4864](https://github.com/AlchemistSimulator/Alchemist/issues/4864)) ([f518523](https://github.com/AlchemistSimulator/Alchemist/commit/f5185237ff142b6ff88ec1cf7f8059b8bc1d6122))
+* **deps:** update dependency scalafmt to v3.10.0 ([#4868](https://github.com/AlchemistSimulator/Alchemist/issues/4868)) ([b506b60](https://github.com/AlchemistSimulator/Alchemist/commit/b506b602d83c85471addba3bb539e061b5144cc9))
+* **deps:** update plugin com.gradle.develocity to v4.2.2 ([#4867](https://github.com/AlchemistSimulator/Alchemist/issues/4867)) ([077a866](https://github.com/AlchemistSimulator/Alchemist/commit/077a866cdc7de0c5d1f807758b1f4fb56f130435))
+* **deps:** update react to v2025.10.6-19.2.0 (patch) ([#4865](https://github.com/AlchemistSimulator/Alchemist/issues/4865)) ([bf44cee](https://github.com/AlchemistSimulator/Alchemist/commit/bf44ceec2247db955130be2ac70ad1709096bc85))
+* **deps:** update react to v2025.10.7-19.2.0 (patch) ([#4866](https://github.com/AlchemistSimulator/Alchemist/issues/4866)) ([400d9e7](https://github.com/AlchemistSimulator/Alchemist/commit/400d9e7a3ff1707df2f80b1159a3f94a383ef7a2))
+
+### Bug Fixes
+
+* **incarnation-sapere:** fix race condition in LsaNode causing ConcurrentModificationException in GraphQL subscriptions ([#4789](https://github.com/AlchemistSimulator/Alchemist/issues/4789)) ([1899c20](https://github.com/AlchemistSimulator/Alchemist/commit/1899c201cc9376e7b1b9aa71a34f337ee41f5218))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([c778be2](https://github.com/AlchemistSimulator/Alchemist/commit/c778be293c96edfd2d55a6507ffce8f9bcc3e69a))
+* **build:** update the javadoc.io cache ([1ee4714](https://github.com/AlchemistSimulator/Alchemist/commit/1ee47149108657b4664a3fdbc0f5802396014975))
+
 ## [42.3.9](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.8...42.3.9) (2025-10-12)
 
 ### Dependency updates

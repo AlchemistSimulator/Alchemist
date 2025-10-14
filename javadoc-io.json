@@ -1,6 +1,7 @@
 {
   "ch.qos.logback/logback-classic/1.5.19": {
-    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19"
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19",
+    "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.5.19/element-list"
   },
   "com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7": {
     "first": "https://javadoc.io/doc/com.apollographql.apollo3/apollo-compiler/4.0.0-beta.7"
@@ -42,7 +43,8 @@
     "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.6/element-list"
   },
   "com.github.spotbugs/spotbugs/4.9.6": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6"
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6",
+    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6/element-list"
   },
   "com.google.code.findbugs/jsr305/3.0.2": {
     "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2",
@@ -255,7 +257,8 @@
     "second": "https://javadoc.io/doc/org.graphstream/gs-algo/2.0/element-list"
   },
   "org.graphstream/gs-core/2.0": {
-    "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0"
+    "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0",
+    "second": "https://javadoc.io/doc/org.graphstream/gs-core/2.0/element-list"
   },
   "org.jetbrains.compose.components/components-resources/1.9.1": {
     "first": "https://javadoc.io/doc/org.jetbrains.compose.components/components-resources/1.9.1"
@@ -369,7 +372,8 @@
     "second": "https://javadoc.io/doc/org.mockito/mockito-core/5.20.0/element-list"
   },
   "org.mongodb/mongodb-driver-sync/5.6.1": {
-    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.1"
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.1",
+    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/5.6.1/element-list"
   },
   "org.protelis/protelis-interpreter/18.4.3": {
     "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/18.4.3"
@@ -384,13 +388,15 @@
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.17"
   },
   "org.slf4j/slf4j-api/2.0.17": {
-    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17"
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.17/element-list"
   },
   "org.slf4j/slf4j-simple/2.0.17": {
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17",
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-simple/2.0.17/element-list"
   },
   "org.yaml/snakeyaml/2.5": {
-    "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.5"
+    "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.5",
+    "second": "https://javadoc.io/doc/org.yaml/snakeyaml/2.5/element-list"
   }
 }

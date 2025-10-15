@@ -21,13 +21,14 @@ import it.unibo.alchemist.boundary.exporters.CSVExporter
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
 import it.unibo.alchemist.boundary.extractors.MoleculeReader
 import it.unibo.alchemist.boundary.extractors.Time
+import it.unibo.alchemist.boundary.variables.GeometricVariable
+import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.deployments.Circle
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
-import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.layers.StepLayer
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.maps.actions.ReproduceGPSTrace
@@ -316,6 +317,41 @@ object DslLoaderFunctions {
                         emptyList(),
                     ),
                 )
+            }
+        }
+    }
+    fun <T, P : Position<P>> test15Variables(): Loader {
+        val incarnation = SAPERE.incarnation<T, P>()
+        return simulation(incarnation) {
+            val rate: Double by variable(GeometricVariable(2.0, 0.1, 10.0, 9))
+            val size: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
+
+            val mSize by variable { -size }
+            val sourceStart by variable { mSize / 10.0 }
+            val sourceSize by variable { size / 5.0 }
+
+            networkModel = ConnectWithinDistance(0.5)
+            deployments {
+                deploy(
+                    Grid(
+                        environment, generator,
+                        mSize, mSize, size, size,
+                        0.25, 0.25, 0.1, 0.1,
+                    ),
+                ) {
+                    inside(Rectangle(sourceStart, sourceStart, sourceSize, sourceSize)) {
+                        molecule = "token, 0, []"
+                    }
+                    programs {
+                        all {
+                            timeDistribution(rate.toString())
+                            program = "{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}"
+                        }
+                        all {
+                            program = "{token, N, L}{token, def: N2>=N, L2} --> {token, N, L}"
+                        }
+                    }
+                }
             }
         }
     }

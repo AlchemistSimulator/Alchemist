@@ -18,6 +18,7 @@ import it.unibo.alchemist.boundary.dsl.DslLoader
 import it.unibo.alchemist.boundary.dsl.model.Incarnation as Inc
 import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
@@ -31,6 +32,8 @@ import kotlin.jvm.optionals.getOrElse
 
 class SimulationContext<T, P : Position<P>>(val incarnation: Incarnation<T, P>, val environment: Environment<T, P>) {
     var monitors: List<OutputMonitor<T, P>> = emptyList()
+    var exporters: List<ExporterContext<T, P>> = emptyList()
+    var launcher: Launcher? = null
     private val layers: MutableMap<String, Layer<T, P>> = HashMap()
     private var _networkModel: LinkingRule<T, P> = NoLinks()
     var networkModel: LinkingRule<T, P>
@@ -49,6 +52,15 @@ class SimulationContext<T, P : Position<P>>(val incarnation: Incarnation<T, P>, 
     }
     fun addMonitor(monitor: OutputMonitor<T, P>) {
         monitors = monitors + (monitor)
+    }
+    fun addLauncher(launcher: Launcher) {
+        this.launcher = launcher
+    }
+    fun exporter(block: ExporterContext<T, P>.() -> Unit) {
+        exporters = exporters + ExporterContext(this).apply(block)
+    }
+    fun program(program: GlobalReaction<T>) {
+        this.environment.addGlobalReaction(program)
     }
     fun layer(block: LayerContext<T, P>.() -> Unit) {
         val l = LayerContext(this).apply(block)
@@ -69,7 +81,7 @@ fun <T, P : Position<P>> createLoader(simBuilder: SimulationContext<T, P>): Load
     override val dependentVariables: Map<String, DependentVariable<*>> = emptyMap()
     override val variables: Map<String, Variable<*>> = emptyMap()
     override val remoteDependencies: List<String> = emptyList()
-    override val launcher: Launcher = DefaultLauncher()
+    override val launcher: Launcher = simBuilder.launcher ?: DefaultLauncher()
 }
 
 fun <T, P : Position<P>> Inc.incarnation(): Incarnation<T, P> = SupportedIncarnations.get<T, P>(this.name).getOrElse {

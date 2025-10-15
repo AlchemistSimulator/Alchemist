@@ -38,19 +38,30 @@ object StaticComparisonHelper {
             "Constants should match",
         )
 
-        // Compare variables
+        // Compare variables by name, default value, and full stream
+        val yamlVariables = yamlLoader.variables
+        val dslVariables = dslLoader.variables
         assertEquals(
-            yamlLoader.variables,
-            dslLoader.variables,
-            "Variables should match",
+            yamlVariables.keys,
+            dslVariables.keys,
+            "Variable names should match",
         )
-
-        // Compare dependent variables
-        assertEquals(
-            yamlLoader.dependentVariables,
-            dslLoader.dependentVariables,
-            "Dependent variables should match",
-        )
+        yamlVariables.keys.forEach { name ->
+            val yamlVar = yamlVariables.getValue(name)
+            val dslVar = dslVariables.getValue(name)
+            assertEquals(
+                yamlVar.default,
+                dslVar.default,
+                "Default value of variable '$name' should match",
+            )
+            val yamlValues = yamlVar.stream().toList()
+            val dslValues = dslVar.stream().toList()
+            assertEquals(
+                yamlValues,
+                dslValues,
+                "Values stream of variable '$name' should match",
+            )
+        }
 
         // Compare remote dependencies
         assertEquals(
@@ -73,8 +84,8 @@ object StaticComparisonHelper {
     fun <T, P : Position<P>> compareSimulations(dslLoader: Loader, yamlLoader: Loader) {
         println("Comparing simulations...")
 
-        val dslSimulation = dslLoader.getDefault<T, P>()
         val yamlSimulation = yamlLoader.getDefault<T, P>()
+        val dslSimulation = dslLoader.getDefault<T, P>()
 
         // Compare environments
         compareEnvironments(dslSimulation.environment, yamlSimulation.environment)

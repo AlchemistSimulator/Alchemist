@@ -35,18 +35,17 @@
     "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.2.2/element-list"
   },
   "com.github.davidmoten/rtree/0.12": {
-    "first": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12"
+    "first": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12",
+    "second": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.12/package-list"
   },
   "com.github.spotbugs/spotbugs-annotations/4.9.7": {
     "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.7"
   },
   "com.github.spotbugs/spotbugs/4.9.6": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6",
-    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6/element-list"
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.6"
   },
   "com.google.code.findbugs/jsr305/3.0.2": {
-    "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2",
-    "second": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2/package-list"
+    "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2"
   },
   "com.google.code.gson/gson/2.13.2": {
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2",
@@ -170,7 +169,8 @@
     "first": "https://javadoc.io/doc/io.mockk/mockk/1.14.6"
   },
   "it.unimi.dsi/dsiutils/2.7.4": {
-    "first": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.4"
+    "first": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.4",
+    "second": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.4/element-list"
   },
   "net.anwiba.commons.swing.icons/org.oxygen.oxygen-icons/4.13.0-1.2.50": {
     "first": "https://javadoc.io/doc/net.anwiba.commons.swing.icons/org.oxygen.oxygen-icons/4.13.0-1.2.50"
@@ -182,7 +182,8 @@
     "first": "https://javadoc.io/doc/net.pearx.kasechange/kasechange/1.4.1"
   },
   "net.sf.trove4j/trove4j/3.0.3": {
-    "first": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3"
+    "first": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3",
+    "second": "https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3/package-list"
   },
   "net.sourceforge.pmd/pmd-dist/7.17.0": {
     "first": "https://javadoc.io/doc/net.sourceforge.pmd/pmd-dist/7.17.0"
@@ -204,7 +205,8 @@
     "second": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.19.0/element-list"
   },
   "org.apache.commons/commons-math3/3.6.1": {
-    "first": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1"
+    "first": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1",
+    "second": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1/package-list"
   },
   "org.codehaus.groovy/groovy-jsr223/3.0.25": {
     "first": "https://javadoc.io/doc/org.codehaus.groovy/groovy-jsr223/3.0.25",
@@ -229,8 +231,7 @@
     "second": "https://javadoc.io/doc/org.danilopianini/javalib-java7/0.6.1/package-list"
   },
   "org.danilopianini/jirf/0.4.36": {
-    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.36",
-    "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.36/element-list"
+    "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.36"
   },
   "org.danilopianini/kotlin-symmetric-matrix/1.1.7": {
     "first": "https://javadoc.io/doc/org.danilopianini/kotlin-symmetric-matrix/1.1.7"
@@ -347,7 +348,8 @@
     "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.2/element-list"
   },
   "org.jooq/jool/0.9.15": {
-    "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15"
+    "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15",
+    "second": "https://javadoc.io/doc/org.jooq/jool/0.9.15/element-list"
   },
   "org.junit.jupiter/junit-jupiter-api/6.0.0": {
     "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/6.0.0",
@@ -358,8 +360,7 @@
     "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/6.0.0/package-list"
   },
   "org.mapsforge/mapsforge-map-awt/0.25.0": {
-    "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.25.0",
-    "second": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.25.0/element-list"
+    "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.25.0"
   },
   "org.mockito/mockito-core/5.20.0": {
     "first": "https://javadoc.io/doc/org.mockito/mockito-core/5.20.0",

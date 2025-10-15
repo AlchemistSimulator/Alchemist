@@ -274,20 +274,20 @@
   "org.jetbrains.compose.ui/ui/1.9.1": {
     "first": "https://javadoc.io/doc/org.jetbrains.compose.ui/ui/1.9.1"
   },
-  "org.jetbrains.dokka/all-modules-page-plugin/2.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.dokka/all-modules-page-plugin/2.0.0"
+  "org.jetbrains.dokka/all-modules-page-plugin/2.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.dokka/all-modules-page-plugin/2.1.0"
   },
-  "org.jetbrains.dokka/analysis-kotlin-descriptors/2.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.dokka/analysis-kotlin-descriptors/2.0.0"
+  "org.jetbrains.dokka/analysis-kotlin-symbols/2.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.dokka/analysis-kotlin-symbols/2.1.0"
   },
-  "org.jetbrains.dokka/dokka-base/2.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.dokka/dokka-base/2.0.0"
+  "org.jetbrains.dokka/dokka-base/2.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.dokka/dokka-base/2.1.0"
   },
-  "org.jetbrains.dokka/dokka-core/2.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.dokka/dokka-core/2.0.0"
+  "org.jetbrains.dokka/dokka-core/2.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.dokka/dokka-core/2.1.0"
   },
-  "org.jetbrains.dokka/templating-plugin/2.0.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.0.0"
+  "org.jetbrains.dokka/templating-plugin/2.1.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.1.0"
   },
   "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.10.7-19.2.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.10.7-19.2.0"

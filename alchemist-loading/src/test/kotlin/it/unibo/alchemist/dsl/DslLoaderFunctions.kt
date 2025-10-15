@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-@file:Suppress("UNCHECKED_CAST")
+@file:Suppress("UNCHECKED_CAST", "DEPRECATION")
 
 package it.unibo.alchemist.dsl
 
@@ -17,6 +17,10 @@ import it.unibo.alchemist.boundary.dsl.model.Incarnation.PROTELIS
 import it.unibo.alchemist.boundary.dsl.model.Incarnation.SAPERE
 import it.unibo.alchemist.boundary.dsl.model.incarnation
 import it.unibo.alchemist.boundary.dsl.model.simulation
+import it.unibo.alchemist.boundary.exporters.CSVExporter
+import it.unibo.alchemist.boundary.exportfilters.CommonFilters
+import it.unibo.alchemist.boundary.extractors.MoleculeReader
+import it.unibo.alchemist.boundary.extractors.Time
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Position
@@ -36,6 +40,7 @@ import it.unibo.alchemist.model.terminators.StableForSteps
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.timedistributions.WeibullTime
+import it.unibo.alchemist.test.GlobalTestReaction
 import org.apache.commons.math3.random.MersenneTwister
 
 object DslLoaderFunctions {
@@ -49,7 +54,6 @@ object DslLoaderFunctions {
             }
         }
     }
-
     fun <T, P : Position<P>> test02ManyNodes(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
@@ -68,7 +72,6 @@ object DslLoaderFunctions {
             }
         }
     }
-
     fun <T, P : Position<P>> test03Grid(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
@@ -90,7 +93,6 @@ object DslLoaderFunctions {
             }
         }
     }
-
     fun <T, P : Position<P>> test05Content(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
@@ -114,7 +116,6 @@ object DslLoaderFunctions {
             }
         }
     }
-
     fun <T, P : Position<P>> test06ContentFiltered(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
@@ -142,6 +143,7 @@ object DslLoaderFunctions {
         }
     }
 
+    @Suppress("DEPRECATION")
     fun <T, P : Position<P>> test07Programs(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
@@ -174,7 +176,6 @@ object DslLoaderFunctions {
             }
         }
     }
-
     fun <T, P : Position<P>> test08ProtelisPrograms(): Loader {
         val incarnation = PROTELIS.incarnation<T, P>()
         return simulation(incarnation) {
@@ -194,7 +195,6 @@ object DslLoaderFunctions {
             }
         }
     }
-
     fun <T, P : Position<P>> test09TimeDistribution(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
@@ -222,7 +222,6 @@ object DslLoaderFunctions {
             }
         }
     }
-
     fun <T, P : Position<P>> test10Environment(): Loader {
         val incarnation = SAPERE.incarnation<T, GeoPosition>()
         val env = OSMEnvironment(incarnation, "vcm.pbf", false)
@@ -256,7 +255,6 @@ object DslLoaderFunctions {
             }
         }
     }
-
     fun <T, P : Position<P>> test11monitors(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
@@ -265,8 +263,7 @@ object DslLoaderFunctions {
     }
     fun <T, P : Position<P>> test12Layers(): Loader {
         val incarnation = SAPERE.incarnation<Double, Euclidean2DPosition>()
-        val env = Continuous2DEnvironment(incarnation)
-        return simulation(incarnation, env) {
+        return simulation(incarnation) {
             layer {
                 molecule = "A"
                 layer = StepLayer(2.0, 2.0, 100.0, 0.0)
@@ -287,6 +284,38 @@ object DslLoaderFunctions {
                         molecule = "a"
                     }
                 }
+            }
+        }
+    }
+    fun <T, P : Position<P>> test13GlobalReaction(): Loader {
+        val incarnation = PROTELIS.incarnation<T, Euclidean2DPosition>()
+        return simulation(incarnation) {
+            program(
+                GlobalTestReaction(
+                    DiracComb(1.0),
+                    environment,
+                ),
+            )
+        }
+    }
+    fun <T, P : Position<P>> test14Exporters(): Loader {
+        val incarnation = PROTELIS.incarnation<T, P>()
+        return simulation(incarnation) {
+            exporter {
+                type = CSVExporter(
+                    "test_export_interval",
+                    4.0,
+                )
+                data(
+                    Time(),
+                    MoleculeReader(
+                        "default_module:default_program",
+                        null,
+                        incarnation,
+                        CommonFilters.NOFILTER.filteringPolicy,
+                        emptyList(),
+                    ),
+                )
             }
         }
     }

@@ -22,8 +22,13 @@ import it.unibo.alchemist.model.Position
 abstract class DslLoader(private val ctx: SimulationContext<*, *>) : Loader {
     @Suppress("UNCHECKED_CAST")
     override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> {
+        values.forEach { (t, u) ->
+            ctx.variablesContext.references[t] = u as Any
+        }
+        println("applying dsl with this values" + ctx.variablesContext.references)
+        println("Build steps" + ctx.buildSteps)
+        ctx.build() // variables passing
         val environment = ctx.environment as Environment<T, P>
-        println("Creating engine")
         val engine = Engine(environment)
         val unknownVariableNames = values.keys - variables.keys
         require(unknownVariableNames.isEmpty()) {
@@ -31,9 +36,12 @@ abstract class DslLoader(private val ctx: SimulationContext<*, *>) : Loader {
                 " Valid names: ${variables.keys}. Provided: ${values.keys}"
         }
         // VARIABLE REIFICATION
-        val variableValues = variables.mapValues { (name, previous) ->
-            if (values.containsKey(name)) values[name] else previous.default
-        }
+        val variableValues = ctx.variablesContext.references.plus(
+            ctx.variablesContext.dependentVariables.map { (k, v) ->
+                k to v()
+            },
+        )
+
         // MONITORS
         ctx.monitors.forEach { monitor ->
             engine.addOutputMonitor(monitor as OutputMonitor<T, P>)

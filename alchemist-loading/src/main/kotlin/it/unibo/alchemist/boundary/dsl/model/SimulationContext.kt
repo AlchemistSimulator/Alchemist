@@ -7,6 +7,8 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
+@file:Suppress("UNCHECKED_CAST")
+
 package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.boundary.DependentVariable
@@ -28,12 +30,15 @@ import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import java.io.Serializable
 import kotlin.jvm.optionals.getOrElse
 
 class SimulationContext<T, P : Position<P>>(val incarnation: Incarnation<T, P>, val environment: Environment<T, P>) {
-    var monitors: List<OutputMonitor<T, P>> = emptyList()
-    var exporters: List<ExporterContext<T, P>> = emptyList()
-    var launcher: Launcher? = null
+    val buildSteps: MutableList<() -> Unit> = mutableListOf()
+    val monitors: MutableList<OutputMonitor<T, P>> = mutableListOf()
+    val exporters: MutableList<ExporterContext<T, P>> = mutableListOf()
+    var launcher: Launcher = DefaultLauncher()
+
     private val layers: MutableMap<String, Layer<T, P>> = HashMap()
     private var _networkModel: LinkingRule<T, P> = NoLinks()
     var networkModel: LinkingRule<T, P>
@@ -42,46 +47,56 @@ class SimulationContext<T, P : Position<P>>(val incarnation: Incarnation<T, P>, 
             _networkModel = value
             environment.linkingRule = value
         }
+    val variablesContext = VariablesContext()
+    fun build() {
+        buildSteps.forEach { it() }
+    }
 
     fun deployments(block: DeploymentsContext<T, P>.() -> Unit) {
-        DeploymentsContext(this).apply(block)
+        buildSteps.add { DeploymentsContext(this).apply(block) }
     }
     fun addTerminator(predicate: TerminationPredicate<*, *>) {
         @Suppress("UNCHECKED_CAST")
-        environment.addTerminator(predicate as TerminationPredicate<T, P>)
+        buildSteps.add { environment.addTerminator(predicate as TerminationPredicate<T, P>) }
     }
     fun addMonitor(monitor: OutputMonitor<T, P>) {
-        monitors = monitors + (monitor)
-    }
-    fun addLauncher(launcher: Launcher) {
-        this.launcher = launcher
+        buildSteps.add { monitors.add(monitor) }
     }
     fun exporter(block: ExporterContext<T, P>.() -> Unit) {
-        exporters = exporters + ExporterContext(this).apply(block)
+        buildSteps.add { exporters.add(ExporterContext(this).apply(block)) }
     }
     fun program(program: GlobalReaction<T>) {
-        this.environment.addGlobalReaction(program)
+        buildSteps.add { this.environment.addGlobalReaction(program) }
+    }
+    fun runLater(block: () -> Unit) {
+        buildSteps.add { block() }
     }
     fun layer(block: LayerContext<T, P>.() -> Unit) {
-        val l = LayerContext(this).apply(block)
-        require(l.layer != null) { "Layer must be specified" }
-        require(l.molecule != null) { "Molecule must be specified" }
-        require(!this.layers.containsKey(l.molecule)) {
-            "Inconsistent layer definition for molecule ${l.molecule}. " +
-                "There must be a single layer per molecule"
+        buildSteps.add {
+            val l = LayerContext(this).apply(block)
+            require(l.layer != null) { "Layer must be specified" }
+            require(l.molecule != null) { "Molecule must be specified" }
+            require(!this.layers.containsKey(l.molecule)) {
+                "Inconsistent layer definition for molecule ${l.molecule}. " +
+                    "There must be a single layer per molecule"
+            }
+            val molecule = incarnation.createMolecule(l.molecule)
+            layers[l.molecule!!] = l.layer!!
+            environment.addLayer(molecule, l.layer!!)
         }
-        val molecule = incarnation.createMolecule(l.molecule)
-        layers[l.molecule!!] = l.layer!!
-        environment.addLayer(molecule, l.layer!!)
     }
+    fun <T : Serializable> variable(source: Variable<out T>): VariablesContext.VariableProvider<T> =
+        variablesContext.register(source)
+    fun <T : Serializable> variable(source: () -> T): VariablesContext.DependentVariableProvider<T> =
+        variablesContext.dependent(source)
 }
 
-fun <T, P : Position<P>> createLoader(simBuilder: SimulationContext<T, P>): Loader = object : DslLoader(simBuilder) {
-    override val constants: Map<String, Any?> = emptyMap()
-    override val dependentVariables: Map<String, DependentVariable<*>> = emptyMap()
-    override val variables: Map<String, Variable<*>> = emptyMap()
-    override val remoteDependencies: List<String> = emptyList()
-    override val launcher: Launcher = simBuilder.launcher ?: DefaultLauncher()
+fun <T, P : Position<P>> createLoader(dsl: SimulationContext<T, P>): Loader = object : DslLoader(dsl) {
+    override val constants: Map<String, Any?> = emptyMap() // not needed
+    override val dependentVariables: Map<String, DependentVariable<*>> = emptyMap() // not needed
+    override val variables: Map<String, Variable<*>> = dsl.variablesContext.variables
+    override val remoteDependencies: List<String> = emptyList() // TODO: to implement
+    override val launcher: Launcher = dsl.launcher
 }
 
 fun <T, P : Position<P>> Inc.incarnation(): Incarnation<T, P> = SupportedIncarnations.get<T, P>(this.name).getOrElse {
@@ -92,10 +107,7 @@ fun <T, P : Position<P>> simulation(
     incarnation: Incarnation<T, P>,
     environment: Environment<T, P>,
     block: SimulationContext<T, P>.() -> Unit,
-): Loader {
-    val sim = SimulationContext(incarnation, environment).apply(block)
-    return createLoader(sim)
-}
+): Loader = createLoader(SimulationContext(incarnation, environment).apply(block))
 
 fun <T, P : Position<P>> simulation(
     incarnation: Incarnation<T, P>,
@@ -103,6 +115,6 @@ fun <T, P : Position<P>> simulation(
 ): Loader {
     @Suppress("UNCHECKED_CAST")
     val defaultEnv = Continuous2DEnvironment(incarnation as Incarnation<T, Euclidean2DPosition>)
-    val sim = SimulationContext(incarnation, defaultEnv).apply(block)
-    return createLoader(sim)
+    val ctx = SimulationContext(incarnation, defaultEnv).apply(block)
+    return createLoader(ctx)
 }

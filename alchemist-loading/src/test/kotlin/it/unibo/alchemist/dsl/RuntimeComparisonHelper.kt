@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.terminators.StepCount
+import kotlin.math.abs
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.fail
 
@@ -114,7 +115,7 @@ object RuntimeComparisonHelper {
         // Print simulation times for debugging (skip comparison due to timing variations)
         println("DSL simulation time: ${dslSimulation.time}")
         println("YAML simulation time: ${yamlSimulation.time}")
-        val timeDiff = kotlin.math.abs(dslSimulation.time.toDouble() - yamlSimulation.time.toDouble())
+        val timeDiff = abs(dslSimulation.time.toDouble() - yamlSimulation.time.toDouble())
         println("Time difference: ${timeDiff}s")
 
         // Compare step counts

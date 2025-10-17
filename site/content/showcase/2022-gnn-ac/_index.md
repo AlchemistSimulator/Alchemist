@@ -1,7 +1,7 @@
 +++
 pre = ""
 title = "2023: Field-informed Reinforcement Learning of Collective Tasks with Graph Neural Networks"
-weight = 4
+weight = 5
 summary = "Simulations demonstrating field-informed reinforcement learning for collective tasks using graph neural networks and aggregate computing."
 tags = ["simulation", "aggregate computing", "reinforcement learning", "graph neural networks", "collective behavior"]
 hidden = true
@@ -88,4 +88,4 @@ The following image shows the collective behavior learned by agents during simul
 <p align="center"><em>Visualization of agents coordinating through field-informed GNN policies.</em></p>
 
 ## Citation
-{{< cite doi="10.1109/ACSOS58161.2023.000216" style=bibtex >}}
+{{< cite doi="10.1109/ACSOS58161.2023.00021" style=bibtex >}}

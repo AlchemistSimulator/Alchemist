@@ -7,12 +7,9 @@ tags = ["simulation", "aggregate computing", "multi-agent reinforcement learning
 hidden = true
 +++
 
-[//]: # (From {{< cite doi="" >}})
-
-[//]: # ({{< cite doi="" style=bibtex >}})
+From {{< cite doi="https://doi.org/10.1016/j.scico.2024.103176" >}}
 
 Simulation and detailed description publicly available at [https://github.com/ScaRLib-group/SCP-ScaRLib-flock-demo](https://github.com/ScaRLib-group/SCP-ScaRLib-flock-demo) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10935669.svg)](https://doi.org/10.5281/zenodo.10935669).
-Related to the paper ``_ScaRLib: Towards a hybrid toolchain for aggregate computing and many-agent reinforcement learning_'' published in the journal _Science of Computer Programming_ (DOI: [10.1016/j.scico.2024.103176](https://doi.org/10.1016/j.scico.2024.103176)).
 
 ## Abstract
 
@@ -61,16 +58,16 @@ Performance analysis confirms polynomial scalability, with Alchemist efficiently
 
 ## Images 
 
-<p align="center">
-  <img src="images/1.png" alt="(a)" width="30%" style="border:1px solid black; margin:4px;">
-  <img src="images/4.png" alt="(b)" width="30%" style="border:1px solid black; margin:4px;">
-  <img src="images/7.png" alt="(c)" width="30%" style="border:1px solid black; margin:4px;">
-</p>
+<div style="text-align:center;white-space:nowrap;">
+  <img src="images/1.png" alt="snapshot-1" style="display:inline-block;width:32%;margin:0 1%;vertical-align:top;" />
+  <img src="images/4.png" alt="snapshot-2" style="display:inline-block;width:32%;margin:0 1%;vertical-align:top;" />
+  <img src="images/7.png" alt="snapshot-3" style="display:inline-block;width:32%;margin:0 1%;vertical-align:top;" />
+</div>
 
-<p align="center">
-  <img src="images/1-large.png" alt="(d)" width="30%" style="border:1px solid black; margin:4px;">
-  <img src="images/3-large.png" alt="(e)" width="30%" style="border:1px solid black; margin:4px;">
-  <img src="images/4-large.png" alt="(f)" width="30%" style="border:1px solid black; margin:4px;">
-</p>
+<div style="text-align:center;white-space:nowrap;margin-top:8px;">
+  <img src="images/1-large.png" alt="snapshot-4" style="display:inline-block;width:32%;margin:0 1%;vertical-align:top;" />
+  <img src="images/3-large.png" alt="snapshot-5" style="display:inline-block;width:32%;margin:0 1%;vertical-align:top;" />
+  <img src="images/4-large.png" alt="snapshot-6" style="display:inline-block;width:32%;margin:0 1%;vertical-align:top;" />
+</div>
 
 <p align="center"><em>Snapshots of learned flocking policy over time.</em></p>

@@ -31,8 +31,7 @@ aggregate model parameters,
 and adapt to failures in a fully decentralized manner,
 leveraging computational fields and spatial interaction patterns.
 
-The following simulations are built on top of Alchemist,
-a flexible meta-simulator for pervasive and aggregate computing systems.
+The following simulations are built on top of Alchemist.
 
 ## Simulation Descriptions
 
@@ -61,26 +60,6 @@ while demonstrating superior robustness to dynamic network conditions.
 Emergent spatial clusters naturally align with local data distributions,
 creating personalized learning zones without explicit configuration.
 
-### Proximity-based Self-Federated Learning
-
-This experiment introduces a collective intelligence paradigm for federated IoT systems,
-where devices autonomously cluster into self-federations based on both spatial proximity and model similarity.
-The approach enables adaptive, decentralized federated learning in non-IID environments,
-where data distributions vary significantly across spatial regions.
-
-Each node locally computes similarity metrics with neighbors and participates in decentralized aggregation cycles.
-Federation formation uses Self-Organizing Coordination Regions (SCR) and space-fluid sparse choice mechanisms,
-allowing the system to dynamically adapt to changing conditions and node failures.
-
-Key characteristics:
-- **Datasets**: Extended MNIST, CIFAR-100
-- **Coordination**: Field-based using SCR and sparse choice
-- **Federation formation**: Dynamic, based on proximity and model similarity
-- **Adaptation**: Autonomous recovery from aggregator failures
-
-The simulation demonstrates how specialized local models emerge that better represent
-underlying regional data distributions,
-achieving improved performance in heterogeneous environments.
 
 ## Snapshots
 

@@ -106,7 +106,8 @@
     "first": "https://javadoc.io/doc/io.arrow-kt/arrow-core/2.1.2"
   },
   "io.github.classgraph/classgraph/4.8.184": {
-    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.184"
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.184",
+    "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.184/package-list"
   },
   "io.jenetics/jpx/3.2.1": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/3.2.1",

@@ -1,3 +1,20 @@
+## [42.3.15](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.14...42.3.15) (2025-10-24)
+
+### Dependency updates
+
+* **deps:** update danysk/makepkg docker tag to v2.0.10 ([#4903](https://github.com/AlchemistSimulator/Alchemist/issues/4903)) ([6e3ef64](https://github.com/AlchemistSimulator/Alchemist/commit/6e3ef648ef4ed5a5788044a2d4421a0399c22111))
+* **deps:** update plugin multijvmtesting to v4.3.0 ([#4906](https://github.com/AlchemistSimulator/Alchemist/issues/4906)) ([63c3b34](https://github.com/AlchemistSimulator/Alchemist/commit/63c3b34193de9ef65fb4196ebf302b6d38c2dc98))
+* **deps:** update plugin multijvmtesting to v4.3.1 ([#4907](https://github.com/AlchemistSimulator/Alchemist/issues/4907)) ([a536d15](https://github.com/AlchemistSimulator/Alchemist/commit/a536d15e236801226e93e5aeb6eb7c9c07931e40))
+* **deps:** update plugin publishoncentral to v9.1.6 ([#4900](https://github.com/AlchemistSimulator/Alchemist/issues/4900)) ([c48b811](https://github.com/AlchemistSimulator/Alchemist/commit/c48b8118426eadc639ac9b486c1d3e17f1f80c0a))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.152.2 ([#4905](https://github.com/AlchemistSimulator/Alchemist/issues/4905)) ([b0f929d](https://github.com/AlchemistSimulator/Alchemist/commit/b0f929dce4c2f0ef70620262ff7c1ad0eb6d6ff8))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([c8a2d9e](https://github.com/AlchemistSimulator/Alchemist/commit/c8a2d9eb9b9bd071bd786430f76f4b7b6b3f2461))
+
 ## [42.3.14](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.13...42.3.14) (2025-10-24)
 
 ### Dependency updates

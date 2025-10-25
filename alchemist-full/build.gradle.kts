@@ -41,7 +41,7 @@ buildscript {
 
 dependencies {
     runtimeOnly(rootProject)
-    rootProject.subprojects.filterNot { it == project }.forEach {
+    rootProject.allprojects.filterNot { it == project }.forEach {
         runtimeOnly(it)
         dokka(it)
     }

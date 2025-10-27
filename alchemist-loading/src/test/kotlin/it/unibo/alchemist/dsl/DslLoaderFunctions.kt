@@ -13,10 +13,10 @@ package it.unibo.alchemist.dsl
 
 import another.location.SimpleMonitor
 import it.unibo.alchemist.boundary.Loader
+import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
+import it.unibo.alchemist.boundary.dsl.Dsl.simulation
 import it.unibo.alchemist.boundary.dsl.model.Incarnation.PROTELIS
 import it.unibo.alchemist.boundary.dsl.model.Incarnation.SAPERE
-import it.unibo.alchemist.boundary.dsl.model.incarnation
-import it.unibo.alchemist.boundary.dsl.model.simulation
 import it.unibo.alchemist.boundary.exporters.CSVExporter
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
 import it.unibo.alchemist.boundary.extractors.MoleculeReader
@@ -55,28 +55,31 @@ object DslLoaderFunctions {
             }
         }
     }
+
     fun <T, P : Position<P>> test02ManyNodes(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
-            networkModel = ConnectWithinDistance(5.0)
+            simulationGenerator = MersenneTwister(10L)
+            scenarioGenerator = MersenneTwister(20L)
+            networkModel = ConnectWithinDistance(0.5)
             deployments {
-                generator = MersenneTwister(10)
-                val circle = Circle(
-                    environment,
-                    generator,
-                    1000,
-                    0.0,
-                    0.0,
-                    10.0,
+                deploy(
+                    Circle(
+                        environment,
+                        generator,
+                        10,
+                        0.0,
+                        0.0,
+                        10.0,
+                    ),
                 )
-                deploy(circle)
             }
         }
     }
     fun <T, P : Position<P>> test03Grid(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
-            networkModel = ConnectWithinDistance(5.0)
+            networkModel = ConnectWithinDistance(0.5)
             deployments {
                 val grid = Grid(
                     environment,
@@ -97,7 +100,7 @@ object DslLoaderFunctions {
     fun <T, P : Position<P>> test05Content(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
-            networkModel = ConnectWithinDistance(5.0)
+            networkModel = ConnectWithinDistance(0.5)
             deployments {
                 val hello = "hello"
                 deploy(
@@ -120,7 +123,7 @@ object DslLoaderFunctions {
     fun <T, P : Position<P>> test06ContentFiltered(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
-            networkModel = ConnectWithinDistance(5.0)
+            networkModel = ConnectWithinDistance(0.5)
             deployments {
                 val hello = "hello"
                 deploy(
@@ -144,11 +147,10 @@ object DslLoaderFunctions {
         }
     }
 
-    @Suppress("DEPRECATION")
     fun <T, P : Position<P>> test07Programs(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
-            networkModel = ConnectWithinDistance(5.0)
+            networkModel = ConnectWithinDistance(0.5)
             deployments {
                 val token = "token"
                 deploy(
@@ -199,7 +201,7 @@ object DslLoaderFunctions {
     fun <T, P : Position<P>> test09TimeDistribution(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
-            networkModel = ConnectWithinDistance(5.0)
+            networkModel = ConnectWithinDistance(0.5)
             deployments {
                 deploy(
                     Grid(
@@ -349,6 +351,40 @@ object DslLoaderFunctions {
                         }
                         all {
                             program = "{token, N, L}{token, def: N2>=N, L2} --> {token, N, L}"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    fun <T, P : Position<P>> test16ProgramsFilters(): Loader {
+        val incarnation = SAPERE.incarnation<T, P>()
+        return simulation(incarnation) {
+            networkModel = ConnectWithinDistance(0.5)
+            deployments {
+                val token = "token"
+                deploy(
+                    Grid(
+                        environment, generator,
+                        -5.0,
+                        -5.0,
+                        5.0,
+                        5.0,
+                        0.25, 0.25, 0.1, 0.1,
+                    ),
+                ) {
+                    inside(Rectangle(-0.5, -0.5, 1.0, 1.0)) {
+                        molecule = token
+                    }
+                    programs {
+                        inside(Rectangle(-0.5, -0.5, 1.0, 1.0)) {
+                            timeDistribution("1")
+                            program = "{token} --> {firing}"
+                        }
+                        all {
+                            program = "{firing} --> +{token}"
                         }
                     }
                 }

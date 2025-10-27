@@ -1,8 +1,8 @@
 incarnation: sapere
 
 seeds:
-  scenario: 10.0
-  simulation: 10.0
+  scenario: 20
+  simulation: 10
 
 network-model:
   type: ConnectWithinDistance
@@ -10,4 +10,4 @@ network-model:
   
 deployments:
   type: Circle
-  parameters: [1000, 0, 0, 10]
+  parameters: [10, 0, 0, 10]

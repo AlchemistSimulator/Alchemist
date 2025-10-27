@@ -126,11 +126,52 @@ object StaticComparisonHelper {
             "Linking rule types should match",
         )
 
+        // Compare neighborhoods induced by the linking rule
+        compareNeighborhoods(dslEnv, yamlEnv)
+
         // Compare programs (reactions)
         comparePrograms(dslEnv, yamlEnv)
 
         // Compare layers
         compareLayers(dslEnv, yamlEnv)
+    }
+
+    /**
+     * Compares neighborhoods for each node matched by position in both environments
+     */
+    private fun <T, P : Position<P>> compareNeighborhoods(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
+        val dslByPos = dslEnv.nodes.associateBy { dslEnv.getPosition(it) }
+        val yamlByPos = yamlEnv.nodes.associateBy { yamlEnv.getPosition(it) }
+
+        // Positions should already match; guard to provide clearer error if not
+        assertEquals(
+            yamlByPos.keys,
+            dslByPos.keys,
+            "Node position sets should match before neighborhood comparison",
+        )
+
+        for (position in dslByPos.keys) {
+            val dslNode = dslByPos.getValue(position)
+            val yamlNode = yamlByPos.getValue(position)
+
+            val dslNeighborPositions = dslEnv
+                .getNeighborhood(dslNode)
+                .neighbors
+                .map { dslEnv.getPosition(it) }
+                .toSet()
+
+            val yamlNeighborPositions = yamlEnv
+                .getNeighborhood(yamlNode)
+                .neighbors
+                .map { yamlEnv.getPosition(it) }
+                .toSet()
+
+            assertEquals(
+                yamlNeighborPositions,
+                dslNeighborPositions,
+                "Neighborhood for node at $position should match",
+            )
+        }
     }
 
     /**

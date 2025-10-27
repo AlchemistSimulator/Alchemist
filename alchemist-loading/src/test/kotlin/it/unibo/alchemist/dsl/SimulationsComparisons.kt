@@ -82,4 +82,9 @@ class SimulationsComparisons {
     fun <T, P : Position<P>> test15() {
         { DslLoaderFunctions.test15Variables<T, P>() }.shouldEqual("dsl/15-variables.yml")
     }
+
+    @Test
+    fun <T, P : Position<P>> test16() {
+        { DslLoaderFunctions.test16ProgramsFilters<T, P>() }.shouldEqual("dsl/16-programsfilters.yml")
+    }
 }

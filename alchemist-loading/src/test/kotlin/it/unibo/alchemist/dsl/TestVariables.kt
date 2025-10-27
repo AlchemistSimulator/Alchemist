@@ -13,9 +13,9 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.doubles.shouldBeExactly
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
+import it.unibo.alchemist.boundary.dsl.Dsl.simulation
 import it.unibo.alchemist.boundary.dsl.model.Incarnation.SAPERE
-import it.unibo.alchemist.boundary.dsl.model.incarnation
-import it.unibo.alchemist.boundary.dsl.model.simulation
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.model.Position

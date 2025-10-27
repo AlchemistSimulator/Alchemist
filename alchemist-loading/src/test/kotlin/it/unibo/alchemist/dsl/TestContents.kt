@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.dsl
 
+import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
+import it.unibo.alchemist.boundary.dsl.Dsl.simulation
 import it.unibo.alchemist.boundary.dsl.model.Incarnation.SAPERE
-import it.unibo.alchemist.boundary.dsl.model.incarnation
-import it.unibo.alchemist.boundary.dsl.model.simulation
 import it.unibo.alchemist.model.deployments.Point
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.junit.jupiter.api.Test

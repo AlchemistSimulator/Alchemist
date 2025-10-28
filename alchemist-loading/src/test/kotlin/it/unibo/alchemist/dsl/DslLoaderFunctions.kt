@@ -24,7 +24,9 @@ import it.unibo.alchemist.boundary.extractors.Time
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
+import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.deployments.Circle
 import it.unibo.alchemist.model.deployments.Grid
@@ -34,6 +36,7 @@ import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.maps.actions.ReproduceGPSTrace
 import it.unibo.alchemist.model.maps.deployments.FromGPSTrace
 import it.unibo.alchemist.model.maps.environments.OSMEnvironment
+import it.unibo.alchemist.model.nodes.TestNode
 import it.unibo.alchemist.model.positionfilters.Rectangle
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.Event
@@ -59,8 +62,8 @@ object DslLoaderFunctions {
     fun <T, P : Position<P>> test02ManyNodes(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
-            simulationGenerator = MersenneTwister(10L)
-            scenarioGenerator = MersenneTwister(20L)
+            simulationGenerator = MersenneTwister(10)
+            scenarioGenerator = MersenneTwister(20)
             networkModel = ConnectWithinDistance(0.5)
             deployments {
                 deploy(
@@ -358,7 +361,6 @@ object DslLoaderFunctions {
         }
     }
 
-    @Suppress("DEPRECATION")
     fun <T, P : Position<P>> test16ProgramsFilters(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
@@ -386,6 +388,27 @@ object DslLoaderFunctions {
                         all {
                             program = "{firing} --> +{token}"
                         }
+                    }
+                }
+            }
+        }
+    }
+    fun <T, P : Position<P>> test17CustomNodes(): Loader {
+        val incarnation = SAPERE.incarnation<T, P>()
+        return simulation(incarnation) {
+            deployments {
+                deploy(
+                    Circle(
+                        environment,
+                        generator,
+                        10,
+                        0.0,
+                        0.0,
+                        5.0,
+                    ),
+                ) {
+                    nodes {
+                        TestNode(env as Environment<Any, *>) as Node<T>
                     }
                 }
             }

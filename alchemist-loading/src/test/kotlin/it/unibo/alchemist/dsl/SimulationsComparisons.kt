@@ -87,4 +87,9 @@ class SimulationsComparisons {
     fun <T, P : Position<P>> test16() {
         { DslLoaderFunctions.test16ProgramsFilters<T, P>() }.shouldEqual("dsl/16-programsfilters.yml")
     }
+
+    @Test
+    fun <T, P : Position<P>> test17() {
+        { DslLoaderFunctions.test17CustomNodes<T, P>() }.shouldEqual("dsl/17-customnodes.yml")
+    }
 }

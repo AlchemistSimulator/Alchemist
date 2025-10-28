@@ -21,6 +21,7 @@ import it.unibo.alchemist.boundary.exporters.CSVExporter
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
 import it.unibo.alchemist.boundary.extractors.MoleculeReader
 import it.unibo.alchemist.boundary.extractors.Time
+import it.unibo.alchemist.boundary.properties.TestNodeProperty
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
@@ -409,6 +410,34 @@ object DslLoaderFunctions {
                 ) {
                     nodes {
                         TestNode(env as Environment<Any, *>) as Node<T>
+                    }
+                }
+            }
+        }
+    }
+    fun <T, P : Position<P>> test18NodeProperties(): Loader {
+        val incarnation = SAPERE.incarnation<T, P>()
+        return simulation(incarnation) {
+            deployments {
+                deploy(
+                    Circle(
+                        environment,
+                        generator,
+                        1000,
+                        0.0,
+                        0.0,
+                        15.0,
+                    ),
+                ) {
+                    properties {
+                        val filter = Rectangle(-3.0, -3.0, 2.0, 2.0)
+                        val filter2 = Rectangle(3.0, 3.0, 2.0, 2.0)
+                        inside(filter) {
+                            add(TestNodeProperty(node, "a"))
+                        }
+                        inside(filter2) {
+                            add(TestNodeProperty(node, "b"))
+                        }
                     }
                 }
             }

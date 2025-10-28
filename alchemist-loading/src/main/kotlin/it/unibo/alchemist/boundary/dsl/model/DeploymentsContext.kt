@@ -60,7 +60,8 @@ class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
             } else {
                 deploymentContext.nodeFactory!!.invoke()
             }
-            // TODO: load properties
+            // load properties
+            deploymentContext.propertiesContext.applyToNode(node, position)
             // load contents
             val contents = deploymentContext.contents
             for (content in contents) {
@@ -84,6 +85,7 @@ class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
     inner class DeploymentContext(val deployment: Deployment<P>) {
         val contents: MutableList<ContentContext> = mutableListOf()
         var nodeFactory: (() -> Node<T>)? = null
+        var propertiesContext: PropertiesContext<T, P> = PropertiesContext()
         val programsContext: ProgramsContext<T, P> = ProgramsContext(this@DeploymentsContext)
         init {
             logger.debug("Visiting deployment: {}", deployment)
@@ -106,8 +108,11 @@ class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
         fun nodes(factory: () -> Node<T>) {
             nodeFactory = factory
         }
+        fun properties(block: PropertiesContext<T, P>.() -> Unit) {
+            propertiesContext.apply(block)
+        }
 
-        // meant to be used outside here
+        // meant to be called from outer class
         fun applyToNodes(node: Node<T>, position: P, content: ContentContext) {
             logger.debug("Applying node to nodes for position: {}, deployment {}", position, deployment)
             if (content.filter == null || content.filter.contains(position)) {

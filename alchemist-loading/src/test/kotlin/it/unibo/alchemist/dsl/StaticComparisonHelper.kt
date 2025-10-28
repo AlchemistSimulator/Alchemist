@@ -106,6 +106,14 @@ object StaticComparisonHelper {
             dslEnv.nodes.size,
             "Node counts should match",
         )
+        // compare nodes class names
+        val dslNodeTypes = dslEnv.nodes.map { it::class }.sortedBy { it.simpleName }
+        val yamlNodeTypes = yamlEnv.nodes.map { it::class }.sortedBy { it.simpleName }
+        assertEquals(
+            yamlNodeTypes,
+            dslNodeTypes,
+            "Node types should match",
+        )
 
         // Compare node positions
         val dslPositions = dslEnv.nodes.map { dslEnv.getPosition(it) }.toSet()

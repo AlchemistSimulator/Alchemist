@@ -15,6 +15,8 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
+import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
+import it.unibo.alchemist.model.linkingrules.NoLinks
 
 class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
     val environment: Environment<*, *> = ctx.environment as Environment<*, *>
@@ -36,15 +38,28 @@ class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
     }
     private fun populateDeployment(deploymentContext: DeploymentContext) {
         val deployment = deploymentContext.deployment
+        // Additional linking rules
+        deployment.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
+            val composedLinkingRule =
+                when (val linkingRule = ctx.environment.linkingRule) {
+                    is NoLinks -> newLinkingRule
+                    is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
+                    else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
+                }
+            ctx.environment.linkingRule = composedLinkingRule
+        }
         deployment.stream().forEach { position ->
             logger.debug("visiting position: {} for deployment: {}", position, deployment)
             logger.debug("creaing node for deployment: {}", deployment)
-            val node = inc.createNode(
-                ctx.simulationGenerator,
-                env,
-                null,
-            )
-            // TODO: add support for custom nodes
+            val node = if (deploymentContext.nodeFactory == null) {
+                inc.createNode(
+                    ctx.simulationGenerator,
+                    env,
+                    null,
+                )
+            } else {
+                deploymentContext.nodeFactory!!.invoke()
+            }
             // TODO: load properties
             // load contents
             val contents = deploymentContext.contents
@@ -68,6 +83,7 @@ class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
 
     inner class DeploymentContext(val deployment: Deployment<P>) {
         val contents: MutableList<ContentContext> = mutableListOf()
+        var nodeFactory: (() -> Node<T>)? = null
         val programsContext: ProgramsContext<T, P> = ProgramsContext(this@DeploymentsContext)
         init {
             logger.debug("Visiting deployment: {}", deployment)
@@ -86,6 +102,9 @@ class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
         }
         fun programs(block: ProgramsContext<T, P>.() -> Unit) {
             programsContext.apply(block)
+        }
+        fun nodes(factory: () -> Node<T>) {
+            nodeFactory = factory
         }
 
         // meant to be used outside here

@@ -1,0 +1,18 @@
+incarnation: sapere
+
+deployments:
+  - type: Circle
+    parameters: [1000, 0, 0, 15]
+    properties:
+      - type: TestNodeProperty
+        parameters: ["a"]
+        in:
+          type: Rectangle
+          parameters: [-3, -3, 2, 2]
+      - type: TestNodeProperty
+        parameters: [ "b" ]
+        in:
+          type: Rectangle
+          parameters: [3, 3, 2, 2]
+
+

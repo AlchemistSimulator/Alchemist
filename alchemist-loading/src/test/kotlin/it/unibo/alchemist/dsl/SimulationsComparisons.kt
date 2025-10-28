@@ -92,4 +92,9 @@ class SimulationsComparisons {
     fun <T, P : Position<P>> test17() {
         { DslLoaderFunctions.test17CustomNodes<T, P>() }.shouldEqual("dsl/17-customnodes.yml")
     }
+
+    @Test
+    fun <T, P : Position<P>> test18() {
+        { DslLoaderFunctions.test18NodeProperties<T, P>() }.shouldEqual("dsl/18-properties.yml")
+    }
 }

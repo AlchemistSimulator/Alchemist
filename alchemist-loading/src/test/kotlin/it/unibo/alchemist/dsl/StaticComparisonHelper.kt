@@ -123,7 +123,16 @@ object StaticComparisonHelper {
             dslPositions,
             "Node positions should match",
         )
-
+        // compare node properties
+        val dslNodeProperties = dslEnv.nodes.flatMap { it.properties }.map { it.toString() }.sortedBy { it }
+        val yamlNodeProperties = yamlEnv.nodes.flatMap { it.properties }.map { it.toString() }.sortedBy { it }
+        println(dslNodeProperties)
+        println(yamlNodeProperties)
+        assertEquals(
+            yamlNodeProperties,
+            dslNodeProperties,
+            "Node properties should match",
+        )
         // Compare node contents (molecules and concentrations)
         compareNodeContents(dslEnv, yamlEnv)
 

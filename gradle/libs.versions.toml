@@ -172,7 +172,7 @@ graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
 hugo = "io.github.fstaudt.hugo:0.11.0"
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
-multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.3.1"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.3.2"
 publishOnCentral = "org.danilopianini.publish-on-central:9.1.6"
 scalafmt = "cz.augi.gradle.scalafmt:1.21.5"
 shadowJar = "com.gradleup.shadow:9.2.2"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -90,11 +90,11 @@ class GraphHopperOptions private constructor(val profile: Profile, val vehicleCl
                 "car" to "car",
                 "car4wd" to "car",
                 "foot" to "foot",
-                "hike" to "foot",
-                "motorcycle" to "car",
+                "hike" to "hike",
+                "motorcycle" to "motorcycle",
                 "mtb" to "mtb",
                 "racingbike" to "racingbike",
-                "truck" to "car",
+                "truck" to "truck",
             ).map { (name, vehicleClass) -> GraphHopperCustomModel(name, vehicleClass) }
 
         /**

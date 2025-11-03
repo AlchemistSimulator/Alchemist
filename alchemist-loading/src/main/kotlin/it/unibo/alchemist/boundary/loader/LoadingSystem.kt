@@ -106,7 +106,7 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
             contextualize(linkingRule)
             // MONITORS
             val monitors = SimulationModel.visitOutputMonitors<P, T>(context, root[DocumentRoot.monitors])
-            // DISPLACEMENTS
+            // DEPLOYMENTS
             setCurrentRandomGenerator(scenarioRNG)
             val displacementsSource = root.getOrEmpty(DocumentRoot.deployments)
             val deploymentDescriptors: List<Deployment<P>> =

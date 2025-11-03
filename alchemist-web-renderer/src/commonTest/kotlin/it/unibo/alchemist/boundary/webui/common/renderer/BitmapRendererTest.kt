@@ -43,8 +43,8 @@ class BitmapRendererTest {
     fun `bitmap renderer should output a Bitmap32 correctly`() {
         val bmp = renderer.render(envSurrogate)
         assertTrue(bmp is Bitmap32, "Expected a Bitmap32 output")
-        val encoded = jsonFormat.encodeToString(Bitmap32Serializer, (bmp as Bitmap32).toBMP32IfRequired())
-        val decoded = jsonFormat.decodeFromString(Bitmap32Serializer, encoded) as Bitmap32
+        val encoded = jsonFormat.encodeToString(Bitmap32Serializer, bmp.toBMP32IfRequired())
+        val decoded = jsonFormat.decodeFromString(Bitmap32Serializer, encoded)
         assertEquals(bmp.height, decoded.height, "Height should match after serialization round-trip")
         assertEquals(bmp.width, decoded.width, "Width should match after serialization round-trip")
         assertEquals(bmp.ints.toList(), decoded.ints.toList(), "Pixel data should match after round-trip")

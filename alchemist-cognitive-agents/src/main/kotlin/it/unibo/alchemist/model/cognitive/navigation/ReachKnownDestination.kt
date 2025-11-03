@@ -47,14 +47,11 @@ open class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
     init {
         route = emptyList<Euclidean2DPosition>().takeIf { destinations.isEmpty() } ?: with(action) {
             val currPos = environment.getPosition(navigatingNode)
-            val (closestDest, distanceToClosestDest) =
-                destinations
-                    .asSequence()
-                    .map { it to it.distanceTo(currPos) }
-                    .minByOrNull { it.second }
-                    ?: throw IllegalArgumentException("internal error: destinations can't be empty at this point")
-            destinations
-                .asSequence()
+            val (closestDest, distanceToClosestDest) = destinations.asSequence()
+                .map { it to it.distanceTo(currPos) }
+                .minByOrNull { it.second }
+                ?: throw IllegalArgumentException("internal error: destinations can't be empty at this point")
+            destinations.asSequence()
                 .sortedBy { it.distanceTo(currPos) }
                 .map { it to findKnownPathTo(it) }
                 .filter { (_, path) ->

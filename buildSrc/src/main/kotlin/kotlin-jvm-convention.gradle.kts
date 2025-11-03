@@ -49,7 +49,7 @@ java {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.add("-Xjvm-default=all") // Enable default methods in Kt interfaces
+        freeCompilerArgs.add("-jvm-default=enable") // Enable default methods in Kt interfaces
     }
 }
 

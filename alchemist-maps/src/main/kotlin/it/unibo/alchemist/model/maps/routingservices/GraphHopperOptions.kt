@@ -133,8 +133,6 @@ class GraphHopperOptions private constructor(val profile: Profile, val vehicleCl
          */
         @JvmOverloads
         fun optionsFor(profile: String = "foot", algorithm: String = DIJKSTRA_BI): GraphHopperOptions =
-            profiles.get(profile to algorithm) ?: throw IllegalArgumentException(
-                "The requested profile ($profile, $algorithm) could not be created.",
-            )
+            profiles.get(profile to algorithm)
     }
 }

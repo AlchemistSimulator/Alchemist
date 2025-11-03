@@ -41,6 +41,7 @@ buildProfile/
 .idea/runConfigurations.xml
 .idea/shelf
 .idea/checkstyle-idea.xml
+/.idea/IntelliLang.xml
 /.idea/kotlinc.xml
 
 # MacOS

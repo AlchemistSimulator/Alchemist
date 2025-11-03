@@ -16,7 +16,6 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.VisibleNode
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import kotlin.math.min
 
 /**
  * Given a list of [VisibleNode] associated to [visionMolecule],
@@ -52,22 +51,16 @@ class CameraInjectVisibleNodeClosestToDistance(
                 }
                 @Suppress("UNCHECKED_CAST")
                 val nodes = visibleNodes as List<VisibleNode<*, Euclidean2DPosition>>
-                val myPosition =
-                    environment.getPosition(node).surroundingPointAt(
-                        versor = environment.getHeading(node),
-                        distance = distance,
-                    )
-                nodes
-                    .map { it.position }
-                    .reduce { n1, n2 -> minBy(n1, n2) { it.distanceTo(myPosition) } }
+                val myPosition = environment.getPosition(node).surroundingPointAt(
+                    versor = environment.getHeading(node),
+                    distance = distance,
+                )
+                nodes.map { it.position }
+                    .reduce { n1, n2 -> minOf(n1, n2, compareBy { it.distanceTo(myPosition) }) }
                     .also { node.setConcentration(targetMolecule, it) }
             }
         }
     }
 
     override fun getContext() = Context.LOCAL
-
-    private fun <T> minBy(a: T, b: T, mapper: (T) -> Double) = with(mapper(a)) {
-        if (min(this, mapper(b)) < this) return b else a
-    }
 }

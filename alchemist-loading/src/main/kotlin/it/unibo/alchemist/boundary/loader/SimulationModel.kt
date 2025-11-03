@@ -793,7 +793,6 @@ internal object SimulationModel {
                         DocumentRoot.Seeds.simulation,
                     )
                 }
-
         is Map<*, *> -> {
             val stringKeys = root.keys.filterIsInstance<String>()
             require(stringKeys.size == root.keys.size) {
@@ -804,7 +803,6 @@ internal object SimulationModel {
             require(nonPrivateKeys.all { it in validKeys }) {
                 "Illegal seeds sub-keys: ${nonPrivateKeys - validKeys.toSet()}. Valid keys are: $validKeys"
             }
-
             fun valueOf(element: String): Any = if (root.containsKey(element)) {
                 root[element] ?: throw IllegalArgumentException(
                     "Invalid random generator descriptor $root has a null value associated to $element",
@@ -818,7 +816,6 @@ internal object SimulationModel {
                     valueOf(DocumentRoot.Seeds.simulation),
                 )
         }
-
         else -> throw IllegalArgumentException(
             "Not a valid ${DocumentRoot.seeds} section: $root. Expected " +
                 DocumentRoot.Seeds.validKeys.map { it to "<a number>" },

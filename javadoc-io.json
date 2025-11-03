@@ -354,7 +354,8 @@
     "second": "https://javadoc.io/doc/org.jooq/jool/0.9.15/element-list"
   },
   "org.junit.jupiter/junit-jupiter-api/6.0.1": {
-    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/6.0.1"
+    "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/6.0.1",
+    "second": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/6.0.1/package-list"
   },
   "org.junit.jupiter/junit-jupiter-engine/6.0.1": {
     "first": "https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-engine/6.0.1"

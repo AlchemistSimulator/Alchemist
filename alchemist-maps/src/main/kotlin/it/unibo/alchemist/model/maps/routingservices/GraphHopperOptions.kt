@@ -62,9 +62,7 @@ class GraphHopperOptions private constructor(val profile: Profile, val vehicleCl
      */
     companion object {
         private val profiles: LoadingCache<Pair<String, String>, GraphHopperOptions> =
-            Caffeine
-                .newBuilder()
-                .build(::GraphHopperOptions)
+            Caffeine.newBuilder().build(::GraphHopperOptions)
 
         /**
          * All the non-abstract subclasses of [RoutingAlgorithm] available in the runtime.

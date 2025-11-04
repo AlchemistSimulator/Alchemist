@@ -54,12 +54,11 @@
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2",
     "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2/element-list"
   },
-  "com.google.devtools.ksp/symbol-processing-api/2.3.0": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.3.0",
-    "second": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.3.0/package-list"
+  "com.google.devtools.ksp/symbol-processing-api/2.3.1": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.3.1"
   },
-  "com.google.devtools.ksp/symbol-processing/2.3.0": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.3.0"
+  "com.google.devtools.ksp/symbol-processing/2.3.1": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.3.1"
   },
   "com.google.guava/guava/33.5.0-jre": {
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.5.0-jre",

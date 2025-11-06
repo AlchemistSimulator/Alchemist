@@ -43,8 +43,7 @@
     "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/4.9.8/element-list"
   },
   "com.github.spotbugs/spotbugs/4.9.8": {
-    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.8",
-    "second": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.8/element-list"
+    "first": "https://javadoc.io/doc/com.github.spotbugs/spotbugs/4.9.8"
   },
   "com.google.code.findbugs/jsr305/3.0.2": {
     "first": "https://javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2",
@@ -54,11 +53,11 @@
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2",
     "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.13.2/element-list"
   },
-  "com.google.devtools.ksp/symbol-processing-api/2.3.1": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.3.1"
+  "com.google.devtools.ksp/symbol-processing-api/2.3.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing-api/2.3.2"
   },
-  "com.google.devtools.ksp/symbol-processing/2.3.1": {
-    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.3.1"
+  "com.google.devtools.ksp/symbol-processing/2.3.2": {
+    "first": "https://javadoc.io/doc/com.google.devtools.ksp/symbol-processing/2.3.2"
   },
   "com.google.guava/guava/33.5.0-jre": {
     "first": "https://javadoc.io/doc/com.google.guava/guava/33.5.0-jre",

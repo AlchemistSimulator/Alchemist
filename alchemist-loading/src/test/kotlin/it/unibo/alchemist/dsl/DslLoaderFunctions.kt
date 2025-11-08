@@ -15,29 +15,33 @@ import another.location.SimpleMonitor
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
 import it.unibo.alchemist.boundary.dsl.Dsl.simulation
+import it.unibo.alchemist.boundary.dsl.generated.RectangleFilter
+import it.unibo.alchemist.boundary.dsl.generated.circle
+import it.unibo.alchemist.boundary.dsl.generated.grid
+import it.unibo.alchemist.boundary.dsl.generated.moleculeReader
+import it.unibo.alchemist.boundary.dsl.generated.point
+import it.unibo.alchemist.boundary.dsl.generated.testNode
+import it.unibo.alchemist.boundary.dsl.generated.testNodeProperty
 import it.unibo.alchemist.boundary.dsl.model.Incarnation.PROTELIS
 import it.unibo.alchemist.boundary.dsl.model.Incarnation.SAPERE
 import it.unibo.alchemist.boundary.exporters.CSVExporter
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
-import it.unibo.alchemist.boundary.extractors.MoleculeReader
 import it.unibo.alchemist.boundary.extractors.Time
-import it.unibo.alchemist.boundary.properties.TestNodeProperty
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
-import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.deployments.Circle
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.layers.StepLayer
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.maps.actions.ReproduceGPSTrace
 import it.unibo.alchemist.model.maps.deployments.FromGPSTrace
 import it.unibo.alchemist.model.maps.environments.OSMEnvironment
-import it.unibo.alchemist.model.nodes.TestNode
 import it.unibo.alchemist.model.positionfilters.Rectangle
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.Event
@@ -54,7 +58,7 @@ object DslLoaderFunctions {
         return simulation(incarnation) {
             networkModel = ConnectWithinDistance(5.0)
             deployments {
-                deploy(Point(environment, 0.0, 0.0))
+                deploy(point(0.0, 0.0))
                 deploy(Point(environment, 0.0, 1.0))
             }
         }
@@ -63,8 +67,8 @@ object DslLoaderFunctions {
     fun <T, P : Position<P>> test02ManyNodes(): Loader {
         val incarnation = SAPERE.incarnation<T, P>()
         return simulation(incarnation) {
-            simulationGenerator = MersenneTwister(10)
-            scenarioGenerator = MersenneTwister(20)
+            simulationGenerator = MersenneTwister(10L)
+            scenarioGenerator = MersenneTwister(20L)
             networkModel = ConnectWithinDistance(0.5)
             deployments {
                 deploy(
@@ -85,9 +89,7 @@ object DslLoaderFunctions {
         return simulation(incarnation) {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
-                val grid = Grid(
-                    environment,
-                    generator,
+                val grid = grid(
                     -5.0,
                     -5.0,
                     5.0,
@@ -108,13 +110,15 @@ object DslLoaderFunctions {
             deployments {
                 val hello = "hello"
                 deploy(
-                    Grid(
-                        environment, generator,
+                    grid(
                         -5.0,
                         -5.0,
                         5.0,
                         5.0,
-                        0.25, 0.25, 0.1, 0.1,
+                        0.25,
+                        0.25,
+                        0.1,
+                        0.1,
                     ),
                 ) {
                     all {
@@ -158,13 +162,15 @@ object DslLoaderFunctions {
             deployments {
                 val token = "token"
                 deploy(
-                    Grid(
-                        environment, generator,
+                    grid(
                         -5.0,
                         -5.0,
                         5.0,
                         5.0,
-                        0.25, 0.25, 0.1, 0.1,
+                        0.25,
+                        0.25,
+                        0.1,
+                        0.1,
                     ),
                 ) {
                     inside(Rectangle(-0.5, -0.5, 1.0, 1.0)) {
@@ -187,7 +193,7 @@ object DslLoaderFunctions {
         val incarnation = PROTELIS.incarnation<T, P>()
         return simulation(incarnation) {
             deployments {
-                deploy(Point(environment, 1.5, 0.5)) {
+                deploy(point(1.5, 0.5)) {
                     programs {
                         all {
                             timeDistribution = +JaktaTimeDistribution(
@@ -281,10 +287,14 @@ object DslLoaderFunctions {
             }
             deployments {
                 deploy(
-                    Grid(
-                        environment, generator,
-                        -5.0, -5.0, 5.0, 5.0, 0.25,
-                        0.1, 0.1,
+                    grid(
+                        -5.0,
+                        -5.0,
+                        5.0,
+                        5.0,
+                        0.25,
+                        0.1,
+                        0.1,
                     ),
                 ) {
                     all {
@@ -315,10 +325,9 @@ object DslLoaderFunctions {
                 )
                 data(
                     Time(),
-                    MoleculeReader(
+                    moleculeReader(
                         "default_module:default_program",
                         null,
-                        incarnation,
                         CommonFilters.NOFILTER.filteringPolicy,
                         emptyList(),
                     ),
@@ -409,20 +418,19 @@ object DslLoaderFunctions {
                     ),
                 ) {
                     nodes {
-                        TestNode(env as Environment<Any, *>) as Node<T>
+                        testNode() as Node<T>
                     }
                 }
             }
         }
     }
     fun <T, P : Position<P>> test18NodeProperties(): Loader {
-        val incarnation = SAPERE.incarnation<T, P>()
-        return simulation(incarnation) {
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
+        val environment = Continuous2DEnvironment(incarnation)
+        return simulation(incarnation, environment) {
             deployments {
                 deploy(
-                    Circle(
-                        environment,
-                        generator,
+                    circle(
                         1000,
                         0.0,
                         0.0,
@@ -430,13 +438,14 @@ object DslLoaderFunctions {
                     ),
                 ) {
                     properties {
-                        val filter = Rectangle(-3.0, -3.0, 2.0, 2.0)
+                        val filter = RectangleFilter(-3.0, -3.0, 2.0, 2.0)
+                        // same
                         val filter2 = Rectangle(3.0, 3.0, 2.0, 2.0)
                         inside(filter) {
-                            add(TestNodeProperty(node, "a"))
+                            add(testNodeProperty("a"))
                         }
                         inside(filter2) {
-                            add(TestNodeProperty(node, "b"))
+                            add(testNodeProperty("b"))
                         }
                     }
                 }

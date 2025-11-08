@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.deployments;
 
+import it.unibo.alchemist.boundary.dsl.BuildDsl;
 import it.unibo.alchemist.model.Deployment;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Position;
@@ -21,6 +22,7 @@ import java.util.stream.Stream;
  *
  * @param <P> position type
  */
+@BuildDsl
 public final class Point<P extends Position<? extends P>> implements Deployment<P> {
 
     private final double x;

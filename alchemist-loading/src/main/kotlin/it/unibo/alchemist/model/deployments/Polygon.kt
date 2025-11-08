@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.deployments
 
+import it.unibo.alchemist.boundary.dsl.BuildDsl
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Position2D
@@ -33,6 +34,7 @@ private typealias Point2D = Pair<Number, Number>
  * undefined. There polygon is closed automatically (there is no need to pass the first point also as last element).
  *
  */
+@BuildDsl
 open class Polygon<P : Position2D<out P>>(
     environment: Environment<*, P>,
     randomGenerator: RandomGenerator,

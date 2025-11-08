@@ -19,7 +19,6 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
-
 class GlobalTestReaction<T>(override val timeDistribution: TimeDistribution<T>, val environment: Environment<T, *>) :
     GlobalReaction<T> {
     override fun compareTo(other: Actionable<T>): Int = tau.compareTo(other.tau)

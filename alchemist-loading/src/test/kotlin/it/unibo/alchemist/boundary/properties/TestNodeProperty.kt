@@ -9,12 +9,30 @@
 
 package it.unibo.alchemist.boundary.properties
 
+import it.unibo.alchemist.boundary.dsl.BuildDsl
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import org.apache.commons.math3.random.RandomGenerator
 
-class TestNodeProperty<T>(node: Node<T>, val s: String) : AbstractNodeProperty<T>(node) {
-    override fun cloneOnNewNode(node: Node<T>): NodeProperty<T> = TestNodeProperty(node, s)
+@BuildDsl
+class TestNodeProperty<T, P : Position<P>>(
+    node: Node<T>,
+    val environment: Environment<T, P>,
+    val incarnation: Incarnation<T, P>,
+    val rng: RandomGenerator,
+    val s: String,
+) : AbstractNodeProperty<T>(node) {
+    override fun cloneOnNewNode(node: Node<T>): NodeProperty<T> = TestNodeProperty(
+        node,
+        environment,
+        incarnation,
+        rng,
+        s,
+    )
 
     override fun toString(): String = super.toString() + "($s)"
 }

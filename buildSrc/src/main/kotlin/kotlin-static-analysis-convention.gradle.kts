@@ -24,8 +24,15 @@ private val kmpGenerationTasks get(): TaskCollection<Task> = tasks.matching { ta
     }
 }
 
+private val kspTasks get(): TaskCollection<Task> = tasks.matching { task ->
+    task.name.startsWith("ksp")
+}
 tasks.withType<Cpd>().configureEach {
     dependsOn(kmpGenerationTasks)
+    dependsOn(kspTasks)
+    excludeGenerated()
+    exclude("**/build/generated/**")
+    exclude("**/generated/**")
 }
 
 tasks.allVerificationTasks.configureEach { excludeGenerated() }

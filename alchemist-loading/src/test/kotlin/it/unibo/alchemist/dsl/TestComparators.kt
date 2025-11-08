@@ -20,12 +20,12 @@ import it.unibo.alchemist.model.Position
 object TestComparators {
 
     /**
-     * Compares a DSL loader with a YAML loader
+     * Compares a DSL loader with a YAML loader.
      *
-     * @param dslLoader The DSL loader to compare
-     * @param yamlResource The YAML resource path to compare against
-     * @param includeRuntime Whether to include runtime behavior comparison
-     * @param steps The number of steps for runtime comparison (only used if includeRuntime is true)
+     * @param dslLoader The DSL loader to compare.
+     * @param yamlResource The YAML resource path to compare against.
+     * @param includeRuntime Whether to include runtime behavior comparison.
+     * @param steps The number of steps for runtime comparison (only used if includeRuntime is true).
      */
     fun <T, P : Position<P>> compare(
         dslLoader: () -> Loader,
@@ -46,12 +46,12 @@ object TestComparators {
     }
 
     /**
-     * Compares DSL code with a YAML resource
+     * Compares DSL code with a YAML resource.
      *
-     * @param dslCode The DSL code resource path
-     * @param yamlResource The YAML resource path to compare against
-     * @param includeRuntime Whether to include runtime behavior comparison
-     * @param steps The number of steps for runtime comparison (only used if includeRuntime is true)
+     * @param dslCode The DSL code resource path.
+     * @param yamlResource The YAML resource path to compare against.
+     * @param includeRuntime Whether to include runtime behavior comparison.
+     * @param steps The number of steps for runtime comparison (only used if includeRuntime is true).
      */
     fun <T, P : Position<P>> compare(
         dslCode: String,
@@ -63,18 +63,38 @@ object TestComparators {
             LoaderFactory.loadDsl(dslCode)
         }, yamlResource, includeRuntime, steps)
     }
+
+    fun <T, P : Position<P>> compare(
+        dslLoader: Loader,
+        yamlLoader: Loader,
+        includeRuntime: Boolean = false,
+        steps: Long = 1000L,
+    ) {
+        // Always perform static comparison
+        StaticComparisonHelper.compareBasicProperties(dslLoader, yamlLoader)
+        StaticComparisonHelper.compareSimulations<T, P>(dslLoader, yamlLoader)
+
+        // Optionally perform runtime comparison
+        if (includeRuntime) {
+            RuntimeComparisonHelper.compareLoaders<T, P>(dslLoader, yamlLoader, steps)
+        }
+    }
 }
 
 /**
- * Extension function for easier test writing with static comparison only
+ * Extension function for easier test writing with static comparison only.
  */
 fun Loader.shouldEqual(yamlResource: String) {
     @Suppress("UNCHECKED_CAST")
     TestComparators.compare<Any, Nothing>({ this }, yamlResource, includeRuntime = false)
 }
+fun Loader.shouldEqual(other: Loader, includeRuntime: Boolean = true) {
+    @Suppress("UNCHECKED_CAST")
+    TestComparators.compare<Any, Nothing>(this, other, includeRuntime = includeRuntime)
+}
 
 /**
- * Extension function for comparing DSL function with YAML resource
+ * Extension function for comparing DSL function with YAML resource.
  */
 fun (() -> Loader).shouldEqual(yamlResource: String, includeRuntime: Boolean = true, steps: Long = 3000L) {
     @Suppress("UNCHECKED_CAST")

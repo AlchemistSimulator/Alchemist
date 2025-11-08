@@ -30,7 +30,7 @@ object RuntimeComparisonHelper {
 
     /**
      * Compares loaders by running both simulations for a specified number of steps
-     * and comparing their final states
+     * and comparing their final states.
      */
     fun <T, P : Position<P>> compareLoaders(dslLoader: Loader, yamlLoader: Loader, steps: Long = 1000L) {
         println("Running simulations for comparison...")
@@ -68,7 +68,7 @@ object RuntimeComparisonHelper {
     }
 
     /**
-     * Adds step-based terminator to a simulation
+     * Adds step-based terminator to a simulation.
      */
     private fun <T, P : Position<P>> addStepTerminator(simulation: Simulation<T, P>, steps: Long) {
         // Add step-based terminator
@@ -76,7 +76,7 @@ object RuntimeComparisonHelper {
     }
 
     /**
-     * Runs a simulation synchronously (terminator will stop it)
+     * Runs a simulation synchronously (terminator will stop it).
      */
     private fun <T, P : Position<P>> runSimulationSynchronously(simulation: Simulation<T, P>) {
         simulation.play() // Start the simulation
@@ -85,7 +85,7 @@ object RuntimeComparisonHelper {
     }
 
     /**
-     * Compares the final states of two simulations after runtime execution
+     * Compares the final states of two simulations after runtime execution.
      */
     private fun <T, P : Position<P>> compareRuntimeStates(
         dslSimulation: Simulation<T, P>,
@@ -104,7 +104,7 @@ object RuntimeComparisonHelper {
     }
 
     /**
-     * Compares simulation execution state (time, step, status, errors)
+     * Compares simulation execution state (time, step, status, errors).
      */
     private fun <T, P : Position<P>> compareSimulationExecutionState(
         dslSimulation: Simulation<T, P>,
@@ -153,7 +153,7 @@ object RuntimeComparisonHelper {
     }
 
     /**
-     * Compares environment states after runtime execution
+     * Compares environment states after runtime execution.
      */
     private fun <T, P : Position<P>> compareRuntimeEnvironmentStates(
         dslEnv: Environment<T, P>,
@@ -185,7 +185,7 @@ object RuntimeComparisonHelper {
     }
 
     /**
-     * Compares node states after runtime execution using position-based matching
+     * Compares node states after runtime execution using position-based matching.
      */
     private fun <T, P : Position<P>> compareRuntimeNodeStates(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
         println("Comparing runtime node states...")
@@ -220,7 +220,7 @@ object RuntimeComparisonHelper {
     }
 
     /**
-     * Compares contents of two nodes at the same position
+     * Compares contents of two nodes at the same position.
      */
     private fun <T> compareNodeContentsAtPosition(dslNode: Node<T>, yamlNode: Node<T>, position: Any) {
         // Compare molecule counts
@@ -271,7 +271,7 @@ object RuntimeComparisonHelper {
     }
 
     /**
-     * Compares global reactions after runtime execution
+     * Compares global reactions after runtime execution.
      */
     private fun <T, P : Position<P>> compareRuntimeGlobalReactions(
         dslEnv: Environment<T, P>,
@@ -297,7 +297,7 @@ object RuntimeComparisonHelper {
     }
 
     /**
-     * Compares layers after runtime execution
+     * Compares layers after runtime execution.
      */
     private fun <T, P : Position<P>> compareRuntimeLayers(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
         println("Comparing runtime layers...")
@@ -318,52 +318,6 @@ object RuntimeComparisonHelper {
             "Layer types should match after runtime",
         )
 
-        // Compare layer values at sample positions
-        compareLayerValues(dslEnv, yamlEnv)
-    }
-
-    /**
-     * Compares layer values at sample positions
-     */
-    private fun <T, P : Position<P>> compareLayerValues(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
-        println("Comparing layer values...")
-
-        // Sample positions to test layer values
-        val samplePositions = mutableListOf<P>()
-
-        // Add positions from both environments' nodes
-        samplePositions.addAll(dslEnv.nodes.map { dslEnv.getPosition(it) })
-        samplePositions.addAll(yamlEnv.nodes.map { yamlEnv.getPosition(it) })
-
-        // Remove duplicates
-        val uniquePositions = samplePositions.distinct()
-
-        if (uniquePositions.isNotEmpty()) {
-            for (position in uniquePositions) {
-                val dslLayerValues = dslEnv.layers.map { (it.getValue(position)) }
-                val yamlLayerValues = yamlEnv.layers.map { it.getValue(position) }
-                // Convert all values to Double for comparison to handle Int vs Double differences
-                val dslDoubleValues = dslLayerValues.map { value ->
-                    when (value) {
-                        is Number -> value.toDouble()
-                        else -> value.toString().toDoubleOrNull() ?: 0.0
-                    }
-                }
-                val yamlDoubleValues = yamlLayerValues.map { value ->
-                    when (value) {
-                        is Number -> value.toDouble()
-                        else -> value.toString().toDoubleOrNull() ?: 0.0
-                    }
-                }
-
-                assertEquals(
-                    dslDoubleValues,
-                    yamlDoubleValues,
-                    "Layer values at position $position should match",
-                )
-            }
-        } else {
-            println("Skipping layer value comparison - no valid positions found")
-        }
+        LayerComparisonUtils.compareLayerValues(dslEnv, yamlEnv)
     }
 }

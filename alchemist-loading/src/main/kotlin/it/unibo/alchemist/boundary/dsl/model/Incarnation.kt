@@ -8,9 +8,28 @@
  */
 
 package it.unibo.alchemist.boundary.dsl.model
+
+/**
+ * Enumeration of available Alchemist incarnations.
+ */
 enum class Incarnation {
+    /**
+     * SAPERE incarnation.
+     */
     SAPERE,
+
+    /**
+     * PROTELIS incarnation.
+     */
     PROTELIS,
+
+    /**
+     * SCAFI incarnation.
+     */
     SCAFI,
+
+    /**
+     * BIOCHEMISTRY incarnation.
+     */
     BIOCHEMISTRY,
 }

@@ -18,10 +18,26 @@ import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import java.util.concurrent.Semaphore
 
-abstract class DslLoader(private val ctx: SimulationContext<*, *>) : Loader {
+/**
+ * Abstract base class for single-use DSL loaders.
+ *
+ * @param ctx The simulation context.
+ */
+abstract class SingleUseDslLoader(private val ctx: SimulationContext<*, *>) : Loader {
+    private val mutex = Semaphore(1)
+    private var consumed = false
+
     @Suppress("UNCHECKED_CAST")
     override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> {
+        try {
+            mutex.acquireUninterruptibly()
+            check(!consumed) { "This loader has already been consumed! This is a bug in Alchemist" }
+            consumed = true
+        } finally {
+            mutex.release()
+        }
         values.forEach { (t, u) ->
             ctx.variablesContext.references[t] = u as Any
         }

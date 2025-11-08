@@ -12,7 +12,20 @@ package it.unibo.alchemist.boundary.dsl.model
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Position
 
-class LayerContext<T, P : Position<P>>(ctx: SimulationContext<T, P>) {
+/**
+ * Context for configuring layers in a simulation.
+ *
+ * @param T The type of molecule concentration.
+ * @param P The type of position.
+ */
+class LayerContext<T, P : Position<P>> {
+    /**
+     * The molecule name for the layer.
+     */
     var molecule: String? = null
+
+    /**
+     * The layer instance.
+     */
     var layer: Layer<T, P>? = null
 }

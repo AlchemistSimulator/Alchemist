@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.dsl.model
 
-import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
+import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
@@ -127,7 +127,7 @@ open class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, 
         /**
          * The properties context for this deployment.
          */
-        var propertiesContext: PropertiesContext<T, P> = PropertiesContext()
+        var propertiesContext: PropertiesContext<T, P> = PropertiesContext(this@DeploymentsContext)
 
         /**
          * The programs context for this deployment.

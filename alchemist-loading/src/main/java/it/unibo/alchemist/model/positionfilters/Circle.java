@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.positionfilters;
 
+import it.unibo.alchemist.boundary.dsl.BuildDsl;
 import it.unibo.alchemist.model.Position2D;
 
 import java.awt.geom.Ellipse2D;
@@ -18,6 +19,7 @@ import java.awt.geom.Ellipse2D;
  *
  * @param <P> Position type
  */
+@BuildDsl(functionName = "CircleFilter")
 public class Circle<P extends Position2D<P>> extends Abstract2DShape<P> {
 
     /**

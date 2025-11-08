@@ -10,6 +10,7 @@
 package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.boundary.Variable
+import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
 import java.io.Serializable
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
@@ -68,7 +69,7 @@ class VariablesContext {
             check(!variables.containsKey(prop.name) && !dependentVariables.contains(prop.name)) {
                 "Variable ${prop.name} already exists"
             }
-            dependentVariables.put(prop.name, source)
+            dependentVariables[prop.name] = source
             return DependentRef(source)
         }
     }
@@ -104,6 +105,7 @@ class VariablesContext {
             check(!variables.containsKey(prop.name) && !dependentVariables.contains(prop.name)) {
                 "Variable ${prop.name} already exists"
             }
+            logger.debug("Registering variable: {}", prop.name)
             variables[prop.name] = source
             references[prop.name] = source.default
             return Ref()

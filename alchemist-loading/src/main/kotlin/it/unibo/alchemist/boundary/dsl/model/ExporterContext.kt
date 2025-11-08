@@ -13,10 +13,28 @@ import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Extractor
 import it.unibo.alchemist.model.Position
 
-class ExporterContext<T, P : Position<P>>(ctx: SimulationContext<T, P>) {
+/**
+ * Context for configuring exporters in a simulation.
+ *
+ * @param T The type of molecule concentration.
+ * @param P The type of position.
+ */
+class ExporterContext<T, P : Position<P>> {
+    /**
+     * The exporter type.
+     */
     var type: Exporter<T, P>? = null
+
+    /**
+     * The list of data extractors.
+     */
     var extractors: List<Extractor<*>> = emptyList()
 
+    /**
+     * Sets the data extractors for this exporter.
+     *
+     * @param extractors The extractors to use.
+     */
     fun data(vararg extractors: Extractor<*>) {
         this.extractors = extractors.toList()
     }

@@ -18,13 +18,36 @@ import it.unibo.alchemist.model.PositionBasedFilter
 import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.linkingrules.NoLinks
 
-class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
+/**
+ * Context for managing deployments in a simulation.
+ *
+ * @param T The type of molecule concentration.
+ * @param P The type of position.
+ * @param ctx The simulation context.
+ */
+open class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
+    /**
+     * The environment instance.
+     */
     val environment: Environment<*, *> = ctx.environment as Environment<*, *>
+
+    /**
+     * The environment instance.
+     */
     val env = ctx.environment
+
+    /**
+     * The scenario generator.
+     */
     var generator = ctx.scenarioGenerator
     private val inc = ctx.incarnation
 
-    // deployment -> node -> molecule -> concentration -> program( timedistribution -> reaction + actions + conditions)
+    /**
+     * Deploys a deployment with a configuration block.
+     *
+     * @param deployment The deployment to configure.
+     * @param block The configuration block.
+     */
     fun deploy(deployment: Deployment<*>, block: DeploymentContext.() -> Unit) {
         logger.debug("Deploying deployment: {}", deployment)
         @Suppress("UNCHECKED_CAST")
@@ -32,6 +55,12 @@ class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
         // populate
         populateDeployment(d)
     }
+
+    /**
+     * Deploys a deployment without additional configuration.
+     *
+     * @param deployment The deployment to deploy.
+     */
     fun deploy(deployment: Deployment<*>) {
         @Suppress("UNCHECKED_CAST")
         this.deploy(deployment) {}
@@ -51,15 +80,12 @@ class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
         deployment.stream().forEach { position ->
             logger.debug("visiting position: {} for deployment: {}", position, deployment)
             logger.debug("creaing node for deployment: {}", deployment)
-            val node = if (deploymentContext.nodeFactory == null) {
-                inc.createNode(
+            val node = deploymentContext.nodeFactory?.invoke()
+                ?: inc.createNode(
                     ctx.simulationGenerator,
                     env,
                     null,
                 )
-            } else {
-                deploymentContext.nodeFactory!!.invoke()
-            }
             // load properties
             deploymentContext.propertiesContext.applyToNode(node, position)
             // load contents
@@ -82,37 +108,94 @@ class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
         }
     }
 
+    /**
+     * Context for configuring a single deployment.
+     *
+     * @param deployment The deployment being configured.
+     */
     inner class DeploymentContext(val deployment: Deployment<P>) {
+        /**
+         * The list of content contexts for this deployment.
+         */
         val contents: MutableList<ContentContext> = mutableListOf()
+
+        /**
+         * Optional factory for creating custom nodes.
+         */
         var nodeFactory: (() -> Node<T>)? = null
+
+        /**
+         * The properties context for this deployment.
+         */
         var propertiesContext: PropertiesContext<T, P> = PropertiesContext()
+
+        /**
+         * The programs context for this deployment.
+         */
         val programsContext: ProgramsContext<T, P> = ProgramsContext(this@DeploymentsContext)
         init {
             logger.debug("Visiting deployment: {}", deployment)
         }
+
+        /**
+         * Configures content for all positions in the deployment.
+         *
+         * @param block The content configuration block.
+         */
         fun all(block: ContentContext.() -> Unit) {
             logger.debug("Adding content for all positions")
             val c = ContentContext().apply(block)
             contents.add(c)
         }
+
+        /**
+         * Configures content for positions inside a filter.
+         *
+         * @param filter The position filter.
+         * @param block The content configuration block.
+         */
         fun inside(filter: PositionBasedFilter<*>, block: ContentContext.() -> Unit) {
             @Suppress("UNCHECKED_CAST")
-            val filter = filter as PositionBasedFilter<P>
-            logger.debug("Adding content for positions inside filter: {}", filter)
-            val c = ContentContext(filter).apply(block)
+            val typedFilter = filter as PositionBasedFilter<P>
+            logger.debug("Adding content for positions inside filter: {}", typedFilter)
+            val c = ContentContext(typedFilter).apply(block)
             contents.add(c)
         }
+
+        /**
+         * Configures programs for this deployment.
+         *
+         * @param block The programs configuration block.
+         */
         fun programs(block: ProgramsContext<T, P>.() -> Unit) {
             programsContext.apply(block)
         }
+
+        /**
+         * Sets a custom node factory for this deployment.
+         *
+         * @param factory The factory function for creating nodes.
+         */
         fun nodes(factory: () -> Node<T>) {
             nodeFactory = factory
         }
+
+        /**
+         * Configures properties for this deployment.
+         *
+         * @param block The properties configuration block.
+         */
         fun properties(block: PropertiesContext<T, P>.() -> Unit) {
             propertiesContext.apply(block)
         }
 
-        // meant to be called from outer class
+        /**
+         * Applies content to nodes at a specific position.
+         *
+         * @param node The node to apply content to.
+         * @param position The position of the node.
+         * @param content The content context to apply.
+         */
         fun applyToNodes(node: Node<T>, position: P, content: ContentContext) {
             logger.debug("Applying node to nodes for position: {}, deployment {}", position, deployment)
             if (content.filter == null || content.filter.contains(position)) {
@@ -128,8 +211,20 @@ class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
             }
         }
 
+        /**
+         * Context for configuring content (molecules and concentrations) for nodes.
+         *
+         * @param filter Optional position filter for applying content.
+         */
         inner class ContentContext(val filter: PositionBasedFilter<P>? = null) {
+            /**
+             * The molecule name.
+             */
             var molecule: String? = null
+
+            /**
+             * The concentration value.
+             */
             var concentration: T? = null
         }
     }

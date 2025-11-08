@@ -13,22 +13,22 @@ import it.unibo.alchemist.boundary.Loader
 import org.kaikikm.threadresloader.ResourceLoader
 
 /**
- * Factory for creating and loading DSL and YAML loaders for testing
+ * Factory for creating and loading DSL and YAML loaders for testing.
  */
 object LoaderFactory {
 
     /**
-     * Loads a DSL loader from a resource path
+     * Loads a DSL loader from a resource path.
      */
-    fun loadDsl(dslCode: String): Loader = throw Exception("Not implemented yet")
+    fun loadDsl(dslCode: String): Loader = throw NotImplementedError("Not implemented yet $dslCode")
 
     /**
-     * Loads a YAML loader from a resource path
+     * Loads a YAML loader from a resource path.
      */
     fun loadYaml(yamlResource: String): Loader = LoadAlchemist.from(ResourceLoader.getResource(yamlResource)!!)
 
     /**
-     * Loads both DSL and YAML loaders for comparison
+     * Loads both DSL and YAML loaders for comparison.
      */
     fun loadBoth(dslCode: String, yamlResource: String): Pair<Loader, Loader> =
         Pair(loadDsl(dslCode), loadYaml(yamlResource))

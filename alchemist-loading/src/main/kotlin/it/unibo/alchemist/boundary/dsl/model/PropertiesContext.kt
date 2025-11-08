@@ -1,6 +1,6 @@
 package it.unibo.alchemist.boundary.dsl.model
 
-import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
+import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.PositionBasedFilter
  * @param T The type of molecule concentration.
  * @param P The type of position.
  */
-class PropertiesContext<T, P : Position<P>> {
+class PropertiesContext<T, P : Position<P>>(val ctx: DeploymentsContext<T, P>) {
     /**
      * List of property contexts with their associated filters.
      */
@@ -50,7 +50,7 @@ class PropertiesContext<T, P : Position<P>> {
     fun applyToNode(node: Node<T>, position: P) {
         propertiesCtx.forEach { (propertyCtx, filter) ->
             if (filter == null || filter.contains(position)) {
-                val properties = PropertyContext(filter, node)
+                val properties = PropertyContext(filter, node, this)
                     .apply(propertyCtx)
                     .properties
                 properties.forEach { property ->
@@ -67,7 +67,11 @@ class PropertiesContext<T, P : Position<P>> {
      * @param filter Optional position filter.
      * @param node The node to configure properties for.
      */
-    inner class PropertyContext(val filter: PositionBasedFilter<P>?, val node: Node<T>) {
+    inner class PropertyContext(
+        val filter: PositionBasedFilter<P>?,
+        val node: Node<T>,
+        val ctx: PropertiesContext<T, P>,
+    ) {
         /**
          * List of properties to add to the node.
          */

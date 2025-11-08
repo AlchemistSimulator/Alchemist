@@ -1,6 +1,6 @@
 package it.unibo.alchemist.boundary.dsl.model
 
-import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
+import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Node

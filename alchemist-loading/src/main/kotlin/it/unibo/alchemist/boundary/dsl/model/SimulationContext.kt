@@ -14,6 +14,7 @@ package it.unibo.alchemist.boundary.dsl.model
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.Variable
+import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
 import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
@@ -161,6 +162,7 @@ class SimulationContext<T, P : Position<P>>(val incarnation: Incarnation<T, P>, 
                     "There must be a single layer per molecule"
             }
             val molecule = incarnation.createMolecule(moleculeName)
+            logger.debug("Adding layer for molecule {}: {}", moleculeName, layer)
             layers[moleculeName] = layer
             environment.addLayer(molecule, layer)
         }

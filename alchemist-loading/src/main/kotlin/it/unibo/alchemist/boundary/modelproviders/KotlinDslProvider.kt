@@ -1,0 +1,55 @@
+/*
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
+package it.unibo.alchemist.boundary.modelproviders
+
+import it.unibo.alchemist.boundary.AlchemistLoaderProvider
+import it.unibo.alchemist.boundary.Loader
+import it.unibo.alchemist.boundary.dsl.scripting.AlchemistScript
+import java.io.InputStream
+import java.io.Reader
+import java.net.URL
+import kotlin.script.experimental.api.ResultValue
+import kotlin.script.experimental.api.ScriptDiagnostic
+import kotlin.script.experimental.api.ScriptEvaluationConfiguration
+import kotlin.script.experimental.api.valueOrNull
+import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
+import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
+
+/**
+ * Provider for loading Alchemist simulations from Kotlin DSL scripts.
+ */
+object KotlinDslProvider : AlchemistLoaderProvider {
+    override val fileExtensions: Regex = "(?i)kts".toRegex()
+
+    override fun from(input: String): Loader {
+        val host = BasicJvmScriptingHost()
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<AlchemistScript>()
+        val evaluationConfiguration = ScriptEvaluationConfiguration {
+            jvm {
+                baseClassLoader(this@KotlinDslProvider::class.java.classLoader)
+            }
+        }
+        val result = host.eval(input.toScriptSource(), compilationConfiguration, evaluationConfiguration)
+        val errors = result.reports.filter { it.severity == ScriptDiagnostic.Severity.ERROR }
+        require(errors.isEmpty()) { errors.joinToString("\n") { it.message } }
+        val value = (result.valueOrNull()?.returnValue as? ResultValue.Value)?.value
+        return value as? Loader
+            ?: error("Script must return a Loader; got ${value?.let { it::class.qualifiedName } ?: "null"}")
+    }
+
+    override fun from(input: Reader): Loader = from(input.readText())
+
+    override fun from(input: InputStream): Loader = from(input.reader())
+
+    override fun from(input: URL): Loader = from(input.openStream())
+}

@@ -50,6 +50,7 @@ java {
 kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xjvm-default=all") // Enable default methods in Kt interfaces
+        freeCompilerArgs.add("-Xcontext-parameters") // Enable context receivers
     }
 }
 

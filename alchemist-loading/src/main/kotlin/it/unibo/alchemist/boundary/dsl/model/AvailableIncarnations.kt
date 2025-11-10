@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.dsl.model
 /**
  * Enumeration of available Alchemist incarnations.
  */
-enum class Incarnation {
+enum class AvailableIncarnations {
     /**
      * SAPERE incarnation.
      */

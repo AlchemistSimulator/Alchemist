@@ -1,6 +1,14 @@
+/*
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.boundary.dsl.model
 
-import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Node
@@ -10,163 +18,179 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TimeDistribution
 
 /**
- * Context for managing programs (reactions) in a simulation.
+ * Context interface for configuring programs (reactions) in a deployment.
+ *
+ * Programs define the behavior of nodes through reactions that execute actions
+ * when conditions are met. Programs can be applied to all nodes or filtered by position.
+ *
+ * ## Usage Example
+ *
+ * ```kotlin
+ * deployments {
+ *     deploy(deployment) {
+ *         programs {
+ *             all {
+ *                 timeDistribution("1")
+ *                 program = "{token} --> {firing}"
+ *             }
+ *             inside(RectangleFilter(-1.0, -1.0, 2.0, 2.0)) {
+ *                 program = "{firing} --> +{token}"
+ *             }
+ *         }
+ *     }
+ * }
+ * ```
  *
  * @param T The type of molecule concentration.
- * @param P The type of position.
- * @param ctx The deployments context.
+ * @param P The type of position, must extend [Position].
+ *
+ * @see [DeploymentContext.programs] for configuring programs in a deployment
+ * @see [Reaction] for the reaction interface
+ * @see [TimeDistribution] for time distribution configuration
  */
-class ProgramsContext<T, P : Position<P>>(val ctx: DeploymentsContext<T, P>) {
+@DslMarker
+annotation class ProgramsMarker
+
+/**
+ * Context interface for configuring programs (reactions) in a deployment.
+ *
+ * Programs define the behavior of nodes through reactions that execute actions
+ * when conditions are met. Programs can be applied to all nodes or filtered by position.
+ *
+ * @param T The type of molecule concentration.
+ * @param P The type of position, must extend [Position].
+ */
+@ProgramsMarker
+interface ProgramsContext<T, P : Position<P>> {
     /**
-     * Entry representing a program with its filter.
-     *
-     * @param filter Optional position filter.
-     * @param program The program configuration block.
+     * The deployment context this programs context belongs to.
      */
-    inner class ProgramEntry(
-        val filter: PositionBasedFilter<P>?,
-        val program: ProgramsContext<T, P>.ProgramContext.() -> Unit,
-    )
+    val ctx: DeploymentContext<T, P>
 
     /**
-     * List of program entries.
-     */
-    val programs: MutableList<ProgramEntry> = mutableListOf()
-
-    /**
-     * Configures a program for all nodes.
+     * Configures a program for all nodes in the deployment.
      *
      * @param block The program configuration block.
      */
-    fun all(block: ProgramContext.() -> Unit) {
-        logger.debug("Adding program for all nodes")
-        programs.add(ProgramEntry(null, block))
-    }
+    fun all(block: ProgramContext<T, P>.() -> Unit)
 
     /**
-     * Configures a program for nodes inside a filter.
+     * Configures a program for nodes inside a position filter.
      *
-     * @param filter The position filter.
+     * Only nodes whose positions match the filter will receive the configured program.
+     *
+     * @param filter The position filter to apply.
      * @param block The program configuration block.
+     * @see [PositionBasedFilter]
      */
-    fun inside(filter: PositionBasedFilter<P>, block: ProgramContext.() -> Unit) {
-        logger.debug("Adding program for nodes inside filter: {}", filter)
-        programs.add(ProgramEntry(filter, block))
-    }
+    fun inside(filter: PositionBasedFilter<P>, block: ProgramContext<T, P>.() -> Unit)
+}
+
+/**
+ * Context interface for configuring a single program (reaction) for a node.
+ *
+ * This context is used within [ProgramsContext] blocks to define reactions with
+ * their time distributions, conditions, and actions.
+ *
+ * @param T The type of molecule concentration.
+ * @param P The type of position, must extend [Position].
+ *
+ * @see [ProgramsContext] for the parent context
+ * @see [Reaction] for the reaction interface
+ * @see [TimeDistribution] for time distribution
+ * @see [Action] for reaction actions
+ * @see [Condition] for reaction conditions
+ */
+@DslMarker
+annotation class ProgramMarker
+
+/**
+ * Context interface for configuring a single program (reaction) for a node.
+ *
+ * This context is used within [ProgramsContext] blocks to define reactions with
+ * their time distributions, conditions, and actions.
+ *
+ * @param T The type of molecule concentration.
+ * @param P The type of position, must extend [Position].
+ */
+@ProgramMarker
+interface ProgramContext<T, P : Position<P>> {
+    /**
+     * The programs context this program context belongs to.
+     */
+    val ctx: ProgramsContext<T, P>
 
     /**
-     * Applies a program to nodes at a specific position.
-     *
-     * @param node The node to apply the program to.
-     * @param position The position of the node.
-     * @param program The program configuration block.
-     * @param filter Optional position filter.
+     * The node this program context is configuring.
      */
-    fun applyToNodes(node: Node<T>, position: P, program: ProgramContext.() -> Unit, filter: PositionBasedFilter<P>?) {
-        logger.debug("Applying program to node at position: {}", position)
-        val c = ProgramContext(node, this).apply(program)
-        if (filter != null && !filter.contains(position)) {
-            return
-        }
-        logger.debug("Creating time distribution for program")
-        val timeDistribution = c.timeDistribution
-            ?: ctx.ctx.incarnation.createTimeDistribution(
-                ctx.ctx.simulationGenerator,
-                ctx.ctx.environment,
-                node,
-                null,
-            )
-        logger.debug("Creating reaction for program")
-        val r = c.reaction ?: run {
-            // Create a basic reaction with custom actions/conditions
-            ctx.ctx.incarnation.createReaction(
-                ctx.ctx.simulationGenerator,
-                ctx.ctx.environment,
-                node,
-                timeDistribution,
-                c.program,
-            )
-        }
-        logger.debug("Adding actions to reaction")
-        r.actions += c.actions.map { it() }
-        logger.debug("Adding conditions to reaction")
-        r.conditions += c.conditions.map { it() }
-
-        logger.debug("Adding condition to reaction")
-        node.addReaction(r)
-    }
+    val node: Node<T>
 
     /**
-     * Context for configuring a single program (reaction).
+     * The program specification as a string.
      *
-     * @param node The node this program is associated with.
-     * @param ctx The programs context.
+     * The format depends on the incarnation being used.
      */
-    open inner class ProgramContext(val node: Node<T>, val ctx: ProgramsContext<T, P>) {
-        /**
-         * The program name.
-         */
-        var program: String? = null
+    var program: String?
 
-        /**
-         * Collection of action factories.
-         */
-        var actions: Collection<() -> Action<T>> = emptyList()
+    /**
+     * The time distribution for the reaction.
+     *
+     * @see [TimeDistribution]
+     */
+    var timeDistribution: TimeDistribution<T>?
 
-        /**
-         * Collection of condition factories.
-         */
-        var conditions: Collection<() -> Condition<T>> = emptyList()
+    /**
+     * An optional custom reaction instance.
+     *
+     * If provided, this reaction will be used instead of creating one from [program].
+     *
+     * @see [Reaction]
+     */
+    var reaction: Reaction<T>?
 
-        /**
-         * The time distribution for the reaction.
-         */
-        var timeDistribution: TimeDistribution<T>? = null
+    /**
+     * Sets the time distribution using a string specification.
+     *
+     * The string is processed by the incarnation to create a [TimeDistribution].
+     *
+     * ```kotlin
+     * timeDistribution("1")
+     * ```
+     *
+     * @param td The time distribution specification string.
+     * @see [TimeDistribution]
+     * @see [it.unibo.alchemist.model.Incarnation.createTimeDistribution]
+     */
+    fun timeDistribution(td: String)
 
-        /**
-         * Optional custom reaction instance.
-         */
-        var reaction: Reaction<T>? = null
+    /**
+     * Adds an action to the program.
+     *
+     * Actions are executed when the reaction fires and all conditions are met.
+     *
+     * @param block A factory function that creates the action.
+     * @see [Action]
+     */
+    fun addAction(block: () -> Action<T>)
 
-        /**
-         * Sets the time distribution using a string specification.
-         *
-         * @param td The time distribution specification.
-         */
-        fun timeDistribution(td: String) {
-            timeDistribution = ctx.ctx.ctx.incarnation.createTimeDistribution(
-                ctx.ctx.ctx.simulationGenerator,
-                ctx.ctx.ctx.environment,
-                node,
-                td,
-            )
-        }
+    /**
+     * Adds a condition to the program.
+     *
+     * Conditions must all be satisfied for the reaction to fire.
+     *
+     * @param block A factory function that creates the condition.
+     * @see [Condition]
+     */
+    fun addCondition(block: () -> Condition<T>)
 
-        /**
-         * Adds an action to the program.
-         *
-         * @param block The action factory.
-         */
-        fun addAction(block: () -> Action<T>) {
-            actions += block
-        }
-
-        /**
-         * Adds a condition to the program.
-         *
-         * @param block The condition factory.
-         */
-        fun addCondition(block: () -> Condition<T>) {
-            conditions += block
-        }
-
-        /**
-         * Unary plus operator for type casting time distributions.
-         *
-         * @param T The target type.
-         * @return The cast time distribution.
-         */
-        @Suppress("UNCHECKED_CAST")
-        operator fun <T> TimeDistribution<*>.unaryPlus(): TimeDistribution<T> = this as TimeDistribution<T>
-    }
+    /**
+     * Unary plus operator for type-safe casting of [TimeDistribution].
+     *
+     * This operator allows casting a [TimeDistribution] with wildcard type parameter
+     * to a specific type parameter, enabling type-safe usage in generic contexts.
+     *
+     * @return The same [TimeDistribution] instance cast to the specified type parameter.
+     */
+    @Suppress("UNCHECKED_CAST")
+    operator fun <T> TimeDistribution<*>.unaryPlus(): TimeDistribution<T> = this as TimeDistribution<T>
 }

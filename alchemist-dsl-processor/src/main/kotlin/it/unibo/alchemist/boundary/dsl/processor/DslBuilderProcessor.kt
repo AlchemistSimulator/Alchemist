@@ -7,6 +7,7 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.validate
 import it.unibo.alchemist.boundary.dsl.BuildDsl
 import java.io.PrintWriter
@@ -127,8 +128,8 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         writer: PrintWriter,
         classDecl: KSClassDeclaration,
         functionName: String,
-        remainingParams: List<com.google.devtools.ksp.symbol.KSValueParameter>,
-        allParameters: List<com.google.devtools.ksp.symbol.KSValueParameter>,
+        remainingParams: List<KSValueParameter>,
+        allParameters: List<KSValueParameter>,
         paramsToSkip: Set<Int>,
         injectionIndices: Map<InjectionType, Int>,
         annotationValues: Map<String, Any?>,
@@ -233,18 +234,18 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
             ContextType.SIMULATION -> writer.println("import ${ProcessorConfig.ContextTypes.SIMULATION_CONTEXT}")
             ContextType.DEPLOYMENT -> writer.println("import ${ProcessorConfig.ContextTypes.DEPLOYMENTS_CONTEXT}")
             ContextType.PROGRAM -> {
-                writer.println("import ${ProcessorConfig.ContextTypes.PROGRAMS_CONTEXT}")
+                writer.println("import ${ProcessorConfig.ContextTypes.PROGRAM_CONTEXT}")
                 writer.println("import ${ProcessorConfig.ContextTypes.PROPERTIES_CONTEXT}")
             }
             ContextType.PROPERTY -> {
-                writer.println("import ${ProcessorConfig.ContextTypes.PROPERTIES_CONTEXT}")
+                writer.println("import ${ProcessorConfig.ContextTypes.PROPERTY_CONTEXT}")
             }
         }
     }
 
     private fun checkNeedsMapEnvironment(
         injectionIndices: Map<InjectionType, Int>,
-        allParameters: List<com.google.devtools.ksp.symbol.KSValueParameter>,
+        allParameters: List<KSValueParameter>,
     ): Boolean {
         val envParam = getEnvironmentParameter(injectionIndices, allParameters) ?: return false
         val qualifiedName = getQualifiedName(envParam)
@@ -253,13 +254,13 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
 
     private fun getEnvironmentParameter(
         injectionIndices: Map<InjectionType, Int>,
-        allParameters: List<com.google.devtools.ksp.symbol.KSValueParameter>,
-    ): com.google.devtools.ksp.symbol.KSValueParameter? {
+        allParameters: List<KSValueParameter>,
+    ): KSValueParameter? {
         val injectionIndicesForEnv = injectionIndices[InjectionType.ENVIRONMENT] ?: return null
         return allParameters.getOrNull(injectionIndicesForEnv)
     }
 
-    private fun getQualifiedName(param: com.google.devtools.ksp.symbol.KSValueParameter): String {
+    private fun getQualifiedName(param: KSValueParameter): String {
         val resolved = param.type.resolve()
         return resolved.declaration.qualifiedName?.asString().orEmpty()
     }
@@ -267,7 +268,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
     private fun processInjectedParams(
         injectionIndices: Map<InjectionType, Int>,
         annotationValues: Map<String, Any?>,
-        allParameters: List<com.google.devtools.ksp.symbol.KSValueParameter>,
+        allParameters: List<KSValueParameter>,
         typeParamNames: MutableList<String>,
         typeParamBounds: MutableList<String>,
     ): Triple<List<Pair<String, String>>, Map<InjectionType, String>, Map<InjectionType, String>> {
@@ -302,7 +303,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         hasInjectedParams: Boolean,
         injectionIndices: Map<InjectionType, Int>,
         annotationValues: Map<String, Any?>,
-        allParameters: List<com.google.devtools.ksp.symbol.KSValueParameter>,
+        allParameters: List<KSValueParameter>,
         typeParamNames: MutableList<String>,
         typeParamBounds: MutableList<String>,
         initialTypeParamNames: List<String>,
@@ -390,8 +391,8 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         classDecl: KSClassDeclaration,
         needsMapEnvironment: Boolean,
         injectedParamTypesMap: Map<InjectionType, String>,
-        allParameters: List<com.google.devtools.ksp.symbol.KSValueParameter>,
-        remainingParams: List<com.google.devtools.ksp.symbol.KSValueParameter>,
+        allParameters: List<KSValueParameter>,
+        remainingParams: List<KSValueParameter>,
         paramsToSkip: Set<Int>,
         paramNames: List<String>,
         injectionIndices: Map<InjectionType, Int>,
@@ -464,8 +465,8 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         classDecl: KSClassDeclaration,
         needsMapEnvironment: Boolean,
         injectedParamTypesMap: Map<InjectionType, String>,
-        allParameters: List<com.google.devtools.ksp.symbol.KSValueParameter>,
-        remainingParams: List<com.google.devtools.ksp.symbol.KSValueParameter>,
+        allParameters: List<KSValueParameter>,
+        remainingParams: List<KSValueParameter>,
         paramsToSkip: Set<Int>,
         paramNames: List<String>,
         injectionIndices: Map<InjectionType, Int>,
@@ -483,12 +484,11 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
 
         val (tParam, pParam) = TypeParameterHandler.findTAndPParams(typeParamNames, finalTypeParamBounds)
         val pVariance = FunctionGenerator.extractVarianceFromBound(pParam, finalTypeParamBounds)
-        val tWithVariance = tParam
         val pWithVariance = if (pVariance.isNotEmpty()) "$pVariance $pParam" else pParam
 
         val functionTypeParamString = TypeParameterHandler.buildTypeParamString(finalTypeParamBounds)
         val returnType = TypeParameterHandler.buildReturnType(className, initialTypeParamNames)
-        val contextPart = "context(ctx: PropertiesContext<$tWithVariance, $pWithVariance>.PropertyContext) "
+        val contextPart = "context(ctx: ${ProcessorConfig.ContextTypes.PROPERTY_CONTEXT}<$tParam, $pWithVariance>) "
         val functionParams = FunctionGenerator.buildFunctionParams(remainingParams, paramNames, paramTypes)
 
         val functionSignature = "${contextPart}fun$functionTypeParamString $functionName$functionParams: $returnType ="

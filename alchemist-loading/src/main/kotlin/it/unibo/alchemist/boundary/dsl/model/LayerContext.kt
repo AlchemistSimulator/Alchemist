@@ -13,19 +13,50 @@ import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Position
 
 /**
- * Context for configuring layers in a simulation.
+ * Context interface for configuring spatial layers in a simulation.
+ *
+ * Layers define overlays of data that can be sensed everywhere in the environment.
+ * They can be used to model physical properties such as pollution, light, temperature, etc.
+ *
+ * ## Usage Example
+ *
+ * ```kotlin
+*     layer {
+*         molecule = "A"
+*         layer = StepLayer(2.0, 2.0, 100.0, 0.0)
+*     }
+ * ```
  *
  * @param T The type of molecule concentration.
- * @param P The type of position.
+ * @param P The type of position, must extend [Position].
+ *
+ * @see [SimulationContext.layer] for adding layers to a simulation
+ * @see [Layer] for the layer interface
  */
-class LayerContext<T, P : Position<P>> {
+@DslMarker
+annotation class LayerMarker
+
+/**
+ * Context interface for configuring spatial layers in a simulation.
+ *
+ * Layers define overlays of data that can be sensed everywhere in the environment.
+ * They can be used to model physical properties such as pollution, light, temperature, etc.
+ *
+ * @param T The type of molecule concentration.
+ * @param P The type of position, must extend [Position].
+ */
+@LayerMarker
+interface LayerContext<T, P : Position<P>> {
     /**
-     * The molecule name for the layer.
+     * The molecule name associated with this layer.
+     *
      */
-    var molecule: String? = null
+    var molecule: String?
 
     /**
-     * The layer instance.
+     * The layer instance that provides spatial data.
+     *
+     * @see [Layer]
      */
-    var layer: Layer<T, P>? = null
+    var layer: Layer<T, P>?
 }

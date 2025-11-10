@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.dsl
 import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.boundary.dsl.model.SimulationContext
+import it.unibo.alchemist.boundary.dsl.model.SimulationContextImpl
 import it.unibo.alchemist.boundary.exporters.GlobalExporter
 import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
@@ -25,7 +25,7 @@ import java.util.concurrent.Semaphore
  *
  * @param ctx The simulation context.
  */
-abstract class SingleUseDslLoader(private val ctx: SimulationContext<*, *>) : Loader {
+abstract class SingleUseDslLoader(private val ctx: SimulationContextImpl<*, *>) : Loader {
     private val mutex = Semaphore(1)
     private var consumed = false
 

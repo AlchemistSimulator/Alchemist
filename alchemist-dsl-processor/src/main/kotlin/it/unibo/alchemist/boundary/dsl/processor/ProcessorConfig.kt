@@ -77,7 +77,9 @@ object ProcessorConfig {
         const val SIMULATION_CONTEXT = "$DSL_MODEL_PACKAGE.SimulationContext"
         const val DEPLOYMENTS_CONTEXT = "$DSL_MODEL_PACKAGE.DeploymentsContext"
         const val PROGRAMS_CONTEXT = "$DSL_MODEL_PACKAGE.ProgramsContext"
+        const val PROGRAM_CONTEXT = "$DSL_MODEL_PACKAGE.ProgramContext"
         const val PROPERTIES_CONTEXT = "$DSL_MODEL_PACKAGE.PropertiesContext"
+        const val PROPERTY_CONTEXT = "$DSL_MODEL_PACKAGE.PropertyContext"
     }
 
     /**

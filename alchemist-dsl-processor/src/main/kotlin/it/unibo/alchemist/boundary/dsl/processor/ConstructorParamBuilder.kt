@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
+import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.KSValueParameter
 
 /**
@@ -105,7 +106,7 @@ object ConstructorParamBuilder {
     }
 
     private fun needsCast(
-        constructorParamType: com.google.devtools.ksp.symbol.KSTypeReference,
+        constructorParamType: KSTypeReference,
         contextParamType: String,
         typeParamNames: List<String>,
     ): Boolean {

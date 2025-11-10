@@ -15,12 +15,13 @@ import io.kotest.matchers.doubles.shouldBeExactly
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
 import it.unibo.alchemist.boundary.dsl.Dsl.simulation
-import it.unibo.alchemist.boundary.dsl.model.Incarnation.SAPERE
+import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations.SAPERE
+import it.unibo.alchemist.boundary.dsl.model.SimulationContextImpl
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.model.Position
 import org.junit.jupiter.api.Test
-
+@Suppress("UNCHECKED_CAST")
 class TestVariables {
     @Test
     fun <T, P : Position<P>> testDefaultValue() {
@@ -31,7 +32,8 @@ class TestVariables {
             runLater {
                 println("Checking variable")
                 rate.shouldBeExactly(5.0)
-                variablesContext.variables.containsKey("rate").shouldBeTrue()
+                (this@simulation as SimulationContextImpl<T, P>).variablesContext
+                    .variables.containsKey("rate").shouldBeTrue()
             }
         }.getDefault<T, P>() // needed to build the simulation
     }
@@ -43,19 +45,23 @@ class TestVariables {
             val rate: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
             deployments {
                 rate.shouldBeExactly(20.0)
-                variablesContext.variables.containsKey("rate").shouldBeTrue()
+                (this@simulation as SimulationContextImpl<T, P>).variablesContext
+                    .variables.containsKey("rate").shouldBeTrue()
             }
         }
         loader.getWith<T, P>(mapOf(("rate" to 20.0)))
     }
 
+    @Suppress("NoNameShadowing")
     @Test
     fun <T, P : Position<P>> testDoubleDeclaration() {
         val incarnation = SAPERE.incarnation<T, P>()
         simulation(incarnation) {
             val rate: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
+            println("First declaration of rate: $rate")
             shouldThrow<IllegalStateException> {
                 val rate: Double by variable(GeometricVariable(2.0, 1.0, 5.0, 1))
+                println("This line should not be printed: $rate")
             }
         }
     }

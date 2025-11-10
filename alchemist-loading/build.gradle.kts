@@ -62,8 +62,6 @@ dependencies {
     testRuntimeOnly(incarnation("protelis"))
     implementation(kotlin("script-runtime"))
 
-    implementation(libs.ksp.api)
-
     ksp(project(":alchemist-dsl-processor"))
 }
 

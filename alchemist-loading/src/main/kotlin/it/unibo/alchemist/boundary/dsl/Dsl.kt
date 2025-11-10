@@ -13,8 +13,9 @@ import it.unibo.alchemist.boundary.DependentVariable
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
-import it.unibo.alchemist.boundary.dsl.model.Incarnation as Inc
+import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations as Inc
 import it.unibo.alchemist.boundary.dsl.model.SimulationContext
+import it.unibo.alchemist.boundary.dsl.model.SimulationContextImpl
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Position
@@ -33,7 +34,7 @@ object Dsl {
      * @param dsl The simulation context.
      * @return A loader instance.
      */
-    fun <T, P : Position<P>> createLoader(dsl: SimulationContext<T, P>): Loader = object : SingleUseDslLoader(dsl) {
+    fun <T, P : Position<P>> createLoader(dsl: SimulationContextImpl<T, P>): Loader = object : SingleUseDslLoader(dsl) {
         override val constants: Map<String, Any?> = emptyMap() // not needed
         override val dependentVariables: Map<String, DependentVariable<*>> = emptyMap() // not needed
         override val variables: Map<String, Variable<*>> = dsl.variablesContext.variables
@@ -64,7 +65,7 @@ object Dsl {
         environment: Environment<T, P>,
         block: SimulationContext<T, P>.() -> Unit,
     ): Loader {
-        val ctx = SimulationContext(incarnation, environment)
+        val ctx = SimulationContextImpl(incarnation, environment)
         @Suppress("UNCHECKED_CAST")
         context(ctx.environment as Environment<*, *>, ctx.incarnation as Incarnation<*, *>) {
             ctx.apply(block)
@@ -85,7 +86,7 @@ object Dsl {
     ): Loader {
         @Suppress("UNCHECKED_CAST")
         val defaultEnv = Continuous2DEnvironment(incarnation as Incarnation<T, Euclidean2DPosition>)
-        val ctx = SimulationContext(incarnation, defaultEnv)
+        val ctx = SimulationContextImpl(incarnation, defaultEnv)
         @Suppress("UNCHECKED_CAST")
         context(ctx.environment, ctx.incarnation) {
             ctx.apply(block)

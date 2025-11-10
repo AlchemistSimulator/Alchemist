@@ -9,9 +9,6 @@
 
 package it.unibo.alchemist.boundary.dsl.scripting
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.compilerOptions
@@ -33,7 +30,47 @@ interface AlchemistScript
  * Compilation configuration for Alchemist scripts.
  */
 object AlchemistCompilationConfiguration : ScriptCompilationConfiguration({
-    defaultImports(*loadDefaultImports().toTypedArray())
+    defaultImports(
+        "it.unibo.alchemist.boundary.dsl.Dsl.simulation",
+        "it.unibo.alchemist.boundary.dsl.Dsl.incarnation",
+        "it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations.*",
+        "it.unibo.alchemist.boundary.dsl.model.Incarnation.*",
+        "it.unibo.alchemist.boundary.dsl.generated.*",
+        "it.unibo.alchemist.boundary.dsl.*",
+        "it.unibo.alchemist.model.maps.actions.*",
+        "it.unibo.alchemist.model.maps.deployments.*",
+        "it.unibo.alchemist.model.maps.environments.*",
+        "it.unibo.alchemist.model.*",
+        "it.unibo.alchemist.model.positions.*",
+        "it.unibo.alchemist.model.deployments.*",
+        "it.unibo.alchemist.model.positionfilters.And",
+        "it.unibo.alchemist.model.positionfilters.Or",
+        "it.unibo.alchemist.model.positionfilters.Not",
+        "it.unibo.alchemist.model.positionfilters.Xor",
+        "it.unibo.alchemist.model.actions.*",
+        "it.unibo.alchemist.model.conditions.*",
+        "it.unibo.alchemist.model.environments.*",
+        "it.unibo.alchemist.model.geometry.*",
+        "it.unibo.alchemist.model.layers.*",
+        "it.unibo.alchemist.model.linkingrules.*",
+        "it.unibo.alchemist.model.movestrategies.*",
+        "it.unibo.alchemist.model.neighborhoods.*",
+        "it.unibo.alchemist.model.nodes.*",
+        "it.unibo.alchemist.model.properties.*",
+        "it.unibo.alchemist.model.routes.*",
+        "it.unibo.alchemist.model.reactions.*",
+        "it.unibo.alchemist.model.terminators.*",
+        "it.unibo.alchemist.model.timedistributions.*",
+        "it.unibo.alchemist.boundary.properties.*",
+        "it.unibo.alchemist.boundary.dsl.aliases.*",
+        "it.unibo.alchemist.boundary.exporters.*",
+        "it.unibo.alchemist.boundary.extractors.*",
+        "it.unibo.alchemist.boundary.launchers.*",
+        "it.unibo.alchemist.boundary.statistic.*",
+        "it.unibo.alchemist.boundary.exportfilters.*",
+        "it.unibo.alchemist.boundary.variables.*",
+        "it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger",
+    )
 
     jvm {
         dependenciesFromClassContext(AlchemistScript::class, wholeClasspath = true)
@@ -42,45 +79,4 @@ object AlchemistCompilationConfiguration : ScriptCompilationConfiguration({
 }) {
     @Suppress("UnusedPrivateMember")
     private fun readResolve(): Any = AlchemistCompilationConfiguration
-}
-
-private fun loadDefaultImports(): List<String> {
-    val defaultImports = listOf(
-        "it.unibo.alchemist.boundary.dsl.Dsl.simulation",
-        "it.unibo.alchemist.boundary.dsl.model.Incarnation.*",
-        "it.unibo.alchemist.boundary.dsl.generated.*",
-        "it.unibo.alchemist.boundary.dsl.*",
-        "it.unibo.alchemist.model.*",
-    )
-
-    val configFileName = "alchemist-default-imports.json"
-    val type = object : TypeToken<List<String>>() {}.type
-    val mergedImports = defaultImports.toMutableList()
-    val seenImports = defaultImports.toMutableSet()
-
-    fun loadAndMergeImports(json: String) {
-        try {
-            val loadedImports = Gson().fromJson<List<String>>(json, type) ?: return
-            loadedImports.forEach { import ->
-                if (seenImports.add(import)) {
-                    mergedImports.add(import)
-                }
-            }
-        } catch (e: Exception) {
-        }
-    }
-
-    val externalFile = File(configFileName)
-    if (externalFile.exists() && externalFile.isFile) {
-        loadAndMergeImports(externalFile.readText())
-    } else {
-        val resourceStream = AlchemistScript::class.java.classLoader
-            .getResourceAsStream(configFileName)
-        if (resourceStream != null) {
-            val json = resourceStream.bufferedReader().use { it.readText() }
-            loadAndMergeImports(json)
-        }
-    }
-
-    return mergedImports
 }

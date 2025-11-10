@@ -11,7 +11,7 @@ package it.unibo.alchemist.dsl
 
 import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
 import it.unibo.alchemist.boundary.dsl.Dsl.simulation
-import it.unibo.alchemist.boundary.dsl.model.Incarnation
+import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
@@ -21,10 +21,10 @@ class TestDeployments {
 
     @Test
     fun testDeployments() {
-        val incarnation = Incarnation.SAPERE.incarnation<Any, Euclidean2DPosition>()
+        val incarnation = AvailableIncarnations.SAPERE.incarnation<Any, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
             deployments {
-                val p = Point(environment, 0.0, 0.0)
+                val p = Point(envAsAny, 0.0, 0.0)
                 deploy(p)
             }
         }
@@ -34,12 +34,12 @@ class TestDeployments {
 
     @Test
     fun testMultipleDeployments() {
-        val incarnation = Incarnation.SAPERE.incarnation<Any, Euclidean2DPosition>()
+        val incarnation = AvailableIncarnations.SAPERE.incarnation<Any, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
             deployments {
-                val point = Point(environment, 0.0, 0.0)
+                val point = Point(envAsAny, 0.0, 0.0)
                 deploy(point)
-                deploy(Point(environment, 1.0, 1.0))
+                deploy(Point(envAsAny, 1.0, 1.0))
             }
         }
 
@@ -48,11 +48,11 @@ class TestDeployments {
 
     @Test
     fun testGridDeployment() {
-        val incarnation = Incarnation.SAPERE.incarnation<Any, Euclidean2DPosition>()
+        val incarnation = AvailableIncarnations.SAPERE.incarnation<Any, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
             deployments {
                 val grid = Grid(
-                    environment,
+                    envAsAny,
                     generator,
                     1.0,
                     1.0,

@@ -14,28 +14,63 @@ import it.unibo.alchemist.boundary.Extractor
 import it.unibo.alchemist.model.Position
 
 /**
- * Context for configuring exporters in a simulation.
+ * Context interface for configuring data exporters in a simulation.
+ *
+ * Exporters define how simulation data is extracted and exported, supporting formats
+ * such as CSV, MongoDB, and custom formats.
+ * Data can be exported per-node or aggregated
+ * using statistical functions.
+ *
+ * ## Usage Example
+ *
+ * ```kotlin
+*     exporter {
+*         type = CSVExporter("output", 4.0)
+*         data(Time(), moleculeReader("moleculeName"))
+*     }
+ * ```
  *
  * @param T The type of molecule concentration.
- * @param P The type of position.
+ * @param P The type of position, must extend [Position].
+ *
+ * @see [SimulationContext.exporter] for adding exporters to a simulation
+ * @see [Exporter] for the exporter interface
+ * @see [Extractor] for data extraction
  */
-class ExporterContext<T, P : Position<P>> {
-    /**
-     * The exporter type.
-     */
-    var type: Exporter<T, P>? = null
+@DslMarker
+annotation class ExporterMarker
 
+/**
+ * Context interface for configuring data exporters in a simulation.
+ *
+ * Exporters define how simulation data is extracted and exported, supporting formats
+ * such as CSV, MongoDB, and custom formats.
+ * Data can be exported per-node or aggregated
+ * using statistical functions.
+ *
+ * @param T The type of molecule concentration.
+ * @param P The type of position, must extend [Position].
+ */
+@ExporterMarker
+interface ExporterContext<T, P : Position<P>> {
     /**
-     * The list of data extractors.
+     * The exporter instance that handles data output.
+     *
+     * @see [Exporter]
      */
-    var extractors: List<Extractor<*>> = emptyList()
+    var type: Exporter<T, P>?
 
     /**
      * Sets the data extractors for this exporter.
      *
-     * @param extractors The extractors to use.
+     * Extractors define which data should be exported from the simulation.
+     *
+     * ```kotlin
+     * data(Time(), moleculeReader("moleculeName"))
+     * ```
+     *
+     * @param extractors The extractors to use for data extraction.
+     * @see [Extractor]
      */
-    fun data(vararg extractors: Extractor<*>) {
-        this.extractors = extractors.toList()
-    }
+    fun data(vararg extractors: Extractor<*>)
 }

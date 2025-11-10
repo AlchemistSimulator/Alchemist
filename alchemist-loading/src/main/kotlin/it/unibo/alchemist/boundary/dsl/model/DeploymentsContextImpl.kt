@@ -25,47 +25,37 @@ import it.unibo.alchemist.model.linkingrules.NoLinks
  * @param P The type of position.
  * @param ctx The simulation context.
  */
-open class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, P>) {
+open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: SimulationContext<T, P>) :
+    DeploymentsContext<T, P> {
     /**
      * The environment instance.
      */
-    val environment: Environment<*, *> = ctx.environment as Environment<*, *>
+    override val envAsAny: Environment<*, *> = ctx.environment as Environment<*, *>
 
     /**
      * The environment instance.
      */
-    val env = ctx.environment
+    override val env = ctx.environment
 
     /**
      * The scenario generator.
      */
-    var generator = ctx.scenarioGenerator
+    override val generator = ctx.scenarioGenerator
     private val inc = ctx.incarnation
 
-    /**
-     * Deploys a deployment with a configuration block.
-     *
-     * @param deployment The deployment to configure.
-     * @param block The configuration block.
-     */
-    fun deploy(deployment: Deployment<*>, block: DeploymentContext.() -> Unit) {
+    override fun deploy(deployment: Deployment<*>, block: DeploymentContext<T, P>.() -> Unit) {
         logger.debug("Deploying deployment: {}", deployment)
         @Suppress("UNCHECKED_CAST")
-        val d = DeploymentContext(deployment as Deployment<P>).apply(block)
+        val d = DeploymentContextImpl(deployment as Deployment<P>).apply(block)
         // populate
         populateDeployment(d)
     }
 
-    /**
-     * Deploys a deployment without additional configuration.
-     *
-     * @param deployment The deployment to deploy.
-     */
-    fun deploy(deployment: Deployment<*>) {
+    override fun deploy(deployment: Deployment<*>) {
         @Suppress("UNCHECKED_CAST")
         this.deploy(deployment) {}
     }
-    private fun populateDeployment(deploymentContext: DeploymentContext) {
+    private fun populateDeployment(deploymentContext: DeploymentContextImpl) {
         val deployment = deploymentContext.deployment
         // Additional linking rules
         deployment.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
@@ -113,11 +103,13 @@ open class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, 
      *
      * @param deployment The deployment being configured.
      */
-    inner class DeploymentContext(val deployment: Deployment<P>) {
+    inner class DeploymentContextImpl(val deployment: Deployment<P>) : DeploymentContext<T, P> {
+        override val ctx: DeploymentsContext<T, P> = this@DeploymentsContextImpl
+
         /**
          * The list of content contexts for this deployment.
          */
-        val contents: MutableList<ContentContext> = mutableListOf()
+        val contents: MutableList<ContentContextImpl> = mutableListOf()
 
         /**
          * Optional factory for creating custom nodes.
@@ -127,65 +119,39 @@ open class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, 
         /**
          * The properties context for this deployment.
          */
-        var propertiesContext: PropertiesContext<T, P> = PropertiesContext(this@DeploymentsContext)
+        var propertiesContext: PropertiesContextImpl<T, P> = PropertiesContextImpl(this@DeploymentContextImpl)
 
         /**
          * The programs context for this deployment.
          */
-        val programsContext: ProgramsContext<T, P> = ProgramsContext(this@DeploymentsContext)
+        val programsContext: ProgramsContextImpl<T, P> = ProgramsContextImpl(this@DeploymentContextImpl)
         init {
             logger.debug("Visiting deployment: {}", deployment)
         }
 
-        /**
-         * Configures content for all positions in the deployment.
-         *
-         * @param block The content configuration block.
-         */
-        fun all(block: ContentContext.() -> Unit) {
+        override fun all(block: ContentContext<T, P>.() -> Unit) {
             logger.debug("Adding content for all positions")
-            val c = ContentContext().apply(block)
+            val c = ContentContextImpl().apply(block)
             contents.add(c)
         }
 
-        /**
-         * Configures content for positions inside a filter.
-         *
-         * @param filter The position filter.
-         * @param block The content configuration block.
-         */
-        fun inside(filter: PositionBasedFilter<*>, block: ContentContext.() -> Unit) {
+        override fun inside(filter: PositionBasedFilter<*>, block: ContentContext<T, P>.() -> Unit) {
             @Suppress("UNCHECKED_CAST")
             val typedFilter = filter as PositionBasedFilter<P>
             logger.debug("Adding content for positions inside filter: {}", typedFilter)
-            val c = ContentContext(typedFilter).apply(block)
+            val c = ContentContextImpl(typedFilter).apply(block)
             contents.add(c)
         }
 
-        /**
-         * Configures programs for this deployment.
-         *
-         * @param block The programs configuration block.
-         */
-        fun programs(block: ProgramsContext<T, P>.() -> Unit) {
+        override fun programs(block: ProgramsContext<T, P>.() -> Unit) {
             programsContext.apply(block)
         }
 
-        /**
-         * Sets a custom node factory for this deployment.
-         *
-         * @param factory The factory function for creating nodes.
-         */
-        fun nodes(factory: () -> Node<T>) {
+        override fun nodes(factory: () -> Node<T>) {
             nodeFactory = factory
         }
 
-        /**
-         * Configures properties for this deployment.
-         *
-         * @param block The properties configuration block.
-         */
-        fun properties(block: PropertiesContext<T, P>.() -> Unit) {
+        override fun properties(block: PropertiesContext<T, P>.() -> Unit) {
             propertiesContext.apply(block)
         }
 
@@ -196,7 +162,7 @@ open class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, 
          * @param position The position of the node.
          * @param content The content context to apply.
          */
-        fun applyToNodes(node: Node<T>, position: P, content: ContentContext) {
+        fun applyToNodes(node: Node<T>, position: P, content: ContentContextImpl) {
             logger.debug("Applying node to nodes for position: {}, deployment {}", position, deployment)
             if (content.filter == null || content.filter.contains(position)) {
                 logger.debug("Creating molecule for node at position: {}", position)
@@ -216,16 +182,16 @@ open class DeploymentsContext<T, P : Position<P>>(val ctx: SimulationContext<T, 
          *
          * @param filter Optional position filter for applying content.
          */
-        inner class ContentContext(val filter: PositionBasedFilter<P>? = null) {
+        inner class ContentContextImpl(override val filter: PositionBasedFilter<P>? = null) : ContentContext<T, P> {
             /**
              * The molecule name.
              */
-            var molecule: String? = null
+            override var molecule: String? = null
 
             /**
              * The concentration value.
              */
-            var concentration: T? = null
+            override var concentration: T? = null
         }
     }
 }

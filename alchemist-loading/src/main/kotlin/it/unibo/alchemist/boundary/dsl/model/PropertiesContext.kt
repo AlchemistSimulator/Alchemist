@@ -1,90 +1,131 @@
+/*
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.boundary.dsl.model
 
-import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
 
 /**
- * Context for managing node properties in a simulation.
+ * Context interface for configuring node properties in a deployment.
+ *
+ * Properties can be assigned to nodes based on their position using filters,
+ * or applied to all nodes in the deployment.
+ *
+ * ## Usage Example
+ *
+ * ```kotlin
+ * deployments {
+ *     deploy(deployment) {
+ *         properties {
+ *             inside(RectangleFilter(-3.0, -3.0, 2.0, 2.0)) {
+ *                 add(MyNodeProperty())
+ *             }
+ *             all {
+ *                 add(CommonProperty())
+ *             }
+ *         }
+ *     }
+ * }
+ * ```
  *
  * @param T The type of molecule concentration.
- * @param P The type of position.
+ * @param P The type of position, must extend [Position].
+ *
+ * @see [DeploymentContext.properties] for configuring properties in a deployment
+ * @see [NodeProperty] for the property interface
+ * @see [PositionBasedFilter] for position filtering
  */
-class PropertiesContext<T, P : Position<P>>(val ctx: DeploymentsContext<T, P>) {
+@DslMarker
+annotation class PropertiesMarker
+
+/**
+ * Context interface for configuring node properties in a deployment.
+ *
+ * Properties can be assigned to nodes based on their position using filters,
+ * or applied to all nodes in the deployment.
+ *
+ * @param T The type of molecule concentration.
+ * @param P The type of position, must extend [Position].
+ */
+@PropertiesMarker
+interface PropertiesContext<T, P : Position<P>> {
     /**
-     * List of property contexts with their associated filters.
+     * The deployment context this properties context belongs to.
      */
-    val propertiesCtx: MutableList<Pair<PropertyContext.() -> Unit, PositionBasedFilter<P>?>> = mutableListOf()
+    val ctx: DeploymentContext<T, P>
 
     /**
      * Configures properties for nodes inside a position filter.
      *
-     * @param filter The position filter.
+     * Only nodes whose positions match the filter will receive the configured properties.
+     *
+     * @param filter The position filter to apply.
+     * @param block The property configuration block.
+     * @see [PositionBasedFilter]
+     */
+    fun inside(filter: PositionBasedFilter<*>, block: PropertyContext<T, P>.() -> Unit)
+
+    /**
+     * Configures properties for all nodes in the deployment.
+     *
      * @param block The property configuration block.
      */
-    fun inside(filter: PositionBasedFilter<*>, block: PropertyContext.() -> Unit) {
-        @Suppress("UNCHECKED_CAST")
-        val typedFilter = filter as PositionBasedFilter<P>
-        propertiesCtx.add(block to typedFilter)
-        logger.debug("Adding property for nodes inside filter: {}", typedFilter)
-    }
+    fun all(block: PropertyContext<T, P>.() -> Unit)
+}
+
+/**
+ * Context interface for configuring properties for a specific node.
+ *
+ * This context is used within [PropertiesContext] blocks to add properties to nodes.
+ *
+ * @param T The type of molecule concentration.
+ * @param P The type of position, must extend [Position].
+ *
+ * @see [PropertiesContext] for the parent context
+ * @see [NodeProperty] for the property interface
+ */
+@DslMarker
+annotation class PropertyMarker
+
+/**
+ * Context interface for configuring properties for a specific node.
+ *
+ * This context is used within [PropertiesContext] blocks to add properties to nodes.
+ *
+ * @param T The type of molecule concentration.
+ * @param P The type of position, must extend [Position].
+ */
+@PropertyMarker
+interface PropertyContext<T, P : Position<P>> {
+    /**
+     * The properties context this property context belongs to.
+     */
+    val ctx: PropertiesContext<T, P>
 
     /**
-     * Configures properties for all nodes.
-     *
-     * @param block The property configuration block.
+     * The optional position filter applied to this property context.
      */
-    fun all(block: PropertyContext.() -> Unit) {
-        propertiesCtx.add(block to null)
-        logger.debug("Adding property for all nodes")
-    }
+    val filter: PositionBasedFilter<P>?
 
     /**
-     * Applies configured properties to a node at a specific position.
-     *
-     * @param node The node to apply properties to.
-     * @param position The position of the node.
+     * The node this property context is configuring.
      */
-    fun applyToNode(node: Node<T>, position: P) {
-        propertiesCtx.forEach { (propertyCtx, filter) ->
-            if (filter == null || filter.contains(position)) {
-                val properties = PropertyContext(filter, node, this)
-                    .apply(propertyCtx)
-                    .properties
-                properties.forEach { property ->
-                    logger.debug("Applying property: {} to node: {}", property, node)
-                    node.addProperty(property)
-                }
-            }
-        }
-    }
+    val node: Node<T>
 
     /**
-     * Context for configuring properties for a specific node.
+     * Adds a property to the node.
      *
-     * @param filter Optional position filter.
-     * @param node The node to configure properties for.
+     * @param property The property to add to the node.
+     * @see [NodeProperty]
      */
-    inner class PropertyContext(
-        val filter: PositionBasedFilter<P>?,
-        val node: Node<T>,
-        val ctx: PropertiesContext<T, P>,
-    ) {
-        /**
-         * List of properties to add to the node.
-         */
-        val properties: MutableList<NodeProperty<T>> = mutableListOf()
-
-        /**
-         * Adds a property to the node.
-         *
-         * @param property The property to add.
-         */
-        fun add(property: NodeProperty<T>) {
-            logger.debug("Adding property: {}", property)
-            properties.add(property)
-        }
-    }
+    fun add(property: NodeProperty<T>)
 }

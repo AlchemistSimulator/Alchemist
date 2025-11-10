@@ -1,5 +1,10 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
+import com.google.devtools.ksp.symbol.KSTypeArgument
+import com.google.devtools.ksp.symbol.KSTypeParameter
+import com.google.devtools.ksp.symbol.KSTypeReference
+import com.google.devtools.ksp.symbol.Variance
+
 /**
  * Handles type parameter preparation and manipulation for DSL builder functions.
  */
@@ -112,7 +117,7 @@ object TypeParameterHandler {
             tIndex >= 0 -> typeParamNames[tIndex]
             pIndex == 0 && typeParamNames.size > 1 -> typeParamNames[1]
             pIndex > 0 -> typeParamNames[0]
-            typeParamNames.size > 0 && pIndex < 0 -> typeParamNames[0]
+            typeParamNames.isNotEmpty() && pIndex < 0 -> typeParamNames[0]
             else -> "T"
         }
 
@@ -152,10 +157,7 @@ object TypeParameterHandler {
      * @param existingTypeParamNames List of existing type parameter names
      * @return Set of needed type parameter names
      */
-    fun collectNeededTypeParams(
-        typeRef: com.google.devtools.ksp.symbol.KSTypeReference,
-        existingTypeParamNames: List<String>,
-    ): Set<String> {
+    fun collectNeededTypeParams(typeRef: KSTypeReference, existingTypeParamNames: List<String>): Set<String> {
         val needed = mutableSetOf<String>()
         val resolved = typeRef.resolve()
         val arguments = resolved.arguments
@@ -168,12 +170,12 @@ object TypeParameterHandler {
     }
 
     private fun processTypeArgForCollection(
-        arg: com.google.devtools.ksp.symbol.KSTypeArgument,
+        arg: KSTypeArgument,
         existingTypeParamNames: List<String>,
         needed: MutableSet<String>,
     ) {
         when {
-            arg.type == null || arg.variance == com.google.devtools.ksp.symbol.Variance.STAR -> {
+            arg.type == null || arg.variance == Variance.STAR -> {
                 if (existingTypeParamNames.isEmpty()) {
                     needed.add("T")
                 }
@@ -185,13 +187,13 @@ object TypeParameterHandler {
     }
 
     private fun processConcreteTypeArgForCollection(
-        arg: com.google.devtools.ksp.symbol.KSTypeArgument,
+        arg: KSTypeArgument,
         existingTypeParamNames: List<String>,
         needed: MutableSet<String>,
     ) {
         val argType = arg.type ?: return
         val argDecl = argType.resolve().declaration
-        if (argDecl is com.google.devtools.ksp.symbol.KSTypeParameter) {
+        if (argDecl is KSTypeParameter) {
             val paramName = argDecl.name.asString()
             if (!existingTypeParamNames.contains(paramName)) {
                 needed.add(paramName)

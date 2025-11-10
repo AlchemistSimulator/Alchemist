@@ -7,182 +7,224 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-@file:Suppress("UNCHECKED_CAST")
-
 package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.Variable
-import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
-import it.unibo.alchemist.boundary.launchers.DefaultLauncher
+import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Incarnation
-import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.TerminationPredicate
-import it.unibo.alchemist.model.linkingrules.NoLinks
 import java.io.Serializable
-import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Main context for building and configuring a simulation.
+ * Main context interface for building and configuring Alchemist simulations using the DSL.
  *
- * @param T The type of molecule concentration.
- * @param P The type of position.
- * @param incarnation The incarnation instance.
- * @param environment The environment instance.
+ * This interface provides a type-safe way to configure simulations programmatically.
+ * It serves as the entry point for DSL users to define
+ * all aspects of a simulation including deployments, programs, monitors, exporters, and more.
+ *
+ * ## Usage Example
+ *
+ * ```kotlin
+ * simulation(incarnation, environment) {
+ *     networkModel = ConnectWithinDistance(0.5)
+ *     deployments {
+ *         deploy(Grid(-5, -5, 5, 5, 0.25, 0.25)) {
+ *             all {
+ *                 molecule = "moleculeName"
+ *                 concentration = 1.0
+ *             }
+ *         }
+ *     }
+ * }
+ * ```
+ *
+ * @param T The type of molecule concentration used in the simulation
+ * @param P The type of position used in the environment, must extend [Position]
+ *
+ * @see [it.unibo.alchemist.boundary.dsl.Dsl] for creating simulation contexts
+ * @see [DeploymentsContextImpl] for deployment configuration
+ * @see [ProgramsContextImpl] for program configuration
+ * @see [ExporterContextImpl] for exporter configuration
+ * @see [LayerContextImpl] for layer configuration
  */
-class SimulationContext<T, P : Position<P>>(val incarnation: Incarnation<T, P>, val environment: Environment<T, P>) {
+@DslMarker
+annotation class SimulationMarker
+
+/**
+ * Main context interface for building and configuring Alchemist simulations using the DSL.
+ *
+ * This interface provides a type-safe way to configure simulations programmatically.
+ * It serves as the entry point for DSL users to define
+ * all aspects of a simulation including deployments, programs, monitors, exporters, and more.
+ *
+ * @param T The type of molecule concentration used in the simulation
+ * @param P The type of position used in the environment, must extend [Position]
+ */
+@SimulationMarker
+interface SimulationContext<T, P : Position<P>> {
     /**
-     * List of build steps to execute.
+     * The incarnation instance that defines how molecules, nodes, and reactions are created.
+     *
+     * ## Creating an Incarnation
+     *
+     * Incarnations are created from the [AvailableIncarnations] enum using the extension function:
+     * ```kotlin
+     *
+     * simulation(AvailableIncarnations.SAPERE.incarnation(), environment) {
+     *     // simulation configuration
+     * }
+     * ```
+     *
+     *
+     * @see [AvailableIncarnations] for the DSL enum of available incarnations
+     * @see [Incarnation] for the incarnation interface
+     * @see [it.unibo.alchemist.boundary.dsl.Dsl.incarnation] for converting enum to instance
      */
-    val buildSteps: MutableList<() -> Unit> = mutableListOf()
+    val incarnation: Incarnation<T, P>
 
     /**
-     * List of output monitors.
+     * The environment where the simulation takes place.
+     *
+     * @see [Environment]
      */
-    val monitors: MutableList<OutputMonitor<T, P>> = mutableListOf()
+    val environment: Environment<T, P>
 
     /**
-     * List of exporters.
+     * The launcher responsible for executing the simulation.
+     *
+     * Some implementations are available in [it.unibo.alchemist.boundary.launchers].
+     *
+     * @see [Launcher]
      */
-    val exporters: MutableList<ExporterContext<T, P>> = mutableListOf()
+    var launcher: Launcher
 
     /**
-     * The launcher for the simulation.
+     * Random number generator controlling the evolution of the events of the simulation.
+     *
+     * @see [RandomGenerator]
      */
-    var launcher: Launcher = DefaultLauncher()
+    var simulationGenerator: RandomGenerator
 
     /**
-     * The random generator for scenario generation.
+     * Random number generator controlling the position of random deployments.
+     *
+     * @see [RandomGenerator]
      */
-    var scenarioGenerator: RandomGenerator = MersenneTwister(0L)
+    var scenarioGenerator: RandomGenerator
 
     /**
-     * The random generator for simulation execution.
-     */
-    var simulationGenerator: RandomGenerator = MersenneTwister(0L)
-
-    private val layers: MutableMap<String, Layer<T, P>> = HashMap()
-    private var _networkModel: LinkingRule<T, P> = NoLinks()
-
-    /**
-     * The network model (linking rule) for the environment.
+     * The network model (linking rule) that defines how nodes connect in the environment.
+     *
+     * @see [LinkingRule]
      */
     var networkModel: LinkingRule<T, P>
-        get() = _networkModel
-        set(value) {
-            _networkModel = value
-            environment.linkingRule = value
-        }
 
     /**
-     * The variables context for managing simulation variables.
-     */
-    val variablesContext = VariablesContext()
-
-    /**
-     * Executes all build steps.
-     */
-    fun build() {
-        buildSteps.forEach { it() }
-    }
-
-    /**
-     * Configures deployments for the simulation.
+     * Configures node deployments for the simulation.
      *
-     * @param block The deployments configuration block.
+     * ## Usage Example
+     * ```kotlin
+     * deployments {
+     *    deploy(point(0,0))
+     *    ...
+     * }
+     * ```
+     *
+     * @see [DeploymentsContextImpl] to configure deployments
      */
-    fun deployments(block: DeploymentsContext<T, P>.() -> Unit) {
-        buildSteps.add { DeploymentsContext(this).apply(block) }
-    }
+    fun deployments(block: DeploymentsContextImpl<T, P>.() -> Unit)
 
     /**
      * Adds a termination predicate to the simulation.
      *
-     * @param predicate The termination predicate.
+     * @param terminator The termination predicate to add
+     * @see [TerminationPredicate]
      */
-    fun addTerminator(predicate: TerminationPredicate<*, *>) {
-        @Suppress("UNCHECKED_CAST")
-        buildSteps.add { environment.addTerminator(predicate as TerminationPredicate<T, P>) }
-    }
+    fun addTerminator(terminator: TerminationPredicate<*, *>)
 
     /**
      * Adds an output monitor to the simulation.
      *
-     * @param monitor The output monitor.
+     * @param monitor The output monitor to add
+     * @see [OutputMonitor]
      */
-    fun addMonitor(monitor: OutputMonitor<T, P>) {
-        buildSteps.add { monitors.add(monitor) }
-    }
+    fun addMonitor(monitor: OutputMonitor<T, P>)
 
     /**
-     * Configures an exporter for the simulation.
+     * Add an exporter to the simulation for data output.
      *
-     * @param block The exporter configuration block.
+     * @param block The configuration block
+     * @see [ExporterContextImpl]
      */
-    fun exporter(block: ExporterContext<T, P>.() -> Unit) {
-        buildSteps.add { exporters.add(ExporterContext<T, P>().apply(block)) }
-    }
+    fun exporter(block: ExporterContextImpl<T, P>.() -> Unit)
 
     /**
-     * Adds a global reaction to the simulation.
+     * Configures a global program.
      *
-     * @param program The global reaction.
+     * @param program the global reaction to add
+     * @see [GlobalReaction]
      */
-    fun program(program: GlobalReaction<T>) {
-        buildSteps.add { this.environment.addGlobalReaction(program) }
-    }
+    fun program(program: GlobalReaction<T>)
 
     /**
-     * Schedules a block to run later during build.
+     * Schedules a block of code to execute later during the loading process.
      *
-     * @param block The block to execute.
+     * This is useful for debug purposes or for operations that need to be deferred
+     *
+     * Example:
+     * ```kotlin
+     * runLater {
+     *     environment.nodes.forEach { node ->
+     *         println("Node: ${node}")
+     *     }
+     * }
+     * ```
+     *
+     * @param block The block of code to execute later
      */
-    fun runLater(block: () -> Unit) {
-        buildSteps.add { block() }
-    }
+    fun runLater(block: () -> Unit)
 
     /**
-     * Configures a layer for the simulation.
+     * Add a spatial layer for a molecule.
      *
-     * @param block The layer configuration block.
+     * It is possible to define overlays (layers) of data that can be sensed
+     * everywhere in the environment
+     *
+     * @param block The configuration block
+     * @see [LayerContextImpl]
      */
-    fun layer(block: LayerContext<T, P>.() -> Unit) {
-        buildSteps.add {
-            val l = LayerContext<T, P>().apply(block)
-            val layer = requireNotNull(l.layer) { "Layer must be specified" }
-            val moleculeName = requireNotNull(l.molecule) { "Molecule must be specified" }
-            require(!this.layers.containsKey(moleculeName)) {
-                "Inconsistent layer definition for molecule $moleculeName. " +
-                    "There must be a single layer per molecule"
-            }
-            val molecule = incarnation.createMolecule(moleculeName)
-            logger.debug("Adding layer for molecule {}: {}", moleculeName, layer)
-            layers[moleculeName] = layer
-            environment.addLayer(molecule, layer)
-        }
-    }
+    fun layer(block: LayerContextImpl<T, P>.() -> Unit)
 
     /**
-     * Registers a variable in the variables context.
+     * Registers a Linear Variable for batch simulations.
      *
-     * @param source The variable source.
-     * @return A variable provider for property delegation.
+     * Example usage with a range variable:
+     * ```kotlin
+     * var myParam by variable(RangeVariable(0.0, 10.0, 0.5))
+     * ```
+     *
+     * @param source The variable source that provides the range of values
+     * @see [Variable]
      */
-    fun <T : Serializable> variable(source: Variable<out T>): VariablesContext.VariableProvider<T> =
-        variablesContext.register(source)
+    fun <T : Serializable> variable(source: Variable<out T>): VariablesContext.VariableProvider<T>
 
     /**
-     * Registers a dependent variable in the variables context.
+     * Registers a dependent variable that is computed from other variables.
      *
-     * @param source The function that provides the variable value.
-     * @return A dependent variable provider for property delegation.
+     * Example usage::
+     * ```kotlin
+     * var param by variable(RangeVariable(0.0, 10.0, 0.5))
+     * var computedParam by variable { param * 2.0 }
+     * ```
+     *
+     * @param source A function that computes the variable value
      */
-    fun <T : Serializable> variable(source: () -> T): VariablesContext.DependentVariableProvider<T> =
-        variablesContext.dependent(source)
+    fun <T : Serializable> variable(source: () -> T): VariablesContext.DependentVariableProvider<T>
 }

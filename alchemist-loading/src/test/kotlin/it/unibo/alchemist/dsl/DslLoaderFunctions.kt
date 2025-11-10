@@ -22,8 +22,8 @@ import it.unibo.alchemist.boundary.dsl.generated.moleculeReader
 import it.unibo.alchemist.boundary.dsl.generated.point
 import it.unibo.alchemist.boundary.dsl.generated.testNode
 import it.unibo.alchemist.boundary.dsl.generated.testNodeProperty
-import it.unibo.alchemist.boundary.dsl.model.Incarnation.PROTELIS
-import it.unibo.alchemist.boundary.dsl.model.Incarnation.SAPERE
+import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations.PROTELIS
+import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations.SAPERE
 import it.unibo.alchemist.boundary.exporters.CSVExporter
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
 import it.unibo.alchemist.boundary.extractors.Time
@@ -59,7 +59,7 @@ object DslLoaderFunctions {
             networkModel = ConnectWithinDistance(5.0)
             deployments {
                 deploy(point(0.0, 0.0))
-                deploy(Point(environment, 0.0, 1.0))
+                deploy(Point(envAsAny, 0.0, 1.0))
             }
         }
     }
@@ -73,7 +73,7 @@ object DslLoaderFunctions {
             deployments {
                 deploy(
                     Circle(
-                        environment,
+                        envAsAny,
                         generator,
                         10,
                         0.0,
@@ -136,7 +136,7 @@ object DslLoaderFunctions {
                 val hello = "hello"
                 deploy(
                     Grid(
-                        environment, generator,
+                        envAsAny, generator,
                         -5.0,
                         -5.0,
                         5.0,
@@ -215,7 +215,7 @@ object DslLoaderFunctions {
             deployments {
                 deploy(
                     Grid(
-                        environment, generator,
+                        envAsAny, generator,
                         -5.0, -5.0, 5.0, 5.0, 0.25, 0.25, 0.1, 0.1,
                     ),
                 ) {

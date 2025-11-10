@@ -1,5 +1,8 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
+import com.google.devtools.ksp.symbol.KSTypeReference
+import com.google.devtools.ksp.symbol.KSValueParameter
+
 /**
  * Generates function signatures and constructor calls for DSL builder functions.
  */
@@ -24,7 +27,7 @@ object FunctionGenerator {
         typeParamBounds: List<String>,
         typeParamNames: List<String>,
         className: String,
-        remainingParams: List<com.google.devtools.ksp.symbol.KSValueParameter>,
+        remainingParams: List<KSValueParameter>,
         paramNames: List<String>,
         paramTypes: List<String>,
         injectedParams: List<Pair<String, String>>,
@@ -63,10 +66,12 @@ object FunctionGenerator {
         val tWithVariance = tParam
         val pWithVariance = if (pVariance.isNotEmpty()) "$pVariance $pParam" else pParam
         val contextTypeName = when (contextType) {
-            ContextType.SIMULATION -> "SimulationContext<$tWithVariance, $pWithVariance>"
-            ContextType.DEPLOYMENT -> "DeploymentsContext<$tWithVariance, $pWithVariance>"
-            ContextType.PROGRAM -> "ProgramsContext<$tWithVariance, $pWithVariance>.ProgramContext"
-            ContextType.PROPERTY -> "PropertiesContext<$tWithVariance, $pWithVariance>.PropertyContext"
+            ContextType.SIMULATION ->
+                "${ProcessorConfig.ContextTypes.SIMULATION_CONTEXT}<$tWithVariance, $pWithVariance>"
+            ContextType.DEPLOYMENT ->
+                "${ProcessorConfig.ContextTypes.DEPLOYMENTS_CONTEXT}<$tWithVariance, $pWithVariance>"
+            ContextType.PROGRAM -> "${ProcessorConfig.ContextTypes.PROGRAM_CONTEXT}<$tWithVariance, $pWithVariance>"
+            ContextType.PROPERTY -> "${ProcessorConfig.ContextTypes.PROPERTY_CONTEXT}<$tWithVariance, $pWithVariance>"
         }
         return "context(ctx: $contextTypeName) "
     }
@@ -100,7 +105,7 @@ object FunctionGenerator {
     }
 
     fun buildFunctionParams(
-        remainingParams: List<com.google.devtools.ksp.symbol.KSValueParameter>,
+        remainingParams: List<KSValueParameter>,
         paramNames: List<String>,
         paramTypes: List<String>,
     ): String {
@@ -141,8 +146,8 @@ object FunctionGenerator {
      */
     // CPD-OFF: Function signature duplication is necessary for API delegation
     fun buildConstructorParams(
-        allParameters: List<com.google.devtools.ksp.symbol.KSValueParameter>,
-        remainingParams: List<com.google.devtools.ksp.symbol.KSValueParameter>,
+        allParameters: List<KSValueParameter>,
+        remainingParams: List<KSValueParameter>,
         paramsToSkip: Set<Int>,
         paramNames: List<String>,
         injectionIndices: Map<InjectionType, Int>,
@@ -192,7 +197,7 @@ object FunctionGenerator {
         return "$className$constructorTypeArgs(${constructorParams.joinToString(", ")})"
     }
 
-    private fun extractDefaultValue(param: com.google.devtools.ksp.symbol.KSValueParameter): String {
+    private fun extractDefaultValue(param: KSValueParameter): String {
         if (!param.hasDefault) {
             return ""
         }
@@ -208,10 +213,8 @@ object FunctionGenerator {
      * @param existingTypeParamNames List of existing type parameter names
      * @return Set of needed type parameter names
      */
-    fun collectNeededTypeParams(
-        typeRef: com.google.devtools.ksp.symbol.KSTypeReference,
-        existingTypeParamNames: List<String>,
-    ): Set<String> = TypeParameterHandler.collectNeededTypeParams(typeRef, existingTypeParamNames)
+    fun collectNeededTypeParams(typeRef: KSTypeReference, existingTypeParamNames: List<String>): Set<String> =
+        TypeParameterHandler.collectNeededTypeParams(typeRef, existingTypeParamNames)
 
     /**
      * Builds the type string for a context parameter, handling type arguments and bounds.
@@ -222,14 +225,14 @@ object FunctionGenerator {
      * @return The type string for the context parameter
      */
     fun buildContextParamType(
-        typeRef: com.google.devtools.ksp.symbol.KSTypeReference,
+        typeRef: KSTypeReference,
         typeParamNames: MutableList<String>,
         typeParamBounds: MutableList<String>,
     ): String = TypeArgumentProcessor.buildContextParamType(typeRef, typeParamNames, typeParamBounds)
 
     fun buildConstructorParamsForPropertyContext(
-        allParameters: List<com.google.devtools.ksp.symbol.KSValueParameter>,
-        remainingParams: List<com.google.devtools.ksp.symbol.KSValueParameter>,
+        allParameters: List<KSValueParameter>,
+        remainingParams: List<KSValueParameter>,
         paramsToSkip: Set<Int>,
         paramNames: List<String>,
         injectionIndices: Map<InjectionType, Int>,

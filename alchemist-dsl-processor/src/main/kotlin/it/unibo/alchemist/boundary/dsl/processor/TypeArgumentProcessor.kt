@@ -1,5 +1,7 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
+import com.google.devtools.ksp.symbol.KSTypeReference
+
 /**
  * Processes type arguments for context parameters in DSL builder functions.
  */
@@ -13,7 +15,7 @@ object TypeArgumentProcessor {
      * @return The type string for the context parameter
      */
     fun buildContextParamType(
-        typeRef: com.google.devtools.ksp.symbol.KSTypeReference,
+        typeRef: KSTypeReference,
         typeParamNames: MutableList<String>,
         typeParamBounds: MutableList<String>,
     ): String {
@@ -30,7 +32,7 @@ object TypeArgumentProcessor {
         val standardTypeParams = listOf("T", "U", "V", "W", "X", "Y", "Z")
         val indexState = IndexState(0, 0)
 
-        val typeArgs = arguments.map { arg ->
+        val typeArgs = arguments.joinToString(", ") { arg ->
             processTypeArgument(
                 arg,
                 declarationTypeParams,
@@ -39,7 +41,7 @@ object TypeArgumentProcessor {
                 typeParamBounds,
                 indexState,
             )
-        }.joinToString(", ")
+        }
 
         return "$typeName<$typeArgs>"
     }
@@ -174,7 +176,7 @@ object TypeArgumentProcessor {
     }
 
     private fun processExtractedType(
-        typeRef: com.google.devtools.ksp.symbol.KSTypeReference,
+        typeRef: KSTypeReference,
         typeParamNames: MutableList<String>,
         standardTypeParams: List<String>,
         indexState: IndexState,

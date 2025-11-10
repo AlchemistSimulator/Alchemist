@@ -31,14 +31,19 @@ import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromT
 object KotlinDslProvider : AlchemistLoaderProvider {
     override val fileExtensions: Regex = "(?i)kts".toRegex()
 
-    override fun from(input: String): Loader {
-        val host = BasicJvmScriptingHost()
-        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<AlchemistScript>()
-        val evaluationConfiguration = ScriptEvaluationConfiguration {
-            jvm {
-                baseClassLoader(this@KotlinDslProvider::class.java.classLoader)
-            }
+    private val host = BasicJvmScriptingHost()
+    private val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<AlchemistScript>()
+    private val baseClassLoader = this::class.java.classLoader
+
+    /**
+     * Evaluation configuration for script execution.
+     */
+    private val evaluationConfiguration = ScriptEvaluationConfiguration {
+        jvm {
+            baseClassLoader(this@KotlinDslProvider.baseClassLoader)
         }
+    }
+    override fun from(input: String): Loader {
         val result = host.eval(input.toScriptSource(), compilationConfiguration, evaluationConfiguration)
         val errors = result.reports.filter { it.severity == ScriptDiagnostic.Severity.ERROR }
         require(errors.isEmpty()) { errors.joinToString("\n") { it.message } }

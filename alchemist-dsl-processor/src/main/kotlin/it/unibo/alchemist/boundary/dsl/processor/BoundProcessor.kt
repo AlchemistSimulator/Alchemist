@@ -1,6 +1,8 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
+import com.google.devtools.ksp.symbol.KSTypeArgument
 import com.google.devtools.ksp.symbol.KSTypeReference
+import com.google.devtools.ksp.symbol.Variance
 
 /**
  * Processes type bounds for type parameters, cleaning up internal Kotlin type representations.
@@ -38,20 +40,17 @@ object BoundProcessor {
         return replaceClassTypeParamReferences(result, classTypeParamNames)
     }
 
-    private fun formatTypeArgument(
-        arg: com.google.devtools.ksp.symbol.KSTypeArgument,
-        classTypeParamNames: List<String>,
-    ): String = when {
+    private fun formatTypeArgument(arg: KSTypeArgument, classTypeParamNames: List<String>): String = when {
         arg.type == null -> "*"
-        arg.variance == com.google.devtools.ksp.symbol.Variance.STAR -> "*"
-        arg.variance == com.google.devtools.ksp.symbol.Variance.CONTRAVARIANT -> {
+        arg.variance == Variance.STAR -> "*"
+        arg.variance == Variance.CONTRAVARIANT -> {
             arg.type?.let {
                 val typeStr = TypeExtractor.extractTypeString(it, emptyList())
                 val replaced = replaceClassTypeParamReferences(typeStr, classTypeParamNames)
                 "in $replaced"
             } ?: "*"
         }
-        arg.variance == com.google.devtools.ksp.symbol.Variance.COVARIANT -> {
+        arg.variance == Variance.COVARIANT -> {
             arg.type?.let {
                 val typeStr = TypeExtractor.extractTypeString(it, emptyList())
                 val replaced = replaceClassTypeParamReferences(typeStr, classTypeParamNames)

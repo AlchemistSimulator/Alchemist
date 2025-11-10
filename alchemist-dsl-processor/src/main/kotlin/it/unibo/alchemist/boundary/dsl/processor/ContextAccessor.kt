@@ -46,9 +46,9 @@ object ContextAccessor {
 
     private fun getProgramAccessor(injectionType: InjectionType, contextParamName: String): String =
         when (injectionType) {
-            InjectionType.ENVIRONMENT -> "$contextParamName.ctx.ctx.env"
-            InjectionType.GENERATOR -> "$contextParamName.ctx.ctx.generator"
-            InjectionType.INCARNATION -> "$contextParamName.ctx.ctx.ctx.incarnation"
+            InjectionType.ENVIRONMENT -> "$contextParamName.ctx.ctx.ctx.env"
+            InjectionType.GENERATOR -> "$contextParamName.ctx.ctx.ctx.generator"
+            InjectionType.INCARNATION -> "$contextParamName.ctx.ctx.ctx.ctx.incarnation"
             InjectionType.NODE -> "$contextParamName.node"
             InjectionType.REACTION -> "$contextParamName.reaction"
             InjectionType.TIMEDISTRIBUTION -> "$contextParamName.timeDistribution!!"
@@ -56,9 +56,9 @@ object ContextAccessor {
 
     private fun getPropertyAccessor(injectionType: InjectionType, contextParamName: String): String =
         when (injectionType) {
-            InjectionType.ENVIRONMENT -> "$contextParamName.ctx.ctx.env"
-            InjectionType.GENERATOR -> "$contextParamName.ctx.ctx.generator"
-            InjectionType.INCARNATION -> "$contextParamName.ctx.ctx.ctx.incarnation"
+            InjectionType.ENVIRONMENT -> "$contextParamName.ctx.ctx.ctx.env"
+            InjectionType.GENERATOR -> "$contextParamName.ctx.ctx.ctx.generator"
+            InjectionType.INCARNATION -> "$contextParamName.ctx.ctx.ctx.ctx.incarnation"
             InjectionType.NODE -> "$contextParamName.node"
             InjectionType.REACTION -> throw IllegalArgumentException("REACTION is not available in PropertyContext")
             InjectionType.TIMEDISTRIBUTION -> throw IllegalArgumentException(

@@ -11,7 +11,7 @@ package it.unibo.alchemist.dsl
 
 import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
 import it.unibo.alchemist.boundary.dsl.Dsl.simulation
-import it.unibo.alchemist.boundary.dsl.model.Incarnation.SAPERE
+import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations.SAPERE
 import it.unibo.alchemist.model.deployments.Point
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.junit.jupiter.api.Test
@@ -23,7 +23,7 @@ class TestContents {
         val incarnation = SAPERE.incarnation<Any, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
             deployments {
-                deploy(Point(environment, 0.0, 0.0)) {
+                deploy(Point(envAsAny, 0.0, 0.0)) {
                     all {
                         molecule = "test"
                         concentration = 1.0

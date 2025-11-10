@@ -1,5 +1,7 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
+import com.google.devtools.ksp.symbol.KSValueParameter
+
 /**
  * Types of parameters that can be injected from context.
  */
@@ -49,9 +51,7 @@ object ParameterInjector {
      * @param parameters The list of constructor parameters to analyze
      * @return A map from injection type to parameter index
      */
-    fun findInjectionIndices(
-        parameters: List<com.google.devtools.ksp.symbol.KSValueParameter>,
-    ): Map<InjectionType, Int> {
+    fun findInjectionIndices(parameters: List<KSValueParameter>): Map<InjectionType, Int> {
         val indices = mutableMapOf<InjectionType, Int>()
 
         parameters.forEachIndexed { index, param ->

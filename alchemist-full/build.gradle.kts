@@ -163,11 +163,9 @@ private data class SemVerExtracted(val base: String, val patch: String, val suff
 }
 
 private fun String.extractVersionComponents(): SemVerExtracted {
-    val (base, patch, suffix) =
-        versionComponentExtractor
-            .matchEntire(this)
-            ?.destructured
-            ?: error("Invalid version format: $this")
+    val (base, patch, suffix) = checkNotNull(versionComponentExtractor.matchEntire(this)?.destructured) {
+        "Invalid version format: $this"
+    }
     return SemVerExtracted(base, patch, suffix)
 }
 

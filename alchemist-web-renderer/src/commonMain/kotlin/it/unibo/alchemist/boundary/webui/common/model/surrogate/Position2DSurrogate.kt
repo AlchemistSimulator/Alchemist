@@ -14,6 +14,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * Surrogate class for `it.unibo.alchemist.model.Position2D`.
+ *
  * @param x the first coordinate of the position.
  * @param y the second coordinate of the position.
  */

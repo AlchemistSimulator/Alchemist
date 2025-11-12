@@ -8,6 +8,12 @@ repositories {
     gradlePluginPortal()
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
+    }
+}
+
 dependencies {
     implementation(libs.dokka.gradle.plugin)
     implementation(libs.gson)

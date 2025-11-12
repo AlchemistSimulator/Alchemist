@@ -130,6 +130,7 @@ allprojects {
  */
 evaluationDependsOnChildren()
 
+val dokkaGlobalClasspath by configurations.creating
 dependencies {
     // Depend on subprojects whose presence is necessary to run
     listOf("api", "engine", "loading").forEach { api(alchemist(it)) } // Execution requirements
@@ -145,6 +146,7 @@ dependencies {
     testRuntimeOnly(incarnation("biochemistry"))
     testRuntimeOnly(alchemist("cognitive-agents"))
     testRuntimeOnly(alchemist("physics"))
+    dokkaGlobalClasspath(alchemist("full"))
 }
 
 tasks.matching { it.name == "kotlinStoreYarnLock" }.configureEach {
@@ -168,6 +170,7 @@ dokka {
                 sourceSetFolder.listFiles { it.name in listOf("java", "kotlin") }.orEmpty().asSequence()
             }.toList()
         sourceRoots.setFrom(allSourceDirs)
+        classpath.from(dokkaGlobalClasspath)
     }
 }
 

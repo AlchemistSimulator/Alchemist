@@ -13,7 +13,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Surrogate class for the [it.unibo.alchemist.model.Node] interface.
+ * Surrogate class for `it.unibo.alchemist.model.Node`.
  * Note: The position is kept by the Environment in the original structure.
  * To improve performance and reduce the serialized [String] size, the position was moved to the node.
  * @param id the id of the [NodeSurrogate].

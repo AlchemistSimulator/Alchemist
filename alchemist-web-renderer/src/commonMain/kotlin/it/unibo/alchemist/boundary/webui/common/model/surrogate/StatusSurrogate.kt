@@ -13,7 +13,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Multiplatform enum to use the [it.unibo.alchemist.core.Status] outside a jvm.
+ * Multiplatform enum to use `it.unibo.alchemist.core.Status` outside of a jvm.
  */
 @SerialName("Status")
 @Serializable

@@ -19,7 +19,6 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
-import it.unibo.alchemist.model.protelis.AlchemistNetworkManager
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
 import it.unibo.alchemist.util.RealDistributions
 import java.io.ObjectInputStream
@@ -43,8 +42,8 @@ import org.protelis.vm.ProtelisVM
  * (assuming a reasonable synchronization among devices) or if they should remain in memory for a specified amount
  * of time. By default, [retentionTime] is [Double.NaN], indicating that messages are deleted upon read.
  *
- * It is possible to sumulate the loss of messages due to a higher connection distance by providing a [RealDistribution]
- * ([packetLossDistance]) mapping distances to the loss probability. By default this feature is disabled.
+ * It is possible to simulate the loss of messages due to a higher connection distance by providing a [RealDistribution]
+ * ([packetLossDistance]) mapping distances to the loss probability. By default, this feature is disabled.
  */
 class RunProtelisProgram<P : Position<P>> private constructor(
     val randomGenerator: RandomGenerator,

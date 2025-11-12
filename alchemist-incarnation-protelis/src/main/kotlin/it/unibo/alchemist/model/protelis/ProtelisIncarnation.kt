@@ -261,9 +261,6 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         override fun hashCode(): Int = hash
     }
 
-    /**
-     * An [org.protelis.vm.ExecutionContext] that operates over a node but does not modify it.
-     */
     private class DummyContext(private val node: Node<Any>) :
         AbstractExecutionContext<DummyContext?>(
             ProtectedExecutionEnvironment(node),

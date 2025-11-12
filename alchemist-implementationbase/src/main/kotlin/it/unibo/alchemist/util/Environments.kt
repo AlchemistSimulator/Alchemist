@@ -42,7 +42,7 @@ object Environments {
      * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes,
      * evaluated using the [allShortestHopPaths] method.
-     * Returns a [Set] containing the [SubNetwork]s.
+     * Returns a [Set] containing the subNetworks.
      */
     fun <T> Environment<T, *>.allSubNetworksByNodeWithHopDistance(): Map<Node<T>, Network<T>> =
         allSubNetworksByNode(hopDistance())
@@ -51,7 +51,7 @@ object Environments {
      * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes,
      * evaluated using the [allShortestHopPaths] method.
-     * Returns a [Set] containing the [SubNetwork]s.
+     * Returns a [Set] containing the subnetworks.
      */
     fun <T> Environment<T, *>.allSubNetworksWithHopDistance(): Set<Network<T>> =
         allSubNetworksByNodeWithHopDistance().values.toSet()
@@ -59,7 +59,7 @@ object Environments {
     /**
      * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes.
-     * Returns a [Set] containing the [SubNetwork]s.
+     * Returns a [Set] containing the subnetworks.
      */
     fun <T> Environment<T, *>.allSubNetworksByNode(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
@@ -102,7 +102,7 @@ object Environments {
     /**
      * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes.
-     * Returns a [Map] containing the [SubNetwork] related to each [Node] of the environment.
+     * Returns a [Map] containing the subNetwork related to each [Node] of the environment.
      */
     fun <T> Environment<T, *>.allSubNetworks(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),

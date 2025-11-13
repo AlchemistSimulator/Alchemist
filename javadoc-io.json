@@ -257,8 +257,7 @@
     "second": "https://javadoc.io/doc/org.graphstream/gs-algo/2.0/element-list"
   },
   "org.graphstream/gs-core/2.0": {
-    "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0",
-    "second": "https://javadoc.io/doc/org.graphstream/gs-core/2.0/element-list"
+    "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0"
   },
   "org.jetbrains.compose.components/components-resources/1.9.3": {
     "first": "https://javadoc.io/doc/org.jetbrains.compose.components/components-resources/1.9.3"
@@ -290,11 +289,11 @@
   "org.jetbrains.dokka/templating-plugin/2.1.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.dokka/templating-plugin/2.1.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.11.6-19.2.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.11.6-19.2.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.11.7-19.2.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react-dom/2025.11.7-19.2.0"
   },
-  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.11.6-19.2.0": {
-    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.11.6-19.2.0"
+  "org.jetbrains.kotlin-wrappers/kotlin-react/2025.11.7-19.2.0": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin-wrappers/kotlin-react/2025.11.7-19.2.0"
   },
   "org.jetbrains.kotlin/kotlin-build-tools-impl/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-build-tools-impl/null"

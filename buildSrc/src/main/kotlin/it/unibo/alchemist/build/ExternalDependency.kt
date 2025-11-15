@@ -83,7 +83,7 @@ data class ExternalDependency(val group: String, val name: String, val version: 
                                         .getOrNull()
                                 }
                         cachedPackageList?.let { packageList ->
-                            ExternalDocumentationLink(this, javadocIOUrl, localPackageList.path)
+                            ExternalDocumentationLink(this, javadocIOUrl, localPackageList.invariantSeparatorsPath)
                         }
                     }
                 }

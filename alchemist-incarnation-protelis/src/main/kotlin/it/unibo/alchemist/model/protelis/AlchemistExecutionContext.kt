@@ -39,17 +39,14 @@ import org.protelis.vm.impl.AbstractExecutionContext
 
 /**
  * @param <P> position type
-*/
-class AlchemistExecutionContext<P : Position<P>>
-/**
  * @param environmentAccess the simulation [it.unibo.alchemist.model.Environment]
  * @param node the local [it.unibo.alchemist.model.Node]
  * @param protelisDevice the local [it.unibo.alchemist.model.protelis.properties.ProtelisDevice]
  * @param reaction the [it.unibo.alchemist.model.Reaction] hosting the program
  * @param randomGenerator the [org.apache.commons.math3.random.RandomGenerator] for this simulation
  * @param networkManager the [AlchemistNetworkManager] to be used
- */
-constructor(
+*/
+class AlchemistExecutionContext<P : Position<P>>(
     /**
      * @return experimental access to the simulated environment, for building oracles
      */

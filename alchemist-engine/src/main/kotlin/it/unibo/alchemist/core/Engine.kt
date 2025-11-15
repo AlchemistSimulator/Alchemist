@@ -99,15 +99,6 @@ open class Engine<T, P : Position<out P>>(
      */
     constructor(environment: Environment<T, P>) : this(environment, ArrayIndexedPriorityQueue())
 
-    /**
-     * Constructs a simulation with a custom scheduler.
-     *
-     * This constructor allows specifying a custom [Scheduler] implementation.
-     * If a custom [DependencyGraph] is also needed, it should be provided separately.
-     *
-     * @param environment the simulation environment
-     * @param scheduler the scheduler responsible for event execution
-     */
     init {
         LOGGER.trace("Engine created")
         environment.simulation = this

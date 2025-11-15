@@ -21,7 +21,7 @@ jobs:
           build-command: |
             ./gradlew dokkaGenerateModuleHtml dokkaGeneratePublicationHtml --dry-run
             for i in {1..3}; do
-                rm dokka-cache/no-javadoc.json
+                rm dokka-cache/no-javadoc.json || true
                 ./gradlew dokkaGenerateModuleHtml dokkaGeneratePublicationHtml --dry-run
             done
             ./gradlew kotlinUpgradeYarnLock kotlinWasmUpgradeYarnLock

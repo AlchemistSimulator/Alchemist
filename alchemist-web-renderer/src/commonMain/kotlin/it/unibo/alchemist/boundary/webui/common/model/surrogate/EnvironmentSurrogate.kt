@@ -15,7 +15,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Surrogate class for the [it.unibo.alchemist.model.Environment] interface.
+ * Surrogate class for the `it.unibo.alchemist.model.Environment` interface.
  * @param dimensions the number of dimensions of the [EnvironmentSurrogate].
  * @param nodes the nodes contained in the [EnvironmentSurrogate].
  * @param <TS> the type of concentration.

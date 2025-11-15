@@ -13,14 +13,13 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.net.URI
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
+import java.util.concurrent.ConcurrentSkipListSet
 import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 import org.eclipse.jgit.api.Git
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.MinimalExternalModuleDependency
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.file.RegularFile
@@ -30,18 +29,43 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 
-private val javadocIOcacheFile = File("javadoc-io.json")
+private val externalKnown: File get() = dokkaCacheFolder.resolve("javadoc-cache.json")
 private val gson = Gson().newBuilder().setPrettyPrinting().create()
-private val mapType = object : TypeToken<MutableMap<String, Pair<URI, URI?>>>() { }.type
-private val javadocIO: MutableMap<String, Pair<URI, URI?>> = javadocIOcacheFile
-    .takeIf(File::exists)
-    ?.let { gson.fromJson(it.readText(), mapType) }
-    ?: mutableMapOf()
+private val mapType = object : TypeToken<ConcurrentHashMap<String, ExternalDocumentationLink>>() { }.type
+private val externalDocsCache: ConcurrentMap<String, ExternalDocumentationLink> = run {
+    val externalDocCacheFile: File = dokkaCacheFolder.resolve("javadoc-cache.json")
+    val delegate = externalDocCacheFile.loadOrCreate<ConcurrentHashMap<String, ExternalDocumentationLink>>(::ConcurrentHashMap)
+    object : ConcurrentMap<String, ExternalDocumentationLink> by delegate {
+        override fun put(key: String, value: ExternalDocumentationLink): ExternalDocumentationLink? =
+            synchronized(externalDocCacheFile) {
+                delegate.put(key, value)?.also { _ ->
+                    externalDocCacheFile.writeText(gson.toJson(delegate.toSortedMap()))
+                }
+            }
+    }
+}
 
-val Project.catalog get() = object : ReadOnlyProperty<Any?, Provider<MinimalExternalModuleDependency>> {
-    override operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-        extensions.getByType<VersionCatalogsExtension>().named("libs")
-            .findLibrary(property.name.replace(Regex("[A-Z]")) { "-${it.value.lowercase()}" }).get()
+private val fetchFailuresCache: MutableSet<ExternalDependency> = run {
+    val fetchFailuresFile: File = dokkaCacheFolder.resolve("no-javadoc.json")
+    val delegate = fetchFailuresFile.loadOrCreate<ConcurrentSkipListSet<ExternalDependency>>(::ConcurrentSkipListSet)
+    object : MutableSet<ExternalDependency> by delegate {
+        override fun add(element: ExternalDependency): Boolean = synchronized(fetchFailuresFile) {
+            delegate.add(element).also { anElementHasBeenAdded ->
+                if (anElementHasBeenAdded) fetchFailuresFile.writeText(gson.toJson(delegate))
+            }
+        }
+    }
+}
+
+private inline fun <reified T : Any> File.loadOrCreate(default: () -> T): T =
+    takeIf(File::exists)?.let { gson.fromJson(readText(), object : TypeToken<T>() { }) }
+        ?: default()
+
+val dokkaCacheFolder get() = File("dokka-cache").apply { mkdirs() }
+
+val Project.catalog get() = ReadOnlyProperty<Any?, Provider<MinimalExternalModuleDependency>> { thisRef, property ->
+    extensions.getByType<VersionCatalogsExtension>().named("libs")
+        .findLibrary(property.name.replace(Regex("[A-Z]")) { "-${it.value.lowercase()}" }).get()
 }
 
 val Project.currentCommitHash get(): String? = runCatching {
@@ -57,29 +81,27 @@ inline fun <reified T1: Task, reified T2: Task> Project.bindTasks() {
  *
  * @return a [Pair] with the URL as a first element, and the packageList URL as second element.
  */
-fun Project.fetchJavadocIOForDependency(dependency: Dependency): Pair<URI, URI>? =
-    dependency.takeIf { it is ExternalDependency } ?.run {
-        synchronized(javadocIO) {
-            val size = javadocIO.size
-            val descriptor = "$group/$name/$version"
-            val javadocIOURLs = javadocIO.getOrPut(descriptor) {
-                logger.lifecycle("Checking javadoc.io for dependency {}:{}:{}", group, name, version)
-                val urlString = "https://javadoc.io/doc/$descriptor"
-                val packageList = listOf("package-list", "element-list")
-                    .map { URI("$urlString/$it") }
-                    .firstOrNull { runCatching { it.toURL().openStream() }.isSuccess }
-                if (packageList == null) {
-                    logger.lifecycle("docs for {}:{}:{} > {}", group, name, version, urlString)
+fun Project.fetchExternalLinkSource(dependency: ExternalDependency): ExternalDocumentationLink? {
+    logger.debug("Fetching external documentation for {}", dependency)
+    return when {
+        dependency in fetchFailuresCache -> {
+            logger.debug("External documentation for {} cannot be retrieved", dependency)
+            null
+        }
+        else -> {
+            val fetched = externalDocsCache[dependency.toString()]?.also {
+                logger.debug("External documentation for {} found in cache", dependency)
+            } ?: dependency.fetchOrNull(this)?.also { newDependencyToCache ->
+                    externalDocsCache[dependency.toString()] = newDependencyToCache
                 }
-                URI(urlString) to packageList
+            if (fetched == null) {
+                fetchFailuresCache += dependency
+                logger.debug("Could not find documentation for {}", dependency)
             }
-            if (javadocIO.size != size) {
-                logger.lifecycle("Caching javadoc.io information for {} at {}", descriptor, javadocIOURLs.first)
-                javadocIOcacheFile.writeText(gson.toJson(javadocIO.toSortedMap()))
-            }
-            javadocIOURLs.second?.let { javadocIOURLs.first to it }
+            fetched
         }
     }
+}
 
 /**
  * Verifies that the generated shadow jar displays the help, and that SLF4J is not falling back to NOP.
@@ -124,7 +146,7 @@ fun Project.testShadowJar(javaExecutable: Provider<String>, jarFile: Provider<Re
                 |${outputs[0]}
                 |Error:
                 |${outputs[0]}
-                """.trimMargin()
+            """.trimMargin()
         }
     }
 }

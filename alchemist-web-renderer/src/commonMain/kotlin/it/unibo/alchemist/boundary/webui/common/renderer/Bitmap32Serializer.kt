@@ -23,7 +23,7 @@ import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 
 /**
- * Serializer for [Bitmap32] class.
+ * Serializer for [Bitmap32].
  */
 object Bitmap32Serializer : KSerializer<Bitmap32> {
     override val descriptor: SerialDescriptor =

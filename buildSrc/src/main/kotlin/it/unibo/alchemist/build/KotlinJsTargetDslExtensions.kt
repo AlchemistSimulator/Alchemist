@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 fun KotlinJsTargetDsl.devServer() {
     browser {
         commonWebpackConfig {
-            devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                static = static ?: mutableListOf()
-            }
+            devServer = (devServer ?: KotlinWebpackConfig.DevServer())
         }
     }
 }

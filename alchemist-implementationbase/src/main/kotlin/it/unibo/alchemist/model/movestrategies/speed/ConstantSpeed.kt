@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -23,13 +23,12 @@ import java.io.Serial
  *
  * @param <T> Concentration type
  * @param <P> Position type
+ *
+ * @param reaction the reaction
+ * @param speed the speed, in meters/second
  */
 class ConstantSpeed<T, P : Position<P>>(private val reaction: Reaction<*>, private val speed: Double) :
     SpeedSelectionStrategy<T, P> {
-    /**
-     * @param reaction the reaction
-     * @param speed the speed, in meters/second
-     */
     init {
         require(speed >= 0) { "Speed must be positive or zero in $reaction. Provided: $speed" }
     }

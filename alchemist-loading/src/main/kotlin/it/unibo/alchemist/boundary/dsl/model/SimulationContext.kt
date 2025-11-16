@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.dsl.model
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.Variable
+import it.unibo.alchemist.boundary.dsl.AlchemistDsl
 import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
@@ -54,20 +55,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * @see [ExporterContextImpl] for exporter configuration
  * @see [LayerContextImpl] for layer configuration
  */
-@DslMarker
-annotation class SimulationMarker
-
-/**
- * Main context interface for building and configuring Alchemist simulations using the DSL.
- *
- * This interface provides a type-safe way to configure simulations programmatically.
- * It serves as the entry point for DSL users to define
- * all aspects of a simulation including deployments, programs, monitors, exporters, and more.
- *
- * @param T The type of molecule concentration used in the simulation
- * @param P The type of position used in the environment, must extend [Position]
- */
-@SimulationMarker
+@AlchemistDsl
 interface SimulationContext<T, P : Position<P>> {
     /**
      * The incarnation instance that defines how molecules, nodes, and reactions are created.
@@ -139,7 +127,7 @@ interface SimulationContext<T, P : Position<P>> {
      *
      * @see [DeploymentsContextImpl] to configure deployments
      */
-    fun deployments(block: DeploymentsContextImpl<T, P>.() -> Unit)
+    fun deployments(block: DeploymentsContext<T, P>.() -> Unit)
 
     /**
      * Adds a termination predicate to the simulation.
@@ -147,7 +135,7 @@ interface SimulationContext<T, P : Position<P>> {
      * @param terminator The termination predicate to add
      * @see [TerminationPredicate]
      */
-    fun addTerminator(terminator: TerminationPredicate<*, *>)
+    fun terminators(block: TerminatorsContext<T, P>.() -> Unit)
 
     /**
      * Adds an output monitor to the simulation.
@@ -155,7 +143,7 @@ interface SimulationContext<T, P : Position<P>> {
      * @param monitor The output monitor to add
      * @see [OutputMonitor]
      */
-    fun addMonitor(monitor: OutputMonitor<T, P>)
+    fun monitors(block: OutputMonitorsContext<T, P>.() -> Unit)
 
     /**
      * Add an exporter to the simulation for data output.
@@ -171,7 +159,7 @@ interface SimulationContext<T, P : Position<P>> {
      * @param program the global reaction to add
      * @see [GlobalReaction]
      */
-    fun program(program: GlobalReaction<T>)
+    fun programs(block: GlobalProgramsContext<T, P>.() -> Unit)
 
     /**
      * Schedules a block of code to execute later during the loading process.
@@ -189,7 +177,7 @@ interface SimulationContext<T, P : Position<P>> {
      *
      * @param block The block of code to execute later
      */
-    fun runLater(block: () -> Unit)
+    fun runLater(block: context(SimulationContext<T, P>) () -> Unit)
 
     /**
      * Add a spatial layer for a molecule.
@@ -200,7 +188,7 @@ interface SimulationContext<T, P : Position<P>> {
      * @param block The configuration block
      * @see [LayerContextImpl]
      */
-    fun layer(block: LayerContextImpl<T, P>.() -> Unit)
+    fun layer(block: LayerContext<T, P>.() -> Unit)
 
     /**
      * Registers a Linear Variable for batch simulations.
@@ -213,7 +201,7 @@ interface SimulationContext<T, P : Position<P>> {
      * @param source The variable source that provides the range of values
      * @see [Variable]
      */
-    fun <T : Serializable> variable(source: Variable<out T>): VariablesContext.VariableProvider<T>
+    fun <A : Serializable> variable(source: Variable<out A>): VariablesContext.VariableProvider<A>
 
     /**
      * Registers a dependent variable that is computed from other variables.
@@ -226,5 +214,5 @@ interface SimulationContext<T, P : Position<P>> {
      *
      * @param source A function that computes the variable value
      */
-    fun <T : Serializable> variable(source: () -> T): VariablesContext.DependentVariableProvider<T>
+    fun <A : Serializable> variable(source: () -> A): VariablesContext.DependentVariableProvider<A>
 }

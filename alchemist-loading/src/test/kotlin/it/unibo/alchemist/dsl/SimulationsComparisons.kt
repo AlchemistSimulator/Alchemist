@@ -85,7 +85,11 @@ class SimulationsComparisons {
 
     @Test
     fun <T, P : Position<P>> test16() {
-        { DslLoaderFunctions.test16ProgramsFilters<T, P>() }.shouldEqual("dsl/yml/16-programsfilters.yml")
+        { DslLoaderFunctions.test16ProgramsFilters<T, P>() }
+            .shouldEqual(
+                "dsl/yml/16-programsfilters.yml",
+                targetTime = 10.0,
+            )
     }
 
     @Test
@@ -96,5 +100,13 @@ class SimulationsComparisons {
     @Test
     fun <T, P : Position<P>> test18() {
         { DslLoaderFunctions.test18NodeProperties<T, P>() }.shouldEqual("dsl/yml/18-properties.yml")
+    }
+
+    @Test
+    fun <T, P : Position<P>> test20() {
+        { DslLoaderFunctions.test20Actions<T, P>() }.shouldEqual(
+            "dsl/yml/20-move.yml",
+            targetTime = 10.0,
+        )
     }
 }

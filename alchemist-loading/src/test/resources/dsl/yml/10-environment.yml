@@ -6,7 +6,7 @@ incarnation: sapere
 
 _pools:
   - pool: &move
-    - time-distribution: 0.1
+    - time-distribution: 15
       type: Event
       actions:
         - type: ReproduceGPSTrace

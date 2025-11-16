@@ -2,6 +2,7 @@ package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
 import it.unibo.alchemist.model.Action
+import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
@@ -56,13 +57,11 @@ class ProgramsContextImpl<T, P : Position<P>>(override val ctx: DeploymentContex
         position: P,
         program: ProgramContextImpl.() -> Unit,
         filter: PositionBasedFilter<P>?,
-    ) {
+    ): Pair<PositionBasedFilter<P>?, Actionable<T>> {
         logger.debug("Applying program to node at position: {}", position)
         val c = ProgramContextImpl(node).apply(program)
         val context = ctx.ctx.ctx
-        if (filter != null && !filter.contains(position)) {
-            return
-        }
+
         logger.debug("Creating time distribution for program")
         val timeDistribution = c.timeDistribution
             ?: context.incarnation.createTimeDistribution(
@@ -72,8 +71,8 @@ class ProgramsContextImpl<T, P : Position<P>>(override val ctx: DeploymentContex
                 null,
             )
         logger.debug("Creating reaction for program")
-        val r = c.reaction ?: run {
-            // Create a basic reaction with custom actions/conditions
+        val r = c.reaction
+            ?: // Create a basic reaction with custom actions/conditions
             context.incarnation.createReaction(
                 context.simulationGenerator,
                 context.environment,
@@ -81,25 +80,28 @@ class ProgramsContextImpl<T, P : Position<P>>(override val ctx: DeploymentContex
                 timeDistribution,
                 c.program,
             )
-        }
         logger.debug("Adding actions to reaction")
         r.actions += c.actions.map { it() }
         logger.debug("Adding conditions to reaction")
         r.conditions += c.conditions.map { it() }
 
-        logger.debug("Adding condition to reaction")
-        node.addReaction(r)
+        logger.debug("Adding reaction to node")
+        if (filter == null || filter.contains(position)) {
+            node.addReaction(r)
+        }
+        return filter to r
     }
 
     /**
      * Context for configuring a single program (reaction).
      *
      * @param node The node this program is associated with.
-     * @param ctx The programs context.
+     * @param ctx The programs' context.
      */
     open inner class ProgramContextImpl(override val node: Node<T>) : ProgramContext<T, P> {
 
         override val ctx: ProgramsContext<T, P> = this@ProgramsContextImpl
+        private val context = ctx.ctx.ctx.ctx
 
         /**
          * The program name.
@@ -127,10 +129,9 @@ class ProgramsContextImpl<T, P : Position<P>>(override val ctx: DeploymentContex
         override var reaction: Reaction<T>? = null
 
         override fun timeDistribution(td: String) {
-            val c = ctx.ctx.ctx.ctx
-            timeDistribution = c.incarnation.createTimeDistribution(
-                c.simulationGenerator,
-                c.environment,
+            timeDistribution = context.incarnation.createTimeDistribution(
+                context.simulationGenerator,
+                context.environment,
                 node,
                 td,
             )
@@ -140,8 +141,35 @@ class ProgramsContextImpl<T, P : Position<P>>(override val ctx: DeploymentContex
             actions += block
         }
 
+        override fun addAction(action: String) {
+            actions += {
+                context.incarnation
+                    .createAction(
+                        context.simulationGenerator,
+                        context.environment,
+                        node,
+                        timeDistribution,
+                        reaction,
+                        action,
+                    )
+            }
+        }
+
         override fun addCondition(block: () -> Condition<T>) {
             conditions += block
+        }
+
+        override fun addCondition(condition: String) {
+            conditions += {
+                context.incarnation.createCondition(
+                    context.simulationGenerator,
+                    context.environment,
+                    node,
+                    timeDistribution,
+                    reaction,
+                    condition,
+                )
+            }
         }
     }
 }

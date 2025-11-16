@@ -25,7 +25,19 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.jvm.optionals.getOrElse
 
 /**
+ * Marker annotation for Alchemist DSL elements.
+ *
+ * This annotation is used to mark DSL context classes and functions,
+ * preventing scope pollution in DSL blocks.
+ */
+@DslMarker
+annotation class AlchemistDsl
+
+/**
  * Main DSL object for creating Alchemist simulations.
+ *
+ * This object provides factory methods for creating simulation loaders
+ * and configuring Alchemist simulations using a type-safe DSL.
  */
 object Dsl {
     /**
@@ -34,12 +46,15 @@ object Dsl {
      * @param dsl The simulation context.
      * @return A loader instance.
      */
-    fun <T, P : Position<P>> createLoader(dsl: SimulationContextImpl<T, P>): Loader = object : SingleUseDslLoader(dsl) {
-        override val constants: Map<String, Any?> = emptyMap() // not needed
-        override val dependentVariables: Map<String, DependentVariable<*>> = emptyMap() // not needed
-        override val variables: Map<String, Variable<*>> = dsl.variablesContext.variables
-        override val remoteDependencies: List<String> = emptyList() // not needed
-        override val launcher: Launcher = dsl.launcher
+    fun <T, P : Position<P>> createLoader(
+        builder: SimulationContextImpl<T, P>,
+        envBuilder: () -> Environment<T, P>,
+    ): Loader = object : DSLLoader<T, P>(builder, envBuilder) {
+        override val constants: Map<String, Any?> = emptyMap()
+        override val dependentVariables: Map<String, DependentVariable<*>> = emptyMap()
+        override val variables: Map<String, Variable<*>> = builder.variablesContext.variables
+        override val remoteDependencies: List<String> = emptyList()
+        override val launcher: Launcher = builder.launcher
     }
 
     /**
@@ -62,15 +77,13 @@ object Dsl {
      */
     fun <T, P : Position<P>> simulation(
         incarnation: Incarnation<T, P>,
-        environment: Environment<T, P>,
+        environment: () -> Environment<T, P>,
         block: SimulationContext<T, P>.() -> Unit,
     ): Loader {
-        val ctx = SimulationContextImpl(incarnation, environment)
+        val ctx = SimulationContextImpl(incarnation)
         @Suppress("UNCHECKED_CAST")
-        context(ctx.environment as Environment<*, *>, ctx.incarnation as Incarnation<*, *>) {
-            ctx.apply(block)
-        }
-        return createLoader(ctx)
+        ctx.apply(block)
+        return createLoader(ctx, environment)
     }
 
     /**
@@ -81,16 +94,14 @@ object Dsl {
      * @return A loader instance.
      */
     fun <T, P : Position<P>> simulation(
-        incarnation: Incarnation<T, P>,
+        incarnation: Incarnation<T, Euclidean2DPosition>,
         block: SimulationContext<T, Euclidean2DPosition>.() -> Unit,
     ): Loader {
         @Suppress("UNCHECKED_CAST")
-        val defaultEnv = Continuous2DEnvironment(incarnation as Incarnation<T, Euclidean2DPosition>)
-        val ctx = SimulationContextImpl(incarnation, defaultEnv)
+        val defaultEnv = { Continuous2DEnvironment(incarnation) }
+        val ctx = SimulationContextImpl(incarnation)
         @Suppress("UNCHECKED_CAST")
-        context(ctx.environment, ctx.incarnation) {
-            ctx.apply(block)
-        }
-        return createLoader(ctx)
+        ctx.apply(block)
+        return createLoader(ctx, defaultEnv)
     }
 }

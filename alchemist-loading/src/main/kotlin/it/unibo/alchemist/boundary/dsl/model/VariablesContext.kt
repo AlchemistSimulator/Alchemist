@@ -20,10 +20,17 @@ import kotlin.reflect.KProperty
  * Context for managing variables in a simulation.
  */
 class VariablesContext {
-    /**
-     * Map of variable references.
-     */
-    val references: MutableMap<String, Any> = mutableMapOf()
+
+    /** Map of default variable values. */
+    val defaults: MutableMap<String, Any> = mutableMapOf()
+
+    /** Thread-local map of variable references. */
+    val references = object : ThreadLocal<Map<String, Any>>() {
+        override fun initialValue(): Map<String, Any> {
+            logger.debug("Initializing variable references with defaults: {}", defaults)
+            return defaults.toMap()
+        }
+    }
 
     /**
      * Map of registered variables.
@@ -34,6 +41,21 @@ class VariablesContext {
      * Map of dependent variables.
      */
     val dependentVariables: MutableMap<String, () -> Any> = mutableMapOf()
+
+    /**
+     * Adds new variable references to the current thread-local context.
+     * Since each simulation may run in its own thread, this ensures that each simulation
+     * has its own set of variable references, while still using the same variable definitions.
+     *
+     * @param newRefs Map of new variable references to add to the default/existing ones.
+     */
+    fun addReferences(newRefs: Map<String, *>) {
+        val currMap = references.get()
+        val newRefs = currMap.toMutableMap().also { m ->
+            m.putAll(newRefs.mapValues { it.value as Any })
+        }
+        references.set(newRefs)
+    }
 
     /**
      * Registers a variable provider.
@@ -80,7 +102,7 @@ class VariablesContext {
      * @param T The type of the variable value.
      * @param source The function that provides the variable value.
      */
-    inner class DependentRef<T : Serializable>(private val source: () -> T) : ReadWriteProperty<Any?, T> {
+    class DependentRef<T : Serializable>(private val source: () -> T) : ReadWriteProperty<Any?, T> {
         override fun getValue(thisRef: Any?, property: KProperty<*>): T = source()
 
         override fun setValue(thisRef: Any?, property: KProperty<*>, value: T): Unit =
@@ -107,7 +129,7 @@ class VariablesContext {
             }
             logger.debug("Registering variable: {}", prop.name)
             variables[prop.name] = source
-            references[prop.name] = source.default
+            defaults[prop.name] = source.default
             return Ref()
         }
     }
@@ -119,11 +141,11 @@ class VariablesContext {
      */
     inner class Ref<T : Serializable> : ReadWriteProperty<Any?, T> {
         override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-            check(references.contains(property.name)) {
+            check(references.get().contains(property.name)) {
                 "Variable ${property.name} has no defined value"
             }
             @Suppress("UNCHECKED_CAST")
-            return references[property.name] as T
+            return references.get()[property.name] as T
         }
 
         override fun setValue(thisRef: Any?, property: KProperty<*>, value: T): Unit =

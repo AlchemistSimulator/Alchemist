@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.dsl.model
 
+import it.unibo.alchemist.boundary.dsl.AlchemistDsl
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
@@ -44,19 +45,8 @@ import it.unibo.alchemist.model.PositionBasedFilter
  * @see [NodeProperty] for the property interface
  * @see [PositionBasedFilter] for position filtering
  */
-@DslMarker
-annotation class PropertiesMarker
 
-/**
- * Context interface for configuring node properties in a deployment.
- *
- * Properties can be assigned to nodes based on their position using filters,
- * or applied to all nodes in the deployment.
- *
- * @param T The type of molecule concentration.
- * @param P The type of position, must extend [Position].
- */
-@PropertiesMarker
+@AlchemistDsl
 interface PropertiesContext<T, P : Position<P>> {
     /**
      * The deployment context this properties context belongs to.
@@ -93,18 +83,7 @@ interface PropertiesContext<T, P : Position<P>> {
  * @see [PropertiesContext] for the parent context
  * @see [NodeProperty] for the property interface
  */
-@DslMarker
-annotation class PropertyMarker
-
-/**
- * Context interface for configuring properties for a specific node.
- *
- * This context is used within [PropertiesContext] blocks to add properties to nodes.
- *
- * @param T The type of molecule concentration.
- * @param P The type of position, must extend [Position].
- */
-@PropertyMarker
+@AlchemistDsl
 interface PropertyContext<T, P : Position<P>> {
     /**
      * The properties context this property context belongs to.
@@ -127,5 +106,5 @@ interface PropertyContext<T, P : Position<P>> {
      * @param property The property to add to the node.
      * @see [NodeProperty]
      */
-    fun add(property: NodeProperty<T>)
+    operator fun NodeProperty<T>.unaryPlus()
 }

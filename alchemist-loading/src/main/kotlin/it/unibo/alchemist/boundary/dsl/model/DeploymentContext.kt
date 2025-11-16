@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.boundary.dsl.model
 
+import it.unibo.alchemist.boundary.dsl.AlchemistDsl
 import it.unibo.alchemist.model.Deployment
-import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
@@ -49,36 +49,12 @@ import org.apache.commons.math3.random.RandomGenerator
  * @see [Deployment] for the deployment interface
  * @see [DeploymentContext] for configuring individual deployments
  */
-@DslMarker
-annotation class DeploymentsMarker
-
-/**
- * Context interface for managing node deployments in a simulation.
- *
- * Deployments define where nodes are placed in the environment and can be configured
- * with content (molecules and concentrations), programs (reactions), and properties.
- *
- * @param T The type of molecule concentration.
- * @param P The type of position, must extend [Position].
- */
-@DeploymentsMarker
+@AlchemistDsl
 interface DeploymentsContext<T, P : Position<P>> {
     /**
      * The simulation context this deployments context belongs to.
      */
     val ctx: SimulationContext<T, P>
-
-    /**
-     * The environment instance as a type-erased reference.
-     */
-    val envAsAny: Environment<*, *>
-
-    /**
-     * The environment instance where nodes are deployed.
-     *
-     * @see [Environment]
-     */
-    val env: Environment<T, P>
 
     /**
      * The random number generator for scenario generation.
@@ -131,19 +107,7 @@ interface DeploymentsContext<T, P : Position<P>> {
  * @see [ProgramsContext] for configuring node programs
  * @see [PropertiesContext] for configuring node properties
  */
-@DslMarker
-annotation class DeploymentMarker
-
-/**
- * Context interface for configuring a single deployment.
- *
- * This context allows configuring content (molecules and concentrations), programs (reactions),
- * properties, and custom node factories for nodes deployed at positions defined by the deployment.
- *
- * @param T The type of molecule concentration.
- * @param P The type of position, must extend [Position].
- */
-@DeploymentMarker
+@AlchemistDsl
 interface DeploymentContext<T, P : Position<P>> {
     /**
      * The deployments context this deployment context belongs to.
@@ -217,7 +181,7 @@ interface DeploymentContext<T, P : Position<P>> {
      * @see [Node]
      * @see [it.unibo.alchemist.model.Incarnation.createNode]
      */
-    fun nodes(factory: () -> Node<T>)
+    fun nodes(factory: (DeploymentContext<T, P>) -> Node<T>)
 
     /**
      * Configures properties for this deployment.
@@ -251,19 +215,7 @@ interface DeploymentContext<T, P : Position<P>> {
  * @see [it.unibo.alchemist.model.Incarnation.createMolecule]
  * @see [it.unibo.alchemist.model.Incarnation.createConcentration]
  */
-@DslMarker
-annotation class ContentMarker
-
-/**
- * Context interface for configuring node content (molecules and concentrations).
- *
- * This context is used within [DeploymentContext] blocks to define the initial
- * content of nodes deployed at specific positions.
- *
- * @param T The type of molecule concentration.
- * @param P The type of position, must extend [Position].
- */
-@ContentMarker
+@AlchemistDsl
 interface ContentContext<T, P : Position<P>> {
     /**
      * The optional position filter applied to this content context.

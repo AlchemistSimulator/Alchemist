@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.boundary.dsl.util
 
-import it.unibo.alchemist.boundary.dsl.SingleUseDslLoader
+import it.unibo.alchemist.boundary.dsl.DSLLoader
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 internal object LoadingSystemLogger {
-    val logger: Logger = LoggerFactory.getLogger(SingleUseDslLoader::class.java)
+    val logger: Logger = LoggerFactory.getLogger(DSLLoader::class.java)
 }

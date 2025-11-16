@@ -25,7 +25,7 @@ class KotlinDslProviderTest {
                 networkModel = ConnectWithinDistance(5.0)
                 deployments {
                     deploy(point(0.0, 0.0))
-                    deploy(Point(environment, 0.0, 1.0))
+                    deploy(point(0.0, 1.0))
                 }
             }
         """.trimIndent()

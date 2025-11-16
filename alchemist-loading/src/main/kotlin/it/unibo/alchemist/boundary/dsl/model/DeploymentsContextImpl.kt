@@ -10,13 +10,14 @@
 package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
+import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Deployment
-import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
 import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.linkingrules.NoLinks
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Context for managing deployments in a simulation.
@@ -27,23 +28,13 @@ import it.unibo.alchemist.model.linkingrules.NoLinks
  */
 open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: SimulationContext<T, P>) :
     DeploymentsContext<T, P> {
-    /**
-     * The environment instance.
-     */
-    override val envAsAny: Environment<*, *> = ctx.environment as Environment<*, *>
 
-    /**
-     * The environment instance.
-     */
-    override val env = ctx.environment
+    override val generator: RandomGenerator
+        get() = ctx.scenarioGenerator
 
-    /**
-     * The scenario generator.
-     */
-    override val generator = ctx.scenarioGenerator
     private val inc = ctx.incarnation
 
-    override fun deploy(deployment: Deployment<*>, block: DeploymentContext<T, P>.() -> Unit) {
+    override fun deploy(deployment: Deployment<*>, block: context(DeploymentContext<T, P>) () -> Unit) {
         logger.debug("Deploying deployment: {}", deployment)
         @Suppress("UNCHECKED_CAST")
         val d = DeploymentContextImpl(deployment as Deployment<P>).apply(block)
@@ -70,10 +61,10 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
         deployment.stream().forEach { position ->
             logger.debug("visiting position: {} for deployment: {}", position, deployment)
             logger.debug("creaing node for deployment: {}", deployment)
-            val node = deploymentContext.nodeFactory?.invoke()
+            val node = deploymentContext.nodeFactory?.invoke(deploymentContext)
                 ?: inc.createNode(
-                    ctx.simulationGenerator,
-                    env,
+                    ctx.simulationGenerator, // Match YAML loader: uses simulationRNG for node creation
+                    ctx.environment,
                     null,
                 )
             // load properties
@@ -85,16 +76,19 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
             }
             // load programs
             val programs = deploymentContext.programsContext.programs
+            val createdPrograms = mutableListOf<Pair<PositionBasedFilter<P>?, Actionable<T>>>()
             for (programEntry in programs) {
-                deploymentContext.programsContext.applyToNodes(
+                val pp = deploymentContext.programsContext.applyToNodes(
                     node,
                     position,
                     programEntry.program,
                     programEntry.filter,
                 )
+                createdPrograms.add(pp)
             }
+            logger.debug("programs={}", createdPrograms)
             logger.debug("Adding node to environment at position: {}", position)
-            env.addNode(node, position)
+            ctx.environment.addNode(node, position)
         }
     }
 
@@ -114,7 +108,10 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
         /**
          * Optional factory for creating custom nodes.
          */
-        var nodeFactory: (() -> Node<T>)? = null
+        var nodeFactory: (
+            context(DeploymentContext<T, P>)
+            () -> Node<T>
+        )? = null
 
         /**
          * The properties context for this deployment.
@@ -147,7 +144,7 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
             programsContext.apply(block)
         }
 
-        override fun nodes(factory: () -> Node<T>) {
+        override fun nodes(factory: DeploymentContext<T, P>.() -> Node<T>) {
             nodeFactory = factory
         }
 
@@ -166,12 +163,12 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
             logger.debug("Applying node to nodes for position: {}, deployment {}", position, deployment)
             if (content.filter == null || content.filter.contains(position)) {
                 logger.debug("Creating molecule for node at position: {}", position)
-                val mol = inc.createMolecule(
+                val mol = ctx.ctx.incarnation.createMolecule(
                     content.molecule
                         ?: error("Molecule not specified"),
                 )
                 logger.debug("Creating concentration for molecule: {}", mol)
-                val conc = inc.createConcentration(content.concentration)
+                val conc = ctx.ctx.incarnation.createConcentration(content.concentration)
                 logger.debug("Setting concentration for molecule: {} to node at position: {}", mol, position)
                 node.setConcentration(mol, conc)
             }

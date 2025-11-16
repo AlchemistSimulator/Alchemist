@@ -24,7 +24,7 @@ class TestDeployments {
         val incarnation = AvailableIncarnations.SAPERE.incarnation<Any, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
             deployments {
-                val p = Point(envAsAny, 0.0, 0.0)
+                val p = Point(ctx.environment, 0.0, 0.0)
                 deploy(p)
             }
         }
@@ -37,9 +37,9 @@ class TestDeployments {
         val incarnation = AvailableIncarnations.SAPERE.incarnation<Any, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
             deployments {
-                val point = Point(envAsAny, 0.0, 0.0)
+                val point = Point(ctx.environment, 0.0, 0.0)
                 deploy(point)
-                deploy(Point(envAsAny, 1.0, 1.0))
+                deploy(Point(ctx.environment, 1.0, 1.0))
             }
         }
 
@@ -52,7 +52,7 @@ class TestDeployments {
         val loader = simulation(incarnation) {
             deployments {
                 val grid = Grid(
-                    envAsAny,
+                    ctx.environment,
                     generator,
                     1.0,
                     1.0,

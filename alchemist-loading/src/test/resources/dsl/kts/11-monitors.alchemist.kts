@@ -1,4 +1,6 @@
 import another.location.SimpleMonitor
+import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
+import it.unibo.alchemist.boundary.dsl.Dsl.simulation
 
 /*
  * Copyright (C) 2010-2025, Danilo Pianini and contributors
@@ -11,5 +13,7 @@ import another.location.SimpleMonitor
 
 val incarnation = SAPERE.incarnation<Any, Euclidean2DPosition>()
 simulation(incarnation) {
-    addMonitor(SimpleMonitor())
+    monitors {
+        +SimpleMonitor<Any, Euclidean2DPosition>()
+    }
 }

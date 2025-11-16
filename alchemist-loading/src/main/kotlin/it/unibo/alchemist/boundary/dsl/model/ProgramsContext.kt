@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.dsl.model
 
+import it.unibo.alchemist.boundary.dsl.AlchemistDsl
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Node
@@ -48,19 +49,7 @@ import it.unibo.alchemist.model.TimeDistribution
  * @see [Reaction] for the reaction interface
  * @see [TimeDistribution] for time distribution configuration
  */
-@DslMarker
-annotation class ProgramsMarker
-
-/**
- * Context interface for configuring programs (reactions) in a deployment.
- *
- * Programs define the behavior of nodes through reactions that execute actions
- * when conditions are met. Programs can be applied to all nodes or filtered by position.
- *
- * @param T The type of molecule concentration.
- * @param P The type of position, must extend [Position].
- */
-@ProgramsMarker
+@AlchemistDsl
 interface ProgramsContext<T, P : Position<P>> {
     /**
      * The deployment context this programs context belongs to.
@@ -101,19 +90,7 @@ interface ProgramsContext<T, P : Position<P>> {
  * @see [Action] for reaction actions
  * @see [Condition] for reaction conditions
  */
-@DslMarker
-annotation class ProgramMarker
-
-/**
- * Context interface for configuring a single program (reaction) for a node.
- *
- * This context is used within [ProgramsContext] blocks to define reactions with
- * their time distributions, conditions, and actions.
- *
- * @param T The type of molecule concentration.
- * @param P The type of position, must extend [Position].
- */
-@ProgramMarker
+@AlchemistDsl
 interface ProgramContext<T, P : Position<P>> {
     /**
      * The programs context this program context belongs to.
@@ -174,6 +151,14 @@ interface ProgramContext<T, P : Position<P>> {
     fun addAction(block: () -> Action<T>)
 
     /**
+     * Adds an action to the program using the incarnation createAction function.
+     *
+     * @param action the action
+     * @see [it.unibo.alchemist.model.Incarnation.createAction]
+     */
+    fun addAction(action: String)
+
+    /**
      * Adds a condition to the program.
      *
      * Conditions must all be satisfied for the reaction to fire.
@@ -182,6 +167,14 @@ interface ProgramContext<T, P : Position<P>> {
      * @see [Condition]
      */
     fun addCondition(block: () -> Condition<T>)
+
+    /**
+     * Adds a condition to the program, using the incarnation createCondition function.
+     *
+     * @param condition the condition
+     * @see [it.unibo.alchemist.model.Incarnation.createCondition]
+     */
+    fun addCondition(condition: String)
 
     /**
      * Unary plus operator for type-safe casting of [TimeDistribution].

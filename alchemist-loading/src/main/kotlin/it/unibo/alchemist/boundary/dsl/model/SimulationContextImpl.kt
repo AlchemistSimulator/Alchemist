@@ -17,13 +17,10 @@ import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
 import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.TerminationPredicate
-import it.unibo.alchemist.model.linkingrules.NoLinks
 import java.io.Serializable
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
@@ -35,14 +32,16 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param P The type of position.
  */
 
-class SimulationContextImpl<T, P : Position<P>>(
-    override val incarnation: Incarnation<T, P>,
-    override val environment: Environment<T, P>,
-) : SimulationContext<T, P> {
+class SimulationContextImpl<T, P : Position<P>>(override val incarnation: Incarnation<T, P>) : SimulationContext<T, P> {
+    /** The environment instance (internal use). */
+    var envIstance: Environment<T, P>? = null
+    override val environment: Environment<T, P>
+        get() = requireNotNull(envIstance) { "Environment has not been initialized yet" }
+
     /**
      * List of build steps to execute.
      */
-    val buildSteps: MutableList<() -> Unit> = mutableListOf()
+    val buildSteps: MutableList<SimulationContextImpl<T, P>.() -> Unit> = mutableListOf()
 
     /**
      * List of output .
@@ -56,18 +55,42 @@ class SimulationContextImpl<T, P : Position<P>>(
 
     override var launcher: Launcher = DefaultLauncher()
 
-    override var scenarioGenerator: RandomGenerator = MersenneTwister(0L)
+    /**
+     * Map of variable references.
+     */
+    val references: MutableMap<String, Any> = mutableMapOf()
 
-    override var simulationGenerator: RandomGenerator = MersenneTwister(0L)
+    private var _scenarioGenerator: RandomGenerator? = null
+    private var _simulationGenerator: RandomGenerator? = null
+
+    override var scenarioGenerator: RandomGenerator
+        get() = if (_scenarioGenerator == null) {
+            _scenarioGenerator = MersenneTwister(0L)
+            _scenarioGenerator!!
+        } else {
+            _scenarioGenerator!!
+        }
+        set(value) {
+            buildSteps.add { this._scenarioGenerator = value }
+        }
+
+    override var simulationGenerator: RandomGenerator
+        get() = if (_simulationGenerator == null) {
+            _simulationGenerator = MersenneTwister(0L)
+            _simulationGenerator!!
+        } else {
+            _simulationGenerator!!
+        }
+        set(value) {
+            buildSteps.add { this._simulationGenerator = value }
+        }
 
     private val layers: MutableMap<String, Layer<T, P>> = HashMap()
-    private var _networkModel: LinkingRule<T, P> = NoLinks()
 
     override var networkModel: LinkingRule<T, P>
-        get() = _networkModel
+        get() = environment.linkingRule
         set(value) {
-            _networkModel = value
-            environment.linkingRule = value
+            buildSteps.add { this.environment.linkingRule = value }
         }
 
     /**
@@ -76,38 +99,53 @@ class SimulationContextImpl<T, P : Position<P>>(
     val variablesContext = VariablesContext()
 
     /**
-     * Executes all build steps.
+     * Build a fresh new simulation context instance, and applies
+     * all the build steps to it.
+     * To ensure that each instance has
+     * its own variables spaces: check the [VariablesContext] documentation for more details.
+     * @see [VariablesContext]
      */
-    fun build() {
-        buildSteps.forEach { it() }
+    fun build(envInstance: Environment<T, P>, values: Map<String, *>): SimulationContextImpl<T, P> {
+        val batchContext = SimulationContextImpl(incarnation)
+        batchContext.envIstance = envInstance
+        batchContext.variablesContext.variables += this.variablesContext.variables
+        batchContext.variablesContext.dependentVariables += this.variablesContext.dependentVariables
+        logger.debug("Binding variables to batchInstance: {}", values)
+        this.variablesContext.addReferences(values)
+        buildSteps.forEach { batchContext.apply(it) }
+        return batchContext
     }
 
-    override fun deployments(block: DeploymentsContextImpl<T, P>.() -> Unit) {
-        buildSteps.add { DeploymentsContextImpl(this).apply(block) }
+    override fun deployments(block: DeploymentsContext<T, P>.() -> Unit) {
+        logger.debug("adding deployments block inside {}", this)
+        buildSteps.add {
+            logger.debug("Configuring deployments inside {}", this)
+            DeploymentsContextImpl(this).apply(block)
+        }
     }
 
-    override fun addTerminator(terminator: TerminationPredicate<*, *>) {
+    override fun terminators(block: TerminatorsContext<T, P>.() -> Unit) {
         @Suppress("UNCHECKED_CAST")
-        buildSteps.add { environment.addTerminator(terminator as TerminationPredicate<T, P>) }
+        buildSteps.add { TerminatorsContextImpl(this).block() }
     }
 
-    override fun addMonitor(monitor: OutputMonitor<T, P>) {
-        buildSteps.add { monitors.add(monitor) }
+    override fun monitors(block: OutputMonitorsContext<T, P>.() -> Unit) {
+        buildSteps.add { OutputMonitorsContextImpl(this).block() }
     }
 
     override fun exporter(block: ExporterContextImpl<T, P>.() -> Unit) {
-        buildSteps.add { exporters.add(ExporterContextImpl<T, P>().apply(block)) }
+        buildSteps.add { this.exporters.add(ExporterContextImpl(this).apply(block)) }
     }
 
-    override fun program(program: GlobalReaction<T>) {
-        buildSteps.add { this.environment.addGlobalReaction(program) }
+    override fun programs(block: GlobalProgramsContext<T, P>.() -> Unit) {
+        buildSteps.add { GlobalProgramsContextImpl(this).block() }
     }
 
-    override fun runLater(block: () -> Unit) {
+    override fun runLater(block: context(SimulationContext<T, P>)() -> Unit) {
         buildSteps.add { block() }
     }
 
-    override fun layer(block: LayerContextImpl<T, P>.() -> Unit) {
+    override fun layer(block: LayerContext<T, P>.() -> Unit) {
         buildSteps.add {
             val l = LayerContextImpl<T, P>().apply(block)
             val layer = requireNotNull(l.layer) { "Layer must be specified" }
@@ -118,14 +156,14 @@ class SimulationContextImpl<T, P : Position<P>>(
             }
             val molecule = incarnation.createMolecule(moleculeName)
             logger.debug("Adding layer for molecule {}: {}", moleculeName, layer)
-            layers[moleculeName] = layer
-            environment.addLayer(molecule, layer)
+            this.layers[moleculeName] = layer
+            this.environment.addLayer(molecule, layer)
         }
     }
 
-    override fun <T : Serializable> variable(source: Variable<out T>): VariablesContext.VariableProvider<T> =
+    override fun <A : Serializable> variable(source: Variable<out A>): VariablesContext.VariableProvider<A> =
         variablesContext.register(source)
 
-    override fun <T : Serializable> variable(source: () -> T): VariablesContext.DependentVariableProvider<T> =
+    override fun <A : Serializable> variable(source: () -> A): VariablesContext.DependentVariableProvider<A> =
         variablesContext.dependent(source)
 }

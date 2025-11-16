@@ -23,7 +23,7 @@ class TestContents {
         val incarnation = SAPERE.incarnation<Any, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
             deployments {
-                deploy(Point(envAsAny, 0.0, 0.0)) {
+                deploy(Point(ctx.environment, 0.0, 0.0)) {
                     all {
                         molecule = "test"
                         concentration = 1.0

@@ -56,6 +56,11 @@ object ProcessorConfig {
     const val TIME_DISTRIBUTION_TYPE = "$MODEL_PACKAGE.TimeDistribution"
 
     /**
+     * Fully qualified name for PositionBasedFilter interface.
+     */
+    const val POSITION_BASED_FILTER_TYPE = "$MODEL_PACKAGE.PositionBasedFilter"
+
+    /**
      * Fully qualified name for RandomGenerator.
      */
     const val RANDOM_GENERATOR_TYPE = "org.apache.commons.math3.random.RandomGenerator"
@@ -74,11 +79,37 @@ object ProcessorConfig {
      * Context type class names.
      */
     object ContextTypes {
+        /** Fully qualified name for SimulationContext. */
         const val SIMULATION_CONTEXT = "$DSL_MODEL_PACKAGE.SimulationContext"
+
+        /** Fully qualified name for ExporterContext. */
+        const val EXPORTER_CONTEXT = "$DSL_MODEL_PACKAGE.ExporterContext"
+
+        /** Fully qualified name for GlobalProgramsContext. */
+        const val GLOBAL_PROGRAMS_CONTEXT = "$DSL_MODEL_PACKAGE.GlobalProgramsContext"
+
+        /** Fully qualified name for OutputMonitorsContext. */
+        const val OUTPUT_MONITORS_CONTEXT = "$DSL_MODEL_PACKAGE.OutputMonitorsContext"
+
+        /** Fully qualified name for TerminatorsContext. */
+        const val TERMINATORS_CONTEXT = "$DSL_MODEL_PACKAGE.TerminatorsContext"
+
+        /** Fully qualified name for DeploymentsContext. */
         const val DEPLOYMENTS_CONTEXT = "$DSL_MODEL_PACKAGE.DeploymentsContext"
+
+        /** Fully qualified name for DeploymentContext. */
+        const val DEPLOYMENT_CONTEXT = "$DSL_MODEL_PACKAGE.DeploymentContext"
+
+        /** Fully qualified name for ProgramsContext. */
         const val PROGRAMS_CONTEXT = "$DSL_MODEL_PACKAGE.ProgramsContext"
+
+        /** Fully qualified name for ProgramContext. */
         const val PROGRAM_CONTEXT = "$DSL_MODEL_PACKAGE.ProgramContext"
+
+        /** Fully qualified name for PropertiesContext. */
         const val PROPERTIES_CONTEXT = "$DSL_MODEL_PACKAGE.PropertiesContext"
+
+        /** Fully qualified name for PropertyContext. */
         const val PROPERTY_CONTEXT = "$DSL_MODEL_PACKAGE.PropertyContext"
     }
 

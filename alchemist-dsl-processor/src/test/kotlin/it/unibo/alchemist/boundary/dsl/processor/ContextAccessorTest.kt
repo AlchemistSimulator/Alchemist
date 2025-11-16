@@ -15,13 +15,94 @@ class ContextAccessorTest {
     }
 
     @Test
+    fun `test exporter context accessors`() {
+        assertEquals(
+            "ctx.ctx.environment",
+            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.EXPORTER_CONTEXT),
+        )
+        assertEquals(
+            "ctx.ctx.scenarioGenerator",
+            ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.EXPORTER_CONTEXT),
+        )
+        assertEquals(
+            "ctx.ctx.incarnation",
+            ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.EXPORTER_CONTEXT),
+        )
+    }
+
+    @Test
+    fun `test global programs context accessors`() {
+        assertEquals(
+            "ctx.ctx.environment",
+            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.GLOBAL_PROGRAMS_CONTEXT),
+        )
+        assertEquals(
+            "ctx.ctx.scenarioGenerator",
+            ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.GLOBAL_PROGRAMS_CONTEXT),
+        )
+        assertEquals(
+            "ctx.ctx.incarnation",
+            ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.GLOBAL_PROGRAMS_CONTEXT),
+        )
+    }
+
+    @Test
+    fun `test output monitors context accessors`() {
+        assertEquals(
+            "ctx.ctx.environment",
+            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.OUTPUT_MONITORS_CONTEXT),
+        )
+        assertEquals(
+            "ctx.ctx.scenarioGenerator",
+            ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.OUTPUT_MONITORS_CONTEXT),
+        )
+        assertEquals(
+            "ctx.ctx.incarnation",
+            ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.OUTPUT_MONITORS_CONTEXT),
+        )
+    }
+
+    @Test
+    fun `test terminators context accessors`() {
+        assertEquals(
+            "ctx.ctx.environment",
+            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.TERMINATORS_CONTEXT),
+        )
+        assertEquals(
+            "ctx.ctx.scenarioGenerator",
+            ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.TERMINATORS_CONTEXT),
+        )
+        assertEquals(
+            "ctx.ctx.incarnation",
+            ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.TERMINATORS_CONTEXT),
+        )
+    }
+
+    @Test
     fun `test deployment context accessors`() {
-        assertEquals("ctx.env", ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.DEPLOYMENT))
+        assertEquals("ctx.environment", ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.DEPLOYMENT))
         assertEquals("ctx.generator", ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.DEPLOYMENT))
         assertEquals(
             "ctx.ctx.incarnation",
             ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.DEPLOYMENT),
         )
+    }
+
+    @Test
+    fun `test deployment context singular accessors`() {
+        assertEquals(
+            "ctx.ctx.environment",
+            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.DEPLOYMENT_CONTEXT),
+        )
+        assertEquals(
+            "ctx.ctx.generator",
+            ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.DEPLOYMENT_CONTEXT),
+        )
+        assertEquals(
+            "ctx.ctx.ctx.incarnation",
+            ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.DEPLOYMENT_CONTEXT),
+        )
+        assertEquals("ctx.filter", ContextAccessor.getAccessor(InjectionType.FILTER, ContextType.DEPLOYMENT_CONTEXT))
     }
 
     @Test

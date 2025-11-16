@@ -1,3 +1,38 @@
+## [42.3.18](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.17...42.3.18) (2025-11-16)
+
+### Dependency updates
+
+* **deps:** update dependency org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin to v0.97.0 ([#4969](https://github.com/AlchemistSimulator/Alchemist/issues/4969)) ([1a17bad](https://github.com/AlchemistSimulator/Alchemist/commit/1a17badd6448dd24122432ab92bbf7675e64d056))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.155 ([#4968](https://github.com/AlchemistSimulator/Alchemist/issues/4968)) ([9be7a58](https://github.com/AlchemistSimulator/Alchemist/commit/9be7a58edaf83f82394b10f1987bcde6b406e8aa))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.156 ([#4970](https://github.com/AlchemistSimulator/Alchemist/issues/4970)) ([7803702](https://github.com/AlchemistSimulator/Alchemist/commit/780370205eab63fe5d1467dccb87502eb6a5d045))
+* **deps:** update gradle-kotlin-qa plugin to v0.98.0 ([#4973](https://github.com/AlchemistSimulator/Alchemist/issues/4973)) ([d30f4e5](https://github.com/AlchemistSimulator/Alchemist/commit/d30f4e5fbce8ec16e03b485697c8d0e0c4c3c491))
+* **deps:** update react to v2025.11.7-19.2.0 (patch) ([#4966](https://github.com/AlchemistSimulator/Alchemist/issues/4966)) ([997a545](https://github.com/AlchemistSimulator/Alchemist/commit/997a545bc421a76a1a1020f6b335fe5322f6a02a))
+* **deps:** update react to v2025.11.8-19.2.0 (patch) ([#4967](https://github.com/AlchemistSimulator/Alchemist/issues/4967)) ([7fbbddd](https://github.com/AlchemistSimulator/Alchemist/commit/7fbbddd46ac653196716d14487dffc382f428eff))
+* **deps:** update react to v2025.11.9-19.2.0 (patch) ([#4975](https://github.com/AlchemistSimulator/Alchemist/issues/4975)) ([cb883dc](https://github.com/AlchemistSimulator/Alchemist/commit/cb883dc193b510865932eaa2b5ade350afd29141))
+
+### Documentation
+
+* fix Dokka linking to external sources and errors related to unresolvable symbols ([#4965](https://github.com/AlchemistSimulator/Alchemist/issues/4965)) ([708a3c3](https://github.com/AlchemistSimulator/Alchemist/commit/708a3c3e9f47fda2198ae8f67b0030cc23d776de))
+
+### Build and continuous integration
+
+* add error handling to remove no-javadoc.json ([40760f0](https://github.com/AlchemistSimulator/Alchemist/commit/40760f0fb224e48dcc8363f18257b71c2563a86d))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([25cf8d6](https://github.com/AlchemistSimulator/Alchemist/commit/25cf8d648fa8e13b7ed44ae080cc9734723e8fd9))
+* **build:** update the javadoc.io cache ([38b6443](https://github.com/AlchemistSimulator/Alchemist/commit/38b644353c1c897d658ae2caecb7b9e8b8412dd6))
+* **build:** update the javadoc.io cache ([1e43bda](https://github.com/AlchemistSimulator/Alchemist/commit/1e43bdac22325a551ed09b72ec950213134309b9))
+* **build:** update the javadoc.io cache ([614efcc](https://github.com/AlchemistSimulator/Alchemist/commit/614efcc5125698d57405cdd6965c2f7a02c7fdd7))
+* **build:** update the javadoc.io cache ([b58d479](https://github.com/AlchemistSimulator/Alchemist/commit/b58d479da4b64a6361353d4f0fd2d7c888bc601a))
+* **build:** update the javadoc.io cache ([97e0e94](https://github.com/AlchemistSimulator/Alchemist/commit/97e0e94f145f2869155bb5891172fa39e0433464))
+* **build:** update the javadoc.io cache ([8de3ecc](https://github.com/AlchemistSimulator/Alchemist/commit/8de3ecc939a28a12311826fb8ab97c62c73d08f7))
+* **build:** update the javadoc.io cache ([56b4823](https://github.com/AlchemistSimulator/Alchemist/commit/56b482334c7352f9f8c7dc3d91d9842163d24a2f))
+* **build:** update the javadoc.io cache ([0dbd76d](https://github.com/AlchemistSimulator/Alchemist/commit/0dbd76df8a66defdddf8b303eef09fc6c6bfa83c))
+* **build:** update the javadoc.io cache ([4d1a1a1](https://github.com/AlchemistSimulator/Alchemist/commit/4d1a1a1b3718219ceca9632d37eb930d0b053075))
+* **deps-dev:** bump js-yaml from 4.1.0 to 4.1.1 ([bfa27ae](https://github.com/AlchemistSimulator/Alchemist/commit/bfa27ae36ed667244156aa14c312036f8aad558f))
+* **gitignore:** add AndroidProjectSystem.xml to .gitignore ([#4974](https://github.com/AlchemistSimulator/Alchemist/issues/4974)) ([188fa6e](https://github.com/AlchemistSimulator/Alchemist/commit/188fa6e39ca7e39c82ef01f95b08d2e7bc5ca3c5))
+
 ## [42.3.17](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.16...42.3.17) (2025-11-12)
 
 ### Dependency updates

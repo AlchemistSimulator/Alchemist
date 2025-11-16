@@ -24,11 +24,7 @@ object TypeHierarchyChecker {
             return true
         }
 
-        if (declaration is KSClassDeclaration) {
-            return checkSuperTypes(declaration, targetQualifiedName, mutableSetOf())
-        }
-
-        return false
+        return declaration is KSClassDeclaration && checkSuperTypes(declaration, targetQualifiedName, mutableSetOf())
     }
 
     /**
@@ -38,10 +34,11 @@ object TypeHierarchyChecker {
      * @param targetQualifiedName The fully qualified name of the target type
      * @return True if the type implements or extends the target type
      */
+    @Suppress("SwallowedException", "TooGenericExceptionCaught")
     fun isAssignableTo(typeRef: KSTypeReference, targetQualifiedName: String): Boolean = try {
         val resolved = typeRef.resolve()
         isAssignableTo(resolved, targetQualifiedName)
-    } catch (e: Exception) {
+    } catch (e: RuntimeException) {
         false
     }
 
@@ -52,37 +49,44 @@ object TypeHierarchyChecker {
     ): Boolean {
         val qualifiedName = classDecl.qualifiedName?.asString() ?: return false
 
-        if (qualifiedName in visited) {
-            return false
-        }
-        visited.add(qualifiedName)
-
-        if (qualifiedName == targetQualifiedName) {
-            return true
-        }
-
-        val superTypes = classDecl.superTypes.toList()
-        for (superType in superTypes) {
-            try {
-                val resolved = superType.resolve()
-                val superDecl = resolved.declaration
-
-                val superQualifiedName = superDecl.qualifiedName?.asString()
-                if (superQualifiedName == targetQualifiedName) {
-                    return true
-                }
-
-                if (superDecl is KSClassDeclaration) {
-                    if (checkSuperTypes(superDecl, targetQualifiedName, visited)) {
-                        return true
-                    }
-                }
-            } catch (e: Exception) {
-                continue
+        return when {
+            qualifiedName in visited -> false
+            qualifiedName == targetQualifiedName -> true
+            else -> {
+                visited.add(qualifiedName)
+                checkSuperTypesRecursive(classDecl, targetQualifiedName, visited)
             }
         }
+    }
 
+    private fun checkSuperTypesRecursive(
+        classDecl: KSClassDeclaration,
+        targetQualifiedName: String,
+        visited: MutableSet<String>,
+    ): Boolean {
+        val superTypes = classDecl.superTypes.toList()
+        for (superType in superTypes) {
+            if (checkSuperType(superType, targetQualifiedName, visited)) {
+                return true
+            }
+        }
         return false
+    }
+
+    @Suppress("SwallowedException", "TooGenericExceptionCaught")
+    private fun checkSuperType(
+        superType: KSTypeReference,
+        targetQualifiedName: String,
+        visited: MutableSet<String>,
+    ): Boolean = try {
+        val resolved = superType.resolve()
+        val superDecl = resolved.declaration
+
+        val superQualifiedName = superDecl.qualifiedName?.asString()
+        superQualifiedName == targetQualifiedName ||
+            (superDecl is KSClassDeclaration && checkSuperTypes(superDecl, targetQualifiedName, visited))
+    } catch (e: RuntimeException) {
+        false
     }
 
     /**
@@ -97,13 +101,8 @@ object TypeHierarchyChecker {
         val declaration = type.declaration
         val qualifiedName = declaration.qualifiedName?.asString() ?: return false
 
-        if (targetQualifiedNames.contains(qualifiedName)) {
-            return true
-        }
-
-        return targetQualifiedNames.any { targetName ->
-            isAssignableTo(type, targetName)
-        }
+        return targetQualifiedNames.contains(qualifiedName) ||
+            targetQualifiedNames.any { targetName -> isAssignableTo(type, targetName) }
     }
 
     /**
@@ -118,16 +117,8 @@ object TypeHierarchyChecker {
         val declaration = type.declaration
         val qualifiedName = declaration.qualifiedName?.asString() ?: return false
 
-        if (qualifiedName == targetQualifiedName) {
-            return true
-        }
-
-        if (isAssignableTo(type, targetQualifiedName)) {
-            return true
-        }
-
-        return packagePatterns.any { pattern ->
-            qualifiedName.startsWith(pattern)
-        }
+        return qualifiedName == targetQualifiedName ||
+            isAssignableTo(type, targetQualifiedName) ||
+            packagePatterns.any { pattern -> qualifiedName.startsWith(pattern) }
     }
 }

@@ -21,12 +21,12 @@ object ImportManager {
      */
     fun writeImports(
         writer: PrintWriter,
-        typeParamBounds: List<String>,
-        paramTypes: List<String>,
+        @Suppress("UNUSED_PARAMETER") typeParamBounds: List<String>,
+        @Suppress("UNUSED_PARAMETER") paramTypes: List<String>,
         defaultValues: List<String>,
         classDecl: KSClassDeclaration,
-        needsMapEnvironment: Boolean = false,
-        injectedParamTypes: List<String> = emptyList(),
+        @Suppress("UNUSED_PARAMETER") needsMapEnvironment: Boolean = false,
+        @Suppress("UNUSED_PARAMETER") injectedParamTypes: List<String> = emptyList(),
     ) {
         val neededImports = DefaultValueAnalyzer.extractNeededImportsFromDefaults(defaultValues, classDecl)
         neededImports.forEach { writer.println(it) }

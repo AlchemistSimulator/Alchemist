@@ -23,6 +23,9 @@ enum class InjectionType {
 
     /** Time distribution parameter injection. */
     TIMEDISTRIBUTION,
+
+    /** Position-based filter parameter injection. */
+    FILTER,
 }
 
 /**
@@ -68,6 +71,7 @@ object ParameterInjector {
                 isReactionType(resolved, simpleName, qualifiedName) -> indices[InjectionType.REACTION] = index
                 isTimeDistributionType(resolved, simpleName, qualifiedName) -> indices[InjectionType.TIMEDISTRIBUTION] =
                     index
+                isFilterType(resolved, simpleName, qualifiedName) -> indices[InjectionType.FILTER] = index
             }
         }
 
@@ -140,8 +144,61 @@ object ParameterInjector {
             qualifiedName.startsWith("${ProcessorConfig.TIME_DISTRIBUTION_TYPE}.")
     }
 
+    private fun isFilterType(
+        type: com.google.devtools.ksp.symbol.KSType,
+        simpleName: String,
+        qualifiedName: String,
+    ): Boolean {
+        val effectiveType = type.makeNotNullable()
+        val effectiveDeclaration = effectiveType.declaration
+        val effectiveQualifiedName = effectiveDeclaration.qualifiedName?.asString().orEmpty()
+        val effectiveSimpleName = effectiveDeclaration.simpleName.asString()
+
+        if (effectiveSimpleName != "PositionBasedFilter" && !effectiveQualifiedName.endsWith(".PositionBasedFilter")) {
+            return false
+        }
+        return TypeHierarchyChecker.isAssignableTo(effectiveType, ProcessorConfig.POSITION_BASED_FILTER_TYPE) ||
+            effectiveQualifiedName == ProcessorConfig.POSITION_BASED_FILTER_TYPE ||
+            effectiveQualifiedName.startsWith("${ProcessorConfig.POSITION_BASED_FILTER_TYPE}.")
+    }
+
+    /**
+     * Parses a scope string to a ContextType enum value.
+     * Supports both enum names and class names (e.g., "DEPLOYMENT" or "DEPLOYMENTS_CONTEXT").
+     *
+     * @param scope The scope string
+     * @return The corresponding ContextType, or null if the scope is invalid or empty
+     */
+    fun parseScope(scope: String?): ContextType? {
+        if (scope.isNullOrBlank()) {
+            return null
+        }
+        val upperScope = scope.uppercase()
+
+        return when (upperScope) {
+            "SIMULATION", "SIMULATION_CONTEXT" -> ContextType.SIMULATION
+            "EXPORTER", "EXPORTER_CONTEXT" -> ContextType.EXPORTER_CONTEXT
+            "GLOBAL_PROGRAMS", "GLOBAL_PROGRAMS_CONTEXT" -> ContextType.GLOBAL_PROGRAMS_CONTEXT
+            "OUTPUT_MONITORS", "OUTPUT_MONITORS_CONTEXT" -> ContextType.OUTPUT_MONITORS_CONTEXT
+            "TERMINATORS", "TERMINATORS_CONTEXT" -> ContextType.TERMINATORS_CONTEXT
+            "DEPLOYMENT", "DEPLOYMENTS_CONTEXT" -> ContextType.DEPLOYMENT
+            "DEPLOYMENT_CONTEXT" -> ContextType.DEPLOYMENT_CONTEXT
+            "PROGRAM", "PROGRAM_CONTEXT" -> ContextType.PROGRAM
+            "PROPERTY", "PROPERTY_CONTEXT" -> ContextType.PROPERTY
+            else -> {
+                @Suppress("SwallowedException")
+                try {
+                    ContextType.valueOf(upperScope)
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+            }
+        }
+    }
+
     /**
      * Determines the context type based on injection indices and annotation values.
+     * If a manual scope is provided in the annotation, it takes precedence over automatic detection.
      *
      * @param injectionIndices Map of injection types to parameter indices
      * @param annotationValues Annotation values from the BuildDsl annotation
@@ -151,16 +208,42 @@ object ParameterInjector {
         injectionIndices: Map<InjectionType, Int>,
         annotationValues: Map<String, Any?>,
     ): ContextType {
+        val manualScope = annotationValues["scope"] as? String
+        if (manualScope != null && manualScope.isNotBlank()) {
+            val parsedScope = parseScope(manualScope)
+            if (parsedScope != null) {
+                return parsedScope
+            }
+        }
+
+        return determineContextTypeFromInjections(injectionIndices, annotationValues)
+    }
+
+    private fun determineContextTypeFromInjections(
+        injectionIndices: Map<InjectionType, Int>,
+        annotationValues: Map<String, Any?>,
+    ): ContextType = when {
+        injectionIndices.containsKey(InjectionType.FILTER) -> ContextType.DEPLOYMENT_CONTEXT
+        hasProgramContextInjections(injectionIndices, annotationValues) -> ContextType.PROGRAM
+        else -> determineDeploymentOrSimulationContext(injectionIndices, annotationValues)
+    }
+
+    private fun hasProgramContextInjections(
+        injectionIndices: Map<InjectionType, Int>,
+        annotationValues: Map<String, Any?>,
+    ): Boolean {
         val hasNode = injectionIndices.containsKey(InjectionType.NODE) &&
             (annotationValues["injectNode"] as? Boolean ?: true)
         val hasReaction = injectionIndices.containsKey(InjectionType.REACTION) &&
             (annotationValues["injectReaction"] as? Boolean ?: true)
         val hasTimeDistribution = injectionIndices.containsKey(InjectionType.TIMEDISTRIBUTION)
+        return hasNode || hasReaction || hasTimeDistribution
+    }
 
-        if (hasNode || hasReaction || hasTimeDistribution) {
-            return ContextType.PROGRAM
-        }
-
+    private fun determineDeploymentOrSimulationContext(
+        injectionIndices: Map<InjectionType, Int>,
+        annotationValues: Map<String, Any?>,
+    ): ContextType {
         val hasEnvironment = injectionIndices.containsKey(InjectionType.ENVIRONMENT) &&
             (annotationValues["injectEnvironment"] as? Boolean ?: true)
         val hasGenerator = injectionIndices.containsKey(InjectionType.GENERATOR) &&
@@ -182,54 +265,83 @@ object ParameterInjector {
      *
      * @param injectionIndices Map of injection types to parameter indices
      * @param annotationValues Annotation values from the BuildDsl annotation
+     * @param contextType The context type to determine which parameters can be injected
      * @return Set of parameter indices to skip
      */
-    fun getInjectionParams(injectionIndices: Map<InjectionType, Int>, annotationValues: Map<String, Any?>): Set<Int> {
+    fun getInjectionParams(
+        injectionIndices: Map<InjectionType, Int>,
+        annotationValues: Map<String, Any?>,
+        contextType: ContextType,
+    ): Set<Int> {
         val paramsToSkip = mutableSetOf<Int>()
 
-        addInjectionParamIfEnabled(
-            InjectionType.ENVIRONMENT,
-            "injectEnvironment",
-            injectionIndices,
-            annotationValues,
-            paramsToSkip,
-        )
+        if (isInjectionTypeAvailable(InjectionType.ENVIRONMENT, contextType)) {
+            addInjectionParamIfEnabled(
+                InjectionType.ENVIRONMENT,
+                "injectEnvironment",
+                injectionIndices,
+                annotationValues,
+                paramsToSkip,
+            )
+        }
 
-        addInjectionParamIfEnabled(
-            InjectionType.GENERATOR,
-            "injectGenerator",
-            injectionIndices,
-            annotationValues,
-            paramsToSkip,
-        )
+        if (isInjectionTypeAvailable(InjectionType.GENERATOR, contextType)) {
+            addInjectionParamIfEnabled(
+                InjectionType.GENERATOR,
+                "injectGenerator",
+                injectionIndices,
+                annotationValues,
+                paramsToSkip,
+            )
+        }
 
-        addInjectionParamIfEnabled(
-            InjectionType.INCARNATION,
-            "injectIncarnation",
-            injectionIndices,
-            annotationValues,
-            paramsToSkip,
-        )
+        if (isInjectionTypeAvailable(InjectionType.INCARNATION, contextType)) {
+            addInjectionParamIfEnabled(
+                InjectionType.INCARNATION,
+                "injectIncarnation",
+                injectionIndices,
+                annotationValues,
+                paramsToSkip,
+            )
+        }
 
-        addInjectionParamIfEnabled(
-            InjectionType.NODE,
-            "injectNode",
-            injectionIndices,
-            annotationValues,
-            paramsToSkip,
-        )
+        if (isInjectionTypeAvailable(InjectionType.NODE, contextType)) {
+            addInjectionParamIfEnabled(
+                InjectionType.NODE,
+                "injectNode",
+                injectionIndices,
+                annotationValues,
+                paramsToSkip,
+            )
+        }
 
-        addInjectionParamIfEnabled(
-            InjectionType.REACTION,
-            "injectReaction",
-            injectionIndices,
-            annotationValues,
-            paramsToSkip,
-        )
+        if (isInjectionTypeAvailable(InjectionType.REACTION, contextType)) {
+            addInjectionParamIfEnabled(
+                InjectionType.REACTION,
+                "injectReaction",
+                injectionIndices,
+                annotationValues,
+                paramsToSkip,
+            )
+        }
 
-        injectionIndices[InjectionType.TIMEDISTRIBUTION]?.let { paramsToSkip.add(it) }
+        if (isInjectionTypeAvailable(InjectionType.TIMEDISTRIBUTION, contextType)) {
+            injectionIndices[InjectionType.TIMEDISTRIBUTION]?.let { paramsToSkip.add(it) }
+        }
+
+        if (isInjectionTypeAvailable(InjectionType.FILTER, contextType)) {
+            injectionIndices[InjectionType.FILTER]?.let { paramsToSkip.add(it) }
+        }
 
         return paramsToSkip
+    }
+
+    @Suppress("SwallowedException")
+    private fun isInjectionTypeAvailable(injectionType: InjectionType, contextType: ContextType): Boolean = try {
+        ContextAccessor.getAccessor(injectionType, contextType)
+        true
+    } catch (e: IllegalArgumentException) {
+        false
     }
 
     private fun addInjectionParamIfEnabled(
@@ -254,8 +366,23 @@ enum class ContextType {
     /** Simulation context (only incarnation or only environment). */
     SIMULATION,
 
-    /** Deployment context (environment and generator). */
+    /** Exporter context (one level below SimulationContext, manually settable). */
+    EXPORTER_CONTEXT,
+
+    /** Global programs context (one level below SimulationContext, manually settable). */
+    GLOBAL_PROGRAMS_CONTEXT,
+
+    /** Output monitors context (one level below SimulationContext, manually settable). */
+    OUTPUT_MONITORS_CONTEXT,
+
+    /** Terminators context (one level below SimulationContext, manually settable). */
+    TERMINATORS_CONTEXT,
+
+    /** Deployments context (environment and generator). */
     DEPLOYMENT,
+
+    /** Deployment context (singular, one level below DeploymentsContext, includes filter). */
+    DEPLOYMENT_CONTEXT,
 
     /** Program context (includes node, reaction, and time distribution). */
     PROGRAM,

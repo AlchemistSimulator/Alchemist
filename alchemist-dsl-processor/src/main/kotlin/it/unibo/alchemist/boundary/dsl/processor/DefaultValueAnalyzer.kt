@@ -139,57 +139,80 @@ object DefaultValueAnalyzer {
         val extractionData = prepareExtractionData(param) ?: return null
         val defaultValue = extractBalancedExpression(extractionData.sourceCode, extractionData.startIndex)
         val trimmed = defaultValue?.trim()?.takeIf { it.isNotEmpty() && !it.contains("\n") }
-        val result = if (trimmed == null && param.hasDefault) {
-            val paramName = param.name?.asString() ?: return null
-            tryExtractSimpleDefault(extractionData.sourceCode, paramName)
-        } else {
-            trimmed
-        }
+        val result = getDefaultValueResult(trimmed, param, extractionData.sourceCode)
         return result?.let { qualifyMathIdentifiers(it) }
+    }
+
+    private fun getDefaultValueResult(trimmed: String?, param: KSValueParameter, sourceCode: String): String? {
+        if (trimmed != null) {
+            return trimmed
+        }
+        return extractDefaultValueFromParam(param, sourceCode)
+    }
+
+    private fun extractDefaultValueFromParam(param: KSValueParameter, sourceCode: String): String? {
+        if (!param.hasDefault) {
+            return null
+        }
+        val paramName = param.name?.asString()
+        return paramName?.let { tryExtractSimpleDefault(sourceCode, it) }
     }
 
     private fun qualifyMathIdentifiers(defaultValue: String): String {
         val replacements = mutableListOf<Pair<IntRange, String>>()
-
-        for (constant in MATH_CONSTANTS) {
-            val pattern = Regex("""\b$constant\b""")
-            val qualifiedPattern = Regex("""\w+\.$constant\b""")
-            if (pattern.containsMatchIn(defaultValue) && !qualifiedPattern.containsMatchIn(defaultValue)) {
-                pattern.findAll(defaultValue).forEach { match ->
-                    val before = defaultValue.substring(0, match.range.first)
-                    val isQualified = before.endsWith(".") || before.endsWith("::")
-                    if (!isQualified) {
-                        replacements.add(match.range to "kotlin.math.${match.value}")
-                    }
-                }
-            }
-        }
-
-        for (function in MATH_FUNCTIONS) {
-            val pattern = Regex("""\b$function\s*\(""")
-            val qualifiedPattern = Regex("""\w+\.$function\s*\(""")
-            if (pattern.containsMatchIn(defaultValue) && !qualifiedPattern.containsMatchIn(defaultValue)) {
-                pattern.findAll(defaultValue).forEach { match ->
-                    val before = defaultValue.substring(0, match.range.first)
-                    val isQualified = before.endsWith(".") || before.endsWith("::")
-                    if (!isQualified) {
-                        replacements.add(match.range to "kotlin.math.${match.value}")
-                    }
-                }
-            }
-        }
+        replacements.addAll(findConstantReplacements(defaultValue))
+        replacements.addAll(findFunctionReplacements(defaultValue))
 
         if (replacements.isEmpty()) {
             return defaultValue
         }
 
-        replacements.sortByDescending { it.first.first }
+        return applyReplacements(defaultValue, replacements)
+    }
 
+    private fun findConstantReplacements(defaultValue: String): List<Pair<IntRange, String>> {
+        val replacements = mutableListOf<Pair<IntRange, String>>()
+        for (constant in MATH_CONSTANTS) {
+            val pattern = Regex("""\b$constant\b""")
+            val qualifiedPattern = Regex("""\w+\.$constant\b""")
+            if (pattern.containsMatchIn(defaultValue) && !qualifiedPattern.containsMatchIn(defaultValue)) {
+                pattern.findAll(defaultValue).forEach { match ->
+                    if (!isQualifiedBefore(defaultValue, match.range.first)) {
+                        replacements.add(match.range to "kotlin.math.${match.value}")
+                    }
+                }
+            }
+        }
+        return replacements
+    }
+
+    private fun findFunctionReplacements(defaultValue: String): List<Pair<IntRange, String>> {
+        val replacements = mutableListOf<Pair<IntRange, String>>()
+        for (function in MATH_FUNCTIONS) {
+            val pattern = Regex("""\b$function\s*\(""")
+            val qualifiedPattern = Regex("""\w+\.$function\s*\(""")
+            if (pattern.containsMatchIn(defaultValue) && !qualifiedPattern.containsMatchIn(defaultValue)) {
+                pattern.findAll(defaultValue).forEach { match ->
+                    if (!isQualifiedBefore(defaultValue, match.range.first)) {
+                        replacements.add(match.range to "kotlin.math.${match.value}")
+                    }
+                }
+            }
+        }
+        return replacements
+    }
+
+    private fun isQualifiedBefore(defaultValue: String, index: Int): Boolean {
+        val before = defaultValue.substring(0, index)
+        return before.endsWith(".") || before.endsWith("::")
+    }
+
+    private fun applyReplacements(defaultValue: String, replacements: List<Pair<IntRange, String>>): String {
+        val sortedReplacements = replacements.sortedByDescending { it.first.first }
         var result = defaultValue
-        for ((range, replacement) in replacements) {
+        for ((range, replacement) in sortedReplacements) {
             result = result.replaceRange(range, replacement)
         }
-
         return result
     }
 

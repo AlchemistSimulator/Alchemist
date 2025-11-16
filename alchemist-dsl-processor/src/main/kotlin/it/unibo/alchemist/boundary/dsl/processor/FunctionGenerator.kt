@@ -68,14 +68,31 @@ object FunctionGenerator {
         val contextTypeName = when (contextType) {
             ContextType.SIMULATION ->
                 "${ProcessorConfig.ContextTypes.SIMULATION_CONTEXT}<$tWithVariance, $pWithVariance>"
+            ContextType.EXPORTER_CONTEXT ->
+                "${ProcessorConfig.ContextTypes.EXPORTER_CONTEXT}<$tWithVariance, $pWithVariance>"
+            ContextType.GLOBAL_PROGRAMS_CONTEXT ->
+                "${ProcessorConfig.ContextTypes.GLOBAL_PROGRAMS_CONTEXT}<$tWithVariance, $pWithVariance>"
+            ContextType.OUTPUT_MONITORS_CONTEXT ->
+                "${ProcessorConfig.ContextTypes.OUTPUT_MONITORS_CONTEXT}<$tWithVariance, $pWithVariance>"
+            ContextType.TERMINATORS_CONTEXT ->
+                "${ProcessorConfig.ContextTypes.TERMINATORS_CONTEXT}<$tWithVariance, $pWithVariance>"
             ContextType.DEPLOYMENT ->
                 "${ProcessorConfig.ContextTypes.DEPLOYMENTS_CONTEXT}<$tWithVariance, $pWithVariance>"
+            ContextType.DEPLOYMENT_CONTEXT ->
+                "${ProcessorConfig.ContextTypes.DEPLOYMENT_CONTEXT}<$tWithVariance, $pWithVariance>"
             ContextType.PROGRAM -> "${ProcessorConfig.ContextTypes.PROGRAM_CONTEXT}<$tWithVariance, $pWithVariance>"
             ContextType.PROPERTY -> "${ProcessorConfig.ContextTypes.PROPERTY_CONTEXT}<$tWithVariance, $pWithVariance>"
         }
         return "context(ctx: $contextTypeName) "
     }
 
+    /**
+     * Extracts variance annotation (in/out) from a type parameter bound.
+     *
+     * @param paramName The name of the type parameter
+     * @param typeParamBounds List of type parameter bounds
+     * @return The variance string ("in", "out", or empty string)
+     */
     fun extractVarianceFromBound(paramName: String, typeParamBounds: List<String>): String {
         val paramIndex = typeParamBounds.indexOfFirst { it.startsWith("$paramName:") }
         if (paramIndex < 0) {
@@ -84,26 +101,29 @@ object FunctionGenerator {
         val bound = typeParamBounds[paramIndex]
         val boundPart = bound.substringAfter(":", "").trim()
 
+        return extractVarianceFromBoundPart(paramName, boundPart)
+    }
+
+    private fun extractVarianceFromBoundPart(paramName: String, boundPart: String): String {
         val escapedParamName = Regex.escape(paramName)
         val outPattern = Regex("""<out\s+$escapedParamName>""")
         val inPattern = Regex("""<in\s+$escapedParamName>""")
 
-        if (outPattern.containsMatchIn(boundPart)) {
-            return "out"
+        return when {
+            outPattern.containsMatchIn(boundPart) || boundPart.startsWith("out ") -> "out"
+            inPattern.containsMatchIn(boundPart) || boundPart.startsWith("in ") -> "in"
+            else -> ""
         }
-        if (inPattern.containsMatchIn(boundPart)) {
-            return "in"
-        }
-
-        if (boundPart.startsWith("out ")) {
-            return "out"
-        }
-        if (boundPart.startsWith("in ")) {
-            return "in"
-        }
-        return ""
     }
 
+    /**
+     * Builds the function parameter list string.
+     *
+     * @param remainingParams Parameters that are not injected
+     * @param paramNames Names of the remaining parameters
+     * @param paramTypes Types of the remaining parameters
+     * @return The function parameter list string
+     */
     fun buildFunctionParams(
         remainingParams: List<KSValueParameter>,
         paramNames: List<String>,
@@ -125,7 +145,12 @@ object FunctionGenerator {
         }
     }
 
-    private fun buildReceiverPart(injectedParams: List<Pair<String, String>>, contextType: ContextType): String = ""
+    private const val EMPTY_RECEIVER = ""
+
+    private fun buildReceiverPart(
+        @Suppress("UNUSED_PARAMETER") injectedParams: List<Pair<String, String>>,
+        @Suppress("UNUSED_PARAMETER") contextType: ContextType,
+    ): String = EMPTY_RECEIVER
 
     /**
      * Builds the list of constructor parameter expressions.
@@ -230,6 +255,20 @@ object FunctionGenerator {
         typeParamBounds: MutableList<String>,
     ): String = TypeArgumentProcessor.buildContextParamType(typeRef, typeParamNames, typeParamBounds)
 
+    /**
+     * Builds constructor parameter expressions for property context.
+     *
+     * @param allParameters All constructor parameters
+     * @param remainingParams Parameters that are not injected
+     * @param paramsToSkip Set of parameter indices to skip
+     * @param paramNames Names of remaining parameters
+     * @param injectionIndices Map of injection types to parameter indices
+     * @param injectedParamNames Map of injection types to parameter names
+     * @param annotationValues Annotation values from BuildDsl
+     * @param typeParamNames Type parameter names
+     * @param injectedParamTypes Map of injection types to parameter types
+     * @return List of constructor parameter expressions
+     */
     fun buildConstructorParamsForPropertyContext(
         allParameters: List<KSValueParameter>,
         remainingParams: List<KSValueParameter>,

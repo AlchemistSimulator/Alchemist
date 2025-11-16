@@ -53,6 +53,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
             InjectionType.NODE -> annotationValues["injectNode"] as? Boolean ?: true
             InjectionType.REACTION -> annotationValues["injectReaction"] as? Boolean ?: true
             InjectionType.TIMEDISTRIBUTION -> true
+            InjectionType.FILTER -> true
         }
 
     private fun processClass(classDecl: KSClassDeclaration) {
@@ -70,6 +71,10 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         val annotationValues = annotation.arguments
             .mapNotNull { arg -> arg.name?.asString()?.let { it to arg.value } }
             .toMap()
+
+        logger.info("DslBuilderProcessor: Annotation values: $annotationValues")
+        val manualScope = annotationValues["scope"] as? String
+        logger.info("DslBuilderProcessor: Manual scope from annotation: '$manualScope'")
 
         val functionName = (annotationValues["functionName"] as? String)?.takeIf { it.isNotEmpty() }
             ?: classDecl.simpleName.asString().replaceFirstChar { it.lowercaseChar() }
@@ -90,8 +95,8 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         val injectionIndices = ParameterInjector.findInjectionIndices(parameters)
         logger.info("DslBuilderProcessor: Injection indices: $injectionIndices")
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-        logger.info("DslBuilderProcessor: Context type: $contextType")
-        val paramsToSkip = ParameterInjector.getInjectionParams(injectionIndices, annotationValues)
+        logger.info("DslBuilderProcessor: Determined context type: $contextType (manual scope was: '$manualScope')")
+        val paramsToSkip = ParameterInjector.getInjectionParams(injectionIndices, annotationValues, contextType)
         val remainingParams = parameters.filterIndexed { index, _ -> !paramsToSkip.contains(index) }
 
         val containingFile = classDecl.containingFile
@@ -232,7 +237,20 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
 
         when (contextType) {
             ContextType.SIMULATION -> writer.println("import ${ProcessorConfig.ContextTypes.SIMULATION_CONTEXT}")
+            ContextType.EXPORTER_CONTEXT -> writer.println("import ${ProcessorConfig.ContextTypes.EXPORTER_CONTEXT}")
+            ContextType.GLOBAL_PROGRAMS_CONTEXT -> writer.println(
+                "import ${ProcessorConfig.ContextTypes.GLOBAL_PROGRAMS_CONTEXT}",
+            )
+            ContextType.OUTPUT_MONITORS_CONTEXT -> writer.println(
+                "import ${ProcessorConfig.ContextTypes.OUTPUT_MONITORS_CONTEXT}",
+            )
+            ContextType.TERMINATORS_CONTEXT -> writer.println(
+                "import ${ProcessorConfig.ContextTypes.TERMINATORS_CONTEXT}",
+            )
             ContextType.DEPLOYMENT -> writer.println("import ${ProcessorConfig.ContextTypes.DEPLOYMENTS_CONTEXT}")
+            ContextType.DEPLOYMENT_CONTEXT -> writer.println(
+                "import ${ProcessorConfig.ContextTypes.DEPLOYMENT_CONTEXT}",
+            )
             ContextType.PROGRAM -> {
                 writer.println("import ${ProcessorConfig.ContextTypes.PROGRAM_CONTEXT}")
                 writer.println("import ${ProcessorConfig.ContextTypes.PROPERTIES_CONTEXT}")
@@ -297,6 +315,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         InjectionType.NODE -> "node"
         InjectionType.REACTION -> "reaction"
         InjectionType.TIMEDISTRIBUTION -> "td"
+        InjectionType.FILTER -> "filter"
     }
 
     private fun updateTypeParamsForInjected(
@@ -461,9 +480,9 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         writer: PrintWriter,
         finalTypeParamBounds: List<String>,
         paramTypes: List<String>,
-        defaultValues: List<String>,
-        classDecl: KSClassDeclaration,
-        needsMapEnvironment: Boolean,
+        @Suppress("UNUSED_PARAMETER") defaultValues: List<String>,
+        @Suppress("UNUSED_PARAMETER") classDecl: KSClassDeclaration,
+        @Suppress("UNUSED_PARAMETER") needsMapEnvironment: Boolean,
         injectedParamTypesMap: Map<InjectionType, String>,
         allParameters: List<KSValueParameter>,
         remainingParams: List<KSValueParameter>,
@@ -475,10 +494,10 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         typeParamNames: List<String>,
         functionName: String,
         className: String,
-        injectedParams: List<Pair<String, String>>,
+        @Suppress("UNUSED_PARAMETER") injectedParams: List<Pair<String, String>>,
         initialTypeParamNames: List<String>,
-        initialTypeParamBounds: List<String>,
-        constructorParams: List<String>,
+        @Suppress("UNUSED_PARAMETER") initialTypeParamBounds: List<String>,
+        @Suppress("UNUSED_PARAMETER") constructorParams: List<String>,
     ) {
         writer.println()
 

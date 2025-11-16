@@ -49,6 +49,8 @@ constructor(
     val errorDistribution: RealDistribution? = null,
 ) : AnyRealDistribution<T>(
     start,
+
+    @Suppress("OVERRIDE_DEPRECATION")
     object : RealDistribution {
         /*
          * Unknown values

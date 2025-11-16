@@ -7,14 +7,15 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 import Libs.alchemist
-import Util.commandExists
-import Util.isMac
-import Util.isWindows
-import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.google.common.hash.Hashing
+import it.unibo.alchemist.build.commandExists
+import it.unibo.alchemist.build.isMac
+import it.unibo.alchemist.build.isWindows
+import it.unibo.alchemist.build.testShadowJar
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import java.time.LocalDateTime
 import org.jetbrains.kotlin.daemon.common.toHexString
 import org.panteleyev.jpackage.ImageType
 import org.panteleyev.jpackage.ImageType.DEB
@@ -40,7 +41,7 @@ buildscript {
 
 dependencies {
     runtimeOnly(rootProject)
-    rootProject.subprojects.filterNot { it == project }.forEach {
+    rootProject.allprojects.filterNot { it == project }.forEach {
         runtimeOnly(it)
         dokka(it)
     }
@@ -79,13 +80,12 @@ tasks.withType<ShadowJar> {
     )
     isZip64 = true
     mergeServiceFiles()
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })
     // Run the jar and check the output
     val minJavaVersion: String by properties
-    val javaExecutable =
-        javaToolchains
-            .launcherFor { languageVersion.set(JavaLanguageVersion.of(minJavaVersion)) }
-            .map { it.executablePath.asFile.absolutePath }
+    val javaExecutable = javaToolchains.launcherFor { languageVersion.set(JavaLanguageVersion.of(minJavaVersion)) }
+        .map { it.executablePath.asFile.absolutePath }
     val testShadowJar = testShadowJar(javaExecutable, archiveFile)
     testShadowJar.configure {
         dependsOn(this@withType)
@@ -95,14 +95,9 @@ tasks.withType<ShadowJar> {
 }
 
 // Disable distTar and distZip
-val toDisable =
-    listOf(
-        tasks.distTar,
-        tasks.distZip,
-        tasks.jpackage,
-        tasks.shadowDistZip,
-        tasks.shadowDistTar,
-    ).map { it.name }
+val toDisable = with(tasks) {
+    listOf(distTar, distZip, jpackage, shadowDistZip, shadowDistTar).map { it.name }
+}
 tasks.matching { it.name in toDisable }.configureEach { enabled = false }
 
 sealed interface PackagingMethod
@@ -131,7 +126,7 @@ fun ImageType.validIfCommandExists(command: String): List<PackagingMethod> = whe
 }
 
 val packageRequirements: List<PackagingMethod> =
-    ImageType.values().flatMap { format ->
+    ImageType.entries.flatMap { format ->
         when (format) {
             EXE, MSI -> if (isWindows) format.valid() else format.disabledOnNon("Windows")
             DMG, PKG -> if (isMac) format.valid() else format.disabledOnNon("MacOS")
@@ -168,15 +163,13 @@ private data class SemVerExtracted(val base: String, val patch: String, val suff
 }
 
 private fun String.extractVersionComponents(): SemVerExtracted {
-    val (base, patch, suffix) =
-        versionComponentExtractor
-            .matchEntire(this)
-            ?.destructured
-            ?: error("Invalid version format: $this")
+    val (base, patch, suffix) = checkNotNull(versionComponentExtractor.matchEntire(this)?.destructured) {
+        "Invalid version format: $this"
+    }
     return SemVerExtracted(base, patch, suffix)
 }
 
-private val packageDestinationDir = rootProject.layout.buildDirectory.map { it.dir("package") }.get().asFile
+private val packageDestinationDir = rootProject.layout.buildDirectory.dir("package").directoryProperty
 private val baseVersion: Provider<String> = provider { rootProject.version.toString() }
 private fun ImageType.formatVersion(version: String): String = when (this) {
     MSI, EXE -> version.substringBefore('-')
@@ -184,8 +177,11 @@ private fun ImageType.formatVersion(version: String): String = when (this) {
     RPM -> version.replace('-', '.')
     else -> version
 }
-private val rpmFileName = baseVersion.map { "${rootProject.name}-${RPM.formatVersion(it)}-1.x86_64.rpm" }
-private val rpmFileProvider = rpmFileName.map { packageDestinationDir.resolve(it) }
+private val rpmFileName: Provider<String> =
+    baseVersion.map { "${rootProject.name}-${RPM.formatVersion(it)}-1.x86_64.rpm" }
+private val rpmFileProvider: RegularFileProperty = rpmFileName.flatMap { fileName ->
+    packageDestinationDir.file(fileName)
+}.fileProperty
 
 val generatePKGBUILD by tasks.registering {
     group = "Distribution"
@@ -208,7 +204,7 @@ val generatePKGBUILD by tasks.registering {
                 "Could not create output directory $outputDir, as it already exists and is not a directory"
             }
         }
-        val rpmFile = rpmFileProvider.get()
+        val rpmFile = rpmFileProvider.get().asFile
         check(rpmFile.exists()) { "Could not find $rpmFileName in ${rpmFile.parentFile}" }
         check(rpmFile.isFile) { "$rpmFileName is a directory" }
         val md5 = MessageDigest.getInstance("MD5")
@@ -224,7 +220,7 @@ val generatePKGBUILD by tasks.registering {
                     "https://github.com/AlchemistSimulator/Alchemist/releases/download/" +
                         "${baseVersion.get()}/" +
                         // Replace x86_64 with $CARCH to avoid namcap warnings
-                        rpmFileName.get().replace("x86_64", "\$CARCH")
+                        rpmFileName.get().replace("x86_64", $$"$CARCH")
                 "RPM_MD5" in key -> md5.digest().toHexString()
                 else -> error("Unknown PKGBUILD replacement key $key")
             }
@@ -242,7 +238,6 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
     val packageSpecificVersion = baseVersion.map { packaging.format.formatVersion(it) }
     val packagingTaskNameSuffix = packaging.name.replaceFirstChar { it.titlecase() } +
         "PerUser".takeIf { packaging.perUser }.orEmpty()
-    val rpmFile = rpmFileName.map { packageDestinationDir.resolve(it) }
     tasks.register<JPackageTask>("jpackage$packagingTaskNameSuffix") {
         group = "Distribution"
         description = "Creates application bundle through jpackage using $packaging"
@@ -252,32 +247,32 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
         resourceDir = projectDir.resolve("package-settings")
         appName = rootProject.name
         appVersion = packageSpecificVersion.get()
-        copyright = "Danilo Pianini and the Alchemist contributors"
+        copyright = "Copyright (c) ${LocalDateTime.now().year} Danilo Pianini and the Alchemist contributors"
         aboutUrl = "https://alchemistsimulator.github.io/"
         appDescription = rootProject.description
         licenseFile = rootProject.projectDir.resolve("LICENSE.md")
         type = packaging.format
-        input = tasks.shadowJar.get().archiveFile.get().asFile.parentFile
+        input = tasks.shadowJar.flatMap { shadowTask -> shadowTask.archiveFile.map { it.asFile.parentFile } }
         // Packaging settings
         destination = packageDestinationDir
-        mainJar = tasks.shadowJar.get().archiveFileName.get()
+        mainJar = tasks.shadowJar.flatMap { it.archiveFileName }
         mainClass = application.mainClass.get()
         verbose = true
+        runtimeImage = javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(multiJvm.latestLts)
+            vendor = JvmVendorSpec.ADOPTIUM
+        }.map { it.metadata.installationPath }
+        icon = project.projectDir.resolve("package-settings/logo.png")
         linux {
-            icon = project.projectDir.resolve("package-settings/logo.png")
             linuxShortcut = true
             linuxDebMaintainer = "Danilo Pianini"
             linuxRpmLicenseType = "GPLv3"
         }
         windows {
-            icon = project.projectDir.resolve("package-settings/logo.ico")
             winDirChooser = true
             winPerUserInstall = packaging.perUser
             winShortcutPrompt = true
             winConsole = true
-        }
-        mac {
-            icon = project.projectDir.resolve("package-settings/logo.png")
         }
     }
 }
@@ -308,4 +303,13 @@ afterEvaluate {
             skip()
         }
     }
+}
+
+private val Provider<Directory>.directoryProperty get(): DirectoryProperty = objects.directoryProperty().also {
+    it.set(this)
+    it.disallowChanges()
+}
+private val Provider<RegularFile>.fileProperty get(): RegularFileProperty = objects.fileProperty().also {
+    it.set(this)
+    it.disallowChanges()
 }

@@ -1,7 +1,11 @@
-import Util.currentCommitHash
-import Util.fetchJavadocIOForDependency
-import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
+import gradle.kotlin.dsl.accessors._588bfaad08c3b59948e49854bb988ab1.versionCatalogs
+import it.unibo.alchemist.build.ExternalDependency
+import it.unibo.alchemist.build.currentCommitHash
+import it.unibo.alchemist.build.registerExternal
 import java.time.Duration
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
+import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
 
 /*
  * Copyright (C) 2010-2024, Danilo Pianini and contributors
@@ -17,7 +21,12 @@ plugins {
 
 val minJavaVersion: String by properties
 
+val fetchEngine: Executor = Executors.newCachedThreadPool()
+
 dokka {
+    dokkaPublications.configureEach {
+        failOnWarning.set(true)
+    }
     dokkaSourceSets.configureEach {
         enableKotlinStdLibDocumentationLink.set(true)
         enableJdkDocumentationLink.set(true)
@@ -44,21 +53,20 @@ dokka {
                 }
             }
         /*
-         * Javadoc.io links for external dependencies
+         * Links for Alchemist modules
          */
-        val configured = mutableSetOf<ExternalDependency>()
-        configurations.configureEach {
-            val newDependencies = dependencies.withType<ExternalDependency>() - configured
-            configured += newDependencies
-            newDependencies.forEach { dependency ->
-                val javadocIOURLs = fetchJavadocIOForDependency(dependency)
-                if (javadocIOURLs != null) {
-                    val (javadoc, packageList) = javadocIOURLs
-                    externalDocumentationLinks.register(dependency.name) {
-                        url.set(javadoc)
-                        packageListUrl.set(packageList)
-                    }
-                }
+        rootProject.subprojects.forEach {
+            registerExternal(
+                ExternalDependency(it.group.toString(), it.name, it.version.toString().substringBefore('-'))
+            )
+        }
+        /*
+         * Links for external dependencies
+         */
+        project.versionCatalogs.forEach { versionCatalog ->
+            versionCatalog.libraryAliases.forEach { alias ->
+                val lib = versionCatalog.findLibrary(alias).get().get()
+                registerExternal(ExternalDependency(lib.group, lib.name, lib.version))
             }
         }
         pluginsConfiguration.html {

@@ -9,14 +9,23 @@
 
 import Libs.alchemist
 import Libs.incarnation
+import com.google.devtools.ksp.gradle.KspAATask
 
 plugins {
     id("kotlin-multiplatform-convention")
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.kotest.multiplatform)
 }
 
 kotlin {
+    js {
+        browser {
+            testTask {
+                useMocha {
+                    timeout = "20s"
+                }
+            }
+        }
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -62,6 +71,8 @@ kotlin {
         }
     }
 }
+
+tasks.cpdKotlinCheck.configure { dependsOn(tasks.withType<KspAATask>()) }
 
 publishing.publications.withType<MavenPublication>().configureEach {
     pom {

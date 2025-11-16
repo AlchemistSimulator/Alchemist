@@ -20,7 +20,7 @@ import Libs.incarnation
 plugins {
     id("kotlin-jvm-convention")
     kotlin("jvm")
-    alias(libs.plugins.ksp)
+    id("com.google.devtools.ksp")
 }
 
 dependencies {

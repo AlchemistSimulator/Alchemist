@@ -12,29 +12,29 @@ jobs:
       group: javadoc-io-${{ github.workflow }}-${{ github.event.number || github.ref }}
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.24
+        uses: danysk/action-checkout@691c39b8c95afa68ab368def403db850341dc773 # 0.2.24
         with:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.5
+      - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
         with:
-          pre-build-command: rm javadoc-io.json
+          pre-build-command: rm -rf dokka-cache
           build-command: |
-            ./gradlew dokkaGeneratePublicationHtml --parallel --dry-run
-            ./gradlew kotlinUpgradeYarnLock kotlinWasmUpgradeYarnLock --parallel
+            ./gradlew dokkaGenerateModuleHtml dokkaGeneratePublicationHtml --dry-run
+            for i in {1..3}; do
+                rm dokka-cache/no-javadoc.json || true
+                ./gradlew dokkaGenerateModuleHtml dokkaGeneratePublicationHtml --dry-run
+            done
+            ./gradlew kotlinUpgradeYarnLock kotlinWasmUpgradeYarnLock
           check-command: |
             git config user.name 'Danilo Pianini [bot]'
             git config user.email 'danilo.pianini@gmail.com'
-            if git status | grep -P '^\s+modified:\s+javadoc-io\.json$'; then
-              git add javadoc-io.json
-              git commit -m 'chore(build): update the javadoc.io cache'
-              git pull --rebase
-              git push
-            fi
-            if ! git diff --quiet -- kotlin-js-store; then
-              git add kotlin-js-store
-              git commit -m 'chore(build): actualize the Kotlin JS store'
-              git pull --rebase
-              git push
-            fi
+            git add dokka-cache || true
+            git commit -nm 'chore(build): update the javadoc.io cache' || true
+            git pull --rebase --autostash
+            git push
+            git add kotlin-js-store || true
+            git commit -nm 'chore(build): actualize the Kotlin JS store' || true
+            git pull --rebase --autostash
+            git push
           should-run-codecov: false
           should-deploy: false

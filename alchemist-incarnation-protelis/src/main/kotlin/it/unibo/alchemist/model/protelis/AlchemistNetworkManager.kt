@@ -29,9 +29,7 @@ import org.protelis.vm.NetworkManager
  * only when [simulateMessageArrival] is called the transfer is
  * actually performed.
  */
-class AlchemistNetworkManager
-@JvmOverloads
-constructor(
+class AlchemistNetworkManager @JvmOverloads constructor(
     /**
      * This reaction stores the time at which the neighbor state is read.
      */
@@ -77,13 +75,11 @@ constructor(
                 val stateBuilder = ImmutableMap.builder<DeviceUID, Map<CodePath, Any>>()
                 val messagesIterator = messages.values.iterator()
                 val retainsNeighbors = retentionTime.isNaN()
-                val neighbors: Set<DeviceUID> =
-                    emptySet<DeviceUID>().takeUnless { retainsNeighbors }
-                        ?: environment
-                            .getNeighborhood(device.node)
-                            .neighbors
-                            .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
-                            .toSet()
+                val neighbors: Set<DeviceUID> = emptySet<DeviceUID>().takeUnless { retainsNeighbors }
+                    ?: environment.getNeighborhood(device.node)
+                        .neighbors
+                        .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
+                        .toSet()
                 while (messagesIterator.hasNext()) {
                     val message = messagesIterator.next()
                     val messageIsValid =
@@ -123,8 +119,7 @@ constructor(
     fun simulateMessageArrival(currentTime: Double) {
         if (toBeSent.isNotEmpty()) {
             val msg = MessageInfo(currentTime, device, toBeSent)
-            environment
-                .getNeighborhood(device.node)
+            environment.getNeighborhood(device.node)
                 .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
                 .forEach { neighborDevice ->
                     val destination = neighborDevice.getNetworkManager(program)

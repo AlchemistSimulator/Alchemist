@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.server.utility
 
-import io.kotest.assertions.fail
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.GeneralPositionSurrogate
@@ -19,6 +18,7 @@ import it.unibo.alchemist.boundary.webui.server.surrogates.utility.ToPositionSur
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import kotlin.test.fail
 
 class ToPositionSurrogateTest :
     StringSpec({

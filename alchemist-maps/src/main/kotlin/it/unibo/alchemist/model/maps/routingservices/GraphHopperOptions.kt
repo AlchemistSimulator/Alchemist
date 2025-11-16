@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -62,9 +62,7 @@ class GraphHopperOptions private constructor(val profile: Profile, val vehicleCl
      */
     companion object {
         private val profiles: LoadingCache<Pair<String, String>, GraphHopperOptions> =
-            Caffeine
-                .newBuilder()
-                .build(::GraphHopperOptions)
+            Caffeine.newBuilder().build(::GraphHopperOptions)
 
         /**
          * All the non-abstract subclasses of [RoutingAlgorithm] available in the runtime.
@@ -90,11 +88,11 @@ class GraphHopperOptions private constructor(val profile: Profile, val vehicleCl
                 "car" to "car",
                 "car4wd" to "car",
                 "foot" to "foot",
-                "hike" to "foot",
-                "motorcycle" to "car",
+                "hike" to "hike",
+                "motorcycle" to "motorcycle",
                 "mtb" to "mtb",
                 "racingbike" to "racingbike",
-                "truck" to "car",
+                "truck" to "truck",
             ).map { (name, vehicleClass) -> GraphHopperCustomModel(name, vehicleClass) }
 
         /**
@@ -133,8 +131,6 @@ class GraphHopperOptions private constructor(val profile: Profile, val vehicleCl
          */
         @JvmOverloads
         fun optionsFor(profile: String = "foot", algorithm: String = DIJKSTRA_BI): GraphHopperOptions =
-            profiles.get(profile to algorithm) ?: throw IllegalArgumentException(
-                "The requested profile ($profile, $algorithm) could not be created.",
-            )
+            profiles.get(profile to algorithm)
     }
 }

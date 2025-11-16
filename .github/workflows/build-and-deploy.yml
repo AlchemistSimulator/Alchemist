@@ -27,7 +27,7 @@ jobs:
         id: java-version
         run: ruby -e 'puts("java-version=#{/^minJavaVersion\s*=\s*(\d+)$/.match(File.read("gradle.properties"))[1]}")' >> $GITHUB_OUTPUT
       - name: Install Node
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v6.0.0
         with:
           node-version-file: package.json
       - name: Compute the next release version
@@ -52,13 +52,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-2025, macos-14, ubuntu-24.04 ]
+        os: [ windows-2025, macos-15, ubuntu-24.04 ]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 180
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.5
+      - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
         with:
           pre-build-command: ./gradlew kotlinUpgradeYarnLock
           build-command: true
@@ -76,8 +76,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.24
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.5
+        uses: danysk/action-checkout@691c39b8c95afa68ab368def403db850341dc773 # 0.2.24
+      - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
         with:
           retries-on-failure: 5
           wait-between-retries: 120
@@ -91,7 +91,7 @@ jobs:
       - name: Tar files
         run: tar -cvf website.tar build/website
       - name: Upload website
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v5.0.0
         with:
           name: website-${{ github.sha }}
           path: website.tar
@@ -126,13 +126,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-2025, macos-14, ubuntu-24.04 ]
+        os: [ windows-2025, macos-15, ubuntu-24.04 ]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 120
     steps:
       - name: Checkout with full history
-        uses: danysk/action-checkout@0.2.24
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.5
+        uses: danysk/action-checkout@691c39b8c95afa68ab368def403db850341dc773 # 0.2.24
+      - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
         with:
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
@@ -151,20 +151,20 @@ jobs:
             fi
       - name: Upload fatjars built on Linux
         if: ${{ runner.os == 'Linux' }}
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v5.0.0
         with:
           name: fat-jars-${{ github.sha }}
           path: build/shadow/*
           if-no-files-found: error
       - name: Upload the PKGBUILD
         if: ${{ runner.os == 'Linux' }}
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v5.0.0
         with:
           name: pkgbuild-${{ github.sha }}
           path: build/pkgbuild/PKGBUILD
           if-no-files-found: error
       - name: Upload platform-specific packages
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v5.0.0
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
           path: build/package/*
@@ -179,7 +179,7 @@ jobs:
       always() && needs.assemble-and-upload.result == 'success'
     steps:
       - name: Download packages
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
@@ -214,7 +214,7 @@ jobs:
       always() && needs.assemble-and-upload.result == 'success'
     steps:
       - name: Download packages
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Work around xdg bug https://bugs.archlinux.org/task/33316
@@ -239,10 +239,10 @@ jobs:
     if: >-
       always() && needs.assemble-and-upload.result == 'success'
     container:
-      image: fedora:43
+      image: fedora:44
     steps:
       - name: Download packages
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
@@ -275,7 +275,7 @@ jobs:
           # Work around https://github.com/actions/checkout/issues/1169
           # sudo git config --system --add safe.directory /__w/Alchemist/Alchemist
       - name: Download the PKGBUILD
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
         with:
           pattern: pkgbuild-${{ github.sha }}
           merge-multiple: true
@@ -284,7 +284,7 @@ jobs:
           namcap PKGBUILD 2>&1
           namcap PKGBUILD 2>&1 | awk 'END { exit (NR > 0 ? NR : 0) }'
       - name: Download the RPM
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
         with:
           pattern: installer-package-${{ github.sha }}-${{ runner.os }}
           merge-multiple: true
@@ -369,32 +369,32 @@ jobs:
           repository: AlchemistSimulator/alchemistsimulator.github.io
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Download website artifact
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
         with:
           name: website-${{ github.sha }}
       - name: Download packages
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
         with:
           pattern: installer-package-${{ github.sha }}*
           path: build/package/
           merge-multiple: true
       - name: Download fatJars
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
         with:
           name: fat-jars-${{ github.sha }}
           path: build/shadow/
           merge-multiple: true
       - name: Download the PKGBUILD
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
         with:
           pattern: pkgbuild-${{ github.sha }}
           path: pkgbuild/
           merge-multiple: true
       - name: Install Node
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v6.0.0
         with:
           node-version-file: package.json
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.5
+      - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
         env:
           MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}
         with:

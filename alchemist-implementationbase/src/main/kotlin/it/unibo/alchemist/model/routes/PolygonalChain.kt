@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -18,6 +18,7 @@ import kotlin.reflect.full.isSuperclassOf
  * Abstract route implementation.
  *
  * @param <P> the type of position that the route is composed
+ * @param points the positions this route traverses
  */
 open class PolygonalChain<P : Position<*>>(override val points: List<P>) : Route<P> {
     private var distance = Double.NaN
@@ -29,9 +30,6 @@ open class PolygonalChain<P : Position<*>>(override val points: List<P>) : Route
     @SafeVarargs
     constructor(vararg positions: P) : this(positions.toList())
 
-    /**
-     * @param points the positions this route traverses
-     */
     init {
         require(points.isNotEmpty()) { "At least one point is required to create a Route" }
     }

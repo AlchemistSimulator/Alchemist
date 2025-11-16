@@ -1,0 +1,4 @@
+<!-- Suppress all checks for generated parser files -->
+<suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
+<!-- Suppress all checks for generated biochemistry DSL files -->
+<suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>

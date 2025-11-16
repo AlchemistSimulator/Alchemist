@@ -13,7 +13,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Surrogate class for the [it.unibo.alchemist.model.Position2D] interface.
+ * Surrogate class for `it.unibo.alchemist.model.Position2D`.
+ *
  * @param x the first coordinate of the position.
  * @param y the second coordinate of the position.
  */

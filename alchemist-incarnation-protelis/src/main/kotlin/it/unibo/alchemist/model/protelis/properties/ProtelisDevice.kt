@@ -13,12 +13,16 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.model.protelis.AlchemistNetworkManager
 import it.unibo.alchemist.model.protelis.ProtelisIncarnation
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
+import it.unibo.alchemist.model.protelis.actions.SendToNeighbor
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.Field
 import org.protelis.vm.ExecutionEnvironment
+import org.slf4j.LoggerFactory
 
 /**
  * Base implementation of [ProtelisDevice]. Requires an [environment] to work.
@@ -48,13 +52,61 @@ constructor(
         private set
 
     /**
+     * All the [AlchemistExecutionContext]s in this node.
+     */
+    private var executionContexts: Map<RunProtelisProgram<*>, AlchemistExecutionContext<P>> = mapOf()
+
+    /**
+     * Gets or creates the [AlchemistNetworkManager] for the given program.
+     * Creates the network manager lazily if it doesn't exist.
+     *
+     * @param program the [RunProtelisProgram]
+     * @return the [AlchemistNetworkManager] for the program
+     */
+    fun networkManagerOf(program: RunProtelisProgram<*>): AlchemistNetworkManager = networkManagers[program] ?: run {
+        val networkManager = AlchemistNetworkManager(
+            program.reaction,
+            this,
+            program,
+            program.retentionTime,
+            program.packetLossDistance,
+        )
+        networkManagers = networkManagers + (program to networkManager)
+        networkManager
+    }
+
+    /**
+     * Gets or creates the [AlchemistExecutionContext] for the given program.
+     * Creates the execution context lazily if it doesn't exist.
+     *
+     * @param program the [RunProtelisProgram]
+     * @return the [AlchemistExecutionContext] for the program
+     */
+    fun executionContextOf(program: RunProtelisProgram<*>): AlchemistExecutionContext<P> =
+        executionContexts[program] ?: run {
+            val networkManager = networkManagerOf(program)
+            val executionContext = AlchemistExecutionContext(
+                environment,
+                node,
+                this,
+                program.reaction,
+                program.randomGenerator,
+                networkManager,
+            )
+            executionContexts = executionContexts + (program to executionContext)
+            executionContext
+        }
+
+    /**
      * Adds a new [AlchemistNetworkManager].
      *
      * @param program
      * the [RunProtelisProgram]
      * @param networkManager
      * the [AlchemistNetworkManager]
+     * @deprecated Use networkManagerOf instead for better encapsulation
      */
+    @Deprecated("Use networkManagerOf instead", ReplaceWith("networkManagerOf"))
     fun addNetworkManger(program: RunProtelisProgram<*>, networkManager: AlchemistNetworkManager) {
         networkManagers = networkManagers + (program to networkManager)
     }
@@ -94,9 +146,7 @@ constructor(
      * @return the [AlchemistNetworkManager] for this specific
      * [RunProtelisProgram]
      */
-    fun getNetworkManager(program: RunProtelisProgram<*>) = requireNotNull(networkManagers[program]) {
-        "No network manager found for $program"
-    }
+    fun getNetworkManager(program: RunProtelisProgram<*>) = networkManagerOf(program)
 
     /**
      * Returns true if node contains [id].
@@ -143,11 +193,37 @@ constructor(
     /**
      * Called just before the VM is executed, to enable and preparations needed in the environment.
      */
-    override fun setup() { /* Nothing to do */ }
+    override fun setup() {
+        validateCommunicationConfiguration()
+    }
+
+    /**
+     * Validates that the node has the required send actions for communication.
+     * Warns the user if ProtelisDevice nodes are missing SendToNeighbor actions.
+     */
+    private fun validateCommunicationConfiguration() {
+        val hasProtelisPrograms = allProtelisPrograms().isNotEmpty()
+        if (hasProtelisPrograms) {
+            val hasSendAction = node.reactions
+                .asSequence()
+                .flatMap { it.actions }
+                .any { it is SendToNeighbor }
+
+            if (!hasSendAction) {
+                LOGGER.warn(
+                    "Protelis node {} is missing a 'send' action. This node will not be able to " +
+                        "communicate with neighboring nodes. Consider adding a reaction with 'send' action " +
+                        "to enable communication.",
+                    node.id,
+                )
+            }
+        }
+    }
 
     override fun toString(): String = "PtDevice${node.id}"
 
     private companion object {
         private const val serialVersionUID: Long = 1L
+        private val LOGGER = LoggerFactory.getLogger(ProtelisDevice::class.java)
     }
 }

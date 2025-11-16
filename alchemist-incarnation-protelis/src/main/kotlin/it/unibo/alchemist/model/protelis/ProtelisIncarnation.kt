@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -261,9 +261,6 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         override fun hashCode(): Int = hash
     }
 
-    /**
-     * An [org.protelis.vm.ExecutionContext] that operates over a node but does not modify it.
-     */
     private class DummyContext(private val node: Node<Any>) :
         AbstractExecutionContext<DummyContext?>(
             ProtectedExecutionEnvironment(node),
@@ -299,11 +296,10 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
      * An [ExecutionEnvironment] that can read and shadow the content of a
      * Node, but cannot modify it. This is used to prevent badly written
      * properties from interacting with the simulation flow.
-     */
-    class ProtectedExecutionEnvironment
-    /**
+     *
      * @param node the [Node]
      */
+    class ProtectedExecutionEnvironment
     @SuppressFBWarnings(value = ["EI_EXPOSE_REP2"], justification = "This is intentional")
     constructor(
         private val node: Node<*>,

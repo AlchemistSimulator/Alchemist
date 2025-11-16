@@ -1,14 +1,13 @@
 import Libs.alchemist
-import Util.webCommonConfiguration
+import it.unibo.alchemist.build.catalog
+import it.unibo.alchemist.build.webCommonConfiguration
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
-import org.jetbrains.kotlin.gradle.tasks.IncrementalSyncTask
 
 plugins {
     kotlin("multiplatform")
-    id("common-static-analysis-convention")
+    id("com.google.devtools.ksp")
     id("dokka-convention")
+    id("io.kotest")
     id("kotlin-static-analysis-convention")
     id("power-assert-convention")
 }
@@ -22,9 +21,7 @@ kotlin {
         }
     }
 
-    js {
-        webCommonConfiguration()
-    }
+    js { webCommonConfiguration() }
 
     sourceSets {
         val alchemistApi = alchemist("api")
@@ -62,11 +59,3 @@ kotlin {
         }
     }
 }
-
-inline fun <reified T: Task> bindToIncrementalSync() {
-    tasks.withType<T>().configureEach {
-        dependsOn(tasks.withType<IncrementalSyncTask>())
-    }
-}
-bindToIncrementalSync<KotlinWebpack>()
-bindToIncrementalSync<KotlinJsTest>()

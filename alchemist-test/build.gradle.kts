@@ -20,7 +20,7 @@ import Libs.alchemist
 
 plugins {
     id("kotlin-jvm-convention")
-    alias(libs.plugins.ksp)
+    id("com.google.devtools.ksp")
 }
 
 dependencies {

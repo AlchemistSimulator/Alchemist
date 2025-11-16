@@ -40,12 +40,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.kotest.assertions.FailKt.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -797,20 +797,29 @@ class TestBioRect2DEnvironmentNoOverlap {
             }
 
             private boolean thereIsOverlap(final Environment<Double, Euclidean2DPosition> env) {
-                getNodes().flatMap(n -> getNodes()
-                                .filter(c -> !c.equals(n))
-                                .filter(c -> env.getDistanceBetweenNodes(n, c)
-                                        < n.asProperty(CircularCellProperty.class).getRadius()
-                                        + c.asProperty(CircularCellProperty.class).getRadius() - DELTA)
-                                .map(c -> new Pair<>(n, c)))
-                        .findAny()
-                        .ifPresent(e -> fail("Nodes " + e.getFirst().getId()
-                                + env.getPosition(e.getFirst()) + " and "
+                getNodes()
+                    .flatMap(n ->
+                        getNodes()
+                            .filter(c -> !c.equals(n))
+                            .filter(c ->
+                                env.getDistanceBetweenNodes(n, c) < n.asProperty(CircularCellProperty.class).getRadius()
+                                    + c.asProperty(CircularCellProperty.class).getRadius() - DELTA
+                            )
+                            .map(c -> new Pair<>(n, c))
+                    )
+                    .findAny()
+                    .ifPresent(e ->
+                        fail(
+                            "Nodes " + e.getFirst().getId() + env.getPosition(e.getFirst()) + " and "
                                 + e.getSecond().getId() + env.getPosition(e.getSecond()) + " are overlapping. "
                                 + "Their distance is: " + env.getDistanceBetweenNodes(e.getFirst(), e.getSecond())
                                 + " but should be greater than "
-                                + (e.getFirst().asProperty(CircularCellProperty.class).getRadius()
-                                + e.getSecond().asProperty(CircularCellProperty.class).getRadius())));
+                                + (
+                                    e.getFirst().asProperty(CircularCellProperty.class).getRadius()
+                                    + e.getSecond().asProperty(CircularCellProperty.class).getRadius()
+                                )
+                        )
+                    );
                 return true;
             }
         });

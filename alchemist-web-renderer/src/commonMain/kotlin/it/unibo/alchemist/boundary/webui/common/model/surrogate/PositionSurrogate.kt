@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.webui.common.model.surrogate
 import kotlinx.serialization.Serializable
 
 /**
- *  Surrogate interface for the [it.unibo.alchemist.model.Position] interface.
+ *  Surrogate interface for `it.unibo.alchemist.model.Position`.
  *  Note: by using the sealed keyword any subclass of [PositionSurrogate] can be serialized and deserialized
  *  automatically using a polymorphic serializer.
  */

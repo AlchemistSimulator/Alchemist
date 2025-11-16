@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,13 +9,12 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import Util.allVerificationTasks
 import com.apollographql.apollo3.gradle.internal.ApolloGenerateSourcesTask
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
+import it.unibo.alchemist.build.allVerificationTasks
 
 plugins {
     id("kotlin-multiplatform-convention")
-    alias(libs.plugins.kotest.multiplatform)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.graphql.server)
     alias(libs.plugins.graphql.client)
@@ -69,18 +68,12 @@ kotlin {
 
 graphql {
     schema {
-        packages =
-            listOf(
-                "it.unibo.alchemist.boundary.graphql",
-            )
+        packages = listOf("it.unibo.alchemist.boundary.graphql")
     }
 }
 
 tasks.withType<AbstractGenerateClientTask>().configureEach {
-    val graphQLGenerateSDL =
-        project(":${project.name}-surrogates")
-            .tasks
-            .named("graphqlGenerateSDL")
+    val graphQLGenerateSDL = project(":${project.name}-surrogates").tasks.named("graphqlGenerateSDL")
     dependsOn(graphQLGenerateSDL)
     schemaFile.convention(
         graphQLGenerateSDL
@@ -97,7 +90,7 @@ tasks.withType<AbstractGenerateClientTask>().configureEach {
 
 val surrogates = project(":${project.name}-surrogates")
 
-/**
+/*
  * Configure the Apollo Gradle plugin to generate Kotlin models
  * from the GraphQL schema inside the `commonMain` sourceSet.
  */

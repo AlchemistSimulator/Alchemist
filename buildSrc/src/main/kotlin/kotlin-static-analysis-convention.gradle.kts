@@ -8,19 +8,15 @@
  */
 
 import de.aaschmid.gradle.plugins.cpd.Cpd
-import Util.excludeGenerated
-import gradle.kotlin.dsl.accessors._0bab511c0467aa19fa2193ea27917418.ktlint
+import it.unibo.alchemist.build.allVerificationTasks
+import it.unibo.alchemist.build.excludeGenerated
+import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 plugins {
-    id("common-static-analysis-convention")
     id("org.danilopianini.gradle-kotlin-qa")
 }
 
-ktlint {
-    filter{
-        excludeGenerated()
-    }
-}
+extensions.getByName<KtlintExtension>("ktlint").apply { filter { excludeGenerated() } }
 
 private val kmpGenerationTasks get(): TaskCollection<Task> = tasks.matching { task ->
     listOf("Actual", "Compose", "Expect").map { "generate$it" }.any {
@@ -38,3 +34,5 @@ tasks.withType<Cpd>().configureEach {
     exclude("**/build/generated/**")
     exclude("**/generated/**")
 }
+
+tasks.allVerificationTasks.configureEach { excludeGenerated() }

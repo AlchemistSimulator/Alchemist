@@ -1,4 +1,5 @@
 import Libs.alchemist
+import it.unibo.alchemist.build.catalog
 
 /*
  * Copyright (C) 2010-2024, Danilo Pianini and contributors
@@ -10,9 +11,7 @@ import Libs.alchemist
  */
 plugins {
     kotlin("jvm")
-    id("common-static-analysis-convention")
     id("dokka-convention")
-    id("java-static-analysis-convention")
     id("kotlin-static-analysis-convention")
     id("org.danilopianini.gradle-java-qa")
     id("power-assert-convention")
@@ -52,5 +51,16 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xjvm-default=all") // Enable default methods in Kt interfaces
         freeCompilerArgs.add("-Xcontext-parameters") // Enable context receivers
+    }
+}
+
+javaQA {
+    checkstyle {
+        additionalConfiguration.set(rootProject.file("checkstyle-additional-config.xml").readText())
+        additionalSuppressions.set(rootProject.file("checkstyle-suppressions.xml").readText())
+    }
+    // enable PMD when this bug is fixed: https://github.com/pmd/pmd/issues/5096
+    tasks.withType<Pmd>().configureEach {
+        enabled = false
     }
 }

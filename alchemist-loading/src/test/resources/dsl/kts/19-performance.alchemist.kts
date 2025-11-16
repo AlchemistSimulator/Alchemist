@@ -7,7 +7,7 @@ import org.apache.commons.math3.random.MersenneTwister
 
 val incarnation = SAPERE.incarnation<Any, Euclidean2DPosition>()
 val environment = Continuous2DEnvironment(incarnation)
-simulation(incarnation, environment) {
+simulation(incarnation, { environment }) {
     simulationGenerator = MersenneTwister(24L)
     scenarioGenerator = MersenneTwister(42L)
 
@@ -33,7 +33,7 @@ simulation(incarnation, environment) {
         layer = StepLayer(0.0, 0.0, 50.0, 50.0)
     }
 
-    addMonitor(SimpleMonitor())
+    monitors { +SimpleMonitor<Any, Euclidean2DPosition>()}
 
     exporter {
         type = CSVExporter(

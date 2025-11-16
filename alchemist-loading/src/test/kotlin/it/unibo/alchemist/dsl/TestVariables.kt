@@ -20,27 +20,28 @@ import it.unibo.alchemist.boundary.dsl.model.SimulationContextImpl
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.junit.jupiter.api.Test
 @Suppress("UNCHECKED_CAST")
 class TestVariables {
     @Test
     fun <T, P : Position<P>> testDefaultValue() {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         simulation(incarnation) {
             val rate: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
 
             runLater {
                 println("Checking variable")
                 rate.shouldBeExactly(5.0)
-                (this@simulation as SimulationContextImpl<T, P>).variablesContext
+                (this as SimulationContextImpl<T, P>).variablesContext
                     .variables.containsKey("rate").shouldBeTrue()
             }
         }.getDefault<T, P>() // needed to build the simulation
     }
 
     @Test
-    fun <T, P : Position<P>> testOverrideValue() {
-        val incarnation = SAPERE.incarnation<T, P>()
+    fun <T : Any, P : Position<P>> testOverrideValue() {
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
             val rate: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
             deployments {
@@ -55,7 +56,7 @@ class TestVariables {
     @Suppress("NoNameShadowing")
     @Test
     fun <T, P : Position<P>> testDoubleDeclaration() {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         simulation(incarnation) {
             val rate: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
             println("First declaration of rate: $rate")
@@ -68,7 +69,7 @@ class TestVariables {
 
     @Test
     fun <T, P : Position<P>> testDependendVariable() {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         val loader = simulation(incarnation) {
             val rate: Double by variable(GeometricVariable(2.0, 0.1, 10.0, 9))
             val size: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))

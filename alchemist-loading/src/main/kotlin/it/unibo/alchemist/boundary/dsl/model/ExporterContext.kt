@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Extractor
+import it.unibo.alchemist.boundary.dsl.AlchemistDsl
 import it.unibo.alchemist.model.Position
 
 /**
@@ -37,22 +38,12 @@ import it.unibo.alchemist.model.Position
  * @see [Exporter] for the exporter interface
  * @see [Extractor] for data extraction
  */
-@DslMarker
-annotation class ExporterMarker
-
-/**
- * Context interface for configuring data exporters in a simulation.
- *
- * Exporters define how simulation data is extracted and exported, supporting formats
- * such as CSV, MongoDB, and custom formats.
- * Data can be exported per-node or aggregated
- * using statistical functions.
- *
- * @param T The type of molecule concentration.
- * @param P The type of position, must extend [Position].
- */
-@ExporterMarker
+@AlchemistDsl
 interface ExporterContext<T, P : Position<P>> {
+
+    /** The parent simulation context. */
+    val ctx: SimulationContext<T, P>
+
     /**
      * The exporter instance that handles data output.
      *

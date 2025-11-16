@@ -65,9 +65,8 @@ class PropertiesContextImpl<T, P : Position<P>>(override val ctx: DeploymentCont
          */
         val properties: MutableList<NodeProperty<T>> = mutableListOf()
 
-        override fun add(property: NodeProperty<T>) {
-            logger.debug("Adding property: {}", property)
-            properties.add(property)
+        override operator fun NodeProperty<T>.unaryPlus() {
+            properties.add(this)
         }
     }
 }

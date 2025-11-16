@@ -17,9 +17,11 @@ import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
 import it.unibo.alchemist.boundary.dsl.Dsl.simulation
 import it.unibo.alchemist.boundary.dsl.generated.RectangleFilter
 import it.unibo.alchemist.boundary.dsl.generated.circle
+import it.unibo.alchemist.boundary.dsl.generated.globalTestReaction
 import it.unibo.alchemist.boundary.dsl.generated.grid
 import it.unibo.alchemist.boundary.dsl.generated.moleculeReader
 import it.unibo.alchemist.boundary.dsl.generated.point
+import it.unibo.alchemist.boundary.dsl.generated.polygon
 import it.unibo.alchemist.boundary.dsl.generated.testNode
 import it.unibo.alchemist.boundary.dsl.generated.testNodeProperty
 import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations.PROTELIS
@@ -33,6 +35,7 @@ import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.actions.BrownianMove
 import it.unibo.alchemist.model.deployments.Circle
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
@@ -45,27 +48,28 @@ import it.unibo.alchemist.model.maps.environments.OSMEnvironment
 import it.unibo.alchemist.model.positionfilters.Rectangle
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.Event
+import it.unibo.alchemist.model.terminators.AfterTime
 import it.unibo.alchemist.model.terminators.StableForSteps
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.timedistributions.WeibullTime
-import it.unibo.alchemist.test.GlobalTestReaction
+import it.unibo.alchemist.model.times.DoubleTime
 import org.apache.commons.math3.random.MersenneTwister
 
 object DslLoaderFunctions {
     fun <T, P : Position<P>> test01Nodes(): Loader {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
             networkModel = ConnectWithinDistance(5.0)
             deployments {
                 deploy(point(0.0, 0.0))
-                deploy(Point(envAsAny, 0.0, 1.0))
+                deploy(Point(ctx.environment, 0.0, 1.0))
             }
         }
     }
 
     fun <T, P : Position<P>> test02ManyNodes(): Loader {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
             simulationGenerator = MersenneTwister(10L)
             scenarioGenerator = MersenneTwister(20L)
@@ -73,7 +77,7 @@ object DslLoaderFunctions {
             deployments {
                 deploy(
                     Circle(
-                        envAsAny,
+                        ctx.environment,
                         generator,
                         10,
                         0.0,
@@ -85,7 +89,7 @@ object DslLoaderFunctions {
         }
     }
     fun <T, P : Position<P>> test03Grid(): Loader {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
@@ -104,7 +108,7 @@ object DslLoaderFunctions {
         }
     }
     fun <T, P : Position<P>> test05Content(): Loader {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
@@ -129,14 +133,14 @@ object DslLoaderFunctions {
         }
     }
     fun <T, P : Position<P>> test06ContentFiltered(): Loader {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
                 val hello = "hello"
                 deploy(
                     Grid(
-                        envAsAny, generator,
+                        ctx.environment, generator,
                         -5.0,
                         -5.0,
                         5.0,
@@ -156,7 +160,7 @@ object DslLoaderFunctions {
     }
 
     fun <T, P : Position<P>> test07Programs(): Loader {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
@@ -190,16 +194,23 @@ object DslLoaderFunctions {
         }
     }
     fun <T, P : Position<P>> test08ProtelisPrograms(): Loader {
-        val incarnation = PROTELIS.incarnation<T, P>()
+        val incarnation = PROTELIS.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
             deployments {
                 deploy(point(1.5, 0.5)) {
                     programs {
                         all {
                             timeDistribution = +JaktaTimeDistribution(
-                                sense = WeibullTime(1.0, 1.0, generator),
+                                sense = WeibullTime(
+                                    1.0,
+                                    1.0,
+                                    ctx.ctx.ctx.generator,
+                                ),
                                 deliberate = DiracComb(0.1),
-                                act = ExponentialTime(1.0, generator),
+                                act = ExponentialTime(
+                                    1.0,
+                                    ctx.ctx.ctx.generator,
+                                ),
                             )
                             program = "1 + 1"
                         }
@@ -209,26 +220,26 @@ object DslLoaderFunctions {
         }
     }
     fun <T, P : Position<P>> test09TimeDistribution(): Loader {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
                 deploy(
                     Grid(
-                        envAsAny, generator,
+                        ctx.environment, generator,
                         -5.0, -5.0, 5.0, 5.0, 0.25, 0.25, 0.1, 0.1,
                     ),
                 ) {
                     inside(Rectangle(-0.5, -0.5, 1.0, 1.0)) {
                         molecule = "token, 0, []"
-                        programs {
-                            all {
-                                timeDistribution = DiracComb(0.5)
-                                program = "{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}"
-                            }
-                            all {
-                                program = "{token, N, L}{token, def: N2>=N, L2} --> {token, N, L}"
-                            }
+                    }
+                    programs {
+                        all {
+                            timeDistribution = DiracComb(0.5)
+                            program = "{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}"
+                        }
+                        all {
+                            program = "{token, N, L}{token, def: N2>=N, L2} --> {token, N, L}"
                         }
                     }
                 }
@@ -238,8 +249,10 @@ object DslLoaderFunctions {
     fun <T, P : Position<P>> test10Environment(): Loader {
         val incarnation = SAPERE.incarnation<T, GeoPosition>()
         val env = OSMEnvironment(incarnation, "vcm.pbf", false)
-        return simulation(incarnation, env) {
-            addTerminator(StableForSteps<Any>(5, 100))
+        return simulation(incarnation, { env }) {
+            terminators {
+                +StableForSteps<Any>(5, 100)
+            }
             deployments {
                 val gps = FromGPSTrace(
                     7,
@@ -250,7 +263,7 @@ object DslLoaderFunctions {
                 deploy(gps) {
                     programs {
                         all {
-                            timeDistribution("0.1")
+                            timeDistribution("15")
                             reaction = Event(node, timeDistribution)
                             addAction {
                                 ReproduceGPSTrace(
@@ -269,9 +282,11 @@ object DslLoaderFunctions {
         }
     }
     fun <T, P : Position<P>> test11monitors(): Loader {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
-            addMonitor(SimpleMonitor())
+            monitors {
+                +SimpleMonitor<T, Euclidean2DPosition>()
+            }
         }
     }
     fun <T, P : Position<P>> test12Layers(): Loader {
@@ -307,16 +322,13 @@ object DslLoaderFunctions {
     fun <T, P : Position<P>> test13GlobalReaction(): Loader {
         val incarnation = PROTELIS.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
-            program(
-                GlobalTestReaction(
-                    DiracComb(1.0),
-                    environment,
-                ),
-            )
+            programs {
+                +globalTestReaction(DiracComb(1.0))
+            }
         }
     }
     fun <T, P : Position<P>> test14Exporters(): Loader {
-        val incarnation = PROTELIS.incarnation<T, P>()
+        val incarnation = PROTELIS.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
             exporter {
                 type = CSVExporter(
@@ -336,7 +348,7 @@ object DslLoaderFunctions {
         }
     }
     fun <T, P : Position<P>> test15Variables(): Loader {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
             val rate: Double by variable(GeometricVariable(2.0, 0.1, 10.0, 9))
             val size: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
@@ -344,16 +356,17 @@ object DslLoaderFunctions {
             val mSize by variable { -size }
             val sourceStart by variable { mSize / 10.0 }
             val sourceSize by variable { size / 5.0 }
-
+            terminators { +AfterTime<T, P>(DoubleTime(1.0)) }
             networkModel = ConnectWithinDistance(0.5)
             deployments {
                 deploy(
                     Grid(
-                        environment, generator,
+                        ctx.environment, generator,
                         mSize, mSize, size, size,
                         0.25, 0.25, 0.1, 0.1,
                     ),
                 ) {
+                    println("using rate $rate and size $size")
                     inside(Rectangle(sourceStart, sourceStart, sourceSize, sourceSize)) {
                         molecule = "token, 0, []"
                     }
@@ -372,14 +385,14 @@ object DslLoaderFunctions {
     }
 
     fun <T, P : Position<P>> test16ProgramsFilters(): Loader {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
                 val token = "token"
                 deploy(
                     Grid(
-                        environment, generator,
+                        ctx.environment, generator,
                         -5.0,
                         -5.0,
                         5.0,
@@ -404,13 +417,11 @@ object DslLoaderFunctions {
         }
     }
     fun <T, P : Position<P>> test17CustomNodes(): Loader {
-        val incarnation = SAPERE.incarnation<T, P>()
+        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
             deployments {
                 deploy(
-                    Circle(
-                        environment,
-                        generator,
+                    circle(
                         10,
                         0.0,
                         0.0,
@@ -427,7 +438,7 @@ object DslLoaderFunctions {
     fun <T, P : Position<P>> test18NodeProperties(): Loader {
         val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
         val environment = Continuous2DEnvironment(incarnation)
-        return simulation(incarnation, environment) {
+        return simulation(incarnation, { environment }) {
             deployments {
                 deploy(
                     circle(
@@ -442,10 +453,68 @@ object DslLoaderFunctions {
                         // same
                         val filter2 = Rectangle(3.0, 3.0, 2.0, 2.0)
                         inside(filter) {
-                            add(testNodeProperty("a"))
+                            +testNodeProperty("a")
                         }
                         inside(filter2) {
-                            add(testNodeProperty("b"))
+                            +testNodeProperty("b")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    fun <T, P : Position<P>> test20Actions(): Loader {
+        val incarnation = SAPERE.incarnation<T, GeoPosition>()
+        val env = OSMEnvironment(incarnation)
+        return simulation(incarnation, { env }) {
+            networkModel = ConnectWithinDistance(1000.0)
+            deployments {
+                val lagoon = listOf(
+                    Pair(45.2038121, 12.2504425),
+                    Pair(45.2207426, 12.2641754),
+                    Pair(45.2381516, 12.2806549),
+                    Pair(45.2570053, 12.2895813),
+                    Pair(45.276336, 12.2957611),
+                    Pair(45.3029049, 12.2991943),
+                    Pair(45.3212544, 12.3046875),
+                    Pair(45.331875, 12.3040009),
+                    Pair(45.3453893, 12.3040009),
+                    Pair(45.3502151, 12.3156738),
+                    Pair(45.3622776, 12.3232269),
+                    Pair(45.3719259, 12.3300934),
+                    Pair(45.3830193, 12.3348999),
+                    Pair(45.395557, 12.3445129),
+                    Pair(45.3998964, 12.3300934),
+                    Pair(45.4018249, 12.3136139),
+                    Pair(45.4105023, 12.3122406),
+                    Pair(45.4167685, 12.311554),
+                    Pair(45.4278531, 12.3012543),
+                    Pair(45.4408627, 12.2902679),
+                    Pair(45.4355628, 12.2772217),
+                    Pair(45.4206242, 12.2703552),
+                    Pair(45.3994143, 12.2744751),
+                    Pair(45.3738553, 12.2676086),
+                    Pair(45.3579354, 12.2614288),
+                    Pair(45.3429763, 12.2497559),
+                    Pair(45.3198059, 12.2408295),
+                    Pair(45.2975921, 12.2346497),
+                    Pair(45.2802014, 12.2408295),
+                    Pair(45.257972, 12.233963),
+                    Pair(45.2038121, 12.2504425),
+                )
+                deploy(polygon(500, lagoon)) {
+                    programs {
+                        all {
+                            timeDistribution("10")
+                            reaction = Event(node, timeDistribution)
+                            addAction {
+                                BrownianMove(
+                                    env,
+                                    node,
+                                    ctx.ctx.ctx.ctx.simulationGenerator,
+                                    0.0005,
+                                )
+                            }
                         }
                     }
                 }

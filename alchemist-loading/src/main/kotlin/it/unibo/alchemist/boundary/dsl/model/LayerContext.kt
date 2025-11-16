@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.dsl.model
 
+import it.unibo.alchemist.boundary.dsl.AlchemistDsl
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Position
 
@@ -33,19 +34,7 @@ import it.unibo.alchemist.model.Position
  * @see [SimulationContext.layer] for adding layers to a simulation
  * @see [Layer] for the layer interface
  */
-@DslMarker
-annotation class LayerMarker
-
-/**
- * Context interface for configuring spatial layers in a simulation.
- *
- * Layers define overlays of data that can be sensed everywhere in the environment.
- * They can be used to model physical properties such as pollution, light, temperature, etc.
- *
- * @param T The type of molecule concentration.
- * @param P The type of position, must extend [Position].
- */
-@LayerMarker
+@AlchemistDsl
 interface LayerContext<T, P : Position<P>> {
     /**
      * The molecule name associated with this layer.

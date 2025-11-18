@@ -12,7 +12,7 @@ jobs:
       group: javadoc-io-${{ github.workflow }}-${{ github.event.number || github.ref }}
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@691c39b8c95afa68ab368def403db850341dc773 # 0.2.24
+        uses: danysk/action-checkout@5c7134bb87fa5d193920c0cbabff5fc9189e6c8d # 0.2.25
         with:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12

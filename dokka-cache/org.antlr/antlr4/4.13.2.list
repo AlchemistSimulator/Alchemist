@@ -1,0 +1,16 @@
+org.antlr.v4
+org.antlr.v4.analysis
+org.antlr.v4.automata
+org.antlr.v4.codegen
+org.antlr.v4.codegen.model
+org.antlr.v4.codegen.model.chunk
+org.antlr.v4.codegen.model.decl
+org.antlr.v4.codegen.target
+org.antlr.v4.gui
+org.antlr.v4.misc
+org.antlr.v4.parse
+org.antlr.v4.semantics
+org.antlr.v4.tool
+org.antlr.v4.tool.ast
+org.antlr.v4.unicode
+src.org.antlr.v4.unicode

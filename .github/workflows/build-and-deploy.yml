@@ -76,7 +76,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@691c39b8c95afa68ab368def403db850341dc773 # 0.2.24
+        uses: danysk/action-checkout@5c7134bb87fa5d193920c0cbabff5fc9189e6c8d # 0.2.25
       - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
         with:
           retries-on-failure: 5
@@ -131,7 +131,7 @@ jobs:
     timeout-minutes: 120
     steps:
       - name: Checkout with full history
-        uses: danysk/action-checkout@691c39b8c95afa68ab368def403db850341dc773 # 0.2.24
+        uses: danysk/action-checkout@5c7134bb87fa5d193920c0cbabff5fc9189e6c8d # 0.2.25
       - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
         with:
           signing-key: ${{ secrets.SIGNING_KEY }}

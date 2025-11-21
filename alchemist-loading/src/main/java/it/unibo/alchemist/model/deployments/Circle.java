@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.deployments;
 
+import it.unibo.alchemist.boundary.dsl.BuildDsl;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Position;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -23,6 +24,7 @@ import static org.apache.commons.math3.util.FastMath.sqrt;
 /**
  * @param <P> {@link Position} type
  */
+@BuildDsl
 public final class Circle<P extends Position<? extends P>> extends AbstractRandomDeployment<P> {
 
     private final double centerX;

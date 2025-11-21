@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.deployments
 
+import it.unibo.alchemist.boundary.dsl.BuildDsl
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position2D
@@ -20,6 +21,7 @@ import org.apache.commons.math3.random.RandomGenerator
  *
  * Default values generate a uniform deployment on a circumference.
  */
+@BuildDsl
 data class CircularArc<P : Position2D<P>>
 @JvmOverloads
 constructor(

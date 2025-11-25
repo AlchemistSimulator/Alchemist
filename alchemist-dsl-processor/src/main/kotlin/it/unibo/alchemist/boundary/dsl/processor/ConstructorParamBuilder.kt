@@ -60,7 +60,7 @@ object ConstructorParamBuilder {
         annotationKey: String,
     ): Boolean = injectionIndices.containsKey(injectionType) &&
         index == injectionIndices[injectionType] &&
-        (annotationValues[annotationKey] as? Boolean ?: true)
+        annotationValues[annotationKey] as? Boolean ?: true
 
     private fun buildInjectedParam(
         injectionType: InjectionType,

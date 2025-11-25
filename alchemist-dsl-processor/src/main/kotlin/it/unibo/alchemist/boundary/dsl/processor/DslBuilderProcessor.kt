@@ -198,9 +198,9 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         )
 
         val hasNode = injectionIndices.containsKey(InjectionType.NODE) &&
-            (annotationValues["injectNode"] as? Boolean ?: true)
+            annotationValues["injectNode"] as? Boolean ?: true
         val hasReaction = injectionIndices.containsKey(InjectionType.REACTION) &&
-            (annotationValues["injectReaction"] as? Boolean ?: true)
+            annotationValues["injectReaction"] as? Boolean ?: true
 
         if (hasNode && !hasReaction) {
             writePropertyContextFunction(

@@ -1,12 +1,13 @@
+import Libs.alchemist
+
 plugins {
     id("kotlin-jvm-convention")
-    kotlin("jvm")
 }
 
 dependencies {
+
+    api(alchemist("api"))
     implementation(libs.ksp.api)
-    api(project(":alchemist-api"))
-//    api(project(":alchemist-dsl-api"))
 
     testImplementation(libs.bundles.testing.compile)
     testRuntimeOnly(libs.bundles.testing.runtimeOnly)

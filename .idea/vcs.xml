@@ -9,9 +9,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/external-resources/learning-scafi-alchemist" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/site/alchemist" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/site/alchemist/external-resources/learning-scafi-alchemist" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/site/alchemist/site/themes/hugo-theme-relearn" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/site/themes/hugo-theme-relearn" vcs="Git" />
   </component>
 </project>

@@ -233,9 +233,9 @@ object ParameterInjector {
         annotationValues: Map<String, Any?>,
     ): Boolean {
         val hasNode = injectionIndices.containsKey(InjectionType.NODE) &&
-            (annotationValues["injectNode"] as? Boolean ?: true)
+            annotationValues["injectNode"] as? Boolean ?: true
         val hasReaction = injectionIndices.containsKey(InjectionType.REACTION) &&
-            (annotationValues["injectReaction"] as? Boolean ?: true)
+            annotationValues["injectReaction"] as? Boolean ?: true
         val hasTimeDistribution = injectionIndices.containsKey(InjectionType.TIMEDISTRIBUTION)
         return hasNode || hasReaction || hasTimeDistribution
     }
@@ -245,11 +245,11 @@ object ParameterInjector {
         annotationValues: Map<String, Any?>,
     ): ContextType {
         val hasEnvironment = injectionIndices.containsKey(InjectionType.ENVIRONMENT) &&
-            (annotationValues["injectEnvironment"] as? Boolean ?: true)
+            annotationValues["injectEnvironment"] as? Boolean ?: true
         val hasGenerator = injectionIndices.containsKey(InjectionType.GENERATOR) &&
-            (annotationValues["injectGenerator"] as? Boolean ?: true)
+            annotationValues["injectGenerator"] as? Boolean ?: true
         val hasIncarnation = injectionIndices.containsKey(InjectionType.INCARNATION) &&
-            (annotationValues["injectIncarnation"] as? Boolean ?: true)
+            annotationValues["injectIncarnation"] as? Boolean ?: true
 
         val injectedCount = listOf(hasEnvironment, hasGenerator, hasIncarnation).count { it }
 
@@ -351,7 +351,7 @@ object ParameterInjector {
         annotationValues: Map<String, Any?>,
         paramsToSkip: MutableSet<Int>,
     ) {
-        if ((annotationValues[annotationKey] as? Boolean ?: true) &&
+        if (annotationValues[annotationKey] as? Boolean ?: true &&
             injectionIndices.containsKey(injectionType)
         ) {
             injectionIndices[injectionType]?.let { paramsToSkip.add(it) }

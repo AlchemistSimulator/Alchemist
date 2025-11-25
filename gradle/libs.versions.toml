@@ -10,16 +10,16 @@ graphhopper = "11.0"
 graphstream = "2.0"
 junit = "6.0.1"
 konf = "1.1.2"
-kotest = "6.0.4"
+kotest = "6.0.5"
 kotlin = "2.2.21"
 ksp = "2.3.2"
 kotlinx-coroutines = "1.10.2"
 ktor = "3.3.2"
 mockito = "5.20.0"
-protelis = "18.4.4"
-react = "2025.11.9-19.2.0"
+protelis = "18.5.0"
+react = "2025.11.12-19.2.0"
 scafi = "1.6.0"
-scala = "2.13.17"
+scala = "2.13.18"
 scalacache = "0.28.0"
 
 [libraries]
@@ -81,7 +81,7 @@ kotlin-multiplatform-plugin = { module = "org.jetbrains.kotlin.multiplatform:org
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
 kotlin-power-assert-plugin = { module = "org.jetbrains.kotlin.plugin.power-assert:org.jetbrains.kotlin.plugin.power-assert.gradle.plugin", version.ref = "kotlin" }
-kotlin-quality-assurance-plugin = "org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin:0.98.0"
+kotlin-quality-assurance-plugin = "org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin:0.98.2"
 kotlin-react = { module = "org.jetbrains.kotlin-wrappers:kotlin-react", version.ref = "react" }
 kotlin-react-dom = { module = "org.jetbrains.kotlin-wrappers:kotlin-react-dom", version.ref = "react" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
@@ -91,7 +91,7 @@ kotlinx-atomicfu-runtime = { module = "org.jetbrains.kotlin:kotlinx-atomicfu-run
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ksp-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version = "2.3.2" }
+ksp-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version = "2.3.3" }
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-serialization", version.ref = "ktor" }
@@ -169,7 +169,7 @@ testing-runtimeOnly = [ "junit-engine" ]
 [plugins]
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
-gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:7.0.6"
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:7.0.7"
 graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
 hugo = "io.github.fstaudt.hugo:0.11.0"
@@ -177,7 +177,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.3.2"
-publishOnCentral = "org.danilopianini.publish-on-central:9.1.7"
+publishOnCentral = "org.danilopianini.publish-on-central:9.1.8"
 scalafmt = "cz.augi.gradle.scalafmt:1.21.5"
 shadowJar = "com.gradleup.shadow:9.2.2"
 taskTree = "com.dorongold.task-tree:4.0.1"

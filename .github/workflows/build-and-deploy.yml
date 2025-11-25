@@ -22,7 +22,7 @@ jobs:
         id: ci-preparation
         run: echo "build-ref=${{ github.workflow }}-${{ github.event.number || github.ref }}" >> $GITHUB_OUTPUT
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
       - name: Compute the Java version
         id: java-version
         run: ruby -e 'puts("java-version=#{/^minJavaVersion\s*=\s*(\d+)$/.match(File.read("gradle.properties"))[1]}")' >> $GITHUB_OUTPUT
@@ -57,7 +57,7 @@ jobs:
     timeout-minutes: 180
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
       - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
         with:
           pre-build-command: ./gradlew kotlinUpgradeYarnLock
@@ -76,7 +76,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@691c39b8c95afa68ab368def403db850341dc773 # 0.2.24
+        uses: danysk/action-checkout@733b8984412e3cc1ea66fcd20281710dc2118187 # 0.2.26
       - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
         with:
           retries-on-failure: 5
@@ -131,7 +131,7 @@ jobs:
     timeout-minutes: 120
     steps:
       - name: Checkout with full history
-        uses: danysk/action-checkout@691c39b8c95afa68ab368def403db850341dc773 # 0.2.24
+        uses: danysk/action-checkout@733b8984412e3cc1ea66fcd20281710dc2118187 # 0.2.26
       - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
         with:
           signing-key: ${{ secrets.SIGNING_KEY }}
@@ -352,7 +352,7 @@ jobs:
       )
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
         with:
           fetch-depth: 0
           fetch-tags: 'true'
@@ -360,7 +360,7 @@ jobs:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout the docs
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
         with:
           path: website
           fetch-depth: 0

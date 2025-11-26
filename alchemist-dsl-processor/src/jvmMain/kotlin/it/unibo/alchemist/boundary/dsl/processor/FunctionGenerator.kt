@@ -3,7 +3,9 @@ package it.unibo.alchemist.boundary.dsl.processor
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.KSValueParameter
 
+/** Emits the signature, call site, and accessor for generated DSL helpers. */
 object FunctionGenerator {
+    /** Builds the helper function signature including context and receiver parts. */
     fun buildFunctionSignature(
         functionName: String,
         className: String,
@@ -31,7 +33,7 @@ object FunctionGenerator {
         return "${contextPart}fun$functionTypeParamString $receiverPart$functionName$functionParams: $returnType ="
     }
 
-    // Build the context receiver only when injections exist.
+    // Build the context receiver only when injections exist so the generated function can require ctx.
     private fun buildContextPart(
         injectedParams: List<Pair<String, String>>,
         contextType: ContextType,
@@ -65,6 +67,7 @@ object FunctionGenerator {
         return "context(ctx: $contextTypeName) "
     }
 
+    /** Reads the variance annotation (in/out) declared for a type parameter bound. */
     fun extractVarianceFromBound(paramName: String, typeParamBounds: List<String>): String {
         val paramIndex = typeParamBounds.indexOfFirst { it.startsWith("$paramName:") }
         if (paramIndex < 0) {
@@ -86,6 +89,7 @@ object FunctionGenerator {
         }
     }
 
+    /** Returns the parameter list string for the remaining constructor arguments. */
     fun buildFunctionParams(
         remainingParams: List<KSValueParameter>,
         paramNames: List<String>,
@@ -112,6 +116,7 @@ object FunctionGenerator {
         @Suppress("UNUSED_PARAMETER") contextType: ContextType,
     ): String = EMPTY_RECEIVER
 
+    /** Delegates to [ConstructorParamBuilder] to build argument expressions. */
     fun buildConstructorParams(
         constructorInfo: ConstructorInfo,
         injectionContext: InjectionContext,
@@ -122,6 +127,7 @@ object FunctionGenerator {
         typeParamNames,
     )
 
+    /** Formats the constructor invocation using the resolved parameters. */
     fun buildConstructorCall(
         className: String,
         typeParamNames: List<String>,
@@ -144,15 +150,18 @@ object FunctionGenerator {
         return defaultValueExpr?.let { " = $it" }.orEmpty()
     }
 
+    /** Computes which type parameters the referenced type requires beyond the ones already known. */
     fun collectNeededTypeParams(typeRef: KSTypeReference, existingTypeParamNames: List<String>): Set<String> =
         TypeParameterHandler.collectNeededTypeParams(typeRef, existingTypeParamNames)
 
+    /** Builds the context parameter type for the injected argument expression. */
     fun buildContextParamType(
         typeRef: KSTypeReference,
         typeParamNames: MutableList<String>,
         typeParamBounds: MutableList<String>,
     ): String = TypeArgumentProcessor.buildContextParamType(typeRef, typeParamNames, typeParamBounds)
 
+    /** Builds property-context-specific constructor arguments. */
     fun buildConstructorParamsForPropertyContext(
         constructorInfo: ConstructorInfo,
         injectionContext: InjectionContext,

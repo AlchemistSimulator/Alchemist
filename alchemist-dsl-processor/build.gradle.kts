@@ -12,15 +12,12 @@ kotlin {
                 api(alchemist("api"))
                 implementation(libs.ksp.api)
             }
-            kotlin.srcDir("src/main/kotlin")
-            resources.srcDir("src/main/resources")
         }
         val jvmTest by getting {
             dependencies {
                 implementation(libs.bundles.testing.compile)
                 runtimeOnly(libs.bundles.testing.runtimeOnly)
             }
-            kotlin.srcDir("src/test/kotlin")
         }
     }
 }

@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.boundary.dsl.processor
 
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -80,7 +89,10 @@ class ContextAccessorTest {
 
     @Test
     fun `test deployment context accessors`() {
-        assertEquals("ctx.environment", ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.DEPLOYMENT))
+        assertEquals(
+            "ctx.ctx.environment",
+            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.DEPLOYMENT),
+        )
         assertEquals("ctx.generator", ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.DEPLOYMENT))
         assertEquals(
             "ctx.ctx.incarnation",
@@ -91,7 +103,7 @@ class ContextAccessorTest {
     @Test
     fun `test deployment context singular accessors`() {
         assertEquals(
-            "ctx.ctx.environment",
+            "ctx.ctx.ctx.environment",
             ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.DEPLOYMENT_CONTEXT),
         )
         assertEquals(
@@ -107,10 +119,16 @@ class ContextAccessorTest {
 
     @Test
     fun `test program context accessors`() {
-        assertEquals("ctx.ctx.ctx.env", ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.PROGRAM))
-        assertEquals("ctx.ctx.ctx.generator", ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.PROGRAM))
         assertEquals(
-            "ctx.ctx.ctx.ctx.incarnation",
+            "ctx.ctx.ctx.ctx.ctx.environment",
+            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.PROGRAM),
+        )
+        assertEquals(
+            "ctx.ctx.ctx.ctx.generator",
+            ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.PROGRAM),
+        )
+        assertEquals(
+            "ctx.ctx.ctx.ctx.ctx.incarnation",
             ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.PROGRAM),
         )
         assertEquals("ctx.node", ContextAccessor.getAccessor(InjectionType.NODE, ContextType.PROGRAM))
@@ -123,13 +141,16 @@ class ContextAccessorTest {
 
     @Test
     fun `test property context accessors`() {
-        assertEquals("ctx.ctx.ctx.env", ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.PROPERTY))
         assertEquals(
-            "ctx.ctx.ctx.generator",
+            "ctx.ctx.ctx.ctx.ctx.environment",
+            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.PROPERTY),
+        )
+        assertEquals(
+            "ctx.ctx.ctx.ctx.generator",
             ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.PROPERTY),
         )
         assertEquals(
-            "ctx.ctx.ctx.ctx.incarnation",
+            "ctx.ctx.ctx.ctx.ctx.incarnation",
             ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.PROPERTY),
         )
         assertEquals("ctx.node", ContextAccessor.getAccessor(InjectionType.NODE, ContextType.PROPERTY))
@@ -138,7 +159,7 @@ class ContextAccessorTest {
     @Test
     fun `test custom context parameter name`() {
         assertEquals(
-            "customCtx.env",
+            "customCtx.ctx.environment",
             ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.DEPLOYMENT, "customCtx"),
         )
         assertEquals(

@@ -26,7 +26,6 @@ object TypeParameterHandler {
     ): Pair<MutableList<String>, MutableList<String>> {
         val finalTypeParamNames = typeParamNames.toMutableList()
         val finalTypeParamBounds = typeParamBounds.toMutableList()
-
         if (injectedParams.isNotEmpty()) {
             val (tParam, pParam) = findTAndPParams(typeParamNames, typeParamBounds)
             addTParamIfNeeded(tParam, finalTypeParamNames, finalTypeParamBounds)
@@ -40,7 +39,6 @@ object TypeParameterHandler {
                 finalTypeParamBounds.add(bound)
             }
         }
-
         return finalTypeParamNames to finalTypeParamBounds
     }
 
@@ -105,13 +103,11 @@ object TypeParameterHandler {
      */
     fun findTAndPParams(typeParamNames: List<String>, typeParamBounds: List<String>): Pair<String, String> {
         val pIndex = typeParamBounds.indexOfFirst { it.contains("Position") }
-
         val pParam = if (pIndex >= 0 && pIndex < typeParamNames.size) {
             typeParamNames[pIndex]
         } else {
             "P"
         }
-
         val tIndex = typeParamNames.indexOf("T")
         val tParam = when {
             tIndex >= 0 -> typeParamNames[tIndex]
@@ -120,7 +116,6 @@ object TypeParameterHandler {
             typeParamNames.isNotEmpty() && pIndex < 0 -> typeParamNames[0]
             else -> "T"
         }
-
         return tParam to pParam
     }
 
@@ -161,11 +156,9 @@ object TypeParameterHandler {
         val needed = mutableSetOf<String>()
         val resolved = typeRef.resolve()
         val arguments = resolved.arguments
-
         arguments.forEach { arg ->
             processTypeArgForCollection(arg, existingTypeParamNames, needed)
         }
-
         return needed
     }
 

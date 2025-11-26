@@ -19,11 +19,9 @@ object TypeHierarchyChecker {
     fun isAssignableTo(type: KSType, targetQualifiedName: String): Boolean {
         val declaration = type.declaration
         val typeQualifiedName = declaration.qualifiedName?.asString()
-
         if (typeQualifiedName == targetQualifiedName) {
             return true
         }
-
         return declaration is KSClassDeclaration && checkSuperTypes(declaration, targetQualifiedName, mutableSetOf())
     }
 
@@ -48,10 +46,9 @@ object TypeHierarchyChecker {
         visited: MutableSet<String>,
     ): Boolean {
         val qualifiedName = classDecl.qualifiedName?.asString() ?: return false
-
-        return when {
-            qualifiedName in visited -> false
-            qualifiedName == targetQualifiedName -> true
+        return when (qualifiedName) {
+            in visited -> false
+            targetQualifiedName -> true
             else -> {
                 visited.add(qualifiedName)
                 checkSuperTypesRecursive(classDecl, targetQualifiedName, visited)
@@ -81,7 +78,6 @@ object TypeHierarchyChecker {
     ): Boolean = try {
         val resolved = superType.resolve()
         val superDecl = resolved.declaration
-
         val superQualifiedName = superDecl.qualifiedName?.asString()
         superQualifiedName == targetQualifiedName ||
             (superDecl is KSClassDeclaration && checkSuperTypes(superDecl, targetQualifiedName, visited))
@@ -97,10 +93,10 @@ object TypeHierarchyChecker {
      * @param targetQualifiedNames Set of fully qualified names to match against
      * @return True if the type matches any target name
      */
+    // Walk the inheritance tree to check for supertypes without relying on string heuristics.
     fun matchesAny(type: KSType, targetQualifiedNames: Set<String>): Boolean {
         val declaration = type.declaration
         val qualifiedName = declaration.qualifiedName?.asString() ?: return false
-
         return targetQualifiedNames.contains(qualifiedName) ||
             targetQualifiedNames.any { targetName -> isAssignableTo(type, targetName) }
     }
@@ -116,7 +112,6 @@ object TypeHierarchyChecker {
     fun matchesTypeOrPackage(type: KSType, targetQualifiedName: String, packagePatterns: Set<String>): Boolean {
         val declaration = type.declaration
         val qualifiedName = declaration.qualifiedName?.asString() ?: return false
-
         return qualifiedName == targetQualifiedName ||
             isAssignableTo(type, targetQualifiedName) ||
             packagePatterns.any { pattern -> qualifiedName.startsWith(pattern) }

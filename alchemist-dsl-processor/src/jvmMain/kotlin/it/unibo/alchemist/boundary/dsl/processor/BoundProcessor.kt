@@ -19,7 +19,6 @@ object BoundProcessor {
         val resolved = bound.resolve()
         val decl = resolved.declaration
         val qualifiedName = decl.qualifiedName?.asString()
-
         if (qualifiedName != null) {
             val arguments = resolved.arguments
             val typeString = if (arguments.isNotEmpty()) {
@@ -30,16 +29,16 @@ object BoundProcessor {
             } else {
                 qualifiedName
             }
-
             val nullableSuffix = if (resolved.isMarkedNullable) "?" else ""
             val result = "$typeString$nullableSuffix"
             return replaceClassTypeParamReferences(result, classTypeParamNames)
         }
-
         val result = TypeExtractor.extractTypeString(bound, emptyList())
         return replaceClassTypeParamReferences(result, classTypeParamNames)
     }
 
+    // Bring each type argument back into a printable form,
+    // handling variance explicitly.
     private fun formatTypeArgument(arg: KSTypeArgument, classTypeParamNames: List<String>): String = when {
         arg.type == null -> "*"
         arg.variance == Variance.STAR -> "*"
@@ -66,6 +65,8 @@ object BoundProcessor {
     }
 
     private fun replaceClassTypeParamReferences(boundStr: String, classTypeParamNames: List<String>): String {
+        // Strip redundant qualification when the matcher references
+        // the same class-level type parameter
         if (classTypeParamNames.isEmpty()) {
             return boundStr
         }

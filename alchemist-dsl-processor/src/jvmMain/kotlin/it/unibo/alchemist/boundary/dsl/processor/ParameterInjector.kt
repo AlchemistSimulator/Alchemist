@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
+import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueParameter
 
 /**
@@ -56,29 +57,26 @@ object ParameterInjector {
      */
     fun findInjectionIndices(parameters: List<KSValueParameter>): Map<InjectionType, Int> {
         val indices = mutableMapOf<InjectionType, Int>()
-
         parameters.forEachIndexed { index, param ->
             val resolved = param.type.resolve()
             val declaration = resolved.declaration
             val qualifiedName = declaration.qualifiedName?.asString().orEmpty()
             val simpleName = declaration.simpleName.asString()
-
             when {
                 isEnvironmentType(resolved, qualifiedName) -> indices[InjectionType.ENVIRONMENT] = index
                 isGeneratorType(resolved, qualifiedName) -> indices[InjectionType.GENERATOR] = index
                 isIncarnationType(resolved, qualifiedName) -> indices[InjectionType.INCARNATION] = index
                 isNodeType(resolved, simpleName, qualifiedName) -> indices[InjectionType.NODE] = index
                 isReactionType(resolved, simpleName, qualifiedName) -> indices[InjectionType.REACTION] = index
-                isTimeDistributionType(resolved, simpleName, qualifiedName) -> indices[InjectionType.TIMEDISTRIBUTION] =
-                    index
+                isTimeDistributionType(resolved, simpleName, qualifiedName) ->
+                    indices[InjectionType.TIMEDISTRIBUTION] = index
                 isFilterType(resolved, simpleName, qualifiedName) -> indices[InjectionType.FILTER] = index
             }
         }
-
         return indices
     }
 
-    private fun isEnvironmentType(type: com.google.devtools.ksp.symbol.KSType, qualifiedName: String): Boolean {
+    private fun isEnvironmentType(type: KSType, qualifiedName: String): Boolean {
         if (!qualifiedName.contains("Environment")) {
             return false
         }
@@ -89,7 +87,7 @@ object ParameterInjector {
         )
     }
 
-    private fun isGeneratorType(type: com.google.devtools.ksp.symbol.KSType, qualifiedName: String): Boolean {
+    private fun isGeneratorType(type: KSType, qualifiedName: String): Boolean {
         if (!qualifiedName.contains("RandomGenerator")) {
             return false
         }
@@ -97,7 +95,7 @@ object ParameterInjector {
             qualifiedName == ProcessorConfig.RANDOM_GENERATOR_TYPE
     }
 
-    private fun isIncarnationType(type: com.google.devtools.ksp.symbol.KSType, qualifiedName: String): Boolean {
+    private fun isIncarnationType(type: KSType, qualifiedName: String): Boolean {
         if (!qualifiedName.contains("Incarnation")) {
             return false
         }
@@ -105,11 +103,7 @@ object ParameterInjector {
             qualifiedName == ProcessorConfig.INCARNATION_TYPE
     }
 
-    private fun isNodeType(
-        type: com.google.devtools.ksp.symbol.KSType,
-        simpleName: String,
-        qualifiedName: String,
-    ): Boolean {
+    private fun isNodeType(type: KSType, simpleName: String, qualifiedName: String): Boolean {
         if (simpleName != "Node" && !qualifiedName.endsWith(".Node")) {
             return false
         }
@@ -118,11 +112,7 @@ object ParameterInjector {
             qualifiedName.startsWith("${ProcessorConfig.NODE_TYPE}.")
     }
 
-    private fun isReactionType(
-        type: com.google.devtools.ksp.symbol.KSType,
-        simpleName: String,
-        qualifiedName: String,
-    ): Boolean {
+    private fun isReactionType(type: KSType, simpleName: String, qualifiedName: String): Boolean {
         if (simpleName != "Reaction" && !qualifiedName.endsWith(".Reaction")) {
             return false
         }
@@ -131,11 +121,7 @@ object ParameterInjector {
             qualifiedName.startsWith("${ProcessorConfig.REACTION_TYPE}.")
     }
 
-    private fun isTimeDistributionType(
-        type: com.google.devtools.ksp.symbol.KSType,
-        simpleName: String,
-        qualifiedName: String,
-    ): Boolean {
+    private fun isTimeDistributionType(type: KSType, simpleName: String, qualifiedName: String): Boolean {
         if (simpleName != "TimeDistribution" && !qualifiedName.endsWith(".TimeDistribution")) {
             return false
         }
@@ -144,16 +130,11 @@ object ParameterInjector {
             qualifiedName.startsWith("${ProcessorConfig.TIME_DISTRIBUTION_TYPE}.")
     }
 
-    private fun isFilterType(
-        type: com.google.devtools.ksp.symbol.KSType,
-        simpleName: String,
-        qualifiedName: String,
-    ): Boolean {
+    private fun isFilterType(type: KSType, simpleName: String, qualifiedName: String): Boolean {
         val effectiveType = type.makeNotNullable()
         val effectiveDeclaration = effectiveType.declaration
         val effectiveQualifiedName = effectiveDeclaration.qualifiedName?.asString().orEmpty()
         val effectiveSimpleName = effectiveDeclaration.simpleName.asString()
-
         if (effectiveSimpleName != "PositionBasedFilter" && !effectiveQualifiedName.endsWith(".PositionBasedFilter")) {
             return false
         }
@@ -173,18 +154,17 @@ object ParameterInjector {
         if (scope.isNullOrBlank()) {
             return null
         }
-        val upperScope = scope.uppercase()
-
-        return when (upperScope) {
-            "SIMULATION", "SIMULATION_CONTEXT" -> ContextType.SIMULATION
+        // accept both versions or the scope
+        return when (val upperScope = scope.uppercase()) {
+            "SIMULATION", "SIMULATION_CONTEXT" -> ContextType.SIMULATION_CONTEXT
             "EXPORTER", "EXPORTER_CONTEXT" -> ContextType.EXPORTER_CONTEXT
             "GLOBAL_PROGRAMS", "GLOBAL_PROGRAMS_CONTEXT" -> ContextType.GLOBAL_PROGRAMS_CONTEXT
             "OUTPUT_MONITORS", "OUTPUT_MONITORS_CONTEXT" -> ContextType.OUTPUT_MONITORS_CONTEXT
             "TERMINATORS", "TERMINATORS_CONTEXT" -> ContextType.TERMINATORS_CONTEXT
-            "DEPLOYMENT", "DEPLOYMENTS_CONTEXT" -> ContextType.DEPLOYMENT
+            "DEPLOYMENT", "DEPLOYMENTS_CONTEXT" -> ContextType.DEPLOYMENTS_CONTEXT
             "DEPLOYMENT_CONTEXT" -> ContextType.DEPLOYMENT_CONTEXT
-            "PROGRAM", "PROGRAM_CONTEXT" -> ContextType.PROGRAM
-            "PROPERTY", "PROPERTY_CONTEXT" -> ContextType.PROPERTY
+            "PROGRAM", "PROGRAM_CONTEXT" -> ContextType.PROGRAM_CONTEXT
+            "PROPERTY", "PROPERTY_CONTEXT" -> ContextType.PROPERTY_CONTEXT
             else -> {
                 @Suppress("SwallowedException")
                 try {
@@ -204,6 +184,7 @@ object ParameterInjector {
      * @param annotationValues Annotation values from the BuildDsl annotation
      * @return The determined context type
      */
+    // Determine which context is active by checking manual overrides first, then injection mix.
     fun determineContextType(
         injectionIndices: Map<InjectionType, Int>,
         annotationValues: Map<String, Any?>,
@@ -215,7 +196,6 @@ object ParameterInjector {
                 return parsedScope
             }
         }
-
         return determineContextTypeFromInjections(injectionIndices, annotationValues)
     }
 
@@ -224,7 +204,7 @@ object ParameterInjector {
         annotationValues: Map<String, Any?>,
     ): ContextType = when {
         injectionIndices.containsKey(InjectionType.FILTER) -> ContextType.DEPLOYMENT_CONTEXT
-        hasProgramContextInjections(injectionIndices, annotationValues) -> ContextType.PROGRAM
+        hasProgramContextInjections(injectionIndices, annotationValues) -> ContextType.PROGRAM_CONTEXT
         else -> determineDeploymentOrSimulationContext(injectionIndices, annotationValues)
     }
 
@@ -250,13 +230,11 @@ object ParameterInjector {
             annotationValues["injectGenerator"] as? Boolean ?: true
         val hasIncarnation = injectionIndices.containsKey(InjectionType.INCARNATION) &&
             annotationValues["injectIncarnation"] as? Boolean ?: true
-
         val injectedCount = listOf(hasEnvironment, hasGenerator, hasIncarnation).count { it }
-
         return if (injectedCount == 1 && (hasIncarnation || hasEnvironment)) {
-            ContextType.SIMULATION
+            ContextType.SIMULATION_CONTEXT
         } else {
-            ContextType.DEPLOYMENT
+            ContextType.DEPLOYMENTS_CONTEXT
         }
     }
 
@@ -274,7 +252,6 @@ object ParameterInjector {
         contextType: ContextType,
     ): Set<Int> {
         val paramsToSkip = mutableSetOf<Int>()
-
         if (isInjectionTypeAvailable(InjectionType.ENVIRONMENT, contextType)) {
             addInjectionParamIfEnabled(
                 InjectionType.ENVIRONMENT,
@@ -324,15 +301,12 @@ object ParameterInjector {
                 paramsToSkip,
             )
         }
-
         if (isInjectionTypeAvailable(InjectionType.TIMEDISTRIBUTION, contextType)) {
             injectionIndices[InjectionType.TIMEDISTRIBUTION]?.let { paramsToSkip.add(it) }
         }
-
         if (isInjectionTypeAvailable(InjectionType.FILTER, contextType)) {
             injectionIndices[InjectionType.FILTER]?.let { paramsToSkip.add(it) }
         }
-
         return paramsToSkip
     }
 
@@ -364,7 +338,7 @@ object ParameterInjector {
  */
 enum class ContextType {
     /** Simulation context (only incarnation or only environment). */
-    SIMULATION,
+    SIMULATION_CONTEXT,
 
     /** Exporter context (one level below SimulationContext, manually settable). */
     EXPORTER_CONTEXT,
@@ -378,15 +352,15 @@ enum class ContextType {
     /** Terminators context (one level below SimulationContext, manually settable). */
     TERMINATORS_CONTEXT,
 
-    /** Deployments context (environment and generator). */
-    DEPLOYMENT,
+    /** Deployments context (generator). */
+    DEPLOYMENTS_CONTEXT,
 
     /** Deployment context (singular, one level below DeploymentsContext, includes filter). */
     DEPLOYMENT_CONTEXT,
 
     /** Program context (includes node, reaction, and time distribution). */
-    PROGRAM,
+    PROGRAM_CONTEXT,
 
     /** Property context (includes node, same depth as program context). */
-    PROPERTY,
+    PROPERTY_CONTEXT,
 }

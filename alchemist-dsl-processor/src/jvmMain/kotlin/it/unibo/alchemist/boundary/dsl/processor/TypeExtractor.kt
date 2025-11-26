@@ -42,17 +42,16 @@ object TypeExtractor {
      * @param typeParamNames List of existing type parameter names for substitution
      * @return A string representation of the type
      */
+    // Normalize a KSTypeReference into a printable string, respecting existing type parameter names.
     fun extractTypeString(typeRef: KSTypeReference, typeParamNames: List<String> = emptyList()): String {
         val resolved = typeRef.resolve()
         val declaration = resolved.declaration
-
         if (declaration is KSTypeParameter) {
             val paramName = declaration.name.asString()
             if (typeParamNames.contains(paramName)) {
                 return paramName
             }
         }
-
         val typeName = getTypeName(declaration)
         val arguments = resolved.arguments
         val typeString = if (arguments.isNotEmpty()) {
@@ -63,7 +62,6 @@ object TypeExtractor {
         } else {
             typeName
         }
-
         return if (resolved.isMarkedNullable) {
             "$typeString?"
         } else {
@@ -80,6 +78,7 @@ object TypeExtractor {
         }
     }
 
+    // Represent the variance and nested references for each argument.
     private fun formatTypeArgument(arg: KSTypeArgument, typeParamNames: List<String>): String = when {
         arg.type == null -> "*"
         arg.variance == Variance.STAR -> "*"

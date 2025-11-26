@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.properties
 
-import it.unibo.alchemist.boundary.dsl.BuildDsl
+import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.properties.AbstractNodeProperty
 import org.apache.commons.math3.random.RandomGenerator
 
-@BuildDsl
+@AlchemistKotlinDSL
 class TestNodeProperty<T, P : Position<P>>(
     node: Node<T>,
     val environment: Environment<T, P>,

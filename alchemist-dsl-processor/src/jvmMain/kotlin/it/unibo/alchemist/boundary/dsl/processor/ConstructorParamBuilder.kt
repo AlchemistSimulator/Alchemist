@@ -4,6 +4,10 @@ import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.KSValueParameter
 
 object ConstructorParamBuilder {
+    /**
+     * Walks constructor parameters in order and either injects context values
+     * or maps supplied arguments.
+     */
     fun buildConstructorParams(
         constructorInfo: ConstructorInfo,
         injectionContext: InjectionContext,
@@ -105,7 +109,7 @@ object ConstructorParamBuilder {
     ): List<String> {
         val propertyContext = injectionContext.copy(
             hasContextParams = true,
-            contextType = ContextType.PROPERTY,
+            contextType = ContextType.PROPERTY_CONTEXT,
             contextParamName = "ctx",
         )
         return buildConstructorParamsInternal(
@@ -120,14 +124,14 @@ object ConstructorParamBuilder {
         injectionContext: InjectionContext,
         typeParamNames: List<String>,
     ): List<String> {
-        val propertyContext = injectionContext.copy(
+        val propertyCONTEXTContext = injectionContext.copy(
             hasContextParams = true,
-            contextType = ContextType.PROPERTY,
+            contextType = ContextType.PROPERTY_CONTEXT,
             contextParamName = "ctx",
         )
         return buildConstructorParamsInternal(
             constructorInfo,
-            propertyContext,
+            propertyCONTEXTContext,
             typeParamNames,
         )
     }

@@ -15,12 +15,18 @@ import org.junit.jupiter.api.Test
 class ContextAccessorTest {
     @Test
     fun `test simulation context accessors`() {
-        assertEquals("ctx.environment", ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.SIMULATION))
+        assertEquals(
+            "ctx.environment",
+            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.SIMULATION_CONTEXT),
+        )
         assertEquals(
             "ctx.scenarioGenerator",
-            ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.SIMULATION),
+            ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.SIMULATION_CONTEXT),
         )
-        assertEquals("ctx.incarnation", ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.SIMULATION))
+        assertEquals(
+            "ctx.incarnation",
+            ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.SIMULATION_CONTEXT),
+        )
     }
 
     @Test
@@ -91,12 +97,15 @@ class ContextAccessorTest {
     fun `test deployment context accessors`() {
         assertEquals(
             "ctx.ctx.environment",
-            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.DEPLOYMENT),
+            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.DEPLOYMENTS_CONTEXT),
         )
-        assertEquals("ctx.generator", ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.DEPLOYMENT))
+        assertEquals(
+            "ctx.generator",
+            ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.DEPLOYMENTS_CONTEXT),
+        )
         assertEquals(
             "ctx.ctx.incarnation",
-            ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.DEPLOYMENT),
+            ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.DEPLOYMENTS_CONTEXT),
         )
     }
 
@@ -121,21 +130,21 @@ class ContextAccessorTest {
     fun `test program context accessors`() {
         assertEquals(
             "ctx.ctx.ctx.ctx.ctx.environment",
-            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.PROGRAM),
+            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.PROGRAM_CONTEXT),
         )
         assertEquals(
             "ctx.ctx.ctx.ctx.generator",
-            ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.PROGRAM),
+            ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.PROGRAM_CONTEXT),
         )
         assertEquals(
             "ctx.ctx.ctx.ctx.ctx.incarnation",
-            ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.PROGRAM),
+            ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.PROGRAM_CONTEXT),
         )
-        assertEquals("ctx.node", ContextAccessor.getAccessor(InjectionType.NODE, ContextType.PROGRAM))
-        assertEquals("ctx.reaction", ContextAccessor.getAccessor(InjectionType.REACTION, ContextType.PROGRAM))
+        assertEquals("ctx.node", ContextAccessor.getAccessor(InjectionType.NODE, ContextType.PROGRAM_CONTEXT))
+        assertEquals("ctx.reaction", ContextAccessor.getAccessor(InjectionType.REACTION, ContextType.PROGRAM_CONTEXT))
         assertEquals(
             "ctx.timeDistribution!!",
-            ContextAccessor.getAccessor(InjectionType.TIMEDISTRIBUTION, ContextType.PROGRAM),
+            ContextAccessor.getAccessor(InjectionType.TIMEDISTRIBUTION, ContextType.PROGRAM_CONTEXT),
         )
     }
 
@@ -143,28 +152,28 @@ class ContextAccessorTest {
     fun `test property context accessors`() {
         assertEquals(
             "ctx.ctx.ctx.ctx.ctx.environment",
-            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.PROPERTY),
+            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.PROPERTY_CONTEXT),
         )
         assertEquals(
             "ctx.ctx.ctx.ctx.generator",
-            ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.PROPERTY),
+            ContextAccessor.getAccessor(InjectionType.GENERATOR, ContextType.PROPERTY_CONTEXT),
         )
         assertEquals(
             "ctx.ctx.ctx.ctx.ctx.incarnation",
-            ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.PROPERTY),
+            ContextAccessor.getAccessor(InjectionType.INCARNATION, ContextType.PROPERTY_CONTEXT),
         )
-        assertEquals("ctx.node", ContextAccessor.getAccessor(InjectionType.NODE, ContextType.PROPERTY))
+        assertEquals("ctx.node", ContextAccessor.getAccessor(InjectionType.NODE, ContextType.PROPERTY_CONTEXT))
     }
 
     @Test
     fun `test custom context parameter name`() {
         assertEquals(
             "customCtx.ctx.environment",
-            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.DEPLOYMENT, "customCtx"),
+            ContextAccessor.getAccessor(InjectionType.ENVIRONMENT, ContextType.DEPLOYMENTS_CONTEXT, "customCtx"),
         )
         assertEquals(
             "customCtx.node",
-            ContextAccessor.getAccessor(InjectionType.NODE, ContextType.PROGRAM, "customCtx"),
+            ContextAccessor.getAccessor(InjectionType.NODE, ContextType.PROGRAM_CONTEXT, "customCtx"),
         )
     }
 }

@@ -1,7 +1,6 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ParameterInjectorTest {
@@ -15,7 +14,7 @@ class ParameterInjectorTest {
 
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
 
-        assertEquals(ContextType.PROGRAM, contextType)
+        assertEquals(ContextType.PROGRAM_CONTEXT, contextType)
     }
 
     @Test
@@ -27,7 +26,7 @@ class ParameterInjectorTest {
 
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
 
-        assertEquals(ContextType.SIMULATION, contextType)
+        assertEquals(ContextType.SIMULATION_CONTEXT, contextType)
     }
 
     @Test
@@ -39,7 +38,7 @@ class ParameterInjectorTest {
 
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
 
-        assertEquals(ContextType.SIMULATION, contextType)
+        assertEquals(ContextType.SIMULATION_CONTEXT, contextType)
     }
 
     @Test
@@ -52,7 +51,7 @@ class ParameterInjectorTest {
 
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
 
-        assertEquals(ContextType.DEPLOYMENT, contextType)
+        assertEquals(ContextType.DEPLOYMENTS_CONTEXT, contextType)
     }
 
     @Test
@@ -64,7 +63,11 @@ class ParameterInjectorTest {
         )
         val annotationValues = emptyMap<String, Any?>()
 
-        val paramsToSkip = ParameterInjector.getInjectionParams(injectionIndices, annotationValues, ContextType.PROGRAM)
+        val paramsToSkip = ParameterInjector.getInjectionParams(
+            injectionIndices,
+            annotationValues,
+            ContextType.PROGRAM_CONTEXT,
+        )
 
         assertEquals(setOf(0, 1, 2), paramsToSkip)
     }
@@ -80,7 +83,7 @@ class ParameterInjectorTest {
         val paramsToSkip = ParameterInjector.getInjectionParams(
             injectionIndices,
             annotationValues,
-            ContextType.DEPLOYMENT,
+            ContextType.DEPLOYMENTS_CONTEXT,
         )
 
         assertEquals(setOf(1), paramsToSkip)
@@ -93,7 +96,11 @@ class ParameterInjectorTest {
         )
         val annotationValues = emptyMap<String, Any?>()
 
-        val paramsToSkip = ParameterInjector.getInjectionParams(injectionIndices, annotationValues, ContextType.PROGRAM)
+        val paramsToSkip = ParameterInjector.getInjectionParams(
+            injectionIndices,
+            annotationValues,
+            ContextType.PROGRAM_CONTEXT,
+        )
 
         assertEquals(setOf(0), paramsToSkip)
     }
@@ -124,7 +131,7 @@ class ParameterInjectorTest {
 
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
 
-        assertEquals(ContextType.PROGRAM, contextType)
+        assertEquals(ContextType.PROGRAM_CONTEXT, contextType)
     }
 
     @Test
@@ -137,7 +144,7 @@ class ParameterInjectorTest {
 
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
 
-        assertEquals(ContextType.SIMULATION, contextType)
+        assertEquals(ContextType.SIMULATION_CONTEXT, contextType)
     }
 
     @Test
@@ -149,7 +156,7 @@ class ParameterInjectorTest {
 
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
 
-        assertEquals(ContextType.DEPLOYMENT, contextType)
+        assertEquals(ContextType.DEPLOYMENTS_CONTEXT, contextType)
     }
 
     @Test
@@ -161,7 +168,7 @@ class ParameterInjectorTest {
 
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
 
-        assertEquals(ContextType.DEPLOYMENT, contextType)
+        assertEquals(ContextType.DEPLOYMENTS_CONTEXT, contextType)
     }
 
     @Test
@@ -173,7 +180,7 @@ class ParameterInjectorTest {
 
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
 
-        assertEquals(ContextType.PROPERTY, contextType)
+        assertEquals(ContextType.PROPERTY_CONTEXT, contextType)
     }
 
     @Test
@@ -198,7 +205,7 @@ class ParameterInjectorTest {
 
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
 
-        assertEquals(ContextType.PROGRAM, contextType)
+        assertEquals(ContextType.PROGRAM_CONTEXT, contextType)
     }
 
     @Test
@@ -258,7 +265,7 @@ class ParameterInjectorTest {
 
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
 
-        assertEquals(ContextType.SIMULATION, contextType)
+        assertEquals(ContextType.SIMULATION_CONTEXT, contextType)
     }
 
     @Test
@@ -270,14 +277,14 @@ class ParameterInjectorTest {
 
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
 
-        assertEquals(ContextType.SIMULATION, contextType)
+        assertEquals(ContextType.SIMULATION_CONTEXT, contextType)
     }
 
     @Test
     fun `test parseScope with valid values`() {
-        assertEquals(ContextType.PROGRAM, ParameterInjector.parseScope("PROGRAM"))
-        assertEquals(ContextType.SIMULATION, ParameterInjector.parseScope("SIMULATION"))
-        assertEquals(ContextType.SIMULATION, ParameterInjector.parseScope("SIMULATION_CONTEXT"))
+        assertEquals(ContextType.PROGRAM_CONTEXT, ParameterInjector.parseScope("PROGRAM"))
+        assertEquals(ContextType.SIMULATION_CONTEXT, ParameterInjector.parseScope("SIMULATION"))
+        assertEquals(ContextType.SIMULATION_CONTEXT, ParameterInjector.parseScope("SIMULATION_CONTEXT"))
         assertEquals(ContextType.EXPORTER_CONTEXT, ParameterInjector.parseScope("EXPORTER"))
         assertEquals(ContextType.EXPORTER_CONTEXT, ParameterInjector.parseScope("EXPORTER_CONTEXT"))
         assertEquals(ContextType.GLOBAL_PROGRAMS_CONTEXT, ParameterInjector.parseScope("GLOBAL_PROGRAMS"))
@@ -286,15 +293,15 @@ class ParameterInjectorTest {
         assertEquals(ContextType.OUTPUT_MONITORS_CONTEXT, ParameterInjector.parseScope("OUTPUT_MONITORS_CONTEXT"))
         assertEquals(ContextType.TERMINATORS_CONTEXT, ParameterInjector.parseScope("TERMINATORS"))
         assertEquals(ContextType.TERMINATORS_CONTEXT, ParameterInjector.parseScope("TERMINATORS_CONTEXT"))
-        assertEquals(ContextType.DEPLOYMENT, ParameterInjector.parseScope("DEPLOYMENT"))
-        assertEquals(ContextType.DEPLOYMENT, ParameterInjector.parseScope("DEPLOYMENTS_CONTEXT"))
+        assertEquals(ContextType.DEPLOYMENTS_CONTEXT, ParameterInjector.parseScope("DEPLOYMENT"))
+        assertEquals(ContextType.DEPLOYMENTS_CONTEXT, ParameterInjector.parseScope("DEPLOYMENTS_CONTEXT"))
         assertEquals(ContextType.DEPLOYMENT_CONTEXT, ParameterInjector.parseScope("DEPLOYMENT_CONTEXT"))
-        assertEquals(ContextType.PROPERTY, ParameterInjector.parseScope("PROPERTY"))
-        assertEquals(ContextType.PROPERTY, ParameterInjector.parseScope("PROPERTY_CONTEXT"))
-        assertEquals(ContextType.PROGRAM, ParameterInjector.parseScope("PROGRAM_CONTEXT"))
-        assertEquals(ContextType.PROGRAM, ParameterInjector.parseScope("program"))
-        assertEquals(ContextType.SIMULATION, ParameterInjector.parseScope("simulation"))
-        assertEquals(ContextType.DEPLOYMENT, ParameterInjector.parseScope("deployments_context"))
+        assertEquals(ContextType.PROPERTY_CONTEXT, ParameterInjector.parseScope("PROPERTY"))
+        assertEquals(ContextType.PROPERTY_CONTEXT, ParameterInjector.parseScope("PROPERTY_CONTEXT"))
+        assertEquals(ContextType.PROGRAM_CONTEXT, ParameterInjector.parseScope("PROGRAM_CONTEXT"))
+        assertEquals(ContextType.PROGRAM_CONTEXT, ParameterInjector.parseScope("program"))
+        assertEquals(ContextType.SIMULATION_CONTEXT, ParameterInjector.parseScope("simulation"))
+        assertEquals(ContextType.DEPLOYMENTS_CONTEXT, ParameterInjector.parseScope("deployments_context"))
         assertEquals(ContextType.EXPORTER_CONTEXT, ParameterInjector.parseScope("exporter"))
     }
 

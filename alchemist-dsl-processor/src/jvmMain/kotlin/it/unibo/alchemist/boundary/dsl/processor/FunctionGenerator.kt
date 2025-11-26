@@ -28,10 +28,10 @@ object FunctionGenerator {
             constructorInfo.paramTypes,
         )
         val receiverPart = buildReceiverPart(injectedParams, contextType)
-
         return "${contextPart}fun$functionTypeParamString $receiverPart$functionName$functionParams: $returnType ="
     }
 
+    // Build the context receiver only when injections exist.
     private fun buildContextPart(
         injectedParams: List<Pair<String, String>>,
         contextType: ContextType,
@@ -41,28 +41,26 @@ object FunctionGenerator {
         if (injectedParams.isEmpty()) {
             return ""
         }
-
         val (tParam, pParam) = TypeParameterHandler.findTAndPParams(typeParamNames, typeParamBounds)
         val pVariance = extractVarianceFromBound(pParam, typeParamBounds)
-        val tWithVariance = tParam
         val pWithVariance = if (pVariance.isNotEmpty()) "$pVariance $pParam" else pParam
         val contextTypeName = when (contextType) {
-            ContextType.SIMULATION ->
-                "${ProcessorConfig.ContextTypes.SIMULATION_CONTEXT}<$tWithVariance, $pWithVariance>"
+            ContextType.SIMULATION_CONTEXT ->
+                "${ProcessorConfig.ContextTypes.SIMULATION_CONTEXT}<$tParam, $pWithVariance>"
             ContextType.EXPORTER_CONTEXT ->
-                "${ProcessorConfig.ContextTypes.EXPORTER_CONTEXT}<$tWithVariance, $pWithVariance>"
+                "${ProcessorConfig.ContextTypes.EXPORTER_CONTEXT}<$tParam, $pWithVariance>"
             ContextType.GLOBAL_PROGRAMS_CONTEXT ->
-                "${ProcessorConfig.ContextTypes.GLOBAL_PROGRAMS_CONTEXT}<$tWithVariance, $pWithVariance>"
+                "${ProcessorConfig.ContextTypes.GLOBAL_PROGRAMS_CONTEXT}<$tParam, $pWithVariance>"
             ContextType.OUTPUT_MONITORS_CONTEXT ->
-                "${ProcessorConfig.ContextTypes.OUTPUT_MONITORS_CONTEXT}<$tWithVariance, $pWithVariance>"
+                "${ProcessorConfig.ContextTypes.OUTPUT_MONITORS_CONTEXT}<$tParam, $pWithVariance>"
             ContextType.TERMINATORS_CONTEXT ->
-                "${ProcessorConfig.ContextTypes.TERMINATORS_CONTEXT}<$tWithVariance, $pWithVariance>"
-            ContextType.DEPLOYMENT ->
-                "${ProcessorConfig.ContextTypes.DEPLOYMENTS_CONTEXT}<$tWithVariance, $pWithVariance>"
+                "${ProcessorConfig.ContextTypes.TERMINATORS_CONTEXT}<$tParam, $pWithVariance>"
+            ContextType.DEPLOYMENTS_CONTEXT ->
+                "${ProcessorConfig.ContextTypes.DEPLOYMENTS_CONTEXT}<$tParam, $pWithVariance>"
             ContextType.DEPLOYMENT_CONTEXT ->
-                "${ProcessorConfig.ContextTypes.DEPLOYMENT_CONTEXT}<$tWithVariance, $pWithVariance>"
-            ContextType.PROGRAM -> "${ProcessorConfig.ContextTypes.PROGRAM_CONTEXT}<$tWithVariance, $pWithVariance>"
-            ContextType.PROPERTY -> "${ProcessorConfig.ContextTypes.PROPERTY_CONTEXT}<$tWithVariance, $pWithVariance>"
+                "${ProcessorConfig.ContextTypes.DEPLOYMENT_CONTEXT}<$tParam, $pWithVariance>"
+            ContextType.PROGRAM_CONTEXT -> "${ProcessorConfig.ContextTypes.PROGRAM_CONTEXT}<$tParam, $pWithVariance>"
+            ContextType.PROPERTY_CONTEXT -> "${ProcessorConfig.ContextTypes.PROPERTY_CONTEXT}<$tParam, $pWithVariance>"
         }
         return "context(ctx: $contextTypeName) "
     }
@@ -74,7 +72,6 @@ object FunctionGenerator {
         }
         val bound = typeParamBounds[paramIndex]
         val boundPart = bound.substringAfter(":", "").trim()
-
         return extractVarianceFromBoundPart(paramName, boundPart)
     }
 
@@ -82,7 +79,6 @@ object FunctionGenerator {
         val escapedParamName = Regex.escape(paramName)
         val outPattern = Regex("""<out\s+$escapedParamName>""")
         val inPattern = Regex("""<in\s+$escapedParamName>""")
-
         return when {
             outPattern.containsMatchIn(boundPart) || boundPart.startsWith("out ") -> "out"
             inPattern.containsMatchIn(boundPart) || boundPart.startsWith("in ") -> "in"
@@ -102,7 +98,6 @@ object FunctionGenerator {
             val defaultValue = extractDefaultValue(param)
             "$varargKeyword$name: $type$defaultValue"
         }
-
         val regularParamsPart = regularParams.joinToString(", ")
         return if (regularParamsPart.isEmpty()) {
             "()"
@@ -112,7 +107,6 @@ object FunctionGenerator {
     }
 
     private const val EMPTY_RECEIVER = ""
-
     private fun buildReceiverPart(
         @Suppress("UNUSED_PARAMETER") injectedParams: List<Pair<String, String>>,
         @Suppress("UNUSED_PARAMETER") contextType: ContextType,
@@ -146,7 +140,6 @@ object FunctionGenerator {
         if (!param.hasDefault) {
             return ""
         }
-
         val defaultValueExpr = DefaultValueAnalyzer.tryExtractDefaultFromSource(param)
         return defaultValueExpr?.let { " = $it" }.orEmpty()
     }

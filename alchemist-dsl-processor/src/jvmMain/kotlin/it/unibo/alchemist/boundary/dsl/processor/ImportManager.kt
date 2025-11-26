@@ -1,7 +1,6 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSValueParameter
 import java.io.PrintWriter
 
 /**
@@ -30,7 +29,6 @@ object ImportManager {
     ) {
         val neededImports = DefaultValueAnalyzer.extractNeededImportsFromDefaults(defaultValues, classDecl)
         neededImports.forEach { writer.println(it) }
-
         writer.println()
     }
 }

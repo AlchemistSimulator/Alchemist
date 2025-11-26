@@ -37,7 +37,6 @@ object StaticComparisonHelper {
             dslLoader.constants,
             "Constants should match",
         )
-
         // Compare variables by name, default value, and full stream
         val yamlVariables = yamlLoader.variables
         val dslVariables = dslLoader.variables
@@ -62,14 +61,12 @@ object StaticComparisonHelper {
                 "Values stream of variable '$name' should match",
             )
         }
-
         // Compare remote dependencies
         assertEquals(
             yamlLoader.remoteDependencies,
             dslLoader.remoteDependencies,
             "Remote dependencies should match",
         )
-
         // Compare launcher types (not exact instances)
         assertEquals(
             yamlLoader.launcher::class,
@@ -83,13 +80,10 @@ object StaticComparisonHelper {
      */
     fun <T, P : Position<P>> compareSimulations(dslLoader: Loader, yamlLoader: Loader) {
         println("Comparing simulations...")
-
         val yamlSimulation = yamlLoader.getDefault<T, P>()
         val dslSimulation = dslLoader.getDefault<T, P>()
-
         // Compare environments
         compareEnvironments(dslSimulation.environment, yamlSimulation.environment)
-
         // Compare simulation properties
         compareSimulationProperties(dslSimulation, yamlSimulation)
     }
@@ -99,7 +93,6 @@ object StaticComparisonHelper {
      */
     private fun <T, P : Position<P>> compareEnvironments(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
         println("Comparing environments...")
-
         // Compare node counts
         assertEquals(
             yamlEnv.nodes.size,
@@ -114,7 +107,6 @@ object StaticComparisonHelper {
             dslNodeTypes,
             "Node types should match",
         )
-
         // Compare node positions
         val dslPositions = dslEnv.nodes.map { dslEnv.getPosition(it) }.toSet()
         val yamlPositions = yamlEnv.nodes.map { yamlEnv.getPosition(it) }.toSet()
@@ -142,13 +134,10 @@ object StaticComparisonHelper {
             dslEnv.linkingRule::class,
             "Linking rule types should match",
         )
-
         // Compare neighborhoods induced by the linking rule
         compareNeighborhoods(dslEnv, yamlEnv)
-
         // Compare programs (reactions)
         comparePrograms(dslEnv, yamlEnv)
-
         // Compare layers
         compareLayers(dslEnv, yamlEnv)
     }
@@ -159,30 +148,25 @@ object StaticComparisonHelper {
     private fun <T, P : Position<P>> compareNeighborhoods(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
         val dslByPos = dslEnv.nodes.associateBy { dslEnv.getPosition(it) }
         val yamlByPos = yamlEnv.nodes.associateBy { yamlEnv.getPosition(it) }
-
         // Positions should already match; guard to provide clearer error if not
         assertEquals(
             yamlByPos.keys,
             dslByPos.keys,
             "Node position sets should match before neighborhood comparison",
         )
-
         for (position in dslByPos.keys) {
             val dslNode = dslByPos.getValue(position)
             val yamlNode = yamlByPos.getValue(position)
-
             val dslNeighborPositions = dslEnv
                 .getNeighborhood(dslNode)
                 .neighbors
                 .map { dslEnv.getPosition(it) }
                 .toSet()
-
             val yamlNeighborPositions = yamlEnv
                 .getNeighborhood(yamlNode)
                 .neighbors
                 .map { yamlEnv.getPosition(it) }
                 .toSet()
-
             assertEquals(
                 yamlNeighborPositions,
                 dslNeighborPositions,
@@ -196,25 +180,20 @@ object StaticComparisonHelper {
      */
     private fun <T, P : Position<P>> compareNodeContents(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
         println("Comparing node contents...")
-
         // Since we can't match by position, we'll compare all nodes by their contents
         val dslNodes = dslEnv.nodes.toList()
         val yamlNodes = yamlEnv.nodes.toList()
-
         // Compare total molecule counts
         val dslTotalMolecules = dslNodes.sumOf { it.moleculeCount }
         val yamlTotalMolecules = yamlNodes.sumOf { it.moleculeCount }
-
         assertEquals(
             yamlTotalMolecules,
             dslTotalMolecules,
             "Total molecule counts should match",
         )
-
         // Compare all node contents (without position matching)
         val dslContents = dslNodes.map { it.contents }.sortedBy { it.toString() }
         val yamlContents = yamlNodes.map { it.contents }.sortedBy { it.toString() }
-
         assertEquals(
             yamlContents,
             dslContents,
@@ -227,10 +206,8 @@ object StaticComparisonHelper {
      */
     private fun <T, P : Position<P>> comparePrograms(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
         println("Comparing programs...")
-
         // Compare global reactions
         compareGlobalReactions(dslEnv, yamlEnv)
-
         // Compare node reactions
         compareNodeReactions(dslEnv, yamlEnv)
     }
@@ -240,20 +217,16 @@ object StaticComparisonHelper {
      */
     private fun <T, P : Position<P>> compareGlobalReactions(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
         println("Comparing global reactions...")
-
         val dslGlobalReactions = dslEnv.globalReactions.toList()
         val yamlGlobalReactions = yamlEnv.globalReactions.toList()
-
         assertEquals(
             yamlGlobalReactions.size,
             dslGlobalReactions.size,
             "Global reactions count should match",
         )
-
         // Compare global reaction types
         val dslGlobalTypes = dslGlobalReactions.map { it::class }.sortedBy { it.simpleName }
         val yamlGlobalTypes = yamlGlobalReactions.map { it::class }.sortedBy { it.simpleName }
-
         assertEquals(
             yamlGlobalTypes,
             dslGlobalTypes,
@@ -266,30 +239,24 @@ object StaticComparisonHelper {
      */
     private fun <T, P : Position<P>> compareNodeReactions(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
         println("Comparing node reactions...")
-
         val dslNodes = dslEnv.nodes.toList()
         val yamlNodes = yamlEnv.nodes.toList()
-
         // Compare total reaction counts
         val dslTotalReactions = dslNodes.sumOf { it.reactions.size }
         val yamlTotalReactions = yamlNodes.sumOf { it.reactions.size }
-
         assertEquals(
             yamlTotalReactions,
             dslTotalReactions,
             "Total node reactions count should match",
         )
-
         // Compare reaction types across all nodes
         val dslReactionTypes = dslNodes.flatMap { it.reactions }.map { it::class }.sortedBy { it.simpleName }
         val yamlReactionTypes = yamlNodes.flatMap { it.reactions }.map { it::class }.sortedBy { it.simpleName }
-
         assertEquals(
             yamlReactionTypes,
             dslReactionTypes,
             "Node reaction types should match",
         )
-
         // Compare reaction programs (conditions and actions)
         compareReactionPrograms(dslNodes, yamlNodes)
     }
@@ -299,20 +266,16 @@ object StaticComparisonHelper {
      */
     private fun <T> compareReactionPrograms(dslNodes: List<Node<T>>, yamlNodes: List<Node<T>>) {
         println("Comparing reaction programs...")
-
         // Compare total reactions count
         val dslTotalReactions = dslNodes.sumOf { it.reactions.size }
         val yamlTotalReactions = yamlNodes.sumOf { it.reactions.size }
-
         assertEquals(
             yamlTotalReactions,
             dslTotalReactions,
             "Total reactions count should match",
         )
-
         val dslReactions = extractReactionInfo(dslNodes)
         val yamlReactions = extractReactionInfo(yamlNodes)
-
         assertEquals(
             yamlReactions,
             dslReactions,
@@ -351,7 +314,6 @@ object StaticComparisonHelper {
      */
     private fun compareSimulationProperties(dslSimulation: Simulation<*, *>, yamlSimulation: Simulation<*, *>) {
         println("Comparing simulation properties...")
-
         // Compare output monitors count
         assertEquals(
             yamlSimulation.outputMonitors.size,
@@ -362,13 +324,11 @@ object StaticComparisonHelper {
         // Compare output monitor types by class since instances may differ
         val yamlMonitorTypes = yamlSimulation.outputMonitors.map { it::class }
         val dslMonitorTypes = dslSimulation.outputMonitors.map { it::class }
-
         assertEquals(
             yamlMonitorTypes.sortedBy { it.simpleName },
             dslMonitorTypes.sortedBy { it.simpleName },
             "Output monitor types should match",
         )
-
         compareExporters(dslSimulation, yamlSimulation)
     }
 
@@ -379,7 +339,6 @@ object StaticComparisonHelper {
         val yamlExporters = yamlSimulation.outputMonitors
             .filterIsInstance<GlobalExporter<*, *>>()
             .flatMap { it.exporters }
-
         assertEquals(
             yamlExporters.size,
             dslExporters.size,
@@ -393,7 +352,6 @@ object StaticComparisonHelper {
             dslTypes,
             "Exporter types should match",
         )
-
         compareDataExtractors(dslExporters, yamlExporters)
     }
 
@@ -405,7 +363,6 @@ object StaticComparisonHelper {
             dslTotal,
             "Total data extractor counts should match",
         )
-
         val dslTypes = dslExporters.flatMap { it.dataExtractors }.map { it::class }.sortedBy { it.simpleName }
         val yamlTypes = yamlExporters.flatMap { it.dataExtractors }.map { it::class }.sortedBy { it.simpleName }
         assertEquals(
@@ -413,7 +370,6 @@ object StaticComparisonHelper {
             dslTypes,
             "Data extractor types should match",
         )
-
         val dslInfo = dslExporters.flatMap { it.dataExtractors }.map { extractor ->
             ExtractorInfo(
                 type = extractor::class.simpleName.orEmpty(),
@@ -445,27 +401,22 @@ object StaticComparisonHelper {
      */
     private fun <T, P : Position<P>> compareLayers(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
         println("Comparing layers...")
-
         // Simplified check
         // If two layers have different molecules this test does not detect it.
-
         // Compare layer counts
         assertEquals(
             yamlEnv.layers.size,
             dslEnv.layers.size,
             "Layer counts should match",
         )
-
         // Compare layer types
         val dslLayerTypes = dslEnv.layers.map { it::class }.sortedBy { it.simpleName }
         val yamlLayerTypes = yamlEnv.layers.map { it::class }.sortedBy { it.simpleName }
-
         assertEquals(
             yamlLayerTypes,
             dslLayerTypes,
             "Layer types should match",
         )
-
         LayerComparisonUtils.compareLayerValues(dslEnv, yamlEnv)
     }
 }

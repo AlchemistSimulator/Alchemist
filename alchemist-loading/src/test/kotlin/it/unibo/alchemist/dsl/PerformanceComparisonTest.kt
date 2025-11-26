@@ -67,48 +67,37 @@ class PerformanceComparisonTest {
         val originalOut = System.out
         val originalErr = System.err
         val nullStream = PrintStream(java.io.ByteArrayOutputStream())
-
         println("\n=== $testHeader ===")
         println("Resource: $yamlResource")
         println("Iterations: $iterations\n")
-
         val yamlTimes = mutableListOf<Long>()
         val dslTimes = mutableListOf<Long>()
-
         val dslUrl = ResourceLoader.getResource(dslResource)!!
         val ymlUrl = ResourceLoader.getResource(yamlResource)!!
-
         repeat(iterations) {
             System.setOut(nullStream)
             System.setErr(nullStream)
-
             val yamlTime = measureTime {
                 val yamlLoader = LoadAlchemist.from(ymlUrl)
                 assertNotNull(yamlLoader)
                 yamlLoaderAction(yamlLoader)
             }
-
             val dslTime = measureTime {
                 val dslLoader = LoadAlchemist.from(dslUrl)
                 assertNotNull(dslLoader)
                 dslLoaderAction(dslLoader)
             }
-
             System.setOut(originalOut)
             System.setErr(originalErr)
-
             yamlTimes.add(yamlTime.inWholeMilliseconds)
             dslTimes.add(dslTime.inWholeMilliseconds)
         }
-
         yamlTimes.forEachIndexed { index, time ->
             println("Iteration ${index + 1}: YAML=${time}ms, DSL=${dslTimes[index]}ms")
         }
-
         val stats = calculateStats(yamlTimes, dslTimes)
         printResults(resultsHeader, stats)
         printSpeedup(stats, dslFasterMsg, yamlFasterMsg)
-
         println("\n=== Test completed ===\n")
     }
 
@@ -146,18 +135,14 @@ class PerformanceComparisonTest {
     fun `verify both loaders produce equivalent results`() {
         val yamlResource = "dsl/yml/19-performance.yml"
         val dslResource = "/dsl/kts/19-performance.alchemist.kts"
-
         val dslUrl = requireNotNull(this.javaClass.getResource(dslResource)) {
             "Resource $dslResource not found on test classpath"
         }
         val dslFile = File(dslUrl.toURI())
-
         val yamlLoader = LoadAlchemist.from(ResourceLoader.getResource(yamlResource)!!)
         val dslLoader = LoadAlchemist.from(dslFile)
-
         assertNotNull(yamlLoader)
         assertNotNull(dslLoader)
-
         val dslLoaderFunction = { dslLoader }
         dslLoaderFunction.shouldEqual(yamlResource, includeRuntime = false)
     }

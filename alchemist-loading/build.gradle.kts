@@ -86,7 +86,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions {
         freeCompilerArgs.addAll(
             "-opt-in=kotlin.time.ExperimentalTime",
-            "-Xuse-fir-lt=false",
         )
         freeCompilerArgs.add("-Xcontext-parameters")
     }

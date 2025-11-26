@@ -13,9 +13,6 @@ import it.unibo.alchemist.boundary.dsl.BuildDsl
 import java.io.PrintWriter
 import java.nio.charset.StandardCharsets
 
-/**
- * KSP symbol processor that generates DSL builder functions for classes annotated with [BuildDsl].
- */
 class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
         logger.info("DslBuilderProcessor: Starting processing")
@@ -92,69 +89,35 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
             logger.info("DslBuilderProcessor: Parameter $index: ${param.name?.asString()} : $typeName")
         }
 
+        val generationContext = buildGenerationContext(classDecl, functionName, parameters, annotationValues)
+        writeGeneratedFile(classDecl, generationContext)
+    }
+
+    private fun buildGenerationContext(
+        classDecl: KSClassDeclaration,
+        functionName: String,
+        parameters: List<KSValueParameter>,
+        annotationValues: Map<String, Any?>,
+    ): GenerationContext {
         val injectionIndices = ParameterInjector.findInjectionIndices(parameters)
         logger.info("DslBuilderProcessor: Injection indices: $injectionIndices")
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-        logger.info("DslBuilderProcessor: Determined context type: $contextType (manual scope was: '$manualScope')")
+        logger.info("DslBuilderProcessor: Determined context type: $contextType")
         val paramsToSkip = ParameterInjector.getInjectionParams(injectionIndices, annotationValues, contextType)
         val remainingParams = parameters.filterIndexed { index, _ -> !paramsToSkip.contains(index) }
-
-        val containingFile = classDecl.containingFile
-        val dependencies = if (containingFile != null) {
-            Dependencies(true, containingFile)
-        } else {
-            Dependencies.ALL_FILES
-        }
-
-        val fileName = functionName.replaceFirstChar { it.uppercaseChar() } + "Helper"
-
-        val file = codeGenerator.createNewFile(
-            dependencies = dependencies,
-            packageName = ProcessorConfig.GENERATED_PACKAGE,
-            fileName = fileName,
-        )
-
-        PrintWriter(file, true, StandardCharsets.UTF_8).use { writer ->
-            writeGeneratedCode(
-                writer,
-                classDecl,
-                functionName,
-                remainingParams,
-                parameters,
-                paramsToSkip,
-                injectionIndices,
-                annotationValues,
-                contextType,
-            )
-        }
-    }
-
-    private fun writeGeneratedCode(
-        writer: PrintWriter,
-        classDecl: KSClassDeclaration,
-        functionName: String,
-        remainingParams: List<KSValueParameter>,
-        allParameters: List<KSValueParameter>,
-        paramsToSkip: Set<Int>,
-        injectionIndices: Map<InjectionType, Int>,
-        annotationValues: Map<String, Any?>,
-        contextType: ContextType,
-    ) {
-        writeFileHeader(writer, classDecl, contextType)
 
         val (initialTypeParamNames, initialTypeParamBounds) = TypeExtractor.extractTypeParameters(classDecl)
         val typeParamNames = initialTypeParamNames.toMutableList()
         val typeParamBounds = initialTypeParamBounds.toMutableList()
-
         val paramTypes = TypeExtractor.extractParamTypes(remainingParams, typeParamNames)
-        val defaultValues = DefaultValueAnalyzer.extractAllDefaultValues(remainingParams, classDecl)
-        val needsMapEnvironment = checkNeedsMapEnvironment(injectionIndices, allParameters)
         val paramNames = TypeExtractor.extractParamNames(remainingParams)
+        val defaultValues = DefaultValueAnalyzer.extractAllDefaultValues(remainingParams, classDecl)
+        val needsMapEnvironment = checkNeedsMapEnvironment(injectionIndices, parameters)
 
         val (injectedParams, injectedParamNames, injectedParamTypesMap) = processInjectedParams(
             injectionIndices,
             annotationValues,
-            allParameters,
+            parameters,
             typeParamNames,
             typeParamBounds,
         )
@@ -164,7 +127,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
             hasInjectedParams,
             injectionIndices,
             annotationValues,
-            allParameters,
+            parameters,
             typeParamNames,
             typeParamBounds,
             initialTypeParamNames,
@@ -172,60 +135,78 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         )
 
         addPositionImportIfNeeded(hasInjectedParams, typeParamNames, typeParamBounds, initialTypeParamBounds)
-        val constructorParams = writeImportsAndFunction(
-            writer,
-            typeParamBounds,
-            paramTypes,
-            defaultValues,
-            classDecl,
-            needsMapEnvironment,
-            injectedParamTypesMap,
-            allParameters,
-            remainingParams,
-            paramsToSkip,
-            paramNames,
-            injectionIndices,
-            injectedParamNames,
-            annotationValues,
-            typeParamNames,
-            contextType,
-            hasInjectedParams,
-            functionName,
-            classDecl.simpleName.asString(),
-            injectedParams,
-            initialTypeParamNames,
-            initialTypeParamBounds,
+
+        val typeParams = TypeParameterInfo(
+            names = typeParamNames.toList(),
+            bounds = typeParamBounds.toList(),
+            classTypeParamNames = initialTypeParamNames,
+            classTypeParamBounds = initialTypeParamBounds,
         )
 
-        val hasNode = injectionIndices.containsKey(InjectionType.NODE) &&
-            annotationValues["injectNode"] as? Boolean ?: true
-        val hasReaction = injectionIndices.containsKey(InjectionType.REACTION) &&
-            annotationValues["injectReaction"] as? Boolean ?: true
+        val constructorInfo = ConstructorInfo(
+            allParameters = parameters,
+            remainingParams = remainingParams,
+            paramsToSkip = paramsToSkip,
+            paramNames = paramNames,
+            paramTypes = paramTypes,
+        )
+
+        val injectionContext = InjectionContext(
+            indices = injectionIndices,
+            paramNames = injectedParamNames,
+            paramTypes = injectedParamTypesMap,
+            annotationValues = annotationValues,
+            contextType = contextType,
+            hasContextParams = hasInjectedParams,
+            contextParamName = "ctx",
+        )
+
+        return GenerationContext(
+            classDecl = classDecl,
+            className = classDecl.simpleName.asString(),
+            functionName = functionName,
+            typeParams = typeParams,
+            constructorInfo = constructorInfo,
+            injectionContext = injectionContext,
+            injectedParams = injectedParams,
+            defaultValues = defaultValues,
+            needsMapEnvironment = needsMapEnvironment,
+        )
+    }
+
+    private fun writeGeneratedFile(classDecl: KSClassDeclaration, context: GenerationContext) {
+        val containingFile = classDecl.containingFile
+        val dependencies = if (containingFile != null) {
+            Dependencies(true, containingFile)
+        } else {
+            Dependencies.ALL_FILES
+        }
+
+        val fileName = context.functionName.replaceFirstChar { it.uppercaseChar() } + "Helper"
+
+        val file = codeGenerator.createNewFile(
+            dependencies = dependencies,
+            packageName = ProcessorConfig.GENERATED_PACKAGE,
+            fileName = fileName,
+        )
+
+        PrintWriter(file, true, StandardCharsets.UTF_8).use { writer ->
+            writeGeneratedCode(writer, context)
+        }
+    }
+
+    private fun writeGeneratedCode(writer: PrintWriter, context: GenerationContext) {
+        writeFileHeader(writer, context.classDecl, context.injectionContext.contextType)
+
+        val constructorParams = writeImportsAndFunction(writer, context)
+
+        val hasNode = context.injectionContext.indices.containsKey(InjectionType.NODE) &&
+            context.injectionContext.annotationValues["injectNode"] as? Boolean ?: true
+        val hasReaction = context.injectionContext.indices.containsKey(InjectionType.REACTION) &&
+            context.injectionContext.annotationValues["injectReaction"] as? Boolean ?: true
 
         if (hasNode && !hasReaction) {
-            writePropertyContextFunction(
-                writer,
-                typeParamBounds,
-                paramTypes,
-                defaultValues,
-                classDecl,
-                needsMapEnvironment,
-                injectedParamTypesMap,
-                allParameters,
-                remainingParams,
-                paramsToSkip,
-                paramNames,
-                injectionIndices,
-                injectedParamNames,
-                annotationValues,
-                typeParamNames,
-                functionName,
-                classDecl.simpleName.asString(),
-                injectedParams,
-                initialTypeParamNames,
-                initialTypeParamBounds,
-                constructorParams,
-            )
+            writePropertyContextFunction(writer, context, constructorParams)
         }
     }
 
@@ -402,75 +383,38 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         }
     }
 
-    private fun writeImportsAndFunction(
-        writer: PrintWriter,
-        finalTypeParamBounds: List<String>,
-        paramTypes: List<String>,
-        defaultValues: List<String>,
-        classDecl: KSClassDeclaration,
-        needsMapEnvironment: Boolean,
-        injectedParamTypesMap: Map<InjectionType, String>,
-        allParameters: List<KSValueParameter>,
-        remainingParams: List<KSValueParameter>,
-        paramsToSkip: Set<Int>,
-        paramNames: List<String>,
-        injectionIndices: Map<InjectionType, Int>,
-        injectedParamNames: Map<InjectionType, String>,
-        annotationValues: Map<String, Any?>,
-        typeParamNames: List<String>,
-        contextType: ContextType,
-        hasInjectedParams: Boolean,
-        functionName: String,
-        className: String,
-        injectedParams: List<Pair<String, String>>,
-        initialTypeParamNames: List<String>,
-        initialTypeParamBounds: List<String>,
-    ): List<String> {
+    private fun writeImportsAndFunction(writer: PrintWriter, context: GenerationContext): List<String> {
         ImportManager.writeImports(
             writer,
-            finalTypeParamBounds,
-            paramTypes,
-            defaultValues,
-            classDecl,
-            needsMapEnvironment,
-            injectedParamTypesMap.values.toList(),
+            context.typeParams.bounds,
+            context.constructorInfo.paramTypes,
+            context.defaultValues,
+            context.classDecl,
+            context.needsMapEnvironment,
+            context.injectionContext.paramTypes.values.toList(),
         )
 
         val constructorParams = FunctionGenerator.buildConstructorParams(
-            allParameters,
-            remainingParams,
-            paramsToSkip,
-            paramNames,
-            injectionIndices,
-            injectedParamNames,
-            annotationValues,
-            typeParamNames,
-            contextType,
-            hasInjectedParams,
-            "ctx",
-            injectedParamTypesMap,
+            context.constructorInfo,
+            context.injectionContext,
+            context.typeParams.names,
         )
 
         val functionSignature = FunctionGenerator.buildFunctionSignature(
-            functionName,
-            finalTypeParamBounds,
-            typeParamNames,
-            className,
-            remainingParams,
-            paramNames,
-            paramTypes,
-            injectedParams,
-            contextType,
-            initialTypeParamNames,
-            initialTypeParamBounds,
+            context.functionName,
+            context.className,
+            context.typeParams,
+            context.constructorInfo,
+            context.injectedParams,
+            context.injectionContext.contextType,
         )
 
         writer.println(functionSignature)
         val constructorCall = FunctionGenerator.buildConstructorCall(
-            className,
-            typeParamNames,
+            context.className,
+            context.typeParams.names,
             constructorParams,
-            initialTypeParamNames,
+            context.typeParams.classTypeParamNames,
         )
         writer.println("    $constructorCall")
         return constructorParams
@@ -478,57 +422,44 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
 
     private fun writePropertyContextFunction(
         writer: PrintWriter,
-        finalTypeParamBounds: List<String>,
-        paramTypes: List<String>,
-        @Suppress("UNUSED_PARAMETER") defaultValues: List<String>,
-        @Suppress("UNUSED_PARAMETER") classDecl: KSClassDeclaration,
-        @Suppress("UNUSED_PARAMETER") needsMapEnvironment: Boolean,
-        injectedParamTypesMap: Map<InjectionType, String>,
-        allParameters: List<KSValueParameter>,
-        remainingParams: List<KSValueParameter>,
-        paramsToSkip: Set<Int>,
-        paramNames: List<String>,
-        injectionIndices: Map<InjectionType, Int>,
-        injectedParamNames: Map<InjectionType, String>,
-        annotationValues: Map<String, Any?>,
-        typeParamNames: List<String>,
-        functionName: String,
-        className: String,
-        @Suppress("UNUSED_PARAMETER") injectedParams: List<Pair<String, String>>,
-        initialTypeParamNames: List<String>,
-        @Suppress("UNUSED_PARAMETER") initialTypeParamBounds: List<String>,
+        context: GenerationContext,
         @Suppress("UNUSED_PARAMETER") constructorParams: List<String>,
     ) {
         writer.println()
 
-        val (tParam, pParam) = TypeParameterHandler.findTAndPParams(typeParamNames, finalTypeParamBounds)
-        val pVariance = FunctionGenerator.extractVarianceFromBound(pParam, finalTypeParamBounds)
+        val (tParam, pParam) = TypeParameterHandler.findTAndPParams(
+            context.typeParams.names,
+            context.typeParams.bounds,
+        )
+        val pVariance = FunctionGenerator.extractVarianceFromBound(pParam, context.typeParams.bounds)
         val pWithVariance = if (pVariance.isNotEmpty()) "$pVariance $pParam" else pParam
 
-        val functionTypeParamString = TypeParameterHandler.buildTypeParamString(finalTypeParamBounds)
-        val returnType = TypeParameterHandler.buildReturnType(className, initialTypeParamNames)
+        val functionTypeParamString = TypeParameterHandler.buildTypeParamString(context.typeParams.bounds)
+        val returnType = TypeParameterHandler.buildReturnType(
+            context.className,
+            context.typeParams.classTypeParamNames,
+        )
         val contextPart = "context(ctx: ${ProcessorConfig.ContextTypes.PROPERTY_CONTEXT}<$tParam, $pWithVariance>) "
-        val functionParams = FunctionGenerator.buildFunctionParams(remainingParams, paramNames, paramTypes)
+        val functionParams = FunctionGenerator.buildFunctionParams(
+            context.constructorInfo.remainingParams,
+            context.constructorInfo.paramNames,
+            context.constructorInfo.paramTypes,
+        )
 
-        val functionSignature = "${contextPart}fun$functionTypeParamString $functionName$functionParams: $returnType ="
+        val functionSignature = "${contextPart}fun$functionTypeParamString " +
+            "${context.functionName}$functionParams: $returnType ="
         writer.println(functionSignature)
 
         val propertyContextConstructorParams = ConstructorParamBuilder.convertToPropertyContextAccessors(
-            injectionIndices,
-            allParameters,
-            remainingParams,
-            paramsToSkip,
-            paramNames,
-            injectedParamNames,
-            annotationValues,
-            typeParamNames,
-            injectedParamTypesMap,
+            context.constructorInfo,
+            context.injectionContext,
+            context.typeParams.names,
         )
         val constructorCall = FunctionGenerator.buildConstructorCall(
-            className,
-            typeParamNames,
+            context.className,
+            context.typeParams.names,
             propertyContextConstructorParams,
-            initialTypeParamNames,
+            context.typeParams.classTypeParamNames,
         )
         writer.println("    $constructorCall")
     }

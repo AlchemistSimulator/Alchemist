@@ -170,27 +170,22 @@ object DefaultValueAnalyzer {
         return applyReplacements(defaultValue, replacements)
     }
 
-    private fun findConstantReplacements(defaultValue: String): List<Pair<IntRange, String>> {
-        val replacements = mutableListOf<Pair<IntRange, String>>()
-        for (constant in MATH_CONSTANTS) {
-            val pattern = Regex("""\b$constant\b""")
-            val qualifiedPattern = Regex("""\w+\.$constant\b""")
-            if (pattern.containsMatchIn(defaultValue) && !qualifiedPattern.containsMatchIn(defaultValue)) {
-                pattern.findAll(defaultValue).forEach { match ->
-                    if (!isQualifiedBefore(defaultValue, match.range.first)) {
-                        replacements.add(match.range to "kotlin.math.${match.value}")
-                    }
-                }
-            }
-        }
-        return replacements
-    }
+    private fun findConstantReplacements(defaultValue: String): List<Pair<IntRange, String>> =
+        findMathReplacements(defaultValue, MATH_CONSTANTS) { identifier -> """\b$identifier\b""" }
 
-    private fun findFunctionReplacements(defaultValue: String): List<Pair<IntRange, String>> {
+    private fun findFunctionReplacements(defaultValue: String): List<Pair<IntRange, String>> =
+        findMathReplacements(defaultValue, MATH_FUNCTIONS) { identifier -> """\b$identifier\s*\(""" }
+
+    private fun findMathReplacements(
+        defaultValue: String,
+        identifiers: Set<String>,
+        patternBuilder: (String) -> String,
+    ): List<Pair<IntRange, String>> {
         val replacements = mutableListOf<Pair<IntRange, String>>()
-        for (function in MATH_FUNCTIONS) {
-            val pattern = Regex("""\b$function\s*\(""")
-            val qualifiedPattern = Regex("""\w+\.$function\s*\(""")
+        for (identifier in identifiers) {
+            val patternStr = patternBuilder(identifier)
+            val pattern = Regex(patternStr)
+            val qualifiedPattern = Regex("""\w+\.""" + patternStr.removePrefix("""\b"""))
             if (pattern.containsMatchIn(defaultValue) && !qualifiedPattern.containsMatchIn(defaultValue)) {
                 pattern.findAll(defaultValue).forEach { match ->
                     if (!isQualifiedBefore(defaultValue, match.range.first)) {

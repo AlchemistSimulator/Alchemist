@@ -360,13 +360,17 @@ object DslLoaderFunctions {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
                 deploy(
-                    Grid(
-                        ctx.environment, generator,
-                        mSize, mSize, size, size,
-                        0.25, 0.25, 0.1, 0.1,
+                    grid(
+                        mSize,
+                        mSize,
+                        size,
+                        size,
+                        0.25,
+                        0.25,
+                        0.1,
+                        0.1,
                     ),
                 ) {
-                    println("using rate $rate and size $size")
                     inside(Rectangle(sourceStart, sourceStart, sourceSize, sourceSize)) {
                         molecule = "token, 0, []"
                     }

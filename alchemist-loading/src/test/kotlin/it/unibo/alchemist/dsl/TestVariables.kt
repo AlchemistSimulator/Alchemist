@@ -50,7 +50,7 @@ class TestVariables {
                     .variables.containsKey("rate").shouldBeTrue()
             }
         }
-        loader.getWith<T, P>(mapOf(("rate" to 20.0)))
+        loader.getWith<T, P>(mapOf("rate" to 20.0))
     }
 
     @Suppress("NoNameShadowing")

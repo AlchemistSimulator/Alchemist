@@ -10,9 +10,12 @@
 package it.unibo.alchemist.boundary.dsl.scripting
 
 import kotlin.script.experimental.annotations.KotlinScript
+import kotlin.script.experimental.api.ScriptAcceptedLocation
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.acceptedLocations
 import kotlin.script.experimental.api.compilerOptions
 import kotlin.script.experimental.api.defaultImports
+import kotlin.script.experimental.api.ide
 import kotlin.script.experimental.jvm.dependenciesFromClassContext
 import kotlin.script.experimental.jvm.jvm
 
@@ -24,7 +27,7 @@ import kotlin.script.experimental.jvm.jvm
     fileExtension = "alchemist.kts",
     compilationConfiguration = AlchemistCompilationConfiguration::class,
 )
-interface AlchemistScript
+abstract class AlchemistScript
 
 /**
  * Compilation configuration for Alchemist scripts.
@@ -37,6 +40,7 @@ object AlchemistCompilationConfiguration : ScriptCompilationConfiguration({
         "it.unibo.alchemist.boundary.dsl.model.Incarnation.*",
         "it.unibo.alchemist.boundary.dsl.generated.*",
         "it.unibo.alchemist.boundary.dsl.*",
+        "it.unibo.alchemist.boundary.dsl.Dsl.*",
         "it.unibo.alchemist.model.maps.actions.*",
         "it.unibo.alchemist.model.maps.deployments.*",
         "it.unibo.alchemist.model.maps.environments.*",
@@ -71,7 +75,9 @@ object AlchemistCompilationConfiguration : ScriptCompilationConfiguration({
         "it.unibo.alchemist.boundary.variables.*",
         "it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger",
     )
-
+    ide {
+        acceptedLocations(ScriptAcceptedLocation.Everywhere)
+    }
     jvm {
         dependenciesFromClassContext(AlchemistScript::class, wholeClasspath = true)
         compilerOptions.append("-Xcontext-parameters")

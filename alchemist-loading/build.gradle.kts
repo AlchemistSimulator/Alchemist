@@ -19,7 +19,6 @@ import Libs.incarnation
  */
 plugins {
     id("kotlin-jvm-convention")
-    kotlin("jvm")
     alias(libs.plugins.ksp)
 }
 
@@ -43,9 +42,9 @@ dependencies {
     implementation(libs.mongodb)
     implementation(libs.snakeyaml)
 
-    implementation("org.jetbrains.kotlin:kotlin-scripting-common")
-    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm")
-    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm-host")
+    implementation("org.jetbrains.kotlin:kotlin-scripting-common:${libs.versions.kotlin.get()}")
+    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm:${libs.versions.kotlin.get()}")
+    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm-host:${libs.versions.kotlin.get()}")
 
     runtimeOnly(libs.groovy.jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))

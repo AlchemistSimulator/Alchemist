@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.model.deployments
 
-import it.unibo.alchemist.boundary.dsl.BuildDsl
+import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
@@ -46,7 +46,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param yShift
  *            how shifted should be positions along columns
  */
-@BuildDsl
+@AlchemistKotlinDSL
 open class Grid
 @JvmOverloads
 constructor(

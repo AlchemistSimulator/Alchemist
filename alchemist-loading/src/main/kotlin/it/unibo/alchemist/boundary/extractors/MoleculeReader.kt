@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.extractors
 
 import it.unibo.alchemist.boundary.ExportFilter
-import it.unibo.alchemist.boundary.dsl.BuildDsl
+import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
@@ -35,7 +35,7 @@ import kotlin.math.min
  *            aggregating data. If an empty list is passed, then the values
  *            will be logged indipendently for each node.
  */
-@BuildDsl(scope = "EXPORTER_CONTEXT")
+@AlchemistKotlinDSL(scope = "EXPORTER_CONTEXT")
 class MoleculeReader
 @JvmOverloads
 constructor(

@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.nodes;
 
-import it.unibo.alchemist.boundary.dsl.BuildDsl;
+import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL;
 import it.unibo.alchemist.model.Environment;
 
 import java.io.Serial;
@@ -17,7 +17,7 @@ import java.io.Serial;
 /**
  * Generic node for testing purposes.
  */
-@BuildDsl(scope = "DEPLOYMENT_CONTEXT")
+@AlchemistKotlinDSL(scope = "DEPLOYMENT_CONTEXT")
 public final class TestNode extends GenericNode<Object> {
 
     @Serial

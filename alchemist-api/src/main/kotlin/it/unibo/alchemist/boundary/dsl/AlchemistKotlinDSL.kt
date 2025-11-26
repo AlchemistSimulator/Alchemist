@@ -35,7 +35,7 @@ package it.unibo.alchemist.boundary.dsl
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
-annotation class BuildDsl(
+annotation class AlchemistKotlinDSL(
     val functionName: String = "",
     val scope: String = "",
     val injectEnvironment: Boolean = true,

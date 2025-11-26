@@ -7,14 +7,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 object LayerComparisonUtils {
     fun <T, P : Position<P>> compareLayerValues(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
         println("Comparing layer values...")
-
         val samplePositions = mutableListOf<P>()
-
         samplePositions.addAll(dslEnv.nodes.map { dslEnv.getPosition(it) })
         samplePositions.addAll(yamlEnv.nodes.map { yamlEnv.getPosition(it) })
-
         val uniquePositions = samplePositions.distinct()
-
         if (uniquePositions.isNotEmpty()) {
             for (position in uniquePositions) {
                 val dslLayerValues = dslEnv.layers.map { it.getValue(position) }
@@ -31,7 +27,6 @@ object LayerComparisonUtils {
                         else -> value.toString().toDoubleOrNull() ?: 0.0
                     }
                 }
-
                 assertEquals(
                     dslDoubleValues,
                     yamlDoubleValues,

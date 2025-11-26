@@ -81,14 +81,10 @@ object RuntimeComparisonHelper {
             "Exactly one termination method must be provided: steps, targetTime, or stableForSteps. " +
                 "Provided: $terminationMethods"
         }
-
         val effectiveSteps = steps ?: 0L
-
         println("Running simulations for comparison...")
-
         val dslSimulation = dslLoader.getDefault<T, P>()
         val yamlSimulation = yamlLoader.getDefault<T, P>()
-
         println(
             "DSL simulation initial step: ${dslSimulation.step}, " +
                 "initial time: ${dslSimulation.time}",
@@ -97,9 +93,7 @@ object RuntimeComparisonHelper {
             "YAML simulation initial step: ${yamlSimulation.step}, " +
                 "initial time: ${yamlSimulation.time}",
         )
-
         addTerminators(dslSimulation, yamlSimulation, steps, targetTime, stableForSteps)
-
         try {
             runAndCompareSimulations(
                 dslSimulation,
@@ -177,16 +171,13 @@ object RuntimeComparisonHelper {
             "DSL simulation completed with status: ${dslSimulation.status}, " +
                 "step: ${dslSimulation.step}, time: ${dslSimulation.time}",
         )
-
         println("Running YAML simulation...")
         runSimulationSynchronously(yamlSimulation)
         println(
             "YAML simulation completed with status: ${yamlSimulation.status}, " +
                 "step: ${yamlSimulation.step}, time: ${yamlSimulation.time}",
         )
-
         checkSimulationTimeAdvancement(dslSimulation, yamlSimulation, effectiveSteps, targetTime, stableForSteps)
-
         val effectivePositionTolerance = positionTolerance ?: max(timeTolerance * 10, 1e-6)
         compareRuntimeStates(
             dslSimulation,

@@ -3,6 +3,7 @@ package it.unibo.alchemist.boundary.dsl.processor
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.KSValueParameter
 
+/** Creates expressions for constructor arguments combining injections and call-site values. */
 object ConstructorParamBuilder {
     /**
      * Walks constructor parameters in order and either injects context values
@@ -94,6 +95,7 @@ object ConstructorParamBuilder {
         return constructorTypeStr != contextParamType
     }
 
+    /** Builds constructor params when a property context is applied. */
     fun buildConstructorParamsForPropertyContext(
         constructorInfo: ConstructorInfo,
         injectionContext: InjectionContext,
@@ -111,6 +113,7 @@ object ConstructorParamBuilder {
         )
     }
 
+    /** Converts regular constructors into property-context-style accessors. */
     fun convertToPropertyContextAccessors(
         constructorInfo: ConstructorInfo,
         injectionContext: InjectionContext,
@@ -224,12 +227,13 @@ object ConstructorParamBuilder {
                             injectionContext.annotationValues,
                             annotationKey,
                         )
-                    ) ||
-                (
-                    !checkAnnotation &&
-                        injectionContext.indices.containsKey(type) &&
-                        index == injectionContext.indices[type] &&
-                        paramsToSkip.contains(index)
+                    ) || (
+                    !checkAnnotation && matchesFallbackInjection(
+                        index,
+                        type,
+                        injectionContext.indices,
+                        paramsToSkip,
+                    )
                     )
             ) {
                 return type
@@ -237,4 +241,13 @@ object ConstructorParamBuilder {
         }
         return null
     }
+
+    private fun matchesFallbackInjection(
+        index: Int,
+        type: InjectionType,
+        injectionIndices: Map<InjectionType, Int>,
+        paramsToSkip: Set<Int>,
+    ): Boolean = paramsToSkip.contains(index) &&
+        injectionIndices.containsKey(type) &&
+        index == injectionIndices[type]
 }

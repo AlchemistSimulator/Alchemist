@@ -45,10 +45,6 @@ abstract class DSLLoader<A, B : Position<B>>(
             }
             val typedCtx = ctx as SimulationContextImpl<T, P>
             val envInstance = envFactory() as Environment<T, P>
-            println("Environment instance: $envInstance")
-            println("applying dsl with values $values")
-            println("Build steps" + ctx.buildSteps)
-
             val unknownVariableNames = values.keys - this@DSLLoader.variables.keys
             require(unknownVariableNames.isEmpty()) {
                 "Unknown variables provided: $unknownVariableNames." +
@@ -60,11 +56,9 @@ abstract class DSLLoader<A, B : Position<B>>(
                     k to v()
                 }.toMap(),
             )
-
             val simulationIstance = typedCtx.build(envInstance, values)
             val environment = simulationIstance.environment
             val engine = Engine(environment)
-
             // MONITORS
             simulationIstance.monitors.forEach { monitor ->
                 engine.addOutputMonitor(monitor)
@@ -75,13 +69,10 @@ abstract class DSLLoader<A, B : Position<B>>(
                     it.type?.bindDataExtractors(it.extractors)
                 }
             } as List<Exporter<T, P>>
-
             exporters.forEach { it.bindVariables(ctx.variablesContext.references.get()) }
-
             if (exporters.isNotEmpty()) {
                 engine.addOutputMonitor(GlobalExporter(exporters))
             }
-
             return engine
         }
     }

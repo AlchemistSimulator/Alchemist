@@ -61,7 +61,6 @@ class ProgramsContextImpl<T, P : Position<P>>(override val ctx: DeploymentContex
         logger.debug("Applying program to node at position: {}", position)
         val c = ProgramContextImpl(node).apply(program)
         val context = ctx.ctx.ctx
-
         logger.debug("Creating time distribution for program")
         val timeDistribution = c.timeDistribution
             ?: context.incarnation.createTimeDistribution(
@@ -84,7 +83,6 @@ class ProgramsContextImpl<T, P : Position<P>>(override val ctx: DeploymentContex
         r.actions += c.actions.map { it() }
         logger.debug("Adding conditions to reaction")
         r.conditions += c.conditions.map { it() }
-
         logger.debug("Adding reaction to node")
         if (filter == null || filter.contains(position)) {
             node.addReaction(r)

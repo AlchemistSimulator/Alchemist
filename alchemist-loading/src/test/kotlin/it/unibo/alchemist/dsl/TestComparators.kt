@@ -43,11 +43,9 @@ object TestComparators {
         timeTolerance: Double = 0.01,
     ) {
         val yamlLoader = LoaderFactory.loadYaml(yamlResource)
-
         // Always perform static comparison
         StaticComparisonHelper.compareBasicProperties(dslLoader(), yamlLoader)
         StaticComparisonHelper.compareSimulations<T, P>(dslLoader(), yamlLoader)
-
         // Optionally perform runtime comparison
         if (includeRuntime) {
             RuntimeComparisonHelper.compareLoaders<T, P>(
@@ -116,7 +114,6 @@ object TestComparators {
         // Always perform static comparison
         StaticComparisonHelper.compareBasicProperties(dslLoader, yamlLoader)
         StaticComparisonHelper.compareSimulations<T, P>(dslLoader, yamlLoader)
-
         // Optionally perform runtime comparison
         if (includeRuntime) {
             RuntimeComparisonHelper.compareLoaders<T, P>(

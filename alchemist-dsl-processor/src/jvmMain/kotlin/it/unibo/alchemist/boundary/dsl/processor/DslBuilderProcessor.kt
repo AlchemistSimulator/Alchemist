@@ -13,19 +13,22 @@ import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL
 import java.io.PrintWriter
 import java.nio.charset.StandardCharsets
 
+/** Symbol processor that emits DSL helpers for `@AlchemistKotlinDSL` classes. */
 class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) : SymbolProcessor {
+    /**
+     * Processes every `@AlchemistKotlinDSL` symbol, generating helpers and reporting unresolved ones.
+     */
     override fun process(resolver: Resolver): List<KSAnnotated> {
         logger.info(
             "DslBuilderProcessor: Starting processing",
         )
         logger.info(
-            "DslBuilderProcessor: AlchemistKotlinDSL qualified name: " +
-                "${AlchemistKotlinDSL::class.qualifiedName}",
+            "DslBuilderProcessor: AlchemistKotlinDSL qualified name: ${AlchemistKotlinDSL::class.qualifiedName}",
         )
         val annotationName = AlchemistKotlinDSL::class.qualifiedName ?: return emptyList()
         val symbols = resolver.getSymbolsWithAnnotation(annotationName)
         val symbolList = symbols.toList()
-        logger.info("DslBuilderProcessor: Found ${symbolList.size} symbols with @BuildDsl annotation")
+        logger.info("DslBuilderProcessor: Found ${symbolList.size} symbols with @AlchemistKotlinDSL annotation")
         symbolList.forEach { symbol ->
             val qualifiedName = when (symbol) {
                 is KSClassDeclaration -> symbol.qualifiedName?.asString() ?: "unknown"

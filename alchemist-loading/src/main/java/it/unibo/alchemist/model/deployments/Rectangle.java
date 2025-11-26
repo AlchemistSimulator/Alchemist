@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.deployments;
 
-import it.unibo.alchemist.boundary.dsl.BuildDsl;
+import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Position;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 /**
  * @param <P> position type
  */
-@BuildDsl
+@AlchemistKotlinDSL
 public class Rectangle<P extends Position<? extends P>> extends AbstractRandomDeployment<P> {
 
     private final double x;

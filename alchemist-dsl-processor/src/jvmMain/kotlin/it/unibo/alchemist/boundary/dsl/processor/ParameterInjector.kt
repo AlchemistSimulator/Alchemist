@@ -181,7 +181,7 @@ object ParameterInjector {
      * If a manual scope is provided in the annotation, it takes precedence over automatic detection.
      *
      * @param injectionIndices Map of injection types to parameter indices
-     * @param annotationValues Annotation values from the BuildDsl annotation
+     * @param annotationValues Annotation values from the AlchemistKotlinDSL annotation
      * @return The determined context type
      */
     // Determine which context is active by checking manual overrides first, then injection mix.
@@ -242,7 +242,7 @@ object ParameterInjector {
      * Gets the set of parameter indices that should be skipped (injected from context).
      *
      * @param injectionIndices Map of injection types to parameter indices
-     * @param annotationValues Annotation values from the BuildDsl annotation
+     * @param annotationValues Annotation values from the AlchemistKotlinDSL annotation
      * @param contextType The context type to determine which parameters can be injected
      * @return Set of parameter indices to skip
      */

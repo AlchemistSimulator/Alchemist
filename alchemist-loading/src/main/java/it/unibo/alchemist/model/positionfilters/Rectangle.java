@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.positionfilters;
 
-import it.unibo.alchemist.boundary.dsl.BuildDsl;
+import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL;
 import it.unibo.alchemist.model.Position2D;
 
 import java.awt.geom.Rectangle2D;
@@ -22,7 +22,7 @@ import static java.lang.Math.min;
  *
  * @param <P> position type
  */
-@BuildDsl(functionName = "RectangleFilter")
+@AlchemistKotlinDSL(functionName = "RectangleFilter")
 public class Rectangle<P extends Position2D<P>> extends Abstract2DShape<P> {
 
     /**

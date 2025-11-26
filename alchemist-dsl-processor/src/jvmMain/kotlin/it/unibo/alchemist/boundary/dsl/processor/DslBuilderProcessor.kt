@@ -9,15 +9,20 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.validate
-import it.unibo.alchemist.boundary.dsl.BuildDsl
+import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL
 import java.io.PrintWriter
 import java.nio.charset.StandardCharsets
 
 class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        logger.info("DslBuilderProcessor: Starting processing")
-        logger.info("DslBuilderProcessor: BuildDsl qualified name: ${BuildDsl::class.qualifiedName}")
-        val annotationName = BuildDsl::class.qualifiedName ?: return emptyList()
+        logger.info(
+            "DslBuilderProcessor: Starting processing",
+        )
+        logger.info(
+            "DslBuilderProcessor: AlchemistKotlinDSL qualified name: " +
+                "${AlchemistKotlinDSL::class.qualifiedName}",
+        )
+        val annotationName = AlchemistKotlinDSL::class.qualifiedName ?: return emptyList()
         val symbols = resolver.getSymbolsWithAnnotation(annotationName)
         val symbolList = symbols.toList()
         logger.info("DslBuilderProcessor: Found ${symbolList.size} symbols with @BuildDsl annotation")
@@ -52,10 +57,10 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         logger.info("DslBuilderProcessor: Processing class ${classDecl.simpleName.asString()}")
         logger.info("DslBuilderProcessor: Class qualified name: ${classDecl.qualifiedName?.asString()}")
         val annotation = classDecl.annotations.firstOrNull {
-            it.shortName.asString() == "BuildDsl"
+            it.shortName.asString() == "AlchemistKotlinDSL"
         }
         if (annotation == null) {
-            logger.warn("Class ${classDecl.simpleName.asString()} has no @BuildDsl annotation")
+            logger.warn("Class ${classDecl.simpleName.asString()} has no @AlchemistKotlinDSL annotation")
             return
         }
         val annotationValues = annotation.arguments

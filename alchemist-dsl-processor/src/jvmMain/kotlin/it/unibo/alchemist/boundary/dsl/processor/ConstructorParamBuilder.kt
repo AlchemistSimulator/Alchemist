@@ -55,15 +55,7 @@ object ConstructorParamBuilder {
         )
     }
 
-    private fun getDefaultParamName(injectionType: InjectionType): String = when (injectionType) {
-        InjectionType.ENVIRONMENT -> "env"
-        InjectionType.GENERATOR -> "generator"
-        InjectionType.INCARNATION -> "incarnation"
-        InjectionType.NODE -> "node"
-        InjectionType.REACTION -> "reaction"
-        InjectionType.TIMEDISTRIBUTION -> "timeDistribution"
-        InjectionType.FILTER -> "filter"
-    }
+    private fun getDefaultParamName(injectionType: InjectionType): String = injectionType.name.lowercase()
 
     private fun needsCast(
         constructorParamType: KSTypeReference,
@@ -223,20 +215,23 @@ object ConstructorParamBuilder {
         injectionTypes: List<Triple<InjectionType, String, Boolean>>,
     ): InjectionType? {
         for ((type, annotationKey, checkAnnotation) in injectionTypes) {
-            val found = if (checkAnnotation) {
-                isInjectionIndex(
-                    type,
-                    index,
-                    injectionContext.indices,
-                    injectionContext.annotationValues,
-                    annotationKey,
-                )
-            } else {
-                injectionContext.indices.containsKey(type) &&
-                    index == injectionContext.indices[type] &&
-                    paramsToSkip.contains(index)
-            }
-            if (found) {
+            if ((
+                    checkAnnotation &&
+                        isInjectionIndex(
+                            type,
+                            index,
+                            injectionContext.indices,
+                            injectionContext.annotationValues,
+                            annotationKey,
+                        )
+                    ) ||
+                (
+                    !checkAnnotation &&
+                        injectionContext.indices.containsKey(type) &&
+                        index == injectionContext.indices[type] &&
+                        paramsToSkip.contains(index)
+                    )
+            ) {
                 return type
             }
         }

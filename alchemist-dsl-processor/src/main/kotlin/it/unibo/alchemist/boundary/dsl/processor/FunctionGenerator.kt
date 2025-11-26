@@ -3,49 +3,30 @@ package it.unibo.alchemist.boundary.dsl.processor
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.KSValueParameter
 
-/**
- * Generates function signatures and constructor calls for DSL builder functions.
- */
 object FunctionGenerator {
-    /**
-     * Builds the function signature for a DSL builder function.
-     *
-     * @param functionName The name of the function to generate
-     * @param typeParamBounds Type parameter bounds
-     * @param typeParamNames Type parameter names
-     * @param className The name of the class being constructed
-     * @param remainingParams Parameters that are not injected
-     * @param paramNames Names of the remaining parameters
-     * @param paramTypes Types of the remaining parameters
-     * @param injectedParams List of injected parameter names and types
-     * @param contextType The type of context (deployment or program)
-     * @param classTypeParamNames Type parameter names from the class declaration
-     * @return The complete function signature string
-     */
     fun buildFunctionSignature(
         functionName: String,
-        typeParamBounds: List<String>,
-        typeParamNames: List<String>,
         className: String,
-        remainingParams: List<KSValueParameter>,
-        paramNames: List<String>,
-        paramTypes: List<String>,
+        typeParams: TypeParameterInfo,
+        constructorInfo: ConstructorInfo,
         injectedParams: List<Pair<String, String>>,
         contextType: ContextType,
-        classTypeParamNames: List<String> = typeParamNames,
-        classTypeParamBounds: List<String> = typeParamBounds,
     ): String {
         val (finalTypeParamNames, finalTypeParamBounds) = TypeParameterHandler.prepareTypeParams(
-            typeParamNames,
-            typeParamBounds,
+            typeParams.names,
+            typeParams.bounds,
             injectedParams,
-            classTypeParamBounds,
+            typeParams.classTypeParamBounds,
         )
 
         val functionTypeParamString = TypeParameterHandler.buildTypeParamString(finalTypeParamBounds)
-        val returnType = TypeParameterHandler.buildReturnType(className, classTypeParamNames)
+        val returnType = TypeParameterHandler.buildReturnType(className, typeParams.classTypeParamNames)
         val contextPart = buildContextPart(injectedParams, contextType, finalTypeParamNames, finalTypeParamBounds)
-        val functionParams = buildFunctionParams(remainingParams, paramNames, paramTypes)
+        val functionParams = buildFunctionParams(
+            constructorInfo.remainingParams,
+            constructorInfo.paramNames,
+            constructorInfo.paramTypes,
+        )
         val receiverPart = buildReceiverPart(injectedParams, contextType)
 
         return "${contextPart}fun$functionTypeParamString $receiverPart$functionName$functionParams: $returnType ="
@@ -86,13 +67,6 @@ object FunctionGenerator {
         return "context(ctx: $contextTypeName) "
     }
 
-    /**
-     * Extracts variance annotation (in/out) from a type parameter bound.
-     *
-     * @param paramName The name of the type parameter
-     * @param typeParamBounds List of type parameter bounds
-     * @return The variance string ("in", "out", or empty string)
-     */
     fun extractVarianceFromBound(paramName: String, typeParamBounds: List<String>): String {
         val paramIndex = typeParamBounds.indexOfFirst { it.startsWith("$paramName:") }
         if (paramIndex < 0) {
@@ -116,14 +90,6 @@ object FunctionGenerator {
         }
     }
 
-    /**
-     * Builds the function parameter list string.
-     *
-     * @param remainingParams Parameters that are not injected
-     * @param paramNames Names of the remaining parameters
-     * @param paramTypes Types of the remaining parameters
-     * @return The function parameter list string
-     */
     fun buildFunctionParams(
         remainingParams: List<KSValueParameter>,
         paramNames: List<String>,
@@ -152,62 +118,16 @@ object FunctionGenerator {
         @Suppress("UNUSED_PARAMETER") contextType: ContextType,
     ): String = EMPTY_RECEIVER
 
-    /**
-     * Builds the list of constructor parameter expressions.
-     *
-     * @param allParameters All constructor parameters
-     * @param remainingParams Parameters that are not injected
-     * @param paramsToSkip Set of parameter indices to skip
-     * @param paramNames Names of remaining parameters
-     * @param injectionIndices Map of injection types to parameter indices
-     * @param injectedParamNames Map of injection types to parameter names
-     * @param annotationValues Annotation values from BuildDsl
-     * @param typeParamNames Type parameter names
-     * @param contextType The type of context
-     * @param hasContextParams Whether context parameters are present
-     * @param contextParamName Name of the context parameter
-     * @param injectedParamTypes Map of injection types to parameter types
-     * @return List of constructor parameter expressions
-     */
-    // CPD-OFF: Function signature duplication is necessary for API delegation
     fun buildConstructorParams(
-        allParameters: List<KSValueParameter>,
-        remainingParams: List<KSValueParameter>,
-        paramsToSkip: Set<Int>,
-        paramNames: List<String>,
-        injectionIndices: Map<InjectionType, Int>,
-        injectedParamNames: Map<InjectionType, String>,
-        annotationValues: Map<String, Any?>,
+        constructorInfo: ConstructorInfo,
+        injectionContext: InjectionContext,
         typeParamNames: List<String>,
-        contextType: ContextType,
-        hasContextParams: Boolean = false,
-        contextParamName: String = "ctx",
-        injectedParamTypes: Map<InjectionType, String> = emptyMap(),
     ): List<String> = ConstructorParamBuilder.buildConstructorParams(
-        allParameters,
-        remainingParams,
-        paramsToSkip,
-        paramNames,
-        injectionIndices,
-        injectedParamNames,
-        annotationValues,
+        constructorInfo,
+        injectionContext,
         typeParamNames,
-        contextType,
-        hasContextParams,
-        contextParamName,
-        injectedParamTypes,
     )
-    // CPD-ON
 
-    /**
-     * Builds the constructor call expression.
-     *
-     * @param className The name of the class
-     * @param typeParamNames Type parameter names
-     * @param constructorParams List of constructor parameter expressions
-     * @param classTypeParamNames Type parameter names from the class declaration
-     * @return The constructor call string
-     */
     fun buildConstructorCall(
         className: String,
         typeParamNames: List<String>,
@@ -231,63 +151,22 @@ object FunctionGenerator {
         return defaultValueExpr?.let { " = $it" }.orEmpty()
     }
 
-    /**
-     * Collects type parameters needed for a type reference.
-     *
-     * @param typeRef The type reference to analyze
-     * @param existingTypeParamNames List of existing type parameter names
-     * @return Set of needed type parameter names
-     */
     fun collectNeededTypeParams(typeRef: KSTypeReference, existingTypeParamNames: List<String>): Set<String> =
         TypeParameterHandler.collectNeededTypeParams(typeRef, existingTypeParamNames)
 
-    /**
-     * Builds the type string for a context parameter, handling type arguments and bounds.
-     *
-     * @param typeRef The type reference to build from
-     * @param typeParamNames Mutable list of type parameter names (may be modified)
-     * @param typeParamBounds Mutable list of type parameter bounds (may be modified)
-     * @return The type string for the context parameter
-     */
     fun buildContextParamType(
         typeRef: KSTypeReference,
         typeParamNames: MutableList<String>,
         typeParamBounds: MutableList<String>,
     ): String = TypeArgumentProcessor.buildContextParamType(typeRef, typeParamNames, typeParamBounds)
 
-    /**
-     * Builds constructor parameter expressions for property context.
-     *
-     * @param allParameters All constructor parameters
-     * @param remainingParams Parameters that are not injected
-     * @param paramsToSkip Set of parameter indices to skip
-     * @param paramNames Names of remaining parameters
-     * @param injectionIndices Map of injection types to parameter indices
-     * @param injectedParamNames Map of injection types to parameter names
-     * @param annotationValues Annotation values from BuildDsl
-     * @param typeParamNames Type parameter names
-     * @param injectedParamTypes Map of injection types to parameter types
-     * @return List of constructor parameter expressions
-     */
     fun buildConstructorParamsForPropertyContext(
-        allParameters: List<KSValueParameter>,
-        remainingParams: List<KSValueParameter>,
-        paramsToSkip: Set<Int>,
-        paramNames: List<String>,
-        injectionIndices: Map<InjectionType, Int>,
-        injectedParamNames: Map<InjectionType, String>,
-        annotationValues: Map<String, Any?>,
+        constructorInfo: ConstructorInfo,
+        injectionContext: InjectionContext,
         typeParamNames: List<String>,
-        injectedParamTypes: Map<InjectionType, String> = emptyMap(),
     ): List<String> = ConstructorParamBuilder.buildConstructorParamsForPropertyContext(
-        allParameters,
-        remainingParams,
-        paramsToSkip,
-        paramNames,
-        injectionIndices,
-        injectedParamNames,
-        annotationValues,
+        constructorInfo,
+        injectionContext,
         typeParamNames,
-        injectedParamTypes,
     )
 }

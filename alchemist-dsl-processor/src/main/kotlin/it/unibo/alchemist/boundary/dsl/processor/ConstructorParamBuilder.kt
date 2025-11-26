@@ -3,53 +3,15 @@ package it.unibo.alchemist.boundary.dsl.processor
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.KSValueParameter
 
-/**
- * Builds constructor parameter expressions for DSL builder functions.
- */
 object ConstructorParamBuilder {
-    /**
-     * Builds the list of constructor parameter expressions.
-     *
-     * @param allParameters All constructor parameters
-     * @param remainingParams Parameters that are not injected
-     * @param paramsToSkip Set of parameter indices to skip
-     * @param paramNames Names of remaining parameters
-     * @param injectionIndices Map of injection types to parameter indices
-     * @param injectedParamNames Map of injection types to parameter names
-     * @param annotationValues Annotation values from BuildDsl
-     * @param typeParamNames Type parameter names
-     * @param contextType The type of context
-     * @param hasContextParams Whether context parameters are present
-     * @param contextParamName Name of the context parameter
-     * @param injectedParamTypes Map of injection types to parameter types
-     * @return List of constructor parameter expressions
-     */
     fun buildConstructorParams(
-        allParameters: List<KSValueParameter>,
-        remainingParams: List<KSValueParameter>,
-        paramsToSkip: Set<Int>,
-        paramNames: List<String>,
-        injectionIndices: Map<InjectionType, Int>,
-        injectedParamNames: Map<InjectionType, String>,
-        annotationValues: Map<String, Any?>,
+        constructorInfo: ConstructorInfo,
+        injectionContext: InjectionContext,
         typeParamNames: List<String>,
-        contextType: ContextType,
-        hasContextParams: Boolean = false,
-        contextParamName: String = "ctx",
-        injectedParamTypes: Map<InjectionType, String> = emptyMap(),
     ): List<String> = buildConstructorParamsInternal(
-        allParameters,
-        remainingParams,
-        paramsToSkip,
-        paramNames,
-        injectionIndices,
-        injectedParamNames,
-        annotationValues,
+        constructorInfo,
+        injectionContext,
         typeParamNames,
-        injectedParamTypes,
-        hasContextParams,
-        contextType,
-        contextParamName,
     )
 
     private fun isInjectionIndex(
@@ -65,15 +27,11 @@ object ConstructorParamBuilder {
     private fun buildInjectedParam(
         injectionType: InjectionType,
         param: KSValueParameter,
-        hasContextParams: Boolean,
-        contextType: ContextType,
-        contextParamName: String,
-        injectedParamNames: Map<InjectionType, String>,
-        injectedParamTypes: Map<InjectionType, String>,
+        injectionContext: InjectionContext,
         typeParamNames: List<String>,
     ): String {
-        val accessor = buildAccessor(injectionType, hasContextParams, contextType, contextParamName, injectedParamNames)
-        val contextParamType = injectedParamTypes[injectionType]
+        val accessor = buildAccessor(injectionType, injectionContext)
+        val contextParamType = injectionContext.paramTypes[injectionType]
         return if (contextParamType != null && needsCast(param.type, contextParamType, typeParamNames)) {
             val castType = TypeExtractor.extractTypeString(param.type, typeParamNames)
             "$accessor as $castType"
@@ -82,18 +40,15 @@ object ConstructorParamBuilder {
         }
     }
 
-    private fun buildAccessor(
-        injectionType: InjectionType,
-        hasContextParams: Boolean,
-        contextType: ContextType,
-        contextParamName: String,
-        injectedParamNames: Map<InjectionType, String>,
-    ): String {
-        if (!hasContextParams) {
-            return injectedParamNames[injectionType] ?: getDefaultParamName(injectionType)
+    private fun buildAccessor(injectionType: InjectionType, injectionContext: InjectionContext): String {
+        if (!injectionContext.hasContextParams) {
+            return injectionContext.paramNames[injectionType] ?: getDefaultParamName(injectionType)
         }
-
-        return ContextAccessor.getAccessor(injectionType, contextType, contextParamName)
+        return ContextAccessor.getAccessor(
+            injectionType,
+            injectionContext.contextType,
+            injectionContext.contextParamName,
+        )
     }
 
     private fun getDefaultParamName(injectionType: InjectionType): String = when (injectionType) {
@@ -112,15 +67,12 @@ object ConstructorParamBuilder {
         typeParamNames: List<String>,
     ): Boolean {
         val constructorTypeStr = TypeExtractor.extractTypeString(constructorParamType, typeParamNames)
-
         if (constructorTypeStr == contextParamType) {
             return false
         }
-
         val constructorResolved = constructorParamType.resolve()
         val constructorDecl = constructorResolved.declaration
         val constructorQualified = constructorDecl.qualifiedName?.asString().orEmpty()
-
         return when {
             !contextParamType.startsWith(constructorQualified) -> true
             constructorResolved.arguments.isEmpty() -> false
@@ -135,7 +87,6 @@ object ConstructorParamBuilder {
     ): Boolean {
         val constructorHasWildcards = constructorTypeStr.contains("<") &&
             (constructorTypeStr.contains("<*") || constructorTypeStr.contains(", *"))
-
         if (constructorHasWildcards) {
             val contextTypeArgs = if (contextParamType.contains("<")) {
                 contextParamType.substringAfter("<").substringBefore(">")
@@ -144,121 +95,58 @@ object ConstructorParamBuilder {
             }
             return typeParamNames.any { it in contextTypeArgs }
         }
-
         return constructorTypeStr != contextParamType
     }
 
-    /**
-     * Builds constructor parameter expressions for property context.
-     *
-     * @param allParameters All constructor parameters
-     * @param remainingParams Parameters that are not injected
-     * @param paramsToSkip Set of parameter indices to skip
-     * @param paramNames Names of remaining parameters
-     * @param injectionIndices Map of injection types to parameter indices
-     * @param injectedParamNames Map of injection types to parameter names
-     * @param annotationValues Annotation values from BuildDsl
-     * @param typeParamNames Type parameter names
-     * @param injectedParamTypes Map of injection types to parameter types
-     * @return List of constructor parameter expressions
-     */
     fun buildConstructorParamsForPropertyContext(
-        allParameters: List<KSValueParameter>,
-        remainingParams: List<KSValueParameter>,
-        paramsToSkip: Set<Int>,
-        paramNames: List<String>,
-        injectionIndices: Map<InjectionType, Int>,
-        injectedParamNames: Map<InjectionType, String>,
-        annotationValues: Map<String, Any?>,
+        constructorInfo: ConstructorInfo,
+        injectionContext: InjectionContext,
         typeParamNames: List<String>,
-        injectedParamTypes: Map<InjectionType, String> = emptyMap(),
-    ): List<String> = buildConstructorParamsInternal(
-        allParameters,
-        remainingParams,
-        paramsToSkip,
-        paramNames,
-        injectionIndices,
-        injectedParamNames,
-        annotationValues,
-        typeParamNames,
-        injectedParamTypes,
-        hasContextParams = true,
-        contextType = ContextType.PROPERTY,
-        contextParamName = "ctx",
-    )
+    ): List<String> {
+        val propertyContext = injectionContext.copy(
+            hasContextParams = true,
+            contextType = ContextType.PROPERTY,
+            contextParamName = "ctx",
+        )
+        return buildConstructorParamsInternal(
+            constructorInfo,
+            propertyContext,
+            typeParamNames,
+        )
+    }
 
-    /**
-     * Converts constructor parameters to property context accessors.
-     *
-     * @param injectionIndices Map of injection types to parameter indices
-     * @param allParameters All constructor parameters
-     * @param remainingParams Parameters that are not injected
-     * @param paramsToSkip Set of parameter indices to skip
-     * @param paramNames Names of remaining parameters
-     * @param injectedParamNames Map of injection types to parameter names
-     * @param annotationValues Annotation values from BuildDsl
-     * @param typeParamNames Type parameter names
-     * @param injectedParamTypes Map of injection types to parameter types
-     * @return List of constructor parameter expressions using property context accessors
-     */
     fun convertToPropertyContextAccessors(
-        injectionIndices: Map<InjectionType, Int>,
-        allParameters: List<KSValueParameter>,
-        remainingParams: List<KSValueParameter>,
-        paramsToSkip: Set<Int>,
-        paramNames: List<String>,
-        injectedParamNames: Map<InjectionType, String>,
-        annotationValues: Map<String, Any?>,
+        constructorInfo: ConstructorInfo,
+        injectionContext: InjectionContext,
         typeParamNames: List<String>,
-        injectedParamTypes: Map<InjectionType, String>,
-    ): List<String> = buildConstructorParamsInternal(
-        allParameters,
-        remainingParams,
-        paramsToSkip,
-        paramNames,
-        injectionIndices,
-        injectedParamNames,
-        annotationValues,
-        typeParamNames,
-        injectedParamTypes,
-        hasContextParams = true,
-        contextType = ContextType.PROPERTY,
-        contextParamName = "ctx",
-    )
+    ): List<String> {
+        val propertyContext = injectionContext.copy(
+            hasContextParams = true,
+            contextType = ContextType.PROPERTY,
+            contextParamName = "ctx",
+        )
+        return buildConstructorParamsInternal(
+            constructorInfo,
+            propertyContext,
+            typeParamNames,
+        )
+    }
 
     private fun buildConstructorParamsInternal(
-        allParameters: List<KSValueParameter>,
-        remainingParams: List<KSValueParameter>,
-        paramsToSkip: Set<Int>,
-        paramNames: List<String>,
-        injectionIndices: Map<InjectionType, Int>,
-        injectedParamNames: Map<InjectionType, String>,
-        annotationValues: Map<String, Any?>,
+        constructorInfo: ConstructorInfo,
+        injectionContext: InjectionContext,
         typeParamNames: List<String>,
-        injectedParamTypes: Map<InjectionType, String>,
-        hasContextParams: Boolean,
-        contextType: ContextType,
-        contextParamName: String,
     ): List<String> {
         val constructorParams = mutableListOf<String>()
         var remainingIndex = 0
-
-        allParameters.forEachIndexed { index, param ->
+        constructorInfo.allParameters.forEachIndexed { index, param ->
             val paramExpr = buildParamExpression(
                 index,
                 param,
                 remainingIndex,
-                remainingParams,
-                paramsToSkip,
-                paramNames,
-                injectionIndices,
-                injectedParamNames,
-                injectedParamTypes,
-                annotationValues,
+                constructorInfo,
+                injectionContext,
                 typeParamNames,
-                hasContextParams,
-                contextType,
-                contextParamName,
             )
             constructorParams.add(paramExpr.first)
             if (paramExpr.second) {
@@ -272,74 +160,35 @@ object ConstructorParamBuilder {
         index: Int,
         param: KSValueParameter,
         remainingIndex: Int,
-        remainingParams: List<KSValueParameter>,
-        paramsToSkip: Set<Int>,
-        paramNames: List<String>,
-        injectionIndices: Map<InjectionType, Int>,
-        injectedParamNames: Map<InjectionType, String>,
-        injectedParamTypes: Map<InjectionType, String>,
-        annotationValues: Map<String, Any?>,
+        constructorInfo: ConstructorInfo,
+        injectionContext: InjectionContext,
         typeParamNames: List<String>,
-        hasContextParams: Boolean,
-        contextType: ContextType,
-        contextParamName: String,
     ): Pair<String, Boolean> {
-        val injectionType = findInjectionType(index, injectionIndices, annotationValues, paramsToSkip)
+        val injectionType = findInjectionType(index, injectionContext, constructorInfo.paramsToSkip)
         if (injectionType != null) {
-            return buildInjectedParamExpression(
-                injectionType,
-                param,
-                hasContextParams,
-                contextType,
-                contextParamName,
-                injectedParamNames,
-                injectedParamTypes,
-                typeParamNames,
-            )
+            return buildInjectedParamExpression(injectionType, param, injectionContext, typeParamNames)
         }
-
-        return buildRegularParamExpression(
-            index,
-            remainingIndex,
-            remainingParams,
-            paramsToSkip,
-            paramNames,
-        )
+        return buildRegularParamExpression(index, remainingIndex, constructorInfo)
     }
 
     private fun buildInjectedParamExpression(
         injectionType: InjectionType,
         param: KSValueParameter,
-        hasContextParams: Boolean,
-        contextType: ContextType,
-        contextParamName: String,
-        injectedParamNames: Map<InjectionType, String>,
-        injectedParamTypes: Map<InjectionType, String>,
+        injectionContext: InjectionContext,
         typeParamNames: List<String>,
     ): Pair<String, Boolean> {
-        val accessor = buildInjectedParam(
-            injectionType,
-            param,
-            hasContextParams,
-            contextType,
-            contextParamName,
-            injectedParamNames,
-            injectedParamTypes,
-            typeParamNames,
-        )
+        val accessor = buildInjectedParam(injectionType, param, injectionContext, typeParamNames)
         return Pair(accessor, false)
     }
 
     private fun buildRegularParamExpression(
         index: Int,
         remainingIndex: Int,
-        remainingParams: List<KSValueParameter>,
-        paramsToSkip: Set<Int>,
-        paramNames: List<String>,
+        constructorInfo: ConstructorInfo,
     ): Pair<String, Boolean> {
-        if (!paramsToSkip.contains(index)) {
-            val paramName = paramNames[remainingIndex]
-            val remainingParam = remainingParams[remainingIndex]
+        if (!constructorInfo.paramsToSkip.contains(index)) {
+            val paramName = constructorInfo.paramNames[remainingIndex]
+            val remainingParam = constructorInfo.remainingParams[remainingIndex]
             val paramValue = if (remainingParam.isVararg) "*$paramName" else paramName
             return Pair(paramValue, true)
         }
@@ -348,8 +197,7 @@ object ConstructorParamBuilder {
 
     private fun findInjectionType(
         index: Int,
-        injectionIndices: Map<InjectionType, Int>,
-        annotationValues: Map<String, Any?>,
+        injectionContext: InjectionContext,
         paramsToSkip: Set<Int>,
     ): InjectionType? {
         val injectionTypes = listOf(
@@ -361,23 +209,27 @@ object ConstructorParamBuilder {
             Triple(InjectionType.TIMEDISTRIBUTION, "", false),
             Triple(InjectionType.FILTER, "", false),
         )
-
-        return findInjectionTypeFromList(index, injectionIndices, annotationValues, paramsToSkip, injectionTypes)
+        return findInjectionTypeFromList(index, injectionContext, paramsToSkip, injectionTypes)
     }
 
     private fun findInjectionTypeFromList(
         index: Int,
-        injectionIndices: Map<InjectionType, Int>,
-        annotationValues: Map<String, Any?>,
+        injectionContext: InjectionContext,
         paramsToSkip: Set<Int>,
         injectionTypes: List<Triple<InjectionType, String, Boolean>>,
     ): InjectionType? {
         for ((type, annotationKey, checkAnnotation) in injectionTypes) {
             val found = if (checkAnnotation) {
-                isInjectionIndex(type, index, injectionIndices, annotationValues, annotationKey)
+                isInjectionIndex(
+                    type,
+                    index,
+                    injectionContext.indices,
+                    injectionContext.annotationValues,
+                    annotationKey,
+                )
             } else {
-                injectionIndices.containsKey(type) &&
-                    index == injectionIndices[type] &&
+                injectionContext.indices.containsKey(type) &&
+                    index == injectionContext.indices[type] &&
                     paramsToSkip.contains(index)
             }
             if (found) {

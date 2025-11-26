@@ -17,7 +17,7 @@ object LayerComparisonUtils {
 
         if (uniquePositions.isNotEmpty()) {
             for (position in uniquePositions) {
-                val dslLayerValues = dslEnv.layers.map { (it.getValue(position)) }
+                val dslLayerValues = dslEnv.layers.map { it.getValue(position) }
                 val yamlLayerValues = yamlEnv.layers.map { it.getValue(position) }
                 val dslDoubleValues = dslLayerValues.map { value ->
                     when (value) {

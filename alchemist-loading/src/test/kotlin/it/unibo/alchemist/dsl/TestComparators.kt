@@ -132,12 +132,17 @@ object TestComparators {
     }
 }
 
-private fun shouldUseDefaultSteps(
+private const val DEFAULT_STEPS = 3000L
+
+private fun computeEffectiveSteps(
     includeRuntime: Boolean,
     steps: Long?,
     targetTime: Double?,
     stableForSteps: Pair<Long, Long>?,
-): Boolean = includeRuntime && steps == null && targetTime == null && stableForSteps == null
+): Long? {
+    val shouldUseDefault = includeRuntime && steps == null && targetTime == null && stableForSteps == null
+    return if (shouldUseDefault) DEFAULT_STEPS else steps
+}
 
 /**
  * Extension function for easier test writing with static comparison only.
@@ -168,17 +173,12 @@ fun Loader.shouldEqual(
     stableForSteps: Pair<Long, Long>? = null,
     timeTolerance: Double = 0.01,
 ) {
-    val effectiveSteps = if (shouldUseDefaultSteps(includeRuntime, steps, targetTime, stableForSteps)) {
-        3000L
-    } else {
-        steps
-    }
     @Suppress("UNCHECKED_CAST")
     TestComparators.compare<Any, Nothing>(
         this,
         other,
         includeRuntime,
-        effectiveSteps,
+        computeEffectiveSteps(includeRuntime, steps, targetTime, stableForSteps),
         targetTime,
         stableForSteps,
         timeTolerance,
@@ -217,17 +217,12 @@ fun (() -> Loader).shouldEqual(
     stableForSteps: Pair<Long, Long>? = null,
     timeTolerance: Double = 0.01,
 ) {
-    val effectiveSteps = if (shouldUseDefaultSteps(includeRuntime, steps, targetTime, stableForSteps)) {
-        3000L
-    } else {
-        steps
-    }
     @Suppress("UNCHECKED_CAST")
     TestComparators.compare<Any, Nothing>(
         this,
         yamlResource,
         includeRuntime,
-        effectiveSteps,
+        computeEffectiveSteps(includeRuntime, steps, targetTime, stableForSteps),
         targetTime,
         stableForSteps,
         timeTolerance,

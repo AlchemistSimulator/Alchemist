@@ -46,27 +46,24 @@ object DefaultValueAnalyzer {
         val neededImports = mutableSetOf<String>()
         val defaultValueText = defaultValues.joinToString(" ")
         val sourceImports = getSourceFileImports(classDecl)
-
         neededImports.addAll(extractIdentifierImports(defaultValueText, sourceImports))
-
         return neededImports
     }
 
     private fun extractIdentifierImports(defaultValueText: String, sourceImports: List<String>): Set<String> {
         val neededImports = mutableSetOf<String>()
-
+        // Use regex to find potential class/function identifiers so we can detect missing imports.
         val identifierPattern = Regex("""\b([A-Z][a-zA-Z0-9]*)\b""")
         val matches = identifierPattern.findAll(defaultValueText)
         for (match in matches) {
             val identifier = match.groupValues[1]
-            if (identifier !in MATH_CONSTANTS && identifier !in MATH_FUNCTIONS && identifier !in BUILTIN_TYPES) {
+            if (!(identifier in MATH_CONSTANTS || identifier in MATH_FUNCTIONS || identifier in BUILTIN_TYPES)) {
                 val qualifiedPattern = Regex("""\w+\.$identifier\b""")
                 if (!qualifiedPattern.containsMatchIn(defaultValueText)) {
                     addImportIfNeeded(identifier, defaultValueText, sourceImports, null, neededImports)
                 }
             }
         }
-
         return neededImports
     }
 
@@ -114,7 +111,6 @@ object DefaultValueAnalyzer {
         if (explicitImport != null) {
             return "import $explicitImport"
         }
-
         return if (defaultPackage != null) {
             "import $defaultPackage.$identifier"
         } else {
@@ -162,11 +158,9 @@ object DefaultValueAnalyzer {
         val replacements = mutableListOf<Pair<IntRange, String>>()
         replacements.addAll(findConstantReplacements(defaultValue))
         replacements.addAll(findFunctionReplacements(defaultValue))
-
         if (replacements.isEmpty()) {
             return defaultValue
         }
-
         return applyReplacements(defaultValue, replacements)
     }
 
@@ -182,6 +176,8 @@ object DefaultValueAnalyzer {
         patternBuilder: (String) -> String,
     ): List<Pair<IntRange, String>> {
         val replacements = mutableListOf<Pair<IntRange, String>>()
+        // Patterns above match both qualified and
+        // unqualified usages so we only rewrite the unqualified ones.
         for (identifier in identifiers) {
             val patternStr = patternBuilder(identifier)
             val pattern = Regex(patternStr)
@@ -198,7 +194,7 @@ object DefaultValueAnalyzer {
     }
 
     private fun isQualifiedBefore(defaultValue: String, index: Int): Boolean {
-        val before = defaultValue.substring(0, index)
+        val before = defaultValue.take(index)
         return before.endsWith(".") || before.endsWith("::")
     }
 
@@ -211,6 +207,13 @@ object DefaultValueAnalyzer {
         return result
     }
 
+    // Fallback regex-based extractor when the AST information is not enough.
+    // KSP doesn’t always expose the default-value expression
+    // it parsed, especially when the parameter belongs to a library or
+    // comes from metadata where the AST node isn’t available,
+    // we can’t rely solely on the AST-based extractor.
+    // In those cases we still want to keep generating the literal default
+    // (for imports, signatures, etc.)
     private fun tryExtractSimpleDefault(sourceCode: String, paramName: String): String? {
         val escapedName = Regex.escape(paramName)
         val modifierPattern = """(?:private\s+|public\s+|protected\s+|internal\s+)?"""
@@ -281,10 +284,8 @@ object DefaultValueAnalyzer {
 
     private fun extractBalancedExpression(sourceCode: String, startIndex: Int): String? {
         if (startIndex >= sourceCode.length) return null
-
         val state = ExtractionState(startIndex)
         val result = StringBuilder()
-
         while (state.index < sourceCode.length) {
             val char = sourceCode[state.index]
             val shouldContinue = processCharacter(char, sourceCode, state, result)
@@ -293,7 +294,6 @@ object DefaultValueAnalyzer {
             }
             state.index++
         }
-
         return result.toString().trim().takeIf { it.isNotEmpty() }
     }
 

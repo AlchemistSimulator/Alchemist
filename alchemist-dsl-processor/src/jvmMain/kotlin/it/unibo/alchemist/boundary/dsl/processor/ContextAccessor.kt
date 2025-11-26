@@ -14,15 +14,15 @@ object ContextAccessor {
      */
     fun getAccessor(injectionType: InjectionType, contextType: ContextType, contextParamName: String = "ctx"): String =
         when (contextType) {
-            ContextType.SIMULATION -> getSimulationAccessor(injectionType, contextParamName)
+            ContextType.SIMULATION_CONTEXT -> getSimulationAccessor(injectionType, contextParamName)
             ContextType.EXPORTER_CONTEXT -> getExporterContextAccessor(injectionType, contextParamName)
             ContextType.GLOBAL_PROGRAMS_CONTEXT -> getGlobalProgramsContextAccessor(injectionType, contextParamName)
             ContextType.OUTPUT_MONITORS_CONTEXT -> getOutputMonitorsContextAccessor(injectionType, contextParamName)
             ContextType.TERMINATORS_CONTEXT -> getTerminatorsContextAccessor(injectionType, contextParamName)
-            ContextType.DEPLOYMENT -> getDeploymentsContextAccessor(injectionType, contextParamName)
+            ContextType.DEPLOYMENTS_CONTEXT -> getDeploymentsContextAccessor(injectionType, contextParamName)
             ContextType.DEPLOYMENT_CONTEXT -> getDeploymentContextAccessor(injectionType, contextParamName)
-            ContextType.PROGRAM -> getProgramAccessor(injectionType, contextParamName)
-            ContextType.PROPERTY -> getPropertyAccessor(injectionType, contextParamName)
+            ContextType.PROGRAM_CONTEXT -> getProgramAccessor(injectionType, contextParamName)
+            ContextType.PROPERTY_CONTEXT -> getPropertyAccessor(injectionType, contextParamName)
         }
 
     private fun getSimulationAccessor(injectionType: InjectionType, contextParamName: String): String =

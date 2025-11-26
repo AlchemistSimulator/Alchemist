@@ -1,6 +1,12 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
+import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSDeclaration
+import com.google.devtools.ksp.symbol.KSTypeAlias
+import com.google.devtools.ksp.symbol.KSTypeArgument
+import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.KSTypeReference
+import com.google.devtools.ksp.symbol.Variance
 
 /**
  * Processes type arguments for context parameters in DSL builder functions.
@@ -23,15 +29,13 @@ object TypeArgumentProcessor {
         val declaration = resolved.declaration
         val typeName = getTypeName(declaration)
         val arguments = resolved.arguments
-
         if (arguments.isEmpty()) {
             return typeName
         }
-
         val declarationTypeParams = getDeclarationTypeParams(declaration)
-        val standardTypeParams = listOf("T", "U", "V", "W", "X", "Y", "Z")
+        // These are fallback names for wildcard/null arguments so we always generate valid type parameters.
+        val standardTypeParams = listOf("T", "U", "V", "W")
         val indexState = IndexState(0, 0)
-
         val typeArgs = arguments.joinToString(", ") { arg ->
             processTypeArgument(
                 arg,
@@ -48,7 +52,7 @@ object TypeArgumentProcessor {
 
     private data class IndexState(var nextStandardIndex: Int, var nextDeclParamIndex: Int)
 
-    private fun getTypeName(declaration: com.google.devtools.ksp.symbol.KSDeclaration): String {
+    private fun getTypeName(declaration: KSDeclaration): String {
         val qualifiedName = declaration.qualifiedName?.asString()
         return if (qualifiedName != null && qualifiedName.isNotEmpty()) {
             qualifiedName
@@ -57,23 +61,21 @@ object TypeArgumentProcessor {
         }
     }
 
-    private fun getDeclarationTypeParams(
-        declaration: com.google.devtools.ksp.symbol.KSDeclaration,
-    ): List<com.google.devtools.ksp.symbol.KSTypeParameter> = when (declaration) {
-        is com.google.devtools.ksp.symbol.KSClassDeclaration -> declaration.typeParameters
-        is com.google.devtools.ksp.symbol.KSTypeAlias -> declaration.typeParameters
+    private fun getDeclarationTypeParams(declaration: KSDeclaration): List<KSTypeParameter> = when (declaration) {
+        is KSClassDeclaration -> declaration.typeParameters
+        is KSTypeAlias -> declaration.typeParameters
         else -> emptyList()
     }
 
     private fun processTypeArgument(
-        arg: com.google.devtools.ksp.symbol.KSTypeArgument,
-        declarationTypeParams: List<com.google.devtools.ksp.symbol.KSTypeParameter>,
+        arg: KSTypeArgument,
+        declarationTypeParams: List<KSTypeParameter>,
         standardTypeParams: List<String>,
         typeParamNames: MutableList<String>,
         typeParamBounds: MutableList<String>,
         indexState: IndexState,
     ): String = when {
-        arg.type == null || arg.variance == com.google.devtools.ksp.symbol.Variance.STAR -> {
+        arg.type == null || arg.variance == Variance.STAR -> {
             val result = handleNullOrStarTypeArg(
                 declarationTypeParams,
                 standardTypeParams,
@@ -90,7 +92,7 @@ object TypeArgumentProcessor {
     }
 
     private fun handleNullOrStarTypeArg(
-        declarationTypeParams: List<com.google.devtools.ksp.symbol.KSTypeParameter>,
+        declarationTypeParams: List<KSTypeParameter>,
         standardTypeParams: List<String>,
         typeParamNames: MutableList<String>,
         typeParamBounds: MutableList<String>,
@@ -105,13 +107,11 @@ object TypeArgumentProcessor {
         } else {
             "T" to null
         }
-
         val newNextDeclParamIndex = if (nextDeclParamIndex < declarationTypeParams.size) {
             nextDeclParamIndex + 1
         } else {
             nextDeclParamIndex
         }
-
         val newNextStandardIndex = if (nextDeclParamIndex >= declarationTypeParams.size &&
             nextStandardIndex < standardTypeParams.size
         ) {
@@ -119,7 +119,6 @@ object TypeArgumentProcessor {
         } else {
             nextStandardIndex
         }
-
         if (!typeParamNames.contains(paramName)) {
             typeParamNames.add(paramName)
             val boundStr = if (declParam != null) {
@@ -136,12 +135,11 @@ object TypeArgumentProcessor {
             }
             typeParamBounds.add(boundStr)
         }
-
         return Triple(paramName, newNextDeclParamIndex, newNextStandardIndex)
     }
 
     private fun processConcreteTypeArgument(
-        arg: com.google.devtools.ksp.symbol.KSTypeArgument,
+        arg: KSTypeArgument,
         typeParamNames: MutableList<String>,
         typeParamBounds: MutableList<String>,
         standardTypeParams: List<String>,
@@ -149,7 +147,7 @@ object TypeArgumentProcessor {
     ): String {
         val argType = arg.type ?: return "T"
         val argDecl = argType.resolve().declaration
-        return if (argDecl is com.google.devtools.ksp.symbol.KSTypeParameter) {
+        return if (argDecl is KSTypeParameter) {
             addTypeParameterIfNeeded(argDecl, typeParamNames, typeParamBounds)
             argDecl.name.asString()
         } else {
@@ -158,7 +156,7 @@ object TypeArgumentProcessor {
     }
 
     private fun addTypeParameterIfNeeded(
-        argDecl: com.google.devtools.ksp.symbol.KSTypeParameter,
+        argDecl: KSTypeParameter,
         typeParamNames: MutableList<String>,
         typeParamBounds: MutableList<String>,
     ) {

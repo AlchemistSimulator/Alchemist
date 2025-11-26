@@ -119,6 +119,7 @@ object ProcessorConfig {
      * @param qualifiedName The fully qualified name to check
      * @return True if the name matches an environment package pattern
      */
+    // Provide centralized patterns instead of ad-hoc string checks so injector stays flexible.
     fun isEnvironmentPackage(qualifiedName: String): Boolean = ENVIRONMENT_PACKAGE_PATTERNS.any { pattern ->
         qualifiedName.startsWith(pattern)
     }

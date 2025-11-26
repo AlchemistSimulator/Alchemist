@@ -16,23 +16,16 @@ object ConstructorFinder {
      * @return The found constructor, or null if no suitable constructor exists
      */
     // Prefer the primary constructor, but if it's missing or not public, pick the public constructor with the most params.
-    fun findConstructor(classDecl: KSClassDeclaration): KSFunctionDeclaration? {
-        val primaryConstructor = classDecl.primaryConstructor
-        if (
-            primaryConstructor != null &&
-            isPublicConstructor(primaryConstructor)
-        ) {
-            return primaryConstructor
-        }
-        val constructors = classDecl.getAllFunctions()
+    fun findConstructor(classDecl: KSClassDeclaration): KSFunctionDeclaration? =
+        classDecl.primaryConstructor?.takeIf { isPublicConstructor(it) } ?: classDecl
+            .getAllFunctions()
             .filter { function ->
                 val simpleName = function.simpleName.asString()
                 (simpleName == "<init>" || simpleName == classDecl.simpleName.asString()) &&
                     isPublicConstructor(function)
             }
             .sortedByDescending { it.parameters.size }
-        return constructors.firstOrNull()
-    }
+            .firstOrNull()
 
     private fun isPublicConstructor(function: KSFunctionDeclaration): Boolean {
         val modifiers = function.modifiers

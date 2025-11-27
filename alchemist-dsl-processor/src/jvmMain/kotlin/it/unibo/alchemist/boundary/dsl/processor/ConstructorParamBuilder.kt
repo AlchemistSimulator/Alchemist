@@ -218,24 +218,21 @@ object ConstructorParamBuilder {
         injectionTypes: List<Triple<InjectionType, String, Boolean>>,
     ): InjectionType? {
         for ((type, annotationKey, checkAnnotation) in injectionTypes) {
-            if ((
-                    checkAnnotation &&
-                        isInjectionIndex(
-                            type,
-                            index,
-                            injectionContext.indices,
-                            injectionContext.annotationValues,
-                            annotationKey,
-                        )
-                    ) || (
-                    !checkAnnotation && matchesFallbackInjection(
-                        index,
-                        type,
-                        injectionContext.indices,
-                        paramsToSkip,
-                    )
-                    )
-            ) {
+            val matchesAnnotation = checkAnnotation &&
+                isInjectionIndex(
+                    type,
+                    index,
+                    injectionContext.indices,
+                    injectionContext.annotationValues,
+                    annotationKey,
+                )
+            val matchesFallback = !checkAnnotation && matchesFallbackInjection(
+                index,
+                type,
+                injectionContext.indices,
+                paramsToSkip,
+            )
+            if (matchesAnnotation || matchesFallback) {
                 return type
             }
         }

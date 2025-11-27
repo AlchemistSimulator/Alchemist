@@ -64,22 +64,16 @@ class SimulationContextImpl<T, P : Position<P>>(override val incarnation: Incarn
     private var _simulationGenerator: RandomGenerator? = null
 
     override var scenarioGenerator: RandomGenerator
-        get() = if (_scenarioGenerator == null) {
-            _scenarioGenerator = MersenneTwister(0L)
-            _scenarioGenerator!!
-        } else {
-            _scenarioGenerator!!
+        get() {
+            return _scenarioGenerator ?: MersenneTwister(0L).also { _scenarioGenerator = it }
         }
         set(value) {
             buildSteps.add { this._scenarioGenerator = value }
         }
 
     override var simulationGenerator: RandomGenerator
-        get() = if (_simulationGenerator == null) {
-            _simulationGenerator = MersenneTwister(0L)
-            _simulationGenerator!!
-        } else {
-            _simulationGenerator!!
+        get() {
+            return _simulationGenerator ?: MersenneTwister(0L).also { _simulationGenerator = it }
         }
         set(value) {
             buildSteps.add { this._simulationGenerator = value }

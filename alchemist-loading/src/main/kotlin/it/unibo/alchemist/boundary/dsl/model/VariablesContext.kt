@@ -51,10 +51,10 @@ class VariablesContext {
      */
     fun addReferences(newRefs: Map<String, *>) {
         val currMap = references.get()
-        val newRefs = currMap.toMutableMap().also { m ->
+        val updatedMap = currMap.toMutableMap().also { m ->
             m.putAll(newRefs.mapValues { it.value as Any })
         }
-        references.set(newRefs)
+        references.set(updatedMap)
     }
 
     /**

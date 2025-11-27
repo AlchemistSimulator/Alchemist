@@ -10,12 +10,12 @@ import com.google.devtools.ksp.symbol.Modifier
 object ConstructorFinder {
     /**
      * Finds a public constructor for the given class declaration.
-     * Prefers the primary constructor, otherwise returns the constructor with the most parameters.
+     * Prefers the primary constructor, otherwise returns the constructor
+     * with the most parameters.
      *
      * @param classDecl The class declaration to find a constructor for
      * @return The found constructor, or null if no suitable constructor exists
      */
-    // Prefer the primary constructor, but if it's missing or not public, pick the public constructor with the most params.
     fun findConstructor(classDecl: KSClassDeclaration): KSFunctionDeclaration? =
         classDecl.primaryConstructor?.takeIf { isPublicConstructor(it) } ?: classDecl
             .getAllFunctions()

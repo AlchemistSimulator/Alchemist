@@ -151,7 +151,7 @@ interface SimulationContext<T, P : Position<P>> {
      * @param block The configuration block
      * @see [ExporterContextImpl]
      */
-    fun exporter(block: ExporterContextImpl<T, P>.() -> Unit)
+    fun exporter(block: ExporterContext<T, P>.() -> Unit)
 
     /**
      * Configures a global program.

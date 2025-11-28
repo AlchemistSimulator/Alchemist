@@ -54,7 +54,7 @@ gson = "com.google.code.gson:gson:2.13.2"
 gson-extras = "org.danilopianini:gson-extras:3.3.0"
 guava = "com.google.guava:guava:33.5.0-jre"
 javalib-java7 = "org.danilopianini:javalib-java7:0.6.1"
-java-quality-assurance-plugin = "org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin:1.156.0"
+java-quality-assurance-plugin = "org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin:1.157.0"
 jgit = "org.eclipse.jgit:org.eclipse.jgit:7.4.0.202509020913-r"
 jgrapht-core = "org.jgrapht:jgrapht-core:1.5.2"
 jirf = "org.danilopianini:jirf:0.4.37"
@@ -81,7 +81,7 @@ kotlin-multiplatform-plugin = { module = "org.jetbrains.kotlin.multiplatform:org
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
 kotlin-power-assert-plugin = { module = "org.jetbrains.kotlin.plugin.power-assert:org.jetbrains.kotlin.plugin.power-assert.gradle.plugin", version.ref = "kotlin" }
-kotlin-quality-assurance-plugin = "org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin:0.98.2"
+kotlin-quality-assurance-plugin = "org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin:0.99.0"
 kotlin-react = { module = "org.jetbrains.kotlin-wrappers:kotlin-react", version.ref = "react" }
 kotlin-react-dom = { module = "org.jetbrains.kotlin-wrappers:kotlin-react-dom", version.ref = "react" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }

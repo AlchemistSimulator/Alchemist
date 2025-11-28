@@ -72,16 +72,28 @@ object LoadAlchemist {
      */
     @JvmStatic
     @JvmOverloads
-    fun from(url: URL, overrides: List<String> = emptyList()): Loader =
-        from(url, modelForExtension(url.path.takeLastWhile { it != '.' }), overrides)
+    fun from(url: URL, overrides: List<String> = emptyList()): Loader {
+        val ext = url.path.takeLastWhile { it != '.' }
+        return if (ext.equals("kts", ignoreCase = true)) {
+            loaderProviderFor(ext).from(url.openStream())
+        } else {
+            from(url, modelForExtension(ext), overrides)
+        }
+    }
 
     /**
      * Load from a [file] with overrides.
      */
     @JvmStatic
     @JvmOverloads
-    fun from(file: File, overrides: List<String> = emptyList()): Loader =
-        from(file.inputStream(), modelForExtension(file.extension), overrides)
+    fun from(file: File, overrides: List<String> = emptyList()): Loader {
+        val ext = file.extension
+        return if (ext.equals("kts", ignoreCase = true)) {
+            loaderProviderFor(ext).from(file.inputStream())
+        } else {
+            from(file.inputStream(), modelForExtension(ext), overrides)
+        }
+    }
 
     /**
      * Load from a [string] with overrides.
@@ -91,8 +103,14 @@ object LoadAlchemist {
     fun from(string: String, overrides: List<String> = emptyList()): Loader = from(File(string), overrides)
 
     @JvmStatic
-    private fun modelForExtension(extension: String) = ClassPathScanner
-        .subTypesOf<AlchemistModelProvider>(extractPackageFrom<LoadAlchemist>())
+    private fun modelForExtension(extension: String) = loadForExtension<AlchemistModelProvider>(extension)
+
+    @JvmStatic
+    private fun loaderProviderFor(extension: String) = loadForExtension<AlchemistLoaderProvider>(extension)
+
+    @JvmStatic
+    private inline fun <reified T : Extensions> loadForExtension(extension: String) = ClassPathScanner
+        .subTypesOf<T>(extractPackageFrom<LoadAlchemist>())
         .mapNotNull { it.kotlin.objectInstance }
         .filter { it.fileExtensions.matches(extension) }
         .also { require(it.size == 1) { "None or conflicting loaders for extension $extension: $it" } }

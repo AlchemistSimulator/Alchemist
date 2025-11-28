@@ -6,8 +6,8 @@ import it.unibo.alchemist.boundary.extractors.Time
 import org.apache.commons.math3.random.MersenneTwister
 
 val incarnation = SAPERE.incarnation<Any, Euclidean2DPosition>()
-val environment = Continuous2DEnvironment(incarnation)
-simulation(incarnation, { environment }) {
+val environment = {Continuous2DEnvironment(incarnation)}
+simulation(incarnation, environment) {
     simulationGenerator = MersenneTwister(24L)
     scenarioGenerator = MersenneTwister(42L)
 

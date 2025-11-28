@@ -127,7 +127,7 @@ class SimulationContextImpl<T, P : Position<P>>(override val incarnation: Incarn
         buildSteps.add { OutputMonitorsContextImpl(this).block() }
     }
 
-    override fun exporter(block: ExporterContextImpl<T, P>.() -> Unit) {
+    override fun exporter(block: ExporterContext<T, P>.() -> Unit) {
         buildSteps.add { this.exporters.add(ExporterContextImpl(this).apply(block)) }
     }
 

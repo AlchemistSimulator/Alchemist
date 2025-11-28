@@ -14,43 +14,74 @@ import org.kaikikm.threadresloader.ResourceLoader
 class PerformanceComparisonTest {
 
     private data class PerformanceStats(
-        val avgYamlTime: Double,
-        val avgDslTime: Double,
-        val minYamlTime: Long,
-        val minDslTime: Long,
-        val maxYamlTime: Long,
-        val maxDslTime: Long,
+        val yamlLoadingTime: Long,
+        val dslLoadingTime: Long,
+        val avgYamlActionTime: Double,
+        val avgDslActionTime: Double,
+        val minYamlActionTime: Long,
+        val minDslActionTime: Long,
+        val maxYamlActionTime: Long,
+        val maxDslActionTime: Long,
     )
 
-    private fun calculateStats(yamlTimes: List<Long>, dslTimes: List<Long>): PerformanceStats = PerformanceStats(
-        avgYamlTime = yamlTimes.average(),
-        avgDslTime = dslTimes.average(),
-        minYamlTime = yamlTimes.minOrNull() ?: 0L,
-        minDslTime = dslTimes.minOrNull() ?: 0L,
-        maxYamlTime = yamlTimes.maxOrNull() ?: 0L,
-        maxDslTime = dslTimes.maxOrNull() ?: 0L,
+    private fun calculateStats(
+        yamlLoadingTime: Long,
+        dslLoadingTime: Long,
+        yamlActionTimes: List<Long>,
+        dslActionTimes: List<Long>,
+    ): PerformanceStats = PerformanceStats(
+        yamlLoadingTime = yamlLoadingTime,
+        dslLoadingTime = dslLoadingTime,
+        avgYamlActionTime = yamlActionTimes.average(),
+        avgDslActionTime = dslActionTimes.average(),
+        minYamlActionTime = yamlActionTimes.minOrNull() ?: 0L,
+        minDslActionTime = dslActionTimes.minOrNull() ?: 0L,
+        maxYamlActionTime = yamlActionTimes.maxOrNull() ?: 0L,
+        maxDslActionTime = dslActionTimes.maxOrNull() ?: 0L,
     )
 
     private fun printResults(header: String, stats: PerformanceStats) {
         println("\n=== $header ===")
         println("YAML Loader:")
-        println("  Average: ${String.format(Locale.US, "%.2f", stats.avgYamlTime)} ms")
-        println("  Min: ${stats.minYamlTime} ms")
-        println("  Max: ${stats.maxYamlTime} ms")
+        println("  Loading Phase:")
+        println("    Time: ${stats.yamlLoadingTime} ms")
+        println("  Action Phase:")
+        println("    Average: ${String.format(Locale.US, "%.2f", stats.avgYamlActionTime)} ms")
+        println("    Min: ${stats.minYamlActionTime} ms")
+        println("    Max: ${stats.maxYamlActionTime} ms")
+        println(
+            "  Total Average: ${String.format(
+                Locale.US,
+                "%.2f",
+                stats.yamlLoadingTime + stats.avgYamlActionTime,
+            )} ms",
+        )
         println("\nDSL Loader:")
-        println("  Average: ${String.format(Locale.US, "%.2f", stats.avgDslTime)} ms")
-        println("  Min: ${stats.minDslTime} ms")
-        println("  Max: ${stats.maxDslTime} ms")
+        println("  Loading Phase:")
+        println("    Time: ${stats.dslLoadingTime} ms")
+        println("  Action Phase:")
+        println("    Average: ${String.format(Locale.US, "%.2f", stats.avgDslActionTime)} ms")
+        println("    Min: ${stats.minDslActionTime} ms")
+        println("    Max: ${stats.maxDslActionTime} ms")
+        println(
+            "  Total Average: ${String.format(Locale.US, "%.2f", stats.dslLoadingTime + stats.avgDslActionTime)} ms",
+        )
     }
 
     private fun printSpeedup(stats: PerformanceStats, dslFasterMsg: String, yamlFasterMsg: String) {
-        val speedup = stats.avgYamlTime / stats.avgDslTime
-        println("\nSpeedup: ${String.format(Locale.US, "%.2f", speedup)}x")
+        val totalYamlTime = stats.yamlLoadingTime + stats.avgYamlActionTime
+        val totalDslTime = stats.dslLoadingTime + stats.avgDslActionTime
+        val speedup = totalYamlTime / totalDslTime
+        println("\nSpeedup (Total): ${String.format(Locale.US, "%.2f", speedup)}x")
         if (speedup > 1.0) {
             println("$dslFasterMsg ${String.format(Locale.US, "%.2f", speedup)}x faster than YAML")
         } else {
             println("$yamlFasterMsg ${String.format(Locale.US, "%.2f", 1.0 / speedup)}x faster than DSL")
         }
+        val loadingSpeedup = stats.yamlLoadingTime.toDouble() / stats.dslLoadingTime.toDouble()
+        println("Loading Phase Speedup: ${String.format(Locale.US, "%.2f", loadingSpeedup)}x")
+        val actionSpeedup = stats.avgYamlActionTime / stats.avgDslActionTime
+        println("Action Phase Speedup: ${String.format(Locale.US, "%.2f", actionSpeedup)}x")
     }
 
     private fun runPerformanceTest(
@@ -63,71 +94,113 @@ class PerformanceComparisonTest {
         yamlFasterMsg: String,
         yamlLoaderAction: (Loader) -> Unit,
         dslLoaderAction: (Loader) -> Unit,
-    ) {
+    ): PerformanceStats {
         val originalOut = System.out
         val originalErr = System.err
         val nullStream = PrintStream(java.io.ByteArrayOutputStream())
         println("\n=== $testHeader ===")
         println("Resource: $yamlResource")
         println("Iterations: $iterations\n")
-        val yamlTimes = mutableListOf<Long>()
-        val dslTimes = mutableListOf<Long>()
+        val yamlActionTimes = mutableListOf<Long>()
+        val dslActionTimes = mutableListOf<Long>()
         val dslUrl = ResourceLoader.getResource(dslResource)!!
         val ymlUrl = ResourceLoader.getResource(yamlResource)!!
+        System.setOut(nullStream)
+        System.setErr(nullStream)
+        var yamlLoader: Loader? = null
+        val yamlLoadingTime = measureTime {
+            yamlLoader = LoadAlchemist.from(ymlUrl)
+        }
+        assertNotNull(yamlLoader)
+        var dslLoader: Loader? = null
+        val dslLoadingTime = measureTime {
+            dslLoader = LoadAlchemist.from(dslUrl)
+        }
+        assertNotNull(dslLoader)
+        System.setOut(originalOut)
+        System.setErr(originalErr)
         repeat(iterations) {
             System.setOut(nullStream)
             System.setErr(nullStream)
-            val yamlTime = measureTime {
-                val yamlLoader = LoadAlchemist.from(ymlUrl)
-                assertNotNull(yamlLoader)
-                yamlLoaderAction(yamlLoader)
+            val yamlActionTime = measureTime {
+                yamlLoaderAction(yamlLoader!!)
             }
-            val dslTime = measureTime {
-                val dslLoader = LoadAlchemist.from(dslUrl)
-                assertNotNull(dslLoader)
-                dslLoaderAction(dslLoader)
+            val dslActionTime = measureTime {
+                dslLoaderAction(dslLoader!!)
             }
             System.setOut(originalOut)
             System.setErr(originalErr)
-            yamlTimes.add(yamlTime.inWholeMilliseconds)
-            dslTimes.add(dslTime.inWholeMilliseconds)
+            yamlActionTimes.add(yamlActionTime.inWholeMilliseconds)
+            dslActionTimes.add(dslActionTime.inWholeMilliseconds)
         }
-        yamlTimes.forEachIndexed { index, time ->
-            println("Iteration ${index + 1}: YAML=${time}ms, DSL=${dslTimes[index]}ms")
-        }
-        val stats = calculateStats(yamlTimes, dslTimes)
+        val stats = calculateStats(
+            yamlLoadingTime.inWholeMilliseconds,
+            dslLoadingTime.inWholeMilliseconds,
+            yamlActionTimes,
+            dslActionTimes,
+        )
         printResults(resultsHeader, stats)
         printSpeedup(stats, dslFasterMsg, yamlFasterMsg)
         println("\n=== Test completed ===\n")
+        return stats
+    }
+    private fun runTestWith(
+        name: String,
+        action: (Loader) -> Unit,
+        testName: String,
+        iterations: Int = 10,
+    ): PerformanceStats {
+        val dslResource = "dsl/kts/$name.alchemist.kts"
+        val yamlResource = "dsl/yml/$name.yml"
+        return runPerformanceTest(
+            testHeader = testName,
+            yamlResource = yamlResource,
+            dslResource = dslResource,
+            iterations = iterations,
+            resultsHeader = "Results",
+            dslFasterMsg = "DSL loading is",
+            yamlFasterMsg = "YAML loading is",
+            yamlLoaderAction = action,
+            dslLoaderAction = action,
+        )
     }
 
     @Test
     fun <T, P : Position<P>> `performance comparison between YAML and DSL loaders`() {
-        runPerformanceTest(
-            testHeader = "Performance Test: YAML vs DSL Loader",
-            yamlResource = "dsl/yml/19-performance.yml",
-            dslResource = "dsl/kts/19-performance.alchemist.kts",
-            iterations = 5,
-            resultsHeader = "Results",
-            dslFasterMsg = "DSL is",
-            yamlFasterMsg = "YAML is",
-            yamlLoaderAction = { it.getDefault<T, P>() },
-            dslLoaderAction = { it.getDefault<T, P>() },
+        runTestWith(
+            "19-performance",
+            testName = "Performance Test: YAML vs DSL Loader",
+            action = { it.getDefault<T, P>() },
+            iterations = 20,
         )
     }
 
     @Test
     fun `performance comparison - loading phase only`() {
-        runPerformanceTest(
-            testHeader = "Performance Test: Loading Phase Only (YAML vs DSL)",
-            yamlResource = "dsl/yml/19-performance.yml",
-            dslResource = "dsl/kts/19-performance.alchemist.kts",
-            iterations = 10,
-            resultsHeader = "Results (Loading Phase Only)",
-            dslFasterMsg = "DSL loading is",
-            yamlFasterMsg = "YAML loading is",
-            yamlLoaderAction = {},
-            dslLoaderAction = {},
+        val stats = mutableListOf<PerformanceStats>()
+        repeat(50) {
+            stats += runTestWith(
+                "19-performance",
+                action = {},
+                testName = "Performance Test: Loading Phase Only ",
+            )
+        }
+        val avgYamlLoadingTime = stats.map { it.yamlLoadingTime }.average()
+        val avgDslLoadingTime = stats.map { it.dslLoadingTime }.average()
+        println("\n=== Loading Phase Only Average Results ===")
+        println(
+            "YAML Loader Average Loading Time: ${String.format(
+                Locale.US,
+                "%.2f",
+                avgYamlLoadingTime,
+            )} ms",
+        )
+        println(
+            "DSL Loader Average Loading Time: ${String.format(
+                Locale.US,
+                "%.2f",
+                avgDslLoadingTime,
+            )} ms",
         )
     }
 

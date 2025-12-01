@@ -1,0 +1,25 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:org.danilopianini.util////PointingToDeclaration/java-quadtree/org.danilopianini.util/index.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree.Companion///PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/-companion/index.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree.Companion/DEFAULT_CAPACITY/#/PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/-companion/-d-e-f-a-u-l-t_-c-a-p-a-c-i-t-y.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree///PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/index.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree/FlexibleQuadTree/#kotlin.Int/PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/-flexible-quad-tree.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree/dimensions/#/PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/dimensions.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree/insert/#TypeParam(bounds=[kotlin.Any?])#kotlin.Double#kotlin.Double/PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/insert.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree/insert/#TypeParam(bounds=[kotlin.Any?])#kotlin.DoubleArray/PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/insert.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree/maxElementsNumber/#/PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/max-elements-number.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree/move/#TypeParam(bounds=[kotlin.Any?])#kotlin.Double#kotlin.Double#kotlin.Double#kotlin.Double/PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/move.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree/move/#TypeParam(bounds=[kotlin.Any?])#kotlin.DoubleArray#kotlin.DoubleArray/PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/move.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree/query/#kotlin.Array[kotlin.DoubleArray]/PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/query.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree/query/#kotlin.Double#kotlin.Double#kotlin.Double#kotlin.Double/PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/query.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree/remove/#TypeParam(bounds=[kotlin.Any?])#kotlin.Double#kotlin.Double/PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/remove.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree/remove/#TypeParam(bounds=[kotlin.Any?])#kotlin.DoubleArray/PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/remove.html
+$dokka.location:org.danilopianini.util/FlexibleQuadTree/toString/#/PointingToDeclaration/java-quadtree/org.danilopianini.util/-flexible-quad-tree/to-string.html
+$dokka.location:org.danilopianini.util/SpatialIndex///PointingToDeclaration/java-quadtree/org.danilopianini.util/-spatial-index/index.html
+$dokka.location:org.danilopianini.util/SpatialIndex/dimensions/#/PointingToDeclaration/java-quadtree/org.danilopianini.util/-spatial-index/dimensions.html
+$dokka.location:org.danilopianini.util/SpatialIndex/insert/#TypeParam(bounds=[kotlin.Any?])#kotlin.DoubleArray/PointingToDeclaration/java-quadtree/org.danilopianini.util/-spatial-index/insert.html
+$dokka.location:org.danilopianini.util/SpatialIndex/move/#TypeParam(bounds=[kotlin.Any?])#kotlin.DoubleArray#kotlin.DoubleArray/PointingToDeclaration/java-quadtree/org.danilopianini.util/-spatial-index/move.html
+$dokka.location:org.danilopianini.util/SpatialIndex/query/#kotlin.Array[kotlin.DoubleArray]/PointingToDeclaration/java-quadtree/org.danilopianini.util/-spatial-index/query.html
+$dokka.location:org.danilopianini.util/SpatialIndex/remove/#TypeParam(bounds=[kotlin.Any?])#kotlin.DoubleArray/PointingToDeclaration/java-quadtree/org.danilopianini.util/-spatial-index/remove.html
+org.danilopianini.util

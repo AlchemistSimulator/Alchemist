@@ -93,7 +93,7 @@ class ObservableMapTest : FunSpec({
 
         test("copy should produce independent map with same entries") {
             val original = ObservableMutableMap(
-                mutableMapOf("a" to 1, "b" to 2)
+                mutableMapOf("a" to 1, "b" to 2),
             )
 
             val copy = original.copy()

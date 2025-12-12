@@ -44,7 +44,6 @@ interface Observable<out T> {
      */
     fun stopWatching(registrant: Any)
 
-
     /**
      * Disposes of the observable by unregistering all currently registered observers.
      * This method ensures that no further updates or notifications are sent to the observers.

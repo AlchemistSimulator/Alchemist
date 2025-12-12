@@ -16,6 +16,7 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.rx.dsl.ReactiveConditionDSL.condition
 import it.unibo.alchemist.rx.model.ReactiveCondition.Companion.validityToPropensity
+import it.unibo.alchemist.rx.model.adapters.ObservableNeighborhood
 import it.unibo.alchemist.rx.model.observation.MutableObservable.Companion.observe
 import it.unibo.alchemist.rx.model.observation.ObservableExtensions.combineLatest
 import it.unibo.alchemist.rx.model.utils.TestEnvironmentFactory.spawnNode

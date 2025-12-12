@@ -7,17 +7,16 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.rx.model
+package it.unibo.alchemist.rx.model.adapters
 
 import arrow.core.Option
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.rx.RxIncarnation
-import it.unibo.alchemist.rx.RxIncarnation.Companion.asReactive
-import it.unibo.alchemist.rx.model.ObservableNeighborhood.Companion.asObservable
-import it.unibo.alchemist.rx.model.ObservableNode.NodeExtension.asObservableNode
+import it.unibo.alchemist.rx.model.adapters.ObservableNeighborhood.Companion.asObservable
+import it.unibo.alchemist.rx.model.adapters.ObservableNode.NodeExtension.asObservableNode
+import it.unibo.alchemist.rx.model.adapters.RxIncarnation.Companion.asReactive
 import it.unibo.alchemist.rx.model.observation.Observable
 import it.unibo.alchemist.rx.model.observation.ObservableMap
 import it.unibo.alchemist.rx.model.observation.ObservableMutableMap

@@ -15,6 +15,7 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.rx.model.adapters.ObservableNeighborhood
 import it.unibo.alchemist.rx.model.utils.TestEnvironmentFactory.spawnNode
 import it.unibo.alchemist.rx.model.utils.TestEnvironmentFactory.withObservableTestEnvironment
 

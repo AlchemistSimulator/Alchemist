@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.rx.model
+package it.unibo.alchemist.rx.model.adapters
 
 import arrow.core.Option
 import it.unibo.alchemist.model.Molecule

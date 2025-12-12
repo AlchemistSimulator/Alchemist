@@ -17,7 +17,7 @@ import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.rx.model.ObservableNode.NodeExtension.asObservableNode
+import it.unibo.alchemist.rx.model.adapters.ObservableNode.NodeExtension.asObservableNode
 import it.unibo.alchemist.rx.model.utils.TestEnvironmentFactory.spawnNode
 import it.unibo.alchemist.rx.model.utils.TestEnvironmentFactory.withObservableTestEnvironment
 

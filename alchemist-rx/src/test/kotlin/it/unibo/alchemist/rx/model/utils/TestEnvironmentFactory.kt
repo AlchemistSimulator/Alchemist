@@ -15,9 +15,9 @@ import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.rx.model.ObservableEnvironment
-import it.unibo.alchemist.rx.model.ObservableEnvironment.Companion.asObservableEnvironment
-import it.unibo.alchemist.rx.model.ObservableNode
+import it.unibo.alchemist.rx.model.adapters.ObservableEnvironment
+import it.unibo.alchemist.rx.model.adapters.ObservableEnvironment.Companion.asObservableEnvironment
+import it.unibo.alchemist.rx.model.adapters.ObservableNode
 import it.unibo.alchemist.test.AlchemistTesting.createEmptyEnvironment
 import java.util.Random
 import org.apache.commons.math3.random.RandomGeneratorFactory

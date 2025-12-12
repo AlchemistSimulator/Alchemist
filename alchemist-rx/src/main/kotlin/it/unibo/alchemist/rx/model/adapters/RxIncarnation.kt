@@ -7,17 +7,15 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.rx
+package it.unibo.alchemist.rx.model.adapters
 
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.rx.model.ObservableEnvironment
-import it.unibo.alchemist.rx.model.ObservableNode
-import it.unibo.alchemist.rx.model.ObservableNode.NodeExtension.asObservableNode
-import it.unibo.alchemist.rx.model.ReactiveBinder
-import it.unibo.alchemist.rx.model.ReactiveTimeDistribution
-import it.unibo.alchemist.rx.model.RxCondition
-import it.unibo.alchemist.rx.model.RxReaction
+import it.unibo.alchemist.rx.model.adapters.ObservableNode.NodeExtension.asObservableNode
+import it.unibo.alchemist.rx.model.adapters.reaction.ReactiveBinder
+import it.unibo.alchemist.rx.model.adapters.reaction.ReactiveTimeDistribution
+import it.unibo.alchemist.rx.model.adapters.reaction.RxCondition
+import it.unibo.alchemist.rx.model.adapters.reaction.RxReaction
 import org.apache.commons.math3.random.RandomGenerator
 
 class RxIncarnation<T, P : Position<P>>(private val delegate: Incarnation<T, P>) {

@@ -7,11 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.rx.model
+package it.unibo.alchemist.rx.model.adapters
 
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.rx.model.ObservableNode.NodeExtension.asObservableNode
+import it.unibo.alchemist.rx.model.adapters.ObservableNode.NodeExtension.asObservableNode
 import it.unibo.alchemist.rx.model.observation.ObservableMutableSet.Companion.toObservableSet
 import it.unibo.alchemist.rx.model.observation.ObservableSet
 import org.danilopianini.util.ArrayListSet
@@ -26,7 +26,7 @@ import org.danilopianini.util.ListSet
  * > **Implementation Notes**: due to some bugs and limitation of the Kotlin compiler with java interop,
  * the compiler struggles in resolving the [Cloneable][java.lang.Cloneable] interface when delegating to [origin].
  * For this reason delegation is made explicit for methods like [isEmpty] or [observableSize]. The same holds
- * for [ReactiveTimeDistribution].
+ * for [it.unibo.alchemist.rx.model.adapters.reaction.ReactiveTimeDistribution].
  *
  * @param T The type of the values associated with the nodes in the neighborhood.
  * @property origin The underlying [Neighborhood] instance providing the base functionality.

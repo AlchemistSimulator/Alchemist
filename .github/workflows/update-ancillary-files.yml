@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - master
+    paths:
+      - gradle/libs.versions.toml
   workflow_dispatch:
 
 jobs:
@@ -19,7 +21,6 @@ jobs:
         with:
           pre-build-command: rm -rf dokka-cache
           build-command: |
-            ./gradlew dokkaGenerateModuleHtml dokkaGeneratePublicationHtml --dry-run
             for i in {1..3}; do
                 rm dokka-cache/no-javadoc.json || true
                 ./gradlew dokkaGenerateModuleHtml dokkaGeneratePublicationHtml --dry-run

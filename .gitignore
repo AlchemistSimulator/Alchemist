@@ -68,4 +68,3 @@ scala_compiler.xml
 # Exceptions
 # Keep 'build' packages in src directories
 !**/src/**/build/
-!**/src/**/build/**

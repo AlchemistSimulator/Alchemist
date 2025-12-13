@@ -1,0 +1,7 @@
+incarnation: sapere
+
+deployments:
+  type: Circle
+  parameters: [10, 0, 0, 5]
+  nodes:
+    type: it.unibo.alchemist.model.nodes.TestNode

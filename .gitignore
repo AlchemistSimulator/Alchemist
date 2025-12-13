@@ -49,6 +49,7 @@ buildProfile/
 .DS_Store
 
 # Other
+dokka-cache/no-javadoc.json
 node_modules/
 .kotlintest/
 **/*.kotlintest*/*

@@ -360,7 +360,7 @@ jobs:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout the docs
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
-        uses: actions/checkout@v6.0.1
+        uses: DanySK/checkout-classic@f55ca46048a09d13b47f0e80db6b546977327791 # 1.0.0
         with:
           path: website
           fetch-depth: 0

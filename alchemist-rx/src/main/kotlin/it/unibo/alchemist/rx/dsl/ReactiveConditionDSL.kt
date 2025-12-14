@@ -11,6 +11,10 @@ package it.unibo.alchemist.rx.dsl
 
 import it.unibo.alchemist.rx.model.ReactiveCondition
 import it.unibo.alchemist.rx.model.observation.Observable
+import it.unibo.alchemist.rx.model.observation.ObservableExtensions.ObservableSetExtensions.filter
+import it.unibo.alchemist.rx.model.observation.ObservableExtensions.ObservableSetExtensions.union
+import it.unibo.alchemist.rx.model.observation.ObservableMutableSet
+import it.unibo.alchemist.rx.model.observation.ObservableSet
 import kotlin.properties.ReadOnlyProperty
 
 /**
@@ -50,22 +54,29 @@ object ReactiveConditionDSL {
         val validityBlock = requireNotNull(builder.validityBlock) {
             "Error constructing condition: the validity block must be specified." +
                 "You can build one specifying a `validity { }` block inside a `condition` block."
-        }
+        }.let { ReactiveConditionContainer(builder.declaredDependencies, it) }
 
         val propensityBlock = requireNotNull(builder.propensityBlock) {
             "Error constructing condition: the propensity block must be specified." +
                 "You can build one specifying a `propensity { }` block inside a `condition` block."
+        }.let {
+            ReactiveConditionContainer {
+                val valid by depending(validityBlock)
+                it(valid)
+            }
         }
 
         return object : ReactiveCondition<T> {
 
-            override val isValid: Observable<Boolean> =
-                ReactiveConditionContainer(builder.declaredDependencies, validityBlock)
+            override val isValid: Observable<Boolean> = validityBlock
 
-            override val propensityContribution: Observable<Double> = ReactiveConditionContainer {
-                val valid by depending(isValid)
-                propensityBlock(valid)
-            }
+            override val propensityContribution: Observable<Double> = propensityBlock
+
+            override val observableInboundDependencies: ObservableSet<Observable<*>> =
+                validityBlock.observableDeps union propensityBlock.observableDeps.filter { it != validityBlock }
+
+            override fun toString(): String =
+                "ReactiveCondition(isValid=${isValid.current}, propensity=${propensityContribution.current})"
         }
     }
 
@@ -111,6 +122,7 @@ object ReactiveConditionDSL {
          * Manually declares a dependency on an [observable].
          * This forces the condition to re-evaluate when the [observable] changes,
          * even if its value is not explicitly used via [depending].
+         * Should be quite useful for global dependencies.
          */
         fun dependsOn(observable: Observable<*>) {
             dependencies.add(observable)
@@ -158,9 +170,12 @@ object ReactiveConditionDSL {
     ) : Observable<T> {
 
         private val dsl = ConditionDSL()
-        private val observingDeps = mutableSetOf<Observable<*>>()
         private val callbacks = mutableMapOf<Any, (T) -> Unit>()
         private val latestValues = mutableMapOf<Observable<*>, Any?>()
+
+        private val observingDeps = mutableSetOf<Observable<*>>()
+
+        val observableDeps = ObservableMutableSet<Observable<*>>()
 
         // used to skipping initial callbacks call when subscribing
         private var initialized = false
@@ -224,9 +239,13 @@ object ReactiveConditionDSL {
 
             toRemove.forEach {
                 it.stopWatching(this)
+                if (it in observableDeps) {
+                    observableDeps.remove(it)
+                }
                 latestValues.remove(it)
             }
             toAdd.forEach { observable ->
+                observableDeps.add(observable)
                 var firstRun = true
                 observable.onChange(this) { newValue ->
                     latestValues[observable] = newValue

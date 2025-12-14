@@ -18,7 +18,7 @@ import it.unibo.alchemist.rx.dsl.ReactiveConditionDSL.condition
 import it.unibo.alchemist.rx.model.ReactiveCondition.Companion.validityToPropensity
 import it.unibo.alchemist.rx.model.adapters.ObservableNeighborhood
 import it.unibo.alchemist.rx.model.observation.MutableObservable.Companion.observe
-import it.unibo.alchemist.rx.model.observation.ObservableExtensions.combineLatest
+import it.unibo.alchemist.rx.model.observation.ObservableExtensions.ObservableSetExtensions.combineLatest
 import it.unibo.alchemist.rx.model.utils.TestEnvironmentFactory.spawnNode
 import it.unibo.alchemist.rx.model.utils.TestEnvironmentFactory.withObservableTestEnvironment
 
@@ -127,6 +127,24 @@ class ReactiveConditionTest : FunSpec({
 
                 seen[2] shouldBe (false to 0.0)
             }
+        }
+
+        test("condition should expose its dependencies") {
+            val obs1 = observe(1)
+            val obs2 = observe(2)
+            val condition = condition<Double> {
+                validity {
+                    val v1 by depending(obs1)
+                    v1 > 0
+                }
+                propensity {
+                    val v2 by depending(obs2)
+                    if (it) v2.toDouble() else 0.0
+                }
+            }
+
+            (obs1 in condition.observableInboundDependencies) shouldBe true
+            (obs2 in condition.observableInboundDependencies) shouldBe true
         }
     }
 })

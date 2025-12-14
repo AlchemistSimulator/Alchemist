@@ -9,7 +9,9 @@
 
 package it.unibo.alchemist.rx.model
 
+import it.unibo.alchemist.rx.model.adapters.ObservableNode
 import it.unibo.alchemist.rx.model.observation.Observable
+import it.unibo.alchemist.rx.model.observation.ObservableSet
 
 /**
  * A reactive [Condition][it.unibo.alchemist.model.Condition] which emits
@@ -30,6 +32,19 @@ interface ReactiveCondition<T> {
      * based on the validity of this condition.
      */
     val propensityContribution: Observable<Double>
+
+    /**
+     * An [ObservableSet] of dependencies as [Observable]s, useful for determine
+     * which are the inbound dependencies of this [ReactiveCondition] and the [reaction][ReactiveReaction]
+     * that hosts this condition.
+     */
+    val observableInboundDependencies: ObservableSet<Observable<*>>
+
+    /**
+     * TODO: implement me somehow
+     */
+    fun cloneCondition(node: ObservableNode<T>, reaction: ReactiveReaction<T>): ReactiveCondition<T> =
+        throw UnsupportedOperationException("${this::class.simpleName} has no support for cloning.")
 
     /**
      * Set of simple handy extension functions.

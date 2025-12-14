@@ -1,0 +1,107 @@
+/*
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
+package it.unibo.alchemist.rx.model
+
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistribution
+import it.unibo.alchemist.rx.dsl.ReactiveConditionDSL.condition
+import it.unibo.alchemist.rx.model.adapters.ObservableEnvironment
+import it.unibo.alchemist.rx.model.adapters.ObservableNode
+import it.unibo.alchemist.rx.model.observation.MutableObservable.Companion.observe
+import it.unibo.alchemist.rx.model.utils.TestEnvironmentFactory.spawnNode
+import it.unibo.alchemist.rx.model.utils.TestEnvironmentFactory.withObservableTestEnvironment
+
+class ReactiveReactionTest : FunSpec({
+
+    class StubTimeDistribution<T>(private var rate: Double = 1.0) : TimeDistribution<T> {
+
+        override fun update(currentTime: Time, executed: Boolean, param: Double, environment: Environment<T, *>) {
+            rate = param
+        }
+
+        override fun getNextOccurence(): Time = Time.INFINITY
+        override fun getRate(): Double = rate
+        override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): TimeDistribution<T> =
+            StubTimeDistribution(rate)
+    }
+
+    class TestReactiveReaction<T>(
+        node: ObservableNode<T>,
+        timeDistribution: TimeDistribution<T>,
+    ) : AbstractReactiveReaction<T>(node, timeDistribution) {
+        override fun updateInternalStatus(
+            currentTime: Time,
+            hasBeenExecuted: Boolean,
+            environment: ObservableEnvironment<T, *>,
+        ) {}
+
+        override fun cloneOnNewNode(node: ObservableNode<T>, currentTime: Time): ReactiveReaction<T> =
+            TestReactiveReaction(node, timeDistribution.cloneOnNewNode(node, currentTime))
+    }
+
+    test("reaction should reschedule when condition dependencies change") {
+        withObservableTestEnvironment {
+            val node = spawnNode(0.0, 0.0)
+            val timeDist = StubTimeDistribution<Double>()
+            val reaction = TestReactiveReaction(node, timeDist)
+
+            val dependency = observe(10)
+            val condition = condition<Double> {
+                validity {
+                    val v by depending(dependency)
+                    v > 5
+                }
+                propensity { 1.0 }
+            }
+
+            reaction.conditions = listOf(condition)
+
+            var rescheduleCount = 0
+            reaction.rescheduleRequest.onChange(this) { rescheduleCount++ }
+
+            val baseline = rescheduleCount
+
+            dependency.current = 4
+            rescheduleCount shouldBe baseline + 1
+
+            dependency.current = 6
+            rescheduleCount shouldBe baseline + 2
+        }
+    }
+
+    test("reaction canExecute should reflect conditions validity") {
+        withObservableTestEnvironment {
+            val node = spawnNode(0.0, 0.0)
+            val timeDist = StubTimeDistribution<Double>()
+            val reaction = TestReactiveReaction(node, timeDist)
+
+            val validObs = observe(true)
+            val condition = condition<Double> {
+                validity {
+                    val v by depending(validObs)
+                    v
+                }
+                propensity { 1.0 }
+            }
+
+            reaction.conditions = listOf(condition)
+
+            reaction.canExecute() shouldBe true
+
+            validObs.current = false
+            condition.isValid.current shouldBe false
+            reaction.canExecute() shouldBe false
+        }
+    }
+})

@@ -10,8 +10,9 @@ dependencies {
     api(alchemist("api"))
     api(alchemist("implementationbase"))
     implementation(libs.arrow.core)
+    implementation(libs.boilerplate)
 
-    implementation(alchemist("euclidean-geometry"))
+    testImplementation(alchemist("euclidean-geometry"))
     testImplementation(alchemist("test"))
     testImplementation(alchemist("implementationbase"))
     testImplementation(incarnation("biochemistry"))

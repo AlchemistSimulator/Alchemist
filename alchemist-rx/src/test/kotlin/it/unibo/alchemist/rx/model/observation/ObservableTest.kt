@@ -15,15 +15,15 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.rx.model.observation.MutableObservable.Companion.observe
 import it.unibo.alchemist.rx.model.observation.MutableObservable.Companion.updateValue
 import it.unibo.alchemist.rx.model.observation.Observable.ObservableExtensions.asMutable
 import it.unibo.alchemist.rx.model.observation.Observable.ObservableExtensions.currentOrNull
+import it.unibo.alchemist.rx.model.observation.ObservableExtensions.ObservableSetExtensions.combineLatest
+import it.unibo.alchemist.rx.model.observation.ObservableExtensions.ObservableSetExtensions.flatMap
 import it.unibo.alchemist.rx.model.observation.ObservableExtensions.combineLatest
-import it.unibo.alchemist.rx.model.observation.ObservableExtensions.flatMap
 
 class ObservableTest : FunSpec({
 

@@ -101,7 +101,7 @@ class ObservableMutableSet<T> : ObservableSet<T> {
 
     override val observableSize: Observable<Int> = backing.map { it.keys.size }
 
-    override var current: Set<T> = emptySet()
+    override val current: Set<T> get() = backing.current.keys
 
     override val observers: List<Any> get() = backing.observers
 
@@ -112,7 +112,9 @@ class ObservableMutableSet<T> : ObservableSet<T> {
      *
      * @param item The item to be added to the set.
      */
-    fun add(item: T) = backing.put(item, true)
+    fun add(item: T) {
+        if (item !in backing.current) backing.put(item, true)
+    }
 
     /**
      * Removes the specified item from the observable set.
@@ -123,15 +125,26 @@ class ObservableMutableSet<T> : ObservableSet<T> {
      */
     fun remove(item: T) = backing.remove(item)
 
+    /**
+     * Clears the current set and inserts the given [items]. This is the equivalent
+     * of calling [remove] for each `this - [items]` element, and [add] for each
+     * `[items] - this` notifying every subscriber.
+     *
+     * > WARNING: calling so many times add and remove for basically every new element
+     * added in this collection will trigger `|N ∪ M|` times the callbacks associated with
+     * this set resulting in a non-negligible time spent updating observers. Please be
+     * careful when using this method.
+     *
+     * @param items
+     */
+    fun clearAndAddAll(items: Set<T>) {
+        val (toRemove, toAdd) = with(this.toSet()) { (this - items) to (items - this) }
+        toRemove.forEach(::remove)
+        toAdd.forEach(::add)
+    }
+
     override fun onChange(registrant: Any, callback: (Set<T>) -> Unit) {
-        backing.onChange(registrant) { map ->
-            val newSet = map.keys.toSet()
-            if (newSet != current) {
-                current = newSet
-                callback(newSet)
-            }
-        }
-        callback(current)
+        backing.onChange(registrant) { callback(it.keys.toSet()) }
     }
 
     override fun stopWatching(registrant: Any) {

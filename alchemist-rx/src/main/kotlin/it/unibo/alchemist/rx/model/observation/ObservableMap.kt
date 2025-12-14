@@ -80,12 +80,7 @@ open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> =
      * @param value The value associated with the specified key.
      */
     fun put(key: K, value: V) {
-        val containedKey = backingMap.containsKey(key)
-
-        @Suppress("UNCHECKED_CAST")
-        val previous = backingMap.put(key, value).let {
-            if (containedKey) (it as V).some() else none()
-        }
+        val previous: V? = backingMap.put(key, value)
         if (previous != value) {
             getAsMutable(key).update { value.some() }
             notifyMapObservers()

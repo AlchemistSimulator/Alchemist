@@ -31,6 +31,7 @@ class ObservableMapTest : FunSpec({
             map.put("a", 1)
             map.put("b", 2)
             map.put("b", 3)
+            map.put("b", 3) // duplicate, should not change
 
             seen.size shouldBe 4
             seen[1] shouldContainExactly mapOf("a" to 1)

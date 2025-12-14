@@ -9,92 +9,154 @@
 
 package it.unibo.alchemist.rx.model.observation
 
+import it.unibo.alchemist.rx.model.observation.ObservableMutableSet.Companion.toObservableSet
+import kotlin.collections.forEach
+
 /**
  * Set of useful extensions on [Observable] and collections of observables.
  */
 object ObservableExtensions {
 
-    /**
-     * Combines the content of an `ObservableSet` into a single observable by applying a mapping function
-     * to each element and aggregating the results.
-     * This function generates a single observable that emits every time the underlying set of contents is changed,
-     * or some of the values (which are in turn observables) emit a changes, triggering the re-evaluation
-     * of the [aggregation][aggregator] function.
-     *
-     * @param map A function that maps each element of the `ObservableSet` to an `Observable`.
-     * @param aggregator A function that aggregates the mapped results into a single value.
-     * @return An `Observable` emitting the aggregated result of the mapped content from the `ObservableSet`.
-     */
-    fun <T, R, O> ObservableSet<T>.combineLatest(
-        map: (T) -> Observable<R>,
-        aggregator: (Iterable<R>) -> O,
-    ): Observable<O> = object : Observable<O> {
+    object ObservableSetExtensions {
 
-        private val sources = mutableMapOf<T, Observable<R>>()
+        /**
+         * Combines the content of an `ObservableSet` into a single observable by applying a mapping function
+         * to each element and aggregating the results.
+         * This function generates a single observable that emits every time the underlying set of contents is changed,
+         * or some of the values (which are in turn observables) emit a changes, triggering the re-evaluation
+         * of the [aggregation][aggregator] function.
+         *
+         * @param map A function that maps each element of the `ObservableSet` to an `Observable`.
+         * @param aggregator A function that aggregates the mapped results into a single value.
+         * @return An `Observable` emitting the aggregated result of the mapped content from the `ObservableSet`.
+         */
+        fun <T, R, O> ObservableSet<T>.combineLatest(
+            map: (T) -> Observable<R>,
+            aggregator: (Iterable<R>) -> O,
+        ): Observable<O> = object : Observable<O> {
 
-        override var current: O = aggregator(this@combineLatest.toSet().map { map(it).current })
-            private set
+            private val sources = mutableMapOf<T, Observable<R>>()
 
-        override var observers: List<Any> = emptyList()
+            override var current: O = aggregator(this@combineLatest.toSet().map { map(it).current })
+                private set
 
-        override fun onChange(registrant: Any, callback: (O) -> Unit) {
-            observers += registrant
-            this@combineLatest.onChange(this to registrant) {
-                sources.reconcile(it, map, this to registrant) { recomputeAndEmit(callback) }
-                recomputeAndEmit(callback)
+            override var observers: List<Any> = emptyList()
+
+            override fun onChange(registrant: Any, callback: (O) -> Unit) {
+                observers += registrant
+                this@combineLatest.onChange(this to registrant) {
+                    sources.reconcile(it, map, this to registrant) { recomputeAndEmit(callback) }
+                    recomputeAndEmit(callback)
+                }
+                callback(current)
             }
-            callback(current)
-        }
 
-        private fun recomputeAndEmit(callback: (O) -> Unit) {
-            val newValue = aggregator(sources.values.map { it.current })
-            if (newValue != current) {
-                current = newValue
-                callback(newValue)
-            }
-        }
-
-        override fun stopWatching(registrant: Any) {
-            observers -= registrant
-            this@combineLatest.stopWatching(this to registrant)
-            sources.values.forEach { it.stopWatching(this to registrant) }
-            sources.clear()
-        }
-    }
-
-    /**
-     * Transforms an [ObservableSet] of type [T] into a single [Observable] of type [O] by fusing the individual
-     * observables obtained from each item in the set. The items in this collection will be mapped
-     * through [map], which is a producer of observables. In this way, the resulting observer will emit when
-     * 1. Members of this collection emit values
-     * 2. The member set of this collection changes, emitting current values for newly added members only.
-     *
-     * @param T The type of elements in the [ObservableSet].
-     * @param O The type of the resulting fused observable.
-     * @param map A function that maps each element of the source [ObservableSet] to an [Observable] of type [O].
-     * @return An [Observable] of type [O] that emits the combined or updated value whenever changes are emitted.
-     */
-    fun <T, O> ObservableSet<T>.flatMap(map: (T) -> Observable<O>): Observable<O> = object : Observable<O> {
-        private val sources = mutableMapOf<T, Observable<O>>()
-
-        override var current: O = map(toSet().first()).current // TODO: better way to handle initial vale
-        override var observers: List<Any> = emptyList()
-
-        override fun onChange(registrant: Any, callback: (O) -> Unit) {
-            observers += registrant
-            this@flatMap.onChange(this to registrant) {
-                sources.reconcile(it, map, this to registrant) { newValue ->
+            private fun recomputeAndEmit(callback: (O) -> Unit) {
+                val newValue = aggregator(sources.values.map { it.current })
+                if (newValue != current) {
                     current = newValue
                     callback(newValue)
                 }
             }
+
+            override fun stopWatching(registrant: Any) {
+                observers -= registrant
+                this@combineLatest.stopWatching(this to registrant)
+                sources.values.forEach { it.stopWatching(this to registrant) }
+                sources.clear()
+            }
         }
 
-        override fun stopWatching(registrant: Any) {
-            observers -= registrant
-            this@flatMap.stopWatching(this to registrant)
-            sources.values.forEach { it.stopWatching(this to registrant) }
-            sources.clear()
+        /**
+         * Transforms an [ObservableSet] of type [T] into a single [Observable] of type [O] by fusing the individual
+         * observables obtained from each item in the set. The items in this collection will be mapped
+         * through [map], which is a producer of observables. In this way, the resulting observer will emit when
+         * 1. Members of this collection emit values
+         * 2. The member set of this collection changes, emitting current values for newly added members only.
+         *
+         * @param T The type of elements in the [ObservableSet].
+         * @param O The type of the resulting fused observable.
+         * @param map A function that maps each element of the source [ObservableSet] to an [Observable] of type [O].
+         * @return An [Observable] of type [O] that emits the combined or updated value whenever changes are emitted.
+         */
+        fun <T, O> ObservableSet<T>.flatMap(map: (T) -> Observable<O>): Observable<O> = object : Observable<O> {
+            private val sources = mutableMapOf<T, Observable<O>>()
+
+            override var current: O = map(toSet().first()).current // TODO: better way to handle initial vale
+            override var observers: List<Any> = emptyList()
+
+            override fun onChange(registrant: Any, callback: (O) -> Unit) {
+                observers += registrant
+                this@flatMap.onChange(this to registrant) {
+                    sources.reconcile(it, map, this to registrant) { newValue ->
+                        current = newValue
+                        callback(newValue)
+                    }
+                }
+            }
+
+            override fun stopWatching(registrant: Any) {
+                observers -= registrant
+                this@flatMap.stopWatching(this to registrant)
+                sources.values.forEach { it.stopWatching(this to registrant) }
+                sources.clear()
+            }
+        }
+
+        /**
+         * Converts this [ObservableSet] of [observables][Observable] into a unique observable that emits
+         * when either this set would have changed (addition/removal of members) or one of its members
+         * emits a value of type [T].
+         *
+         * @return a unique observable wrapping in one place all the notifications emitted by this [ObservableSet]
+         */
+        fun <T> ObservableSet<Observable<T>>.merge(): Observable<T> = this.flatMap { it }
+
+        /**
+         * Returns a new [ObservableSet] applying the given [predicate] to each element.
+         * The resulting collection is this collection with all the items that satisfies the given [predicate].
+         * This function is backed by the standard `filter` of [sets][Set].
+         *
+         * @param predicate the predicate to apply for each element of this collection.
+         * @return a new [ObservableSet] with the items that satisfies the input [predicate].
+         */
+        fun <T> ObservableSet<T>.filter(predicate: (T) -> Boolean): ObservableSet<T> =
+            this.toSet().filter(predicate).toObservableSet()
+
+        /**
+         * Combines this observable set with another, producing a new observable set that represents
+         * the union of both sets.
+         *
+         * @param other The observable set to be merged with the current one.
+         * @return A new observable set that emits the union of the values.
+         */
+        infix fun <T> ObservableSet<T>.union(other: ObservableSet<T>): ObservableSet<T> = object : ObservableSet<T> {
+            private val backing = this@union.mergeWith(other) { s1, s2 -> s1 + s2 }
+
+            override val current: Set<T> get() = backing.current
+
+            override val observers: List<Any> = backing.observers
+
+            override val observableSize: Observable<Int> = backing.map { it.size }
+
+            override fun onChange(registrant: Any, callback: (Set<T>) -> Unit) = backing.onChange(registrant, callback)
+
+            override fun stopWatching(registrant: Any) = backing.stopWatching(registrant)
+
+            override fun observeMembership(item: T): Observable<Boolean> =
+                this@union.observeMembership(item).mergeWith(other.observeMembership(item)) { a, b -> a || b }
+
+            override fun toSet(): Set<T> = current
+
+            override fun toList(): List<T> = current.toList()
+
+            override fun copy(): ObservableSet<T> = ObservableMutableSet<T>().apply {
+                current.forEach(this::add)
+            }
+
+            override fun contains(item: T): Boolean = item in current
+
+            override fun toString(): String = "UnionObservableSet($current)[from: ${this@union}, other: $other]"
         }
     }
 

@@ -12,6 +12,10 @@ package it.unibo.alchemist.rx.model.observation
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.rx.model.observation.MutableObservable.Companion.observe
+import it.unibo.alchemist.rx.model.observation.ObservableExtensions.ObservableSetExtensions.filter
+import it.unibo.alchemist.rx.model.observation.ObservableExtensions.ObservableSetExtensions.merge
+import it.unibo.alchemist.rx.model.observation.ObservableExtensions.ObservableSetExtensions.union
 import it.unibo.alchemist.rx.model.observation.ObservableMutableSet.Companion.toObservableSet
 
 class ObservableSetTest : FunSpec({
@@ -87,15 +91,15 @@ class ObservableSetTest : FunSpec({
             val seen = mutableListOf<Set<String>>()
             set.onChange(this) { seen.add(it) }
 
-            seen.size shouldBe 2
-            seen[1] shouldContainExactlyInAnyOrder listOf("a", "b", "c")
+            seen.size shouldBe 1
+            seen[0] shouldContainExactlyInAnyOrder listOf("a", "b", "c")
 
             set.remove("b")
             set.remove("b")
             set.remove("x")
 
-            seen.size shouldBe 3
-            seen[2] shouldContainExactlyInAnyOrder listOf("a", "c")
+            seen.size shouldBe 2
+            seen[1] shouldContainExactlyInAnyOrder listOf("a", "c")
         }
 
         test("observeMembership should emit false when element not present and true when added") {
@@ -132,6 +136,26 @@ class ObservableSetTest : FunSpec({
         }
     }
 
+    context("ObservableSet extensions") {
+
+        test("filter should filter set elements") {
+            val set = ObservableMutableSet(1, 2, 3, 4, 5)
+            set.filter { it % 2 == 0 }.toSet() shouldContainExactlyInAnyOrder listOf(2, 4)
+        }
+
+        test("merging a set should emit updates both for sets and members") {
+            val sources = listOf(observe(10), observe(20), observe(30))
+            val set: ObservableSet<Observable<Int>> = sources.toObservableSet()
+
+            var changeCounter = 0
+            set.merge().onChange(this) { changeCounter++ }
+
+            var baseline = changeCounter
+            sources[0].update { it + 100 }
+            changeCounter shouldBe baseline + 1
+        }
+    }
+
     context("set operators tests") {
         test("plus and minus operators should mirror add and remove") {
             val set = ObservableMutableSet<Int>()
@@ -145,6 +169,13 @@ class ObservableSetTest : FunSpec({
             set - 1
             (1 in set) shouldBe false
             (2 in set) shouldBe true
+        }
+
+        test("union should perform set union of two sets") {
+            val s1 = ObservableSet(1, 2, 3)
+            val s2 = ObservableSet(2, 3, 4)
+
+            (s1 union s2).toSet() shouldContainExactlyInAnyOrder setOf(1, 2, 3, 4)
         }
     }
 })

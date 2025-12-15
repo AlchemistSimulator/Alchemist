@@ -23,7 +23,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         logger.info(
             "DslBuilderProcessor: AlchemistKotlinDSL qualified name: ${AlchemistKotlinDSL::class.qualifiedName}",
         )
-        val annotationName = AlchemistKotlinDSL::class.qualifiedName ?: return emptyList()
+        val annotationName = AlchemistKotlinDSL::class.qualifiedName.orEmpty()
         val symbols = resolver.getSymbolsWithAnnotation(annotationName)
         val symbolList = symbols.toList()
         logger.info("DslBuilderProcessor: Found ${symbolList.size} symbols with @AlchemistKotlinDSL annotation")

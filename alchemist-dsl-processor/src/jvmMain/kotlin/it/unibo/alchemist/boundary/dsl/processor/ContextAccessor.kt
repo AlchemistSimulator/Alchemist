@@ -1,5 +1,7 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
+import it.unibo.alchemist.boundary.dsl.processor.data.InjectionType
+
 /**
  * Provides accessor paths for injected parameters based on context type.
  */

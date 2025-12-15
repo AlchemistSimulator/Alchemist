@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.dsl.processor
 
+import it.unibo.alchemist.boundary.dsl.processor.data.InjectionType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

@@ -2,32 +2,7 @@ package it.unibo.alchemist.boundary.dsl.processor
 
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueParameter
-
-/**
- * Types of parameters that can be injected from context.
- */
-enum class InjectionType {
-    /** Environment parameter injection. */
-    ENVIRONMENT,
-
-    /** Random generator parameter injection. */
-    GENERATOR,
-
-    /** Incarnation parameter injection. */
-    INCARNATION,
-
-    /** Node parameter injection. */
-    NODE,
-
-    /** Reaction parameter injection. */
-    REACTION,
-
-    /** Time distribution parameter injection. */
-    TIMEDISTRIBUTION,
-
-    /** Position-based filter parameter injection. */
-    FILTER,
-}
+import it.unibo.alchemist.boundary.dsl.processor.data.InjectionType
 
 /**
  * Information about a parameter injection.

@@ -19,9 +19,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
      * Processes every `@AlchemistKotlinDSL` symbol, generating helpers and reporting unresolved ones.
      */
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        logger.info(
-            "DslBuilderProcessor: Starting processing",
-        )
+        logger.info("DslBuilderProcessor: Starting processing")
         logger.info(
             "DslBuilderProcessor: AlchemistKotlinDSL qualified name: ${AlchemistKotlinDSL::class.qualifiedName}",
         )

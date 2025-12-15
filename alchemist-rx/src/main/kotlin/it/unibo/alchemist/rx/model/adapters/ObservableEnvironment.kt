@@ -23,7 +23,7 @@ import it.unibo.alchemist.rx.model.observation.ObservableMutableMap
 import it.unibo.alchemist.rx.model.observation.ObservableMutableMap.ObservableMapExtensions.upsertValue
 import kotlin.collections.addAll
 
-class ObservableEnvironment<T, P : Position<P>>(private val origin: Environment<T, P>) :
+class ObservableEnvironment<T, P : Position<out P>>(private val origin: Environment<T, P>) :
     Environment<T, P> by origin {
 
     private val observableNodes: MutableMap<Int, ObservableNode<T>> =

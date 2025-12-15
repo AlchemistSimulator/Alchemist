@@ -25,8 +25,7 @@ import org.danilopianini.util.ListSet
  *
  * > **Implementation Notes**: due to some bugs and limitation of the Kotlin compiler with java interop,
  * the compiler struggles in resolving the [Cloneable][java.lang.Cloneable] interface when delegating to [origin].
- * For this reason delegation is made explicit for methods like [isEmpty] or [observableSize]. The same holds
- * for [it.unibo.alchemist.rx.model.adapters.reaction.ReactiveTimeDistribution].
+ * For this reason delegation is made explicit for methods like [isEmpty] or [observableSize].
  *
  * @param T The type of the values associated with the nodes in the neighborhood.
  * @property origin The underlying [Neighborhood] instance providing the base functionality.

@@ -11,14 +11,16 @@ package it.unibo.alchemist.rx.model.adapters
 
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.rx.model.adapters.ObservableNode.NodeExtension.asObservableNode
 import it.unibo.alchemist.rx.model.adapters.reaction.ReactiveBinder
-import it.unibo.alchemist.rx.model.adapters.reaction.ReactiveTimeDistribution
-import it.unibo.alchemist.rx.model.adapters.reaction.RxCondition
-import it.unibo.alchemist.rx.model.adapters.reaction.RxReaction
+import it.unibo.alchemist.rx.model.adapters.reaction.ReactiveBinder.bindAndGetReactiveCondition
+import it.unibo.alchemist.rx.model.adapters.reaction.ReactiveConditionAdapter
+import it.unibo.alchemist.rx.model.adapters.reaction.ReactiveReactionAdapter
 import org.apache.commons.math3.random.RandomGenerator
 
-class RxIncarnation<T, P : Position<P>>(private val delegate: Incarnation<T, P>) {
+class RxIncarnation<T, P : Position<out P>>(private val delegate: Incarnation<T, P>) {
 
     fun createNode(
         randomGenerator: RandomGenerator,
@@ -30,16 +32,16 @@ class RxIncarnation<T, P : Position<P>>(private val delegate: Incarnation<T, P>)
         randomGenerator: RandomGenerator,
         environment: ObservableEnvironment<T, P>,
         node: ObservableNode<T>,
-        timeDistribution: ReactiveTimeDistribution<T>,
+        timeDistribution: TimeDistribution<T>,
         parameter: Any?,
-    ): RxReaction<T> = delegate.createReaction(
+    ): ReactiveReactionAdapter<T> = delegate.createReaction(
         randomGenerator,
         environment,
         node,
         timeDistribution,
         parameter,
     ).let {
-        ReactiveBinder.bindReaction(it, environment)
+        ReactiveBinder.bindAndGetReactiveReaction(it, environment)
     }
 
     @Suppress("complexity:LongParameterList")
@@ -47,21 +49,19 @@ class RxIncarnation<T, P : Position<P>>(private val delegate: Incarnation<T, P>)
         randomGenerator: RandomGenerator,
         environment: ObservableEnvironment<T, P>,
         node: ObservableNode<T>,
-        timeDistribution: ReactiveTimeDistribution<T>,
-        reaction: RxReaction<T>,
+        timeDistribution: TimeDistribution<T>,
+        reaction: Reaction<T>,
         additionalParameters: Any?,
-    ): RxCondition<T> = delegate.createCondition(
+    ): ReactiveConditionAdapter<T> = delegate.createCondition(
         randomGenerator,
         environment,
         node,
         timeDistribution,
         reaction,
         additionalParameters,
-    ).let {
-        ReactiveBinder.bindCondition(it, reaction, environment)
-    }
+    ).bindAndGetReactiveCondition(environment, reaction)
 
     companion object {
-        fun <T, P : Position<P>> Incarnation<T, P>.asReactive(): RxIncarnation<T, P> = RxIncarnation(this)
+        fun <T, P : Position<out P>> Incarnation<T, P>.asReactive(): RxIncarnation<T, P> = RxIncarnation(this)
     }
 }

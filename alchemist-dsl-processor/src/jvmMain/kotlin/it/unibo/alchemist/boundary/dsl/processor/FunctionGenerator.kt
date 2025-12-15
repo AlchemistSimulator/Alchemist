@@ -2,6 +2,9 @@ package it.unibo.alchemist.boundary.dsl.processor
 
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.KSValueParameter
+import it.unibo.alchemist.boundary.dsl.processor.data.ConstructorInfo
+import it.unibo.alchemist.boundary.dsl.processor.data.InjectionContext
+import it.unibo.alchemist.boundary.dsl.processor.data.TypeParameterInfo
 
 /** Emits the signature, call site, and accessor for generated DSL helpers. */
 object FunctionGenerator {

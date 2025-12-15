@@ -4,6 +4,7 @@ import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.KSValueParameter
 import it.unibo.alchemist.boundary.dsl.processor.data.ConstructorInfo
 import it.unibo.alchemist.boundary.dsl.processor.data.InjectionContext
+import it.unibo.alchemist.boundary.dsl.processor.data.InjectionType
 
 /** Creates expressions for constructor arguments combining injections and call-site values. */
 object ConstructorParamBuilder {

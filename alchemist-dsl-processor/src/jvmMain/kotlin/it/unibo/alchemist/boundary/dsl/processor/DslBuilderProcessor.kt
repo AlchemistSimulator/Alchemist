@@ -10,81 +10,47 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.validate
 import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL
+import it.unibo.alchemist.boundary.dsl.processor.data.ConstructorInfo
+import it.unibo.alchemist.boundary.dsl.processor.data.GenerationContext
+import it.unibo.alchemist.boundary.dsl.processor.data.InjectionContext
+import it.unibo.alchemist.boundary.dsl.processor.data.InjectionType
+import it.unibo.alchemist.boundary.dsl.processor.data.TypeParameterInfo
 import java.io.PrintWriter
 import java.nio.charset.StandardCharsets
 
 /** Symbol processor that emits DSL helpers for `@AlchemistKotlinDSL` classes. */
 class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) : SymbolProcessor {
+
     /**
-     * Processes every `@AlchemistKotlinDSL` symbol, generating helpers and reporting unresolved ones.
+     * Processes every `@AlchemistKotlinDSL` symbol,
+     * generating helpers and returning unresolved ones.
      */
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        logger.info("DslBuilderProcessor: Starting processing")
-        logger.info(
-            "DslBuilderProcessor: AlchemistKotlinDSL qualified name: ${AlchemistKotlinDSL::class.qualifiedName}",
-        )
-        val annotationName = AlchemistKotlinDSL::class.qualifiedName.orEmpty()
-        val symbols = resolver.getSymbolsWithAnnotation(annotationName)
-        val symbolList = symbols.toList()
-        logger.info("DslBuilderProcessor: Found ${symbolList.size} symbols with @AlchemistKotlinDSL annotation")
-        symbolList.forEach { symbol ->
-            val qualifiedName = when (symbol) {
-                is KSClassDeclaration -> symbol.qualifiedName?.asString() ?: "unknown"
-                else -> symbol.toString()
+        logger.dslInfo("Starting processing")
+        val annotationName = AlchemistKotlinDSL::class.qualifiedName
+        check(!annotationName.isNullOrBlank()) {
+            "The Alchemist Kotlin DSL annotation name is invalid or missing: '$annotationName'"
+        }
+        logger.dslInfo("Alchemist DSL annotation: $annotationName")
+        return resolver.getSymbolsWithAnnotation(annotationName)
+            .onEach { symbol ->
+                val qualifiedName = when (symbol) {
+                    is KSClassDeclaration -> symbol.qualifiedName?.asString() ?: "unknown"
+                    else -> symbol.toString()
+                }
+                logger.dslInfo("Found symbol: $qualifiedName")
             }
-            logger.info("DslBuilderProcessor: Found symbol: $qualifiedName")
-        }
-        val ret = symbolList.filter { !it.validate() }.toList()
-        symbolList
-            .filter { it is KSClassDeclaration && it.validate() }
-            .forEach { classDecl ->
-                processClass(classDecl as KSClassDeclaration)
+            .fold(emptyList()) { invalidElements, symbol ->
+                when {
+                    !symbol.validate() -> invalidElements + symbol
+                    else -> {
+                        if (symbol is KSClassDeclaration) {
+                            processClass(symbol)
+                        }
+                        invalidElements
+                    }
+                }
             }
-        return ret
-    }
-
-    private fun shouldInjectType(injectionType: InjectionType, annotationValues: Map<String, Any?>): Boolean =
-        when (injectionType) {
-            InjectionType.ENVIRONMENT -> annotationValues["injectEnvironment"] as? Boolean ?: true
-            InjectionType.GENERATOR -> annotationValues["injectGenerator"] as? Boolean ?: true
-            InjectionType.INCARNATION -> annotationValues["injectIncarnation"] as? Boolean ?: true
-            InjectionType.NODE -> annotationValues["injectNode"] as? Boolean ?: true
-            InjectionType.REACTION -> annotationValues["injectReaction"] as? Boolean ?: true
-            InjectionType.TIMEDISTRIBUTION -> true
-            InjectionType.FILTER -> true
-        }
-
-    private fun processClass(classDecl: KSClassDeclaration) {
-        logger.info("DslBuilderProcessor: Processing class ${classDecl.simpleName.asString()}")
-        logger.info("DslBuilderProcessor: Class qualified name: ${classDecl.qualifiedName?.asString()}")
-        val annotation = classDecl.annotations.firstOrNull {
-            it.shortName.asString() == "AlchemistKotlinDSL"
-        }
-        if (annotation == null) {
-            logger.warn("Class ${classDecl.simpleName.asString()} has no @AlchemistKotlinDSL annotation")
-            return
-        }
-        val annotationValues = annotation.arguments
-            .mapNotNull { arg -> arg.name?.asString()?.let { it to arg.value } }
-            .toMap()
-        logger.info("DslBuilderProcessor: Annotation values: $annotationValues")
-        val manualScope = annotationValues["scope"] as? String
-        logger.info("DslBuilderProcessor: Manual scope from annotation: '$manualScope'")
-        val functionName = (annotationValues["functionName"] as? String)?.takeIf { it.isNotEmpty() }
-            ?: classDecl.simpleName.asString().replaceFirstChar { it.lowercaseChar() }
-        val constructor = ConstructorFinder.findConstructor(classDecl)
-        if (constructor == null) {
-            logger.warn("Class ${classDecl.simpleName.asString()} has no usable constructor")
-            return
-        }
-        val parameters = constructor.parameters
-        logger.info("DslBuilderProcessor: Found constructor with ${parameters.size} parameters")
-        parameters.forEachIndexed { index, param ->
-            val typeName = param.type.resolve().declaration.qualifiedName?.asString() ?: "unknown"
-            logger.info("DslBuilderProcessor: Parameter $index: ${param.name?.asString()} : $typeName")
-        }
-        val generationContext = buildGenerationContext(classDecl, functionName, parameters, annotationValues)
-        writeGeneratedFile(classDecl, generationContext)
     }
 
     // Gather all derived state (injections, type params, constructor metadata) before emitting code.
@@ -95,9 +61,9 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         annotationValues: Map<String, Any?>,
     ): GenerationContext {
         val injectionIndices = ParameterInjector.findInjectionIndices(parameters)
-        logger.info("DslBuilderProcessor: Injection indices: $injectionIndices")
+        logger.dslInfo("Injection indices: $injectionIndices")
         val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-        logger.info("DslBuilderProcessor: Determined context type: $contextType")
+        logger.dslInfo("Determined context type: $contextType")
         val paramsToSkip = ParameterInjector.getInjectionParams(injectionIndices, annotationValues, contextType)
         val remainingParams = parameters.filterIndexed { index, _ -> !paramsToSkip.contains(index) }
         val (initialTypeParamNames, initialTypeParamBounds) = TypeExtractor.extractTypeParameters(classDecl)
@@ -162,6 +128,51 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
             needsMapEnvironment = needsMapEnvironment,
         )
     }
+
+    private fun shouldInjectType(injectionType: InjectionType, annotationValues: Map<String, Any?>): Boolean =
+        when (injectionType) {
+            InjectionType.ENVIRONMENT -> annotationValues["injectEnvironment"] as? Boolean ?: true
+            InjectionType.GENERATOR -> annotationValues["injectGenerator"] as? Boolean ?: true
+            InjectionType.INCARNATION -> annotationValues["injectIncarnation"] as? Boolean ?: true
+            InjectionType.NODE -> annotationValues["injectNode"] as? Boolean ?: true
+            InjectionType.REACTION -> annotationValues["injectReaction"] as? Boolean ?: true
+            InjectionType.TIMEDISTRIBUTION -> true
+            InjectionType.FILTER -> true
+        }
+
+    private fun processClass(classDecl: KSClassDeclaration) {
+        logger.dslInfo("Processing class ${classDecl.simpleName.asString()}")
+        logger.dslInfo("Class qualified name: ${classDecl.qualifiedName?.asString()}")
+        val annotation = classDecl.annotations.firstOrNull {
+            it.shortName.asString() == "AlchemistKotlinDSL"
+        }
+        if (annotation == null) {
+            logger.warn("Class ${classDecl.simpleName.asString()} has no @AlchemistKotlinDSL annotation")
+            return
+        }
+        val annotationValues = annotation.arguments
+            .mapNotNull { arg -> arg.name?.asString()?.let { it to arg.value } }
+            .toMap()
+        logger.dslInfo("Annotation values: $annotationValues")
+        val manualScope = annotationValues["scope"] as? String
+        logger.dslInfo("Manual scope from annotation: '$manualScope'")
+        val functionName = (annotationValues["functionName"] as? String)?.takeIf { it.isNotEmpty() }
+            ?: classDecl.simpleName.asString().replaceFirstChar { it.lowercaseChar() }
+        val constructor = ConstructorFinder.findConstructor(classDecl)
+        if (constructor == null) {
+            logger.warn("Class ${classDecl.simpleName.asString()} has no usable constructor")
+            return
+        }
+        val parameters = constructor.parameters
+        logger.dslInfo("Found constructor with ${parameters.size} parameters")
+        parameters.forEachIndexed { index, param ->
+            val typeName = param.type.resolve().declaration.qualifiedName?.asString() ?: "unknown"
+            logger.dslInfo("Parameter $index: ${param.name?.asString()} : $typeName")
+        }
+        val generationContext = buildGenerationContext(classDecl, functionName, parameters, annotationValues)
+        writeGeneratedFile(classDecl, generationContext)
+    }
+
     private fun writeGeneratedFile(classDecl: KSClassDeclaration, context: GenerationContext) {
         val containingFile = classDecl.containingFile
         val dependencies = if (containingFile != null) {
@@ -432,5 +443,9 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
             context.typeParams.classTypeParamNames,
         )
         writer.println("    $constructorCall")
+    }
+
+    companion object {
+        private fun KSPLogger.dslInfo(message: String) = info("${DslBuilderProcessor::class.simpleName}: $message")
     }
 }

@@ -13,24 +13,19 @@ object ConstructorFinder {
      * Prefers the primary constructor, otherwise returns the constructor
      * with the most parameters.
      *
-     * @param classDecl The class declaration to find a constructor for
+     * @param classDeclaration The class declaration to find a constructor for
      * @return The found constructor, or null if no suitable constructor exists
      */
-    fun findConstructor(classDecl: KSClassDeclaration): KSFunctionDeclaration? =
-        classDecl.primaryConstructor?.takeIf { isPublicConstructor(it) } ?: classDecl
-            .getAllFunctions()
-            .filter { function ->
-                val simpleName = function.simpleName.asString()
-                (simpleName == "<init>" || simpleName == classDecl.simpleName.asString()) &&
-                    isPublicConstructor(function)
-            }
-            .sortedByDescending { it.parameters.size }
-            .firstOrNull()
+    fun findConstructor(classDeclaration: KSClassDeclaration): KSFunctionDeclaration? =
+        classDeclaration.primaryConstructor?.takeIf { isPublicConstructor(it) }
+            ?: classDeclaration.getAllFunctions()
+                .filter { function ->
+                    val simpleName = function.simpleName.asString()
+                    (simpleName == "<init>" || simpleName == classDeclaration.simpleName.asString()) &&
+                        isPublicConstructor(function)
+                }
+                .maxByOrNull { it.parameters.size }
 
-    private fun isPublicConstructor(function: KSFunctionDeclaration): Boolean {
-        val modifiers = function.modifiers
-        return !modifiers.contains(Modifier.PRIVATE) &&
-            !modifiers.contains(Modifier.PROTECTED) &&
-            !modifiers.contains(Modifier.INTERNAL)
-    }
+    private fun isPublicConstructor(function: KSFunctionDeclaration): Boolean =
+        function.modifiers.none { it == Modifier.PRIVATE || it == Modifier.PROTECTED || it == Modifier.INTERNAL }
 }

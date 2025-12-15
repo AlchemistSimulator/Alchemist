@@ -10,7 +10,6 @@
 package it.unibo.alchemist.boundary.dsl.processor.data
 
 import it.unibo.alchemist.boundary.dsl.processor.ContextType
-import it.unibo.alchemist.boundary.dsl.processor.InjectionType
 
 /**
  * Represents the injected values and annotation-driven flags available during generation.

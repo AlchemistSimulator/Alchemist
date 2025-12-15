@@ -51,27 +51,20 @@ object BoundProcessor {
     private fun formatTypeArgument(arg: KSTypeArgument, classTypeParamNames: List<String>): String = when {
         arg.type == null -> "*"
         arg.variance == Variance.STAR -> "*"
-        arg.variance == Variance.CONTRAVARIANT -> {
-            arg.type?.let {
-                val typeStr = TypeExtractor.extractTypeString(it, emptyList())
-                val replaced = replaceClassTypeParamReferences(typeStr, classTypeParamNames)
-                "in $replaced"
-            } ?: "*"
-        }
-        arg.variance == Variance.COVARIANT -> {
-            arg.type?.let {
-                val typeStr = TypeExtractor.extractTypeString(it, emptyList())
-                val replaced = replaceClassTypeParamReferences(typeStr, classTypeParamNames)
-                "out $replaced"
-            } ?: "*"
-        }
-        else -> {
-            arg.type?.let {
-                val typeStr = TypeExtractor.extractTypeString(it, emptyList())
-                replaceClassTypeParamReferences(typeStr, classTypeParamNames)
-            } ?: "*"
-        }
+        arg.variance == Variance.CONTRAVARIANT -> arg.transformWithVariance(classTypeParamNames, "in")
+        arg.variance == Variance.COVARIANT -> arg.transformWithVariance(classTypeParamNames, "out")
+        else -> arg.transformWithVariance(classTypeParamNames)
     }
+
+    private fun KSTypeArgument.transformWithVariance(
+        classTypeParamNames: List<String>,
+        variance: String? = null,
+    ): String = type?.let {
+        val typeStr = TypeExtractor.extractTypeString(it, emptyList())
+        sequenceOf(variance, replaceClassTypeParamReferences(typeStr, classTypeParamNames))
+            .filterNotNull()
+            .joinToString(" ")
+    } ?: "*"
 
     private fun replaceClassTypeParamReferences(boundStr: String, classTypeParamNames: List<String>): String {
         // Strip redundant qualification when the matcher references

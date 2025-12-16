@@ -1,3 +1,15 @@
+## [42.3.21](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.20...42.3.21) (2025-12-16)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v18.5.1 (patch) ([#5027](https://github.com/AlchemistSimulator/Alchemist/issues/5027)) ([e15e840](https://github.com/AlchemistSimulator/Alchemist/commit/e15e8404e3fa4dcb2fc241ca8b535c4a93727c77))
+* **deps:** update plugin hugo to v0.12.0 ([#5026](https://github.com/AlchemistSimulator/Alchemist/issues/5026)) ([1742fe0](https://github.com/AlchemistSimulator/Alchemist/commit/1742fe0adce61ee8236b476ab8157d3b8a1646aa))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([964891b](https://github.com/AlchemistSimulator/Alchemist/commit/964891b48a1c6538b1d482af3257af9782396e8f))
+* **build:** update the javadoc.io cache ([3fa575b](https://github.com/AlchemistSimulator/Alchemist/commit/3fa575b92dfe3c39cfb825e363fa8c55dcd680ef))
+
 ## [42.3.20](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.19...42.3.20) (2025-12-14)
 
 ### Dependency updates

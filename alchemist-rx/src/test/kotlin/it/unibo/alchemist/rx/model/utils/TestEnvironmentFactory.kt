@@ -67,6 +67,7 @@ object TestEnvironmentFactory {
                 })
                 play()
                 run()
+                error.ifPresent { throw it }
             }
         } else {
             Continuous2DEnvironment(testIncarnation).asObservableEnvironment().apply {
@@ -87,7 +88,9 @@ object TestEnvironmentFactory {
         setup: ObservableEnvironment<Double, Euclidean2DPosition>.() -> Unit,
         onFinishChecks: ObservableEnvironment<Double, Euclidean2DPosition>.() -> Unit,
     ) {
-        val env = Continuous2DEnvironment(testIncarnation).asObservableEnvironment()
+        val env = Continuous2DEnvironment(testIncarnation).asObservableEnvironment().apply {
+            linkingRule = ConnectWithinDistance(1.5)
+        }
         env.addTerminator(StepCount(100))
 
         with(ReactiveEngine(env, ArrayIndexedPriorityQueue())) {
@@ -102,6 +105,7 @@ object TestEnvironmentFactory {
             })
             play()
             run()
+            error.ifPresent { throw it }
         }
     }
 

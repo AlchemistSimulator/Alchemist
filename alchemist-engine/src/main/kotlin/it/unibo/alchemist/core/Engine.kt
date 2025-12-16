@@ -78,7 +78,7 @@ open class Engine<T, P : Position<out P>>(
     protected val statusLocks: Map<Status, SynchBox> = Status.entries.associateWith { SynchBox() }
 
     /** Queue of scheduled simulation commands. */
-    private val commands: BlockingQueue<CheckedRunnable> = LinkedBlockingQueue()
+    protected val commands: BlockingQueue<CheckedRunnable> = LinkedBlockingQueue()
 
     /** Queue of updates to be processed after execution. */
     protected val afterExecutionUpdates: Queue<Update> = ArrayDeque()
@@ -177,8 +177,16 @@ open class Engine<T, P : Position<out P>>(
     /** @return the last error encountered, if any. */
     override fun getError(): Optional<Throwable> = error
 
+    protected fun setError(error: Optional<Throwable>) {
+        this.error = error
+    }
+
     /** @return the current simulation status. */
     override fun getStatus(): Status = status
+
+    protected fun setStatus(status: Status) {
+        this.status = status
+    }
 
     /** @return the current step (thread-safe). */
     @Synchronized override fun getStep(): Long = currentStep
@@ -334,7 +342,7 @@ open class Engine<T, P : Position<out P>>(
         monitors.remove(op)
     }
 
-    private fun processCommandsWhileIn(status: Status) {
+    protected fun processCommandsWhileIn(status: Status) {
         while (this.status == status) {
             processCommand(commands.take())
         }
@@ -635,7 +643,7 @@ open class Engine<T, P : Position<out P>>(
         }
     }
 
-    private companion object {
+    protected companion object {
         /** Logger instance. */
         val LOGGER: Logger = LoggerFactory.getLogger(Engine::class.java)
     }

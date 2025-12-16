@@ -10,11 +10,15 @@
 package it.unibo.alchemist.rx.model.utils
 
 import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.core.ArrayIndexedPriorityQueue
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.SupportedIncarnations
+import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.terminators.StepCount
+import it.unibo.alchemist.rx.core.ReactiveEngine
 import it.unibo.alchemist.rx.model.adapters.ObservableEnvironment
 import it.unibo.alchemist.rx.model.adapters.ObservableEnvironment.Companion.asObservableEnvironment
 import it.unibo.alchemist.rx.model.adapters.ObservableNode
@@ -68,6 +72,36 @@ object TestEnvironmentFactory {
             Continuous2DEnvironment(testIncarnation).asObservableEnvironment().apply {
                 linkingRule = ConnectWithinDistance(neighborhoodRadius)
             }.body()
+        }
+    }
+
+    /**
+     * Runs a simple simulation with a [ReactiveEngine]. You can set up the simulation and the environment
+     * in the [setup] block, then you can perform checks after execution has terminated with [onFinishChecks]
+     * block.
+     *
+     * @param setup the code block to setup this simulation environment
+     * @param onFinishChecks checks to perform on the environment when this simulation finishes
+     */
+    fun withReactiveEngine(
+        setup: ObservableEnvironment<Double, Euclidean2DPosition>.() -> Unit,
+        onFinishChecks: ObservableEnvironment<Double, Euclidean2DPosition>.() -> Unit,
+    ) {
+        val env = Continuous2DEnvironment(testIncarnation).asObservableEnvironment()
+        env.addTerminator(StepCount(100))
+
+        with(ReactiveEngine(env, ArrayIndexedPriorityQueue())) {
+            addOutputMonitor(object : OutputMonitor<Double, Euclidean2DPosition> {
+                override fun initialized(environment: Environment<Double, Euclidean2DPosition>) {
+                    environment.asObservableEnvironment().setup()
+                }
+
+                override fun finished(environment: Environment<Double, Euclidean2DPosition>, time: Time, step: Long) {
+                    environment.asObservableEnvironment().onFinishChecks()
+                }
+            })
+            play()
+            run()
         }
     }
 

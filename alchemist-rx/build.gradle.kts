@@ -9,6 +9,7 @@ plugins {
 dependencies {
     api(alchemist("api"))
     api(alchemist("implementationbase"))
+    api(alchemist("engine"))
     implementation(libs.arrow.core)
     implementation(libs.boilerplate)
 

@@ -123,6 +123,7 @@ class ObservableEnvironment<T, P : Position<out P>>(private val origin: Environm
          * @receiver the environment to be wrapped as an observable environment.
          * @return an [ObservableEnvironment] instance wrapping the current environment.
          */
-        fun <T, P : Position<P>> Environment<T, P>.asObservableEnvironment() = ObservableEnvironment(this)
+        fun <T, P : Position<out P>> Environment<T, P>.asObservableEnvironment() = this as? ObservableEnvironment<T, P>
+            ?: ObservableEnvironment(this)
     }
 }

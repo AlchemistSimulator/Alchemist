@@ -12,12 +12,14 @@ package it.unibo.alchemist.rx.model.utils
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.ArrayIndexedPriorityQueue
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.terminators.StepCount
+import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.rx.core.ReactiveEngine
 import it.unibo.alchemist.rx.model.adapters.ObservableEnvironment
 import it.unibo.alchemist.rx.model.adapters.ObservableEnvironment.Companion.asObservableEnvironment
@@ -30,11 +32,14 @@ object TestEnvironmentFactory {
 
     private val rnd = RandomGeneratorFactory.createRandomGenerator(Random(123))
 
-    private val testIncarnation = SupportedIncarnations.getAvailableIncarnations().first().let { name ->
-        SupportedIncarnations.get<Double, Euclidean2DPosition>(name).orElseThrow {
-            IllegalStateException("Canno find incarnation \"$name\"")
+    val testIncarnation: Incarnation<Double, Euclidean2DPosition> =
+        SupportedIncarnations.getAvailableIncarnations().first().let { name ->
+            SupportedIncarnations.get<Double, Euclidean2DPosition>(name).orElseThrow {
+                IllegalStateException("Canno find incarnation \"$name\"")
+            }
         }
-    }
+
+    val testExponentialTimeDistribution = ExponentialTime<Double>(1.0, rnd)
 
     /**
      * Runs the give [body] with a test [ObservableEnvironment]. If [withEngine] is set to true,

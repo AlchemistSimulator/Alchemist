@@ -11,7 +11,9 @@ package it.unibo.alchemist.rx.model.engine
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.core.ArrayIndexedPriorityQueue
 import it.unibo.alchemist.model.Action
+import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
@@ -20,11 +22,21 @@ import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.actions.SetLocalMoleculeConcentration
 import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.conditions.MoleculeHasConcentration
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.reactions.ChemicalReaction
+import it.unibo.alchemist.model.terminators.StepCount
 import it.unibo.alchemist.model.timedistributions.DiracComb
+import it.unibo.alchemist.rx.core.ReactiveEngine
+import it.unibo.alchemist.rx.model.adapters.ObservableEnvironment.Companion.asObservableEnvironment
 import it.unibo.alchemist.rx.model.adapters.ObservableNode
+import it.unibo.alchemist.rx.model.utils.TestEnvironmentFactory
 import it.unibo.alchemist.rx.model.utils.TestEnvironmentFactory.spawnNode
 import it.unibo.alchemist.rx.model.utils.TestEnvironmentFactory.withReactiveEngine
+import org.mockito.ArgumentCaptor
+import org.mockito.Mockito.atLeast
+import org.mockito.Mockito.spy
+import org.mockito.Mockito.verify
 
 @Suppress("AssignedValueIsNeverRead")
 class ReactiveEngineTest : FunSpec({
@@ -157,5 +169,68 @@ class ReactiveEngineTest : FunSpec({
         }) {
             r2Executed shouldBe true
         }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    test("batch updates should trigger single reschedule") {
+        val scheduler = spy(ArrayIndexedPriorityQueue<Double>())
+        lateinit var node1: ObservableNode<Double>
+        lateinit var node2: ObservableNode<Double>
+        val molA = Molecule { "A" }
+        val molB = Molecule { "B" }
+
+        val env = Continuous2DEnvironment(TestEnvironmentFactory.testIncarnation).asObservableEnvironment().apply {
+            linkingRule = ConnectWithinDistance(1.5)
+        }
+        env.addTerminator(StepCount(1))
+
+        val engine = ReactiveEngine(env, scheduler)
+
+        node1 = env.spawnNode(0.0, 0.0)
+        node2 = env.spawnNode(1.0, 0.0)
+
+        val r1 = ChemicalReaction(node1, DiracComb(2.0)).apply {
+            actions = listOf(object : AbstractAction<Double>(node1) {
+                override fun execute() {
+                    node1.setConcentration(molA, 1.0)
+                    node1.setConcentration(molB, 1.0)
+                }
+                override fun getContext() = Context.LOCAL
+                override fun cloneAction(node: Node<Double>, reaction: Reaction<Double>) = this
+            })
+        }
+        node1.addReaction(r1)
+
+        val r2 = ChemicalReaction(node2, TestEnvironmentFactory.testExponentialTimeDistribution).apply {
+            conditions = listOf(object : AbstractCondition<Double>(node2) {
+                override fun getContext() = Context.NEIGHBORHOOD
+
+                override fun getPropensityContribution(): Double {
+                    val neighbors = env.getNeighborhood(node2).neighbors
+                    val concA = neighbors.sumOf { it.getConcentration(molA) ?: 0.0 }
+                    val concB = neighbors.sumOf { it.getConcentration(molB) ?: 0.0 }
+                    return 1.0 + concA + concB
+                }
+                override fun isValid(): Boolean = true
+
+                init {
+                    declareDependencyOn(molA)
+                    declareDependencyOn(molB)
+                }
+            })
+        }
+        node2.addReaction(r2)
+
+        engine.play()
+        engine.run()
+
+        val captor = ArgumentCaptor.forClass(Actionable::class.java) as ArgumentCaptor<*>
+        verify(scheduler, atLeast(0)).updateReaction(captor.capture() as Actionable<Double?>?)
+
+        val r2Updates = captor.allValues.filter {
+            (it as? Reaction<Double>)?.node?.id == node2.id
+        }
+
+        r2Updates.size shouldBe 1
     }
 })

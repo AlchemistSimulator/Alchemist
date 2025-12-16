@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
@@ -21,8 +22,10 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.rx.model.adapters.ObservableEnvironment
 import it.unibo.alchemist.rx.model.adapters.reaction.ReactiveReactionAdapter
 import it.unibo.alchemist.rx.model.adapters.reaction.asReactive
+import java.util.LinkedHashSet
 import java.util.Optional
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
 import org.jooq.lambda.fi.lang.CheckedRunnable
 import org.slf4j.LoggerFactory
 
@@ -45,6 +48,8 @@ class ReactiveEngine<T, P : Position<out P>>(
 ) : Engine<T, P>(environment, scheduler) {
 
     private val reactionWrappers = ConcurrentHashMap<Actionable<T>, ReactiveReactionAdapter<T>>()
+    private val pendingUpdates = LinkedHashSet<Actionable<T>>()
+    private var batchingUpdates = AtomicBoolean(false)
 
     @Suppress("DuplicatedCode")
     override fun doStep() {
@@ -62,10 +67,17 @@ class ReactiveEngine<T, P : Position<out P>>(
 
         if (scheduledTime.isFinite && nextReaction.canExecute()) {
             nextReaction.conditions.forEach { it.reactionReady() }
-            nextReaction.execute()
+            batchingUpdates.set(true)
+            try {
+                nextReaction.execute()
+            } finally {
+                batchingUpdates.set(false)
+            }
+            pendingUpdates.remove(nextReaction)
+            pendingUpdates.forEach { updateReactionInScheduler(it, executed = false) }
+            pendingUpdates.clear()
         }
 
-        // Update the executed reaction itself
         updateReactionInScheduler(nextReaction, executed = true)
 
         monitors.forEach { it.stepDone(environment, nextReaction, time, step) }
@@ -79,7 +91,6 @@ class ReactiveEngine<T, P : Position<out P>>(
     override fun run() {
         newStatus(Status.READY)
 
-        // Initialize and schedule all reactions
         environment.nodes.forEach { node ->
             node.reactions.forEach { reaction ->
                 scheduleReaction(reaction)
@@ -128,7 +139,11 @@ class ReactiveEngine<T, P : Position<out P>>(
             scheduler.addReaction(reactiveReaction)
 
             reactiveReaction.rescheduleRequest.onChange(this) {
-                updateReactionInScheduler(reactiveReaction, executed = false)
+                if (batchingUpdates.get()) {
+                    pendingUpdates.add(reactiveReaction)
+                } else {
+                    updateReactionInScheduler(reactiveReaction, executed = false)
+                }
             }
         } else {
             actionable.initializationComplete(currentTime, environment)

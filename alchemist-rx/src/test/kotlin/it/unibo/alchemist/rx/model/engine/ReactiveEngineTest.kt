@@ -87,7 +87,6 @@ class ReactiveEngineTest : FunSpec({
                     init {
                         declareDependencyOn(molecule)
                     }
-                    override fun cloneCondition(node: Node<Double>, reaction: Reaction<Double>) = this
                 })
 
                 actions = listOf(object : AbstractAction<Double>(node2) {
@@ -103,6 +102,59 @@ class ReactiveEngineTest : FunSpec({
             node2.addReaction(reaction2)
         }) {
             node1.contains(molecule) shouldBe true
+            r2Executed shouldBe true
+        }
+    }
+
+    test("movement triggers neighobrhood reactions") {
+        lateinit var node1: ObservableNode<Double>
+        lateinit var node2: ObservableNode<Double>
+        val molecule = Molecule { "A" }
+        var r2Executed = false
+
+        withReactiveEngine({
+            node1 = spawnNode(0.0, 0.0)
+            ChemicalReaction(node1, DiracComb(1.0)).apply {
+                actions = listOf(SetLocalMoleculeConcentration(node1, molecule, 1.0))
+                node1.addReaction(this)
+            }
+
+            node2 = spawnNode(10.0, 0.0)
+            ChemicalReaction(node2, DiracComb(1.0)).apply {
+                conditions = listOf(object : AbstractCondition<Double>(node2) {
+                    override fun getContext() = Context.NEIGHBORHOOD
+                    override fun getPropensityContribution(): Double = 1.0
+                    override fun isValid(): Boolean = getNeighborhood(node2).neighbors.any {
+                        it.getConcentration(molecule) == 1.0
+                    }
+                    init {
+                        declareDependencyOn(molecule)
+                    }
+                })
+
+                actions = listOf(object : AbstractAction<Double>(node2) {
+                    override fun execute() {
+                        r2Executed = true
+                    }
+                    override fun getContext(): Context = Context.LOCAL
+                    override fun cloneAction(node: Node<Double>, reaction: Reaction<Double>): Action<Double> = this
+                })
+                node2.addReaction(this)
+            }
+
+            ChemicalReaction(node2, DiracComb(0.5)).apply {
+                actions = listOf(object : AbstractAction<Double>(node2) {
+                    override fun execute() {
+                        moveNodeToPosition(node2, makePosition(1.0, 0.0))
+                    }
+                    override fun getContext(): Context = Context.LOCAL
+                    override fun cloneAction(node: Node<Double>, reaction: Reaction<Double>): Action<Double> = this
+                })
+                node2.addReaction(this)
+            }
+
+            node2.reactions.firstOrNull()?.canExecute() shouldBe false
+        }) {
             r2Executed shouldBe true
         }
     }

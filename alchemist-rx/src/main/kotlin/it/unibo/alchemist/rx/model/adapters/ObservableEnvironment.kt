@@ -21,13 +21,22 @@ import it.unibo.alchemist.rx.model.observation.Observable
 import it.unibo.alchemist.rx.model.observation.ObservableMap
 import it.unibo.alchemist.rx.model.observation.ObservableMutableMap
 import it.unibo.alchemist.rx.model.observation.ObservableMutableMap.ObservableMapExtensions.upsertValue
+import it.unibo.alchemist.rx.model.observation.ObservableMutableSet
+import it.unibo.alchemist.rx.model.observation.ObservableMutableSet.Companion.toObservableSet
+import it.unibo.alchemist.rx.model.observation.ObservableSet
 import kotlin.collections.addAll
 
+/**
+ * An adapter for [Environment] to make it observable.
+ */
 class ObservableEnvironment<T, P : Position<out P>>(private val origin: Environment<T, P>) :
     Environment<T, P> by origin {
 
     private val observableNodes: MutableMap<Int, ObservableNode<T>> =
         origin.nodes.associate { it.id to it.asObservableNode() }.toMutableMap()
+
+    private val observableNodesSet: ObservableMutableSet<ObservableNode<T>> =
+        observableNodes.values.toSet().toObservableSet()
 
     private val observeNodePositions: ObservableMutableMap<Int, P> =
         ObservableMutableMap(origin.nodes.associate { it.id to getPosition(it) }.toMutableMap())
@@ -37,16 +46,56 @@ class ObservableEnvironment<T, P : Position<out P>>(private val origin: Environm
             origin.nodes.associate { it.id to getNeighborhood(it).asObservable() }.toMutableMap(),
         )
 
+    /**
+     * Holder for the reactive alternative of the associated [it.unibo.alchemist.model.Incarnation].
+     */
     val rxIncarnation: RxIncarnation<T, P> = origin.incarnation.asReactive()
 
+    /**
+     * Return an observable view (as an [ObservableSet]) of the [ObservableNode]s contained
+     * in this environment.
+     *
+     * @return an observable collection of the nodes inside this environment
+     */
+    fun observeNodes(): ObservableSet<ObservableNode<T>> = observableNodesSet
+
+    /**
+     * Yields an observable view of the given node.
+     *
+     * @param node the node to be observed
+     * @return an [ObservableNode] instance of that node
+     */
     fun observeNode(node: Node<T>): ObservableNode<T> = observableNodes.getOrPut(node.id) { node.asObservableNode() }
 
+    /**
+     * Yields an observable view of the given node's position in this environment.
+     * @param node the node to observe
+     * @return an [Observable] of [Option]s wrapping the input node's position. [none][arrow.core.none] if
+     * the input node has no associated positions.
+     */
     fun observeNodePosition(node: Node<T>): Observable<Option<P>> = observeNodePositions[node.id]
 
+    /**
+     * Observe the number of nodes in this environment.
+     *
+     * @return an [Observable] of integers representing the number of nodes contained in this environment.
+     */
     fun observeNodeCounts(): Observable<Int> = observeNodePositions.map { it.keys.size }
 
+    /**
+     * @return a [ObservableMap] associating node ids to their positions.
+     */
     fun observeAnyMovement(): ObservableMap<Int, P> = observeNodePositions
 
+    /**
+     * Yields the [neighborhood][ObservableNeighborhood] of the input [node] as an [Option],
+     * [none][arrow.core.none] if the input node does not have an associated neighborhood.
+     * The returned observable emits each time a change in this node's neighborhood is detected,
+     * i.e. the input node is moved or some its members are removed/added to its neighborhood.
+     *
+     * @param node the center of the neighborhood to be observed.
+     * @return an [Observable] of the input node's [neighborhood][ObservableNeighborhood].
+     */
     fun observeNeighborhood(node: Node<T>): Observable<Option<ObservableNeighborhood<T>>> =
         observableNeighbourhood[node.id]
 
@@ -55,6 +104,7 @@ class ObservableEnvironment<T, P : Position<out P>>(private val origin: Environm
         return origin.addNode(observableNode, position).also {
             if (it) {
                 observableNodes[node.id] = observableNode
+                observableNodesSet.add(observableNode)
                 observeNodePositions[node.id] = position
                 updateNeighborhood(observableNode)
             }
@@ -64,7 +114,7 @@ class ObservableEnvironment<T, P : Position<out P>>(private val origin: Environm
     override fun removeNode(node: Node<T>) {
         val oldNeighbourhood = getNeighborhood(node)
         origin.removeNode(node)
-        observableNodes.remove(node.id)
+        observableNodes.remove(node.id)?.let(observableNodesSet::remove)
         updateNeighborhood(node, oldNeighbourhood, isAddition = false)
         observableNeighbourhood.remove(node.id)
         observeNodePositions.remove(node.id)

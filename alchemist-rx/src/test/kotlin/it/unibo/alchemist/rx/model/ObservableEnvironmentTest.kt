@@ -111,6 +111,25 @@ class ObservableEnvironmentTest : FunSpec({
                 seen.last()[n2.id] shouldBe (3.0 to 0.0).toPosition()
             }
         }
+
+        test("observeNodes should track node additions and removals") {
+            withObservableTestEnvironment {
+                val nodesObservable = observeNodes()
+                var currentNodes = emptySet<Int>()
+                nodesObservable.onChange(this) { set ->
+                    currentNodes = set.map { it.id }.toSet()
+                }
+
+                val n1 = spawnNode(0.0, 0.0)
+                currentNodes shouldContainExactlyInAnyOrder listOf(n1.id)
+
+                val n2 = spawnNode(1.0, 1.0)
+                currentNodes shouldContainExactlyInAnyOrder listOf(n1.id, n2.id)
+
+                removeNode(n1)
+                currentNodes shouldContainExactlyInAnyOrder listOf(n2.id)
+            }
+        }
     }
 
     test("observeNeighborhood should reflect neighbors according to linking rule") {

@@ -92,9 +92,7 @@ object ReactiveBinder {
                     it.add(this).flatMap { n -> n.observeConcentration(target) }
                 }.getOrElse { observe(arrow.core.none()) }
             }
-            Context.GLOBAL -> environment.nodes.map {
-                it.asObservableNode().observeConcentration(target)
-            }.merge() // quite wrong, this is a snapshot of current nodes, this set of node should be [ObservableSet]
+            Context.GLOBAL -> environment.observeNodes().flatMap { it.observeConcentration(target) }
         }
     }
 
@@ -126,7 +124,7 @@ object ReactiveBinder {
                     observe(arrow.core.none<ObservableMap<Molecule, T>>())
                 }
             }
-            Context.GLOBAL -> environment.nodes.map { it.asObservableNode().observableContents }.merge() // see above
+            Context.GLOBAL -> environment.observeNodes().flatMap(ObservableNode<T>::observableContents)
         }
     }
 

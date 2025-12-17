@@ -101,8 +101,6 @@ class ReactiveEngineCorrectnessTest : FunSpec({
 
         val trace = CopyOnWriteArrayList<EventTrace>()
         val monitor = object : OutputMonitor<Double, Euclidean2DPosition> {
-            override fun finished(environment: Environment<Double, Euclidean2DPosition>, time: Time, step: Long) {}
-            override fun initialized(environment: Environment<Double, Euclidean2DPosition>) {}
             override fun stepDone(
                 environment: Environment<Double, Euclidean2DPosition>,
                 reaction: Actionable<Double>?,

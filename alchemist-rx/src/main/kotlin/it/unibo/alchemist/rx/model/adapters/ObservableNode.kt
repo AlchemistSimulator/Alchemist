@@ -27,6 +27,12 @@ import it.unibo.alchemist.rx.model.observation.ObservableMutableMap.ObservableMa
  */
 class ObservableNode<T>(private val source: Node<T>) : Node<T> by source {
 
+    /**
+     * This node's contents as an [ObservableMutableMap], meaning that
+     * a new value for a given molecule is emitted if the concentration
+     * associated with that molecule changes, or [arrow.core.none] if
+     * the concentration is removed.
+     */
     val observableContents: ObservableMutableMap<Molecule, T> =
         ObservableMutableMap(source.contents.toMutableMap())
 
@@ -65,6 +71,9 @@ class ObservableNode<T>(private val source: Node<T>) : Node<T> by source {
         observableContents[molecule].current.getOrNull()?.let { source.setConcentration(molecule, it) }
     }
 
+    /**
+     * Dispose every observable associated with this node's content.
+     */
     fun dispose() {
         observableMoleculeCount.dispose()
         observableContents.dispose()

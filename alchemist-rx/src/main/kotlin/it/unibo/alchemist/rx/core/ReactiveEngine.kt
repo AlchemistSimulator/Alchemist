@@ -49,7 +49,7 @@ class ReactiveEngine<T, P : Position<out P>>(
 
     private val reactionWrappers = ConcurrentHashMap<Actionable<T>, ReactiveReactionAdapter<T>>()
     private val pendingUpdates = LinkedHashSet<Actionable<T>>()
-    private var batchingUpdates = AtomicBoolean(false)
+    private val batchingUpdates = AtomicBoolean(false)
 
     @Suppress("DuplicatedCode")
     override fun doStep() {
@@ -88,6 +88,7 @@ class ReactiveEngine<T, P : Position<out P>>(
         currentStep = step + 1
     }
 
+    @Suppress("TooGenericExceptionCaught")
     override fun run() {
         newStatus(Status.READY)
 
@@ -199,10 +200,18 @@ class ReactiveEngine<T, P : Position<out P>>(
     }
 
     // reactions are updated through observables
+    @Suppress("EmptyFunctionBlock")
     override fun neighborAdded(node: Node<T>, n: Node<T>) { }
+
+    @Suppress("EmptyFunctionBlock")
     override fun neighborRemoved(node: Node<T>, n: Node<T>) { }
+
+    @Suppress("EmptyFunctionBlock")
     override fun nodeMoved(node: Node<T>) { }
 
+    /**
+     * Static logger holder.
+     */
     companion object {
         private val LOGGER = LoggerFactory.getLogger(ReactiveEngine::class.java)
     }

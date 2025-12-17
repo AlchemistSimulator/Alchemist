@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.rx.model.adapters.ObservableNeighborhood.Companion.asObservable
 import it.unibo.alchemist.rx.model.adapters.ObservableNode.NodeExtension.asObservableNode
-import it.unibo.alchemist.rx.model.adapters.RxIncarnation.Companion.asReactive
+import it.unibo.alchemist.rx.model.adapters.ReactiveIncarnation.Companion.asReactive
 import it.unibo.alchemist.rx.model.observation.Observable
 import it.unibo.alchemist.rx.model.observation.ObservableMap
 import it.unibo.alchemist.rx.model.observation.ObservableMutableMap
@@ -49,7 +49,7 @@ class ObservableEnvironment<T, P : Position<out P>>(private val origin: Environm
     /**
      * Holder for the reactive alternative of the associated [it.unibo.alchemist.model.Incarnation].
      */
-    val rxIncarnation: RxIncarnation<T, P> = origin.incarnation.asReactive()
+    val reactiveIncarnation: ReactiveIncarnation<T, P> = origin.incarnation.asReactive()
 
     /**
      * Return an observable view (as an [ObservableSet]) of the [ObservableNode]s contained
@@ -123,8 +123,8 @@ class ObservableEnvironment<T, P : Position<out P>>(private val origin: Environm
     override fun moveNodeToPosition(node: Node<T>, newPosition: P) {
         val formerNeighborhood = getNeighborhood(node)
         origin.moveNodeToPosition(node, newPosition)
-        val newPosition = getPosition(node).takeIf { it != observeNodePositions[node.id].current } ?: return
-        observeNodePositions.upsertValue(node.id) { newPosition }
+        val newPos = getPosition(node).takeIf { it != observeNodePositions[node.id].current } ?: return
+        observeNodePositions.upsertValue(node.id) { newPos }
         updateNeighborhood(node, formerNeighborhood)
     }
 
@@ -159,6 +159,9 @@ class ObservableEnvironment<T, P : Position<out P>>(private val origin: Environm
         }
     }
 
+    /**
+     * Factory methods holder.
+     */
     companion object {
 
         /**

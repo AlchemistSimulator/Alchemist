@@ -17,6 +17,9 @@ import kotlin.collections.forEach
  */
 object ObservableExtensions {
 
+    /**
+     * Set of useful extensions on [ObservableSet].
+     */
     object ObservableSetExtensions {
 
         /**

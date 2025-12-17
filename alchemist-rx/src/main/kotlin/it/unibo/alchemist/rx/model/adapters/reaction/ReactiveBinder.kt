@@ -67,10 +67,10 @@ object ReactiveBinder {
         val sourceNode = reaction.node.asObservableNode()
         inboundDependencies.forEach { dependency ->
             deps += when (dependency) {
-                is Molecule -> wireMolecule(environment, reaction, context, dependency, sourceNode)
-                MOVEMENT -> wireMovement(environment, reaction, context, sourceNode)
-                EVERY_MOLECULE -> wireEveryMolecule(environment, reaction, context, sourceNode)
-                EVERYTHING -> wireEverything(environment, reaction, context, sourceNode)
+                is Molecule -> wireMolecule(environment, context, dependency, sourceNode)
+                MOVEMENT -> wireMovement(environment, context, sourceNode)
+                EVERY_MOLECULE -> wireEveryMolecule(environment, context, sourceNode)
+                EVERYTHING -> wireEverything(environment, context, sourceNode)
                 else -> error("Unrecognised dependency kind \"$dependency\" for condition $this.")
             }
         }
@@ -80,7 +80,6 @@ object ReactiveBinder {
 
     private fun <T> wireMolecule(
         environment: ObservableEnvironment<T, *>,
-        reaction: Reaction<T>,
         context: Context,
         target: Molecule,
         node: ObservableNode<T>,
@@ -98,14 +97,13 @@ object ReactiveBinder {
 
     private fun <T> wireMovement(
         environment: ObservableEnvironment<T, *>,
-        reaction: Reaction<T>,
         context: Context,
         node: ObservableNode<T>,
     ): Observable<*> = when (context) {
         Context.LOCAL -> environment.observeNodePosition(node)
         Context.NEIGHBORHOOD -> environment.observeNeighborhood(node).switchMap { neighborhood ->
             neighborhood.map {
-                it.add(reaction.node).flatMap { n -> environment.observeNodePosition(n) }
+                it.add(node).flatMap { n -> environment.observeNodePosition(n) }
             }.getOrElse { observe(arrow.core.none()) }
         }
         Context.GLOBAL -> environment.observeAnyMovement()
@@ -113,7 +111,6 @@ object ReactiveBinder {
 
     private fun <T> wireEveryMolecule(
         environment: ObservableEnvironment<T, *>,
-        reaction: Reaction<T>,
         context: Context,
         node: ObservableNode<T>,
     ): Observable<*> = with(node) {
@@ -130,11 +127,10 @@ object ReactiveBinder {
 
     private fun <T> wireEverything(
         environment: ObservableEnvironment<T, *>,
-        reaction: Reaction<T>,
         context: Context,
         node: ObservableNode<T>,
     ): Observable<*> = listOf(
-        wireEveryMolecule(environment, reaction, context, node),
-        wireMovement(environment, reaction, context, node),
+        wireEveryMolecule(environment, context, node),
+        wireMovement(environment, context, node),
     ).merge()
 }

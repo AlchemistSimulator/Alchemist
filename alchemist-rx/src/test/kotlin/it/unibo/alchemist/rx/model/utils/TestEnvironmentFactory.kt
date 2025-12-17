@@ -115,7 +115,7 @@ object TestEnvironmentFactory {
     }
 
     fun <T> ObservableEnvironment<T, Euclidean2DPosition>.spawnNode(vararg coordinates: Double): ObservableNode<T> =
-        rxIncarnation.createNode(rnd, this, null)
+        reactiveIncarnation.createNode(rnd, this, null)
             .also { addNode(it, makePosition(coordinates)) }
 
     fun getObservableEnvironment(): ObservableEnvironment<Double, Euclidean2DPosition> =

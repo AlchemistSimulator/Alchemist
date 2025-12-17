@@ -20,14 +20,26 @@ import it.unibo.alchemist.rx.model.adapters.reaction.ReactiveConditionAdapter
 import it.unibo.alchemist.rx.model.adapters.reaction.ReactiveReactionAdapter
 import org.apache.commons.math3.random.RandomGenerator
 
-class RxIncarnation<T, P : Position<out P>>(private val delegate: Incarnation<T, P>) {
+/**
+ * Simple reactive adapter for [Incarnation] capable of creating [ObservableNode]s and
+ * reactive [conditions][ReactiveConditionAdapter] and [reactions][ReactiveReactionAdapter].
+ *
+ * @param delegate the incarnation that backs this reactive incarnation.
+ */
+class ReactiveIncarnation<T, P : Position<out P>>(private val delegate: Incarnation<T, P>) {
 
+    /**
+     * @see [Incarnation.createNode]
+     */
     fun createNode(
         randomGenerator: RandomGenerator,
         environment: ObservableEnvironment<T, P>,
         parameter: Any?,
     ): ObservableNode<T> = delegate.createNode(randomGenerator, environment, parameter).asObservableNode()
 
+    /**
+     * @see [Incarnation.createReaction]
+     */
     fun createReaction(
         randomGenerator: RandomGenerator,
         environment: ObservableEnvironment<T, P>,
@@ -44,6 +56,9 @@ class RxIncarnation<T, P : Position<out P>>(private val delegate: Incarnation<T,
         ReactiveBinder.bindAndGetReactiveReaction(it, environment)
     }
 
+    /**
+     * @see [Incarnation.createCondition]
+     */
     @Suppress("complexity:LongParameterList")
     fun createCondition(
         randomGenerator: RandomGenerator,
@@ -61,7 +76,15 @@ class RxIncarnation<T, P : Position<out P>>(private val delegate: Incarnation<T,
         additionalParameters,
     ).bindAndGetReactiveCondition(environment, reaction)
 
+    /**
+     * Factory methods holder.
+     */
     companion object {
-        fun <T, P : Position<out P>> Incarnation<T, P>.asReactive(): RxIncarnation<T, P> = RxIncarnation(this)
+
+        /**
+         * Converts this [Incarnation] into a [it.unibo.alchemist.rx.model.adapters.ReactiveIncarnation].
+         */
+        fun <T, P : Position<out P>> Incarnation<T, P>.asReactive(): ReactiveIncarnation<T, P> =
+            ReactiveIncarnation(this)
     }
 }

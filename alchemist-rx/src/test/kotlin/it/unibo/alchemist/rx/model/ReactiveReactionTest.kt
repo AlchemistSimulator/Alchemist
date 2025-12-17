@@ -11,10 +11,9 @@ package it.unibo.alchemist.rx.model
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
+import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.rx.dsl.ReactiveConditionDSL.condition
 import it.unibo.alchemist.rx.model.adapters.ObservableEnvironment
 import it.unibo.alchemist.rx.model.adapters.ObservableNode
@@ -24,37 +23,26 @@ import it.unibo.alchemist.rx.model.utils.TestEnvironmentFactory.withObservableTe
 
 class ReactiveReactionTest : FunSpec({
 
-    class StubTimeDistribution<T>(private var rate: Double = 1.0) : TimeDistribution<T> {
-
-        override fun update(currentTime: Time, executed: Boolean, param: Double, environment: Environment<T, *>) {
-            rate = param
-        }
-
-        override fun getNextOccurence(): Time = Time.INFINITY
-        override fun getRate(): Double = rate
-        override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): TimeDistribution<T> =
-            StubTimeDistribution(rate)
-    }
-
     class TestReactiveReaction<T>(
         node: ObservableNode<T>,
-        timeDistribution: TimeDistribution<T>,
+        timeDistribution: TimeDistribution<T> = DiracComb<T>(1.0),
     ) : AbstractReactiveReaction<T>(node, timeDistribution) {
+
+        override fun cloneOnNewNode(node: ObservableNode<T>, currentTime: Time): ReactiveReaction<T> =
+            TestReactiveReaction(node, timeDistribution.cloneOnNewNode(node, currentTime))
+
+        @Suppress("EmptyFunctionBlock")
         override fun updateInternalStatus(
             currentTime: Time,
             hasBeenExecuted: Boolean,
             environment: ObservableEnvironment<T, *>,
         ) {}
-
-        override fun cloneOnNewNode(node: ObservableNode<T>, currentTime: Time): ReactiveReaction<T> =
-            TestReactiveReaction(node, timeDistribution.cloneOnNewNode(node, currentTime))
     }
 
     test("reaction should reschedule when condition dependencies change") {
         withObservableTestEnvironment {
             val node = spawnNode(0.0, 0.0)
-            val timeDist = StubTimeDistribution<Double>()
-            val reaction = TestReactiveReaction(node, timeDist)
+            val reaction = TestReactiveReaction(node)
 
             val dependency = observe(10)
             val condition = condition<Double> {
@@ -83,8 +71,7 @@ class ReactiveReactionTest : FunSpec({
     test("reaction canExecute should reflect conditions validity") {
         withObservableTestEnvironment {
             val node = spawnNode(0.0, 0.0)
-            val timeDist = StubTimeDistribution<Double>()
-            val reaction = TestReactiveReaction(node, timeDist)
+            val reaction = TestReactiveReaction(node)
 
             val validObs = observe(true)
             val condition = condition<Double> {

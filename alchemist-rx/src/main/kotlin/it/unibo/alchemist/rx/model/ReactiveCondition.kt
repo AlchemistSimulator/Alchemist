@@ -41,7 +41,7 @@ interface ReactiveCondition<T> {
     val observableInboundDependencies: ObservableSet<Observable<*>>
 
     /**
-     * TODO: implement me somehow
+     * This method should be overridden by subclasses.
      */
     fun cloneCondition(node: ObservableNode<T>, reaction: ReactiveReaction<T>): ReactiveCondition<T> =
         throw UnsupportedOperationException("${this::class.simpleName} has no support for cloning.")

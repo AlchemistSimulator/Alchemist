@@ -94,7 +94,8 @@ abstract class AbstractReactiveReaction<T>(
         actions.forEach(ReactiveAction<T>::execute)
     }
 
-    override fun initializationComplete(atTime: Time, environment: ObservableEnvironment<T, *>) { }
+    @Suppress("EmptyFunctionBlock")
+    override fun initializationComplete(atTime: Time, environment: ObservableEnvironment<T, *>) {}
 
     override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: ObservableEnvironment<T, *>) {
         updateInternalStatus(currentTime, hasBeenExecuted, environment)
@@ -144,11 +145,9 @@ abstract class AbstractReactiveReaction<T>(
     }
 
     /**
-     * AbstractReactiveReaction companion object for static holders
+     * AbstractReactiveReaction companion object for static holders.
      */
     companion object {
-
-        private const val MARGIN: Byte = 20
 
         private const val serialVersionUID: Long = 1L
     }

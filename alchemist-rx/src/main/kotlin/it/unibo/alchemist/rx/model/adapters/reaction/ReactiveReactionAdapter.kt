@@ -35,7 +35,7 @@ interface ReactiveReactionAdapter<T> : Reaction<T> {
 }
 
 /**
- * Converts this [Reaction] into a [reactive reaction][ReactiveReactionAdapter],
+ * Converts this [Reaction] into a [reactive reaction][ReactiveReactionAdapter].
  *
  * @param environment the environment where the node containing this reaction is placed.
  */
@@ -52,7 +52,7 @@ internal class ReactiveReactionAdapterImpl<T>(
 
     private val _conditions = ArrayList<ReactiveConditionAdapter<T>>()
 
-    private var conditionsAggregateObservable: MutableObservable<Boolean> = observe(true)
+    private val conditionsAggregateObservable: MutableObservable<Boolean> = observe(true)
 
     override var conditions: List<Condition<T>>
         get() = Collections.unmodifiableList(_conditions)
@@ -76,7 +76,7 @@ internal class ReactiveReactionAdapterImpl<T>(
                 newConditions.map { it.observeValidity }
                     .combineLatest { validities -> validities.all { it } }
                     .apply {
-                        onChange(this) {
+                        onChange(this) { _ ->
                             conditionsAggregateObservable.update { it }
                         }
                     }

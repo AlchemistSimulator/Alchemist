@@ -53,7 +53,7 @@ class ObservableTest : FunSpec({
             observable.onChange(this) { changesCount++ }
 
             repeat(10) {
-                observable.update { it + 10 }
+                observable.update { curr -> curr + 10 }
             }
 
             changesCount shouldBe 10
@@ -65,13 +65,13 @@ class ObservableTest : FunSpec({
             observable.onChange(this) { changesCount++ }
 
             repeat(10) {
-                observable.update { it + 10 }
+                observable.update { curr -> curr + 10 }
             }
 
             observable.stopWatching(this)
 
             repeat(10) {
-                observable.update { it + 10 }
+                observable.update { curr -> curr + 10 }
             }
 
             changesCount shouldBe 10
@@ -83,13 +83,13 @@ class ObservableTest : FunSpec({
             observable.onChange(this) { changesCount++ }
 
             repeat(10) {
-                observable.update { it + 10 }
+                observable.update { curr -> curr + 10 }
             }
 
             observable.dispose()
 
             repeat(10) {
-                observable.update { it + 10 }
+                observable.update { curr -> curr + 10 }
             }
 
             changesCount shouldBe 10
@@ -100,7 +100,7 @@ class ObservableTest : FunSpec({
             var changesCount = -1
             observable.onChange(this) { changesCount++ }
 
-            repeat(10) {
+            repeat(10) { _ ->
                 observable.update { it } // update the value with itself
             }
 
@@ -119,7 +119,7 @@ class ObservableTest : FunSpec({
             observable.onChange(registrantA) { aCount++ }
             observable.onChange(registrantB) { bCount++ }
 
-            repeat(3) { observable.update { it + 1 } }
+            repeat(3) { observable.update { curr -> curr + 1 } }
 
             aCount shouldBe 3
             bCount shouldBe 3
@@ -139,7 +139,7 @@ class ObservableTest : FunSpec({
             observable.onChange(registrant) { sum += it }
             observable.onChange(registrant) { count++ }
 
-            repeat(3) { observable.update { it + 1 } }
+            repeat(3) { observable.update { curr -> curr + 1 } }
 
             sum shouldBe (1 + 2 + 3)
             count shouldBe 3
@@ -153,7 +153,7 @@ class ObservableTest : FunSpec({
 
             strObservable.onChange(this) { changesCounts++ }
 
-            repeat(10) { observable.update { it + 10 } }
+            repeat(10) { observable.update { curr -> curr + 10 } }
 
             changesCounts shouldBe 10
             strObservable.current shouldBe "${10 * 11}"
@@ -168,7 +168,7 @@ class ObservableTest : FunSpec({
 
             // Sequence that keeps parity constant: 0 -> 2 -> 4 -> 6
             repeat(3) {
-                observable.update { it + 2 }
+                observable.update { curr -> curr + 2 }
             }
 
             emissions shouldBe 0
@@ -198,7 +198,7 @@ class ObservableTest : FunSpec({
             var emissions = -1
             c.onChange(this) { emissions++ }
 
-            repeat(5) {
+            repeat(5) { _ ->
                 a.update { it + 2 }
                 b.update { it + 2 }
             }
@@ -241,7 +241,7 @@ class ObservableTest : FunSpec({
             var emissions = -1
             collected.onChange(this) { emissions++ }
 
-            repeat(5) {
+            repeat(5) { _ ->
                 a.update { it + 2 }
                 b.update { it + 4 }
             }

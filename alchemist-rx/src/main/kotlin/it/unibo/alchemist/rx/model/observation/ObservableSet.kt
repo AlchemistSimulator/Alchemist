@@ -73,7 +73,7 @@ interface ObservableSet<T> : Observable<Set<T>> {
     operator fun contains(item: T): Boolean
 
     /**
-     * A companion object for the [ObservableSet] class, providing a simple factory
+     * A companion object for the [ObservableSet] class, providing a simple factory.
      */
     companion object {
 

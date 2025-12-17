@@ -219,6 +219,13 @@ interface MutableObservable<T> : Observable<T> {
             }
         }
 
+        /**
+         * Handy method to update the optional[Option] contents of this [MutableObservable].
+         * Applies the given function to the value contained by the underlying [Option],
+         * if it is empty nothing is computed.
+         *
+         * @param updateFunc the update function to perform on the value wrapped by the underlying [Option]
+         */
         fun <T> MutableObservable<Option<T>>.updateValue(updateFunc: (T) -> T) {
             update { it.map(updateFunc) }
         }

@@ -85,4 +85,6 @@ internal class ReactiveConditionAdapterImpl<T>(
     override fun reactionReady() {
         origin.reactionReady()
     }
+
+    override fun toString(): String = "Rx-$origin"
 }

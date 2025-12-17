@@ -12,6 +12,7 @@ dependencies {
     api(alchemist("engine"))
     implementation(libs.arrow.core)
     implementation(libs.boilerplate)
+    implementation(libs.guava)
 
     testImplementation(alchemist("euclidean-geometry"))
     testImplementation(alchemist("test"))

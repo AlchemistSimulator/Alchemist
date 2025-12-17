@@ -90,4 +90,6 @@ internal class ReactiveReactionAdapterImpl<T>(
 
     override fun canExecute(): Boolean = conditionsAggregateObservable.current &&
         origin.canExecute() // when and if this class is abstract, let's mimic [AbstractReaction<T>]
+
+    override fun toString(): String = "Rx-$origin"
 }

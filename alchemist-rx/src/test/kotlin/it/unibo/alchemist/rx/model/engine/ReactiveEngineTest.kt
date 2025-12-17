@@ -85,11 +85,12 @@ class ReactiveEngineTest : FunSpec({
             node1 = spawnNode(0.0, 0.0)
             node2 = spawnNode(1.0, 0.0)
 
-            val reaction1 = ChemicalReaction(node1, DiracComb(1.0)).apply {
+            ChemicalReaction(node1, DiracComb(1.0)).apply {
                 actions = listOf(SetLocalMoleculeConcentration(node1, molecule, 1.0))
+                node1.addReaction(this)
             }
 
-            val reaction2 = ChemicalReaction(node2, DiracComb(2.0)).apply {
+            ChemicalReaction(node2, DiracComb(2.0)).apply {
                 conditions = listOf(object : AbstractCondition<Double>(node2) {
                     override fun getContext() = Context.NEIGHBORHOOD
                     override fun getPropensityContribution() = 1.0
@@ -108,10 +109,8 @@ class ReactiveEngineTest : FunSpec({
                     override fun getContext() = Context.LOCAL
                     override fun cloneAction(node: Node<Double>, reaction: Reaction<Double>) = this
                 })
+                node2.addReaction(this)
             }
-
-            node1.addReaction(reaction1)
-            node2.addReaction(reaction2)
         }) {
             node1.contains(molecule) shouldBe true
             r2Executed shouldBe true
@@ -189,19 +188,20 @@ class ReactiveEngineTest : FunSpec({
         node1 = env.spawnNode(0.0, 0.0)
         node2 = env.spawnNode(1.0, 0.0)
 
-        val r1 = ChemicalReaction(node1, DiracComb(2.0)).apply {
+        ChemicalReaction(node1, DiracComb(2.0)).apply {
             actions = listOf(object : AbstractAction<Double>(node1) {
                 override fun execute() {
                     node1.setConcentration(molA, 1.0)
                     node1.setConcentration(molB, 1.0)
                 }
+
                 override fun getContext() = Context.LOCAL
                 override fun cloneAction(node: Node<Double>, reaction: Reaction<Double>) = this
             })
+            node1.addReaction(this)
         }
-        node1.addReaction(r1)
 
-        val r2 = ChemicalReaction(node2, TestEnvironmentFactory.testExponentialTimeDistribution).apply {
+        ChemicalReaction(node2, TestEnvironmentFactory.testExponentialTimeDistribution).apply {
             conditions = listOf(object : AbstractCondition<Double>(node2) {
                 override fun getContext() = Context.NEIGHBORHOOD
 
@@ -211,6 +211,7 @@ class ReactiveEngineTest : FunSpec({
                     val concB = neighbors.sumOf { it.getConcentration(molB) ?: 0.0 }
                     return 1.0 + concA + concB
                 }
+
                 override fun isValid(): Boolean = true
 
                 init {
@@ -218,8 +219,8 @@ class ReactiveEngineTest : FunSpec({
                     declareDependencyOn(molB)
                 }
             })
+            node2.addReaction(this)
         }
-        node2.addReaction(r2)
 
         engine.play()
         engine.run()
@@ -230,7 +231,6 @@ class ReactiveEngineTest : FunSpec({
         val r2Updates = captor.allValues.filter {
             (it as? Reaction<Double>)?.node?.id == node2.id
         }
-
         r2Updates.size shouldBe 1
     }
 })

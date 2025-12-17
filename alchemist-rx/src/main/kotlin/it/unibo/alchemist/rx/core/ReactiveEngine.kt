@@ -81,11 +81,11 @@ class ReactiveEngine<T, P : Position<out P>>(
         updateReactionInScheduler(nextReaction, executed = true)
 
         monitors.forEach { it.stepDone(environment, nextReaction, time, step) }
-        currentStep = step + 1
         if (environment.isTerminated) {
             newStatus(Status.TERMINATED)
             LOGGER.info("Termination condition reached.")
         }
+        currentStep = step + 1
     }
 
     override fun run() {

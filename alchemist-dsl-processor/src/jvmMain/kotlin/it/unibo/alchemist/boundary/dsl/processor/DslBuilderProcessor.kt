@@ -35,13 +35,6 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
             }
             logger.dslInfo("Alchemist DSL annotation: $annotationName")
             return resolver.getSymbolsWithAnnotation(annotationName)
-                .onEach { symbol ->
-                    val qualifiedName = when (symbol) {
-                        is KSClassDeclaration -> symbol.qualifiedName?.asString() ?: "unknown"
-                        else -> symbol.toString()
-                    }
-                    logger.dslInfo("Found symbol: $qualifiedName")
-                }
                 .fold(emptyList()) { invalidElements, symbol ->
                     when {
                         !symbol.validate() -> invalidElements + symbol

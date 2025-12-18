@@ -114,55 +114,29 @@ object ParameterInjector {
      * If a manual scope is provided in the annotation, it takes precedence over automatic detection.
      *
      * @param injectionIndices Map of injection types to parameter indices
-     * @param annotationValues Annotation values from the AlchemistKotlinDSL annotation
      * @return The determined context type
      */
     // Determine which context is active by checking manual overrides first, then injection mix.
-    fun determineContextType(
-        injectionIndices: Map<InjectionType, Int>,
-        annotationValues: Map<String, Any?>,
-    ): ContextType {
-        val manualScope = annotationValues["scope"] as? String
-        if (!manualScope.isNullOrBlank()) {
-            val parsedScope = parseScope(manualScope)
-            if (parsedScope != null) {
-                return parsedScope
-            }
-        }
-        return determineContextTypeFromInjections(injectionIndices, annotationValues)
-    }
+    fun determineContextType(injectionIndices: Map<InjectionType, Int>): ContextType =
+        determineContextTypeFromInjections(injectionIndices)
 
-    private fun determineContextTypeFromInjections(
-        injectionIndices: Map<InjectionType, Int>,
-        annotationValues: Map<String, Any?>,
-    ): ContextType = when {
+    private fun determineContextTypeFromInjections(injectionIndices: Map<InjectionType, Int>): ContextType = when {
         injectionIndices.containsKey(InjectionType.FILTER) -> ContextType.DEPLOYMENT_CONTEXT
-        hasProgramContextInjections(injectionIndices, annotationValues) -> ContextType.PROGRAM_CONTEXT
-        else -> determineDeploymentOrSimulationContext(injectionIndices, annotationValues)
+        hasProgramContextInjections(injectionIndices) -> ContextType.PROGRAM_CONTEXT
+        else -> determineDeploymentOrSimulationContext(injectionIndices)
     }
 
-    private fun hasProgramContextInjections(
-        injectionIndices: Map<InjectionType, Int>,
-        annotationValues: Map<String, Any?>,
-    ): Boolean {
-        val hasNode = injectionIndices.containsKey(InjectionType.NODE) &&
-            annotationValues["injectNode"] as? Boolean ?: true
-        val hasReaction = injectionIndices.containsKey(InjectionType.REACTION) &&
-            annotationValues["injectReaction"] as? Boolean ?: true
+    private fun hasProgramContextInjections(injectionIndices: Map<InjectionType, Int>): Boolean {
+        val hasNode = injectionIndices.containsKey(InjectionType.NODE)
+        val hasReaction = injectionIndices.containsKey(InjectionType.REACTION)
         val hasTimeDistribution = injectionIndices.containsKey(InjectionType.TIMEDISTRIBUTION)
         return hasNode || hasReaction || hasTimeDistribution
     }
 
-    private fun determineDeploymentOrSimulationContext(
-        injectionIndices: Map<InjectionType, Int>,
-        annotationValues: Map<String, Any?>,
-    ): ContextType {
-        val hasEnvironment = injectionIndices.containsKey(InjectionType.ENVIRONMENT) &&
-            annotationValues["injectEnvironment"] as? Boolean ?: true
-        val hasGenerator = injectionIndices.containsKey(InjectionType.GENERATOR) &&
-            annotationValues["injectGenerator"] as? Boolean ?: true
-        val hasIncarnation = injectionIndices.containsKey(InjectionType.INCARNATION) &&
-            annotationValues["injectIncarnation"] as? Boolean ?: true
+    private fun determineDeploymentOrSimulationContext(injectionIndices: Map<InjectionType, Int>): ContextType {
+        val hasEnvironment = injectionIndices.containsKey(InjectionType.ENVIRONMENT)
+        val hasGenerator = injectionIndices.containsKey(InjectionType.GENERATOR)
+        val hasIncarnation = injectionIndices.containsKey(InjectionType.INCARNATION)
         val injectedCount = listOf(hasEnvironment, hasGenerator, hasIncarnation).count { it }
         return if (injectedCount == 1 && (hasIncarnation || hasEnvironment)) {
             ContextType.SIMULATION_CONTEXT
@@ -175,22 +149,15 @@ object ParameterInjector {
      * Gets the set of parameter indices that should be skipped (injected from context).
      *
      * @param injectionIndices Map of injection types to parameter indices
-     * @param annotationValues Annotation values from the AlchemistKotlinDSL annotation
      * @param contextType The context type to determine which parameters can be injected
      * @return Set of parameter indices to skip
      */
-    fun getInjectionParams(
-        injectionIndices: Map<InjectionType, Int>,
-        annotationValues: Map<String, Any?>,
-        contextType: ContextType,
-    ): Set<Int> {
+    fun getInjectionParams(injectionIndices: Map<InjectionType, Int>, contextType: ContextType): Set<Int> {
         val paramsToSkip = mutableSetOf<Int>()
         if (isInjectionTypeAvailable(InjectionType.ENVIRONMENT, contextType)) {
             addInjectionParamIfEnabled(
                 InjectionType.ENVIRONMENT,
-                "injectEnvironment",
                 injectionIndices,
-                annotationValues,
                 paramsToSkip,
             )
         }
@@ -198,9 +165,7 @@ object ParameterInjector {
         if (isInjectionTypeAvailable(InjectionType.GENERATOR, contextType)) {
             addInjectionParamIfEnabled(
                 InjectionType.GENERATOR,
-                "injectGenerator",
                 injectionIndices,
-                annotationValues,
                 paramsToSkip,
             )
         }
@@ -208,9 +173,7 @@ object ParameterInjector {
         if (isInjectionTypeAvailable(InjectionType.INCARNATION, contextType)) {
             addInjectionParamIfEnabled(
                 InjectionType.INCARNATION,
-                "injectIncarnation",
                 injectionIndices,
-                annotationValues,
                 paramsToSkip,
             )
         }
@@ -218,9 +181,7 @@ object ParameterInjector {
         if (isInjectionTypeAvailable(InjectionType.NODE, contextType)) {
             addInjectionParamIfEnabled(
                 InjectionType.NODE,
-                "injectNode",
                 injectionIndices,
-                annotationValues,
                 paramsToSkip,
             )
         }
@@ -228,9 +189,7 @@ object ParameterInjector {
         if (isInjectionTypeAvailable(InjectionType.REACTION, contextType)) {
             addInjectionParamIfEnabled(
                 InjectionType.REACTION,
-                "injectReaction",
                 injectionIndices,
-                annotationValues,
                 paramsToSkip,
             )
         }
@@ -253,14 +212,10 @@ object ParameterInjector {
 
     private fun addInjectionParamIfEnabled(
         injectionType: InjectionType,
-        annotationKey: String,
         injectionIndices: Map<InjectionType, Int>,
-        annotationValues: Map<String, Any?>,
         paramsToSkip: MutableSet<Int>,
     ) {
-        if (annotationValues[annotationKey] as? Boolean ?: true &&
-            injectionIndices.containsKey(injectionType)
-        ) {
+        if (injectionIndices.containsKey(injectionType)) {
             injectionIndices[injectionType]?.let { paramsToSkip.add(it) }
         }
     }

@@ -1,12 +1,10 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSDeclaration
-import com.google.devtools.ksp.symbol.KSTypeArgument
 import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.KSValueParameter
-import com.google.devtools.ksp.symbol.Variance
+import it.unibo.alchemist.boundary.dsl.processor.extensions.toStringWithGenerics
 
 /**
  * Extracts type information from KSP symbols for code generation.
@@ -23,7 +21,7 @@ object TypeExtractor {
         val typeParamNames = typeParameters.map { it.name.asString() }
         val typeParamBounds = typeParameters.map { typeParam ->
             val bounds: List<String> = typeParam.bounds.map { bound ->
-                BoundProcessor.processBound(bound, typeParamNames)
+                TypeBoundProcessor.processBound(bound, typeParamNames)
             }.toList()
             if (bounds.isNotEmpty()) {
                 val boundStr = bounds.joinToString(" & ")
@@ -52,41 +50,7 @@ object TypeExtractor {
                 return paramName
             }
         }
-        val typeName = getTypeName(declaration)
-        val arguments = resolved.arguments
-        val typeString = if (arguments.isNotEmpty()) {
-            val typeArgs = arguments.joinToString(", ") { arg ->
-                formatTypeArgument(arg, typeParamNames)
-            }
-            "$typeName<$typeArgs>"
-        } else {
-            typeName
-        }
-        return if (resolved.isMarkedNullable) {
-            "$typeString?"
-        } else {
-            typeString
-        }
-    }
-
-    private fun getTypeName(declaration: KSDeclaration): String {
-        val qualifiedName = declaration.qualifiedName?.asString()
-        return if (qualifiedName != null && qualifiedName.isNotEmpty()) {
-            qualifiedName
-        } else {
-            declaration.simpleName.asString()
-        }
-    }
-
-    // Represent the variance and nested references for each argument.
-    private fun formatTypeArgument(arg: KSTypeArgument, typeParamNames: List<String>): String = when {
-        arg.type == null -> "*"
-        arg.variance == Variance.STAR -> "*"
-        arg.variance == Variance.CONTRAVARIANT ->
-            arg.type?.let { "in ${extractTypeString(it, typeParamNames)}" } ?: "*"
-        arg.variance == Variance.COVARIANT ->
-            arg.type?.let { "out ${extractTypeString(it, typeParamNames)}" } ?: "*"
-        else -> arg.type?.let { extractTypeString(it, typeParamNames) } ?: "*"
+        return resolved.toStringWithGenerics(typeParamNames)
     }
 
     /**

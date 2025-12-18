@@ -123,7 +123,7 @@ object TypeArgumentProcessor {
             typeParamNames.add(paramName)
             val boundStr = if (declParam != null) {
                 val bounds = declParam.bounds.map { bound ->
-                    BoundProcessor.processBound(bound)
+                    TypeBoundProcessor.processBound(bound)
                 }.toList()
                 if (bounds.isNotEmpty()) {
                     "$paramName: ${bounds.joinToString(" & ")}"
@@ -163,7 +163,7 @@ object TypeArgumentProcessor {
         val paramName = argDecl.name.asString()
         if (!typeParamNames.contains(paramName)) {
             typeParamNames.add(paramName)
-            val bounds = argDecl.bounds.map { BoundProcessor.processBound(it) }.toList()
+            val bounds = argDecl.bounds.map { TypeBoundProcessor.processBound(it) }.toList()
             val boundStr = if (bounds.isNotEmpty()) {
                 "$paramName: ${bounds.joinToString(" & ")}"
             } else {

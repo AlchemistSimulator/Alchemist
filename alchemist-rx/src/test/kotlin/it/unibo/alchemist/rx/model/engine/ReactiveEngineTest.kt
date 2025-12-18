@@ -201,7 +201,7 @@ class ReactiveEngineTest : FunSpec({
             node1.addReaction(this)
         }
 
-        ChemicalReaction(node2, TestEnvironmentFactory.testExponentialTimeDistribution).apply {
+        ChemicalReaction(node2, TestEnvironmentFactory.testExponentialTimeDistribution()).apply {
             conditions = listOf(object : AbstractCondition<Double>(node2) {
                 override fun getContext() = Context.NEIGHBORHOOD
 

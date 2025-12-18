@@ -39,7 +39,7 @@ object TestEnvironmentFactory {
             }
         }
 
-    val testExponentialTimeDistribution = ExponentialTime<Double>(1.0, rnd)
+    fun <T> testExponentialTimeDistribution(rate: Double = 1.0) = ExponentialTime<T>(rate, rnd)
 
     /**
      * Runs the give [body] with a test [ObservableEnvironment]. If [withEngine] is set to true,

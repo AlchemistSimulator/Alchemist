@@ -47,7 +47,7 @@ object ParameterInjector {
                 isIncarnationType(resolved, qualifiedName) -> indices[InjectionType.INCARNATION] = index
                 isNodeType(resolved, simpleName, qualifiedName) -> indices[InjectionType.NODE] = index
                 isReactionType(resolved, simpleName, qualifiedName) -> indices[InjectionType.REACTION] = index
-                isTimeDistribution(resolved) -> indices[InjectionType.TIMEDISTRIBUTION] = index
+                resolved.isSubtypeOf<TimeDistribution<*>>() -> indices[InjectionType.TIMEDISTRIBUTION] = index
                 isFilterType(resolved, simpleName, qualifiedName) -> indices[InjectionType.FILTER] = index
             }
         }
@@ -100,9 +100,8 @@ object ParameterInjector {
     }
 
     context(resolver: Resolver)
-    private fun isTimeDistribution(type: KSType): Boolean =
-        checkNotNull(resolver.getClassDeclarationByName<TimeDistribution<*>>())
-            .asStarProjectedType().isAssignableFrom(type)
+    private inline fun <reified T> KSType.isSubtypeOf(): Boolean =
+        checkNotNull(resolver.getClassDeclarationByName<T>()).asStarProjectedType().isAssignableFrom(this)
 
     private fun isFilterType(type: KSType, simpleName: String, qualifiedName: String): Boolean {
         val effectiveType = type.makeNotNullable()
@@ -305,36 +304,4 @@ object ParameterInjector {
             injectionIndices[injectionType]?.let { paramsToSkip.add(it) }
         }
     }
-}
-
-/**
- * Type of context available for parameter injection.
- */
-enum class ContextType {
-    /** Simulation context (only incarnation or only environment). */
-    SIMULATION_CONTEXT,
-
-    /** Exporter context (one level below SimulationContext, manually settable). */
-    EXPORTER_CONTEXT,
-
-    /** Global programs context (one level below SimulationContext, manually settable). */
-    GLOBAL_PROGRAMS_CONTEXT,
-
-    /** Output monitors context (one level below SimulationContext, manually settable). */
-    OUTPUT_MONITORS_CONTEXT,
-
-    /** Terminators context (one level below SimulationContext, manually settable). */
-    TERMINATORS_CONTEXT,
-
-    /** Deployments context (generator). */
-    DEPLOYMENTS_CONTEXT,
-
-    /** Deployment context (singular, one level below DeploymentsContext, includes filter). */
-    DEPLOYMENT_CONTEXT,
-
-    /** Program context (includes node, reaction, and time distribution). */
-    PROGRAM_CONTEXT,
-
-    /** Property context (includes node, same depth as program context). */
-    PROPERTY_CONTEXT,
 }

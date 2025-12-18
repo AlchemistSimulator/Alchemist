@@ -9,6 +9,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.validate
+import findConstructor
 import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL
 import it.unibo.alchemist.boundary.dsl.processor.data.ConstructorInfo
 import it.unibo.alchemist.boundary.dsl.processor.data.GenerationContext
@@ -158,7 +159,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         logger.dslInfo("Manual scope from annotation: '$manualScope'")
         val functionName = (annotationValues["functionName"] as? String)?.takeIf { it.isNotEmpty() }
             ?: classDecl.simpleName.asString().replaceFirstChar { it.lowercaseChar() }
-        val constructor = ConstructorFinder.findConstructor(classDecl)
+        val constructor = classDecl.findConstructor()
         if (constructor == null) {
             logger.warn("Class ${classDecl.simpleName.asString()} has no usable constructor")
             return
@@ -375,11 +376,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         ImportManager.writeImports(
             writer,
             context.typeParams.bounds,
-            context.constructorInfo.paramTypes,
-            context.defaultValues,
             context.classDecl,
-            context.needsMapEnvironment,
-            context.injectionContext.paramTypes.values.toList(),
         )
         val constructorParams = FunctionGenerator.buildConstructorParams(
             context.constructorInfo,
@@ -445,7 +442,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         writer.println("    $constructorCall")
     }
 
-    companion object {
+    private companion object {
         private fun KSPLogger.dslInfo(message: String) = info("${DslBuilderProcessor::class.simpleName}: $message")
     }
 }

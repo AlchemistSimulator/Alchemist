@@ -54,7 +54,7 @@ object TypeArgumentProcessor {
 
     private fun getTypeName(declaration: KSDeclaration): String {
         val qualifiedName = declaration.qualifiedName?.asString()
-        return if (qualifiedName != null && qualifiedName.isNotEmpty()) {
+        return if (!qualifiedName.isNullOrEmpty()) {
             qualifiedName
         } else {
             declaration.simpleName.asString()

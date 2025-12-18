@@ -4,7 +4,7 @@ package it.unibo.alchemist.boundary.dsl.processor
  * Configuration for the DSL processor, centralizing package names and type detection rules.
  * This makes the processor more maintainable and allows for easier customization.
  */
-object ProcessorConfig {
+internal object ProcessorConfig {
     /**
      * Base package for Alchemist model classes.
      */
@@ -31,49 +31,9 @@ object ProcessorConfig {
     const val POSITION_TYPE = "$MODEL_PACKAGE.Position"
 
     /**
-     * Fully qualified name for the Environment interface.
-     */
-    const val ENVIRONMENT_TYPE = "$MODEL_PACKAGE.Environment"
-
-    /**
-     * Fully qualified name for the Incarnation interface.
-     */
-    const val INCARNATION_TYPE = "$MODEL_PACKAGE.Incarnation"
-
-    /**
-     * Fully qualified name for the Node class.
-     */
-    const val NODE_TYPE = "$MODEL_PACKAGE.Node"
-
-    /**
-     * Fully qualified name for the Reaction interface.
-     */
-    const val REACTION_TYPE = "$MODEL_PACKAGE.Reaction"
-
-    /**
-     * Fully qualified name for the TimeDistribution interface.
-     */
-    const val TIME_DISTRIBUTION_TYPE = "$MODEL_PACKAGE.TimeDistribution"
-
-    /**
      * Fully qualified name for PositionBasedFilter interface.
      */
     const val POSITION_BASED_FILTER_TYPE = "$MODEL_PACKAGE.PositionBasedFilter"
-
-    /**
-     * Fully qualified name for RandomGenerator.
-     */
-    const val RANDOM_GENERATOR_TYPE = "org.apache.commons.math3.random.RandomGenerator"
-
-    /**
-     * Package patterns that should be considered for Environment type detection.
-     * This replaces the hardcoded "maps" check.
-     */
-    val ENVIRONMENT_PACKAGE_PATTERNS = setOf(
-        MODEL_PACKAGE,
-        "$MODEL_PACKAGE.maps",
-        "$MODEL_PACKAGE.environments",
-    )
 
     /**
      * Context type class names.
@@ -111,16 +71,5 @@ object ProcessorConfig {
 
         /** Fully qualified name for PropertyContext. */
         const val PROPERTY_CONTEXT = "$DSL_MODEL_PACKAGE.PropertyContext"
-    }
-
-    /**
-     * Checks if a qualified name matches any of the environment package patterns.
-     *
-     * @param qualifiedName The fully qualified name to check
-     * @return True if the name matches an environment package pattern
-     */
-    // Provide centralized patterns instead of ad-hoc string checks so injector stays flexible.
-    fun isEnvironmentPackage(qualifiedName: String): Boolean = ENVIRONMENT_PACKAGE_PATTERNS.any { pattern ->
-        qualifiedName.startsWith(pattern)
     }
 }

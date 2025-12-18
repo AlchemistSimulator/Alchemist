@@ -123,7 +123,7 @@ object ParameterInjector {
         annotationValues: Map<String, Any?>,
     ): ContextType {
         val manualScope = annotationValues["scope"] as? String
-        if (manualScope != null && manualScope.isNotBlank()) {
+        if (!manualScope.isNullOrBlank()) {
             val parsedScope = parseScope(manualScope)
             if (parsedScope != null) {
                 return parsedScope

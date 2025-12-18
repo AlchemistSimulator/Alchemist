@@ -26,11 +26,7 @@ object ConstructorParamBuilder {
         injectionType: InjectionType,
         index: Int,
         injectionIndices: Map<InjectionType, Int>,
-        annotationValues: Map<String, Any?>,
-        annotationKey: String,
-    ): Boolean = injectionIndices.containsKey(injectionType) &&
-        index == injectionIndices[injectionType] &&
-        annotationValues[annotationKey] as? Boolean ?: true
+    ): Boolean = injectionIndices.containsKey(injectionType) && index == injectionIndices[injectionType]
 
     private fun buildInjectedParam(
         injectionType: InjectionType,
@@ -220,14 +216,12 @@ object ConstructorParamBuilder {
         paramsToSkip: Set<Int>,
         injectionTypes: List<Triple<InjectionType, String, Boolean>>,
     ): InjectionType? {
-        for ((type, annotationKey, checkAnnotation) in injectionTypes) {
+        for ((type, _, checkAnnotation) in injectionTypes) {
             val matchesAnnotation = checkAnnotation &&
                 isInjectionIndex(
                     type,
                     index,
                     injectionContext.indices,
-                    injectionContext.annotationValues,
-                    annotationKey,
                 )
             val matchesFallback = !checkAnnotation && matchesFallbackInjection(
                 index,

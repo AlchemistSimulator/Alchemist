@@ -1,7 +1,7 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
 import it.unibo.alchemist.boundary.dsl.processor.data.InjectionType
-import org.junit.jupiter.api.Assertions.assertEquals
+import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
 
 class ParameterInjectorTest {
@@ -11,10 +11,7 @@ class ParameterInjectorTest {
             InjectionType.NODE to 0,
             InjectionType.REACTION to 1,
         )
-        val annotationValues = emptyMap<String, Any?>()
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
+        val contextType = ParameterInjector.determineContextType(injectionIndices)
         assertEquals(ContextType.PROGRAM_CONTEXT, contextType)
     }
 
@@ -23,10 +20,7 @@ class ParameterInjectorTest {
         val injectionIndices = mapOf(
             InjectionType.ENVIRONMENT to 0,
         )
-        val annotationValues = emptyMap<String, Any?>()
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
+        val contextType = ParameterInjector.determineContextType(injectionIndices)
         assertEquals(ContextType.SIMULATION_CONTEXT, contextType)
     }
 
@@ -35,10 +29,7 @@ class ParameterInjectorTest {
         val injectionIndices = mapOf(
             InjectionType.INCARNATION to 0,
         )
-        val annotationValues = emptyMap<String, Any?>()
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
+        val contextType = ParameterInjector.determineContextType(injectionIndices)
         assertEquals(ContextType.SIMULATION_CONTEXT, contextType)
     }
 
@@ -48,10 +39,7 @@ class ParameterInjectorTest {
             InjectionType.ENVIRONMENT to 0,
             InjectionType.GENERATOR to 1,
         )
-        val annotationValues = emptyMap<String, Any?>()
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
+        val contextType = ParameterInjector.determineContextType(injectionIndices)
         assertEquals(ContextType.DEPLOYMENTS_CONTEXT, contextType)
     }
 
@@ -62,32 +50,11 @@ class ParameterInjectorTest {
             InjectionType.GENERATOR to 1,
             InjectionType.NODE to 2,
         )
-        val annotationValues = emptyMap<String, Any?>()
-
         val paramsToSkip = ParameterInjector.getInjectionParams(
             injectionIndices,
-            annotationValues,
             ContextType.PROGRAM_CONTEXT,
         )
-
         assertEquals(setOf(0, 1, 2), paramsToSkip)
-    }
-
-    @Test
-    fun `test getInjectionParams with environment disabled`() {
-        val injectionIndices = mapOf(
-            InjectionType.ENVIRONMENT to 0,
-            InjectionType.GENERATOR to 1,
-        )
-        val annotationValues = mapOf("injectEnvironment" to false)
-
-        val paramsToSkip = ParameterInjector.getInjectionParams(
-            injectionIndices,
-            annotationValues,
-            ContextType.DEPLOYMENTS_CONTEXT,
-        )
-
-        assertEquals(setOf(1), paramsToSkip)
     }
 
     @Test
@@ -95,14 +62,10 @@ class ParameterInjectorTest {
         val injectionIndices = mapOf(
             InjectionType.TIMEDISTRIBUTION to 0,
         )
-        val annotationValues = emptyMap<String, Any?>()
-
         val paramsToSkip = ParameterInjector.getInjectionParams(
             injectionIndices,
-            annotationValues,
             ContextType.PROGRAM_CONTEXT,
         )
-
         assertEquals(setOf(0), paramsToSkip)
     }
 
@@ -112,76 +75,12 @@ class ParameterInjectorTest {
             InjectionType.ENVIRONMENT to 0,
             InjectionType.TIMEDISTRIBUTION to 1,
         )
-        val annotationValues = emptyMap<String, Any?>()
-
         val paramsToSkip = ParameterInjector.getInjectionParams(
             injectionIndices,
-            annotationValues,
             ContextType.GLOBAL_PROGRAMS_CONTEXT,
         )
 
         assertEquals(setOf(0), paramsToSkip)
-    }
-
-    @Test
-    fun `test determineContextType with manual scope PROGRAM override`() {
-        val injectionIndices = mapOf(
-            InjectionType.ENVIRONMENT to 0,
-        )
-        val annotationValues = mapOf("scope" to "PROGRAM")
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
-        assertEquals(ContextType.PROGRAM_CONTEXT, contextType)
-    }
-
-    @Test
-    fun `test determineContextType with manual scope SIMULATION override`() {
-        val injectionIndices = mapOf(
-            InjectionType.ENVIRONMENT to 0,
-            InjectionType.GENERATOR to 1,
-        )
-        val annotationValues = mapOf("scope" to "SIMULATION")
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
-        assertEquals(ContextType.SIMULATION_CONTEXT, contextType)
-    }
-
-    @Test
-    fun `test determineContextType with manual scope DEPLOYMENT override`() {
-        val injectionIndices = mapOf(
-            InjectionType.ENVIRONMENT to 0,
-        )
-        val annotationValues = mapOf("scope" to "DEPLOYMENT")
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
-        assertEquals(ContextType.DEPLOYMENTS_CONTEXT, contextType)
-    }
-
-    @Test
-    fun `test determineContextType with manual scope DEPLOYMENTS_CONTEXT override`() {
-        val injectionIndices = mapOf(
-            InjectionType.ENVIRONMENT to 0,
-        )
-        val annotationValues = mapOf("scope" to "DEPLOYMENTS_CONTEXT")
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
-        assertEquals(ContextType.DEPLOYMENTS_CONTEXT, contextType)
-    }
-
-    @Test
-    fun `test determineContextType with manual scope PROPERTY override`() {
-        val injectionIndices = mapOf(
-            InjectionType.ENVIRONMENT to 0,
-        )
-        val annotationValues = mapOf("scope" to "PROPERTY")
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
-        assertEquals(ContextType.PROPERTY_CONTEXT, contextType)
     }
 
     @Test
@@ -190,71 +89,8 @@ class ParameterInjectorTest {
             InjectionType.ENVIRONMENT to 0,
             InjectionType.FILTER to 1,
         )
-        val annotationValues = emptyMap<String, Any?>()
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
+        val contextType = ParameterInjector.determineContextType(injectionIndices)
         assertEquals(ContextType.DEPLOYMENT_CONTEXT, contextType)
-    }
-
-    @Test
-    fun `test determineContextType with filter and manual scope override`() {
-        val injectionIndices = mapOf(
-            InjectionType.FILTER to 0,
-        )
-        val annotationValues = mapOf("scope" to "PROGRAM")
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
-        assertEquals(ContextType.PROGRAM_CONTEXT, contextType)
-    }
-
-    @Test
-    fun `test determineContextType with manual scope EXPORTER_CONTEXT override`() {
-        val injectionIndices = mapOf(
-            InjectionType.ENVIRONMENT to 0,
-        )
-        val annotationValues = mapOf("scope" to "EXPORTER_CONTEXT")
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
-        assertEquals(ContextType.EXPORTER_CONTEXT, contextType)
-    }
-
-    @Test
-    fun `test determineContextType with manual scope GLOBAL_PROGRAMS_CONTEXT override`() {
-        val injectionIndices = mapOf(
-            InjectionType.ENVIRONMENT to 0,
-        )
-        val annotationValues = mapOf("scope" to "GLOBAL_PROGRAMS_CONTEXT")
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
-        assertEquals(ContextType.GLOBAL_PROGRAMS_CONTEXT, contextType)
-    }
-
-    @Test
-    fun `test determineContextType with manual scope OUTPUT_MONITORS_CONTEXT override`() {
-        val injectionIndices = mapOf(
-            InjectionType.ENVIRONMENT to 0,
-        )
-        val annotationValues = mapOf("scope" to "OUTPUT_MONITORS_CONTEXT")
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
-        assertEquals(ContextType.OUTPUT_MONITORS_CONTEXT, contextType)
-    }
-
-    @Test
-    fun `test determineContextType with manual scope TERMINATORS_CONTEXT override`() {
-        val injectionIndices = mapOf(
-            InjectionType.ENVIRONMENT to 0,
-        )
-        val annotationValues = mapOf("scope" to "TERMINATORS_CONTEXT")
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
-        assertEquals(ContextType.TERMINATORS_CONTEXT, contextType)
     }
 
     @Test
@@ -262,22 +98,7 @@ class ParameterInjectorTest {
         val injectionIndices = mapOf(
             InjectionType.ENVIRONMENT to 0,
         )
-        val annotationValues = mapOf("scope" to "INVALID_SCOPE")
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
-        assertEquals(ContextType.SIMULATION_CONTEXT, contextType)
-    }
-
-    @Test
-    fun `test determineContextType with empty scope falls back to automatic detection`() {
-        val injectionIndices = mapOf(
-            InjectionType.ENVIRONMENT to 0,
-        )
-        val annotationValues = mapOf("scope" to "")
-
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
-
+        val contextType = ParameterInjector.determineContextType(injectionIndices)
         assertEquals(ContextType.SIMULATION_CONTEXT, contextType)
     }
 

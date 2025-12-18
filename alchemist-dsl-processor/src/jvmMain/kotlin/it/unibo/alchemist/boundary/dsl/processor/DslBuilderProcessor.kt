@@ -55,13 +55,12 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         classDecl: KSClassDeclaration,
         functionName: String,
         parameters: List<KSValueParameter>,
-        annotationValues: Map<String, Any?>,
     ): GenerationContext {
         val injectionIndices = ParameterInjector.findInjectionIndices(parameters)
         logger.dslInfo("Injection indices: $injectionIndices")
-        val contextType = ParameterInjector.determineContextType(injectionIndices, annotationValues)
+        val contextType = ParameterInjector.determineContextType(injectionIndices)
         logger.dslInfo("Determined context type: $contextType")
-        val paramsToSkip = ParameterInjector.getInjectionParams(injectionIndices, annotationValues, contextType)
+        val paramsToSkip = ParameterInjector.getInjectionParams(injectionIndices, contextType)
         val remainingParams = parameters.filterIndexed { index, _ -> !paramsToSkip.contains(index) }
         val (initialTypeParamNames, initialTypeParamBounds) = TypeExtractor.extractTypeParameters(classDecl)
         val typeParamNames = initialTypeParamNames.toMutableList()
@@ -74,7 +73,6 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         val (injectedParams, injectedParamNames, injectedParamTypesMap) =
             processInjectedParams(
                 injectionIndices,
-                annotationValues,
                 parameters,
                 typeParamNames,
                 typeParamBounds,
@@ -83,7 +81,6 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         updateTypeParamsForInjected(
             hasInjectedParams,
             injectionIndices,
-            annotationValues,
             parameters,
             typeParamNames,
             typeParamBounds,
@@ -108,7 +105,6 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
             indices = injectionIndices,
             paramNames = injectedParamNames,
             paramTypes = injectedParamTypesMap,
-            annotationValues = annotationValues,
             contextType = contextType,
             hasContextParams = hasInjectedParams,
             contextParamName = "ctx",
@@ -126,36 +122,11 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         )
     }
 
-    private fun shouldInjectType(injectionType: InjectionType, annotationValues: Map<String, Any?>): Boolean =
-        when (injectionType) {
-            InjectionType.ENVIRONMENT -> annotationValues["injectEnvironment"] as? Boolean ?: true
-            InjectionType.GENERATOR -> annotationValues["injectGenerator"] as? Boolean ?: true
-            InjectionType.INCARNATION -> annotationValues["injectIncarnation"] as? Boolean ?: true
-            InjectionType.NODE -> annotationValues["injectNode"] as? Boolean ?: true
-            InjectionType.REACTION -> annotationValues["injectReaction"] as? Boolean ?: true
-            InjectionType.TIMEDISTRIBUTION -> true
-            InjectionType.FILTER -> true
-        }
-
     context(resolver: Resolver)
     private fun processClass(classDecl: KSClassDeclaration) {
         logger.dslInfo("Processing class ${classDecl.simpleName.asString()}")
         logger.dslInfo("Class qualified name: ${classDecl.qualifiedName?.asString()}")
-        val annotation = classDecl.annotations.firstOrNull {
-            it.shortName.asString() == "AlchemistKotlinDSL"
-        }
-        if (annotation == null) {
-            logger.warn("Class ${classDecl.simpleName.asString()} has no @AlchemistKotlinDSL annotation")
-            return
-        }
-        val annotationValues = annotation.arguments
-            .mapNotNull { arg -> arg.name?.asString()?.let { it to arg.value } }
-            .toMap()
-        logger.dslInfo("Annotation values: $annotationValues")
-        val manualScope = annotationValues["scope"] as? String
-        logger.dslInfo("Manual scope from annotation: '$manualScope'")
-        val functionName = (annotationValues["functionName"] as? String)?.takeIf { it.isNotEmpty() }
-            ?: classDecl.simpleName.asString().replaceFirstChar { it.lowercaseChar() }
+        val functionName = classDecl.simpleName.asString().replaceFirstChar { it.lowercaseChar() }
         val constructor = classDecl.findConstructor()
         if (constructor == null) {
             logger.warn("Class ${classDecl.simpleName.asString()} has no usable constructor")
@@ -167,7 +138,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
             val typeName = param.type.resolve().declaration.qualifiedName?.asString() ?: "unknown"
             logger.dslInfo("Parameter $index: ${param.name?.asString()} : $typeName")
         }
-        val generationContext = buildGenerationContext(classDecl, functionName, parameters, annotationValues)
+        val generationContext = buildGenerationContext(classDecl, functionName, parameters)
         writeGeneratedFile(classDecl, generationContext)
     }
 
@@ -192,10 +163,8 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
     private fun writeGeneratedCode(writer: PrintWriter, context: GenerationContext) {
         writeFileHeader(writer, context.classDecl, context.injectionContext.contextType)
         val constructorParams = writeImportsAndFunction(writer, context)
-        val hasNode = context.injectionContext.indices.containsKey(InjectionType.NODE) &&
-            context.injectionContext.annotationValues["injectNode"] as? Boolean ?: true
-        val hasReaction = context.injectionContext.indices.containsKey(InjectionType.REACTION) &&
-            context.injectionContext.annotationValues["injectReaction"] as? Boolean ?: true
+        val hasNode = context.injectionContext.indices.containsKey(InjectionType.NODE)
+        val hasReaction = context.injectionContext.indices.containsKey(InjectionType.REACTION)
         if (hasNode && !hasReaction) {
             writePropertyContextFunction(writer, context, constructorParams)
         }
@@ -260,7 +229,6 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
 
     private fun processInjectedParams(
         injectionIndices: Map<InjectionType, Int>,
-        annotationValues: Map<String, Any?>,
         allParameters: List<KSValueParameter>,
         typeParamNames: MutableList<String>,
         typeParamBounds: MutableList<String>,
@@ -269,14 +237,12 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         val injectedParamNames = mutableMapOf<InjectionType, String>()
         val injectedParamTypesMap = mutableMapOf<InjectionType, String>()
         injectionIndices.forEach { (injectionType, index) ->
-            if (shouldInjectType(injectionType, annotationValues)) {
-                val param = allParameters[index]
-                val paramType = FunctionGenerator.buildContextParamType(param.type, typeParamNames, typeParamBounds)
-                val paramName = getInjectionParamName(injectionType)
-                injectedParams.add(paramName to paramType)
-                injectedParamNames[injectionType] = paramName
-                injectedParamTypesMap[injectionType] = paramType
-            }
+            val param = allParameters[index]
+            val paramType = FunctionGenerator.buildContextParamType(param.type, typeParamNames, typeParamBounds)
+            val paramName = getInjectionParamName(injectionType)
+            injectedParams.add(paramName to paramType)
+            injectedParamNames[injectionType] = paramName
+            injectedParamTypesMap[injectionType] = paramType
         }
         return Triple(injectedParams, injectedParamNames, injectedParamTypesMap)
     }
@@ -294,7 +260,6 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
     private fun updateTypeParamsForInjected(
         hasInjectedParams: Boolean,
         injectionIndices: Map<InjectionType, Int>,
-        annotationValues: Map<String, Any?>,
         allParameters: List<KSValueParameter>,
         typeParamNames: MutableList<String>,
         typeParamBounds: MutableList<String>,
@@ -305,18 +270,16 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
             return
         }
         val newTypeParams = mutableMapOf<String, String>()
-        injectionIndices.forEach { (injectionType, index) ->
-            if (shouldInjectType(injectionType, annotationValues)) {
-                val param = allParameters[index]
-                val initialSize = typeParamNames.size
-                FunctionGenerator.buildContextParamType(param.type, typeParamNames, typeParamBounds)
+        injectionIndices.forEach { (_, index) ->
+            val param = allParameters[index]
+            val initialSize = typeParamNames.size
+            FunctionGenerator.buildContextParamType(param.type, typeParamNames, typeParamBounds)
 
-                for (i in initialSize until typeParamNames.size) {
-                    val newParam = typeParamNames[i]
-                    val newBound = typeParamBounds[i]
-                    if (!newTypeParams.containsKey(newParam)) {
-                        newTypeParams[newParam] = newBound
-                    }
+            for (i in initialSize until typeParamNames.size) {
+                val newParam = typeParamNames[i]
+                val newBound = typeParamBounds[i]
+                if (!newTypeParams.containsKey(newParam)) {
+                    newTypeParams[newParam] = newBound
                 }
             }
         }

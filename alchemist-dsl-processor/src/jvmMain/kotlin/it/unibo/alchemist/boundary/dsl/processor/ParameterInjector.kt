@@ -5,7 +5,12 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueParameter
 import it.unibo.alchemist.boundary.dsl.processor.data.InjectionType
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TimeDistribution
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Information about a parameter injection.
@@ -42,61 +47,16 @@ object ParameterInjector {
             val qualifiedName = declaration.qualifiedName?.asString().orEmpty()
             val simpleName = declaration.simpleName.asString()
             when {
-                isEnvironmentType(resolved, qualifiedName) -> indices[InjectionType.ENVIRONMENT] = index
-                isGeneratorType(resolved, qualifiedName) -> indices[InjectionType.GENERATOR] = index
-                isIncarnationType(resolved, qualifiedName) -> indices[InjectionType.INCARNATION] = index
-                isNodeType(resolved, simpleName, qualifiedName) -> indices[InjectionType.NODE] = index
-                isReactionType(resolved, simpleName, qualifiedName) -> indices[InjectionType.REACTION] = index
+                resolved.isSubtypeOf<Environment<*, *>>() -> indices[InjectionType.ENVIRONMENT] = index
+                resolved.isSubtypeOf<RandomGenerator>() -> indices[InjectionType.GENERATOR] = index
+                resolved.isSubtypeOf<Incarnation<*, *>>() -> indices[InjectionType.INCARNATION] = index
+                resolved.isSubtypeOf<Node<*>>() -> indices[InjectionType.NODE] = index
+                resolved.isSubtypeOf<Reaction<*>>() -> indices[InjectionType.REACTION] = index
                 resolved.isSubtypeOf<TimeDistribution<*>>() -> indices[InjectionType.TIMEDISTRIBUTION] = index
                 isFilterType(resolved, simpleName, qualifiedName) -> indices[InjectionType.FILTER] = index
             }
         }
         return indices
-    }
-
-    private fun isEnvironmentType(type: KSType, qualifiedName: String): Boolean {
-        if (!qualifiedName.contains("Environment")) {
-            return false
-        }
-        return TypeHierarchyChecker.matchesTypeOrPackage(
-            type,
-            ProcessorConfig.ENVIRONMENT_TYPE,
-            ProcessorConfig.ENVIRONMENT_PACKAGE_PATTERNS,
-        )
-    }
-
-    private fun isGeneratorType(type: KSType, qualifiedName: String): Boolean {
-        if (!qualifiedName.contains("RandomGenerator")) {
-            return false
-        }
-        return TypeHierarchyChecker.isAssignableTo(type, ProcessorConfig.RANDOM_GENERATOR_TYPE) ||
-            qualifiedName == ProcessorConfig.RANDOM_GENERATOR_TYPE
-    }
-
-    private fun isIncarnationType(type: KSType, qualifiedName: String): Boolean {
-        if (!qualifiedName.contains("Incarnation")) {
-            return false
-        }
-        return TypeHierarchyChecker.isAssignableTo(type, ProcessorConfig.INCARNATION_TYPE) ||
-            qualifiedName == ProcessorConfig.INCARNATION_TYPE
-    }
-
-    private fun isNodeType(type: KSType, simpleName: String, qualifiedName: String): Boolean {
-        if (simpleName != "Node" && !qualifiedName.endsWith(".Node")) {
-            return false
-        }
-        return TypeHierarchyChecker.isAssignableTo(type, ProcessorConfig.NODE_TYPE) ||
-            qualifiedName == ProcessorConfig.NODE_TYPE ||
-            qualifiedName.startsWith("${ProcessorConfig.NODE_TYPE}.")
-    }
-
-    private fun isReactionType(type: KSType, simpleName: String, qualifiedName: String): Boolean {
-        if (simpleName != "Reaction" && !qualifiedName.endsWith(".Reaction")) {
-            return false
-        }
-        return TypeHierarchyChecker.isAssignableTo(type, ProcessorConfig.REACTION_TYPE) ||
-            qualifiedName == ProcessorConfig.REACTION_TYPE ||
-            qualifiedName.startsWith("${ProcessorConfig.REACTION_TYPE}.")
     }
 
     context(resolver: Resolver)

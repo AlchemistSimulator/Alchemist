@@ -27,34 +27,37 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
      * generating helpers and returning unresolved ones.
      */
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        logger.dslInfo("Starting processing")
-        val annotationName = AlchemistKotlinDSL::class.qualifiedName
-        check(!annotationName.isNullOrBlank()) {
-            "The Alchemist Kotlin DSL annotation name is invalid or missing: '$annotationName'"
-        }
-        logger.dslInfo("Alchemist DSL annotation: $annotationName")
-        return resolver.getSymbolsWithAnnotation(annotationName)
-            .onEach { symbol ->
-                val qualifiedName = when (symbol) {
-                    is KSClassDeclaration -> symbol.qualifiedName?.asString() ?: "unknown"
-                    else -> symbol.toString()
-                }
-                logger.dslInfo("Found symbol: $qualifiedName")
+        context(resolver) {
+            logger.dslInfo("Starting processing")
+            val annotationName = AlchemistKotlinDSL::class.qualifiedName
+            check(!annotationName.isNullOrBlank()) {
+                "The Alchemist Kotlin DSL annotation name is invalid or missing: '$annotationName'"
             }
-            .fold(emptyList()) { invalidElements, symbol ->
-                when {
-                    !symbol.validate() -> invalidElements + symbol
-                    else -> {
-                        if (symbol is KSClassDeclaration) {
-                            processClass(symbol)
+            logger.dslInfo("Alchemist DSL annotation: $annotationName")
+            return resolver.getSymbolsWithAnnotation(annotationName)
+                .onEach { symbol ->
+                    val qualifiedName = when (symbol) {
+                        is KSClassDeclaration -> symbol.qualifiedName?.asString() ?: "unknown"
+                        else -> symbol.toString()
+                    }
+                    logger.dslInfo("Found symbol: $qualifiedName")
+                }
+                .fold(emptyList()) { invalidElements, symbol ->
+                    when {
+                        !symbol.validate() -> invalidElements + symbol
+                        else -> {
+                            if (symbol is KSClassDeclaration) {
+                                processClass(symbol)
+                            }
+                            invalidElements
                         }
-                        invalidElements
                     }
                 }
-            }
+        }
     }
 
     // Gather all derived state (injections, type params, constructor metadata) before emitting code.
+    context(resolver: Resolver)
     private fun buildGenerationContext(
         classDecl: KSClassDeclaration,
         functionName: String,
@@ -141,6 +144,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
             InjectionType.FILTER -> true
         }
 
+    context(resolver: Resolver)
     private fun processClass(classDecl: KSClassDeclaration) {
         logger.dslInfo("Processing class ${classDecl.simpleName.asString()}")
         logger.dslInfo("Class qualified name: ${classDecl.qualifiedName?.asString()}")

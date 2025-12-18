@@ -1,8 +1,11 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
+import com.google.devtools.ksp.getClassDeclarationByName
+import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueParameter
 import it.unibo.alchemist.boundary.dsl.processor.data.InjectionType
+import it.unibo.alchemist.model.TimeDistribution
 
 /**
  * Information about a parameter injection.
@@ -30,7 +33,8 @@ object ParameterInjector {
      * @param parameters The list of constructor parameters to analyze
      * @return A map from injection type to parameter index
      */
-    fun findInjectionIndices(parameters: List<KSValueParameter>): Map<InjectionType, Int> {
+    context(resolver: Resolver)
+    internal fun findInjectionIndices(parameters: List<KSValueParameter>): Map<InjectionType, Int> {
         val indices = mutableMapOf<InjectionType, Int>()
         parameters.forEachIndexed { index, param ->
             val resolved = param.type.resolve()
@@ -43,8 +47,7 @@ object ParameterInjector {
                 isIncarnationType(resolved, qualifiedName) -> indices[InjectionType.INCARNATION] = index
                 isNodeType(resolved, simpleName, qualifiedName) -> indices[InjectionType.NODE] = index
                 isReactionType(resolved, simpleName, qualifiedName) -> indices[InjectionType.REACTION] = index
-                isTimeDistributionType(resolved, simpleName, qualifiedName) ->
-                    indices[InjectionType.TIMEDISTRIBUTION] = index
+                isTimeDistribution(resolved) -> indices[InjectionType.TIMEDISTRIBUTION] = index
                 isFilterType(resolved, simpleName, qualifiedName) -> indices[InjectionType.FILTER] = index
             }
         }
@@ -96,14 +99,10 @@ object ParameterInjector {
             qualifiedName.startsWith("${ProcessorConfig.REACTION_TYPE}.")
     }
 
-    private fun isTimeDistributionType(type: KSType, simpleName: String, qualifiedName: String): Boolean {
-        if (simpleName != "TimeDistribution" && !qualifiedName.endsWith(".TimeDistribution")) {
-            return false
-        }
-        return TypeHierarchyChecker.isAssignableTo(type, ProcessorConfig.TIME_DISTRIBUTION_TYPE) ||
-            qualifiedName == ProcessorConfig.TIME_DISTRIBUTION_TYPE ||
-            qualifiedName.startsWith("${ProcessorConfig.TIME_DISTRIBUTION_TYPE}.")
-    }
+    context(resolver: Resolver)
+    private fun isTimeDistribution(type: KSType): Boolean =
+        checkNotNull(resolver.getClassDeclarationByName<TimeDistribution<*>>())
+            .asStarProjectedType().isAssignableFrom(type)
 
     private fun isFilterType(type: KSType, simpleName: String, qualifiedName: String): Boolean {
         val effectiveType = type.makeNotNullable()

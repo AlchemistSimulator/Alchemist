@@ -1,5 +1,8 @@
 package it.unibo.alchemist.boundary.dsl.processor
 
+import com.google.devtools.ksp.getClassDeclarationByName
+import com.google.devtools.ksp.getConstructors
+import com.google.devtools.ksp.isPublic
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
@@ -7,6 +10,7 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.validate
 import findConstructor
@@ -16,8 +20,16 @@ import it.unibo.alchemist.boundary.dsl.processor.data.GenerationContext
 import it.unibo.alchemist.boundary.dsl.processor.data.InjectionContext
 import it.unibo.alchemist.boundary.dsl.processor.data.InjectionType
 import it.unibo.alchemist.boundary.dsl.processor.data.TypeParameterInfo
+import it.unibo.alchemist.core.Simulation
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.LinkingRule
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.TimeDistribution
 import java.io.PrintWriter
 import java.nio.charset.StandardCharsets
+import parameterTypes
 
 /** Symbol processor that emits DSL helpers for `@AlchemistKotlinDSL` classes. */
 class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) : SymbolProcessor {
@@ -123,13 +135,31 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
     }
 
     context(resolver: Resolver)
-    private fun processClass(classDecl: KSClassDeclaration) {
-        logger.dslInfo("Processing class ${classDecl.simpleName.asString()}")
-        logger.dslInfo("Class qualified name: ${classDecl.qualifiedName?.asString()}")
-        val functionName = classDecl.simpleName.asString().replaceFirstChar { it.lowercaseChar() }
-        val constructor = classDecl.findConstructor()
+    private fun processClass(classDeclaration: KSClassDeclaration) {
+        logger.dslInfo("Processing class ${classDeclaration.simpleName.asString()}")
+        logger.dslInfo("Class qualified name: ${classDeclaration.qualifiedName?.asString()}")
+        val injectableTypes = injectableTypes()
+        val contextualizableConstructors = classDeclaration.getConstructors()
+            .filter { it.isPublic() }
+            .map { it to it.parameterTypes }
+            .filter { (_, parameterTypes) ->
+                // Only consider constructors with injectable parameters
+                parameterTypes.any { it in injectableTypes }
+            }
+            .distinctBy { (_, parameterTypes) -> parameterTypes - injectableTypes }
+            .map { it.first }
+            .toSet()
+        val file = codeGenerator.createNewFile(
+            dependencies = classDeclaration.containingFile
+                ?.let { Dependencies(false, it) }
+                ?: Dependencies.ALL_FILES,
+            packageName = classDeclaration.packageName.asString(),
+            fileName = "",
+        )
+        val functionName = classDeclaration.simpleName.asString().replaceFirstChar { it.lowercaseChar() }
+        val constructor = classDeclaration.findConstructor()
         if (constructor == null) {
-            logger.warn("Class ${classDecl.simpleName.asString()} has no usable constructor")
+            logger.warn("Class ${classDeclaration.simpleName.asString()} has no usable constructor")
             return
         }
         val parameters = constructor.parameters
@@ -138,8 +168,8 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
             val typeName = param.type.resolve().declaration.qualifiedName?.asString() ?: "unknown"
             logger.dslInfo("Parameter $index: ${param.name?.asString()} : $typeName")
         }
-        val generationContext = buildGenerationContext(classDecl, functionName, parameters)
-        writeGeneratedFile(classDecl, generationContext)
+        val generationContext = buildGenerationContext(classDeclaration, functionName, parameters)
+        writeGeneratedFile(classDeclaration, generationContext)
     }
 
     private fun writeGeneratedFile(classDecl: KSClassDeclaration, context: GenerationContext) {
@@ -404,5 +434,18 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
 
     private companion object {
         private fun KSPLogger.dslInfo(message: String) = info("${DslBuilderProcessor::class.simpleName}: $message")
+
+        context(resolver: Resolver)
+        fun injectableTypes(): Set<KSType> = sequenceOf(
+            resolver.getClassDeclarationByName<Environment<*, *>>(),
+            resolver.getClassDeclarationByName<Incarnation<*, *>>(),
+            resolver.getClassDeclarationByName<LinkingRule<*, *>>(),
+            resolver.getClassDeclarationByName<Node<*>>(),
+            resolver.getClassDeclarationByName<Reaction<*>>(),
+            resolver.getClassDeclarationByName<Simulation<*, *>>(),
+            resolver.getClassDeclarationByName<TimeDistribution<*>>(),
+        )
+            .map { checkNotNull(it).asStarProjectedType() }
+            .toSet()
     }
 }

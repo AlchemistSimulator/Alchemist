@@ -70,6 +70,11 @@ sealed interface ReactiveReaction<T> :
     val timeDistribution: TimeDistribution<T>
 
     /**
+     * Disposes this reaction, clearing its subscriptions.
+     */
+    fun dispose()
+
+    /**
      * @return true if the reaction can be executed (namely, all the conditions
      * are satisfied).
      */

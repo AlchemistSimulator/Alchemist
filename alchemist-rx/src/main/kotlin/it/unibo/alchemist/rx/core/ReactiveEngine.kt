@@ -115,6 +115,8 @@ class ReactiveEngine<T, P : Position<out P>>(
         } finally {
             status = Status.TERMINATED
             commands.clear()
+            reactionWrappers.values.forEach { it.dispose() }
+            reactionWrappers.clear()
             runCatching {
                 monitors.forEach { it.finished(environment, currentTime, step) }
             }.onFailure { e ->
@@ -156,6 +158,7 @@ class ReactiveEngine<T, P : Position<out P>>(
         if (actionable is Reaction<T>) {
             reactionWrappers.remove(actionable)?.let { wrapper ->
                 wrapper.rescheduleRequest.stopWatching(this)
+                wrapper.dispose()
                 scheduler.removeReaction(wrapper)
             }
         } else {

@@ -43,6 +43,7 @@ abstract class AbstractReactiveReaction<T>(
     private val _conditions = ArrayList<ReactiveCondition<T>>()
     private var canExecute: Boolean = true
     private var conditionsAggregateObservable: Observable<Boolean>? = null
+    private val subscriptions = ArrayList<Observable<*>>()
 
     private val hash: Int = Hashes.hash32(node.hashCode(), node.moleculeCount, node.reactions.size)
 
@@ -65,21 +66,28 @@ abstract class AbstractReactiveReaction<T>(
                 it.observableInboundDependencies.stopWatching(this)
             }
 
+            subscriptions.forEach { it.stopWatching(this) }
+            subscriptions.clear()
+
             conditionsAggregateObservable?.stopWatching(this)
 
             _conditions.clear()
             _conditions.addAll(value)
 
             value.forEach { condition ->
-                condition.observableInboundDependencies.merge().onChange(this) {
-                    requestReschedule()
+                condition.observableInboundDependencies.merge().apply {
+                    onChange(this@AbstractReactiveReaction) { requestReschedule() }
+                    subscriptions.add(this)
                 }
             }
 
             conditionsAggregateObservable = value.takeIf { it.isNotEmpty() }
                 ?.map { it.isValid }
                 ?.combineLatest { validities -> validities.all { it } }
-                ?.apply { onChange(this) { canExecute = it } }
+                ?.apply {
+                    onChange(this@AbstractReactiveReaction) { canExecute = it }
+                    subscriptions.add(this)
+                }
 
             requestReschedule()
         }
@@ -96,6 +104,12 @@ abstract class AbstractReactiveReaction<T>(
 
     @Suppress("EmptyFunctionBlock")
     override fun initializationComplete(atTime: Time, environment: ObservableEnvironment<T, *>) {}
+
+    override fun dispose() {
+        subscriptions.forEach { it.stopWatching(this) }
+        subscriptions.clear()
+        _conditions.clear()
+    }
 
     override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: ObservableEnvironment<T, *>) {
         updateInternalStatus(currentTime, hasBeenExecuted, environment)

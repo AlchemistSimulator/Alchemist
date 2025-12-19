@@ -10,6 +10,7 @@
 package it.unibo.alchemist.rx.model
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
@@ -89,6 +90,29 @@ class ReactiveReactionTest : FunSpec({
             validObs.current = false
             condition.isValid.current shouldBe false
             reaction.canExecute() shouldBe false
+        }
+    }
+
+    test("disposing a reaction should remove all of its subscriptions") {
+        withObservableTestEnvironment {
+            val node = spawnNode(0.0, 0.0)
+            val cond = condition<Double> {
+                validity {
+                    true
+                }
+                propensity { 1.0 }
+            }
+
+            val baseline = cond.isValid.observers.size
+
+            val reaction = TestReactiveReaction(node).apply {
+                conditions = listOf(cond)
+            }
+
+            cond.isValid.observers.filterIsInstance<Pair<Any, Any>>().first().toList() shouldContain reaction
+            cond.isValid.observers.size shouldBe baseline + 1
+            reaction.dispose()
+            cond.isValid.observers.size shouldBe baseline
         }
     }
 })

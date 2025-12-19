@@ -32,6 +32,11 @@ interface ReactiveReactionAdapter<T> : Reaction<T> {
      * Used by the scheduler to learn when this reaction needs to be rescheduled.
      */
     val rescheduleRequest: Observable<Unit>
+
+    /**
+     * Disposes the reaction, clearing all the subscriptions.
+     */
+    fun dispose()
 }
 
 /**
@@ -51,34 +56,33 @@ internal class ReactiveReactionAdapterImpl<T>(
     override val rescheduleRequest = EventObservable()
 
     private val _conditions = ArrayList<ReactiveConditionAdapter<T>>()
+    private val subscriptions = ArrayList<Observable<*>>()
 
     private val conditionsAggregateObservable: MutableObservable<Boolean> = observe(true)
 
     override var conditions: List<Condition<T>>
         get() = Collections.unmodifiableList(_conditions)
         set(value) {
-            _conditions.forEach {
-                it.observeValidity.stopWatching(this)
-                it.observePropensityContribution.stopWatching(this)
-                it.observableInboundDependencies.stopWatching(this)
-            }
-
+            subscriptions.forEach { it.stopWatching(this) }
+            subscriptions.clear()
             _conditions.clear()
 
             value.map { it.asReactive(environment, this) }.also { newConditions ->
                 _conditions.addAll(newConditions)
                 newConditions.forEach { condition ->
-                    condition.observableInboundDependencies.merge().onChange(this) {
-                        rescheduleRequest.emit() // the scheduler will take care to call `update(..., false, ...)`
+                    condition.observableInboundDependencies.merge().apply {
+                        onChange(this@ReactiveReactionAdapterImpl) { rescheduleRequest.emit() }
+                        subscriptions.add(this)
                     }
                 }
 
                 newConditions.map { it.observeValidity }
                     .combineLatest { validities -> validities.all { it } }
                     .apply {
-                        onChange(this) { _ ->
+                        onChange(this@ReactiveReactionAdapterImpl) { _ ->
                             conditionsAggregateObservable.update { it }
                         }
+                        subscriptions.add(this)
                     }
             }
 
@@ -90,6 +94,12 @@ internal class ReactiveReactionAdapterImpl<T>(
 
     override fun canExecute(): Boolean = conditionsAggregateObservable.current &&
         origin.canExecute() // when and if this class is abstract, let's mimic [AbstractReaction<T>]
+
+    override fun dispose() {
+        subscriptions.forEach { it.stopWatching(this) }
+        subscriptions.clear()
+        _conditions.clear()
+    }
 
     override fun toString(): String = "Rx-$origin"
 }

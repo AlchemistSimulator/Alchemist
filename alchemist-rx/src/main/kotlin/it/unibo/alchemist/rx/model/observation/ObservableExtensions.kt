@@ -84,9 +84,24 @@ object ObservableExtensions {
          */
         fun <T, O> ObservableSet<T>.flatMap(map: (T) -> Observable<O>): Observable<O> = object : Observable<O> {
             private val sources = mutableMapOf<T, Observable<O>>()
+            private val UNINITIALIZED = Any()
 
-            override var current: O = map(toSet().first()).current // TODO: better way to handle initial vale
+            private var _current: Any? = UNINITIALIZED
             override var observers: List<Any> = emptyList()
+
+            override var current: O
+                get() {
+                    if (_current !== UNINITIALIZED) {
+                        @Suppress("UNCHECKED_CAST")
+                        return _current as O
+                    }
+                    return toSet().firstOrNull()
+                        ?.let { map(it).current }
+                        ?: throw NoSuchElementException("Cannot access 'current': the source ObservableSet is empty!")
+                }
+                set(value) {
+                    _current = value
+                }
 
             override fun onChange(registrant: Any, callback: (O) -> Unit) {
                 observers += registrant

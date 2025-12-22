@@ -1,3 +1,17 @@
+## [42.3.24](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.23...42.3.24) (2025-12-22)
+
+### Dependency updates
+
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.23 ([#5041](https://github.com/AlchemistSimulator/Alchemist/issues/5041)) ([b309285](https://github.com/AlchemistSimulator/Alchemist/commit/b309285ee0f5722a0790cad215ce2f279f06c920))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.153.1 ([#5040](https://github.com/AlchemistSimulator/Alchemist/issues/5040)) ([b47adc7](https://github.com/AlchemistSimulator/Alchemist/commit/b47adc72202caec88db24be6b1517a854bba67a0))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([4951180](https://github.com/AlchemistSimulator/Alchemist/commit/495118013bfc077bb9dfb6f3b839dae28928594a))
+
 ## [42.3.23](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.22...42.3.23) (2025-12-19)
 
 ### Dependency updates

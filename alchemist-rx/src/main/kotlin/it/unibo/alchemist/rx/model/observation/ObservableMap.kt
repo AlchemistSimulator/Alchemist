@@ -62,7 +62,7 @@ open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> =
 
     override val current: Map<K, V> = Collections.unmodifiableMap(backingMap)
 
-    override val observers: List<Any> = mapObservers.keys.toList()
+    override val observers: List<Any> get() = mapObservers.keys.toList()
 
     init {
         if (backingMap.isNotEmpty()) {

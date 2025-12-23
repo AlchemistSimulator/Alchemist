@@ -25,4 +25,7 @@ internal fun KSTypeReference.asString(): String = buildString {
             },
         )
     }
+    if (type.isMarkedNullable) {
+        append("?")
+    }
 }

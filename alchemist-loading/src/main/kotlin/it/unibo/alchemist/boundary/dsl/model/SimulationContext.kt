@@ -55,7 +55,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * @see [ExporterContextImpl] for exporter configuration
  * @see [LayerContextImpl] for layer configuration
  */
-@AlchemistDsl
+@Suppress("UndocumentedPublicFunction") // Detekt false positive with context parameters
 interface SimulationContext<T, P : Position<P>> {
     /**
      * The incarnation instance that defines how molecules, nodes, and reactions are created.
@@ -128,9 +128,7 @@ interface SimulationContext<T, P : Position<P>> {
      * @see [DeploymentsContextImpl] to configure deployments
      */
     context(environment: Environment<T, P>)
-    fun deployments(
-        block: DeploymentsContext<T, P>.() -> Unit,
-    )
+    fun deployments(block: DeploymentsContext<T, P>.() -> Unit)
 
     /**
      * Adds a termination predicate to the simulation.

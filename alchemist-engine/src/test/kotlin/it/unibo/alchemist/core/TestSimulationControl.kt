@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -68,7 +68,7 @@ class TestSimulationControl :
 
         fun Environment<Nothing, *>.tickRate(delta: Double) {
             this.simulation.schedule {
-                this.addGlobalReaction(GlobalTestReaction(DiracComb(Time.ZERO, delta), this))
+                this.addGlobalReaction(GlobalTestReaction(this, DiracComb(Time.ZERO, delta)))
             }
         }
     }

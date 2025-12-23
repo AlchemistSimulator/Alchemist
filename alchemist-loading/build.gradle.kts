@@ -19,6 +19,7 @@ import Libs.incarnation
  */
 plugins {
     id("kotlin-jvm-convention")
+    id("com.google.devtools.ksp")
 }
 
 dependencies {
@@ -41,17 +42,34 @@ dependencies {
     implementation(libs.mongodb)
     implementation(libs.snakeyaml)
 
+    implementation("org.jetbrains.kotlin:kotlin-scripting-common:${libs.versions.kotlin.get()}")
+    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm:${libs.versions.kotlin.get()}")
+    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm-host:${libs.versions.kotlin.get()}")
+
     runtimeOnly(libs.groovy.jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))
     runtimeOnly(libs.scala.compiler)
 
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("maps"))
+    testImplementation(alchemist("test"))
     testImplementation(libs.appdirs)
     testImplementation(libs.caffeine)
     testImplementation(libs.embedmongo)
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("protelis"))
+    implementation(kotlin("script-runtime"))
+
+    ksp(project(":alchemist-dsl-processor"))
+}
+
+kotlin {
+    sourceSets.main {
+        kotlin.srcDir("build/generated/ksp/main/kotlin")
+    }
+    sourceSets.test {
+        kotlin.srcDir("build/generated/ksp/test/kotlin")
+    }
 }
 
 tasks.withType<Test> {
@@ -68,6 +86,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions {
         freeCompilerArgs.addAll(
             "-opt-in=kotlin.time.ExperimentalTime",
+            "-Xcontext-parameters",
         )
     }
 }

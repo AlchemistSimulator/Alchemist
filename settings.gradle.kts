@@ -16,6 +16,7 @@ include(
     "alchemist-api",
     "alchemist-composeui",
     "alchemist-cognitive-agents",
+    "alchemist-dsl-processor",
     "alchemist-engine",
     "alchemist-euclidean-geometry",
     "alchemist-full",

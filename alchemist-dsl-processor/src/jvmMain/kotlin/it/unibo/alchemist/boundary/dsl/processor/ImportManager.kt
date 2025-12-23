@@ -6,7 +6,7 @@ import java.io.PrintWriter
 /**
  * Manages writing import statements for generated DSL code.
  */
-object ImportManager {
+internal object ImportManager {
     /**
      * Writes all necessary import statements to the generated code file.
      *

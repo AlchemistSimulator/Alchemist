@@ -19,7 +19,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * @property index The parameter index
  * @property inject Whether to inject this parameter
  */
-data class InjectionInfo(
+internal data class InjectionInfo(
     /** The type of injection. */
     val type: InjectionType,
     /** The parameter index. */
@@ -31,7 +31,7 @@ data class InjectionInfo(
 /**
  * Finds and manages parameter injection indices for context-aware DSL generation.
  */
-object ParameterInjector {
+internal object ParameterInjector {
     /**
      * Finds indices of parameters that can be injected from context.
      *

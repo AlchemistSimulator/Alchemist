@@ -9,10 +9,15 @@
 
 package it.unibo.alchemist.boundary.dsl.processor.extensions
 
+import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSType
+import it.unibo.alchemist.boundary.dsl.processor.DslBuilderProcessor
 
 internal fun KSType.toStringWithGenerics(typeParamNames: List<String>): String = "${declaration.typeName}${
     arguments.takeIf { it.isNotEmpty() }
         ?.joinToString(prefix = "<", separator = ", ", postfix = ">") { it.format(typeParamNames) }
         .orEmpty()
 }${"?".takeIf { isMarkedNullable }.orEmpty()}"
+
+context(resolver: Resolver)
+internal fun KSType.isInjectable() = DslBuilderProcessor.injectableTypes().any { it.isAssignableFrom(this) }

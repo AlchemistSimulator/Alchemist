@@ -17,7 +17,7 @@ package it.unibo.alchemist.boundary.dsl.processor.data
  * @property classTypeParamNames Original class-level type parameter names.
  * @property classTypeParamBounds Original class-level type parameter bounds.
  */
-data class TypeParameterInfo(
+internal data class TypeParameterInfo(
     val names: List<String>,
     val bounds: List<String>,
     val classTypeParamNames: List<String> = names,

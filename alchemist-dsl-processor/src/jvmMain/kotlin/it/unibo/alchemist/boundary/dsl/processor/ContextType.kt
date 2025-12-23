@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.dsl.processor
 /**
  * Type of context available for parameter injection.
  */
-enum class ContextType {
+internal enum class ContextType {
     /** Simulation context (only incarnation or only environment). */
     SIMULATION_CONTEXT,
 

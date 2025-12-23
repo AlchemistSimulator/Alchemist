@@ -9,7 +9,7 @@ import it.unibo.alchemist.boundary.dsl.processor.extensions.toStringWithGenerics
 /**
  * Extracts type information from KSP symbols for code generation.
  */
-object TypeExtractor {
+internal object TypeExtractor {
     /**
      * Extracts type parameter names and bounds from a class declaration.
      *

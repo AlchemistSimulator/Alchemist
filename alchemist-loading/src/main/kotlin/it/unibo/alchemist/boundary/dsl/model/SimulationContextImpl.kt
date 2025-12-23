@@ -32,9 +32,11 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param P The type of position.
  */
 
-class SimulationContextImpl<T, P : Position<P>>(override val incarnation: Incarnation<T, P>) : SimulationContext<T, P> {
+class SimulationContextImpl<T, P : Position<P>>(
+    override val incarnation: Incarnation<T, P>,
+    private var envIstance: Environment<T, P>? = null,
+) : SimulationContext<T, P> {
     /** The environment instance (internal use). */
-    var envIstance: Environment<T, P>? = null
     override val environment: Environment<T, P>
         get() = requireNotNull(envIstance) { "Environment has not been initialized yet" }
 
@@ -110,6 +112,7 @@ class SimulationContextImpl<T, P : Position<P>>(override val incarnation: Incarn
         return batchContext
     }
 
+    context(environment: Environment<T, P>)
     override fun deployments(block: DeploymentsContext<T, P>.() -> Unit) {
         logger.debug("adding deployments block inside {}", this)
         buildSteps.add {

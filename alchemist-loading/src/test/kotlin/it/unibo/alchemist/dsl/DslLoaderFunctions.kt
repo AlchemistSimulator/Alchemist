@@ -7,23 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-@file:Suppress("UNCHECKED_CAST", "DEPRECATION")
-
 package it.unibo.alchemist.dsl
 
 import another.location.SimpleMonitor
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
 import it.unibo.alchemist.boundary.dsl.Dsl.simulation
-import it.unibo.alchemist.boundary.dsl.generated.RectangleFilter
-import it.unibo.alchemist.boundary.dsl.generated.circle
-import it.unibo.alchemist.boundary.dsl.generated.globalTestReaction
-import it.unibo.alchemist.boundary.dsl.generated.grid
-import it.unibo.alchemist.boundary.dsl.generated.moleculeReader
-import it.unibo.alchemist.boundary.dsl.generated.point
-import it.unibo.alchemist.boundary.dsl.generated.polygon
-import it.unibo.alchemist.boundary.dsl.generated.testNode
-import it.unibo.alchemist.boundary.dsl.generated.testNodeProperty
 import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations.PROTELIS
 import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations.SAPERE
 import it.unibo.alchemist.boundary.exporters.CSVExporter
@@ -39,6 +28,7 @@ import it.unibo.alchemist.model.actions.BrownianMove
 import it.unibo.alchemist.model.deployments.Circle
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
+import it.unibo.alchemist.model.deployments.point
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.layers.StepLayer
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance

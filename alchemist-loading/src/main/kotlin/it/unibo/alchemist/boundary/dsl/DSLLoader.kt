@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.dsl
 
 import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Loader
+import it.unibo.alchemist.boundary.dsl.model.SimulationContext
 import it.unibo.alchemist.boundary.dsl.model.SimulationContextImpl
 import it.unibo.alchemist.boundary.exporters.GlobalExporter
 import it.unibo.alchemist.core.Engine
@@ -25,12 +26,12 @@ import java.util.concurrent.Semaphore
  * @param ctx The simulation context.
  */
 abstract class DSLLoader<A, B : Position<B>>(
-    private val ctx: SimulationContextImpl<*, *>,
+    private val ctx: SimulationContext<*, *>,
     private val envFactory: () -> Environment<*, *>,
 ) : Loader {
     override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> =
         SingleUseLoader(ctx).load(values)
-    private inner class SingleUseLoader(private val ctx: SimulationContextImpl<*, *>) {
+    private inner class SingleUseLoader(private val ctx: SimulationContext<*, *>) {
         private val mutex = Semaphore(1)
         private var consumed = false
 

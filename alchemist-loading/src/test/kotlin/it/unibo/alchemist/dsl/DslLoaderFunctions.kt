@@ -18,6 +18,7 @@ import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations.SAPERE
 import it.unibo.alchemist.boundary.exporters.CSVExporter
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
 import it.unibo.alchemist.boundary.extractors.Time
+import it.unibo.alchemist.boundary.extractors.moleculeReader
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution

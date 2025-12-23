@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.test
 
+import it.unibo.alchemist.boundary.dsl.AlchemistDsl
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
@@ -20,7 +21,8 @@ import it.unibo.alchemist.model.TimeDistribution
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 
-class GlobalTestReaction<T>(override val timeDistribution: TimeDistribution<T>, val environment: Environment<T, *>) :
+@AlchemistDsl
+class GlobalTestReaction<T>(val environment: Environment<T, *>, override val timeDistribution: TimeDistribution<T>) :
     GlobalReaction<T> {
     override fun compareTo(other: Actionable<T>): Int = tau.compareTo(other.tau)
 

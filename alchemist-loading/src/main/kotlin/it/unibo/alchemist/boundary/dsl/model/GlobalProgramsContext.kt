@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.TimeDistribution
 
 /**
  * Context for configuring global reactions in a simulation.
@@ -27,6 +28,7 @@ interface GlobalProgramsContext<T, P : Position<P>> {
      *
      * @param this The global reaction to add.
      */
+    context(timeDistribution: TimeDistribution<T>)
     operator fun GlobalReaction<T>.unaryPlus()
 }
 
@@ -38,6 +40,7 @@ interface GlobalProgramsContext<T, P : Position<P>> {
  */
 class GlobalProgramsContextImpl<T, P : Position<P>>(override val ctx: SimulationContext<T, P>) :
     GlobalProgramsContext<T, P> {
+    context(timeDistribution: TimeDistribution<T>)
     override fun GlobalReaction<T>.unaryPlus() {
         ctx.environment.addGlobalReaction(this)
     }

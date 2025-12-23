@@ -14,9 +14,7 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.rx.dsl.ReactiveConditionDSL.condition
 import it.unibo.alchemist.rx.model.observation.MutableObservable.Companion.observe
-import it.unibo.alchemist.rx.model.observation.Observable
 import it.unibo.alchemist.rx.model.observation.ObservableMutableSet
-import it.unibo.alchemist.rx.model.utils.withDisposal
 
 class DisposableTest : FunSpec({
 
@@ -84,4 +82,39 @@ class DisposableTest : FunSpec({
             set.observers.shouldBeEmpty()
         }
     }
-})
+}) {
+    companion object {
+        /**
+         * A utility class to track [Disposable] resources and ensure they are disposed.
+         */
+        class DisposalTracker : Disposable {
+            private val resources = mutableListOf<Disposable>()
+
+            /**
+             * Registers a [Disposable] to be tracked.
+             *
+             * @return this [Disposable]
+             */
+            fun <T : Disposable> T.track(): T = also { resources.add(it) }
+
+            override fun dispose() {
+                resources.asReversed().forEach { runCatching { it.dispose() } }
+                resources.clear()
+            }
+        }
+
+        /**
+         * Executes the given [block] within a [DisposalTracker] scope.
+         * All [Disposable]s tracked via [DisposalTracker.track] will be disposed
+         * when the block completes (successfully or exceptionally).
+         */
+        fun <T> withDisposal(block: DisposalTracker.() -> T): T {
+            val tracker = DisposalTracker()
+            try {
+                return tracker.block()
+            } finally {
+                tracker.dispose()
+            }
+        }
+    }
+}

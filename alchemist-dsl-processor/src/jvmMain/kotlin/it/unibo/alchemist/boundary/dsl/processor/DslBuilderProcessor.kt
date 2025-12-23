@@ -11,18 +11,10 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
-import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.validate
-import findConstructor
 import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL
-import it.unibo.alchemist.boundary.dsl.processor.data.ConstructorInfo
-import it.unibo.alchemist.boundary.dsl.processor.data.GenerationContext
 import it.unibo.alchemist.boundary.dsl.processor.data.InjectableConstructor
-import it.unibo.alchemist.boundary.dsl.processor.data.InjectionContext
-import it.unibo.alchemist.boundary.dsl.processor.data.InjectionType
-import it.unibo.alchemist.boundary.dsl.processor.data.TypeParameterInfo
 import it.unibo.alchemist.boundary.dsl.processor.extensions.asString
-import it.unibo.alchemist.boundary.dsl.processor.extensions.isInjectable
 import it.unibo.alchemist.boundary.dsl.processor.extensions.nameOrTypeName
 import it.unibo.alchemist.boundary.dsl.processor.extensions.typeName
 import it.unibo.alchemist.core.Simulation
@@ -34,7 +26,7 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TimeDistribution
 import java.io.PrintWriter
 import java.nio.charset.StandardCharsets
-import parameterTypes
+import org.apache.commons.math3.random.RandomGenerator
 
 /** Symbol processor that emits DSL helpers for `@AlchemistKotlinDSL` classes. */
 class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) : SymbolProcessor {
@@ -70,7 +62,6 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
     private fun processClass(classDeclaration: KSClassDeclaration) {
         logger.dslInfo("Processing class ${classDeclaration.simpleName.asString()}")
         logger.dslInfo("Class qualified name: ${classDeclaration.qualifiedName?.asString()}")
-        val injectableTypes = injectableTypes()
         val file = codeGenerator.createNewFile(
             dependencies = classDeclaration.containingFile
                 ?.let { Dependencies(false, it) }
@@ -84,67 +75,74 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
         writer.println("package ${classDeclaration.packageName.asString()}")
         writer.println()
         val functionName = classDeclaration.simpleName.asString().replaceFirstChar { it.lowercaseChar() }
-        classDeclaration.getConstructors()
+        val injectableConstructors = classDeclaration.getConstructors()
             .filter { it.isPublic() }
             .mapNotNull { InjectableConstructor(it) }
-            .forEach { (constructor, injectableParams, preservedParams) ->
-                val context = injectableParams.joinToString(prefix = "context(", postfix = ")") { param ->
-                    "${param.nameOrTypeName()}: ${param.type.asString()}"
-                }
-                writer.println(context)
-                val typeParameters = constructor.typeParameters.takeIf { it.isNotEmpty() }
-                    ?.joinToString(prefix = "<", postfix = "> ") {
-                        buildString {
-                            if (it.isReified) {
-                                append("reified ")
-                            }
-                            append(it.name.asString())
-                        }
-                    }
-                    .orEmpty()
-                val parameters = preservedParams.joinToString(separator = NEWLINE_INDENT) { parameter ->
-                    buildString {
-                        if (parameter.isCrossInline) {
-                            append("crossinline ")
-                        }
-                        if (parameter.isNoInline) {
-                            append("noinline ")
-                        }
-                        if (parameter.isVararg) {
-                            append("vararg ")
-                        }
-                        append(
-                            "${parameter.name?.asString()}: ${parameter.type.asString()}",
-                        )
-                    }
-                }
-                val whereClause = constructor.typeParameters
-                    .flatMap { typeParam ->
-                        typeParam.bounds.map { bound ->
-                            "${typeParam.simpleName.asString()} : ${bound.asString()}"
-                        }
-                    }
-                    .takeIf { it.isNotEmpty() }
-                    ?.joinToString(separator = NEWLINE_INDENT, prefix = "where\n    ", postfix = "\n")
-                    .orEmpty()
-                val arguments = constructor.parameters.joinToString(NEWLINE_INDENT) {
-                    buildString {
-                        if (it.isVararg) {
-                            append("*")
-                        }
-                        append(it.nameOrTypeName())
-                    }
-                }
-                writer.println(
-                    """
-                        |fun $typeParameters$functionName(
-                        |    $parameters
-                        |) $whereClause= ${classDeclaration.typeName}(
-                        |    $arguments
-                        |)
-                    """.trimMargin(),
-                )
+            .toList()
+        if (injectableConstructors.isEmpty()) {
+            logger.warn(
+                "No injectable constructors, ${AlchemistKotlinDSL::class.qualifiedName} will have no effect.",
+                classDeclaration,
+            )
+        }
+        injectableConstructors.forEach { (constructor, injectableParams, preservedParams) ->
+            val context = injectableParams.joinToString(prefix = "context(", postfix = ")") { param ->
+                "${param.nameOrTypeName()}: ${param.type.asString()}"
             }
+            writer.println(context)
+            val typeParameters = constructor.typeParameters.takeIf { it.isNotEmpty() }
+                ?.joinToString(prefix = "<", postfix = "> ") { typeArgument ->
+                    buildString {
+                        if (typeArgument.isReified) {
+                            append("reified ")
+                        }
+                        append(typeArgument.name.asString())
+                    }
+                }
+                .orEmpty()
+            val parameters = preservedParams.joinToString(separator = NEWLINE_INDENT) { parameter ->
+                buildString {
+                    if (parameter.isCrossInline) {
+                        append("crossinline ")
+                    }
+                    if (parameter.isNoInline) {
+                        append("noinline ")
+                    }
+                    if (parameter.isVararg) {
+                        append("vararg ")
+                    }
+                    append(
+                        "${parameter.name?.asString()}: ${parameter.type.asString()}",
+                    )
+                }
+            }
+            val whereClause = constructor.typeParameters
+                .flatMap { typeParam ->
+                    typeParam.bounds.map { bound ->
+                        "${typeParam.simpleName.asString()} : ${bound.asString()}"
+                    }
+                }
+                .takeIf { it.isNotEmpty() }
+                ?.joinToString(separator = NEWLINE_INDENT, prefix = "where\n    ", postfix = "\n")
+                .orEmpty()
+            val arguments = constructor.parameters.joinToString(NEWLINE_INDENT) {
+                buildString {
+                    if (it.isVararg) {
+                        append("*")
+                    }
+                    append(it.nameOrTypeName())
+                }
+            }
+            writer.println(
+                """
+                    |fun $typeParameters$functionName(
+                    |    $parameters
+                    |) $whereClause= ${classDeclaration.typeName}(
+                    |    $arguments
+                    |)
+                """.trimMargin(),
+            )
+        }
     }
 
     internal companion object {
@@ -159,11 +157,10 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator, private val 
             resolver.getClassDeclarationByName<Incarnation<*, *>>(),
             resolver.getClassDeclarationByName<LinkingRule<*, *>>(),
             resolver.getClassDeclarationByName<Node<*>>(),
+            resolver.getClassDeclarationByName<RandomGenerator>(),
             resolver.getClassDeclarationByName<Reaction<*>>(),
             resolver.getClassDeclarationByName<Simulation<*, *>>(),
             resolver.getClassDeclarationByName<TimeDistribution<*>>(),
-        )
-            .map { checkNotNull(it).asStarProjectedType() }
-            .toSet()
+        ).map { checkNotNull(it).asStarProjectedType() }.toSet()
     }
 }

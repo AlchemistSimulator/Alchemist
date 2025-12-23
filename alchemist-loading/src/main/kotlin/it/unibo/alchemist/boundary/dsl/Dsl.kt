@@ -79,11 +79,18 @@ object Dsl {
     fun <T, P : Position<P>> simulation(
         incarnation: Incarnation<T, P>,
         environment: () -> Environment<T, P>,
-        block: SimulationContext<T, P>.() -> Unit,
+        block: context(
+            RandomGenerator,
+            Environment<T, P>
+        ) SimulationContext<T, P>.() -> Unit,
     ): Loader {
         val ctx = SimulationContextImpl(incarnation)
         @Suppress("UNCHECKED_CAST")
-        ctx.apply(block)
+        ctx.apply {
+            context(ctx.simulationGenerator, ctx.environment) {
+                block()
+            }
+        }
         return createLoader(ctx, environment)
     }
 

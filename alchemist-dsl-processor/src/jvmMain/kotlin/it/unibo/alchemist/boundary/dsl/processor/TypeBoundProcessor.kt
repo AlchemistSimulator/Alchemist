@@ -15,7 +15,7 @@ import it.unibo.alchemist.boundary.dsl.processor.extensions.toStringWithGenerics
 /**
  * Processes type bounds for type parameters, cleaning up internal Kotlin type representations.
  */
-object TypeBoundProcessor {
+internal object TypeBoundProcessor {
     /**
      * Processes a type bound reference, cleaning up internal Kotlin type representations and variance annotations.
      *

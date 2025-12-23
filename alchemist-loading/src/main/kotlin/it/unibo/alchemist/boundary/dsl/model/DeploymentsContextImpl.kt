@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.dsl.model
 import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Deployment
+import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
@@ -42,6 +43,7 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
         populateDeployment(d)
     }
 
+    context(environment: Environment<T, P>)
     override fun deploy(deployment: Deployment<*>) {
         @Suppress("UNCHECKED_CAST")
         this.deploy(deployment) {}

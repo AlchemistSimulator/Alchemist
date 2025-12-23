@@ -127,7 +127,10 @@ interface SimulationContext<T, P : Position<P>> {
      *
      * @see [DeploymentsContextImpl] to configure deployments
      */
-    fun deployments(block: DeploymentsContext<T, P>.() -> Unit)
+    context(environment: Environment<T, P>)
+    fun deployments(
+        block: DeploymentsContext<T, P>.() -> Unit,
+    )
 
     /**
      * Adds a termination predicate to the simulation.

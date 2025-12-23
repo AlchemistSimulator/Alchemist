@@ -9,7 +9,7 @@ import java.io.IOException
 /**
  * Analyzes and extracts default values from constructor parameters.
  */
-object DefaultValueAnalyzer {
+internal object DefaultValueAnalyzer {
     private val MATH_CONSTANTS = setOf("PI", "E")
     private val MATH_FUNCTIONS = setOf(
         "sin", "cos", "tan", "asin", "acos", "atan", "atan2",

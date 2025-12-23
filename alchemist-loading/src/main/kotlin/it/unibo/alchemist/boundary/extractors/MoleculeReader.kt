@@ -35,7 +35,7 @@ import kotlin.math.min
  *            aggregating data. If an empty list is passed, then the values
  *            will be logged indipendently for each node.
  */
-@AlchemistKotlinDSL(scope = "EXPORTER_CONTEXT")
+@AlchemistKotlinDSL
 class MoleculeReader
 @JvmOverloads
 constructor(

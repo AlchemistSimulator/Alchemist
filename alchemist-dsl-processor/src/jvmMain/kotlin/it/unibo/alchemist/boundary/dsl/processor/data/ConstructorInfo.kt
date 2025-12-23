@@ -20,7 +20,7 @@ import com.google.devtools.ksp.symbol.KSValueParameter
  * @property paramNames Names assigned to the remaining parameters.
  * @property paramTypes Types of the remaining parameters.
  */
-data class ConstructorInfo(
+internal data class ConstructorInfo(
     val allParameters: List<KSValueParameter>,
     val remainingParams: List<KSValueParameter>,
     val paramsToSkip: Set<Int>,

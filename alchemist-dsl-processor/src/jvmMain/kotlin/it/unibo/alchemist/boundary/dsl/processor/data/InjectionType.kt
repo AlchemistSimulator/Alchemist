@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.dsl.processor.data
 /**
  * Types of parameters that can be injected from context.
  */
-enum class InjectionType {
+internal enum class InjectionType {
     /** Environment parameter injection. */
     ENVIRONMENT,
 

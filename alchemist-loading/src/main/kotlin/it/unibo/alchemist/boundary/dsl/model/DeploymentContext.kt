@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.boundary.dsl.AlchemistDsl
 import it.unibo.alchemist.model.Deployment
+import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
@@ -90,7 +91,10 @@ interface DeploymentsContext<T, P : Position<P>> {
      * @param deployment The deployment that defines node positions.
      * @see [Deployment]
      */
-    fun deploy(deployment: Deployment<*>)
+    context(environment: Environment<T, P>)
+    fun deploy(
+        deployment: Deployment<*>,
+    )
 }
 
 /**

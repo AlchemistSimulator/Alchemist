@@ -11,7 +11,7 @@ import com.google.devtools.ksp.symbol.Variance
 /**
  * Processes type arguments for context parameters in DSL builder functions.
  */
-object TypeArgumentProcessor {
+internal object TypeArgumentProcessor {
     /**
      * Builds the type string for a context parameter, handling type arguments and bounds.
      *

@@ -28,6 +28,7 @@ import it.unibo.alchemist.model.actions.BrownianMove
 import it.unibo.alchemist.model.deployments.Circle
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
+import it.unibo.alchemist.model.deployments.grid
 import it.unibo.alchemist.model.deployments.point
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.layers.StepLayer

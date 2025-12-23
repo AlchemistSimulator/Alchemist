@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.jvm.optionals.getOrElse
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Marker annotation for Alchemist DSL elements.
@@ -95,14 +96,17 @@ object Dsl {
      */
     fun <T> simulation(
         incarnation: Incarnation<T, Euclidean2DPosition>,
-        block: context(Environment<T, Euclidean2DPosition>) SimulationContext<T, Euclidean2DPosition>.() -> Unit,
+        block: context(
+            RandomGenerator,
+            Environment<T, Euclidean2DPosition>
+        ) SimulationContext<T, Euclidean2DPosition>.() -> Unit,
     ): Loader {
         @Suppress("UNCHECKED_CAST")
         val defaultEnv = { Continuous2DEnvironment(incarnation) }
         val ctx = SimulationContextImpl(incarnation)
         @Suppress("UNCHECKED_CAST")
         ctx.apply {
-            context(ctx.environment) {
+            context(ctx.simulationGenerator, ctx.environment) {
                 block()
             }
         }

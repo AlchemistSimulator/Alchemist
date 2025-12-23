@@ -50,7 +50,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * @see [Deployment] for the deployment interface
  * @see [DeploymentContext] for configuring individual deployments
  */
-@AlchemistDsl
+@Suppress("UndocumentedPublicFunction") // Detekt false positive with context parameters
 interface DeploymentsContext<T, P : Position<P>> {
     /**
      * The simulation context this deployments context belongs to.
@@ -92,9 +92,7 @@ interface DeploymentsContext<T, P : Position<P>> {
      * @see [Deployment]
      */
     context(environment: Environment<T, P>)
-    fun deploy(
-        deployment: Deployment<*>,
-    )
+    fun deploy(deployment: Deployment<*>)
 }
 
 /**
@@ -111,7 +109,6 @@ interface DeploymentsContext<T, P : Position<P>> {
  * @see [ProgramsContext] for configuring node programs
  * @see [PropertiesContext] for configuring node properties
  */
-@AlchemistDsl
 interface DeploymentContext<T, P : Position<P>> {
     /**
      * The deployments context this deployment context belongs to.
@@ -219,7 +216,6 @@ interface DeploymentContext<T, P : Position<P>> {
  * @see [it.unibo.alchemist.model.Incarnation.createMolecule]
  * @see [it.unibo.alchemist.model.Incarnation.createConcentration]
  */
-@AlchemistDsl
 interface ContentContext<T, P : Position<P>> {
     /**
      * The optional position filter applied to this content context.

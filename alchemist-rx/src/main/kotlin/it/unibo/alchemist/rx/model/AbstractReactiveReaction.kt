@@ -64,6 +64,7 @@ abstract class AbstractReactiveReaction<T>(
                 it.isValid.stopWatching(this)
                 it.propensityContribution.stopWatching(this)
                 it.observableInboundDependencies.stopWatching(this)
+                it.dispose()
             }
 
             subscriptions.forEach { it.stopWatching(this) }
@@ -108,6 +109,7 @@ abstract class AbstractReactiveReaction<T>(
     override fun dispose() {
         subscriptions.forEach { it.stopWatching(this) }
         subscriptions.clear()
+        _conditions.forEach { it.dispose() }
         _conditions.clear()
     }
 

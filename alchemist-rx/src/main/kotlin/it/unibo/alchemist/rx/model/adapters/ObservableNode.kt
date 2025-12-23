@@ -13,6 +13,7 @@ import arrow.core.Option
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.rx.model.Disposable
 import it.unibo.alchemist.rx.model.observation.Observable
 import it.unibo.alchemist.rx.model.observation.ObservableMutableMap
 import it.unibo.alchemist.rx.model.observation.ObservableMutableMap.ObservableMapExtensions.upsertValue
@@ -25,7 +26,9 @@ import it.unibo.alchemist.rx.model.observation.ObservableMutableMap.ObservableMa
  * @param T The type of the concentrations associated with molecules in the node.
  * @param source The `Node` instance being wrapped to provide observable support.
  */
-class ObservableNode<T>(private val source: Node<T>) : Node<T> by source {
+class ObservableNode<T>(private val source: Node<T>) :
+    Node<T> by source,
+    Disposable {
 
     /**
      * This node's contents as an [ObservableMutableMap], meaning that
@@ -74,7 +77,7 @@ class ObservableNode<T>(private val source: Node<T>) : Node<T> by source {
     /**
      * Dispose every observable associated with this node's content.
      */
-    fun dispose() {
+    override fun dispose() {
         observableMoleculeCount.dispose()
         observableContents.dispose()
         // leaking [observeContains]

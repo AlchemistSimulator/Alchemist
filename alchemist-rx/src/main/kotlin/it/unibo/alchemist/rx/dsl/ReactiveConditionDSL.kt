@@ -77,6 +77,11 @@ object ReactiveConditionDSL {
 
             override fun toString(): String =
                 "ReactiveCondition(isValid=${isValid.current}, propensity=${propensityContribution.current})"
+
+            override fun dispose() {
+                validityBlock.dispose()
+                propensityBlock.dispose()
+            }
         }
     }
 

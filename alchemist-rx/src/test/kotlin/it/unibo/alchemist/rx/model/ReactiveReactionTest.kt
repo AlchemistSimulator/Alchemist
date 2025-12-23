@@ -112,7 +112,7 @@ class ReactiveReactionTest : FunSpec({
             cond.isValid.observers.filterIsInstance<Pair<Any, Any>>().first().toList() shouldContain reaction
             cond.isValid.observers.size shouldBe baseline + 1
             reaction.dispose()
-            cond.isValid.observers.size shouldBe baseline
+            cond.isValid.observers.size shouldBe 0
         }
     }
 })

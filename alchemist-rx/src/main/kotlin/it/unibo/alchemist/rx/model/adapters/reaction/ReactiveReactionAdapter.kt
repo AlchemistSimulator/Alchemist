@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.rx.model.Disposable
 import it.unibo.alchemist.rx.model.adapters.ObservableEnvironment
 import it.unibo.alchemist.rx.model.observation.EventObservable
 import it.unibo.alchemist.rx.model.observation.MutableObservable
@@ -27,16 +28,13 @@ import java.util.Collections
  * along with having a reactive validity trigger based on [condition][ReactiveConditionAdapter]'s
  * inbound dependencies' changes.
  */
-interface ReactiveReactionAdapter<T> : Reaction<T> {
+interface ReactiveReactionAdapter<T> :
+    Reaction<T>,
+    Disposable {
     /**
      * Used by the scheduler to learn when this reaction needs to be rescheduled.
      */
     val rescheduleRequest: Observable<Unit>
-
-    /**
-     * Disposes the reaction, clearing all the subscriptions.
-     */
-    fun dispose()
 }
 
 /**

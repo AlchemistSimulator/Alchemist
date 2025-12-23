@@ -23,7 +23,8 @@ import java.io.Serializable
  */
 sealed interface ReactiveReaction<T> :
     Comparable<ReactiveReaction<T>>,
-    Serializable {
+    Serializable,
+    Disposable {
 
     /**
      * Emits when this reaction requests the scheduler to reschedule
@@ -68,11 +69,6 @@ sealed interface ReactiveReaction<T> :
      * @return the [TimeDistribution] for this [ReactiveReaction]
      */
     val timeDistribution: TimeDistribution<T>
-
-    /**
-     * Disposes this reaction, clearing its subscriptions.
-     */
-    fun dispose()
 
     /**
      * @return true if the reaction can be executed (namely, all the conditions

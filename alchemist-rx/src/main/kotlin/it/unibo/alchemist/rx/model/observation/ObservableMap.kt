@@ -119,7 +119,10 @@ open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> =
 
     override fun dispose() {
         keyObservables.values.forEach { it.dispose() }
+        keyObservables.clear()
         mapObservers.keys.forEach(::stopWatching)
+        mapObservers.clear()
+        backingMap.clear()
     }
 
     /**

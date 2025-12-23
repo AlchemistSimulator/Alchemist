@@ -10,13 +10,14 @@
 package it.unibo.alchemist.rx.model.observation
 
 import arrow.core.Option
+import it.unibo.alchemist.rx.model.Disposable
 
 /**
  * Represents an observable object that emits updates to registered observers when its value changes.
  *
  * @param T The type of the value being observed.
  */
-interface Observable<out T> {
+interface Observable<out T> : Disposable {
     /**
      * The current state or value of the observable.
      */
@@ -48,7 +49,7 @@ interface Observable<out T> {
      * Disposes of the observable by unregistering all currently registered observers.
      * This method ensures that no further updates or notifications are sent to the observers.
      */
-    fun dispose() {
+    override fun dispose() {
         observers.forEach { this.stopWatching(it) }
     }
 

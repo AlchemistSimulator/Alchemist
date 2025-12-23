@@ -153,6 +153,7 @@ class ObservableMutableSet<T> : ObservableSet<T> {
 
     override fun dispose() {
         backing.dispose()
+        observableSize.dispose()
     }
 
     override fun observeMembership(item: T): Observable<Boolean> = backing[item].map { opt -> opt.getOrElse { false } }

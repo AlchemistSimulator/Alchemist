@@ -18,7 +18,7 @@ import it.unibo.alchemist.rx.model.observation.ObservableSet
  * validity and propensity contribution when changes to its dependencies
  * are detected.
  */
-interface ReactiveCondition<T> {
+interface ReactiveCondition<T> : Disposable {
 
     /**
      * Emits when this condition's dependencies change. Emits true
@@ -39,6 +39,11 @@ interface ReactiveCondition<T> {
      * that hosts this condition.
      */
     val observableInboundDependencies: ObservableSet<Observable<*>>
+
+    /**
+     * Disposes this condition, clearing its subscriptions.
+     */
+    override fun dispose() {}
 
     /**
      * This method should be overridden by subclasses.

@@ -112,7 +112,7 @@ class SimulationContextImpl<T, P : Position<P>>(
         return batchContext
     }
 
-    context(environment: Environment<T, P>)
+    context(randomGenerator: RandomGenerator, environment: Environment<T, P>)
     override fun deployments(block: DeploymentsContext<T, P>.() -> Unit) {
         logger.debug("adding deployments block inside {}", this)
         buildSteps.add {

@@ -127,7 +127,7 @@ interface SimulationContext<T, P : Position<P>> {
      *
      * @see [DeploymentsContextImpl] to configure deployments
      */
-    context(environment: Environment<T, P>)
+    context(randomGenerator: RandomGenerator, environment: Environment<T, P>)
     fun deployments(block: DeploymentsContext<T, P>.() -> Unit)
 
     /**

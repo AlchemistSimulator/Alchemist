@@ -8,7 +8,7 @@ import com.google.devtools.ksp.symbol.Variance
 /**
  * Handles type parameter preparation and manipulation for DSL builder functions.
  */
-object TypeParameterHandler {
+internal object TypeParameterHandler {
     /**
      * Prepares type parameters by adding T and P parameters if needed for injected parameters.
      *

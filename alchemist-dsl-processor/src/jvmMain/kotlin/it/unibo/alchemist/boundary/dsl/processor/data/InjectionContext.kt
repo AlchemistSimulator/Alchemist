@@ -21,7 +21,7 @@ import it.unibo.alchemist.boundary.dsl.processor.ContextType
  * @property hasContextParams Whether the helper defines context receivers.
  * @property contextParamName Name of the context parameter used by accessors.
  */
-data class InjectionContext(
+internal data class InjectionContext(
     val indices: Map<InjectionType, Int>,
     val paramNames: Map<InjectionType, String>,
     val paramTypes: Map<InjectionType, String>,

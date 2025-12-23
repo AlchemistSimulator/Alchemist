@@ -7,7 +7,7 @@ import it.unibo.alchemist.boundary.dsl.processor.data.InjectionContext
 import it.unibo.alchemist.boundary.dsl.processor.data.InjectionType
 
 /** Creates expressions for constructor arguments combining injections and call-site values. */
-object ConstructorParamBuilder {
+internal object ConstructorParamBuilder {
     /**
      * Walks constructor parameters in order and either injects context values
      * or maps supplied arguments.

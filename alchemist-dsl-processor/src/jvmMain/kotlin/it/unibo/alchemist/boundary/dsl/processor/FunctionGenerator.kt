@@ -7,7 +7,7 @@ import it.unibo.alchemist.boundary.dsl.processor.data.InjectionContext
 import it.unibo.alchemist.boundary.dsl.processor.data.TypeParameterInfo
 
 /** Emits the signature, call site, and accessor for generated DSL helpers. */
-object FunctionGenerator {
+internal object FunctionGenerator {
     /** Builds the helper function signature including context and receiver parts. */
     fun buildFunctionSignature(
         functionName: String,

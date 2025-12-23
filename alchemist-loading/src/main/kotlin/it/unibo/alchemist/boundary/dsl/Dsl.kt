@@ -93,15 +93,19 @@ object Dsl {
      * @param block The simulation configuration block.
      * @return A loader instance.
      */
-    fun <T, P : Position<P>> simulation(
+    fun <T> simulation(
         incarnation: Incarnation<T, Euclidean2DPosition>,
-        block: SimulationContext<T, Euclidean2DPosition>.() -> Unit,
+        block: context(Environment<T, Euclidean2DPosition>) SimulationContext<T, Euclidean2DPosition>.() -> Unit,
     ): Loader {
         @Suppress("UNCHECKED_CAST")
         val defaultEnv = { Continuous2DEnvironment(incarnation) }
         val ctx = SimulationContextImpl(incarnation)
         @Suppress("UNCHECKED_CAST")
-        ctx.apply(block)
+        ctx.apply {
+            context(ctx.environment) {
+                block()
+            }
+        }
         return createLoader(ctx, defaultEnv)
     }
 }

@@ -8,6 +8,7 @@
  */
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSValueParameter
 
 /**
  * Finds a public constructor for the given class declaration.

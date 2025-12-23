@@ -22,7 +22,7 @@ import java.util.stream.Stream;
  *
  * @param <P> position type
  */
-@AlchemistKotlinDSL(scope = "DEPLOYMENTS_CONTEXT")
+@AlchemistKotlinDSL
 public final class Point<P extends Position<? extends P>> implements Deployment<P> {
 
     private final double x;

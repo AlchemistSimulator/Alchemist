@@ -8,7 +8,7 @@ import com.google.devtools.ksp.symbol.KSTypeReference
  * Checks type hierarchies using KSP's type resolution instead of string matching.
  * This provides more accurate type detection by checking actual type relationships.
  */
-object TypeHierarchyChecker {
+internal object TypeHierarchyChecker {
     /**
      * Checks if a type implements or extends a target type by qualified name.
      *

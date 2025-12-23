@@ -24,7 +24,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
  * @property defaultValues Default values inferred for remaining params.
  * @property needsMapEnvironment Whether a `MapEnvironment` import is required.
  */
-data class GenerationContext(
+internal data class GenerationContext(
     val classDecl: KSClassDeclaration,
     val className: String,
     val functionName: String,

@@ -5,7 +5,7 @@ import it.unibo.alchemist.boundary.dsl.processor.data.InjectionType
 /**
  * Provides accessor paths for injected parameters based on context type.
  */
-object ContextAccessor {
+internal object ContextAccessor {
     /**
      * Gets the accessor path for an injected parameter based on the context type.
      *

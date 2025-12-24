@@ -17,7 +17,7 @@ import java.io.Serial;
 /**
  * Generic node for testing purposes.
  */
-@AlchemistKotlinDSL(scope = "DEPLOYMENT_CONTEXT")
+@AlchemistKotlinDSL
 public final class TestNode extends GenericNode<Object> {
 
     @Serial

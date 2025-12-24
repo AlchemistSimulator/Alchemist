@@ -104,6 +104,7 @@ object Dsl {
     fun <T> simulation(
         incarnation: Incarnation<T, Euclidean2DPosition>,
         block: context(
+            Incarnation<T, Euclidean2DPosition>,
             RandomGenerator,
             Environment<T, Euclidean2DPosition>
         ) SimulationContext<T, Euclidean2DPosition>.() -> Unit,
@@ -113,7 +114,7 @@ object Dsl {
         val ctx = SimulationContextImpl(incarnation)
         @Suppress("UNCHECKED_CAST")
         ctx.apply {
-            context(ctx.simulationGenerator, ctx.environment) {
+            context(incarnation, ctx.simulationGenerator, ctx.environment) {
                 block()
             }
         }

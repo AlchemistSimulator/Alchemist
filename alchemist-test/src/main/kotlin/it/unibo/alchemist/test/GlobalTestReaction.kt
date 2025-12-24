@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.test
 
-import it.unibo.alchemist.boundary.dsl.AlchemistDsl
+import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.TimeDistribution
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 
-@AlchemistDsl
+@AlchemistKotlinDSL
 class GlobalTestReaction<T>(val environment: Environment<T, *>, override val timeDistribution: TimeDistribution<T>) :
     GlobalReaction<T> {
     override fun compareTo(other: Actionable<T>): Int = tau.compareTo(other.tau)

@@ -19,6 +19,7 @@ import it.unibo.alchemist.boundary.exporters.CSVExporter
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
 import it.unibo.alchemist.boundary.extractors.Time
 import it.unibo.alchemist.boundary.extractors.moleculeReader
+import it.unibo.alchemist.boundary.properties.testNodeProperty
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
@@ -29,14 +30,17 @@ import it.unibo.alchemist.model.actions.BrownianMove
 import it.unibo.alchemist.model.deployments.Circle
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
+import it.unibo.alchemist.model.deployments.circle
 import it.unibo.alchemist.model.deployments.grid
 import it.unibo.alchemist.model.deployments.point
+import it.unibo.alchemist.model.deployments.polygon
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.layers.StepLayer
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.maps.actions.ReproduceGPSTrace
 import it.unibo.alchemist.model.maps.deployments.FromGPSTrace
 import it.unibo.alchemist.model.maps.environments.OSMEnvironment
+import it.unibo.alchemist.model.nodes.testNode
 import it.unibo.alchemist.model.positionfilters.Rectangle
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.Event
@@ -46,6 +50,7 @@ import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.timedistributions.WeibullTime
 import it.unibo.alchemist.model.times.DoubleTime
+import it.unibo.alchemist.test.globalTestReaction
 import org.apache.commons.math3.random.MersenneTwister
 
 object DslLoaderFunctions {
@@ -315,7 +320,7 @@ object DslLoaderFunctions {
         val incarnation = PROTELIS.incarnation<T, Euclidean2DPosition>()
         return simulation(incarnation) {
             programs {
-                +globalTestReaction(DiracComb(1.0))
+                +globalTestReaction(DiracComb<T>(1.0))
             }
         }
     }
@@ -445,7 +450,7 @@ object DslLoaderFunctions {
                     ),
                 ) {
                     properties {
-                        val filter = RectangleFilter(-3.0, -3.0, 2.0, 2.0)
+                        val filter = Rectangle(-3.0, -3.0, 2.0, 2.0)
                         // same
                         val filter2 = Rectangle(3.0, 3.0, 2.0, 2.0)
                         inside(filter) {

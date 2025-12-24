@@ -15,6 +15,7 @@ plugins {
 }
 
 dependencies {
+    ksp(alchemist("dsl-processor"))
     api(alchemist("api"))
     api(alchemist("engine"))
     api(alchemist("loading"))
@@ -24,7 +25,6 @@ dependencies {
     implementation(alchemist("physics"))
     runtimeOnly(libs.bundles.testing.runtimeOnly)
     implementation(libs.ksp)
-    ksp(project(":alchemist-dsl-processor"))
 }
 
 publishing.publications {

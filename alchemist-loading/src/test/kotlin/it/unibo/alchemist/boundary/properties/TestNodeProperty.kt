@@ -20,17 +20,17 @@ import org.apache.commons.math3.random.RandomGenerator
 
 @AlchemistKotlinDSL
 class TestNodeProperty<T, P : Position<P>>(
-    node: Node<T>,
-    val environment: Environment<T, P>,
     val incarnation: Incarnation<T, P>,
     val rng: RandomGenerator,
+    val environment: Environment<T, P>,
+    node: Node<T>,
     val s: String,
 ) : AbstractNodeProperty<T>(node) {
     override fun cloneOnNewNode(node: Node<T>): NodeProperty<T> = TestNodeProperty(
-        node,
-        environment,
         incarnation,
         rng,
+        environment,
+        node,
         s,
     )
 

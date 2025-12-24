@@ -19,6 +19,7 @@ import it.unibo.alchemist.model.TimeDistribution
  * @param T The type of molecule concentration.
  * @param P The type of position.
  */
+@Suppress("UndocumentedPublicFunction") // Detekt false positive with context parameters
 interface GlobalProgramsContext<T, P : Position<P>> {
     /** The parent simulation context. */
     val ctx: SimulationContext<T, P>

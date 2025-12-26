@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.deployments;
 
-import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Position;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
@@ -23,7 +22,6 @@ import javax.annotation.Nonnull;
  *
  * @param <P> position type
  */
-@AlchemistKotlinDSL
 public final class GeometricGradientRectangle<P extends Position<? extends P>> extends Rectangle<P> {
 
     private final ExponentialDistribution exp;

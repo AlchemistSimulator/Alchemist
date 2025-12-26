@@ -48,7 +48,7 @@ object Dsl {
      * @return A loader instance.
      */
     fun <T, P : Position<P>> createLoader(
-        builder: SimulationContextImpl<T, P>,
+        builder: SimulationContext<T, P>,
         envBuilder: () -> Environment<T, P>,
     ): Loader = object : DSLLoader<T, P>(builder, envBuilder) {
         override val constants: Map<String, Any?> = emptyMap()

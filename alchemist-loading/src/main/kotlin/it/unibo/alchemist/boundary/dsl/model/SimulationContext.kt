@@ -12,7 +12,6 @@ package it.unibo.alchemist.boundary.dsl.model
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.Variable
-import it.unibo.alchemist.boundary.dsl.AlchemistDsl
 import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
@@ -216,4 +215,11 @@ interface SimulationContext<T, P : Position<P>> {
      * @param source A function that computes the variable value
      */
     fun <A : Serializable> variable(source: () -> A): VariablesContext.DependentVariableProvider<A>
+
+    /**
+     * The context managing variables for batch simulations.
+     *
+     * @see [VariablesContext]
+     */
+    val variablesContext: VariablesContext
 }

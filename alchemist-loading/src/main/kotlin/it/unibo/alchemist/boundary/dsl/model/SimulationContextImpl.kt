@@ -92,7 +92,7 @@ class SimulationContextImpl<T, P : Position<P>>(
     /**
      * The variables context for managing simulation variables.
      */
-    val variablesContext = VariablesContext()
+    override val variablesContext = VariablesContext()
 
     /**
      * Build a fresh new simulation context instance, and applies

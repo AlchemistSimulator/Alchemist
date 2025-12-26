@@ -8,7 +8,6 @@
  */
 package it.unibo.alchemist.model.deployments
 
-import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
@@ -16,7 +15,6 @@ import it.unibo.alchemist.model.Position
 /**
  * Given an environment and a list of list of numbers, it creates a list of the right position type for the environment.
  */
-@AlchemistKotlinDSL
 class SpecificPositions(environment: Environment<*, *>, vararg positions: Iterable<Number>) : Deployment<Position<*>> {
     private val positions: List<Position<*>> = positions.map { environment.makePosition(*it.toList().toTypedArray()) }
 

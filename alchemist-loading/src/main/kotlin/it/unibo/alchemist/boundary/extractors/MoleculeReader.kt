@@ -10,7 +10,6 @@
 package it.unibo.alchemist.boundary.extractors
 
 import it.unibo.alchemist.boundary.ExportFilter
-import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
@@ -31,11 +30,10 @@ import kotlin.math.min
  * @param filter
  *            the [FilteringPolicy] to use
  * @param aggregatorNames
- *            the names of the [UnivariateStatistic] to use for
- *            aggregating data. If an empty list is passed, then the values
- *            will be logged indipendently for each node.
+ *    the names of the [org.apache.commons.math.stat.descriptive.UnivariateStatistic] to use for
+ *    aggregating data. If an empty list is passed, then the values
+ *    will be logged indipendently for each node.
  */
-@AlchemistKotlinDSL
 class MoleculeReader
 @JvmOverloads
 constructor(

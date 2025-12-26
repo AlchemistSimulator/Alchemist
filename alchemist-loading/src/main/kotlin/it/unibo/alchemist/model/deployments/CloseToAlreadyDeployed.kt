@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.deployments
 
-import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Position
@@ -20,7 +19,6 @@ import org.apache.commons.math3.random.RandomGenerator
  * in the proximity of those already included in the environment.
  * Behaviour if there are no nodes already inserted is undefined.
  */
-@AlchemistKotlinDSL
 class CloseToAlreadyDeployed<T, P : Position<P>>(
     randomGenerator: RandomGenerator,
     environment: Environment<T, P>,

@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.timedistributions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Time;
@@ -26,7 +25,6 @@ import java.io.Serial;
  *
  * @param <T> concentration type
  */
-@AlchemistKotlinDSL
 public class ExponentialTime<T> extends AbstractDistribution<T> {
 
     @Serial

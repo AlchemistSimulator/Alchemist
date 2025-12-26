@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.deployments
 
-import it.unibo.alchemist.boundary.dsl.AlchemistKotlinDSL
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.LinkingRule
@@ -20,7 +19,6 @@ import org.apache.commons.math3.random.RandomGenerator
 /**
  * A deployment based on a [GraphStream](https://github.com/graphstream) graph.
  */
-@AlchemistKotlinDSL
 class GraphStreamDeployment<P>(
     private val createLinks: Boolean,
     private val graphStreamSupport: GraphStreamSupport<*, P>,

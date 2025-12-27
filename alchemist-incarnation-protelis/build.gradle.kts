@@ -21,6 +21,7 @@ dependencies {
     // IMPLEMENTATION
     implementation(alchemist("maps"))
     implementation(alchemist("physics"))
+    implementation(libs.arrow.core)
     implementation(libs.apache.commons.lang3)
     // TESTING
     testImplementation(alchemist("loading"))

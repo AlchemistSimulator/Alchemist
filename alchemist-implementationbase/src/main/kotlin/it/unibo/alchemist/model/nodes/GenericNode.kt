@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.model.nodes
 
+import arrow.core.Option
 import com.google.common.collect.MapMaker
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
@@ -16,6 +17,8 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableMutableMap
 import java.util.Collections
 import java.util.Spliterator
 import java.util.concurrent.Semaphore
@@ -52,6 +55,10 @@ constructor(
         environment: Environment<T, *>,
     ) : this(environment.incarnation, environment)
 
+    override val observableContents: ObservableMutableMap<Molecule, T> = ObservableMutableMap(molecules)
+
+    override val observeMoleculeCount: Observable<Int> = observableContents.map { it.size }
+
     final override fun addReaction(reactionToAdd: Reaction<T>) {
         reactions.add(reactionToAdd)
     }
@@ -66,6 +73,10 @@ constructor(
 
     override fun contains(molecule: Molecule): Boolean = molecules.containsKey(molecule)
 
+    override fun observeContains(molecule: Molecule): Observable<Boolean> = observableContents.map {
+        it.contains(molecule)
+    }
+
     /**
      * @return an empty concentration
      */
@@ -79,6 +90,8 @@ constructor(
     final override fun forEach(action: Consumer<in Reaction<T>>) = reactions.forEach(action)
 
     override fun getConcentration(molecule: Molecule): T = molecules[molecule] ?: createT()
+
+    override fun observeConcentration(molecule: Molecule): Observable<Option<T>> = observableContents[molecule]
 
     override val contents: Map<Molecule, T> = Collections.unmodifiableMap(molecules)
 

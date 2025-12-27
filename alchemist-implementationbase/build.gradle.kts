@@ -21,6 +21,7 @@ dependencies {
     api(libs.quadtree)
 
     implementation(libs.kotlin.reflect)
+    implementation(libs.arrow.core)
     implementation(libs.boilerplate)
     implementation(libs.caffeine)
     implementation(libs.classgraph)

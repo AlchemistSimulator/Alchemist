@@ -1,4 +1,4 @@
-package it.unibo.alchemist.rx.model.observation
+package it.unibo.alchemist.model.observation
 
 /**
  * An implementation of [Observable] that emits updates to its observers when triggered manually

@@ -30,7 +30,6 @@ include(
     "alchemist-maintenance-tooling",
     "alchemist-maps",
     "alchemist-physics",
-    "alchemist-rx",
     "alchemist-sapere-mathexp",
     "alchemist-smartcam",
     "alchemist-swingui",

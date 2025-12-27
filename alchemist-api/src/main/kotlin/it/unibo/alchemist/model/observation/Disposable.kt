@@ -7,12 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.rx.model
+package it.unibo.alchemist.model.observation
 
 /**
  * Anything taking up some resource and that can be cleared up.
  */
-interface Disposable {
+fun interface Disposable {
 
     /**
      * Disposes and releases the resources held by this object.

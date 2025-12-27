@@ -7,12 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.rx.model.observation
+package it.unibo.alchemist.model.observation
 
 import arrow.core.Option
 import arrow.core.none
 import arrow.core.some
-import it.unibo.alchemist.rx.model.observation.MutableObservable.Companion.observe
+import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
 import java.util.Collections
 
 /**
@@ -93,8 +93,7 @@ open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> =
      *
      * @param key The key whose mapping is to be removed from the map.
      */
-    fun remove(key: K) {
-        backingMap.remove(key)
+    fun remove(key: K): V? = backingMap.remove(key).also {
         val previousObservedValue = keyObservables[key]?.update { none() } ?: none()
         if (previousObservedValue.isSome()) notifyMapObservers()
     }

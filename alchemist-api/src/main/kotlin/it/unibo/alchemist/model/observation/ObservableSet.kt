@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.rx.model.observation
+package it.unibo.alchemist.model.observation
 
 import arrow.core.getOrElse
 import java.util.Collections

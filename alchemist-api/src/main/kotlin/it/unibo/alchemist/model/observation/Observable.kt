@@ -7,10 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.rx.model.observation
+package it.unibo.alchemist.model.observation
 
 import arrow.core.Option
-import it.unibo.alchemist.rx.model.Disposable
 
 /**
  * Represents an observable object that emits updates to registered observers when its value changes.

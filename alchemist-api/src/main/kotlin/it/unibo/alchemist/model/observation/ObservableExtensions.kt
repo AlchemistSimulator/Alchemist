@@ -7,9 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.rx.model.observation
+package it.unibo.alchemist.model.observation
 
-import it.unibo.alchemist.rx.model.observation.ObservableMutableSet.Companion.toObservableSet
+import it.unibo.alchemist.model.observation.ObservableMutableSet.Companion.toObservableSet
 import kotlin.collections.forEach
 
 /**

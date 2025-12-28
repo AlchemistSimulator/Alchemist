@@ -92,6 +92,7 @@ open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> =
      * Notifies observers if the key had an associated value before removal.
      *
      * @param key The key whose mapping is to be removed from the map.
+     * @return the previous value associated with the key, or null if the key was not present in the map.
      */
     fun remove(key: K): V? = backingMap.remove(key).also {
         val previousObservedValue = keyObservables[key]?.update { none() } ?: none()

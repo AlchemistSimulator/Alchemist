@@ -122,8 +122,9 @@ class ObservableMutableSet<T> : ObservableSet<T> {
      * will be notified of the change.
      *
      * @param item The item to be removed from the set.
+     * @return true if the set contained the specified [item]
      */
-    fun remove(item: T) = backing.remove(item)
+    fun remove(item: T): Boolean = backing.remove(item) == null
 
     /**
      * Clears the current set and inserts the given [items]. This is the equivalent

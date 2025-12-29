@@ -58,11 +58,11 @@ interface ObservableMap<K, V> : Observable<Map<K, V>> {
 open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> = linkedMapOf()) : ObservableMap<K, V> {
 
     private val keyObservables: MutableMap<K, MutableObservable<Option<V>>> = linkedMapOf()
-    private val mapObservers: MutableMap<Any, List<(Map<K, V>) -> Unit>> = linkedMapOf()
+    override val observingCallbacks: MutableMap<Any, List<(Map<K, V>) -> Unit>> = linkedMapOf()
 
     override val current: Map<K, V> = Collections.unmodifiableMap(backingMap)
 
-    override val observers: List<Any> get() = mapObservers.keys.toList()
+    override val observers: List<Any> get() = observingCallbacks.keys.toList()
 
     init {
         if (backingMap.isNotEmpty()) {
@@ -100,12 +100,12 @@ open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> =
     }
 
     override fun onChange(registrant: Any, callback: (Map<K, V>) -> Unit) {
-        mapObservers[registrant] = mapObservers[registrant].orEmpty() + callback
+        observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
         callback(current.toMap())
     }
 
     override fun stopWatching(registrant: Any) {
-        mapObservers.remove(registrant)
+        observingCallbacks.remove(registrant)
         with(keyObservables.iterator()) {
             while (hasNext()) {
                 val (_, obs) = next()
@@ -120,8 +120,8 @@ open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> =
     override fun dispose() {
         keyObservables.values.forEach { it.dispose() }
         keyObservables.clear()
-        mapObservers.keys.forEach(::stopWatching)
-        mapObservers.clear()
+        observingCallbacks.keys.forEach(::stopWatching)
+        observingCallbacks.clear()
         backingMap.clear()
     }
 
@@ -151,7 +151,7 @@ open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> =
      */
     operator fun minus(key: K) = remove(key)
 
-    private fun notifyMapObservers() = mapObservers.values.forEach { callbacks ->
+    private fun notifyMapObservers() = observingCallbacks.values.forEach { callbacks ->
         callbacks.forEach { it(current.toMap()) }
     }
 

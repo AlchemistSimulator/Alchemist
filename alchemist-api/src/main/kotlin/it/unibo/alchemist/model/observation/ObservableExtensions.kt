@@ -36,37 +36,34 @@ object ObservableExtensions {
         fun <T, R, O> ObservableSet<T>.combineLatest(
             map: (T) -> Observable<R>,
             aggregator: (Iterable<R>) -> O,
-        ): Observable<O> = object : Observable<O> {
+        ): Observable<O> = object : DerivedObservable<O>() {
 
             private val sources = mutableMapOf<T, Observable<R>>()
 
-            override var current: O = aggregator(this@combineLatest.toSet().map { map(it).current })
-                private set
+            override fun computeFresh(): O = aggregator(this@combineLatest.toSet().map { map(it).current })
 
-            override var observers: List<Any> = emptyList()
-
-            override fun onChange(registrant: Any, callback: (O) -> Unit) {
-                observers += registrant
-                this@combineLatest.onChange(this to registrant) {
-                    sources.reconcile(it, map, this to registrant) { recomputeAndEmit(callback) }
-                    recomputeAndEmit(callback)
-                }
-                callback(current)
+            override fun startMonitoring() {
+                this@combineLatest.onChange(this, ::reconcile)
+                reconcile(this@combineLatest.toSet())
             }
 
-            private fun recomputeAndEmit(callback: (O) -> Unit) {
-                val newValue = aggregator(sources.values.map { it.current })
-                if (newValue != current) {
-                    current = newValue
-                    callback(newValue)
-                }
-            }
-
-            override fun stopWatching(registrant: Any) {
-                observers -= registrant
-                this@combineLatest.stopWatching(this to registrant)
-                sources.values.forEach { it.stopWatching(this to registrant) }
+            override fun stopMonitoring() {
+                this@combineLatest.stopWatching(this)
+                sources.values.forEach { it.stopWatching(this@combineLatest) }
                 sources.clear()
+            }
+
+            private fun reconcile(current: Set<T>) {
+                (sources.keys - current).forEach { sources.remove(it)?.stopWatching(this) }
+                (current - sources.keys).forEach { key ->
+                    with(map(key)) {
+                        sources[key] = this
+                        onChange(this@combineLatest) {
+                            updateAndNotify(computeFresh())
+                        }
+                    }
+                }
+                updateAndNotify(computeFresh())
             }
         }
 
@@ -82,44 +79,36 @@ object ObservableExtensions {
          * @param map A function that maps each element of the source [ObservableSet] to an [Observable] of type [O].
          * @return An [Observable] of type [O] that emits the combined or updated value whenever changes are emitted.
          */
-        fun <T, O> ObservableSet<T>.flatMap(map: (T) -> Observable<O>): Observable<O> = object : Observable<O> {
-            private val sources = mutableMapOf<T, Observable<O>>()
-            private val UNINITIALIZED = Any()
+        fun <T, O> ObservableSet<T>.flatMap(map: (T) -> Observable<O>): Observable<O> =
+            object : DerivedObservable<O>() {
+                private val sources = mutableMapOf<T, Observable<O>>()
 
-            private var _current: Any? = UNINITIALIZED
-            override var observers: List<Any> = emptyList()
+                override fun computeFresh(): O = getFirstCurrent()
 
-            override var current: O
-                get() {
-                    if (_current !== UNINITIALIZED) {
-                        @Suppress("UNCHECKED_CAST")
-                        return _current as O
-                    }
-                    return toSet().firstOrNull()
-                        ?.let { map(it).current }
-                        ?: throw NoSuchElementException("Cannot access 'current': the source ObservableSet is empty!")
-                }
-                set(value) {
-                    _current = value
+                override fun startMonitoring() {
+                    this@flatMap.onChange(this, ::reconcile)
+                    reconcile(this@flatMap.toSet())
                 }
 
-            override fun onChange(registrant: Any, callback: (O) -> Unit) {
-                observers += registrant
-                this@flatMap.onChange(this to registrant) {
-                    sources.reconcile(it, map, this to registrant) { newValue ->
-                        current = newValue
-                        callback(newValue)
+                override fun stopMonitoring() {
+                    this@flatMap.stopWatching(this)
+                    sources.values.forEach { it.stopWatching(this@flatMap) }
+                    sources.clear()
+                }
+
+                private fun getFirstCurrent(): O = this@flatMap.toSet().firstOrNull()?.let { map(it).current }
+                    ?: throw NoSuchElementException("Cannot access 'current': the source ObservableSet is empty!")
+
+                private fun reconcile(current: Set<T>) {
+                    (sources.keys - current).forEach { sources.remove(it)?.stopWatching(this) }
+                    (current - sources.keys).forEach { key ->
+                        with(map(key)) {
+                            sources[key] = this
+                            onChange(this@flatMap, ::updateAndNotify)
+                        }
                     }
                 }
             }
-
-            override fun stopWatching(registrant: Any) {
-                observers -= registrant
-                this@flatMap.stopWatching(this to registrant)
-                sources.values.forEach { it.stopWatching(this to registrant) }
-                sources.clear()
-            }
-        }
 
         /**
          * Converts this [ObservableSet] of [observables][Observable] into a unique observable that emits
@@ -153,13 +142,23 @@ object ObservableExtensions {
 
             override val current: Set<T> get() = backing.current
 
-            override val observers: List<Any> = backing.observers
+            override var observers: List<Any> = emptyList()
+
+            override val observingCallbacks: MutableMap<Any, List<(Set<T>) -> Unit>> = mutableMapOf()
 
             override val observableSize: Observable<Int> = backing.map { it.size }
 
-            override fun onChange(registrant: Any, callback: (Set<T>) -> Unit) = backing.onChange(registrant, callback)
+            override fun onChange(registrant: Any, callback: (Set<T>) -> Unit) {
+                observers += registrant
+                observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
+                backing.onChange(this to registrant, callback)
+            }
 
-            override fun stopWatching(registrant: Any) = backing.stopWatching(registrant)
+            override fun stopWatching(registrant: Any) {
+                observers -= registrant
+                observingCallbacks.remove(registrant)
+                backing.stopWatching(registrant)
+            }
 
             override fun observeMembership(item: T): Observable<Boolean> =
                 this@union.observeMembership(item).mergeWith(other.observeMembership(item)) { a, b -> a || b }
@@ -185,30 +184,15 @@ object ObservableExtensions {
      *
      * @return A new [Observable] that aggregates updates from the collection of source [Observable] instances.
      */
-    fun <T> Iterable<Observable<T>>.merge(): Observable<T> = object : Observable<T> {
+    fun <T> Iterable<Observable<T>>.merge(): Observable<T> = object : DerivedObservable<T>() {
+        override fun computeFresh(): T = this@merge.first().current
 
-        override var current: T = this@merge.first().current // bho
-
-        override var observers: List<Any> = emptyList()
-
-        override fun onChange(registrant: Any, callback: (T) -> Unit) {
-            observers += registrant
-            this@merge.forEach { observable ->
-                observable.onChange(this to registrant) {
-                    if (it != current) { // do we really need this
-                        current = it
-                        callback(it)
-                    }
-                }
-            }
-            callback(current)
+        override fun startMonitoring() {
+            this@merge.forEach { it.onChange(this, ::updateAndNotify) }
         }
 
-        override fun stopWatching(registrant: Any) {
-            observers -= registrant
-            this@merge.forEach { observable ->
-                observable.stopWatching(this to registrant)
-            }
+        override fun stopMonitoring() {
+            this@merge.forEach { it.stopWatching(this) }
         }
     }
 
@@ -224,31 +208,20 @@ object ObservableExtensions {
      * @return a [Observable] of type [O], which emits the transformed result whenever the
      *         state of the source [Observable]s changes.
      */
-    fun <T, O> List<Observable<T>>.combineLatest(collector: (List<T>) -> O): Observable<O> = object : Observable<O> {
-        val sources = this@combineLatest
+    fun <T, O> List<Observable<T>>.combineLatest(collector: (List<T>) -> O): Observable<O> =
+        object : DerivedObservable<O>() {
+            override fun computeFresh(): O = collector(this@combineLatest.map { it.current })
 
-        override var current = collector(sources.map { it.current })
-        override var observers: List<Any> = listOf()
-
-        override fun onChange(registrant: Any, callback: (O) -> Unit) {
-            observers += registrant
-            sources.forEach { observable ->
-                observable.onChange(this to registrant) { _ ->
-                    val newValue = collector(sources.map { it.current })
-                    if (newValue != current) {
-                        current = newValue
-                        callback(current)
-                    }
+            override fun startMonitoring() {
+                this@combineLatest.forEach { observable ->
+                    observable.onChange(this) { updateAndNotify(computeFresh()) }
                 }
             }
-            callback(current)
-        }
 
-        override fun stopWatching(registrant: Any) {
-            observers -= registrant
-            sources.forEach { it.stopWatching(this to registrant) }
+            override fun stopMonitoring() {
+                this@combineLatest.forEach { it.stopWatching(this) }
+            }
         }
-    }
 
     /**
      * Transforms the items emitted by this [Observable] into observables, then flatten the emissions from those
@@ -257,57 +230,30 @@ object ObservableExtensions {
      * @param transform a function that returns an [Observable] for reach item emitted by the source.
      * @return an [Observable] that emist the items emitted by the observable returned by [transform].
      */
-    fun <T, R> Observable<T>.switchMap(transform: (T) -> Observable<R>): Observable<R> = object : Observable<R> {
+    fun <T, R> Observable<T>.switchMap(transform: (T) -> Observable<R>): Observable<R> =
+        object : DerivedObservable<R>() {
+            private var innerSubscription: Observable<R>? = null
 
-        private var innerSubscription: Observable<R>? = null
-        override var current: R = transform(this@switchMap.current).also { innerSubscription = it }.current
-        override var observers: List<Any> = emptyList()
+            override fun computeFresh(): R = transform(this@switchMap.current).current
 
-        override fun onChange(registrant: Any, callback: (R) -> Unit) {
-            observers += registrant
-            this@switchMap.onChange(this to registrant) { outerValue ->
-                innerSubscription?.stopWatching(this to registrant)
-                val newInner = transform(outerValue)
-                innerSubscription = newInner
-                newInner.onChange(this to registrant) { innerValue ->
-                    if (innerValue != current) {
-                        current = innerValue
-                        callback(innerValue)
-                    }
-                }
-                if (newInner.current != current) {
-                    current = newInner.current
-                    callback(current)
-                }
+            override fun startMonitoring() {
+                this@switchMap.onChange(this, ::switchInner)
+                switchInner(this@switchMap.current)
             }
-            innerSubscription?.onChange(this to registrant) {
-                if (it != current) {
-                    current = it
-                    callback(it)
+
+            override fun stopMonitoring() {
+                this@switchMap.stopWatching(this)
+                innerSubscription?.stopWatching(this)
+                innerSubscription = null
+            }
+
+            private fun switchInner(value: T) {
+                innerSubscription?.stopWatching(this)
+                with(transform(value)) {
+                    innerSubscription = this
+                    onChange(this@switchMap, ::updateAndNotify)
+                    updateAndNotify(this.current)
                 }
             }
         }
-
-        override fun stopWatching(registrant: Any) {
-            observers -= registrant
-            this@switchMap.stopWatching(this to registrant)
-            innerSubscription?.stopWatching(this to registrant)
-        }
-    }
-
-    private fun <T, R> MutableMap<T, Observable<R>>.reconcile(
-        newKeys: Set<T>,
-        map: (T) -> Observable<R>,
-        subscriptionKey: Any,
-        onValueChange: (R) -> Unit,
-    ) {
-        val keysToRemove = keys - newKeys
-        val keysToAdd = newKeys - keys
-        keysToRemove.forEach { remove(it)?.stopWatching(subscriptionKey) }
-        keysToAdd.forEach { key ->
-            val observable = map(key)
-            put(key, observable)
-            observable.onChange(subscriptionKey, onValueChange)
-        }
-    }
 }

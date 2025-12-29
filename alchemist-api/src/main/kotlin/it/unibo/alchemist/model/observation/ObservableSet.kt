@@ -103,7 +103,9 @@ class ObservableMutableSet<T> : ObservableSet<T> {
 
     override val current: Set<T> get() = backing.current.keys
 
-    override val observers: List<Any> get() = backing.observers
+    override val observers: List<Any> get() = backing.observers.map { this to it }
+
+    override val observingCallbacks: MutableMap<Any, List<(Set<T>) -> Unit>> = mutableMapOf()
 
     /**
      * Adds an item to the observable set.
@@ -145,16 +147,19 @@ class ObservableMutableSet<T> : ObservableSet<T> {
     }
 
     override fun onChange(registrant: Any, callback: (Set<T>) -> Unit) {
-        backing.onChange(registrant) { callback(it.keys.toSet()) }
+        observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
+        backing.onChange(this to registrant) { callback(it.keys.toSet()) }
     }
 
     override fun stopWatching(registrant: Any) {
-        backing.stopWatching(registrant)
+        backing.stopWatching(this to registrant)
+        observingCallbacks.remove(registrant)
     }
 
     override fun dispose() {
         backing.dispose()
         observableSize.dispose()
+        observingCallbacks.clear()
     }
 
     override fun observeMembership(item: T): Observable<Boolean> = backing[item].map { opt -> opt.getOrElse { false } }

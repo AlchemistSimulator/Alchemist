@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.observation
  */
 class EventObservable : Observable<Unit> {
 
-    private val observingCallbacks: MutableMap<Any, List<(Unit) -> Unit>> = linkedMapOf()
+    override val observingCallbacks: MutableMap<Any, List<(Unit) -> Unit>> = linkedMapOf()
 
     override val current: Unit = Unit
 

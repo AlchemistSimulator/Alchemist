@@ -16,7 +16,7 @@ import arrow.core.Option
  *
  * @param T The type of the value being observed.
  */
-interface Observable<out T> : Disposable {
+interface Observable<T> : Disposable {
     /**
      * The current state or value of the observable.
      */
@@ -26,6 +26,11 @@ interface Observable<out T> : Disposable {
      * Represents a list of all entities currently observing changes to this observable object.
      */
     val observers: List<Any>
+
+    /**
+     * Stores the set of observers along with the list of callbacks associated with them.
+     */
+    val observingCallbacks: Map<Any, List<(T) -> Unit>>
 
     /**
      * Registers a callback to be notified of changes in the observable. The callback is invoked
@@ -59,25 +64,18 @@ interface Observable<out T> : Disposable {
      * @param transform The function to transform each value emitted by this observable.
      * @return A new observable that emits the transformed values.
      */
-    fun <S> map(transform: (T) -> S): Observable<S> = object : Observable<S> {
-        override var current: S = transform(this@Observable.current)
-        override var observers: List<Any> = listOf()
+    fun <S> map(transform: (T) -> S): Observable<S> = object : DerivedObservable<S>() {
 
-        override fun onChange(registrant: Any, callback: (S) -> Unit) {
-            observers += registrant
-            this@Observable.onChange(this to registrant) { newValue ->
-                val transformed = transform(newValue)
-                if (transformed != current) {
-                    current = transformed
-                    callback(transformed)
-                }
+        override fun computeFresh(): S = transform(this@Observable.current)
+
+        override fun startMonitoring() {
+            this@Observable.onChange(this) {
+                updateAndNotify(transform(it))
             }
-            callback(current)
         }
 
-        override fun stopWatching(registrant: Any) {
-            observers -= registrant
-            this@Observable.stopWatching(this to registrant)
+        override fun stopMonitoring() {
+            this@Observable.stopWatching(this)
         }
 
         override fun toString(): String = "MapObservable($current)[from: ${this@Observable}]"
@@ -92,31 +90,22 @@ interface Observable<out T> : Disposable {
      * @return A new observable that emits values resulting from merging the two observables.
      */
     @Suppress("UNCHECKED_CAST")
-    fun <O, R> mergeWith(other: Observable<O>, merge: (T, O) -> R): Observable<R> = object : Observable<R> {
-        override var current: R = merge(this@Observable.current, other.current)
-        override var observers: List<Any> = emptyList()
+    fun <O, R> mergeWith(other: Observable<O>, merge: (T, O) -> R): Observable<R> = object : DerivedObservable<R>() {
 
-        override fun onChange(registrant: Any, callback: (R) -> Unit) {
-            observers += registrant
-            listOf(this@Observable, other).forEach { obs ->
-                obs.onChange(this to registrant) { nextItem ->
-                    val newValue = when (obs) {
-                        this@Observable -> merge(nextItem as T, other.current)
-                        else -> merge(this@Observable.current, nextItem as O)
-                    }
-                    if (newValue != current) {
-                        current = newValue
-                        callback(newValue)
-                    }
-                }
+        override fun computeFresh(): R = merge(this@Observable.current, other.current)
+
+        override fun startMonitoring() {
+            val handleUpdate: (Any?) -> Unit = {
+                updateAndNotify(merge(this@Observable.current, other.current))
             }
-            callback(current)
+
+            listOf(this@Observable, other).forEach { obs ->
+                obs.onChange(this, handleUpdate)
+            }
         }
 
-        override fun stopWatching(registrant: Any) {
-            observers -= registrant
-            this@Observable.stopWatching(this to registrant)
-            other.stopWatching(this to registrant)
+        override fun stopMonitoring() {
+            listOf(this@Observable, other).forEach { it.stopWatching(this) }
         }
 
         override fun toString() = "MergeObservable($current)[from: ${this@Observable}, other: $other]"
@@ -145,16 +134,21 @@ interface Observable<out T> : Disposable {
         fun <T> Observable<T>.asMutable(): MutableObservable<T> =
             this as? MutableObservable<T> ?: object : MutableObservable<T> {
                 override var current: T = this@asMutable.current
+                    get() = this@asMutable.current
 
-                override var observers: List<Any> = this@asMutable.observers.toList()
+                override var observers: List<Any> = emptyList()
+
+                override val observingCallbacks: MutableMap<Any, List<(T) -> Unit>> = mutableMapOf()
 
                 override fun onChange(registrant: Any, callback: (T) -> Unit) {
                     observers += registrant
+                    observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
                     this@asMutable.onChange(this to registrant, callback)
                 }
 
                 override fun stopWatching(registrant: Any) {
                     observers -= registrant
+                    observingCallbacks.remove(registrant)
                     this@asMutable.stopWatching(this to registrant)
                 }
             }
@@ -195,7 +189,7 @@ interface MutableObservable<T> : Observable<T> {
          * @return A new instance of [MutableObservable] initialized with the provided value.
          */
         fun <T> observe(initial: T): MutableObservable<T> = object : MutableObservable<T> {
-            private val observingCallbacks: MutableMap<Any, List<(T) -> Unit>> = linkedMapOf()
+            override val observingCallbacks: MutableMap<Any, List<(T) -> Unit>> = linkedMapOf()
 
             override var current: T = initial
                 set(value) {

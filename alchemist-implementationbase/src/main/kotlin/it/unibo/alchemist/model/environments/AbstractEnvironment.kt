@@ -86,7 +86,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     @Transient
     override val observeNodeCount: Observable<Int> = observableNodes.observableSize
 
-    private val regionObservers = mutableSetOf<RegionObserver<T, P>>()
+    private val regionObservers = mutableSetOf<RegionObserver>()
 
     final override var linkingRule: LinkingRule<T, P> = NoLinks()
 
@@ -200,10 +200,35 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         return validCache[center to range]
     }
 
-    private fun observeAllNodesInRange(centerProvider: () -> P, range: Double): ObservableSet<Node<T>> {
-        val initialNodes = getNodesWithinRange(centerProvider(), range).toList().toObservableSet()
-        val region = RegionObserver(centerProvider, range, initialNodes)
-        regionObservers += region
+    private fun observeAllNodesInRange(
+        centerProvider: () -> P,
+        range: Double,
+        node: Node<T>? = null,
+    ): ObservableSet<Node<T>> {
+        regionObservers.find {
+            it == RegionObserver(
+                centerId = node?.id,
+                centerProvider = centerProvider,
+                radius = range,
+                visibleNodes = emptySet<Node<T>>().toObservableSet(),
+            )
+        }?.let { return it.visibleNodes }
+
+        val initialNodes = getAllNodesInRange(centerProvider(), range).toObservableSet()
+        if (node != null) {
+            check(initialNodes.remove(node)) {
+                "Either the provided range ($range) is too small for queries to work without precision loss, " +
+                    "or the environment is in an inconsistent state. Node $node at ${centerProvider()} was the " +
+                    "query center, but within range $range, only nodes $initialNodes were found."
+            }
+        }
+        regionObservers += RegionObserver(
+            centerId = node?.id,
+            centerProvider = centerProvider,
+            radius = range,
+            visibleNodes = initialNodes,
+        )
+
         return initialNodes
     }
 
@@ -247,7 +272,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     }
 
     override fun observeNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>> =
-        observeAllNodesInRange({ getPosition(node) }, range)
+        observeAllNodesInRange({ getPosition(node) }, range, node)
 
     override fun getNodesWithinRange(position: P, range: Double): ListSet<Node<T>> {
         /*
@@ -501,11 +526,26 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         out.writeObject(incarnation.javaClass.getSimpleName())
     }
 
-    private data class RegionObserver<T, P>(
-        val centerProvider: () -> P,
+    private inner class RegionObserver(
+        val centerId: Int? = null,
+        val centerProvider: () -> P = {
+            requireNotNull(centerId) { "specify either centerId or a centerProvider" }
+            getPosition(getNodeByID(centerId))
+        },
         val radius: Double,
         val visibleNodes: ObservableMutableSet<Node<T>>,
-    )
+    ) {
+        override fun equals(other: Any?): Boolean = (other as? AbstractEnvironment<*, *>.RegionObserver)?.let { other ->
+            if (other.radius != radius) return@let false
+            if (centerId != null) {
+                centerId == other.centerId
+            } else {
+                centerProvider() == other.centerProvider()
+            }
+        } ?: false
+
+        override fun hashCode(): Int = 13 * (centerId ?: 0)
+    }
 
     private data class Operation<T>(val origin: Node<T>, val destination: Node<T>, val isAdd: Boolean) {
         override fun toString(): String = origin.toString() + (if (isAdd) " discovered " else " lost ") + destination

@@ -1,3 +1,13 @@
+## [42.3.26](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.25...42.3.26) (2025-12-30)
+
+### Dependency updates
+
+* **deps:** update dependency scalafmt to v3.10.3 ([#5043](https://github.com/AlchemistSimulator/Alchemist/issues/5043)) ([b33906f](https://github.com/AlchemistSimulator/Alchemist/commit/b33906f2a0f4ea92b39fed04cb0bafa32ebf7c27))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.153.5 ([#5044](https://github.com/AlchemistSimulator/Alchemist/issues/5044)) ([d9fb72d](https://github.com/AlchemistSimulator/Alchemist/commit/d9fb72da27c450ce78a812fb60a65555dff013cf))
+
 ## [42.3.25](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.24...42.3.25) (2025-12-22)
 
 ### Documentation

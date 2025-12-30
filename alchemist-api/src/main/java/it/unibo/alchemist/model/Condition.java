@@ -10,6 +10,8 @@
 package it.unibo.alchemist.model;
 
 import it.unibo.alchemist.core.Simulation;
+import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableSet;
 import org.danilopianini.util.ListSet;
 
 import java.io.Serializable;
@@ -47,6 +49,12 @@ public interface Condition<T> extends Serializable {
     ListSet<? extends Dependency> getInboundDependencies();
 
     /**
+     * @return The set of dependencies which may influence the truth value of this
+     *         condition, as an {@link ObservableSet} of {@link Observable}
+     */
+    ObservableSet<? extends Observable<?>> observeInboundDependencies();
+
+    /**
      * @return the node this Condition belongs to
      */
     Node<T> getNode();
@@ -62,9 +70,22 @@ public interface Condition<T> extends Serializable {
     double getPropensityContribution();
 
     /**
+     * An observable and reactive view of the corresponding {@link #getPropensityContribution()}.
+     *
+     * @return an observable view of how this condition may influence the propensity.
+     */
+    Observable<Double> observePropensityContribution();
+
+    /**
      * @return true if the condition is satisfied in the current environment.
      */
     boolean isValid();
+
+    /**
+     * @return an observable that emits true if the condition is satisfied in the
+     *          current environment.
+     */
+    Observable<Boolean> observeValidity();
 
     /**
      * This method is called by the {@link Simulation} once the {@link Reaction}

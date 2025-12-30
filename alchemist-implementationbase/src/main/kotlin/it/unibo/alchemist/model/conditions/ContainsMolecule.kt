@@ -16,9 +16,12 @@ import it.unibo.alchemist.model.Node
 /**
  * The condition is valid if the node contains the molecule.
  */
-class ContainsMolecule<T>(node: Node<T>, private val molecule: Molecule) :
-    AbstractNonPropensityContributingCondition<T>(node) {
-    override fun getContext() = Context.LOCAL
+class ContainsMolecule<T>(node: Node<T>, molecule: Molecule) : AbstractNonPropensityContributingCondition<T>(node) {
 
-    override fun isValid() = node.contains(molecule)
+    init {
+        addObservableDependency(node.observeContains(molecule))
+        validity = node.observeContains(molecule)
+    }
+
+    override fun getContext() = Context.LOCAL
 }

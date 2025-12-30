@@ -13,6 +13,10 @@ import com.google.common.collect.Sets;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableMutableSet;
+import it.unibo.alchemist.model.observation.ObservableSet;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
@@ -37,6 +41,12 @@ public class LsaStandardCondition extends AbstractLsaCondition {
     private final ILsaMolecule molecule;
     private boolean valid;
 
+    private final MutableObservable<Boolean> validity = MutableObservable.Companion.observe(false);
+
+    private final MutableObservable<Double> propensity = MutableObservable.Companion.observe(0.0);
+
+    private final ObservableMutableSet<Observable<?>> observingDeps = new ObservableMutableSet<>();
+
     /**
      * Builds an LsaStandardCondition.
      *
@@ -47,6 +57,11 @@ public class LsaStandardCondition extends AbstractLsaCondition {
      */
     public LsaStandardCondition(final ILsaMolecule mol, final ILsaNode n) {
         super(n, Sets.newHashSet(new ILsaMolecule[] {mol}));
+        final var obs = n.observeConcentration(mol);
+        observingDeps.add(obs);
+        obs.onChange(this, it ->
+            null /* TODO: Recompute condition on sources change */
+        );
         molecule = mol;
     }
 
@@ -125,6 +140,11 @@ public class LsaStandardCondition extends AbstractLsaCondition {
         return makeValid(matchesfound);
     }
 
+    @Override
+    public ObservableSet<? extends Observable<?>> observeInboundDependencies() {
+        return observingDeps;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -146,8 +166,18 @@ public class LsaStandardCondition extends AbstractLsaCondition {
     }
 
     @Override
+    public Observable<Double> observePropensityContribution() {
+        return propensity;
+    }
+
+    @Override
     public final boolean isValid() {
         return valid;
+    }
+
+    @Override
+    public Observable<Boolean> observeValidity() {
+        return validity;
     }
 
     /**

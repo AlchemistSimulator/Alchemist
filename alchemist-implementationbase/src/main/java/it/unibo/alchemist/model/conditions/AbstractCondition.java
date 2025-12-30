@@ -14,6 +14,10 @@ import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableMutableSet;
+import it.unibo.alchemist.model.observation.ObservableSet;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
@@ -31,6 +35,10 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     private static final long serialVersionUID = -1610947908159507754L;
     private final ListSet<Dependency> influencing = new LinkedListSet<>();
     private final Node<T> node;
+
+    private final ObservableMutableSet<Observable<?>> dependencies = new ObservableMutableSet<>();
+    protected Observable<Double> propensity = MutableObservable.Companion.observe(0.0);
+    protected Observable<Boolean> validity = MutableObservable.Companion.observe(false);
 
     /**
      * @param node the node this Condition belongs to
@@ -50,6 +58,11 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     @Override
     public final ListSet<? extends Dependency> getInboundDependencies() {
         return ListSets.unmodifiableListSet(influencing);
+    }
+
+    @Override
+    public final ObservableSet<? extends Observable<?>> observeInboundDependencies() {
+        return dependencies;
     }
 
     /**
@@ -73,9 +86,40 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     }
 
     /**
+     * Add the given {@link Observable} to the set of observables of this Condition.
+     *
+     * @param dep the observable to observe
+     * @return the input dependency itself
+     */
+    protected Observable<?> addObservableDependency(final Observable<?> dep) {
+        dependencies.add(dep);
+        return dep;
+    }
+
+    @Override
+    public boolean isValid() {
+        return validity.getCurrent();
+    }
+
+    @Override
+    public Observable<Boolean> observeValidity() {
+        return validity;
+    }
+
+    @Override
+    public double getPropensityContribution() {
+        return propensity.getCurrent();
+    }
+
+    @Override
+    public Observable<Double> observePropensityContribution() {
+        return propensity;
+    }
+
+    /**
      * {@inheritDoc}
      *
-     *  <p>
+     * <p>
      * How to override: create a new action of your concrete subtype.
      */
     @Override

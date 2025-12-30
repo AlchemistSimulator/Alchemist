@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
+import it.unibo.alchemist.model.observation.Observable;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.io.Serial;
@@ -44,6 +45,8 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     protected AbstractNeighborCondition(final Environment<T, ?> environment, final Node<T> node) {
         super(node);
         this.environment = environment;
+        addObservableDependency(getEnvironment().observeNeighborhood(getNode()));
+        setPropensityContributionObservable();
     }
 
     @Override
@@ -63,13 +66,11 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
 
     /**
      * Override if the desired behavior differs. Default is returning the sum of the neighbor's propensities
-     *
-     * @return the sum of the neighbor's propensities
      */
-    @Override
-    public double getPropensityContribution() {
-        // the condition's propensity contribution is computed as the sum of the neighbor's propensities
-        return getValidNeighbors().values().stream().mapToDouble(it -> it).sum();
+    protected void setPropensityContributionObservable() {
+        propensity = observeValidNeighbors().map(nodes ->
+            nodes.values().stream().mapToDouble(it -> it).sum()
+        );
     }
 
     /**
@@ -81,10 +82,24 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
      * @return a map of neighbors which satisfy the condition and their propensity
      */
     public final Map<Node<T>, Double> getValidNeighbors() {
-        return getEnvironment().getNeighborhood(getNode()).getNeighbors().stream()
+        return observeValidNeighbors().getCurrent();
+    }
+
+    /**
+     * Searches in the given neighborhood which nodes satisfy the condition and
+     * returns a list of valid neighbors as an {@link Observable}. Each time the node
+     * containing this condition changes, a new value for its neighborhood is recomputed
+     * and emitted.
+     *
+     * @return an observable which emits a map of neighbors which satisfy the condition and their propensity.
+     */
+    public final Observable<Map<Node<T>, Double>> observeValidNeighbors() {
+        return getEnvironment().observeNeighborhood(getNode()).map(neighborhood ->
+            neighborhood.getNeighbors().stream()
                 .map(it -> new ImmutablePair<>(it, getNeighborPropensity(it)))
                 .filter(it -> it.getValue() > 0)
-                .collect(Collectors.toMap(ImmutablePair::getKey, ImmutablePair::getValue));
+                .collect(Collectors.toMap(ImmutablePair::getKey, ImmutablePair::getValue))
+            );
     }
 
     /**

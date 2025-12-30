@@ -43,4 +43,9 @@ class NoOtherReactionCanExecute<T>(node: Node<T>, private val myReaction: Reacti
         .filterNot { it == myReaction }
         .filter { it.conditions.isNotEmpty() }
         .none { it.canExecute() }
+
+    /*
+     * if Actionable.canExecute becomes observable, we can do something like
+     * `combineLatest` and make this condition validity based upon that aggregate.
+     */
 }

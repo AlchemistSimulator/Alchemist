@@ -48,6 +48,7 @@ public class GenericMoleculePresent<T extends Number> extends
         molecule = mol;
         qty = quantity;
         declareDependencyOn(mol);
+        setupObservables();
     }
 
     /**
@@ -59,13 +60,32 @@ public class GenericMoleculePresent<T extends Number> extends
     }
 
     /**
-     * @return true if the concentration of the molecule is higher or equal the
-     *         value.
+     * Sets up the observables that backs this condition validity and propensity contribution.
+     * The validity returns true if the concentration of the molecule is higher or equal the value.
+     * Propensity influence is computed through the binomial coefficient. See
+     * <a href="https://doi.org/10.1007/978-3-540-68894-5">
+     * Bernardo, Degano, Zavattaro - Formal Methods for Computational Systems Biology
+     * </a>.
+     *
      */
-    @Override
-    public boolean isValid() {
-        return getNode().getConcentration(molecule).doubleValue() >= qty
-                .doubleValue();
+    private void setupObservables() {
+        final var obs = getNode().observeConcentration(molecule);
+
+        addObservableDependency(obs);
+
+        validity = obs.map(it -> {
+            final var value = it.isSome() ? it.getOrNull().doubleValue() : 0.0;
+            return value >= qty.doubleValue();
+        });
+
+        propensity = obs.map(it -> {
+            final int n = it.isSome() ? it.getOrNull().intValue() : 0;
+            final int k = qty.intValue();
+            if (k > n) {
+                return 0.0;
+            }
+            return CombinatoricsUtils.binomialCoefficientDouble(n, k);
+        });
     }
 
     /**
@@ -82,24 +102,6 @@ public class GenericMoleculePresent<T extends Number> extends
     @Override
     public GenericMoleculePresent<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
         return new GenericMoleculePresent<>(newNode, molecule, qty);
-    }
-
-    /**
-     * Propensity influence is computed through the binomial coefficient. See
-     * <a href="https://doi.org/10.1007/978-3-540-68894-5">
-     * Bernardo, Degano, Zavattaro - Formal Methods for Computational Systems Biology
-     * </a>.
-     *
-     * @return the propensity influence
-     */
-    @Override
-    public double getPropensityContribution() {
-        final int n = getNode().getConcentration(molecule).intValue();
-        final int k = qty.intValue();
-        if (k > n) {
-            return 0;
-        }
-        return CombinatoricsUtils.binomialCoefficientDouble(n, k);
     }
 
     /**

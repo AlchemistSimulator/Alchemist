@@ -480,6 +480,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         if (linkingRule.isLocallyConsistent()) {
             val newNeighborhood = linkingRule.computeNeighborhood(node, this)
             val oldNeighborhood: Neighborhood<T>? = neighCache.put(node.id, newNeighborhood)
+            observableNeighCache.put(node.id, newNeighborhood)
             oldNeighborhood?.let {
                 it
                     .getNeighbors()

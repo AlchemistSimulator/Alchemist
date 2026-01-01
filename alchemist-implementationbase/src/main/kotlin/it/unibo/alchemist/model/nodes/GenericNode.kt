@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,7 +10,6 @@ package it.unibo.alchemist.model.nodes
 
 import com.google.common.collect.MapMaker
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
@@ -33,10 +32,6 @@ open class GenericNode<T>
 @JvmOverloads
 constructor(
     /**
-     * simulation incarnation.
-     */
-    val incarnation: Incarnation<T, *>,
-    /**
      * The environment in which the node is places.
      */
     val environment: Environment<T, *>,
@@ -48,9 +43,6 @@ constructor(
     val molecules: MutableMap<Molecule, T> = LinkedHashMap(),
     final override val properties: MutableList<NodeProperty<T>> = ArrayList(),
 ) : Node<T> {
-    constructor(
-        environment: Environment<T, *>,
-    ) : this(environment.incarnation, environment)
 
     final override fun addReaction(reactionToAdd: Reaction<T>) {
         reactions.add(reactionToAdd)
@@ -69,7 +61,7 @@ constructor(
     /**
      * @return an empty concentration
      */
-    protected open fun createT(): T = incarnation.createConcentration()
+    protected open fun createT(): T = environment.incarnation.createConcentration()
 
     final override fun equals(other: Any?): Boolean = other is Node<*> && other.id == id
 

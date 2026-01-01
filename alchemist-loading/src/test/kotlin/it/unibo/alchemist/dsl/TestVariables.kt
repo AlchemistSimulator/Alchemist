@@ -13,51 +13,43 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.doubles.shouldBeExactly
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
 import it.unibo.alchemist.boundary.dsl.Dsl.simulation
-import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations.SAPERE
-import it.unibo.alchemist.boundary.dsl.model.SimulationContextImpl
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.sapere.SAPEREIncarnation
+import it.unibo.alchemist.model.sapere.molecules.LsaMolecule
 import org.junit.jupiter.api.Test
-@Suppress("UNCHECKED_CAST")
+
 class TestVariables {
     @Test
-    fun <T, P : Position<P>> testDefaultValue() {
-        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
-        simulation(incarnation) {
+    fun <P : Position<P>> testDefaultValue() {
+        simulation(SAPEREIncarnation()) {
             val rate: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
 
             runLater {
                 println("Checking variable")
                 rate.shouldBeExactly(5.0)
-                (this as SimulationContextImpl<T, P>).variablesContext
-                    .variables.containsKey("rate").shouldBeTrue()
+                this.variablesContext.variables.containsKey("rate").shouldBeTrue()
             }
-        }.getDefault<T, P>() // needed to build the simulation
+        }.getDefault<List<LsaMolecule>, P>() // needed to build the simulation
     }
 
     @Test
-    fun <T : Any, P : Position<P>> testOverrideValue() {
-        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
-        val loader = simulation(incarnation) {
+    fun <P : Position<P>> testOverrideValue() {
+        val loader = simulation(SAPEREIncarnation()) {
             val rate: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
             deployments {
                 rate.shouldBeExactly(20.0)
-                (this@simulation as SimulationContextImpl<T, P>).variablesContext
-                    .variables.containsKey("rate").shouldBeTrue()
+                variablesContext.variables.containsKey("rate").shouldBeTrue()
             }
         }
-        loader.getWith<T, P>(mapOf("rate" to 20.0))
+        loader.getWith<List<LsaMolecule>, P>(mapOf("rate" to 20.0))
     }
 
-    @Suppress("NoNameShadowing")
     @Test
-    fun <T, P : Position<P>> testDoubleDeclaration() {
-        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
-        simulation(incarnation) {
+    fun <P : Position<P>> testDoubleDeclaration() {
+        simulation(SAPEREIncarnation()) {
             val rate: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
             println("First declaration of rate: $rate")
             shouldThrow<IllegalStateException> {
@@ -68,9 +60,8 @@ class TestVariables {
     }
 
     @Test
-    fun <T, P : Position<P>> testDependendVariable() {
-        val incarnation = SAPERE.incarnation<T, Euclidean2DPosition>()
-        val loader = simulation(incarnation) {
+    fun <P : Position<P>> testDependendVariable() {
+        val loader = simulation(SAPEREIncarnation()) {
             val rate: Double by variable(GeometricVariable(2.0, 0.1, 10.0, 9))
             val size: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
 
@@ -86,6 +77,6 @@ class TestVariables {
                 sourceSize.shouldBe(2.0)
             }
         }
-        loader.getWith<T, P>(mapOf("size" to 10.0))
+        loader.getWith<List<LsaMolecule>, P>(mapOf("size" to 10.0))
     }
 }

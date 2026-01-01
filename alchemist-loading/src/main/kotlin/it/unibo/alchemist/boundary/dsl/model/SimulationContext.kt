@@ -12,7 +12,6 @@ package it.unibo.alchemist.boundary.dsl.model
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.Variable
-import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Incarnation
@@ -59,20 +58,7 @@ interface SimulationContext<T, P : Position<P>> {
     /**
      * The incarnation instance that defines how molecules, nodes, and reactions are created.
      *
-     * ## Creating an Incarnation
-     *
-     * Incarnations are created from the [AvailableIncarnations] enum using the extension function:
-     * ```kotlin
-     *
-     * simulation(AvailableIncarnations.SAPERE.incarnation(), environment) {
-     *     // simulation configuration
-     * }
-     * ```
-     *
-     *
-     * @see [AvailableIncarnations] for the DSL enum of available incarnations
      * @see [Incarnation] for the incarnation interface
-     * @see [it.unibo.alchemist.boundary.dsl.Dsl.incarnation] for converting enum to instance
      */
     val incarnation: Incarnation<T, P>
 

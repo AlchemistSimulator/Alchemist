@@ -7,11 +7,6 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.dsl.processor.extensions
+package it.unibo.alchemist.boundary.dsl.processor.datatypes
 
-import com.google.devtools.ksp.symbol.KSTypeParameter
-import com.google.devtools.ksp.symbol.KSTypeReference
-import it.unibo.alchemist.boundary.dsl.processor.datatypes.TypePosition
-
-context(valid: Set<KSTypeParameter>)
-internal fun KSTypeReference.asString(): String = resolve().render(TypePosition.TYPE)
+internal enum class TypePosition { TYPE, TYPE_ARG }

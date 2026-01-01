@@ -9,91 +9,10 @@
 
 package it.unibo.alchemist.boundary.dsl.model
 
-import it.unibo.alchemist.boundary.dsl.AlchemistDsl
-import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
-import org.apache.commons.math3.random.RandomGenerator
-
-/**
- * Context interface for managing node deployments in a simulation.
- *
- * Deployments define where nodes are placed in the environment and can be configured
- * with content (molecules and concentrations), programs (reactions), and properties.
- *
- * ## Usage Example
- *
- * ```kotlin
- * simulation(incarnation) {
- *     deployments {
- *         deploy(grid(-5.0, -5.0, 5.0, 5.0, 0.25, 0.25)) {
- *             all {
- *                 molecule = "token"
- *                 concentration = 1.0
- *             }
- *             programs {
- *                 all {
- *                     program = "{token} --> {firing}"
- *                 }
- *             }
- *         }
- *     }
- * }
- * ```
- *
- * @param T The type of molecule concentration.
- * @param P The type of position, must extend [Position].
- *
- * @see [SimulationContext.deployments] for configuring deployments in a simulation
- * @see [Deployment] for the deployment interface
- * @see [DeploymentContext] for configuring individual deployments
- */
-@Suppress("UndocumentedPublicFunction") // Detekt false positive with context parameters
-interface DeploymentsContext<T, P : Position<P>> {
-    /**
-     * The simulation context this deployments context belongs to.
-     */
-    val ctx: SimulationContext<T, P>
-
-    /**
-     * The random number generator for scenario generation.
-     *
-     * Used for random deployments and position perturbations.
-     *
-     * @see [RandomGenerator]
-     */
-    val generator: RandomGenerator
-
-    /**
-     * Deploys nodes using a deployment with a configuration block.
-     *
-     * The configuration block allows setting content, programs, properties, and custom node factories.
-     *
-     * ```kotlin
-     * deploy(grid(-5.0, -5.0, 5.0, 5.0, 0.25, 0.25)) {
-     *     all { molecule = "token" }
-     * }
-     * ```
-     *
-     * @param deployment The deployment that defines node positions.
-     * @param block The configuration block for the deployment.
-     * @see [Deployment]
-     */
-    fun deploy(deployment: Deployment<*>, block: DeploymentContext<T, P>.() -> Unit)
-
-    /**
-     * Deploys nodes using a deployment without additional configuration.
-     *
-     * Nodes are created at the positions defined by the deployment with default settings.
-     *
-     * @param deployment The deployment that defines node positions.
-     * @see [Deployment]
-     */
-    context(environment: Environment<T, P>)
-    fun deploy(deployment: Deployment<*>)
-}
 
 /**
  * Context interface for configuring a single deployment.
@@ -109,6 +28,8 @@ interface DeploymentsContext<T, P : Position<P>> {
  * @see [ProgramsContext] for configuring node programs
  * @see [PropertiesContext] for configuring node properties
  */
+// TODO: remove when detekt false positive is fixed
+@Suppress("UndocumentedPublicFunction") // Detekt false positive with context parameters
 interface DeploymentContext<T, P : Position<P>> {
     /**
      * The deployments context this deployment context belongs to.
@@ -182,6 +103,7 @@ interface DeploymentContext<T, P : Position<P>> {
      * @see [Node]
      * @see [it.unibo.alchemist.model.Incarnation.createNode]
      */
+    context(environment: Environment<T, P>)
     fun nodes(factory: (DeploymentContext<T, P>) -> Node<T>)
 
     /**
@@ -201,44 +123,4 @@ interface DeploymentContext<T, P : Position<P>> {
      * @see [PropertiesContext]
      */
     fun properties(block: PropertiesContext<T, P>.() -> Unit)
-}
-
-/**
- * Context interface for configuring node content (molecules and concentrations).
- *
- * This context is used within [DeploymentContext] blocks to define the initial
- * content of nodes deployed at specific positions.
- *
- * @param T The type of molecule concentration.
- * @param P The type of position, must extend [Position].
- *
- * @see [DeploymentContext] for the parent context
- * @see [it.unibo.alchemist.model.Incarnation.createMolecule]
- * @see [it.unibo.alchemist.model.Incarnation.createConcentration]
- */
-interface ContentContext<T, P : Position<P>> {
-    /**
-     * The optional position filter applied to this content context.
-     *
-     * If set, content is only applied to nodes at positions matching this filter.
-     */
-    val filter: PositionBasedFilter<P>?
-
-    /**
-     * The molecule name to inject into nodes.
-     *
-     * The molecule is created using the incarnation's molecule factory.
-     *
-     * @see [it.unibo.alchemist.model.Incarnation.createMolecule]
-     */
-    var molecule: String?
-
-    /**
-     * The concentration value for the molecule.
-     *
-     * The concentration is created using the incarnation's concentration factory.
-     *
-     * @see [it.unibo.alchemist.model.Incarnation.createConcentration]
-     */
-    var concentration: T?
 }

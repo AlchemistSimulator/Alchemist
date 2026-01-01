@@ -9,20 +9,17 @@
 
 package it.unibo.alchemist.dsl
 
-import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
 import it.unibo.alchemist.boundary.dsl.Dsl.simulation
-import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.sapere.SAPEREIncarnation
 import org.junit.jupiter.api.Test
 
 class TestDeployments {
 
     @Test
     fun testDeployments() {
-        val incarnation = AvailableIncarnations.SAPERE.incarnation<Any, Euclidean2DPosition>()
-        val loader = simulation(incarnation) {
+        val loader = simulation(SAPEREIncarnation()) {
             deployments {
                 val p = Point(ctx.environment, 0.0, 0.0)
                 deploy(p)
@@ -34,8 +31,7 @@ class TestDeployments {
 
     @Test
     fun testMultipleDeployments() {
-        val incarnation = AvailableIncarnations.SAPERE.incarnation<Any, Euclidean2DPosition>()
-        val loader = simulation(incarnation) {
+        val loader = simulation(SAPEREIncarnation()) {
             deployments {
                 val point = Point(ctx.environment, 0.0, 0.0)
                 deploy(point)
@@ -48,8 +44,7 @@ class TestDeployments {
 
     @Test
     fun testGridDeployment() {
-        val incarnation = AvailableIncarnations.SAPERE.incarnation<Any, Euclidean2DPosition>()
-        val loader = simulation(incarnation) {
+        val loader = simulation(SAPEREIncarnation()) {
             deployments {
                 val grid = Grid(
                     ctx.environment,

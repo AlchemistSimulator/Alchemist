@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -274,20 +274,21 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
         final var parameters = additionalParameters.toString();
         if (parameters.startsWith("+")) {
             return new LsaRandomNeighborAction(
-                (LsaNode) node,
-                createMolecule(parameters.substring(1)),
+                randomGenerator,
                 environment,
-                randomGenerator
+                (LsaNode) node,
+                createMolecule(parameters.substring(1))
             );
         }
         if (parameters.startsWith("*")) {
             return new LsaAllNeighborsAction(
+                randomGenerator,
+                environment,
                 (LsaNode) node,
-                createMolecule(parameters.substring(1)),
-                environment
+                createMolecule(parameters.substring(1))
             );
         }
-        return new LsaStandardAction(createMolecule(parameters), (LsaNode) node, randomGenerator);
+        return new LsaStandardAction(randomGenerator, (LsaNode) node, createMolecule(parameters));
     }
 
     @Override

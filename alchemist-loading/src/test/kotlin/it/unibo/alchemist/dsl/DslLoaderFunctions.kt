@@ -22,7 +22,7 @@ import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.actions.BrownianMove
+import it.unibo.alchemist.model.actions.brownianMove
 import it.unibo.alchemist.model.deployments.Circle
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
@@ -509,10 +509,7 @@ object DslLoaderFunctions {
                         timeDistribution("10")
                         reaction = Event(node, timeDistribution)
                         addAction {
-                            BrownianMove(
-                                env,
-                                node,
-                                ctx.ctx.ctx.ctx.simulationGenerator,
+                            brownianMove(
                                 0.0005,
                             )
                         }

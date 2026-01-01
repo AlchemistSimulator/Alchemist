@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -69,7 +69,7 @@ interface DeploymentContext<T, P : Position<P>> {
      * @see [PositionBasedFilter]
      * @see [ContentContext]
      */
-    fun inside(filter: PositionBasedFilter<*>, block: ContentContext<T, P>.() -> Unit)
+    fun inside(filter: PositionBasedFilter<*>, block: context(Node<T>) ContentContext<T, P>.() -> Unit)
 
     /**
      * Configures programs (reactions) for this deployment.

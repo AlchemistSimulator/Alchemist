@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -78,6 +78,7 @@ interface DeploymentsContext<T, P : Position<P>> {
      * @param block The configuration block for the deployment.
      * @see [it.unibo.alchemist.model.Deployment]
      */
+    context(environment: Environment<T, P>)
     fun deploy(deployment: Deployment<*>, block: DeploymentContext<T, P>.() -> Unit)
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.dsl.model
 import it.unibo.alchemist.boundary.dsl.AlchemistDsl
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Condition
+import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
@@ -61,7 +62,7 @@ interface ProgramsContext<T, P : Position<P>> {
      *
      * @param block The program configuration block.
      */
-    fun all(block: ProgramContext<T, P>.() -> Unit)
+    fun all(block: context(Environment<T, P>, Node<T>) ProgramContext<T, P>.() -> Unit)
 
     /**
      * Configures a program for nodes inside a position filter.

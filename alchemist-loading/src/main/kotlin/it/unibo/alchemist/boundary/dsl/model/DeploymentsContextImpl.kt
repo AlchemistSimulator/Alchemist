@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -35,6 +35,7 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
 
     private val inc = ctx.incarnation
 
+    context(environment: Environment<T, P>)
     override fun deploy(deployment: Deployment<*>, block: context(DeploymentContext<T, P>) () -> Unit) {
         logger.debug("Deploying deployment: {}", deployment)
         @Suppress("UNCHECKED_CAST")
@@ -48,6 +49,7 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
         @Suppress("UNCHECKED_CAST")
         this.deploy(deployment) {}
     }
+    context(_: Environment<T, P>)
     private fun populateDeployment(deploymentContext: DeploymentContextImpl) {
         val deployment = deploymentContext.deployment
         // Additional linking rules
@@ -69,27 +71,29 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
                     ctx.environment,
                     null,
                 )
-            // load properties
-            deploymentContext.propertiesContext.applyToNode(node, position)
-            // load contents
-            val contents = deploymentContext.contents
-            for (content in contents) {
-                deploymentContext.applyToNodes(node, position, content)
+            context(node) {
+                // load properties
+                deploymentContext.propertiesContext.applyToNode(node, position)
+                // load contents
+                val contents = deploymentContext.contents
+                for (content in contents) {
+                    deploymentContext.applyToNodes(node, position, content)
+                }
+                // load programs
+                val programs = deploymentContext.programsContext.programs
+                val createdPrograms = mutableListOf<Pair<PositionBasedFilter<P>?, Actionable<T>>>()
+                for (programEntry in programs) {
+                    val pp = deploymentContext.programsContext.applyToNodes(
+                        node,
+                        position,
+                        programEntry.program,
+                        programEntry.filter,
+                    )
+                    createdPrograms.add(pp)
+                }
+                logger.debug("programs={}", createdPrograms)
+                logger.debug("Adding node to environment at position: {}", position)
             }
-            // load programs
-            val programs = deploymentContext.programsContext.programs
-            val createdPrograms = mutableListOf<Pair<PositionBasedFilter<P>?, Actionable<T>>>()
-            for (programEntry in programs) {
-                val pp = deploymentContext.programsContext.applyToNodes(
-                    node,
-                    position,
-                    programEntry.program,
-                    programEntry.filter,
-                )
-                createdPrograms.add(pp)
-            }
-            logger.debug("programs={}", createdPrograms)
-            logger.debug("Adding node to environment at position: {}", position)
             ctx.environment.addNode(node, position)
         }
     }
@@ -134,7 +138,7 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
             contents.add(c)
         }
 
-        override fun inside(filter: PositionBasedFilter<*>, block: ContentContext<T, P>.() -> Unit) {
+        override fun inside(filter: PositionBasedFilter<*>, block: context(Node<T>) ContentContext<T, P>.() -> Unit) {
             @Suppress("UNCHECKED_CAST")
             val typedFilter = filter as PositionBasedFilter<P>
             logger.debug("Adding content for positions inside filter: {}", typedFilter)

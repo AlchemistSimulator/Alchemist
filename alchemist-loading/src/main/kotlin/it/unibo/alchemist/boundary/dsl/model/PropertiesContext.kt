@@ -46,7 +46,8 @@ import it.unibo.alchemist.model.PositionBasedFilter
  * @see [NodeProperty] for the property interface
  * @see [PositionBasedFilter] for position filtering
  */
-
+// TODO: remove when detekt false positive is fixed
+@Suppress("UndocumentedPublicFunction") // Detekt false positive with context parameters
 @AlchemistDsl
 interface PropertiesContext<T, P : Position<P>> {
     /**
@@ -63,6 +64,7 @@ interface PropertiesContext<T, P : Position<P>> {
      * @param block The property configuration block.
      * @see [PositionBasedFilter]
      */
+    context(environment: Environment<T, P>)
     fun inside(
         filter: PositionBasedFilter<P>,
         block: context(Environment<T, P>, Node<T>) PropertyContext<T, P>.() -> Unit,

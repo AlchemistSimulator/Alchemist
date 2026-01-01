@@ -1,3 +1,19 @@
+## [42.3.27](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.26...42.3.27) (2026-01-01)
+
+### Dependency updates
+
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.162.0 ([#5045](https://github.com/AlchemistSimulator/Alchemist/issues/5045)) ([f5aca35](https://github.com/AlchemistSimulator/Alchemist/commit/f5aca356ac68a433950d54d80f7a9994b9934215))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.163.0 ([#5048](https://github.com/AlchemistSimulator/Alchemist/issues/5048)) ([3d8a44d](https://github.com/AlchemistSimulator/Alchemist/commit/3d8a44d6865e1663c6ca52b74cbc88f4432e887c))
+* **deps:** update dependency org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin to v0.100.0 ([#5046](https://github.com/AlchemistSimulator/Alchemist/issues/5046)) ([71a4680](https://github.com/AlchemistSimulator/Alchemist/commit/71a468096f418a66f0cfc5dd0c475a92913629c4))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.154.1 ([#5047](https://github.com/AlchemistSimulator/Alchemist/issues/5047)) ([4c7d2b0](https://github.com/AlchemistSimulator/Alchemist/commit/4c7d2b0e0c1810f1540906841600bc457bced0c6))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([10e910a](https://github.com/AlchemistSimulator/Alchemist/commit/10e910a5e1f03f35f4cd983d4caf8170c1b91948))
+
 ## [42.3.26](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.25...42.3.26) (2025-12-30)
 
 ### Dependency updates

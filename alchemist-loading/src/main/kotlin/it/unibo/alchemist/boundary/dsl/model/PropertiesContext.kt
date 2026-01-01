@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,6 +10,7 @@
 package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.boundary.dsl.AlchemistDsl
+import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
@@ -62,14 +63,17 @@ interface PropertiesContext<T, P : Position<P>> {
      * @param block The property configuration block.
      * @see [PositionBasedFilter]
      */
-    fun inside(filter: PositionBasedFilter<*>, block: PropertyContext<T, P>.() -> Unit)
+    fun inside(
+        filter: PositionBasedFilter<P>,
+        block: context(Environment<T, P>, Node<T>) PropertyContext<T, P>.() -> Unit,
+    )
 
     /**
      * Configures properties for all nodes in the deployment.
      *
      * @param block The property configuration block.
      */
-    fun all(block: PropertyContext<T, P>.() -> Unit)
+    fun all(block: context(Environment<T, P>, Node<T>) PropertyContext<T, P>.() -> Unit)
 }
 
 /**
@@ -103,7 +107,6 @@ interface PropertyContext<T, P : Position<P>> {
     /**
      * Adds a property to the node.
      *
-     * @param property The property to add to the node.
      * @see [NodeProperty]
      */
     operator fun NodeProperty<T>.unaryPlus()

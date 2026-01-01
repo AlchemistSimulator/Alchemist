@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -59,7 +59,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         if (Double.isNaN(diameter)) {
             throw new IllegalArgumentException("Invalid diameter: " + parameter);
         }
-        final Node<Double> node = new GenericNode<>(this, environment);
+        final Node<Double> node = new GenericNode<>(environment);
         if (diameter == 0) {
             node.addProperty(new CircularCell(environment, node));
         } else {

@@ -9,27 +9,22 @@
 
 package it.unibo.alchemist.dsl
 
-import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
 import it.unibo.alchemist.boundary.dsl.Dsl.simulation
-import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations.SAPERE
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.sapere.SAPEREIncarnation
 import org.junit.jupiter.api.Test
 
 class TestSimulations {
 
     @Test
     fun testIncarnation() {
-        val incarnation = SAPERE.incarnation<Any, Euclidean2DPosition>()
-        val loader = simulation(incarnation) {
-        }
+        val loader = simulation(SAPEREIncarnation()) { }
         loader.launch(loader.launcher)
     }
 
     @Test
     fun testLinkingRule() {
-        val incarnation = SAPERE.incarnation<Any, Euclidean2DPosition>()
-        val loader = simulation(incarnation) {
+        val loader = simulation(SAPEREIncarnation()) {
             networkModel = ConnectWithinDistance(5.0)
         }
         loader.launch(loader.launcher)

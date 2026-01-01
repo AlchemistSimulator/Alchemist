@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -63,12 +63,12 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
      */
     @SuppressWarnings("unchecked")
     public LsaRandomNeighborAction(
-            final ILsaNode node,
-            final ILsaMolecule molecule,
-            final Environment<List<ILsaMolecule>, ?> environment,
-            final RandomGenerator randomGenerator
+        final RandomGenerator randomGenerator,
+        final Environment<List<ILsaMolecule>, ?> environment,
+        final ILsaNode node,
+        final ILsaMolecule molecule
     ) {
-        super(molecule, node);
+        super(randomGenerator, node, molecule);
         final String molString = molecule.toString();
         initO = molString.contains(LsaMolecule.SYN_O);
         initD = molString.contains(LsaMolecule.SYN_D);
@@ -88,7 +88,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
             final Node<List<ILsaMolecule>> node,
             final Reaction<List<ILsaMolecule>> reaction
     ) {
-        return new LsaRandomNeighborAction((ILsaNode) node, getMolecule(), getEnvironment(), randomEngine);
+        return new LsaRandomNeighborAction(randomEngine, getEnvironment(), (ILsaNode) node, getMolecule());
     }
 
     /**

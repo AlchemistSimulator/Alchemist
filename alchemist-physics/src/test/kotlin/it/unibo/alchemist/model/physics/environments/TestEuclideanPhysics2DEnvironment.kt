@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.physics.environments
 
-import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.SupportedIncarnations
@@ -32,13 +31,10 @@ class TestEuclideanPhysics2DEnvironment {
     private lateinit var node2: Node<Any>
     private lateinit var node3: Node<Any>
 
-    private fun createCircleNode(
-        incarnation: Incarnation<Any, Euclidean2DPosition>,
-        environment: Physics2DEnvironment<Any>,
-        radius: Double,
-    ) = GenericNode(incarnation, environment).apply {
-        addProperty(CircularArea(environment, this, radius))
-    }
+    private fun createCircleNode(environment: Physics2DEnvironment<Any>, radius: Double) =
+        GenericNode(environment).apply {
+            addProperty(CircularArea(environment, this, radius))
+        }
 
     private fun getNodeRadius(node: Node<Any>): Double = node.asProperty<Any, AreaProperty<Any>>().shape.radius
 
@@ -47,9 +43,9 @@ class TestEuclideanPhysics2DEnvironment {
         val incarnation = SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow()
         environment = ContinuousPhysics2DEnvironment(incarnation)
         environment.linkingRule = NoLinks()
-        node1 = createCircleNode(incarnation, environment, DEFAULT_SHAPE_SIZE / 2)
-        node2 = createCircleNode(incarnation, environment, DEFAULT_SHAPE_SIZE / 2)
-        node3 = createCircleNode(incarnation, environment, DEFAULT_SHAPE_SIZE / 2)
+        node1 = createCircleNode(environment, DEFAULT_SHAPE_SIZE / 2)
+        node2 = createCircleNode(environment, DEFAULT_SHAPE_SIZE / 2)
+        node3 = createCircleNode(environment, DEFAULT_SHAPE_SIZE / 2)
     }
 
     @Test

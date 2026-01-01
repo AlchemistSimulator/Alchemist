@@ -13,16 +13,13 @@ import it.unibo.alchemist.boundary.DependentVariable
 import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
-import it.unibo.alchemist.boundary.dsl.model.AvailableIncarnations as Inc
 import it.unibo.alchemist.boundary.dsl.model.SimulationContext
 import it.unibo.alchemist.boundary.dsl.model.SimulationContextImpl
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import kotlin.jvm.optionals.getOrElse
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -50,23 +47,16 @@ object Dsl {
     fun <T, P : Position<P>> createLoader(
         builder: SimulationContext<T, P>,
         envBuilder: () -> Environment<T, P>,
-    ): Loader = object : DSLLoader<T, P>(builder, envBuilder) {
+    ): Loader = object : DSLLoader(builder) {
         override val constants: Map<String, Any?> = emptyMap()
         override val dependentVariables: Map<String, DependentVariable<*>> = emptyMap()
         override val variables: Map<String, Variable<*>> = builder.variablesContext.variables
         override val remoteDependencies: List<String> = emptyList()
         override val launcher: Launcher = builder.launcher
-    }
 
-    /**
-     * Converts an Incarnation enum to an Incarnation instance.
-     *
-     * @return The incarnation instance.
-     */
-    fun <T, P : Position<P>> Inc.incarnation(): Incarnation<T, P> =
-        SupportedIncarnations.get<T, P>(this.name).getOrElse {
-            throw IllegalArgumentException("Incarnation $this not supported")
-        }
+        @Suppress("UNCHECKED_CAST")
+        override fun <T, P : Position<P>> envFactory(): Environment<T, P> = envBuilder() as Environment<T, P>
+    }
 
     /**
      * Creates a simulation with a custom environment.
@@ -78,20 +68,23 @@ object Dsl {
      */
     fun <T, P : Position<P>> simulation(
         incarnation: Incarnation<T, P>,
-        environment: () -> Environment<T, P>,
+        environment: context(Incarnation<T, P>) () -> Environment<T, P>,
         block: context(
             RandomGenerator,
             Environment<T, P>
         ) SimulationContext<T, P>.() -> Unit,
     ): Loader {
         val ctx = SimulationContextImpl(incarnation)
-        @Suppress("UNCHECKED_CAST")
         ctx.apply {
             context(ctx.simulationGenerator, ctx.environment) {
                 block()
             }
         }
-        return createLoader(ctx, environment)
+        return createLoader(ctx) {
+            context(incarnation) {
+                environment()
+            }
+        }
     }
 
     /**
@@ -109,10 +102,8 @@ object Dsl {
             Environment<T, Euclidean2DPosition>
         ) SimulationContext<T, Euclidean2DPosition>.() -> Unit,
     ): Loader {
-        @Suppress("UNCHECKED_CAST")
         val defaultEnv = { Continuous2DEnvironment(incarnation) }
         val ctx = SimulationContextImpl(incarnation)
-        @Suppress("UNCHECKED_CAST")
         ctx.apply {
             context(incarnation, ctx.simulationGenerator, ctx.environment) {
                 block()

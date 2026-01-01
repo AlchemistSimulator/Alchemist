@@ -146,6 +146,7 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
             programsContext.apply(block)
         }
 
+        context(environment: Environment<T, P>)
         override fun nodes(factory: DeploymentContext<T, P>.() -> Node<T>) {
             nodeFactory = factory
         }

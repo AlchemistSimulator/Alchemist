@@ -25,10 +25,10 @@ import java.util.concurrent.Semaphore
  *
  * @param ctx The simulation context.
  */
-abstract class DSLLoader<A, B : Position<B>>(
-    private val ctx: SimulationContext<*, *>,
-    private val envFactory: () -> Environment<*, *>,
-) : Loader {
+abstract class DSLLoader(private val ctx: SimulationContext<*, *>) : Loader {
+
+    protected abstract fun <T, P : Position<P>> envFactory(): Environment<T, P>
+
     override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> =
         SingleUseLoader(ctx).load(values)
     private inner class SingleUseLoader(private val ctx: SimulationContext<*, *>) {
@@ -45,7 +45,7 @@ abstract class DSLLoader<A, B : Position<B>>(
                 mutex.release()
             }
             val typedCtx = ctx as SimulationContextImpl<T, P>
-            val envInstance = envFactory() as Environment<T, P>
+            val envInstance = envFactory<T, P>()
             val unknownVariableNames = values.keys - this@DSLLoader.variables.keys
             require(unknownVariableNames.isEmpty()) {
                 "Unknown variables provided: $unknownVariableNames." +

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -19,7 +19,6 @@ import Libs.incarnation
  */
 plugins {
     id("kotlin-jvm-convention")
-    alias(libs.plugins.ksp)
 }
 
 dependencies {
@@ -53,11 +52,11 @@ dependencies {
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("maps"))
     testImplementation(alchemist("test"))
+    testImplementation(incarnation("sapere"))
+    testImplementation(incarnation("protelis"))
     testImplementation(libs.appdirs)
     testImplementation(libs.caffeine)
     testImplementation(libs.embedmongo)
-    testRuntimeOnly(incarnation("sapere"))
-    testRuntimeOnly(incarnation("protelis"))
     implementation(kotlin("script-runtime"))
 
     ksp(project(":alchemist-dsl-processor"))

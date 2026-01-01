@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -139,7 +140,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       environment: Environment[T, P],
       parameters: Any
   ): GenericNode[T] = {
-    val scafiNode = new GenericNode[T](this, environment)
+    val scafiNode = new GenericNode[T](environment)
     scafiNode.addProperty(new ScafiDevice(scafiNode))
     scafiNode
   }

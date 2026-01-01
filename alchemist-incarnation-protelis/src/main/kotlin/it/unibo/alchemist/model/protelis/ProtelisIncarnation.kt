@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -177,7 +177,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         parameter: Any?,
-    ): Node<Any> = GenericNode(this, environment).apply {
+    ): Node<Any> = GenericNode(environment).apply {
         addProperty(ProtelisDevice(environment, this))
     }
 

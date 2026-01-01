@@ -22,6 +22,8 @@ import it.unibo.alchemist.model.PositionBasedFilter
  * @param T The type of molecule concentration.
  * @param P The type of position.
  */
+// TODO: remove when detekt false positive is fixed
+@Suppress("UndocumentedPublicFunction") // Detekt false positive with context parameters
 class PropertiesContextImpl<T, P : Position<P>>(override val ctx: DeploymentContext<T, P>) : PropertiesContext<T, P> {
     /**
      * List of property contexts with their associated filters.
@@ -34,6 +36,7 @@ class PropertiesContextImpl<T, P : Position<P>>(override val ctx: DeploymentCont
             >,
         > = mutableListOf()
 
+    context(_: Environment<T, P>)
     override fun inside(
         filter: PositionBasedFilter<P>,
         block: context(Environment<T, P>, Node<T>) PropertyContext<T, P>.() -> Unit,
@@ -53,11 +56,12 @@ class PropertiesContextImpl<T, P : Position<P>>(override val ctx: DeploymentCont
      * @param node The node to apply properties to.
      * @param position The position of the node.
      */
+    context(_: Environment<T, P>, _: Node<T>)
     fun applyToNode(node: Node<T>, position: P) {
         propertiesCtx.forEach { (propertyCtx, filter) ->
             if (filter == null || filter.contains(position)) {
                 val properties = PropertyContextImpl(filter, node)
-                    .apply(propertyCtx)
+                    .apply { propertyCtx() }
                     .properties
                 properties.forEach { property ->
                     logger.debug("Applying property: {} to node: {}", property, node)

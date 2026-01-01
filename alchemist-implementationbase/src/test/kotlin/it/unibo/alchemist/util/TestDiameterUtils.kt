@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
  * Adds a node to the environment at the specified [coordinates].
  */
 infix fun Environment<Any, Euclidean2DPosition>.addNodeAt(coordinates: Pair<Double, Double>) = addNode(
-    GenericNode(ProtelisIncarnation(), this),
+    GenericNode(this),
     Euclidean2DPosition(coordinates.first, coordinates.second),
 )
 

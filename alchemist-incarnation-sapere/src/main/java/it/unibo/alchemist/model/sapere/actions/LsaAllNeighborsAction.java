@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -36,32 +36,16 @@ public final class LsaAllNeighborsAction extends LsaRandomNeighborAction {
      *            the LSA
      * @param environment
      *            the current environment
-     */
-    public LsaAllNeighborsAction(
-            final ILsaNode node,
-            final ILsaMolecule molecule,
-            final Environment<List<ILsaMolecule>, ?> environment
-    ) {
-        this(node, molecule, environment, null);
-    }
-
-    /**
-     * @param node
-     *            the node in which the reaction is programmed
-     * @param molecule
-     *            the LSA
-     * @param environment
-     *            the current environment
      * @param randomGenerator
      *            unused. Can be null.
      */
     public LsaAllNeighborsAction(
-            final ILsaNode node,
-            final ILsaMolecule molecule,
-            final Environment<List<ILsaMolecule>, ?> environment,
-            final RandomGenerator randomGenerator
+        final RandomGenerator randomGenerator,
+        final Environment<List<ILsaMolecule>, ?> environment,
+        final ILsaNode node,
+        final ILsaMolecule molecule
     ) {
-        super(node, molecule, environment, randomGenerator);
+        super(randomGenerator, environment, node, molecule);
     }
 
     @Override

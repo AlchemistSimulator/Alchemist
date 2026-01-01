@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.biochemistry.nodes;
 
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.nodes.GenericNode;
@@ -29,20 +28,10 @@ public final class EnvironmentNodeImpl extends GenericNode<Double> implements En
     /**
      * Create a new environment node.
      *
-     * @param incarnation the simulation incarnation
-     * @param environment the environment
-     */
-    public EnvironmentNodeImpl(final Incarnation<Double, ?> incarnation, final Environment<Double, ?> environment) {
-        super(incarnation, environment);
-    }
-
-    /**
-     * Create a new environment node.
-     *
      * @param environment the environment
      */
     public EnvironmentNodeImpl(final Environment<Double, ?> environment) {
-        super(environment.getIncarnation(), environment);
+        super(environment);
     }
 
     @Override

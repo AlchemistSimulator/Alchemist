@@ -1,6 +1,16 @@
+/*
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
+import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
@@ -16,16 +26,23 @@ class PropertiesContextImpl<T, P : Position<P>>(override val ctx: DeploymentCont
     /**
      * List of property contexts with their associated filters.
      */
-    val propertiesCtx: MutableList<Pair<PropertyContextImpl.() -> Unit, PositionBasedFilter<P>?>> = mutableListOf()
+    val propertiesCtx: MutableList<
+        Pair<
+            context(Environment<T, P>, Node<T>)
+            PropertyContext<T, P>.() -> Unit,
+            PositionBasedFilter<P>?,
+            >,
+        > = mutableListOf()
 
-    override fun inside(filter: PositionBasedFilter<*>, block: PropertyContext<T, P>.() -> Unit) {
-        @Suppress("UNCHECKED_CAST")
-        val typedFilter = filter as PositionBasedFilter<P>
-        propertiesCtx.add(block to typedFilter)
-        logger.debug("Adding property for nodes inside filter: {}", typedFilter)
+    override fun inside(
+        filter: PositionBasedFilter<P>,
+        block: context(Environment<T, P>, Node<T>) PropertyContext<T, P>.() -> Unit,
+    ) {
+        propertiesCtx.add(block to filter)
+        logger.debug("Adding property for nodes inside filter: {}", filter)
     }
 
-    override fun all(block: PropertyContext<T, P>.() -> Unit) {
+    override fun all(block: context(Environment<T, P>, Node<T>) PropertyContext<T, P>.() -> Unit) {
         propertiesCtx.add(block to null)
         logger.debug("Adding property for all nodes")
     }

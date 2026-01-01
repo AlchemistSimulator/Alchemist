@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,6 @@
 package it.unibo.alchemist.model.neighborhoods
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
@@ -22,12 +21,10 @@ import org.junit.jupiter.api.Test
  * Tests pertaining to the `it.unibo.alchemist.model.implementations.neighborhoods` package.
  */
 class TestNeighborhood {
-    private fun createIntNode(
-        incarnation: Incarnation<Int, Euclidean2DPosition>,
-        environment: Environment<Int, Euclidean2DPosition>,
-    ): Node<Int> = object : GenericNode<Int>(incarnation, environment) {
-        override fun createT(): Int = 0
-    }
+    private fun createIntNode(environment: Environment<Int, Euclidean2DPosition>): Node<Int> =
+        object : GenericNode<Int>(environment) {
+            override fun createT(): Int = 0
+        }
 
     /**
      * Tests whether the clone function of the
@@ -37,8 +34,8 @@ class TestNeighborhood {
     fun testClone() {
         val incarnation = SupportedIncarnations.get<Int, Euclidean2DPosition>("protelis").orElseThrow()
         val environment = Continuous2DEnvironment<Int>(incarnation)
-        val n1 = createIntNode(incarnation, environment)
-        val n2 = createIntNode(incarnation, environment)
+        val n1 = createIntNode(environment)
+        val n2 = createIntNode(environment)
         val neigh1 = Neighborhoods.make(environment, n1, mutableListOf(n2))
         val neigh2 = neigh1.remove(n2)
         Assertions.assertEquals(0, neigh2.size())

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -21,17 +21,16 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeParameter
+import it.unibo.alchemist.boundary.dsl.processor.datatypes.InjectableConstructor
 import it.unibo.alchemist.boundary.dsl.processor.extensions.asString
 import it.unibo.alchemist.boundary.dsl.processor.extensions.injectableConstructors
 import it.unibo.alchemist.boundary.dsl.processor.extensions.nameOrTypeName
-import it.unibo.alchemist.boundary.dsl.processor.extensions.typeName
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.TimeDistribution
 import java.io.PrintWriter
 import java.nio.charset.StandardCharsets
 import org.apache.commons.math3.random.RandomGenerator
@@ -48,7 +47,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator) : SymbolProc
                 .forEach { classDeclaration ->
                     val injectableConstructors = classDeclaration.getConstructors()
                         .flatMap { it.injectableConstructors() }
-                        .toList()
+                        .toSet() // Remove duplicates
                     if (injectableConstructors.isNotEmpty()) {
                         val file = codeGenerator.createNewFile(
                             dependencies = classDeclaration.containingFile
@@ -80,7 +79,6 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator) : SymbolProc
             resolver.getClassDeclarationByName<RandomGenerator>(),
             resolver.getClassDeclarationByName<Reaction<*>>(),
             resolver.getClassDeclarationByName<Simulation<*, *>>(),
-            resolver.getClassDeclarationByName<TimeDistribution<*>>(),
         ).map { checkNotNull(it).asStarProjectedType() }.toSet()
 
         private fun processConstructor(
@@ -89,65 +87,71 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator) : SymbolProc
             injectableConstructor: InjectableConstructor,
         ) {
             val (constructor, injectableParams, preservedParams) = injectableConstructor
-            val context = injectableParams.joinToString(prefix = "context(", postfix = ")") { param ->
-                "${param.nameOrTypeName()}: ${param.type.asString()}"
-            }
-            writer.println(context)
             val typeParameters = constructor.typeParameters.render()
-            val parameters = preservedParams.joinToString(separator = NEWLINE_INDENT) { parameter ->
-                val vararg = if (parameter.isVararg) "vararg " else ""
-                "$vararg${parameter.name?.asString()}: ${parameter.type.asString()}"
-            }
-            val whereClause = constructor.typeParameters
-                .flatMap { typeParam ->
-                    typeParam.bounds.map { bound ->
-                        "${typeParam.simpleName.asString()} : ${bound.asString()}"
-                    }
+            context(constructor.typeParameters.toSet()) {
+                val parameters = preservedParams.joinToString(separator = NEWLINE_INDENT) { parameter ->
+                    val vararg = if (parameter.isVararg) "vararg " else ""
+                    "$vararg${parameter.name?.asString()}: ${parameter.type.asString()}"
                 }
-                .takeIf { it.isNotEmpty() }
-                ?.joinToString(separator = NEWLINE_INDENT, prefix = "where\n    ", postfix = "\n")
-                .orEmpty()
-            val useAllArguments = preservedParams.size + injectableParams.size == constructor.parameters.size
-            val arguments = constructor.parameters.asSequence()
-                .run {
-                    when {
-                        useAllArguments -> this
-                        else -> {
-                            val argumentsToUse = (preservedParams + injectableParams).toSet()
-                            filter { it in argumentsToUse }
+                val whereClause = constructor.typeParameters
+                    .flatMap { typeParam ->
+                        typeParam.bounds.map { bound ->
+                            "${typeParam.simpleName.asString()} : ${bound.asString()}"
                         }
                     }
-                }
-                .joinToString(NEWLINE_INDENT) {
-                    /*
-                     * If it is a Java constructor, all arguments will be used.
-                     * Since the same is true if there are no default parameters in Kotlin,
-                     * it is safe to call positionally if `useAllArguments` is true.
-                     * If it is a Kotlin constructor with default parameters, named arguments must be used to
-                     * support cases in which there are mandatory parameters after the optional ones.
-                     */
-                    val name = it.name
-                    when {
-                        useAllArguments || name == null -> {
-                            "${if (it.isVararg) "*" else ""}${it.nameOrTypeName()}"
+                    .takeIf { it.isNotEmpty() }
+                    ?.joinToString(separator = NEWLINE_INDENT, prefix = "where\n    ", postfix = "\n")
+                    .orEmpty()
+                val useAllArguments = preservedParams.size + injectableParams.size == constructor.parameters.size
+                val arguments = constructor.parameters.asSequence()
+                    .run {
+                        when {
+                            useAllArguments -> this
+                            else -> {
+                                val argumentsToUse = (preservedParams + injectableParams).toSet()
+                                filter { it in argumentsToUse }
+                            }
                         }
-                        else -> "${name.asString()} = ${it.nameOrTypeName()}"
                     }
+                    .joinToString(NEWLINE_INDENT) {
+                        /*
+                         * If it is a Java constructor, all arguments will be used.
+                         * Since the same is true if there are no default parameters in Kotlin,
+                         * it is safe to call positionally if `useAllArguments` is true.
+                         * If it is a Kotlin constructor with default parameters, named arguments must be used to
+                         * support cases in which there are mandatory parameters after the optional ones.
+                         */
+                        val name = it.name
+                        when {
+                            useAllArguments || name == null -> {
+                                "${if (it.isVararg) "*" else ""}${it.nameOrTypeName()}"
+                            }
+                            else -> "${name.asString()} = ${it.nameOrTypeName()}"
+                        }
+                    }
+                val context = injectableParams.joinToString(prefix = "context(", postfix = ")") { param ->
+                    "${param.nameOrTypeName()}: ${param.type.asString()}"
                 }
-            val functionName = classDeclaration.simpleName.asString().replaceFirstChar { it.lowercaseChar() }
-            val contextParameterNames = injectableParams.joinToString("") { param ->
-                param.nameOrTypeName().replaceFirstChar { it.uppercase() }
-            }
-            val argumentsString = if (parameters.isEmpty()) "()" else "(\n|    $parameters\n|)"
-            writer.println(
-                """
+                val classSimpleName = classDeclaration.simpleName.asString()
+                val functionName = classSimpleName.replaceFirstChar { it.lowercaseChar() }
+                val contextParameterNames = injectableParams.joinToString("") { param ->
+                    param.nameOrTypeName().replaceFirstChar { it.uppercase() }
+                }
+                val argumentsString = if (parameters.isEmpty()) "()" else "(\n|    $parameters\n|)"
+                writer.println(
+                    """
+                |/**
+                | * Contextual builder for [$classSimpleName].
+                | */
                 |@JvmName("${functionName}WithContextual$contextParameterNames")
-                |fun $typeParameters$functionName$argumentsString $whereClause= ${classDeclaration.typeName}(
+                |$context
+                |fun $typeParameters$functionName$argumentsString $whereClause= ${classSimpleName}$typeParameters(
                 |    $arguments
                 |)
                 |
-                """.trimMargin(),
-            )
+                    """.trimMargin(),
+                )
+            }
         }
 
         private fun List<KSTypeParameter>.render() = takeIf { it.isNotEmpty() }

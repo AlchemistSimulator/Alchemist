@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,7 +13,7 @@ import com.google.devtools.ksp.isPublic
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
-import it.unibo.alchemist.boundary.dsl.processor.InjectableConstructor
+import it.unibo.alchemist.boundary.dsl.processor.datatypes.InjectableConstructor
 
 /**
  * Finds a public constructor for the given class declaration.

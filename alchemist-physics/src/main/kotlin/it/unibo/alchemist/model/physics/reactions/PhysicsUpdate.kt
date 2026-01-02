@@ -17,9 +17,15 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
+import it.unibo.alchemist.model.observation.EventObservable
+import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.merge
+import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
 import it.unibo.alchemist.model.physics.PhysicsDependency
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.timedistributions.DiracComb
+import java.util.ArrayList
 import org.danilopianini.util.ImmutableListSet
 import org.danilopianini.util.ListSet
 
@@ -33,6 +39,7 @@ class PhysicsUpdate<T>(
     val environment: Dynamics2DEnvironment<T>,
     override val timeDistribution: TimeDistribution<T>,
 ) : GlobalReaction<T> {
+
     constructor(
         environment: Dynamics2DEnvironment<T>,
         updateRate: Double = 30.0,
@@ -48,13 +55,54 @@ class PhysicsUpdate<T>(
 
     override val tau: Time get() = timeDistribution.nextOccurence
 
+    override val rescheduleRequest: EventObservable = EventObservable()
+
     override var actions: List<Action<T>> = listOf()
 
+    private var validity: Observable<Boolean> = observe(true)
+
+    private var canExecute: Boolean = true
+
+    private val subscriptions: MutableList<Observable<*>> = ArrayList()
+
     override var conditions: List<Condition<T>> = listOf()
+        set(value) {
+            field = value
+            field.forEach {
+                it.observeValidity().stopWatching(this)
+                it.observePropensityContribution().stopWatching(this)
+                it.observeInboundDependencies().stopWatching(this)
+                // TODO: dispose conditions
+            }
+
+            subscriptions.forEach { it.stopWatching(this) }
+            subscriptions.clear()
+
+            validity.dispose()
+
+            value.forEach { condition ->
+                condition.observeInboundDependencies().merge().apply {
+                    onChange(this@PhysicsUpdate) { rescheduleRequest.emit() }
+                    subscriptions.add(this)
+                }
+            }
+
+            validity = value.takeIf { it.isNotEmpty() }
+                ?.map { it.observeValidity() }
+                ?.combineLatest { validities -> validities.all { it } }
+                ?.apply {
+                    onChange(this@PhysicsUpdate) { canExecute = it }
+                    subscriptions.add(this)
+                } ?: observe(true)
+
+            rescheduleRequest.emit()
+        }
 
     override fun compareTo(other: Actionable<T>): Int = tau.compareTo(other.tau)
 
-    override fun canExecute(): Boolean = conditions.all { it.isValid }
+    override fun canExecute(): Boolean = canExecute
+
+    override fun observeCanExecute(): Observable<Boolean> = validity
 
     override fun execute() {
         environment.updatePhysics(1 / rate)

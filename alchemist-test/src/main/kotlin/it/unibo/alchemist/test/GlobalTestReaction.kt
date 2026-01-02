@@ -17,6 +17,10 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
+import it.unibo.alchemist.model.observation.EventObservable
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.combineLatest
+import it.unibo.alchemist.model.observation.ObservableMutableSet
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 
@@ -26,15 +30,29 @@ class GlobalTestReaction<T>(override val timeDistribution: TimeDistribution<T>, 
 
     override fun canExecute(): Boolean = conditions.all { it.isValid }
 
+    override fun observeCanExecute(): Observable<Boolean> = validity
+
     override fun execute() = timeDistribution.update(timeDistribution.nextOccurence, true, 1.0, environment)
 
     override var actions: List<Action<T>> = emptyList()
 
     override var conditions: List<Condition<T>> = emptyList()
+        set(value) {
+            field = value
+            observableConditions.clearAndAddAll(value.toSet())
+        }
+
+    private val observableConditions: ObservableMutableSet<Condition<T>> = ObservableMutableSet()
+
+    private val validity = observableConditions.combineLatest({
+        it.observeValidity()
+    }) { validities -> validities.all { it } }
 
     override val outboundDependencies: ListSet<out Dependency> = ListSets.emptyListSet()
 
     override val inboundDependencies: ListSet<out Dependency> = ListSets.emptyListSet()
+
+    override val rescheduleRequest: Observable<Unit> = EventObservable()
 
     override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
 

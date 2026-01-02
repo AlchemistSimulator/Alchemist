@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.reactions;
 
+import arrow.core.Option;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Actionable;
@@ -21,12 +22,18 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.model.observation.EventObservable;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableExtensions;
+import kotlin.Unit;
 import org.danilopianini.util.ArrayListSet;
 import org.danilopianini.util.Hashes;
 import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.io.Serial;
@@ -37,6 +44,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static arrow.core.OptionKt.none;
 
 /**
  * The type which describes the concentration of a molecule.
@@ -58,6 +67,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     private final int hash;
     private List<? extends Action<T>> actions = new ArrayList<>(0);
     private List<? extends Condition<T>> conditions = new ArrayList<>(0);
+
     private Context incontext = Context.LOCAL;
     private Context outcontext = Context.LOCAL;
     private ListSet<Dependency> outbound = new LinkedListSet<>();
@@ -65,6 +75,11 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     private int stringLength = Byte.MAX_VALUE;
     private final TimeDistribution<T> timeDistribution;
     private final Node<T> node;
+
+    private final EventObservable rescheduleRequest = new EventObservable();
+    private Observable<Boolean> validity = MutableObservable.Companion.observe(true);
+    private final List<Observable<?>> subscriptions = new ArrayList<>();
+    private Option<Boolean> canExecute = none();
 
     /**
      * Builds a new reaction, starting at time t.
@@ -108,14 +123,14 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      */
     @Override
     public boolean canExecute() {
-        if (conditions == null) {
-            return true;
-        }
-        int i = 0;
-        while (i < conditions.size() && conditions.get(i).isValid()) {
-            i++;
-        }
-        return i == conditions.size();
+        final var current = canExecute.getOrNull();
+        if (current != null) return current;
+        return conditions.stream().allMatch(Condition::isValid);
+    }
+
+    @Override
+    public @NotNull Observable<Boolean> observeCanExecute() {
+        return validity;
     }
 
     @Override
@@ -188,6 +203,11 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         return outcontext;
     }
 
+    @Override
+    public @NotNull Observable<Unit> getRescheduleRequest() {
+        return rescheduleRequest;
+    }
+
     /**
      * @return a {@link String} representation of the rate
      */
@@ -221,8 +241,26 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         return hash;
     }
 
+    /**
+     * This method is called when the environment has completed its
+     * initialization. Can be used by this reaction to compute its next
+     * execution time - in case such computation requires an inspection of the
+     * environment.
+     * <br/>
+     * <b>NOTE</b>: if you intend to override this method, please make sure the observable
+     * dependencies (i.e. observable conditions) are properly initialized with
+     * {@link #initializeObservableConditions(List)}.
+     *
+     * @param atTime
+     * the time at which the initialization of this reaction was
+     * accomplished
+     * @param environment
+     * the environment
+     */
     @Override
-    public void initializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) { }
+    public void initializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) {
+        initializeObservableConditions(this.conditions);
+    }
 
     /**
      * This method provides the facility to clone reactions.
@@ -296,6 +334,53 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         this.conditions = Objects.requireNonNull(conditions, "The conditions list can't be null");
         setInputContext(conditions.stream().map(Condition::getContext).reduce(Context.LOCAL, Context::getWider));
         inbound = computeDependencies(conditions.stream().map(Condition::getInboundDependencies).flatMap(List::stream));
+    }
+
+    /**
+     * Call this method for handling the reactive nature of this reaction's validity and this
+     * reaction reschedule requests. This method takes care of disposing and clearing all
+     * conditions and subscriptions that could have been possibly be bound to this reaction
+     * in previous moments, while adding the new subscriptions to be reactive wrt
+     * condition changes and inbound dependencies changes.
+     */
+    protected final void initializeObservableConditions(@Nonnull final List<? extends Condition<T>> conditions) {
+        this.conditions.forEach(condition -> {
+            condition.observeValidity().stopWatching(this);
+            condition.observePropensityContribution().stopWatching(this);
+            condition.observeInboundDependencies().stopWatching(this);
+            // TODO: make condition disposable
+        });
+
+        subscriptions.forEach(it -> it.stopWatching(this));
+        subscriptions.clear();
+
+        conditions.forEach(condition -> {
+            final var merged = ObservableExtensions.ObservableSetExtensions.INSTANCE.merge(
+                condition.observeInboundDependencies()
+            );
+            merged.onChange(this, it -> {
+                rescheduleRequest.emit();
+                return null;
+            });
+            subscriptions.add(merged);
+        });
+
+        validity.dispose(); // trying to avoid leaks
+
+        if (!conditions.isEmpty()) {
+            validity = ObservableExtensions.INSTANCE.combineLatest(
+                conditions.stream().map(Condition::observeValidity).toList(),
+                it -> it.stream().allMatch(b -> b)
+            );
+
+            // need at least one observer to track validity updates
+            validity.onChange(this, it -> {
+                canExecute = Option.fromNullable(it);
+                return null;
+            });
+        }
+
+        rescheduleRequest.emit();
     }
 
     /**

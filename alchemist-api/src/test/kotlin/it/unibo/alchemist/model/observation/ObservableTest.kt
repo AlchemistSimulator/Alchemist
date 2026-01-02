@@ -463,5 +463,4 @@ class ObservableTest : FunSpec({
             event.observers.isEmpty() shouldBe true
         }
     }
-
 })

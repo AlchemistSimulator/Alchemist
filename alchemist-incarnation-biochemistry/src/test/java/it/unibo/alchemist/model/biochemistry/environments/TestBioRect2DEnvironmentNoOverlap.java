@@ -665,7 +665,7 @@ class TestBioRect2DEnvironmentNoOverlap {
 
     private List<Node<Double>> getOverlappingNodes(final Node<Double> node) {
         final double diameter = node.asProperty(CircularCellProperty.class).getDiameter();
-        return environment.getNodesWithinRange(node, diameter).stream()
+        return environment.getNodesWithinRange(node, diameter).getCurrent().stream()
                 .filter(n -> environment.getDistanceBetweenNodes(node, n) < diameter)
                 .collect(Collectors.toList());
     }
@@ -692,7 +692,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         environment.moveNodeToPosition(c1, pd);
         assertTrueJUnit4(
             SHOULD_BE_EMPTY_BUT_IS + mapToNodePositions(getOverlappingNodes(c1)),
-                environment.getNodesWithinRange(c1, diameter - DELTA).isEmpty()
+                environment.getNodesWithinRange(c1, diameter - DELTA).getCurrent().isEmpty()
         );
     }
 
@@ -714,7 +714,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         environment.moveNodeToPosition(c1, pd);
         assertTrueJUnit4(
                 SHOULD_BE_EMPTY_BUT_IS + mapToNodePositions(getOverlappingNodes(c1)),
-                environment.getNodesWithinRange(c1, diameter).isEmpty()
+                environment.getNodesWithinRange(c1, diameter).getCurrent().isEmpty()
         );
     }
 
@@ -738,7 +738,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         environment.moveNodeToPosition(c3, pd);
         environment.moveNodeToPosition(c4, pd);
         assertTrueJUnit4(SHOULD_BE_EMPTY_BUT_IS + mapToNodePositions(getOverlappingNodes(c1)),
-                environment.getNodesWithinRange(c1, diameter).isEmpty());
+                environment.getNodesWithinRange(c1, diameter).getCurrent().isEmpty());
     }
 
     /**

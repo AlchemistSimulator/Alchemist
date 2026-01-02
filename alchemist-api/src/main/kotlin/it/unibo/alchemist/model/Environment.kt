@@ -132,32 +132,24 @@ interface Environment<T, P : Position<out P>> :
     val observeNodeCount: Observable<Int>
 
     /**
-     * Given a [node] this method returns a list of all the surrounding
-     * nodes within the given [range]. Note that this method (depending on the
+     * Given a [node] this method returns an [Observable] view of the set of
+     * all the surrounding nodes within the given [range].
+     *
+     * > Note that this method (depending on the
      * implementation) might be not optimized, and it's consequently **much**
      * better to use [Environment.getNeighborhood] and filter the
      * neighborhood if you are sure that all the nodes within the range are
      * connected to the center.
      */
-    fun getNodesWithinRange(node: Node<T>, range: Double): ListSet<Node<T>>
+    fun getNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>>
 
     /**
-     * An [Observable] alternative to [getNodesWithinRange].
-     */
-    fun observeNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>>
-
-    /**
-     * Given a [position] this method returns a list of all the
+     * Given a [position] this method returns an [Observable] view of the set of the
      * surrounding nodes within the given [range].
-     * Note that this method
-     * (depending on the implementation) might be not optimized.
+     *
+     * > Note: this method (depending on the implementation) might be not optimized.
      */
-    fun getNodesWithinRange(position: P, range: Double): ListSet<Node<T>>
-
-    /**
-     * An [Observable] alternative to [getNodesWithinRange].
-     */
-    fun observeNodesWithinRange(position: P, range: Double): ObservableSet<Node<T>>
+    fun getNodesWithinRange(position: P, range: Double): ObservableSet<Node<T>>
 
     /**
      * This method allows to know which are the smallest coordinates represented.

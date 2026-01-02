@@ -38,8 +38,6 @@ import java.util.Objects
 import java.util.Spliterator
 import java.util.function.Consumer
 import org.danilopianini.util.ArrayListSet
-import org.danilopianini.util.ImmutableListSet
-import org.danilopianini.util.LinkedListSet
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 import org.danilopianini.util.SpatialIndex
@@ -260,28 +258,10 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     override fun getNodeByID(id: Int): Node<T> = nodes.first { n: Node<T> -> n.id == id }
 
-    override fun getNodesWithinRange(node: Node<T>, range: Double): ListSet<Node<T>> {
-        val centerPosition = getPosition(node)
-        val res = LinkedListSet(getAllNodesInRange(centerPosition, range))
-        check(res.remove(node)) {
-            "Either the provided range ($range) is too small for queries to work without precision loss, " +
-                "or the environment is in an inconsistent state. Node $node at $centerPosition was the query center, " +
-                "but within range $range, only nodes $res were found."
-        }
-        return res
-    }
-
-    override fun observeNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>> =
+    override fun getNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>> =
         observeAllNodesInRange({ getPosition(node) }, range, node)
 
-    override fun getNodesWithinRange(position: P, range: Double): ListSet<Node<T>> {
-        /*
-         * Collect every node in range
-         */
-        return ImmutableListSet.copyOf(getAllNodesInRange(position, range))
-    }
-
-    override fun observeNodesWithinRange(position: P, range: Double): ObservableSet<Node<T>> =
+    override fun getNodesWithinRange(position: P, range: Double): ObservableSet<Node<T>> =
         observeAllNodesInRange({ position }, range)
 
     override fun getPosition(node: Node<T>): P = requireNotNull(nodeToPos[node.id]) {
@@ -418,6 +398,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                 observableNeighCache.put(it.id, this)
             }
         }
+        updateRegionObservers(node, null, null)
         ifEngineAvailable { it.nodeRemoved(node, neigh) }
         nodeRemoved(node, neigh)
     }
@@ -441,21 +422,33 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             "Tried to move a node not previously present in the environment:\nNode: $n\nRequested position: $p"
         }
         observableNodeToPos[n.id] = p
+        updateRegionObservers(n, p, pos)
+    }
+
+    override fun spliterator(): Spliterator<Node<T>> = nodes.spliterator()
+
+    private fun updateRegionObservers(node: Node<T>, newPosition: P?, oldPosition: P?) {
         if (regionObservers.isNotEmpty()) {
-            regionObservers.forEach {
-                val center = it.centerProvider()
-                val oldPosition = pos ?: p
-                val wasInside = oldPosition.distanceTo(center) <= it.radius
-                val isInside = p.distanceTo(center) <= it.radius
+            regionObservers.forEach { region ->
                 when {
-                    wasInside && !isInside -> it.visibleNodes.remove(n)
-                    !wasInside && isInside -> it.visibleNodes.add(n)
+                    newPosition == null -> { // removal
+                        if (node in region.visibleNodes) region.visibleNodes.remove(node)
+                    }
+                    else -> { // new node added or moved
+                        val center = region.centerProvider()
+
+                        val wasInside = oldPosition?.distanceTo(center)?.let { it <= region.radius } ?: false
+                        val isInside = newPosition.distanceTo(center) <= region.radius
+
+                        when {
+                            wasInside && !isInside -> region.visibleNodes.remove(node)
+                            !wasInside && isInside -> region.visibleNodes.add(node)
+                        }
+                    }
                 }
             }
         }
     }
-
-    override fun spliterator(): Spliterator<Node<T>> = nodes.spliterator()
 
     private fun toQueue(
         center: Node<T>,
@@ -538,6 +531,9 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     ) {
         override fun equals(other: Any?): Boolean = (other as? AbstractEnvironment<*, *>.RegionObserver)?.let { other ->
             if (other.radius != radius) return@let false
+
+            if ((centerId == null) != (other.centerId == null)) return@let false
+
             if (centerId != null) {
                 centerId == other.centerId
             } else {

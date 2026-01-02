@@ -166,11 +166,11 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
      * @param range the communication range
      * @return the set of nodes within the communication range
      */
-    protected final Set<Node<T>> nodesInRange(
+    protected final Set<? extends Node<T>> nodesInRange(
             final Environment<T, ?> environment,
             final Node<T> node, final double range
     ) {
-        return environment.getNodesWithinRange(node, range);
+        return environment.getNodesWithinRange(node, range).getCurrent();
     }
 
     /**

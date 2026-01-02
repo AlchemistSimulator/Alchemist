@@ -31,7 +31,7 @@ constructor(val maxRange: Double, val tolerance: Double = 0.1) :
         }
         val inRange =
             environment
-                .getNodesWithinRange(center, maxRange)
+                .getNodesWithinRange(center, maxRange).current
                 .filter { target ->
                     val losDistance = environment.getDistanceBetweenNodes(center, target)
                     val outbound = environment.computeRoute(center, target)

@@ -39,7 +39,7 @@ public final class TensionPresent extends AbstractCondition<Double> {
         super(node);
         this.environment = environment;
         addObservableDependency(
-            environment.observeNodesWithinRange(node, environment.getMaxDiameterAmongCircularDeformableCells())
+            environment.getNodesWithinRange(node, environment.getMaxDiameterAmongCircularDeformableCells())
         );
         setPropensityContribution();
         setValidity();
@@ -60,7 +60,7 @@ public final class TensionPresent extends AbstractCondition<Double> {
 
     private void setPropensityContribution() {
         final var thisNode = getNode();
-        propensity = environment.observeNodesWithinRange(thisNode, environment.getMaxDiameterAmongCircularDeformableCells()).map(it ->
+        propensity = environment.getNodesWithinRange(thisNode, environment.getMaxDiameterAmongCircularDeformableCells()).map(it ->
             it.stream()
                 .flatMap(node ->
                     node.asPropertyOrNull(CircularCellProperty.class) != null ? Stream.of(node) : Stream.empty()
@@ -95,7 +95,7 @@ public final class TensionPresent extends AbstractCondition<Double> {
 
     private void setValidity() {
         final var thisNode = getNode();
-        validity = environment.observeNodesWithinRange(getNode(), environment.getMaxDiameterAmongCircularDeformableCells()).map(it ->
+        validity = environment.getNodesWithinRange(getNode(), environment.getMaxDiameterAmongCircularDeformableCells()).map(it ->
             it.stream()
                 .parallel()
                 .flatMap(n -> n.asPropertyOrNull(CircularCellProperty.class) != null

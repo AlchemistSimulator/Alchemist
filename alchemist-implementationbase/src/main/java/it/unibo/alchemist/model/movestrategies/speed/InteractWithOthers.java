@@ -84,7 +84,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
     public double getNodeMovementLength(final P target) {
         double crowd = 0;
         final Collection<? extends Node<T>> neighs = radius > 0
-            ? environment.getNodesWithinRange(node, radius)
+            ? environment.getNodesWithinRange(node, radius).getCurrent()
             : Collections.emptyList();
         if (neighs.size() > 1 / interaction) {
             for (final Node<T> neigh : neighs) {

@@ -246,14 +246,15 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     }
 
     override fun observeNeighborhood(node: Node<T>): Observable<Neighborhood<T>> =
-        observableNeighCache[node.id].map { neighborhood ->
-            require(neighborhood.isSome() && neighborhood.getOrNull() != null) {
+        observableNeighCache[node.id].map { maybeNeighborhood ->
+            val neighborhood = maybeNeighborhood.getOrNull()
+            requireNotNull(neighborhood) {
                 check(node !in observableNodes) {
                     "The environment state is inconsistent. $node is among the nodes, but has no position."
                 }
                 "$node is not part of the environment."
             }
-            neighborhood.getOrNull()!!
+            neighborhood
         }
 
     override fun getNodeByID(id: Int): Node<T> = nodes.first { n: Node<T> -> n.id == id }
@@ -273,8 +274,9 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         "Node $node: ${node.javaClass.simpleName} does not exist in the environment."
     }
 
-    override fun observePosition(node: Node<T>): Observable<P> = observableNodeToPos[node.id].map { position ->
-        require(position.isSome() && position.getOrNull() != null) {
+    override fun observePosition(node: Node<T>): Observable<P> = observableNodeToPos[node.id].map { maybePosition ->
+        val position = maybePosition.getOrNull()
+        requireNotNull(position) {
             check(!nodes.contains(node)) {
                 "Node $node is registered in the environment but has no position. " +
                     "This could be a bug in Alchemist. Please open an issue at: " +
@@ -282,7 +284,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             }
             "Node $node: ${node.javaClass.simpleName} does not exist in the environment."
         }
-        position.getOrNull()!!
+        position
     }
 
     /**

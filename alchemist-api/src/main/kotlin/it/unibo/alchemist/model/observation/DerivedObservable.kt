@@ -18,9 +18,10 @@ import java.util.Collections
  * An abstract implementation of the `Observable` interface designed to support observables whose states
  * are derived from other data sources. Manages the lifecycle of observation and update propagation.
  *
+ * @param emitOnDistinct whether to emit when the new derived value is different from the current one.
  * @param T The type of data being observed.
  */
-abstract class DerivedObservable<T> : Observable<T> {
+abstract class DerivedObservable<T>(private val emitOnDistinct: Boolean = true) : Observable<T> {
     private val callbacks = LinkedHashMap<Any, List<(T) -> Unit>>()
 
     private var cached: Option<T> = none()
@@ -35,10 +36,13 @@ abstract class DerivedObservable<T> : Observable<T> {
 
     @Suppress("UNCHECKED_CAST")
     override val current: T
-        get() = if (isListening && cached.isSome()) {
-            cached.getOrNull()!!
-        } else {
-            computeFresh()
+        get() {
+            val maybeCached = cached.getOrNull()
+            return if (isListening && maybeCached != null) {
+                maybeCached
+            } else {
+                computeFresh()
+            }
         }
 
     override fun onChange(registrant: Any, callback: (T) -> Unit) {
@@ -83,7 +87,8 @@ abstract class DerivedObservable<T> : Observable<T> {
     protected abstract fun computeFresh(): T
 
     protected fun updateAndNotify(newValue: T) {
-        if (newValue != cached) {
+        val changed = cached.getOrNull()?.let { it != newValue } ?: true
+        if (!emitOnDistinct || changed) {
             cached = newValue.some()
             callbacks.values.forEach { cs ->
                 cs.forEach { it(newValue) }

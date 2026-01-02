@@ -113,11 +113,11 @@ object ObservableExtensions {
         /**
          * Converts this [ObservableSet] of [observables][Observable] into a unique observable that emits
          * when either this set would have changed (addition/removal of members) or one of its members
-         * emits a value of type [T].
+         * emits a value.
          *
          * @return a unique observable wrapping in one place all the notifications emitted by this [ObservableSet]
          */
-        fun <T> ObservableSet<Observable<T>>.merge(): Observable<T> = this.flatMap { it }
+        fun ObservableSet<out Observable<*>>.merge(): Observable<*> = this.flatMap { it }
 
         /**
          * Returns a new [ObservableSet] applying the given [predicate] to each element.

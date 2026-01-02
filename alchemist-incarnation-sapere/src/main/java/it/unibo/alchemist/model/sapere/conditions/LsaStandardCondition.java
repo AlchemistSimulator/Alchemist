@@ -14,7 +14,6 @@ import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.observation.MutableObservable;
-import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
@@ -37,11 +36,7 @@ public class LsaStandardCondition extends AbstractLsaCondition {
     private static final long serialVersionUID = 1L;
 
     private final ILsaMolecule molecule;
-    private boolean valid;
-
-    private final MutableObservable<Boolean> validity = MutableObservable.Companion.observe(false);
-
-    private final MutableObservable<Double> propensity = MutableObservable.Companion.observe(0.0);
+    private final MutableObservable<Boolean> valid = MutableObservable.Companion.observe(false);
 
     /**
      * Builds an LsaStandardCondition.
@@ -57,6 +52,9 @@ public class LsaStandardCondition extends AbstractLsaCondition {
         // TODO: understand how to observability
         final var obs = n.observeConcentration(mol);
         addObservableDependency(obs);
+        validity = valid;
+        propensity = MutableObservable.Companion.observe(-1d);
+
         obs.onChange(this, it ->
             null /* TODO: Recompute condition on sources change */
         );
@@ -153,26 +151,6 @@ public class LsaStandardCondition extends AbstractLsaCondition {
         return molecule;
     }
 
-    @Override
-    public final double getPropensityContribution() {
-        return -1;
-    }
-
-    @Override
-    public Observable<Double> observePropensityContribution() {
-        return propensity;
-    }
-
-    @Override
-    public final boolean isValid() {
-        return valid;
-    }
-
-    @Override
-    public Observable<Boolean> observeValidity() {
-        return validity;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -190,8 +168,8 @@ public class LsaStandardCondition extends AbstractLsaCondition {
      * @return the value which is passed.
      */
     protected final boolean makeValid(final boolean isValid) {
-        valid = isValid;
-        return valid;
+        valid.update(it -> isValid);
+        return isValid;
     }
 
 }

@@ -14,7 +14,6 @@ import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
-import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableMutableSet;
 import it.unibo.alchemist.model.observation.ObservableSet;
@@ -37,8 +36,8 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     private final Node<T> node;
 
     private final ObservableMutableSet<Observable<?>> dependencies = new ObservableMutableSet<>();
-    protected Observable<Double> propensity = MutableObservable.Companion.observe(0.0);
-    protected Observable<Boolean> validity = MutableObservable.Companion.observe(false);
+    protected Observable<Double> propensity;
+    protected Observable<Boolean> validity;
 
     /**
      * @param node the node this Condition belongs to
@@ -98,7 +97,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
 
     @Override
     public boolean isValid() {
-        return validity.getCurrent();
+        return observeValidity().getCurrent();
     }
 
     @Override
@@ -108,7 +107,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
 
     @Override
     public double getPropensityContribution() {
-        return propensity.getCurrent();
+        return observePropensityContribution().getCurrent();
     }
 
     @Override

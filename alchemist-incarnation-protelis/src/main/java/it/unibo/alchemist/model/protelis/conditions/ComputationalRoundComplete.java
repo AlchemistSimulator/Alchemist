@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
+import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice;
 
@@ -38,6 +39,17 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
         super(node);
         this.program = program;
         declareDependencyOn(this.program.asMolecule());
+        addObservableDependency(program.getObserveComputationalCycleComplete());
+    }
+
+    @Override
+    public Observable<Boolean> observeValidity() {
+        return getProgram().getObserveComputationalCycleComplete();
+    }
+
+    @Override
+    public Observable<Double> observePropensityContribution() {
+        return observeValidity().map(it -> it ? 1d : 0d);
     }
 
     @Override
@@ -62,21 +74,11 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
         return Context.LOCAL;
     }
 
-    @Override
-    public double getPropensityContribution() {
-        return isValid() ? 1 : 0;
-    }
-
     /**
      * @return the {@link RunProtelisProgram} action this condition is mapped to
      */
     public RunProtelisProgram<?> getProgram() {
         return program;
-    }
-
-    @Override
-    public boolean isValid() {
-        return program.isComputationalCycleComplete();
     }
 
     @Override

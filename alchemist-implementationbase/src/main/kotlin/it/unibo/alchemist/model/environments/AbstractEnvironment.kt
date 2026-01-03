@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.environments
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
+import gnu.trove.map.hash.TDoubleObjectHashMap
 import gnu.trove.map.hash.TIntObjectHashMap
 import gnu.trove.set.hash.TIntHashSet
 import it.unibo.alchemist.core.Simulation
@@ -84,7 +85,11 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     @Transient
     override val observeNodeCount: Observable<Int> = observableNodes.observableSize
 
-    private val regionObservers = mutableSetOf<RegionObserver>()
+    private val regionObservers = ArrayList<RegionObserver>()
+
+    private val regionNodeCenteredIndex = TIntObjectHashMap<TDoubleObjectHashMap<RegionObserver>>()
+
+    private val regionPositionCenteredIndex = HashMap<P, TDoubleObjectHashMap<RegionObserver>>()
 
     final override var linkingRule: LinkingRule<T, P> = NoLinks()
 
@@ -203,16 +208,19 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         range: Double,
         node: Node<T>? = null,
     ): ObservableSet<Node<T>> {
-        regionObservers.find {
-            it == RegionObserver(
-                centerId = node?.id,
-                centerProvider = centerProvider,
-                radius = range,
-                visibleNodes = emptySet<Node<T>>().toObservableSet(),
-            )
-        }?.let { return it.visibleNodes }
+        val cached = if (node != null) {
+            regionNodeCenteredIndex[node.id]?.get(range)
+        } else {
+            regionPositionCenteredIndex[centerProvider()]?.get(range)
+        }
 
+        if (cached != null) {
+            return cached.visibleNodes
+        }
+
+        val actualCenter = centerProvider()
         val initialNodes = getAllNodesInRange(centerProvider(), range).toObservableSet()
+
         if (node != null) {
             check(initialNodes.remove(node)) {
                 "Either the provided range ($range) is too small for queries to work without precision loss, " +
@@ -220,12 +228,26 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                     "query center, but within range $range, only nodes $initialNodes were found."
             }
         }
-        regionObservers += RegionObserver(
+
+        val region = RegionObserver(
             centerId = node?.id,
             centerProvider = centerProvider,
             radius = range,
             visibleNodes = initialNodes,
-        )
+        ).apply { regionObservers.add(this) }
+
+        if (node != null) {
+            var radiusMap = regionNodeCenteredIndex[node.id]
+            if (radiusMap == null) {
+                radiusMap = TDoubleObjectHashMap()
+                regionNodeCenteredIndex.put(node.id, radiusMap)
+            }
+            radiusMap.put(range, region)
+        } else {
+            regionPositionCenteredIndex
+                .computeIfAbsent(actualCenter) { TDoubleObjectHashMap() }
+                .put(range, region)
+        }
 
         return initialNodes
     }
@@ -435,6 +457,10 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                 when {
                     newPosition == null -> { // removal
                         if (node in region.visibleNodes) region.visibleNodes.remove(node)
+                        regionNodeCenteredIndex.remove(node.id)?.forEachValue {
+                            regionObservers.remove(it)
+                            true
+                        }
                     }
                     else -> { // new node added or moved
                         val center = region.centerProvider()
@@ -524,27 +550,10 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     private inner class RegionObserver(
         val centerId: Int? = null,
-        val centerProvider: () -> P = {
-            requireNotNull(centerId) { "specify either centerId or a centerProvider" }
-            getPosition(getNodeByID(centerId))
-        },
+        val centerProvider: () -> P,
         val radius: Double,
         val visibleNodes: ObservableMutableSet<Node<T>>,
-    ) {
-        override fun equals(other: Any?): Boolean = (other as? AbstractEnvironment<*, *>.RegionObserver)?.let { other ->
-            if (other.radius != radius) return@let false
-
-            if ((centerId == null) != (other.centerId == null)) return@let false
-
-            if (centerId != null) {
-                centerId == other.centerId
-            } else {
-                centerProvider() == other.centerProvider()
-            }
-        } ?: false
-
-        override fun hashCode(): Int = 13 * (centerId ?: 0)
-    }
+    )
 
     private data class Operation<T>(val origin: Node<T>, val destination: Node<T>, val isAdd: Boolean) {
         override fun toString(): String = origin.toString() + (if (isAdd) " discovered " else " lost ") + destination

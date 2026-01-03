@@ -47,7 +47,7 @@ public final class ConcentrationChanged<T> extends AbstractCondition<T> {
 
         addObservableDependency(node.observeConcentration(target));
 
-        validity = node.observeConcentration(target).map(it -> {
+        setValidity(node.observeConcentration(target).map(it -> {
             if (!hasFlipped) {
                 final var maybeValue = Optional.fromNullable(it.getOrNull());
                 if (!maybeValue.equals(previous)) {
@@ -56,9 +56,9 @@ public final class ConcentrationChanged<T> extends AbstractCondition<T> {
                 }
             }
             return hasFlipped;
-        });
+        }));
 
-        propensity = validity.map(valid -> valid ? 1d : 0d);
+        setPropensity(observeValidity().map(valid -> valid ? 1d : 0d));
     }
 
     @Override

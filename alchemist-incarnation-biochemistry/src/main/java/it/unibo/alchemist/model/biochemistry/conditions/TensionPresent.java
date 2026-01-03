@@ -60,7 +60,7 @@ public final class TensionPresent extends AbstractCondition<Double> {
 
     private void setPropensityContribution() {
         final var thisNode = getNode();
-        propensity = environment.getNodesWithinRange(thisNode, environment.getMaxDiameterAmongCircularDeformableCells()).map(it ->
+        setPropensity(environment.getNodesWithinRange(thisNode, environment.getMaxDiameterAmongCircularDeformableCells()).map(it ->
             it.stream()
                 .flatMap(node ->
                     node.asPropertyOrNull(CircularCellProperty.class) != null ? Stream.of(node) : Stream.empty()
@@ -90,12 +90,12 @@ public final class TensionPresent extends AbstractCondition<Double> {
                     }
                 })
                 .sum()
-        );
+        ));
     }
 
     private void setValidity() {
         final var thisNode = getNode();
-        validity = environment.getNodesWithinRange(getNode(), environment.getMaxDiameterAmongCircularDeformableCells()).map(it ->
+        setValidity(environment.getNodesWithinRange(getNode(), environment.getMaxDiameterAmongCircularDeformableCells()).map(it ->
             it.stream()
                 .parallel()
                 .flatMap(n -> n.asPropertyOrNull(CircularCellProperty.class) != null
@@ -113,6 +113,6 @@ public final class TensionPresent extends AbstractCondition<Double> {
                             + n.asProperty(CircularCellProperty.class).getRadius());
                     }
                 })
-        );
+        ));
     }
 }

@@ -18,6 +18,6 @@ import it.unibo.alchemist.model.Node
  */
 abstract class AbstractNonPropensityContributingCondition<T>(node: Node<T>) : AbstractCondition<T>(node) {
     init {
-        propensity = validity.map { if (it) 1.0 else 0.0 }
+        setPropensity(observeValidity().map { if (it) 1.0 else 0.0 })
     }
 }

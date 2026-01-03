@@ -44,8 +44,8 @@ public final class MoleculeHasConcentration<T> extends AbstractCondition<T> {
         this.value = Objects.requireNonNull(value);
         declareDependencyOn(this.mol);
         addObservableDependency(node.observeConcentration(molecule));
-        validity = node.observeConcentration(molecule).map(value::equals);
-        propensity = validity.map(valid -> valid ? 1d : 2d);
+        setValidity(node.observeConcentration(molecule).map(value::equals));
+        setPropensity(observeValidity().map(valid -> valid ? 1d : 2d));
     }
 
     @Override

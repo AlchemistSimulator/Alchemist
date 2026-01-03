@@ -73,19 +73,19 @@ public class GenericMoleculePresent<T extends Number> extends
 
         addObservableDependency(obs);
 
-        validity = obs.map(it -> {
+        setValidity(obs.map(it -> {
             final var value = it.isSome() ? it.getOrNull().doubleValue() : 0.0;
             return value >= qty.doubleValue();
-        });
+        }));
 
-        propensity = obs.map(it -> {
+        setPropensity(obs.map(it -> {
             final int n = it.isSome() ? it.getOrNull().intValue() : 0;
             final int k = qty.intValue();
             if (k > n) {
                 return 0.0;
             }
             return CombinatoricsUtils.binomialCoefficientDouble(n, k);
-        });
+        }));
     }
 
     /**

@@ -36,8 +36,16 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     private final Node<T> node;
 
     private final ObservableMutableSet<Observable<?>> dependencies = new ObservableMutableSet<>();
-    protected Observable<Double> propensity;
-    protected Observable<Boolean> validity;
+
+    /**
+     * An observable which emits this condition's validity.
+     */
+    private Observable<Boolean> validity;
+
+    /**
+     * An observable which emits this condition's propensity contribution.
+     */
+    private Observable<Double> propensity;
 
     /**
      * @param node the node this Condition belongs to
@@ -95,23 +103,37 @@ public abstract class AbstractCondition<T> implements Condition<T> {
         return dep;
     }
 
+    /**
+     * If you plan to extend this method, please consider leaving this
+     * implementation as is and use a reactive/observable style by
+     * overriding {@link #observeValidity()}.
+     *
+     * @return whether this condition is valid.
+     */
     @Override
     public boolean isValid() {
         return observeValidity().getCurrent();
     }
 
     @Override
-    public Observable<Boolean> observeValidity() {
+    public final Observable<Boolean> observeValidity() {
         return validity;
     }
 
+    /**
+     * If you plan to extend this method, please consider leaving this
+     * implementation as is and use a reactive/observable style by
+     * overriding {@link #observePropensityContribution()}.
+     *
+     * @return this condition's propensity contribution.
+     */
     @Override
     public double getPropensityContribution() {
         return observePropensityContribution().getCurrent();
     }
 
     @Override
-    public Observable<Double> observePropensityContribution() {
+    public final Observable<Double> observePropensityContribution() {
         return propensity;
     }
 
@@ -124,6 +146,14 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     @Override
     public Condition<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
         throw new UnsupportedOperationException(getClass().getSimpleName() + " has no support for cloning.");
+    }
+
+    protected final void setValidity(final Observable<Boolean> newValidity) {
+        this.validity = newValidity;
+    }
+
+    protected final void setPropensity(final Observable<Double> newPropensity) {
+        this.propensity = newPropensity;
     }
 
     /**

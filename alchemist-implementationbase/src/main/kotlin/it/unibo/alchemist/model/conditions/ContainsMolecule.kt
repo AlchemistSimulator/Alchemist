@@ -20,7 +20,7 @@ class ContainsMolecule<T>(node: Node<T>, molecule: Molecule) : AbstractNonPropen
 
     init {
         addObservableDependency(node.observeContains(molecule))
-        validity = node.observeContains(molecule)
+        setValidity(node.observeContains(molecule))
     }
 
     override fun getContext() = Context.LOCAL

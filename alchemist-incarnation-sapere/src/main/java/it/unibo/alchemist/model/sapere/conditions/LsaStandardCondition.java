@@ -52,8 +52,8 @@ public class LsaStandardCondition extends AbstractLsaCondition {
         // TODO: understand how to observability
         final var obs = n.observeConcentration(mol);
         addObservableDependency(obs);
-        validity = valid;
-        propensity = MutableObservable.Companion.observe(-1d);
+        setValidity(valid);
+        setPropensity(MutableObservable.Companion.observe(-1d));
 
         obs.onChange(this, it ->
             null /* TODO: Recompute condition on sources change */

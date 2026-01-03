@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -79,7 +80,7 @@ interface DeploymentsContext<T, P : Position<P>> {
      * @see [it.unibo.alchemist.model.Deployment]
      */
     context(environment: Environment<T, P>)
-    fun deploy(deployment: Deployment<*>, block: DeploymentContext<T, P>.() -> Unit)
+    fun deploy(deployment: Deployment<*>, block: context(Node<T>) DeploymentContext<T, P>.() -> Unit)
 
     /**
      * Deploys nodes using a deployment without additional configuration.

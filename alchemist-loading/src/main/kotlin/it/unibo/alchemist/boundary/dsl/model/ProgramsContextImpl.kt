@@ -1,9 +1,19 @@
+/*
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
+import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
@@ -17,6 +27,8 @@ import it.unibo.alchemist.model.TimeDistribution
  * @param P The type of position.
  * @param ctx The deployments context.
  */
+// TODO: remove when detekt false positive is fixed
+@Suppress("UndocumentedPublicFunction") // Detekt false positive with context parameters
 class ProgramsContextImpl<T, P : Position<P>>(override val ctx: DeploymentContext<T, P>) : ProgramsContext<T, P> {
     /**
      * Entry representing a program with its filter.
@@ -26,7 +38,7 @@ class ProgramsContextImpl<T, P : Position<P>>(override val ctx: DeploymentContex
      */
     inner class ProgramEntry(
         val filter: PositionBasedFilter<P>?,
-        val program: ProgramsContextImpl<T, P>.ProgramContextImpl.() -> Unit,
+        val program: context(Environment<T, P>, Node<T>) ProgramsContextImpl<T, P>.ProgramContextImpl.() -> Unit,
     )
 
     /**
@@ -34,12 +46,16 @@ class ProgramsContextImpl<T, P : Position<P>>(override val ctx: DeploymentContex
      */
     val programs: MutableList<ProgramEntry> = mutableListOf()
 
-    override fun all(block: ProgramContext<T, P>.() -> Unit) {
+    context(_: Environment<T, P>, _: Node<T>)
+    override fun all(block: context(Environment<T, P>, Node<T>) ProgramContext<T, P>.() -> Unit) {
         logger.debug("Adding program for all nodes")
         programs.add(ProgramEntry(null, block))
     }
 
-    override fun inside(filter: PositionBasedFilter<P>, block: ProgramContext<T, P>.() -> Unit) {
+    override fun inside(
+        filter: PositionBasedFilter<P>,
+        block: context(Environment<T, P>, Node<T>) ProgramContext<T, P>.() -> Unit,
+    ) {
         logger.debug("Adding program for nodes inside filter: {}", filter)
         programs.add(ProgramEntry(filter, block))
     }
@@ -55,39 +71,41 @@ class ProgramsContextImpl<T, P : Position<P>>(override val ctx: DeploymentContex
     fun applyToNodes(
         node: Node<T>,
         position: P,
-        program: ProgramContextImpl.() -> Unit,
+        program: context(Environment<T, P>, Node<T>) ProgramContextImpl.() -> Unit,
         filter: PositionBasedFilter<P>?,
     ): Pair<PositionBasedFilter<P>?, Actionable<T>> {
-        logger.debug("Applying program to node at position: {}", position)
-        val c = ProgramContextImpl(node).apply(program)
-        val context = ctx.ctx.ctx
-        logger.debug("Creating time distribution for program")
-        val timeDistribution = c.timeDistribution
-            ?: context.incarnation.createTimeDistribution(
-                context.simulationGenerator,
-                context.environment,
-                node,
-                null,
-            )
-        logger.debug("Creating reaction for program")
-        val r = c.reaction
-            ?: // Create a basic reaction with custom actions/conditions
-            context.incarnation.createReaction(
-                context.simulationGenerator,
-                context.environment,
-                node,
-                timeDistribution,
-                c.program,
-            )
-        logger.debug("Adding actions to reaction")
-        r.actions += c.actions.map { it() }
-        logger.debug("Adding conditions to reaction")
-        r.conditions += c.conditions.map { it() }
-        logger.debug("Adding reaction to node")
-        if (filter == null || filter.contains(position)) {
-            node.addReaction(r)
+        context(ctx.ctx.ctx.environment, node) {
+            logger.debug("Applying program to node at position: {}", position)
+            val c = ProgramContextImpl(node).apply { program() }
+            val context = ctx.ctx.ctx
+            logger.debug("Creating time distribution for program")
+            val timeDistribution = c.timeDistribution
+                ?: context.incarnation.createTimeDistribution(
+                    context.simulationGenerator,
+                    context.environment,
+                    node,
+                    null,
+                )
+            logger.debug("Creating reaction for program")
+            val r = c.reaction
+                ?: // Create a basic reaction with custom actions/conditions
+                context.incarnation.createReaction(
+                    context.simulationGenerator,
+                    context.environment,
+                    node,
+                    timeDistribution,
+                    c.program,
+                )
+            logger.debug("Adding actions to reaction")
+            r.actions += c.actions.map { it() }
+            logger.debug("Adding conditions to reaction")
+            r.conditions += c.conditions.map { it() }
+            logger.debug("Adding reaction to node")
+            if (filter == null || filter.contains(position)) {
+                node.addReaction(r)
+            }
+            return filter to r
         }
-        return filter to r
     }
 
     /**

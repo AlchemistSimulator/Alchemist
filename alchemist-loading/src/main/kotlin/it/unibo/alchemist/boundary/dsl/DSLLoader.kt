@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.dsl
 
-import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.dsl.model.SimulationContext
 import it.unibo.alchemist.boundary.dsl.model.SimulationContextImpl
@@ -29,14 +28,15 @@ abstract class DSLLoader(private val ctx: SimulationContext<*, *>) : Loader {
 
     protected abstract fun <T, P : Position<P>> envFactory(): Environment<T, P>
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> =
-        SingleUseLoader(ctx).load(values)
-    private inner class SingleUseLoader(private val ctx: SimulationContext<*, *>) {
+        SingleUseLoader(ctx as SimulationContext<T, P>).load(values)
+
+    private inner class SingleUseLoader<T, P : Position<P>>(private val ctx: SimulationContext<T, P>) {
         private val mutex = Semaphore(1)
         private var consumed = false
 
-        @Suppress("UNCHECKED_CAST")
-        fun <T, P : Position<P>> load(values: Map<String, *>): Simulation<T, P> {
+        fun load(values: Map<String, *>): Simulation<T, P> {
             try {
                 mutex.acquireUninterruptibly()
                 check(!consumed) { "This loader has already been consumed! This is a bug in Alchemist" }
@@ -67,9 +67,9 @@ abstract class DSLLoader(private val ctx: SimulationContext<*, *>) : Loader {
             // EXPORTERS
             val exporters = simulationIstance.exporters.map {
                 it.type.apply {
-                    it.type?.bindDataExtractors(it.extractors)
+                    bindDataExtractors(it.extractors)
                 }
-            } as List<Exporter<T, P>>
+            }
             exporters.forEach { it.bindVariables(ctx.variablesContext.references.get()) }
             if (exporters.isNotEmpty()) {
                 engine.addOutputMonitor(GlobalExporter(exporters))

@@ -542,6 +542,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         private static final long serialVersionUID = 1L;
         private static final ListSet<Dependency> DEPENDENCY = ImmutableListSet.of(Dependency.EVERYTHING);
         private final Molecule mol;
+        private final Observable<Boolean> validity = MutableObservable.Companion.observe(false);
+        private final Observable<Double> propensity = MutableObservable.Companion.observe(0.0);
 
         SGFakeConditionAction(final Molecule m) {
             super();
@@ -601,7 +603,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
 
         @Override
         public Observable<Double> observePropensityContribution() {
-            return MutableObservable.Companion.observe(0.0);
+            return propensity;
         }
 
         @Override
@@ -611,7 +613,13 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
 
         @Override
         public Observable<Boolean> observeValidity() {
-            return MutableObservable.Companion.observe(false);
+            return validity;
+        }
+
+        @Override
+        public void dispose() {
+            observeValidity().dispose();
+            observePropensityContribution().dispose();
         }
 
         @Override

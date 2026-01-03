@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model;
 
 import it.unibo.alchemist.core.Simulation;
+import it.unibo.alchemist.model.observation.Disposable;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableSet;
 import org.danilopianini.util.ListSet;
@@ -22,7 +23,7 @@ import java.io.Serializable;
  * @param <T>
  *     The type which describes the concentration of a molecule
  */
-public interface Condition<T> extends Serializable {
+public interface Condition<T> extends Serializable, Disposable {
 
     /**
      * This method allows cloning this action on a new node. It may result

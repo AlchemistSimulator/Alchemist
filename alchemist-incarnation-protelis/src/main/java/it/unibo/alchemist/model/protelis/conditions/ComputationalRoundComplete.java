@@ -70,6 +70,12 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
     }
 
     @Override
+    public void dispose() {
+        super.dispose();
+        getProgram().getObserveComputationalCycleComplete().dispose();
+    }
+
+    @Override
     public Context getContext() {
         return Context.LOCAL;
     }

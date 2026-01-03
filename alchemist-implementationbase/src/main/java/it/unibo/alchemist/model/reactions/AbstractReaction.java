@@ -427,11 +427,7 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
     @Override
     public void dispose() {
         subscriptions.forEach(it -> it.stopWatching(this));
-        conditions.forEach(condition -> {
-            condition.observeValidity().stopWatching(this);
-            condition.observePropensityContribution().stopWatching(this);
-            condition.observeInboundDependencies().stopWatching(this);
-        });
+        conditions.forEach(Disposable::dispose);
         conditions.clear();
         subscriptions.clear();
     }

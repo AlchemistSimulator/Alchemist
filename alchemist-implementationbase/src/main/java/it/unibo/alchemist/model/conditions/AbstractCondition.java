@@ -115,8 +115,12 @@ public abstract class AbstractCondition<T> implements Condition<T> {
         return observeValidity().getCurrent();
     }
 
+    /**
+     * If you plan to override this method, make sure to free up additional
+     * observables in {@link #dispose()}.
+     */
     @Override
-    public final Observable<Boolean> observeValidity() {
+    public Observable<Boolean> observeValidity() {
         return validity;
     }
 
@@ -132,9 +136,25 @@ public abstract class AbstractCondition<T> implements Condition<T> {
         return observePropensityContribution().getCurrent();
     }
 
+    /**
+     * If you plan to override this method, make sure to free up additional
+     * observables in {@link #dispose()}.
+     */
     @Override
-    public final Observable<Double> observePropensityContribution() {
+    public Observable<Double> observePropensityContribution() {
         return propensity;
+    }
+
+    /**
+     * Override this method if a custom implementation for validity or propensity
+     * contribution are provided. It is always advised to call the super method
+     * alongside the custom implementation to avoid possible leaks.
+     */
+    @Override
+    public void dispose() {
+        this.validity.dispose();
+        this.propensity.dispose();
+        this.dependencies.dispose();
     }
 
     /**

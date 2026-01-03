@@ -51,6 +51,7 @@ interface DeploymentContext<T, P : Position<P>> {
      * @param block The content configuration block.
      * @see [ContentContext]
      */
+    context(_: Node<T>)
     fun all(block: ContentContext<T, P>.() -> Unit)
 
     /**
@@ -69,6 +70,7 @@ interface DeploymentContext<T, P : Position<P>> {
      * @see [PositionBasedFilter]
      * @see [ContentContext]
      */
+    context(_: Node<T>)
     fun inside(filter: PositionBasedFilter<*>, block: context(Node<T>) ContentContext<T, P>.() -> Unit)
 
     /**

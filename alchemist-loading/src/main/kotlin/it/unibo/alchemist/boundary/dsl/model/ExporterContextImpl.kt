@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.Position
  * @param P The type of position.
  */
 class ExporterContextImpl<T, P : Position<P>>(override val ctx: SimulationContext<T, P>) : ExporterContext<T, P> {
-    override var type: Exporter<T, P>? = null
+    override lateinit var type: Exporter<T, P>
 
     /**
      * The list of data extractors.

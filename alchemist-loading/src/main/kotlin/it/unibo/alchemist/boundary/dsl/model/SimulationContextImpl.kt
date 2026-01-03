@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -50,10 +50,12 @@ class SimulationContextImpl<T, P : Position<P>>(
      */
     val monitors: MutableList<OutputMonitor<T, P>> = mutableListOf()
 
+    private val _exporters: MutableList<ExporterContextImpl<T, P>> = mutableListOf()
+
     /**
      * List of exporters.
      */
-    val exporters: MutableList<ExporterContextImpl<T, P>> = mutableListOf()
+    val exporters: List<ExporterContextImpl<T, P>> get() = _exporters
 
     override var launcher: Launcher = DefaultLauncher()
 
@@ -131,7 +133,7 @@ class SimulationContextImpl<T, P : Position<P>>(
     }
 
     override fun exporter(block: ExporterContext<T, P>.() -> Unit) {
-        buildSteps.add { this.exporters.add(ExporterContextImpl(this).apply(block)) }
+        buildSteps.add { this._exporters.add(ExporterContextImpl(this).apply(block)) }
     }
 
     override fun programs(block: GlobalProgramsContext<T, P>.() -> Unit) {

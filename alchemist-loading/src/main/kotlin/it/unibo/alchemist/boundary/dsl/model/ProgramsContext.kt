@@ -51,6 +51,8 @@ import it.unibo.alchemist.model.TimeDistribution
  * @see [TimeDistribution] for time distribution configuration
  */
 @AlchemistDsl
+// TODO: remove when detekt false positive is fixed
+@Suppress("UndocumentedPublicFunction") // Detekt false positive with context parameters
 interface ProgramsContext<T, P : Position<P>> {
     /**
      * The deployment context this programs context belongs to.
@@ -62,6 +64,7 @@ interface ProgramsContext<T, P : Position<P>> {
      *
      * @param block The program configuration block.
      */
+    context(_: Environment<T, P>, _: Node<T>)
     fun all(block: context(Environment<T, P>, Node<T>) ProgramContext<T, P>.() -> Unit)
 
     /**
@@ -73,7 +76,10 @@ interface ProgramsContext<T, P : Position<P>> {
      * @param block The program configuration block.
      * @see [PositionBasedFilter]
      */
-    fun inside(filter: PositionBasedFilter<P>, block: ProgramContext<T, P>.() -> Unit)
+    fun inside(
+        filter: PositionBasedFilter<P>,
+        block: context(Environment<T, P>, Node<T>) ProgramContext<T, P>.() -> Unit,
+    )
 }
 
 /**

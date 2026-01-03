@@ -49,7 +49,7 @@ interface ExporterContext<T, P : Position<P>> {
      *
      * @see [Exporter]
      */
-    var type: Exporter<T, P>?
+    var type: Exporter<T, P>
 
     /**
      * Sets the data extractors for this exporter.

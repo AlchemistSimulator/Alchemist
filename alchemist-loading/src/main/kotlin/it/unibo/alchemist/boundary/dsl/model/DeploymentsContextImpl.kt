@@ -36,10 +36,10 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
     private val inc = ctx.incarnation
 
     context(environment: Environment<T, P>)
-    override fun deploy(deployment: Deployment<*>, block: context(DeploymentContext<T, P>) () -> Unit) {
+    override fun deploy(deployment: Deployment<*>, block: context(Node<T>) DeploymentContext<T, P>.() -> Unit) {
         logger.debug("Deploying deployment: {}", deployment)
         @Suppress("UNCHECKED_CAST")
-        val d = DeploymentContextImpl(deployment as Deployment<P>).apply(block)
+        val d = DeploymentContextImpl(deployment as Deployment<P>).apply { block() }
         // populate
         populateDeployment(d)
     }
@@ -132,17 +132,19 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
             logger.debug("Visiting deployment: {}", deployment)
         }
 
+        context(_: Node<T>)
         override fun all(block: ContentContext<T, P>.() -> Unit) {
             logger.debug("Adding content for all positions")
             val c = ContentContextImpl().apply(block)
             contents.add(c)
         }
 
+        context(_: Node<T>)
         override fun inside(filter: PositionBasedFilter<*>, block: context(Node<T>) ContentContext<T, P>.() -> Unit) {
             @Suppress("UNCHECKED_CAST")
             val typedFilter = filter as PositionBasedFilter<P>
             logger.debug("Adding content for positions inside filter: {}", typedFilter)
-            val c = ContentContextImpl(typedFilter).apply(block)
+            val c = ContentContextImpl(typedFilter).apply { block() }
             contents.add(c)
         }
 

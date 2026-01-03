@@ -340,6 +340,13 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
      * trigger some environment query that may fail in the set-up phase.
      */
     protected final void initializeObservableConditions() {
+        if (!subscriptions.isEmpty()) {
+            subscriptions.forEach(s -> s.stopWatching(this));
+            subscriptions.clear();
+        }
+
+        validity.dispose();
+
         conditions.forEach(condition -> {
             final var merged = ObservableExtensions.ObservableSetExtensions.INSTANCE.merge(
                 condition.observeInboundDependencies()
@@ -350,8 +357,6 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
             });
             subscriptions.add(merged);
         });
-
-        validity.dispose();
 
         if (!conditions.isEmpty()) {
             validity = ObservableExtensions.INSTANCE.combineLatest(
@@ -364,6 +369,8 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
                 canExecute = Option.fromNullable(it);
                 return null;
             });
+
+            subscriptions.add(validity);
         }
 
         rescheduleRequest.emit();

@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
+import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.EventObservable
 import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
 import it.unibo.alchemist.model.observation.Observable
@@ -68,12 +69,7 @@ class PhysicsUpdate<T>(
     override var conditions: List<Condition<T>> = listOf()
         set(value) {
             field = value
-            field.forEach {
-                it.observeValidity().stopWatching(this)
-                it.observePropensityContribution().stopWatching(this)
-                it.observeInboundDependencies().stopWatching(this)
-                // TODO: dispose conditions
-            }
+            field.forEach(Disposable::dispose)
 
             subscriptions.forEach { it.stopWatching(this) }
             subscriptions.clear()

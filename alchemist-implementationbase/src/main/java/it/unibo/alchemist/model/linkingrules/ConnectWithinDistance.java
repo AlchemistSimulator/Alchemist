@@ -43,7 +43,7 @@ public class ConnectWithinDistance<T, P extends Position<P>> extends AbstractLoc
      */
     @Override
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> environment) {
-        return Neighborhoods.make(environment, center, environment.getNodesWithinRange(center, range).getCurrent());
+        return Neighborhoods.make(environment, center, environment.getNodesWithinRange(center, range));
     }
 
     /**

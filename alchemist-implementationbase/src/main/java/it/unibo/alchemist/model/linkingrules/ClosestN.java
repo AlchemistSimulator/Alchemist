@@ -170,7 +170,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
             final Environment<T, ?> environment,
             final Node<T> node, final double range
     ) {
-        return environment.getNodesWithinRange(node, range).getCurrent();
+        return environment.getNodesWithinRange(node, range);
     }
 
     /**

@@ -79,7 +79,7 @@ public final class CellTensionPolarization extends AbstractAction<Double> {
         // transforming each node around in a vector (Position)
         final List<Euclidean2DPosition> pushForces = environment.getNodesWithinRange(
                 thisNode,
-                environment.getMaxDiameterAmongCircularDeformableCells()).getCurrent().stream()
+                environment.getMaxDiameterAmongCircularDeformableCells()).stream()
                 .parallel()
                 .filter(node -> { // only cells overlapping this cell are selected
                     final CircularCellProperty circularCell = getCircularCell(node);

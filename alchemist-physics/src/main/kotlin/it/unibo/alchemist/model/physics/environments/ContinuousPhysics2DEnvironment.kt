@@ -55,7 +55,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     override fun getNodesWithin(shape: Euclidean2DShape): List<Node<T>> = when {
         shape.diameter + largestShapeDiameter <= 0 -> emptyList()
         else ->
-            getNodesWithinRange(shape.centroid, (shape.diameter + largestShapeDiameter) / 2).current
+            getNodesWithinRange(shape.centroid, (shape.diameter + largestShapeDiameter) / 2)
                 .filter { shape.intersects(getShape(it)) }
     }
 

@@ -39,6 +39,8 @@ import java.util.Objects
 import java.util.Spliterator
 import java.util.function.Consumer
 import org.danilopianini.util.ArrayListSet
+import org.danilopianini.util.ImmutableListSet
+import org.danilopianini.util.LinkedListSet
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 import org.danilopianini.util.SpatialIndex
@@ -281,10 +283,28 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     override fun getNodeByID(id: Int): Node<T> = nodes.first { n: Node<T> -> n.id == id }
 
-    override fun getNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>> =
+    override fun getNodesWithinRange(node: Node<T>, range: Double): ListSet<Node<T>> {
+        val centerPosition = getPosition(node)
+        val res = LinkedListSet(getAllNodesInRange(centerPosition, range))
+        check(res.remove(node)) {
+            "Either the provided range ($range) is too small for queries to work without precision loss, " +
+                "or the environment is in an inconsistent state. Node $node at $centerPosition was the query center, " +
+                "but within range $range, only nodes $res were found."
+        }
+        return res
+    }
+
+    override fun getNodesWithinRange(position: P, range: Double): ListSet<Node<T>> {
+        /*
+         * Collect every node in range
+         */
+        return ImmutableListSet.copyOf(getAllNodesInRange(position, range))
+    }
+
+    override fun observeNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>> =
         observeAllNodesInRange({ getPosition(node) }, range, node)
 
-    override fun getNodesWithinRange(position: P, range: Double): ObservableSet<Node<T>> =
+    override fun observeNodesWithinRange(position: P, range: Double): ObservableSet<Node<T>> =
         observeAllNodesInRange({ position }, range)
 
     override fun getPosition(node: Node<T>): P = requireNotNull(nodeToPos[node.id]) {

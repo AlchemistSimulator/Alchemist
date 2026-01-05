@@ -9,6 +9,9 @@
 
 package it.unibo.alchemist.model.observation
 
+import arrow.core.Option
+import arrow.core.none
+import arrow.core.some
 import it.unibo.alchemist.model.observation.ObservableMutableSet.Companion.toObservableSet
 import kotlin.collections.forEach
 
@@ -68,22 +71,26 @@ object ObservableExtensions {
         }
 
         /**
-         * Transforms an [ObservableSet] of type [T] into a single [Observable] of type [O] by fusing the individual
-         * observables obtained from each item in the set. The items in this collection will be mapped
-         * through [map], which is a producer of observables. In this way, the resulting observer will emit when
-         * 1. Members of this collection emit values
-         * 2. The member set of this collection changes, emitting current values for newly added members only.
+         * Transforms an [ObservableSet] of type [T] into a single [Observable] of type [Option]<[O]> by fusing the
+         * individual observables obtained from each item in the set.
+         *
+         * The resulting observable is **total**:
+         * - If the set is empty, it emits (and its [Observable.current] is) [arrow.core.None]
+         * - If the set is non-empty, it emits [arrow.core.Some] values coming from any mapped observable
          *
          * @param T The type of elements in the [ObservableSet].
          * @param O The type of the resulting fused observable.
          * @param map A function that maps each element of the source [ObservableSet] to an [Observable] of type [O].
-         * @return An [Observable] of type [O] that emits the combined or updated value whenever changes are emitted.
+         * @return An [Observable] of type [Option]<[O]> that is safe to use on empty sets.
          */
-        fun <T, O> ObservableSet<T>.flatMap(map: (T) -> Observable<O>): Observable<O> =
-            object : DerivedObservable<O>() {
+        fun <T, O> ObservableSet<T>.flatMap(map: (T) -> Observable<O>): Observable<Option<O>> =
+            object : DerivedObservable<Option<O>>() {
                 private val sources = mutableMapOf<T, Observable<O>>()
 
-                override fun computeFresh(): O = getFirstCurrent()
+                override fun computeFresh(): Option<O> = this@flatMap.toSet().firstOrNull()
+                    ?.let { key -> sources[key]?.current ?: map(key).current }
+                    ?.some()
+                    ?: none()
 
                 override fun startMonitoring() {
                     this@flatMap.onChange(this, ::reconcile)
@@ -96,16 +103,18 @@ object ObservableExtensions {
                     sources.clear()
                 }
 
-                private fun getFirstCurrent(): O = this@flatMap.toSet().firstOrNull()?.let { map(it).current }
-                    ?: throw NoSuchElementException("Cannot access 'current': the source ObservableSet is empty!")
-
                 private fun reconcile(current: Set<T>) {
                     (sources.keys - current).forEach { sources.remove(it)?.stopWatching(this) }
                     (current - sources.keys).forEach { key ->
                         with(map(key)) {
                             sources[key] = this
-                            onChange(this@flatMap, ::updateAndNotify)
+                            onChange(this@flatMap) {
+                                updateAndNotify(it.some())
+                            }
                         }
+                    }
+                    if (current.isEmpty()) {
+                        updateAndNotify(none())
                     }
                 }
             }
@@ -115,17 +124,35 @@ object ObservableExtensions {
          * when either this set would have changed (addition/removal of members) or one of its members
          * emits a value.
          *
+         * The resulting observable is safe on empty sets: it emits [arrow.core.None] when the set is empty.
+         *
          * @return a unique observable wrapping in one place all the notifications emitted by this [ObservableSet]
          */
-        fun ObservableSet<out Observable<*>>.merge(): Observable<*> = this.flatMap { it }
+        @Suppress("UNCHECKED_CAST")
+        fun ObservableSet<out Observable<*>>.merge(): Observable<Option<Any?>> = flatMap { it as Observable<Any?> }
+
+        /**
+         * Converts the given [ObservableSet] of [observables][Observable] into a unique observable that emits
+         * when either this set would have changed (addition/removal of members) or one of its members
+         * emits a value.
+         *
+         * The resulting observable is safe on empty sets: it emits [arrow.core.None] when the set is empty.
+         *
+         * @return a unique observable wrapping in one place all the notifications emitted by this [ObservableSet]
+         */
+        @JvmStatic
+        @JvmName("mergeObservables")
+        @Suppress("UNCHECKED_CAST")
+        fun merge(observables: ObservableSet<out Observable<*>>): Observable<Option<Any?>> =
+            observables.flatMap { it as Observable<Any?> }
 
         /**
          * Returns a new [ObservableSet] applying the given [predicate] to each element.
-         * The resulting collection is this collection with all the items that satisfies the given [predicate].
+         * The resulting collection is this collection with all the items that satisfy the given [predicate].
          * This function is backed by the standard `filter` of [sets][Set].
          *
          * @param predicate the predicate to apply for each element of this collection.
-         * @return a new [ObservableSet] with the items that satisfies the input [predicate].
+         * @return a new [ObservableSet] with the items that satisfy the input [predicate].
          */
         fun <T> ObservableSet<T>.filter(predicate: (T) -> Boolean): ObservableSet<T> =
             this.toSet().filter(predicate).toObservableSet()
@@ -178,25 +205,6 @@ object ObservableExtensions {
     }
 
     /**
-     * Combines a collection of [Observable] instances into a single observable instance that emits updates
-     * based on changes coming from all observables. Every time an observer of this collection emits,
-     * the resulting observable emits.
-     *
-     * @return A new [Observable] that aggregates updates from the collection of source [Observable] instances.
-     */
-    fun <T> Iterable<Observable<T>>.merge(): Observable<T> = object : DerivedObservable<T>() {
-        override fun computeFresh(): T = this@merge.first().current
-
-        override fun startMonitoring() {
-            this@merge.forEach { it.onChange(this, ::updateAndNotify) }
-        }
-
-        override fun stopMonitoring() {
-            this@merge.forEach { it.stopWatching(this) }
-        }
-    }
-
-    /**
      * Collects the latest values emitted by a list of [Observable]s and transforms them
      * into a new [Observable] using the provided collector function.
      *
@@ -208,9 +216,12 @@ object ObservableExtensions {
      * @return a [Observable] of type [O], which emits the transformed result whenever the
      *         state of the source [Observable]s changes.
      */
-    fun <T, O> List<Observable<T>>.combineLatest(collector: (List<T>) -> O): Observable<O> =
-        object : DerivedObservable<O>() {
-            override fun computeFresh(): O = collector(this@combineLatest.map { it.current })
+    fun <T, O> List<Observable<T>>.combineLatest(collector: (List<T>) -> O): Observable<Option<O>> =
+        object : DerivedObservable<Option<O>>() {
+
+            override fun computeFresh(): Option<O> = this@combineLatest.takeIf { it.isNotEmpty() }
+                ?.let { _ -> collector(this@combineLatest.map { it.current }).some() }
+                ?: arrow.core.none()
 
             override fun startMonitoring() {
                 this@combineLatest.forEach { observable ->

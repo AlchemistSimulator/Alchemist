@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model.observation
 
+import arrow.core.Option
+import arrow.core.getOrElse
 import arrow.core.none
 import arrow.core.some
 import io.kotest.core.spec.style.FunSpec
@@ -23,6 +25,7 @@ import it.unibo.alchemist.model.observation.Observable.ObservableExtensions.asMu
 import it.unibo.alchemist.model.observation.Observable.ObservableExtensions.currentOrNull
 import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.combineLatest
 import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.flatMap
+import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.merge
 import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
 
 class ObservableTest : FunSpec({
@@ -212,14 +215,14 @@ class ObservableTest : FunSpec({
             val a = observe(1)
             val b = observe(10)
 
-            val collected: MutableObservable<String> =
+            val collected: MutableObservable<Option<String>> =
                 listOf<Observable<Int>>(a, b).combineLatest { values ->
                     "${values[0]}-${values[1]}"
                 }.asMutable()
 
             val emissions = mutableListOf<String>()
 
-            collected.onChange(this) { emissions.add(it) }
+            collected.onChange(this) { emissions.add(it.getOrElse { "" }) }
 
             a.update { it + 1 }
             b.update { it + 5 }
@@ -232,7 +235,7 @@ class ObservableTest : FunSpec({
             val a = observe(0)
             val b = observe(0)
 
-            val collected: MutableObservable<Int> =
+            val collected: MutableObservable<Option<Int>> =
                 listOf<Observable<Int>>(a, b).combineLatest { values ->
                     (values[0] + values[1]) % 2
                 }.asMutable()
@@ -252,7 +255,7 @@ class ObservableTest : FunSpec({
             val a = observe(1)
             val b = observe(2)
 
-            val collected: MutableObservable<Int> =
+            val collected: MutableObservable<Option<Int>> =
                 listOf<Observable<Int>>(a, b).combineLatest { values ->
                     values.sum()
                 }.asMutable()
@@ -362,7 +365,7 @@ class ObservableTest : FunSpec({
                 val fused = set.flatMap(::observableFor)
 
                 val seen = mutableListOf<Int>()
-                fused.onChange(this) { seen.add(it) }
+                fused.onChange(this) { seen.add(it.getOrElse { -1 }) }
 
                 seen[0] shouldBe 0
 
@@ -393,6 +396,78 @@ class ObservableTest : FunSpec({
                 inner["a"]!!.observers.shouldHaveSize(0)
                 inner["b"]!!.observers.shouldHaveSize(0)
             }
+        }
+
+        test("should emit None immediately if the source ObservableSet is empty") {
+            val set = ObservableMutableSet<String>()
+            val fused = set.flatMap { observe(10) }
+            val seen = mutableListOf<Option<Int>>()
+
+            fused.onChange(this) { seen.add(it) }
+
+            seen shouldContainExactly listOf(none())
+        }
+
+        test("should emit None when the set becomes empty (after having been non-empty)") {
+            val set = ObservableMutableSet("a")
+            val inner = mutableMapOf<String, MutableObservable<Int>>()
+
+            fun observableFor(key: String): Observable<Int> = inner.getOrPut(key) { observe(0) }
+
+            val fused = set.flatMap(::observableFor)
+
+            val seen = mutableListOf<Option<Int>>()
+            fused.onChange(this) { seen.add(it) }
+
+            inner["a"]!!.update { 7 }
+            set.remove("a")
+
+            seen shouldContainExactly listOf(0.some(), 7.some(), none())
+        }
+    }
+
+    context("merge") {
+        test("a merged observable set should emit on membership and members emissions") {
+            val obsA = observe(10)
+            val obsB = observe(-10)
+            val elements = ObservableMutableSet(obsA, obsB)
+            val merged = elements.merge()
+
+            var counter = -elements.toSet().size
+            merged.onChange(this) {
+                println(it)
+                counter++
+            }
+
+            obsA.update { it + 11 }
+            elements.add(observe(29))
+
+            counter shouldBe 2
+        }
+
+        test("merge should emit None immediately if the set is empty") {
+            val set = ObservableMutableSet<Observable<Int>>()
+            val merged = set.merge()
+
+            val seen = mutableListOf<Any?>()
+            merged.onChange(this) { seen.add(it.getOrNull()) }
+
+            seen shouldContainExactly listOf(null)
+        }
+
+        test("merge should emit None when set becomes empty, then Some when it becomes non-empty again") {
+            val a = observe(1)
+            val set = ObservableMutableSet<Observable<Int>>(a)
+            val merged = set.merge()
+
+            val seen = mutableListOf<Any?>()
+            merged.onChange(this) { seen.add(it.getOrNull()) }
+
+            set.remove(a)
+            val b = observe(9)
+            set.add(b)
+
+            seen shouldContainExactly listOf(1, null, 9)
         }
     }
 

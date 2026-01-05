@@ -49,21 +49,7 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
         declareDependencyOn(molecule);
         this.molecule = molecule;
         this.concentration = concentration;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public boolean isValid() {
-        if (getValidNeighbors().isEmpty()) {
-            return false;
-        } else {
-            final Neighborhood<Double> neighborhood = getEnvironment().getNeighborhood(getNode());
-            return getValidNeighbors().entrySet().stream()
-                .filter(n -> n.getKey().asPropertyOrNull(CellProperty.class) != null)
-                .allMatch(n ->
-                    neighborhood.contains(n.getKey()) && n.getKey().getConcentration(molecule) >= concentration
-                );
-        }
+        setUpObservability();
     }
 
     @Override
@@ -88,4 +74,22 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
         return molecule.toString() + " >= " + concentration + " in neighbor";
     }
 
+
+    @SuppressWarnings("unchecked")
+    private void setUpObservability() {
+        addObservableDependency(getNode().observeConcentration(molecule));
+        setValidity(
+            observeValidNeighbors().map(validNeighbors -> {
+                if (validNeighbors.isEmpty()) {
+                    return false;
+                }
+                final Neighborhood<Double> neighborhood = getEnvironment().getNeighborhood(getNode());
+                return validNeighbors.entrySet().stream()
+                    .filter(n -> n.getKey().asPropertyOrNull(CellProperty.class) != null)
+                    .allMatch(n ->
+                        neighborhood.contains(n.getKey()) && n.getKey().getConcentration(molecule) >= concentration
+                    );
+            })
+        );
+    }
 }

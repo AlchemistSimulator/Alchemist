@@ -33,8 +33,14 @@ public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
      * @param node the node
      * @param environment the current environment.
      */
+    @SuppressWarnings("unchecked")
     public NeighborhoodPresent(final Environment<T, ?> environment, final Node<T> node) {
         super(environment, node);
+
+        setValidity(environment.observeNeighborhood(getNode()).map(neighborhood ->
+            neighborhood.getNeighbors().stream()
+                .anyMatch(n -> n.asPropertyOrNull(CellProperty.class) != null)
+            ));
     }
 
     @Override
@@ -47,13 +53,6 @@ public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
     protected double getNeighborPropensity(final Node<T> neighbor) {
         // to be eligible (p = 1), a neighbor just needs to be an instance of CellNode
         return neighbor.asPropertyOrNull(CellProperty.class) != null ? 1d : 0d;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public boolean isValid() {
-        return getEnvironment().getNeighborhood(getNode()).getNeighbors().stream()
-                .anyMatch(n -> n.asPropertyOrNull(CellProperty.class) != null);
     }
 
     @Override

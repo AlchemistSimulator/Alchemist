@@ -45,6 +45,7 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
         declareDependencyOn(junction);
         this.junction = junction;
         this.environment = environment;
+        setUpObservability();
     }
 
     @Override
@@ -70,4 +71,7 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
         return "junction " + junction.toString() + " present ";
     }
 
+    private void setUpObservability() {
+        // TODO: make CellProperty and junctions observable!
+    }
 }

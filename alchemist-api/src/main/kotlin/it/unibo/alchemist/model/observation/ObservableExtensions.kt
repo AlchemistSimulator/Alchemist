@@ -46,27 +46,24 @@ object ObservableExtensions {
             override fun computeFresh(): O = aggregator(this@combineLatest.toSet().map { map(it).current })
 
             override fun startMonitoring() {
-                this@combineLatest.onChange(this, ::reconcile)
-                reconcile(this@combineLatest.toSet())
+                val callback: (Set<T>) -> Unit = { current ->
+                    reconcile(
+                        sources = sources,
+                        current = current,
+                        map = map,
+                        doOnChange = { updateAndNotify(computeFresh()) },
+                        postCleanup = { updateAndNotify(computeFresh()) },
+                    )
+                }
+
+                this@combineLatest.onChange(this, callback)
+                callback(this@combineLatest.toSet())
             }
 
             override fun stopMonitoring() {
                 this@combineLatest.stopWatching(this)
                 sources.values.forEach { it.stopWatching(this@combineLatest) }
                 sources.clear()
-            }
-
-            private fun reconcile(current: Set<T>) {
-                (sources.keys - current).forEach { sources.remove(it)?.stopWatching(this) }
-                (current - sources.keys).forEach { key ->
-                    with(map(key)) {
-                        sources[key] = this
-                        onChange(this@combineLatest) {
-                            updateAndNotify(computeFresh())
-                        }
-                    }
-                }
-                updateAndNotify(computeFresh())
             }
         }
 
@@ -93,8 +90,22 @@ object ObservableExtensions {
                     ?: none()
 
                 override fun startMonitoring() {
-                    this@flatMap.onChange(this, ::reconcile)
-                    reconcile(this@flatMap.toSet())
+                    val callback: (Set<T>) -> Unit = { current ->
+                        reconcile(
+                            sources = sources,
+                            current = current,
+                            map = map,
+                            doOnChange = { updateAndNotify(it.some()) },
+                            postCleanup = {
+                                if (this@flatMap.current.isEmpty()) {
+                                    updateAndNotify(none())
+                                }
+                            },
+                        )
+                    }
+
+                    this@flatMap.onChange(this, callback)
+                    callback(this@flatMap.toSet())
                 }
 
                 override fun stopMonitoring() {
@@ -102,22 +113,24 @@ object ObservableExtensions {
                     sources.values.forEach { it.stopWatching(this@flatMap) }
                     sources.clear()
                 }
+            }
 
-                private fun reconcile(current: Set<T>) {
-                    (sources.keys - current).forEach { sources.remove(it)?.stopWatching(this) }
-                    (current - sources.keys).forEach { key ->
-                        with(map(key)) {
-                            sources[key] = this
-                            onChange(this@flatMap) {
-                                updateAndNotify(it.some())
-                            }
-                        }
-                    }
-                    if (current.isEmpty()) {
-                        updateAndNotify(none())
-                    }
+        private fun <T, O> ObservableSet<T>.reconcile(
+            sources: MutableMap<T, Observable<O>>,
+            current: Set<T>,
+            map: (T) -> Observable<O>,
+            doOnChange: (O) -> Unit,
+            postCleanup: () -> Unit,
+        ) {
+            (sources.keys - current).forEach { sources.remove(it)?.stopWatching(this) }
+            (current - sources.keys).forEach { key ->
+                with(map(key)) {
+                    sources[key] = this
+                    onChange(this@reconcile, doOnChange)
                 }
             }
+            postCleanup()
+        }
 
         /**
          * Converts this [ObservableSet] of [observables][Observable] into a unique observable that emits

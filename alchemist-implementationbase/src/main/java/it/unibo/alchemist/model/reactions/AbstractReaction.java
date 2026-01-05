@@ -47,6 +47,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static arrow.core.OptionKt.none;
+import static arrow.core.OptionKt.getOrElse;
 
 /**
  * The type which describes the concentration of a molecule.
@@ -348,7 +349,7 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
         validity.dispose();
 
         conditions.forEach(condition -> {
-            final var merged = ObservableExtensions.ObservableSetExtensions.INSTANCE.merge(
+            final var merged = ObservableExtensions.ObservableSetExtensions.mergeObservables(
                 condition.observeInboundDependencies()
             );
             merged.onChange(this, it -> {
@@ -362,7 +363,7 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
             validity = ObservableExtensions.INSTANCE.combineLatest(
                 conditions.stream().map(Condition::observeValidity).toList(),
                 it -> it.stream().allMatch(b -> b)
-            );
+            ).map(it -> getOrElse(it, () -> true));
 
             // need at least one observer to track validity updates
             validity.onChange(this, it -> {

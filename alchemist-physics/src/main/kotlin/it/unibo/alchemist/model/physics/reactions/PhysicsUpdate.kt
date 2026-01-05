@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.physics.reactions
 
+import arrow.core.getOrElse
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
@@ -86,6 +87,7 @@ class PhysicsUpdate<T>(
             validity = value.takeIf { it.isNotEmpty() }
                 ?.map { it.observeValidity() }
                 ?.combineLatest { validities -> validities.all { it } }
+                ?.map { it.getOrElse { true } } // none means empty set of conditions i.e. always true.
                 ?.apply {
                     onChange(this@PhysicsUpdate) { canExecute = it }
                     subscriptions.add(this)

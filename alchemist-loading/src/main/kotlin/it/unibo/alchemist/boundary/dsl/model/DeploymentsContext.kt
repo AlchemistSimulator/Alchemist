@@ -79,17 +79,17 @@ interface DeploymentsContext<T, P : Position<P>> {
      * @param block The configuration block for the deployment.
      * @see [it.unibo.alchemist.model.Deployment]
      */
-    context(environment: Environment<T, P>)
-    fun deploy(deployment: Deployment<*>, block: context(Node<T>) DeploymentContext<T, P>.() -> Unit)
-
-    /**
-     * Deploys nodes using a deployment without additional configuration.
-     *
-     * Nodes are created at the positions defined by the deployment with default settings.
-     *
-     * @param deployment The deployment that defines node positions.
-     * @see [Deployment]
-     */
-    context(environment: Environment<T, P>)
-    fun deploy(deployment: Deployment<*>)
+    // TODO: fix the doc
+    context(randomGenerator: RandomGenerator, environment: Environment<T, P>)
+    fun deploy(
+        deployment: Deployment<P>,
+        nodeFactory: context(RandomGenerator, Environment<T, P>) () -> Node<T> = {
+            contextOf<Environment<T, P>>().incarnation.createNode(
+                contextOf<RandomGenerator>(),
+                contextOf<Environment<T, P>>(),
+                null,
+            )
+        },
+        block: context(Environment<T, P>, Node<T>) DeploymentContext<T, P>.() -> Unit = { },
+    )
 }

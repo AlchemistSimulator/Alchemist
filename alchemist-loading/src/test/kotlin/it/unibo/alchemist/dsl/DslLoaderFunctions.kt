@@ -429,10 +429,8 @@ object DslLoaderFunctions {
                         0.0,
                         5.0,
                     ),
+                    nodeFactory = { testNode() },
                 ) {
-                    nodes {
-                        testNode()
-                    }
                 }
             }
         }

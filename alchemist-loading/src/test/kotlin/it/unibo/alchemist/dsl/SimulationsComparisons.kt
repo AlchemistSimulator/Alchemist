@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -55,22 +55,22 @@ class SimulationsComparisons {
 
     @Test
     fun <T, P : Position<P>> test10() {
-        { DslLoaderFunctions.test10Environment<T, P>() }.shouldEqual("dsl/yml/10-environment.yml")
+        { DslLoaderFunctions.test10Environment<T>() }.shouldEqual("dsl/yml/10-environment.yml")
     }
 
     @Test
     fun <T, P : Position<P>> test11() {
-        { DslLoaderFunctions.test11monitors<T, P>() }.shouldEqual("dsl/yml/11-monitors.yml")
+        { DslLoaderFunctions.test11monitors() }.shouldEqual("dsl/yml/11-monitors.yml")
     }
 
     @Test
     fun <T, P : Position<P>> test12() {
-        { DslLoaderFunctions.test12Layers<T, P>() }.shouldEqual("dsl/yml/12-layers.yml")
+        { DslLoaderFunctions.test12Layers() }.shouldEqual("dsl/yml/12-layers.yml")
     }
 
     @Test
     fun <T, P : Position<P>> test13() {
-        { DslLoaderFunctions.test13GlobalReaction<T, P>() }.shouldEqual("dsl/yml/13-globalreaction.yml")
+        { DslLoaderFunctions.test13GlobalReaction() }.shouldEqual("dsl/yml/13-globalreaction.yml")
     }
 
     @Test

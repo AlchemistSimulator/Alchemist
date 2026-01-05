@@ -169,10 +169,20 @@ public abstract class AbstractCondition<T> implements Condition<T> {
         throw new UnsupportedOperationException(getClass().getSimpleName() + " has no support for cloning.");
     }
 
+    /**
+     * To be used by inheritors when initializing.
+     *
+     * @param newValidity the validity to set
+     */
     protected final void setValidity(final Observable<Boolean> newValidity) {
         this.validity = newValidity;
     }
 
+    /**
+     * To be used by inheritors when initializing.
+     *
+     * @param newPropensity the propensity to set
+     */
     protected final void setPropensity(final Observable<Double> newPropensity) {
         this.propensity = newPropensity;
     }

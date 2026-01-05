@@ -46,8 +46,8 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static arrow.core.OptionKt.none;
 import static arrow.core.OptionKt.getOrElse;
+import static arrow.core.OptionKt.none;
 
 /**
  * The type which describes the concentration of a molecule.
@@ -397,7 +397,7 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
 
     /**
      * @return the default implementation returns a String in the form
-     * className@timeScheduled[Conditions]-rate-&gt;[Actions]
+     *         className@timeScheduled[Conditions]-rate-&gt;[Actions]
      */
     @Override
     public String toString() {

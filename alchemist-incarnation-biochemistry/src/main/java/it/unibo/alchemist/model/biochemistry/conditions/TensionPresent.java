@@ -60,59 +60,63 @@ public final class TensionPresent extends AbstractCondition<Double> {
 
     private void setPropensityContribution() {
         final var thisNode = getNode();
-        setPropensity(environment.observeNodesWithinRange(thisNode, environment.getMaxDiameterAmongCircularDeformableCells()).map(it ->
-            it.stream()
-                .flatMap(node ->
-                    node.asPropertyOrNull(CircularCellProperty.class) != null ? Stream.of(node) : Stream.empty()
-                )
-                .mapToDouble(node -> {
-                    final double maxRn;
-                    final double minRn;
-                    final double maxRN = thisNode.asProperty(CircularDeformableCellProperty.class)
-                        .getMaximumRadius();
-                    final double minRN = thisNode.asProperty(CircularDeformableCellProperty.class).getRadius();
-                    if (node.asPropertyOrNull(CircularDeformableCellProperty.class) != null) {
-                        maxRn = node.asProperty(CircularDeformableCellProperty.class).getMaximumRadius();
-                        minRn = node.asProperty(CircularDeformableCellProperty.class).getRadius();
-                    } else {
-                        maxRn = node.asProperty(CircularCellProperty.class).getRadius();
-                        minRn = maxRn;
-                    }
-                    final double distance = environment.getDistanceBetweenNodes(node, thisNode);
-                    if (maxRn + maxRN - distance < 0) {
-                        return 0;
-                    } else {
-                        if (maxRn == minRn && maxRN == minRN) {
-                            return 1;
+        setPropensity(
+            environment.observeNodesWithinRange(thisNode, environment.getMaxDiameterAmongCircularDeformableCells()).map(it ->
+                it.stream()
+                    .flatMap(node ->
+                        node.asPropertyOrNull(CircularCellProperty.class) != null ? Stream.of(node) : Stream.empty()
+                    )
+                    .mapToDouble(node -> {
+                        final double maxRn;
+                        final double minRn;
+                        final double maxRN = thisNode.asProperty(CircularDeformableCellProperty.class)
+                            .getMaximumRadius();
+                        final double minRN = thisNode.asProperty(CircularDeformableCellProperty.class).getRadius();
+                        if (node.asPropertyOrNull(CircularDeformableCellProperty.class) != null) {
+                            maxRn = node.asProperty(CircularDeformableCellProperty.class).getMaximumRadius();
+                            minRn = node.asProperty(CircularDeformableCellProperty.class).getRadius();
                         } else {
-                            return (maxRn + maxRN - distance) / (maxRn + maxRN - minRn - minRN);
+                            maxRn = node.asProperty(CircularCellProperty.class).getRadius();
+                            minRn = maxRn;
                         }
-                    }
-                })
-                .sum()
-        ));
+                        final double distance = environment.getDistanceBetweenNodes(node, thisNode);
+                        if (maxRn + maxRN - distance < 0) {
+                            return 0;
+                        } else {
+                            if (maxRn == minRn && maxRN == minRN) {
+                                return 1;
+                            } else {
+                                return (maxRn + maxRN - distance) / (maxRn + maxRN - minRn - minRN);
+                            }
+                        }
+                    })
+                    .sum()
+            )
+        );
     }
 
     private void setValidity() {
         final var thisNode = getNode();
-        setValidity(environment.observeNodesWithinRange(getNode(), environment.getMaxDiameterAmongCircularDeformableCells()).map(it ->
-            it.stream()
-                .parallel()
-                .flatMap(n -> n.asPropertyOrNull(CircularCellProperty.class) != null
-                    ? Stream.of(n)
-                    : Stream.empty())
-                .anyMatch(n -> {
-                    final double maxDN = thisNode.asProperty(CircularDeformableCellProperty.class)
-                        .getMaximumRadius();
-                    if (n.asPropertyOrNull(CircularDeformableCellProperty.class) != null) {
-                        return environment.getDistanceBetweenNodes(n, thisNode)
-                            < (maxDN + n.asProperty(CircularDeformableCellProperty.class)
-                            .getMaximumRadius());
-                    } else {
-                        return environment.getDistanceBetweenNodes(n, thisNode) < (maxDN
-                            + n.asProperty(CircularCellProperty.class).getRadius());
-                    }
-                })
-        ));
+        setValidity(
+            environment.observeNodesWithinRange(getNode(), environment.getMaxDiameterAmongCircularDeformableCells()).map(it ->
+                it.stream()
+                    .parallel()
+                    .flatMap(n -> n.asPropertyOrNull(CircularCellProperty.class) != null
+                        ? Stream.of(n)
+                        : Stream.empty())
+                    .anyMatch(n -> {
+                        final double maxDN = thisNode.asProperty(CircularDeformableCellProperty.class)
+                            .getMaximumRadius();
+                        if (n.asPropertyOrNull(CircularDeformableCellProperty.class) != null) {
+                            return environment.getDistanceBetweenNodes(n, thisNode)
+                                < (maxDN + n.asProperty(CircularDeformableCellProperty.class)
+                                .getMaximumRadius());
+                        } else {
+                            return environment.getDistanceBetweenNodes(n, thisNode) < (maxDN
+                                + n.asProperty(CircularCellProperty.class).getRadius());
+                        }
+                    })
+            )
+        );
     }
 }

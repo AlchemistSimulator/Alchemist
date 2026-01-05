@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableMutableSet;
 import it.unibo.alchemist.model.observation.ObservableSet;
@@ -40,12 +41,12 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     /**
      * An observable which emits this condition's validity.
      */
-    private Observable<Boolean> validity;
+    private Observable<Boolean> validity = MutableObservable.Companion.observe(true);
 
     /**
      * An observable which emits this condition's propensity contribution.
      */
-    private Observable<Double> propensity;
+    private Observable<Double> propensity = MutableObservable.Companion.observe(0.0);
 
     /**
      * @param node the node this Condition belongs to

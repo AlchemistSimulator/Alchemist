@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.dsl.model
 
-import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
@@ -90,23 +89,6 @@ interface DeploymentContext<T, P : Position<P>> {
      * @see [ProgramsContext]
      */
     fun programs(block: ProgramsContext<T, P>.() -> Unit)
-
-    /**
-     * Sets a custom node factory for this deployment.
-     *
-     * By default, nodes are created using the incarnation's node factory.
-     * This allows using custom node types.
-     *
-     * ```kotlin
-     * nodes { MyCustomNode() }
-     * ```
-     *
-     * @param factory The factory function for creating nodes.
-     * @see [Node]
-     * @see [it.unibo.alchemist.model.Incarnation.createNode]
-     */
-    context(environment: Environment<T, P>)
-    fun nodes(factory: (DeploymentContext<T, P>) -> Node<T>)
 
     /**
      * Configures properties for this deployment.

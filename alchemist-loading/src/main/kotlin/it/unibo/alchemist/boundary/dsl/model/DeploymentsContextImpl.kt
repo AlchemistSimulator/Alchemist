@@ -33,25 +33,13 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
     override val generator: RandomGenerator
         get() = ctx.scenarioGenerator
 
-    private val inc = ctx.incarnation
-
-    context(environment: Environment<T, P>)
-    override fun deploy(deployment: Deployment<*>, block: context(Node<T>) DeploymentContext<T, P>.() -> Unit) {
+    context(randomGenerator: RandomGenerator, environment: Environment<T, P>)
+    override fun deploy(
+        deployment: Deployment<P>,
+        nodeFactory: context(RandomGenerator, Environment<T, P>) () -> Node<T>,
+        block: context(Environment<T, P>, Node<T>) DeploymentContext<T, P>.() -> Unit,
+    ) {
         logger.debug("Deploying deployment: {}", deployment)
-        @Suppress("UNCHECKED_CAST")
-        val d = DeploymentContextImpl(deployment as Deployment<P>).apply { block() }
-        // populate
-        populateDeployment(d)
-    }
-
-    context(environment: Environment<T, P>)
-    override fun deploy(deployment: Deployment<*>) {
-        @Suppress("UNCHECKED_CAST")
-        this.deploy(deployment) {}
-    }
-    context(_: Environment<T, P>)
-    private fun populateDeployment(deploymentContext: DeploymentContextImpl) {
-        val deployment = deploymentContext.deployment
         // Additional linking rules
         deployment.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
             val composedLinkingRule =
@@ -62,17 +50,13 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
                 }
             ctx.environment.linkingRule = composedLinkingRule
         }
-        deployment.stream().forEach { position ->
+        deployment.forEach { position ->
             logger.debug("visiting position: {} for deployment: {}", position, deployment)
             logger.debug("creaing node for deployment: {}", deployment)
-            val node = deploymentContext.nodeFactory?.invoke(deploymentContext)
-                ?: inc.createNode(
-                    ctx.simulationGenerator, // Match YAML loader: uses simulationRNG for node creation
-                    ctx.environment,
-                    null,
-                )
+            val node = nodeFactory()
             context(node) {
                 // load properties
+                val deploymentContext = DeploymentContextImpl(deployment).apply { block() }
                 deploymentContext.propertiesContext.applyToNode(node, position)
                 // load contents
                 val contents = deploymentContext.contents
@@ -112,14 +96,6 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
         val contents: MutableList<ContentContextImpl> = mutableListOf()
 
         /**
-         * Optional factory for creating custom nodes.
-         */
-        var nodeFactory: (
-            context(DeploymentContext<T, P>)
-            () -> Node<T>
-        )? = null
-
-        /**
          * The properties context for this deployment.
          */
         var propertiesContext: PropertiesContextImpl<T, P> = PropertiesContextImpl(this@DeploymentContextImpl)
@@ -150,11 +126,6 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
 
         override fun programs(block: ProgramsContext<T, P>.() -> Unit) {
             programsContext.apply(block)
-        }
-
-        context(environment: Environment<T, P>)
-        override fun nodes(factory: DeploymentContext<T, P>.() -> Node<T>) {
-            nodeFactory = factory
         }
 
         override fun properties(block: PropertiesContext<T, P>.() -> Unit) {

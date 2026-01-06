@@ -70,7 +70,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
 
     @Override
     public final ObservableSet<? extends Observable<?>> observeInboundDependencies() {
-        return dependencies;
+        return dependencies.copy();
     }
 
     /**

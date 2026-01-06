@@ -18,6 +18,8 @@ import org.apache.commons.math3.util.CombinatoricsUtils;
 
 import java.io.Serial;
 
+import static arrow.core.OptionKt.getOrElse;
+
 /**
  * This class implements a condition which checks if a molecule is present or
  * not.
@@ -74,12 +76,12 @@ public class GenericMoleculePresent<T extends Number> extends
         addObservableDependency(obs);
 
         setValidity(obs.map(it -> {
-            final var value = it.isSome() ? it.getOrNull().doubleValue() : 0.0;
+            final double value = getOrElse(it, () -> 0.0).doubleValue();
             return value >= qty.doubleValue();
         }));
 
         setPropensity(obs.map(it -> {
-            final int n = it.isSome() ? it.getOrNull().intValue() : 0;
+            final int n = getOrElse(it, () -> 0).intValue();
             final int k = qty.intValue();
             if (k > n) {
                 return 0.0;

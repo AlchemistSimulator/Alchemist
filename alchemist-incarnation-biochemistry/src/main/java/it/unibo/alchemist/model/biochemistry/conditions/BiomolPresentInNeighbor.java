@@ -74,7 +74,6 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
         return molecule.toString() + " >= " + concentration + " in neighbor";
     }
 
-
     @SuppressWarnings("unchecked")
     private void setUpObservability() {
         addObservableDependency(getNode().observeConcentration(molecule));

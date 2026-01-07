@@ -37,6 +37,21 @@ interface ObservableMap<K, V> : Observable<Map<K, V>> {
     operator fun get(key: K): Observable<Option<V>>
 
     /**
+     * Checks whether the specified key is present in the observable map.
+     *
+     * @param key The key to be checked for presence in the map.
+     * @return true if the key is present in the map, false otherwise.
+     */
+    operator fun contains(key: K): Boolean
+
+    /**
+     * Tests whether this map is empty.
+     *
+     * @return true if this observable map is empty, false otherwise.
+     */
+    fun isEmpty(): Boolean
+
+    /**
      * Converts the observable map into a standard, non-observable map.
      * The returned map reflects the contents of the observable map at the time of invocation,
      * and it's unmodifiable.
@@ -44,6 +59,26 @@ interface ObservableMap<K, V> : Observable<Map<K, V>> {
      * @return An unmodifiable map containing the key-value pairs of the observable map.
      */
     fun asMap(): Map<K, V>
+
+    /**
+     * Simple extensions for the observable map.
+     */
+    companion object {
+
+        /**
+         * Retrieves the value associated with the specified key in the observable map,
+         * or returns a default value using the provided function if the key is not present
+         * or the value is not [none][arrow.core.None].
+         *
+         * @param key The key whose associated value is to be retrieved.
+         * @param defaultProvider A function that provides a default value if the key
+         *        is not present in the observable map.
+         * @return The value associated with the specified key, or the value provided
+         *         by the default function if the key is absent.
+         */
+        fun <K, V> ObservableMap<in K, out V>.getOrElse(key: K, defaultProvider: () -> V): V =
+            this.takeIf { key in this }?.get(key)?.current?.getOrNull() ?: defaultProvider()
+    }
 }
 
 /**
@@ -125,6 +160,8 @@ open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> =
         backingMap.clear()
     }
 
+    override fun isEmpty(): Boolean = backingMap.isEmpty()
+
     /**
      * Creates and returns a copy of the current ObservableMutableMap.
      *
@@ -135,6 +172,8 @@ open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> =
     override fun asMap(): Map<K, V> = Collections.unmodifiableMap(backingMap)
 
     override operator fun get(key: K): Observable<Option<V>> = getAsMutable(key)
+
+    override fun contains(key: K): Boolean = backingMap.containsKey(key)
 
     /**
      * @see [put]

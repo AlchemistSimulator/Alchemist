@@ -14,9 +14,10 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.molecules.Junction;
+import it.unibo.alchemist.model.observation.ObservableMap;
+import it.unibo.alchemist.model.observation.ObservableMutableMap;
 
 import java.io.Serial;
-import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -49,11 +50,6 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
     }
 
     @Override
-    public boolean isValid() {
-        return cell.containsJunction(junction);
-    }
-
-    @Override
     public JunctionPresentInCell cloneCondition(final Node<Double> newNode, final Reaction<Double> newReaction) {
         return new JunctionPresentInCell(environment, newNode, junction);
     }
@@ -61,9 +57,18 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
     @Override
     protected double getNeighborPropensity(final Node<Double> neighbor) {
         // the neighbor's propensity is computed as the number of junctions it has
-        return cell.getJunctions()
-            .getOrDefault(junction, Collections.emptyMap())
-            .getOrDefault(neighbor, 0);
+        final ObservableMutableMap<Node<Double>, Integer> junctions =
+            ObservableMap.Companion.getOrElse(
+                cell.getJunctions(),
+                junction,
+                ObservableMutableMap::new
+            );
+
+        return ObservableMap.Companion.getOrElse(
+            junctions,
+            neighbor,
+            () -> 0
+        );
     }
 
     @Override
@@ -72,6 +77,6 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
     }
 
     private void setUpObservability() {
-        // TODO: make CellProperty and junctions observable!
+        setValidity(cell.observeContainsJunction(junction));
     }
 }

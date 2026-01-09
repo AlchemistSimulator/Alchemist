@@ -68,9 +68,10 @@ public abstract class AbstractCondition<T> implements Condition<T> {
         return ListSets.unmodifiableListSet(influencing);
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     @Override
     public final ObservableSet<? extends Observable<?>> observeInboundDependencies() {
-        return dependencies.copy();
+        return dependencies;
     }
 
     /**

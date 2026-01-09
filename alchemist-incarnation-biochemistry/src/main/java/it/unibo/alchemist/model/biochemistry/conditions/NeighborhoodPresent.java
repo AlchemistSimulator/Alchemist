@@ -13,6 +13,8 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
 
 import java.io.Serial;
 
@@ -50,9 +52,10 @@ public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected double getNeighborPropensity(final Node<T> neighbor) {
+    protected Observable<Double> observeNeighborPropensity(final Node<T> neighbor) {
         // to be eligible (p = 1), a neighbor just needs to be an instance of CellNode
-        return neighbor.asPropertyOrNull(CellProperty.class) != null ? 1d : 0d;
+        // Note: Property changes are not yet observable, so this assumes static properties for now.
+        return MutableObservable.Companion.observe(neighbor.asPropertyOrNull(CellProperty.class) != null ? 1d : 0d);
     }
 
     @Override

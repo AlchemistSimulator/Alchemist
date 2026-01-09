@@ -14,13 +14,15 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.molecules.Junction;
-import it.unibo.alchemist.model.observation.ObservableMap;
-import it.unibo.alchemist.model.observation.ObservableMutableMap;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableExtensions;
 
 import java.io.Serial;
 import java.util.Objects;
 
 /**
+ * Condition that is valid if a specific junction is present in the cell.
  */
 public final class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
@@ -32,16 +34,16 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
     private final CellProperty<?> cell;
 
     /**
-     * @param junction the junction
-     * @param node the node
+     * @param junction    the junction
+     * @param node        the node
      * @param environment the environment
      */
     public JunctionPresentInCell(final Environment<Double, ?> environment, final Node<Double> node, final Junction junction) {
         super(environment, node);
         cell = node.asPropertyOrNull(CellProperty.class);
         Objects.requireNonNull(
-                cell,
-                "This Condition can be set only in node with " + CellProperty.class.getSimpleName()
+            cell,
+            "This Condition can be set only in node with " + CellProperty.class.getSimpleName()
         );
         declareDependencyOn(junction);
         this.junction = junction;
@@ -55,19 +57,16 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
     }
 
     @Override
-    protected double getNeighborPropensity(final Node<Double> neighbor) {
-        // the neighbor's propensity is computed as the number of junctions it has
-        final ObservableMutableMap<Node<Double>, Integer> junctions =
-            ObservableMap.Companion.getOrElse(
-                cell.getJunctions(),
-                junction,
-                ObservableMutableMap::new
-            );
-
-        return ObservableMap.Companion.getOrElse(
-            junctions,
-            neighbor,
-            () -> 0
+    protected Observable<Double> observeNeighborPropensity(final Node<Double> neighbor) {
+        return ObservableExtensions.INSTANCE.switchMap(
+            cell.getJunctions().get(junction),
+            maybeJunctions -> {
+                if (maybeJunctions.isNone() || maybeJunctions.getOrNull().isEmpty()) {
+                    return MutableObservable.Companion.observe(0.0);
+                }
+                return maybeJunctions.getOrNull().get(neighbor)
+                    .map(maybeCount -> maybeCount.fold(() -> 0d, Integer::doubleValue));
+            }
         );
     }
 

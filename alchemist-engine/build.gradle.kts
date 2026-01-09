@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.trove4j)
     implementation(libs.kotlin.coroutines.core)
+    implementation(libs.arrow.core)
 
     testImplementation(alchemist("euclidean-geometry"))
     testImplementation(alchemist("implementationbase"))

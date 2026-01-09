@@ -134,6 +134,39 @@ open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> =
         if (previousObservedValue.isSome()) notifyMapObservers()
     }
 
+    /**
+     * Replaces the whole content of this map with [from], like doing a `clear` followed
+     * by a `putAll`, * but without notifying per-key observers for keys that remain
+     * present (unless their value changes).
+     *
+     * @param from A map containing the new key-value pairs to populate the map with.
+     */
+    fun clearAndPutAll(from: Map<K, V>) {
+        var changed = false
+        val keysToRemove = backingMap.keys.toSet() - from.keys
+        if (keysToRemove.isNotEmpty()) {
+            keysToRemove.forEach { key ->
+                backingMap.remove(key)
+                keyObservables[key]?.update { none() }
+            }
+            changed = true
+        }
+
+        if (from.isNotEmpty()) {
+            from.forEach { (key, value) ->
+                val previous = backingMap.put(key, value)
+                if (previous != value) {
+                    getAsMutable(key).update { value.some() }
+                    changed = true
+                }
+            }
+        }
+
+        if (changed) {
+            notifyMapObservers()
+        }
+    }
+
     override fun onChange(registrant: Any, callback: (Map<K, V>) -> Unit) {
         observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
         callback(current.toMap())

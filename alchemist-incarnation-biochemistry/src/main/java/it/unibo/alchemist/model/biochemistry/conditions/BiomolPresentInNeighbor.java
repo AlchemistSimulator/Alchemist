@@ -15,10 +15,11 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
 import org.apache.commons.math3.util.FastMath;
 
 import java.io.Serial;
-import java.util.Optional;
 
 import static org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble;
 
@@ -34,10 +35,10 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
     private final Double concentration;
 
     /**
-     * @param molecule the molecule to check
+     * @param molecule      the molecule to check
      * @param concentration the minimum concentration
-     * @param node the local node
-     * @param environment the environment
+     * @param node          the local node
+     * @param environment   the environment
      */
     public BiomolPresentInNeighbor(
         final Environment<Double, ?> environment,
@@ -59,14 +60,18 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
 
     @SuppressWarnings("unchecked")
     @Override
-    protected double getNeighborPropensity(final Node<Double> neighbor) {
+    protected Observable<Double> observeNeighborPropensity(final Node<Double> neighbor) {
         // the neighbor is eligible, its propensity is computed using the concentration of the biomolecule
-        return Optional.of(neighbor)
-            .filter(it -> it.asPropertyOrNull(CellProperty.class) != null)
-            .map(it -> it.getConcentration(molecule))
-            .filter(it -> it >= concentration)
-            .map(it -> binomialCoefficientDouble(it.intValue(), (int) FastMath.ceil(concentration)))
-            .orElse(0d);
+        if (neighbor.asPropertyOrNull(CellProperty.class) == null) {
+            return MutableObservable.Companion.observe(0d);
+        }
+        return neighbor.observeConcentration(molecule).map(opt -> opt.map(conc -> {
+            if (conc >= concentration) {
+                return binomialCoefficientDouble(conc.intValue(), (int) FastMath.ceil(concentration));
+            } else {
+                return 0d;
+            }
+        }).fold(() -> 0d, val -> val));
     }
 
     @Override

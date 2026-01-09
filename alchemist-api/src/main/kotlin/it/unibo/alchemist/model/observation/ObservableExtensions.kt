@@ -21,6 +21,55 @@ import kotlin.collections.forEach
 object ObservableExtensions {
 
     /**
+     * Set of useful extensions on [ObservableList].
+     */
+    object ObservableListExtensions {
+
+        /**
+         * Combines the content of an `ObservableList` into a single observable by applying a mapping function
+         * to each element and aggregating the results.
+         *
+         * @param map A function that maps each element of the `ObservableList` to an `Observable`.
+         * @param aggregator A function that aggregates the mapped results into a single value.
+         * @return An `Observable` emitting the aggregated result of the mapped content from the `ObservableList`.
+         */
+        fun <T, R, O> ObservableList<T>.combineLatest(
+            map: (T) -> Observable<R>,
+            aggregator: (List<R>) -> O,
+        ): Observable<O> = combineLatestCollection(map, aggregator)
+
+        /**
+         * Transforms an [ObservableList] of type [T] into a single [Observable] of type [Option]<[O]> by fusing the
+         * individual observables obtained from each item in the list.
+         *
+         * @param T The type of elements in the [ObservableList].
+         * @param O The type of the resulting fused observable.
+         * @param map A function that maps each element of the source [ObservableList] to an [Observable] of type [O].
+         * @return An [Observable] of type [Option]<[O]> that is safe to use on empty lists.
+         */
+        fun <T, O> ObservableList<T>.flatMap(map: (T) -> Observable<O>): Observable<Option<O>> = flatMapCollection(map)
+
+        /**
+         * Converts this [ObservableList] of [observables][Observable] into a unique observable.
+         *
+         * @return a unique observable wrapping in one place all the notifications emitted by this [ObservableList]
+         */
+        @Suppress("UNCHECKED_CAST")
+        fun ObservableList<out Observable<*>>.merge(): Observable<Option<Any?>> = flatMap { it as Observable<Any?> }
+
+        /**
+         * Converts the given [ObservableList] of [observables][Observable] into a unique observable.
+         *
+         * @return a unique observable wrapping in one place all the notifications emitted by this [ObservableList]
+         */
+        @JvmStatic
+        @JvmName("mergeObservables")
+        @Suppress("UNCHECKED_CAST")
+        fun merge(observables: ObservableList<out Observable<*>>): Observable<Option<Any?>> =
+            observables.flatMap { it as Observable<Any?> }
+    }
+
+    /**
      * Set of useful extensions on [ObservableSet].
      */
     object ObservableSetExtensions {
@@ -39,33 +88,7 @@ object ObservableExtensions {
         fun <T, R, O> ObservableSet<T>.combineLatest(
             map: (T) -> Observable<R>,
             aggregator: (Iterable<R>) -> O,
-        ): Observable<O> = object : DerivedObservable<O>() {
-
-            private val sources = mutableMapOf<T, Observable<R>>()
-
-            override fun computeFresh(): O = aggregator(this@combineLatest.toSet().map { map(it).current })
-
-            override fun startMonitoring() {
-                val callback: (Set<T>) -> Unit = { current ->
-                    reconcile(
-                        sources = sources,
-                        current = current,
-                        map = map,
-                        doOnChange = { updateAndNotify(computeFresh()) },
-                        postCleanup = { updateAndNotify(computeFresh()) },
-                    )
-                }
-
-                this@combineLatest.onChange(this, callback)
-                callback(this@combineLatest.toSet())
-            }
-
-            override fun stopMonitoring() {
-                this@combineLatest.stopWatching(this)
-                sources.values.forEach { it.stopWatching(this@combineLatest) }
-                sources.clear()
-            }
-        }
+        ): Observable<O> = combineLatestCollection(map, aggregator)
 
         /**
          * Transforms an [ObservableSet] of type [T] into a single [Observable] of type [Option]<[O]> by fusing the
@@ -80,57 +103,7 @@ object ObservableExtensions {
          * @param map A function that maps each element of the source [ObservableSet] to an [Observable] of type [O].
          * @return An [Observable] of type [Option]<[O]> that is safe to use on empty sets.
          */
-        fun <T, O> ObservableSet<T>.flatMap(map: (T) -> Observable<O>): Observable<Option<O>> =
-            object : DerivedObservable<Option<O>>() {
-                private val sources = mutableMapOf<T, Observable<O>>()
-
-                override fun computeFresh(): Option<O> = this@flatMap.toSet().firstOrNull()
-                    ?.let { key -> sources[key]?.current ?: map(key).current }
-                    ?.some()
-                    ?: none()
-
-                override fun startMonitoring() {
-                    val callback: (Set<T>) -> Unit = { current ->
-                        reconcile(
-                            sources = sources,
-                            current = current,
-                            map = map,
-                            doOnChange = { updateAndNotify(it.some()) },
-                            postCleanup = {
-                                if (this@flatMap.current.isEmpty()) {
-                                    updateAndNotify(none())
-                                }
-                            },
-                        )
-                    }
-
-                    this@flatMap.onChange(this, callback)
-                    callback(this@flatMap.toSet())
-                }
-
-                override fun stopMonitoring() {
-                    this@flatMap.stopWatching(this)
-                    sources.values.forEach { it.stopWatching(this@flatMap) }
-                    sources.clear()
-                }
-            }
-
-        private fun <T, O> ObservableSet<T>.reconcile(
-            sources: MutableMap<T, Observable<O>>,
-            current: Set<T>,
-            map: (T) -> Observable<O>,
-            doOnChange: (O) -> Unit,
-            postCleanup: () -> Unit,
-        ) {
-            (sources.keys - current).forEach { sources.remove(it)?.stopWatching(this) }
-            (current - sources.keys).forEach { key ->
-                with(map(key)) {
-                    sources[key] = this
-                    onChange(this@reconcile, doOnChange)
-                }
-            }
-            postCleanup()
-        }
+        fun <T, O> ObservableSet<T>.flatMap(map: (T) -> Observable<O>): Observable<Option<O>> = flatMapCollection(map)
 
         /**
          * Converts this [ObservableSet] of [observables][Observable] into a unique observable that emits
@@ -215,6 +188,93 @@ object ObservableExtensions {
 
             override fun toString(): String = "UnionObservableSet($current)[from: ${this@union}, other: $other]"
         }
+    }
+
+    private fun <T, C : Collection<T>, R, O> Observable<C>.combineLatestCollection(
+        map: (T) -> Observable<R>,
+        aggregator: (List<R>) -> O,
+    ): Observable<O> = object : DerivedObservable<O>() {
+
+        private val sources = mutableMapOf<T, Observable<R>>()
+
+        override fun computeFresh(): O = aggregator(this@combineLatestCollection.current.map { map(it).current })
+
+        @Suppress("UNCHECKED_CAST")
+        override fun startMonitoring() {
+            val callback: (C) -> Unit = { current ->
+                reconcile(
+                    sources = sources,
+                    current = current,
+                    map = map,
+                    doOnChange = { updateAndNotify(computeFresh()) },
+                    postCleanup = { updateAndNotify(computeFresh()) },
+                )
+            }
+
+            this@combineLatestCollection.onChange(this, callback)
+            callback(ArrayList(this@combineLatestCollection.current) as C)
+        }
+
+        override fun stopMonitoring() {
+            this@combineLatestCollection.stopWatching(this)
+            sources.values.forEach { it.stopWatching(this@combineLatestCollection) }
+            sources.clear()
+        }
+    }
+
+    private fun <T, C : Collection<T>, O> Observable<C>.flatMapCollection(
+        map: (T) -> Observable<O>,
+    ): Observable<Option<O>> = object : DerivedObservable<Option<O>>() {
+        private val sources = mutableMapOf<T, Observable<O>>()
+
+        override fun computeFresh(): Option<O> = this@flatMapCollection.current.firstOrNull()
+            ?.let { key -> sources[key]?.current ?: map(key).current }
+            ?.some()
+            ?: none()
+
+        @Suppress("UNCHECKED_CAST")
+        override fun startMonitoring() {
+            val callback: (C) -> Unit = { current ->
+                reconcile(
+                    sources = sources,
+                    current = current,
+                    map = map,
+                    doOnChange = { updateAndNotify(it.some()) },
+                    postCleanup = {
+                        if (this@flatMapCollection.current.isEmpty()) {
+                            updateAndNotify(none())
+                        }
+                    },
+                )
+            }
+
+            this@flatMapCollection.onChange(this, callback)
+            callback(ArrayList(this@flatMapCollection.current) as C)
+        }
+
+        override fun stopMonitoring() {
+            this@flatMapCollection.stopWatching(this)
+            sources.values.forEach { it.stopWatching(this@flatMapCollection) }
+            sources.clear()
+        }
+    }
+
+    private fun <T, O> Observable<out Collection<T>>.reconcile(
+        sources: MutableMap<T, Observable<O>>,
+        current: Collection<T>,
+        map: (T) -> Observable<O>,
+        doOnChange: (O) -> Unit,
+        postCleanup: () -> Unit,
+    ) {
+        val currentSet = current.toSet()
+        (sources.keys - currentSet).forEach { sources.remove(it)?.stopWatching(this) }
+        (currentSet - sources.keys).forEach { key ->
+            with(map(key)) {
+                sources[key] = this
+                onChange(this@reconcile, doOnChange)
+            }
+        }
+        postCleanup()
     }
 
     /**

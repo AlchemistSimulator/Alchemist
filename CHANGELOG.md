@@ -1,3 +1,22 @@
+## [42.3.30](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.29...42.3.30) (2026-01-10)
+
+### Dependency updates
+
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.24 ([#5055](https://github.com/AlchemistSimulator/Alchemist/issues/5055)) ([480d5f0](https://github.com/AlchemistSimulator/Alchemist/commit/480d5f05f98c318a852d5aed9e6397263c28c4dd))
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.23.0 ([#5056](https://github.com/AlchemistSimulator/Alchemist/issues/5056)) ([d0c8ad8](https://github.com/AlchemistSimulator/Alchemist/commit/d0c8ad8b05b7453738072d39edb1e28dac1be13c))
+* **deps:** update junit-framework monorepo to v6.0.2 (patch) ([#5053](https://github.com/AlchemistSimulator/Alchemist/issues/5053)) ([4ded044](https://github.com/AlchemistSimulator/Alchemist/commit/4ded0446e29554d75b2797fd594e37513affec46))
+* **deps:** update plugin shadowjar to v9.3.1 ([#5052](https://github.com/AlchemistSimulator/Alchemist/issues/5052)) ([eb7cc00](https://github.com/AlchemistSimulator/Alchemist/commit/eb7cc00c9bfca38325de6ed7a4c0cf99e155d600))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.154.4 ([#5057](https://github.com/AlchemistSimulator/Alchemist/issues/5057)) ([ad54837](https://github.com/AlchemistSimulator/Alchemist/commit/ad548376f02ec9de9ae7efd88674f7cc95f27017))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([c726b27](https://github.com/AlchemistSimulator/Alchemist/commit/c726b279406e53661d444db0ee939f7718a4f757))
+* **build:** update the javadoc.io cache ([4133c54](https://github.com/AlchemistSimulator/Alchemist/commit/4133c5404d11877b117e3b33c545b6ea43711b7a))
+* **build:** update the javadoc.io cache ([b22c194](https://github.com/AlchemistSimulator/Alchemist/commit/b22c194f5c6eea78f6d4ed5400cf0a1ead8ee2a2))
+
 ## [42.3.29](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.28...42.3.29) (2026-01-06)
 
 ### Documentation

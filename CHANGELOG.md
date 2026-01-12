@@ -1,3 +1,13 @@
+## [42.3.31](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.30...42.3.31) (2026-01-12)
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.154.5 ([#5059](https://github.com/AlchemistSimulator/Alchemist/issues/5059)) ([d4509fc](https://github.com/AlchemistSimulator/Alchemist/commit/d4509fc1dcf2feb49f660fd403b42fe3a325e4e3))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.18 ([#5058](https://github.com/AlchemistSimulator/Alchemist/issues/5058)) ([c5e0f79](https://github.com/AlchemistSimulator/Alchemist/commit/c5e0f79ec1d6bf878010cfffa2ca2b81dc2cbfb6))
+
 ## [42.3.30](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.29...42.3.30) (2026-01-10)
 
 ### Dependency updates

@@ -247,17 +247,33 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
      * execution time - in case such computation requires an inspection of the
      * environment.
      * <br/>
-     * <b>NOTE</b>: if you intend to override this method, please make sure the observable
-     * dependencies (i.e. observable conditions) are properly initialized with
+     * <b>NOTE</b>: this method ensures that the observable dependencies
+     * (i.e. observable conditions) are properly initialized with
      * {@link #initializeObservableConditions()}.
+     * Subclasses should override {@link #onInitializationComplete(Time, Environment)}
+     * to add custom initialization logic.
      *
      * @param atTime      the time at which the initialization of this reaction was
      *                    accomplished
      * @param environment the environment
      */
     @Override
-    public void initializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) {
+    public final void initializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) {
         initializeObservableConditions();
+        onInitializationComplete(atTime, environment);
+    }
+
+    /**
+     * This method is called by {@link #initializationComplete(Time, Environment)}
+     * after the observable dependencies have been initialized.
+     * Subclasses can override this to perform custom initialization (e.g. initial update).
+     *
+     * @param atTime      the time at which the initialization of this reaction was
+     *                    accomplished
+     * @param environment the environment
+     */
+    protected void onInitializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) {
+        // Empty by default
     }
 
     /**

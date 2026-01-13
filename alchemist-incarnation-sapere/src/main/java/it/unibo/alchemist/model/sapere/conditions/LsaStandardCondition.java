@@ -49,15 +49,11 @@ public class LsaStandardCondition extends AbstractLsaCondition {
     public LsaStandardCondition(final ILsaMolecule mol, final ILsaNode n) {
         super(n, Sets.newHashSet(new ILsaMolecule[] {mol}));
 
-        // TODO: understand how to observability
-        final var obs = n.observeConcentration(mol);
-        addObservableDependency(obs);
+        // we trigger the update on any change in the LSA space. Is this correct?
+        addObservableDependency(n.observeLsaSpace());
         setValidity(valid);
         setPropensity(MutableObservable.Companion.observe(-1d));
 
-        obs.onChange(this, it ->
-            null /* TODO: Recompute condition on sources change */
-        );
         molecule = mol;
     }
 

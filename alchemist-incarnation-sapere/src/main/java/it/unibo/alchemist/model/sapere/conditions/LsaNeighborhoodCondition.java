@@ -11,8 +11,10 @@ package it.unibo.alchemist.model.sapere.conditions;
 
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.observation.ObservableExtensions;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
@@ -43,12 +45,28 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
      * @param environment the environment
      */
     public LsaNeighborhoodCondition(
-            final ILsaNode node,
-            final ILsaMolecule molecule,
-            final Environment<List<ILsaMolecule>, ?> environment
+        final ILsaNode node,
+        final ILsaMolecule molecule,
+        final Environment<List<ILsaMolecule>, ?> environment
     ) {
         super(molecule, node);
         this.environment = environment;
+
+        // We depend on every neighbor's LSA space, hence an update is triggered
+        // every time a change in node's neighborhood is emitted, or one of the
+        // members' LSA space has changed.
+        addObservableDependency(ObservableExtensions.INSTANCE.switchMap(
+            environment.observeNeighborhood(node).map(Neighborhood::getNeighbors),
+            neighbors ->
+                ObservableExtensions.INSTANCE.combineLatest(
+                    neighbors.stream()
+                        .filter(it -> it instanceof ILsaNode)
+                        .map(neighbor ->
+                            ((ILsaNode) neighbor).observeLsaSpace()
+                        ).toList(),
+                    space -> space
+                )
+        ));
     }
 
     @Override
@@ -58,9 +76,9 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
 
     @Override
     public boolean filter(
-            final List<Map<HashString, ITreeNode<?>>> matchesList,
-            final List<ILsaNode> validNodes,
-            final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
+        final List<Map<HashString, ITreeNode<?>>> matchesList,
+        final List<ILsaNode> validNodes,
+        final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
     ) {
         if (validNodes.isEmpty()) {
             return false;
@@ -126,7 +144,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                         final List<ILsaMolecule> alreadyRemoved =
                             alreadyRemovedMap.computeIfAbsent(n, k -> new ArrayList<>());
                         final List<ILsaMolecule> otherMatches =
-                                calculateMatches(partialInstance, dups, n.getLsaSpace(), alreadyRemoved);
+                            calculateMatches(partialInstance, dups, n.getLsaSpace(), alreadyRemoved);
                         if (otherMatches.isEmpty()) {
                             /*
                              * This match should be removed, but there might be
@@ -138,13 +156,13 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                             matchesList.remove(i);
                         } else {
                             incorporateNewMatches(
-                                    n,
-                                    otherMatches,
-                                    matches,
-                                    getMolecule(),
-                                    matchesList,
-                                    alreadyRemovedMap,
-                                    retrieved
+                                n,
+                                otherMatches,
+                                matches,
+                                getMolecule(),
+                                matchesList,
+                                alreadyRemovedMap,
+                                retrieved
                             );
                             matchesfound = true;
                             newValidNodes.add(n);
@@ -162,7 +180,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                     final List<ILsaMolecule> alreadyRemoved =
                         alreadyRemovedMap.computeIfAbsent(n, k -> new ArrayList<>());
                     final List<ILsaMolecule> otherMatches =
-                            calculateMatches(partialInstance, dups, n.getLsaSpace(), alreadyRemoved);
+                        calculateMatches(partialInstance, dups, n.getLsaSpace(), alreadyRemoved);
                     if (!otherMatches.isEmpty()) {
                         matchesPerNode.put(n, otherMatches);
                         newValidNodes.add(n);

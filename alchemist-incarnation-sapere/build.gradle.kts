@@ -19,7 +19,6 @@ dependencies {
     implementation(alchemist("maps"))
     implementation(alchemist("physics"))
     implementation(alchemist("sapere-mathexp"))
-    implementation(libs.arrow.core)
     implementation(libs.boilerplate)
     implementation(libs.trove4j)
 }

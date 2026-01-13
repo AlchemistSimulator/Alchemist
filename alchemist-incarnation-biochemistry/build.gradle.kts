@@ -28,7 +28,6 @@ dependencies {
     api(alchemist("euclidean-geometry"))
     api(alchemist("physics"))
     implementation(libs.apache.commons.lang3)
-    implementation(libs.arrow.core)
     implementation(libs.boilerplate)
     implementation(libs.jirf)
     implementation(libs.trove4j)

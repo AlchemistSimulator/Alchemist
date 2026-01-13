@@ -17,7 +17,6 @@ dependencies {
     api(alchemist("api"))
     api(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))
-    implementation(libs.arrow.core)
     implementation(libs.caffeine)
     implementation(libs.jgrapht.core)
     implementation(libs.rtree)

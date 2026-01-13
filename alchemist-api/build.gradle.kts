@@ -16,7 +16,7 @@ dependencies {
     api(libs.jool)
     api(libs.listset)
     implementation(libs.kotlin.reflect)
-    implementation(libs.arrow.core)
+    api(libs.arrow.core)
 
     testImplementation(libs.kotlin.test)
 }

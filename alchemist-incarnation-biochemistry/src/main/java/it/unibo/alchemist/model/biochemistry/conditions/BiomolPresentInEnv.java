@@ -23,7 +23,6 @@ import org.apache.commons.math3.util.FastMath;
 
 import javax.annotation.Nullable;
 import java.io.Serial;
-import java.util.stream.Collectors;
 
 /**
  * @param <P> Position type
@@ -70,8 +69,10 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
     }
 
     private void setUpObservability() {
-        setValidity(observeTotalQuantity().map(totalQty -> totalQty >= getQuantity()));
-        setPropensity(observeTotalQuantity().map(totalQty -> {
+        final Observable<Double> totalQuantity = observeTotalQuantity();
+        addObservableDependency(totalQuantity);
+        setValidity(totalQuantity.map(totalQty -> totalQty >= getQuantity()));
+        setPropensity(totalQuantity.map(totalQty -> {
             if (totalQty < getQuantity()) {
                 return 0d;
             }
@@ -83,27 +84,22 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
     }
 
     private Observable<Double> observeTotalQuantity() {
-        return environment.observeNeighborhood(getNode()).map(neighborhood ->
-            neighborhood.getNeighbors().stream()
-                .parallel()
-                .filter(n -> n instanceof EnvironmentNode)
-                .collect(Collectors.toList())
-            )
-            .map(nodesSurrounding -> {
-                double quantityInEnvNodes = 0;
-                if (!nodesSurrounding.isEmpty()) {
-                    quantityInEnvNodes = nodesSurrounding.stream()
-                        .parallel()
-                        .mapToDouble(n -> n.getConcentration(getBiomolecule()))
-                        .sum();
-                }
+        return environment.observeNeighborhood(getNode()).mergeWith(
+            environment.observePosition(getNode()),
+            (neighborhood, position) -> {
+                final double quantityInEnvNodes = neighborhood.getNeighbors().stream()
+                    .parallel()
+                    .filter(EnvironmentNode.class::isInstance)
+                    .mapToDouble(n -> n.getConcentration(getBiomolecule()))
+                    .sum();
                 double quantityInLayers = 0;
                 final @Nullable Layer<Double, P> layer = environment.getLayer(getBiomolecule());
                 if (layer != null) {
-                    quantityInLayers = layer.getValue(environment.getPosition(getNode()));
+                    quantityInLayers = layer.getValue(position);
                 }
                 return quantityInEnvNodes + quantityInLayers;
-            });
+            }
+        );
     }
 
     private Biomolecule getBiomolecule() {

@@ -22,12 +22,12 @@ jobs:
         id: ci-preparation
         run: echo "build-ref=${{ github.workflow }}-${{ github.event.number || github.ref }}" >> $GITHUB_OUTPUT
       - name: Checkout
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Compute the Java version
         id: java-version
         run: ruby -e 'puts("java-version=#{/^minJavaVersion\s*=\s*(\d+)$/.match(File.read("gradle.properties"))[1]}")' >> $GITHUB_OUTPUT
       - name: Install Node
-        uses: actions/setup-node@v6.0.0
+        uses: actions/setup-node@v6.1.0
         with:
           node-version-file: package.json
       - name: Compute the next release version
@@ -57,8 +57,8 @@ jobs:
     timeout-minutes: 180
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.0
-      - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
+        uses: actions/checkout@v6.0.1
+      - uses: DanySK/build-check-deploy-gradle-action@810719541546fff1db1edd1fb858e12654dc1d95 # 4.0.17
         with:
           pre-build-command: ./gradlew kotlinUpgradeYarnLock
           build-command: true
@@ -76,8 +76,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@733b8984412e3cc1ea66fcd20281710dc2118187 # 0.2.26
-      - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
+        uses: danysk/action-checkout@7f6ee3cd5bd670cdb3e162894776736254afff1e # 0.2.27
+      - uses: DanySK/build-check-deploy-gradle-action@810719541546fff1db1edd1fb858e12654dc1d95 # 4.0.17
         with:
           retries-on-failure: 5
           wait-between-retries: 120
@@ -91,7 +91,7 @@ jobs:
       - name: Tar files
         run: tar -cvf website.tar build/website
       - name: Upload website
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: website-${{ github.sha }}
           path: website.tar
@@ -131,8 +131,8 @@ jobs:
     timeout-minutes: 120
     steps:
       - name: Checkout with full history
-        uses: danysk/action-checkout@733b8984412e3cc1ea66fcd20281710dc2118187 # 0.2.26
-      - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
+        uses: danysk/action-checkout@7f6ee3cd5bd670cdb3e162894776736254afff1e # 0.2.27
+      - uses: DanySK/build-check-deploy-gradle-action@810719541546fff1db1edd1fb858e12654dc1d95 # 4.0.17
         with:
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
@@ -151,20 +151,20 @@ jobs:
             fi
       - name: Upload fatjars built on Linux
         if: ${{ runner.os == 'Linux' }}
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: fat-jars-${{ github.sha }}
           path: build/shadow/*
           if-no-files-found: error
       - name: Upload the PKGBUILD
         if: ${{ runner.os == 'Linux' }}
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: pkgbuild-${{ github.sha }}
           path: build/pkgbuild/PKGBUILD
           if-no-files-found: error
       - name: Upload platform-specific packages
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
           path: build/package/*
@@ -179,7 +179,7 @@ jobs:
       always() && needs.assemble-and-upload.result == 'success'
     steps:
       - name: Download packages
-        uses: actions/download-artifact@v6.0.0
+        uses: actions/download-artifact@v7.0.0
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
@@ -214,7 +214,7 @@ jobs:
       always() && needs.assemble-and-upload.result == 'success'
     steps:
       - name: Download packages
-        uses: actions/download-artifact@v6.0.0
+        uses: actions/download-artifact@v7.0.0
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Work around xdg bug https://bugs.archlinux.org/task/33316
@@ -242,7 +242,7 @@ jobs:
       image: fedora:44
     steps:
       - name: Download packages
-        uses: actions/download-artifact@v6.0.0
+        uses: actions/download-artifact@v7.0.0
         with:
           name: installer-package-${{ github.sha }}-${{ runner.os }}
       - name: Install packages
@@ -275,7 +275,7 @@ jobs:
           # Work around https://github.com/actions/checkout/issues/1169
           # sudo git config --system --add safe.directory /__w/Alchemist/Alchemist
       - name: Download the PKGBUILD
-        uses: actions/download-artifact@v6.0.0
+        uses: actions/download-artifact@v7.0.0
         with:
           pattern: pkgbuild-${{ github.sha }}
           merge-multiple: true
@@ -284,7 +284,7 @@ jobs:
           namcap PKGBUILD 2>&1
           namcap PKGBUILD 2>&1 | awk 'END { exit (NR > 0 ? NR : 0) }'
       - name: Download the RPM
-        uses: actions/download-artifact@v6.0.0
+        uses: actions/download-artifact@v7.0.0
         with:
           pattern: installer-package-${{ github.sha }}-${{ runner.os }}
           merge-multiple: true
@@ -352,7 +352,7 @@ jobs:
       )
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.0
+        uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 0
           fetch-tags: 'true'
@@ -360,7 +360,7 @@ jobs:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout the docs
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
-        uses: actions/checkout@v6.0.0
+        uses: DanySK/checkout-classic@f55ca46048a09d13b47f0e80db6b546977327791 # 1.0.0
         with:
           path: website
           fetch-depth: 0
@@ -369,32 +369,32 @@ jobs:
           repository: AlchemistSimulator/alchemistsimulator.github.io
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Download website artifact
-        uses: actions/download-artifact@v6.0.0
+        uses: actions/download-artifact@v7.0.0
         with:
           name: website-${{ github.sha }}
       - name: Download packages
-        uses: actions/download-artifact@v6.0.0
+        uses: actions/download-artifact@v7.0.0
         with:
           pattern: installer-package-${{ github.sha }}*
           path: build/package/
           merge-multiple: true
       - name: Download fatJars
-        uses: actions/download-artifact@v6.0.0
+        uses: actions/download-artifact@v7.0.0
         with:
           name: fat-jars-${{ github.sha }}
           path: build/shadow/
           merge-multiple: true
       - name: Download the PKGBUILD
-        uses: actions/download-artifact@v6.0.0
+        uses: actions/download-artifact@v7.0.0
         with:
           pattern: pkgbuild-${{ github.sha }}
           path: pkgbuild/
           merge-multiple: true
       - name: Install Node
-        uses: actions/setup-node@v6.0.0
+        uses: actions/setup-node@v6.1.0
         with:
           node-version-file: package.json
-      - uses: DanySK/build-check-deploy-gradle-action@3a800c3b221073eeae25f5fb98687e3a40aa1712 # 4.0.12
+      - uses: DanySK/build-check-deploy-gradle-action@810719541546fff1db1edd1fb858e12654dc1d95 # 4.0.17
         env:
           MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}
         with:

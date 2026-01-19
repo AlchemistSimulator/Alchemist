@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
+import it.unibo.alchemist.model.observation.ObservableMutableMap
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.properties.AbstractNodeProperty
 
@@ -27,7 +28,8 @@ constructor(
     override val node: Node<Double>,
     override val maximumDiameter: Double,
     override val rigidity: Double,
-    override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
+    override val junctions: ObservableMutableMap<Junction, ObservableMutableMap<Node<Double>, Int>> =
+        ObservableMutableMap(),
 ) : AbstractNodeProperty<Double>(node),
     CircularDeformableCellProperty,
     CircularCellProperty by CircularCell(

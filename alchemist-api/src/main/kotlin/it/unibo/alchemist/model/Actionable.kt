@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model
 
+import it.unibo.alchemist.model.observation.Observable
 import java.io.Serializable
 import org.danilopianini.util.ListSet
 
@@ -23,6 +24,14 @@ sealed interface Actionable<T> :
      * are satisfied).
      */
     fun canExecute(): Boolean
+
+    /**
+     * Observes whether the reaction can be executed. This observable emits updates
+     * to indicate if the conditions required for execution are satisfied.
+     *
+     * @return An [Observable] emitting true if the reaction van be executed, false otherwise.
+     */
+    fun observeCanExecute(): Observable<Boolean>
 
     /**
      * Executes the reactions.
@@ -87,6 +96,12 @@ sealed interface Actionable<T> :
      * @return the [TimeDistribution] for this [Reaction]
      */
     val timeDistribution: TimeDistribution<T>
+
+    /**
+     * Emits when this reaction requests the [Scheduler][it.unibo.alchemist.core.Scheduler]
+     * to reschedule this reaction.
+     */
+    val rescheduleRequest: Observable<Unit>
 
     /**
      * Updates the scheduling of this reaction.

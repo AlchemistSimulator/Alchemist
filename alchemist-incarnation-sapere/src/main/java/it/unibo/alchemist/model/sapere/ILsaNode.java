@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.sapere;
 
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.observation.ObservableList;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -43,6 +44,11 @@ public interface ILsaNode extends Node<List<ILsaMolecule>> {
      * @return lsaMolecules in the node. This backs the internal LsaSpace: USE READ-ONLY.
      */
     List<ILsaMolecule> getLsaSpace();
+
+    /**
+     * @return an {@link ObservableList} view of LSA Molecules in the node.
+     */
+    ObservableList<ILsaMolecule> observeLsaSpace();
 
     @Override
     List<ILsaMolecule> getConcentration(@Nonnull Molecule mol);

@@ -9,9 +9,11 @@
 
 package it.unibo.alchemist.model.conditions
 
+import arrow.core.getOrElse
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
 
 /**
  * The condition is valid if all the other reactions having at least one condition can not execute.
@@ -31,16 +33,19 @@ class NoOtherReactionCanExecute<T>(node: Node<T>, private val myReaction: Reacti
             "Violation of the $className contract. Only a single $className per node can get built. " +
                 "Double creation at node $node, reaction $myReaction"
         }
+
+        setValidity(
+            node.reactions
+                .filterNot { it == myReaction }
+                .filter { it.conditions.isNotEmpty() }
+                .map { it.observeCanExecute() }
+                .combineLatest { reactionsCanExecute -> reactionsCanExecute.none { it } }
+                .map { it.getOrElse { true } },
+        )
     }
 
     override fun cloneCondition(newNode: Node<T>, newReaction: Reaction<T>) =
         NoOtherReactionCanExecute(newNode, myReaction)
 
     override fun getContext() = Context.LOCAL
-
-    override fun isValid() = node.reactions
-        .asSequence()
-        .filterNot { it == myReaction }
-        .filter { it.conditions.isNotEmpty() }
-        .none { it.canExecute() }
 }

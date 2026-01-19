@@ -14,9 +14,9 @@ kotest = "6.0.7"
 kotlin = "2.2.21"
 kotlinx-coroutines = "1.10.2"
 ktor = "3.3.3"
-mockito = "5.20.0"
-protelis = "18.5.0"
-react = "2025.12.0-19.2.0"
+mockito = "5.21.0"
+protelis = "18.5.2"
+react = "2025.12.6-19.2.3"
 scafi = "1.6.0"
 scala = "2.13.18"
 scalacache = "0.28.0"
@@ -40,7 +40,7 @@ conrec = "org.danilopianini:conrec:0.1.1"
 dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 dyn4j = "org.dyn4j:dyn4j:5.0.2"
 dsiutils = "it.unimi.dsi:dsiutils:2.7.4"
-embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.21.0"
+embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.22.0"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphql-client = { module = "com.expediagroup:graphql-kotlin-client", version.ref = "graphql" }
 graphql-hooks-provider = { module = "com.expediagroup:graphql-kotlin-hooks-provider", version.ref = "graphql" }
@@ -53,8 +53,8 @@ gson = "com.google.code.gson:gson:2.13.2"
 gson-extras = "org.danilopianini:gson-extras:3.3.0"
 guava = "com.google.guava:guava:33.5.0-jre"
 javalib-java7 = "org.danilopianini:javalib-java7:0.6.1"
-java-quality-assurance-plugin = "org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin:1.159.0"
-jgit = "org.eclipse.jgit:org.eclipse.jgit:7.4.0.202509020913-r"
+java-quality-assurance-plugin = "org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin:1.161.0"
+jgit = "org.eclipse.jgit:org.eclipse.jgit:7.5.0.202512021534-r"
 jgrapht-core = "org.jgrapht:jgrapht-core:1.5.2"
 jirf = "org.danilopianini:jirf:0.4.37"
 jool = "org.jooq:jool:0.9.15"
@@ -88,7 +88,7 @@ kotlinx-atomicfu-runtime = { module = "org.jetbrains.kotlin:kotlinx-atomicfu-run
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ksp-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version = "2.3.3" }
+ksp-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version = "2.3.4" }
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-serialization", version.ref = "ktor" }
@@ -103,12 +103,12 @@ ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor"
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", version.ref = "ktor" }
 listset = "org.danilopianini:listset:0.3.9"
-logback = "ch.qos.logback:logback-classic:1.5.21"
+logback = "ch.qos.logback:logback-classic:1.5.22"
 mapsforge = "org.mapsforge:mapsforge-map-awt:0.25.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.4.2"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-mockk = "io.mockk:mockk:1.14.6"
-mongodb = "org.mongodb:mongodb-driver-sync:5.6.1"
+mockk = "io.mockk:mockk:1.14.7"
+mongodb = "org.mongodb:mongodb-driver-sync:5.6.2"
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.2.50"
 protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }
 protelis-lang = { module = "org.protelis:protelis-lang", version.ref = "protelis" }
@@ -166,15 +166,15 @@ testing-runtimeOnly = [ "junit-engine" ]
 [plugins]
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
-gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:7.0.7"
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:7.0.8"
 graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
-hugo = "io.github.fstaudt.hugo:0.11.0"
+hugo = "io.github.fstaudt.hugo:0.12.0"
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.3.2"
-publishOnCentral = "org.danilopianini.publish-on-central:9.1.8"
+publishOnCentral = "org.danilopianini.publish-on-central:9.1.9"
 scalafmt = "cz.augi.gradle.scalafmt:1.21.5"
-shadowJar = "com.gradleup.shadow:9.2.2"
+shadowJar = "com.gradleup.shadow:9.3.0"
 taskTree = "com.dorongold.task-tree:4.0.1"
 jpackage = "org.panteleyev.jpackageplugin:1.7.6"

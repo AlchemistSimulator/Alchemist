@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.model.protelis
 
+import arrow.core.Option
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
@@ -28,6 +29,8 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.GenericNode
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableMap
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.protelis.actions.SendToNeighbor
 import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete
@@ -363,9 +366,13 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override val contents: MutableMap<Molecule, Any> get() = notImplemented()
 
+        override val observableContents: ObservableMap<Molecule, Any> get() = notImplemented()
+
         override val id: Int get() = notImplemented()
 
         override val moleculeCount: Int get() = notImplemented()
+
+        override val observeMoleculeCount: Observable<Int> get() = notImplemented()
 
         override val properties: List<NodeProperty<Any>> = emptyList()
 
@@ -381,7 +388,11 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override fun contains(molecule: Molecule): Boolean = notImplemented()
 
+        override fun observeContains(molecule: Molecule): Observable<Boolean> = notImplemented()
+
         override fun getConcentration(molecule: Molecule): Any = notImplemented()
+
+        override fun observeConcentration(molecule: Molecule): Observable<Option<Any>> = notImplemented()
 
         override fun removeConcentration(moleculeToRemove: Molecule) = notImplemented<Unit>()
 

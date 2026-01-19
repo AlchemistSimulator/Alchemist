@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.biochemistry.CellProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
+import it.unibo.alchemist.model.observation.ObservableMutableMap
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.properties.AbstractNodeProperty
 import kotlin.math.nextDown
@@ -30,7 +31,8 @@ constructor(
      */
     val environment: Environment<Double, Euclidean2DPosition>,
     override val node: Node<Double>,
-    override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
+    override val junctions: ObservableMutableMap<Junction, ObservableMutableMap<Node<Double>, Int>> =
+        ObservableMutableMap(),
 ) : AbstractNodeProperty<Double>(node),
     CellProperty<Euclidean2DPosition> {
     override var polarizationVersor: Euclidean2DPosition = Euclidean2DPosition.zero

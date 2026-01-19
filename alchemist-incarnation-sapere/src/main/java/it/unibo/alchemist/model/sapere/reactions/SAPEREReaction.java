@@ -184,8 +184,14 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          */
         for (final Entry<ILsaNode, List<ILsaMolecule>> entry : toRemove.entrySet()) {
             final ILsaNode n = entry.getKey();
+            final List<ILsaMolecule> currentSpace = n.getLsaSpace();
             for (final ILsaMolecule m : entry.getValue()) {
-                n.removeConcentration(m);
+                for (final ILsaMolecule molecule : currentSpace) {
+                    if (m.matches(molecule)) {
+                        n.removeConcentration(m);
+                        break;
+                    }
+                }
             }
         }
         /*

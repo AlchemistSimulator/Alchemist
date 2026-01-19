@@ -28,7 +28,6 @@ dependencies {
     implementation(alchemist("engine"))
     implementation(alchemist("euclidean-geometry"))
     implementation(libs.apache.commons.lang3)
-    implementation(libs.arrow.core)
     implementation(libs.dsiutils)
     implementation(libs.graphstream.core)
     implementation(libs.graphstream.algo)

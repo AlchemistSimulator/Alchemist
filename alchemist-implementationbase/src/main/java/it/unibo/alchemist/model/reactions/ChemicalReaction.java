@@ -47,7 +47,7 @@ public class ChemicalReaction<T> extends AbstractReaction<T> {
     }
 
     @Override
-    public final void initializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) {
+    protected final void onInitializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) {
         update(atTime, true, environment);
     }
 

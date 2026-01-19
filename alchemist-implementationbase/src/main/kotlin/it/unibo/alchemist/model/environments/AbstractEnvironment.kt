@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.environments
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
+import gnu.trove.map.hash.TDoubleObjectHashMap
 import gnu.trove.map.hash.TIntObjectHashMap
 import gnu.trove.set.hash.TIntHashSet
 import it.unibo.alchemist.core.Simulation
@@ -26,6 +27,11 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableMutableMap
+import it.unibo.alchemist.model.observation.ObservableMutableSet
+import it.unibo.alchemist.model.observation.ObservableMutableSet.Companion.toObservableSet
+import it.unibo.alchemist.model.observation.ObservableSet
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serial
@@ -56,8 +62,15 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     private val _globalReactions = ArrayListSet<GlobalReaction<T>>()
     final override var layers: Map<Molecule, Layer<T, P>> = LinkedHashMap()
         private set
+
+    @Transient
+    private val observableNeighCache = ObservableMutableMap<Int, Neighborhood<T>>()
     private val neighCache = TIntObjectHashMap<Neighborhood<T>>()
+
+    @Transient
+    private val observableNodeToPos = ObservableMutableMap<Int, P>()
     private val nodeToPos = TIntObjectHashMap<P>()
+
     private val spatialIndex: SpatialIndex<Node<T>> = internalIndex
 
 //    override val layers: Map<Molecule, Layer<T, P>> get() = _layers
@@ -67,7 +80,19 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     override val nodes: ListSet<Node<T>> = ListSets.unmodifiableListSet(_nodes)
 
+    @Transient
+    override val observableNodes: ObservableMutableSet<Node<T>> = _nodes.toList().toObservableSet()
+
     final override val nodeCount: Int get() = nodes.size
+
+    @Transient
+    override val observeNodeCount: Observable<Int> = observableNodes.observableSize
+
+    private val regionObservers = ArrayList<RegionObserver>()
+
+    private val regionNodeCenteredIndex = TIntObjectHashMap<TDoubleObjectHashMap<RegionObserver>>()
+
+    private val regionPositionCenteredIndex = HashMap<P, TDoubleObjectHashMap<RegionObserver>>()
 
     final override var linkingRule: LinkingRule<T, P> = NoLinks()
 
@@ -125,6 +150,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             val actualPosition = computeActualInsertionPosition(node, position)
             setPosition(node, actualPosition)
             require(_nodes.add(node)) { "Node with id ${node.id} was already existing in this environment." }
+            observableNodes.add(node)
             spatialIndex.insert(node, *actualPosition.coordinates)
             updateNeighborhood(node, true)
             ifEngineAvailable { it.nodeAdded(node) }
@@ -178,6 +204,55 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         return validCache[center to range]
     }
 
+    private fun observeAllNodesInRange(
+        centerProvider: () -> P,
+        range: Double,
+        node: Node<T>? = null,
+    ): ObservableSet<Node<T>> {
+        val cached = if (node != null) {
+            regionNodeCenteredIndex[node.id]?.get(range)
+        } else {
+            regionPositionCenteredIndex[centerProvider()]?.get(range)
+        }
+
+        if (cached != null) {
+            return cached.visibleNodes
+        }
+
+        val actualCenter = centerProvider()
+        val initialNodes = getAllNodesInRange(centerProvider(), range).toObservableSet()
+
+        if (node != null) {
+            check(initialNodes.remove(node)) {
+                "Either the provided range ($range) is too small for queries to work without precision loss, " +
+                    "or the environment is in an inconsistent state. Node $node at ${centerProvider()} was the " +
+                    "query center, but within range $range, only nodes $initialNodes were found."
+            }
+        }
+
+        val region = RegionObserver(
+            centerId = node?.id,
+            centerProvider = centerProvider,
+            radius = range,
+            visibleNodes = initialNodes,
+        ).apply { regionObservers.add(this) }
+
+        if (node != null) {
+            var radiusMap = regionNodeCenteredIndex[node.id]
+            if (radiusMap == null) {
+                radiusMap = TDoubleObjectHashMap()
+                regionNodeCenteredIndex.put(node.id, radiusMap)
+            }
+            radiusMap.put(range, region)
+        } else {
+            regionPositionCenteredIndex
+                .computeIfAbsent(actualCenter) { TDoubleObjectHashMap() }
+                .put(range, region)
+        }
+
+        return initialNodes
+    }
+
     override fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double = getPosition(n1).distanceTo(getPosition(n2))
 
     override fun getLayer(molecule: Molecule): Layer<T, P>? = layers[molecule]
@@ -192,6 +267,18 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         }
         return result
     }
+
+    override fun observeNeighborhood(node: Node<T>): Observable<Neighborhood<T>> =
+        observableNeighCache[node.id].map { maybeNeighborhood ->
+            val neighborhood = maybeNeighborhood.getOrNull()
+            requireNotNull(neighborhood) {
+                check(node !in observableNodes) {
+                    "The environment state is inconsistent. $node is among the nodes, but has no position."
+                }
+                "$node is not part of the environment."
+            }
+            neighborhood
+        }
 
     override fun getNodeByID(id: Int): Node<T> = nodes.first { n: Node<T> -> n.id == id }
 
@@ -213,6 +300,12 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         return ImmutableListSet.copyOf(getAllNodesInRange(position, range))
     }
 
+    override fun observeNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>> =
+        observeAllNodesInRange({ getPosition(node) }, range, node)
+
+    override fun observeNodesWithinRange(position: P, range: Double): ObservableSet<Node<T>> =
+        observeAllNodesInRange({ position }, range)
+
     override fun getPosition(node: Node<T>): P = requireNotNull(nodeToPos[node.id]) {
         check(!nodes.contains(node)) {
             "Node $node is registered in the environment but has no position. " +
@@ -220,6 +313,19 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                 "https://github.com/AlchemistSimulator/Alchemist/issues/new/choose"
         }
         "Node $node: ${node.javaClass.simpleName} does not exist in the environment."
+    }
+
+    override fun observePosition(node: Node<T>): Observable<P> = observableNodeToPos[node.id].map { maybePosition ->
+        val position = maybePosition.getOrNull()
+        requireNotNull(position) {
+            check(!nodes.contains(node)) {
+                "Node $node is registered in the environment but has no position. " +
+                    "This could be a bug in Alchemist. Please open an issue at: " +
+                    "https://github.com/AlchemistSimulator/Alchemist/issues/new/choose"
+            }
+            "Node $node: ${node.javaClass.simpleName} does not exist in the environment."
+        }
+        position
     }
 
     /**
@@ -300,6 +406,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     private fun recursiveOperation(origin: Node<T>): Sequence<Operation<T>> {
         val newNeighborhood = linkingRule.computeNeighborhood(Objects.requireNonNull(origin), this)
         val oldNeighborhood: Neighborhood<T>? = neighCache.put(origin.id, newNeighborhood)
+        observableNeighCache.put(origin.id, newNeighborhood)
         return toQueue(origin, oldNeighborhood, newNeighborhood)
     }
 
@@ -314,16 +421,27 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         }
         val newNeighborhood = linkingRule.computeNeighborhood(destination, this)
         val oldNeighborhood = neighCache.put(destination.id, newNeighborhood)
+        observableNeighCache.put(destination.id, newNeighborhood)
         return toQueue(destination, oldNeighborhood, newNeighborhood)
     }
 
     override fun removeNode(node: Node<T>) {
         invalidateCache()
         _nodes.remove(requireNotNull(node) { "Node cannot be null." })
+        observableNodes.remove(node)
         val pos = requireNotNull(nodeToPos.remove(node.id)) { "Node position cannot be null." }
+        observableNodeToPos.remove(node.id)
         spatialIndex.remove(node, *pos.coordinates)
         val neigh = neighCache.remove(node.id)
-        neigh.forEach { neighCache.put(it.id, neighCache.remove(it.id).remove(node)) }
+        observableNeighCache.remove(node.id)
+        neigh.forEach {
+            with(neighCache.remove(it.id).remove(node)) {
+                neighCache.put(it.id, this)
+                observableNeighCache.remove(it.id)
+                observableNeighCache.put(it.id, this)
+            }
+        }
+        updateRegionObservers(node, null, null)
         ifEngineAvailable { it.nodeRemoved(node, neigh) }
         nodeRemoved(node, neigh)
     }
@@ -346,9 +464,38 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         require(pos == null || spatialIndex.move(n, pos.coordinates, p.coordinates)) {
             "Tried to move a node not previously present in the environment:\nNode: $n\nRequested position: $p"
         }
+        observableNodeToPos[n.id] = p
+        updateRegionObservers(n, p, pos)
     }
 
     override fun spliterator(): Spliterator<Node<T>> = nodes.spliterator()
+
+    private fun updateRegionObservers(node: Node<T>, newPosition: P?, oldPosition: P?) {
+        if (regionObservers.isNotEmpty()) {
+            regionObservers.forEach { region ->
+                when {
+                    newPosition == null -> { // removal
+                        if (node in region.visibleNodes) region.visibleNodes.remove(node)
+                        regionNodeCenteredIndex.remove(node.id)?.forEachValue {
+                            regionObservers.remove(it)
+                            true
+                        }
+                    }
+                    else -> { // new node added or moved
+                        val center = region.centerProvider()
+
+                        val wasInside = oldPosition?.distanceTo(center)?.let { it <= region.radius } ?: false
+                        val isInside = newPosition.distanceTo(center) <= region.radius
+
+                        when {
+                            wasInside && !isInside -> region.visibleNodes.remove(node)
+                            !wasInside && isInside -> region.visibleNodes.add(node)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     private fun toQueue(
         center: Node<T>,
@@ -373,6 +520,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         if (linkingRule.isLocallyConsistent()) {
             val newNeighborhood = linkingRule.computeNeighborhood(node, this)
             val oldNeighborhood: Neighborhood<T>? = neighCache.put(node.id, newNeighborhood)
+            observableNeighCache.put(node.id, newNeighborhood)
             oldNeighborhood?.let {
                 it
                     .getNeighbors()
@@ -382,7 +530,10 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                     .filter { neigh -> neigh.contains(node) }
                     .forEach { neighborhoodToChange ->
                         val formerNeighbor = neighborhoodToChange.getCenter()
-                        neighCache.put(formerNeighbor.id, neighborhoodToChange.remove(node))
+                        with(neighborhoodToChange.remove(node)) {
+                            neighCache.put(formerNeighbor.id, this)
+                            observableNeighCache.put(formerNeighbor.id, this)
+                        }
                         if (!isNewNode) {
                             ifEngineAvailable { it.neighborRemoved(node, formerNeighbor) }
                         }
@@ -391,7 +542,10 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             val newNeighbors = newNeighborhood.neighbors
             val oldNeighbors: Set<Node<T>>? = oldNeighborhood?.neighbors
             (newNeighbors - oldNeighbors.orEmpty()).forEach { newNeighbor ->
-                neighCache.put(newNeighbor.id, neighCache[newNeighbor.id].add(node))
+                with(neighCache[newNeighbor.id].add(node)) {
+                    neighCache.put(newNeighbor.id, this)
+                    observableNeighCache.put(newNeighbor.id, this)
+                }
                 if (!isNewNode) {
                     ifEngineAvailable { it.neighborAdded(node, newNeighbor) }
                 }
@@ -412,6 +566,13 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         out.defaultWriteObject()
         out.writeObject(incarnation.javaClass.getSimpleName())
     }
+
+    private inner class RegionObserver(
+        val centerId: Int? = null,
+        val centerProvider: () -> P,
+        val radius: Double,
+        val visibleNodes: ObservableMutableSet<Node<T>>,
+    )
 
     private data class Operation<T>(val origin: Node<T>, val destination: Node<T>, val isAdd: Boolean) {
         override fun toString(): String = origin.toString() + (if (isAdd) " discovered " else " lost ") + destination

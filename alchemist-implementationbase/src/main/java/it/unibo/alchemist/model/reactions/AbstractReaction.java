@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.reactions;
 
+import arrow.core.Option;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Actionable;
@@ -21,12 +22,19 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.model.observation.Disposable;
+import it.unibo.alchemist.model.observation.EventObservable;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableExtensions;
+import kotlin.Unit;
 import org.danilopianini.util.ArrayListSet;
 import org.danilopianini.util.Hashes;
 import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.io.Serial;
@@ -38,6 +46,9 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static arrow.core.OptionKt.getOrElse;
+import static arrow.core.OptionKt.none;
+
 /**
  * The type which describes the concentration of a molecule.
  * This class offers a partial implementation of Reaction. In particular, it
@@ -45,7 +56,7 @@ import java.util.stream.Stream;
  *
  * @param <T> concentration type
  */
-public abstract class AbstractReaction<T> implements Reaction<T> {
+public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
 
     /**
      * How bigger should be the StringBuffer with respect to the previous
@@ -58,6 +69,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     private final int hash;
     private List<? extends Action<T>> actions = new ArrayList<>(0);
     private List<? extends Condition<T>> conditions = new ArrayList<>(0);
+
     private Context incontext = Context.LOCAL;
     private Context outcontext = Context.LOCAL;
     private ListSet<Dependency> outbound = new LinkedListSet<>();
@@ -66,13 +78,16 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     private final TimeDistribution<T> timeDistribution;
     private final Node<T> node;
 
+    private final EventObservable rescheduleRequest = new EventObservable();
+    private Observable<Boolean> validity = MutableObservable.Companion.observe(true);
+    private final List<Observable<?>> subscriptions = new ArrayList<>();
+    private Option<Boolean> canExecute = none();
+
     /**
      * Builds a new reaction, starting at time t.
      *
-     * @param node
-     *            the node this reaction belongs to
-     * @param timeDistribution
-     *            the time distribution this reaction should follow
+     * @param node             the node this reaction belongs to
+     * @param timeDistribution the time distribution this reaction should follow
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public AbstractReaction(final Node<T> node, final TimeDistribution<T> timeDistribution) {
@@ -84,8 +99,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     /**
      * Allows subclasses to add influenced molecules.
      *
-     * @param m
-     *            the influenced molecule
+     * @param m the influenced molecule
      */
     protected final void addOutboundDependency(final Dependency m) {
         outbound.add(m);
@@ -94,8 +108,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     /**
      * Allows subclasses to add influencing molecules.
      *
-     * @param m
-     *            the molecule to add
+     * @param m the molecule to add
      */
     protected final void addInboundDependency(final Dependency m) {
         inbound.add(m);
@@ -108,14 +121,16 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      */
     @Override
     public boolean canExecute() {
-        if (conditions == null) {
-            return true;
+        final var current = canExecute.getOrNull();
+        if (current != null) {
+            return current;
         }
-        int i = 0;
-        while (i < conditions.size() && conditions.get(i).isValid()) {
-            i++;
-        }
-        return i == conditions.size();
+        return conditions.stream().allMatch(Condition::isValid);
+    }
+
+    @Override
+    public final @NotNull Observable<Boolean> observeCanExecute() {
+        return validity;
     }
 
     @Override
@@ -188,6 +203,11 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         return outcontext;
     }
 
+    @Override
+    public final @NotNull Observable<Unit> getRescheduleRequest() {
+        return rescheduleRequest;
+    }
+
     /**
      * @return a {@link String} representation of the rate
      */
@@ -221,19 +241,48 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         return hash;
     }
 
+    /**
+     * This method is called when the environment has completed its
+     * initialization. Can be used by this reaction to compute its next
+     * execution time - in case such computation requires an inspection of the
+     * environment.
+     * <br/>
+     * <b>NOTE</b>: this method ensures that the observable dependencies
+     * (i.e. observable conditions) are properly initialized with
+     * {@link #initializeObservableConditions()}.
+     * Subclasses should override {@link #onInitializationComplete(Time, Environment)}
+     * to add custom initialization logic.
+     *
+     * @param atTime      the time at which the initialization of this reaction was
+     *                    accomplished
+     * @param environment the environment
+     */
     @Override
-    public void initializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) { }
+    public final void initializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) {
+        initializeObservableConditions();
+        onInitializationComplete(atTime, environment);
+    }
+
+    /**
+     * This method is called by {@link #initializationComplete(Time, Environment)}
+     * after the observable dependencies have been initialized.
+     * Subclasses can override this to perform custom initialization (e.g. initial update).
+     *
+     * @param atTime      the time at which the initialization of this reaction was
+     *                    accomplished
+     * @param environment the environment
+     */
+    protected void onInitializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) {
+        // Empty by default
+    }
 
     /**
      * This method provides the facility to clone reactions.
      * Given a constructor in form of a {@link Supplier}, it populates the actions and conditions with
      * cloned version of the ones registered in this reaction.
      *
-     * @param builder
-     *            the supplier
-     *
-     * @param <R>
-     *            The reaction type
+     * @param builder the supplier
+     * @param <R>     The reaction type
      * @return the populated cloned reaction
      */
     protected <R extends Reaction<T>> R makeClone(final Supplier<R> builder) {
@@ -299,10 +348,55 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     /**
+     * Call this method for handling the reactive nature of this reaction's validity, and this
+     * reaction reschedules requests, binding this reaction to its conditions' validity and
+     * on condition's inbound dependencies respectively.
+     * <br/>
+     * Note that this method must be called after the initialization (i.e. to be called in
+     * {@link #initializationComplete(Time, Environment)}) because observers' callbacks could
+     * trigger some environment query that may fail in the set-up phase.
+     */
+    protected final void initializeObservableConditions() {
+        if (!subscriptions.isEmpty()) {
+            subscriptions.forEach(s -> s.stopWatching(this));
+            subscriptions.clear();
+        }
+
+        validity.dispose();
+
+        conditions.forEach(condition -> {
+            final var merged = ObservableExtensions.ObservableSetExtensions.mergeObservables(
+                condition.observeInboundDependencies()
+            );
+            merged.onChange(this, it -> {
+                rescheduleRequest.emit();
+                return null;
+            });
+            subscriptions.add(merged);
+        });
+
+        if (!conditions.isEmpty()) {
+            validity = ObservableExtensions.INSTANCE.combineLatest(
+                conditions.stream().map(Condition::observeValidity).toList(),
+                it -> it.stream().allMatch(b -> b)
+            ).map(it -> getOrElse(it, () -> true));
+
+            // need at least one observer to track validity updates
+            validity.onChange(this, it -> {
+                canExecute = Option.fromNullable(it);
+                return null;
+            });
+
+            subscriptions.add(validity);
+        }
+
+        rescheduleRequest.emit();
+    }
+
+    /**
      * Used by subclasses to set their input context.
      *
-     * @param c
-     *            the new input context
+     * @param c the new input context
      */
     protected final void setInputContext(final Context c) {
         incontext = c;
@@ -311,8 +405,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     /**
      * Used by subclasses to set their output context.
      *
-     * @param c
-     *            the new input context
+     * @param c the new input context
      */
     protected final void setOutputContext(final Context c) {
         outcontext = c;
@@ -320,7 +413,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     /**
      * @return the default implementation returns a String in the form
-     *     className@timeScheduled[Conditions]-rate-&gt;[Actions]
+     *         className@timeScheduled[Conditions]-rate-&gt;[Actions]
      */
     @Override
     public String toString() {
@@ -349,22 +442,34 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     /**
+     * Disposes all resources held by this reaction if removed and not used any more. If plan to extend
+     * this method, please make sure to call the base implementation to free up resources for this reaction's
+     * subscriptions (input dependencies changes and condition changes).
+     * Ideally, through this method you should clear up all the references that would become dangling if
+     * the reference to this reaction is lost during program execution resulting in a memory leak.
+     */
+    @Override
+    public void dispose() {
+        subscriptions.forEach(it -> it.stopWatching(this));
+        conditions.forEach(Disposable::dispose);
+        conditions.clear();
+        subscriptions.clear();
+    }
+
+    /**
      * This method gets called as soon as
      * {@link #update(Time, boolean, Environment)} is called. It is useful to
      * update the internal status of the reaction.
      *
-     * @param currentTime
-     *            the current simulation time
-     * @param hasBeenExecuted
-     *            true if this reaction has just been executed, false if the
-     *            update has been triggered due to a dependency
-     * @param environment
-     *            the current environment
+     * @param currentTime     the current simulation time
+     * @param hasBeenExecuted true if this reaction has just been executed, false if the
+     *                        update has been triggered due to a dependency
+     * @param environment     the current environment
      */
     protected abstract void updateInternalStatus(
-            Time currentTime,
-            boolean hasBeenExecuted,
-            Environment<T, ?> environment
+        Time currentTime,
+        boolean hasBeenExecuted,
+        Environment<T, ?> environment
     );
 
     @Nonnull

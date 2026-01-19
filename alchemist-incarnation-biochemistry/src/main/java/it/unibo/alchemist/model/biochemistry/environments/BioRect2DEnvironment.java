@@ -114,7 +114,7 @@ public class BioRect2DEnvironment extends AbstractLimitedContinuous2D<Double> {
             super.moveNode(node, direction);
             final Neighborhood<Double> neigh = getNeighborhood(node);
             final Map<Junction, Map<Node<Double>, Integer>> jun = node
-                    .asProperty(CellProperty.class).getJunctions();
+                    .asProperty(CellProperty.class).getJunctions().getCurrent();
             jun.forEach((key, value) -> value.forEach((key1, value1) -> {
                 if (!neigh.contains(key1)) {
                     // there is a junction that links a node which isn't in the neighborhood after the movement

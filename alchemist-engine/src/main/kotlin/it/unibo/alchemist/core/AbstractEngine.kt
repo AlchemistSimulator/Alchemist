@@ -309,6 +309,13 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
         }
     }
 
+    /**
+     * Initializes the simulation engine.
+     *
+     * This method is called during the setup phase of the simulation engine and is responsible
+     * for preparing all necessary internal states and resources required for the engine's execution,
+     * e.g. initial scheduling of global and nodes' reactions.
+     */
     protected abstract fun initialize()
 
     /**

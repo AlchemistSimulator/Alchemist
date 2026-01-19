@@ -241,22 +241,6 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
         return hash;
     }
 
-    /**
-     * This method is called when the environment has completed its
-     * initialization. Can be used by this reaction to compute its next
-     * execution time - in case such computation requires an inspection of the
-     * environment.
-     * <br/>
-     * <b>NOTE</b>: this method ensures that the observable dependencies
-     * (i.e. observable conditions) are properly initialized with
-     * {@link #initializeObservableConditions()}.
-     * Subclasses should override {@link #onInitializationComplete(Time, Environment)}
-     * to add custom initialization logic.
-     *
-     * @param atTime      the time at which the initialization of this reaction was
-     *                    accomplished
-     * @param environment the environment
-     */
     @Override
     public final void initializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) {
         initializeObservableConditions();
@@ -264,8 +248,11 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
     }
 
     /**
-     * This method is called by {@link #initializationComplete(Time, Environment)}
-     * after the observable dependencies have been initialized.
+     * This method is called when the environment has completed its
+     * initialization. Can be used by this reaction to compute its next
+     * execution time - in case such computation requires an inspection of the
+     * environment. At the time this method is called, all observable
+     * dependencies have been already initialized.
      * Subclasses can override this to perform custom initialization (e.g. initial update).
      *
      * @param atTime      the time at which the initialization of this reaction was

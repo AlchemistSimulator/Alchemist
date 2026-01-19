@@ -18,6 +18,8 @@ import org.apache.commons.math3.util.CombinatoricsUtils;
 
 import java.io.Serial;
 
+import static arrow.core.OptionKt.getOrElse;
+
 /**
  * This class implements a condition which checks if a molecule is present or
  * not.
@@ -48,6 +50,7 @@ public class GenericMoleculePresent<T extends Number> extends
         molecule = mol;
         qty = quantity;
         declareDependencyOn(mol);
+        setupObservables();
     }
 
     /**
@@ -59,13 +62,32 @@ public class GenericMoleculePresent<T extends Number> extends
     }
 
     /**
-     * @return true if the concentration of the molecule is higher or equal the
-     *         value.
+     * Sets up the observables that backs this condition validity and propensity contribution.
+     * The validity returns true if the concentration of the molecule is higher or equal the value.
+     * Propensity influence is computed through the binomial coefficient. See
+     * <a href="https://doi.org/10.1007/978-3-540-68894-5">
+     * Bernardo, Degano, Zavattaro - Formal Methods for Computational Systems Biology
+     * </a>.
+     *
      */
-    @Override
-    public boolean isValid() {
-        return getNode().getConcentration(molecule).doubleValue() >= qty
-                .doubleValue();
+    private void setupObservables() {
+        final var obs = getNode().observeConcentration(molecule);
+
+        addObservableDependency(obs);
+
+        setValidity(obs.map(it -> {
+            final double value = getOrElse(it, () -> 0.0).doubleValue();
+            return value >= qty.doubleValue();
+        }));
+
+        setPropensity(obs.map(it -> {
+            final int n = getOrElse(it, () -> 0).intValue();
+            final int k = qty.intValue();
+            if (k > n) {
+                return 0.0;
+            }
+            return CombinatoricsUtils.binomialCoefficientDouble(n, k);
+        }));
     }
 
     /**
@@ -82,24 +104,6 @@ public class GenericMoleculePresent<T extends Number> extends
     @Override
     public GenericMoleculePresent<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
         return new GenericMoleculePresent<>(newNode, molecule, qty);
-    }
-
-    /**
-     * Propensity influence is computed through the binomial coefficient. See
-     * <a href="https://doi.org/10.1007/978-3-540-68894-5">
-     * Bernardo, Degano, Zavattaro - Formal Methods for Computational Systems Biology
-     * </a>.
-     *
-     * @return the propensity influence
-     */
-    @Override
-    public double getPropensityContribution() {
-        final int n = getNode().getConcentration(molecule).intValue();
-        final int k = qty.intValue();
-        if (k > n) {
-            return 0;
-        }
-        return CombinatoricsUtils.binomialCoefficientDouble(n, k);
     }
 
     /**

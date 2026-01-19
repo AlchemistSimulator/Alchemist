@@ -27,6 +27,10 @@ import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.maps.MapEnvironment;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableMutableSet;
+import it.unibo.alchemist.model.observation.ObservableSet;
 import it.unibo.alchemist.model.reactions.AbstractReaction;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
@@ -538,6 +542,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         private static final long serialVersionUID = 1L;
         private static final ListSet<Dependency> DEPENDENCY = ImmutableListSet.of(Dependency.EVERYTHING);
         private final Molecule mol;
+        private final Observable<Boolean> validity = MutableObservable.Companion.observe(false);
+        private final Observable<Double> propensity = MutableObservable.Companion.observe(0.0);
 
         SGFakeConditionAction(final Molecule m) {
             super();
@@ -574,6 +580,11 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             return DEPENDENCY;
         }
 
+        @Override
+        public ObservableSet<? extends Observable<?>> observeInboundDependencies() {
+            return new ObservableMutableSet<>();
+        }
+
         @Nonnull
         @Override
         public ListSet<? extends Dependency> getOutboundDependencies() {
@@ -587,12 +598,28 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
 
         @Override
         public double getPropensityContribution() {
-            return 0;
+            return observePropensityContribution().getCurrent();
+        }
+
+        @Override
+        public Observable<Double> observePropensityContribution() {
+            return propensity;
         }
 
         @Override
         public boolean isValid() {
-            return false;
+            return observeValidity().getCurrent();
+        }
+
+        @Override
+        public Observable<Boolean> observeValidity() {
+            return validity;
+        }
+
+        @Override
+        public void dispose() {
+            observeValidity().dispose();
+            observePropensityContribution().dispose();
         }
 
         @Override

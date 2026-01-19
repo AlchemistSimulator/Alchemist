@@ -18,6 +18,9 @@ import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
+import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
 import it.unibo.alchemist.util.RealDistributions
@@ -154,8 +157,15 @@ class RunProtelisProgram<P : Position<P>> private constructor(
      * @return true if the Program has finished its last computation,
      * and is ready to send a new message (used for dependency management)
      */
-    var isComputationalCycleComplete = false
-        private set
+    val isComputationalCycleComplete: Boolean get() = observeComputationalCycleComplete.current
+
+    /**
+     * An observable that emits updates indicating whether the computational cycle of a Protelis program
+     * has been completed. The current value of this observable is caputered by [isComputationalCycleComplete].
+     */
+    val observeComputationalCycleComplete: Observable<Boolean> get() = _observeComputationalCycleComplete
+
+    private val _observeComputationalCycleComplete: MutableObservable<Boolean> = observe(false)
 
     private val name: Molecule =
         node.reactions
@@ -208,7 +218,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     override fun execute() {
         vm.runCycle()
         node.setConcentration(name, vm.currentValue)
-        isComputationalCycleComplete = true
+        _observeComputationalCycleComplete.update { true }
     }
 
     /*
@@ -226,7 +236,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
      * Resets the computation status (used for dependency management).
      */
     fun prepareForComputationalCycle() {
-        isComputationalCycleComplete = false
+        _observeComputationalCycleComplete.update { false }
     }
 
     /**

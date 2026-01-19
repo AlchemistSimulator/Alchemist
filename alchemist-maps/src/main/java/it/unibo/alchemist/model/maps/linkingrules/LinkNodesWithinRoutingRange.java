@@ -41,7 +41,8 @@ public final class LinkNodesWithinRoutingRange<T> extends AbstractLocallyConsist
     @Override
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, GeoPosition> environment) {
         if (environment instanceof final MapEnvironment<T, ?, ?> menv) {
-            final Stream<Node<T>> stream = menv.getNodesWithinRange(center, range).parallelStream();
+            final Stream<? extends Node<T>> stream =
+                menv.getNodesWithinRange(center, range).parallelStream();
             final List<Node<T>> filtered = stream
                     .filter(node -> menv.computeRoute(center, node).length() < range)
                     .collect(Collectors.toList());

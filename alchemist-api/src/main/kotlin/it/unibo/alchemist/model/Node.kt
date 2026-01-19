@@ -8,6 +8,9 @@
  */
 package it.unibo.alchemist.model
 
+import arrow.core.Option
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableMap
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
@@ -61,6 +64,14 @@ interface Node<T> :
     operator fun contains(molecule: Molecule): Boolean
 
     /**
+     * Observes whether a node contains a [Molecule].
+     *
+     * @param molecule * the molecule to check
+     * @return emit true if the molecule is present, false otherwise
+     */
+    fun observeContains(molecule: Molecule): Observable<Boolean>
+
+    /**
      * Calculates the concentration of a molecule.
      *
      * @param molecule
@@ -70,9 +81,24 @@ interface Node<T> :
     fun getConcentration(molecule: Molecule): T
 
     /**
+     * Observe the concentration calculated with the given molecule.
+     * The result of this computation is wrapped into an [Option] and
+     * [some][arrow.core.Some] if the value is present, otherwise
+     * [none][arrow.core.None].
+     *
+     * @param molecule the molecule whose concentration will be returned
+     */
+    fun observeConcentration(molecule: Molecule): Observable<Option<T>>
+
+    /**
      * @return the molecule corresponding to the i-th position
      */
     val contents: Map<Molecule, T>
+
+    /**
+     * @return an observable view of the molecule corresponding to the i-th position
+     */
+    val observableContents: ObservableMap<Molecule, T>
 
     /**
      * @return an univocal id for this node in the environment
@@ -83,6 +109,11 @@ interface Node<T> :
      * @return the count of different molecules in this node
      */
     val moleculeCount: Int
+
+    /**
+     * Observes the count of different molecules in this node.
+     */
+    val observeMoleculeCount: Observable<Int>
 
     /**
      * @return a list of the node's properties/capabilities

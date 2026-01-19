@@ -176,7 +176,7 @@ interface MutableObservable<T> : Observable<T> {
     }
 
     /**
-     * Factory methods container.
+     * Factories and extension methods container.
      */
     companion object {
 

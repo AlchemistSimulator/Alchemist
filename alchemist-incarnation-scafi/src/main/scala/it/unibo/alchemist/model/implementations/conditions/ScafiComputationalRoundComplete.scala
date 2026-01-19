@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.{Condition, Context, Node, Reaction}
 final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val program: RunScafiProgram[_, _])
     extends AbstractCondition(device.getNode) {
   declareDependencyOn(this.program.asMolecule)
+  addObservableDependency(program.observeComputationalCycleComplete)
 
   override def cloneCondition(node: Node[T], reaction: Reaction[T]): Condition[T] = {
     ScafiIncarnationUtils.runInScafiDeviceContext[T, Condition[T]](

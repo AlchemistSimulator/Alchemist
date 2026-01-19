@@ -15,6 +15,7 @@ import it.unibo.alchemist.boundary.exporters.GlobalExporter
 import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
 import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot
 import it.unibo.alchemist.core.Engine
+import it.unibo.alchemist.core.ReactiveEngine
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
@@ -149,7 +150,12 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                 SimulationModel
                     .visitBuilding<Simulation<T, P>>(context, engineDescriptor)
                     ?.getOrThrow()
-                    ?: Engine(environment)
+                    ?: if (System.getProperty("alchemist.engine", "default") == "reactive") {
+                        logger.warn("Using experimental reactive APIs")
+                        ReactiveEngine(environment)
+                    } else {
+                        Engine(environment)
+                    }
             // Attach monitors
             monitors.forEach(engine::addOutputMonitor)
             // Attach data exporters

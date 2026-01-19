@@ -8,6 +8,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.actions.AbstractLocalAction
+import it.unibo.alchemist.model.observation.{MutableObservable, Observable}
 import it.unibo.alchemist.model.{Node, Position, Reaction}
 import it.unibo.alchemist.model.implementations.nodes.SimpleNodeManager
 import it.unibo.alchemist.model.molecules.SimpleMolecule
@@ -82,7 +83,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
   lazy val nodeManager = new SimpleNodeManager(node)
   private var neighborhoodManager: Map[ID, NeighborData[P]] = Map()
   private val commonNames = new ScafiIncarnationForAlchemist.StandardSensorNames {}
-  private var completed = false
+  private val _completed = MutableObservable.Companion.observe[Boolean](false)
   declareDependencyTo(Dependency.EVERY_MOLECULE)
 
   def asMolecule = programNameMolecule
@@ -186,16 +187,18 @@ sealed class RunScafiProgram[T, P <: Position[P]](
     node.setConcentration(programName, computed.root[T]())
     val toSend = NeighborData(computed, position, alchemistCurrentTime)
     neighborhoodManager = neighborhoodManager + (node.getId -> toSend)
-    completed = true
+    _completed.update(_ => true)
   }
 
   def sendExport(id: ID, exportData: NeighborData[P]): Unit = neighborhoodManager += id -> exportData
 
   def getExport(id: ID): Option[NeighborData[P]] = neighborhoodManager.get(id)
 
-  def isComputationalCycleComplete: Boolean = completed
+  def isComputationalCycleComplete: Boolean = _completed.getCurrent
 
-  def prepareForComputationalCycle: Unit = completed = false
+  def observeComputationalCycleComplete: Observable[Boolean] = _completed
+
+  def prepareForComputationalCycle: Unit = _completed.update(_ => false)
 
 }
 

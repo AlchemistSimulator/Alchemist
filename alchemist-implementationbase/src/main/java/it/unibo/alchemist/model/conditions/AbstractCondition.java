@@ -14,6 +14,10 @@ import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableMutableSet;
+import it.unibo.alchemist.model.observation.ObservableSet;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
@@ -31,6 +35,18 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     private static final long serialVersionUID = -1610947908159507754L;
     private final ListSet<Dependency> influencing = new LinkedListSet<>();
     private final Node<T> node;
+
+    private final ObservableMutableSet<Observable<?>> dependencies = new ObservableMutableSet<>();
+
+    /**
+     * An observable which emits this condition's validity.
+     */
+    private Observable<Boolean> validity = MutableObservable.Companion.observe(true);
+
+    /**
+     * An observable which emits this condition's propensity contribution.
+     */
+    private Observable<Double> propensity = MutableObservable.Companion.observe(0.0);
 
     /**
      * @param node the node this Condition belongs to
@@ -50,6 +66,12 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     @Override
     public final ListSet<? extends Dependency> getInboundDependencies() {
         return ListSets.unmodifiableListSet(influencing);
+    }
+
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
+    @Override
+    public final ObservableSet<? extends Observable<?>> observeInboundDependencies() {
+        return dependencies;
     }
 
     /**
@@ -73,14 +95,97 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     }
 
     /**
+     * Add the given {@link Observable} to the set of observables of this Condition.
+     *
+     * @param dep the observable to observe
+     * @return the input dependency itself
+     */
+    protected Observable<?> addObservableDependency(final Observable<?> dep) {
+        dependencies.add(dep);
+        return dep;
+    }
+
+    /**
+     * If you plan to extend this method, please consider leaving this
+     * implementation as is and use a reactive/observable style by
+     * overriding {@link #observeValidity()}.
+     *
+     * @return whether this condition is valid.
+     */
+    @Override
+    public boolean isValid() {
+        return observeValidity().getCurrent();
+    }
+
+    /**
+     * If you plan to override this method, make sure to free up additional
+     * observables in {@link #dispose()}.
+     */
+    @Override
+    public Observable<Boolean> observeValidity() {
+        return validity;
+    }
+
+    /**
+     * If you plan to extend this method, please consider leaving this
+     * implementation as is and use a reactive/observable style by
+     * overriding {@link #observePropensityContribution()}.
+     *
+     * @return this condition's propensity contribution.
+     */
+    @Override
+    public double getPropensityContribution() {
+        return observePropensityContribution().getCurrent();
+    }
+
+    /**
+     * If you plan to override this method, make sure to free up additional
+     * observables in {@link #dispose()}.
+     */
+    @Override
+    public Observable<Double> observePropensityContribution() {
+        return propensity;
+    }
+
+    /**
+     * Override this method if a custom implementation for validity or propensity
+     * contribution are provided. It is always advised to call the super method
+     * alongside the custom implementation to avoid possible leaks.
+     */
+    @Override
+    public void dispose() {
+        this.validity.dispose();
+        this.propensity.dispose();
+        this.dependencies.dispose();
+    }
+
+    /**
      * {@inheritDoc}
      *
-     *  <p>
+     * <p>
      * How to override: create a new action of your concrete subtype.
      */
     @Override
     public Condition<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
         throw new UnsupportedOperationException(getClass().getSimpleName() + " has no support for cloning.");
+    }
+
+    /**
+     * To be used by inheritors when initializing.
+     *
+     * @param newValidity the validity to set
+     */
+    protected final void setValidity(final Observable<Boolean> newValidity) {
+        this.validity = newValidity;
+    }
+
+    /**
+     * To be used by inheritors when initializing.
+     *
+     * @param newPropensity the propensity to set
+     */
+    protected final void setPropensity(final Observable<Double> newPropensity) {
+        this.propensity = newPropensity;
     }
 
     /**

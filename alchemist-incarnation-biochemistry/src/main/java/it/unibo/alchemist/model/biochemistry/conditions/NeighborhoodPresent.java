@@ -13,6 +13,8 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
 
 import java.io.Serial;
 
@@ -33,8 +35,14 @@ public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
      * @param node the node
      * @param environment the current environment.
      */
+    @SuppressWarnings("unchecked")
     public NeighborhoodPresent(final Environment<T, ?> environment, final Node<T> node) {
         super(environment, node);
+
+        setValidity(environment.observeNeighborhood(getNode()).map(neighborhood ->
+            neighborhood.getNeighbors().stream()
+                .anyMatch(n -> n.asPropertyOrNull(CellProperty.class) != null)
+            ));
     }
 
     @Override
@@ -44,16 +52,10 @@ public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected double getNeighborPropensity(final Node<T> neighbor) {
+    protected Observable<Double> observeNeighborPropensity(final Node<T> neighbor) {
         // to be eligible (p = 1), a neighbor just needs to be an instance of CellNode
-        return neighbor.asPropertyOrNull(CellProperty.class) != null ? 1d : 0d;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public boolean isValid() {
-        return getEnvironment().getNeighborhood(getNode()).getNeighbors().stream()
-                .anyMatch(n -> n.asPropertyOrNull(CellProperty.class) != null);
+        // Note: Property changes are not yet observable, so this assumes static properties for now.
+        return MutableObservable.Companion.observe(neighbor.asPropertyOrNull(CellProperty.class) != null ? 1d : 0d);
     }
 
     @Override

@@ -16,7 +16,6 @@ import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
-import org.danilopianini.util.ListSet;
 
 import java.io.Serial;
 import java.util.stream.Collectors;
@@ -180,7 +179,7 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
             ranges.put(center.getId(), getRange());
         }
         final double curRange = ranges.get(center.getId());
-        final ListSet<Node<T>> potentialNeighs = environment.getNodesWithinRange(center, curRange);
+        final var potentialNeighs = environment.getNodesWithinRange(center, curRange);
         final Neighborhood<T> neigh = Neighborhoods.make(environment, center, potentialNeighs.stream()
                 .filter(neighbor -> !conditionForRemoval(environment, center, neighbor, curRange, ranges.get(neighbor.getId())))
                 .collect(Collectors.toList()));

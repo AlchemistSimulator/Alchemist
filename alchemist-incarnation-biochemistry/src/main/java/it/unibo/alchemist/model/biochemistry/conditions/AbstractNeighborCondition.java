@@ -14,9 +14,13 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
+import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableExtensions;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -25,8 +29,7 @@ import java.util.stream.Collectors;
  * Formally, this condition is satisfied
  * if at least one neighbor satisfies the condition.
  *
- * @param <T>
- *            the concentration type.
+ * @param <T> the concentration type.
  */
 public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> {
 
@@ -36,14 +39,14 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     private final Environment<T, ?> environment;
 
     /**
-     * @param node
-     *            the node hosting this condition
-     * @param environment
-     *            the current environment
+     * @param node        the node hosting this condition
+     * @param environment the current environment
      */
     protected AbstractNeighborCondition(final Environment<T, ?> environment, final Node<T> node) {
         super(node);
         this.environment = environment;
+        addObservableDependency(getEnvironment().observeNeighborhood(getNode()));
+        setPropensityContributionObservable();
     }
 
     @Override
@@ -63,13 +66,11 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
 
     /**
      * Override if the desired behavior differs. Default is returning the sum of the neighbor's propensities
-     *
-     * @return the sum of the neighbor's propensities
      */
-    @Override
-    public double getPropensityContribution() {
-        // the condition's propensity contribution is computed as the sum of the neighbor's propensities
-        return getValidNeighbors().values().stream().mapToDouble(it -> it).sum();
+    protected void setPropensityContributionObservable() {
+        setPropensity(observeValidNeighbors().map(nodes ->
+            nodes.values().stream().mapToDouble(it -> it).sum()
+        ));
     }
 
     /**
@@ -81,10 +82,36 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
      * @return a map of neighbors which satisfy the condition and their propensity
      */
     public final Map<Node<T>, Double> getValidNeighbors() {
-        return getEnvironment().getNeighborhood(getNode()).getNeighbors().stream()
-                .map(it -> new ImmutablePair<>(it, getNeighborPropensity(it)))
-                .filter(it -> it.getValue() > 0)
-                .collect(Collectors.toMap(ImmutablePair::getKey, ImmutablePair::getValue));
+        return observeValidNeighbors().getCurrent();
+    }
+
+    /**
+     * Searches in the given neighborhood which nodes satisfy the condition and
+     * returns a list of valid neighbors as an {@link Observable}. The observed map
+     * emits if:
+     * <ul>
+     *     <li>Neighbors belonging to the neighborhood of the node associated with this condition changes;</li>
+     *     <li>Some neighbor propensity (observed through {@link #observeNeighborPropensity(Node)}) changes.</li>
+     * </ul>
+     *
+     * @return an observable which emits a map of neighbors which satisfy the condition and their propensity.
+     */
+    public final Observable<Map<Node<T>, Double>> observeValidNeighbors() {
+        return ObservableExtensions.INSTANCE.switchMap(
+            getEnvironment().observeNeighborhood(getNode()),
+            neighborhood -> {
+                final List<Observable<Pair<Node<T>, Double>>> propensities = neighborhood.getNeighbors().stream()
+                    .map((Node<T> neighbor) -> observeNeighborPropensity(neighbor)
+                        .map(prop -> (Pair<Node<T>, Double>) new ImmutablePair<>(neighbor, prop))).toList();
+
+                return ObservableExtensions.INSTANCE.combineLatest(
+                    propensities,
+                    list -> list.stream()
+                        .filter(pair -> pair.getValue() > 0)
+                        .collect(Collectors.toMap(Pair::getKey, Pair::getValue))
+                ).map(it -> it.fold(Map::of, val -> val));
+            }
+        );
     }
 
     /**
@@ -95,8 +122,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
      * every neighbor and randomly choose one of them.
      *
      * @param neighbor - the neighbor whose propensity to be chosen has to be computed
-     *
-     * @return the neighbor's propensity to be chosen as the other node of the reaction
+     * @return an observable of the neighbor's propensity to be chosen as the other node of the reaction
      */
-    protected abstract double getNeighborPropensity(Node<T> neighbor);
+    protected abstract Observable<Double> observeNeighborPropensity(Node<T> neighbor);
 }

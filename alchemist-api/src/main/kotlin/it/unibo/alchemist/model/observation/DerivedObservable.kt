@@ -15,8 +15,10 @@ import arrow.core.some
 import java.util.Collections
 
 /**
- * An abstract implementation of the `Observable` interface designed to support observables whose states
- * are derived from other data sources. Manages the lifecycle of observation and update propagation.
+ * An abstract implementation of the [Observable] interface designed to support observables whose states
+ * are derived from other data sources. Manages the lifecycle of observation and update propagation while
+ * keeping a minimal set of active subscriptions with the underlying observables. Moreover, observation of
+ * the sources is enabled if only there are observers registered with this derived observable.
  *
  * @param emitOnDistinct whether to emit when the new derived value is different from the current one.
  * @param T The type of data being observed.
@@ -80,10 +82,28 @@ abstract class DerivedObservable<T>(private val emitOnDistinct: Boolean = true) 
         cached = none()
     }
 
+    /**
+     * Initiates monitoring for changes or updates in the implementing class.
+     * This method should enable necessary mechanisms to observe and react to changes
+     * based on the specific implementation of the derived class.
+     */
     protected abstract fun startMonitoring()
 
+    /**
+     * Stops monitoring for changes or updates in the implementing class.
+     * This method should disable any active observation mechanisms and ensure
+     * that resources or listeners associated with monitoring are appropriately released.
+     * It is intended to complement the `startMonitoring` function.
+     */
     protected abstract fun stopMonitoring()
 
+    /**
+     * Computes and returns a fresh value of type [T]. This method is expected to be implemented
+     * in derived classes to provide a new value that represents the updated state or computation
+     * result of the observable entity.
+     *
+     * @return a fresh, computed value of type [T]
+     */
     protected abstract fun computeFresh(): T
 
     protected fun updateAndNotify(newValue: T) {

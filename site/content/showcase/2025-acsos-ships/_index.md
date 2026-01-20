@@ -47,7 +47,7 @@ We use openly available data to locate the positions of the land stations. Simil
 
 We assume that all ships intend to communicate a data stream d = 3 Mbit/s to the land station, approximately equivalent to the bitrate of a compressed 720p video stream.
 
-We simulation is performed with two free variables:
+The simulation is performed with two free variables:
 - p5G: Controlling the probability of a vessel being equipped with a 5G tower. We let p5G range in [0, 0.01, 0.02, 0.05, 0.1, 0.5, 1].
 - f: Controlling the aggregate program round frequency. We let f range in [1 / 60, 0.1, 0.2]Hz.
 - Every experiment is performed 100 times, each time with a different seed.

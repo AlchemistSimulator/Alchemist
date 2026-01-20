@@ -41,7 +41,7 @@ We assume each vessel to be equipped with:
 - a 5G consumer-grade module (similar to the ones used in mobile phones); and
 - a Wi-Fi-direct capable device.
 
-Furthermore, we assume that a vessel can be equipped with a probability 5G cellular tower p5G.
+Furthermore, we assume that a vessel can be equipped with a 5G cellular tower with probability p5G.
 
 We use openly available data to locate the positions of the land stations. Similarly, we use openly available data to understand where the existing 5G infrastructure is located and their specific technology.
 

@@ -1,0 +1,25 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:it.unibo.alchemist.model.cognitive.impact.cognitive/AbstractCognitiveCharacteristic.Companion///PointingToDeclaration/it/unibo/alchemist/model/cognitive/impact/cognitive/AbstractCognitiveCharacteristic.Companion.html
+$dokka.location:it.unibo.alchemist.model.cognitive.impact.individual/Age.Companion///PointingToDeclaration/it/unibo/alchemist/model/cognitive/impact/individual/Age.Companion.html
+$dokka.location:it.unibo.alchemist.model.cognitive.impact.individual/Gender.Companion///PointingToDeclaration/it/unibo/alchemist/model/cognitive/impact/individual/Gender.Companion.html
+$dokka.location:it.unibo.alchemist.model.cognitive.impact.individual/HelpAttitudeSpec.AdultFemale///PointingToDeclaration/it/unibo/alchemist/model/cognitive/impact/individual/HelpAttitudeSpec.AdultFemale.html
+$dokka.location:it.unibo.alchemist.model.cognitive.impact.individual/HelpAttitudeSpec.AdultMale///PointingToDeclaration/it/unibo/alchemist/model/cognitive/impact/individual/HelpAttitudeSpec.AdultMale.html
+$dokka.location:it.unibo.alchemist.model.cognitive.impact.individual/HelpAttitudeSpec.ElderlyFemale///PointingToDeclaration/it/unibo/alchemist/model/cognitive/impact/individual/HelpAttitudeSpec.ElderlyFemale.html
+$dokka.location:it.unibo.alchemist.model.cognitive.impact.individual/HelpAttitudeSpec.ElderlyMale///PointingToDeclaration/it/unibo/alchemist/model/cognitive/impact/individual/HelpAttitudeSpec.ElderlyMale.html
+$dokka.location:it.unibo.alchemist.model.cognitive.impact.individual/Speed.Companion///PointingToDeclaration/it/unibo/alchemist/model/cognitive/impact/individual/Speed.Companion.html
+$dokka.location:it.unibo.alchemist.model.cognitive.properties/Orienting.Companion///PointingToDeclaration/it/unibo/alchemist/model/cognitive/properties/Orienting.Companion.html
+it.unibo.alchemist.model.cognitive
+it.unibo.alchemist.model.cognitive.actions
+it.unibo.alchemist.model.cognitive.conditions
+it.unibo.alchemist.model.cognitive.environments
+it.unibo.alchemist.model.cognitive.groups
+it.unibo.alchemist.model.cognitive.impact
+it.unibo.alchemist.model.cognitive.impact.cognitive
+it.unibo.alchemist.model.cognitive.impact.individual
+it.unibo.alchemist.model.cognitive.navigation
+it.unibo.alchemist.model.cognitive.properties
+it.unibo.alchemist.model.cognitive.reactions
+it.unibo.alchemist.model.cognitive.steering
+it.unibo.alchemist.util
+

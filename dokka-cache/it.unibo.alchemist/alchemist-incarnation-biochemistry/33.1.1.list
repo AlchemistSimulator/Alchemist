@@ -1,0 +1,48 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.ArgContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.ArgContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.ArgListContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.ArgListContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.BiochemicalReactionContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.BiochemicalReactionContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.BiochemicalReactionLeftContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.BiochemicalReactionLeftContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.BiochemicalReactionLeftContextContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.BiochemicalReactionLeftContextContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.BiochemicalReactionLeftInCellContextContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.BiochemicalReactionLeftInCellContextContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.BiochemicalReactionLeftInEnvContextContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.BiochemicalReactionLeftInEnvContextContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.BiochemicalReactionLeftInNeighborContextContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.BiochemicalReactionLeftInNeighborContextContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.BiochemicalReactionRightContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.BiochemicalReactionRightContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.BiochemicalReactionRightContextContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.BiochemicalReactionRightContextContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.BiochemicalReactionRightElemContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.BiochemicalReactionRightElemContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.BiochemicalReactionRightInCellContextContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.BiochemicalReactionRightInCellContextContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.BiochemicalReactionRightInEnvContextContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.BiochemicalReactionRightInEnvContextContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.BiochemicalReactionRightInNeighborContextContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.BiochemicalReactionRightInNeighborContextContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.BiomoleculeContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.BiomoleculeContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.ConcentrationContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.ConcentrationContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.CreateJunctionContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.CreateJunctionContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.CreateJunctionJunctionContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.CreateJunctionJunctionContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.CreateJunctionLeftContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.CreateJunctionLeftContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.CreateJunctionRightContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.CreateJunctionRightContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.CustomConditionContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.CustomConditionContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.CustomConditionsContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.CustomConditionsContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.CustomReactionTypeContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.CustomReactionTypeContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.DecimalContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.DecimalContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.JavaClassContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.JavaClassContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.JavaConstructorContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.JavaConstructorContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.JunctionContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.JunctionContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.JunctionLeftContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.JunctionLeftContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.JunctionReactionContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.JunctionReactionContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.JunctionReactionJunctionConditionContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.JunctionReactionJunctionConditionContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.JunctionReactionJunctionContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.JunctionReactionJunctionContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.JunctionReactionLeftContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.JunctionReactionLeftContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.JunctionReactionRightContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.JunctionReactionRightContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.JunctionRightContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.JunctionRightContext.html
+$dokka.location:it.unibo.alchemist.model.biochemistry.dsl/BiochemistrydslParser.ReactionContext///PointingToDeclaration/it/unibo/alchemist/model/biochemistry/dsl/BiochemistrydslParser.ReactionContext.html
+it.unibo.alchemist.model.biochemistry
+it.unibo.alchemist.model.biochemistry.actions
+it.unibo.alchemist.model.biochemistry.conditions
+it.unibo.alchemist.model.biochemistry.dsl
+it.unibo.alchemist.model.biochemistry.environments
+it.unibo.alchemist.model.biochemistry.layers
+it.unibo.alchemist.model.biochemistry.molecules
+it.unibo.alchemist.model.biochemistry.nodes
+it.unibo.alchemist.model.biochemistry.properties
+it.unibo.alchemist.model.biochemistry.reactions
+

@@ -1,0 +1,12 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+
+it.unibo.alchemist.boundary.graphql
+it.unibo.alchemist.boundary.graphql.monitor
+it.unibo.alchemist.boundary.graphql.schema.model.surrogates
+it.unibo.alchemist.boundary.graphql.schema.operations.mutations
+it.unibo.alchemist.boundary.graphql.schema.operations.queries
+it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions
+it.unibo.alchemist.boundary.graphql.schema.util
+it.unibo.alchemist.model.util
+

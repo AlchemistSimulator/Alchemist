@@ -1,0 +1,18 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:it.unibo.alchemist.model.util/GraphStreamSupport.Companion///PointingToDeclaration/it/unibo/alchemist/model/util/GraphStreamSupport.Companion.html
+it.unibo.alchemist.boundary
+it.unibo.alchemist.boundary.exporters
+it.unibo.alchemist.boundary.exportfilters
+it.unibo.alchemist.boundary.extractors
+it.unibo.alchemist.boundary.launchers
+it.unibo.alchemist.boundary.loader.util
+it.unibo.alchemist.boundary.modelproviders
+it.unibo.alchemist.boundary.statistic
+it.unibo.alchemist.boundary.variables
+it.unibo.alchemist.model
+it.unibo.alchemist.model.deployments
+it.unibo.alchemist.model.linkingrules
+it.unibo.alchemist.model.positionfilters
+it.unibo.alchemist.model.util
+

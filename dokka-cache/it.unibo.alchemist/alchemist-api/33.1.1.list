@@ -1,0 +1,10 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:it.unibo.alchemist.model.geometry/Vector2D.Companion///PointingToDeclaration/it/unibo/alchemist/model/geometry/Vector2D.Companion.html
+$dokka.location:it.unibo.alchemist.model/Node.Companion///PointingToDeclaration/it/unibo/alchemist/model/Node.Companion.html
+$dokka.location:it.unibo.alchemist.model/Time.Companion///PointingToDeclaration/it/unibo/alchemist/model/Time.Companion.html
+it.unibo.alchemist.boundary
+it.unibo.alchemist.core
+it.unibo.alchemist.model
+it.unibo.alchemist.model.geometry
+

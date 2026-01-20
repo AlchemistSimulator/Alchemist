@@ -1,0 +1,7 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+
+it.unibo.alchemist.model
+it.unibo.alchemist.model.actions
+it.unibo.alchemist.model.nodes
+

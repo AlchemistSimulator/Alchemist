@@ -1,0 +1,18 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:it.unibo.alchemist.boundary.swingui.effect.impl/DrawLayersIsolines.Distribution///PointingToDeclaration/it/unibo/alchemist/boundary/swingui/effect/impl/DrawLayersIsolines.Distribution.html
+$dokka.location:it.unibo.alchemist.boundary.swingui.effect.impl/DrawShape.Mode///PointingToDeclaration/it/unibo/alchemist/boundary/swingui/effect/impl/DrawShape.Mode.html
+$dokka.location:it.unibo.alchemist.boundary.swingui.effect.isolines.api/IsolinesFactory.IsolineFinders///PointingToDeclaration/it/unibo/alchemist/boundary/swingui/effect/isolines/api/IsolinesFactory.IsolineFinders.html
+$dokka.location:it.unibo.alchemist.boundary.swingui.impl/ReactivityPanel.Status///PointingToDeclaration/it/unibo/alchemist/boundary/swingui/impl/ReactivityPanel.Status.html
+$dokka.location:it.unibo.alchemist.boundary.swingui.tape.impl/JTapeFeatureStack.Type///PointingToDeclaration/it/unibo/alchemist/boundary/swingui/tape/impl/JTapeFeatureStack.Type.html
+it.unibo.alchemist.boundary.swingui.api
+it.unibo.alchemist.boundary.swingui.effect.api
+it.unibo.alchemist.boundary.swingui.effect.impl
+it.unibo.alchemist.boundary.swingui.effect.isolines.api
+it.unibo.alchemist.boundary.swingui.effect.isolines.impl
+it.unibo.alchemist.boundary.swingui.impl
+it.unibo.alchemist.boundary.swingui.monitor.impl
+it.unibo.alchemist.boundary.swingui.tape.impl
+it.unibo.alchemist.boundary.util
+it.unibo.alchemist.boundary.wormhole.impl
+

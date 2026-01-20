@@ -1,0 +1,7 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+
+it.unibo.alchemist.model.sapere.dsl
+it.unibo.alchemist.model.sapere.dsl.impl
+it.unibo.alchemist.model.sapere.dsl.parser
+

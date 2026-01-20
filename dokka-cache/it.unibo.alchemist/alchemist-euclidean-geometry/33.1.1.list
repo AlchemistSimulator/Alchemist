@@ -1,0 +1,23 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:it.unibo.alchemist.model.environments/Euclidean2DEnvironment.Companion///PointingToDeclaration/it/unibo/alchemist/model/environments/Euclidean2DEnvironment.Companion.html
+$dokka.location:it.unibo.alchemist.model.geometry/GeometricShapeFactory.Companion///PointingToDeclaration/it/unibo/alchemist/model/geometry/GeometricShapeFactory.Companion.html
+$dokka.location:it.unibo.alchemist.model.geometry/Intersection2D.Companion///PointingToDeclaration/it/unibo/alchemist/model/geometry/Intersection2D.Companion.html
+$dokka.location:it.unibo.alchemist.model.geometry/Intersection2D.InfinitePoints///PointingToDeclaration/it/unibo/alchemist/model/geometry/Intersection2D.InfinitePoints.html
+$dokka.location:it.unibo.alchemist.model.geometry/Intersection2D.MultiplePoints///PointingToDeclaration/it/unibo/alchemist/model/geometry/Intersection2D.MultiplePoints.html
+$dokka.location:it.unibo.alchemist.model.geometry/Intersection2D.None///PointingToDeclaration/it/unibo/alchemist/model/geometry/Intersection2D.None.html
+$dokka.location:it.unibo.alchemist.model.geometry/Intersection2D.SinglePoint///PointingToDeclaration/it/unibo/alchemist/model/geometry/Intersection2D.SinglePoint.html
+$dokka.location:it.unibo.alchemist.model.geometry/Segment2D.Companion///PointingToDeclaration/it/unibo/alchemist/model/geometry/Segment2D.Companion.html
+$dokka.location:it.unibo.alchemist.model.geometry/SlopeInterceptLine2D.Companion///PointingToDeclaration/it/unibo/alchemist/model/geometry/SlopeInterceptLine2D.Companion.html
+$dokka.location:it.unibo.alchemist.model.positions/Euclidean2DPosition.Companion///PointingToDeclaration/it/unibo/alchemist/model/positions/Euclidean2DPosition.Companion.html
+it.unibo.alchemist.model
+it.unibo.alchemist.model.actions
+it.unibo.alchemist.model.environments
+it.unibo.alchemist.model.geometry
+it.unibo.alchemist.model.geometry.navigationgraph
+it.unibo.alchemist.model.geometry.util
+it.unibo.alchemist.model.linkingrules
+it.unibo.alchemist.model.movestrategies
+it.unibo.alchemist.model.obstacles
+it.unibo.alchemist.model.positions
+

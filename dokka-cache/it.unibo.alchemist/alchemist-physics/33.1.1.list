@@ -1,0 +1,9 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+
+it.unibo.alchemist.model.physics
+it.unibo.alchemist.model.physics.actions
+it.unibo.alchemist.model.physics.environments
+it.unibo.alchemist.model.physics.properties
+it.unibo.alchemist.model.physics.reactions
+

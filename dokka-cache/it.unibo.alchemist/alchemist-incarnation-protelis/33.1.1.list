@@ -1,0 +1,11 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:it.unibo.alchemist.model.protelis/ProtelisIncarnation.ProtectedExecutionEnvironment///PointingToDeclaration/it/unibo/alchemist/model/protelis/ProtelisIncarnation.ProtectedExecutionEnvironment.html
+it.unibo.alchemist.model.protelis
+it.unibo.alchemist.model.protelis.actions
+it.unibo.alchemist.model.protelis.concentrations
+it.unibo.alchemist.model.protelis.conditions
+it.unibo.alchemist.protelis
+it.unibo.alchemist.protelis.actions
+it.unibo.alchemist.protelis.properties
+

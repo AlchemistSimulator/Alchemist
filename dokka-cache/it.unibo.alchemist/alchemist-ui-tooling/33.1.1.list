@@ -1,0 +1,6 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:it.unibo.alchemist.boundary.ui.api/Wormhole2D.Mode///PointingToDeclaration/it/unibo/alchemist/boundary/ui/api/Wormhole2D.Mode.html
+it.unibo.alchemist.boundary.ui.api
+it.unibo.alchemist.boundary.ui.impl
+

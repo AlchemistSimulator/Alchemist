@@ -1,0 +1,13 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+
+it.unibo.alchemist.model.sapere
+it.unibo.alchemist.model.sapere.actions
+it.unibo.alchemist.model.sapere.concentrations
+it.unibo.alchemist.model.sapere.conditions
+it.unibo.alchemist.model.sapere.linkingrules
+it.unibo.alchemist.model.sapere.molecules
+it.unibo.alchemist.model.sapere.nodes
+it.unibo.alchemist.model.sapere.reactions
+it.unibo.alchemist.model.sapere.timedistributions
+

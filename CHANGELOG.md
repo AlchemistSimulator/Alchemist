@@ -1,3 +1,24 @@
+## [42.3.32](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.31...42.3.32) (2026-01-20)
+
+### Dependency updates
+
+* **deps:** update dependency org.jetbrains.compose to v1.10.0 ([#5060](https://github.com/AlchemistSimulator/Alchemist/issues/5060)) ([9022fd1](https://github.com/AlchemistSimulator/Alchemist/commit/9022fd14e6cc37dcf3a061ba0af841683b8d703a))
+* **deps:** update node.js to 24.13 ([#5062](https://github.com/AlchemistSimulator/Alchemist/issues/5062)) ([7d4f502](https://github.com/AlchemistSimulator/Alchemist/commit/7d4f5026d1289593032fa0d18d9d01392cb3b432))
+* **deps:** update plugin com.gradle.develocity to v4.3.1 ([#5064](https://github.com/AlchemistSimulator/Alchemist/issues/5064)) ([7f78ba4](https://github.com/AlchemistSimulator/Alchemist/commit/7f78ba4c530a7e7af95ddb5f181d0a0bdb3746a8))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.7 ([#5065](https://github.com/AlchemistSimulator/Alchemist/issues/5065)) ([2677637](https://github.com/AlchemistSimulator/Alchemist/commit/2677637606347b647031a71bd90b5950ee452e6d))
+
+### Documentation
+
+* add showcase page for ACSOS 2025 maritime network simulation ([#5070](https://github.com/AlchemistSimulator/Alchemist/issues/5070)) ([7cce834](https://github.com/AlchemistSimulator/Alchemist/commit/7cce8349053f90053eced9a764b8013cc077b95c))
+
+### Build and continuous integration
+
+* **deps:** update actions/setup-node action to v6.2.0 ([#5063](https://github.com/AlchemistSimulator/Alchemist/issues/5063)) ([3ac81e9](https://github.com/AlchemistSimulator/Alchemist/commit/3ac81e9e50a398011ad3e1701ca851f36d488879))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([610f078](https://github.com/AlchemistSimulator/Alchemist/commit/610f078ea7df0770f310455c4331822010e22b8e))
+
 ## [42.3.31](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.30...42.3.31) (2026-01-12)
 
 ### Documentation

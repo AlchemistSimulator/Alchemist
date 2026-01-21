@@ -39,6 +39,24 @@ class ObservableTest : FunSpec({
             lastSeen shouldBe 42
         }
 
+        test("`onChange` with invokeOnRegistration = false should not emit current value") {
+            val observable = observe(42)
+            var lastSeen: Int? = null
+
+            observable.onChange(this, false) { lastSeen = it }
+
+            lastSeen shouldBe null
+        }
+
+        test("`onChange` with invokeOnRegistration = true should emit current value") {
+            val observable = observe(42)
+            var lastSeen: Int? = null
+
+            observable.onChange(this, true) { lastSeen = it }
+
+            lastSeen shouldBe 42
+        }
+
         test("`update` should return previous value and update current") {
             val observable = observe(0)
 

@@ -68,16 +68,16 @@ class TestContinuous2DObstacle {
         );
 
         environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(0, 0));
-        assertEquals(1, environment.getNodeCount());
+        assertEquals(1, environment.getNodeCount().getCurrent());
         environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(1, 1));
-        assertEquals(1, environment.getNodeCount());
+        assertEquals(1, environment.getNodeCount().getCurrent());
         // CHECKSTYLE: MagicNumber OFF
         environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(1.5, 0.5));
-        assertEquals(1, environment.getNodeCount());
+        assertEquals(1, environment.getNodeCount().getCurrent());
         environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(1, 5));
-        assertEquals(1, environment.getNodeCount());
+        assertEquals(1, environment.getNodeCount().getCurrent());
         environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(1, 2.999));
-        assertEquals(2, environment.getNodeCount());
+        assertEquals(2, environment.getNodeCount().getCurrent());
         assertEquals(2, environment.getObstaclesInRange(0d, 0d, 100d).size());
         assertEquals(1, environment.getObstaclesInRange(0d, 0d, 1d).size());
         assertEquals(R1021, environment.getObstaclesInRange(0d, 0d, 1d).get(0));

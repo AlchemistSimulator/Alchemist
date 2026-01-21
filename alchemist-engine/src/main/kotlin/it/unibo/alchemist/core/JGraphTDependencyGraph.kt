@@ -239,7 +239,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         }
     }
 
-    private val Node<T>.neighborhood get() = environment.getNeighborhood(this).neighbors
+    private val Node<T>.neighborhood get() = environment.getNeighborhood(this).current.neighbors
 
     private companion object {
         private val Actionable<*>.inputContext get() =

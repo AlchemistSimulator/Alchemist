@@ -162,7 +162,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
             final Position<?> curNodeActualPos = environment.getPosition(curNode);
             if (curNode.equals(node)
                 || !curPos.equals(curNodeActualPos)
-                || environment.getNeighborhood(node).contains(curNode)) {
+                || environment.getNeighborhood(node).getCurrent().contains(curNode)) {
                 /*
                  * Update target
                  */

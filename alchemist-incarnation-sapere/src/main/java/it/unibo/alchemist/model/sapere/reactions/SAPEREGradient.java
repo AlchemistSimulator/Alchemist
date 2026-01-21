@@ -394,7 +394,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         final P curPos = this.environment.getPosition(getNode());
         final boolean positionChanged = !curPos.equals(mypos);
         boolean neighPositionChanged = false;
-        for (final Node<List<ILsaMolecule>> n : this.environment.getNeighborhood(getNode())) {
+        for (final Node<List<ILsaMolecule>> n : this.environment.getNeighborhood(getNode()).getCurrent()) {
             final P p = this.environment.getPosition(n);
             final int nid = n.getId();
             positionCacheTemp.put(nid, p);

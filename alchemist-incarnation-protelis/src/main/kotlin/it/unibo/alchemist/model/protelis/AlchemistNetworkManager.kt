@@ -58,6 +58,10 @@ class AlchemistNetworkManager @JvmOverloads constructor(
     private var toBeSent: Map<CodePath, Any> = emptyMap()
     private var neighborState = ImmutableMap.of<DeviceUID, Map<CodePath, Any>>()
     private var timeAtLastValidityCheck = Double.NEGATIVE_INFINITY
+    private val neighborDevices: Set<ProtelisDevice<*>>
+        get() = environment.getNeighborhood(device.node).current.neighbors
+            .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
+            .toSet()
 
     init {
         require(retentionTime.isNaN() || retentionTime >= 0) { "The retention time can't be negative." }
@@ -75,11 +79,7 @@ class AlchemistNetworkManager @JvmOverloads constructor(
                 val stateBuilder = ImmutableMap.builder<DeviceUID, Map<CodePath, Any>>()
                 val messagesIterator = messages.values.iterator()
                 val retainsNeighbors = retentionTime.isNaN()
-                val neighbors: Set<DeviceUID> = emptySet<DeviceUID>().takeUnless { retainsNeighbors }
-                    ?: environment.getNeighborhood(device.node)
-                        .neighbors
-                        .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
-                        .toSet()
+                val neighbors: Set<DeviceUID> = emptySet<DeviceUID>().takeUnless { retainsNeighbors } ?: neighborDevices
                 while (messagesIterator.hasNext()) {
                     val message = messagesIterator.next()
                     val messageIsValid =
@@ -119,8 +119,7 @@ class AlchemistNetworkManager @JvmOverloads constructor(
     fun simulateMessageArrival(currentTime: Double) {
         if (toBeSent.isNotEmpty()) {
             val msg = MessageInfo(currentTime, device, toBeSent)
-            environment.getNeighborhood(device.node)
-                .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
+            neighborDevices
                 .forEach { neighborDevice ->
                     val destination = neighborDevice.getNetworkManager(program)
                     var packetArrives = true

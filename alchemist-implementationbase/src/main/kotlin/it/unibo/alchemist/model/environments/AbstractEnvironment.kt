@@ -82,10 +82,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     @Transient
     override val observableNodes: ObservableMutableSet<Node<T>> = _nodes.toList().toObservableSet()
 
-    final override val nodeCount: Int get() = nodes.size
-
     @Transient
-    override val observeNodeCount: Observable<Int> = observableNodes.observableSize
+    final override val nodeCount: Observable<Int> = observableNodes.observableSize
 
     private val regionObservers = ArrayList<RegionObserver>()
 
@@ -552,7 +550,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                 }
             }
         } else {
-            val processed = TIntHashSet(nodeCount).apply { add(node.id) }
+            val processed = TIntHashSet(nodes.size).apply { add(node.id) }
             val operations = recursiveOperation(node).toMutableList()
             while (operations.isNotEmpty()) {
                 val next = operations.removeLast()

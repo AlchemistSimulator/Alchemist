@@ -117,14 +117,9 @@ interface Environment<T, P : Position<out P>> :
     val observableNodes: ObservableSet<Node<T>>
 
     /**
-     * Returns the number of [Node]s currently in the [Environment].
-     */
-    val nodeCount: Int
-
-    /**
      * Returns an [Observable] view of the number of [Node]s currently in the [Environment].
      */
-    val observeNodeCount: Observable<Int>
+    val nodeCount: Observable<Int>
 
     /**
      * Given a [node] this method returns a list of all the surrounding

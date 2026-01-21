@@ -25,7 +25,7 @@ class NumberOfNodes : Extractor<Int> {
         reaction: Actionable<T>?,
         time: Time,
         step: Long,
-    ): Map<String, Int> = mapOf(NAME to environment.nodeCount)
+    ): Map<String, Int> = mapOf(NAME to environment.nodeCount.current)
 
     private companion object {
         private const val NAME: String = "nodes"

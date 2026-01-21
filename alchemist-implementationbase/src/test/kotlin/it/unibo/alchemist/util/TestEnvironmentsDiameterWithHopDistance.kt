@@ -103,7 +103,7 @@ object TestEnvironmentsDiameterWithHopDistance {
             withHopDistanceMustHave(3.subnetworks())
             specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 2.0)
             specificNodeInASegmentedNetworkShouldHaveHopDiameter(1, 1.0)
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(nodeCount - 1, 0.0)
+            specificNodeInASegmentedNetworkShouldHaveHopDiameter(nodeCount.current - 1, 0.0)
         }
     }
 }

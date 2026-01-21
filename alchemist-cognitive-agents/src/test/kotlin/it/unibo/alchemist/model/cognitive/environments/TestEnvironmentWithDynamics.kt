@@ -33,7 +33,7 @@ class TestEnvironmentWithDynamics<T, P> :
                             environment.shapeFactory.rectangle(120.0, 120.0).transformed {
                                 origin(environment.origin)
                             },
-                        ).size shouldBe environment.nodeCount
+                        ).size shouldBe environment.nodeCount.current
                 },
             )
         }

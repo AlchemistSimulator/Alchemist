@@ -68,7 +68,7 @@ class TestNeighborhoodReactionsPropensities {
                 .onEach { it.second.setConcentration(BIOMOLECULE, it.first) }
                 .map { it.second }
                 .onEach { environment.addNode(it, POSITION) }
-        assertEquals(neighbors.toList(), environment.getNeighborhood(centralNode).neighbors.toList())
+        assertEquals(neighbors.toList(), environment.getNeighborhood(centralNode).current.neighbors.toList())
     }
 
     @Test

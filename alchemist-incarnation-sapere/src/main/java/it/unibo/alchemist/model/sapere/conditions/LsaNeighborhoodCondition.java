@@ -56,7 +56,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
         // every time a change in node's neighborhood is emitted, or one of the
         // members' LSA space has changed.
         addObservableDependency(ObservableExtensions.INSTANCE.switchMap(
-            environment.observeNeighborhood(node).map(Neighborhood::getNeighbors),
+            environment.getNeighborhood(node).map(Neighborhood::getNeighbors),
             neighbors ->
                 ObservableExtensions.INSTANCE.combineLatest(
                     neighbors.stream()

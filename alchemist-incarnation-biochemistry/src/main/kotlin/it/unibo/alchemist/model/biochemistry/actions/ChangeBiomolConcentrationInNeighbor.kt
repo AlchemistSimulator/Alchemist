@@ -30,17 +30,18 @@ class ChangeBiomolConcentrationInNeighbor(
     val molecule: Biomolecule,
     val deltaConcentration: Double,
 ) : AbstractNeighborAction<Double>(node, environment, randomGenerator) {
+
     override fun cloneAction(newNode: Node<Double>, newReaction: Reaction<Double>) =
         ChangeBiomolConcentrationInNeighbor(randomGenerator, environment, newNode, molecule, deltaConcentration)
 
     override fun execute() {
-        val neighborhood = environment.getNeighborhood(node)
-        val validNeighbors =
-            neighborhood.filter {
-                it.asPropertyOrNull<Double, CellProperty<Euclidean2DPosition>>() != null &&
-                    (deltaConcentration > 0 || it.getConcentration(molecule) >= deltaConcentration)
-            }
-        execute(validNeighbors.randomElement(randomGenerator))
+        val validNeighbors = environment.getNeighborhood(node).current.filter {
+            it.asPropertyOrNull<Double, CellProperty<Euclidean2DPosition>>() != null &&
+                (deltaConcentration > 0 || it.getConcentration(molecule) >= deltaConcentration)
+        }
+        if (validNeighbors.isNotEmpty()) {
+            execute(validNeighbors.randomElement(randomGenerator))
+        }
     }
 
     override fun execute(targetNode: Node<Double>) {

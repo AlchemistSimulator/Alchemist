@@ -112,7 +112,7 @@ public class BioRect2DEnvironment extends AbstractLimitedContinuous2D<Double> {
     public final void moveNode(final Node<Double> node, @Nonnull final Euclidean2DPosition direction) {
         if (node.asPropertyOrNull(CellProperty.class) != null) {
             super.moveNode(node, direction);
-            final Neighborhood<Double> neigh = getNeighborhood(node);
+            final Neighborhood<Double> neigh = retrieveNeighborhood(node);
             final Map<Junction, Map<Node<Double>, Integer>> jun = node
                     .asProperty(CellProperty.class).getJunctions().getCurrent();
             jun.forEach((key, value) -> value.forEach((key1, value1) -> {

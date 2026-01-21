@@ -28,7 +28,7 @@ object Environments {
     ): (Node<T>, Node<T>) -> Double = { n1, n2 ->
         when {
             n1 == n2 -> 0.0
-            n2 in getNeighborhood(n1) -> computeDistance(n1, n2)
+            n2 in getNeighborhood(n1).current -> computeDistance(n1, n2)
             else -> POSITIVE_INFINITY
         }
     }
@@ -154,7 +154,7 @@ object Environments {
         while (toExplore.isNotEmpty()) {
             val current = toExplore.first()
             explored += current
-            val neighbors = getNeighborhood(current).toMutableSet()
+            val neighbors = getNeighborhood(current).current.toMutableSet()
             toExplore += neighbors
             toExplore -= explored
         }

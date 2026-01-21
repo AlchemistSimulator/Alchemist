@@ -94,15 +94,10 @@ interface Environment<T, P : Position<out P>> :
     var linkingRule: LinkingRule<T, P>
 
     /**
-     * Given a [node], this method returns its neighborhood.
-     */
-    fun getNeighborhood(node: Node<T>): Neighborhood<T>
-
-    /**
      * Given a [node], this method returns an observable view of
      * its neighborhood.
      */
-    fun observeNeighborhood(node: Node<T>): Observable<Neighborhood<T>>
+    fun getNeighborhood(node: Node<T>): Observable<Neighborhood<T>>
 
     /**
      * Allows accessing a [Node] in this [Environment] known its [id].

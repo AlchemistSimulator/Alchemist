@@ -38,7 +38,7 @@ class NeighborHasConcentration<T>(
 
     init {
         setValidity(
-            environment.observeNeighborhood(node).switchMap { neighborhood ->
+            environment.getNeighborhood(node).switchMap { neighborhood ->
                 neighborhood.neighbors.map { it.observeConcentration(target) }
                     .combineLatest { neighborsConcentrations ->
                         neighborsConcentrations.any { it.isSome { nConc -> nConc == concentration } }

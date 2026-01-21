@@ -23,7 +23,7 @@ constructor(filter: ExportFilter, aggregators: List<String>, precision: Int = 2)
         time: Time,
         step: Long,
     ): Map<Node<T>, Double> = environment.nodes.associateWith { node ->
-        environment.getNeighborhood(node).size().toDouble()
+        environment.getNeighborhood(node).current.size().toDouble()
     }
 
     private companion object {

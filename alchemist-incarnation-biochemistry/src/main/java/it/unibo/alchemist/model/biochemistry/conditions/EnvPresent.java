@@ -39,8 +39,8 @@ public final class EnvPresent extends AbstractCondition<Double> {
         super(node);
         this.environment = environment;
 
-        addObservableDependency(environment.observeNeighborhood(node));
-        setValidity(environment.observeNeighborhood(node).map(it ->
+        addObservableDependency(environment.getNeighborhood(node));
+        setValidity(environment.getNeighborhood(node).map(it ->
             it.getNeighbors().stream().anyMatch(n -> n instanceof EnvironmentNode)
         ));
 

@@ -38,7 +38,7 @@ class TestInSightConnection :
                 environment.getDistanceBetweenNodes(node0, node1) shouldBeLessThan maxRange
                 val route = environment.computeRoute(node0, node1)
                 route.length() shouldBeGreaterThan maxRange
-                environment.getNeighborhood(node0).contains(node1).shouldBeFalse()
+                environment.getNeighborhood(node0).current.contains(node1).shouldBeFalse()
             }
         },
     )

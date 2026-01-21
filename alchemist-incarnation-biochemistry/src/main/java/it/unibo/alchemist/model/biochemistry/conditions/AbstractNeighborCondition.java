@@ -45,7 +45,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     protected AbstractNeighborCondition(final Environment<T, ?> environment, final Node<T> node) {
         super(node);
         this.environment = environment;
-        addObservableDependency(getEnvironment().observeNeighborhood(getNode()));
+        addObservableDependency(getEnvironment().getNeighborhood(getNode()));
         setPropensityContributionObservable();
     }
 
@@ -98,7 +98,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
      */
     public final Observable<Map<Node<T>, Double>> observeValidNeighbors() {
         return ObservableExtensions.INSTANCE.switchMap(
-            getEnvironment().observeNeighborhood(getNode()),
+            getEnvironment().getNeighborhood(getNode()),
             neighborhood -> {
                 final List<Observable<Pair<Node<T>, Double>>> propensities = neighborhood.getNeighbors().stream()
                     .map((Node<T> neighbor) -> observeNeighborPropensity(neighbor)

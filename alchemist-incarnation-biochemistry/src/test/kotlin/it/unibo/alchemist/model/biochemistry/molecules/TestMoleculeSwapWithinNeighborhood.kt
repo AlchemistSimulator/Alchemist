@@ -48,8 +48,8 @@ class TestMoleculeSwapWithinNeighborhood {
         environment.linkingRule = LINKING_RULE
         environment.addNode(nodes.first, INITIAL_POSITIONS.first)
         environment.addNode(nodes.second, INITIAL_POSITIONS.second)
-        assertTrue(environment.getNeighborhood(nodes.first).neighbors.contains(nodes.second))
-        assertTrue(environment.getNeighborhood(nodes.second).neighbors.contains(nodes.first))
+        assertTrue(environment.getNeighborhood(nodes.first).current.neighbors.contains(nodes.second))
+        assertTrue(environment.getNeighborhood(nodes.second).current.neighbors.contains(nodes.first))
         nodes.first.setConcentration(BIOMOLECULE, 1.0)
     }
 

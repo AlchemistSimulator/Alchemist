@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.times.DoubleTime
-import java.lang.IllegalStateException
 
 /**
  * This class models a distribution that follows the packet arrival times as described in
@@ -152,7 +151,7 @@ class SimpleNetworkArrivals<T> private constructor(
 
     /** Gets the neighbors of a node as a collection. */
     val Node<T>.neighborhood: Collection<Node<T>>
-        get() = environment.getNeighborhood(this).neighbors
+        get() = environment.getNeighborhood(this).current.neighbors
 
     /** Computes the effective bandwidth considering access point load balancing. */
     val bandwidth: Double

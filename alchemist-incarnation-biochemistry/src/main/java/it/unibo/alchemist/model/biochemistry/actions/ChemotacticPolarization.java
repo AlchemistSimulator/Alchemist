@@ -22,6 +22,7 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.apache.commons.math3.util.FastMath;
 
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +39,7 @@ public final class ChemotacticPolarization extends AbstractAction<Double> {
     private final Biomolecule biomolecule;
     private final boolean ascend;
     private final CellProperty<Euclidean2DPosition> cell;
+    private List<Node<Double>> neighbors = new ArrayList<>(0);
 
     /**
      * @param environment the environment
@@ -67,6 +69,13 @@ public final class ChemotacticPolarization extends AbstractAction<Double> {
         } else {
             throw new IllegalArgumentException("Possible imput string are only up or down");
         }
+
+        environment.getNeighborhood(getNode()).onChange(this, neighborhood -> {
+            this.neighbors = neighborhood.getNeighbors().stream()
+                .filter(n -> n instanceof EnvironmentNode && n.contains(this.biomolecule))
+                .collect(Collectors.toList());
+            return null;
+        });
     }
 
     /**
@@ -98,9 +107,7 @@ public final class ChemotacticPolarization extends AbstractAction<Double> {
     public void execute() {
         // declaring a variable for the node where this action is set, to have faster access
         final Node<Double> thisNode = getNode();
-        final List<Node<Double>> l = environment.getNeighborhood(thisNode).getNeighbors().stream()
-                .filter(n -> n instanceof EnvironmentNode && n.contains(biomolecule))
-                .collect(Collectors.toList());
+        final List<Node<Double>> l = this.neighbors;
         if (l.isEmpty()) {
             cell.addPolarizationVersor(Euclidean2DPosition.Companion.getZero());
         } else {

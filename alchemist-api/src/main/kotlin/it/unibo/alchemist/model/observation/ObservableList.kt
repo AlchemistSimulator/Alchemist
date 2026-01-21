@@ -27,10 +27,11 @@ interface ObservableList<T> : Observable<List<T>> {
      * The callback will be invoked with the current list of items as a parameter.
      *
      * @param registrant The object registering for change notifications. Used to manage the lifecycle of the observer.
+     * @param invokeOnRegistration whether the callback should be invoked on registration
      * @param callback The function to be invoked whenever the list changes. It receives the current list of items as
      *                 a parameter.
      */
-    override fun onChange(registrant: Any, callback: (List<T>) -> Unit)
+    override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (List<T>) -> Unit)
 
     /**
      * Returns the element at the specified index in the list.
@@ -186,9 +187,9 @@ class ObservableMutableList<T> : ObservableList<T> {
         }
     }
 
-    override fun onChange(registrant: Any, callback: (List<T>) -> Unit) {
+    override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (List<T>) -> Unit) {
         observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-        callback(toList())
+        if (invokeOnRegistration) callback(toList())
     }
 
     override fun stopWatching(registrant: Any) {

@@ -167,9 +167,9 @@ open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> =
         }
     }
 
-    override fun onChange(registrant: Any, callback: (Map<K, V>) -> Unit) {
+    override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Map<K, V>) -> Unit) {
         observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-        callback(current.toMap())
+        if (invokeOnRegistration) callback(current.toMap())
     }
 
     override fun stopWatching(registrant: Any) {

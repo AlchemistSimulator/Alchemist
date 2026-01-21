@@ -24,16 +24,6 @@ interface ObservableSet<T> : Observable<Set<T>> {
     val observableSize: Observable<Int>
 
     /**
-     * Observes changes to the set and triggers the provided callback function whenever the set changes.
-     * The callback will be invoked with the current set of items as a parameter.
-     *
-     * @param registrant The object registering for change notifications. Used to manage the lifecycle of the observer.
-     * @param callback The function to be invoked whenever the set changes. It receives the current set of items as
-     *                 a parameter.
-     */
-    override fun onChange(registrant: Any, callback: (Set<T>) -> Unit)
-
-    /**
      * Observes the membership status of a specific item in the set.
      * The returned observable will emit `true` if the item is a member of the set,
      * and `false` otherwise. Emits updates whenever the membership status changes.
@@ -146,9 +136,9 @@ class ObservableMutableSet<T> : ObservableSet<T> {
         toAdd.forEach(::add)
     }
 
-    override fun onChange(registrant: Any, callback: (Set<T>) -> Unit) {
+    override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Set<T>) -> Unit) {
         observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-        backing.onChange(this to registrant) { callback(it.keys.toSet()) }
+        backing.onChange(this to registrant, invokeOnRegistration) { callback(it.keys.toSet()) }
     }
 
     override fun stopWatching(registrant: Any) {

@@ -225,7 +225,7 @@ open class Engine<T, P : Position<out P>>(
      */
     private inner class Movement(private val sourceNode: Node<T>) : Update() {
         override val reactionsToUpdate: Sequence<Actionable<T>>
-            get() = getReactionsRelatedTo(sourceNode, environment.getNeighborhood(sourceNode)).filter {
+            get() = getReactionsRelatedTo(sourceNode, environment.getNeighborhood(sourceNode).current).filter {
                 it.inboundDependencies.any { dependency -> dependency.dependsOn(Dependency.MOVEMENT) }
             }
 
@@ -292,8 +292,8 @@ open class Engine<T, P : Position<out P>>(
         override val reactionsToUpdate: Sequence<Actionable<T>>
             get() {
                 val subjects = sequenceOf(sourceNode, targetNode)
-                val sourceNeighbors = environment.getNeighborhood(sourceNode).asSequence()
-                val targetNeighbors = environment.getNeighborhood(targetNode).asSequence()
+                val sourceNeighbors = environment.getNeighborhood(sourceNode).current.asSequence()
+                val targetNeighbors = environment.getNeighborhood(targetNode).current.asSequence()
                 val allSubjects = (subjects + sourceNeighbors + targetNeighbors).distinct()
                 return allSubjects.flatMap { it.reactions.asSequence() }.filter {
                     it.inputContext ==

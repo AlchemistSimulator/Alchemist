@@ -93,14 +93,14 @@ public abstract class AbstractSAPEREMoveNodeAgent<P extends Position<? extends P
      * @return the position of node
      */
     protected final Neighborhood<List<ILsaMolecule>> getNeighborhood(final ILsaNode node) {
-        return environment.getNeighborhood(node);
+        return environment.getNeighborhood(node).getCurrent();
     }
 
     /**
      * @return the position of node
      */
     protected final Neighborhood<List<ILsaMolecule>> getLocalNeighborhood() {
-        return environment.getNeighborhood(getNode());
+        return environment.getNeighborhood(getNode()).getCurrent();
     }
 
     /**

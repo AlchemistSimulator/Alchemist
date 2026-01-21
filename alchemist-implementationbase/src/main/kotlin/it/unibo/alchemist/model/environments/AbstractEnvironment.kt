@@ -154,7 +154,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             spatialIndex.insert(node, *actualPosition.coordinates)
             updateNeighborhood(node, true)
             ifEngineAvailable { it.nodeAdded(node) }
-            nodeAdded(node, position, getNeighborhood(node))
+            nodeAdded(node, position, retrieveNeighborhood(node))
             true
         }
         else -> false
@@ -192,7 +192,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     ): Sequence<Operation<T>> = newNeighborhood
         .getNeighbors()
         .asSequence()
-        .filterNot { it in (oldNeighborhood ?: emptySet()) || getNeighborhood(it).contains(center) }
+        .filterNot { it in (oldNeighborhood ?: emptySet()) || retrieveNeighborhood(it).contains(center) }
         .map { Operation(center, it, true) }
 
     private fun getAllNodesInRange(center: P, range: Double): List<Node<T>> {
@@ -257,7 +257,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     override fun getLayer(molecule: Molecule): Layer<T, P>? = layers[molecule]
 
-    override fun getNeighborhood(node: Node<T>): Neighborhood<T> {
+    protected fun retrieveNeighborhood(node: Node<T>): Neighborhood<T> {
         val result = neighCache[node.id]
         requireNotNull(result) {
             check(!nodes.contains(node)) {
@@ -268,7 +268,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         return result
     }
 
-    override fun observeNeighborhood(node: Node<T>): Observable<Neighborhood<T>> =
+    override fun getNeighborhood(node: Node<T>): Observable<Neighborhood<T>> =
         observableNeighCache[node.id].map { maybeNeighborhood ->
             val neighborhood = maybeNeighborhood.getOrNull()
             requireNotNull(neighborhood) {
@@ -359,7 +359,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     ): Sequence<Operation<T>> = oldNeighborhood
         ?.neighbors
         ?.asSequence()
-        ?.filter { neigh -> !newNeighborhood.contains(neigh) && getNeighborhood(neigh).contains(center) }
+        ?.filter { neigh -> !newNeighborhood.contains(neigh) && retrieveNeighborhood(neigh).contains(center) }
         ?.map { neigh -> Operation(center, neigh, isAdd = false) }
         .orEmpty()
 
@@ -526,7 +526,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                     .getNeighbors()
                     .asSequence()
                     .filterNot(newNeighborhood::contains)
-                    .map(this::getNeighborhood)
+                    .map(this::retrieveNeighborhood)
                     .filter { neigh -> neigh.contains(node) }
                     .forEach { neighborhoodToChange ->
                         val formerNeighbor = neighborhoodToChange.getCenter()

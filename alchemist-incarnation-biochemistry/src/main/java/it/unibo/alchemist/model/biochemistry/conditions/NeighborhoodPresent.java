@@ -39,7 +39,7 @@ public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
     public NeighborhoodPresent(final Environment<T, ?> environment, final Node<T> node) {
         super(environment, node);
 
-        setValidity(environment.observeNeighborhood(getNode()).map(neighborhood ->
+        setValidity(environment.getNeighborhood(getNode()).map(neighborhood ->
             neighborhood.getNeighbors().stream()
                 .anyMatch(n -> n.asPropertyOrNull(CellProperty.class) != null)
             ));

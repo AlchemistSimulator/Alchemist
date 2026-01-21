@@ -47,17 +47,19 @@ abstract class DerivedObservable<T>(private val emitOnDistinct: Boolean = true) 
             }
         }
 
-    override fun onChange(registrant: Any, callback: (T) -> Unit) {
+    override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
         val wasEmpty = callbacks.isEmpty()
         callbacks[registrant] = callbacks[registrant].orEmpty() + callback
         if (wasEmpty) {
             val initial = computeFresh()
             cached = initial.some()
-            callback(initial)
+            if (invokeOnRegistration) {
+                callback(initial)
+            }
 
             isListening = true
             startMonitoring()
-        } else {
+        } else if (invokeOnRegistration) {
             callback(current)
         }
     }

@@ -110,7 +110,7 @@ object TestEnvironmentsDiameter {
             mustHave(3.subnetworks())
             specificNodeInASegmentedNetworkShouldHaveDiameter(0, 8.49)
             specificNodeInASegmentedNetworkShouldHaveDiameter(1, 6.32)
-            specificNodeInASegmentedNetworkShouldHaveDiameter(nodeCount - 1, 0.0)
+            specificNodeInASegmentedNetworkShouldHaveDiameter(nodeCount.current - 1, 0.0)
         }
     }
 }

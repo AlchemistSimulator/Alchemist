@@ -22,13 +22,13 @@ import it.unibo.alchemist.model.Time
  */
 class NodesPositions<T, P : Position<P>>(private val environment: Environment<T, P>) : AbstractDoubleExporter() {
     override val columnNames: List<String> by lazy {
-        (0 until environment.nodeCount).flatMap { nodeId ->
+        (0 until environment.nodeCount.current).flatMap { nodeId ->
             (0 until environment.dimensions).map { dimensionIndex ->
                 columnNameFormat(nodeId, Dimension(dimensionIndex))
             }
         }
     }
-    private val expectedNodesCount: Int by lazy { environment.nodeCount }
+    private val expectedNodesCount: Int by lazy { environment.nodeCount.current }
     private val maxNodeId: Int by lazy {
         environment.nodes.maxOfOrNull { it.id } ?: error("No nodes in the environment")
     }
@@ -51,7 +51,7 @@ class NodesPositions<T, P : Position<P>>(private val environment: Environment<T,
     }
 
     private fun <T> checkExtractCondition(environment: Environment<T, *>) {
-        require(expectedNodesCount == environment.nodeCount) {
+        require(expectedNodesCount == environment.nodeCount.current) {
             "The number of nodes in the environment is ${environment.nodeCount}, but $expectedNodesCount was expected"
         }
         val currentMaxNodeId = environment.nodes.maxOfOrNull { it.id } ?: error("No nodes in the environment")

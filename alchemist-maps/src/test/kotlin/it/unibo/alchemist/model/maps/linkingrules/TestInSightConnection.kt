@@ -29,7 +29,7 @@ class TestInSightConnection :
                         .from(ResourceLoader.getResource("simulations/connect-sight.yml"))
                         .getDefault<Nothing, GeoPosition>()
                         .environment as OSMEnvironment
-                environment.nodeCount shouldBe 102
+                environment.nodeCount.current shouldBe 102
                 val node0 = environment.getNodeByID(0)
                 val node1 = environment.getNodeByID(1)
                 val rule = environment.linkingRule

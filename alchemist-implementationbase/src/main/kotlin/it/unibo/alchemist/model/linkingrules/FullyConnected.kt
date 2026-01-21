@@ -30,7 +30,7 @@ class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
 
         override fun getCenter() = center
 
-        override fun isEmpty() = environment.nodeCount <= 1
+        override fun isEmpty() = environment.nodeCount.current <= 1
 
         override fun getNeighbors() = object : ListSet<Node<T>> {
             override fun get(index: Int) = BugReporting.reportBug("Not implemented")
@@ -67,13 +67,13 @@ class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
 
             override fun retainAll(elements: Collection<Node<T>>) = BugReporting.reportBug("Not implemented")
 
-            override val size = environment.nodeCount - 1
+            override val size = environment.nodeCount.current - 1
 
             override fun contains(element: Node<T>?) = element != center && environment.contains(element)
 
             override fun containsAll(elements: Collection<Node<T>>) = elements.all { contains(it) }
 
-            override fun isEmpty() = environment.nodeCount == 1
+            override fun isEmpty() = environment.nodeCount.current == 1
         }
 
         override fun remove(node: Node<T>?) = this
@@ -82,6 +82,6 @@ class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
 
         override fun iterator() = neighbors.iterator()
 
-        override fun size() = environment.nodeCount - 1
+        override fun size() = environment.nodeCount.current - 1
     }
 }

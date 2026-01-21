@@ -139,7 +139,7 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
         ?.toDouble()
         ?.let {
             Color.getHSBColor(
-                (it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.toDouble())).toFloat(),
+                (it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.current.toDouble())).toFloat(),
                 1f,
                 1f,
             )

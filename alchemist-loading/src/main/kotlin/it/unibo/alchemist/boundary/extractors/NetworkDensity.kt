@@ -46,7 +46,7 @@ class NetworkDensity : Extractor<Double> {
         val area = (boundingBox.maxX - boundingBox.minX) * (boundingBox.maxY - boundingBox.minY)
         return when {
             area <= 0 || area.isInfinite() -> Double.NaN
-            else -> nodeCount / area
+            else -> nodeCount.current / area
         }
     }
 }

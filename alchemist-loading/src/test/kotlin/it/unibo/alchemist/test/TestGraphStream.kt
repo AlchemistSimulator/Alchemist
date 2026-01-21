@@ -26,7 +26,7 @@ class TestGraphStream :
                     .getDefault<Nothing, Nothing>()
                     .environment
             "displace all nodes" - {
-                environment.nodeCount shouldBeExactly 400
+                environment.nodeCount.current shouldBeExactly 400
                 "with neighbors closer than non-neighbors" {
                     environment.nodes.forEach { node ->
                         val neighborhood = environment.getNeighborhood(node).current

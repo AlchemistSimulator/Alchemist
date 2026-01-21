@@ -14,7 +14,7 @@ class TestTerminationPredicateSerialization {
     fun `termination predicates can be serialized and deserialized`() {
         // Create a predicate that checks if the environment has more than 100 nodes
         val originalPredicate: TerminationPredicate<Int, Position<*>> =
-            TerminationPredicate { env -> env.nodeCount > 100 }
+            TerminationPredicate { env -> env.nodeCount.current > 100 }
         // Serialize the predicate
         val serializedBytes = serialize(originalPredicate)
         // Deserialize the predicate
@@ -22,7 +22,7 @@ class TestTerminationPredicateSerialization {
             deserialize(serializedBytes)
         // Check that the deserialized predicate works as expected
         val mockEnvironment = mockk<Environment<Int, Position<*>>>()
-        every { mockEnvironment.nodeCount } returns 101
+        every { mockEnvironment.nodeCount.current } returns 101
         assertEquals(originalPredicate(mockEnvironment), deserializedPredicate(mockEnvironment)) {
             "Deserialized predicate should behave the same as the original"
         }

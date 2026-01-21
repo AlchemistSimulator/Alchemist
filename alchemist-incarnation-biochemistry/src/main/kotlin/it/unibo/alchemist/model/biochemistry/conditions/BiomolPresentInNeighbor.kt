@@ -85,6 +85,10 @@ class BiomolPresentInNeighbor(
      * This object stores the `serialVersionUID` constant required for serialization purposes.
      */
     companion object {
+
+        /**
+         * Unique ID for deserialization purposes.
+         */
         @Serial const val serialVersionUID: Long = 499903479123400111L
     }
 }

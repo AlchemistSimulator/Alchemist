@@ -33,9 +33,9 @@ class EventObservable : Observable<Unit> {
         observingCallbacks.values.forEach { callbacks -> callbacks.forEach { it(Unit) } }
     }
 
-    override fun onChange(registrant: Any, callback: (Unit) -> Unit) {
+    override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Unit) -> Unit) {
         observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-        callback(current)
+        if (invokeOnRegistration) callback(current)
     }
 
     override fun stopWatching(registrant: Any) {

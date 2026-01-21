@@ -161,10 +161,10 @@ object ObservableExtensions {
 
             override val observableSize: Observable<Int> = backing.map { it.size }
 
-            override fun onChange(registrant: Any, callback: (Set<T>) -> Unit) {
+            override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Set<T>) -> Unit) {
                 observers += registrant
                 observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-                backing.onChange(this to registrant, callback)
+                backing.onChange(this to registrant, invokeOnRegistration, callback)
             }
 
             override fun stopWatching(registrant: Any) {

@@ -25,7 +25,7 @@ class NetworkCentroid : Extractor<Double> {
         reaction: Actionable<T>?,
         time: Time,
         step: Long,
-    ): Map<String, Double> = when (environment.nodeCount) {
+    ): Map<String, Double> = when (environment.nodeCount.current) {
         0 -> columnNames.associateWith { NaN }
         else ->
             environment.networkHub().toList().mapIndexed { index, value ->
@@ -40,6 +40,6 @@ class NetworkCentroid : Extractor<Double> {
                 sums[index] += value
             }
         }
-        return sums.map { it / nodeCount }
+        return sums.map { it / nodeCount.current }
     }
 }

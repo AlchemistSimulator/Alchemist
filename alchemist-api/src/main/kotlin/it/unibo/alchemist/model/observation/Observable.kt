@@ -40,7 +40,18 @@ interface Observable<T> : Disposable {
      * @param callback   The callback to be executed when the observable's state changes. It receives
      *                   the updated value of the observable as an argument.
      */
-    fun onChange(registrant: Any, callback: (T) -> Unit)
+    fun onChange(registrant: Any, callback: (T) -> Unit) = onChange(registrant, true, callback)
+
+    /**
+     * Registers a callback to be notified of changes in the observable. The callback is invoked
+     * whenever the state of the observable changes.
+     *
+     * @param registrant The entity registering the callback.
+     * @param invokeOnRegistration Whether the callback should be invoked immediately upon registration.
+     * @param callback   The callback to be executed when the observable's state changes. It receives
+     *                   the updated value of the observable as an argument.
+     */
+    fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit)
 
     /**
      * Unregisters the specified registrant from watching for changes or updates in the observable.
@@ -140,10 +151,10 @@ interface Observable<T> : Disposable {
 
                 override val observingCallbacks: MutableMap<Any, List<(T) -> Unit>> = mutableMapOf()
 
-                override fun onChange(registrant: Any, callback: (T) -> Unit) {
+                override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
                     observers += registrant
                     observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-                    this@asMutable.onChange(this to registrant, callback)
+                    this@asMutable.onChange(this to registrant, invokeOnRegistration, callback)
                 }
 
                 override fun stopWatching(registrant: Any) {
@@ -201,8 +212,10 @@ interface MutableObservable<T> : Observable<T> {
 
             override val observers: List<Any> get() = observingCallbacks.keys.toList()
 
-            override fun onChange(registrant: Any, callback: (T) -> Unit) {
-                callback(current)
+            override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
+                if (invokeOnRegistration) {
+                    callback(current)
+                }
                 observingCallbacks[registrant] = observingCallbacks[registrant]?.let {
                     it + callback
                 } ?: listOf(callback)

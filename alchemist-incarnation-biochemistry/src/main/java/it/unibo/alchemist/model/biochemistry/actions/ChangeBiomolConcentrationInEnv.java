@@ -138,7 +138,7 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
      * @return a list containing the environment nodes around
      */
     private List<EnvironmentNode> getEnvironmentNodesSurrounding() {
-        return environment.getNeighborhood(getNode()).getNeighbors().stream()
+        return environment.getNeighborhood(getNode()).getCurrent().getNeighbors().stream()
                 .parallel()
                 .flatMap(n -> n instanceof EnvironmentNode ? Stream.of((EnvironmentNode) n) : Stream.empty())
                 .collect(Collectors.toList());

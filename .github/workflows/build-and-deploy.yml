@@ -58,7 +58,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.1
-      - uses: DanySK/build-check-deploy-gradle-action@7547d434ea8e3a278682bd5640e79ac1d3fae992 # 4.0.19
+      - uses: DanySK/build-check-deploy-gradle-action@94e25bfa1ec0e4392a48d31183a3bf403a94c055 # 4.0.20
         with:
           pre-build-command: ./gradlew kotlinUpgradeYarnLock
           build-command: true
@@ -77,7 +77,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@7f6ee3cd5bd670cdb3e162894776736254afff1e # 0.2.27
-      - uses: DanySK/build-check-deploy-gradle-action@7547d434ea8e3a278682bd5640e79ac1d3fae992 # 4.0.19
+      - uses: DanySK/build-check-deploy-gradle-action@94e25bfa1ec0e4392a48d31183a3bf403a94c055 # 4.0.20
         with:
           retries-on-failure: 5
           wait-between-retries: 120
@@ -132,7 +132,7 @@ jobs:
     steps:
       - name: Checkout with full history
         uses: danysk/action-checkout@7f6ee3cd5bd670cdb3e162894776736254afff1e # 0.2.27
-      - uses: DanySK/build-check-deploy-gradle-action@7547d434ea8e3a278682bd5640e79ac1d3fae992 # 4.0.19
+      - uses: DanySK/build-check-deploy-gradle-action@94e25bfa1ec0e4392a48d31183a3bf403a94c055 # 4.0.20
         with:
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
@@ -394,7 +394,7 @@ jobs:
         uses: actions/setup-node@v6.2.0
         with:
           node-version-file: package.json
-      - uses: DanySK/build-check-deploy-gradle-action@7547d434ea8e3a278682bd5640e79ac1d3fae992 # 4.0.19
+      - uses: DanySK/build-check-deploy-gradle-action@94e25bfa1ec0e4392a48d31183a3bf403a94c055 # 4.0.20
         env:
           MAKEPKG_IMAGE: ${{ needs.ci-preparation.outputs.makepkg-image }}
         with:

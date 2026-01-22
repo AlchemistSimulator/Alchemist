@@ -99,7 +99,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
       case 2 => Point3D(point.getCoordinate(0), point.getCoordinate(1), 0)
       case 3 => Point3D(point.getCoordinate(0), point.getCoordinate(1), point.getCoordinate(2))
     }
-    val position: P = environment.getPosition(node)
+    val position: P = environment.getCurrentPosition(node)
     // NB: We assume it.unibo.alchemist.model.Time = DoubleTime
     //     and that its "time unit" is seconds, and then we get NANOSECONDS
     val alchemistCurrentTime = Try(environment.getSimulation)

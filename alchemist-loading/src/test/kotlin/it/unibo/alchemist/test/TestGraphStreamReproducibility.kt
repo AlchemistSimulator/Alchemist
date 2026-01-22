@@ -58,7 +58,7 @@ class TestGraphStreamReproducibility :
                             )
                         }
                         environment.nodes.map { node ->
-                            environment.getPosition(node).coordinates.toList() to
+                            environment.getCurrentPosition(node).coordinates.toList() to
                                 environment.getNeighborhood(node).current.neighbors.map { it.id }
                         }
                     }

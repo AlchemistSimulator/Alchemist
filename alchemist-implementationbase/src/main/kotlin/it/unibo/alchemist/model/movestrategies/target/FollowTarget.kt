@@ -42,7 +42,7 @@ open class FollowTarget<T, P : Position<P>>(
     /**
      * the current position.
      */
-    protected val currentPosition: P get() = environment.getPosition(node)
+    protected val currentPosition: P get() = environment.getCurrentPosition(node)
 
     override fun getTarget(): P {
         val conc = node.getConcentration(targetMolecule) ?: return currentPosition

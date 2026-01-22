@@ -125,7 +125,7 @@ open class Explore<T, L : Euclidean2DConvexShape, R>(
         environment
             .getNodesWithinRange(centroid, radius)
             .asSequence()
-            .map { environment.getPosition(it) }
+            .map { environment.getCurrentPosition(it) }
             .count { contains(it) }
             .let { it * node.area / area }
             .coerceAtMost(1.0)

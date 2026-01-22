@@ -252,7 +252,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         return initialNodes
     }
 
-    override fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double = getPosition(n1).distanceTo(getPosition(n2))
+    override fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double =
+        retrievePosition(n1).distanceTo(retrievePosition(n2))
 
     override fun getLayer(molecule: Molecule): Layer<T, P>? = _layers[molecule]
 
@@ -282,7 +283,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     override fun getNodeByID(id: Int): Node<T> = nodes.first { n: Node<T> -> n.id == id }
 
     override fun getNodesWithinRange(node: Node<T>, range: Double): ListSet<Node<T>> {
-        val centerPosition = getPosition(node)
+        val centerPosition = retrievePosition(node)
         val res = LinkedListSet(getAllNodesInRange(centerPosition, range))
         check(res.remove(node)) {
             "Either the provided range ($range) is too small for queries to work without precision loss, " +
@@ -300,12 +301,12 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     }
 
     override fun observeNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>> =
-        observeAllNodesInRange({ getPosition(node) }, range, node)
+        observeAllNodesInRange({ retrievePosition(node) }, range, node)
 
     override fun observeNodesWithinRange(position: P, range: Double): ObservableSet<Node<T>> =
         observeAllNodesInRange({ position }, range)
 
-    override fun getPosition(node: Node<T>): P = requireNotNull(nodeToPos[node.id]) {
+    protected fun retrievePosition(node: Node<T>): P = requireNotNull(nodeToPos[node.id]) {
         check(!nodes.contains(node)) {
             "Node $node is registered in the environment but has no position. " +
                 "This could be a bug in Alchemist. Please open an issue at: " +
@@ -314,7 +315,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         "Node $node: ${node.javaClass.simpleName} does not exist in the environment."
     }
 
-    override fun observePosition(node: Node<T>): Observable<P> = observableNodeToPos[node.id].map { maybePosition ->
+    override fun getPosition(node: Node<T>): Observable<P> = observableNodeToPos[node.id].map { maybePosition ->
         val position = maybePosition.getOrNull()
         requireNotNull(position) {
             check(!nodes.contains(node)) {
@@ -447,7 +448,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     private fun runQuery(center: P, range: Double): List<Node<T>> = spatialIndex
         .query(*center.boundingBox(range).map { it.coordinates }.toTypedArray())
-        .filter { getPosition(it).distanceTo(center) <= range }
+        .filter { retrievePosition(it).distanceTo(center) <= range }
 
     /**
      * Adds or updates a node's position in the position map.

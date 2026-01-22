@@ -33,6 +33,6 @@ abstract class AbstractGroupSteeringAction<T, P, A>(
      * Computes the centroid of the [group] in absolute coordinates.
      */
     protected fun centroid(): P = with(group()) {
-        map { environment.getPosition(it) }.reduce { acc, pos -> acc + pos } / size.toDouble()
+        map { environment.getCurrentPosition(it) }.reduce { acc, pos -> acc + pos } / size.toDouble()
     }
 }

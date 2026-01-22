@@ -57,7 +57,7 @@ public final class StraightLineTraceDependantSpeed<
         final Node<T> currentNode,
         final GeoPosition targetPosition
     ) {
-        return environment.getPosition(currentNode).distanceTo(targetPosition);
+        return environment.getCurrentPosition(currentNode).distanceTo(targetPosition);
     }
 
     @Override

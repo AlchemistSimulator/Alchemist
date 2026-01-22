@@ -391,11 +391,11 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
                 : getNode().getConcentration(context);
         final TIntObjectMap<P> positionCacheTemp = new TIntObjectHashMap<>(positionCache.size());
         final TIntObjectMap<List<? extends ILsaMolecule>> gradCacheTemp = new TIntObjectHashMap<>(gradCache.size());
-        final P curPos = this.environment.getPosition(getNode());
+        final P curPos = this.environment.getCurrentPosition(getNode());
         final boolean positionChanged = !curPos.equals(mypos);
         boolean neighPositionChanged = false;
         for (final Node<List<ILsaMolecule>> n : this.environment.getNeighborhood(getNode()).getCurrent()) {
-            final P p = this.environment.getPosition(n);
+            final P p = this.environment.getCurrentPosition(n);
             final int nid = n.getId();
             positionCacheTemp.put(nid, p);
             gradCacheTemp.put(n.getId(), n.getConcentration(gradient));

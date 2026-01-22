@@ -113,8 +113,12 @@ class TestDeformableCell {
         environment.addNode(cellNode3, CELL_POS1_3);
         environment.addNode(cellNode4, CELL_POS1_4);
 
-        assertNotNull(environment.getPosition(cellNode2), "Position of cellNode2 = " + environment.getPosition(cellNode2));
-        assertNotNull(environment.getPosition(cellNode3), "Position of cellNode3 = " + environment.getPosition(cellNode3));
+        assertNotNull(
+            environment.getCurrentPosition(cellNode2), "Position of cellNode2 = " + environment.getCurrentPosition(cellNode2)
+        );
+        assertNotNull(
+            environment.getCurrentPosition(cellNode3), "Position of cellNode3 = " + environment.getCurrentPosition(cellNode3)
+        );
         assertFalse(environment.getNodes().contains(cellNode4), "unexpected node in the environment");
     }
 
@@ -391,8 +395,8 @@ class TestDeformableCell {
         environment.moveNodeToPosition(cellNode1, new Euclidean2DPosition(0, 10));
         assertEquals(
             EXPECTED_POS_MOV1,
-            environment.getPosition(cellNode1),
-                "Position of cellNode1 = " + environment.getPosition(cellNode1)
+            environment.getCurrentPosition(cellNode1),
+                "Position of cellNode1 = " + environment.getCurrentPosition(cellNode1)
         );
     }
 }

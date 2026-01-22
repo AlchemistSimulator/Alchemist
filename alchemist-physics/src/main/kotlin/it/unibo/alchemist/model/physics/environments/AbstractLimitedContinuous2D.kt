@@ -28,7 +28,7 @@ abstract class AbstractLimitedContinuous2D<T>(incarnation: Incarnation<T, Euclid
     }
 
     override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) {
-        val (curX, curY) = getPosition(node).coordinates
+        val (curX, curY) = getCurrentPosition(node).coordinates
         val (newX, newY) = newPosition.coordinates
         super.moveNodeToPosition(node, next(curX, curY, newX, newY))
     }

@@ -43,7 +43,7 @@ class NodesPositions<T, P : Position<P>>(private val environment: Environment<T,
         return environment.nodes
             .flatMap {
                 val nodeId = it.id
-                val nodePosition = environment.getPosition(it)
+                val nodePosition = environment.getCurrentPosition(it)
                 nodePosition.coordinates.mapIndexed { index, coordinate ->
                     columnNameFormat(nodeId, Dimension(index)) to coordinate
                 }

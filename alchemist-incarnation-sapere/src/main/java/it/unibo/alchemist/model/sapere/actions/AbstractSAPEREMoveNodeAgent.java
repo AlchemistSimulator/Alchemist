@@ -75,7 +75,7 @@ public abstract class AbstractSAPEREMoveNodeAgent<P extends Position<? extends P
      * @return the current position of the node
      */
     protected P getCurrentPosition() {
-        return environment.getPosition(getNode());
+        return environment.getCurrentPosition(getNode());
     }
 
     /**
@@ -84,7 +84,7 @@ public abstract class AbstractSAPEREMoveNodeAgent<P extends Position<? extends P
      * @return the position of node
      */
     protected final P getPosition(final Node<List<ILsaMolecule>> node) {
-        return environment.getPosition(node);
+        return environment.getCurrentPosition(node);
     }
 
     /**
@@ -112,7 +112,7 @@ public abstract class AbstractSAPEREMoveNodeAgent<P extends Position<? extends P
         if (environment instanceof EuclideanEnvironment) {
             ((EuclideanEnvironment) environment).moveNode(getNode(), direction);
         } else {
-            final var myPosition = environment.getPosition(getNode());
+            final var myPosition = environment.getCurrentPosition(getNode());
             environment.moveNodeToPosition(getNode(), myPosition.plus(direction.getCoordinates()));
         }
     }

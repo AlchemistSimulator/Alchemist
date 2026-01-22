@@ -81,7 +81,7 @@ object ScafiIncarnationForAlchemist
       val layer: Layer[Any, Position[_]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
       val node = alchemistEnvironment.getNodeByID(mid())
       layer
-        .getValue(alchemistEnvironment.getPosition(node))
+        .getValue(alchemistEnvironment.getCurrentPosition(node))
         .asInstanceOf[A]
     }
 

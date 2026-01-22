@@ -27,5 +27,5 @@ interface SteeringActionWithTarget<T, P> : SteeringAction<T, P> where P : Positi
      * Computes the distance between this action's target and the given [node].
      */
     fun targetDistanceTo(node: Node<T>, environment: Environment<T, P>): Double =
-        target().distanceTo(environment.getPosition(node))
+        target().distanceTo(environment.getCurrentPosition(node))
 }

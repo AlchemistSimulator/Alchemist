@@ -15,6 +15,8 @@ import java.io.Serial;
 
 /**
  * Generic node for testing purposes.
+ *
+ * @param <T> concentration type
  */
 public final class TestNode<T> extends GenericNode<T> {
 

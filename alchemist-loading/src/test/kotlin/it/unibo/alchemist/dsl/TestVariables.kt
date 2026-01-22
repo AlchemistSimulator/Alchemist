@@ -48,6 +48,7 @@ class TestVariables {
     }
 
     @Test
+    @Suppress("NoNameShadowing")
     fun <P : Position<P>> testDoubleDeclaration() {
         simulation(SAPEREIncarnation()) {
             val rate: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))

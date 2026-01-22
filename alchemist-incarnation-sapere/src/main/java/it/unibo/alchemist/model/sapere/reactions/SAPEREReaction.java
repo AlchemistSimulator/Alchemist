@@ -142,7 +142,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
             }
             return;
         }
-        final Position<?> nodePosCache = modifiesOnlyLocally ? environment.getPosition(getNode()) : null;
+        final Position<?> nodePosCache = modifiesOnlyLocally ? environment.getCurrentPosition(getNode()) : null;
         final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally
             ? new ArrayList<>(getLsaNode().getLsaSpace())
             : null;
@@ -210,7 +210,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          */
         if (modifiesOnlyLocally) {
             final ILsaNode n = getLsaNode();
-            if (Objects.requireNonNull(nodePosCache).equals(environment.getPosition(getNode()))) {
+            if (Objects.requireNonNull(nodePosCache).equals(environment.getCurrentPosition(getNode()))) {
                 final List<? extends ILsaMolecule> contents = n.getLsaSpace();
                 if (contents.size() == Objects.requireNonNull(localContentCache).size()) {
                     emptyExecution = localContentCache.containsAll(contents);

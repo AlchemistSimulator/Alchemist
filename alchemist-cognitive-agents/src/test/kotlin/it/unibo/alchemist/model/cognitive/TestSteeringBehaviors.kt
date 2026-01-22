@@ -36,12 +36,12 @@ class TestSteeringBehaviors<T, P> :
                 .startSimulation(
                     onceInitialized = { environment ->
                         environment.nodes.forEach {
-                            startDistances[it] = environment.getPosition(it).distanceTo(environment.origin)
+                            startDistances[it] = environment.getCurrentPosition(it).distanceTo(environment.origin)
                         }
                     },
                     whenFinished = { environment, _, _ ->
                         environment.nodes.forEach {
-                            endDistances[it] = environment.getPosition(it).distanceTo(environment.origin)
+                            endDistances[it] = environment.getCurrentPosition(it).distanceTo(environment.origin)
                         }
                     },
                 ).nodes
@@ -55,12 +55,12 @@ class TestSteeringBehaviors<T, P> :
                 .startSimulation(
                     onceInitialized = { e ->
                         e.nodes.forEach {
-                            startDistances[it] = e.getPosition(it).distanceTo(e.origin)
+                            startDistances[it] = e.getCurrentPosition(it).distanceTo(e.origin)
                         }
                     },
                     whenFinished = { e, _, _ ->
                         e.nodes.forEach {
-                            endDistances[it] = e.getPosition(it).distanceTo(e.origin)
+                            endDistances[it] = e.getCurrentPosition(it).distanceTo(e.origin)
                         }
                     },
                 ).nodes
@@ -73,7 +73,7 @@ class TestSteeringBehaviors<T, P> :
                 startSimulation(
                     atEachStep = { e, _, _, _ ->
                         e.nodes.forEach {
-                            nodesPositions[it]?.add(e.getPosition(it))
+                            nodesPositions[it]?.add(e.getCurrentPosition(it))
                         }
                     },
                 )
@@ -106,8 +106,12 @@ class TestSteeringBehaviors<T, P> :
                         .groupBy { it.asProperty<T, SocialProperty<T>>().group }
                         .values
                         .forEach {
-                            for (nodePos in it.map { node -> e.getPosition(node) }) {
-                                for (otherPos in (it.map { node -> e.getPosition(node) }.minusElement(nodePos))) {
+                            for (nodePos in it.map { node -> e.getCurrentPosition(node) }) {
+                                for (otherPos in (
+                                    it.map { node ->
+                                        e.getCurrentPosition(node)
+                                    }.minusElement(nodePos)
+                                    )) {
                                     nodePos.distanceTo(otherPos) shouldBeLessThan 4.0
                                 }
                             }
@@ -120,7 +124,7 @@ class TestSteeringBehaviors<T, P> :
         "nodes using separation behavior keep a distance to each other" {
             loadYamlSimulation<T, P>("separation.yml").startSimulation(
                 whenFinished = { e, _, _ ->
-                    with(e.nodes.map { e.getPosition(it) }) {
+                    with(e.nodes.map { e.getCurrentPosition(it) }) {
                         for (nodePos in this) {
                             for (otherPos in (this.minusElement(nodePos))) {
                                 nodePos.distanceTo(otherPos) shouldBeGreaterThan 6.0
@@ -136,7 +140,7 @@ class TestSteeringBehaviors<T, P> :
             loadYamlSimulation<T, P>("obstacle-avoidance.yml").startSimulation(
                 whenFinished = { e, _, _ ->
                     e.nodes.forEach {
-                        e.getPosition(it).distanceTo(e.makePosition(600.0, 240.0)) shouldBeLessThan 10.0
+                        e.getCurrentPosition(it).distanceTo(e.makePosition(600.0, 240.0)) shouldBeLessThan 10.0
                     }
                 },
                 steps = 26000,

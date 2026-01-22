@@ -71,7 +71,7 @@ public final class CellTensionPolarization extends AbstractAction<Double> {
     @Override
     public void execute() {
         // get node position as an array
-        final double[] nodePosistion = environment.getPosition(getNode()).getCoordinates();
+        final double[] nodePosistion = environment.getCurrentPosition(getNode()).getCoordinates();
         // initializing resulting versor
         final double[] resultingVersor = new double[nodePosistion.length];
         // declaring a variable for the node where this action is set, to have faster access
@@ -102,7 +102,7 @@ public final class CellTensionPolarization extends AbstractAction<Double> {
                 })
                 .map(node -> {
                     // position of node n as an array
-                    final double[] nPos = environment.getPosition(node).getCoordinates();
+                    final double[] nPos = environment.getCurrentPosition(node).getCoordinates();
                     // max radius of n
                     final double localNodeMaxRadius;
                     // min radius of n

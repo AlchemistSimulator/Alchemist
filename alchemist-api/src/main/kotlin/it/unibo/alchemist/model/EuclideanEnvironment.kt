@@ -25,7 +25,7 @@ interface EuclideanEnvironment<T, P> : Environment<T, P> where P : Position<P>, 
      * method may suffice.
      */
     fun moveNode(node: Node<T>, direction: P) {
-        val oldcoord = getPosition(node)
+        val oldcoord = getCurrentPosition(node)
         moveNodeToPosition(node, oldcoord.plus(direction))
     }
 

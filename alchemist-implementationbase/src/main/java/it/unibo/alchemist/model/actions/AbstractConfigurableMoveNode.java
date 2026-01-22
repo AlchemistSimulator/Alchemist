@@ -104,7 +104,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
         double maxWalk = speedSelectionStrategy.getNodeMovementLength(end);
         final Environment<T, P> environment = getEnvironment();
         final Node<T> node = getNode();
-        P curPos = environment.getPosition(node);
+        P curPos = environment.getCurrentPosition(node);
         if (curPos.distanceTo(end) <= maxWalk) {
             final P destination = end;
             end = targetSelectionStrategy.getTarget();

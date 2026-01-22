@@ -27,13 +27,6 @@ class SendScafiMessage[T, P <: Position[P]](
   assert(reaction != null, "Reaction cannot be null")
   assert(program != null, "Program cannot be null")
 
-  private var neighbors: Iterator[Node[T]] = Iterator.empty
-  environment.getNeighborhood(device.getNode).onChange(this, neighborhood => {
-      neighbors = neighborhood.getNeighbors.iterator().asScala
-      kotlin.Unit.INSTANCE
-    }
-  )
-
   /**
    * This method allows to clone this action on a new node. It may result useful to support runtime creation of nodes
    * with the same reaction programming, e.g. for morphogenesis.
@@ -70,7 +63,7 @@ class SendScafiMessage[T, P <: Position[P]](
   override def execute(): Unit = {
     val toSend = program.getExport(device.getNode.getId).get
     for {
-      neighborhood <- neighbors
+      neighborhood <- environment.getNeighborhood(device.getNode).getCurrent.getNeighbors.iterator().asScala
       action <- ScafiIncarnationUtils.allScafiProgramsFor[T, P](neighborhood).filter(program.getClass.isInstance(_))
       if action.programNameMolecule == program.programNameMolecule
     } action.sendExport(device.getNode.getId, toSend)

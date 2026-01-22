@@ -35,7 +35,7 @@ class NetworkDensity : Extractor<Double> {
         )
 
         val boundingBox = this.fold(BoundingBox()) { bb, node ->
-            val (x, y) = getPosition(node).coordinates
+            val (x, y) = getCurrentPosition(node).coordinates
             BoundingBox(
                 min(x, bb.minX),
                 max(x, bb.maxX),

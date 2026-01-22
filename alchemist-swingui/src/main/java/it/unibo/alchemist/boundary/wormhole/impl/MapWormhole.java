@@ -140,7 +140,7 @@ public final class MapWormhole extends WormholeSwing<GeoPosition> {
             setZoom(zoom);
             zoom--;
         } while (zoom > 1 && !environment.getNodes().parallelStream()
-                .map(environment::getPosition)
+                .map(environment::getCurrentPosition)
                 .map(this::getViewPoint)
                 .allMatch(this::isInsideView));
     }

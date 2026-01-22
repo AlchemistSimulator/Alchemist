@@ -243,7 +243,7 @@ class TestChemotaxis {
         r1.execute();
         r2.execute();
         assertEquals(new Euclidean2DPosition(0.5 + FastMath.sqrt(0.5), 0.5 + FastMath.sqrt(0.5)),
-                environment.getPosition(cellNode1)
+                environment.getCurrentPosition(cellNode1)
         );
     }
 
@@ -273,11 +273,11 @@ class TestChemotaxis {
         r1.execute();
         r2.execute();
         assertEquals(1,
-                environment.getPosition(cellNode1).getX(),
+                environment.getCurrentPosition(cellNode1).getX(),
                 PRECISION
                 );
         assertEquals(1,
-                environment.getPosition(cellNode1).getY(),
+                environment.getCurrentPosition(cellNode1).getY(),
                 PRECISION
                 );
     }
@@ -310,11 +310,11 @@ class TestChemotaxis {
         r2.execute();
         r2.execute();
         assertEquals(0.5,
-                environment.getPosition(cellNode1).getX(),
+                environment.getCurrentPosition(cellNode1).getX(),
                 PRECISION
                 );
         assertEquals(0.5,
-                environment.getPosition(cellNode1).getY(),
+                environment.getCurrentPosition(cellNode1).getY(),
                 PRECISION
                 );
     }

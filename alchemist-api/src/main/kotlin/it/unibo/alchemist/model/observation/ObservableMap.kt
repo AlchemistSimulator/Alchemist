@@ -13,6 +13,7 @@ import arrow.core.Option
 import arrow.core.none
 import arrow.core.some
 import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
+import it.unibo.alchemist.model.observation.Observable.ObservableExtensions.currentOrNull
 import java.util.Collections
 
 /**
@@ -248,5 +249,16 @@ open class ObservableMutableMap<K, V>(private val backingMap: MutableMap<K, V> =
                 valueUpdate(it.getOrNull()).apply { put(key, this) }.some()
             }
         }
+
+        /**
+         * Updates the value associated with the given key in the map by applying the provided transformation function.
+         * If the key does not exist or its current value is `null`, no operation is performed, and `null` is returned.
+         *
+         * @param key The key whose associated value is to be updated.
+         * @param valueUpdate A function that defines how the current value should be updated.
+         * @return The updated value if the key exists and its value is not `null`; otherwise, `null`.
+         */
+        fun <K, V> ObservableMutableMap<K, V>.updateOrNull(key: K, valueUpdate: V.() -> Unit): V? =
+            this[key].currentOrNull()?.let { it.apply(valueUpdate).also { new -> this[key] = new } }
     }
 }

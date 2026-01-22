@@ -37,7 +37,7 @@ class EnvironmentSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<
             envWrapper.nodes.forEach { node ->
                 val nodeSurrogate = envSurrogate.nodeById(node.id)
                 checkNodeSurrogate(node, nodeSurrogate)
-                checkPositionSurrogate(envWrapper.getPosition(node), envSurrogate.nodeToPos()[node.id]!!)
+                checkPositionSurrogate(envWrapper.getCurrentPosition(node), envSurrogate.nodeToPos()[node.id]!!)
                 checkNeighborhood(envWrapper.getNeighborhood(node).current, envSurrogate.getNeighborhood(node.id))
             }
             // Test propagation of changes

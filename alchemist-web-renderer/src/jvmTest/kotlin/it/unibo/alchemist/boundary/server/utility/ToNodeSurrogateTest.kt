@@ -55,5 +55,5 @@ fun <T, P, TS, PS> checkToNodeSurrogate(
         nodeSurrogate.contents[surrogateContentKey] shouldBe EmptyConcentrationSurrogate
     }
     node.contents.size shouldBe nodeSurrogate.contents.size
-    checkToPositionSurrogate(environment.getPosition(node), nodeSurrogate.position)
+    checkToPositionSurrogate(environment.getCurrentPosition(node), nodeSurrogate.position)
 }

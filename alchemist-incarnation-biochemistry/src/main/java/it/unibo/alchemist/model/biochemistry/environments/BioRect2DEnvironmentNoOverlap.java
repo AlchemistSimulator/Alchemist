@@ -84,7 +84,7 @@ public final class BioRect2DEnvironmentNoOverlap
                 return range <= 0
                         || getNodesWithinRange(position, range).stream()
                             .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
-                            .noneMatch(n -> getPosition(n).distanceTo(position) < nodeRadius
+                            .noneMatch(n -> retrievePosition(n).distanceTo(position) < nodeRadius
                                     + n.asProperty(CircularCellProperty.class).getRadius());
             } else {
                 return true;
@@ -96,7 +96,7 @@ public final class BioRect2DEnvironmentNoOverlap
 
     @Override
     public void moveNodeToPosition(@Nonnull final Node<Double> node, @Nonnull final Euclidean2DPosition newPosition) {
-        final double[] cur = getPosition(node).getCoordinates();
+        final double[] cur = retrievePosition(node).getCoordinates();
         final double[] np = newPosition.getCoordinates();
         final Euclidean2DPosition nextWithinLimts = super.next(cur[0], cur[1], np[0], np[1]);
         if (node.asPropertyOrNull(CircularCellProperty.class) != null) {
@@ -158,7 +158,7 @@ public final class BioRect2DEnvironmentNoOverlap
         range = FastMath.sqrt(FastMath.pow(newHalfDistance, 2) + FastMath.pow(newMaxDiameter, 2));
         return getNodesWithinRange(newMidPoint, range).stream()
                 .filter(n -> !n.equals(nodeToMove) && n.asPropertyOrNull(CircularCellProperty.class) != null)
-                .filter(n -> selectNodes(n, nodeToMove, getPosition(nodeToMove), requestedPos, xVer, yVer))
+                .filter(n -> selectNodes(n, nodeToMove, retrievePosition(nodeToMove), requestedPos, xVer, yVer))
                 .map(n -> getPositionIfNodeIsObstacle(nodeToMove, n, originalPos, oy, ox, ry, rx))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -175,7 +175,7 @@ public final class BioRect2DEnvironmentNoOverlap
         final double yVer
     ) {
         // testing if node is between requested position and original position
-        final Euclidean2DPosition nodePos = getPosition(node);
+        final Euclidean2DPosition nodePos = retrievePosition(node);
         final Euclidean2DPosition nodeOrientationFromOrigin = new Euclidean2DPosition(nodePos.getX() - origin.getX(),
                 nodePos.getY() - origin.getY());
         final double scalarProductResult1 = xVer * nodeOrientationFromOrigin.getX()
@@ -208,7 +208,7 @@ public final class BioRect2DEnvironmentNoOverlap
         final double xr
     ) {
         // original position
-        final Euclidean2DPosition possibleObstaclePosition = getPosition(node);
+        final Euclidean2DPosition possibleObstaclePosition = retrievePosition(node);
         // coordinates of original position, requested position and of node's position
         final double yn = possibleObstaclePosition.getY();
         final double xn = possibleObstaclePosition.getX();

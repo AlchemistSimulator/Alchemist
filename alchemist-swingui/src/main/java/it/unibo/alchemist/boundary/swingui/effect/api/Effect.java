@@ -59,7 +59,7 @@ public interface Effect extends Serializable {
             final Environment<T, P> environment,
             final Wormhole2D<P> wormhole
     ) {
-        final Point viewPoint = wormhole.getViewPoint(environment.getPosition(n));
+        final Point viewPoint = wormhole.getViewPoint(environment.getCurrentPosition(n));
         apply(g, n, viewPoint.x, viewPoint.y); // preserve backward compatibility
     }
 

@@ -111,9 +111,9 @@ public final class ChemotacticPolarization extends AbstractAction<Double> {
         if (l.isEmpty()) {
             cell.addPolarizationVersor(Euclidean2DPosition.Companion.getZero());
         } else {
-            final boolean isNodeOnMaxConc = environment.getPosition(l.stream()
+            final boolean isNodeOnMaxConc = environment.getCurrentPosition(l.stream()
                     .max(Comparator.comparingDouble(n -> n.getConcentration(biomolecule)))
-                    .get()).equals(environment.getPosition(thisNode));
+                    .get()).equals(environment.getCurrentPosition(thisNode));
             if (isNodeOnMaxConc) {
                 cell.addPolarizationVersor(environment.makePosition(0, 0));
             } else {
@@ -138,9 +138,9 @@ public final class ChemotacticPolarization extends AbstractAction<Double> {
 
     private Euclidean2DPosition weightedAverageVectors(final List<Node<Double>> list, final Node<Double> thisNode) {
         Euclidean2DPosition res = Euclidean2DPosition.Companion.getZero();
-        final Euclidean2DPosition thisNodePos = environment.getPosition(thisNode);
+        final Euclidean2DPosition thisNodePos = environment.getCurrentPosition(thisNode);
         for (final Node<Double> n : list) {
-            final Euclidean2DPosition nPos = environment.getPosition(n);
+            final Euclidean2DPosition nPos = environment.getCurrentPosition(n);
             Euclidean2DPosition vecTemp = new Euclidean2DPosition(
                 nPos.getX() - thisNodePos.getX(),
                 nPos.getY() - thisNodePos.getY()

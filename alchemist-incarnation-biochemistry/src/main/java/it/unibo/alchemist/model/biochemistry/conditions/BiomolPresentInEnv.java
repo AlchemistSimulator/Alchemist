@@ -85,7 +85,7 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
 
     private Observable<Double> observeTotalQuantity() {
         return environment.getNeighborhood(getNode()).mergeWith(
-            environment.observePosition(getNode()),
+            environment.getPosition(getNode()),
             (neighborhood, position) -> {
                 final double quantityInEnvNodes = neighborhood.getNeighbors().stream()
                     .parallel()

@@ -22,7 +22,7 @@ class TestPhysicalPedestrians<T, P> :
             loadYamlSimulation<T, P>("pushing_behavior.yml").startSimulation(
                 steps = 35000,
                 whenFinished = { environment, _, _ ->
-                    environment.getPosition(environment.nodes.first()) shouldNotBe environment.makePosition(0, 0)
+                    environment.getCurrentPosition(environment.nodes.first()) shouldNotBe environment.makePosition(0, 0)
                 },
             )
         }

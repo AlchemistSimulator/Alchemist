@@ -8,7 +8,6 @@
  */
 package it.unibo.alchemist.core
 
-import com.google.common.collect.Sets
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.BatchEngine.OutputReplayStrategy.Aggregate.toReplayStrategy
 import it.unibo.alchemist.model.Actionable
@@ -29,11 +28,10 @@ import org.slf4j.LoggerFactory
  *
  * @param <T> concentration type
  * @param <P> [Position] type
-</P></T> */
+ */
 class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
     private val outputReplayStrategy: OutputReplayStrategy
     private val executeLock = Any()
-    private val updateLock = Any()
 
     private constructor(
         environment: Environment<T, P>,
@@ -98,17 +96,17 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
      */
     override fun doStep() {
         val batchedScheduler = scheduler as BatchedScheduler<T>
-        val nextEvents = batchedScheduler.nextBatch
+        val nextEvents = batchedScheduler.getNextBatch()
         val batchSize = nextEvents.size
         if (nextEvents.isEmpty()) {
-            newStatus(Status.TERMINATED)
+            terminate()
             LOGGER.info("No more reactions.")
             return
         }
-        val sortededNextEvents =
-            nextEvents.stream().sorted(Comparator.comparing(Actionable<T>::tau)).collect(Collectors.toList())
-        val minSlidingWindowTime = sortededNextEvents[0].tau
-        val maxSlidingWindowTime = sortededNextEvents[sortededNextEvents.size - 1].tau
+        val sortedNextEvents = nextEvents.sortedBy { it.tau }
+        val minSlidingWindowTime = sortedNextEvents.first().tau
+        val maxSlidingWindowTime = sortedNextEvents.last().tau
+
         runBlocking {
             val taskMapper =
                 Function { event: Actionable<T> ->
@@ -140,7 +138,7 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         is OutputReplayStrategy.Reply ->
             resultsOrderedByTime.forEach(::doStepDoneAllMonitors)
         is OutputReplayStrategy.Aggregate ->
-            doStepDoneAllMonitors(resultsOrderedByTime[resultsOrderedByTime.size - 1])
+            doStepDoneAllMonitors(resultsOrderedByTime.last())
     }
 
     private fun doStepDoneAllMonitors(result: TaskResult) {
@@ -152,17 +150,31 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
     private fun doEvent(nextEvent: Actionable<T>, slidingWindowTime: Time): TaskResult {
         validateEventExecutionTime(nextEvent, slidingWindowTime)
         val currentLocalTime = nextEvent.tau
+
         if (nextEvent.canExecute()) {
             safeExecuteEvent(nextEvent)
-            safeUpdateEvent(nextEvent)
         }
+
         nextEvent.update(currentLocalTime, true, environment)
-        scheduler.updateReaction(nextEvent)
+        synchronized(scheduler) {
+            scheduler.updateReaction(nextEvent)
+        }
+
         if (environment.isTerminated) {
-            newStatus(Status.TERMINATED)
+            terminate()
             LOGGER.info("Termination condition reached.")
         }
         return TaskResult(nextEvent, currentLocalTime)
+    }
+
+    override fun updateReaction(reaction: Actionable<T>) {
+        val previousTau = reaction.tau
+        reaction.update(time, false, environment)
+        if (reaction.tau != previousTau) {
+            synchronized(scheduler) {
+                scheduler.updateReaction(reaction)
+            }
+        }
     }
 
     private fun validateEventExecutionTime(nextEvent: Actionable<T>, slidingWindowTime: Time) {
@@ -196,22 +208,6 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
                 it.reactionReady()
             }
             event.execute()
-        }
-    }
-
-    private fun safeUpdateEvent(event: Actionable<T>) {
-        synchronized(updateLock) {
-            var toUpdate: Set<Actionable<T>> = dependencyGraph.outboundDependencies(event)
-            if (!afterExecutionUpdates.isEmpty()) {
-                afterExecutionUpdates.forEach { it.performChanges() }
-                afterExecutionUpdates.clear()
-                toUpdate =
-                    Sets.union(
-                        toUpdate,
-                        dependencyGraph.outboundDependencies(event),
-                    )
-            }
-            toUpdate.forEach { updateReaction(it) }
         }
     }
 

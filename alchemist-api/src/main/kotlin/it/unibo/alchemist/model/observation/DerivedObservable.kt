@@ -26,7 +26,7 @@ import java.util.Collections
 abstract class DerivedObservable<T>(private val emitOnDistinct: Boolean = true) : Observable<T> {
     private val callbacks = LinkedHashMap<Any, List<(T) -> Unit>>()
 
-    private var cached: Option<T> = none()
+    protected var cached: Option<T> = none()
 
     private var isListening = false
 
@@ -51,14 +51,15 @@ abstract class DerivedObservable<T>(private val emitOnDistinct: Boolean = true) 
         val wasEmpty = callbacks.isEmpty()
         callbacks[registrant] = callbacks[registrant].orEmpty() + callback
         if (wasEmpty) {
-            val initial = computeFresh()
-            cached = initial.some()
-            if (invokeOnRegistration) {
-                callback(initial)
-            }
-
             isListening = true
-            startMonitoring()
+            if (invokeOnRegistration) {
+                val initial = computeFresh()
+                cached = initial.some()
+                callback(initial)
+                startMonitoring(true)
+            } else {
+                startMonitoring(true)
+            }
         } else if (invokeOnRegistration) {
             callback(current)
         }
@@ -90,6 +91,17 @@ abstract class DerivedObservable<T>(private val emitOnDistinct: Boolean = true) 
      * based on the specific implementation of the derived class.
      */
     protected abstract fun startMonitoring()
+
+    /**
+     * Initiates monitoring for changes or updates in the implementing class.
+     * This method should enable necessary mechanisms to observe and react to changes
+     * based on the specific implementation of the derived class.
+     *
+     * @param lazy whether the monitoring should be started lazily (avoiding immediate callbacks)
+     */
+    protected open fun startMonitoring(lazy: Boolean) {
+        startMonitoring()
+    }
 
     /**
      * Stops monitoring for changes or updates in the implementing class.

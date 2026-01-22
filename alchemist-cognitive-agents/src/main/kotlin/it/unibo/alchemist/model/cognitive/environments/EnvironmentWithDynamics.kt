@@ -149,7 +149,7 @@ constructor(
 
     override fun moveNode(node: Node<T>, direction: Euclidean2DPosition) {
         backingEnvironment.moveNode(node, direction)
-        moveNodeBodyToPosition(node, backingEnvironment.getPosition(node))
+        moveNodeBodyToPosition(node, backingEnvironment.getCurrentPosition(node))
     }
 
     private fun addPhysicalProperties(body: PhysicsBody, radius: Double) {
@@ -175,7 +175,7 @@ constructor(
         }
     }
 
-    override fun getPosition(node: Node<T>): Euclidean2DPosition = nodeToBody[node]?.position
+    override fun getCurrentPosition(node: Node<T>): Euclidean2DPosition = nodeToBody[node]?.position
         ?: throw IllegalArgumentException("Unable to find $node's position in the environment.")
 
     private val PhysicsBody.position get() =

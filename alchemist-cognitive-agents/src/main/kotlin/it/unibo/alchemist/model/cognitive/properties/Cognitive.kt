@@ -45,7 +45,7 @@ constructor(
         ) {
             when (danger) {
                 null -> 0.0
-                else -> environment.getLayer(danger)?.getValue(environment.getPosition(node)) as? Double ?: 0.0
+                else -> environment.getLayer(danger)?.getValue(environment.getCurrentPosition(node)) as? Double ?: 0.0
             }
         }
     }

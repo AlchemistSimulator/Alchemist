@@ -79,7 +79,7 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
             final Environment<T, P> environment,
             final Wormhole2D<P> wormhole
     ) {
-        path.add(environment.getPosition(node));
+        path.add(environment.getCurrentPosition(node));
         if (toBeDrawn) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
             graphics2D.setColor(colorCache);

@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.model.protelis.AlchemistNetworkManager
 import it.unibo.alchemist.model.protelis.ProtelisIncarnation
@@ -129,7 +128,7 @@ constructor(
         when {
             node.contains(molecule) -> node.getConcentration(molecule)
             else ->
-                checkNotNull(environment.getLayer(molecule)?.getValue(environment.getPosition(node))) {
+                checkNotNull(environment.getLayer(molecule)?.getValue(environment.getCurrentPosition(node))) {
                     "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists"
                 }
         }

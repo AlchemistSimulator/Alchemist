@@ -66,7 +66,7 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) :
             val content =
                 """
                 |$POSITION
-                |${environment.getPosition(node)}
+                |${environment.getCurrentPosition(node)}
                 |
                 |$CONTENT
                 |${node.contents.map { (k, v) -> "${k.name} -> $v" }.sorted().joinToString(System.lineSeparator())}

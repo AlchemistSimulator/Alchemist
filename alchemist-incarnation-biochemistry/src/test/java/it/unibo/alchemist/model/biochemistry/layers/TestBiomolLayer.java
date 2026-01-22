@@ -86,7 +86,7 @@ class TestBiomolLayer {
                 @Nonnull final Time time,
                 final long step
             ) {
-                final Euclidean2DPosition curPos = environment.getPosition(environment.getNodeByID(0));
+                final Euclidean2DPosition curPos = environment.getCurrentPosition(environment.getNodeByID(0));
                 assertEquals(curPos.getX() > 0 && curPos.getY() > 0, underTest.canExecute());
             }
 

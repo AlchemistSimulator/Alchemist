@@ -157,14 +157,14 @@ interface Environment<T, P : Position<out P>> :
     val offset: DoubleArray
 
     /**
-     * Calculates the position of a [node].
-     */
-    fun getPosition(node: Node<T>): P
-
-    /**
      * Observe the position of a [node].
      */
-    fun observePosition(node: Node<T>): Observable<P>
+    fun getPosition(node: Node<T>): Observable<P>
+
+    /**
+     * Retrieves [node]'s current position.
+     */
+    fun getCurrentPosition(node: Node<T>): P = getPosition(node).current
 
     /**
      * Return the current [Simulation], if present, or throws an [IllegalStateException] otherwise.

@@ -232,7 +232,7 @@ class TestChemotaxis {
         environment.addNode(envNode3, p3);
         environment.addNode(envNode4, p4);
         environment.addNode(cellNode1, p5);
-        assertEquals(EXPECTED_NODES, environment.getNodeCount());
+        assertEquals(EXPECTED_NODES, environment.getNodeCount().getCurrent());
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
@@ -262,7 +262,7 @@ class TestChemotaxis {
         environment.addNode(envNode3, p3);
         environment.addNode(envNode4, p4);
         environment.addNode(cellNode1, p5);
-        assertEquals(EXPECTED_NODES, environment.getNodeCount());
+        assertEquals(EXPECTED_NODES, environment.getNodeCount().getCurrent());
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
@@ -297,7 +297,7 @@ class TestChemotaxis {
         environment.addNode(envNode3, p3);
         environment.addNode(envNode4, p4);
         environment.addNode(cellNode1, p5);
-        assertEquals(EXPECTED_NODES, environment.getNodeCount());
+        assertEquals(EXPECTED_NODES, environment.getNodeCount().getCurrent());
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION2);
         envNode3.setConcentration(biomolA, CONCENTRATION2);

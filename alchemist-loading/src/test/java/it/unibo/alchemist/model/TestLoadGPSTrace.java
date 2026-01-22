@@ -94,7 +94,7 @@ class TestLoadGPSTrace {
                 for (final Node<T> node : environment.getNodes()) {
                     final GeoPosition start = Objects.requireNonNull(NODE_START_POSITION.get(node));
                     final GeoPosition idealArrive = Objects.requireNonNull(START_ARRIVE_POSITION.get(start));
-                    final GeoPosition realArrive = Objects.requireNonNull(environment.getPosition(node));
+                    final GeoPosition realArrive = Objects.requireNonNull(environment.getCurrentPosition(node));
                     assertEquals(
                             0.0,
                             idealArrive.distanceTo(realArrive),
@@ -108,7 +108,7 @@ class TestLoadGPSTrace {
             @Override
             public void initialized(@Nonnull final Environment<T, GeoPosition> environment) {
                 for (final Node<T> node : environment.getNodes()) {
-                    final GeoPosition position = environment.getPosition(node);
+                    final GeoPosition position = environment.getCurrentPosition(node);
                     /*
                      * We don't know the actual type of position, we use LatLongPosition here, so we need to make sure
                      * that types match, or the map won't return what we expect

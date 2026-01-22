@@ -48,7 +48,7 @@ public final class DrawSmartcam implements Effect {
             final Wormhole2D<P> wormhole
     ) {
         final double zoom = wormhole.getZoom();
-        final Point viewPoint = wormhole.getViewPoint(environment.getPosition(node));
+        final Point viewPoint = wormhole.getViewPoint(environment.getCurrentPosition(node));
         final int x = viewPoint.x;
         final int y = viewPoint.y;
         if (environment instanceof Physics2DEnvironment) {

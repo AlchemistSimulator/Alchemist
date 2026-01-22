@@ -63,7 +63,7 @@ public final class MoveForwardAndTeleport<T, P extends Position2D<P>> extends Ab
 
     @Override
     public P getNextPosition() {
-        final P cur = getEnvironment().getPosition(getNode());
+        final P cur = getEnvironment().getCurrentPosition(getNode());
         if (Double.isNaN(y)) {
             y = cur.getY();
         }

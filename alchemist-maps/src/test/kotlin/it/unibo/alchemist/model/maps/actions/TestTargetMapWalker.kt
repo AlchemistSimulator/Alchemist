@@ -49,73 +49,73 @@ internal class TestTargetMapWalker {
 
     @Test
     fun `Node should not move if no position is set`() {
-        val start = environment.getPosition(node)
+        val start = environment.getCurrentPosition(node)
         assertTrue(STARTPOSITION.distanceTo(start) < 10)
         run()
-        assertEquals(start, environment.getPosition(node))
+        assertEquals(start, environment.getCurrentPosition(node))
     }
 
     @Test
     fun `Node should reach the target position when LatLongPosition is set`() {
-        val start = environment.getPosition(node)
+        val start = environment.getCurrentPosition(node)
         assertTrue(STARTPOSITION.distanceTo(start) < 10)
         node.setConcentration(TRACK, LatLongPosition(ENDLAT, ENDLON))
         run()
-        assertEquals(ENDPOSITION, environment.getPosition(node))
+        assertEquals(ENDPOSITION, environment.getCurrentPosition(node))
     }
 
     @Test
     fun `Node should reach the target position when position is set as Iterable of Doubles`() {
-        val start = environment.getPosition(node)
+        val start = environment.getCurrentPosition(node)
         assertTrue(STARTPOSITION.distanceTo(start) < 10)
         node.setConcentration(TRACK, listOf(ENDLAT, ENDLON))
         run()
-        assertEquals(ENDPOSITION, environment.getPosition(node))
+        assertEquals(ENDPOSITION, environment.getCurrentPosition(node))
     }
 
     @Test
     fun `Node should reach the target position when position is set as Iterable of Strings`() {
-        val start = environment.getPosition(node)
+        val start = environment.getCurrentPosition(node)
         assertTrue(STARTPOSITION.distanceTo(start) < 10)
         node.setConcentration(TRACK, listOf(ENDLAT.toString(), ENDLON.toString()))
         run()
-        assertEquals(ENDPOSITION, environment.getPosition(node))
+        assertEquals(ENDPOSITION, environment.getCurrentPosition(node))
     }
 
     @Test
     fun `Node should reach the target position when position is set as a stringified list of numbers`() {
-        val start = environment.getPosition(node)
+        val start = environment.getCurrentPosition(node)
         assertTrue(STARTPOSITION.distanceTo(start) < 10)
         node.setConcentration(TRACK, listOf(ENDLAT, ENDLON).toString())
         run()
-        assertEquals(ENDPOSITION, environment.getPosition(node))
+        assertEquals(ENDPOSITION, environment.getCurrentPosition(node))
     }
 
     @Test
     fun `Node should reach the target position when position is set as a stringified GeoPosition`() {
-        val start = environment.getPosition(node)
+        val start = environment.getCurrentPosition(node)
         assertTrue(STARTPOSITION.distanceTo(start) < 10)
         node.setConcentration(TRACK, ENDPOSITION.toString())
         run()
-        assertEquals(ENDPOSITION, environment.getPosition(node))
+        assertEquals(ENDPOSITION, environment.getCurrentPosition(node))
     }
 
     @Test
     fun `Node should reach the target position when position is set as an angle bracket string`() {
-        val start = environment.getPosition(node)
+        val start = environment.getCurrentPosition(node)
         assertTrue(STARTPOSITION.distanceTo(start) < 10)
         node.setConcentration(TRACK, "<$ENDLAT $ENDLON>")
         run()
-        assertEquals(ENDPOSITION, environment.getPosition(node))
+        assertEquals(ENDPOSITION, environment.getCurrentPosition(node))
     }
 
     @Test
     fun `Node should reach the target position when position is set as a string with embedded coordinates`() {
-        val start = environment.getPosition(node)
+        val start = environment.getCurrentPosition(node)
         assertTrue(STARTPOSITION.distanceTo(start) < 10)
         node.setConcentration(TRACK, "sakldaskld$ENDLAT fmekfjr$ENDLON sdsad32d")
         run()
-        assertEquals(ENDPOSITION, environment.getPosition(node))
+        assertEquals(ENDPOSITION, environment.getCurrentPosition(node))
     }
 
     companion object {

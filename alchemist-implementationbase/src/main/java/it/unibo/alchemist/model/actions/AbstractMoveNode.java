@@ -78,7 +78,7 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
             } else {
                 environment.moveNodeToPosition(
                         getNode(),
-                        environment.getPosition(getNode()).plus(getNextPosition().getCoordinates())
+                        environment.getCurrentPosition(getNode()).plus(getNextPosition().getCoordinates())
                 );
             }
         }
@@ -116,7 +116,7 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
      * @return the position of the node
      */
     protected final P getNodePosition(final Node<T> n) {
-        return environment.getPosition(n);
+        return environment.getCurrentPosition(n);
     }
 
     /**

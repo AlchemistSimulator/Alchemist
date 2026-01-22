@@ -89,7 +89,7 @@ class AlchemistExecutionContext<P : Position<P>>(
      * The device position, in form of [Position].
      */
     val devicePosition: P
-        get() = environmentAccess.getPosition(node)
+        get() = environmentAccess.getCurrentPosition(node)
 
     /**
      * @param environment
@@ -239,7 +239,8 @@ class AlchemistExecutionContext<P : Position<P>>(
      * the destination, in the form of a destination node
      * @return the distance on a map
      */
-    fun routingDistance(dest: Node<Any>): Double = routingDistance(environmentAccess.getPosition(dest) as GeoPosition)
+    fun routingDistance(dest: Node<Any>): Double =
+        routingDistance(environmentAccess.getCurrentPosition(dest) as GeoPosition)
 
     /**
      * Computes the distance along a map. Requires a [MapEnvironment].

@@ -449,13 +449,12 @@ object DslLoaderFunctions {
                     ),
                 ) {
                     properties {
-                        val filter = Rectangle(-3.0, -3.0, 2.0, 2.0)
+                        val filter = Rectangle<Euclidean2DPosition>(-3.0, -3.0, 2.0, 2.0)
                         // same
-                        val filter2 = Rectangle(3.0, 3.0, 2.0, 2.0)
                         inside(filter) {
                             +testNodeProperty("a")
                         }
-                        inside(filter2) {
+                        inside(Rectangle(3.0, 3.0, 2.0, 2.0)) {
                             +testNodeProperty("b")
                         }
                     }

@@ -61,7 +61,7 @@ class TestFeelsTransmission<T> {
                 val reference = environment.makePosition(-50.0, 0.0)
                 environment.nodes.forEach {
                     assertTrue(
-                        environment.getPosition(it).distanceTo(reference) < 13.0,
+                        environment.getCurrentPosition(it).distanceTo(reference) < 13.0,
                         "Node should have moved closer to the evacuation reference point",
                     )
                 }

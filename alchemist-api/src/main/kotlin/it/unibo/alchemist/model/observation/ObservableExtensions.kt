@@ -199,8 +199,10 @@ object ObservableExtensions {
 
         override fun computeFresh(): O = aggregator(this@combineLatestCollection.current.map { map(it).current })
 
+        override fun startMonitoring() = startMonitoring(false)
+
         @Suppress("UNCHECKED_CAST")
-        override fun startMonitoring() {
+        override fun startMonitoring(lazy: Boolean) {
             val callback: (C) -> Unit = { current ->
                 reconcile(
                     sources = sources,
@@ -211,8 +213,16 @@ object ObservableExtensions {
                 )
             }
 
-            this@combineLatestCollection.onChange(this, callback)
-            callback(ArrayList(this@combineLatestCollection.current) as C)
+            this@combineLatestCollection.onChange(this, !lazy, callback)
+            if (lazy) {
+                reconcile(
+                    sources = sources,
+                    current = ArrayList(this@combineLatestCollection.current) as C,
+                    map = map,
+                    doOnChange = { updateAndNotify(computeFresh()) },
+                    invokeOnRegistration = cached.getOrNull() != null,
+                )
+            }
         }
 
         override fun stopMonitoring() {
@@ -232,8 +242,10 @@ object ObservableExtensions {
             ?.some()
             ?: none()
 
+        override fun startMonitoring() = startMonitoring(false)
+
         @Suppress("UNCHECKED_CAST")
-        override fun startMonitoring() {
+        override fun startMonitoring(lazy: Boolean) {
             val callback: (C) -> Unit = { current ->
                 reconcile(
                     sources = sources,
@@ -248,8 +260,16 @@ object ObservableExtensions {
                 )
             }
 
-            this@flatMapCollection.onChange(this, callback)
-            callback(ArrayList(this@flatMapCollection.current) as C)
+            this@flatMapCollection.onChange(this, !lazy, callback)
+            if (lazy) {
+                reconcile(
+                    sources = sources,
+                    current = ArrayList(this@flatMapCollection.current) as C,
+                    map = map,
+                    doOnChange = { updateAndNotify(it.some()) },
+                    invokeOnRegistration = cached.getOrNull() != null,
+                )
+            }
         }
 
         override fun stopMonitoring() {
@@ -264,14 +284,15 @@ object ObservableExtensions {
         current: Collection<T>,
         map: (T) -> Observable<O>,
         doOnChange: (O) -> Unit,
-        postCleanup: () -> Unit,
+        postCleanup: () -> Unit = {},
+        invokeOnRegistration: Boolean = true,
     ) {
         val currentSet = current.toSet()
         (sources.keys - currentSet).forEach { sources.remove(it)?.stopWatching(this) }
         (currentSet - sources.keys).forEach { key ->
             with(map(key)) {
                 sources[key] = this
-                onChange(this@reconcile, doOnChange)
+                onChange(this@reconcile, invokeOnRegistration, doOnChange)
             }
         }
         postCleanup()
@@ -296,9 +317,11 @@ object ObservableExtensions {
                 ?.let { _ -> collector(this@combineLatest.map { it.current }).some() }
                 ?: arrow.core.none()
 
-            override fun startMonitoring() {
+            override fun startMonitoring() = startMonitoring(false)
+
+            override fun startMonitoring(lazy: Boolean) {
                 this@combineLatest.forEach { observable ->
-                    observable.onChange(this) { updateAndNotify(computeFresh()) }
+                    observable.onChange(this, !lazy) { updateAndNotify(computeFresh()) }
                 }
             }
 
@@ -320,9 +343,14 @@ object ObservableExtensions {
 
             override fun computeFresh(): R = transform(this@switchMap.current).current
 
-            override fun startMonitoring() {
-                this@switchMap.onChange(this, ::switchInner)
-                switchInner(this@switchMap.current)
+            override fun startMonitoring() = startMonitoring(false)
+
+            override fun startMonitoring(lazy: Boolean) {
+                this@switchMap.onChange(this, !lazy, ::switchInner)
+                if (lazy) {
+                    // a manual switch to set up inner subscription without emitting is required if lazy
+                    switchInner(this@switchMap.current, invokeOnRegistration = cached.getOrNull() != null)
+                }
             }
 
             override fun stopMonitoring() {
@@ -331,12 +359,16 @@ object ObservableExtensions {
                 innerSubscription = null
             }
 
-            private fun switchInner(value: T) {
+            private fun switchInner(value: T) = switchInner(value, true)
+
+            private fun switchInner(value: T, invokeOnRegistration: Boolean) {
                 innerSubscription?.stopWatching(this)
                 with(transform(value)) {
                     innerSubscription = this
-                    onChange(this@switchMap, ::updateAndNotify)
-                    updateAndNotify(this.current)
+                    onChange(this@switchMap, invokeOnRegistration, ::updateAndNotify)
+                    if (invokeOnRegistration) {
+                        updateAndNotify(this.current)
+                    }
                 }
             }
         }

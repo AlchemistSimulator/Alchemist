@@ -7,8 +7,6 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-@file:Suppress("UNCHECKED_CAST")
-
 package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.boundary.Launcher
@@ -34,11 +32,14 @@ import org.apache.commons.math3.random.RandomGenerator
 
 class SimulationContextImpl<T, P : Position<P>>(
     override val incarnation: Incarnation<T, P>,
-    private var envIstance: Environment<T, P>? = null,
+    private val environmentFactory: context(Incarnation<T, P>) () -> Environment<T, P>,
 ) : SimulationContext<T, P> {
     /** The environment instance (internal use). */
-    override val environment: Environment<T, P>
-        get() = requireNotNull(envIstance) { "Environment has not been initialized yet" }
+    override val environment: Environment<T, P> by lazy {
+        context(incarnation) {
+            environmentFactory()
+        }
+    }
 
     /**
      * List of build steps to execute.
@@ -104,8 +105,7 @@ class SimulationContextImpl<T, P : Position<P>>(
      * @see [VariablesContext]
      */
     fun build(envInstance: Environment<T, P>, values: Map<String, *>): SimulationContextImpl<T, P> {
-        val batchContext = SimulationContextImpl(incarnation)
-        batchContext.envIstance = envInstance
+        val batchContext = SimulationContextImpl(incarnation) { envInstance }
         batchContext.variablesContext.variables += this.variablesContext.variables
         batchContext.variablesContext.dependentVariables += this.variablesContext.dependentVariables
         logger.debug("Binding variables to batchInstance: {}", values)

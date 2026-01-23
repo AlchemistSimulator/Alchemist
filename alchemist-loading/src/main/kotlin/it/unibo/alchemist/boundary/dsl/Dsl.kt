@@ -62,27 +62,28 @@ object Dsl {
      * Creates a simulation with a custom environment.
      *
      * @param incarnation The incarnation instance.
-     * @param environment The environment instance.
+     * @param environmentFactory The environment instance.
      * @param block The simulation configuration block.
      * @return A loader instance.
      */
     fun <T, P : Position<P>> simulation(
         incarnation: Incarnation<T, P>,
-        environment: context(Incarnation<T, P>) () -> Environment<T, P>,
+        environmentFactory: context(Incarnation<T, P>) () -> Environment<T, P>,
         block: context(
+            Incarnation<T, P>,
             RandomGenerator,
-            Environment<T, P>
+            Environment<T, P>,
         ) SimulationContext<T, P>.() -> Unit,
     ): Loader {
-        val ctx = SimulationContextImpl(incarnation)
+        val ctx = SimulationContextImpl(incarnation, environmentFactory)
         ctx.apply {
-            context(ctx.simulationGenerator, ctx.environment) {
+            context(incarnation, ctx.simulationGenerator, ctx.environment) {
                 block()
             }
         }
         return createLoader(ctx) {
             context(incarnation) {
-                environment()
+                environmentFactory()
             }
         }
     }
@@ -99,16 +100,7 @@ object Dsl {
         block: context(
             Incarnation<T, Euclidean2DPosition>,
             RandomGenerator,
-            Environment<T, Euclidean2DPosition>
+            Environment<T, Euclidean2DPosition>,
         ) SimulationContext<T, Euclidean2DPosition>.() -> Unit,
-    ): Loader {
-        val defaultEnv = { Continuous2DEnvironment(incarnation) }
-        val ctx = SimulationContextImpl(incarnation)
-        ctx.apply {
-            context(incarnation, ctx.simulationGenerator, ctx.environment) {
-                block()
-            }
-        }
-        return createLoader(ctx, defaultEnv)
-    }
+    ): Loader = simulation(incarnation, { Continuous2DEnvironment(incarnation) }, block)
 }

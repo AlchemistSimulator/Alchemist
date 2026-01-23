@@ -15,7 +15,7 @@ plugins {
 }
 
 dependencies {
-    ksp(alchemist("dsl-processor"))
+    ksp(alchemist("factories-generator"))
     api(alchemist("api"))
     implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))

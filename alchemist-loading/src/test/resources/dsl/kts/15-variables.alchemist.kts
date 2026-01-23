@@ -1,25 +1,37 @@
+/*
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 
-import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
-import it.unibo.alchemist.boundary.dsl.Dsl.simulation
+package dsl.kts
 
-val incarnation = SAPERE.incarnation<Any, Euclidean2DPosition>()
-simulation(incarnation) {
+simulation(SAPEREIncarnation<Euclidean2DPosition>()) {
     val rate: Double by variable(GeometricVariable(2.0, 0.1, 10.0, 9))
     val size: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
 
     val mSize by variable { -size }
     val sourceStart by variable { mSize / 10.0 }
     val sourceSize by variable { size / 5.0 }
-
+    terminators { +AfterTime<List<ILsaMolecule>, Euclidean2DPosition>(DoubleTime(1.0)) }
     networkModel = ConnectWithinDistance(0.5)
     deployments {
         deploy(
             grid(
-                mSize, mSize, size, size,
-                0.25, 0.25, 0.1, 0.1,
+                mSize,
+                mSize,
+                size,
+                size,
+                0.25,
+                0.25,
+                0.1,
+                0.1,
             ),
         ) {
-            inside(RectangleFilter(sourceStart, sourceStart, sourceSize, sourceSize)) {
+            inside(Rectangle<Euclidean2DPosition>(sourceStart, sourceStart, sourceSize, sourceSize)) {
                 molecule = "token, 0, []"
             }
             programs {
@@ -34,5 +46,3 @@ simulation(incarnation) {
         }
     }
 }
-
-

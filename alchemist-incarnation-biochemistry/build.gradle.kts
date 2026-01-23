@@ -25,7 +25,7 @@ plugins {
 dependencies {
     antlr(libs.antlr4)
 
-    ksp(alchemist("dsl-processor"))
+    ksp(alchemist("factories-generator"))
 
     api(alchemist("implementationbase"))
     api(alchemist("euclidean-geometry"))

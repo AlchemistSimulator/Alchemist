@@ -1,17 +1,17 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.implementations.conditions
+package it.unibo.alchemist.model.scafi.conditions
 
 import it.unibo.alchemist.model.ScafiIncarnationUtils
 import it.unibo.alchemist.model.conditions.AbstractCondition
-import it.unibo.alchemist.model.implementations.actions.RunScafiProgram
 import it.unibo.alchemist.model.implementations.nodes.ScafiDevice
+import it.unibo.alchemist.model.scafi.actions.RunScafiProgram
 import it.unibo.alchemist.model.{Condition, Context, Node, Reaction}
 
 final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val program: RunScafiProgram[_, _])

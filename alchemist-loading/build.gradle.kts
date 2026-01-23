@@ -10,23 +10,25 @@
 import Libs.alchemist
 import Libs.incarnation
 
-/*
- * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
- *
- * This file is part of Alchemist) and is distributed under the terms of the
- * GNU General Public License) with a linking exception)
- * as described in the file LICENSE in the Alchemist distribution"s top directory.
- */
 plugins {
     id("kotlin-jvm-convention")
+    kotlin("plugin.scripting")
 }
 
 dependencies {
+    ksp(alchemist("factories-generator"))
+
     api(alchemist("api"))
     api(alchemist("implementationbase"))
 
     implementation(alchemist("engine"))
     implementation(alchemist("euclidean-geometry"))
+    implementation(kotlin("reflect"))
+    implementation(kotlin("script-runtime"))
+    implementation(kotlin("scripting-common"))
+    implementation(kotlin("scripting-ide-services"))
+    implementation(kotlin("scripting-jvm"))
+    implementation(kotlin("scripting-jvm-host"))
     implementation(libs.apache.commons.lang3)
     implementation(libs.arrow.core)
     implementation(libs.dsiutils)
@@ -41,10 +43,6 @@ dependencies {
     implementation(libs.mongodb)
     implementation(libs.snakeyaml)
 
-    implementation("org.jetbrains.kotlin:kotlin-scripting-common:${libs.versions.kotlin.get()}")
-    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm:${libs.versions.kotlin.get()}")
-    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm-host:${libs.versions.kotlin.get()}")
-
     runtimeOnly(libs.groovy.jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))
     runtimeOnly(libs.scala.compiler)
@@ -57,9 +55,6 @@ dependencies {
     testImplementation(libs.appdirs)
     testImplementation(libs.caffeine)
     testImplementation(libs.embedmongo)
-    implementation(kotlin("script-runtime"))
-
-    ksp(project(":alchemist-dsl-processor"))
 }
 
 kotlin {

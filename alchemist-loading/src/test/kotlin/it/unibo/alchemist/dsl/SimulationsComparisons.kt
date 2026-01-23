@@ -14,52 +14,52 @@ import org.junit.jupiter.api.Test
 class SimulationsComparisons {
 
     @Test
-    fun <T, P : Position<P>> test01() {
-        { DslLoaderFunctions.test01Nodes<T, P>() }.shouldEqual("dsl/yml/01-nodes.yml")
+    fun test01() {
+        { DslLoaderFunctions.test01Nodes() }.shouldEqual("dsl/yml/01-nodes.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> test02() {
-        { DslLoaderFunctions.test02ManyNodes<T, P>() }.shouldEqual("dsl/yml/02-manynodes.yml")
+    fun test02() {
+        { DslLoaderFunctions.test02ManyNodes() }.shouldEqual("dsl/yml/02-manynodes.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> test03() {
-        { DslLoaderFunctions.test03Grid<T, P>() }.shouldEqual("dsl/yml/03-grid.yml")
+    fun test03() {
+        { DslLoaderFunctions.test03Grid() }.shouldEqual("dsl/yml/03-grid.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> test05() {
-        { DslLoaderFunctions.test05Content<T, P>() }.shouldEqual("dsl/yml/05-content.yml")
+    fun test05() {
+        { DslLoaderFunctions.test05Content() }.shouldEqual("dsl/yml/05-content.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> test06() {
-        { DslLoaderFunctions.test06ContentFiltered<T, P>() }.shouldEqual("dsl/yml/06-filters.yml")
+    fun test06() {
+        { DslLoaderFunctions.test06ContentFiltered() }.shouldEqual("dsl/yml/06-filters.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> test07() {
-        { DslLoaderFunctions.test07Programs<T, P>() }.shouldEqual("dsl/yml/07-program.yml")
+    fun test07() {
+        { DslLoaderFunctions.test07Programs() }.shouldEqual("dsl/yml/07-program.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> test08() {
-        DslLoaderFunctions.test08ProtelisPrograms<T, P>().shouldEqual("dsl/yml/08-protelisprogram.yml")
+    fun test08() {
+        DslLoaderFunctions.test08ProtelisPrograms().shouldEqual("dsl/yml/08-protelisprogram.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> test09() {
-        { DslLoaderFunctions.test09TimeDistribution<T, P>() }.shouldEqual("dsl/yml/09-timedistribution.yml")
+    fun test09() {
+        { DslLoaderFunctions.test09TimeDistribution() }.shouldEqual("dsl/yml/09-timedistribution.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> test10() {
-        { DslLoaderFunctions.test10Environment<T>() }.shouldEqual("dsl/yml/10-environment.yml")
+    fun test10() {
+        { DslLoaderFunctions.test10Environment() }.shouldEqual("dsl/yml/10-environment.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> test11() {
+    fun test11() {
         { DslLoaderFunctions.test11monitors() }.shouldEqual("dsl/yml/11-monitors.yml")
     }
 
@@ -75,17 +75,17 @@ class SimulationsComparisons {
 
     @Test
     fun <T, P : Position<P>> test14() {
-        { DslLoaderFunctions.test14Exporters<T, P>() }.shouldEqual("dsl/yml/14-exporters.yml")
+        { DslLoaderFunctions.test14Exporters() }.shouldEqual("dsl/yml/14-exporters.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> test15() {
-        { DslLoaderFunctions.test15Variables<T, P>() }.shouldEqual("dsl/yml/15-variables.yml")
+    fun test15() {
+        { DslLoaderFunctions.test15Variables() }.shouldEqual("dsl/yml/15-variables.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> test16() {
-        { DslLoaderFunctions.test16ProgramsFilters<T, P>() }
+    fun test16() {
+        { DslLoaderFunctions.test16ProgramsFilters() }
             .shouldEqual(
                 "dsl/yml/16-programsfilters.yml",
                 targetTime = 10.0,
@@ -93,18 +93,18 @@ class SimulationsComparisons {
     }
 
     @Test
-    fun <T, P : Position<P>> test17() {
-        { DslLoaderFunctions.test17CustomNodes<T, P>() }.shouldEqual("dsl/yml/17-customnodes.yml")
+    fun test17() {
+        { DslLoaderFunctions.test17CustomNodes() }.shouldEqual("dsl/yml/17-customnodes.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> test18() {
-        { DslLoaderFunctions.test18NodeProperties<T, P>() }.shouldEqual("dsl/yml/18-properties.yml")
+    fun test18() {
+        { DslLoaderFunctions.test18NodeProperties() }.shouldEqual("dsl/yml/18-properties.yml")
     }
 
     @Test
-    fun <T, P : Position<P>> test20() {
-        { DslLoaderFunctions.test20Actions<T, P>() }.shouldEqual(
+    fun test20() {
+        { DslLoaderFunctions.test20Actions() }.shouldEqual(
             "dsl/yml/20-move.yml",
             targetTime = 10.0,
         )

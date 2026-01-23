@@ -6,17 +6,17 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model
+package it.unibo.alchemist.model.incarnations
 
-import it.unibo.alchemist.model.ScafiIncarnationUtils._
-import it.unibo.alchemist.model.implementations.actions.{RunScafiProgram, SendScafiMessage}
-import it.unibo.alchemist.model.implementations.conditions.ScafiComputationalRoundComplete
 import it.unibo.alchemist.model.implementations.nodes.ScafiDevice
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.reactions.{ChemicalReaction, Event}
 import it.unibo.alchemist.model.timedistributions.{DiracComb, ExponentialTime}
 import it.unibo.alchemist.model.times.DoubleTime
+import it.unibo.alchemist.model._
+import it.unibo.alchemist.model.scafi.actions.{RunScafiProgram, SendScafiMessage}
+import it.unibo.alchemist.model.scafi.conditions.ScafiComputationalRoundComplete
 import it.unibo.alchemist.scala.ScalaInterpreter
 import org.apache.commons.math3.random.RandomGenerator
 

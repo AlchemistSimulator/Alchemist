@@ -10,8 +10,8 @@
 package it.unibo.alchemist.dsl
 
 import it.unibo.alchemist.boundary.dsl.Dsl.simulation
+import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
-import it.unibo.alchemist.model.sapere.SAPEREIncarnation
 import org.junit.jupiter.api.Test
 
 class TestSimulations {

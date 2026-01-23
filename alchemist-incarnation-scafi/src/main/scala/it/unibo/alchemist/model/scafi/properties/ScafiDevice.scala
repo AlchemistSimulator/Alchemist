@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -7,11 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations.nodes
+package it.unibo.alchemist.model.scafi.properties
 
+import it.unibo.alchemist.model.scafi.actions.{RunScafiProgram, SendScafiMessage}
 import it.unibo.alchemist.model.{Node, NodeProperty}
-import it.unibo.alchemist.model.implementations.actions.{RunScafiProgram, SendScafiMessage}
 import org.slf4j.LoggerFactory
+
 import scala.jdk.CollectionConverters._
 
 class ScafiDevice[E](node: Node[E]) extends NodeProperty[E] {

@@ -17,7 +17,7 @@ import it.unibo.alchemist.boundary.dsl.Dsl.simulation
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.sapere.SAPEREIncarnation
+import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule
 import org.junit.jupiter.api.Test
 

@@ -20,7 +20,6 @@ class KotlinDslProviderTest {
     @Test
     fun `a simple textual Kotlin DSL script should load`() {
         val script = """
-            import it.unibo.alchemist.model.sapere.SAPEREIncarnation
             simulation(SAPEREIncarnation()) {
                 networkModel = ConnectWithinDistance(5.0)
                 deployments {
@@ -36,7 +35,7 @@ class KotlinDslProviderTest {
     }
 
     @Test
-    fun loadFromFile() {
+    fun `loading the variables test from the Kotlin Script should provide the same value of the YAML file`() {
         val dslUrl = requireNotNull(this.javaClass.getResource("/dsl/kts/15-variables.alchemist.kts")) {
             "Resource /dsl/kts/15-variables.alchemist.kts not found on test classpath"
         }

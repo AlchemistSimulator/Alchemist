@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.sapere;
+package it.unibo.alchemist.model.incarnations;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Action;
@@ -20,6 +20,8 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
+import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.actions.LsaAllNeighborsAction;
 import it.unibo.alchemist.model.sapere.actions.LsaRandomNeighborAction;
 import it.unibo.alchemist.model.sapere.actions.LsaStandardAction;

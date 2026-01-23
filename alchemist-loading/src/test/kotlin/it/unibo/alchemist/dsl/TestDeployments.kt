@@ -12,7 +12,7 @@ package it.unibo.alchemist.dsl
 import it.unibo.alchemist.boundary.dsl.Dsl.simulation
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
-import it.unibo.alchemist.model.sapere.SAPEREIncarnation
+import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import org.junit.jupiter.api.Test
 
 class TestDeployments {

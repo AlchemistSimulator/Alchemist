@@ -18,10 +18,10 @@ import org.junit.jupiter.api.Test
 
 class KotlinDslProviderTest {
     @Test
-    fun loadSimpleScript() {
+    fun `a simple textual Kotlin DSL script should load`() {
         val script = """
-            val inc = SAPERE.incarnation<Any, Euclidean2DPosition>()
-            simulation(inc) {
+            import it.unibo.alchemist.model.sapere.SAPEREIncarnation
+            simulation(SAPEREIncarnation()) {
                 networkModel = ConnectWithinDistance(5.0)
                 deployments {
                     deploy(point(0.0, 0.0))

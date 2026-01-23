@@ -6,7 +6,8 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.protelis
+
+package it.unibo.alchemist.model.incarnations
 
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
@@ -44,6 +45,7 @@ import java.util.Optional
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import javax.annotation.Nonnull
+import kotlin.text.get
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 import org.protelis.lang.ProtelisLoader
@@ -248,10 +250,11 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         private val nodeRef = WeakReference(node)
         private val hash = Objects.hash(molecule, property, node)
 
-        val node: Node<Any> get() =
-            checkNotNull(nodeRef.get()) {
-                "Memory management issue: a Protelis node has been garbage-collected while still in use."
-            }
+        val node: Node<Any>
+            get() =
+                checkNotNull(nodeRef.get()) {
+                    "Memory management issue: a Protelis node has been garbage-collected while still in use."
+                }
 
         override fun equals(other: Any?) = other is CacheKey &&
             other.nodeRef.get() === nodeRef.get() &&
@@ -293,7 +296,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
     }
 
     /**
-     * An [ExecutionEnvironment] that can read and shadow the content of a
+     * An [org.protelis.vm.ExecutionEnvironment] that can read and shadow the content of a
      * Node, but cannot modify it. This is used to prevent badly written
      * properties from interacting with the simulation flow.
      *

@@ -284,15 +284,15 @@ object DslLoaderFunctions {
         }
     }
     fun test12Layers(): Loader {
-        val incarnation = SAPEREIncarnation<Euclidean2DPosition>()
+        val incarnation = ProtelisIncarnation<Euclidean2DPosition>()
         return simulation(incarnation) {
             layer {
                 molecule = "A"
                 layer = StepLayer(
                     2.0,
                     2.0,
-                    incarnation.createConcentration("100"),
-                    incarnation.createConcentration("0"),
+                    100,
+                    0,
                 )
             }
             layer {
@@ -300,8 +300,8 @@ object DslLoaderFunctions {
                 layer = StepLayer(
                     -2.0,
                     -2.0,
-                    incarnation.createConcentration("0"),
-                    incarnation.createConcentration("100"),
+                    0,
+                    100,
                 )
             }
             deployments {

@@ -10,13 +10,18 @@
 package it.unibo.alchemist.dsl
 
 import it.unibo.alchemist.boundary.LoadAlchemist
-import java.io.File
 import java.nio.file.Files
+import java.util.stream.Stream
 import kotlin.io.path.writeText
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import org.kaikikm.threadresloader.ResourceLoader
 
 class KotlinDslProviderTest {
+
     @Test
     fun `a simple textual Kotlin DSL script should load`() {
         val script = """
@@ -34,42 +39,23 @@ class KotlinDslProviderTest {
         assertNotNull(loader)
     }
 
-    @Test
-    fun `loading the variables test from the Kotlin Script should provide the same value of the YAML file`() {
-        val dslUrl = requireNotNull(this.javaClass.getResource("/dsl/kts/15-variables.alchemist.kts")) {
-            "Resource /dsl/kts/15-variables.alchemist.kts not found on test classpath"
+    @ParameterizedTest(name = "{0} should match {1}")
+    @MethodSource("equivalenceCases")
+    fun `Kotlin DSL resources should match YAML equivalents`(ktsResource: String, ymlResource: String) {
+        val url = requireNotNull(ResourceLoader.getResource(ktsResource)) {
+            "Resource $ktsResource not found on test classpath"
         }
-        val dslFile = File(dslUrl.toURI())
-        val dslLoader = { LoadAlchemist.from(dslFile) }
-        dslLoader.shouldEqual("dsl/yml/15-variables.yml")
+        val loaderBuilder = { LoadAlchemist.from(url) }
+        loaderBuilder.shouldEqual(ymlResource)
     }
 
-    @Test
-    fun loadFromFile2() {
-        val dslUrl = requireNotNull(this.javaClass.getResource("/dsl/kts/14-exporters.alchemist.kts")) {
-            "Resource /dsl/kts/14-exporters.alchemist.kts not found on test classpath"
-        }
-        val dslFile = File(dslUrl.toURI())
-        val dslLoader = { LoadAlchemist.from(dslFile) }
-        dslLoader.shouldEqual("dsl/yml/14-exporters.yml")
-    }
-
-    @Test
-    fun loadFromFile3() {
-        val dslUrl = requireNotNull(this.javaClass.getResource("/dsl/kts/18-properties.alchemist.kts")) {
-            "Resource /dsl/kts/18-properties.alchemist.kts not found on test classpath"
-        }
-        val dslFile = File(dslUrl.toURI())
-        val dslLoader = { LoadAlchemist.from(dslFile) }
-        dslLoader.shouldEqual("dsl/yml/18-properties.yml")
-    }
-
-    @Test
-    fun testUrlLoader() {
-        val dslUrl = requireNotNull(this.javaClass.getResource("/dsl/kts/12-layers.alchemist.kts")) {
-            "Resource /dsl/kts/12-layers.alchemist.kts not found on test classpath"
-        }
-        val dslLoader = { LoadAlchemist.from(dslUrl) }
-        dslLoader.shouldEqual("dsl/yml/12-layers.yml")
+    companion object {
+        @JvmStatic
+        fun equivalenceCases(): Stream<Arguments> = Stream.of(
+            Arguments.of("dsl/kts/12-layers.alchemist.kts", "dsl/yml/12-layers.yml"),
+            Arguments.of("dsl/kts/14-exporters.alchemist.kts", "dsl/yml/14-exporters.yml"),
+            Arguments.of("dsl/kts/15-variables.alchemist.kts", "dsl/yml/15-variables.yml"),
+            Arguments.of("dsl/kts/18-properties.alchemist.kts", "dsl/yml/18-properties.yml"),
+        )
     }
 }

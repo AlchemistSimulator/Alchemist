@@ -9,11 +9,9 @@
 
 package dsl.kts
 
-import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
-import it.unibo.alchemist.boundary.dsl.Dsl.simulation
+import it.unibo.alchemist.model.positionfilters.Rectangle as InRectangle
 
-val incarnation = SAPERE.incarnation<Any, Euclidean2DPosition>()
-simulation(incarnation) {
+simulation(SAPEREIncarnation<Euclidean2DPosition>()) {
     deployments {
         deploy(
             circle(
@@ -24,8 +22,8 @@ simulation(incarnation) {
             ),
         ) {
             properties {
-                val filter = RectangleFilter(-3.0, -3.0, 2.0, 2.0)
-                val filter2 = RectangleFilter(3.0, 3.0, 2.0, 2.0)
+                val filter = InRectangle<Euclidean2DPosition>(-3.0, -3.0, 2.0, 2.0)
+                val filter2 = InRectangle<Euclidean2DPosition>(3.0, 3.0, 2.0, 2.0)
                 inside(filter) {
                     +testNodeProperty("a")
                 }

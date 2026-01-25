@@ -8,7 +8,6 @@
  */
 package it.unibo.alchemist.model.incarnations
 
-import it.unibo.alchemist.model.implementations.nodes.ScafiDevice
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.reactions.{ChemicalReaction, Event}
@@ -17,6 +16,7 @@ import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.model._
 import it.unibo.alchemist.model.scafi.actions.{RunScafiProgram, SendScafiMessage}
 import it.unibo.alchemist.model.scafi.conditions.ScafiComputationalRoundComplete
+import it.unibo.alchemist.model.scafi.properties.ScafiDevice
 import it.unibo.alchemist.scala.ScalaInterpreter
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -26,6 +26,9 @@ import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._
 
 sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
+
+  import ScafiIncarnationUtils.runInScafiDeviceContext
+
   private[this] def notNull[V](value: V, name: String = "Object"): V =
     Objects.requireNonNull(value, s"$name must not be null")
 

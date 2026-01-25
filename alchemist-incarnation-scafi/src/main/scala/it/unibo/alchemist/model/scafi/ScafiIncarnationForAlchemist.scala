@@ -12,8 +12,8 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 import java.util.Optional
-import it.unibo.alchemist.model.implementations.nodes.NodeManager
 import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.scafi.nodes.NodeManager
 import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.model.{Environment, Layer}
 import it.unibo.scafi.incarnations.BasicAbstractIncarnation

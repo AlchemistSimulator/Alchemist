@@ -19,19 +19,19 @@ import org.junit.jupiter.api.Test
 
 object TestEnvironmentsDiameterWithHopDistance {
     private infix fun <T> Environment<T, *>.withHopDistanceMustHave(expected: Subnetworks) =
-        assertEquals<Int>(expected.count, allSubNetworksWithHopDistance().size)
+        assertEquals(expected.count, allSubNetworksWithHopDistance().size)
 
     private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveHopDiameter(
         index: Int,
         expected: Double,
-    ) = {
+    ) {
         require(index < nodes.size)
-        assertEquals<Double>(expected, allSubNetworksByNodeWithHopDistance()[nodes[index]]?.diameter!!)
+        assertEquals(expected, allSubNetworksByNodeWithHopDistance()[nodes[index]]?.diameter!!)
     }
 
     private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveHopDiameter(expected: Double) {
         assertFalse(isNetworkSegmented())
-        assertEquals<Double>(expected, allSubNetworksWithHopDistance().single().diameter)
+        assertEquals(expected, allSubNetworksWithHopDistance().single().diameter)
     }
 
     @Test

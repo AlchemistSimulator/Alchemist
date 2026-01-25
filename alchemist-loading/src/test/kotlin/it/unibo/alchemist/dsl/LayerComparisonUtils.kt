@@ -28,8 +28,8 @@ object LayerComparisonUtils {
                     }
                 }
                 assertEquals(
-                    dslDoubleValues,
                     yamlDoubleValues,
+                    dslDoubleValues,
                     "Layer values at position $position should match",
                 )
             }

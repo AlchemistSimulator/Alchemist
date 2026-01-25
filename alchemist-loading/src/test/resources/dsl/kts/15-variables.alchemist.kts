@@ -9,6 +9,10 @@
 
 package dsl.kts
 
+import it.unibo.alchemist.model.sapere.ILsaMolecule
+import it.unibo.alchemist.model.times.DoubleTime
+import it.unibo.alchemist.model.positionfilters.Rectangle as InRectangle
+
 simulation(SAPEREIncarnation<Euclidean2DPosition>()) {
     val rate: Double by variable(GeometricVariable(2.0, 0.1, 10.0, 9))
     val size: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
@@ -31,7 +35,7 @@ simulation(SAPEREIncarnation<Euclidean2DPosition>()) {
                 0.1,
             ),
         ) {
-            inside(Rectangle<Euclidean2DPosition>(sourceStart, sourceStart, sourceSize, sourceSize)) {
+            inside(InRectangle<Euclidean2DPosition>(sourceStart, sourceStart, sourceSize, sourceSize)) {
                 molecule = "token, 0, []"
             }
             programs {

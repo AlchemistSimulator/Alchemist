@@ -11,10 +11,10 @@ package it.unibo.alchemist.util
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.protelis.ProtelisIncarnation
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
 import it.unibo.alchemist.util.Environments.networkDiameter
 import kotlin.test.assertTrue

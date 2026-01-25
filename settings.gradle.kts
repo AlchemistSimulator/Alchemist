@@ -27,6 +27,7 @@ include(
     "alchemist-incarnation-sapere",
     "alchemist-incarnation-scafi",
     "alchemist-incarnation-biochemistry",
+    "alchemist-kotlinscript",
     "alchemist-loading",
     "alchemist-maintenance-tooling",
     "alchemist-maps",

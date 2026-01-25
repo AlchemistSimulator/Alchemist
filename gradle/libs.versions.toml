@@ -63,8 +63,9 @@ jpx = "io.jenetics:jpx:3.2.1"
 jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
-junit-platform-engine = "org.junit.platform:junit-platform-engine:6.0.2"
-junit-platform-launcher = "org.junit.platform:junit-platform-launcher:6.0.2"
+junit-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
+junit-platform-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit" }
 kasechange = "net.pearx.kasechange:kasechange:1.4.1"
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 korim = "com.soywiz.korlibs.korim:korim:4.0.10"
@@ -156,6 +157,7 @@ scalacache = [ "scalacache-core", "scalacache-guava" ]
 scalatest = [ "scalatest", "scalatest-junit", "junit-platform-engine", "junit-platform-launcher" ]
 testing-compile = [
     "junit-api",
+    "junit-params",
     "kotest-assertions-core",
     "kotest-assertions-table",
     "kotest-runner",

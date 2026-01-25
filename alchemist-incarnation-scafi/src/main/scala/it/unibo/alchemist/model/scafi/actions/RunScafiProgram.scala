@@ -10,11 +10,11 @@ package it.unibo.alchemist.model.scafi.actions
 
 import it.unibo.alchemist.model.actions.AbstractLocalAction
 import it.unibo.alchemist.model.{Node, Position, Reaction}
-import it.unibo.alchemist.model.implementations.nodes.SimpleNodeManager
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.{Time => AlchemistTime, _}
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ContextImpl, _}
+import it.unibo.alchemist.model.scafi.nodes.SimpleNodeManager
 import it.unibo.alchemist.scala.PimpMyAlchemist._
 import it.unibo.scafi.space.Point3D
 import org.apache.commons.math3.random.RandomGenerator

@@ -9,11 +9,12 @@
 
 package it.unibo.alchemist.model.scafi.actions
 
-import it.unibo.alchemist.model.{Node, Position, Reaction, ScafiIncarnationUtils}
-import it.unibo.alchemist.model.ScafiIncarnationUtils._
-import it.unibo.alchemist.model.implementations.nodes.ScafiDevice
+import it.unibo.alchemist.model.{Node, Position, Reaction}
+import it.unibo.alchemist.model.incarnations.ScafiIncarnationUtils
 import it.unibo.alchemist.model._
 import it.unibo.alchemist.model.actions.AbstractAction
+import it.unibo.alchemist.model.incarnations.ScafiIncarnationUtils.runInScafiDeviceContext
+import it.unibo.alchemist.model.scafi.properties.ScafiDevice
 
 import java.util.stream.Collectors
 import scala.jdk.CollectionConverters._

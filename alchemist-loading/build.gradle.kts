@@ -12,7 +12,6 @@ import Libs.incarnation
 
 plugins {
     id("kotlin-jvm-convention")
-    kotlin("plugin.scripting")
 }
 
 dependencies {
@@ -23,10 +22,10 @@ dependencies {
 
     implementation(alchemist("engine"))
     implementation(alchemist("euclidean-geometry"))
+    implementation(alchemist("kotlinscript"))
     implementation(kotlin("reflect"))
     implementation(kotlin("script-runtime"))
     implementation(kotlin("scripting-common"))
-    implementation(kotlin("scripting-ide-services"))
     implementation(kotlin("scripting-jvm"))
     implementation(kotlin("scripting-jvm-host"))
     implementation(libs.apache.commons.lang3)

@@ -6,18 +6,16 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-
-package dsl.kts
-
-val incarnation = SAPEREIncarnation<Euclidean2DPosition>()
+import it.unibo.alchemist.model.sapere.ILsaMolecule
+val incarnation: ProtelisIncarnation<Euclidean2DPosition> = ProtelisIncarnation<Euclidean2DPosition>()
 simulation(incarnation) {
     layer {
         molecule = "A"
         layer = StepLayer(
             2.0,
             2.0,
-            incarnation.createConcentration("100"),
-            incarnation.createConcentration("0"),
+            100,
+            0,
         )
     }
     layer {
@@ -25,8 +23,8 @@ simulation(incarnation) {
         layer = StepLayer(
             -2.0,
             -2.0,
-            incarnation.createConcentration("0"),
-            incarnation.createConcentration("100"),
+            0,
+            100,
         )
     }
     deployments {

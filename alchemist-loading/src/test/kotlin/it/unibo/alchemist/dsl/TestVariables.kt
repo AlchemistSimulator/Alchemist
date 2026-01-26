@@ -17,7 +17,10 @@ import it.unibo.alchemist.boundary.dsl.Dsl.simulation
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.deployments.point
+import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
+import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule
 import org.junit.jupiter.api.Test
 
@@ -62,22 +65,39 @@ class TestVariables {
 
     @Test
     fun <P : Position<P>> testDependendVariable() {
-        val loader = simulation(SAPEREIncarnation()) {
-            val rate: Double by variable(GeometricVariable(2.0, 0.1, 10.0, 9))
-            val size: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
+        val loader = simulation(ProtelisIncarnation()) {
+            val geometricVariable: Double by variable(GeometricVariable(10.0, 1.0, 1000.0, 4))
+            val linearVariable: Double by variable(LinearVariable(1.0, 1.0, 2.0, 3.0))
 
-            val mSize by variable { -size }
-            val sourceStart by variable { mSize / 10.0 }
-            val sourceSize by variable { size / 5.0 }
+            val mSize by variable { -linearVariable }
+            val sourceStart by variable { mSize / geometricVariable }
+            val sourceSize by variable { linearVariable / 5.0 }
 
-            runLater {
-                rate.shouldBe(2.0)
-                size.shouldBe(10.0)
-                mSize.shouldBe(-10.0)
-                sourceStart.shouldBe(-1.0)
-                sourceSize.shouldBe(2.0)
+            deployments {
+                deploy(point(0.0, 0.0)) {
+                    all {
+                        molecule = "mSize"
+                        concentration = mSize
+                    }
+                    all {
+                        molecule = "sourceStart"
+                        concentration = sourceStart
+                    }
+                    all {
+                        molecule = "sourceSize"
+                        concentration = sourceSize
+                    }
+                }
             }
         }
-        loader.getWith<List<LsaMolecule>, P>(mapOf("size" to 10.0))
+        loader.variables.size shouldBe 2
+        loader.dependentVariables.size shouldBe 0
+        loader.getWith<List<LsaMolecule>, P>(mapOf("linearVariable" to 10.0)).apply {
+            environment.nodes.size shouldBe 1
+            val node = environment.nodes.single()
+            node.getConcentration(SimpleMolecule("mSize")) shouldBe -10.0
+            node.getConcentration(SimpleMolecule("sourceStart")) shouldBe -1.0
+            node.getConcentration(SimpleMolecule("sourceSize")) shouldBe 2.0
+        }
     }
 }

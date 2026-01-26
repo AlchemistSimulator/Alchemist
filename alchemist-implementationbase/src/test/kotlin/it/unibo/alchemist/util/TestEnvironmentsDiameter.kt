@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test
 
 object TestEnvironmentsDiameter {
     private infix fun <T> Environment<T, *>.mustHave(expected: Subnetworks) =
-        assertEquals<Int>(expected.count, allSubNetworksByNode().size)
+        assertEquals(expected.count, allSubNetworks().size)
 
     private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveDiameter(expected: Double) {
         assertFalse(isNetworkSegmented())

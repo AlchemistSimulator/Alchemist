@@ -11,7 +11,6 @@ import Libs.alchemist
 
 plugins {
     id("kotlin-jvm-convention")
-    alias(libs.plugins.ksp)
 }
 
 dependencies {
@@ -24,7 +23,6 @@ dependencies {
     implementation(alchemist("implementationbase"))
     implementation(alchemist("physics"))
     runtimeOnly(libs.bundles.testing.runtimeOnly)
-    implementation(libs.ksp)
 }
 
 publishing.publications {

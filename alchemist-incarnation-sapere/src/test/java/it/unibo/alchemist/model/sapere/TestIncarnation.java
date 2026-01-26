@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.incarnations.SAPEREIncarnation;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.sapere.actions.LsaAllNeighborsAction;
 import it.unibo.alchemist.model.sapere.actions.LsaRandomNeighborAction;

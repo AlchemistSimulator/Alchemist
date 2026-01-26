@@ -37,6 +37,11 @@ arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
 caffeine = "com.github.ben-manes.caffeine:caffeine:3.2.3"
 classgraph = "io.github.classgraph:classgraph:4.8.184"
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
+compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-multiplatform" }
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
 conrec = "org.danilopianini:conrec:0.1.1"
 dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 dyn4j = "org.dyn4j:dyn4j:5.0.2"
@@ -136,6 +141,7 @@ svgsalamander = "guru.nidi.com.kitfox:svgSalamander:1.1.3"
 trove4j = "net.sf.trove4j:trove4j:3.0.3"
 
 [bundles]
+compose = [ "compose-components-resources", "compose-foundation", "compose-material", "compose-runtime", "compose-ui" ]
 graphhopper = [ "graphhopper-core" ]
 graphql-server = [ "graphql-server", "graphql-server-ktor" ]
 kotlin-react = [ "kotlin-react", "kotlin-react-dom" ]

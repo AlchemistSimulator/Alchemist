@@ -26,7 +26,8 @@ object TestEnvironmentsDiameterWithHopDistance {
         expected: Double,
     ) {
         require(index < nodes.size)
-        assertEquals(expected, allSubNetworksByNodeWithHopDistance()[nodes[index]]?.diameter!!)
+        val subnetworkOfIndexedNode = checkNotNull(allSubNetworksByNodeWithHopDistance()[nodes[index]])
+        assertEquals(expected, subnetworkOfIndexedNode.diameter)
     }
 
     private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveHopDiameter(expected: Double) {
@@ -91,8 +92,9 @@ object TestEnvironmentsDiameterWithHopDistance {
         with(twoSparseSubnetworks) {
             mustBeSegmented()
             withHopDistanceMustHave(2.subnetworks())
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 2.0)
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(1, 1.0)
+            nodes.forEach {
+                specificNodeInASegmentedNetworkShouldHaveHopDiameter(it.id, 2.0)
+            }
         }
     }
 
@@ -101,8 +103,9 @@ object TestEnvironmentsDiameterWithHopDistance {
         with(threeSparseSubnetworks) {
             mustBeSegmented()
             withHopDistanceMustHave(3.subnetworks())
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 2.0)
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(1, 1.0)
+            (0 until nodeCount - 1).forEach {
+                specificNodeInASegmentedNetworkShouldHaveHopDiameter(it, 2.0)
+            }
             specificNodeInASegmentedNetworkShouldHaveHopDiameter(nodeCount - 1, 0.0)
         }
     }

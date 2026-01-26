@@ -40,6 +40,15 @@ object Environments {
 
     /**
      * Computes the diameter of all subnetworks in the environment.
+     * The diameter is the longest shortest path between any two nodes.
+     * Returns a [Map] containing the subnetwork related to each [Node] of the environment.
+     */
+    fun <T> Environment<T, *>.allSubNetworks(
+        computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
+    ): Set<Network<T>> = allSubNetworksByNode(computeDistance).values.toSet()
+
+    /**
+     * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes,
      * evaluated using the [allShortestHopPaths] method.
      * Returns a [Set] containing the subnetworks.
@@ -49,17 +58,8 @@ object Environments {
 
     /**
      * Computes the diameter of all subnetworks in the environment.
-     * The diameter is the longest shortest path between any two nodes,
-     * evaluated using the [allShortestHopPaths] method.
-     * Returns a [Set] containing the subnetworks.
-     */
-    fun <T> Environment<T, *>.allSubNetworksWithHopDistance(): Set<Network<T>> =
-        allSubNetworksByNodeWithHopDistance().values.toSet()
-
-    /**
-     * Computes the diameter of all subnetworks in the environment.
      * The diameter is the longest shortest path between any two nodes.
-     * Returns a [Set] containing the subnetworks.
+     * Returns a [Map] mapping each node to the subnetwork it belongs to.
      */
     fun <T> Environment<T, *>.allSubNetworksByNode(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
@@ -72,7 +72,7 @@ object Environments {
             when (val subnetwork = subnetworks[centerIndex]) {
                 null -> {
                     val newSubnetwork = MutableNetwork(0.0, mutableListOf(centerNode))
-                    result.put(centerNode, newSubnetwork)
+                    result[centerNode] = newSubnetwork
                     val centerRow = paths.row(centerIndex)
                     for (potentialNeighborIndex in centerIndex + 1 until nodeCount) {
                         val distanceToNeighbor = centerRow[potentialNeighborIndex]
@@ -93,6 +93,7 @@ object Environments {
                             .maxOrNull()
                             ?: 0.0,
                     )
+                    result[centerNode] = subnetwork
                 }
             }
         }
@@ -101,12 +102,12 @@ object Environments {
 
     /**
      * Computes the diameter of all subnetworks in the environment.
-     * The diameter is the longest shortest path between any two nodes.
-     * Returns a [Map] containing the subnetwork related to each [Node] of the environment.
+     * The diameter is the longest shortest path between any two nodes,
+     * evaluated using the [allShortestHopPaths] method.
+     * Returns a [Set] containing the subnetworks.
      */
-    fun <T> Environment<T, *>.allSubNetworks(
-        computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
-    ): Set<Network<T>> = allSubNetworksByNode(computeDistance).values.toSet()
+    fun <T> Environment<T, *>.allSubNetworksWithHopDistance(): Set<Network<T>> =
+        allSubNetworksByNodeWithHopDistance().values.toSet()
 
     /**
      * Calculates the shortest paths using the Floyd-Warshall algorithm calculating the Hop Distance between nodes.

@@ -10,6 +10,7 @@
 package it.unibo.alchemist.util
 
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.util.Environments.allSubNetworks
 import it.unibo.alchemist.util.Environments.allSubNetworksByNode
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
 import java.math.BigDecimal
@@ -24,9 +25,9 @@ object TestEnvironmentsDiameter {
 
     private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveDiameter(expected: Double) {
         assertFalse(isNetworkSegmented())
-        assertEquals<Double>(
+        assertEquals(
             expected,
-            allSubNetworksByNode().values.single().diameter.roundToTwoDecimals(),
+            allSubNetworks().single().diameter.roundToTwoDecimals(),
         )
     }
 
@@ -34,7 +35,7 @@ object TestEnvironmentsDiameter {
         require(index < nodes.size)
         val diameter = allSubNetworksByNode()[nodes[index]]?.diameter
         if (diameter != null) {
-            assertEquals<Double>(
+            assertEquals(
                 expected,
                 diameter.roundToTwoDecimals(),
             )

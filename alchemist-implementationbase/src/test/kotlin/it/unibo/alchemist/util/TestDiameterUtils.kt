@@ -103,7 +103,7 @@ val twoConnectedNodesAndOneIsolated = environmentWithNodesAt(ORIGIN, 3.0 to 0.0,
  */
 val twoSubnetworksWithTwoNodesEach = environmentWithNodesAt(ORIGIN, 3.0 to 0.0, 10.0 to 0.0, 10.0 to 3.0)
 
-private val subnetwork1 = listOf(
+val subnetwork1 = listOf(
     -3.0 to 3.0,
     ORIGIN,
     0.0 to 6.0,

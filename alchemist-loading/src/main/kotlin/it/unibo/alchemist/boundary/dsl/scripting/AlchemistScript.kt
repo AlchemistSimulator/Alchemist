@@ -27,7 +27,7 @@ import kotlin.script.experimental.jvm.jvm
     fileExtension = "alchemist.kts",
     compilationConfiguration = AlchemistCompilationConfiguration::class,
 )
-abstract class AlchemistScript
+interface AlchemistScript
 
 /**
  * Compilation configuration for Alchemist scripts.

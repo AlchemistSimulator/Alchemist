@@ -20,6 +20,7 @@ import it.unibo.alchemist.boundary.properties.testNodeProperty
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
+import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.actions.brownianMove
@@ -49,9 +50,12 @@ import it.unibo.alchemist.model.terminators.StableForSteps
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.timedistributions.WeibullTime
+import it.unibo.alchemist.model.timedistributions.exponentialTime
+import it.unibo.alchemist.model.timedistributions.weibullTime
 import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.test.globalTestReaction
 import org.apache.commons.math3.random.MersenneTwister
+import org.apache.commons.math3.random.RandomGenerator
 
 object DslLoaderFunctions {
     fun test01Nodes(): Loader {
@@ -73,9 +77,7 @@ object DslLoaderFunctions {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
                 deploy(
-                    Circle(
-                        ctx.environment,
-                        generator,
+                    circle(
                         10,
                         0.0,
                         0.0,
@@ -104,24 +106,25 @@ object DslLoaderFunctions {
             }
         }
     }
+    context(_: RandomGenerator, _: Environment<*, Euclidean2DPosition>)
+    fun makePerturbedGridForTesting() = grid(
+        -5.0,
+        -5.0,
+        5.0,
+        5.0,
+        0.25,
+        0.25,
+        0.1,
+        0.1,
+    )
     fun test05Content(): Loader {
         val incarnation = SAPEREIncarnation<Euclidean2DPosition>()
         return simulation(incarnation) {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
                 val hello = "hello"
-                deploy(
-                    grid(
-                        -5.0,
-                        -5.0,
-                        5.0,
-                        5.0,
-                        0.25,
-                        0.25,
-                        0.1,
-                        0.1,
-                    ),
-                ) {
+                deploy(makePerturbedGridForTesting())
+                {
                     all {
                         molecule = hello
                     }
@@ -135,16 +138,7 @@ object DslLoaderFunctions {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
                 val hello = "hello"
-                deploy(
-                    Grid(
-                        ctx.environment, generator,
-                        -5.0,
-                        -5.0,
-                        5.0,
-                        5.0,
-                        0.25, 0.25, 0.1, 0.1,
-                    ),
-                ) {
+                deploy(makePerturbedGridForTesting()) {
                     all {
                         molecule = hello
                     }
@@ -162,18 +156,7 @@ object DslLoaderFunctions {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
                 val token = "token"
-                deploy(
-                    grid(
-                        -5.0,
-                        -5.0,
-                        5.0,
-                        5.0,
-                        0.25,
-                        0.25,
-                        0.1,
-                        0.1,
-                    ),
-                ) {
+                deploy(makePerturbedGridForTesting()) {
                     inside(Rectangle(-0.5, -0.5, 1.0, 1.0)) {
                         molecule = token
                     }
@@ -196,16 +179,12 @@ object DslLoaderFunctions {
                 programs {
                     all {
                         timeDistribution = +JaktaTimeDistribution(
-                            sense = WeibullTime(
+                            sense = weibullTime(
                                 1.0,
                                 1.0,
-                                ctx.ctx.ctx.generator,
                             ),
                             deliberate = DiracComb(0.1),
-                            act = ExponentialTime(
-                                1.0,
-                                ctx.ctx.ctx.generator,
-                            ),
+                            act = exponentialTime<Any>(1.0),
                         )
                         program = "1 + 1"
                     }
@@ -218,12 +197,7 @@ object DslLoaderFunctions {
         return simulation(incarnation) {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
-                deploy(
-                    Grid(
-                        ctx.environment, generator,
-                        -5.0, -5.0, 5.0, 5.0, 0.25, 0.25, 0.1, 0.1,
-                    ),
-                ) {
+                deploy(makePerturbedGridForTesting()) {
                     inside(Rectangle(-0.5, -0.5, 1.0, 1.0)) {
                         molecule = "token, 0, []"
                     }
@@ -355,18 +329,7 @@ object DslLoaderFunctions {
         terminators { +AfterTime<List<ILsaMolecule>, Euclidean2DPosition>(DoubleTime(1.0)) }
         networkModel = ConnectWithinDistance(0.5)
         deployments {
-            deploy(
-                grid(
-                    mSize,
-                    mSize,
-                    size,
-                    size,
-                    0.25,
-                    0.25,
-                    0.1,
-                    0.1,
-                ),
-            ) {
+            deploy(makePerturbedGridForTesting()) {
                 inside(Rectangle(sourceStart, sourceStart, sourceSize, sourceSize)) {
                     molecule = "token, 0, []"
                 }
@@ -389,16 +352,7 @@ object DslLoaderFunctions {
             networkModel = ConnectWithinDistance(0.5)
             deployments {
                 val token = "token"
-                deploy(
-                    Grid(
-                        ctx.environment, generator,
-                        -5.0,
-                        -5.0,
-                        5.0,
-                        5.0,
-                        0.25, 0.25, 0.1, 0.1,
-                    ),
-                ) {
+                deploy(makePerturbedGridForTesting()) {
                     inside(Rectangle(-0.5, -0.5, 1.0, 1.0)) {
                         molecule = token
                     }

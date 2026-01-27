@@ -30,55 +30,54 @@ import org.apache.commons.math3.random.RandomGenerator
 open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: SimulationContext<T, P>) :
     DeploymentsContext<T, P> {
 
-    override val generator: RandomGenerator
-        get() = ctx.scenarioGenerator
-
-    context(randomGenerator: RandomGenerator, environment: Environment<T, P>)
+    context(environment: Environment<T, P>)
     override fun deploy(
         deployment: Deployment<P>,
         nodeFactory: context(RandomGenerator, Environment<T, P>) () -> Node<T>,
         block: context(Environment<T, P>, Node<T>) DeploymentContext<T, P>.() -> Unit,
     ) {
-        logger.debug("Deploying deployment: {}", deployment)
-        // Additional linking rules
-        deployment.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
-            val composedLinkingRule =
-                when (val linkingRule = ctx.environment.linkingRule) {
-                    is NoLinks -> newLinkingRule
-                    is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
-                    else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
-                }
-            ctx.environment.linkingRule = composedLinkingRule
-        }
-        deployment.forEach { position ->
-            logger.debug("visiting position: {} for deployment: {}", position, deployment)
-            logger.debug("creaing node for deployment: {}", deployment)
-            val node = nodeFactory()
-            context(node) {
-                // load properties
-                val deploymentContext = DeploymentContextImpl(deployment).apply { block() }
-                deploymentContext.propertiesContext.applyToNode(node, position)
-                // load contents
-                val contents = deploymentContext.contents
-                for (content in contents) {
-                    deploymentContext.applyToNodes(node, position, content)
-                }
-                // load programs
-                val programs = deploymentContext.programsContext.programs
-                val createdPrograms = mutableListOf<Pair<PositionBasedFilter<P>?, Actionable<T>>>()
-                for (programEntry in programs) {
-                    val pp = deploymentContext.programsContext.applyToNodes(
-                        node,
-                        position,
-                        programEntry.program,
-                        programEntry.filter,
-                    )
-                    createdPrograms.add(pp)
-                }
-                logger.debug("programs={}", createdPrograms)
-                logger.debug("Adding node to environment at position: {}", position)
+        context(ctx.simulationGenerator) {
+            logger.debug("Deploying deployment: {}", deployment)
+            // Additional linking rules
+            deployment.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
+                val composedLinkingRule =
+                    when (val linkingRule = ctx.environment.linkingRule) {
+                        is NoLinks -> newLinkingRule
+                        is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
+                        else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
+                    }
+                ctx.environment.linkingRule = composedLinkingRule
             }
-            ctx.environment.addNode(node, position)
+            deployment.forEach { position ->
+                logger.debug("visiting position: {} for deployment: {}", position, deployment)
+                logger.debug("creaing node for deployment: {}", deployment)
+                val node = nodeFactory()
+                context(node) {
+                    // load properties
+                    val deploymentContext = DeploymentContextImpl(deployment).apply { block() }
+                    deploymentContext.propertiesContext.applyToNode(node, position)
+                    // load contents
+                    val contents = deploymentContext.contents
+                    for (content in contents) {
+                        deploymentContext.applyToNodes(node, position, content)
+                    }
+                    // load programs
+                    val programs = deploymentContext.programsContext.programs
+                    val createdPrograms = mutableListOf<Pair<PositionBasedFilter<P>?, Actionable<T>>>()
+                    for (programEntry in programs) {
+                        val pp = deploymentContext.programsContext.applyToNodes(
+                            node,
+                            position,
+                            programEntry.program,
+                            programEntry.filter,
+                        )
+                        createdPrograms.add(pp)
+                    }
+                    logger.debug("programs={}", createdPrograms)
+                    logger.debug("Adding node to environment at position: {}", position)
+                }
+                ctx.environment.addNode(node, position)
+            }
         }
     }
 

@@ -56,15 +56,6 @@ interface DeploymentsContext<T, P : Position<P>> {
     val ctx: SimulationContext<T, P>
 
     /**
-     * The random number generator for scenario generation.
-     *
-     * Used for random deployments and position perturbations.
-     *
-     * @see [org.apache.commons.math3.random.RandomGenerator]
-     */
-    val generator: RandomGenerator
-
-    /**
      * Deploys nodes using a deployment with a configuration block.
      *
      * The configuration block allows setting content, programs, properties, and custom node factories.
@@ -80,7 +71,7 @@ interface DeploymentsContext<T, P : Position<P>> {
      * @see [it.unibo.alchemist.model.Deployment]
      */
     // TODO: fix the doc
-    context(randomGenerator: RandomGenerator, environment: Environment<T, P>)
+    context(environment: Environment<T, P>)
     fun deploy(
         deployment: Deployment<P>,
         nodeFactory: context(RandomGenerator, Environment<T, P>) () -> Node<T> = {

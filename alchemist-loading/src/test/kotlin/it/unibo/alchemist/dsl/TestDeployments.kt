@@ -12,6 +12,7 @@ package it.unibo.alchemist.dsl
 import it.unibo.alchemist.boundary.dsl.Dsl.simulation
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
+import it.unibo.alchemist.model.deployments.grid
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import org.junit.jupiter.api.Test
 
@@ -46,9 +47,7 @@ class TestDeployments {
     fun testGridDeployment() {
         val loader = simulation(SAPEREIncarnation()) {
             deployments {
-                val grid = Grid(
-                    ctx.environment,
-                    generator,
+                val grid = grid(
                     1.0,
                     1.0,
                     5.0,

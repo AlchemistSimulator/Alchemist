@@ -118,7 +118,7 @@ interface SimulationContext<T, P : Position<P>> {
     /**
      * Adds a termination predicate to the simulation.
      *
-     * @param terminator The termination predicate to add
+     * @param block The termination predicate to add
      * @see [TerminationPredicate]
      */
     fun terminators(block: TerminatorsContext<T, P>.() -> Unit)

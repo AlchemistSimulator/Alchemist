@@ -408,16 +408,13 @@ object RuntimeComparisonHelper {
         positionTolerance: Double = 1e-6,
     ) {
         println("Comparing runtime node states... (position tolerance: $positionTolerance)")
-
         val dslNodesWithPos = dslEnv.nodes.map { it to dslEnv.getPosition(it) }
         val yamlNodesWithPos = yamlEnv.nodes.map { it to yamlEnv.getPosition(it) }.toMutableList()
-
         val (matchedPairs, unmatchedDslNodes, distances) = matchNodesByPosition(
             dslNodesWithPos,
             yamlNodesWithPos,
             positionTolerance,
         )
-
         printMatchingStatistics(distances, matchedPairs, dslNodesWithPos.size)
         checkUnmatchedNodes(unmatchedDslNodes, yamlNodesWithPos, distances, positionTolerance)
         compareMatchedNodes(matchedPairs, dslEnv, yamlEnv, positionTolerance)

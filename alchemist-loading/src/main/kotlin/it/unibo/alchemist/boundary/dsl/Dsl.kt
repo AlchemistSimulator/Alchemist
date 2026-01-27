@@ -77,7 +77,7 @@ object Dsl {
     ): Loader {
         val ctx = SimulationContextImpl(incarnation, environmentFactory)
         ctx.apply {
-            context(incarnation, ctx.simulationGenerator, ctx.environment) {
+            context(incarnation, ctx.scenarioGenerator, ctx.environment) {
                 block()
             }
         }

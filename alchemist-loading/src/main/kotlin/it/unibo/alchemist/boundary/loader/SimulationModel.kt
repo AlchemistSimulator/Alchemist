@@ -69,7 +69,7 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
 private typealias ReactionComponentFunction<T, P, R> =
-    (RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, Any?) -> R
+    (RandomGenerator, Environment<T, P>, Node<T>?, Actionable<T>, Any?) -> R
 
 /*
  * UTILITY FUNCTIONS
@@ -707,7 +707,7 @@ internal object SimulationModel {
                 genericFactory: (Context, Any?) -> Result<R>?,
             ): Result<R>? {
                 fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = runCatching {
-                    makeWith(simulationRNG, environment, node, timeDistribution, actionable, parameter)
+                    makeWith(simulationRNG, environment, node, actionable, parameter)
                 }
                 return when (parameter) {
                     is String -> create(parameter, incarnationFactory)

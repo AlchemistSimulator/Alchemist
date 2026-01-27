@@ -178,7 +178,7 @@ object DslLoaderFunctions {
             deploy(point(1.5, 0.5)) {
                 programs {
                     all {
-                        timeDistribution = +JaktaTimeDistribution(
+                        timeDistribution = JaktaTimeDistribution(
                             sense = weibullTime(
                                 1.0,
                                 1.0,

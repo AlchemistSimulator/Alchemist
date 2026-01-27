@@ -14,9 +14,7 @@ import it.unibo.alchemist.boundary.dsl.Dsl.simulation
 import it.unibo.alchemist.boundary.extractors.Time
 import org.apache.commons.math3.random.MersenneTwister
 
-val incarnation = SAPERE.incarnation<Any, Euclidean2DPosition>()
-val environment = {Continuous2DEnvironment(incarnation)}
-simulation(incarnation, environment) {
+simulation(SAPEREIncarnation<Euclidean2DPosition>()) {
     simulationGenerator = MersenneTwister(24L)
     scenarioGenerator = MersenneTwister(42L)
 

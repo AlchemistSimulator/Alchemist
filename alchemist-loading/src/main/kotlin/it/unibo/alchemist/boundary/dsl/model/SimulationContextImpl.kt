@@ -34,6 +34,10 @@ class SimulationContextImpl<T, P : Position<P>>(
     override val incarnation: Incarnation<T, P>,
     private val environmentFactory: context(Incarnation<T, P>) () -> Environment<T, P>,
 ) : SimulationContext<T, P> {
+
+    private var randomGeneratorForSimulation: () -> RandomGenerator = ::defaultRandomGenerator
+    private var randomGeneratorForScenario: () -> RandomGenerator = ::defaultRandomGenerator
+
     /** The environment instance (internal use). */
     override val environment: Environment<T, P> by lazy {
         context(incarnation) {
@@ -160,9 +164,30 @@ class SimulationContextImpl<T, P : Position<P>>(
         }
     }
 
+    override fun seeds(block: SeedsContext.() -> Unit) {
+        val seedContext = object : SeedsContext {
+            override fun simulation(seed: Long) = simulation { defaultRandomGenerator(seed) }
+
+            override fun scenario(seed: Long) = scenario { defaultRandomGenerator(seed) }
+
+            override fun simulation(block: () -> RandomGenerator) {
+                randomGeneratorForSimulation = block
+            }
+
+            override fun scenario(block: () -> RandomGenerator) {
+                randomGeneratorForScenario = block
+            }
+        }
+        seedContext.block()
+    }
+
     override fun <A : Serializable> variable(source: Variable<out A>): VariablesContext.VariableProvider<A> =
         variablesContext.register(source)
 
     override fun <A : Serializable> variable(source: () -> A): VariablesContext.DependentVariableProvider<A> =
         variablesContext.dependent(source)
+
+    private companion object {
+        fun defaultRandomGenerator(seed: Long = 0L): RandomGenerator = MersenneTwister(seed)
+    }
 }

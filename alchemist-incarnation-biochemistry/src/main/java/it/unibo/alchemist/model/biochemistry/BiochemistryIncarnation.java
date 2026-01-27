@@ -108,7 +108,6 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
-        final TimeDistribution<Double> time,
         final Actionable<Double> actionable,
         final @Nullable Object additionalParameters
     ) {
@@ -120,7 +119,6 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
-        final TimeDistribution<Double> time,
         final Actionable<Double> actionable,
         final @Nullable Object additionalParameters
     ) {

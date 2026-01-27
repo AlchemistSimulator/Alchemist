@@ -77,7 +77,6 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         node: Node<Any>?,
-        time: TimeDistribution<Any>,
         actionable: Actionable<Any>,
         additionalParameters: Any?,
     ): Action<Any> {
@@ -135,7 +134,6 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         node: Node<Any>?,
-        time: TimeDistribution<Any>,
         actionable: Actionable<Any>,
         additionalParameters: Any?,
     ): Condition<Any> {
@@ -203,11 +201,11 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             }
         parameter?.let {
             result.actions =
-                listOf(createAction(randomGenerator, environment, node, timeDistribution, result, it))
+                listOf(createAction(randomGenerator, environment, node, result, it))
         }
         if (isSend) {
             result.conditions =
-                listOf(createCondition(randomGenerator, environment, node, timeDistribution, result, null))
+                listOf(createCondition(randomGenerator, environment, node, result, null))
         }
         return result
     }

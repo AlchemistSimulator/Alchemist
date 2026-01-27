@@ -72,8 +72,10 @@ object DslLoaderFunctions {
     fun test02ManyNodes(): Loader {
         val incarnation = SAPEREIncarnation<Euclidean2DPosition>()
         return simulation(incarnation) {
-            simulationGenerator = MersenneTwister(10L)
-            scenarioGenerator = MersenneTwister(20L)
+            seeds {
+                simulation(10L)
+                scenario(20L)
+            }
             networkModel = ConnectWithinDistance(0.5)
             deployments {
                 deploy(

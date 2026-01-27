@@ -69,8 +69,6 @@ object RuntimeComparisonHelper {
         steps: Long? = null,
         targetTime: Double? = null,
         stableForSteps: Pair<Long, Long>? = null,
-        timeTolerance: Double = 0.01,
-        positionTolerance: Double? = null,
     ) {
         val terminationMethods = listOfNotNull(
             steps?.let { "steps" },
@@ -102,8 +100,6 @@ object RuntimeComparisonHelper {
                 targetTime,
                 stableForSteps,
                 steps,
-                timeTolerance,
-                positionTolerance,
             )
         } catch (e: Exception) {
             fail("Error during simulation execution: ${e.message}")
@@ -162,8 +158,6 @@ object RuntimeComparisonHelper {
         targetTime: Double?,
         stableForSteps: Pair<Long, Long>?,
         steps: Long?,
-        timeTolerance: Double,
-        positionTolerance: Double?,
     ) {
         println("Running DSL simulation...")
         runSimulationSynchronously(dslSimulation)
@@ -178,13 +172,10 @@ object RuntimeComparisonHelper {
                 "step: ${yamlSimulation.step}, time: ${yamlSimulation.time}",
         )
         checkSimulationTimeAdvancement(dslSimulation, yamlSimulation, effectiveSteps, targetTime, stableForSteps)
-        val effectivePositionTolerance = positionTolerance ?: max(timeTolerance * 10, 1e-6)
         compareRuntimeStates(
             dslSimulation,
             yamlSimulation,
-            timeTolerance,
             compareSteps = steps != null,
-            positionTolerance = effectivePositionTolerance,
         )
     }
 
@@ -283,9 +274,7 @@ object RuntimeComparisonHelper {
     private fun <T, P : Position<P>> compareRuntimeStates(
         dslSimulation: Simulation<T, P>,
         yamlSimulation: Simulation<T, P>,
-        timeTolerance: Double = 0.01,
         compareSteps: Boolean = true,
-        positionTolerance: Double = 1e-6,
     ) {
         println("Comparing runtime simulation states...")
 
@@ -293,10 +282,10 @@ object RuntimeComparisonHelper {
         val yamlEnv = yamlSimulation.environment
 
         // Compare simulation execution state
-        compareSimulationExecutionState(dslSimulation, yamlSimulation, timeTolerance, compareSteps)
+        compareSimulationExecutionState(dslSimulation, yamlSimulation, compareSteps)
 
         // Compare environment states
-        compareRuntimeEnvironmentStates(dslEnv, yamlEnv, positionTolerance)
+        compareRuntimeEnvironmentStates(dslEnv, yamlEnv)
     }
 
     /**
@@ -305,23 +294,16 @@ object RuntimeComparisonHelper {
     private fun <T, P : Position<P>> compareSimulationExecutionState(
         dslSimulation: Simulation<T, P>,
         yamlSimulation: Simulation<T, P>,
-        timeTolerance: Double = 0.01,
         compareSteps: Boolean = true,
     ) {
         println("Comparing simulation execution state...")
-
         val dslTime = dslSimulation.time.toDouble()
         val yamlTime = yamlSimulation.time.toDouble()
-        val timeDiff = abs(dslTime - yamlTime)
-
         println("DSL simulation time: ${dslSimulation.time}, step: ${dslSimulation.step}")
         println("YAML simulation time: ${yamlSimulation.time}, step: ${yamlSimulation.step}")
-        println("Time difference: ${timeDiff}s (tolerance: ${timeTolerance}s)")
-
-        if (timeDiff > timeTolerance) {
+        if (dslTime != yamlTime) {
             fail<Nothing>(
-                "Simulation times differ by ${timeDiff}s (tolerance: ${timeTolerance}s). " +
-                    "DSL: ${dslTime}s, YAML: ${yamlTime}s",
+                "Simulation times differ by ${abs(dslTime - yamlTime)}s. DSL: ${dslTime}s, YAML: ${yamlTime}s",
             )
         }
 
@@ -370,7 +352,6 @@ object RuntimeComparisonHelper {
     private fun <T, P : Position<P>> compareRuntimeEnvironmentStates(
         dslEnv: Environment<T, P>,
         yamlEnv: Environment<T, P>,
-        positionTolerance: Double = 1e-6,
     ) {
         println("Comparing runtime environment states...")
 
@@ -388,7 +369,7 @@ object RuntimeComparisonHelper {
         )
 
         // Compare node positions and contents
-        compareRuntimeNodeStates(dslEnv, yamlEnv, positionTolerance)
+        compareRuntimeNodeStates(dslEnv, yamlEnv)
 
         // Compare global reactions
         compareRuntimeGlobalReactions(dslEnv, yamlEnv)
@@ -402,28 +383,22 @@ object RuntimeComparisonHelper {
      *
      * @param positionTolerance Maximum distance between positions to consider them matching (default: 1e-6)
      */
-    private fun <T, P : Position<P>> compareRuntimeNodeStates(
-        dslEnv: Environment<T, P>,
-        yamlEnv: Environment<T, P>,
-        positionTolerance: Double = 1e-6,
-    ) {
-        println("Comparing runtime node states... (position tolerance: $positionTolerance)")
+    private fun <T, P : Position<P>> compareRuntimeNodeStates(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
+        println("Comparing runtime node states...")
         val dslNodesWithPos = dslEnv.nodes.map { it to dslEnv.getPosition(it) }
         val yamlNodesWithPos = yamlEnv.nodes.map { it to yamlEnv.getPosition(it) }.toMutableList()
         val (matchedPairs, unmatchedDslNodes, distances) = matchNodesByPosition(
             dslNodesWithPos,
             yamlNodesWithPos,
-            positionTolerance,
         )
         printMatchingStatistics(distances, matchedPairs, dslNodesWithPos.size)
-        checkUnmatchedNodes(unmatchedDslNodes, yamlNodesWithPos, distances, positionTolerance)
-        compareMatchedNodes(matchedPairs, dslEnv, yamlEnv, positionTolerance)
+        checkUnmatchedNodes(unmatchedDslNodes, yamlNodesWithPos, distances)
+        compareMatchedNodes(matchedPairs, dslEnv, yamlEnv)
     }
 
     private fun <T, P : Position<P>> matchNodesByPosition(
         dslNodesWithPos: List<Pair<Node<T>, P>>,
         yamlNodesWithPos: MutableList<Pair<Node<T>, P>>,
-        positionTolerance: Double,
     ): Triple<List<Pair<Node<T>, Node<T>>>, List<Pair<Node<T>, P>>, List<Double>> {
         val matchedPairs = mutableListOf<Pair<Node<T>, Node<T>>>()
         val unmatchedDslNodes = mutableListOf<Pair<Node<T>, P>>()
@@ -437,7 +412,7 @@ object RuntimeComparisonHelper {
                 val (yamlNode, yamlPos) = closest
                 val distance = dslPos.distanceTo(yamlPos)
                 distances.add(distance)
-                if (distance <= positionTolerance) {
+                if (distance != 0.0) {
                     matchedPairs.add(dslNode to yamlNode)
                     yamlNodesWithPos.remove(closest)
                 } else {
@@ -471,7 +446,6 @@ object RuntimeComparisonHelper {
         unmatchedDslNodes: List<Pair<Node<T>, P>>,
         yamlNodesWithPos: List<Pair<Node<T>, P>>,
         distances: List<Double>,
-        positionTolerance: Double,
     ) {
         if (unmatchedDslNodes.isNotEmpty()) {
             val minDistance = distances.minOrNull() ?: Double.MAX_VALUE
@@ -485,7 +459,7 @@ object RuntimeComparisonHelper {
             }
             fail<Nothing>(
                 "DSL simulation has ${unmatchedDslNodes.size} unmatched nodes " +
-                    "(tolerance: $positionTolerance). Distance stats: min=$minDistance, " +
+                    "Distance stats: min=$minDistance, " +
                     "max=$maxDistance, avg=$avgDistance. First 10 positions: $positions$moreInfo",
             )
         }
@@ -507,17 +481,13 @@ object RuntimeComparisonHelper {
         matchedPairs: List<Pair<Node<T>, Node<T>>>,
         dslEnv: Environment<T, P>,
         yamlEnv: Environment<T, P>,
-        positionTolerance: Double,
     ) {
         for ((dslNode, yamlNode) in matchedPairs) {
             val dslPos = dslEnv.getPosition(dslNode)
             val yamlPos = yamlEnv.getPosition(yamlNode)
             val distance = dslPos.distanceTo(yamlPos)
-            if (distance > positionTolerance) {
-                println(
-                    "WARNING: Matched nodes have distance $distance " +
-                        "(tolerance: $positionTolerance)",
-                )
+            if (distance != 0.0) {
+                println("WARNING: Matched nodes have distance $distance ")
             }
             compareNodeContentsAtPosition(dslNode, yamlNode, dslPos)
         }

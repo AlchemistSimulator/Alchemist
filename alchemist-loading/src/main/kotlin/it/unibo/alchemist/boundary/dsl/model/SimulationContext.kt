@@ -202,6 +202,8 @@ interface SimulationContext<T, P : Position<P>> {
      */
     fun <A : Serializable> variable(source: () -> A): VariablesContext.DependentVariableProvider<A>
 
+    fun seeds(block: SeedsContext.() -> Unit)
+
     /**
      * The context managing variables for batch simulations.
      *

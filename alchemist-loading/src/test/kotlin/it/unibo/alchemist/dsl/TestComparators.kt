@@ -31,7 +31,6 @@ object TestComparators {
      *   Exactly one of steps, targetTime, or stableForSteps must be provided.
      * @param stableForSteps If provided, terminates when environment is stable (checkInterval, equalIntervals).
      *   Exactly one of steps, targetTime, or stableForSteps must be provided.
-     * @param timeTolerance Tolerance for time comparison in seconds (default: 0.01s).
      */
     fun <T, P : Position<P>> compare(
         dslLoader: () -> Loader,
@@ -40,7 +39,6 @@ object TestComparators {
         steps: Long? = null,
         targetTime: Double? = null,
         stableForSteps: Pair<Long, Long>? = null,
-        timeTolerance: Double = 0.01,
     ) {
         val yamlLoader = LoaderFactory.loadYaml(yamlResource)
         // Always perform static comparison
@@ -54,8 +52,6 @@ object TestComparators {
                 steps = steps,
                 targetTime = targetTime,
                 stableForSteps = stableForSteps,
-                timeTolerance = timeTolerance,
-                positionTolerance = null,
             )
         }
     }
@@ -72,7 +68,6 @@ object TestComparators {
      *   Exactly one of steps, targetTime, or stableForSteps must be provided.
      * @param stableForSteps If provided, terminates when environment is stable (checkInterval, equalIntervals).
      *   Exactly one of steps, targetTime, or stableForSteps must be provided.
-     * @param timeTolerance Tolerance for time comparison in seconds (default: 0.01s).
      */
     fun <T, P : Position<P>> compare(
         dslCode: String,
@@ -81,11 +76,10 @@ object TestComparators {
         steps: Long? = null,
         targetTime: Double? = null,
         stableForSteps: Pair<Long, Long>? = null,
-        timeTolerance: Double = 0.01,
     ) {
         compare<T, P>({
             LoaderFactory.loadDsl(dslCode)
-        }, yamlResource, includeRuntime, steps, targetTime, stableForSteps, timeTolerance)
+        }, yamlResource, includeRuntime, steps, targetTime, stableForSteps)
     }
 
     /**
@@ -100,7 +94,6 @@ object TestComparators {
      *   Exactly one of steps, targetTime, or stableForSteps must be provided.
      * @param stableForSteps If provided, terminates when environment is stable (checkInterval, equalIntervals).
      *   Exactly one of steps, targetTime, or stableForSteps must be provided.
-     * @param timeTolerance Tolerance for time comparison in seconds (default: 0.01s).
      */
     fun <T, P : Position<P>> compare(
         dslLoader: Loader,
@@ -109,7 +102,6 @@ object TestComparators {
         steps: Long? = null,
         targetTime: Double? = null,
         stableForSteps: Pair<Long, Long>? = null,
-        timeTolerance: Double = 0.01,
     ) {
         // Always perform static comparison
         StaticComparisonHelper.compareBasicProperties(dslLoader, yamlLoader)
@@ -122,8 +114,6 @@ object TestComparators {
                 steps = steps,
                 targetTime = targetTime,
                 stableForSteps = stableForSteps,
-                timeTolerance = timeTolerance,
-                positionTolerance = null,
             )
         }
     }
@@ -160,7 +150,6 @@ fun Loader.shouldEqual(yamlResource: String) {
  *   Exactly one of steps, targetTime, or stableForSteps must be provided when includeRuntime is true.
  * @param stableForSteps If provided, terminates when environment is stable (checkInterval, equalIntervals).
  *   Exactly one of steps, targetTime, or stableForSteps must be provided when includeRuntime is true.
- * @param timeTolerance Tolerance for time comparison in seconds (default: 0.01s)
  */
 fun Loader.shouldEqual(
     other: Loader,
@@ -168,9 +157,7 @@ fun Loader.shouldEqual(
     steps: Long? = null,
     targetTime: Double? = null,
     stableForSteps: Pair<Long, Long>? = null,
-    timeTolerance: Double = 0.01,
 ) {
-    @Suppress("UNCHECKED_CAST")
     TestComparators.compare<Any, Nothing>(
         this,
         other,
@@ -178,7 +165,6 @@ fun Loader.shouldEqual(
         computeEffectiveSteps(includeRuntime, steps, targetTime, stableForSteps),
         targetTime,
         stableForSteps,
-        timeTolerance,
     )
 }
 
@@ -193,8 +179,6 @@ fun Loader.shouldEqual(
  *   Exactly one of steps, targetTime, or stableForSteps must be provided when includeRuntime is true.
  * @param stableForSteps If provided, terminates when environment is stable (checkInterval, equalIntervals).
  *   Exactly one of steps, targetTime, or stableForSteps must be provided when includeRuntime is true.
- * @param timeTolerance Tolerance for time comparison in seconds (default: 0.01s)
- *
  * @note For simulations to advance time, all reactions must have explicit time distributions.
  *       Reactions without time distributions default to "Infinity" rate, which schedules
  *       them at time 0.0, preventing time from advancing.
@@ -212,9 +196,7 @@ fun (() -> Loader).shouldEqual(
     steps: Long? = null,
     targetTime: Double? = null,
     stableForSteps: Pair<Long, Long>? = null,
-    timeTolerance: Double = 0.01,
 ) {
-    @Suppress("UNCHECKED_CAST")
     TestComparators.compare<Any, Nothing>(
         this,
         yamlResource,
@@ -222,6 +204,5 @@ fun (() -> Loader).shouldEqual(
         computeEffectiveSteps(includeRuntime, steps, targetTime, stableForSteps),
         targetTime,
         stableForSteps,
-        timeTolerance,
     )
 }

@@ -206,7 +206,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
                     final Matcher condMatcher = MATCH_CONDITION.matcher(conditionsSpec);
                     while (condMatcher.find()) {
                         final String condition = condMatcher.group(CONDITION_GROUP);
-                        conditions.add(createCondition(randomGenerator, environment, node, timeDistribution, result, condition));
+                        conditions.add(createCondition(randomGenerator, environment, node, result, condition));
                     }
                 } else {
                     illegalSpec(
@@ -221,7 +221,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
                     final Matcher actMatcher = MATCH_ACTION.matcher(actionsSpec);
                     while (actMatcher.find()) {
                         final String action = actMatcher.group(ACTION_GROUP);
-                        actions.add(createAction(randomGenerator, environment, node, timeDistribution, result, action));
+                        actions.add(createAction(randomGenerator, environment, node, result, action));
                     }
                 } else {
                     illegalSpec("not a sequence of valid conditions"
@@ -248,7 +248,6 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
         final RandomGenerator randomGenerator,
         final Environment<List<ILsaMolecule>, P> environment,
         final Node<List<ILsaMolecule>> node,
-        final TimeDistribution<List<ILsaMolecule>> time,
         final Actionable<List<ILsaMolecule>> reaction,
         final @Nullable Object additionalParameters
     ) {
@@ -268,7 +267,6 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
         final RandomGenerator randomGenerator,
         final Environment<List<ILsaMolecule>, P> environment,
         final Node<List<ILsaMolecule>> node,
-        final TimeDistribution<List<ILsaMolecule>> time,
         final Actionable<List<ILsaMolecule>> actionable,
         final @Nullable Object additionalParameters
     ) {

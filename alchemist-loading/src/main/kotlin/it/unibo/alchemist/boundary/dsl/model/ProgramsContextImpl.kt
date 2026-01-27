@@ -157,35 +157,8 @@ class ProgramsContextImpl<T, P : Position<P>>(override val ctx: DeploymentContex
             actions += block
         }
 
-        override fun addAction(action: String) {
-            actions += {
-                context.incarnation
-                    .createAction(
-                        context.simulationGenerator,
-                        context.environment,
-                        node,
-                        timeDistribution,
-                        reaction,
-                        action,
-                    )
-            }
-        }
-
         override fun addCondition(block: () -> Condition<T>) {
             conditions += block
-        }
-
-        override fun addCondition(condition: String) {
-            conditions += {
-                context.incarnation.createCondition(
-                    context.simulationGenerator,
-                    context.environment,
-                    node,
-                    timeDistribution,
-                    reaction,
-                    condition,
-                )
-            }
         }
     }
 }

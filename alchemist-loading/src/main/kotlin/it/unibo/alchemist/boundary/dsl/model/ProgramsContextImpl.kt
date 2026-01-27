@@ -14,11 +14,13 @@ import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TimeDistribution
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Context for managing programs (reactions) in a simulation.
@@ -144,11 +146,12 @@ class ProgramsContextImpl<T, P : Position<P>>(override val ctx: DeploymentContex
          */
         override var reaction: Reaction<T>? = null
 
+        context(_: Incarnation<T, P>, _: RandomGenerator, _: Environment<T, P>, _: Node<T>)
         override fun timeDistribution(td: String) {
-            timeDistribution = context.incarnation.createTimeDistribution(
-                context.simulationGenerator,
-                context.environment,
-                node,
+            timeDistribution = contextOf<Incarnation<T, P>>().createTimeDistribution(
+                contextOf<RandomGenerator>(),
+                contextOf<Environment<T, P>>(),
+                contextOf<Node<T>>(),
                 td,
             )
         }

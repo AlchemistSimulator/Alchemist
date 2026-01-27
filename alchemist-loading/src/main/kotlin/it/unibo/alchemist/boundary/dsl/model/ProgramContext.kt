@@ -86,6 +86,7 @@ interface ProgramContext<T, P : Position<P>> {
      * @see [TimeDistribution]
      * @see [it.unibo.alchemist.model.Incarnation.createTimeDistribution]
      */
+    context(_: Incarnation<T, P>, _: RandomGenerator, _: Environment<T, P>, _: Node<T>)
     fun timeDistribution(td: String)
 
     /**

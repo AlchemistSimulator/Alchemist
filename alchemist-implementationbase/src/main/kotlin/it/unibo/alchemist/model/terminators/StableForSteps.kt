@@ -43,10 +43,10 @@ import java.util.function.Predicate
  * @param equalIntervals The amount of [checkInterval] intervals that need to pass
  * (during which the environment doesn't change) for [test] to return true
  */
-data class StableForSteps<T : Any>(private val checkInterval: Long, private val equalIntervals: Long) :
-    TerminationPredicate<T, Position<*>> {
+data class StableForSteps<T, P: Position<P>>(private val checkInterval: Long, private val equalIntervals: Long) :
+    TerminationPredicate<T, P> {
     private var success: Long = 0
-    private var positions: Map<Node<T>, Position<*>> = emptyMap()
+    private var positions: Map<Node<T>, P> = emptyMap()
     private var contents = makeTable<T>(0)
 
     init {
@@ -55,7 +55,7 @@ data class StableForSteps<T : Any>(private val checkInterval: Long, private val 
         }
     }
 
-    override fun invoke(environment: Environment<T, Position<*>>): Boolean {
+    override fun invoke(environment: Environment<T, P>): Boolean {
         if (environment.simulation.step % checkInterval == 0L) {
             val newPositions = environment.associateBy({ it }, { environment.getPosition(it) })
             val newContents = makeTable<T>(environment.nodeCount)
@@ -72,7 +72,7 @@ data class StableForSteps<T : Any>(private val checkInterval: Long, private val 
     }
 
     private companion object {
-        private fun <T : Any> makeTable(size: Int): Table<Node<T>, Molecule, T> =
+        private fun <T> makeTable(size: Int): Table<Node<T>, Molecule, T> =
             Tables.newCustomTable(Maps.newLinkedHashMapWithExpectedSize<Node<T>, Map<Molecule, T>>(size)) {
                 Maps.newLinkedHashMapWithExpectedSize(size)
             }

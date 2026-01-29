@@ -103,7 +103,11 @@ interface DeploymentContext<T, P : Position<P>> {
         program(timeDistribution, makeReaction(timeDistribution, descriptor), block)
 
     context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>)
-    fun program(timeDistribution: Any? = null, descriptor: String? = null, block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { }) {
+    fun program(
+        timeDistribution: Any? = null,
+        descriptor: String? = null,
+        block: context(Reaction<T>
+    ) ActionableContext<T>.() -> Unit = { }) {
         val timeDistribution = incarnation.createTimeDistribution(randomGenerator, environment, node, timeDistribution)
         program(timeDistribution, makeReaction(timeDistribution, descriptor), block)
     }
@@ -279,9 +283,7 @@ fun main() {
     }
     simulationOnMap(ProtelisIncarnation()) {
         environment(oSMEnvironment( "vcm.pbf", false)) {
-            terminators {
-                -StableForSteps<Any>(5, 100)
-            }
+            terminator(StableForSteps(5, 100))
             deployments {
                 deploy(FromGPSTrace(7, "gpsTrace", true, "AlignToSimulationTime")) {
                     program(timeDistribution = 15) {

@@ -111,6 +111,14 @@ class PhysicsUpdate<T>(
 
     override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
 
+    override fun dispose() {
+        subscriptions.forEach { it.stopWatching(this) }
+        subscriptions.clear()
+        validity.dispose()
+        conditions.forEach(Disposable::dispose)
+        rescheduleRequest.dispose()
+    }
+
     private companion object {
         const val DEFAULT_RATE = 30.0
     }

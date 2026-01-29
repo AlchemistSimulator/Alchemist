@@ -249,7 +249,14 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                 .put(range, region)
         }
 
-        return initialNodes
+        return AutoDisposableObservableSet(initialNodes) {
+            regionObservers.remove(region)
+            if (node != null) {
+                regionNodeCenteredIndex[node.id]?.remove(range)
+            } else {
+                regionPositionCenteredIndex[actualCenter]?.remove(range)
+            }
+        }
     }
 
     override fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double =
@@ -574,6 +581,28 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         val radius: Double,
         val visibleNodes: ObservableMutableSet<Node<T>>,
     )
+
+    /**
+     * Simple [ObservableSet] that should prevent basic memory leaks. Simply calls [onDispose] when
+     * no observers observe this structure.
+     */
+    private class AutoDisposableObservableSet<T>(
+        private val delegate: ObservableSet<T>,
+        private val onDispose: () -> Unit,
+    ) : ObservableSet<T> by delegate {
+
+        override fun stopWatching(registrant: Any) {
+            delegate.stopWatching(registrant)
+            if (delegate.observers.isEmpty()) {
+                onDispose()
+            }
+        }
+
+        override fun dispose() {
+            delegate.dispose()
+            onDispose()
+        }
+    }
 
     private data class Operation<T>(val origin: Node<T>, val destination: Node<T>, val isAdd: Boolean) {
         override fun toString(): String = origin.toString() + (if (isAdd) " discovered " else " lost ") + destination

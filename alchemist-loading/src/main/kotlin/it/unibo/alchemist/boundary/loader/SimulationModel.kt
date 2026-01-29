@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -69,7 +69,7 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
 private typealias ReactionComponentFunction<T, P, R> =
-    (RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, Any?) -> R
+    (RandomGenerator, Environment<T, P>, Node<T>?, Actionable<T>, Any?) -> R
 
 /*
  * UTILITY FUNCTIONS
@@ -253,7 +253,7 @@ internal object SimulationModel {
         }
     }
 
-    internal fun <P : Position<out P>, T : Any?> visitIncarnation(root: Any?): Incarnation<T, P> =
+    internal fun <P : Position<out P>, T> visitIncarnation(root: Any?): Incarnation<T, P> =
         SupportedIncarnations.get<T, P>(root.toString()).orElseThrow {
             IllegalArgumentException(
                 "Invalid incarnation descriptor: $root. " +
@@ -261,7 +261,7 @@ internal object SimulationModel {
             )
         }
 
-    internal fun <P : Position<P>, T : Any?> visitLinkingRule(localContext: Context, root: Any?): LinkingRule<T, P> {
+    internal fun <P : Position<P>, T> visitLinkingRule(localContext: Context, root: Any?): LinkingRule<T, P> {
         val linkingRules =
             visitRecursively(localContext, root, JavaType) { element ->
                 visitBuilding<LinkingRule<T, P>>(localContext, element)
@@ -707,7 +707,7 @@ internal object SimulationModel {
                 genericFactory: (Context, Any?) -> Result<R>?,
             ): Result<R>? {
                 fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = runCatching {
-                    makeWith(simulationRNG, environment, node, timeDistribution, actionable, parameter)
+                    makeWith(simulationRNG, environment, node, actionable, parameter)
                 }
                 return when (parameter) {
                     is String -> create(parameter, incarnationFactory)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -59,7 +59,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         if (Double.isNaN(diameter)) {
             throw new IllegalArgumentException("Invalid diameter: " + parameter);
         }
-        final Node<Double> node = new GenericNode<>(this, environment);
+        final Node<Double> node = new GenericNode<>(environment);
         if (diameter == 0) {
             node.addProperty(new CircularCell(environment, node));
         } else {
@@ -108,7 +108,6 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
-        final TimeDistribution<Double> time,
         final Actionable<Double> actionable,
         final @Nullable Object additionalParameters
     ) {
@@ -120,7 +119,6 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
-        final TimeDistribution<Double> time,
         final Actionable<Double> actionable,
         final @Nullable Object additionalParameters
     ) {

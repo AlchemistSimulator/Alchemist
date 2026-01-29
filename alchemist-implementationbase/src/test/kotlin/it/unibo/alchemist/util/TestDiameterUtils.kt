@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,10 +11,10 @@ package it.unibo.alchemist.util
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.protelis.ProtelisIncarnation
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
 import it.unibo.alchemist.util.Environments.networkDiameter
 import kotlin.test.assertTrue
@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
  * Adds a node to the environment at the specified [coordinates].
  */
 infix fun Environment<Any, Euclidean2DPosition>.addNodeAt(coordinates: Pair<Double, Double>) = addNode(
-    GenericNode(ProtelisIncarnation(), this),
+    GenericNode(this),
     Euclidean2DPosition(coordinates.first, coordinates.second),
 )
 
@@ -103,33 +103,33 @@ val twoConnectedNodesAndOneIsolated = environmentWithNodesAt(ORIGIN, 3.0 to 0.0,
  */
 val twoSubnetworksWithTwoNodesEach = environmentWithNodesAt(ORIGIN, 3.0 to 0.0, 10.0 to 0.0, 10.0 to 3.0)
 
+val subnetwork1 = listOf(
+    -3.0 to 3.0,
+    ORIGIN,
+    0.0 to 6.0,
+    3.0 to 3.0,
+).toTypedArray()
+
+private val subnetwork2 = listOf(
+    12.0 to 12.0,
+    12.0 to 14.0,
+    9.0 to 15.0,
+    15.0 to 15.0,
+).toTypedArray()
+
 /**
  * Represents a network composed of two subnetworks,
  * each with different amount of nodes.
  */
-val twoSparseSubnetworks = environmentWithNodesAt(
-    ORIGIN,
-    12.0 to 12.0,
-    0.0 to 6.0,
-    12.0 to 14.0,
-    -3.0 to 3.0,
-    9.0 to 15.0,
-    3.0 to 3.0,
-    15.0 to 15.0,
-)
+val twoSparseSubnetworks = environmentWithNodesAt(*subnetwork1, *subnetwork2)
 
 /**
  * Represents a network composed of three subnetworks,
  * each with different amount of nodes.
  */
 val threeSparseSubnetworks = environmentWithNodesAt(
-    ORIGIN,
-    12.0 to 12.0,
-    0.0 to 6.0,
-    12.0 to 14.0,
-    -3.0 to 3.0,
-    9.0 to 15.0,
-    3.0 to 3.0,
-    15.0 to 15.0,
+    *subnetwork1,
+    *subnetwork2,
+    // Isolated node
     25.0 to 25.0,
 )

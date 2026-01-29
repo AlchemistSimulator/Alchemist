@@ -27,7 +27,6 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.linkingrules.NoLinks
-import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMutableMap
 import it.unibo.alchemist.model.observation.ObservableMutableSet
@@ -234,29 +233,50 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             centerProvider = centerProvider,
             radius = range,
             visibleNodes = initialNodes,
-        ).apply { regionObservers.add(this) }
+        )
 
-        if (node != null) {
-            var radiusMap = regionNodeCenteredIndex[node.id]
-            if (radiusMap == null) {
-                radiusMap = TDoubleObjectHashMap()
-                regionNodeCenteredIndex.put(node.id, radiusMap)
-            }
-            radiusMap.put(range, region)
-        } else {
-            regionPositionCenteredIndex
-                .computeIfAbsent(actualCenter) { TDoubleObjectHashMap() }
-                .put(range, region)
+        val addRegion = {
+            runCatching {
+                val currentCenter = centerProvider()
+                val currentNodes = getAllNodesInRange(currentCenter, range)
+                initialNodes.clearAndAddAll(currentNodes.toSet())
+
+                regionObservers.add(region)
+                if (node != null) {
+                    var radiusMap = regionNodeCenteredIndex[node.id]
+                    if (radiusMap == null) {
+                        radiusMap = TDoubleObjectHashMap()
+                        regionNodeCenteredIndex.put(node.id, radiusMap)
+                    }
+                    radiusMap.put(range, region)
+                } else {
+                    regionPositionCenteredIndex
+                        .computeIfAbsent(actualCenter) { TDoubleObjectHashMap() }
+                        .put(range, region)
+                }
+            }.onFailure { initialNodes.clearAndAddAll(emptySet()) }
         }
 
-        return AutoDisposableObservableSet(initialNodes) {
+        val removeRegion = {
             regionObservers.remove(region)
             if (node != null) {
                 regionNodeCenteredIndex[node.id]?.remove(range)
+                if (regionNodeCenteredIndex[node.id]?.isEmpty == true) {
+                    regionNodeCenteredIndex.remove(node.id)
+                }
             } else {
                 regionPositionCenteredIndex[actualCenter]?.remove(range)
+                if (regionPositionCenteredIndex[actualCenter]?.isEmpty == true) {
+                    regionPositionCenteredIndex.remove(actualCenter)
+                }
             }
         }
+
+        return RefCountObservableSet(
+            delegate = initialNodes,
+            onActive = { addRegion() },
+            onInactive = { removeRegion() },
+        )
     }
 
     override fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double =
@@ -583,24 +603,39 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     )
 
     /**
-     * Simple [ObservableSet] that should prevent basic memory leaks. Simply calls [onDispose] when
-     * no observers observe this structure.
+     * Simple wrapper for [ObservableSet] that manages reference counting to track observers and
+     * invoke specified callbacks when observers are registered or deregistered.
+     * It serves as both a way to avoid leaks through the [onInactive] callback (which should clear
+     * the backing caches), and a lazy evaluation of [onActive] when observers are registered.
+     *
+     *
+     * @param onActive the callback to be invoked when the first observer is added
+     * @param onInactive the callback to be invoked when the last observer is removed, which
+     *                   should clear backing caches and resources.
      */
-    private class AutoDisposableObservableSet<T>(
-        private val delegate: ObservableSet<T>,
-        private val onDispose: () -> Unit,
+    private class RefCountObservableSet<T>(
+        private val delegate: ObservableMutableSet<T>,
+        private val onActive: () -> Unit,
+        private val onInactive: () -> Unit,
     ) : ObservableSet<T> by delegate {
+
+        override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Set<T>) -> Unit) {
+            if (delegate.observers.isEmpty()) {
+                onActive()
+            }
+            delegate.onChange(registrant, invokeOnRegistration, callback)
+        }
 
         override fun stopWatching(registrant: Any) {
             delegate.stopWatching(registrant)
             if (delegate.observers.isEmpty()) {
-                onDispose()
+                onInactive()
             }
         }
 
         override fun dispose() {
             delegate.dispose()
-            onDispose()
+            onInactive()
         }
     }
 

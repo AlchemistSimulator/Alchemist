@@ -19,6 +19,8 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import java.io.Serializable
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
@@ -30,16 +32,19 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param P The type of position.
  */
 
-class SimulationContextImpl<T, P : Position<P>>(
+class SimulationContextImpl<T, P : Position<P>, E : Environment<T, P>>(
     override val incarnation: Incarnation<T, P>,
-    private val environmentFactory: context(Incarnation<T, P>) () -> Environment<T, P>,
-) : SimulationContext<T, P> {
+    private var environmentFactory: context(Incarnation<T, P>) () -> E,
+) : SimulationContext<T, P, E> {
 
     private var randomGeneratorForSimulation: () -> RandomGenerator = ::defaultRandomGenerator
     private var randomGeneratorForScenario: () -> RandomGenerator = ::defaultRandomGenerator
 
+    private val simRNG by lazy { randomGeneratorForSimulation() }
+    private val scenarioRNG by lazy { randomGeneratorForScenario() }
+
     /** The environment instance (internal use). */
-    override val environment: Environment<T, P> by lazy {
+    override val environment: E by lazy {
         context(incarnation) {
             environmentFactory()
         }
@@ -48,7 +53,7 @@ class SimulationContextImpl<T, P : Position<P>>(
     /**
      * List of build steps to execute.
      */
-    val buildSteps: MutableList<SimulationContextImpl<T, P>.() -> Unit> = mutableListOf()
+    val buildSteps: MutableList<SimulationContextImpl<T, P, E>.() -> Unit> = mutableListOf()
 
     /**
      * List of output .
@@ -108,8 +113,8 @@ class SimulationContextImpl<T, P : Position<P>>(
      * its own variables spaces: check the [VariablesContext] documentation for more details.
      * @see [VariablesContext]
      */
-    fun build(envInstance: Environment<T, P>, values: Map<String, *>): SimulationContextImpl<T, P> {
-        val batchContext = SimulationContextImpl(incarnation) { envInstance }
+    fun build(values: Map<String, *>): SimulationContextImpl<T, P, E> {
+        val batchContext = SimulationContextImpl<T, P, E>(incarnation)
         batchContext.variablesContext.variables += this.variablesContext.variables
         batchContext.variablesContext.dependentVariables += this.variablesContext.dependentVariables
         logger.debug("Binding variables to batchInstance: {}", values)
@@ -118,33 +123,40 @@ class SimulationContextImpl<T, P : Position<P>>(
         return batchContext
     }
 
-    context(randomGenerator: RandomGenerator, environment: Environment<T, P>)
-    override fun deployments(block: DeploymentsContext<T, P>.() -> Unit) {
-        logger.debug("adding deployments block inside {}", this)
+    context(_: Incarnation<T, P>)
+    override fun deployments(
+        block: context(Incarnation<T, P>, RandomGenerator, E) DeploymentsContext<T, P>.() -> Unit,
+    ) {
         buildSteps.add {
             logger.debug("Configuring deployments inside {}", this)
-            DeploymentsContextImpl(this).apply(block)
+            context(scenarioRNG) {
+                DeploymentsContextImpl<T, P>(simRNG).apply {
+                    context(environment) {
+                        block()
+                    }
+                }
+            }
         }
     }
 
-    override fun terminators(block: TerminatorsContext<T, P>.() -> Unit) {
-        @Suppress("UNCHECKED_CAST")
-        buildSteps.add { TerminatorsContextImpl(this).block() }
+    context(_: Incarnation<T, P>)
+    override fun environment(block: context(Incarnation<T, P>) () -> E) {
+        environmentFactory = block
     }
 
     override fun monitors(block: OutputMonitorsContext<T, P>.() -> Unit) {
-        buildSteps.add { OutputMonitorsContextImpl(this).block() }
+        buildSteps.add { OutputMonitorsContextImpl<T, P>(this).block() }
     }
 
     override fun exporter(block: ExporterContext<T, P>.() -> Unit) {
-        buildSteps.add { this._exporters.add(ExporterContextImpl(this).apply(block)) }
+        buildSteps.add { this._exporters.add(ExporterContextImpl<T, P>(this).apply(block)) }
     }
 
     override fun programs(block: GlobalProgramsContext<T, P>.() -> Unit) {
-        buildSteps.add { GlobalProgramsContextImpl(this).block() }
+        buildSteps.add { GlobalProgramsContextImpl<T, P>(this).block() }
     }
 
-    override fun runLater(block: context(SimulationContext<T, P>)() -> Unit) {
+    override fun runLater(block: context(SimulationContext<T, P, E>)() -> Unit) {
         buildSteps.add { block() }
     }
 
@@ -179,6 +191,11 @@ class SimulationContextImpl<T, P : Position<P>>(
             }
         }
         seedContext.block()
+    }
+
+    override fun terminators(block: TerminatorsContext<T, P>.() -> Unit) {
+        @Suppress("UNCHECKED_CAST")
+        buildSteps.add { TerminatorsContextImpl<T, P>(this).block() }
     }
 
     override fun <A : Serializable> variable(source: Variable<out A>): VariablesContext.VariableProvider<A> =

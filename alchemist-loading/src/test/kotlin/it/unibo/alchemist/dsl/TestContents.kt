@@ -11,6 +11,7 @@ package it.unibo.alchemist.dsl
 
 import it.unibo.alchemist.boundary.dsl.Dsl.simulation
 import it.unibo.alchemist.model.deployments.Point
+import it.unibo.alchemist.model.deployments.point
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule
 import org.junit.jupiter.api.Test
@@ -21,7 +22,7 @@ class TestContents {
     fun testAll() {
         val loader = simulation(SAPEREIncarnation()) {
             deployments {
-                deploy(Point(ctx.environment, 0.0, 0.0)) {
+                deploy(point(0.0, 0.0)) {
                     all {
                         molecule = "test"
                         concentration = listOf(LsaMolecule("1"))

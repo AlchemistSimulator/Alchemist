@@ -13,6 +13,7 @@ import it.unibo.alchemist.boundary.dsl.Dsl.simulation
 import it.unibo.alchemist.model.deployments.Grid
 import it.unibo.alchemist.model.deployments.Point
 import it.unibo.alchemist.model.deployments.grid
+import it.unibo.alchemist.model.deployments.point
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import org.junit.jupiter.api.Test
 
@@ -22,7 +23,7 @@ class TestDeployments {
     fun testDeployments() {
         val loader = simulation(SAPEREIncarnation()) {
             deployments {
-                val p = Point(ctx.environment, 0.0, 0.0)
+                val p = point(0.0, 0.0)
                 deploy(p)
             }
         }
@@ -34,9 +35,9 @@ class TestDeployments {
     fun testMultipleDeployments() {
         val loader = simulation(SAPEREIncarnation()) {
             deployments {
-                val point = Point(ctx.environment, 0.0, 0.0)
+                val point = point(0.0, 0.0)
                 deploy(point)
-                deploy(Point(ctx.environment, 1.0, 1.0))
+                deploy(point(1.0, 1.0))
             }
         }
 

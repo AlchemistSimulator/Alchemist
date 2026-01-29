@@ -13,6 +13,7 @@ import it.unibo.alchemist.boundary.dsl.util.LoadingSystemLogger.logger
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
@@ -27,26 +28,26 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param P The type of position.
  * @param ctx The simulation context.
  */
-open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: SimulationContext<T, P>) :
+open class DeploymentsContextImpl<T, P : Position<P>>(private val simulationRandomGenerator: RandomGenerator) :
     DeploymentsContext<T, P> {
 
-    context(environment: Environment<T, P>)
+    context(_: Incarnation<T, P>, environment: Environment<T, P>)
     override fun deploy(
         deployment: Deployment<P>,
         nodeFactory: context(RandomGenerator, Environment<T, P>) () -> Node<T>,
         block: context(Environment<T, P>, Node<T>) DeploymentContext<T, P>.() -> Unit,
     ) {
-        context(ctx.simulationGenerator) {
+        context(simulationRandomGenerator) {
             logger.debug("Deploying deployment: {}", deployment)
             // Additional linking rules
             deployment.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
                 val composedLinkingRule =
-                    when (val linkingRule = ctx.environment.linkingRule) {
+                    when (val linkingRule = environment.linkingRule) {
                         is NoLinks -> newLinkingRule
                         is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
                         else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
                     }
-                ctx.environment.linkingRule = composedLinkingRule
+                environment.linkingRule = composedLinkingRule
             }
             deployment.forEach { position ->
                 logger.debug("visiting position: {} for deployment: {}", position, deployment)
@@ -76,7 +77,7 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
                     logger.debug("programs={}", createdPrograms)
                     logger.debug("Adding node to environment at position: {}", position)
                 }
-                ctx.environment.addNode(node, position)
+                environment.addNode(node, position)
             }
         }
     }
@@ -138,16 +139,17 @@ open class DeploymentsContextImpl<T, P : Position<P>>(override val ctx: Simulati
          * @param position The position of the node.
          * @param content The content context to apply.
          */
-        fun applyToNodes(node: Node<T>, position: P, content: ContentContextImpl) {
+        context(incarnation: Incarnation<T, P>)
+        internal fun applyToNodes(node: Node<T>, position: P, content: ContentContextImpl) {
             logger.debug("Applying node to nodes for position: {}, deployment {}", position, deployment)
             if (content.filter == null || content.filter.contains(position)) {
                 logger.debug("Creating molecule for node at position: {}", position)
-                val mol = ctx.ctx.incarnation.createMolecule(
+                val mol = incarnation.createMolecule(
                     content.molecule
                         ?: error("Molecule not specified"),
                 )
                 logger.debug("Creating concentration for molecule: {}", mol)
-                val conc = ctx.ctx.incarnation.createConcentration(content.concentration)
+                val conc = incarnation.createConcentration(content.concentration)
                 logger.debug("Setting concentration for molecule: {} to node at position: {}", mol, position)
                 node.setConcentration(mol, conc)
             }

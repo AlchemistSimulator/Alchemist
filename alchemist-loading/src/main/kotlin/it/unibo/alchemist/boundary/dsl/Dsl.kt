@@ -19,6 +19,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -44,63 +45,46 @@ object Dsl {
      * @param dsl The simulation context.
      * @return A loader instance.
      */
-    fun <T, P : Position<P>> createLoader(
-        builder: SimulationContext<T, P>,
-        envBuilder: () -> Environment<T, P>,
-    ): Loader = object : DSLLoader(builder) {
-        override val constants: Map<String, Any?> = emptyMap()
-        override val dependentVariables: Map<String, DependentVariable<*>> = emptyMap()
-        override val variables: Map<String, Variable<*>> = builder.variablesContext.variables
-        override val remoteDependencies: List<String> = emptyList()
-        override val launcher: Launcher = builder.launcher
-
-        @Suppress("UNCHECKED_CAST")
-        override fun <T, P : Position<P>> envFactory(): Environment<T, P> = envBuilder() as Environment<T, P>
-    }
+    private fun <T, P : Position<P>, E : Environment<T, P>> createLoader(builder: SimulationContext<T, P, E>): Loader =
+        object : DSLLoader(builder) {
+            override val constants: Map<String, Any?> = emptyMap()
+            override val dependentVariables: Map<String, DependentVariable<*>> = emptyMap()
+            override val variables: Map<String, Variable<*>> = builder.variablesContext.variables
+            override val remoteDependencies: List<String> = emptyList()
+            override val launcher: Launcher = builder.launcher
+        }
 
     /**
      * Creates a simulation with a custom environment.
      *
      * @param incarnation The incarnation instance.
-     * @param environmentFactory The environment instance.
      * @param block The simulation configuration block.
      * @return A loader instance.
      */
-    fun <T, P : Position<P>> simulation(
+    fun <T, P : Position<P>, E : Environment<T, P>> simulation(
         incarnation: Incarnation<T, P>,
-        environmentFactory: context(Incarnation<T, P>) () -> Environment<T, P>,
         block: context(
             Incarnation<T, P>,
             RandomGenerator,
-            Environment<T, P>,
-        ) SimulationContext<T, P>.() -> Unit,
+        ) SimulationContext<T, P, E>.() -> Unit,
     ): Loader {
-        val ctx = SimulationContextImpl(incarnation, environmentFactory)
+        val ctx = SimulationContextImpl<T, P, E>(incarnation)
         ctx.apply {
-            context(incarnation, ctx.scenarioGenerator, ctx.environment) {
+            context(incarnation, ctx.scenarioGenerator) {
                 block()
             }
         }
-        return createLoader(ctx) {
-            context(incarnation) {
-                environmentFactory()
-            }
-        }
+        return createLoader(ctx)
     }
 
     /**
-     * Creates a simulation with a default 2D continuous environment.
-     *
-     * @param incarnation The incarnation instance.
-     * @param block The simulation configuration block.
-     * @return A loader instance.
+     * Creates a 2D simulation with a Euclidean2DEnvironment.
      */
-    fun <T> simulation(
+    fun <T> simulation2D(
         incarnation: Incarnation<T, Euclidean2DPosition>,
         block: context(
             Incarnation<T, Euclidean2DPosition>,
             RandomGenerator,
-            Environment<T, Euclidean2DPosition>,
-        ) SimulationContext<T, Euclidean2DPosition>.() -> Unit,
-    ): Loader = simulation(incarnation, { Continuous2DEnvironment(incarnation) }, block)
+        ) SimulationContext<T, Euclidean2DPosition, Euclidean2DEnvironment<T>>.() -> Unit,
+    ): Loader = simulation<T, Euclidean2DPosition, Euclidean2DEnvironment<T>>(incarnation, block)
 }

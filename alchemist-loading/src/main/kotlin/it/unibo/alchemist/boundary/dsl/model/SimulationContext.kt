@@ -54,7 +54,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * @see [LayerContextImpl] for layer configuration
  */
 @Suppress("UndocumentedPublicFunction") // Detekt false positive with context parameters
-interface SimulationContext<T, P : Position<P>> {
+interface SimulationContext<T, P : Position<P>, E : Environment<T, P>> {
     /**
      * The incarnation instance that defines how molecules, nodes, and reactions are created.
      *
@@ -67,7 +67,7 @@ interface SimulationContext<T, P : Position<P>> {
      *
      * @see [Environment]
      */
-    val environment: Environment<T, P>
+    val environment: E
 
     /**
      * The launcher responsible for executing the simulation.
@@ -99,6 +99,9 @@ interface SimulationContext<T, P : Position<P>> {
      */
     var networkModel: LinkingRule<T, P>
 
+    context(_: Incarnation<T, P>)
+    fun environment(block: context(Incarnation<T, P>) () -> E)
+
     /**
      * Configures node deployments for the simulation.
      *
@@ -112,8 +115,8 @@ interface SimulationContext<T, P : Position<P>> {
      *
      * @see [DeploymentsContextImpl] to configure deployments
      */
-    context(randomGenerator: RandomGenerator, environment: Environment<T, P>)
-    fun deployments(block: DeploymentsContext<T, P>.() -> Unit)
+    context(_: Incarnation<T, P>)
+    fun deployments(block: context(Incarnation<T, P>, RandomGenerator, E) DeploymentsContext<T, P>.() -> Unit)
 
     /**
      * Adds a termination predicate to the simulation.
@@ -126,7 +129,7 @@ interface SimulationContext<T, P : Position<P>> {
     /**
      * Adds an output monitor to the simulation.
      *
-     * @param monitor The output monitor to add
+     * @param block The output monitor to add
      * @see [OutputMonitor]
      */
     fun monitors(block: OutputMonitorsContext<T, P>.() -> Unit)
@@ -142,7 +145,7 @@ interface SimulationContext<T, P : Position<P>> {
     /**
      * Configures a global program.
      *
-     * @param program the global reaction to add
+     * @param block the global reaction to add
      * @see [GlobalReaction]
      */
     fun programs(block: GlobalProgramsContext<T, P>.() -> Unit)
@@ -163,7 +166,8 @@ interface SimulationContext<T, P : Position<P>> {
      *
      * @param block The block of code to execute later
      */
-    fun runLater(block: context(SimulationContext<T, P>) () -> Unit)
+    // TODO: should be removed
+    fun runLater(block: context(SimulationContext<T, P, E>) () -> Unit)
 
     /**
      * Add a spatial layer for a molecule.

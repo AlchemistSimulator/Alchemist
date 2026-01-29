@@ -24,6 +24,11 @@ import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.observation.Disposable;
 import it.unibo.alchemist.model.observation.EventObservable;
+import it.unibo.alchemist.model.observation.Lifecycle;
+import it.unibo.alchemist.model.observation.LifecycleKt;
+import it.unibo.alchemist.model.observation.LifecycleOwner;
+import it.unibo.alchemist.model.observation.LifecycleRegistry;
+import it.unibo.alchemist.model.observation.LifecycleState;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableExtensions;
@@ -56,7 +61,7 @@ import static arrow.core.OptionKt.none;
  *
  * @param <T> concentration type
  */
-public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
+public abstract class AbstractReaction<T> implements Reaction<T>, Disposable, LifecycleOwner {
 
     /**
      * How bigger should be the StringBuffer with respect to the previous
@@ -78,13 +83,13 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
     private final TimeDistribution<T> timeDistribution;
     private final Node<T> node;
 
+    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry();
     private final EventObservable rescheduleRequest = new EventObservable();
     private Observable<Boolean> validity = MutableObservable.Companion.observe(true);
-    private final List<Observable<?>> subscriptions = new ArrayList<>();
     private Option<Boolean> canExecute = none();
 
     /**
-     * Builds a new reaction, starting at time t.
+     * Builds a new reaction, starting   at time t.
      *
      * @param node             the node this reaction belongs to
      * @param timeDistribution the time distribution this reaction should follow
@@ -141,6 +146,13 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
     @Override
     public final boolean equals(final Object o) {
         return this == o;
+    }
+
+    @NotNull
+    @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
+    public final Lifecycle getLifecycle() {
+        return lifecycleRegistry;
     }
 
     /**
@@ -244,6 +256,7 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
     @Override
     public final void initializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) {
         initializeObservableConditions();
+        lifecycleRegistry.markState(LifecycleState.STARTED);
         onInitializationComplete(atTime, environment);
     }
 
@@ -344,22 +357,16 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
      * trigger some environment query that may fail in the set-up phase.
      */
     protected final void initializeObservableConditions() {
-        if (!subscriptions.isEmpty()) {
-            subscriptions.forEach(s -> s.stopWatching(this));
-            subscriptions.clear();
-        }
-
         validity.dispose();
 
         conditions.forEach(condition -> {
             final var merged = ObservableExtensions.ObservableSetExtensions.mergeObservables(
                 condition.observeInboundDependencies()
             );
-            merged.onChange(this, it -> {
+            LifecycleKt.bindTo(merged, this, it -> {
                 rescheduleRequest.emit();
-                return null;
+                return Unit.INSTANCE;
             });
-            subscriptions.add(merged);
         });
 
         if (!conditions.isEmpty()) {
@@ -368,15 +375,11 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
                 it -> it.stream().allMatch(b -> b)
             ).map(it -> getOrElse(it, () -> true));
 
-            // need at least one observer to track validity updates
-            validity.onChange(this, it -> {
+            LifecycleKt.bindTo(validity, this, it -> {
                 canExecute = Option.fromNullable(it);
-                return null;
+                return Unit.INSTANCE;
             });
-
-            subscriptions.add(validity);
         }
-
         rescheduleRequest.emit();
     }
 
@@ -437,10 +440,9 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable {
      */
     @Override
     public void dispose() {
-        subscriptions.forEach(it -> it.stopWatching(this));
+        lifecycleRegistry.markState(LifecycleState.DESTROYED);
         conditions.forEach(Disposable::dispose);
         conditions.clear();
-        subscriptions.clear();
     }
 
     /**

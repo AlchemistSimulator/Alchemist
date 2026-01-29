@@ -27,6 +27,7 @@ import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.maps.MapEnvironment;
+import it.unibo.alchemist.model.observation.Disposable;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableMutableSet;
@@ -364,6 +365,12 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     @Override
     public double getRate() {
         return canRun ? getTimeDistribution().getRate() : 0;
+    }
+
+    @Override
+    public void dispose() {
+        fakeconds.forEach(Disposable::dispose);
+        super.dispose();
     }
 
     @Override

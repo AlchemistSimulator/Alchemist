@@ -26,8 +26,6 @@ import java.util.concurrent.Semaphore
  */
 abstract class DSLLoader(private val ctx: SimulationContext<*, *>) : Loader {
 
-    protected abstract fun <T, P : Position<P>> envFactory(): Environment<T, P>
-
     @Suppress("UNCHECKED_CAST")
     override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> =
         SingleUseLoader(ctx as SimulationContext<T, P>).load(values)
@@ -45,7 +43,6 @@ abstract class DSLLoader(private val ctx: SimulationContext<*, *>) : Loader {
                 mutex.release()
             }
             val typedCtx = ctx as SimulationContextImpl<T, P>
-            val envInstance = envFactory<T, P>()
             val unknownVariableNames = values.keys - this@DSLLoader.variables.keys
             require(unknownVariableNames.isEmpty()) {
                 "Unknown variables provided: $unknownVariableNames." +
@@ -57,7 +54,7 @@ abstract class DSLLoader(private val ctx: SimulationContext<*, *>) : Loader {
                     k to v()
                 }.toMap(),
             )
-            val simulationIstance = typedCtx.build(envInstance, values)
+            val simulationIstance = typedCtx.build(values)
             val environment = simulationIstance.environment
             val engine = Engine(environment)
             // MONITORS

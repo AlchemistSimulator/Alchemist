@@ -31,6 +31,7 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.TimeDistribution
 import java.io.PrintWriter
 import java.nio.charset.StandardCharsets
 import org.apache.commons.math3.random.RandomGenerator
@@ -74,11 +75,11 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator) : SymbolProc
         fun injectableTypes(): Set<KSType> = sequenceOf(
             resolver.getClassDeclarationByName<Environment<*, *>>(),
             resolver.getClassDeclarationByName<Incarnation<*, *>>(),
-            resolver.getClassDeclarationByName<LinkingRule<*, *>>(),
             resolver.getClassDeclarationByName<Node<*>>(),
             resolver.getClassDeclarationByName<RandomGenerator>(),
             resolver.getClassDeclarationByName<Reaction<*>>(),
             resolver.getClassDeclarationByName<Simulation<*, *>>(),
+            resolver.getClassDeclarationByName<TimeDistribution<*>>(),
         ).map { checkNotNull(it).asStarProjectedType() }.toSet()
 
         private fun processConstructor(

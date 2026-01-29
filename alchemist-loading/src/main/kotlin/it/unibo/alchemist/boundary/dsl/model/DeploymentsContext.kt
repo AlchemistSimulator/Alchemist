@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import org.apache.commons.math3.random.RandomGenerator
@@ -51,11 +52,6 @@ import org.apache.commons.math3.random.RandomGenerator
 @Suppress("UndocumentedPublicFunction") // Detekt false positive with context parameters
 interface DeploymentsContext<T, P : Position<P>> {
     /**
-     * The simulation context this deployments context belongs to.
-     */
-    val ctx: SimulationContext<T, P>
-
-    /**
      * Deploys nodes using a deployment with a configuration block.
      *
      * The configuration block allows setting content, programs, properties, and custom node factories.
@@ -71,7 +67,7 @@ interface DeploymentsContext<T, P : Position<P>> {
      * @see [it.unibo.alchemist.model.Deployment]
      */
     // TODO: fix the doc
-    context(environment: Environment<T, P>)
+    context(_: Incarnation<T, P>, environment: Environment<T, P>)
     fun deploy(
         deployment: Deployment<P>,
         nodeFactory: context(RandomGenerator, Environment<T, P>) () -> Node<T> = {

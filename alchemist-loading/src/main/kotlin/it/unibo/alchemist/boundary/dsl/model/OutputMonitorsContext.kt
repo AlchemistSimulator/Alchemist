@@ -10,6 +10,7 @@
 package it.unibo.alchemist.boundary.dsl.model
 
 import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 
 /**
@@ -18,9 +19,9 @@ import it.unibo.alchemist.model.Position
  * @param T The type of molecule concentration.
  * @param P The type of position.
  */
-interface OutputMonitorsContext<T, P : Position<P>> {
+interface OutputMonitorsContext<T, P : Position<P>, E : Environment<T, P>> {
     /** The parent simulation context. */
-    val ctx: SimulationContext<T, P>
+    val ctx: SimulationContext<T, P, *>
 
     /**
      * Adds an output monitor to the simulation.
@@ -36,8 +37,9 @@ interface OutputMonitorsContext<T, P : Position<P>> {
  * @param T The type of molecule concentration.
  * @param P The type of position.
  */
-class OutputMonitorsContextImpl<T, P : Position<P>>(override val ctx: SimulationContextImpl<T, P>) :
-    OutputMonitorsContext<T, P> {
+class OutputMonitorsContextImpl<T, P : Position<P>, E : Environment<T, P>>(
+    override val ctx: SimulationContextImpl<T, P, E>,
+) : OutputMonitorsContext<T, P, E> {
     override fun OutputMonitor<T, P>.unaryPlus() {
         ctx.monitors += this
     }

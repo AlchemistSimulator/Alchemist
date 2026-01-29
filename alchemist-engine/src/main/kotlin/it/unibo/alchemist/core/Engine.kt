@@ -79,8 +79,10 @@ open class Engine<T, P : Position<out P>>(
     }
 
     override fun nodeRemoved(node: Node<T>, oldNeighborhood: Neighborhood<T>) {
+        // copy of reactions due to how [GenericNode.dispose] clears the reactions
+        val reactions = ArrayList(node.reactions)
         schedule {
-            node.reactions.forEach { removeReaction(it) }
+            reactions.forEach { removeReaction(it) }
         }
     }
 

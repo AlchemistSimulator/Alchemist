@@ -18,6 +18,8 @@ import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.observation.EventObservable
+import it.unibo.alchemist.model.observation.LifecycleRegistry
+import it.unibo.alchemist.model.observation.LifecycleState
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.combineLatest
 import it.unibo.alchemist.model.observation.ObservableMutableSet
@@ -35,6 +37,8 @@ class GlobalTestReaction<T>(override val timeDistribution: TimeDistribution<T>, 
     override fun execute() = timeDistribution.update(timeDistribution.nextOccurence, true, 1.0, environment)
 
     override var actions: List<Action<T>> = emptyList()
+
+    override val lifecycle: LifecycleRegistry = LifecycleRegistry()
 
     override var conditions: List<Condition<T>> = emptyList()
         set(value) {
@@ -56,9 +60,12 @@ class GlobalTestReaction<T>(override val timeDistribution: TimeDistribution<T>, 
 
     override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
 
-    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {
+        lifecycle.markState(LifecycleState.STARTED)
+    }
 
     override fun dispose() {
+        lifecycle.markState(LifecycleState.DESTROYED)
         observableConditions.dispose()
         validity.dispose()
         conditions.forEach(Condition<T>::dispose)

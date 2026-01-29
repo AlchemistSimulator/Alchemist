@@ -20,14 +20,16 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.EventObservable
+import it.unibo.alchemist.model.observation.LifecycleRegistry
+import it.unibo.alchemist.model.observation.LifecycleState
 import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.merge
 import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
+import it.unibo.alchemist.model.observation.bindTo
 import it.unibo.alchemist.model.physics.PhysicsDependency
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.timedistributions.DiracComb
-import java.util.ArrayList
 import org.danilopianini.util.ImmutableListSet
 import org.danilopianini.util.ListSet
 
@@ -59,28 +61,24 @@ class PhysicsUpdate<T>(
 
     override val rescheduleRequest: EventObservable = EventObservable()
 
+    override val lifecycle: LifecycleRegistry = LifecycleRegistry()
+
     override var actions: List<Action<T>> = listOf()
 
     private var validity: Observable<Boolean> = observe(true)
 
     private var canExecute: Boolean = true
 
-    private val subscriptions: MutableList<Observable<*>> = ArrayList()
-
     override var conditions: List<Condition<T>> = listOf()
         set(value) {
             field = value
             field.forEach(Disposable::dispose)
 
-            subscriptions.forEach { it.stopWatching(this) }
-            subscriptions.clear()
-
             validity.dispose()
 
             value.forEach { condition ->
-                condition.observeInboundDependencies().merge().apply {
-                    onChange(this@PhysicsUpdate) { rescheduleRequest.emit() }
-                    subscriptions.add(this)
+                condition.observeInboundDependencies().merge().bindTo(this) {
+                    rescheduleRequest.emit()
                 }
             }
 
@@ -89,8 +87,7 @@ class PhysicsUpdate<T>(
                 ?.combineLatest { validities -> validities.all { it } }
                 ?.map { it.getOrElse { true } } // none means empty set of conditions i.e. always true.
                 ?.apply {
-                    onChange(this@PhysicsUpdate) { canExecute = it }
-                    subscriptions.add(this)
+                    bindTo(this@PhysicsUpdate) { canExecute = it }
                 } ?: observe(true)
 
             rescheduleRequest.emit()
@@ -109,11 +106,12 @@ class PhysicsUpdate<T>(
 
     override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
 
-    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {
+        lifecycle.markState(LifecycleState.STARTED)
+    }
 
     override fun dispose() {
-        subscriptions.forEach { it.stopWatching(this) }
-        subscriptions.clear()
+        lifecycle.markState(LifecycleState.DESTROYED)
         validity.dispose()
         conditions.forEach(Disposable::dispose)
         rescheduleRequest.dispose()

@@ -19,6 +19,8 @@ import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.observation.Disposable
+import it.unibo.alchemist.model.observation.LifecycleRegistry
+import it.unibo.alchemist.model.observation.LifecycleState
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMutableMap
 import java.util.Collections
@@ -56,6 +58,12 @@ constructor(
     constructor(
         environment: Environment<T, *>,
     ) : this(environment.incarnation, environment)
+
+    override val lifecycle: LifecycleRegistry = LifecycleRegistry()
+
+    init {
+        lifecycle.markState(LifecycleState.STARTED)
+    }
 
     override val observableContents: ObservableMutableMap<Molecule, T> = ObservableMutableMap(molecules)
 
@@ -140,6 +148,7 @@ constructor(
     override fun toString(): String = "Node$id{ properties: $properties, molecules: ${observableContents.current}}"
 
     override fun dispose() {
+        lifecycle.markState(LifecycleState.DESTROYED)
         reactions.forEach(Disposable::dispose)
         reactions.clear()
         observableContents.dispose()

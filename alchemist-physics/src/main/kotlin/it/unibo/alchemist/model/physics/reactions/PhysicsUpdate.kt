@@ -110,4 +110,12 @@ class PhysicsUpdate<T>(
     override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
 
     override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+
+    override fun dispose() {
+        subscriptions.forEach { it.stopWatching(this) }
+        subscriptions.clear()
+        validity.dispose()
+        conditions.forEach(Disposable::dispose)
+        rescheduleRequest.dispose()
+    }
 }

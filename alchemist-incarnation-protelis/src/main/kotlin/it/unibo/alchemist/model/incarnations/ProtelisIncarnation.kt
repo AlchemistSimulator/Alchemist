@@ -29,6 +29,7 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.GenericNode
+import it.unibo.alchemist.model.observation.LifecycleRegistry
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMap
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
@@ -373,6 +374,8 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override val reactions: List<Reaction<Any>> = emptyList()
 
+        override val lifecycle: LifecycleRegistry = LifecycleRegistry()
+
         override fun iterator(): MutableIterator<Reaction<Any>> = notImplemented()
 
         override fun compareTo(@Nonnull other: Node<Any>): Int = notImplemented()
@@ -394,6 +397,8 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         override fun removeReaction(reactionToRemove: Reaction<Any>) = notImplemented<Unit>()
 
         override fun setConcentration(molecule: Molecule, concentration: Any) = notImplemented<Unit>()
+
+        override fun dispose() = notImplemented<Unit>()
 
         override fun addProperty(nodeProperty: NodeProperty<Any>) = notImplemented<Unit>()
 

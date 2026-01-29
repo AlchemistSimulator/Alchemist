@@ -27,6 +27,7 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMutableMap
 import it.unibo.alchemist.model.observation.ObservableMutableSet
@@ -444,6 +445,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         updateRegionObservers(node, null, null)
         ifEngineAvailable { it.nodeRemoved(node, neigh) }
         nodeRemoved(node, neigh)
+        node.dispose()
     }
 
     private fun runQuery(center: P, range: Double): List<Node<T>> = spatialIndex

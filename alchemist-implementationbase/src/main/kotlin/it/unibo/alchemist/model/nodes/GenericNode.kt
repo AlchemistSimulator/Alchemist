@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMutableMap
 import java.util.Collections
@@ -111,7 +112,9 @@ constructor(
     }
 
     final override fun removeReaction(reactionToRemove: Reaction<T>) {
-        reactions.remove(reactionToRemove)
+        if (reactions.remove(reactionToRemove)) {
+            reactionToRemove.dispose()
+        }
     }
 
     override fun setConcentration(molecule: Molecule, concentration: T) {
@@ -135,6 +138,13 @@ constructor(
     final override fun spliterator(): Spliterator<Reaction<T>> = reactions.spliterator()
 
     override fun toString(): String = "Node$id{ properties: $properties, molecules: ${observableContents.current}}"
+
+    override fun dispose() {
+        reactions.forEach(Disposable::dispose)
+        reactions.clear()
+        observableContents.dispose()
+        observeMoleculeCount.dispose()
+    }
 
     private companion object {
         private const val serialVersionUID = 2496775909028222278L

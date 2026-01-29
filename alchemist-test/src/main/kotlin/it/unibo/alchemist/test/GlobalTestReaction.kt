@@ -57,4 +57,11 @@ class GlobalTestReaction<T>(override val timeDistribution: TimeDistribution<T>, 
     override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
 
     override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+
+    override fun dispose() {
+        observableConditions.dispose()
+        validity.dispose()
+        conditions.forEach(Condition<T>::dispose)
+        rescheduleRequest.dispose()
+    }
 }

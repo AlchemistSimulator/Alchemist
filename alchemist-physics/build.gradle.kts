@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -14,6 +14,7 @@ plugins {
 }
 
 dependencies {
+    ksp(alchemist("factories-generator"))
     api(alchemist("api"))
     api(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -36,7 +36,7 @@ internal class TestConcurrency {
     fun `simulation commands should interleave`() {
         val incarnation = BiochemistryIncarnation()
         val environment = Continuous2DEnvironment(incarnation)
-        val node = GenericNode(incarnation, environment)
+        val node = GenericNode(environment)
         environment.linkingRule = NoLinks()
         val timeDistribution = DiracComb<Double>(1.0)
         val reaction = Event(node, timeDistribution)

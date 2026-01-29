@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -80,7 +80,7 @@ class TestDeformableCell {
     private TimeDistribution<Double> time;
 
     private Node<Double> createDeformableCell(final double maxDiameter, final double rigidity) {
-        final Node<Double> node = new GenericNode<>(incarnation, environment);
+        final Node<Double> node = new GenericNode<>(environment);
         node.addProperty(
             new CircularDeformableCell(environment, node, maxDiameter, rigidity)
         );

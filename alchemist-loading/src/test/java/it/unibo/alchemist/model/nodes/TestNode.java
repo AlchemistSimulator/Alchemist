@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -15,8 +15,10 @@ import java.io.Serial;
 
 /**
  * Generic node for testing purposes.
+ *
+ * @param <T> concentration type
  */
-public final class TestNode extends GenericNode<Object> {
+public final class TestNode<T> extends GenericNode<T> {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -24,13 +26,14 @@ public final class TestNode extends GenericNode<Object> {
     /**
      * @param environment the environment
      */
-    public TestNode(final Environment<Object, ?> environment) {
+    public TestNode(final Environment<T, ?> environment) {
         super(environment);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    protected Object createT() {
-        return new Object();
+    protected T createT() {
+        return (T) new Object();
     }
 
 }

@@ -83,6 +83,7 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable, Li
     private final TimeDistribution<T> timeDistribution;
     private final Node<T> node;
 
+    private final List<Disposable> subscriptions = new ArrayList<>(0);
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry();
     private final EventObservable rescheduleRequest = new EventObservable();
     private Observable<Boolean> validity = MutableObservable.Companion.observe(true);
@@ -357,16 +358,18 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable, Li
      * trigger some environment query that may fail in the set-up phase.
      */
     protected final void initializeObservableConditions() {
+        subscriptions.forEach(Disposable::dispose);
+        subscriptions.clear();
         validity.dispose();
 
         conditions.forEach(condition -> {
             final var merged = ObservableExtensions.ObservableSetExtensions.mergeObservables(
                 condition.observeInboundDependencies()
             );
-            LifecycleKt.bindTo(merged, this, it -> {
+            subscriptions.add(LifecycleKt.bindTo(merged, this, it -> {
                 rescheduleRequest.emit();
                 return Unit.INSTANCE;
-            });
+            }));
         });
 
         if (!conditions.isEmpty()) {
@@ -375,10 +378,10 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable, Li
                 it -> it.stream().allMatch(b -> b)
             ).map(it -> getOrElse(it, () -> true));
 
-            LifecycleKt.bindTo(validity, this, it -> {
+            subscriptions.add(LifecycleKt.bindTo(validity, this, it -> {
                 canExecute = Option.fromNullable(it);
                 return Unit.INSTANCE;
-            });
+            }));
         }
         rescheduleRequest.emit();
     }
@@ -441,8 +444,10 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable, Li
     @Override
     public void dispose() {
         lifecycleRegistry.markState(LifecycleState.DESTROYED);
+        subscriptions.forEach(Disposable::dispose);
         conditions.forEach(Disposable::dispose);
         conditions.clear();
+        subscriptions.clear();
     }
 
     /**

@@ -111,36 +111,41 @@ class LifecycleRegistry : Lifecycle {
  *
  * @param lifecycleOwner The object controlling the lifecycle of this subscription.
  * @param callback The action to perform when the observable emits a value.
+ * @return a [Disposable] to manually dispose the subscription outside owner's lifecycle.
  */
-fun <T> Observable<T>.bindTo(lifecycleOwner: LifecycleOwner, callback: (T) -> Unit) {
-    if (lifecycleOwner.lifecycle.currentState == DESTROYED) return
-
-    val dataListener: (T) -> Unit = { data ->
-        // avoid zombie callbacks
-        if (lifecycleOwner.lifecycle.currentState.isAtLeast(STARTED)) {
-            callback(data)
-        }
-    }
-
-    var lifecycleObserver: ((LifecycleState) -> Unit)? = null
-    lifecycleObserver = { state ->
-        when (state) {
-            DESTROYED -> {
-                this.stopWatching(lifecycleOwner)
-                lifecycleObserver?.let { lifecycleOwner.lifecycle.removeObserver(it) }
+fun <T> Observable<T>.bindTo(lifecycleOwner: LifecycleOwner, callback: (T) -> Unit): Disposable? =
+    lifecycleOwner.takeIf { it.lifecycle.currentState != DESTROYED }?.let {
+        val dataListener: (T) -> Unit = { data ->
+            // avoid zombie callbacks
+            if (lifecycleOwner.lifecycle.currentState.isAtLeast(STARTED)) {
+                callback(data)
             }
-            STARTED -> callback(this.current)
-            else -> { /* No action needed for other states */ }
+        }
+
+        var lifecycleObserver: ((LifecycleState) -> Unit)? = null
+        lifecycleObserver = { state ->
+            when (state) {
+                DESTROYED -> {
+                    this.stopWatching(lifecycleOwner)
+                    lifecycleObserver?.let { lifecycleOwner.lifecycle.removeObserver(it) }
+                }
+                STARTED -> callback(this.current)
+                else -> { /* No action needed for other states */ }
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+
+        // set `invokeOnRegistration = false` because we handle the initial data emission manually below
+        // to strictly respect the `isAtLeast(STARTED)` check.
+        this.onChange(lifecycleOwner, invokeOnRegistration = false, callback = dataListener)
+
+        if (lifecycleOwner.lifecycle.currentState.isAtLeast(STARTED)) {
+            callback(this.current)
+        }
+
+        return Disposable {
+            this@bindTo.stopWatching(dataListener)
+            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
         }
     }
-
-    lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
-
-    // set `invokeOnRegistration = false` because we handle the initial data emission manually below
-    // to strictly respect the `isAtLeast(STARTED)` check.
-    this.onChange(lifecycleOwner, invokeOnRegistration = false, callback = dataListener)
-
-    if (lifecycleOwner.lifecycle.currentState.isAtLeast(STARTED)) {
-        callback(this.current)
-    }
-}

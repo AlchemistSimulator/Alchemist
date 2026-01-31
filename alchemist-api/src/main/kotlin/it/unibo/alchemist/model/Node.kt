@@ -9,6 +9,8 @@
 package it.unibo.alchemist.model
 
 import arrow.core.Option
+import it.unibo.alchemist.model.observation.Disposable
+import it.unibo.alchemist.model.observation.LifecycleOwner
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMap
 import java.io.Serializable
@@ -25,7 +27,9 @@ import kotlin.reflect.jvm.jvmErasure
 interface Node<T> :
     Serializable,
     Iterable<Reaction<T>>,
-    Comparable<Node<T>> {
+    Comparable<Node<T>>,
+    Disposable,
+    LifecycleOwner {
     /**
      * Adds a reaction to this node.
      * The reaction is added only in the node,

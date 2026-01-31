@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model
 
+import it.unibo.alchemist.model.observation.Disposable
+import it.unibo.alchemist.model.observation.LifecycleOwner
 import it.unibo.alchemist.model.observation.Observable
 import java.io.Serializable
 import org.danilopianini.util.ListSet
@@ -18,7 +20,9 @@ import org.danilopianini.util.ListSet
  */
 sealed interface Actionable<T> :
     Comparable<Actionable<T>>,
-    Serializable {
+    Serializable,
+    Disposable,
+    LifecycleOwner {
     /**
      * @return true if the reaction can be executed (namely, all the conditions
      * are satisfied).

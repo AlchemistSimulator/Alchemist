@@ -10,9 +10,7 @@
 package attempt
 
 import another.location.SimpleMonitor
-import com.lowagie.tools.BuildTutorial.action
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.boundary.dsl.Dsl
 import it.unibo.alchemist.dsl.DslLoaderFunctions
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
 import it.unibo.alchemist.model.Action
@@ -28,7 +26,6 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TerminationPredicate
-import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.deployments.circle
 import it.unibo.alchemist.model.deployments.grid
@@ -44,7 +41,6 @@ import it.unibo.alchemist.model.maps.environments.oSMEnvironment
 import it.unibo.alchemist.model.positionfilters.Rectangle
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.event
-import it.unibo.alchemist.model.sapere.ILsaMolecule
 import it.unibo.alchemist.model.terminators.StableForSteps
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.exponentialTime
@@ -73,48 +69,45 @@ interface ContentContext<T> {
 
 }
 
+interface TimeDistributionContext<T, P : Position<P>> {
+
+    context(timeDistribution: TimeDistribution<T>)
+    val timeDistribution: TimeDistribution<T> get() = timeDistribution
+
+    fun <A : Actionable<T>> program(actionable: A, block: context(A) ActionableContext<T>.() -> Unit = { })
+
+    context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>, timeDistribution: TimeDistribution<T>)
+    fun program(program: String?, block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { }) =
+        program(
+            incarnation.createReaction(randomGenerator, environment, node, timeDistribution, program),
+            block
+        )
+}
+
 interface DeploymentContext<T, P : Position<P>> {
 
     val position: P
 
+    fun <TimeDistributionType : TimeDistribution<T>> timeDistribution(
+        timeDistribution: TimeDistributionType,
+        block: context(TimeDistributionType) TimeDistributionContext<T, P>.() -> Unit
+    )
+
+    @Suppress("UNCHECKED_CAST")
     context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>)
-    fun program(timeDistribution: TimeDistribution<T>, actionable: Actionable<T>, block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { })
+    fun withTimeDistribution(
+        parameter: Any? = null,
+        block: context(TimeDistribution<T>) TimeDistributionContext<T, P>.() -> Unit
+    ) = timeDistribution<TimeDistribution<T>>(
+        parameter as? TimeDistribution<T> ?: makeTimeDistribution(parameter),
+        block
+    )
 
     context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>)
-    fun program(
-        timeDistribution: TimeDistribution<T>,
-        actionable: context(TimeDistribution<T>) () -> Actionable<T> = { makeReaction(timeDistribution, null) },
-        block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { }
-    ) = program(timeDistribution, context(timeDistribution) { actionable() }, block)
-
-    context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>)
-    fun program(
-        timeDistribution: Any? = null,
-        actionable: context(TimeDistribution<T>) () -> Actionable<T> = { makeReaction(contextOf<TimeDistribution<T>>(), null) },
-        block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { }
-    ) = program(makeTimeDistribution(timeDistribution), actionable, block)
-
-    context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>)
-    fun program(timeDistribution: Any? = null, actionable: Actionable<T>, block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { }) =
-        program(makeTimeDistribution(timeDistribution), actionable, block)
-
-    context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>)
-    fun program(timeDistribution: TimeDistribution<T>, descriptor: String? = null, block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { }) =
-        program(timeDistribution, makeReaction(timeDistribution, descriptor), block)
-
-    context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>)
-    fun program(
-        timeDistribution: Any? = null,
-        descriptor: String? = null,
-        block: context(Reaction<T>
-    ) ActionableContext<T>.() -> Unit = { }) {
-        val timeDistribution = incarnation.createTimeDistribution(randomGenerator, environment, node, timeDistribution)
-        program(timeDistribution, makeReaction(timeDistribution, descriptor), block)
-    }
-
-    context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>)
-    fun program(descriptor: String, block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { }) =
-        program(timeDistribution = null, descriptor, block)
+    fun program(timeDistribution: Any? = null, program: String? = null, block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { }) =
+        withTimeDistribution(timeDistribution) {
+            program(program, block)
+        }
 
     fun contents(block: context(Incarnation<T, P>) ContentContext<T>.() -> Unit)
 
@@ -128,8 +121,8 @@ interface DeploymentContext<T, P : Position<P>> {
             parameter,
         )
 
-        context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>)
-        fun <T, P : Position<P>> makeReaction(timeDistribution: TimeDistribution<T>, descriptor: String?) = incarnation.createReaction(
+        context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>, timeDistribution: TimeDistribution<T>)
+        fun <T, P : Position<P>> makeReaction(descriptor: String?) = incarnation.createReaction(
             randomGenerator,
             environment,
             node,
@@ -197,17 +190,16 @@ fun main() {
                     "AlignToSimulationTime",
                 )
                 deploy(gps) {
-                    program(
-                        timeDistribution = 15,
-                        actionable =  { event() }
-                    ) {
-                        action(
-                            reproduceGPSTrace(
-                                "gpsTrace",
-                                true,
-                                "AlignToSimulationTime",
+                    withTimeDistribution(15) {
+                        program(event()) {
+                            action(
+                                reproduceGPSTrace(
+                                    "gpsTrace",
+                                    true,
+                                    "AlignToSimulationTime",
+                                )
                             )
-                        )
+                        }
                     }
                 }
             }
@@ -223,10 +215,9 @@ fun main() {
                             - "token, 0, []"
                         }
                     }
-                    program(
-                        DiracComb(0.5),
-                            "{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}"
-                    )
+                    timeDistribution(DiracComb(0.5)) {
+                        program("{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}")
+                    }
                     program("{token, N, L}{token, def: N2>=N, L2} --> {token, N, L}")
                 }
             }
@@ -236,14 +227,15 @@ fun main() {
         environment {
             deployments {
                 deploy(point(1.5, 0.5)) {
-                    program(
-                        timeDistribution = JaktaTimeDistribution(
+                    timeDistribution(
+                        JaktaTimeDistribution(
                             sense = weibullTime(1.0, 1.0),
                             deliberate = DiracComb(0.1),
                             act = exponentialTime<Any>(1.0),
-                        ),
-                        descriptor = "1 + 1"
-                    )
+                        )
+                    ) {
+                        program("1 + 1")
+                    }
                 }
             }
         }
@@ -259,7 +251,10 @@ fun main() {
                             - token
                         }
                     }
-                    program(1, "{token} --> {firing}")
+                    program(
+                        timeDistribution = 1,
+                        "{token} --> {firing}"
+                    )
                     program( "{firing} --> +{token}")
                 }
             }
@@ -287,13 +282,13 @@ fun main() {
             deployments {
                 deploy(FromGPSTrace(7, "gpsTrace", true, "AlignToSimulationTime")) {
                     program(timeDistribution = 15) {
-                        action {
+                        action(
                             reproduceGPSTrace(
                                 "gpsTrace",
                                 true,
                                 "AlignToSimulationTime",
                             )
-                        }
+                        )
                     }
                 }
             }

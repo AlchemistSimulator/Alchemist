@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -30,9 +30,9 @@ import kotlin.math.min
  * @param filter
  *            the [FilteringPolicy] to use
  * @param aggregatorNames
- *            the names of the [UnivariateStatistic] to use for
- *            aggregating data. If an empty list is passed, then the values
- *            will be logged indipendently for each node.
+ *    the names of the [org.apache.commons.math.stat.descriptive.UnivariateStatistic] to use for
+ *    aggregating data. If an empty list is passed, then the values
+ *    will be logged indipendently for each node.
  */
 class MoleculeReader
 @JvmOverloads

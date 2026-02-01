@@ -10,6 +10,7 @@
 package it.unibo.alchemist.util
 
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.util.Environments.allSubNetworks
 import it.unibo.alchemist.util.Environments.allSubNetworksByNode
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
 import java.math.BigDecimal
@@ -20,13 +21,13 @@ import org.junit.jupiter.api.Test
 
 object TestEnvironmentsDiameter {
     private infix fun <T> Environment<T, *>.mustHave(expected: Subnetworks) =
-        assertEquals<Int>(expected.count, allSubNetworksByNode().size)
+        assertEquals(expected.count, allSubNetworks().size)
 
     private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveDiameter(expected: Double) {
         assertFalse(isNetworkSegmented())
-        assertEquals<Double>(
+        assertEquals(
             expected,
-            allSubNetworksByNode().values.single().diameter.roundToTwoDecimals(),
+            allSubNetworks().single().diameter.roundToTwoDecimals(),
         )
     }
 
@@ -34,7 +35,7 @@ object TestEnvironmentsDiameter {
         require(index < nodes.size)
         val diameter = allSubNetworksByNode()[nodes[index]]?.diameter
         if (diameter != null) {
-            assertEquals<Double>(
+            assertEquals(
                 expected,
                 diameter.roundToTwoDecimals(),
             )
@@ -99,7 +100,7 @@ object TestEnvironmentsDiameter {
             mustBeSegmented()
             mustHave(2.subnetworks())
             specificNodeInASegmentedNetworkShouldHaveDiameter(0, 8.49)
-            specificNodeInASegmentedNetworkShouldHaveDiameter(1, 6.32)
+            specificNodeInASegmentedNetworkShouldHaveDiameter(subnetwork1.size + 1, 6.32)
         }
     }
 
@@ -109,7 +110,7 @@ object TestEnvironmentsDiameter {
             mustBeSegmented()
             mustHave(3.subnetworks())
             specificNodeInASegmentedNetworkShouldHaveDiameter(0, 8.49)
-            specificNodeInASegmentedNetworkShouldHaveDiameter(1, 6.32)
+            specificNodeInASegmentedNetworkShouldHaveDiameter(subnetwork1.size + 1, 6.32)
             specificNodeInASegmentedNetworkShouldHaveDiameter(nodeCount - 1, 0.0)
         }
     }

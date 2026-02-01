@@ -11,8 +11,8 @@ package it.unibo.alchemist.model.sapere.nodes;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.incarnations.SAPEREIncarnation;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
-import it.unibo.alchemist.model.sapere.SAPEREIncarnation;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;

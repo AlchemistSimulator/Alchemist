@@ -35,6 +35,7 @@ import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
 import it.unibo.alchemist.model.Reaction
@@ -131,6 +132,8 @@ interface DeploymentContext<T, P : Position<P>> {
         }
 
     fun contents(block: context(Incarnation<T, P>) ContentContext<T>.() -> Unit)
+
+    fun nodeProperty(property: NodeProperty<T>)
 
     private companion object {
 

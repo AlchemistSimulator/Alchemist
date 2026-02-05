@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -43,7 +43,7 @@ constructor(
     private val filter: ExportFilter,
     aggregatorNames: List<String>,
     precision: Int? = null,
-) : AbstractAggregatingDoubleExporter(filter, aggregatorNames, precision) {
+) : AbstractAggregatingDoubleExtractor(filter, aggregatorNames, precision) {
     private companion object {
         private const val SHORT_NAME_MAX_LENGTH = 5
     }

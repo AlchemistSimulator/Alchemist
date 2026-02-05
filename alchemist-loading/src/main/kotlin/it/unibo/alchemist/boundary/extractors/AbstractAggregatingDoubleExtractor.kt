@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -25,13 +25,13 @@ import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
  * extracts data from the environment, filters it, and then aggregates it.
  * Available aggregators can be found at this [site](http://bit.ly/40MWWvt).
  */
-abstract class AbstractAggregatingDoubleExporter
+abstract class AbstractAggregatingDoubleExtractor
 @JvmOverloads
 constructor(
     private val filter: ExportFilter = CommonFilters.NOFILTER.filteringPolicy,
     aggregatorNames: List<String>,
     precision: Int? = null,
-) : AbstractDoubleExporter(precision) {
+) : AbstractDoubleExtractor(precision) {
     constructor(
         filter: String?,
         aggregatorNames: List<String>,

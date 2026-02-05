@@ -77,39 +77,3 @@ interface PropertiesContext<T, P : Position<P>> {
      */
     fun all(block: context(Environment<T, P>, Node<T>) PropertyContext<T, P>.() -> Unit)
 }
-
-/**
- * Context interface for configuring properties for a specific node.
- *
- * This context is used within [PropertiesContext] blocks to add properties to nodes.
- *
- * @param T The type of molecule concentration.
- * @param P The type of position, must extend [Position].
- *
- * @see [PropertiesContext] for the parent context
- * @see [NodeProperty] for the property interface
- */
-@AlchemistDsl
-interface PropertyContext<T, P : Position<P>> {
-    /**
-     * The properties context this property context belongs to.
-     */
-    val ctx: PropertiesContext<T, P>
-
-    /**
-     * The optional position filter applied to this property context.
-     */
-    val filter: PositionBasedFilter<P>?
-
-    /**
-     * The node this property context is configuring.
-     */
-    val node: Node<T>
-
-    /**
-     * Adds a property to the node.
-     *
-     * @see [NodeProperty]
-     */
-    operator fun NodeProperty<T>.unaryPlus()
-}

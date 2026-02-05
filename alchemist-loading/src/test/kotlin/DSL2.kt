@@ -10,9 +10,18 @@
 package attempt
 
 import another.location.SimpleMonitor
+import it.unibo.alchemist.boundary.Exporter
+import it.unibo.alchemist.boundary.Extractor
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.boundary.dsl.Dsl
+import it.unibo.alchemist.boundary.Variable
+import it.unibo.alchemist.boundary.exporters.CSVExporter
+import it.unibo.alchemist.boundary.exportfilters.CommonFilters
+import it.unibo.alchemist.boundary.extractors.Time
+import it.unibo.alchemist.boundary.extractors.moleculeReader
+import it.unibo.alchemist.boundary.variables.GeometricVariable
+import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.dsl.DslLoaderFunctions
+import it.unibo.alchemist.dsl.DslLoaderFunctions.makePerturbedGridForTesting
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
@@ -45,13 +54,17 @@ import it.unibo.alchemist.model.maps.deployments.FromGPSTrace
 import it.unibo.alchemist.model.maps.environments.oSMEnvironment
 import it.unibo.alchemist.model.positionfilters.Rectangle
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.reactions.event
+import it.unibo.alchemist.model.terminators.AfterTime
 import it.unibo.alchemist.model.terminators.StableForSteps
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.exponentialTime
 import it.unibo.alchemist.model.timedistributions.weibullTime
+import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.test.globalTestReaction
+import java.io.Serializable
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 import org.apache.commons.math3.random.RandomGenerator
 
 interface ActionableContext<T> {
@@ -112,7 +125,7 @@ interface DeploymentContext<T, P : Position<P>> {
     )
 
     context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>)
-    fun program(timeDistribution: Any? = null, program: String? = null, block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { }) =
+    fun program(program: String? = null, timeDistribution: Any? = null, block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { }) =
         withTimeDistribution(timeDistribution) {
             program(program, block)
         }
@@ -161,12 +174,26 @@ interface EnvironmentContext<T, P : Position<P>> {
     fun terminator(terminator: TerminationPredicate<T, P>)
 }
 
+interface ExporterContext<T, P : Position<P>> {
+    operator fun Extractor<*>.unaryMinus()
+}
+
+interface VariableProvider<V : Serializable> {
+    operator fun provideDelegate(
+        thisRef: Any?,
+        property: KProperty<*>,
+    ): ReadOnlyProperty<Any?, V>
+}
+
 interface SimulationContext<T, P: Position<P>> {
     fun <E: Environment<T, P>> environment(environment: E, block: context(E) EnvironmentContext<T, P>.() -> Unit)
+    fun exportWith(exporter: Exporter<T, P>, block: ExporterContext<T, P>.() -> Unit)
     fun scenarioRandomGenerator(randomGenerator: RandomGenerator)
     fun scenarioSeed(seed: Long)
     fun simulationRandomGenerator(randomGenerator: RandomGenerator)
     fun simulationSeed(seed: Long)
+
+    fun <V : Serializable> variable(variable: Variable<out V>): VariableProvider<V>
 }
 
 operator fun PositionBasedFilter<*>.contains(position: Position<*>): Boolean = contains(position)
@@ -182,6 +209,43 @@ fun <T, I : Incarnation<T, GeoPosition>> simulationOnMap(incarnation: I, block: 
 fun <T, I : Incarnation<T, Euclidean2DPosition>> simulation2D(incarnation: I, block: context(I) SimulationContext<T, Euclidean2DPosition>.() -> Unit) = simulation(incarnation, block)
 
 fun main() {
+    simulation2D(SAPEREIncarnation()) {
+        val rate: Double by variable(GeometricVariable(2.0, 0.1, 10.0, 9))
+        val size: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
+
+        environment {
+            val mSize = -size
+            val sourceStart = mSize / 10.0
+            val sourceSize = size / 5.0
+            terminator(AfterTime(DoubleTime(1.0)))
+            networkModel(ConnectWithinDistance(0.5))
+            deployments {
+                deploy(makePerturbedGridForTesting()) {
+                    if (position in Rectangle(sourceStart, sourceStart, sourceSize, sourceSize)) {
+                        contents {
+                            - "token, 0, []"
+                        }
+                    }
+                    program(
+                        "{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}",
+                        rate
+                    )
+                    program("{token, N, L}{token, def: N2>=N, L2} --> {token, N, L}")
+                }
+            }
+        }
+    }
+    simulation(ProtelisIncarnation()) {
+        exportWith(CSVExporter("test_export_interval", 4.0)) {
+            - Time()
+            - moleculeReader(
+                "default_module:default_program",
+                null,
+                CommonFilters.NOFILTER.filteringPolicy,
+                emptyList(),
+            )
+        }
+    }
     simulation2D(ProtelisIncarnation()) {
         environment {
             globalProgram(DiracComb(1.0), globalTestReaction(DiracComb(1.0)))
@@ -288,8 +352,8 @@ fun main() {
                         }
                     }
                     program(
-                        timeDistribution = 1,
-                        "{token} --> {firing}"
+                        "{token} --> {firing}",
+                        timeDistribution = 1
                     )
                     program( "{firing} --> +{token}")
                 }

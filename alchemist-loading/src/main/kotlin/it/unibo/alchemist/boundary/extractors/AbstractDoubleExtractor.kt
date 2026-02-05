@@ -20,7 +20,7 @@ import java.util.Locale
  * Provided a [precision] representing the significant digits, formats doubles accordingly, using [Locale.ENGLISH].
  * If `null` is provided, returns the default conversion to string.
  */
-abstract class AbstractDoubleExporter
+abstract class AbstractDoubleExtractor
 @JvmOverloads
 constructor(val precision: Int? = null) : Extractor<Double> {
     init {

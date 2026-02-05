@@ -11,14 +11,18 @@ package attempt
 
 import another.location.SimpleMonitor
 import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.boundary.dsl.Dsl
 import it.unibo.alchemist.dsl.DslLoaderFunctions
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
@@ -34,21 +38,25 @@ import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.environments.continuous2DEnvironment
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
+import it.unibo.alchemist.model.layers.StepLayer
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.maps.actions.reproduceGPSTrace
 import it.unibo.alchemist.model.maps.deployments.FromGPSTrace
 import it.unibo.alchemist.model.maps.environments.oSMEnvironment
 import it.unibo.alchemist.model.positionfilters.Rectangle
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.reactions.event
 import it.unibo.alchemist.model.terminators.StableForSteps
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.exponentialTime
 import it.unibo.alchemist.model.timedistributions.weibullTime
+import it.unibo.alchemist.test.globalTestReaction
 import org.apache.commons.math3.random.RandomGenerator
 
 interface ActionableContext<T> {
     fun action(action: Action<T>)
+    fun condition(condition: Condition<T>)
 }
 
 interface ContentContext<T> {
@@ -138,16 +146,16 @@ interface DeploymentsContext<T, P : Position<P>> {
 
 interface TerminatorsContext<T, P : Position<P>> {
     operator fun TerminationPredicate<T, P>.unaryMinus()
-    @Suppress("UNCHECKED_CAST")
-    operator fun TerminationPredicate<T, *>.unaryMinus() = (this as TerminationPredicate<T, P>).unaryMinus()
-    @Suppress("UNCHECKED_CAST")
-    operator fun TerminationPredicate<*, P>.unaryMinus() = (this as TerminationPredicate<T, P>).unaryMinus()
-    @Suppress("UNCHECKED_CAST")
-    operator fun TerminationPredicate<*, *>.unaryMinus() = (this as TerminationPredicate<T, P>).unaryMinus()
 }
 
 interface EnvironmentContext<T, P : Position<P>> {
     fun deployments(block: context(RandomGenerator) DeploymentsContext<T, P>.() -> Unit)
+    fun globalProgram(timeDistribution: TimeDistribution<T>, globalReaction: GlobalReaction<T>, block: context(GlobalReaction<T>) ActionableContext<T>.() -> Unit = {})
+
+    fun layer(molecule: Molecule, layer: Layer<T, P>)
+
+    context(incarnation: Incarnation<T, P>)
+    fun layer(molecule: String? = null, layer: Layer<T, P>) = layer(incarnation.createMolecule(molecule), layer)
     fun monitor(monitor: OutputMonitor<T, P>)
     fun networkModel(model: LinkingRule<T, P>)
     fun terminator(terminator: TerminationPredicate<T, P>)
@@ -174,6 +182,34 @@ fun <T, I : Incarnation<T, GeoPosition>> simulationOnMap(incarnation: I, block: 
 fun <T, I : Incarnation<T, Euclidean2DPosition>> simulation2D(incarnation: I, block: context(I) SimulationContext<T, Euclidean2DPosition>.() -> Unit) = simulation(incarnation, block)
 
 fun main() {
+    simulation2D(ProtelisIncarnation()) {
+        environment {
+            globalProgram(DiracComb(1.0), globalTestReaction(DiracComb(1.0)))
+        }
+    }
+    simulation2D(ProtelisIncarnation()) {
+        environment {
+            layer("A", StepLayer(2.0, 2.0, 100, 0))
+            layer("B", StepLayer(-2.0, -2.0, 0, 100))
+            deployments {
+                deploy(
+                    grid(
+                        -5.0,
+                        -5.0,
+                        5.0,
+                        5.0,
+                        0.25,
+                        0.1,
+                        0.1,
+                    ),
+                ) {
+                    contents {
+                        - "a"
+                    }
+                }
+            }
+        }
+    }
     simulation2D(SAPEREIncarnation()) {
         environment {
             monitor(SimpleMonitor())

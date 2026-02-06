@@ -69,24 +69,33 @@ import kotlin.reflect.KProperty
 import org.apache.commons.math3.random.RandomGenerator
 
 interface ActionableContext<T> {
-    fun action(action: Action<T>)
-    fun condition(condition: Condition<T>)
+    context(actionable: Actionable<T>)
+    fun action(action: Action<T>) {
+        actionable.actions += action
+    }
+    context(actionable: Actionable<T>)
+    fun condition(condition: Condition<T>) {
+        actionable.conditions += condition
+    }
 }
 
 interface ContentContext<T> {
 
     context(incarnation: Incarnation<T, *>)
-    fun concentrationOf(origin: Any?) = incarnation.createConcentration(origin)
+    fun concentrationOf(origin: Any?): T = incarnation.createConcentration(origin)
 
-    operator fun Pair<Molecule, T>.unaryMinus()
+    context(node: Node<T>)
+    operator fun Pair<Molecule, T>.unaryMinus() {
+        node.setConcentration(first, second)
+    }
 
-    context(incarnation: Incarnation<T, *>)
+    context(incarnation: Incarnation<T, *>, _: Node<T>)
     operator fun Molecule.unaryMinus() = -Pair(this, incarnation.createConcentration())
 
-    context(incarnation: Incarnation<T, *>)
+    context(incarnation: Incarnation<T, *>, _: Node<T>)
     operator fun String.unaryMinus() = -Pair(incarnation.createMolecule(this), incarnation.createConcentration())
 
-    context(incarnation: Incarnation<T, *>)
+    context(incarnation: Incarnation<T, *>, _: Node<T>)
     operator fun Pair<String, T>.unaryMinus() = -Pair(incarnation.createMolecule(first), second)
 
 }
@@ -96,7 +105,13 @@ interface TimeDistributionContext<T, P : Position<P>> {
     context(timeDistribution: TimeDistribution<T>)
     val timeDistribution: TimeDistribution<T> get() = timeDistribution
 
-    fun <A : Actionable<T>> program(actionable: A, block: context(A) ActionableContext<T>.() -> Unit = { })
+    context(node: Node<T>)
+    fun <R : Reaction<T>> program(reaction: R, block: context(R) ActionableContext<T>.() -> Unit = { }) {
+        context(reaction) {
+            object : ActionableContext<T> { }.block()
+        }
+        node.addReaction(reaction)
+    }
 
     context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>, timeDistribution: TimeDistribution<T>)
     fun program(program: String?, block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { }) =
@@ -113,7 +128,11 @@ interface DeploymentContext<T, P : Position<P>> {
     fun <TimeDistributionType : TimeDistribution<T>> timeDistribution(
         timeDistribution: TimeDistributionType,
         block: context(TimeDistributionType) TimeDistributionContext<T, P>.() -> Unit
-    )
+    ) {
+        context(timeDistribution) {
+            object : TimeDistributionContext<T, P> { }.block()
+        }
+    }
 
     @Suppress("UNCHECKED_CAST")
     context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>)
@@ -131,14 +150,20 @@ interface DeploymentContext<T, P : Position<P>> {
             program(program, block)
         }
 
-    fun contents(block: context(Incarnation<T, P>) ContentContext<T>.() -> Unit)
+    context(_: Incarnation<T, P>, _: Node<T>)
+    fun contents(block: context(Incarnation<T, P>) ContentContext<T>.() -> Unit) {
+        object : ContentContext<T> { }.block()
+    }
 
-    fun nodeProperty(property: NodeProperty<T>)
+    context(node: Node<T>)
+    fun nodeProperty(property: NodeProperty<T>) {
+        node.addProperty(property)
+    }
 
     private companion object {
 
         context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>)
-        fun <T, P : Position<P>> makeTimeDistribution(parameter: Any? = null) = incarnation.createTimeDistribution(
+        fun <T, P : Position<P>> makeTimeDistribution(parameter: Any? = null): TimeDistribution<T> = incarnation.createTimeDistribution(
             randomGenerator,
             environment,
             node,
@@ -146,7 +171,7 @@ interface DeploymentContext<T, P : Position<P>> {
         )
 
         context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>, timeDistribution: TimeDistribution<T>)
-        fun <T, P : Position<P>> makeReaction(descriptor: String?) = incarnation.createReaction(
+        fun <T, P : Position<P>> makeReaction(descriptor: String?): Reaction<T> = incarnation.createReaction(
             randomGenerator,
             environment,
             node,
@@ -157,7 +182,18 @@ interface DeploymentContext<T, P : Position<P>> {
 }
 
 interface DeploymentsContext<T, P : Position<P>> {
-    fun deploy(deployment: Deployment<P>, block: context(RandomGenerator, Node<T>, P) DeploymentContext<T, P>.() -> Unit = {})
+    context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>)
+    fun deploy(deployment: Deployment<P>, block: context(RandomGenerator, Node<T>) DeploymentContext<T, P>.() -> Unit = {}) {
+        deployment.forEach { position ->
+            val node: Node<T> = incarnation.createNode(randomGenerator, environment, TODO())
+            context(node) {
+                object : DeploymentContext<T, P> {
+                    override val position: P get() = position
+                }.block()
+            }
+            environment.addNode(node, position)
+        }
+    }
 }
 
 interface TerminatorsContext<T, P : Position<P>> {
@@ -454,7 +490,7 @@ fun main() {
             networkModel(ConnectWithinDistance(0.5))
             deployments {
                 val hello = "hello"
-                deploy(DslLoaderFunctions.makePerturbedGridForTesting()) {
+                deploy(makePerturbedGridForTesting()) {
                     contents {
                         -hello
                     }

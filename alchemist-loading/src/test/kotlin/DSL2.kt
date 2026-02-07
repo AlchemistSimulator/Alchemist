@@ -10,17 +10,21 @@
 package attempt
 
 import another.location.SimpleMonitor
+import it.unibo.alchemist.boundary.DependentVariable
 import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Extractor
+import it.unibo.alchemist.boundary.Launcher
+import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.boundary.exporters.CSVExporter
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
 import it.unibo.alchemist.boundary.extractors.Time
 import it.unibo.alchemist.boundary.extractors.moleculeReader
+import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
-import it.unibo.alchemist.dsl.DslLoaderFunctions
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.dsl.DslLoaderFunctions.makePerturbedGridForTesting
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
 import it.unibo.alchemist.model.Action
@@ -49,7 +53,9 @@ import it.unibo.alchemist.model.environments.continuous2DEnvironment
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import it.unibo.alchemist.model.layers.StepLayer
+import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.maps.actions.reproduceGPSTrace
 import it.unibo.alchemist.model.maps.deployments.FromGPSTrace
 import it.unibo.alchemist.model.maps.environments.oSMEnvironment
@@ -66,37 +72,38 @@ import it.unibo.alchemist.test.globalTestReaction
 import java.io.Serializable
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
+import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 
-interface ActionableContext<T> {
+object ActionableContext {
     context(actionable: Actionable<T>)
-    fun action(action: Action<T>) {
+    fun <T> action(action: Action<T>) {
         actionable.actions += action
     }
     context(actionable: Actionable<T>)
-    fun condition(condition: Condition<T>) {
+    fun <T> condition(condition: Condition<T>) {
         actionable.conditions += condition
     }
 }
 
-interface ContentContext<T> {
+object ContentContext {
 
     context(incarnation: Incarnation<T, *>)
-    fun concentrationOf(origin: Any?): T = incarnation.createConcentration(origin)
+    fun <T> concentrationOf(origin: Any?): T = incarnation.createConcentration(origin)
 
     context(node: Node<T>)
-    operator fun Pair<Molecule, T>.unaryMinus() {
+    operator fun <T> Pair<Molecule, T>.unaryMinus() {
         node.setConcentration(first, second)
     }
 
     context(incarnation: Incarnation<T, *>, _: Node<T>)
-    operator fun Molecule.unaryMinus() = -Pair(this, incarnation.createConcentration())
+    operator fun <T> Molecule.unaryMinus() = -Pair(this, incarnation.createConcentration())
 
     context(incarnation: Incarnation<T, *>, _: Node<T>)
-    operator fun String.unaryMinus() = -Pair(incarnation.createMolecule(this), incarnation.createConcentration())
+    operator fun <T> String.unaryMinus() = -Pair(incarnation.createMolecule(this), incarnation.createConcentration())
 
     context(incarnation: Incarnation<T, *>, _: Node<T>)
-    operator fun Pair<String, T>.unaryMinus() = -Pair(incarnation.createMolecule(first), second)
+    operator fun <T> Pair<String, T>.unaryMinus() = -Pair(incarnation.createMolecule(first), second)
 
 }
 
@@ -106,15 +113,15 @@ interface TimeDistributionContext<T, P : Position<P>> {
     val timeDistribution: TimeDistribution<T> get() = timeDistribution
 
     context(node: Node<T>)
-    fun <R : Reaction<T>> program(reaction: R, block: context(R) ActionableContext<T>.() -> Unit = { }) {
+    fun <R : Reaction<T>> program(reaction: R, block: context(R) ActionableContext.() -> Unit = { }) {
         context(reaction) {
-            object : ActionableContext<T> { }.block()
+            ActionableContext.block()
         }
         node.addReaction(reaction)
     }
 
     context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>, timeDistribution: TimeDistribution<T>)
-    fun program(program: String?, block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { }) =
+    fun program(program: String?, block: context(Reaction<T>) ActionableContext.() -> Unit = { }) =
         program(
             incarnation.createReaction(randomGenerator, environment, node, timeDistribution, program),
             block
@@ -145,14 +152,14 @@ interface DeploymentContext<T, P : Position<P>> {
     )
 
     context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>, node: Node<T>)
-    fun program(program: String? = null, timeDistribution: Any? = null, block: context(Reaction<T>) ActionableContext<T>.() -> Unit = { }) =
+    fun program(program: String? = null, timeDistribution: Any? = null, block: context(Reaction<T>) ActionableContext.() -> Unit = { }) =
         withTimeDistribution(timeDistribution) {
             program(program, block)
         }
 
     context(_: Incarnation<T, P>, _: Node<T>)
-    fun contents(block: context(Incarnation<T, P>) ContentContext<T>.() -> Unit) {
-        object : ContentContext<T> { }.block()
+    fun contents(block: context(Incarnation<T, P>) ContentContext.() -> Unit) {
+        ContentContext.block()
     }
 
     context(node: Node<T>)
@@ -181,11 +188,11 @@ interface DeploymentContext<T, P : Position<P>> {
     }
 }
 
-interface DeploymentsContext<T, P : Position<P>> {
-    context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>)
-    fun deploy(deployment: Deployment<P>, block: context(RandomGenerator, Node<T>) DeploymentContext<T, P>.() -> Unit = {}) {
+object DeploymentsContext {
+    context(randomGenerator: RandomGenerator, environment: Environment<T, P>)
+    fun <T, P : Position<P>> deploy(deployment: Deployment<P>, nodeFactory: (P) -> Node<T>, block: context(RandomGenerator, Node<T>) DeploymentContext<T, P>.() -> Unit = {}) {
         deployment.forEach { position ->
-            val node: Node<T> = incarnation.createNode(randomGenerator, environment, TODO())
+            val node: Node<T> = nodeFactory(position)
             context(node) {
                 object : DeploymentContext<T, P> {
                     override val position: P get() = position
@@ -193,24 +200,45 @@ interface DeploymentsContext<T, P : Position<P>> {
             }
             environment.addNode(node, position)
         }
+
     }
+    context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>)
+    fun <T, P : Position<P>> deploy(deployment: Deployment<P>, nodeParameter: String? = null, block: context(RandomGenerator, Node<T>) DeploymentContext<T, P>.() -> Unit = {}) =
+        deploy(deployment, { incarnation.createNode(randomGenerator, environment, nodeParameter) }, block)
 }
 
-interface TerminatorsContext<T, P : Position<P>> {
-    operator fun TerminationPredicate<T, P>.unaryMinus()
+object TerminatorsContext {
+    context(environment: Environment<T, P>)
+    operator fun <T, P : Position<P>> TerminationPredicate<T, P>.unaryMinus() = environment.addTerminator(this)
 }
 
 interface EnvironmentContext<T, P : Position<P>> {
-    fun deployments(block: context(RandomGenerator) DeploymentsContext<T, P>.() -> Unit)
-    fun globalProgram(timeDistribution: TimeDistribution<T>, globalReaction: GlobalReaction<T>, block: context(GlobalReaction<T>) ActionableContext<T>.() -> Unit = {})
 
-    fun layer(molecule: Molecule, layer: Layer<T, P>)
+    fun deployments(block: context(RandomGenerator) DeploymentsContext.() -> Unit)
 
-    context(incarnation: Incarnation<T, P>)
+    context(environment: Environment<T, P>)
+    fun globalProgram(timeDistribution: TimeDistribution<T>, globalReaction: GlobalReaction<T>, block: context(GlobalReaction<T>) ActionableContext.() -> Unit = {}) {
+        context(globalReaction) {
+            ActionableContext.block()
+        }
+        environment.addGlobalReaction(globalReaction)
+    }
+
+    context(environment: Environment<T, P>)
+    fun layer(molecule: Molecule, layer: Layer<T, P>) = environment.addLayer(molecule, layer)
+
+    context(incarnation: Incarnation<T, P>, environment: Environment<T, P>)
     fun layer(molecule: String? = null, layer: Layer<T, P>) = layer(incarnation.createMolecule(molecule), layer)
-    fun monitor(monitor: OutputMonitor<T, P>)
-    fun networkModel(model: LinkingRule<T, P>)
-    fun terminator(terminator: TerminationPredicate<T, P>)
+
+    context(environment: Environment<T, P>)
+    fun networkModel(model: LinkingRule<T, P>) = when(val currentRule = environment.linkingRule) {
+        is NoLinks<T, P> -> environment.linkingRule = model
+        is CombinedLinkingRule<T, P> -> environment.linkingRule = CombinedLinkingRule(currentRule.subRules + model)
+        else -> environment.linkingRule = CombinedLinkingRule(listOf(environment.linkingRule, model))
+    }
+
+    context(environment: Environment<T, P>)
+    fun terminator(terminator: TerminationPredicate<T, P>) = environment.addTerminator(terminator)
 }
 
 interface ExporterContext<T, P : Position<P>> {
@@ -228,9 +256,11 @@ interface SimulationContext<T, P: Position<P>> {
     fun <E: Environment<T, P>> environment(environment: E, block: context(E) EnvironmentContext<T, P>.() -> Unit)
     fun exportWith(exporter: Exporter<T, P>, block: ExporterContext<T, P>.() -> Unit)
     fun scenarioRandomGenerator(randomGenerator: RandomGenerator)
-    fun scenarioSeed(seed: Long)
+    fun scenarioSeed(seed: Long) = scenarioRandomGenerator(MersenneTwister(seed))
     fun simulationRandomGenerator(randomGenerator: RandomGenerator)
-    fun simulationSeed(seed: Long)
+    fun simulationSeed(seed: Long) = simulationRandomGenerator(MersenneTwister(seed))
+    fun monitor(monitor: OutputMonitor<T, P>)
+    fun launcher(launcher: Launcher)
 
     fun <V : Serializable> variable(variable: Variable<out V>): VariableProvider<V>
 }
@@ -241,13 +271,85 @@ context(_: Incarnation<T, Euclidean2DPosition>)
 fun <T> SimulationContext<T, Euclidean2DPosition>.environment(block: context(Continuous2DEnvironment<T>) EnvironmentContext<T, Euclidean2DPosition>.() -> Unit) =
     environment(continuous2DEnvironment(), block)
 
-fun <T, P : Position<P>, I : Incarnation<T, P>> simulation(incarnation: I, block: context(I) SimulationContext<T, P>.() -> Unit): Unit = TODO()
+fun <T, P : Position<P>, I : Incarnation<T, P>> simulation(incarnation: I, block: context(I) SimulationContext<T, P>.() -> Unit): Loader = object : Loader {
 
-fun <T, I : Incarnation<T, GeoPosition>> simulationOnMap(incarnation: I, block: context(I) SimulationContext<T, GeoPosition>.() -> Unit): Unit = simulation(incarnation, block)
+    override var constants: Map<String, Any?> = emptyMap()
+    override val remoteDependencies: List<String> get() = TODO("Not yet implemented")
+    override var launcher: Launcher = DefaultLauncher()
+    override val dependentVariables: Map<String, DependentVariable<*>> = emptyMap()
+    override var variables: Map<String, Variable<*>> = emptyMap()
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> = getWithTyped(values) as Simulation<T, P>
+
+    private fun getWithTyped(values: Map<String, *>): Simulation<T, P> {
+        var theEnvironment: Environment<T, P>? = null
+        var simulationRandomGenerator: RandomGenerator = MersenneTwister(0)
+        var scenarioRandomGenerator: RandomGenerator = MersenneTwister(0)
+        context(incarnation) {
+            object : SimulationContext<T, P> {
+                override fun <E : Environment<T, P>> environment(
+                    environment: E,
+                    block: context(E) EnvironmentContext<T, P>.() -> Unit
+                ) {
+                    context(environment) {
+                        object : EnvironmentContext<T, P> {
+                            override fun deployments(block: context(RandomGenerator) DeploymentsContext.() -> Unit) {
+                                TODO("Not yet implemented")
+                            }
+                        }.block()
+                    }
+                    theEnvironment = environment
+                }
+
+                override fun exportWith(
+                    exporter: Exporter<T, P>,
+                    block: ExporterContext<T, P>.() -> Unit
+                ) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun scenarioRandomGenerator(randomGenerator: RandomGenerator) {
+                    checkSeedCanBeSet()
+                    scenarioRandomGenerator = randomGenerator
+                }
+
+                override fun simulationRandomGenerator(randomGenerator: RandomGenerator) {
+                    checkSeedCanBeSet()
+                    simulationRandomGenerator = randomGenerator
+                }
+
+                override fun monitor(monitor: OutputMonitor<T, P>) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun launcher(launcher: Launcher) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun <V : Serializable> variable(variable: Variable<out V>): VariableProvider<V> {
+                    TODO("Not yet implemented")
+                }
+
+                fun checkSeedCanBeSet() {
+                    check(theEnvironment == null) {
+                        "Seeds must be set before the environment is defined, otherwise it might be used to create random elements in the environment with an unexpected seed"
+                    }
+                }
+            }.block()
+        }
+        TODO()
+    }
+}
+
+fun <T, I : Incarnation<T, GeoPosition>> simulationOnMap(incarnation: I, block: context(I) SimulationContext<T, GeoPosition>.() -> Unit) = simulation(incarnation, block)
 
 fun <T, I : Incarnation<T, Euclidean2DPosition>> simulation2D(incarnation: I, block: context(I) SimulationContext<T, Euclidean2DPosition>.() -> Unit) = simulation(incarnation, block)
 
 fun main() {
+    simulation(ProtelisIncarnation<Euclidean2DPosition>()) {
+
+    }
     simulation2D(SAPEREIncarnation()) {
         val rate: Double by variable(GeometricVariable(2.0, 0.1, 10.0, 9))
         val size: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
@@ -314,9 +416,7 @@ fun main() {
         }
     }
     simulation2D(SAPEREIncarnation()) {
-        environment {
-            monitor(SimpleMonitor())
-        }
+        monitor(SimpleMonitor())
     }
     simulationOnMap(SAPEREIncarnation()){
         environment(oSMEnvironment( "vcm.pbf", false)) {

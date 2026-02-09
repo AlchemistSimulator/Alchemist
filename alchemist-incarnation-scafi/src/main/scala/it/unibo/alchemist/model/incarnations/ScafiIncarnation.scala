@@ -8,15 +8,15 @@
  */
 package it.unibo.alchemist.model.incarnations
 
+import it.unibo.alchemist.model._
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.reactions.{ChemicalReaction, Event}
-import it.unibo.alchemist.model.timedistributions.{DiracComb, ExponentialTime}
-import it.unibo.alchemist.model.times.DoubleTime
-import it.unibo.alchemist.model._
 import it.unibo.alchemist.model.scafi.actions.{RunScafiProgram, SendScafiMessage}
 import it.unibo.alchemist.model.scafi.conditions.ScafiComputationalRoundComplete
 import it.unibo.alchemist.model.scafi.properties.ScafiDevice
+import it.unibo.alchemist.model.timedistributions.{DiracComb, ExponentialTime}
+import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.scala.ScalaInterpreter
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -48,7 +48,6 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       randomGenerator: RandomGenerator,
       environment: Environment[T, P],
       node: Node[T],
-      time: TimeDistribution[T],
       reaction: Actionable[T],
       param: Any
   ): Action[T] = runInScafiDeviceContext[T, Action[T]](
@@ -106,7 +105,6 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       randomGenerator: RandomGenerator,
       environment: Environment[T, P],
       node: Node[T],
-      time: TimeDistribution[T],
       reaction: Actionable[T],
       parameters: Any
   ): Condition[T] = runInScafiDeviceContext[T, Condition[T]](
@@ -168,12 +166,12 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       }
     if (parameters != null) {
       result.setActions(
-        ListBuffer[Action[T]](createAction(randomGenerator, environment, node, time, result, parameterString)).asJava
+        ListBuffer[Action[T]](createAction(randomGenerator, environment, node, result, parameterString)).asJava
       )
     }
     if (isSend) {
       result.setConditions(
-        ListBuffer[Condition[T]](createCondition(randomGenerator, environment, node, time, result, null)).asJava
+        ListBuffer[Condition[T]](createCondition(randomGenerator, environment, node, result, null)).asJava
       )
     }
     result

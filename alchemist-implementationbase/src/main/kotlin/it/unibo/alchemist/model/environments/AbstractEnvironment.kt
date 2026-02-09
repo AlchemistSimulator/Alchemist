@@ -57,7 +57,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     private val _layers: MutableMap<Molecule, Layer<T, P>> = LinkedHashMap()
     private val neighCache = TIntObjectHashMap<Neighborhood<T>>()
     private val nodeToPos = TIntObjectHashMap<P>()
-    private val spatialIndex: SpatialIndex<Node<T>> = requireNotNull(internalIndex)
+    private val spatialIndex: SpatialIndex<Node<T>> = internalIndex
 
     override val layers: ListSet<Layer<T, P>> get() = ArrayListSet(_layers.values)
 

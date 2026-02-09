@@ -11,7 +11,7 @@ package it.unibo.alchemist.boundary.modelproviders
 
 import it.unibo.alchemist.boundary.AlchemistLoaderProvider
 import it.unibo.alchemist.boundary.Loader
-import it.unibo.alchemist.boundary.dsl.scripting.AlchemistScript
+import it.unibo.alchemist.boundary.kotlindsl.AlchemistScript
 import java.io.InputStream
 import java.io.Reader
 import java.net.URL

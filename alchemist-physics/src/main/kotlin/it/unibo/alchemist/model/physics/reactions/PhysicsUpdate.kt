@@ -31,12 +31,12 @@ class PhysicsUpdate<T>(
      * The environment to update.
      */
     val environment: Dynamics2DEnvironment<T>,
-    override val timeDistribution: TimeDistribution<T>,
+    override val timeDistribution: TimeDistribution<T> = DiracComb(DEFAULT_RATE),
 ) : GlobalReaction<T> {
 
     constructor(
         environment: Dynamics2DEnvironment<T>,
-        updateRate: Double = 30.0,
+        updateRate: Double,
     ) : this(environment, DiracComb(updateRate))
 
     override val outboundDependencies: ListSet<out Dependency> = ListSet.of(PhysicsDependency)
@@ -65,4 +65,8 @@ class PhysicsUpdate<T>(
     override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
 
     override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+
+    private companion object {
+        const val DEFAULT_RATE = 30.0
+    }
 }

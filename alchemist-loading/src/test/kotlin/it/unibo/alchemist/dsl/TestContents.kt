@@ -9,8 +9,9 @@
 
 package it.unibo.alchemist.dsl
 
-import it.unibo.alchemist.boundary.dsl.Dsl.simulation
-import it.unibo.alchemist.model.deployments.Point
+import it.unibo.alchemist.boundary.kotlindsl.environment
+import it.unibo.alchemist.boundary.kotlindsl.simulation
+import it.unibo.alchemist.boundary.kotlindsl.simulation2D
 import it.unibo.alchemist.model.deployments.point
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule
@@ -20,12 +21,13 @@ class TestContents {
 
     @Test
     fun testAll() {
-        val loader = simulation(SAPEREIncarnation()) {
-            deployments {
-                deploy(point(0.0, 0.0)) {
-                    all {
-                        molecule = "test"
-                        concentration = listOf(LsaMolecule("1"))
+        val loader = simulation2D(SAPEREIncarnation()) {
+            environment {
+                deployments {
+                    deploy(point(0.0, 0.0)) {
+                        contents {
+                            - "test" to listOf(LsaMolecule("1"))
+                        }
                     }
                 }
             }

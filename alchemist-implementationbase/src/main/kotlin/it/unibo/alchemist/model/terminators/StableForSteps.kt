@@ -43,7 +43,7 @@ import java.util.function.Predicate
  * @param equalIntervals The amount of [checkInterval] intervals that need to pass
  * (during which the environment doesn't change) for [test] to return true
  */
-data class StableForSteps<T, P: Position<P>>(private val checkInterval: Long, private val equalIntervals: Long) :
+data class StableForSteps<T : Any, P : Position<P>>(private val checkInterval: Long, private val equalIntervals: Long) :
     TerminationPredicate<T, P> {
     private var success: Long = 0
     private var positions: Map<Node<T>, P> = emptyMap()
@@ -72,8 +72,10 @@ data class StableForSteps<T, P: Position<P>>(private val checkInterval: Long, pr
     }
 
     private companion object {
-        private fun <T> makeTable(size: Int): Table<Node<T>, Molecule, T> =
-            Tables.newCustomTable(Maps.newLinkedHashMapWithExpectedSize<Node<T>, Map<Molecule, T>>(size)) {
+        private fun <T : Any> makeTable(size: Int): Table<Node<T>, Molecule, T> =
+            Tables.newCustomTable<Node<T>, Molecule, T>(
+                Maps.newLinkedHashMapWithExpectedSize<Node<T>, Map<Molecule, T>>(size),
+            ) {
                 Maps.newLinkedHashMapWithExpectedSize(size)
             }
     }

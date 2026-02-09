@@ -32,7 +32,7 @@ object TestComparators {
      * @param stableForSteps If provided, terminates when environment is stable (checkInterval, equalIntervals).
      *   Exactly one of steps, targetTime, or stableForSteps must be provided.
      */
-    fun <T, P : Position<P>> compare(
+    fun <T : Any, P : Position<P>> compare(
         dslLoader: () -> Loader,
         yamlResource: String,
         includeRuntime: Boolean = false,
@@ -69,7 +69,7 @@ object TestComparators {
      * @param stableForSteps If provided, terminates when environment is stable (checkInterval, equalIntervals).
      *   Exactly one of steps, targetTime, or stableForSteps must be provided.
      */
-    fun <T, P : Position<P>> compare(
+    fun <T : Any, P : Position<P>> compare(
         dslCode: String,
         yamlResource: String,
         includeRuntime: Boolean = false,
@@ -95,7 +95,7 @@ object TestComparators {
      * @param stableForSteps If provided, terminates when environment is stable (checkInterval, equalIntervals).
      *   Exactly one of steps, targetTime, or stableForSteps must be provided.
      */
-    fun <T, P : Position<P>> compare(
+    fun <T : Any, P : Position<P>> compare(
         dslLoader: Loader,
         yamlLoader: Loader,
         includeRuntime: Boolean = false,

@@ -9,9 +9,8 @@
 
 package it.unibo.alchemist.dsl
 
-import it.unibo.alchemist.boundary.dsl.Dsl.simulation
-import it.unibo.alchemist.model.deployments.Grid
-import it.unibo.alchemist.model.deployments.Point
+import it.unibo.alchemist.boundary.kotlindsl.environment
+import it.unibo.alchemist.boundary.kotlindsl.simulation2D
 import it.unibo.alchemist.model.deployments.grid
 import it.unibo.alchemist.model.deployments.point
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
@@ -21,10 +20,12 @@ class TestDeployments {
 
     @Test
     fun testDeployments() {
-        val loader = simulation(SAPEREIncarnation()) {
-            deployments {
-                val p = point(0.0, 0.0)
-                deploy(p)
+        val loader = simulation2D(SAPEREIncarnation()) {
+            environment {
+                deployments {
+                    val p = point(0.0, 0.0)
+                    deploy(p)
+                }
             }
         }
 
@@ -33,12 +34,13 @@ class TestDeployments {
 
     @Test
     fun testMultipleDeployments() {
-        val loader = simulation(SAPEREIncarnation()) {
-            deployments {
+        val loader = simulation2D(SAPEREIncarnation()) {
+            environment {
+                deployments {
                 val point = point(0.0, 0.0)
                 deploy(point)
                 deploy(point(1.0, 1.0))
-            }
+            }}
         }
 
         loader.launch(loader.launcher)
@@ -46,8 +48,9 @@ class TestDeployments {
 
     @Test
     fun testGridDeployment() {
-        val loader = simulation(SAPEREIncarnation()) {
-            deployments {
+        val loader = simulation2D(SAPEREIncarnation()) {
+            environment {
+                deployments {
                 val grid = grid(
                     1.0,
                     1.0,
@@ -58,7 +61,7 @@ class TestDeployments {
                 )
                 deploy(grid)
             }
-        }
+        }}
         loader.launch(loader.launcher)
     }
 }

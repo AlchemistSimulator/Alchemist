@@ -63,7 +63,7 @@ object RuntimeComparisonHelper {
      *       Small timing differences are expected even with time-based terminators due to thread
      *       scheduling and the terminator being checked after each step completes.
      */
-    fun <T, P : Position<P>> compareLoaders(
+    fun <T : Any, P : Position<P>> compareLoaders(
         dslLoader: Loader,
         yamlLoader: Loader,
         steps: Long? = null,
@@ -120,7 +120,7 @@ object RuntimeComparisonHelper {
         stableForSteps: Pair<Long, Long>?,
     ): Boolean = effectiveSteps > 0 || targetTime != null || stableForSteps != null
 
-    private fun <T, P : Position<P>> addTerminators(
+    private fun <T : Any, P : Position<P>> addTerminators(
         dslSimulation: Simulation<T, P>,
         yamlSimulation: Simulation<T, P>,
         steps: Long?,
@@ -220,13 +220,12 @@ object RuntimeComparisonHelper {
      * Terminates when environment (positions + node contents) remains unchanged
      * for checkInterval * equalIntervals steps.
      */
-    private fun <T, P : Position<P>> addStableTerminator(
+    private fun <T : Any, P : Position<P>> addStableTerminator(
         simulation: Simulation<T, P>,
         checkInterval: Long,
         equalIntervals: Long,
     ) {
-        @Suppress("UNCHECKED_CAST")
-        val terminator = StableForSteps<Any>(checkInterval, equalIntervals) as
+        val terminator = StableForSteps<T, P>(checkInterval, equalIntervals) as
             TerminationPredicate<T, P>
         simulation.environment.addTerminator(terminator)
     }

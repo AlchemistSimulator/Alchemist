@@ -1,0 +1,221 @@
+/*
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
+package it.unibo.alchemist.boundary.kotlindsl
+
+import it.unibo.alchemist.boundary.DependentVariable
+import it.unibo.alchemist.boundary.Exporter
+import it.unibo.alchemist.boundary.Extractor
+import it.unibo.alchemist.boundary.Launcher
+import it.unibo.alchemist.boundary.Loader
+import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.boundary.Variable
+import it.unibo.alchemist.boundary.exporters.GlobalExporter
+import it.unibo.alchemist.boundary.launchers.DefaultLauncher
+import it.unibo.alchemist.core.Engine
+import it.unibo.alchemist.core.Simulation
+import it.unibo.alchemist.model.Deployment
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.Neighborhood
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.PositionBasedFilter
+import it.unibo.alchemist.model.environments.AbstractEnvironment
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.environments.continuous2DEnvironment
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import java.io.Serializable
+import kotlin.properties.ReadOnlyProperty
+import org.apache.commons.math3.random.MersenneTwister
+import org.apache.commons.math3.random.RandomGenerator
+import org.danilopianini.util.SpatialIndex
+import org.slf4j.LoggerFactory
+
+@Suppress("UNCHECKED_CAST")
+operator fun <P: Position<P>> PositionBasedFilter<*>.contains(position: P): Boolean =
+    (this as PositionBasedFilter<P>).contains(position)
+
+context(_: Incarnation<T, Euclidean2DPosition>)
+fun <T> SimulationContext<T, Euclidean2DPosition>.environment(
+    block: context(Continuous2DEnvironment<T>) EnvironmentContext<T, Euclidean2DPosition>.() -> Unit,
+) = environment(continuous2DEnvironment(), block)
+
+fun <T, P : Position<P>, I : Incarnation<T, P>> simulation(
+    incarnation: I,
+    block: context(I) SimulationContext<T, P>.() -> Unit,
+): Loader = object : Loader {
+
+    private val logger = LoggerFactory.getLogger("Alchemist Kotlin DSL Loader")
+    override var constants: Map<String, Any?> = emptyMap()
+    override val remoteDependencies: List<String> get() = TODO("Not yet implemented")
+    override var launcher: Launcher = DefaultLauncher()
+    override val dependentVariables: Map<String, DependentVariable<*>> = emptyMap()
+    override var variables: Map<String, Variable<*>> = emptyMap()
+    val defaultEnvironment = getWithTyped(emptyMap<String, Nothing>())
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> =
+        (if(values.isEmpty()) defaultEnvironment else getWithTyped(values)) as Simulation<T, P>
+
+    private fun getWithTyped(values: Map<String, *>): Simulation<T, P> {
+        logger.debug("Creating simulation with variables: {}", values)
+        val loader = this
+        val noIndex = object : SpatialIndex<Node<T>> {
+            override val dimensions: Int = 2
+            override fun insert(element: Node<T>, vararg position: Double) = Unit
+            override fun remove(element: Node<T>, vararg position: Double) = false
+            override fun move(element: Node<T>, start: DoubleArray, end: DoubleArray) = false
+            override fun query(vararg parallelotope: DoubleArray) = emptyList<Node<T>>()
+        }
+        var theEnvironment: Environment<T, P> = object : AbstractEnvironment<T, P>(incarnation, noIndex) {
+            override fun computeActualInsertionPosition(node: Node<T>, p: P): P = nope()
+            override fun nodeAdded(node: Node<T>, position: P, neighborhood: Neighborhood<T>) = nope()
+            override val dimensions: Int = 2
+            override val offset: DoubleArray = DoubleArray(dimensions) { 0.0 }
+            override val size: DoubleArray = DoubleArray(dimensions) { 1.0 }
+            override fun makePosition(vararg coordinates: Number): P = nope()
+            override fun makePosition(coordinates: DoubleArray) = nope()
+            override fun moveNodeToPosition(node: Node<T>, newPosition: P) = nope()
+            fun nope(): Nothing = error(
+                "The empty environment cannot generate positions, and does not support the insertion of nodes."
+            )
+        }
+        val exporters = mutableListOf<Exporter<T, P>>()
+        val monitors = mutableListOf<OutputMonitor<T, P>>()
+        context(incarnation) {
+            object : SimulationContext<T, P> {
+
+                var launcherHasNotBeenSet = true
+                var environmentHasNotBeenSet = true
+                lateinit var simulationRNG: RandomGenerator
+                lateinit var scenarioRNG: RandomGenerator
+
+                override fun <E : Environment<T, P>> environment(
+                    environment: E,
+                    block: context(E) EnvironmentContext<T, P>.() -> Unit,
+                ) {
+                    if (!this::simulationRNG.isInitialized) {
+                        simulationRNG = MersenneTwister(0L)
+                    }
+                    if (!this::scenarioRNG.isInitialized) {
+                        scenarioRNG = MersenneTwister(0L)
+                    }
+                    check(environmentHasNotBeenSet) {
+                        "Only one environment can be set, currently set: $theEnvironment"
+                    }
+                    theEnvironment = environment
+                    environmentHasNotBeenSet = false
+                    context(environment, simulationRNG) {
+                        check(contextOf<RandomGenerator>() == simulationRNG)
+                        object : EnvironmentContext<T, P> {
+                            override fun deployments(block: context(RandomGenerator) DeploymentsContext.() -> Unit) {
+                                check(contextOf<RandomGenerator>() == simulationRNG)
+                                context(scenarioRNG) {
+                                    object : DeploymentsContext {
+                                        context(randomGenerator: RandomGenerator, environment: Environment<T, P>)
+                                        override fun <T, P : Position<P>> deploy(
+                                            deployment: Deployment<P>,
+                                            nodeFactory: (P) -> Node<T>,
+                                            block: context(RandomGenerator, Node<T>) DeploymentContext<T, P>.() -> Unit,
+                                        ) {
+                                            check(contextOf<RandomGenerator>() == scenarioRNG)
+                                            deployment.forEach { position ->
+                                                context(simulationRNG) {
+                                                    check(contextOf<RandomGenerator>() == simulationRNG)
+                                                    val node: Node<T> = nodeFactory(position)
+                                                    context(node) {
+                                                        object : DeploymentContext<T, P> {
+                                                            override val position: P get() = position
+                                                        }.block()
+                                                    }
+                                                    environment.addNode(node, position)
+                                                }
+                                            }
+                                        }
+                                    }.block()
+                                }
+                            }
+                        }.block()
+                    }
+                }
+
+                override fun exportWith(exporter: Exporter<T, P>, block: ExporterContext<T, P>.() -> Unit) {
+                    val extractors = mutableListOf<Extractor<*>>()
+                    object : ExporterContext<T, P> {
+                        override fun Extractor<*>.unaryMinus() {
+                            extractors += this
+                        }
+                    }.block()
+                    exporter.bindDataExtractors(extractors)
+                    exporters += exporter
+                }
+
+                override fun scenarioRandomGenerator(randomGenerator: RandomGenerator) {
+                    checkSeedCanBeSet()
+                    scenarioRNG = randomGenerator
+                }
+
+                override fun simulationRandomGenerator(randomGenerator: RandomGenerator) {
+                    checkSeedCanBeSet()
+                    simulationRNG = randomGenerator
+                }
+
+                override fun monitor(monitor: OutputMonitor<T, P>) {
+                    monitors += monitor
+                }
+
+                override fun launcher(launcher: Launcher) {
+                    check(launcherHasNotBeenSet) {
+                        "Only one launcher can be set, currently set: ${loader.launcher}"
+                    }
+                    loader.launcher = launcher
+                }
+
+                override fun <V : Serializable> variable(variable: Variable<out V>): ReadOnlyProperty<Any?, V> =
+                    ReadOnlyProperty { thisRef, property ->
+                        variables += property.name to variable
+                        @Suppress("UNCHECKED_CAST")
+                        values.getOrDefault(property.name, variable.default) as V
+                    }
+
+                fun checkSeedCanBeSet() {
+                    check(environmentHasNotBeenSet) {
+                        "Seeds must be set before the environment is defined to preserve reproducibility"
+                    }
+                }
+            }.block()
+        }
+        check(variables.keys.containsAll(values.keys)) {
+            val undefinedVariables = values.keys - variables.keys
+            """
+            The following variables provided in input have no corresponding variable defined in the simulation context:
+            $undefinedVariables
+            The available variables are: ${variables.keys}
+            """.trimIndent()
+        }
+        val theSimulation: Simulation<T, P> = Engine(theEnvironment)
+        if (exporters.isNotEmpty()) {
+            theSimulation.addOutputMonitor(GlobalExporter(exporters))
+        }
+        monitors.forEach { monitor -> theSimulation.addOutputMonitor(monitor) }
+        return theSimulation
+    }
+}
+
+fun <T, I : Incarnation<T, GeoPosition>> simulationOnMap(
+    incarnation: I,
+    block: context(I) SimulationContext<T, GeoPosition>.() -> Unit,
+) = simulation(incarnation, block)
+
+fun <T, I : Incarnation<T, Euclidean2DPosition>> simulation2D(
+    incarnation: I,
+    block: context(I) SimulationContext<T, Euclidean2DPosition>.() -> Unit,
+) = simulation(incarnation, block)

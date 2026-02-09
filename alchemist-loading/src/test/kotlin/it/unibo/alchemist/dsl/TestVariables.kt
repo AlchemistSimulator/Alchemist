@@ -77,16 +77,17 @@ class TestVariables {
             val mSize = -linearVariable
             val sourceStart = mSize / geometricVariable
             val sourceSize = linearVariable / 5.0
-environment {
-            deployments {
-                deploy(point(0.0, 0.0)) {
-                    contents {
-                        - "mSize" to mSize
-                        - "sourceStart" to sourceStart
-                        - "sourceSize" to sourceSize
+            environment {
+                deployments {
+                    deploy(point(0.0, 0.0)) {
+                        contents {
+                            -"mSize" to mSize
+                            -"sourceStart" to sourceStart
+                            -"sourceSize" to sourceSize
+                        }
                     }
                 }
-            }}
+            }
         }
         loader.variables.size shouldBe 2
         loader.dependentVariables.size shouldBe 0

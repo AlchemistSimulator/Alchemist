@@ -37,10 +37,11 @@ class TestDeployments {
         val loader = simulation2D(SAPEREIncarnation()) {
             environment {
                 deployments {
-                val point = point(0.0, 0.0)
-                deploy(point)
-                deploy(point(1.0, 1.0))
-            }}
+                    val point = point(0.0, 0.0)
+                    deploy(point)
+                    deploy(point(1.0, 1.0))
+                }
+            }
         }
 
         loader.launch(loader.launcher)
@@ -51,17 +52,18 @@ class TestDeployments {
         val loader = simulation2D(SAPEREIncarnation()) {
             environment {
                 deployments {
-                val grid = grid(
-                    1.0,
-                    1.0,
-                    5.0,
-                    5.0,
-                    1.0,
-                    1.0,
-                )
-                deploy(grid)
+                    val grid = grid(
+                        1.0,
+                        1.0,
+                        5.0,
+                        5.0,
+                        1.0,
+                        1.0,
+                    )
+                    deploy(grid)
+                }
             }
-        }}
+        }
         loader.launch(loader.launcher)
     }
 }

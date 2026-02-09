@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,7 +10,6 @@
 package it.unibo.alchemist.dsl
 
 import it.unibo.alchemist.boundary.kotlindsl.environment
-import it.unibo.alchemist.boundary.kotlindsl.simulation
 import it.unibo.alchemist.boundary.kotlindsl.simulation2D
 import it.unibo.alchemist.model.deployments.point
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
@@ -26,7 +25,7 @@ class TestContents {
                 deployments {
                     deploy(point(0.0, 0.0)) {
                         contents {
-                            - "test" to listOf(LsaMolecule("1"))
+                            -"test" to listOf(LsaMolecule("1"))
                         }
                     }
                 }

@@ -45,7 +45,6 @@ import java.util.Optional
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import javax.annotation.Nonnull
-import kotlin.text.get
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 import org.protelis.lang.ProtelisLoader
@@ -358,7 +357,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         }
     }
 
-    private object NoNode : Node<Any> {
+    private data object NoNode : Node<Any> {
         @Serial
         private const val serialVersionUID = 1L
 
@@ -389,10 +388,6 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         override fun removeReaction(reactionToRemove: Reaction<Any>) = notImplemented<Unit>()
 
         override fun setConcentration(molecule: Molecule, concentration: Any) = notImplemented<Unit>()
-
-        override fun equals(other: Any?): Boolean = other === this
-
-        override fun hashCode(): Int = -1
 
         override fun addProperty(nodeProperty: NodeProperty<Any>) = notImplemented<Unit>()
 

@@ -18,12 +18,10 @@ import org.danilopianini.util.SpatialIndex
 /**
  * An [AbstractEnvironment] implementation that intentionally provides no spatial functionality.
  *
- * This environment is meant as a placeholder or sentinel implementation in contexts where an [Environment]
+ * This environment is meant as a placeholder or sentinel implementation in contexts where an
+ * [it.unibo.alchemist.model.Environment]
  * instance is required, but node insertion, movement, neighborhood computation, and position construction must be
  * disallowed.
- *
- * The backing [SpatialIndex] is a no-op implementation: it never stores elements and always returns empty query
- * results. Any operation that would require actual spatial support fails fast with an error.
  *
  * @param incarnation the [Incarnation] associated with this environment.
  * @param dimensions the number of spatial dimensions exposed by this environment.
@@ -33,9 +31,9 @@ class EmptyEnvironment<T, P : Position<P>>(incarnation: Incarnation<T, P>, overr
         incarnation,
         object : SpatialIndex<Node<T>> {
             override val dimensions: Int = dimensions
-            override fun insert(element: Node<T>, vararg position: Double) = Unit
-            override fun remove(element: Node<T>, vararg position: Double) = false
-            override fun move(element: Node<T>, start: DoubleArray, end: DoubleArray) = false
+            override fun insert(element: Node<T>, vararg position: Double) = nope()
+            override fun remove(element: Node<T>, vararg position: Double) = nope()
+            override fun move(element: Node<T>, start: DoubleArray, end: DoubleArray) = nope()
             override fun query(vararg parallelotope: DoubleArray) = emptyList<Node<T>>()
         },
     ) {

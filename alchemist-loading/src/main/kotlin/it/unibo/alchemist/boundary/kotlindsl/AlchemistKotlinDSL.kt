@@ -40,7 +40,7 @@ import org.danilopianini.util.SpatialIndex
 import org.slf4j.LoggerFactory
 
 @Suppress("UNCHECKED_CAST")
-operator fun <P: Position<P>> PositionBasedFilter<*>.contains(position: P): Boolean =
+operator fun <P : Position<P>> PositionBasedFilter<*>.contains(position: P): Boolean =
     (this as PositionBasedFilter<P>).contains(position)
 
 context(_: Incarnation<T, Euclidean2DPosition>)
@@ -63,7 +63,7 @@ fun <T, P : Position<P>, I : Incarnation<T, P>> simulation(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P> =
-        (if(values.isEmpty()) defaultEnvironment else getWithTyped(values)) as Simulation<T, P>
+        (if (values.isEmpty()) defaultEnvironment else getWithTyped(values)) as Simulation<T, P>
 
     private fun getWithTyped(values: Map<String, *>): Simulation<T, P> {
         logger.debug("Creating simulation with variables: {}", values)
@@ -85,7 +85,7 @@ fun <T, P : Position<P>, I : Incarnation<T, P>> simulation(
             override fun makePosition(coordinates: DoubleArray) = nope()
             override fun moveNodeToPosition(node: Node<T>, newPosition: P) = nope()
             fun nope(): Nothing = error(
-                "The empty environment cannot generate positions, and does not support the insertion of nodes."
+                "The empty environment cannot generate positions, and does not support the insertion of nodes.",
             )
         }
         val exporters = mutableListOf<Exporter<T, P>>()

@@ -7,10 +7,8 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.dsl
+package it.unibo.alchemist.boundary.kotlindsl
 
-import it.unibo.alchemist.boundary.kotlindsl.environment
-import it.unibo.alchemist.boundary.kotlindsl.simulation2D
 import it.unibo.alchemist.model.deployments.point
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule

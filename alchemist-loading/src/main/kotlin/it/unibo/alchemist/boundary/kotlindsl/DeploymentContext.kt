@@ -96,7 +96,8 @@ interface DeploymentContext<T, P : Position<P>> {
      * The optional [block] can be used to attach actions and conditions through [ActionableContext].
      *
      * @param program an incarnation-specific reaction/program descriptor, possibly `null`.
-     * @param timeDistribution either a concrete [TimeDistribution] instance, an incarnation-specific descriptor, or `null`.
+     * @param timeDistribution
+     *      either a concrete [TimeDistribution] instance, an incarnation-specific descriptor, or `null`.
      * @param block an optional configuration block for actions and conditions.
      */
     context(
@@ -138,22 +139,13 @@ interface DeploymentContext<T, P : Position<P>> {
 
     private companion object {
 
-        /**
-         * Creates a [TimeDistribution] through the current [Incarnation].
-         *
-         * The [parameter] is forwarded to [Incarnation.createTimeDistribution] and its interpretation depends on
-         * the concrete incarnation.
-         *
-         * @param parameter an incarnation-specific descriptor, or `null`.
-         * @return a time distribution suitable for scheduling reactions on the given [node] in the given [environment].
-         */
         context(
             incarnation: Incarnation<T, P>,
             randomGenerator: RandomGenerator,
             environment: Environment<T, P>,
             node: Node<T>
         )
-        fun <T, P : Position<P>> makeTimeDistribution(parameter: Any? = null): TimeDistribution<T> =
+        private fun <T, P : Position<P>> makeTimeDistribution(parameter: Any? = null): TimeDistribution<T> =
             incarnation.createTimeDistribution(
                 randomGenerator,
                 environment,
@@ -161,15 +153,6 @@ interface DeploymentContext<T, P : Position<P>> {
                 parameter,
             )
 
-        /**
-         * Creates a [Reaction] through the current [Incarnation] using the provided [timeDistribution].
-         *
-         * Note: the [descriptor] parameter is currently ignored, and the reaction is created with a `null`
-         * program descriptor, delegating program selection to the incarnation.
-         *
-         * @param descriptor an optional descriptor that is currently not used.
-         * @return a reaction created by the incarnation for the given context.
-         */
         context(
             incarnation: Incarnation<T, P>,
             randomGenerator: RandomGenerator,
@@ -177,7 +160,7 @@ interface DeploymentContext<T, P : Position<P>> {
             node: Node<T>,
             timeDistribution: TimeDistribution<T>
         )
-        fun <T, P : Position<P>> makeReaction(descriptor: String?): Reaction<T> = incarnation.createReaction(
+        private fun <T, P : Position<P>> makeReaction(descriptor: String?): Reaction<T> = incarnation.createReaction(
             randomGenerator,
             environment,
             node,

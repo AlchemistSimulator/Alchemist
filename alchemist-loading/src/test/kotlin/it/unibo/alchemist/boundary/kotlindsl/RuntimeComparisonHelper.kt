@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.dsl
+package it.unibo.alchemist.boundary.kotlindsl
 
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.core.Simulation
@@ -21,7 +21,6 @@ import it.unibo.alchemist.model.terminators.StableForSteps
 import it.unibo.alchemist.model.terminators.StepCount
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.math.abs
-import kotlin.math.max
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.fail
 
@@ -45,8 +44,6 @@ object RuntimeComparisonHelper {
      *   Only one termination method should be provided.
      * @param stableForSteps If provided, terminates when environment is stable (checkInterval, equalIntervals).
      *   Only one termination method should be provided.
-     * @param timeTolerance Tolerance for time comparison in seconds (default: 0.01s)
-     * @param positionTolerance Maximum distance between positions to consider them matching.
      *   If null, calculated as max(timeTolerance * 10, 1e-6).
      *   For random movement tests, consider using a larger value (e.g., 1.0 or more).
      *
@@ -379,8 +376,6 @@ object RuntimeComparisonHelper {
 
     /**
      * Compares node states after runtime execution using position-based matching with tolerance.
-     *
-     * @param positionTolerance Maximum distance between positions to consider them matching (default: 1e-6)
      */
     private fun <T, P : Position<P>> compareRuntimeNodeStates(dslEnv: Environment<T, P>, yamlEnv: Environment<T, P>) {
         println("Comparing runtime node states...")

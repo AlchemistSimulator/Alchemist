@@ -6,19 +6,28 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.dsl
+package it.unibo.alchemist.boundary.kotlindsl
 
-import it.unibo.alchemist.model.Position
-import org.junit.jupiter.api.Test
+import io.kotest.core.spec.style.AnnotationSpec
+import it.unibo.alchemist.model.deployments.point
+import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 
 class SimulationsComparisons {
 
-    // TODO: rewrite
-//    @Test
-//    fun test01() {
-//        { DslLoaderFunctions.test01Nodes() }.shouldEqual("dsl/yml/01-nodes.yml")
-//    }
-//
+    @AnnotationSpec.Test
+    fun test01() {
+        simulation2D(SAPEREIncarnation()) {
+            environment {
+                networkModel(ConnectWithinDistance(5.0))
+                deployments {
+                    deploy(point(0, 0))
+                    deploy(point(1, 1))
+                }
+            }
+        }.shouldEqual("dsl/yml/01-nodes.yml")
+    }
+
 //    @Test
 //    fun test02() {
 //        { DslLoaderFunctions.test02ManyNodes() }.shouldEqual("dsl/yml/02-manynodes.yml")

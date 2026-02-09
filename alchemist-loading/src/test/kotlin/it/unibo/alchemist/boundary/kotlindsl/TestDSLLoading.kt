@@ -7,19 +7,13 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.dsl
+package it.unibo.alchemist.boundary.kotlindsl
 
 import another.location.SimpleMonitor
 import it.unibo.alchemist.boundary.exporters.CSVExporter
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
 import it.unibo.alchemist.boundary.extractors.Time
 import it.unibo.alchemist.boundary.extractors.moleculeReader
-import it.unibo.alchemist.boundary.kotlindsl.ActionableContext
-import it.unibo.alchemist.boundary.kotlindsl.contains
-import it.unibo.alchemist.boundary.kotlindsl.environment
-import it.unibo.alchemist.boundary.kotlindsl.simulation
-import it.unibo.alchemist.boundary.kotlindsl.simulation2D
-import it.unibo.alchemist.boundary.kotlindsl.simulationOnMap
 import it.unibo.alchemist.boundary.variables.GeometricVariable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.jakta.timedistributions.JaktaTimeDistribution
@@ -65,7 +59,7 @@ class TestDSLLoading {
                 networkModel(ConnectWithinDistance(0.5))
                 deployments {
                     deploy(makePerturbedGridForTesting()) {
-                        if (position in Rectangle(sourceStart, sourceStart, sourceSize, sourceSize)) {
+                        if (position contains Rectangle(sourceStart, sourceStart, sourceSize, sourceSize)) {
                             contents {
                                 -"token, 0, []"
                             }

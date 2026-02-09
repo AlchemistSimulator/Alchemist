@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -147,11 +147,11 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      *
      * @param node
      * the node
-     * @param p
+     * @param originalPosition
      * the original (requested) position
      * @return the actual position where the node should be located
      */
-    protected abstract fun computeActualInsertionPosition(node: Node<T>, p: P): P
+    protected abstract fun computeActualInsertionPosition(node: Node<T>, originalPosition: P): P
 
     override fun forEach(action: Consumer<in Node<T>?>?) {
         nodes.forEach(action)
@@ -170,12 +170,10 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     private fun getAllNodesInRange(center: P, range: Double): List<Node<T>> {
         require(range > 0) { "Range query must be positive (provided: $range)" }
         @Suppress("UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS")
-        val validCache =
-            cache ?: Caffeine
-                .newBuilder()
-                .maximumSize(1000)
-                .build<Pair<P, Double>, List<Node<T>>> { (pos, r) -> runQuery(pos, r) }
-                .also { cache = it }
+        val validCache = cache ?: Caffeine.newBuilder()
+            .maximumSize(1000)
+            .build<Pair<P, Double>, List<Node<T>>> { (pos, r) -> runQuery(pos, r) }
+            .also { cache = it }
         return validCache[center to range]
     }
 

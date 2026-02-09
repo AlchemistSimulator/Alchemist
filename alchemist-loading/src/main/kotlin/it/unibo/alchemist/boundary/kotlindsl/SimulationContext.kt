@@ -15,10 +15,10 @@ import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
-import org.apache.commons.math3.random.MersenneTwister
-import org.apache.commons.math3.random.RandomGenerator
 import java.io.Serializable
 import kotlin.properties.ReadOnlyProperty
+import org.apache.commons.math3.random.MersenneTwister
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Top-level DSL scope for defining a simulation scenario.

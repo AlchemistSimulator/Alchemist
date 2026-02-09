@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -28,6 +28,12 @@ import org.gradle.api.tasks.Exec
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
+
+// To avoid imports with hashcode in generated accessors
+internal
+val org.gradle.api.Project.`versionCatalogs`: org.gradle.api.artifacts.VersionCatalogsExtension get() =
+    (this as org.gradle.api.plugins.ExtensionAware).extensions.getByName("versionCatalogs") as org.gradle.api.artifacts.VersionCatalogsExtension
+
 
 private val externalKnown: File get() = dokkaCacheFolder.resolve("javadoc-cache.json")
 private val gson = Gson().newBuilder().setPrettyPrinting().create()

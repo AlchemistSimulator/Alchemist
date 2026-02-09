@@ -34,4 +34,3 @@ object TerminatorsContext {
     context(environment: Environment<T, P>)
     operator fun <T, P : Position<P>> TerminationPredicate<T, P>.unaryMinus() = environment.addTerminator(this)
 }
-

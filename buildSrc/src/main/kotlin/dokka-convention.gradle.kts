@@ -1,7 +1,16 @@
-import gradle.kotlin.dsl.accessors._588bfaad08c3b59948e49854bb988ab1.versionCatalogs
+/*
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 import it.unibo.alchemist.build.ExternalDependency
 import it.unibo.alchemist.build.currentCommitHash
 import it.unibo.alchemist.build.registerExternal
+import it.unibo.alchemist.build.versionCatalogs
 import java.time.Duration
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -81,3 +90,4 @@ dokka {
 tasks.withType<DokkaBaseTask>().configureEach {
     timeout.set(Duration.ofMinutes(5))
 }
+

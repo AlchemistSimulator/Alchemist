@@ -141,6 +141,7 @@ internal class DSLLoader<T, P : Position<P>, I : Incarnation<T, P>>(
                     check(launcherHasNotBeenSet) {
                         "Only one launcher can be set, currently set: ${loader.launcher}"
                     }
+                    launcherHasNotBeenSet = false
                     loader.launcher = launcher
                 }
 

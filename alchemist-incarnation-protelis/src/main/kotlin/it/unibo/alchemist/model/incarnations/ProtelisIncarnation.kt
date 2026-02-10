@@ -29,9 +29,9 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.observation.LifecycleRegistry
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMap
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.protelis.actions.SendToNeighbor
 import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete

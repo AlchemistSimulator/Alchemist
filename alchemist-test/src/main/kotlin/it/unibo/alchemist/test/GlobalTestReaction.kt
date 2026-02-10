@@ -18,11 +18,11 @@ import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.observation.EventObservable
-import it.unibo.alchemist.model.observation.LifecycleRegistry
-import it.unibo.alchemist.model.observation.LifecycleState
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.combineLatest
 import it.unibo.alchemist.model.observation.ObservableMutableSet
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleState
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 

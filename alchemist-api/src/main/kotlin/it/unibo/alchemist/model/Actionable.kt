@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model
 
 import it.unibo.alchemist.model.observation.Disposable
-import it.unibo.alchemist.model.observation.LifecycleOwner
 import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleOwner
 import java.io.Serializable
 import org.danilopianini.util.ListSet
 

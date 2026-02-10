@@ -24,11 +24,11 @@ import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.observation.Disposable;
 import it.unibo.alchemist.model.observation.EventObservable;
-import it.unibo.alchemist.model.observation.Lifecycle;
-import it.unibo.alchemist.model.observation.LifecycleKt;
-import it.unibo.alchemist.model.observation.LifecycleOwner;
-import it.unibo.alchemist.model.observation.LifecycleRegistry;
-import it.unibo.alchemist.model.observation.LifecycleState;
+import it.unibo.alchemist.model.observation.lifecycle.Lifecycle;
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleOwner;
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleOwnerKt;
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry;
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleState;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableExtensions;
@@ -366,7 +366,7 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable, Li
             final var merged = ObservableExtensions.ObservableSetExtensions.mergeObservables(
                 condition.observeInboundDependencies()
             );
-            subscriptions.add(LifecycleKt.bindTo(merged, this, it -> {
+            subscriptions.add(LifecycleOwnerKt.bindTo(merged, this, it -> {
                 rescheduleRequest.emit();
                 return Unit.INSTANCE;
             }));
@@ -378,7 +378,7 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable, Li
                 it -> it.stream().allMatch(b -> b)
             ).map(it -> getOrElse(it, () -> true));
 
-            subscriptions.add(LifecycleKt.bindTo(validity, this, it -> {
+            subscriptions.add(LifecycleOwnerKt.bindTo(validity, this, it -> {
                 canExecute = Option.fromNullable(it);
                 return Unit.INSTANCE;
             }));

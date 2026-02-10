@@ -10,9 +10,9 @@ package it.unibo.alchemist.model
 
 import arrow.core.Option
 import it.unibo.alchemist.model.observation.Disposable
-import it.unibo.alchemist.model.observation.LifecycleOwner
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMap
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleOwner
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf

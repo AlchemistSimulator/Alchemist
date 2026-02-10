@@ -20,13 +20,13 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.EventObservable
-import it.unibo.alchemist.model.observation.LifecycleRegistry
-import it.unibo.alchemist.model.observation.LifecycleState
 import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.merge
 import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
-import it.unibo.alchemist.model.observation.bindTo
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleState
+import it.unibo.alchemist.model.observation.lifecycle.bindTo
 import it.unibo.alchemist.model.physics.PhysicsDependency
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.timedistributions.DiracComb

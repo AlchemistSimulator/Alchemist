@@ -19,10 +19,10 @@ import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.observation.Disposable
-import it.unibo.alchemist.model.observation.LifecycleRegistry
-import it.unibo.alchemist.model.observation.LifecycleState
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMutableMap
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleState
 import java.util.Collections
 import java.util.Spliterator
 import java.util.concurrent.Semaphore

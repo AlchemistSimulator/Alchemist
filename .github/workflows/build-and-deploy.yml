@@ -239,7 +239,7 @@ jobs:
     if: >-
       always() && needs.assemble-and-upload.result == 'success'
     container:
-      image: fedora:44
+      image: fedora:45
     steps:
       - name: Download packages
         uses: actions/download-artifact@v7.0.0

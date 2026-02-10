@@ -1,5 +1,6 @@
 import Libs.alchemist
 import it.unibo.alchemist.build.catalog
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 
 /*
  * Copyright (C) 2010-2024, Danilo Pianini and contributors
@@ -49,7 +50,7 @@ java {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.add("-Xjvm-default=all") // Enable default methods in Kt interfaces
+        jvmDefault.set(JvmDefaultMode.ENABLE)
     }
 }
 

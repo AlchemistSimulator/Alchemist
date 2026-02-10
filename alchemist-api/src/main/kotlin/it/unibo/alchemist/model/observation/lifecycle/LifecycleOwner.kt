@@ -7,38 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.observation
+package it.unibo.alchemist.model.observation.lifecycle
 
-import it.unibo.alchemist.model.observation.LifecycleState.DESTROYED
-import it.unibo.alchemist.model.observation.LifecycleState.STARTED
-
-/**
- * Represents the lifecycle state of a component.
- */
-enum class LifecycleState {
-
-    /**
-     * Destroyed state for a LifecycleOwner. After this state is reached, this Lifecycle will not emit any more events.
-     */
-    DESTROYED,
-
-    /**
-     * Initialized state for a LifecycleOwner.
-     */
-    INITIALIZED,
-
-    /**
-     * Started state for a LifecycleOwner.
-     */
-    STARTED,
-
-    ;
-
-    /**
-     * Checks if the current state is at least the given [state].
-     */
-    fun isAtLeast(state: LifecycleState): Boolean = this >= state
-}
+import it.unibo.alchemist.model.observation.Disposable
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleState.DESTROYED
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleState.STARTED
 
 /**
  * An object which has a [Lifecycle].
@@ -52,66 +26,18 @@ interface LifecycleOwner {
 }
 
 /**
- * Manages the state and listeners.
- */
-interface Lifecycle {
-
-    /**
-     * Returns the current state of the Lifecycle.
-     */
-    val currentState: LifecycleState
-
-    /**
-     * Adds a LifecycleObserver that will be notified when the LifecycleOwner changes state.
-     */
-    fun addObserver(observer: (LifecycleState) -> Unit)
-
-    /**
-     * Removes the given observer from the observers list.
-     */
-    fun removeObserver(observer: (LifecycleState) -> Unit)
-}
-
-/**
- * A concrete implementation of [Lifecycle] that handles state transitions and observer notification.
- */
-class LifecycleRegistry : Lifecycle {
-
-    private val observers = mutableListOf<(LifecycleState) -> Unit>()
-
-    override var currentState: LifecycleState = LifecycleState.INITIALIZED
-        private set
-
-    /**
-     * Transitions the lifecycle to a new [state] and notifies all observers.
-     */
-    fun markState(state: LifecycleState) {
-        currentState = state
-        observers.toList().forEach { it(state) }
-    }
-
-    override fun addObserver(observer: (LifecycleState) -> Unit) {
-        observers.add(observer)
-    }
-
-    override fun removeObserver(observer: (LifecycleState) -> Unit) {
-        observers.remove(observer)
-    }
-}
-
-/**
- * Observes this [Observable] within the context of a [LifecycleOwner]. This
- * method is a memory-safe alternative to [Observable.onChange] in scenarios
+ * Observes this [it.unibo.alchemist.model.observation.Observable] within the context of a [LifecycleOwner]. This
+ * method is a memory-safe alternative to [it.unibo.alchemist.model.observation.Observable.onChange] in scenarios
  * where it is crucial to avoid that the owner subscription leaks. When the
  * registrant's state reaches [LifecycleState.DESTROYED], the subscription
  * is automatically removed and cleared up. Moreover, the [callback] is only
  * invoked if the lifecycle is in an active state ([STARTED]). Finally,
  * when the lifecycle moves from an inactive state back to active, the
- * [callback] is triggered immediately with the [Observable.current] value.
+ * [callback] is triggered immediately with the [it.unibo.alchemist.model.observation.Observable.current] value.
  *
  * @param lifecycleOwner The object controlling the lifecycle of this subscription.
  * @param callback The action to perform when the observable emits a value.
- * @return a [Disposable] to manually dispose the subscription outside owner's lifecycle.
+ * @return a [it.unibo.alchemist.model.observation.Disposable] to manually dispose the subscription outside owner's lifecycle.
  */
 fun <T> Observable<T>.bindTo(lifecycleOwner: LifecycleOwner, callback: (T) -> Unit): Disposable? =
     lifecycleOwner.takeIf { it.lifecycle.currentState != DESTROYED }?.let {

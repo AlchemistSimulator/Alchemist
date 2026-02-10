@@ -14,9 +14,7 @@
     },
     {
       "description": "Some updates should have type docs",
-      "matchPackageNames": [
-        "gohugoio/hugo"
-      ],
+      "matchPackageNames": ["gohugoio/hugo"],
       "semanticCommitType": "docs"
     },
     {
@@ -28,8 +26,8 @@
       "semanticCommitScope": "core-deps"
     },
     {
-      "description": "Updates to to the site should have type docs",
-      "matchPaths": ["site/*"],
+      "description": "Updates to the site should have type docs",
+      "matchFileNames": ["site/*"],
       "semanticCommitType": "docs"
     }
   ]

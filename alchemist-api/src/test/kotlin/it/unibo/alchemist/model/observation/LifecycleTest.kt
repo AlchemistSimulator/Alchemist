@@ -13,9 +13,13 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.observation.LifecycleState.DESTROYED
-import it.unibo.alchemist.model.observation.LifecycleState.STARTED
 import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
+import it.unibo.alchemist.model.observation.lifecycle.Lifecycle
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleOwner
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleState.DESTROYED
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleState.STARTED
+import it.unibo.alchemist.model.observation.lifecycle.bindTo
 
 class LifecycleTest : FunSpec({
 

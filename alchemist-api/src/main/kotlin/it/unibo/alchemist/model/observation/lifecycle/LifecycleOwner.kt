@@ -37,7 +37,8 @@ interface LifecycleOwner {
  *
  * @param lifecycleOwner The object controlling the lifecycle of this subscription.
  * @param callback The action to perform when the observable emits a value.
- * @return a [it.unibo.alchemist.model.observation.Disposable] to manually dispose the subscription outside owner's lifecycle.
+ * @return a [it.unibo.alchemist.model.observation.Disposable]
+ *         to manually dispose the subscription outside owner's lifecycle.
  */
 fun <T> Observable<T>.bindTo(lifecycleOwner: LifecycleOwner, callback: (T) -> Unit): Disposable? =
     lifecycleOwner.takeIf { it.lifecycle.currentState != DESTROYED }?.let {

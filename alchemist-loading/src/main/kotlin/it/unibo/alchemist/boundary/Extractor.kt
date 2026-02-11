@@ -25,8 +25,7 @@ interface Extractor<out E : Any> {
      * Extracts properties from an environment. The returned map must either:
      *   - contain a single element,
      *   - have the keys matching [columnNames], or
-     *   - be iterable in predictable order
-     *     (namely, implement [SortedMap] or extend one of [LinkedHashMap] or [ConcurrentLinkedHashMap]).
+     *   - be iterable in predictable order.
      *
      * @param environment
      *            the {@link Environment}
@@ -42,7 +41,7 @@ interface Extractor<out E : Any> {
      *      - contain a single element,
      *      - have the keys matching [columnNames], or
      *      - be iterable in predictable order
-     *      (namely, implement [SortedMap] or extend [LinkedHashMap]).
+     *      (namely, implement [java.util.SortedMap] or extend [LinkedHashMap]).
      */
     fun <T> extractData(
         environment: Environment<T, *>,

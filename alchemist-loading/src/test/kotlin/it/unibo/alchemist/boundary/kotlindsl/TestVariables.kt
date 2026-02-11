@@ -60,6 +60,7 @@ class TestVariables {
             val rate: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
             println("First declaration of rate: $rate")
             shouldThrow<IllegalStateException> {
+                @Suppress("NoNameShadowing") // We are shadowing on purpose to test that it is not allowed
                 val rate: Double by variable(GeometricVariable(2.0, 1.0, 5.0, 1))
                 println("This line should not be printed: $rate")
             }

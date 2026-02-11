@@ -59,7 +59,7 @@ class TestDSLLoading {
                 networkModel(ConnectWithinDistance(0.5))
                 deployments {
                     deploy(makePerturbedGridForTesting()) {
-                        if (position contains Rectangle(sourceStart, sourceStart, sourceSize, sourceSize)) {
+                        if (position in Rectangle(sourceStart, sourceStart, sourceSize, sourceSize)) {
                             contents {
                                 -"token, 0, []"
                             }

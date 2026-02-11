@@ -39,7 +39,7 @@ class TestGrid {
     @Test
     void testVerticalLine() {
         test(10, 1, 9.9);
-        assertEquals(10L, new Grid(environment(), randomGenerator(), 0, 0, 1, 10, 1, 1, 0, 0).stream().count());
+        assertEquals(10L, new Grid<>(environment(), randomGenerator(), 0, 0, 1, 10, 1, 1, 0, 0).stream().count());
     }
 
     /**
@@ -81,7 +81,7 @@ class TestGrid {
     void testbug73() {
         assertEquals(
                 20L * 20,
-                new Grid(environment(), randomGenerator(), 0, 0, 20, 20, 1, 1, 0.8, 0.8)
+                new Grid<>(environment(), randomGenerator(), 0, 0, 20, 20, 1, 1, 0.8, 0.8)
                     .stream().distinct().count()
         );
     }
@@ -97,7 +97,7 @@ class TestGrid {
     private void test(final long expected, final double x, final double y) {
         assertEquals(
                 expected,
-                new Grid(
+                new Grid<>(
                         environment(),
                         new MersenneTwister(),
                         0,

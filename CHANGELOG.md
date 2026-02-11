@@ -1,3 +1,39 @@
+## [42.3.35](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.34...42.3.35) (2026-02-11)
+
+### Dependency updates
+
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.28 ([#5105](https://github.com/AlchemistSimulator/Alchemist/issues/5105)) ([06e24d8](https://github.com/AlchemistSimulator/Alchemist/commit/06e24d8eab7432952e6bf949e2a978b767ebceb3))
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.29 ([#5118](https://github.com/AlchemistSimulator/Alchemist/issues/5118)) ([3d21842](https://github.com/AlchemistSimulator/Alchemist/commit/3d21842c81c7a0ba7ed81f862c73b8d9656c0493))
+* **deps:** update dependency commons-codec:commons-codec to v1.21.0 ([#5114](https://github.com/AlchemistSimulator/Alchemist/issues/5114)) ([df1fee3](https://github.com/AlchemistSimulator/Alchemist/commit/df1fee3a5b8d5629d7bb68a149a3096403a4ccb7))
+* **deps:** update dependency org.jetbrains.compose to v1.10.1 ([#5126](https://github.com/AlchemistSimulator/Alchemist/issues/5126)) ([da0cef4](https://github.com/AlchemistSimulator/Alchemist/commit/da0cef44c2d56a221cc394443629f306b66ba635))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.6.3 ([#5106](https://github.com/AlchemistSimulator/Alchemist/issues/5106)) ([fdf7dd3](https://github.com/AlchemistSimulator/Alchemist/commit/fdf7dd3d0213ef53f693e57e6f8460878803c753))
+* **deps:** update dependency scalafmt to v3.10.7 ([#5127](https://github.com/AlchemistSimulator/Alchemist/issues/5127)) ([ba91605](https://github.com/AlchemistSimulator/Alchemist/commit/ba91605da406889939594dafda1ee7def9d5dcba))
+* **deps:** update gradle to v9.3.1 ([#5107](https://github.com/AlchemistSimulator/Alchemist/issues/5107)) ([25418ea](https://github.com/AlchemistSimulator/Alchemist/commit/25418eafe0d51eff6800e9f21beea1a624807b10))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.9 ([#5110](https://github.com/AlchemistSimulator/Alchemist/issues/5110)) ([ddd33d9](https://github.com/AlchemistSimulator/Alchemist/commit/ddd33d979aa16d84e515e60c3abf4eebb7793a24))
+* **deps:** update plugin publishoncentral to v9.1.12 ([#5111](https://github.com/AlchemistSimulator/Alchemist/issues/5111)) ([eba8a45](https://github.com/AlchemistSimulator/Alchemist/commit/eba8a45400c9bbc4584d13401801e0f6b8d63043))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.155.3 ([#5119](https://github.com/AlchemistSimulator/Alchemist/issues/5119)) ([3100787](https://github.com/AlchemistSimulator/Alchemist/commit/310078716159f18cca293f39fd0d51c5e595c567))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.23 ([#5112](https://github.com/AlchemistSimulator/Alchemist/issues/5112)) ([dc8ac26](https://github.com/AlchemistSimulator/Alchemist/commit/dc8ac26da837799284eede98afbc1709e24b8783))
+* **deps:** update fedora docker tag to v45 ([#5123](https://github.com/AlchemistSimulator/Alchemist/issues/5123)) ([fd8ca24](https://github.com/AlchemistSimulator/Alchemist/commit/fd8ca246995ab0908fd205340e232563e227b5af))
+* fix the Renovate configuration base path ([6b5debb](https://github.com/AlchemistSimulator/Alchemist/commit/6b5debb6765eb09b2e93589de849a82c9add8f23))
+* migrate Renovate `matchPaths` to `matchFileNames` ([#5124](https://github.com/AlchemistSimulator/Alchemist/issues/5124)) ([a604704](https://github.com/AlchemistSimulator/Alchemist/commit/a6047047c446dfa5240224dc31ea0f3333a78922))
+* **renovate:** base the configuration on the root Kotlin rules ([b597776](https://github.com/AlchemistSimulator/Alchemist/commit/b5977760ca6b07d256eac613f4e013948d07763c))
+* use the colon to separate the renovate base config pointer ([3ca63fc](https://github.com/AlchemistSimulator/Alchemist/commit/3ca63fc235f9acbd36043755a8b3ff1a7c979539))
+* use the typed DSL JVM default method option ([#5125](https://github.com/AlchemistSimulator/Alchemist/issues/5125)) ([2466ac9](https://github.com/AlchemistSimulator/Alchemist/commit/2466ac9aeab8913346e4b67e0f245f3ad9c00411))
+* write a custom version catalog accessor to avoid depending on generated accessors with hashcoded package ([#5116](https://github.com/AlchemistSimulator/Alchemist/issues/5116)) ([e7ae107](https://github.com/AlchemistSimulator/Alchemist/commit/e7ae1070c97c5eda56e496bdbfa6e2b7f24033d9))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([52adbfe](https://github.com/AlchemistSimulator/Alchemist/commit/52adbfe1384113a647e85127b4255747dcca4f26))
+* **build:** update the javadoc.io cache ([3987542](https://github.com/AlchemistSimulator/Alchemist/commit/398754272593b8981df11f347e9d14d021adfda7))
+* **build:** update the javadoc.io cache ([7d9c28f](https://github.com/AlchemistSimulator/Alchemist/commit/7d9c28f8c71568b23225b72abb6b6cda4e3d9b61))
+* **build:** update the javadoc.io cache ([fee7e5e](https://github.com/AlchemistSimulator/Alchemist/commit/fee7e5eb59a05768dbcfcc3840e552afc1988989))
+
 ## [42.3.34](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.33...42.3.34) (2026-02-08)
 
 ### Dependency updates

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -121,12 +121,6 @@ open class Engine<T, P : Position<out P>>(
         }
     }
 
-    /**
-     * Executes an action while holding the status lock.
-     *
-     * @param action the action to execute
-     * @return the result of the action
-     */
     private fun <R> doOnStatus(action: () -> R): R = statusLock.run {
         lock()
         try {
@@ -232,17 +226,15 @@ open class Engine<T, P : Position<out P>>(
      */
     protected open fun newStatus(next: Status): CompletableFuture<Unit> {
         val future = CompletableFuture<Unit>()
-        schedule(
-            CheckedRunnable {
-                doOnStatus {
-                    if (next.isReachableFrom(status)) {
-                        status = next
-                        lockForStatus(next).releaseAll()
-                    }
-                    future.complete(null)
+        schedule {
+            doOnStatus {
+                if (next.isReachableFrom(status)) {
+                    status = next
+                    lockForStatus(next).releaseAll()
                 }
-            },
-        )
+                future.complete(null)
+            }
+        }
         return future
     }
 
@@ -543,18 +535,18 @@ open class Engine<T, P : Position<out P>>(
         override val reactionsToUpdate: Sequence<Actionable<T>> = sequenceOf(sourceReaction)
     }
 
+    /** Handles the addition of a reaction. */
+    private inner class ReactionAddition(source: Actionable<T>) : AbstractUpdateOnReaction(source) {
+        override fun performChanges() {
+            this@Engine.scheduleReaction(sourceReaction)
+        }
+    }
+
     /** Handles the removal of a reaction. */
     private inner class ReactionRemoval(source: Actionable<T>) : AbstractUpdateOnReaction(source) {
         override fun performChanges() {
             dependencyGraph.removeDependencies(sourceReaction)
             scheduler.removeReaction(sourceReaction)
-        }
-    }
-
-    /** Handles the addition of a reaction. */
-    private inner class ReactionAddition(source: Actionable<T>) : AbstractUpdateOnReaction(source) {
-        override fun performChanges() {
-            this@Engine.scheduleReaction(sourceReaction)
         }
     }
 

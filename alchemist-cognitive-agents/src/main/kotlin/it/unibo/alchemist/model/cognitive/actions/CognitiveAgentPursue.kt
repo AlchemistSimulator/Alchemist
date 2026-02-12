@@ -18,11 +18,15 @@ import it.unibo.alchemist.model.geometry.Euclidean2DConvexShape
 import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DPassage
 
 /**
- * A [CognitiveAgentNavigationAction2D] using [Pursue] navigation strategy.
+ * A cognitive navigation action that pursues a static destination using the [Pursue] strategy.
  *
  * @param T the concentration type.
- * @param L the type of landmarks of the node's cognitive map.
- * @param R the type of edges of the node's cognitive map, representing the [R]elations between landmarks.
+ * @param L the landmark shape type used by the node's cognitive map.
+ * @param R the relation/edge type used by the node's cognitive map.
+ * @param environment the environment hosting the node.
+ * @param reaction the reaction executing this action.
+ * @param pedestrian the owner pedestrian property.
+ * @param destination coordinates (vararg) describing the destination position.
  */
 class CognitiveAgentPursue<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,

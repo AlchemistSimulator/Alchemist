@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -20,16 +20,17 @@ import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 
 /**
- * Combination of multiple steering actions.
+ * Combines multiple steering actions into a single steering behavior.
  *
- * @param environment
- *          the environment inside which the node moves.
- * @param pedestrian
- *          the owner of this action.
- * @param actions
- *          the list of actions to combine to determine the node movement.
- * @param steerStrategy
- *          the logic according to the steering actions are combined.
+ * @constructor Creates a new composite steering action.
+ * @param environment the environment in which the node moves.
+ * @param reaction the reaction that executes this action.
+ * @param pedestrian the owner of this action.
+ * @param actions the list of steering actions to combine.
+ * @param steerStrategy the strategy used to combine the steering actions.
+ * @param T the type of the concentration.
+ * @param P the type of the position.
+ * @param A
  */
 class CognitiveAgentCombineSteering<T, P, A>(
     environment: Environment<T, P>,

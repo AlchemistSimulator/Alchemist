@@ -19,11 +19,11 @@ import com.apollographql.apollo3.network.ws.WebSocketNetworkTransport
 import it.unibo.alchemist.boundary.graphql.utils.DefaultGraphQLSettings
 
 /**
- * Default GraphQL client implementation.
+ * Default GraphQL client implementation backed by Apollo.
  *
- * @param host the host of the GraphQL server
- * @param port the port of the GraphQL server
- * @param enableSubscription whether to enable subscriptions or not
+ * @param host the GraphQL server host.
+ * @param port the GraphQL server port.
+ * @param enableSubscription whether to enable subscription support (WebSocket transport).
  */
 data class DefaultGraphQLClient(
     override val host: String = DefaultGraphQLSettings.DEFAULT_HOST,

@@ -12,11 +12,11 @@ package it.unibo.alchemist.model.cognitive
 import it.unibo.alchemist.model.NodeProperty
 
 /**
- * The pedestrian's capability for form groups.
+ * Capability that enables a pedestrian to form and belong to groups.
+ *
+ * @param T the concentration type.
  */
 interface SocialProperty<T> : NodeProperty<T> {
-    /**
-     * Pedestrian's [Group].
-     */
+    /** The group the pedestrian currently belongs to. */
     val group: Group<T>
 }

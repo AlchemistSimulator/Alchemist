@@ -15,15 +15,12 @@ import it.unibo.alchemist.model.cognitive.steering.DistanceWeighted
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 
 /**
- * Steering behavior using [DistanceWeighted] steering strategy (= steering actions are summed with different
- * weights depending on the distance to their target).
+ * Steering behavior that blends multiple steering actions using a [DistanceWeighted] strategy.
  *
- * @param environment
- *          the environment inside which the pedestrian moves.
- * @param pedestrian
- *          the owner of this reaction.
- * @param timeDistribution
- *          the time distribution according to this the reaction executes.
+ * @param T the concentration type.
+ * @param environment the environment in which the pedestrian moves.
+ * @property pedestrian the owner of this reaction.
+ * @param timeDistribution the time distribution governing reaction execution.
  */
 open class BlendedSteering<T>(
     environment: Euclidean2DEnvironment<T>,

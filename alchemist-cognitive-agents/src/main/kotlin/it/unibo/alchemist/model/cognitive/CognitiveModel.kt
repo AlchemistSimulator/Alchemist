@@ -10,36 +10,51 @@
 package it.unibo.alchemist.model.cognitive
 
 /**
- * Theoretical model to describe the cognitive processes underlying in an agent.
+ * Theoretical model that describes the cognitive processes of an agent.
+ *
+ * Implementations provide measures for the agent's belief about danger, fear level,
+ * and competing intentions to escape or remain.
  */
 interface CognitiveModel {
     /**
-     * Value representing the current belief of the situation dangerousness.
+     * Returns the agent's current belief about the situation's dangerousness.
+     *
+     * @return the perceived level of dangerousness as a [Double].
      */
     fun dangerBelief(): Double
 
     /**
-     * Value representing the level of fear.
+     * Returns the agent's current fear level.
+     *
+     * @return the fear level as a [Double].
      */
     fun fear(): Double
 
     /**
-     * Value representing the intention to escape. Opposed to [remainIntention].
+     * Returns the agent's intention to escape. This value is opposed to [remainIntention].
+     *
+     * @return the intention to escape as a [Double].
      */
     fun escapeIntention(): Double
 
     /**
-     * Value representing the intention to remain. Opposed to [escapeIntention]
+     * Returns the agent's intention to remain. This value is opposed to [escapeIntention].
+     *
+     * @return the intention to remain as a [Double].
      */
     fun remainIntention(): Double
 
     /**
-     * Update the current intensity of the aforementioned feelings considering a [frequency].
+     * Update the model internal state using the provided update frequency.
+     *
+     * @param frequency the update frequency (time between updates or update rate), represented as a [Double].
      */
     fun update(frequency: Double)
 
     /**
-     * Whether or not this node intends to escape.
+     * Whether the agent currently intends to escape.
+     *
+     * @return true if the escape intention is greater than the remain intention; false otherwise.
      */
     fun wantsToEscape(): Boolean = escapeIntention() > remainIntention()
 }

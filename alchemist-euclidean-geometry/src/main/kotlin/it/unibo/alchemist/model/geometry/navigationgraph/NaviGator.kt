@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -166,15 +166,13 @@ object NaviGator {
                 }
                 val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
                     seeds.filter {
-                    /*
-                     * A seed is considered intersected if it intersects with the polygon and, in particular, with the
-                     * remaining portion of the advancing edge. Similarly for obstacles below.
-                     */
+                        /*
+                         * A seed is considered intersected if it intersects with the polygon and, in particular, with the
+                         * remaining portion of the advancing edge. Similarly for obstacles below.
+                         */
                         it != this &&
                             it.intersects(asAwtShape()) &&
-                            polygonToInterval(it).intersectsBoundsExcluded(
-                                remaining,
-                            )
+                            polygonToInterval(it).intersectsBoundsExcluded(remaining)
                     }
                 }
                 val intersectedObstacles: () -> List<Shape> = {
@@ -190,38 +188,33 @@ object NaviGator {
                         return emptyList()
                     }
                 }
-                val newRemaining =
-                    remaining.subtractAll(
-                        intersectedObstacles().map { shapeToInterval(it) },
-                    )
-                val neighborToIntervals =
-                    intersectedSeeds().map { neighbor ->
-                /*
-                 * Maps each neighbor to a collection of intervals representing
-                 * the portions of the advancing edge leading to that neighbor.
-                 */
-                        neighbor to
-                            newRemaining.mapNotNull { remaining ->
-                                polygonToInterval(neighbor).intersect(remaining)
-                            }
+                val newRemaining = remaining.subtractAll(
+                    intersectedObstacles().map { shapeToInterval(it) },
+                )
+                val neighborToIntervals = intersectedSeeds().map { neighbor ->
+                    /*
+                     * Maps each neighbor to a collection of intervals representing
+                     * the portions of the advancing edge leading to that neighbor.
+                     */
+                    neighbor to newRemaining.mapNotNull { interval ->
+                        polygonToInterval(neighbor).intersect(interval)
                     }
-                val passages =
-                    neighborToIntervals.flatMap { (neighbor, intervals) ->
-                /*
-                 * Intervals should be mapped to actual segments, considering the
-                 * coordinate we ignored so far of the oldEdge.
-                 */
-                        intervals.map {
-                            val passageShape =
-                                when {
-                                    oldEdge.isHorizontal ->
-                                        createSegment(it.start, oldEdge.first.y, x2 = it.endInclusive)
-                                    else ->
-                                        createSegment(oldEdge.first.x, it.start, y2 = it.endInclusive)
-                                }
-                            Euclidean2DPassage(this, neighbor, passageShape)
+                }
+                val passages = neighborToIntervals.flatMap { (neighbor, intervals) ->
+                    /*
+                     * Intervals should be mapped to actual segments, considering the
+                     * coordinate we ignored so far of the oldEdge.
+                     */
+                    intervals.map {
+                        val passageShape = when {
+                            oldEdge.isHorizontal ->
+                                createSegment(it.start, oldEdge.first.y, x2 = it.endInclusive)
+                            else ->
+                                createSegment(oldEdge.first.x, it.start, y2 = it.endInclusive)
                         }
+                        Euclidean2DPassage(this, neighbor, passageShape)
                     }
+                }
                 return passages +
                     newRemaining
                         .flatMap {

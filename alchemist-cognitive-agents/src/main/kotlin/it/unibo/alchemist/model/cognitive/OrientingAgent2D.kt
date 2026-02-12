@@ -15,6 +15,6 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.jgrapht.graph.DefaultEdge
 
 /**
- * An agent capable of orienting itself inside an Euclidean environment.
+ * A specialization of [OrientingAgent] for two-dimensional Euclidean space.
  */
 typealias OrientingAgent2D = OrientingAgent<Euclidean2DPosition, Euclidean2DTransformation, Ellipse, DefaultEdge>

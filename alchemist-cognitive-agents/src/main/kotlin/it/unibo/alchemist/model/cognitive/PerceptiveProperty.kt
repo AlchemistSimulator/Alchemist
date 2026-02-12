@@ -13,16 +13,16 @@ import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.physics.InfluenceSphere
 
 /**
- * The pedestrian's capability to influence other pedestrians.
+ * The pedestrian's capability to perceive and influence other pedestrians.
+ *
+ * @param T the concentration type.
  */
 interface PerceptiveProperty<T> : NodeProperty<T> {
-    /**
-     * The field of view of the pedestrian.
-     */
+    /** The agent's primary field of view. */
     val fieldOfView: InfluenceSphere<T>
 
     /**
-     * The list of influence spheres belonging to this pedestrian (by default, only its [fieldOfView]).
+     * The set of influence spheres associated with this pedestrian. By default only [fieldOfView] is present.
      */
     val senses: Map<String, InfluenceSphere<T>> get() = mapOf("view" to fieldOfView)
 }

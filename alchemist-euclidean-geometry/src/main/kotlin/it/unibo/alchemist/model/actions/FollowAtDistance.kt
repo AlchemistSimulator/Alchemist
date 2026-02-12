@@ -22,16 +22,18 @@ import kotlin.math.min
 import kotlin.math.sin
 
 /**
- * Makes the [Node] follow a [target] defined in a [Molecule] with some [speed],
- * but keeping a [distance] from it.
+ * Causes a node to follow a destination read from a [Molecule], maintaining a fixed [distance]
+ * and respecting a maximum [speed].
  *
- * @param <T> concentration type
- * @param environment the environment containing the nodes
- * @param node the follower
- * @param reaction the reaction hosting this action
- * @param target molecule from which to read the destination to follow in the form of coordinates or a tuple
- * @param distance the distance to keep from the destination
- * @param speed the maximum speed
+ * The destination is read from the specified [target] molecule and interpreted as coordinates or a tuple.
+ *
+ * @param T the concentration type.
+ * @param node the follower node.
+ * @param reaction the reaction hosting this action.
+ * @param environment the environment containing the nodes.
+ * @param target the molecule carrying the destination coordinates.
+ * @param distance the distance to keep from the destination.
+ * @param speed the maximum movement speed.
  */
 class FollowAtDistance<T>(
     node: Node<T>,

@@ -12,25 +12,25 @@ package it.unibo.alchemist.model.cognitive
 import it.unibo.alchemist.model.Position
 
 /**
- * Strategy interface describing how the next points of the steering actions
- * are combined to calculate the next position to move on.
+ * Strategy describing how steering actions are combined to compute the next position.
+ *
+ * @param T the concentration type.
+ * @param P the [Position] type used by actions.
  */
 interface SteeringStrategy<T, P : Position<P>> {
     /**
-     * Computes the next position starting from the steering actions the node obey to,
-     * in relative coordinates with respect to its current position.
+     * Computes the next relative position by combining the provided steering actions.
      *
-     * @param actions
-     *          the list of actions to combine.
+     * @param actions the list of actions to combine.
+     * @return the next position relative to the current position as a [P].
      */
     fun computeNextPosition(actions: List<SteeringAction<T, P>>): P
 
     /**
-     * Computes the target to reach starting from the steering actions the node obey to,
-     * in absolute coordinates.
+     * Computes the absolute target position derived from the provided steering actions.
      *
-     * @param actions
-     *          the list of actions to combine.
+     * @param actions the list of actions to combine.
+     * @return the target position as a [P].
      */
     fun computeTarget(actions: List<SteeringAction<T, P>>): P
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,6 +11,7 @@ import Libs.alchemist
 import Libs.incarnation
 import com.apollographql.apollo3.gradle.internal.ApolloGenerateSourcesTask
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
+import dev.detekt.gradle.Detekt
 import it.unibo.alchemist.build.allVerificationTasks
 
 plugins {
@@ -125,4 +126,9 @@ publishing.publications {
             }
         }
     }
+}
+
+// exclude files in build from Detekt
+tasks.withType<Detekt>().configureEach {
+    exclude("**/boundary/graphql/client/**")
 }

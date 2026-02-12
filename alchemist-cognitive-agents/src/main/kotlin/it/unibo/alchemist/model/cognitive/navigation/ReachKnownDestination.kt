@@ -29,14 +29,14 @@ import org.jgrapht.alg.shortestpath.BFSShortestPath
  * cognitive map to obtain a route to follow.
  *
  * @param T the concentration type.
- * @param L the type of landmarks of the pedestrian's cognitive map.
- * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
+ * @param L the landmark shape type used by the pedestrian's cognitive map.
+ * @param R the relation/edge type used by the pedestrian's cognitive map.
+ * @param action the navigation action driving this strategy.
+ * @param destinations list of known destinations (must not be empty).
  */
 open class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
     action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
-    /**
-     * Known destinations (must not be empty).
-     */
+    /** Known destinations (must not be empty). */
     private val destinations: List<Euclidean2DPosition>,
     /*
      * An empty list is passed to super method, because route is initialised in this class' init block.

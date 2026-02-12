@@ -19,14 +19,12 @@ import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
- * Move the agent away from the pedestrians near to him.
+ * Steering action that moves the agent away from nearby pedestrians (separation behavior).
  *
- * @param environment
- *          the environment inside which the node moves.
- * @param reaction
- *          the reaction which executes this action.
- * @param pedestrian
- *          the owner of this action.
+ * @param T the concentration type.
+ * @property environment the physics environment in which the node moves.
+ * @param reaction the reaction executing this action.
+ * @property pedestrian the owner pedestrian property.
  */
 class CognitiveAgentSeparation<T>(
     val environment: Physics2DEnvironment<T>,

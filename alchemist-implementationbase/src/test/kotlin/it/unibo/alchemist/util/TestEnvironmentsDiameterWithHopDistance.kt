@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -24,7 +24,7 @@ object TestEnvironmentsDiameterWithHopDistance {
     private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveHopDiameter(
         index: Int,
         expected: Double,
-    ) = {
+    ) {
         require(index < nodes.size)
         assertEquals<Double>(expected, allSubNetworksByNodeWithHopDistance()[nodes[index]]?.diameter!!)
     }

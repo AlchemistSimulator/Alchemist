@@ -15,16 +15,17 @@ import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 
 /**
- * Defines what a node should do when in a new room (= environment's area), this is designed to be used jointly
- * with a [NavigationAction]: the latter defines how to properly move the node, while delegating the decision on
- * where to move it to a [NavigationStrategy].
+ * Defines what a node should do when it enters a new room (an area of the environment).
+ *
+ * This interface is intended to be used together with a [NavigationAction]: the action
+ * provides movement primitives (how to move), while the strategy decides where to move.
  *
  * @param T the concentration type.
- * @param P the [Position] type and [Vector] type for the space the node is into.
- * @param A the transformations supported by the shapes in this space.
- * @param L the type of landmarks of the node's cognitive map.
- * @param R the type of edges of the node's cognitive map, representing the [R]elations between landmarks.
- * @param N the type of nodes of the navigation graph provided by the environment.
+ * @param P the [Position] and [Vector] type used by the environment.
+ * @param A the transformation type supported by shapes in the environment.
+ * @param L the type of landmarks in the node's cognitive map.
+ * @param R the type of edges in the node's cognitive map, representing relations between landmarks.
+ * @param N the type of navigation-area shapes provided by the environment.
  * @param E the type of edges of the navigation graph provided by the environment.
  */
 interface NavigationStrategy<T, P, A, L, R, N, E>
@@ -32,24 +33,26 @@ interface NavigationStrategy<T, P, A, L, R, N, E>
           A : Transformation<P>,
           L : ConvexShape<P, A>,
           N : ConvexShape<P, A> {
-    /**
-     * The [NavigationAction] used to navigate the environment.
-     */
+    /** The [NavigationAction] used to navigate the environment. */
     val action: NavigationAction<T, P, A, L, R, N, E>
 
-    /**
-     * The node's orienting capability.
-     */
+    /** The node's orienting capability. */
     val orientingCapability get() = action.orientingProperty
 
     /**
-     * This is called whenever the node enters a new room.
+     * Called whenever the node enters a new room.
+     *
+     * @param newRoom the room that the node has just entered.
      */
     fun inNewRoom(newRoom: N)
 
     /**
-     * This is called in place of [inNewRoom] when the node ends up in an unexpected room while moving.
-     * By default, unexpected rooms are treated just like expected ones.
+     * Called when the node ends up in an unexpected room while moving.
+     * By default, unexpected rooms are treated the same as expected ones.
+     *
+     * @param previousRoom the room the node was in before moving.
+     * @param expectedNewRoom the room the node was expected to enter.
+     * @param actualNewRoom the room the node actually entered.
      */
     fun inUnexpectedNewRoom(previousRoom: N, expectedNewRoom: N, actualNewRoom: N) = inNewRoom(actualNewRoom)
 }

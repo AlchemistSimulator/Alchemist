@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,34 +13,35 @@ import it.unibo.alchemist.model.geometry.shapes.AdimensionalShape
 import java.io.Serializable
 
 /**
- * Generic factory for [Shape].
+ * Generic factory for [Shape] instances.
+ *
+ * @param S the [Vector] type used by the shapes created by this factory.
+ * @param A the [Transformation] type supported by the shapes.
  */
 interface GeometricShapeFactory<S : Vector<S>, A : Transformation<S>> : Serializable {
     /**
-     * A special shape which does not occupy space and does not intersect with any other, not even with itself.
+     * A special shape that occupies no space and does not intersect any other shape.
      */
     fun adimensional(): AdimensionalShape<S, A>
 
     /**
-     * Requires that the given shape is compatible with the ones provided by this factory,
+     * Requires that the given shape is compatible with those provided by this factory;
      * otherwise throws an exception.
      *
-     * @param shape the shape to check
-     * @return the same shape
+     * @param shape the shape to check.
+     * @return the same shape if compatible.
      */
     fun requireCompatible(shape: Shape<*, *>): Shape<S, A>
 
-    /**
-     * Factory methods for [Shape].
-     */
+    /** Factory methods for [Shape]. */
     companion object {
         /**
-         * Retrieves a factory of [Shape] compatible with the given vector type.
+         * Retrieves a factory of [Shape] compatible with the given vector and transformation types.
          *
-         * @param <S> The type of vector used
-         * @param <A> The supported geometric transformations
-         * @param <F> The interface of the factory requested
-         * @return the factory
+         * @param S The type of vector used.
+         * @param A The supported geometric transformations.
+         * @param F The factory interface requested.
+         * @return an instance of the requested factory interface [F].
          */
         inline fun <S, A, reified F> getInstance(): F
             where S : Vector<S>,
@@ -49,14 +50,13 @@ interface GeometricShapeFactory<S : Vector<S>, A : Transformation<S>> : Serializ
             getInstance(F::class.java)
 
         /**
-         * Retrieves a factory of [Shape] compatible with the given space.
-         * (This method is meant for compatibility with java).
+         * Retrieves a factory of [Shape] compatible with the given space (Java-friendly overload).
          *
-         * @param <S> The type of vector used
-         * @param <A> The supported geometric transformations
-         * @param <F> The interface of the factory requested
-         * @param type The interface of the factory requested
-         * @return the factory
+         * @param S The type of vector used.
+         * @param A The supported geometric transformations.
+         * @param F The factory interface requested.
+         * @param type the [Class] object representing the requested factory interface.
+         * @return an instance of the requested factory interface [F].
          */
         @JvmStatic
         @Suppress("UNCHECKED_CAST")

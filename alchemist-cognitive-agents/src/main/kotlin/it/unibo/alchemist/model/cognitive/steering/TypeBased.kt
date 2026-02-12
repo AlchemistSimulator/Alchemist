@@ -16,15 +16,14 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.reflect.KClass
 
 /**
- * A [Weighted] steering strategy assigning weights based on actions' types (each type has its own weight, specified
- * by the client).
+ * A [Weighted] steering strategy assigning weights based on actions' types; the client provides a weight
+ * for each action KClass.
  *
- * @param environment
- *          the environment in which the node moves.
- * @param node
- *          the owner of the steering actions combined by this strategy.
- * @param typeWeights
- *          the weight for each type of steering action.
+ * @param T the concentration type.
+ * @param environment the environment in which the node moves.
+ * @param node the owner of the steering actions combined by this strategy.
+ * @param typeWeights the map of weights for each steering action KClass.
+ * @param defaultWeight fallback weight used when an action's type is not present in [typeWeights].
  */
 class TypeBased<T>(
     environment: Euclidean2DEnvironment<T>,

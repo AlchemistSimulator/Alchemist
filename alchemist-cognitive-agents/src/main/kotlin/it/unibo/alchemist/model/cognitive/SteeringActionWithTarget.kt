@@ -15,16 +15,25 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.Vector
 
 /**
- * A [SteeringAction] with a defined target.
+ * A [SteeringAction] that exposes an absolute target position.
+ *
+ * @param T the concentration type.
+ * @param P the [Position] and [Vector] type used by the environment.
  */
 interface SteeringActionWithTarget<T, P> : SteeringAction<T, P> where P : Position<P>, P : Vector<P> {
     /**
-     * The position the owner of this action moves towards, in absolute coordinates.
+     * Returns the absolute target position this action points to.
+     *
+     * @return the target position as a [P].
      */
     fun target(): P
 
     /**
-     * Computes the distance between this action's target and the given [node].
+     * Computes the distance between this action's target and the given [node] within the provided [environment].
+     *
+     * @param node the node to measure distance to.
+     * @param environment the environment containing the node.
+     * @return the distance from the action's target to the node's position.
      */
     fun targetDistanceTo(node: Node<T>, environment: Environment<T, P>): Double =
         target().distanceTo(environment.getPosition(node))

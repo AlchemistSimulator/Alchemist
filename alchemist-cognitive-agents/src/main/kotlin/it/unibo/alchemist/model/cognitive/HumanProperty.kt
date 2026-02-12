@@ -18,39 +18,36 @@ import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 
 /**
- * A capability representing a pedestrian's individual characteristics.
+ * Capability representing a pedestrian's individual characteristics.
+ *
+ * @param T the concentration type.
+ * @param S the concrete Vector type used for geometry operations.
+ * @param A the concrete Transformation type compatible with [S].
  */
 interface HumanProperty<T, S : Vector<S>, A : Transformation<S>> : NodeProperty<T> {
-    /**
-     * The age of this pedestrian.
-     */
+    /** The age of this pedestrian. */
     val age: Age
 
-    /**
-     * The gender of this pedestrian.
-     */
+    /** The gender of this pedestrian. */
     val gender: Gender
 
-    /**
-     * The speed of an agent considering its age, gender and a random factor.
-     */
+    /** The agent's speed considering age, gender and randomness. */
     val speed: Speed
 
     /**
-     * Value between 0 and 1 representing the attitude towards conforming to social rules of this pedestrian.
+     * Value between 0 and 1 representing the attitude toward conforming to social rules.
      */
     val compliance: Double
 
-    /**
-     * The attitude of an agent towards helping another agent.
-     */
+    /** The attitude toward helping other agents. */
     val helpAttitude: HelpAttitude
 
     /**
-     * Value between 0 and 1 representing the probability this pedestrian will help another pedestrian in difficulty.
+     * Returns the probability that this pedestrian will help another pedestrian.
      *
-     * @param toHelp The pedestrian who needs help.
-     * @param isGroupMember Whether the pedestrian in difficulty is a member of the helper's group.
+     * @param toHelp the pedestrian who may receive help.
+     * @param isGroupMember true if the pedestrian in difficulty is a member of the helper's group.
+     * @return a probability in [0.0, 1.0] representing the likelihood of offering help.
      */
     fun probabilityOfHelping(toHelp: HeterogeneousPedestrianModel<T, S, A>, isGroupMember: Boolean): Double =
         helpAttitude.level(toHelp.age, toHelp.gender, isGroupMember)

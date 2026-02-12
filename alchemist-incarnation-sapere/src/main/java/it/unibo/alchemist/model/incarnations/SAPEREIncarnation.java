@@ -39,6 +39,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import javax.annotation.Nullable;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -293,7 +294,15 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
 
     @Override
     public List<ILsaMolecule> createConcentration(final Object descriptor) {
-        return createConcentration();
+        if (descriptor == null) {
+            return createConcentration();
+        }
+        if (descriptor instanceof final Collection<?> descriptorList) {
+            return descriptorList.stream().map(it ->
+                it instanceof final ILsaMolecule lsa ? lsa : createMolecule(it.toString())
+            ).toList();
+        }
+        return List.of(createMolecule(descriptor.toString()));
     }
 
     @Override

@@ -14,6 +14,7 @@ import it.unibo.alchemist.boundary.Launcher
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Position
 import java.io.Serializable
 import kotlin.properties.ReadOnlyProperty
@@ -37,6 +38,8 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param T the concentration type used by the simulation.
  * @param P the position type used by the environment.
  */
+// Detekt false positive. Remove once Detekt supports context parameters.
+@Suppress("UndocumentedPublicFunction")
 interface SimulationContext<T, P : Position<P>> {
 
     /**
@@ -124,5 +127,11 @@ interface SimulationContext<T, P : Position<P>> {
      * @param variable the variable definition.
      * @return a property delegate providing the resolved variable value.
      */
-    fun <V : Serializable> variable(variable: Variable<out V>): ReadOnlyProperty<Any?, V>
+    fun <V : Serializable> variable(variable: Variable<out V>): VariableDelegateFactory<V>
+
+    /**
+     * Creates a concentration value using the current [Incarnation].
+     */
+    context(incarnation: Incarnation<T, P>)
+    fun concentrationOf(concentration: Any?): T = incarnation.createConcentration(concentration)
 }

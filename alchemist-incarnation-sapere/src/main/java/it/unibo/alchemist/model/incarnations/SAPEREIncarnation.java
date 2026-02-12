@@ -73,7 +73,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
         final String matchStart = "(?:\\s*(?<";
         final String condition = matchStart + CONDITION_GROUP + ">\\+";
         final String action = matchStart + ACTION_GROUP + ">[+*]";
-        final String matchEnd = "?\\{[^\\{\\}]+?\\}))";
+        final String matchEnd = "?\\{[^{}]+?}))";
         MATCH_CONDITION = Pattern.compile(condition + matchEnd);
         MATCH_ACTION = Pattern.compile(action + matchEnd);
         final String sequence = matchEnd + "*\\s*";

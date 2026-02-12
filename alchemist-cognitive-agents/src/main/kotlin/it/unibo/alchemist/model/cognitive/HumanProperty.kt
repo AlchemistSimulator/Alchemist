@@ -50,6 +50,7 @@ interface HumanProperty<T, S : Vector<S>, A : Transformation<S>> : NodeProperty<
      * Value between 0 and 1 representing the probability this pedestrian will help another pedestrian in difficulty.
      *
      * @param toHelp The pedestrian who needs help.
+     * @param isGroupMember Whether the pedestrian in difficulty is a member of the helper's group.
      */
     fun probabilityOfHelping(toHelp: HeterogeneousPedestrianModel<T, S, A>, isGroupMember: Boolean): Double =
         helpAttitude.level(toHelp.age, toHelp.gender, isGroupMember)

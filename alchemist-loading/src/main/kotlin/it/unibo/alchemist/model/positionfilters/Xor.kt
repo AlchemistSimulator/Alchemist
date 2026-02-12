@@ -13,16 +13,20 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
 
 /**
- * Check if only one between [positionBasedFilterA] and [positionBasedFilterB] is satisfied.
- * @param positionBasedFilterA the first filter.
- * @param positionBasedFilterB the second filter.
+ * A position-based filter that matches when exactly one of two underlying filters
+ * matches the provided position (exclusive-or behaviour).
+ *
+ * @param P the concrete position type used by the filters
+ * @param positionBasedFilterA the first filter
+ * @param positionBasedFilterB the second filter
  */
 data class Xor<P : Position<P>>(
     val positionBasedFilterA: PositionBasedFilter<P>,
     val positionBasedFilterB: PositionBasedFilter<P>,
 ) : PositionBasedFilter<P> {
     /**
-     * Returns true if only one [positionBasedFilterA] and [positionBasedFilterB] is satisfied.
+     * Returns true if exactly one of [positionBasedFilterA] or [positionBasedFilterB]
+     * contains the given [position].
      */
     override operator fun contains(position: P) = position in positionBasedFilterA != position in positionBasedFilterB
 }

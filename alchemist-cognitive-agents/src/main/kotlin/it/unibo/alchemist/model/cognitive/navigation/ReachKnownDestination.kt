@@ -45,28 +45,29 @@ open class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
     final override val route: List<Euclidean2DPosition>
 
     init {
-        route = emptyList<Euclidean2DPosition>().takeIf { destinations.isEmpty() } ?: with(action) {
-            val currPos = environment.getPosition(navigatingNode)
-            val (closestDest, distanceToClosestDest) =
-                destinations
-                    .asSequence()
+        route = if (destinations.isEmpty()) {
+            emptyList()
+        } else {
+            with(action) {
+                val currPos = environment.getPosition(navigatingNode)
+                val (closestDest, distanceToClosestDest) = destinations.asSequence()
                     .map { it to it.distanceTo(currPos) }
-                    .minByOrNull { it.second }
-                    ?: throw IllegalArgumentException("internal error: destinations can't be empty at this point")
-            destinations
-                .asSequence()
-                .sortedBy { it.distanceTo(currPos) }
-                .map { it to findKnownPathTo(it) }
-                .filter { (_, path) ->
-                    /*
-                     * A path leading to a destination is considered "valid" when:
-                     * - it's not empty
-                     * - the path's start is closer to currPos than the closest destination (this
-                     * because otherwise it's more convenient to just pursue the latter).
-                     */
-                    path.isNotEmpty() && currPos.distanceTo(path.first().centroid) < distanceToClosestDest
-                }.map { (destination, path) -> path.map { it.centroid } + destination }
-                .firstOrNull() ?: listOf(closestDest)
+                    .minBy { it.second }
+                destinations.asSequence()
+                    .sortedBy { it.distanceTo(currPos) }
+                    .map { it to findKnownPathTo(it) }
+                    .filter { (_, path) ->
+                        /*
+                         * A path leading to a destination is considered "valid" when:
+                         * - it's not empty
+                         * - the path's start is closer to currPos than the closest destination (this
+                         * because otherwise it's more convenient to just pursue the latter).
+                         */
+                        path.isNotEmpty() && currPos.distanceTo(path.first().centroid) < distanceToClosestDest
+                    }
+                    .map { (destination, path) -> path.map { it.centroid } + destination }
+                    .firstOrNull() ?: listOf(closestDest)
+            }
         }
         setDestination(route[0])
     }

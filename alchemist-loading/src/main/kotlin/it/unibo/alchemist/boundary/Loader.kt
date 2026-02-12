@@ -52,22 +52,33 @@ interface Loader : Serializable {
     val variables: Map<String, Variable<*>>
 
     /**
-     * @param <T> concentration type
-     * @param <P> position type
-     * @return an [Simulation] with all the variables set at their
-     * default values
-     </P></T> */
+     * Returns a simulation with all the variables set to their default values.
+     *
+     * This is equivalent to calling [getWith] with an empty values map.
+     *
+     * Type parameters:
+     * - T: the concentration type used by the simulation
+     * - P: the position type used by the simulation
+     *
+     * @return an instance of [Simulation] with variables initialized to their defaults
+     */
     fun <T, P : Position<P>> getDefault(): Simulation<T, P> = getWith(emptyMap<String, Nothing>())
 
     /**
-     * @param values a map specifying name-value bindings for the variables in this
-     * scenario
-     * @param <T>    concentration type
-     * @param <P>    position type
-     * @return an [Simulation] with all the variables set at the
-     * specified values. If the value is unspecified, the default is
-     * used instead
-     </P></T> */
+     * Returns a simulation with variables set according to the provided [values] map.
+     *
+     * Each entry in [values] maps a variable name to the desired value. Variables not
+     * present in the map will be initialized to their default values.
+     *
+     * Parameters:
+     * - values: a map specifying name-value bindings for the variables in this scenario
+     *
+     * Type parameters:
+     * - T: the concentration type used by the simulation
+     * - P: the position type used by the simulation
+     *
+     * @return an instance of [Simulation] with variables initialized to the specified values
+     */
     fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P>
 
     /**

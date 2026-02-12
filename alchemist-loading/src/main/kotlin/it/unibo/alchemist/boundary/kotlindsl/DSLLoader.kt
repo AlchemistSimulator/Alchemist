@@ -145,11 +145,17 @@ internal class DSLLoader<T, P : Position<P>, I : Incarnation<T, P>>(
                     loader.launcher = launcher
                 }
 
-                override fun <V : Serializable> variable(variable: Variable<out V>): ReadOnlyProperty<Any?, V> =
-                    ReadOnlyProperty { thisRef, property ->
+                override fun <V : Serializable> variable(variable: Variable<out V>) =
+                    VariableDelegateFactory { _, property ->
+                        check(property.name !in variables.keys) {
+                            "Error: variable '${property.name}' defined multiple times. " +
+                                "The first definition binds to: ${variables[property.name]}"
+                        }
                         variables += property.name to variable
-                        @Suppress("UNCHECKED_CAST")
-                        values.getOrDefault(property.name, variable.default) as V
+                        ReadOnlyProperty { _, _ ->
+                            @Suppress("UNCHECKED_CAST")
+                            values.getOrDefault(property.name, variable.default) as V
+                        }
                     }
 
                 fun checkSeedCanBeSet() {

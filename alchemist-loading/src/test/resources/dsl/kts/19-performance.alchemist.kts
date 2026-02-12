@@ -9,109 +9,52 @@
 
 package dsl.kts
 import another.location.SimpleMonitor
-import it.unibo.alchemist.boundary.dsl.Dsl.incarnation
-import it.unibo.alchemist.boundary.dsl.Dsl.simulation
 import it.unibo.alchemist.boundary.extractors.Time
-import org.apache.commons.math3.random.MersenneTwister
 
-simulation(SAPEREIncarnation<Euclidean2DPosition>()) {
-    simulationGenerator = MersenneTwister(24L)
-    scenarioGenerator = MersenneTwister(42L)
-
-    networkModel = ConnectWithinDistance(0.5)
-
+simulation2D(SAPEREIncarnation()) {
+    simulationSeed(24L)
+    scenarioSeed(42L)
     val rate: Double by variable(GeometricVariable(2.0, 0.1, 10.0, 9))
     val size: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
-
-    val mSize by variable { -size }
-    val sourceStart by variable { mSize / 10.0 }
-    val sourceSize by variable { size / 5.0 }
-
-    layer {
-        molecule = "A"
-        layer = StepLayer(2.0, 2.0, 100.0, 0.0)
-    }
-    layer {
-        molecule = "B"
-        layer = StepLayer(-2.0, -2.0, 0.0, 100.0)
-    }
-    layer {
-        molecule = "C"
-        layer = StepLayer(0.0, 0.0, 50.0, 50.0)
-    }
-
-    monitors { +SimpleMonitor<Any, Euclidean2DPosition>()}
-
-    exporter {
-        type = CSVExporter(
-            "performance_test",
-            1.0,
-        )
-        data(
-            Time(),
-            moleculeReader(
-                "token",
-                null,
-                CommonFilters.NOFILTER.filteringPolicy,
-                emptyList(),
-            ),
-        )
-    }
-
-    deployments {
-        deploy(
-            circle(
-                200,
-                0.0,
-                0.0,
-                20.0,
-            ),
-        ) {
-            all {
-                molecule = "basemolecule"
+    environment {
+        networkModel(ConnectWithinDistance(0.5))
+        val mSize = -size
+        val sourceStart = mSize / 10.0
+        val sourceSize = size / 5.0
+        layer("A", StepLayer(2.0, 2.0, concentrationOf(100.0), concentrationOf(0.0)))
+        layer("B", StepLayer(-2.0, -2.0, concentrationOf(0.0), concentrationOf(100.0)))
+        layer("C", StepLayer(0.0, 0.0, concentrationOf(50.0), concentrationOf(50.0)))
+        monitor(SimpleMonitor())
+        deployments {
+            deploy(circle(200, 0.0, 0.0, 20.0)) {
+                contents {
+                    - "basemolecule"
+                    if (position in Rectangle(-5.0, -5.0, 10.0, 10.0)) {
+                        - "centermolecule"
+                    }
+                    program("1", 1.0)
+                    program("2", 2.0)                        }
             }
-            inside(RectangleFilter(-5.0, -5.0, 10.0, 10.0)) {
-                molecule = "centermolecule"
-            }
-            programs {
-                all {
-                    timeDistribution("1")
-                    program = "{basemolecule} --> {processed}"
+            deploy(grid(mSize, mSize, size, size, 0.25, 0.25, 0.1, 0.1)) {
+                contents {
+                    - "gridmolecule"
+                    if (position in Rectangle(sourceStart, sourceStart, sourceSize, sourceSize)) {
+                        -"token, 0, []"
+                    }
+                    if (position in Rectangle(-2.0, -2.0, 4.0, 4.0)) {
+                        -"filteredmolecule"
+                    }
                 }
-                all {
-                    program = "{processed} --> +{basemolecule}"
+                program("{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}", rate)
+                program("{token, N, L}{token, def: N2>=N, L2} --> {token, N, L}")
+                if (position in Rectangle(-1.0, -1.0, 2.0, 2.0)) {
+                    program("{filteredmolecule} --> {active}", 0.5)
                 }
             }
         }
-        deploy(
-            grid(
-                mSize, mSize, size, size,
-                0.25, 0.25, 0.1, 0.1,
-            ),
-        ) {
-            all {
-                molecule = "gridmolecule"
-            }
-            inside(RectangleFilter(sourceStart, sourceStart, sourceSize, sourceSize)) {
-                molecule = "token, 0, []"
-            }
-            inside(RectangleFilter(-2.0, -2.0, 4.0, 4.0)) {
-                molecule = "filteredmolecule"
-            }
-            programs {
-                all {
-                    timeDistribution(rate.toString())
-                    program = "{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}"
-                }
-                all {
-                    program = "{token, N, L}{token, def: N2>=N, L2} --> {token, N, L}"
-                }
-                inside(RectangleFilter(-1.0, -1.0, 2.0, 2.0)) {
-                    timeDistribution("0.5")
-                    program = "{filteredmolecule} --> {active}"
-                }
-            }
-        }
+    }
+    exportWith(CSVExporter("performance_test", 1.0)) {
+        -Time()
+        -moleculeReader("token", null, CommonFilters.NOFILTER.filteringPolicy, emptyList())
     }
 }
-

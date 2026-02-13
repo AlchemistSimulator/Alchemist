@@ -90,7 +90,7 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable, Li
     private Option<Boolean> canExecute = none();
 
     /**
-     * Builds a new reaction, starting   at time t.
+     * Builds a new reaction, starting at time t.
      *
      * @param node             the node this reaction belongs to
      * @param timeDistribution the time distribution this reaction should follow

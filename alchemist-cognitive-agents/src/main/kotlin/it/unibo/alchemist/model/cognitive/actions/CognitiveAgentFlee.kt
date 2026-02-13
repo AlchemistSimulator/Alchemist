@@ -28,7 +28,7 @@ import it.unibo.alchemist.model.geometry.Vector
 open class CognitiveAgentFlee<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     vararg coords: Double,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position<P>, P : Vector<P>,

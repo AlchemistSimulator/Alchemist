@@ -35,7 +35,7 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 abstract class AbstractLayerAction(
     protected val environment: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
-    override val pedestrian: PedestrianProperty<Number>,
+    pedestrian: PedestrianProperty<Number>,
     protected val targetMolecule: Molecule,
 ) : AbstractSteeringAction<Number, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
     abstract override fun cloneAction(node: Node<Number>, reaction: Reaction<Number>): AbstractLayerAction

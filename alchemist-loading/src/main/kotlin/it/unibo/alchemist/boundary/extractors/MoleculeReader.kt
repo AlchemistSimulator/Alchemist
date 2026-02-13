@@ -21,18 +21,19 @@ import kotlin.math.min
 /**
  * Reads the value of a molecule and logs it.
  *
- * @param moleculeName
+ * @property moleculeName
  *            the target molecule
- * @param property
+ * @property property
  *            the target property
- * @param incarnation
+ * @property incarnation
  *            the target incarnation
- * @param filter
- *            the [FilteringPolicy] to use
+ * @property filter
+ *            the [ExportFilter] to use
  * @param aggregatorNames
- *            the names of the [UnivariateStatistic] to use for
+ *            the names of the [org.apache.commons.math3.stat.descriptive.UnivariateStatistic] to use for
  *            aggregating data. If an empty list is passed, then the values
- *            will be logged indipendently for each node.
+ *            will be logged independently for each node.
+ * @param precision the number of decimal digits to use when writing the output, null for no rounding
  */
 class MoleculeReader
 @JvmOverloads

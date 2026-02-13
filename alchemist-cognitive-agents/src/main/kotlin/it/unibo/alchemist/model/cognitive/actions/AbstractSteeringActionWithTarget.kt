@@ -31,7 +31,7 @@ import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
 abstract class AbstractSteeringActionWithTarget<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     private val targetSelectionStrategy: TargetSelectionStrategy<T, P>,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     SteeringActionWithTarget<T, P>

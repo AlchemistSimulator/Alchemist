@@ -18,10 +18,13 @@ import org.bson.Document
 /**
  * Exports data to a MongoDB instance.
  *
- * @param uri the connection URI of the database instance.
- * @param dbName the name the database to export data to.
- * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].
- * @param appendTime if true it will always generate a new Mongo document, false to overwrite.
+ * @param T the concentration type
+ * @param P the position type
+ * @property uri the connection URI of the database instance
+ * @property dbName the name of the database to export data to
+ * @property interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL]
+ * @property appendTime if true it will always generate a new Mongo document, false to overwrite
+ * @property collectionName the name of the collection used for the current simulation
  */
 class MongoDBExporter<T, P : Position<P>>
 @JvmOverloads

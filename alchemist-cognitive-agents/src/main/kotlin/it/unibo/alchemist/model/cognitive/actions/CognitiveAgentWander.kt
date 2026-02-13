@@ -34,7 +34,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param T the concentration type.
  * @param reaction the reaction executing this action.
  * @property environment the physics environment in which the node moves.
- * @property pedestrian the owner of this action.
+ * @param pedestrian the owner of this action.
  * @property randomGenerator the random number generator used to select directions.
  * @property offset the distance from the node position to the center of the circle.
  * @property radius the radius of the circle from which target points are sampled.
@@ -42,7 +42,7 @@ import org.apache.commons.math3.random.RandomGenerator
 open class CognitiveAgentWander<T>(
     private val environment: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     protected val randomGenerator: RandomGenerator,
     protected val offset: Double,
     protected val radius: Double,

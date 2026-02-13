@@ -17,9 +17,12 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
 
 /**
- *  Contains all exporters selected in the configuration file.
- *  Implements the [OutputMonitor] interface and delegate the export phase to each one of his internal exporters.
- *  @param exporters The list of [Exporter].
+ * Aggregates and delegates to multiple exporters selected in the configuration file.
+ * Implements the [OutputMonitor] interface and delegates the export phase to each internal exporter.
+ *
+ * @param T the concentration type
+ * @param P the position type
+ * @property exporters the list of exporters to delegate to
  */
 class GlobalExporter<T, P : Position<P>>(val exporters: List<Exporter<T, P>>) : OutputMonitor<T, P> {
     @Override

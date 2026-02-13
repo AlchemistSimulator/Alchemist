@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 open class CognitiveAgentFollowLayer(
     euclidean: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
-    override val pedestrian: PedestrianProperty<Number>,
+    pedestrian: PedestrianProperty<Number>,
     targetMolecule: Molecule,
 ) : AbstractLayerAction(euclidean, reaction, pedestrian, targetMolecule) {
     private val followScalarField =

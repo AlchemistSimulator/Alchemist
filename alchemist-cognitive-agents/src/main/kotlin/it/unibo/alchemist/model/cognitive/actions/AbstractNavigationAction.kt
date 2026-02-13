@@ -43,15 +43,15 @@ import it.unibo.alchemist.model.physics.properties.OccupiesSpaceProperty
  */
 abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
     override val environment: EnvironmentWithGraph<*, T, P, A, N, E>,
-    override val reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    reaction: Reaction<T>,
+    pedestrian: PedestrianProperty<T>,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     NavigationAction<T, P, A, L, R, N, E>
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P>,
           L : ConvexShape<P, A>,
           N : ConvexShape<P, A> {
-    override val navigatingNode = node
+    final override val navigatingNode = node
 
     /**
      * The strategy used to navigate the environment.

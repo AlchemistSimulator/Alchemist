@@ -17,6 +17,8 @@ import it.unibo.alchemist.model.Time
  * An object that is able to extract numeric informations from an Alchemist
  * [Environment], given the current simulation [Time], the last executed
  * [Actionable] (usually a [Reaction] or null) and the current simulation step.
+ *
+ * @param E the type of extracted values
  */
 interface Extractor<out E : Any> {
     /**
@@ -30,11 +32,11 @@ interface Extractor<out E : Any> {
      *  - be an ordered map (for example a [java.util.SortedMap], a [java.util.LinkedHashMap]
      *    or any map with deterministic iteration order).
      *
+     * @param T the concentration type used by the environment
      * @param environment the environment from which to extract values
      * @param reaction the last executed actionable (may be null)
      * @param time the current simulation time
      * @param step the current simulation step
-     * @param T the concentration type used by the environment
      * @return a map of property names to extracted values. The map must follow one of the
      *         ordering/key contracts described above so that callers can consistently
      *         determine column ordering when producing tabular outputs.
@@ -54,11 +56,11 @@ interface Extractor<out E : Any> {
      * to provide custom formatting (for example numeric formatting or localized
      * representations).
      *
+     * @param T the concentration type used by the environment
      * @param environment the environment from which to extract values
      * @param reaction the last executed actionable (may be null)
      * @param time the current simulation time
      * @param step the current simulation step
-     * @param T the concentration type used by the environment
      * @return a map of property names to their textual representations
      */
     fun <T> extractDataAsText(

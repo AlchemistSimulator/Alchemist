@@ -19,35 +19,27 @@ interface Loader : Serializable {
     /**
      * Allows to access the currently defined constants, namely variables defined in the simulation file whose value is
      * constant and does not depend on the value of any free variable (directly or indirectly).
-     *
-     * @return a [Map] between variable names and their computed value
      */
     val constants: Map<String, Any?>
 
     /**
-     * @return remote dependencies files
+     * Remote dependency files referenced by the simulation definition.
      */
     val remoteDependencies: List<String>
 
     /**
-     * Returns the launcher to be used in to manage the simulation lifecycle.
-     *
-     * @return launcher
+     * Returns the launcher to be used to manage the simulation lifecycle.
      */
     val launcher: Launcher
 
     /**
-     * Allows to access the currently defined dependent variable (those variables whose value can be determined given a
+     * Allows to access the currently defined dependent variables (those variables whose value can be determined given a
      * valid set of values for the free variables).
-     *
-     * @return a [Map] between variable names and their actual
-     * representation
      */
     val dependentVariables: Map<String, DependentVariable<*>>
 
     /**
-     * @return a [Map] between variable names and their actual
-     * representation
+     * A map between variable names and their actual representation.
      */
     val variables: Map<String, Variable<*>>
 
@@ -56,10 +48,8 @@ interface Loader : Serializable {
      *
      * This is equivalent to calling [getWith] with an empty values map.
      *
-     * Type parameters:
-     * - T: the concentration type used by the simulation
-     * - P: the position type used by the simulation
-     *
+     * @param T the concentration type
+     * @param P the position type used by the simulation
      * @return an instance of [Simulation] with variables initialized to their defaults
      */
     fun <T, P : Position<P>> getDefault(): Simulation<T, P> = getWith(emptyMap<String, Nothing>())
@@ -70,13 +60,9 @@ interface Loader : Serializable {
      * Each entry in [values] maps a variable name to the desired value. Variables not
      * present in the map will be initialized to their default values.
      *
-     * Parameters:
-     * - values: a map specifying name-value bindings for the variables in this scenario
-     *
-     * Type parameters:
-     * - T: the concentration type used by the simulation
-     * - P: the position type used by the simulation
-     *
+     * @param T the concentration type
+     * @param P the position type used by the simulation
+     * @param values a map specifying name-value bindings for the variables in this scenario
      * @return an instance of [Simulation] with variables initialized to the specified values
      */
     fun <T, P : Position<P>> getWith(values: Map<String, *>): Simulation<T, P>

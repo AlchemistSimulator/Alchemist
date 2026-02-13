@@ -24,15 +24,20 @@ private const val DOUBLE_EQUALITY_EPSILON = 10e-12
 /**
  * [Logistic function](https://en.wikipedia.org/wiki/Logistic_function).
  *
- * @param sigma Steepness parameter of the logistic function.
- * @param tau Threshold parameter of the logistic function.
+ * @param sigma Steepness parameter of the logistic function
+ * @param tau Threshold parameter of the logistic function
+ * @param parameters additional input parameters whose sum is used as input
+ * @return logistic function result in (0,1)
  */
 fun logistic(sigma: Double, tau: Double, vararg parameters: Double) = 1 / (1 + E.pow(-sigma * (parameters.sum() - tau)))
 
 /**
+ * Advanced logistic variant that recenters the output.
  *
- * @param sigma Steepness parameter of the advanced logistic function.
- * @param tau Threshold parameter of the advanced logistic function.
+ * @param sigma Steepness parameter of the advanced logistic function
+ * @param tau Threshold parameter of the advanced logistic function
+ * @param parameters additional input parameters whose sum is used as input
+ * @return adjusted logistic value
  */
 fun advancedLogistic(sigma: Double, tau: Double, vararg parameters: Double) =
     logistic(sigma, tau, *parameters) - 1 / (1 + E.pow(sigma * tau)) * (1 + E.pow(-sigma * tau))

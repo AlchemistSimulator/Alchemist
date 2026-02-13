@@ -24,12 +24,12 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  * @param T the concentration type.
  * @property environment the physics environment in which the node moves.
  * @param reaction the reaction executing this action.
- * @property pedestrian the owner pedestrian property.
+ * @param pedestrian the owner pedestrian property.
  */
 class CognitiveAgentSeparation<T>(
     val environment: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
 ) : AbstractGroupSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentSeparation<T> =
         CognitiveAgentSeparation(environment, reaction, node.pedestrianProperty)

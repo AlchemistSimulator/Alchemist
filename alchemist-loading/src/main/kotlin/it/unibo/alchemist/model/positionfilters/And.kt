@@ -14,8 +14,10 @@ import it.unibo.alchemist.model.PositionBasedFilter
 
 /**
  * Check if both [positionBasedFilterA] and [positionBasedFilterB] are satisfied.
- * @param positionBasedFilterA the first filter.
- * @param positionBasedFilterB the second filter.
+ *
+ * @param P the position type
+ * @property positionBasedFilterA the first filter
+ * @property positionBasedFilterB the second filter
  */
 data class And<P : Position<P>>(
     val positionBasedFilterA: PositionBasedFilter<P>,

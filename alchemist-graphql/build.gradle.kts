@@ -131,4 +131,5 @@ publishing.publications {
 // exclude files in build from Detekt
 tasks.withType<Detekt>().configureEach {
     exclude("**/boundary/graphql/client/**")
+    exclude("**/io/kotest/framework/runtime/**")
 }

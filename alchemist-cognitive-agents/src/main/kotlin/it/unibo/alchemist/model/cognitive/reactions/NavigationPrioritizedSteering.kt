@@ -34,7 +34,7 @@ open class NavigationPrioritizedSteering<T, N : ConvexPolygon>
 @JvmOverloads
 constructor(
     environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
     /** Tolerance angle in degrees (see [SinglePrevalent]). */
     toleranceAngle: Double = Math.toDegrees(SinglePrevalent.DEFAULT_TOLERANCE_ANGLE),

@@ -23,18 +23,18 @@ import it.unibo.alchemist.util.lazyMutable
 /**
  * A cognitive navigation action that pursues known destinations using [ReachKnownDestination] strategy.
  *
- * @param T the concentration type.
- * @param L the landmark shape type used by the node's cognitive map.
- * @param R the relation/edge type used by the node's cognitive map.
- * @param environment the environment hosting the node.
- * @param reaction the reaction executing this action.
- * @param pedestrian the owner pedestrian property.
- * @param destinations vararg coordinates representing known destinations.
+ * @param T the concentration type
+ * @param L the landmark shape type used by the node's cognitive map
+ * @param R the relation/edge type used by the node's cognitive map
+ * @param environment the environment hosting the node
+ * @param reaction the reaction executing this action
+ * @param pedestrian the owner pedestrian property
+ * @param destinations vararg coordinates representing known destinations
  */
 class CognitiveAgentReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     vararg destinations: Number,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
     override var strategy: NavigationStrategy2D<T, L, R, ConvexPolygon, Euclidean2DPassage> by lazyMutable {

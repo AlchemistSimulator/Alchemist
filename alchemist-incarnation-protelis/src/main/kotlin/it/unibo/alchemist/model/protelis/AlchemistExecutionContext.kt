@@ -38,24 +38,30 @@ import org.protelis.vm.TimeAwareDevice
 import org.protelis.vm.impl.AbstractExecutionContext
 
 /**
- * @param <P> position type
- * @param environmentAccess the simulation [it.unibo.alchemist.model.Environment]
- * @param node the local [it.unibo.alchemist.model.Node]
- * @param protelisDevice the local [it.unibo.alchemist.model.protelis.properties.ProtelisDevice]
- * @param reaction the [it.unibo.alchemist.model.Reaction] hosting the program
- * @param randomGenerator the [org.apache.commons.math3.random.RandomGenerator] for this simulation
- * @param networkManager the [AlchemistNetworkManager] to be used
-*/
+ * Execution context that bridges the Alchemist simulation and the Protelis VM.
+ *
+ * This class provides Protelis with the device identity, coordinates, timing
+ * and network-related information retrieved from the hosting Alchemist
+ * simulation objects.
+ *
+ * @param P the position type used by the environment
+ * @property environmentAccess the simulation environment used to query positions and distances
+ * @param node the local node hosting this execution context
+ * @param protelisDevice the device wrapper exposing node properties to Protelis
+ * @param reaction the reaction hosting the running Protelis program
+ * @property randomGenerator the random generator instance used by this execution context
+ * @param networkManager the network manager used to share state among neighbouring devices
+ */
 class AlchemistExecutionContext<P : Position<P>>(
     /**
-     * @return experimental access to the simulated environment, for building oracles
+     * Experimental access to the simulated environment, for building oracles.
      */
     val environmentAccess: Environment<Any, P>,
     private val node: Node<Any>,
     private val protelisDevice: ProtelisDevice<P>,
     private val reaction: Reaction<Any>,
     /**
-     * @return the internal [org.apache.commons.math3.random.RandomGenerator]
+     * The internal random generator used by the execution context.
      */
     val randomGenerator: RandomGenerator,
     networkManager: AlchemistNetworkManager,

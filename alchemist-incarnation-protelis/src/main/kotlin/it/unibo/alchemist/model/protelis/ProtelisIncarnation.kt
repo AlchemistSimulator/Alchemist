@@ -395,7 +395,11 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override fun addProperty(nodeProperty: NodeProperty<Any>) = notImplemented<Unit>()
 
-        @Suppress("UnusedPrivateMember")
+        /**
+         * Ensures that deserialization of this sentinel object returns the canonical instance.
+         * Called reflectively by the Java serialization subsystem; kept private intentionally.
+         */
+        @Suppress("unused")
         private fun readResolve(): Any = NoNode
 
         private fun <A> notImplemented(): A =

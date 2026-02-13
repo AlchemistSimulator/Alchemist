@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.Position
  *
  * @param T the concentration type
  * @param P the position
- * @param posMapping the position mapping function from a generic set of coordinates
+ * @property posMapping the position mapping function from a generic set of coordinates
  * represented as a list of numbers, to an instance of Alchemist [Position] object
  */
 @GraphQLDescription("A layer containing a substance or a molecule with a spatial distribution")

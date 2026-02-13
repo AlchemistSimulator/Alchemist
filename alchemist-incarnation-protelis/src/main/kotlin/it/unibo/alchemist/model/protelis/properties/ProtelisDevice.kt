@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.model.protelis.AlchemistNetworkManager
 import it.unibo.alchemist.model.protelis.ProtelisIncarnation
@@ -100,11 +99,10 @@ constructor(
     /**
      * Adds a new [AlchemistNetworkManager].
      *
-     * @param program
-     * the [RunProtelisProgram]
-     * @param networkManager
-     * the [AlchemistNetworkManager]
-     * @deprecated Use networkManagerOf instead for better encapsulation
+     * Deprecated: prefer [networkManagerOf] for better encapsulation.
+     *
+     * @param program the [RunProtelisProgram]
+     * @param networkManager the [AlchemistNetworkManager]
      */
     @Deprecated("Use networkManagerOf instead", ReplaceWith("networkManagerOf"))
     fun addNetworkManger(program: RunProtelisProgram<*>, networkManager: AlchemistNetworkManager) {

@@ -16,9 +16,12 @@ import it.unibo.alchemist.model.Concentration
 
 /**
  * A GraphQL surrogate for a [Concentration] object.
- * **Note**: the content of the surrogate is a String (Json String) representation of the actual content inside the
+ * The content of the surrogate is a String (JSON String) representation of the actual content inside the
  * [origin].
- * @param T The type of the original concentration.
+ *
+ * @param T the type of the original concentration
+ * @property origin the original [Concentration] instance this surrogate represents
+ * @property content the JSON or string representation of the concentration content
  */
 @GraphQLDescription("The concentration of a molecule, represented as a Json String or its string representation.")
 data class ConcentrationSurrogate<T>(

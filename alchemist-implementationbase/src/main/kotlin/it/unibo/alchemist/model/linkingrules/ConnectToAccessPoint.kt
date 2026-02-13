@@ -17,7 +17,13 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.neighborhoods.Neighborhoods
 
 /**
- * @param accessPointId the id of the access point.
+ * Linking rule that connects nodes within a specified radius but filters
+ * connections through a designated access point when the center is not an AP itself.
+ *
+ * @param T the concentration type
+ * @param P the position type
+ * @param radius the maximum connection radius
+ * @property accessPointId the molecule id used to mark access-point nodes
  */
 class ConnectToAccessPoint<T, P : Position<P>>(radius: Double, val accessPointId: Molecule) :
     ConnectWithinDistance<T, P>(radius) {

@@ -35,7 +35,7 @@ import it.unibo.alchemist.model.geometry.Vector
 class CognitiveAgentCombineSteering<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     private val actions: List<SteeringAction<T, P>>,
     private val steerStrategy: SteeringStrategy<T, P>,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)

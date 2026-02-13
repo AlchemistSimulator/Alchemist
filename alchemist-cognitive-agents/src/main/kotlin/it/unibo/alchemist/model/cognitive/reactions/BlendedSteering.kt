@@ -19,11 +19,11 @@ import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
  *
  * @param T the concentration type.
  * @param environment the environment in which the pedestrian moves.
- * @property pedestrian the owner of this reaction.
+ * @param pedestrian the owner of this reaction.
  * @param timeDistribution the time distribution governing reaction execution.
  */
 open class BlendedSteering<T>(
     environment: Euclidean2DEnvironment<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
 ) : SteeringBehavior<T>(environment, pedestrian, timeDistribution, DistanceWeighted(environment, pedestrian.node))

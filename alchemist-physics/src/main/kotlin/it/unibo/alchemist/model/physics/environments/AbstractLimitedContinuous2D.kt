@@ -19,6 +19,7 @@ import java.io.Serial
  * Nodes cannot move to positions that are not allowed.
  *
  * @param T the concentration type
+ * @param incarnation the incarnation used to build nodes and concentrations
  */
 abstract class AbstractLimitedContinuous2D<T>(incarnation: Incarnation<T, Euclidean2DPosition>) :
     ContinuousPhysics2DEnvironment<T>(incarnation) {

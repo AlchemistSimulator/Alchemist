@@ -24,6 +24,6 @@ import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
  */
 class PrioritySteering<T>(
     environment: Euclidean2DEnvironment<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
 ) : SteeringBehavior<T>(environment, pedestrian, timeDistribution, Nearest(environment, pedestrian.node))

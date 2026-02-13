@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory
  *
  * @param T the concentration type
  * @param P the position type, extending [Position]
- * @property environment the simulation environment
+ * @param environment the simulation environment
  * @property scheduler the scheduler managing event execution
  */
 open class Engine<T, P : Position<out P>>(
@@ -529,7 +529,7 @@ open class Engine<T, P : Position<out P>>(
     /**
      * Represents an update affecting a specific reaction.
      *
-     * @param sourceReaction the reaction affected by this update
+     * @property sourceReaction the reaction affected by this update
      */
     private open inner class AbstractUpdateOnReaction(val sourceReaction: Actionable<T>) : Update() {
         override val reactionsToUpdate: Sequence<Actionable<T>> = sequenceOf(sourceReaction)
@@ -553,8 +553,8 @@ open class Engine<T, P : Position<out P>>(
     /**
      * Handles neighborhood changes, ensuring updates to relevant reactions.
      *
-     * @param sourceNode the node initiating the change
-     * @param targetNode the node affected by the change
+     * @property sourceNode the node initiating the change
+     * @property targetNode the node affected by the change
      */
     private open inner class NeighborhoodChanged(val sourceNode: Node<T>, val targetNode: Node<T>) : Update() {
         override val reactionsToUpdate: Sequence<Actionable<T>>

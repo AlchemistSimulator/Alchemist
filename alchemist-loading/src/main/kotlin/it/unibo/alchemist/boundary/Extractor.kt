@@ -14,9 +14,10 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Time
 
 /**
- * An object that is able to extract numeric informations from an Alchemist
+ * An object that is able to extract numeric information from an Alchemist
  * [Environment], given the current simulation [Time], the last executed
- * [Actionable] (usually a [Reaction] or null) and the current simulation step.
+ * [Actionable] (usually a [it.unibo.alchemist.model.Reaction] or null)
+ * and the current simulation step.
  *
  * @param E the type of extracted values
  */

@@ -103,33 +103,28 @@ val twoConnectedNodesAndOneIsolated = environmentWithNodesAt(ORIGIN, 3.0 to 0.0,
  */
 val twoSubnetworksWithTwoNodesEach = environmentWithNodesAt(ORIGIN, 3.0 to 0.0, 10.0 to 0.0, 10.0 to 3.0)
 
+private val positionsForTwoSubnets = arrayOf(
+    -3.0 to 3.0,
+    ORIGIN,
+    0.0 to 6.0,
+    3.0 to 3.0,
+    9.0 to 15.0,
+    12.0 to 12.0,
+    12.0 to 14.0,
+    15.0 to 15.0,
+)
+
 /**
  * Represents a network composed of two subnetworks,
  * each with different amount of nodes.
  */
-val twoSparseSubnetworks = environmentWithNodesAt(
-    ORIGIN,
-    12.0 to 12.0,
-    0.0 to 6.0,
-    12.0 to 14.0,
-    -3.0 to 3.0,
-    9.0 to 15.0,
-    3.0 to 3.0,
-    15.0 to 15.0,
-)
+val twoSparseSubnetworks = environmentWithNodesAt(*positionsForTwoSubnets)
 
 /**
  * Represents a network composed of three subnetworks,
  * each with different amount of nodes.
  */
 val threeSparseSubnetworks = environmentWithNodesAt(
-    ORIGIN,
-    12.0 to 12.0,
-    0.0 to 6.0,
-    12.0 to 14.0,
-    -3.0 to 3.0,
-    9.0 to 15.0,
-    3.0 to 3.0,
-    15.0 to 15.0,
+    *positionsForTwoSubnets,
     25.0 to 25.0,
 )

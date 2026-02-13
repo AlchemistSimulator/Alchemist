@@ -26,12 +26,12 @@ object TestEnvironmentsDiameterWithHopDistance {
         expected: Double,
     ) {
         require(index < nodes.size)
-        assertEquals<Double>(expected, allSubNetworksByNodeWithHopDistance()[nodes[index]]?.diameter!!)
+        assertEquals(expected, allSubNetworksByNodeWithHopDistance()[nodes[index]]?.diameter!!)
     }
 
     private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveHopDiameter(expected: Double) {
         assertFalse(isNetworkSegmented())
-        assertEquals<Double>(expected, allSubNetworksWithHopDistance().single().diameter)
+        assertEquals(expected, allSubNetworksWithHopDistance().single().diameter)
     }
 
     @Test

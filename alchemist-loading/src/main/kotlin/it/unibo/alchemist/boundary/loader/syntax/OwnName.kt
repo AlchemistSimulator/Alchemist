@@ -7,17 +7,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.kotlinscript
+package it.unibo.alchemist.boundary.loader.syntax
 
-import kotlin.script.experimental.annotations.KotlinScript
+import kotlin.reflect.KProperty
 
-/**
- * Base interface for Alchemist Kotlin DSL scripts.
- */
-@KotlinScript(
-    displayName = "Alchemist Kotlin DSL",
-    fileExtension = "alchemist.kts",
-    compilationConfiguration = AlchemistCompilationConfiguration::class,
-)
-interface AlchemistScript
-
+internal object OwnName {
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): String = property.name.lowercase()
+}

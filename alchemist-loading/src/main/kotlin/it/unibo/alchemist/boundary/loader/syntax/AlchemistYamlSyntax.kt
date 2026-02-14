@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,9 +9,7 @@
 
 package it.unibo.alchemist.boundary.loader.syntax
 
-import kotlin.reflect.KProperty
-
-internal object DocumentRoot : SyntaxElement {
+internal object AlchemistYamlSyntax : SyntaxElement {
     object JavaType : SyntaxElement {
         val type by OwnName
         val parameters by OwnName
@@ -228,11 +226,7 @@ internal object DocumentRoot : SyntaxElement {
                 optional(*validKeys.toTypedArray())
             },
         )
-}
 
-internal object OwnName {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): String = property.name.lowercase()
+    private fun validDescriptor(configuration: DescriptorBuilder.() -> Unit): SyntaxElement.ValidDescriptor =
+        DescriptorBuilder().apply(configuration).build()
 }
-
-private fun validDescriptor(configuration: DescriptorBuilder.() -> Unit): SyntaxElement.ValidDescriptor =
-    DescriptorBuilder().apply(configuration).build()

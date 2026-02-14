@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -22,7 +22,6 @@ dependencies {
 
     implementation(alchemist("engine"))
     implementation(alchemist("euclidean-geometry"))
-    implementation(alchemist("kotlinscript"))
     implementation(kotlin("reflect"))
     implementation(kotlin("script-runtime"))
     implementation(kotlin("scripting-common"))
@@ -47,6 +46,7 @@ dependencies {
     runtimeOnly(libs.scala.compiler)
 
     testImplementation(alchemist("engine"))
+    testImplementation(alchemist("kotlinscript"))
     testImplementation(alchemist("maps"))
     testImplementation(alchemist("test"))
     testImplementation(incarnation("sapere"))

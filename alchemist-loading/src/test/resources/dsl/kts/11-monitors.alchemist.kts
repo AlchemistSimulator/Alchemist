@@ -9,10 +9,8 @@
 
 package dsl.kts
 import another.location.SimpleMonitor
-import it.unibo.alchemist.boundary.dsl.Dsl.simulation
+import it.unibo.alchemist.boundary.kotlindsl.simulation2D
 
-simulation(SAPEREIncarnation<Euclidean2DPosition>()) {
-    monitors {
-        +SimpleMonitor<Any, Euclidean2DPosition>()
-    }
+simulation2D(SAPEREIncarnation<Euclidean2DPosition>()) {
+    monitor(SimpleMonitor())
 }

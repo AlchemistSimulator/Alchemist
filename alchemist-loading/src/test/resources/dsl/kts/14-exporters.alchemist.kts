@@ -9,21 +9,16 @@
 
 package dsl.kts
 
-val incarnation = ProtelisIncarnation<Euclidean2DPosition>()
-simulation(incarnation) {
-    exporter {
-        type = CSVExporter(
-            "test_export_interval",
-            4.0,
-        )
-        data(
-            Time(),
-            moleculeReader(
-                "default_module:default_program",
-                null,
-                CommonFilters.NOFILTER.filteringPolicy,
-                emptyList(),
-            ),
+import it.unibo.alchemist.boundary.kotlindsl.simulation
+
+simulation(ProtelisIncarnation()) {
+    exportWith(CSVExporter("test_export_interval", 4.0)) {
+        - it.unibo.alchemist.boundary.extractors.Time()
+        - moleculeReader(
+            "default_module:default_program",
+            null,
+            CommonFilters.NOFILTER.filteringPolicy,
+            emptyList(),
         )
     }
 }

@@ -84,8 +84,8 @@ object Environments {
                     }
                 }
                 else -> {
-                    result[centerNode] = subnetwork
                     // The subnetwork is already computed
+                    result[centerNode] = subnetwork
                     subnetwork.diameter = max(
                         subnetwork.diameter,
                         paths.row(centerIndex).asSequence()

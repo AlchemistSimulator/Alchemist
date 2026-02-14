@@ -15,8 +15,13 @@ import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.protelis.ProtelisIncarnation
+import it.unibo.alchemist.util.Environments.allSubNetworksByNode
+import it.unibo.alchemist.util.Environments.allSubNetworksByNodeWithHopDistance
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
 import it.unibo.alchemist.util.Environments.networkDiameter
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
@@ -42,6 +47,20 @@ fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =
 fun <T> Environment<T, *>.mustBeSegmented() {
     assertTrue(isNetworkSegmented())
     assertTrue(networkDiameter().isNaN())
+}
+
+/**
+ *
+ */
+fun <T> Environment<T, *>.mustHaveCoherentSubnetworks() {
+    val networks = allSubNetworksByNodeWithHopDistance()
+    assertEquals(nodes.size, networks.size)
+    assertEquals(nodes.sorted(), networks.values.flatMap { it.nodes }.distinct().sorted())
+    networks.forEach { (pivot, network) ->
+        network.nodes.forEach { connectedNode ->
+            assertContains(networks[connectedNode]?.nodes.orEmpty(), pivot)
+        }
+    }
 }
 
 /**
@@ -128,3 +147,15 @@ val threeSparseSubnetworks = environmentWithNodesAt(
     *positionsForTwoSubnets,
     25.0 to 25.0,
 )
+
+infix fun <T> Environment<T, *>.mustHave(expected: Subnetworks) =
+    assertEquals(expected.count, allSubNetworksByNode().values.distinct().size)
+
+infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveDiameter(expected: Double) {
+    assertFalse(isNetworkSegmented())
+    assertEquals(
+        expected,
+        allSubNetworksByNode().values.toSet().single().diameter,
+        absoluteTolerance = 10e-12,
+    )
+}

@@ -10,6 +10,7 @@
 package it.unibo.alchemist.util
 
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.util.Environments.allSubNetworksByNodeWithHopDistance
 import it.unibo.alchemist.util.Environments.allSubNetworksWithHopDistance
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
@@ -18,16 +19,14 @@ import kotlin.test.assertFalse
 import org.junit.jupiter.api.Test
 
 object TestEnvironmentsDiameterWithHopDistance {
-    private infix fun <T> Environment<T, *>.withHopDistanceMustHave(expected: Subnetworks) =
+    private infix fun <T> Environment<T, *>.mustHave(expected: Subnetworks) =
         assertEquals<Int>(expected.count, allSubNetworksWithHopDistance().size)
 
-    private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveHopDiameter(
-        index: Int,
-        expected: Double,
-    ) {
-        require(index < nodes.size)
-        assertEquals(expected, allSubNetworksByNodeWithHopDistance()[nodes[index]]?.diameter!!)
-    }
+    private fun <T> Environment<T, *>.diameterOfSubnetworkWithNode(id: Int): Double =
+        diameterOfSubnetworkWithNode(getNodeByID(id))
+
+    private fun <T> Environment<T, *>.diameterOfSubnetworkWithNode(node: Node<T>) =
+        allSubNetworksByNodeWithHopDistance().getValue(node).diameter
 
     private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveHopDiameter(expected: Double) {
         assertFalse(isNetworkSegmented())
@@ -59,9 +58,11 @@ object TestEnvironmentsDiameterWithHopDistance {
     fun `a network of three nodes with one isolated should be considered segmented`() {
         with(twoConnectedNodesAndOneIsolated) {
             mustBeSegmented()
-            withHopDistanceMustHave(2.subnetworks())
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 1.0)
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(2, 0.0)
+            mustHaveCoherentSubnetworks()
+            mustHave(2.subnetworks())
+            assertEquals(1.0, diameterOfSubnetworkWithNode(0))
+            assertEquals(1.0, diameterOfSubnetworkWithNode(1))
+            assertEquals(0.0, diameterOfSubnetworkWithNode(2))
         }
     }
 
@@ -69,9 +70,11 @@ object TestEnvironmentsDiameterWithHopDistance {
     fun `a network of four nodes connected by two should be considered segmented with the same diameter`() {
         with(twoSubnetworksWithTwoNodesEach) {
             mustBeSegmented()
-            withHopDistanceMustHave(2.subnetworks())
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 1.0)
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(2, 1.0)
+            mustHaveCoherentSubnetworks()
+            mustHave(2.subnetworks())
+            nodes.forEach {
+                assertEquals(1.0, diameterOfSubnetworkWithNode(it))
+            }
         }
     }
 
@@ -90,9 +93,8 @@ object TestEnvironmentsDiameterWithHopDistance {
     fun `two sparse subnetworks should be considered segmented`() {
         with(twoSparseSubnetworks) {
             mustBeSegmented()
-            withHopDistanceMustHave(2.subnetworks())
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 2.0)
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(1, 1.0)
+            mustHaveCoherentSubnetworks()
+            mustHave(2.subnetworks())
         }
     }
 
@@ -100,10 +102,10 @@ object TestEnvironmentsDiameterWithHopDistance {
     fun `three sparse subnetworks should be considered segmented`() {
         with(threeSparseSubnetworks) {
             mustBeSegmented()
-            withHopDistanceMustHave(3.subnetworks())
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(0, 2.0)
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(1, 1.0)
-            specificNodeInASegmentedNetworkShouldHaveHopDiameter(nodeCount - 1, 0.0)
+            mustHaveCoherentSubnetworks()
+            mustHave(3.subnetworks())
+            assertEquals(2.0, diameterOfSubnetworkWithNode(nodes.first()))
+            assertEquals(0.0, diameterOfSubnetworkWithNode(nodes.last()))
         }
     }
 }

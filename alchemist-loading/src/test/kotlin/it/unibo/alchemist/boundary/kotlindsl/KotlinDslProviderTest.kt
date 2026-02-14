@@ -25,11 +25,13 @@ class KotlinDslProviderTest {
     @Test
     fun `a simple textual Kotlin DSL script should load`() {
         val script = """
-            simulation(SAPEREIncarnation()) {
-                networkModel = ConnectWithinDistance(5.0)
-                deployments {
-                    deploy(point(0.0, 0.0))
-                    deploy(point(0.0, 1.0))
+            simulation2D(SAPEREIncarnation()) {
+                environment {
+                    networkModel(ConnectWithinDistance(5.0))
+                    deployments {
+                        deploy(point(0.0, 0.0))
+                        deploy(point(0.0, 1.0))
+                    }
                 }
             }
         """.trimIndent()

@@ -137,14 +137,20 @@ internal class DSLLoader<T, P : Position<P>, I : Incarnation<T, P>>(
 
                 override fun <V : Serializable> variable(variable: Variable<out V>) =
                     VariableDelegateFactory { _, property ->
-                        check(property.name !in variables.keys) {
-                            "Error: variable '${property.name}' defined multiple times. " +
-                                "The first definition binds to: ${variables[property.name]}"
+                        var registeredVariable = variables[property.name]
+                        if (registeredVariable == null) {
+                            logger.debug("Registering variable '{}' with definition: {}", property.name, variable)
+                            variables += property.name to variable
+                            registeredVariable = variable
                         }
-                        variables += property.name to variable
+                        check(registeredVariable == variable) {
+                            "Error: variable '${property.name}' was defined multiple times. " +
+                                "The first definition binds to: $registeredVariable, " +
+                                "while the second definition attempts to bind to: $variable."
+                        }
                         ReadOnlyProperty { _, _ ->
                             @Suppress("UNCHECKED_CAST")
-                            values.getOrDefault(property.name, variable.default) as V
+                            values.getOrDefault(property.name, registeredVariable.default) as V
                         }
                     }
 

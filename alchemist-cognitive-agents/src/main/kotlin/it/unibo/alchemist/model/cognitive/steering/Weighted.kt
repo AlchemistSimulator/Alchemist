@@ -18,15 +18,25 @@ import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
- * A [SteeringStrategy] performing a weighted sum of steering actions (see [computeNextPosition]).
+ * SteeringStrategy that computes the agent's next position as a weighted sum of steering actions.
  *
- * @param environment
- *          the environment in which the node moves.
- * @param node
- *          the owner of the steering actions combined by this strategy.
- * @param weight
- *          lambda used to assign a weight to each steering action: the higher the weight, the greater the
- *          importance of the action.
+ * Actions are partitioned into group steering actions (instances of [GroupSteeringAction]) and
+ * non-group steering actions. For each partition the strategy computes a weighted average of
+ * the actions' next positions using the provided [weight] lambda; the two resulting vectors are
+ * then summed (with unitary weight) to obtain the final displacement.
+ *
+ * The [weight] parameter is an extension lambda on [SteeringAction] invoked as `action.weight()`.
+ * It must return a numeric weight (a non-negative [Double]) used to compute the weighted average.
+ * If the total weight of a partition is zero, the implementation falls back to the first action's
+ * next position; if there are no actions at all, the environment origin is returned.
+ *
+ * The strategy also computes a target position by selecting the closest target among
+ * [SteeringActionWithTarget] actions; if none are present, the current node position is returned.
+ *
+ * @param T the concentration type of the simulation.
+ * @param environment the environment in which the node moves.
+ * @param node the owner of the steering actions combined by this strategy.
+ * @param weight an extension lambda that assigns a numeric weight to each steering action.
  */
 open class Weighted<T>(
     private val environment: Euclidean2DEnvironment<T>,

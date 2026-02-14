@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.Position
  * A surrogate for [Simulation].
  * @param T the concentration type
  * @param P the position
+ * @property origin the original [Simulation] wrapped by this surrogate
  */
 @GraphQLDescription("The simulation")
 data class SimulationSurrogate<T, P : Position<out P>>(@param:GraphQLIgnore override val origin: Simulation<T, P>) :

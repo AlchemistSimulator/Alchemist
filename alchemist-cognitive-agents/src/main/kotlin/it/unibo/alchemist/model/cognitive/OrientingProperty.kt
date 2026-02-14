@@ -18,7 +18,14 @@ import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.geometry.navigationgraph.NavigationGraph
 
 /**
- * A node's capability to orient.
+ * A node's orienting capability.
+ *
+ * @param T the concentration type.
+ * @param P the [Position] and [Vector] type used by the environment.
+ * @param A the transformation type supported by shapes in this environment.
+ * @param L the type of landmarks in the cognitive map.
+ * @param N the type of navigation-area shapes used to derive landmarks.
+ * @param E the type of edges in the navigation graph.
  */
 interface OrientingProperty<T, P, A, L, N, E> :
     NodeProperty<T>
@@ -28,40 +35,38 @@ interface OrientingProperty<T, P, A, L, N, E> :
           L : ConvexShape<P, A>,
           N : ConvexShape<P, A> {
     /**
-     * The knowledge degree of the agent concerning the environment. This is a Double value in [0, 1] describing the
-     * percentage of environment the agent is familiar with prior to the start of the simulation (thus it does not
-     * take into account the knowledge the pedestrian will gain during it, namely the [volatileMemory]).
+     * The degree of prior knowledge about the environment, in [0.0, 1.0].
      */
     val knowledgeDegree: Double
 
-    /**
-     * The environment in which the node moves.
-     */
+    /** The environment in which the node moves. */
     val environment: EnvironmentWithGraph<*, T, P, A, N, E>
 
     /**
-     * The cognitive map of the agent. It's a graph composed of landmarks (elements of the environment easy to
-     * remember due to their uniqueness) and spatial relations between them. It's modeled as a [NavigationGraph].
+     * The agent's cognitive map: a [NavigationGraph] of landmarks and spatial relations.
      */
     val cognitiveMap: NavigationGraph<P, A, L, E>
 
     /**
-     * The volatile memory of the agent: it models the ability to remember areas of the environment already visited
-     * since the start of the simulation. Each area is paired with the number of visits. Areas are assumed to be
-     * represented as [ConvexShape]s, as in [NavigationGraph]s.
+     * Volatile memory tracking visited areas paired with the number of visits.
      */
     val volatileMemory: MutableMap<ConvexShape<P, A>, Int>
 
     /**
-     * Registers a visit to the provided [area] in the agent's [volatileMemory].
+     * Registers a visit to the provided [area] in the volatile memory.
+     *
+     * @param area the area that has been visited.
      */
     fun <M : ConvexShape<P, A>> registerVisit(area: M) {
         volatileMemory[area] = (volatileMemory[area] ?: 0) + 1
     }
 
     /**
-     * Creates a landmark entirely contained in the given area. If such area contains one or more destinations, the
-     * returned landmark must contain at least one of them.
+     * Creates a landmark entirely contained in the given [area]. If [area] contains one or more destinations,
+     * the returned landmark must contain at least one of them.
+     *
+     * @param area the navigation-area used to create the landmark.
+     * @return a landmark of type [L] contained in the provided area.
      */
     fun createLandmarkIn(area: N): L
 }

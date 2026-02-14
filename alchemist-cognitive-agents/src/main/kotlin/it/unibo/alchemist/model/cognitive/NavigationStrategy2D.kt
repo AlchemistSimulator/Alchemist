@@ -13,7 +13,9 @@ import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
- * A [NavigationStrategy] in a bidimensional euclidean space.
+ * A [NavigationStrategy] specialized for bidimensional Euclidean space.
+ *
+ * @param T the concentration type.
  */
 typealias NavigationStrategy2D<T, L, R, N, E> =
     NavigationStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, L, R, N, E>

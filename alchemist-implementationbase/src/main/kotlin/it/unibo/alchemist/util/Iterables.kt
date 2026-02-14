@@ -17,12 +17,11 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 object Iterables {
     /**
-     * Fisher–Yates shuffle algorithm
-     * using a [RandomGenerator].
+     * Fisher–Yates shuffle algorithm using a [RandomGenerator].
      * More information [on Wikipedia](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle).
      *
-     * @param randomGenerator
-     *          the simulation {@link RandomGenerator}.
+     * @param R the element type
+     * @param randomGenerator the simulation random generator used to shuffle
      */
     fun <R> Iterable<R>.shuffled(randomGenerator: RandomGenerator): Iterable<R> = toMutableList().apply {
         for (i in size - 1 downTo 1) {

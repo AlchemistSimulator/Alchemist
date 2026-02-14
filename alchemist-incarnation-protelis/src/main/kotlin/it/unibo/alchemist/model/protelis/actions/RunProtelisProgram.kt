@@ -229,7 +229,13 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         isComputationalCycleComplete = false
     }
 
-    @Suppress("UnusedPrivateMember")
+    /**
+     * Called reflectively by the Java serialization subsystem during deserialization.
+     * This method is intentionally private and may appear unused to static analyzers.
+     *
+     * After default deserialization, recreate transient components tied to the device.
+     */
+    @Suppress("unused")
     private fun readObject(stream: ObjectInputStream) {
         stream.defaultReadObject()
         // After deserialization, recreate the components using the device

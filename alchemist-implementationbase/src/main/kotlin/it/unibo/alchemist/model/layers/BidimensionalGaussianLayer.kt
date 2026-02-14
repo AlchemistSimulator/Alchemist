@@ -15,8 +15,13 @@ import it.unibo.alchemist.util.math.BidimensionalGaussian
 /**
  * A [Layer] based on a [2D gaussian function][BidimensionalGaussian] and an optional baseline value.
  *
- * @param centerX x coord of the layer's center.
- * @param centerY y coord of the layer's center.
+ * @param P the position type
+ * @param baseline the baseline value added to the gaussian (default: 0.0)
+ * @property centerX the x coordinate of the layer's center
+ * @property centerY the y coordinate of the layer's center
+ * @param norm normalization (amplitude) factor of the gaussian function
+ * @param sigmaX standard deviation along the X axis
+ * @param sigmaY standard deviation along the Y axis (defaults to [sigmaX])
  */
 open class BidimensionalGaussianLayer<P : Position2D<P>>
 @JvmOverloads

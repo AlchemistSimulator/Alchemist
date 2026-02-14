@@ -12,11 +12,11 @@ package it.unibo.alchemist.model.cognitive
 import it.unibo.alchemist.model.NodeProperty
 
 /**
- * A node capability to walk.
+ * Capability that enables a node to walk.
+ *
+ * @param T the concentration type.
  */
 interface WalkingPedestrianProperty<T> : NodeProperty<T> {
-    /**
-     * The node's walking speed.
-     */
+    /** The node's walking speed. */
     val walkingSpeed: Double
 }

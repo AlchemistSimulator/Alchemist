@@ -18,7 +18,8 @@ import it.unibo.alchemist.model.Node
 /**
  * A GraphQL surrogate for a [Node] object.
  * @param T The type of the concentration.
- * @param id The id of the node.
+ * @property id The id of the node.
+ * @property origin the original Node wrapped by this surrogate
  */
 @GraphQLDescription("A node in the environment")
 data class NodeSurrogate<T>(@param:GraphQLIgnore override val origin: Node<T>, val id: Int = origin.id) :

@@ -706,9 +706,10 @@ internal object SimulationModel {
                 incarnationFactory: ReactionComponentFunction<T, P, R>,
                 genericFactory: (Context, Any?) -> Result<R>?,
             ): Result<R>? {
-                fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = runCatching {
-                    makeWith(simulationRNG, environment, node, timeDistribution, actionable, parameter)
-                }
+                fun <R> create(withParameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> =
+                    runCatching {
+                        makeWith(simulationRNG, environment, node, timeDistribution, actionable, withParameter)
+                    }
                 return when (parameter) {
                     is String -> create(parameter, incarnationFactory)
                     is Map<*, *> ->

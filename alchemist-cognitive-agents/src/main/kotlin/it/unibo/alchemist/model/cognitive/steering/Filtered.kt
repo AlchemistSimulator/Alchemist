@@ -15,21 +15,20 @@ import it.unibo.alchemist.model.cognitive.SteeringStrategy
 import it.unibo.alchemist.model.geometry.Vector
 
 /**
- * [SteeringStrategy] decorator applying a [filter] to the list of steering actions (see [computeNextPosition]).
+ * Decorator for a [SteeringStrategy] that filters the provided steering actions before
+ * delegating the combination logic to the wrapped strategy.
  *
- * @param steerStrategy
- *          computeNextPosition is delegated to this strategy.
- * @param filter
- *          the filter to apply on the list of steering actions.
+ * @param T the concentration type.
+ * @param P the [Position] type used by the strategy.
+ * @param steerStrategy the underlying strategy to which the filtered actions are delegated.
+ * @param filter the filter function applied to the actions list before delegation.
  */
 open class Filtered<T, P>(
     private val steerStrategy: SteeringStrategy<T, P>,
     private val filter: List<SteeringAction<T, P>>.() -> List<SteeringAction<T, P>>,
 ) : SteeringStrategy<T, P> by steerStrategy
     where P : Position<P>, P : Vector<P> {
-    /**
-     * Delegated to [steerStrategy] after [filter]ing the given [actions].
-     */
+    /** Delegates to [steerStrategy] after applying [filter] to [actions]. */
     override fun computeNextPosition(actions: List<SteeringAction<T, P>>) =
         steerStrategy.computeNextPosition(actions.filter())
 }

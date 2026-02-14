@@ -30,8 +30,10 @@ import kotlin.math.pow
  * [Andresen et al.](https://doi.org/10.1080/23249935.2018.1432717), see [weight].
  *
  * @param T the concentration type.
- * @param L the type of landmarks of the pedestrian's cognitive map.
- * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
+ * @param L the landmark shape type used by the pedestrian's cognitive map.
+ * @param R the relation/edge type used by the pedestrian's cognitive map.
+ * @property action the navigation action driving this strategy.
+ * @property knownImpasseWeight weight assigned to known impasses (see [impasseFactor]).
  */
 open class Explore<T, L : Euclidean2DConvexShape, R>(
     override val action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,

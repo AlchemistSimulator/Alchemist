@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -91,12 +91,12 @@ sealed interface Actionable<T> :
     /**
      * Updates the scheduling of this reaction.
      *
-     * @param hasBeenExecuted
-     * true if the reaction have just been executed.
      * @param currentTime
      * the current [Time] of execution. This is mandatory in
      * order to correctly compute the time shift of an
      * already-scheduled reaction
+     * @param hasBeenExecuted
+     * true if the reaction have just been executed.
      * @param environment
      * the current environment
      */

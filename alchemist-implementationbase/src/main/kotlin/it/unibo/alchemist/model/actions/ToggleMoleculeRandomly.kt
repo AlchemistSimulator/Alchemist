@@ -19,12 +19,12 @@ import org.apache.commons.math3.random.RandomGenerator
  * * if it is present, then with probability [odds] it's removed from [node];
  * * otherwise, with probability [odds] it is inserted in [node] with the provided [concentration].
  *
- * @param <T> concentration type
+ * @param T the concentration type
  * @param node the node containing the molecule to toggle
- * @param randomGenerator random number generator to use
+ * @property randomGenerator random number generator to use
  * @param molecule the molecule to toggle
  * @param concentration the concentration to use for the "on" state
- * @param odds probability to toggle the molecule every time the action is triggered
+ * @property odds probability to toggle the molecule every time the action is triggered
  */
 open class ToggleMoleculeRandomly<T>(
     node: Node<T>,

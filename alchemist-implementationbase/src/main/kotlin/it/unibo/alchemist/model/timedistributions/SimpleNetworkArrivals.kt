@@ -176,11 +176,11 @@ class SimpleNetworkArrivals<T> private constructor(
         }
 
     /** Computes the packet size, defaulting to 1.0 if not specified or invalid. */
+    @Suppress("UnreachableCode") // Detekt false positive. Remove once fixed.
     val packetSize: Double
         get() = constantPacketSize
-            ?: incarnation.getProperty(node, packetSizeMolecule, packetSizeProperty).takeIf {
-                it.isFinite() && it >= 0
-            } ?: 1.0
+            ?: incarnation.getProperty(node, packetSizeMolecule, packetSizeProperty).takeIf { it.isFinite() && it >= 0 }
+            ?: 1.0
 
     /** Computes the propagation delay from constants or properties. */
     val propagationDelay: Double

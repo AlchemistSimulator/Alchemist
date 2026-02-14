@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -188,16 +188,19 @@ interface Node<T> :
      */
     companion object {
         /**
-         * returns a [NodeProperty] of the provided type [C].
-         * @param [C] type of capability
-         * @return a capability of the provided type [C]
+         * Returns the node property of the reified type [C].
+         *
+         * @receiver the node from which to retrieve the property.
+         * @return the property of type [C].
+         * @throws IllegalArgumentException if no compatible property is present.
          */
         inline fun <T, reified C : NodeProperty<T>> Node<T>.asProperty(): C = asProperty(C::class)
 
         /**
-         * returns a [NodeProperty] of the provided type [C] or null if the node does not have a compatible property.
-         * @param [C] type of capability
-         * @return if present, a capability of the provided type [C]
+         * Returns the node property of the reified type [C], or null if the node does not have a compatible property.
+         *
+         * @receiver the node from which to retrieve the property.
+         * @return the property of type [C] if present, or null otherwise.
          */
         inline fun <T, reified C : NodeProperty<T>> Node<T>.asPropertyOrNull(): C? = when {
             properties.size <= 1 -> properties.firstOrNull() as? C

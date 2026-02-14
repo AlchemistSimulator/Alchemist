@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.cognitive.navigation
 
-import it.unibo.alchemist.model.cognitive.NavigationStrategy
 import it.unibo.alchemist.model.cognitive.actions.NavigationAction2D
 import it.unibo.alchemist.model.geometry.ConvexPolygon
 import it.unibo.alchemist.model.geometry.Euclidean2DConvexShape
@@ -17,27 +16,25 @@ import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DPassage
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
- * A [NavigationStrategy] allowing to reach a (static) destination.
- * The client can specify a list of [knownDestinations] (see [Pursue]) and [unknownDestinations] (see
- * [GoalOrientedExploration]).
- * The pedestrian will try to reach the closest known destination for which a valid path leading there is
- * known, but in case another destination is found along the way (either known or unknown), the latter will
- * be approached instead of the chosen known destination. To put it in another way, this behavior mixes
- * [ReachKnownDestination] and [GoalOrientedExploration].
+ * Navigation strategy that aims to reach a static destination.
+ *
+ * The strategy mixes known-target routing ([ReachKnownDestination]) and exploratory
+ * goal-oriented behavior ([GoalOrientedExploration]). The pedestrian prefers the
+ * closest known destination for which a path exists, but will divert to any
+ * destination encountered along the way (either known or unknown).
  *
  * @param T the concentration type.
- * @param L the type of landmarks of the pedestrian's cognitive map.
- * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
+ * @param L the landmark shape type used by the pedestrian's cognitive map.
+ * @param R the relation/edge type used by the pedestrian's cognitive map.
+ * @param action the navigation action driving this strategy.
+ * @param knownDestinations a list of known static destinations (may be empty).
+ * @param unknownDestinations optional unknown destinations to consider while exploring.
  */
 open class ReachDestination<T, L : Euclidean2DConvexShape, R>(
     action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
-    /**
-     * Known destinations, can be empty.
-     */
+    /** Known destinations, can be empty. */
     private val knownDestinations: List<Euclidean2DPosition>,
-    /**
-     * Unknown destinations, defaults to an empty list.
-     */
+    /** Unknown destinations, defaults to an empty list. */
     private val unknownDestinations: List<Euclidean2DPosition> = emptyList(),
 ) : GoalOrientedExploration<T, L, R>(
     action,

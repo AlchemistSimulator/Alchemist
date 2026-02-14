@@ -1,4 +1,5 @@
 incarnation: protelis
+
 variables:
   zoom: &zoom
     formula: 0.1
@@ -14,7 +15,9 @@ variables:
   people_count: &people_count
     type: GeometricVariable
     parameters: [300, 50, 500, 9]
+
 seeds: { simulation: *seed, scenario: *scenario_seed}
+
 export:
   - type: CSVExporter
     parameters:
@@ -36,8 +39,11 @@ export:
         precision: 2
         aggregators: [ mean, max, min, variance, median ]
         value-filter: onlyfinite
+
 environment: { type: ImageEnvironment, parameters: [*image_path, *zoom] }
+
 network-model: { type: ObstaclesBreakConnection, parameters: [5] }
+
 deployments:
   type: Rectangle
   parameters: [*people_count, 62, 15, 95, 200]

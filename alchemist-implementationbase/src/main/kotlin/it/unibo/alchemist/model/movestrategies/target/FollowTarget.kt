@@ -18,14 +18,15 @@ import org.danilopianini.util.regex.Patterns
 import org.slf4j.LoggerFactory
 
 /**
- * This strategy reads the value of a "target" molecule and tries to interpret
+ * Strategy that reads the value of a "target" molecule and tries to interpret
  * it as a coordinate.
  *
- * @param environment the environment
- * @param node the node
- * @param targetMolecule the target molecule
- * @param <T> Concentration type
-</T> */
+ * @param T the concentration type
+ * @param P the position type
+ * @property environment the environment
+ * @property node the node
+ * @property targetMolecule the target molecule used to determine the destination
+ */
 open class FollowTarget<T, P : Position<P>>(
     protected val environment: Environment<T, P>,
     private val node: Node<T>,

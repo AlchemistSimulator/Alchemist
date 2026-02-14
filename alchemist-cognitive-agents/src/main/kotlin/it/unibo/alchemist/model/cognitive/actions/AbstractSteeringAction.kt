@@ -33,7 +33,7 @@ abstract class AbstractSteeringAction<T, P, A>(
     /**
      * The pedestrian property of the owner of this action.
      */
-    protected open val pedestrian: PedestrianProperty<T>,
+    protected val pedestrian: PedestrianProperty<T>,
 ) : AbstractMoveNode<T, P>(environment, pedestrian.node),
     SteeringAction<T, P>
     where P : Position<P>,

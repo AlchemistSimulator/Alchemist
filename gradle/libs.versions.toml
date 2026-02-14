@@ -11,7 +11,7 @@ graphstream = "2.0"
 junit = "6.0.2"
 konf = "1.1.2"
 kotest = "6.1.3"
-kotlin = "2.2.21"
+kotlin = "2.3.10"
 kotlinx-coroutines = "1.10.2"
 ktor = "3.3.3"
 mockito = "5.21.0"
@@ -35,6 +35,11 @@ appdirs = "net.harawata:appdirs:1.5.0"
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
 caffeine = "com.github.ben-manes.caffeine:caffeine:3.2.3"
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
+compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-multiplatform" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform" }
 classgraph = "io.github.classgraph:classgraph:4.8.184"
 conrec = "org.danilopianini:conrec:0.1.1"
 dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
@@ -53,7 +58,7 @@ gson = "com.google.code.gson:gson:2.13.2"
 gson-extras = "org.danilopianini:gson-extras:3.3.0"
 guava = "com.google.guava:guava:33.5.0-jre"
 javalib-java7 = "org.danilopianini:javalib-java7:0.6.1"
-java-quality-assurance-plugin = "org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin:1.163.0"
+java-quality-assurance-plugin = "org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin:1.166.0"
 jgit = "org.eclipse.jgit:org.eclipse.jgit:7.5.0.202512021534-r"
 jgrapht-core = "org.jgrapht:jgrapht-core:1.5.2"
 jirf = "org.danilopianini:jirf:0.4.37"
@@ -80,7 +85,7 @@ kotlin-multiplatform-plugin = { module = "org.jetbrains.kotlin.multiplatform:org
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
 kotlin-power-assert-plugin = { module = "org.jetbrains.kotlin.plugin.power-assert:org.jetbrains.kotlin.plugin.power-assert.gradle.plugin", version.ref = "kotlin" }
-kotlin-quality-assurance-plugin = "org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin:0.100.0"
+kotlin-quality-assurance-plugin = "org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin:1.0.1-dev03.9adca76"
 kotlin-react = { module = "org.jetbrains.kotlin-wrappers:kotlin-react", version.ref = "react" }
 kotlin-react-dom = { module = "org.jetbrains.kotlin-wrappers:kotlin-react-dom", version.ref = "react" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
@@ -132,6 +137,13 @@ svgsalamander = "guru.nidi.com.kitfox:svgSalamander:1.1.3"
 trove4j = "net.sf.trove4j:trove4j:3.0.3"
 
 [bundles]
+compose = [
+    "compose-components-resources",
+    "compose-foundation",
+    "compose-material",
+    "compose-runtime",
+    "compose-ui"
+]
 graphhopper = [ "graphhopper-core" ]
 graphql-server = [ "graphql-server", "graphql-server-ktor" ]
 kotlin-react = [ "kotlin-react", "kotlin-react-dom" ]

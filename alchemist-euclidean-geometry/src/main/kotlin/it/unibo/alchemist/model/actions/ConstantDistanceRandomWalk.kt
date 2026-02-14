@@ -17,19 +17,19 @@ import org.apache.commons.math3.distribution.DiracDeltaDistribution
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Moves for [distance] toward a uniformly random chosen direction at a constant [speed],
- * then changes direction and walks another [distance], and so on.
+ * Walks a fixed [distance] in a uniformly random direction at the given [speed],
+ * then repeats the move by selecting a new random direction.
  *
- * Automatically changes direction on impact with obstacles
- * if the [environment] supports them.
+ * The walker automatically changes direction on impact with obstacles when the
+ * provided [environment] supports obstacle handling.
  *
- * @param <T> concentration type
- * @param environment environment containing the node
- * @param node the node to move
- * @param reaction the reaction containing this action
- * @param randomGenerator random number generator to use for the decisions
- * @param distance the distance to travel before picking another one
- * @param speed the speed
+ * @param T the concentration type.
+ * @param node the node to move.
+ * @param reaction the reaction that contains this action.
+ * @param environment the environment containing the node.
+ * @param randomGenerator the random generator used to pick directions.
+ * @param distance the distance to travel before choosing a new direction.
+ * @param speed the walking speed.
  */
 class ConstantDistanceRandomWalk<T>(
     node: Node<T>,

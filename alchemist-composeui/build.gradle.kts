@@ -1,5 +1,7 @@
+import dev.detekt.gradle.Detekt
 import it.unibo.alchemist.build.devServer
 import it.unibo.alchemist.build.webCommonConfiguration
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 /*
@@ -28,11 +30,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.ui)
-                implementation(compose.foundation)
-                implementation(compose.material)
-                implementation(compose.components.resources)
+                implementation(libs.bundles.compose)
             }
         }
     }
@@ -47,4 +45,9 @@ publishing.publications.withType<MavenPublication>().configureEach {
             }
         }
     }
+}
+
+// exclude files in build from Detekt
+tasks.withType<Detekt>().configureEach {
+    exclude("**/alchemist_composeui/**")
 }

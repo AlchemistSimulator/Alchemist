@@ -18,7 +18,9 @@ import it.unibo.alchemist.model.TerminationPredicate
  * If the simulation is uninitialized (thus, the environment returns null when asked for the simulation),
  * this predicate always returns false.
  *
- * @param lastStep the last step.
+ * @param T the concentration type
+ * @param P the position type
+ * @property lastStep the last step at which the simulation should terminate
  */
 data class StepCount<T, P : Position<P>>(val lastStep: Long) : TerminationPredicate<T, P> {
     override fun invoke(environment: Environment<T, P>): Boolean = environment.simulation.step >= lastStep

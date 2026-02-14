@@ -29,7 +29,7 @@ open class CognitiveAgentSeek2D<T, P, A>(
      */
     protected val environment: EuclideanEnvironment<T, P>,
     reaction: Reaction<T>,
-    final override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     /**
      * The position the node wants to reach.
      */

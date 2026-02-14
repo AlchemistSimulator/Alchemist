@@ -20,9 +20,15 @@ import it.unibo.alchemist.model.Time
 
 /**
  * Abstract implementation of a [Exporter].
- * @param samplingInterval the sampling time, defaults to [DEFAULT_INTERVAL].
+ *
+ * @param T the concentration type
+ * @param P the position type
+ * @param samplingInterval the sampling time, defaults to [DEFAULT_INTERVAL]
  */
 abstract class AbstractExporter<T, P : Position<P>>(private val samplingInterval: Double) : Exporter<T, P> {
+    /**
+     * The list of bound data extractors.
+     */
     final override lateinit var dataExtractors: List<Extractor<*>>
         private set
 

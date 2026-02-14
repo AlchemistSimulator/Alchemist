@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -26,8 +26,6 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempDirectory
 import kotlin.reflect.KClass
 import org.slf4j.LoggerFactory
-
-private lateinit var outputPrintStream: PrintStream
 
 /**
  * Writes data provided by a number of extractors to a CSV file. The CSV uses '#' as the comment character.
@@ -56,6 +54,8 @@ constructor(
     val fileExtension: String = "csv",
     private val appendTime: Boolean = false,
 ) : AbstractExporter<T, P>(interval) {
+
+    private lateinit var outputPrintStream: PrintStream
 
     override fun setup(environment: Environment<T, P>) {
         if (!File(exportPath).exists()) {

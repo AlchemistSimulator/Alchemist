@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -18,13 +18,12 @@ import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
- * [Filtered] strategy considering only the group steering action and the non-group steering action whose targets are
- * nearest to the node's position. The two actions are combined using [DistanceWeighted] strategy.
+ * Strategy that considers the group steering action (if present) and the nearest
+ * non-group steering action, then combines them using a [DistanceWeighted] strategy.
  *
- * @param environment
- *          the environment in which the node moves.
- * @param node
- *          the owner of the steering action this strategy belongs to.
+ * @param T the concentration type.
+ * @param environment the environment in which the node moves.
+ * @param node the owner of the steering action this strategy belongs to.
  */
 class Nearest<T>(environment: Euclidean2DEnvironment<T>, node: Node<T>) :
     Filtered<T, Euclidean2DPosition>(
@@ -40,8 +39,9 @@ class Nearest<T>(environment: Euclidean2DEnvironment<T>, node: Node<T>) :
     ) {
     private companion object {
         /**
-         * Picks the [SteeringActionWithTarget] whose target is nearest to the [node]'s current position, or the first
-         * action of the list if none of them has a defined target. If the list is empty, null is returned.
+         * Picks the [SteeringActionWithTarget] whose target is nearest to the [node]'s current position,
+         * or the first action of the list if none of the actions has a defined target.
+         * Returns null for an empty list.
          */
         private fun <T> List<SteeringAction<T, Euclidean2DPosition>>.pickNearestOrFirst(
             environment: Environment<T, Euclidean2DPosition>,

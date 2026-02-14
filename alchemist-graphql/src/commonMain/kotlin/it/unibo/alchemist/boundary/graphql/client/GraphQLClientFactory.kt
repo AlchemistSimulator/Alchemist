@@ -12,15 +12,16 @@ package it.unibo.alchemist.boundary.graphql.client
 import it.unibo.alchemist.boundary.graphql.utils.DefaultGraphQLSettings
 
 /**
- * Factory for [GraphQLClient]s.
+ * Factory for creating [GraphQLClient] instances.
  */
 object GraphQLClientFactory {
     /**
      * Returns a lightweight [GraphQLClient] capable of executing queries and mutations.
-     * Note: this client is not capable of executing subscriptions.
+     * This client does not support subscriptions.
      *
-     * @param host the host of the GraphQL server
-     * @param port the port of the GraphQL server
+     * @param host the GraphQL server host.
+     * @param port the GraphQL server port.
+     * @return a [GraphQLClient] instance configured without subscription support.
      */
     fun basicClient(
         host: String = DefaultGraphQLSettings.DEFAULT_HOST,
@@ -30,8 +31,9 @@ object GraphQLClientFactory {
     /**
      * Returns a [GraphQLClient] capable of executing queries, mutations and subscriptions.
      *
-     * @param host the host of the GraphQL server
-     * @param port the port of the GraphQL server
+     * @param host the GraphQL server host.
+     * @param port the GraphQL server port.
+     * @return a [GraphQLClient] instance configured with subscription support.
      */
     fun subscriptionClient(
         host: String = DefaultGraphQLSettings.DEFAULT_HOST,

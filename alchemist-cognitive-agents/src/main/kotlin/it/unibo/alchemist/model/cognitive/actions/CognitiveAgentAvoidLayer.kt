@@ -38,7 +38,7 @@ class CognitiveAgentAvoidLayer
 constructor(
     environment: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
-    override val pedestrian: PedestrianProperty<Number>,
+    pedestrian: PedestrianProperty<Number>,
     targetMolecule: Molecule,
     private val viewDepth: Double = Double.POSITIVE_INFINITY,
 ) : AbstractLayerAction(environment, reaction, pedestrian, targetMolecule) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory
  *
  * @param T the concentration type
  * @param P the position type, extending [Position]
- * @property environment the simulation environment
+ * @param environment the simulation environment
  * @property scheduler the scheduler managing event execution
  */
 open class Engine<T, P : Position<out P>>(
@@ -121,12 +121,6 @@ open class Engine<T, P : Position<out P>>(
         }
     }
 
-    /**
-     * Executes an action while holding the status lock.
-     *
-     * @param action the action to execute
-     * @return the result of the action
-     */
     private fun <R> doOnStatus(action: () -> R): R = statusLock.run {
         lock()
         try {
@@ -232,17 +226,15 @@ open class Engine<T, P : Position<out P>>(
      */
     protected open fun newStatus(next: Status): CompletableFuture<Unit> {
         val future = CompletableFuture<Unit>()
-        schedule(
-            CheckedRunnable {
-                doOnStatus {
-                    if (next.isReachableFrom(status)) {
-                        status = next
-                        lockForStatus(next).releaseAll()
-                    }
-                    future.complete(null)
+        schedule {
+            doOnStatus {
+                if (next.isReachableFrom(status)) {
+                    status = next
+                    lockForStatus(next).releaseAll()
                 }
-            },
-        )
+                future.complete(null)
+            }
+        }
         return future
     }
 
@@ -537,10 +529,17 @@ open class Engine<T, P : Position<out P>>(
     /**
      * Represents an update affecting a specific reaction.
      *
-     * @param sourceReaction the reaction affected by this update
+     * @property sourceReaction the reaction affected by this update
      */
     private open inner class AbstractUpdateOnReaction(val sourceReaction: Actionable<T>) : Update() {
         override val reactionsToUpdate: Sequence<Actionable<T>> = sequenceOf(sourceReaction)
+    }
+
+    /** Handles the addition of a reaction. */
+    private inner class ReactionAddition(source: Actionable<T>) : AbstractUpdateOnReaction(source) {
+        override fun performChanges() {
+            this@Engine.scheduleReaction(sourceReaction)
+        }
     }
 
     /** Handles the removal of a reaction. */
@@ -551,18 +550,11 @@ open class Engine<T, P : Position<out P>>(
         }
     }
 
-    /** Handles the addition of a reaction. */
-    private inner class ReactionAddition(source: Actionable<T>) : AbstractUpdateOnReaction(source) {
-        override fun performChanges() {
-            this@Engine.scheduleReaction(sourceReaction)
-        }
-    }
-
     /**
      * Handles neighborhood changes, ensuring updates to relevant reactions.
      *
-     * @param sourceNode the node initiating the change
-     * @param targetNode the node affected by the change
+     * @property sourceNode the node initiating the change
+     * @property targetNode the node affected by the change
      */
     private open inner class NeighborhoodChanged(val sourceNode: Node<T>, val targetNode: Node<T>) : Update() {
         override val reactionsToUpdate: Sequence<Actionable<T>>

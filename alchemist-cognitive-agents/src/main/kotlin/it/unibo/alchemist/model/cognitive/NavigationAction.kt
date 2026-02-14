@@ -18,16 +18,17 @@ import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 
 /**
- * A [SteeringAction] allowing a node to navigate an environment consciously (e.g. without getting stuck in
- * U-shaped obstacles). Names are inspired to indoor environments, but this interface works for outdoor ones as well.
+ * A [SteeringAction] allowing a node to navigate an environment consciously (for example, avoiding
+ * getting stuck in U-shaped obstacles). Names are inspired by indoor environments, but this
+ * interface also works for outdoor scenarios.
  *
  * @param T the concentration type.
- * @param P the [Position] type and [Vector] type for the space the node is into.
- * @param A the transformations supported by the shapes in this space.
- * @param L the type of landmarks of the node's cognitive map.
- * @param R the type of edges of the node's cognitive map, representing the [R]elations between landmarks.
- * @param N the type of nodes of the navigation graph provided by the [environment].
- * @param E the type of edges of the navigation graph provided by the [environment].
+ * @param P the [Position] and [Vector] type used by the space the node occupies.
+ * @param A the transformation type supported by the shapes in this space.
+ * @param L the type of landmarks in the node's cognitive map.
+ * @param R the type of edges in the node's cognitive map, representing relations between landmarks.
+ * @param N the type of navigation-area shapes provided by the [environment].
+ * @param E the type of edges (passages) of the navigation graph provided by the [environment].
  */
 interface NavigationAction<T, P, A, L, R, N, E> :
     SteeringAction<T, P>
@@ -35,48 +36,42 @@ interface NavigationAction<T, P, A, L, R, N, E> :
           A : Transformation<P>,
           L : ConvexShape<P, A>,
           N : ConvexShape<P, A> {
-    /**
-     * The owner of this action.
-     */
+    /** The owner of this action. */
     val navigatingNode: Node<T>
 
-    /**
-     * The [navigatingNode]'s orientingProperty.
-     */
+    /** The [navigatingNode]'s orienting property. */
     val orientingProperty get() = navigatingNode.asProperty<T, OrientingProperty<T, P, A, L, N, E>>()
 
-    /**
-     * The environment the [navigatingNode] is into.
-     */
+    /** The environment the [navigatingNode] is in. */
     val environment: EnvironmentWithGraph<*, T, P, A, N, E>
 
-    /**
-     * The position of the [navigatingNode] in the [environment].
-     */
+    /** The position of the [navigatingNode] in the [environment]. */
     val pedestrianPosition: P
 
-    /**
-     * The room (= environment's area) the [navigatingNode] is into.
-     */
+    /** The room (environment area) the [navigatingNode] is in, if any. */
     val currentRoom: N?
 
     /**
-     * @returns the doors (= passages/edges) the node can perceive.
+     * Returns the doors (passages/edges) the node can perceive.
+     *
+     * @return a [List] of visible door edges of type [E].
      */
     fun doorsInSight(): List<E>
 
     /**
-     * Moves the node across the provided [door], which must be among [doorsInSight].
+     * Moves the node across the provided [door], which must be among the doors returned by [doorsInSight].
+     *
+     * @param door the door (edge) to cross.
      */
     fun crossDoor(door: E)
 
     /**
      * Moves the node to the given final [destination], which must be inside [currentRoom].
+     *
+     * @param destination the final destination position inside the current room.
      */
     fun moveToFinal(destination: P)
 
-    /**
-     * Stops moving the node.
-     */
+    /** Stops the node by moving it to its current position. */
     fun stop() = moveToFinal(pedestrianPosition)
 }

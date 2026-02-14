@@ -19,7 +19,8 @@ import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
 /**
  * A strategy that follows a [it.unibo.alchemist.model.Route].
  *
- * @param reaction the associated reaction
+ * @param T the concentration type handled by nodes using this strategy
+ * @property reaction the associated [Reaction] used to obtain time for trace progression
  */
 class FollowTrace<T>(private val reaction: Reaction<*>) :
     AbstractStrategyWithGPS(),

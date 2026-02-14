@@ -14,5 +14,7 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * A capability representing a pedestrian's individual characteristics in a 2D space.
+ *
+ * @param T the concentration type.
  */
 typealias Human2DProperty<T> = HumanProperty<T, Euclidean2DPosition, Euclidean2DTransformation>

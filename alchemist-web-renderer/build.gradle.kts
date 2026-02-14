@@ -10,6 +10,7 @@
 import Libs.alchemist
 import Libs.incarnation
 import com.google.devtools.ksp.gradle.KspAATask
+import dev.detekt.gradle.Detekt
 
 plugins {
     id("kotlin-multiplatform-convention")
@@ -83,4 +84,10 @@ publishing.publications.withType<MavenPublication>().configureEach {
             }
         }
     }
+}
+
+// exclude files in build from Detekt
+tasks.withType<Detekt>().configureEach {
+    exclude("**/boundary/graphql/client/**")
+    exclude("**/io/kotest/**")
 }

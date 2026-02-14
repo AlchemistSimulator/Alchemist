@@ -24,10 +24,9 @@ import kotlinx.coroutines.withTimeout
  * This variable loads any [JSR-233](https://archive.is/PGdk8) language available in the classpath.
  *
  * @constructor builds a new JSR223Variable given a language name and a script.
- *
- * @param language can be the name of the language, the file extension, or its mime type
- * @param formula the script that will get interpreted
- * @param timeout how long should the interpreter be allowed to compute before giving up, in ms. Defaults to 1000ms.
+ * @property language the language name, file extension, or mime type
+ * @property formula the script that will get interpreted
+ * @property timeout how long should the interpreter be allowed to compute before giving up, in ms. Defaults to 1000ms
  */
 data class JSR223Variable
 @JvmOverloads

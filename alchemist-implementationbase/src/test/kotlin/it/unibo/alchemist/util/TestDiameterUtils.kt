@@ -15,8 +15,13 @@ import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.protelis.ProtelisIncarnation
+import it.unibo.alchemist.util.Environments.allSubNetworksByNode
+import it.unibo.alchemist.util.Environments.allSubNetworksByNodeWithHopDistance
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
 import it.unibo.alchemist.util.Environments.networkDiameter
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
@@ -42,6 +47,20 @@ fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =
 fun <T> Environment<T, *>.mustBeSegmented() {
     assertTrue(isNetworkSegmented())
     assertTrue(networkDiameter().isNaN())
+}
+
+/**
+ *
+ */
+fun <T> Environment<T, *>.mustHaveCoherentSubnetworks() {
+    val networks = allSubNetworksByNodeWithHopDistance()
+    assertEquals(nodes.size, networks.size)
+    assertEquals(nodes.sorted(), networks.values.flatMap { it.nodes }.distinct().sorted())
+    networks.forEach { (pivot, network) ->
+        network.nodes.forEach { connectedNode ->
+            assertContains(networks[connectedNode]?.nodes.orEmpty(), pivot)
+        }
+    }
 }
 
 /**
@@ -103,33 +122,40 @@ val twoConnectedNodesAndOneIsolated = environmentWithNodesAt(ORIGIN, 3.0 to 0.0,
  */
 val twoSubnetworksWithTwoNodesEach = environmentWithNodesAt(ORIGIN, 3.0 to 0.0, 10.0 to 0.0, 10.0 to 3.0)
 
+private val positionsForTwoSubnets = arrayOf(
+    -3.0 to 3.0,
+    ORIGIN,
+    0.0 to 6.0,
+    3.0 to 3.0,
+    9.0 to 15.0,
+    12.0 to 12.0,
+    12.0 to 14.0,
+    15.0 to 15.0,
+)
+
 /**
  * Represents a network composed of two subnetworks,
  * each with different amount of nodes.
  */
-val twoSparseSubnetworks = environmentWithNodesAt(
-    ORIGIN,
-    12.0 to 12.0,
-    0.0 to 6.0,
-    12.0 to 14.0,
-    -3.0 to 3.0,
-    9.0 to 15.0,
-    3.0 to 3.0,
-    15.0 to 15.0,
-)
+val twoSparseSubnetworks = environmentWithNodesAt(*positionsForTwoSubnets)
 
 /**
  * Represents a network composed of three subnetworks,
  * each with different amount of nodes.
  */
 val threeSparseSubnetworks = environmentWithNodesAt(
-    ORIGIN,
-    12.0 to 12.0,
-    0.0 to 6.0,
-    12.0 to 14.0,
-    -3.0 to 3.0,
-    9.0 to 15.0,
-    3.0 to 3.0,
-    15.0 to 15.0,
+    *positionsForTwoSubnets,
     25.0 to 25.0,
 )
+
+infix fun <T> Environment<T, *>.mustHave(expected: Subnetworks) =
+    assertEquals(expected.count, allSubNetworksByNode().values.distinct().size)
+
+infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveDiameter(expected: Double) {
+    assertFalse(isNetworkSegmented())
+    assertEquals(
+        expected,
+        allSubNetworksByNode().values.toSet().single().diameter,
+        absoluteTolerance = 10e-12,
+    )
+}

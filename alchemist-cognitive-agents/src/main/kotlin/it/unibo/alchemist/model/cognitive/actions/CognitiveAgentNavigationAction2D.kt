@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.cognitive.NavigationAction
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.ConvexPolygon
@@ -27,14 +28,19 @@ private typealias AbstractNavigationAction2D<T, L, R, N, E> =
  * Implementation of a [NavigationAction2D]. This action accepts an [Euclidean2DEnvironmentWithGraph] whose graph
  * contains [ConvexPolygon]al nodes and [Euclidean2DPassage]s as edges.
  *
- * @param T the concentration type.
- * @param L the type of landmarks of the node's cognitive map.
- * @param R the type of edges of the node's cognitive map, representing the [R]elations between landmarks.
+ * @param T the concentration type
+ * @param L the type of landmarks in the node's cognitive map
+ * @param R the type of edges in the node's cognitive map representing relations
+ * @property environment the Euclidean environment with navigation graph
+ * @param reaction the reaction executing this action
+ * @param pedestrian the owner pedestrian property
+ * @param wallRepulsionFactor factor used to push nodes away from passage walls
+ * @property DEFAULT_WALL_REPULSION_FACTOR default value for the wall repulsion factor
  */
 open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
-    override val environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
+    final override val environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     /**
      * When crossing [Euclidean2DPassage]s, the node is pushed away from the wall of
      * a quantity equal to (this factor * the width of the passage). This is performed to prevent

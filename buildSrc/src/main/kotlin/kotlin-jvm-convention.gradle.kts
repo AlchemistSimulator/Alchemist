@@ -64,3 +64,9 @@ javaQA {
         enabled = false
     }
 }
+
+tasks.withType<Checkstyle>().configureEach {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+}

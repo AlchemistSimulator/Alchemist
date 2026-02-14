@@ -10,38 +10,31 @@
 package it.unibo.alchemist.util
 
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.util.Environments.allSubNetworks
 import it.unibo.alchemist.util.Environments.allSubNetworksByNode
 import it.unibo.alchemist.util.Environments.isNetworkSegmented
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.math.hypot
+import kotlin.math.sqrt
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import org.junit.jupiter.api.Test
 
 object TestEnvironmentsDiameter {
-    private infix fun <T> Environment<T, *>.mustHave(expected: Subnetworks) =
-        assertEquals<Int>(expected.count, allSubNetworksByNode().size)
 
-    private infix fun <T> Environment<T, *>.mustNotBeSegmentedAndHaveDiameter(expected: Double) {
-        assertFalse(isNetworkSegmented())
-        assertEquals<Double>(
-            expected,
-            allSubNetworksByNode().values.single().diameter.roundToTwoDecimals(),
-        )
+    private const val EXPECTED_DIAMETER_LONG = 8.48528137423857
+    private const val EXPECTED_DIAMETER_SHORT = 6.324555320336759
+
+    private fun <T> Environment<T, *>.subnetworksDiametersShouldBe(diameters: List<Double>) {
+        assertEquals(diameters.sorted(), allSubNetworks().map { it.diameter }.sorted())
     }
 
-    private fun <T> Environment<T, *>.specificNodeInASegmentedNetworkShouldHaveDiameter(index: Int, expected: Double) {
-        require(index < nodes.size)
-        val diameter = allSubNetworksByNode()[nodes[index]]?.diameter
-        if (diameter != null) {
-            assertEquals<Double>(
-                expected,
-                diameter.roundToTwoDecimals(),
-            )
-        }
-    }
+    private fun <T> Environment<T, *>.subnetworksDiametersShouldBe(vararg diameters: Double) =
+        subnetworksDiametersShouldBe(diameters.toList())
 
-    private fun Double.roundToTwoDecimals(): Double = BigDecimal(this).setScale(2, RoundingMode.HALF_UP).toDouble()
+    private fun <T> Environment<T, *>.networkDiameterShouldBe(diameter: Double) =
+        subnetworksDiametersShouldBe(listOf(diameter))
 
     @Test
     fun `environments with a single node have diameter 0`() =
@@ -51,7 +44,8 @@ object TestEnvironmentsDiameter {
     fun `two connected nodes should have diameter 3`() = twoConnectedNodes mustNotBeSegmentedAndHaveDiameter 3.0
 
     @Test
-    fun `a triangle formation network is not segmented`() = nodesInATriangle mustNotBeSegmentedAndHaveDiameter 4.24
+    fun `a triangle formation network is not segmented`() =
+        nodesInATriangle mustNotBeSegmentedAndHaveDiameter 3 * sqrt(2.0)
 
     @Test
     fun `three nodes in a row have diameter 8`() = threeNodesInARow mustNotBeSegmentedAndHaveDiameter 8.0
@@ -68,8 +62,7 @@ object TestEnvironmentsDiameter {
         with(twoConnectedNodesAndOneIsolated) {
             mustBeSegmented()
             mustHave(2.subnetworks())
-            specificNodeInASegmentedNetworkShouldHaveDiameter(0, 3.0)
-            specificNodeInASegmentedNetworkShouldHaveDiameter(2, 0.0)
+            subnetworksDiametersShouldBe(listOf(0.0, 3.0))
         }
     }
 
@@ -78,19 +71,18 @@ object TestEnvironmentsDiameter {
         with(twoSubnetworksWithTwoNodesEach) {
             mustBeSegmented()
             mustHave(2.subnetworks())
-            specificNodeInASegmentedNetworkShouldHaveDiameter(0, 3.0)
-            specificNodeInASegmentedNetworkShouldHaveDiameter(2, 3.0)
+            subnetworksDiametersShouldBe(listOf(3.0, 3.0))
         }
     }
 
     @Test
     fun `a network of three nodes added dynamically and not in order should adapt accordingly`() =
         with(singleNodeEnvironment()) {
-            mustNotBeSegmentedAndHaveDiameter(expected = 0.0)
-            addNodeAt(1.0 to 4.0)
-            mustNotBeSegmentedAndHaveDiameter(expected = 4.12)
-            addNodeAt(-4.0 to -2.0)
-            mustNotBeSegmentedAndHaveDiameter(expected = 8.60)
+            networkDiameterShouldBe(0.0)
+            addNodeAt(1.0 to 1.0)
+            networkDiameterShouldBe(hypot(1.0, 1.0))
+            addNodeAt(-1.0 to -1.0)
+            networkDiameterShouldBe(2 * sqrt(2.0))
         }
 
     @Test
@@ -98,8 +90,7 @@ object TestEnvironmentsDiameter {
         with(twoSparseSubnetworks) {
             mustBeSegmented()
             mustHave(2.subnetworks())
-            specificNodeInASegmentedNetworkShouldHaveDiameter(0, 8.49)
-            specificNodeInASegmentedNetworkShouldHaveDiameter(1, 6.32)
+            subnetworksDiametersShouldBe(EXPECTED_DIAMETER_SHORT, EXPECTED_DIAMETER_LONG)
         }
     }
 
@@ -108,9 +99,7 @@ object TestEnvironmentsDiameter {
         with(threeSparseSubnetworks) {
             mustBeSegmented()
             mustHave(3.subnetworks())
-            specificNodeInASegmentedNetworkShouldHaveDiameter(0, 8.49)
-            specificNodeInASegmentedNetworkShouldHaveDiameter(1, 6.32)
-            specificNodeInASegmentedNetworkShouldHaveDiameter(nodeCount - 1, 0.0)
+            subnetworksDiametersShouldBe(EXPECTED_DIAMETER_SHORT, EXPECTED_DIAMETER_LONG, 0.0)
         }
     }
 }

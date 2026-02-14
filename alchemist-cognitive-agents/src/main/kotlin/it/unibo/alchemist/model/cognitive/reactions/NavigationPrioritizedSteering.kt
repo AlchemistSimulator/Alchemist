@@ -19,25 +19,26 @@ import it.unibo.alchemist.model.geometry.ConvexPolygon
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
- * A [SteeringBehavior] using [SinglePrevalent] steering strategy and accepting a collection of actions
- * containing a single [NavigationAction2D], which is used as the prevalent one.
+ * A [SteeringBehavior] that prioritizes a single navigation action using the [SinglePrevalent] strategy.
+ * The provided actions must contain a single [NavigationAction2D], used as the prevalent action.
  *
- * @param T concentration type
- * @param N type of nodes of the environment's graph.
+ * @param T the concentration type.
+ * @param N the polygon type used by the environment's navigation graph.
+ * @param environment the environment containing the navigation graph.
+ * @property pedestrian the owner pedestrian's property.
+ * @param timeDistribution the time distribution that schedules reaction execution.
+ * @param toleranceAngle tolerance angle in degrees for the SinglePrevalent strategy.
+ * @param alpha smoothing alpha for exponential smoothing used by SinglePrevalent.
  */
 open class NavigationPrioritizedSteering<T, N : ConvexPolygon>
 @JvmOverloads
 constructor(
     environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
-    /**
-     * Tolerance angle in degrees (see [SinglePrevalent]).
-     */
+    /** Tolerance angle in degrees (see [SinglePrevalent]). */
     toleranceAngle: Double = Math.toDegrees(SinglePrevalent.DEFAULT_TOLERANCE_ANGLE),
-    /**
-     * Alpha value for exponential smoothing (see [SinglePrevalent]).
-     */
+    /** Alpha value for exponential smoothing (see [SinglePrevalent]). */
     alpha: Double = SinglePrevalent.DEFAULT_ALPHA,
 ) : SteeringBehavior<T>(
     environment,
@@ -54,7 +55,7 @@ constructor(
 ) {
     private companion object {
         /**
-         * @returns the only navigation action contained in the list or throws an exception.
+         * Returns the only navigation action contained in the list or throws an exception.
          */
         private fun <T, M : ConvexPolygon> ActionList<T>.singleNavigationAction(): NaviAction<T, M> = this
             .filterIsInstance<NaviAction<T, M>>()

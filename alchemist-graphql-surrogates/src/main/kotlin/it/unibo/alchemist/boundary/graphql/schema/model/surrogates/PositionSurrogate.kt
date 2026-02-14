@@ -41,8 +41,8 @@ interface PositionSurrogate {
  * the use of a full [Position] or [PositionSurrogate] when
  * client executes operations that require a position as parameter.
  *
- * @param coordinates the coordinates of the position.
- * @param dimensions the dimension of the position.
+ * @property coordinates the coordinates of the position.
+ * @property dimensions the dimension of the position.
  */
 @GraphQLDescription("Position in space, used as input parameter")
 data class PositionInput(val coordinates: List<Double>, val dimensions: Int = coordinates.size)

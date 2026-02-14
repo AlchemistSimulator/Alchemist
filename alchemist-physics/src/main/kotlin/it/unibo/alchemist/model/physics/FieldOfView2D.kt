@@ -15,14 +15,16 @@ import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 /**
  * A sphere of influence representing the sight of a node in the Euclidean world.
  *
+ * @param T
+ *          the concentration type
  * @param environment
- *          the environment where this sphere of influence is.
+ *          the environment where this sphere of influence is defined
  * @param owner
- *          the node who owns this sphere of influence.
+ *          the node that owns this sphere of influence
  * @param distance
- *          the distance in meters at which the sight arrives.
+ *          the maximum sight distance in meters
  * @param aperture
- *          the amplitude of the field of view in radians.
+ *          the amplitude of the field of view in radians
  */
 class FieldOfView2D<T>(environment: Physics2DEnvironment<T>, owner: Node<T>, distance: Double, aperture: Double) :
     InfluenceSphere2D<T>(environment, owner, environment.shapeFactory.circleSector(distance, aperture, 0.0))

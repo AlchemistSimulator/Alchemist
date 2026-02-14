@@ -18,19 +18,20 @@ import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 
 /**
- * Move the node towards the target position as fast as possible.
+ * Moves the node towards the target position as fast as possible.
  *
- * @param environment
- *          the environment inside which the node moves.
- * @param pedestrian
- *          the owner of this action.
- * @param target
- *          the position the node moves towards.
+ * @param T the concentration type.
+ * @param P the position type.
+ * @param A the transformation type compatible with [P].
+ * @param environment the environment in which the node moves.
+ * @param reaction the reaction executing this action.
+ * @property pedestrian the owner pedestrian property.
+ * @param target the position the node moves towards.
  */
 open class CognitiveAgentSeek<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     target: P,
 ) : CognitiveAgentArrive<T, P, A>(environment, reaction, pedestrian, 0.0, 0.0, target)
     where P : Position<P>, P : Vector<P>,

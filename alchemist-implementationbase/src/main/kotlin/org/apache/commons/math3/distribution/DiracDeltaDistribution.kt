@@ -25,14 +25,6 @@ import org.apache.commons.math3.random.RandomGenerator
 class DiracDeltaDistribution constructor(val value: Double) :
     RealDistribution,
     java.io.Serializable {
-    /**
-     * This constructor is meant for reflection compatibility only.
-     * [randomGenerator] is unused.
-     */
-    constructor(
-        @Suppress("UNUSED_PARAMETER") randomGenerator: RandomGenerator? = null,
-        value: Double,
-    ) : this(value)
 
     override fun probability(x: Double) = if (x == value) 1.0 else 0.0
 

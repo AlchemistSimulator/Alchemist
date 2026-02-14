@@ -21,16 +21,18 @@ import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
 import it.unibo.alchemist.model.movestrategies.speed.GloballyConstantSpeed
 
 /**
- * It's an [AbstractConfigurableMoveNode] in the Euclidean world, which provides a default [interpolatePositions]
- * that is accurate with respect to the target given and the current maximum walking distance.
+ * An [AbstractConfigurableMoveNode] specialized for Euclidean spaces.
  *
- * @param <T> Concentration type
- * @param <P> position type
- * @param environment the [Environment] which is executing the simulation
- * @param node the [Node] which is executing the current [Action]
- * @param routingStrategy the [RoutingStrategy] selected for this [Action]
- * @param targetSelectionStrategy the [TargetSelectionStrategy] selected for this [Action]
- * @param speedSelectionStrategy the [SpeedSelectionStrategy] selected for this [Action]
+ * This class provides a default [interpolatePositions] implementation that
+ * moves the node toward a target without exceeding a provided maximum step length.
+ *
+ * @param T the concentration type.
+ * @param P the [Position] type used for spatial coordinates and vectors.
+ * @param environment the [Environment] executing the simulation.
+ * @param node the [Node] executing this [Action].
+ * @param routingStrategy the [RoutingStrategy] selected for this action.
+ * @param targetSelectionStrategy the [TargetSelectionStrategy] selected for this action.
+ * @param speedSelectionStrategy the [SpeedSelectionStrategy] selected for this action.
  */
 open class EuclideanConfigurableMoveNode<T, P>(
     environment: Environment<T, P>,
@@ -46,13 +48,15 @@ open class EuclideanConfigurableMoveNode<T, P>(
     speedSelectionStrategy,
 ) where P : Position<P>, P : Vector<P> {
     /**
-     * @param environment the [Environment] which is executing the simulation
-     * @param node the [Node] which is executing the current [Action]
-     * @param reaction the reaction which is executing the current [Action]
-     * @param routingStrategy the [RoutingStrategy] selected for this [Action]
-     * @param targetSelectionStrategy the [TargetSelectionStrategy] selected for this [Action]
-     * @param speed the maximum speed set to a [GloballyConstantSpeed] instance
-     * @return an [AbstractConfigurableMoveNode] implementation using a [GloballyConstantSpeed]
+     * Secondary constructor that uses a [GloballyConstantSpeed].
+     *
+     * @param environment the [Environment] executing the simulation.
+     * @param node the [Node] executing this [Action].
+     * @param reaction the reaction executing this [Action].
+     * @param routingStrategy the [RoutingStrategy] selected for this action.
+     * @param targetSelectionStrategy the [TargetSelectionStrategy] selected for this action.
+     * @param speed the maximum speed used to create a [GloballyConstantSpeed].
+     * @return an [AbstractConfigurableMoveNode] implementation using [GloballyConstantSpeed].
      */
     constructor(
         environment: Environment<T, P>,
@@ -70,8 +74,13 @@ open class EuclideanConfigurableMoveNode<T, P>(
     )
 
     /**
-     * @returns the next relative position reached by the node. If [maxWalk] is greater than the distance to
-     * the [target], the node positions precisely on [target] without going farther.
+     * Computes the next position toward [target], constrained by [maxWalk].
+     *
+     * @param current the current position.
+     * @param target the target position to reach.
+     * @param maxWalk the maximum distance that can be traveled in this step.
+     * @return the next relative position as a [P]. If [maxWalk] is greater than the distance
+     *         to the [target], the returned position is exactly [target].
      */
     override fun interpolatePositions(current: P, target: P, maxWalk: Double): P =
         (target - current).coerceAtMost(maxWalk)

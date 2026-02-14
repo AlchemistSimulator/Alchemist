@@ -16,12 +16,10 @@ import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 /**
  * A sphere of influence in the Euclidean world.
  *
- * @param environment
- *          the environment where this sphere of influence is.
- * @param owner
- *          the node who owns this sphere of influence.
- * @param shape
- *          the shape of this sphere of influence
+ * @param T the concentration type
+ * @param environment the environment where this sphere of influence exists
+ * @param owner the node that owns this sphere
+ * @param shape the geometric shape defining the sphere of influence
  */
 open class InfluenceSphere2D<T>(
     private val environment: Physics2DEnvironment<T>,

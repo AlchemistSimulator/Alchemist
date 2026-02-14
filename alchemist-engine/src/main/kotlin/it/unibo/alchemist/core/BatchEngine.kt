@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory
  * This class implements a simulation. It offers a wide number of static
  * factories to ease the creation process.
  *
- * @param <T> concentration type
- * @param <P> [Position] type
-</P></T> */
+ * @param T concentration type
+ * @param P [Position] type
+ */
 class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
     private val outputReplayStrategy: OutputReplayStrategy
     private val executeLock = Any()
@@ -124,9 +124,8 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
                 val futureResults = tasks.awaitAll()
                 val newStep = step + batchSize.toLong()
                 currentStep = newStep
-                val resultsOrderedByTime =
-                    futureResults
-                        .sortedWith(Comparator.comparing { result: TaskResult -> result.eventTime })
+                val resultsOrderedByTime = futureResults
+                    .sortedWith(Comparator.comparing { result: TaskResult -> result.eventTime })
                 currentTime = if (maxSlidingWindowTime > time) maxSlidingWindowTime else time
                 doStepDoneAllMonitors(resultsOrderedByTime)
             } catch (e: InterruptedException) {
@@ -218,7 +217,6 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
     /**
      * Safely set simulation status.
      */
-    @SuppressWarnings("ForbiddenVoid")
     override fun newStatus(next: Status): CompletableFuture<Unit> {
         synchronized(this) { return super.newStatus(next) }
     }
@@ -249,12 +247,9 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
             Reply.name -> Reply
             else ->
                 error(
-                    """
-                        Invalid output reply strategy $this. Available choices: ${listOf(
-                        Aggregate,
-                        Reply,
-                    ).map { it.name }}    
-                    """.trimIndent(),
+                    "Invalid output reply strategy $this. Available choices: ${
+                        listOf(Aggregate, Reply).map { it.name }
+                    }",
                 )
         }
     }

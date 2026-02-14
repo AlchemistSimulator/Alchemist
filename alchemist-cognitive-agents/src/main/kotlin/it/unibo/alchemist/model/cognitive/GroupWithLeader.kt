@@ -12,11 +12,14 @@ package it.unibo.alchemist.model.cognitive
 import it.unibo.alchemist.model.Node
 
 /**
- * A group with a special member acting as a leader.
+ * A group that designates a special member as the leader.
+ *
+ * @param T the concentration type.
+ * @param N the concrete node type used for the leader.
  */
 interface GroupWithLeader<T, N : Node<T>> : Group<T> {
     /**
-     * The leader of the group.
+     * The node acting as the group's leader.
      */
     val leader: N
 }

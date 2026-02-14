@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.geometry.Vector
 abstract class AbstractGroupSteeringAction<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     GroupSteeringAction<T, P>
     where P : Position<P>,

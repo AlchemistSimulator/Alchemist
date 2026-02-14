@@ -19,11 +19,12 @@ object Neighborhoods {
     /**
      * Creates a [SimpleNeighborhood].
      *
-     * @param environment The environment of the neighborhood.
-     * @param center The center of the neighborhood.
-     * @param neighbors The neighbors in the neighborhood, defaults to empty.
-     *
-     * @return The newly created [SimpleNeighborhood].
+     * @param T the concentration type
+     * @param P the position type
+     * @param environment the environment of the neighborhood
+     * @param center the center node of the neighborhood
+     * @param neighbors the neighbors in the neighborhood (defaults to empty)
+     * @return the newly created [SimpleNeighborhood]
      */
     @JvmStatic @JvmOverloads
     fun <T, P : Position<P>> make(

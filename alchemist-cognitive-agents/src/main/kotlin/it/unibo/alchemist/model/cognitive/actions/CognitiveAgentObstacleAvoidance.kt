@@ -21,19 +21,17 @@ import kotlin.reflect.jvm.jvmName
 /**
  * Move the agent avoiding potential obstacles in its path.
  *
- * @param environment
- *          the environment inside which the node moves.
- * @param reaction
- *          the reaction which executes this action.
- * @param pedestrian
- *          the owner of this action.
- * @param proximityRange
- *          the distance at which an obstacle is perceived by the node.
+ * @param W the obstacle type (2D)
+ * @param T the concentration type
+ * @property environment the 2D environment with obstacles
+ * @property reaction the steering behavior reaction executing this action
+ * @param pedestrian the owner pedestrian property
+ * @property proximityRange the distance at which an obstacle is perceived by the node
  */
 class CognitiveAgentObstacleAvoidance<W : it.unibo.alchemist.model.Obstacle2D<Euclidean2DPosition>, T>(
     private val environment: Environment2DWithObstacles<W, T>,
     override val reaction: SteeringBehavior<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     private val proximityRange: Double,
 ) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentObstacleAvoidance<W, T> {

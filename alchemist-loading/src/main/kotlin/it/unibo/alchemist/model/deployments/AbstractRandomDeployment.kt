@@ -15,13 +15,12 @@ import java.util.stream.Stream
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * @param environment
- * the [Environment]
- * @param randomGenerator
- * the [RandomGenerator]
- * @param nodeCount
- * the number of nodes
- * @param <P>
+ * Abstract base for random deployments of nodes inside an environment.
+ *
+ * @param P the position type
+ * @property environment the simulation environment
+ * @property randomGenerator the random number generator
+ * @property nodeCount the number of nodes to deploy
  */
 abstract class AbstractRandomDeployment<P : Position<out P>>(
     protected val environment: Environment<*, P>,

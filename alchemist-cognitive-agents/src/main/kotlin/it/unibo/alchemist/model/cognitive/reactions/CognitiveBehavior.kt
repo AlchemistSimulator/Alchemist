@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -20,12 +20,13 @@ import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.reactions.AbstractReaction
 
 /**
- * Reaction representing the cognitive behavior of a pedestrian.
+ * Reaction representing a pedestrian's cognitive behavior.
  *
- * @param node
- *          the owner of this reaction.
- * @param timeDistribution
- *          the time distribution according to this the reaction executes.
+ * @param T the concentration type.
+ * @param V the vector type used by the node's position/geometry.
+ * @param A the transformation type compatible with [V].
+ * @param node the owner of this reaction.
+ * @param timeDistribution the time distribution governing reaction execution.
  */
 class CognitiveBehavior<T, V, A>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
     AbstractReaction<T>(node, timeDistribution)

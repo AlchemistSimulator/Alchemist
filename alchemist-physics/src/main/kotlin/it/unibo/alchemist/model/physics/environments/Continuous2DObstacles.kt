@@ -23,7 +23,10 @@ import java.io.ObjectOutputStream
 import java.io.Serial
 
 /**
- * @param T concentration type
+ * A 2D continuous environment that supports rectangular obstacles and prevents nodes from moving through them.
+ *
+ * @param T the concentration type
+ * @param incarnation the incarnation used to build nodes and concentrations
  */
 open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosition>) :
     AbstractLimitedContinuous2D<T>(incarnation),

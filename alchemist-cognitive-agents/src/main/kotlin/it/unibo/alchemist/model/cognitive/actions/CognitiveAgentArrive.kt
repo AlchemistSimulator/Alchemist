@@ -39,7 +39,7 @@ import it.unibo.alchemist.model.geometry.Vector
 open class CognitiveAgentArrive<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     protected val decelerationRadius: Double,
     protected val arrivalTolerance: Double,
     protected val target: P,

@@ -72,7 +72,7 @@ object Environments {
             when (val subnetwork = subnetworks[centerIndex]) {
                 null -> {
                     val newSubnetwork = MutableNetwork(0.0, mutableListOf(centerNode))
-                    result.put(centerNode, newSubnetwork)
+                    result[centerNode] = newSubnetwork
                     val centerRow = paths.row(centerIndex)
                     for (potentialNeighborIndex in centerIndex + 1 until nodeCount) {
                         val distanceToNeighbor = centerRow[potentialNeighborIndex]
@@ -85,6 +85,7 @@ object Environments {
                 }
                 else -> {
                     // The subnetwork is already computed
+                    result[centerNode] = subnetwork
                     subnetwork.diameter = max(
                         subnetwork.diameter,
                         paths.row(centerIndex).asSequence()

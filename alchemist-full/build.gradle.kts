@@ -280,7 +280,7 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
 tasks.assemble.configure { dependsOn(packageTasks) }
 
 tasks.withType<AbstractArchiveTask> {
-    duplicatesStrategy = DuplicatesStrategy.WARN
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 publishing.publications {

@@ -9,6 +9,7 @@
 
 import it.unibo.alchemist.build.ExternalDependency
 import it.unibo.alchemist.build.currentCommitHash
+import it.unibo.alchemist.build.isInCI
 import it.unibo.alchemist.build.registerExternal
 import it.unibo.alchemist.build.versionCatalogs
 import java.time.Duration
@@ -62,20 +63,25 @@ dokka {
                 }
             }
         /*
-         * Links for Alchemist modules
+         * Generate Dokka links only in CI. It takes too long for local builds
          */
-        rootProject.subprojects.forEach {
-            registerExternal(
-                ExternalDependency(it.group.toString(), it.name, it.version.toString().substringBefore('-'))
-            )
-        }
-        /*
-         * Links for external dependencies
-         */
-        project.versionCatalogs.forEach { versionCatalog ->
-            versionCatalog.libraryAliases.forEach { alias ->
-                val lib = versionCatalog.findLibrary(alias).get().get()
-                registerExternal(ExternalDependency(lib.group, lib.name, lib.version))
+        if (isInCI) {
+            /*
+             * Links for Alchemist modules
+             */
+            rootProject.subprojects.forEach {
+                registerExternal(
+                    ExternalDependency(it.group.toString(), it.name, it.version.toString().substringBefore('-'))
+                )
+            }
+            /*
+             * Links for external dependencies
+             */
+            project.versionCatalogs.forEach { versionCatalog ->
+                versionCatalog.libraryAliases.forEach { alias ->
+                    val lib = versionCatalog.findLibrary(alias).get().get()
+                    registerExternal(ExternalDependency(lib.group, lib.name, lib.version))
+                }
             }
         }
         pluginsConfiguration.html {

@@ -42,12 +42,22 @@ $dokka.location:io.ktor.client.content/LocalFileContent/contentType/#/PointingTo
 $dokka.location:io.ktor.client.content/LocalFileContent/file/#/PointingToDeclaration/ktor-client-core/io.ktor.client.content/-local-file-content/file.html
 $dokka.location:io.ktor.client.content/LocalFileContent/readFrom/#/PointingToDeclaration/ktor-client-core/io.ktor.client.content/-local-file-content/read-from.html
 $dokka.location:io.ktor.client.content/LocalFileContent/readFrom/#kotlin.ranges.LongRange/PointingToDeclaration/ktor-client-core/io.ktor.client.content/-local-file-content/read-from.html
+$dokka.location:io.ktor.client.content/ObservableContent///PointingToDeclaration/ktor-client-core/io.ktor.client.content/-observable-content/index.html
+$dokka.location:io.ktor.client.content/ObservableContent/ObservableContent/#io.ktor.http.content.OutgoingContent#kotlin.coroutines.CoroutineContext#io.ktor.client.content.ProgressListener/PointingToDeclaration/ktor-client-core/io.ktor.client.content/-observable-content/-observable-content.html
+$dokka.location:io.ktor.client.content/ObservableContent/contentLength/#/PointingToDeclaration/ktor-client-core/io.ktor.client.content/-observable-content/content-length.html
+$dokka.location:io.ktor.client.content/ObservableContent/contentType/#/PointingToDeclaration/ktor-client-core/io.ktor.client.content/-observable-content/content-type.html
+$dokka.location:io.ktor.client.content/ObservableContent/delegate/#/PointingToDeclaration/ktor-client-core/io.ktor.client.content/-observable-content/delegate.html
+$dokka.location:io.ktor.client.content/ObservableContent/getProperty/#io.ktor.util.AttributeKey[TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/ktor-client-core/io.ktor.client.content/-observable-content/get-property.html
+$dokka.location:io.ktor.client.content/ObservableContent/headers/#/PointingToDeclaration/ktor-client-core/io.ktor.client.content/-observable-content/headers.html
+$dokka.location:io.ktor.client.content/ObservableContent/readFrom/#/PointingToDeclaration/ktor-client-core/io.ktor.client.content/-observable-content/read-from.html
+$dokka.location:io.ktor.client.content/ObservableContent/setProperty/#io.ktor.util.AttributeKey[TypeParam(bounds=[kotlin.Any])]#TypeParam(bounds=[kotlin.Any])?/PointingToDeclaration/ktor-client-core/io.ktor.client.content/-observable-content/set-property.html
+$dokka.location:io.ktor.client.content/ObservableContent/status/#/PointingToDeclaration/ktor-client-core/io.ktor.client.content/-observable-content/status.html
 $dokka.location:io.ktor.client.content/ProgressListener///PointingToDeclaration/ktor-client-core/io.ktor.client.content/-progress-listener/index.html
 $dokka.location:io.ktor.client.content/ProgressListener/onProgress/#kotlin.Long#kotlin.Long?/PointingToDeclaration/ktor-client-core/io.ktor.client.content/-progress-listener/on-progress.html
 $dokka.location:io.ktor.client.engine.js////PointingToDeclaration/ktor-client-core/io.ktor.client.engine.js/index.html
 $dokka.location:io.ktor.client.engine.js//JsClient/#/PointingToDeclaration/ktor-client-core/io.ktor.client.engine.js/-js-client.html
 $dokka.location:io.ktor.client.engine.js/Js///PointingToDeclaration/ktor-client-core/io.ktor.client.engine.js/-js/index.html
-$dokka.location:io.ktor.client.engine.js/Js/create/#kotlin.Function1[io.ktor.client.engine.js.JsClientEngineConfig,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.engine.js/-js/[wasm-js]create.html
+$dokka.location:io.ktor.client.engine.js/Js/create/#kotlin.Function1[io.ktor.client.engine.js.JsClientEngineConfig,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.engine.js/-js/create.html
 $dokka.location:io.ktor.client.engine.js/JsClientEngineConfig///PointingToDeclaration/ktor-client-core/io.ktor.client.engine.js/-js-client-engine-config/index.html
 $dokka.location:io.ktor.client.engine.js/JsClientEngineConfig/JsClientEngineConfig/#/PointingToDeclaration/ktor-client-core/io.ktor.client.engine.js/-js-client-engine-config/-js-client-engine-config.html
 $dokka.location:io.ktor.client.engine.js/JsClientEngineConfig/configureRequest/#kotlin.Function1[io.ktor.client.fetch.RequestInit,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.engine.js/-js-client-engine-config/[wasm-js]configure-request.html
@@ -388,6 +398,8 @@ $dokka.location:io.ktor.client.fetch/WritableStreamDefaultWriter/ready/#/Pointin
 $dokka.location:io.ktor.client.fetch/WritableStreamDefaultWriter/releaseLock/#/PointingToDeclaration/ktor-client-core/io.ktor.client.fetch/[wasm-js]-writable-stream-default-writer/release-lock.html
 $dokka.location:io.ktor.client.fetch/WritableStreamDefaultWriter/write/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/ktor-client-core/io.ktor.client.fetch/[js]-writable-stream-default-writer/write.html
 $dokka.location:io.ktor.client.fetch/WritableStreamDefaultWriter/write/#TypeParam(bounds=[kotlin.js.JsAny?])/PointingToDeclaration/ktor-client-core/io.ktor.client.fetch/[wasm-js]-writable-stream-default-writer/write.html
+$dokka.location:io.ktor.client.io////PointingToDeclaration/ktor-client-core/io.ktor.client.io/index.html
+$dokka.location:io.ktor.client.io//configurePlatform/#/PointingToDeclaration/ktor-client-core/io.ktor.client.io/configure-platform.html
 $dokka.location:io.ktor.client.network.sockets////PointingToDeclaration/ktor-client-core/io.ktor.client.network.sockets/index.html
 $dokka.location:io.ktor.client.network.sockets//SocketTimeoutException/#kotlin.String#kotlin.Throwable?/PointingToDeclaration/ktor-client-core/io.ktor.client.network.sockets/-socket-timeout-exception.html
 $dokka.location:io.ktor.client.network.sockets/ConnectTimeoutException///PointingToDeclaration/ktor-client-core/io.ktor.client.network.sockets/-connect-timeout-exception/index.html
@@ -653,6 +665,7 @@ $dokka.location:io.ktor.client.plugins.websocket/WebSocketException/WebSocketExc
 $dokka.location:io.ktor.client.plugins.websocket/WebSocketExtensionsCapability///PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-socket-extensions-capability/index.html
 $dokka.location:io.ktor.client.plugins.websocket/WebSockets.Config///PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-sockets/-config/index.html
 $dokka.location:io.ktor.client.plugins.websocket/WebSockets.Config/Config/#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-sockets/-config/-config.html
+$dokka.location:io.ktor.client.plugins.websocket/WebSockets.Config/channels/#kotlin.Function1[io.ktor.websocket.WebSocketChannelsConfig,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-sockets/-config/channels.html
 $dokka.location:io.ktor.client.plugins.websocket/WebSockets.Config/contentConverter/#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-sockets/-config/content-converter.html
 $dokka.location:io.ktor.client.plugins.websocket/WebSockets.Config/extensions/#kotlin.Function1[io.ktor.websocket.WebSocketExtensionsConfig,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-sockets/-config/extensions.html
 $dokka.location:io.ktor.client.plugins.websocket/WebSockets.Config/maxFrameSize/#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-sockets/-config/max-frame-size.html
@@ -664,6 +677,7 @@ $dokka.location:io.ktor.client.plugins.websocket/WebSockets.Plugin/prepare/#kotl
 $dokka.location:io.ktor.client.plugins.websocket/WebSockets///PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-sockets/index.html
 $dokka.location:io.ktor.client.plugins.websocket/WebSockets/WebSockets/#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-sockets/-web-sockets.html
 $dokka.location:io.ktor.client.plugins.websocket/WebSockets/WebSockets/#kotlin.Long#kotlin.Long/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-sockets/-web-sockets.html
+$dokka.location:io.ktor.client.plugins.websocket/WebSockets/channelsConfig/#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-sockets/channels-config.html
 $dokka.location:io.ktor.client.plugins.websocket/WebSockets/contentConverter/#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-sockets/content-converter.html
 $dokka.location:io.ktor.client.plugins.websocket/WebSockets/maxFrameSize/#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-sockets/max-frame-size.html
 $dokka.location:io.ktor.client.plugins.websocket/WebSockets/pingIntervalMillis/#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins.websocket/-web-sockets/ping-interval-millis.html
@@ -689,6 +703,7 @@ $dokka.location:io.ktor.client.plugins//UserAgent/#/PointingToDeclaration/ktor-
 $dokka.location:io.ktor.client.plugins//addDefaultResponseValidation/io.ktor.client.HttpClientConfig[*]#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/add-default-response-validation.html
 $dokka.location:io.ktor.client.plugins//convertLongTimeoutToIntWithInfiniteAsZero/#kotlin.Long/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/convert-long-timeout-to-int-with-infinite-as-zero.html
 $dokka.location:io.ktor.client.plugins//convertLongTimeoutToLongWithInfiniteAsZero/#kotlin.Long/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/convert-long-timeout-to-long-with-infinite-as-zero.html
+$dokka.location:io.ktor.client.plugins//defaultRequest/io.ktor.client.HttpClientConfig[*]#kotlin.Boolean#kotlin.Function1[io.ktor.client.plugins.DefaultRequest.DefaultRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/default-request.html
 $dokka.location:io.ktor.client.plugins//defaultRequest/io.ktor.client.HttpClientConfig[*]#kotlin.Function1[io.ktor.client.plugins.DefaultRequest.DefaultRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/default-request.html
 $dokka.location:io.ktor.client.plugins//defaultTransformers/io.ktor.client.HttpClient#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/default-transformers.html
 $dokka.location:io.ktor.client.plugins//expectSuccess/io.ktor.client.request.HttpRequestBuilder#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/expect-success.html
@@ -712,6 +727,7 @@ $dokka.location:io.ktor.client.plugins/DataConversion/prepare/#kotlin.Function1[
 $dokka.location:io.ktor.client.plugins/DefaultRequest.DefaultRequestBuilder///PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-default-request/-default-request-builder/index.html
 $dokka.location:io.ktor.client.plugins/DefaultRequest.DefaultRequestBuilder/attributes/#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-default-request/-default-request-builder/attributes.html
 $dokka.location:io.ktor.client.plugins/DefaultRequest.DefaultRequestBuilder/headers/#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-default-request/-default-request-builder/headers.html
+$dokka.location:io.ktor.client.plugins/DefaultRequest.DefaultRequestBuilder/headers/#kotlin.Function1[io.ktor.http.HeadersBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-default-request/-default-request-builder/headers.html
 $dokka.location:io.ktor.client.plugins/DefaultRequest.DefaultRequestBuilder/host/#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-default-request/-default-request-builder/host.html
 $dokka.location:io.ktor.client.plugins/DefaultRequest.DefaultRequestBuilder/port/#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-default-request/-default-request-builder/port.html
 $dokka.location:io.ktor.client.plugins/DefaultRequest.DefaultRequestBuilder/setAttributes/#kotlin.Function1[io.ktor.util.Attributes,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-default-request/-default-request-builder/set-attributes.html
@@ -728,6 +744,7 @@ $dokka.location:io.ktor.client.plugins/DefaultRequest.Plugin/prepare/#kotlin.Fun
 $dokka.location:io.ktor.client.plugins/DefaultRequest///PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-default-request/index.html
 $dokka.location:io.ktor.client.plugins/HttpCallValidatorConfig///PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-http-call-validator-config/index.html
 $dokka.location:io.ktor.client.plugins/HttpCallValidatorConfig/HttpCallValidatorConfig/#/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-http-call-validator-config/-http-call-validator-config.html
+$dokka.location:io.ktor.client.plugins/HttpCallValidatorConfig/handleResponseException/#kotlin.coroutines.SuspendFunction1[kotlin.Throwable,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-http-call-validator-config/handle-response-exception.html
 $dokka.location:io.ktor.client.plugins/HttpCallValidatorConfig/handleResponseException/#kotlin.coroutines.SuspendFunction2[kotlin.Throwable,io.ktor.client.request.HttpRequest,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-http-call-validator-config/handle-response-exception.html
 $dokka.location:io.ktor.client.plugins/HttpCallValidatorConfig/handleResponseExceptionWithRequest/#kotlin.coroutines.SuspendFunction2[kotlin.Throwable,io.ktor.client.request.HttpRequest,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-http-call-validator-config/handle-response-exception-with-request.html
 $dokka.location:io.ktor.client.plugins/HttpCallValidatorConfig/validateResponse/#kotlin.coroutines.SuspendFunction1[io.ktor.client.statement.HttpResponse,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.plugins/-http-call-validator-config/validate-response.html
@@ -876,6 +893,7 @@ $dokka.location:io.ktor.client.request.forms/MultiPartFormDataContent/MultiPartF
 $dokka.location:io.ktor.client.request.forms/MultiPartFormDataContent/boundary/#/PointingToDeclaration/ktor-client-core/io.ktor.client.request.forms/-multi-part-form-data-content/boundary.html
 $dokka.location:io.ktor.client.request.forms/MultiPartFormDataContent/contentLength/#/PointingToDeclaration/ktor-client-core/io.ktor.client.request.forms/-multi-part-form-data-content/content-length.html
 $dokka.location:io.ktor.client.request.forms/MultiPartFormDataContent/contentType/#/PointingToDeclaration/ktor-client-core/io.ktor.client.request.forms/-multi-part-form-data-content/content-type.html
+$dokka.location:io.ktor.client.request.forms/MultiPartFormDataContent/parts/#/PointingToDeclaration/ktor-client-core/io.ktor.client.request.forms/-multi-part-form-data-content/parts.html
 $dokka.location:io.ktor.client.request.forms/MultiPartFormDataContent/writeTo/#io.ktor.utils.io.ByteWriteChannel/PointingToDeclaration/ktor-client-core/io.ktor.client.request.forms/-multi-part-form-data-content/write-to.html
 $dokka.location:io.ktor.client.request////PointingToDeclaration/ktor-client-core/io.ktor.client.request/index.html
 $dokka.location:io.ktor.client.request//ResponseAdapterAttributeKey/#/PointingToDeclaration/ktor-client-core/io.ktor.client.request/-response-adapter-attribute-key.html
@@ -960,6 +978,9 @@ $dokka.location:io.ktor.client.request//preparePut/io.ktor.client.HttpClient#io.
 $dokka.location:io.ktor.client.request//preparePut/io.ktor.client.HttpClient#java.net.URL#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/prepare-put.html
 $dokka.location:io.ktor.client.request//preparePut/io.ktor.client.HttpClient#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/prepare-put.html
 $dokka.location:io.ktor.client.request//preparePut/io.ktor.client.HttpClient#kotlin.String#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/prepare-put.html
+$dokka.location:io.ktor.client.request//prepareQuery/io.ktor.client.HttpClient#io.ktor.client.request.HttpRequestBuilder/PointingToDeclaration/ktor-client-core/io.ktor.client.request/prepare-query.html
+$dokka.location:io.ktor.client.request//prepareQuery/io.ktor.client.HttpClient#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/prepare-query.html
+$dokka.location:io.ktor.client.request//prepareQuery/io.ktor.client.HttpClient#kotlin.String#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/prepare-query.html
 $dokka.location:io.ktor.client.request//prepareRequest/io.ktor.client.HttpClient#io.ktor.client.request.HttpRequestBuilder/PointingToDeclaration/ktor-client-core/io.ktor.client.request/prepare-request.html
 $dokka.location:io.ktor.client.request//prepareRequest/io.ktor.client.HttpClient#io.ktor.http.Url#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/prepare-request.html
 $dokka.location:io.ktor.client.request//prepareRequest/io.ktor.client.HttpClient#java.net.URL#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/prepare-request.html
@@ -970,6 +991,9 @@ $dokka.location:io.ktor.client.request//put/io.ktor.client.HttpClient#io.ktor.ht
 $dokka.location:io.ktor.client.request//put/io.ktor.client.HttpClient#java.net.URL#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/put.html
 $dokka.location:io.ktor.client.request//put/io.ktor.client.HttpClient#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/put.html
 $dokka.location:io.ktor.client.request//put/io.ktor.client.HttpClient#kotlin.String#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/put.html
+$dokka.location:io.ktor.client.request//query/io.ktor.client.HttpClient#io.ktor.client.request.HttpRequestBuilder/PointingToDeclaration/ktor-client-core/io.ktor.client.request/query.html
+$dokka.location:io.ktor.client.request//query/io.ktor.client.HttpClient#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/query.html
+$dokka.location:io.ktor.client.request//query/io.ktor.client.HttpClient#kotlin.String#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/query.html
 $dokka.location:io.ktor.client.request//request/#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/request.html
 $dokka.location:io.ktor.client.request//request/io.ktor.client.HttpClient#io.ktor.client.request.HttpRequestBuilder/PointingToDeclaration/ktor-client-core/io.ktor.client.request/request.html
 $dokka.location:io.ktor.client.request//request/io.ktor.client.HttpClient#io.ktor.http.Url#kotlin.Function1[io.ktor.client.request.HttpRequestBuilder,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client.request/request.html
@@ -1190,6 +1214,7 @@ $dokka.location:io.ktor.client/HttpClientConfig/followRedirects/#/PointingToDecl
 $dokka.location:io.ktor.client/HttpClientConfig/install/#io.ktor.client.HttpClient/PointingToDeclaration/ktor-client-core/io.ktor.client/-http-client-config/install.html
 $dokka.location:io.ktor.client/HttpClientConfig/install/#io.ktor.client.plugins.HttpClientPlugin[TypeParam(bounds=[kotlin.Any]),TypeParam(bounds=[kotlin.Any])]#kotlin.Function1[TypeParam(bounds=[kotlin.Any]),kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client/-http-client-config/install.html
 $dokka.location:io.ktor.client/HttpClientConfig/install/#kotlin.String#kotlin.Function1[io.ktor.client.HttpClient,kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client/-http-client-config/install.html
+$dokka.location:io.ktor.client/HttpClientConfig/installOrReplace/#io.ktor.client.plugins.HttpClientPlugin[TypeParam(bounds=[kotlin.Any]),TypeParam(bounds=[kotlin.Any])]#kotlin.Function1[TypeParam(bounds=[kotlin.Any]),kotlin.Unit]/PointingToDeclaration/ktor-client-core/io.ktor.client/-http-client-config/install-or-replace.html
 $dokka.location:io.ktor.client/HttpClientConfig/plusAssign/#io.ktor.client.HttpClientConfig[TypeParam(bounds=[io.ktor.client.engine.HttpClientEngineConfig])]/PointingToDeclaration/ktor-client-core/io.ktor.client/-http-client-config/plus-assign.html
 $dokka.location:io.ktor.client/HttpClientConfig/useDefaultTransformers/#/PointingToDeclaration/ktor-client-core/io.ktor.client/-http-client-config/use-default-transformers.html
 $dokka.location:io.ktor.client/HttpClientEngineContainer///PointingToDeclaration/ktor-client-core/io.ktor.client/-http-client-engine-container/index.html
@@ -1200,6 +1225,7 @@ io.ktor.client.content
 io.ktor.client.engine
 io.ktor.client.engine.js
 io.ktor.client.fetch
+io.ktor.client.io
 io.ktor.client.network.sockets
 io.ktor.client.plugins
 io.ktor.client.plugins.api

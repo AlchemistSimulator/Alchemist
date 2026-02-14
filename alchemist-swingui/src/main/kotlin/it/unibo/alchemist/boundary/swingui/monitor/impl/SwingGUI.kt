@@ -30,9 +30,17 @@ import org.slf4j.LoggerFactory
 
 /**
  * Creates a Swing-based graphical interface for the provided [environment].
- * The actual implementation of the [main] display is chosen based on the type of [environment]
+ * The actual implementation of the [main] display is chosen based on the type of [environment].
  *
- * @deprecated The Entire Swing UI is deprecated and is set to be replaced with a modern UI
+ * @param T the concentration type used by the environment
+ * @param P the concrete [Position2D] type used by the environment
+ * @param environment the simulation environment for this GUI (property)
+ * @param graphicsFile optional effects file to load (may be null)
+ * @param closeOperation the JFrame close operation constant
+ * @param failOnHeadless if true, throw when running in headless mode; otherwise only warn
+ * @param main the main display component backing this monitor (property)
+ * @property headAttached true when a display is available on this JVM (not headless)
+ * @property timeStepMonitor internal monitor for time steps
  */
 @Deprecated("The Swing UI must be replaced by a web UI")
 class SwingGUI<T, P : Position2D<P>> private constructor(
@@ -47,8 +55,9 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
     /**
      * Builds a single-use graphical interface.
      *
-     * @param environment the simulation for this GUI
-     * @param graphicsFile the effect file
+     * @param environment the simulation environment for this GUI
+     * @param graphicsFile optional effects file to load
+     * @param failOnHeadless if true, throw when running in headless mode; otherwise only warn
      * @param closeOperation the type of close operation for this GUI
      */
     constructor(
@@ -59,10 +68,11 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
     ) : this(environment, graphicsFile, closeOperation, failOnHeadless, makeSwingComponent(environment))
 
     /**
-     * Builds a single-use graphical interface.
+     * Builds a single-use graphical interface from an effects file path.
      *
-     * @param environment the simulation for this GUI
-     * @param graphics the effect file
+     * @param environment the simulation environment for this GUI
+     * @param graphics optional path to an effects file
+     * @param failOnHeadless if true, throw when running in headless mode; otherwise only warn
      * @param closeOperation the type of close operation for this GUI
      */
     @JvmOverloads
@@ -118,7 +128,7 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
             frame.isVisible = true
         } else {
             LoggerFactory.getLogger(SwingGUI::class.java).warn(
-                "Swing GUI requested, but this JVM instance is running in headless mode. To fail istead of printing" +
+                "Swing GUI requested, but this JVM instance is running in headless mode. To fail instead of printing" +
                     "this warning, pass `failOnHeadless: true` as an output monitor parameter",
             )
         }

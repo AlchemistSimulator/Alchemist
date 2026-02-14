@@ -29,21 +29,26 @@ import org.jgrapht.Graphs
  * Accepts an array of coordinates representing the destinations and uses [inferIsKnown] to partition them into
  * known and unknown ones.
  *
- * @param T the concentration type.
- * @param L the type of landmarks of the node's cognitive map.
- * @param R the type of edges of the node's cognitive map, representing the [R]elations between landmarks.
+ * @param T the concentration type
+ * @param L the type of landmarks of the node's cognitive map
+ * @param R the type of edges of the node's cognitive map, representing relations
+ * @param environment the environment hosting the node
+ * @param reaction the reaction executing this action
+ * @param pedestrian the owner pedestrian property
+ * @param destinations vararg coordinates representing destinations
  */
 class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     vararg destinations: Number,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
     /**
-     * Infers if a [destination] is known by the [navigatingNode]
-     * (see [it.unibo.alchemist.model.cognitive.navigation.Pursue]). A destination is considered
-     * to be known if the node's cognitive map contains at least one landmark located in the same
+     * Infers if a [destination] is known by the [navigatingNode]. A destination is considered
+     * known if the node's cognitive map contains at least one landmark located in the same
      * room (= [environment]'s area) of the destination, or in an adjacent room.
+     *
+     * @param destination the position to check
      */
     private fun inferIsKnown(destination: Euclidean2DPosition): Boolean =
         environment.graph.nodeContaining(destination)?.let { room ->

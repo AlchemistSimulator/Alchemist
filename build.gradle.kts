@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,6 +10,7 @@
 import Libs.alchemist
 import Libs.incarnation
 import com.github.spotbugs.snom.SpotBugsTask
+import dev.detekt.gradle.Detekt
 import it.unibo.alchemist.build.id
 import it.unibo.alchemist.build.isInCI
 import it.unibo.alchemist.build.isMac
@@ -68,6 +69,15 @@ allprojects {
     tasks.withType<SpotBugsTask>().configureEach {
         reports {
             create("html") { enabled = true }
+        }
+    }
+
+    // STATIC ANALYSIS
+
+    tasks.withType<Detekt>().configureEach {
+        exclude { fileTree ->
+            val absolutePath = fileTree.file.absolutePath
+            listOf("/build/", "/generated/").any { it in absolutePath }
         }
     }
 

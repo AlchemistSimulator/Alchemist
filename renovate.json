@@ -1,12 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "github>DanySK/renovate-config"
+    "github>DanySK/renovate-config:kotlin"
   ],
   "packageRules": [
     {
       "description": "Trigger a minor update on some dependencies",
-      "matchDepNames": [
+      "matchPackageNames": [
         "/^org\\.apache\\.commons:commons-math3$/",
         "/^org\\.danilopianini:listset$/"
       ],
@@ -14,24 +14,20 @@
     },
     {
       "description": "Some updates should have type docs",
-      "matchDepNames": [
-        "/^org\\.jetbrains\\.dokka.*/",
-        "gohugoio/hugo"
-      ],
+      "matchPackageNames": ["gohugoio/hugo"],
       "semanticCommitType": "docs"
     },
     {
       "description": "Identify some updates as core",
-      "matchDepNames": [
+      "matchPackageNames": [
         "/^it\\.unibo\\.scafi:.*/",
-        "/^org\\.jetbrains\\.kotlin(?::|\\.plugins).*/",
         "/^org\\.protelis:.*/"
       ],
       "semanticCommitScope": "core-deps"
     },
     {
-      "description": "Updates to to the site should have type docs",
-      "matchPaths": ["site/*"],
+      "description": "Updates to the site should have type docs",
+      "matchFileNames": ["site/*"],
       "semanticCommitType": "docs"
     }
   ]

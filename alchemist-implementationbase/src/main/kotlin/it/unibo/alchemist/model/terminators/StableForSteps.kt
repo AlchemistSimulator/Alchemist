@@ -38,10 +38,8 @@ import java.util.function.Predicate
  * to avoid missing checks.
  *
  * @constructor Creates a new [StableForSteps] with the given values.
- *
- * @param checkInterval The recurrence of the test
- * @param equalIntervals The amount of [checkInterval] intervals that need to pass
- * (during which the environment doesn't change) for [test] to return true
+ * @property checkInterval the recurrence of the test
+ * @property equalIntervals the number of [checkInterval] intervals required to be unchanged for [test] to return true
  */
 data class StableForSteps<T : Any, P : Position<P>>(private val checkInterval: Long, private val equalIntervals: Long) :
     TerminationPredicate<T, P> {
@@ -60,7 +58,7 @@ data class StableForSteps<T : Any, P : Position<P>>(private val checkInterval: L
             val newPositions = environment.associateBy({ it }, { environment.getPosition(it) })
             val newContents = makeTable<T>(environment.nodeCount)
             environment.forEach { node ->
-                node.contents.forEach { molecule, concentration ->
+                node.contents.forEach { (molecule, concentration) ->
                     newContents.put(node, molecule, concentration)
                 }
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -28,13 +28,15 @@ import kotlin.reflect.KClass
 import org.slf4j.LoggerFactory
 
 /**
- * Writes on file data provided by a number of {@link Extractor}s. Produces a
- * CSV with '#' as comment character.e
- * @param fileNameRoot the starting name of the file to export data to.
- * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].
- * @param exportPath if no path is specified it will generate the file inside a temporary folder.
- * @param appendTime if true it will always generate a new file, false to overwrite.
- * @param fileExtension the extension for the exported files, by default 'csv'
+ * Writes data provided by a number of extractors to a CSV file. The CSV uses '#' as the comment character.
+ *
+ * @param T the concentration type
+ * @param P the position type
+ * @property fileNameRoot the starting name of the file to export data to
+ * @property interval the sampling time; defaults to [AbstractExporter.DEFAULT_INTERVAL]
+ * @property exportPath the directory to write exported files (temporary folder is used when omitted)
+ * @property appendTime if true a timestamp is appended to the file name to avoid overwriting
+ * @property fileExtension the extension for the exported files (default: 'csv')
  */
 class CSVExporter<T, P : Position<P>>
 @JvmOverloads
@@ -52,6 +54,7 @@ constructor(
     val fileExtension: String = "csv",
     private val appendTime: Boolean = false,
 ) : AbstractExporter<T, P>(interval) {
+
     private lateinit var outputPrintStream: PrintStream
 
     override fun setup(environment: Environment<T, P>) {

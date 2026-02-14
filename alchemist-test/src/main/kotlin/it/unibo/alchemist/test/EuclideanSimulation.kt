@@ -24,14 +24,12 @@ import org.kaikikm.threadresloader.ResourceLoader
 /**
  * Run the simulation this environment owns.
  *
- * @param onceInitialized
- *          the lambda to execute when the simulation begins.
- * @param atEachStep
- *          the lambda to execute on each step of the simulation.
- * @param whenFinished
- *          the lambda to execute at the end of the simulation.
- * @param steps
- *          the number of steps the simulation must execute.
+ * @param T the concentration type used by the simulation
+ * @param P the position/vector type used by the simulation
+ * @param onceInitialized the lambda to execute when the simulation begins
+ * @param atEachStep the lambda to execute on each step of the simulation
+ * @param whenFinished the lambda to execute at the end of the simulation
+ * @param steps the number of steps the simulation must execute
  */
 fun <T, P> Simulation<T, P>.startSimulation(
     onceInitialized: (EuclideanEnvironment<T, P>) -> Unit = { },
@@ -69,10 +67,11 @@ fun <T, P> Simulation<T, P>.startSimulation(
 /**
  * Loads a simulation from a YAML file.
  *
- * @param resource
- *          the name of the file containing the simulation to load.
- * @param vars
- *          a map specifying name-value bindings for the variables in this scenario.
+ * @param T the concentration type
+ * @param P the position/vector type
+ * @param resource the name of the file containing the simulation to load
+ * @param vars a map specifying name-value bindings for the variables in this scenario
+ * @return the loaded [Simulation]
  */
 fun <T, P> loadYamlSimulation(
     resource: String,

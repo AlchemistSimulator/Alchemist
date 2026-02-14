@@ -30,10 +30,10 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 // TODO: Detekt false positive. Remove once Detekt supports context parameters.
 @Suppress("UndocumentedPublicFunction")
-interface DeploymentsContext {
+fun interface DeploymentsContext<T, P : Position<P>> {
 
     /**
-     * Deploys nodes according to the provided [deployment], creating each node through [nodeFactory] and optionally
+     * Deploys nodes according to the provided [deployment], creating each node through [nodeFactory] and
      * configuring it through [block].
      *
      * The [block] is invoked once per deployed position, after the node has been created and while a suitable DSL scope
@@ -44,11 +44,11 @@ interface DeploymentsContext {
      * @param nodeFactory a factory used to create a node for each deployed position.
      * @param block an optional per-node configuration block.
      */
-    context(randomGenerator: RandomGenerator, environment: Environment<T, P>)
-    fun <T, P : Position<P>> deploy(
+    context(randomGenerator: RandomGenerator)
+    fun deploy(
         deployment: Deployment<P>,
         nodeFactory: (P) -> Node<T>,
-        block: context(RandomGenerator, Node<T>) DeploymentContext<T, P>.() -> Unit = {},
+        block: context(RandomGenerator, Node<T>) DeploymentContext<T, P>.() -> Unit,
     )
 
     /**
@@ -63,7 +63,7 @@ interface DeploymentsContext {
      * @param block an optional per-node configuration block.
      */
     context(incarnation: Incarnation<T, P>, randomGenerator: RandomGenerator, environment: Environment<T, P>)
-    fun <T, P : Position<P>> deploy(
+    fun deploy(
         deployment: Deployment<P>,
         nodeParameter: String? = null,
         block: context(RandomGenerator, Node<T>) DeploymentContext<T, P>.() -> Unit = {},

@@ -18,11 +18,11 @@ import java.io.Serial
 import java.util.Objects
 
 /**
- * @param node
- * the local node
- * @param reaction
- * the reaction
- * @param protelisProgram the [RunProtelisProgram] whose data will be sent
+ * Action that broadcasts the content of a Protelis program to neighbours.
+ *
+ * @param node the local node hosting the action
+ * @param reaction the reaction triggering this action
+ * @property protelisProgram the [RunProtelisProgram] whose data will be sent
  */
 class SendToNeighbor(node: Node<Any>, reaction: Reaction<Any>, val protelisProgram: RunProtelisProgram<*>) :
     AbstractAction<Any>(node) {

@@ -13,9 +13,12 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
 
 /**
- * Check if either [positionBasedFilterA] or [positionBasedFilterB] is satisfied.
- * @param positionBasedFilterA the first filter.
- * @param positionBasedFilterB the second filter.
+ * Position-based filter that matches when at least one of two underlying filters
+ * matches the provided position (logical OR behaviour).
+ *
+ * @param P the position type
+ * @property positionBasedFilterA the first filter
+ * @property positionBasedFilterB the second filter
  */
 data class Or<P : Position<P>>(
     val positionBasedFilterA: PositionBasedFilter<P>,

@@ -84,6 +84,6 @@ object AlchemistCompilationConfiguration : ScriptCompilationConfiguration({
     }
 }) {
     // See: https://docs.oracle.com/javase/8/docs/platform/serialization/spec/input.html
-    @Suppress("UnusedPrivateMember")
+    @Suppress("UnusedPrivateFunction")
     private fun readResolve(): Any = AlchemistCompilationConfiguration
 }

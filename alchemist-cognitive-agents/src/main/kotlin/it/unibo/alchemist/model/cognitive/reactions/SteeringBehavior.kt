@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -22,29 +22,23 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.AbstractReaction
 
 /**
- * Reaction representing the steering behavior of a pedestrian.
+ * Reaction representing a pedestrian's steering behavior.
  *
- * @param environment
- *          the environment inside which the pedestrian moves.
- * @param pedestrian
- *          the owner of this reaction.
- * @param timeDistribution
- *          the time distribution according to which this reaction executes.
- * @param steerStrategy
- *          the strategy used to combine steering actions.
+ * @param T the concentration type
+ * @property environment the Euclidean environment where the pedestrian moves (property)
+ * @property pedestrian the owner pedestrian's property
+ * @param timeDistribution the time distribution that schedules reaction execution
+ * @property steerStrategy the strategy used to combine steering actions
+ * @property steerActions list of steering actions in this reaction
  */
 open class SteeringBehavior<T>(
     private val environment: Environment<T, Euclidean2DPosition>,
-    /**
-     * The pedestrian property of the owner of this reaction.
-     */
-    protected open val pedestrian: PedestrianProperty<T>,
+    /** The pedestrian property of the owner of this reaction. */
+    protected val pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
     open val steerStrategy: SteeringStrategy<T, Euclidean2DPosition>,
 ) : AbstractReaction<T>(pedestrian.node, timeDistribution) {
-    /**
-     * The list of steering actions in this reaction.
-     */
+    /** The list of steering actions in this reaction. */
     fun steerActions(): List<SteeringAction<T, Euclidean2DPosition>> =
         actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()
 

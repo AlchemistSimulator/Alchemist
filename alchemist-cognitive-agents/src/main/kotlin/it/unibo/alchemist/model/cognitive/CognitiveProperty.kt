@@ -15,11 +15,13 @@ import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.NodeProperty
 
 /**
- * The pedestrian's cognitive capability.
+ * Cognitive capability attached to a node.
+ *
+ * @param T the concentration type of the environment.
  */
 interface CognitiveProperty<T> : NodeProperty<T> {
     /**
-     * The molecule associated with danger in the environment.
+     * The molecule used to signal danger in the environment, if any.
      */
     val danger: Molecule?
 
@@ -29,7 +31,9 @@ interface CognitiveProperty<T> : NodeProperty<T> {
     val cognitiveModel: CognitiveModel
 
     /**
-     * The mind model of all people considered influential for this cognitive pedestrian.
+     * The cognitive models of people considered influential for this pedestrian.
+     *
+     * @return a list of [CognitiveModel] instances representing influential people.
      */
     fun influentialPeople(): List<CognitiveModel> = node
         .asProperty<T, PerceptiveProperty<T>>()

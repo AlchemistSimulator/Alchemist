@@ -14,11 +14,16 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.Vector
 
 /**
- * A [SteeringAction] related to a group of pedestrians.
+ * A [SteeringAction] that is influenced by a group of pedestrians.
+ *
+ * @param T the concentration type.
+ * @param P the position/vector type used by the steering action.
  */
 interface GroupSteeringAction<T, P> : SteeringAction<T, P> where P : Position<P>, P : Vector<P> {
     /**
-     * The list of pedestrians influencing this action.
+     * Returns the list of nodes (pedestrians) that influence this group steering action.
+     *
+     * @return a [List] of [Node] instances representing the influencing group.
      */
     fun group(): List<Node<T>>
 }

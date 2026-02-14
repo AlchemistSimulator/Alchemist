@@ -25,8 +25,10 @@ private typealias Point2D = Pair<Number, Number>
 /**
  * Creates a new Polygon with the given points.
  *
+ * @param P the position2D type
+ * @param environment the simulation environment
+ * @param randomGenerator the RNG used for placements
  * @param nodes the count of nodes that need to get displaced inside the polygon
- *
  * @param pointsInput the points of the polygon.
  * The class does not check for "malformed" polygons (e.g. with intersections).
  * If the provided points do not represent a valid polygon in bidimensional space, the behaviour of this class is

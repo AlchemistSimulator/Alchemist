@@ -16,40 +16,44 @@ import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 
 /**
- * Defines how physical forces and steering actions (which may be seen as intentional forces) are combined to compute
- * the overall next position reached by a physical [node]. The combination of steering actions is delegated to a
- * [nonPhysicalStrategy]. The resulting intentional force is then combined with the physical ones to determine the
- * next position reached by [node].
+ * Strategy that combines physical forces with intentional steering actions to compute a node's next position.
+ *
+ * The aggregation of steering actions and target computation is delegated to [nonPhysicalStrategy]. The resulting
+ * intentional force is then combined with the physical forces to compute the final displacement of [node].
+ *
+ * @param T the concentration type.
+ * @param P the [Position] and [Vector] type used by the environment.
+ * @param A the transformation type supported by shapes in this space.
+ * @param F the geometric shape factory used by the environment.
  */
 interface PhysicalSteeringStrategy<T, P, A, F> :
     SteeringStrategy<T, P>
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P>,
           F : GeometricShapeFactory<P, A> {
-    /**
-     * The node to be moved.
-     */
+    /** The node to be moved. */
     val node: Node<T>
 
     /**
-     * The combination of intentional forces (= steering actions) and [computeTarget] are delegated to this strategy.
+     * Strategy responsible for combining intentional steering actions and computing the target.
      */
     val nonPhysicalStrategy: SteeringStrategy<T, P>
 
     /**
-     * Computes the next relative position reached by the node, given the overall intentional force.
+     * Computes the next relative position given the overall intentional force.
+     *
+     * @param overallIntentionalForce the combined intentional force as a vector of type [P].
+     * @return the next relative position as a [P].
      */
     fun computeNextPosition(overallIntentionalForce: P): P
 
     /**
-     * Computes the next relative position reached by the node, taking into account both the intentional and the
-     * physical forces acting on [node] (intentional forces = [actions]).
+     * Computes the next position by delegating the combination of steering actions to [nonPhysicalStrategy]
+     * and then applying physical dynamics.
      */
     override fun computeNextPosition(actions: List<SteeringAction<T, P>>): P =
         computeNextPosition(nonPhysicalStrategy.computeNextPosition(actions))
 
-    /**
-     * Delegated to [nonPhysicalStrategy].
-     */
+    /** Delegates target computation to [nonPhysicalStrategy]. */
     override fun computeTarget(actions: List<SteeringAction<T, P>>): P = nonPhysicalStrategy.computeTarget(actions)
 }

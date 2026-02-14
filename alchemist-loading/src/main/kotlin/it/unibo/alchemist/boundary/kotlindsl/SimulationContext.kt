@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Position
 import java.io.Serializable
-import kotlin.properties.ReadOnlyProperty
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -38,21 +37,23 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param T the concentration type used by the simulation.
  * @param P the position type used by the environment.
  */
-// Detekt false positive. Remove once Detekt supports context parameters.
-@Suppress("UndocumentedPublicFunction")
 interface SimulationContext<T, P : Position<P>> {
 
     /**
-     * Sets the simulation [environment] and configures it through [block].
+     * Sets the simulation [environment] and configures it through [environmentConfiguration].
      *
-     * The [block] is executed with the provided environment as a context receiver, and with an [EnvironmentContext]
+     * The [environmentConfiguration] is executed with the provided environment as a context receiver,
+     * and with an [EnvironmentContext]
      * as receiver, enabling environment-level configuration (deployments, layers, global programs, linking rules,
      * terminators).
      *
      * @param environment the environment instance to use for the simulation.
-     * @param block the environment configuration block.
+     * @param environmentConfiguration the environment configuration block.
      */
-    fun <E : Environment<T, P>> environment(environment: E, block: context(E) EnvironmentContext<T, P>.() -> Unit)
+    fun <E : Environment<T, P>> environment(
+        environment: E,
+        environmentConfiguration: context(E) EnvironmentContext<T, P>.() -> Unit,
+    )
 
     /**
      * Registers an [Exporter] and configures which [it.unibo.alchemist.boundary.Extractor] instances it should use.

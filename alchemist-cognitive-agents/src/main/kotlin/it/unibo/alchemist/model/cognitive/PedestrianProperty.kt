@@ -10,13 +10,17 @@
 package it.unibo.alchemist.model.cognitive
 
 /**
- * A node capability to move. It includes both [WalkingPedestrianProperty] and [RunningPedestrianProperty].
+ * Capability that enables node movement, combining walking and running pedestrian properties.
+ *
+ * @param T the concentration type.
  */
 interface PedestrianProperty<T> :
     WalkingPedestrianProperty<T>,
     RunningPedestrianProperty<T> {
     /**
-     * The speed at which the pedestrian is moving.
+     * Returns the current speed of the pedestrian.
+     *
+     * @return the pedestrian's speed as a [Double].
      */
     fun speed(): Double
 }

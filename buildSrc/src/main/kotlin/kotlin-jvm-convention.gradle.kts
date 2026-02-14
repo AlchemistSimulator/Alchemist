@@ -9,6 +9,7 @@
 
 import Libs.alchemist
 import it.unibo.alchemist.build.catalog
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 
 /*
  * Copyright (C) 2010-2024, Danilo Pianini and contributors
@@ -59,7 +60,7 @@ java {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.add("-Xjvm-default=all") // Enable default methods in Kt interfaces
+        jvmDefault.set(JvmDefaultMode.ENABLE)
         freeCompilerArgs.add("-Xcontext-parameters") // Enable context receivers
     }
 }
@@ -72,5 +73,11 @@ javaQA {
     // enable PMD when this bug is fixed: https://github.com/pmd/pmd/issues/5096
     tasks.withType<Pmd>().configureEach {
         enabled = false
+    }
+}
+
+tasks.withType<Checkstyle>().configureEach {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }

@@ -13,12 +13,17 @@ import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Position
 
 /**
- * Action whose purpose is moving a node inside the environment it is in.
+ * An action that describes movement of a node inside its environment.
+ *
+ * @param T the concentration type.
+ * @param P the [Position] type used by the action.
  */
 interface SteeringAction<T, P : Position<P>> : Action<T> {
     /**
-     * The position the owner of this action moves to when it is executed,
-     * in relative coordinates with respect to its current position.
+     * Returns the target relative position the owner will move to when this action is executed.
+     * The position is relative to the owner's current position.
+     *
+     * @return the next relative position as a [P].
      */
     fun nextPosition(): P
 }

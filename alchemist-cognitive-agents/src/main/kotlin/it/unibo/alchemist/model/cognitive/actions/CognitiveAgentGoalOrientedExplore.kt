@@ -21,14 +21,18 @@ import it.unibo.alchemist.util.Arrays.toPositions
 /**
  * A [CognitiveAgentNavigationAction2D] using [GoalOrientedExploration] navigation strategy.
  *
- * @param T the concentration type.
- * @param L the type of landmarks of the node's cognitive map.
- * @param R the type of edges of the node's cognitive map, representing the [R]elations between landmarks.
+ * @param T the concentration type
+ * @param L the landmark shape type used by the node's cognitive map
+ * @param R the relation/edge type used by the node's cognitive map
+ * @param environment the environment hosting the node
+ * @param reaction the reaction that executes this action
+ * @param pedestrian the owner pedestrian property
+ * @param unknownDestinations vararg coordinates representing unknown destinations
  */
 class CognitiveAgentGoalOrientedExplore<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     vararg unknownDestinations: Number,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
     init {

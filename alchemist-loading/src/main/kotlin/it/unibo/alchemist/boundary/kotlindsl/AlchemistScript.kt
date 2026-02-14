@@ -84,7 +84,13 @@ object AlchemistCompilationConfiguration : ScriptCompilationConfiguration({
         compilerOptions.append("-Xcontext-parameters")
     }
 }) {
-    // See: https://docs.oracle.com/javase/8/docs/platform/serialization/spec/input.html
-    @Suppress("UnusedPrivateMember")
+    /**
+     * Return the singleton instance on deserialization.
+     * This is intentionally private and used by Java serialization. Detekt flags it as unused,
+     * but it is required by the serialization mechanism.
+     *
+     * See: https://docs.oracle.com/javase/8/docs/platform/serialization/spec/input.html
+     */
+    @Suppress("unused")
     private fun readResolve(): Any = AlchemistCompilationConfiguration
 }

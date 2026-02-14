@@ -39,7 +39,7 @@ constructor(
     ) : this(
         filter = CommonFilters.fromString(filter),
         aggregatorNames = aggregatorNames,
-        precision = null,
+        precision = precision,
     )
 
     /**

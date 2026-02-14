@@ -40,20 +40,21 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 // TODO: Detekt false positive. Remove once Detekt supports context parameters.
 @Suppress("UndocumentedPublicFunction")
-interface EnvironmentContext<T, P : Position<P>> {
+fun interface EnvironmentContext<T, P : Position<P>> {
 
     /**
      * Enters the node deployment DSL.
      *
-     * The provided [block] is executed with a [RandomGenerator] available as a context receiver and with
+     * The provided [deploymentsConfiguration] is executed
+     * with a [RandomGenerator] available as a context receiver and with
      * [DeploymentsContext] as receiver, allowing the scenario to create and configure nodes produced by
      * one or more [it.unibo.alchemist.model.Deployment] strategies.
      *
      * Implementations are expected to ensure a consistent usage of random generators for reproducibility.
      *
-     * @param block the deployment configuration block.
+     * @param deploymentsConfiguration the deployment configuration block.
      */
-    fun deployments(block: context(RandomGenerator) DeploymentsContext.() -> Unit)
+    fun deployments(deploymentsConfiguration: context(RandomGenerator) DeploymentsContext<T, P>.() -> Unit)
 
     /**
      * Registers a [GlobalReaction] in the current [Environment] and optionally configures it.

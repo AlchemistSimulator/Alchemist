@@ -10,16 +10,12 @@
 package it.unibo.alchemist.boundary.graphql.utils
 
 /**
- * Default settings for GraphQL environment.
+ * Default settings for the GraphQL environment.
  */
 object DefaultGraphQLSettings {
-    /**
-     * Default host for the GraphQL server.
-     */
+    /** Default host for the GraphQL server. */
     const val DEFAULT_HOST = "127.0.0.1"
 
-    /**
-     * Default port for the GraphQL server.
-     */
+    /** Default port for the GraphQL server. */
     const val DEFAULT_PORT = 8081
 }

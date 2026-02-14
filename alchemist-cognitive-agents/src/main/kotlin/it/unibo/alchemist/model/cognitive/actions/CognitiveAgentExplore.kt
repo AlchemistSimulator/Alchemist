@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DPassage
 class CognitiveAgentExplore<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
     init {
         strategy = Explore(this)

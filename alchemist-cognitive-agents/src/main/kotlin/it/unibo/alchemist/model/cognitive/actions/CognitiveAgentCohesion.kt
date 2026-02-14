@@ -26,11 +26,13 @@ import it.unibo.alchemist.model.geometry.Vector
  *          the environment inside which the node moves.
  * @param reaction
  *          the reaction which executes this action.
+ * @param pedestrian
+ *          the owner of this action.
  */
 class CognitiveAgentCohesion<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
 ) : AbstractGroupSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P> {

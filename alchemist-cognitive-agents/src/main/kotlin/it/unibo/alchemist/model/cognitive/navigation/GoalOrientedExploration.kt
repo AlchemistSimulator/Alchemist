@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.cognitive.navigation
 
-import it.unibo.alchemist.model.cognitive.NavigationStrategy
 import it.unibo.alchemist.model.cognitive.actions.NavigationAction2D
 import it.unibo.alchemist.model.geometry.ConvexPolygon
 import it.unibo.alchemist.model.geometry.Euclidean2DConvexShape
@@ -17,16 +16,15 @@ import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DPassage
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
- * A [NavigationStrategy] allowing to explore the environment looking for something specific whose position
- * is unknown.
- * The client can specify a list of [unknownDestinations]: these can be recognized once they're in sight,
- * but the node doesn't know their position until that moment (think e.g. of exits in an evacuation
- * scenario). More specifically, unknown destinations can be detected if located in a room adjacent to the
- * room the node is into. Once a destination is detected, the node will reach it and stop.
+ * Navigation strategy that explores the environment looking for unknown destination points.
+ * Unknown destinations are not known a priori but can be detected when they are inside a room
+ * adjacent to the node's current room. When detected, the node approaches the destination and stops.
  *
  * @param T the concentration type.
- * @param L the type of landmarks of the node's cognitive map.
- * @param R the type of edges of the node's cognitive map, representing the [R]elations between landmarks.
+ * @param L the landmark shape type used by the node's cognitive map.
+ * @param R the relation/edge type used by the node's cognitive map.
+ * @param action the navigation action driving this strategy.
+ * @param unknownDestinations list of static destinations that can be detected when in sight.
  */
 open class GoalOrientedExploration<T, L : Euclidean2DConvexShape, R>(
     action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
@@ -36,10 +34,9 @@ open class GoalOrientedExploration<T, L : Euclidean2DConvexShape, R>(
         reachUnknownDestination(newRoom, orElse = { super.inNewRoom(newRoom) })
 
     /**
-     * If one or more unknown destinations are inside [newRoom] (= the room the node is into), the closest
-     * one is approached. Otherwise, if one or more destinations are in a room adjacent to the current one, the
-     * related doors are weighted using [weightExit] and the one with minimum weight is crossed. [orElse] is
-     * executed otherwise.
+     * If any unknown destination is inside [newRoom], approach the closest one. Otherwise, if any unknown
+     * destination lies in an adjacent room, pick the best door using [weightExit] and cross it. If none applies,
+     * execute [orElse].
      */
     protected open fun reachUnknownDestination(newRoom: ConvexPolygon, orElse: () -> Unit) = with(action) {
         unknownDestinations
@@ -58,8 +55,8 @@ open class GoalOrientedExploration<T, L : Euclidean2DConvexShape, R>(
     }
 
     /**
-     * Assigns a weight to a door (= passage) leading to an unknown destination (e.g. an exit).
-     * By default, the exit's distance and its congestion are considered.
+     * Assigns a weight to a door leading to an unknown destination. By default it considers
+     * the exit's distance and congestion.
      */
     protected open fun weightExit(door: Euclidean2DPassage): Double = with(door) {
         distanceToPedestrian() * congestionFactor(head)

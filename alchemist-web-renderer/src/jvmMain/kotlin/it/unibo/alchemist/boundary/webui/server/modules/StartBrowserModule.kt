@@ -16,9 +16,9 @@ import java.net.URI
 /**
  * Start the default browser of the user on the server address.
  */
-suspend fun Application.startBrowserModule() {
+suspend fun startBrowserModule(app: Application) {
     if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-        engine.resolvedConnectors().forEach {
+        app.engine.resolvedConnectors().forEach {
             Desktop.getDesktop().browse(URI("${it.type.name.lowercase()}://${it.host}:${it.port}"))
         }
     }

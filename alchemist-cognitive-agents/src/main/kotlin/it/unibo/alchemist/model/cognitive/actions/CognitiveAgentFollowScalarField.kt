@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.physics.PhysicsEnvironment
 class CognitiveAgentFollowScalarField<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     /**
      * The position of either maximum or minimum value of the scalar field, can be null if such a position doesn't
      * exist or isn't known. Its use is explained in [nextPosition].

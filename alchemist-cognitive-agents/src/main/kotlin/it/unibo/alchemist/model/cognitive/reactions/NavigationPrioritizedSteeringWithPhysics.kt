@@ -26,7 +26,7 @@ class NavigationPrioritizedSteeringWithPhysics<T, N : ConvexPolygon>
 @JvmOverloads
 constructor(
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, *>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
     /**
      * Tolerance angle in degrees (see [SinglePrevalent]).

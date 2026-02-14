@@ -20,7 +20,6 @@ import it.unibo.alchemist.boundary.exporters.GlobalExporter
 import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
@@ -65,7 +64,7 @@ internal class DSLLoader<T, P : Position<P>, I : Incarnation<T, P>>(
 
                 override fun <E : Environment<T, P>> environment(
                     environment: E,
-                    block: context(E) EnvironmentContext<T, P>.() -> Unit,
+                    environmentConfiguration: context(E) EnvironmentContext<T, P>.() -> Unit,
                 ) {
                     if (!this::simulationRNG.isInitialized) {
                         simulationRNG = MersenneTwister(0L)
@@ -80,35 +79,26 @@ internal class DSLLoader<T, P : Position<P>, I : Incarnation<T, P>>(
                     environmentHasNotBeenSet = false
                     context(environment, simulationRNG) {
                         check(contextOf<RandomGenerator>() == simulationRNG)
-                        object : EnvironmentContext<T, P> {
-                            override fun deployments(block: context(RandomGenerator) DeploymentsContext.() -> Unit) {
-                                check(contextOf<RandomGenerator>() == simulationRNG)
-                                context(scenarioRNG) {
-                                    object : DeploymentsContext {
-                                        context(randomGenerator: RandomGenerator, environment: Environment<T, P>)
-                                        override fun <T, P : Position<P>> deploy(
-                                            deployment: Deployment<P>,
-                                            nodeFactory: (P) -> Node<T>,
-                                            block: context(RandomGenerator, Node<T>) DeploymentContext<T, P>.() -> Unit,
-                                        ) {
-                                            check(contextOf<RandomGenerator>() == scenarioRNG)
-                                            deployment.forEach { position ->
-                                                context(simulationRNG) {
-                                                    check(contextOf<RandomGenerator>() == simulationRNG)
-                                                    val node: Node<T> = nodeFactory(position)
-                                                    context(node) {
-                                                        object : DeploymentContext<T, P> {
-                                                            override val position: P get() = position
-                                                        }.block()
-                                                    }
-                                                    environment.addNode(node, position)
-                                                }
+                        EnvironmentContext<T, P> { deploymentsConfiguration ->
+                            check(contextOf<RandomGenerator>() == simulationRNG)
+                            context(scenarioRNG) {
+                                DeploymentsContext<T, P> { deployment, nodeFactory, block ->
+                                    check(contextOf<RandomGenerator>() == scenarioRNG)
+                                    deployment.forEach { currentNodePosition ->
+                                        context(simulationRNG) {
+                                            check(contextOf<RandomGenerator>() == simulationRNG)
+                                            val node: Node<T> = nodeFactory(currentNodePosition)
+                                            context(node) {
+                                                object : DeploymentContext<T, P> {
+                                                    override val position: P get() = currentNodePosition
+                                                }.block()
                                             }
+                                            environment.addNode(node, currentNodePosition)
                                         }
-                                    }.block()
-                                }
+                                    }
+                                }.deploymentsConfiguration()
                             }
-                        }.block()
+                        }.environmentConfiguration()
                     }
                 }
 

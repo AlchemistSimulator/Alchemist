@@ -21,10 +21,9 @@ import java.io.Serial
  * rate, but if the [it.unibo.alchemist.model.TimeDistribution] has a high variance, the movements
  * on the map will inherit this tract.
  *
- * @param <T> Concentration type
- * @param <P> Position type
- *
- * @param reaction the reaction
+ * @param T Concentration type
+ * @param P Position type
+ * @param reaction the reaction used to compute movement timing
  * @param speed the speed, in meters/second
  */
 class ConstantSpeed<T, P : Position<P>>(private val reaction: Reaction<*>, private val speed: Double) :

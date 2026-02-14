@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,9 @@
 
 import it.unibo.alchemist.build.ExternalDependency
 import it.unibo.alchemist.build.currentCommitHash
+import it.unibo.alchemist.build.isInCI
 import it.unibo.alchemist.build.registerExternal
+import it.unibo.alchemist.build.versionCatalogs
 import java.time.Duration
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -61,20 +63,25 @@ dokka {
                 }
             }
         /*
-         * Links for Alchemist modules
+         * Generate Dokka links only in CI. It takes too long for local builds
          */
-        rootProject.subprojects.forEach {
-            registerExternal(
-                ExternalDependency(it.group.toString(), it.name, it.version.toString().substringBefore('-'))
-            )
-        }
-        /*
-         * Links for external dependencies
-         */
-        project.versionCatalogs.forEach { versionCatalog ->
-            versionCatalog.libraryAliases.forEach { alias ->
-                val lib = versionCatalog.findLibrary(alias).get().get()
-                registerExternal(ExternalDependency(lib.group, lib.name, lib.version))
+        if (isInCI) {
+            /*
+             * Links for Alchemist modules
+             */
+            rootProject.subprojects.forEach {
+                registerExternal(
+                    ExternalDependency(it.group.toString(), it.name, it.version.toString().substringBefore('-'))
+                )
+            }
+            /*
+             * Links for external dependencies
+             */
+            project.versionCatalogs.forEach { versionCatalog ->
+                versionCatalog.libraryAliases.forEach { alias ->
+                    val lib = versionCatalog.findLibrary(alias).get().get()
+                    registerExternal(ExternalDependency(lib.group, lib.name, lib.version))
+                }
             }
         }
         pluginsConfiguration.html {
@@ -89,3 +96,4 @@ dokka {
 tasks.withType<DokkaBaseTask>().configureEach {
     timeout.set(Duration.ofMinutes(5))
 }
+

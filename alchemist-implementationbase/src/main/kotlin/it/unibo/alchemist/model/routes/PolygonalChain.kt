@@ -17,8 +17,8 @@ import kotlin.reflect.full.isSuperclassOf
 /**
  * Abstract route implementation.
  *
- * @param <P> the type of position that the route is composed
- * @param points the positions this route traverses
+ * @param P the type of position that composes the route
+ * @property points the positions this route traverses
  */
 open class PolygonalChain<P : Position<*>>(override val points: List<P>) : Route<P> {
     private var distance = Double.NaN

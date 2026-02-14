@@ -19,19 +19,15 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 /**
  * Move the node towards positions of the environment with a high concentration of the target molecule.
  *
- * @param euclidean
- *          the environment inside which the node moves.
- * @param reaction
- *          the reaction which executes this action.
- * @param pedestrian
- *          the owner of this action.
- * @param targetMolecule
- *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
+ * @param euclidean the environment inside which the node moves.
+ * @param reaction the reaction which executes this action.
+ * @param pedestrian the owner of this action.
+ * @param targetMolecule the molecule whose concentration defines the scalar field to follow.
  */
 open class CognitiveAgentFollowLayer(
     euclidean: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
-    override val pedestrian: PedestrianProperty<Number>,
+    pedestrian: PedestrianProperty<Number>,
     targetMolecule: Molecule,
 ) : AbstractLayerAction(euclidean, reaction, pedestrian, targetMolecule) {
     private val followScalarField =

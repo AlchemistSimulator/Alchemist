@@ -100,11 +100,10 @@ constructor(
     /**
      * Adds a new [AlchemistNetworkManager].
      *
-     * @param program
-     * the [RunProtelisProgram]
-     * @param networkManager
-     * the [AlchemistNetworkManager]
-     * @deprecated Use networkManagerOf instead for better encapsulation
+     * Deprecated: prefer [networkManagerOf] for better encapsulation.
+     *
+     * @param program the [RunProtelisProgram]
+     * @param networkManager the [AlchemistNetworkManager]
      */
     @Deprecated("Use networkManagerOf instead", ReplaceWith("networkManagerOf"))
     fun addNetworkManger(program: RunProtelisProgram<*>, networkManager: AlchemistNetworkManager) {

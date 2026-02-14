@@ -15,55 +15,61 @@ import com.apollographql.apollo3.api.Query
 import com.apollographql.apollo3.api.Subscription
 
 /**
- * The most basic GraphQL client, capable of executing queries, mutations and subscriptions.
+ * Basic GraphQL client capable of preparing queries, mutations, and subscriptions for execution.
  */
 interface GraphQLClient {
-    /**
-     * The address of the GraphQL server.
-     */
+    /** The address of the GraphQL server. */
     val host: String
 
-    /**
-     * The port of the GraphQL server.
-     */
+    /** The port of the GraphQL server. */
     val port: Int
 
     /**
-     * The URL of the GraphQL server.
+     * Returns the HTTP URL of the GraphQL endpoint.
+     *
+     * @return the HTTP server URL where GraphQL requests should be sent.
      */
     fun serverUrl(): String = "http://$host:$port/graphql"
 
     /**
-     * The URL of the GraphQL server subscription.
+     * Returns the URL to use for GraphQL subscriptions (often a WebSocket URL).
+     *
+     * @return the subscription URL as a [String].
      */
     fun subscriptionUrl(): String
 
     /**
      * Prepare a query to be executed.
-     * @param query the query to be executed
-     * @return the associated [ApolloCall] that can be executed
+     *
+     * @param D the query data type produced by the query.
+     * @param query the query to be executed.
+     * @return an [ApolloCall] that can be executed to perform the query.
      * @see ApolloCall
      */
     fun <D : Query.Data> query(query: Query<D>): ApolloCall<D>
 
     /**
      * Prepare a mutation to be executed.
-     * @param mutation the mutation to be executed
-     * @return the associated [ApolloCall] that can be executed
+     *
+     * @param D the mutation data type produced by the mutation.
+     * @param mutation the mutation to be executed.
+     * @return an [ApolloCall] that can be executed to perform the mutation.
      * @see ApolloCall
      */
     fun <D : Mutation.Data> mutation(mutation: Mutation<D>): ApolloCall<D>
 
     /**
      * Prepare a subscription to be executed.
-     * @param subscription the subscription to be executed
-     * @return the associated [ApolloCall] that can be executed
+     *
+     * @param D the subscription data type produced by the subscription.
+     * @param subscription the subscription to be executed.
+     * @return an [ApolloCall] that can be executed to perform the subscription.
      * @see ApolloCall
      */
     fun <D : Subscription.Data> subscription(subscription: Subscription<D>): ApolloCall<D>
 
     /**
-     * Closes the client.
+     * Closes any resources held by the client.
      */
     fun close()
 }

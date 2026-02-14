@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -22,19 +22,20 @@ import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DefaultUndirectedWeightedGraph
 
 /**
- * A [NavigationStrategy] allowing to pursue a known (static) [destination] without knowing any
- * path leading there, this is also known as path searching.
- * In this context, knowing a destination means knowing its position, which, in turn, means
- * knowing two things:
- * - the direction that connects the destination and the current position as the crow flies,
- * - an estimation of the distance between the destination and the current position.
- * In order to reach the [destination] without a route to follow, the weighting system used
- * in [Explore] is extended so as to take into account the (estimated) suitability of each
- * door to reach the provided [destination], see [suitabilityFactor].
+ * A [NavigationStrategy] that pursues a known static [destination] without a predefined route
+ * (also known as path searching).
+ *
+ * Knowing a destination provides the straight-line direction and a distance estimate. To reach
+ * the destination the weighting system from [Explore] is extended with a suitability factor
+ * that estimates how appropriate each visible door is to reach the destination (see
+ * [suitabilityFactor] and [computeDoorsRankings]).
  *
  * @param T the concentration type.
- * @param L the type of landmarks of the pedestrian's cognitive map.
- * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
+ * @param L the landmark shape type used by the pedestrian's cognitive map.
+ * @param R the relation/edge type used by the pedestrian's cognitive map.
+ * @param action the navigation action that provides perception (visible doors, current room)
+ *               and movement helpers used by this strategy.
+ * @property destination the static target position to pursue.
  */
 open class Pursue<T, L : Euclidean2DConvexShape, R>(
     action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,

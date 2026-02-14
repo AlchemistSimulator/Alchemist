@@ -24,24 +24,25 @@ import it.unibo.alchemist.util.RandomGenerators.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Give the impression of a random walk through the environment targeting an ever changing pseudo-randomly point
- * of a circumference at a given distance and with a given radius from the current node position.
+ * Produces a wandering steering action that simulates a random walk by targeting
+ * points on a circle centered at a given offset from the node and with a given radius.
  *
- * @param environment
- *          the environment inside which the node moves.
- * @param pedestrian
- *          the owner of this action.
- * @param randomGenerator
- *          the simulation {@link RandomGenerator}.
- * @param offset
- *          the distance from the node position of the center of the circle.
- * @param radius
- *          the radius of the circle.
+ * The node's heading is set randomly and subsequent target points are chosen on a
+ * circumference around the heading with the specified [offset] and [radius]. The
+ * resulting target is constrained by the node's maximum walking distance.
+ *
+ * @param T the concentration type.
+ * @param reaction the reaction executing this action.
+ * @property environment the physics environment in which the node moves.
+ * @param pedestrian the owner of this action.
+ * @property randomGenerator the random number generator used to select directions.
+ * @property offset the distance from the node position to the center of the circle.
+ * @property radius the radius of the circle from which target points are sampled.
  */
 open class CognitiveAgentWander<T>(
     private val environment: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
-    override val pedestrian: PedestrianProperty<T>,
+    pedestrian: PedestrianProperty<T>,
     protected val randomGenerator: RandomGenerator,
     protected val offset: Double,
     protected val radius: Double,

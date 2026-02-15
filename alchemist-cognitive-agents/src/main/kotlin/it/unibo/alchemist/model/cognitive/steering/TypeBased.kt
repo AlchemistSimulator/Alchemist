@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -28,6 +28,6 @@ import kotlin.reflect.KClass
 class TypeBased<T>(
     environment: Euclidean2DEnvironment<T>,
     node: Node<T>,
-    typeWeights: LinkedHashMap<KClass<SteeringAction<T, Euclidean2DPosition>>, Double>,
+    typeWeights: Map<KClass<SteeringAction<T, Euclidean2DPosition>>, Double>,
     defaultWeight: Double = 0.0,
 ) : Weighted<T>(environment, node, { typeWeights[this::class] ?: defaultWeight })

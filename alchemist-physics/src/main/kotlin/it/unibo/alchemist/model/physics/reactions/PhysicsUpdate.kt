@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -31,11 +31,12 @@ class PhysicsUpdate<T>(
      * The environment to update.
      */
     val environment: Dynamics2DEnvironment<T>,
-    override val timeDistribution: TimeDistribution<T>,
+    override val timeDistribution: TimeDistribution<T> = DiracComb(DEFAULT_RATE),
 ) : GlobalReaction<T> {
+
     constructor(
         environment: Dynamics2DEnvironment<T>,
-        updateRate: Double = 30.0,
+        updateRate: Double,
     ) : this(environment, DiracComb(updateRate))
 
     override val outboundDependencies: ListSet<out Dependency> = ListSet.of(PhysicsDependency)
@@ -64,4 +65,8 @@ class PhysicsUpdate<T>(
     override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
 
     override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+
+    private companion object {
+        const val DEFAULT_RATE = 30.0
+    }
 }

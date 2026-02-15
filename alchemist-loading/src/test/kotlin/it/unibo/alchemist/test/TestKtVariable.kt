@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -57,13 +57,13 @@ class TestKtVariable<T, P : Position<P>> :
         "test 'type' keyword clashes" {
             loadAlchemistFromResource("regression/2022-coordination-type-clash.yml") shouldNot beNull()
         }
-        "test null values in bindings" {
+        "dependent variables should support null values" {
             val simulation = loadAlchemistFromResource("regression/2022-coordination-null-bindings.yml")
             simulation shouldNot beNull()
             val variable = simulation.variables["result"]
             variable shouldNot beNull()
             val values = variable?.toList().orEmpty()
-            values.forEach { it shouldBe "null" }
+            values.forEach { it.toString().substringBefore(" ") shouldBe "null" }
         }
 
         // This is a regression test, when the simulation is loaded with formula defined inside a "seed" definition

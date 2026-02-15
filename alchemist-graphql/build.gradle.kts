@@ -11,7 +11,6 @@ import Libs.alchemist
 import Libs.incarnation
 import com.apollographql.apollo3.gradle.internal.ApolloGenerateSourcesTask
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
-import dev.detekt.gradle.Detekt
 import it.unibo.alchemist.build.allVerificationTasks
 
 plugins {
@@ -126,10 +125,4 @@ publishing.publications {
             }
         }
     }
-}
-
-// exclude files in build from Detekt
-tasks.withType<Detekt>().configureEach {
-    exclude("**/boundary/graphql/client/**")
-    exclude("**/io/kotest/framework/runtime/**")
 }

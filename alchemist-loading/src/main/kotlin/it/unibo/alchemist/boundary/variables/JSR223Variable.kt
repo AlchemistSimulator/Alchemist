@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.variables
 
 import it.unibo.alchemist.boundary.DependentVariable
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot
+import it.unibo.alchemist.boundary.loader.syntax.AlchemistYamlSyntax
 import javax.script.Bindings
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
@@ -83,7 +83,7 @@ constructor(
                                 because it reached its ${timeout}ms timeout.
                                 This is usually a sign that something is looping.
                                 Either make the script run faster, or allow for a longer time by specifiying a different
-                                `${DocumentRoot.DependentVariable.timeout}`.
+                                `${AlchemistYamlSyntax.DependentVariable.timeout}`.
                         """.trimIndent().replace(Regex("\\R"), "")
                     else ->
                         """

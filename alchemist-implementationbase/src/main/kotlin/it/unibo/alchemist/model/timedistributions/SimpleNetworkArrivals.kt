@@ -29,14 +29,6 @@ import java.lang.IllegalStateException
  * then it will get used as a constant delay. Otherwise, the String will be used within [Incarnation.getProperty]
  *
  */
-
-private val Molecule?.isMeaningful: Molecule?
-    get() = this?.takeUnless { name.isNullOrBlank() }
-
-/**
- * A time distribution that simulates network packet arrivals based on EdgeCloudSim model.
- * Computes delays based on propagation delay and packet transmission time (packet size / bandwidth).
- */
 class SimpleNetworkArrivals<T> private constructor(
     /** The incarnation used to resolve properties from nodes. */
     val incarnation: Incarnation<T, *>,
@@ -161,7 +153,7 @@ class SimpleNetworkArrivals<T> private constructor(
             ).let { bw ->
             accessPointIdentificator?.let { id ->
                 if (node.isAccessPoint || myNeighborhood.isEmpty()) {
-                    bw / Math.max(myNeighborhood.size, 1)
+                    bw / myNeighborhood.size.coerceAtLeast(1)
                 } else {
                     val accesspoints = myNeighborhood.filter { it.isAccessPoint }
                     when (accesspoints.size) {
@@ -218,6 +210,11 @@ class SimpleNetworkArrivals<T> private constructor(
         )
 
     override fun getRate(): Double = 1 / (propagationDelay + packetSize / bandwidth)
-}
 
-private operator fun Time.plus(other: Double) = DoubleTime(toDouble() + other)
+    private companion object {
+        private val Molecule?.isMeaningful: Molecule?
+            get() = this?.takeUnless { name.isNullOrBlank() }
+
+        private operator fun Time.plus(other: Double) = DoubleTime(toDouble() + other)
+    }
+}

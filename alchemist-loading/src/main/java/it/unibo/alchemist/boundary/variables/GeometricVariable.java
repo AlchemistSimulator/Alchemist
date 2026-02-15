@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,7 +11,9 @@ package it.unibo.alchemist.boundary.variables;
 
 import org.apache.commons.math3.util.FastMath;
 
+import javax.annotation.Nonnull;
 import java.io.Serial;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -72,7 +74,7 @@ public final class GeometricVariable extends AbstractPrintableVariable<Double> {
     }
 
     @Override
-    public Stream<Double> stream() {
+    public @Nonnull Stream<Double> stream() {
         return IntStream.range(0, maxSamples)
             .mapToDouble(s -> min * FastMath.pow(max / min, (double) s / Math.max(1, maxSamples - 1)))
             .boxed();
@@ -83,4 +85,17 @@ public final class GeometricVariable extends AbstractPrintableVariable<Double> {
         return '[' + stream().map(Object::toString).collect(Collectors.joining(",")) + ']';
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof final GeometricVariable other
+            && def == other.def
+            && maxSamples == other.maxSamples
+            && min == other.min
+            && max == other.max;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(def, min, max, maxSamples);
+    }
 }

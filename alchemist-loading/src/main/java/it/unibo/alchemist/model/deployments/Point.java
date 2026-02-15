@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -39,6 +39,42 @@ public final class Point<P extends Position<? extends P>> implements Deployment<
         this.x = x;
         this.y = y;
         positionMaker = environment::makePosition;
+    }
+
+    /**
+     * @param environment
+     *            The {@link Environment}
+     * @param x
+     *            x coordinate
+     * @param y
+     *            y coordinate
+     */
+    public Point(final Environment<?, P> environment, final int x, final int y) {
+        this(environment, (double) x, (double) y);
+    }
+
+    /**
+     * @param environment
+     *            The {@link Environment}
+     * @param x
+     *            x coordinate
+     * @param y
+     *            y coordinate
+     */
+    public Point(final Environment<?, P> environment, final double x, final int y) {
+        this(environment, x, (double) y);
+    }
+
+    /**
+     * @param environment
+     *            The {@link Environment}
+     * @param x
+     *            x coordinate
+     * @param y
+     *            y coordinate
+     */
+    public Point(final Environment<?, P> environment, final int x, final double y) {
+        this(environment, (double) x, y);
     }
 
     @Override

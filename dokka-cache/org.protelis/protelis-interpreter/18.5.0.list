@@ -1,0 +1,10 @@
+org.protelis
+org.protelis.lang
+org.protelis.lang.datatype
+org.protelis.lang.datatype.impl
+org.protelis.lang.interpreter
+org.protelis.lang.interpreter.impl
+org.protelis.lang.interpreter.util
+org.protelis.lang.loading
+org.protelis.vm
+org.protelis.vm.impl

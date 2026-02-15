@@ -6,13 +6,13 @@ variables:
   kotlin: &k
     language: kotlin
     # Once bugged due to: https://youtrack.jetbrains.com/issue/KT-51213
-    formula: base.toString()
+    formula: base.toString() + " kotlin"
   groovy: &g
     language: groovy
-    formula: base.toString()
+    formula: base.toString() + " groovy"
   scala: &s
     language: scala
-    formula: if (base == null) "null" else base.toString()
+    formula: (if (base == null) "null" else base.toString()) + " scala"
   result:
     type: ArbitraryVariable
     parameters: [*k, [*g, *s, *k]]

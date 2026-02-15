@@ -1,4 +1,4 @@
-incarnation: protelis
+incarnation: sapere
 
 environment:
   type: Continuous2DEnvironment

@@ -38,7 +38,7 @@ internal class DSLLoader<T, P : Position<P>, I : Incarnation<T, P>>(
 
     private val logger = LoggerFactory.getLogger("Alchemist Kotlin DSL Loader")
     override var constants: Map<String, Any?> = emptyMap()
-    override val remoteDependencies: List<String> get() = TODO("Not yet implemented")
+    override val remoteDependencies: List<String> get() = emptyList()
     override var launcher: Launcher = DefaultLauncher()
     override val dependentVariables: Map<String, DependentVariable<*>> = emptyMap()
     override var variables: Map<String, Variable<*>> = emptyMap()

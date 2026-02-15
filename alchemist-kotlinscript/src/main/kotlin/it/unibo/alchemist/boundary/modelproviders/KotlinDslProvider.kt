@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,7 +11,7 @@ package it.unibo.alchemist.boundary.modelproviders
 
 import it.unibo.alchemist.boundary.AlchemistLoaderProvider
 import it.unibo.alchemist.boundary.Loader
-import it.unibo.alchemist.boundary.kotlindsl.AlchemistScript
+import it.unibo.alchemist.kotlinscript.AlchemistScript
 import java.io.InputStream
 import java.io.Reader
 import java.net.URL

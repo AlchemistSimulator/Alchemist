@@ -20,4 +20,3 @@ import kotlin.script.experimental.annotations.KotlinScript
     compilationConfiguration = AlchemistCompilationConfiguration::class,
 )
 interface AlchemistScript
-

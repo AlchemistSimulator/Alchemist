@@ -19,6 +19,7 @@ dependencies {
     }
     implementation(alchemist("cognitive-agents"))
     implementation(alchemist("loading"))
+    implementation(alchemist("maps"))
     implementation(kotlin("script-runtime"))
     implementation(kotlin("scripting-common"))
     implementation(kotlin("scripting-jvm"))

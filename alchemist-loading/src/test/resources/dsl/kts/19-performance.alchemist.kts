@@ -10,6 +10,10 @@
 package dsl.kts
 import another.location.SimpleMonitor
 import it.unibo.alchemist.boundary.extractors.Time
+import it.unibo.alchemist.boundary.kotlindsl.environment
+import it.unibo.alchemist.boundary.kotlindsl.simulation2D
+import it.unibo.alchemist.model.positionfilters.Rectangle
+import kotlin.collections.emptyList
 
 simulation2D(SAPEREIncarnation()) {
     simulationSeed(24L)
@@ -29,7 +33,7 @@ simulation2D(SAPEREIncarnation()) {
             deploy(circle(200, 0.0, 0.0, 20.0)) {
                 contents {
                     - "basemolecule"
-                    if (position in Rectangle(-5.0, -5.0, 10.0, 10.0)) {
+                    if (position in Rectangle<Euclidean2DPosition>(-5.0, -5.0, 10.0, 10.0)) {
                         - "centermolecule"
                     }
                     program("1", 1.0)
@@ -38,16 +42,16 @@ simulation2D(SAPEREIncarnation()) {
             deploy(grid(mSize, mSize, size, size, 0.25, 0.25, 0.1, 0.1)) {
                 contents {
                     - "gridmolecule"
-                    if (position in Rectangle(sourceStart, sourceStart, sourceSize, sourceSize)) {
+                    if (position in Rectangle<Euclidean2DPosition>(sourceStart, sourceStart, sourceSize, sourceSize)) {
                         -"token, 0, []"
                     }
-                    if (position in Rectangle(-2.0, -2.0, 4.0, 4.0)) {
+                    if (position in Rectangle<Euclidean2DPosition>(-2.0, -2.0, 4.0, 4.0)) {
                         -"filteredmolecule"
                     }
                 }
                 program("{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}", rate)
                 program("{token, N, L}{token, def: N2>=N, L2} --> {token, N, L}")
-                if (position in Rectangle(-1.0, -1.0, 2.0, 2.0)) {
+                if (position in Rectangle<Euclidean2DPosition>(-1.0, -1.0, 2.0, 2.0)) {
                     program("{filteredmolecule} --> {active}", 0.5)
                 }
             }

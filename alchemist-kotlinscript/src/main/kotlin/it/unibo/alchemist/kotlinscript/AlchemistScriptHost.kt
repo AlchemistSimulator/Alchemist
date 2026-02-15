@@ -27,7 +27,7 @@ fun main(vararg args: String) {
         AlchemistCompilationConfiguration,
         ScriptEvaluationConfiguration {
 //            jvm { mainArguments(scriptArgs) }
-        }
+        },
     )
 
     result.reports

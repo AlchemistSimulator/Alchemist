@@ -11,11 +11,13 @@ package it.unibo.alchemist.kotlinscript
 
 import it.unibo.alchemist.boundary.kotlindsl.SimulationContext
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
+import it.unibo.alchemist.model.maps.environments.OSMEnvironment
 import kotlin.script.experimental.api.ScriptAcceptedLocation
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.acceptedLocations
 import kotlin.script.experimental.api.compilerOptions
 import kotlin.script.experimental.api.defaultImports
+import kotlin.script.experimental.api.hostConfiguration
 import kotlin.script.experimental.api.ide
 import kotlin.script.experimental.jvm.dependenciesFromClassContext
 import kotlin.script.experimental.jvm.jvm
@@ -24,7 +26,16 @@ import kotlin.script.experimental.jvm.jvm
  * Compilation configuration for Alchemist scripts.
  */
 object AlchemistCompilationConfiguration : ScriptCompilationConfiguration({
+    val classes = listOf(
+        ProtelisIncarnation::class,
+        OSMEnvironment::class,
+    )
+    val importsFromClasses = classes
+        .mapNotNull { it.qualifiedName?.substringBeforeLast('.') }
+        .distinct()
+        .map { "$it.*" }
     defaultImports(
+        *importsFromClasses.toTypedArray(),
         "it.unibo.alchemist.model.*",
         "it.unibo.alchemist.model.deployments.*",
         "it.unibo.alchemist.model.incarnations.*",
@@ -51,12 +62,14 @@ object AlchemistCompilationConfiguration : ScriptCompilationConfiguration({
         "it.unibo.alchemist.boundary.properties.*",
         "it.unibo.alchemist.boundary.exporters.*",
         "it.unibo.alchemist.boundary.extractors.*",
+        "it.unibo.alchemist.boundary.kotlindsl.*",
         "it.unibo.alchemist.boundary.launchers.*",
         "it.unibo.alchemist.boundary.statistic.*",
         "it.unibo.alchemist.boundary.exportfilters.*",
         "it.unibo.alchemist.boundary.variables.*",
-        "it.unibo.alchemist.boundary.kotlindsl.*"
     )
+    hostConfiguration
+    compilerOptions.append("-Xcontext-parameters")
     ide {
         acceptedLocations(ScriptAcceptedLocation.Everywhere)
     }
@@ -64,7 +77,6 @@ object AlchemistCompilationConfiguration : ScriptCompilationConfiguration({
         dependenciesFromClassContext(AlchemistScript::class, wholeClasspath = true)
         dependenciesFromClassContext(ProtelisIncarnation::class, wholeClasspath = true)
         dependenciesFromClassContext(SimulationContext::class, wholeClasspath = true)
-        compilerOptions.append("-Xcontext-parameters")
     }
 }) {
     // See: https://docs.oracle.com/javase/8/docs/platform/serialization/spec/input.html

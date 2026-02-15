@@ -87,7 +87,7 @@ The [JSR-223 specification](https://jcp.org/en/jsr/detail?id=223) defines mechan
 allowing scripting language programs to access information developed in the Java Platform.
 
 Many languages (including [Groovy](https://groovy-lang.org/integrating.html#jsr223),
-[Python (Jython)](https://wiki.python.org/jython/UserGuide#using-jsr-223),
+Python (Jython),
 [Kotlin](https://github.com/Kotlin/kotlin-script-examples/blob/master/jvm/jsr223/jsr223.md),
 and Scala provide bindings for JSR-223).
 {{% /notice %}}

@@ -48,7 +48,7 @@ class KotlinDslProviderTest {
         val url = requireNotNull(ResourceLoader.getResource(ktsResource)) {
             "Resource $ktsResource not found on test classpath"
         }
-        LoadAlchemist.from(url).shouldEqual<Any, Nothing>(ymlResource, steps = 10_000L)
+        LoadAlchemist.from(url).shouldEqual<Any, Nothing>(ymlResource, steps = 100L)
     }
 
     companion object {

@@ -611,7 +611,6 @@ internal object SimulationModel {
             exporter.bindDataExtractors(dataExtractors)
             Result.success(exporter)
         }
-
         else -> null
     }
 

@@ -26,17 +26,6 @@ variables:
   sourceSize: &sourceSize
     formula: size / 5
 
-layers:
-  - type: StepLayer
-    parameters: [2, 2, 100, 0]
-    molecule: A
-  - type: StepLayer
-    parameters: [-2, -2, 0, 100]
-    molecule: B
-  - type: StepLayer
-    parameters: [0, 0, 50, 50]
-    molecule: C
-
 monitors:
   - type: another.location.SimpleMonitor
 

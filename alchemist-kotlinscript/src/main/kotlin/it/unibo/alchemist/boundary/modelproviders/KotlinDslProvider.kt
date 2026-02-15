@@ -18,7 +18,7 @@ import java.net.URL
 import kotlin.script.experimental.api.ResultValue
 import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
-import kotlin.script.experimental.api.valueOrNull
+import kotlin.script.experimental.api.valueOrThrow
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
@@ -47,9 +47,23 @@ object KotlinDslProvider : AlchemistLoaderProvider {
         val result = host.eval(input.toScriptSource(), compilationConfiguration, evaluationConfiguration)
         val errors = result.reports.filter { it.severity == ScriptDiagnostic.Severity.ERROR }
         require(errors.isEmpty()) { errors.joinToString("\n") { it.message } }
-        val value = (result.valueOrNull()?.returnValue as? ResultValue.Value)?.value
-        return value as? Loader
-            ?: error("Script must return a Loader; got ${value?.let { it::class.qualifiedName } ?: "null"}")
+        return when (val resultValue = result.valueOrThrow().returnValue) {
+            is ResultValue.Value -> {
+                val value = resultValue.value
+                check(value is Loader) {
+                    "Script must return a Loader; got ${value?.let { "$it: ${it::class.qualifiedName}" }}"
+                }
+                value
+            }
+            is ResultValue.Error -> {
+                throw resultValue.error
+            }
+            is ResultValue.Unit ->
+                error("Script returned Unit; expected a Loader (use 'simulation { ... }' as the last statement)")
+            is ResultValue.NotEvaluated -> {
+                error("Script was not evaluated")
+            }
+        }
     }
 
     override fun from(input: Reader): Loader = from(input.readText())

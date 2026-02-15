@@ -54,6 +54,11 @@ internal class DSLLoader<T, P : Position<P>, I : Incarnation<T, P>>(
         var theEnvironment: Environment<T, P> = EmptyEnvironment(incarnation)
         val exporters = mutableListOf<Exporter<T, P>>()
         val monitors = mutableListOf<OutputMonitor<T, P>>()
+        val instancedVariables: Map<String, *> by lazy {
+            variables.mapValues {
+                values.getOrDefault(it.key, it.value.default)
+            }
+        }
         context(incarnation) {
             object : SimulationContext<T, P> {
 
@@ -150,7 +155,7 @@ internal class DSLLoader<T, P : Position<P>, I : Incarnation<T, P>>(
                         }
                         ReadOnlyProperty { _, _ ->
                             @Suppress("UNCHECKED_CAST")
-                            values.getOrDefault(property.name, registeredVariable.default) as V
+                            instancedVariables[property.name] as V
                         }
                     }
 
@@ -168,6 +173,9 @@ internal class DSLLoader<T, P : Position<P>, I : Incarnation<T, P>>(
             $undefinedVariables
             The available variables are: ${variables.keys}
             """.trimIndent()
+        }
+        exporters.forEach { exporter ->
+            exporter.bindVariables(instancedVariables)
         }
         val theSimulation: Simulation<T, P> = Engine(theEnvironment)
         if (exporters.isNotEmpty()) {

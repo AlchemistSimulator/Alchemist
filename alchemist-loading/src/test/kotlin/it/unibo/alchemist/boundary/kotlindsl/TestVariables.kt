@@ -80,9 +80,9 @@ class TestVariables {
                 deployments {
                     deploy(point(0.0, 0.0)) {
                         contents {
-                            -"mSize" to mSize
-                            -"sourceStart" to sourceStart
-                            -"sourceSize" to sourceSize
+                            "mSize"(mSize)
+                            "sourceStart"(sourceStart)
+                            "sourceSize"(sourceSize)
                         }
                     }
                 }

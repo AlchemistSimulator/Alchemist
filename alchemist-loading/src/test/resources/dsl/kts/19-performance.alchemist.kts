@@ -25,9 +25,6 @@ simulation2D(SAPEREIncarnation()) {
         val mSize = -size
         val sourceStart = mSize / 10.0
         val sourceSize = size / 5.0
-        layer("A", StepLayer(2.0, 2.0, concentrationOf(100.0), concentrationOf(0.0)))
-        layer("B", StepLayer(-2.0, -2.0, concentrationOf(0.0), concentrationOf(100.0)))
-        layer("C", StepLayer(0.0, 0.0, concentrationOf(50.0), concentrationOf(50.0)))
         monitor(SimpleMonitor())
         deployments {
             deploy(circle(200, 0.0, 0.0, 20.0)) {
@@ -36,8 +33,8 @@ simulation2D(SAPEREIncarnation()) {
                     if (position in Rectangle<Euclidean2DPosition>(-5.0, -5.0, 10.0, 10.0)) {
                         - "centermolecule"
                     }
-                    program("1", 1.0)
-                    program("2", 2.0)                        }
+                    program("{basemolecule} --> {processed}", 1.0)
+                    program("{processed} --> +{basemolecule}")                        }
             }
             deploy(grid(mSize, mSize, size, size, 0.25, 0.25, 0.1, 0.1)) {
                 contents {

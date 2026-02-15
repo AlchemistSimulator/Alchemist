@@ -7,7 +7,6 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package dsl.kts
-import it.unibo.alchemist.boundary.kotlindsl.ContentContext.unaryMinus
 import it.unibo.alchemist.boundary.kotlindsl.environment
 import it.unibo.alchemist.boundary.kotlindsl.simulation2D
 
@@ -18,7 +17,7 @@ simulation2D(ProtelisIncarnation()) {
         deployments {
             deploy(grid(-5.0, -5.0, 5.0, 5.0, 0.25, 0.1, 0.1)) {
                 contents {
-                    -just("a")
+                    -"a"
                 }
             }
         }

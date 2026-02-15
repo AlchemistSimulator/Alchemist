@@ -96,37 +96,36 @@ constructor(
     }
 
     override fun exportData(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
-        val line: String =
-            dataExtractors.joinToString(separator = " ") { extractor ->
-                val data = extractor.extractDataAsText(environment, reaction, time, step)
-                val names = extractor.columnNames
-                when {
-                    data.size <= 1 -> data.values.joinToString(" ")
-                    // Labels and keys match
-                    data.size == names.size && data.keys.containsAll(names) ->
-                        names.joinToString(" ") {
-                            requireNotNull(data[it]) {
-                                BugReporting.reportBug(
-                                    "Bug in ${this::class.simpleName}",
-                                    mapOf("key" to it, "data" to data),
-                                )
-                            }
-                        }
-                    // If the labels do not match keys, require predictable iteration order
-                    else -> {
-                        require(data.hasPredictableIteration) {
+        val line: String = dataExtractors.joinToString(separator = " ") { extractor ->
+            val data = extractor.extractDataAsText(environment, reaction, time, step)
+            val names = extractor.columnNames
+            when {
+                data.size <= 1 -> data.values.joinToString(" ")
+                // Labels and keys match
+                data.size == names.size && data.keys.containsAll(names) ->
+                    names.joinToString(" ") {
+                        requireNotNull(data[it]) {
                             BugReporting.reportBug(
-                                """
-                                    Extractor "${extractor::class.simpleName}" is likely bugged:
-                                    1. the set of labels $names does not match the keys ${data.keys}, but iteration may fail as
-                                    2. it returned a map with non-predictable iteration order of type ${data::class.simpleName}"
-                                """.trimIndent(),
+                                "Bug in ${this::class.simpleName}",
+                                mapOf("key" to it, "data" to data),
                             )
                         }
-                        data.values.joinToString(" ")
                     }
+                // If the labels do not match keys, require predictable iteration order
+                else -> {
+                    require(data.hasPredictableIteration) {
+                        BugReporting.reportBug(
+                            """
+                                Extractor "${extractor::class.simpleName}" is likely bugged:
+                                1. the set of labels $names does not match the keys ${data.keys}, but iteration may fail as
+                                2. it returned a map with non-predictable iteration order of type ${data::class.simpleName}"
+                            """.trimIndent(),
+                        )
+                    }
+                    data.values.joinToString(" ")
                 }
             }
+        }
         outputPrintStream.println(line)
     }
 

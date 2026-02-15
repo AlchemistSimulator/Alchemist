@@ -22,7 +22,6 @@ simulation2D(SAPEREIncarnation()) {
         val mSize = -size
         val sourceStart = mSize / 10.0
         val sourceSize = size / 5.0
-        terminator(AfterTime(DoubleTime(1.0)))
         networkModel(ConnectWithinDistance(0.5))
         deployments {
             deploy(makePerturbedGridForTesting()) {

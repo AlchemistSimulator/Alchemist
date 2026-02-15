@@ -137,21 +137,19 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                 logger.debug("Deployment descriptors: {}", deploymentDescriptors)
             }
             // EXPORTS
-            val exporters =
-                SimulationModel.visitRecursively<Exporter<T, P>>(
-                    context,
-                    root.getOrEmpty(AlchemistYamlSyntax.export),
-                ) {
-                    SimulationModel.visitSingleExporter(incarnation, context, it)
-                }
+            val exporters = SimulationModel.visitRecursively<Exporter<T, P>>(
+                context,
+                root.getOrEmpty(AlchemistYamlSyntax.export),
+            ) {
+                SimulationModel.visitSingleExporter(incarnation, context, it)
+            }
             exporters.forEach { it.bindVariables(variableValues) }
             // ENGINE
             val engineDescriptor = root[AlchemistYamlSyntax.engine]
-            val engine: Simulation<T, P> =
-                SimulationModel
-                    .visitBuilding<Simulation<T, P>>(context, engineDescriptor)
-                    ?.getOrThrow()
-                    ?: Engine(environment)
+            val engine: Simulation<T, P> = SimulationModel
+                .visitBuilding<Simulation<T, P>>(context, engineDescriptor)
+                ?.getOrThrow()
+                ?: Engine(environment)
             // Attach monitors
             monitors.forEach(engine::addOutputMonitor)
             // Attach data exporters

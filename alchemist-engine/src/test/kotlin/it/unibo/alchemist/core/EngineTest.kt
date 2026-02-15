@@ -12,7 +12,6 @@ package it.unibo.alchemist.core
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.core.util.DependencyUtils
-import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.conditions.NeighborHasConcentration
@@ -23,9 +22,7 @@ import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.times.DoubleTime
 
 @Suppress("UnnecessaryAbstractClass")
-abstract class AbstractEngineTest(
-    val engineFactory: (Environment<Double, *>) -> Simulation<Double, *>,
-) : FreeSpec({
+class EngineTest : FreeSpec({
 
     "Neighbor Condition: Reaction executes when neighbor has concentration" {
         val incarnation = BiochemistryIncarnation()
@@ -58,7 +55,7 @@ abstract class AbstractEngineTest(
 
         environment.addTerminator { it.simulation.time > DoubleTime(5.0) }
 
-        val engine = engineFactory(environment)
+        val engine = Engine(environment)
         engine.play()
         engine.run()
 

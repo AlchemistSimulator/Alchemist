@@ -1,3 +1,35 @@
+## [42.4.0](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.35...42.4.0) (2026-02-15)
+
+### ⚠ BREAKING CHANGES
+
+* **api-deps:** update the infrastructure to Kotlin 2.3.10 (#5136)
+
+### Dependency updates
+
+* **api-deps:** update the infrastructure to Kotlin 2.3.10 ([#5136](https://github.com/AlchemistSimulator/Alchemist/issues/5136)) ([5dcb9ed](https://github.com/AlchemistSimulator/Alchemist/commit/5dcb9edf2cc560fd605eed8ce60ff9b513258b1b))
+* **core-deps:** update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.10.0 ([#5079](https://github.com/AlchemistSimulator/Alchemist/issues/5079)) ([4f797bf](https://github.com/AlchemistSimulator/Alchemist/commit/4f797bf17c38f6f76d268ccfbfb0541e1d028300))
+* **deps:** update dependency io.ktor.plugin to v3.4.0 ([#5090](https://github.com/AlchemistSimulator/Alchemist/issues/5090)) ([835efd5](https://github.com/AlchemistSimulator/Alchemist/commit/835efd5ef91319805b48df2f395da0a18d5f68da))
+* **deps:** update dependency org.danilopianini:kotlin-symmetric-matrix to v1.1.11 ([#5031](https://github.com/AlchemistSimulator/Alchemist/issues/5031)) ([bb6b9e3](https://github.com/AlchemistSimulator/Alchemist/commit/bb6b9e3af752dd35cc144d4d445cfa3e5632684b))
+* **deps:** update plugin gitsemver to v7.0.12 ([#5128](https://github.com/AlchemistSimulator/Alchemist/issues/5128)) ([e3820d9](https://github.com/AlchemistSimulator/Alchemist/commit/e3820d9057d36dfdd5889828c756c82b70cac860))
+* **deps:** update plugin publishoncentral to v9.1.13 ([#5129](https://github.com/AlchemistSimulator/Alchemist/issues/5129)) ([0462b19](https://github.com/AlchemistSimulator/Alchemist/commit/0462b19c10dc39f7eb833c26ccdf1af1f72186da))
+
+### Documentation
+
+* drop dead link to Jython's JSR223 ([#5138](https://github.com/AlchemistSimulator/Alchemist/issues/5138)) ([79fd840](https://github.com/AlchemistSimulator/Alchemist/commit/79fd84004e6eb81f2cd5cadca01546e8788bc184))
+
+### Build and continuous integration
+
+* **full:** change duplicates strategy to inclusion ([#5133](https://github.com/AlchemistSimulator/Alchemist/issues/5133)) ([fa066ae](https://github.com/AlchemistSimulator/Alchemist/commit/fa066ae7732f67dac6d9247e8122ce3f8b14764e))
+* limit the time-expensive Dokka link feches to CI runs ([#5134](https://github.com/AlchemistSimulator/Alchemist/issues/5134)) ([4683b8e](https://github.com/AlchemistSimulator/Alchemist/commit/4683b8e401531f599738c6b6ddc7130b9987e5e0))
+* refactor the Dokka extensions to a dedicated file ([#5135](https://github.com/AlchemistSimulator/Alchemist/issues/5135)) ([3b2714f](https://github.com/AlchemistSimulator/Alchemist/commit/3b2714f78237d00ddbd793182d6267dc09c79ed0))
+* update makepkg image to danysk/makepkg:2.1.0 ([3cde247](https://github.com/AlchemistSimulator/Alchemist/commit/3cde247d0100b469b38160204723dd5afeefa7c0))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([bedb482](https://github.com/AlchemistSimulator/Alchemist/commit/bedb482b6cd53d4e91ebfdf2ea0b038fc6866c76))
+* **build:** update the javadoc.io cache ([f3c7250](https://github.com/AlchemistSimulator/Alchemist/commit/f3c725057a863a9992d984f0420db4ea8b1ba4d2))
+* **build:** update the javadoc.io cache ([5dcfb7e](https://github.com/AlchemistSimulator/Alchemist/commit/5dcfb7ef28bfef20712427fb6a16eacd292f4968))
+
 ## [42.3.35](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.34...42.3.35) (2026-02-11)
 
 ### Dependency updates

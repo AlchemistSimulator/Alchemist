@@ -171,7 +171,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     private fun getAllNodesInRange(center: P, range: Double): List<Node<T>> {
         require(range > 0) { "Range query must be positive (provided: $range)" }
-        @Suppress("UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS")
         val validCache = cache ?: Caffeine.newBuilder()
             .maximumSize(1000)
             .build<Pair<P, Double>, List<Node<T>>> { (pos, r) -> runQuery(pos, r) }

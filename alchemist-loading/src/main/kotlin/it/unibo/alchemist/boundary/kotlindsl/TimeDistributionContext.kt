@@ -31,8 +31,6 @@ import org.apache.commons.math3.random.RandomGenerator
  * In both cases, an optional configuration block can be provided to attach [it.unibo.alchemist.model.Action]s
  * and [it.unibo.alchemist.model.Condition]s via [ActionableContext].
  */
-// TODO: Detekt false positive. Remove once Detekt supports context parameters.
-@Suppress("UndocumentedPublicFunction", "UndocumentedPublicProperty")
 interface TimeDistributionContext<T, P : Position<P>> {
 
     /**

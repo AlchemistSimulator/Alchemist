@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -26,7 +25,6 @@ private val fakeShape =
         override fun transformed(transformation: Euclidean2DTransformation.() -> Unit) = this
     }
 
-@SuppressFBWarnings("SE_BAD_FIELD_STORE")
 class TestEuclidean2DShapeFactory :
     FreeSpec({
     /*
@@ -36,11 +34,10 @@ class TestEuclidean2DShapeFactory :
      */
         "!Shape.intersect symmetry" - {
             val firsts = factory.oneOfEachWithSize(DEFAULT_SHAPE_SIZE)
-            val seconds =
-                firsts.mapValues {
-                    // puts the other shapes in a corner to test "edge" cases
-                    it.value.transformed { origin(DEFAULT_SHAPE_SIZE * 2, DEFAULT_SHAPE_SIZE * 2) }
-                }
+            val seconds = firsts.mapValues {
+                // puts the other shapes in a corner to test "edge" cases
+                it.value.transformed { origin(DEFAULT_SHAPE_SIZE * 2, DEFAULT_SHAPE_SIZE * 2) }
+            }
             val names = firsts.keys.toList()
             for (f in names.indices) {
                 for (s in f until names.size) {
@@ -55,9 +52,7 @@ class TestEuclidean2DShapeFactory :
 
         "Test requireCompatible" {
             shouldNotThrowAny {
-                factory
-                    .oneOfEachWithSize(DEFAULT_SHAPE_SIZE)
-                    .values
+                factory.oneOfEachWithSize(DEFAULT_SHAPE_SIZE).values
                     .forEach { factory.requireCompatible(it) }
             }
             shouldThrow<IllegalArgumentException> {
@@ -74,20 +69,19 @@ class TestEuclidean2DShapeFactory :
                     val angle = Math.PI / 4
                     val initialOrigin = Euclidean2DPosition(100.0, 100.0)
                     val shape = it.value.transformed { origin(initialOrigin) }
-                    val rotated =
-                        shape
-                            .transformed { rotate(angle) }
-                            .transformed { origin(500.0, 500.0) }
-                            .transformed { rotate(angle) }
-                            .transformed { origin(0.0, 0.0) }
-                            .transformed { rotate(angle) }
-                            .transformed { origin(7.0, 0.0) }
-                            .transformed { rotate(angle) }
-                            .transformed { repeat(3) { rotate(angle) } }
-                            .transformed {
-                                origin(initialOrigin)
-                                rotate(angle)
-                            }
+                    val rotated = shape
+                        .transformed { rotate(angle) }
+                        .transformed { origin(500.0, 500.0) }
+                        .transformed { rotate(angle) }
+                        .transformed { origin(0.0, 0.0) }
+                        .transformed { rotate(angle) }
+                        .transformed { origin(7.0, 0.0) }
+                        .transformed { rotate(angle) }
+                        .transformed { repeat(3) { rotate(angle) } }
+                        .transformed {
+                            origin(initialOrigin)
+                            rotate(angle)
+                        }
                     rotated.centroid shouldBe shape.centroid
                 }
             }

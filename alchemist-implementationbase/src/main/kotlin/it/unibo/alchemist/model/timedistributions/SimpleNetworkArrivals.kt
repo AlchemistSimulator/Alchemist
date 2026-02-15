@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.times.DoubleTime
-import java.lang.IllegalStateException
 
 /**
  * This class models a distribution that follows the packet arrival times as described in
@@ -167,8 +166,10 @@ class SimpleNetworkArrivals<T> private constructor(
             } ?: bw
         }
 
-    /** Computes the packet size, defaulting to 1.0 if not specified or invalid. */
-    @Suppress("UnreachableCode") // Detekt false positive. Remove once fixed.
+    /**
+     * Computes the packet size from constants or properties.
+     * Defaults to 1.0 if not specified or invalid.
+     */
     val packetSize: Double
         get() = constantPacketSize
             ?: incarnation.getProperty(node, packetSizeMolecule, packetSizeProperty).takeIf { it.isFinite() && it >= 0 }

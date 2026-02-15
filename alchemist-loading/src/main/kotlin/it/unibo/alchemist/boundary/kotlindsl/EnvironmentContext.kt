@@ -38,8 +38,6 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param T the concentration type used by the simulation.
  * @param P the position type used by the environment.
  */
-// TODO: Detekt false positive. Remove once Detekt supports context parameters.
-@Suppress("UndocumentedPublicFunction")
 fun interface EnvironmentContext<T, P : Position<P>> {
 
     /**

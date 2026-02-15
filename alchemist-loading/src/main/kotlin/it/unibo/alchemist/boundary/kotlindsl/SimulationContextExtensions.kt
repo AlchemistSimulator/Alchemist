@@ -7,9 +7,6 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-// TODO: Detekt false positive. Remove once Detekt supports context parameters.
-@file:Suppress("UndocumentedPublicFunction")
-
 package it.unibo.alchemist.boundary.kotlindsl
 
 import it.unibo.alchemist.model.Incarnation

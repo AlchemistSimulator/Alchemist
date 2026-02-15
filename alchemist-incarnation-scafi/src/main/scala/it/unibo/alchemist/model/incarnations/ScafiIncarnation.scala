@@ -89,13 +89,13 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
     }
   )
 
-  /** NOTE: String v may be prefixed by "_" symbol to avoid caching the value resulting from its interpretation */
+  /** NOTE: String v may be prefixed by the "_" symbol to avoid caching the value resulting from its interpretation */
   override def createConcentration(data: Any): T = {
     /*
      * TODO: support double-try parse in case of strings (to avoid "\"string\"" in the YAML file)
      */
     val dataString = data.toString
-    val doCacheValue = !dataString.startsWith("_");
+    val doCacheValue = !dataString.startsWith("_")
     CachedInterpreter[AnyRef](if (doCacheValue) dataString else dataString.tail, doCacheValue).asInstanceOf[T]
   }
 
@@ -187,7 +187,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
     val frequency = toDouble(parameters)
     if (frequency.isNaN) {
       throw new IllegalArgumentException(
-        parameters + " is not a valid number, the time distribution could not be created."
+        parameters.toString + " is not a valid number, the time distribution could not be created."
       )
     }
     new DiracComb(new DoubleTime(randomGenerator.nextDouble() / frequency), frequency)
@@ -211,9 +211,7 @@ object ScafiIncarnationUtils {
     body(node.asProperty(classOf[ScafiDevice[T]]))
   }
 
-  def runOnlyOnScafiDevice[T, A](node: Node[T], message: String)(body: => A): A =
-    runInScafiDeviceContext(node, message, (_: ScafiDevice[T]) => body)
-  def isScafiNode[T](node: Node[T]): Boolean = node.asPropertyOrNull[ScafiDevice[T]](classOf[ScafiDevice[T]]) != null
+  private def isScafiNode[T](node: Node[T]): Boolean = node.asPropertyOrNull[ScafiDevice[T]](classOf[ScafiDevice[T]]) != null
 
   def allActions[T, P <: Position[P], C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
     for {
@@ -221,7 +219,7 @@ object ScafiIncarnationUtils {
       action: Action[T] <- reaction.getActions.asScala if klass.isInstance(action)
     } yield action.asInstanceOf[C]
 
-  def allScafiProgramsFor[T, P <: Position[P]](node: Node[T]) =
+  def allScafiProgramsFor[T, P <: Position[P]](node: Node[T]): mutable.Buffer[RunScafiProgram[T, P]] =
     allActions[T, P, RunScafiProgram[T, P]](node, classOf[RunScafiProgram[T, P]])
 
   def allConditionsFor[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Condition[T]] =
@@ -230,14 +228,6 @@ object ScafiIncarnationUtils {
       condition <- reaction.getConditions.asScala if conditionClass.isInstance(condition)
     } yield condition
 
-  def inboundDependencies[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Dependency] =
-    for {
-      c <- allConditionsFor(node, conditionClass)
-      dep <- c.getInboundDependencies.iterator().asScala
-    } yield dep
-
-  def allCompletedScafiProgram[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Dependency] =
-    inboundDependencies(node, classOf[ScafiComputationalRoundComplete[T]])
 }
 
 object CachedInterpreter {

@@ -19,8 +19,6 @@ import it.unibo.alchemist.model.TerminationPredicate
  * This context is meant to be used with Kotlin context receivers, requiring an [Environment] to be available
  * in the surrounding scope. The unary minus operator provides a compact notation for adding terminators.
  */
-// TODO: Detekt false positive. Remove once Detekt supports context parameters.
-@Suppress("UndocumentedPublicFunction")
 object TerminatorsContext {
 
     /**

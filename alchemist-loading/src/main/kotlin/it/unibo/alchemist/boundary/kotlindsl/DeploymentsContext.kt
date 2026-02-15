@@ -28,8 +28,6 @@ import org.apache.commons.math3.random.RandomGenerator
  * This interface is based on Kotlin context receivers: the relevant [RandomGenerator] and [Environment] (and, in the
  * overload that creates nodes via incarnation, also the [Incarnation]) must be available in the surrounding scope.
  */
-// TODO: Detekt false positive. Remove once Detekt supports context parameters.
-@Suppress("UndocumentedPublicFunction")
 fun interface DeploymentsContext<T, P : Position<P>> {
 
     /**

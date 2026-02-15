@@ -12,7 +12,6 @@ package it.unibo.alchemist.model.protelis
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.hash.Hashing
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Molecule
@@ -166,7 +165,6 @@ class AlchemistExecutionContext<P : Position<P>>(
 
     override fun getCurrentTime() = reaction.tau.toDouble()
 
-    @SuppressFBWarnings(value = ["EI_EXPOSE_REP"], justification = INTENTIONAL)
     override fun getDeviceUID(): DeviceUID = protelisDevice
 
     override fun hashCode(): Int {
@@ -304,7 +302,5 @@ class AlchemistExecutionContext<P : Position<P>>(
          * It only makes sense in case the environment is a [MapEnvironment]
          */
         val APPROXIMATE_NBR_RANGE: Molecule = SimpleMolecule("APPROXIMATE_NBR_RANGE")
-
-        private const val INTENTIONAL = "This is intentional"
     }
 }

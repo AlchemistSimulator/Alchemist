@@ -13,7 +13,6 @@ import kotlin.String
 /**
  * Statically defined libraries used by the project.
  */
-@Suppress("UndocumentedPublicProperty")
 object Libs {
 
     /**

@@ -32,8 +32,6 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param T the concentration type used by the simulation.
  * @param P the position type used by the environment.
  */
-// TODO: Detekt false positive. Remove once Detekt supports context parameters.
-@Suppress("UndocumentedPublicFunction")
 interface DeploymentContext<T, P : Position<P>> {
 
     /**
@@ -81,7 +79,7 @@ interface DeploymentContext<T, P : Position<P>> {
     fun withTimeDistribution(
         parameter: Any? = null,
         block: context(TimeDistribution<T>) TimeDistributionContext<T, P>.() -> Unit,
-    ) = timeDistribution<TimeDistribution<T>>(
+    ) = timeDistribution(
         parameter as? TimeDistribution<T> ?: makeTimeDistribution(parameter),
         block,
     )

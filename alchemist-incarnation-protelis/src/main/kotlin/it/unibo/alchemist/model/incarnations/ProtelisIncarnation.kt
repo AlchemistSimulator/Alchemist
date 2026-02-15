@@ -12,7 +12,6 @@ package it.unibo.alchemist.model.incarnations
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
@@ -299,11 +298,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
      *
      * @param node the [Node]
      */
-    class ProtectedExecutionEnvironment
-    @SuppressFBWarnings(value = ["EI_EXPOSE_REP2"], justification = "This is intentional")
-    constructor(
-        private val node: Node<*>,
-    ) : ExecutionEnvironment {
+    class ProtectedExecutionEnvironment(private val node: Node<*>) : ExecutionEnvironment {
         private val shadow: ExecutionEnvironment = SimpleExecutionEnvironment()
 
         override fun commit() = Unit

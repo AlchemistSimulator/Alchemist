@@ -13,8 +13,6 @@ import it.unibo.alchemist.model.Condition
  * Both [action] and [condition] mutate the current [Actionable] by appending the provided element to its internal
  * collections. Ordering is preserved and duplicates are allowed.
  */
-// TODO: Detekt false positive. Remove once Detekt supports context parameters.
-@Suppress("UndocumentedPublicFunction")
 object ActionableContext {
 
     /**

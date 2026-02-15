@@ -77,7 +77,9 @@ allprojects {
     tasks.withType<Detekt>().configureEach {
         exclude { fileTree ->
             val absolutePath = fileTree.file.absolutePath
-            listOf("/build/", "/generated/").any { it in absolutePath }
+            listOf("build", "generated")
+                .map { "${File.separator}$it${File.separator}" }
+                .any { it in absolutePath }
         }
     }
 

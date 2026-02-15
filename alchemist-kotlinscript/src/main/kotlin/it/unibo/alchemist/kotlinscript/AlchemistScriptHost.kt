@@ -18,6 +18,18 @@ import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 
+/**
+ * Host entry point for executing an Alchemist Kotlin script.
+ *
+ * The application expects exactly one command-line argument: the path to a
+ * Kotlin script file (usually with extension `.alchemist.kts`) that evaluates to
+ * an instance of [Loader]. The returned loader's launcher will be used to
+ * launch the simulation.
+ *
+ * @param args command-line arguments; must contain exactly one element which is
+ * the path to the script file to execute.
+ * @throws IllegalArgumentException if the number of arguments is not exactly one.
+ */
 fun main(vararg args: String) {
     require(args.size == 1) { "usage: <app> <file.alchemist.kts>" }
 
@@ -29,11 +41,9 @@ fun main(vararg args: String) {
 //            jvm { mainArguments(scriptArgs) }
         },
     )
-
     result.reports
         .filter { it.severity > ScriptDiagnostic.Severity.DEBUG }
         .forEach { d -> System.err.println("${d.severity}: ${d.message}") }
-
     val eval = result.valueOrNull()
     val returned = (eval?.returnValue as? ResultValue.Value)?.value
     check(returned is Loader) {

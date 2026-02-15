@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.kotlindsl
 
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.Loader
+import it.unibo.alchemist.boundary.kotlindsl.TestComparators.shouldEqual
 import it.unibo.alchemist.model.Position
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -226,7 +227,6 @@ class PerformanceComparisonTest {
         val dslLoader = LoadAlchemist.from(dslFile)
         assertNotNull(yamlLoader)
         assertNotNull(dslLoader)
-        val dslLoaderFunction = { dslLoader }
-        dslLoaderFunction.shouldEqual(yamlResource, includeRuntime = false)
+        dslLoader.shouldEqual<Any, Nothing>(yamlResource, 0L)
     }
 }

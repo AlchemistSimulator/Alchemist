@@ -10,6 +10,7 @@
 package it.unibo.alchemist.boundary.kotlindsl
 
 import it.unibo.alchemist.boundary.LoadAlchemist
+import it.unibo.alchemist.boundary.kotlindsl.TestComparators.shouldEqual
 import java.nio.file.Files
 import java.util.stream.Stream
 import kotlin.io.path.writeText
@@ -47,8 +48,7 @@ class KotlinDslProviderTest {
         val url = requireNotNull(ResourceLoader.getResource(ktsResource)) {
             "Resource $ktsResource not found on test classpath"
         }
-        val loaderBuilder = { LoadAlchemist.from(url) }
-        loaderBuilder.shouldEqual(ymlResource)
+        LoadAlchemist.from(url).shouldEqual<Any, Nothing>(ymlResource, steps = 10_000L)
     }
 
     companion object {

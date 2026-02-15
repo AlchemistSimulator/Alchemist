@@ -54,12 +54,13 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 ) : Environment<T, P> {
     private val _nodes: ListSet<Node<T>> = ArrayListSet()
     private val _globalReactions = ArrayListSet<GlobalReaction<T>>()
-    private val _layers: MutableMap<Molecule, Layer<T, P>> = LinkedHashMap()
+    final override var layers: Map<Molecule, Layer<T, P>> = LinkedHashMap()
+        private set
     private val neighCache = TIntObjectHashMap<Neighborhood<T>>()
     private val nodeToPos = TIntObjectHashMap<P>()
     private val spatialIndex: SpatialIndex<Node<T>> = internalIndex
 
-    override val layers: ListSet<Layer<T, P>> get() = ArrayListSet(_layers.values)
+//    override val layers: Map<Molecule, Layer<T, P>> get() = _layers
 
     override val globalReactions: ListSet<GlobalReaction<T>>
         get() = ListSets.unmodifiableListSet(_globalReactions)
@@ -105,7 +106,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     }
 
     override fun addLayer(molecule: Molecule, layer: Layer<T, P>) {
-        check(_layers.put(molecule, layer) == null) { "Two layers have been associated to $molecule" }
+        check(molecule !in layers.keys) { "A layer for $molecule was already associated to this environment." }
+        layers += molecule to layer
     }
 
     override fun addGlobalReaction(reaction: GlobalReaction<T>) {
@@ -179,7 +181,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     override fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double = getPosition(n1).distanceTo(getPosition(n2))
 
-    override fun getLayer(molecule: Molecule): Layer<T, P>? = _layers[molecule]
+    override fun getLayer(molecule: Molecule): Layer<T, P>? = layers[molecule]
 
     override fun getNeighborhood(node: Node<T>): Neighborhood<T> {
         val result = neighCache[node.id]

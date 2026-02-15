@@ -23,7 +23,7 @@ class TestContents {
                 deployments {
                     deploy(point(0.0, 0.0)) {
                         contents {
-                            -"test" to listOf(LsaMolecule("1"))
+                            "test"(listOf(LsaMolecule("1")))
                         }
                     }
                 }

@@ -23,9 +23,38 @@ import it.unibo.alchemist.model.Node
  * The API is based on Kotlin context receivers: the required [Incarnation] and/or [Node] are expected to be
  * available in the current context.
  */
-// TODO: Detekt false positive. Remove once Detekt supports context parameters.
-@Suppress("UndocumentedPublicFunction")
 object ContentContext {
+
+    /**
+     * Assigns the given [concentration] to this [Molecule] on the current [Node].
+     *
+     * Context receivers:
+     * - [incarnation]: used to create concentrations by default when none is provided.
+     * - [node]: the target [Node] that will receive the concentration.
+     *
+     * @receiver the molecule to which the concentration will be assigned
+     * @param concentration the concentration value to assign; when omitted, a fresh
+     * concentration instance is created via [Incarnation.createConcentration].
+     */
+    context(incarnation: Incarnation<T, *>, node: Node<T>)
+    operator fun <T> Molecule.invoke(concentration: T = incarnation.createConcentration()) =
+        node.setConcentration(this, concentration)
+
+    /**
+     * Create the [Molecule] identified by this string using the current [Incarnation]
+     * and assign it the provided [concentration] on the current [Node].
+     *
+     * Context receivers:
+     * - [incarnation]: used to create the molecule and, by default, the concentration.
+     * - [node]: the target [Node] that will receive the concentration.
+     *
+     * @receiver the molecule name (string) to create
+     * @param concentration the concentration value to assign; when omitted, a fresh
+     * concentration instance is created via [Incarnation.createConcentration].
+     */
+    context(incarnation: Incarnation<T, *>, node: Node<T>)
+    operator fun <T> String.invoke(concentration: T = incarnation.createConcentration()) =
+        incarnation.createMolecule(this)(concentration)
 
     /**
      * Creates a concentration value using the current [Incarnation].
@@ -39,46 +68,33 @@ object ContentContext {
     fun <T> concentrationOf(origin: Any?): T = incarnation.createConcentration(origin)
 
     /**
-     * Assigns a concentration to the current [Node] for the given [Molecule].
-     *
-     * This operator enables concise DSL statements by interpreting `-(molecule to concentration)` as
-     * "set the concentration of this molecule on the current node".
-     *
-     * @receiver a pair `(molecule, concentration)` to assign.
-     */
-    context(node: Node<T>)
-    operator fun <T> Pair<Molecule, T>.unaryMinus() {
-        node.setConcentration(first, second)
-    }
-
-    /**
      * Assigns a default concentration for this [Molecule] to the current [Node].
      *
-     * The concentration is created via [Incarnation.createConcentration] with no explicit origin.
+     * This operator invokes the parameterless molecule invoker, which in turn
+     * creates a default concentration via [Incarnation.createConcentration] and assigns
+     * it to the current [Node].
      *
-     * @receiver the molecule whose concentration should be set.
+     * Context receivers:
+     * - [incarnation]: used to create the default concentration
+     * - [Node]: the target node
+     *
+     * @receiver the molecule whose default concentration will be set on the current node
      */
     context(incarnation: Incarnation<T, *>, _: Node<T>)
-    operator fun <T> Molecule.unaryMinus() = -Pair(this, incarnation.createConcentration())
+    operator fun <T> Molecule.unaryMinus() = this()
 
     /**
-     * Assigns a default concentration for the molecule identified by this string to the current [Node].
+     * Create a [Molecule] using its name and assign a default concentration to the current [Node].
      *
-     * The [Molecule] is created via [Incarnation.createMolecule], while the concentration is created via
-     * [Incarnation.createConcentration] with no explicit origin.
+     * This is equivalent to calling the string-based invoker with no explicit concentration
+     * and therefore creates and assigns a default concentration via the current [Incarnation].
      *
-     * @receiver the molecule name to create and set.
+     * Context receivers:
+     * - [incarnation]: used to create the molecule and its default concentration
+     * - [Node]: the target node
+     *
+     * @receiver the molecule name to create and set with its default concentration
      */
     context(incarnation: Incarnation<T, *>, _: Node<T>)
-    operator fun <T> String.unaryMinus() = -Pair(incarnation.createMolecule(this), incarnation.createConcentration())
-
-    /**
-     * Assigns the provided concentration to the molecule identified by the given name on the current [Node].
-     *
-     * The molecule is created via [Incarnation.createMolecule].
-     *
-     * @receiver a pair `(moleculeName, concentration)` to assign.
-     */
-    context(incarnation: Incarnation<T, *>, _: Node<T>)
-    operator fun <T> Pair<String, T>.unaryMinus() = -Pair(incarnation.createMolecule(first), second)
+    operator fun <T> String.unaryMinus() = this()
 }

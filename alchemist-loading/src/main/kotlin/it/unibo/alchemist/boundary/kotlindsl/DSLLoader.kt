@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory
 
 internal class DSLLoader<T, P : Position<P>, I : Incarnation<T, P>>(
     private val incarnation: I,
-    private val block: context(I) SimulationContext<T, P>.() -> Unit,
+    private val simulationConfiguration: context(I) SimulationContext<T, P>.() -> Unit,
 ) : Loader {
 
     private val logger = LoggerFactory.getLogger("Alchemist Kotlin DSL Loader")
@@ -159,7 +159,7 @@ internal class DSLLoader<T, P : Position<P>, I : Incarnation<T, P>>(
                         "Seeds must be set before the environment is defined to preserve reproducibility"
                     }
                 }
-            }.block()
+            }.simulationConfiguration()
         }
         check(variables.keys.containsAll(values.keys)) {
             val undefinedVariables = values.keys - variables.keys

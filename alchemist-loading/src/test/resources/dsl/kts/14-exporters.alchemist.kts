@@ -12,7 +12,7 @@ package dsl.kts
 import it.unibo.alchemist.boundary.kotlindsl.simulation
 
 simulation(ProtelisIncarnation()) {
-    exportWith(CSVExporter("test_export_interval", 4.0)) {
+    exportWith(CSVExporter("test_export_interval", 3.0)) {
         - it.unibo.alchemist.boundary.extractors.Time()
         - moleculeReader(
             "default_module:default_program",

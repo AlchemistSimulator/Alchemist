@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -22,10 +22,10 @@ import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -91,7 +91,7 @@ class TestYAMLLoader {
         final var simulation = testNoVar("synthetic/testlayer.yml");
         @SuppressWarnings("unchecked")
         final Environment<Object, P> environment = (Environment<Object, P>) simulation.getEnvironment();
-        final Set<Layer<Object, P>> layers = environment.getLayers();
+        final Collection<Layer<Object, P>> layers = environment.getLayers().values();
         assertFalse(layers.isEmpty());
         assertEquals(2, layers.size());
         assertEquals(2L, layers.stream()

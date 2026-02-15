@@ -63,10 +63,9 @@ constructor(
         }
         val path = if (exportPath.endsWith(File.separator)) exportPath else "${exportPath}${File.separator}"
         val time = if (appendTime) "${System.currentTimeMillis()}" else ""
-        val filePrefix =
-            listOf(fileNameRoot, variablesDescriptor, time)
-                .filter(String::isNotBlank)
-                .joinToString(separator = "_")
+        val filePrefix = listOf(fileNameRoot, variablesDescriptor, time)
+            .filter(String::isNotBlank)
+            .joinToString(separator = "_")
         require(filePrefix.isNotEmpty()) {
             "No fileNameRoot provided for exporting data, no variables in the environment, and timestamp unset:" +
                 "the file name would be empty. Please provide a file name."

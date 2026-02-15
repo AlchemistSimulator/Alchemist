@@ -49,7 +49,7 @@ open class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
             emptyList()
         } else {
             with(action) {
-                val currPos = environment.getPosition(navigatingNode)
+                val currPos = environment.getCurrentPosition(navigatingNode)
                 val (closestDest, distanceToClosestDest) = destinations.asSequence()
                     .map { it to it.distanceTo(currPos) }
                     .minBy { it.second }
@@ -86,7 +86,7 @@ open class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
      */
     private fun findKnownPathTo(destination: Euclidean2DPosition): List<L> = with(orientingCapability.cognitiveMap) {
         emptyList<L>().takeIf { vertexSet().isEmpty() } ?: let {
-            val currPos = environment.getPosition(node)
+            val currPos = environment.getCurrentPosition(node)
             val currRoom = environment.graph.nodeContaining(currPos)
             val destRoom = environment.graph.nodeContaining(destination)
             if (currRoom == null || destRoom == null) {

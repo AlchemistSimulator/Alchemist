@@ -98,8 +98,6 @@ object RuntimeComparisonHelper {
                 stableForSteps,
                 steps,
             )
-        } catch (e: Exception) {
-            fail("Error during simulation execution: ${e.message}")
         } finally {
             // Ensure simulations are terminated (only if not already terminated)
             if (dslSimulation.status != Status.TERMINATED) {
@@ -406,7 +404,7 @@ object RuntimeComparisonHelper {
                 val (yamlNode, yamlPos) = closest
                 val distance = dslPos.distanceTo(yamlPos)
                 distances.add(distance)
-                if (distance != 0.0) {
+                if (distance == 0.0) {
                     matchedPairs.add(dslNode to yamlNode)
                     yamlNodesWithPos.remove(closest)
                 } else {

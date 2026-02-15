@@ -10,7 +10,7 @@ package dsl.kts
 import it.unibo.alchemist.boundary.kotlindsl.environment
 import it.unibo.alchemist.boundary.kotlindsl.simulation2D
 
-simulation2D(SAPEREIncarnation()) {
+simulation2D(ProtelisIncarnation()) {
     environment {
         layer("A", StepLayer(2.0, 2.0, concentrationOf(100), concentrationOf(0)))
         layer("B", StepLayer(-2.0, -2.0, concentrationOf(0), concentrationOf(100)))

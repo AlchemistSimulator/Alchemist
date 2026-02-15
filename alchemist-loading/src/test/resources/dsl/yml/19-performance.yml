@@ -1,0 +1,76 @@
+incarnation: sapere
+
+seeds:
+  scenario: 42
+  simulation: 24
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [0.5]
+
+environment:
+  type: Continuous2DEnvironment
+  parameters: []
+
+variables:
+  rate: &rate
+    type: GeometricVariable
+    parameters: [2, 0.1, 10, 9]
+  size: &size
+    type: LinearVariable
+    parameters: [5, 1, 10, 1]
+  mSize: &mSize
+    formula: -size
+  sourceStart: &sourceStart
+    formula: mSize / 10
+  sourceSize: &sourceSize
+    formula: size / 5
+
+monitors:
+  - type: another.location.SimpleMonitor
+
+export:
+  - type: CSVExporter
+    parameters:
+      fileNameRoot: "performance_test"
+      interval: 1.0
+    data:
+      - time
+      - molecule: "token"
+
+deployments:
+  - type: Circle
+    parameters: [200, 0, 0, 20]
+    contents:
+      - molecule: basemolecule
+      - in:
+          type: Rectangle
+          parameters: [-5, -5, 10, 10]
+        molecule: centermolecule
+    programs:
+      - time-distribution: 1
+        program: "{basemolecule} --> {processed}"
+      - program: "{processed} --> +{basemolecule}"
+  - type: Grid
+    parameters: [*mSize, *mSize, *size, *size, 0.25, 0.25, 0.1, 0.1]
+    contents:
+      - molecule: gridmolecule
+      - in:
+          type: Rectangle
+          parameters: [*sourceStart, *sourceStart, *sourceSize, *sourceSize]
+        molecule: token, 0, []
+      - in:
+          type: Rectangle
+          parameters: [-2, -2, 4, 4]
+        molecule: filteredmolecule
+    programs:
+      - time-distribution: *rate
+        program: "{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}"
+      - program: >
+          {token, N, L}{token, def: N2>=N, L2} --> {token, N, L}
+      - time-distribution: 0.5
+        in:
+          type: Rectangle
+          parameters: [-1, -1, 2, 2]
+        program: "{filteredmolecule} --> {active}"
+

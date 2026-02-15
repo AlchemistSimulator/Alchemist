@@ -50,7 +50,6 @@ constructor(
 ) : AnyRealDistribution<T>(
     start,
 
-    @Suppress("OVERRIDE_DEPRECATION")
     object : RealDistribution {
         /*
          * Unknown values

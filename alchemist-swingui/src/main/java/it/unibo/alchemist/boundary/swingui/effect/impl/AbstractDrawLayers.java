@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -100,7 +100,7 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
         if (layerFilter && molecule != null && environment.getLayer(molecule) != null) {
             toDraw.add(environment.getLayer(molecule));
         } else {
-            toDraw.addAll(environment.getLayers());
+            toDraw.addAll(environment.getLayers().values());
         }
         if (!toDraw.isEmpty()) {
             drawLayers(toDraw, environment, graphics2D, wormhole);

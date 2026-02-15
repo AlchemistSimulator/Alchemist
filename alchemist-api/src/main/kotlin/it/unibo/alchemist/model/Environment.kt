@@ -83,7 +83,7 @@ interface Environment<T, P : Position<out P>> :
     /**
      * Return all the Layers in this [Environment].
      */
-    val layers: ListSet<Layer<T, P>>
+    val layers: Map<Molecule, Layer<T, P>>
 
     /**
      * Returns the current [LinkingRule].

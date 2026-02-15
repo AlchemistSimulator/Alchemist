@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -23,14 +23,14 @@ import it.unibo.alchemist.boundary.extractors.MoleculeReader
 import it.unibo.alchemist.boundary.extractors.Time
 import it.unibo.alchemist.boundary.launchers.DefaultLauncher
 import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.DependentVariable.formula as formulaKey
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.DependentVariable.language as languageKey
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.DependentVariable.timeout as timeoutKey
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Deployment.Program as ProgramSyntax
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Environment.GlobalProgram as GlobalProgramSyntax
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.JavaType
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot.Layer as LayerSyntax
+import it.unibo.alchemist.boundary.loader.syntax.AlchemistYamlSyntax
+import it.unibo.alchemist.boundary.loader.syntax.AlchemistYamlSyntax.DependentVariable.formula as formulaKey
+import it.unibo.alchemist.boundary.loader.syntax.AlchemistYamlSyntax.DependentVariable.language as languageKey
+import it.unibo.alchemist.boundary.loader.syntax.AlchemistYamlSyntax.DependentVariable.timeout as timeoutKey
+import it.unibo.alchemist.boundary.loader.syntax.AlchemistYamlSyntax.Deployment.Program as ProgramSyntax
+import it.unibo.alchemist.boundary.loader.syntax.AlchemistYamlSyntax.Environment.GlobalProgram as GlobalProgramSyntax
+import it.unibo.alchemist.boundary.loader.syntax.AlchemistYamlSyntax.JavaType
+import it.unibo.alchemist.boundary.loader.syntax.AlchemistYamlSyntax.Layer as LayerSyntax
 import it.unibo.alchemist.boundary.loader.syntax.SyntaxElement
 import it.unibo.alchemist.boundary.loader.util.JVMConstructor
 import it.unibo.alchemist.boundary.loader.util.NamedParametersConstructor
@@ -69,7 +69,7 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
 private typealias ReactionComponentFunction<T, P, R> =
-    (RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, Any?) -> R
+    (RandomGenerator, Environment<T, P>, Node<T>?, Actionable<T>, Any?) -> R
 
 /*
  * UTILITY FUNCTIONS
@@ -123,7 +123,7 @@ private fun Any?.removeKeysRecursively(keys: Set<Any>): Any? = when (this) {
     is String -> this
     is Map<*, *> -> {
         val isAnObjectToBuild =
-            listOf(JavaType, DocumentRoot.DependentVariable, DocumentRoot.Variable)
+            listOf(JavaType, AlchemistYamlSyntax.DependentVariable, AlchemistYamlSyntax.Variable)
                 .any { it.validateDescriptor(this) }
         when {
             isAnObjectToBuild -> this
@@ -176,8 +176,8 @@ internal object SimulationModel {
      * Converts an alchemist model defined as a Map into a loadable simulation environment and relative exports.
      */
     fun fromMap(root: Map<String, *>): Loader {
-        require(DocumentRoot.validateDescriptor(root)) {
-            "Invalid simulation descriptor: $root.\n" + DocumentRoot.validDescriptors.first()
+        require(AlchemistYamlSyntax.validateDescriptor(root)) {
+            "Invalid simulation descriptor: $root.\n" + AlchemistYamlSyntax.validDescriptors.first()
         }
         val context = Context()
         var previousSize: Int? = null
@@ -185,11 +185,11 @@ internal object SimulationModel {
         val collectedNonFatalFailures = mutableMapOf<String, List<Throwable>>()
         while (context.constants.size != previousSize) {
             previousSize = context.constants.size
-            val stillToTry = injectedRoot[DocumentRoot.variables]?.removeKeysRecursively(context.constants.keys)
+            val stillToTry = injectedRoot[AlchemistYamlSyntax.variables]?.removeKeysRecursively(context.constants.keys)
             visitNamedRecursively(
                 context = context,
                 root = stillToTry ?: emptyMap<String, Any>(),
-                syntax = DocumentRoot.DependentVariable,
+                syntax = AlchemistYamlSyntax.DependentVariable,
                 forceSuccess = false,
             ) { name, element ->
                 val evaluationAsConstant = visitConstant(name, context, element)
@@ -209,13 +209,13 @@ internal object SimulationModel {
         }
         logger.info("{} constants: {}", context.constants.size, context.constants)
         val constantsNames = context.constants.keys
-        val varsWithoutConsts = injectedRoot[DocumentRoot.variables].removeKeysRecursively(constantsNames)
+        val varsWithoutConsts = injectedRoot[AlchemistYamlSyntax.variables].removeKeysRecursively(constantsNames)
         // Dependent variables
         val dependentVariables: Map<String, DependentVariable<*>> =
             visitNamedRecursively(
                 context = context,
                 root = varsWithoutConsts,
-                syntax = DocumentRoot.DependentVariable,
+                syntax = AlchemistYamlSyntax.DependentVariable,
                 forceSuccess = false,
             ) { name, element ->
                 visitDependentVariableRegistering(name, context, element)
@@ -224,11 +224,11 @@ internal object SimulationModel {
         injectedRoot = inject(context, injectedRoot)
         // Real variables
         val variablesLeft =
-            injectedRoot[DocumentRoot.variables].removeKeysRecursively(constantsNames + dependentVariables.keys)
+            injectedRoot[AlchemistYamlSyntax.variables].removeKeysRecursively(constantsNames + dependentVariables.keys)
         variablesLeft?.validateVariableConsistencyRecursively(errors = collectedNonFatalFailures)
         val variables: Map<String, Variable<*>> = visitVariables(context, variablesLeft)
         logger.info("Variables: {}", variables)
-        var launcherDescriptor = injectedRoot[DocumentRoot.launcher]
+        var launcherDescriptor = injectedRoot[AlchemistYamlSyntax.launcher]
         val isJvmConstructorWithoutType =
             launcherDescriptor is Map<*, *> &&
                 launcherDescriptor.containsKey(JavaType.parameters) &&
@@ -241,7 +241,7 @@ internal object SimulationModel {
         val remoteDependencies =
             visitRecursively(
                 context,
-                injectedRoot[DocumentRoot.REMOTE_DEPENDENCIES] ?: emptyMap<String, Any>(),
+                injectedRoot[AlchemistYamlSyntax.REMOTE_DEPENDENCIES] ?: emptyMap<String, Any>(),
             ) { visitBuilding<String>(context, it) }
         logger.info("Remote dependencies: {}", remoteDependencies)
         return object : LoadingSystem(context, injectedRoot) {
@@ -253,7 +253,7 @@ internal object SimulationModel {
         }
     }
 
-    internal fun <P : Position<out P>, T : Any?> visitIncarnation(root: Any?): Incarnation<T, P> =
+    internal fun <P : Position<out P>, T> visitIncarnation(root: Any?): Incarnation<T, P> =
         SupportedIncarnations.get<T, P>(root.toString()).orElseThrow {
             IllegalArgumentException(
                 "Invalid incarnation descriptor: $root. " +
@@ -261,7 +261,7 @@ internal object SimulationModel {
             )
         }
 
-    internal fun <P : Position<P>, T : Any?> visitLinkingRule(localContext: Context, root: Any?): LinkingRule<T, P> {
+    internal fun <P : Position<P>, T> visitLinkingRule(localContext: Context, root: Any?): LinkingRule<T, P> {
         val linkingRules =
             visitRecursively(localContext, root, JavaType) { element ->
                 visitBuilding<LinkingRule<T, P>>(localContext, element)
@@ -410,7 +410,7 @@ internal object SimulationModel {
     }
 
     private fun <P : Position<P>> visitFilter(context: Context, element: Map<*, *>): List<PositionBasedFilter<P>> {
-        val filterKey = DocumentRoot.Deployment.Filter.FILTER
+        val filterKey = AlchemistYamlSyntax.Deployment.Filter.FILTER
         val positionBasedFilters =
             visitRecursively(context, element[filterKey] ?: emptyList<Any>()) { shape ->
                 visitBuilding<PositionBasedFilter<P>>(context, shape)
@@ -425,10 +425,10 @@ internal object SimulationModel {
         root: Map<*, *>,
     ): List<Triple<List<PositionBasedFilter<P>>, Molecule, () -> T>> {
         logger.debug("Visiting contents: {}", root)
-        val allContents = root[DocumentRoot.Deployment.contents] ?: emptyList<Any>()
+        val allContents = root[AlchemistYamlSyntax.Deployment.contents] ?: emptyList<Any>()
         return visitRecursively(context, allContents) { element ->
             logger.debug("Visiting as content: {}", element)
-            val moleculeKey = DocumentRoot.Deployment.Contents.molecule
+            val moleculeKey = AlchemistYamlSyntax.Deployment.Contents.molecule
             (element as? Map<*, *>)?.takeIf { element.containsKey(moleculeKey) }?.let { contentDescriptor ->
                 logger.debug("Found content descriptor: {}", contentDescriptor)
                 val filters = visitFilter<P>(context, element)
@@ -440,7 +440,7 @@ internal object SimulationModel {
                 }
                 val molecule = incarnation.createMolecule(moleculeElement?.toString())
                 logger.debug("Molecule: {}", molecule)
-                val concentrationKey = DocumentRoot.Deployment.Contents.concentration
+                val concentrationKey = AlchemistYamlSyntax.Deployment.Contents.concentration
                 val concentrationMaker: () -> T = {
                     incarnation.createConcentration(element[concentrationKey])
                 }
@@ -454,9 +454,9 @@ internal object SimulationModel {
         root: Map<*, *>,
     ): List<Pair<List<PositionBasedFilter<P>>, NodeProperty<T>>> {
         logger.debug("Visiting properties: {}", root)
-        val capabilitiesKey = DocumentRoot.Deployment.properties
+        val capabilitiesKey = AlchemistYamlSyntax.Deployment.properties
         val allCapabilities = root[capabilitiesKey] ?: emptyList<Any>()
-        return visitRecursively(context, allCapabilities, DocumentRoot.Deployment.Property) { element ->
+        return visitRecursively(context, allCapabilities, AlchemistYamlSyntax.Deployment.Property) { element ->
             (element as? Map<*, *>)?.let {
                 val filters = visitFilter<P>(context, element)
                 val nodeProperty =
@@ -544,19 +544,19 @@ internal object SimulationModel {
         context: Context,
         root: Any?,
     ): Result<Extractor<E>>? = when {
-        root is String && root.equals(DocumentRoot.Export.Data.time, ignoreCase = true) -> Result.success(Time())
+        root is String && root.equals(AlchemistYamlSyntax.Export.Data.time, ignoreCase = true) -> Result.success(Time())
 
-        root is Map<*, *> && DocumentRoot.Export.Data.validateDescriptor(root) -> {
-            val molecule = root[DocumentRoot.Export.Data.molecule]?.toString()
+        root is Map<*, *> && AlchemistYamlSyntax.Export.Data.validateDescriptor(root) -> {
+            val molecule = root[AlchemistYamlSyntax.Export.Data.molecule]?.toString()
             if (molecule == null) {
                 visitBuilding<Extractor<E>>(context, root)
             } else {
-                val property = root[DocumentRoot.Export.Data.property]?.toString()
+                val property = root[AlchemistYamlSyntax.Export.Data.property]?.toString()
                 val filter: ExportFilter =
-                    root[DocumentRoot.Export.Data.VALUE_FILTER]?.let { CommonFilters.fromString(it.toString()) }
+                    root[AlchemistYamlSyntax.Export.Data.VALUE_FILTER]?.let { CommonFilters.fromString(it.toString()) }
                         ?: CommonFilters.NOFILTER.filteringPolicy
                 val precision: Int? =
-                    when (val digits = root[DocumentRoot.Export.Data.precision]) {
+                    when (val digits = root[AlchemistYamlSyntax.Export.Data.precision]) {
                         null -> null
                         is Byte -> digits.toInt()
                         is Short -> digits.toInt()
@@ -582,7 +582,7 @@ internal object SimulationModel {
                 val aggregators: List<String> =
                     visitRecursively(
                         context,
-                        root[DocumentRoot.Export.Data.aggregators] ?: emptyList<Any>(),
+                        root[AlchemistYamlSyntax.Export.Data.aggregators] ?: emptyList<Any>(),
                     ) {
                         require(it is CharSequence) {
                             "Invalid aggregator $it:${it?.let { it::class.simpleName }}. Must be a String."
@@ -601,17 +601,16 @@ internal object SimulationModel {
         context: Context,
         root: Any?,
     ): Result<Exporter<T, P>>? = when {
-        root is Map<*, *> && DocumentRoot.Export.validateDescriptor(root) -> {
+        root is Map<*, *> && AlchemistYamlSyntax.Export.validateDescriptor(root) -> {
             val exporter =
                 visitBuilding<Exporter<T, P>>(context, root)?.getOrThrow() ?: cantBuildWith<Exporter<T, P>>(root)
             val dataExtractors =
-                visitRecursively(context, root[DocumentRoot.Export.data]) {
+                visitRecursively(context, root[AlchemistYamlSyntax.Export.data]) {
                     visitExportData<Any>(incarnation, context, it)
                 }
             exporter.bindDataExtractors(dataExtractors)
             Result.success(exporter)
         }
-
         else -> null
     }
 
@@ -637,7 +636,7 @@ internal object SimulationModel {
         }
 
     fun <P : Position<P>, T> visitOutputMonitors(context: Context, root: Any?): List<OutputMonitor<T, P>> =
-        visitRecursively(context, root ?: emptyList<Any>(), DocumentRoot.Monitor) { origin ->
+        visitRecursively(context, root ?: emptyList<Any>(), AlchemistYamlSyntax.Monitor) { origin ->
             (origin as? Map<*, *>)?.let { _ ->
                 visitBuilding<OutputMonitor<T, P>>(context, origin)
             }
@@ -708,7 +707,7 @@ internal object SimulationModel {
             ): Result<R>? {
                 fun <R> create(withParameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> =
                     runCatching {
-                        makeWith(simulationRNG, environment, node, timeDistribution, actionable, withParameter)
+                        makeWith(simulationRNG, environment, node, actionable, withParameter)
                     }
                 return when (parameter) {
                     is String -> create(parameter, incarnationFactory)
@@ -790,8 +789,8 @@ internal object SimulationModel {
                 makeDefaultRandomGenerator(0).also {
                     logger.warn(
                         "No seeds specified, defaulting to 0 for both {} and {}",
-                        DocumentRoot.Seeds.scenario,
-                        DocumentRoot.Seeds.simulation,
+                        AlchemistYamlSyntax.Seeds.scenario,
+                        AlchemistYamlSyntax.Seeds.simulation,
                     )
                 }
         is Map<*, *> -> {
@@ -799,7 +798,7 @@ internal object SimulationModel {
             require(stringKeys.size == root.keys.size) {
                 "Illegal seeds sub-keys: ${root.keys - stringKeys.toSet()}. Valid keys are: $stringKeys"
             }
-            val validKeys = DocumentRoot.Seeds.validKeys
+            val validKeys = AlchemistYamlSyntax.Seeds.validKeys
             val nonPrivateKeys = stringKeys.filterNot { it.startsWith("_") }
             require(nonPrivateKeys.all { it in validKeys }) {
                 "Illegal seeds sub-keys: ${nonPrivateKeys - validKeys.toSet()}. Valid keys are: $validKeys"
@@ -811,15 +810,15 @@ internal object SimulationModel {
             } else {
                 0
             }
-            visitRandomGenerator(context, valueOf(DocumentRoot.Seeds.scenario)) to
+            visitRandomGenerator(context, valueOf(AlchemistYamlSyntax.Seeds.scenario)) to
                 visitRandomGenerator(
                     context,
-                    valueOf(DocumentRoot.Seeds.simulation),
+                    valueOf(AlchemistYamlSyntax.Seeds.simulation),
                 )
         }
         else -> throw IllegalArgumentException(
-            "Not a valid ${DocumentRoot.seeds} section: $root. Expected " +
-                DocumentRoot.Seeds.validKeys.map { it to "<a number>" },
+            "Not a valid ${AlchemistYamlSyntax.seeds} section: $root. Expected " +
+                AlchemistYamlSyntax.Seeds.validKeys.map { it to "<a number>" },
         )
     }
 
@@ -840,11 +839,11 @@ internal object SimulationModel {
     private fun visitVariables(context: Context, root: Any?): Map<String, Variable<*>> = visitNamedRecursively(
         context,
         root,
-        syntax = DocumentRoot.Variable,
+        syntax = AlchemistYamlSyntax.Variable,
     ) { name, element ->
         (element as? Map<*, *>?)
             ?.takeIfNotAConstant(name, context)
-            ?.takeIf { DocumentRoot.Variable.validateDescriptor(element) }
+            ?.takeIf { AlchemistYamlSyntax.Variable.validateDescriptor(element) }
             ?.let { _ ->
                 fun Any?.toDouble(): Double = coerceToDouble(context)
                 val variable =
@@ -858,10 +857,10 @@ internal object SimulationModel {
                             runCatching {
                                 // Must be a linear variable, or else fail
                                 LinearVariable(
-                                    element[DocumentRoot.Variable.default].toDouble(),
-                                    element[DocumentRoot.Variable.min].toDouble(),
-                                    element[DocumentRoot.Variable.max].toDouble(),
-                                    element[DocumentRoot.Variable.step].toDouble(),
+                                    element[AlchemistYamlSyntax.Variable.default].toDouble(),
+                                    element[AlchemistYamlSyntax.Variable.min].toDouble(),
+                                    element[AlchemistYamlSyntax.Variable.max].toDouble(),
+                                    element[AlchemistYamlSyntax.Variable.step].toDouble(),
                                 )
                             }
                     }

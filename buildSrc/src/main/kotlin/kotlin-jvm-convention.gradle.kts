@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 import Libs.alchemist
 import it.unibo.alchemist.build.catalog
 import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
@@ -15,6 +24,7 @@ plugins {
     id("dokka-convention")
     id("kotlin-static-analysis-convention")
     id("org.danilopianini.gradle-java-qa")
+    id("com.google.devtools.ksp")
     id("power-assert-convention")
 }
 
@@ -51,6 +61,7 @@ java {
 kotlin {
     compilerOptions {
         jvmDefault.set(JvmDefaultMode.ENABLE)
+        freeCompilerArgs.add("-Xcontext-parameters") // Enable context receivers
     }
 }
 

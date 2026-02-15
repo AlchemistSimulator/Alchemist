@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.physics.actions
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Node
@@ -51,10 +50,8 @@ class HeadTowardRandomDirection<T>(
      */
     override fun getContext() = Context.LOCAL
 
-    @SuppressFBWarnings("SA_LOCAL_SELF_ASSIGNMENT")
     private fun Euclidean2DPosition.asAngle() = atan2(y, x)
 
-    @SuppressFBWarnings("SA_LOCAL_SELF_ASSIGNMENT")
     private fun Double.toDirection() = Euclidean2DPosition(cos(this), sin(this))
 
     private companion object {

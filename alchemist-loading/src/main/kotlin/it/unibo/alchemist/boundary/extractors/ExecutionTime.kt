@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.Time
  */
 class ExecutionTime
 @JvmOverloads
-constructor(precision: Int? = null) : AbstractDoubleExporter(precision) {
+constructor(precision: Int? = null) : AbstractDoubleExtractor(precision) {
     private companion object {
         private const val NANOS_TO_SEC: Double = 1e9
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,7 +13,7 @@ import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.exporters.GlobalExporter
 import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
-import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot
+import it.unibo.alchemist.boundary.loader.syntax.AlchemistYamlSyntax
 import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Deployment
@@ -70,23 +70,23 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
             root = SimulationModel.inject(context, root)
             logger.debug("Complete simulation model: {}", root)
             // SEEDS
-            val (scenarioRNG, simulationRNG) = SimulationModel.visitSeeds(context, root[DocumentRoot.seeds])
+            val (scenarioRNG, simulationRNG) = SimulationModel.visitSeeds(context, root[AlchemistYamlSyntax.seeds])
             setCurrentRandomGenerator(simulationRNG)
             // INCARNATION
-            val incarnation = SimulationModel.visitIncarnation<P, T>(root[DocumentRoot.incarnation])
+            val incarnation = SimulationModel.visitIncarnation<P, T>(root[AlchemistYamlSyntax.incarnation])
             contextualize(incarnation)
             registerImplicit<String, Molecule>(incarnation::createMolecule)
             registerImplicit<String, Any?>(incarnation::createConcentration)
             // ENVIRONMENT
             val environment: Environment<T, P> =
-                SimulationModel.visitEnvironment(incarnation, context, root[DocumentRoot.environment])
+                SimulationModel.visitEnvironment(incarnation, context, root[AlchemistYamlSyntax.environment])
             logger.info("Created environment: {}", environment)
             contextualize(environment)
             // GLOBAL PROGRAMS
             loadGlobalProgramsOnEnvironment(simulationRNG, incarnation, environment, root)
             // LAYERS
             val layers: List<Pair<Molecule, Layer<T, P>>> =
-                SimulationModel.visitLayers(incarnation, context, root[DocumentRoot.layers])
+                SimulationModel.visitLayers(incarnation, context, root[AlchemistYamlSyntax.layers])
             layers
                 .groupBy { it.first }
                 .mapValues { (_, pair) -> pair.map { it.second } }
@@ -101,19 +101,19 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                 }
             // LINKING RULE
             val linkingRule =
-                SimulationModel.visitLinkingRule<P, T>(context, root.getOrEmptyMap(DocumentRoot.LINKING_RULES))
+                SimulationModel.visitLinkingRule<P, T>(context, root.getOrEmptyMap(AlchemistYamlSyntax.LINKING_RULES))
             environment.linkingRule = linkingRule
             contextualize(linkingRule)
             // MONITORS
-            val monitors = SimulationModel.visitOutputMonitors<P, T>(context, root[DocumentRoot.monitors])
+            val monitors = SimulationModel.visitOutputMonitors<P, T>(context, root[AlchemistYamlSyntax.monitors])
             // DEPLOYMENTS
             setCurrentRandomGenerator(scenarioRNG)
-            val displacementsSource = root.getOrEmpty(DocumentRoot.deployments)
+            val displacementsSource = root.getOrEmpty(AlchemistYamlSyntax.deployments)
             val deploymentDescriptors: List<Deployment<P>> =
                 SimulationModel.visitRecursively(
                     context,
                     displacementsSource,
-                    syntax = DocumentRoot.Deployment,
+                    syntax = AlchemistYamlSyntax.Deployment,
                 ) { element ->
                     (element as? Map<*, *>)?.let { _ ->
                         setCurrentRandomGenerator(scenarioRNG)
@@ -124,10 +124,12 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                     }
                 }
             setCurrentRandomGenerator(simulationRNG)
-            val terminators: List<TerminationPredicate<T, P>> =
-                SimulationModel.visitRecursively(context, root.getOrEmpty(DocumentRoot.terminate)) { terminator ->
-                    (terminator as? Map<*, *>)?.let { SimulationModel.visitBuilding(context, it) }
-                }
+            val terminators: List<TerminationPredicate<T, P>> = SimulationModel.visitRecursively(
+                context,
+                root.getOrEmpty(AlchemistYamlSyntax.terminate),
+            ) { terminator ->
+                (terminator as? Map<*, *>)?.let { SimulationModel.visitBuilding(context, it) }
+            }
             terminators.forEach(environment::addTerminator)
             if (deploymentDescriptors.isEmpty()) {
                 logger.warn("There are no displacements in the specification, the environment won't have any node")
@@ -135,21 +137,19 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                 logger.debug("Deployment descriptors: {}", deploymentDescriptors)
             }
             // EXPORTS
-            val exporters =
-                SimulationModel.visitRecursively<Exporter<T, P>>(
-                    context,
-                    root.getOrEmpty(DocumentRoot.export),
-                ) {
-                    SimulationModel.visitSingleExporter(incarnation, context, it)
-                }
+            val exporters = SimulationModel.visitRecursively<Exporter<T, P>>(
+                context,
+                root.getOrEmpty(AlchemistYamlSyntax.export),
+            ) {
+                SimulationModel.visitSingleExporter(incarnation, context, it)
+            }
             exporters.forEach { it.bindVariables(variableValues) }
             // ENGINE
-            val engineDescriptor = root[DocumentRoot.engine]
-            val engine: Simulation<T, P> =
-                SimulationModel
-                    .visitBuilding<Simulation<T, P>>(context, engineDescriptor)
-                    ?.getOrThrow()
-                    ?: Engine(environment)
+            val engineDescriptor = root[AlchemistYamlSyntax.engine]
+            val engine: Simulation<T, P> = SimulationModel
+                .visitBuilding<Simulation<T, P>>(context, engineDescriptor)
+                ?.getOrThrow()
+                ?: Engine(environment)
             // Attach monitors
             monitors.forEach(engine::addOutputMonitor)
             // Attach data exporters
@@ -165,29 +165,30 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
             environment: Environment<T, P>,
             descriptor: Map<*, *>,
         ) {
-            val environmentDescriptor = descriptor[DocumentRoot.environment]
+            val environmentDescriptor = descriptor[AlchemistYamlSyntax.environment]
             if (environmentDescriptor is Map<*, *>) {
-                val programDescriptor = environmentDescriptor.getOrEmpty(DocumentRoot.Environment.GLOBAL_PROGRAMS)
-                val globalPrograms =
-                    SimulationModel.visitRecursively(
-                        context,
-                        programDescriptor,
-                        DocumentRoot.Environment.GlobalProgram,
-                    ) { program ->
-                        requireNotNull(program) {
-                            "null is not a valid program in $descriptor." +
-                                DocumentRoot.Environment.GlobalProgram.guide
-                        }
-                        (program as? Map<*, *>)?.let {
-                            SimulationModel
-                                .visitProgram(randomGenerator, incarnation, environment, null, context, it)
-                                ?.onSuccess { (_, actionable) ->
-                                    if (actionable is GlobalReaction) {
-                                        environment.addGlobalReaction(actionable)
-                                    }
-                                }
-                        }
+                val programDescriptor = environmentDescriptor.getOrEmpty(
+                    AlchemistYamlSyntax.Environment.GLOBAL_PROGRAMS,
+                )
+                val globalPrograms = SimulationModel.visitRecursively(
+                    context,
+                    programDescriptor,
+                    AlchemistYamlSyntax.Environment.GlobalProgram,
+                ) { program ->
+                    requireNotNull(program) {
+                        "null is not a valid program in $descriptor." +
+                            AlchemistYamlSyntax.Environment.GlobalProgram.guide
                     }
+                    (program as? Map<*, *>)?.let {
+                        SimulationModel
+                            .visitProgram(randomGenerator, incarnation, environment, null, context, it)
+                            ?.onSuccess { (_, actionable) ->
+                                if (actionable is GlobalReaction) {
+                                    environment.addGlobalReaction(actionable)
+                                }
+                            }
+                    }
+                }
                 logger.debug("Global programs: {}", globalPrograms)
             }
         }
@@ -224,15 +225,15 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
             nodePosition: P,
             descriptor: Map<*, *>,
         ) {
-            val programDescriptor = descriptor.getOrEmpty(DocumentRoot.Deployment.programs)
+            val programDescriptor = descriptor.getOrEmpty(AlchemistYamlSyntax.Deployment.programs)
             val programs =
                 SimulationModel.visitRecursively(
                     context,
                     programDescriptor,
-                    DocumentRoot.Deployment.Program,
+                    AlchemistYamlSyntax.Deployment.Program,
                 ) { program ->
                     requireNotNull(program) {
-                        "null is not a valid program in $descriptor. ${DocumentRoot.Deployment.Program.guide}"
+                        "null is not a valid program in $descriptor. ${AlchemistYamlSyntax.Deployment.Program.guide}"
                     }
                     (program as? Map<*, *>)?.let {
                         SimulationModel
@@ -258,11 +259,11 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
             descriptor: Map<*, *>,
         ) {
             logger.debug("Processing deployment: {} with descriptor: {}", deployment, descriptor)
-            val nodeDescriptor = descriptor[DocumentRoot.Deployment.nodes]
-            if (descriptor.containsKey(DocumentRoot.Deployment.nodes)) {
+            val nodeDescriptor = descriptor[AlchemistYamlSyntax.Deployment.nodes]
+            if (descriptor.containsKey(AlchemistYamlSyntax.Deployment.nodes)) {
                 requireNotNull(nodeDescriptor) { "Invalid node type descriptor: $nodeDescriptor" }
                 if (nodeDescriptor is Map<*, *>) {
-                    DocumentRoot.JavaType.validateDescriptor(nodeDescriptor)
+                    AlchemistYamlSyntax.JavaType.validateDescriptor(nodeDescriptor)
                 }
             }
             // ADDITIONAL LINKING RULES

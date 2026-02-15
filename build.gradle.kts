@@ -10,6 +10,7 @@
 import Libs.alchemist
 import Libs.incarnation
 import com.github.spotbugs.snom.SpotBugsTask
+import dev.detekt.gradle.Detekt
 import it.unibo.alchemist.build.id
 import it.unibo.alchemist.build.isInCI
 import it.unibo.alchemist.build.isMac
@@ -68,6 +69,17 @@ allprojects {
     tasks.withType<SpotBugsTask>().configureEach {
         reports {
             create("html") { enabled = true }
+        }
+    }
+
+    // STATIC ANALYSIS
+
+    tasks.withType<Detekt>().configureEach {
+        exclude { fileTree ->
+            val absolutePath = fileTree.file.absolutePath
+            listOf("build", "generated")
+                .map { "${File.separator}$it${File.separator}" }
+                .any { it in absolutePath }
         }
     }
 

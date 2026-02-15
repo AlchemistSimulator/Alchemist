@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -33,7 +33,7 @@ class TestContinuous2DObstacle {
         final Incarnation<Integer, Euclidean2DPosition> incarnation,
         final Environment<Integer, Euclidean2DPosition> environment
     ) {
-        return new GenericNode<>(incarnation, environment) {
+        return new GenericNode<>(environment) {
             @Override
             public Integer createT() {
                 return 0;

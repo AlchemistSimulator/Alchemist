@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -54,12 +54,13 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 ) : Environment<T, P> {
     private val _nodes: ListSet<Node<T>> = ArrayListSet()
     private val _globalReactions = ArrayListSet<GlobalReaction<T>>()
-    private val _layers: MutableMap<Molecule, Layer<T, P>> = LinkedHashMap()
+    final override var layers: Map<Molecule, Layer<T, P>> = LinkedHashMap()
+        private set
     private val neighCache = TIntObjectHashMap<Neighborhood<T>>()
     private val nodeToPos = TIntObjectHashMap<P>()
-    private val spatialIndex: SpatialIndex<Node<T>> = requireNotNull(internalIndex)
+    private val spatialIndex: SpatialIndex<Node<T>> = internalIndex
 
-    override val layers: ListSet<Layer<T, P>> get() = ArrayListSet(_layers.values)
+//    override val layers: Map<Molecule, Layer<T, P>> get() = _layers
 
     override val globalReactions: ListSet<GlobalReaction<T>>
         get() = ListSets.unmodifiableListSet(_globalReactions)
@@ -105,7 +106,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     }
 
     override fun addLayer(molecule: Molecule, layer: Layer<T, P>) {
-        check(_layers.put(molecule, layer) == null) { "Two layers have been associated to $molecule" }
+        check(molecule !in layers.keys) { "A layer for $molecule was already associated to this environment." }
+        layers += molecule to layer
     }
 
     override fun addGlobalReaction(reaction: GlobalReaction<T>) {
@@ -147,11 +149,11 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      *
      * @param node
      * the node
-     * @param p
+     * @param originalPosition
      * the original (requested) position
      * @return the actual position where the node should be located
      */
-    protected abstract fun computeActualInsertionPosition(node: Node<T>, p: P): P
+    protected abstract fun computeActualInsertionPosition(node: Node<T>, originalPosition: P): P
 
     override fun forEach(action: Consumer<in Node<T>?>?) {
         nodes.forEach(action)
@@ -169,19 +171,16 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     private fun getAllNodesInRange(center: P, range: Double): List<Node<T>> {
         require(range > 0) { "Range query must be positive (provided: $range)" }
-        @Suppress("UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS")
-        val validCache =
-            cache ?: Caffeine
-                .newBuilder()
-                .maximumSize(1000)
-                .build<Pair<P, Double>, List<Node<T>>> { (pos, r) -> runQuery(pos, r) }
-                .also { cache = it }
+        val validCache = cache ?: Caffeine.newBuilder()
+            .maximumSize(1000)
+            .build<Pair<P, Double>, List<Node<T>>> { (pos, r) -> runQuery(pos, r) }
+            .also { cache = it }
         return validCache[center to range]
     }
 
     override fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double = getPosition(n1).distanceTo(getPosition(n2))
 
-    override fun getLayer(molecule: Molecule): Layer<T, P>? = _layers[molecule]
+    override fun getLayer(molecule: Molecule): Layer<T, P>? = layers[molecule]
 
     override fun getNeighborhood(node: Node<T>): Neighborhood<T> {
         val result = neighCache[node.id]

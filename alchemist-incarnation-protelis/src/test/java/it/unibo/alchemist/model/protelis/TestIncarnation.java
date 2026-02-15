@@ -16,6 +16,7 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.incarnations.ProtelisIncarnation;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.protelis.actions.SendToNeighbor;
 import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete;

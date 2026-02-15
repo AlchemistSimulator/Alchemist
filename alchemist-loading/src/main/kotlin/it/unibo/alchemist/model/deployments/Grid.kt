@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -45,10 +45,10 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param yShift
  *            how shifted should be positions along columns
  */
-open class Grid
+open class Grid<P : Position<P>>
 @JvmOverloads
 constructor(
-    private val environment: Environment<*, *>,
+    private val environment: Environment<*, P>,
     private val randomGenerator: RandomGenerator,
     private val xStart: Double,
     private val yStart: Double,
@@ -60,8 +60,8 @@ constructor(
     private val yRand: Double = 0.0,
     private val xShift: Double = 0.0,
     private val yShift: Double = 0.0,
-) : Deployment<Position<*>> {
-    override fun stream(): Stream<Position<*>> {
+) : Deployment<P> {
+    override fun stream(): Stream<P> {
         val positions =
             (0 until stepCount(yStart, yEnd, yStep))
                 .map { yn ->

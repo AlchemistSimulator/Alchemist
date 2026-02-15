@@ -8,7 +8,7 @@
 
 package it.unibo.alchemist.scafi.test
 
-import it.unibo.alchemist.model.ScafiIncarnation
+import it.unibo.alchemist.model.incarnations.ScafiIncarnation
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.reactions.Event

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.Time
  *
  * Note: this exporter is not designed to handle changes in the environment topology like node removal or addition.
  */
-class NodesPositions<T, P : Position<P>>(private val environment: Environment<T, P>) : AbstractDoubleExporter() {
+class NodesPositions<T, P : Position<P>>(private val environment: Environment<T, P>) : AbstractDoubleExtractor() {
     override val columnNames: List<String> by lazy {
         (0 until environment.nodeCount).flatMap { nodeId ->
             (0 until environment.dimensions).map { dimensionIndex ->

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -49,19 +49,6 @@ public class LsaStandardAction extends AbstractLsaAction {
     private final RandomGenerator rand;
 
     /**
-     * Builds a new local action, without any RandomGenerator. #RANDOM.
-     *
-     * @param n
-     *            The source node
-     * @param m
-     *            The ILsaMolecule instance you want to add to the node lsa
-     *            space.
-     */
-    public LsaStandardAction(final ILsaMolecule m, final ILsaNode n) {
-        this(m, n, null);
-    }
-
-    /**
      * Builds a new local action.
      *
      * @param n
@@ -72,7 +59,7 @@ public class LsaStandardAction extends AbstractLsaAction {
      * @param random
      *            The Random generator to use
      */
-    public LsaStandardAction(final ILsaMolecule m, final ILsaNode n, final RandomGenerator random) {
+    public LsaStandardAction(final RandomGenerator random, final ILsaNode n, final ILsaMolecule m) {
         super(n, Collections.singletonList(m));
         mol = Objects.requireNonNull(m);
         rand = random;
@@ -94,7 +81,7 @@ public class LsaStandardAction extends AbstractLsaAction {
      */
     @Override
     public LsaStandardAction cloneAction(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> reaction) {
-        return new LsaStandardAction(getMolecule(), (ILsaNode) node);
+        return new LsaStandardAction(rand, (ILsaNode) node, getMolecule());
     }
 
     /**

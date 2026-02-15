@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,23 +10,23 @@
 import Libs.alchemist
 import Libs.incarnation
 
-/*
- * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
- *
- * This file is part of Alchemist) and is distributed under the terms of the
- * GNU General Public License) with a linking exception)
- * as described in the file LICENSE in the Alchemist distribution"s top directory.
- */
 plugins {
     id("kotlin-jvm-convention")
 }
 
 dependencies {
+    ksp(alchemist("factories-generator"))
+
     api(alchemist("api"))
     api(alchemist("implementationbase"))
 
     implementation(alchemist("engine"))
     implementation(alchemist("euclidean-geometry"))
+    implementation(kotlin("reflect"))
+    implementation(kotlin("script-runtime"))
+    implementation(kotlin("scripting-common"))
+    implementation(kotlin("scripting-jvm"))
+    implementation(kotlin("scripting-jvm-host"))
     implementation(libs.apache.commons.lang3)
     implementation(libs.arrow.core)
     implementation(libs.dsiutils)
@@ -46,12 +46,23 @@ dependencies {
     runtimeOnly(libs.scala.compiler)
 
     testImplementation(alchemist("engine"))
+    testImplementation(alchemist("kotlinscript"))
     testImplementation(alchemist("maps"))
+    testImplementation(alchemist("test"))
+    testImplementation(incarnation("sapere"))
+    testImplementation(incarnation("protelis"))
     testImplementation(libs.appdirs)
     testImplementation(libs.caffeine)
     testImplementation(libs.embedmongo)
-    testRuntimeOnly(incarnation("sapere"))
-    testRuntimeOnly(incarnation("protelis"))
+}
+
+kotlin {
+    sourceSets.main {
+        kotlin.srcDir("build/generated/ksp/main/kotlin")
+    }
+    sourceSets.test {
+        kotlin.srcDir("build/generated/ksp/test/kotlin")
+    }
 }
 
 tasks.withType<Test> {
@@ -68,6 +79,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions {
         freeCompilerArgs.addAll(
             "-opt-in=kotlin.time.ExperimentalTime",
+            "-Xcontext-parameters",
         )
     }
 }

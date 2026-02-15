@@ -1,0 +1,19 @@
+incarnation: protelis
+
+environment:
+  type: Continuous2DEnvironment
+  parameters: []
+
+layers:
+  - type: StepLayer
+    parameters: [2, 2, 100, 0]
+    molecule: A
+  - type: StepLayer
+    parameters: [-2, -2, 0, 100]
+    molecule: B
+
+deployments:
+  - type: Grid
+    parameters: [-5, -5, 5, 5, 0.25, 0.1, 0.1]
+    contents:
+      molecule: a

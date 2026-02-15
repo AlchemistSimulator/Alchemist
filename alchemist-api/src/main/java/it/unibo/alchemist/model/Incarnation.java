@@ -119,8 +119,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      * @param node
      *            the node that will host this object. If it is `null` the actionable
      *            will not belong to a {@link Node}
-     * @param time
-     *            the time distribution of the reaction
      * @param actionable
      *            the actionable hosting this object
      * @param additionalParameters
@@ -131,7 +129,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
         RandomGenerator randomGenerator,
         Environment<T, P> environment,
         @Nullable Node<T> node,
-        TimeDistribution<T> time,
         Actionable<T> actionable,
         @Nullable Object additionalParameters
     );
@@ -144,8 +141,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      * @param node
      *            the node that will host this object. If it is `null` the actionable
      *            will not belong to a {@link Node}
-     * @param time
-     *            the time distribution of the reaction
      * @param actionable
      *            the actionable hosting this object
      * @param additionalParameters
@@ -156,7 +151,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
         RandomGenerator randomGenerator,
         Environment<T, P> environment,
         @Nullable Node<T> node,
-        TimeDistribution<T> time,
         Actionable<T> actionable,
         @Nullable Object additionalParameters
     );

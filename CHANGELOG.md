@@ -1,3 +1,18 @@
+## [42.4.1](https://github.com/AlchemistSimulator/Alchemist/compare/42.4.0...42.4.1) (2026-02-15)
+
+### Dependency updates
+
+* **core-deps:** update react to v2025.12.12-19.2.3 (patch) ([#5036](https://github.com/AlchemistSimulator/Alchemist/issues/5036)) ([5e7843f](https://github.com/AlchemistSimulator/Alchemist/commit/5e7843f5b6e3b5a668f322dca284d4e543b8ecd2))
+* **core-deps:** update react to v2026 (major) ([#5050](https://github.com/AlchemistSimulator/Alchemist/issues/5050)) ([47f380e](https://github.com/AlchemistSimulator/Alchemist/commit/47f380e672ffac4ac309f7478d04894b0a4a0db1))
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.31 ([#5132](https://github.com/AlchemistSimulator/Alchemist/issues/5132)) ([4ed459b](https://github.com/AlchemistSimulator/Alchemist/commit/4ed459b545232414b7e5038690c1c132e244a113))
+* **deps:** update dependency org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin to v1.0.1 ([#5137](https://github.com/AlchemistSimulator/Alchemist/issues/5137)) ([7d86531](https://github.com/AlchemistSimulator/Alchemist/commit/7d865314de7c6ca70cb6b560b605c21a741287a1))
+
+### General maintenance
+
+* **build:** actualize the Kotlin JS store ([33f91b4](https://github.com/AlchemistSimulator/Alchemist/commit/33f91b430206c419b2d13eb5bb1b35b4083fcfc7))
+* **build:** update the javadoc.io cache ([73ca731](https://github.com/AlchemistSimulator/Alchemist/commit/73ca73168ac3a5c826c050237941e899affd6bd8))
+* **build:** update the javadoc.io cache ([2abdb6d](https://github.com/AlchemistSimulator/Alchemist/commit/2abdb6dea768e16c85d6ed5f330d7a58391366f2))
+
 ## [42.4.0](https://github.com/AlchemistSimulator/Alchemist/compare/42.3.35...42.4.0) (2026-02-15)
 
 ### ⚠ BREAKING CHANGES

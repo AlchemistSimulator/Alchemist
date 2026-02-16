@@ -1,3 +1,23 @@
+## [43.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/42.4.2...43.0.0) (2026-02-16)
+
+### ⚠ BREAKING CHANGES
+
+* introduce a Kotlin DSL (#5115)
+
+### Features
+
+* introduce a Kotlin DSL ([#5115](https://github.com/AlchemistSimulator/Alchemist/issues/5115)) ([c8e16b6](https://github.com/AlchemistSimulator/Alchemist/commit/c8e16b62d55799ffc5673aea677d9e76e8a71f18))
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.2.13-19.2.4 (patch) ([#5141](https://github.com/AlchemistSimulator/Alchemist/issues/5141)) ([b08cb80](https://github.com/AlchemistSimulator/Alchemist/commit/b08cb8049399711a30611cfda6c313067b3a110e))
+* **deps:** update junit-framework monorepo to v6.0.3 (patch) ([#5140](https://github.com/AlchemistSimulator/Alchemist/issues/5140)) ([f1a16cb](https://github.com/AlchemistSimulator/Alchemist/commit/f1a16cb0827228f0ca4d73715e2f8be93970439a))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([fbdbd63](https://github.com/AlchemistSimulator/Alchemist/commit/fbdbd639a8efbeec79ec03f435c3aa1ebdaabdcc))
+* **build:** update the javadoc.io cache ([4d75038](https://github.com/AlchemistSimulator/Alchemist/commit/4d75038a7a46b5d8f770dd2fd9b5e7745a75e152))
+
 ## [42.4.2](https://github.com/AlchemistSimulator/Alchemist/compare/42.4.1...42.4.2) (2026-02-15)
 
 ### Dependency updates

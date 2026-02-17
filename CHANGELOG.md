@@ -1,3 +1,14 @@
+## [43.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.0...43.0.1) (2026-02-17)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.2.14-19.2.4 (patch) ([#5143](https://github.com/AlchemistSimulator/Alchemist/issues/5143)) ([433a814](https://github.com/AlchemistSimulator/Alchemist/commit/433a81461b0a0a8b2d5720633ba6e3fe93805c9e))
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.5.32 ([#5142](https://github.com/AlchemistSimulator/Alchemist/issues/5142)) ([7736c27](https://github.com/AlchemistSimulator/Alchemist/commit/7736c27875d6efbc424fa6b2589c9576a02183fa))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([94ba0c3](https://github.com/AlchemistSimulator/Alchemist/commit/94ba0c38f7f05895bb3186b1596cd8e1a77e74da))
+
 ## [43.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/42.4.2...43.0.0) (2026-02-16)
 
 ### ⚠ BREAKING CHANGES

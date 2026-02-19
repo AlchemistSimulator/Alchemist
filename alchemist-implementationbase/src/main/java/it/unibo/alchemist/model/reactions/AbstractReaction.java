@@ -24,14 +24,15 @@ import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.observation.Disposable;
 import it.unibo.alchemist.model.observation.EventObservable;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableExtensions;
+import it.unibo.alchemist.model.observation.ObservableMutableSet;
 import it.unibo.alchemist.model.observation.lifecycle.Lifecycle;
 import it.unibo.alchemist.model.observation.lifecycle.LifecycleOwner;
 import it.unibo.alchemist.model.observation.lifecycle.LifecycleOwnerKt;
 import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry;
 import it.unibo.alchemist.model.observation.lifecycle.LifecycleState;
-import it.unibo.alchemist.model.observation.MutableObservable;
-import it.unibo.alchemist.model.observation.Observable;
-import it.unibo.alchemist.model.observation.ObservableExtensions;
 import kotlin.Unit;
 import org.danilopianini.util.ArrayListSet;
 import org.danilopianini.util.Hashes;
@@ -49,6 +50,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static arrow.core.OptionKt.getOrElse;
@@ -362,15 +364,18 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable, Li
         subscriptions.clear();
         validity.dispose();
 
-        conditions.forEach(condition -> {
-            final var merged = ObservableExtensions.ObservableSetExtensions.mergeObservables(
-                condition.observeInboundDependencies()
-            );
-            subscriptions.add(LifecycleOwnerKt.bindTo(merged, this, it -> {
-                rescheduleRequest.emit();
-                return Unit.INSTANCE;
-            }));
-        });
+        final var allDependencies = conditions.stream()
+            .flatMap(it -> it.observeInboundDependencies().toSet().stream())
+            .collect(Collectors.toSet());
+
+        final Observable<?> merged = ObservableExtensions.ObservableSetExtensions.mergeObservables(
+            ObservableMutableSet.Companion.toObservableSet(allDependencies)
+        );
+
+        subscriptions.add(LifecycleOwnerKt.bindTo(merged, this, it -> {
+            rescheduleRequest.emit();
+            return Unit.INSTANCE;
+        }));
 
         if (!conditions.isEmpty()) {
             validity = ObservableExtensions.INSTANCE.combineLatest(
@@ -406,7 +411,7 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable, Li
 
     /**
      * @return the default implementation returns a String in the form
-     *         className@timeScheduled[Conditions]-rate-&gt;[Actions]
+     * className@timeScheduled[Conditions]-rate-&gt;[Actions]
      */
     @Override
     public String toString() {

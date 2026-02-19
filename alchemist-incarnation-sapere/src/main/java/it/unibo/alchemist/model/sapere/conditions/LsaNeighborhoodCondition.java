@@ -52,9 +52,9 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
         super(molecule, node);
         this.environment = environment;
 
-        // We depend on every neighbor's LSA space, hence an update is triggered
-        // every time a change in node's neighborhood is emitted, or one of the
-        // members' LSA space has changed.
+        // We depend on every neighbor's concentration of the target molecule.
+        // An update is triggered only when a molecule matching the template
+        // is added or removed in any neighbor.
         addObservableDependency(ObservableExtensions.INSTANCE.switchMap(
             environment.getNeighborhood(node).map(Neighborhood::getNeighbors),
             neighbors ->
@@ -62,7 +62,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                     neighbors.stream()
                         .filter(it -> it instanceof ILsaNode)
                         .map(neighbor ->
-                            ((ILsaNode) neighbor).observeLsaSpace()
+                            ((ILsaNode) neighbor).observeConcentration(molecule)
                         ).toList(),
                     space -> space
                 )

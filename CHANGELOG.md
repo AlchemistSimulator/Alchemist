@@ -1,3 +1,14 @@
+## [43.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.2...43.0.3) (2026-02-19)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.2.15-19.2.4 (patch) ([#5146](https://github.com/AlchemistSimulator/Alchemist/issues/5146)) ([66c3be2](https://github.com/AlchemistSimulator/Alchemist/commit/66c3be21b316f0cb474fea34d52fc38c7630b954))
+* **deps:** update ksp monorepo to v2.3.6 (patch) ([#5144](https://github.com/AlchemistSimulator/Alchemist/issues/5144)) ([6cc9cd7](https://github.com/AlchemistSimulator/Alchemist/commit/6cc9cd75f84e93110b38c7b250de007afb499c5e))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([3b237a9](https://github.com/AlchemistSimulator/Alchemist/commit/3b237a9b28d395cf544f8e1449cccfbfaf3f6ddb))
+
 ## [43.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.1...43.0.2) (2026-02-18)
 
 ### Documentation

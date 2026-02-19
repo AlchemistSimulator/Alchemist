@@ -49,7 +49,7 @@ public class LsaStandardCondition extends AbstractLsaCondition {
     public LsaStandardCondition(final ILsaMolecule mol, final ILsaNode n) {
         super(n, Sets.newHashSet(new ILsaMolecule[] {mol}));
 
-        addObservableDependency(n.observeConcentration(mol));
+        addObservableDependency(n.observeConcentration(mol.generalize()));
         setValidity(valid);
         setPropensity(MutableObservable.Companion.observe(-1d));
 

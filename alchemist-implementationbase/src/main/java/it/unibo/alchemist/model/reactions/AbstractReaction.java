@@ -411,7 +411,7 @@ public abstract class AbstractReaction<T> implements Reaction<T>, Disposable, Li
 
     /**
      * @return the default implementation returns a String in the form
-     * className@timeScheduled[Conditions]-rate-&gt;[Actions]
+     *      className@timeScheduled[Conditions]-rate-&gt;[Actions]
      */
     @Override
     public String toString() {

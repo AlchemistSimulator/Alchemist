@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,9 @@
 
 package it.unibo.alchemist.model.observation
 
-import java.util.Collections
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 
 /**
  * Represents a list that allows observation of its contents and provides notifications on changes.
@@ -85,12 +87,12 @@ interface ObservableList<T> : Observable<List<T>> {
  */
 class ObservableMutableList<T> : ObservableList<T> {
 
-    private val backing: MutableList<T> = ArrayList()
+    private var backing: PersistentList<T> = persistentListOf()
     private val sizeObservable = MutableObservable.observe(0)
 
     override val observableSize: Observable<Int> = sizeObservable
 
-    override val current: List<T> get() = Collections.unmodifiableList(backing)
+    override val current: List<T> get() = backing
 
     override val observers: List<Any> get() = observingCallbacks.keys.toList()
 
@@ -104,9 +106,9 @@ class ObservableMutableList<T> : ObservableList<T> {
      * @return `true` (as specified by [MutableList.add])
      */
     fun add(item: T): Boolean {
-        val result = backing.add(item)
+        backing = backing.add(item)
         notifyObservers()
-        return result
+        return true
     }
 
     /**
@@ -117,7 +119,7 @@ class ObservableMutableList<T> : ObservableList<T> {
      * @param item The item to be added to the list.
      */
     fun add(index: Int, item: T) {
-        backing.add(index, item)
+        backing = backing.add(index, item)
         notifyObservers()
     }
 
@@ -128,9 +130,9 @@ class ObservableMutableList<T> : ObservableList<T> {
      * @return `true` if this list changed as a result of the call
      */
     fun addAll(items: Collection<T>): Boolean = if (items.isNotEmpty()) {
-        val result = backing.addAll(items)
+        backing = backing.addAll(items)
         notifyObservers()
-        result
+        true
     } else {
         false
     }
@@ -143,8 +145,10 @@ class ObservableMutableList<T> : ObservableList<T> {
      * @return `true` if the list contained the specified element
      */
     fun remove(item: T): Boolean {
-        val result = backing.remove(item)
+        val newBacking = backing.remove(item)
+        val result = newBacking !== backing
         if (result) {
+            backing = newBacking
             notifyObservers()
         }
         return result
@@ -157,9 +161,10 @@ class ObservableMutableList<T> : ObservableList<T> {
      * @return the element that was removed from the list
      */
     fun removeAt(index: Int): T {
-        val result = backing.removeAt(index)
+        val old = backing[index]
+        backing = backing.removeAt(index)
         notifyObservers()
-        return result
+        return old
     }
 
     /**
@@ -170,8 +175,9 @@ class ObservableMutableList<T> : ObservableList<T> {
      * @return the element previously at the specified position
      */
     operator fun set(index: Int, element: T): T {
-        val old = backing.set(index, element)
+        val old = backing[index]
         if (old != element) {
+            backing = backing.set(index, element)
             notifyObservers()
         }
         return old
@@ -182,7 +188,7 @@ class ObservableMutableList<T> : ObservableList<T> {
      */
     fun clear() {
         if (backing.isNotEmpty()) {
-            backing.clear()
+            backing = persistentListOf()
             notifyObservers()
         }
     }
@@ -199,15 +205,15 @@ class ObservableMutableList<T> : ObservableList<T> {
     override fun dispose() {
         observingCallbacks.clear()
         sizeObservable.dispose()
-        backing.clear()
+        backing = persistentListOf()
     }
 
     override operator fun get(index: Int): T = backing[index]
 
-    override fun toList(): List<T> = Collections.unmodifiableList(ArrayList(backing))
+    override fun toList(): List<T> = backing
 
     override fun copy(): ObservableMutableList<T> = ObservableMutableList<T>().apply {
-        this@ObservableMutableList.backing.forEach(this::add)
+        backing = this@ObservableMutableList.backing
     }
 
     override operator fun contains(item: T): Boolean = backing.contains(item)
@@ -233,7 +239,7 @@ class ObservableMutableList<T> : ObservableList<T> {
 
     private fun notifyObservers() {
         sizeObservable.update { backing.size }
-        val snapshot = toList()
+        val snapshot = backing
         observingCallbacks.values.forEach { callbacks ->
             callbacks.forEach { it(snapshot) }
         }
@@ -262,7 +268,7 @@ class ObservableMutableList<T> : ObservableList<T> {
          * @return A new [ObservableMutableList] containing the specified items.
          */
         operator fun <T> invoke(vararg items: T): ObservableMutableList<T> = ObservableMutableList<T>().apply {
-            items.forEach(this::add)
+            backing = items.toList().toPersistentList()
         }
     }
 }

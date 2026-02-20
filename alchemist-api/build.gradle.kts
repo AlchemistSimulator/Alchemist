@@ -17,6 +17,7 @@ dependencies {
     api(libs.listset)
     implementation(libs.kotlin.reflect)
     api(libs.arrow.core)
+    api(libs.kotlinx.collections.immutable)
     testImplementation(libs.kotlin.test)
 }
 

@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.sapere;
 
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableList;
 
 import javax.annotation.Nonnull;
@@ -52,5 +53,11 @@ public interface ILsaNode extends Node<List<ILsaMolecule>> {
 
     @Override
     List<ILsaMolecule> getConcentration(@Nonnull Molecule mol);
+
+    /**
+     * @param name the name of the molecule to observe
+     * @return an observable that emits the list of molecules with the given name
+     */
+    Observable<List<ILsaMolecule>> observeMoleculeName(String name);
 
 }

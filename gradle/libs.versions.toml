@@ -12,6 +12,7 @@ junit = "6.0.3"
 konf = "1.1.2"
 kotest = "6.1.4"
 kotlin = "2.3.10"
+kotlinx-collections = "0.4.0"
 ksp = "2.3.6"
 kotlinx-coroutines = "1.10.2"
 ktor = "3.4.0"
@@ -94,6 +95,7 @@ kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotatio
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 ksp = { module = "com.google.devtools.ksp:symbol-processing", version.ref = "ksp" }
 kotlinx-atomicfu-runtime = { module = "org.jetbrains.kotlin:kotlinx-atomicfu-runtime", version.ref = "kotlin" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections" }
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }

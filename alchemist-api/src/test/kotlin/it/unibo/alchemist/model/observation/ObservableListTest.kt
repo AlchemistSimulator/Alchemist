@@ -90,7 +90,7 @@ class ObservableListTest : FunSpec({
             val list = ObservableMutableList(1, 2, 3)
             var nextExpected = 3
 
-            list.observableSize.onChange(this) { it shouldBe nextExpected }
+            list.observableSize.onChange(this, false) { it shouldBe nextExpected }
 
             repeat(3) {
                 nextExpected++

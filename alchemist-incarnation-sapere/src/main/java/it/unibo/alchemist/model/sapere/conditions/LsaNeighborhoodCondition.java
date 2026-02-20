@@ -52,15 +52,17 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
         super(molecule, node);
         this.environment = environment;
 
-        // We depend on every neighbor's LsaSpace.
-        // An update is triggered whenever a neighbor's LSA space changes.
+        final String moleculeName = molecule.getArg(0).toString();
+
+        // We depend on every neighbor's LsaSpace for the specific molecule name.
+        // An update is triggered whenever a neighbor's LSA space for that name changes.
         addObservableDependency(ObservableExtensions.INSTANCE.switchMap(
             environment.getNeighborhood(node).map(Neighborhood::getNeighbors),
             neighbors ->
                 ObservableExtensions.INSTANCE.combineLatest(
                     neighbors.stream()
                         .filter(it -> it instanceof ILsaNode)
-                        .map(neighbor -> ((ILsaNode) neighbor).observeLsaSpace())
+                        .map(neighbor -> ((ILsaNode) neighbor).observeMoleculeName(moleculeName))
                         .toList(),
                     space -> space
                 )

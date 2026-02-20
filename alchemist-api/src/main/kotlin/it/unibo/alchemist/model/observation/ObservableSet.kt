@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -8,9 +8,6 @@
  */
 
 package it.unibo.alchemist.model.observation
-
-import arrow.core.getOrElse
-import java.util.Collections
 
 /**
  * Represents a set that allows observation of its contents and provides notifications on changes.
@@ -85,9 +82,9 @@ interface ObservableSet<T> : Observable<Set<T>> {
  *
  * @param T The type of elements maintained by this set.
  */
-class ObservableMutableSet<T> : ObservableSet<T> {
+class ObservableMutableSet<T>(initial: Iterable<T> = emptyList()) : ObservableSet<T> {
 
-    private val backing = ObservableMutableMap<T, Boolean>()
+    private val backing = ObservableMutableMap<T, Boolean>(initial.associateWith { true })
 
     override val observableSize: Observable<Int> = backing.map { it.keys.size }
 
@@ -138,7 +135,7 @@ class ObservableMutableSet<T> : ObservableSet<T> {
 
     override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Set<T>) -> Unit) {
         observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-        backing.onChange(this to registrant, invokeOnRegistration) { callback(it.keys.toSet()) }
+        backing.onChange(this to registrant, invokeOnRegistration) { callback(it.keys) }
     }
 
     override fun stopWatching(registrant: Any) {
@@ -152,15 +149,13 @@ class ObservableMutableSet<T> : ObservableSet<T> {
         observingCallbacks.clear()
     }
 
-    override fun observeMembership(item: T): Observable<Boolean> = backing[item].map { opt -> opt.getOrElse { false } }
+    override fun observeMembership(item: T): Observable<Boolean> = backing[item].map { opt -> opt.isSome() }
 
-    override fun toSet(): Set<T> = Collections.unmodifiableSet(backing.current.keys)
+    override fun toSet(): Set<T> = backing.current.keys
 
     override fun toList(): List<T> = backing.current.keys.toList()
 
-    override fun copy(): ObservableMutableSet<T> = ObservableMutableSet<T>().apply {
-        this@ObservableMutableSet.backing.asMap().keys.forEach(this::add)
-    }
+    override fun copy(): ObservableMutableSet<T> = ObservableMutableSet(backing.asMap().keys)
 
     override operator fun contains(item: T): Boolean = item in backing.current
 
@@ -194,9 +189,7 @@ class ObservableMutableSet<T> : ObservableSet<T> {
          *
          * @return An instance of `ObservableMutableSet` containing all unique elements from the original list.
          */
-        fun <T> List<T>.toObservableSet(): ObservableMutableSet<T> = ObservableMutableSet<T>().also {
-            this.forEach(it::add)
-        }
+        fun <T> List<T>.toObservableSet(): ObservableMutableSet<T> = ObservableMutableSet<T>(this)
 
         /**
          * Converts the current set into an observable mutable set.
@@ -204,9 +197,7 @@ class ObservableMutableSet<T> : ObservableSet<T> {
          *
          * @return An instance of `ObservableMutableSet` containing all the elements from the original set.
          */
-        fun <T> Set<T>.toObservableSet(): ObservableMutableSet<T> = ObservableMutableSet<T>().also {
-            this.forEach(it::add)
-        }
+        fun <T> Set<T>.toObservableSet(): ObservableMutableSet<T> = ObservableMutableSet<T>(this)
 
         /**
          * Creates a new [ObservableMutableSet] and populates it with the specified items.
@@ -215,8 +206,6 @@ class ObservableMutableSet<T> : ObservableSet<T> {
          * The items are provided as a variable number of arguments.
          * @return A new [ObservableMutableSet] containing the specified items.
          */
-        operator fun <T> invoke(vararg items: T): ObservableMutableSet<T> = ObservableMutableSet<T>().apply {
-            items.forEach(this::add)
-        }
+        operator fun <T> invoke(vararg items: T): ObservableMutableSet<T> = ObservableMutableSet<T>(items.toList())
     }
 }

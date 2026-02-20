@@ -22,7 +22,6 @@ import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMutableMap
 import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry
 import it.unibo.alchemist.model.observation.lifecycle.LifecycleState
-import java.util.Collections
 import java.util.Spliterator
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicInteger
@@ -97,7 +96,7 @@ constructor(
 
     override fun observeConcentration(molecule: Molecule): Observable<Option<T>> = observableContents[molecule]
 
-    override val contents: Map<Molecule, T> = Collections.unmodifiableMap(observableContents.current)
+    override val contents: Map<Molecule, T> get() = observableContents.current
 
     override val moleculeCount: Int get() = observeMoleculeCount.current
 

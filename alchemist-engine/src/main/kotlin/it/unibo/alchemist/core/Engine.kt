@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.core
 
+import it.unibo.alchemist.core.batch.BatchManager
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Neighborhood
@@ -28,6 +29,8 @@ open class Engine<T, P : Position<out P>>(
     protected val scheduler: Scheduler<T>,
 ) : AbstractEngine<T, P>(environment) {
 
+    private val batchManager = BatchManager<T>()
+
     constructor(environment: Environment<T, P>) : this(environment, ArrayIndexedPriorityQueue())
 
     override fun initialize() {
@@ -46,12 +49,14 @@ open class Engine<T, P : Position<out P>>(
             "$nextEvent is scheduled in the past at time $scheduledTime. Current time: $time; current step: $step."
         }
         currentTime = scheduledTime
-        if (scheduledTime.isFinite && nextEvent.canExecute()) {
-            nextEvent.conditions.forEach { it.reactionReady() }
-            nextEvent.execute()
+        batchManager.useBatch(onReschedule = { updateReaction(it) }) {
+            if (scheduledTime.isFinite && nextEvent.canExecute()) {
+                nextEvent.conditions.forEach { it.reactionReady() }
+                nextEvent.execute()
+            }
+            nextEvent.update(time, true, environment)
+            scheduler.updateReaction(nextEvent)
         }
-        nextEvent.update(time, true, environment)
-        scheduler.updateReaction(nextEvent)
 
         monitors.forEach { it.stepDone(environment, nextEvent, time, step) }
         if (environment.isTerminated) {
@@ -95,7 +100,9 @@ open class Engine<T, P : Position<out P>>(
         scheduler.addReaction(reaction)
 
         reaction.rescheduleRequest.onChange(this, false) {
-            updateReaction(reaction)
+            batchManager.requestReschedule(reaction) {
+                updateReaction(reaction)
+            }
         }
     }
 

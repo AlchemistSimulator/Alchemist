@@ -1,6 +1,0 @@
-module:org.junit.jupiter.params
-org.junit.jupiter.params
-org.junit.jupiter.params.aggregator
-org.junit.jupiter.params.converter
-org.junit.jupiter.params.provider
-org.junit.jupiter.params.support

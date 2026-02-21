@@ -1,6 +1,0 @@
-$dokka.format:html-v1
-$dokka.linkExtension:html
-$dokka.location:it.unibo.alchemist.util////PointingToDeclaration/alchemist-maintenance-tooling/it.unibo.alchemist.util/index.html
-$dokka.location:it.unibo.alchemist.util/BugReporting///PointingToDeclaration/alchemist-maintenance-tooling/it.unibo.alchemist.util/-bug-reporting/index.html
-$dokka.location:it.unibo.alchemist.util/BugReporting/reportBug/#kotlin.String#kotlin.collections.Map[kotlin.String,kotlin.Any?]/PointingToDeclaration/alchemist-maintenance-tooling/it.unibo.alchemist.util/-bug-reporting/report-bug.html
-it.unibo.alchemist.util

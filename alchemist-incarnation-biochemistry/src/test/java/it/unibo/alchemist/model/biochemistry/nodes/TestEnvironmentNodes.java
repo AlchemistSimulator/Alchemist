@@ -237,7 +237,9 @@ final class TestEnvironmentNodes {
             .parallel()
             .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
             .min(
-                Comparator.comparingDouble(n -> environment.getPosition(n).distanceTo(environment.getPosition(center)))
+                Comparator.comparingDouble(n ->
+                    environment.getCurrentPosition(n).distanceTo(environment.getCurrentPosition(center))
+                )
             )
             .map(node -> node.getConcentration(new Biomolecule(A)))
             .orElseThrow();
@@ -295,13 +297,13 @@ final class TestEnvironmentNodes {
         final Environment<Double, Euclidean2DPosition> environment = testNoVar("testEnv5.yml");
         final double conAInEnv1 = environment.getNodes().stream()
             .parallel()
-            .filter(n -> environment.getPosition(n).equals(new Euclidean2DPosition(0, 0)))
+            .filter(n -> environment.getCurrentPosition(n).equals(new Euclidean2DPosition(0, 0)))
             .findAny()
             .map(node -> node.getConcentration(new Biomolecule(A)))
             .orElseThrow();
         final double conAInEnv2 = environment.getNodes().stream()
             .parallel()
-            .filter(n -> environment.getPosition(n).equals(new Euclidean2DPosition(1, 0)))
+            .filter(n -> environment.getCurrentPosition(n).equals(new Euclidean2DPosition(1, 0)))
             .findAny()
             .map(node -> node.getConcentration(new Biomolecule(A)))
             .orElseThrow();

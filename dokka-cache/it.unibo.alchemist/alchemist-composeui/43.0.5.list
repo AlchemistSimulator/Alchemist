@@ -1,0 +1,10 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:it.unibo.alchemist.boundary.composeui////PointingToDeclaration/alchemist-composeui/it.unibo.alchemist.boundary.composeui/index.html
+$dokka.location:it.unibo.alchemist.boundary.composeui//app/#/PointingToDeclaration/alchemist-composeui/it.unibo.alchemist.boundary.composeui/app.html
+$dokka.location:it.unibo.alchemist.boundary.composeui//getPlatform/#/PointingToDeclaration/alchemist-composeui/it.unibo.alchemist.boundary.composeui/get-platform.html
+$dokka.location:it.unibo.alchemist.boundary.composeui//main/#/PointingToDeclaration/alchemist-composeui/it.unibo.alchemist.boundary.composeui/[wasm-js]main.html
+$dokka.location:it.unibo.alchemist.boundary.composeui/ComposeMonitor///PointingToDeclaration/alchemist-composeui/it.unibo.alchemist.boundary.composeui/-compose-monitor/index.html
+$dokka.location:it.unibo.alchemist.boundary.composeui/ComposeMonitor/ComposeMonitor/#/PointingToDeclaration/alchemist-composeui/it.unibo.alchemist.boundary.composeui/-compose-monitor/-compose-monitor.html
+$dokka.location:it.unibo.alchemist.boundary.composeui/ComposeMonitor/initialized/#it.unibo.alchemist.model.Environment[kotlin.Any,kotlin.Nothing]/PointingToDeclaration/alchemist-composeui/it.unibo.alchemist.boundary.composeui/-compose-monitor/initialized.html
+it.unibo.alchemist.boundary.composeui

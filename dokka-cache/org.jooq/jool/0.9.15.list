@@ -1,0 +1,9 @@
+module:org.jooq.jool
+org.jooq.lambda
+org.jooq.lambda.exception
+org.jooq.lambda.fi.lang
+org.jooq.lambda.fi.util
+org.jooq.lambda.fi.util.concurrent
+org.jooq.lambda.fi.util.function
+org.jooq.lambda.function
+org.jooq.lambda.tuple

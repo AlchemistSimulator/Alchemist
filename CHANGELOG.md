@@ -1,3 +1,21 @@
+## [43.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.6...43.0.7) (2026-02-26)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.2.21-19.2.4 (patch) ([#5157](https://github.com/AlchemistSimulator/Alchemist/issues/5157)) ([1ea3957](https://github.com/AlchemistSimulator/Alchemist/commit/1ea3957b402af05f1890b79915bfc59136724066))
+* **deps:** update danysk/makepkg docker tag to v2.1.1 ([#5158](https://github.com/AlchemistSimulator/Alchemist/issues/5158)) ([de663d1](https://github.com/AlchemistSimulator/Alchemist/commit/de663d1ddc0c8f113e79ed8aa18ca7d7cb80a91a))
+* **deps:** update dependency com.miglayout:miglayout-swing to v11.4.3 ([#5156](https://github.com/AlchemistSimulator/Alchemist/issues/5156)) ([62524a2](https://github.com/AlchemistSimulator/Alchemist/commit/62524a2b7147826787d44969765a8d965ac96157))
+* **deps:** update graphql to v9.0.0 (patch) ([#5161](https://github.com/AlchemistSimulator/Alchemist/issues/5161)) ([3973422](https://github.com/AlchemistSimulator/Alchemist/commit/3973422cb4e0be224388e8eb1e2d76db9c87971f))
+* **deps:** update kotest to v6.1.4 (patch) ([#5159](https://github.com/AlchemistSimulator/Alchemist/issues/5159)) ([ffe5a23](https://github.com/AlchemistSimulator/Alchemist/commit/ffe5a23be68dd51fd145c780cdd7b587e2ab98a7))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.157.0 ([#5160](https://github.com/AlchemistSimulator/Alchemist/issues/5160)) ([5a38b10](https://github.com/AlchemistSimulator/Alchemist/commit/5a38b10ea9acc69e8c0166c3731d846105cbbe34))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([9afa2cd](https://github.com/AlchemistSimulator/Alchemist/commit/9afa2cdc2a7a1af6cfe78b9715c40cec53a12fb6))
+
 ## [43.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.5...43.0.6) (2026-02-24)
 
 ### Dependency updates

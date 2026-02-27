@@ -1,3 +1,23 @@
+## [43.0.8](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.7...43.0.8) (2026-02-27)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.2.22-19.2.4 (patch) ([#5168](https://github.com/AlchemistSimulator/Alchemist/issues/5168)) ([97a92ae](https://github.com/AlchemistSimulator/Alchemist/commit/97a92ae63aea03202a000d2627c616cd9cfdb25d))
+* **deps:** update dependency org.mockito:mockito-core to v5.22.0 ([#5167](https://github.com/AlchemistSimulator/Alchemist/issues/5167)) ([d4c9579](https://github.com/AlchemistSimulator/Alchemist/commit/d4c9579bcb97e1eb3556bccd9628b43b455ffb91))
+* **deps:** update dependency org.yaml:snakeyaml to v2.6 ([#5162](https://github.com/AlchemistSimulator/Alchemist/issues/5162)) ([1d835d2](https://github.com/AlchemistSimulator/Alchemist/commit/1d835d2e4d74ba0b0581d2bf87e8efd89fa44ea1))
+* **deps:** update node.js to 24.14 ([#5165](https://github.com/AlchemistSimulator/Alchemist/issues/5165)) ([2df67ae](https://github.com/AlchemistSimulator/Alchemist/commit/2df67aec03c21f47f4d31afa0df941ec161de5dc))
+* **deps:** update plugin shadowjar to v9.3.2 ([#5166](https://github.com/AlchemistSimulator/Alchemist/issues/5166)) ([cdd989c](https://github.com/AlchemistSimulator/Alchemist/commit/cdd989ca00ce7baf829dfbd243a1385a665d4763))
+
+### Build and continuous integration
+
+* **deps:** update actions/download-artifact action to v8 ([#5163](https://github.com/AlchemistSimulator/Alchemist/issues/5163)) ([49626a4](https://github.com/AlchemistSimulator/Alchemist/commit/49626a4c4718b0e4e2dfebb394c0b5bd3becad1c))
+* **deps:** update actions/upload-artifact action to v7 ([#5164](https://github.com/AlchemistSimulator/Alchemist/issues/5164)) ([1025b9b](https://github.com/AlchemistSimulator/Alchemist/commit/1025b9bec3f7d2be9920b04cebb73f5273f80e69))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([5003579](https://github.com/AlchemistSimulator/Alchemist/commit/5003579f1237679db0d50f85bc00022704d471a8))
+* **build:** update the javadoc.io cache ([3f3a414](https://github.com/AlchemistSimulator/Alchemist/commit/3f3a414cd64e6abd6a95dfd1482bcb607e29a8e5))
+
 ## [43.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.6...43.0.7) (2026-02-26)
 
 ### Dependency updates

@@ -155,7 +155,7 @@ public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
 
     @Override
     public void moveNode(@Nonnull final Node<T> node, final Euclidean2DPosition direction) {
-        final Euclidean2DPosition cur = getPosition(node);
+        final Euclidean2DPosition cur = retrievePosition(node);
         final double ox = cur.getCoordinates()[0];
         final double oy = cur.getCoordinates()[1];
         double nx = direction.getCoordinates()[0] + ox;
@@ -176,7 +176,7 @@ public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         for (final Node<T> n : getNodes()) {
-            builder.append(getPosition(n)).append(' ').append(n).append('\n');
+            builder.append(retrievePosition(n)).append(' ').append(n).append('\n');
         }
         return builder.toString();
     }

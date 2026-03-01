@@ -13,6 +13,7 @@ import com.google.common.collect.Sets;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
@@ -35,7 +36,7 @@ public class LsaStandardCondition extends AbstractLsaCondition {
     private static final long serialVersionUID = 1L;
 
     private final ILsaMolecule molecule;
-    private boolean valid;
+    private final MutableObservable<Boolean> valid = MutableObservable.Companion.observe(false);
 
     /**
      * Builds an LsaStandardCondition.
@@ -47,6 +48,11 @@ public class LsaStandardCondition extends AbstractLsaCondition {
      */
     public LsaStandardCondition(final ILsaMolecule mol, final ILsaNode n) {
         super(n, Sets.newHashSet(new ILsaMolecule[] {mol}));
+
+        addObservableDependency(n.observeMoleculeName(mol.getArg(0).toString()));
+        setValidity(valid);
+        setPropensity(MutableObservable.Companion.observe(-1d));
+
         molecule = mol;
     }
 
@@ -140,16 +146,6 @@ public class LsaStandardCondition extends AbstractLsaCondition {
         return molecule;
     }
 
-    @Override
-    public final double getPropensityContribution() {
-        return -1;
-    }
-
-    @Override
-    public final boolean isValid() {
-        return valid;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -167,8 +163,8 @@ public class LsaStandardCondition extends AbstractLsaCondition {
      * @return the value which is passed.
      */
     protected final boolean makeValid(final boolean isValid) {
-        valid = isValid;
-        return valid;
+        valid.update(it -> isValid);
+        return isValid;
     }
 
 }

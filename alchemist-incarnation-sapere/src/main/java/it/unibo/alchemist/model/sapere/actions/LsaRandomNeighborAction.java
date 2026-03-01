@@ -172,7 +172,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
          * #NEIGH
          */
         if (initNeigh) {
-            setSyntheticNeigh(environment.getNeighborhood(node).getNeighbors());
+            setSyntheticNeigh(environment.getNeighborhood(node).getCurrent().getNeighbors());
         }
         /*
          * #O

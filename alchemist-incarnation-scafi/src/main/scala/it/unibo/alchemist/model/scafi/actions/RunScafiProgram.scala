@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.scafi.actions
 
 import it.unibo.alchemist.model.actions.AbstractLocalAction
+import it.unibo.alchemist.model.observation.{MutableObservable, Observable}
 import it.unibo.alchemist.model.{Node, Position, Reaction}
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.{Time => AlchemistTime, _}
@@ -83,7 +84,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
   lazy val nodeManager = new SimpleNodeManager(node)
   private var neighborhoodManager: Map[ID, NeighborData[P]] = Map()
   private val commonNames = new ScafiIncarnationForAlchemist.StandardSensorNames {}
-  private var completed = false
+  private val _completed = MutableObservable.Companion.observe[Boolean](false)
   declareDependencyTo(Dependency.EVERY_MOLECULE)
 
   def asMolecule = programNameMolecule
@@ -98,7 +99,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
       case 2 => Point3D(point.getCoordinate(0), point.getCoordinate(1), 0)
       case 3 => Point3D(point.getCoordinate(0), point.getCoordinate(1), point.getCoordinate(2))
     }
-    val position: P = environment.getPosition(node)
+    val position: P = environment.getCurrentPosition(node)
     // NB: We assume it.unibo.alchemist.model.Time = DoubleTime
     //     and that its "time unit" is seconds, and then we get NANOSECONDS
     val alchemistCurrentTime = Try(environment.getSimulation)
@@ -187,16 +188,18 @@ sealed class RunScafiProgram[T, P <: Position[P]](
     node.setConcentration(programName, computed.root[T]())
     val toSend = NeighborData(computed, position, alchemistCurrentTime)
     neighborhoodManager = neighborhoodManager + (node.getId -> toSend)
-    completed = true
+    _completed.update(_ => true)
   }
 
   def sendExport(id: ID, exportData: NeighborData[P]): Unit = neighborhoodManager += id -> exportData
 
   def getExport(id: ID): Option[NeighborData[P]] = neighborhoodManager.get(id)
 
-  def isComputationalCycleComplete: Boolean = completed
+  def isComputationalCycleComplete: Boolean = _completed.getCurrent
 
-  def prepareForComputationalCycle: Unit = completed = false
+  def observeComputationalCycleComplete: Observable[Boolean] = _completed
+
+  def prepareForComputationalCycle: Unit = _completed.update(_ => false)
 
 }
 

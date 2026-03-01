@@ -35,7 +35,7 @@ class NetworkDensity : Extractor<Double> {
         )
 
         val boundingBox = this.fold(BoundingBox()) { bb, node ->
-            val (x, y) = getPosition(node).coordinates
+            val (x, y) = getCurrentPosition(node).coordinates
             BoundingBox(
                 min(x, bb.minX),
                 max(x, bb.maxX),
@@ -46,7 +46,7 @@ class NetworkDensity : Extractor<Double> {
         val area = (boundingBox.maxX - boundingBox.minX) * (boundingBox.maxY - boundingBox.minY)
         return when {
             area <= 0 || area.isInfinite() -> Double.NaN
-            else -> nodeCount / area
+            else -> nodeCount.current / area
         }
     }
 }

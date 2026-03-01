@@ -27,6 +27,11 @@ import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.maps.MapEnvironment;
+import it.unibo.alchemist.model.observation.Disposable;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableMutableSet;
+import it.unibo.alchemist.model.observation.ObservableSet;
 import it.unibo.alchemist.model.reactions.AbstractReaction;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
@@ -363,6 +368,12 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     }
 
     @Override
+    public void dispose() {
+        fakeconds.forEach(Disposable::dispose);
+        super.dispose();
+    }
+
+    @Override
     protected void updateInternalStatus(
         final Time currentTime,
         final boolean hasBeenExecuted,
@@ -387,11 +398,11 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
                 : getNode().getConcentration(context);
         final TIntObjectMap<P> positionCacheTemp = new TIntObjectHashMap<>(positionCache.size());
         final TIntObjectMap<List<? extends ILsaMolecule>> gradCacheTemp = new TIntObjectHashMap<>(gradCache.size());
-        final P curPos = this.environment.getPosition(getNode());
+        final P curPos = this.environment.getCurrentPosition(getNode());
         final boolean positionChanged = !curPos.equals(mypos);
         boolean neighPositionChanged = false;
-        for (final Node<List<ILsaMolecule>> n : this.environment.getNeighborhood(getNode())) {
-            final P p = this.environment.getPosition(n);
+        for (final Node<List<ILsaMolecule>> n : this.environment.getNeighborhood(getNode()).getCurrent()) {
+            final P p = this.environment.getCurrentPosition(n);
             final int nid = n.getId();
             positionCacheTemp.put(nid, p);
             gradCacheTemp.put(n.getId(), n.getConcentration(gradient));
@@ -538,6 +549,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         private static final long serialVersionUID = 1L;
         private static final ListSet<Dependency> DEPENDENCY = ImmutableListSet.of(Dependency.EVERYTHING);
         private final Molecule mol;
+        private final Observable<Boolean> validity = MutableObservable.Companion.observe(false);
+        private final Observable<Double> propensity = MutableObservable.Companion.observe(0.0);
 
         SGFakeConditionAction(final Molecule m) {
             super();
@@ -574,6 +587,11 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             return DEPENDENCY;
         }
 
+        @Override
+        public ObservableSet<? extends Observable<?>> observeInboundDependencies() {
+            return new ObservableMutableSet<>();
+        }
+
         @Nonnull
         @Override
         public ListSet<? extends Dependency> getOutboundDependencies() {
@@ -587,12 +605,28 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
 
         @Override
         public double getPropensityContribution() {
-            return 0;
+            return observePropensityContribution().getCurrent();
+        }
+
+        @Override
+        public Observable<Double> observePropensityContribution() {
+            return propensity;
         }
 
         @Override
         public boolean isValid() {
-            return false;
+            return observeValidity().getCurrent();
+        }
+
+        @Override
+        public Observable<Boolean> observeValidity() {
+            return validity;
+        }
+
+        @Override
+        public void dispose() {
+            observeValidity().dispose();
+            observePropensityContribution().dispose();
         }
 
         @Override

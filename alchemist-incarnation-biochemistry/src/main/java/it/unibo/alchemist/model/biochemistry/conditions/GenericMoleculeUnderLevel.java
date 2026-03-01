@@ -15,30 +15,25 @@ import it.unibo.alchemist.model.Reaction;
 
 import java.io.Serial;
 
+import static arrow.core.OptionKt.getOrElse;
+
 /**
  * @param <T> the concentration type
  */
 public final class GenericMoleculeUnderLevel<T extends Number> extends
-        GenericMoleculePresent<T> {
+    GenericMoleculePresent<T> {
 
     @Serial
     private static final long serialVersionUID = -5646651431692309010L;
 
     /**
-     * @param mol the molecule
-     * @param n the node
+     * @param mol      the molecule
+     * @param n        the node
      * @param quantity how many molecules should be present
      */
     public GenericMoleculeUnderLevel(final Node<T> n, final Molecule mol, final T quantity) {
         super(n, mol, quantity);
-    }
-
-    /**
-     * @return true if the concentration of the molecule is lower the value.
-     */
-    @Override
-    public boolean isValid() {
-        return getNode().getConcentration(getMolecule()).doubleValue() < getQuantity().doubleValue();
+        setUpObservability();
     }
 
     @Override
@@ -47,16 +42,22 @@ public final class GenericMoleculeUnderLevel<T extends Number> extends
     }
 
     /**
-     * @return the propensity influence computed as max(0, T-[M]), where T is
-     *         the threshold chosen and [M] is the current concentration of the
-     *         molecule
+     * This condition validity is true if the concentration of the molecule is lower the value;
+     * the propensity influence computed as max(0, T-[M]), where T is the threshold chosen
+     * and [M] is the current concentration of the molecule.
      */
-    @Override
-    public double getPropensityContribution() {
+    private void setUpObservability() {
+        final var dep = getNode().observeConcentration(getMolecule());
         final double qty = getQuantity().doubleValue();
-        final double c = getNode().getConcentration(getMolecule())
-                .doubleValue();
-        return Math.max(0, qty - c);
-    }
 
+        addObservableDependency(dep);
+
+        setValidity(dep.map(newValue ->
+            getOrElse(newValue, () -> Double.NEGATIVE_INFINITY).doubleValue() < qty
+        ));
+
+        setPropensity(dep.map(newValue ->
+            Math.max(0, qty - getOrElse(newValue, () -> 0.0).doubleValue())
+        ));
+    }
 }

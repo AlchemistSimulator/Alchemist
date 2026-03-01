@@ -9,15 +9,23 @@
 
 package it.unibo.alchemist.model.sapere.nodes;
 
+import arrow.core.Option;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.nodes.GenericNode;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableList;
+import it.unibo.alchemist.model.observation.ObservableMutableList;
+import it.unibo.alchemist.model.observation.ObservableMutableMap;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
 import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
+import kotlin.Unit;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,7 +45,11 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     private static final long serialVersionUID = -2167025208984968645L;
     private static final ILsaMolecule ZEROMOL = new LsaMolecule("0");
 
-    private final List<ILsaMolecule> instances = new ArrayList<>();
+    private final Map<String, List<ILsaMolecule>> instancesByName = new HashMap<>();
+    private final Map<String, MutableObservable<List<ILsaMolecule>>> observablesByName = new HashMap<>();
+    private final MutableObservable<Integer> moleculeCount = MutableObservable.Companion.observe(0);
+    private final ObservableMutableList<ILsaMolecule> allInstances = new ObservableMutableList<>();
+    private boolean contentsDirty = true;
 
     /**
      * @param environment
@@ -45,16 +57,39 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
      */
     public LsaNode(final Environment<List<ILsaMolecule>, ?> environment) {
         super(environment);
+        this.allInstances.onChange(this, it -> {
+            contentsDirty = true;
+            return Unit.INSTANCE;
+        });
     }
 
     @Override
-    public boolean contains(@Nonnull final Molecule molecule) {
-        if (molecule instanceof final ILsaMolecule toMatch) {
-            synchronized (instances) {
-                return instances.stream().anyMatch(mol -> mol.matches(toMatch));
-            }
+    @NotNull
+    public Map<Molecule, List<ILsaMolecule>> getContents() {
+        if (contentsDirty) {
+            updateContents(allInstances.toList());
         }
-        return false;
+        return super.getContents();
+    }
+
+    @Override
+    @NotNull
+    public ObservableMutableMap<Molecule, List<ILsaMolecule>> getObservableContents() {
+        if (contentsDirty) {
+            updateContents(allInstances.toList());
+        }
+        return super.getObservableContents();
+    }
+
+    @Override
+    @NotNull
+    public Observable<Boolean> observeContains(@NotNull final Molecule molecule) {
+        if (molecule instanceof final ILsaMolecule toMatch) {
+            return observeMoleculeName(toMatch.getArg(0).toString()).map(molecules ->
+                molecules.stream().anyMatch(mol -> mol.matches(toMatch))
+            );
+        }
+        return MutableObservable.Companion.observe(false);
     }
 
     @Override
@@ -64,70 +99,65 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
-    public int getMoleculeCount() {
-        synchronized (instances) {
-            return instances.size();
-        }
+    @NotNull
+    public Observable<Integer> getObserveMoleculeCount() {
+        return moleculeCount;
     }
 
     @Override
-    public List<ILsaMolecule> getConcentration(@Nonnull final Molecule m) {
-        if (!(m instanceof final ILsaMolecule mol)) {
-            throw new IllegalArgumentException(m + " is not a compatible molecule type");
+    @NotNull
+    public Observable<Option<List<ILsaMolecule>>> observeConcentration(@NotNull final Molecule molecule) {
+        if (!(molecule instanceof final ILsaMolecule mol)) {
+            throw new IllegalArgumentException(molecule + " is not a compatible molecule type");
         }
-        final ArrayList<ILsaMolecule> listMol = new ArrayList<>();
-        synchronized (instances) {
-            for (final ILsaMolecule instance : instances) {
+        return observeMoleculeName(mol.getArg(0).toString()).map(current -> {
+            final ArrayList<ILsaMolecule> res = new ArrayList<>();
+            for (final ILsaMolecule instance : current) {
                 if (mol.matches(instance)) {
-                    listMol.add(instance);
+                    res.add(instance);
                 }
             }
-        }
-        return listMol;
+            return Option.fromNullable(res);
+        });
     }
 
     @Override
-    @Nonnull
-    public Map<Molecule, List<ILsaMolecule>> getContents() {
-        // Create a defensive copy to avoid ConcurrentModificationException
-        final List<ILsaMolecule> instancesCopy;
-        synchronized (instances) {
-            instancesCopy = new ArrayList<>(instances);
+    @NotNull
+    public Observable<List<ILsaMolecule>> observeMoleculeName(@NotNull final String name) {
+        synchronized (instancesByName) {
+            return observablesByName.computeIfAbsent(name, k ->
+                MutableObservable.Companion.observe(instancesByName.getOrDefault(name, Collections.emptyList()))
+            );
         }
-        final Map<Molecule, List<ILsaMolecule>> res = new HashMap<>(instancesCopy.size(), 1.0f);
-        for (final ILsaMolecule m : instancesCopy) {
-            final List<ILsaMolecule> l;
-            if (res.containsKey(m)) {
-                /*
-                 * Safe by construction.
-                 */
-                l = res.get(m);
-            } else {
-                l = new ArrayList<>(1);
-                l.add(ZEROMOL);
-                res.put(m, l);
-            }
-            final Double v = (Double) l.get(0).getArg(0).getRootNodeData() + 1;
-            final IExpression e = new Expression(new NumTreeNode(v));
-            l.set(0, new LsaMolecule(Collections.singletonList(e)));
-        }
-        return res;
     }
 
     @Override
     public List<ILsaMolecule> getLsaSpace() {
-        synchronized (instances) {
-            return Collections.unmodifiableList(new ArrayList<>(instances));
-        }
+        return Collections.unmodifiableList(allInstances.toList());
+    }
+
+    @Override
+    public ObservableList<ILsaMolecule> observeLsaSpace() {
+        return allInstances;
     }
 
     @Override
     public boolean removeConcentration(final ILsaMolecule matchedInstance) {
-        synchronized (instances) {
-            for (int i = 0; i < instances.size(); i++) {
-                if (matchedInstance.matches(instances.get(i))) {
-                    instances.remove(i);
-                    return true;
+        synchronized (instancesByName) {
+            final String name = matchedInstance.getArg(0).toString();
+            final List<ILsaMolecule> list = instancesByName.get(name);
+            if (list != null) {
+                for (int i = 0; i < list.size(); i++) {
+                    if (matchedInstance.matches(list.get(i))) {
+                        list.remove(i);
+                        moleculeCount.update(c -> c - 1);
+                        allInstances.remove(matchedInstance);
+                        final var obs = observablesByName.get(name);
+                        if (obs != null) {
+                            obs.update(it -> new ArrayList<>(list));
+                        }
+                        return true;
+                    }
                 }
             }
         }
@@ -137,8 +167,16 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @Override
     public void setConcentration(final ILsaMolecule inst) {
         if (inst.isIstance()) {
-            synchronized (instances) {
-                instances.add(inst);
+            synchronized (instancesByName) {
+                final String name = inst.getArg(0).toString();
+                final List<ILsaMolecule> list = instancesByName.computeIfAbsent(name, k -> new ArrayList<>());
+                list.add(inst);
+                moleculeCount.update(c -> c + 1);
+                allInstances.add(inst);
+                final var obs = observablesByName.get(name);
+                if (obs != null) {
+                    obs.update(it -> new ArrayList<>(list));
+                }
             }
         } else {
             throw new IllegalStateException("Tried to insert uninstanced " + inst + " into " + this);
@@ -157,7 +195,29 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @Override
     @Nonnull
     public String toString() {
-        return getId() + " contains: " + instances.toString();
+        return getId() + " contains: " + allInstances.getCurrent();
     }
 
+    private Unit updateContents(final List<? extends ILsaMolecule> currentInstances) {
+        final Map<Molecule, List<ILsaMolecule>> res = new HashMap<>(currentInstances.size(), 1.0f);
+        for (final ILsaMolecule m : currentInstances) {
+            final List<ILsaMolecule> l;
+            if (res.containsKey(m)) {
+                /*
+                 * Safe by construction.
+                 */
+                l = res.get(m);
+            } else {
+                l = new ArrayList<>(1);
+                l.add(ZEROMOL);
+                res.put(m, l);
+            }
+            final Double v = (Double) l.get(0).getArg(0).getRootNodeData() + 1;
+            final IExpression e = new Expression(new NumTreeNode(v));
+            l.set(0, new LsaMolecule(Collections.singletonList(e)));
+        }
+        contentsDirty = false;
+        super.getObservableContents().clearAndPutAll(res);
+        return null;
+    }
 }

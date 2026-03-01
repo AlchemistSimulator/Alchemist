@@ -28,7 +28,7 @@ class CloseToAlreadyDeployed<T, P : Position<P>>(
     override val sources =
         environment.nodes
             .asSequence()
-            .map { environment.getPosition(it) }
+            .map { environment.getCurrentPosition(it) }
             .map {
                 when (it) {
                     is GeoPosition -> doubleArrayOf(it.latitude, it.longitude)

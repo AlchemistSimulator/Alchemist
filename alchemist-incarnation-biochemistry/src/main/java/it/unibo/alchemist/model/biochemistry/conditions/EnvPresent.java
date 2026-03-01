@@ -38,6 +38,13 @@ public final class EnvPresent extends AbstractCondition<Double> {
     public EnvPresent(final Environment<Double, ?> environment, final Node<Double> node) {
         super(node);
         this.environment = environment;
+
+        addObservableDependency(environment.getNeighborhood(node));
+        setValidity(environment.getNeighborhood(node).map(it ->
+            it.getNeighbors().stream().anyMatch(n -> n instanceof EnvironmentNode)
+        ));
+
+        setPropensity(observeValidity().map(it -> it ? 1d : 0d));
     }
 
     @Override
@@ -48,17 +55,6 @@ public final class EnvPresent extends AbstractCondition<Double> {
     @Override
     public Context getContext() {
         return Context.NEIGHBORHOOD;
-    }
-
-    @Override
-    public double getPropensityContribution() {
-        return isValid() ? 1d : 0d;
-    }
-
-    @Override
-    public boolean isValid() {
-        return environment.getNeighborhood(getNode()).getNeighbors().stream()
-                .anyMatch(n -> n instanceof EnvironmentNode);
     }
 
     @Override

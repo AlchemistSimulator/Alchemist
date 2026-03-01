@@ -148,7 +148,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
              *
              * then remain still.
              */
-            final GeoPosition currentPosition = environment.getPosition(node);
+            final GeoPosition currentPosition = environment.getCurrentPosition(node);
             if (matches.isEmpty()) {
                 if (curPos == null || currentPosition.equals(curPos)) {
                     return currentPosition;
@@ -159,15 +159,15 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
             /*
              * If the current target node has moved, the destination should be re-computed.
              */
-            final Position<?> curNodeActualPos = environment.getPosition(curNode);
+            final Position<?> curNodeActualPos = environment.getCurrentPosition(curNode);
             if (curNode.equals(node)
                 || !curPos.equals(curNodeActualPos)
-                || environment.getNeighborhood(node).contains(curNode)) {
+                || environment.getNeighborhood(node).getCurrent().contains(curNode)) {
                 /*
                  * Update target
                  */
                 curNode = environment.getNodeByID(nid);
-                curPos = environment.getPosition(curNode);
+                curPos = environment.getCurrentPosition(curNode);
             }
             return curPos;
         }

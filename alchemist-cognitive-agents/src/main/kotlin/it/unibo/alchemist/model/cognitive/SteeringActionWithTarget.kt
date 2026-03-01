@@ -36,5 +36,5 @@ interface SteeringActionWithTarget<T, P> : SteeringAction<T, P> where P : Positi
      * @return the distance from the action's target to the node's position.
      */
     fun targetDistanceTo(node: Node<T>, environment: Environment<T, P>): Double =
-        target().distanceTo(environment.getPosition(node))
+        target().distanceTo(environment.getCurrentPosition(node))
 }

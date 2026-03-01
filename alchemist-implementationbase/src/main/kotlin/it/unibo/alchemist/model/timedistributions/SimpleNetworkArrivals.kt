@@ -143,7 +143,7 @@ class SimpleNetworkArrivals<T> private constructor(
 
     /** Gets the neighbors of a node as a collection. */
     val Node<T>.neighborhood: Collection<Node<T>>
-        get() = environment.getNeighborhood(this).neighbors
+        get() = environment.getNeighborhood(this).current.neighbors
 
     /** Computes the effective bandwidth considering access point load balancing. */
     val bandwidth: Double

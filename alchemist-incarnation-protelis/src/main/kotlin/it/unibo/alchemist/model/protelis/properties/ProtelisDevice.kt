@@ -128,7 +128,7 @@ constructor(
         when {
             node.contains(molecule) -> node.getConcentration(molecule)
             else ->
-                checkNotNull(environment.getLayer(molecule)?.getValue(environment.getPosition(node))) {
+                checkNotNull(environment.getLayer(molecule)?.getValue(environment.getCurrentPosition(node))) {
                     "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists"
                 }
         }

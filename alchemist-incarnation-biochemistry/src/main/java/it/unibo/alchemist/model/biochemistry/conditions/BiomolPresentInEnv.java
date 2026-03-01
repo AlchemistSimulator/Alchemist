@@ -17,13 +17,12 @@ import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
+import it.unibo.alchemist.model.observation.Observable;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.apache.commons.math3.util.FastMath;
 
 import javax.annotation.Nullable;
 import java.io.Serial;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @param <P> Position type
@@ -56,28 +55,7 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
     ) {
         super(node, biomolecule, concentration);
         this.environment = environment;
-    }
-
-    @Override
-    public double getPropensityContribution() {
-        final double totalQuantity = getTotalQuantity();
-        if (totalQuantity < getQuantity()) {
-            return 0;
-        }
-        return CombinatoricsUtils.binomialCoefficientDouble(
-                (int) FastMath.round(totalQuantity),
-                (int) FastMath.round(getQuantity())
-            );
-    }
-
-    /**
-     * @return a list of EnvironmentNodes near to the node where this condition is located.
-     */
-    private List<Node<Double>> getEnviromentNodesSurrounding() {
-        return environment.getNeighborhood(getNode()).getNeighbors().stream()
-                .parallel()
-                .filter(n -> n instanceof EnvironmentNode)
-                .collect(Collectors.toList());
+        setUpObservability();
     }
 
     @Override
@@ -90,29 +68,41 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
         return Context.NEIGHBORHOOD;
     }
 
-    @Override
-    public boolean isValid() {
-        return getTotalQuantity() >= getQuantity();
+    private void setUpObservability() {
+        final Observable<Double> totalQuantity = observeTotalQuantity();
+        addObservableDependency(totalQuantity);
+        setValidity(totalQuantity.map(totalQty -> totalQty >= getQuantity()));
+        setPropensity(totalQuantity.map(totalQty -> {
+            if (totalQty < getQuantity()) {
+                return 0d;
+            }
+            return CombinatoricsUtils.binomialCoefficientDouble(
+                (int) FastMath.round(totalQty),
+                (int) FastMath.round(getQuantity())
+            );
+        }));
+    }
+
+    private Observable<Double> observeTotalQuantity() {
+        return environment.getNeighborhood(getNode()).mergeWith(
+            environment.getPosition(getNode()),
+            (neighborhood, position) -> {
+                final double quantityInEnvNodes = neighborhood.getNeighbors().stream()
+                    .parallel()
+                    .filter(EnvironmentNode.class::isInstance)
+                    .mapToDouble(n -> n.getConcentration(getBiomolecule()))
+                    .sum();
+                double quantityInLayers = 0;
+                final @Nullable Layer<Double, P> layer = environment.getLayer(getBiomolecule());
+                if (layer != null) {
+                    quantityInLayers = layer.getValue(position);
+                }
+                return quantityInEnvNodes + quantityInLayers;
+            }
+        );
     }
 
     private Biomolecule getBiomolecule() {
         return (Biomolecule) getMolecule();
     }
-
-    private double getTotalQuantity() {
-        double quantityInEnvNodes = 0;
-        if (!getEnviromentNodesSurrounding().isEmpty()) {
-            quantityInEnvNodes = getEnviromentNodesSurrounding().stream()
-                    .parallel()
-                    .mapToDouble(n -> n.getConcentration(getBiomolecule()))
-                    .sum();
-        }
-        double quantityInLayers = 0;
-        final @Nullable Layer<Double, P> layer = environment.getLayer(getBiomolecule());
-        if (layer != null) {
-            quantityInLayers = layer.getValue(environment.getPosition(getNode()));
-        }
-        return quantityInEnvNodes + quantityInLayers;
-    }
-
 }

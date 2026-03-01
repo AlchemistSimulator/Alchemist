@@ -16,6 +16,9 @@ import it.unibo.alchemist.model.Node
  * it contributes respectively with 1.0 in case it can execute,
  * or with 0.0 in case it cannot.
  */
+@Suppress("AbstractClassCanBeConcreteClass")
 abstract class AbstractNonPropensityContributingCondition<T>(node: Node<T>) : AbstractCondition<T>(node) {
-    final override fun getPropensityContribution(): Double = if (isValid) 1.0 else 0.0
+    init {
+        setPropensity(observeValidity().map { if (it) 1.0 else 0.0 })
+    }
 }

@@ -232,7 +232,7 @@ class TestChemotaxis {
         environment.addNode(envNode3, p3);
         environment.addNode(envNode4, p4);
         environment.addNode(cellNode1, p5);
-        assertEquals(EXPECTED_NODES, environment.getNodeCount());
+        assertEquals(EXPECTED_NODES, environment.getNodeCount().getCurrent());
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
@@ -243,7 +243,7 @@ class TestChemotaxis {
         r1.execute();
         r2.execute();
         assertEquals(new Euclidean2DPosition(0.5 + FastMath.sqrt(0.5), 0.5 + FastMath.sqrt(0.5)),
-                environment.getPosition(cellNode1)
+                environment.getCurrentPosition(cellNode1)
         );
     }
 
@@ -262,7 +262,7 @@ class TestChemotaxis {
         environment.addNode(envNode3, p3);
         environment.addNode(envNode4, p4);
         environment.addNode(cellNode1, p5);
-        assertEquals(EXPECTED_NODES, environment.getNodeCount());
+        assertEquals(EXPECTED_NODES, environment.getNodeCount().getCurrent());
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
@@ -273,11 +273,11 @@ class TestChemotaxis {
         r1.execute();
         r2.execute();
         assertEquals(1,
-                environment.getPosition(cellNode1).getX(),
+                environment.getCurrentPosition(cellNode1).getX(),
                 PRECISION
                 );
         assertEquals(1,
-                environment.getPosition(cellNode1).getY(),
+                environment.getCurrentPosition(cellNode1).getY(),
                 PRECISION
                 );
     }
@@ -297,7 +297,7 @@ class TestChemotaxis {
         environment.addNode(envNode3, p3);
         environment.addNode(envNode4, p4);
         environment.addNode(cellNode1, p5);
-        assertEquals(EXPECTED_NODES, environment.getNodeCount());
+        assertEquals(EXPECTED_NODES, environment.getNodeCount().getCurrent());
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION2);
         envNode3.setConcentration(biomolA, CONCENTRATION2);
@@ -310,11 +310,11 @@ class TestChemotaxis {
         r2.execute();
         r2.execute();
         assertEquals(0.5,
-                environment.getPosition(cellNode1).getX(),
+                environment.getCurrentPosition(cellNode1).getX(),
                 PRECISION
                 );
         assertEquals(0.5,
-                environment.getPosition(cellNode1).getY(),
+                environment.getCurrentPosition(cellNode1).getY(),
                 PRECISION
                 );
     }

@@ -163,7 +163,7 @@ class GraphStreamSupport<T, P : Position<out P>>(val linkingRule: LinkingRule<T,
             val shift = ebeAdd(barycenter, offsets)
 
             fun DoubleArray.zoomAndPan(): DoubleArray = ebeAdd(shift, ebeMultiply(zooms, ebeSubtract(this, barycenter)))
-            return GraphStreamSupport(OffsetGraphStreamLinkingRule<T, P>(environment.nodeCount, graph)) {
+            return GraphStreamSupport(OffsetGraphStreamLinkingRule<T, P>(environment.nodeCount.current, graph)) {
                 originalCoordinates.stream().map {
                     val shifted = it.zoomAndPan()
                     if (is3D) {

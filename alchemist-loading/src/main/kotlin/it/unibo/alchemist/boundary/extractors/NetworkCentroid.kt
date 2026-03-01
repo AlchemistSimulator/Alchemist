@@ -25,7 +25,7 @@ class NetworkCentroid : Extractor<Double> {
         reaction: Actionable<T>?,
         time: Time,
         step: Long,
-    ): Map<String, Double> = when (environment.nodeCount) {
+    ): Map<String, Double> = when (environment.nodeCount.current) {
         0 -> columnNames.associateWith { NaN }
         else ->
             environment.networkHub().toList().mapIndexed { index, value ->
@@ -36,10 +36,10 @@ class NetworkCentroid : Extractor<Double> {
     private fun <T> Environment<T, *>.networkHub(): List<Double> {
         val sums = DoubleArray(dimensions) { ORIGIN }
         forEach { node ->
-            getPosition(node).coordinates.forEachIndexed { index, value ->
+            getCurrentPosition(node).coordinates.forEachIndexed { index, value ->
                 sums[index] += value
             }
         }
-        return sums.map { it / nodeCount }
+        return sums.map { it / nodeCount.current }
     }
 }

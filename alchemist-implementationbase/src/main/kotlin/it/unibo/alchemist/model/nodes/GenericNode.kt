@@ -8,6 +8,8 @@
  */
 package it.unibo.alchemist.model.nodes
 
+import arrow.core.Option
+import arrow.core.getOrElse
 import com.google.common.collect.MapMaker
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
@@ -15,7 +17,11 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
-import java.util.Collections
+import it.unibo.alchemist.model.observation.Disposable
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableMutableMap
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleState
 import java.util.Spliterator
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicInteger
@@ -40,9 +46,19 @@ constructor(
     /**
      * The node's molecules.
      */
-    val molecules: MutableMap<Molecule, T> = LinkedHashMap(),
+    molecules: MutableMap<Molecule, T> = LinkedHashMap(),
     final override val properties: MutableList<NodeProperty<T>> = ArrayList(),
 ) : Node<T> {
+
+    override val lifecycle: LifecycleRegistry = LifecycleRegistry()
+
+    init {
+        lifecycle.markState(LifecycleState.STARTED)
+    }
+
+    override val observableContents: ObservableMutableMap<Molecule, T> = ObservableMutableMap(molecules)
+
+    override val observeMoleculeCount: Observable<Int> = observableContents.map { it.size }
 
     final override fun addReaction(reactionToAdd: Reaction<T>) {
         reactions.add(reactionToAdd)
@@ -56,7 +72,11 @@ constructor(
 
     final override fun compareTo(@Nonnull other: Node<T>): Int = id.compareTo(other.id)
 
-    override fun contains(molecule: Molecule): Boolean = molecules.containsKey(molecule)
+    override fun contains(molecule: Molecule): Boolean = observeContains(molecule).current
+
+    override fun observeContains(molecule: Molecule): Observable<Boolean> = observableContents.map {
+        it.contains(molecule)
+    }
 
     /**
      * @return an empty concentration
@@ -70,28 +90,34 @@ constructor(
      */
     final override fun forEach(action: Consumer<in Reaction<T>>) = reactions.forEach(action)
 
-    override fun getConcentration(molecule: Molecule): T = molecules[molecule] ?: createT()
+    override fun getConcentration(molecule: Molecule): T = observeConcentration(molecule).current.getOrElse {
+        createT()
+    }
 
-    override val contents: Map<Molecule, T> = Collections.unmodifiableMap(molecules)
+    override fun observeConcentration(molecule: Molecule): Observable<Option<T>> = observableContents[molecule]
 
-    override val moleculeCount: Int get() = molecules.size
+    override val contents: Map<Molecule, T> get() = observableContents.current
+
+    override val moleculeCount: Int get() = observeMoleculeCount.current
 
     final override fun hashCode(): Int = id // TODO: better hashing
 
     final override fun iterator(): Iterator<Reaction<T>> = reactions.iterator()
 
     final override fun removeConcentration(moleculeToRemove: Molecule) {
-        if (molecules.remove(moleculeToRemove) == null) {
+        if (observableContents.remove(moleculeToRemove) == null) {
             throw NoSuchElementException("$moleculeToRemove was not present in node $id")
         }
     }
 
     final override fun removeReaction(reactionToRemove: Reaction<T>) {
-        reactions.remove(reactionToRemove)
+        if (reactions.remove(reactionToRemove)) {
+            reactionToRemove.dispose()
+        }
     }
 
     override fun setConcentration(molecule: Molecule, concentration: T) {
-        molecules[molecule] = concentration
+        observableContents[molecule] = concentration
     }
 
     final override fun addProperty(nodeProperty: NodeProperty<T>) {
@@ -110,7 +136,15 @@ constructor(
      */
     final override fun spliterator(): Spliterator<Reaction<T>> = reactions.spliterator()
 
-    override fun toString(): String = "Node$id{ properties: $properties, molecules: $molecules }"
+    override fun toString(): String = "Node$id{ properties: $properties, molecules: ${observableContents.current}}"
+
+    override fun dispose() {
+        lifecycle.markState(LifecycleState.DESTROYED)
+        reactions.forEach(Disposable::dispose)
+        reactions.clear()
+        observableContents.dispose()
+        observeMoleculeCount.dispose()
+    }
 
     private companion object {
         private const val serialVersionUID = 2496775909028222278L

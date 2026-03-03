@@ -2,7 +2,7 @@ $dokka.format:html-v1
 $dokka.linkExtension:html
 $dokka.location:io.ktor.client.plugins.contentnegotiation////PointingToDeclaration/ktor-client-content-negotiation/io.ktor.client.plugins.contentnegotiation/index.html
 $dokka.location:io.ktor.client.plugins.contentnegotiation//ContentNegotiation/#/PointingToDeclaration/ktor-client-content-negotiation/io.ktor.client.plugins.contentnegotiation/-content-negotiation.html
-$dokka.location:io.ktor.client.plugins.contentnegotiation//exclude/io.ktor.client.request.HttpRequestBuilder#io.ktor.http.ContentType/PointingToDeclaration/ktor-client-content-negotiation/io.ktor.client.plugins.contentnegotiation/exclude.html
+$dokka.location:io.ktor.client.plugins.contentnegotiation//exclude/io.ktor.client.request.HttpRequestBuilder#vararg(io.ktor.http.ContentType)/PointingToDeclaration/ktor-client-content-negotiation/io.ktor.client.plugins.contentnegotiation/exclude.html
 $dokka.location:io.ktor.client.plugins.contentnegotiation/ContentConverterException///PointingToDeclaration/ktor-client-content-negotiation/io.ktor.client.plugins.contentnegotiation/-content-converter-exception/index.html
 $dokka.location:io.ktor.client.plugins.contentnegotiation/ContentConverterException/ContentConverterException/#kotlin.String/PointingToDeclaration/ktor-client-content-negotiation/io.ktor.client.plugins.contentnegotiation/-content-converter-exception/-content-converter-exception.html
 $dokka.location:io.ktor.client.plugins.contentnegotiation/ContentNegotiationConfig///PointingToDeclaration/ktor-client-content-negotiation/io.ktor.client.plugins.contentnegotiation/-content-negotiation-config/index.html

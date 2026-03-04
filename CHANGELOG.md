@@ -1,3 +1,17 @@
+## [43.0.10](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.9...43.0.10) (2026-03-04)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.3.2-19.2.4 (patch) ([#5174](https://github.com/AlchemistSimulator/Alchemist/issues/5174)) ([074f5c0](https://github.com/AlchemistSimulator/Alchemist/commit/074f5c0fa01de3aa73a0119c9a57261d27d19ad8))
+* **deps:** update dependency io.arrow-kt:arrow-core to v2.2.2 ([#5176](https://github.com/AlchemistSimulator/Alchemist/issues/5176)) ([fce83ad](https://github.com/AlchemistSimulator/Alchemist/commit/fce83ad3d5c3ace4f71baaf3ac4dca3258f1c6df))
+* **deps:** update dependency io.ktor.plugin to v3.4.1 ([#5175](https://github.com/AlchemistSimulator/Alchemist/issues/5175)) ([99849be](https://github.com/AlchemistSimulator/Alchemist/commit/99849be10b6b45017e6d29ff06330205dabedd9c))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([51b916b](https://github.com/AlchemistSimulator/Alchemist/commit/51b916b60d131f1ff36ddb4bcd69407d27b4b14f))
+* **build:** update the javadoc.io cache ([48d0948](https://github.com/AlchemistSimulator/Alchemist/commit/48d0948c071ade07dca9e3b3225cba13eac9194c))
+* **build:** update the javadoc.io cache ([7c41a11](https://github.com/AlchemistSimulator/Alchemist/commit/7c41a1167c0cf58c784d1c935e566f0db568a68a))
+
 ## [43.0.9](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.8...43.0.9) (2026-03-02)
 
 ### Dependency updates

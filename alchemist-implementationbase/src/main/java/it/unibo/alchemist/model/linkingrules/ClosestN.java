@@ -100,7 +100,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
 
     @Override
     public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> environment) {
-        if (environment.getNodeCount() < expectedNodes || !nodeIsEnabled(center)) {
+        if (environment.getNodeCount().getCurrent() < expectedNodes || !nodeIsEnabled(center)) {
             return Neighborhoods.make(environment, center);
         }
         return Neighborhoods.make(environment, center,
@@ -130,13 +130,17 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
         Set<Node<T>> inRange;
         final double maxRange = Doubles.max(environment.getSizeInDistanceUnits()) * 2;
         do {
-            inRange = (environment.getNodeCount() > nodeCount && currentRange < maxRange
+            inRange = (environment.getNodeCount().getCurrent() > nodeCount && currentRange < maxRange
                     ? nodesInRange(environment, center, currentRange).stream()
                     : environment.getNodes().stream())
                         .filter(n -> !n.equals(center) && nodeIsEnabled(n))
                         .collect(Collectors.toCollection(LinkedHashSet::new));
             currentRange *= 2;
-        } while (inRange.size() < nodeCount && inRange.size() < environment.getNodeCount() - 1 && currentRange < maxRange * 2);
+        } while (
+            inRange.size() < nodeCount
+                && inRange.size() < environment.getNodeCount().getCurrent() - 1
+                && currentRange < maxRange * 2
+        );
         if (inRange.isEmpty()) {
             return Stream.empty();
         }
@@ -166,7 +170,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
      * @param range the communication range
      * @return the set of nodes within the communication range
      */
-    protected final Set<Node<T>> nodesInRange(
+    protected final Set<? extends Node<T>> nodesInRange(
             final Environment<T, ?> environment,
             final Node<T> node, final double range
     ) {
@@ -200,7 +204,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
              * would, on average, contain the number of required devices
              */
             return ranges().get(center, () -> {
-                final int nodes = environment.getNodeCount();
+                final int nodes = environment.getNodeCount().getCurrent();
                 if (nodes < nodeCount || nodes < 10) {
                     return Double.MAX_VALUE;
                 }

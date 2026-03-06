@@ -39,7 +39,7 @@ class TestSpecificPositions :
         "Test YAML loading with 2D env" {
             val loader = LoadAlchemist.from(ResourceLoader.getResource("testSpecificPositions.yml"))
             val environment = loader.getWith<Any, Euclidean2DPosition>(emptyMap<String, Double>()).environment
-            environment.nodes.map { environment.getPosition(it) } shouldBe
+            environment.nodes.map { environment.getCurrentPosition(it) } shouldBe
                 listOf(Euclidean2DPosition(1.0, 2.0), Euclidean2DPosition(3.0, 4.0))
         }
     }) {

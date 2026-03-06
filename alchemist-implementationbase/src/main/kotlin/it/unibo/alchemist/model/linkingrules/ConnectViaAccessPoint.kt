@@ -41,7 +41,8 @@ class ConnectViaAccessPoint<T, P : Position<P>>(radius: Double, val accessPointI
                         environment,
                         center,
                         neighbors.filter {
-                            it == closestAP || !it.isAccessPoint && environment.getNeighborhood(it).contains(closestAP)
+                            it == closestAP ||
+                                !it.isAccessPoint && environment.getNeighborhood(it).current.contains(closestAP)
                         },
                     )
                 } ?: Neighborhoods.make(environment, center, emptyList())

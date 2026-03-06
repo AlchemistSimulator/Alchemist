@@ -28,7 +28,7 @@ object Environments {
     ): (Node<T>, Node<T>) -> Double = { n1, n2 ->
         when {
             n1 == n2 -> 0.0
-            n2 in getNeighborhood(n1) -> computeDistance(n1, n2)
+            n2 in getNeighborhood(n1).current -> computeDistance(n1, n2)
             else -> POSITIVE_INFINITY
         }
     }
@@ -64,7 +64,7 @@ object Environments {
     fun <T> Environment<T, *>.allSubNetworksByNode(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
     ): Map<Node<T>, Network<T>> {
-        val subnetworks = arrayOfNulls<MutableNetwork<T>>(nodeCount)
+        val subnetworks = arrayOfNulls<MutableNetwork<T>>(nodeCount.current)
         val result = mutableMapOf<Node<T>, Network<T>>()
         val paths = allShortestPaths(computeDistance)
         // Update all the subnetworks with the last evaluated; that is the most complete
@@ -74,7 +74,7 @@ object Environments {
                     val newSubnetwork = MutableNetwork(0.0, mutableListOf(centerNode))
                     result[centerNode] = newSubnetwork
                     val centerRow = paths.row(centerIndex)
-                    for (potentialNeighborIndex in centerIndex + 1 until nodeCount) {
+                    for (potentialNeighborIndex in centerIndex + 1 until nodeCount.current) {
                         val distanceToNeighbor = centerRow[potentialNeighborIndex]
                         if (distanceToNeighbor.isFinite()) {
                             newSubnetwork.diameter = max(newSubnetwork.diameter, distanceToNeighbor)
@@ -125,18 +125,19 @@ object Environments {
             },
     ): SymmetricMatrix<Double> {
         val nodes = nodes.toList()
+        val currentNodeCount = nodeCount.current
         /*
          * The distance matrix is a triangular matrix stored in a flat array.
          */
-        val distances = MutableDoubleSymmetricMatrix(nodeCount)
-        for (i in 0 until nodeCount) {
-            for (j in i until nodeCount) {
+        val distances = MutableDoubleSymmetricMatrix(currentNodeCount)
+        for (i in 0 until currentNodeCount) {
+            for (j in i until currentNodeCount) {
                 distances[i, j] = computeDistance(nodes[i], nodes[j])
             }
         }
-        for (intermediate in 0 until nodeCount) {
-            for (i in 0 until nodeCount) {
-                for (j in i + 1 until nodeCount) {
+        for (intermediate in 0 until currentNodeCount) {
+            for (i in 0 until currentNodeCount) {
+                for (j in i + 1 until currentNodeCount) {
                     val throughIntermediate = distances[i, intermediate] + distances[intermediate, j]
                     if (distances[i, j] > throughIntermediate) {
                         distances[i, j] = throughIntermediate
@@ -156,7 +157,7 @@ object Environments {
         while (toExplore.isNotEmpty()) {
             val current = toExplore.first()
             explored += current
-            val neighbors = getNeighborhood(current).toMutableSet()
+            val neighbors = getNeighborhood(current).current.toMutableSet()
             toExplore += neighbors
             toExplore -= explored
         }

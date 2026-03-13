@@ -116,7 +116,7 @@ public abstract class AbstractSAPERENeighborAgent<P extends Position<P>> extends
      * @return the current position of the node
      */
     protected final P getCurrentPosition() {
-        return environment.getPosition(getNode());
+        return environment.getCurrentPosition(getNode());
     }
 
     /**
@@ -125,7 +125,7 @@ public abstract class AbstractSAPERENeighborAgent<P extends Position<P>> extends
      * @return the position of node
      */
     protected final P getPosition(final ILsaNode node) {
-        return environment.getPosition(node);
+        return environment.getCurrentPosition(node);
     }
 
     /**
@@ -134,21 +134,24 @@ public abstract class AbstractSAPERENeighborAgent<P extends Position<P>> extends
      * @return the position of node
      */
     protected final Neighborhood<List<ILsaMolecule>> getNeighborhood(final ILsaNode node) {
-        return environment.getNeighborhood(node);
+        return environment.getNeighborhood(node).getCurrent();
     }
 
     /**
      * @return the position of node
      */
     protected final Neighborhood<List<ILsaMolecule>> getLocalNeighborhood() {
-        return environment.getNeighborhood(getNode());
+        return environment.getNeighborhood(getNode()).getCurrent();
     }
 
     /**
      * @param direction the point towards which move the node
      */
     protected final void move(final P direction) {
-        environment.moveNodeToPosition(getNode(), getEnvironment().getPosition(getNode()).plus(direction.getCoordinates()));
+        environment.moveNodeToPosition(
+            getNode(),
+            getEnvironment().getCurrentPosition(getNode()).plus(direction.getCoordinates())
+        );
     }
 
     /**

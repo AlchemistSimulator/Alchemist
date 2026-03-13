@@ -1,3 +1,23 @@
+## [43.0.15](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.14...43.0.15) (2026-03-13)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.3.10-19.2.4 (patch) ([#5193](https://github.com/AlchemistSimulator/Alchemist/issues/5193)) ([6aa0cf4](https://github.com/AlchemistSimulator/Alchemist/commit/6aa0cf477c95b6fba9e61958793f8426cbe4ca11))
+* **core-deps:** update react to v2026.3.9-19.2.4 (patch) ([#5192](https://github.com/AlchemistSimulator/Alchemist/issues/5192)) ([6cf3661](https://github.com/AlchemistSimulator/Alchemist/commit/6cf3661c9939c425aac0db4e2009c3bf36f788ec))
+* **deps:** update dependency org.eclipse.jgit:org.eclipse.jgit to v7.6.0.202603022253-r ([#5196](https://github.com/AlchemistSimulator/Alchemist/issues/5196)) ([9ce5282](https://github.com/AlchemistSimulator/Alchemist/commit/9ce52828a0d4706a643e3fa962b6f85b0e6758a6))
+* **deps:** update dependency org.mockito:mockito-core to v5.23.0 ([#5195](https://github.com/AlchemistSimulator/Alchemist/issues/5195)) ([a31db5e](https://github.com/AlchemistSimulator/Alchemist/commit/a31db5edca423627554ed2499fe37ef018275950))
+* **deps:** update kotest to v6.1.6 (patch) ([#5191](https://github.com/AlchemistSimulator/Alchemist/issues/5191)) ([589c3b7](https://github.com/AlchemistSimulator/Alchemist/commit/589c3b76e8018ef0e376d71f2d4839b20959cef5))
+
+### Build and continuous integration
+
+* **deps:** update actions/download-artifact action to v8.0.1 ([#5194](https://github.com/AlchemistSimulator/Alchemist/issues/5194)) ([c4e4807](https://github.com/AlchemistSimulator/Alchemist/commit/c4e4807db64f0f7ed07a0c282d4a6c921a1d02a4))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([7a69381](https://github.com/AlchemistSimulator/Alchemist/commit/7a693818944c7c9ef63f5204f190c4619677e0c7))
+* **build:** update the javadoc.io cache ([1697b4d](https://github.com/AlchemistSimulator/Alchemist/commit/1697b4db4fadcad3324513540283353b588ad6f7))
+* **build:** update the javadoc.io cache ([0e7734c](https://github.com/AlchemistSimulator/Alchemist/commit/0e7734c717411639321801ff4be11f5485426059))
+
 ## [43.0.14](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.13...43.0.14) (2026-03-09)
 
 ### Dependency updates

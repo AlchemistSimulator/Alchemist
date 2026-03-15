@@ -716,8 +716,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             positions.clear();
             neighbors.clear();
             environment.getNodes().parallelStream().forEach(node -> {
-                positions.put(node, environment.getPosition(node));
-                neighbors.put(node, environment.getNeighborhood(node));
+                positions.put(node, environment.getCurrentPosition(node));
+                neighbors.put(node, environment.getNeighborhood(node).getCurrent());
             });
             releaseData();
             repaint();
@@ -891,7 +891,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                             final P envEnding = wormhole.getEnvPoint(endingPoint);
                             final P envOrigin = wormhole.getEnvPoint(originPoint);
                             for (final Node<T> n : selectedNodes) {
-                                final P p = currentEnv.getPosition(n);
+                                final P p = currentEnv.getCurrentPosition(n);
                                 final P finalPos = p.plus(envEnding.minus(envOrigin.getCoordinates()).getCoordinates());
                                 engine.schedule(() -> {
                                     currentEnv.moveNodeToPosition(n, finalPos);

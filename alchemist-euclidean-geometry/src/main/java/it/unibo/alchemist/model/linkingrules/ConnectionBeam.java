@@ -84,10 +84,10 @@ public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2
             });
         }
         if (!normal.isEmpty()) {
-            final Euclidean2DPosition cp = environment.getPosition(center);
+            final Euclidean2DPosition cp = environment.getCurrentPosition(center);
             final List<Node<T>> neighs = normal.getNeighbors().stream()
                 .filter(neigh -> {
-                    final Euclidean2DPosition np = environment.getPosition(neigh);
+                    final Euclidean2DPosition np = environment.getCurrentPosition(neigh);
                     return !oenv.intersectsObstacle(cp, np) || projectedBeamOvercomesObstacle(cp, np);
                 })
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);

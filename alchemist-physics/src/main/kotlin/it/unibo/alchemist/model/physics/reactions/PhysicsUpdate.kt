@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.physics.reactions
 
+import arrow.core.getOrElse
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
@@ -17,6 +18,15 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
+import it.unibo.alchemist.model.observation.Disposable
+import it.unibo.alchemist.model.observation.EventObservable
+import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.merge
+import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry
+import it.unibo.alchemist.model.observation.lifecycle.LifecycleState
+import it.unibo.alchemist.model.observation.lifecycle.bindTo
 import it.unibo.alchemist.model.physics.PhysicsDependency
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.timedistributions.DiracComb
@@ -49,13 +59,45 @@ class PhysicsUpdate<T>(
 
     override val tau: Time get() = timeDistribution.nextOccurence
 
+    override val rescheduleRequest: EventObservable = EventObservable()
+
+    override val lifecycle: LifecycleRegistry = LifecycleRegistry()
+
     override var actions: List<Action<T>> = listOf()
 
+    private var validity: Observable<Boolean> = observe(true)
+
+    private var canExecute: Boolean = true
+
     override var conditions: List<Condition<T>> = listOf()
+        set(value) {
+            field = value
+            field.forEach(Disposable::dispose)
+
+            validity.dispose()
+
+            value.forEach { condition ->
+                condition.observeInboundDependencies().merge().bindTo(this) {
+                    rescheduleRequest.emit()
+                }
+            }
+
+            validity = value.takeIf { it.isNotEmpty() }
+                ?.map { it.observeValidity() }
+                ?.combineLatest { validities -> validities.all { it } }
+                ?.map { it.getOrElse { true } } // none means empty set of conditions i.e. always true.
+                ?.apply {
+                    bindTo(this@PhysicsUpdate) { canExecute = it }
+                } ?: observe(true)
+
+            rescheduleRequest.emit()
+        }
 
     override fun compareTo(other: Actionable<T>): Int = tau.compareTo(other.tau)
 
-    override fun canExecute(): Boolean = conditions.all { it.isValid }
+    override fun canExecute(): Boolean = canExecute
+
+    override fun observeCanExecute(): Observable<Boolean> = validity
 
     override fun execute() {
         environment.updatePhysics(1 / rate)
@@ -64,7 +106,16 @@ class PhysicsUpdate<T>(
 
     override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
 
-    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {
+        lifecycle.markState(LifecycleState.STARTED)
+    }
+
+    override fun dispose() {
+        lifecycle.markState(LifecycleState.DESTROYED)
+        validity.dispose()
+        conditions.forEach(Disposable::dispose)
+        rescheduleRequest.dispose()
+    }
 
     private companion object {
         const val DEFAULT_RATE = 30.0

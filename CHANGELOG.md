@@ -1,3 +1,11 @@
+## [43.0.16](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.15...43.0.16) (2026-03-15)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.3.11-19.2.4 (patch) ([#5199](https://github.com/AlchemistSimulator/Alchemist/issues/5199)) ([b9ce697](https://github.com/AlchemistSimulator/Alchemist/commit/b9ce6976d8ac8ce2473188f348015db98140f2d5))
+* **deps:** update kotest to v6.1.7 (patch) ([#5197](https://github.com/AlchemistSimulator/Alchemist/issues/5197)) ([9d0691c](https://github.com/AlchemistSimulator/Alchemist/commit/9d0691cc5c2e2322cdc806c4ebfe5e2494fa669a))
+* **deps:** update plugin shadowjar to v9.4.0 ([#5198](https://github.com/AlchemistSimulator/Alchemist/issues/5198)) ([7c82cc7](https://github.com/AlchemistSimulator/Alchemist/commit/7c82cc7066875da10f5fc5a6ea0ca7b5c93b9a9f))
+
 ## [43.0.15](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.14...43.0.15) (2026-03-13)
 
 ### Dependency updates

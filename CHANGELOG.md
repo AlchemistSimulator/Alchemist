@@ -1,3 +1,14 @@
+## [43.0.17](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.16...43.0.17) (2026-03-16)
+
+### Dependency updates
+
+* **core-deps:** update kotlin to v2.3.20 (patch) ([#5201](https://github.com/AlchemistSimulator/Alchemist/issues/5201)) ([b1193a7](https://github.com/AlchemistSimulator/Alchemist/commit/b1193a7d34765b9141ac479116fd12c3d3204e01))
+* **core-deps:** update react to v2026.3.12-19.2.4 (patch) ([#5202](https://github.com/AlchemistSimulator/Alchemist/issues/5202)) ([b89bab4](https://github.com/AlchemistSimulator/Alchemist/commit/b89bab4f46033932b22e2943a2b389ed7f65b969))
+
+### General maintenance
+
+* **build:** actualize the Kotlin JS store ([a870142](https://github.com/AlchemistSimulator/Alchemist/commit/a870142e23dbacbb12b594085992e135090190c4))
+
 ## [43.0.16](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.15...43.0.16) (2026-03-15)
 
 ### Dependency updates

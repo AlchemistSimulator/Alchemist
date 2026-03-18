@@ -1,3 +1,9 @@
+## [43.0.19](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.18...43.0.19) (2026-03-18)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.3.13-19.2.4 (patch) ([#5204](https://github.com/AlchemistSimulator/Alchemist/issues/5204)) ([7d4fe9b](https://github.com/AlchemistSimulator/Alchemist/commit/7d4fe9b9ef8bb47c88ad9af77e6079c3a008be49))
+
 ## [43.0.18](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.17...43.0.18) (2026-03-16)
 
 ### Documentation

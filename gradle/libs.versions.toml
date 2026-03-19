@@ -1,5 +1,5 @@
 [versions]
-androidx-lifecycle = "2.9.6"
+androidx-lifecycle = "2.10.0"
 antlr4 = "4.13.2"
 apollo ="4.0.0-beta.7"
 arrow = "2.2.2.1"

@@ -1,3 +1,9 @@
+## [43.0.21](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.20...43.0.21) (2026-03-23)
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.159.0 ([#5218](https://github.com/AlchemistSimulator/Alchemist/issues/5218)) ([1dce80a](https://github.com/AlchemistSimulator/Alchemist/commit/1dce80a2e70e5204d076657c276560d90a5a32eb))
+
 ## [43.0.20](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.19...43.0.20) (2026-03-21)
 
 ### Dependency updates

@@ -1,3 +1,17 @@
+## [43.0.22](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.21...43.0.22) (2026-03-24)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.3.15-19.2.4 (patch) ([#5220](https://github.com/AlchemistSimulator/Alchemist/issues/5220)) ([0eb799d](https://github.com/AlchemistSimulator/Alchemist/commit/0eb799d40146bc68f3ac796891acd74340dd893d))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.27 ([#5219](https://github.com/AlchemistSimulator/Alchemist/issues/5219)) ([ff6fb66](https://github.com/AlchemistSimulator/Alchemist/commit/ff6fb66c4fe25da55f795403c6f38318e32e51e3))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([5712680](https://github.com/AlchemistSimulator/Alchemist/commit/57126801979c9b3628ea8452b81438bfc426069d))
+
 ## [43.0.21](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.20...43.0.21) (2026-03-23)
 
 ### Documentation

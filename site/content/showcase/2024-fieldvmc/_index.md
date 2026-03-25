@@ -45,27 +45,25 @@ and optimisation, and that the resulting system is **self-stabilising under even
 
 ## Experiment description
 The experiments want to show the capabilities of the proposed model in generating self-organising spatial structures.
-
-The goal of this evaluation is to show that the proposed FieldVMC supports the construction of the same structures of its predecessor, 
+The goal of this evaluation is to show that the proposed FieldVMC supports the construction of the same structures of its predecessor,
 and, in addition, that it can work in scenarios not previously investigated.
-
 In the extended journal evaluation, experiments are organised into three classes:
 - **Type A**: comparison between VMC and FieldVMC (e.g., self-construction and self-healing),
 - **Type B**: analysis of new phenomena enabled by FieldVMC (self-integration, self-division, self-optimisation),
 - **Type C**: scalability analysis focusing on communication costs and data rates.
 
-The experiments presented in this artefact correspond to scenarios exploring the emergent behaviours enabled by the aggregate formulation. 
-    To this end, we designed a set of five experiments:
-- *oneRoot*: self-construction from a single node (growth from seed),
-- *cutting*: self-repair after disruption (network segmentation) with no regeneration (cutting). 
-  The segmentation is performed by removing a part of the structure after 500 simulated seconds, and the nodes are not able to regenerate the missing part;
-- *graft*: self-integration of multiple FieldVMC systems (grafting). Two distinct structures are created, 
-and after 500 simulated seconds, they are merged into a single structure;
-- *graftWithMoreLeaders*: self-segmentation of a larger structure (budding). 
-Two distinct structures are created with possibly more than leader each; after 500 simulated seconds, they are merged into a single structure;
-- *graftWithSpawning*: self-optimization of multiple large structures into a more efficient one (abscission and regrowth). 
-Two distinct structures are created, and after 500 simulated seconds, they are merged into a single structure. 
-During the simulation, nodes are able to spawn new nodes and destroy the ones that are not useful anymore, resulting in an optimized structure.
+The experiments presented in this artefact correspond to scenarios exploring the emergent behaviours enabled by the aggregate formulation.
+To this end, we designed a set of experiments:
+- _legacySelfConstruction_: self-construction from a single node (growth from seed),
+- _selfDivision_: self-division after disruption (network segmentation) with no regeneration (cutting). The segmentation is performed by removing a part of the structure after 500 simulated seconds, and the nodes are not able to regenerate the missing part;
+- _selfIntegration_: self-integration of multiple FieldVMC systems (grafting). Two distinct structures are created, and after 500 simulated seconds, they are merged into a single structure;
+- _selfSegmentation_: self-segmentation of a larger structure (budding). Two distinct structures are created with possibly more than leader each; after 500 simulated seconds, they are merged into a single structure;
+- _selfOptimisation_: self-optimisation of multiple large structures into a more efficient one (abscission and regrowth). Sparse nodes are created far from success and resource sources, with spawning and destruction of nodes enabled, the structure is allowed to grow and optimize itself.
+- _selfConstructionClassicVMC_: implementation of the classic VMC model, starting from a single node, with spawning of new nodes but no destruction of them;
+- _selfHealingClassicVMC_: same of the previous one, but with the cutting of a part of the structure after 500 simulated seconds;
+- _selfConstructionFieldVMC_: implementation of our FieldVMC model, with optimized parameters to be as close as possible to the classic VMC model;
+- _selfHealingFieldVMC_: same of the previous one, but with the cutting of a part of the structure after 500 simulated seconds;
+- _selfConstructionFieldVMCOptimizer_: launcher of our FieldVMC model in order to evaluate the optimized parameters used in the comparison with the classic VMC model.
 
 More generally, these scenarios illustrate how the aggregate formulation allows the system to naturally support structural operations such as **growth, merging, division, and reconfiguration**, which are difficult to express in the original VMC formulation.
 

@@ -13,7 +13,7 @@ summary: "Experimental evaluation of a decentralized replanning mechanism ground
 
 Experimental artefact and simulation setup available at
 [https://github.com/angelacorte/experiments-2025-acsos-robots](https://github.com/angelacorte/experiments-2025-acsos-robots)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14022712.svg)](https://doi.org/10.5281/zenodo.14022712)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16578273.svg)](https://doi.org/10.5281/zenodo.16578273)
 
 This work was presented at the **2025 IEEE International Conference on Autonomic Computing and Self-Organizing Systems (ACSOS)** (DOI: [10.1109/ACSOS66086.2025.00017](https://doi.org/10.1109/ACSOS66086.2025.00017)).
 
@@ -40,8 +40,8 @@ The mission requires a team of $m$ robots to service $n$ tasks. Robots must navi
 The experiments are designed to test how the swarm reacts when robots fail or the environment changes.
 
 We compared four main strategies:
-- **Gossip (G)**: Fully decentralized, high resilience but higher message overhead.
-- **Leader (L)**: Distributed leader election, lower overhead but dependent on leader stability.
+- **Gossip Based**: Fully decentralized, high resilience but higher message overhead.
+- **Leader Based**: Distributed leader election, lower overhead but dependent on leader stability.
 - **Oracle**: A baseline with global knowledge (centralized).
 - **Late-Stage**: A baseline where robots only check for missed tasks at the end of their plan.
 

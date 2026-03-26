@@ -1,3 +1,20 @@
+## [43.0.23](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.22...43.0.23) (2026-03-26)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.3.16-19.2.4 (patch) ([#5226](https://github.com/AlchemistSimulator/Alchemist/issues/5226)) ([dae276e](https://github.com/AlchemistSimulator/Alchemist/commit/dae276eabc0d102dae672ca8bf247bd33827b529))
+* **deps:** update dependency io.kotest:io.kotest.gradle.plugin to v6.1.8 ([#5221](https://github.com/AlchemistSimulator/Alchemist/issues/5221)) ([7b7ac6a](https://github.com/AlchemistSimulator/Alchemist/commit/7b7ac6a723d81ac574c2637baa5799bf83fe374d))
+* **deps:** update kotest to v6.1.9 (patch) ([#5222](https://github.com/AlchemistSimulator/Alchemist/issues/5222)) ([3ae63c5](https://github.com/AlchemistSimulator/Alchemist/commit/3ae63c500ee20e7220f5600fa10815979e213cdf))
+* **deps:** update plugin com.gradle.develocity to v4.4.0 ([#5224](https://github.com/AlchemistSimulator/Alchemist/issues/5224)) ([76e04d2](https://github.com/AlchemistSimulator/Alchemist/commit/76e04d2ad694390fe4f1aaf9fbb23dea1fe5e4f1))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.28 ([#5223](https://github.com/AlchemistSimulator/Alchemist/issues/5223)) ([0ab16f0](https://github.com/AlchemistSimulator/Alchemist/commit/0ab16f050d9624a6a1ffd1954fdeb179e31a8873))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([72f0406](https://github.com/AlchemistSimulator/Alchemist/commit/72f04067adb6b4c57fcaa6ec363fa4b41b5a6d70))
+
 ## [43.0.22](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.21...43.0.22) (2026-03-24)
 
 ### Dependency updates

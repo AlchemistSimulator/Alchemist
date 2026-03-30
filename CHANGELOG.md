@@ -1,3 +1,23 @@
+## [43.0.25](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.24...43.0.25) (2026-03-30)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.3.17-19.2.4 (patch) ([#5240](https://github.com/AlchemistSimulator/Alchemist/issues/5240)) ([084d890](https://github.com/AlchemistSimulator/Alchemist/commit/084d890500d702033b25d9369a1b86e0a09e031a))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.168.0 ([#5239](https://github.com/AlchemistSimulator/Alchemist/issues/5239)) ([003a02c](https://github.com/AlchemistSimulator/Alchemist/commit/003a02c10ef25630a7886db43278c54be9715897))
+* **deps:** update dependency org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin to v1.4.0 ([#5237](https://github.com/AlchemistSimulator/Alchemist/issues/5237)) ([67a126a](https://github.com/AlchemistSimulator/Alchemist/commit/67a126aeae5604b89a02408876108533d6714acc))
+* **deps:** update ktor monorepo to v3.4.2 (patch) ([#5235](https://github.com/AlchemistSimulator/Alchemist/issues/5235)) ([811f985](https://github.com/AlchemistSimulator/Alchemist/commit/811f9852f9a21a77ba9919e17d2e4bfcd09e1d60))
+* **deps:** update plugin shadowjar to v9.4.1 ([#5236](https://github.com/AlchemistSimulator/Alchemist/issues/5236)) ([e4926c0](https://github.com/AlchemistSimulator/Alchemist/commit/e4926c0564c288a36b414d8bfb37b753f3486c42))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.30 ([#5234](https://github.com/AlchemistSimulator/Alchemist/issues/5234)) ([fe7d703](https://github.com/AlchemistSimulator/Alchemist/commit/fe7d703293b2ed8de028e54b42fa97b7b83d5233))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([3b60466](https://github.com/AlchemistSimulator/Alchemist/commit/3b604667831715ee48a21ca815d1118aa869749f))
+* **build:** update the javadoc.io cache ([b44d725](https://github.com/AlchemistSimulator/Alchemist/commit/b44d725de4e1274e33b033ed1ffd816a0a75ddc9))
+* **deps-dev:** bump handlebars from 4.7.8 to 4.7.9 ([4d5bbe0](https://github.com/AlchemistSimulator/Alchemist/commit/4d5bbe0981d71f6b1192fb28ed905146a6d16c0c))
+
 ## [43.0.24](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.23...43.0.24) (2026-03-26)
 
 ### Dependency updates

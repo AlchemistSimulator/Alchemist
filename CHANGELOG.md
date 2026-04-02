@@ -1,3 +1,18 @@
+## [43.0.28](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.27...43.0.28) (2026-04-02)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.4.1-19.2.4 (patch) ([#5244](https://github.com/AlchemistSimulator/Alchemist/issues/5244)) ([b93814a](https://github.com/AlchemistSimulator/Alchemist/commit/b93814a917ec8fbc27607b28963df05294aea813))
+
+### Documentation
+
+* update `FieldVMC` and add `Field-Based Path Replanning` to showcase ([#5189](https://github.com/AlchemistSimulator/Alchemist/issues/5189)) ([5a13eb9](https://github.com/AlchemistSimulator/Alchemist/commit/5a13eb9239146dca2775f94964f4d64834d70cdd))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([7e6c606](https://github.com/AlchemistSimulator/Alchemist/commit/7e6c606edd442a21279daf7b427b96a4ee617b37))
+* **deps-dev:** bump lodash-es from 4.17.23 to 4.18.1 ([43b14d8](https://github.com/AlchemistSimulator/Alchemist/commit/43b14d8162756e73a941ba75958e862bd4b257a9))
+
 ## [43.0.27](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.26...43.0.27) (2026-04-02)
 
 ### Dependency updates

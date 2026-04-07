@@ -1,3 +1,14 @@
+## [43.0.31](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.30...43.0.31) (2026-04-07)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.4.3-19.2.4 (patch) ([#5250](https://github.com/AlchemistSimulator/Alchemist/issues/5250)) ([835817d](https://github.com/AlchemistSimulator/Alchemist/commit/835817d2650e3b16091da965b4348128fb4d044b))
+* **deps:** update kotest to v6.1.11 (patch) ([#5248](https://github.com/AlchemistSimulator/Alchemist/issues/5248)) ([94e5bdb](https://github.com/AlchemistSimulator/Alchemist/commit/94e5bdbc4b894172515d9a64ebb600e2e9332b15))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([224b0a0](https://github.com/AlchemistSimulator/Alchemist/commit/224b0a0fe1750f154e53e39ecc7832cc7f1053cf))
+
 ## [43.0.30](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.29...43.0.30) (2026-04-04)
 
 ### Documentation

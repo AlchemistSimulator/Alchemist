@@ -1,3 +1,18 @@
+## [43.0.32](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.31...43.0.32) (2026-04-09)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.4.4-19.2.5 (patch) ([#5251](https://github.com/AlchemistSimulator/Alchemist/issues/5251)) ([907ec31](https://github.com/AlchemistSimulator/Alchemist/commit/907ec31d218ba723f96ca7cf958eafd03370b89c))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.160.1 ([#5252](https://github.com/AlchemistSimulator/Alchemist/issues/5252)) ([4b78bc8](https://github.com/AlchemistSimulator/Alchemist/commit/4b78bc83f2381ce448b260d5bdbcb2651fee5b99))
+
+### General maintenance
+
+* **build:** actualize the Kotlin JS store ([11c56c9](https://github.com/AlchemistSimulator/Alchemist/commit/11c56c93cf5b3572c2740f59f7b575d27e12a81b))
+* **build:** update the javadoc.io cache ([fc957d9](https://github.com/AlchemistSimulator/Alchemist/commit/fc957d91beea0cf043c5c18adae81edd05093d35))
+
 ## [43.0.31](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.30...43.0.31) (2026-04-07)
 
 ### Dependency updates

@@ -1,9 +1,14 @@
 incarnation: sapere
 
+_constants:
+  name: "test"
+
 variables:
   number: 1
-  name: "peppe"
+  other:
+    type: ArbitraryVariable
+    parameters: [ 1, [1, 2]]
   simple: &simple
     language: kotlin
     formula: |
-      val couple: Pair<Int, String> = number to name
+      val couple: Pair<Int, String> = (number + other) to name

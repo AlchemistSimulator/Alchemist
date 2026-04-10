@@ -77,4 +77,17 @@ class TestKtVariable<T, P : Position<P>> :
             assertNotNull(loader.getWith<T, P>(emptyMap<String, String>()))
             loader.variables["seed"] shouldNot beNull()
         }
+
+        // This is a regression test, when using Alchemist variables inside a JSR223Variable scope,
+        // the simulation does not inherit the external variables into the JSR scope.
+        // Caused by: javax.script.ScriptException: ERROR Unresolved reference: *externalVariableName*
+        "simulation should load external variables inside function scope" {
+            val file = ResourceLoader.getResource("regression/testJSRVariable.yml")
+            assertNotNull(file)
+            val loader = LoadAlchemist.from(file)
+            assertNotNull(loader.getWith<T, P>(emptyMap<String, String>()))
+            loader.variables["simple"] shouldNot beNull()
+        }
     })
+
+data class SimpleDataClass(val number: Int, val name: String)

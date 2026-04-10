@@ -100,5 +100,3 @@ class TestKtVariable<T, P : Position<P>> :
             loader.variables["simple"] shouldNot beNull()
         }
     })
-
-data class SimpleDataClass(val number: Int, val name: String)

@@ -1,0 +1,10 @@
+incarnation: sapere
+
+variables:
+  number: 1
+  name: "peppe"
+  simple: &simple
+    language: kotlin
+    formula: |
+      import it.unibo.alchemist.test.SimpleDataClass
+      val simpleDataClass = SimpleDataClass(number, name)

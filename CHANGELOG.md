@@ -1,3 +1,9 @@
+## [43.0.37](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.36...43.0.37) (2026-04-14)
+
+### Documentation
+
+* clarify YAML constant creation limitations ([#5268](https://github.com/AlchemistSimulator/Alchemist/issues/5268)) ([60a69d2](https://github.com/AlchemistSimulator/Alchemist/commit/60a69d29b11c9f76dce1c79f6121664738c772d0))
+
 ## [43.0.36](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.35...43.0.36) (2026-04-14)
 
 ### Dependency updates

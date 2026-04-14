@@ -700,7 +700,11 @@ Variables can be created in three ways:
 * writing an expression that can be interpreted by some JSR-223-compatible language whose interpreter is in the
   classpath, possibly specifying a timeout. Produces a {{% api package="boundary" class="DependentVariable" %}}.
 
-**Note**: direct constant creation from YAML is currently not supported. Use the `formula` version through the JSR223 language of your preference (defaults to Groovy).
+{{% notice info %}}
+YAML constants are supported for dependent variables when `formula` is a YAML number, list, or `null`; in those
+cases, the loader creates a constant directly without JSR-223 evaluation. Only string formulas are evaluated through
+a JSR-223 language (Groovy by default). YAML maps are rejected because their meaning would be ambiguous.
+{{% /notice %}}
 
 ### `variable.type`
 

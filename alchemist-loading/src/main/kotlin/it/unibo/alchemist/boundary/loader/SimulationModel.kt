@@ -973,11 +973,9 @@ internal object SimulationModel {
         return when (root) {
             is Map<*, *> -> visitNamedRecursivelyFromMap(evidence, context, root, syntax, forceSuccess, visitSingle)
             is String -> emptyMap()
-            is Iterable<*> ->
-                root
-                    .flatMap {
-                        visitNamedRecursively(evidence, context, it, syntax, forceSuccess, visitSingle).toList()
-                    }.toMap()
+            is Iterable<*> -> root.flatMap {
+                visitNamedRecursively(evidence, context, it, syntax, forceSuccess, visitSingle).toList()
+            }.toMap()
             else -> emptyMap()
         }
     }

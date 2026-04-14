@@ -700,6 +700,8 @@ Variables can be created in three ways:
 * writing an expression that can be interpreted by some JSR-223-compatible language whose interpreter is in the
   classpath, possibly specifying a timeout. Produces a {{% api package="boundary" class="DependentVariable" %}}.
 
+**Note**: direct constant creation from YAML is currently not supported. Use the `formula` version through the JSR223 language of your preference (defaults to Groovy).
+
 ### `variable.type`
 
 Same as [type](#type)

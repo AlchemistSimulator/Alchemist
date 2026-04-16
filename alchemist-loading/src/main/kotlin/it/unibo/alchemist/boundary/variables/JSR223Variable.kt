@@ -16,6 +16,7 @@ import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 import javax.script.SimpleBindings
 import kotlin.reflect.jvm.jvmName
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -69,7 +70,7 @@ constructor(
     override fun getWith(variables: Map<String, Any?>): Any? = synchronized(engine) {
         runCatching {
             runBlocking {
-                withTimeout(timeout) {
+                withTimeout(timeout.milliseconds) {
                     engine.eval(formula, variables.asBindings())
                 }
             }

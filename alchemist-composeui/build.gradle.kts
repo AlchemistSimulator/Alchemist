@@ -31,6 +31,11 @@ kotlin {
                 implementation(libs.bundles.compose)
             }
         }
+        val jvmMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+            }
+        }
     }
 }
 

@@ -36,10 +36,11 @@ class ComposeMonitor<T, P : Position<P>> : OutputMonitor<T, P> {
     override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
         currentUiState.update {
             val viewport = environment.toViewport()
+            val displayedTime = time.toComposeUiLabel()
             it.copy(
                 scene = viewport.copy(showLinks = it.scene.showLinks),
                 controls = it.controls.copy(
-                    timeLabel = time.toString(),
+                    timeLabel = displayedTime,
                     step = step,
                     status = environment.simulation.toSimulationStatus(),
                 )
@@ -69,3 +70,7 @@ class ComposeMonitor<T, P : Position<P>> : OutputMonitor<T, P> {
     private fun alchemistDesktopController(environment: Environment<T, P>): ComposeUiController =
         ComposeUiController(currentUiState, DesktopAlchemistUiCallback(environment.simulation, currentUiState))
 }
+
+private fun Time.toComposeUiLabel(): String = toDouble().formatFixed(DISPLAYED_TIME_DECIMALS)
+
+private const val DISPLAYED_TIME_DECIMALS = 2

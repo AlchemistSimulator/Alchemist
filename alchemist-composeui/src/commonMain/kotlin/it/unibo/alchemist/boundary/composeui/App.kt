@@ -10,6 +10,8 @@
 package it.unibo.alchemist.boundary.composeui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 
 /**
@@ -17,8 +19,9 @@ import androidx.compose.runtime.remember
  */
 @Composable
 fun app(controller: ComposeUiController = remember { demoController() }) {
+    val state by controller.store.stateFlow.collectAsState()
     AlchemistUiRoot(
-        state = controller.store.state,
+        state = state,
         callbacks = controller.callbacks,
     )
 }

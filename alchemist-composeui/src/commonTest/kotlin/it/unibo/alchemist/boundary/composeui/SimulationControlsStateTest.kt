@@ -13,6 +13,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.startCoroutine
 
 class SimulationControlsStateTest {
     @Test
@@ -47,4 +50,32 @@ class SimulationControlsStateTest {
         }
         assertEquals(7L, store.state.controls.step)
     }
+
+    @Test
+    fun `viewport links are hidden by default`() {
+        assertFalse(ViewportScene().showLinks)
+    }
+
+    @Test
+    fun `demo controller toggles links without changing selection`() {
+        val controller = demoController()
+        controller.store.update { it.copy(selectedNodeId = 3) }
+
+        runSuspend { controller.callbacks.onToggleLinks() }
+
+        assertTrue(controller.store.state.scene.showLinks)
+        assertEquals(3, controller.store.state.selectedNodeId)
+    }
+}
+
+private fun runSuspend(block: suspend () -> Unit) {
+    block.startCoroutine(
+        object : Continuation<Unit> {
+            override val context = EmptyCoroutineContext
+
+            override fun resumeWith(result: Result<Unit>) {
+                result.getOrThrow()
+            }
+        },
+    )
 }

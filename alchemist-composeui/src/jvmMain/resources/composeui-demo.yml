@@ -23,3 +23,6 @@ deployments:
           {token} --> {firing}
       # If the time distribution is unspecified, the SAPERE incarnation assumes a "ASAP" behavior (rate = Infinity)
       - program: "{firing} --> +{token}"
+    - type: Event
+      time-distribution: 1
+      actions: { type: BrownianMove, parameters: [ 0.4 ] }

@@ -98,6 +98,7 @@ private const val NodeHitRadius = 22f
 private const val SelectedNodeRadius = 18f
 private const val SelectedNodeInnerRadius = 12f
 private const val NodeRadius = 7f
+private const val LinkStrokeWidth = 1.5f
 private const val GridVerticalDivisions = 8
 private const val GridHorizontalDivisions = 6
 
@@ -246,6 +247,7 @@ private fun ViewportSurface(
             node.copy(center = node.center.toScreenPosition(viewportSize, camera))
         }
     }
+    val renderedEdges = remember(scene.edges, renderedNodes) { renderEdges(scene.edges, renderedNodes) }
     val density = androidx.compose.ui.platform.LocalDensity.current
     val tapThresholdPx = with(density) { NodeHitRadius.dp.toPx() }
     Surface(
@@ -329,6 +331,17 @@ private fun ViewportSurface(
                     ),
                 )
                 drawGrid(size)
+                if (scene.showLinks) {
+                    renderedEdges.forEach { edge ->
+                        drawLine(
+                            color = Outline.copy(alpha = 0.42f),
+                            start = edge.start,
+                            end = edge.end,
+                            strokeWidth = LinkStrokeWidth.dp.toPx(),
+                            cap = StrokeCap.Round,
+                        )
+                    }
+                }
                 renderedNodes.forEach { rendered ->
                     val isSelected = rendered.node.id == selectedNodeId
                     val nodeColor = lerp(AccentCool, Accent, rendered.node.accent)
@@ -372,7 +385,11 @@ private fun ViewportSurface(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
-                SummaryRail(summary = scene.summary)
+                SummaryRail(
+                    summary = scene.summary,
+                    showLinks = scene.showLinks,
+                    onToggleLinks = { coroutineScope.launch { callbacks.onToggleLinks() } },
+                )
             }
             Surface(
                 modifier = Modifier
@@ -397,10 +414,7 @@ private fun ViewportSurface(
 }
 
 @Composable
-private fun SummaryRail(summary: List<InfoField>) {
-    if (summary.isEmpty()) {
-        return
-    }
+private fun SummaryRail(summary: List<InfoField>, showLinks: Boolean, onToggleLinks: () -> Unit) {
     Row(
         modifier = Modifier.horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -426,6 +440,28 @@ private fun SummaryRail(summary: List<InfoField>) {
                         style = MaterialTheme.typography.subtitle1,
                     )
                 }
+            }
+        }
+        Surface(
+            modifier = Modifier.clickable(onClick = onToggleLinks),
+            color = if (showLinks) AccentCool.copy(alpha = 0.2f) else PanelStrong.copy(alpha = 0.82f),
+            shape = RoundedCornerShape(999.dp),
+            elevation = 0.dp,
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "LINKS",
+                    style = MaterialTheme.typography.caption,
+                    color = if (showLinks) AccentCool else TextSecondary,
+                )
+                Text(
+                    text = if (showLinks) "ON" else "OFF",
+                    style = MaterialTheme.typography.subtitle1,
+                )
             }
         }
     }
@@ -720,7 +756,18 @@ private fun renderNodes(scene: ViewportScene, viewportSize: IntSize): List<Rende
     }
 }
 
+private fun renderEdges(edges: List<ViewportEdge>, renderedNodes: List<RenderedNode>): List<RenderedEdge> {
+    val nodesById = renderedNodes.associateBy { it.node.id }
+    return edges.mapNotNull { edge ->
+        val from = nodesById[edge.fromNodeId] ?: return@mapNotNull null
+        val to = nodesById[edge.toNodeId] ?: return@mapNotNull null
+        RenderedEdge(start = from.center, end = to.center)
+    }
+}
+
 private data class RenderedNode(val node: ViewportNode, val center: Offset)
+
+private data class RenderedEdge(val start: Offset, val end: Offset)
 
 private data class ViewportCameraState(
     val pan: Offset = Offset.Zero,

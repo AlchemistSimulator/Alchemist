@@ -11,51 +11,32 @@
 
 package it.unibo.alchemist.boundary.composeui
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.Snapshot
-import androidx.compose.runtime.snapshots.SnapshotApplyConflictException
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 /**
  * Thread-safe holder for the UI state observed by Compose.
  */
 class ComposeUiStateStore(initialState: AlchemistUiState) {
-    var state: AlchemistUiState by mutableStateOf(initialState)
-        private set
+    private val mutableState = MutableStateFlow(initialState)
+    val state: AlchemistUiState
+        get() = mutableState.value
+    val stateFlow: StateFlow<AlchemistUiState> = mutableState.asStateFlow()
 
     /**
      * Replace the current state.
      */
     fun set(newState: AlchemistUiState) {
-        mutateState {
-            state = newState
-        }
+        mutableState.value = newState
     }
 
     /**
      * Mutate the current state atomically.
      */
     fun update(transform: (AlchemistUiState) -> AlchemistUiState) {
-        mutateState {
-            state = transform(state)
-        }
-    }
-
-    /**
-     * Compose snapshots are optimistic: concurrent writers may race, and the loser must retry.
-     */
-    private fun mutateState(mutation: () -> Unit) {
-        runCatching {
-            Snapshot.withMutableSnapshot {
-                mutation()
-            }
-        }.getOrElse { error ->
-            when (error) {
-                is SnapshotApplyConflictException -> mutateState(mutation)
-                else -> throw error
-            }
-        }
+        mutableState.update(transform)
     }
 }
 
@@ -117,6 +98,14 @@ fun demoController(): ComposeUiController {
             override suspend fun onInspectorDismiss() {
                 store.update {
                     it.copy(selectedNodeId = null, inspector = null)
+                }
+            }
+
+            override suspend fun onToggleLinks() {
+                store.update {
+                    it.copy(
+                        scene = it.scene.copy(showLinks = !it.scene.showLinks),
+                    )
                 }
             }
         }
@@ -199,6 +188,13 @@ private fun sampleUiState(): AlchemistUiState {
     return AlchemistUiState(
         scene = ViewportScene(
             nodes = nodes,
+            edges = listOf(
+                ViewportEdge(1, 2),
+                ViewportEdge(2, 3),
+                ViewportEdge(3, 4),
+                ViewportEdge(4, 5),
+                ViewportEdge(1, 3),
+            ),
             dimensions = 2,
             backdrop = ViewportBackdrop.SPACE,
             summary = listOf(

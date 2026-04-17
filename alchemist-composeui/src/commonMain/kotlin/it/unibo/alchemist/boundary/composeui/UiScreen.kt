@@ -52,6 +52,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,6 +76,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlin.math.max
 import kotlin.math.min
+import kotlinx.coroutines.launch
 
 private val Midnight = Color(0xFF07111D)
 private val DeepSea = Color(0xFF10253B)
@@ -104,6 +106,7 @@ private const val GridHorizontalDivisions = 6
  */
 @Composable
 fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
+    val coroutineScope = rememberCoroutineScope()
     MaterialTheme(
         colors = MaterialTheme.colors.copy(
             primary = Accent,
@@ -197,7 +200,7 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
                         state.inspector?.let {
                             NodeInspector(
                                 inspector = it,
-                                onDismiss = callbacks::onInspectorDismiss,
+                                onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
                             )
                         }
                     }
@@ -206,7 +209,7 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
                         modifier = Modifier
                             .fillMaxSize()
                             .background(Color(0x66050A11))
-                            .clickable(onClick = callbacks::onInspectorDismiss),
+                            .clickable(onClick = { coroutineScope.launch { callbacks.onInspectorDismiss() } }),
                     )
                     Box(
                         modifier = Modifier
@@ -216,7 +219,7 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
                     ) {
                         NodeInspector(
                             inspector = requireNotNull(state.inspector),
-                            onDismiss = callbacks::onInspectorDismiss,
+                            onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
@@ -252,6 +255,7 @@ private fun ViewportSurface(
         shape = RoundedCornerShape(28.dp),
         elevation = 0.dp,
     ) {
+        val coroutineScope = rememberCoroutineScope()
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -277,9 +281,9 @@ private fun ViewportSurface(
                                 .minByOrNull { node -> node.center.distanceTo(tapOffset) }
                                 ?.takeIf { node -> node.center.distanceTo(tapOffset) <= tapThresholdPx }
                             if (hit != null) {
-                                callbacks.onNodeSelected(hit.node.id)
+                                coroutineScope.launch { callbacks.onNodeSelected(hit.node.id) }
                             } else {
-                                callbacks.onInspectorDismiss()
+                                coroutineScope.launch { callbacks.onInspectorDismiss() }
                             }
                         }
                     }
@@ -433,6 +437,7 @@ private fun ControlDock(
     callbacks: AlchemistUiCallbacks,
     modifier: Modifier = Modifier,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Surface(
         modifier = modifier,
         color = PanelStrong,
@@ -450,9 +455,9 @@ private fun ControlDock(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                TransportButton(label = "Play", enabled = controls.canPlay, accent = Positive, onClick = callbacks::onPlay)
-                TransportButton(label = "Pause", enabled = controls.canPause, accent = Danger, onClick = callbacks::onPause)
-                TransportButton(label = "Step", enabled = controls.canStep, accent = Accent, onClick = callbacks::onStep)
+                TransportButton(label = "Play", enabled = controls.canPlay, accent = Positive, onClick = { coroutineScope.launch { callbacks.onPlay() }})
+                TransportButton(label = "Pause", enabled = controls.canPause, accent = Danger, onClick = { coroutineScope.launch { callbacks.onPause() }})
+                TransportButton(label = "Step", enabled = controls.canStep, accent = Accent, onClick = { coroutineScope.launch { callbacks.onStep() }})
             }
             StatusPill(controls = controls)
             MetricBlock(label = "Time", value = controls.timeLabel)

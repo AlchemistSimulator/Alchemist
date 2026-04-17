@@ -115,28 +115,28 @@ data class AlchemistUiState(
  * Interaction contract expected by the common Compose UI.
  */
 interface AlchemistUiCallbacks {
-    fun onPlay()
+    suspend fun onPlay()
 
-    fun onPause()
+    suspend fun onPause()
 
-    fun onStep()
+    suspend fun onStep()
 
-    fun onNodeSelected(nodeId: Int)
+    suspend fun onNodeSelected(nodeId: Int)
 
-    fun onInspectorDismiss()
+    suspend fun onInspectorDismiss()
 }
 
 /**
  * Shared no-op callback implementation.
  */
 object NoOpUiCallbacks : AlchemistUiCallbacks {
-    override fun onPlay() = Unit
+    override suspend fun onPlay() = Unit
 
-    override fun onPause() = Unit
+    override suspend fun onPause() = Unit
 
-    override fun onStep() = Unit
+    override suspend fun onStep() = Unit
 
-    override fun onNodeSelected(nodeId: Int) = Unit
+    override suspend fun onNodeSelected(nodeId: Int) = Unit
 
-    override fun onInspectorDismiss() = Unit
+    override suspend fun onInspectorDismiss() = Unit
 }

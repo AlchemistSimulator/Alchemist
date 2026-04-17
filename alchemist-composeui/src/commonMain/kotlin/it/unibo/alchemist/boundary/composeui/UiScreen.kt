@@ -96,6 +96,7 @@ private const val SelectedNodeRadius = 18f
 private const val SelectedNodeInnerRadius = 12f
 private const val NodeRadius = 7f
 private const val LinkStrokeWidth = 1.5f
+private val StatusPillWidth = 132.dp
 private const val GridVerticalDivisions = 8
 private const val GridHorizontalDivisions = 6
 
@@ -578,20 +579,24 @@ private fun StatusPill(controls: SimulationControlsState) {
             else -> AccentCool
         }
     Surface(
+        modifier = Modifier.width(StatusPillWidth),
         color = color.copy(alpha = 0.14f),
         shape = RoundedCornerShape(999.dp),
         elevation = 0.dp,
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.Center,
         ) {
             Box(
                 modifier = Modifier
                     .size(10.dp)
                     .background(color = color, shape = CircleShape),
             )
+            Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = controls.statusLabel,
                 style = MaterialTheme.typography.subtitle1,

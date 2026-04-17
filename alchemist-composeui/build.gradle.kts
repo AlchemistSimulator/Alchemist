@@ -7,6 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
+import Libs.alchemist
 import it.unibo.alchemist.build.devServer
 import it.unibo.alchemist.build.webCommonConfiguration
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -33,7 +34,9 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
+                implementation(alchemist("euclidean-geometry"))
                 implementation(compose.desktop.currentOs)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
             }
         }
     }

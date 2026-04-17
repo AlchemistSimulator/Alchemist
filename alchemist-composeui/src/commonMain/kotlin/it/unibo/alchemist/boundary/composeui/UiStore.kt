@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.runtime.snapshots.SnapshotApplyConflictException
 
 /**
  * Thread-safe holder for the UI state observed by Compose.
@@ -27,7 +28,7 @@ class ComposeUiStateStore(initialState: AlchemistUiState) {
      * Replace the current state.
      */
     fun set(newState: AlchemistUiState) {
-        Snapshot.withMutableSnapshot {
+        mutateState {
             state = newState
         }
     }
@@ -36,8 +37,24 @@ class ComposeUiStateStore(initialState: AlchemistUiState) {
      * Mutate the current state atomically.
      */
     fun update(transform: (AlchemistUiState) -> AlchemistUiState) {
-        Snapshot.withMutableSnapshot {
+        mutateState {
             state = transform(state)
+        }
+    }
+
+    /**
+     * Compose snapshots are optimistic: concurrent writers may race, and the loser must retry.
+     */
+    private fun mutateState(mutation: () -> Unit) {
+        runCatching {
+            Snapshot.withMutableSnapshot {
+                mutation()
+            }
+        }.getOrElse { error ->
+            when (error) {
+                is SnapshotApplyConflictException -> mutateState(mutation)
+                else -> throw error
+            }
         }
     }
 }
@@ -54,7 +71,7 @@ fun demoController(): ComposeUiController {
     val store = ComposeUiStateStore(sampleUiState())
     val callbacks =
         object : AlchemistUiCallbacks {
-            override fun onPlay() {
+            override suspend fun onPlay() {
                 store.update {
                     it.copy(
                         controls = it.controls.copy(status = SimulationStatus.RUNNING),
@@ -62,7 +79,7 @@ fun demoController(): ComposeUiController {
                 }
             }
 
-            override fun onPause() {
+            override suspend fun onPause() {
                 store.update {
                     it.copy(
                         controls = it.controls.copy(status = SimulationStatus.PAUSED),
@@ -70,7 +87,7 @@ fun demoController(): ComposeUiController {
                 }
             }
 
-            override fun onStep() {
+            override suspend fun onStep() {
                 store.update {
                     val nextStep = it.controls.step + 1
                     it.copy(
@@ -87,7 +104,7 @@ fun demoController(): ComposeUiController {
                 }
             }
 
-            override fun onNodeSelected(nodeId: Int) {
+            override suspend fun onNodeSelected(nodeId: Int) {
                 val node = store.state.scene.nodes.firstOrNull { it.id == nodeId } ?: return
                 store.update {
                     it.copy(
@@ -97,7 +114,7 @@ fun demoController(): ComposeUiController {
                 }
             }
 
-            override fun onInspectorDismiss() {
+            override suspend fun onInspectorDismiss() {
                 store.update {
                     it.copy(selectedNodeId = null, inspector = null)
                 }

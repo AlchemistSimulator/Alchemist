@@ -1,5 +1,3 @@
-@file:Suppress("MagicNumber")
-
 /*
  * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
@@ -49,6 +47,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -91,8 +90,6 @@ private val TextPrimary = Color(0xFFF4F0E8)
 private val TextSecondary = Color(0xFFDCE7F2)
 private val TextMuted = Color(0xFFC1D0DE)
 private val Danger = Color(0xFFD98B8B)
-private const val MinZoom = 0.65f
-private const val MaxZoom = 2.4f
 private const val ZoomStep = 1.12f
 private const val NodeHitRadius = 22f
 private const val SelectedNodeRadius = 18f
@@ -158,43 +155,62 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
             val inspectorVisible = state.inspector != null
             val inspectorWidth = 324.dp
             val bottomBarHeight = 112.dp
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(20.dp),
-            ) {
-                Column(
+            val layoutSpacing = 20.dp
+            if (compactLayout) {
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(
-                            end = if (!compactLayout && inspectorVisible) inspectorWidth + 20.dp else 0.dp,
-                            bottom = bottomBarHeight,
-                        ),
+                        .padding(layoutSpacing),
                 ) {
-                    ViewportSurface(
-                        scene = state.scene,
-                        selectedNodeId = state.selectedNodeId,
+                    SimulationPrimaryPane(
+                        state = state,
                         callbacks = callbacks,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
+                        dockWidthFraction = 1f,
+                        spacing = layoutSpacing,
+                        modifier = Modifier.fillMaxSize(),
                     )
+                    if (inspectorVisible) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color(0x66050A11))
+                                .clickable(onClick = { coroutineScope.launch { callbacks.onInspectorDismiss() } }),
+                        )
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = bottomBarHeight + 12.dp)
+                                .fillMaxWidth(),
+                        ) {
+                            NodeInspector(
+                                inspector = requireNotNull(state.inspector),
+                                onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
+                    }
                 }
-                ControlDock(
-                    controls = state.controls,
+            } else {
+                Row(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth(if (compactLayout) 1f else 0.84f)
-                        .wrapContentHeight(),
-                    callbacks = callbacks,
-                )
-                if (!compactLayout) {
+                        .fillMaxSize()
+                        .padding(layoutSpacing),
+                    horizontalArrangement = Arrangement.spacedBy(layoutSpacing),
+                ) {
+                    SimulationPrimaryPane(
+                        state = state,
+                        callbacks = callbacks,
+                        dockWidthFraction = 0.84f,
+                        spacing = layoutSpacing,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                    )
                     AnimatedVisibility(
                         visible = inspectorVisible,
                         enter = slideInHorizontally(initialOffsetX = { it / 2 }) + fadeIn(),
                         exit = slideOutHorizontally(targetOffsetX = { it / 2 }) + fadeOut(),
                         modifier = Modifier
-                            .align(Alignment.TopEnd)
                             .fillMaxHeight()
                             .width(inspectorWidth),
                     ) {
@@ -202,30 +218,48 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
                             NodeInspector(
                                 inspector = it,
                                 onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
+                                modifier = Modifier.fillMaxHeight(),
                             )
                         }
                     }
-                } else if (inspectorVisible) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color(0x66050A11))
-                            .clickable(onClick = { coroutineScope.launch { callbacks.onInspectorDismiss() } }),
-                    )
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = bottomBarHeight + 12.dp)
-                            .fillMaxWidth(),
-                    ) {
-                        NodeInspector(
-                            inspector = requireNotNull(state.inspector),
-                            onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun SimulationPrimaryPane(
+    state: AlchemistUiState,
+    callbacks: AlchemistUiCallbacks,
+    dockWidthFraction: Float,
+    spacing: androidx.compose.ui.unit.Dp,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(spacing),
+    ) {
+        ViewportSurface(
+            scene = state.scene,
+            selectedNodeId = state.selectedNodeId,
+            callbacks = callbacks,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
+            ControlDock(
+                controls = state.controls,
+                modifier = Modifier
+                    .fillMaxWidth(dockWidthFraction)
+                    .wrapContentHeight(),
+                callbacks = callbacks,
+            )
         }
     }
 }
@@ -240,8 +274,16 @@ private fun ViewportSurface(
 ) {
     var viewportSize by remember { mutableStateOf(IntSize.Zero) }
     var camera by remember { mutableStateOf(ViewportCameraState()) }
+    var fixedProjection by remember { mutableStateOf<ViewportProjection?>(null) }
     var middleDragAnchor by remember { mutableStateOf<Offset?>(null) }
-    val baseNodes = remember(scene.nodes, viewportSize) { renderNodes(scene, viewportSize) }
+    val candidateProjection = remember(scene.nodes, viewportSize) { scene.createViewportProjection(viewportSize) }
+    val projection = fixedProjection ?: candidateProjection
+    LaunchedEffect(candidateProjection) {
+        if (fixedProjection == null && candidateProjection != null) {
+            fixedProjection = candidateProjection
+        }
+    }
+    val baseNodes = remember(scene.nodes, viewportSize, projection) { renderNodes(scene, viewportSize, projection) }
     val renderedNodes = remember(baseNodes, viewportSize, camera) {
         baseNodes.map { node ->
             node.copy(center = node.center.toScreenPosition(viewportSize, camera))
@@ -629,6 +671,7 @@ private fun NodeInspector(inspector: NodeInspectorState, onDismiss: () -> Unit, 
     Surface(
         modifier = modifier,
         color = PanelStrong,
+        contentColor = TextPrimary,
         shape = RoundedCornerShape(28.dp),
         elevation = 0.dp,
     ) {
@@ -689,6 +732,7 @@ private fun NodeInspector(inspector: NodeInspectorState, onDismiss: () -> Unit, 
 private fun InspectorSection(title: String, description: String, fields: List<InfoField>) {
     Surface(
         color = Panel.copy(alpha = 0.72f),
+        contentColor = TextPrimary,
         shape = RoundedCornerShape(22.dp),
         elevation = 0.dp,
     ) {
@@ -731,28 +775,16 @@ private fun InspectorSection(title: String, description: String, fields: List<In
     }
 }
 
-private fun renderNodes(scene: ViewportScene, viewportSize: IntSize): List<RenderedNode> {
-    if (scene.nodes.isEmpty() || viewportSize.width == 0 || viewportSize.height == 0) {
+private fun renderNodes(
+    scene: ViewportScene,
+    viewportSize: IntSize,
+    projection: ViewportProjection?,
+): List<RenderedNode> {
+    if (projection == null || scene.nodes.isEmpty() || viewportSize.width == 0 || viewportSize.height == 0) {
         return emptyList()
     }
-    val xs = scene.nodes.map { it.coordinates[0] }
-    val ys = scene.nodes.map { it.coordinates[1] }
-    val minX = xs.minOrNull() ?: 0.0
-    val maxX = xs.maxOrNull() ?: 0.0
-    val minY = ys.minOrNull() ?: 0.0
-    val maxY = ys.maxOrNull() ?: 0.0
-    val xSpan = max(1e-6, maxX - minX)
-    val ySpan = max(1e-6, maxY - minY)
-    val safeWidth = viewportSize.width.toFloat()
-    val safeHeight = viewportSize.height.toFloat()
-    val marginX = safeWidth * 0.12f
-    val marginY = safeHeight * 0.14f
     return scene.nodes.map { node ->
-        val normalizedX = ((node.coordinates[0] - minX) / xSpan).toFloat()
-        val normalizedY = ((node.coordinates[1] - minY) / ySpan).toFloat()
-        val x = marginX + normalizedX * (safeWidth - marginX * 2)
-        val y = safeHeight - marginY - normalizedY * (safeHeight - marginY * 2)
-        RenderedNode(node = node, center = Offset(x, y))
+        RenderedNode(node = node, center = node.toViewportPosition(viewportSize, projection))
     }
 }
 
@@ -800,7 +832,7 @@ private fun ViewportCameraState.zoomBy(
         scrollDelta > 0f -> 1f / ZoomStep
         else -> 1f
     }
-    val targetZoom = (zoom * zoomFactor).coerceIn(MinZoom, MaxZoom)
+    val targetZoom = applyInfiniteZoomFactor(zoom, zoomFactor)
     if (targetZoom == zoom) {
         return this
     }
@@ -808,6 +840,19 @@ private fun ViewportCameraState.zoomBy(
     val worldPoint = pivot.toWorldPosition(viewportSize, this)
     val newPan = pivot - center - ((worldPoint - center) * targetZoom)
     return copy(zoom = targetZoom, pan = newPan)
+}
+
+internal fun applyInfiniteZoomFactor(currentZoom: Float, zoomFactor: Float): Float {
+    if (currentZoom <= 0f || !currentZoom.isFinite() || zoomFactor <= 0f || !zoomFactor.isFinite()) {
+        return currentZoom
+    }
+    val targetZoom = currentZoom * zoomFactor
+    return when {
+        targetZoom.isNaN() -> currentZoom
+        targetZoom == 0f -> Float.MIN_VALUE
+        targetZoom == Float.POSITIVE_INFINITY -> Float.MAX_VALUE
+        else -> targetZoom
+    }
 }
 
 private fun Offset.toWorldPosition(

@@ -53,10 +53,23 @@ data class ViewportNode(
 }
 
 /**
+ * An undirected edge projected in the central viewport.
+ */
+data class ViewportEdge(val fromNodeId: Int, val toNodeId: Int) {
+    init {
+        require(fromNodeId != toNodeId) {
+            "Viewport edges require two distinct endpoints."
+        }
+    }
+}
+
+/**
  * State of the central scene area.
  */
 data class ViewportScene(
     val nodes: List<ViewportNode> = emptyList(),
+    val edges: List<ViewportEdge> = emptyList(),
+    val showLinks: Boolean = false,
     val dimensions: Int = 2,
     val backdrop: ViewportBackdrop = ViewportBackdrop.SPACE,
     val summary: List<InfoField> = emptyList(),
@@ -124,6 +137,8 @@ interface AlchemistUiCallbacks {
     suspend fun onNodeSelected(nodeId: Int)
 
     suspend fun onInspectorDismiss()
+
+    suspend fun onToggleLinks()
 }
 
 /**
@@ -139,4 +154,6 @@ object NoOpUiCallbacks : AlchemistUiCallbacks {
     override suspend fun onNodeSelected(nodeId: Int) = Unit
 
     override suspend fun onInspectorDismiss() = Unit
+
+    override suspend fun onToggleLinks() = Unit
 }

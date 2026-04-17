@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.composeui.adapter
 
 import it.unibo.alchemist.boundary.composeui.InfoField
 import it.unibo.alchemist.boundary.composeui.SimulationStatus
+import it.unibo.alchemist.boundary.composeui.ViewportEdge
 import it.unibo.alchemist.boundary.composeui.ViewportNode
 import it.unibo.alchemist.boundary.composeui.ViewportScene
 import it.unibo.alchemist.core.Simulation
@@ -28,6 +29,7 @@ fun <T, P : Position<P>> Node<T>.toViewport(environment: Environment<T, P>): Vie
 
 fun <T, P : Position<P>> Environment<T, P>.toViewport(): ViewportScene = ViewportScene(
     nodes = nodes.map { it.toViewport(this) },
+    edges = extractEdges(),
     dimensions = when (this) {
         // TODO: add the other environments
         is Continuous2DEnvironment -> 2
@@ -41,4 +43,18 @@ fun <T, P : Position<P>> Simulation<T, P>.toSimulationStatus(): SimulationStatus
     Status.PAUSED -> SimulationStatus.PAUSED
     Status.RUNNING -> SimulationStatus.RUNNING
     Status.TERMINATED -> SimulationStatus.TERMINATED
+}
+
+private fun <T, P : Position<P>> Environment<T, P>.extractEdges(): List<ViewportEdge> = buildSet {
+    nodes.forEach { node ->
+        getNeighborhood(node).forEach { neighbor ->
+            canonicalEdge(node.id, neighbor.id)?.let(::add)
+        }
+    }
+}.toList()
+
+internal fun canonicalEdge(firstNodeId: Int, secondNodeId: Int): ViewportEdge? = when {
+    firstNodeId == secondNodeId -> null
+    firstNodeId < secondNodeId -> ViewportEdge(firstNodeId, secondNodeId)
+    else -> ViewportEdge(secondNodeId, firstNodeId)
 }

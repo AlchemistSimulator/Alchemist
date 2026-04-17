@@ -15,7 +15,6 @@ import androidx.compose.ui.window.application
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.composeui.adapter.toSimulationStatus
 import it.unibo.alchemist.boundary.composeui.adapter.toViewport
-import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
@@ -36,8 +35,9 @@ class ComposeMonitor<T, P : Position<P>> : OutputMonitor<T, P> {
 
     override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
         currentUiState.update {
+            val viewport = environment.toViewport()
             it.copy(
-                scene = environment.toViewport(),
+                scene = viewport.copy(showLinks = it.scene.showLinks),
                 controls = it.controls.copy(
                     timeLabel = time.toString(),
                     step = step,

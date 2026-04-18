@@ -23,8 +23,10 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Monitor extension that uses JVM Compose UI to display the simulation.
+ * @param targetFps The target frames per second for the UI updates. Defaults to 30.
  */
-class ComposeMonitor<T, P : Position<P>> : OutputMonitor<T, P> {
+class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: Int = 30) : OutputMonitor<T, P> {
+    private val throttleMs = 1000L / targetFps.coerceAtLeast(1)
     private val windowStarted = AtomicBoolean(false)
     private val currentUiState by lazy { ComposeUiStateStore(AlchemistUiState()) }
 
@@ -35,7 +37,21 @@ class ComposeMonitor<T, P : Position<P>> : OutputMonitor<T, P> {
         }
     }
 
+    private var lastUpdate: Long = 0L
+
     override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+        val now = System.currentTimeMillis()
+        if (now - lastUpdate >= throttleMs) {
+            lastUpdate = now
+            updateUiState(environment, time, step)
+        }
+    }
+
+    override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
+        updateUiState(environment, time, step)
+    }
+
+    private fun updateUiState(environment: Environment<T, P>, time: Time, step: Long) {
         currentUiState.update {
             val viewport = environment.toViewport()
             val displayedTime = time.toComposeUiLabel()
@@ -49,8 +65,6 @@ class ComposeMonitor<T, P : Position<P>> : OutputMonitor<T, P> {
             )
         }
     }
-
-    override fun finished(environment: Environment<T, P>, time: Time, step: Long) = Unit
 
     private fun ensureWindow(environment: Environment<T, P>) {
         if (windowStarted.compareAndSet(false, true)) {
@@ -67,6 +81,9 @@ class ComposeMonitor<T, P : Position<P>> : OutputMonitor<T, P> {
                         )
                     }
                 }
+            }.apply {
+                isDaemon = true
+                name = "Alchemist Compose UI"
             }.start()
         }
     }

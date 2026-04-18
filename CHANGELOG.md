@@ -1,3 +1,25 @@
+## [43.0.38](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.37...43.0.38) (2026-04-18)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.4.9-19.2.5 (patch) ([#5278](https://github.com/AlchemistSimulator/Alchemist/issues/5278)) ([fe6d321](https://github.com/AlchemistSimulator/Alchemist/commit/fe6d3210227d088cf79573fe289f0d45401dc460))
+* **deps:** update dependency com.google.guava:guava to v33.6.0-jre ([#5272](https://github.com/AlchemistSimulator/Alchemist/issues/5272)) ([6989ce3](https://github.com/AlchemistSimulator/Alchemist/commit/6989ce394735a7f5343525f348d9383356e4f4ce))
+* **deps:** update dependency org.danilopianini:jirf to v0.4.38 ([#5274](https://github.com/AlchemistSimulator/Alchemist/issues/5274)) ([ce1a577](https://github.com/AlchemistSimulator/Alchemist/commit/ce1a577054237e2771c887d1e046c6315e352dfb))
+* **deps:** update dependency org.danilopianini:jirf to v1 ([#5276](https://github.com/AlchemistSimulator/Alchemist/issues/5276)) ([a1dbee6](https://github.com/AlchemistSimulator/Alchemist/commit/a1dbee6eb3fe09ebfe28cd207f9037385878c3bd))
+* **deps:** update graphql to v9.2.0 (minor) ([#5275](https://github.com/AlchemistSimulator/Alchemist/issues/5275)) ([d7d5ee8](https://github.com/AlchemistSimulator/Alchemist/commit/d7d5ee8dad6dcf4fbca2b82765eb53e3d4076bb4))
+* **deps:** update node.js to 24.15 ([#5277](https://github.com/AlchemistSimulator/Alchemist/issues/5277)) ([0735612](https://github.com/AlchemistSimulator/Alchemist/commit/0735612ea149b1cf782bdf2774394a2d7a4951c7))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([014be92](https://github.com/AlchemistSimulator/Alchemist/commit/014be92b291f4c5df40be3bc97261811fa1a1651))
+* **build:** update the javadoc.io cache ([730f2ac](https://github.com/AlchemistSimulator/Alchemist/commit/730f2ac5b36f400e621ef8949067a9ddb9e6401f))
+* **build:** update the javadoc.io cache ([196f300](https://github.com/AlchemistSimulator/Alchemist/commit/196f30072189c5f6f1b6c8e90a88dc933ec543c0))
+* convert timeout to milliseconds in JSR223Variable ([#5269](https://github.com/AlchemistSimulator/Alchemist/issues/5269)) ([59eb6bc](https://github.com/AlchemistSimulator/Alchemist/commit/59eb6bc3128fc8a617f4107ba12c2b45176695f4))
+
+### Style improvements
+
+* improve indentation of `Iterable` handling in `SimulationModel` ([#5270](https://github.com/AlchemistSimulator/Alchemist/issues/5270)) ([6d24a3c](https://github.com/AlchemistSimulator/Alchemist/commit/6d24a3c6d6b95327c00b8691043724cf2090b928))
+
 ## [43.0.37](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.36...43.0.37) (2026-04-14)
 
 ### Documentation

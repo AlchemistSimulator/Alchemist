@@ -79,11 +79,11 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun TransportButton(label: String, enabled: Boolean, accent: Color, onClick: () -> Unit) {
-    val buttonContentColor = if (accent.luminance() > 0.35f) Midnight else TextPrimary
+    val buttonContentColor = if (accent.luminance() > 0.35f) TextPrimary else Surface
     Button(
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(8.dp),
         elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = accent.copy(alpha = if (enabled) 0.92f else 0.28f),

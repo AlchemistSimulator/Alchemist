@@ -85,7 +85,7 @@ internal fun SummaryRail(summary: List<InfoField>, showLinks: Boolean, onToggleL
     ) {
         summary.forEach { item ->
             Surface(
-                color = PanelStrong.copy(alpha = 0.82f),
+                color = SurfaceStrong.copy(alpha = 0.82f),
                 shape = RoundedCornerShape(999.dp),
                 elevation = 0.dp,
             ) {
@@ -108,7 +108,7 @@ internal fun SummaryRail(summary: List<InfoField>, showLinks: Boolean, onToggleL
         }
         Surface(
             modifier = Modifier.clickable(onClick = onToggleLinks),
-            color = if (showLinks) AccentCool.copy(alpha = 0.2f) else PanelStrong.copy(alpha = 0.82f),
+            color = if (showLinks) SecondaryAccent.copy(alpha = 0.2f) else SurfaceStrong.copy(alpha = 0.82f),
             shape = RoundedCornerShape(999.dp),
             elevation = 0.dp,
         ) {
@@ -120,7 +120,7 @@ internal fun SummaryRail(summary: List<InfoField>, showLinks: Boolean, onToggleL
                 Text(
                     text = "LINKS",
                     style = MaterialTheme.typography.caption,
-                    color = if (showLinks) AccentCool else TextSecondary,
+                    color = if (showLinks) SecondaryAccent else TextSecondary,
                 )
                 Text(
                     text = if (showLinks) "ON" else "OFF",

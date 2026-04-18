@@ -87,8 +87,8 @@ internal fun ControlDock(
 ) {
     Surface(
         modifier = modifier,
-        color = PanelStrong,
-        shape = RoundedCornerShape(28.dp),
+        color = SurfaceStrong,
+        shape = RoundedCornerShape(12.dp),
         elevation = 0.dp,
     ) {
         Row(
@@ -104,7 +104,7 @@ internal fun ControlDock(
             ) {
                 TransportButton(label = "Play", enabled = controls.canPlay, accent = Positive, onClick = onPlay)
                 TransportButton(label = "Pause", enabled = controls.canPause, accent = Danger, onClick = onPause)
-                TransportButton(label = "Step", enabled = controls.canStep, accent = Accent, onClick = onStep)
+                TransportButton(label = "Step", enabled = controls.canStep, accent = PrimaryAccent, onClick = onStep)
             }
             StatusPill(controls = controls)
             MetricBlock(label = "Time", value = controls.timeLabel)

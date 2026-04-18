@@ -82,9 +82,9 @@ internal fun StatusPill(controls: SimulationControlsState) {
     val color =
         when (controls.status) {
             SimulationStatus.RUNNING -> Positive
-            SimulationStatus.PAUSED -> Accent
+            SimulationStatus.PAUSED -> PrimaryAccent
             SimulationStatus.TERMINATED -> Danger
-            else -> AccentCool
+            else -> SecondaryAccent
         }
     Surface(
         modifier = Modifier.width(StatusPillWidth),

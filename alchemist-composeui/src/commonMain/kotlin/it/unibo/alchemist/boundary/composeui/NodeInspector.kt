@@ -81,9 +81,9 @@ import kotlinx.coroutines.launch
 internal fun NodeInspector(inspector: NodeInspectorState, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier,
-        color = PanelStrong,
+        color = SurfaceStrong,
         contentColor = TextPrimary,
-        shape = RoundedCornerShape(28.dp),
+        shape = RoundedCornerShape(12.dp),
         elevation = 0.dp,
     ) {
         Column(

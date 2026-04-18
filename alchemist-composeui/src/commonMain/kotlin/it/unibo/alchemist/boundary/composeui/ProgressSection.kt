@@ -103,7 +103,7 @@ internal fun ProgressSection(progress: SimulationProgress, modifier: Modifier = 
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp),
-                color = Accent,
+                color = PrimaryAccent,
                 backgroundColor = Outline.copy(alpha = 0.55f),
             )
         } else {
@@ -112,7 +112,7 @@ internal fun ProgressSection(progress: SimulationProgress, modifier: Modifier = 
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp),
-                color = Accent,
+                color = PrimaryAccent,
                 backgroundColor = Outline.copy(alpha = 0.55f),
             )
         }

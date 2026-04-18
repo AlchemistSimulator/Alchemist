@@ -79,19 +79,19 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlinx.coroutines.launch
 
-internal val Midnight = Color(0xFF07111D)
-internal val DeepSea = Color(0xFF10253B)
-internal val Ink = Color(0xFF16293C)
-internal val Panel = Color(0xF0132237)
-internal val PanelStrong = Color(0xF70D1A2A)
-internal val Outline = Color(0xFF426988)
-internal val Accent = Color(0xFFF0B35A)
-internal val AccentCool = Color(0xFF6AC3FF)
-internal val Positive = Color(0xFF6ED39C)
-internal val TextPrimary = Color(0xFFF4F0E8)
-internal val TextSecondary = Color(0xFFDCE7F2)
-internal val TextMuted = Color(0xFFC1D0DE)
-internal val Danger = Color(0xFFD98B8B)
+internal val Background = Color(0xFFF8F9FA)
+internal val BackgroundVariant = Color(0xFFE9ECEF)
+internal val BackgroundGradientEnd = Color(0xFFDEE2E6)
+internal val Surface = Color(0xFFFFFFFF)
+internal val SurfaceStrong = Color(0xFFF1F3F5)
+internal val Outline = Color(0xFFCED4DA)
+internal val PrimaryAccent = Color(0xFF0D6EFD)
+internal val SecondaryAccent = Color(0xFF0A58CA)
+internal val Positive = Color(0xFF198754)
+internal val TextPrimary = Color(0xFF212529)
+internal val TextSecondary = Color(0xFF495057)
+internal val TextMuted = Color(0xFF6C757D)
+internal val Danger = Color(0xFFDC3545)
 internal const val ZoomStep = 1.12f
 internal const val NodeHitRadius = 22f
 internal const val SelectedNodeRadius = 18f

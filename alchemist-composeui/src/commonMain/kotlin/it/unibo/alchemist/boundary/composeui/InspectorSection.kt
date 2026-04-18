@@ -80,9 +80,9 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun InspectorSection(title: String, description: String, fields: List<InfoField>) {
     Surface(
-        color = Panel.copy(alpha = 0.72f),
+        color = Surface.copy(alpha = 0.72f),
         contentColor = TextPrimary,
-        shape = RoundedCornerShape(22.dp),
+        shape = RoundedCornerShape(8.dp),
         elevation = 0.dp,
     ) {
         Column(

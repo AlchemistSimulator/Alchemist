@@ -80,10 +80,11 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun ControlDock(
     controls: SimulationControlsState,
-    callbacks: AlchemistUiCallbacks,
+    onPlay: () -> Unit,
+    onPause: () -> Unit,
+    onStep: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val coroutineScope = rememberCoroutineScope()
     Surface(
         modifier = modifier,
         color = PanelStrong,
@@ -101,15 +102,9 @@ internal fun ControlDock(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                TransportButton(label = "Play", enabled = controls.canPlay, accent = Positive, onClick = {
-                    coroutineScope.launch { callbacks.onPlay() }
-                })
-                TransportButton(label = "Pause", enabled = controls.canPause, accent = Danger, onClick = {
-                    coroutineScope.launch { callbacks.onPause() }
-                })
-                TransportButton(label = "Step", enabled = controls.canStep, accent = Accent, onClick = {
-                    coroutineScope.launch { callbacks.onStep() }
-                })
+                TransportButton(label = "Play", enabled = controls.canPlay, accent = Positive, onClick = onPlay)
+                TransportButton(label = "Pause", enabled = controls.canPause, accent = Danger, onClick = onPause)
+                TransportButton(label = "Step", enabled = controls.canStep, accent = Accent, onClick = onStep)
             }
             StatusPill(controls = controls)
             MetricBlock(label = "Time", value = controls.timeLabel)

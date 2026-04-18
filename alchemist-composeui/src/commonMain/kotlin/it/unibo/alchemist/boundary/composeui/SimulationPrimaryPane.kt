@@ -79,7 +79,9 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun SimulationPrimaryPane(
-    state: AlchemistUiState,
+    scene: ViewportScene,
+    controls: SimulationControlsState,
+    selectedNodeId: Int?,
     callbacks: AlchemistUiCallbacks,
     dockWidthFraction: Float,
     spacing: androidx.compose.ui.unit.Dp,
@@ -90,8 +92,8 @@ internal fun SimulationPrimaryPane(
         verticalArrangement = Arrangement.spacedBy(spacing),
     ) {
         ViewportSurface(
-            scene = state.scene,
-            selectedNodeId = state.selectedNodeId,
+            scene = scene,
+            selectedNodeId = selectedNodeId,
             callbacks = callbacks,
             modifier = Modifier
                 .fillMaxWidth()
@@ -102,12 +104,15 @@ internal fun SimulationPrimaryPane(
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center,
         ) {
+            val coroutineScope = rememberCoroutineScope()
             ControlDock(
-                controls = state.controls,
+                controls = controls,
+                onPlay = { coroutineScope.launch { callbacks.onPlay() } },
+                onPause = { coroutineScope.launch { callbacks.onPause() } },
+                onStep = { coroutineScope.launch { callbacks.onStep() } },
                 modifier = Modifier
                     .fillMaxWidth(dockWidthFraction)
                     .wrapContentHeight(),
-                callbacks = callbacks,
             )
         }
     }

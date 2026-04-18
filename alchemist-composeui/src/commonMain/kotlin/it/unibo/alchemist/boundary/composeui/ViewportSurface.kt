@@ -9,40 +9,16 @@
 
 package it.unibo.alchemist.boundary.composeui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -59,22 +35,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isTertiaryPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlin.math.max
-import kotlin.math.min
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -97,12 +69,6 @@ internal fun ViewportSurface(
         }
     }
     val baseNodes = remember(scene.nodes, viewportSize, projection) { renderNodes(scene, viewportSize, projection) }
-    val renderedNodes = remember(baseNodes, viewportSize, camera) {
-        baseNodes.map { node ->
-            node.copy(center = node.center.toScreenPosition(viewportSize, camera))
-        }
-    }
-    val renderedEdges = remember(scene.edges, renderedNodes) { renderEdges(scene.edges, renderedNodes) }
     val density = androidx.compose.ui.platform.LocalDensity.current
     val tapThresholdPx = with(density) { NodeHitRadius.dp.toPx() }
     Surface(
@@ -132,11 +98,23 @@ internal fun ViewportSurface(
                 modifier = Modifier
                     .fillMaxSize()
                     .onGloballyPositioned { coordinates -> viewportSize = coordinates.size }
-                    .pointerInput(renderedNodes, selectedNodeId) {
+                    .pointerInput(baseNodes, selectedNodeId) {
                         detectTapGestures { tapOffset ->
-                            val hit = renderedNodes
-                                .minByOrNull { node -> node.center.distanceTo(tapOffset) }
-                                ?.takeIf { node -> node.center.distanceTo(tapOffset) <= tapThresholdPx }
+                            val worldTap = tapOffset.toWorldPosition(viewportSize, camera)
+                            // We need to map base nodes to screen space to check hits accurately against radius
+                            // Alternatively we can map the tap back to base node space (which is screen space with camera pan=0, zoom=1)
+                            val tapInBaseSpace = tapOffset.toWorldPosition(
+                                viewportSize,
+                                camera,
+                            ).toScreenPosition(viewportSize, ViewportCameraState())
+                            // Wait, baseNodes are already in the "camera at 0, zoom 1" screen space.
+                            // So if we take the tapOffset, we just need to convert it to that same space to measure distance!
+                            val hit = baseNodes
+                                .minByOrNull { node -> node.center.distanceTo(tapInBaseSpace) }
+                                ?.takeIf { node ->
+                                    node.center.distanceTo(tapInBaseSpace) <=
+                                        tapThresholdPx / camera.zoom
+                                }
                             if (hit != null) {
                                 coroutineScope.launch { callbacks.onNodeSelected(hit.node.id) }
                             } else {
@@ -186,8 +164,16 @@ internal fun ViewportSurface(
                     ),
                 )
                 drawGrid(size)
+
+                // Map the base nodes and edges down here in the Draw phase
+                val currentCamera = camera
+                val mappedNodes = baseNodes.map { node ->
+                    node.copy(center = node.center.toScreenPosition(viewportSize, currentCamera))
+                }
+                val mappedEdges = renderEdges(scene.edges, mappedNodes)
+
                 if (scene.showLinks) {
-                    renderedEdges.forEach { edge ->
+                    mappedEdges.forEach { edge ->
                         drawLine(
                             color = Outline.copy(alpha = 0.42f),
                             start = edge.start,
@@ -197,29 +183,33 @@ internal fun ViewportSurface(
                         )
                     }
                 }
-                renderedNodes.forEach { rendered ->
+                mappedNodes.forEach { rendered ->
                     val isSelected = rendered.node.id == selectedNodeId
                     val nodeColor = lerp(AccentCool, Accent, rendered.node.accent)
+                    val screenRadius = NodeRadius.dp.toPx() * currentCamera.zoom
+                    val screenSelectedRadius = SelectedNodeRadius.dp.toPx() * currentCamera.zoom
+                    val screenSelectedInnerRadius = SelectedNodeInnerRadius.dp.toPx() * currentCamera.zoom
+
                     if (isSelected) {
                         drawCircle(
                             color = nodeColor.copy(alpha = 0.20f),
-                            radius = SelectedNodeRadius.dp.toPx(),
+                            radius = screenSelectedRadius,
                             center = rendered.center,
                         )
                         drawCircle(
                             color = Accent,
-                            radius = SelectedNodeInnerRadius.dp.toPx(),
+                            radius = screenSelectedInnerRadius,
                             center = rendered.center,
-                            style = Stroke(width = 2.dp.toPx()),
+                            style = Stroke(width = 2.dp.toPx() * currentCamera.zoom),
                         )
                     }
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(nodeColor, nodeColor.copy(alpha = 0.45f)),
                             center = rendered.center,
-                            radius = SelectedNodeRadius.dp.toPx(),
+                            radius = max(1f, screenSelectedRadius),
                         ),
-                        radius = NodeRadius.dp.toPx(),
+                        radius = screenRadius,
                         center = rendered.center,
                     )
                 }
@@ -267,7 +257,7 @@ internal fun ViewportSurface(
         }
     }
 }
-internal fun androidx.compose.ui.graphics.drawscope.DrawScope.drawGrid(canvasSize: Size) {
+internal fun DrawScope.drawGrid(canvasSize: Size) {
     val stepX = canvasSize.width / GridVerticalDivisions.toFloat()
     val stepY = canvasSize.height / GridHorizontalDivisions.toFloat()
     for (column in 1 until GridVerticalDivisions) {

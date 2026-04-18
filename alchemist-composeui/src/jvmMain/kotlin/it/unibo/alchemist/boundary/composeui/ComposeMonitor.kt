@@ -10,8 +10,11 @@
 package it.unibo.alchemist.boundary.composeui
 
 import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.composeui.adapter.toSimulationStatus
 import it.unibo.alchemist.boundary.composeui.adapter.toViewport
@@ -19,6 +22,7 @@ import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
+import java.awt.Toolkit
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -69,10 +73,17 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: In
     private fun ensureWindow(environment: Environment<T, P>) {
         if (windowStarted.compareAndSet(false, true)) {
             Thread {
+                val screenSize = Toolkit.getDefaultToolkit().screenSize
                 application {
                     Window(
                         onCloseRequest = { exitApplication() },
                         title = "Alchemist",
+                        state = rememberWindowState(
+                            size = DpSize(
+                                width = (screenSize.width * 3 / 4).dp,
+                                height = (screenSize.height * 3 / 4).dp,
+                            ),
+                        ),
                     ) {
                         app(
                             remember {

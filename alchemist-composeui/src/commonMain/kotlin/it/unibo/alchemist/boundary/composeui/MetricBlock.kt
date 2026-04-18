@@ -80,8 +80,8 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun MetricBlock(label: String, value: String) {
     Surface(
-        color = Panel.copy(alpha = 0.78f),
-        shape = RoundedCornerShape(18.dp),
+        color = Surface.copy(alpha = 0.78f),
+        shape = RoundedCornerShape(8.dp),
         elevation = 0.dp,
     ) {
         Column(
@@ -91,7 +91,7 @@ internal fun MetricBlock(label: String, value: String) {
             Text(
                 text = label.uppercase(),
                 style = MaterialTheme.typography.caption,
-                color = AccentCool,
+                color = SecondaryAccent,
             )
             Text(
                 text = value,

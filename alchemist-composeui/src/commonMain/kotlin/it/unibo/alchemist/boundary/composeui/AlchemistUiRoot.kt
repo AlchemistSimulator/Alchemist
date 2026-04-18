@@ -85,23 +85,21 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
     val coroutineScope = rememberCoroutineScope()
     MaterialTheme(
         colors = MaterialTheme.colors.copy(
-            primary = Accent,
-            primaryVariant = AccentCool,
-            secondary = AccentCool,
-            background = Midnight,
-            surface = Panel,
-            onPrimary = Midnight,
-            onSecondary = Midnight,
+            primary = PrimaryAccent,
+            primaryVariant = SecondaryAccent,
+            secondary = SecondaryAccent,
+            background = Background,
+            surface = Surface,
+            onPrimary = Background,
+            onSecondary = Background,
             onBackground = TextPrimary,
             onSurface = TextPrimary,
         ),
         typography = MaterialTheme.typography.copy(
             h4 = MaterialTheme.typography.h4.copy(
-                fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.SemiBold,
             ),
             h6 = MaterialTheme.typography.h6.copy(
-                fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.SemiBold,
             ),
             subtitle1 = MaterialTheme.typography.subtitle1.copy(
@@ -125,7 +123,7 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
                 .fillMaxSize()
                 .background(
                     Brush.linearGradient(
-                        colors = listOf(Midnight, DeepSea, Ink),
+                        colors = listOf(Background, BackgroundVariant, BackgroundGradientEnd),
                     ),
                 ),
         ) {

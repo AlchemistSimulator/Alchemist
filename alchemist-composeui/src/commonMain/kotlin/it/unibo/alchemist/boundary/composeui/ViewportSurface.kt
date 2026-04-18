@@ -73,9 +73,9 @@ internal fun ViewportSurface(
     val tapThresholdPx = with(density) { NodeHitRadius.dp.toPx() }
     Surface(
         modifier = modifier,
-        color = Panel,
+        color = Surface,
         contentColor = TextPrimary,
-        shape = RoundedCornerShape(28.dp),
+        shape = RoundedCornerShape(12.dp),
         elevation = 0.dp,
     ) {
         val coroutineScope = rememberCoroutineScope()
@@ -85,11 +85,11 @@ internal fun ViewportSurface(
                 .border(
                     width = 1.dp,
                     color = Outline.copy(alpha = 0.8f),
-                    shape = RoundedCornerShape(28.dp),
+                    shape = RoundedCornerShape(12.dp),
                 )
                 .background(
                     Brush.radialGradient(
-                        colors = listOf(DeepSea.copy(alpha = 0.55f), Midnight),
+                        colors = listOf(BackgroundVariant.copy(alpha = 0.55f), Background),
                         radius = 1600f,
                     ),
                 ),
@@ -160,7 +160,7 @@ internal fun ViewportSurface(
             ) {
                 drawRect(
                     brush = Brush.verticalGradient(
-                        colors = listOf(DeepSea.copy(alpha = 0.55f), Midnight),
+                        colors = listOf(BackgroundVariant.copy(alpha = 0.55f), Background),
                     ),
                 )
                 drawGrid(size)
@@ -185,7 +185,7 @@ internal fun ViewportSurface(
                 }
                 mappedNodes.forEach { rendered ->
                     val isSelected = rendered.node.id == selectedNodeId
-                    val nodeColor = lerp(AccentCool, Accent, rendered.node.accent)
+                    val nodeColor = lerp(SecondaryAccent, PrimaryAccent, rendered.node.accent)
                     val screenRadius = NodeRadius.dp.toPx() * currentCamera.zoom
                     val screenSelectedRadius = SelectedNodeRadius.dp.toPx() * currentCamera.zoom
                     val screenSelectedInnerRadius = SelectedNodeInnerRadius.dp.toPx() * currentCamera.zoom
@@ -197,7 +197,7 @@ internal fun ViewportSurface(
                             center = rendered.center,
                         )
                         drawCircle(
-                            color = Accent,
+                            color = PrimaryAccent,
                             radius = screenSelectedInnerRadius,
                             center = rendered.center,
                             style = Stroke(width = 2.dp.toPx() * currentCamera.zoom),
@@ -240,8 +240,8 @@ internal fun ViewportSurface(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(20.dp),
-                color = PanelStrong.copy(alpha = 0.88f),
-                shape = RoundedCornerShape(18.dp),
+                color = SurfaceStrong.copy(alpha = 0.88f),
+                shape = RoundedCornerShape(8.dp),
                 elevation = 0.dp,
             ) {
                 Text(

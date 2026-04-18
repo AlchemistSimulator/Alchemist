@@ -30,7 +30,9 @@ class ComposeMonitor<T, P : Position<P>> : OutputMonitor<T, P> {
 
     override fun initialized(environment: Environment<T, P>) {
         ensureWindow(environment)
-        currentUiState.update { it.copy(controls = it.controls.copy(status = environment.simulation.toSimulationStatus() )) }
+        currentUiState.update {
+            it.copy(controls = it.controls.copy(status = environment.simulation.toSimulationStatus()))
+        }
     }
 
     override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
@@ -43,7 +45,7 @@ class ComposeMonitor<T, P : Position<P>> : OutputMonitor<T, P> {
                     timeLabel = displayedTime,
                     step = step,
                     status = environment.simulation.toSimulationStatus(),
-                )
+                ),
             )
         }
     }
@@ -58,9 +60,11 @@ class ComposeMonitor<T, P : Position<P>> : OutputMonitor<T, P> {
                         onCloseRequest = { exitApplication() },
                         title = "Alchemist",
                     ) {
-                        app(remember {
-                            alchemistDesktopController(environment)
-                        })
+                        app(
+                            remember {
+                                alchemistDesktopController(environment)
+                            },
+                        )
                     }
                 }
             }.start()

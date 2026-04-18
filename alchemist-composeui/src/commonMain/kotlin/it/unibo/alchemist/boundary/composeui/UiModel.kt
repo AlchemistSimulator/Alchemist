@@ -11,6 +11,8 @@
 
 package it.unibo.alchemist.boundary.composeui
 
+import androidx.compose.runtime.Immutable
+
 /**
  * High-level simulation status mirrored in the Compose UI.
  */
@@ -33,11 +35,13 @@ enum class ViewportBackdrop {
 /**
  * A simple label/value pair for inspector and summary sections.
  */
+@Immutable
 data class InfoField(val label: String, val value: String)
 
 /**
  * A node projected in the central viewport.
  */
+@Immutable
 data class ViewportNode(
     val id: Int,
     val coordinates: List<Double>,
@@ -55,6 +59,7 @@ data class ViewportNode(
 /**
  * An undirected edge projected in the central viewport.
  */
+@Immutable
 data class ViewportEdge(val fromNodeId: Int, val toNodeId: Int) {
     init {
         require(fromNodeId != toNodeId) {
@@ -66,6 +71,7 @@ data class ViewportEdge(val fromNodeId: Int, val toNodeId: Int) {
 /**
  * State of the central scene area.
  */
+@Immutable
 data class ViewportScene(
     val nodes: List<ViewportNode> = emptyList(),
     val edges: List<ViewportEdge> = emptyList(),
@@ -79,6 +85,7 @@ data class ViewportScene(
 /**
  * State for the bottom control dock progress section.
  */
+@Immutable
 data class SimulationProgress(val fraction: Float? = null, val label: String = "Progress unavailable") {
     init {
         require(fraction == null || fraction in 0f..1f) {
@@ -90,6 +97,7 @@ data class SimulationProgress(val fraction: Float? = null, val label: String = "
 /**
  * State for transport controls and simulator metrics.
  */
+@Immutable
 data class SimulationControlsState(
     val status: SimulationStatus = SimulationStatus.INIT,
     val timeLabel: String = "0",
@@ -105,6 +113,7 @@ data class SimulationControlsState(
 /**
  * State for the node inspector panel.
  */
+@Immutable
 data class NodeInspectorState(
     val nodeId: Int,
     val title: String = "Node $nodeId",
@@ -117,6 +126,7 @@ data class NodeInspectorState(
 /**
  * Top-level state consumed by the Compose UI shell.
  */
+@Immutable
 data class AlchemistUiState(
     val scene: ViewportScene = ViewportScene(),
     val controls: SimulationControlsState = SimulationControlsState(),

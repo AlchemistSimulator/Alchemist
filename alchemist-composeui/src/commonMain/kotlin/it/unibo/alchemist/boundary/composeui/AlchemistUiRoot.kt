@@ -141,7 +141,9 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
                         .padding(layoutSpacing),
                 ) {
                     SimulationPrimaryPane(
-                        state = state,
+                        scene = state.scene,
+                        controls = state.controls,
+                        selectedNodeId = state.selectedNodeId,
                         callbacks = callbacks,
                         dockWidthFraction = 1f,
                         spacing = layoutSpacing,
@@ -176,7 +178,9 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
                     horizontalArrangement = Arrangement.spacedBy(layoutSpacing),
                 ) {
                     SimulationPrimaryPane(
-                        state = state,
+                        scene = state.scene,
+                        controls = state.controls,
+                        selectedNodeId = state.selectedNodeId,
                         callbacks = callbacks,
                         dockWidthFraction = 0.84f,
                         spacing = layoutSpacing,

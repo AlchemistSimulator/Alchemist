@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 
 class DesktopAlchemistUiCallback<T, P : Position<P>>(
     private val simulation: Simulation<T, P>,
-    private val store: ComposeUiStateStore
+    private val store: ComposeUiStateStore,
 ) : AlchemistUiCallbacks {
     override suspend fun onPlay() {
         simulation.play().await()

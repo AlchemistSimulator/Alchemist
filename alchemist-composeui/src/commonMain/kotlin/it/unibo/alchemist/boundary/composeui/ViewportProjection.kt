@@ -1,3 +1,4 @@
+@file:Suppress("ktlint:standard:property-naming", "ktlint:standard:function-naming")
 /*
  * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
@@ -14,11 +15,7 @@ import androidx.compose.ui.unit.IntSize
 import kotlin.math.max
 import kotlin.math.min
 
-internal data class ViewportProjection(
-    val worldCenterX: Double,
-    val worldCenterY: Double,
-    val pixelsPerUnit: Float,
-) {
+internal data class ViewportProjection(val worldCenterX: Double, val worldCenterY: Double, val pixelsPerUnit: Float) {
     init {
         require(pixelsPerUnit > 0f) {
             "Viewport projection requires a positive pixels-per-unit ratio."
@@ -51,10 +48,7 @@ internal fun ViewportScene.createViewportProjection(viewportSize: IntSize): View
     )
 }
 
-internal fun ViewportNode.toViewportPosition(
-    viewportSize: IntSize,
-    projection: ViewportProjection,
-): Offset {
+internal fun ViewportNode.toViewportPosition(viewportSize: IntSize, projection: ViewportProjection): Offset {
     val center = Offset(viewportSize.width / 2f, viewportSize.height / 2f)
     return Offset(
         x = center.x + ((coordinates[0] - projection.worldCenterX) * projection.pixelsPerUnit).toFloat(),

@@ -24,7 +24,7 @@ import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 fun <T, P : Position<P>> Node<T>.toViewport(environment: Environment<T, P>): ViewportNode = ViewportNode(
     id = id,
     coordinates = environment.getPosition(this).coordinates.toList(),
-    concentrations = this.contents.map { InfoField(it.key.toString(), it.value.toString()) }
+    concentrations = this.contents.map { InfoField(it.key.toString(), it.value.toString()) },
 )
 
 fun <T, P : Position<P>> Environment<T, P>.toViewport(): ViewportScene = ViewportScene(
@@ -34,7 +34,7 @@ fun <T, P : Position<P>> Environment<T, P>.toViewport(): ViewportScene = Viewpor
         // TODO: add the other environments
         is Continuous2DEnvironment -> 2
         else -> 2
-    }
+    },
 )
 
 fun <T, P : Position<P>> Simulation<T, P>.toSimulationStatus(): SimulationStatus = when (this.status) {

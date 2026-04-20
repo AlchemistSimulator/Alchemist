@@ -39,10 +39,10 @@ import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.times.DoubleTime
 import java.io.Serial
 import java.lang.ref.WeakReference
+import java.time.Duration
 import java.util.Objects
 import java.util.Optional
 import java.util.concurrent.Semaphore
-import java.util.concurrent.TimeUnit
 import javax.annotation.Nonnull
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
@@ -64,7 +64,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
     private val cache: LoadingCache<CacheKey, SynchronizedVM> =
         CacheBuilder
             .newBuilder()
-            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .expireAfterAccess(Duration.ofMinutes(10))
             .build(
                 object : CacheLoader<CacheKey, SynchronizedVM>() {
                     override fun load(@Nonnull key: CacheKey): SynchronizedVM = SynchronizedVM(requireNotNull(key))

@@ -24,7 +24,7 @@ import it.unibo.alchemist.model.maps.MapEnvironment
 import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
-import java.util.concurrent.TimeUnit
+import java.time.Duration
 import java.util.function.Function
 import org.apache.commons.math3.random.RandomGenerator
 import org.protelis.lang.datatype.DatatypeFactory
@@ -71,7 +71,7 @@ class AlchemistExecutionContext<P : Position<P>>(
     private val cache =
         CacheBuilder
             .newBuilder()
-            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .expireAfterAccess(Duration.ofMinutes(10))
             .maximumSize(100)
             .build(
                 object : CacheLoader<P, Double>() {

@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlin.math.max
+import kotlin.math.min
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -259,22 +260,22 @@ internal fun ViewportSurface(
             }
             val gridLegend = remember(viewportSize, camera.zoom, projection) {
                 if (viewportSize.width == 0 || viewportSize.height == 0 || projection == null) return@remember null
-                var stepX = (viewportSize.width / GridVerticalDivisions.toFloat()) * camera.zoom
-                var stepY = (viewportSize.height / GridHorizontalDivisions.toFloat()) * camera.zoom
+                val baseStep = min(
+                    viewportSize.width / GridVerticalDivisions.toFloat(),
+                    viewportSize.height / GridHorizontalDivisions.toFloat(),
+                )
+                var step = baseStep * camera.zoom
                 var s = 1.0
-                while (stepX < 10f || stepY < 10f) {
-                    stepX *= 2f
-                    stepY *= 2f
+                while (step < 10f) {
+                    step *= 2f
                     s *= 2.0
                 }
-                while (stepX > 100f || stepY > 100f) {
-                    stepX /= 2f
-                    stepY /= 2f
+                while (step > 100f) {
+                    step /= 2f
                     s /= 2.0
                 }
-                val worldX = (viewportSize.width / GridVerticalDivisions.toDouble() * s) / projection.pixelsPerUnit
-                val worldY = (viewportSize.height / GridHorizontalDivisions.toDouble() * s) / projection.pixelsPerUnit
-                GridLegendData(worldX, worldY, stepX, stepY)
+                val worldStep = (baseStep * s) / projection.pixelsPerUnit
+                GridLegendData(worldStep, worldStep, step, step)
             }
             if (gridLegend != null) {
                 Surface(
@@ -285,110 +286,51 @@ internal fun ViewportSurface(
                     shape = RoundedCornerShape(8.dp),
                     elevation = 0.dp,
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.padding(12.dp),
                     ) {
                         Text(
-                            text = gridLegend.worldY.formatFixed(2),
+                            text = gridLegend.worldX.formatFixed(2),
                             style = MaterialTheme.typography.caption,
                             color = TextPrimary,
-                            modifier = Modifier.padding(end = 6.dp),
+                            modifier = Modifier.padding(bottom = 4.dp),
                         )
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = gridLegend.worldX.formatFixed(2),
-                                style = MaterialTheme.typography.caption,
-                                color = TextPrimary,
-                                modifier = Modifier.padding(bottom = 4.dp),
-                            )
-                            val density = androidx.compose.ui.platform.LocalDensity.current
-                            val canvasWidth = with(density) { gridLegend.stepX.toDp().coerceIn(20.dp, 120.dp) }
-                            val canvasHeight = with(density) { gridLegend.stepY.toDp().coerceIn(20.dp, 120.dp) }
-                            Canvas(modifier = Modifier.size(canvasWidth, canvasHeight)) {
-                                val strokeWidth = 1.5.dp.toPx()
-                                val arrowSize = 4.dp.toPx()
-                                val color = TextPrimary.copy(alpha = 0.7f)
-                                
-                                val originX = arrowSize
-                                val originY = size.height - arrowSize
-                                val endX = size.width - arrowSize
-                                val endY = arrowSize
-                                
-                                // Draw horizontal arrow
-                                drawLine(
-                                    color = color,
-                                    start = Offset(originX, originY),
-                                    end = Offset(endX, originY),
-                                    strokeWidth = strokeWidth,
-                                    cap = StrokeCap.Round,
-                                )
-                                drawLine(
-                                    color = color,
-                                    start = Offset(endX - arrowSize, originY - arrowSize),
-                                    end = Offset(endX, originY),
-                                    strokeWidth = strokeWidth,
-                                    cap = StrokeCap.Round,
-                                )
-                                drawLine(
-                                    color = color,
-                                    start = Offset(endX - arrowSize, originY + arrowSize),
-                                    end = Offset(endX, originY),
-                                    strokeWidth = strokeWidth,
-                                    cap = StrokeCap.Round,
-                                )
-                                drawLine(
-                                    color = color,
-                                    start = Offset(originX + arrowSize, originY - arrowSize),
-                                    end = Offset(originX, originY),
-                                    strokeWidth = strokeWidth,
-                                    cap = StrokeCap.Round,
-                                )
-                                drawLine(
-                                    color = color,
-                                    start = Offset(originX + arrowSize, originY + arrowSize),
-                                    end = Offset(originX, originY),
-                                    strokeWidth = strokeWidth,
-                                    cap = StrokeCap.Round,
-                                )
+                        val density = androidx.compose.ui.platform.LocalDensity.current
+                        val canvasWidth = with(density) { gridLegend.stepX.toDp().coerceIn(20.dp, 120.dp) }
+                        Canvas(modifier = Modifier.size(canvasWidth, 10.dp)) {
+                            val strokeWidth = 1.5.dp.toPx()
+                            val color = TextPrimary.copy(alpha = 0.7f)
 
-                                // Draw vertical arrow
-                                drawLine(
-                                    color = color,
-                                    start = Offset(originX, originY),
-                                    end = Offset(originX, endY),
-                                    strokeWidth = strokeWidth,
-                                    cap = StrokeCap.Round,
-                                )
-                                drawLine(
-                                    color = color,
-                                    start = Offset(originX - arrowSize, endY + arrowSize),
-                                    end = Offset(originX, endY),
-                                    strokeWidth = strokeWidth,
-                                    cap = StrokeCap.Round,
-                                )
-                                drawLine(
-                                    color = color,
-                                    start = Offset(originX + arrowSize, endY + arrowSize),
-                                    end = Offset(originX, endY),
-                                    strokeWidth = strokeWidth,
-                                    cap = StrokeCap.Round,
-                                )
-                                drawLine(
-                                    color = color,
-                                    start = Offset(originX - arrowSize, originY - arrowSize),
-                                    end = Offset(originX, originY),
-                                    strokeWidth = strokeWidth,
-                                    cap = StrokeCap.Round,
-                                )
-                                drawLine(
-                                    color = color,
-                                    start = Offset(originX + arrowSize, originY - arrowSize),
-                                    end = Offset(originX, originY),
-                                    strokeWidth = strokeWidth,
-                                    cap = StrokeCap.Round,
-                                )
-                            }
+                            val startX = 0f
+                            val endX = size.width
+                            val centerY = size.height / 2f
+                            val tickHeight = 4.dp.toPx()
+
+                            // Draw horizontal line
+                            drawLine(
+                                color = color,
+                                start = Offset(startX, centerY),
+                                end = Offset(endX, centerY),
+                                strokeWidth = strokeWidth,
+                                cap = StrokeCap.Round,
+                            )
+                            // Draw left tick
+                            drawLine(
+                                color = color,
+                                start = Offset(startX + strokeWidth / 2, centerY - tickHeight),
+                                end = Offset(startX + strokeWidth / 2, centerY + tickHeight),
+                                strokeWidth = strokeWidth,
+                                cap = StrokeCap.Round,
+                            )
+                            // Draw right tick
+                            drawLine(
+                                color = color,
+                                start = Offset(endX - strokeWidth / 2, centerY - tickHeight),
+                                end = Offset(endX - strokeWidth / 2, centerY + tickHeight),
+                                strokeWidth = strokeWidth,
+                                cap = StrokeCap.Round,
+                            )
                         }
                     }
                 }
@@ -399,22 +341,23 @@ internal fun ViewportSurface(
 internal fun DrawScope.drawGrid(canvasSize: Size, camera: ViewportCameraState) {
     val center = Offset(canvasSize.width / 2f, canvasSize.height / 2f)
     val origin = center + camera.pan
-    
-    var stepX = (canvasSize.width / GridVerticalDivisions.toFloat()) * camera.zoom
-    var stepY = (canvasSize.height / GridHorizontalDivisions.toFloat()) * camera.zoom
-    
+
+    val baseStep = min(
+        canvasSize.width / GridVerticalDivisions.toFloat(),
+        canvasSize.height / GridHorizontalDivisions.toFloat(),
+    )
+    var step = baseStep * camera.zoom
+
     // Prevent the grid from becoming too dense when zoomed out
-    while (stepX < 10f || stepY < 10f) {
-        stepX *= 2f
-        stepY *= 2f
+    while (step < 10f) {
+        step *= 2f
     }
     // Prevent the grid from becoming too sparse when zoomed in
-    while (stepX > 100f || stepY > 100f) {
-        stepX /= 2f
-        stepY /= 2f
+    while (step > 100f) {
+        step /= 2f
     }
 
-    val startX = (origin.x % stepX) - stepX
+    val startX = (origin.x % step) - step
     var currentX = startX
     while (currentX < canvasSize.width) {
         drawLine(
@@ -423,10 +366,10 @@ internal fun DrawScope.drawGrid(canvasSize: Size, camera: ViewportCameraState) {
             end = Offset(currentX, canvasSize.height),
             strokeWidth = 1f,
         )
-        currentX += stepX
+        currentX += step
     }
 
-    val startY = (origin.y % stepY) - stepY
+    val startY = (origin.y % step) - step
     var currentY = startY
     while (currentY < canvasSize.height) {
         drawLine(
@@ -435,7 +378,7 @@ internal fun DrawScope.drawGrid(canvasSize: Size, camera: ViewportCameraState) {
             end = Offset(canvasSize.width, currentY),
             strokeWidth = 1f,
         )
-        currentY += stepY
+        currentY += step
     }
 
     // Draw origin axes if they are visible

@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.composeui
 
 import it.unibo.alchemist.boundary.composeui.adapter.toSimulationStatus
 import it.unibo.alchemist.core.Simulation
+import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlinx.coroutines.Dispatchers
@@ -55,20 +56,21 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
         val target = currentState.toTimeInput.toDoubleOrNull()
             ?: return showDialog("Invalid time", "Insert a valid numeric time.")
         val currentTime = simulation.time.toDouble()
+        val wasRunning = simulation.status == Status.RUNNING
         if (target < currentTime) {
             return showDialog(
                 title = "Invalid time",
                 message = "Target time $target cannot be lower than current time ${currentTime.formatFixed(DISPLAYED_TIME_DECIMALS)}.",
             )
         }
-        if (target == currentTime) {
-            ensurePaused()
-            syncSimulationState()
-            return
+        if (target > currentTime) {
+            val jumpCompletion = simulation.goToTime(DoubleTime(target))
+            simulation.play().await()
+            jumpCompletion.await()
+            if (wasRunning) {
+                simulation.play().await()
+            }
         }
-        val jumpCompletion = simulation.goToTime(DoubleTime(target))
-        simulation.play().await()
-        jumpCompletion.await()
         syncSimulationState()
     }
 
@@ -82,20 +84,21 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
         val currentState = store.state.controls
         val target = currentState.toStepInput.toLongOrNull()
             ?: return showDialog("Invalid step", "Insert a valid integer step.")
+        val wasRunning = simulation.status == Status.RUNNING
         if (target < simulation.step) {
             return showDialog(
                 title = "Invalid step",
                 message = "Target step $target cannot be lower than current step ${simulation.step}.",
             )
         }
-        if (target == simulation.step) {
-            ensurePaused()
-            syncSimulationState()
-            return
+        if (target > simulation.step) {
+            val jumpCompletion = simulation.goToStep(target)
+            simulation.play().await()
+            jumpCompletion.await()
+            if (wasRunning) {
+                simulation.play().await()
+            }
         }
-        val jumpCompletion = simulation.goToStep(target)
-        simulation.play().await()
-        jumpCompletion.await()
         syncSimulationState()
     }
 
@@ -169,12 +172,6 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
                     dialog = null,
                 ),
             )
-        }
-    }
-
-    private suspend fun ensurePaused() {
-        if (simulation.status == it.unibo.alchemist.core.Status.RUNNING) {
-            simulation.pause().await()
         }
     }
 

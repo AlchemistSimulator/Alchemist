@@ -112,7 +112,8 @@ Defined in `adapter/AlchemistNodeAdapter.kt` and used by `ComposeMonitor.kt`:
 - Toggle links from the summary rail.
 - Use play/pause/step to control the simulation when the UI is attached to a live engine.
 - Press Enter in `To Time` / `To Step` to fast-forward to the requested target.
-- `To Time` / `To Step` reject backward targets and leave the simulator paused at the requested target.
+- `To Time` / `To Step` reject backward targets.
+- If the simulation was already running, jump actions resume it immediately after the target is reached.
 - Use `FPS` to control UI refresh frequency, clamped between `5` and the detected monitor refresh rate, or `60` if detection is unavailable.
 - Use the event-rate slider to pace the simulation thread; the terminal `Max` value disables pacing and runs full throttle.
 
@@ -159,6 +160,7 @@ Defined in `adapter/AlchemistNodeAdapter.kt` and used by `ComposeMonitor.kt`:
 - Synchronizes store updates on `Dispatchers.Main.immediate`.
 - Uses the simulation object as the source of truth for play/pause/step/jump state.
 - Validates `To Time`, `To Step`, and `FPS` submissions before mutating simulator state.
+- Restores running state after a successful jump when the simulation was already running.
 
 ### `ViewportSurface`
 
@@ -171,6 +173,7 @@ Defined in `adapter/AlchemistNodeAdapter.kt` and used by `ComposeMonitor.kt`:
 
 - Builds a sample scene with nodes, edges, summary data, and a mock progress state.
 - Supports play/pause/step and link toggling without a live simulation.
+- Mirrors the running-state jump behavior used on JVM.
 
 ## Requirements for future changes
 

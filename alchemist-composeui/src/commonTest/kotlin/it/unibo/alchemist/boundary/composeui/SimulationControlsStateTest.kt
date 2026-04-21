@@ -113,6 +113,22 @@ class SimulationControlsStateTest {
         assertEquals(DEFAULT_MAX_UI_FPS, controller.store.state.controls.uiFps)
         assertEquals(DEFAULT_MAX_UI_FPS.toString(), controller.store.state.controls.fpsInput)
     }
+
+    @Test
+    fun `demo controller preserves running state after jump`() {
+        val controller = demoController()
+        controller.store.update {
+            it.copy(controls = it.controls.copy(status = SimulationStatus.RUNNING))
+        }
+
+        runSuspend {
+            controller.callbacks.onToStepInputChanged("99")
+            controller.callbacks.onToStepSubmit()
+        }
+
+        assertEquals(SimulationStatus.RUNNING, controller.store.state.controls.status)
+        assertEquals(99L, controller.store.state.controls.step)
+    }
 }
 
 private fun runSuspend(block: suspend () -> Unit) {

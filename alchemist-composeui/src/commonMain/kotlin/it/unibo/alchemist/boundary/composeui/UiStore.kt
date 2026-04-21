@@ -88,6 +88,7 @@ fun demoController(): ComposeUiController {
                     val target = state.controls.toTimeInput.toDoubleOrNull()
                         ?: return@update state.withDialog("Invalid time", "Insert a valid numeric time.")
                     val currentTime = state.controls.timeLabel.toDoubleOrNull() ?: 0.0
+                    val wasRunning = state.controls.status == SimulationStatus.RUNNING
                     if (target < currentTime) {
                         return@update state.withDialog(
                             title = "Invalid time",
@@ -95,7 +96,11 @@ fun demoController(): ComposeUiController {
                         )
                     }
                     val targetStep = ceil(target * DEMO_TIME_SCALE).toLong()
-                    state.withStepProgress(targetStep, timeLabel = target.formatFixed(DISPLAYED_TIME_DECIMALS))
+                    state.withStepProgress(
+                        targetStep,
+                        timeLabel = target.formatFixed(DISPLAYED_TIME_DECIMALS),
+                        status = if (wasRunning) SimulationStatus.RUNNING else SimulationStatus.PAUSED,
+                    )
                 }
             }
 
@@ -109,13 +114,17 @@ fun demoController(): ComposeUiController {
                 store.update { state ->
                     val target = state.controls.toStepInput.toLongOrNull()
                         ?: return@update state.withDialog("Invalid step", "Insert a valid integer step.")
+                    val wasRunning = state.controls.status == SimulationStatus.RUNNING
                     if (target < state.controls.step) {
                         return@update state.withDialog(
                             title = "Invalid step",
                             message = "Target step $target cannot be lower than current step ${state.controls.step}.",
                         )
                     }
-                    state.withStepProgress(target)
+                    state.withStepProgress(
+                        target,
+                        status = if (wasRunning) SimulationStatus.RUNNING else SimulationStatus.PAUSED,
+                    )
                 }
             }
 
@@ -285,9 +294,10 @@ internal fun AlchemistUiState.withDialog(title: String, message: String): Alchem
 internal fun AlchemistUiState.withStepProgress(
     step: Long,
     timeLabel: String = formatDemoTime(step),
+    status: SimulationStatus = SimulationStatus.PAUSED,
 ): AlchemistUiState = copy(
     controls = controls.copy(
-        status = SimulationStatus.PAUSED,
+        status = status,
         step = step,
         timeLabel = timeLabel,
         progress = SimulationProgress(

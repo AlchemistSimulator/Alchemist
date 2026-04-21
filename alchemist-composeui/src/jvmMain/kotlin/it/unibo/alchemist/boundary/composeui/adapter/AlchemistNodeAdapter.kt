@@ -43,9 +43,13 @@ fun <T, P : Position<P>> Simulation<T, P>.toSimulationStatus(): SimulationStatus
 private fun <T, P : Position<P>> Environment<T, P>.extractEdges(): List<ViewportEdge> = buildList {
     nodes.forEach { node ->
         getNeighborhood(node).forEach { neighbor ->
-            if (node.id < neighbor.id) {
-                add(ViewportEdge(node.id, neighbor.id))
-            }
+            canonicalEdge(node.id, neighbor.id)?.let(::add)
         }
     }
+}.distinct()
+
+internal fun canonicalEdge(firstNodeId: Int, secondNodeId: Int): ViewportEdge? = when {
+    firstNodeId == secondNodeId -> null
+    firstNodeId < secondNodeId -> ViewportEdge(firstNodeId, secondNodeId)
+    else -> ViewportEdge(secondNodeId, firstNodeId)
 }

@@ -11,6 +11,8 @@
 
 package it.unibo.alchemist.boundary.composeui
 
+import kotlin.math.ceil
+import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -71,17 +73,69 @@ fun demoController(): ComposeUiController {
             override suspend fun onStep() {
                 store.update {
                     val nextStep = it.controls.step + 1
-                    it.copy(
-                        controls = it.controls.copy(
-                            status = SimulationStatus.PAUSED,
-                            step = nextStep,
-                            timeLabel = formatDemoTime(nextStep),
-                            progress = SimulationProgress(
-                                fraction = (nextStep % 100).toFloat() / 100f,
-                                label = "Scenario exploration",
-                            ),
-                        ),
-                    )
+                    it.withStepProgress(nextStep)
+                }
+            }
+
+            override suspend fun onToTimeInputChanged(value: String) {
+                store.update {
+                    it.copy(controls = it.controls.copy(toTimeInput = value))
+                }
+            }
+
+            override suspend fun onToTimeSubmit() {
+                store.update { state ->
+                    val target = state.controls.toTimeInput.toDoubleOrNull()
+                        ?: return@update state.withDialog("Invalid time", "Insert a valid numeric time.")
+                    val currentTime = state.controls.timeLabel.toDoubleOrNull() ?: 0.0
+                    if (target < currentTime) {
+                        return@update state.withDialog(
+                            title = "Invalid time",
+                            message = "Target time $target cannot be lower than current time $currentTime.",
+                        )
+                    }
+                    val targetStep = ceil(target * DEMO_TIME_SCALE).toLong()
+                    state.withStepProgress(targetStep, timeLabel = target.formatFixed(DISPLAYED_TIME_DECIMALS))
+                }
+            }
+
+            override suspend fun onToStepInputChanged(value: String) {
+                store.update {
+                    it.copy(controls = it.controls.copy(toStepInput = value))
+                }
+            }
+
+            override suspend fun onToStepSubmit() {
+                store.update { state ->
+                    val target = state.controls.toStepInput.toLongOrNull()
+                        ?: return@update state.withDialog("Invalid step", "Insert a valid integer step.")
+                    if (target < state.controls.step) {
+                        return@update state.withDialog(
+                            title = "Invalid step",
+                            message = "Target step $target cannot be lower than current step ${state.controls.step}.",
+                        )
+                    }
+                    state.withStepProgress(target)
+                }
+            }
+
+            override suspend fun onFpsInputChanged(value: String) {
+                store.update {
+                    it.copy(controls = it.controls.copy(fpsInput = value))
+                }
+            }
+
+            override suspend fun onFpsSubmit() {
+                store.update { state ->
+                    val target = state.controls.fpsInput.toIntOrNull()
+                        ?: return@update state.withDialog("Invalid FPS", "Insert a valid integer FPS value.")
+                    state.copy(controls = state.controls.withUiFps(target))
+                }
+            }
+
+            override suspend fun onEventRateChanged(value: Float) {
+                store.update { state ->
+                    state.copy(controls = state.controls.withEventRateSliderValue(value.roundToInt()))
                 }
             }
 
@@ -106,6 +160,12 @@ fun demoController(): ComposeUiController {
                     it.copy(
                         scene = it.scene.copy(showLinks = !it.scene.showLinks),
                     )
+                }
+            }
+
+            override suspend fun onDialogDismiss() {
+                store.update {
+                    it.copy(controls = it.controls.copy(dialog = null))
                 }
             }
         }
@@ -216,6 +276,42 @@ private fun sampleUiState(): AlchemistUiState {
     )
 }
 
+internal fun AlchemistUiState.withDialog(title: String, message: String): AlchemistUiState = copy(
+    controls = controls.copy(
+        dialog = ControlDialogState(title, message),
+    ),
+)
+
+internal fun AlchemistUiState.withStepProgress(
+    step: Long,
+    timeLabel: String = formatDemoTime(step),
+): AlchemistUiState = copy(
+    controls = controls.copy(
+        status = SimulationStatus.PAUSED,
+        step = step,
+        timeLabel = timeLabel,
+        progress = SimulationProgress(
+            fraction = (step % 100).toFloat() / 100f,
+            label = "Scenario exploration",
+        ),
+        dialog = null,
+    ),
+)
+
+internal fun SimulationControlsState.withUiFps(target: Int): SimulationControlsState {
+    val coerced = target.coerceIn(MIN_UI_FPS, maxUiFps)
+    return copy(
+        fpsInput = coerced.toString(),
+        uiFps = coerced,
+        dialog = null,
+    )
+}
+
+internal fun SimulationControlsState.withEventRateSliderValue(target: Int): SimulationControlsState = copy(
+    eventRateSliderValue = target.coerceIn(MIN_SIMULATION_EVENTS_PER_SECOND, maxEventRateSliderValue),
+    dialog = null,
+)
+
 internal fun ViewportNode.toInspectorState(): NodeInspectorState = NodeInspectorState(
     nodeId = id,
     subtitle = "Live node snapshot",
@@ -242,3 +338,5 @@ internal fun Double.formatFixed(decimals: Int): String {
 }
 
 private fun formatDemoTime(step: Long): String = (step / 10.0).formatFixed(2)
+
+private const val DEMO_TIME_SCALE = 10.0

@@ -118,6 +118,22 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
             ),
         ),
     ) {
+        state.controls.dialog?.let { dialog ->
+            androidx.compose.material.AlertDialog(
+                onDismissRequest = { coroutineScope.launch { callbacks.onDialogDismiss() } },
+                title = { Text(dialog.title) },
+                text = { Text(dialog.message) },
+                confirmButton = {
+                    androidx.compose.material.TextButton(
+                        onClick = { coroutineScope.launch { callbacks.onDialogDismiss() } },
+                    ) {
+                        Text("OK")
+                    }
+                },
+                backgroundColor = SurfaceStrong,
+                contentColor = TextPrimary,
+            )
+        }
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
@@ -130,7 +146,7 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
             val compactLayout = maxWidth < 980.dp
             val inspectorVisible = state.inspector != null
             val inspectorWidth = 324.dp
-            val bottomBarHeight = 112.dp
+            val bottomBarHeight = 152.dp
             val layoutSpacing = 20.dp
             if (compactLayout) {
                 Box(

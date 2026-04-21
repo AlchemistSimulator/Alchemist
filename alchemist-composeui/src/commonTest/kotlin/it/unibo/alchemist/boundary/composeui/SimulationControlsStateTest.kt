@@ -15,6 +15,8 @@ import kotlin.coroutines.startCoroutine
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class SimulationControlsStateTest {
@@ -65,6 +67,51 @@ class SimulationControlsStateTest {
 
         assertTrue(controller.store.state.scene.showLinks)
         assertEquals(3, controller.store.state.selectedNodeId)
+    }
+
+    @Test
+    fun `ui fps is clamped to the configured range`() {
+        val controls = SimulationControlsState(maxUiFps = 45).withUiFps(120)
+
+        assertEquals(45, controls.uiFps)
+        assertEquals("45", controls.fpsInput)
+    }
+
+    @Test
+    fun `full throttle is represented by the max slider value`() {
+        val controls =
+            SimulationControlsState(maxEventRateSliderValue = 50).withEventRateSliderValue(50)
+
+        assertTrue(controls.isFullThrottle)
+        assertNull(controls.effectiveEventsPerSecond)
+        assertEquals(FULL_THROTTLE_LABEL, controls.eventRateLabel)
+    }
+
+    @Test
+    fun `demo controller rejects backward time jumps`() {
+        val controller = demoController()
+
+        runSuspend {
+            controller.callbacks.onToTimeInputChanged("1.5")
+            controller.callbacks.onToTimeSubmit()
+        }
+
+        val dialog = controller.store.state.controls.dialog
+        assertNotNull(dialog)
+        assertEquals("Invalid time", dialog.title)
+    }
+
+    @Test
+    fun `demo controller updates fps on submit`() {
+        val controller = demoController()
+
+        runSuspend {
+            controller.callbacks.onFpsInputChanged("120")
+            controller.callbacks.onFpsSubmit()
+        }
+
+        assertEquals(DEFAULT_MAX_UI_FPS, controller.store.state.controls.uiFps)
+        assertEquals(DEFAULT_MAX_UI_FPS.toString(), controller.store.state.controls.fpsInput)
     }
 }
 

@@ -110,6 +110,13 @@ internal fun SimulationPrimaryPane(
                 onPlay = { coroutineScope.launch { callbacks.onPlay() } },
                 onPause = { coroutineScope.launch { callbacks.onPause() } },
                 onStep = { coroutineScope.launch { callbacks.onStep() } },
+                onToTimeInputChanged = { coroutineScope.launch { callbacks.onToTimeInputChanged(it) } },
+                onToTimeSubmit = { coroutineScope.launch { callbacks.onToTimeSubmit() } },
+                onToStepInputChanged = { coroutineScope.launch { callbacks.onToStepInputChanged(it) } },
+                onToStepSubmit = { coroutineScope.launch { callbacks.onToStepSubmit() } },
+                onFpsInputChanged = { coroutineScope.launch { callbacks.onFpsInputChanged(it) } },
+                onFpsSubmit = { coroutineScope.launch { callbacks.onFpsSubmit() } },
+                onEventRateChanged = { coroutineScope.launch { callbacks.onEventRateChanged(it) } },
                 modifier = Modifier
                     .fillMaxWidth(dockWidthFraction)
                     .wrapContentHeight(),

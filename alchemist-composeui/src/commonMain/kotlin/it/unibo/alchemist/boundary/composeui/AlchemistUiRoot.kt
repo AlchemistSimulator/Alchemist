@@ -10,6 +10,10 @@
 package it.unibo.alchemist.boundary.composeui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -148,6 +152,24 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
             val inspectorWidth = 324.dp
             val bottomBarHeight = 152.dp
             val layoutSpacing = 20.dp
+            val inspectorTransition = updateTransition(targetState = inspectorVisible, label = "inspector")
+            val animatedInspectorWidth by inspectorTransition.animateDp(
+                transitionSpec = { tween(durationMillis = 320) },
+                label = "inspector-width",
+            ) { visible ->
+                if (visible) {
+                    inspectorWidth
+                } else {
+                    0.dp
+                }
+            }
+            var displayedInspector by remember { mutableStateOf(state.inspector) }
+            if (state.inspector != null) {
+                displayedInspector = state.inspector
+            }
+            if (!inspectorTransition.currentState && !inspectorTransition.targetState && displayedInspector != null) {
+                displayedInspector = null
+            }
             if (compactLayout) {
                 Box(
                     modifier = Modifier
@@ -200,22 +222,33 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
                         spacing = layoutSpacing,
                         modifier = Modifier
                             .weight(1f)
+                            .animateContentSize(animationSpec = tween(durationMillis = 320))
                             .fillMaxHeight(),
                     )
-                    AnimatedVisibility(
-                        visible = inspectorVisible,
-                        enter = slideInHorizontally(initialOffsetX = { it / 2 }) + fadeIn(),
-                        exit = slideOutHorizontally(targetOffsetX = { it / 2 }) + fadeOut(),
+                    Box(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .width(inspectorWidth),
+                            .width(animatedInspectorWidth),
                     ) {
-                        state.inspector?.let {
-                            NodeInspector(
-                                inspector = it,
-                                onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
-                                modifier = Modifier.fillMaxHeight(),
-                            )
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = inspectorVisible,
+                            enter = slideInHorizontally(
+                                animationSpec = tween(durationMillis = 320),
+                                initialOffsetX = { it / 3 },
+                            ) + fadeIn(animationSpec = tween(durationMillis = 220)),
+                            exit = slideOutHorizontally(
+                                animationSpec = tween(durationMillis = 320),
+                                targetOffsetX = { it / 3 },
+                            ) + fadeOut(animationSpec = tween(durationMillis = 180)),
+                            modifier = Modifier.fillMaxHeight(),
+                        ) {
+                            displayedInspector?.let {
+                                NodeInspector(
+                                    inspector = it,
+                                    onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
+                                    modifier = Modifier.fillMaxHeight(),
+                                )
+                            }
                         }
                     }
                 }

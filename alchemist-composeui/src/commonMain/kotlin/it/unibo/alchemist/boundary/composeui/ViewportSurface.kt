@@ -41,7 +41,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.isTertiaryPressed
+import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -63,7 +63,7 @@ internal fun ViewportSurface(
     var viewportSize by remember { mutableStateOf(IntSize.Zero) }
     var camera by remember { mutableStateOf(ViewportCameraState()) }
     var fixedProjection by remember { mutableStateOf<ViewportProjection?>(null) }
-    var middleDragAnchor by remember { mutableStateOf<Offset?>(null) }
+    var rightDragAnchor by remember { mutableStateOf<Offset?>(null) }
     val candidateProjection = remember(scene.nodes, viewportSize) { scene.createViewportProjection(viewportSize) }
     val projection = fixedProjection ?: candidateProjection
     LaunchedEffect(candidateProjection) {
@@ -128,7 +128,7 @@ internal fun ViewportSurface(
                     }
                     .onPointerEvent(PointerEventType.Press) { event ->
                         val change = event.changes.firstOrNull() ?: return@onPointerEvent
-                        middleDragAnchor = if (event.buttons.isTertiaryPressed) {
+                        rightDragAnchor = if (event.buttons.isSecondaryPressed) {
                             change.position
                         } else {
                             null
@@ -136,19 +136,19 @@ internal fun ViewportSurface(
                     }
                     .onPointerEvent(PointerEventType.Move) { event ->
                         val change = event.changes.firstOrNull() ?: return@onPointerEvent
-                        if (event.buttons.isTertiaryPressed) {
-                            val previous = middleDragAnchor ?: change.position
+                        if (event.buttons.isSecondaryPressed) {
+                            val previous = rightDragAnchor ?: change.position
                             val delta = change.position - previous
                             if (delta != Offset.Zero) {
                                 camera = camera.panBy(delta)
                             }
-                            middleDragAnchor = change.position
+                            rightDragAnchor = change.position
                         } else {
-                            middleDragAnchor = null
+                            rightDragAnchor = null
                         }
                     }
                     .onPointerEvent(PointerEventType.Release) {
-                        middleDragAnchor = null
+                        rightDragAnchor = null
                     }
                     .onPointerEvent(PointerEventType.Scroll) { event ->
                         val pointerChange = event.changes.firstOrNull() ?: return@onPointerEvent
@@ -252,7 +252,7 @@ internal fun ViewportSurface(
                     text = if (scene.nodes.isEmpty()) {
                         "No nodes to display"
                     } else {
-                        "Click to inspect · middle-drag to pan · wheel to zoom"
+                        "Click to inspect · right-drag to pan · wheel to zoom"
                     },
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
                     style = MaterialTheme.typography.caption,

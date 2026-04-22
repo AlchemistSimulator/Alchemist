@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.composeui
 
+import it.unibo.alchemist.boundary.composeui.view.viewport.applyInfiniteZoomFactor
 import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertTrue

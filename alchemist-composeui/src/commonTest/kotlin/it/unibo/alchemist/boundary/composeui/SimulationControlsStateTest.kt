@@ -9,6 +9,11 @@
 
 package it.unibo.alchemist.boundary.composeui
 
+import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
+import it.unibo.alchemist.boundary.composeui.model.GroupInspectorState
+import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
+import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
+import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.startCoroutine
@@ -118,7 +123,9 @@ class SimulationControlsStateTest {
     fun `demo controller preserves running state after jump`() {
         val controller = demoController()
         controller.store.update {
-            it.copy(controls = it.controls.copy(status = SimulationStatus.RUNNING))
+            it.copy(
+                controls = it.controls.copy(status = SimulationStatus.RUNNING),
+            )
         }
 
         runSuspend {

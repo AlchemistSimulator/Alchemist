@@ -10,6 +10,10 @@
 package it.unibo.alchemist.boundary.composeui
 
 import androidx.compose.ui.unit.IntSize
+import it.unibo.alchemist.boundary.composeui.model.ViewportNode
+import it.unibo.alchemist.boundary.composeui.model.ViewportScene
+import it.unibo.alchemist.boundary.composeui.view.viewport.createViewportProjection
+import it.unibo.alchemist.boundary.composeui.view.viewport.toViewportPosition
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull

@@ -9,7 +9,11 @@
 
 package it.unibo.alchemist.boundary.composeui
 
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
 import it.unibo.alchemist.boundary.composeui.adapter.toSimulationStatus
+import it.unibo.alchemist.boundary.composeui.model.AlchemistUiCallbacks
+import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
+import it.unibo.alchemist.boundary.composeui.model.ControlDialogState
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.model.Position
@@ -119,7 +123,7 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
 
     override suspend fun onEventRateChanged(value: Float) {
         updateState {
-            it.copy(controls = it.controls.withEventRateSliderValue(value.roundToInt()))
+            it.copy(controls = it.controls.updateEventThrottling(value.roundToInt()))
         }
     }
 

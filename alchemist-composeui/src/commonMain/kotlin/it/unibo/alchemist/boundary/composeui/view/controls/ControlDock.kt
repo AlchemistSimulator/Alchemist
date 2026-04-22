@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.composeui
+package it.unibo.alchemist.boundary.composeui.view.controls
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Slider
+import androidx.compose.material.SliderDefaults
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
@@ -32,8 +33,25 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import it.unibo.alchemist.boundary.composeui.model.EventsPerSecond
+import it.unibo.alchemist.boundary.composeui.model.FullThrottle
+import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
+import it.unibo.alchemist.boundary.composeui.model.SimulationEventThrottling.Companion.MAX_SIMULATION_EVENTS_PER_SECOND
+import it.unibo.alchemist.boundary.composeui.model.SimulationEventThrottling.Companion.MIN_SIMULATION_EVENTS_PER_SECOND
+import it.unibo.alchemist.boundary.composeui.view.components.MetricBlock
+import it.unibo.alchemist.boundary.composeui.view.components.TransportButton
+import it.unibo.alchemist.boundary.composeui.view.theme.Danger
+import it.unibo.alchemist.boundary.composeui.view.theme.Outline
+import it.unibo.alchemist.boundary.composeui.view.theme.Positive
+import it.unibo.alchemist.boundary.composeui.view.theme.PrimaryAccent
+import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
+import it.unibo.alchemist.boundary.composeui.view.theme.SurfaceStrong
+import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
+import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 
 @Composable
 internal fun ControlDock(
@@ -154,12 +172,12 @@ private fun EventRateSlider(controls: SimulationControlsState, onValueChange: (F
             color = SecondaryAccent,
         )
         Slider(
-            value = controls.eventRateSliderValue.toFloat(),
+            value = controls.simulationEventThrottling.value.toFloat(),
             onValueChange = onValueChange,
             valueRange =
-                MIN_SIMULATION_EVENTS_PER_SECOND.toFloat()..controls.maxEventRateSliderValue.toFloat(),
-            steps = controls.maxEventRateSliderValue - MIN_SIMULATION_EVENTS_PER_SECOND - 1,
-            colors = androidx.compose.material.SliderDefaults.colors(
+                MIN_SIMULATION_EVENTS_PER_SECOND.toFloat()..MAX_SIMULATION_EVENTS_PER_SECOND.toFloat(),
+            steps = MAX_SIMULATION_EVENTS_PER_SECOND - MIN_SIMULATION_EVENTS_PER_SECOND - 1,
+            colors = SliderDefaults.colors(
                 thumbColor = PrimaryAccent,
                 activeTrackColor = PrimaryAccent,
                 inactiveTrackColor = Outline,
@@ -170,17 +188,20 @@ private fun EventRateSlider(controls: SimulationControlsState, onValueChange: (F
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = "${MIN_SIMULATION_EVENTS_PER_SECOND} evt/s",
+                text = EventsPerSecond(MIN_SIMULATION_EVENTS_PER_SECOND).toLabel(),
                 style = MaterialTheme.typography.caption,
                 color = TextSecondary,
             )
+            if (!controls.isFullThrottle) {
+                Text(
+                    text = controls.simulationEventThrottling.toLabel(),
+                    style = MaterialTheme.typography.caption,
+                    color = TextPrimary,
+                )
+            }
             Text(
-                text = controls.eventRateLabel,
-                style = MaterialTheme.typography.caption,
-                color = TextPrimary,
-            )
-            Text(
-                text = FULL_THROTTLE_LABEL,
+                text = FullThrottle.toLabel(),
+                fontWeight = if (controls.isFullThrottle) FontWeight.Bold else FontWeight.Normal,
                 style = MaterialTheme.typography.caption,
                 color = if (controls.isFullThrottle) PrimaryAccent else TextSecondary,
             )

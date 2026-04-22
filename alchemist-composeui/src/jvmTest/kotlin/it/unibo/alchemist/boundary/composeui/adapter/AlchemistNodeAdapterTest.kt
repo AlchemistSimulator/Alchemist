@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.composeui.adapter
 
-import it.unibo.alchemist.boundary.composeui.ViewportEdge
+import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

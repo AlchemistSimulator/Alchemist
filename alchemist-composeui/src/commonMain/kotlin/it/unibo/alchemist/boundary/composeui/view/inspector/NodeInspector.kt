@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.composeui
+package it.unibo.alchemist.boundary.composeui.view.inspector
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +24,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import it.unibo.alchemist.boundary.composeui.model.GroupInspectorState
+import it.unibo.alchemist.boundary.composeui.model.InfoField
+import it.unibo.alchemist.boundary.composeui.model.InspectorState
+import it.unibo.alchemist.boundary.composeui.model.NodeInspectorState
+import it.unibo.alchemist.boundary.composeui.view.components.TransportButton
+import it.unibo.alchemist.boundary.composeui.view.theme.Outline
+import it.unibo.alchemist.boundary.composeui.view.theme.SurfaceStrong
+import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
+import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 
 @Composable
 internal fun NodeInspector(inspector: InspectorState, onDismiss: () -> Unit, modifier: Modifier = Modifier) {

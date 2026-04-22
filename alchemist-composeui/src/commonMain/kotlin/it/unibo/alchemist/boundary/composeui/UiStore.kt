@@ -11,6 +11,22 @@
 
 package it.unibo.alchemist.boundary.composeui
 
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
+import it.unibo.alchemist.boundary.composeui.model.AlchemistUiCallbacks
+import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
+import it.unibo.alchemist.boundary.composeui.model.ControlDialogState
+import it.unibo.alchemist.boundary.composeui.model.GroupInspectorState
+import it.unibo.alchemist.boundary.composeui.model.InfoField
+import it.unibo.alchemist.boundary.composeui.model.InspectorState
+import it.unibo.alchemist.boundary.composeui.model.NodeInspectorState
+import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
+import it.unibo.alchemist.boundary.composeui.model.SimulationProgress
+import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
+import it.unibo.alchemist.boundary.composeui.model.ViewportBackdrop
+import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
+import it.unibo.alchemist.boundary.composeui.model.ViewportNode
+import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -144,7 +160,7 @@ fun demoController(): ComposeUiController {
 
             override suspend fun onEventRateChanged(value: Float) {
                 store.update { state ->
-                    state.copy(controls = state.controls.withEventRateSliderValue(value.roundToInt()))
+                    state.copy(controls = state.controls.updateEventThrottling(value.roundToInt()))
                 }
             }
 
@@ -319,10 +335,10 @@ internal fun SimulationControlsState.withUiFps(target: Int): SimulationControlsS
     )
 }
 
-internal fun SimulationControlsState.withEventRateSliderValue(target: Int): SimulationControlsState = copy(
-    eventRateSliderValue = target.coerceIn(MIN_SIMULATION_EVENTS_PER_SECOND, maxEventRateSliderValue),
-    dialog = null,
-)
+//internal fun SimulationControlsState.withEventRateSliderValue(target: Int): SimulationControlsState = copy(
+//    eventRateSliderValue = target.coerceIn(MIN_SIMULATION_EVENTS_PER_SECOND, simulationEventThrottling.value),
+//    dialog = null,
+//)
 
 internal fun AlchemistUiState.withSelection(nodeIds: List<Int>): AlchemistUiState {
     val selectedIds = scene.sanitizeSelection(nodeIds)

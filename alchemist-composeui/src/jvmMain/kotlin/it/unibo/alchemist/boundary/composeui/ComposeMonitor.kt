@@ -16,8 +16,15 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_MAX_UI_FPS
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
 import it.unibo.alchemist.boundary.composeui.adapter.toSimulationStatus
 import it.unibo.alchemist.boundary.composeui.adapter.toViewport
+import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
+import it.unibo.alchemist.boundary.composeui.model.FullThrottle
+import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
+import it.unibo.alchemist.boundary.composeui.view.app
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
@@ -103,9 +110,12 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: In
 
     private fun throttleSimulation() {
         val controls = currentUiState.state.controls
-        val eventsPerSecond = controls.effectiveEventsPerSecond ?: run {
-            nextEventReleaseNs = 0L
-            return
+        val eventsPerSecond = when (val throttling = controls.simulationEventThrottling) {
+            is FullThrottle -> {
+                nextEventReleaseNs = 0
+                return
+            }
+            else -> throttling.value
         }
         val intervalNs = (1_000_000_000.0 / eventsPerSecond).roundToLong().coerceAtLeast(1L)
         val now = System.nanoTime()

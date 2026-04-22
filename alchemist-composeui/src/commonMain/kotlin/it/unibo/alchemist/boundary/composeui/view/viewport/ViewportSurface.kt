@@ -7,16 +7,14 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.composeui
+package it.unibo.alchemist.boundary.composeui.view.viewport
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -48,6 +46,25 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import it.unibo.alchemist.boundary.composeui.formatFixed
+import it.unibo.alchemist.boundary.composeui.model.AlchemistUiCallbacks
+import it.unibo.alchemist.boundary.composeui.model.ViewportScene
+import it.unibo.alchemist.boundary.composeui.view.theme.Background
+import it.unibo.alchemist.boundary.composeui.view.theme.BackgroundVariant
+import it.unibo.alchemist.boundary.composeui.view.theme.GridHorizontalDivisions
+import it.unibo.alchemist.boundary.composeui.view.theme.GridVerticalDivisions
+import it.unibo.alchemist.boundary.composeui.view.theme.LinkStrokeWidth
+import it.unibo.alchemist.boundary.composeui.view.theme.NodeHitRadius
+import it.unibo.alchemist.boundary.composeui.view.theme.NodeRadius
+import it.unibo.alchemist.boundary.composeui.view.theme.Outline
+import it.unibo.alchemist.boundary.composeui.view.theme.PrimaryAccent
+import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
+import it.unibo.alchemist.boundary.composeui.view.theme.SelectedNodeInnerRadius
+import it.unibo.alchemist.boundary.composeui.view.theme.SelectedNodeRadius
+import it.unibo.alchemist.boundary.composeui.view.theme.Surface
+import it.unibo.alchemist.boundary.composeui.view.theme.SurfaceStrong
+import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
+import it.unibo.alchemist.boundary.composeui.view.theme.lerp
 import kotlin.math.max
 import kotlin.math.min
 import kotlinx.coroutines.launch
@@ -146,7 +163,9 @@ internal fun ViewportSurface(
                                     node.copy(center = node.center.toScreenPosition(viewportSize, camera))
                                 }
                                 val selectedIds = mappedNodes
-                                    .filter { selectionNode -> createSelectionRect(anchor, current).contains(selectionNode.center) }
+                                    .filter { selectionNode ->
+                                        createSelectionRect(anchor, current).contains(selectionNode.center)
+                                    }
                                     .map { selectionNode -> selectionNode.node.id }
                                 coroutineScope.launch { callbacks.onNodesSelected(selectedIds) }
                             } else {

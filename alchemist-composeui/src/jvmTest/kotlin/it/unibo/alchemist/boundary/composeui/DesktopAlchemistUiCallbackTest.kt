@@ -9,6 +9,9 @@
 
 package it.unibo.alchemist.boundary.composeui
 
+import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
+import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
+import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.model.Actionable
@@ -16,7 +19,6 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.times.DoubleTime
 import java.util.Optional

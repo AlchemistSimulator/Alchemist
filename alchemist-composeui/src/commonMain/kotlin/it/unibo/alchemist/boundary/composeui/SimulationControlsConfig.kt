@@ -9,10 +9,9 @@
 
 package it.unibo.alchemist.boundary.composeui
 
-internal const val MIN_UI_FPS = 5
-internal const val DEFAULT_UI_FPS = 30
-internal const val DEFAULT_MAX_UI_FPS = 60
-internal const val MIN_SIMULATION_EVENTS_PER_SECOND = 1
-internal const val DEFAULT_MAX_SIMULATION_EVENTS_PER_SECOND = 120
-internal const val FULL_THROTTLE_LABEL = "Max"
-internal const val DISPLAYED_TIME_DECIMALS = 2
+object SimulationControlsConfig {
+    const val MIN_UI_FPS = 5
+    const val DEFAULT_UI_FPS = 30
+    const val DEFAULT_MAX_UI_FPS = 60
+    const val DISPLAYED_TIME_DECIMALS = 2
+}

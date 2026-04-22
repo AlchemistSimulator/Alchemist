@@ -1,4 +1,9 @@
-@file:Suppress("ktlint:standard:property-naming", "ktlint:standard:function-naming")
+@file:Suppress(
+    "ReturnCount",
+    "TopLevelPropertyNaming",
+    "ktlint:standard:property-naming",
+    "ktlint:standard:function-naming",
+)
 /*
  * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
@@ -8,10 +13,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.composeui
+package it.unibo.alchemist.boundary.composeui.view.viewport
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
+import it.unibo.alchemist.boundary.composeui.model.ViewportNode
+import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import kotlin.math.max
 import kotlin.math.min
 

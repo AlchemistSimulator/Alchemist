@@ -9,6 +9,12 @@
 
 package it.unibo.alchemist.boundary.composeui
 
+import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
+import it.unibo.alchemist.boundary.composeui.model.GroupInspectorState
+import it.unibo.alchemist.boundary.composeui.model.InfoField
+import it.unibo.alchemist.boundary.composeui.model.NodeInspectorState
+import it.unibo.alchemist.boundary.composeui.model.ViewportNode
+import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs

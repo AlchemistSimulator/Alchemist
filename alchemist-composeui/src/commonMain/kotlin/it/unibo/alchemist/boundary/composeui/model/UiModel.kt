@@ -9,9 +9,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.composeui
+package it.unibo.alchemist.boundary.composeui.model
 
 import androidx.compose.runtime.Immutable
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_MAX_UI_FPS
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_UI_FPS
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
 
 /**
  * High-level simulation status mirrored in the Compose UI.
@@ -114,34 +117,39 @@ data class SimulationControlsState(
     val fpsInput: String = DEFAULT_UI_FPS.toString(),
     val uiFps: Int = DEFAULT_UI_FPS,
     val maxUiFps: Int = DEFAULT_MAX_UI_FPS,
-    val eventRateSliderValue: Int = MIN_SIMULATION_EVENTS_PER_SECOND,
-    val maxEventRateSliderValue: Int = DEFAULT_MAX_SIMULATION_EVENTS_PER_SECOND,
+    val simulationEventThrottling: SimulationEventThrottling = FullThrottle,
+//    val eventRateSliderValue: Int = MIN_SIMULATION_EVENTS_PER_SECOND,
+//    val maxEventRateSliderValue: Int = MAX_SIMULATION_EVENTS_PER_SECOND,
     val dialog: ControlDialogState? = null,
 ) {
     init {
         require(maxUiFps >= MIN_UI_FPS) {
-            "Maximum UI fps must be at least $MIN_UI_FPS."
+            "Maximum UI fps must be at least ${MIN_UI_FPS}."
         }
         require(uiFps in MIN_UI_FPS..maxUiFps) {
-            "UI fps must remain within [$MIN_UI_FPS, $maxUiFps]."
+            "UI fps must remain within [${MIN_UI_FPS}, $maxUiFps]."
         }
-        require(eventRateSliderValue in MIN_SIMULATION_EVENTS_PER_SECOND..maxEventRateSliderValue) {
-            "Slider value must remain within [$MIN_SIMULATION_EVENTS_PER_SECOND, $maxEventRateSliderValue]."
-        }
-        require(maxEventRateSliderValue > MIN_SIMULATION_EVENTS_PER_SECOND) {
-            "Maximum slider value must exceed the minimum event rate."
-        }
+//        require(eventRateSliderValue in MIN_SIMULATION_EVENTS_PER_SECOND..maxEventRateSliderValue) {
+//            "Slider value must remain within [${MIN_SIMULATION_EVENTS_PER_SECOND}, $maxEventRateSliderValue]."
+//        }
+//        require(maxEventRateSliderValue > MIN_SIMULATION_EVENTS_PER_SECOND) {
+//            "Maximum slider value must exceed the minimum event rate."
+//        }
     }
 
     val canPlay: Boolean = status == SimulationStatus.READY || status == SimulationStatus.PAUSED
     val canPause: Boolean = status == SimulationStatus.RUNNING
     val canStep: Boolean = status == SimulationStatus.READY || status == SimulationStatus.PAUSED
     val statusLabel: String = status.name.lowercase().replaceFirstChar(Char::uppercaseChar)
-    val isFullThrottle: Boolean = eventRateSliderValue == maxEventRateSliderValue
-    val effectiveEventsPerSecond: Int? = eventRateSliderValue.takeUnless { isFullThrottle }
-    val eventRateLabel: String =
-        effectiveEventsPerSecond?.let { "$it evt/s" } ?: FULL_THROTTLE_LABEL
-    val fpsRangeLabel: String = "$MIN_UI_FPS-$maxUiFps FPS"
+    val isFullThrottle: Boolean = simulationEventThrottling is FullThrottle
+//    val effectiveEventsPerSecond: Int? = eventRateSliderValue.takeUnless { isFullThrottle }
+//    val eventRateLabel: String =
+//        effectiveEventsPerSecond?.let { "$it evt/s" } ?: "∞"
+    val fpsRangeLabel: String = "${MIN_UI_FPS}-$maxUiFps FPS"
+
+    fun updateEventThrottling(newValue: Int): SimulationControlsState = copy(
+        simulationEventThrottling = simulationEventThrottling.update(newValue),
+    )
 }
 
 /**

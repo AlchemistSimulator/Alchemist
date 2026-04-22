@@ -9,11 +9,11 @@
 
 package it.unibo.alchemist.boundary.composeui.adapter
 
-import it.unibo.alchemist.boundary.composeui.InfoField
-import it.unibo.alchemist.boundary.composeui.SimulationStatus
-import it.unibo.alchemist.boundary.composeui.ViewportEdge
-import it.unibo.alchemist.boundary.composeui.ViewportNode
-import it.unibo.alchemist.boundary.composeui.ViewportScene
+import it.unibo.alchemist.boundary.composeui.model.InfoField
+import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
+import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
+import it.unibo.alchemist.boundary.composeui.model.ViewportNode
+import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.model.Environment

@@ -179,7 +179,7 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
                     SimulationPrimaryPane(
                         scene = state.scene,
                         controls = state.controls,
-                        selectedNodeId = state.selectedNodeId,
+                        selectedNodeIds = state.selectedNodeIds,
                         callbacks = callbacks,
                         dockWidthFraction = 1f,
                         spacing = layoutSpacing,
@@ -216,7 +216,7 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
                     SimulationPrimaryPane(
                         scene = state.scene,
                         controls = state.controls,
-                        selectedNodeId = state.selectedNodeId,
+                        selectedNodeIds = state.selectedNodeIds,
                         callbacks = callbacks,
                         dockWidthFraction = 0.84f,
                         spacing = layoutSpacing,

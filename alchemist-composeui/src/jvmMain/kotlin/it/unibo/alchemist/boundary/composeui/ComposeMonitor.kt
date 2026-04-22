@@ -92,7 +92,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: In
                     step = step,
                     status = environment.simulation.toSimulationStatus(),
                 ),
-            )
+            ).withSelection(it.selectedNodeIds)
         }
     }
 

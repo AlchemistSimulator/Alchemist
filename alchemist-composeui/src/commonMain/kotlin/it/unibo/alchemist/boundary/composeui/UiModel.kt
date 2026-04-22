@@ -145,7 +145,13 @@ data class SimulationControlsState(
 }
 
 /**
- * State for the node inspector panel.
+ * State for the right-side inspector panel.
+ */
+@Immutable
+sealed interface InspectorState
+
+/**
+ * Inspector state for a single node.
  */
 @Immutable
 data class NodeInspectorState(
@@ -155,7 +161,19 @@ data class NodeInspectorState(
     val position: List<InfoField>,
     val concentrations: List<InfoField>,
     val metadata: List<InfoField>,
-)
+) : InspectorState
+
+/**
+ * Inspector state for a group of selected nodes.
+ */
+@Immutable
+data class GroupInspectorState(
+    val nodeIds: List<Int>,
+    val title: String = "Selected Nodes",
+    val subtitle: String = "${nodeIds.size} nodes selected",
+    val position: List<InfoField>,
+    val concentrations: List<InfoField>,
+) : InspectorState
 
 /**
  * Top-level state consumed by the Compose UI shell.
@@ -164,8 +182,8 @@ data class NodeInspectorState(
 data class AlchemistUiState(
     val scene: ViewportScene = ViewportScene(),
     val controls: SimulationControlsState = SimulationControlsState(),
-    val selectedNodeId: Int? = null,
-    val inspector: NodeInspectorState? = null,
+    val selectedNodeIds: List<Int> = emptyList(),
+    val inspector: InspectorState? = null,
 )
 
 /**
@@ -193,6 +211,8 @@ interface AlchemistUiCallbacks {
     suspend fun onEventRateChanged(value: Float)
 
     suspend fun onNodeSelected(nodeId: Int)
+
+    suspend fun onNodesSelected(nodeIds: List<Int>)
 
     suspend fun onInspectorDismiss()
 
@@ -226,6 +246,8 @@ object NoOpUiCallbacks : AlchemistUiCallbacks {
     override suspend fun onEventRateChanged(value: Float) = Unit
 
     override suspend fun onNodeSelected(nodeId: Int) = Unit
+
+    override suspend fun onNodesSelected(nodeIds: List<Int>) = Unit
 
     override suspend fun onInspectorDismiss() = Unit
 

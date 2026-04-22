@@ -125,20 +125,19 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
 
     override suspend fun onNodeSelected(nodeId: Int) {
         updateState { currentState ->
-            val node = currentState.scene.nodes.firstOrNull { it.id == nodeId } ?: return@updateState currentState
-            currentState.copy(
-                selectedNodeId = nodeId,
-                inspector = node.toInspectorState(),
-            )
+            currentState.withSelection(listOf(nodeId))
+        }
+    }
+
+    override suspend fun onNodesSelected(nodeIds: List<Int>) {
+        updateState { currentState ->
+            currentState.withSelection(nodeIds)
         }
     }
 
     override suspend fun onInspectorDismiss() {
         updateState {
-            it.copy(
-                selectedNodeId = null,
-                inspector = null,
-            )
+            it.withSelection(emptyList())
         }
     }
 

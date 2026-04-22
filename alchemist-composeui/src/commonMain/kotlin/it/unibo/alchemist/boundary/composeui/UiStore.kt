@@ -149,18 +149,20 @@ fun demoController(): ComposeUiController {
             }
 
             override suspend fun onNodeSelected(nodeId: Int) {
-                val node = store.state.scene.nodes.firstOrNull { it.id == nodeId } ?: return
                 store.update {
-                    it.copy(
-                        selectedNodeId = nodeId,
-                        inspector = node.toInspectorState(),
-                    )
+                    it.withSelection(listOf(nodeId))
+                }
+            }
+
+            override suspend fun onNodesSelected(nodeIds: List<Int>) {
+                store.update {
+                    it.withSelection(nodeIds)
                 }
             }
 
             override suspend fun onInspectorDismiss() {
                 store.update {
-                    it.copy(selectedNodeId = null, inspector = null)
+                    it.withSelection(emptyList())
                 }
             }
 
@@ -322,6 +324,32 @@ internal fun SimulationControlsState.withEventRateSliderValue(target: Int): Simu
     dialog = null,
 )
 
+internal fun AlchemistUiState.withSelection(nodeIds: List<Int>): AlchemistUiState {
+    val selectedIds = scene.sanitizeSelection(nodeIds)
+    return copy(
+        selectedNodeIds = selectedIds,
+        inspector = scene.toInspectorState(selectedIds),
+    )
+}
+
+internal fun ViewportScene.sanitizeSelection(nodeIds: List<Int>): List<Int> {
+    val availableNodeIds = nodes.mapTo(linkedSetOf()) { it.id }
+    return nodeIds.distinct().filter(availableNodeIds::contains)
+}
+
+internal fun ViewportScene.toInspectorState(selectedNodeIds: List<Int>): InspectorState? {
+    if (selectedNodeIds.isEmpty()) {
+        return null
+    }
+    val selectedNodesById = nodes.associateBy { it.id }
+    val selectedNodes = selectedNodeIds.mapNotNull(selectedNodesById::get)
+    return when (selectedNodes.size) {
+        0 -> null
+        1 -> selectedNodes.single().toInspectorState()
+        else -> selectedNodes.toGroupInspectorState()
+    }
+}
+
 internal fun ViewportNode.toInspectorState(): NodeInspectorState = NodeInspectorState(
     nodeId = id,
     subtitle = "Live node snapshot",
@@ -331,6 +359,29 @@ internal fun ViewportNode.toInspectorState(): NodeInspectorState = NodeInspector
     concentrations = concentrations,
     metadata = metadata,
 )
+
+internal fun List<ViewportNode>.toGroupInspectorState(): GroupInspectorState {
+    val xs = map { it.coordinates[0] }
+    val ys = map { it.coordinates[1] }
+    val moleculeNames = flatMap { node -> node.concentrations.map(InfoField::label) }.distinct().sorted()
+    val concentrations = moleculeNames.map { molecule ->
+        val values = map { node -> node.concentrations.firstOrNull { it.label == molecule }?.value }
+        val sharedValue = values.firstOrNull()?.takeIf { firstValue ->
+            values.all { it == firstValue }
+        }
+        InfoField(molecule, sharedValue ?: MIXED_CONCENTRATION_PLACEHOLDER)
+    }
+    return GroupInspectorState(
+        nodeIds = map(ViewportNode::id),
+        position = listOf(
+            InfoField("Min X", xs.minOrNull()?.formatFixed(3).orEmpty()),
+            InfoField("Max X", xs.maxOrNull()?.formatFixed(3).orEmpty()),
+            InfoField("Min Y", ys.minOrNull()?.formatFixed(3).orEmpty()),
+            InfoField("Max Y", ys.maxOrNull()?.formatFixed(3).orEmpty()),
+        ),
+        concentrations = concentrations,
+    )
+}
 
 internal fun Double.formatFixed(decimals: Int): String {
     val safeDecimals = decimals.coerceAtLeast(0)
@@ -350,3 +401,4 @@ internal fun Double.formatFixed(decimals: Int): String {
 private fun formatDemoTime(step: Long): String = (step / 10.0).formatFixed(2)
 
 private const val DEMO_TIME_SCALE = 10.0
+internal const val MIXED_CONCENTRATION_PLACEHOLDER = "Mixed"

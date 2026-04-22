@@ -61,12 +61,12 @@ class SimulationControlsStateTest {
     @Test
     fun `demo controller toggles links without changing selection`() {
         val controller = demoController()
-        controller.store.update { it.copy(selectedNodeId = 3) }
+        controller.store.update { it.withSelection(listOf(3)) }
 
         runSuspend { controller.callbacks.onToggleLinks() }
 
         assertTrue(controller.store.state.scene.showLinks)
-        assertEquals(3, controller.store.state.selectedNodeId)
+        assertEquals(listOf(3), controller.store.state.selectedNodeIds)
     }
 
     @Test
@@ -128,6 +128,20 @@ class SimulationControlsStateTest {
 
         assertEquals(SimulationStatus.RUNNING, controller.store.state.controls.status)
         assertEquals(99L, controller.store.state.controls.step)
+    }
+
+    @Test
+    fun `demo controller builds a group inspector for multi selection`() {
+        val controller = demoController()
+
+        runSuspend {
+            controller.callbacks.onNodesSelected(listOf(1, 3))
+        }
+
+        assertEquals(listOf(1, 3), controller.store.state.selectedNodeIds)
+        val inspector = controller.store.state.inspector as GroupInspectorState
+        assertEquals(listOf(1, 3), inspector.nodeIds)
+        assertEquals("Mixed", inspector.concentrations.first { it.label == "signal" }.value)
     }
 }
 

@@ -81,7 +81,7 @@ import kotlinx.coroutines.launch
 internal fun SimulationPrimaryPane(
     scene: ViewportScene,
     controls: SimulationControlsState,
-    selectedNodeId: Int?,
+    selectedNodeIds: List<Int>,
     callbacks: AlchemistUiCallbacks,
     dockWidthFraction: Float,
     spacing: androidx.compose.ui.unit.Dp,
@@ -93,7 +93,7 @@ internal fun SimulationPrimaryPane(
     ) {
         ViewportSurface(
             scene = scene,
-            selectedNodeId = selectedNodeId,
+            selectedNodeIds = selectedNodeIds,
             callbacks = callbacks,
             modifier = Modifier
                 .fillMaxWidth()

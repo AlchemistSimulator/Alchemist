@@ -73,7 +73,7 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
         environment: Environment<T, P>,
         wormhole: Wormhole2D<P>,
     ) {
-        val nodePosition: P = environment.getPosition(node)
+        val nodePosition: P = environment.getCurrentPosition(node)
         val viewPoint: Point = wormhole.getViewPoint(nodePosition)
         val (x, y) = Pair(viewPoint.x, viewPoint.y)
         drawDirectedNode(g, node, x, y, environment, wormhole)
@@ -139,7 +139,7 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
         ?.toDouble()
         ?.let {
             Color.getHSBColor(
-                (it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.toDouble())).toFloat(),
+                (it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.current.toDouble())).toFloat(),
                 1f,
                 1f,
             )
@@ -156,7 +156,7 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
         if (roundedTime >= lastDraw) {
             lastDrawMemory = lastDrawMemory + (node.id to lastDraw + timespan.`val`)
             val updatedPositions =
-                (positions + (environment.getPosition(node) to rotation(node)))
+                (positions + (environment.getCurrentPosition(node) to rotation(node)))
                     .takeLast(MAX_SNAPSHOT_LENGTH)
             positionsMemory = positionsMemory +
                 (node.id to updatedPositions)

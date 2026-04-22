@@ -9,11 +9,15 @@
 
 @file:Suppress("ktlint:standard:property-naming", "ktlint:standard:function-naming")
 
-package it.unibo.alchemist.boundary.composeui
+package it.unibo.alchemist.boundary.composeui.view.viewport
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
+import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
+import it.unibo.alchemist.boundary.composeui.model.ViewportNode
+import it.unibo.alchemist.boundary.composeui.model.ViewportScene
+import it.unibo.alchemist.boundary.composeui.view.theme.ZoomStep
 
 internal fun renderNodes(
     scene: ViewportScene,

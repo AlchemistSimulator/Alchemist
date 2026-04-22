@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.composeui
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
+import it.unibo.alchemist.boundary.composeui.view.app
 import kotlinx.browser.document
 
 /**

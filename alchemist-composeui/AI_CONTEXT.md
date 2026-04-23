@@ -7,6 +7,7 @@
 - inspect a running simulation visually,
 - control playback with play/pause/step, jump, FPS, and pacing actions,
 - inspect nodes in detail,
+- reposition selected nodes with `Ctrl + left drag`,
 - toggle link visibility,
 - run the same UI shell across JVM desktop and browser targets.
 
@@ -17,9 +18,10 @@ This document is intentionally **intent-driven**: it describes why the module ex
 1. Render a live simulation viewport with nodes and optional edges.
 2. Expose transport controls plus direct jump and pacing controls.
 3. Show a node inspector when a node is selected.
-4. Keep the UI state reactive and thread-safe.
-5. Bridge the simulation engine to the Compose UI on JVM.
-6. Provide a demo/fallback shell for non-simulation entrypoints.
+4. Move selected nodes from the viewport and commit the new positions to the simulator.
+5. Keep the UI state reactive and thread-safe.
+6. Bridge the simulation engine to the Compose UI on JVM.
+7. Provide a demo/fallback shell for non-simulation entrypoints.
 
 ## Current architecture
 
@@ -107,6 +109,10 @@ Defined in `adapter/AlchemistNodeAdapter.kt` and used by `ComposeMonitor.kt`:
 
 - Left-click a node to inspect it.
 - Click empty space to dismiss the inspector.
+- Drag a selection box with left-drag.
+- Hold `Ctrl` and left-drag from a selected node to translate the full selection while preserving inter-node distances.
+- `Ctrl + left drag` commits the new node positions to the simulator only when the pointer is released.
+- If `Ctrl + left drag` starts on empty space or an unselected node, keep the normal click/selection behavior.
 - Middle-drag to pan the viewport.
 - Wheel to zoom.
 - Toggle links from the summary rail.
@@ -128,7 +134,7 @@ Defined in `adapter/AlchemistNodeAdapter.kt` and used by `ComposeMonitor.kt`:
 
 3. **Viewport projection must remain stable enough for inspection**
    - `ViewportProjection` fixes the mapping once a valid viewport exists.
-   - The selection and zoom/pan logic assume a consistent mapping between world and screen space.
+   - The selection, drag translation, and zoom/pan logic assume a consistent mapping between world and screen space.
 
 4. **Live monitor updates must preserve UI-only toggles**
    - `ComposeMonitor.updateUiState` intentionally preserves `scene.showLinks` while refreshing the scene from the simulation.
@@ -139,6 +145,11 @@ Defined in `adapter/AlchemistNodeAdapter.kt` and used by `ComposeMonitor.kt`:
 
 6. **Demo state should remain usable without a live simulation**
    - `demoController()` is the browser-friendly fallback and should continue to demonstrate the UI shell.
+
+7. **Node dragging is preview-first and simulator-authoritative**
+   - The viewport may preview translated node positions locally during `Ctrl + drag`.
+   - JVM simulator state must be mutated only on drag release, then the UI must resync from the environment snapshot.
+   - Only X/Y are translated from the viewport gesture; any higher coordinates must remain unchanged.
 
 7. **Small composables should stay small**
    - Maintain the current composition pattern: one responsibility per file when possible.
@@ -161,6 +172,7 @@ Defined in `adapter/AlchemistNodeAdapter.kt` and used by `ComposeMonitor.kt`:
 - Uses the simulation object as the source of truth for play/pause/step/jump state.
 - Validates `To Time`, `To Step`, and `FPS` submissions before mutating simulator state.
 - Restores running state after a successful jump when the simulation was already running.
+- Commits dragged-node positions through `simulation.schedule { ... }`, `environment.moveNodeToPosition(...)`, and `simulation.nodeMoved(...)`.
 
 ### `ViewportSurface`
 
@@ -168,6 +180,8 @@ Defined in `adapter/AlchemistNodeAdapter.kt` and used by `ComposeMonitor.kt`:
 - Uses projection data derived from the current scene.
 - Keeps the first valid projection fixed until the layout becomes valid.
 - Requires node selection hit tests to respect camera zoom.
+- Supports selection-box drag and `Ctrl + left drag` translation for already selected nodes.
+- Must preserve existing selection behavior when a `Ctrl` gesture does not start on a selected node.
 
 ### `demoController()`
 
@@ -184,9 +198,10 @@ When changing this module, preserve the following:
 - Preserve browser entrypoint usability.
 - Preserve the JVM monitor contract with `OutputMonitor`.
 - Preserve node inspection, transport controls, and link toggling.
+- Preserve selection-box, pan, and zoom interactions while adding node dragging.
 - Preserve jump validation semantics: backward `To Time` / `To Step` targets must fail with a popup.
 - Preserve the constants governing FPS and event-rate ranges.
-- Add or update tests when changing projection math, selection logic, or state transitions.
+- Add or update tests when changing projection math, selection logic, node dragging, or state transitions.
 
 ## Preferred change strategy
 

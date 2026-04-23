@@ -11,9 +11,11 @@ package it.unibo.alchemist.boundary.composeui
 
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
 import it.unibo.alchemist.boundary.composeui.adapter.toSimulationStatus
+import it.unibo.alchemist.boundary.composeui.adapter.toViewport
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.ControlDialogState
+import it.unibo.alchemist.boundary.composeui.model.NodePositionUpdate
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.model.Position
@@ -22,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
+import kotlin.runCatching
 
 class DesktopAlchemistUiCallback<T, P : Position<P>>(
     private val simulation: Simulation<T, P>,
@@ -139,6 +142,31 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
         }
     }
 
+    override suspend fun onNodesMoved(nodePositions: List<NodePositionUpdate>) {
+        if (nodePositions.isEmpty()) {
+            return
+        }
+        val environment = simulation.environment
+        val completion = java.util.concurrent.CompletableFuture<Unit>()
+        simulation.schedule {
+            runCatching {
+                nodePositions.forEach { nodePosition ->
+                    val node = environment.getNodeByID(nodePosition.nodeId)
+                    val newPosition = environment.makePosition(nodePosition.coordinates)
+                    environment.moveNodeToPosition(node, newPosition)
+                    simulation.nodeMoved(node)
+                }
+            }.onSuccess {
+                completion.complete(Unit)
+            }.onFailure { error ->
+                completion.completeExceptionally(error)
+                throw error
+            }
+        }
+        completion.await()
+        syncSimulationState(refreshScene = true)
+    }
+
     override suspend fun onInspectorDismiss() {
         updateState {
             it.withSelection(emptyList())
@@ -165,16 +193,22 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
         }
     }
 
-    private suspend fun syncSimulationState() {
+    private suspend fun syncSimulationState(refreshScene: Boolean = false) {
         updateState {
+            val nextScene = if (refreshScene) {
+                simulation.environment.toViewport().copy(showLinks = it.scene.showLinks)
+            } else {
+                it.scene
+            }
             it.copy(
+                scene = nextScene,
                 controls = it.controls.copy(
                     status = simulation.toSimulationStatus(),
                     timeLabel = simulation.time.toDouble().formatFixed(DISPLAYED_TIME_DECIMALS),
                     step = simulation.step,
                     dialog = null,
                 ),
-            )
+            ).withSelection(it.selectedNodeIds)
         }
     }
 

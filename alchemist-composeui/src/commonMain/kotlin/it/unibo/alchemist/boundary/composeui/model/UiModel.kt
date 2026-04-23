@@ -60,6 +60,18 @@ data class ViewportNode(
 }
 
 /**
+ * Final node coordinates produced by a viewport drag interaction.
+ */
+@Immutable
+data class NodePositionUpdate(val nodeId: Int, val coordinates: List<Double>) {
+    init {
+        require(coordinates.size >= 2) {
+            "Moved nodes require at least two coordinates."
+        }
+    }
+}
+
+/**
  * An undirected edge projected in the central viewport.
  */
 @Immutable
@@ -222,6 +234,8 @@ interface AlchemistUiCallbacks {
 
     suspend fun onNodesSelected(nodeIds: List<Int>)
 
+    suspend fun onNodesMoved(nodePositions: List<NodePositionUpdate>)
+
     suspend fun onInspectorDismiss()
 
     suspend fun onToggleLinks()
@@ -256,6 +270,8 @@ object NoOpUiCallbacks : AlchemistUiCallbacks {
     override suspend fun onNodeSelected(nodeId: Int) = Unit
 
     override suspend fun onNodesSelected(nodeIds: List<Int>) = Unit
+
+    override suspend fun onNodesMoved(nodePositions: List<NodePositionUpdate>) = Unit
 
     override suspend fun onInspectorDismiss() = Unit
 

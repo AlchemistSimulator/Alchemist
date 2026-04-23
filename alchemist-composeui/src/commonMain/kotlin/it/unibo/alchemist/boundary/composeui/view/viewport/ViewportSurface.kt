@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.isCtrlPressed
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -47,6 +48,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.formatFixed
+import it.unibo.alchemist.boundary.composeui.toPositionUpdate
+import it.unibo.alchemist.boundary.composeui.translateSelectedNodes
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import it.unibo.alchemist.boundary.composeui.view.theme.Background
@@ -81,8 +84,11 @@ internal fun ViewportSurface(
     var camera by remember { mutableStateOf(ViewportCameraState()) }
     var fixedProjection by remember { mutableStateOf<ViewportProjection?>(null) }
     var rightDragAnchor by remember { mutableStateOf<Offset?>(null) }
-    var primaryDragAnchor by remember { mutableStateOf<Offset?>(null) }
-    var primaryDragCurrent by remember { mutableStateOf<Offset?>(null) }
+    var selectionDragAnchor by remember { mutableStateOf<Offset?>(null) }
+    var selectionDragCurrent by remember { mutableStateOf<Offset?>(null) }
+    var nodeDragAnchor by remember { mutableStateOf<Offset?>(null) }
+    var nodeDragCurrent by remember { mutableStateOf<Offset?>(null) }
+    var draggedNodeIds by remember { mutableStateOf<List<Int>>(emptyList()) }
     val candidateProjection = remember(scene.nodes, viewportSize) { scene.createViewportProjection(viewportSize) }
     val projection = fixedProjection ?: candidateProjection
     LaunchedEffect(candidateProjection) {
@@ -90,12 +96,22 @@ internal fun ViewportSurface(
             fixedProjection = candidateProjection
         }
     }
-    val baseNodes = remember(scene.nodes, viewportSize, projection) { renderNodes(scene, viewportSize, projection) }
+    val previewScene = remember(scene, draggedNodeIds, nodeDragAnchor, nodeDragCurrent, viewportSize, camera, projection) {
+        val anchor = nodeDragAnchor
+        val current = nodeDragCurrent
+        if (anchor == null || current == null || projection == null) {
+            scene
+        } else {
+            val (deltaX, deltaY) = screenDeltaToWorldDelta(anchor, current, viewportSize, camera, projection)
+            scene.translateSelectedNodes(draggedNodeIds, deltaX, deltaY)
+        }
+    }
+    val baseNodes = remember(previewScene.nodes, viewportSize, projection) { renderNodes(previewScene, viewportSize, projection) }
     val density = androidx.compose.ui.platform.LocalDensity.current
     val tapThresholdPx = with(density) { NodeHitRadius.dp.toPx() }
     val dragThresholdPx = with(density) { 6.dp.toPx() }
-    val selectionRect = primaryDragAnchor?.let { anchor ->
-        val current = primaryDragCurrent ?: anchor
+    val selectionRect = selectionDragAnchor?.let { anchor ->
+        val current = selectionDragCurrent ?: anchor
         createSelectionRect(anchor, current).takeIf { anchor.distanceTo(current) >= dragThresholdPx }
     }
     Surface(
@@ -129,12 +145,37 @@ internal fun ViewportSurface(
                         val change = event.changes.firstOrNull() ?: return@onPointerEvent
                         if (event.buttons.isSecondaryPressed) {
                             rightDragAnchor = change.position
-                            primaryDragAnchor = null
-                            primaryDragCurrent = null
+                            selectionDragAnchor = null
+                            selectionDragCurrent = null
+                            nodeDragAnchor = null
+                            nodeDragCurrent = null
+                            draggedNodeIds = emptyList()
                         } else {
                             rightDragAnchor = null
-                            primaryDragAnchor = change.position
-                            primaryDragCurrent = change.position
+                            val hit = findHitNode(
+                                baseNodes = baseNodes,
+                                viewportSize = viewportSize,
+                                camera = camera,
+                                tapOffset = change.position,
+                                tapThresholdPx = tapThresholdPx,
+                            )
+                            val shouldDragSelection =
+                                event.keyboardModifiers.isCtrlPressed &&
+                                    hit != null &&
+                                    hit.node.id in selectedNodeIds
+                            if (shouldDragSelection) {
+                                selectionDragAnchor = null
+                                selectionDragCurrent = null
+                                nodeDragAnchor = change.position
+                                nodeDragCurrent = change.position
+                                draggedNodeIds = selectedNodeIds
+                            } else {
+                                nodeDragAnchor = null
+                                nodeDragCurrent = null
+                                draggedNodeIds = emptyList()
+                                selectionDragAnchor = change.position
+                                selectionDragCurrent = change.position
+                            }
                         }
                     }
                     .onPointerEvent(PointerEventType.Move) { event ->
@@ -148,45 +189,72 @@ internal fun ViewportSurface(
                             rightDragAnchor = change.position
                         } else {
                             rightDragAnchor = null
-                            if (primaryDragAnchor != null) {
-                                primaryDragCurrent = change.position
+                            if (nodeDragAnchor != null) {
+                                nodeDragCurrent = change.position
+                            } else if (selectionDragAnchor != null) {
+                                selectionDragCurrent = change.position
                             }
                         }
                     }
                     .onPointerEvent(PointerEventType.Release) { event ->
                         val releasePosition = event.changes.firstOrNull()?.position
-                        val anchor = primaryDragAnchor
-                        val current = primaryDragCurrent ?: releasePosition
-                        if (anchor != null && current != null) {
-                            if (anchor.distanceTo(current) >= dragThresholdPx) {
-                                val mappedNodes = baseNodes.map { node ->
-                                    node.copy(center = node.center.toScreenPosition(viewportSize, camera))
-                                }
-                                val selectedIds = mappedNodes
-                                    .filter { selectionNode ->
-                                        createSelectionRect(anchor, current).contains(selectionNode.center)
-                                    }
-                                    .map { selectionNode -> selectionNode.node.id }
-                                coroutineScope.launch { callbacks.onNodesSelected(selectedIds) }
-                            } else {
-                                val hit = findHitNode(
-                                    baseNodes = baseNodes,
-                                    viewportSize = viewportSize,
-                                    camera = camera,
-                                    tapOffset = current,
-                                    tapThresholdPx = tapThresholdPx,
+                        val moveAnchor = nodeDragAnchor
+                        val moveCurrent = nodeDragCurrent ?: releasePosition
+                        if (moveAnchor != null && moveCurrent != null) {
+                            if (moveAnchor.distanceTo(moveCurrent) >= dragThresholdPx && projection != null) {
+                                val (deltaX, deltaY) = screenDeltaToWorldDelta(
+                                    moveAnchor,
+                                    moveCurrent,
+                                    viewportSize,
+                                    camera,
+                                    projection,
                                 )
-                                coroutineScope.launch {
-                                    if (hit != null) {
-                                        callbacks.onNodeSelected(hit.node.id)
-                                    } else {
-                                        callbacks.onInspectorDismiss()
+                                val movedNodes = scene
+                                    .translateSelectedNodes(draggedNodeIds, deltaX, deltaY)
+                                    .nodes
+                                    .filter { it.id in draggedNodeIds }
+                                    .map { it.toPositionUpdate() }
+                                if (movedNodes.isNotEmpty()) {
+                                    coroutineScope.launch { callbacks.onNodesMoved(movedNodes) }
+                                }
+                            }
+                        } else {
+                            val anchor = selectionDragAnchor
+                            val current = selectionDragCurrent ?: releasePosition
+                            if (anchor != null && current != null) {
+                                if (anchor.distanceTo(current) >= dragThresholdPx) {
+                                    val mappedNodes = baseNodes.map { node ->
+                                        node.copy(center = node.center.toScreenPosition(viewportSize, camera))
+                                    }
+                                    val selectedIds = mappedNodes
+                                        .filter { selectionNode ->
+                                            createSelectionRect(anchor, current).contains(selectionNode.center)
+                                        }
+                                        .map { selectionNode -> selectionNode.node.id }
+                                    coroutineScope.launch { callbacks.onNodesSelected(selectedIds) }
+                                } else {
+                                    val hit = findHitNode(
+                                        baseNodes = baseNodes,
+                                        viewportSize = viewportSize,
+                                        camera = camera,
+                                        tapOffset = current,
+                                        tapThresholdPx = tapThresholdPx,
+                                    )
+                                    coroutineScope.launch {
+                                        if (hit != null) {
+                                            callbacks.onNodeSelected(hit.node.id)
+                                        } else {
+                                            callbacks.onInspectorDismiss()
+                                        }
                                     }
                                 }
                             }
                         }
-                        primaryDragAnchor = null
-                        primaryDragCurrent = null
+                        selectionDragAnchor = null
+                        selectionDragCurrent = null
+                        nodeDragAnchor = null
+                        nodeDragCurrent = null
+                        draggedNodeIds = emptyList()
                         rightDragAnchor = null
                     }
                     .onPointerEvent(PointerEventType.Scroll) { event ->
@@ -213,9 +281,9 @@ internal fun ViewportSurface(
                 val mappedNodes = baseNodes.map { node ->
                     node.copy(center = node.center.toScreenPosition(viewportSize, currentCamera))
                 }
-                val mappedEdges = renderEdges(scene.edges, mappedNodes)
+                val mappedEdges = renderEdges(previewScene.edges, mappedNodes)
 
-                if (scene.showLinks) {
+                if (previewScene.showLinks) {
                     mappedEdges.forEach { edge ->
                         drawLine(
                             color = Outline.copy(alpha = 0.42f),
@@ -304,7 +372,7 @@ internal fun ViewportSurface(
                     text = if (scene.nodes.isEmpty()) {
                         "No nodes to display"
                     } else {
-                        "Click to inspect · drag to select · right-drag to pan · wheel to zoom"
+                        "Click to inspect · drag to select · Ctrl-drag selected nodes · right-drag to pan · wheel to zoom"
                     },
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
                     style = MaterialTheme.typography.caption,
@@ -476,4 +544,25 @@ private fun findHitNode(
     return baseNodes
         .minByOrNull { node -> node.center.distanceTo(tapInBaseSpace) }
         ?.takeIf { node -> node.center.distanceTo(tapInBaseSpace) <= tapThresholdPx / camera.zoom }
+}
+
+private fun screenDeltaToWorldDelta(
+    anchor: Offset,
+    current: Offset,
+    viewportSize: IntSize,
+    camera: ViewportCameraState,
+    projection: ViewportProjection,
+): Pair<Double, Double> {
+    val anchorInBaseSpace = anchor
+        .toWorldPosition(viewportSize, camera)
+        .toScreenPosition(viewportSize, ViewportCameraState())
+    val currentInBaseSpace = current
+        .toWorldPosition(viewportSize, camera)
+        .toScreenPosition(viewportSize, ViewportCameraState())
+    val baseDelta = currentInBaseSpace - anchorInBaseSpace
+    return (
+        baseDelta.x / projection.pixelsPerUnit
+    ).toDouble() to (
+        -baseDelta.y / projection.pixelsPerUnit
+    ).toDouble()
 }

@@ -19,6 +19,7 @@ import it.unibo.alchemist.boundary.composeui.model.ControlDialogState
 import it.unibo.alchemist.boundary.composeui.model.GroupInspectorState
 import it.unibo.alchemist.boundary.composeui.model.InfoField
 import it.unibo.alchemist.boundary.composeui.model.InspectorState
+import it.unibo.alchemist.boundary.composeui.model.NodePositionUpdate
 import it.unibo.alchemist.boundary.composeui.model.NodeInspectorState
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.SimulationProgress
@@ -173,6 +174,14 @@ fun demoController(): ComposeUiController {
             override suspend fun onNodesSelected(nodeIds: List<Int>) {
                 store.update {
                     it.withSelection(nodeIds)
+                }
+            }
+
+            override suspend fun onNodesMoved(nodePositions: List<NodePositionUpdate>) {
+                store.update { currentState ->
+                    currentState
+                        .copy(scene = currentState.scene.withMovedNodes(nodePositions))
+                        .withSelection(currentState.selectedNodeIds)
                 }
             }
 
@@ -353,6 +362,33 @@ internal fun ViewportScene.sanitizeSelection(nodeIds: List<Int>): List<Int> {
     return nodeIds.distinct().filter(availableNodeIds::contains)
 }
 
+internal fun ViewportScene.withMovedNodes(nodePositions: List<NodePositionUpdate>): ViewportScene {
+    if (nodePositions.isEmpty()) {
+        return this
+    }
+    val coordinatesByNodeId = nodePositions.associate { it.nodeId to it.coordinates }
+    return copy(
+        nodes = nodes.map { node ->
+            coordinatesByNodeId[node.id]?.let(node::withCoordinates) ?: node
+        },
+    )
+}
+
+internal fun ViewportScene.translateSelectedNodes(
+    nodeIds: Collection<Int>,
+    deltaX: Double,
+    deltaY: Double,
+): ViewportScene {
+    if (nodeIds.isEmpty() || (deltaX == 0.0 && deltaY == 0.0)) {
+        return this
+    }
+    val selectedIds = nodeIds.toHashSet()
+    val translatedNodes = nodes.mapNotNull { node ->
+        node.takeIf { it.id in selectedIds }?.translate(deltaX, deltaY)?.toPositionUpdate()
+    }
+    return withMovedNodes(translatedNodes)
+}
+
 internal fun ViewportScene.toInspectorState(selectedNodeIds: List<Int>): InspectorState? {
     if (selectedNodeIds.isEmpty()) {
         return null
@@ -375,6 +411,20 @@ internal fun ViewportNode.toInspectorState(): NodeInspectorState = NodeInspector
     concentrations = concentrations,
     metadata = metadata,
 )
+
+internal fun ViewportNode.translate(deltaX: Double, deltaY: Double): ViewportNode = copy(
+    coordinates = coordinates.mapIndexed { index, coordinate ->
+        when (index) {
+            0 -> coordinate + deltaX
+            1 -> coordinate + deltaY
+            else -> coordinate
+        }
+    },
+)
+
+internal fun ViewportNode.withCoordinates(newCoordinates: List<Double>): ViewportNode = copy(coordinates = newCoordinates)
+
+internal fun ViewportNode.toPositionUpdate(): NodePositionUpdate = NodePositionUpdate(id, coordinates)
 
 internal fun List<ViewportNode>.toGroupInspectorState(): GroupInspectorState {
     val xs = map { it.coordinates[0] }

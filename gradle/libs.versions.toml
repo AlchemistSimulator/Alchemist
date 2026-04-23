@@ -191,7 +191,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.3.2"
-publishOnCentral = "org.danilopianini.publish-on-central:9.2.0"
+publishOnCentral = "org.danilopianini.publish-on-central:9.2.1"
 scalafmt = "cz.augi.gradle.scalafmt:1.21.5"
 shadowJar = "com.gradleup.shadow:9.4.1"
 taskTree = "com.dorongold.task-tree:4.0.1"

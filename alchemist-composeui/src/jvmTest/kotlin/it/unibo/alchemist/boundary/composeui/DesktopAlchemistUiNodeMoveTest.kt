@@ -50,6 +50,7 @@ class DesktopAlchemistUiNodeMoveTest {
         environment.addNode(firstNode, environment.makePosition(0.0, 0.0))
         environment.addNode(secondNode, environment.makePosition(2.0, 3.0))
         val simulation = RecordingMoveSimulation(environment)
+        environment.simulation = simulation
         val store = ComposeUiStateStore(
             AlchemistUiState(
                 scene = environment.toViewport(),

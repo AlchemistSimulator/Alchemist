@@ -154,7 +154,6 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
                     val node = environment.getNodeByID(nodePosition.nodeId)
                     val newPosition = environment.makePosition(nodePosition.coordinates)
                     environment.moveNodeToPosition(node, newPosition)
-                    simulation.nodeMoved(node)
                 }
             }.onSuccess {
                 completion.complete(Unit)

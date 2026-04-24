@@ -84,14 +84,38 @@ data class ViewportEdge(val fromNodeId: Int, val toNodeId: Int) {
 }
 
 /**
+ * The world-space bounds of the viewport scene.
+ */
+@Immutable
+data class ViewportWorldBounds(
+    val minX: Double,
+    val maxX: Double,
+    val minY: Double,
+    val maxY: Double,
+)
+
+/**
+ * Effective link rendering strategy used for the current scene snapshot.
+ */
+enum class LinkRenderMode {
+    FULL,
+    SAMPLED,
+    HIDDEN,
+}
+
+/**
  * State of the central scene area.
  */
 @Immutable
 data class ViewportScene(
     val nodes: List<ViewportNode> = emptyList(),
     val edges: List<ViewportEdge> = emptyList(),
+    val edgeCount: Int = edges.size,
     val showLinks: Boolean = false,
+    val linkRenderMode: LinkRenderMode = LinkRenderMode.FULL,
+    val linkRenderNotice: String? = null,
     val dimensions: Int = 2,
+    val worldBounds: ViewportWorldBounds? = nodes.toWorldBounds(),
     val backdrop: ViewportBackdrop = ViewportBackdrop.SPACE,
     val summary: List<InfoField> = emptyList(),
     val message: String = "Waiting for simulation data",
@@ -205,6 +229,38 @@ data class AlchemistUiState(
     val selectedNodeIds: List<Int> = emptyList(),
     val inspector: InspectorState? = null,
 )
+
+private fun List<ViewportNode>.toWorldBounds(): ViewportWorldBounds? {
+    if (isEmpty()) {
+        return null
+    }
+    var minX = Double.POSITIVE_INFINITY
+    var maxX = Double.NEGATIVE_INFINITY
+    var minY = Double.POSITIVE_INFINITY
+    var maxY = Double.NEGATIVE_INFINITY
+    forEach { node ->
+        val x = node.coordinates[0]
+        val y = node.coordinates[1]
+        if (x < minX) {
+            minX = x
+        }
+        if (x > maxX) {
+            maxX = x
+        }
+        if (y < minY) {
+            minY = y
+        }
+        if (y > maxY) {
+            maxY = y
+        }
+    }
+    return ViewportWorldBounds(
+        minX = minX,
+        maxX = maxX,
+        minY = minY,
+        maxY = maxY,
+    )
+}
 
 /**
  * Interaction contract expected by the common Compose UI.

@@ -10,15 +10,20 @@
 package it.unibo.alchemist.boundary.composeui.adapter
 
 import it.unibo.alchemist.boundary.composeui.model.InfoField
+import it.unibo.alchemist.boundary.composeui.model.LinkRenderMode
 import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
+import it.unibo.alchemist.boundary.composeui.view.viewport.FullEdgeRenderLimit
+import it.unibo.alchemist.boundary.composeui.view.viewport.MaxDrawnEdgesPerFrame
+import it.unibo.alchemist.boundary.composeui.view.viewport.SampledEdgeRenderLimit
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import java.util.PriorityQueue
 
 fun <T, P : Position<P>> Node<T>.toViewport(environment: Environment<T, P>): ViewportNode = ViewportNode(
     id = id,
@@ -26,11 +31,18 @@ fun <T, P : Position<P>> Node<T>.toViewport(environment: Environment<T, P>): Vie
     concentrations = this.contents.map { InfoField(it.key.toString(), it.value.toString()) },
 )
 
-fun <T, P : Position<P>> Environment<T, P>.toViewport(): ViewportScene = ViewportScene(
-    nodes = nodes.map { it.toViewport(this) },
-    edges = extractEdges(),
-    dimensions = dimensions,
-)
+fun <T, P : Position<P>> Environment<T, P>.toViewport(renderLinks: Boolean = false): ViewportScene {
+    val viewportNodes = nodes.map { it.toViewport(this) }
+    val edgeSnapshot = extractEdgeSnapshot(renderLinks)
+    return ViewportScene(
+        nodes = viewportNodes,
+        edges = edgeSnapshot.edges,
+        edgeCount = edgeSnapshot.edgeCount,
+        linkRenderMode = edgeSnapshot.renderMode,
+        linkRenderNotice = edgeSnapshot.notice,
+        dimensions = dimensions,
+    )
+}
 
 fun <T, P : Position<P>> Simulation<T, P>.toSimulationStatus(): SimulationStatus = when (this.status) {
     Status.INIT -> SimulationStatus.INIT
@@ -40,16 +52,112 @@ fun <T, P : Position<P>> Simulation<T, P>.toSimulationStatus(): SimulationStatus
     Status.TERMINATED -> SimulationStatus.TERMINATED
 }
 
-private fun <T, P : Position<P>> Environment<T, P>.extractEdges(): List<ViewportEdge> = buildList {
-    nodes.forEach { node ->
-        getNeighborhood(node).forEach { neighbor ->
-            canonicalEdge(node.id, neighbor.id)?.let(::add)
+private fun <T, P : Position<P>> Environment<T, P>.extractEdgeSnapshot(renderLinks: Boolean): EdgeSnapshot {
+    if (!renderLinks) {
+        return EdgeSnapshot()
+    }
+    return collectEdgeSnapshot(
+        edgePairs = sequence {
+            for (node in nodes) {
+                for (neighbor in getNeighborhood(node)) {
+                    yield(node.id to neighbor.id)
+                }
+            }
+        },
+    )
+}
+
+internal fun collectEdgeSnapshot(edgePairs: Sequence<Pair<Int, Int>>, renderLinks: Boolean = true): EdgeSnapshot {
+    if (!renderLinks) {
+        return EdgeSnapshot()
+    }
+    val seenEdges = HashSet<Long>()
+    val fullEdges = ArrayList<ViewportEdge>(FullEdgeRenderLimit)
+    val sampledEdges = PriorityQueue<SampledViewportEdge>(
+        MaxDrawnEdgesPerFrame,
+        compareByDescending<SampledViewportEdge> { it.score },
+    )
+    var uniqueEdges = 0
+    for ((firstNodeId, secondNodeId) in edgePairs) {
+        val edgeKey = canonicalEdgeKey(firstNodeId, secondNodeId) ?: continue
+        if (!seenEdges.add(edgeKey)) {
+            continue
+        }
+        uniqueEdges++
+        if (uniqueEdges <= FullEdgeRenderLimit) {
+            fullEdges += edgeKey.toViewportEdge()
+        }
+        sampledEdges.consider(edgeKey)
+        if (uniqueEdges > SampledEdgeRenderLimit) {
+            return EdgeSnapshot(
+                renderMode = LinkRenderMode.HIDDEN,
+                edgeCount = uniqueEdges,
+                notice = "links hidden above ${SampledEdgeRenderLimit.toReadableCount()}",
+            )
         }
     }
-}.distinct()
-
-internal fun canonicalEdge(firstNodeId: Int, secondNodeId: Int): ViewportEdge? = when {
-    firstNodeId == secondNodeId -> null
-    firstNodeId < secondNodeId -> ViewportEdge(firstNodeId, secondNodeId)
-    else -> ViewportEdge(secondNodeId, firstNodeId)
+    return when {
+        uniqueEdges <= FullEdgeRenderLimit -> EdgeSnapshot(
+            edges = fullEdges,
+            edgeCount = uniqueEdges,
+            renderMode = LinkRenderMode.FULL,
+        )
+        else -> EdgeSnapshot(
+            edges = sampledEdges
+                .toList()
+                .sortedBy(SampledViewportEdge::score)
+                .map(SampledViewportEdge::edge),
+            edgeCount = uniqueEdges,
+            renderMode = LinkRenderMode.SAMPLED,
+            notice = "showing ${MaxDrawnEdgesPerFrame.toReadableCount()} sampled links",
+        )
+    }
 }
+
+private fun PriorityQueue<SampledViewportEdge>.consider(edgeKey: Long) {
+    val candidate = SampledViewportEdge(score = edgeKey.sampleScore(), edge = edgeKey.toViewportEdge())
+    if (size < MaxDrawnEdgesPerFrame) {
+        add(candidate)
+        return
+    }
+    val largestScore = peek() ?: return
+    if (candidate.score < largestScore.score) {
+        poll()
+        add(candidate)
+    }
+}
+
+internal data class EdgeSnapshot(
+    val edges: List<ViewportEdge> = emptyList(),
+    val edgeCount: Int = 0,
+    val renderMode: LinkRenderMode = LinkRenderMode.FULL,
+    val notice: String? = null,
+)
+
+private data class SampledViewportEdge(val score: Long, val edge: ViewportEdge)
+
+private fun Int.toReadableCount(): String = "%,d".format(this)
+
+private fun Long.sampleScore(): Long {
+    var value = this
+    value = (value xor (value ushr 33)) * -0xae502812aa7333L
+    value = (value xor (value ushr 33)) * -0x3b314601e57a13adL
+    return value xor (value ushr 33)
+}
+
+private fun Long.toViewportEdge(): ViewportEdge = ViewportEdge(
+    fromNodeId = (this ushr 32).toInt(),
+    toNodeId = this.toInt(),
+)
+
+private fun canonicalEdgeKey(firstNodeId: Int, secondNodeId: Int): Long? = when {
+    firstNodeId == secondNodeId -> null
+    firstNodeId < secondNodeId -> edgeKey(firstNodeId, secondNodeId)
+    else -> edgeKey(secondNodeId, firstNodeId)
+}
+
+private fun edgeKey(firstNodeId: Int, secondNodeId: Int): Long =
+    (firstNodeId.toLong() shl 32) or (secondNodeId.toLong() and 0xffffffffL)
+
+internal fun canonicalEdge(firstNodeId: Int, secondNodeId: Int): ViewportEdge? =
+    canonicalEdgeKey(firstNodeId, secondNodeId)?.toViewportEdge()

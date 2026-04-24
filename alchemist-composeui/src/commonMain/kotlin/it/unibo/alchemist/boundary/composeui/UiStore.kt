@@ -28,6 +28,7 @@ import it.unibo.alchemist.boundary.composeui.model.ViewportBackdrop
 import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
+import it.unibo.alchemist.boundary.composeui.model.ViewportWorldBounds
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -367,10 +368,12 @@ internal fun ViewportScene.withMovedNodes(nodePositions: List<NodePositionUpdate
         return this
     }
     val coordinatesByNodeId = nodePositions.associate { it.nodeId to it.coordinates }
+    val updatedNodes = nodes.map { node ->
+        coordinatesByNodeId[node.id]?.let(node::withCoordinates) ?: node
+    }
     return copy(
-        nodes = nodes.map { node ->
-            coordinatesByNodeId[node.id]?.let(node::withCoordinates) ?: node
-        },
+        nodes = updatedNodes,
+        worldBounds = updatedNodes.toWorldBounds(),
     )
 }
 
@@ -383,10 +386,17 @@ internal fun ViewportScene.translateSelectedNodes(
         return this
     }
     val selectedIds = nodeIds.toHashSet()
-    val translatedNodes = nodes.mapNotNull { node ->
-        node.takeIf { it.id in selectedIds }?.translate(deltaX, deltaY)?.toPositionUpdate()
+    val updatedNodes = nodes.map { node ->
+        if (node.id in selectedIds) {
+            node.translate(deltaX, deltaY)
+        } else {
+            node
+        }
     }
-    return withMovedNodes(translatedNodes)
+    return copy(
+        nodes = updatedNodes,
+        worldBounds = updatedNodes.toWorldBounds(),
+    )
 }
 
 internal fun ViewportScene.toInspectorState(selectedNodeIds: List<Int>): InspectorState? {
@@ -425,6 +435,38 @@ internal fun ViewportNode.translate(deltaX: Double, deltaY: Double): ViewportNod
 internal fun ViewportNode.withCoordinates(newCoordinates: List<Double>): ViewportNode = copy(coordinates = newCoordinates)
 
 internal fun ViewportNode.toPositionUpdate(): NodePositionUpdate = NodePositionUpdate(id, coordinates)
+
+private fun List<ViewportNode>.toWorldBounds(): ViewportWorldBounds? {
+    if (isEmpty()) {
+        return null
+    }
+    var minX = Double.POSITIVE_INFINITY
+    var maxX = Double.NEGATIVE_INFINITY
+    var minY = Double.POSITIVE_INFINITY
+    var maxY = Double.NEGATIVE_INFINITY
+    forEach { node ->
+        val x = node.coordinates[0]
+        val y = node.coordinates[1]
+        if (x < minX) {
+            minX = x
+        }
+        if (x > maxX) {
+            maxX = x
+        }
+        if (y < minY) {
+            minY = y
+        }
+        if (y > maxY) {
+            maxY = y
+        }
+    }
+    return ViewportWorldBounds(
+        minX = minX,
+        maxX = maxX,
+        minY = minY,
+        maxY = maxY,
+    )
+}
 
 internal fun List<ViewportNode>.toGroupInspectorState(): GroupInspectorState {
     val xs = map { it.coordinates[0] }

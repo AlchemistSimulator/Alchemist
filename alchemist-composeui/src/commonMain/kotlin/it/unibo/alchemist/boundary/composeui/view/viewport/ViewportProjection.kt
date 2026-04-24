@@ -34,12 +34,11 @@ internal fun ViewportScene.createViewportProjection(viewportSize: IntSize): View
     if (nodes.isEmpty() || viewportSize.width <= 0 || viewportSize.height <= 0) {
         return null
     }
-    val xs = nodes.map { it.coordinates[0] }
-    val ys = nodes.map { it.coordinates[1] }
-    val minX = xs.minOrNull() ?: return null
-    val maxX = xs.maxOrNull() ?: return null
-    val minY = ys.minOrNull() ?: return null
-    val maxY = ys.maxOrNull() ?: return null
+    val bounds = worldBounds ?: return null
+    val minX = bounds.minX
+    val maxX = bounds.maxX
+    val minY = bounds.minY
+    val maxY = bounds.maxY
     val xSpan = max(MinWorldSpan, maxX - minX)
     val ySpan = max(MinWorldSpan, maxY - minY)
     val safeWidth = viewportSize.width.toFloat()

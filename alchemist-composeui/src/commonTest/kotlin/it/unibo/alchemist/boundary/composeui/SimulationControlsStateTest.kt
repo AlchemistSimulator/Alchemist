@@ -9,7 +9,9 @@
 
 package it.unibo.alchemist.boundary.composeui
 
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_MAX_UI_FPS
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
+import it.unibo.alchemist.boundary.composeui.model.FullThrottle
 import it.unibo.alchemist.boundary.composeui.model.GroupInspectorState
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
@@ -84,12 +86,11 @@ class SimulationControlsStateTest {
 
     @Test
     fun `full throttle is represented by the max slider value`() {
-        val controls =
-            SimulationControlsState(maxEventRateSliderValue = 50).withEventRateSliderValue(50)
+        val controls = SimulationControlsState().updateEventThrottling(Int.MAX_VALUE)
 
         assertTrue(controls.isFullThrottle)
-        assertNull(controls.effectiveEventsPerSecond)
-        assertEquals(FULL_THROTTLE_LABEL, controls.eventRateLabel)
+        assertEquals(FullThrottle, controls.simulationEventThrottling)
+        assertEquals("Max", controls.simulationEventThrottling.toLabel())
     }
 
     @Test

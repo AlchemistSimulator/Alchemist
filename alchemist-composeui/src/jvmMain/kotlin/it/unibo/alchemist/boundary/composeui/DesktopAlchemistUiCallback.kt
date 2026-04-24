@@ -174,8 +174,11 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
 
     override suspend fun onToggleLinks() {
         updateState {
+            val nextShowLinks = !it.scene.showLinks
             it.copy(
-                scene = it.scene.copy(showLinks = !it.scene.showLinks),
+                scene = simulation.environment
+                    .toViewport(renderLinks = nextShowLinks)
+                    .copy(showLinks = nextShowLinks),
             )
         }
     }
@@ -195,7 +198,7 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
     private suspend fun syncSimulationState(refreshScene: Boolean = false) {
         updateState {
             val nextScene = if (refreshScene) {
-                simulation.environment.toViewport().copy(showLinks = it.scene.showLinks)
+                simulation.environment.toViewport(renderLinks = it.scene.showLinks).copy(showLinks = it.scene.showLinks)
             } else {
                 it.scene
             }

@@ -90,7 +90,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: In
 
     private fun updateUiState(environment: Environment<T, P>, time: Time, step: Long) {
         currentUiState.update {
-            val viewport = environment.toViewport()
+            val viewport = environment.toViewport(renderLinks = it.scene.showLinks)
             val displayedTime = time.toComposeUiLabel()
             it.copy(
                 scene = viewport.copy(showLinks = it.scene.showLinks),

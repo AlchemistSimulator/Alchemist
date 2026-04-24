@@ -29,7 +29,12 @@ import it.unibo.alchemist.boundary.composeui.view.theme.SurfaceStrong
 import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 
 @Composable
-internal fun SummaryRail(summary: List<InfoField>, showLinks: Boolean, onToggleLinks: () -> Unit) {
+internal fun SummaryRail(
+    summary: List<InfoField>,
+    showLinks: Boolean,
+    onToggleLinks: () -> Unit,
+    linkRenderNotice: String? = null,
+) {
     Row(
         modifier = Modifier.horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -52,6 +57,29 @@ internal fun SummaryRail(summary: List<InfoField>, showLinks: Boolean, onToggleL
                     )
                     Text(
                         text = item.value,
+                        style = MaterialTheme.typography.subtitle1,
+                    )
+                }
+            }
+        }
+        linkRenderNotice?.let { notice ->
+            Surface(
+                color = SecondaryAccent.copy(alpha = 0.12f),
+                shape = RoundedCornerShape(999.dp),
+                elevation = 0.dp,
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "ADAPTIVE",
+                        style = MaterialTheme.typography.caption,
+                        color = SecondaryAccent,
+                    )
+                    Text(
+                        text = notice,
                         style = MaterialTheme.typography.subtitle1,
                     )
                 }

@@ -10,7 +10,6 @@
 package it.unibo.alchemist.boundary.composeui.view.components
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -25,22 +24,33 @@ import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 
 @Composable
 internal fun TransportButton(label: String, enabled: Boolean, accent: Color, onClick: () -> Unit) {
-    val buttonContentColor = if (accent.luminance() > ACCENT_LUMINANCE_THRESHOLD) TextPrimary else Surface
+    val colors = accent.toTransportButtonColors(enabled)
     Button(
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(8.dp),
+        shape = componentShape,
         elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = accent.copy(alpha = if (enabled) 0.92f else 0.28f),
-            contentColor = buttonContentColor,
+            backgroundColor = colors.background,
+            contentColor = colors.content,
             disabledBackgroundColor = Outline.copy(alpha = 0.65f),
             disabledContentColor = TextSecondary,
         ),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
+        contentPadding = transportButtonPadding,
     ) {
         Text(text = label)
     }
 }
 
+private data class TransportButtonPalette(val background: Color, val content: Color)
+
+private fun Color.toTransportButtonColors(enabled: Boolean): TransportButtonPalette =
+    TransportButtonPalette(
+        background = copy(alpha = if (enabled) EnabledButtonAlpha else DisabledButtonAlpha),
+        content = if (luminance() > ACCENT_LUMINANCE_THRESHOLD) TextPrimary else Surface,
+    )
+
 private const val ACCENT_LUMINANCE_THRESHOLD = 0.35f
+private const val EnabledButtonAlpha = 0.92f
+private const val DisabledButtonAlpha = 0.28f
+private val transportButtonPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp)

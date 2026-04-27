@@ -129,6 +129,7 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
             val inspectorWidth = 324.dp
             val bottomBarHeight = 152.dp
             val layoutSpacing = 20.dp
+            val paneSpacing = if (inspectorVisible) 8.dp else layoutSpacing
             val inspectorTransition = updateTransition(targetState = inspectorVisible, label = "inspector")
             val animatedInspectorWidth by inspectorTransition.animateDp(
                 transitionSpec = { tween(durationMillis = 320) },
@@ -190,7 +191,7 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(layoutSpacing),
-                    horizontalArrangement = Arrangement.spacedBy(layoutSpacing),
+                    horizontalArrangement = Arrangement.spacedBy(paneSpacing),
                 ) {
                     SimulationPrimaryPane(
                         scene = state.scene,

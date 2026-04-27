@@ -11,7 +11,7 @@ deployments:
 #  type: Grid
 #  parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
   type: Rectangle
-  parameters: [10000, -5, -5, 10, 10]
+  parameters: [1000, -5, -5, 10, 10]
   contents:
     - in:
         type: Rectangle

@@ -19,13 +19,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
@@ -37,36 +36,46 @@ import it.unibo.alchemist.boundary.composeui.view.theme.StatusPillWidth
 
 @Composable
 internal fun StatusPill(controls: SimulationControlsState) {
-    val color =
-        when (controls.status) {
-            SimulationStatus.RUNNING -> Positive
-            SimulationStatus.PAUSED -> PrimaryAccent
-            SimulationStatus.TERMINATED -> Danger
-            else -> SecondaryAccent
-        }
-    Surface(
+    val presentation = controls.toStatusPillPresentation()
+    ComponentSurface(
         modifier = Modifier.width(StatusPillWidth),
-        color = color.copy(alpha = 0.14f),
-        shape = RoundedCornerShape(999.dp),
-        elevation = 0.dp,
+        color = presentation.color.copy(alpha = StatusPillAlpha),
+        shape = pillShape,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 10.dp),
+                .padding(componentPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
             Box(
                 modifier = Modifier
                     .size(10.dp)
-                    .background(color = color, shape = CircleShape),
+                    .background(color = presentation.color, shape = CircleShape),
             )
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(statusIndicatorSpacing))
             Text(
-                text = controls.statusLabel,
+                text = presentation.label,
                 style = MaterialTheme.typography.subtitle1,
             )
         }
     }
 }
+
+private data class StatusPillPresentation(val label: String, val color: Color)
+
+private fun SimulationControlsState.toStatusPillPresentation(): StatusPillPresentation =
+    StatusPillPresentation(
+        label = statusLabel,
+        color =
+            when (status) {
+                SimulationStatus.RUNNING -> Positive
+                SimulationStatus.PAUSED -> PrimaryAccent
+                SimulationStatus.TERMINATED -> Danger
+                else -> SecondaryAccent
+            },
+    )
+
+private const val StatusPillAlpha = 0.14f
+private val statusIndicatorSpacing = 10.dp

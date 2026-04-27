@@ -51,14 +51,8 @@ internal fun NodeInspector(inspector: InspectorState, onDismiss: () -> Unit, mod
             verticalArrangement = Arrangement.spacedBy(18.dp),
         ) {
             InspectorHeader(
-                title = when (inspector) {
-                    is GroupInspectorState -> inspector.title
-                    is NodeInspectorState -> inspector.title
-                },
-                subtitle = when (inspector) {
-                    is GroupInspectorState -> inspector.subtitle
-                    is NodeInspectorState -> inspector.subtitle
-                },
+                title = inspector.title,
+                subtitle = inspector.subtitle,
                 onDismiss = onDismiss,
             )
             when (inspector) {
@@ -139,3 +133,17 @@ private fun GroupNodeInspector(inspector: GroupInspectorState) {
         },
     )
 }
+
+private val InspectorState.title: String
+    get() =
+        when (this) {
+            is GroupInspectorState -> title
+            is NodeInspectorState -> title
+        }
+
+private val InspectorState.subtitle: String
+    get() =
+        when (this) {
+            is GroupInspectorState -> subtitle
+            is NodeInspectorState -> subtitle
+        }

@@ -1,3 +1,17 @@
+## [43.0.42](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.41...43.0.42) (2026-04-28)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.4.13-19.2.5 (patch) ([#5311](https://github.com/AlchemistSimulator/Alchemist/issues/5311)) ([ee9886d](https://github.com/AlchemistSimulator/Alchemist/commit/ee9886d027c02442ec1cd9ace90375fe2dc88d2d))
+* **deps:** update dependency commons-codec:commons-codec to v1.22.0 ([#5308](https://github.com/AlchemistSimulator/Alchemist/issues/5308)) ([7cffd16](https://github.com/AlchemistSimulator/Alchemist/commit/7cffd16e358b51ded5125b97ff909ee5ede0b38b))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.174.0 ([#5306](https://github.com/AlchemistSimulator/Alchemist/issues/5306)) ([96aa5c2](https://github.com/AlchemistSimulator/Alchemist/commit/96aa5c28696cb8c081bd3fd5ac26edcbd558f2ca))
+* **deps:** update dependency org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin to v1.6.0 ([#5307](https://github.com/AlchemistSimulator/Alchemist/issues/5307)) ([252cdba](https://github.com/AlchemistSimulator/Alchemist/commit/252cdba272bb7cc875f0e5d7b0be342c79cc88f4))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([f779f96](https://github.com/AlchemistSimulator/Alchemist/commit/f779f966c2522b59c5d38ebe9f083860d40c6bcb))
+* **build:** update the javadoc.io cache ([b8a01f8](https://github.com/AlchemistSimulator/Alchemist/commit/b8a01f83496c39df8f1e4e6b0979859bb3ea2aa0))
+
 ## [43.0.41](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.40...43.0.41) (2026-04-24)
 
 ### Dependency updates

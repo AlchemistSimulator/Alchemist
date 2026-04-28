@@ -370,7 +370,12 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         if (hooked.isEmpty()) {
             return;
         }
-        final P hookedCoordinates = positions.get(hooked.get());
+        final Node<T> hookedNode = hooked.get();
+        final P hookedCoordinates = positions.get(hookedNode);
+        if (hookedCoordinates == null) {
+            hooked.set(Optional.empty());
+            return;
+        }
         final Point hookedPoint = wormhole.getViewPoint(hookedCoordinates);
         if (hookedPoint.distance(getCenter()) > FREEDOM_RADIUS) {
             wormhole.setViewPosition(hookedPoint);

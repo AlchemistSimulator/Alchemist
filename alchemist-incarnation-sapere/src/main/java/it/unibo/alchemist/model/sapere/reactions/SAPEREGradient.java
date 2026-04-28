@@ -467,69 +467,87 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
 
         @Override
         public boolean execute(final int a, final List<? extends ILsaMolecule> mgnList) {
-            if (!mgnList.isEmpty()) {
-                final P aPos = positionCache.get(a);
-                final double distNode = aPos.distanceTo(mypos);
-                matches.put(LsaMolecule.SYN_O, new NumTreeNode(a));
-                matches.put(LsaMolecule.SYN_D, new NumTreeNode(distNode));
-                if (mapenvironment != null) {
-                    matches.put(LsaMolecule.SYN_ROUTE, new NumTreeNode(routecache.get(a)));
-                }
-                final Map<HashString, ITreeNode<?>> localMatches = mgnList.size() > 1 ? new HashMap<>(matches) : matches;
-                for (final ILsaMolecule mgn : mgnList) {
-                    /*
-                     * Instance all the variables but synthetics.
-                     */
-                    for (int i = 0; i < gradient.size(); i++) {
-                        final ITreeNode<?> uninstancedArg = gradient.getArg(i).getRootNode();
-                        if (uninstancedArg.getType().equals(Type.VAR)) {
-                            final HashString varName = uninstancedArg.toHashString();
-                            if (!varName.toString().startsWith("#")) {
-                                final ITreeNode<?> localVal = mgn.getArg(i).getRootNode();
-                                localMatches.put(varName, localVal);
-                            }
-                        }
-                    }
-                    /*
-                     * Compute new value
-                     */
-                    final List<IExpression> valuesFound = gradientExpr.allocateVar(localMatches);
-                    if (gradientsFound.isEmpty()) {
-                        if ((Double) valuesFound.get(argPosition).getRootNodeData() <= threshold) {
-                            gradientsFound.add(new LsaMolecule(valuesFound));
-                        }
-                    } else {
-                        boolean compatibleFound = false;
-                        for (int j = 0; j < gradientsFound.size(); j++) {
-                            final ILsaMolecule gradToCompare = gradientsFound.get(j);
-                            int i = 0;
-                            for (; i < argPosition; i++) {
-                                if (!gradToCompare.getArg(i).matches(valuesFound.get(i), null)) {
-                                    /*
-                                     * Gradients are not compatible
-                                     */
-                                    break;
-                                }
-                            }
-                            if (i == argPosition) {
-                                /*
-                                 * These two gradients are comparable
-                                 */
-                                compatibleFound = true;
-                                final double newVal = (Double) valuesFound.get(argPosition).getRootNodeData();
-                                final double oldVal = (Double) gradToCompare.getArg(argPosition).getRootNodeData();
-                                if (newVal < oldVal) {
-                                    gradientsFound.set(j, new LsaMolecule(valuesFound));
-                                }
-                            }
-                        }
-                        if (!compatibleFound && (Double) valuesFound.get(argPosition).getRootNodeData() < threshold) {
-                            gradientsFound.add(new LsaMolecule(valuesFound));
-                        }
+            if (mgnList.isEmpty()) {
+                return true;
+            }
+            final Map<HashString, ITreeNode<?>> localMatches = prepareMatches(a, mgnList.size());
+            for (final ILsaMolecule mgn : mgnList) {
+                bindGradientVariables(mgn, localMatches);
+                updateGradientsFound(gradientExpr.allocateVar(localMatches));
+            }
+            return true;
+        }
+
+        private void bindGradientVariables(
+            final ILsaMolecule molecule,
+            final Map<HashString, ITreeNode<?>> localMatches
+        ) {
+            for (int i = 0; i < gradient.size(); i++) {
+                final ITreeNode<?> uninstancedArg = gradient.getArg(i).getRootNode();
+                if (uninstancedArg.getType().equals(Type.VAR)) {
+                    final HashString varName = uninstancedArg.toHashString();
+                    if (!varName.toString().startsWith("#")) {
+                        localMatches.put(varName, molecule.getArg(i).getRootNode());
                     }
                 }
             }
+        }
+
+        private boolean isCompatibleGradient(final ILsaMolecule gradientToCompare, final List<IExpression> valuesFound) {
+            for (int i = 0; i < argPosition; i++) {
+                if (!gradientToCompare.getArg(i).matches(valuesFound.get(i), null)) {
+                    return false;
+                }
+            }
             return true;
+        }
+
+        private boolean isWithinThreshold(final List<IExpression> valuesFound) {
+            return candidateDistance(valuesFound) <= threshold;
+        }
+
+        private double candidateDistance(final List<IExpression> valuesFound) {
+            return (Double) valuesFound.get(argPosition).getRootNodeData();
+        }
+
+        private Map<HashString, ITreeNode<?>> prepareMatches(final int nodeId, final int moleculeCount) {
+            final P nodePosition = positionCache.get(nodeId);
+            matches.put(LsaMolecule.SYN_O, new NumTreeNode(nodeId));
+            matches.put(LsaMolecule.SYN_D, new NumTreeNode(nodePosition.distanceTo(mypos)));
+            if (mapenvironment != null) {
+                matches.put(LsaMolecule.SYN_ROUTE, new NumTreeNode(routecache.get(nodeId)));
+            }
+            return moleculeCount > 1 ? new HashMap<>(matches) : matches;
+        }
+
+        private void updateGradientsFound(final List<IExpression> valuesFound) {
+            if (gradientsFound.isEmpty()) {
+                if (isWithinThreshold(valuesFound)) {
+                    gradientsFound.add(new LsaMolecule(valuesFound));
+                }
+                return;
+            }
+            var compatibleGradientFound = false;
+            for (int i = 0; i < gradientsFound.size(); i++) {
+                final ILsaMolecule gradientToCompare = gradientsFound.get(i);
+                if (isCompatibleGradient(gradientToCompare, valuesFound)) {
+                    compatibleGradientFound = true;
+                    replaceWithBetterGradient(i, gradientToCompare, valuesFound);
+                }
+            }
+            if (!compatibleGradientFound && candidateDistance(valuesFound) < threshold) {
+                gradientsFound.add(new LsaMolecule(valuesFound));
+            }
+        }
+
+        private void replaceWithBetterGradient(
+            final int gradientIndex,
+            final ILsaMolecule currentGradient,
+            final List<IExpression> candidateGradient
+        ) {
+            if (candidateDistance(candidateGradient) < (Double) currentGradient.getArg(argPosition).getRootNodeData()) {
+                gradientsFound.set(gradientIndex, new LsaMolecule(candidateGradient));
+            }
         }
     }
 

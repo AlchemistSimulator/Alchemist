@@ -136,81 +136,97 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     @Override
     public void execute() {
         if (possibleMatches.isEmpty()) {
-            for (final ILsaAction a : getSAPEREActions()) {
-                a.setExecutionContext(null, validNodes);
-                a.execute();
-            }
+            executeActions(null);
             return;
         }
         final Position<?> nodePosCache = modifiesOnlyLocally ? environment.getPosition(getNode()) : null;
         final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally
             ? new ArrayList<>(getLsaNode().getLsaSpace())
             : null;
-        Map<HashString, ITreeNode<?>> matches = null;
-        Map<ILsaNode, List<ILsaMolecule>> toRemove = null;
-        /*
-         * If there is infinite propensity, the last match added is the one to
-         * choose, since it is the one which generated the "infinity" value.
-         */
-        if (totalPropensity == Double.POSITIVE_INFINITY) {
-            final int index = possibleMatches.size() - 1;
-            matches = possibleMatches.get(index);
-            toRemove = possibleRemove.get(index);
-        } else if (numericRate()) {
-            /*
-             * If the rate is numeric, the choice is just random
-             */
-            final int index = Math.abs(rng.nextInt()) % possibleMatches.size();
-            matches = possibleMatches.get(index);
-            toRemove = possibleRemove.get(index);
-        } else {
-            /*
-             * Otherwise, the matches must be chosen randomly using their
-             * propensities
-             */
-            final double index = rng.nextDouble() * totalPropensity;
-            double sum = 0;
-            for (int i = 0; matches == null; i++) {
-                sum += propensities.get(i);
-                if (sum > index) {
-                    matches = possibleMatches.get(i);
-                    toRemove = possibleRemove.get(i);
-                }
-            }
-        }
+        final int selectedMatchIndex = selectMatchIndex();
+        final Map<HashString, ITreeNode<?>> matches = possibleMatches.get(selectedMatchIndex);
         /*
          * The matched LSAs must be removed from the local space, if no action
          * added them back.
          */
-        for (final Entry<ILsaNode, List<ILsaMolecule>> entry : toRemove.entrySet()) {
-            final ILsaNode n = entry.getKey();
-            for (final ILsaMolecule m : entry.getValue()) {
-                n.removeConcentration(m);
-            }
-        }
+        removeMatchedMolecules(possibleRemove.get(selectedMatchIndex));
         /*
          * #T Must be loaded by the reaction, which is the only structure aware
          * of the time. Other special values (#NEIG, #O, #D) will be allocated
          * inside the actions.
          */
         matches.put(LsaMolecule.SYN_T, new NumTreeNode(getTau().toDouble()));
-        for (final ILsaAction a : getSAPEREActions()) {
-            a.setExecutionContext(matches, validNodes);
-            a.execute();
-        }
-
+        executeActions(matches);
         /*
          * Empty action optimization
          */
-        if (modifiesOnlyLocally) {
-            final ILsaNode n = getLsaNode();
-            if (Objects.requireNonNull(nodePosCache).equals(environment.getPosition(getNode()))) {
-                final List<? extends ILsaMolecule> contents = n.getLsaSpace();
-                if (contents.size() == Objects.requireNonNull(localContentCache).size()) {
-                    emptyExecution = localContentCache.containsAll(contents);
-                }
+        updateEmptyExecutionStatus(nodePosCache, localContentCache);
+    }
+
+    private void executeActions(final Map<HashString, ITreeNode<?>> matches) {
+        for (final ILsaAction action : getSAPEREActions()) {
+            action.setExecutionContext(matches, validNodes);
+            action.execute();
+        }
+    }
+
+    private void removeMatchedMolecules(final Map<ILsaNode, List<ILsaMolecule>> toRemove) {
+        for (final Entry<ILsaNode, List<ILsaMolecule>> entry : toRemove.entrySet()) {
+            final ILsaNode node = entry.getKey();
+            for (final ILsaMolecule molecule : entry.getValue()) {
+                node.removeConcentration(molecule);
             }
         }
+    }
+
+    private int selectMatchIndex() {
+        /*
+         * If there is infinite propensity, the last match added is the one to
+         * choose, since it is the one which generated the "infinity" value.
+         */
+        if (totalPropensity == Double.POSITIVE_INFINITY) {
+            return possibleMatches.size() - 1;
+        }
+        /*
+         * If the rate is numeric, the choice is just random
+         */
+        if (numericRate()) {
+            return Math.abs(rng.nextInt()) % possibleMatches.size();
+        }
+        /*
+         * Otherwise, the matches must be chosen randomly using their
+         * propensities
+         */
+        return selectWeightedMatchIndex();
+    }
+
+    private int selectWeightedMatchIndex() {
+        final double selectedPropensity = rng.nextDouble() * totalPropensity;
+        double cumulativePropensity = 0;
+        for (int i = 0; i < propensities.size(); i++) {
+            cumulativePropensity += propensities.get(i);
+            if (cumulativePropensity > selectedPropensity) {
+                return i;
+            }
+        }
+        throw new IllegalStateException("No match selected despite positive total propensity.");
+    }
+
+    private void updateEmptyExecutionStatus(
+        final Position<?> nodePositionBeforeExecution,
+        final List<? extends ILsaMolecule> localContentBeforeExecution
+    ) {
+        if (!modifiesOnlyLocally || nodePositionChanged(nodePositionBeforeExecution)) {
+            return;
+        }
+        final List<? extends ILsaMolecule> contents = getLsaNode().getLsaSpace();
+        if (contents.size() == Objects.requireNonNull(localContentBeforeExecution).size()) {
+            emptyExecution = localContentBeforeExecution.containsAll(contents);
+        }
+    }
+
+    private boolean nodePositionChanged(final Position<?> nodePositionBeforeExecution) {
+        return !Objects.requireNonNull(nodePositionBeforeExecution).equals(environment.getPosition(getNode()));
     }
 
     /**

@@ -161,7 +161,7 @@ class ObservableTest : FunSpec({
 
             repeat(3) { observable.update { curr -> curr + 1 } }
 
-            sum shouldBe (1 + 2 + 3)
+            sum shouldBe 1 + 2 + 3
             count shouldBe 3
         }
 

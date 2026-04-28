@@ -338,110 +338,141 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             return;
         }
         accessData();
-        if (hooked.isPresent()) {
-            final P hcoor = positions.get(hooked.get());
-            final Point hp = wormhole.getViewPoint(hcoor);
-            if (hp.distance(getCenter()) > FREEDOM_RADIUS) {
-                wormhole.setViewPosition(hp);
-            }
-        }
-        /*
-         * Compute nodes in sight and their screen position
-         */
-        final Map<Node<T>, Point> onView = positions.entrySet().parallelStream()
-                .map(pair -> new Pair<>(pair.getKey(), wormhole.getViewPoint(pair.getValue())))
-                .filter(p -> wormhole.isInsideView(p.getSecond()))
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+        updateHookedNodeView();
+        final Map<Node<T>, Point> onView = computeNodesOnView();
         g.setColor(Color.BLACK);
-        if (obstacles != null) {
-            /*
-             * TODO: only draw obstacles if on view
-             */
-            obstacles.parallelStream()
-                    .map(this::convertObstacle)
-                    .forEachOrdered(g::fill);
-        }
-        if (paintLinks) {
-            g.setColor(Color.GRAY);
-            onView.keySet().parallelStream()
-                .map(neighbors::get)
-                .flatMap(neigh ->
-                    neigh.getNeighbors().parallelStream()
-                        .map(node ->
-                            node.compareTo(neigh.getCenter()) > 0
-                                ? new Pair<>(neigh.getCenter(), node)
-                                : new Pair<>(node, neigh.getCenter())
-                        )
-                )
-                .distinct()
-                .map(pair ->
-                    mapPair(
-                        pair,
-                        node -> Optional
-                            .ofNullable(onView.get(node))
-                            .orElse(wormhole.getViewPoint(positions.get(node)))
-                    )
-                )
-                .forEachOrdered(line -> {
-                    final Point p1 = line.getFirst();
-                    final Point p2 = line.getSecond();
-                    g.drawLine(p1.x, p1.y, p2.x, p2.y);
-                });
-        }
+        drawObstacles(g);
+        drawLinks(g, onView);
         releaseData();
-        if (
-            isDraggingMouse
-                && status == ViewStatus.MOVING_SELECTED_NODES
-                && originPoint != null
-                && endingPoint != null
-        ) {
-            for (final Node<T> n : selectedNodes) {
-                if (onView.containsKey(n)) {
-                    onView.put(n, new Point(onView.get(n).x + (endingPoint.x - originPoint.x),
-                            onView.get(n).y + (endingPoint.y - originPoint.y)));
-                }
-            }
-        }
+        moveSelectedNodesOnView(onView);
         g.setColor(Color.GREEN);
         if (effectStack != null) {
             effectStack.forEach(effect -> onView.forEach((node, point) ->
                 effect.apply(g, node, currentEnv, wormhole)));
         }
-        if (isCloserNodeMarked()) {
-            final Optional<Map.Entry<Node<T>, Point>> closest = onView.entrySet().parallelStream()
-                    .min((pair1, pair2) -> {
-                        final Point p1 = pair1.getValue();
-                        final Point p2 = pair2.getValue();
-                        final double d1 = Math.hypot(p1.x - mouseX, p1.y - mouseY);
-                        final double d2 = Math.hypot(p2.x - mouseX, p2.y - mouseY);
-                        return Double.compare(d1, d2);
-                    });
-            if (closest.isPresent()) {
-                nearest = closest.get().getKey();
-                final int nearestX = closest.get().getValue().x;
-                final int nearestY = closest.get().getValue().y;
-                drawFriedEgg(g, nearestX, nearestY, Color.RED, Color.YELLOW);
+        highlightClosestNode(g, onView);
+        drawSelectionRectangle(g, onView);
+        highlightSelectedNodes(g, onView);
+    }
+
+    private Map<Node<T>, Point> computeNodesOnView() {
+        return positions.entrySet().parallelStream()
+            .map(pair -> new Pair<>(pair.getKey(), wormhole.getViewPoint(pair.getValue())))
+            .filter(p -> wormhole.isInsideView(p.getSecond()))
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+    }
+
+    private void updateHookedNodeView() {
+        if (hooked.isEmpty()) {
+            return;
+        }
+        final P hookedCoordinates = positions.get(hooked.get());
+        final Point hookedPoint = wormhole.getViewPoint(hookedCoordinates);
+        if (hookedPoint.distance(getCenter()) > FREEDOM_RADIUS) {
+            wormhole.setViewPosition(hookedPoint);
+        }
+    }
+
+    private void drawObstacles(final Graphics2D g) {
+        if (obstacles == null) {
+            return;
+        }
+        /*
+         * This currently draws all obstacles, even when they are fully outside the viewport.
+         */
+        obstacles.parallelStream()
+            .map(this::convertObstacle)
+            .forEachOrdered(g::fill);
+    }
+
+    private void drawLinks(final Graphics2D g, final Map<Node<T>, Point> onView) {
+        if (!paintLinks) {
+            return;
+        }
+        g.setColor(Color.GRAY);
+        onView.keySet().parallelStream()
+            .map(neighbors::get)
+            .flatMap(neigh ->
+                neigh.getNeighbors().parallelStream()
+                    .map(node ->
+                        node.compareTo(neigh.getCenter()) > 0
+                            ? new Pair<>(neigh.getCenter(), node)
+                            : new Pair<>(node, neigh.getCenter())
+                    )
+            )
+            .distinct()
+            .map(pair ->
+                mapPair(
+                    pair,
+                    node -> Optional
+                        .ofNullable(onView.get(node))
+                        .orElse(wormhole.getViewPoint(positions.get(node)))
+                )
+            )
+            .forEachOrdered(line -> {
+                final Point p1 = line.getFirst();
+                final Point p2 = line.getSecond();
+                g.drawLine(p1.x, p1.y, p2.x, p2.y);
+            });
+    }
+
+    private void moveSelectedNodesOnView(final Map<Node<T>, Point> onView) {
+        if (!isDraggingMouse || status != ViewStatus.MOVING_SELECTED_NODES || originPoint == null || endingPoint == null) {
+            return;
+        }
+        for (final Node<T> node : selectedNodes) {
+            if (onView.containsKey(node)) {
+                onView.put(
+                    node,
+                    new Point(
+                        onView.get(node).x + (endingPoint.x - originPoint.x),
+                        onView.get(node).y + (endingPoint.y - originPoint.y)
+                    )
+                );
             }
-        } else {
+        }
+    }
+
+    private void highlightClosestNode(final Graphics2D g, final Map<Node<T>, Point> onView) {
+        if (!isCloserNodeMarked()) {
             nearest = null;
+            return;
         }
-        if (isDraggingMouse && status == ViewStatus.SELECTING_NODES && originPoint != null && endingPoint != null) {
-            g.setColor(Color.BLACK);
-            final int x = Math.min(originPoint.x, endingPoint.x);
-            final int y = Math.min(originPoint.y, endingPoint.y);
-            final int width = Math.abs(endingPoint.x - originPoint.x);
-            final int height = Math.abs(endingPoint.y - originPoint.y);
-            g.drawRect(x, y, width, height);
-            selectedNodes = onView.entrySet().parallelStream()
-                    .filter(nodes -> isInsideRectangle(nodes.getValue(), x, y, width, height))
-                    .map(Map.Entry::getKey)
-                    .collect(Collectors.toSet());
+        onView.entrySet().parallelStream()
+            .min((pair1, pair2) -> Double.compare(distanceFromMouse(pair1.getValue()), distanceFromMouse(pair2.getValue())))
+            .ifPresent(closest -> {
+                nearest = closest.getKey();
+                final Point point = closest.getValue();
+                drawFriedEgg(g, point.x, point.y, Color.RED, Color.YELLOW);
+            });
+    }
+
+    private double distanceFromMouse(final Point point) {
+        return Math.hypot(point.x - mouseX, point.y - mouseY);
+    }
+
+    private void drawSelectionRectangle(final Graphics2D g, final Map<Node<T>, Point> onView) {
+        if (!isDraggingMouse || status != ViewStatus.SELECTING_NODES || originPoint == null || endingPoint == null) {
+            return;
         }
+        g.setColor(Color.BLACK);
+        final int x = Math.min(originPoint.x, endingPoint.x);
+        final int y = Math.min(originPoint.y, endingPoint.y);
+        final int width = Math.abs(endingPoint.x - originPoint.x);
+        final int height = Math.abs(endingPoint.y - originPoint.y);
+        g.drawRect(x, y, width, height);
+        selectedNodes = onView.entrySet().parallelStream()
+            .filter(nodes -> isInsideRectangle(nodes.getValue(), x, y, width, height))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
+    }
+
+    private void highlightSelectedNodes(final Graphics2D g, final Map<Node<T>, Point> onView) {
         selectedNodes.parallelStream()
-            .map(e -> Optional.ofNullable(onView.get(e)))
+            .map(node -> Optional.ofNullable(onView.get(node)))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .forEachOrdered(p -> drawFriedEgg(g, p.x, p.y, Color.BLUE, Color.CYAN));
+            .forEachOrdered(point -> drawFriedEgg(g, point.x, point.y, Color.BLUE, Color.CYAN));
     }
 
     private void drawFriedEgg(final Graphics g, final int x, final int y, final Color c1, final Color c2) {
@@ -899,7 +930,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                                 });
                             }
                         } else {
-                            // TODO: display proper error message
+                            // Surface this warning through the UI if interactive feedback is added here.
                             L.warn("Can not handle node movement on a finished simulation.");
                         }
                     } else {

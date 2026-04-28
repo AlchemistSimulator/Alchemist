@@ -66,41 +66,57 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
             return false;
         }
         if (matchesList.isEmpty()) {
-            /*
-             * This is the first condition. It must create all the matches.
-             *
-             * To create them, it must check every neighbor and create the
-             * matches for each of them.
-             */
-            int lastSize = 0;
-            for (int i = 0; i < validNodes.size();) {
-                final ILsaNode neigh = validNodes.get(i);
-                createMatches(getMolecule(), neigh, matchesList, retrieved);
-                if (matchesList.size() > lastSize) {
-                    /*
-                     * This neighbor has the LSA we are checking for, so new
-                     * matches have been created. For each of them, we must add
-                     * the selected node special property, in order for the
-                     * actions on a single neighbor to be correctly bound.
-                     */
-                    final NumTreeNode nodeId = new NumTreeNode(neigh.getId());
-                    for (; lastSize < matchesList.size(); lastSize++) {
-                        matchesList.get(lastSize).put(LsaMolecule.SYN_SELECTED, nodeId);
-                    }
-                    i++;
-                } else {
-                    /*
-                     * This neighbor is not valid and thus should be removed
-                     * from the validNodes list.
-                     */
-                    validNodes.remove(i);
-                }
-            }
-            /*
-             * True if at least a valid match has been created.
-             */
-            return makeValid(!matchesList.isEmpty());
+            return createInitialMatches(matchesList, validNodes, retrieved);
         }
+        return filterExistingMatches(matchesList, validNodes, retrieved);
+    }
+
+    private boolean createInitialMatches(
+        final List<Map<HashString, ITreeNode<?>>> matchesList,
+        final List<ILsaNode> validNodes,
+        final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
+    ) {
+        /*
+         * This is the first condition. It must create all the matches.
+         *
+         * To create them, it must check every neighbor and create the
+         * matches for each of them.
+         */
+        int lastSize = 0;
+        for (int i = 0; i < validNodes.size();) {
+            final ILsaNode neigh = validNodes.get(i);
+            createMatches(getMolecule(), neigh, matchesList, retrieved);
+            if (matchesList.size() > lastSize) {
+                /*
+                 * This neighbor has the LSA we are checking for, so new
+                 * matches have been created. For each of them, we must add
+                 * the selected node special property, in order for the
+                 * actions on a single neighbor to be correctly bound.
+                 */
+                final NumTreeNode nodeId = new NumTreeNode(neigh.getId());
+                for (; lastSize < matchesList.size(); lastSize++) {
+                    matchesList.get(lastSize).put(LsaMolecule.SYN_SELECTED, nodeId);
+                }
+                i++;
+            } else {
+                /*
+                 * This neighbor is not valid and thus should be removed
+                 * from the validNodes list.
+                 */
+                validNodes.remove(i);
+            }
+        }
+        /*
+         * True if at least a valid match has been created.
+         */
+        return makeValid(!matchesList.isEmpty());
+    }
+
+    private boolean filterExistingMatches(
+        final List<Map<HashString, ITreeNode<?>>> matchesList,
+        final List<ILsaNode> validNodes,
+        final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
+    ) {
         /*
          * At least a condition has been run before. This condition must check
          * the existing matches, removing all those which are no longer valid.
@@ -119,66 +135,30 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
              */
             final ITreeNode<?> node = matches.get(LsaMolecule.SYN_SELECTED);
             if (node != null) {
-                final int id = ((Double) node.getData()).intValue();
-                for (int j = validNodes.size() - 1; j >= 0; j--) {
-                    final ILsaNode n = validNodes.get(j);
-                    if (n.getId() == id) {
-                        final List<ILsaMolecule> alreadyRemoved =
-                            alreadyRemovedMap.computeIfAbsent(n, k -> new ArrayList<>());
-                        final List<ILsaMolecule> otherMatches =
-                                calculateMatches(partialInstance, dups, n.getLsaSpace(), alreadyRemoved);
-                        if (otherMatches.isEmpty()) {
-                            /*
-                             * This match should be removed, but there might be
-                             * other matches in which this node is still valid,
-                             * so the node validity check must be performed
-                             * after.
-                             */
-                            retrieved.remove(i);
-                            matchesList.remove(i);
-                        } else {
-                            incorporateNewMatches(
-                                    n,
-                                    otherMatches,
-                                    matches,
-                                    getMolecule(),
-                                    matchesList,
-                                    alreadyRemovedMap,
-                                    retrieved
-                            );
-                            matchesfound = true;
-                            newValidNodes.add(n);
-                        }
-                        break;
-                    }
-                }
+                matchesfound |= filterMatchesForSelectedNode(
+                    validNodes,
+                    retrieved,
+                    matchesList,
+                    newValidNodes,
+                    i,
+                    alreadyRemovedMap,
+                    matches,
+                    partialInstance,
+                    dups,
+                    ((Double) node.getData()).intValue()
+                );
             } else {
-                /*
-                 * No node has been selected for this match yet
-                 */
-                final Map<ILsaNode, List<ILsaMolecule>> matchesPerNode = new HashMap<>();
-                for (int j = validNodes.size() - 1; j >= 0; j--) {
-                    final ILsaNode n = validNodes.get(j);
-                    final List<ILsaMolecule> alreadyRemoved =
-                        alreadyRemovedMap.computeIfAbsent(n, k -> new ArrayList<>());
-                    final List<ILsaMolecule> otherMatches =
-                            calculateMatches(partialInstance, dups, n.getLsaSpace(), alreadyRemoved);
-                    if (!otherMatches.isEmpty()) {
-                        matchesPerNode.put(n, otherMatches);
-                        newValidNodes.add(n);
-                    }
-                }
-                if (matchesPerNode.isEmpty()) {
-                    /*
-                     * I've checked all the neighbors which are still valid. If
-                     * this condition is not valid for the current match, it
-                     * should be removed.
-                     */
-                    matchesList.remove(i);
-                } else {
-                    incorporateNewMatches(matchesPerNode, matches, getMolecule(), matchesList, alreadyRemovedMap, retrieved);
-                    matchesfound = true;
-                }
+                matchesfound |= filterMatchesWithoutSelectedNode(
+                    validNodes,
+                    retrieved,
+                    matchesList,
+                    newValidNodes,
+                    i,
+                    alreadyRemovedMap,
+                    matches,
+                    partialInstance,
+                    dups
+                );
             }
         }
         /*
@@ -191,6 +171,91 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
             }
         }
         return makeValid(matchesfound);
+    }
+
+    private boolean filterMatchesForSelectedNode(
+        final List<ILsaNode> validNodes,
+        final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved,
+        final List<Map<HashString, ITreeNode<?>>> matchesList,
+        final AbstractSet<ILsaNode> newValidNodes,
+        final int matchIndex,
+        final Map<ILsaNode, List<ILsaMolecule>> alreadyRemovedMap,
+        final Map<HashString, ITreeNode<?>> matches,
+        final List<IExpression> partialInstance,
+        final boolean dups,
+        final int selectedNodeId
+    ) {
+        for (int j = validNodes.size() - 1; j >= 0; j--) {
+            final ILsaNode node = validNodes.get(j);
+            if (node.getId() == selectedNodeId) {
+                final List<ILsaMolecule> alreadyRemoved =
+                    alreadyRemovedMap.computeIfAbsent(node, k -> new ArrayList<>());
+                final List<ILsaMolecule> otherMatches =
+                    calculateMatches(partialInstance, dups, node.getLsaSpace(), alreadyRemoved);
+                if (otherMatches.isEmpty()) {
+                    /*
+                     * This match should be removed, but there might be
+                     * other matches in which this node is still valid,
+                     * so the node validity check must be performed
+                     * after.
+                     */
+                    retrieved.remove(matchIndex);
+                    matchesList.remove(matchIndex);
+                    return false;
+                }
+                incorporateNewMatches(
+                        node,
+                        otherMatches,
+                        matches,
+                        getMolecule(),
+                        matchesList,
+                        alreadyRemovedMap,
+                        retrieved
+                );
+                newValidNodes.add(node);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean filterMatchesWithoutSelectedNode(
+        final List<ILsaNode> validNodes,
+        final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved,
+        final List<Map<HashString, ITreeNode<?>>> matchesList,
+        final AbstractSet<ILsaNode> newValidNodes,
+        final int matchIndex,
+        final Map<ILsaNode, List<ILsaMolecule>> alreadyRemovedMap,
+        final Map<HashString, ITreeNode<?>> matches,
+        final List<IExpression> partialInstance,
+        final boolean dups
+    ) {
+        /*
+         * No node has been selected for this match yet
+         */
+        final Map<ILsaNode, List<ILsaMolecule>> matchesPerNode = new HashMap<>();
+        for (int j = validNodes.size() - 1; j >= 0; j--) {
+            final ILsaNode node = validNodes.get(j);
+            final List<ILsaMolecule> alreadyRemoved =
+                alreadyRemovedMap.computeIfAbsent(node, k -> new ArrayList<>());
+            final List<ILsaMolecule> otherMatches =
+                calculateMatches(partialInstance, dups, node.getLsaSpace(), alreadyRemoved);
+            if (!otherMatches.isEmpty()) {
+                matchesPerNode.put(node, otherMatches);
+                newValidNodes.add(node);
+            }
+        }
+        if (matchesPerNode.isEmpty()) {
+            /*
+             * I've checked all the neighbors which are still valid. If
+             * this condition is not valid for the current match, it
+             * should be removed.
+             */
+            matchesList.remove(matchIndex);
+            return false;
+        }
+        incorporateNewMatches(matchesPerNode, matches, getMolecule(), matchesList, alreadyRemovedMap, retrieved);
+        return true;
     }
 
     /*

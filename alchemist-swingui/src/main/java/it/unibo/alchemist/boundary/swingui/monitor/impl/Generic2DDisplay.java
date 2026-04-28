@@ -421,12 +421,13 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             return;
         }
         for (final Node<T> node : selectedNodes) {
-            if (onView.containsKey(node)) {
+            final Point point = onView.get(node);
+            if (point != null) {
                 onView.put(
                     node,
                     new Point(
-                        onView.get(node).x + (endingPoint.x - originPoint.x),
-                        onView.get(node).y + (endingPoint.y - originPoint.y)
+                        point.x + (endingPoint.x - originPoint.x),
+                        point.y + (endingPoint.y - originPoint.y)
                     )
                 );
             }

@@ -389,9 +389,10 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         /*
          * This currently draws all obstacles, even when they are fully outside the viewport.
          */
-        obstacles.parallelStream()
+        final List<Shape> obstacleShapes = obstacles.parallelStream()
             .map(this::convertObstacle)
-            .forEachOrdered(g::fill);
+            .collect(Collectors.toList());
+        obstacleShapes.forEach(g::fill);
     }
 
     private void drawLinks(final Graphics2D g, final Map<Node<T>, Point> onView) {

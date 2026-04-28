@@ -338,12 +338,16 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             return;
         }
         accessData();
-        updateHookedNodeView();
-        final Map<Node<T>, Point> onView = computeNodesOnView();
-        g.setColor(Color.BLACK);
-        drawObstacles(g);
-        drawLinks(g, onView);
-        releaseData();
+        final Map<Node<T>, Point> onView;
+        try {
+            updateHookedNodeView();
+            onView = computeNodesOnView();
+            g.setColor(Color.BLACK);
+            drawObstacles(g);
+            drawLinks(g, onView);
+        } finally {
+            releaseData();
+        }
         moveSelectedNodesOnView(onView);
         g.setColor(Color.GREEN);
         if (effectStack != null) {

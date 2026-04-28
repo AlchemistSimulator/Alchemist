@@ -483,7 +483,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             .map(node -> Optional.ofNullable(onView.get(node)))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .forEachOrdered(point -> drawFriedEgg(g, point.x, point.y, Color.BLUE, Color.CYAN));
+            .collect(Collectors.toList())
+            .forEach(point -> drawFriedEgg(g, point.x, point.y, Color.BLUE, Color.CYAN));
     }
 
     private void drawFriedEgg(final Graphics g, final int x, final int y, final Color c1, final Color c2) {

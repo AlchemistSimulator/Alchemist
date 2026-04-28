@@ -527,14 +527,15 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
                 }
                 return;
             }
+            var compatibleGradientFound = false;
             for (int i = 0; i < gradientsFound.size(); i++) {
                 final ILsaMolecule gradientToCompare = gradientsFound.get(i);
                 if (isCompatibleGradient(gradientToCompare, valuesFound)) {
+                    compatibleGradientFound = true;
                     replaceWithBetterGradient(i, gradientToCompare, valuesFound);
-                    return;
                 }
             }
-            if (candidateDistance(valuesFound) < threshold) {
+            if (!compatibleGradientFound && candidateDistance(valuesFound) < threshold) {
                 gradientsFound.add(new LsaMolecule(valuesFound));
             }
         }

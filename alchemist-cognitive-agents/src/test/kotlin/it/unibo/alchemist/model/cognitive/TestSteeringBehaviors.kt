@@ -107,7 +107,7 @@ class TestSteeringBehaviors<T, P> :
                         .values
                         .forEach {
                             for (nodePos in it.map { node -> e.getPosition(node) }) {
-                                for (otherPos in (it.map { node -> e.getPosition(node) }.minusElement(nodePos))) {
+                                for (otherPos in it.map { node -> e.getPosition(node) }.minusElement(nodePos)) {
                                     nodePos.distanceTo(otherPos) shouldBeLessThan 4.0
                                 }
                             }

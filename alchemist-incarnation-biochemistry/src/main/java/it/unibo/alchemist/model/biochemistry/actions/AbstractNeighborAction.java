@@ -29,7 +29,6 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
     @Serial
     private static final long serialVersionUID = -2287346030993830896L;
     private final Environment<T, ?> environment;
-    private final Node<T> node;
 
     /**
      * @param node the current node
@@ -42,7 +41,6 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
             final RandomGenerator randomGenerator
     ) {
         super(node, randomGenerator);
-        this.node = node;
         this.environment = environment;
     }
 
@@ -54,9 +52,9 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
      */
     @Override
     public void execute() {
-        final Neighborhood<T> neighborhood = environment.getNeighborhood(node);
-        if (!neighborhood.isEmpty()) {
-            execute(Iterables.INSTANCE.randomElement(neighborhood, getRandomGenerator()));
+        final Neighborhood<T> currentNeighborhood = getEnvironment().getNeighborhood(getNode()).getCurrent();
+        if (!currentNeighborhood.isEmpty()) {
+            execute(Iterables.INSTANCE.randomElement(currentNeighborhood, getRandomGenerator()));
         }
     }
 

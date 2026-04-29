@@ -21,6 +21,8 @@ import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
 import it.unibo.alchemist.model.biochemistry.startSimulationWithoutParameters
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.observation.ObservableMap.Companion.getOrElse
+import it.unibo.alchemist.model.observation.ObservableMutableMap
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import kotlin.properties.Delegates
@@ -66,7 +68,7 @@ class TestNeighborhoodReactionsPropensities {
                 .onEach { it.second.setConcentration(BIOMOLECULE, it.first) }
                 .map { it.second }
                 .onEach { environment.addNode(it, POSITION) }
-        assertEquals(neighbors.toList(), environment.getNeighborhood(centralNode).neighbors.toList())
+        assertEquals(neighbors.toList(), environment.getNeighborhood(centralNode).current.neighbors.toList())
     }
 
     @Test
@@ -132,8 +134,8 @@ private val Node<Double>.junctionPresentPropensity: Double
             centralNode
                 .asProperty<Double, CellProperty<Euclidean2DPosition>>()
                 .junctions
-                .getOrDefault(JUNCTION, emptyMap())
-                .getOrDefault(it, 0)
+                .getOrElse(JUNCTION) { ObservableMutableMap() }
+                .getOrElse(it) { 0 }
                 .toDouble()
         }
 

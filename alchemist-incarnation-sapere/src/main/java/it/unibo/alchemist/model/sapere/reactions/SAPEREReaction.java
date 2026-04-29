@@ -142,7 +142,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
             }
             return;
         }
-        final Position<?> nodePosCache = modifiesOnlyLocally ? environment.getPosition(getNode()) : null;
+        final Position<?> nodePosCache = modifiesOnlyLocally ? environment.getCurrentPosition(getNode()) : null;
         final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally
             ? new ArrayList<>(getLsaNode().getLsaSpace())
             : null;
@@ -184,8 +184,14 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          */
         for (final Entry<ILsaNode, List<ILsaMolecule>> entry : toRemove.entrySet()) {
             final ILsaNode n = entry.getKey();
+            final List<ILsaMolecule> currentSpace = n.getLsaSpace();
             for (final ILsaMolecule m : entry.getValue()) {
-                n.removeConcentration(m);
+                for (final ILsaMolecule molecule : currentSpace) {
+                    if (m.matches(molecule)) {
+                        n.removeConcentration(m);
+                        break;
+                    }
+                }
             }
         }
         /*
@@ -204,7 +210,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          */
         if (modifiesOnlyLocally) {
             final ILsaNode n = getLsaNode();
-            if (Objects.requireNonNull(nodePosCache).equals(environment.getPosition(getNode()))) {
+            if (Objects.requireNonNull(nodePosCache).equals(environment.getCurrentPosition(getNode()))) {
                 final List<? extends ILsaMolecule> contents = n.getLsaSpace();
                 if (contents.size() == Objects.requireNonNull(localContentCache).size()) {
                     emptyExecution = localContentCache.containsAll(contents);
@@ -234,7 +240,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
              * Valid nodes must be re-initialized, as per issue #
              */
             final Collection<? extends Node<List<ILsaMolecule>>> neighs =
-                    this.environment.getNeighborhood(getNode()).getNeighbors();
+                    this.environment.getNeighborhood(getNode()).getCurrent().getNeighbors();
             validNodes = new ArrayList<>(neighs.size());
             for (final Node<List<ILsaMolecule>> neigh: neighs) {
                 validNodes.add((ILsaNode) neigh);

@@ -116,7 +116,7 @@ public final class LsaCountNeighborsAction extends AbstractSAPERELocalAgent {
         final List<IExpression> l = mol.allocateVar(getMatches());
         Double num = 0.0;
         environment.getNeighborhood(getNode());
-        for (final Node<List<ILsaMolecule>> nod : environment.getNeighborhood(getNode()).getNeighbors()) {
+        for (final Node<List<ILsaMolecule>> nod : environment.getNeighborhood(getNode()).getCurrent().getNeighbors()) {
             if (!nod.getConcentration(new LsaMolecule(l)).isEmpty()) {
                 num++;
             }

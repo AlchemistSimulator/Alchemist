@@ -44,6 +44,21 @@ public final class ConcentrationChanged<T> extends AbstractCondition<T> {
         previous = Optional.fromNullable(node.getConcentration(target));
         hasFlipped = false;
         declareDependencyOn(target);
+
+        addObservableDependency(node.observeConcentration(target));
+
+        setValidity(node.observeConcentration(target).map(it -> {
+            if (!hasFlipped) {
+                final var maybeValue = Optional.fromNullable(it.getOrNull());
+                if (!maybeValue.equals(previous)) {
+                    hasFlipped = true;
+                    previous = maybeValue;
+                }
+            }
+            return hasFlipped;
+        }));
+
+        setPropensity(observeValidity().map(valid -> valid ? 1d : 0d));
     }
 
     @Override
@@ -57,35 +72,10 @@ public final class ConcentrationChanged<T> extends AbstractCondition<T> {
     }
 
     @Override
-    public double getPropensityContribution() {
-        return isValid(true) ? 1 : 0;
-    }
-
-    @Override
     public boolean isValid() {
-        return isValid(false);
-    }
-
-    private boolean isValid(final boolean internal) {
-        /*
-         * If the call is internal, the condition may switch to true. Otherwise,
-         * it will return the previous value and switch to false
-         */
-        if (internal) {
-            if (!hasFlipped) {
-                @Nonnull
-                final Optional<T> curVal = Optional.fromNullable(getNode().getConcentration(target));
-                if (!curVal.equals(previous)) {
-                    hasFlipped = true;
-                    previous = curVal;
-                }
-            }
-        } else {
-            final boolean flip = hasFlipped;
-            hasFlipped = false;
-            return flip;
-        }
-        return hasFlipped;
+        final boolean flip = hasFlipped;
+        hasFlipped = false;
+        return flip;
     }
 
     @Override

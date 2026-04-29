@@ -61,7 +61,7 @@ constructor(
         filterByMolecule?.run {
             seen = seen.filter { it.contains(filterByMolecule) }
         }
-        node.setConcentration(outputMolecule, seen.map { VisibleNodeImpl(it, environment.getPosition(it)) })
+        node.setConcentration(outputMolecule, seen.map { VisibleNodeImpl(it, environment.getCurrentPosition(it)) })
     }
 
     override fun getContext() = Context.LOCAL

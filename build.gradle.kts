@@ -64,6 +64,9 @@ allprojects {
         }
         useJUnitPlatform()
         maxHeapSize = "1g"
+        "alchemist.engine".let { property ->
+            System.getProperty(property)?.let { systemProperty(property, it) }
+        }
     }
 
     tasks.withType<SpotBugsTask>().configureEach {

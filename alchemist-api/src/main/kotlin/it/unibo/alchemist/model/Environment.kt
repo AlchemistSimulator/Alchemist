@@ -10,6 +10,8 @@
 package it.unibo.alchemist.model
 
 import it.unibo.alchemist.core.Simulation
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableSet
 import java.io.Serializable
 import org.danilopianini.util.ListSet
 
@@ -18,6 +20,7 @@ import org.danilopianini.util.ListSet
  * Every environment must implement this specification.
  * [T] is the [Concentration] type, [P] is the [Position] type.
  */
+@Suppress("TooManyFunctions")
 interface Environment<T, P : Position<out P>> :
     Serializable,
     Iterable<Node<T>> {
@@ -91,9 +94,10 @@ interface Environment<T, P : Position<out P>> :
     var linkingRule: LinkingRule<T, P>
 
     /**
-     * Given a [node], this method returns its neighborhood.
+     * Given a [node], this method returns an observable view of
+     * its neighborhood.
      */
-    fun getNeighborhood(node: Node<T>): Neighborhood<T>
+    fun getNeighborhood(node: Node<T>): Observable<Neighborhood<T>>
 
     /**
      * Allows accessing a [Node] in this [Environment] known its [id].
@@ -108,9 +112,14 @@ interface Environment<T, P : Position<out P>> :
     val nodes: ListSet<Node<T>>
 
     /**
-     * Returns the number of [Node]s currently in the [Environment].
+     * An [Observable] view of all the [Node]s that exist in current [Environment].
      */
-    val nodeCount: Int
+    val observableNodes: ObservableSet<Node<T>>
+
+    /**
+     * Returns an [Observable] view of the number of [Node]s currently in the [Environment].
+     */
+    val nodeCount: Observable<Int>
 
     /**
      * Given a [node] this method returns a list of all the surrounding
@@ -123,12 +132,22 @@ interface Environment<T, P : Position<out P>> :
     fun getNodesWithinRange(node: Node<T>, range: Double): ListSet<Node<T>>
 
     /**
+     * An [Observable] alternative to [getNodesWithinRange].
+     */
+    fun observeNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>>
+
+    /**
      * Given a [position] this method returns a list of all the
      * surrounding nodes within the given [range].
      * Note that this method
      * (depending on the implementation) might be not optimized.
      */
     fun getNodesWithinRange(position: P, range: Double): ListSet<Node<T>>
+
+    /**
+     * An [Observable] alternative to [getNodesWithinRange].
+     */
+    fun observeNodesWithinRange(position: P, range: Double): ObservableSet<Node<T>>
 
     /**
      * This method allows to know which are the smallest coordinates represented.
@@ -138,9 +157,14 @@ interface Environment<T, P : Position<out P>> :
     val offset: DoubleArray
 
     /**
-     * Calculates the position of a [node].
+     * Observe the position of a [node].
      */
-    fun getPosition(node: Node<T>): P
+    fun getPosition(node: Node<T>): Observable<P>
+
+    /**
+     * Retrieves [node]'s current position.
+     */
+    fun getCurrentPosition(node: Node<T>): P = getPosition(node).current
 
     /**
      * Return the current [Simulation], if present, or throws an [IllegalStateException] otherwise.

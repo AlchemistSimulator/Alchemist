@@ -209,7 +209,9 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
                 return i;
             }
         }
-        throw new IllegalStateException("No match selected despite positive total propensity.");
+        // Floating-point rounding can cause selectedPropensity == totalPropensity;
+        // fall back to the last bucket in that case.
+        return propensities.size() - 1;
     }
 
     private void updateEmptyExecutionStatus(

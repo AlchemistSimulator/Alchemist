@@ -191,7 +191,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          * If the rate is numeric, the choice is just random
          */
         if (numericRate()) {
-            return Math.abs(rng.nextInt()) % possibleMatches.size();
+            return rng.nextInt(possibleMatches.size());
         }
         /*
          * Otherwise, the matches must be chosen randomly using their

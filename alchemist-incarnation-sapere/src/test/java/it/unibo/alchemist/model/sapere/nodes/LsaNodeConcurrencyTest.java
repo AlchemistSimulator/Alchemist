@@ -23,7 +23,10 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -53,10 +56,11 @@ class LsaNodeConcurrencyTest {
         final ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
         final CountDownLatch latch = new CountDownLatch(numberOfThreads);
         final AtomicBoolean exceptionOccurred = new AtomicBoolean(false);
+        final List<Future<?>> tasks = new java.util.ArrayList<>(numberOfThreads);
         // Start threads that modify the node while others read from it
         for (int i = 0; i < numberOfThreads; i++) {
             final int threadId = i;
-            executor.submit(() -> {
+            tasks.add(executor.submit(() -> {
                 try {
                     for (int j = 0; j < numberOfOperations; j++) {
                         if (threadId % 2 == 0) {
@@ -69,7 +73,7 @@ class LsaNodeConcurrencyTest {
                             assertNotNull(lsaSpace);
                         } else {
                             // Writer threads
-                            final ILsaMolecule newMolecule = new LsaMolecule("thread" + threadId + "_" + j);
+                            final ILsaMolecule newMolecule = new LsaMolecule("thread" + threadId + "x" + j);
                             node.setConcentration(newMolecule);
                             // Sometimes remove molecules to simulate real concurrent modification
                             if (j % 10 == 0 && node.getMoleculeCount() > MIN_MOLECULES) {
@@ -81,17 +85,25 @@ class LsaNodeConcurrencyTest {
                             }
                         }
                     }
-                } catch (final IllegalStateException | java.util.ConcurrentModificationException e) {
-                    exceptionOccurred.set(true);
-                    e.printStackTrace();
                 } finally {
                     latch.countDown();
                 }
-            });
+                return null;
+            }));
         }
         // Wait for all threads to complete
         assertTrue(latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "Test should complete within 30 seconds");
         executor.shutdown();
+        for (final Future<?> task : tasks) {
+            try {
+                task.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            } catch (final InterruptedException e) {
+                Thread.currentThread().interrupt();
+                exceptionOccurred.set(true);
+            } catch (final ExecutionException | TimeoutException e) {
+                exceptionOccurred.set(true);
+            }
+        }
         // No exceptions should have occurred (especially no ConcurrentModificationException)
         assertFalse(exceptionOccurred.get(), "No exceptions should occur during concurrent access");
         // Verify the node is still in a valid state

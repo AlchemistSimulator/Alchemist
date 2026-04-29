@@ -252,6 +252,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
              * should be removed.
              */
             matchesList.remove(matchIndex);
+            retrieved.remove(matchIndex);
             return false;
         }
         incorporateNewMatches(matchesPerNode, matches, getMolecule(), matchesList, alreadyRemovedMap, retrieved);

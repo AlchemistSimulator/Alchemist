@@ -54,10 +54,9 @@ public final class SAPEREChemotaxis<P extends Position<P>> extends AbstractSAPER
             final int idPosition
     ) {
         super(environment, node, response);
-        /*
-         * Thanks Java, for not having unsigned primitives! -.-
-         */
-        assert idPosition >= 0 : "Argument number must be positive";
+        if (idPosition < 0) {
+            throw new IllegalArgumentException("Argument number must be non-negative");
+        }
         this.response = response;
         this.gradient = gradient;
         this.idPosition = idPosition;

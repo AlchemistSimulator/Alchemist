@@ -1,3 +1,29 @@
+## [43.0.43](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.42...43.0.43) (2026-04-29)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v18.8.1 (patch) ([#5310](https://github.com/AlchemistSimulator/Alchemist/issues/5310)) ([3e92b8a](https://github.com/AlchemistSimulator/Alchemist/commit/3e92b8a6f8c7091c06a9bf6cd7310a3bef7bb785))
+* **core-deps:** update react to v2026.4.14-19.2.5 (patch) ([#5322](https://github.com/AlchemistSimulator/Alchemist/issues/5322)) ([59cf000](https://github.com/AlchemistSimulator/Alchemist/commit/59cf0008bd28801fca4ab9c2ca8df55bc740da02))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.175.0 ([#5309](https://github.com/AlchemistSimulator/Alchemist/issues/5309)) ([b7c3933](https://github.com/AlchemistSimulator/Alchemist/commit/b7c3933d62ff217a577a4cd0cc9d80fe4945f633))
+* **deps:** update gradle to v9.5.0 ([#5315](https://github.com/AlchemistSimulator/Alchemist/issues/5315)) ([72ef7c4](https://github.com/AlchemistSimulator/Alchemist/commit/72ef7c49842fcd474ad9003427378689027ea93b))
+* **deps:** update plugin gitsemver to v7.0.18 ([#5314](https://github.com/AlchemistSimulator/Alchemist/issues/5314)) ([886c6c2](https://github.com/AlchemistSimulator/Alchemist/commit/886c6c26c1afec85b640e091e22623fbead8833d))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.16 ([#5320](https://github.com/AlchemistSimulator/Alchemist/issues/5320)) ([3d6385b](https://github.com/AlchemistSimulator/Alchemist/commit/3d6385bf75a71c3cf1c2ce862f9fb610a7f5b0ee))
+* **deps:** update plugin publishoncentral to v9.2.2 ([#5321](https://github.com/AlchemistSimulator/Alchemist/issues/5321)) ([3a5c02a](https://github.com/AlchemistSimulator/Alchemist/commit/3a5c02aa448c013825fc8906bc53736c84eca006))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.161.0 ([#5316](https://github.com/AlchemistSimulator/Alchemist/issues/5316)) ([c38e869](https://github.com/AlchemistSimulator/Alchemist/commit/c38e8691fe94f4948a76e644b97cacd8280aaffd))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([1cdef2b](https://github.com/AlchemistSimulator/Alchemist/commit/1cdef2b5674af1489d2142f3db9680e0490e36cb))
+* **build:** update the javadoc.io cache ([cd476f3](https://github.com/AlchemistSimulator/Alchemist/commit/cd476f385c5fa5e46a63f9a78ec47d19ba85d5d3))
+
+### Style improvements
+
+* **cognitive-agents:** drop useless parenthesis in `TestSteeringBehaviors` ([#5319](https://github.com/AlchemistSimulator/Alchemist/issues/5319)) ([4333dec](https://github.com/AlchemistSimulator/Alchemist/commit/4333deccc0102ca9d708f840753741282eb77de5))
+* **SAPEREGradient:** simplify gradient processing and enhance readability ([#5313](https://github.com/AlchemistSimulator/Alchemist/issues/5313)) ([7e1cc10](https://github.com/AlchemistSimulator/Alchemist/commit/7e1cc104a3b7a6d49ae2b3118c5d05fdf70c57f5))
+
 ## [43.0.42](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.41...43.0.42) (2026-04-28)
 
 ### Dependency updates

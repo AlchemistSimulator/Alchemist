@@ -170,7 +170,7 @@ object ObservableExtensions {
             override fun stopWatching(registrant: Any) {
                 observers -= registrant
                 observingCallbacks.remove(registrant)
-                backing.stopWatching(registrant)
+                backing.stopWatching(this to registrant)
             }
 
             override fun observeMembership(item: T): Observable<Boolean> =

@@ -92,7 +92,7 @@ class LsaNodeConcurrencyTest {
             }));
         }
         // Wait for all threads to complete
-        assertTrue(latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "Test should complete within 30 seconds");
+        assertTrue(latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "Test should complete within " + TIMEOUT_SECONDS + " seconds");
         executor.shutdown();
         for (final Future<?> task : tasks) {
             try {

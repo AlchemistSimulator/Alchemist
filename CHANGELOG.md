@@ -1,3 +1,26 @@
+## [43.0.45](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.44...43.0.45) (2026-04-30)
+
+### Dependency updates
+
+* **deps:** update dependency org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin to v1.6.1 ([#5323](https://github.com/AlchemistSimulator/Alchemist/issues/5323)) ([249a798](https://github.com/AlchemistSimulator/Alchemist/commit/249a79845221db3b86cd3e24892d075cb6ccd6c0))
+
+### Bug Fixes
+
+* **incarnation-sapere:** validate chemotaxis argument explicitly ([#5326](https://github.com/AlchemistSimulator/Alchemist/issues/5326)) ([93a9f5b](https://github.com/AlchemistSimulator/Alchemist/commit/93a9f5b92c7deaed73cb34b90d014be14a4c1d4d))
+
+### Tests
+
+* **cognitive-agents:** replace unsafe map assertions in steering tests ([#5327](https://github.com/AlchemistSimulator/Alchemist/issues/5327)) ([d4c43d4](https://github.com/AlchemistSimulator/Alchemist/commit/d4c43d4ec04f323f3b870c4b6544712445976fa5))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([d2571fd](https://github.com/AlchemistSimulator/Alchemist/commit/d2571fded0c6684b6f3e7ff5d85e2889127784ea))
+
+### Refactoring
+
+* **sapere:** extract match creation and filtering logic into separate methods ([#5318](https://github.com/AlchemistSimulator/Alchemist/issues/5318)) ([eec1c07](https://github.com/AlchemistSimulator/Alchemist/commit/eec1c07c7b37d6523ee159b8a11276270f671cd3))
+* **sapere:** simplify execution logic in SAPEREReaction ([#5317](https://github.com/AlchemistSimulator/Alchemist/issues/5317)) ([0b71e90](https://github.com/AlchemistSimulator/Alchemist/commit/0b71e90de33dfd68f5799a39d69bd8828f688186))
+
 ## [43.0.44](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.43...43.0.44) (2026-04-29)
 
 ### Documentation

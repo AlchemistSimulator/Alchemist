@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -27,7 +28,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -55,8 +55,7 @@ class LsaNodeConcurrencyTest {
         final int numberOfOperations = 100;
         final ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
         final CountDownLatch latch = new CountDownLatch(numberOfThreads);
-        final AtomicBoolean exceptionOccurred = new AtomicBoolean(false);
-        final List<Future<?>> tasks = new java.util.ArrayList<>(numberOfThreads);
+        final List<Future<?>> tasks = new ArrayList<>(numberOfThreads);
         // Start threads that modify the node while others read from it
         for (int i = 0; i < numberOfThreads; i++) {
             final int threadId = i;
@@ -92,24 +91,21 @@ class LsaNodeConcurrencyTest {
             }));
         }
         // Wait for all threads to complete
-        assertTrue(latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "Test should complete within " + TIMEOUT_SECONDS + " seconds");
-        executor.shutdown();
-        for (final Future<?> task : tasks) {
-            try {
-                task.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
-            } catch (final InterruptedException e) {
-                Thread.currentThread().interrupt();
-                exceptionOccurred.set(true);
-            } catch (final ExecutionException e) {
-                exceptionOccurred.set(true);
-            } catch (final TimeoutException e) {
-                task.cancel(true);
-                executor.shutdownNow();
-                exceptionOccurred.set(true);
+        try {
+            assertTrue(latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "Test should complete within " + TIMEOUT_SECONDS + " seconds");
+            for (final Future<?> task : tasks) {
+                try {
+                    task.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+                } catch (final ExecutionException e) {
+                    throw new AssertionError("Task failed with exception", e.getCause());
+                } catch (final TimeoutException e) {
+                    task.cancel(true);
+                    throw new AssertionError("Task timed out after " + TIMEOUT_SECONDS + " seconds", e);
+                }
             }
+        } finally {
+            executor.shutdownNow();
         }
-        // No exceptions should have occurred (especially no ConcurrentModificationException)
-        assertFalse(exceptionOccurred.get(), "No exceptions should occur during concurrent access");
         // Verify the node is still in a valid state
         final Map<Molecule, List<ILsaMolecule>> finalContents = node.getContents();
         assertNotNull(finalContents);

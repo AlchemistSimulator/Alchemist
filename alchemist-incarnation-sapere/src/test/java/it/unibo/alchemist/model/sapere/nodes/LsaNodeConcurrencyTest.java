@@ -108,6 +108,14 @@ class LsaNodeConcurrencyTest {
             }
         } finally {
             executor.shutdownNow();
+            try {
+                if (!executor.awaitTermination(TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+                    throw new AssertionError("Executor did not terminate within " + TIMEOUT_SECONDS + " seconds");
+                }
+            } catch (final InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new AssertionError("Interrupted while waiting for executor termination", e);
+            }
         }
         // Verify the node is still in a valid state
         final Map<Molecule, List<ILsaMolecule>> finalContents = node.getContents();

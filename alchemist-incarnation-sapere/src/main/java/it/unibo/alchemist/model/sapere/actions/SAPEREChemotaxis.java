@@ -55,7 +55,7 @@ public final class SAPEREChemotaxis<P extends Position<P>> extends AbstractSAPER
     ) {
         super(environment, node, response);
         if (idPosition < 0) {
-            throw new IllegalArgumentException("Argument number must be non-negative");
+            throw new IllegalArgumentException("idPosition must be non-negative, but was: " + idPosition);
         }
         this.response = response;
         this.gradient = gradient;

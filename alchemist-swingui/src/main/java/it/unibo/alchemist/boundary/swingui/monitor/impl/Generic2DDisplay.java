@@ -373,7 +373,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         final Node<T> hookedNode = hooked.get();
         final P hookedCoordinates = positions.get(hookedNode);
         if (hookedCoordinates == null) {
-            hooked.set(Optional.empty());
+            hooked = Optional.empty();
             return;
         }
         final Point hookedPoint = wormhole.getViewPoint(hookedCoordinates);

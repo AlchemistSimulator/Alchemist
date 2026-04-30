@@ -96,6 +96,9 @@ class LsaNodeConcurrencyTest {
             for (final Future<?> task : tasks) {
                 try {
                     task.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+                } catch (final InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new AssertionError("Test interrupted while waiting for task", e);
                 } catch (final ExecutionException e) {
                     throw new AssertionError("Task failed with exception", e.getCause());
                 } catch (final TimeoutException e) {

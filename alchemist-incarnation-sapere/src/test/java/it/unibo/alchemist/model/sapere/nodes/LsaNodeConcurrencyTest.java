@@ -100,7 +100,11 @@ class LsaNodeConcurrencyTest {
             } catch (final InterruptedException e) {
                 Thread.currentThread().interrupt();
                 exceptionOccurred.set(true);
-            } catch (final ExecutionException | TimeoutException e) {
+            } catch (final ExecutionException e) {
+                exceptionOccurred.set(true);
+            } catch (final TimeoutException e) {
+                task.cancel(true);
+                executor.shutdownNow();
                 exceptionOccurred.set(true);
             }
         }

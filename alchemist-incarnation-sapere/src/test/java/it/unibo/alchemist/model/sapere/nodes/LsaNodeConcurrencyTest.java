@@ -91,6 +91,7 @@ class LsaNodeConcurrencyTest {
             }));
         }
         // Wait for all threads to complete
+        AssertionError primaryFailure = null;
         try {
             assertTrue(latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "Test should complete within " + TIMEOUT_SECONDS + " seconds");
             for (final Future<?> task : tasks) {
@@ -106,16 +107,33 @@ class LsaNodeConcurrencyTest {
                     throw new AssertionError("Task timed out after " + TIMEOUT_SECONDS + " seconds", e);
                 }
             }
+        } catch (final AssertionError e) {
+            primaryFailure = e;
         } finally {
             executor.shutdownNow();
             try {
                 if (!executor.awaitTermination(TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
-                    throw new AssertionError("Executor did not terminate within " + TIMEOUT_SECONDS + " seconds");
+                    final AssertionError terminationError = new AssertionError(
+                        "Executor did not terminate within " + TIMEOUT_SECONDS + " seconds");
+                    if (primaryFailure != null) {
+                        primaryFailure.addSuppressed(terminationError);
+                    } else {
+                        throw terminationError;
+                    }
                 }
             } catch (final InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new AssertionError("Interrupted while waiting for executor termination", e);
+                final AssertionError terminationError = new AssertionError(
+                    "Interrupted while waiting for executor termination", e);
+                if (primaryFailure != null) {
+                    primaryFailure.addSuppressed(terminationError);
+                } else {
+                    throw terminationError;
+                }
             }
+        }
+        if (primaryFailure != null) {
+            throw primaryFailure;
         }
         // Verify the node is still in a valid state
         final Map<Molecule, List<ILsaMolecule>> finalContents = node.getContents();

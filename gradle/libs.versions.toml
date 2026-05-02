@@ -190,7 +190,7 @@ hugo = "io.github.fstaudt.hugo:0.12.0"
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
-multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.3.2"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.3.3"
 publishOnCentral = "org.danilopianini.publish-on-central:9.2.2"
 scalafmt = "cz.augi.gradle.scalafmt:1.21.5"
 shadowJar = "com.gradleup.shadow:9.4.1"

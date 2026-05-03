@@ -35,7 +35,7 @@ apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.
 appdirs = "net.harawata:appdirs:1.5.0"
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
-caffeine = "com.github.ben-manes.caffeine:caffeine:3.2.3"
+caffeine = "com.github.ben-manes.caffeine:caffeine:3.2.4"
 classgraph = "io.github.classgraph:classgraph:4.8.184"
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }

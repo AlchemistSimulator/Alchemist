@@ -1,3 +1,25 @@
+## [43.0.47](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.46...43.0.47) (2026-05-04)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.5.0-19.2.5 (minor) ([#5337](https://github.com/AlchemistSimulator/Alchemist/issues/5337)) ([de89687](https://github.com/AlchemistSimulator/Alchemist/commit/de8968753b5b650f11b62b164570511cca883a2c))
+* **deps:** update dependency com.github.ben-manes.caffeine:caffeine to v3.2.4 ([#5334](https://github.com/AlchemistSimulator/Alchemist/issues/5334)) ([d7d2e0e](https://github.com/AlchemistSimulator/Alchemist/commit/d7d2e0e9efdd83ff167c12ae50ae8b0c498c6dc4))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.176.0 ([#5330](https://github.com/AlchemistSimulator/Alchemist/issues/5330)) ([051c9e4](https://github.com/AlchemistSimulator/Alchemist/commit/051c9e457082d57a1c181985665302e30f6f94bf))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.177.0 ([#5333](https://github.com/AlchemistSimulator/Alchemist/issues/5333)) ([6abca36](https://github.com/AlchemistSimulator/Alchemist/commit/6abca36137001ef8807d894f2cd3d5bb734d7b35))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.178.0 ([#5335](https://github.com/AlchemistSimulator/Alchemist/issues/5335)) ([fe216ff](https://github.com/AlchemistSimulator/Alchemist/commit/fe216ffe161d72f6247f5ab3fd51082f2df762cd))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.7.0 ([#5329](https://github.com/AlchemistSimulator/Alchemist/issues/5329)) ([0053e8f](https://github.com/AlchemistSimulator/Alchemist/commit/0053e8fd5a08c4d4c02aee7955c004ce15f2b1a9))
+* **deps:** update plugin multijvmtesting to v4.3.3 ([#5331](https://github.com/AlchemistSimulator/Alchemist/issues/5331)) ([98e94d1](https://github.com/AlchemistSimulator/Alchemist/commit/98e94d1f6a68f3678ae8b820abcbdb1e5a0dd211))
+* **deps:** update plugin multijvmtesting to v4.3.4 ([#5332](https://github.com/AlchemistSimulator/Alchemist/issues/5332)) ([25e965f](https://github.com/AlchemistSimulator/Alchemist/commit/25e965f8ead7a7ab644c99433b95cbd09998d50b))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([3bb03fb](https://github.com/AlchemistSimulator/Alchemist/commit/3bb03fb4b0b8bda83326e51763d2c99066467042))
+* **build:** update the javadoc.io cache ([076a4f9](https://github.com/AlchemistSimulator/Alchemist/commit/076a4f9bf821c4b9f11cfbfb911d3173c3cd667f))
+
+### Style improvements
+
+* **swingui:** simplify Generic2DDisplay rendering ([#5312](https://github.com/AlchemistSimulator/Alchemist/issues/5312)) ([e293f1f](https://github.com/AlchemistSimulator/Alchemist/commit/e293f1f8fd091e15934dddd77721d052928f73b1))
+
 ## [43.0.46](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.45...43.0.46) (2026-04-30)
 
 ### Dependency updates

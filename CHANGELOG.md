@@ -1,3 +1,19 @@
+## [43.0.48](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.47...43.0.48) (2026-05-08)
+
+### Dependency updates
+
+* **core-deps:** update kotlinx-coroutines monorepo to v1.11.0 (minor) ([#5339](https://github.com/AlchemistSimulator/Alchemist/issues/5339)) ([1280467](https://github.com/AlchemistSimulator/Alchemist/commit/1280467d49bda89405e4a4c5399feba68c60aada))
+* **core-deps:** update react to v2026.5.2-19.2.6 (patch) ([#5338](https://github.com/AlchemistSimulator/Alchemist/issues/5338)) ([88b0f95](https://github.com/AlchemistSimulator/Alchemist/commit/88b0f956fb835b628f4a1c71f1641c1ce170f2ca))
+* **deps:** update plugin multijvmtesting to v4.3.5 ([#5336](https://github.com/AlchemistSimulator/Alchemist/issues/5336)) ([1ed9b11](https://github.com/AlchemistSimulator/Alchemist/commit/1ed9b11b57fd72f32afb2141e941050e5862399e))
+* **deps:** update plugin publishoncentral to v9.2.3 ([#5340](https://github.com/AlchemistSimulator/Alchemist/issues/5340)) ([810c4ed](https://github.com/AlchemistSimulator/Alchemist/commit/810c4ed1ae3fedddb98aeaafbeb9102c8738969d))
+
+### General maintenance
+
+* **build:** actualize the Kotlin JS store ([8fe8582](https://github.com/AlchemistSimulator/Alchemist/commit/8fe85826bc6417df1c6228fcfe57660b456dbd41))
+* **build:** update the javadoc.io cache ([bad2aae](https://github.com/AlchemistSimulator/Alchemist/commit/bad2aaef8a8161e916d2491eef672d1438d88c74))
+* **build:** update the javadoc.io cache ([a9e0459](https://github.com/AlchemistSimulator/Alchemist/commit/a9e0459ea0d38916d95f2ee7bdf2544423406c4a))
+* **build:** update the javadoc.io cache ([3cd4ccf](https://github.com/AlchemistSimulator/Alchemist/commit/3cd4ccf9fa588a8f9d3031f74dcdff6dcfb45a35))
+
 ## [43.0.47](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.46...43.0.47) (2026-05-04)
 
 ### Dependency updates

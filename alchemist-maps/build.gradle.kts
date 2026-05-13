@@ -29,6 +29,7 @@ dependencies {
         implementation(lang3)
     }
     implementation(libs.appdirs)
+    implementation(libs.ais.lib.messages)
     implementation(libs.boilerplate)
     implementation(libs.caffeine)
     implementation(libs.gson)

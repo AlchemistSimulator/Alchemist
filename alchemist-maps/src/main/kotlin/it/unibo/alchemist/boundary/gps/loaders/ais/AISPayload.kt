@@ -72,7 +72,7 @@ data class AISPayload(
         /**
          * Converts timestamped AIS messages to payloads.
          */
-        fun from(messages: Map<Instant, AisMessage>): List<AISPayload> = messages
+        fun from(messages: Iterable<Pair<Instant, AisMessage>>): List<AISPayload> = messages
             .mapNotNull { (timestamp, message) -> from(timestamp, message) }
             .sortedWith(compareBy(AISPayload::vesselId, AISPayload::timestamp))
 

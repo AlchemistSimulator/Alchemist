@@ -10,19 +10,22 @@ import java.time.Instant
 object AISDecoder {
     /** @return the message parsed from a raw [String] to [AisMessage] and maps it to the timestamp of the raw message.
      **/
-    fun parsePayload(payload: String, date: String): Map<Instant, AisMessage> {
+    fun parsePayload(payload: String, date: String): List<Pair<Instant, AisMessage>> {
         val aisMessageBuilder = AISMessageParser()
-        val payloadDecoded = mutableMapOf<Instant, AisMessage>()
+        val payloadDecoded = mutableListOf<Pair<Instant, AisMessage>>()
+        var currentTimestamp: Instant? = null
         payload.lines().forEach {
             if (it.startsWith(DATE_TIME_PREFIX)) {
                 val time = it.substringAfter(DATE_TIME_PREFIX).trim()
-                val currentTimestamp = Instant.parse("${date}T${time}Z")
-                if (aisMessageBuilder.isComplete()) {
-                    val aisMessage = aisMessageBuilder.build()
-                    if (aisMessage != null) payloadDecoded[currentTimestamp] = aisMessage
-                }
+                currentTimestamp = Instant.parse("${date}T${time}Z")
             } else if (it != "") {
                 aisMessageBuilder.parseLine(it)
+                if (aisMessageBuilder.isComplete()) {
+                    val aisMessage = aisMessageBuilder.build()
+                    if (aisMessage != null && currentTimestamp != null) {
+                        payloadDecoded += currentTimestamp to aisMessage
+                    }
+                }
             }
         }
         return payloadDecoded
@@ -31,7 +34,7 @@ object AISDecoder {
     /** Parses all the raw AIS lines contained in a [File].
      * @param file the [File] from which parse AIS info.
      **/
-    fun parseFile(file: File): Map<Instant, AisMessage> {
+    fun parseFile(file: File): List<Pair<Instant, AisMessage>> {
         val dateLong = file.name.substringAfterLast("/").substringBefore("-")
         val year = dateLong.take(4)
         val month = dateLong.drop(4).take(2)

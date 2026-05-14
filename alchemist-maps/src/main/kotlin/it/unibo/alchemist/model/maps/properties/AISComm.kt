@@ -22,9 +22,15 @@ import java.time.Instant
 class AISComm<T>(node: Node<T>) : AbstractNodeProperty<T>(node) {
     private val receivedPayloads = mutableListOf<AISPayload>()
 
+    /**
+     * List of all received AIS payloads.
+     */
     val messages: List<AISPayload>
         get() = receivedPayloads
 
+    /**
+     * The most recently received AIS payload.
+     */
     val latestMessage: AISPayload?
         get() = receivedPayloads.lastOrNull()
 

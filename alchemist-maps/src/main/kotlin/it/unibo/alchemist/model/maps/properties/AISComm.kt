@@ -2,7 +2,6 @@ package it.unibo.alchemist.model.maps.properties
 
 import dk.dma.ais.message.AisMessage
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
-import it.unibo.alchemist.boundary.gps.loaders.ais.AISProperty
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.properties.AbstractNodeProperty
@@ -21,12 +20,10 @@ class AISComm<T>(node: Node<T>) : AbstractNodeProperty<T>(node) {
         get() = receivedPayloads.lastOrNull()
 
     val speedOverGround: Double?
-        get() = this[AISProperty.SOG]
+        get() = latestMessage?.sog
 
     val courseOverGround: Double?
-        get() = this[AISProperty.COG]
-
-    operator fun get(property: AISProperty): Double? = latestMessage?.properties?.get(property)
+        get() = latestMessage?.cog
 
     fun receive(message: AISPayload) {
         receivedPayloads += message

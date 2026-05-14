@@ -43,8 +43,8 @@ class AISGPXConverter {
             .lat(latitude)
             .lon(longitude)
             .time(timestamp)
-        properties[AISProperty.SOG]?.let { builder.speed(it, Speed.Unit.KNOTS) }
-        properties[AISProperty.COG]?.let { builder.course(it) }
+        sog?.let { builder.speed(it, Speed.Unit.KNOTS) }
+        cog?.let { builder.course(it) }
         return builder.build()
     }
 }

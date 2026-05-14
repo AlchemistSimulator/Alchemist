@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.boundary.gps.loaders.ais
 
 import dk.dma.ais.message.AisMessage
@@ -14,7 +23,8 @@ import java.time.Instant
  * @property timestamp the timestamp related to the receipt of the message.
  * @property longitude longitude of the boat.
  * @property latitude latitude of the boat.
- * @property sog speed over ground, expressed in knots.
+ * @property speedOverGroundKnots speed over ground, expressed in knots.
+ * @property speedOverGroundMetersPerSecond speed over ground, expressed in meters per second.
  * @property cog course over ground, expressed in degrees.
  * @property heading vessel heading, expressed in degrees.
  * @property positionAccuracy raw AIS position accuracy flag.
@@ -28,7 +38,7 @@ data class AISPayload(
     val timestamp: Instant,
     val longitude: Double,
     val latitude: Double,
-    val sog: Double? = null,
+    val speedOverGroundKnots: Double? = null,
     val cog: Double? = null,
     val heading: Double? = null,
     val positionAccuracy: Double? = null,
@@ -37,8 +47,11 @@ data class AISPayload(
     val raim: Double? = null,
     val shipType: Double? = null,
 ) {
+    val speedOverGroundMetersPerSecond: Double?
+        get() = speedOverGroundKnots?.times(KNOTS_TO_METERS_PER_SECOND)
+
     /**
-     * Static factory for [AISPayload]
+     * Static factory for [AISPayload].
      */
     companion object {
         /**
@@ -55,7 +68,7 @@ data class AISPayload(
                     timestamp = timestamp,
                     longitude = longitude,
                     latitude = latitude,
-                    sog = vesselPosition?.takeIf { it.isSogValid }?.sog?.div(DIV),
+                    speedOverGroundKnots = vesselPosition?.takeIf { it.isSogValid }?.sog?.div(DIV),
                     cog = vesselPosition?.takeIf { it.isCogValid }?.cog?.div(DIV),
                     heading = vesselPosition?.takeIf { it.isHeadingValid }?.trueHeading?.toDouble(),
                     positionAccuracy = vesselPosition?.posAcc?.toDouble(),
@@ -83,5 +96,6 @@ data class AISPayload(
         private fun Double.isValidLongitude(): Boolean = !isNaN() && this in -180.0..180.0
 
         private const val DIV = 10.0
+        private const val KNOTS_TO_METERS_PER_SECOND = 0.5144444444444445
     }
 }

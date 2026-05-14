@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.boundary.gps.loaders
 
 import com.google.common.collect.ImmutableSet
@@ -15,8 +24,9 @@ import java.net.URL
  */
 class AISLoader : GPSFileLoader {
     override fun readTrace(url: URL): List<GPSTrace> = url.openStream().use { input ->
+        val date = AISDecoder.dateFrom(url.path.substringAfterLast("/"))
         AISPayload
-            .from(AISDecoder.parsePayload(input.bufferedReader().readText(), dateFrom(url)))
+            .from(AISDecoder.parsePayload(input.bufferedReader().readText(), date))
             .toTraces()
     }
 
@@ -41,13 +51,5 @@ class AISLoader : GPSFileLoader {
     private companion object {
         private val EXTENSIONS = ImmutableSet.of("ais", "nmea", "txt")
         private const val MILLIS_IN_SECOND = 1_000.0
-
-        private fun dateFrom(url: URL): String {
-            val dateLong = url.path.substringAfterLast("/").substringBefore("-")
-            val year = dateLong.take(4)
-            val month = dateLong.drop(4).take(2)
-            val day = dateLong.takeLast(2)
-            return "$year-$month-$day"
-        }
     }
 }

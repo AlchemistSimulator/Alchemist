@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.model.maps.properties
 
 import dk.dma.ais.message.AisMessage
@@ -19,9 +28,21 @@ class AISComm<T>(node: Node<T>) : AbstractNodeProperty<T>(node) {
     val latestMessage: AISPayload?
         get() = receivedPayloads.lastOrNull()
 
-    val speedOverGround: Double?
-        get() = latestMessage?.sog
+    /**
+     * Speed over ground (in knots) from the latest AIS message.
+     */
+    val speedOverGroundKnots: Double?
+        get() = latestMessage?.speedOverGroundKnots
 
+    /**
+     * Speed over ground (in m/s) from the latest AIS message.
+     */
+    val speedOverGroundMetersPerSecond: Double?
+        get() = latestMessage?.speedOverGroundMetersPerSecond
+
+    /**
+     * Course over ground (in degrees) from the latest AIS message.
+     */
     val courseOverGround: Double?
         get() = latestMessage?.cog
 

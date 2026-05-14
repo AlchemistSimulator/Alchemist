@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.boundary.gps.loaders.ais
 
 import io.jenetics.jpx.GPX
@@ -43,7 +52,7 @@ class AISGPXConverter {
             .lat(latitude)
             .lon(longitude)
             .time(timestamp)
-        sog?.let { builder.speed(it, Speed.Unit.KNOTS) }
+        speedOverGroundKnots?.let { builder.speed(it, Speed.Unit.KNOTS) }
         cog?.let { builder.course(it) }
         return builder.build()
     }

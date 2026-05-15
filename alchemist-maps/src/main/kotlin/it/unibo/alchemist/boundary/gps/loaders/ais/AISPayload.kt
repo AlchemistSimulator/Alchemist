@@ -59,27 +59,21 @@ data class AISPayload(
          */
         fun from(timestamp: Instant, message: AisMessage): AISPayload? {
             val positionMessage = message as? IPositionMessage ?: return null
-            val longitude = positionMessage.pos.longitudeDouble
-            val latitude = positionMessage.pos.latitudeDouble
             val vesselPosition = message.vesselPosition()
-            return if (longitude.isValidLongitude() && latitude.isValidLatitude()) {
-                AISPayload(
-                    vesselId = message.userId,
-                    timestamp = timestamp,
-                    longitude = longitude,
-                    latitude = latitude,
-                    speedOverGroundKnots = vesselPosition?.takeIf { it.isSogValid }?.sog?.div(DIV),
-                    cog = vesselPosition?.takeIf { it.isCogValid }?.cog?.div(DIV),
-                    heading = vesselPosition?.takeIf { it.isHeadingValid }?.trueHeading?.toDouble(),
-                    positionAccuracy = vesselPosition?.posAcc?.toDouble(),
-                    rateOfTurn = (message as? AisPositionMessage)?.takeIf { it.isRotValid }?.rot?.toDouble(),
-                    navigationalStatus = (message as? AisPositionMessage)?.navStatus?.toDouble(),
-                    raim = vesselPosition?.raim?.toDouble(),
-                    shipType = (message as? AisStaticCommon)?.shipType?.toDouble(),
-                )
-            } else {
-                null
-            }
+            return AISPayload(
+                vesselId = message.userId,
+                timestamp = timestamp,
+                longitude = positionMessage.pos.longitudeDouble,
+                latitude = positionMessage.pos.latitudeDouble,
+                speedOverGroundKnots = vesselPosition?.takeIf { it.isSogValid }?.sog?.div(DIV),
+                cog = vesselPosition?.takeIf { it.isCogValid }?.cog?.div(DIV),
+                heading = vesselPosition?.takeIf { it.isHeadingValid }?.trueHeading?.toDouble(),
+                positionAccuracy = vesselPosition?.posAcc?.toDouble(),
+                rateOfTurn = (message as? AisPositionMessage)?.takeIf { it.isRotValid }?.rot?.toDouble(),
+                navigationalStatus = (message as? AisPositionMessage)?.navStatus?.toDouble(),
+                raim = vesselPosition?.raim?.toDouble(),
+                shipType = (message as? AisStaticCommon)?.shipType?.toDouble(),
+            )
         }
 
         /**
@@ -90,10 +84,6 @@ data class AISPayload(
             .sortedWith(compareBy(AISPayload::vesselId, AISPayload::timestamp))
 
         private fun AisMessage.vesselPosition(): IVesselPositionMessage? = this as? IVesselPositionMessage
-
-        private fun Double.isValidLatitude(): Boolean = !isNaN() && this in -90.0..90.0
-
-        private fun Double.isValidLongitude(): Boolean = !isNaN() && this in -180.0..180.0
 
         private const val DIV = 10.0
         private const val KNOTS_TO_METERS_PER_SECOND = 0.5144444444444445

@@ -50,6 +50,11 @@ object AISDecoder {
     fun parseFile(file: File): List<Pair<Instant, AisMessage>> =
         parsePayload(file.readText(Charsets.UTF_8), dateFrom(file.name))
 
+    /**
+     * Extract date from a file name.
+     * @param resourceName the name of file.
+     * @return the date or a fallback date.
+     */
     fun dateFrom(resourceName: String): String = DATE_PATTERN
         .find(resourceName)
         ?.value

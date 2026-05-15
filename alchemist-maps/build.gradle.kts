@@ -17,6 +17,7 @@ plugins {
 dependencies {
     ksp(alchemist("factories-generator"))
     api(alchemist("api"))
+    api(libs.ais.lib.messages)
 
     implementation(alchemist("implementationbase"))
     implementation(alchemist("loading"))
@@ -29,7 +30,6 @@ dependencies {
         implementation(lang3)
     }
     implementation(libs.appdirs)
-    api(libs.ais.lib.messages)
     implementation(libs.boilerplate)
     implementation(libs.caffeine)
     implementation(libs.gson)

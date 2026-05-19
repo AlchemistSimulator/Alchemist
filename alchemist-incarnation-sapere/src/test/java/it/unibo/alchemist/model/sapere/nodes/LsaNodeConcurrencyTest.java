@@ -41,6 +41,7 @@ class LsaNodeConcurrencyTest {
 
     private static final int MIN_MOLECULES = 5;
     private static final int TIMEOUT_SECONDS = 30;
+    private static final String SECONDS = " seconds";
 
     @Test
     void testConcurrentGetContentsAndModification() throws InterruptedException {
@@ -93,7 +94,9 @@ class LsaNodeConcurrencyTest {
         // Wait for all threads to complete
         AssertionError primaryFailure = null;
         try {
-            assertTrue(latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "Test should complete within " + TIMEOUT_SECONDS + " seconds");
+            assertTrue(
+                latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS),
+                "Test should complete within " + TIMEOUT_SECONDS + SECONDS);
             for (final Future<?> task : tasks) {
                 try {
                     task.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -104,7 +107,7 @@ class LsaNodeConcurrencyTest {
                     throw new AssertionError("Task failed with exception", e.getCause());
                 } catch (final TimeoutException e) {
                     task.cancel(true);
-                    throw new AssertionError("Task timed out after " + TIMEOUT_SECONDS + " seconds", e);
+                    throw new AssertionError("Task timed out after " + TIMEOUT_SECONDS + SECONDS, e);
                 }
             }
         } catch (final AssertionError e) {
@@ -114,7 +117,7 @@ class LsaNodeConcurrencyTest {
             try {
                 if (!executor.awaitTermination(TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
                     final AssertionError terminationError = new AssertionError(
-                        "Executor did not terminate within " + TIMEOUT_SECONDS + " seconds");
+                        "Executor did not terminate within " + TIMEOUT_SECONDS + SECONDS);
                     if (primaryFailure != null) {
                         primaryFailure.addSuppressed(terminationError);
                     } else {

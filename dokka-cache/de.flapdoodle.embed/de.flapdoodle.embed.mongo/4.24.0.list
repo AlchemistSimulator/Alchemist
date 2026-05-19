@@ -1,8 +1,0 @@
-de.flapdoodle.embed.mongo.client
-de.flapdoodle.embed.mongo.commands
-de.flapdoodle.embed.mongo.config
-de.flapdoodle.embed.mongo.distribution
-de.flapdoodle.embed.mongo.runtime
-de.flapdoodle.embed.mongo.transitions
-de.flapdoodle.embed.mongo.types
-de.flapdoodle.embed.mongo.util

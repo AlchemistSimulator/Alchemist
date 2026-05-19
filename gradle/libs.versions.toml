@@ -4,7 +4,7 @@ antlr4 = "4.13.2"
 ais-lib = "2.8.5"
 apollo ="4.0.0-beta.7"
 arrow = "2.2.2.1"
-compose-multiplatform = "1.10.3"
+compose-multiplatform = "1.11.0"
 dokka = "2.2.0"
 graphql = "9.2.0"
 graphhopper = "11.0"
@@ -13,12 +13,12 @@ junit = "6.0.3"
 konf = "1.1.2"
 kotest = "6.1.11"
 kotlin = "2.3.21"
-ksp = "2.3.7"
+ksp = "2.3.8"
 kotlinx-coroutines = "1.11.0"
-ktor = "3.4.3"
+ktor = "3.5.0"
 mockito = "5.23.0"
 protelis = "18.8.1"
-react = "2026.5.3-19.2.6"
+react = "2026.5.5-19.2.6"
 scafi = "1.6.0"
 scala = "2.13.18"
 scalacache = "0.28.0"
@@ -99,7 +99,7 @@ kotlinx-atomicfu-runtime = { module = "org.jetbrains.kotlin:kotlinx-atomicfu-run
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ksp-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version = "2.3.7" }
+ksp-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version = "2.3.8" }
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-serialization", version.ref = "ktor" }
@@ -185,15 +185,15 @@ testing-runtimeOnly = [ "junit-engine" ]
 [plugins]
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
-gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:7.0.18"
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:7.0.19"
 graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
 hugo = "io.github.fstaudt.hugo:0.12.0"
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
-multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.3.5"
-publishOnCentral = "org.danilopianini.publish-on-central:9.2.3"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.3.6"
+publishOnCentral = "org.danilopianini.publish-on-central:9.2.4"
 scalafmt = "cz.augi.gradle.scalafmt:1.21.5"
 shadowJar = "com.gradleup.shadow:9.4.1"
 taskTree = "com.dorongold.task-tree:4.0.1"

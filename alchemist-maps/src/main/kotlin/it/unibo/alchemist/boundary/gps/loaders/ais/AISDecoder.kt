@@ -20,24 +20,26 @@ import java.time.format.DateTimeFormatter
  * Utility object to decode AIS raw messages.
  */
 object AISDecoder {
-    /** @return the message parsed from a raw [String] to [AisMessage] and maps it to the timestamp of the raw message.
+    /**
+     * @param date the payload date, formatted as an ISO local date (`yyyy-MM-dd`).
+     * @throws java.time.format.DateTimeParseException if [date] is not a valid ISO local date.
+     * @return the message parsed from a raw [String] to [AisMessage] and maps it to the timestamp of the raw message.
      **/
     fun parsePayload(payload: String, date: String): List<Pair<Instant, AisMessage>> {
-        var vdm = Vdm()
-        var currentTimestamp = Instant.parse("${date}T00:00:00Z")
+        val payloadDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE)
+        var currentTimestamp = Instant.parse("${payloadDate}T00:00:00Z")
         return payload.lines().mapNotNull {
             when {
                 it.startsWith(DATE_TIME_PREFIX) -> {
                     val time = it.substringAfter(DATE_TIME_PREFIX).trim()
-                    currentTimestamp = Instant.parse("${date}T${time}Z")
+                    currentTimestamp = Instant.parse("${payloadDate}T${time}Z")
                     null
                 }
                 it.isBlank() -> null
                 else -> {
-                    vdm = AISMessageParser.parseLine(vdm, it)
+                    val vdm = AISMessageParser.parseLine(Vdm(), it)
                     vdm.takeIf { aisMessage -> aisMessage.isCompletePacket }
                         ?.let(AISMessageParser::build)
-                        .also { if (vdm.isCompletePacket) vdm = Vdm() }
                         ?.let { message -> currentTimestamp to message }
                 }
             }

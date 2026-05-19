@@ -16,15 +16,16 @@ import java.time.Instant
 class TestAISPayload :
     StringSpec({
         "AISPayload should convert speed from knots to meters per second" {
+            val speedOverGroundKnots = 10.0
             val payload = AISPayload(
                 vesselId = 1,
                 timestamp = Instant.EPOCH,
                 longitude = 11.0,
                 latitude = 44.0,
-                speedOverGroundKnots = 10.0,
+                speedOverGroundKnots = speedOverGroundKnots,
             )
-
-            payload.speedOverGroundMetersPerSecond shouldBe 5.144444444444445
+            payload.speedOverGroundMetersPerSecond shouldBe
+                speedOverGroundKnots * METERS_IN_NAUTICAL_MILE / SECONDS_PER_HOUR
         }
 
         "AISPayload should keep missing speed unavailable" {
@@ -34,7 +35,9 @@ class TestAISPayload :
                 longitude = 11.0,
                 latitude = 44.0,
             )
-
             payload.speedOverGroundMetersPerSecond shouldBe null
         }
     })
+
+private const val METERS_IN_NAUTICAL_MILE = 1_852.0
+private const val SECONDS_PER_HOUR = 3_600.0

@@ -13,9 +13,7 @@ import io.jenetics.jpx.GPX
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import java.nio.file.Files
-import java.nio.file.Path
 import java.time.Instant
-import java.util.Comparator
 import java.util.stream.Collectors
 
 class TestAISGPXConverter :
@@ -31,11 +29,9 @@ class TestAISGPXConverter :
                     ),
                     outputDirectory,
                 ) { vesselId -> "vessel-$vesselId" }
-
                 Files.exists(outputDirectory.resolve("vessel-1.gpx")) shouldBe true
                 Files.exists(outputDirectory.resolve("vessel-2.gpx")) shouldBe true
                 Files.exists(outputDirectory.resolve("1.gpx")) shouldBe false
-
                 val exportedTimes = GPX
                     .read(outputDirectory.resolve("vessel-1.gpx"))
                     .tracks()
@@ -43,10 +39,9 @@ class TestAISGPXConverter :
                     .flatMap { segment -> segment.points() }
                     .map { point -> point.time.orElseThrow() }
                     .collect(Collectors.toList())
-
                 exportedTimes shouldBe listOf(Instant.EPOCH, Instant.EPOCH.plusSeconds(2))
             } finally {
-                outputDirectory.deleteRecursively()
+                outputDirectory.toFile().deleteRecursively()
             }
         }
     })
@@ -57,10 +52,3 @@ private fun payloadAt(vesselId: Int, seconds: Long) = AISPayload(
     longitude = vesselId.toDouble(),
     latitude = vesselId.toDouble(),
 )
-
-private fun Path.deleteRecursively() {
-    Files
-        .walk(this)
-        .sorted(Comparator.reverseOrder())
-        .forEach(Files::deleteIfExists)
-}

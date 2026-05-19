@@ -23,7 +23,6 @@ class TestAISLoader :
                 payloadAt(10, vesselId = 1),
                 payloadAt(12, vesselId = 1),
             ).toTraces().single()
-
             trace.startTime.toDouble() shouldBe 10.0
             trace.finalTime.toDouble() shouldBe 12.0
         }
@@ -33,7 +32,6 @@ class TestAISLoader :
                 payloadAt(12, vesselId = 1),
                 payloadAt(10, vesselId = 1),
             ).toTraces().single()
-
             trace.initialPosition.time.toDouble() shouldBe 10.0
             trace.finalPosition.time.toDouble() shouldBe 12.0
         }
@@ -45,7 +43,6 @@ class TestAISLoader :
                 payloadAt(origin, 5, vesselId = 1),
                 payloadAt(origin, 3, vesselId = 2),
             ).toTraces(timeOrigin = origin)
-
             traces
                 .map { it.startTime.toDouble() to it.finalTime.toDouble() }
                 .toSet() shouldBe setOf(5.0 to 5.0, 3.0 to 8.0)
@@ -53,7 +50,6 @@ class TestAISLoader :
 
         "AISLoader should advertise AIS-like file extensions" {
             val extensions = AISLoader().supportedExtensions()
-
             extensions shouldContain "ais"
             extensions shouldContain "nmea"
             extensions shouldContain "txt"

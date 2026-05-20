@@ -9,7 +9,7 @@ dokka = "2.2.0"
 graphql = "9.2.0"
 graphhopper = "11.0"
 graphstream = "2.0"
-junit = "6.0.3"
+junit = "6.1.0"
 konf = "1.1.2"
 kotest = "6.1.11"
 kotlin = "2.3.21"
@@ -18,7 +18,7 @@ kotlinx-coroutines = "1.11.0"
 ktor = "3.5.0"
 mockito = "5.23.0"
 protelis = "18.8.1"
-react = "2026.5.5-19.2.6"
+react = "2026.5.6-19.2.6"
 scafi = "1.6.0"
 scala = "2.13.18"
 scalacache = "0.28.0"
@@ -185,7 +185,7 @@ testing-runtimeOnly = [ "junit-engine" ]
 [plugins]
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
-gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:7.0.19"
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:7.0.20"
 graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
 hugo = "io.github.fstaudt.hugo:0.12.0"

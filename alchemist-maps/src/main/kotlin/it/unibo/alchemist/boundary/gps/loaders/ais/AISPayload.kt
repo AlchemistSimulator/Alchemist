@@ -54,6 +54,7 @@ data class AISPayload(
      * Static factory for [AISPayload].
      */
     companion object {
+        /** AIS stores speed over ground and course over ground as tenths of knots/degrees. */
         private const val AIS_TENTHS_SCALE = 10.0
         private const val METERS_IN_NAUTICAL_MILE = 1_852.0
         private const val SECONDS_PER_HOUR = 3_600.0

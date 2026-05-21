@@ -20,6 +20,10 @@ import java.time.format.DateTimeFormatter
  * Utility object to decode AIS raw messages.
  */
 object AISDecoder {
+    private const val DATE_TIME_PREFIX = "!DATE-TIME,"
+    private const val FALLBACK_DATE = "1970-01-01"
+    private val DATE_PATTERN = Regex("""\d{8}""")
+
     /**
      * @param date the payload date, formatted as an ISO local date (`yyyy-MM-dd`).
      * @throws java.time.format.DateTimeParseException if [date] is not a valid ISO local date.
@@ -66,8 +70,4 @@ object AISDecoder {
             }.getOrNull()
         }
         ?: FALLBACK_DATE
-
-    private const val DATE_TIME_PREFIX = "!DATE-TIME,"
-    private const val FALLBACK_DATE = "1970-01-01"
-    private val DATE_PATTERN = Regex("""\d{8}""")
 }

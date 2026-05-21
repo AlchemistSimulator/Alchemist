@@ -1,0 +1,29 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:io.ktor.serialization////PointingToDeclaration/ktor-serialization/io.ktor.serialization/index.html
+$dokka.location:io.ktor.serialization//deserialize/io.ktor.serialization.WebsocketContentConverter#io.ktor.websocket.Frame#io.ktor.utils.io.charsets.Charset/PointingToDeclaration/ktor-serialization/io.ktor.serialization/deserialize.html
+$dokka.location:io.ktor.serialization//deserialize/kotlin.collections.List[io.ktor.serialization.ContentConverter]#io.ktor.utils.io.ByteReadChannel#io.ktor.util.reflect.TypeInfo#io.ktor.utils.io.charsets.Charset/PointingToDeclaration/ktor-serialization/io.ktor.serialization/deserialize.html
+$dokka.location:io.ktor.serialization//serialize/io.ktor.serialization.WebsocketContentConverter#TypeParam(bounds=[kotlin.Any?])#io.ktor.utils.io.charsets.Charset/PointingToDeclaration/ktor-serialization/io.ktor.serialization/serialize.html
+$dokka.location:io.ktor.serialization//suitableCharset/io.ktor.http.Headers#io.ktor.utils.io.charsets.Charset/PointingToDeclaration/ktor-serialization/io.ktor.serialization/suitable-charset.html
+$dokka.location:io.ktor.serialization//suitableCharsetOrNull/io.ktor.http.Headers#io.ktor.utils.io.charsets.Charset/PointingToDeclaration/ktor-serialization/io.ktor.serialization/suitable-charset-or-null.html
+$dokka.location:io.ktor.serialization/Configuration///PointingToDeclaration/ktor-serialization/io.ktor.serialization/-configuration/index.html
+$dokka.location:io.ktor.serialization/Configuration/register/#io.ktor.http.ContentType#TypeParam(bounds=[io.ktor.serialization.ContentConverter])#kotlin.Function1[TypeParam(bounds=[io.ktor.serialization.ContentConverter]),kotlin.Unit]/PointingToDeclaration/ktor-serialization/io.ktor.serialization/-configuration/register.html
+$dokka.location:io.ktor.serialization/ContentConvertException///PointingToDeclaration/ktor-serialization/io.ktor.serialization/-content-convert-exception/index.html
+$dokka.location:io.ktor.serialization/ContentConvertException/ContentConvertException/#kotlin.String#kotlin.Throwable?/PointingToDeclaration/ktor-serialization/io.ktor.serialization/-content-convert-exception/-content-convert-exception.html
+$dokka.location:io.ktor.serialization/ContentConverter///PointingToDeclaration/ktor-serialization/io.ktor.serialization/-content-converter/index.html
+$dokka.location:io.ktor.serialization/ContentConverter/deserialize/#io.ktor.utils.io.charsets.Charset#io.ktor.util.reflect.TypeInfo#io.ktor.utils.io.ByteReadChannel/PointingToDeclaration/ktor-serialization/io.ktor.serialization/-content-converter/deserialize.html
+$dokka.location:io.ktor.serialization/ContentConverter/serialize/#io.ktor.http.ContentType#io.ktor.utils.io.charsets.Charset#io.ktor.util.reflect.TypeInfo#kotlin.Any?/PointingToDeclaration/ktor-serialization/io.ktor.serialization/-content-converter/serialize.html
+$dokka.location:io.ktor.serialization/JsonConvertException///PointingToDeclaration/ktor-serialization/io.ktor.serialization/-json-convert-exception/index.html
+$dokka.location:io.ktor.serialization/JsonConvertException/JsonConvertException/#kotlin.String#kotlin.Throwable?/PointingToDeclaration/ktor-serialization/io.ktor.serialization/-json-convert-exception/-json-convert-exception.html
+$dokka.location:io.ktor.serialization/WebsocketContentConvertException///PointingToDeclaration/ktor-serialization/io.ktor.serialization/-websocket-content-convert-exception/index.html
+$dokka.location:io.ktor.serialization/WebsocketContentConvertException/WebsocketContentConvertException/#kotlin.String#kotlin.Throwable?/PointingToDeclaration/ktor-serialization/io.ktor.serialization/-websocket-content-convert-exception/-websocket-content-convert-exception.html
+$dokka.location:io.ktor.serialization/WebsocketContentConverter///PointingToDeclaration/ktor-serialization/io.ktor.serialization/-websocket-content-converter/index.html
+$dokka.location:io.ktor.serialization/WebsocketContentConverter/deserialize/#io.ktor.utils.io.charsets.Charset#io.ktor.util.reflect.TypeInfo#io.ktor.websocket.Frame/PointingToDeclaration/ktor-serialization/io.ktor.serialization/-websocket-content-converter/deserialize.html
+$dokka.location:io.ktor.serialization/WebsocketContentConverter/isApplicable/#io.ktor.websocket.Frame/PointingToDeclaration/ktor-serialization/io.ktor.serialization/-websocket-content-converter/is-applicable.html
+$dokka.location:io.ktor.serialization/WebsocketContentConverter/serialize/#io.ktor.utils.io.charsets.Charset#io.ktor.util.reflect.TypeInfo#kotlin.Any?/PointingToDeclaration/ktor-serialization/io.ktor.serialization/-websocket-content-converter/serialize.html
+$dokka.location:io.ktor.serialization/WebsocketConverterNotFoundException///PointingToDeclaration/ktor-serialization/io.ktor.serialization/-websocket-converter-not-found-exception/index.html
+$dokka.location:io.ktor.serialization/WebsocketConverterNotFoundException/WebsocketConverterNotFoundException/#kotlin.String#kotlin.Throwable?/PointingToDeclaration/ktor-serialization/io.ktor.serialization/-websocket-converter-not-found-exception/-websocket-converter-not-found-exception.html
+$dokka.location:io.ktor.serialization/WebsocketDeserializeException///PointingToDeclaration/ktor-serialization/io.ktor.serialization/-websocket-deserialize-exception/index.html
+$dokka.location:io.ktor.serialization/WebsocketDeserializeException/WebsocketDeserializeException/#kotlin.String#kotlin.Throwable?#io.ktor.websocket.Frame/PointingToDeclaration/ktor-serialization/io.ktor.serialization/-websocket-deserialize-exception/-websocket-deserialize-exception.html
+$dokka.location:io.ktor.serialization/WebsocketDeserializeException/frame/#/PointingToDeclaration/ktor-serialization/io.ktor.serialization/-websocket-deserialize-exception/frame.html
+io.ktor.serialization

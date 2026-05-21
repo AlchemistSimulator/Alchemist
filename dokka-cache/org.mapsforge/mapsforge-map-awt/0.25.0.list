@@ -1,0 +1,4 @@
+org.mapsforge.map.awt.graphics
+org.mapsforge.map.awt.input
+org.mapsforge.map.awt.util
+org.mapsforge.map.awt.view

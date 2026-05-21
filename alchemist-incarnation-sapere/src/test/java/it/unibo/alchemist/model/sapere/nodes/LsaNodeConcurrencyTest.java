@@ -40,11 +40,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class LsaNodeConcurrencyTest {
 
     private static final int MIN_MOLECULES = 5;
+    private static final int NUMBER_OF_OPERATIONS = 100;
+    private static final int NUMBER_OF_THREADS = 10;
     private static final int TIMEOUT_SECONDS = 30;
     private static final String SECONDS = " seconds";
 
     @Test
-    void testConcurrentGetContentsAndModification() throws InterruptedException {
+    void testConcurrentGetContentsAndModification() {
         final SAPEREIncarnation<Euclidean2DPosition> incarnation = new SAPEREIncarnation<>();
         final Environment<List<ILsaMolecule>, Euclidean2DPosition> environment = new Continuous2DEnvironment<>(incarnation);
         final LsaNode node = new LsaNode(environment);
@@ -52,63 +54,71 @@ class LsaNodeConcurrencyTest {
         for (int i = 0; i < 10; i++) {
             node.setConcentration(new LsaMolecule("molecule" + i));
         }
-        final int numberOfThreads = 10;
-        final int numberOfOperations = 100;
-        final ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
-        final CountDownLatch latch = new CountDownLatch(numberOfThreads);
-        final List<Future<?>> tasks = new ArrayList<>(numberOfThreads);
-        // Start threads that modify the node while others read from it
-        for (int i = 0; i < numberOfThreads; i++) {
+        final ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+        final CountDownLatch latch = new CountDownLatch(NUMBER_OF_THREADS);
+        final List<Future<?>> tasks = new ArrayList<>(NUMBER_OF_THREADS);
+        for (int i = 0; i < NUMBER_OF_THREADS; i++) {
             final int threadId = i;
-            tasks.add(executor.submit(() -> {
-                try {
-                    for (int j = 0; j < numberOfOperations; j++) {
-                        if (threadId % 2 == 0) {
-                            // Reader threads - should not throw ConcurrentModificationException
-                            final Map<Molecule, List<ILsaMolecule>> contents = node.getContents();
-                            assertNotNull(contents);
-                            final int moleculeCount = node.getMoleculeCount();
-                            assertTrue(moleculeCount >= 0);
-                            final List<ILsaMolecule> lsaSpace = node.getLsaSpace();
-                            assertNotNull(lsaSpace);
-                        } else {
-                            // Writer threads
-                            final ILsaMolecule newMolecule = new LsaMolecule("thread" + threadId + "x" + j);
-                            node.setConcentration(newMolecule);
-                            // Sometimes remove molecules to simulate real concurrent modification
-                            if (j % 10 == 0 && node.getMoleculeCount() > MIN_MOLECULES) {
-                                try {
-                                    node.removeConcentration(newMolecule);
-                                } catch (final IllegalStateException e) {
-                                    // Expected if molecule was already removed by another thread
-                                }
-                            }
-                        }
-                    }
-                } finally {
-                    latch.countDown();
-                }
-                return null;
-            }));
+            tasks.add(executor.submit(() -> runConcurrentTask(node, threadId, latch)));
         }
-        // Wait for all threads to complete
+        awaitTaskCompletion(latch, tasks, executor);
+        // Verify the node is still in a valid state
+        final Map<Molecule, List<ILsaMolecule>> finalContents = node.getContents();
+        assertNotNull(finalContents);
+        assertTrue(node.getMoleculeCount() >= 0);
+    }
+
+    private Void runConcurrentTask(final LsaNode node, final int threadId, final CountDownLatch latch) {
+        try {
+            for (int j = 0; j < NUMBER_OF_OPERATIONS; j++) {
+                if (threadId % 2 == 0) {
+                    // Reader threads - should not throw ConcurrentModificationException
+                    final Map<Molecule, List<ILsaMolecule>> contents = node.getContents();
+                    assertNotNull(contents);
+                    final int moleculeCount = node.getMoleculeCount();
+                    assertTrue(moleculeCount >= 0);
+                    final List<ILsaMolecule> lsaSpace = node.getLsaSpace();
+                    assertNotNull(lsaSpace);
+                } else {
+                    runWriterIteration(node, threadId, j);
+                }
+            }
+        } finally {
+            latch.countDown();
+        }
+        return null;
+    }
+
+    private void runWriterIteration(final LsaNode node, final int threadId, final int operation) {
+        final ILsaMolecule newMolecule = new LsaMolecule("thread" + threadId + "x" + operation);
+        node.setConcentration(newMolecule);
+        // Sometimes remove molecules to simulate real concurrent modification
+        if (operation % 10 == 0 && node.getMoleculeCount() > MIN_MOLECULES) {
+            try {
+                node.removeConcentration(newMolecule);
+            } catch (final IllegalStateException e) {
+                // Expected if molecule was already removed by another thread
+            }
+        }
+    }
+
+    private void awaitTaskCompletion(
+        final CountDownLatch latch,
+        final List<Future<?>> tasks,
+        final ExecutorService executor
+    ) {
         AssertionError primaryFailure = null;
         try {
-            assertTrue(
-                latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS),
-                "Test should complete within " + TIMEOUT_SECONDS + SECONDS);
+            try {
+                assertTrue(
+                    latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS),
+                    "Test should complete within " + TIMEOUT_SECONDS + SECONDS);
+            } catch (final InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new AssertionError("Test interrupted while waiting for tasks", e);
+            }
             for (final Future<?> task : tasks) {
-                try {
-                    task.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
-                } catch (final InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new AssertionError("Test interrupted while waiting for task", e);
-                } catch (final ExecutionException e) {
-                    throw new AssertionError("Task failed with exception", e.getCause());
-                } catch (final TimeoutException e) {
-                    task.cancel(true);
-                    throw new AssertionError("Task timed out after " + TIMEOUT_SECONDS + SECONDS, e);
-                }
+                waitForTask(task);
             }
         } catch (final AssertionError e) {
             primaryFailure = e;
@@ -138,10 +148,20 @@ class LsaNodeConcurrencyTest {
         if (primaryFailure != null) {
             throw primaryFailure;
         }
-        // Verify the node is still in a valid state
-        final Map<Molecule, List<ILsaMolecule>> finalContents = node.getContents();
-        assertNotNull(finalContents);
-        assertTrue(node.getMoleculeCount() >= 0);
+    }
+
+    private static void waitForTask(final Future<?> task) {
+        try {
+            task.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new AssertionError("Test interrupted while waiting for task", e);
+        } catch (final ExecutionException e) {
+            throw new AssertionError("Task failed with exception", e.getCause());
+        } catch (final TimeoutException e) {
+            task.cancel(true);
+            throw new AssertionError("Task timed out after " + TIMEOUT_SECONDS + SECONDS, e);
+        }
     }
 
     @Test

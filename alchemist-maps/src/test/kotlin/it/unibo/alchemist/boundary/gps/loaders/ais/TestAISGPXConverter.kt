@@ -13,8 +13,10 @@ import io.jenetics.jpx.GPX
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import java.nio.file.Files
-import java.time.Instant
 import java.util.stream.Collectors
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
+import kotlin.time.toJavaInstant
 
 class TestAISGPXConverter :
     StringSpec({
@@ -39,7 +41,7 @@ class TestAISGPXConverter :
                     .flatMap { segment -> segment.points() }
                     .map { point -> point.time.orElseThrow() }
                     .collect(Collectors.toList())
-                exportedTimes shouldBe listOf(Instant.EPOCH, Instant.EPOCH.plusSeconds(2))
+                exportedTimes shouldBe listOf(EPOCH.toJavaInstant(), (EPOCH + 2.seconds).toJavaInstant())
             } finally {
                 outputDirectory.toFile().deleteRecursively()
             }
@@ -48,7 +50,9 @@ class TestAISGPXConverter :
 
 private fun payloadAt(vesselId: Int, seconds: Long) = AISPayload(
     vesselId = vesselId,
-    timestamp = Instant.EPOCH.plusSeconds(seconds),
+    timestamp = EPOCH + seconds.seconds,
     longitude = vesselId.toDouble(),
     latitude = vesselId.toDouble(),
 )
+
+private val EPOCH = Instant.fromEpochSeconds(0)

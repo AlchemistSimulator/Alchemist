@@ -18,8 +18,7 @@ import it.unibo.alchemist.model.maps.positions.GPSPointImpl
 import it.unibo.alchemist.model.maps.routes.GPSTraceImpl
 import it.unibo.alchemist.model.times.DoubleTime
 import java.net.URL
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Instant
 
 /**
  * Reads raw AIS NMEA files as Alchemist GPS traces.
@@ -40,7 +39,7 @@ class AISLoader : GPSFileLoader {
  *
  * @param timeOrigin instant mapped to simulation time zero.
  */
-internal fun Iterable<AISPayload>.toTraces(timeOrigin: Instant = Instant.EPOCH): List<GPSTrace> = groupBy(
+internal fun Iterable<AISPayload>.toTraces(timeOrigin: Instant = EPOCH): List<GPSTrace> = groupBy(
     AISPayload::vesselId,
 )
     .values
@@ -59,8 +58,9 @@ internal fun Iterable<AISPayload>.toTraces(timeOrigin: Instant = Instant.EPOCH):
     }
 
 private fun Instant.toTraceTime(timeOrigin: Instant): DoubleTime = DoubleTime(
-    Duration.between(timeOrigin, this).toMillis() / MILLIS_IN_SECOND,
+    (this - timeOrigin).inWholeMilliseconds / MILLIS_IN_SECOND,
 )
 
 private val EXTENSIONS = ImmutableSet.of("ais", "nmea", "txt")
+private val EPOCH = Instant.fromEpochSeconds(0)
 private const val MILLIS_IN_SECOND = 1_000.0

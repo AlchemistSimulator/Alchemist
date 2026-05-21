@@ -14,8 +14,8 @@ import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.properties.AbstractNodeProperty
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Duration
+import kotlin.time.Instant
 
 /**
  * Minimal AIS communication property.
@@ -30,7 +30,7 @@ class AISComm<T>(
 ) : AbstractNodeProperty<T>(node) {
     init {
         require(maxSize > 0) { "maxSize must be positive" }
-        require(validityWindow?.isNegative != true) { "validityWindow must not be negative" }
+        require(validityWindow?.isNegative() != true) { "validityWindow must not be negative" }
     }
 
     private val receivedPayloads = ArrayDeque<AISPayload>()

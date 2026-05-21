@@ -16,6 +16,7 @@ import io.jenetics.jpx.TrackSegment
 import io.jenetics.jpx.WayPoint
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.time.toJavaInstant
 
 /**
  * Converts decoded AIS payloads into one GPX file per vessel.
@@ -51,7 +52,7 @@ class AISGPXConverter {
             .builder()
             .lat(latitude)
             .lon(longitude)
-            .time(timestamp)
+            .time(timestamp.toJavaInstant())
         speedOverGroundKnots?.let { builder.speed(it, Speed.Unit.KNOTS) }
         cog?.let { builder.course(it) }
         return builder.build()

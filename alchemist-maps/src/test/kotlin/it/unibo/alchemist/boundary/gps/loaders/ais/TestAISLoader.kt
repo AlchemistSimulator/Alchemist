@@ -14,7 +14,8 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.gps.loaders.AISLoader
 import it.unibo.alchemist.boundary.gps.loaders.toTraces
-import java.time.Instant
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 class TestAISLoader :
     StringSpec({
@@ -56,12 +57,13 @@ class TestAISLoader :
         }
     })
 
-private fun payloadAt(secondsFromEpoch: Long, vesselId: Int): AISPayload =
-    payloadAt(Instant.EPOCH, secondsFromEpoch, vesselId)
+private fun payloadAt(secondsFromEpoch: Long, vesselId: Int): AISPayload = payloadAt(EPOCH, secondsFromEpoch, vesselId)
 
 private fun payloadAt(origin: Instant, secondsFromOrigin: Long, vesselId: Int): AISPayload = AISPayload(
     vesselId = vesselId,
-    timestamp = origin.plusSeconds(secondsFromOrigin),
+    timestamp = origin + secondsFromOrigin.seconds,
     longitude = vesselId.toDouble(),
     latitude = vesselId.toDouble(),
 )
+
+private val EPOCH = Instant.fromEpochSeconds(0)

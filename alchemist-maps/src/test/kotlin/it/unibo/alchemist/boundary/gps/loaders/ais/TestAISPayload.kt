@@ -11,7 +11,7 @@ package it.unibo.alchemist.boundary.gps.loaders.ais
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import java.time.Instant
+import kotlin.time.Instant
 
 class TestAISPayload :
     StringSpec({
@@ -19,7 +19,7 @@ class TestAISPayload :
             val speedOverGroundKnots = 10.0
             val payload = AISPayload(
                 vesselId = 1,
-                timestamp = Instant.EPOCH,
+                timestamp = EPOCH,
                 longitude = 11.0,
                 latitude = 44.0,
                 speedOverGroundKnots = speedOverGroundKnots,
@@ -31,7 +31,7 @@ class TestAISPayload :
         "AISPayload should keep missing speed unavailable" {
             val payload = AISPayload(
                 vesselId = 1,
-                timestamp = Instant.EPOCH,
+                timestamp = EPOCH,
                 longitude = 11.0,
                 latitude = 44.0,
             )
@@ -39,5 +39,6 @@ class TestAISPayload :
         }
     })
 
+private val EPOCH = Instant.fromEpochSeconds(0)
 private const val METERS_IN_NAUTICAL_MILE = 1_852.0
 private const val SECONDS_PER_HOUR = 3_600.0

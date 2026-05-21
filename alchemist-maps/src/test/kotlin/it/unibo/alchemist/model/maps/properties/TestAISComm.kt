@@ -17,8 +17,8 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.mockk
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
 import it.unibo.alchemist.model.Node
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 class TestAISComm :
     StringSpec({
@@ -60,7 +60,7 @@ class TestAISComm :
             val withinWindow = payloadAt(3)
             val newest = payloadAt(5)
             val lateExpired = payloadAt(1)
-            val comm = AISComm(node(), validityWindow = Duration.ofSeconds(3))
+            val comm = AISComm(node(), validityWindow = 3.seconds)
 
             listOf(oldest, withinWindow, newest, lateExpired).forEach(comm::receive)
 
@@ -83,17 +83,19 @@ class TestAISComm :
 
         "AISComm should reject invalid retention settings" {
             shouldThrow<IllegalArgumentException> { AISComm(node(), maxSize = 0) }
-            shouldThrow<IllegalArgumentException> { AISComm(node(), validityWindow = Duration.ofSeconds(-1)) }
+            shouldThrow<IllegalArgumentException> { AISComm(node(), validityWindow = (-1).seconds) }
         }
     })
 
 private fun payloadAt(seconds: Long, speedOverGroundKnots: Double? = null, cog: Double? = null) = AISPayload(
     vesselId = seconds.toInt(),
-    timestamp = Instant.EPOCH.plusSeconds(seconds),
+    timestamp = EPOCH + seconds.seconds,
     longitude = seconds.toDouble(),
     latitude = seconds.toDouble(),
     speedOverGroundKnots = speedOverGroundKnots,
     cog = cog,
 )
+
+private val EPOCH = Instant.fromEpochSeconds(0)
 
 private fun node(): Node<Any> = mockk()

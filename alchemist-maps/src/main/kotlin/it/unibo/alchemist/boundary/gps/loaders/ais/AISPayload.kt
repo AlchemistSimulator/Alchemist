@@ -14,7 +14,7 @@ import dk.dma.ais.message.AisPositionMessage
 import dk.dma.ais.message.AisStaticCommon
 import dk.dma.ais.message.IPositionMessage
 import dk.dma.ais.message.IVesselPositionMessage
-import java.time.Instant
+import kotlin.time.Instant
 
 /**
  * Subset of AIS information used to generate traces.

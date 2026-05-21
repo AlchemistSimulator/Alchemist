@@ -63,7 +63,7 @@ class AISComm<T>(
      * Course over ground (in degrees) from the latest AIS message.
      */
     val courseOverGround: Double?
-        get() = latestMessage?.cog
+        get() = latestMessage?.courseOverGround
 
     /**
      * Receives an AIS payload and adds it to the list of received messages.

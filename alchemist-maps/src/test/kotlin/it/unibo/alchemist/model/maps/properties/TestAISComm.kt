@@ -93,7 +93,7 @@ private fun payloadAt(seconds: Long, speedOverGroundKnots: Double? = null, cog: 
     longitude = seconds.toDouble(),
     latitude = seconds.toDouble(),
     speedOverGroundKnots = speedOverGroundKnots,
-    cog = cog,
+    courseOverGround = cog,
 )
 
 private val EPOCH = Instant.fromEpochSeconds(0)

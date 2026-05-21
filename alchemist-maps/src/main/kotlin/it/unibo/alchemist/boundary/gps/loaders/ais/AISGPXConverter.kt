@@ -54,7 +54,7 @@ class AISGPXConverter {
             .lon(longitude)
             .time(timestamp.toJavaInstant())
         speedOverGroundKnots?.let { builder.speed(it, Speed.Unit.KNOTS) }
-        cog?.let { builder.course(it) }
+        courseOverGround?.let { builder.course(it) }
         return builder.build()
     }
 }

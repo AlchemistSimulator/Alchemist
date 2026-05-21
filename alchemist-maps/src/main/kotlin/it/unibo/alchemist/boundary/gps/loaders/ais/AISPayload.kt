@@ -25,7 +25,7 @@ import kotlin.time.Instant
  * @property latitude latitude of the boat.
  * @property speedOverGroundKnots speed over ground, expressed in knots.
  * @property speedOverGroundMetersPerSecond speed over ground, expressed in meters per second.
- * @property cog course over ground, expressed in degrees.
+ * @property courseOverGround course over ground, expressed in degrees.
  * @property heading vessel heading, expressed in degrees.
  * @property positionAccuracy raw AIS position accuracy flag.
  * @property rateOfTurn rate of turn, expressed according to the AIS library conversion.
@@ -39,7 +39,7 @@ data class AISPayload(
     val longitude: Double,
     val latitude: Double,
     val speedOverGroundKnots: Double? = null,
-    val cog: Double? = null,
+    val courseOverGround: Double? = null,
     val heading: Double? = null,
     val positionAccuracy: Double? = null,
     val rateOfTurn: Double? = null,
@@ -54,13 +54,12 @@ data class AISPayload(
      * Static factory for [AISPayload].
      */
     companion object {
-        private const val DIV = 10.0
-        private val Double.knotsToMetersPerSecond: Double
-            get() = this * METERS_PER_SECOND_IN_ONE_KNOT
-
+        private const val AIS_TENTHS_SCALE = 10.0
         private const val METERS_IN_NAUTICAL_MILE = 1_852.0
         private const val SECONDS_PER_HOUR = 3_600.0
         private const val METERS_PER_SECOND_IN_ONE_KNOT = METERS_IN_NAUTICAL_MILE / SECONDS_PER_HOUR
+        private val Double.knotsToMetersPerSecond: Double
+            get() = this * METERS_PER_SECOND_IN_ONE_KNOT
 
         /**
          * Builds an [AISPayload] from an AIS message when it carries a valid position.
@@ -73,8 +72,8 @@ data class AISPayload(
                 timestamp = timestamp,
                 longitude = positionMessage.pos.longitudeDouble,
                 latitude = positionMessage.pos.latitudeDouble,
-                speedOverGroundKnots = vesselPosition?.takeIf { it.isSogValid }?.sog?.div(DIV),
-                cog = vesselPosition?.takeIf { it.isCogValid }?.cog?.div(DIV),
+                speedOverGroundKnots = vesselPosition?.takeIf { it.isSogValid }?.sog?.div(AIS_TENTHS_SCALE),
+                courseOverGround = vesselPosition?.takeIf { it.isCogValid }?.cog?.div(AIS_TENTHS_SCALE),
                 heading = vesselPosition?.takeIf { it.isHeadingValid }?.trueHeading?.toDouble(),
                 positionAccuracy = vesselPosition?.posAcc?.toDouble(),
                 rateOfTurn = (message as? AisPositionMessage)?.takeIf { it.isRotValid }?.rot?.toDouble(),

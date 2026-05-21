@@ -1,0 +1,32 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:it.unibo.alchemist.model.actions////PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/index.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraInjectVisibleNodeClosestToDistance///PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-inject-visible-node-closest-to-distance/index.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraInjectVisibleNodeClosestToDistance/CameraInjectVisibleNodeClosestToDistance/#it.unibo.alchemist.model.Node[kotlin.Any]#it.unibo.alchemist.model.physics.environments.Physics2DEnvironment[kotlin.Any]#kotlin.Double#it.unibo.alchemist.model.Molecule#it.unibo.alchemist.model.Molecule/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-inject-visible-node-closest-to-distance/-camera-inject-visible-node-closest-to-distance.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraInjectVisibleNodeClosestToDistance/cloneAction/#it.unibo.alchemist.model.Node[kotlin.Any]#it.unibo.alchemist.model.Reaction[kotlin.Any]/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-inject-visible-node-closest-to-distance/clone-action.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraInjectVisibleNodeClosestToDistance/context/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-inject-visible-node-closest-to-distance/context.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraInjectVisibleNodeClosestToDistance/execute/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-inject-visible-node-closest-to-distance/execute.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraInjectVisibleNodeClosestToDistance/getContext/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-inject-visible-node-closest-to-distance/get-context.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraSee///PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-see/index.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraSee/CameraSee/#it.unibo.alchemist.model.Node[kotlin.Any]#it.unibo.alchemist.model.physics.environments.Physics2DEnvironment[kotlin.Any]#kotlin.Double#kotlin.Double#it.unibo.alchemist.model.Molecule#it.unibo.alchemist.model.Molecule?/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-see/-camera-see.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraSee/angle/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-see/angle.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraSee/cloneAction/#it.unibo.alchemist.model.Node[kotlin.Any]#it.unibo.alchemist.model.Reaction[kotlin.Any]/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-see/clone-action.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraSee/context/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-see/context.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraSee/distance/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-see/distance.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraSee/execute/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-see/execute.html
+$dokka.location:it.unibo.alchemist.model.actions/CameraSee/getContext/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.actions/-camera-see/get-context.html
+$dokka.location:it.unibo.alchemist.model.nodes////PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.nodes/index.html
+$dokka.location:it.unibo.alchemist.model.nodes/VisibleNodeImpl///PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.nodes/-visible-node-impl/index.html
+$dokka.location:it.unibo.alchemist.model.nodes/VisibleNodeImpl/VisibleNodeImpl/#it.unibo.alchemist.model.Node[TypeParam(bounds=[kotlin.Any?])]#TypeParam(bounds=[it.unibo.alchemist.model.Position[^]])/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.nodes/-visible-node-impl/-visible-node-impl.html
+$dokka.location:it.unibo.alchemist.model.nodes/VisibleNodeImpl/equals/#kotlin.Any?/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.nodes/-visible-node-impl/equals.html
+$dokka.location:it.unibo.alchemist.model.nodes/VisibleNodeImpl/hashCode/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.nodes/-visible-node-impl/hash-code.html
+$dokka.location:it.unibo.alchemist.model.nodes/VisibleNodeImpl/node/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.nodes/-visible-node-impl/node.html
+$dokka.location:it.unibo.alchemist.model.nodes/VisibleNodeImpl/position/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.nodes/-visible-node-impl/position.html
+$dokka.location:it.unibo.alchemist.model.nodes/VisibleNodeImpl/toString/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model.nodes/-visible-node-impl/to-string.html
+$dokka.location:it.unibo.alchemist.model////PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model/index.html
+$dokka.location:it.unibo.alchemist.model/VisibleNode///PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model/-visible-node/index.html
+$dokka.location:it.unibo.alchemist.model/VisibleNode/node/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model/-visible-node/node.html
+$dokka.location:it.unibo.alchemist.model/VisibleNode/position/#/PointingToDeclaration/alchemist-smartcam/it.unibo.alchemist.model/-visible-node/position.html
+it.unibo.alchemist.model
+it.unibo.alchemist.model.actions
+it.unibo.alchemist.model.nodes

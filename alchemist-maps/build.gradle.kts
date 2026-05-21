@@ -50,6 +50,10 @@ publishing.publications {
                     name.set("Andrea Placuzzi")
                     email.set("andrea.placuzzi@studio.unibo.it")
                 }
+                developer {
+                    name.set("Lorenzo Antonioli")
+                    email.set("lorenzo.antonioli2@studio.unibo.it")
+                }
             }
             contributors {
                 contributor {

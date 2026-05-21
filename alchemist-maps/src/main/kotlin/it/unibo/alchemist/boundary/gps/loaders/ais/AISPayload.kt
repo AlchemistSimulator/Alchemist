@@ -65,11 +65,19 @@ data class AISPayload(
         /**
          * Builds an [AISPayload] from an AIS message when it carries a valid position.
          */
-        fun from(timestamp: Instant, message: AisMessage): AISPayload? {
-            val positionMessage = message as? IPositionMessage ?: return null
-            val vesselPosition = message.vesselPosition()
+        fun from(timestamp: Instant, message: AisMessage): AISPayload? = when (message) {
+            is IPositionMessage -> from(timestamp, message.userId, message)
+            else -> null
+        }
+
+        /**
+         * Builds an [AISPayload] from an AIS message when it carries a valid position.
+         */
+        fun from(timestamp: Instant, userId: Int, positionMessage: IPositionMessage): AISPayload {
+            val vesselPosition = positionMessage as? IVesselPositionMessage
+            val aisPosition = positionMessage as? AisPositionMessage
             return AISPayload(
-                vesselId = message.userId,
+                vesselId = userId,
                 timestamp = timestamp,
                 longitude = positionMessage.pos.longitudeDouble,
                 latitude = positionMessage.pos.latitudeDouble,
@@ -77,10 +85,10 @@ data class AISPayload(
                 courseOverGround = vesselPosition?.takeIf { it.isCogValid }?.cog?.div(AIS_TENTHS_SCALE),
                 heading = vesselPosition?.takeIf { it.isHeadingValid }?.trueHeading?.toDouble(),
                 positionAccuracy = vesselPosition?.posAcc?.toDouble(),
-                rateOfTurn = (message as? AisPositionMessage)?.takeIf { it.isRotValid }?.rot?.toDouble(),
-                navigationalStatus = (message as? AisPositionMessage)?.navStatus?.toDouble(),
+                rateOfTurn = aisPosition?.takeIf { it.isRotValid }?.rot?.toDouble(),
+                navigationalStatus = aisPosition?.navStatus?.toDouble(),
                 raim = vesselPosition?.raim?.toDouble(),
-                shipType = (message as? AisStaticCommon)?.shipType?.toDouble(),
+                shipType = (positionMessage as? AisStaticCommon)?.shipType?.toDouble(),
             )
         }
 
@@ -90,7 +98,5 @@ data class AISPayload(
         fun from(messages: Iterable<Pair<Instant, AisMessage>>): List<AISPayload> = messages
             .mapNotNull { (timestamp, message) -> from(timestamp, message) }
             .sortedWith(compareBy(AISPayload::vesselId, AISPayload::timestamp))
-
-        private fun AisMessage.vesselPosition(): IVesselPositionMessage? = this as? IVesselPositionMessage
     }
 }

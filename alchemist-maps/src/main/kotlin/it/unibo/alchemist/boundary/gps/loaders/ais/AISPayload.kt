@@ -48,12 +48,20 @@ data class AISPayload(
     val shipType: Double? = null,
 ) {
     val speedOverGroundMetersPerSecond: Double?
-        get() = speedOverGroundKnots?.times(KNOTS_TO_METERS_PER_SECOND)
+        get() = speedOverGroundKnots?.knotsToMetersPerSecond
 
     /**
      * Static factory for [AISPayload].
      */
     companion object {
+        private const val DIV = 10.0
+        private val Double.knotsToMetersPerSecond: Double
+            get() = this * METERS_PER_SECOND_IN_ONE_KNOT
+
+        private const val METERS_IN_NAUTICAL_MILE = 1_852.0
+        private const val SECONDS_PER_HOUR = 3_600.0
+        private const val METERS_PER_SECOND_IN_ONE_KNOT = METERS_IN_NAUTICAL_MILE / SECONDS_PER_HOUR
+
         /**
          * Builds an [AISPayload] from an AIS message when it carries a valid position.
          */
@@ -84,8 +92,5 @@ data class AISPayload(
             .sortedWith(compareBy(AISPayload::vesselId, AISPayload::timestamp))
 
         private fun AisMessage.vesselPosition(): IVesselPositionMessage? = this as? IVesselPositionMessage
-
-        private const val DIV = 10.0
-        private const val KNOTS_TO_METERS_PER_SECOND = 0.5144444444444445
     }
 }

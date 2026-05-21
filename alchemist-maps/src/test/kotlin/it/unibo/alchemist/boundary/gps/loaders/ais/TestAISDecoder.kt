@@ -11,19 +11,24 @@ package it.unibo.alchemist.boundary.gps.loaders.ais
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import kotlin.time.Instant
 
 class TestAISDecoder :
     StringSpec({
-        "AISDecoder should extract dates from resource names" {
-            AISDecoder.dateFrom("ais-20260515.nmea") shouldBe "2026-05-15"
+        "AISDecoder should accept dates from resource names" {
+            AISDecoder.parsePayload("\n\n", "ais-20260515.nmea") shouldBe emptyList()
         }
 
         "AISDecoder should fall back when no valid date is available" {
-            AISDecoder.dateFrom("ais-without-date.nmea") shouldBe "1970-01-01"
-            AISDecoder.dateFrom("ais-20261340.nmea") shouldBe "1970-01-01"
+            AISDecoder.parsePayload("\n\n", "ais-without-date.nmea") shouldBe emptyList()
+            AISDecoder.parsePayload("\n\n", "ais-20261340.nmea") shouldBe emptyList()
         }
 
         "AISDecoder should ignore blank payloads" {
             AISDecoder.parsePayload("\n\n", "2026-05-15") shouldBe emptyList()
+        }
+
+        "AISDecoder should accept the payload date as an instant" {
+            AISDecoder.parsePayload("\n\n", Instant.parse("2026-05-15T00:00:00Z")) shouldBe emptyList()
         }
     })

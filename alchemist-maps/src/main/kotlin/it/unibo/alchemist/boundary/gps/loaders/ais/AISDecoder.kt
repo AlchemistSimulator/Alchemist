@@ -28,12 +28,12 @@ object AISDecoder {
     private val DATE_PATTERN = Regex("""\d{8}""")
 
     /**
-     * @param date the payload date, formatted as an ISO local date (`yyyy-MM-dd`).
-     * @throws kotlin.time.InstantFormatException if [date] is not a valid ISO local date.
+     * @param date the payload date, formatted as an ISO local date (`yyyy-MM-dd`), or a resource name embedding a
+     * date formatted as `yyyyMMdd`.
      * @return the message parsed from a raw [String] to [AisMessage] and maps it to the timestamp of the raw message.
      **/
     fun parsePayload(payload: String, date: String): List<Pair<Instant, AisMessage>> =
-        parsePayload(payload, startOfDay(date))
+        parsePayload(payload, startOfDay(date.dateFromResourceNameOrSelf()))
 
     /**
      * @param date the payload date as an instant. Messages preceding the first explicit timestamp use this instant.
@@ -63,19 +63,22 @@ object AISDecoder {
     /** Parses all the raw AIS lines contained in a [File].
      * @param file the [File] from which parse AIS info.
      **/
-    fun parseFile(file: File): List<Pair<Instant, AisMessage>> =
-        parsePayload(file.readText(Charsets.UTF_8), dateFrom(file.name))
+    fun parseFile(file: File, date: String = dateFrom(file.name)): List<Pair<Instant, AisMessage>> =
+        parsePayload(file.readText(Charsets.UTF_8), date)
 
     /**
      * Extract date from a file name.
      * @param resourceName the name of file.
      * @return the date or a fallback date.
      */
-    fun dateFrom(resourceName: String): String = DATE_PATTERN
+    private fun dateFrom(resourceName: String): String = DATE_PATTERN
         .find(resourceName)
         ?.value
         ?.let { date -> date.toIsoDate().takeIf { runCatching { startOfDay(it) }.isSuccess } }
         ?: FALLBACK_DATE
+
+    private fun String.dateFromResourceNameOrSelf(): String =
+        takeIf { runCatching { startOfDay(it) }.isSuccess } ?: dateFrom(this)
 
     private fun startOfDay(date: String): Instant = Instant.parse("${date}T00:00:00Z")
 

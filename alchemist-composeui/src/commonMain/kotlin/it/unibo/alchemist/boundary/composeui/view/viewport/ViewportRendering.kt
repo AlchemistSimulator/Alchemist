@@ -23,6 +23,9 @@ import it.unibo.alchemist.boundary.composeui.view.theme.NodeHitRadius
 import it.unibo.alchemist.boundary.composeui.view.theme.ZoomStep
 import kotlin.math.floor
 import kotlin.math.sqrt
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 internal const val FullEdgeRenderLimit = 20_000
 internal const val SampledEdgeRenderLimit = 200_000
@@ -38,13 +41,13 @@ internal fun buildViewportSceneCache(
     if (projection == null || scene.nodes.isEmpty() || viewportSize.width == 0 || viewportSize.height == 0) {
         return ViewportSceneCache(scene = scene)
     }
-    val baseCenters = scene.nodes.map { node -> node.toViewportPosition(viewportSize, projection) }
+    val baseCenters = scene.nodes.map { node -> node.toViewportPosition(viewportSize, projection) }.toImmutableList()
     val nodeIndexById = scene.nodes.withIndex().associate { (index, node) -> node.id to index }
     val indexedEdges = scene.edges.mapNotNull { edge ->
         val fromIndex = nodeIndexById[edge.fromNodeId] ?: return@mapNotNull null
         val toIndex = nodeIndexById[edge.toNodeId] ?: return@mapNotNull null
         IndexedEdge(fromIndex = fromIndex, toIndex = toIndex)
-    }
+    }.toImmutableList()
     val spatialIndex = if (scene.nodes.size >= SpatialIndexThreshold) {
         NodeSpatialIndex(baseCenters)
     } else {
@@ -70,12 +73,13 @@ internal fun buildViewportFrame(
         .toBaseRect(camera)
         .inflate(NodeHitRadius / camera.zoom.coerceAtLeast(1e-6f))
     val visibleNodeIndices = cache.queryNodeIndices(visibleBaseRect)
-    val screenPositions = arrayOfNulls<Offset>(cache.baseCenters.size)
+    val mutableScreenPositions = MutableList<Offset?>(cache.baseCenters.size) { null }
     visibleNodeIndices.forEach { nodeIndex ->
-        screenPositions[nodeIndex] = cache.baseCenters[nodeIndex].toScreenPosition(viewportSize, camera)
+        mutableScreenPositions[nodeIndex] = cache.baseCenters[nodeIndex].toScreenPosition(viewportSize, camera)
     }
+    val screenPositions = mutableScreenPositions.toImmutableList()
     val visibleEdges = if (!cache.scene.showLinks || cache.scene.linkRenderMode == LinkRenderMode.HIDDEN) {
-        emptyList()
+        persistentListOf()
     } else {
         val edgeBudget = when (cache.scene.linkRenderMode) {
             LinkRenderMode.FULL -> cache.indexedEdges.size
@@ -91,7 +95,7 @@ internal fun buildViewportFrame(
                     add(edge)
                 }
             }
-        }
+        }.toImmutableList()
     }
     return ViewportFrame(
         screenPositions = screenPositions,
@@ -139,29 +143,29 @@ internal fun ViewportSceneCache.selectNodes(
         .map { nodeIndex -> scene.nodes[nodeIndex].id }
 }
 
-@Immutable
 internal data class ViewportSceneCache(
     val scene: ViewportScene,
-    val baseCenters: List<Offset> = emptyList(),
-    val indexedEdges: List<IndexedEdge> = emptyList(),
+    val baseCenters: ImmutableList<Offset> = persistentListOf(),
+    val indexedEdges: ImmutableList<IndexedEdge> = persistentListOf(),
     val spatialIndex: NodeSpatialIndex? = null,
 ) {
-    fun queryNodeIndices(rect: Rect): List<Int> = spatialIndex?.query(rect) ?: baseCenters.indices.filter { index ->
-        rect.contains(baseCenters[index])
-    }
+    fun queryNodeIndices(rect: Rect): ImmutableList<Int> =
+        spatialIndex?.query(rect) ?: baseCenters.indices.filter { index ->
+            rect.contains(baseCenters[index])
+        }.toImmutableList()
 }
 
 @Immutable
 internal data class ViewportFrame(
-    val screenPositions: Array<Offset?>,
-    val visibleNodeIndices: List<Int>,
-    val visibleEdges: List<IndexedEdge>,
+    val screenPositions: ImmutableList<Offset?>,
+    val visibleNodeIndices: ImmutableList<Int>,
+    val visibleEdges: ImmutableList<IndexedEdge>,
 ) {
     companion object {
         fun empty(nodeCount: Int): ViewportFrame = ViewportFrame(
-            screenPositions = arrayOfNulls(nodeCount),
-            visibleNodeIndices = emptyList(),
-            visibleEdges = emptyList(),
+            screenPositions = List(nodeCount) { null }.toImmutableList(),
+            visibleNodeIndices = persistentListOf(),
+            visibleEdges = persistentListOf(),
         )
     }
 }
@@ -178,9 +182,9 @@ internal class NodeSpatialIndex(positions: List<Offset>) {
         }
     }
 
-    fun query(rect: Rect): List<Int> {
+    fun query(rect: Rect): ImmutableList<Int> {
         if (rect.isEmpty) {
-            return emptyList()
+            return persistentListOf()
         }
         val minCellX = floor(rect.left / SpatialIndexCellSize).toInt()
         val maxCellX = floor(rect.right / SpatialIndexCellSize).toInt()
@@ -192,7 +196,7 @@ internal class NodeSpatialIndex(positions: List<Offset>) {
                 cells[cellKey(cellX, cellY)]?.let(matches::addAll)
             }
         }
-        return matches
+        return matches.toImmutableList()
     }
 
     private fun cellKey(position: Offset): Long =

@@ -38,6 +38,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.startCoroutine
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlinx.collections.immutable.persistentListOf
 import org.apache.commons.math3.random.RandomGenerator
 import org.jooq.lambda.fi.lang.CheckedRunnable
 
@@ -54,7 +55,7 @@ class DesktopAlchemistUiNodeMoveTest {
         val store = ComposeUiStateStore(
             AlchemistUiState(
                 scene = environment.toViewport(),
-                selectedNodeIds = listOf(firstNode.id, secondNode.id),
+                selectedNodeIds = persistentListOf(firstNode.id, secondNode.id),
             ).withSelection(listOf(firstNode.id, secondNode.id)),
         )
         val callback = DesktopAlchemistUiCallback(simulation, store)
@@ -62,8 +63,8 @@ class DesktopAlchemistUiNodeMoveTest {
         runSuspend {
             callback.onNodesMoved(
                 listOf(
-                    NodePositionUpdate(firstNode.id, listOf(1.5, -2.0)),
-                    NodePositionUpdate(secondNode.id, listOf(3.5, 1.0)),
+                    NodePositionUpdate(firstNode.id, persistentListOf(1.5, -2.0)),
+                    NodePositionUpdate(secondNode.id, persistentListOf(3.5, 1.0)),
                 ),
             )
         }

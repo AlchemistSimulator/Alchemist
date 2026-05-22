@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.boundary.composeui.view.viewport
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -22,6 +22,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.InfoField
 import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
@@ -86,7 +89,15 @@ internal fun SummaryRail(
             }
         }
         Surface(
-            modifier = Modifier.clickable(onClick = onToggleLinks),
+            modifier = Modifier
+                .toggleable(
+                    value = showLinks,
+                    role = Role.Switch,
+                    onValueChange = { onToggleLinks() },
+                )
+                .semantics {
+                    stateDescription = if (showLinks) "Links visible" else "Links hidden"
+                },
             color = if (showLinks) SecondaryAccent.copy(alpha = 0.2f) else SurfaceStrong.copy(alpha = 0.82f),
             shape = RoundedCornerShape(999.dp),
             elevation = 0.dp,

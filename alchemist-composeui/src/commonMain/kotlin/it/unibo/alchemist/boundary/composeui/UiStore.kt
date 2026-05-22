@@ -31,6 +31,9 @@ import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import it.unibo.alchemist.boundary.composeui.model.ViewportWorldBounds
 import kotlin.math.ceil
 import kotlin.math.roundToInt
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -210,73 +213,73 @@ fun demoController(): ComposeUiController {
 }
 
 private fun sampleUiState(): AlchemistUiState {
-    val nodes = listOf(
+    val nodes = persistentListOf(
         ViewportNode(
             id = 1,
-            coordinates = listOf(-3.5, 1.7),
+            coordinates = persistentListOf(-3.5, 1.7),
             accent = 0.15f,
-            metadata = listOf(
+            metadata = persistentListOf(
                 InfoField("Neighbors", "4"),
                 InfoField("Reactions", "3"),
                 InfoField("Properties", "2"),
             ),
-            concentrations = listOf(
+            concentrations = persistentListOf(
                 InfoField("signal", "0.91"),
                 InfoField("gradient", "0.42"),
             ),
         ),
         ViewportNode(
             id = 2,
-            coordinates = listOf(-1.2, 0.3),
+            coordinates = persistentListOf(-1.2, 0.3),
             accent = 0.33f,
-            metadata = listOf(
+            metadata = persistentListOf(
                 InfoField("Neighbors", "5"),
                 InfoField("Reactions", "2"),
                 InfoField("Properties", "1"),
             ),
-            concentrations = listOf(
+            concentrations = persistentListOf(
                 InfoField("source", "true"),
                 InfoField("gradient", "0.68"),
             ),
         ),
         ViewportNode(
             id = 3,
-            coordinates = listOf(0.8, 2.2),
+            coordinates = persistentListOf(0.8, 2.2),
             accent = 0.55f,
-            metadata = listOf(
+            metadata = persistentListOf(
                 InfoField("Neighbors", "3"),
                 InfoField("Reactions", "4"),
                 InfoField("Properties", "2"),
             ),
-            concentrations = listOf(
+            concentrations = persistentListOf(
                 InfoField("signal", "0.77"),
                 InfoField("temperature", "296 K"),
             ),
         ),
         ViewportNode(
             id = 4,
-            coordinates = listOf(2.1, -0.8),
+            coordinates = persistentListOf(2.1, -0.8),
             accent = 0.74f,
-            metadata = listOf(
+            metadata = persistentListOf(
                 InfoField("Neighbors", "6"),
                 InfoField("Reactions", "2"),
                 InfoField("Properties", "3"),
             ),
-            concentrations = listOf(
+            concentrations = persistentListOf(
                 InfoField("gradient", "0.18"),
                 InfoField("payload", "ready"),
             ),
         ),
         ViewportNode(
             id = 5,
-            coordinates = listOf(3.9, 1.4),
+            coordinates = persistentListOf(3.9, 1.4),
             accent = 0.92f,
-            metadata = listOf(
+            metadata = persistentListOf(
                 InfoField("Neighbors", "2"),
                 InfoField("Reactions", "1"),
                 InfoField("Properties", "1"),
             ),
-            concentrations = listOf(
+            concentrations = persistentListOf(
                 InfoField("goal", "true"),
                 InfoField("signal", "0.12"),
             ),
@@ -285,7 +288,7 @@ private fun sampleUiState(): AlchemistUiState {
     return AlchemistUiState(
         scene = ViewportScene(
             nodes = nodes,
-            edges = listOf(
+            edges = persistentListOf(
                 ViewportEdge(1, 2),
                 ViewportEdge(2, 3),
                 ViewportEdge(3, 4),
@@ -294,7 +297,7 @@ private fun sampleUiState(): AlchemistUiState {
             ),
             dimensions = 2,
             backdrop = ViewportBackdrop.SPACE,
-            summary = listOf(
+            summary = persistentListOf(
                 InfoField("Nodes", nodes.size.toString()),
                 InfoField("Dimensions", "2D"),
                 InfoField("Backdrop", "Procedural field"),
@@ -358,9 +361,9 @@ internal fun AlchemistUiState.withSelection(nodeIds: List<Int>): AlchemistUiStat
     )
 }
 
-internal fun ViewportScene.sanitizeSelection(nodeIds: List<Int>): List<Int> {
+internal fun ViewportScene.sanitizeSelection(nodeIds: List<Int>): ImmutableList<Int> {
     val availableNodeIds = nodes.mapTo(linkedSetOf()) { it.id }
-    return nodeIds.distinct().filter(availableNodeIds::contains)
+    return nodeIds.distinct().filter(availableNodeIds::contains).toImmutableList()
 }
 
 internal fun ViewportScene.withMovedNodes(nodePositions: List<NodePositionUpdate>): ViewportScene {
@@ -370,7 +373,7 @@ internal fun ViewportScene.withMovedNodes(nodePositions: List<NodePositionUpdate
     val coordinatesByNodeId = nodePositions.associate { it.nodeId to it.coordinates }
     val updatedNodes = nodes.map { node ->
         coordinatesByNodeId[node.id]?.let(node::withCoordinates) ?: node
-    }
+    }.toImmutableList()
     return copy(
         nodes = updatedNodes,
         worldBounds = updatedNodes.toWorldBounds(),
@@ -392,7 +395,7 @@ internal fun ViewportScene.translateSelectedNodes(
         } else {
             node
         }
-    }
+    }.toImmutableList()
     return copy(
         nodes = updatedNodes,
         worldBounds = updatedNodes.toWorldBounds(),
@@ -417,7 +420,7 @@ internal fun ViewportNode.toInspectorState(): NodeInspectorState = NodeInspector
     subtitle = "Live node snapshot",
     position = coordinates.take(2).mapIndexed { index, coordinate ->
         InfoField(if (index == 0) "X" else "Y", coordinate.formatFixed(3))
-    },
+    }.toImmutableList(),
     concentrations = concentrations,
     metadata = metadata,
 )
@@ -429,14 +432,15 @@ internal fun ViewportNode.translate(deltaX: Double, deltaY: Double): ViewportNod
             1 -> coordinate + deltaY
             else -> coordinate
         }
-    },
+    }.toImmutableList(),
 )
 
-internal fun ViewportNode.withCoordinates(newCoordinates: List<Double>): ViewportNode = copy(coordinates = newCoordinates)
+internal fun ViewportNode.withCoordinates(newCoordinates: List<Double>): ViewportNode =
+    copy(coordinates = newCoordinates.toImmutableList())
 
 internal fun ViewportNode.toPositionUpdate(): NodePositionUpdate = NodePositionUpdate(id, coordinates)
 
-private fun List<ViewportNode>.toWorldBounds(): ViewportWorldBounds? {
+private fun ImmutableList<ViewportNode>.toWorldBounds(): ViewportWorldBounds? {
     if (isEmpty()) {
         return null
     }
@@ -478,10 +482,10 @@ internal fun List<ViewportNode>.toGroupInspectorState(): GroupInspectorState {
             values.all { it == firstValue }
         }
         InfoField(molecule, sharedValue ?: MIXED_CONCENTRATION_PLACEHOLDER)
-    }
+    }.toImmutableList()
     return GroupInspectorState(
-        nodeIds = map(ViewportNode::id),
-        position = listOf(
+        nodeIds = map(ViewportNode::id).toImmutableList(),
+        position = persistentListOf(
             InfoField("Min X", xs.minOrNull()?.formatFixed(3).orEmpty()),
             InfoField("Max X", xs.maxOrNull()?.formatFixed(3).orEmpty()),
             InfoField("Min Y", ys.minOrNull()?.formatFixed(3).orEmpty()),

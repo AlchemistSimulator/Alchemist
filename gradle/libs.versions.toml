@@ -14,6 +14,7 @@ kotest = "6.1.11"
 kotlin = "2.3.20"
 ksp = "2.3.6"
 kotlinx-coroutines = "1.10.2"
+kotlinx-collections-immutable = "0.4.0"
 ktor = "3.4.2"
 mockito = "5.23.0"
 protelis = "18.7.0"
@@ -82,6 +83,7 @@ kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "
 kotlin-cli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.6"
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable" }
 kotlin-jvm-plugin = { module = "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin", version.ref = "kotlin" }
 kotlin-multiplatform-plugin = { module = "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin", version.ref = "kotlin" }
 kotlin-power-assert-plugin = { module = "org.jetbrains.kotlin.plugin.power-assert:org.jetbrains.kotlin.plugin.power-assert.gradle.plugin", version.ref = "kotlin" }

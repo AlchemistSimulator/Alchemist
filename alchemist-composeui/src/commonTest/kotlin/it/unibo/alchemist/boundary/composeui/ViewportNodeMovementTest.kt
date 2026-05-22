@@ -17,16 +17,18 @@ import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 class ViewportNodeMovementTest {
     @Test
     fun `translate selected nodes applies one delta and preserves trailing coordinates`() {
         val scene = ViewportScene(
             nodes = listOf(
-                ViewportNode(id = 1, coordinates = listOf(0.0, 1.0, 7.0)),
-                ViewportNode(id = 2, coordinates = listOf(3.0, -2.0, 9.0)),
-                ViewportNode(id = 3, coordinates = listOf(10.0, 10.0, 11.0)),
-            ),
+                ViewportNode(id = 1, coordinates = persistentListOf(0.0, 1.0, 7.0)),
+                ViewportNode(id = 2, coordinates = persistentListOf(3.0, -2.0, 9.0)),
+                ViewportNode(id = 3, coordinates = persistentListOf(10.0, 10.0, 11.0)),
+            ).toImmutableList(),
         )
 
         val moved = scene.translateSelectedNodes(listOf(1, 2), deltaX = 1.5, deltaY = -0.5)
@@ -40,12 +42,14 @@ class ViewportNodeMovementTest {
     fun `with moved nodes replaces only targeted coordinates`() {
         val scene = ViewportScene(
             nodes = listOf(
-                ViewportNode(id = 1, coordinates = listOf(0.0, 0.0)),
-                ViewportNode(id = 2, coordinates = listOf(1.0, 1.0)),
-            ),
+                ViewportNode(id = 1, coordinates = persistentListOf(0.0, 0.0)),
+                ViewportNode(id = 2, coordinates = persistentListOf(1.0, 1.0)),
+            ).toImmutableList(),
         )
 
-        val moved = scene.withMovedNodes(listOf(NodePositionUpdate(nodeId = 2, coordinates = listOf(8.0, -3.0))))
+        val moved = scene.withMovedNodes(
+            listOf(NodePositionUpdate(nodeId = 2, coordinates = persistentListOf(8.0, -3.0))),
+        )
 
         assertEquals(listOf(0.0, 0.0), moved.nodes.first { it.id == 1 }.coordinates)
         assertEquals(listOf(8.0, -3.0), moved.nodes.first { it.id == 2 }.coordinates)
@@ -56,11 +60,11 @@ class ViewportNodeMovementTest {
         val state = AlchemistUiState(
             scene = ViewportScene(
                 nodes = listOf(
-                    ViewportNode(id = 1, coordinates = listOf(0.0, 1.0)),
-                    ViewportNode(id = 2, coordinates = listOf(4.0, 3.0)),
-                ),
+                    ViewportNode(id = 1, coordinates = persistentListOf(0.0, 1.0)),
+                    ViewportNode(id = 2, coordinates = persistentListOf(4.0, 3.0)),
+                ).toImmutableList(),
             ),
-            selectedNodeIds = listOf(1, 2),
+            selectedNodeIds = persistentListOf(1, 2),
         )
 
         val moved = state
@@ -73,5 +77,16 @@ class ViewportNodeMovementTest {
         assertEquals("6.000", inspector.position.first { it.label == "Max X" }.value)
         assertEquals("-0.500", inspector.position.first { it.label == "Min Y" }.value)
         assertEquals("1.500", inspector.position.first { it.label == "Max Y" }.value)
+    }
+
+    @Test
+    fun `mutable coordinate inputs are copied before entering viewport state`() {
+        val mutableCoordinates = mutableListOf(1.0, 2.0)
+        val node = ViewportNode(id = 1, coordinates = persistentListOf(0.0, 0.0))
+            .withCoordinates(mutableCoordinates)
+
+        mutableCoordinates[0] = 99.0
+
+        assertEquals(persistentListOf(1.0, 2.0), node.coordinates)
     }
 }

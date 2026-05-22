@@ -30,6 +30,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(libs.bundles.compose)
+                implementation(libs.kotlinx.collections.immutable)
             }
         }
         val jvmMain by getting {

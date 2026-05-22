@@ -18,6 +18,8 @@ import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 class ViewportProjectionTest {
     @Test
@@ -31,7 +33,7 @@ class ViewportProjectionTest {
         val viewportSize = IntSize(1000, 500)
         val projection = assertNotNull(sampleScene().createViewportProjection(viewportSize))
 
-        val movedNode = ViewportNode(id = 3, coordinates = listOf(20.0, 20.0))
+        val movedNode = ViewportNode(id = 3, coordinates = persistentListOf(20.0, 20.0))
         val movedPosition = movedNode.toViewportPosition(viewportSize, projection)
 
         assertTrue(movedPosition.x > viewportSize.width)
@@ -41,7 +43,7 @@ class ViewportProjectionTest {
 
 private fun sampleScene(): ViewportScene = ViewportScene(
     nodes = listOf(
-        ViewportNode(id = 1, coordinates = listOf(0.0, 0.0)),
-        ViewportNode(id = 2, coordinates = listOf(10.0, 10.0)),
-    ),
+        ViewportNode(id = 1, coordinates = persistentListOf(0.0, 0.0)),
+        ViewportNode(id = 2, coordinates = persistentListOf(10.0, 10.0)),
+    ).toImmutableList(),
 )

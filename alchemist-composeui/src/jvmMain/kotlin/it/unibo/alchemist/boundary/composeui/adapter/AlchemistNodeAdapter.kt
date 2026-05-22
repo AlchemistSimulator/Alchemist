@@ -24,15 +24,18 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import java.util.PriorityQueue
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 fun <T, P : Position<P>> Node<T>.toViewport(environment: Environment<T, P>): ViewportNode = ViewportNode(
     id = id,
-    coordinates = environment.getPosition(this).coordinates.toList(),
-    concentrations = this.contents.map { InfoField(it.key.toString(), it.value.toString()) },
+    coordinates = environment.getPosition(this).coordinates.toList().toImmutableList(),
+    concentrations = this.contents.map { InfoField(it.key.toString(), it.value.toString()) }.toImmutableList(),
 )
 
 fun <T, P : Position<P>> Environment<T, P>.toViewport(renderLinks: Boolean = false): ViewportScene {
-    val viewportNodes = nodes.map { it.toViewport(this) }
+    val viewportNodes = nodes.map { it.toViewport(this) }.toImmutableList()
     val edgeSnapshot = extractEdgeSnapshot(renderLinks)
     return ViewportScene(
         nodes = viewportNodes,
@@ -98,7 +101,7 @@ internal fun collectEdgeSnapshot(edgePairs: Sequence<Pair<Int, Int>>, renderLink
     }
     return when {
         uniqueEdges <= FullEdgeRenderLimit -> EdgeSnapshot(
-            edges = fullEdges,
+            edges = fullEdges.toImmutableList(),
             edgeCount = uniqueEdges,
             renderMode = LinkRenderMode.FULL,
         )
@@ -106,7 +109,8 @@ internal fun collectEdgeSnapshot(edgePairs: Sequence<Pair<Int, Int>>, renderLink
             edges = sampledEdges
                 .toList()
                 .sortedBy(SampledViewportEdge::score)
-                .map(SampledViewportEdge::edge),
+                .map(SampledViewportEdge::edge)
+                .toImmutableList(),
             edgeCount = uniqueEdges,
             renderMode = LinkRenderMode.SAMPLED,
             notice = "showing ${MaxDrawnEdgesPerFrame.toReadableCount()} sampled links",
@@ -128,7 +132,7 @@ private fun PriorityQueue<SampledViewportEdge>.consider(edgeKey: Long) {
 }
 
 internal data class EdgeSnapshot(
-    val edges: List<ViewportEdge> = emptyList(),
+    val edges: ImmutableList<ViewportEdge> = persistentListOf(),
     val edgeCount: Int = 0,
     val renderMode: LinkRenderMode = LinkRenderMode.FULL,
     val notice: String? = null,

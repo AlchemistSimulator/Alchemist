@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.maps.positions.GPSPointImpl
 import it.unibo.alchemist.model.maps.routes.GPSTraceImpl
 import it.unibo.alchemist.model.times.DoubleTime
 import java.net.URL
+import kotlin.time.DurationUnit.SECONDS
 import kotlin.time.Instant
 
 /**
@@ -31,35 +32,34 @@ class AISLoader : GPSFileLoader {
     }
 
     override fun supportedExtensions(): ImmutableSet<String> = EXTENSIONS
-}
 
-/**
- * Converts AIS payloads to GPS traces, preserving epoch-based times by default.
- *
- * @param timeOrigin instant mapped to simulation time zero.
- */
-internal fun Iterable<AISPayload>.toTraces(timeOrigin: Instant = EPOCH): List<GPSTrace> = groupBy(
-    AISPayload::vesselId,
-)
-    .values
-    .map { vesselPayloads ->
-        GPSTraceImpl(
-            vesselPayloads
-                .sortedBy(AISPayload::timestamp)
-                .map {
-                    GPSPointImpl(
-                        it.latitude,
-                        it.longitude,
-                        it.timestamp.toTraceTime(timeOrigin),
-                    )
-                },
+    /**
+     * AIS trace conversion helpers.
+     */
+    companion object {
+        private val EXTENSIONS = ImmutableSet.of("ais", "nmea", "txt")
+        private val EPOCH = Instant.fromEpochSeconds(0)
+
+        /**
+         * Converts AIS payloads to GPS traces, preserving epoch-based times by default.
+         *
+         * @param timeOrigin instant mapped to simulation time zero.
+         */
+        internal fun Iterable<AISPayload>.toTraces(timeOrigin: Instant = EPOCH): List<GPSTrace> =
+            groupBy(AISPayload::vesselId).values.map { vesselPayloads ->
+                GPSTraceImpl(
+                    vesselPayloads.sortedBy(AISPayload::timestamp).map {
+                        GPSPointImpl(
+                            it.latitude,
+                            it.longitude,
+                            it.timestamp.toTraceTime(timeOrigin),
+                        )
+                    },
+                )
+            }
+
+        private fun Instant.toTraceTime(timeOrigin: Instant): DoubleTime = DoubleTime(
+            (this - timeOrigin).toDouble(SECONDS),
         )
     }
-
-private fun Instant.toTraceTime(timeOrigin: Instant): DoubleTime = DoubleTime(
-    (this - timeOrigin).inWholeMilliseconds / MILLIS_IN_SECOND,
-)
-
-private val EXTENSIONS = ImmutableSet.of("ais", "nmea", "txt")
-private val EPOCH = Instant.fromEpochSeconds(0)
-private const val MILLIS_IN_SECOND = 1_000.0
+}

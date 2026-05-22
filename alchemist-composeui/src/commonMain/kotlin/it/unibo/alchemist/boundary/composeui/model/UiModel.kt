@@ -15,6 +15,8 @@ import androidx.compose.runtime.Immutable
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_MAX_UI_FPS
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_UI_FPS
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 /**
  * High-level simulation status mirrored in the Compose UI.
@@ -47,10 +49,10 @@ data class InfoField(val label: String, val value: String)
 @Immutable
 data class ViewportNode(
     val id: Int,
-    val coordinates: List<Double>,
+    val coordinates: ImmutableList<Double>,
     val accent: Float = 0.5f,
-    val metadata: List<InfoField> = emptyList(),
-    val concentrations: List<InfoField> = emptyList(),
+    val metadata: ImmutableList<InfoField> = persistentListOf(),
+    val concentrations: ImmutableList<InfoField> = persistentListOf(),
 ) {
     init {
         require(coordinates.size >= 2) {
@@ -63,7 +65,7 @@ data class ViewportNode(
  * Final node coordinates produced by a viewport drag interaction.
  */
 @Immutable
-data class NodePositionUpdate(val nodeId: Int, val coordinates: List<Double>) {
+data class NodePositionUpdate(val nodeId: Int, val coordinates: ImmutableList<Double>) {
     init {
         require(coordinates.size >= 2) {
             "Moved nodes require at least two coordinates."
@@ -108,8 +110,8 @@ enum class LinkRenderMode {
  */
 @Immutable
 data class ViewportScene(
-    val nodes: List<ViewportNode> = emptyList(),
-    val edges: List<ViewportEdge> = emptyList(),
+    val nodes: ImmutableList<ViewportNode> = persistentListOf(),
+    val edges: ImmutableList<ViewportEdge> = persistentListOf(),
     val edgeCount: Int = edges.size,
     val showLinks: Boolean = false,
     val linkRenderMode: LinkRenderMode = LinkRenderMode.FULL,
@@ -117,7 +119,7 @@ data class ViewportScene(
     val dimensions: Int = 2,
     val worldBounds: ViewportWorldBounds? = nodes.toWorldBounds(),
     val backdrop: ViewportBackdrop = ViewportBackdrop.SPACE,
-    val summary: List<InfoField> = emptyList(),
+    val summary: ImmutableList<InfoField> = persistentListOf(),
     val message: String = "Waiting for simulation data",
 )
 
@@ -202,9 +204,9 @@ data class NodeInspectorState(
     val nodeId: Int,
     val title: String = "Node $nodeId",
     val subtitle: String,
-    val position: List<InfoField>,
-    val concentrations: List<InfoField>,
-    val metadata: List<InfoField>,
+    val position: ImmutableList<InfoField>,
+    val concentrations: ImmutableList<InfoField>,
+    val metadata: ImmutableList<InfoField>,
 ) : InspectorState
 
 /**
@@ -212,11 +214,11 @@ data class NodeInspectorState(
  */
 @Immutable
 data class GroupInspectorState(
-    val nodeIds: List<Int>,
+    val nodeIds: ImmutableList<Int>,
     val title: String = "Selected Nodes",
     val subtitle: String = "${nodeIds.size} nodes selected",
-    val position: List<InfoField>,
-    val concentrations: List<InfoField>,
+    val position: ImmutableList<InfoField>,
+    val concentrations: ImmutableList<InfoField>,
 ) : InspectorState
 
 /**
@@ -226,11 +228,11 @@ data class GroupInspectorState(
 data class AlchemistUiState(
     val scene: ViewportScene = ViewportScene(),
     val controls: SimulationControlsState = SimulationControlsState(),
-    val selectedNodeIds: List<Int> = emptyList(),
+    val selectedNodeIds: ImmutableList<Int> = persistentListOf(),
     val inspector: InspectorState? = null,
 )
 
-private fun List<ViewportNode>.toWorldBounds(): ViewportWorldBounds? {
+private fun ImmutableList<ViewportNode>.toWorldBounds(): ViewportWorldBounds? {
     if (isEmpty()) {
         return null
     }

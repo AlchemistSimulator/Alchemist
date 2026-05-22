@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -169,6 +170,8 @@ fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
                                 .fillMaxSize()
                                 .background(InspectorScrim)
                                 .clickable(
+                                    onClickLabel = "Dismiss inspector",
+                                    role = Role.Button,
                                     onClick = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
                                 ),
                         )

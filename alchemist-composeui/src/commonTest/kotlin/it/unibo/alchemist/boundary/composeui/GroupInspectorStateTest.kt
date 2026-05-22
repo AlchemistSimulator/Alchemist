@@ -19,6 +19,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNull
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 class GroupInspectorStateTest {
     @Test
@@ -27,22 +29,22 @@ class GroupInspectorStateTest {
             nodes = listOf(
                 ViewportNode(
                     id = 10,
-                    coordinates = listOf(-2.0, 5.0),
-                    concentrations = listOf(
+                    coordinates = persistentListOf(-2.0, 5.0),
+                    concentrations = persistentListOf(
                         InfoField("shared", "1"),
                         InfoField("variant", "A"),
                     ),
                 ),
                 ViewportNode(
                     id = 20,
-                    coordinates = listOf(4.0, -1.0),
-                    concentrations = listOf(
+                    coordinates = persistentListOf(4.0, -1.0),
+                    concentrations = persistentListOf(
                         InfoField("shared", "1"),
                         InfoField("variant", "B"),
                         InfoField("partial", "yes"),
                     ),
                 ),
-            ),
+            ).toImmutableList(),
         )
 
         val inspector = assertIs<GroupInspectorState>(scene.toInspectorState(listOf(10, 20)))
@@ -61,15 +63,15 @@ class GroupInspectorStateTest {
     fun `selection is cleared when all selected nodes disappear from the scene`() {
         val state = AlchemistUiState(
             scene = ViewportScene(
-                nodes = listOf(ViewportNode(id = 1, coordinates = listOf(0.0, 0.0))),
+                nodes = persistentListOf(ViewportNode(id = 1, coordinates = persistentListOf(0.0, 0.0))),
             ),
-            selectedNodeIds = listOf(1),
+            selectedNodeIds = persistentListOf(1),
             inspector = NodeInspectorState(
                 nodeId = 1,
                 subtitle = "Live node snapshot",
-                position = emptyList(),
-                concentrations = emptyList(),
-                metadata = emptyList(),
+                position = persistentListOf(),
+                concentrations = persistentListOf(),
+                metadata = persistentListOf(),
             ),
         )
 

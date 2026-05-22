@@ -69,6 +69,7 @@ internal fun SimulationPrimaryPane(
                     onFpsInputChanged = { coroutineScope.launch { callbacks.onFpsInputChanged(it) } },
                     onFpsSubmit = { coroutineScope.launch { callbacks.onFpsSubmit() } },
                     onEventRateChanged = { coroutineScope.launch { callbacks.onEventRateChanged(it) } },
+                    compact = dockWidthFraction >= 1f,
                     modifier = Modifier.wrapContentHeight(),
                 )
             }

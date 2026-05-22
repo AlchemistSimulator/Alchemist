@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.composeui.view.viewport
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,11 +40,23 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isCtrlPressed
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -96,23 +109,18 @@ internal fun ViewportSurface(
             fixedProjection = candidateProjection
         }
     }
-    val previewScene = remember(scene, draggedNodeIds, nodeDragAnchor, nodeDragCurrent, viewportSize, camera, projection) {
-        val anchor = nodeDragAnchor
-        val current = nodeDragCurrent
-        if (anchor == null || current == null || projection == null) {
-            scene
-        } else {
-            val (deltaX, deltaY) = screenDeltaToWorldDelta(anchor, current, viewportSize, camera, projection)
-            scene.translateSelectedNodes(draggedNodeIds, deltaX, deltaY)
-        }
-    }
-    val sceneCache = remember(previewScene, viewportSize, projection) {
-        buildViewportSceneCache(previewScene, viewportSize, projection)
+    val sceneCache = remember(scene, viewportSize, projection) {
+        buildViewportSceneCache(scene, viewportSize, projection)
     }
     val viewportFrame = remember(sceneCache, viewportSize, camera) {
         buildViewportFrame(sceneCache, viewportSize, camera)
     }
     val selectedNodeIdSet = remember(selectedNodeIds) { selectedNodeIds.toHashSet() }
+    val draggedNodeIdSet = remember(draggedNodeIds) { draggedNodeIds.toHashSet() }
+    val nodeDragScreenDelta = nodeDragAnchor?.let { anchor ->
+        val current = nodeDragCurrent ?: anchor
+        current - anchor
+    } ?: Offset.Zero
     val density = androidx.compose.ui.platform.LocalDensity.current
     val tapThresholdPx = with(density) { NodeHitRadius.dp.toPx() }
     val dragThresholdPx = with(density) { 6.dp.toPx() }
@@ -147,6 +155,99 @@ internal fun ViewportSurface(
                 modifier = Modifier
                     .fillMaxSize()
                     .onGloballyPositioned { coordinates -> viewportSize = coordinates.size }
+                    .focusable()
+                    .semantics {
+                        contentDescription = viewportContentDescription(
+                            nodeCount = scene.nodes.size,
+                            selectedNodeCount = selectedNodeIds.size,
+                            showLinks = scene.showLinks,
+                        )
+                        stateDescription = viewportStateDescription(
+                            camera = camera,
+                            selectedNodeCount = selectedNodeIds.size,
+                        )
+                        role = Role.Image
+                        customActions = buildViewportAccessibilityActions(
+                            hasNodes = scene.nodes.isNotEmpty(),
+                            hasSelection = selectedNodeIds.isNotEmpty(),
+                            onSelectFirstNode = {
+                                scene.nodes.firstOrNull()?.let { node ->
+                                    coroutineScope.launch { callbacks.onNodeSelected(node.id) }
+                                    true
+                                } ?: false
+                            },
+                            onClearSelection = {
+                                if (selectedNodeIds.isEmpty()) {
+                                    false
+                                } else {
+                                    coroutineScope.launch { callbacks.onInspectorDismiss() }
+                                    true
+                                }
+                            },
+                            onZoomIn = {
+                                camera = camera.zoomIn(viewportSize)
+                                true
+                            },
+                            onZoomOut = {
+                                camera = camera.zoomOut(viewportSize)
+                                true
+                            },
+                            onPanLeft = {
+                                camera = camera.panBy(Offset(KEYBOARD_PAN_STEP_PX, 0f))
+                                true
+                            },
+                            onPanRight = {
+                                camera = camera.panBy(Offset(-KEYBOARD_PAN_STEP_PX, 0f))
+                                true
+                            },
+                            onPanUp = {
+                                camera = camera.panBy(Offset(0f, KEYBOARD_PAN_STEP_PX))
+                                true
+                            },
+                            onPanDown = {
+                                camera = camera.panBy(Offset(0f, -KEYBOARD_PAN_STEP_PX))
+                                true
+                            },
+                        )
+                    }
+                    .onPreviewKeyEvent { event ->
+                        if (event.type != KeyEventType.KeyDown) {
+                            return@onPreviewKeyEvent false
+                        }
+                        when (event.key) {
+                            Key.DirectionLeft -> {
+                                camera = camera.panBy(Offset(KEYBOARD_PAN_STEP_PX, 0f))
+                                true
+                            }
+                            Key.DirectionRight -> {
+                                camera = camera.panBy(Offset(-KEYBOARD_PAN_STEP_PX, 0f))
+                                true
+                            }
+                            Key.DirectionUp -> {
+                                camera = camera.panBy(Offset(0f, KEYBOARD_PAN_STEP_PX))
+                                true
+                            }
+                            Key.DirectionDown -> {
+                                camera = camera.panBy(Offset(0f, -KEYBOARD_PAN_STEP_PX))
+                                true
+                            }
+                            Key.Enter, Key.NumPadEnter -> {
+                                scene.nodes.firstOrNull()?.let { node ->
+                                    coroutineScope.launch { callbacks.onNodeSelected(node.id) }
+                                    true
+                                } ?: false
+                            }
+                            Key.Backspace -> {
+                                if (selectedNodeIds.isEmpty()) {
+                                    false
+                                } else {
+                                    coroutineScope.launch { callbacks.onInspectorDismiss() }
+                                    true
+                                }
+                            }
+                            else -> false
+                        }
+                    }
                     .onPointerEvent(PointerEventType.Press) { event ->
                         val change = event.changes.firstOrNull() ?: return@onPointerEvent
                         if (event.buttons.isSecondaryPressed) {
@@ -277,10 +378,17 @@ internal fun ViewportSurface(
                 )
                 val currentCamera = camera
                 drawGrid(size, currentCamera)
-                if (previewScene.showLinks) {
+                fun shiftedCenter(nodeIndex: Int): Offset? {
+                    val center = viewportFrame.screenPositions[nodeIndex]
+                    val node = scene.nodes.getOrNull(nodeIndex)
+                    return center?.let {
+                        if (node?.id in draggedNodeIdSet) it + nodeDragScreenDelta else it
+                    }
+                }
+                if (scene.showLinks) {
                     viewportFrame.visibleEdges.forEach { edge ->
-                        val start = viewportFrame.screenPositions[edge.fromIndex] ?: return@forEach
-                        val end = viewportFrame.screenPositions[edge.toIndex] ?: return@forEach
+                        val start = shiftedCenter(edge.fromIndex) ?: return@forEach
+                        val end = shiftedCenter(edge.toIndex) ?: return@forEach
                         drawLine(
                             color = Outline.copy(alpha = 0.42f),
                             start = start,
@@ -291,8 +399,8 @@ internal fun ViewportSurface(
                     }
                 }
                 viewportFrame.visibleNodeIndices.forEach { nodeIndex ->
-                    val node = previewScene.nodes[nodeIndex]
-                    val center = viewportFrame.screenPositions[nodeIndex] ?: return@forEach
+                    val node = scene.nodes[nodeIndex]
+                    val center = shiftedCenter(nodeIndex) ?: return@forEach
                     val isSelected = node.id in selectedNodeIdSet
                     val nodeColor = lerp(SecondaryAccent, PrimaryAccent, node.accent)
                     val screenRadius = NodeRadius.dp.toPx() * currentCamera.zoom
@@ -336,47 +444,19 @@ internal fun ViewportSurface(
                     )
                 }
             }
-            Column(
+            ViewportChrome(
+                scene = scene,
+                onToggleLinks = { coroutineScope.launch { callbacks.onToggleLinks() } },
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Text(
-                    text = "Alchemist Simulator",
-                    style = MaterialTheme.typography.h4,
-                )
-                Text(
-                    text = scene.message,
-                    style = MaterialTheme.typography.body2,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                SummaryRail(
-                    summary = scene.summary,
-                    showLinks = scene.showLinks,
-                    onToggleLinks = { coroutineScope.launch { callbacks.onToggleLinks() } },
-                    linkRenderNotice = scene.linkRenderNotice.takeIf { scene.showLinks },
-                )
-            }
-            Surface(
+            )
+            ViewportGestureHint(
+                hasNodes = scene.nodes.isNotEmpty(),
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(20.dp),
-                color = SurfaceStrong.copy(alpha = 0.88f),
-                shape = RoundedCornerShape(8.dp),
-                elevation = 0.dp,
-            ) {
-                Text(
-                    text = if (scene.nodes.isEmpty()) {
-                        "No nodes to display"
-                    } else {
-                        "Click to inspect · drag to select · Ctrl-drag selected nodes · right-drag to pan · wheel to zoom"
-                    },
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-                    style = MaterialTheme.typography.caption,
-                )
-            }
+            )
             val gridLegend = remember(viewportSize, camera.zoom, projection) {
                 if (viewportSize.width == 0 || viewportSize.height == 0 || projection == null) return@remember null
                 val baseStep = min(
@@ -397,65 +477,119 @@ internal fun ViewportSurface(
                 GridLegendData(worldStep, worldStep, step, step)
             }
             if (gridLegend != null) {
-                Surface(
+                ViewportGridLegend(
+                    gridLegend = gridLegend,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(20.dp),
-                    color = SurfaceStrong.copy(alpha = 0.88f),
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = 0.dp,
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(12.dp),
-                    ) {
-                        Text(
-                            text = gridLegend.worldX.formatFixed(2),
-                            style = MaterialTheme.typography.caption,
-                            color = TextPrimary,
-                            modifier = Modifier.padding(bottom = 4.dp),
-                        )
-                        val density = androidx.compose.ui.platform.LocalDensity.current
-                        val canvasWidth = with(density) { gridLegend.stepX.toDp().coerceIn(20.dp, 120.dp) }
-                        Canvas(modifier = Modifier.size(canvasWidth, 10.dp)) {
-                            val strokeWidth = 1.5.dp.toPx()
-                            val color = TextPrimary.copy(alpha = 0.7f)
-
-                            val startX = 0f
-                            val endX = size.width
-                            val centerY = size.height / 2f
-                            val tickHeight = 4.dp.toPx()
-
-                            // Draw horizontal line
-                            drawLine(
-                                color = color,
-                                start = Offset(startX, centerY),
-                                end = Offset(endX, centerY),
-                                strokeWidth = strokeWidth,
-                                cap = StrokeCap.Round,
-                            )
-                            // Draw left tick
-                            drawLine(
-                                color = color,
-                                start = Offset(startX + strokeWidth / 2, centerY - tickHeight),
-                                end = Offset(startX + strokeWidth / 2, centerY + tickHeight),
-                                strokeWidth = strokeWidth,
-                                cap = StrokeCap.Round,
-                            )
-                            // Draw right tick
-                            drawLine(
-                                color = color,
-                                start = Offset(endX - strokeWidth / 2, centerY - tickHeight),
-                                end = Offset(endX - strokeWidth / 2, centerY + tickHeight),
-                                strokeWidth = strokeWidth,
-                                cap = StrokeCap.Round,
-                            )
-                        }
-                    }
-                }
+                )
             }
         }
     }
+}
+
+@Composable
+private fun ViewportChrome(
+    scene: ViewportScene,
+    onToggleLinks: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(
+            text = "Alchemist Simulator",
+            style = MaterialTheme.typography.h4,
+        )
+        Text(
+            text = scene.message,
+            style = MaterialTheme.typography.body2,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
+        SummaryRail(
+            summary = scene.summary,
+            showLinks = scene.showLinks,
+            onToggleLinks = onToggleLinks,
+            linkRenderNotice = scene.linkRenderNotice.takeIf { scene.showLinks },
+        )
+    }
+}
+
+@Composable
+private fun ViewportGestureHint(hasNodes: Boolean, modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier,
+        color = SurfaceStrong.copy(alpha = 0.88f),
+        shape = RoundedCornerShape(8.dp),
+        elevation = 0.dp,
+    ) {
+        Text(
+            text = if (hasNodes) {
+                "Click to inspect · drag to select · Ctrl-drag selected nodes · right-drag to pan · wheel to zoom"
+            } else {
+                "No nodes to display"
+            },
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+            style = MaterialTheme.typography.caption,
+        )
+    }
+}
+
+@Composable
+private fun ViewportGridLegend(gridLegend: GridLegendData, modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier,
+        color = SurfaceStrong.copy(alpha = 0.88f),
+        shape = RoundedCornerShape(8.dp),
+        elevation = 0.dp,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(12.dp),
+        ) {
+            Text(
+                text = gridLegend.worldX.formatFixed(2),
+                style = MaterialTheme.typography.caption,
+                color = TextPrimary,
+                modifier = Modifier.padding(bottom = 4.dp),
+            )
+            val density = androidx.compose.ui.platform.LocalDensity.current
+            val canvasWidth = with(density) { gridLegend.stepX.toDp().coerceIn(20.dp, 120.dp) }
+            Canvas(modifier = Modifier.size(canvasWidth, 10.dp)) {
+                drawGridLegendScale()
+            }
+        }
+    }
+}
+
+private fun DrawScope.drawGridLegendScale() {
+    val strokeWidth = 1.5.dp.toPx()
+    val color = TextPrimary.copy(alpha = 0.7f)
+    val centerY = size.height / 2f
+    val tickHeight = 4.dp.toPx()
+    drawLine(
+        color = color,
+        start = Offset(0f, centerY),
+        end = Offset(size.width, centerY),
+        strokeWidth = strokeWidth,
+        cap = StrokeCap.Round,
+    )
+    drawLine(
+        color = color,
+        start = Offset(strokeWidth / 2, centerY - tickHeight),
+        end = Offset(strokeWidth / 2, centerY + tickHeight),
+        strokeWidth = strokeWidth,
+        cap = StrokeCap.Round,
+    )
+    drawLine(
+        color = color,
+        start = Offset(size.width - strokeWidth / 2, centerY - tickHeight),
+        end = Offset(size.width - strokeWidth / 2, centerY + tickHeight),
+        strokeWidth = strokeWidth,
+        cap = StrokeCap.Round,
+    )
 }
 internal fun DrawScope.drawGrid(canvasSize: Size, camera: ViewportCameraState) {
     val center = Offset(canvasSize.width / 2f, canvasSize.height / 2f)
@@ -523,6 +657,63 @@ internal fun DrawScope.drawGrid(canvasSize: Size, camera: ViewportCameraState) {
 
 private data class GridLegendData(val worldX: Double, val worldY: Double, val stepX: Float, val stepY: Float)
 
+private fun viewportContentDescription(
+    nodeCount: Int,
+    selectedNodeCount: Int,
+    showLinks: Boolean,
+): String = buildString {
+    append("Simulation viewport with ")
+    append(nodeCount)
+    append(if (nodeCount == 1) " node" else " nodes")
+    append(". ")
+    append(selectedNodeCount)
+    append(if (selectedNodeCount == 1) " node selected. " else " nodes selected. ")
+    append(if (showLinks) "Links are visible." else "Links are hidden.")
+}
+
+private fun viewportStateDescription(camera: ViewportCameraState, selectedNodeCount: Int): String =
+    "Zoom ${camera.zoom.toDouble().formatFixed(2)}, $selectedNodeCount selected"
+
+private fun buildViewportAccessibilityActions(
+    hasNodes: Boolean,
+    hasSelection: Boolean,
+    onSelectFirstNode: () -> Boolean,
+    onClearSelection: () -> Boolean,
+    onZoomIn: () -> Boolean,
+    onZoomOut: () -> Boolean,
+    onPanLeft: () -> Boolean,
+    onPanRight: () -> Boolean,
+    onPanUp: () -> Boolean,
+    onPanDown: () -> Boolean,
+): List<CustomAccessibilityAction> = buildList {
+    if (hasNodes) {
+        add(CustomAccessibilityAction("Select first node") { onSelectFirstNode() })
+    }
+    if (hasSelection) {
+        add(CustomAccessibilityAction("Clear node selection") { onClearSelection() })
+    }
+    add(CustomAccessibilityAction("Zoom in") { onZoomIn() })
+    add(CustomAccessibilityAction("Zoom out") { onZoomOut() })
+    add(CustomAccessibilityAction("Pan left") { onPanLeft() })
+    add(CustomAccessibilityAction("Pan right") { onPanRight() })
+    add(CustomAccessibilityAction("Pan up") { onPanUp() })
+    add(CustomAccessibilityAction("Pan down") { onPanDown() })
+}
+
+private fun ViewportCameraState.zoomIn(viewportSize: IntSize): ViewportCameraState =
+    if (viewportSize.width > 0 && viewportSize.height > 0) {
+        zoomBy(viewportSize = viewportSize, pivot = viewportSize.center, scrollDelta = -1f)
+    } else {
+        this
+    }
+
+private fun ViewportCameraState.zoomOut(viewportSize: IntSize): ViewportCameraState =
+    if (viewportSize.width > 0 && viewportSize.height > 0) {
+        zoomBy(viewportSize = viewportSize, pivot = viewportSize.center, scrollDelta = 1f)
+    } else {
+        this
+    }
+
 private fun createSelectionRect(anchor: Offset, current: Offset): Rect = Rect(
     left = min(anchor.x, current.x),
     top = min(anchor.y, current.y),
@@ -550,3 +741,5 @@ private fun screenDeltaToWorldDelta(
         -baseDelta.y / projection.pixelsPerUnit
     ).toDouble()
 }
+
+private const val KEYBOARD_PAN_STEP_PX = 48f

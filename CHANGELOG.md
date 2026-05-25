@@ -1,3 +1,22 @@
+## [43.0.53](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.52...43.0.53) (2026-05-24)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v18.8.3 ([#5361](https://github.com/AlchemistSimulator/Alchemist/issues/5361)) ([486aba7](https://github.com/AlchemistSimulator/Alchemist/commit/486aba7dc0c28254882d476f1ecb82cadfba3c9d))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.179.0 ([#5360](https://github.com/AlchemistSimulator/Alchemist/issues/5360)) ([2a20ebb](https://github.com/AlchemistSimulator/Alchemist/commit/2a20ebb7de4c1a35ed4ba6ad698febd371581225))
+* **deps:** update junit-framework monorepo to v6.1.0 ([#5359](https://github.com/AlchemistSimulator/Alchemist/issues/5359)) ([0d1f14f](https://github.com/AlchemistSimulator/Alchemist/commit/0d1f14feb1a6b8a61cc9fcb869c915b5a0a14e11))
+* **deps:** update node.js to 24.16 ([#5362](https://github.com/AlchemistSimulator/Alchemist/issues/5362)) ([449d43e](https://github.com/AlchemistSimulator/Alchemist/commit/449d43eaea82c0435b593e54cdc8f880f1d18988))
+* **deps:** update plugin gitsemver to v7.0.20 ([#5358](https://github.com/AlchemistSimulator/Alchemist/issues/5358)) ([4d1ea4c](https://github.com/AlchemistSimulator/Alchemist/commit/4d1ea4caf7d087f1313adb51d00fc2d2493fc584))
+
+### Tests
+
+* **sapere:** resolve master merge conflicts and split LsaNode concurrency test into focused helpers ([#5325](https://github.com/AlchemistSimulator/Alchemist/issues/5325)) ([3b9e855](https://github.com/AlchemistSimulator/Alchemist/commit/3b9e85539ad642c74a0cf59846c20adc45a31b6c))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([8ebdff6](https://github.com/AlchemistSimulator/Alchemist/commit/8ebdff693825698d42189bcb654093b93f3d73d4))
+* **build:** update the javadoc.io cache ([0aeb8ce](https://github.com/AlchemistSimulator/Alchemist/commit/0aeb8ce3ad9011da319806283a5b0cf8dad05cd5))
+
 ## [43.0.52](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.51...43.0.52) (2026-05-19)
 
 ### Dependency updates

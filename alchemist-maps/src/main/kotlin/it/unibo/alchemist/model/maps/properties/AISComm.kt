@@ -13,93 +13,156 @@ import dk.dma.ais.message.AisMessage
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.properties.AbstractNodeProperty
-import kotlin.time.Duration
+import kotlin.time.DurationUnit.SECONDS
 import kotlin.time.Instant
 
 /**
- * Minimal AIS communication property.
+ * Node property exposing AIS data associated with the node.
  *
- * @param maxSize maximum number of payloads to retain.
- * @param validityWindow optional time window for retained payloads.
+ * The node is intended to represent the vessel described by the latest AIS payload, while [history] keeps
+ * previous payloads when retention is enabled. The AIS vessel identifier is exposed through [vesselId].
+ *
+ * @param maxSize maximum number of AIS payloads to retain in [history].
+ * @param validityWindow optional Alchemist time window for retained payloads in [history].
  */
-class AISComm<T>(
-    node: Node<T>,
-    private val maxSize: Int = Int.MAX_VALUE,
-    private val validityWindow: Duration? = null,
-) : AbstractNodeProperty<T>(node) {
+class AISComm<T>(node: Node<T>, private val maxSize: Int = Int.MAX_VALUE, private val validityWindow: Time? = null) :
+    AbstractNodeProperty<T>(node) {
     init {
         require(maxSize > 0) { "maxSize must be positive" }
-        require(validityWindow?.isNegative() != true) { "validityWindow must not be negative" }
+        require(validityWindow?.toDouble()?.let { it >= 0.0 } != false) {
+            "validityWindow must not be negative"
+        }
     }
 
-    private val receivedPayloads = ArrayDeque<AISPayload>()
+    private val payloads = ArrayDeque<AISPayload>()
 
     /**
-     * List of all retained AIS payloads, from newest to oldest receipt.
+     * Retained AIS payloads associated with this node, from newest to oldest.
      */
-    val messages: List<AISPayload>
-        get() = receivedPayloads.toList()
+    val history: List<AISPayload>
+        get() = payloads.toList()
 
     /**
-     * The most recently received AIS payload.
+     * Latest AIS payload associated with this node.
      */
-    val latestMessage: AISPayload?
-        get() = receivedPayloads.firstOrNull()
+    val currentData: AISPayload?
+        get() = payloads.firstOrNull()
 
     /**
-     * Speed over ground (in knots) from the latest AIS message.
+     * AIS MMSI of the vessel represented by this node.
+     */
+    val vesselId: Int?
+        get() = currentData?.vesselId
+
+    /**
+     * Timestamp of the current AIS payload.
+     */
+    val timestamp: Instant?
+        get() = currentData?.timestamp
+
+    /**
+     * Current AIS longitude.
+     */
+    val longitude: Double?
+        get() = currentData?.longitude
+
+    /**
+     * Current AIS latitude.
+     */
+    val latitude: Double?
+        get() = currentData?.latitude
+
+    /**
+     * Current AIS speed over ground, expressed in knots.
      */
     val speedOverGroundKnots: Double?
-        get() = latestMessage?.speedOverGroundKnots
+        get() = currentData?.speedOverGroundKnots
 
     /**
-     * Speed over ground (in m/s) from the latest AIS message.
+     * Current AIS speed over ground, expressed in meters per second.
      */
     val speedOverGroundMetersPerSecond: Double?
-        get() = latestMessage?.speedOverGroundMetersPerSecond
+        get() = currentData?.speedOverGroundMetersPerSecond
 
     /**
-     * Course over ground (in degrees) from the latest AIS message.
+     * Current AIS course over ground, expressed in degrees.
      */
     val courseOverGround: Double?
-        get() = latestMessage?.courseOverGround
+        get() = currentData?.courseOverGround
 
     /**
-     * Receives an AIS payload and adds it to the list of received messages.
-     *
-     * @param message the AIS payload to receive.
+     * Current AIS vessel heading, expressed in degrees.
      */
-    fun receive(message: AISPayload) {
-        receivedPayloads.addFirst(message)
+    val heading: Double?
+        get() = currentData?.heading
+
+    /**
+     * Current raw AIS position accuracy flag.
+     */
+    val positionAccuracy: Double?
+        get() = currentData?.positionAccuracy
+
+    /**
+     * Current AIS rate of turn.
+     */
+    val rateOfTurn: Double?
+        get() = currentData?.rateOfTurn
+
+    /**
+     * Current raw AIS navigational status.
+     */
+    val navigationalStatus: Double?
+        get() = currentData?.navigationalStatus
+
+    /**
+     * Current raw AIS RAIM flag.
+     */
+    val raim: Double?
+        get() = currentData?.raim
+
+    /**
+     * Current AIS ship type.
+     */
+    val shipType: Double?
+        get() = currentData?.shipType
+
+    /**
+     * Updates this node's AIS data and stores the payload in [history].
+     *
+     * @param data the AIS payload associated with this node.
+     */
+    fun update(data: AISPayload) {
+        payloads.addFirst(data)
         trim()
     }
 
     /**
-     * Receives an AIS message with a timestamp, converts it to an AIS payload
-     * and adds it to the list of received messages.
+     * Converts an AIS message into payload data and updates this node when the message carries a valid position.
      *
-     * @param timestamp the timestamp of the message.
-     * @param message the AIS message to receive.
+     * @param timestamp the timestamp of the AIS message.
+     * @param message the AIS message to use as this node's data.
      */
-    fun receive(timestamp: Instant, message: AisMessage) {
-        AISPayload.from(timestamp, message)?.let(::receive)
+    fun update(timestamp: Instant, message: AisMessage) {
+        AISPayload.from(timestamp, message)?.let(::update)
     }
 
     override fun cloneOnNewNode(node: Node<T>): NodeProperty<T> = AISComm(node, maxSize, validityWindow).also {
-        it.receivedPayloads.addAll(receivedPayloads)
+        it.payloads.addAll(payloads)
     }
 
     private fun trim() {
-        while (receivedPayloads.size > maxSize) {
-            receivedPayloads.removeLast()
+        while (payloads.size > maxSize) {
+            payloads.removeLast()
         }
         validityWindow?.let { window ->
-            receivedPayloads
+            payloads
                 .maxOfOrNull(AISPayload::timestamp)
-                ?.minus(window)
-                ?.let { oldestRetainedTimestamp ->
-                    receivedPayloads.removeAll { payload -> payload.timestamp < oldestRetainedTimestamp }
+                ?.let { newestTimestamp ->
+                    payloads.removeAll { payload ->
+                        (newestTimestamp - payload.timestamp).toDouble(SECONDS) > window.toDouble()
+                    }
                 }
         }
     }

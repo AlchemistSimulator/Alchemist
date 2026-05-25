@@ -17,83 +17,111 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.mockk
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 class TestAISComm :
     StringSpec({
-        "AISComm should expose retained messages as a LIFO" {
+        "AISComm should expose the current AIS data and retain history in update order" {
             val first = payloadAt(0)
             val second = payloadAt(1)
             val comm = AISComm(node())
-
-            comm.receive(first)
-            comm.receive(second)
-
-            comm.latestMessage shouldBe second
-            comm.messages shouldContainExactly listOf(second, first)
+            comm.update(first)
+            comm.update(second)
+            comm.currentData shouldBe second
+            comm.history shouldContainExactly listOf(second, first)
         }
 
-        "AISComm should expose navigation data from the latest message" {
+        "AISComm should expose all current AIS packet data" {
             val comm = AISComm(node())
-
-            comm.receive(payloadAt(0, speedOverGroundKnots = 10.0, cog = 90.0))
-
-            comm.speedOverGroundKnots shouldBe 10.0
+            val data = payloadAt(
+                0,
+                speedOverGroundKnots = 10.0,
+                cog = 90.0,
+                heading = 180.0,
+                positionAccuracy = 1.0,
+                rateOfTurn = 2.0,
+                navigationalStatus = 3.0,
+                raim = 4.0,
+                shipType = 5.0,
+            )
+            comm.update(data)
+            comm.vesselId shouldBe data.vesselId
+            comm.timestamp shouldBe data.timestamp
+            comm.longitude shouldBe data.longitude
+            comm.latitude shouldBe data.latitude
+            comm.speedOverGroundKnots shouldBe data.speedOverGroundKnots
             comm.speedOverGroundMetersPerSecond shouldBe 5.144444444444445
-            comm.courseOverGround shouldBe 90.0
+            comm.courseOverGround shouldBe data.courseOverGround
+            comm.heading shouldBe data.heading
+            comm.positionAccuracy shouldBe data.positionAccuracy
+            comm.rateOfTurn shouldBe data.rateOfTurn
+            comm.navigationalStatus shouldBe data.navigationalStatus
+            comm.raim shouldBe data.raim
+            comm.shipType shouldBe data.shipType
         }
 
-        "AISComm should trim retained messages to maxSize" {
+        "AISComm should trim retained AIS data to maxSize" {
             val first = payloadAt(0)
             val second = payloadAt(1)
             val third = payloadAt(2)
             val comm = AISComm(node(), maxSize = 2)
-
-            listOf(first, second, third).forEach(comm::receive)
-
-            comm.messages shouldContainExactly listOf(third, second)
+            listOf(first, second, third).forEach(comm::update)
+            comm.history shouldContainExactly listOf(third, second)
         }
 
-        "AISComm should discard messages outside the validity window" {
+        "AISComm should discard AIS data outside the validity window" {
             val oldest = payloadAt(0)
             val withinWindow = payloadAt(3)
             val newest = payloadAt(5)
             val lateExpired = payloadAt(1)
-            val comm = AISComm(node(), validityWindow = 3.seconds)
-
-            listOf(oldest, withinWindow, newest, lateExpired).forEach(comm::receive)
-
-            comm.messages shouldContainExactly listOf(newest, withinWindow)
+            val comm = AISComm(node(), validityWindow = DoubleTime(3.0))
+            listOf(oldest, withinWindow, newest, lateExpired).forEach(comm::update)
+            comm.history shouldContainExactly listOf(newest, withinWindow)
         }
 
-        "AISComm should clone retained messages and trimming policy" {
+        "AISComm should clone retained AIS data and trimming policy" {
             val newest = payloadAt(2)
             val comm = AISComm(node(), maxSize = 1).apply {
-                receive(payloadAt(1))
-                receive(newest)
+                update(payloadAt(1))
+                update(newest)
             }
-
             val clone = comm.cloneOnNewNode(node()) as AISComm<Any>
-            clone.receive(payloadAt(3))
-
-            clone.messages.size shouldBe 1
-            clone.latestMessage shouldNotBe newest
+            clone.update(payloadAt(3))
+            clone.history.size shouldBe 1
+            clone.currentData shouldNotBe newest
         }
 
         "AISComm should reject invalid retention settings" {
             shouldThrow<IllegalArgumentException> { AISComm(node(), maxSize = 0) }
-            shouldThrow<IllegalArgumentException> { AISComm(node(), validityWindow = (-1).seconds) }
+            shouldThrow<IllegalArgumentException> { AISComm(node(), validityWindow = DoubleTime(-1.0)) }
         }
     })
 
-private fun payloadAt(seconds: Long, speedOverGroundKnots: Double? = null, cog: Double? = null) = AISPayload(
+private fun payloadAt(
+    seconds: Long,
+    speedOverGroundKnots: Double? = null,
+    cog: Double? = null,
+    heading: Double? = null,
+    positionAccuracy: Double? = null,
+    rateOfTurn: Double? = null,
+    navigationalStatus: Double? = null,
+    raim: Double? = null,
+    shipType: Double? = null,
+) = AISPayload(
     vesselId = seconds.toInt(),
     timestamp = EPOCH + seconds.seconds,
     longitude = seconds.toDouble(),
     latitude = seconds.toDouble(),
     speedOverGroundKnots = speedOverGroundKnots,
     courseOverGround = cog,
+    heading = heading,
+    positionAccuracy = positionAccuracy,
+    rateOfTurn = rateOfTurn,
+    navigationalStatus = navigationalStatus,
+    raim = raim,
+    shipType = shipType,
 )
 
 private val EPOCH = Instant.fromEpochSeconds(0)

@@ -66,7 +66,10 @@ public class ReproduceGPSTrace<T, O extends RoutingServiceOptions<O>, S extends 
             new IgnoreStreets<>(),
             new StraightLineTraceDependantSpeed<>(environment, node, reaction),
             new FollowTrace<>(reaction),
-            path, cycle, normalizer, normalizerArgs
+            path,
+            cycle,
+            normalizer,
+            normalizerArgs
         );
     }
 

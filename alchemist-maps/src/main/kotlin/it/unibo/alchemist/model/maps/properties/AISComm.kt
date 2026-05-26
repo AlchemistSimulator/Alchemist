@@ -24,10 +24,10 @@ import kotlin.time.Instant
  * The node is intended to represent the vessel described by the latest AIS payload, while [history] keeps
  * previous payloads when retention is enabled. The AIS vessel identifier is exposed through [vesselId].
  *
- * @param maxSize maximum number of AIS payloads to retain in [history].
+ * @param maxSize maximum number of AIS payloads to retain in [history]. Defaults to the latest payload only.
  * @param validityWindow optional Alchemist time window for retained payloads in [history].
  */
-class AISComm<T>(node: Node<T>, private val maxSize: Int = Int.MAX_VALUE, private val validityWindow: Time? = null) :
+class AISComm<T>(node: Node<T>, private val maxSize: Int = 1, private val validityWindow: Time? = null) :
     AbstractNodeProperty<T>(node) {
     init {
         require(maxSize > 0) { "maxSize must be positive" }

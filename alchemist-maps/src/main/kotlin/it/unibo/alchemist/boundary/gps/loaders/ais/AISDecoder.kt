@@ -59,6 +59,7 @@ object AISDecoder {
     fun parsePayload(payload: String, date: Instant): List<Pair<Instant, AisMessage>> {
         val payloadDate = date.toIsoDate()
         var currentTimestamp = date
+        var vdm = Vdm()
         return payload.lines().mapNotNull { line ->
             when {
                 line.startsWith(DATE_TIME_PREFIX) -> {
@@ -67,7 +68,13 @@ object AISDecoder {
                     null
                 }
                 line.isBlank() -> null
-                else -> line.toAisMessage()?.let { message -> currentTimestamp to message }
+                else -> vdm.parseSentence(line)
+                    .also { parsedVdm -> vdm = parsedVdm }
+                    .takeIf { it.isCompletePacket }
+                    ?.let { completeVdm ->
+                        vdm = Vdm()
+                        completeVdm.toAisMessage()?.let { message -> currentTimestamp to message }
+                    }
             }
         }
     }
@@ -96,14 +103,10 @@ object AISDecoder {
     private fun String.dateFromResourceNameOrSelf(): String =
         takeIf { runCatching { startOfDay(it) }.isSuccess } ?: dateFrom(this)
 
-    private fun String.toAisMessage(): AisMessage? = toVdm()
-        .takeIf { it.isCompletePacket }
-        ?.toAisMessage()
-
     private fun String.toIsoDate(): String =
         "${take(YEAR_DIGITS)}-${substring(MONTH_START, MONTH_END)}-${takeLast(DAY_DIGITS)}"
 
-    private fun String.toVdm(): Vdm = runCatching { Vdm().apply { parse(this@toVdm) } }.getOrElse { exception ->
+    private fun Vdm.parseSentence(line: String): Vdm = runCatching { apply { parse(line) } }.getOrElse { exception ->
         if (exception is SentenceException && exception.isRecoverable) {
             logger.debug(
                 "Resetting partial AIS message after an out-of-sequence sentence or invalid checksum",

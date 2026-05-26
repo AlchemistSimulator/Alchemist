@@ -26,7 +26,7 @@ class TestAISComm :
         "AISComm should expose the current AIS data and retain history in update order" {
             val first = payloadAt(0)
             val second = payloadAt(1)
-            val comm = AISComm(node())
+            val comm = AISComm(node(), maxSize = 2)
             comm.update(first)
             comm.update(second)
             comm.currentData shouldBe second

@@ -1,8 +1,8 @@
 +++
 title = "GPS Traces"
 weight = 6
-tags = ["deployment", "node", "nodes", "gps", "traces", "gpx"]
-summary = "Deployment of nodes on map-based environments using GPS data."
+tags = ["deployment", "node", "nodes", "gps", "traces", "gpx", "ais", "nmea"]
+summary = "Deployment of nodes on map-based environments using GPS and AIS data."
 +++
 
 {{% notice tip "Importing maps" %}}
@@ -18,6 +18,20 @@ The class supports deploying more nodes than there are available traces by reusi
 
 {{< code path="alchemist-loading/src/test/resources/testgps.yml" >}}
 
+AIS traces can be loaded through the same trace-based deployment and movement machinery.
+Any path accepted by
+{{% api package="model.maps.deployments" class="FromGPSTrace" %}},
+{{% api package="model.maps.actions" class="ReproduceGPSTrace" %}},
+or {{% api package="model.maps.actions" class="GPSTraceWalker" %}}
+may point to an AIS NMEA file.
+
+{{< code path="src/test/resources/website-snippets/ais-trace.yml" >}}
+
+AIS files are grouped by vessel and each vessel becomes an independent trace.
+Alchemist recognizes AIS files with the `.ais`, `.nmea`, and `.txt` extensions.
+Timestamp marker lines in the form `!DATE-TIME,HH:mm:ss` are supported;
+the date is read from a `yyyyMMdd` substring in the resource name when available.
+
 {{% notice tip "Get GPS data for your experiments" %}}
 The great folks at [OpenStreetMap](https://openstreetmap.org) release GPS data for
 [the whole planet](https://planet.openstreetmap.org/gps/).
@@ -30,7 +44,7 @@ are available
 ### Alignment of time
 
 Often, GPS traces are collected at different points in time.
-When this is the case, a strategy must be concted to "align" them:
+When this is the case, a strategy must be selected to "align" them:
 for instance, we may want all traces to be interpreted as beginning at the same time,
 regardless of the actual time they were taken;
 or we might want to discard the first hour of data;

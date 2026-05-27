@@ -60,11 +60,14 @@ public class ReproduceGPSTrace<T, O extends RoutingServiceOptions<O>, S extends 
         final String normalizer,
         final Object... normalizerArgs
     ) {
-        super(environment, node,
-                new IgnoreStreets<>(),
-                new StraightLineTraceDependantSpeed<>(environment, node, reaction),
-                new FollowTrace<>(reaction),
-                path, cycle, normalizer, normalizerArgs);
+        super(
+            environment,
+            node,
+            new IgnoreStreets<>(),
+            new StraightLineTraceDependantSpeed<>(environment, node, reaction),
+            new FollowTrace<>(reaction),
+            path, cycle, normalizer, normalizerArgs
+        );
     }
 
     /**

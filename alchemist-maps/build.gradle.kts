@@ -17,6 +17,7 @@ plugins {
 dependencies {
     ksp(alchemist("factories-generator"))
     api(alchemist("api"))
+    api(libs.ais.lib.messages)
 
     implementation(alchemist("implementationbase"))
     implementation(alchemist("loading"))
@@ -48,6 +49,10 @@ publishing.publications {
                 developer {
                     name.set("Andrea Placuzzi")
                     email.set("andrea.placuzzi@studio.unibo.it")
+                }
+                developer {
+                    name.set("Lorenzo Antonioli")
+                    email.set("lorenzo.antonioli2@studio.unibo.it")
                 }
             }
             contributors {

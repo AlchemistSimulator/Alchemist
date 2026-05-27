@@ -1,3 +1,19 @@
+## [43.0.54](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.53...43.0.54) (2026-05-26)
+
+### Dependency updates
+
+* **deps:** update plugin com.gradle.develocity to v4.4.2 ([#5366](https://github.com/AlchemistSimulator/Alchemist/issues/5366)) ([584621f](https://github.com/AlchemistSimulator/Alchemist/commit/584621fc8ed98a2d60d2d4f4790a588ca7e741ab))
+* **deps:** update plugin multijvmtesting to v4.4.0 ([#5363](https://github.com/AlchemistSimulator/Alchemist/issues/5363)) ([f3b747f](https://github.com/AlchemistSimulator/Alchemist/commit/f3b747f04b9c290a0fc43b33434e70ed7bd953e1))
+* **deps:** update plugin multijvmtesting to v4.5.0 ([#5364](https://github.com/AlchemistSimulator/Alchemist/issues/5364)) ([a6f93a3](https://github.com/AlchemistSimulator/Alchemist/commit/a6f93a355016291953b9f8da5e7e5dbdf509b8e0))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.162.0 ([#5367](https://github.com/AlchemistSimulator/Alchemist/issues/5367)) ([79e8b77](https://github.com/AlchemistSimulator/Alchemist/commit/79e8b774ee3e414687e1ea04e796d3cc79202e3e))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([96c7f98](https://github.com/AlchemistSimulator/Alchemist/commit/96c7f98e7d24ee0f249238f483d49c3d57e9dd0b))
+
 ## [43.0.53](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.52...43.0.53) (2026-05-24)
 
 ### Dependency updates

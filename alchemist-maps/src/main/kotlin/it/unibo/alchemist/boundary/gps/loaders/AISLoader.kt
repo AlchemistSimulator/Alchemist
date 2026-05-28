@@ -26,9 +26,11 @@ import kotlin.time.Instant
  */
 class AISLoader : GPSFileLoader {
     override fun readTrace(url: URL): List<GPSTrace> = url.openStream().use { input ->
-        AISPayload
-            .from(AISDecoder.parsePayload(input.bufferedReader().readText(), url.path.substringAfterLast("/")))
-            .toTraces()
+        input.bufferedReader().useLines { lines ->
+            AISPayload
+                .from(AISDecoder.parsePayload(lines, url.path.substringAfterLast("/")))
+                .toTraces()
+        }
     }
 
     override fun supportedExtensions(): ImmutableSet<String> = EXTENSIONS

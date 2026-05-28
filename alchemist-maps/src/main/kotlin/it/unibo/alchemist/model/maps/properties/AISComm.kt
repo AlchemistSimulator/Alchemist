@@ -28,7 +28,11 @@ import kotlin.time.Instant
  *   Defaults to 100. Use `null` to retain all payloads without any size limit.
  * @param validityWindow optional Alchemist time window for retained payloads in [history].
  */
-class AISComm<T>(node: Node<T>, private val maxSize: Int? = 100, private val validityWindow: Time? = null) :
+class AISComm<T> @JvmOverloads constructor(
+    node: Node<T>,
+    private val maxSize: Int? = 100,
+    private val validityWindow: Time? = null,
+) :
     AbstractNodeProperty<T>(node) {
     init {
         require(maxSize == null || maxSize > 0) { "maxSize must be positive or null for unlimited retention" }

@@ -32,8 +32,7 @@ class AISComm<T> @JvmOverloads constructor(
     node: Node<T>,
     private val maxSize: Int? = 100,
     private val validityWindow: Time? = null,
-) :
-    AbstractNodeProperty<T>(node) {
+) : AbstractNodeProperty<T>(node) {
     init {
         require(maxSize == null || maxSize > 0) { "maxSize must be positive or null for unlimited retention" }
         require(validityWindow?.toDouble()?.let { it >= 0.0 } != false) {

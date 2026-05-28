@@ -59,6 +59,13 @@ data class AISPayload(
         private const val METERS_IN_NAUTICAL_MILE = 1_852.0
         private const val SECONDS_PER_HOUR = 3_600.0
         private const val METERS_PER_SECOND_IN_ONE_KNOT = METERS_IN_NAUTICAL_MILE / SECONDS_PER_HOUR
+
+        /** AIS sentinel value indicating that longitude is unavailable. */
+        private const val AIS_LONGITUDE_UNAVAILABLE = 181.0
+
+        /** AIS sentinel value indicating that latitude is unavailable. */
+        private const val AIS_LATITUDE_UNAVAILABLE = 91.0
+
         private val Double.knotsToMetersPerSecond: Double
             get() = this * METERS_PER_SECOND_IN_ONE_KNOT
 
@@ -72,15 +79,20 @@ data class AISPayload(
 
         /**
          * Builds an [AISPayload] from an AIS message when it carries a valid position.
+         * Returns null if the position uses the standard unavailable coordinate sentinels
+         * (181° longitude or 91° latitude).
          */
-        fun from(timestamp: Instant, userId: Int, positionMessage: IPositionMessage): AISPayload {
+        fun from(timestamp: Instant, userId: Int, positionMessage: IPositionMessage): AISPayload? {
+            val longitude = positionMessage.pos.longitudeDouble
+            val latitude = positionMessage.pos.latitudeDouble
+            if (longitude >= AIS_LONGITUDE_UNAVAILABLE || latitude >= AIS_LATITUDE_UNAVAILABLE) return null
             val vesselPosition = positionMessage as? IVesselPositionMessage
             val aisPosition = positionMessage as? AisPositionMessage
             return AISPayload(
                 vesselId = userId,
                 timestamp = timestamp,
-                longitude = positionMessage.pos.longitudeDouble,
-                latitude = positionMessage.pos.latitudeDouble,
+                longitude = longitude,
+                latitude = latitude,
                 speedOverGroundKnots = vesselPosition?.takeIf { it.isSogValid }?.sog?.div(AIS_TENTHS_SCALE),
                 courseOverGround = vesselPosition?.takeIf { it.isCogValid }?.cog?.div(AIS_TENTHS_SCALE),
                 heading = vesselPosition?.takeIf { it.isHeadingValid }?.trueHeading?.toDouble(),

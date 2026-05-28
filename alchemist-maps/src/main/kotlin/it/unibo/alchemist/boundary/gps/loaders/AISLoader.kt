@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -20,15 +20,20 @@ import it.unibo.alchemist.model.times.DoubleTime
 import java.net.URL
 import kotlin.time.DurationUnit.SECONDS
 import kotlin.time.Instant
+import org.openstreetmap.osmosis.osmbinary.file.FileFormatException
 
 /**
  * Reads raw AIS NMEA files as Alchemist GPS traces.
  */
 class AISLoader : GPSFileLoader {
-    override fun readTrace(url: URL): List<GPSTrace> = url.openStream().use { input ->
-        AISPayload
-            .from(AISDecoder.parsePayload(input.bufferedReader().readText(), url.path.substringAfterLast("/")))
-            .toTraces()
+    override fun readTrace(url: URL): List<GPSTrace> = runCatching {
+        url.openStream().use { input ->
+            val resourceName = url.path.substringAfterLast("/")
+            val content = input.bufferedReader().readText()
+            AISPayload.from(AISDecoder.parsePayload(content, resourceName)).toTraces()
+        }
+    }.getOrElse {
+        throw FileFormatException("Incorrect AIS Payload in $url").initCause(it)
     }
 
     override fun supportedExtensions(): ImmutableSet<String> = EXTENSIONS

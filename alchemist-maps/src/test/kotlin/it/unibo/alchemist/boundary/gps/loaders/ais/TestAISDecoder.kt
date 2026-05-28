@@ -31,4 +31,18 @@ class TestAISDecoder :
         "AISDecoder should accept the payload date as an instant" {
             AISDecoder.parsePayload("\n\n", Instant.parse("2026-05-15T00:00:00Z")) shouldBe emptyList()
         }
+
+        "AISDecoder should roll over to next day when date-time markers cross midnight" {
+            val payload = """
+                !DATE-TIME,23:59:59
+                !AIVDM,1,1,,A,13cSch@P0jPpMi@IwwD3Q2l00000,0*10
+                !DATE-TIME,00:00:01
+                !AIVDM,1,1,,A,13cSch@P0jPpN40J00O3Q2lD0000,0*42
+            """.trimIndent()
+            val timestamps = AISDecoder.parsePayload(payload, "2026-05-15").map { it.first }
+            timestamps shouldBe listOf(
+                Instant.parse("2026-05-15T23:59:59Z"),
+                Instant.parse("2026-05-16T00:00:01Z"),
+            )
+        }
     })

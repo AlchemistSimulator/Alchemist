@@ -15,6 +15,7 @@ import dk.dma.ais.message.AisMessageException
 import dk.dma.ais.sentence.SentenceException
 import dk.dma.ais.sentence.Vdm
 import java.io.File
+import java.time.LocalDate
 import kotlin.time.Instant
 import org.slf4j.LoggerFactory
 
@@ -57,7 +58,7 @@ object AISDecoder {
      * @return the message parsed from a raw [String] to [AisMessage] and maps it to the timestamp of the raw message.
      **/
     fun parsePayload(payload: String, date: Instant): List<Pair<Instant, AisMessage>> {
-        val payloadDate = date.toIsoDate()
+        var payloadDate = LocalDate.parse(date.toIsoDate())
         var currentTimestamp = date
         var vdmAccumulator = Vdm()
         return buildList {
@@ -65,7 +66,12 @@ object AISDecoder {
                 when {
                     line.startsWith(DATE_TIME_PREFIX) -> {
                         val time = line.substringAfter(DATE_TIME_PREFIX).trim()
-                        currentTimestamp = Instant.parse("${payloadDate}T${time}Z")
+                        var timestamp = Instant.parse("${payloadDate}T${time}Z")
+                        if (timestamp < currentTimestamp) {
+                            payloadDate = payloadDate.plusDays(1)
+                            timestamp = Instant.parse("${payloadDate}T${time}Z")
+                        }
+                        currentTimestamp = timestamp
                     }
                     line.isBlank() -> Unit
                     else -> vdmAccumulator = vdmAccumulator.parseSentence(line) { message ->

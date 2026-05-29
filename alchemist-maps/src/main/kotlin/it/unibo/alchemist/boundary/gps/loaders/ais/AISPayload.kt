@@ -138,13 +138,11 @@ data class AISPayload(
             val name = message as? INameMessage
             val message5 = message as? AisMessage5
             val message24 = message as? AisMessage24
-            val longitude = positionMessage?.longitude
-            val latitude = positionMessage?.latitude
             return AISPayload(
                 vesselMMSI = message.userId,
                 timestamp = timestamp,
-                latitude = latitude,
-                longitude = longitude,
+                latitude = positionMessage?.latitude,
+                longitude = positionMessage?.longitude,
                 courseOverGroundDegrees = vesselPosition?.takeIf { it.isCogValid }?.cog?.div(AIS_TENTHS_SCALE),
                 speedOverGroundKnots = vesselPosition?.takeIf { it.isSogValid }?.sog?.div(AIS_TENTHS_SCALE),
                 headingDegrees = vesselPosition?.takeIf { it.isHeadingValid }?.trueHeading?.toDouble(),

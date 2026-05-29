@@ -95,14 +95,26 @@ class AISComm<T> @JvmOverloads constructor(
     /**
      * Current AIS course over ground, expressed in degrees.
      */
-    val courseOverGround: Double?
+    val courseOverGroundDegrees: Double?
         get() = currentData?.courseOverGroundDegrees
+
+    /**
+     * Current AIS course over ground, expressed in radians.
+     */
+    val courseOverGroundRadians: Double?
+        get() = currentData?.courseOverGroundRadians
 
     /**
      * Current AIS vessel heading, expressed in degrees.
      */
-    val heading: Double?
-        get() = currentData?.heading
+    val headingDegrees: Double?
+        get() = currentData?.headingDegrees
+
+    /**
+     * Current AIS vessel heading, expressed in radians.
+     */
+    val headingRadians: Double?
+        get() = currentData?.headingRadians
 
     /**
      * Current raw AIS position accuracy flag.

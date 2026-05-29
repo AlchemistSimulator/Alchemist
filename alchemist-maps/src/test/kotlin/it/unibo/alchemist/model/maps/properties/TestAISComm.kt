@@ -55,8 +55,8 @@ class TestAISComm :
             comm.latitude shouldBe data.latitude
             comm.speedOverGroundKnots shouldBe data.speedOverGroundKnots
             comm.speedOverGroundMetersPerSecond shouldBe 5.144444444444445
-            comm.courseOverGround shouldBe data.courseOverGroundDegrees
-            comm.heading shouldBe data.heading
+            comm.courseOverGroundDegrees shouldBe data.courseOverGroundDegrees
+            comm.headingDegrees shouldBe data.headingDegrees
             comm.positionAccuracy shouldBe data.positionAccuracy
             comm.rateOfTurn shouldBe data.rateOfTurn
             comm.navigationalStatus shouldBe data.navigationalStatus
@@ -118,7 +118,7 @@ private fun payloadAt(
     latitude = seconds.toDouble(),
     speedOverGroundKnots = speedOverGroundKnots,
     courseOverGroundDegrees = cog,
-    heading = heading,
+    headingDegrees = heading,
     positionAccuracy = positionAccuracy,
     rateOfTurn = rateOfTurn,
     navigationalStatus = navigationalStatus,

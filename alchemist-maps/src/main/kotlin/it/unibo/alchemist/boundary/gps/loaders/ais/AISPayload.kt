@@ -27,8 +27,9 @@ import kotlin.time.Instant
  * @property speedOverGroundKnots speed over ground, expressed in knots.
  * @property speedOverGroundMetersPerSecond speed over ground, expressed in meters per second.
  * @property courseOverGroundDegrees course over ground, expressed in degrees.
- * @property courseOverGroundRadiants course over ground, expressed in radians.
- * @property heading vessel heading, expressed in degrees.
+ * @property courseOverGroundRadians course over ground, expressed in radians.
+ * @property headingDegrees vessel heading, expressed in degrees.
+ * @property headingRadians vessel heading, expressed in radians.
  * @property positionAccuracy raw AIS position accuracy flag.
  * @property rateOfTurn rate of turn, expressed according to the AIS library conversion.
  * @property navigationalStatus AIS navigational status.
@@ -42,18 +43,21 @@ data class AISPayload(
     val latitude: Double,
     val speedOverGroundKnots: Double? = null,
     val courseOverGroundDegrees: Double? = null,
-    val heading: Double? = null,
+    val headingDegrees: Double? = null,
     val positionAccuracy: Double? = null,
     val rateOfTurn: Double? = null,
     val navigationalStatus: AISNavigationStatus? = null,
     val raim: Double? = null,
     val shipType: AISShipType? = null,
 ) {
+    val courseOverGroundRadians: Double?
+        get() = courseOverGroundDegrees?.degreesToRadians
+
+    val headingRadians: Double?
+        get() = headingDegrees?.degreesToRadians
+
     val speedOverGroundMetersPerSecond: Double?
         get() = speedOverGroundKnots?.knotsToMetersPerSecond
-
-    val courseOverGroundRadiants: Double?
-        get() = courseOverGroundDegrees?.degreesToRadians
 
     /**
      * Static factory for [AISPayload].
@@ -103,7 +107,7 @@ data class AISPayload(
                 latitude = latitude,
                 speedOverGroundKnots = vesselPosition?.takeIf { it.isSogValid }?.sog?.div(AIS_TENTHS_SCALE),
                 courseOverGroundDegrees = vesselPosition?.takeIf { it.isCogValid }?.cog?.div(AIS_TENTHS_SCALE),
-                heading = vesselPosition?.takeIf { it.isHeadingValid }?.trueHeading?.toDouble(),
+                headingDegrees = vesselPosition?.takeIf { it.isHeadingValid }?.trueHeading?.toDouble(),
                 positionAccuracy = vesselPosition?.posAcc?.toDouble(),
                 rateOfTurn = aisPosition?.takeIf { it.isRotValid }?.rot?.toDouble(),
                 navigationalStatus = aisPosition?.navStatus?.let(AISNavigationStatus::fromCode),

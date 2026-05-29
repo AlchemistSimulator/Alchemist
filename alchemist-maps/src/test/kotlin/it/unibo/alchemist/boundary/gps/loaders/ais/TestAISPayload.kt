@@ -48,7 +48,18 @@ class TestAISPayload :
                 latitude = 44.0,
                 courseOverGroundDegrees = 180.0,
             )
-            payload.courseOverGroundRadiants shouldBe (PI plusOrMinus 1e-15)
+            payload.courseOverGroundRadians shouldBe (PI plusOrMinus 1e-15)
+        }
+
+        "AISPayload should convert heading from degrees to radians" {
+            val payload = AISPayload(
+                vesselMMSI = 1,
+                timestamp = EPOCH,
+                longitude = 11.0,
+                latitude = 44.0,
+                headingDegrees = 90.0,
+            )
+            payload.headingRadians shouldBe (PI / 2 plusOrMinus 1e-15)
         }
 
         "AISShipType should map AIS ship type codes to semantic values" {

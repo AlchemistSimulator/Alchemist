@@ -49,7 +49,7 @@ class TestAISGPXConverter :
     })
 
 private fun payloadAt(vesselId: Int, seconds: Long) = AISPayload(
-    vesselId = vesselId,
+    vesselMMSI = vesselId,
     timestamp = EPOCH + seconds.seconds,
     longitude = vesselId.toDouble(),
     latitude = vesselId.toDouble(),

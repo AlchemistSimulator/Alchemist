@@ -59,7 +59,7 @@ class TestAISLoader : StringSpec({
 private fun payloadAt(secondsFromEpoch: Long, vesselId: Int): AISPayload = payloadAt(EPOCH, secondsFromEpoch, vesselId)
 
 private fun payloadAt(origin: Instant, secondsFromOrigin: Long, vesselId: Int): AISPayload = AISPayload(
-    vesselId = vesselId,
+    vesselMMSI = vesselId,
     timestamp = origin + secondsFromOrigin.seconds,
     longitude = vesselId.toDouble(),
     latitude = vesselId.toDouble(),

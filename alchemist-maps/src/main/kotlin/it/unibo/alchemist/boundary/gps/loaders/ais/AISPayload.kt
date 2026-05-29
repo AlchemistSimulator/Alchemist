@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -14,41 +14,46 @@ import dk.dma.ais.message.AisPositionMessage
 import dk.dma.ais.message.AisStaticCommon
 import dk.dma.ais.message.IPositionMessage
 import dk.dma.ais.message.IVesselPositionMessage
+import kotlin.math.PI
 import kotlin.time.Instant
 
 /**
  * Subset of AIS information used to generate traces.
  *
- * @property vesselId AIS MMSI.
+ * @property vesselMMSI AIS MMSI.
  * @property timestamp the timestamp related to the receipt of the message.
  * @property longitude longitude of the boat.
  * @property latitude latitude of the boat.
  * @property speedOverGroundKnots speed over ground, expressed in knots.
  * @property speedOverGroundMetersPerSecond speed over ground, expressed in meters per second.
- * @property courseOverGround course over ground, expressed in degrees.
+ * @property courseOverGroundDegrees course over ground, expressed in degrees.
+ * @property courseOverGroundRadiants course over ground, expressed in radians.
  * @property heading vessel heading, expressed in degrees.
  * @property positionAccuracy raw AIS position accuracy flag.
  * @property rateOfTurn rate of turn, expressed according to the AIS library conversion.
  * @property navigationalStatus raw AIS navigational status.
  * @property raim raw AIS RAIM flag.
- * @property shipType vessel type.
+ * @property shipType AIS ship type.
  */
 data class AISPayload(
-    val vesselId: Int,
+    val vesselMMSI: Int,
     val timestamp: Instant,
     val longitude: Double,
     val latitude: Double,
     val speedOverGroundKnots: Double? = null,
-    val courseOverGround: Double? = null,
+    val courseOverGroundDegrees: Double? = null,
     val heading: Double? = null,
     val positionAccuracy: Double? = null,
     val rateOfTurn: Double? = null,
     val navigationalStatus: Double? = null,
     val raim: Double? = null,
-    val shipType: Double? = null,
+    val shipType: AISShipType? = null,
 ) {
     val speedOverGroundMetersPerSecond: Double?
         get() = speedOverGroundKnots?.knotsToMetersPerSecond
+
+    val courseOverGroundRadiants: Double?
+        get() = courseOverGroundDegrees?.degreesToRadians
 
     /**
      * Static factory for [AISPayload].
@@ -68,6 +73,9 @@ data class AISPayload(
 
         private val Double.knotsToMetersPerSecond: Double
             get() = this * METERS_PER_SECOND_IN_ONE_KNOT
+
+        private val Double.degreesToRadians: Double
+            get() = this * PI / 180.0
 
         /**
          * Builds an [AISPayload] from an AIS message when it carries a valid position.
@@ -89,18 +97,18 @@ data class AISPayload(
             val vesselPosition = positionMessage as? IVesselPositionMessage
             val aisPosition = positionMessage as? AisPositionMessage
             return AISPayload(
-                vesselId = userId,
+                vesselMMSI = userId,
                 timestamp = timestamp,
                 longitude = longitude,
                 latitude = latitude,
                 speedOverGroundKnots = vesselPosition?.takeIf { it.isSogValid }?.sog?.div(AIS_TENTHS_SCALE),
-                courseOverGround = vesselPosition?.takeIf { it.isCogValid }?.cog?.div(AIS_TENTHS_SCALE),
+                courseOverGroundDegrees = vesselPosition?.takeIf { it.isCogValid }?.cog?.div(AIS_TENTHS_SCALE),
                 heading = vesselPosition?.takeIf { it.isHeadingValid }?.trueHeading?.toDouble(),
                 positionAccuracy = vesselPosition?.posAcc?.toDouble(),
                 rateOfTurn = aisPosition?.takeIf { it.isRotValid }?.rot?.toDouble(),
                 navigationalStatus = aisPosition?.navStatus?.toDouble(),
                 raim = vesselPosition?.raim?.toDouble(),
-                shipType = (positionMessage as? AisStaticCommon)?.shipType?.toDouble(),
+                shipType = (positionMessage as? AisStaticCommon)?.shipType?.let(AISShipType::fromCode),
             )
         }
 
@@ -109,6 +117,6 @@ data class AISPayload(
          */
         fun from(messages: Iterable<Pair<Instant, AisMessage>>): List<AISPayload> = messages
             .mapNotNull { (timestamp, message) -> from(timestamp, message) }
-            .sortedWith(compareBy(AISPayload::vesselId, AISPayload::timestamp))
+            .sortedWith(compareBy(AISPayload::vesselMMSI, AISPayload::timestamp))
     }
 }

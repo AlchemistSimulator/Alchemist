@@ -51,7 +51,7 @@ class AISLoader : GPSFileLoader {
          * @param timeOrigin instant mapped to simulation time zero.
          */
         internal fun Iterable<AISPayload>.toTraces(timeOrigin: Instant = EPOCH): List<GPSTrace> =
-            groupBy(AISPayload::vesselId).values.map { vesselPayloads ->
+            groupBy(AISPayload::vesselMMSI).values.map { vesselPayloads ->
                 GPSTraceImpl(
                     vesselPayloads.sortedBy(AISPayload::timestamp).map {
                         GPSPointImpl(

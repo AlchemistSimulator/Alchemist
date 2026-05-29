@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -32,7 +32,7 @@ class AISGPXConverter {
     fun write(payloads: Iterable<AISPayload>, outputDirectory: Path, vesselIdMapper: (Int) -> String = Int::toString) {
         Files.createDirectories(outputDirectory)
         payloads
-            .groupBy(AISPayload::vesselId)
+            .groupBy(AISPayload::vesselMMSI)
             .forEach { (vesselId, points) ->
                 val anonymizedId = vesselIdMapper(vesselId)
                 val track = Track
@@ -54,7 +54,7 @@ class AISGPXConverter {
             .lon(longitude)
             .time(timestamp.toJavaInstant())
         speedOverGroundKnots?.let { builder.speed(it, Speed.Unit.KNOTS) }
-        courseOverGround?.let { builder.course(it) }
+        courseOverGroundDegrees?.let { builder.course(it) }
         return builder.build()
     }
 }

@@ -10,7 +10,9 @@
 package it.unibo.alchemist.boundary.gps.loaders.ais
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
+import kotlin.math.PI
 import kotlin.time.Instant
 
 class TestAISPayload :
@@ -18,7 +20,7 @@ class TestAISPayload :
         "AISPayload should convert speed from knots to meters per second" {
             val speedOverGroundKnots = 10.0
             val payload = AISPayload(
-                vesselId = 1,
+                vesselMMSI = 1,
                 timestamp = EPOCH,
                 longitude = 11.0,
                 latitude = 44.0,
@@ -30,12 +32,32 @@ class TestAISPayload :
 
         "AISPayload should keep missing speed unavailable" {
             val payload = AISPayload(
-                vesselId = 1,
+                vesselMMSI = 1,
                 timestamp = EPOCH,
                 longitude = 11.0,
                 latitude = 44.0,
             )
             payload.speedOverGroundMetersPerSecond shouldBe null
+        }
+
+        "AISPayload should convert course over ground from degrees to radians" {
+            val payload = AISPayload(
+                vesselMMSI = 1,
+                timestamp = EPOCH,
+                longitude = 11.0,
+                latitude = 44.0,
+                courseOverGroundDegrees = 180.0,
+            )
+            payload.courseOverGroundRadiants shouldBe (PI plusOrMinus 1e-15)
+        }
+
+        "AISShipType should map AIS ship type codes to semantic values" {
+            AISShipType.fromCode(0) shouldBe AISShipType.NotAvailable
+            AISShipType.fromCode(19) shouldBe AISShipType.ReservedForFutureUse(19)
+            AISShipType.fromCode(50) shouldBe AISShipType.PilotVessel
+            AISShipType.fromCode(71) shouldBe AISShipType.HazardousCargoA
+            AISShipType.fromCode(99) shouldBe AISShipType.OtherTypeNoAdditionalInformation
+            AISShipType.fromCode(100) shouldBe null
         }
     })
 

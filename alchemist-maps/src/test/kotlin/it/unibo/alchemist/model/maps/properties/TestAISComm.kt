@@ -16,6 +16,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.mockk
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
+import it.unibo.alchemist.boundary.gps.loaders.ais.AISShipType
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.time.Duration.Companion.seconds
@@ -44,16 +45,16 @@ class TestAISComm :
                 rateOfTurn = 2.0,
                 navigationalStatus = 3.0,
                 raim = 4.0,
-                shipType = 5.0,
+                shipType = AISShipType.PilotVessel,
             )
             comm.update(data)
-            comm.vesselId shouldBe data.vesselId
+            comm.vesselId shouldBe data.vesselMMSI
             comm.timestamp shouldBe data.timestamp
             comm.longitude shouldBe data.longitude
             comm.latitude shouldBe data.latitude
             comm.speedOverGroundKnots shouldBe data.speedOverGroundKnots
             comm.speedOverGroundMetersPerSecond shouldBe 5.144444444444445
-            comm.courseOverGround shouldBe data.courseOverGround
+            comm.courseOverGround shouldBe data.courseOverGroundDegrees
             comm.heading shouldBe data.heading
             comm.positionAccuracy shouldBe data.positionAccuracy
             comm.rateOfTurn shouldBe data.rateOfTurn
@@ -108,14 +109,14 @@ private fun payloadAt(
     rateOfTurn: Double? = null,
     navigationalStatus: Double? = null,
     raim: Double? = null,
-    shipType: Double? = null,
+    shipType: AISShipType? = null,
 ) = AISPayload(
-    vesselId = seconds.toInt(),
+    vesselMMSI = seconds.toInt(),
     timestamp = EPOCH + seconds.seconds,
     longitude = seconds.toDouble(),
     latitude = seconds.toDouble(),
     speedOverGroundKnots = speedOverGroundKnots,
-    courseOverGround = cog,
+    courseOverGroundDegrees = cog,
     heading = heading,
     positionAccuracy = positionAccuracy,
     rateOfTurn = rateOfTurn,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.maps.properties
 
 import dk.dma.ais.message.AisMessage
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
+import it.unibo.alchemist.boundary.gps.loaders.ais.AISShipType
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Time
@@ -58,7 +59,7 @@ class AISComm<T> @JvmOverloads constructor(
      * AIS MMSI of the vessel represented by this node.
      */
     val vesselId: Int?
-        get() = currentData?.vesselId
+        get() = currentData?.vesselMMSI
 
     /**
      * Timestamp of the current AIS payload.
@@ -94,7 +95,7 @@ class AISComm<T> @JvmOverloads constructor(
      * Current AIS course over ground, expressed in degrees.
      */
     val courseOverGround: Double?
-        get() = currentData?.courseOverGround
+        get() = currentData?.courseOverGroundDegrees
 
     /**
      * Current AIS vessel heading, expressed in degrees.
@@ -129,7 +130,7 @@ class AISComm<T> @JvmOverloads constructor(
     /**
      * Current AIS ship type.
      */
-    val shipType: Double?
+    val shipType: AISShipType?
         get() = currentData?.shipType
 
     /**

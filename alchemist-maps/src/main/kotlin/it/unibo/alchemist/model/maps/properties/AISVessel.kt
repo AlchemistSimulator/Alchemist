@@ -30,7 +30,7 @@ import kotlin.time.Instant
  *   Defaults to 100. Use `null` to retain all payloads without any size limit.
  * @param validityWindow optional Alchemist time window for retained payloads in [history].
  */
-class AISComm<T> @JvmOverloads constructor(
+class AISVessel<T> @JvmOverloads constructor(
     node: Node<T>,
     private val maxSize: Int? = 100,
     private val validityWindow: Time? = null,
@@ -166,7 +166,7 @@ class AISComm<T> @JvmOverloads constructor(
         AISPayload.from(timestamp, message)?.let(::update)
     }
 
-    override fun cloneOnNewNode(node: Node<T>): NodeProperty<T> = AISComm(node, maxSize, validityWindow).also {
+    override fun cloneOnNewNode(node: Node<T>): NodeProperty<T> = AISVessel(node, maxSize, validityWindow).also {
         it.payloads.addAll(payloads)
     }
 

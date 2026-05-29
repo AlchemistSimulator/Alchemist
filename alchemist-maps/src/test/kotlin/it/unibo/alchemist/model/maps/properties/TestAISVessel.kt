@@ -23,20 +23,20 @@ import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
-class TestAISComm :
+class TestAISVessel :
     StringSpec({
-        "AISComm should expose the current AIS data and retain history in update order" {
+        "AISVessel should expose the current AIS data and retain history in update order" {
             val first = payloadAt(0)
             val second = payloadAt(1)
-            val comm = AISComm(node())
-            comm.update(first)
-            comm.update(second)
-            comm.currentData shouldBe second
-            comm.history shouldContainExactly listOf(second, first)
+            val vessel = AISVessel(node())
+            vessel.update(first)
+            vessel.update(second)
+            vessel.currentData shouldBe second
+            vessel.history shouldContainExactly listOf(second, first)
         }
 
-        "AISComm should expose all current AIS packet data" {
-            val comm = AISComm(node())
+        "AISVessel should expose all current AIS packet data" {
+            val vessel = AISVessel(node())
             val data = payloadAt(
                 0,
                 speedOverGroundKnots = 10.0,
@@ -48,58 +48,58 @@ class TestAISComm :
                 raim = 4.0,
                 shipType = AISShipType.PilotVessel,
             )
-            comm.update(data)
-            comm.vesselId shouldBe data.vesselMMSI
-            comm.timestamp shouldBe data.timestamp
-            comm.longitude shouldBe data.longitude
-            comm.latitude shouldBe data.latitude
-            comm.speedOverGroundKnots shouldBe data.speedOverGroundKnots
-            comm.speedOverGroundMetersPerSecond shouldBe 5.144444444444445
-            comm.courseOverGroundDegrees shouldBe data.courseOverGroundDegrees
-            comm.courseOverGroundRadians shouldBe data.courseOverGroundRadians
-            comm.headingDegrees shouldBe data.headingDegrees
-            comm.headingRadians shouldBe data.headingRadians
-            comm.positionAccuracy shouldBe data.positionAccuracy
-            comm.rateOfTurn shouldBe data.rateOfTurn
-            comm.navigationalStatus shouldBe data.navigationalStatus
-            comm.raim shouldBe data.raim
-            comm.shipType shouldBe data.shipType
+            vessel.update(data)
+            vessel.vesselId shouldBe data.vesselMMSI
+            vessel.timestamp shouldBe data.timestamp
+            vessel.longitude shouldBe data.longitude
+            vessel.latitude shouldBe data.latitude
+            vessel.speedOverGroundKnots shouldBe data.speedOverGroundKnots
+            vessel.speedOverGroundMetersPerSecond shouldBe 5.144444444444445
+            vessel.courseOverGroundDegrees shouldBe data.courseOverGroundDegrees
+            vessel.courseOverGroundRadians shouldBe data.courseOverGroundRadians
+            vessel.headingDegrees shouldBe data.headingDegrees
+            vessel.headingRadians shouldBe data.headingRadians
+            vessel.positionAccuracy shouldBe data.positionAccuracy
+            vessel.rateOfTurn shouldBe data.rateOfTurn
+            vessel.navigationalStatus shouldBe data.navigationalStatus
+            vessel.raim shouldBe data.raim
+            vessel.shipType shouldBe data.shipType
         }
 
-        "AISComm should trim retained AIS data to maxSize" {
+        "AISVessel should trim retained AIS data to maxSize" {
             val first = payloadAt(0)
             val second = payloadAt(1)
             val third = payloadAt(2)
-            val comm = AISComm(node(), maxSize = 2)
-            listOf(first, second, third).forEach(comm::update)
-            comm.history shouldContainExactly listOf(third, second)
+            val vessel = AISVessel(node(), maxSize = 2)
+            listOf(first, second, third).forEach(vessel::update)
+            vessel.history shouldContainExactly listOf(third, second)
         }
 
-        "AISComm should discard AIS data outside the validity window" {
+        "AISVessel should discard AIS data outside the validity window" {
             val oldest = payloadAt(0)
             val withinWindow = payloadAt(3)
             val newest = payloadAt(5)
             val lateExpired = payloadAt(1)
-            val comm = AISComm(node(), validityWindow = DoubleTime(3.0))
-            listOf(oldest, withinWindow, newest, lateExpired).forEach(comm::update)
-            comm.history shouldContainExactly listOf(newest, withinWindow)
+            val vessel = AISVessel(node(), validityWindow = DoubleTime(3.0))
+            listOf(oldest, withinWindow, newest, lateExpired).forEach(vessel::update)
+            vessel.history shouldContainExactly listOf(newest, withinWindow)
         }
 
-        "AISComm should clone retained AIS data and trimming policy" {
+        "AISVessel should clone retained AIS data and trimming policy" {
             val newest = payloadAt(2)
-            val comm = AISComm(node(), maxSize = 1).apply {
+            val vessel = AISVessel(node(), maxSize = 1).apply {
                 update(payloadAt(1))
                 update(newest)
             }
-            val clone = comm.cloneOnNewNode(node()) as AISComm<Any>
+            val clone = vessel.cloneOnNewNode(node()) as AISVessel<Any>
             clone.update(payloadAt(3))
             clone.history.size shouldBe 1
             clone.currentData shouldNotBe newest
         }
 
-        "AISComm should reject invalid retention settings" {
-            shouldThrow<IllegalArgumentException> { AISComm(node(), maxSize = 0) }
-            shouldThrow<IllegalArgumentException> { AISComm(node(), validityWindow = DoubleTime(-1.0)) }
+        "AISVessel should reject invalid retention settings" {
+            shouldThrow<IllegalArgumentException> { AISVessel(node(), maxSize = 0) }
+            shouldThrow<IllegalArgumentException> { AISVessel(node(), validityWindow = DoubleTime(-1.0)) }
         }
     })
 

@@ -31,7 +31,7 @@ import kotlin.time.Instant
  * @property heading vessel heading, expressed in degrees.
  * @property positionAccuracy raw AIS position accuracy flag.
  * @property rateOfTurn rate of turn, expressed according to the AIS library conversion.
- * @property navigationalStatus raw AIS navigational status.
+ * @property navigationalStatus AIS navigational status.
  * @property raim raw AIS RAIM flag.
  * @property shipType AIS ship type.
  */
@@ -45,7 +45,7 @@ data class AISPayload(
     val heading: Double? = null,
     val positionAccuracy: Double? = null,
     val rateOfTurn: Double? = null,
-    val navigationalStatus: Double? = null,
+    val navigationalStatus: AISNavigationStatus? = null,
     val raim: Double? = null,
     val shipType: AISShipType? = null,
 ) {
@@ -106,7 +106,7 @@ data class AISPayload(
                 heading = vesselPosition?.takeIf { it.isHeadingValid }?.trueHeading?.toDouble(),
                 positionAccuracy = vesselPosition?.posAcc?.toDouble(),
                 rateOfTurn = aisPosition?.takeIf { it.isRotValid }?.rot?.toDouble(),
-                navigationalStatus = aisPosition?.navStatus?.toDouble(),
+                navigationalStatus = aisPosition?.navStatus?.let(AISNavigationStatus::fromCode),
                 raim = vesselPosition?.raim?.toDouble(),
                 shipType = (positionMessage as? AisStaticCommon)?.shipType?.let(AISShipType::fromCode),
             )

@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.maps.properties
 
 import dk.dma.ais.message.AisMessage
+import it.unibo.alchemist.boundary.gps.loaders.ais.AISNavigationStatus
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISShipType
 import it.unibo.alchemist.model.Node
@@ -116,9 +117,9 @@ class AISComm<T> @JvmOverloads constructor(
         get() = currentData?.rateOfTurn
 
     /**
-     * Current raw AIS navigational status.
+     * Current AIS navigational status.
      */
-    val navigationalStatus: Double?
+    val navigationalStatus: AISNavigationStatus?
         get() = currentData?.navigationalStatus
 
     /**

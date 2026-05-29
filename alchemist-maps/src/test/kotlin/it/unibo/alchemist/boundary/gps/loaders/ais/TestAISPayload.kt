@@ -59,6 +59,15 @@ class TestAISPayload :
             AISShipType.fromCode(99) shouldBe AISShipType.OtherTypeNoAdditionalInformation
             AISShipType.fromCode(100) shouldBe null
         }
+
+        "AISNavigationStatus should map AIS navigational status codes to semantic values" {
+            AISNavigationStatus.fromCode(0) shouldBe AISNavigationStatus.UnderWayUsingEngine
+            AISNavigationStatus.fromCode(3) shouldBe AISNavigationStatus.RestrictedManoeuverability
+            AISNavigationStatus.fromCode(12) shouldBe AISNavigationStatus.ReservedForFutureUse(12)
+            AISNavigationStatus.fromCode(14) shouldBe AISNavigationStatus.AisSartActive
+            AISNavigationStatus.fromCode(15) shouldBe AISNavigationStatus.NotDefined
+            AISNavigationStatus.fromCode(16) shouldBe null
+        }
     })
 
 private val EPOCH = Instant.fromEpochSeconds(0)

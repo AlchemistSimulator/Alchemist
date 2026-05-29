@@ -15,6 +15,7 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.mockk
+import it.unibo.alchemist.boundary.gps.loaders.ais.AISNavigationStatus
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISShipType
 import it.unibo.alchemist.model.Node
@@ -43,7 +44,7 @@ class TestAISComm :
                 heading = 180.0,
                 positionAccuracy = 1.0,
                 rateOfTurn = 2.0,
-                navigationalStatus = 3.0,
+                navigationalStatus = AISNavigationStatus.RestrictedManoeuverability,
                 raim = 4.0,
                 shipType = AISShipType.PilotVessel,
             )
@@ -107,7 +108,7 @@ private fun payloadAt(
     heading: Double? = null,
     positionAccuracy: Double? = null,
     rateOfTurn: Double? = null,
-    navigationalStatus: Double? = null,
+    navigationalStatus: AISNavigationStatus? = null,
     raim: Double? = null,
     shipType: AISShipType? = null,
 ) = AISPayload(

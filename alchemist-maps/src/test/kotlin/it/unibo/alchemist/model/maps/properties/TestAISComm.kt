@@ -56,7 +56,9 @@ class TestAISComm :
             comm.speedOverGroundKnots shouldBe data.speedOverGroundKnots
             comm.speedOverGroundMetersPerSecond shouldBe 5.144444444444445
             comm.courseOverGroundDegrees shouldBe data.courseOverGroundDegrees
+            comm.courseOverGroundRadians shouldBe data.courseOverGroundRadians
             comm.headingDegrees shouldBe data.headingDegrees
+            comm.headingRadians shouldBe data.headingRadians
             comm.positionAccuracy shouldBe data.positionAccuracy
             comm.rateOfTurn shouldBe data.rateOfTurn
             comm.navigationalStatus shouldBe data.navigationalStatus

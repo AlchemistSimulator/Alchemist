@@ -34,9 +34,8 @@ class TestAISPayload :
             val payload = AISPayload(
                 vesselMMSI = 1,
                 timestamp = EPOCH,
-                longitude = 11.0,
-                latitude = 44.0,
             )
+            payload.hasPosition shouldBe false
             payload.speedOverGroundMetersPerSecond shouldBe null
         }
 

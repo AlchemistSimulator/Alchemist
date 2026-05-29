@@ -10,46 +10,82 @@
 package it.unibo.alchemist.boundary.gps.loaders.ais
 
 import dk.dma.ais.message.AisMessage
+import dk.dma.ais.message.AisMessage24
+import dk.dma.ais.message.AisMessage5
 import dk.dma.ais.message.AisPositionMessage
 import dk.dma.ais.message.AisStaticCommon
+import dk.dma.ais.message.IDimensionMessage
+import dk.dma.ais.message.INameMessage
 import dk.dma.ais.message.IPositionMessage
 import dk.dma.ais.message.IVesselPositionMessage
+import dk.dma.ais.message.UTCDateResponseMessage
 import kotlin.math.PI
 import kotlin.time.Instant
 
 /**
- * Subset of AIS information used to generate traces.
+ * Decoded AIS message data.
+ *
+ * Position data is optional: AIS messages can carry static vessel information without coordinates.
  *
  * @property vesselMMSI AIS MMSI.
- * @property timestamp the timestamp related to the receipt of the message.
- * @property longitude longitude of the boat.
- * @property latitude latitude of the boat.
- * @property speedOverGroundKnots speed over ground, expressed in knots.
- * @property speedOverGroundMetersPerSecond speed over ground, expressed in meters per second.
+ * @property timestamp the timestamp related to the receipt or content of the message.
+ * @property latitude latitude of the vessel, when available.
+ * @property longitude longitude of the vessel, when available.
  * @property courseOverGroundDegrees course over ground, expressed in degrees.
  * @property courseOverGroundRadians course over ground, expressed in radians.
+ * @property speedOverGroundKnots speed over ground, expressed in knots.
+ * @property speedOverGroundMetersPerSecond speed over ground, expressed in meters per second.
  * @property headingDegrees vessel heading, expressed in degrees.
  * @property headingRadians vessel heading, expressed in radians.
+ * @property navigationalStatus AIS navigational status.
+ * @property imoNumber IMO number of the vessel.
+ * @property vesselName name of the vessel.
+ * @property callsign callsign of the vessel.
+ * @property shipType AIS ship type.
+ * @property dimensionToBow distance from AIS antenna to the bow, in meters.
+ * @property dimensionToStern distance from AIS antenna to the stern, in meters.
+ * @property dimensionToPort distance from AIS antenna to port, in meters.
+ * @property dimensionToStarboard distance from AIS antenna to starboard, in meters.
+ * @property draughtMeters current draught, in meters.
+ * @property destination destination manually entered in AIS.
+ * @property eta estimated time of arrival.
  * @property positionAccuracy raw AIS position accuracy flag.
  * @property rateOfTurn rate of turn, expressed according to the AIS library conversion.
- * @property navigationalStatus AIS navigational status.
- * @property raim raw AIS RAIM flag.
- * @property shipType AIS ship type.
+ * @property isEquippedWithRAIM whether AIS reports receiver autonomous integrity monitoring.
  */
 data class AISPayload(
     val vesselMMSI: Int,
     val timestamp: Instant,
-    val longitude: Double,
-    val latitude: Double,
-    val speedOverGroundKnots: Double? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
     val courseOverGroundDegrees: Double? = null,
+    val speedOverGroundKnots: Double? = null,
     val headingDegrees: Double? = null,
+    val navigationalStatus: AISNavigationStatus? = null,
+    val imoNumber: Long? = null,
+    val vesselName: String? = null,
+    val callsign: String? = null,
+    val shipType: AISShipType? = null,
+    val dimensionToBow: Int? = null,
+    val dimensionToStern: Int? = null,
+    val dimensionToPort: Int? = null,
+    val dimensionToStarboard: Int? = null,
+    val draughtMeters: Double? = null,
+    val destination: String? = null,
+    val eta: Instant? = null,
     val positionAccuracy: Double? = null,
     val rateOfTurn: Double? = null,
-    val navigationalStatus: AISNavigationStatus? = null,
-    val raim: Double? = null,
-    val shipType: AISShipType? = null,
-) {
+    val isEquippedWithRAIM: Boolean? = null,
+    val positioningDevice: Int? = null,
+    val dataTerminalReady: Int? = null,
+    val vendorId: String? = null,
+) : Comparable<AISPayload> {
+
+    typealias MMSI = Int
+
+    val hasPosition: Boolean
+        get() = longitude != null && latitude != null
+
     val courseOverGroundRadians: Double?
         get() = courseOverGroundDegrees?.degreesToRadians
 
@@ -59,11 +95,15 @@ data class AISPayload(
     val speedOverGroundMetersPerSecond: Double?
         get() = speedOverGroundKnots?.knotsToMetersPerSecond
 
+    override fun compareTo(other: AISPayload): Int = compareBy<AISPayload> { timestamp }
+        .thenBy { vesselMMSI }
+        .compare(this, other)
+
     /**
      * Static factory for [AISPayload].
      */
     companion object {
-        /** AIS stores speed over ground and course over ground as tenths of knots/degrees. */
+        /** AIS stores speed over ground, course over ground, and draught in tenths of their respective units. */
         private const val AIS_TENTHS_SCALE = 10.0
         private const val METERS_IN_NAUTICAL_MILE = 1_852.0
         private const val SECONDS_PER_HOUR = 3_600.0
@@ -82,45 +122,96 @@ data class AISPayload(
             get() = this * PI / 180.0
 
         /**
-         * Builds an [AISPayload] from an AIS message when it carries a valid position.
+         * Builds an [AISPayload] from an AIS message using the timestamp carried by the message, when available.
          */
-        fun from(timestamp: Instant, message: AisMessage): AISPayload? = when (message) {
-            is IPositionMessage -> from(timestamp, message.userId, message)
-            else -> null
-        }
+        fun from(message: AisMessage): AISPayload? = message.timestamp?.let { from(it, message) }
 
         /**
-         * Builds an [AISPayload] from an AIS message when it carries a valid position.
-         * Returns null if the position uses the standard unavailable coordinate sentinels
-         * (181° longitude or 91° latitude).
+         * Builds an [AISPayload] from an AIS message.
          */
-        fun from(timestamp: Instant, userId: Int, positionMessage: IPositionMessage): AISPayload? {
-            val longitude = positionMessage.pos.longitudeDouble
-            val latitude = positionMessage.pos.latitudeDouble
-            if (longitude >= AIS_LONGITUDE_UNAVAILABLE || latitude >= AIS_LATITUDE_UNAVAILABLE) return null
-            val vesselPosition = positionMessage as? IVesselPositionMessage
-            val aisPosition = positionMessage as? AisPositionMessage
+        fun from(timestamp: Instant, message: AisMessage): AISPayload {
+            val positionMessage = message as? IPositionMessage
+            val vesselPosition = message as? IVesselPositionMessage
+            val aisPosition = message as? AisPositionMessage
+            val staticCommon = message as? AisStaticCommon
+            val dimensions = message as? IDimensionMessage
+            val name = message as? INameMessage
+            val message5 = message as? AisMessage5
+            val message24 = message as? AisMessage24
+            val longitude = positionMessage?.longitude
+            val latitude = positionMessage?.latitude
             return AISPayload(
-                vesselMMSI = userId,
+                vesselMMSI = message.userId,
                 timestamp = timestamp,
-                longitude = longitude,
                 latitude = latitude,
-                speedOverGroundKnots = vesselPosition?.takeIf { it.isSogValid }?.sog?.div(AIS_TENTHS_SCALE),
+                longitude = longitude,
                 courseOverGroundDegrees = vesselPosition?.takeIf { it.isCogValid }?.cog?.div(AIS_TENTHS_SCALE),
+                speedOverGroundKnots = vesselPosition?.takeIf { it.isSogValid }?.sog?.div(AIS_TENTHS_SCALE),
                 headingDegrees = vesselPosition?.takeIf { it.isHeadingValid }?.trueHeading?.toDouble(),
-                positionAccuracy = vesselPosition?.posAcc?.toDouble(),
+                navigationalStatus = message.navigationStatus,
+                imoNumber = message5?.imo?.takeUnless { it == 0L },
+                vesselName = name?.name?.trimText(),
+                callsign = staticCommon?.callsign?.trimText(),
+                shipType = staticCommon?.shipType?.let(AISShipType::fromCode),
+                dimensionToBow = dimensions?.dimBow,
+                dimensionToStern = dimensions?.dimStern,
+                dimensionToPort = dimensions?.dimPort,
+                dimensionToStarboard = dimensions?.dimStarboard,
+                draughtMeters = message5?.draught?.div(AIS_TENTHS_SCALE),
+                destination = message5?.dest?.trimText(),
+                eta = message5?.etaDate?.time?.let(Instant::fromEpochMilliseconds),
+                positionAccuracy = positionMessage?.posAcc?.toDouble(),
                 rateOfTurn = aisPosition?.takeIf { it.isRotValid }?.rot?.toDouble(),
-                navigationalStatus = aisPosition?.navStatus?.let(AISNavigationStatus::fromCode),
-                raim = vesselPosition?.raim?.toDouble(),
-                shipType = (positionMessage as? AisStaticCommon)?.shipType?.let(AISShipType::fromCode),
+                isEquippedWithRAIM = message.isEquippedWithRAIM,
+                positioningDevice = message5?.posType ?: message24?.posType,
+                dataTerminalReady = message5?.dte,
+                vendorId = message24?.vendorId?.trimText(),
             )
         }
 
         /**
          * Converts timestamped AIS messages to payloads.
          */
-        fun from(messages: Iterable<Pair<Instant, AisMessage>>): List<AISPayload> = messages
-            .mapNotNull { (timestamp, message) -> from(timestamp, message) }
-            .sortedWith(compareBy(AISPayload::vesselMMSI, AISPayload::timestamp))
+        fun from(messages: Iterable<Pair<Instant, AisMessage>>): Map<MMSI, List<AISPayload>> = messages
+            .map { (timestamp, message) -> from(timestamp, message) }
+            .groupBy(AISPayload::vesselMMSI)
+            .mapValues { (_, messages) -> messages.sorted() }
+
+        /**
+         * Converts AIS messages with embedded timestamps to payloads.
+         */
+        fun fromMessages(messages: Iterable<AisMessage>): Map<MMSI, List<AISPayload>> = messages
+            .mapNotNull(::from)
+            .groupBy(AISPayload::vesselMMSI)
+            .mapValues { (_, messages) -> messages.sorted() }
+
+        private val AisMessage.timestamp: Instant?
+            get() = sourceTag?.timestamp?.time?.let(Instant::fromEpochMilliseconds)
+                ?: (this as? UTCDateResponseMessage)?.date?.time?.let(Instant::fromEpochMilliseconds)
+
+        private val AisMessage.navigationStatus: AISNavigationStatus?
+            get() = when (this) {
+                is AisPositionMessage -> navStatus
+                is dk.dma.ais.message.AisMessage27 -> navStatus
+                else -> null
+            }?.let(AISNavigationStatus::fromCode)
+
+        private val AisMessage.isEquippedWithRAIM: Boolean?
+            get() = when (this) {
+                is IVesselPositionMessage -> getRaim()
+                is UTCDateResponseMessage -> getRaim()
+                is dk.dma.ais.message.AisMessage27 -> getRaim()
+                else -> null
+            }?.let { it == AIS_FLAG_SET }
+
+        private val IPositionMessage.longitude: Double?
+            get() = pos.longitudeDouble.takeIf { it < AIS_LONGITUDE_UNAVAILABLE }
+
+        private val IPositionMessage.latitude: Double?
+            get() = pos.latitudeDouble.takeIf { it < AIS_LATITUDE_UNAVAILABLE }
+
+        private fun String.trimText(): String? = AisMessage.trimText(this).takeUnless(String::isBlank)
+
+        private const val AIS_FLAG_SET = 1
     }
 }

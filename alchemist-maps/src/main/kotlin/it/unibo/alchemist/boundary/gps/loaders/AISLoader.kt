@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableSet
 import it.unibo.alchemist.boundary.gps.GPSFileLoader
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISDecoder
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
+import it.unibo.alchemist.boundary.gps.loaders.ais.AISVesselStatus
 import it.unibo.alchemist.model.maps.GPSTrace
 import it.unibo.alchemist.model.maps.positions.GPSPointImpl
 import it.unibo.alchemist.model.maps.routes.GPSTraceImpl
@@ -28,9 +29,8 @@ import org.openstreetmap.osmosis.osmbinary.file.FileFormatException
 class AISLoader : GPSFileLoader {
     override fun readTrace(url: URL): List<GPSTrace> = runCatching {
         url.openStream().use { input ->
-            val resourceName = url.path.substringAfterLast("/")
             val content = input.bufferedReader().readText()
-            AISPayload.from(AISDecoder.parsePayload(content, resourceName)).toTraces()
+            AISVesselStatus.from(AISPayload.from(AISDecoder.parsePayload(content))).toTraces()
         }
     }.getOrElse {
         throw FileFormatException("Incorrect AIS Payload in $url").initCause(it)
@@ -51,9 +51,12 @@ class AISLoader : GPSFileLoader {
          * @param timeOrigin instant mapped to simulation time zero.
          */
         internal fun Iterable<AISPayload>.toTraces(timeOrigin: Instant = EPOCH): List<GPSTrace> =
-            groupBy(AISPayload::vesselMMSI).values.map { vesselPayloads ->
+            AISVesselStatus.from(this).toTraces(timeOrigin)
+
+        internal fun Map<AISPayload.MMSI, List<AISVesselStatus>>.toTraces(timeOrigin: Instant = EPOCH): List<GPSTrace> =
+            values.map { vesselPayloads ->
                 GPSTraceImpl(
-                    vesselPayloads.sortedBy(AISPayload::timestamp).map {
+                    vesselPayloads.sortedBy(AISVesselStatus::timestamp).map {
                         GPSPointImpl(
                             it.latitude,
                             it.longitude,

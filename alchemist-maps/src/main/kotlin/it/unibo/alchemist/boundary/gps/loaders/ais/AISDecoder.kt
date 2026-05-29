@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.gps.loaders.ais
 import dk.dma.ais.binary.SixbitException
 import dk.dma.ais.message.AisMessage
 import dk.dma.ais.message.AisMessageException
+import dk.dma.ais.message.UTCDateResponseMessage
 import dk.dma.ais.sentence.SentenceException
 import dk.dma.ais.sentence.Vdm
 import java.io.File
@@ -25,33 +26,23 @@ import org.slf4j.LoggerFactory
 object AISDecoder {
     private const val DATE_TIME_PREFIX = "!DATE-TIME,"
     private const val DATE_TIME_SEPARATOR = 'T'
-    private const val DAY_DIGITS = 2
     private const val FALLBACK_DATE = "1970-01-01"
     private const val INVALID_CHECKSUM = "Invalid checksum"
-    private const val MONTH_END = 6
-    private const val MONTH_START = 4
     private const val OUT_OF_SEQUENCE_SENTENCE = "Out of sequence sentence:"
-    private const val YEAR_DIGITS = 4
 
-    private val DATE_PATTERN = Regex("""\d{8}""")
     private val logger = LoggerFactory.getLogger(AISDecoder::class.java)
-
-    /**
-     * Extract date from a file name.
-     * @param resourceName the name of file.
-     * @return the date or a fallback date.
-     */
-    private fun dateFrom(resourceName: String): String = DATE_PATTERN
-        .find(resourceName)
-        ?.value
-        ?.let { date -> date.toIsoDate().takeIf { runCatching { startOfDay(it) }.isSuccess } }
-        ?: FALLBACK_DATE
 
     /** Parses all the raw AIS lines contained in a [File].
      * @param file the [File] from which parse AIS info.
      **/
-    fun parseFile(file: File, date: String = dateFrom(file.name)): List<Pair<Instant, AisMessage>> =
-        parsePayload(file.readText(Charsets.UTF_8), date)
+    fun parseFile(file: File): List<Pair<Instant, AisMessage>> = parsePayload(file.readText(Charsets.UTF_8))
+
+    /**
+     * @return the messages parsed from a raw [String] to [AisMessage], paired with timestamps obtained from AIS
+     * source tags, AIS UTC response messages, or in-file `!DATE-TIME` markers when no AIS timestamp is available.
+     **/
+    fun parsePayload(payload: String): List<Pair<Instant, AisMessage>> =
+        parsePayload(payload, startOfDay(FALLBACK_DATE))
 
     /**
      * @param date the payload date as an instant. Messages preceding the first explicit timestamp use this instant.
@@ -75,24 +66,22 @@ object AISDecoder {
                     }
                     line.isBlank() -> Unit
                     else -> vdmAccumulator = vdmAccumulator.parseSentence(line) { message ->
-                        add(currentTimestamp to message)
+                        val messageTimestamp = message.timestamp ?: currentTimestamp
+                        currentTimestamp = messageTimestamp
+                        add(messageTimestamp to message)
                     }
                 }
             }
         }
     }
 
-    /**
-     * @param date the payload date, formatted as an ISO local date (`yyyy-MM-dd`), or a resource name embedding a
-     * date formatted as `yyyyMMdd`.
-     * @return the message parsed from a raw [String] to [AisMessage] and maps it to the timestamp of the raw message.
-     **/
-    fun parsePayload(payload: String, date: String): List<Pair<Instant, AisMessage>> =
-        parsePayload(payload, startOfDay(date.dateFromResourceNameOrSelf()))
-
     private fun startOfDay(date: String): Instant = Instant.parse("${date}T00:00:00Z")
 
     private fun Instant.toIsoDate(): String = toString().substringBefore(DATE_TIME_SEPARATOR)
+
+    private val AisMessage.timestamp: Instant?
+        get() = sourceTag?.timestamp?.time?.let(Instant::fromEpochMilliseconds)
+            ?: (this as? UTCDateResponseMessage)?.date?.time?.let(Instant::fromEpochMilliseconds)
 
     private val SentenceException.hasInvalidChecksum: Boolean
         get() = message?.contains(INVALID_CHECKSUM) == true
@@ -102,12 +91,6 @@ object AISDecoder {
 
     private val SentenceException.isRecoverable: Boolean
         get() = isOutOfSequence || hasInvalidChecksum
-
-    private fun String.dateFromResourceNameOrSelf(): String =
-        takeIf { runCatching { startOfDay(it) }.isSuccess } ?: dateFrom(this)
-
-    private fun String.toIsoDate(): String =
-        "${take(YEAR_DIGITS)}-${substring(MONTH_START, MONTH_END)}-${takeLast(DAY_DIGITS)}"
 
     private fun Vdm.parseSentence(line: String, onComplete: (AisMessage) -> Unit): Vdm {
         val vdm = runCatching { apply { parse(line) } }.getOrElse { exception ->

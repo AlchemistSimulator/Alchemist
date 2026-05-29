@@ -15,17 +15,8 @@ import kotlin.time.Instant
 
 class TestAISDecoder :
     StringSpec({
-        "AISDecoder should accept dates from resource names" {
-            AISDecoder.parsePayload("\n\n", "ais-20260515.nmea") shouldBe emptyList()
-        }
-
-        "AISDecoder should fall back when no valid date is available" {
-            AISDecoder.parsePayload("\n\n", "ais-without-date.nmea") shouldBe emptyList()
-            AISDecoder.parsePayload("\n\n", "ais-20261340.nmea") shouldBe emptyList()
-        }
-
         "AISDecoder should ignore blank payloads" {
-            AISDecoder.parsePayload("\n\n", "2026-05-15") shouldBe emptyList()
+            AISDecoder.parsePayload("\n\n") shouldBe emptyList()
         }
 
         "AISDecoder should accept the payload date as an instant" {
@@ -39,7 +30,7 @@ class TestAISDecoder :
                 !DATE-TIME,00:00:01
                 !AIVDM,1,1,,A,13cSch@P0jPpN40J00O3Q2lD0000,0*42
             """.trimIndent()
-            val timestamps = AISDecoder.parsePayload(payload, "2026-05-15").map { it.first }
+            val timestamps = AISDecoder.parsePayload(payload, Instant.parse("2026-05-15T00:00:00Z")).map { it.first }
             timestamps shouldBe listOf(
                 Instant.parse("2026-05-15T23:59:59Z"),
                 Instant.parse("2026-05-16T00:00:01Z"),

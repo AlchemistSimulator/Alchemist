@@ -31,14 +31,13 @@ class AISGPXConverter {
      */
     fun write(payloads: Iterable<AISPayload>, outputDirectory: Path, vesselIdMapper: (Int) -> String = Int::toString) {
         Files.createDirectories(outputDirectory)
-        payloads
-            .groupBy(AISPayload::vesselMMSI)
+        AISVesselStatus.from(payloads)
             .forEach { (vesselId, points) ->
                 val anonymizedId = vesselIdMapper(vesselId)
                 val track = Track
                     .builder()
                     .name("Vessel $anonymizedId")
-                    .addSegment(TrackSegment.of(points.sortedBy(AISPayload::timestamp).map { it.toWayPoint() }))
+                    .addSegment(TrackSegment.of(points.sortedBy(AISVesselStatus::timestamp).map { it.toWayPoint() }))
                     .build()
                 GPX.write(
                     GPX.builder("Alchemist AIS importer").addTrack(track).build(),
@@ -47,7 +46,7 @@ class AISGPXConverter {
             }
     }
 
-    private fun AISPayload.toWayPoint(): WayPoint {
+    private fun AISVesselStatus.toWayPoint(): WayPoint {
         val builder = WayPoint
             .builder()
             .lat(latitude)

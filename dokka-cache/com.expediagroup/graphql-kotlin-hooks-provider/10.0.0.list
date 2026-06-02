@@ -1,0 +1,6 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:com.expediagroup.graphql.plugin.schema.hooks////PointingToDeclaration/graphql-kotlin-hooks-provider/com.expediagroup.graphql.plugin.schema.hooks/index.html
+$dokka.location:com.expediagroup.graphql.plugin.schema.hooks/SchemaGeneratorHooksProvider///PointingToDeclaration/graphql-kotlin-hooks-provider/com.expediagroup.graphql.plugin.schema.hooks/-schema-generator-hooks-provider/index.html
+$dokka.location:com.expediagroup.graphql.plugin.schema.hooks/SchemaGeneratorHooksProvider/hooks/#/PointingToDeclaration/graphql-kotlin-hooks-provider/com.expediagroup.graphql.plugin.schema.hooks/-schema-generator-hooks-provider/hooks.html
+com.expediagroup.graphql.plugin.schema.hooks

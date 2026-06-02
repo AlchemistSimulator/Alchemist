@@ -22,7 +22,7 @@ jobs:
         id: ci-preparation
         run: echo "build-ref=${{ github.workflow }}-${{ github.event.number || github.ref }}" >> $GITHUB_OUTPUT
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - name: Compute the Java version
         id: java-version
         run: ruby -e 'puts("java-version=#{/^minJavaVersion\s*=\s*(\d+)$/.match(File.read("gradle.properties"))[1]}")' >> $GITHUB_OUTPUT
@@ -57,7 +57,7 @@ jobs:
     timeout-minutes: 180
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6.0.3
       - uses: DanySK/build-check-deploy-gradle-action@28ef158d2a2c366ec647ef8fc4f9a4243ebf8ef4 # 4.0.33
         with:
           pre-build-command: ./gradlew kotlinUpgradeYarnLock
@@ -352,7 +352,7 @@ jobs:
       )
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6.0.3
         with:
           fetch-depth: 0
           fetch-tags: 'true'

@@ -9,294 +9,213 @@
 
 package it.unibo.alchemist.model.maps.properties
 
-import dk.dma.ais.message.AisMessage
+import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.benmanes.caffeine.cache.LoadingCache
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISNavigationStatus
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISShipType
-import it.unibo.alchemist.boundary.gps.loaders.ais.AISVesselStatus
+import it.unibo.alchemist.boundary.gps.loaders.ais.AISTrace
+import it.unibo.alchemist.boundary.gps.loaders.ais.AISTraceLoader
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
-import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.maps.MapEnvironment
 import it.unibo.alchemist.model.properties.AbstractNodeProperty
-import it.unibo.alchemist.model.times.DoubleTime
-import kotlin.time.DurationUnit.SECONDS
+import java.io.Serial
+import java.util.Objects
+import java.util.concurrent.TimeUnit
 import kotlin.time.Instant
 
 /**
- * Node property exposing AIS data associated with the node.
+ * Node property exposing current AIS data associated with the node.
  *
- * The node is intended to represent the vessel described by the latest AIS vessel status, while [history] keeps
- * previous statuses when retention is enabled. The AIS vessel identifier is exposed through [vesselId].
- *
- * @param maxSize maximum number of AIS vessel statuses to retain in [history].
- *   Defaults to 1. Use `null` to retain all statuses without any size limit.
- * @param validityWindow Alchemist time window for retained statuses in [history].
+ * AIS metadata is loaded from [path] and one MMSI trace is allocated to each vessel property in the same environment.
+ * The node position remains managed by the environment and by movement actions.
  */
-class AISVessel<T> @JvmOverloads constructor(
+class AISVessel<T>(
+    private val environment: MapEnvironment<T, *, *>,
     node: Node<T>,
-    private val maxSize: Int? = 1,
-    private val validityWindow: Time? = DoubleTime(DEFAULT_VALIDITY_WINDOW_SECONDS),
+    private val path: String,
+    @Suppress("UNUSED_PARAMETER") private val cycle: Boolean = false,
+    private val normalizer: String = "AlignToSimulationTime",
+    private vararg val normalizerArgs: Any?,
 ) : AbstractNodeProperty<T>(node) {
-    init {
-        require(maxSize == null || maxSize > 0) { "maxSize must be positive or null for unlimited retention" }
-        require(validityWindow?.toDouble()?.let { it >= 0.0 } != false) {
-            "validityWindow must not be negative"
-        }
-    }
-
-    private val statuses = ArrayDeque<AISVesselStatus>()
-    private val payloads = ArrayDeque<AISPayload>()
+    private val trace: AISTrace by lazy { traceFor(environment, path, normalizer, *normalizerArgs) }
 
     /**
-     * Retained AIS vessel statuses associated with this node, from newest to oldest.
+     * Current AIS payload for the simulation time.
      */
-    val history: List<AISVesselStatus>
-        get() = statuses.toList()
-
-    /**
-     * Latest AIS vessel status associated with this node.
-     */
-    val currentStatus: AISVesselStatus
-        get() = statuses.firstOrNull() ?: error("AISVessel has no valid status")
+    val currentPayload: AISPayload
+        get() = trace.payloadAt(environment.simulationOrNull?.time ?: error("AISVessel requires a simulation time"))
 
     /**
      * AIS MMSI of the vessel represented by this node.
      */
     val vesselId: Int
-        get() = currentStatus.vesselMMSI
+        get() = trace.vesselMMSI
 
     /**
      * Timestamp of the current AIS payload.
      */
     val timestamp: Instant
-        get() = currentStatus.timestamp
+        get() = currentPayload.timestamp
 
-    /**
-     * Current AIS speed over ground, expressed in knots.
-     */
+    /** Current AIS latitude, if present in the AIS stream. Environment position remains authoritative. */
+    val latitude: Double?
+        get() = currentPayload.latitude
+
+    /** Current AIS longitude, if present in the AIS stream. Environment position remains authoritative. */
+    val longitude: Double?
+        get() = currentPayload.longitude
+
+    /** Current AIS speed over ground, expressed in knots. */
     val speedOverGroundKnots: Double?
-        get() = currentStatus.speedOverGroundKnots
+        get() = currentPayload.speedOverGroundKnots
 
-    /**
-     * Current AIS speed over ground, expressed in meters per second.
-     */
+    /** Current AIS speed over ground, expressed in meters per second. */
     val speedOverGroundMetersPerSecond: Double?
-        get() = currentStatus.speedOverGroundMetersPerSecond
+        get() = currentPayload.speedOverGroundMetersPerSecond
 
-    /**
-     * Current AIS course over ground, expressed in degrees.
-     */
+    /** Current AIS course over ground, expressed in degrees. */
     val courseOverGroundDegrees: Double?
-        get() = currentStatus.courseOverGroundDegrees
+        get() = currentPayload.courseOverGroundDegrees
 
-    /**
-     * Current AIS course over ground, expressed in radians.
-     */
+    /** Current AIS course over ground, expressed in radians. */
     val courseOverGroundRadians: Double?
-        get() = currentStatus.courseOverGroundRadians
+        get() = currentPayload.courseOverGroundRadians
 
-    /**
-     * Current AIS vessel heading, expressed in degrees.
-     */
+    /** Current AIS vessel heading, expressed in degrees. */
     val headingDegrees: Double?
-        get() = currentStatus.headingDegrees
+        get() = currentPayload.headingDegrees
 
-    /**
-     * Current AIS vessel heading, expressed in radians.
-     */
+    /** Current AIS vessel heading, expressed in radians. */
     val headingRadians: Double?
-        get() = currentStatus.headingRadians
+        get() = currentPayload.headingRadians
 
-    /**
-     * Current raw AIS position accuracy flag.
-     */
+    /** Current raw AIS position accuracy flag. */
     val positionAccuracy: Double?
-        get() = currentStatus.positionAccuracy
+        get() = currentPayload.positionAccuracy
 
-    /**
-     * Current AIS rate of turn.
-     */
+    /** Current AIS rate of turn. */
     val rateOfTurn: Double?
-        get() = currentStatus.rateOfTurn
+        get() = currentPayload.rateOfTurn
 
-    /**
-     * Current AIS navigational status.
-     */
+    /** Current AIS navigational status. */
     val navigationalStatus: AISNavigationStatus?
-        get() = currentStatus.navigationalStatus
+        get() = currentPayload.navigationalStatus
 
-    /**
-     * Whether the current AIS data reports receiver autonomous integrity monitoring.
-     */
+    /** Whether the current AIS data reports receiver autonomous integrity monitoring. */
     val isEquippedWithRAIM: Boolean?
-        get() = currentStatus.isEquippedWithRAIM
+        get() = currentPayload.isEquippedWithRAIM
 
-    /**
-     * Current AIS ship type.
-     */
+    /** Current AIS ship type. */
     val shipType: AISShipType?
-        get() = currentStatus.shipType
+        get() = currentPayload.shipType
 
-    /**
-     * Current AIS callsign.
-     */
+    /** Current AIS callsign. */
     val callsign: String?
-        get() = currentStatus.callsign
+        get() = currentPayload.callsign
 
-    /**
-     * Current AIS vessel name.
-     */
+    /** Current AIS vessel name. */
     val vesselName: String?
-        get() = currentStatus.vesselName
+        get() = currentPayload.vesselName
 
-    /**
-     * Current AIS dimension to bow, in meters.
-     */
+    /** Current AIS dimension to bow, in meters. */
     val dimensionToBow: Int?
-        get() = currentStatus.dimensionToBow
+        get() = currentPayload.dimensionToBow
 
-    /**
-     * Current AIS dimension to stern, in meters.
-     */
+    /** Current AIS dimension to stern, in meters. */
     val dimensionToStern: Int?
-        get() = currentStatus.dimensionToStern
+        get() = currentPayload.dimensionToStern
 
-    /**
-     * Current AIS dimension to port, in meters.
-     */
+    /** Current AIS dimension to port, in meters. */
     val dimensionToPort: Int?
-        get() = currentStatus.dimensionToPort
+        get() = currentPayload.dimensionToPort
 
-    /**
-     * Current AIS dimension to starboard, in meters.
-     */
+    /** Current AIS dimension to starboard, in meters. */
     val dimensionToStarboard: Int?
-        get() = currentStatus.dimensionToStarboard
+        get() = currentPayload.dimensionToStarboard
 
-    /**
-     * Current AIS IMO number.
-     */
+    /** Current AIS IMO number. */
     val imoNumber: Long?
-        get() = currentStatus.imoNumber
+        get() = currentPayload.imoNumber
 
-    /**
-     * Current AIS positioning device code.
-     */
+    /** Current AIS positioning device code. */
     val positioningDevice: Int?
-        get() = currentStatus.positioningDevice
+        get() = currentPayload.positioningDevice
 
-    /**
-     * Current AIS estimated time of arrival.
-     */
+    /** Current AIS estimated time of arrival. */
     val eta: Instant?
-        get() = currentStatus.eta
+        get() = currentPayload.eta
 
-    /**
-     * Current AIS draught, in meters.
-     */
+    /** Current AIS draught, in meters. */
     val draughtMeters: Double?
-        get() = currentStatus.draughtMeters
+        get() = currentPayload.draughtMeters
 
-    /**
-     * Current AIS destination.
-     */
+    /** Current AIS destination. */
     val destination: String?
-        get() = currentStatus.destination
+        get() = currentPayload.destination
 
-    /**
-     * Current AIS data terminal ready flag.
-     */
+    /** Current AIS data terminal ready flag. */
     val dataTerminalReady: Int?
-        get() = currentStatus.dataTerminalReady
+        get() = currentPayload.dataTerminalReady
 
-    /**
-     * Current AIS vendor identifier.
-     */
+    /** Current AIS vendor identifier. */
     val vendorId: String?
-        get() = currentStatus.vendorId
+        get() = currentPayload.vendorId
 
-    /**
-     * Updates this node's AIS data and stores the status in [history].
-     *
-     * @param status the AIS vessel status associated with this node.
-     */
-    fun update(status: AISVesselStatus) {
-        statuses.addFirst(status)
-        trim()
+    override fun cloneOnNewNode(node: Node<T>): NodeProperty<T> = AISVessel(
+        environment,
+        node,
+        path,
+        cycle,
+        normalizer,
+        *normalizerArgs,
+    )
+
+    private class TraceRef(val path: String, val normalizer: String, vararg val args: Any?) {
+        private val hash by lazy { Objects.hash(path, normalizer, args.contentHashCode()) }
+
+        override fun hashCode(): Int = hash
+
+        override fun equals(other: Any?) = this === other ||
+            (
+                other is TraceRef &&
+                    path == other.path &&
+                    normalizer == other.normalizer &&
+                    args.contentDeepEquals(other.args)
+                )
+
+        override fun toString(): String = "AISTrace[path=$path, normalizer=$normalizer(${args.contentToString()})]"
     }
-
-    /**
-     * Updates this node's AIS data from compactable payloads.
-     */
-    fun update(data: Iterable<AISPayload>) {
-        payloads.addAll(data)
-        rebuildStatuses()
-    }
-
-    /**
-     * Updates this node's AIS data from a compactable payload.
-     */
-    fun update(payload: AISPayload) {
-        update(listOf(payload))
-    }
-
-    /**
-     * Converts an AIS message into payload data and updates this node when it can produce vessel statuses.
-     *
-     * @param timestamp the timestamp of the AIS message.
-     * @param message the AIS message to use as this node's data.
-     */
-    fun update(timestamp: Instant, message: AisMessage) {
-        update(listOf(AISPayload.fromTimedMessages(timestamp, message)))
-    }
-
-    override fun cloneOnNewNode(node: Node<T>): NodeProperty<T> = AISVessel(node, maxSize, validityWindow).also {
-        it.statuses.addAll(statuses)
-        it.payloads.addAll(payloads)
-    }
-
-    /**
-     * Returns the latest known status at [time].
-     */
-    fun statusAt(time: Time): AISVesselStatus = statuses
-        .filter { status -> status.timestamp.toSimulationTime().toDouble() <= time.toDouble() }
-        .maxByOrNull(AISVesselStatus::timestamp)
-        ?: statuses.minByOrNull(AISVesselStatus::timestamp)
-        ?: error("AISVessel has no valid status")
-
-    private fun trim() {
-        maxSize?.let { max ->
-            while (statuses.size > max) {
-                statuses.removeLast()
-            }
-        }
-        validityWindow?.let { window ->
-            statuses
-                .maxOfOrNull(AISVesselStatus::timestamp)
-                ?.let { newestTimestamp ->
-                    statuses.removeAll { status ->
-                        (newestTimestamp - status.timestamp).toDouble(SECONDS) > window.toDouble()
-                    }
-                    payloads.removeAll { payload ->
-                        (newestTimestamp - payload.timestamp).toDouble(SECONDS) > window.toDouble()
-                    }
-                }
-        }
-    }
-
-    private fun rebuildStatuses() {
-        statuses.clear()
-        AISVesselStatus.from(payloads)
-            .values
-            .flatten()
-            .sortedDescending()
-            .forEach(statuses::addLast)
-        trim()
-    }
-
-    private fun Instant.toSimulationTime(): Time = DoubleTime(toEpochMilliseconds() / 1_000.0)
 
     private companion object {
-        private const val DEFAULT_VALIDITY_WINDOW_SECONDS = 5.0 * 60
+        @Serial
+        private const val serialVersionUID = 1L
+
+        private val TRACE_LOADER_CACHE: LoadingCache<TraceRef, AISTraceLoader> = Caffeine
+            .newBuilder()
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .build { key -> AISTraceLoader(key.path, key.normalizer, *key.args) }
+
+        private val LOADER: LoadingCache<MapEnvironment<*, *, *>, LoadingCache<TraceRef, Iterator<AISTrace>>> = Caffeine
+            .newBuilder()
+            .weakKeys()
+            .build { _ ->
+                Caffeine.newBuilder().build { key: TraceRef -> TRACE_LOADER_CACHE.get(key).iterator() }
+            }
+
+        fun traceFor(
+            environment: MapEnvironment<*, *, *>,
+            path: String,
+            normalizer: String,
+            vararg normalizerArgs: Any?,
+        ): AISTrace {
+            val aisTraceLoader = checkNotNull(LOADER.get(environment)) {
+                "Unable to load an AIS trace mapping for: $environment"
+            }
+            val key = TraceRef(path, normalizer, *normalizerArgs)
+            val iterator = checkNotNull(aisTraceLoader.get(key)) { "Unable to load an AIS trace iterator for: $key" }
+            return iterator.takeIf { it.hasNext() }?.next() ?: error("All AIS traces for $key have been consumed.")
+        }
     }
 }

@@ -176,7 +176,7 @@ data class AISPayload(
         fun fromTimedMessages(messages: Iterable<Pair<Instant, AisMessage>>): Map<MMSI, List<AISPayload>> = messages
             .map { (timestamp, message) -> fromTimedMessages(timestamp, message) }
             .groupBy(AISPayload::vesselMMSI)
-            .mapValues { (_, payloads) -> payloads.sorted() }
+            .mapValues { (_, payloads) -> payloads.sortedBy(AISPayload::timestamp) }
 
         /**
          * Converts AIS messages with embedded timestamps to payloads.
@@ -184,7 +184,7 @@ data class AISPayload(
         fun fromMessages(messages: Iterable<AisMessage>): Map<MMSI, List<AISPayload>> = messages
             .mapNotNull(::fromSingleMessage)
             .groupBy(AISPayload::vesselMMSI)
-            .mapValues { (_, payloads) -> payloads.sorted() }
+            .mapValues { (_, payloads) -> payloads.sortedBy(AISPayload::timestamp) }
 
         private val AisMessage.timestamp: Instant?
             get() = sourceTag?.timestamp?.time?.let(Instant::fromEpochMilliseconds)

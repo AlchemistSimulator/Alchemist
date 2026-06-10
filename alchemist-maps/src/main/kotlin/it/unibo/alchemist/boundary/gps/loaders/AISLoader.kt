@@ -13,8 +13,7 @@ import com.google.common.collect.ImmutableSet
 import it.unibo.alchemist.boundary.gps.GPSFileLoader
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISDecoder
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
-import it.unibo.alchemist.boundary.gps.loaders.ais.AISVesselStatus
-import it.unibo.alchemist.boundary.gps.loaders.ais.MMSI
+import it.unibo.alchemist.boundary.gps.loaders.ais.AISTrace
 import it.unibo.alchemist.model.maps.GPSTrace
 import it.unibo.alchemist.model.maps.positions.GPSPointImpl
 import it.unibo.alchemist.model.maps.routes.GPSTraceImpl
@@ -30,8 +29,10 @@ import org.openstreetmap.osmosis.osmbinary.file.FileFormatException
 class AISLoader : GPSFileLoader {
     override fun readTrace(url: URL): List<GPSTrace> = runCatching {
         url.openStream().use { input ->
-            val content = input.bufferedReader().readText()
-            AISVesselStatus.from(AISPayload.fromTimedMessages(AISDecoder.parsePayload(content))).toTraces()
+            AISPayload.fromTimedMessages(AISDecoder.parsePayload(input.bufferedReader().readText()))
+                .values
+                .flatten()
+                .toTraces()
         }
     }.getOrElse {
         throw FileFormatException("Incorrect AIS Payload in $url").initCause(it)
@@ -51,26 +52,22 @@ class AISLoader : GPSFileLoader {
          *
          * @param timeOrigin instant mapped to simulation time zero.
          */
-        internal fun Iterable<AISPayload>.toTraces(timeOrigin: Instant = EPOCH): List<GPSTrace> =
-            AISVesselStatus.from(this).toTraces(timeOrigin)
+        internal fun Iterable<AISPayload>.toTraces(timeOrigin: Instant = EPOCH): List<GPSTrace> = AISTrace
+            .from(this)
+            .map { trace -> trace.toTrace(timeOrigin) }
 
-        internal fun Map<MMSI, List<AISVesselStatus>>.toTraces(timeOrigin: Instant = EPOCH): List<GPSTrace> =
-            values.map { vesselPayloads ->
-                GPSTraceImpl(
-                    vesselPayloads.asSequence()
-                        .filter { it.latitude != null && it.longitude != null }
-                        .sortedBy(AISVesselStatus::timestamp)
-                        .map {
-                            check(it.latitude != null && it.longitude != null)
-                            GPSPointImpl(
-                                it.latitude,
-                                it.longitude,
-                                it.timestamp.toTraceTime(timeOrigin),
-                            )
-                        }
-                        .toList(),
-                )
-            }
+        private fun AISTrace.toTrace(timeOrigin: Instant): GPSTrace = GPSTraceImpl(
+            positionPayloads.asSequence()
+                .map {
+                    check(it.latitude != null && it.longitude != null)
+                    GPSPointImpl(
+                        it.latitude,
+                        it.longitude,
+                        it.timestamp.toTraceTime(timeOrigin),
+                    )
+                }
+                .toList(),
+        )
 
         private fun Instant.toTraceTime(timeOrigin: Instant): DoubleTime = DoubleTime(
             (this - timeOrigin).toDouble(SECONDS),

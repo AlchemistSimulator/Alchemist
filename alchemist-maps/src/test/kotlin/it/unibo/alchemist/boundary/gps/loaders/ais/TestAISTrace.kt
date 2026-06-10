@@ -12,69 +12,63 @@ package it.unibo.alchemist.boundary.gps.loaders.ais
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.doubles.plusOrMinus
-import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
-class TestAISVesselStatus :
+class TestAISTrace :
     StringSpec({
-        "AISVesselStatus should discard vessel streams without positions" {
-            AISVesselStatus.from(
+        "AIS traces should discard vessel streams without positions" {
+            AISTrace.from(
                 listOf(
                     payloadAt(1, vesselMMSI = 1, vesselName = "STATIC"),
                     payloadAt(2, vesselMMSI = 1, callsign = "CALL"),
                 ),
-            ).shouldBeEmpty()
+            ) shouldBe emptyList()
         }
 
-        "AISVesselStatus should seed the first position-bearing status with earlier static data" {
-            val statuses = AISVesselStatus.from(
+        "AIS traces should build progressively complete payloads" {
+            val trace = AISTrace.from(
                 listOf(
                     payloadAt(1, vesselName = "VESSEL", shipType = AISShipType.PilotVessel),
                     payloadAt(2, longitude = 10.0, latitude = 44.0),
                 ),
-            ).getValue(VESSEL_MMSI)
-            statuses shouldContainExactly listOf(
-                AISVesselStatus(
-                    vesselMMSI = VESSEL_MMSI,
-                    timestamp = EPOCH + 2.seconds,
+            ).single()
+            trace.payloads shouldContainExactly listOf(
+                payloadAt(1, vesselName = "VESSEL", shipType = AISShipType.PilotVessel),
+                payloadAt(
+                    2,
                     longitude = 10.0,
                     latitude = 44.0,
-                    shipType = AISShipType.PilotVessel,
                     vesselName = "VESSEL",
+                    shipType = AISShipType.PilotVessel,
                 ),
             )
         }
 
-        "AISVesselStatus should interpolate numeric measures at non-measure changes" {
-            val statuses = AISVesselStatus.from(
+        "AIS traces should interpolate numeric measures and use closest non-numeric values" {
+            val trace = AISTrace.from(
                 listOf(
                     payloadAt(0, longitude = 0.0, latitude = 0.0, headingDegrees = 10.0),
                     payloadAt(9, shipType = AISShipType.PilotVessel),
                     payloadAt(10, longitude = 10.0, latitude = 10.0, headingDegrees = 20.0),
                 ),
-            ).getValue(VESSEL_MMSI)
-            statuses.map(AISVesselStatus::timestamp) shouldContainExactly listOf(
-                EPOCH,
-                EPOCH + 9.seconds,
-                EPOCH + 10.seconds,
-            )
-            statuses[1].headingDegrees shouldBe (19.0 plusOrMinus 1e-15)
-            statuses[1].longitude shouldBe (9.0 plusOrMinus 1e-15)
-            statuses[1].latitude shouldBe (9.0 plusOrMinus 1e-15)
-            statuses[1].shipType shouldBe AISShipType.PilotVessel
+            ).single()
+            val payload = trace.payloadAt(DoubleTime(9.0))
+            payload.headingDegrees shouldBe (19.0 plusOrMinus 1e-15)
+            payload.longitude shouldBe (9.0 plusOrMinus 1e-15)
+            payload.latitude shouldBe (9.0 plusOrMinus 1e-15)
+            payload.shipType shouldBe AISShipType.PilotVessel
         }
 
-        "AISVesselStatus should compare by timestamp and then vessel MMSI" {
-            val sameTimeHigherMmsi = statusAt(1, vesselMMSI = 2)
-            val sameTimeLowerMmsi = statusAt(1, vesselMMSI = 1)
-            val later = statusAt(2, vesselMMSI = 0)
-            listOf(sameTimeHigherMmsi, later, sameTimeLowerMmsi).sorted() shouldContainExactly listOf(
-                sameTimeLowerMmsi,
-                sameTimeHigherMmsi,
-                later,
-            )
+        "AIS traces should compare by MMSI" {
+            AISTrace.from(
+                listOf(
+                    payloadAt(1, vesselMMSI = 2, longitude = 0.0, latitude = 0.0),
+                    payloadAt(1, vesselMMSI = 1, longitude = 0.0, latitude = 0.0),
+                ),
+            ).map(AISTrace::vesselMMSI) shouldContainExactly listOf(1, 2)
         }
     })
 
@@ -99,11 +93,4 @@ private fun payloadAt(
     shipType = shipType,
     callsign = callsign,
     vesselName = vesselName,
-)
-
-private fun statusAt(seconds: Long, vesselMMSI: Int) = AISVesselStatus(
-    vesselMMSI = vesselMMSI,
-    timestamp = EPOCH + seconds.seconds,
-    longitude = 0.0,
-    latitude = 0.0,
 )

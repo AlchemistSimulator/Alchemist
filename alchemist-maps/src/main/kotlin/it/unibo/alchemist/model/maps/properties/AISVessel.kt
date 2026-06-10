@@ -173,7 +173,7 @@ class AISVessel<T>(
     )
 
     private class TraceRef(val path: String, val normalizer: String, vararg val args: Any?) {
-        private val hash by lazy { Objects.hash(path, normalizer, args.contentHashCode()) }
+        private val hash by lazy { Objects.hash(path, normalizer, args.contentDeepHashCode()) }
 
         override fun hashCode(): Int = hash
 

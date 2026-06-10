@@ -199,9 +199,9 @@ data class AISPayload(
 
         private val AisMessage.isEquippedWithRAIM: Boolean?
             get() = when (this) {
-                is IVesselPositionMessage -> getRaim()
-                is UTCDateResponseMessage -> getRaim()
-                is dk.dma.ais.message.AisMessage27 -> getRaim()
+                is IVesselPositionMessage -> raim
+                is UTCDateResponseMessage -> raim
+                is dk.dma.ais.message.AisMessage27 -> raim
                 else -> null
             }?.let { it == AIS_FLAG_SET }
 

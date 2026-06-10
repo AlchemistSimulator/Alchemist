@@ -3,16 +3,16 @@ environment:
   type: OSMEnvironment
 deployments:
   - type: FromGPSTrace
-    parameters: [1, "trace/ok/5min.nmea.txt", true, "AlignToSimulationTime"]
+    parameters: [1, "trace/ok/5min.nmea.txt", false, "AlignToSimulationTime"]
     properties:
       - type: AISVessel
-        parameters: ["trace/ok/5min.nmea.txt", true, "AlignToSimulationTime"]
+        parameters: ["trace/ok/5min.nmea.txt", "AlignToSimulationTime"]
     programs:
       - time-distribution: 1
         type: Event
         actions:
           - type: ReproduceGPSTrace
-            parameters: ["trace/ok/5min.nmea.txt", true, "AlignToSimulationTime"]
+            parameters: ["trace/ok/5min.nmea.txt", false, "AlignToSimulationTime"]
 terminate:
   - type: AfterTime
     parameters: 300

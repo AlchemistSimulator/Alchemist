@@ -35,7 +35,6 @@ class AISVessel<T>(
     private val environment: MapEnvironment<T, *, *>,
     node: Node<T>,
     private val path: String,
-    @Suppress("UNUSED_PARAMETER") private val cycle: Boolean = false,
     private val normalizer: String = "AlignToSimulationTime",
     private vararg val normalizerArgs: Any?,
 ) : AbstractNodeProperty<T>(node) {
@@ -167,7 +166,6 @@ class AISVessel<T>(
         environment,
         node,
         path,
-        cycle,
         normalizer,
         *normalizerArgs,
     )

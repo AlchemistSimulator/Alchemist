@@ -27,7 +27,7 @@ class TestAISVessel :
         "AISVessel should expose current AIS data from its allocated trace" {
             val environment = environmentAt(0.0)
             val trace = AISTraceLoader(AIS_TRACE, NORMALIZER).first()
-            val vessel = AISVessel(environment, node(), AIS_TRACE, true, NORMALIZER)
+            val vessel = AISVessel(environment, node(), AIS_TRACE, NORMALIZER)
             vessel.vesselId shouldBe trace.vesselMMSI
             vessel.currentPayload shouldBe trace.payloadAt(DoubleTime(0.0))
             vessel.timestamp shouldBe trace.payloadAt(DoubleTime(0.0)).timestamp
@@ -38,7 +38,7 @@ class TestAISVessel :
         "AISVessel should allocate MMSIs progressively in the same environment" {
             val environment = environmentAt(0.0)
             val expectedMmsis = AISTraceLoader(AIS_TRACE, NORMALIZER).map { it.vesselMMSI }
-            val vessels = expectedMmsis.map { AISVessel(environment, node(), AIS_TRACE, true, NORMALIZER) }
+            val vessels = expectedMmsis.map { AISVessel(environment, node(), AIS_TRACE, NORMALIZER) }
             vessels.map(AISVessel<Any>::vesselId) shouldContainExactly expectedMmsis
         }
 
@@ -46,10 +46,10 @@ class TestAISVessel :
             val environment = environmentAt(0.0)
             val traceCount = AISTraceLoader(AIS_TRACE, NORMALIZER).count()
             repeat(traceCount) {
-                AISVessel(environment, node(), AIS_TRACE, true, NORMALIZER).vesselId
+                AISVessel(environment, node(), AIS_TRACE, NORMALIZER).vesselId
             }
             shouldThrow<IllegalStateException> {
-                AISVessel(environment, node(), AIS_TRACE, true, NORMALIZER).vesselId
+                AISVessel(environment, node(), AIS_TRACE, NORMALIZER).vesselId
             }
         }
     })

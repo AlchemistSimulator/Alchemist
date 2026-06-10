@@ -66,8 +66,6 @@ class TestAISVessel :
             vessel.update(data)
             vessel.vesselId shouldBe data.vesselMMSI
             vessel.timestamp shouldBe data.timestamp
-            vessel.longitude shouldBe data.longitude
-            vessel.latitude shouldBe data.latitude
             vessel.speedOverGroundKnots shouldBe data.speedOverGroundKnots
             vessel.speedOverGroundMetersPerSecond shouldBe 5.144444444444445
             vessel.courseOverGroundDegrees shouldBe data.courseOverGroundDegrees

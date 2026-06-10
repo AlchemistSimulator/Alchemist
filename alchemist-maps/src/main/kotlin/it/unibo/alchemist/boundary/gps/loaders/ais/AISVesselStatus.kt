@@ -19,8 +19,8 @@ import kotlin.time.Instant
 data class AISVesselStatus(
     val vesselMMSI: Int,
     val timestamp: Instant,
-    val latitude: Double,
-    val longitude: Double,
+    val latitude: Double?,
+    val longitude: Double?,
     val courseOverGroundDegrees: Double? = null,
     val speedOverGroundKnots: Double? = null,
     val headingDegrees: Double? = null,

@@ -72,18 +72,6 @@ class AISVessel<T> @JvmOverloads constructor(
         get() = currentStatus.timestamp
 
     /**
-     * Current AIS longitude.
-     */
-    val longitude: Double
-        get() = currentStatus.longitude
-
-    /**
-     * Current AIS latitude.
-     */
-    val latitude: Double
-        get() = currentStatus.latitude
-
-    /**
      * Current AIS speed over ground, expressed in knots.
      */
     val speedOverGroundKnots: Double?

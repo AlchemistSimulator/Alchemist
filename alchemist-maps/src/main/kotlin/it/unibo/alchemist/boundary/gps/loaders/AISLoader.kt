@@ -56,13 +56,18 @@ class AISLoader : GPSFileLoader {
         internal fun Map<AISPayload.MMSI, List<AISVesselStatus>>.toTraces(timeOrigin: Instant = EPOCH): List<GPSTrace> =
             values.map { vesselPayloads ->
                 GPSTraceImpl(
-                    vesselPayloads.sortedBy(AISVesselStatus::timestamp).map {
-                        GPSPointImpl(
-                            it.latitude,
-                            it.longitude,
-                            it.timestamp.toTraceTime(timeOrigin),
-                        )
-                    },
+                    vesselPayloads.asSequence()
+                        .filter { it.latitude != null && it.longitude != null }
+                        .sortedBy(AISVesselStatus::timestamp)
+                        .map {
+                            check(it.latitude != null && it.longitude != null)
+                            GPSPointImpl(
+                                it.latitude,
+                                it.longitude,
+                                it.timestamp.toTraceTime(timeOrigin),
+                            )
+                        }
+                        .toList(),
                 )
             }
 

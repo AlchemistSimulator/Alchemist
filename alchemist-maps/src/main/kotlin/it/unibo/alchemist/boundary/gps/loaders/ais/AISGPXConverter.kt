@@ -46,14 +46,17 @@ class AISGPXConverter {
             }
     }
 
-    private fun AISVesselStatus.toWayPoint(): WayPoint {
-        val builder = WayPoint
-            .builder()
-            .lat(latitude)
-            .lon(longitude)
-            .time(timestamp.toJavaInstant())
-        speedOverGroundKnots?.let { builder.speed(it, Speed.Unit.KNOTS) }
-        courseOverGroundDegrees?.let { builder.course(it) }
-        return builder.build()
+    private fun AISVesselStatus.toWayPoint(): WayPoint? = when {
+        latitude == null -> null
+        longitude == null -> null
+        else -> {
+            val wayPointBuilder = WayPoint.builder()
+                .lat(latitude)
+                .lon(longitude)
+                .time(timestamp.toJavaInstant())
+            speedOverGroundKnots?.let { wayPointBuilder.speed(it, Speed.Unit.KNOTS) }
+            courseOverGroundDegrees?.let { wayPointBuilder.course(it) }
+            wayPointBuilder.build()
+        }
     }
 }

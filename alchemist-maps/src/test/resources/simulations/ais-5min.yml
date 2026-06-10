@@ -3,7 +3,7 @@ environment:
   type: OSMEnvironment
 deployments:
   - type: FromGPSTrace
-    parameters: [1, "trace/ok/5min.nmea.txt", false, "AlignToSimulationTime"]
+    parameters: ["trace/ok/5min.nmea.txt", "AlignToSimulationTime"]
     properties:
       - type: AISVessel
         parameters: ["trace/ok/5min.nmea.txt", "AlignToSimulationTime"]

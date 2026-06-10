@@ -15,6 +15,35 @@ import kotlin.time.Instant
 
 /**
  * Position-bearing AIS vessel state reconstructed from one or more [AISPayload] events.
+ *
+ * @property vesselMMSI AIS MMSI.
+ * @property timestamp status timestamp.
+ * @property latitude latitude of the vessel.
+ * @property longitude longitude of the vessel.
+ * @property courseOverGroundDegrees course over ground, expressed in degrees.
+ * @property speedOverGroundKnots speed over ground, expressed in knots.
+ * @property headingDegrees vessel heading, expressed in degrees.
+ * @property navigationalStatus AIS navigational status.
+ * @property imoNumber IMO number of the vessel.
+ * @property vesselName name of the vessel.
+ * @property callsign callsign of the vessel.
+ * @property shipType AIS ship type.
+ * @property dimensionToBow distance from AIS antenna to the bow, in meters.
+ * @property dimensionToStern distance from AIS antenna to the stern, in meters.
+ * @property dimensionToPort distance from AIS antenna to port, in meters.
+ * @property dimensionToStarboard distance from AIS antenna to starboard, in meters.
+ * @property draughtMeters current draught, in meters.
+ * @property destination destination manually entered in AIS.
+ * @property eta estimated time of arrival.
+ * @property positionAccuracy raw AIS position accuracy flag.
+ * @property rateOfTurn rate of turn, expressed according to the AIS library conversion.
+ * @property isEquippedWithRAIM whether AIS reports receiver autonomous integrity monitoring.
+ * @property positioningDevice AIS positioning device code.
+ * @property dataTerminalReady AIS data terminal ready flag.
+ * @property vendorId vendor identifier from AIS static data.
+ * @property courseOverGroundRadians course over ground, expressed in radians.
+ * @property headingRadians vessel heading, expressed in radians.
+ * @property speedOverGroundMetersPerSecond speed over ground, expressed in meters per second.
  */
 data class AISVesselStatus(
     val vesselMMSI: Int,
@@ -97,8 +126,8 @@ data class AISVesselStatus(
                 .mapNotNull { payload ->
                     val previous = state
                     state = state.mergedWith(payload)
-                    val status = state.statusAt(payload.timestamp, sortedPayloads) ?: return@mapNotNull null
-                    status.takeIf { previous.differsFrom(state) || payload.hasPosition }
+                    state.statusAt(payload.timestamp, sortedPayloads)
+                        .takeIf { previous.differsFrom(state) || payload.hasPosition }
                 }
                 .distinct()
         }
@@ -133,14 +162,12 @@ data class AISVesselStatus(
 
         private fun AISPayload.differsFrom(other: AISPayload): Boolean = copy(timestamp = other.timestamp) != other
 
-        private fun AISPayload.statusAt(timestamp: Instant, payloads: List<AISPayload>): AISVesselStatus? {
-            val latitude = payloads.interpolated(timestamp, AISPayload::latitude) ?: latitude ?: return null
-            val longitude = payloads.interpolated(timestamp, AISPayload::longitude) ?: longitude ?: return null
-            return AISVesselStatus(
+        private fun AISPayload.statusAt(timestamp: Instant, payloads: List<AISPayload>): AISVesselStatus =
+            AISVesselStatus(
                 vesselMMSI = vesselMMSI,
                 timestamp = timestamp,
-                latitude = latitude,
-                longitude = longitude,
+                latitude = payloads.interpolated(timestamp, AISPayload::latitude) ?: latitude,
+                longitude = payloads.interpolated(timestamp, AISPayload::longitude) ?: longitude,
                 courseOverGroundDegrees = payloads.interpolated(timestamp, AISPayload::courseOverGroundDegrees)
                     ?: courseOverGroundDegrees,
                 speedOverGroundKnots = payloads.interpolated(timestamp, AISPayload::speedOverGroundKnots)
@@ -165,17 +192,21 @@ data class AISVesselStatus(
                 dataTerminalReady = dataTerminalReady,
                 vendorId = vendorId,
             )
-        }
 
-        private fun List<AISPayload>.interpolated(timestamp: Instant, selector: (AISPayload) -> Double?): Double? {
-            val known = mapNotNull { payload -> selector(payload)?.let { payload.timestamp to it } }
-            if (known.isEmpty()) return null
-            val previous = known.lastOrNull { (time, _) -> time <= timestamp } ?: return known.first().second
-            val next = known.firstOrNull { (time, _) -> time >= timestamp } ?: return previous.second
-            if (previous.first == next.first) return previous.second
-            val elapsed = (timestamp - previous.first).toDouble(SECONDS)
-            val duration = (next.first - previous.first).toDouble(SECONDS)
-            return previous.second + (next.second - previous.second) * elapsed / duration
-        }
+        private fun List<AISPayload>.interpolated(timestamp: Instant, selector: (AISPayload) -> Double?): Double? =
+            mapNotNull { payload -> selector(payload)?.let { payload.timestamp to it } }
+                .takeIf { it.isNotEmpty() }
+                ?.let { known ->
+                    val previous = known.lastOrNull { (time, _) -> time <= timestamp } ?: known.first()
+                    val next = known.firstOrNull { (time, _) -> time >= timestamp } ?: previous
+                    when (previous.first) {
+                        next.first -> previous.second
+                        else -> {
+                            val elapsed = (timestamp - previous.first).toDouble(SECONDS)
+                            val duration = (next.first - previous.first).toDouble(SECONDS)
+                            previous.second + (next.second - previous.second) * elapsed / duration
+                        }
+                    }
+                }
     }
 }

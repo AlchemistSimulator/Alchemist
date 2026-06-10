@@ -52,6 +52,10 @@ import kotlin.time.Instant
  * @property positionAccuracy raw AIS position accuracy flag.
  * @property rateOfTurn rate of turn, expressed according to the AIS library conversion.
  * @property isEquippedWithRAIM whether AIS reports receiver autonomous integrity monitoring.
+ * @property positioningDevice AIS positioning device code.
+ * @property dataTerminalReady AIS data terminal ready flag.
+ * @property vendorId vendor identifier from AIS static data.
+ * @property hasPosition whether both latitude and longitude are available.
  */
 data class AISPayload(
     val vesselMMSI: Int,

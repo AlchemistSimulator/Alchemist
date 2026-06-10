@@ -14,6 +14,7 @@ import it.unibo.alchemist.boundary.gps.GPSFileLoader
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISDecoder
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISVesselStatus
+import it.unibo.alchemist.boundary.gps.loaders.ais.MMSI
 import it.unibo.alchemist.model.maps.GPSTrace
 import it.unibo.alchemist.model.maps.positions.GPSPointImpl
 import it.unibo.alchemist.model.maps.routes.GPSTraceImpl
@@ -30,7 +31,7 @@ class AISLoader : GPSFileLoader {
     override fun readTrace(url: URL): List<GPSTrace> = runCatching {
         url.openStream().use { input ->
             val content = input.bufferedReader().readText()
-            AISVesselStatus.from(AISPayload.from(AISDecoder.parsePayload(content))).toTraces()
+            AISVesselStatus.from(AISPayload.fromTimedMessages(AISDecoder.parsePayload(content))).toTraces()
         }
     }.getOrElse {
         throw FileFormatException("Incorrect AIS Payload in $url").initCause(it)
@@ -53,7 +54,7 @@ class AISLoader : GPSFileLoader {
         internal fun Iterable<AISPayload>.toTraces(timeOrigin: Instant = EPOCH): List<GPSTrace> =
             AISVesselStatus.from(this).toTraces(timeOrigin)
 
-        internal fun Map<AISPayload.MMSI, List<AISVesselStatus>>.toTraces(timeOrigin: Instant = EPOCH): List<GPSTrace> =
+        internal fun Map<MMSI, List<AISVesselStatus>>.toTraces(timeOrigin: Instant = EPOCH): List<GPSTrace> =
             values.map { vesselPayloads ->
                 GPSTraceImpl(
                     vesselPayloads.asSequence()

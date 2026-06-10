@@ -247,7 +247,7 @@ class AISVessel<T> @JvmOverloads constructor(
      * @param message the AIS message to use as this node's data.
      */
     fun update(timestamp: Instant, message: AisMessage) {
-        update(listOf(AISPayload.from(timestamp, message)))
+        update(listOf(AISPayload.fromTimedMessages(timestamp, message)))
     }
 
     override fun cloneOnNewNode(node: Node<T>): NodeProperty<T> = AISVessel(node, maxSize, validityWindow).also {

@@ -101,7 +101,7 @@ data class AISVesselStatus(
         /**
          * Groups payloads by vessel and compacts each vessel stream into status snapshots.
          */
-        fun from(payloads: Iterable<AISPayload>): Map<AISPayload.MMSI, List<AISVesselStatus>> = payloads
+        fun from(payloads: Iterable<AISPayload>): Map<MMSI, List<AISVesselStatus>> = payloads
             .groupBy(AISPayload::vesselMMSI)
             .mapValues { (_, vesselPayloads) -> vesselPayloads.toStatuses() }
             .filterValues(List<AISVesselStatus>::isNotEmpty)
@@ -109,10 +109,9 @@ data class AISVesselStatus(
         /**
          * Compacts already grouped AIS payloads into status snapshots.
          */
-        fun from(payloads: Map<AISPayload.MMSI, List<AISPayload>>): Map<AISPayload.MMSI, List<AISVesselStatus>> =
-            payloads
-                .mapValues { (_, vesselPayloads) -> vesselPayloads.toStatuses() }
-                .filterValues(List<AISVesselStatus>::isNotEmpty)
+        fun from(payloads: Map<MMSI, List<AISPayload>>): Map<MMSI, List<AISVesselStatus>> = payloads
+            .mapValues { (_, vesselPayloads) -> vesselPayloads.toStatuses() }
+            .filterValues(List<AISVesselStatus>::isNotEmpty)
 
         private fun List<AISPayload>.toStatuses(): List<AISVesselStatus> {
             val sortedPayloads = sorted()

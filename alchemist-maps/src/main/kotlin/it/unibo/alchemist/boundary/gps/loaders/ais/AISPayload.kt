@@ -85,8 +85,6 @@ data class AISPayload(
     val vendorId: String? = null,
 ) : Comparable<AISPayload> {
 
-    typealias MMSI = Int
-
     val hasPosition: Boolean
         get() = longitude != null && latitude != null
 
@@ -128,12 +126,13 @@ data class AISPayload(
         /**
          * Builds an [AISPayload] from an AIS message using the timestamp carried by the message, when available.
          */
-        fun from(message: AisMessage): AISPayload? = message.timestamp?.let { from(it, message) }
+        fun fromSingleMessage(message: AisMessage): AISPayload? =
+            message.timestamp?.let { fromTimedMessages(it, message) }
 
         /**
          * Builds an [AISPayload] from an AIS message.
          */
-        fun from(timestamp: Instant, message: AisMessage): AISPayload {
+        fun fromTimedMessages(timestamp: Instant, message: AisMessage): AISPayload {
             val positionMessage = message as? IPositionMessage
             val vesselPosition = message as? IVesselPositionMessage
             val aisPosition = message as? AisPositionMessage
@@ -174,18 +173,18 @@ data class AISPayload(
         /**
          * Converts timestamped AIS messages to payloads.
          */
-        fun from(messages: Iterable<Pair<Instant, AisMessage>>): Map<MMSI, List<AISPayload>> = messages
-            .map { (timestamp, message) -> from(timestamp, message) }
+        fun fromTimedMessages(messages: Iterable<Pair<Instant, AisMessage>>): Map<MMSI, List<AISPayload>> = messages
+            .map { (timestamp, message) -> fromTimedMessages(timestamp, message) }
             .groupBy(AISPayload::vesselMMSI)
-            .mapValues { (_, messages) -> messages.sorted() }
+            .mapValues { (_, payloads) -> payloads.sorted() }
 
         /**
          * Converts AIS messages with embedded timestamps to payloads.
          */
         fun fromMessages(messages: Iterable<AisMessage>): Map<MMSI, List<AISPayload>> = messages
-            .mapNotNull(::from)
+            .mapNotNull(::fromSingleMessage)
             .groupBy(AISPayload::vesselMMSI)
-            .mapValues { (_, messages) -> messages.sorted() }
+            .mapValues { (_, payloads) -> payloads.sorted() }
 
         private val AisMessage.timestamp: Instant?
             get() = sourceTag?.timestamp?.time?.let(Instant::fromEpochMilliseconds)

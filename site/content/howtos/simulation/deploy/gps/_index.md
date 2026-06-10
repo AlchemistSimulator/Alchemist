@@ -30,7 +30,7 @@ may point to an AIS NMEA file.
 AIS files are grouped by vessel and each vessel becomes an independent trace.
 Alchemist recognizes AIS files with the `.ais`, `.nmea`, and `.txt` extensions.
 Timestamp marker lines in the form `!DATE-TIME,HH:mm:ss` are supported;
-the date is read from a `yyyyMMdd` substring in the resource name when available.
+when no AIS timestamp is available, they are anchored to January 1, 1970.
 
 {{% notice tip "Get GPS data for your experiments" %}}
 The great folks at [OpenStreetMap](https://openstreetmap.org) release GPS data for

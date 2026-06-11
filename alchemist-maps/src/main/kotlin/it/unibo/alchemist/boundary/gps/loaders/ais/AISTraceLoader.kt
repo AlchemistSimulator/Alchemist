@@ -28,7 +28,9 @@ class AISTraceLoader(
     override fun iterator(): Iterator<AISTrace> = traces.iterator()
 
     private fun loadTraces(): List<AISTrace> {
-        val rawTraces = ResourceLoader.getResourceAsStream(path).bufferedReader().use { input ->
+        val rawTraces = checkNotNull(ResourceLoader.getResourceAsStream(path)) {
+            "resource not found: '$path', make sure the file exists in the classpath"
+        }.bufferedReader().use { input ->
             AISTrace.from(AISPayload.fromTimedMessages(AISDecoder.parsePayload(input.readText())).values.flatten())
         }
         val alignedTraces = TraceLoader(path, false, normalizer, *normalizerArgs).toList()

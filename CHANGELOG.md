@@ -1,3 +1,22 @@
+## [43.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.58...43.1.0) (2026-06-11)
+
+### Features
+
+* **maps:** add native AIS data support and `AISVessel` NodeProperty ([#5369](https://github.com/AlchemistSimulator/Alchemist/issues/5369)) ([5ecf848](https://github.com/AlchemistSimulator/Alchemist/commit/5ecf8488cf0e2e1c8f6d3cc9ea97c488ed59dfe3))
+
+### Dependency updates
+
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.10.2 ([#5401](https://github.com/AlchemistSimulator/Alchemist/issues/5401)) ([6375eb5](https://github.com/AlchemistSimulator/Alchemist/commit/6375eb5e6ce1f6ab35a4cdd32326d60e874ee569))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.34 ([#5404](https://github.com/AlchemistSimulator/Alchemist/issues/5404)) ([440a4c1](https://github.com/AlchemistSimulator/Alchemist/commit/440a4c1155a955d7d505f91300055f570d984112))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([aac3e52](https://github.com/AlchemistSimulator/Alchemist/commit/aac3e52aa7f2718643b9be3dc4e384cbf30a21e7))
+* **build:** update the javadoc.io cache ([36f2d34](https://github.com/AlchemistSimulator/Alchemist/commit/36f2d34789ef176c303920fa4b1463da0cbb912b))
+
 ## [43.0.58](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.57...43.0.58) (2026-06-11)
 
 ### Dependency updates

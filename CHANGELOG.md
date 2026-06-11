@@ -1,3 +1,23 @@
+## [43.0.58](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.57...43.0.58) (2026-06-11)
+
+### Dependency updates
+
+* **deps:** update arrow-kt monorepo to v2.2.3 ([#5397](https://github.com/AlchemistSimulator/Alchemist/issues/5397)) ([ddc5deb](https://github.com/AlchemistSimulator/Alchemist/commit/ddc5deb2d25f93652d511cf1f9db52b90f1854f1))
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.10.1 ([#5398](https://github.com/AlchemistSimulator/Alchemist/issues/5398)) ([dbded83](https://github.com/AlchemistSimulator/Alchemist/commit/dbded83fcb11fce7d81a705e9d2c296a729d55e2))
+* **deps:** update dependency org.danilopianini:kotlin-symmetric-matrix to v1.1.15 ([#5388](https://github.com/AlchemistSimulator/Alchemist/issues/5388)) ([7665fab](https://github.com/AlchemistSimulator/Alchemist/commit/7665fabcbd4a8684837c62989b9571a8dd0083b0))
+* **deps:** update dependency org.eclipse.jgit:org.eclipse.jgit to v7.7.0.202606012155-r ([#5405](https://github.com/AlchemistSimulator/Alchemist/issues/5405)) ([d122164](https://github.com/AlchemistSimulator/Alchemist/commit/d122164082687968619dfeb0c724967a9ab9b6be))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.163.0 ([#5400](https://github.com/AlchemistSimulator/Alchemist/issues/5400)) ([1d22b17](https://github.com/AlchemistSimulator/Alchemist/commit/1d22b175e09810d4c667bdba1c34751bd17c6f5f))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([6a3be24](https://github.com/AlchemistSimulator/Alchemist/commit/6a3be2441b1c21cc57e5a1bd60dc1d69713220d3))
+* **build:** update the javadoc.io cache ([4fdb10a](https://github.com/AlchemistSimulator/Alchemist/commit/4fdb10aa166958d9d592404927b2f6a069581bd8))
+* **build:** update the javadoc.io cache ([58c35bd](https://github.com/AlchemistSimulator/Alchemist/commit/58c35bd0d0a95e60c089979c1cbd22f5ffeceb04))
+* **build:** update the javadoc.io cache ([7b4edf3](https://github.com/AlchemistSimulator/Alchemist/commit/7b4edf3ba948ca73eb44865fad6c87689fc9d6d7))
+
 ## [43.0.57](https://github.com/AlchemistSimulator/Alchemist/compare/43.0.56...43.0.57) (2026-06-04)
 
 ### Dependency updates

@@ -12,7 +12,6 @@ package it.unibo.alchemist.boundary.gps.loaders.ais
 import it.unibo.alchemist.boundary.gps.loaders.AISLoader.Companion.toTraces
 import it.unibo.alchemist.boundary.gps.loaders.TraceLoader
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit.SECONDS
 import kotlin.time.Instant
 import org.kaikikm.threadresloader.ResourceLoader
 

@@ -17,7 +17,6 @@ import java.io.IOException
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
 import kotlin.jvm.optionals.getOrDefault
-import kotlin.jvm.optionals.getOrElse
 
 /**
  * Distributes nodes in the first positions of [GPSTrace].

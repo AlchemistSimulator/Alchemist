@@ -27,7 +27,6 @@ kotlin {
     jvm {
         compilerOptions {
             jvmDefault.set(JvmDefaultMode.ENABLE)
-            freeCompilerArgs.add("-Xcontext-parameters") // Enable context receivers
         }
     }
 

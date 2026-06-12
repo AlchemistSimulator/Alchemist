@@ -69,7 +69,6 @@ object AlchemistCompilationConfiguration : ScriptCompilationConfiguration({
         "it.unibo.alchemist.boundary.variables.*",
     )
     hostConfiguration
-    compilerOptions.append("-Xcontext-parameters")
     ide {
         acceptedLocations(ScriptAcceptedLocation.Everywhere)
     }

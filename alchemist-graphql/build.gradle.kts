@@ -9,7 +9,7 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import com.apollographql.apollo3.gradle.internal.ApolloGenerateSourcesTask
+import com.apollographql.apollo.gradle.internal.ApolloGenerateSourcesTask
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
 import it.unibo.alchemist.build.allVerificationTasks
 

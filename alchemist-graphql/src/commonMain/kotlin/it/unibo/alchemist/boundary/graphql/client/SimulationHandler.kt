@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.graphql.client
 
-import com.apollographql.apollo3.api.Mutation
+import com.apollographql.apollo.api.Mutation
 
 /**
  * Utility to control simulation lifecycle through GraphQL operations.

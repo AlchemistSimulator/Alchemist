@@ -9,13 +9,13 @@
 
 package it.unibo.alchemist.boundary.graphql.client
 
-import com.apollographql.apollo3.ApolloCall
-import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.api.Mutation
-import com.apollographql.apollo3.api.Query
-import com.apollographql.apollo3.api.Subscription
-import com.apollographql.apollo3.network.ws.GraphQLWsProtocol
-import com.apollographql.apollo3.network.ws.WebSocketNetworkTransport
+import com.apollographql.apollo.ApolloCall
+import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Mutation
+import com.apollographql.apollo.api.Query
+import com.apollographql.apollo.api.Subscription
+import com.apollographql.apollo.network.ws.GraphQLWsProtocol
+import com.apollographql.apollo.network.ws.WebSocketNetworkTransport
 import it.unibo.alchemist.boundary.graphql.utils.DefaultGraphQLSettings
 
 /**

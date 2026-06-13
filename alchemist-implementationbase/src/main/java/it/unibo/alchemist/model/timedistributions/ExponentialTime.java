@@ -60,7 +60,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public final void updateStatus(
+    protected final void updateStatus(
             final Time currentTime,
             final boolean executed,
             final double newpropensity,

@@ -2,7 +2,7 @@
 androidx-lifecycle = "2.10.0"
 antlr4 = "4.13.2"
 ais-lib = "2.8.5"
-apollo ="4.0.0-beta.7"
+apollo ="4.4.3"
 arrow = "2.2.3"
 compose-multiplatform = "1.11.1"
 dokka = "2.2.0"
@@ -12,7 +12,7 @@ graphstream = "2.0"
 junit = "6.1.0"
 konf = "1.1.2"
 kotest = "6.1.11"
-kotlin = "2.3.21"
+kotlin = "2.4.0"
 ksp = "2.3.9"
 kotlinx-coroutines = "1.11.0"
 ktor = "3.5.0"
@@ -33,7 +33,7 @@ apache-commons-collections4 = "org.apache.commons:commons-collections4:4.5.0"
 apache-commons-io = "commons-io:commons-io:2.22.0"
 apache-commons-lang3 = "org.apache.commons:commons-lang3:3.20.0"
 apache-commons-math3 = "org.apache.commons:commons-math3:3.6.1"
-apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
+apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }
 appdirs = "net.harawata:appdirs:1.5.0"
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
@@ -99,7 +99,7 @@ kotlinx-atomicfu-runtime = { module = "org.jetbrains.kotlin:kotlinx-atomicfu-run
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ksp-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version = "2.3.9" }
+ksp-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-serialization", version.ref = "ktor" }
@@ -186,7 +186,7 @@ testing-runtimeOnly = [ "junit-engine" ]
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:7.0.20"
-graphql-client = { id = "com.apollographql.apollo3", version.ref = "apollo" }
+graphql-client = { id = "com.apollographql.apollo", version.ref = "apollo" }
 graphql-server = { id = "com.expediagroup.graphql", version.ref = "graphql" }
 hugo = "io.github.fstaudt.hugo:0.12.0"
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

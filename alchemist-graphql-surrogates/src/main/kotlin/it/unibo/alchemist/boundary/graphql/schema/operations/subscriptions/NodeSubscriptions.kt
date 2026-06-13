@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.graphql.schema.operations.subscriptions
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.server.operations.Subscription
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.NeighborhoodSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.NodeSurrogate
 import it.unibo.alchemist.model.Environment
@@ -24,6 +25,10 @@ import kotlinx.coroutines.flow.map
  *
  * @param environment the environment.
  */
+@SuppressFBWarnings(
+    value = ["NP_NONNULL_PARAM_VIOLATION"],
+    justification = "SpotBugs reports Kotlin 2.4 coroutine Flow.map synthetic state-machine calls as null violations.",
+)
 class NodeSubscriptions<T, P : Position<out P>>(environment: Environment<T, P>) : Subscription {
     private val environmentMonitor = environment.subscriptionMonitor()
 

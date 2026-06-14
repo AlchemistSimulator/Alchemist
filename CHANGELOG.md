@@ -1,3 +1,27 @@
+## [43.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.1...43.1.2) (2026-06-14)
+
+### Dependency updates
+
+* **core-deps:** update kotlin to v2.4.0 ([#5407](https://github.com/AlchemistSimulator/Alchemist/issues/5407)) ([738b3de](https://github.com/AlchemistSimulator/Alchemist/commit/738b3deb4109b5399134e6dcff45d43a4b00a239))
+* **core-deps:** update react to v2026.6.1-19.2.7 ([#5380](https://github.com/AlchemistSimulator/Alchemist/issues/5380)) ([66cdd79](https://github.com/AlchemistSimulator/Alchemist/commit/66cdd791602e60da47f057d5ee0ccc0cd72e5fbe))
+* **deps:** update dependency org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin to v1.7.1 ([#5396](https://github.com/AlchemistSimulator/Alchemist/issues/5396)) ([288e5b5](https://github.com/AlchemistSimulator/Alchemist/commit/288e5b53bc61abda41e79d6e6640c1f8bee91a4c))
+* **deps:** update plugin gitsemver to v7.0.21 ([#5411](https://github.com/AlchemistSimulator/Alchemist/issues/5411)) ([4d17512](https://github.com/AlchemistSimulator/Alchemist/commit/4d1751259a5dbf7d9254855a5dc4ef1932961ae2))
+
+### Bug Fixes
+
+* **implementationbase:** change `updateStatus` method visibility to protected ([#5410](https://github.com/AlchemistSimulator/Alchemist/issues/5410)) ([620a6ae](https://github.com/AlchemistSimulator/Alchemist/commit/620a6ae548f61bb7eac3ec98bd312579d8ec1e61))
+
+### Build and continuous integration
+
+* add https://archive.is/hVoJw to the ignored links (causes false positives) ([07f50f7](https://github.com/AlchemistSimulator/Alchemist/commit/07f50f7660258585311d73fd7049a7e85f7dbc81))
+* add new DOI link to lycheeignore ([338f880](https://github.com/AlchemistSimulator/Alchemist/commit/338f8801f63a22ca5522c16dc6569b24972b40c9))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.35 ([#5408](https://github.com/AlchemistSimulator/Alchemist/issues/5408)) ([b9d931a](https://github.com/AlchemistSimulator/Alchemist/commit/b9d931aa21d2487639d12462cf67b8d7016a6063))
+* do not run SpotBugs if there are no Java sources ([#5409](https://github.com/AlchemistSimulator/Alchemist/issues/5409)) ([3b5280b](https://github.com/AlchemistSimulator/Alchemist/commit/3b5280ba9bcd55ee5dbf0da7c5979e646d6d70b4))
+
+### General maintenance
+
+* **build:** actualize the Kotlin JS store ([bf7202e](https://github.com/AlchemistSimulator/Alchemist/commit/bf7202edae1c584b8576d2e8a2d396b5a20666cd))
+
 ## [43.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.0...43.1.1) (2026-06-12)
 
 ### Documentation

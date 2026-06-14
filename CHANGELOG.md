@@ -1,3 +1,10 @@
+## [43.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.2...43.1.3) (2026-06-14)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.6.4-19.2.7 ([#5413](https://github.com/AlchemistSimulator/Alchemist/issues/5413)) ([28c24f0](https://github.com/AlchemistSimulator/Alchemist/commit/28c24f00f956d58c9accedcab67b5d605ea219b2))
+* **deps:** update gradle-java-qa plugin to v1.184.0 ([#5414](https://github.com/AlchemistSimulator/Alchemist/issues/5414)) ([e42e03a](https://github.com/AlchemistSimulator/Alchemist/commit/e42e03aec15a1af82ddac559949592d652ba4309))
+
 ## [43.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.1...43.1.2) (2026-06-14)
 
 ### Dependency updates

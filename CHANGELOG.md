@@ -1,3 +1,17 @@
+## [43.1.4](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.3...43.1.4) (2026-06-14)
+
+### Dependency updates
+
+* **deps:** update dependency org.danilopianini:kotlin-symmetric-matrix to v2 ([#5415](https://github.com/AlchemistSimulator/Alchemist/issues/5415)) ([e6c9647](https://github.com/AlchemistSimulator/Alchemist/commit/e6c9647d66c7851037985aef4596543e0b786b06))
+
+### Bug Fixes
+
+* **release:** add task to check Maven Central Portal plugin classpath ([#5416](https://github.com/AlchemistSimulator/Alchemist/issues/5416)) ([6b58370](https://github.com/AlchemistSimulator/Alchemist/commit/6b5837058118c2b0b331e8144c5be412d2ec5c6d))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([0fb1e0e](https://github.com/AlchemistSimulator/Alchemist/commit/0fb1e0ea33fd99aa5fd86c3e7d975c2e5cfd2a54))
+
 ## [43.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.2...43.1.3) (2026-06-14)
 
 ### Dependency updates

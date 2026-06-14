@@ -13,6 +13,7 @@ import it.unibo.alchemist.boundary.swingui.effect.isolines.api.Isoline;
 import it.unibo.alchemist.boundary.swingui.effect.isolines.api.Segment2D;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 class IsolineImpl implements Isoline {
@@ -32,7 +33,7 @@ class IsolineImpl implements Isoline {
 
     @Override
     public Collection<Segment2D> getSegments() {
-        return segments;
+        return Collections.unmodifiableCollection(segments);
     }
 
     @Override

@@ -10,11 +10,17 @@
 import Libs.alchemist
 import Libs.incarnation
 import com.github.spotbugs.snom.SpotBugsTask
+import com.sun.net.httpserver.HttpExchange
+import com.sun.net.httpserver.HttpServer
 import dev.detekt.gradle.Detekt
 import it.unibo.alchemist.build.id
 import it.unibo.alchemist.build.isInCI
 import it.unibo.alchemist.build.isMac
 import it.unibo.alchemist.build.isWindows
+import java.net.InetSocketAddress
+import kotlinx.coroutines.runBlocking
+import org.danilopianini.gradle.mavencentral.portal.PublishPortalDeployment
+import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
@@ -161,6 +167,57 @@ dependencies {
     dokkaGlobalClasspath(alchemist("full"))
 }
 
+val checkMavenCentralPortalPluginClasspath by tasks.registering {
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    description = "Checks that the Maven Central Portal publishing plugin can upload to a local fake endpoint."
+    val outputFile = layout.buildDirectory.file("reports/checkMavenCentralPortalPluginClasspath/result.txt")
+    inputs.property("publishOnCentralPluginVersion", libs.plugins.publishOnCentral.get().version.requiredVersion)
+    outputs.file(outputFile)
+    doLast {
+        val server = HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0)
+        server.createContext("/api/v1/publisher/upload") { exchange ->
+            exchange.use {
+                check(exchange.requestMethod == "POST") {
+                    "Expected POST to ${exchange.requestURI}, received ${exchange.requestMethod}"
+                }
+                exchange.requestBody.use { it.readBytes() }
+                exchange.respond(201, "local-deployment-id")
+            }
+        }
+        server.start()
+        try {
+            val localPortal = "http://127.0.0.1:${server.address.port}/"
+            val bundle = temporaryDir.resolve("maven-central-portal-bundle.zip").apply {
+                parentFile.mkdirs()
+                writeBytes(byteArrayOf(0x50, 0x4b, 0x05, 0x06, 0, 0, 0, 0))
+            }
+            val deployment = PublishPortalDeployment(
+                project = project,
+                baseUrl = localPortal,
+                user = providers.provider { "local-user" },
+                password = providers.provider { "local-password" },
+                zipTask = tasks.named<ConventionTask>("zipMavenCentralPortalPublication"),
+            )
+            val deploymentId = runBlocking {
+                deployment.upload(bundle, releaseAfterUpload = false)
+            }
+            check(deploymentId == "local-deployment-id") {
+                "Unexpected local Maven Central Portal deployment id: $deploymentId"
+            }
+            outputFile.get().asFile.apply {
+                parentFile.mkdirs()
+                writeText(deploymentId)
+            }
+        } finally {
+            server.stop(0)
+        }
+    }
+}
+
+tasks.check {
+    dependsOn(checkMavenCentralPortalPluginClasspath)
+}
+
 tasks.matching { it.name == "kotlinStoreYarnLock" }.configureEach {
     dependsOn(rootProject.tasks.named("kotlinUpgradeYarnLock"))
 }
@@ -238,4 +295,11 @@ val performWebsiteStringReplacements by tasks.registering {
 
 tasks.hugoBuild.configure {
     finalizedBy(performWebsiteStringReplacements)
+}
+
+private fun HttpExchange.respond(statusCode: Int, body: String) {
+    val response = body.toByteArray()
+    responseHeaders.add("Content-Type", "text/plain; charset=utf-8")
+    sendResponseHeaders(statusCode, response.size.toLong())
+    responseBody.use { it.write(response) }
 }

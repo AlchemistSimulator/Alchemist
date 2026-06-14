@@ -65,9 +65,6 @@ public class MoveOnMap<T, O extends RoutingServiceOptions<O>, S extends RoutingS
      */
     @Override
     public MoveOnMap<T, O, S> cloneAction(final Node<T> node, final Reaction<T> reaction) {
-        /*
-         * Routing strategies can not be cloned at the moment.
-         */
         return new MoveOnMap<>(
             getEnvironment(),
             node,

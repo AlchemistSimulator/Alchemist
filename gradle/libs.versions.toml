@@ -2,7 +2,7 @@
 androidx-lifecycle = "2.10.0"
 antlr4 = "4.13.2"
 ais-lib = "2.8.5"
-apollo ="4.4.3"
+apollo ="5.0.0"
 arrow = "2.2.3"
 compose-multiplatform = "1.11.1"
 dokka = "2.2.0"

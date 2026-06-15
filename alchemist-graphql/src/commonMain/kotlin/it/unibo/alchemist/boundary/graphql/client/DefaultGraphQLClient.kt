@@ -14,8 +14,8 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Mutation
 import com.apollographql.apollo.api.Query
 import com.apollographql.apollo.api.Subscription
-import com.apollographql.apollo.network.ws.GraphQLWsProtocol
-import com.apollographql.apollo.network.ws.WebSocketNetworkTransport
+import com.apollographql.apollo.network.websocket.GraphQLWsProtocol
+import com.apollographql.apollo.network.websocket.WebSocketNetworkTransport
 import it.unibo.alchemist.boundary.graphql.utils.DefaultGraphQLSettings
 
 /**
@@ -40,7 +40,7 @@ data class DefaultGraphQLClient(
                         WebSocketNetworkTransport
                             .Builder()
                             .serverUrl(subscriptionUrl())
-                            .protocol(GraphQLWsProtocol.Factory())
+                            .wsProtocol(GraphQLWsProtocol())
                             .build(),
                     )
                 }

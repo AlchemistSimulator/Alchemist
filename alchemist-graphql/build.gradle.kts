@@ -9,7 +9,6 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import com.apollographql.apollo.gradle.internal.ApolloGenerateSourcesTask
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
 import it.unibo.alchemist.build.allVerificationTasks
 
@@ -107,12 +106,11 @@ apollo {
     }
 }
 
-val apolloGenerationTasks = tasks.withType<ApolloGenerateSourcesTask>()
-apolloGenerationTasks.configureEach {
-    dependsOn(surrogates.tasks.named("graphqlGenerateSDL"))
+tasks.generateApolloSources.configure {
+    dependsOn("${surrogates.path}:graphqlGenerateSDL")
 }
 
-tasks.allVerificationTasks.configureEach { dependsOn(apolloGenerationTasks) }
+tasks.allVerificationTasks.configureEach { tasks.generateApolloSources }
 
 publishing.publications {
     withType<MavenPublication> {

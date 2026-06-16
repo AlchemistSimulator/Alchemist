@@ -10,6 +10,7 @@
 import Libs.alchemist
 import Libs.incarnation
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
+import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateSDLTask
 import it.unibo.alchemist.build.allVerificationTasks
 
 plugins {
@@ -71,14 +72,15 @@ graphql {
     }
 }
 
+val surrogates = project(":${project.name}-surrogates")
+
+evaluationDependsOn(surrogates.path)
+
+val graphQLGenerateSDL = surrogates.tasks.withType<GraphQLGenerateSDLTask>()
+
 tasks.withType<AbstractGenerateClientTask>().configureEach {
-    val graphQLGenerateSDL = project(":${project.name}-surrogates").tasks.named("graphqlGenerateSDL")
     dependsOn(graphQLGenerateSDL)
-    schemaFile.convention(
-        graphQLGenerateSDL
-            .map { it.property("schemaFile") as RegularFileProperty }
-            .map { it.get() },
-    )
+    schemaFile.convention(surrogates.layout.buildDirectory.file("schema.graphqls"))
     packageName.set("it.unibo.alchemist.boundary.graphql.client.generated")
     kotlin {
         sourceSets {
@@ -86,8 +88,6 @@ tasks.withType<AbstractGenerateClientTask>().configureEach {
         }
     }
 }
-
-val surrogates = project(":${project.name}-surrogates")
 
 /*
  * Configure the Apollo Gradle plugin to generate Kotlin models
@@ -106,11 +106,9 @@ apollo {
     }
 }
 
-tasks.generateApolloSources.configure {
-    dependsOn("${surrogates.path}:graphqlGenerateSDL")
-}
+tasks.named("generateAlchemist-graphqlApolloSources").configure { dependsOn(graphQLGenerateSDL) }
 
-tasks.allVerificationTasks.configureEach { dependsOn(tasks.generateApolloSources) }
+tasks.allVerificationTasks.configureEach { dependsOn(tasks.named("generateAlchemist-graphqlApolloSources")) }
 
 publishing.publications {
     withType<MavenPublication> {

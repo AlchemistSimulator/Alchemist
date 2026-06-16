@@ -98,7 +98,7 @@ apollo {
         generateKotlinModels.set(true)
         generateSourcesDuringGradleSync.set(true)
         packageName.set("it.unibo.alchemist.boundary.graphql.client")
-        schemaFiles.from(surrogates.layout.buildDirectory.file("schema.graphql"))
+        schemaFiles.from(surrogates.layout.buildDirectory.file("schema.graphqls"))
         srcDir("src/commonMain/resources/graphql")
         outputDirConnection {
             connectToKotlinSourceSet("commonMain")
@@ -110,7 +110,7 @@ tasks.generateApolloSources.configure {
     dependsOn("${surrogates.path}:graphqlGenerateSDL")
 }
 
-tasks.allVerificationTasks.configureEach { tasks.generateApolloSources }
+tasks.allVerificationTasks.configureEach { dependsOn(tasks.generateApolloSources) }
 
 publishing.publications {
     withType<MavenPublication> {

@@ -194,7 +194,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.5.1"
 publishOnCentral = "org.danilopianini.publish-on-central:9.2.4"
-scalafmt = "cz.augi.gradle.scalafmt:1.21.5"
+scalafmt = "cz.augi.gradle.scalafmt:1.21.6"
 shadowJar = "com.gradleup.shadow:9.4.2"
 taskTree = "com.dorongold.task-tree:4.0.1"
 jpackage = "org.panteleyev.jpackageplugin:2.0.1"

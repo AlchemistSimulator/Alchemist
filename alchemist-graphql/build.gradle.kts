@@ -9,8 +9,8 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import com.apollographql.apollo.gradle.internal.ApolloGenerateSourcesTask
 import com.expediagroup.graphql.plugin.gradle.tasks.AbstractGenerateClientTask
+import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateSDLTask
 import it.unibo.alchemist.build.allVerificationTasks
 
 plugins {
@@ -72,14 +72,15 @@ graphql {
     }
 }
 
+val surrogates = project(":${project.name}-surrogates")
+
+evaluationDependsOn(surrogates.path)
+
+val graphQLGenerateSDL = surrogates.tasks.named("graphqlGenerateSDL")
+
 tasks.withType<AbstractGenerateClientTask>().configureEach {
-    val graphQLGenerateSDL = project(":${project.name}-surrogates").tasks.named("graphqlGenerateSDL")
     dependsOn(graphQLGenerateSDL)
-    schemaFile.convention(
-        graphQLGenerateSDL
-            .map { it.property("schemaFile") as RegularFileProperty }
-            .map { it.get() },
-    )
+    schemaFile.convention(surrogates.layout.buildDirectory.file("schema.graphqls"))
     packageName.set("it.unibo.alchemist.boundary.graphql.client.generated")
     kotlin {
         sourceSets {
@@ -88,18 +89,18 @@ tasks.withType<AbstractGenerateClientTask>().configureEach {
     }
 }
 
-val surrogates = project(":${project.name}-surrogates")
-
 /*
  * Configure the Apollo Gradle plugin to generate Kotlin models
  * from the GraphQL schema inside the `commonMain` sourceSet.
  */
 apollo {
     service(name) {
+        val graphQLSchemaFile = files(surrogates.layout.buildDirectory.file("schema.graphqls"))
+            .builtBy(graphQLGenerateSDL)
         generateKotlinModels.set(true)
         generateSourcesDuringGradleSync.set(true)
         packageName.set("it.unibo.alchemist.boundary.graphql.client")
-        schemaFiles.from(surrogates.layout.buildDirectory.file("schema.graphql"))
+        schemaFiles.from(graphQLSchemaFile)
         srcDir("src/commonMain/resources/graphql")
         outputDirConnection {
             connectToKotlinSourceSet("commonMain")
@@ -107,12 +108,9 @@ apollo {
     }
 }
 
-val apolloGenerationTasks = tasks.withType<ApolloGenerateSourcesTask>()
-apolloGenerationTasks.configureEach {
-    dependsOn(surrogates.tasks.named("graphqlGenerateSDL"))
+tasks.allVerificationTasks.configureEach {
+    dependsOn(tasks.generateApolloSources)
 }
-
-tasks.allVerificationTasks.configureEach { dependsOn(apolloGenerationTasks) }
 
 publishing.publications {
     withType<MavenPublication> {

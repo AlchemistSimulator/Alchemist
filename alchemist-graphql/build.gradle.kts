@@ -76,7 +76,7 @@ val surrogates = project(":${project.name}-surrogates")
 
 evaluationDependsOn(surrogates.path)
 
-val graphQLGenerateSDL = surrogates.tasks.withType<GraphQLGenerateSDLTask>()
+val graphQLGenerateSDL = surrogates.tasks.named("graphqlGenerateSDL")
 
 tasks.withType<AbstractGenerateClientTask>().configureEach {
     dependsOn(graphQLGenerateSDL)
@@ -95,10 +95,12 @@ tasks.withType<AbstractGenerateClientTask>().configureEach {
  */
 apollo {
     service(name) {
+        val graphQLSchemaFile = files(surrogates.layout.buildDirectory.file("schema.graphqls"))
+            .builtBy(graphQLGenerateSDL)
         generateKotlinModels.set(true)
         generateSourcesDuringGradleSync.set(true)
         packageName.set("it.unibo.alchemist.boundary.graphql.client")
-        schemaFiles.from(surrogates.layout.buildDirectory.file("schema.graphqls"))
+        schemaFiles.from(graphQLSchemaFile)
         srcDir("src/commonMain/resources/graphql")
         outputDirConnection {
             connectToKotlinSourceSet("commonMain")
@@ -106,9 +108,9 @@ apollo {
     }
 }
 
-tasks.named("generateAlchemist-graphqlApolloSources").configure { dependsOn(graphQLGenerateSDL) }
-
-tasks.allVerificationTasks.configureEach { dependsOn(tasks.named("generateAlchemist-graphqlApolloSources")) }
+tasks.allVerificationTasks.configureEach {
+    dependsOn(tasks.generateApolloSources)
+}
 
 publishing.publications {
     withType<MavenPublication> {

@@ -1,3 +1,21 @@
+## [43.1.7](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.6...43.1.7) (2026-06-18)
+
+### Dependency updates
+
+* **deps:** update apollo graphql packages to v5 ([#5421](https://github.com/AlchemistSimulator/Alchemist/issues/5421)) ([5009a35](https://github.com/AlchemistSimulator/Alchemist/commit/5009a3593a054132589bcb49f3d96e9d573ef477))
+* **deps:** update plugin com.gradle.develocity to v4.4.3 ([#5423](https://github.com/AlchemistSimulator/Alchemist/issues/5423)) ([09289c6](https://github.com/AlchemistSimulator/Alchemist/commit/09289c65705a8c2690f0de204a9e4236f5eb1951))
+* **deps:** update plugin scalafmt to v1.21.6 ([#5427](https://github.com/AlchemistSimulator/Alchemist/issues/5427)) ([d0d77b3](https://github.com/AlchemistSimulator/Alchemist/commit/d0d77b300d3c41ab208db9a87661533ea990d6c2))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.163.3 ([#5430](https://github.com/AlchemistSimulator/Alchemist/issues/5430)) ([8c78385](https://github.com/AlchemistSimulator/Alchemist/commit/8c78385cabc72f3a5d8c3696551dfb40133392a7))
+
+### Build and continuous integration
+
+* **deps-dev:** bump js-yaml from 4.1.1 to 4.2.0 ([f8e6788](https://github.com/AlchemistSimulator/Alchemist/commit/f8e67881540d1b710a1e8b0bb6dd2146861170c6))
+* **deps:** bump tar and npm ([cfa6120](https://github.com/AlchemistSimulator/Alchemist/commit/cfa6120c471c55278ae2630ecc54e34204fbd0bd))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.36 ([#5424](https://github.com/AlchemistSimulator/Alchemist/issues/5424)) ([e07f606](https://github.com/AlchemistSimulator/Alchemist/commit/e07f60636d9a49f5ee08fb2ed12d9131e1205b99))
+
 ## [43.1.6](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.5...43.1.6) (2026-06-16)
 
 ### Dependency updates

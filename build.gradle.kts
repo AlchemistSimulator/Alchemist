@@ -56,6 +56,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven("https://artifacts.unidata.ucar.edu/repository/unidata-releases/")
     }
 
     // TEST AND COVERAGE

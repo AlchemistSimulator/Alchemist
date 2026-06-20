@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model;
 
+import it.unibo.alchemist.model.observation.Observable;
+
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 
@@ -42,7 +44,7 @@ public interface TimeDistribution<T> extends Cloneable, Serializable {
     /**
      * @return the next time at which the event will occur
      */
-    Time getNextOccurence();
+    Observable<Time> getNextOccurence();
 
     /**
      * @return how many times per time unit the event will happen on average

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <excludedPredefinedLibrary name="Alchemist/build/js/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/js/packages/alchemist-composeui-test/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/js/packages/alchemist-composeui/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/js/packages/alchemist-dsl-processor-test/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/js/packages/alchemist-dsl-processor/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/js/packages/alchemist-factories-generator-test/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/js/packages/alchemist-factories-generator/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/js/packages/alchemist-graphql-test/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/js/packages/alchemist-graphql/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/js/packages/alchemist-maintenance-tooling-test/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/js/packages/alchemist-maintenance-tooling/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/js/packages/alchemist-web-renderer-test/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/js/packages/alchemist-web-renderer/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/js/packages_imported/apollo-kotlin-apollo-runtime/4.0.0-beta.7/node_modules" />
+    <excludedPredefinedLibrary name="Alchemist/build/wasm/node_modules" />
+  </component>
+</project>

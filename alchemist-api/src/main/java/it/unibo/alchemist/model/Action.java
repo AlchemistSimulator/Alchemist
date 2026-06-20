@@ -9,9 +9,6 @@
 
 package it.unibo.alchemist.model;
 
-import org.danilopianini.util.ListSet;
-
-import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 /**
@@ -40,16 +37,4 @@ public interface Action<T> extends Serializable {
      * Effectively executes this action.
      */
     void execute();
-
-    /**
-     * @return The context for this action.
-     */
-    Context getContext();
-
-    /**
-     * @return The list of the dependencies that this action generates.
-     */
-    @Nonnull
-    ListSet<? extends Dependency> getOutboundDependencies();
-
 }

@@ -45,7 +45,7 @@ class TestSteeringBehaviors<T, P> :
                         }
                     },
                 ).nodes
-                .forEach { startDistances[it]!! shouldBeGreaterThan endDistances[it]!! }
+                .forEach { startDistances.getValue(it) shouldBeGreaterThan endDistances.getValue(it) }
         }
 
         "nodes fleeing from a target must go away from it" {
@@ -64,7 +64,7 @@ class TestSteeringBehaviors<T, P> :
                         }
                     },
                 ).nodes
-                .forEach { startDistances[it]!! shouldBeLessThan endDistances[it]!! }
+                .forEach { startDistances.getValue(it) shouldBeLessThan endDistances.getValue(it) }
         }
 
         "nodes arriving to a target must decelerate while approaching it" {

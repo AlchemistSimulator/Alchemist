@@ -56,7 +56,7 @@ public final class GenericMoleculeUnderLevel<T extends Number> extends
             getOrElse(newValue, () -> Double.NEGATIVE_INFINITY).doubleValue() < qty
         ));
 
-        setPropensity(dep.map(newValue ->
+        setPropensityContribution(dep.map(newValue ->
             Math.max(0, qty - getOrElse(newValue, () -> 0.0).doubleValue())
         ));
     }

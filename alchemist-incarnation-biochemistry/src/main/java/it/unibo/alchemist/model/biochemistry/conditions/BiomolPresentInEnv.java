@@ -72,7 +72,7 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
         final Observable<Double> totalQuantity = observeTotalQuantity();
         addObservableDependency(totalQuantity);
         setValidity(totalQuantity.map(totalQty -> totalQty >= getQuantity()));
-        setPropensity(totalQuantity.map(totalQty -> {
+        setPropensityContribution(totalQuantity.map(totalQty -> {
             if (totalQty < getQuantity()) {
                 return 0d;
             }

@@ -67,7 +67,7 @@ class TestGPSLoader {
     private static final List<String> ERRORS =
             ImmutableList.of(NO_SEGMENTS, EMPTY_SEGMENT, POINT_WITHOUT_TIME, WRONG_EXTENSION, UNRECOGNIZED_EXTENSION);
     private static final int NUM_MAX_TRACES = 6;
-    private static final int TOTAL_POINTS = 12_196;
+    private static final int TOTAL_POINTS = 16_486;
 
     /**
      *
@@ -91,7 +91,7 @@ class TestGPSLoader {
         }
         assertEquals(3, new TraceLoader(DIRECTORY_WITH_FILES, CLASS_TIME_ALIGNMENT_TO_TIME, 0.0, false, false)
             .size().orElseThrow(unexpectedCyclicTrace()));
-        final TraceLoader loaderGpx = new TraceLoader(DIRECTORY_WITH_SUBDIRECTORIES, true, ALIGNMENT);
+        final TraceLoader loaderGpx = new TraceLoader(DIRECTORY_WITH_FILES, true, ALIGNMENT);
         final Iterator<GPSTrace> trace2 = loaderGpx.iterator();
         int points = 0;
         for (int i = 0; i < NUM_MAX_TRACES; i++) {

@@ -44,13 +44,13 @@ open class Engine<T, P : Position<out P>>(
             LOGGER.info("No more reactions.")
             return
         }
-        val scheduledTime = nextEvent.tau
+        val scheduledTime = nextEvent.tau.current
         check(scheduledTime >= time) {
             "$nextEvent is scheduled in the past at time $scheduledTime. Current time: $time; current step: $step."
         }
         currentTime = scheduledTime
         batchManager.useBatch(onReschedule = { updateReaction(it) }) {
-            if (scheduledTime.isFinite && nextEvent.canExecute()) {
+            if (scheduledTime.isFinite && nextEvent.canExecute().current) {
                 nextEvent.conditions.forEach { it.reactionReady() }
                 nextEvent.execute()
             }
@@ -96,9 +96,7 @@ open class Engine<T, P : Position<out P>>(
     }
 
     private fun scheduleReaction(reaction: Actionable<T>) {
-        reaction.initializationComplete(time, environment)
         scheduler.addReaction(reaction)
-
         reaction.rescheduleRequest.onChange(this, false) {
             batchManager.requestReschedule(reaction) {
                 updateReaction(reaction)

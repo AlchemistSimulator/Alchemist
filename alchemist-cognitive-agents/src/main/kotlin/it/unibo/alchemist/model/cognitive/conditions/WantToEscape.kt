@@ -16,14 +16,16 @@ import it.unibo.alchemist.model.cognitive.CognitiveProperty
 import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
+import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observation.Observable
 
 /**
  * The intention of the pedestrian to evacuate or not.
  */
 open class WantToEscape<T, S : Vector<S>, A : Transformation<S>>(node: Node<T>) : AbstractCondition<T>(node) {
-    override fun getContext(): Context = Context.LOCAL
+    override fun getPropensityContribution(): Observable<Double> = MutableObservable.observe(0.0)
 
-    override fun getPropensityContribution(): Double = 0.0
-
-    override fun isValid(): Boolean = node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.wantsToEscape()
+    override fun isValid(): Observable<Boolean> = MutableObservable.observe(
+        node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.wantsToEscape()
+    )
 }

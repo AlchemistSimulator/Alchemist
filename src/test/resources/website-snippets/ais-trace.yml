@@ -1,0 +1,12 @@
+incarnation: sapere
+environment:
+  type: OSMEnvironment
+deployments:
+  - type: FromGPSTrace
+    parameters: [1, "ais/ais-20260515.nmea", true, "AlignToSimulationTime"]
+    programs:
+      - time-distribution: 1
+        type: Event
+        actions:
+          - type: ReproduceGPSTrace
+            parameters: ["ais/ais-20260515.nmea", true, "AlignToSimulationTime"]

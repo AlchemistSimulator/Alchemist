@@ -12,8 +12,6 @@ package it.unibo.alchemist.model;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.observation.Disposable;
 import it.unibo.alchemist.model.observation.Observable;
-import it.unibo.alchemist.model.observation.ObservableSet;
-import org.danilopianini.util.ListSet;
 
 import java.io.Serializable;
 
@@ -39,23 +37,6 @@ public interface Condition<T> extends Serializable, Disposable {
     Condition<T> cloneCondition(Node<T> node, Reaction<T> reaction);
 
     /**
-     * @return The context for this condition.
-     */
-    Context getContext();
-
-    /**
-     * @return The list of molecules whose concentration may influence the truth
-     *         value of this condition
-     */
-    ListSet<? extends Dependency> getInboundDependencies();
-
-    /**
-     * @return The set of dependencies which may influence the truth value of this
-     *         condition, as an {@link ObservableSet} of {@link Observable}
-     */
-    ObservableSet<? extends Observable<?>> observeInboundDependencies();
-
-    /**
      * @return the node this Condition belongs to
      */
     Node<T> getNode();
@@ -68,25 +49,12 @@ public interface Condition<T> extends Serializable, Disposable {
      *
      * @return how this condition may influence the propensity.
      */
-    double getPropensityContribution();
-
-    /**
-     * An observable and reactive view of the corresponding {@link #getPropensityContribution()}.
-     *
-     * @return an observable view of how this condition may influence the propensity.
-     */
-    Observable<Double> observePropensityContribution();
+    Observable<Double> getPropensityContribution();
 
     /**
      * @return true if the condition is satisfied in the current environment.
      */
-    boolean isValid();
-
-    /**
-     * @return an observable that emits true if the condition is satisfied in the
-     *          current environment.
-     */
-    Observable<Boolean> observeValidity();
+    Observable<Boolean> isValid();
 
     /**
      * This method is called by the {@link Simulation} once the {@link Reaction}

@@ -335,7 +335,7 @@ object ObservableExtensions {
      * into a single observable mirroring the most recently emitted observable.
      *
      * @param transform a function that returns an [Observable] for reach item emitted by the source.
-     * @return an [Observable] that emist the items emitted by the observable returned by [transform].
+     * @return an [Observable] that emits the items emitted by the observable returned by [transform].
      */
     fun <T, R> Observable<T>.switchMap(transform: (T) -> Observable<R>): Observable<R> =
         object : DerivedObservable<R>() {

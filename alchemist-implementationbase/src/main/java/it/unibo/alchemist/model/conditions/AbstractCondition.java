@@ -11,16 +11,11 @@ package it.unibo.alchemist.model.conditions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Condition;
-import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableMutableSet;
-import it.unibo.alchemist.model.observation.ObservableSet;
-import org.danilopianini.util.LinkedListSet;
-import org.danilopianini.util.ListSet;
-import org.danilopianini.util.ListSets;
 
 import javax.annotation.Nonnull;
 import java.io.Serial;
@@ -33,7 +28,6 @@ public abstract class AbstractCondition<T> implements Condition<T> {
 
     @Serial
     private static final long serialVersionUID = -1610947908159507754L;
-    private final ListSet<Dependency> influencing = new LinkedListSet<>();
     private final Node<T> node;
 
     private final ObservableMutableSet<Observable<?>> dependencies = new ObservableMutableSet<>();
@@ -60,24 +54,6 @@ public abstract class AbstractCondition<T> implements Condition<T> {
      * {@inheritDoc}
      *
      * <p>
-     * How to override: if you intend your condition to be potentially changed by
-     * any change in the context, return null.
-     */
-    @Override
-    public final ListSet<? extends Dependency> getInboundDependencies() {
-        return ListSets.unmodifiableListSet(influencing);
-    }
-
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
-    @Override
-    public final ObservableSet<? extends Observable<?>> observeInboundDependencies() {
-        return dependencies;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
      * Override if your {@link Condition} can return a more specific type of node.
      * The typical way is to cast the call to super.getNode().
      */
@@ -85,13 +61,6 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "It is intentional")
     public Node<T> getNode() {
         return node;
-    }
-
-    /**
-     * @param m the molecule to add
-     */
-    protected final void declareDependencyOn(final Dependency m) {
-        influencing.add(m);
     }
 
     /**
@@ -106,44 +75,21 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     }
 
     /**
-     * If you plan to extend this method, please consider leaving this
-     * implementation as is and use a reactive/observable style by
-     * overriding {@link #observeValidity()}.
-     *
-     * @return whether this condition is valid.
-     */
-    @Override
-    public boolean isValid() {
-        return observeValidity().getCurrent();
-    }
-
-    /**
      * If you plan to override this method, make sure to free up additional
      * observables in {@link #dispose()}.
      */
     @Override
-    public Observable<Boolean> observeValidity() {
+    public Observable<Boolean> isValid() {
         return validity;
     }
 
-    /**
-     * If you plan to extend this method, please consider leaving this
-     * implementation as is and use a reactive/observable style by
-     * overriding {@link #observePropensityContribution()}.
-     *
-     * @return this condition's propensity contribution.
-     */
-    @Override
-    public double getPropensityContribution() {
-        return observePropensityContribution().getCurrent();
-    }
 
     /**
      * If you plan to override this method, make sure to free up additional
      * observables in {@link #dispose()}.
      */
     @Override
-    public Observable<Double> observePropensityContribution() {
+    public Observable<Double> getPropensityContribution() {
         return propensity;
     }
 
@@ -184,7 +130,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
      *
      * @param newPropensity the propensity to set
      */
-    protected final void setPropensity(final Observable<Double> newPropensity) {
+    protected final void setPropensityContribution(final Observable<Double> newPropensity) {
         this.propensity = newPropensity;
     }
 

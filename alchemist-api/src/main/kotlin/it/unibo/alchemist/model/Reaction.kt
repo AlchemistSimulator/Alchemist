@@ -17,20 +17,6 @@ package it.unibo.alchemist.model
 </T> */
 interface Reaction<T> : Actionable<T> {
     /**
-     * The widest [Context] among [Condition]s, namely the
-     * smallest [Context] in which the [Reaction] can read
-     * informations.
-     */
-    val inputContext: Context
-
-    /**
-     * The widest [Context] among [Action]s, namely the
-     * smallest context in which the [Reaction] can do
-     * modifications.
-     */
-    val outputContext: Context
-
-    /**
      * @return The [Node] in which this [Reaction] executes.
      */
     val node: Node<T>

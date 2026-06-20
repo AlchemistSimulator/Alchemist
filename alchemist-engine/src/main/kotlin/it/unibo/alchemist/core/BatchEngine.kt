@@ -103,20 +103,16 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
             LOGGER.info("No more reactions.")
             return
         }
-        val sortedNextEvents = nextEvents.sortedBy { it.tau }
-        val minSlidingWindowTime = sortedNextEvents.first().tau
-        val maxSlidingWindowTime = sortedNextEvents.last().tau
+        val sortedNextEvents = nextEvents.sortedBy { it.tau.current }
+        val minSlidingWindowTime = sortedNextEvents.first().tau.current
+        val maxSlidingWindowTime = sortedNextEvents.last().tau.current
 
         runBlocking {
-            val taskMapper =
-                Function { event: Actionable<T> ->
-                    async {
-                        doEvent(
-                            event,
-                            minSlidingWindowTime,
-                        )
-                    }
+            val taskMapper = Function { event: Actionable<T> ->
+                async {
+                    doEvent(event, minSlidingWindowTime)
                 }
+            }
             val tasks = nextEvents.stream().map(taskMapper).collect(Collectors.toList())
             try {
                 val futureResults = tasks.awaitAll()
@@ -148,12 +144,10 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
 
     private fun doEvent(nextEvent: Actionable<T>, slidingWindowTime: Time): TaskResult {
         validateEventExecutionTime(nextEvent, slidingWindowTime)
-        val currentLocalTime = nextEvent.tau
-
-        if (nextEvent.canExecute()) {
+        val currentLocalTime = nextEvent.tau.current
+        if (nextEvent.canExecute().current) {
             safeExecuteEvent(nextEvent)
         }
-
         nextEvent.update(currentLocalTime, true, environment)
         synchronized(scheduler) {
             scheduler.updateReaction(nextEvent)
@@ -177,12 +171,9 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
     }
 
     private fun validateEventExecutionTime(nextEvent: Actionable<T>, slidingWindowTime: Time) {
-        val scheduledTime = nextEvent.tau
+        val scheduledTime = nextEvent.tau.current
         if (!isEventTimeScheduledInFirstBatch(scheduledTime) &&
-            isEventScheduledBeforeCurrentTime(
-                scheduledTime,
-                slidingWindowTime,
-            )
+            isEventScheduledBeforeCurrentTime(scheduledTime, slidingWindowTime)
         ) {
             error(
                 nextEvent.toString() + " is scheduled in the past at time " + scheduledTime +

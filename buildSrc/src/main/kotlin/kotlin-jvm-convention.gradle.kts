@@ -8,7 +8,9 @@
  */
 
 import Libs.alchemist
+import com.github.spotbugs.snom.SpotBugsTask
 import it.unibo.alchemist.build.catalog
+import org.gradle.api.tasks.SourceSetContainer
 import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 
 /*
@@ -61,7 +63,6 @@ java {
 kotlin {
     compilerOptions {
         jvmDefault.set(JvmDefaultMode.ENABLE)
-        freeCompilerArgs.add("-Xcontext-parameters") // Enable context receivers
     }
 }
 
@@ -80,4 +81,11 @@ tasks.withType<Checkstyle>().configureEach {
     javaLauncher = javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(25))
     }
+}
+
+val sourceSets = extensions.getByType<SourceSetContainer>()
+tasks.withType<SpotBugsTask>().configureEach {
+    val sourceSetName = name.removePrefix("spotbugs").replaceFirstChar(Char::lowercase)
+    val javaSources = sourceSets.findByName(sourceSetName)?.allJava
+    enabled = javaSources?.files?.isNotEmpty() ?: false
 }

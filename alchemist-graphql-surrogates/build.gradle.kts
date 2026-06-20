@@ -28,6 +28,7 @@ dependencies {
 tasks {
     graphqlGenerateSDL {
         packages = listOf("monitor", "schema", "operations", "util").map { "it.unibo.alchemist.boundary.graphql.$it" }
+        schemaFile.set(layout.buildDirectory.file("schema.graphqls"))
     }
     withType<KotlinCompile>().configureEach {
         finalizedBy(graphqlGenerateSDL)

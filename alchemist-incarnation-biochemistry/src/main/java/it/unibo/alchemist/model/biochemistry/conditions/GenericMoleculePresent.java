@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.biochemistry.conditions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
@@ -32,7 +31,7 @@ public class GenericMoleculePresent<T extends Number> extends
     @Serial
     private static final long serialVersionUID = -7400434133059391639L;
     private final Molecule molecule;
-    private final T qty;
+    private final T quantity;
 
     /**
      * Builds a new condition, which checks if the molecule exists or not inside
@@ -48,17 +47,8 @@ public class GenericMoleculePresent<T extends Number> extends
             throw new IllegalArgumentException("The quantity of compound must be a positive number.");
         }
         molecule = mol;
-        qty = quantity;
-        declareDependencyOn(mol);
+        this.quantity = quantity;
         setupObservables();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Context getContext() {
-        return Context.LOCAL;
     }
 
     /**
@@ -72,17 +62,14 @@ public class GenericMoleculePresent<T extends Number> extends
      */
     private void setupObservables() {
         final var obs = getNode().observeConcentration(molecule);
-
         addObservableDependency(obs);
-
         setValidity(obs.map(it -> {
             final double value = getOrElse(it, () -> 0.0).doubleValue();
-            return value >= qty.doubleValue();
+            return value >= quantity.doubleValue();
         }));
-
-        setPropensity(obs.map(it -> {
+        setPropensityContribution(obs.map(it -> {
             final int n = getOrElse(it, () -> 0).intValue();
-            final int k = qty.intValue();
+            final int k = quantity.intValue();
             if (k > n) {
                 return 0.0;
             }
@@ -95,7 +82,7 @@ public class GenericMoleculePresent<T extends Number> extends
      */
     @Override
     public String toString() {
-        return molecule.toString() + ">=" + qty;
+        return molecule.toString() + ">=" + quantity;
     }
 
     /**
@@ -103,7 +90,7 @@ public class GenericMoleculePresent<T extends Number> extends
      */
     @Override
     public GenericMoleculePresent<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
-        return new GenericMoleculePresent<>(newNode, molecule, qty);
+        return new GenericMoleculePresent<>(newNode, molecule, quantity);
     }
 
     /**
@@ -112,7 +99,7 @@ public class GenericMoleculePresent<T extends Number> extends
      * @return the current threshold
      */
     public T getQuantity() {
-        return qty;
+        return quantity;
     }
 
     /**

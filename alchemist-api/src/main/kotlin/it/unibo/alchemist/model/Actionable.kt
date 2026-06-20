@@ -11,23 +11,20 @@ package it.unibo.alchemist.model
 
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableList
+import it.unibo.alchemist.model.observation.ObservableMutableList.Companion.toObservableList
 import it.unibo.alchemist.model.observation.lifecycle.LifecycleOwner
 import java.io.Serializable
 import org.danilopianini.util.ListSet
 
 /**
- * A time-distributed entity with [inboundDependencies], [outboundDependencies] and an execution strategy.
+ * A time-distributed entity with an execution strategy.
  */
 sealed interface Actionable<T> :
     Comparable<Actionable<T>>,
     Serializable,
     Disposable,
     LifecycleOwner {
-    /**
-     * @return true if the reaction can be executed (namely, all the conditions
-     * are satisfied).
-     */
-    fun canExecute(): Boolean
 
     /**
      * Observes whether the reaction can be executed. This observable emits updates
@@ -35,26 +32,12 @@ sealed interface Actionable<T> :
      *
      * @return An [Observable] emitting true if the reaction van be executed, false otherwise.
      */
-    fun observeCanExecute(): Observable<Boolean>
+    fun canExecute(): Observable<Boolean>
 
     /**
      * Executes the reactions.
      */
     fun execute()
-
-    /**
-     * This method is called when the environment has completed its
-     * initialization. Can be used by this reaction to compute its next
-     * execution time - in case such computation requires an inspection of the
-     * environment.
-     *
-     * @param atTime
-     * the time at which the initialization of this reaction was
-     * accomplished
-     * @param environment
-     * the environment
-     */
-    fun initializationComplete(atTime: Time, environment: Environment<T, *>)
 
     /**
      *  The list of [Action]s of the [Reaction].
@@ -67,18 +50,6 @@ sealed interface Actionable<T> :
      * Please be careful when you modify this list.
      */
     var conditions: List<Condition<T>>
-
-    /**
-     * @return The list of [Dependency] whose concentration may change after the
-     * execution of this reaction.
-     */
-    val outboundDependencies: ListSet<out Dependency>
-
-    /**
-     * @return The list of [Dependency]s whose concentration may affect the
-     * execution of the [Reaction].
-     */
-    val inboundDependencies: ListSet<out Dependency>
 
     /**
      * Returns the speed of this [Reaction]. It is an average number, and
@@ -94,7 +65,7 @@ sealed interface Actionable<T> :
      * @return The global [Time] at which this reaction is scheduled to be
      * executed
      */
-    val tau: Time get() = timeDistribution.nextOccurence
+    val tau: Observable<Time>
 
     /**
      * @return the [TimeDistribution] for this [Reaction]
@@ -106,6 +77,15 @@ sealed interface Actionable<T> :
      * to reschedule this reaction.
      */
     val rescheduleRequest: Observable<Unit>
+
+    /**
+     * Optional rate equation used to compute the next scheduled time from the
+     * propensity contribution value of each condition and the current time.
+     *
+     * When present, the implementation uses this function instead of the default
+     * scheduling logic (taking the distribution time).
+     */
+    val rateEquation: ((List<Double>, Time) -> Time)?
 
     /**
      * Updates the scheduling of this reaction.

@@ -173,7 +173,7 @@ public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
     }
 
     @Override
-    public String toString() {
+    public @Nonnull String toString() {
         final StringBuilder builder = new StringBuilder();
         for (final Node<T> n : getNodes()) {
             builder.append(retrievePosition(n)).append(' ').append(n).append('\n');

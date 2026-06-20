@@ -68,7 +68,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
      * Override if the desired behavior differs. Default is returning the sum of the neighbor's propensities
      */
     protected void setPropensityContributionObservable() {
-        setPropensity(observeValidNeighbors().map(nodes ->
+        setPropensityContribution(observeValidNeighbors().map(nodes ->
             nodes.values().stream().mapToDouble(it -> it).sum()
         ));
     }

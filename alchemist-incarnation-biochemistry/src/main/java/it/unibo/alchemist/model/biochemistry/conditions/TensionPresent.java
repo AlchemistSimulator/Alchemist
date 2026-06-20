@@ -60,7 +60,7 @@ public final class TensionPresent extends AbstractCondition<Double> {
 
     private void setPropensityContribution() {
         final var thisNode = getNode();
-        setPropensity(
+        setPropensityContribution(
             environment.observeNodesWithinRange(thisNode, environment.getMaxDiameterAmongCircularDeformableCells()).map(it ->
                 it.stream()
                     .flatMap(node ->

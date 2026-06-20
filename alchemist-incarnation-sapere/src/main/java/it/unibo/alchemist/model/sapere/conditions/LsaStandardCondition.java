@@ -51,7 +51,7 @@ public class LsaStandardCondition extends AbstractLsaCondition {
 
         addObservableDependency(n.observeMoleculeName(mol.getArg(0).toString()));
         setValidity(valid);
-        setPropensity(MutableObservable.Companion.observe(-1d));
+        setPropensityContribution(MutableObservable.Companion.observe(-1d));
 
         molecule = mol;
     }

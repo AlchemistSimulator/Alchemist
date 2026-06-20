@@ -10,9 +10,12 @@ package it.unibo.alchemist.model.scafi.conditions
 
 import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.incarnations.ScafiIncarnationUtils
+import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.scafi.actions.RunScafiProgram
 import it.unibo.alchemist.model.scafi.properties.ScafiDevice
 import it.unibo.alchemist.model.{Condition, Context, Node, Reaction}
+
+import java.lang
 
 final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val program: RunScafiProgram[_, _])
     extends AbstractCondition(device.getNode) {
@@ -40,7 +43,7 @@ final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val p
 
   override def getPropensityContribution = if (isValid) 1 else 0
 
-  override def isValid = program.isComputationalCycleComplete
+  override def isValid: Observable[lang.Boolean] = program.isComputationalCycleComplete
 
   override def getNode = super.getNode
 

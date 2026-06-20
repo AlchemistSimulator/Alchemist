@@ -37,7 +37,7 @@ class ArrayIndexedPriorityEpsilonBatchQueue<T>(
             val prev = delegate.tree[0]
             result.add(prev)
             for (next in delegate.tree.subList(1, delegate.tree.size)) {
-                if (abs(next.tau.toDouble() - prev.tau.toDouble()) >= epsilon) {
+                if (abs(next.tau.current.toDouble() - prev.tau.current.toDouble()) >= epsilon) {
                     break
                 } else {
                     result.add(next)

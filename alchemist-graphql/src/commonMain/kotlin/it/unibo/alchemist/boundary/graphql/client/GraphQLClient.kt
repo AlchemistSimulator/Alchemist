@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.boundary.graphql.client
 
-import com.apollographql.apollo3.ApolloCall
-import com.apollographql.apollo3.api.Mutation
-import com.apollographql.apollo3.api.Query
-import com.apollographql.apollo3.api.Subscription
+import com.apollographql.apollo.ApolloCall
+import com.apollographql.apollo.api.Mutation
+import com.apollographql.apollo.api.Query
+import com.apollographql.apollo.api.Subscription
 
 /**
  * Basic GraphQL client capable of preparing queries, mutations, and subscriptions for execution.

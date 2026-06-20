@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.conditions;
 
 import it.unibo.alchemist.model.Condition;
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
@@ -42,20 +41,14 @@ public final class MoleculeHasConcentration<T> extends AbstractCondition<T> {
         super(node);
         this.mol = Objects.requireNonNull(molecule);
         this.value = Objects.requireNonNull(value);
-        declareDependencyOn(this.mol);
         addObservableDependency(node.observeConcentration(molecule));
         setValidity(node.observeConcentration(molecule).map(opt -> opt.fold(() -> false, value::equals)));
-        setPropensity(observeValidity().map(valid -> valid ? 1d : 2d));
+        setPropensityContribution(isValid().map(valid -> valid ? 1d : 0d));
     }
 
     @Override
     public Condition<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
         return new MoleculeHasConcentration<>(newNode, mol, value);
-    }
-
-    @Override
-    public Context getContext() {
-        return Context.LOCAL;
     }
 
     @Override

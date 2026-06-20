@@ -19,6 +19,6 @@ import it.unibo.alchemist.model.Node
 @Suppress("AbstractClassCanBeConcreteClass")
 abstract class AbstractNonPropensityContributingCondition<T>(node: Node<T>) : AbstractCondition<T>(node) {
     init {
-        setPropensity(observeValidity().map { if (it) 1.0 else 0.0 })
+        setPropensityContribution(isValid().map { if (it) 1.0 else 0.0 })
     }
 }

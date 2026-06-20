@@ -41,6 +41,4 @@ open class ToggleMolecule<T>(node: Node<T>, protected val molecule: Molecule, pr
      * Switch on the molecule and set its concentration.
      */
     private fun switchOn() = node.setConcentration(molecule, concentration)
-
-    override fun getContext() = Context.LOCAL
 }

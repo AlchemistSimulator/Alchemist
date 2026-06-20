@@ -38,7 +38,7 @@ class NoOtherReactionCanExecute<T>(node: Node<T>, private val myReaction: Reacti
             node.reactions
                 .filterNot { it == myReaction }
                 .filter { it.conditions.isNotEmpty() }
-                .map { it.observeCanExecute() }
+                .map { it.canExecute() }
                 .combineLatest { reactionsCanExecute -> reactionsCanExecute.none { it } }
                 .map { it.getOrElse { true } },
         )
@@ -46,6 +46,4 @@ class NoOtherReactionCanExecute<T>(node: Node<T>, private val myReaction: Reacti
 
     override fun cloneCondition(newNode: Node<T>, newReaction: Reaction<T>) =
         NoOtherReactionCanExecute(newNode, myReaction)
-
-    override fun getContext() = Context.LOCAL
 }

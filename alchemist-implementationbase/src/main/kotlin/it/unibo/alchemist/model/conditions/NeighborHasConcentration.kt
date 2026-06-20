@@ -47,8 +47,6 @@ class NeighborHasConcentration<T>(
         )
     }
 
-    override fun getContext(): Context = Context.NEIGHBORHOOD
-
     override fun cloneCondition(newNode: Node<T>, newReaction: Reaction<T>): Condition<T> =
         NeighborHasConcentration(newNode, environment, target, concentration)
 }

@@ -16,7 +16,7 @@ plugins {
 dependencies {
     api(alchemist("api"))
     implementation(libs.cdm.core)
-    compileOnly(libs.cdm.grib)
+    runtimeOnly(libs.cdm.grib)
     implementation(libs.gson)
     implementation(libs.slf4j)
 }

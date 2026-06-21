@@ -18,7 +18,9 @@ dependencies {
     implementation(libs.cdm.core)
     runtimeOnly(libs.cdm.grib)
     implementation(libs.gson)
+    implementation(libs.guava)
     implementation(libs.slf4j)
+    testImplementation(alchemist("test"))
 }
 
 publishing.publications {

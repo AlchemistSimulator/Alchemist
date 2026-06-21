@@ -29,15 +29,15 @@ public interface TimeDistribution<T> extends Cloneable, Serializable {
      *            current time
      * @param executed
      *            true if the reaction has just been executed
-     * @param param
-     *            a parameter passed by the reaction
+     * @param source
+     *            the host reaction
      * @param environment
      *            the current environment
      */
     void update(
         @Nonnull Time currentTime,
         boolean executed,
-        double param,
+        @Nonnull Actionable<T> source,
         @Nonnull Environment<T, ?> environment
     );
 

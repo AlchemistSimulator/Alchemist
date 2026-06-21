@@ -22,10 +22,10 @@ import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.lifecycle.Lifecycle
 import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry
-import org.danilopianini.util.ImmutableListSet
-import org.danilopianini.util.ListSet
 import java.util.function.Supplier
 import javax.annotation.Nonnull
+import org.danilopianini.util.ImmutableListSet
+import org.danilopianini.util.ListSet
 
 /**
  * The type which describes the concentration of a molecule.
@@ -34,11 +34,8 @@ import javax.annotation.Nonnull
  *
  * @param <T> concentration type
 </T> */
-abstract class AbstractReaction<T>(
-    override val node: Node<T>,
-    override val timeDistribution: TimeDistribution<T>,
-    final override val rateEquation: ((List<Double>, Time) -> Time)? = null,
-) : Reaction<T> {
+abstract class AbstractReaction<T>(override val node: Node<T>, override val timeDistribution: TimeDistribution<T>) :
+    Reaction<T> {
     override var actions: List<Action<T>> = emptyList()
 
     override var conditions: List<Condition<T>> = emptyList()
@@ -84,19 +81,7 @@ abstract class AbstractReaction<T>(
      */
     protected val reactionName: String get() = javaClass.simpleName
 
-    override val tau: Observable<Time> by lazy {
-        when (rateEquation) {
-            null -> timeDistribution.nextOccurence
-            else -> {
-                val propensityContributionChanged: Observable<Unit> = conditions
-                    .map { it.propensityContribution.map { Unit } }
-                    .reduce { a, b -> a.mergeWith(b) { _, _ -> } }
-                propensityContributionChanged.mergeWith(timeDistribution.nextOccurence) { _, time ->
-                    rateEquation(conditions.map { it.propensityContribution.current }, time)
-                }
-            }
-        }
-    }
+    override val tau: Observable<Time> get() = timeDistribution.nextOccurence
 
     /**
      * This method is called when the environment has completed its
@@ -145,30 +130,26 @@ abstract class AbstractReaction<T>(
         append(actions)
     }.also { stringLength = it.length }
 
-    override fun update(
-        @Nonnull currentTime: Time,
-        hasBeenExecuted: Boolean,
-        @Nonnull environment: Environment<T, *>,
-    ) {
-        updateInternalStatus(currentTime, hasBeenExecuted, environment)
-        timeDistribution.update(currentTime, hasBeenExecuted, rate, environment)
+    override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) {
+//        updateInternalStatus(currentTime, hasBeenExecuted, environment)
+        timeDistribution.update(currentTime, hasBeenExecuted, this, environment)
     }
 
-    /**
-     * This method gets called as soon as
-     * [.update] is called. It is useful to
-     * update the internal status of the reaction.
-     *
-     * @param currentTime     the current simulation time
-     * @param hasBeenExecuted true if this reaction has just been executed, false if the
-     * update has been triggered due to a dependency
-     * @param environment     the current environment
-     */
-    protected abstract fun updateInternalStatus(
-        currentTime: Time?,
-        hasBeenExecuted: Boolean,
-        environment: Environment<T, *>,
-    )
+//    /**
+//     * This method gets called as soon as
+//     * [.update] is called. It is useful to
+//     * update the internal status of the reaction.
+//     *
+//     * @param currentTime     the current simulation time
+//     * @param hasBeenExecuted true if this reaction has just been executed, false if the
+//     * update has been triggered due to a dependency
+//     * @param environment     the current environment
+//     */
+//    protected abstract fun updateInternalStatus(
+//        currentTime: Time?,
+//        hasBeenExecuted: Boolean,
+//        environment: Environment<T, *>,
+//    )
 
     private companion object {
         /**

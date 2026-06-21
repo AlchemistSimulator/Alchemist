@@ -20,11 +20,10 @@ import org.danilopianini.util.ListSet
 /**
  * A time-distributed entity with an execution strategy.
  */
-sealed interface Actionable<T> :
-    Comparable<Actionable<T>>,
-    Serializable,
-    Disposable,
-    LifecycleOwner {
+sealed interface Actionable<T> : Comparable<Actionable<T>> {
+//    Serializable,
+//    Disposable,
+//    LifecycleOwner {
 
     /**
      * Observes whether the reaction can be executed. This observable emits updates
@@ -77,15 +76,6 @@ sealed interface Actionable<T> :
      * to reschedule this reaction.
      */
     val rescheduleRequest: Observable<Unit>
-
-    /**
-     * Optional rate equation used to compute the next scheduled time from the
-     * propensity contribution value of each condition and the current time.
-     *
-     * When present, the implementation uses this function instead of the default
-     * scheduling logic (taking the distribution time).
-     */
-    val rateEquation: ((List<Double>, Time) -> Time)?
 
     /**
      * Updates the scheduling of this reaction.

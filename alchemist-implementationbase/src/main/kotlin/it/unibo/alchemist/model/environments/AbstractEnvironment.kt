@@ -38,11 +38,7 @@ import java.io.Serial
 import java.util.Objects
 import java.util.Spliterator
 import java.util.function.Consumer
-import org.danilopianini.util.ArrayListSet
-import org.danilopianini.util.ImmutableListSet
-import org.danilopianini.util.LinkedListSet
-import org.danilopianini.util.ListSet
-import org.danilopianini.util.ListSets
+import kotlinx.collections.immutable.ImmutableList
 import org.danilopianini.util.SpatialIndex
 
 /**
@@ -58,8 +54,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     incarnation: Incarnation<T, P>,
     internalIndex: SpatialIndex<Node<T>>,
 ) : Environment<T, P> {
-    private val _nodes: ListSet<Node<T>> = ArrayListSet()
-    private val _globalReactions = ArrayListSet<GlobalReaction<T>>()
+    private val _nodes: List<Node<T>> = emptyList()
+    private val _globalReactions = ArrayList<GlobalReaction<T>>()
     final override var layers: Map<Molecule, Layer<T, P>> = LinkedHashMap()
         private set
 
@@ -75,7 +71,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
 //    override val layers: Map<Molecule, Layer<T, P>> get() = _layers
 
-    override val globalReactions: ListSet<GlobalReaction<T>>
+    override val globalReactions: ImmutableList<GlobalReaction<T>>
         get() = ListSets.unmodifiableListSet(_globalReactions)
 
     override val nodes: ListSet<Node<T>> = ListSets.unmodifiableListSet(_nodes)

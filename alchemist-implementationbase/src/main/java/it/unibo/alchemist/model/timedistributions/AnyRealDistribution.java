@@ -125,7 +125,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
             }
             next = new DoubleTime(currentTime.toDouble() + step);
         }
-        if (additionalParameter == 0) {
+        if (source.getRate() == 0) {
             // The execution is blocked
             setNextOccurrence(Time.INFINITY);
         } else {

@@ -32,7 +32,7 @@ class ConstantSpeed<T, P : Position<P>>(private val reaction: Reaction<*>, priva
         require(speed >= 0) { "Speed must be positive or zero in $reaction. Provided: $speed" }
     }
 
-    override fun getNodeMovementLength(target: P?): Double = speed / reaction.rate
+    override fun getNodeMovementLength(target: P?): Double = speed / reaction.timeDistribution.rate
 
     override fun cloneIfNeeded(destination: Node<T>, reaction: Reaction<T>): ConstantSpeed<T, P> =
         ConstantSpeed(reaction, speed)

@@ -53,11 +53,11 @@ class TestIncarnation {
         assertNotNull(node);
         final TimeDistribution<Object> immediately = INCARNATION.createTimeDistribution(rng, environment, node, null);
         assertNotNull(immediately);
-        assertTrue(Double.isInfinite(immediately.getRate()));
-        assertTrue(immediately.getRate() > 0);
+        assertTrue(Double.isInfinite(immediately.rate));
+        assertTrue(immediately.rate > 0);
         final TimeDistribution<Object> standard = INCARNATION.createTimeDistribution(rng, environment, node, "3");
         assertNotNull(standard);
-        assertEquals(3d, standard.getRate(), Double.MIN_VALUE);
+        assertEquals(3d, standard.rate, Double.MIN_VALUE);
         final Reaction<Object> generic = INCARNATION.createReaction(rng, environment, node, standard, null);
         assertNotNull(generic);
         assertInstanceOf(Event.class, generic);

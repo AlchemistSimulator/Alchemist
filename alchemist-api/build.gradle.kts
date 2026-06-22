@@ -14,10 +14,9 @@ plugins {
 dependencies {
     api(libs.apache.commons.math3)
     api(libs.jool)
-    api(libs.listset)
-    implementation(libs.kotlin.reflect)
     api(libs.arrow.core)
-    api(libs.kotlinx.collections.immutable)
+    api(libs.kotlinx.collections.immutable.jvm)
+    implementation(libs.kotlin.reflect)
     testImplementation(libs.kotlin.test)
 }
 

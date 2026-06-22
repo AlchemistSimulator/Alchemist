@@ -9,13 +9,11 @@
 
 package it.unibo.alchemist.model;
 
-import java.io.Serializable;
-
 /**
  *          Interface for a molecule.
  *
  */
-public interface Molecule extends Serializable {
+public interface Molecule {
 
     /**
      * @return the name of this {@link Molecule}

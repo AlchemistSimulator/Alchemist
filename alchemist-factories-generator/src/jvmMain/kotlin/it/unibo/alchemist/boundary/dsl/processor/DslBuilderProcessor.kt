@@ -28,7 +28,6 @@ import it.unibo.alchemist.boundary.dsl.processor.extensions.nameOrTypeName
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
-import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TimeDistribution

@@ -13,11 +13,8 @@ import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.util.BugReporting.reportBug
-import org.danilopianini.util.ArrayListSet
 import org.danilopianini.util.Hashes
 import org.danilopianini.util.ImmutableListSet
-import org.danilopianini.util.ListSet
-import org.danilopianini.util.ListSets
 
 /**
  * A basic implementation of the [Neighborhood] interface.
@@ -25,27 +22,13 @@ import org.danilopianini.util.ListSets
 class SimpleNeighborhood<T, P : Position<P>> private constructor(
     private val environment: Environment<T, P>,
     private val center: Node<T>,
-    private val neighbors: ImmutableListSet<out Node<T>>,
+    override val neighbors: ImmutableL<out Node<T>>,
 ) : Neighborhood<T> {
     internal constructor(
         environment: Environment<T, P>,
         center: Node<T>,
         neighbors: Iterable<Node<T>>,
     ) : this(environment, center, ImmutableListSet.Builder<Node<T>>().addAll(neighbors).build())
-
-    override fun clone() = SimpleNeighborhood(environment, center, ArrayListSet(neighbors))
-
-    override fun contains(node: Node<T>?) = neighbors.contains(node)
-
-    override fun getCenter() = center
-
-    override fun getNeighbors(): ListSet<out Node<T>> = ListSets.unmodifiableListSet(neighbors)
-
-    override fun isEmpty() = neighbors.isEmpty()
-
-    override fun iterator() = neighbors.iterator()
-
-    override fun size() = neighbors.size
 
     override fun toString() = "$center links: $neighbors"
 

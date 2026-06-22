@@ -13,7 +13,7 @@ import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableSet
 import java.io.Serializable
-import org.danilopianini.util.ListSet
+import kotlinx.collections.immutable.ImmutableList
 
 /**
  * Interface for an environment.
@@ -42,7 +42,7 @@ interface Environment<T, P : Position<out P>> :
     /**
      * Get the [Environment]'s [GlobalReaction]s.
      */
-    val globalReactions: ListSet<GlobalReaction<T>>
+    val globalReactions: List<GlobalReaction<T>>
 
     /**
      * Adds a new [node] to this environment in a specific [position].
@@ -109,7 +109,7 @@ interface Environment<T, P : Position<out P>> :
     /**
      * Returns all the [Node]s that exist in current [Environment].
      */
-    val nodes: ListSet<Node<T>>
+    val nodes: ImmutableList<Node<T>>
 
     /**
      * An [Observable] view of all the [Node]s that exist in current [Environment].
@@ -129,7 +129,7 @@ interface Environment<T, P : Position<out P>> :
      * neighborhood if you are sure that all the nodes within the range are
      * connected to the center.
      */
-    fun getNodesWithinRange(node: Node<T>, range: Double): ListSet<Node<T>>
+    fun getNodesWithinRange(node: Node<T>, range: Double): List<Node<T>>
 
     /**
      * An [Observable] alternative to [getNodesWithinRange].
@@ -142,7 +142,7 @@ interface Environment<T, P : Position<out P>> :
      * Note that this method
      * (depending on the implementation) might be not optimized.
      */
-    fun getNodesWithinRange(position: P, range: Double): ListSet<Node<T>>
+    fun getNodesWithinRange(position: P, range: Double): List<Node<T>>
 
     /**
      * An [Observable] alternative to [getNodesWithinRange].

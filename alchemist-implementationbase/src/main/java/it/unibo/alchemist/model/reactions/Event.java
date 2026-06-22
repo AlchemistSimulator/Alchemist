@@ -47,7 +47,7 @@ public final class Event<T> extends AbstractReaction<T> {
 
     @Override
     public double getRate() {
-        return getTimeDistribution().getRate();
+        return getTimeDistribution().rate;
     }
 
     @Override

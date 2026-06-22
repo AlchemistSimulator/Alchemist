@@ -252,7 +252,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
                 validNodes.add((ILsaNode) neigh);
             }
             if (getConditions().isEmpty()) {
-                totalPropensity = getTimeDistribution().getRate();
+                totalPropensity = getTimeDistribution().rate;
             } else {
                 totalPropensity = 0d;
                 possibleMatches = new ArrayList<>();
@@ -271,14 +271,14 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
                     }
                 }
                 if (numericRate()) {
-                    totalPropensity = possibleMatches.size() * getTimeDistribution().getRate();
+                    totalPropensity = possibleMatches.size() * getTimeDistribution().rate;
                 } else {
                     /*
                      * For each possible match, compute the propensity
                      */
                     for (final Map<HashString, ITreeNode<?>> match : possibleMatches) {
                         timeDistribution.setMatches(match);
-                        final double p = timeDistribution.getRate();
+                        final double p = timeDistribution.rate;
                         propensities.add(p);
                         totalPropensity += p;
                         if (totalPropensity == Double.POSITIVE_INFINITY) {
@@ -301,7 +301,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
 
     @Override
     public String getRateAsString() {
-        return numericRate() ? Double.toString(getTimeDistribution().getRate()) : timeDistribution.getRateEquation().toString();
+        return numericRate() ? Double.toString(getTimeDistribution().rate) : timeDistribution.getRateEquation().toString();
     }
 
     @Override

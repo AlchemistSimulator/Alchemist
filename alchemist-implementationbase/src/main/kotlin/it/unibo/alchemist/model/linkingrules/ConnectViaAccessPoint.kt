@@ -29,8 +29,9 @@ class ConnectViaAccessPoint<T, P : Position<P>>(radius: Double, val accessPointI
     private val Node<T>.isAccessPoint
         get() = contains(accessPointId)
 
-    private fun Neighborhood<T>.closestAccessPoint(environment: Environment<T, P>): Node<T>? =
-        asSequence().filter { it.isAccessPoint }.minByOrNull { environment.getDistanceBetweenNodes(center, it) }
+    private fun Neighborhood<T>.closestAccessPoint(environment: Environment<T, P>): Node<T>? = neighbors.asSequence()
+        .filter { it.isAccessPoint }
+        .minByOrNull { environment.getDistanceBetweenNodes(center, it) }
 
     override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>): Neighborhood<T> =
         super.computeNeighborhood(center, environment).run {
@@ -42,12 +43,13 @@ class ConnectViaAccessPoint<T, P : Position<P>>(radius: Double, val accessPointI
                         center,
                         neighbors.filter {
                             it == closestAP ||
-                                !it.isAccessPoint && environment.getNeighborhood(it).current.contains(closestAP)
+                                !it.isAccessPoint &&
+                                environment.getNeighborhood(it).current.neighbors.contains(closestAP)
                         },
                     )
                 } ?: Neighborhoods.make(environment, center, emptyList())
             } else {
-                if (all { it.isAccessPoint }) {
+                if (neighbors.all { it.isAccessPoint }) {
                     this
                 } else {
                     // The AP must connect only if it is the closest AP of each node or the node is not connected
@@ -59,7 +61,7 @@ class ConnectViaAccessPoint<T, P : Position<P>>(radius: Double, val accessPointI
                             .filter { neighbor ->
                                 neighbor.isAccessPoint ||
                                     environment.getNeighborhood(neighbor).run {
-                                        contains(center) || none { it.isAccessPoint }
+                                        center in neighbors || neighbors.none { it.isAccessPoint }
                                     }
                             }.asIterable(),
                     )

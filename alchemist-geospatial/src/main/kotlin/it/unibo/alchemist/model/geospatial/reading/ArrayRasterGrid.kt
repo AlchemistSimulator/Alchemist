@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model.geospatial.reading
 
+import java.io.Serializable
+
 /**
  * In-memory implementation of [RasterGrid], format-agnostic.
  *
@@ -27,4 +29,8 @@ class ArrayRasterGrid(
 ) : RasterGrid {
 
     override fun valueAt(latIndex: Int, lonIndex: Int): Double = values[latIndex * longitudes.size + lonIndex]
+
+    private companion object {
+        private const val serialVersionUID = 1L
+    }
 }

@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.geospatial.strategy
 
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
+import java.io.Serializable
 
 /**
  * Strategy for **missing values**: what to return when the position is *inside* the grid but the
@@ -17,7 +18,7 @@ import it.unibo.alchemist.model.geospatial.reading.RasterGrid
  * [SpatialExtrapolationStrategy] because the cause differs (in-grid missing data, not a position
  * outside the extent of the grid). Built-in implementations in [MissingValue].
  */
-fun interface MissingValueStrategy {
+fun interface MissingValueStrategy : Serializable {
 
     /**
      * @param grid the slice on which a missing value was encountered.

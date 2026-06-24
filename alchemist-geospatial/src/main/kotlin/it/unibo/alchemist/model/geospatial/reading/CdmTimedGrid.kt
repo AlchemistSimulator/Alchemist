@@ -200,6 +200,8 @@ class CdmTimedGrid(directory: Path, variableName: String? = null) : TimedGrid {
 
     private companion object {
 
+        private const val serialVersionUID = 1L
+
         /**
          * Selects the variable to read from the dataset.
          *

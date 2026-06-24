@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.geospatial.strategy
 
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
+import java.io.Serializable
 
 /**
  * Strategy for **spatial interpolation**: given a grid slice and a position assumed to be *inside*
@@ -19,7 +20,7 @@ import it.unibo.alchemist.model.geospatial.reading.RasterGrid
  * Bounds checking and out-of-extent handling are NOT this strategy's concern: they belong to
  * [SpatialExtrapolationStrategy] instead when the point is outside.
  */
-fun interface SpatialInterpolationStrategy {
+fun interface SpatialInterpolationStrategy : Serializable {
 
     /**
      * @param grid the slice to sample.

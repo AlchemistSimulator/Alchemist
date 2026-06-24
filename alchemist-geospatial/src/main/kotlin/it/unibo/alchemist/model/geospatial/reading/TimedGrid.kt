@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.geospatial.reading
 
+import java.io.Serializable
 import java.time.Instant
 
 /**
@@ -20,7 +21,7 @@ import java.time.Instant
  * real-world timestamps to simulation time once at construction; [grid] is index-based
  * because temporal interpolation operates on adjacent indices, not timestamps directly.
  */
-interface TimedGrid {
+interface TimedGrid : Serializable {
     /**
      * Real-world timestamps of each slice, strictly ascending, aligned with [grid].
      */

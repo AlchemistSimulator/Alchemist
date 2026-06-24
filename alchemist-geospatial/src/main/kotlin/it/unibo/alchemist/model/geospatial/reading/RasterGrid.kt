@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model.geospatial.reading
 
+import java.io.Serializable
+
 /**
  * A single 2D spatial "slice" of data on a regular geographic grid (latitude/longitude).
  *
@@ -20,7 +22,7 @@ package it.unibo.alchemist.model.geospatial.reading
  * from +89.95 to −59.95) must normalize internally, so that strategies never need to
  * reason about axis direction.
  */
-interface RasterGrid {
+interface RasterGrid : Serializable {
     /**
      * Latitudes of grid nodes, in degrees, sorted in ascending order.
      */

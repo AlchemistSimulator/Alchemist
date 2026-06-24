@@ -9,11 +9,13 @@
 
 package it.unibo.alchemist.model.geospatial.strategy
 
+import java.io.Serializable
+
 /**
  * Strategy for **temporal extrapolation**: what to return when the simulation time is *outside* the
  * time interval covered by the data. Built-in implementations in [TemporalExtrapolation].
  */
-fun interface TemporalExtrapolationStrategy {
+fun interface TemporalExtrapolationStrategy : Serializable {
 
     /**
      * @param currentTime current simulation time (as a `Double`), outside the range of [sliceTimes].

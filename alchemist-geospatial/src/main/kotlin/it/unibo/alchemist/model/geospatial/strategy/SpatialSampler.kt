@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.geospatial.strategy
 
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
+import java.io.Serializable
 
 /**
  * Orchestrates the three spatial strategies (in-extent interpolation,
@@ -24,7 +25,7 @@ class SpatialSampler(
     private val interpolation: SpatialInterpolationStrategy,
     private val outOfBounds: SpatialExtrapolationStrategy,
     private val missing: MissingValueStrategy,
-) {
+) : Serializable {
 
     /**
      * Samples [grid] at the given position, applying in order: bounds check, interpolation and
@@ -48,5 +49,9 @@ class SpatialSampler(
 
         val interpolatedValue = interpolation.valueAt(grid, latitude, longitude)
         return if (interpolatedValue.isNaN()) missing.valueAt(grid, latitude, longitude) else interpolatedValue
+    }
+
+    private companion object {
+        private const val serialVersionUID = 1L
     }
 }

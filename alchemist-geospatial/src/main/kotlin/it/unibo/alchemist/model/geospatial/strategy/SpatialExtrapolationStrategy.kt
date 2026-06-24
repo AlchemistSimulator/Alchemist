@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.geospatial.strategy
 
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
+import java.io.Serializable
 
 /**
  * Strategy for **spatial extrapolation**: what to return when the requested position is *outside*
@@ -17,7 +18,7 @@ import it.unibo.alchemist.model.geospatial.reading.RasterGrid
  * in-grid cell, which is a [MissingValueStrategy] concern). Built-in implementations in
  * [SpatialExtrapolation].
  */
-fun interface SpatialExtrapolationStrategy {
+fun interface SpatialExtrapolationStrategy : Serializable {
 
     /**
      * @param grid the slice from which the point stands out.

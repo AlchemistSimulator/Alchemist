@@ -19,7 +19,6 @@ dependencies {
     runtimeOnly(libs.cdm.grib)
     implementation(libs.gson)
     implementation(libs.guava)
-    implementation(libs.mockk)
     implementation(libs.slf4j)
     testImplementation(alchemist("test"))
 }

@@ -19,6 +19,8 @@ import java.nio.file.Path
  * Only `key` is read, because the base URL is a layer parameter
  * (`endpoint`): a single `.cdsapirc` has one `url` and cannot serve two data stores (CDS and EWDS),
  * whereas the **same token** (unified ECMWF identity) is valid on both.
+ *
+ * **Note**: The key format is not checked, as there is no guarantee that it will not change in the future.
  */
 internal object CdsApiRc {
 

@@ -25,8 +25,8 @@ class TestCdmTimedGrid : StringSpec({
      */
     val tempDir: Path = Files.createTempDirectory("cdm-timed-grid-test")
 
+    // deletes the directory and its files after the tests
     afterSpec {
-        // empties the tmp directory after each test
         tempDir.toFile().deleteRecursively()
     }
 

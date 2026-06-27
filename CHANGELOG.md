@@ -1,3 +1,21 @@
+## [43.1.10](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.9...43.1.10) (2026-06-27)
+
+### Dependency updates
+
+* **core-deps:** update scafi ([#5440](https://github.com/AlchemistSimulator/Alchemist/issues/5440)) ([023c5cc](https://github.com/AlchemistSimulator/Alchemist/commit/023c5cc1402d9212dff6adba6a89436a67b532ab))
+* **deps:** update graphql to v10.1.0 ([#5446](https://github.com/AlchemistSimulator/Alchemist/issues/5446)) ([7856641](https://github.com/AlchemistSimulator/Alchemist/commit/7856641a2afe913769a1b436e4891e90c60b6816))
+* **deps:** update ktor monorepo to v3.5.1 ([#5445](https://github.com/AlchemistSimulator/Alchemist/issues/5445)) ([c35db77](https://github.com/AlchemistSimulator/Alchemist/commit/c35db77853c2c2c12c2c6766eb86c486b822d034))
+
+### Build and continuous integration
+
+* **website:** add YAML specification link to lycheeignore (causes false positives) ([9fa06b4](https://github.com/AlchemistSimulator/Alchemist/commit/9fa06b4b318616f037f5517134ae26c6cd2cf1ce))
+
+### General maintenance
+
+* **build:** actualize the Kotlin JS store ([317ac5b](https://github.com/AlchemistSimulator/Alchemist/commit/317ac5bf1c0aacf39410f5468ce4eceb3add2851))
+* **build:** update the javadoc.io cache ([a372bee](https://github.com/AlchemistSimulator/Alchemist/commit/a372bee729de0a1e5eb51c6947085b5ed7a00983))
+* **build:** update the javadoc.io cache ([d9d7247](https://github.com/AlchemistSimulator/Alchemist/commit/d9d7247104d54579d58e672bcbcc6eb2c43cce07))
+
 ## [43.1.9](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.8...43.1.9) (2026-06-22)
 
 ### Dependency updates

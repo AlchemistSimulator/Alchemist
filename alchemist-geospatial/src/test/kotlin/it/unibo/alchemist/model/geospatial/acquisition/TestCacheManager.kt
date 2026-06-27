@@ -29,7 +29,7 @@ class TestCacheManager : StringSpec({
         Files.writeString(dir.resolve(dataFileName), "payload")
     }
 
-    // resets the temp dir after every unit test
+    // deletes the directory and its files after the tests
     afterSpec {
         tempDir.toFile().deleteRecursively()
     }

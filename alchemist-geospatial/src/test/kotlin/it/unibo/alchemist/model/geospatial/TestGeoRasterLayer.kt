@@ -101,7 +101,7 @@ class TestGeoRasterLayer : StringSpec({
 
     val tempDir: Path = createTempDirectory("geo-raster-layer-test")
 
-    // cleans the temp directory after each test
+    // deletes the directory and its files after the tests
     afterSpec {
         tempDir.toFile().deleteRecursively()
     }

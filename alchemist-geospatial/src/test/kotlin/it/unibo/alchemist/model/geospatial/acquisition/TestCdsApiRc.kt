@@ -22,7 +22,7 @@ class TestCdsApiRc : StringSpec({
     // a realistic ECMWF unified access token
     val realisticKey = "5b65k8c5-fr34-81dc-82b3-88e1hib45559"
 
-    // deletes the test file after every unit test
+    // deletes the directory and its files after the tests
     afterSpec {
         tempDir.toFile().deleteRecursively()
     }

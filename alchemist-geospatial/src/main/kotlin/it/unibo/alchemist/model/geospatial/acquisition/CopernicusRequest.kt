@@ -56,7 +56,6 @@ data class CopernicusRequest(val dataset: String, val inputs: Map<String, Any>) 
             .digest(str.toByteArray(Charsets.UTF_8))
             /*
              * 0 = padding with zeros instead of spaces.
-             * ("05" and "5" are different values in ECMWF API)
              * 2 = at least two digits.
              * x = all hex are represented in lowercase.
              */

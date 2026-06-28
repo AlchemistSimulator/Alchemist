@@ -22,25 +22,29 @@ private const val DIGEST_BUFFER_BYTES = 8 * 1024 // 8 KB
 /**
  * Verifies the integrity of a downloaded [file] against the metadata the data store
  * advertised for it: the byte count must equal [expectedSizeBytes] and the MD5 digest must equal
- * [expectedMd5] (compared case-insensitively).
+ * [expectedMd5], if provided. (compared case-insensitively).
  *
  * **Note for archives**: if the downloaded file is an archive (e.g., ZIP), the byte count
  * and MD5 hash typically refer to the archive itself and not to its extracted files.
  *
  * @param file the downloaded file to check.
  * @param expectedSizeBytes the expected size in bytes.
- * @param expectedMd5 the expected MD5 digest as a hex string.
+ * @param expectedMd5 the expected MD5 digest as a hex string, if provided.
  *
  * @throws IllegalStateException if the actual size or MD5 does not match the expected value.
  */
-internal fun verify(file: Path, expectedSizeBytes: Long, expectedMd5: String) {
+internal fun verify(file: Path, expectedSizeBytes: Long, expectedMd5: String? = null) {
     val actualSize = Files.size(file)
     check(actualSize == expectedSizeBytes) {
         "Size mismatch for '${file.fileName}': expected $expectedSizeBytes bytes, got $actualSize"
     }
-    val actualMd5 = md5Hex(file)
-    check(actualMd5.equals(expectedMd5, ignoreCase = true)) {
-        "MD5 mismatch for '${file.fileName}': expected $expectedMd5, got $actualMd5"
+
+    // only if md5 is specified
+    expectedMd5?.let {
+        val actualMd5 = md5Hex(file)
+        check(actualMd5.equals(expectedMd5, ignoreCase = true)) {
+            "MD5 mismatch for '${file.fileName}': expected $expectedMd5, got $actualMd5"
+        }
     }
 }
 

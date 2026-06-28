@@ -268,7 +268,7 @@ tasks.hugoBuild.configure {
     finalizedBy(copyGlobalDokkaInTheWebsite, copyModuleDokkaInTheWebsite)
 }
 
-val performWebsiteStringReplacements by tasks.registering {
+val performWebsiteStringReplacements = tasks.register("performWebsiteStringReplacements") {
     dependsOn(copyGlobalDokkaInTheWebsite, copyModuleDokkaInTheWebsite)
     doLast {
         val index = File(websiteDir, "index.html")

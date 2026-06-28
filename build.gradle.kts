@@ -148,7 +148,7 @@ allprojects {
  */
 evaluationDependsOnChildren()
 
-val dokkaGlobalClasspath by configurations.creating
+val dokkaGlobalClasspath = configurations.create("dokkaGlobalClasspath")
 dependencies {
     // Depend on subprojects whose presence is necessary to run
     listOf("api", "engine", "loading").forEach { api(alchemist(it)) } // Execution requirements
@@ -167,7 +167,7 @@ dependencies {
     dokkaGlobalClasspath(alchemist("full"))
 }
 
-val checkMavenCentralPortalPluginClasspath by tasks.registering {
+val checkMavenCentralPortalPluginClasspath = tasks.register("checkMavenCentralPortalPluginClasspath") {
     group = LifecycleBasePlugin.VERIFICATION_GROUP
     description = "Checks that the Maven Central Portal publishing plugin can upload to a local fake endpoint."
     val outputFile = layout.buildDirectory.file("reports/checkMavenCentralPortalPluginClasspath/result.txt")

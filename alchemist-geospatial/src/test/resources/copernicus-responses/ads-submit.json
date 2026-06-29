@@ -1,0 +1,32 @@
+{
+  "processID": "cams-global-greenhouse-gas-forecasts",
+  "type": "process",
+  "jobID": "61ebb7be-650e-4aa5-9039-6030eb01bb68",
+  "status": "accepted",
+  "created": "2026-06-28T17:29:06.745241",
+  "updated": "2026-06-28T17:29:06.745241",
+  "links": [
+    {
+      "href": "https://ads.atmosphere.copernicus.eu/api/retrieve/v1/processes/cams-global-greenhouse-gas-forecasts/execute",
+      "rel": "self"
+    },
+    {
+      "href": "https://ads.atmosphere.copernicus.eu/api/retrieve/v1/jobs/61ebb7be-650e-4aa5-9039-6030eb01bb68",
+      "rel": "monitor",
+      "type": "application/json",
+      "title": "job status info"
+    }
+  ],
+  "metadata": {
+    "datasetMetadata": {
+      "messages": [
+        {
+          "date": "2026-06-28T17:29:06.758695",
+          "severity": "WARNING",
+          "content": "You are using a deprecated API endpoint. If you are using cdsapi, please upgrade to the latest version."
+        }
+      ]
+    },
+    "origin": "api"
+  }
+}

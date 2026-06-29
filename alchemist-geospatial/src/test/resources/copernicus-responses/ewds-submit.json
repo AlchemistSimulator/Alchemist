@@ -1,0 +1,32 @@
+{
+  "processID": "cems-fire-historical-v1",
+  "type": "process",
+  "jobID": "ca0c3ecc-9c02-48ad-b781-73ee0510e653",
+  "status": "accepted",
+  "created": "2026-06-28T17:24:02.116929",
+  "updated": "2026-06-28T17:24:02.116929",
+  "links": [
+    {
+      "href": "https://ewds.climate.copernicus.eu/api/retrieve/v1/processes/cems-fire-historical-v1/execute",
+      "rel": "self"
+    },
+    {
+      "href": "https://ewds.climate.copernicus.eu/api/retrieve/v1/jobs/ca0c3ecc-9c02-48ad-b781-73ee0510e653",
+      "rel": "monitor",
+      "type": "application/json",
+      "title": "job status info"
+    }
+  ],
+  "metadata": {
+    "datasetMetadata": {
+      "messages": [
+        {
+          "date": "2026-06-28T17:24:02.135635",
+          "severity": "WARNING",
+          "content": "You are using a deprecated API endpoint. If you are using cdsapi, please upgrade to the latest version."
+        }
+      ]
+    },
+    "origin": "api"
+  }
+}

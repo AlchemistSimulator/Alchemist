@@ -1,0 +1,8 @@
+{
+  "type": "invalid request",
+  "title": "invalid request",
+  "status": 400,
+  "detail": "Request has not produced a valid combination of values, please check your selection.\n{'data_format': ['netcdf'], 'day': ['10'], 'hydrological_model': ['lisflood'], 'leadtime_hour': ['26'], 'month': ['02'], 'product_type': ['control_forecast'], 'system_version': ['operational'], 'variable': ['river_discharge_in_the_last_24_hours'], 'year': ['2024']}",
+  "instance": "https://ewds.climate.copernicus.eu/api/retrieve/v1/processes/cems-glofas-forecast/execute",
+  "trace_id": "cec329b8-cb55-4b84-a3a8-86b85facdbb4"
+}

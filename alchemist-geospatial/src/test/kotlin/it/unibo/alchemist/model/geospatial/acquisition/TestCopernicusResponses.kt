@@ -125,6 +125,41 @@ class TestCopernicusResponses : StringSpec({
             traceId = null,
         )
     }
+
+    "parseProblemDetail extracts all fields from a 400 invalid-request body" {
+        parseProblemDetail(loadBody("error-400-invalid-request.json")) shouldBe ProblemDetail(
+            type = "invalid request",
+            title = "invalid request",
+            status = 400,
+            detail = "Request has not produced a valid combination of values, " +
+                "please check your selection.\n" +
+                "{'data_format': ['netcdf'], 'day': ['10'], 'hydrological_model': ['lisflood'], " +
+                "'leadtime_hour': ['26'], 'month': ['02'], 'product_type': ['control_forecast'], " +
+                "'system_version': ['operational'], 'variable': ['river_discharge_in_the_last_24_hours'], " +
+                "'year': ['2024']}",
+            instance = "https://ewds.climate.copernicus.eu/api/retrieve" +
+                "/v1/processes/cems-glofas-forecast/execute",
+            traceId = "cec329b8-cb55-4b84-a3a8-86b85facdbb4",
+        )
+    }
+
+    /*
+     * no real failed-job body has been captured (failed jobs are rare on stable datasets).
+     * A failed job would occur after a successful submit (all fields in the request are validated
+     * correctly in the ECMWF backend) but somehow the requested data can't be processed/returned.
+     * The following are SYNTHETIC bodies, NOT ECMWF's failed-jobs responses.
+     */
+    "parseFailureMessage reads a top-level message string" {
+        parseFailureMessage("""{"status":"failed","message":"the job blew up"}""") shouldBe "the job blew up"
+    }
+
+    "parseFailureMessage returns null when no message is present" {
+        parseFailureMessage("""{"status":"failed"}""") shouldBe null
+    }
+
+    "parseFailureMessage returns null when message is JSON null" {
+        parseFailureMessage("""{"status":"failed","message":null}""") shouldBe null
+    }
 })
 
 /**

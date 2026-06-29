@@ -1,0 +1,8 @@
+{
+  "type": "permission denied",
+  "title": "permission denied",
+  "status": 401,
+  "detail": "authentication required",
+  "instance": "https://ads.atmosphere.copernicus.eu/api/retrieve/v1/jobs/61ebb7be-650e-4aa5-9039-6030eb01bb68",
+  "trace_id": "b63a2882-2510-4ced-935a-b2faec13eead"
+}

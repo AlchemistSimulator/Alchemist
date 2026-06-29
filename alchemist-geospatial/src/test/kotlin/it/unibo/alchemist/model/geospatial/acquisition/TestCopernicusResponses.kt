@@ -89,6 +89,42 @@ class TestCopernicusResponses : StringSpec({
             md5 = "b7b990dc67d490e0360c41b47fc616a6",
         )
     }
+
+    // errors extraction
+    "parseProblemDetail extracts all fields from a 404 result-not-ready body" {
+        parseProblemDetail(loadBody("error-404-result-not-ready.json")) shouldBe ProblemDetail(
+            type = "http://www.opengis.net/def/exceptions/ogcapi-processes-1/1.0/result-not-ready",
+            title = "job results not ready",
+            status = 404,
+            detail = "status of 61ebb7be-650e-4aa5-9039-6030eb01bb68 is 'accepted'",
+            instance = "https://ads.atmosphere.copernicus.eu/api/retrieve" +
+                "/v1/jobs/61ebb7be-650e-4aa5-9039-6030eb01bb68/results",
+            traceId = "e7ba3606-9816-43cc-ab6a-4f0642388701",
+        )
+    }
+
+    "parseProblemDetail handles a 401 whose type is a free-string label, not a URI" {
+        parseProblemDetail(loadBody("error-401-permission-denied.json")) shouldBe ProblemDetail(
+            type = "permission denied",
+            title = "permission denied",
+            status = 401,
+            detail = "authentication required",
+            instance = "https://ads.atmosphere.copernicus.eu/api/retrieve" +
+                "/v1/jobs/61ebb7be-650e-4aa5-9039-6030eb01bb68",
+            traceId = "b63a2882-2510-4ced-935a-b2faec13eead",
+        )
+    }
+
+    "parseProblemDetail defaults type to 'about:blank' and nulls absent fields" {
+        parseProblemDetail("""{"detail":"something went wrong"}""") shouldBe ProblemDetail(
+            type = "about:blank",
+            title = null,
+            status = null,
+            detail = "something went wrong",
+            instance = null,
+            traceId = null,
+        )
+    }
 })
 
 /**

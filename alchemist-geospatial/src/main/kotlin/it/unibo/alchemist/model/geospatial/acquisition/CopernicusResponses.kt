@@ -29,6 +29,34 @@ import com.google.gson.JsonParser
  */
 
 /**
+ * Metadata of a result file ready for download.
+ *
+ * @property href absolute, unauthenticated download URL.
+ * @property sizeBytes expected size in bytes; must always be verified after download.
+ * @property md5 expected MD5, if advertised, else `null`.
+ */
+internal data class RemoteAsset(val href: String, val sizeBytes: Long, val md5: String?)
+
+/**
+ * An RFC 7807 "Problem Details" error report from the data store.
+ *
+ * @property type a URI (or, for ECMWF, sometimes an opaque label) identifying the problem type.
+ * @property title a short, human-readable summary of the problem type.
+ * @property status the HTTP status code echoed in the body, if present.
+ * @property detail a human-readable explanation specific to this occurrence, if present.
+ * @property instance a URI identifying the specific occurrence of the problem, if present.
+ * @property traceId the data store's trace identifier (`trace_id`), useful when reporting an issue.
+ */
+internal data class ProblemDetail(
+    val type: String,
+    val title: String?,
+    val status: Int?,
+    val detail: String?,
+    val instance: String?,
+    val traceId: String?,
+)
+
+/**
  * Search for and returns the `href` property of the first link in the `links`
  * array within the [json] whose `rel` property is equal to [rel].
  *
@@ -129,10 +157,30 @@ internal fun parseAsset(json: String): RemoteAsset {
 }
 
 /**
- * Metadata of a result file ready for download.
+ * Parses an RFC 7807 "Problem Details" error body [json], as returned by the data store on a
+ * failed request (e.g. a `404` result-not-ready, a `401` authentication required, a `403`
+ * dataset-license not accepted, a `400` invalid request).
  *
- * @property href absolute, unauthenticated download URL.
- * @property sizeBytes expected size in bytes; must always be verified after download.
- * @property md5 expected MD5, if advertised, else `null`.
+ * All fields are optional per RFC 7807 except `type` (which defaults to `"about:blank"`), so every
+ * field but [ProblemDetail.type] is nullable. Note that ECMWF does not always honor the spec's
+ * recommendation that `type` be a URI (it sometimes repeats the human-readable title, e.g.
+ * `"permission denied"`), so `type` is treated as an opaque string, never parsed as a URI.
+ *
+ * @param json the JSON error body as a string.
+ * @return the extracted [ProblemDetail].
  */
-internal data class RemoteAsset(val href: String, val sizeBytes: Long, val md5: String?)
+internal fun parseProblemDetail(json: String): ProblemDetail {
+    val obj = JsonParser.parseString(json).asJsonObject
+
+    // a field extractor by name
+    fun field(name: String): String? = obj.get(name)?.takeUnless { it.isJsonNull }?.asString
+
+    return ProblemDetail(
+        type = field("type") ?: "about:blank",
+        title = field("title"),
+        status = obj.get("status")?.takeUnless { it.isJsonNull }?.asInt,
+        detail = field("detail"),
+        instance = field("instance"),
+        traceId = field("trace_id"),
+    )
+}

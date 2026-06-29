@@ -1,0 +1,27 @@
+{
+  "processID": "derived-era5-pressure-levels-daily-statistics",
+  "type": "process",
+  "jobID": "98644c83-07f4-44ff-bc6b-2969c0342a32",
+  "status": "successful",
+  "created": "2026-06-28T17:19:54.843588",
+  "started": "2026-06-28T17:20:07.894336",
+  "finished": "2026-06-28T17:20:17.935423",
+  "updated": "2026-06-28T17:20:17.935423",
+  "links": [
+    {
+      "href": "https://cds.climate.copernicus.eu/api/retrieve/v1/jobs/98644c83-07f4-44ff-bc6b-2969c0342a32",
+      "rel": "self",
+      "type": "application/json"
+    },
+    {
+      "href": "https://cds.climate.copernicus.eu/api/retrieve/v1/jobs/98644c83-07f4-44ff-bc6b-2969c0342a32/results",
+      "rel": "results"
+    }
+  ],
+  "metadata": {
+    "datasetMetadata": {
+      "catalogue": "c3s"
+    },
+    "origin": "api"
+  }
+}

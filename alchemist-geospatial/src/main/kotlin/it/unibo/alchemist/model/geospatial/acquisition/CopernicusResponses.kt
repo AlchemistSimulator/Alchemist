@@ -60,7 +60,23 @@ internal data class ProblemDetail(
     val detail: String?,
     val instance: String?,
     val traceId: String?,
-)
+) {
+    /**
+     * Extracts a human-readable summary of this problem-detail, or an
+     * empty string if no content is extractable.
+     *
+     * @return a human-readable string describing this problem.
+     */
+    fun describe(): String {
+        val core = detail ?: title ?: return ""
+        return buildString {
+            append(core)
+            append(" [type=$type")
+            traceId?.let { append(", trace=$it") }
+            append("]")
+        }
+    }
+}
 
 /**
  * Search for and returns the `href` property of the first link in the `links`

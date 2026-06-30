@@ -60,7 +60,7 @@ kotlin {
                 }
             }
         }
-        val jvmTest by getting {
+        jvmTest {
             dependencies {
                 val `kotest-runner` by catalog
                 implementation(`kotest-runner`)

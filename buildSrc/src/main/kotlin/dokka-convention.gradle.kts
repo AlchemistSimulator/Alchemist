@@ -44,10 +44,10 @@ dokka {
             .forEach { (path, file) ->
                 sourceLink {
                     localDirectory.set(file)
-                    val project = if (project == rootProject) "" else project.name
+                    val projectPath = if (project == rootProject) "" else project.name
                     val url = "https://github.com/AlchemistSimulator/Alchemist/${
                         currentCommitHash?.let { "tree/$it" } ?: "blob/master"
-                    }/$project/$path"
+                    }/$projectPath/$path"
                     remoteUrl.set(uri(url))
                     remoteLineSuffix.set("#L")
                 }

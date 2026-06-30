@@ -22,7 +22,6 @@ import kotlinx.coroutines.runBlocking
 import org.danilopianini.gradle.mavencentral.portal.PublishPortalDeployment
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
 
 plugins {
@@ -92,17 +91,6 @@ allprojects {
     tasks.withType<Javadoc>().configureEach {
         // Disable Javadoc, use Dokka.
         enabled = false
-    }
-
-    /*
-     * Work around:
-     * Task ':...:dokkaJavadoc' uses this output of task ':...:jar' without declaring an explicit or implicit dependency.
-     * This can lead to incorrect results being produced, depending on what order the tasks are executed.
-     */
-    tasks.withType<AbstractDokkaTask>().configureEach {
-        allprojects.forEach { otherProject ->
-            dependsOn(otherProject.tasks.withType<org.gradle.jvm.tasks.Jar>().matching { it.name == "jar" })
-        }
     }
 
     if (isInCI) {

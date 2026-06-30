@@ -21,8 +21,6 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-val minJavaVersion: String by properties
-
 val fetchEngine: Executor = Executors.newCachedThreadPool()
 
 dokka {
@@ -32,7 +30,7 @@ dokka {
     dokkaSourceSets.configureEach {
         enableKotlinStdLibDocumentationLink.set(true)
         enableJdkDocumentationLink.set(true)
-        jdkVersion.set(minJavaVersion.toInt())
+        jdkVersion.set(providers.gradleProperty("minJavaVersion").map(String::toInt))
         skipDeprecated.set(false)
         skipEmptyPackages.set(true)
         /*

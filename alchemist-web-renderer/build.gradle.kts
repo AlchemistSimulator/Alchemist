@@ -42,7 +42,7 @@ kotlin {
                 implementation(libs.kotlin.coroutines.test)
             }
         }
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 api(alchemist("api"))
                 implementation(incarnation("sapere"))

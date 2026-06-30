@@ -56,7 +56,7 @@ application {
 }
 
 // Shadow Jar
-tasks.withType<ShadowJar> {
+tasks.withType<ShadowJar>().configureEach {
     manifest {
         attributes(
             mapOf(
@@ -82,23 +82,28 @@ tasks.withType<ShadowJar> {
     mergeServiceFiles()
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })
-    // Run the jar and check the output
-    val minJavaVersion: String by properties
-    val javaExecutable = javaToolchains.launcherFor { languageVersion.set(JavaLanguageVersion.of(minJavaVersion)) }
-        .map { it.executablePath.asFile.absolutePath }
-    val testShadowJar = testShadowJar(javaExecutable, archiveFile)
-    testShadowJar.configure {
-        dependsOn(this@withType)
-    }
-    this.finalizedBy(testShadowJar)
-    tasks.assemble.configure { dependsOn(testShadowJar) }
 }
+
+val javaExecutable = javaToolchains.launcherFor {
+    languageVersion.set(
+        providers.gradleProperty("minJavaVersion").map(JavaLanguageVersion::of),
+    )
+}
+
+val testShadowJar = testShadowJar(
+    javaExecutable.map { it.executablePath.asFile.absolutePath },
+    tasks.shadowJar.flatMap { it.archiveFile },
+)
+testShadowJar.configure { dependsOn(tasks.shadowJar) }
+tasks.shadowJar.configure { finalizedBy(testShadowJar) }
+tasks.assemble.configure { dependsOn(testShadowJar) }
 
 // Disable distTar and distZip
 val toDisable = with(tasks) {
-    listOf(distTar, distZip, jpackage, shadowDistZip, shadowDistTar).map { it.name }
+    listOf(distTar, distZip, jpackage, shadowDistZip, shadowDistTar).forEach {
+        it.configure { enabled = false }
+    }
 }
-tasks.matching { it.name in toDisable }.configureEach { enabled = false }
 
 sealed interface PackagingMethod
 

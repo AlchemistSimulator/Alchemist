@@ -36,7 +36,7 @@ kotlin {
         val alchemistApi = alchemist("api")
         val alchemistMaintenanceTooling = alchemist("maintenance-tooling")
         val isNotRootRootProject = project != alchemistMaintenanceTooling && project != alchemistApi
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 if (isNotRootRootProject) {
                     implementation(alchemist("maintenance-tooling"))

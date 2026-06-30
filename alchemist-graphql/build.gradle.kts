@@ -58,7 +58,7 @@ kotlin {
                 implementation(alchemist("test"))
             }
         }
-        val jsMain by getting {
+        jsMain {
             dependencies {
                 implementation(libs.kotlinx.atomicfu.runtime)
             }

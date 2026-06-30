@@ -318,6 +318,7 @@ private val Provider<Directory>.directoryProperty get(): DirectoryProperty = obj
     it.set(this)
     it.disallowChanges()
 }
+
 private val Provider<RegularFile>.fileProperty get(): RegularFileProperty = objects.fileProperty().also {
     it.set(this)
     it.disallowChanges()

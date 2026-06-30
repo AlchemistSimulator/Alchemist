@@ -258,8 +258,9 @@ fun Project.dokkaCopyTask(destination: String): Copy.() -> Unit = {
     into(File(websiteDir, "reference/$destination"))
 }
 
-val copyGlobalDokkaInTheWebsite by tasks.registering(Copy::class, dokkaCopyTask("kdoc"))
-val copyModuleDokkaInTheWebsite by tasks.registering(Copy::class, alchemist("full").dokkaCopyTask("kdoc-modules"))
+val copyGlobalDokkaInTheWebsite = tasks.register<Copy>("copyGlobalDokkaInTheWebsite", dokkaCopyTask("kdoc"))
+val copyModuleDokkaInTheWebsite =
+    tasks.register<Copy>("copyModuleDokkaInTheWebsite", alchemist("full").dokkaCopyTask("kdoc-modules"))
 
 tasks.hugoBuild.configure {
     outputDirectory = websiteDir

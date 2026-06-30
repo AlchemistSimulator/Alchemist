@@ -52,7 +52,7 @@ kotlin {
                 implementation(libs.resourceloader)
             }
         }
-        val jvmTest by getting {
+        jvmTest {
             dependencies {
                 implementation(libs.ktor.server.test.host)
                 implementation(alchemist("euclidean-geometry"))

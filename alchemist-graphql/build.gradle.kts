@@ -35,7 +35,7 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 api(alchemist("api"))
                 api(alchemist("graphql-surrogates"))

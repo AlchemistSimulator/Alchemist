@@ -36,7 +36,7 @@ kotlin {
                 implementation(libs.redux.kotlin.threadsafe)
             }
         }
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(libs.kotlin.test)
                 implementation(libs.kotlin.coroutines.test)

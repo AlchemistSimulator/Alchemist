@@ -191,7 +191,7 @@ private val rpmFileProvider: RegularFileProperty = rpmFileName.flatMap { fileNam
     packageDestinationDir.file(fileName)
 }.fileProperty
 
-val generatePKGBUILD by tasks.registering {
+val generatePKGBUILD = tasks.register("generatePKGBUILD") {
     group = "Distribution"
     description = "Generates a valid PKGBUILD by replacing values in the template file"
     if (validFormats.none { it is ValidPackaging && it.format == RPM }) {

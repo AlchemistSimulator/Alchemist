@@ -288,7 +288,7 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
 
 tasks.assemble.configure { dependsOn(packageTasks) }
 
-tasks.withType<AbstractArchiveTask> {
+tasks.withType<AbstractArchiveTask>().configureEach {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 

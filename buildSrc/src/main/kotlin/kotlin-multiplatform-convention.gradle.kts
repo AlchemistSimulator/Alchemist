@@ -43,7 +43,7 @@ kotlin {
                 }
             }
         }
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 val kotlinTest by catalog
                 val kotestAssertionsCore by catalog

@@ -53,7 +53,7 @@ kotlin {
                 implementation(kotestFrameworkEngine)
             }
         }
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 if (isNotRootRootProject) {
                     implementation(alchemistApi)

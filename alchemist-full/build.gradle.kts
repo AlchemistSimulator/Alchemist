@@ -240,6 +240,7 @@ val generatePKGBUILD = tasks.register("generatePKGBUILD") {
         outputDir.resolve("PKGBUILD").writeText(pkgbuildContent)
     }
 }
+
 tasks.assemble.configure { dependsOn(generatePKGBUILD) }
 
 val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packaging: ValidPackaging ->

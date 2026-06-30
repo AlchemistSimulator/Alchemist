@@ -60,7 +60,7 @@ kotlin {
                 implementation(alchemist("test"))
             }
         }
-        val jsMain by getting {
+        jsMain {
             dependencies {
                 implementation(libs.bundles.ktor.client)
                 implementation(libs.bundles.kotlin.react)

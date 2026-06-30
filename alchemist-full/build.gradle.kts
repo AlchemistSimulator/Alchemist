@@ -99,7 +99,7 @@ tasks.shadowJar.configure { finalizedBy(testShadowJar) }
 tasks.assemble.configure { dependsOn(testShadowJar) }
 
 // Disable distTar and distZip
-val toDisable = with(tasks) {
+with(tasks) {
     listOf(distTar, distZip, jpackage, shadowDistZip, shadowDistTar).forEach {
         it.configure { enabled = false }
     }

@@ -94,6 +94,6 @@ dokka {
 }
 
 tasks.withType<DokkaBaseTask>().configureEach {
-    timeout.set(Duration.ofMinutes(5))
+    timeout.set(Duration.ofMinutes(15))
 }
 

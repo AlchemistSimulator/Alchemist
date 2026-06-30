@@ -47,7 +47,7 @@ kotlin {
                 implementation(libs.bundles.ktor.server)
             }
         }
-        val jvmTest by getting {
+        jvmTest {
             dependencies {
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.kotest.runner)

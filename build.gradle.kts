@@ -34,8 +34,6 @@ plugins {
     alias(libs.plugins.hugo)
 }
 
-val minJavaVersion: String by properties
-
 allprojects {
 
     with(rootProject.libs.plugins) {
@@ -46,7 +44,7 @@ allprojects {
     }
 
     multiJvm {
-        jvmVersionForCompilation.set(minJavaVersion.toInt())
+        jvmVersionForCompilation.set(providers.gradleProperty("minJavaVersion").map(String::toInt))
         maximumSupportedJvmVersion.set(latestJava)
         if (isInCI && (isWindows || isMac)) {
             /*

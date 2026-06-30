@@ -27,7 +27,7 @@ kotlin {
         }
     }
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.serialization.json)
@@ -36,13 +36,13 @@ kotlin {
                 implementation(libs.redux.kotlin.threadsafe)
             }
         }
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(libs.kotlin.test)
                 implementation(libs.kotlin.coroutines.test)
             }
         }
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 api(alchemist("api"))
                 implementation(incarnation("sapere"))
@@ -52,7 +52,7 @@ kotlin {
                 implementation(libs.resourceloader)
             }
         }
-        val jvmTest by getting {
+        jvmTest {
             dependencies {
                 implementation(libs.ktor.server.test.host)
                 implementation(alchemist("euclidean-geometry"))
@@ -60,7 +60,7 @@ kotlin {
                 implementation(alchemist("test"))
             }
         }
-        val jsMain by getting {
+        jsMain {
             dependencies {
                 implementation(libs.bundles.ktor.client)
                 implementation(libs.bundles.kotlin.react)

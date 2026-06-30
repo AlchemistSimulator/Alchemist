@@ -6,7 +6,7 @@ plugins {
 
 kotlin {
     sourceSets {
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 api(alchemist("api"))
                 implementation(libs.ksp.api)

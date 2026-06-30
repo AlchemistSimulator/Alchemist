@@ -176,14 +176,17 @@ private fun String.extractVersionComponents(): SemVerExtracted {
 
 private val packageDestinationDir = rootProject.layout.buildDirectory.dir("package").directoryProperty
 private val baseVersion: Provider<String> = provider { rootProject.version.toString() }
+
 private fun ImageType.formatVersion(version: String): String = when (this) {
     MSI, EXE -> version.substringBefore('-')
     DMG, PKG -> version.extractVersionComponents().asMangledVersion()
     RPM -> version.replace('-', '.')
     else -> version
 }
+
 private val rpmFileName: Provider<String> =
     baseVersion.map { "${rootProject.name}-${RPM.formatVersion(it)}-1.x86_64.rpm" }
+
 private val rpmFileProvider: RegularFileProperty = rpmFileName.flatMap { fileName ->
     packageDestinationDir.file(fileName)
 }.fileProperty

@@ -1,3 +1,16 @@
+## [43.1.13](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.12...43.1.13) (2026-07-01)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.6.11-19.2.7 ([#5466](https://github.com/AlchemistSimulator/Alchemist/issues/5466)) ([fe1fdac](https://github.com/AlchemistSimulator/Alchemist/commit/fe1fdacd97ddbd3aca70b27ca7428474396b21a9))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.188.0 ([#5462](https://github.com/AlchemistSimulator/Alchemist/issues/5462)) ([c04958f](https://github.com/AlchemistSimulator/Alchemist/commit/c04958fecb9f32bff02ab90f2b26df1a58c5c36f))
+* **deps:** update plugin com.gradle.develocity to v4.5.0 ([#5464](https://github.com/AlchemistSimulator/Alchemist/issues/5464)) ([b117696](https://github.com/AlchemistSimulator/Alchemist/commit/b117696841dc2e5f657178a1884322e180583992))
+
+### Build and continuous integration
+
+* add false positive DOI link to lycheeignore ([644bd02](https://github.com/AlchemistSimulator/Alchemist/commit/644bd02eba561e0330461b726fb7b21b6cc8411c))
+* replace delegates and fix multiple build warnings ([#5465](https://github.com/AlchemistSimulator/Alchemist/issues/5465)) ([dac4196](https://github.com/AlchemistSimulator/Alchemist/commit/dac419688c7fb5243baf7da3f448d7413749ce60))
+
 ## [43.1.12](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.11...43.1.12) (2026-06-29)
 
 ### Dependency updates

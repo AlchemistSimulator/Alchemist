@@ -382,18 +382,33 @@ internal object SimulationModel {
     }
 
     private fun visitConstant(name: String, context: Context, root: Any?): Result<Constant<*>>? {
-        val constant: Result<Constant<*>>? =
-            when (root) {
-                is Map<*, *> -> {
-                    visitDependentVariable(name, context, root)
-                        ?.mapCatching { it.getWith(context.constants) }
-                        ?.onFailure {
-                            logger.debug("Evaluation failed at {}, context {}:\n{}", root, context, it.message)
-                        }?.onSuccess { context.registerConstant(name, root, it) }
-                        ?.map { Constant(it) }
-                }
-                else -> null
+        fun unsupportedConstantInstantiation(): Nothing = throw IllegalArgumentException(
+            """
+            Constant creation failed: '$name' with value '$root'.
+            Direct constant instantiation from YAML is not supported, please consult the Alchemist YAML spec at:
+              > https://alchemistsimulator.github.io/reference/yaml/index.html#variable
+            Likely workaround:
+            ```yaml
+            $name:
+              formula: >
+                $root
+            ```
+            """.trimIndent(),
+        )
+        val constant: Result<Constant<*>>? = when (root) {
+            is Number -> unsupportedConstantInstantiation()
+            is String -> unsupportedConstantInstantiation()
+            is Boolean -> unsupportedConstantInstantiation()
+            is Map<*, *> -> {
+                visitDependentVariable(name, context, root)
+                    ?.mapCatching { it.getWith(context.constants) }
+                    ?.onFailure {
+                        logger.debug("Evaluation failed at {}, context {}:\n{}", root, context, it.message)
+                    }?.onSuccess { context.registerConstant(name, root, it) }
+                    ?.map { Constant(it) }
             }
+            else -> null
+        }
         constant?.onSuccess {
             logger.debug("Variable {}, evaluated from {} as constant, returned {}", name, root, it.value)
             check(!context.constants.containsKey(name) || context.constants[name] == it.value) {

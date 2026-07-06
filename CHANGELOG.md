@@ -1,3 +1,13 @@
+## [43.1.15](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.14...43.1.15) (2026-07-06)
+
+### Dependency updates
+
+* **deps:** update plugin shadowjar to v9.5.1 ([#5469](https://github.com/AlchemistSimulator/Alchemist/issues/5469)) ([314dc51](https://github.com/AlchemistSimulator/Alchemist/commit/314dc51cbddc702a7d248109140419fac7712c00))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.164.0 ([#5470](https://github.com/AlchemistSimulator/Alchemist/issues/5470)) ([b32597c](https://github.com/AlchemistSimulator/Alchemist/commit/b32597c62eef972a4839d66306a5e0679ab774cd))
+
 ## [43.1.14](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.13...43.1.14) (2026-07-02)
 
 ### Dependency updates

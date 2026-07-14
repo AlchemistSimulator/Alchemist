@@ -1,5 +1,5 @@
 [versions]
-androidx-lifecycle = "2.10.0"
+androidx-lifecycle = "2.11.0"
 antlr4 = "4.13.2"
 ais-lib = "2.8.5"
 apollo = "5.0.1"

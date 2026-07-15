@@ -44,7 +44,7 @@ class CSVExporter<T, P : Position<P>>
 constructor(
     private val fileNameRoot: String = "",
     val interval: Double = DEFAULT_INTERVAL,
-    val decimalPlacesCount: String = "2",
+    val decimalPlacesCount: Int = 2,
     val exportPath: String =
         createTempDirectory("alchemist-export")
             .absolutePathString()
@@ -103,17 +103,20 @@ constructor(
             val names = extractor.columnNames
             when {
                 data.size <= 1 ->
-                    roundValues(data.values, decimalPlacesCount.toInt()).joinToString(" ")
+                    roundValues(data.values, decimalPlacesCount).joinToString(" ")
                 // Labels and keys match
                 data.size == names.size && data.keys.containsAll(names) ->
-                    names.joinToString(" ") {
-                        requireNotNull(data[it]) {
-                            BugReporting.reportBug(
-                                "Bug in ${this::class.simpleName}",
-                                mapOf("key" to it, "data" to data),
-                            )
-                        }
-                    }
+                    roundValues(
+                        names.map { name ->
+                            requireNotNull(data[name]) {
+                                BugReporting.reportBug(
+                                    "Bug in ${this::class.simpleName}",
+                                    mapOf("key" to name, "data" to data),
+                                )
+                            }
+                        },
+                        decimalPlacesCount,
+                    ).joinToString(" ")
                 // If the labels do not match keys, require predictable iteration order
                 else -> {
                     require(data.hasPredictableIteration) {
@@ -125,7 +128,7 @@ constructor(
                             """.trimIndent(),
                         )
                     }
-                    data.values.joinToString(" ")
+                    roundValues(data.values, decimalPlacesCount).joinToString(" ")
                 }
             }
         }
@@ -143,8 +146,13 @@ constructor(
         }
     }
 
-    private fun roundValues(values: Collection<String>, decimalsNumber: Int): Collection<String> = values.map {
-        if (it.toDouble() % 0 == 0.0) it else String.format(Locale.US, "%.${decimalsNumber}f", it.toDouble())
+    private fun roundValues(values: Collection<String>, decimalsNumber: Int): Collection<String> = values.map { raw ->
+        val number = raw.toDoubleOrNull()
+        if (number == null || !number.isFinite() || number % 1.0 == 0.0) {
+            raw
+        } else {
+            String.format(Locale.US, "%.${decimalsNumber}f", number)
+        }
     }
 
     private companion object {

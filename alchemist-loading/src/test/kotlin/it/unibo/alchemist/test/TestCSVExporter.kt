@@ -57,7 +57,7 @@ class TestCSVExporter<T, P : Position<P>> :
             }
             "should have limited-length decimals" {
                 val limitedDecimalsFile = simulation.csvExporters()[1].dataFile("fixed-decimals_")
-                val precision2 = """(0\.0*\d\d|\d\.0*\d|\d\.\d|\d\d)(e(-|\+)\d+)?"""
+                val precision2 = """(\d\d.\d\d|0\.0*\d\d|\d\.0*\d|\d\.\d|\d\d)(e(-|\+)\d+)?"""
                 val lineRegex = Regex("""^$precision2(\s($precision2))+$""")
                 limitedDecimalsFile.useLines { lines ->
                     lines

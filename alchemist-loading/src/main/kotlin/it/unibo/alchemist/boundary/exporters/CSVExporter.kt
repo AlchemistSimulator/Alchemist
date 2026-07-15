@@ -37,12 +37,14 @@ import org.slf4j.LoggerFactory
  * @property exportPath the directory to write exported files (temporary folder is used when omitted)
  * @property appendTime if true a timestamp is appended to the file name to avoid overwriting
  * @property fileExtension the extension for the exported files (default: 'csv')
+ * @property decimalPlacesCount the count of places after decimal
  */
 class CSVExporter<T, P : Position<P>>
 @JvmOverloads
 constructor(
     private val fileNameRoot: String = "",
     val interval: Double = DEFAULT_INTERVAL,
+    val decimalPlacesCount: String = "2",
     val exportPath: String =
         createTempDirectory("alchemist-export")
             .absolutePathString()
@@ -100,7 +102,8 @@ constructor(
             val data = extractor.extractDataAsText(environment, reaction, time, step)
             val names = extractor.columnNames
             when {
-                data.size <= 1 -> data.values.joinToString(" ")
+                data.size <= 1 ->
+                    roundValues(data.values, decimalPlacesCount.toInt()).joinToString(" ")
                 // Labels and keys match
                 data.size == names.size && data.keys.containsAll(names) ->
                     names.joinToString(" ") {
@@ -138,6 +141,10 @@ constructor(
             println(SEPARATOR)
             close()
         }
+    }
+
+    private fun roundValues(values: Collection<String>, decimalsNumber: Int): Collection<String> = values.map {
+        if (it.toDouble() % 0 == 0.0) it else String.format(Locale.US, "%.${decimalsNumber}f", it.toDouble())
     }
 
     private companion object {

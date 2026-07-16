@@ -17,7 +17,7 @@ jobs:
         uses: danysk/action-checkout@a68beea0e65091ba27ce80140f3b1fc5fe8d7e83 # 0.2.30
         with:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      - uses: DanySK/build-check-deploy-gradle-action@0d87404d9fc0f77219b51fffe634ede074c0b3e7 # 4.0.40
+      - uses: DanySK/build-check-deploy-gradle-action@bb1e4f529222e1af485b329208b0abcfa56095dc # 4.0.41
         with:
           pre-build-command: rm -rf dokka-cache
           build-command: |

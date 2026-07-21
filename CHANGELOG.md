@@ -1,3 +1,14 @@
+## [43.1.20](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.19...43.1.20) (2026-07-21)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.7.4-19.2.7 ([#5506](https://github.com/AlchemistSimulator/Alchemist/issues/5506)) ([928c3ec](https://github.com/AlchemistSimulator/Alchemist/commit/928c3ec2515339d6987bf0861060b71d7ab240fc))
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v7.0.1 ([#5503](https://github.com/AlchemistSimulator/Alchemist/issues/5503)) ([9c34be3](https://github.com/AlchemistSimulator/Alchemist/commit/9c34be37c84a2d33db18fc66bdec4e913f4599ac))
+* **deps:** update danysk/action-checkout action to v0.2.31 ([#5504](https://github.com/AlchemistSimulator/Alchemist/issues/5504)) ([9497047](https://github.com/AlchemistSimulator/Alchemist/commit/9497047a073efb11d63919d52e6edf0113736c46))
+
 ## [43.1.19](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.18...43.1.19) (2026-07-19)
 
 ### Dependency updates

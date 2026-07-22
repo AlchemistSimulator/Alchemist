@@ -9,26 +9,30 @@
 
 package it.unibo.alchemist.model.geospatial.reading
 
-import java.io.Serializable
-
 /**
- * In-memory implementation of [RasterGrid], format-agnostic.
- *
- * Once data has been read from a file (NetCDF, GRIB, or any other source) and loaded here,
- * this class has no dependency on the reading library. Values are stored in a single
- * flattened row-major array, avoiding the overhead and boxing of Array<DoubleArray>.
+ * In-memory implementation of [RasterGrid].
+ * Values are stored in a single flattened row-major array.
  *
  * @property latitudes see [RasterGrid.latitudes] (ascending).
  * @property longitudes see [RasterGrid.longitudes] (ascending).
- * @property values Cell values in row-major order; [Double.NaN] indicates a missing value.
+ * @property values cell values in row-major order; [Double.NaN] indicates a missing value.
  */
 class ArrayRasterGrid(
     override val latitudes: DoubleArray,
     override val longitudes: DoubleArray,
     private val values: DoubleArray,
-) : RasterGrid {
+) : RasterGrid<Double> {
 
-    override fun valueAt(latIndex: Int, lonIndex: Int): Double = values[latIndex * longitudes.size + lonIndex]
+    init {
+        val expectedSize = latitudes.size * longitudes.size
+        require(values.size == expectedSize) {
+            "Dimension mismatch: expected $expectedSize values " +
+                "(${latitudes.size} lat x ${longitudes.size} lon), but got ${values.size}"
+        }
+    }
+
+    override fun valueAt(latIndex: Int, lonIndex: Int): Double? =
+        values[latIndex * longitudes.size + lonIndex].takeUnless { it.isNaN() }
 
     private companion object {
         private const val serialVersionUID = 1L

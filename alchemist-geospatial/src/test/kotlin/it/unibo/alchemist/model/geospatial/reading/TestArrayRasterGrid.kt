@@ -9,8 +9,9 @@
 
 package it.unibo.alchemist.model.geospatial.reading
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.doubles.shouldBeNaN
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 
 class TestArrayRasterGrid : StringSpec({
@@ -39,18 +40,18 @@ class TestArrayRasterGrid : StringSpec({
     }
 
     // Missing values tests
-    "valueAt should preserve Double.NaN for missing values" {
+    "valueAt should return null for missing values" {
         // (iLat=1, iLon=1) is a NaN
         val nanValues = DoubleArray(12) { idx -> if (idx == 5) Double.NaN else idx.toDouble() }
         val nanGrid = ArrayRasterGrid(lats, lons, nanValues)
-        nanGrid.valueAt(1, 1).shouldBeNaN()
+        nanGrid.valueAt(1, 1).shouldBeNull()
     }
 
-    "a grid entirely made of NaN should return NaN everywhere" {
+    "a grid entirely made of NaN should return null everywhere" {
         val allNaN = ArrayRasterGrid(lats, lons, DoubleArray(12) { Double.NaN })
         for (iLat in 0..2) {
             for (iLon in 0..3) {
-                allNaN.valueAt(iLat, iLon).shouldBeNaN()
+                allNaN.valueAt(iLat, iLon).shouldBeNull()
             }
         }
     }
@@ -62,5 +63,16 @@ class TestArrayRasterGrid : StringSpec({
 
     "longitudes should be accessible and match the constructor argument" {
         grid.longitudes shouldBe lons
+    }
+
+    // Dimension mismatch
+    "a mismatch between (lats x lons) and values should raise an exception" {
+        shouldThrow<IllegalArgumentException> {
+            ArrayRasterGrid(
+                lats,
+                lons,
+                DoubleArray(lats.size * lons.size - 1) { Double.NaN },
+            )
+        }
     }
 })

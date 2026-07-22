@@ -14,15 +14,14 @@ import java.io.Serializable
 /**
  * A single 2D spatial "slice" of data on a regular geographic grid (latitude/longitude).
  *
- * This interface represents a data container: it exposes axes and cell access,
- * but contains no interpolation logic (that lives in the spatial strategies).
- *
  * Axis contract: [latitudes] and [longitudes] are ALWAYS sorted in ascending order.
  * Implementations that read files with descending axes (e.g. GloFAS, whose latitude runs
  * from +89.95 to −59.95) must normalize internally, so that strategies never need to
  * reason about axis direction.
+ *
+ * @param T the type of value stored in each cell of this grid.
  */
-interface RasterGrid : Serializable {
+interface RasterGrid<T> : Serializable {
     /**
      * Latitudes of grid nodes, in degrees, sorted in ascending order.
      */
@@ -39,8 +38,8 @@ interface RasterGrid : Serializable {
      * @param latIndex index on the [latitudes] axis
      * @param lonIndex index on the [longitudes] axis
      *
-     * @return the value of the cell, or [Double.NaN] if the cell
-     * contains a missing value or a placeholder
+     * @return the value of the cell, or null if the cell
+     * contains a missing value
      */
-    fun valueAt(latIndex: Int, lonIndex: Int): Double
+    fun valueAt(latIndex: Int, lonIndex: Int): T?
 }

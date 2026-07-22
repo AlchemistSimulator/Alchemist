@@ -47,7 +47,7 @@ compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-mu
 conrec = "org.danilopianini:conrec:0.1.1"
 dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 dyn4j = "org.dyn4j:dyn4j:6.0.0"
-dsiutils = "it.unimi.dsi:dsiutils:2.7.4"
+dsiutils = "it.unimi.dsi:dsiutils:2.7.5"
 embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.33.0"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphql-client = { module = "com.expediagroup:graphql-kotlin-client", version.ref = "graphql" }

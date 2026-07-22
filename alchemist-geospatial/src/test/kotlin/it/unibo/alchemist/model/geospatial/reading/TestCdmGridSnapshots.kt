@@ -12,13 +12,13 @@ package it.unibo.alchemist.model.geospatial.reading
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeSortedWith
-import io.kotest.matchers.doubles.shouldBeNaN
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.geospatial.writeTestNetcdf
 import java.nio.file.Files
 import java.nio.file.Path
 
-class TestCdmTimedGrid : StringSpec({
+class TestCdmGridSnapshots : StringSpec({
 
     /**
      * the directory where the temporary NetCDF files for the tests will be created
@@ -34,7 +34,7 @@ class TestCdmTimedGrid : StringSpec({
     "should read a single file and expose the correct number of instants" {
         val dir = Files.createTempDirectory(tempDir, "basic")
         writeFixedTestNetcdf(dir, "data.nc", doubleArrayOf(0.0, 24.0, 48.0))
-        val tg = CdmTimedGrid(dir)
+        val tg = CdmGridSnapshots.forDoubles(dir)
         tg.instants.size shouldBe 3
     }
 
@@ -43,7 +43,7 @@ class TestCdmTimedGrid : StringSpec({
         // b_file.nc is read second (in alphabetical order) but contains the most recent times
         writeFixedTestNetcdf(dir, "b_file.nc", doubleArrayOf(48.0, 72.0))
         writeFixedTestNetcdf(dir, "a_file.nc", doubleArrayOf(0.0, 24.0))
-        val tg = CdmTimedGrid(dir)
+        val tg = CdmGridSnapshots.forDoubles(dir)
         tg.instants.size shouldBe 4
         tg.instants shouldBeSortedWith compareBy { it }
     }
@@ -51,7 +51,7 @@ class TestCdmTimedGrid : StringSpec({
     "grid[i] should be accessible for every index in instants" {
         val dir = Files.createTempDirectory(tempDir, "align")
         writeFixedTestNetcdf(dir, "data.nc", doubleArrayOf(0.0, 24.0, 48.0, 72.0, 96.0))
-        val tg = CdmTimedGrid(dir)
+        val tg = CdmGridSnapshots.forDoubles(dir)
         // ff instants and grids are misaligned, the grid(s) would throw an IndexOutOfBoundsException
         tg.instants.indices.forEach { i -> tg.grid(i).latitudes.size shouldBe 3 }
     }
@@ -65,7 +65,7 @@ class TestCdmTimedGrid : StringSpec({
             lons = floatArrayOf(5f, 15f, 25f, 35f),
             timeHours = doubleArrayOf(0.0),
         )
-        val resultLats = CdmTimedGrid(dir).grid(0).latitudes
+        val resultLats = CdmGridSnapshots.forDoubles(dir).grid(0).latitudes
         resultLats shouldBe doubleArrayOf(10.0, 20.0, 30.0)
     }
 
@@ -84,7 +84,7 @@ class TestCdmTimedGrid : StringSpec({
             rawValues = floatArrayOf(100f, 101f, 200f, 201f),
         )
         // checks if the rows get reversed
-        val grid = CdmTimedGrid(dir).grid(0)
+        val grid = CdmGridSnapshots.forDoubles(dir).grid(0)
         grid.valueAt(0, 0) shouldBe 200.0
         grid.valueAt(0, 1) shouldBe 201.0
         grid.valueAt(1, 0) shouldBe 100.0
@@ -103,15 +103,15 @@ class TestCdmTimedGrid : StringSpec({
             rawValues = floatArrayOf(fill, 42f, 42f, 42f),
             fillValue = fill,
         )
-        val grid = CdmTimedGrid(dir).grid(0)
-        grid.valueAt(0, 0).shouldBeNaN()
+        val grid = CdmGridSnapshots.forDoubles(dir).grid(0)
+        grid.valueAt(0, 0).shouldBeNull()
         grid.valueAt(0, 1) shouldBe 42.0
     }
 
     // Configuration errors tests
     "should throw IllegalArgumentException on empty directory" {
         val emptyDir = Files.createTempDirectory(tempDir, "empty")
-        shouldThrow<IllegalArgumentException> { CdmTimedGrid(emptyDir) }
+        shouldThrow<IllegalArgumentException> { CdmGridSnapshots.forDoubles(emptyDir) }
     }
 
     "should throw IllegalArgumentException on duplicate timestamps across files" {
@@ -120,7 +120,7 @@ class TestCdmTimedGrid : StringSpec({
         for (i in 1..3) {
             writeFixedTestNetcdf(dir, "f$i.nc", doubleArrayOf(0.0, 24.0))
         }
-        shouldThrow<IllegalArgumentException> { CdmTimedGrid(dir) }
+        shouldThrow<IllegalArgumentException> { CdmGridSnapshots.forDoubles(dir) }
     }
 
     "should throw IllegalArgumentException when files have mismatched spatial grids" {
@@ -137,7 +137,7 @@ class TestCdmTimedGrid : StringSpec({
             floatArrayOf(5f, 15f),
             doubleArrayOf(24.0),
         )
-        shouldThrow<IllegalArgumentException> { CdmTimedGrid(dir) }
+        shouldThrow<IllegalArgumentException> { CdmGridSnapshots.forDoubles(dir) }
     }
 })
 

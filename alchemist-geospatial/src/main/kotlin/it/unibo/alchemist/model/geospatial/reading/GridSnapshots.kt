@@ -21,7 +21,7 @@ import java.time.Instant
  * real-world timestamps to simulation time once at construction; [grid] is index-based
  * because temporal interpolation operates on adjacent indices, not timestamps directly.
  */
-interface TimedGrid : Serializable {
+interface GridSnapshots<T> : Serializable {
     /**
      * Real-world timestamps of each slice, strictly ascending, aligned with [grid].
      */
@@ -32,5 +32,5 @@ interface TimedGrid : Serializable {
      *
      * @param index 0-based, aligned with [instants].
      */
-    fun grid(index: Int): RasterGrid
+    fun grid(index: Int): RasterGrid<T>
 }

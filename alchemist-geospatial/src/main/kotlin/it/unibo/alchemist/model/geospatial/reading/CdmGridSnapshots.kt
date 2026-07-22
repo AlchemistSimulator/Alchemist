@@ -22,7 +22,7 @@ import ucar.nc2.dataset.NetcdfDataset
 import ucar.nc2.dataset.NetcdfDatasets
 
 /**
- * Eager [TimedGrid] implementation. This implementation depends on
+ * Eager [GridSnapshots] implementation. This implementation depends on
  * [NetCDF-Java](https://docs.unidata.ucar.edu/netcdf-java/current/javadoc/index.html).
  *
  * Reads a directory of **homogeneous** data files (same variable, same spatial grid,
@@ -30,28 +30,50 @@ import ucar.nc2.dataset.NetcdfDatasets
  * All data is loaded into memory at construction time; file handles are closed before
  * the constructor returns.
  *
- * Files are opened in **enhanced mode** (fill values being replaced by [Double.NaN], scale/offset applied).
- * Latitude and longitude axes are normalized to **ascending order** regardless of the
- * direction stored in the file. Spatial homogeneity across files is validated eagerly.
+ * ### Supported datasets
+ * - **Formats:** supports NetCDF, GRIB1, GRIB2 and any other format recognized by
+ * the NetCDF-Java Common Data Model (CDM) that maps to CF conventions.
+ * - **CF Compliance**: the implementation relies on the **CF (Climate and Forecast) conventions**.
+ * Files must contain properly tagged coordinate axes (recognized as Time, Latitude, and
+ * Longitude by the CDM) and parseable CF-compliant time units (e.g., "hours since 1900-01-01").
+ * - **Dimensions**: strictly limited to {time, lat, lon} data. Datasets
+ * with other dimensions (e.g. z-axis) are not supported.
+ * - **Data unpacking**: missing/fill values are replaced by [Double.NaN].
+ *
+ * ### Grid normalization
+ * Latitude and longitude axes are normalized to ascending order regardless of the direction
+ * stored in the file (e.g., GloFAS data descending from +89.95 to -59.95 will be reversed
+ * internally to fulfill the [RasterGrid] contract). Spatial homogeneity across files is
+ * validated eagerly.
+ *
  * The variable to read is selected by [variableName], or auto-detected as the unique
  * `(time, lat, lon)` variable in the file.
  *
- * **SAX note:** `NetcdfDatasets.openDataset` parses its internal XML configuration via SAX.
+ * ## SAX note
+ * `NetcdfDatasets.openDataset` parses its internal XML configuration via SAX.
  * If Alchemist's classpath contains a xerces/xml-apis jar that overrides the JDK SAX parser,
  * a `SAXNotRecognizedException` will be thrown on first open. Two fixes: exclude the
  * offending jar from the dependency tree, or set the system property before any call to this class.
  *
- * @param directory directory of homogeneous spacial data files (NetCDFs/GRIBs).
+ * @param directory directory of homogeneous spatial data files (NetCDFs/GRIBs).
  * @param variableName name of the variable as it appears in the file (e.g. `"dis24"`),
  * not the CDS catalogue name. If `null`, auto-detected from the file.
+ * @param gridFactory function that constructs the specific [RasterGrid] implementation.
+ *
+ * @param T the type of value stored in each cell of each grid.
+ *
  * @throws IllegalArgumentException if the directory is empty; if the variable is missing
  * or ambiguous; if files have mismatched spatial axes; if the dimension order is not
  * `(time, lat, lon)`; or if two files share a timestamp (i.e. the temporal coverages are not disjoint).
  */
-class CdmTimedGrid(directory: Path, variableName: String? = null) : TimedGrid {
+class CdmGridSnapshots<T>(
+    directory: Path,
+    variableName: String? = null,
+    gridFactory: (DoubleArray, DoubleArray, DoubleArray) -> RasterGrid<T>,
+) : GridSnapshots<T> {
 
     override val instants: List<Instant>
-    private val grids: List<RasterGrid>
+    private val grids: List<RasterGrid<T>>
 
     init {
         // lists the files in the directory, which must not be empty
@@ -62,7 +84,7 @@ class CdmTimedGrid(directory: Path, variableName: String? = null) : TimedGrid {
         require(files.isNotEmpty()) { "No data files in $directory" }
 
         // maps all file time instances to the corresponding RasterGrid, sorting them by Instant
-        val map = TreeMap<Instant, RasterGrid>()
+        val map = TreeMap<Instant, RasterGrid<T>>()
 
         /**
          * spatial reference established by the first file.
@@ -74,8 +96,8 @@ class CdmTimedGrid(directory: Path, variableName: String? = null) : TimedGrid {
 
         for (file in files) {
             /*
-             * opens the file in "enhanced mode": every fill value get replaced with NaN,
-             * applies scale/offset, following the CF (Climate and Forecast) convention.
+             * opens the file in "enhanced mode": every fill value get replaced with NaN
+             * and expects dimensions to be properly tagged.
              */
             NetcdfDatasets.openDataset(file.toString()).use { ds ->
                 // ensures that all axis are present (time, lat, lon)
@@ -102,8 +124,8 @@ class CdmTimedGrid(directory: Path, variableName: String? = null) : TimedGrid {
                 val rawLons: DoubleArray = lonAxis.coordValues
 
                 /*
-                determines whether an axis is descending (e.g. GloFAS lat: +89.95 to -59.95).
-                RasterGrid contract requires them to be ascending.
+                 * determines whether an axis is descending (e.g. GloFAS lat: +89.95 to -59.95).
+                 * RasterGrid contract requires them to be ascending.
                  */
                 val latDesc = rawLats.first() > rawLats.last()
                 val lonDesc = rawLons.first() > rawLons.last()
@@ -170,18 +192,19 @@ class CdmTimedGrid(directory: Path, variableName: String? = null) : TimedGrid {
                     )
 
                     /*
-                    constructs the double array in row-major order, with ascending normalized axes.
-                    If the index was descending, then srcLat/srcLon are reversed so that iLat=0
-                    corresponds to the lowest latitude.
+                     * constructs the double array in row-major order, with ascending normalized axes.
+                     * If the index was descending, then srcLat/srcLon are reversed so that iLat=0
+                     * corresponds to the lowest latitude.
                      */
-                    val values = DoubleArray(nLat * nLon) { idx ->
+                    val measurements = DoubleArray(nLat * nLon) { idx ->
                         val iLat = idx / nLon
                         val iLon = idx % nLon
                         val srcLat = if (latDesc) (nLat - 1 - iLat) else iLat
                         val srcLon = if (lonDesc) (nLon - 1 - iLon) else iLon
                         rawData.getDouble(srcLat * nLon + srcLon)
                     }
-                    map[instant] = ArrayRasterGrid(lats, lons, values)
+
+                    map[instant] = gridFactory(lats, lons, measurements)
                 }
             }
         }
@@ -196,17 +219,23 @@ class CdmTimedGrid(directory: Path, variableName: String? = null) : TimedGrid {
      * @param index 0-based index, aligned with [instants].
      * @return the [RasterGrid] for that instant.
      */
-    override fun grid(index: Int): RasterGrid = grids[index]
+    override fun grid(index: Int): RasterGrid<T> = grids[index]
 
-    private companion object {
+    companion object {
 
         private const val serialVersionUID = 1L
+
+        /**
+         * Implementation for [Double] that uses an [ArrayRasterGrid].
+         */
+        fun forDoubles(directory: Path, variableName: String? = null): CdmGridSnapshots<Double> =
+            CdmGridSnapshots(directory, variableName, ::ArrayRasterGrid)
 
         /**
          * Selects the variable to read from the dataset.
          *
          * If [name] is provided, looks it up by short name (the name as it appears in the file,
-         * not the CDS catalogue name). Otherwise, auto-detects the unique 3D variable
+         * not the store catalogue name). Otherwise, auto-detects the unique 3D variable
          * whose dimensions exactly match ([timeDimName], [latDimName], [lonDimName]).
          * Coordinate axis variables (latitude, longitude, time themselves) are 1D and are therefore excluded
          * automatically.
@@ -221,7 +250,7 @@ class CdmTimedGrid(directory: Path, variableName: String? = null) : TimedGrid {
          * @throws IllegalArgumentException if the named variable is not found, or if
          * auto-detection finds zero or more than one candidate.
          */
-        fun resolveVariable(
+        private fun resolveVariable(
             ds: NetcdfDataset,
             name: String?,
             timeDimName: String,

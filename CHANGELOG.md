@@ -1,3 +1,23 @@
+## [43.1.21](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.20...43.1.21) (2026-07-23)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.7.5-19.2.8 ([#5510](https://github.com/AlchemistSimulator/Alchemist/issues/5510)) ([ce0d644](https://github.com/AlchemistSimulator/Alchemist/commit/ce0d64486aa4e918f7de0adfc20efd5e3a1df0e0))
+* **deps:** update dependency io.kotest:io.kotest.gradle.plugin to v6.2.3 ([#5507](https://github.com/AlchemistSimulator/Alchemist/issues/5507)) ([e6fc557](https://github.com/AlchemistSimulator/Alchemist/commit/e6fc557cc009b31164390df4bbfb231f34f73d3a))
+* **deps:** update dependency it.unimi.dsi:dsiutils to v2.7.5 ([#5509](https://github.com/AlchemistSimulator/Alchemist/issues/5509)) ([0b98c95](https://github.com/AlchemistSimulator/Alchemist/commit/0b98c956d78d330a95d20ca5b05ac28ae1fce067))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.9.1 ([#5511](https://github.com/AlchemistSimulator/Alchemist/issues/5511)) ([1de8b8e](https://github.com/AlchemistSimulator/Alchemist/commit/1de8b8eeeb52dbd843ac2b8393ab3c5ad7409e3d))
+* **deps:** update plugin shadowjar to v9.6.1 ([#5508](https://github.com/AlchemistSimulator/Alchemist/issues/5508)) ([fb0c57c](https://github.com/AlchemistSimulator/Alchemist/commit/fb0c57c7f1dcd887463648ed8b12987ce739b6b8))
+
+### Build and continuous integration
+
+* **deps:** bump tar and npm ([bcc634a](https://github.com/AlchemistSimulator/Alchemist/commit/bcc634a3948c710da6f16520abf8449ccd37fd15))
+
+### General maintenance
+
+* **build:** actualize the Kotlin JS store ([a955019](https://github.com/AlchemistSimulator/Alchemist/commit/a9550192718654185537150a231c5cb78076e756))
+* **build:** update the javadoc.io cache ([0dc7e74](https://github.com/AlchemistSimulator/Alchemist/commit/0dc7e7487cc2ed7bedef5e50e45f0cc256075edf))
+* **build:** update the javadoc.io cache ([1899c29](https://github.com/AlchemistSimulator/Alchemist/commit/1899c29f363f137cb239e81c40078f2cd641f24d))
+
 ## [43.1.20](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.19...43.1.20) (2026-07-21)
 
 ### Dependency updates

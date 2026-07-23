@@ -3,6 +3,8 @@ export:
   - type: CSVExporter
     parameters:
       fileNameRoot: "test_base"
+      interval: 1.0
+      decimalPlacesCount: 3
     data:
       - time
 

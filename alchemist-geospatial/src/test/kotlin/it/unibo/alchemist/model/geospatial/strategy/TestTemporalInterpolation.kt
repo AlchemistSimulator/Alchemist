@@ -13,8 +13,15 @@ import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.model.geospatial.strategy.temporal.ClosestDoubleInterpolation
+import it.unibo.alchemist.model.geospatial.strategy.temporal.LastDoubleInterpolation
+import it.unibo.alchemist.model.geospatial.strategy.temporal.LinearInterpolation
+import it.unibo.alchemist.model.geospatial.strategy.temporal.NextDoubleInterpolation
+import it.unibo.alchemist.model.geospatial.strategy.temporal.TemporalInterpolationStrategy
 
 class TestTemporalInterpolation : StringSpec({
+
+    lateinit var strategy: TemporalInterpolationStrategy<Double>
 
     val tolerance = 1e-9
 
@@ -26,25 +33,29 @@ class TestTemporalInterpolation : StringSpec({
     val weights = (0..steps).map { it.toDouble() / steps }
 
     // LINEAR temporal interpolation strategy tests
-    "LINEAR returns the endpoints at weight 0 and 1" {
-        TemporalInterpolation.LINEAR.interpolate(
+    "Linear returns the endpoints at weight 0 and 1" {
+        strategy = LinearInterpolation()
+
+        strategy.interpolate(
             valueBefore,
             valueAfter,
             0.0,
         ) shouldBe (valueBefore plusOrMinus tolerance)
 
-        TemporalInterpolation.LINEAR.interpolate(
+        strategy.interpolate(
             valueBefore,
             valueAfter,
             1.0,
         ) shouldBe (valueAfter plusOrMinus tolerance)
     }
 
-    "LINEAR blends proportionally to the weight" {
+    "Linear blends proportionally to the weight" {
+        strategy = LinearInterpolation()
+
         for (weight in weights) {
             val expected = valueBefore + (valueAfter - valueBefore) * weight
             withClue("at weight $weight") {
-                TemporalInterpolation.LINEAR.interpolate(
+                strategy.interpolate(
                     valueBefore,
                     valueAfter,
                     weight,
@@ -53,42 +64,52 @@ class TestTemporalInterpolation : StringSpec({
         }
     }
 
-    // BEFORE temporal interpolation strategy test
-    "BEFORE always returns the earlier value regardless of weight" {
+    // Last temporal interpolation strategy test
+    "Last always returns the earlier value regardless of weight" {
+        strategy = LastDoubleInterpolation()
+
         for (weight in weights) {
             withClue("at weight $weight") {
-                TemporalInterpolation.BEFORE.interpolate(valueBefore, valueAfter, weight) shouldBe valueBefore
+                strategy.interpolate(valueBefore, valueAfter, weight) shouldBe valueBefore
             }
         }
     }
 
-    // AFTER temporal interpolation strategy test
-    "AFTER always returns the later value regardless of weight" {
+    // Next temporal interpolation strategy test
+    "Next always returns the later value regardless of weight" {
+        strategy = NextDoubleInterpolation()
+
         for (weight in weights) {
             withClue("at weight $weight") {
-                TemporalInterpolation.AFTER.interpolate(valueBefore, valueAfter, weight) shouldBe valueAfter
+                strategy.interpolate(valueBefore, valueAfter, weight) shouldBe valueAfter
             }
         }
     }
 
-    // NEAREST temporal interpolation strategy tests
-    "NEAREST returns the earlier value when the weight is below 0.5" {
+    // Closest temporal interpolation strategy tests
+    "Closest returns the earlier value when the weight is below 0.5" {
+        strategy = ClosestDoubleInterpolation()
+
         for (weight in listOf(0.0, 0.25, 0.499)) {
             withClue("at weight $weight") {
-                TemporalInterpolation.NEAREST.interpolate(valueBefore, valueAfter, weight) shouldBe valueBefore
+                strategy.interpolate(valueBefore, valueAfter, weight) shouldBe valueBefore
             }
         }
     }
 
-    "NEAREST returns the later value when the weight is at or above 0.5" {
+    "Closest returns the later value when the weight is at or above 0.5" {
+        strategy = ClosestDoubleInterpolation()
+
         for (weight in listOf(0.5, 0.75, 1.0)) {
             withClue("at weight $weight") {
-                TemporalInterpolation.NEAREST.interpolate(valueBefore, valueAfter, weight) shouldBe valueAfter
+                strategy.interpolate(valueBefore, valueAfter, weight) shouldBe valueAfter
             }
         }
     }
 
-    "NEAREST resolves the exact 0.5 tie to the later value" {
-        TemporalInterpolation.NEAREST.interpolate(valueBefore, valueAfter, 0.5) shouldBe valueAfter
+    "Closest resolves the exact 0.5 tie to the later value" {
+        strategy = ClosestDoubleInterpolation()
+
+        strategy.interpolate(valueBefore, valueAfter, 0.5) shouldBe valueAfter
     }
 })

@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.geospatial
 
-import it.unibo.alchemist.model.geospatial.reading.CdmTimedGrid
+import it.unibo.alchemist.model.geospatial.reading.CdmGridSnapshots
 import java.nio.file.Path
 import ucar.ma2.Array as UcarArray
 import ucar.ma2.ArrayDouble
@@ -29,7 +29,7 @@ import ucar.nc2.write.NetcdfFormatWriter
  *
  * @param path destination file. The parent directory must already exist.
  * @param lats latitude values in degrees, stored in the file as-is. Pass a descending array
- * to test axis normalization in [CdmTimedGrid].
+ * to test axis normalization in [CdmGridSnapshots].
  * @param lons longitude values in degrees, stored in the file as-is.
  * @param timeHours time offsets in hours from [timeEpoch], one value per time step.
  * @param rawValues flat `time * lat * lon` array in row-major order, or `null` to use the

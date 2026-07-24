@@ -23,7 +23,7 @@ class TestArrayRasterGrid : StringSpec({
      */
     val lats = doubleArrayOf(10.0, 20.0, 30.0)
     val lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0)
-    val values = DoubleArray(12) { idx -> (idx / lons.size) * 10.0 + (idx % lons.size) }
+    val values = Array<Double?>(12) { idx -> (idx / lons.size) * 10.0 + (idx % lons.size) }
     val grid = ArrayRasterGrid(lats, lons, values)
 
     // Value access tests
@@ -41,17 +41,17 @@ class TestArrayRasterGrid : StringSpec({
 
     // Missing values tests
     "valueAt should return null for missing values" {
-        // (iLat=1, iLon=1) is a NaN
-        val nanValues = DoubleArray(12) { idx -> if (idx == 5) Double.NaN else idx.toDouble() }
-        val nanGrid = ArrayRasterGrid(lats, lons, nanValues)
-        nanGrid.valueAt(1, 1).shouldBeNull()
+        // (iLat=1, iLon=1) is a missing value
+        val nullValues = Array(12) { idx -> if (idx == 5) null else idx.toDouble() }
+        val nullGrid = ArrayRasterGrid(lats, lons, nullValues)
+        nullGrid.valueAt(1, 1).shouldBeNull()
     }
 
-    "a grid entirely made of NaN should return null everywhere" {
-        val allNaN = ArrayRasterGrid(lats, lons, DoubleArray(12) { Double.NaN })
+    "a grid entirely made of nulls should return null everywhere" {
+        val allNull = ArrayRasterGrid(lats, lons, arrayOfNulls<Double>(12))
         for (iLat in 0..2) {
             for (iLon in 0..3) {
-                allNaN.valueAt(iLat, iLon).shouldBeNull()
+                allNull.valueAt(iLat, iLon).shouldBeNull()
             }
         }
     }
@@ -71,7 +71,7 @@ class TestArrayRasterGrid : StringSpec({
             ArrayRasterGrid(
                 lats,
                 lons,
-                DoubleArray(lats.size * lons.size - 1) { Double.NaN },
+                Array(lats.size * lons.size - 1) { 0.0 },
             )
         }
     }

@@ -66,11 +66,8 @@ import ucar.nc2.dataset.NetcdfDatasets
  * or ambiguous; if files have mismatched spatial axes; if the dimension order is not
  * `(time, lat, lon)`; or if two files share a timestamp (i.e. the temporal coverages are not disjoint).
  */
-class CdmGridSnapshots<T>(
-    directory: Path,
-    variableName: String? = null,
-    gridFactory: (DoubleArray, DoubleArray, DoubleArray) -> RasterGrid<T>,
-) : GridSnapshots<T> {
+class CdmGridSnapshots<T>(directory: Path, variableName: String? = null, measurementConverter: (Double) -> T) :
+    GridSnapshots<T> {
 
     override val instants: List<Instant>
     private val grids: List<RasterGrid<T>>
@@ -196,15 +193,19 @@ class CdmGridSnapshots<T>(
                      * If the index was descending, then srcLat/srcLon are reversed so that iLat=0
                      * corresponds to the lowest latitude.
                      */
-                    val measurements = DoubleArray(nLat * nLon) { idx ->
-                        val iLat = idx / nLon
-                        val iLon = idx % nLon
-                        val srcLat = if (latDesc) (nLat - 1 - iLat) else iLat
-                        val srcLon = if (lonDesc) (nLon - 1 - iLon) else iLon
-                        rawData.getDouble(srcLat * nLon + srcLon)
-                    }
+                    @Suppress("UNCHECKED_CAST")
+                    val measurements = arrayOfNulls<Any?>(nLat * nLon).also { arr ->
+                        for (idx in arr.indices) {
+                            val iLat = idx / nLon
+                            val iLon = idx % nLon
+                            val srcLat = if (latDesc) (nLat - 1 - iLat) else iLat
+                            val srcLon = if (lonDesc) (nLon - 1 - iLon) else iLon
+                            val raw = rawData.getDouble(srcLat * nLon + srcLon)
+                            arr[idx] = if (raw.isNaN()) null else measurementConverter(raw)
+                        }
+                    } as Array<T?>
 
-                    map[instant] = gridFactory(lats, lons, measurements)
+                    map[instant] = ArrayRasterGrid(lats, lons, measurements)
                 }
             }
         }
@@ -224,12 +225,6 @@ class CdmGridSnapshots<T>(
     companion object {
 
         private const val serialVersionUID = 1L
-
-        /**
-         * Implementation for [Double] that uses an [ArrayRasterGrid].
-         */
-        fun forDoubles(directory: Path, variableName: String? = null): CdmGridSnapshots<Double> =
-            CdmGridSnapshots(directory, variableName, ::ArrayRasterGrid)
 
         /**
          * Selects the variable to read from the dataset.

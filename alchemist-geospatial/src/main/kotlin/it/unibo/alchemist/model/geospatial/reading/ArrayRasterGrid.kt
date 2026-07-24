@@ -10,18 +10,18 @@
 package it.unibo.alchemist.model.geospatial.reading
 
 /**
- * In-memory implementation of [RasterGrid].
- * Values are stored in a single flattened row-major array.
+ * In-memory implementation of [RasterGrid] where values
+ * are stored in a single flattened row-major array.
  *
  * @property latitudes see [RasterGrid.latitudes] (ascending).
  * @property longitudes see [RasterGrid.longitudes] (ascending).
- * @property values cell values in row-major order; [Double.NaN] indicates a missing value.
+ * @property values cell values in row-major order; `null` values represent missing/fill values.
  */
-class ArrayRasterGrid(
+class ArrayRasterGrid<T>(
     override val latitudes: DoubleArray,
     override val longitudes: DoubleArray,
-    private val values: DoubleArray,
-) : RasterGrid<Double> {
+    private val values: Array<T?>,
+) : RasterGrid<T> {
 
     init {
         val expectedSize = latitudes.size * longitudes.size
@@ -31,8 +31,7 @@ class ArrayRasterGrid(
         }
     }
 
-    override fun valueAt(latIndex: Int, lonIndex: Int): Double? =
-        values[latIndex * longitudes.size + lonIndex].takeUnless { it.isNaN() }
+    override fun valueAt(latIndex: Int, lonIndex: Int): T? = values[latIndex * longitudes.size + lonIndex]
 
     private companion object {
         private const val serialVersionUID = 1L

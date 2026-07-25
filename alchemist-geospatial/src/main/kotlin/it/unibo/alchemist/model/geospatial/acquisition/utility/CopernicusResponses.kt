@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geospatial.acquisition
+package it.unibo.alchemist.model.geospatial.acquisition.utility
 
 import com.google.gson.JsonParser
 

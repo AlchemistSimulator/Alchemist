@@ -14,6 +14,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.paths.shouldExist
 import io.kotest.matchers.paths.shouldNotExist
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.model.geospatial.acquisition.utility.flattenArchives
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipEntry

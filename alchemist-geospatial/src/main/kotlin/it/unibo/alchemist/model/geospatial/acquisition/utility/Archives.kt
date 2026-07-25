@@ -7,12 +7,13 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geospatial.acquisition
+package it.unibo.alchemist.model.geospatial.acquisition.utility
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipException
 import java.util.zip.ZipFile
+import kotlin.collections.iterator
 
 /**
  * Extract all ZIP files inside of [dir] and deletes them.

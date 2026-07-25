@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model.geospatial.acquisition
 
+import it.unibo.alchemist.model.geospatial.acquisition.utility.CanonicalJson
+import it.unibo.alchemist.model.geospatial.acquisition.utility.toFileSystemSafe
 import java.security.MessageDigest
 
 /**

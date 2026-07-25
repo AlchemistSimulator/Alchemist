@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geospatial.acquisition
+package it.unibo.alchemist.model.geospatial.acquisition.utility
 
 /**
  * Renders this `String` as a single file-system-safe path segment: every character outside `[A-Za-z0-9._-]`

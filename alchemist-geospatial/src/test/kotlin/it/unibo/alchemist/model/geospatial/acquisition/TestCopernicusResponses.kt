@@ -12,6 +12,14 @@ package it.unibo.alchemist.model.geospatial.acquisition
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.model.geospatial.acquisition.utility.ProblemDetail
+import it.unibo.alchemist.model.geospatial.acquisition.utility.RemoteAsset
+import it.unibo.alchemist.model.geospatial.acquisition.utility.parseAsset
+import it.unibo.alchemist.model.geospatial.acquisition.utility.parseFailureMessage
+import it.unibo.alchemist.model.geospatial.acquisition.utility.parseMonitorUrl
+import it.unibo.alchemist.model.geospatial.acquisition.utility.parseProblemDetail
+import it.unibo.alchemist.model.geospatial.acquisition.utility.parseResultsUrl
+import it.unibo.alchemist.model.geospatial.acquisition.utility.parseStatus
 
 /**
  * The test data, the ACTUAL response bodies, were captured on 2026-06-28 (yyyy-mm-dd)

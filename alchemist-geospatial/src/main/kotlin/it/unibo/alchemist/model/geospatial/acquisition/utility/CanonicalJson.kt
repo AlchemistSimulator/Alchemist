@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geospatial.acquisition
+package it.unibo.alchemist.model.geospatial.acquisition.utility
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -35,7 +35,7 @@ internal object CanonicalJson {
 
     /**
      * Recursively rewrites [value] into a form Gson serializes deterministically: every [Map]
-     * becomes a key-sorted [TreeMap], every [List] keeps its order,
+     * becomes a key-sorted [java.util.TreeMap], every [List] keeps its order,
      * scalars (strings, booleans, numbers, nulls) are left untouched.
      */
     private fun canonicalize(value: Any?): Any? = when (value) {

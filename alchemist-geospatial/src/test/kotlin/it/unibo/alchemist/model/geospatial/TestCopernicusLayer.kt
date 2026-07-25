@@ -13,20 +13,14 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.doubles.plusOrMinus
-import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geospatial.reading.ArrayRasterGrid
+import it.unibo.alchemist.model.geospatial.reading.GridSnapshots
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
-import it.unibo.alchemist.model.geospatial.reading.TimedGrid
-import it.unibo.alchemist.model.geospatial.strategy.MissingValue
-import it.unibo.alchemist.model.geospatial.strategy.SpatialExtrapolation
-import it.unibo.alchemist.model.geospatial.strategy.SpatialInterpolation
-import it.unibo.alchemist.model.geospatial.strategy.SpatialSampler
-import it.unibo.alchemist.model.geospatial.strategy.TemporalExtrapolation
 import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
@@ -34,8 +28,7 @@ import kotlin.io.path.createTempDirectory
 
 private const val TOLERANCE = 1e-9
 
-class TestGeoRasterLayer : StringSpec({
-
+class TestCopernicusLayer : StringSpec({
     // fixed spatial grid
     val lats = doubleArrayOf(44.0, 45.0, 46.0)
     val lons = doubleArrayOf(11.0, 12.0, 13.0)
@@ -73,14 +66,14 @@ class TestGeoRasterLayer : StringSpec({
     /**
      * A [RasterGrid] where every cell has a fixed [value].
      */
-    fun flatGrid(value: Double): RasterGrid = ArrayRasterGrid(
+    fun flatGrid(value: Double): RasterGrid<Double> = ArrayRasterGrid(
         lats,
         lons,
-        DoubleArray(lats.size * lons.size) { value },
+        Array(lats.size * lons.size) { value },
     )
 
     /**
-     * Returns a [TimedGrid] made of flat slices.
+     * Returns a [GridSnapshots] made of flat slices.
      * THe i-th slice has all cells equal to `sliceValue[i]`.
      * Time steps are spaced [step] apart starting from [base].
      */
@@ -88,14 +81,14 @@ class TestGeoRasterLayer : StringSpec({
         vararg sliceValues: Double,
         base: Instant = Instant.EPOCH,
         step: Duration = Duration.ofHours(1),
-    ): TimedGrid {
+    ): GridSnapshots<Double> {
         val instants = sliceValues.indices.map { i ->
             base.plus(step.multipliedBy(i.toLong()))
         }
         val grids = sliceValues.map { v -> flatGrid(v) }
-        return object : TimedGrid {
+        return object : GridSnapshots<Double> {
             override val instants = instants
-            override fun grid(index: Int): RasterGrid = grids[index]
+            override fun grid(index: Int): RasterGrid<Double> = grids[index]
         }
     }
 
@@ -107,21 +100,24 @@ class TestGeoRasterLayer : StringSpec({
     }
 
     "require fails on empty TimedGrid" {
-        val emptyGrid = object : TimedGrid {
+        val emptyGrid = object : GridSnapshots<Double> {
             override val instants: List<Instant> = emptyList()
-            override fun grid(index: Int): RasterGrid = throw UnsupportedOperationException()
+            override fun grid(index: Int): RasterGrid<Double> = throw UnsupportedOperationException()
         }
         shouldThrow<IllegalArgumentException> {
-            GeoRasterLayer(envAt(0.0), emptyGrid)
+            DoubleCopernicusLayer(
+                environment = envAt(0.0),
+                data = emptyGrid,
+            )
         }
     }
 
     // timeOrigin tests
     "default timeOrigin maps the first instant to t=0.0" {
         val timedGrid = syntheticGrid(7.0, 14.0)
-        val layer = GeoRasterLayer(
-            envAt(0.0),
-            timedGrid,
+        val layer = DoubleCopernicusLayer(
+            environment = envAt(0.0),
+            data = timedGrid,
         )
         withClue("t=0.0 should hit the first slice exactly") {
             for (i in timedGrid.instants.indices) {
@@ -131,7 +127,7 @@ class TestGeoRasterLayer : StringSpec({
     }
 
     "explicit timeOrigin shifts the temporal origin" {
-        val layer = GeoRasterLayer(
+        val layer = DoubleCopernicusLayer(
             envAt(0.0),
             syntheticGrid(10.0, 20.0, 30.0),
             // instants: EPOCH, EPOCH+1h, EPOCH+2h
@@ -142,14 +138,23 @@ class TestGeoRasterLayer : StringSpec({
         }
     }
 
-    "explicit timeOrigin: t before shifted range extrapolates with LAST" {
-        // computed simulation times: -1.0, 0.0, 1.0, t=-2.0 is out of range
-        val layer = GeoRasterLayer(
+    "explicit timeOrigin: t before shifted range extrapolates with the first or last time slice" {
+        // computed simulation times: -1.0, 0.0, 1.0; t=-2.0 and 2 are out of range
+        var layer = DoubleCopernicusLayer(
             envAt(-2.0),
             syntheticGrid(10.0, 20.0, 30.0),
             timeOrigin = Instant.EPOCH.plus(Duration.ofHours(1)),
         )
-        withClue("t=-2.0 < sliceTimes.first()=-1.0, extrapolates to last slice: 30.0") {
+        withClue("t=-2.0 < sliceTimes.first()=-1.0, extrapolates to first slice: 10.0") {
+            layer.getValue(center) shouldBe 10.0
+        }
+
+        layer = DoubleCopernicusLayer(
+            envAt(2.0),
+            syntheticGrid(10.0, 20.0, 30.0),
+            timeOrigin = Instant.EPOCH.plus(Duration.ofHours(1)),
+        )
+        withClue("t=2.0 > sliceTimes.last()=1.0, extrapolates to last slice: 30.0") {
             layer.getValue(center) shouldBe 30.0
         }
     }
@@ -160,7 +165,7 @@ class TestGeoRasterLayer : StringSpec({
          * instants in the file: EPOCH, EPOCH+1h
          * sliceTimes should be [0.0, 2.0] with scale PT30M
          */
-        val layer = GeoRasterLayer(
+        val layer = DoubleCopernicusLayer(
             envAt(1.0),
             syntheticGrid(0.0, 10.0),
             timeScale = Duration.ofMinutes(30),
@@ -175,7 +180,7 @@ class TestGeoRasterLayer : StringSpec({
          * instants in the file: EPOCH, EPOCH+6h
          * sliceTimes should be [0.0, 1.0] with scale PT6H
          */
-        val layer = GeoRasterLayer(
+        val layer = DoubleCopernicusLayer(
             envAt(0.5),
             syntheticGrid(0.0, 12.0, step = Duration.ofHours(6)),
             timeScale = Duration.ofHours(6),
@@ -185,12 +190,29 @@ class TestGeoRasterLayer : StringSpec({
         }
     }
 
-    // interpolation and extrapolation tests
+    // out of bound test
+    "getValue() should raise an exception when an out-of-bounds position is passed" {
+        val timedGrid = syntheticGrid(7.0)
+        val layer = DoubleCopernicusLayer(
+            environment = envAt(0.0),
+            data = timedGrid,
+        )
+        shouldThrow<IllegalArgumentException> {
+            layer.getValue(
+                mockk {
+                    every { latitude } returns (lats.first() - 1)
+                    every { longitude } returns (lons.first() - 1)
+                },
+            )
+        }
+    }
+
+    // strategies tests
     "exact hits on slices produce values without temporal interpolation" {
         val sliceValues = doubleArrayOf(1.0, 2.0, 3.0)
         for (i in sliceValues.indices) {
             val time = i.toDouble()
-            val layer = GeoRasterLayer(
+            val layer = DoubleCopernicusLayer(
                 envAt(time),
                 syntheticGrid(*sliceValues),
             )
@@ -200,63 +222,14 @@ class TestGeoRasterLayer : StringSpec({
         }
     }
 
-    "temporal extrapolation is applied if simulation time is not in range" {
-        doubleArrayOf(-100.0, -1.0, 99.0, 999.0).forEach { time ->
-            val layer = GeoRasterLayer(
-                envAt(time),
-                syntheticGrid(5.0, 10.0, 15.0),
-                temporalExtrapolation = TemporalExtrapolation.LAST,
-            )
-            layer.getValue(center) shouldBe 15.0
-        }
-    }
-
+    // no simulation test
     "simulationOrNull null falls back to t=0.0 and reads the first slice" {
-        val layer = GeoRasterLayer(
+        val layer = DoubleCopernicusLayer(
             envNoSim,
             syntheticGrid(42.0, 84.0),
         )
         withClue("null simulation: t=0.0, first slice = 42.0") {
             layer.getValue(center) shouldBe 42.0
-        }
-    }
-
-    "spatial extrapolation is applied if the position is out of bounds" {
-        val outside: GeoPosition = mockk {
-            every { latitude } returns 90.0
-            every { longitude } returns 180.0
-        }
-        val layer = GeoRasterLayer(
-            envAt(0.0),
-            syntheticGrid(99.0),
-            spatial = SpatialSampler(
-                SpatialInterpolation.NEAREST,
-                SpatialExtrapolation.ZERO,
-                MissingValue.NAN,
-            ),
-        )
-        withClue("outside extent with ZERO extrapolation returns 0.0") {
-            layer.getValue(outside) shouldBe 0.0
-        }
-    }
-
-    "MissingValue.NAN propagates NaN for in-grid missing cells" {
-        val values = DoubleArray(9) { 5.0 }.also { it[4] = Double.NaN } // center cell missing
-        val timedGrid = object : TimedGrid {
-            override val instants = listOf(Instant.EPOCH)
-            override fun grid(index: Int) = ArrayRasterGrid(lats, lons, values)
-        }
-        val layer = GeoRasterLayer(
-            envAt(0.0),
-            timedGrid,
-            spatial = SpatialSampler(
-                SpatialInterpolation.NEAREST,
-                SpatialExtrapolation.ZERO,
-                MissingValue.NAN,
-            ),
-        )
-        withClue("center cell is NaN; MissingValue.NAN propagates NaN") {
-            layer.getValue(center).shouldBeNaN()
         }
     }
 
@@ -277,7 +250,7 @@ class TestGeoRasterLayer : StringSpec({
             rawValues = FloatArray(27) { idx -> ((idx / 9) + 1) * 10f },
         )
 
-        val layer = GeoRasterLayer(envAt(0.0), dir)
+        val layer = DoubleCopernicusLayer(envAt(0.0), dir)
         withClue("t=0.0 -> first slice -> all cells = 10.0") {
             layer.getValue(center) shouldBe (10.0 plusOrMinus TOLERANCE)
         }
@@ -293,7 +266,7 @@ class TestGeoRasterLayer : StringSpec({
             rawValues = FloatArray(18) { idx -> if (idx < 9) 0f else 10f },
         )
 
-        val layer = GeoRasterLayer(envAt(0.5), dir)
+        val layer = DoubleCopernicusLayer(envAt(0.5), dir)
         withClue("t=0.5 halfway between 0.0 and 10.0 -> 5.0") {
             layer.getValue(center) shouldBe (5.0 plusOrMinus TOLERANCE)
         }
@@ -315,7 +288,7 @@ class TestGeoRasterLayer : StringSpec({
             },
         )
 
-        val layer = GeoRasterLayer(envAt(0.0), dir)
+        val layer = DoubleCopernicusLayer(envAt(0.0), dir)
         val lat44: GeoPosition = mockk {
             every { latitude } returns 44.0
             every { longitude } returns 12.0
@@ -343,7 +316,7 @@ class TestGeoRasterLayer : StringSpec({
             rawValues = FloatArray(9) { 7f },
         )
 
-        val layer = GeoRasterLayer(envAt(0.0), dir, variable = null)
+        val layer = DoubleCopernicusLayer(envAt(0.0), dir, variable = null)
         withClue("auto-detected variable; all cells = 7.0") {
             layer.getValue(center) shouldBe (7.0 plusOrMinus TOLERANCE)
         }
@@ -360,7 +333,7 @@ class TestGeoRasterLayer : StringSpec({
             variableName = "dis24",
         )
 
-        val layer = GeoRasterLayer(envAt(0.0), dir, variable = "dis24")
+        val layer = DoubleCopernicusLayer(envAt(0.0), dir, variable = "dis24")
         withClue("explicit variable 'dis24'; all cells = 42.0") {
             layer.getValue(center) shouldBe (42.0 plusOrMinus TOLERANCE)
         }
@@ -385,7 +358,7 @@ class TestGeoRasterLayer : StringSpec({
             rawValues = FloatArray(18) { idx -> if (idx < 9) 30f else 40f },
         )
         var t = 0.0
-        val layer = GeoRasterLayer(mutableEnv { t }, dir)
+        val layer = DoubleCopernicusLayer(mutableEnv { t }, dir)
 
         (0..3).forEach {
             val time = it.toDouble()
@@ -397,7 +370,7 @@ class TestGeoRasterLayer : StringSpec({
             }
         }
 
-        // interpolation across the file boundary: t=1.5 should return the mean with LINEAR
+        // interpolation across the file boundary: t=1.5 should return the mean with linear interpolation
         t = 1.5
         withClue("t=1.5 crosses file boundary. LINEAR blend of 20.0 and 30.0 = 25.0") {
             layer.getValue(center) shouldBe (25.0 plusOrMinus TOLERANCE)

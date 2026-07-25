@@ -38,7 +38,7 @@ import ucar.nc2.dataset.NetcdfDatasets
  * Longitude by the CDM) and parseable CF-compliant time units (e.g., "hours since 1900-01-01").
  * - **Dimensions**: strictly limited to {time, lat, lon} data. Datasets
  * with other dimensions (e.g. z-axis) are not supported.
- * - **Data unpacking**: missing/fill values are replaced by [Double.NaN].
+ * - **Data unpacking**: missing/fill values are replaced by `nulls`.
  *
  * ### Grid normalization
  * Latitude and longitude axes are normalized to ascending order regardless of the direction
@@ -58,7 +58,8 @@ import ucar.nc2.dataset.NetcdfDatasets
  * @param directory directory of homogeneous spatial data files (NetCDFs/GRIBs).
  * @param variableName name of the variable as it appears in the file (e.g. `"dis24"`),
  * not the CDS catalogue name. If `null`, auto-detected from the file.
- * @param gridFactory function that constructs the specific [RasterGrid] implementation.
+ * @param measurementConverter specifies how to convert the raw [Double]
+ * value read from the file to the required type [T]
  *
  * @param T the type of value stored in each cell of each grid.
  *
@@ -188,6 +189,8 @@ class CdmGridSnapshots<T>(directory: Path, variableName: String? = null, measure
                         intArrayOf(1, nLat, nLon),
                     )
 
+                    var nonNullCount = 0
+
                     /*
                      * constructs the double array in row-major order, with ascending normalized axes.
                      * If the index was descending, then srcLat/srcLon are reversed so that iLat=0
@@ -201,11 +204,27 @@ class CdmGridSnapshots<T>(directory: Path, variableName: String? = null, measure
                             val srcLat = if (latDesc) (nLat - 1 - iLat) else iLat
                             val srcLon = if (lonDesc) (nLon - 1 - iLon) else iLon
                             val raw = rawData.getDouble(srcLat * nLon + srcLon)
-                            arr[idx] = if (raw.isNaN()) null else measurementConverter(raw)
+
+                            if (raw.isNaN()) {
+                                arr[idx] = null
+                            } else {
+                                arr[idx] = measurementConverter(raw)
+                                nonNullCount++
+                            }
                         }
                     } as Array<T?>
 
-                    map[instant] = ArrayRasterGrid(lats, lons, measurements)
+                    /*
+                     * Computes the grid density to pick the most efficient
+                     * grid implementation.
+                     */
+                    val density = nonNullCount.toDouble() / measurements.size
+
+                    map[instant] = if (density < SPARSE_DENSITY_THRESHOLD) {
+                        MapRasterGrid(lats, lons, measurements)
+                    } else {
+                        ArrayRasterGrid(lats, lons, measurements)
+                    }
                 }
             }
         }
@@ -223,6 +242,11 @@ class CdmGridSnapshots<T>(directory: Path, variableName: String? = null, measure
     override fun grid(index: Int): RasterGrid<T> = grids[index]
 
     companion object {
+
+        /**
+         * Below this fraction of non-missing cells, a grid is considered "sparse".
+         */
+        private const val SPARSE_DENSITY_THRESHOLD = 0.1
 
         private const val serialVersionUID = 1L
 

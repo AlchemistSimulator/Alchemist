@@ -13,6 +13,8 @@ package it.unibo.alchemist.model.geospatial.reading
  * In-memory implementation of [RasterGrid] where values
  * are stored in a single flattened row-major array.
  *
+ * Suited for dense grids, where most cells hold a value.
+ *
  * @property latitudes see [RasterGrid.latitudes] (ascending).
  * @property longitudes see [RasterGrid.longitudes] (ascending).
  * @property values cell values in row-major order; `null` values represent missing/fill values.
@@ -24,11 +26,7 @@ class ArrayRasterGrid<T>(
 ) : RasterGrid<T> {
 
     init {
-        val expectedSize = latitudes.size * longitudes.size
-        require(values.size == expectedSize) {
-            "Dimension mismatch: expected $expectedSize values " +
-                "(${latitudes.size} lat x ${longitudes.size} lon), but got ${values.size}"
-        }
+        requireMatchingGridSize(latitudes, longitudes, values.size)
     }
 
     override fun valueAt(latIndex: Int, lonIndex: Int): T? = values[latIndex * longitudes.size + lonIndex]

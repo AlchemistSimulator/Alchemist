@@ -14,8 +14,13 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 
-class TestArrayRasterGrid : StringSpec({
-
+/**
+ * Contract shared by every [RasterGrid] implementation, verified
+ * once and parameterized by the factory of the concrete implementation under test.
+ */
+abstract class TestRasterGridContract(
+    gridOf: (DoubleArray, DoubleArray, Array<Double?>) -> RasterGrid<Double>,
+) : StringSpec({
     /**
      * 3 latitudes by 4 longitudes.
      * The cell value at (iLat, iLon) is iLat * 10 + iLon,
@@ -24,7 +29,7 @@ class TestArrayRasterGrid : StringSpec({
     val lats = doubleArrayOf(10.0, 20.0, 30.0)
     val lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0)
     val values = Array<Double?>(12) { idx -> (idx / lons.size) * 10.0 + (idx % lons.size) }
-    val grid = ArrayRasterGrid(lats, lons, values)
+    val grid = gridOf(lats, lons, values)
 
     // Value access tests
     "valueAt should return the correct value for an interior cell" {
@@ -76,3 +81,9 @@ class TestArrayRasterGrid : StringSpec({
         }
     }
 })
+
+// tests the array implementation (suitable for dense grids)
+class TestArrayRasterGrid : TestRasterGridContract(::ArrayRasterGrid)
+
+// tests the map implementation (suitable for sparse grids)
+class TestMapRasterGrid : TestRasterGridContract(::MapRasterGrid)

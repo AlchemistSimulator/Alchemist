@@ -12,6 +12,7 @@ package it.unibo.alchemist.model.geospatial.acquisition
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import it.unibo.alchemist.model.geospatial.acquisition.utility.CanonicalJson
 
 class TestCanonicalJson : StringSpec({
 

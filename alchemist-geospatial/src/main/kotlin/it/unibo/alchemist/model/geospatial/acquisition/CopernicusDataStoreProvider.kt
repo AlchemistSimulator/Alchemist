@@ -9,6 +9,16 @@
 
 package it.unibo.alchemist.model.geospatial.acquisition
 
+import it.unibo.alchemist.model.geospatial.acquisition.utility.CanonicalJson
+import it.unibo.alchemist.model.geospatial.acquisition.utility.RemoteAsset
+import it.unibo.alchemist.model.geospatial.acquisition.utility.flattenArchives
+import it.unibo.alchemist.model.geospatial.acquisition.utility.parseAsset
+import it.unibo.alchemist.model.geospatial.acquisition.utility.parseFailureMessage
+import it.unibo.alchemist.model.geospatial.acquisition.utility.parseMonitorUrl
+import it.unibo.alchemist.model.geospatial.acquisition.utility.parseProblemDetail
+import it.unibo.alchemist.model.geospatial.acquisition.utility.parseResultsUrl
+import it.unibo.alchemist.model.geospatial.acquisition.utility.parseStatus
+import it.unibo.alchemist.model.geospatial.acquisition.utility.verify
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -99,13 +109,13 @@ class CopernicusDataStoreProvider(
      *
      * `POST {endpoint}/retrieve/v1/processes/{dataset}/execute`, with `PRIVATE-TOKEN` and
      * `Content-Type`/`Accept: application/json`, body `{"inputs": <request.inputs>}` serialized via
-     * [CanonicalJson]. The monitor URL is read from the `rel="monitor"` link of the response
-     * ([parseMonitorUrl]), never rebuilt from a path.
+     * [it.unibo.alchemist.model.geospatial.acquisition.utility.CanonicalJson]. The monitor URL is read from the `rel="monitor"` link of the response
+     * ([it.unibo.alchemist.model.geospatial.acquisition.utility.parseMonitorUrl]), never rebuilt from a path.
      *
      * @param request the [CopernicusRequest] used to initialize the job on ECMWF servers.
      * @return the absolute job URL to pass to [awaitSuccess].
      *
-     * @throws IllegalStateException on a non-2xx response, enriched with [parseProblemDetail].
+     * @throws IllegalStateException on a non-2xx response, enriched with [it.unibo.alchemist.model.geospatial.acquisition.utility.parseProblemDetail].
      */
     private fun submit(request: CopernicusRequest): String {
         val body = CanonicalJson.encode(mapOf("inputs" to request.inputs))
@@ -134,7 +144,7 @@ class CopernicusDataStoreProvider(
      * backoff capped at [maxPollInterval] and a [timeout] guillotine.
      *
      * Terminal failure states are listed **explicitly** (`failed`/`rejected`/`dismissed`):
-     * consistently with [parseStatus], any other state (known like `accepted`/`running` or unknown),
+     * consistently with [it.unibo.alchemist.model.geospatial.acquisition.utility.parseStatus], any other state (known like `accepted`/`running` or unknown),
      * is treated as transient and polling continues.
      *
      * **Note**: a *future, unannounced* terminal state would be awaited up to [timeout] rather than
@@ -200,12 +210,12 @@ class CopernicusDataStoreProvider(
     /**
      * Fetches the result metadata. `GET resultUrl` (authenticated).
      *
-     * Extracts href, size and MD5 via [parseAsset], then resolves the href against [resultsUrl].
+     * Extracts href, size and MD5 via [it.unibo.alchemist.model.geospatial.acquisition.utility.parseAsset], then resolves the href against [resultsUrl].
      * ECMWF already serves the asset URI as absolute, so the resolve is a defensive no-op
      * (tolerates a future relative href).
      *
      * @param resultsUrl the results URL from [awaitSuccess] (`rel="results"` link).
-     * @return a [RemoteAsset] with an **absolute** href, expected size, and best-effort checksum.
+     * @return a [it.unibo.alchemist.model.geospatial.acquisition.utility.RemoteAsset] with an **absolute** href, expected size, and best-effort checksum.
      */
     private fun fetchAsset(resultsUrl: String): RemoteAsset {
         val asset = parseAsset(get(resultsUrl).body())
@@ -293,7 +303,7 @@ class CopernicusDataStoreProvider(
 
     /**
      * Always throws for a terminal-failure job (HTTP 200 with a `failed`/`rejected`/`dismissed` status).
-     * The failure detail lives in the job's top-level `message` string (see [parseFailureMessage]),
+     * The failure detail lives in the job's top-level `message` string (see [it.unibo.alchemist.model.geospatial.acquisition.utility.parseFailureMessage]),
      * **not** in an RFC 7807 body, do it is read directly; a null/blank message falls back to
      * the raw body.
      *

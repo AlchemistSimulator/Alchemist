@@ -43,3 +43,17 @@ interface RasterGrid<T> : Serializable {
      */
     fun valueAt(latIndex: Int, lonIndex: Int): T?
 }
+
+/**
+ * Validates that the number of provided values matches the size of the grid
+ * described by [latitudes] and [longitudes].
+ *
+ * @throws IllegalArgumentException if [valuesSize] does not equal `latitudes.size * longitudes.size`.
+ */
+internal fun requireMatchingGridSize(latitudes: DoubleArray, longitudes: DoubleArray, valuesSize: Int) {
+    val expectedSize = latitudes.size * longitudes.size
+    require(valuesSize == expectedSize) {
+        "Dimension mismatch: expected $expectedSize values " +
+            "(${latitudes.size} lat x ${longitudes.size} lon), but got $valuesSize"
+    }
+}

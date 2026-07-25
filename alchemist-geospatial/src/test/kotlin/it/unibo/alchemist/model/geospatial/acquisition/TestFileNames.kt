@@ -13,6 +13,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldMatch
 import io.kotest.matchers.string.shouldNotContain
+import it.unibo.alchemist.model.geospatial.acquisition.utility.toFileSystemSafe
 
 class TestFileNames : StringSpec({
 

@@ -12,6 +12,8 @@ package it.unibo.alchemist.model.geospatial.acquisition
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.model.geospatial.acquisition.utility.md5Hex
+import it.unibo.alchemist.model.geospatial.acquisition.utility.verify
 import java.nio.file.Files
 import java.nio.file.Path
 

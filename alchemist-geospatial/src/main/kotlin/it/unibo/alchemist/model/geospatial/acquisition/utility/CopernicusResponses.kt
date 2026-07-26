@@ -176,10 +176,13 @@ internal fun parseAsset(json: String): RemoteAsset {
         .getAsJsonObject("asset")
         ?.getAsJsonObject("value")
         ?: error("No 'asset.value' object in the results response")
+
+    fun field(name: String) = value.get(name)?.takeUnless { it.isJsonNull }
+
     return RemoteAsset(
-        href = value.get("href")?.asString ?: error("No 'href' in asset.value"),
-        sizeBytes = value.get("file:size")?.asLong ?: error("No 'file:size' in asset.value"),
-        md5 = value.get("file:checksum")?.asString,
+        href = field("href")?.asString ?: error("No 'href' in asset.value"),
+        sizeBytes = field("file:size")?.asLong ?: error("No 'file:size' in asset.value"),
+        md5 = field("file:checksum")?.asString,
     )
 }
 

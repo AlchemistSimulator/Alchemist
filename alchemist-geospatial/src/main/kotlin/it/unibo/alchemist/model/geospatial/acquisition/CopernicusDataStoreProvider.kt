@@ -25,6 +25,8 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.file.Path
 import java.time.Duration
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 import org.slf4j.LoggerFactory
 
 /**
@@ -39,23 +41,20 @@ import org.slf4j.LoggerFactory
  * The sole auth asymmetry is the final download GET, which carries **no** token
  * (the asset lives on a public object store on a different host): see [download].
  *
- * Network calls are **blocking** by design: the layer's YAML constructor blocks on the first
- * download, after which the cache makes reruns instant.
- *
  * @param endpoint base URL of the data store (e.g. `https://ewds.climate.copernicus.eu/api`); a
  * trailing slash, if present, is trimmed.
  * @param token ECMWF token sent as the `PRIVATE-TOKEN` header on the OGC GET/POST calls.
- * @param cache cache manager: decides hit/miss and guarantees the atomic rename.
  * @param http injectable HTTP client (to make this class testable); defaults to the JDK [HttpClient].
  * @param pollInterval base interval between two status polls; grows with backoff up to [maxPollInterval].
  * @param maxPollInterval cap on the polling interval. Defaults to 120 seconds, matching the official
  * ECMWF client's duration.
  * @param timeout overall guillotine on the wait for job completion.
+ *
+ * @throws IllegalArgumentException if the [endpoint] does not represent a valid URL.
  */
 class CopernicusDataStoreProvider(
     endpoint: String,
     private val token: String,
-    private val cache: CacheManager,
     private val http: HttpClient = HttpClient.newHttpClient(),
     private val pollInterval: Duration = Duration.ofSeconds(2),
     private val maxPollInterval: Duration = Duration.ofSeconds(120),
@@ -65,19 +64,7 @@ class CopernicusDataStoreProvider(
     /**
      * endpoint normalized once: no trailing slash, so path concatenation never yields `//`
      */
-    private val base: String = endpoint.trimEnd('/')
-
-    /**
-     * Returns the cache directory for [request], retrieving the asset only on cache miss.
-     *
-     * @param request the [CopernicusRequest] that will be used to determine a cache hit/miss.
-     * @return the path to the cache entry, filled with data.
-     *
-     * @throws IllegalStateException if no file is produced on cache miss.
-     */
-    override fun fetch(request: CopernicusRequest): Path = cache.getOrProduce(request) { targetDir ->
-        this.produce(request, targetDir)
-    }
+    private val base: URI = URI.create(endpoint.trimEnd('/'))
 
     /**
      * The full OGC API processes flow, written into [targetDir].
@@ -88,9 +75,14 @@ class CopernicusDataStoreProvider(
      * @param request the [CopernicusRequest] used to initialize the job on ECMWF servers.
      * @param targetDir the temporary directory where the downloaded assets will be saved.
      *
+     * @throws IllegalArgumentException if [targetDir] does not exist or is not a directory.
      * @throws IllegalStateException if the assets can't be downloaded or on timeout.
      */
-    private fun produce(request: CopernicusRequest, targetDir: Path) {
+    override fun fetch(request: CopernicusRequest, targetDir: Path) {
+        require(targetDir.isDirectory()) {
+            "$targetDir is not a directory or does not exist"
+        }
+
         // asks ECMWF servers to elaborate the data.
         val monitorUrl = submit(request)
         // polls until the data can be retrieved.
@@ -99,6 +91,7 @@ class CopernicusDataStoreProvider(
         val asset = fetchAsset(resultsUrl)
         // downloads the asset.
         val file = download(asset, targetDir)
+
         // asset validation and optional archive flattening.
         verify(file, asset.sizeBytes, asset.md5)
         flattenArchives(targetDir)
@@ -107,7 +100,7 @@ class CopernicusDataStoreProvider(
     /**
      * Submits the job and returns the URL from which to monitor its status.
      *
-     * `POST {endpoint}/retrieve/v1/processes/{dataset}/execute`, with `PRIVATE-TOKEN` and
+     * `POST {endpoint}/retrieve/v1/processes/{dataset}/execution`, with `PRIVATE-TOKEN` and
      * `Content-Type`/`Accept: application/json`, body `{"inputs": <request.inputs>}` serialized via
      * [it.unibo.alchemist.model.geospatial.acquisition.utility.CanonicalJson]. The monitor URL is read from the `rel="monitor"` link of the response
      * ([it.unibo.alchemist.model.geospatial.acquisition.utility.parseMonitorUrl]), never rebuilt from a path.
@@ -122,7 +115,7 @@ class CopernicusDataStoreProvider(
 
         // builds the full POST request
         val httpRequest = HttpRequest.newBuilder()
-            .uri(URI.create("$base/retrieve/v1/processes/${request.dataset}/execute"))
+            .uri(URI.create("$base/retrieve/v1/processes/${request.dataset}/execution"))
             // always needed! A 403 error would be thrown otherwise
             .header("PRIVATE-TOKEN", token)
             .header("Content-Type", "application/json")

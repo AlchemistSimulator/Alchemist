@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.geospatial.acquisition
 import java.nio.file.Path
 
 /**
- * Common contract for an external data source: given a typed request, it generates a
- * local directory of files that are ready to be opened. Ensures that the rest of the system
+ * Common contract for an external data source: given a typed request, it fills a
+ * directory with files that are ready to be opened. Ensures that the rest of the system
  * is unaware of the specifics of each individual provider API.
  *
  * [R] is associated with [CacheKey], so caching is part of the contract; it is not
@@ -29,11 +29,12 @@ import java.nio.file.Path
 interface ExternalDataProvider<in R : CacheKey> {
 
     /**
-     * Obtains the local directory (cache entry) corresponding to [request],
-     * generating it if it does not exist (e.g., by downloading resources).
+     * Fills [targetDir] with the data denoted by [request] (e.g., by downloading resources).
      *
      * @param request the request identifying the data to obtain.
-     * @return the [Path] of a **directory** containing the ready-to-open files.
+     * @param targetDir the directory to fill with data; it must exist and be writable.
+     *
+     * @throws IllegalStateException if the data cannot be produced.
      */
-    fun fetch(request: R): Path
+    fun fetch(request: R, targetDir: Path)
 }

@@ -14,14 +14,13 @@ import it.unibo.alchemist.model.geospatial.acquisition.utility.toFileSystemSafe
 import java.security.MessageDigest
 
 /**
- * A request to an ECMWF data store (CDS or EWDS): carries the request **identity** and **what to
+ * A request to an ECMWF api-friendly datastore (CDS / EWDS / ADS): carries the request **identity** and **what to
  * download**.
  *
  * @property dataset dataset identifier (e.g. `"cems-glofas-historical"`).
  * @property inputs the **opaque** request map: the selection (variables, dates, area, format, ...)
  * of parameters used for the request to the datastore. It is intentionally untyped because the fields
- * vary widely per dataset (ERA5 uses `year/month/day`, GloFAS uses `hyear/hmonth/hday/system_version/...`);
- * modeling them as fixed fields would be brittle.
+ * vary widely per dataset (ERA5 uses `year/month/day`, GloFAS uses `hyear/hmonth/hday/system_version/...`).
  */
 data class CopernicusRequest(val dataset: String, val inputs: Map<String, Any>) : CacheKey {
 

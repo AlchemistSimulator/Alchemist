@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.geospatial.acquisition.utility.parseMonitorUrl
 import it.unibo.alchemist.model.geospatial.acquisition.utility.parseProblemDetail
 import it.unibo.alchemist.model.geospatial.acquisition.utility.parseResultsUrl
 import it.unibo.alchemist.model.geospatial.acquisition.utility.parseStatus
+import it.unibo.alchemist.model.geospatial.loadJsonCopernicusResponse
 
 /**
  * The test data, the ACTUAL response bodies, were captured on 2026-06-28 (yyyy-mm-dd)
@@ -170,16 +171,7 @@ class TestCopernicusResponses : StringSpec({
     }
 })
 
-/**
- * Loads the JSON bodies from the .../resources/copernicus-responses/ directory.
- *
- * @param fileName the name of the JSON file to load.
- * @return the JSON body of [fileName] as a string.
- *
- * @throws IllegalStateException if no file with name [fileName] is found.
- */
-internal fun loadBody(fileName: String): String = checkNotNull(
-    TestCopernicusResponses::class.java.getResourceAsStream("/copernicus-responses/$fileName"),
-) {
-    "Missing test fixture: $fileName"
-}.bufferedReader().use { it.readText() }
+private fun loadBody(fileName: String): String = loadJsonCopernicusResponse(
+    fileName,
+    TestCopernicusResponses::class.java,
+)

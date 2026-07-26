@@ -178,7 +178,7 @@ class TestCopernicusResponses : StringSpec({
  *
  * @throws IllegalStateException if no file with name [fileName] is found.
  */
-private fun loadBody(fileName: String): String = checkNotNull(
+internal fun loadBody(fileName: String): String = checkNotNull(
     TestCopernicusResponses::class.java.getResourceAsStream("/copernicus-responses/$fileName"),
 ) {
     "Missing test fixture: $fileName"

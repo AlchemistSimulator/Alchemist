@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.geospatial
 
+import it.unibo.alchemist.model.geospatial.acquisition.TestCopernicusDataStoreProvider
 import it.unibo.alchemist.model.geospatial.reading.CdmGridSnapshots
 import java.nio.file.Path
 import ucar.ma2.Array as UcarArray
@@ -106,3 +107,15 @@ internal fun writeTestNetcdf(
         )
     }
 }
+
+/**
+ * Reads the content of the JSON Copernicus responses.
+ * JSON files must be placed in `src/test/resources/copernicus-responses/`.
+ *
+ * @param fileName the name of the file (e.g, "name.json").
+ * @param cls the class used to resolve the path to the file.
+ * @return the JSON file content as a string.
+ */
+internal fun <T> loadJsonCopernicusResponse(fileName: String, cls: Class<T>): String = checkNotNull(
+    cls.getResourceAsStream("/copernicus-responses/$fileName"),
+) { "Missing test fixture: $fileName" }.bufferedReader().use { it.readText() }

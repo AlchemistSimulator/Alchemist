@@ -10,11 +10,8 @@
 package it.unibo.alchemist.model.geospatial.acquisition
 
 /**
- * Deterministic identity of a request, used by [CacheManager] as the directory name for its
- * cache entry. Implemented by request types (e.g. [CopernicusRequest], [BBBikeRequest]).
- *
- * [CacheManager] depends on this interface and nothing else, so it stays unaware
- * of HTTP and of the individual provider APIs.
+ * Deterministic identity of a request, used by [CopernicusCacheManager] as the directory name for its
+ * cache entry. Implemented by request types (e.g. [CopernicusRequest]).
  */
 interface CacheKey {
 

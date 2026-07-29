@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.geospatial.loadJsonCopernicusResponse
  * from several ECMWF stores (CDS / EWDS / ADS). The EWDS and ADS submit bodies are verbatim;
  * the CDS submit body is truncated. The expected values are read manually from each body.
  */
-class TestCopernicusResponses : StringSpec({
+class TestCopernicusParsers : StringSpec({
 
     // a captured submit response paired with the monitor URL expected from it.
     data class SubmitCase(val store: String, val body: String, val expectedMonitorUrl: String)
@@ -173,5 +173,5 @@ class TestCopernicusResponses : StringSpec({
 
 private fun loadBody(fileName: String): String = loadJsonCopernicusResponse(
     fileName,
-    TestCopernicusResponses::class.java,
+    TestCopernicusParsers::class.java,
 )

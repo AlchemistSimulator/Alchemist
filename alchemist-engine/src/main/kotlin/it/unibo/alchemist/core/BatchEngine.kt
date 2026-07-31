@@ -148,10 +148,7 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         if (nextEvent.canExecute().current) {
             safeExecuteEvent(nextEvent)
         }
-        nextEvent.update(currentLocalTime, true, environment)
-        synchronized(scheduler) {
-            scheduler.updateReaction(nextEvent)
-        }
+        nextEvent.update(currentLocalTime)
 
         if (environment.isTerminated) {
             terminate()
@@ -160,13 +157,9 @@ class BatchEngine<T, P : Position<out P>> : Engine<T, P> {
         return TaskResult(nextEvent, currentLocalTime)
     }
 
-    override fun updateReaction(reaction: Actionable<T>) {
-        val previousTau = reaction.tau
-        reaction.update(time, false, environment)
-        if (reaction.tau != previousTau) {
-            synchronized(scheduler) {
-                scheduler.updateReaction(reaction)
-            }
+    override fun requestSchedulerUpdate(reaction: Actionable<T>) {
+        synchronized(scheduler) {
+            scheduler.updateReaction(reaction)
         }
     }
 

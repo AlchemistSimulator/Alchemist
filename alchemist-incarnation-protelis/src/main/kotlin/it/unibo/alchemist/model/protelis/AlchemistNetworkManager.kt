@@ -68,7 +68,7 @@ class AlchemistNetworkManager @JvmOverloads constructor(
     }
 
     override fun getNeighborState(): ImmutableMap<DeviceUID, Map<CodePath, Any>> {
-        val currentTime = event.tau.toDouble()
+        val currentTime = event.tau.current.toDouble()
         /*
          * If no time has passed, the last result is still valid, otherwise needs to be recomputed
          */

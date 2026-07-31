@@ -85,8 +85,6 @@ sealed class RunScafiProgram[T, P <: Position[P]](
   private var neighborhoodManager: Map[ID, NeighborData[P]] = Map()
   private val commonNames = new ScafiIncarnationForAlchemist.StandardSensorNames {}
   private val _completed = MutableObservable.Companion.observe[Boolean](false)
-  declareDependencyTo(Dependency.EVERY_MOLECULE)
-
   def asMolecule = programNameMolecule
 
   override def cloneAction(node: Node[T], reaction: Reaction[T]) =

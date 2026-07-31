@@ -44,7 +44,7 @@ public final class EnvPresent extends AbstractCondition<Double> {
             it.getNeighbors().stream().anyMatch(n -> n instanceof EnvironmentNode)
         ));
 
-        setPropensityContribution(observeValidity().map(it -> it ? 1d : 0d));
+        setPropensityContribution(isValid().map(it -> it ? 1d : 0d));
     }
 
     @Override

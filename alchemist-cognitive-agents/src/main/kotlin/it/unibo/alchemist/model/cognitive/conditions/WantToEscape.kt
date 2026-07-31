@@ -26,6 +26,6 @@ open class WantToEscape<T, S : Vector<S>, A : Transformation<S>>(node: Node<T>) 
     override fun getPropensityContribution(): Observable<Double> = MutableObservable.observe(0.0)
 
     override fun isValid(): Observable<Boolean> = MutableObservable.observe(
-        node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.wantsToEscape()
+        node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.wantsToEscape(),
     )
 }

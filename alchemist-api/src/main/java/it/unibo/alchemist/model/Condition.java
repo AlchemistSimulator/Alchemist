@@ -12,6 +12,7 @@ package it.unibo.alchemist.model;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.observation.Disposable;
 import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableSet;
 
 import java.io.Serializable;
 
@@ -35,6 +36,20 @@ public interface Condition<T> extends Serializable, Disposable {
      * @return the cloned action
      */
     Condition<T> cloneCondition(Node<T> node, Reaction<T> reaction);
+
+    /**
+     * @return the context inspected by this condition
+     */
+    default Context getContext() {
+        return Context.LOCAL;
+    }
+
+    /**
+     * Returns the observable model values which may affect this condition.
+     *
+     * @return the reactive dependencies of this condition
+     */
+    ObservableSet<? extends Observable<?>> getDependencies();
 
     /**
      * @return the node this Condition belongs to

@@ -10,12 +10,8 @@
 package it.unibo.alchemist.model.actions;
 
 import it.unibo.alchemist.model.Action;
-import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
-import org.danilopianini.util.LinkedListSet;
-import org.danilopianini.util.ListSet;
-import org.danilopianini.util.ListSets;
 
 import javax.annotation.Nonnull;
 import java.io.Serial;
@@ -31,7 +27,6 @@ public abstract class AbstractAction<T> implements Action<T> {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    private final ListSet<Dependency> dependencies = new LinkedListSet<>();
     @Nonnull
     private final Node<T> node;
 
@@ -47,17 +42,6 @@ public abstract class AbstractAction<T> implements Action<T> {
     }
 
     /**
-     * Allows adding a Molecule to the set of molecules which are modified by this action.
-     * This method must be called in the constructor and not during the execution.
-     *
-     * @param m
-     *            the molecule which will be modified
-     */
-    protected final void declareDependencyTo(final Dependency m) {
-        dependencies.add(m);
-    }
-
-    /**
      * @param molecule
      *            the molecule
      * @return An {@link Optional} with the value of concentration, or an empty
@@ -66,19 +50,6 @@ public abstract class AbstractAction<T> implements Action<T> {
      */
     protected final Optional<T> getConcentration(final Molecule molecule) {
         return Optional.ofNullable(getNode().getConcentration(molecule));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * How to override: if you intend your action to influence any reaction with
-     * compatible context, return null.
-     */
-    @Nonnull
-    @Override
-    public final ListSet<? extends Dependency> getOutboundDependencies() {
-        return ListSets.unmodifiableListSet(dependencies);
     }
 
     /**

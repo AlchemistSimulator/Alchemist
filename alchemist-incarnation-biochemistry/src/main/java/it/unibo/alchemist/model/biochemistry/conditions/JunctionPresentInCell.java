@@ -45,7 +45,6 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
             cell,
             "This Condition can be set only in node with " + CellProperty.class.getSimpleName()
         );
-        declareDependencyOn(junction);
         this.junction = junction;
         this.environment = environment;
         setUpObservability();

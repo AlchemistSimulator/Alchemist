@@ -48,9 +48,7 @@ public final class RemoveJunctionInNeighbor extends AbstractNeighborAction<Doubl
             final RandomGenerator randomGenerator) {
         super(node, environment, randomGenerator);
         if (node.asPropertyOrNull(CellProperty.class) != null) {
-            declareDependencyTo(junction);
             for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
-                declareDependencyTo(entry.getKey());
             }
             jun = junction;
         } else {

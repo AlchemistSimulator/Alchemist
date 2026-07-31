@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.timedistributions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.times.DoubleTime;
@@ -109,14 +109,14 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
     protected void updateStatus(
             final Time currentTime,
             final boolean hasBeenExecuted,
-            final double additionalParameter,
-            final Environment<T, ?> environment
+            final Actionable<T> source
     ) {
+        final double additionalParameter = source.getRate();
         if (
             next == null
                 || hasBeenExecuted
                 || currentTime.compareTo(next) < 0
-                || additionalParameter > 0 && getNextOccurence().isInfinite()
+                || additionalParameter > 0 && getNextOccurence().getCurrent().isInfinite()
         ) {
             // New time generation necessary
             final var step = distribution.sample();

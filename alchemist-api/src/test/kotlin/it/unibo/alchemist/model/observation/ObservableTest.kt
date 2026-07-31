@@ -123,6 +123,29 @@ class ObservableTest : FunSpec({
             sum shouldBe 1 + 2 + 3
             count shouldBe 3
         }
+        test("subscriptions should be disposed independently") {
+            val observable = observe(0)
+            var firstCount = 0
+            var secondCount = 0
+            val first = observable.subscribe(invokeOnSubscription = false) { firstCount++ }
+            val second = observable.subscribe(invokeOnSubscription = false) { secondCount++ }
+            observable.observers shouldHaveSize 2
+            first.dispose()
+            first.dispose()
+            observable.update { it + 1 }
+            firstCount shouldBe 0
+            secondCount shouldBe 1
+            observable.observers shouldHaveSize 1
+            second.dispose()
+            observable.observers shouldHaveSize 0
+        }
+        test("an observable may emit an event when assigned an equal value") {
+            val observable = observe(initial = 0, emitOnDistinct = false)
+            var emissions = 0
+            observable.subscribe(invokeOnSubscription = false) { emissions++ }
+            observable.current = 0
+            emissions shouldBe 1
+        }
         test("it should be possibile to map an observable into another") {
             val observable = observe(10)
             val strObservable = observable.map { it.toString() }

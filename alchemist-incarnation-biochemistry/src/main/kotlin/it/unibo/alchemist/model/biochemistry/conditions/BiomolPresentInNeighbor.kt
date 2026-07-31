@@ -37,7 +37,6 @@ class BiomolPresentInNeighbor(
 ) : AbstractNeighborCondition<Double>(environment, node) {
 
     init {
-        declareDependencyOn(molecule)
         setUpObservability()
     }
 

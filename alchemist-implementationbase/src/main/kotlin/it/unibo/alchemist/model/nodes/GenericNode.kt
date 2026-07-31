@@ -20,8 +20,6 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMutableMap
-import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry
-import it.unibo.alchemist.model.observation.lifecycle.LifecycleState
 import java.util.Spliterator
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicInteger
@@ -49,12 +47,6 @@ constructor(
     molecules: MutableMap<Molecule, T> = LinkedHashMap(),
     final override val properties: MutableList<NodeProperty<T>> = ArrayList(),
 ) : Node<T> {
-
-    override val lifecycle: LifecycleRegistry = LifecycleRegistry()
-
-    init {
-        lifecycle.markState(LifecycleState.STARTED)
-    }
 
     override val observableContents: ObservableMutableMap<Molecule, T> = ObservableMutableMap(molecules)
 
@@ -139,7 +131,6 @@ constructor(
     override fun toString(): String = "Node$id{ properties: $properties, molecules: ${observableContents.current}}"
 
     override fun dispose() {
-        lifecycle.markState(LifecycleState.DESTROYED)
         reactions.forEach(Disposable::dispose)
         reactions.clear()
         observableContents.dispose()

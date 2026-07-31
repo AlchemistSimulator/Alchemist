@@ -12,151 +12,186 @@ package it.unibo.alchemist.model.reactions
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
-import it.unibo.alchemist.model.Dependency
+import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
+import it.unibo.alchemist.model.observation.CompositeDisposable
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.lifecycle.Lifecycle
-import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry
+import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.merge
 import java.util.function.Supplier
 import javax.annotation.Nonnull
-import org.danilopianini.util.ImmutableListSet
-import org.danilopianini.util.ListSet
 
 /**
- * The type which describes the concentration of a molecule.
- * This class offers a partial implementation of Reaction. In particular, it
- * allows writing new reaction specifying only which distribution time to adopt
+ * Partial implementation of a [Reaction] whose scheduling is driven by observable model state.
  *
- * @param <T> concentration type
-</T> */
-abstract class AbstractReaction<T>(override val node: Node<T>, override val timeDistribution: TimeDistribution<T>) :
-    Reaction<T> {
+ * @param T concentration type
+ */
+abstract class AbstractReaction<T>(
+    final override val node: Node<T>,
+    final override val timeDistribution: TimeDistribution<T>,
+) : Reaction<T> {
+
     override var actions: List<Action<T>> = emptyList()
+        set(value) {
+            field = value
+            outputContext = value.fold(Context.LOCAL) { context, action -> Context.getWider(context, action.context) }
+        }
 
     override var conditions: List<Condition<T>> = emptyList()
         set(value) {
             field = value
-            if (value.isNotEmpty()) {
-                canExecute = conditions.map { it.isValid() }.reduce { a, b -> a.mergeWith(b) { x, y -> x && y } }
+            inputContext =
+                value.fold(Context.LOCAL) { context, condition -> Context.getWider(context, condition.context) }
+            canExecute.dispose()
+            canExecute = value
+                .map(Condition<T>::isValid)
+                .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
+                ?: MutableObservable.observe(true)
+            initializedEnvironment?.let {
+                initializeDependencySubscriptions()
+                reactToModelUpdate(it)
             }
         }
 
-    private var stringLength = Byte.MAX_VALUE.toInt()
+    final override var inputContext: Context = Context.LOCAL
+        private set
 
-    private val lifecycleRegistry = LifecycleRegistry()
+    final override var outputContext: Context = Context.LOCAL
+        private set
 
     private var canExecute: Observable<Boolean> = MutableObservable.observe(true)
 
-    override val rescheduleRequest: Observable<Unit> = MutableObservable.observe(Unit)
+    @Transient
+    private var dependencySubscriptions: CompositeDisposable? = null
+
+    @Transient
+    private var initializedEnvironment: Environment<T, *>? = null
+
+    private var disposed = false
+
+    override val tau: Observable<Time> get() = timeDistribution.nextOccurence
 
     override fun canExecute(): Observable<Boolean> = canExecute
 
     override fun compareTo(other: Actionable<T>): Int = tau.current.compareTo(other.tau.current)
 
-    override val lifecycle: Lifecycle get() = lifecycleRegistry
-
     /**
-     * The default execution iterates all the actions in order and executes them. Override to change the behavior.
+     * The default execution iterates all actions in order.
      */
-    override fun execute() {
-        for (a in actions) {
-            a.execute()
-        }
-    }
+    override fun execute() = actions.forEach(Action<T>::execute)
 
     /**
      * @return a [String] representation of the rate
      */
-    protected open val rateAsString: String? get() = timeDistribution.getRate().toString()
+    protected open val rateAsString: String get() = timeDistribution.rate.toString()
 
     /**
-     * This method is used to provide a reaction name in toString().
-     *
-     * @return the name for this reaction.
+     * @return the name used by [toString]
      */
     protected val reactionName: String get() = javaClass.simpleName
 
-    override val tau: Observable<Time> get() = timeDistribution.nextOccurence
-
-    /**
-     * This method is called when the environment has completed its
-     * initialization. Can be used by this reaction to compute its next
-     * execution time - in case such computation requires an inspection of the
-     * environment. At the time this method is called, all observable
-     * dependencies have been already initialized.
-     * Subclasses can override this to perform custom initialization (e.g., initial update).
-     *
-     * @param atTime      the time at which the initialization of this reaction was
-     * achieved
-     * @param environment the environment
-     */
-    protected open fun onInitializationComplete(@Nonnull atTime: Time, @Nonnull environment: Environment<T?, *>) {
-        // Empty by default
+    final override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {
+        check(!disposed) { "A disposed reaction cannot be initialized again: $this" }
+        initializedEnvironment = environment
+        initializeDependencySubscriptions()
+        onInitializationComplete(atTime, environment)
     }
 
     /**
-     * This method provides the facility to clone reactions.
-     * Given a constructor in form of a [java.util.function.Supplier], it populates the actions and conditions with
-     * cloned version of the ones registered in this reaction.
+     * Called once reactive dependencies have been activated.
+     */
+    protected open fun onInitializationComplete(@Nonnull atTime: Time, @Nonnull environment: Environment<T, *>) = Unit
+
+    /**
+     * Creates a clone and populates it with cloned actions and conditions.
+     */
+    protected fun <R : Reaction<T>> makeClone(builder: Supplier<R>): R = builder.get().also { result ->
+        val destination = result.node
+        result.conditions = conditions.map { it.cloneCondition(destination, result) }
+        result.actions = actions.map { it.cloneAction(destination, result) }
+    }
+
+    final override fun update(currentTime: Time) {
+        val environment = checkNotNull(initializedEnvironment) {
+            "Reaction $this was advanced before initialization"
+        }
+        updateInternalStatus(currentTime, true, environment)
+        timeDistribution.update(currentTime, this)
+    }
+
+    /**
+     * Recomputes reaction-specific state before its time distribution is updated.
      *
-     * @param builder the supplier
-     * @param <R>     The reaction type
-     * @return the populated cloned reaction
-     </R> */
-    protected fun <R : Reaction<T>> makeClone(builder: Supplier<R>): R {
-        val res = builder.get()
-        val n = res.node
-        val c = conditions.map { it.cloneCondition(n, res) }
-        val a = actions.map { it.cloneAction(n, res) }
-        res.actions = a
-        res.conditions = c
-        return res
+     * @param currentTime current simulation time
+     * @param hasBeenExecuted whether this reaction's scheduled event has fired
+     * @param environment current environment
+     */
+    protected abstract fun updateInternalStatus(
+        currentTime: Time,
+        hasBeenExecuted: Boolean,
+        environment: Environment<T, *>,
+    )
+
+    /**
+     * Overrides the automatically inferred input context.
+     */
+    protected fun setInputContext(context: Context) {
+        inputContext = context
+    }
+
+    /**
+     * Overrides the automatically inferred output context.
+     */
+    protected fun setOutputContext(context: Context) {
+        outputContext = context
+    }
+
+    override fun dispose() {
+        if (!disposed) {
+            disposed = true
+            initializedEnvironment = null
+            dependencySubscriptions?.dispose()
+            dependencySubscriptions = null
+            conditions.forEach(Condition<T>::dispose)
+            conditions = emptyList()
+            actions = emptyList()
+            canExecute.dispose()
+            tau.dispose()
+        }
     }
 
     override fun toString(): String = buildString {
         append(reactionName)
         append('@')
-        append(tau)
+        append(tau.current)
         append(':')
         append(conditions)
         append('-')
         append(rateAsString)
         append("->")
         append(actions)
-    }.also { stringLength = it.length }
-
-    override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) {
-//        updateInternalStatus(currentTime, hasBeenExecuted, environment)
-        timeDistribution.update(currentTime, hasBeenExecuted, this, environment)
     }
 
-//    /**
-//     * This method gets called as soon as
-//     * [.update] is called. It is useful to
-//     * update the internal status of the reaction.
-//     *
-//     * @param currentTime     the current simulation time
-//     * @param hasBeenExecuted true if this reaction has just been executed, false if the
-//     * update has been triggered due to a dependency
-//     * @param environment     the current environment
-//     */
-//    protected abstract fun updateInternalStatus(
-//        currentTime: Time?,
-//        hasBeenExecuted: Boolean,
-//        environment: Environment<T, *>,
-//    )
+    private fun initializeDependencySubscriptions() {
+        dependencySubscriptions?.dispose()
+        dependencySubscriptions = CompositeDisposable().apply {
+            conditions.forEach { condition ->
+                add(
+                    condition.dependencies.merge().subscribe(invokeOnSubscription = false) {
+                        initializedEnvironment?.let(::reactToModelUpdate)
+                    },
+                )
+            }
+        }
+    }
 
-    private companion object {
-        /**
-         * How bigger should be the StringBuffer with respect to the previous
-         * interaction.
-         */
-        private const val MARGIN: Byte = 20
-        private val EVERYTHING: ListSet<Dependency?>? = ImmutableListSet.of<Dependency?>(Dependency.EVERYTHING)
+    private fun reactToModelUpdate(environment: Environment<T, *>) {
+        val currentTime = environment.simulation.time
+        updateInternalStatus(currentTime, false, environment)
+        timeDistribution.reactToUpdate(currentTime, this)
     }
 }

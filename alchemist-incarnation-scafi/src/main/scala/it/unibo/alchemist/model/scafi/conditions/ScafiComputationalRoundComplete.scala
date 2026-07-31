@@ -19,7 +19,6 @@ import java.lang
 
 final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val program: RunScafiProgram[_, _])
     extends AbstractCondition(device.getNode) {
-  declareDependencyOn(this.program.asMolecule)
   addObservableDependency(program.observeComputationalCycleComplete)
 
   override def cloneCondition(node: Node[T], reaction: Reaction[T]): Condition[T] = {
@@ -41,9 +40,11 @@ final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val p
 
   override def getContext = Context.LOCAL
 
-  override def getPropensityContribution = if (isValid) 1 else 0
+  override def getPropensityContribution: Observable[java.lang.Double] =
+    isValid.map(valid => if (valid) 1.0 else 0.0)
 
-  override def isValid: Observable[lang.Boolean] = program.isComputationalCycleComplete
+  override def isValid: Observable[lang.Boolean] =
+    program.observeComputationalCycleComplete.map(valid => lang.Boolean.valueOf(valid))
 
   override def getNode = super.getNode
 

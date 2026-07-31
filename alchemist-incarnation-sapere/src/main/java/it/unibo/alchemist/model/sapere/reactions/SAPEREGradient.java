@@ -18,9 +18,9 @@ import gnu.trove.procedure.TIntObjectProcedure;
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Context;
-import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
@@ -30,6 +30,7 @@ import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.observation.Disposable;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableExtensions;
 import it.unibo.alchemist.model.observation.ObservableMutableSet;
 import it.unibo.alchemist.model.observation.ObservableSet;
 import it.unibo.alchemist.model.reactions.AbstractReaction;
@@ -42,8 +43,6 @@ import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
 import it.unibo.alchemist.model.sapere.dsl.impl.Type;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.danilopianini.lang.HashString;
-import org.danilopianini.util.ImmutableListSet;
-import org.danilopianini.util.ListSet;
 
 import javax.annotation.Nonnull;
 import java.io.Serial;
@@ -68,7 +67,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     private static final IExpression ZERO_NODE = new Expression(new NumTreeNode(0d));
 
     private final int argPosition;
-    private boolean canRun = true;
+    private final MutableObservable<Boolean> canRun = MutableObservable.Companion.observe(true);
     private List<? extends ILsaMolecule> contextCache;
     private final Environment<List<ILsaMolecule>, P> environment;
     private final List<Action<List<ILsaMolecule>>> fakeacts = new ArrayList<>(1);
@@ -153,27 +152,56 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         final List<IExpression> grexp = gradient.allocateVar(null);
         grexp.set(argPosition, exp);
         gradientExpr = new LsaMolecule(grexp);
-        /*
-         * Dependency management:
-         * this reaction depends on the value of the source in this node, the value of gradient in
-         * the neighbors, and the value of the context locally.
-         * Moreover, the value may change if the neighborhood
-         * changes, or if the node moves.
-         */
-        addOutboundDependency(gradient);
-        addInboundDependency(source);
-        addInboundDependency(Dependency.MOVEMENT);
-        fakeconds.add(new SGFakeConditionAction(source));
-        addInboundDependency(gradient);
+        fakeconds.add(
+            new SGFakeConditionAction(
+                source,
+                node.observeMoleculeName(source.getArg(0).toString()),
+                environment.getNeighborhood(node),
+                environment.getPosition(node),
+                observeNeighborLsaSpaces(environment, node),
+                observeNeighborPositions(environment, node)
+            )
+        );
         fakeacts.add(new SGFakeConditionAction(gradient));
         if (context != null) {
-            addInboundDependency(context);
-            fakeconds.add(new SGFakeConditionAction(context));
+            fakeconds.add(
+                new SGFakeConditionAction(context, node.observeMoleculeName(context.getArg(0).toString()))
+            );
         }
         final boolean usesRoutes = this.environment instanceof MapEnvironment
                 && (gradientTemplate.toString().contains(LsaMolecule.SYN_ROUTE)
                 || expression.contains(LsaMolecule.SYN_ROUTE));
         mapenvironment = usesRoutes ? (MapEnvironment<List<ILsaMolecule>, ?, ?>) this.environment : null;
+    }
+
+    private static Observable<?> observeNeighborLsaSpaces(
+            final Environment<List<ILsaMolecule>, ?> environment,
+            final ILsaNode node
+    ) {
+        return ObservableExtensions.INSTANCE.switchMap(
+            environment.getNeighborhood(node).map(Neighborhood::getNeighbors),
+            neighbors -> ObservableExtensions.INSTANCE.combineLatest(
+                neighbors.stream()
+                    .filter(ILsaNode.class::isInstance)
+                    .map(ILsaNode.class::cast)
+                    .map(ILsaNode::observeLsaSpace)
+                    .toList(),
+                spaces -> spaces
+            )
+        );
+    }
+
+    private static Observable<?> observeNeighborPositions(
+            final Environment<List<ILsaMolecule>, ?> environment,
+            final ILsaNode node
+    ) {
+        return ObservableExtensions.INSTANCE.switchMap(
+            environment.getNeighborhood(node).map(Neighborhood::getNeighbors),
+            neighbors -> ObservableExtensions.INSTANCE.combineLatest(
+                neighbors.stream().map(environment::getPosition).toList(),
+                positions -> positions
+            )
+        );
     }
 
     /**
@@ -237,7 +265,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     }
 
     @Override
-    public boolean canExecute() {
+    public Observable<Boolean> canExecute() {
         return canRun;
     }
 
@@ -285,9 +313,9 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
              */
             updateInternalStatus(Time.ZERO, true, environment);
         }
-        canRun = false;
+        canRun.setCurrent(false);
         final Map<HashString, ITreeNode<?>> matches = new HashMap<>();
-        matches.put(LsaMolecule.SYN_T, new NumTreeNode(getTau().toDouble()));
+        matches.put(LsaMolecule.SYN_T, new NumTreeNode(getTau().getCurrent().toDouble()));
         // PMD suppression: there is a side effect
         final List<ILsaMolecule> createdFromSource = cleanUpExistingAndRecomputeFromSource(matches); //NOPMD
         /*
@@ -364,7 +392,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
 
     @Override
     public double getRate() {
-        return canRun ? getTimeDistribution().getRate() : 0;
+        return canRun.getCurrent() ? getTimeDistribution().getRate() : 0;
     }
 
     @Override
@@ -425,7 +453,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             positionCache = positionCacheTemp;
             gradCache = gradCacheTemp;
             mypos = curPos;
-            canRun = true;
+            canRun.setCurrent(true);
         }
     }
 
@@ -565,14 +593,17 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     private static class SGFakeConditionAction implements Action<List<ILsaMolecule>>, Condition<List<ILsaMolecule>> {
         @Serial
         private static final long serialVersionUID = 1L;
-        private static final ListSet<Dependency> DEPENDENCY = ImmutableListSet.of(Dependency.EVERYTHING);
         private final Molecule mol;
         private final Observable<Boolean> validity = MutableObservable.Companion.observe(false);
         private final Observable<Double> propensity = MutableObservable.Companion.observe(0.0);
+        private final ObservableMutableSet<Observable<?>> dependencies = new ObservableMutableSet<>();
 
-        SGFakeConditionAction(final Molecule m) {
+        SGFakeConditionAction(final Molecule m, final Observable<?>... dependencies) {
             super();
             mol = m;
+            for (final Observable<?> dependency : dependencies) {
+                this.dependencies.add(dependency);
+            }
         }
 
         @Override
@@ -601,19 +632,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         }
 
         @Override
-        public ListSet<? extends Dependency> getInboundDependencies() {
-            return DEPENDENCY;
-        }
-
-        @Override
-        public ObservableSet<? extends Observable<?>> observeInboundDependencies() {
-            return new ObservableMutableSet<>();
-        }
-
-        @Nonnull
-        @Override
-        public ListSet<? extends Dependency> getOutboundDependencies() {
-            return DEPENDENCY;
+        public ObservableSet<? extends Observable<?>> getDependencies() {
+            return dependencies;
         }
 
         @Override
@@ -622,29 +642,20 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         }
 
         @Override
-        public double getPropensityContribution() {
-            return observePropensityContribution().getCurrent();
-        }
-
-        @Override
-        public Observable<Double> observePropensityContribution() {
+        public Observable<Double> getPropensityContribution() {
             return propensity;
         }
 
         @Override
-        public boolean isValid() {
-            return observeValidity().getCurrent();
-        }
-
-        @Override
-        public Observable<Boolean> observeValidity() {
+        public Observable<Boolean> isValid() {
             return validity;
         }
 
         @Override
         public void dispose() {
-            observeValidity().dispose();
-            observePropensityContribution().dispose();
+            validity.dispose();
+            propensity.dispose();
+            dependencies.dispose();
         }
 
         @Override

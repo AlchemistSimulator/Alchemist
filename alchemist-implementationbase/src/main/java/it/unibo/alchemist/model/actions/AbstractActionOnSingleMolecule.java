@@ -40,7 +40,6 @@ public abstract class AbstractActionOnSingleMolecule<T> extends AbstractAction<T
             final Molecule molecule) {
         super(node);
         this.mol = molecule;
-        declareDependencyTo(molecule);
     }
 
     /**

@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.timedistributions
 
-import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.times.DoubleTime
@@ -77,7 +77,7 @@ open class WeibullTime<T> private constructor(
         start,
     )
 
-    override fun updateStatus(currentTime: Time, executed: Boolean, param: Double, environment: Environment<T?, *>?) {
+    override fun updateStatus(currentTime: Time, executed: Boolean, source: Actionable<T?>) {
         if (executed) {
             this.setNextOccurrence(currentTime.plus(DoubleTime(1.0 / this.genSample())))
         }

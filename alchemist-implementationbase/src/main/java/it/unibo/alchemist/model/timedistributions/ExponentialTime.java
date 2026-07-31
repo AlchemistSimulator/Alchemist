@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.timedistributions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.times.DoubleTime;
@@ -63,9 +63,9 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
     protected final void updateStatus(
             final Time currentTime,
             final boolean executed,
-            final double newpropensity,
-            final Environment<T, ?> environment
+            final Actionable<T> source
     ) {
+        final double newpropensity = source.getRate();
         if (Double.isNaN(newpropensity) || Double.isNaN(oldPropensity)) {
             throw new IllegalStateException("Propensity cannot be NaN");
         }
@@ -88,7 +88,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
             setNextOccurrence(curTime.plus(dt));
         } else {
             if (oldPropensity != newpropensity) {
-                final Time sub = getNextOccurence().minus(curTime);
+                final Time sub = getNextOccurence().getCurrent().minus(curTime);
                 final Time mul = sub.times(oldPropensity / newpropensity);
                 setNextOccurrence(mul.plus(curTime));
             }

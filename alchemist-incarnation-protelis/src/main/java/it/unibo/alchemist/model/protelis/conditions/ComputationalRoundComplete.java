@@ -38,18 +38,17 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
     public ComputationalRoundComplete(final Node<Object> node, final RunProtelisProgram<?> program) {
         super(node);
         this.program = program;
-        declareDependencyOn(this.program.asMolecule());
         addObservableDependency(program.getObserveComputationalCycleComplete());
     }
 
     @Override
-    public Observable<Boolean> observeValidity() {
+    public Observable<Boolean> isValid() {
         return getProgram().getObserveComputationalCycleComplete();
     }
 
     @Override
-    public Observable<Double> observePropensityContribution() {
-        return observeValidity().map(it -> it ? 1d : 0d);
+    public Observable<Double> getPropensityContribution() {
+        return isValid().map(it -> it ? 1d : 0d);
     }
 
     @Override

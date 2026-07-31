@@ -9,34 +9,14 @@
 package it.unibo.alchemist.model.sapere
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.sapere.nodes.LsaNode
-import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.test.AlchemistTesting.loadAlchemistFromResource
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import it.unibo.alchemist.test.AlchemistTesting.terminatingAfterSteps
-import org.apache.commons.math3.random.MersenneTwister
 
 class RegressionTest :
     StringSpec(
         {
-            "reactions in format a --> *b should generate outgoing dependencies for both a and b" {
-                val twoOutGoingDependencies =
-                    with(SAPEREIncarnation<Euclidean2DPosition>()) {
-                        with(Continuous2DEnvironment<List<ILsaMolecule>>(this)) {
-                            createReaction(
-                                MersenneTwister(),
-                                this,
-                                LsaNode(this),
-                                DiracComb(1.0),
-                                "{x} --> *{y}",
-                            )
-                        }
-                    }
-                twoOutGoingDependencies.outboundDependencies.size shouldBe 2
+            "reactions with neighbor outputs should execute" {
                 loadAlchemistFromResource("it/unibo/alchemist/regressions/bug1718.yml")
                     .getDefault<Any, Nothing>()
                     .terminatingAfterSteps(100)

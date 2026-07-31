@@ -11,19 +11,15 @@ package it.unibo.alchemist.model
 
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.ObservableList
-import it.unibo.alchemist.model.observation.ObservableMutableList.Companion.toObservableList
-import it.unibo.alchemist.model.observation.lifecycle.LifecycleOwner
 import java.io.Serializable
-import org.danilopianini.util.ListSet
 
 /**
  * A time-distributed entity with an execution strategy.
  */
-sealed interface Actionable<T> : Comparable<Actionable<T>> {
-//    Serializable,
-//    Disposable,
-//    LifecycleOwner {
+sealed interface Actionable<T> :
+    Comparable<Actionable<T>>,
+    Serializable,
+    Disposable {
 
     /**
      * Observes whether the reaction can be executed. This observable emits updates
@@ -39,6 +35,14 @@ sealed interface Actionable<T> : Comparable<Actionable<T>> {
     fun execute()
 
     /**
+     * Activates reactive scheduling after the environment is fully initialized.
+     *
+     * @param atTime the current simulation time
+     * @param environment the initialized environment
+     */
+    fun initializationComplete(atTime: Time, environment: Environment<T, *>)
+
+    /**
      *  The list of [Action]s of the [Reaction].
      *  Please be careful when you modify this list.
      */
@@ -49,6 +53,16 @@ sealed interface Actionable<T> : Comparable<Actionable<T>> {
      * Please be careful when you modify this list.
      */
     var conditions: List<Condition<T>>
+
+    /**
+     * @return the widest context inspected by this actionable's conditions
+     */
+    val inputContext: Context
+
+    /**
+     * @return the widest context modified by this actionable's actions
+     */
+    val outputContext: Context
 
     /**
      * Returns the speed of this [Reaction]. It is an average number, and
@@ -72,22 +86,12 @@ sealed interface Actionable<T> : Comparable<Actionable<T>> {
     val timeDistribution: TimeDistribution<T>
 
     /**
-     * Emits when this reaction requests the [Scheduler][it.unibo.alchemist.core.Scheduler]
-     * to reschedule this reaction.
-     */
-    val rescheduleRequest: Observable<Unit>
-
-    /**
-     * Updates the scheduling of this reaction.
+     * Advances this actionable's stateful time distribution after its scheduled event fires.
      *
      * @param currentTime
      * the current [Time] of execution. This is mandatory in
      * order to correctly compute the time shift of an
      * already-scheduled reaction
-     * @param hasBeenExecuted
-     * true if the reaction have just been executed.
-     * @param environment
-     * the current environment
      */
-    fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>)
+    fun update(currentTime: Time)
 }

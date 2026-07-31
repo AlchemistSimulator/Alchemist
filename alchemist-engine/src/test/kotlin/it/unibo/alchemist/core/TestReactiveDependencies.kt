@@ -14,6 +14,7 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.observation.Disposable
 import java.util.concurrent.atomic.AtomicInteger
 
 class TestReactiveDependencies : AbstractDependencyTest() {
@@ -27,9 +28,9 @@ class TestReactiveDependencies : AbstractDependencyTest() {
     override fun Reaction<Double>.assertDependencies(vararg dependencies: Reaction<Double>) {
         val counters = dependencies.associateWith { AtomicInteger(0) }
 
-        dependencies.forEach { target ->
+        val subscriptions = dependencies.associateWith { target ->
             target.initializationComplete(Time.ZERO, environment)
-            target.rescheduleRequest.onChange(this) {
+            target.tau.subscribe(false) {
                 counters[target]?.incrementAndGet()
             }
         }
@@ -41,6 +42,6 @@ class TestReactiveDependencies : AbstractDependencyTest() {
             count shouldBeGreaterThan 0
         }
 
-        dependencies.forEach { it.rescheduleRequest.stopWatching(this) }
+        subscriptions.values.forEach(Disposable::dispose)
     }
 }

@@ -15,7 +15,7 @@ import java.util.IdentityHashMap
 /**
  * A manager for batching [Actionable] reschedule requests.
  * This is used to avoid redundant updates to the scheduler when multiple
- * dependencies change in a single simulation step.
+ * scheduling-time emissions occur in a single simulation step.
  */
 class BatchManager<T> {
     private val dirtyReactions = Collections.newSetFromMap(IdentityHashMap<Actionable<T>, Boolean>())

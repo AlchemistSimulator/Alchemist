@@ -16,6 +16,7 @@ import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableMutableSet;
+import it.unibo.alchemist.model.observation.ObservableSet;
 
 import javax.annotation.Nonnull;
 import java.io.Serial;
@@ -72,6 +73,11 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     protected Observable<?> addObservableDependency(final Observable<?> dep) {
         dependencies.add(dep);
         return dep;
+    }
+
+    @Override
+    public final ObservableSet<? extends Observable<?>> getDependencies() {
+        return dependencies;
     }
 
     /**

@@ -13,12 +13,9 @@ package it.unibo.alchemist.model;
  * This enum describes the possible contexts for a given {@link Action} or
  * {@link Condition}. A context represents the elements which are read for a
  * {@link Condition} and the elements that may be subject of modifications for
- * an {@link Action}. Choosing the right {@link Context} is crucial: if it's too
- * restricted the simulation will be invalid, if it's too wide it WILL impact
- * dramatically on performances. Contexts are used internally to better
- * determine dependencies among reactions. See
- * <a href= "https://ieeexplore.ieee.org/document/6078316/" >
- * this paper</a> for further information about the usage of contexts.
+ * an {@link Action}. Contexts describe model access scope for inspection and
+ * external representations; reactive scheduling is driven by observable model
+ * state instead.
  *
  */
 public enum Context {

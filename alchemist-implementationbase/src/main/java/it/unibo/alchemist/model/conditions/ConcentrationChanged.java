@@ -14,7 +14,6 @@ import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
-import it.unibo.alchemist.model.observation.Observable;
 
 import javax.annotation.Nonnull;
 import java.io.Serial;
@@ -44,8 +43,6 @@ public final class ConcentrationChanged<T> extends AbstractCondition<T> {
         this.target = Objects.requireNonNull(target);
         previous = Optional.fromNullable(node.getConcentration(target));
         hasFlipped = false;
-        declareDependencyOn(target);
-
         addObservableDependency(node.observeConcentration(target));
 
         setValidity(node.observeConcentration(target).map(it -> {
@@ -59,7 +56,7 @@ public final class ConcentrationChanged<T> extends AbstractCondition<T> {
             return hasFlipped;
         }));
 
-        setPropensityContribution(observeValidity().map(valid -> valid ? 1d : 0d));
+        setPropensityContribution(isValid().map(valid -> valid ? 1d : 0d));
     }
 
     @Override
@@ -73,10 +70,8 @@ public final class ConcentrationChanged<T> extends AbstractCondition<T> {
     }
 
     @Override
-    public Observable<Boolean> isValid() {
-        final boolean flip = hasFlipped;
+    public void reactionReady() {
         hasFlipped = false;
-        return flip;
     }
 
     @Override

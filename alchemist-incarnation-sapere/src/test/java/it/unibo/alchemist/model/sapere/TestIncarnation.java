@@ -87,7 +87,7 @@ final class TestIncarnation {
             assertEquals(rate, t0.getRate(), Double.MIN_VALUE);
         }
         if (!Double.isNaN(occurrence)) {
-            assertEquals(occurrence, t0.getNextOccurence().toDouble(), Double.MIN_VALUE);
+            assertEquals(occurrence, t0.getNextOccurence().getCurrent().toDouble(), Double.MIN_VALUE);
         }
     }
 

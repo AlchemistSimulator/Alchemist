@@ -44,7 +44,7 @@ internal class TestTargetMapWalker {
 
     private fun run() = repeat(STEPS) {
         reaction.execute()
-        reaction.update(reaction.tau, true, environment)
+        reaction.update(reaction.tau.current)
     }
 
     @Test

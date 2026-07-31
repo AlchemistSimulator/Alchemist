@@ -29,7 +29,6 @@ class SendToNeighbor(node: Node<Any>, reaction: Reaction<Any>, val protelisProgr
     private val reaction: Reaction<Any> = Objects.requireNonNull<Reaction<Any>>(reaction)
 
     init {
-        declareDependencyTo(protelisProgram.asMolecule())
     }
 
     override fun cloneAction(newNode: Node<Any>, newReaction: Reaction<Any>): SendToNeighbor {
@@ -46,7 +45,7 @@ class SendToNeighbor(node: Node<Any>, reaction: Reaction<Any>, val protelisProgr
     override fun execute() {
         val protelisDevice = node.asProperty<ProtelisDevice<*>>(ProtelisDevice::class.java)
         val mgr = protelisDevice.getNetworkManager(this.protelisProgram)
-        mgr.simulateMessageArrival(reaction.tau.toDouble())
+        mgr.simulateMessageArrival(reaction.tau.current.toDouble())
         protelisProgram.prepareForComputationalCycle()
     }
 

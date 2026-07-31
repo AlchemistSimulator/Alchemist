@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,63 +12,59 @@ package it.unibo.alchemist.test
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
-import it.unibo.alchemist.model.Dependency
+import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.observation.EventObservable
+import it.unibo.alchemist.model.observation.CompositeDisposable
+import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.combineLatest
-import it.unibo.alchemist.model.observation.ObservableMutableSet
-import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry
-import it.unibo.alchemist.model.observation.lifecycle.LifecycleState
-import org.danilopianini.util.ListSet
-import org.danilopianini.util.ListSets
+import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.merge
 
 class GlobalTestReaction<T>(val environment: Environment<T, *>, override val timeDistribution: TimeDistribution<T>) :
     GlobalReaction<T> {
-    override fun compareTo(other: Actionable<T>): Int = tau.compareTo(other.tau)
 
-    override fun canExecute(): Boolean = conditions.all { it.isValid }
-
-    override fun observeCanExecute(): Observable<Boolean> = validity
-
-    override fun execute() = timeDistribution.update(timeDistribution.nextOccurence, true, 1.0, environment)
-
+    override val inputContext: Context = Context.GLOBAL
+    override val outputContext: Context = Context.GLOBAL
+    override val tau: Observable<Time> get() = timeDistribution.nextOccurence
     override var actions: List<Action<T>> = emptyList()
-
-    override val lifecycle: LifecycleRegistry = LifecycleRegistry()
+    private var validity: Observable<Boolean> = MutableObservable.observe(true)
+    private val subscriptions = CompositeDisposable()
 
     override var conditions: List<Condition<T>> = emptyList()
         set(value) {
             field = value
-            observableConditions.clearAndAddAll(value.toSet())
+            validity.dispose()
+            validity = value
+                .map(Condition<T>::isValid)
+                .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
+                ?: MutableObservable.observe(true)
         }
 
-    private val observableConditions: ObservableMutableSet<Condition<T>> = ObservableMutableSet()
+    override fun compareTo(other: Actionable<T>): Int = tau.current.compareTo(other.tau.current)
 
-    private val validity = observableConditions.combineLatest({
-        it.observeValidity()
-    }) { validities -> validities.all { it } }
+    override fun canExecute(): Observable<Boolean> = validity
 
-    override val outboundDependencies: ListSet<out Dependency> = ListSets.emptyListSet()
+    override fun execute() = actions.forEach(Action<T>::execute)
 
-    override val inboundDependencies: ListSet<out Dependency> = ListSets.emptyListSet()
-
-    override val rescheduleRequest: Observable<Unit> = EventObservable()
-
-    override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
+    override fun update(currentTime: Time) = timeDistribution.update(currentTime, this)
 
     override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {
-        lifecycle.markState(LifecycleState.STARTED)
+        subscriptions.clear()
+        conditions.forEach { condition ->
+            subscriptions.add(
+                condition.dependencies.merge().subscribe(invokeOnSubscription = false) {
+                    timeDistribution.reactToUpdate(environment.simulation.time, this)
+                },
+            )
+        }
     }
 
     override fun dispose() {
-        lifecycle.markState(LifecycleState.DESTROYED)
-        observableConditions.dispose()
+        subscriptions.dispose()
         validity.dispose()
         conditions.forEach(Condition<T>::dispose)
-        rescheduleRequest.dispose()
+        timeDistribution.nextOccurence.dispose()
     }
 }

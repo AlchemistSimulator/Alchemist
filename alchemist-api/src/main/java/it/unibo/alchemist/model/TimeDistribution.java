@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -27,19 +27,22 @@ public interface TimeDistribution<T> extends Cloneable, Serializable {
      *
      * @param currentTime
      *            current time
-     * @param executed
-     *            true if the reaction has just been executed
      * @param source
      *            the host reaction
-     * @param environment
-     *            the current environment
      */
     void update(
         @Nonnull Time currentTime,
-        boolean executed,
-        @Nonnull Actionable<T> source,
-        @Nonnull Environment<T, ?> environment
+        @Nonnull Actionable<T> source
     );
+
+    /**
+     * Reacts to a model change that may alter the source propensity without advancing the event stream.
+     * Implementations which are insensitive to model changes may keep the default no-op behavior.
+     *
+     * @param currentTime current simulation time
+     * @param source the host reaction
+     */
+    default void reactToUpdate(@Nonnull final Time currentTime, @Nonnull final Actionable<T> source) { }
 
     /**
      * @return the next time at which the event will occur

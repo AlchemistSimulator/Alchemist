@@ -37,4 +37,11 @@ public interface Action<T> extends Serializable {
      * Effectively executes this action.
      */
     void execute();
+
+    /**
+     * @return the context in which this action may modify the model
+     */
+    default Context getContext() {
+        return Context.LOCAL;
+    }
 }

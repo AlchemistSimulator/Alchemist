@@ -50,7 +50,6 @@ public abstract class AbstractLsaCondition extends AbstractCondition<List<ILsaMo
     public AbstractLsaCondition(final ILsaNode node, final Set<ILsaMolecule> m) {
         super(node);
         for (final ILsaMolecule mol : m) {
-            declareDependencyOn(mol);
         }
     }
 

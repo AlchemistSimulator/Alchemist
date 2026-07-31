@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.actions;
 
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Context;
-import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.EuclideanEnvironment;
 import it.unibo.alchemist.model.Node;
@@ -60,7 +59,6 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
         super(node);
         this.environment = environment;
         this.absolute = isAbsolute;
-        declareDependencyTo(Dependency.MOVEMENT);
     }
 
     /**

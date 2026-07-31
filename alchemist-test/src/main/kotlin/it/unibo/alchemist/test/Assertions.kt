@@ -39,29 +39,25 @@ private fun <T> Iterable<T>.ebeEquals(other: Iterable<T>, elementComparator: (T,
 infix fun Condition<*>.shouldEqual(other: Condition<*>) {
     assertEquals(other::class, this::class, "Condition types don't match")
     assertEquals(other.context, context, "Condition contexts don't match")
-    assertEquals(other.isValid, isValid, "Condition validity doesn't match")
-    assertEquals(other.propensityContribution, propensityContribution)
-    assertEquals(other.inboundDependencies, inboundDependencies)
+    assertEquals(other.isValid().current, isValid().current, "Condition validity doesn't match")
+    assertEquals(other.propensityContribution.current, propensityContribution.current)
 }
 
 infix fun Action<*>.shouldEqual(other: Action<*>) {
     assertEquals(other::class, this::class, "Action types don't match")
     assertEquals(other.context, context, "Action contexts don't match")
-    assertEquals(other.outboundDependencies, outboundDependencies)
 }
 
 infix fun TimeDistribution<*>.shouldEqual(other: TimeDistribution<*>) {
     assertEquals(other::class, this::class, "TimeDistribution types don't match")
     assertEquals(other.rate, rate)
-    assertEquals(other.nextOccurence, nextOccurence)
+    assertEquals(other.nextOccurence.current, nextOccurence.current)
 }
 
 infix fun Actionable<*>.shouldEqual(other: Actionable<*>) {
     assertEquals(other::class, this::class, "Actionable types don't match")
-    assertEquals(other.inboundDependencies, inboundDependencies)
-    assertEquals(other.outboundDependencies, outboundDependencies)
     assertEquals(other.rate, rate)
-    assertEquals(other.tau, tau)
+    assertEquals(other.tau.current, tau.current)
     timeDistribution shouldEqual other.timeDistribution
     conditions.ebeEquals(other.conditions) { expected, actual -> actual shouldEqual expected }
     actions.ebeEquals(other.actions) { expected, actual -> actual shouldEqual expected }

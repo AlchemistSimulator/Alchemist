@@ -31,7 +31,6 @@ import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMap
-import it.unibo.alchemist.model.observation.lifecycle.LifecycleRegistry
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.protelis.actions.SendToNeighbor
 import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete
@@ -373,8 +372,6 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         override val properties: List<NodeProperty<Any>> = emptyList()
 
         override val reactions: List<Reaction<Any>> = emptyList()
-
-        override val lifecycle: LifecycleRegistry = LifecycleRegistry()
 
         override fun iterator(): MutableIterator<Reaction<Any>> = notImplemented()
 

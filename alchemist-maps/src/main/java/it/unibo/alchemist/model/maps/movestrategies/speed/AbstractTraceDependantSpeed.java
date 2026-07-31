@@ -63,7 +63,7 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
 
     @Override
     public final double getNodeMovementLength(final GeoPosition target) {
-        final Time currentTime = reaction.getTau();
+        final Time currentTime = reaction.getTau().getCurrent();
         final double curTime = currentTime.toDouble();
         final GPSPoint next = getTrace().getNextPosition(currentTime);
         final double expArrival = next.getTime().toDouble();

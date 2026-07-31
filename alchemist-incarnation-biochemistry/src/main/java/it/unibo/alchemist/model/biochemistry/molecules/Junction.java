@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.biochemistry.molecules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 
 import java.io.Serial;
@@ -82,11 +81,6 @@ public final class Junction extends SimpleMolecule {
         final String[] split = getName().split("-");
         final String revName = split[1] + "-" + split[0];
         return new Junction(revName, getMoleculesInNeighborNode(), getMoleculesInCurrentNode());
-    }
-
-    @Override
-    public boolean dependsOn(final Dependency mol) {
-        return equals(mol);
     }
 
 }

@@ -13,7 +13,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Context;
-import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
@@ -31,8 +30,6 @@ import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.sapere.timedistributions.SAPERETimeDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
-import org.danilopianini.util.ArrayListSet;
-import org.danilopianini.util.ListSet;
 
 import javax.annotation.Nonnull;
 import java.io.Serial;
@@ -42,9 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Stream.concat;
 
 /**
  * This class realizes a reaction with Lsa concentrations.
@@ -155,7 +149,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          * of the time. Other special values (#NEIG, #O, #D) will be allocated
          * inside the actions.
          */
-        matches.put(LsaMolecule.SYN_T, new NumTreeNode(getTau().toDouble()));
+        matches.put(LsaMolecule.SYN_T, new NumTreeNode(getTau().getCurrent().toDouble()));
         executeActions(matches);
         /*
          * Empty action optimization
@@ -327,52 +321,5 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         super.setConditions(c);
         super.setActions(a);
         modifiesOnlyLocally = getOutputContext() == Context.LOCAL;
-        /*
-         * The following optimization only makes sense if the reaction acts
-         * locally. Otherwise, there is no control on where the modified
-         * molecules will end up.
-         */
-        final ListSet<Dependency> inboundDependencies = new ArrayListSet<>(getInboundDependencies());
-        // The condition semantics implies removal of the matched conditions for ILsaMolecules
-        final List<Dependency> outboundDependencies = concat(
-            getOutboundDependencies().stream(),
-            inboundDependencies.stream().filter(it -> it instanceof ILsaMolecule)
-        ).distinct().collect(Collectors.toList());
-        screen(inboundDependencies);
-        screen(outboundDependencies);
-        inboundDependencies.forEach(this::addInboundDependency);
-        outboundDependencies.forEach(this::addOutboundDependency);
-    }
-
-    /**
-     * This method screens the lsaMolecule list, deleting all molecule which can
-     * be covered from another one more generic.
-     *
-     * @param moleculeList
-     *            List of lsaMolecule to screen
-     */
-    private static void screen(final List<Dependency> moleculeList) {
-        /*
-         * PHASE 1: generalize the list
-         */
-        for (int i = 0; i < moleculeList.size(); i++) { // NOPMD: this loop has side effects
-            moleculeList.add(((ILsaMolecule) moleculeList.remove(0)).generalize());
-        }
-        /*
-         * PHASE2: compare one-by-one
-         */
-        for (int i = moleculeList.size() - 1; i > 0; i--) {
-            for (int p = i - 1; p >= 0; p--) {
-                final ILsaMolecule m1 = (ILsaMolecule) moleculeList.get(i);
-                final ILsaMolecule m2 = (ILsaMolecule) moleculeList.get(p);
-                if (m2.equals(m1) || m2.moreGenericOf(m1)) {
-                    moleculeList.remove(i);
-                    i--;
-                } else if (m1.moreGenericOf(m2)) {
-                    moleculeList.remove(p);
-                    i--;
-                }
-            }
-        }
     }
 }

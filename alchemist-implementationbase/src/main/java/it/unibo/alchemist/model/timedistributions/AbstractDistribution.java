@@ -9,10 +9,12 @@
 
 package it.unibo.alchemist.model.timedistributions;
 
-import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
 
 import javax.annotation.Nonnull;
 import java.io.Serial;
@@ -28,7 +30,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
 
     @Serial
     private static final long serialVersionUID = -8906648194668569179L;
-    private Time tau;
+    private final MutableObservable<Time> tau;
     private boolean schedulable;
     private final Time startTime;
 
@@ -37,7 +39,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
      *            initial time
      */
     public AbstractDistribution(final Time start) {
-        tau = start;
+        tau = MutableObservable.Companion.observe(start, false);
         startTime = start;
     }
 
@@ -48,16 +50,23 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
      *            the new time
      */
     protected final void setNextOccurrence(final Time t) {
-        this.tau = t;
+        tau.setCurrent(t);
     }
 
     @Override
     public final void update(
             final @Nonnull Time currentTime,
-            final boolean hasBeenExecuted,
-            final double additionalParameter,
-            final @Nonnull Environment<T, ?> environment
+            final @Nonnull Actionable<T> source
     ) {
+        update(currentTime, true, source);
+    }
+
+    @Override
+    public final void reactToUpdate(final @Nonnull Time currentTime, final @Nonnull Actionable<T> source) {
+        update(currentTime, false, source);
+    }
+
+    private void update(final Time currentTime, final boolean executed, final Actionable<T> source) {
         if (!schedulable && currentTime.compareTo(startTime) >= 0) {
             /*
              * If the simulation time is beyond the startTime for this reaction,
@@ -69,11 +78,11 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
          * If the current time is not past the starting time for this reaction,
          * it should not be used.
          */
-        updateStatus(schedulable ? currentTime : startTime, hasBeenExecuted, additionalParameter, environment);
+        updateStatus(schedulable ? currentTime : startTime, executed, source);
     }
 
     @Override
-    public final Time getNextOccurence() {
+    public final Observable<Time> getNextOccurence() {
         return tau;
     }
 
@@ -85,12 +94,9 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
      * @param executed
      *            true if the reaction whose this distribution has been
      *            associated has just been executed
-     * @param param
-     *            optional parameter passed by the reaction
-     * @param environment
-     *            the current environment
+     * @param source the actionable associated with this distribution
      */
-    protected abstract void updateStatus(Time currentTime, boolean executed, double param, Environment<T, ?> environment);
+    protected abstract void updateStatus(Time currentTime, boolean executed, Actionable<T> source);
 
     @Override
     public abstract AbstractDistribution<T> cloneOnNewNode(@Nonnull Node<T> destination, @Nonnull Time currentTime);

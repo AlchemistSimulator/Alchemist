@@ -14,7 +14,6 @@ import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.SteeringStrategy
 import it.unibo.alchemist.model.cognitive.steering.Sum
-import it.unibo.alchemist.model.physics.PhysicsDependency
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.physics.properties.PhysicalPedestrian2D
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
@@ -36,10 +35,6 @@ class PhysicalBlendedSteering<T>(
 
     override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> =
         Sum(environment, node, super.steerStrategy)
-
-    init {
-        addInboundDependency(PhysicsDependency)
-    }
 
     /**
      * Update the node physical state.

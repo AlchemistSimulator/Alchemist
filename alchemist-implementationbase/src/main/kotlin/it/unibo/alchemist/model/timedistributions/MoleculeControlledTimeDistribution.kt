@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.timedistributions
 
-import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
@@ -136,7 +136,7 @@ constructor(
 
     private var previousStep: Double? = null
 
-    override fun updateStatus(currentTime: Time, executed: Boolean, param: Double, environment: Environment<T, *>) {
+    override fun updateStatus(currentTime: Time, executed: Boolean, source: Actionable<T>) {
         val currentStep = readCurrentValue(incarnation, node, molecule, property)
         if (executed) {
             previousStep = currentStep
@@ -148,7 +148,7 @@ constructor(
                     "hence the simulation has been forcibly terminated."
             }
         }
-        super.updateStatus(currentTime, executed, param, environment)
+        super.updateStatus(currentTime, executed, source)
     }
 
     override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): MoleculeControlledTimeDistribution<T> =

@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.timedistributions
 
+import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
@@ -180,11 +181,11 @@ class SimpleNetworkArrivals<T> private constructor(
         get() = constantPropagationDelay
             ?: incarnation.getProperty(node, propagationDelayMolecule, propagationDelayProperty)
 
-    override fun updateStatus(currentTime: Time, executed: Boolean, rate: Double, environment: Environment<T, *>) {
+    override fun updateStatus(currentTime: Time, executed: Boolean, source: Actionable<T>) {
         /*
          * To be revised once we have a better infrastructure of events and time distributions
          */
-        if (rate == 0.0) {
+        if (source.rate == 0.0) {
             time = Time.INFINITY
         } else if (time.isInfinite) {
             time = currentTime + propagationDelay + packetSize / bandwidth

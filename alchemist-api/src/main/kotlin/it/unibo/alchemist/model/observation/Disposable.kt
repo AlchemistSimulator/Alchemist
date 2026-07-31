@@ -19,3 +19,41 @@ fun interface Disposable {
      */
     fun dispose()
 }
+
+/**
+ * Owns a group of [Disposable] resources and releases them together.
+ */
+class CompositeDisposable : Disposable {
+    private val resources = linkedSetOf<Disposable>()
+    private var disposed = false
+
+    /**
+     * Adds [resource] to this composite.
+     * If this composite was already disposed, [resource] is disposed immediately.
+     *
+     * @return [resource]
+     */
+    fun <T : Disposable> add(resource: T): T = resource.also {
+        if (disposed) {
+            it.dispose()
+        } else {
+            resources += it
+        }
+    }
+
+    /**
+     * Disposes all currently owned resources while keeping this composite reusable.
+     */
+    fun clear() {
+        val toDispose = resources.toList()
+        resources.clear()
+        toDispose.forEach(Disposable::dispose)
+    }
+
+    override fun dispose() {
+        if (!disposed) {
+            disposed = true
+            clear()
+        }
+    }
+}

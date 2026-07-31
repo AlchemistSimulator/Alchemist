@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.model.timedistributions
 
-import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.times.DoubleTime
@@ -19,14 +19,14 @@ import it.unibo.alchemist.model.times.DoubleTime
 class Trigger<T>(time: Time) : AbstractDistribution<T>(time) {
     override fun getRate(): Double = Double.Companion.NaN
 
-    override fun updateStatus(currentTime: Time?, executed: Boolean, param: Double, environment: Environment<T, *>) {
+    override fun updateStatus(currentTime: Time, executed: Boolean, source: Actionable<T>) {
         if (executed) {
             setNextOccurrence(DoubleTime(Double.Companion.POSITIVE_INFINITY))
         }
     }
 
     override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): AbstractDistribution<T> =
-        Trigger(nextOccurence)
+        Trigger(nextOccurence.current)
 
     /**
      * Static constants for [Trigger] class.

@@ -51,7 +51,6 @@ public abstract class AbstractLsaAction extends AbstractAction<List<ILsaMolecule
     public AbstractLsaAction(final ILsaNode node, final List<ILsaMolecule> m) {
         super(node);
         for (final ILsaMolecule mol : m) {
-            declareDependencyTo(mol);
         }
     }
 

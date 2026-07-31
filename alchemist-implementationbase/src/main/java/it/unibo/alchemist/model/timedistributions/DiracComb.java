@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.timedistributions;
 
-import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.times.DoubleTime;
@@ -57,8 +57,7 @@ public class DiracComb<T> extends AbstractDistribution<T> {
     protected final void updateStatus(
             final Time currentTime,
             final boolean executed,
-            final double param,
-            final Environment<T, ?> environment) {
+            final Actionable<T> source) {
         if (executed) {
             setNextOccurrence(new DoubleTime(currentTime.toDouble() + timeInterval));
         }

@@ -54,9 +54,7 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
                 node.asPropertyOrNull(CellProperty.class),
                 "This Action can be set only in nodes with " + CellProperty.class.getSimpleName()
         );
-        declareDependencyTo(junction);
         for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
-            declareDependencyTo(entry.getKey());
         }
         jun = junction;
         this.environment = environment;

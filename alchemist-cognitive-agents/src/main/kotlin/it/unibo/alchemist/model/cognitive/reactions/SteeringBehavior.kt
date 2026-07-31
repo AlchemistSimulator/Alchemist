@@ -45,7 +45,7 @@ open class SteeringBehavior<T>(
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time) =
         SteeringBehavior(environment, node.pedestrianProperty, timeDistribution, steerStrategy)
 
-    override fun updateInternalStatus(currentTime: Time?, hasBeenExecuted: Boolean, environment: Environment<T, *>?) =
+    override fun updateInternalStatus(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) =
         Unit
 
     override fun execute() {

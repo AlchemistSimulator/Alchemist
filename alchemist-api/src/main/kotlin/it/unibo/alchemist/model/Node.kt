@@ -12,7 +12,6 @@ import arrow.core.Option
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMap
-import it.unibo.alchemist.model.observation.lifecycle.LifecycleOwner
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
@@ -28,8 +27,7 @@ interface Node<T> :
     Serializable,
     Iterable<Reaction<T>>,
     Comparable<Node<T>>,
-    Disposable,
-    LifecycleOwner {
+    Disposable {
     /**
      * Adds a reaction to this node.
      * The reaction is added only in the node,

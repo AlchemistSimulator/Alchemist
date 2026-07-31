@@ -12,51 +12,40 @@ package it.unibo.alchemist.model.reactions
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.timedistributions.ExponentialTime
-import javax.annotation.Nonnull
+import it.unibo.alchemist.model.TimeDistribution
 
 /**
- * @param <T> concentration type
- * @param node
- * node
- * @param timeDistribution
- * time distribution
-</T> */
-open class ChemicalReaction<T>(node: Node<T>, override val timeDistribution: ExponentialTime<T>) :
-    AbstractReaction<T>(
-        node,
-        timeDistribution,
-    ) {
+ * A reaction whose rate is the product of its time distribution rate and all condition propensity contributions.
+ *
+ * @param T concentration type
+ */
+open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
+    AbstractReaction<T>(node, timeDistribution) {
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ChemicalReaction<T> =
-        makeClone<ChemicalReaction<T>> {
-            ChemicalReaction<T>(
-                node,
-                this@ChemicalReaction.timeDistribution.cloneOnNewNode(node, currentTime),
-            )
+    private var currentRate = 0.0
+
+    final override val rate: Double get() = currentRate
+
+    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ChemicalReaction<T> = makeClone {
+        ChemicalReaction(node, timeDistribution.cloneOnNewNode(node, currentTime))
+    }
+
+    override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
+        update(atTime)
+    }
+
+    /**
+     * Subclasses overriding this method must invoke the base implementation to refresh [rate].
+     */
+    override fun updateInternalStatus(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) {
+        currentRate = timeDistribution.rate
+        for (condition in conditions) {
+            val contribution = condition.propensityContribution.current
+            require(contribution >= 0) { "Condition $condition returned a negative propensity contribution" }
+            currentRate *= contribution
+            if (currentRate == 0.0) {
+                break
+            }
         }
-
-//    override fun onInitializationComplete(@Nonnull atTime: Time, @Nonnull environment: Environment<T?, *>) {
-//        update(atTime, true, environment)
-//    }
-
-//    /**
-//     * Subclasses must call super.updateInternalStatus for the rate to get updated in case of method override.
-//     */
-//    override fun updateInternalStatus(
-//        currentTime: Time?,
-//        hasBeenExecuted: Boolean,
-//        environment: Environment<T?, *>?
-//    ) {
-//        this.rate = this@ChemicalReaction.timeDistribution.getRate()
-//        for (cond in conditions) {
-//            val v: Double = cond.getPropensityContribution()
-//            if (v == 0.0) {
-//                this.rate = 0.0
-//                break
-//            }
-//            check(!(v < 0)) { "Condition " + cond + " returned a negative propensity conditioning value" }
-//            this.rate *= cond.getPropensityContribution()
-//        }
-//    }
+    }
 }

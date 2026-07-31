@@ -54,6 +54,25 @@ interface Observable<T> : Disposable {
     fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit)
 
     /**
+     * Subscribes [callback] to this observable using a unique subscription identity.
+     *
+     * @param invokeOnSubscription whether [callback] should receive [current] immediately
+     * @param callback the callback to invoke on updates
+     * @return a non-null handle that removes exactly this subscription when disposed
+     */
+    fun subscribe(invokeOnSubscription: Boolean = true, callback: (T) -> Unit): Disposable {
+        val subscription = Any()
+        onChange(subscription, invokeOnSubscription, callback)
+        var active = true
+        return Disposable {
+            if (active) {
+                active = false
+                stopWatching(subscription)
+            }
+        }
+    }
+
+    /**
      * Unregisters the specified registrant from watching for changes or updates in the observable.
      *
      * @param registrant The entity to be unregistered from observing changes.
@@ -203,32 +222,34 @@ interface MutableObservable<T> : Observable<T> {
          * @param initial The initial value of the observable.
          * @return A new instance of [MutableObservable] initialized with the provided value.
          */
-        fun <T> observe(initial: T): MutableObservable<T> = object : MutableObservable<T> {
-            override val observingCallbacks: MutableMap<Any, List<(T) -> Unit>> = linkedMapOf()
+        @JvmOverloads
+        fun <T> observe(initial: T, emitOnDistinct: Boolean = true): MutableObservable<T> =
+            object : MutableObservable<T> {
+                override val observingCallbacks: MutableMap<Any, List<(T) -> Unit>> = linkedMapOf()
 
-            override var current: T = initial
-                set(value) {
-                    if (value != field) {
-                        field = value
-                        observingCallbacks.values.forEach { callbacks -> callbacks.forEach { it(value) } }
+                override var current: T = initial
+                    set(value) {
+                        if (!emitOnDistinct || value != field) {
+                            field = value
+                            observingCallbacks.values.forEach { callbacks -> callbacks.forEach { it(value) } }
+                        }
                     }
+
+                override val observers: List<Any> get() = observingCallbacks.keys.toList()
+
+                override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
+                    if (invokeOnRegistration) {
+                        callback(current)
+                    }
+                    observingCallbacks[registrant] = observingCallbacks[registrant]?.let {
+                        it + callback
+                    } ?: listOf(callback)
                 }
 
-            override val observers: List<Any> get() = observingCallbacks.keys.toList()
-
-            override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
-                if (invokeOnRegistration) {
-                    callback(current)
+                override fun stopWatching(registrant: Any) {
+                    observingCallbacks.remove(registrant)
                 }
-                observingCallbacks[registrant] = observingCallbacks[registrant]?.let {
-                    it + callback
-                } ?: listOf(callback)
             }
-
-            override fun stopWatching(registrant: Any) {
-                observingCallbacks.remove(registrant)
-            }
-        }
 
         /**
          * Handy method to update the optional[Option] contents of this [MutableObservable].

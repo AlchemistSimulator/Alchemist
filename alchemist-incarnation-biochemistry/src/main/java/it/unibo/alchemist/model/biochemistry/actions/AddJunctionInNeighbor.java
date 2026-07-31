@@ -48,7 +48,6 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
             final RandomGenerator randomGenerator
     ) {
         super(node, environment, randomGenerator);
-        declareDependencyTo(junction);
         jun = junction;
     }
 

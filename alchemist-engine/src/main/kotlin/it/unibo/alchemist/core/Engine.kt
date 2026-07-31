@@ -14,6 +14,8 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.observation.Disposable
+import java.util.IdentityHashMap
 
 /**
  * Represents a simulation engine that manages execution and scheduling.
@@ -30,6 +32,7 @@ open class Engine<T, P : Position<out P>>(
 ) : AbstractEngine<T, P>(environment) {
 
     private val batchManager = BatchManager<T>()
+    private val schedulingSubscriptions = IdentityHashMap<Actionable<T>, Disposable>()
 
     constructor(environment: Environment<T, P>) : this(environment, ArrayIndexedPriorityQueue())
 
@@ -49,13 +52,12 @@ open class Engine<T, P : Position<out P>>(
             "$nextEvent is scheduled in the past at time $scheduledTime. Current time: $time; current step: $step."
         }
         currentTime = scheduledTime
-        batchManager.useBatch(onReschedule = { updateReaction(it) }) {
+        batchManager.useBatch(onReschedule = { scheduler.updateReaction(it) }) {
             if (scheduledTime.isFinite && nextEvent.canExecute().current) {
                 nextEvent.conditions.forEach { it.reactionReady() }
                 nextEvent.execute()
             }
-            nextEvent.update(time, true, environment)
-            scheduler.updateReaction(nextEvent)
+            nextEvent.update(time)
         }
 
         monitors.forEach { it.stepDone(environment, nextEvent, time, step) }
@@ -96,24 +98,34 @@ open class Engine<T, P : Position<out P>>(
     }
 
     private fun scheduleReaction(reaction: Actionable<T>) {
-        scheduler.addReaction(reaction)
-        reaction.rescheduleRequest.onChange(this, false) {
-            batchManager.requestReschedule(reaction) {
-                updateReaction(reaction)
-            }
+        check(!schedulingSubscriptions.containsKey(reaction)) {
+            "Reaction $reaction was scheduled more than once"
         }
+        reaction.initializationComplete(time, environment)
+        scheduler.addReaction(reaction)
+        val subscription = reaction.tau.subscribe(invokeOnSubscription = false) {
+            requestSchedulerUpdate(reaction)
+        }
+        schedulingSubscriptions[reaction] = subscription
     }
 
-    protected open fun updateReaction(reaction: Actionable<T>) {
-        val previousTau = reaction.tau
-        reaction.update(time, false, environment)
-        if (reaction.tau != previousTau) {
+    /**
+     * Reindexes [reaction] after its observable execution time changes.
+     */
+    protected open fun requestSchedulerUpdate(reaction: Actionable<T>) {
+        batchManager.requestReschedule(reaction) {
             scheduler.updateReaction(reaction)
         }
     }
 
     private fun removeReaction(reaction: Actionable<T>) {
-        reaction.rescheduleRequest.stopWatching(this)
+        schedulingSubscriptions.remove(reaction)?.dispose()
         scheduler.removeReaction(reaction)
+        reaction.dispose()
+    }
+
+    override fun afterRun() {
+        schedulingSubscriptions.values.forEach(Disposable::dispose)
+        schedulingSubscriptions.clear()
     }
 }

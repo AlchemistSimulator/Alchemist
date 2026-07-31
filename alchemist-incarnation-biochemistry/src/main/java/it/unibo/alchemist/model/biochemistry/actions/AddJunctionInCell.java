@@ -47,7 +47,6 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
     ) {
         super(node, environment, randomGenerator);
         node.asProperty(CellProperty.class);
-        declareDependencyTo(junction);
         this.junction = junction;
     }
 

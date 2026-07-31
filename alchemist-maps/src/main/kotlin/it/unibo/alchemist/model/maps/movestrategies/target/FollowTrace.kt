@@ -26,8 +26,8 @@ class FollowTrace<T>(private val reaction: Reaction<*>) :
     AbstractStrategyWithGPS(),
     TargetSelectionStrategy<T, GeoPosition> {
 
-    override fun getTarget(): GPSPoint = requireNotNull(trace.getNextPosition(reaction.tau)) {
-        "No valid position found at time ${reaction.tau}"
+    override fun getTarget(): GPSPoint = requireNotNull(trace.getNextPosition(reaction.tau.current)) {
+        "No valid position found at time ${reaction.tau.current}"
     }
 
     override fun cloneIfNeeded(destination: Node<T>, reaction: Reaction<T>): FollowTrace<T> = FollowTrace(reaction)

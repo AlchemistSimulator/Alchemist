@@ -10,7 +10,6 @@ package it.unibo.alchemist.model.protelis.actions
 
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Context
-import it.unibo.alchemist.model.Dependency
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
@@ -27,7 +26,6 @@ import it.unibo.alchemist.util.RealDistributions
 import java.io.ObjectInputStream
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
-import org.danilopianini.util.ImmutableListSet
 import org.protelis.lang.ProtelisLoader
 import org.protelis.vm.ProtelisProgram
 import org.protelis.vm.ProtelisVM
@@ -225,10 +223,6 @@ class RunProtelisProgram<P : Position<P>> private constructor(
      * A Protelis program never writes in other nodes
      */
     override fun getContext() = Context.LOCAL
-
-    override fun getOutboundDependencies(): ImmutableListSet<Dependency> = ImmutableListSet.of(
-        Dependency.EVERY_MOLECULE,
-    )
 
     override fun hashCode() = name.hashCode()
 

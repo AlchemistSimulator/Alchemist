@@ -22,7 +22,7 @@ plugins {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation(libs.apollo.runtime)
                 implementation(libs.kotlin.coroutines.core)
@@ -30,12 +30,12 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
             }
         }
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 api(alchemist("api"))
                 api(alchemist("graphql-surrogates"))
@@ -47,7 +47,7 @@ kotlin {
                 implementation(libs.bundles.ktor.server)
             }
         }
-        val jvmTest by getting {
+        jvmTest {
             dependencies {
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.kotest.runner)
@@ -58,7 +58,7 @@ kotlin {
                 implementation(alchemist("test"))
             }
         }
-        val jsMain by getting {
+        jsMain {
             dependencies {
                 implementation(libs.kotlinx.atomicfu.runtime)
             }

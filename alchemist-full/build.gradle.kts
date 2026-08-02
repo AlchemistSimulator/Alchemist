@@ -56,7 +56,7 @@ application {
 }
 
 // Shadow Jar
-tasks.withType<ShadowJar> {
+tasks.withType<ShadowJar>().configureEach {
     manifest {
         attributes(
             mapOf(
@@ -82,23 +82,28 @@ tasks.withType<ShadowJar> {
     mergeServiceFiles()
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })
-    // Run the jar and check the output
-    val minJavaVersion: String by properties
-    val javaExecutable = javaToolchains.launcherFor { languageVersion.set(JavaLanguageVersion.of(minJavaVersion)) }
-        .map { it.executablePath.asFile.absolutePath }
-    val testShadowJar = testShadowJar(javaExecutable, archiveFile)
-    testShadowJar.configure {
-        dependsOn(this@withType)
-    }
-    this.finalizedBy(testShadowJar)
-    tasks.assemble.configure { dependsOn(testShadowJar) }
 }
 
-// Disable distTar and distZip
-val toDisable = with(tasks) {
-    listOf(distTar, distZip, jpackage, shadowDistZip, shadowDistTar).map { it.name }
+val javaExecutable = javaToolchains.launcherFor {
+    languageVersion.set(
+        providers.gradleProperty("minJavaVersion").map(JavaLanguageVersion::of),
+    )
 }
-tasks.matching { it.name in toDisable }.configureEach { enabled = false }
+
+val testShadowJar = testShadowJar(
+    javaExecutable.map { it.executablePath.asFile.absolutePath },
+    tasks.shadowJar.flatMap { it.archiveFile },
+)
+testShadowJar.configure { dependsOn(tasks.shadowJar) }
+tasks.shadowJar.configure { finalizedBy(testShadowJar) }
+tasks.assemble.configure { dependsOn(testShadowJar) }
+
+// Disable distTar and distZip
+with(tasks) {
+    listOf(distTar, distZip, jpackage, shadowDistZip, shadowDistTar).forEach {
+        it.configure { enabled = false }
+    }
+}
 
 sealed interface PackagingMethod
 
@@ -171,19 +176,22 @@ private fun String.extractVersionComponents(): SemVerExtracted {
 
 private val packageDestinationDir = rootProject.layout.buildDirectory.dir("package").directoryProperty
 private val baseVersion: Provider<String> = provider { rootProject.version.toString() }
+
 private fun ImageType.formatVersion(version: String): String = when (this) {
     MSI, EXE -> version.substringBefore('-')
     DMG, PKG -> version.extractVersionComponents().asMangledVersion()
     RPM -> version.replace('-', '.')
     else -> version
 }
+
 private val rpmFileName: Provider<String> =
     baseVersion.map { "${rootProject.name}-${RPM.formatVersion(it)}-1.x86_64.rpm" }
+
 private val rpmFileProvider: RegularFileProperty = rpmFileName.flatMap { fileName ->
     packageDestinationDir.file(fileName)
 }.fileProperty
 
-val generatePKGBUILD by tasks.registering {
+val generatePKGBUILD = tasks.register("generatePKGBUILD") {
     group = "Distribution"
     description = "Generates a valid PKGBUILD by replacing values in the template file"
     if (validFormats.none { it is ValidPackaging && it.format == RPM }) {
@@ -232,6 +240,7 @@ val generatePKGBUILD by tasks.registering {
         outputDir.resolve("PKGBUILD").writeText(pkgbuildContent)
     }
 }
+
 tasks.assemble.configure { dependsOn(generatePKGBUILD) }
 
 val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packaging: ValidPackaging ->
@@ -279,7 +288,7 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
 
 tasks.assemble.configure { dependsOn(packageTasks) }
 
-tasks.withType<AbstractArchiveTask> {
+tasks.withType<AbstractArchiveTask>().configureEach {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
@@ -309,6 +318,7 @@ private val Provider<Directory>.directoryProperty get(): DirectoryProperty = obj
     it.set(this)
     it.disallowChanges()
 }
+
 private val Provider<RegularFile>.fileProperty get(): RegularFileProperty = objects.fileProperty().also {
     it.set(this)
     it.disallowChanges()

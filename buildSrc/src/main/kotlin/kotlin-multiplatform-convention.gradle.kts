@@ -36,14 +36,14 @@ kotlin {
         val alchemistApi = alchemist("api")
         val alchemistMaintenanceTooling = alchemist("maintenance-tooling")
         val isNotRootRootProject = project != alchemistMaintenanceTooling && project != alchemistApi
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 if (isNotRootRootProject) {
                     implementation(alchemist("maintenance-tooling"))
                 }
             }
         }
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 val kotlinTest by catalog
                 val kotestAssertionsCore by catalog
@@ -53,14 +53,14 @@ kotlin {
                 implementation(kotestFrameworkEngine)
             }
         }
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 if (isNotRootRootProject) {
                     implementation(alchemistApi)
                 }
             }
         }
-        val jvmTest by getting {
+        jvmTest {
             dependencies {
                 val `kotest-runner` by catalog
                 implementation(`kotest-runner`)

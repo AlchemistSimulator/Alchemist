@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model.cognitive
 
+import it.unibo.alchemist.model.observation.Observable
+
 /**
  * Theoretical model that describes the cognitive processes of an agent.
  *
@@ -16,6 +18,11 @@ package it.unibo.alchemist.model.cognitive
  * and competing intentions to escape or remain.
  */
 interface CognitiveModel {
+    /**
+     * The current escape decision, updated whenever the model evolves.
+     */
+    val escapeDecision: Observable<Boolean>
+
     /**
      * Returns the agent's current belief about the situation's dangerousness.
      *
@@ -56,5 +63,5 @@ interface CognitiveModel {
      *
      * @return true if the escape intention is greater than the remain intention; false otherwise.
      */
-    fun wantsToEscape(): Boolean = escapeIntention() > remainIntention()
+    fun wantsToEscape(): Boolean = escapeDecision.current
 }

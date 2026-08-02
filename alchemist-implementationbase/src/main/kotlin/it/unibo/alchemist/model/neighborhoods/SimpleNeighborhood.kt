@@ -12,23 +12,22 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.util.BugReporting.reportBug
-import org.danilopianini.util.Hashes
-import org.danilopianini.util.ImmutableListSet
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 
 /**
  * A basic implementation of the [Neighborhood] interface.
  */
 class SimpleNeighborhood<T, P : Position<P>> private constructor(
     private val environment: Environment<T, P>,
-    private val center: Node<T>,
-    override val neighbors: ImmutableL<out Node<T>>,
+    override val center: Node<T>,
+    override val neighbors: PersistentList<Node<T>>,
 ) : Neighborhood<T> {
     internal constructor(
         environment: Environment<T, P>,
         center: Node<T>,
         neighbors: Iterable<Node<T>>,
-    ) : this(environment, center, ImmutableListSet.Builder<Node<T>>().addAll(neighbors).build())
+    ) : this(environment, center, neighbors.distinct().toPersistentList())
 
     override fun toString() = "$center links: $neighbors"
 
@@ -37,74 +36,15 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
         other.center == center &&
         other.neighbors == neighbors
 
-    override fun hashCode(): Int = Hashes.hash32(environment, center, neighbors)
+    override fun hashCode(): Int = arrayOf(environment, center, neighbors).contentHashCode()
 
-    override fun add(node: Node<T>) = SimpleNeighborhood(
-        environment,
-        center,
-        Iterable {
-            object : Iterator<Node<T>> {
-                val previousNodes = neighbors.iterator()
-                var nodeReady = true
-
-                override fun hasNext() = nodeReady
-
-                override fun next() = if (previousNodes.hasNext()) {
-                    previousNodes.next()
-                } else {
-                    if (nodeReady) {
-                        nodeReady = false
-                        node
-                    } else {
-                        throw NoSuchElementException("No other elements.")
-                    }
-                }
-            }
-        },
-    )
+    override fun add(node: Node<T>): Neighborhood<T> =
+        if (node in this) this else SimpleNeighborhood(environment, center, neighbors.add(node))
 
     override fun remove(node: Node<T>): Neighborhood<T> {
         require(node in this) {
             "$node not in $this"
         }
-        return SimpleNeighborhood(
-            environment,
-            center,
-            Iterable {
-                object : Iterator<Node<T>> {
-                    val base = neighbors.iterator()
-                    var lookahead = updateLookAhead()
-
-                    fun updateLookAhead(): Node<T>? = if (base.hasNext()) {
-                        val maybeNext = base.next()
-                        if (maybeNext == node) {
-                            updateLookAhead()
-                        } else {
-                            maybeNext
-                        }
-                    } else {
-                        null
-                    }
-
-                    override fun hasNext() = lookahead !== null
-
-                    override fun next() = if (hasNext()) {
-                        val result =
-                            lookahead ?: reportBug(
-                                "Neighborhood iterator failure in ${this::class.qualifiedName}",
-                                mapOf(
-                                    "base" to base,
-                                    "lookahead" to lookahead,
-                                    "hasNext" to hasNext(),
-                                ),
-                            )
-                        lookahead = updateLookAhead()
-                        result
-                    } else {
-                        throw NoSuchElementException("No other elements.")
-                    }
-                }
-            },
-        )
+        return SimpleNeighborhood(environment, center, neighbors.remove(node))
     }
 }

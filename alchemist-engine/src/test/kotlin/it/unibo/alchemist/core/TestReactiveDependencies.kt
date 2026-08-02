@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.core
 
+import io.kotest.assertions.withClue
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull
 import it.unibo.alchemist.model.Environment
@@ -39,7 +40,9 @@ class TestReactiveDependencies : AbstractDependencyTest() {
         dependencies.forEach { target ->
             val count = counters[target]?.get()
             count.shouldNotBeNull()
-            count shouldBeGreaterThan 0
+            withClue("Expected $target to react to execution of $this") {
+                count shouldBeGreaterThan 0
+            }
         }
 
         subscriptions.values.forEach(Disposable::dispose)

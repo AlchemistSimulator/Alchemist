@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
-import org.danilopianini.util.ListSets
+import kotlinx.collections.immutable.persistentListOf
 import org.junit.jupiter.api.Test
 
 /**
@@ -31,7 +31,7 @@ class TestSimpleNetworkArrivals {
         val incarnation = mockk<Incarnation<Any, Euclidean2DPosition>>()
         val environment = mockk<Environment<Any, Euclidean2DPosition>>()
         val node = mockk<Node<Any>>()
-        every { environment.getNeighborhood(node).current.neighbors } returns ListSets.emptyListSet()
+        every { environment.getNeighborhood(node).current.neighbors } returns persistentListOf()
         val propagationDelay = 0.1
         val packetSize = 1000.0
         val bandwidth = 1000.0
@@ -54,8 +54,8 @@ class TestSimpleNetworkArrivals {
         val environment = mockk<Environment<Any, Euclidean2DPosition>>()
         val node1 = mockk<Node<Any>>()
         val node2 = mockk<Node<Any>>()
-        every { environment.getNeighborhood(node1).current.neighbors } returns ListSets.emptyListSet()
-        every { environment.getNeighborhood(node2).current.neighbors } returns ListSets.emptyListSet()
+        every { environment.getNeighborhood(node1).current.neighbors } returns persistentListOf()
+        every { environment.getNeighborhood(node2).current.neighbors } returns persistentListOf()
         val distribution = SimpleNetworkArrivals(
             incarnation = incarnation,
             node = node1,
@@ -77,7 +77,7 @@ class TestSimpleNetworkArrivals {
         val incarnation = mockk<Incarnation<Any, Euclidean2DPosition>>()
         val environment = mockk<Environment<Any, Euclidean2DPosition>>()
         val node = mockk<Node<Any>>()
-        every { environment.getNeighborhood(node).current.neighbors } returns ListSets.emptyListSet()
+        every { environment.getNeighborhood(node).current.neighbors } returns persistentListOf()
         val distribution = SimpleNetworkArrivals(
             incarnation = incarnation,
             node = node,

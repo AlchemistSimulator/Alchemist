@@ -25,6 +25,8 @@ Do not mark an item complete until its implementation and proportional verificat
 - Eliminate the `org.danilopianini:javalib-java7:0.6.1` dependency by the end of the implementation. Replace
   `ListSet` with suitable Kotlin collection types or immutable collections while preserving required ordering and
   uniqueness semantics.
+- Make each `Neighborhood` value an immutable snapshot. Topology may change during a simulation, but a change must
+  create and publish a replacement neighborhood rather than mutate an already published instance.
 - Keep changes small and focused, and maintain this document as part of each phase.
 
 The Java-to-Kotlin rule applies during every phase, not only during final API modernization. Small mechanical
@@ -62,6 +64,8 @@ changes. Model observables invalidate the reactions that directly consume them.
 7. Each logical model mutation transaction recomputes and reindexes every affected reaction at most once.
 8. Removed or disposed reactions cannot emit scheduler updates.
 9. All scheduling calculations use the triggering event's simulation time, never a stale batch/global time.
+10. Published neighborhoods and their neighbor collections are immutable; topology updates atomically replace the
+    observable neighborhood snapshot.
 
 ### Soundness constraints to settle before the core API is finalized
 
@@ -85,9 +89,9 @@ changes. Model observables invalidate the reactions that directly consume them.
   `alchemist-api` Kotlin and Java compilation to pass.
 - [x] Identified the next masked compiler frontier in the incomplete `Environment`/`Neighborhood` collection
   migration.
-- [ ] Merge the current `origin/master` and refresh this evidence after conflict resolution.
+- [x] Merge the current `origin/master` and refresh this evidence after conflict resolution.
 
-Known failures before the master merge:
+Known failures after the master merge:
 
 - Java and Kotlin declare incompatible `it.unibo.alchemist.model.TimeDistribution` interfaces.
 - `AbstractEnvironment` mixes immutable `List` declarations with mutation and stale `ListSet` APIs.
@@ -100,26 +104,41 @@ Known failures before the master merge:
 
 - [x] Refresh `origin/master` immediately before the merge.
 - [x] Record the pre-merge `HEAD`, current build failures, and worktree status.
-- [ ] Merge `origin/master` into `marmellata` with a normal merge commit.
+- [x] Merge `origin/master` into `marmellata` with a normal merge commit.
 - [x] Resolve conflicts by preserving the reactive direction while adopting current master fixes and APIs.
 - [x] Do not regenerate or commit caches, documentation caches, build outputs, or unrelated lock-file changes.
-- [ ] Re-run focused compilation to establish the post-merge failure frontier.
-- [ ] Update the current-evidence section with the merge commit and new failures.
+- [x] Re-run focused compilation to establish the post-merge failure frontier.
+- [x] Update the current-evidence section with the merge commit and new failures.
 
 ## Phase 2: restore a compiling baseline
 
 This phase restores coherence without prematurely finalizing the new scheduling API.
 
-- [ ] Keep exactly one `TimeDistribution` declaration. Retain the currently implemented Java reactive contract
+- [x] Keep exactly one `TimeDistribution` declaration. Retain the currently implemented Java reactive contract
   temporarily if that minimizes churn before Phase 4.
-- [ ] Complete or locally roll back the unfinished `Environment`/`Neighborhood` collection migration.
-- [ ] Replace encountered `ListSet` uses with Kotlin collections or immutable collections; do not introduce new
+- [x] Complete or locally roll back the unfinished `Environment`/`Neighborhood` collection migration.
+- [x] Replace encountered `ListSet` uses with Kotlin collections or immutable collections; do not introduce new
   uses of `javalib-java7` while restoring compilation.
-- [ ] Preserve ordered uniqueness for nodes, global reactions, and neighborhood members.
+- [x] Preserve ordered uniqueness for nodes, global reactions, and neighborhood members.
+- [x] Represent neighborhoods as immutable, copy-on-write snapshots and replace the observable value when topology
+  changes.
 - [ ] Restore collection/iteration behavior required by Java, Kotlin, and Scala consumers.
 - [ ] Fix the known formatting and static-analysis failures without suppressions.
-- [ ] Compile `alchemist-api`, `alchemist-engine`, and `alchemist-implementationbase` before widening verification.
+- [x] Compile `alchemist-api`, `alchemist-engine`, and `alchemist-implementationbase` before widening verification.
 - [ ] Record newly exposed downstream compilation failures here.
+
+Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
+
+- [x] Replace stale `ListSets.emptyListSet()` test fixtures with immutable Kotlin collections.
+- [x] Fix eight `MapGetWithNotNullAssertionOperator` findings in `ObservableTest` without suppressions.
+- [x] Make reaction invalidation safe before an environment is attached to a simulation; the failing regression is
+  `TestReactiveDependencies.local reactions on separate nodes should be isolated`.
+- [x] Trace and fix the website-snippet simulation failure `Propensity cannot be NaN`.
+- [x] Fix the deterministic cognitive-agent social-contagion regression: the non-exposed pedestrian never begins
+  evacuating under reactive scheduling.
+- [x] Update ten biochemistry Java test assertions to read the current value of observable validity and propensity.
+- [x] Update three Protelis Java test assertions to use the `TimeDistribution.getRate()` accessor.
+- [x] Remove the known empty initializer from `SendToNeighbor`.
 
 ## Phase 3: remove `BatchEngine`
 
@@ -201,6 +220,8 @@ This phase restores coherence without prematurely finalizing the new scheduling 
 - [ ] Port old dependency-graph expectations as observable behavior tests, not graph-structure tests.
 - [ ] Test positive local invalidation and negative isolation across unrelated nodes.
 - [ ] Test neighborhood addition/removal, movement, global changes, and dynamic reaction/node changes.
+- [ ] Test that previously published neighborhood snapshots cannot change when topology changes and that observers
+  receive a distinct immutable replacement snapshot.
 - [ ] Test propensity changes that do not change Boolean condition validity.
 - [ ] Test zero-to-positive, positive-to-zero, and positive-to-positive chemical propensity transitions.
 - [ ] Verify whether each transition preserves, transforms, or redraws the sampled time as specified.
@@ -260,3 +281,61 @@ Use repository Gradle tasks from the repository root.
 - 2026-08-02: the merge commit hook reached `:alchemist-api:compileKotlin` and reproduced the known duplicate
   Java/Kotlin `TimeDistribution` declaration. Per project-owner direction, hooks are bypassed for this master merge;
   the failure becomes the first focused post-merge compilation frontier for Phase 2.
+- 2026-08-02: completed Phase 1 with merge commit
+  `59d06c9d52e6f4c802a3deb4726a0789f7e37ef9`, whose parents are the pre-merge branch head and the refreshed
+  `origin/master`. The post-merge worktree was clean, and focused compilation stops at the duplicate
+  `TimeDistribution` declarations as expected.
+- 2026-08-02: removed the stale duplicate Kotlin `TimeDistribution`; the Java declaration remains temporarily
+  because it is the contract consumed by the current reactive implementation. Both `:alchemist-api:compileKotlin`
+  and `:alchemist-api:compileJava` now pass, exposing implementation-base collection migration as the next
+  compiler frontier.
+- 2026-08-02: `alchemist-engine` Kotlin and Java compilation pass. `alchemist-implementationbase:compileKotlin`
+  now fails exclusively in the incomplete `Environment`/`Neighborhood` collection migration: stale `ListSet`
+  types, a malformed `SimpleNeighborhood`, immutable `List` values used as mutable collections, and consumers
+  expecting `Neighborhood` to provide iteration, membership, size, and copy-update operations.
+- 2026-08-02: completed the core collection migration. `AbstractEnvironment` uses insertion-ordered sets internally
+  and immutable-list snapshots externally; `SimpleNeighborhood` uses a deduplicated persistent list and exposes
+  iterable, membership, size, and copy-update behavior to Kotlin, Java, and Scala. Mechanical Java callers now use
+  `List`, ordered-set copies, and Java accessor syntax. `alchemist-implementationbase` Kotlin and Java compilation
+  pass; no new `javalib-java7` use was introduced.
+- 2026-08-02: made neighborhood immutability explicit: a neighborhood is an immutable topology snapshot, and a
+  simulation topology change publishes a replacement snapshot rather than mutating existing neighborhood data.
+- 2026-08-02: strengthened `Neighborhood.neighbors` to the immutable-collection type in the public API. The
+  repository-wide Kotlin formatter compiled the migration successfully through Java, Kotlin, Scala, physics,
+  maps, loading, and biochemistry before exposing four mechanical Java-getter fixes in `SAPEREReaction` as the
+  next compiler frontier.
+- 2026-08-02: replaced the stale SAPERE Kotlin-property syntax with Java `getRate()` calls. Focused SAPERE Kotlin
+  and Java compilation now pass. The remaining bridge-method warnings are not suppressed and will disappear when
+  reaction/time-distribution APIs are finalized.
+- 2026-08-02: the first post-migration `./gradlew --parallel build` passed all production compilation and failed in
+  five tasks: `alchemist-api:detektTest` (eight map-access findings), `alchemist-engine:test` (pre-simulation
+  reactive invalidation), `alchemist-implementationbase:compileTestKotlin` (stale `ListSets` fixtures), root `test`
+  (a website simulation reports `Propensity cannot be NaN`), and `alchemist-cognitive-agents:test` (one social-
+  contagion movement assertion). These are the active Phase 2 frontier above.
+- 2026-08-02: migrated `SimpleNetworkArrivals` test fixtures to `persistentListOf()` and replaced unsafe test-map
+  assertions with `getValue`. `:alchemist-implementationbase:compileTestKotlin` and `:alchemist-api:detektTest`
+  both pass without suppressions.
+- 2026-08-02: made reactions retain their last known simulation time, allowing dependency invalidation after
+  explicit initialization but before engine attachment. The reactive-dependency test now creates a fresh model for
+  every source/dependency relation so a prior case cannot exhaust the next case's reactants; its diagnostics name
+  both source and target. The focused engine regression passes.
+- 2026-08-02: isolated the website-snippet failure to `variables-export.yml`. A disabled Protelis send reaction
+  combined an infinite base rate with a zero condition contribution, yielding `Infinity * 0 = NaN`. Chemical
+  reactions now short-circuit zero contributions before multiplication, and snippet failures include the resource
+  name for actionable diagnostics. `./gradlew :test --tests 'TestWebsiteCodeSnippets'` passes.
+- 2026-08-02: reran `TestFeelsTransmission` in isolation. The social-contagion case fails identically while the
+  layer-driven case passes, so this is a deterministic reactive-invalidation regression rather than a stochastic
+  fluctuation. The non-exposed pedestrian remains near its start instead of reacting to propagated danger.
+- 2026-08-02: traced the cognitive regression to `WantToEscape`, which wraps the initial cognitive decision in a
+  constant observable. Implementation is in progress to expose the escape decision as model-owned reactive state
+  and publish transitions after cognitive updates.
+- 2026-08-02: `CognitiveModel` now exposes an observable escape decision, `ImpactModel` publishes decision changes
+  after each cognitive update, and `WantToEscape` consumes that live state. Both focused `TestFeelsTransmission`
+  cases pass, including social contagion.
+- 2026-08-02: all known focused Phase 2 regressions are resolved. Kotlin formatting and the repository-wide build
+  are in progress to discover any remaining collection, interoperability, or static-analysis issues.
+- 2026-08-02: Kotlin formatting passes. The next full build passes production compilation and exposes three masked
+  downstream issues: ten biochemistry Java assertions compare a scalar to `Observable<Double>`, three Protelis Java
+  assertions use `.rate` on a Java-declared distribution, and Detekt rejects `SendToNeighbor`'s empty initializer.
+- 2026-08-02: corrected all three downstream issues. Focused biochemistry and Protelis test compilation plus
+  Protelis Detekt pass. A clean formatting/build cycle is next.

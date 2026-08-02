@@ -264,8 +264,8 @@ class ObservableTest : FunSpec({
                 set.add("a")
                 set.add("b")
                 seen.last() shouldBe 0
-                inner["a"]!!.update { 10 }
-                inner["b"]!!.update { 5 }
+                inner.getValue("a").update { 10 }
+                inner.getValue("b").update { 5 }
                 seen shouldContainExactly listOf(0, 10, 15)
                 set.remove("a")
                 seen.last() shouldBe 5
@@ -279,11 +279,11 @@ class ObservableTest : FunSpec({
                 val combined = set.combineLatest(map = ::observableFor, aggregator = { values -> values.sum() })
                 val registrant = "test-registrant"
                 combined.onChange(registrant) { }
-                inner["x"]!!.observers.shouldHaveSize(1)
-                inner["y"]!!.observers.shouldHaveSize(1)
+                inner.getValue("x").observers.shouldHaveSize(1)
+                inner.getValue("y").observers.shouldHaveSize(1)
                 combined.stopWatching(registrant)
-                inner["x"]!!.observers.shouldHaveSize(0)
-                inner["y"]!!.observers.shouldHaveSize(0)
+                inner.getValue("x").observers.shouldHaveSize(0)
+                inner.getValue("y").observers.shouldHaveSize(0)
             }
         }
         context("flatMap") {
@@ -298,7 +298,7 @@ class ObservableTest : FunSpec({
                 seen[0] shouldBe 0
                 inner["b"] = observe(10)
                 set.add("b")
-                inner["b"]!!.update { 20 }
+                inner.getValue("b").update { 20 }
                 set.add("c")
                 seen.shouldContainExactly(listOf(0, 10, 20, 0))
             }
@@ -330,7 +330,7 @@ class ObservableTest : FunSpec({
             val fused = set.flatMap(::observableFor)
             val seen = mutableListOf<Option<Int>>()
             fused.onChange(this) { seen.add(it) }
-            inner["a"]!!.update { 7 }
+            inner.getValue("a").update { 7 }
             set.remove("a")
             seen shouldContainExactly listOf(0.some(), 7.some(), none())
         }

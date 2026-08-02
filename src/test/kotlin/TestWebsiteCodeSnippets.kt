@@ -41,7 +41,10 @@ class TestWebsiteCodeSnippets {
                     }
                     environment.addTerminator(StepCount(100))
                     val errorContainer = simulation.runInCurrentThread().error
-                    assertTrue(errorContainer.isEmpty, "Simulation encountered errors: $errorContainer")
+                    assertTrue(
+                        errorContainer.isEmpty,
+                        "Simulation $snippetName encountered errors: $errorContainer",
+                    )
                 }
             }.forEach {
                 it.join()

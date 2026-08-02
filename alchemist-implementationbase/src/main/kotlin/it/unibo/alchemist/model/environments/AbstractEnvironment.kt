@@ -39,6 +39,7 @@ import java.util.Objects
 import java.util.Spliterator
 import java.util.function.Consumer
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import org.danilopianini.util.SpatialIndex
 
 /**
@@ -54,8 +55,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     incarnation: Incarnation<T, P>,
     internalIndex: SpatialIndex<Node<T>>,
 ) : Environment<T, P> {
-    private val _nodes: List<Node<T>> = emptyList()
-    private val _globalReactions = ArrayList<GlobalReaction<T>>()
+    private val _nodes = LinkedHashSet<Node<T>>()
+    private val _globalReactions = LinkedHashSet<GlobalReaction<T>>()
     final override var layers: Map<Molecule, Layer<T, P>> = LinkedHashMap()
         private set
 
@@ -72,9 +73,10 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 //    override val layers: Map<Molecule, Layer<T, P>> get() = _layers
 
     override val globalReactions: ImmutableList<GlobalReaction<T>>
-        get() = ListSets.unmodifiableListSet(_globalReactions)
+        get() = _globalReactions.toImmutableList()
 
-    override val nodes: ListSet<Node<T>> = ListSets.unmodifiableListSet(_nodes)
+    override val nodes: ImmutableList<Node<T>>
+        get() = _nodes.toImmutableList()
 
     @Transient
     override val observableNodes: ObservableMutableSet<Node<T>> = _nodes.toList().toObservableSet()
@@ -184,7 +186,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         oldNeighborhood: Neighborhood<T>?,
         newNeighborhood: Neighborhood<T>,
     ): Sequence<Operation<T>> = newNeighborhood
-        .getNeighbors()
+        .neighbors
         .asSequence()
         .filterNot { it in (oldNeighborhood ?: emptySet()) || retrieveNeighborhood(it).contains(center) }
         .map { Operation(center, it, true) }
@@ -305,22 +307,22 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     override fun getNodeByID(id: Int): Node<T> = nodes.first { n: Node<T> -> n.id == id }
 
-    override fun getNodesWithinRange(node: Node<T>, range: Double): ListSet<Node<T>> {
+    override fun getNodesWithinRange(node: Node<T>, range: Double): List<Node<T>> {
         val centerPosition = retrievePosition(node)
-        val res = LinkedListSet(getAllNodesInRange(centerPosition, range))
-        check(res.remove(node)) {
+        val nodesInRange = getAllNodesInRange(centerPosition, range).distinct()
+        check(node in nodesInRange) {
             "Either the provided range ($range) is too small for queries to work without precision loss, " +
                 "or the environment is in an inconsistent state. Node $node at $centerPosition was the query center, " +
-                "but within range $range, only nodes $res were found."
+                "but within range $range, only nodes $nodesInRange were found."
         }
-        return res
+        return nodesInRange.filterNot { it == node }
     }
 
-    override fun getNodesWithinRange(position: P, range: Double): ListSet<Node<T>> {
+    override fun getNodesWithinRange(position: P, range: Double): List<Node<T>> {
         /*
          * Collect every node in range
          */
-        return ImmutableListSet.copyOf(getAllNodesInRange(position, range))
+        return getAllNodesInRange(position, range).distinct()
     }
 
     override fun observeNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>> =
@@ -373,7 +375,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     override val isTerminated: Boolean
         get() = terminationPredicate.test(this)
 
-    override fun iterator(): MutableIterator<Node<T>> = nodes.iterator()
+    override fun iterator(): Iterator<Node<T>> = nodes.iterator()
 
     private fun lostNeighbors(
         center: Node<T>,
@@ -455,7 +457,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         val pos = requireNotNull(nodeToPos.remove(node.id)) { "Node position cannot be null." }
         observableNodeToPos.remove(node.id)
         spatialIndex.remove(node, *pos.coordinates)
-        val neigh = neighCache.remove(node.id)
+        val neigh = requireNotNull(neighCache.remove(node.id)) { "Node neighborhood cannot be null." }
         observableNeighCache.remove(node.id)
         neigh.forEach {
             with(neighCache.remove(it.id).remove(node)) {
@@ -547,13 +549,13 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             observableNeighCache.put(node.id, newNeighborhood)
             oldNeighborhood?.let {
                 it
-                    .getNeighbors()
+                    .neighbors
                     .asSequence()
                     .filterNot(newNeighborhood::contains)
                     .map(this::retrieveNeighborhood)
                     .filter { neigh -> neigh.contains(node) }
                     .forEach { neighborhoodToChange ->
-                        val formerNeighbor = neighborhoodToChange.getCenter()
+                        val formerNeighbor = neighborhoodToChange.center
                         with(neighborhoodToChange.remove(node)) {
                             neighCache.put(formerNeighbor.id, this)
                             observableNeighCache.put(formerNeighbor.id, this)
@@ -564,8 +566,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                     }
             }
             val newNeighbors = newNeighborhood.neighbors
-            val oldNeighbors: Set<Node<T>>? = oldNeighborhood?.neighbors
-            (newNeighbors - oldNeighbors.orEmpty()).forEach { newNeighbor ->
+            val oldNeighbors = oldNeighborhood?.neighbors.orEmpty()
+            (newNeighbors - oldNeighbors).forEach { newNeighbor ->
                 with(neighCache[newNeighbor.id].add(node)) {
                     neighCache.put(newNeighbor.id, this)
                     observableNeighCache.put(newNeighbor.id, this)

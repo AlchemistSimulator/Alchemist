@@ -42,10 +42,11 @@ open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution
         for (condition in conditions) {
             val contribution = condition.propensityContribution.current
             require(contribution >= 0) { "Condition $condition returned a negative propensity contribution" }
-            currentRate *= contribution
-            if (currentRate == 0.0) {
+            if (contribution == 0.0) {
+                currentRate = 0.0
                 break
             }
+            currentRate *= contribution
         }
     }
 }

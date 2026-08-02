@@ -28,9 +28,6 @@ class SendToNeighbor(node: Node<Any>, reaction: Reaction<Any>, val protelisProgr
     AbstractAction<Any>(node) {
     private val reaction: Reaction<Any> = Objects.requireNonNull<Reaction<Any>>(reaction)
 
-    init {
-    }
-
     override fun cloneAction(newNode: Node<Any>, newReaction: Reaction<Any>): SendToNeighbor {
         val device: ProtelisDevice<*> = newNode.asProperty()
         val possibleRefs: List<RunProtelisProgram<*>> = device.allProtelisPrograms()

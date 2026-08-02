@@ -161,21 +161,21 @@ class TestDeformableCell {
         assertTrue(cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
-                .getConditions().get(0).isValid());
+                .getConditions().get(0).isValid().getCurrent());
         assertEquals(1d, cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
-                .getConditions().get(0).getPropensityContribution(),
+                .getConditions().get(0).getPropensityContribution().getCurrent(),
                 PRECISION);
         environment.moveNodeToPosition(cellNode2, new Euclidean2DPosition(0, 4));
         assertFalse(cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
-                .getConditions().get(0).isValid());
+                .getConditions().get(0).isValid().getCurrent());
         assertEquals(0d, cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
-                .getConditions().get(0).getPropensityContribution(),
+                .getConditions().get(0).getPropensityContribution().getCurrent(),
                 PRECISION);
     }
 
@@ -191,31 +191,31 @@ class TestDeformableCell {
         assertTrue(cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
-                .getConditions().get(0).isValid());
+                .getConditions().get(0).isValid().getCurrent());
         assertEquals(1d, cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
-                .getConditions().get(0).getPropensityContribution(),
+                .getConditions().get(0).getPropensityContribution().getCurrent(),
                 PRECISION);
         environment.moveNodeToPosition(cellNode3, MOVE_TO_POS2_1);
         assertTrue(cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
-                .getConditions().get(0).isValid());
+                .getConditions().get(0).isValid().getCurrent());
         assertEquals(0.5, cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
-                .getConditions().get(0).getPropensityContribution(),
+                .getConditions().get(0).getPropensityContribution().getCurrent(),
                 PRECISION);
         environment.moveNodeToPosition(cellNode3, MOVE_TO_POS2_2);
         assertFalse(cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
-                .getConditions().get(0).isValid());
+                .getConditions().get(0).isValid().getCurrent());
         assertEquals(0d, cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
-                .getConditions().get(0).getPropensityContribution(),
+                .getConditions().get(0).getPropensityContribution().getCurrent(),
                 PRECISION);
     }
 

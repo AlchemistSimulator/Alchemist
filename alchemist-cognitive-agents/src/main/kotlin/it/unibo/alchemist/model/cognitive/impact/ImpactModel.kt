@@ -17,6 +17,8 @@ import it.unibo.alchemist.model.cognitive.impact.cognitive.DesireWalkRandomly
 import it.unibo.alchemist.model.cognitive.impact.cognitive.Fear
 import it.unibo.alchemist.model.cognitive.impact.cognitive.IntentionEvacuate
 import it.unibo.alchemist.model.cognitive.impact.cognitive.IntentionWalkRandomly
+import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observation.Observable
 import kotlin.reflect.KClass
 
 /**
@@ -30,6 +32,10 @@ const val PARAMETERS_FILE = "it/unibo/alchemist/model/cognitive/impact/config.to
  */
 class ImpactModel(compliance: Double, influencedBy: () -> List<CognitiveModel>, environmentalFactors: () -> Double) :
     CognitiveModel {
+    private val mutableEscapeDecision = MutableObservable.observe(false)
+
+    override val escapeDecision: Observable<Boolean> get() = mutableEscapeDecision
+
     private val cognitiveCharacteristics =
         linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
             BeliefDanger::class to
@@ -72,7 +78,10 @@ class ImpactModel(compliance: Double, influencedBy: () -> List<CognitiveModel>, 
 
     override fun escapeIntention(): Double = characteristicLevel<IntentionEvacuate>()
 
-    override fun update(frequency: Double) = cognitiveCharacteristics.values.forEach { it.update(frequency) }
+    override fun update(frequency: Double) {
+        cognitiveCharacteristics.values.forEach { it.update(frequency) }
+        mutableEscapeDecision.current = escapeIntention() > remainIntention()
+    }
 
     private inline fun <reified C : CognitiveCharacteristic> characteristicLevel(): Double =
         cognitiveCharacteristics[C::class]?.level() ?: 0.0

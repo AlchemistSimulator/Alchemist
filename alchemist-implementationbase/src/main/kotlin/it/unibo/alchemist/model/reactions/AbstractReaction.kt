@@ -71,6 +71,8 @@ abstract class AbstractReaction<T>(
     @Transient
     private var initializedEnvironment: Environment<T, *>? = null
 
+    private var lastKnownTime = Time.ZERO
+
     private var disposed = false
 
     override val tau: Observable<Time> get() = timeDistribution.nextOccurence
@@ -96,6 +98,7 @@ abstract class AbstractReaction<T>(
 
     final override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {
         check(!disposed) { "A disposed reaction cannot be initialized again: $this" }
+        lastKnownTime = atTime
         initializedEnvironment = environment
         initializeDependencySubscriptions()
         onInitializationComplete(atTime, environment)
@@ -119,6 +122,7 @@ abstract class AbstractReaction<T>(
         val environment = checkNotNull(initializedEnvironment) {
             "Reaction $this was advanced before initialization"
         }
+        lastKnownTime = currentTime
         updateInternalStatus(currentTime, true, environment)
         timeDistribution.update(currentTime, this)
     }
@@ -190,7 +194,7 @@ abstract class AbstractReaction<T>(
     }
 
     private fun reactToModelUpdate(environment: Environment<T, *>) {
-        val currentTime = environment.simulation.time
+        val currentTime = environment.simulationOrNull?.time ?: lastKnownTime
         updateInternalStatus(currentTime, false, environment)
         timeDistribution.reactToUpdate(currentTime, this)
     }

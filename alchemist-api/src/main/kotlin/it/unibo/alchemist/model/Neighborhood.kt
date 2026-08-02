@@ -9,14 +9,24 @@
 
 package it.unibo.alchemist.model
 
-import java.io.Serializable
+import kotlinx.collections.immutable.ImmutableList
 
 /**
  * A neighborhood, namely the set of nodes to which a "central" node is connected to.
  *
  * @param <T> concentration type
 </T> */
-interface Neighborhood<T> {
+interface Neighborhood<T> : Iterable<Node<T>> {
+
+    /**
+     * Returns a neighborhood with [node] among its neighbors.
+     */
+    fun add(node: Node<T>): Neighborhood<T>
+
+    /**
+     * Checks whether [node] belongs to this neighborhood.
+     */
+    operator fun contains(node: Node<T>): Boolean = node in neighbors
 
     /**
      * Allows accessing the central node.
@@ -27,15 +37,24 @@ interface Neighborhood<T> {
     val center: Node<T>
 
     /**
-     * Allows directly accessing every node in the neighborhood.
-     * A change of this List will be reflected in the neighborhood.
-     *
-     * @return the [java.util.List] of the neighbors
+     * An ordered, read-only view of every node in the neighborhood.
      */
-    val neighbors: List<Node<T>>
+    val neighbors: ImmutableList<Node<T>>
 
     /**
      * @return true if this neighborhood has no neighbors
      */
     val isEmpty: Boolean get() = neighbors.isEmpty()
+
+    /**
+     * Returns a neighborhood without [node].
+     */
+    fun remove(node: Node<T>): Neighborhood<T>
+
+    /**
+     * Returns the number of neighbors.
+     */
+    fun size(): Int = neighbors.size
+
+    override fun iterator(): Iterator<Node<T>> = neighbors.iterator()
 }

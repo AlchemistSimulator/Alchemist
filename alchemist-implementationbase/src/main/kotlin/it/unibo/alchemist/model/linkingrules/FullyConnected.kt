@@ -9,13 +9,11 @@
 
 package it.unibo.alchemist.model.linkingrules
 
-import com.google.common.collect.Iterators
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.LinkingRule
-import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.util.BugReporting
+import it.unibo.alchemist.model.neighborhoods.Neighborhoods
 
 /**
  * This rule connects each and every node to each and every other.
@@ -23,11 +21,6 @@ import it.unibo.alchemist.util.BugReporting
 class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
     override fun isLocallyConsistent() = true
 
-    override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>) = object :
-        Neighborhood<T> {
-        override val center: Node<T> get() = center
-        override val neighbors: List<Node<T>> by lazy {
-            environment.nodes.filter { it != center }
-        }
-    }
+    override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>) =
+        Neighborhoods.make(environment, center, environment.nodes.filter { it != center })
 }

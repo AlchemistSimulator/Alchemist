@@ -1,6 +1,6 @@
 # Reactive Engine Refactor Plan
 
-Last updated: 2026-08-02
+Last updated: 2026-08-03
 
 Working branch: `marmellata`
 
@@ -17,6 +17,7 @@ Do not mark an item complete until its implementation and proportional verificat
 - Make `TimeDistribution` responsible only for generating correctly distributed time samples.
 - Make reactions own `tau`, execution advancement, invalidation, and any transformation or replacement of a
   previously sampled time.
+- During Phase 5, rename reaction `tau` to `nextOccurrence` across the API and repository consumers.
 - Remove propensity contribution from conditions. Conditions describe reactive validity, not scheduling policy.
 - Put chemical propensity computation in a specialized token-driven reaction abstraction.
 - Renounce Java `Serializable` across the model and engine APIs.
@@ -124,10 +125,10 @@ This phase restores coherence without prematurely finalizing the new scheduling 
 - [x] Preserve ordered uniqueness for nodes, global reactions, and neighborhood members.
 - [x] Represent neighborhoods as immutable, copy-on-write snapshots and replace the observable value when topology
   changes.
-- [ ] Restore collection/iteration behavior required by Java, Kotlin, and Scala consumers.
-- [ ] Fix the known formatting and static-analysis failures without suppressions.
+- [x] Restore collection/iteration behavior required by Java, Kotlin, and Scala consumers.
+- [x] Fix the known formatting and static-analysis failures without suppressions.
 - [x] Compile `alchemist-api`, `alchemist-engine`, and `alchemist-implementationbase` before widening verification.
-- [ ] Record newly exposed downstream compilation failures here.
+- [x] Record newly exposed downstream compilation failures here.
 
 Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
@@ -152,19 +153,20 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   check, consistently with the accepted removal of `Serializable` from the live model graph.
 - [x] Fix the node-removal lifecycle regression where the engine advances a reaction that was never reactively
   initialized (`alchemist-full` `TestRemoveNode`).
-- [ ] Pull forward a bounded Phase 8 slice required by verification: remove serialization inheritance from action,
+- [x] Pull forward a bounded Phase 8 slice required by verification: remove serialization inheritance from action,
   condition, linking-rule, and speed-strategy APIs, porting the significantly changed Java interfaces to Kotlin.
 
 ## Phase 3: remove `BatchEngine`
 
-- [ ] Delete `BatchEngine` and its output replay strategy.
-- [ ] Audit `BatchedScheduler`, fixed-batch and epsilon-batch queues, constructors, loaders, configuration strings,
+- [x] Inventory the complete batch-engine surface before deletion and record the migration boundary.
+- [x] Delete `BatchEngine` and its output replay strategy.
+- [x] Audit `BatchedScheduler`, fixed-batch and epsilon-batch queues, constructors, loaders, configuration strings,
   tests, examples, and documentation.
-- [ ] Remove batch-only scheduler types that no longer have a supported consumer.
-- [ ] Migrate any generally useful scheduler behavior to the single `Engine` path.
-- [ ] Remove batch-specific synchronization and stale-time accommodations.
-- [ ] Add a compatibility error for removed batch-engine configuration where silent fallback would be dangerous.
-- [ ] Verify that the remaining engine has one authoritative event-time and scheduler-update path.
+- [x] Remove batch-only scheduler types that no longer have a supported consumer.
+- [x] Migrate any generally useful scheduler behavior to the single `Engine` path.
+- [x] Remove batch-specific synchronization and stale-time accommodations.
+- [x] Add a compatibility error for removed batch-engine configuration where silent fallback would be dangerous.
+- [x] Verify that the remaining engine has one authoritative event-time and scheduler-update path.
 
 ## Phase 4: reduce `TimeDistribution` to sampling
 
@@ -180,6 +182,8 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 ## Phase 5: make reactions own scheduling
 
 - [ ] Give each reaction sole ownership of observable `tau`.
+- [ ] Rename reaction `tau` to `nextOccurrence` across the API, implementations, engine, schedulers, loaders,
+  tests, and documentation.
 - [ ] Define initialization, firing, invalidation, cloning, and removal transitions.
 - [ ] Move all decisions about sampling, preserving, transforming, or replacing scheduled times into reactions.
 - [ ] Keep scheduler notification as a consequence of a reaction-owned `tau` change.
@@ -214,7 +218,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 - [ ] Inventory `Serializable`, `serialVersionUID`, `@Serial`, `@Transient`, `readObject`, `writeObject`, and cloning
   code coupled to serialization.
-- [ ] Remove serialization from the action, condition, linking-rule, and speed-strategy interface hierarchies.
+- [x] Remove serialization from the action, condition, linking-rule, and speed-strategy interface hierarchies.
 - [ ] Remove serialization inheritance from model, engine, reaction, condition, action, node, environment, molecule,
   and time-distribution APIs where present.
 - [ ] Remove obsolete serialization fields, hooks, tests, and warning suppressions.
@@ -269,7 +273,8 @@ Use repository Gradle tasks from the repository root.
 - [ ] When Scala in `alchemist-incarnation-scafi` changes, run
   `./gradlew --parallel alchemist-incarnation-scafi:scalafmtAll`.
 - [ ] Re-run affected module verification after formatting.
-- [ ] Finish every non-trivial completed change with `./gradlew --parallel build`.
+- [ ] Finish every non-trivial completed change with `./gradlew --parallel build`, excluding alternate-JVM test
+  matrix tasks and the redistributable DEB/RPM package tasks. Keep the normal test suites and verification tasks.
 - [ ] If the full build fails, record the exact blocker in this document and keep fixing until it passes or an
   external blocker is confirmed.
 
@@ -433,3 +438,40 @@ Use repository Gradle tasks from the repository root.
   initialization remains an error.
 - 2026-08-03: `AbstractReaction.update` now ignores advancement after terminal disposal without weakening the
   initialization check for live reactions. Focused `alchemist-full` `TestRemoveNode` passes.
+- 2026-08-03: added the Phase 5 API rename from `tau` to `nextOccurrence`. Repository-wide validation will exclude
+  alternate-JVM test-matrix tasks and DEB/RPM packaging to reduce turnaround time, while retaining the normal test
+  suite, compilation, formatting, and static analysis.
+- 2026-08-03: Phase 2 is complete. Repository-wide Kotlin formatting passes, and the optimized full build passes
+  922 tasks with the normal test suites and verification enabled; only alternate-JVM tests and DEB/RPM packaging
+  were excluded as directed. The repository now has a compiling, test-passing reactive baseline for Phase 3.
+- 2026-08-03: began Phase 3 after the Phase 2 source checkpoint was committed as `7d93c2232`. The first step is a
+  repository-wide inventory of `BatchEngine`, its scheduler types, loader/configuration entry points, tests, and
+  documentation before choosing the deletion boundary.
+- 2026-08-03: completed the Phase 3 inventory. The deletion boundary is `BatchEngine`, `BatchedScheduler`, the
+  fixed/epsilon batch queues, the unused `EngineConfiguration` marker, the engine coroutine dependency, and stale
+  website documentation. Launcher parameter batches remain supported because they orchestrate independent normal
+  simulations. The internal scheduler-update coalescer remains until Phase 7 because it is not a parallel engine.
+  Historical changelog entries remain historical. A loader regression will make removed `BatchEngine` requests
+  fail with a targeted compatibility message.
+- 2026-08-03: deleted the inventoried batch engine and scheduler types, removed the engine module's coroutine
+  dependency, added the targeted loader rejection and regression fixture, clarified the launcher parameter-batch
+  regression, and replaced the stale parallel-engine website documentation. Focused verification is next.
+- 2026-08-03: engine Kotlin/Java compilation passes without the batch API and coroutine dependency. All focused
+  `RegressionTestOnRealCases` cases pass: launcher parameter batches still use the normal engine, and both simple
+  and fully qualified removed-engine requests are covered by the targeted type-name check. No batch execution
+  behavior needs migration into `Engine`; deletion removes its locks, sliding-window time, and replay semantics.
+- 2026-08-03: initialized documentation submodules and ran `./gradlew hugoBuild`; the rewritten single-engine page
+  and generated API documentation build successfully. Repository-wide Kotlin formatting and verification are next.
+- 2026-08-03: repository-wide `./gradlew --parallel ktlintFormat` passes after the Phase 3 Kotlin changes. Focused
+  engine/loading verification will now be repeated before the final optimized full build.
+- 2026-08-03: post-format focused verification passes: `alchemist-engine:build` and `alchemist-loading:check`
+  complete successfully with alternate-JVM test tasks excluded. This covers the remaining reactive engine tests,
+  the loading suite, static analysis, and the removed-`BatchEngine` compatibility regression. The final optimized
+  repository-wide build is next.
+- 2026-08-03: stopped the first repository-wide validation run after its task graph showed that excluding
+  `testWithJvm*` does not also exclude Kotlin Multiplatform's separately named `jvmTestWithJvm*` tasks. The final
+  rerun will exclude both naming families, plus DEB/RPM packaging, while retaining the default-JVM tests.
+- 2026-08-03: Phase 3 is complete. The corrected optimized `./gradlew --parallel build` passes 916 tasks with the
+  normal default-JVM, JavaScript, and WebAssembly suites and all verification enabled; `testWithJvm*`,
+  `jvmTestWithJvm*`, and DEB/RPM packaging tasks were excluded. The repository now exposes only the reactive
+  `Engine` execution path, with one reaction-owned event-time source feeding its scheduler-update coalescer.

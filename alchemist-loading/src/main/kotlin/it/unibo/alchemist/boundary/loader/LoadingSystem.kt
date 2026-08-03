@@ -43,7 +43,7 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
         private val mutex = Semaphore(1)
         private var consumed = false
 
-        fun <T : Any?, P : Position<P>> simulationWith(values: Map<String, *>): Simulation<T, P> {
+        fun <T, P : Position<P>> simulationWith(values: Map<String, *>): Simulation<T, P> {
             try {
                 mutex.acquireUninterruptibly()
                 check(!consumed) {
@@ -146,6 +146,7 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
             exporters.forEach { it.bindVariables(variableValues) }
             // ENGINE
             val engineDescriptor = root[AlchemistYamlSyntax.engine]
+            requireSupportedEngine(engineDescriptor)
             val engine: Simulation<T, P> = SimulationModel
                 .visitBuilding<Simulation<T, P>>(context, engineDescriptor)
                 ?.getOrThrow()
@@ -349,5 +350,16 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
         private fun Map<*, *>.getOrEmpty(key: String) = get(key) ?: emptyList<Any>()
 
         private fun Map<*, *>.getOrEmptyMap(key: String) = get(key) ?: emptyMap<String, Any>()
+    }
+}
+
+private fun requireSupportedEngine(engineDescriptor: Any?) {
+    val requestedType =
+        (engineDescriptor as? Map<*, *>)
+            ?.get(AlchemistYamlSyntax.JavaType.type)
+            ?.toString()
+            ?.substringAfterLast('.')
+    require(requestedType != "BatchEngine") {
+        "BatchEngine has been removed. Omit the '${AlchemistYamlSyntax.engine}' section to use the reactive Engine."
     }
 }

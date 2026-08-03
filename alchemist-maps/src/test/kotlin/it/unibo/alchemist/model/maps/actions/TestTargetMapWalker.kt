@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.SupportedIncarnations
+import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.maps.environments.OSMEnvironment
 import it.unibo.alchemist.model.maps.positions.LatLongPosition
@@ -40,6 +41,7 @@ internal class TestTargetMapWalker {
         reaction.actions = listOf(walker)
         node.addReaction(reaction)
         environment.addNode(node, STARTPOSITION)
+        reaction.initializationComplete(Time.ZERO, environment)
     }
 
     private fun run() = repeat(STEPS) {

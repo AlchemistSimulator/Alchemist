@@ -28,13 +28,13 @@ class SendToNeighbor(node: Node<Any>, reaction: Reaction<Any>, val protelisProgr
     AbstractAction<Any>(node) {
     private val reaction: Reaction<Any> = Objects.requireNonNull<Reaction<Any>>(reaction)
 
-    override fun cloneAction(newNode: Node<Any>, newReaction: Reaction<Any>): SendToNeighbor {
-        val device: ProtelisDevice<*> = newNode.asProperty()
+    override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>): SendToNeighbor {
+        val device: ProtelisDevice<*> = node.asProperty()
         val possibleRefs: List<RunProtelisProgram<*>> = device.allProtelisPrograms()
         check(possibleRefs.size == 1) {
             "There must be one and one only unconfigured " + RunProtelisProgram::class.simpleName
         }
-        return SendToNeighbor(newNode, this.reaction, possibleRefs[0])
+        return SendToNeighbor(node, this.reaction, possibleRefs[0])
     }
 
     override fun getContext(): Context = Context.NEIGHBORHOOD

@@ -13,12 +13,9 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
-import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import java.io.Serial;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -29,9 +26,6 @@ import java.util.Objects;
  * See {@link RemoveJunctionInNeighbor} for the other part of the process
  */
 public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> { // TODO try local
-
-    @Serial
-    private static final long serialVersionUID = 3565077605882164314L;
 
     private final Junction jun;
     private final Environment<Double, ?> environment;
@@ -54,8 +48,6 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
                 node.asPropertyOrNull(CellProperty.class),
                 "This Action can be set only in nodes with " + CellProperty.class.getSimpleName()
         );
-        for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
-        }
         jun = junction;
         this.environment = environment;
     }

@@ -38,14 +38,14 @@ private fun <T> Iterable<T>.ebeEquals(other: Iterable<T>, elementComparator: (T,
 
 infix fun Condition<*>.shouldEqual(other: Condition<*>) {
     assertEquals(other::class, this::class, "Condition types don't match")
-    assertEquals(other.context, context, "Condition contexts don't match")
+    assertEquals(other.getContext(), getContext(), "Condition contexts don't match")
     assertEquals(other.isValid().current, isValid().current, "Condition validity doesn't match")
-    assertEquals(other.propensityContribution.current, propensityContribution.current)
+    assertEquals(other.getPropensityContribution().current, getPropensityContribution().current)
 }
 
 infix fun Action<*>.shouldEqual(other: Action<*>) {
     assertEquals(other::class, this::class, "Action types don't match")
-    assertEquals(other.context, context, "Action contexts don't match")
+    assertEquals(other.getContext(), getContext(), "Action contexts don't match")
 }
 
 infix fun TimeDistribution<*>.shouldEqual(other: TimeDistribution<*>) {
@@ -78,7 +78,7 @@ infix fun Node<*>.shouldEqual(other: Node<*>) {
 
 infix fun LinkingRule<*, *>.shouldEqual(other: LinkingRule<*, *>) {
     assertEquals(other::class, this::class, "LinkingRule types don't match")
-    assertEquals(other.isLocallyConsistent, isLocallyConsistent)
+    assertEquals(other.isLocallyConsistent(), isLocallyConsistent())
 }
 
 infix fun <T, P : Position<P>> Environment<T, P>.shouldEqual(other: Environment<T, P>) {

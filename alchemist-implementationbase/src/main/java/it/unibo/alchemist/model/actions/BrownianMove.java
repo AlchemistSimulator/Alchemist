@@ -17,8 +17,6 @@ import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import java.io.Serial;
-
 /**
  * Moves the node randomly.
  *
@@ -27,10 +25,7 @@ import java.io.Serial;
  */
 public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = -904100978119782403L;
     private final double range;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the random engines provided by Apache are Serializable")
     private final RandomGenerator randomGenerator;
 
     /**

@@ -54,7 +54,7 @@ class GlobalTestReaction<T>(val environment: Environment<T, *>, override val tim
         subscriptions.clear()
         conditions.forEach { condition ->
             subscriptions.add(
-                condition.dependencies.merge().subscribe(invokeOnSubscription = false) {
+                condition.getDependencies().merge().subscribe(invokeOnSubscription = false) {
                     timeDistribution.reactToUpdate(environment.simulation.time, this)
                 },
             )

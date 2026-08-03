@@ -126,7 +126,9 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     public Observable<List<ILsaMolecule>> observeMoleculeName(@NotNull final String name) {
         synchronized (instancesByName) {
             return observablesByName.computeIfAbsent(name, k ->
-                MutableObservable.Companion.observe(instancesByName.getOrDefault(name, Collections.emptyList()))
+                MutableObservable.Companion.observe(
+                    new ArrayList<>(instancesByName.getOrDefault(name, Collections.emptyList()))
+                )
             );
         }
     }

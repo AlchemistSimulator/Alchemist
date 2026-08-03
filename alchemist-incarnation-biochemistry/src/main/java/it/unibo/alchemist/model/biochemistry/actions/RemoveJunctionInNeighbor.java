@@ -13,12 +13,8 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
-import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 import org.apache.commons.math3.random.RandomGenerator;
-
-import java.io.Serial;
-import java.util.Map;
 
 /**
  * Represent the action of removing a junction between a neighbor and the current node.
@@ -28,9 +24,6 @@ import java.util.Map;
  * See {@link RemoveJunctionInCell} for the other part of the process.
  */
 public final class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
-
-    @Serial
-    private static final long serialVersionUID = -5033532863301442377L;
 
     private final Junction jun;
 
@@ -48,8 +41,6 @@ public final class RemoveJunctionInNeighbor extends AbstractNeighborAction<Doubl
             final RandomGenerator randomGenerator) {
         super(node, environment, randomGenerator);
         if (node.asPropertyOrNull(CellProperty.class) != null) {
-            for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
-            }
             jun = junction;
         } else {
             throw new UnsupportedOperationException(

@@ -13,7 +13,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.primitives.Doubles;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.LinkingRule;
 import it.unibo.alchemist.model.Neighborhood;
@@ -25,7 +24,6 @@ import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.stream.SmallestN;
 import org.jooq.lambda.tuple.Tuple2;
 
-import java.io.Serial;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -42,14 +40,11 @@ import java.util.stream.Stream;
  */
 public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = 2L;
     private static final double CONNECTION_RANGE_TOLERANCE = 1.1;
     private final int nodeCount;
     private final int expectedNodes;
     private final int maxNodes;
-    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
-    private transient Cache<Node<T>, Double> ranges;
+    private Cache<Node<T>, Double> ranges;
 
     /**
      * @param nodeCount

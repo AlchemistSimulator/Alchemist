@@ -40,7 +40,7 @@ open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution
     override fun updateInternalStatus(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) {
         currentRate = timeDistribution.rate
         for (condition in conditions) {
-            val contribution = condition.propensityContribution.current
+            val contribution = condition.getPropensityContribution().current
             require(contribution >= 0) { "Condition $condition returned a negative propensity contribution" }
             if (contribution == 0.0) {
                 currentRate = 0.0

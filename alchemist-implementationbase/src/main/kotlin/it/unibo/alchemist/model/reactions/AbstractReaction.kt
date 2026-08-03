@@ -38,14 +38,18 @@ abstract class AbstractReaction<T>(
     override var actions: List<Action<T>> = emptyList()
         set(value) {
             field = value
-            outputContext = value.fold(Context.LOCAL) { context, action -> Context.getWider(context, action.context) }
+            outputContext = value.fold(Context.LOCAL) { context, action ->
+                Context.getWider(context, action.getContext())
+            }
         }
 
     override var conditions: List<Condition<T>> = emptyList()
         set(value) {
             field = value
             inputContext =
-                value.fold(Context.LOCAL) { context, condition -> Context.getWider(context, condition.context) }
+                value.fold(Context.LOCAL) { context, condition ->
+                    Context.getWider(context, condition.getContext())
+                }
             canExecute.dispose()
             canExecute = value
                 .map(Condition<T>::isValid)
@@ -119,6 +123,9 @@ abstract class AbstractReaction<T>(
     }
 
     final override fun update(currentTime: Time) {
+        if (disposed) {
+            return
+        }
         val environment = checkNotNull(initializedEnvironment) {
             "Reaction $this was advanced before initialization"
         }
@@ -185,7 +192,7 @@ abstract class AbstractReaction<T>(
         dependencySubscriptions = CompositeDisposable().apply {
             conditions.forEach { condition ->
                 add(
-                    condition.dependencies.merge().subscribe(invokeOnSubscription = false) {
+                    condition.getDependencies().merge().subscribe(invokeOnSubscription = false) {
                         initializedEnvironment?.let(::reactToModelUpdate)
                     },
                 )

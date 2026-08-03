@@ -174,36 +174,6 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         mapenvironment = usesRoutes ? (MapEnvironment<List<ILsaMolecule>, ?, ?>) this.environment : null;
     }
 
-    private static Observable<?> observeNeighborLsaSpaces(
-            final Environment<List<ILsaMolecule>, ?> environment,
-            final ILsaNode node
-    ) {
-        return ObservableExtensions.INSTANCE.switchMap(
-            environment.getNeighborhood(node).map(Neighborhood::getNeighbors),
-            neighbors -> ObservableExtensions.INSTANCE.combineLatest(
-                neighbors.stream()
-                    .filter(ILsaNode.class::isInstance)
-                    .map(ILsaNode.class::cast)
-                    .map(ILsaNode::observeLsaSpace)
-                    .toList(),
-                spaces -> spaces
-            )
-        );
-    }
-
-    private static Observable<?> observeNeighborPositions(
-            final Environment<List<ILsaMolecule>, ?> environment,
-            final ILsaNode node
-    ) {
-        return ObservableExtensions.INSTANCE.switchMap(
-            environment.getNeighborhood(node).map(Neighborhood::getNeighbors),
-            neighbors -> ObservableExtensions.INSTANCE.combineLatest(
-                neighbors.stream().map(environment::getPosition).toList(),
-                positions -> positions
-            )
-        );
-    }
-
     /**
      * Builds a new SAPERE Gradient.
      * This constructor is slower and is provided
@@ -261,6 +231,36 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             new LsaMolecule(contextTemplate),
             gradThreshold,
             timeDistribution
+        );
+    }
+
+    private static Observable<?> observeNeighborLsaSpaces(
+            final Environment<List<ILsaMolecule>, ?> environment,
+            final ILsaNode node
+    ) {
+        return ObservableExtensions.INSTANCE.switchMap(
+            environment.getNeighborhood(node).map(Neighborhood::getNeighbors),
+            neighbors -> ObservableExtensions.INSTANCE.combineLatest(
+                neighbors.stream()
+                    .filter(ILsaNode.class::isInstance)
+                    .map(ILsaNode.class::cast)
+                    .map(ILsaNode::observeLsaSpace)
+                    .toList(),
+                spaces -> spaces
+            )
+        );
+    }
+
+    private static Observable<?> observeNeighborPositions(
+            final Environment<List<ILsaMolecule>, ?> environment,
+            final ILsaNode node
+    ) {
+        return ObservableExtensions.INSTANCE.switchMap(
+            environment.getNeighborhood(node).map(Neighborhood::getNeighbors),
+            neighbors -> ObservableExtensions.INSTANCE.combineLatest(
+                neighbors.stream().map(environment::getPosition).toList(),
+                positions -> positions
+            )
         );
     }
 

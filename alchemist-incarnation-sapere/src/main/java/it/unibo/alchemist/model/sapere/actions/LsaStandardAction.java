@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.sapere.actions;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
@@ -25,7 +24,6 @@ import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serial;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -35,17 +33,11 @@ import java.util.Objects;
  */
 public class LsaStandardAction extends AbstractLsaAction {
 
-    @Serial
-    private static final long serialVersionUID = -7034948679002996913L;
     private static final Logger L = LoggerFactory.getLogger(LsaStandardAction.class);
     private final boolean initRand;
     private final boolean initNode;
     private final ILsaMolecule mol;
     private final ITreeNode<?> nodeId;
-    @SuppressFBWarnings(
-            value = "SE_BAD_FIELD",
-            justification = "All provided RandomGenerator implementations are actually Serializable"
-    )
     private final RandomGenerator rand;
 
     /**

@@ -24,7 +24,6 @@ import it.unibo.alchemist.model.sapere.dsl.impl.UIDNode;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.danilopianini.lang.HashString;
 
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,9 +37,6 @@ import java.util.Set;
  */
 public abstract class AbstractLsaCondition extends AbstractCondition<List<ILsaMolecule>> implements ILsaCondition {
 
-    @Serial
-    private static final long serialVersionUID = -5633486241371700913L;
-
     /**
      * @param node
      *            the node hosting this action
@@ -49,8 +45,6 @@ public abstract class AbstractLsaCondition extends AbstractCondition<List<ILsaMo
      */
     public AbstractLsaCondition(final ILsaNode node, final Set<ILsaMolecule> m) {
         super(node);
-        for (final ILsaMolecule mol : m) {
-        }
     }
 
     @Override

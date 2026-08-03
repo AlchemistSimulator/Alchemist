@@ -12,7 +12,6 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy
-import java.io.Serial
 
 /**
  * This strategy makes the node move at an average constant speed, which is
@@ -36,9 +35,4 @@ class ConstantSpeed<T, P : Position<P>>(private val reaction: Reaction<*>, priva
 
     override fun cloneIfNeeded(destination: Node<T>, reaction: Reaction<T>): ConstantSpeed<T, P> =
         ConstantSpeed(reaction, speed)
-
-    private companion object {
-        @Serial
-        private const val serialVersionUID = 1746429998480123049L
-    }
 }

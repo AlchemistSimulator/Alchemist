@@ -26,7 +26,6 @@ import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.danilopianini.lang.HashString;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -37,8 +36,6 @@ import java.util.Set;
  *
  */
 public abstract class AbstractLsaAction extends AbstractAction<List<ILsaMolecule>> implements ILsaAction {
-    @Serial
-    private static final long serialVersionUID = 4158296120349274343L;
     private Map<HashString, ITreeNode<?>> matches;
     private List<ILsaNode> nodes;
 
@@ -50,8 +47,6 @@ public abstract class AbstractLsaAction extends AbstractAction<List<ILsaMolecule
      */
     public AbstractLsaAction(final ILsaNode node, final List<ILsaMolecule> m) {
         super(node);
-        for (final ILsaMolecule mol : m) {
-        }
     }
 
     /**

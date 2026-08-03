@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.sapere.actions;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
@@ -17,7 +16,6 @@ import it.unibo.alchemist.model.sapere.dsl.impl.ConstTreeNode;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 
-import java.io.Serial;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,13 +23,7 @@ import java.util.List;
  */
 public final class LsaChangeArgument extends AbstractSAPERELocalAgent {
 
-    @Serial
-    private static final long serialVersionUID = -7128058274012426458L;
     private static final HashString OLD = new HashString("OldType");
-    @SuppressFBWarnings(
-            value = "SE_BAD_FIELD",
-            justification = "All provided RandomGenerator implementations are actually Serializable"
-    )
     private final RandomGenerator rnd;
     private final HashString newTargetVar;
     private final String[] listT;

@@ -22,5 +22,5 @@ import it.unibo.alchemist.model.observation.Observable
  */
 open class WantToEscape<T, S : Vector<S>, A : Transformation<S>>(node: Node<T>) : AbstractCondition<T>(node) {
     override fun isValid(): Observable<Boolean> =
-        node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.escapeDecision
+        getNode().asProperty<T, CognitiveProperty<T>>().cognitiveModel.escapeDecision
 }

@@ -31,6 +31,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
     @Serial
     private static final long serialVersionUID = -8906648194668569179L;
     private final MutableObservable<Time> tau;
+    private final Observable<Time> observableTau;
     private boolean schedulable;
     private final Time startTime;
 
@@ -40,6 +41,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
      */
     public AbstractDistribution(final Time start) {
         tau = MutableObservable.Companion.observe(start, false);
+        observableTau = tau.map(time -> time);
         startTime = start;
     }
 
@@ -61,11 +63,6 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
         update(currentTime, true, source);
     }
 
-    @Override
-    public final void reactToUpdate(final @Nonnull Time currentTime, final @Nonnull Actionable<T> source) {
-        update(currentTime, false, source);
-    }
-
     private void update(final Time currentTime, final boolean executed, final Actionable<T> source) {
         if (!schedulable && currentTime.compareTo(startTime) >= 0) {
             /*
@@ -82,8 +79,13 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
     }
 
     @Override
+    public final void reactToUpdate(final @Nonnull Time currentTime, final @Nonnull Actionable<T> source) {
+        update(currentTime, false, source);
+    }
+
+    @Override
     public final Observable<Time> getNextOccurence() {
-        return tau;
+        return observableTau;
     }
 
     /**

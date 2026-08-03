@@ -28,6 +28,8 @@ Do not mark an item complete until its implementation and proportional verificat
 - Make each `Neighborhood` value an immutable snapshot. Topology may change during a simulation, but a change must
   create and publish a replacement neighborhood rather than mutate an already published instance.
 - Keep changes small and focused, and maintain this document as part of each phase.
+- At every relevant, independently committable milestone, stop before beginning the next one and suggest a
+  Conventional Commit message for the completed work.
 
 The Java-to-Kotlin rule applies during every phase, not only during final API modernization. Small mechanical
 edits needed for merge conflict resolution or temporary compilation recovery do not by themselves require a
@@ -139,6 +141,19 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] Update ten biochemistry Java test assertions to read the current value of observable validity and propensity.
 - [x] Update three Protelis Java test assertions to use the `TimeDistribution.getRate()` accessor.
 - [x] Remove the known empty initializer from `SendToNeighbor`.
+- [x] Fix method ordering and the SpotBugs finding in transitional `AbstractDistribution`.
+- [x] Update `TestBiomolLayer` to compare against the current reactive execution-validity value.
+- [x] Remove empty dependency loops and obsolete serialization members from SAPERE action/condition bases, and
+  restore constructor grouping in `SAPEREGradient`.
+- [x] Prevent SAPERE reactions with neighbor outputs from executing a cached match after its consumed LSA has been
+  invalidated, and classify the accompanying SAPERE SpotBugs report for Phase 8.
+- [x] Initialize the map-walker reaction explicitly in its direct-execution test fixture before advancing it.
+- [x] Replace the loading regression's whole-environment Java serialization assertion with a load-only incarnation
+  check, consistently with the accepted removal of `Serializable` from the live model graph.
+- [x] Fix the node-removal lifecycle regression where the engine advances a reaction that was never reactively
+  initialized (`alchemist-full` `TestRemoveNode`).
+- [ ] Pull forward a bounded Phase 8 slice required by verification: remove serialization inheritance from action,
+  condition, linking-rule, and speed-strategy APIs, porting the significantly changed Java interfaces to Kotlin.
 
 ## Phase 3: remove `BatchEngine`
 
@@ -199,6 +214,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 - [ ] Inventory `Serializable`, `serialVersionUID`, `@Serial`, `@Transient`, `readObject`, `writeObject`, and cloning
   code coupled to serialization.
+- [ ] Remove serialization from the action, condition, linking-rule, and speed-strategy interface hierarchies.
 - [ ] Remove serialization inheritance from model, engine, reaction, condition, action, node, environment, molecule,
   and time-distribution APIs where present.
 - [ ] Remove obsolete serialization fields, hooks, tests, and warning suppressions.
@@ -259,6 +275,8 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-08-03: added a workflow checkpoint at every relevant, independently committable milestone. Each checkpoint
+  pauses further implementation and proposes a Conventional Commit message before work continues.
 - 2026-08-02: created the living plan after the initial architecture, history, and compilation audit.
 - 2026-08-02: made Java-to-Kotlin conversion mandatory whenever a Java file receives significant modification.
 - 2026-08-02: required replacement of `ListSet` and removal of `org.danilopianini:javalib-java7:0.6.1` by the end
@@ -339,3 +357,79 @@ Use repository Gradle tasks from the repository root.
   assertions use `.rate` on a Java-declared distribution, and Detekt rejects `SendToNeighbor`'s empty initializer.
 - 2026-08-02: corrected all three downstream issues. Focused biochemistry and Protelis test compilation plus
   Protelis Detekt pass. A clean formatting/build cycle is next.
+- 2026-08-03: the clean full build passes all executed tests, including website snippets and cognitive social
+  contagion. It now fails only `alchemist-implementationbase` verification: one Checkstyle overload-order finding
+  and one SpotBugs finding in the transitional `AbstractDistribution` implementation.
+- 2026-08-03: the `AbstractDistribution` overload order is fixed and its public `tau` view no longer exposes the
+  mutable backing observable. The remaining SpotBugs report is serialization fallout from already making
+  `Molecule` non-serializable plus an exposed mutable condition-dependency set. A bounded serialization-removal
+  slice is in progress rather than restoring serialization or suppressing the findings.
+- 2026-08-03: ported `Action`, `Condition`, `LinkingRule`, and `SpeedSelectionStrategy` from Java to Kotlin while
+  removing their serialization inheritance; removed now-obsolete serialization fields and suppressions encountered
+  in this slice. `AbstractCondition` now returns a defensive dependency-set copy. Core API/implementation
+  compilation, implementation-base Checkstyle, and SpotBugs pass; repository-wide formatting and build remain.
+- 2026-08-03: the repository formatter exposed one Kotlin/Java synthetic-property compatibility site in
+  `WantToEscape`; it now calls the inherited `getNode()` method explicitly. No other module failed compilation
+  before Gradle stopped at this frontier.
+- 2026-08-03: the next formatter pass reached Protelis and found only named-argument compatibility warnings in
+  `SendToNeighbor.cloneAction`; its parameter names now match the newly ported `Action` contract.
+- 2026-08-03: the full build passed all executed tests and exposed four Checkstyle findings in two biochemistry
+  actions where dependency-graph removal had left empty loops. The loops, unused imports, and obsolete
+  serialization identifiers have been removed.
+- 2026-08-03: the focused biochemistry Checkstyle rerun found one import-separator blank line left by that cleanup;
+  it has been removed.
+- 2026-08-03: the next repository build reached physics Detekt after all earlier checks passed and exposed the known
+  missing documentation on `PhysicsUpdate.environment`. The public property is now documented; focused physics
+  Detekt and repository-wide Kotlin formatting pass. The final repository-wide build is next.
+- 2026-08-03: the full build cleared the previous static-analysis frontier and all other completed tests, then found
+  one remaining biochemistry assertion comparing a Boolean to the observable returned by `canExecute()`. The
+  assertion now reads the observable's current value, and the focused `TestBiomolLayer` run passes. The final
+  repository-wide build is being rerun.
+- 2026-08-03: the rerun confirms the biochemistry suite passes and exposes only SAPERE Checkstyle findings: two
+  empty dependency loops left by graph removal and a loader-compatibility constructor separated from the primary
+  constructor. The empty loops and obsolete serialization members are removed, and constructors are regrouped;
+  focused SAPERE Checkstyle passes. The final repository-wide build is being rerun.
+- 2026-08-03: SAPERE Checkstyle, Detekt, compilation, and the biochemistry regression remain green. The full run now
+  reaches `RegressionTest.reactions with neighbor outputs should execute`, where a reaction attempts to remove a
+  cached `<token>` match after another reaction consumed it. The same run generated a SAPERE SpotBugs report; both
+  are the active Phase 2 frontier.
+- 2026-08-03: added reaction identity and cached-match context to the stale SAPERE removal failure so the focused
+  regression can identify which reactive subscription or scheduling transition failed before changing behavior.
+  It identifies the stale reaction as `<token> --> <firing>`; dependency identity, current value, and observer count
+  are now included to distinguish a missing subscription from a missed scheduler update.
+- 2026-08-03: the stale reaction's molecule-name observable has two live observers, confirming scheduling wiring is
+  present. Root cause is value aliasing: `observeMoleculeName` initially stored the mutable backing list, so removal
+  mutated the observable's current value before equality-based emission and suppressed invalidation. Its initial
+  value is now a defensive snapshot, and the temporary diagnostic wrapper has been removed.
+- 2026-08-03: focused `RegressionTest.reactions with neighbor outputs should execute` passes with the defensive
+  molecule-name snapshot. Focused SAPERE SpotBugs is next to classify the generated report before another full
+  build.
+- 2026-08-03: focused SAPERE SpotBugs completes successfully at the Gradle level; its findings are the expected
+  broader serialization-removal inventory assigned to Phase 8, not a Phase 2 blocker. Four suppressions and serial
+  identifiers on action classes became obsolete when `Action` stopped being serializable and have been removed.
+- 2026-08-03: the SAPERE verification rerun found one separator blank left by suppression removal in
+  `LsaRandomNeighborAction`; it has been removed before repeating the focused checks.
+- 2026-08-03: focused SAPERE Checkstyle and SpotBugs tasks now complete successfully, and the obsolete-suppression
+  findings are gone. Remaining SpotBugs findings are recorded serialization/API inventory for Phase 8. The final
+  repository-wide build is being rerun.
+- 2026-08-03: the next full-build frontier consists of eight map-walker tests directly advancing an uninitialized
+  reaction and one loading regression that still requires whole-environment Java serialization. The map fixture
+  will adopt the reactive lifecycle; the loading test will retain construction/incarnation coverage without
+  restoring the serialization contract that Phase 8 intentionally removes.
+- 2026-08-03: `TestTargetMapWalker` now completes the reaction's reactive initialization after installing it in the
+  environment. All eight focused map-walker tests pass.
+- 2026-08-03: `TestRegressions` now verifies environment construction and incarnation availability without Java
+  object-stream round-tripping. Both focused loading regressions pass, consistently with the planned removal of
+  `Serializable` from the live model graph.
+- 2026-08-03: repository-wide `./gradlew --parallel ktlintFormat` passes after the map fixture migration. The
+  mandatory full build is next; Phase 2 remains open until that run succeeds.
+- 2026-08-03: the full build clears the prior map, loading, SAPERE, biochemistry, website, and static-analysis
+  frontiers, then fails only `alchemist-full` `TestRemoveNode`: after a node-removal transition, the engine attempts
+  to advance an `Event` whose reactive initialization never completed. This lifecycle defect is the remaining
+  Phase 2 frontier.
+- 2026-08-03: traced `TestRemoveNode` to the firing reaction removing and disposing its own node during
+  `execute()`. The engine's normal post-fire advancement then observes a terminal disposed reaction, not an
+  uninitialized live reaction. Advancement after disposal must therefore be inert while advancement before
+  initialization remains an error.
+- 2026-08-03: `AbstractReaction.update` now ignores advancement after terminal disposal without weakening the
+  initialization check for live reactions. Focused `alchemist-full` `TestRemoveNode` passes.

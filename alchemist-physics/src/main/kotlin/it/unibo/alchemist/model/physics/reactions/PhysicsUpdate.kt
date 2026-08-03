@@ -30,6 +30,7 @@ import it.unibo.alchemist.model.timedistributions.DiracComb
  * A global reaction responsible for updating a [Dynamics2DEnvironment].
  */
 class PhysicsUpdate<T>(
+    /** The physics environment advanced by this reaction. */
     val environment: Dynamics2DEnvironment<T>,
     override val timeDistribution: TimeDistribution<T> = DiracComb(DEFAULT_RATE),
 ) : GlobalReaction<T> {
@@ -90,7 +91,7 @@ class PhysicsUpdate<T>(
         subscriptions.clear()
         conditions.forEach { condition ->
             subscriptions.add(
-                condition.dependencies.merge().subscribe(invokeOnSubscription = false) {
+                condition.getDependencies().merge().subscribe(invokeOnSubscription = false) {
                     timeDistribution.reactToUpdate(environment.simulation.time, this)
                 },
             )

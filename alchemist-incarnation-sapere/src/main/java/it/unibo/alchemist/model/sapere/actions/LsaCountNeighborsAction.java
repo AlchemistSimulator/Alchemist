@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.sapere.actions;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
@@ -21,19 +20,15 @@ import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 
-import java.io.Serial;
 import java.util.List;
 
 /**
  */
 public final class LsaCountNeighborsAction extends AbstractSAPERELocalAgent {
 
-    @Serial
-    private static final long serialVersionUID = -7128058274012426458L;
     private final HashString countVarName;
     private final Environment<List<ILsaMolecule>, ?> environment;
     private final ILsaMolecule mol;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All implementations are actually serializable")
     private final RandomGenerator rnd;
 
     /**

@@ -15,7 +15,6 @@ import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.exporters.CSVExporter;
 import it.unibo.alchemist.boundary.exporters.GlobalExporter;
 import it.unibo.alchemist.boundary.extractors.MeanSquaredError;
-import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
@@ -56,20 +55,14 @@ class TestRegressions {
     }
 
     /**
-     * Test environment serialization and incarnation restoration.
+     * Test environment loading and incarnation restoration.
      */
     @Test
-    void testLoadAndSerialize() {
+    void testLoad() {
         final Environment<?, ?> environment = LoadAlchemist
             .from(ResourceLoader.getResource("testCustomExport.yml"))
             .getDefault()
             .getEnvironment();
         assertNotNull(environment.getIncarnation());
-        final byte[] serialized = SerializationUtils.serialize(environment);
-        assertNotNull(serialized);
-        final Object deserialized = SerializationUtils.deserialize(SerializationUtils.serialize(environment));
-        assertNotNull(deserialized);
-        assertEquals(environment.getClass(), deserialized.getClass());
-        assertNotNull(((Environment<?, ?>) deserialized).getIncarnation());
     }
 }

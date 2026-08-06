@@ -18,10 +18,8 @@ import java.io.Serializable
  * Implementations that read files with descending axes (e.g. GloFAS, whose latitude runs
  * from +89.95 to −59.95) must normalize internally, so that strategies never need to
  * reason about axis direction.
- *
- * @param T the type of value stored in each cell of this grid.
  */
-interface RasterGrid<T> : Serializable {
+interface RasterGrid : Serializable {
     /**
      * Latitudes of grid nodes, in degrees, sorted in ascending order.
      */
@@ -35,13 +33,13 @@ interface RasterGrid<T> : Serializable {
     /**
      * Raw value of the cell at the given index coordinates.
      *
-     * @param latIndex index on the [latitudes] axis
-     * @param lonIndex index on the [longitudes] axis
+     * @param latIndex index on the [latitudes] axis.
+     * @param lonIndex index on the [longitudes] axis.
      *
-     * @return the value of the cell, or null if the cell
-     * contains a missing value
+     * @return the raw value of the cell; a [Double.NaN]
+     * denotes a missing/fill value.
      */
-    fun valueAt(latIndex: Int, lonIndex: Int): T?
+    fun valueAt(latIndex: Int, lonIndex: Int): Double
 }
 
 /**

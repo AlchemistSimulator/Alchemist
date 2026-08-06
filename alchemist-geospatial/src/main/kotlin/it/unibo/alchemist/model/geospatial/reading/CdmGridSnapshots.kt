@@ -35,7 +35,8 @@ import ucar.nc2.dataset.NetcdfDatasets
  * the NetCDF-Java Common Data Model (CDM) that maps to CF conventions.
  * - **CF Compliance**: the implementation relies on the **CF (Climate and Forecast) conventions**.
  * Files must contain properly tagged coordinate axes (recognized as Time, Latitude, and
- * Longitude by the CDM) and parseable CF-compliant time units (e.g., "hours since 1900-01-01").
+ * Longitude by the CDM) and parseable CF-compliant time units (e.g., "hours since 1900-01-01"),
+ * or use a convention that [ucar.nc2] can convert to the CF convention.
  * - **Dimensions**: strictly limited to {time, lat, lon} data. Datasets
  * with other dimensions (e.g. z-axis) are not supported.
  * - **Data unpacking**: missing/fill values are replaced by `nulls`.
@@ -58,20 +59,15 @@ import ucar.nc2.dataset.NetcdfDatasets
  * @param directory directory of homogeneous spatial data files (NetCDFs/GRIBs).
  * @param variableName name of the variable as it appears in the file (e.g. `"dis24"`),
  * not the CDS catalogue name. If `null`, auto-detected from the file.
- * @param measurementConverter specifies how to convert the raw [Double]
- * value read from the file to the required type [T]
- *
- * @param T the type of value stored in each cell of each grid.
  *
  * @throws IllegalArgumentException if the directory is empty; if the variable is missing
  * or ambiguous; if files have mismatched spatial axes; if the dimension order is not
  * `(time, lat, lon)`; or if two files share a timestamp (i.e. the temporal coverages are not disjoint).
  */
-class CdmGridSnapshots<T>(directory: Path, variableName: String? = null, measurementConverter: (Double) -> T) :
-    GridSnapshots<T> {
+class CdmGridSnapshots(directory: Path, variableName: String? = null) : GridSnapshots {
 
     override val instants: List<Instant>
-    private val grids: List<RasterGrid<T>>
+    private val grids: List<RasterGrid>
 
     init {
         // lists the files in the directory, which must not be empty
@@ -82,7 +78,7 @@ class CdmGridSnapshots<T>(directory: Path, variableName: String? = null, measure
         require(files.isNotEmpty()) { "No data files in $directory" }
 
         // maps all file time instances to the corresponding RasterGrid, sorting them by Instant
-        val map = TreeMap<Instant, RasterGrid<T>>()
+        val map = TreeMap<Instant, RasterGrid>()
 
         /**
          * spatial reference established by the first file.
@@ -196,23 +192,17 @@ class CdmGridSnapshots<T>(directory: Path, variableName: String? = null, measure
                      * If the index was descending, then srcLat/srcLon are reversed so that iLat=0
                      * corresponds to the lowest latitude.
                      */
-                    @Suppress("UNCHECKED_CAST")
-                    val measurements = arrayOfNulls<Any?>(nLat * nLon).also { arr ->
+                    val measurements = DoubleArray(nLat * nLon).also { arr ->
                         for (idx in arr.indices) {
                             val iLat = idx / nLon
                             val iLon = idx % nLon
                             val srcLat = if (latDesc) (nLat - 1 - iLat) else iLat
                             val srcLon = if (lonDesc) (nLon - 1 - iLon) else iLon
-                            val raw = rawData.getDouble(srcLat * nLon + srcLon)
+                            arr[idx] = rawData.getDouble(srcLat * nLon + srcLon)
 
-                            if (raw.isNaN()) {
-                                arr[idx] = null
-                            } else {
-                                arr[idx] = measurementConverter(raw)
-                                nonNullCount++
-                            }
+                            if (arr[idx].isNaN()) nonNullCount++
                         }
-                    } as Array<T?>
+                    }
 
                     /*
                      * Computes the grid density to pick the most efficient
@@ -239,7 +229,7 @@ class CdmGridSnapshots<T>(directory: Path, variableName: String? = null, measure
      * @param index 0-based index, aligned with [instants].
      * @return the [RasterGrid] for that instant.
      */
-    override fun grid(index: Int): RasterGrid<T> = grids[index]
+    override fun grid(index: Int): RasterGrid = grids[index]
 
     companion object {
 

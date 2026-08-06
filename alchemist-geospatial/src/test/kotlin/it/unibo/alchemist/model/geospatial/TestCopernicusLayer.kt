@@ -66,10 +66,10 @@ class TestCopernicusLayer : StringSpec({
     /**
      * A [RasterGrid] where every cell has a fixed [value].
      */
-    fun flatGrid(value: Double): RasterGrid<Double> = ArrayRasterGrid(
+    fun flatGrid(value: Double): RasterGrid = ArrayRasterGrid(
         lats,
         lons,
-        Array(lats.size * lons.size) { value },
+        DoubleArray(lats.size * lons.size) { value },
     )
 
     /**
@@ -81,14 +81,14 @@ class TestCopernicusLayer : StringSpec({
         vararg sliceValues: Double,
         base: Instant = Instant.EPOCH,
         step: Duration = Duration.ofHours(1),
-    ): GridSnapshots<Double> {
+    ): GridSnapshots {
         val instants = sliceValues.indices.map { i ->
             base.plus(step.multipliedBy(i.toLong()))
         }
         val grids = sliceValues.map { v -> flatGrid(v) }
-        return object : GridSnapshots<Double> {
+        return object : GridSnapshots {
             override val instants = instants
-            override fun grid(index: Int): RasterGrid<Double> = grids[index]
+            override fun grid(index: Int): RasterGrid = grids[index]
         }
     }
 
@@ -100,9 +100,9 @@ class TestCopernicusLayer : StringSpec({
     }
 
     "require fails on empty TimedGrid" {
-        val emptyGrid = object : GridSnapshots<Double> {
+        val emptyGrid = object : GridSnapshots {
             override val instants: List<Instant> = emptyList()
-            override fun grid(index: Int): RasterGrid<Double> = throw UnsupportedOperationException()
+            override fun grid(index: Int): RasterGrid = throw UnsupportedOperationException()
         }
         shouldThrow<IllegalArgumentException> {
             DoubleCopernicusLayer(

@@ -14,20 +14,16 @@ import it.unibo.alchemist.model.geospatial.reading.RasterGrid
 import it.unibo.alchemist.model.geospatial.strategy.nearestIndex
 
 /**
- * Value of the nearest cell to the point, generic respect to [T].
- *
- * @param T the type of data to interpolate.
+ * Value of the nearest cell to the point.
  */
-class NearestInterpolation<T> : SpatialInterpolationStrategy<T> {
-    override fun valueAt(grid: RasterGrid<T>, position: GeoPosition): T? {
+class NearestInterpolation : SpatialInterpolation {
+    override fun valueAt(grid: RasterGrid, position: GeoPosition): Double {
         val nearestLatitudeIndex = nearestIndex(grid.latitudes, position.latitude)
         val nearestLongitudeIndex = nearestIndex(grid.longitudes, position.longitude)
         return grid.valueAt(nearestLatitudeIndex, nearestLongitudeIndex)
     }
-}
 
-/**
- * Nearest spatial interpolation for [Double] values.
- */
-class NearestDoubleInterpolation(delegate: SpatialInterpolationStrategy<Double> = NearestInterpolation()) :
-    SpatialInterpolationStrategy<Double> by delegate
+    private companion object {
+        private const val serialVersionUID = 1L
+    }
+}

@@ -11,9 +11,10 @@ package it.unibo.alchemist.model.geospatial.reading
 
 import java.nio.file.Files
 import java.nio.file.Path
-import java.time.Instant
 import java.util.Formatter
 import java.util.TreeMap
+import kotlin.time.Instant
+import kotlin.time.toKotlinInstant
 import ucar.nc2.Variable
 import ucar.nc2.constants.AxisType
 import ucar.nc2.dataset.CoordinateAxis1D
@@ -167,7 +168,7 @@ class CdmGridSnapshots(directory: Path, variableName: String? = null) : GridSnap
                 val nTime = timeAxis.size.toInt()
                 for (t in 0 until nTime) {
                     // converts a CalendarDate CF-Aware to an Instant
-                    val instant = timeAxis.getCalendarDate(t).toDate().toInstant()
+                    val instant = (timeAxis.getCalendarDate(t).toDate().toInstant()).toKotlinInstant()
 
                     /*
                      * If there are duplicate timestamps across different files, then there are overlapping

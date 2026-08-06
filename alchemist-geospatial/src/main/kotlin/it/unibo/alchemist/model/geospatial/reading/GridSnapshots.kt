@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.geospatial.reading
 
 import java.io.Serializable
-import java.time.Instant
+import kotlin.time.Instant
 
 /**
  * A time-ordered sequence of [RasterGrid] slices backed by geophysical source data.

@@ -22,9 +22,11 @@ import it.unibo.alchemist.model.geospatial.reading.ArrayRasterGrid
 import it.unibo.alchemist.model.geospatial.reading.GridSnapshots
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
 import java.nio.file.Path
-import java.time.Duration
-import java.time.Instant
 import kotlin.io.path.createTempDirectory
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 
 private const val TOLERANCE = 1e-9
 
@@ -80,11 +82,9 @@ class TestCopernicusLayer : StringSpec({
     fun syntheticGrid(
         vararg sliceValues: Double,
         base: Instant = Instant.EPOCH,
-        step: Duration = Duration.ofHours(1),
+        step: Duration = 1.hours,
     ): GridSnapshots {
-        val instants = sliceValues.indices.map { i ->
-            base.plus(step.multipliedBy(i.toLong()))
-        }
+        val instants = sliceValues.indices.map { i -> base.plus(step * i) }
         val grids = sliceValues.map { v -> flatGrid(v) }
         return object : GridSnapshots {
             override val instants = instants
@@ -131,7 +131,7 @@ class TestCopernicusLayer : StringSpec({
             envAt(0.0),
             syntheticGrid(10.0, 20.0, 30.0),
             // instants: EPOCH, EPOCH+1h, EPOCH+2h
-            timeOrigin = Instant.EPOCH.plus(Duration.ofHours(1)),
+            timeOrigin = Instant.EPOCH + 1.hours,
         )
         withClue("t=0.0 with shifted origin maps to the second slice = 20.0") {
             layer.getValue(center) shouldBe 20.0
@@ -143,7 +143,7 @@ class TestCopernicusLayer : StringSpec({
         var layer = DoubleCopernicusLayer(
             envAt(-2.0),
             syntheticGrid(10.0, 20.0, 30.0),
-            timeOrigin = Instant.EPOCH.plus(Duration.ofHours(1)),
+            timeOrigin = Instant.EPOCH + 1.hours,
         )
         withClue("t=-2.0 < sliceTimes.first()=-1.0, extrapolates to first slice: 10.0") {
             layer.getValue(center) shouldBe 10.0
@@ -152,7 +152,7 @@ class TestCopernicusLayer : StringSpec({
         layer = DoubleCopernicusLayer(
             envAt(2.0),
             syntheticGrid(10.0, 20.0, 30.0),
-            timeOrigin = Instant.EPOCH.plus(Duration.ofHours(1)),
+            timeOrigin = Instant.EPOCH + 1.hours,
         )
         withClue("t=2.0 > sliceTimes.last()=1.0, extrapolates to last slice: 30.0") {
             layer.getValue(center) shouldBe 30.0
@@ -168,7 +168,7 @@ class TestCopernicusLayer : StringSpec({
         val layer = DoubleCopernicusLayer(
             envAt(1.0),
             syntheticGrid(0.0, 10.0),
-            timeScale = Duration.ofMinutes(30),
+            timeScale = 30.minutes,
         )
         withClue("t=1.0 is halfway between 0.0 and 2.0, LINEAR blending should return 5.0") {
             layer.getValue(center) shouldBe (5.0 plusOrMinus TOLERANCE)
@@ -182,8 +182,8 @@ class TestCopernicusLayer : StringSpec({
          */
         val layer = DoubleCopernicusLayer(
             envAt(0.5),
-            syntheticGrid(0.0, 12.0, step = Duration.ofHours(6)),
-            timeScale = Duration.ofHours(6),
+            syntheticGrid(0.0, 12.0, step = 6.hours),
+            timeScale = 6.hours,
         )
         withClue("t=0.5 halfway, LINEAR blending should return 6.0") {
             layer.getValue(center) shouldBe (6.0 plusOrMinus TOLERANCE)
@@ -377,3 +377,9 @@ class TestCopernicusLayer : StringSpec({
         }
     }
 })
+
+/**
+ * Shorthand for EPOCH time.
+ */
+private val Instant.Companion.EPOCH: Instant
+    get() = Instant.fromEpochMilliseconds(0)

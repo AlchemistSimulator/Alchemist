@@ -17,8 +17,9 @@ import it.unibo.alchemist.model.geospatial.strategy.converter.MeasurementConvert
 import it.unibo.alchemist.model.geospatial.strategy.spatiotemporal.SpatioTemporalInterpolation
 import it.unibo.alchemist.model.geospatial.strategy.spatiotemporal.TrilinearInterpolation
 import java.nio.file.Path
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Instant
 
 /**
  * [CopernicusLayer] that returns values as [Double].
@@ -33,7 +34,7 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
         environment: Environment<*, GeoPosition>,
         data: GridSnapshots,
         timeOrigin: Instant? = null,
-        timeScale: Duration = Duration.ofHours(1),
+        timeScale: Duration = 1.hours,
         interpolation: SpatioTemporalInterpolation = TrilinearInterpolation(),
         converter: MeasurementConverter<Double> = DoubleIdentityWithFallback(),
     ) : super(
@@ -57,7 +58,7 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
         dataDirectory: Path,
         variable: String? = null,
         timeOrigin: Instant? = null,
-        timeScale: Duration = Duration.ofHours(1),
+        timeScale: Duration = 1.hours,
         interpolation: SpatioTemporalInterpolation = TrilinearInterpolation(),
         converter: MeasurementConverter<Double> = DoubleIdentityWithFallback(),
     ) : super(

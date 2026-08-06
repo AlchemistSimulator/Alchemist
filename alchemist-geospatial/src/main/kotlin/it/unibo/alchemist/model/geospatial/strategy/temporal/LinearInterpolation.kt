@@ -10,13 +10,17 @@
 package it.unibo.alchemist.model.geospatial.strategy.temporal
 
 /**
- * [TemporalInterpolationStrategy] that blends between two adjacent values.
+ * [TemporalInterpolation] that blends between two adjacent values.
  */
-class LinearInterpolation : TemporalInterpolationStrategy<Double> {
-    override fun interpolate(valueBefore: Double?, valueAfter: Double?, weight: Double): Double? =
-        if (valueBefore != null && valueAfter != null) {
-            valueBefore + (valueAfter - valueBefore) * weight
-        } else {
-            null
-        }
+class LinearInterpolation : TemporalInterpolation {
+    override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = when {
+        weight == 0.0 -> valueBefore
+        weight == 1.0 -> valueAfter
+        valueBefore.isNaN() || valueAfter.isNaN() -> Double.NaN
+        else -> valueBefore + (valueAfter - valueBefore) * weight
+    }
+
+    private companion object {
+        private const val serialVersionUID = 1L
+    }
 }

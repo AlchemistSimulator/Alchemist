@@ -16,10 +16,10 @@ import it.unibo.alchemist.model.geospatial.strategy.weight
 
 /**
  * Bilinear interpolation over the 4 cells surrounding the point. If any of the 4 corners is
- * missing, returns `null.
+ * missing, returns [Double.NaN].
  */
-class BilinearInterpolator : SpatialInterpolationStrategy<Double> {
-    override fun valueAt(grid: RasterGrid<Double>, position: GeoPosition): Double? {
+class BilinearInterpolation : SpatialInterpolation {
+    override fun valueAt(grid: RasterGrid, position: GeoPosition): Double {
         val (lowerLatitudeIndex, upperLatitudeIndex) = bracketIndices(
             grid.latitudes,
             position.latitude,
@@ -39,11 +39,11 @@ class BilinearInterpolator : SpatialInterpolationStrategy<Double> {
         val northEastValue = grid.valueAt(upperLatitudeIndex, upperLongitudeIndex)
 
         // if any of the four points is missing, returns a missing value
-        val anyCornerMissing = southWestValue == null ||
-            southEastValue == null ||
-            northWestValue == null ||
-            northEastValue == null
-        if (anyCornerMissing) return null
+        val anyCornerMissing = southWestValue.isNaN() ||
+            southEastValue.isNaN() ||
+            northWestValue.isNaN() ||
+            northEastValue.isNaN()
+        if (anyCornerMissing) return Double.NaN
 
         val longitudeWeight = weight(
             grid.longitudes,

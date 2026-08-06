@@ -17,15 +17,13 @@ import java.io.Serializable
  * Strategy for **spatial interpolation**: given a grid slice and a position assumed to be *inside*
  * its extent, produces a value by combining nearby cells. It is a functional interface, so a custom rule
  * can be passed as a lambda.
- *
- * @param T the type of data to interpolate.
  */
-fun interface SpatialInterpolationStrategy<T> : Serializable {
+fun interface SpatialInterpolation : Serializable {
 
     /**
      * @param grid the slice to sample.
      * @param position the requested geographical position, assumed to be inside of [grid].
-     * @return the interpolated value, or `null` if the involved cells are missing.
+     * @return the interpolated value, or [Double.NaN] if the interpolation yields a missing value.
      */
-    fun valueAt(grid: RasterGrid<T>, position: GeoPosition): T?
+    fun valueAt(grid: RasterGrid, position: GeoPosition): Double
 }

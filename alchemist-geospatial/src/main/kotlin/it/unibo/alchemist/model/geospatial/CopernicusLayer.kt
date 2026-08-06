@@ -18,8 +18,9 @@ import it.unibo.alchemist.model.geospatial.strategy.converter.MeasurementConvert
 import it.unibo.alchemist.model.geospatial.strategy.spatiotemporal.SpatioTemporalInterpolation
 import it.unibo.alchemist.model.geospatial.strategy.weight
 import java.nio.file.Path
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Instant
 
 /**
  * A [GeoLayer] that exposes a value of type [T] for any [GeoPosition] as a function
@@ -56,7 +57,7 @@ open class CopernicusLayer<T>(
     private val environment: Environment<*, GeoPosition>,
     private val data: GridSnapshots,
     timeOrigin: Instant? = null,
-    timeScale: Duration = Duration.ofHours(1),
+    timeScale: Duration = 1.hours,
     private val interpolation: SpatioTemporalInterpolation,
     private val converter: MeasurementConverter<T>,
 ) : GeoLayer<T> {
@@ -85,7 +86,7 @@ open class CopernicusLayer<T>(
         dataDirectory: Path,
         variable: String? = null,
         timeOrigin: Instant? = null,
-        timeScale: Duration = Duration.ofHours(1),
+        timeScale: Duration = 1.hours,
         interpolation: SpatioTemporalInterpolation,
         converter: MeasurementConverter<T>,
     ) : this(
@@ -204,11 +205,10 @@ open class CopernicusLayer<T>(
 }
 
 /**
- * Converts a real-world [Instant] to a simulation time [Double] using millisecond precision.
+ * Converts a real-world [Instant] to a simulation time [Double].
  *
  * @param instant timestamp to convert.
  * @param origin the instant that maps to `0.0` in simulation time.
  * @param scale duration of one simulation time unit.
  */
-private fun toSimulationTime(instant: Instant, origin: Instant, scale: Duration): Double =
-    Duration.between(origin, instant).toMillis().toDouble() / scale.toMillis().toDouble()
+private fun toSimulationTime(instant: Instant, origin: Instant, scale: Duration): Double = (instant - origin) / scale

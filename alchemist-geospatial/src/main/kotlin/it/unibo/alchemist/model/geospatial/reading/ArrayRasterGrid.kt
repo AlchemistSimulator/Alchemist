@@ -17,19 +17,19 @@ package it.unibo.alchemist.model.geospatial.reading
  *
  * @property latitudes see [RasterGrid.latitudes] (ascending).
  * @property longitudes see [RasterGrid.longitudes] (ascending).
- * @property values cell values in row-major order; `null` values represent missing/fill values.
+ * @property values cell values in row-major order; [Double.NaN] values represent missing/fill values.
  */
-class ArrayRasterGrid<T>(
+class ArrayRasterGrid(
     override val latitudes: DoubleArray,
     override val longitudes: DoubleArray,
-    private val values: Array<T?>,
-) : RasterGrid<T> {
+    private val values: DoubleArray,
+) : RasterGrid {
 
     init {
         requireMatchingGridSize(latitudes, longitudes, values.size)
     }
 
-    override fun valueAt(latIndex: Int, lonIndex: Int): T? = values[latIndex * longitudes.size + lonIndex]
+    override fun valueAt(latIndex: Int, lonIndex: Int): Double = values[latIndex * longitudes.size + lonIndex]
 
     private companion object {
         private const val serialVersionUID = 1L

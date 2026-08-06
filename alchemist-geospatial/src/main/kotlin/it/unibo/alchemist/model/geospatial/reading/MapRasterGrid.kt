@@ -17,10 +17,10 @@ package it.unibo.alchemist.model.geospatial.reading
  *
  * @property latitudes see [RasterGrid.latitudes] (ascending).
  * @property longitudes see [RasterGrid.longitudes] (ascending).
- * @param values cell values in row-major order; `null` values represent missing/fill values.
+ * @param values cell values in row-major order; [Double.NaN] values represent missing/fill values.
  */
-class MapRasterGrid<T>(override val latitudes: DoubleArray, override val longitudes: DoubleArray, values: Array<T?>) :
-    RasterGrid<T> {
+class MapRasterGrid(override val latitudes: DoubleArray, override val longitudes: DoubleArray, values: DoubleArray) :
+    RasterGrid {
 
     init {
         requireMatchingGridSize(latitudes, longitudes, values.size)
@@ -29,17 +29,17 @@ class MapRasterGrid<T>(override val latitudes: DoubleArray, override val longitu
     /**
      * A map that associates each (latIndex, longIndex) pair with the value, if present.
      */
-    private val availableValues: Map<Pair<Int, Int>, T> = buildMap {
+    private val availableValues: Map<Pair<Int, Int>, Double> = buildMap {
         for (latIndex in latitudes.indices) {
             for (lonIndex in longitudes.indices) {
-                values[latIndex * longitudes.size + lonIndex]?.let { cellValue ->
-                    put(latIndex to lonIndex, cellValue)
-                }
+                val cellValue = values[latIndex * longitudes.size + lonIndex]
+                if (!cellValue.isNaN()) put(latIndex to lonIndex, cellValue)
             }
         }
     }
 
-    override fun valueAt(latIndex: Int, lonIndex: Int): T? = availableValues[latIndex to lonIndex]
+    override fun valueAt(latIndex: Int, lonIndex: Int): Double =
+        availableValues.getOrDefault(latIndex to lonIndex, Double.NaN)
 
     private companion object {
         private const val serialVersionUID = 1L

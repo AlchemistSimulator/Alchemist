@@ -10,15 +10,13 @@
 package it.unibo.alchemist.model.geospatial.strategy.temporal
 
 /**
- * [TemporalInterpolationStrategy] that always resolves with the value of
+ * [TemporalInterpolation] that always resolves with the value of
  * the next temporal slice.
  */
-class NextInterpolation<T> : TemporalInterpolationStrategy<T> {
-    override fun interpolate(valueBefore: T?, valueAfter: T?, weight: Double): T? = valueAfter
-}
+class NextInterpolation : TemporalInterpolation {
+    override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = valueAfter
 
-/**
- * [NextInterpolation] for [Double] type.
- */
-class NextDoubleInterpolation(delegate: TemporalInterpolationStrategy<Double> = NextInterpolation()) :
-    TemporalInterpolationStrategy<Double> by delegate
+    private companion object {
+        private const val serialVersionUID = 1L
+    }
+}

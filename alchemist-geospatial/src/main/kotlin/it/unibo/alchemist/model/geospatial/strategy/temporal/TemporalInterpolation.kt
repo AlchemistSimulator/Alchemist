@@ -16,7 +16,7 @@ import java.io.Serializable
  * slices bracketing the current time, plus a normalized weight, produces the value at the current
  * time.
  */
-fun interface TemporalInterpolationStrategy<T> : Serializable {
+fun interface TemporalInterpolation : Serializable {
 
     /**
      * @param valueBefore value at the slice at or immediately before the current time.
@@ -24,5 +24,5 @@ fun interface TemporalInterpolationStrategy<T> : Serializable {
      * @param weight normalized position in `[0.0, 1.0]`: `0.0` coincides with [valueBefore], `1.0` with [valueAfter].
      * @return the interpolated value.
      */
-    fun interpolate(valueBefore: T?, valueAfter: T?, weight: Double): T?
+    fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double
 }

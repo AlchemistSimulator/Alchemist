@@ -13,7 +13,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.geospatial.GeoPositionMock
+import it.unibo.alchemist.model.geospatial.mockGeoPosition
 import it.unibo.alchemist.model.geospatial.reading.ArrayRasterGrid
 import it.unibo.alchemist.model.geospatial.strategy.spatiotemporal.TrilinearInterpolation
 
@@ -41,7 +41,7 @@ class TestSpatioTemporalInterpolation : StringSpec({
         values = doubleArrayOf(1000.0, 1010.0, 1020.0, 1100.0),
     )
 
-    val center = GeoPositionMock(15.0, 150.0) // cell center
+    val center = mockGeoPosition(15.0, 150.0) // cell center
 
     "Trilinear at timeWeight 0.0 equals the bilinear value of gridBefore" {
         // bilinear average of gridBefore corners: (0 + 10 + 20 + 100) / 4 = 32.5

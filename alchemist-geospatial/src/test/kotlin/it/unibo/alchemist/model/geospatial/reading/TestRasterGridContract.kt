@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.geospatial.reading
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.shouldBe
 
 /**
@@ -19,7 +19,7 @@ import io.kotest.matchers.shouldBe
  * once and parameterized by the factory of the concrete implementation under test.
  */
 abstract class TestRasterGridContract(
-    gridOf: (DoubleArray, DoubleArray, Array<Double?>) -> RasterGrid<Double>,
+    gridOf: (DoubleArray, DoubleArray, DoubleArray) -> RasterGrid,
 ) : StringSpec({
     /**
      * 3 latitudes by 4 longitudes.
@@ -28,7 +28,7 @@ abstract class TestRasterGridContract(
      */
     val lats = doubleArrayOf(10.0, 20.0, 30.0)
     val lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0)
-    val values = Array<Double?>(12) { idx -> (idx / lons.size) * 10.0 + (idx % lons.size) }
+    val values = DoubleArray(12) { idx -> (idx / lons.size) * 10.0 + (idx % lons.size) }
     val grid = gridOf(lats, lons, values)
 
     // Value access tests
@@ -45,18 +45,18 @@ abstract class TestRasterGridContract(
     }
 
     // Missing values tests
-    "valueAt should return null for missing values" {
+    "valueAt should return Double.NaN for missing values" {
         // (iLat=1, iLon=1) is a missing value
-        val nullValues = Array(12) { idx -> if (idx == 5) null else idx.toDouble() }
-        val nullGrid = ArrayRasterGrid(lats, lons, nullValues)
-        nullGrid.valueAt(1, 1).shouldBeNull()
+        val nanValues = DoubleArray(12) { idx -> if (idx == 5) Double.NaN else idx.toDouble() }
+        val nullGrid = ArrayRasterGrid(lats, lons, nanValues)
+        nullGrid.valueAt(1, 1).shouldBeNaN()
     }
 
-    "a grid entirely made of nulls should return null everywhere" {
-        val allNull = ArrayRasterGrid(lats, lons, arrayOfNulls<Double>(12))
+    "a grid entirely made of Double.NaN should return NaN everywhere" {
+        val allNan = ArrayRasterGrid(lats, lons, DoubleArray(12) { Double.NaN })
         for (iLat in 0..2) {
             for (iLon in 0..3) {
-                allNull.valueAt(iLat, iLon).shouldBeNull()
+                allNan.valueAt(iLat, iLon).shouldBeNaN()
             }
         }
     }
@@ -76,7 +76,7 @@ abstract class TestRasterGridContract(
             ArrayRasterGrid(
                 lats,
                 lons,
-                Array(lats.size * lons.size - 1) { 0.0 },
+                DoubleArray(lats.size * lons.size - 1) { 0.0 },
             )
         }
     }

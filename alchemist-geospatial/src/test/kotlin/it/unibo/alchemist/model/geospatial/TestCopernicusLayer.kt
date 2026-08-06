@@ -35,10 +35,7 @@ class TestCopernicusLayer : StringSpec({
     val lats = doubleArrayOf(44.0, 45.0, 46.0)
     val lons = doubleArrayOf(11.0, 12.0, 13.0)
 
-    val center: GeoPosition = mockk {
-        every { latitude } returns 45.0
-        every { longitude } returns 12.0
-    }
+    val center: GeoPosition = mockGeoPosition(45.0, 12.0)
 
     /**
      * Environment mock with the simulation fixed at time [t]
@@ -198,12 +195,7 @@ class TestCopernicusLayer : StringSpec({
             data = timedGrid,
         )
         shouldThrow<IllegalArgumentException> {
-            layer.getValue(
-                mockk {
-                    every { latitude } returns (lats.first() - 1)
-                    every { longitude } returns (lons.first() - 1)
-                },
-            )
+            layer.getValue(mockGeoPosition(lats.first() - 1, lons.first() - 1))
         }
     }
 
@@ -289,14 +281,8 @@ class TestCopernicusLayer : StringSpec({
         )
 
         val layer = DoubleCopernicusLayer(envAt(0.0), dir)
-        val lat44: GeoPosition = mockk {
-            every { latitude } returns 44.0
-            every { longitude } returns 12.0
-        }
-        val lat46: GeoPosition = mockk {
-            every { latitude } returns 46.0
-            every { longitude } returns 12.0
-        }
+        val lat44: GeoPosition = mockGeoPosition(44.0, 12.0)
+        val lat46: GeoPosition = mockGeoPosition(46.0, 12.0)
 
         withClue("after normalisation, lat=44 (file-row 2) should return 3.0") {
             layer.getValue(lat44) shouldBe (3.0 plusOrMinus TOLERANCE)

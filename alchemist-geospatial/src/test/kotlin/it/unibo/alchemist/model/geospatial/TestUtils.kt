@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model.geospatial
 
+import io.mockk.every
+import io.mockk.mockk
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geospatial.reading.CdmGridSnapshots
 import java.nio.file.Path
@@ -121,27 +123,9 @@ internal fun <T> loadJsonCopernicusResponse(fileName: String, cls: Class<T>): St
 ) { "Missing test fixture: $fileName" }.bufferedReader().use { it.readText() }
 
 /**
- * [GeoPosition] mock used test cases.
+ * [GeoPosition] mock used in test cases.
  */
-internal class GeoPositionMock(
-    override val x: Double,
-    override val y: Double,
-    override val coordinates: DoubleArray = doubleArrayOf(x, y),
-    override val dimensions: Int = 2,
-) : GeoPosition {
-
-    override fun getLatitude(): Double = x
-
-    override fun getLongitude(): Double = y
-
-    @Deprecated("Deprecated in Java")
-    override fun getCoordinate(dimension: Int): Double = coordinates[dimension]
-
-    // methods not used in the tests
-    override fun plus(other: GeoPosition?): GeoPosition = TODO("Not needed for tests")
-    override fun minus(other: GeoPosition?): GeoPosition = TODO("Not needed for tests")
-    override fun boundingBox(range: Double): List<GeoPosition> = TODO("Not needed for tests")
-    override fun distanceTo(other: GeoPosition?): Double = TODO("Not needed for tests")
-    override fun plus(other: DoubleArray): GeoPosition = TODO("Not needed for tests")
-    override fun minus(other: DoubleArray): GeoPosition = TODO("Not needed for tests")
+internal fun mockGeoPosition(lat: Double, long: Double): GeoPosition = mockk {
+    every { latitude } returns lat
+    every { longitude } returns long
 }

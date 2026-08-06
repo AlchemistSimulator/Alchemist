@@ -12,12 +12,10 @@ package it.unibo.alchemist.model.geospatial
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geospatial.reading.GridSnapshots
-import it.unibo.alchemist.model.geospatial.strategy.missing.MissingValueStrategy
-import it.unibo.alchemist.model.geospatial.strategy.missing.PropagateNull
-import it.unibo.alchemist.model.geospatial.strategy.spatial.BilinearInterpolator
-import it.unibo.alchemist.model.geospatial.strategy.spatial.SpatialInterpolationStrategy
-import it.unibo.alchemist.model.geospatial.strategy.temporal.LinearInterpolation
-import it.unibo.alchemist.model.geospatial.strategy.temporal.TemporalInterpolationStrategy
+import it.unibo.alchemist.model.geospatial.strategy.converter.DoubleIdentityWithFallback
+import it.unibo.alchemist.model.geospatial.strategy.converter.MeasurementConverter
+import it.unibo.alchemist.model.geospatial.strategy.spatiotemporal.SpatioTemporalInterpolation
+import it.unibo.alchemist.model.geospatial.strategy.spatiotemporal.TrilinearInterpolation
 import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
@@ -25,7 +23,7 @@ import java.time.Instant
 /**
  * [CopernicusLayer] that returns values as [Double].
  *
- * By default, it uses bilinear interpolation on the grid and propagates the generated null values.
+ * By default, it uses [TrilinearInterpolation] on the grid and propagates the generated [Double.NaN] values.
  * Time slices are linearly interpolated by default.
  *
  * @see CopernicusLayer
@@ -33,20 +31,18 @@ import java.time.Instant
 class DoubleCopernicusLayer : CopernicusLayer<Double> {
     constructor(
         environment: Environment<*, GeoPosition>,
-        data: GridSnapshots<Double>,
+        data: GridSnapshots,
         timeOrigin: Instant? = null,
         timeScale: Duration = Duration.ofHours(1),
-        spatialInterpolation: SpatialInterpolationStrategy<Double> = BilinearInterpolator(),
-        missingValue: MissingValueStrategy<Double> = PropagateNull(),
-        temporalInterpolation: TemporalInterpolationStrategy<Double> = LinearInterpolation(),
+        interpolation: SpatioTemporalInterpolation = TrilinearInterpolation(),
+        converter: MeasurementConverter<Double> = DoubleIdentityWithFallback(),
     ) : super(
         environment,
         data,
         timeOrigin,
         timeScale,
-        spatialInterpolation,
-        missingValue,
-        temporalInterpolation,
+        interpolation,
+        converter,
     )
 
     /**
@@ -62,19 +58,15 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
         variable: String? = null,
         timeOrigin: Instant? = null,
         timeScale: Duration = Duration.ofHours(1),
-        spatialInterpolation: SpatialInterpolationStrategy<Double> = BilinearInterpolator(),
-        missingValue: MissingValueStrategy<Double> = PropagateNull(),
-        temporalInterpolation: TemporalInterpolationStrategy<Double> = LinearInterpolation(),
-        measurementConverter: (Double) -> Double = { it },
+        interpolation: SpatioTemporalInterpolation = TrilinearInterpolation(),
+        converter: MeasurementConverter<Double> = DoubleIdentityWithFallback(),
     ) : super(
         environment,
         dataDirectory,
         variable,
         timeOrigin,
         timeScale,
-        spatialInterpolation,
-        missingValue,
-        temporalInterpolation,
-        measurementConverter,
+        interpolation,
+        converter,
     )
 }

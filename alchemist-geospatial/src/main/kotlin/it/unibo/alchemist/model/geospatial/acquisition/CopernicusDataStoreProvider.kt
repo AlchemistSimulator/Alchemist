@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory
  *
  * @param endpoint base URL of the data store (e.g. `https://ewds.climate.copernicus.eu/api`); a
  * trailing slash, if present, is trimmed.
- * @param token ECMWF token sent as the `PRIVATE-TOKEN` header on the OGC GET/POST calls.
+ * @param tokenSupplier supplies the ECMWF token sent as the `PRIVATE-TOKEN` header on the OGC GET/POST calls.
  * @param http injectable HTTP client (to make this class testable); defaults to the JDK [HttpClient].
  * @param pollInterval base interval between two status polls; grows with backoff up to [maxPollInterval].
  * @param maxPollInterval cap on the polling interval. Defaults to 120 seconds, matching the official
@@ -54,12 +54,18 @@ import org.slf4j.LoggerFactory
  */
 class CopernicusDataStoreProvider(
     endpoint: String,
-    private val token: String,
     private val http: HttpClient = HttpClient.newHttpClient(),
     private val pollInterval: Duration = Duration.ofSeconds(2),
     private val maxPollInterval: Duration = Duration.ofSeconds(120),
     private val timeout: Duration = Duration.ofMinutes(30),
+    tokenSupplier: () -> String,
 ) : ExternalDataProvider<CopernicusRequest> {
+
+    /**
+     * read on first use, not at construction: a cache hit must not require credentials,
+     * so the token can be absent.
+     */
+    private val token: String by lazy(tokenSupplier)
 
     /**
      * endpoint normalized once: no trailing slash, so path concatenation never yields `//`

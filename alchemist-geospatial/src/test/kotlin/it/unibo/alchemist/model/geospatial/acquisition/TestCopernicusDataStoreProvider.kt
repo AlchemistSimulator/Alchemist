@@ -27,7 +27,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
 
     fun createProvider(endpoint: String, timeout: Duration = Duration.ofSeconds(2)) = CopernicusDataStoreProvider(
         endpoint = endpoint,
-        token = token,
+        tokenSupplier = { token },
         http = HttpClient.newHttpClient(),
         pollInterval = Duration.ofMillis(100),
         maxPollInterval = Duration.ofMillis(300),

@@ -1,0 +1,3 @@
+module:com.github.benmanes.caffeine
+com.github.benmanes.caffeine.cache
+com.github.benmanes.caffeine.cache.stats

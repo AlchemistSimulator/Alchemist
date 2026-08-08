@@ -22,6 +22,7 @@ import it.unibo.alchemist.model.geospatial.reading.ArrayRasterGrid
 import it.unibo.alchemist.model.geospatial.reading.GridSnapshots
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempDirectory
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
@@ -242,7 +243,7 @@ class TestCopernicusLayer : StringSpec({
             rawValues = FloatArray(27) { idx -> ((idx / 9) + 1) * 10f },
         )
 
-        val layer = DoubleCopernicusLayer(envAt(0.0), dir)
+        val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString())
         withClue("t=0.0 -> first slice -> all cells = 10.0") {
             layer.getValue(center) shouldBe (10.0 plusOrMinus TOLERANCE)
         }
@@ -258,7 +259,7 @@ class TestCopernicusLayer : StringSpec({
             rawValues = FloatArray(18) { idx -> if (idx < 9) 0f else 10f },
         )
 
-        val layer = DoubleCopernicusLayer(envAt(0.5), dir)
+        val layer = DoubleCopernicusLayer(envAt(0.5), dir.absolutePathString())
         withClue("t=0.5 halfway between 0.0 and 10.0 -> 5.0") {
             layer.getValue(center) shouldBe (5.0 plusOrMinus TOLERANCE)
         }
@@ -280,7 +281,7 @@ class TestCopernicusLayer : StringSpec({
             },
         )
 
-        val layer = DoubleCopernicusLayer(envAt(0.0), dir)
+        val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString())
         val lat44: GeoPosition = mockGeoPosition(44.0, 12.0)
         val lat46: GeoPosition = mockGeoPosition(46.0, 12.0)
 
@@ -302,7 +303,7 @@ class TestCopernicusLayer : StringSpec({
             rawValues = FloatArray(9) { 7f },
         )
 
-        val layer = DoubleCopernicusLayer(envAt(0.0), dir, variable = null)
+        val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString(), variable = null)
         withClue("auto-detected variable; all cells = 7.0") {
             layer.getValue(center) shouldBe (7.0 plusOrMinus TOLERANCE)
         }
@@ -319,7 +320,7 @@ class TestCopernicusLayer : StringSpec({
             variableName = "dis24",
         )
 
-        val layer = DoubleCopernicusLayer(envAt(0.0), dir, variable = "dis24")
+        val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString(), variable = "dis24")
         withClue("explicit variable 'dis24'; all cells = 42.0") {
             layer.getValue(center) shouldBe (42.0 plusOrMinus TOLERANCE)
         }
@@ -344,7 +345,7 @@ class TestCopernicusLayer : StringSpec({
             rawValues = FloatArray(18) { idx -> if (idx < 9) 30f else 40f },
         )
         var t = 0.0
-        val layer = DoubleCopernicusLayer(mutableEnv { t }, dir)
+        val layer = DoubleCopernicusLayer(mutableEnv { t }, dir.absolutePathString())
 
         (0..3).forEach {
             val time = it.toDouble()

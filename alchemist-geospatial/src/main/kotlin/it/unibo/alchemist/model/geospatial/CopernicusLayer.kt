@@ -11,8 +11,13 @@ package it.unibo.alchemist.model.geospatial
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.geospatial.acquisition.CopernicusCacheManager
+import it.unibo.alchemist.model.geospatial.acquisition.CopernicusDataStoreProvider
+import it.unibo.alchemist.model.geospatial.acquisition.CopernicusRequest
+import it.unibo.alchemist.model.geospatial.acquisition.utility.CdsApiRc
 import it.unibo.alchemist.model.geospatial.reading.CdmGridSnapshots
 import it.unibo.alchemist.model.geospatial.reading.GridSnapshots
+import it.unibo.alchemist.model.geospatial.reading.RasterGrid
 import it.unibo.alchemist.model.geospatial.strategy.bracketIndices
 import it.unibo.alchemist.model.geospatial.strategy.converter.MeasurementConverter
 import it.unibo.alchemist.model.geospatial.strategy.spatiotemporal.SpatioTemporalInterpolation
@@ -28,18 +33,22 @@ import kotlin.time.Instant
  * On [getValue], the layer knows the perceived simulation time at that moment via
  * [Environment.simulationOrNull].
  *
- * When [getValue] is called, the two time slices that enclose the current time are selected,
- * their values are evaluated spatially and temporally via [interpolation].
- * If the simulation time falls outside the calculated simulation time range,
- * the returned value will refer to the first or last time slice of [data].
+ * On [getValue], the two time slices enclosing the current time are located and handed to
+ * [interpolation], which resolves them both spatially and temporally; the resulting `Double`
+ * (possibly [Double.NaN]) is mapped to [T] by [converter]. Outside the covered time range the
+ * value of the first or last slice is returned; outside the covered **spatial** extent
+ * no extrapolation is performed and [getValue] fails.
  *
  * Once the construction is complete, real-world time [Instant] are converted proportionally to
  * simulation time using [timeOrigin] and [timeScale].
  *
- * Two constructors are currently available (a third one is planned once the
- * `acquisition` subpackage is implemented. SEE THE TODO below):
- * - **Primary** (this): accepts a ready-built [GridSnapshots]; intended for unit tests.
- * - **Directory**: accepts a local [Path], builds [CdmGridSnapshots] internally (no network I/O).
+ * Three constructors are available:
+ * - **Primary** (this): accepts a ready-built [GridSnapshots]; it is used in tests.
+ * - **Directory** (YAML): takes the path of a local directory of data files. No network, no cache,
+ * no credentials. Selected from YAML by providing `dataDirectory`.
+ * - **Datastore**: takes a Copernicus-family endpoint plus an opaque request, retrieves the
+ * data through a local cache manager, then reads it. The only one that touches the network. Selected from
+ * YAML by providing `endpoint`, `dataset` and `inputs`.
  *
  * @property environment simulation environment. Used only to read the current time via [Environment.simulationOrNull].
  * @property data temporal raster series backing this layer.
@@ -56,8 +65,8 @@ import kotlin.time.Instant
 open class CopernicusLayer<T>(
     private val environment: Environment<*, GeoPosition>,
     private val data: GridSnapshots,
+    timeScale: Duration = DEFAULT_TIME_SCALE,
     timeOrigin: Instant? = null,
-    timeScale: Duration = 1.hours,
     private val interpolation: SpatioTemporalInterpolation,
     private val converter: MeasurementConverter<T>,
 ) : GeoLayer<T> {
@@ -65,38 +74,6 @@ open class CopernicusLayer<T>(
     init {
         require(data.instants.isNotEmpty()) { "GridSnapshots is empty." }
     }
-
-    /**
-     * Constructs a [CopernicusLayer] from a local directory of data files (no network I/O).
-     *
-     * Builds a [CdmGridSnapshots] from [dataDirectory] and delegates to the primary constructor.
-     * (Intended for integration tests with pre downloaded static NetCDF files)
-     *
-     * @param dataDirectory directory containing one or more homogeneous data files (same variable
-     * and spatial grid, disjoint time ranges).
-     * @param variable variable name inside the file (e.g. `"dis24"`).
-     * If `null`, it is auto-detected as the unique `(time, lat, lon)` variable.
-     * @param timeOrigin real-world [Instant] corresponding to simulation `Time.ZERO`.
-     * @param timeScale real-world [Duration] of one simulation time unit.
-     * @param interpolation strategy for spatio-temporal evaluation.
-     * @param converter defines how read [Double] values should be converted into [T].
-     */
-    constructor(
-        environment: Environment<*, GeoPosition>,
-        dataDirectory: Path,
-        variable: String? = null,
-        timeOrigin: Instant? = null,
-        timeScale: Duration = 1.hours,
-        interpolation: SpatioTemporalInterpolation,
-        converter: MeasurementConverter<T>,
-    ) : this(
-        environment,
-        CdmGridSnapshots(dataDirectory, variable),
-        timeOrigin,
-        timeScale,
-        interpolation,
-        converter,
-    )
 
     /**
      * Real-world instant corresponding to simulation `Time.ZERO`.
@@ -114,6 +91,98 @@ open class CopernicusLayer<T>(
         .toDoubleArray()
 
     /**
+     * Constructs a [CopernicusLayer] reading a **local directory** of already-available data files:
+     * no network I/O, no cache, no credentials.
+     *
+     * @param dataDirectory path of a directory holding one or more homogeneous data files (same
+     * variable and spatial grid, disjoint time ranges). A leading `~` is expanded to the user home.
+     * @param variable variable name inside the file (e.g. `"dis24"`, the GRIB shortName, not the
+     * catalogue name). Auto-detected as the unique `(time, lat, lon)` variable when `null`.
+     * @param timeScale real-world duration of one simulation time unit, as an ISO-8601 duration (e.g. `"PT6H"`).
+     * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601 instant
+     * (e.g. `"2024-06-10T00:00:00Z"`). The first instant found in the data is used when `null`.
+     * @param interpolation strategy for spatio-temporal evaluation.
+     * @param converter defines how read [Double] values are converted into [T].
+     *
+     * @throws IllegalArgumentException if [timeScale] or [timeOrigin] are not valid ISO-8601
+     * strings, or if [dataDirectory] does not hold readable, homogeneous data files.
+     */
+    constructor(
+        environment: Environment<*, GeoPosition>,
+        dataDirectory: String,
+        variable: String? = null,
+        timeScale: String = DEFAULT_TIME_SCALE_ISO,
+        timeOrigin: String? = null,
+        interpolation: SpatioTemporalInterpolation,
+        converter: MeasurementConverter<T>,
+    ) : this(
+        environment,
+        CdmGridSnapshots(dataDirectory.expandUser(), variable),
+        Duration.parseIsoString(timeScale),
+        timeOrigin?.let(Instant::parse),
+        interpolation,
+        converter,
+    )
+
+    /**
+     * Constructs a [CopernicusLayer] that fetches (and locally caches) data from a
+     * Copernicus-family datastore (CDS / EWDS / ADS) identified by [endpoint], authenticating with
+     * the token found in [cdsApiRcFile].
+     *
+     * The cache is consulted **synchronously at construction**: on a cache hit no network call and
+     * no credential is needed, on a cache miss this performs blocking network I/O before the layer
+     * becomes usable.
+     *
+     * @param endpoint base URL of the datastore (e.g. `"https://ewds.climate.copernicus.eu/api"`).
+     * @param dataset dataset identifier (e.g. `"cems-glofas-historical"`).
+     * @param inputs opaque request map for [dataset] (variables, dates, area, format...), passed
+     * verbatim to the datastore.
+     * @param variable variable name inside the downloaded file. Auto-detected when `null`.
+     * @param timeScale real-world duration of one simulation time unit, as an ISO-8601 duration.
+     * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601
+     * instant. The first instant found in the data is used when `null`.
+     * @param cacheDirectory root of the local cache. A leading `~` is expanded to the user home.
+     * @param cdsApiRcFile path of a `.cdsapirc`-formatted file holding the API token. A leading `~`
+     * is expanded to the user home.
+     * @param interpolation strategy for spatio-temporal evaluation.
+     * @param converter defines how read [Double] values are converted into [T].
+     *
+     * @throws IllegalArgumentException if [timeScale] or [timeOrigin] are not valid ISO-8601
+     * strings, or if [endpoint] is not a valid URL.
+     * @throws IllegalStateException if the token cannot be read, if the remote job fails or times
+     * out, or if the downloaded asset fails its integrity check.
+     */
+    constructor(
+        environment: Environment<*, GeoPosition>,
+        endpoint: String,
+        dataset: String,
+        inputs: Map<String, Any>,
+        variable: String? = null,
+        timeScale: String = DEFAULT_TIME_SCALE_ISO,
+        timeOrigin: String? = null,
+        cacheDirectory: String = DEFAULT_CACHE_DIRECTORY,
+        cdsApiRcFile: String = DEFAULT_CDSAPIRC_FILE,
+        interpolation: SpatioTemporalInterpolation,
+        converter: MeasurementConverter<T>,
+    ) : this(
+        environment,
+        CdmGridSnapshots(
+            resolveDataDirectory(
+                endpoint,
+                dataset,
+                inputs,
+                cacheDirectory.expandUser(),
+                cdsApiRcFile.expandUser(),
+            ),
+            variable,
+        ),
+        Duration.parseIsoString(timeScale),
+        timeOrigin?.let(Instant::parse),
+        interpolation,
+        converter,
+    )
+
+    /**
      * Reads the simulation time, finds the adjacent time slices using [bracketIndices],
      * and applies the spatio-temporal [interpolation] strategy.
      * If the simulation time falls outside the calculated simulation time range,
@@ -122,7 +191,7 @@ open class CopernicusLayer<T>(
      * @param position the geographic position to query.
      * @return the interpolated or extrapolated value converted to [T].
      *
-     * @throws IllegalArgumentException if the given [position] is outside the geographical area.
+     * @throws IllegalArgumentException if the given [position] is outside the spatial extent.
      */
     override fun getValue(position: GeoPosition): T {
         val t = environment.simulationOrNull?.time?.toDouble() ?: 0.0
@@ -164,28 +233,19 @@ open class CopernicusLayer<T>(
     private fun sample(position: GeoPosition, gridBeforeIndex: Int, gridAfterIndex: Int, timeWeight: Double): T {
         val gridBefore = data.grid(gridBeforeIndex)
         val gridAfter = data.grid(gridAfterIndex)
+        val latitudes = gridBefore.latitudes
+        val longitudes = gridBefore.longitudes
 
-        val isLatitudeInBounds = position.latitude in gridBefore.latitudes.first()..gridBefore.latitudes.last()
-        val isLongitudeInBounds = position.longitude in gridBefore.longitudes.first()..gridBefore.longitudes.last()
+        val inBounds = position.latitude in latitudes.first()..latitudes.last() &&
+            position.longitude in longitudes.first()..longitudes.last()
 
-        require(isLatitudeInBounds && isLongitudeInBounds) {
-            "GeoPosition out of bounds: requested value at (lat: ${position.latitude}, " +
-                "long: ${position.longitude}) but the bounding box is lat: [${gridBefore.latitudes.first()}, " +
-                "${gridBefore.latitudes.last()}], long: [${gridBefore.longitudes.first()}, ${gridBefore.longitudes.last()}]"
-        }
+        require(inBounds) { outOfBoundsMessage(position, gridBefore) }
 
         /*
-         * The interpolation returns a Double, which might be a NaN.
+         * The interpolation returns a Double, which might be NaN.
          * The converter is fully responsible for mapping it to T.
          */
-        return converter.convert(
-            interpolation.interpolate(
-                position,
-                gridBefore,
-                gridAfter,
-                timeWeight,
-            ),
-        )
+        return converter.convert(interpolation.interpolate(position, gridBefore, gridAfter, timeWeight))
     }
 
     /**
@@ -199,8 +259,47 @@ open class CopernicusLayer<T>(
         0.0,
     )
 
-    private companion object {
+    companion object {
         private const val serialVersionUID = 1L
+
+        /**
+         * Default root of the local cache, used by the datastore costructor.
+         */
+        internal const val DEFAULT_CACHE_DIRECTORY = "~/.alchemist/cache/geospatial"
+
+        /**
+         * Default location of the file holding the datastore API token.
+         */
+        internal const val DEFAULT_CDSAPIRC_FILE = "~/.cdsapirc"
+
+        /**
+         * Default real-world duration of one simulation time unit, as a [Duration]
+         * and as a ISO-8601 string.
+         */
+        internal val DEFAULT_TIME_SCALE: Duration = 1.hours
+        internal val DEFAULT_TIME_SCALE_ISO: String = DEFAULT_TIME_SCALE.toIsoString()
+
+        /**
+         * Ensures the data denoted by `(dataset, inputs)` is present in the local cache rooted at
+         * [cacheDirectoryRoot], downloading it from [endpoint] on a cache miss, and returns the
+         * directory it lives in. The token is read from [cdsApiRcFile] lazily, so a cache hit needs
+         * no credentials.
+         *
+         * @return the directory holding the data files, ready to be opened.
+         *
+         * @throws IllegalStateException if the data cannot be produced.
+         */
+        private fun resolveDataDirectory(
+            endpoint: String,
+            dataset: String,
+            inputs: Map<String, Any>,
+            cacheDirectoryRoot: Path,
+            cdsApiRcFile: Path,
+        ): Path {
+            val provider = CopernicusDataStoreProvider(endpoint) { CdsApiRc.readToken(cdsApiRcFile) }
+            return CopernicusCacheManager(provider, cacheDirectoryRoot)
+                .getOrProduce(CopernicusRequest(dataset, inputs))
+        }
     }
 }
 
@@ -212,3 +311,17 @@ open class CopernicusLayer<T>(
  * @param scale duration of one simulation time unit.
  */
 private fun toSimulationTime(instant: Instant, origin: Instant, scale: Duration): Double = (instant - origin) / scale
+
+/**
+ * Builds the failure message for a [position] falling outside the extent of [grid].
+ *
+ * @param position the out-of-bounds [GeoPosition].
+ * @param grid the grid whose extent was exceeded.
+ */
+private fun outOfBoundsMessage(position: GeoPosition, grid: RasterGrid): String {
+    val latitudes = grid.latitudes
+    val longitudes = grid.longitudes
+    return "GeoPosition out of bounds: requested (lat: ${position.latitude}, lon: ${position.longitude}) " +
+        "but the bounding box is lat: [${latitudes.first()}, ${latitudes.last()}], " +
+        "lon: [${longitudes.first()}, ${longitudes.last()}]"
+}

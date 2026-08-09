@@ -13,6 +13,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.security.DigestInputStream
 import java.security.MessageDigest
+import org.slf4j.LoggerFactory
 
 /**
  * Size of the buffer used to stream a file through the MD5 digest, in bytes.
@@ -20,33 +21,64 @@ import java.security.MessageDigest
 private const val DIGEST_BUFFER_BYTES = 8 * 1024 // 8 KB
 
 /**
- * Verifies the integrity of a downloaded [file] against the metadata the data store
- * advertised for it: the byte count must equal [expectedSizeBytes] and the MD5 digest must equal
- * [expectedMd5], if provided. (compared case-insensitively).
+ * Number of hexadecimal digits in a well-formed MD5 digest.
+ */
+private const val MD5_HEX_DIGITS = 32
+
+private val logger =
+    LoggerFactory.getLogger("it.unibo.alchemist.model.geospatial.acquisition.utility.Integrity")
+
+/**
+ * Verifies the integrity of a downloaded [file] against the metadata the data store advertised for
+ * it: the byte count must equal [expectedSizeBytes] and, when [expectedMd5] is supplied,
+ * the MD5 digest must equal it.
  *
- * **Note for archives**: if the downloaded file is an archive (e.g., ZIP), the byte count
- * and MD5 hash typically refer to the archive itself and not to its extracted files.
+ * **Note on the advertised MD5:** the data store emits hexadecimal hashes **without left
+ * zero-padding**, so a digest such as `0aa45b...` is advertised as the 31-character
+ * `aa45b...`. The advertised value is therefore left-padded back to [MD5_HEX_DIGITS] before comparison.
+ *
+ * **Note for archives**: for an archive (e.g. ZIP) the advertised size and digest describe the
+ * archive itself, not its extracted entries.
  *
  * @param file the downloaded file to check.
  * @param expectedSizeBytes the expected size in bytes.
- * @param expectedMd5 the expected MD5 digest as a hex string, if provided.
+ * @param expectedMd5 the expected MD5 digest as a hex string, if advertised.
  *
- * @throws IllegalStateException if the actual size or MD5 does not match the expected value.
+ * @throws IllegalStateException if the actual size, or the actual MD5, does not match.
  */
 internal fun verify(file: Path, expectedSizeBytes: Long, expectedMd5: String? = null) {
     val actualSize = Files.size(file)
+
     check(actualSize == expectedSizeBytes) {
         "Size mismatch for '${file.fileName}': expected $expectedSizeBytes bytes, got $actualSize"
     }
 
-    // only if md5 is specified
-    expectedMd5?.let {
-        val actualMd5 = md5Hex(file)
-        check(actualMd5.equals(expectedMd5, ignoreCase = true)) {
-            "MD5 mismatch for '${file.fileName}': expected $expectedMd5, got $actualMd5"
-        }
+    // no checksum advertised: nothing to verify.
+    val advertised = expectedMd5 ?: return
+    val expected = advertised.lowercase().padStart(MD5_HEX_DIGITS, '0')
+
+    // warns the user that no md5 was provided.
+    if (!expected.isMd5Hex()) {
+        logger.warn(
+            "Data store advertised an unusable checksum ('{}') for '{}': skipping MD5 verification",
+            advertised,
+            file.fileName,
+        )
+        return
+    }
+
+    val actual = md5Hex(file)
+
+    check(actual == expected) {
+        "MD5 mismatch for '${file.fileName}': expected $expected " +
+            "(advertised as '$advertised'), got $actual"
     }
 }
+
+/**
+ * @return `true` if this string is a well-formed lowercase MD5 hex digest.
+ */
+private fun String.isMd5Hex(): Boolean = length == MD5_HEX_DIGITS && all { it in '0'..'9' || it in 'a'..'f' }
 
 /**
  * Computes the MD5 digest of [file] as a lowercase hex string,

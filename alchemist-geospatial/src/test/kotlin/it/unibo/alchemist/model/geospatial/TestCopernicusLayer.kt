@@ -39,7 +39,7 @@ class TestCopernicusLayer : StringSpec({
     val center: GeoPosition = mockGeoPosition(45.0, 12.0)
 
     /**
-     * Environment mock with the simulation fixed at time [t]
+     * Environment mock with the simulation fixed at time [t].
      */
     fun envAt(t: Double): Environment<Any?, GeoPosition> = mockk {
         every { simulationOrNull } returns mockk {

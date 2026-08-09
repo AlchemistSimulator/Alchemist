@@ -12,6 +12,8 @@ package it.unibo.alchemist.model.geospatial.acquisition
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldStartWith
 import it.unibo.alchemist.model.geospatial.acquisition.utility.ProblemDetail
 import it.unibo.alchemist.model.geospatial.acquisition.utility.RemoteAsset
 import it.unibo.alchemist.model.geospatial.acquisition.utility.parseAsset
@@ -23,83 +25,119 @@ import it.unibo.alchemist.model.geospatial.acquisition.utility.parseStatus
 import it.unibo.alchemist.model.geospatial.loadJsonCopernicusResponse
 
 /**
- * The test data, the ACTUAL response bodies, were captured on 2026-06-28 (yyyy-mm-dd)
- * from several ECMWF stores (CDS / EWDS / ADS). The EWDS and ADS submit bodies are verbatim;
- * the CDS submit body is truncated. The expected values are read manually from each body.
+ * The test data are ACTUAL response bodies, captured from the three ECMWF data stores (CDS / ADS / EWDS)
+ * against the current `/execution` submit path. Each store contributes one full job lifecycle,
+ * all four bodies sharing the same job id: submit -> accepted -> successful -> results.
+ * Error bodies were captured separately.
  */
 class TestCopernicusParsers : StringSpec({
 
-    // a captured submit response paired with the monitor URL expected from it.
-    data class SubmitCase(val store: String, val body: String, val expectedMonitorUrl: String)
+    /**
+     * One full job lifecycle captured from a single data store.
+     */
+    data class StoreCase(
+        val store: String,
+        val submit: String,
+        val accepted: String,
+        val successful: String,
+        val results: String,
+        val monitorUrl: String,
+        val resultsUrl: String,
+        val asset: RemoteAsset,
+    )
 
-    // some ACTUAL responses received after submit requests
-    val submitCases = listOf(
-        SubmitCase(
-            store = "CDS",
-            body = loadBody("cds-submit.json"),
-            expectedMonitorUrl = "https://cds.climate.copernicus.eu/api/retrieve" +
-                "/v1/jobs/98644c83-07f4-44ff-bc6b-2969c0342a32",
-        ),
-        SubmitCase(
-            store = "EWDS",
-            body = loadBody("ewds-submit.json"),
-            expectedMonitorUrl = "https://ewds.climate.copernicus.eu/api/retrieve" +
-                "/v1/jobs/ca0c3ecc-9c02-48ad-b781-73ee0510e653",
-        ),
-        SubmitCase(
-            store = "ADS",
-            body = loadBody("ads-submit.json"),
-            expectedMonitorUrl = "https://ads.atmosphere.copernicus.eu/api/retrieve" +
-                "/v1/jobs/61ebb7be-650e-4aa5-9039-6030eb01bb68",
+    val cds = StoreCase(
+        store = "CDS",
+        submit = loadBody("cds-submit.json"),
+        accepted = loadBody("cds-accepted-status.json"),
+        successful = loadBody("cds-successful-status.json"),
+        results = loadBody("cds-results.json"),
+        monitorUrl = "https://cds.climate.copernicus.eu/api/retrieve" +
+            "/v1/jobs/82d0a5fb-f096-42fd-b644-c7ba173b0154",
+        resultsUrl = "https://cds.climate.copernicus.eu/api/retrieve" +
+            "/v1/jobs/82d0a5fb-f096-42fd-b644-c7ba173b0154/results",
+        asset = RemoteAsset(
+            href = "https://object-store.os-api.cci2.ecmwf.int:443/" +
+                "cci2-prod-cache-1/2026-08-08/f8ec201f667455bd3cf338c39fc03a1a.zip",
+            sizeBytes = 50_689L,
+            md5 = "aa45b382ed6a3d13a4f30cca4d0a9b7",
         ),
     )
 
-    // status bodies. One successful (adds a results link), one accepted (only a self link)
-    val successfulStatus = loadBody("successful-status.json")
-    val acceptedStatus = loadBody("accepted-status.json")
+    val ads = StoreCase(
+        store = "ADS",
+        submit = loadBody("ads-submit.json"),
+        accepted = loadBody("ads-accepted-status.json"),
+        successful = loadBody("ads-successful-status.json"),
+        results = loadBody("ads-results.json"),
+        monitorUrl = "https://ads.atmosphere.copernicus.eu/api/retrieve" +
+            "/v1/jobs/a79e0cce-9c46-4bd9-aec5-3570977cbbd1",
+        resultsUrl = "https://ads.atmosphere.copernicus.eu/api/retrieve" +
+            "/v1/jobs/a79e0cce-9c46-4bd9-aec5-3570977cbbd1/results",
+        asset = RemoteAsset(
+            href = "https://object-store.os-api.cci2.ecmwf.int:443/" +
+                "cci2-prod-cache-2/2026-08-08/1b2c8f7e437451ffc09a9e23cb32a542.zip",
+            sizeBytes = 7_768_356L,
+            md5 = "d6c0964f89e3f43d1a99ee4d7722f505",
+        ),
+    )
 
-    // results body (from a GET .../jobs/{id}/results request)
-    val resultsBody = loadBody("results.json")
+    val ewds = StoreCase(
+        store = "EWDS",
+        submit = loadBody("ewds-submit.json"),
+        accepted = loadBody("ewds-accepted-status.json"),
+        successful = loadBody("ewds-successful-status.json"),
+        results = loadBody("ewds-results.json"),
+        monitorUrl = "https://ewds.climate.copernicus.eu/api/retrieve" +
+            "/v1/jobs/bb1ee550-0dea-4c84-b164-b8c54165a25f",
+        resultsUrl = "https://ewds.climate.copernicus.eu/api/retrieve" +
+            "/v1/jobs/bb1ee550-0dea-4c84-b164-b8c54165a25f/results",
+        asset = RemoteAsset(
+            href = "https://object-store.os-api.cci2.ecmwf.int:443/" +
+                "cci2-prod-cache-3/2026-08-09/9600fbec69609809250b901b42f6800.zip",
+            sizeBytes = 22_643L,
+            md5 = "104b13e69dc13b15f75c910d08f0e4ac",
+        ),
+    )
+
+    val stores = listOf(cds, ads, ewds)
+
+    /**
+     * Runs [check] on every store, reporting which one failed.
+     */
+    fun eachStore(check: (StoreCase) -> Unit) = stores.forEach { case ->
+        withClue("store: ${case.store}") { check(case) }
+    }
 
     // link extraction
     "parseMonitorUrl extracts the monitor link from a submit response" {
-        submitCases.forEach { case ->
-            withClue("store: ${case.store}") {
-                parseMonitorUrl(case.body) shouldBe case.expectedMonitorUrl
-            }
-        }
+        eachStore { parseMonitorUrl(it.submit) shouldBe it.monitorUrl }
     }
 
     // status extraction
-    "parseStatus reads 'successful' from a finished job" {
-        parseStatus(successfulStatus) shouldBe "successful"
-    }
-
     "parseStatus reads 'accepted' from a pending job" {
-        parseStatus(acceptedStatus) shouldBe "accepted"
+        eachStore { parseStatus(it.accepted) shouldBe "accepted" }
     }
 
-    // download link extraction
-    "parseResultsUrl returns the results link once the job is successful" {
-        parseResultsUrl(successfulStatus) shouldBe
-            "https://cds.climate.copernicus.eu/api/retrieve/v1/jobs/98644c83-07f4-44ff-bc6b-2969c0342a32/results"
+    "parseStatus reads 'successful' from a finished job" {
+        eachStore { parseStatus(it.successful) shouldBe "successful" }
     }
 
+    // results link extraction
     "parseResultsUrl returns null while the job is not yet ready" {
-        parseResultsUrl(acceptedStatus) shouldBe null
+        eachStore { parseResultsUrl(it.accepted) shouldBe null }
+    }
+
+    "parseResultsUrl returns the results link once the job is successful" {
+        eachStore { parseResultsUrl(it.successful) shouldBe it.resultsUrl }
     }
 
     // asset metadata extraction
     "parseAsset extracts href, size and checksum from a results response" {
-        parseAsset(resultsBody) shouldBe RemoteAsset(
-            href = "https://object-store.os-api.cci2.ecmwf.int:443/" +
-                "cci2-prod-cache-1/2026-06-28/55f861b61cf925b229030a1faf838e93.nc",
-            sizeBytes = 2_331_970L,
-            md5 = "b7b990dc67d490e0360c41b47fc616a6",
-        )
+        eachStore { parseAsset(it.results) shouldBe it.asset }
     }
 
-    // errors extraction
+    // error bodies: RFC 7807
     "parseProblemDetail extracts all fields from a 404 result-not-ready body" {
         parseProblemDetail(loadBody("error-404-result-not-ready.json")) shouldBe ProblemDetail(
             type = "http://www.opengis.net/def/exceptions/ogcapi-processes-1/1.0/result-not-ready",
@@ -109,10 +147,11 @@ class TestCopernicusParsers : StringSpec({
             instance = "https://ads.atmosphere.copernicus.eu/api/retrieve" +
                 "/v1/jobs/61ebb7be-650e-4aa5-9039-6030eb01bb68/results",
             traceId = "e7ba3606-9816-43cc-ab6a-4f0642388701",
+            traceback = null,
         )
     }
 
-    "parseProblemDetail handles a 401 whose type is a free-string label, not a URI" {
+    "parseProblemDetail handles a 401 whose type is a string label, not a URI" {
         parseProblemDetail(loadBody("error-401-permission-denied.json")) shouldBe ProblemDetail(
             type = "permission denied",
             title = "permission denied",
@@ -121,6 +160,7 @@ class TestCopernicusParsers : StringSpec({
             instance = "https://ads.atmosphere.copernicus.eu/api/retrieve" +
                 "/v1/jobs/61ebb7be-650e-4aa5-9039-6030eb01bb68",
             traceId = "b63a2882-2510-4ced-935a-b2faec13eead",
+            traceback = null,
         )
     }
 
@@ -132,33 +172,31 @@ class TestCopernicusParsers : StringSpec({
             detail = "something went wrong",
             instance = null,
             traceId = null,
+            traceback = null,
         )
     }
 
-    "parseProblemDetail extracts all fields from a 400 invalid-request body" {
-        parseProblemDetail(loadBody("error-400-invalid-request.json")) shouldBe ProblemDetail(
-            type = "invalid request",
-            title = "invalid request",
-            status = 400,
-            detail = "Request has not produced a valid combination of values, " +
-                "please check your selection.\n" +
-                "{'data_format': ['netcdf'], 'day': ['10'], 'hydrological_model': ['lisflood'], " +
-                "'leadtime_hour': ['26'], 'month': ['02'], 'product_type': ['control_forecast'], " +
-                "'system_version': ['operational'], 'variable': ['river_discharge_in_the_last_24_hours'], " +
-                "'year': ['2024']}",
-            instance = "https://ewds.climate.copernicus.eu/api/retrieve" +
-                "/v1/processes/cems-glofas-forecast/execute",
-            traceId = "cec329b8-cb55-4b84-a3a8-86b85facdbb4",
-        )
+    "parseProblemDetail extracts the traceback from a failed job's results body" {
+        val problem = parseProblemDetail(loadBody("ewds-failed-results.json"))
+        problem.type shouldBe "job results failed"
+        problem.title shouldBe "The job has failed"
+        problem.status shouldBe 400
+        problem.detail shouldBe null
+        problem.instance shouldBe "https://ewds.climate.copernicus.eu/api/retrieve" +
+            "/v1/jobs/3a891e6b-e602-400d-9f26-d9be8acadc05/results"
+        problem.traceId shouldBe "4e257fcd-dda1-494a-8e26-d5d6885676d4"
+        problem.traceback shouldStartWith "The job failed with: MultiAdaptorNoDataError"
     }
 
-    /*
-     * no real failed-job body has been captured (failed jobs are rare on stable datasets).
-     * A failed job would occur after a successful submit (all fields in the request are validated
-     * correctly in the ECMWF backend) but somehow the requested data can't be processed/returned.
-     * The following are SYNTHETIC bodies, NOT ECMWF's failed-jobs responses.
-     */
-    "parseFailureMessage reads a top-level message string" {
+    "describe falls back to the traceback when the body carries no detail" {
+        val described = parseProblemDetail(loadBody("ewds-failed-results.json")).describe()
+        described shouldContain "MultiAdaptorNoDataError"
+        described shouldContain "type=job results failed"
+        described shouldContain "trace=4e257fcd-dda1-494a-8e26-d5d6885676d4"
+    }
+
+    // synthetic: no real body was captured that populates the OGC 'message' field.
+    "parseFailureMessage reads a message string" {
         parseFailureMessage("""{"status":"failed","message":"the job blew up"}""") shouldBe "the job blew up"
     }
 

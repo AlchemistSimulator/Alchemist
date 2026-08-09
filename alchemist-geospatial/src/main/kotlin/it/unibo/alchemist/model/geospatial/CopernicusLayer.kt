@@ -52,7 +52,8 @@ import kotlin.time.Instant
  *
  * @property environment simulation environment. Used only to read the current time via [Environment.simulationOrNull].
  * @property data temporal raster series backing this layer.
- * @param timeOrigin real-world [Instant] corresponding to simulation `Time.ZERO`. Defaults to the first instant in [data].
+ * @param timeOrigin real-world [Instant] corresponding to simulation `Time.ZERO`.
+ * Defaults to the first instant in [data].
  * @param timeScale real-world [Duration] of one simulation time unit. Defaults to one hour.
  * @param interpolation strategy for generating a value from the spatio-temporal grid slices.
  * @param converter strategy for converting the interpolated [Double] (or [Double.NaN] if missing) into the
@@ -196,34 +197,36 @@ open class CopernicusLayer<T>(
     override fun getValue(position: GeoPosition): T {
         val t = environment.simulationOrNull?.time?.toDouble() ?: 0.0
 
-        /*
-         * The simulation time is outside the calculated simulation time range.
-         * Returns the first or the last spatially resolved value.
-         */
-        if (t < sliceTimes.first()) {
-            return sampleExactSlice(position, 0)
-        } else if (t > sliceTimes.last()) {
-            return sampleExactSlice(position, sliceTimes.lastIndex)
+        return when {
+            /*
+             * the simulation time is outside the calculated simulation time range.
+             * Returns the first or the last spatially resolved value.
+             */
+            t < sliceTimes.first() -> sampleExactSlice(position, 0)
+            t > sliceTimes.last() -> sampleExactSlice(position, sliceTimes.lastIndex)
+            else -> {
+                // the indices of the spatial slices that enclose time t.
+                val (gridIndexBefore, gridIndexAfter) = bracketIndices(sliceTimes, t)
+
+                if (gridIndexBefore == gridIndexAfter) {
+                    // the time t falls exactly on a slice.
+                    sampleExactSlice(position, gridIndexBefore)
+                } else {
+                    /*
+                     * the time t lies between two distinct slices.
+                     * Applies the spatio-temporal interpolation strategy.
+                     */
+                    val timeWeight = weight(
+                        sliceTimes,
+                        gridIndexBefore,
+                        gridIndexAfter,
+                        t,
+                    )
+
+                    sample(position, gridIndexBefore, gridIndexAfter, timeWeight)
+                }
+            }
         }
-
-        // the indices of the spatial slices that enclose time t.
-        val (gridIndexBefore, gridIndexAfter) = bracketIndices(sliceTimes, t)
-
-        // the time t falls exactly on a slice.
-        if (gridIndexBefore == gridIndexAfter) return sampleExactSlice(position, gridIndexBefore)
-
-        /*
-         * the time t lies between two distinct slices.
-         * Applies the spatio-temporal interpolation strategy.
-         */
-        val timeWeight = weight(
-            sliceTimes,
-            gridIndexBefore,
-            gridIndexAfter,
-            t,
-        )
-
-        return sample(position, gridIndexBefore, gridIndexAfter, timeWeight)
     }
 
     /**
@@ -259,6 +262,9 @@ open class CopernicusLayer<T>(
         0.0,
     )
 
+    /**
+     * Default values and helper factory logic for [CopernicusLayer].
+     */
     companion object {
         private const val serialVersionUID = 1L
 

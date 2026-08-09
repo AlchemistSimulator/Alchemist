@@ -42,26 +42,27 @@ internal fun nearestIndex(axis: DoubleArray, coordinate: Double): Int {
 
     val binarySearchResult = Arrays.binarySearch(axis, coordinate)
 
-    // exact match found: the coordinate aligns perfectly with a grid node.
-    if (binarySearchResult >= 0) return binarySearchResult
-
     /*
      * binarySearch returns -(insertionPoint) - 1 when no match is found. Inverting the formula
      * yields the insertion point: the index of the first node strictly greater than the coordinate.
      */
     val upperIndex = -binarySearchResult - 1
 
-    if (upperIndex <= 0) return 0
-    if (upperIndex >= axis.size) return axis.lastIndex
+    return when {
+        // exact match found: the coordinate aligns perfectly with a grid node.
+        binarySearchResult >= 0 -> binarySearchResult
+        upperIndex <= 0 -> 0
+        upperIndex >= axis.size -> axis.lastIndex
+        else -> {
+            // the coordinate is between axis[lowerIndex] and axis[upperIndex]
+            val lowerIndex = upperIndex - 1
 
-    // the coordinate is between axis[lowerIndex] and axis[upperIndex]
-    val lowerIndex = upperIndex - 1
+            val distanceToLower = coordinate - axis[lowerIndex]
+            val distanceToUpper = axis[upperIndex] - coordinate
 
-    val distanceToLower = coordinate - axis[lowerIndex]
-    val distanceToUpper = axis[upperIndex] - coordinate
-
-    // return the index with the smaller distance. Ties go to lowerIndex.
-    return if (distanceToLower <= distanceToUpper) lowerIndex else upperIndex
+            if (distanceToLower <= distanceToUpper) lowerIndex else upperIndex
+        }
+    }
 }
 
 /**
@@ -81,17 +82,17 @@ internal fun bracketIndices(axis: DoubleArray, coordinate: Double): Pair<Int, In
     require(!coordinate.isNaN()) { "The query coordinate cannot be NaN." }
 
     val binarySearchResult = Arrays.binarySearch(axis, coordinate)
-
-    // exact match
-    if (binarySearchResult >= 0) return binarySearchResult to binarySearchResult
-
     val upperIndex = -binarySearchResult - 1
 
-    if (upperIndex <= 0) return 0 to 0
-    if (upperIndex >= axis.size) return axis.lastIndex to axis.lastIndex
-
-    val lowerIndex = upperIndex - 1
-    return lowerIndex to upperIndex
+    return when {
+        binarySearchResult >= 0 -> binarySearchResult to binarySearchResult
+        upperIndex <= 0 -> 0 to 0
+        upperIndex >= axis.size -> axis.lastIndex to axis.lastIndex
+        else -> {
+            val lowerIndex = upperIndex - 1
+            lowerIndex to upperIndex
+        }
+    }
 }
 
 /**

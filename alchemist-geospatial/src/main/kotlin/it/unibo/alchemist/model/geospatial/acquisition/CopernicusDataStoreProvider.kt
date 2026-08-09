@@ -25,7 +25,6 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.file.Path
 import java.time.Duration
-import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import org.slf4j.LoggerFactory
 
@@ -33,8 +32,7 @@ import org.slf4j.LoggerFactory
  * The **only point of the module that speaks the ECMWF data stores' REST API**.
  *
  * Implements the OGC API - Processes flow (submit -> poll -> results -> download) and confines it
- * entirely here: ECMWF marks this API as "recommended for advanced users, not supported" and
- * evolving, so any change to the REST surface impacts **this class alone**.
+ * entirely here.
  *
  * Serves multiple data stores (CDS, ADS, EWDS) indistinctly: the same ECMWF software
  * sits underneath, with identical sub-paths; only the host differs, supplied via [endpoint].
@@ -44,7 +42,7 @@ import org.slf4j.LoggerFactory
  * @param endpoint base URL of the data store (e.g. `https://ewds.climate.copernicus.eu/api`); a
  * trailing slash, if present, is trimmed.
  * @param tokenSupplier supplies the ECMWF token sent as the `PRIVATE-TOKEN` header on the OGC GET/POST calls.
- * @param http injectable HTTP client (to make this class testable); defaults to the JDK [HttpClient].
+ * @param http HTTP client to use; defaults to the JDK [HttpClient].
  * @param pollInterval base interval between two status polls; grows with backoff up to [maxPollInterval].
  * @param maxPollInterval cap on the polling interval. Defaults to 120 seconds, matching the official
  * ECMWF client's duration.
@@ -55,9 +53,9 @@ import org.slf4j.LoggerFactory
 class CopernicusDataStoreProvider(
     endpoint: String,
     private val http: HttpClient = HttpClient.newHttpClient(),
-    private val pollInterval: Duration = Duration.ofSeconds(2),
-    private val maxPollInterval: Duration = Duration.ofSeconds(120),
-    private val timeout: Duration = Duration.ofMinutes(30),
+    private val pollInterval: Duration = Duration.ofSeconds(DEFAULT_POLL_INTERVAL_SEC),
+    private val maxPollInterval: Duration = Duration.ofSeconds(DEFAULT_MAX_POLL_INTERVAL_SEC),
+    private val timeout: Duration = Duration.ofMinutes(DEFAULT_TIMEOUT_MIN),
     tokenSupplier: () -> String,
 ) : ExternalDataProvider<CopernicusRequest> {
 
@@ -68,9 +66,13 @@ class CopernicusDataStoreProvider(
     private val token: String by lazy(tokenSupplier)
 
     /**
-     * endpoint normalized once: no trailing slash, so path concatenation never yields `//`
+     * endpoint normalized once: no trailing slash, so path concatenation never yields `//`.
      */
-    private val base: URI = URI.create(endpoint.trimEnd('/'))
+    private val base: URI = URI.create(endpoint.trimEnd('/')).also {
+        require(it.isAbsolute && it.scheme in setOf("http", "https")) {
+            "The endpoint must be an absolute http/https URL, but was '$endpoint'"
+        }
+    }
 
     /**
      * The full OGC API processes flow, written into [targetDir].
@@ -108,13 +110,13 @@ class CopernicusDataStoreProvider(
      *
      * `POST {endpoint}/retrieve/v1/processes/{dataset}/execution`, with `PRIVATE-TOKEN` and
      * `Content-Type`/`Accept: application/json`, body `{"inputs": <request.inputs>}` serialized via
-     * [it.unibo.alchemist.model.geospatial.acquisition.utility.CanonicalJson]. The monitor URL is read from the `rel="monitor"` link of the response
-     * ([it.unibo.alchemist.model.geospatial.acquisition.utility.parseMonitorUrl]), never rebuilt from a path.
+     * [CanonicalJson]. The monitor URL is read from the `rel="monitor"` link of the response
+     * ([parseMonitorUrl]), never rebuilt from a path.
      *
      * @param request the [CopernicusRequest] used to initialize the job on ECMWF servers.
      * @return the absolute job URL to pass to [awaitSuccess].
      *
-     * @throws IllegalStateException on a non-2xx response, enriched with [it.unibo.alchemist.model.geospatial.acquisition.utility.parseProblemDetail].
+     * @throws IllegalStateException on a non-2xx response, enriched with [parseProblemDetail].
      */
     private fun submit(request: CopernicusRequest): String {
         val body = CanonicalJson.encode(mapOf("inputs" to request.inputs))
@@ -132,7 +134,7 @@ class CopernicusDataStoreProvider(
         val response = http.send(httpRequest, HttpResponse.BodyHandlers.ofString())
 
         // something has gone wrong
-        if (response.statusCode() !in 200..299) {
+        if (!response.isSuccessful) {
             failOnHttpError("Submit of dataset '${request.dataset}'", response)
         }
         return parseMonitorUrl(response.body())
@@ -143,12 +145,8 @@ class CopernicusDataStoreProvider(
      * backoff capped at [maxPollInterval] and a [timeout] guillotine.
      *
      * Terminal failure states are listed **explicitly** (`failed`/`rejected`/`dismissed`):
-     * consistently with [it.unibo.alchemist.model.geospatial.acquisition.utility.parseStatus], any other state (known like `accepted`/`running` or unknown),
+     * consistently with [parseStatus], any other state (known like `accepted`/`running` or unknown),
      * is treated as transient and polling continues.
-     *
-     * **Note**: a *future, unannounced* terminal state would be awaited up to [timeout] rather than
-     * detected at once. This is tolerable bacause [timeout] still guarantees termination, and
-     * unrecognized states are logged at WARN for diagnosis.
      *
      * @param monitorUrl the URL to use to check the job status. See [submit].
      * @return the result URL (`rel="results"` link, present only once the job is `successful`).
@@ -166,7 +164,7 @@ class CopernicusDataStoreProvider(
          * polling mode (to prevent them from thinking the program
          * has frozen).
          */
-        val heartbeatNanos = Duration.ofSeconds(30).toNanos()
+        val heartbeatNanos = Duration.ofSeconds(USER_ALERT_INTERVAL_SEC).toNanos()
         var lastHeartbeat = System.nanoTime()
 
         // tries to poll until a success/timeout/error
@@ -180,7 +178,7 @@ class CopernicusDataStoreProvider(
                     return parseResultsUrl(body)
                         ?: error("Job 'successful' but no rel='results' link at $monitorUrl: inconsistent response")
                 }
-                "failed", "rejected", "dismissed" -> failOnStatus(monitorUrl, status, body)
+                "failed", "rejected", "dismissed", "deleted" -> failOnStatus(monitorUrl, status, body)
                 "accepted", "running" -> {
                     // fine details on debug mode
                     logger.debug("Job status '{}' at {}", status, monitorUrl)
@@ -192,7 +190,7 @@ class CopernicusDataStoreProvider(
                         lastHeartbeat = now
                     }
                 }
-                // warns the user about the new unknow status, but keeps polling
+                // warns the user about the new unknow status, but keeps polling.
                 else -> logger.warn("Unrecognized job status '{}' at {}, continuing to poll", status, monitorUrl)
             }
 
@@ -209,12 +207,12 @@ class CopernicusDataStoreProvider(
     /**
      * Fetches the result metadata. `GET resultUrl` (authenticated).
      *
-     * Extracts href, size and MD5 via [it.unibo.alchemist.model.geospatial.acquisition.utility.parseAsset], then resolves the href against [resultsUrl].
+     * Extracts href, size and MD5 via [parseAsset], then resolves the href against [resultsUrl].
      * ECMWF already serves the asset URI as absolute, so the resolve is a defensive no-op
      * (tolerates a future relative href).
      *
      * @param resultsUrl the results URL from [awaitSuccess] (`rel="results"` link).
-     * @return a [it.unibo.alchemist.model.geospatial.acquisition.utility.RemoteAsset] with an **absolute** href, expected size, and best-effort checksum.
+     * @return a [RemoteAsset] with an **absolute** href, expected size, and best-effort checksum.
      */
     private fun fetchAsset(resultsUrl: String): RemoteAsset {
         val asset = parseAsset(get(resultsUrl).body())
@@ -226,8 +224,8 @@ class CopernicusDataStoreProvider(
      * Streams the asset file into [targetDir].
      *
      * `GET asset.href` **without** `PRIVATE-TOKEN`: unlike the OGC GETs (monitor, results), the
-     * href points to an object store on a different host (e.g. `object-store.os-api.cci2.ecmwf.int`, an
-     * S3 back-end) that serves the resource **publicly, unauthenticated**.
+     * href points to an object store on a different host (e.g. `object-store.os-api.cci2.ecmwf.int`)
+     * that serves the resource **publicly, unauthenticated**.
      *
      * @param asset result metadata (absolute href, expected size, nullable checksum).
      * @param targetDir temporary directory to write into.
@@ -246,33 +244,10 @@ class CopernicusDataStoreProvider(
         val response = http.send(request, HttpResponse.BodyHandlers.ofFile(target))
 
         // http error code check
-        if (response.statusCode() !in 200..299) {
+        if (!response.isSuccessful) {
             error("Download failed (HTTP ${response.statusCode()}) from ${asset.href}")
         }
         return response.body()
-    }
-
-    /**
-     * Authenticated GET (with `PRIVATE-TOKEN` header) to an OGC endpoint.
-     *
-     * @param url the request URL.
-     * @return the [HttpResponse] received after the request.
-     *
-     * @throws IllegalStateException on a non-2xx response.
-     */
-    private fun get(url: String): HttpResponse<String> {
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .header("PRIVATE-TOKEN", token)
-            .header("Accept", "application/json")
-            .GET()
-            .build()
-        val response = http.send(request, HttpResponse.BodyHandlers.ofString())
-
-        if (response.statusCode() !in 200..299) {
-            failOnHttpError("GET $url", response)
-        }
-        return response
     }
 
     /**
@@ -301,28 +276,87 @@ class CopernicusDataStoreProvider(
     }
 
     /**
-     * Always throws for a terminal-failure job (HTTP 200 with a `failed`/`rejected`/`dismissed` status).
-     * The failure detail lives in the job's top-level `message` string (see [it.unibo.alchemist.model.geospatial.acquisition.utility.parseFailureMessage]),
-     * **not** in an RFC 7807 body, do it is read directly; a null/blank message falls back to
-     * the raw body.
+     * Always throws for a terminal failure job (HTTP 200 with a `failed`/`rejected`/`dismissed` status).
      *
-     * @param monitorUrl the poll url that responds with a `failed`/`rejected`/`dismissed` status.
-     * @param status the failed status (`failed`/`rejected`/`dismissed`).
-     * @param body the JSON body that contains the top-level `message` string.
+     * **Note**: the status document does **not** carry the cause: ECMWF exposes it only by showing the
+     * `rel="results"` link, which answers 4xx with an RFC 7807 body whose proprietary `traceback`
+     * field holds the backend failure. The OGC `message` field and the raw status body are
+     * the fallbacks, **in that order**.
+     *
+     * @param monitorUrl the poll URL that reported a terminal failure status.
+     * @param status the terminal failure status (`failed`/`rejected`/`dismissed`).
+     * @param body the status document, used to locate the results link and, failing that, as a fallback
+     * message source.
      *
      * @throws IllegalStateException always.
      */
     private fun failOnStatus(monitorUrl: String, status: String, body: String): Nothing {
-        val message = runCatching { parseFailureMessage(body) }.getOrNull()
+        val cause = parseResultsUrl(body)
+            ?.let { runCatching { parseProblemDetail(getRaw(it).body()).describe() }.getOrNull() }
+            ?.takeUnless { it.isBlank() }
+            ?: runCatching { parseFailureMessage(body) }.getOrNull()
         error(
             buildString {
                 append("Job in state '$status' at $monitorUrl")
-                if (message.isNullOrBlank()) append(". Body: $body") else append(": $message")
+                if (cause.isNullOrBlank()) append(". Body: $body") else append(": $cause")
             },
         )
     }
 
+    /**
+     * Authenticated GET (with `PRIVATE-TOKEN` header) to an OGC endpoint.
+     *
+     * @param url the request URL.
+     * @return the [HttpResponse] received after the request.
+     *
+     * @throws IllegalStateException on a non-2xx response.
+     */
+    private fun get(url: String): HttpResponse<String> = getRaw(url).also {
+        if (!it.isSuccessful) failOnHttpError("GET $url", it)
+    }
+
+    /**
+     * Authenticated GET that does **not** check the status code: the caller inspects the body.
+     */
+    private fun getRaw(url: String): HttpResponse<String> = http.send(
+        HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("PRIVATE-TOKEN", token)
+            .header("Accept", "application/json")
+            .GET()
+            .build(),
+        HttpResponse.BodyHandlers.ofString(),
+    )
+
     private companion object {
         private val logger = LoggerFactory.getLogger(CopernicusDataStoreProvider::class.java)
+
+        /**
+         * Default interval in seconds between two consecutive polls.
+         */
+        private const val DEFAULT_POLL_INTERVAL_SEC = 2L
+
+        /**
+         * Default max interval in seconds between two consecutive polls.
+         */
+        private const val DEFAULT_MAX_POLL_INTERVAL_SEC = 120L
+
+        /**
+         * Default maximum number of minutes allowed to wait for a poll with a ‘successful’ status.
+         */
+        private const val DEFAULT_TIMEOUT_MIN = 30L
+
+        /**
+         * How often to alert the user that the program is still in
+         * polling mode (to prevent them from thinking the program
+         * has frozen).
+         */
+        private const val USER_ALERT_INTERVAL_SEC = 30L
     }
 }
+
+/**
+ * Extension property used to check if a response was successful.
+ */
+private val HttpResponse<*>.isSuccessful: Boolean
+    get() = statusCode() in 200..299

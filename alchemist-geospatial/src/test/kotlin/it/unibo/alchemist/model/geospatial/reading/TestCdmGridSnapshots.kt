@@ -21,7 +21,7 @@ import java.nio.file.Path
 class TestCdmGridSnapshots : StringSpec({
 
     /**
-     * the directory where the temporary NetCDF files for the tests will be created
+     * the directory where the temporary NetCDF files for the tests will be created.
      */
     val tempDir: Path = Files.createTempDirectory("cdm-timed-grid-test")
 
@@ -142,14 +142,14 @@ class TestCdmGridSnapshots : StringSpec({
 })
 
 /**
- * Creates a NetCDF-3 file with
- * - latitudes: (10°, 20°, 30°)
- * - longitudes: (5°, 15°, 25°, 35°)
- * - the provided hours offset from `2024-01-01 00:00`
+ * Creates a NetCDF-3 file with:
+ * - latitudes: (10°, 20°, 30°).
+ * - longitudes: (5°, 15°, 25°, 35°).
+ * - the provided hours offset from `2024-01-01 00:00`.
  *
- * @param dir the directory where the file will be created (must exist)
- * @param fileName the name of the file
- * @param timeHours hours offsets from `2024-01-01 00:00`
+ * @param dir the directory where the file will be created (must exist).
+ * @param fileName the name of the file.
+ * @param timeHours hours offsets from `2024-01-01 00:00`.
  */
 private fun writeFixedTestNetcdf(dir: Path, fileName: String, timeHours: DoubleArray) {
     writeTestNetcdf(

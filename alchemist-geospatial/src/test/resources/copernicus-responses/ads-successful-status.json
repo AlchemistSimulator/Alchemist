@@ -1,0 +1,27 @@
+{
+    "processID": "cams-global-greenhouse-gas-forecasts",
+    "type": "process",
+    "jobID": "a79e0cce-9c46-4bd9-aec5-3570977cbbd1",
+    "status": "successful",
+    "created": "2026-08-09T16:03:57.677938",
+    "started": "2026-08-09T16:04:17.950364",
+    "finished": "2026-08-09T16:04:23.744705",
+    "updated": "2026-08-09T16:04:23.744705",
+    "links": [
+        {
+            "href": "https://ads.atmosphere.copernicus.eu/api/retrieve/v1/jobs/a79e0cce-9c46-4bd9-aec5-3570977cbbd1",
+            "rel": "self",
+            "type": "application/json"
+        },
+        {
+            "href": "https://ads.atmosphere.copernicus.eu/api/retrieve/v1/jobs/a79e0cce-9c46-4bd9-aec5-3570977cbbd1/results",
+            "rel": "results"
+        }
+    ],
+    "metadata": {
+        "datasetMetadata": {
+            "catalogue": "cams"
+        },
+        "origin": "api"
+    }
+}

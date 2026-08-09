@@ -7,19 +7,14 @@
     "updated": "2026-08-09T16:03:03.634155",
     "links": [
         {
-            "href": "https://cds.climate.copernicus.eu/api/retrieve/v1/processes/derived-era5-land-daily-statistics/execution",
-            "rel": "self"
-        },
-        {
             "href": "https://cds.climate.copernicus.eu/api/retrieve/v1/jobs/82d0a5fb-f096-42fd-b644-c7ba173b0154",
-            "rel": "monitor",
-            "type": "application/json",
-            "title": "job status info"
+            "rel": "self",
+            "type": "application/json"
         }
     ],
     "metadata": {
         "datasetMetadata": {
-            "messages": []
+            "catalogue": "c3s"
         },
         "origin": "api"
     }

@@ -1,0 +1,8 @@
+{
+    "type": "job results failed",
+    "title": "The job has failed",
+    "status": 400,
+    "instance": "https://ewds.climate.copernicus.eu/api/retrieve/v1/jobs/3a891e6b-e602-400d-9f26-d9be8acadc05/results",
+    "trace_id": "4e257fcd-dda1-494a-8e26-d5d6885676d4",
+    "traceback": "The job failed with: MultiAdaptorNoDataError\nMARS has returned an error, please check your selection.\nRequest submitted to the MARS server:\n[{'area': ['36.99', '28.46', '36.97', '28.48'], 'levtype': ['sfc'], 'date': ['2020-10-14', '2023-01-01'], 'time': ['06:00:00'], 'param': ['240023'], 'type': ['sfo'], 'class': ['ce'], 'model': ['lisflood'], 'expect': ['any'], 'expver': ['1'], 'number': ['all'], 'stream': ['efcl'], 'database': 'ecmwf', 'hdate': ['20100101']}]\nFull error message:\nmars - ERROR  - 20260809.160500 - Exception: Assertion failed: RegularGrid::minmax_ij: non-empty area crop/mask (to at least one point)  (/home/deploy/git/mars-client/mir/src/mir/repres/regular/RegularGrid.cc:165 minmax_ij)\nmars - ERROR  - 20260809.160500 - MIR: Assertion failed: RegularGrid::minmax_ij: non-empty area crop/mask (to at least one point)\nmars - ERROR  - 20260809.160500 - Interpolation failed (-2)\nmars - ERROR  - 20260809.160500 - Mars server task finished in error\nmars - ERROR  - 20260809.160500 - Double buffer error: Assertion failed: length == buffers_[i].length_(RemoteException from Connector[mvr012,bods1-ag0721:9701]) [marser-ecmwf]\nmars - ERROR  - 20260809.160500 - Error code is -2\nmars - ERROR  - 20260809.160500 - Request failed\nmars - ERROR  - 20260809.160500 - Some errors reported (last error -2)\n"
+}

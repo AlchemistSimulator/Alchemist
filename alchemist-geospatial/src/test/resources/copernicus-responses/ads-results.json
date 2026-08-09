@@ -1,0 +1,11 @@
+{
+    "asset": {
+        "value": {
+            "type": "application/zip",
+            "href": "https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-08-08/1b2c8f7e437451ffc09a9e23cb32a542.zip",
+            "file:checksum": "d6c0964f89e3f43d1a99ee4d7722f505",
+            "file:size": 7768356,
+            "file:local_path": "s3://cci2-prod-cache-2/2026-08-08/1b2c8f7e437451ffc09a9e23cb32a542.zip"
+        }
+    }
+}

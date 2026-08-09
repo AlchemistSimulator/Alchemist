@@ -232,6 +232,9 @@ class CdmGridSnapshots(directory: Path, variableName: String? = null) : GridSnap
      */
     override fun grid(index: Int): RasterGrid = grids[index]
 
+    /**
+     * Default values and helper factory logic for [CdmGridSnapshots].
+     */
     companion object {
 
         /**

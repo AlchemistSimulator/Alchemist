@@ -29,9 +29,9 @@ class BilinearInterpolation : SpatialInterpolation {
             position.longitude,
         )
 
-        /**
+        /*
          * axes are sorted in ascending order, so lower latitude index = south,
-         * lower longitude index = west
+         * lower longitude index = west.
          */
         val southWestValue = grid.valueAt(lowerLatitudeIndex, lowerLongitudeIndex)
         val southEastValue = grid.valueAt(lowerLatitudeIndex, upperLongitudeIndex)

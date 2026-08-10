@@ -55,11 +55,6 @@ data class CopernicusRequest(val dataset: String, val inputs: Map<String, Any>) 
          */
         private fun sha256Hex(str: String): String = MessageDigest.getInstance("SHA-256")
             .digest(str.toByteArray(Charsets.UTF_8))
-            /*
-             * 0 = padding with zeros instead of spaces.
-             * 2 = at least two digits.
-             * x = all hex are represented in lowercase.
-             */
-            .joinToString("") { "%02x".format(it) }
+            .toHexString()
     }
 }

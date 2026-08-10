@@ -98,12 +98,5 @@ internal fun md5Hex(file: Path): String {
             // reading feeds the digest. The bytes themselves are discarded.
         }
     }
-    return digest.digest().joinToString("") {
-        /*
-         * 0 = padding with zeros instead of spaces.
-         * 2 = at least two digits.
-         * x = all hex are represented in lowercase.
-         */
-        "%02x".format(it)
-    }
+    return digest.digest().toHexString()
 }

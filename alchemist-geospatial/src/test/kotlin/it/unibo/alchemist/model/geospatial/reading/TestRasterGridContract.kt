@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.geospatial.reading
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.spec.style.stringSpec
 import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.shouldBe
 
@@ -18,9 +19,7 @@ import io.kotest.matchers.shouldBe
  * Contract shared by every [RasterGrid] implementation, verified
  * once and parameterized by the factory of the concrete implementation under test.
  */
-abstract class TestRasterGridContract(
-    gridOf: (DoubleArray, DoubleArray, DoubleArray) -> RasterGrid,
-) : StringSpec({
+fun rasterGridContract(gridOf: (DoubleArray, DoubleArray, DoubleArray) -> RasterGrid) = stringSpec {
     /**
      * 3 latitudes by 4 longitudes.
      * The cell value at (iLat, iLon) is iLat * 10 + iLon,
@@ -73,17 +72,21 @@ abstract class TestRasterGridContract(
     // Dimension mismatch
     "a mismatch between (lats x lons) and values should raise an exception" {
         shouldThrow<IllegalArgumentException> {
-            ArrayRasterGrid(
+            gridOf(
                 lats,
                 lons,
                 DoubleArray(lats.size * lons.size - 1) { 0.0 },
             )
         }
     }
-})
+}
 
 // tests the array implementation (suitable for dense grids)
-class TestArrayRasterGrid : TestRasterGridContract(::ArrayRasterGrid)
+class TestArrayRasterGrid : StringSpec({
+    include(rasterGridContract(::ArrayRasterGrid))
+})
 
 // tests the map implementation (suitable for sparse grids)
-class TestMapRasterGrid : TestRasterGridContract(::MapRasterGrid)
+class TestMapRasterGrid : StringSpec({
+    include(rasterGridContract(::MapRasterGrid))
+})

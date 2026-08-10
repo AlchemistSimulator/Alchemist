@@ -13,7 +13,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.geospatial.mockGeoPosition
+import it.unibo.alchemist.mockGeoPosition
 import it.unibo.alchemist.model.geospatial.reading.ArrayRasterGrid
 import it.unibo.alchemist.model.geospatial.strategy.spatial.BilinearInterpolation
 import it.unibo.alchemist.model.geospatial.strategy.spatial.NearestInterpolation

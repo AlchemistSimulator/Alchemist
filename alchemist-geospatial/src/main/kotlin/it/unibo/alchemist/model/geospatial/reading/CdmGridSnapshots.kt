@@ -186,7 +186,7 @@ class CdmGridSnapshots(directory: Path, variableName: String? = null) : GridSnap
                         intArrayOf(1, nLat, nLon),
                     )
 
-                    var nonNullCount = 0
+                    var nanCount = 0
 
                     /*
                      * constructs the double array in row-major order, with ascending normalized axes.
@@ -201,15 +201,15 @@ class CdmGridSnapshots(directory: Path, variableName: String? = null) : GridSnap
                             val srcLon = if (lonDesc) (nLon - 1 - iLon) else iLon
                             arr[idx] = rawData.getDouble(srcLat * nLon + srcLon)
 
-                            if (arr[idx].isNaN()) nonNullCount++
+                            if (arr[idx].isNaN()) nanCount++
                         }
                     }
 
                     /*
-                     * Computes the grid density to pick the most efficient
+                     * Computes the fraction of NON-missing cells to pick the most efficient
                      * grid implementation.
                      */
-                    val density = nonNullCount.toDouble() / measurements.size
+                    val density = (measurements.size - nanCount).toDouble() / measurements.size
 
                     map[instant] = if (density < SPARSE_DENSITY_THRESHOLD) {
                         MapRasterGrid(lats, lons, measurements)

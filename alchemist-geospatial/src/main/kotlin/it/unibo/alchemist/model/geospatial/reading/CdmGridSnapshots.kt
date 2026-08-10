@@ -136,7 +136,7 @@ class CdmGridSnapshots(directory: Path, variableName: String? = null) : GridSnap
                     require(lats.contentEquals(refLats)) {
                         "Latitude axes differ in $file vs previous files"
                     }
-                    require(lons.contentEquals(refLons!!)) {
+                    require(lons.contentEquals(refLons)) {
                         "Longitude axes differ in $file vs previous files"
                     }
                 }

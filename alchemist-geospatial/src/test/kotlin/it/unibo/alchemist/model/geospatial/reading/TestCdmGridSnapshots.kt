@@ -14,7 +14,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeSortedWith
 import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.geospatial.writeTestNetcdf
+import it.unibo.alchemist.writeTestNetcdf
 import java.nio.file.Files
 import java.nio.file.Path
 

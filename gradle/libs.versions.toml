@@ -29,7 +29,7 @@ antlr4 = { module = "org.antlr:antlr4", version.ref = "antlr4" }
 antlr4-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr4" }
 ais-lib-messages = { module = "dk.dma.ais.lib:ais-lib-messages", version.ref = "ais-lib" }
 apache-commons-codec = "commons-codec:commons-codec:1.22.1"
-apache-commons-collections4 = "org.apache.commons:commons-collections4:4.5.0"
+apache-commons-collections4 = "org.apache.commons:commons-collections4:4.6.0"
 apache-commons-io = "commons-io:commons-io:2.22.0"
 apache-commons-lang3 = "org.apache.commons:commons-lang3:3.20.0"
 apache-commons-math3 = "org.apache.commons:commons-math3:3.6.1"

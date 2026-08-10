@@ -76,9 +76,8 @@ internal fun writeTestNetcdf(
         addAttribute(Attribute("units", "degrees_east"))
         addAttribute(Attribute("axis", "X"))
     }
-    builder.addVariable(variableName, DataType.FLOAT, "time latitude longitude").apply {
-        addAttribute(Attribute("_FillValue", fillValue))
-    }
+    builder.addVariable(variableName, DataType.FLOAT, "time latitude longitude")
+        .addAttribute(Attribute("_FillValue", fillValue))
 
     // creates the file and enters write mode
     builder.build().use { writer ->

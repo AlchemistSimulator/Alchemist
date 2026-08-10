@@ -118,7 +118,7 @@ class TestCopernicusLayer : StringSpec({
             data = timedGrid,
         )
         withClue("t=0.0 should hit the first slice exactly") {
-            for (i in timedGrid.instants.indices) {
+            timedGrid.instants.indices.forEach { _ ->
                 layer.getValue(center) shouldBe 7.0
             }
         }

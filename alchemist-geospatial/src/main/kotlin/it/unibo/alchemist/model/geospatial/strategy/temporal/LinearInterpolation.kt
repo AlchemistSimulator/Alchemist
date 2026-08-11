@@ -9,10 +9,15 @@
 
 package it.unibo.alchemist.model.geospatial.strategy.temporal
 
+import it.unibo.alchemist.model.geospatial.strategy.StatelessStrategy
+
 /**
  * [TemporalInterpolation] that blends between two adjacent values.
  */
-class LinearInterpolation : TemporalInterpolation {
+class LinearInterpolation :
+    StatelessStrategy(),
+    TemporalInterpolation {
+
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = when {
         weight == 0.0 -> valueBefore
         weight == 1.0 -> valueAfter

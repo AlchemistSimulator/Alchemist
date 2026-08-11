@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.geospatial.strategy.spatiotemporal
 
+import it.unibo.alchemist.model.geospatial.strategy.StatelessStrategy
 import it.unibo.alchemist.model.geospatial.strategy.spatial.BilinearInterpolation
 import it.unibo.alchemist.model.geospatial.strategy.temporal.LinearInterpolation
 
@@ -23,4 +24,8 @@ import it.unibo.alchemist.model.geospatial.strategy.temporal.LinearInterpolation
  * the interpolation yields [Double.NaN].
  */
 class TrilinearInterpolation :
-    SpatioTemporalInterpolation by SeparableSpatioTemporalInterpolation(BilinearInterpolation(), LinearInterpolation())
+    StatelessStrategy(),
+    SpatioTemporalInterpolation by SeparableSpatioTemporalInterpolation(
+        BilinearInterpolation(),
+        LinearInterpolation(),
+    )

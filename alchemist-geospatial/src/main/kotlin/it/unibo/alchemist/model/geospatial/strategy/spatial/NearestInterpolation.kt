@@ -11,12 +11,16 @@ package it.unibo.alchemist.model.geospatial.strategy.spatial
 
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
+import it.unibo.alchemist.model.geospatial.strategy.StatelessStrategy
 import it.unibo.alchemist.model.geospatial.strategy.nearestIndex
 
 /**
  * Value of the nearest cell to the point.
  */
-class NearestInterpolation : SpatialInterpolation {
+class NearestInterpolation :
+    StatelessStrategy(),
+    SpatialInterpolation {
+
     override fun valueAt(grid: RasterGrid, position: GeoPosition): Double {
         val nearestLatitudeIndex = nearestIndex(grid.latitudes, position.latitude)
         val nearestLongitudeIndex = nearestIndex(grid.longitudes, position.longitude)

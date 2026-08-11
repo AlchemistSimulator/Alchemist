@@ -16,9 +16,5 @@ package it.unibo.alchemist.model.geospatial.strategy.converter
  * @param defaultValue the fallback value returned when encountering `Double.NaN`.
  * Defaults to [Double.NaN].
  */
-class DoubleIdentityWithFallback(defaultValue: Double = Double.NaN) :
-    MissingValueFallbackConverter<Double>({ it }, defaultValue) {
-    private companion object {
-        private const val serialVersionUID = 1L
-    }
-}
+data class DoubleIdentityWithFallback(private val defaultValue: Double = Double.NaN) :
+    MeasurementConverter<Double> by MissingValueFallbackConverter({ it }, defaultValue)

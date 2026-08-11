@@ -9,11 +9,16 @@
 
 package it.unibo.alchemist.model.geospatial.strategy.temporal
 
+import it.unibo.alchemist.model.geospatial.strategy.StatelessStrategy
+
 /**
  * [TemporalInterpolation] that always resolves with the value of
  * the next temporal slice.
  */
-class NextInterpolation : TemporalInterpolation {
+class NextInterpolation :
+    StatelessStrategy(),
+    TemporalInterpolation {
+
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = valueAfter
 
     private companion object {

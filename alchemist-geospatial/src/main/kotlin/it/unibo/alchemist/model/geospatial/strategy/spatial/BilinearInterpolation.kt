@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.geospatial.strategy.spatial
 
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
+import it.unibo.alchemist.model.geospatial.strategy.StatelessStrategy
 import it.unibo.alchemist.model.geospatial.strategy.bracketIndices
 import it.unibo.alchemist.model.geospatial.strategy.weight
 
@@ -18,7 +19,10 @@ import it.unibo.alchemist.model.geospatial.strategy.weight
  * Bilinear interpolation over the 4 cells surrounding the point. If any of the 4 corners is
  * missing, returns [Double.NaN].
  */
-class BilinearInterpolation : SpatialInterpolation {
+class BilinearInterpolation :
+    StatelessStrategy(),
+    SpatialInterpolation {
+
     override fun valueAt(grid: RasterGrid, position: GeoPosition): Double {
         val (lowerLatitudeIndex, upperLatitudeIndex) = bracketIndices(
             grid.latitudes,

@@ -9,11 +9,16 @@
 
 package it.unibo.alchemist.model.geospatial.strategy.temporal
 
+import it.unibo.alchemist.model.geospatial.strategy.StatelessStrategy
+
 /**
  * [TemporalInterpolation] that always resolves with the resolved value of
  * the closest temporal slice.
  */
-class ClosestInterpolation : TemporalInterpolation {
+class ClosestInterpolation :
+    StatelessStrategy(),
+    TemporalInterpolation {
+
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double =
         if (weight < 0.5) valueBefore else valueAfter
 

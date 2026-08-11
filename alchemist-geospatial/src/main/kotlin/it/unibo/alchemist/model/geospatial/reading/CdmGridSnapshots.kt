@@ -51,12 +51,6 @@ import ucar.nc2.dataset.NetcdfDatasets
  * The variable to read is selected by [variableName], or auto-detected as the unique
  * `(time, lat, lon)` variable in the file.
  *
- * ## SAX note
- * `NetcdfDatasets.openDataset` parses its internal XML configuration via SAX.
- * If Alchemist's classpath contains a xerces/xml-apis jar that overrides the JDK SAX parser,
- * a `SAXNotRecognizedException` will be thrown on first open. Two fixes: exclude the
- * offending jar from the dependency tree, or set the system property before any call to this class.
- *
  * @param directory directory of homogeneous spatial data files (NetCDFs/GRIBs).
  * @param variableName name of the variable as it appears in the file (e.g. `"dis24"`),
  * not the CDS catalogue name. If `null`, auto-detected from the file.

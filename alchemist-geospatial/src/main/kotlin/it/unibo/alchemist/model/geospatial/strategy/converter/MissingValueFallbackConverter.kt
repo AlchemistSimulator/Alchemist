@@ -18,10 +18,8 @@ package it.unibo.alchemist.model.geospatial.strategy.converter
  *
  * @param T the output type of the measurement conversion.
  */
-open class MissingValueFallbackConverter<T>(
-    private val delegate: MeasurementConverter<T>,
-    private val defaultValue: T,
-) : MeasurementConverter<T> {
+class MissingValueFallbackConverter<T>(private val delegate: MeasurementConverter<T>, private val defaultValue: T) :
+    MeasurementConverter<T> {
 
     /**
      * Converts the given [value].

@@ -42,6 +42,16 @@ dependencies {
     testRuntimeOnly(incarnation("protelis"))
 }
 
+configurations.all {
+    resolutionStrategy {
+        eachDependency {
+            if (requested.group == "com.google.protobuf" && requested.name == "protobuf-java") {
+                useVersion("3.12.2")
+            }
+        }
+    }
+}
+
 publishing.publications {
     withType<MavenPublication> {
         pom {

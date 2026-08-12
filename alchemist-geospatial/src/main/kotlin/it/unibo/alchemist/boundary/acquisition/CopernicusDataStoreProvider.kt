@@ -42,6 +42,9 @@ import org.slf4j.LoggerFactory
  *
  * @param endpoint base URL of the data store (e.g. `https://ewds.climate.copernicus.eu/api`); a
  * trailing slash, if present, is trimmed.
+ * @param checkMd5 whether to check the MD5 digest of the downloaded file. Sometimes Copernicus stores
+ * return the correct requested assets but report an incorrect MD5, so it may be useful to
+ * disable this check.
  * @param tokenSupplier supplies the ECMWF token sent as the `PRIVATE-TOKEN` header on the OGC GET/POST calls.
  * @param http HTTP client to use; defaults to the JDK [HttpClient].
  * @param pollInterval base interval between two status polls; grows with backoff up to [maxPollInterval].
@@ -52,12 +55,13 @@ import org.slf4j.LoggerFactory
  * @throws IllegalArgumentException if the [endpoint] does not represent a valid URL.
  */
 class CopernicusDataStoreProvider(
-    endpoint: String,
+    private val endpoint: String,
+    private val checkMd5: Boolean = true,
     private val http: HttpClient = HttpClient.newHttpClient(),
     private val pollInterval: Duration = Duration.ofSeconds(DEFAULT_POLL_INTERVAL_SEC),
     private val maxPollInterval: Duration = Duration.ofSeconds(DEFAULT_MAX_POLL_INTERVAL_SEC),
     private val timeout: Duration = Duration.ofMinutes(DEFAULT_TIMEOUT_MIN),
-    tokenSupplier: () -> String,
+    private val tokenSupplier: () -> String,
 ) : ExternalDataProvider<CopernicusRequest> {
 
     /**
@@ -85,7 +89,8 @@ class CopernicusDataStoreProvider(
      * @param targetDir the temporary directory where the downloaded assets will be saved.
      *
      * @throws IllegalArgumentException if [targetDir] does not exist or is not a directory.
-     * @throws IllegalStateException if the assets can't be downloaded or on timeout.
+     * @throws IllegalStateException if the assets can't be downloaded, on timeout or if the
+     * asset validation fails.
      */
     override fun fetch(request: CopernicusRequest, targetDir: Path) {
         require(targetDir.isDirectory()) {
@@ -104,11 +109,15 @@ class CopernicusDataStoreProvider(
         // downloads the asset.
         val file = download(asset, targetDir)
 
-        // asset validation and optional archive flattening.
-        verify(file, asset.sizeBytes, asset.md5) { md5, file ->
-            logger.warn(
-                "\"Data store advertised an unusable MD5 checksum ($md5) for '$file': skipping MD5 verification",
-            )
+        // asset validation and archive flattening.
+        if (!checkMd5) {
+            logger.warn("MD5 check disabled. Only the size in bytes is checked.")
+        }
+
+        verify(file, asset.sizeBytes, asset.takeIf { checkMd5 }?.md5) { md5, file ->
+            check(!checkMd5) {
+                "Data store advertised an unusable MD5 checksum ($md5) for '$file': could not check asset integrity."
+            }
         }
         flattenArchives(targetDir)
 

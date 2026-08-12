@@ -13,6 +13,7 @@ import it.unibo.alchemist.boundary.acquisition.CopernicusCacheManager
 import it.unibo.alchemist.boundary.acquisition.CopernicusDataStoreProvider
 import it.unibo.alchemist.boundary.acquisition.CopernicusRequest
 import it.unibo.alchemist.boundary.acquisition.utility.CdsApiRc
+import it.unibo.alchemist.boundary.acquisition.utility.CopernicusInputs
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.expandUser
@@ -49,7 +50,7 @@ import kotlin.time.Instant
  * no credentials. Selected from YAML by providing `dataDirectory`.
  * - **Datastore**: takes a Copernicus-family endpoint plus an opaque request, retrieves the
  * data through a local cache manager, then reads it. The only one that touches the network. Selected from
- * YAML by providing `endpoint`, `dataset` and `inputs`.
+ * YAML by providing `endpoint`, `dataset` and `inputsFile`.
  *
  * @property environment simulation environment. Used only to read the current time via [Environment.simulationOrNull].
  * @property data temporal raster series backing this layer.
@@ -137,8 +138,12 @@ open class CopernicusLayer<T>(
      *
      * @param endpoint base URL of the datastore (e.g. `"https://ewds.climate.copernicus.eu/api"`).
      * @param dataset dataset identifier (e.g. `"cems-glofas-historical"`).
-     * @param inputs opaque request map for [dataset] (variables, dates, area, format...), passed
-     * verbatim to the datastore.
+     * @param inputsFile path of a JSON file holding the opaque request map for [dataset] at
+     * [endpoint] (variables, dates, area, type, ...), passed verbatim to the datastore.
+     * A leading `~` is expanded to the user home.
+     * @param checkMd5 whether to check the MD5 digest of the downloaded asset.
+     * Sometimes Copernicus stores return the correct requested assets but report an incorrect MD5,
+     * so it may be useful to disable this check. `true` by default.
      * @param variable variable name inside the downloaded file. Auto-detected when `null`.
      * @param timeScale real-world duration of one simulation time unit, as an ISO-8601 duration.
      * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601
@@ -158,7 +163,8 @@ open class CopernicusLayer<T>(
         environment: Environment<*, GeoPosition>,
         endpoint: String,
         dataset: String,
-        inputs: Map<String, Any>,
+        inputsFile: String,
+        checkMd5: Boolean = true,
         variable: String? = null,
         timeScale: String = DEFAULT_TIME_SCALE_ISO,
         timeOrigin: String? = null,
@@ -172,7 +178,8 @@ open class CopernicusLayer<T>(
             resolveDataDirectory(
                 endpoint,
                 dataset,
-                inputs,
+                checkMd5,
+                inputsFile.expandUser(),
                 cacheDirectory.expandUser(),
                 cdsApiRcFile.expandUser(),
             ),
@@ -299,13 +306,14 @@ open class CopernicusLayer<T>(
         private fun resolveDataDirectory(
             endpoint: String,
             dataset: String,
-            inputs: Map<String, Any>,
+            checkMd5: Boolean,
+            inputsFile: Path,
             cacheDirectoryRoot: Path,
             cdsApiRcFile: Path,
         ): Path {
-            val provider = CopernicusDataStoreProvider(endpoint) { CdsApiRc.readToken(cdsApiRcFile) }
+            val provider = CopernicusDataStoreProvider(endpoint, checkMd5) { CdsApiRc.readToken(cdsApiRcFile) }
             return CopernicusCacheManager(provider, cacheDirectoryRoot)
-                .getOrProduce(CopernicusRequest(dataset, inputs))
+                .getOrProduce(CopernicusRequest(dataset, CopernicusInputs.read(inputsFile)))
         }
     }
 }

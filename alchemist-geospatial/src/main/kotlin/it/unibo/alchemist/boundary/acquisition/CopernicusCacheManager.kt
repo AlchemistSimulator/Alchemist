@@ -9,10 +9,12 @@
 
 package it.unibo.alchemist.boundary.acquisition
 
+import java.io.Serializable
 import java.nio.file.FileSystemException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
+import org.slf4j.LoggerFactory
 
 /**
  * Filesystem cache of the directories produced by data providers. This is the **single** place
@@ -55,7 +57,12 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
     override fun getOrProduce(request: CopernicusRequest): Path {
         val finalDir = root.resolve(request.toFileName())
         // cache hit: the directory already exists
-        if (Files.isDirectory(finalDir)) return finalDir
+        if (Files.isDirectory(finalDir)) {
+            logger.info("Cache hit for '${request.toFileName()}': using $finalDir")
+            return finalDir
+        }
+
+        logger.info("Cache miss for '${request.toFileName()}': fetching data")
 
         // cache miss (also creates root if it does not exist)
         Files.createDirectories(tmpRoot)
@@ -101,6 +108,8 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
         Files.list(dir).use { entries -> entries.anyMatch { Files.isRegularFile(it) } }
 
     private companion object {
+        private val logger = LoggerFactory.getLogger(CopernicusCacheManager::class.java)
+
         private const val TEMP_SUBDIR = ".tmp"
     }
 }

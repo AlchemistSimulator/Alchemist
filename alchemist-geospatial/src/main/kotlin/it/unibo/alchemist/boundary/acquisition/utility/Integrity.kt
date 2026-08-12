@@ -25,9 +25,6 @@ private const val DIGEST_BUFFER_BYTES = 8 * 1024 // 8 KB
  */
 private const val MD5_HEX_DIGITS = 32
 
-private val logger =
-    LoggerFactory.getLogger("it.unibo.alchemist.model.geospatial.acquisition.utility.Integrity")
-
 /**
  * Verifies the integrity of a downloaded [file] against the metadata the data store advertised for
  * it: the byte count must equal [expectedSizeBytes] and, when [expectedMd5] is supplied,
@@ -43,10 +40,17 @@ private val logger =
  * @param file the downloaded file to check.
  * @param expectedSizeBytes the expected size in bytes.
  * @param expectedMd5 the expected MD5 digest as a hex string, if advertised.
+ * @param checksumUnusableAction an action performed with the advertised checksum and filename
+ * if the checksum turns out to be unusable.
  *
  * @throws IllegalStateException if the actual size, or the actual MD5, does not match.
  */
-internal fun verify(file: Path, expectedSizeBytes: Long, expectedMd5: String? = null) {
+internal fun verify(
+    file: Path,
+    expectedSizeBytes: Long,
+    expectedMd5: String? = null,
+    checksumUnusableAction: (String, String) -> Unit = { _, _ -> },
+) {
     val actualSize = Files.size(file)
 
     check(actualSize == expectedSizeBytes) {
@@ -59,11 +63,7 @@ internal fun verify(file: Path, expectedSizeBytes: Long, expectedMd5: String? = 
 
     // warns the user that no md5 was provided.
     if (!expected.isMd5Hex()) {
-        logger.warn(
-            "Data store advertised an unusable checksum ('{}') for '{}': skipping MD5 verification",
-            advertised,
-            file.fileName,
-        )
+        checksumUnusableAction(advertised, file.fileName.toString())
         return
     }
 

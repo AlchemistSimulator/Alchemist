@@ -64,10 +64,10 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
      * @param environment simulation environment.
      * @param dataDirectory path of a directory holding one or more homogeneous data files. A
      * leading `~` is expanded to the user home.
-     * @param variable variable name inside the file (e.g. `"dis24"`); auto-detected when `null`.
      * @param timeScale real-world duration of one simulation time unit, as an ISO-8601 duration.
      * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601
      * instant; the first instant found in the data is used when `null`.
+     * @param variable variable name inside the file (e.g. `"dis24"`); auto-detected when `null`.
      * @param interpolation strategy for spatio-temporal evaluation.
      * @param converter maps the interpolated value (possibly [Double.NaN]) to a [Double].
      */
@@ -75,9 +75,9 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
     constructor(
         environment: Environment<*, GeoPosition>,
         dataDirectory: String,
-        variable: String? = null,
         timeScale: String = DEFAULT_TIME_SCALE_ISO,
         timeOrigin: String? = null,
+        variable: String? = null,
         interpolation: SpatioTemporalInterpolation = TrilinearInterpolation(),
         converter: MeasurementConverter<Double> = DoubleIdentityWithFallback(),
     ) : super(
@@ -97,11 +97,15 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
      * @param environment simulation environment.
      * @param endpoint base URL of the datastore (e.g. `"https://ewds.climate.copernicus.eu/api"`).
      * @param dataset dataset identifier (e.g. `"cems-glofas-historical"`).
-     * @param inputs opaque request map for [dataset], passed verbatim to the datastore.
-     * @param variable variable name inside the downloaded file; auto-detected when `null`.
+     * @param inputsFile path of a JSON file holding the opaque request map for [dataset] at [endpoint],
+     * passed verbatim to the datastore.
+     * @param checkMd5 whether to check the MD5 digest of the downloaded asset.
+     * Sometimes Copernicus stores return the correct requested assets but report an incorrect MD5,
+     * so it may be useful to disable this check.
      * @param timeScale real-world duration of one simulation time unit, as an ISO-8601 duration.
      * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601
      * instant; the first instant found in the data is used when `null`.
+     * @param variable variable name inside the downloaded file; auto-detected when `null`.
      * @param cacheDirectory root of the local cache. A leading `~` is expanded to the user home.
      * @param cdsApiRcFile path of a `.cdsapirc`-formatted file holding the API token. A leading `~`
      * is expanded to the user home.
@@ -113,10 +117,11 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
         environment: Environment<*, GeoPosition>,
         endpoint: String,
         dataset: String,
-        inputs: Map<String, Any>,
-        variable: String? = null,
+        inputsFile: String,
+        checkMd5: Boolean,
         timeScale: String = DEFAULT_TIME_SCALE_ISO,
         timeOrigin: String? = null,
+        variable: String? = null,
         cacheDirectory: String = DEFAULT_CACHE_DIRECTORY,
         cdsApiRcFile: String = DEFAULT_CDSAPIRC_FILE,
         interpolation: SpatioTemporalInterpolation = TrilinearInterpolation(),
@@ -125,7 +130,8 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
         environment,
         endpoint,
         dataset,
-        inputs,
+        inputsFile,
+        checkMd5,
         variable,
         timeScale,
         timeOrigin,

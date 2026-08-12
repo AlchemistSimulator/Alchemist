@@ -25,6 +25,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.file.Path
 import java.time.Duration
+import java.time.temporal.ChronoUnit
 import kotlin.io.path.isDirectory
 import org.slf4j.LoggerFactory
 
@@ -91,6 +92,9 @@ class CopernicusDataStoreProvider(
             "$targetDir is not a directory or does not exist"
         }
 
+        logger.info("Fetching dataset '${request.dataset}'.")
+        val start = System.nanoTime()
+
         // asks ECMWF servers to elaborate the data.
         val monitorUrl = submit(request)
         // polls until the data can be retrieved.
@@ -101,8 +105,15 @@ class CopernicusDataStoreProvider(
         val file = download(asset, targetDir)
 
         // asset validation and optional archive flattening.
-        verify(file, asset.sizeBytes, asset.md5)
+        verify(file, asset.sizeBytes, asset.md5) { md5, file ->
+            logger.warn(
+                "\"Data store advertised an unusable MD5 checksum ($md5) for '$file': skipping MD5 verification",
+            )
+        }
         flattenArchives(targetDir)
+
+        val elapsed = Duration.ofNanos(System.nanoTime() - start).truncatedTo(ChronoUnit.MILLIS)
+        logger.info("Dataset '${request.dataset}' successfully downloaded in $elapsed.")
     }
 
     /**
@@ -137,7 +148,10 @@ class CopernicusDataStoreProvider(
         if (!response.isSuccessful) {
             failOnHttpError("Submit of dataset '${request.dataset}'", response)
         }
-        return parseMonitorUrl(response.body())
+
+        val monitorUrl = parseMonitorUrl(response.body())
+        logger.info("Job submitted for '${request.dataset}', monitoring at $monitorUrl")
+        return monitorUrl
     }
 
     /**
@@ -174,24 +188,24 @@ class CopernicusDataStoreProvider(
             // status check
             when (val status = parseStatus(body)) {
                 "successful" -> {
-                    logger.info("Job completed at {}", monitorUrl)
+                    logger.info("Job completed at $monitorUrl")
                     return parseResultsUrl(body)
                         ?: error("Job 'successful' but no rel='results' link at $monitorUrl: inconsistent response")
                 }
                 "failed", "rejected", "dismissed", "deleted" -> failOnStatus(monitorUrl, status, body)
                 "accepted", "running" -> {
                     // fine details on debug mode
-                    logger.debug("Job status '{}' at {}", status, monitorUrl)
+                    logger.debug("Job status '$status' at $monitorUrl")
                     val now = System.nanoTime()
 
                     // reassures the user that the program is in fact not dead.
                     if (now - lastHeartbeat >= heartbeatNanos) {
-                        logger.info("Still waiting for job at {} (status: {})", monitorUrl, status)
+                        logger.info("Still waiting for job at $monitorUrl (status: $status)")
                         lastHeartbeat = now
                     }
                 }
                 // warns the user about the new unknow status, but keeps polling.
-                else -> logger.warn("Unrecognized job status '{}' at {}, continuing to poll", status, monitorUrl)
+                else -> logger.warn("Unrecognized job status '$status' at $monitorUrl, continuing to poll")
             }
 
             // fails on timeout
@@ -217,6 +231,8 @@ class CopernicusDataStoreProvider(
     private fun fetchAsset(resultsUrl: String): RemoteAsset {
         val asset = parseAsset(get(resultsUrl).body())
         val absoluteHref = URI.create(resultsUrl).resolve(asset.href).toString()
+
+        logger.info("Asset will be downloaded from: $absoluteHref (${asset.sizeBytes} bytes)")
         return asset.copy(href = absoluteHref)
     }
 
@@ -239,6 +255,7 @@ class CopernicusDataStoreProvider(
         // extracts the asset name from the uri
         val fileName = uri.path.substringAfterLast('/').ifEmpty { "download" }
         val target = targetDir.resolve(fileName)
+        logger.info("Downloading $fileName...")
 
         val request = HttpRequest.newBuilder().uri(uri).GET().build() // no PRIVATE-TOKEN needed
         val response = http.send(request, HttpResponse.BodyHandlers.ofFile(target))
@@ -247,6 +264,7 @@ class CopernicusDataStoreProvider(
         if (!response.isSuccessful) {
             error("Download failed (HTTP ${response.statusCode()}) from ${asset.href}")
         }
+        logger.info("Downloaded $fileName")
         return response.body()
     }
 

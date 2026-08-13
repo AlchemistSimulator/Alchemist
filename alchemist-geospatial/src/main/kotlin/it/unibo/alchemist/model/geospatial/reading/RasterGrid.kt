@@ -12,23 +12,33 @@ package it.unibo.alchemist.model.geospatial.reading
 import java.io.Serializable
 
 /**
- * A single 2D spatial "slice" of data on a regular geographic grid (latitude/longitude).
+ * A single 2D spatial bounding box, based on a geographic grid (latitude/longitude).
  *
- * Axis contract: [latitudes] and [longitudes] are ALWAYS sorted in ascending order.
- * Implementations that read files with descending axes (e.g. GloFAS, whose latitude runs
- * from +89.95 to −59.95) must normalize internally, so that strategies never need to
- * reason about axis direction.
+ * @param latitudes latitudes of grid nodes, in degrees, sorted in **strictly** ascending order.
+ * @param longitudes longitudes of grid nodes, in degrees, sorted in **strictly** ascending order.
+ * @param gridValues cell values in row-major order respect to [latitudes] x [longitudes];
+ * [Double.NaN] values represent missing/fill values.
+ *
+ * @throws IllegalArgumentException if [latitudes]/[longitudes] are not strictly ascending or if
+ * [gridValues]' size does not equal `latitudes.size * longitudes.size`.
  */
-interface RasterGrid : Serializable {
-    /**
-     * Latitudes of grid nodes, in degrees, sorted in ascending order.
-     */
-    val latitudes: DoubleArray
+abstract class RasterGrid(val latitudes: DoubleArray, val longitudes: DoubleArray, val gridValues: DoubleArray) :
+    Serializable {
 
-    /**
-     * Longitudes of grid nodes, in degrees, sorted in ascending order.
-     */
-    val longitudes: DoubleArray
+    init {
+        require(latitudes.isStrictlyAscending()) {
+            "latitudes must be strictly ascending, but got ${latitudes.contentToString()}"
+        }
+        require(longitudes.isStrictlyAscending()) {
+            "longitudes must be strictly ascending, but got ${longitudes.contentToString()}"
+        }
+
+        val expectedSize = latitudes.size * longitudes.size
+        require(gridValues.size == expectedSize) {
+            "Dimension mismatch: expected $expectedSize values " +
+                "(${latitudes.size} lat x ${longitudes.size} lon), but got ${gridValues.size}"
+        }
+    }
 
     /**
      * Raw value of the cell at the given index coordinates.
@@ -36,36 +46,17 @@ interface RasterGrid : Serializable {
      * @param latIndex index on the [latitudes] axis.
      * @param lonIndex index on the [longitudes] axis.
      *
-     * @return the raw value of the cell; a [Double.NaN]
-     * denotes a missing/fill value.
+     * @return the raw value of the cell; a [Double.NaN] denotes a missing/fill value.
      */
-    fun valueAt(latIndex: Int, lonIndex: Int): Double
-}
+    abstract fun valueAt(latIndex: Int, lonIndex: Int): Double
 
-/**
- * Validates that [latitudes] and [longitudes] are strictly ascending and that the number of
- * provided values matches the size of the grid described by [latitudes] and [longitudes].
- *
- * @throws IllegalArgumentException if [latitudes]/[longitudes] are not strictly ascending or if
- * [valuesSize] does not equal `latitudes.size * longitudes.size`.
- */
-internal fun requireValidGridAxes(latitudes: DoubleArray, longitudes: DoubleArray, valuesSize: Int) {
-    require(latitudes.isStrictlyAscending()) {
-        "latitudes must be strictly ascending, but got ${latitudes.contentToString()}"
-    }
-    require(longitudes.isStrictlyAscending()) {
-        "longitudes must be strictly ascending, but got ${longitudes.contentToString()}"
-    }
-
-    val expectedSize = latitudes.size * longitudes.size
-    require(valuesSize == expectedSize) {
-        "Dimension mismatch: expected $expectedSize values " +
-            "(${latitudes.size} lat x ${longitudes.size} lon), but got $valuesSize"
+    private companion object {
+        private const val serialVersionUID = 1L
     }
 }
 
 /**
- * @return `true` if this [DoubleArray] is stricly ascending.
+ * @return `true` if this [DoubleArray] is strictly ascending.
  */
 private fun DoubleArray.isStrictlyAscending(): Boolean = when {
     this.size <= 1 -> true

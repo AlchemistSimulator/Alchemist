@@ -11,19 +11,22 @@ package it.unibo.alchemist.model.geospatial.reading
 
 /**
  * In-memory implementation of [RasterGrid] where only non-missing values
- * are stored, in a map keyed by latitude-longitude index pairs.
+ * are stored in a map keyed by latitude-longitude index pairs.
  *
  * Suited for sparse grids, where most cells hold a missing value.
  *
  * @property latitudes see [RasterGrid.latitudes] (ascending).
  * @property longitudes see [RasterGrid.longitudes] (ascending).
  * @param values cell values in row-major order; [Double.NaN] values represent missing/fill values.
+ *
+ * @throws IllegalArgumentException if [latitudes]/[longitudes] are not strictly ascending or if
+ * [values]' size does not equal `latitudes.size * longitudes.size`.
  */
 class MapRasterGrid(override val latitudes: DoubleArray, override val longitudes: DoubleArray, values: DoubleArray) :
     RasterGrid {
 
     init {
-        requireMatchingGridSize(latitudes, longitudes, values.size)
+        requireValidGridAxes(latitudes, longitudes, values.size)
     }
 
     /**

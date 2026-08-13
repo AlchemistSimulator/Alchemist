@@ -8,30 +8,11 @@
  */
 package it.unibo.alchemist.model.timedistributions
 
-import it.unibo.alchemist.model.Actionable
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.times.DoubleTime
 
 /**
  * A trigger that fires at a given [time].
  */
-class Trigger<T>(time: Time) : AbstractDistribution<T>(time) {
-    override fun getRate(): Double = Double.Companion.NaN
-
-    override fun updateStatus(currentTime: Time, executed: Boolean, source: Actionable<T>) {
-        if (executed) {
-            setNextOccurrence(DoubleTime(Double.Companion.POSITIVE_INFINITY))
-        }
-    }
-
-    override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): AbstractDistribution<T> =
-        Trigger(nextOccurence.current)
-
-    /**
-     * Static constants for [Trigger] class.
-     */
-    companion object {
-        private const val serialVersionUID = 5207992119302525618L
-    }
+class Trigger(private val time: Time) : AbstractDistribution(time) {
+    override fun sample(): Time = time
 }

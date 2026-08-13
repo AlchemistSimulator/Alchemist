@@ -13,17 +13,11 @@ import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import java.io.Serial;
-
 /**
  * A {@link DiracComb} whose rate is determined (uniformly) randomly within the provided bounds.
  *
- * @param <T> concentration type
  */
-public class RandomDiracComb<T> extends DiracComb<T> {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class RandomDiracComb extends DiracComb {
 
     /**
      * @param rng

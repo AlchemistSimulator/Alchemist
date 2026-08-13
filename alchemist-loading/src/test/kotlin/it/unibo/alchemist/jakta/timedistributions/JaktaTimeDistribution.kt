@@ -9,24 +9,15 @@
 
 package it.unibo.alchemist.jakta.timedistributions
 
-import it.unibo.alchemist.model.Actionable
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.observation.Observable
 
-data class JaktaTimeDistribution<T>(
-    val sense: TimeDistribution<T>,
-    val deliberate: TimeDistribution<T>,
-    val act: TimeDistribution<T>,
-) : TimeDistribution<T> {
-    override fun update(currentTime: Time, source: Actionable<T>) = doNotUse()
-
-    override fun getNextOccurence(): Observable<Time> = doNotUse()
-
-    override fun getRate(): Double = doNotUse()
-
-    override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): TimeDistribution<T> = doNotUse()
+data class JaktaTimeDistribution(
+    val sense: TimeDistribution,
+    val deliberate: TimeDistribution,
+    val act: TimeDistribution,
+) : TimeDistribution {
+    override fun sample(): Time = doNotUse()
 
     private fun doNotUse(): Nothing = error(
         "${this::class.simpleName} is not meant to be used directly, but to host custom time distributions" +

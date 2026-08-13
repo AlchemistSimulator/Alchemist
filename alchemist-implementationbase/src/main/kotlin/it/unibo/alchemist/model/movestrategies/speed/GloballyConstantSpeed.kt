@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy
  */
 class GloballyConstantSpeed<T, P : Position<P>>(private val reaction: Reaction<*>, private val maxSpeed: Double) :
     SpeedSelectionStrategy<T, P> {
-    override fun getNodeMovementLength(target: P?) = maxSpeed / reaction.timeDistribution.rate
+    override fun getNodeMovementLength(target: P?) = maxSpeed / reaction.rate
 
     override fun cloneIfNeeded(destination: Node<T>, reaction: Reaction<T>): GloballyConstantSpeed<T, P> =
         GloballyConstantSpeed(reaction, maxSpeed)

@@ -60,15 +60,15 @@ class BiomolPresentInNeighbor(
     override fun cloneCondition(
         newNode: Node<Double>,
         newReaction: Reaction<Double>,
-    ): AbstractNeighborCondition<Double> = BiomolPresentInNeighbor(environment, node, molecule, concentration)
+    ): AbstractNeighborCondition<Double> = BiomolPresentInNeighbor(environment, newNode, molecule, concentration)
 
     override fun toString(): String = "$molecule >= $concentration in neighbor"
 
     private fun setUpObservability() {
-        addObservableDependency(node.observeConcentration(molecule))
+        addObservableDependency(super.getNode().observeConcentration(molecule))
         setValidity(
             observeValidNeighbors().map { validNeighbors ->
-                val current = environment.getNeighborhood(node).current
+                val current = environment.getNeighborhood(super.getNode()).current
                 validNeighbors
                     ?.takeIf { it.isNotEmpty() }?.entries
                     ?.filter { it.key.asPropertyOrNull<Double, CellProperty<*>>() != null }

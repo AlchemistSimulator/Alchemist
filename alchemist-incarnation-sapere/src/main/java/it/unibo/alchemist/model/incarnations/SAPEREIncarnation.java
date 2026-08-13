@@ -166,12 +166,12 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
         return new LsaNode(environment);
     }
 
-    private static TimeDistribution<List<ILsaMolecule>> defaultTD(final RandomGenerator rand) {
+    private static TimeDistribution defaultTD(final RandomGenerator rand) {
         return new SAPEREExponentialTime("Infinity", rand);
     }
 
     @Override
-    public TimeDistribution<List<ILsaMolecule>> createTimeDistribution(
+    public TimeDistribution createTimeDistribution(
         final RandomGenerator randomGenerator,
         final Environment<List<ILsaMolecule>, P> environment,
         final Node<List<ILsaMolecule>> node,
@@ -195,7 +195,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
             final RandomGenerator randomGenerator,
             final Environment<List<ILsaMolecule>, P> environment,
             final Node<List<ILsaMolecule>> node,
-            final TimeDistribution<List<ILsaMolecule>> timeDistribution,
+            final TimeDistribution timeDistribution,
             final @Nullable Object parameter) {
         final SAPEREReaction result = new SAPEREReaction(environment, (LsaNode) node, randomGenerator, timeDistribution);
         if (parameter != null && !parameter.toString().isEmpty()) {

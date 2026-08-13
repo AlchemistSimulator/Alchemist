@@ -30,7 +30,7 @@ private const val INVERSE_REACTION = "[token in neighbor] --> [token]"
 private val INCARNATION = BiochemistryIncarnation()
 private val BIOMOLECULE = INCARNATION.createMolecule("token")
 private val RANDOM = MersenneTwister()
-private val TIME = ExponentialTime<Double>(1.0, RANDOM)
+private val TIME = ExponentialTime(1.0, RANDOM)
 private val LINKING_RULE = ConnectWithinDistance<Double, Euclidean2DPosition>(5.0)
 private val INITIAL_POSITIONS = Pair(Euclidean2DPosition(0.0, 0.0), Euclidean2DPosition(1.0, 0.0))
 private var environment: Environment<Double, Euclidean2DPosition> by Delegates.notNull()

@@ -64,7 +64,7 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
      */
     public BiochemicalReaction(
             final Node<Double> node,
-            final TimeDistribution<Double> timeDistribution,
+            final TimeDistribution timeDistribution,
             final Environment<Double, ?> environment,
             final RandomGenerator randomGenerator
     ) {
@@ -76,14 +76,14 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
     @Nonnull
     @Override
     public BiochemicalReaction cloneOnNewNode(@Nonnull final Node<Double> node, @Nonnull final Time currentTime) {
-        return new BiochemicalReaction(node, getTimeDistribution().cloneOnNewNode(node, currentTime), environment, random);
+        return new BiochemicalReaction(node, getTimeDistribution(), environment, random);
     }
 
     @Override
     protected void updateInternalStatus(
-        final Time currentTime,
+        @Nonnull final Time currentTime,
         final boolean hasBeenExecuted,
-        final Environment<Double, ?> currentEnvironment
+        @Nonnull final Environment<Double, ?> currentEnvironment
     ) {
         if (neighborConditionsPresent) {
             validNeighbors = getConditions().stream()

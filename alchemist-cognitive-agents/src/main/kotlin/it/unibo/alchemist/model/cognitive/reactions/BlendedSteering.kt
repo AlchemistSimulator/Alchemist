@@ -25,5 +25,5 @@ import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 open class BlendedSteering<T>(
     environment: Euclidean2DEnvironment<T>,
     pedestrian: PedestrianProperty<T>,
-    timeDistribution: TimeDistribution<T>,
+    timeDistribution: TimeDistribution,
 ) : SteeringBehavior<T>(environment, pedestrian, timeDistribution, DistanceWeighted(environment, pedestrian.node))

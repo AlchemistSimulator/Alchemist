@@ -50,7 +50,7 @@ class TestChemotaxis {
     private final Biomolecule biomolA = new Biomolecule("A");
     private final BiochemistryIncarnation incarnation = new BiochemistryIncarnation();
     private RandomGenerator rand;
-    private TimeDistribution<Double> time;
+    private TimeDistribution time;
 
     /**
      *
@@ -67,7 +67,7 @@ class TestChemotaxis {
         envNode4 = new EnvironmentNodeImpl(environment);
         cellNode1 = incarnation.createNode(rand, environment, null);
         rand = new MersenneTwister();
-        time = new ExponentialTime<>(1, rand);
+        time = new ExponentialTime(1, rand);
     }
 
     /**

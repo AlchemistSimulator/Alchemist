@@ -17,6 +17,11 @@ import it.unibo.alchemist.model.cognitive.steering.SinglePrevalent
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.ConvexPolygon
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.timedistributions.AnyRealDistribution
+import it.unibo.alchemist.model.timedistributions.DiracComb
+import it.unibo.alchemist.model.timedistributions.ExponentialTime
+import it.unibo.alchemist.model.timedistributions.SimpleNetworkArrivals
+import it.unibo.alchemist.model.timedistributions.WeibullTime
 
 /**
  * A [SteeringBehavior] that prioritizes a single navigation action using the [SinglePrevalent] strategy.
@@ -35,7 +40,7 @@ open class NavigationPrioritizedSteering<T, N : ConvexPolygon>
 constructor(
     environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
     pedestrian: PedestrianProperty<T>,
-    timeDistribution: TimeDistribution<T>,
+    timeDistribution: TimeDistribution,
     /** Tolerance angle in degrees (see [SinglePrevalent]). */
     toleranceAngle: Double = Math.toDegrees(SinglePrevalent.DEFAULT_TOLERANCE_ANGLE),
     /** Alpha value for exponential smoothing (see [SinglePrevalent]). */
@@ -48,7 +53,14 @@ constructor(
         environment,
         pedestrian.node,
         prevalent = { singleNavigationAction() },
-        maxWalk = { pedestrian.speed() / timeDistribution.rate },
+        maxWalk = {
+            pedestrian.speed() /
+                (
+                    timeDistribution.steeringRate.takeUnless(Double::isNaN) ?: error(
+                        "Navigation steering requires a time generator with a defined execution rate",
+                    )
+                    )
+        },
         toleranceAngle = Math.toRadians(toleranceAngle),
         alpha = alpha,
     ),
@@ -65,6 +77,16 @@ constructor(
             }
     }
 }
+
+private val TimeDistribution.steeringRate: Double
+    get() = when (this) {
+        is DiracComb -> frequency
+        is ExponentialTime -> lambda
+        is AnyRealDistribution -> mean
+        is WeibullTime -> mean
+        is SimpleNetworkArrivals<*> -> expectedRate
+        else -> Double.NaN
+    }
 
 /*
  * Just for readability.

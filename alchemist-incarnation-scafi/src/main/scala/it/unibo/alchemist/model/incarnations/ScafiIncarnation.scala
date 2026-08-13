@@ -150,7 +150,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       randomGenerator: RandomGenerator,
       environment: Environment[T, P],
       node: Node[T],
-      time: TimeDistribution[T],
+      time: TimeDistribution,
       parameters: Any
   ): Reaction[T] = {
     val parameterString = Option(parameters).map(_.toString).orNull
@@ -159,7 +159,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       if (isSend) {
         new ChemicalReaction[T](
           Objects.requireNonNull[Node[T]](node),
-          Objects.requireNonNull[TimeDistribution[T]](time)
+          Objects.requireNonNull[TimeDistribution](time)
         )
       } else {
         new Event[T](node, time)
@@ -182,8 +182,8 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       environment: Environment[T, P],
       node: Node[T],
       parameters: Any
-  ): TimeDistribution[T] = {
-    if (parameters == null) return new ExponentialTime[T](Double.PositiveInfinity, randomGenerator)
+  ): TimeDistribution = {
+    if (parameters == null) return new ExponentialTime(Double.PositiveInfinity, randomGenerator)
     val frequency = toDouble(parameters)
     if (frequency.isNaN) {
       throw new IllegalArgumentException(

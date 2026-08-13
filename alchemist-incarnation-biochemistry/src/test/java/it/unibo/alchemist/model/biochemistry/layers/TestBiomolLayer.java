@@ -63,7 +63,7 @@ class TestBiomolLayer {
             rand,
             environment,
             cellNode,
-            new DiracComb<>(100d),
+            new DiracComb(100d),
             "[] --> [it.unibo.alchemist.model.actions.BrownianMove(10)]"
         ));
         cellNode.setConcentration(a, 0d);

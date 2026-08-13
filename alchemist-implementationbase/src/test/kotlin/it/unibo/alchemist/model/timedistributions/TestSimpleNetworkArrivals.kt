@@ -14,10 +14,8 @@ import io.mockk.mockk
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.jupiter.api.Test
 
@@ -44,32 +42,10 @@ class TestSimpleNetworkArrivals {
             bandwidth = bandwidth,
         )
         // Rate should be 1 / (propagationDelay + packetSize / bandwidth)
-        val expectedRate = 1.0 / (propagationDelay + packetSize / bandwidth)
-        assertEquals(expectedRate, distribution.rate)
-    }
-
-    @Test
-    fun `SimpleNetworkArrivals should support cloning`() {
-        val incarnation = mockk<Incarnation<Any, Euclidean2DPosition>>()
-        val environment = mockk<Environment<Any, Euclidean2DPosition>>()
-        val node1 = mockk<Node<Any>>()
-        val node2 = mockk<Node<Any>>()
-        every { environment.getNeighborhood(node1).current.neighbors } returns persistentListOf()
-        every { environment.getNeighborhood(node2).current.neighbors } returns persistentListOf()
-        val distribution = SimpleNetworkArrivals(
-            incarnation = incarnation,
-            node = node1,
-            environment = environment,
-            propagationDelay = 0.1,
-            packetSize = 1000.0,
-            bandwidth = 1000.0,
-        )
-        val cloned = distribution.cloneOnNewNode(node2, Time.ZERO)
-        assertNotEquals(distribution, cloned)
-        assertEquals(node2, cloned.node)
-        assertEquals(distribution.incarnation, cloned.incarnation)
-        assertEquals(distribution.environment, cloned.environment)
-        assertEquals(distribution.rate, cloned.rate)
+        val expectedDelay = propagationDelay + packetSize / bandwidth
+        val expectedRate = 1.0 / expectedDelay
+        assertEquals(expectedRate, distribution.expectedRate)
+        assertEquals(expectedDelay, distribution.sample().toDouble())
     }
 
     @Test

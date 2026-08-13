@@ -17,20 +17,25 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.observation.CompositeDisposable
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.merge
+import it.unibo.alchemist.model.timedistributions.AbstractDistribution
+import it.unibo.alchemist.model.timedistributions.AnyRealDistribution
+import it.unibo.alchemist.model.timedistributions.DiracComb
+import it.unibo.alchemist.model.timedistributions.ExponentialTime
+import it.unibo.alchemist.model.timedistributions.SimpleNetworkArrivals
+import it.unibo.alchemist.model.timedistributions.WeibullTime
 
-class GlobalTestReaction<T>(val environment: Environment<T, *>, override val timeDistribution: TimeDistribution<T>) :
+class GlobalTestReaction<T>(val environment: Environment<T, *>, override val timeDistribution: TimeDistribution) :
     GlobalReaction<T> {
 
     override val inputContext: Context = Context.GLOBAL
     override val outputContext: Context = Context.GLOBAL
-    override val tau: Observable<Time> get() = timeDistribution.nextOccurence
+    override val rate: Double get() = timeDistribution.expectedRate
+    private val mutableNextOccurrence = MutableObservable.observe(timeDistribution.startTime, false)
+    override val tau: Observable<Time> = mutableNextOccurrence.map { it }
     override var actions: List<Action<T>> = emptyList()
     private var validity: Observable<Boolean> = MutableObservable.observe(true)
-    private val subscriptions = CompositeDisposable()
 
     override var conditions: List<Condition<T>> = emptyList()
         set(value) {
@@ -48,23 +53,33 @@ class GlobalTestReaction<T>(val environment: Environment<T, *>, override val tim
 
     override fun execute() = actions.forEach(Action<T>::execute)
 
-    override fun update(currentTime: Time) = timeDistribution.update(currentTime, this)
-
-    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {
-        subscriptions.clear()
-        conditions.forEach { condition ->
-            subscriptions.add(
-                condition.getDependencies().merge().subscribe(invokeOnSubscription = false) {
-                    timeDistribution.reactToUpdate(environment.simulation.time, this)
-                },
-            )
-        }
+    override fun update(currentTime: Time) {
+        val sample = timeDistribution.sample()
+        check(sample.isFinite && sample >= Time.ZERO) { "$timeDistribution generated an invalid delay: $sample" }
+        mutableNextOccurrence.current = currentTime.plus(sample)
     }
 
+    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+
     override fun dispose() {
-        subscriptions.dispose()
         validity.dispose()
         conditions.forEach(Condition<T>::dispose)
-        timeDistribution.nextOccurence.dispose()
+        tau.dispose()
+        mutableNextOccurrence.dispose()
+    }
+
+    private companion object {
+        private val TimeDistribution.startTime: Time
+            get() = (this as? AbstractDistribution)?.startTime ?: Time.ZERO
+
+        private val TimeDistribution.expectedRate: Double
+            get() = when (this) {
+                is DiracComb -> frequency
+                is ExponentialTime -> lambda
+                is AnyRealDistribution -> mean
+                is WeibullTime -> mean
+                is SimpleNetworkArrivals<*> -> expectedRate
+                else -> Double.NaN
+            }
     }
 }

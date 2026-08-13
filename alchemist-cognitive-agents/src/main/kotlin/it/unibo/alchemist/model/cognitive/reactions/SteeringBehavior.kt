@@ -29,13 +29,12 @@ import it.unibo.alchemist.model.reactions.AbstractReaction
  * @property pedestrian the owner pedestrian's property
  * @param timeDistribution the time distribution that schedules reaction execution
  * @property steerStrategy the strategy used to combine steering actions
- * @property steerActions list of steering actions in this reaction
  */
 open class SteeringBehavior<T>(
     private val environment: Environment<T, Euclidean2DPosition>,
     /** The pedestrian property of the owner of this reaction. */
     protected val pedestrian: PedestrianProperty<T>,
-    timeDistribution: TimeDistribution<T>,
+    timeDistribution: TimeDistribution,
     open val steerStrategy: SteeringStrategy<T, Euclidean2DPosition>,
 ) : AbstractReaction<T>(pedestrian.node, timeDistribution) {
     /** The list of steering actions in this reaction. */

@@ -22,6 +22,13 @@ import it.unibo.alchemist.model.observation.CompositeDisposable
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.merge
+import it.unibo.alchemist.model.timedistributions.AbstractDistribution
+import it.unibo.alchemist.model.timedistributions.AnyRealDistribution
+import it.unibo.alchemist.model.timedistributions.DiracComb
+import it.unibo.alchemist.model.timedistributions.ExponentialTime
+import it.unibo.alchemist.model.timedistributions.SimpleNetworkArrivals
+import it.unibo.alchemist.model.timedistributions.Trigger
+import it.unibo.alchemist.model.timedistributions.WeibullTime
 import java.util.function.Supplier
 import javax.annotation.Nonnull
 
@@ -32,7 +39,7 @@ import javax.annotation.Nonnull
  */
 abstract class AbstractReaction<T>(
     final override val node: Node<T>,
-    final override val timeDistribution: TimeDistribution<T>,
+    final override val timeDistribution: TimeDistribution,
 ) : Reaction<T> {
 
     override var actions: List<Action<T>> = emptyList()
@@ -79,7 +86,16 @@ abstract class AbstractReaction<T>(
 
     private var disposed = false
 
-    override val tau: Observable<Time> get() = timeDistribution.nextOccurence
+    private val mutableNextOccurrence = MutableObservable.observe(timeDistribution.startTime, false)
+
+    private val observableNextOccurrence = mutableNextOccurrence.map { it }
+
+    private var previousRate: Double? = null
+
+    override val tau: Observable<Time> get() = observableNextOccurrence
+
+    override val rate: Double
+        get() = timeDistribution.defaultReactionRate
 
     override fun canExecute(): Observable<Boolean> = canExecute
 
@@ -93,7 +109,7 @@ abstract class AbstractReaction<T>(
     /**
      * @return a [String] representation of the rate
      */
-    protected open val rateAsString: String get() = timeDistribution.rate.toString()
+    protected open val rateAsString: String get() = rate.toString()
 
     /**
      * @return the name used by [toString]
@@ -131,7 +147,7 @@ abstract class AbstractReaction<T>(
         }
         lastKnownTime = currentTime
         updateInternalStatus(currentTime, true, environment)
-        timeDistribution.update(currentTime, this)
+        updateScheduling(currentTime, true)
     }
 
     /**
@@ -171,7 +187,8 @@ abstract class AbstractReaction<T>(
             conditions = emptyList()
             actions = emptyList()
             canExecute.dispose()
-            tau.dispose()
+            observableNextOccurrence.dispose()
+            mutableNextOccurrence.dispose()
         }
     }
 
@@ -203,6 +220,78 @@ abstract class AbstractReaction<T>(
     private fun reactToModelUpdate(environment: Environment<T, *>) {
         val currentTime = environment.simulationOrNull?.time ?: lastKnownTime
         updateInternalStatus(currentTime, false, environment)
-        timeDistribution.reactToUpdate(currentTime, this)
+        updateScheduling(currentTime, false)
     }
+
+    /**
+     * Applies this reaction's scheduling policy after execution or reactive invalidation.
+     *
+     * The default policy draws a new delay after execution. Exponential generators additionally preserve their
+     * sampled exponential variate when the reaction rate changes, rescaling the remaining delay to the new rate.
+     *
+     * @param currentTime current simulation time
+     * @param hasBeenExecuted whether this reaction's scheduled event fired
+     */
+    protected open fun updateScheduling(currentTime: Time, hasBeenExecuted: Boolean) {
+        val schedulingTime = maxOf(currentTime, timeDistribution.startTime)
+        when (val distribution = timeDistribution) {
+            is Trigger -> if (hasBeenExecuted) setNextOccurrence(Time.INFINITY)
+            is ExponentialTime -> updateExponentialScheduling(distribution, schedulingTime, hasBeenExecuted)
+            else -> if (hasBeenExecuted) scheduleSampleAfter(schedulingTime)
+        }
+    }
+
+    /** Schedules a newly sampled delay after [currentTime]. */
+    protected fun scheduleSampleAfter(currentTime: Time) {
+        setNextOccurrence(currentTime.plus(validatedSample()))
+    }
+
+    /** Changes the reaction-owned absolute occurrence time. */
+    protected fun setNextOccurrence(nextOccurrence: Time) {
+        mutableNextOccurrence.current = nextOccurrence
+    }
+
+    private fun updateExponentialScheduling(
+        distribution: ExponentialTime,
+        currentTime: Time,
+        hasBeenExecuted: Boolean,
+    ) {
+        val newRate = rate
+        val oldRate = previousRate
+        check(!newRate.isNaN() && oldRate?.isNaN() != true) { "Reaction propensity cannot be NaN" }
+        when {
+            newRate == 0.0 -> setNextOccurrence(Time.INFINITY)
+            hasBeenExecuted || oldRate == null || oldRate == 0.0 -> {
+                val baseRate = distribution.lambda
+                val sampledDelay = validatedSample().let { sample ->
+                    if (baseRate == newRate) sample else sample.times(baseRate / newRate)
+                }
+                setNextOccurrence(currentTime.plus(sampledDelay))
+            }
+            oldRate != newRate -> {
+                val remaining = tau.current.minus(currentTime)
+                setNextOccurrence(currentTime.plus(remaining.times(oldRate / newRate)))
+            }
+        }
+        previousRate = newRate
+    }
+
+    private fun validatedSample(): Time = timeDistribution.sample().also { sample ->
+        check(sample.isFinite && sample >= Time.ZERO) {
+            "$timeDistribution generated an invalid delay: $sample"
+        }
+    }
+
+    private val TimeDistribution.startTime: Time
+        get() = (this as? AbstractDistribution)?.startTime ?: Time.ZERO
+
+    private val TimeDistribution.defaultReactionRate: Double
+        get() = when (this) {
+            is DiracComb -> frequency
+            is ExponentialTime -> lambda
+            is AnyRealDistribution -> mean
+            is WeibullTime -> mean
+            is SimpleNetworkArrivals<*> -> expectedRate
+            else -> Double.NaN
+        }
 }

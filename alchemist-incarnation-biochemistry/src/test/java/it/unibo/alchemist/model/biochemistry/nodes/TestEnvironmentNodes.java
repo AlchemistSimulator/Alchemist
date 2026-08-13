@@ -61,7 +61,7 @@ final class TestEnvironmentNodes {
                 rand,
             standardEnvironment,
                 destination,
-                new ExponentialTime<>(rate, rand),
+                new ExponentialTime(rate, rand),
                 reaction
         ));
     }

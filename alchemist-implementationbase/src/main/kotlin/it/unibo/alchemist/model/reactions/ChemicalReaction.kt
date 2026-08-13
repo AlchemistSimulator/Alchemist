@@ -13,13 +13,14 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
+import it.unibo.alchemist.model.timedistributions.AnyRealDistribution
 
 /**
  * A reaction whose rate is the product of its time distribution rate and all condition propensity contributions.
  *
  * @param T concentration type
  */
-open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
+open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution) :
     AbstractReaction<T>(node, timeDistribution) {
 
     private var currentRate = 0.0
@@ -27,7 +28,7 @@ open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution
     final override val rate: Double get() = currentRate
 
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ChemicalReaction<T> = makeClone {
-        ChemicalReaction(node, timeDistribution.cloneOnNewNode(node, currentTime))
+        ChemicalReaction(node, timeDistribution)
     }
 
     override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
@@ -38,7 +39,7 @@ open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution
      * Subclasses overriding this method must invoke the base implementation to refresh [rate].
      */
     override fun updateInternalStatus(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) {
-        currentRate = timeDistribution.rate
+        currentRate = super.rate
         for (condition in conditions) {
             val contribution = condition.getPropensityContribution().current
             require(contribution >= 0) { "Condition $condition returned a negative propensity contribution" }
@@ -47,6 +48,19 @@ open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution
                 break
             }
             currentRate *= contribution
+        }
+    }
+
+    override fun updateScheduling(currentTime: Time, hasBeenExecuted: Boolean) {
+        val distribution = timeDistribution
+        if (distribution is AnyRealDistribution) {
+            when {
+                rate == 0.0 -> setNextOccurrence(Time.INFINITY)
+                hasBeenExecuted || tau.current.isInfinite || currentTime < tau.current ->
+                    scheduleSampleAfter(maxOf(currentTime, distribution.startTime))
+            }
+        } else {
+            super.updateScheduling(currentTime, hasBeenExecuted)
         }
     }
 }

@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.sapere.timedistributions;
 
 import it.unibo.alchemist.model.Time;
-import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
@@ -19,10 +18,9 @@ import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -33,10 +31,8 @@ import java.util.concurrent.Semaphore;
  * rate equation.
  *
  */
-public final class SAPEREExponentialTime extends ExponentialTime<List<ILsaMolecule>> implements SAPERETimeDistribution {
+public final class SAPEREExponentialTime extends ExponentialTime implements SAPERETimeDistribution {
 
-    @Serial
-    private static final long serialVersionUID = -687039899173488373L;
     private static final String F_PATTERN = "###.######################";
     private static final DecimalFormat FORMAT = new DecimalFormat(F_PATTERN, DecimalFormatSymbols.getInstance(Locale.ENGLISH));
     private static final Semaphore FORMAT_MUTEX = new Semaphore(1);
@@ -94,6 +90,17 @@ public final class SAPEREExponentialTime extends ExponentialTime<List<ILsaMolecu
     @Override
     public double getRate() {
         return numericRate ? staticRate : (Double) exp.calculate(matches).getValue(matches);
+    }
+
+    @Override
+    public double getLambda() {
+        return getRate();
+    }
+
+    @Override
+    @Nonnull
+    public Time sample() {
+        return genTime(getRate());
     }
 
     @Override

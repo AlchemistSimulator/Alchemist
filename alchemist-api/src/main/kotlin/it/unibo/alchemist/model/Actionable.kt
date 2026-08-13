@@ -72,7 +72,7 @@ sealed interface Actionable<T> :
      * @return the number of times this [Reaction] is triggered per time
      * unit.
      */
-    val rate: Double get() = timeDistribution.rate
+    val rate: Double
 
     /**
      * @return The global [Time] at which this reaction is scheduled to be
@@ -83,10 +83,10 @@ sealed interface Actionable<T> :
     /**
      * @return the [TimeDistribution] for this [Reaction]
      */
-    val timeDistribution: TimeDistribution<T>
+    val timeDistribution: TimeDistribution
 
     /**
-     * Advances this actionable's stateful time distribution after its scheduled event fires.
+     * Advances this actionable's reaction-owned scheduling state after its scheduled event fires.
      *
      * @param currentTime
      * the current [Time] of execution. This is mandatory in

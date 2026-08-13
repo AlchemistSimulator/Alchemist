@@ -42,6 +42,7 @@ import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
 import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
 import it.unibo.alchemist.model.sapere.dsl.impl.Type;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
+import it.unibo.alchemist.model.sapere.timedistributions.SAPERETimeDistribution;
 import org.danilopianini.lang.HashString;
 
 import javax.annotation.Nonnull;
@@ -134,7 +135,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             final String expression,
             final ILsaMolecule contextTemplate,
             final double gradThreshold,
-            final TimeDistribution<List<ILsaMolecule>> timeDistribution
+            final TimeDistribution timeDistribution
     ) {
         super(node, timeDistribution);
         setInputContext(Context.NEIGHBORHOOD);
@@ -214,7 +215,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      */
     public SAPEREGradient(final Environment<List<ILsaMolecule>, P> environment,
             final ILsaNode node,
-            final TimeDistribution<List<ILsaMolecule>> timeDistribution,
+            final TimeDistribution timeDistribution,
             final String sourceTemplate,
             final String gradientTemplate,
             final int valuePosition,
@@ -265,6 +266,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     }
 
     @Override
+    @Nonnull
     public Observable<Boolean> canExecute() {
         return canRun;
     }
@@ -392,7 +394,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
 
     @Override
     public double getRate() {
-        return canRun.getCurrent() ? getTimeDistribution().getRate() : 0;
+        return canRun.getCurrent() ? ((SAPERETimeDistribution) getTimeDistribution()).getRate() : 0;
     }
 
     @Override
@@ -403,9 +405,9 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
 
     @Override
     protected void updateInternalStatus(
-        final Time currentTime,
+        @Nonnull final Time currentTime,
         final boolean hasBeenExecuted,
-        final Environment<List<ILsaMolecule>, ?> currentEnvironment
+        @Nonnull final Environment<List<ILsaMolecule>, ?> currentEnvironment
     ) {
         /*
          * It makes sense to reschedule the reaction if:
@@ -591,8 +593,6 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     }
 
     private static class SGFakeConditionAction implements Action<List<ILsaMolecule>>, Condition<List<ILsaMolecule>> {
-        @Serial
-        private static final long serialVersionUID = 1L;
         private final Molecule mol;
         private final Observable<Boolean> validity = MutableObservable.Companion.observe(false);
         private final Observable<Double> propensity = MutableObservable.Companion.observe(0.0);
@@ -607,17 +607,19 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         }
 
         @Override
+        @Nonnull
         public Action<List<ILsaMolecule>> cloneAction(
-                final Node<List<ILsaMolecule>> node,
-                final Reaction<List<ILsaMolecule>> reaction
+            @Nonnull final Node<List<ILsaMolecule>> node,
+            @Nonnull final Reaction<List<ILsaMolecule>> reaction
         ) {
             return null;
         }
 
         @Override
+        @Nonnull
         public Condition<List<ILsaMolecule>> cloneCondition(
-                final Node<List<ILsaMolecule>> node,
-                final Reaction<List<ILsaMolecule>> reaction
+            @Nonnull final Node<List<ILsaMolecule>> node,
+            @Nonnull final Reaction<List<ILsaMolecule>> reaction
         ) {
             return null;
         }
@@ -627,26 +629,31 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         }
 
         @Override
+        @Nonnull
         public Context getContext() {
             return null;
         }
 
         @Override
+        @Nonnull
         public ObservableSet<? extends Observable<?>> getDependencies() {
             return dependencies;
         }
 
         @Override
+        @Nonnull
         public Node<List<ILsaMolecule>> getNode() {
             return null;
         }
 
         @Override
+        @Nonnull
         public Observable<Double> getPropensityContribution() {
             return propensity;
         }
 
         @Override
+        @Nonnull
         public Observable<Boolean> isValid() {
             return validity;
         }

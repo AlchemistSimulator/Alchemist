@@ -167,7 +167,7 @@ class TestDSLLoading {
                             JaktaTimeDistribution(
                                 sense = weibullTime(1.0, 1.0),
                                 deliberate = DiracComb(0.1),
-                                act = exponentialTime<Any>(1.0),
+                                act = exponentialTime(1.0),
                             ),
                         ) {
                             program("1 + 1")

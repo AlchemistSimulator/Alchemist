@@ -30,11 +30,11 @@ class TestScafiIncarnation extends AnyFunSuite with Matchers {
 
     val standard = INC.createTimeDistribution(rng, env, node, "3")
     assertNotNull(standard)
-    standard.getRate shouldEqual 3d
 
     val generic = INC.createReaction(rng, env, node, standard, null)
     assertNotNull(generic)
     assertTrue(generic.isInstanceOf[Event[_]])
+    generic.getRate shouldEqual 3d
   }
 
   /** Verifies that the incarnation can properly init new concentrations. */

@@ -24,6 +24,7 @@ import org.kaikikm.threadresloader.ResourceLoader
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
+import scala.language.implicitConversions
 import scala.util.{Failure, Try}
 
 sealed class DefaultRunScafiProgram[P <: Position[P]](
@@ -48,7 +49,7 @@ sealed class DefaultRunScafiProgram[P <: Position[P]](
       reaction,
       randomGenerator,
       programName,
-      FastMath.nextUp(1.0 / reaction.getTimeDistribution.getRate)
+      FastMath.nextUp(1.0 / reaction.getRate)
     )
 }
 
@@ -74,18 +75,18 @@ sealed class RunScafiProgram[T, P <: Position[P]](
       reaction,
       randomGenerator,
       programName,
-      FastMath.nextUp(1.0 / reaction.getTimeDistribution.getRate)
+      FastMath.nextUp(1.0 / reaction.getRate)
     )
 
   import RunScafiProgram.NeighborData
-  val program =
+  val program: ScafiIncarnationForAlchemist.Context with ScafiIncarnationForAlchemist.ContextOps => ScafiIncarnationForAlchemist.Export with ScafiIncarnationForAlchemist.ExportOps =
     ResourceLoader.classForName(programName).getDeclaredConstructor().newInstance().asInstanceOf[CONTEXT => EXPORT]
   val programNameMolecule = new SimpleMolecule(programName)
   lazy val nodeManager = new SimpleNodeManager(node)
   private var neighborhoodManager: Map[ID, NeighborData[P]] = Map()
   private val commonNames = new ScafiIncarnationForAlchemist.StandardSensorNames {}
   private val _completed = MutableObservable.Companion.observe[Boolean](false)
-  def asMolecule = programNameMolecule
+  def asMolecule: SimpleMolecule = programNameMolecule
 
   override def cloneAction(node: Node[T], reaction: Reaction[T]) =
     new RunScafiProgram(environment, node, reaction, randomGenerator, programName, retentionTime)
@@ -116,7 +117,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
     }
     val deltaTime: Long =
       currentTime - neighborhoodManager.get(node.getId).map(d => alchemistTimeToNanos(d.executionTime)).getOrElse(0L)
-    val localSensors = node.getContents().asScala.map { case (k, v) => k.getName -> v }
+    val localSensors = node.getContents.asScala.map { case (k, v) => k.getName -> v }
 
     val neighborhoodSensors = scala.collection.mutable.Map[CNAME, Map[ID, Any]]()
     val exports: Iterable[(ID, EXPORT)] = neighborhoodManager.view.mapValues(_.exportData)
@@ -159,7 +160,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
         case LSNS_ALCHEMIST_COORDINATES => Some(position.getCoordinates)
         case commonNames.LSNS_DELTA_TIME => Some(FiniteDuration(deltaTime, TimeUnit.NANOSECONDS))
         case commonNames.LSNS_POSITION =>
-          val k = position.getDimensions()
+          val k = position.getDimensions
           Some(
             Point3D(
               position.getCoordinate(0),

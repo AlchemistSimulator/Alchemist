@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.timedistributions
 
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
@@ -47,7 +46,7 @@ constructor(
     val property: String? = null,
     val start: Time = Time.ZERO,
     val errorDistribution: RealDistribution? = null,
-) : AnyRealDistribution<T>(
+) : AnyRealDistribution(
     start,
 
     object : RealDistribution {
@@ -133,26 +132,6 @@ constructor(
         distributionName = distributionName,
         distributionParametrs = distributionParametrs,
     )
-
-    private var previousStep: Double? = null
-
-    override fun updateStatus(currentTime: Time, executed: Boolean, source: Actionable<T>) {
-        val currentStep = readCurrentValue(incarnation, node, molecule, property)
-        if (executed) {
-            previousStep = currentStep
-        } else {
-            require(currentStep == previousStep) {
-                "Something nasty happened: molecule $molecule is being used as a scheduler, but " +
-                    "some reaction other than the one using it for scheduling changed the concentration. " +
-                    "This is unsupported and sends the simulator into an inconsistent state, " +
-                    "hence the simulation has been forcibly terminated."
-            }
-        }
-        super.updateStatus(currentTime, executed, source)
-    }
-
-    override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): MoleculeControlledTimeDistribution<T> =
-        MoleculeControlledTimeDistribution(incarnation, destination, molecule, property, start, errorDistribution)
 
     private companion object {
         private fun <T> readCurrentValue(

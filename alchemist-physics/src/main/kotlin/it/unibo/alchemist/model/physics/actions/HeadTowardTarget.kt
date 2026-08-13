@@ -46,7 +46,7 @@ constructor(
      */
     override fun execute() {
         node.getConcentration(target)?.also {
-            val speedRadians = angularSpeedRadians / reaction.timeDistribution.rate
+            val speedRadians = angularSpeedRadians / reaction.rate
             val targetPosition = it.toPosition(environment)
             val myHeading = environment.getHeading(node)
             if (targetPosition != myHeading) {

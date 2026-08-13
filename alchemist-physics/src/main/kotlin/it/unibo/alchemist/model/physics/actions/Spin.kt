@@ -36,7 +36,7 @@ class Spin<T>(
      * Spins the node around itself.
      */
     override fun execute() {
-        val realSpeed = angularSpeedRadians / reaction.timeDistribution.rate
+        val realSpeed = angularSpeedRadians / reaction.rate
         val headingAngle = environment.getHeading(node).asAngle + realSpeed
         environment.setHeading(node, environment.makePosition(cos(headingAngle), sin(headingAngle)))
     }

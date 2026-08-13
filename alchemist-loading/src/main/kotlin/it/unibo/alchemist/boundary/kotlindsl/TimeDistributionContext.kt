@@ -39,8 +39,8 @@ interface TimeDistributionContext<T, P : Position<P>> {
      * This property mainly exists to allow explicit access to the time distribution from within nested DSL blocks,
      * without having to refer to the context receiver name directly.
      */
-    context(timeDistribution: TimeDistribution<T>)
-    val timeDistribution: TimeDistribution<T> get() = timeDistribution
+    context(timeDistribution: TimeDistribution)
+    val timeDistribution: TimeDistribution get() = timeDistribution
 
     /**
      * Registers an existing [reaction] on the current [Node] and optionally configures it.
@@ -82,7 +82,7 @@ interface TimeDistributionContext<T, P : Position<P>> {
         randomGenerator: RandomGenerator,
         environment: Environment<T, P>,
         node: Node<T>,
-        timeDistribution: TimeDistribution<T>
+        timeDistribution: TimeDistribution
     )
     fun program(program: String?, block: context(Reaction<T>) ActionableContext.() -> Unit = { }) = program(
         incarnation.createReaction(randomGenerator, environment, node, timeDistribution, program),

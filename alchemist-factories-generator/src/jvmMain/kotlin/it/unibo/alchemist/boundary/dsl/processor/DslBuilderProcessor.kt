@@ -78,7 +78,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator) : SymbolProc
             resolver.getClassDeclarationByName<RandomGenerator>(),
             resolver.getClassDeclarationByName<Reaction<*>>(),
             resolver.getClassDeclarationByName<Simulation<*, *>>(),
-            resolver.getClassDeclarationByName<TimeDistribution<*>>(),
+            resolver.getClassDeclarationByName<TimeDistribution>(),
         ).map { checkNotNull(it).asStarProjectedType() }.toSet()
 
         private fun processConstructor(

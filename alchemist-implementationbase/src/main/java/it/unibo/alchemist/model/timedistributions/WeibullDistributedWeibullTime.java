@@ -14,17 +14,11 @@ import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.distribution.WeibullDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import java.io.Serial;
-
 /**
  * Weibull distributed events with different (Weibull distributed) mean.
  *
- * @param <T> concentration type
  */
-public class WeibullDistributedWeibullTime<T> extends WeibullTime<T> {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class WeibullDistributedWeibullTime extends WeibullTime {
 
     /**
      * @param mean

@@ -27,7 +27,7 @@ class PhysicalBlendedSteering<T>(
      */
     val environment: Dynamics2DEnvironment<T>,
     pedestrian: PedestrianProperty<T>,
-    timeDistribution: TimeDistribution<T>,
+    timeDistribution: TimeDistribution,
 ) : BlendedSteering<T>(environment, pedestrian, timeDistribution) {
     private var previouslyAppliedForce = Euclidean2DPosition.zero
 

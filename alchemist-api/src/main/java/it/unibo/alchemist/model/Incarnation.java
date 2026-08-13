@@ -83,7 +83,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            a {@link String} describing the object
      * @return a new {@link TimeDistribution}
      */
-    TimeDistribution<T> createTimeDistribution(
+    TimeDistribution createTimeDistribution(
         RandomGenerator randomGenerator,
         Environment<T, P> environment,
         @Nullable Node<T> node,
@@ -107,7 +107,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
         RandomGenerator randomGenerator,
         Environment<T, P> environment,
         Node<T> node,
-        TimeDistribution<T> timeDistribution,
+        TimeDistribution timeDistribution,
         @Nullable Object parameter
     );
 

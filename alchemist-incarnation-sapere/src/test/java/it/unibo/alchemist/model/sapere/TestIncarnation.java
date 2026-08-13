@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.sapere.actions.LsaRandomNeighborAction;
 import it.unibo.alchemist.model.sapere.conditions.LsaNeighborhoodCondition;
 import it.unibo.alchemist.model.sapere.nodes.LsaNode;
 import it.unibo.alchemist.model.sapere.timedistributions.SAPEREExponentialTime;
+import it.unibo.alchemist.model.reactions.Event;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +42,7 @@ final class TestIncarnation {
     private ILsaNode node;
     private Environment<List<ILsaMolecule>, Euclidean2DPosition> environment;
     private RandomGenerator randomGenerator;
-    private TimeDistribution<List<ILsaMolecule>> timeDistribution;
+    private TimeDistribution timeDistribution;
 
     private ILsaMolecule mkMol(final String s, final int args, final boolean ground) {
         final ILsaMolecule res = incarnation.createMolecule(s);
@@ -79,15 +80,16 @@ final class TestIncarnation {
     }
 
     private void testTD(final String param, final double rate, final double occurrence) {
-        final TimeDistribution<List<ILsaMolecule>> t0 = incarnation.createTimeDistribution(
+        final TimeDistribution t0 = incarnation.createTimeDistribution(
                 randomGenerator, environment, node, param
         );
         assertNotNull(t0);
+        final var event = new Event<>(node, t0);
         if (!Double.isNaN(rate)) {
-            assertEquals(rate, t0.getRate(), Double.MIN_VALUE);
+            assertEquals(rate, event.getRate(), Double.MIN_VALUE);
         }
         if (!Double.isNaN(occurrence)) {
-            assertEquals(occurrence, t0.getNextOccurence().getCurrent().toDouble(), Double.MIN_VALUE);
+            assertEquals(occurrence, event.getTau().getCurrent().toDouble(), Double.MIN_VALUE);
         }
     }
 

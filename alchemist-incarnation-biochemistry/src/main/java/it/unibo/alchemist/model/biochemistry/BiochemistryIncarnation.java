@@ -69,7 +69,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
     }
 
     @Override
-    public TimeDistribution<Double> createTimeDistribution(
+    public TimeDistribution createTimeDistribution(
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
@@ -82,7 +82,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         if (Double.isNaN(rate)) {
             throw new IllegalArgumentException("Invalid rate: " + parameter);
         }
-        return new ExponentialTime<>(rate, randomGenerator);
+        return new ExponentialTime(rate, randomGenerator);
     }
 
     @Override
@@ -90,7 +90,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
-        final TimeDistribution<Double> timeDistribution,
+        final TimeDistribution timeDistribution,
         final @Nullable Object parameter
         ) {
         return new BiochemicalReactionBuilder<>(this, node, environment)

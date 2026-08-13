@@ -170,21 +170,41 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 ## Phase 4: reduce `TimeDistribution` to sampling
 
-- [ ] Define the minimal sampling contract, preferably a non-negative delay generator.
-- [ ] Remove `update`, `reactToUpdate`, `Actionable`, `Environment`, propensity, rate-conditioning, and observable
+- [x] Use Apache Commons Math's `RealDistribution` as the design reference: keep sampling independent from
+  reaction lifecycle and scheduling, and add distribution metadata only when an identified consumer needs it.
+- [x] Define the minimal sampling contract as `sample(): Time`, returning a finite non-negative delay. The legacy
+  generic parameter and scheduling members were removed during consumer migration; no transitional API remains.
+- [x] Remove `update`, `reactToUpdate`, `Actionable`, `Environment`, propensity, rate-conditioning, and observable
   next-occurrence responsibilities from `TimeDistribution`.
-- [ ] Decide whether configured base rate remains a distribution parameter or becomes entirely reaction-owned.
-- [ ] Migrate deterministic, exponential, trigger, Weibull, network-arrival, molecule-controlled, and incarnation-
+- [x] Keep configured parameters such as an exponential lambda inside the sampler when they shape its probability
+  law, but do not expose a generic `rate`: reactions own execution rate/propensity and any reporting of it.
+- [x] Migrate deterministic, exponential, trigger, Weibull, network-arrival, molecule-controlled, and incarnation-
   specific implementations.
-- [ ] Make invalid samples, negative delays, NaN, and infinity behavior explicit.
+- [x] Make invalid samples, negative delays, NaN, and infinity behavior explicit.
 - [ ] Add isolated deterministic and statistical tests for every distribution family.
 
 ## Phase 5: make reactions own scheduling
 
-- [ ] Give each reaction sole ownership of observable `tau`.
+- [x] Give each reaction sole ownership of observable `tau`.
+- [ ] As the next implementation step, replace shared-generator reaction cloning with **newly instantiated program**
+  semantics:
+  - keep generator reconstruction outside the minimal `TimeDistribution` sampling contract, using a separate
+    node-aware construction policy owned by the reaction/program;
+  - construct a fresh `TimeDistribution` instance bound to the destination node and environment instead of passing
+    the source reaction's generator object to the clone;
+  - initialize a fresh reaction occurrence by sampling from the clone time (while respecting any configured
+    absolute not-before/start time), without copying the source `tau`, residual waiting time, previous propensity,
+    match token, or other reaction-local sampler state;
+  - allow reconstructed generators to keep using the simulation's shared RNG intentionally, without treating the
+    generator object itself as shared reaction state;
+  - explicitly rebind node-dependent generators such as `MoleculeControlledTimeDistribution` and
+    `SimpleNetworkArrivals`, and isolate mutable specialized state such as SAPERE match tokens;
+  - add cloning regressions for deterministic and non-memoryless generators, destination-node-dependent generators,
+    RNG-backed generators, and specialized mutable generators.
 - [ ] Rename reaction `tau` to `nextOccurrence` across the API, implementations, engine, schedulers, loaders,
   tests, and documentation.
-- [ ] Define initialization, firing, invalidation, cloning, and removal transitions.
+- [ ] Define initialization, firing, invalidation, and removal transitions; cloning follows the newly-instantiated-
+  program contract above rather than copying a running stochastic process.
 - [ ] Move all decisions about sampling, preserving, transforming, or replacing scheduled times into reactions.
 - [ ] Keep scheduler notification as a consequence of a reaction-owned `tau` change.
 - [ ] Ensure initialization computes `tau` before scheduler insertion without causing duplicate reindexing.
@@ -280,6 +300,71 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-08-13: selected newly instantiated program semantics for reaction cloning. The next Phase 5 implementation
+  step must replace every pass-through of the source `TimeDistribution` with a fresh destination-bound generator
+  created by a separate construction policy. A clone starts a new schedule at its clone time and inherits neither
+  the source occurrence nor reaction-local generator state; this deliberately avoids relying on memorylessness.
+- 2026-08-03: began Phase 4 from clean committed checkpoint `1898ab40a`. The sampling contract will use
+  `org.apache.commons.math3.distribution.RealDistribution` as inspiration, favoring a single `sample()` operation
+  unless the implementation inventory proves that additional distribution metadata belongs in the generic API.
+- 2026-08-03: defined the target `TimeDistribution` contract as the single operation `sample(): Time`, producing a
+  finite non-negative delay. Distribution parameters remain encapsulated when they define the probability law;
+  generic rate, absolute occurrence, lifecycle updates, node-aware cloning, and concentration typing do not belong
+  in the final API. Ported the significantly changed interface to Kotlin and added the sampling seam to every
+  current distribution family while retaining the old operations temporarily for behavior-preserving migration.
+- 2026-08-03: compiler deprecations on the transitional operations are intentionally deferred rather than
+  suppressed: warnings are errors in this repository, so annotations would make every not-yet-migrated consumer
+  fail before it can be moved. The API documentation identifies the legacy surface until its removal.
+- 2026-08-03: focused implementation-base sampling tests pass for constant-period, arbitrary real, exponential,
+  Weibull, trigger, and network-arrival generators. `AnyRealDistribution.sample()` now rejects negative, NaN, and
+  infinite delays. Removed obsolete serialization identifiers and serialization-only SpotBugs exceptions from the
+  time-distribution hierarchy after the Kotlin API stopped extending `Serializable`.
+- 2026-08-03: repository-wide Kotlin formatting and focused API, implementation-base, and SAPERE checks pass after
+  resolving the newly exposed Checkstyle and Detekt findings without suppressions. Existing trigger execution,
+  SAPERE reaction, and distribution tests remain green. The optimized full build is the final gate for this
+  contract-introduction checkpoint.
+- 2026-08-03: the first optimized full build stopped in `alchemist-full:generatePKGBUILD`, which consumes the RPM
+  artifact after `jpackageRpm` was deliberately excluded and therefore cannot find its input. The corrected build
+  excludes this RPM-derived metadata task together with the DEB/RPM builders; no source or verification task had
+  failed.
+- 2026-08-03: the Phase 4 contract-introduction checkpoint passes the corrected optimized
+  `./gradlew --parallel build`: 915 tasks completed successfully in 8m42s, including the normal JVM, JavaScript,
+  WebAssembly, documentation, static-analysis, and regression suites. Alternate-JVM matrix tasks, DEB/RPM
+  builders, and the RPM-derived `generatePKGBUILD` task were excluded as directed. The repository is ready for a
+  commit checkpoint before migrating consumers away from the transitional scheduling operations.
+- 2026-08-03: review of the uncommitted checkpoint found that retaining the legacy scheduling surface was too
+  conservative for the requested API migration. The checkpoint will be corrected before commit: `TimeDistribution`
+  will expose only `sample(): Time`; `nextOccurence`, `rate`, `update`, `reactToUpdate`, generic concentration typing,
+  and node-aware cloning will move to reaction scheduling or construction policy rather than remain transitional.
+- 2026-08-03: the corrected API and implementation-base production sources compile. `TimeDistribution` is now a
+  non-generic functional interface containing only `sample(): Time`; the significantly changed distribution base,
+  real-distribution adapter, deterministic generator, exponential generator, and event reaction were ported to
+  Kotlin. `AbstractReaction` now owns its mutable absolute occurrence, validates samples at the reaction boundary,
+  redraws after execution, and preserves the previous exponential variate by rescaling the remaining delay on a
+  positive-to-positive propensity change. Distribution-owned update/react/update-observable machinery is gone.
+- 2026-08-03: removed generic distribution rate metadata as well as generic concentration parameters from the
+  built-in node-independent generators. Deterministic, exponential, arbitrary-real, Weibull, trigger,
+  network-arrival, and molecule-controlled implementations now only generate delays through the public contract;
+  reactions interpret law-specific configuration such as frequency, lambda, or mean when legacy consumers still
+  require an execution-rate view. SAPERE rate equations remain only on its specialized match-token interface for
+  the explicit chemical-reaction migration in Phase 6.
+- 2026-08-03: focused engine, implementation-base, SAPERE, physics, cognitive-agent, and loading suites pass after
+  moving occurrence ownership into local and global reactions. Coverage now asserts that `TimeDistribution`
+  declares exactly `sample`, that reactions convert delays to absolute times, and that invalid custom samples are
+  rejected at the reaction boundary. Trigger, reactive-invalidation, DSL, and real-simulation regressions remain
+  green. Formatting, static analysis, and the optimized repository-wide build are next.
+- 2026-08-03: post-format compilation found the final direct `TimeDistribution.getRate()` call in a Scafi test; the
+  test now verifies the reaction-owned rate instead. The same verification exposed an infinity-over-infinity
+  rescaling edge case for immediate exponential reactions. Reactions now preserve an unscaled sample when the
+  generator lambda already equals their execution rate, with explicit regression coverage. Focused
+  implementation-base, Scafi, and Protelis checks pass, including the Protelis gradient propagation simulation.
+- 2026-08-03: the corrected sample-only API checkpoint passes the optimized repository-wide
+  `./gradlew --parallel build`: 915 tasks completed successfully in 8m42s. This includes normal JVM, JavaScript,
+  WebAssembly, Dokka, static-analysis, loader, incarnation, real-simulation, and website-snippet verification;
+  alternate-JVM matrix tasks, DEB/RPM builders, and the RPM-derived `generatePKGBUILD` task were excluded as
+  directed. After the final API-documentation audit and Kotlin formatting, the identical optimized build passed
+  again in 1m51s (915 tasks: 85 executed, 830 up-to-date). The checkpoint is ready for review and commit before the
+  Phase 5 `tau` to `nextOccurrence` rename.
 - 2026-08-03: added a workflow checkpoint at every relevant, independently committable milestone. Each checkpoint
   pauses further implementation and proposes a Conventional Commit message before work continues.
 - 2026-08-02: created the living plan after the initial architecture, history, and compilation audit.

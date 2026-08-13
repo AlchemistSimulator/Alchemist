@@ -33,12 +33,12 @@ class TestSpatioTemporalInterpolation : StringSpec({
     val gridBefore = ArrayRasterGrid(
         latitudes = latitudes,
         longitudes = longitudes,
-        values = doubleArrayOf(0.0, 10.0, 20.0, 100.0),
+        gridValues = doubleArrayOf(0.0, 10.0, 20.0, 100.0),
     )
     val gridAfter = ArrayRasterGrid(
         latitudes = latitudes,
         longitudes = longitudes,
-        values = doubleArrayOf(1000.0, 1010.0, 1020.0, 1100.0),
+        gridValues = doubleArrayOf(1000.0, 1010.0, 1020.0, 1100.0),
     )
 
     val center = mockGeoPosition(15.0, 150.0) // cell center
@@ -62,7 +62,7 @@ class TestSpatioTemporalInterpolation : StringSpec({
         val gridBeforeWithHole = ArrayRasterGrid(
             latitudes = latitudes,
             longitudes = longitudes,
-            values = doubleArrayOf(Double.NaN, 10.0, 20.0, 100.0),
+            gridValues = doubleArrayOf(Double.NaN, 10.0, 20.0, 100.0),
         )
         trilinear.interpolate(center, gridBeforeWithHole, gridAfter, 0.5).shouldBeNaN()
     }
@@ -75,7 +75,7 @@ class TestSpatioTemporalInterpolation : StringSpec({
         val gridAfterWithHole = ArrayRasterGrid(
             latitudes = latitudes,
             longitudes = longitudes,
-            values = doubleArrayOf(Double.NaN, 1010.0, 1020.0, 1100.0),
+            gridValues = doubleArrayOf(Double.NaN, 1010.0, 1020.0, 1100.0),
         )
         trilinear.interpolate(center, gridBefore, gridAfterWithHole, 0.0) shouldBe (32.5 plusOrMinus tolerance)
     }
@@ -84,7 +84,7 @@ class TestSpatioTemporalInterpolation : StringSpec({
         val gridBeforeWithHole = ArrayRasterGrid(
             latitudes = latitudes,
             longitudes = longitudes,
-            values = doubleArrayOf(Double.NaN, 10.0, 20.0, 100.0),
+            gridValues = doubleArrayOf(Double.NaN, 10.0, 20.0, 100.0),
         )
         trilinear.interpolate(center, gridBeforeWithHole, gridAfter, 1.0) shouldBe (1032.5 plusOrMinus tolerance)
     }

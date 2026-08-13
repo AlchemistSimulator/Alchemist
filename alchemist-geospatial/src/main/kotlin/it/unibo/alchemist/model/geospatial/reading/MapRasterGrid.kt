@@ -14,20 +14,9 @@ package it.unibo.alchemist.model.geospatial.reading
  * are stored in a map keyed by latitude-longitude index pairs.
  *
  * Suited for sparse grids, where most cells hold a missing value.
- *
- * @property latitudes see [RasterGrid.latitudes] (ascending).
- * @property longitudes see [RasterGrid.longitudes] (ascending).
- * @param values cell values in row-major order; [Double.NaN] values represent missing/fill values.
- *
- * @throws IllegalArgumentException if [latitudes]/[longitudes] are not strictly ascending or if
- * [values]' size does not equal `latitudes.size * longitudes.size`.
  */
-class MapRasterGrid(override val latitudes: DoubleArray, override val longitudes: DoubleArray, values: DoubleArray) :
-    RasterGrid {
-
-    init {
-        requireValidGridAxes(latitudes, longitudes, values.size)
-    }
+class MapRasterGrid(latitudes: DoubleArray, longitudes: DoubleArray, gridValues: DoubleArray) :
+    RasterGrid(latitudes, longitudes, gridValues) {
 
     /**
      * A map that associates each (latIndex, longIndex) pair with the value, if present.
@@ -35,7 +24,7 @@ class MapRasterGrid(override val latitudes: DoubleArray, override val longitudes
     private val availableValues: Map<Pair<Int, Int>, Double> = buildMap {
         for (latIndex in latitudes.indices) {
             for (lonIndex in longitudes.indices) {
-                val cellValue = values[latIndex * longitudes.size + lonIndex]
+                val cellValue = gridValues[latIndex * longitudes.size + lonIndex]
                 if (!cellValue.isNaN()) put(latIndex to lonIndex, cellValue)
             }
         }

@@ -10,7 +10,9 @@
 package it.unibo.alchemist.model.timedistributions
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.times.DoubleTime
 import org.apache.commons.math3.random.RandomGenerator
 import org.apache.commons.math3.util.FastMath
@@ -23,8 +25,8 @@ import org.apache.commons.math3.util.FastMath
  * @param randomGenerator simulation random generator
  */
 @SuppressFBWarnings(value = ["EI_EXPOSE_REP2"], justification = "The simulation intentionally shares its RNG")
-open class ExponentialTime(open val lambda: Double, start: Time, private val randomGenerator: RandomGenerator) :
-    AbstractDistribution(start) {
+open class ExponentialTime<T>(open val lambda: Double, start: Time, protected val randomGenerator: RandomGenerator) :
+    AbstractDistribution<T>(start) {
 
     /**
      * @param rate configured exponential rate
@@ -41,6 +43,8 @@ open class ExponentialTime(open val lambda: Double, start: Time, private val ran
     protected open fun genTime(propensity: Double): Time = DoubleTime(uniformToExponential(propensity))
 
     override fun sample(): Time = genTime(lambda)
+
+    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = ExponentialTime(lambda, startTime, randomGenerator)
 
     private fun uniformToExponential(lambda: Double): Double = -FastMath.log1p(-randomGenerator.nextDouble()) / lambda
 }

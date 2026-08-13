@@ -83,7 +83,7 @@ sealed interface Actionable<T> :
     /**
      * @return the [TimeDistribution] for this [Reaction]
      */
-    val timeDistribution: TimeDistribution
+    val timeDistribution: TimeDistribution<T>
 
     /**
      * Advances this actionable's reaction-owned scheduling state after its scheduled event fires.

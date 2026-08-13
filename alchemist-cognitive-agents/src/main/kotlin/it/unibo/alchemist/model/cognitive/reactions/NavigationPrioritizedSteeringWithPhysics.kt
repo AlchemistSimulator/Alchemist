@@ -27,7 +27,7 @@ class NavigationPrioritizedSteeringWithPhysics<T, N : ConvexPolygon>
 constructor(
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, *>,
     pedestrian: PedestrianProperty<T>,
-    timeDistribution: TimeDistribution,
+    timeDistribution: TimeDistribution<T>,
     /**
      * Tolerance angle in degrees (see [SinglePrevalent]).
      */

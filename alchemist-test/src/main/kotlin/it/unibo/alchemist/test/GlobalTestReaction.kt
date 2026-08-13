@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.timedistributions.SimpleNetworkArrivals
 import it.unibo.alchemist.model.timedistributions.WeibullTime
 
-class GlobalTestReaction<T>(val environment: Environment<T, *>, override val timeDistribution: TimeDistribution) :
+class GlobalTestReaction<T>(val environment: Environment<T, *>, override val timeDistribution: TimeDistribution<T>) :
     GlobalReaction<T> {
 
     override val inputContext: Context = Context.GLOBAL
@@ -69,15 +69,15 @@ class GlobalTestReaction<T>(val environment: Environment<T, *>, override val tim
     }
 
     private companion object {
-        private val TimeDistribution.startTime: Time
-            get() = (this as? AbstractDistribution)?.startTime ?: Time.ZERO
+        private val TimeDistribution<*>.startTime: Time
+            get() = (this as? AbstractDistribution<*>)?.startTime ?: Time.ZERO
 
-        private val TimeDistribution.expectedRate: Double
+        private val TimeDistribution<*>.expectedRate: Double
             get() = when (this) {
-                is DiracComb -> frequency
-                is ExponentialTime -> lambda
-                is AnyRealDistribution -> mean
-                is WeibullTime -> mean
+                is DiracComb<*> -> frequency
+                is ExponentialTime<*> -> lambda
+                is AnyRealDistribution<*> -> mean
+                is WeibullTime<*> -> mean
                 is SimpleNetworkArrivals<*> -> expectedRate
                 else -> Double.NaN
             }

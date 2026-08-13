@@ -51,12 +51,12 @@ class TestIncarnation {
         final Environment<Object, Euclidean2DPosition> environment = new Continuous2DEnvironment<>(INCARNATION);
         final Node<Object> node = INCARNATION.createNode(rng, environment, null);
         assertNotNull(node);
-        final TimeDistribution immediately = INCARNATION.createTimeDistribution(rng, environment, node, null);
+        final TimeDistribution<Object> immediately = INCARNATION.createTimeDistribution(rng, environment, node, null);
         assertNotNull(immediately);
         final Reaction<Object> immediateReaction = INCARNATION.createReaction(rng, environment, node, immediately, null);
         assertTrue(Double.isInfinite(immediateReaction.getRate()));
         assertTrue(immediateReaction.getRate() > 0);
-        final TimeDistribution standard = INCARNATION.createTimeDistribution(rng, environment, node, "3");
+        final TimeDistribution<Object> standard = INCARNATION.createTimeDistribution(rng, environment, node, "3");
         assertNotNull(standard);
         final Reaction<Object> generic = INCARNATION.createReaction(rng, environment, node, standard, null);
         assertEquals(3d, generic.getRate(), Double.MIN_VALUE);

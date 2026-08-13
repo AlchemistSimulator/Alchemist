@@ -150,7 +150,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       randomGenerator: RandomGenerator,
       environment: Environment[T, P],
       node: Node[T],
-      time: TimeDistribution,
+      time: TimeDistribution[T],
       parameters: Any
   ): Reaction[T] = {
     val parameterString = Option(parameters).map(_.toString).orNull
@@ -159,7 +159,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       if (isSend) {
         new ChemicalReaction[T](
           Objects.requireNonNull[Node[T]](node),
-          Objects.requireNonNull[TimeDistribution](time)
+          Objects.requireNonNull[TimeDistribution[T]](time)
         )
       } else {
         new Event[T](node, time)
@@ -182,15 +182,15 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       environment: Environment[T, P],
       node: Node[T],
       parameters: Any
-  ): TimeDistribution = {
-    if (parameters == null) return new ExponentialTime(Double.PositiveInfinity, randomGenerator)
+  ): TimeDistribution[T] = {
+    if (parameters == null) return new ExponentialTime[T](Double.PositiveInfinity, randomGenerator)
     val frequency = toDouble(parameters)
     if (frequency.isNaN) {
       throw new IllegalArgumentException(
         parameters.toString + " is not a valid number, the time distribution could not be created."
       )
     }
-    new DiracComb(new DoubleTime(randomGenerator.nextDouble() / frequency), frequency)
+    new DiracComb[T](new DoubleTime(randomGenerator.nextDouble() / frequency), frequency)
   }
 
   override def getProperty(node: Node[T], molecule: Molecule, propertyName: String): Double = {

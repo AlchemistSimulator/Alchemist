@@ -9,7 +9,9 @@
 
 package it.unibo.alchemist.model.timedistributions
 
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.times.DoubleTime
 
 /**
@@ -18,7 +20,7 @@ import it.unibo.alchemist.model.times.DoubleTime
  * @param start initial scheduling time
  * @param rate number of occurrences per time unit
  */
-open class DiracComb(start: Time, rate: Double) : AbstractDistribution(start) {
+open class DiracComb<T>(start: Time, rate: Double) : AbstractDistribution<T>(start) {
 
     private val timeInterval = 1 / rate
 
@@ -31,6 +33,8 @@ open class DiracComb(start: Time, rate: Double) : AbstractDistribution(start) {
     val frequency: Double get() = 1 / timeInterval
 
     override fun sample(): Time = DoubleTime(timeInterval)
+
+    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = DiracComb(startTime, frequency)
 
     override fun toString(): String = "${javaClass.simpleName}[ΔT=$timeInterval]"
 }

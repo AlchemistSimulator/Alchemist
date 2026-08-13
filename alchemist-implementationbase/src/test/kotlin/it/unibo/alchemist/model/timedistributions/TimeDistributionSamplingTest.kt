@@ -28,18 +28,23 @@ import org.junit.jupiter.api.Test
 class TimeDistributionSamplingTest {
 
     @Test
-    fun `the generic contract only exposes sampling`() {
-        assertEquals(listOf("sample"), TimeDistribution::class.java.declaredMethods.map { it.name })
+    fun `the generic contract exposes sampling and fresh instantiation`() {
+        assertEquals(
+            setOf("sample", "newInstanceOn"),
+            TimeDistribution::class.java.declaredMethods.map {
+                it.name
+            }.toSet(),
+        )
     }
 
     @Test
     fun `a Dirac comb samples its constant period`() {
-        assertEquals(DoubleTime(0.25), DiracComb(4.0).sample())
+        assertEquals(DoubleTime(0.25), DiracComb<Any>(4.0).sample())
     }
 
     @Test
     fun `an arbitrary real distribution delegates sampling`() {
-        assertEquals(DoubleTime(2.5), AnyRealDistribution(DiracDeltaDistribution(2.5)).sample())
+        assertEquals(DoubleTime(2.5), AnyRealDistribution<Any>(DiracDeltaDistribution(2.5)).sample())
     }
 
     @Test
@@ -48,14 +53,14 @@ class TimeDistributionSamplingTest {
             val distribution = mockk<RealDistribution>()
             every { distribution.sample() } returns invalidSample
             assertFailsWith<IllegalStateException> {
-                AnyRealDistribution(distribution).sample()
+                AnyRealDistribution<Any>(distribution).sample()
             }
         }
     }
 
     @Test
     fun `exponential samples are finite non-negative delays`() {
-        val distribution = ExponentialTime(2.0, Well19937c(0))
+        val distribution = ExponentialTime<Any>(2.0, Well19937c(0))
         repeat(100) {
             val sample = distribution.sample().toDouble()
             assertTrue(sample.isFinite() && sample >= 0.0)
@@ -74,7 +79,7 @@ class TimeDistributionSamplingTest {
 
     @Test
     fun `Weibull samples are finite non-negative delays`() {
-        val distribution = WeibullTime(2.0, 0.5, Well19937c(0))
+        val distribution = WeibullTime<Any>(2.0, 0.5, Well19937c(0))
         repeat(100) {
             val sample = distribution.sample().toDouble()
             assertTrue(sample.isFinite() && sample >= 0.0)
@@ -83,12 +88,12 @@ class TimeDistributionSamplingTest {
 
     @Test
     fun `a trigger samples its configured time`() {
-        assertEquals(DoubleTime(42.0), Trigger(DoubleTime(42.0)).sample())
+        assertEquals(DoubleTime(42.0), Trigger<Any>(DoubleTime(42.0)).sample())
     }
 
     @Test
     fun `reactions own absolute occurrence updates`() {
-        val reaction = Event(mockk<Node<Any>>()) { DoubleTime(2.0) }
+        val reaction = Event(mockk<Node<Any>>(), FixedDistribution(DoubleTime(2.0)))
         reaction.initializationComplete(Time.ZERO, mockk<Environment<Any, *>>())
 
         reaction.update(DoubleTime(3.0))
@@ -98,11 +103,17 @@ class TimeDistributionSamplingTest {
 
     @Test
     fun `reactions reject invalid custom samples`() {
-        val reaction = Event(mockk<Node<Any>>()) { DoubleTime(-1.0) }
+        val reaction = Event(mockk<Node<Any>>(), FixedDistribution(DoubleTime(-1.0)))
         reaction.initializationComplete(Time.ZERO, mockk<Environment<Any, *>>())
 
         assertFailsWith<IllegalStateException> {
             reaction.update(Time.ZERO)
         }
+    }
+
+    private class FixedDistribution(private val delay: Time) : TimeDistribution<Any> {
+        override fun sample(): Time = delay
+
+        override fun newInstanceOn(node: Node<Any>): TimeDistribution<Any> = FixedDistribution(delay)
     }
 }

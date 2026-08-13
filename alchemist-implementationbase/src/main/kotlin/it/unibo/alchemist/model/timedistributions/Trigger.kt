@@ -8,11 +8,15 @@
  */
 package it.unibo.alchemist.model.timedistributions
 
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistribution
 
 /**
  * A trigger that fires at a given [time].
  */
-class Trigger(private val time: Time) : AbstractDistribution(time) {
+class Trigger<T>(private val time: Time) : AbstractDistribution<T>(time) {
     override fun sample(): Time = time
+
+    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = Trigger(time)
 }

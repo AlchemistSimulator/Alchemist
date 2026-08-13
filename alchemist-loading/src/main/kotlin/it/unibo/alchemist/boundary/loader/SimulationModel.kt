@@ -680,7 +680,7 @@ internal object SimulationModel {
             /*
              * Time distribution
              */
-            val timeDistribution: TimeDistribution =
+            val timeDistribution: TimeDistribution<T> =
                 visitTimeDistribution(
                     incarnation,
                     simulationRNG,
@@ -769,7 +769,7 @@ internal object SimulationModel {
         incarnation: Incarnation<T, P>,
         environment: Environment<T, P>,
         node: Node<T>?,
-        timeDistribution: TimeDistribution,
+        timeDistribution: TimeDistribution<T>,
         context: Context,
         root: Map<*, *>,
     ) = when {
@@ -831,7 +831,7 @@ internal object SimulationModel {
         root: Any?,
     ) = when {
         root is Map<*, *> && root.containsKey(JavaType.type) ->
-            visitBuilding<TimeDistribution>(context, root)?.getOrThrow() ?: cantBuildWith<TimeDistribution>(root)
+            visitBuilding<TimeDistribution<T>>(context, root)?.getOrThrow() ?: cantBuildWith<TimeDistribution<T>>(root)
         else ->
             incarnation.createTimeDistribution(simulationRNG, environment, node, root)
     }

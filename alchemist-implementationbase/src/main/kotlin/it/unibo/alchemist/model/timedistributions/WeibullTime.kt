@@ -1,6 +1,8 @@
 package it.unibo.alchemist.model.timedistributions
 
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.times.DoubleTime
 import org.apache.commons.math3.distribution.WeibullDistribution
 import org.apache.commons.math3.random.RandomGenerator
@@ -11,12 +13,12 @@ import org.apache.commons.math3.util.FastMath
  * Weibull distributed events.
  *
  */
-open class WeibullTime private constructor(
+open class WeibullTime<T> private constructor(
     private val randomGenerator: RandomGenerator,
     private val backingDistribution: WeibullDistribution,
     private val offset: Double,
     start: Time,
-) : AbstractDistribution(start) {
+) : AbstractDistribution<T>(start) {
     /**
      * @param mean
      *            mean for this distribution
@@ -81,6 +83,14 @@ open class WeibullTime private constructor(
         backingDistribution.inverseCumulativeProbability(randomGenerator.nextDouble()) + this.offset
 
     override fun sample(): Time = DoubleTime(1.0 / genSample())
+
+    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = WeibullTime(
+        backingDistribution.shape,
+        backingDistribution.scale,
+        offset,
+        startTime,
+        randomGenerator,
+    )
 
     /**
      * @return the mean for this distribution.

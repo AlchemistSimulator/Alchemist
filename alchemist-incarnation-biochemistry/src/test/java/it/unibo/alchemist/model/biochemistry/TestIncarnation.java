@@ -53,7 +53,7 @@ class TestIncarnation {
     private Node<Double> node;
     private Environment<Double, Euclidean2DPosition> environment;
     private RandomGenerator rand;
-    private TimeDistribution time;
+    private TimeDistribution<Double> time;
 
     private static Biomolecule makeMol(final String name) {
         final Biomolecule biomol = INCARNATION.createMolecule(name);
@@ -68,7 +68,7 @@ class TestIncarnation {
         environment = new BioRect2DEnvironment(INCARNATION);
         node = INCARNATION.createNode(rand, environment, null);
         rand = new MersenneTwister();
-        time = new ExponentialTime(1, rand);
+        time = new ExponentialTime<>(1, rand);
     }
 
     /**

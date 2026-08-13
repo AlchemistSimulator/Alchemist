@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.times.DoubleTime
 
 /**
@@ -46,7 +47,7 @@ class SimpleNetworkArrivals<T> private constructor(
     private val bandwidthProperty: String? = null,
     private val accessPointIdentificator: Molecule? = null,
     startTime: Time = Time.ZERO,
-) : AbstractDistribution(startTime) {
+) : AbstractDistribution<T>(startTime) {
 
     @JvmOverloads
     constructor(
@@ -182,6 +183,23 @@ class SimpleNetworkArrivals<T> private constructor(
 
     /** Expected number of arrivals per time unit for the current network state. */
     val expectedRate: Double get() = 1 / (propagationDelay + packetSize / bandwidth)
+
+    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = SimpleNetworkArrivals(
+        incarnation = incarnation,
+        environment = environment,
+        node = node,
+        constantPropagationDelay = constantPropagationDelay,
+        propagationDelayMolecule = propagationDelayMolecule,
+        propagationDelayProperty = propagationDelayProperty,
+        constantPacketSize = constantPacketSize,
+        packetSizeMolecule = packetSizeMolecule,
+        packetSizeProperty = packetSizeProperty,
+        constantBandwidth = constantBandwidth,
+        bandwidthMolecule = bandwidthMolecule,
+        bandwidthProperty = bandwidthProperty,
+        accessPointIdentificator = accessPointIdentificator,
+        startTime = startTime,
+    )
 
     private companion object {
         private val Molecule?.isMeaningful: Molecule?

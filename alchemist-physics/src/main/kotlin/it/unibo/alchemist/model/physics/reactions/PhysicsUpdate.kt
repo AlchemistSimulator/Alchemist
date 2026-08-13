@@ -35,7 +35,7 @@ import it.unibo.alchemist.model.timedistributions.WeibullTime
 class PhysicsUpdate<T>(
     /** The physics environment advanced by this reaction. */
     val environment: Dynamics2DEnvironment<T>,
-    override val timeDistribution: TimeDistribution = DiracComb(DEFAULT_RATE),
+    override val timeDistribution: TimeDistribution<T> = DiracComb(DEFAULT_RATE),
 ) : GlobalReaction<T> {
 
     constructor(environment: Dynamics2DEnvironment<T>, updateRate: Double) : this(environment, DiracComb(updateRate))
@@ -85,15 +85,15 @@ class PhysicsUpdate<T>(
     private companion object {
         const val DEFAULT_RATE = 30.0
 
-        private val TimeDistribution.startTime: Time
-            get() = (this as? AbstractDistribution)?.startTime ?: Time.ZERO
+        private val TimeDistribution<*>.startTime: Time
+            get() = (this as? AbstractDistribution<*>)?.startTime ?: Time.ZERO
 
-        private val TimeDistribution.expectedRate: Double
+        private val TimeDistribution<*>.expectedRate: Double
             get() = when (this) {
-                is DiracComb -> frequency
-                is ExponentialTime -> lambda
-                is AnyRealDistribution -> mean
-                is WeibullTime -> mean
+                is DiracComb<*> -> frequency
+                is ExponentialTime<*> -> lambda
+                is AnyRealDistribution<*> -> mean
+                is WeibullTime<*> -> mean
                 is SimpleNetworkArrivals<*> -> expectedRate
                 else -> Double.NaN
             }

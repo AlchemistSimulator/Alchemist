@@ -34,15 +34,16 @@ open class SteeringBehavior<T>(
     private val environment: Environment<T, Euclidean2DPosition>,
     /** The pedestrian property of the owner of this reaction. */
     protected val pedestrian: PedestrianProperty<T>,
-    timeDistribution: TimeDistribution,
+    timeDistribution: TimeDistribution<T>,
     open val steerStrategy: SteeringStrategy<T, Euclidean2DPosition>,
 ) : AbstractReaction<T>(pedestrian.node, timeDistribution) {
     /** The list of steering actions in this reaction. */
     fun steerActions(): List<SteeringAction<T, Euclidean2DPosition>> =
         actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time) =
-        SteeringBehavior(environment, node.pedestrianProperty, timeDistribution, steerStrategy)
+    override fun cloneOnNewNode(node: Node<T>, currentTime: Time) = makeClone(node, currentTime) {
+        SteeringBehavior(environment, node.pedestrianProperty, it, steerStrategy)
+    }
 
     override fun updateInternalStatus(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) =
         Unit

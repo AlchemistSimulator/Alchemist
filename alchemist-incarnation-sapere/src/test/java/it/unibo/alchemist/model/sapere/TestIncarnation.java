@@ -42,7 +42,7 @@ final class TestIncarnation {
     private ILsaNode node;
     private Environment<List<ILsaMolecule>, Euclidean2DPosition> environment;
     private RandomGenerator randomGenerator;
-    private TimeDistribution timeDistribution;
+    private TimeDistribution<List<ILsaMolecule>> timeDistribution;
 
     private ILsaMolecule mkMol(final String s, final int args, final boolean ground) {
         final ILsaMolecule res = incarnation.createMolecule(s);
@@ -80,7 +80,7 @@ final class TestIncarnation {
     }
 
     private void testTD(final String param, final double rate, final double occurrence) {
-        final TimeDistribution t0 = incarnation.createTimeDistribution(
+        final TimeDistribution<List<ILsaMolecule>> t0 = incarnation.createTimeDistribution(
                 randomGenerator, environment, node, param
         );
         assertNotNull(t0);

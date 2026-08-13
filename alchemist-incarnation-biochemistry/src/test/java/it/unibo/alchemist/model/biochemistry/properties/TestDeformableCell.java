@@ -77,7 +77,7 @@ class TestDeformableCell {
     private Node<Double> cellNode5;
     private final BiochemistryIncarnation incarnation = new BiochemistryIncarnation();
     private RandomGenerator rand;
-    private TimeDistribution time;
+    private TimeDistribution<Double> time;
 
     private Node<Double> createDeformableCell(final double maxDiameter, final double rigidity) {
         final Node<Double> node = new GenericNode<>(environment);
@@ -100,7 +100,7 @@ class TestDeformableCell {
         cellNode4 = createDeformableCell(3, 0.5);
         cellNode5 = createDeformableCell(2, 0.5);
         rand = new MersenneTwister();
-        time = new ExponentialTime(1, rand);
+        time = new ExponentialTime<>(1, rand);
     }
 
     /**

@@ -29,7 +29,6 @@ import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.timedistributions.SimpleNetworkArrivals
 import it.unibo.alchemist.model.timedistributions.Trigger
 import it.unibo.alchemist.model.timedistributions.WeibullTime
-import java.util.function.Supplier
 import javax.annotation.Nonnull
 
 /**
@@ -39,7 +38,7 @@ import javax.annotation.Nonnull
  */
 abstract class AbstractReaction<T>(
     final override val node: Node<T>,
-    final override val timeDistribution: TimeDistribution,
+    final override val timeDistribution: TimeDistribution<T>,
 ) : Reaction<T> {
 
     override var actions: List<Action<T>> = emptyList()
@@ -86,6 +85,8 @@ abstract class AbstractReaction<T>(
 
     private var disposed = false
 
+    private var newlyInstantiatedAt: Time? = null
+
     private val mutableNextOccurrence = MutableObservable.observe(timeDistribution.startTime, false)
 
     private val observableNextOccurrence = mutableNextOccurrence.map { it }
@@ -122,7 +123,16 @@ abstract class AbstractReaction<T>(
         initializedEnvironment = environment
         initializeDependencySubscriptions()
         onInitializationComplete(atTime, environment)
+        newlyInstantiatedAt?.let { cloneTime ->
+            val schedulingTime = maxOf(cloneTime, atTime)
+            updateInternalStatus(schedulingTime, false, environment)
+            initializeNewProgramScheduling(schedulingTime)
+            newlyInstantiatedAt = null
+        }
     }
+
+    /** Whether this reaction is awaiting initialization as a newly instantiated program. */
+    protected val isNewlyInstantiatedProgram: Boolean get() = newlyInstantiatedAt != null
 
     /**
      * Called once reactive dependencies have been activated.
@@ -132,10 +142,26 @@ abstract class AbstractReaction<T>(
     /**
      * Creates a clone and populates it with cloned actions and conditions.
      */
-    protected fun <R : Reaction<T>> makeClone(builder: Supplier<R>): R = builder.get().also { result ->
-        val destination = result.node
-        result.conditions = conditions.map { it.cloneCondition(destination, result) }
-        result.actions = actions.map { it.cloneAction(destination, result) }
+    protected fun <R : AbstractReaction<T>> makeClone(
+        node: Node<T>,
+        currentTime: Time,
+        builder: (TimeDistribution<T>) -> R,
+    ): R {
+        val freshGenerator = timeDistribution.newInstanceOn(node)
+        check(freshGenerator !== timeDistribution) {
+            "The time distribution of $this returned itself from newInstanceOn($node)"
+        }
+        return prepareClone(builder(freshGenerator), currentTime)
+    }
+
+    /**
+     * Populates a freshly constructed specialized reaction with cloned actions and conditions.
+     */
+    protected fun <R : AbstractReaction<T>> prepareClone(result: R, currentTime: Time): R = result.also { clone ->
+        val destination = clone.node
+        clone.conditions = conditions.map { condition -> condition.cloneCondition(destination, clone) }
+        clone.actions = actions.map { action -> action.cloneAction(destination, clone) }
+        clone.newlyInstantiatedAt = currentTime
     }
 
     final override fun update(currentTime: Time) {
@@ -235,9 +261,18 @@ abstract class AbstractReaction<T>(
     protected open fun updateScheduling(currentTime: Time, hasBeenExecuted: Boolean) {
         val schedulingTime = maxOf(currentTime, timeDistribution.startTime)
         when (val distribution = timeDistribution) {
-            is Trigger -> if (hasBeenExecuted) setNextOccurrence(Time.INFINITY)
-            is ExponentialTime -> updateExponentialScheduling(distribution, schedulingTime, hasBeenExecuted)
+            is Trigger<*> -> if (hasBeenExecuted) setNextOccurrence(Time.INFINITY)
+            is ExponentialTime<*> -> updateExponentialScheduling(distribution, schedulingTime, hasBeenExecuted)
             else -> if (hasBeenExecuted) scheduleSampleAfter(schedulingTime)
+        }
+    }
+
+    /** Starts a newly instantiated program without interpreting the initialization as a previous occurrence. */
+    protected open fun initializeNewProgramScheduling(currentTime: Time) {
+        if (timeDistribution is Trigger<*>) {
+            setNextOccurrence(maxOf(currentTime, timeDistribution.startTime))
+        } else {
+            updateScheduling(currentTime, true)
         }
     }
 
@@ -252,7 +287,7 @@ abstract class AbstractReaction<T>(
     }
 
     private fun updateExponentialScheduling(
-        distribution: ExponentialTime,
+        distribution: ExponentialTime<*>,
         currentTime: Time,
         hasBeenExecuted: Boolean,
     ) {
@@ -282,15 +317,15 @@ abstract class AbstractReaction<T>(
         }
     }
 
-    private val TimeDistribution.startTime: Time
-        get() = (this as? AbstractDistribution)?.startTime ?: Time.ZERO
+    private val TimeDistribution<T>.startTime: Time
+        get() = (this as? AbstractDistribution<*>)?.startTime ?: Time.ZERO
 
-    private val TimeDistribution.defaultReactionRate: Double
+    private val TimeDistribution<T>.defaultReactionRate: Double
         get() = when (this) {
-            is DiracComb -> frequency
-            is ExponentialTime -> lambda
-            is AnyRealDistribution -> mean
-            is WeibullTime -> mean
+            is DiracComb<*> -> frequency
+            is ExponentialTime<*> -> lambda
+            is AnyRealDistribution<*> -> mean
+            is WeibullTime<*> -> mean
             is SimpleNetworkArrivals<*> -> expectedRate
             else -> Double.NaN
         }

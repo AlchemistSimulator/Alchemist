@@ -48,7 +48,7 @@ infix fun Action<*>.shouldEqual(other: Action<*>) {
     assertEquals(other.getContext(), getContext(), "Action contexts don't match")
 }
 
-infix fun TimeDistribution.shouldEqual(other: TimeDistribution) {
+infix fun TimeDistribution<*>.shouldEqual(other: TimeDistribution<*>) {
     assertEquals(other::class, this::class, "TimeDistribution types don't match")
 }
 

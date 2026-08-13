@@ -186,7 +186,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         node: Node<Any>,
-        timeDistribution: TimeDistribution,
+        timeDistribution: TimeDistribution<Any>,
         parameter: Any?,
     ): Reaction<Any> {
         val parameterString = parameter?.toString()
@@ -216,7 +216,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         environment: Environment<Any, P>,
         node: Node<Any>?,
         parameter: Any?,
-    ): TimeDistribution = try {
+    ): TimeDistribution<Any> = try {
         val frequency = parameter
             ?.let { (it as? Number)?.toDouble() ?: it.toString().toDouble() }
         when (frequency) {

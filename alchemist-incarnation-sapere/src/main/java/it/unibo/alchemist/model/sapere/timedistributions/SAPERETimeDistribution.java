@@ -10,17 +10,19 @@
 package it.unibo.alchemist.model.sapere.timedistributions;
 
 import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import org.danilopianini.lang.HashString;
 
 import java.util.Map;
+import java.util.List;
 
 /**
  * Interface for TimeDistribution that need matches.
  *
  */
-public interface SAPERETimeDistribution extends TimeDistribution {
+public interface SAPERETimeDistribution extends TimeDistribution<List<ILsaMolecule>> {
 
     /**
      * @return the rate computed against the currently installed SAPERE match token

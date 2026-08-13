@@ -26,7 +26,7 @@ object DependencyUtils {
 
     class SimpleReaction<T>(
         node: Node<T>,
-        distribution: TimeDistribution,
+        distribution: TimeDistribution<T>,
         val action: () -> Unit,
     ) : AbstractReaction<T>(node, distribution) {
         override fun updateInternalStatus(

@@ -20,4 +20,4 @@ import it.unibo.alchemist.model.TimeDistribution
  *
  * @property startTime earliest absolute time at which a reaction using this generator may run
  */
-abstract class AbstractDistribution(val startTime: Time) : TimeDistribution
+abstract class AbstractDistribution<T>(val startTime: Time) : TimeDistribution<T>

@@ -28,7 +28,7 @@ import it.unibo.alchemist.model.times.DoubleTime
 
 class GlobalContextsReaction<T>(
     node: Node<T>,
-    timeDistribution: TimeDistribution,
+    timeDistribution: TimeDistribution<T>,
     inGlobal: Boolean,
     outGlobal: Boolean,
 ) : AbstractReaction<T>(node, timeDistribution) {

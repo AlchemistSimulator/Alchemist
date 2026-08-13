@@ -37,7 +37,7 @@ internal class TestConcurrency {
         val environment = Continuous2DEnvironment(incarnation)
         val node = GenericNode(environment)
         environment.linkingRule = NoLinks()
-        val timeDistribution = DiracComb(1.0)
+        val timeDistribution = DiracComb<Double>(1.0)
         val reaction = Event(node, timeDistribution)
         node.addReaction(reaction)
         environment.addNode(node, environment.makePosition(0, 0))

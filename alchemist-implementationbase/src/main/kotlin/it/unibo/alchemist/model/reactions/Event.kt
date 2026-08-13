@@ -21,12 +21,11 @@ import it.unibo.alchemist.model.TimeDistribution
  * @param node node hosting the event
  * @param timeDistribution delay generator
  */
-class Event<T>(node: Node<T>, timeDistribution: TimeDistribution) : AbstractReaction<T>(node, timeDistribution) {
+class Event<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) : AbstractReaction<T>(node, timeDistribution) {
 
     override fun updateInternalStatus(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) =
         Unit
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Event<T> = makeClone {
-        Event(node, timeDistribution)
-    }
+    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Event<T> =
+        makeClone(node, currentTime) { freshGenerator -> Event(node, freshGenerator) }
 }

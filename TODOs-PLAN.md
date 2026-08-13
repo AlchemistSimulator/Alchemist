@@ -1,6 +1,6 @@
 # Reactive Engine Refactor Plan
 
-Last updated: 2026-08-03
+Last updated: 2026-08-13
 
 Working branch: `marmellata`
 
@@ -186,10 +186,9 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 ## Phase 5: make reactions own scheduling
 
 - [x] Give each reaction sole ownership of observable `tau`.
-- [ ] As the next implementation step, replace shared-generator reaction cloning with **newly instantiated program**
-  semantics:
-  - keep generator reconstruction outside the minimal `TimeDistribution` sampling contract, using a separate
-    node-aware construction policy owned by the reaction/program;
+- [x] Complete the replacement of shared-generator reaction cloning with **newly instantiated program** semantics:
+  - make `TimeDistribution<T>.newInstanceOn(node)` construct a fresh, destination-bound generator with the same
+    configuration; this open-world operation replaces the rejected central built-in factory registry;
   - construct a fresh `TimeDistribution` instance bound to the destination node and environment instead of passing
     the source reaction's generator object to the clone;
   - initialize a fresh reaction occurrence by sampling from the clone time (while respecting any configured
@@ -201,6 +200,20 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
     `SimpleNetworkArrivals`, and isolate mutable specialized state such as SAPERE match tokens;
   - add cloning regressions for deterministic and non-memoryless generators, destination-node-dependent generators,
     RNG-backed generators, and specialized mutable generators.
+  Execution checkpoints for this step:
+  - [x] Inventory every reaction clone path and distinguish generator configuration from sampler/reaction runtime
+    state.
+  - [x] Reject the closed-world `builtInFactory()` approach: adding a distribution must never require modifying a
+    central type switch.
+  - [x] Reinstate generic `TimeDistribution<T>` with `newInstanceOn(node)` and implement it in every distribution;
+    opaque nested samplers must retain their own reconstruction recipe or fail clearly when reinstantiation is
+    requested.
+  - [x] Make base reaction cloning use `newInstanceOn(node)` and initialize the fresh generator without copying a
+    running schedule.
+  - [x] Migrate cognitive, biochemical, SAPERE, and other specialized reaction clones; preserve shared simulation
+    RNGs while isolating generator objects and mutable match/token state.
+  - [x] Complete the deterministic, non-memoryless, destination-bound, RNG-backed, and specialized clone regression
+    matrix.
 - [ ] Rename reaction `tau` to `nextOccurrence` across the API, implementations, engine, schedulers, loaders,
   tests, and documentation.
 - [ ] Define initialization, firing, invalidation, and removal transitions; cloning follows the newly-instantiated-
@@ -288,21 +301,79 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 Use repository Gradle tasks from the repository root.
 
-- [ ] During each phase, run the narrow compile and test tasks for touched modules.
-- [ ] When Kotlin changes, run `./gradlew --parallel ktlintFormat` before final verification.
+- [x] During each phase, run the narrow compile and test tasks for touched modules.
+- [x] When Kotlin changes, run `./gradlew --parallel ktlintFormat` before final verification.
 - [ ] When Scala in `alchemist-incarnation-scafi` changes, run
   `./gradlew --parallel alchemist-incarnation-scafi:scalafmtAll`.
-- [ ] Re-run affected module verification after formatting.
-- [ ] Finish every non-trivial completed change with `./gradlew --parallel build`, excluding alternate-JVM test
+- [x] Re-run affected module verification after formatting.
+- [x] Finish every non-trivial completed change with `./gradlew --parallel build`, excluding alternate-JVM test
   matrix tasks and the redistributable DEB/RPM package tasks. Keep the normal test suites and verification tasks.
-- [ ] If the full build fails, record the exact blocker in this document and keep fixing until it passes or an
+- [x] If the full build fails, record the exact blocker in this document and keep fixing until it passes or an
   external blocker is confirmed.
 
 ## Progress log
 
+- 2026-08-13: rejected the provisional `TimeDistributionFactory`/`builtInFactory()` implementation because its
+  central runtime-type switch made the model closed to new distribution implementations. The replacement contract
+  is `TimeDistribution<T>.newInstanceOn(node)`: each distribution owns reconstruction of a fresh equivalent
+  generator, while the reaction still owns clone-time scheduling and all runtime occurrence semantics. The method
+  intentionally receives no current time, preventing generator construction from absorbing scheduling policy.
+- 2026-08-13: completed the open-world contract migration. Every distribution now implements
+  `newInstanceOn(node)`, including destination-bound network/molecule generators and randomized or SAPERE-specific
+  subclasses. Randomized Dirac, distributed-Weibull, and SAPERE exponential implementations were significantly
+  changed and therefore ported from Java to Kotlin. Core, cognitive, biochemical, and SAPERE clone paths no longer
+  pass the source generator object. Compilation and focused regression validation are green; formatting and the
+  optimized repository-wide build remain before this checkpoint can close.
+- 2026-08-13: unified specialized cloning with the base newly-instantiated-program lifecycle. Cognitive,
+  biochemical, and SAPERE reactions now reconstruct their generator through `newInstanceOn(node)`, clone actions
+  and conditions onto the destination, and record the clone time through one base helper. This prevents manual
+  specialized clones from bypassing fresh-program initialization while retaining intentionally shared simulation
+  RNGs and discarding mutable SAPERE match state. Formatting and validation are next.
+- 2026-08-13: repository-wide Kotlin formatting passes. The post-format focused suite passes all 20 sampling and
+  clone regressions in `alchemist-implementationbase`, the SAPERE fresh-generator regression, and Checkstyle for
+  both Java modules whose specialized clone paths changed. The matrix covers deterministic starts and triggers,
+  non-memoryless state isolation, destination rebinding, shared-RNG generators, Weibull and randomized specialized
+  types, SAPERE reconstruction, and the explicit failure for an opaque sampler without a reconstruction recipe.
+  The filtered repository-wide build is the remaining gate for this checkpoint.
+- 2026-08-13: the first filtered full build passed production and test compilation, documentation, Checkstyle,
+  SpotBugs, and the suites reached before failing at `alchemist-implementationbase:detektMain`. The only findings
+  are two `NoNameShadowing` reports in the new clone helper's nested implicit lambda parameters. The parameters are
+  now explicitly named; formatting and focused Detekt will be rerun before repeating the full build.
+- 2026-08-13: the lambda naming correction passes repository-wide Kotlin formatting and focused
+  `alchemist-implementationbase:detektMain`. The same filtered full build is being repeated as the final gate.
+- 2026-08-13: the `TimeDistribution<T>.newInstanceOn(node)` and newly-instantiated-program clone checkpoint is
+  complete. The final filtered `./gradlew --parallel build` passes 916 tasks in 9m22s, including normal JVM,
+  JavaScript, WebAssembly, documentation, static-analysis, loader, incarnation, and integration verification.
+  Alternate-JVM `testWithJvm*`/`jvmTestWithJvm*` tasks, DEB/RPM builders, and RPM-derived `generatePKGBUILD` were
+  excluded as directed. Phase 5 can proceed with the separately planned `tau` to `nextOccurrence` rename after
+  this independently committable checkpoint is reviewed and committed.
+- 2026-08-13: `AbstractReaction` now delegates fresh generator construction polymorphically to
+  `TimeDistribution<T>.newInstanceOn(node)`. `Event` and `ChemicalReaction` create a distinct generator for a clone,
+  clone actions and conditions onto the new reaction, and defer fresh scheduling until engine initialization. The
+  initial occurrence is sampled after `max(cloneTime, configuredStart)` without importing the source occurrence,
+  residual delay, or previous rate. A cloned absolute trigger remains pending instead of being mistaken for a
+  trigger that already fired. Built-in reconstruction currently covers deterministic, exponential, Weibull,
+  trigger, describable Apache-real, molecule-controlled, and network-arrival generators; an opaque sampler reports
+  that its implementation lacks a reconstruction recipe rather than silently sharing it. Randomized Dirac and
+  Weibull variants preserve their specialized type and recreate their per-node law; SAPERE reconstruction retains
+  its rate equation and shared simulation RNG while dropping the mutable match token.
+- 2026-08-13: the focused core clone regression matrix passes for deterministic clone-time scheduling, configured
+  absolute starts, triggers, non-memoryless state isolation, destination-node rebinding, distinct RNG-backed
+  generator objects using the shared simulation RNG, Weibull reconstruction, and explicit rejection of an opaque
+  sampler without a construction policy. Loader/DSL propagation and specialized reaction clone paths remain the
+  next checkpoint, so the overall Phase 5 clone item remains open.
+- 2026-08-13: the superseded factory-based checkpoint passed repository-wide validation before review. Validation
+  of its `newInstanceOn` replacement is tracked separately below.
+- 2026-08-13: completed the Phase 5 clone-path and construction-boundary inventory. `Event`, `ChemicalReaction`,
+  cognitive reactions, `BiochemicalReaction`, and `SAPEREReaction` currently pass the source generator object to
+  their clones. `MoleculeControlledTimeDistribution` and `SimpleNetworkArrivals` additionally capture the source
+  node, while `SAPEREExponentialTime` carries mutable match state. The selected correction is the open-world,
+  node-aware `TimeDistribution<T>.newInstanceOn(node)` operation. Each concrete generator retains the configuration
+  it needs to recreate itself; an opaque nested sampler must report that it cannot do so rather than assume
+  memorylessness or silently share hidden state.
 - 2026-08-13: selected newly instantiated program semantics for reaction cloning. The next Phase 5 implementation
   step must replace every pass-through of the source `TimeDistribution` with a fresh destination-bound generator
-  created by a separate construction policy. A clone starts a new schedule at its clone time and inherits neither
+  created through `newInstanceOn(node)`. A clone starts a new schedule at its clone time and inherits neither
   the source occurrence nor reaction-local generator state; this deliberately avoids relying on memorylessness.
 - 2026-08-03: began Phase 4 from clean committed checkpoint `1898ab40a`. The sampling contract will use
   `org.apache.commons.math3.distribution.RealDistribution` as inspiration, favoring a single `sample()` operation

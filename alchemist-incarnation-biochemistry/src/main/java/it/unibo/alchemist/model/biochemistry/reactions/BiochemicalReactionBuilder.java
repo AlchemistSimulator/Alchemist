@@ -79,7 +79,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
     private final Node<Double> node;
     private final Environment<Double, P> environment;
     private RandomGenerator rand;
-    private TimeDistribution time;
+    private TimeDistribution<Double> time;
     private String reactionString;
 
     /**
@@ -155,7 +155,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
      * @param td the time distribution
      * @return .
      */
-    public BiochemicalReactionBuilder<P> timeDistribution(final TimeDistribution td) {
+    public BiochemicalReactionBuilder<P> timeDistribution(final TimeDistribution<Double> td) {
         time = td;
         return this;
     }
@@ -184,7 +184,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         private BiochemistryDSLVisitor(
             @Nonnull final RandomGenerator rand,
             @Nonnull final BiochemistryIncarnation incarnation,
-            @Nonnull final TimeDistribution timeDistribution,
+            @Nonnull final TimeDistribution<Double> timeDistribution,
             @Nonnull final Node<Double> currentNode,
             @Nonnull final Environment<Double, P> environment
         ) {

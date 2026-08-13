@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.util.BugReporting
 import it.unibo.alchemist.util.RealDistributions
 import org.apache.commons.math3.distribution.RealDistribution
@@ -37,16 +38,15 @@ import org.apache.commons.math3.random.RandomGenerator
  *   **must** always be greater than zero. It is thus recommended to use an [errorDistribution] whose
  *   support lower bound is zero or greater
  */
-class MoleculeControlledTimeDistribution<T>
-@JvmOverloads
-constructor(
+class MoleculeControlledTimeDistribution<T> private constructor(
     private val incarnation: Incarnation<T, *>,
     val node: Node<T>,
     val molecule: Molecule,
-    val property: String? = null,
-    val start: Time = Time.ZERO,
-    val errorDistribution: RealDistribution? = null,
-) : AnyRealDistribution(
+    val property: String?,
+    val start: Time,
+    val errorDistribution: RealDistribution?,
+    private val errorDistributionFactory: (() -> RealDistribution)?,
+) : AnyRealDistribution<T>(
     start,
 
     object : RealDistribution {
@@ -98,6 +98,36 @@ constructor(
     @JvmOverloads
     constructor(
         incarnation: Incarnation<T, *>,
+        node: Node<T>,
+        molecule: Molecule,
+        property: String? = null,
+        start: Time = Time.ZERO,
+        errorDistribution: RealDistribution? = null,
+    ) : this(incarnation, node, molecule, property, start, errorDistribution, null)
+
+    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> {
+        val freshErrorDistribution = when {
+            errorDistributionFactory != null -> errorDistributionFactory.invoke()
+            errorDistribution == null -> null
+            else -> error(
+                "Cannot reconstruct $this from an opaque error distribution. " +
+                    "Construct it from a distribution description or provide no error distribution.",
+            )
+        }
+        return MoleculeControlledTimeDistribution(
+            incarnation,
+            node,
+            molecule,
+            property,
+            start,
+            freshErrorDistribution,
+            errorDistributionFactory,
+        )
+    }
+
+    @JvmOverloads
+    constructor(
+        incarnation: Incarnation<T, *>,
         randomGenerator: RandomGenerator,
         node: Node<T>,
         molecule: Molecule,
@@ -106,12 +136,19 @@ constructor(
         distributionName: String,
         vararg distributionParametrs: Double,
     ) : this(
-        incarnation,
-        node,
-        molecule,
-        property,
-        start,
-        RealDistributions.makeRealDistribution(randomGenerator, distributionName, *distributionParametrs),
+        incarnation = incarnation,
+        node = node,
+        molecule = molecule,
+        property = property,
+        start = start,
+        errorDistribution = RealDistributions.makeRealDistribution(
+            randomGenerator,
+            distributionName,
+            *distributionParametrs,
+        ),
+        errorDistributionFactory = {
+            RealDistributions.makeRealDistribution(randomGenerator, distributionName, *distributionParametrs)
+        },
     )
 
     constructor(

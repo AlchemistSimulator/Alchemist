@@ -64,7 +64,7 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
      */
     public BiochemicalReaction(
             final Node<Double> node,
-            final TimeDistribution timeDistribution,
+            final TimeDistribution<Double> timeDistribution,
             final Environment<Double, ?> environment,
             final RandomGenerator randomGenerator
     ) {
@@ -76,7 +76,10 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
     @Nonnull
     @Override
     public BiochemicalReaction cloneOnNewNode(@Nonnull final Node<Double> node, @Nonnull final Time currentTime) {
-        return new BiochemicalReaction(node, getTimeDistribution(), environment, random);
+        return prepareClone(
+            new BiochemicalReaction(node, getTimeDistribution().newInstanceOn(node), environment, random),
+            currentTime
+        );
     }
 
     @Override

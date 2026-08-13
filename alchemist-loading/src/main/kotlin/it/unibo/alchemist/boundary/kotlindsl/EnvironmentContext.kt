@@ -70,7 +70,7 @@ fun interface EnvironmentContext<T, P : Position<P>> {
      */
     context(environment: Environment<T, P>)
     fun globalProgram(
-        timeDistribution: TimeDistribution,
+        timeDistribution: TimeDistribution<T>,
         globalReaction: GlobalReaction<T>,
         block: context(GlobalReaction<T>) ActionableContext.() -> Unit = {},
     ) {

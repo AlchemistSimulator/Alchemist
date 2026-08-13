@@ -9,7 +9,9 @@
 
 package it.unibo.alchemist.model.timedistributions
 
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.util.RealDistributions
 import org.apache.commons.math3.distribution.RealDistribution
@@ -19,8 +21,11 @@ import org.apache.commons.math3.random.RandomGenerator
  * Generates delays by delegating to an Apache Commons Math [RealDistribution].
  *
  */
-open class AnyRealDistribution(start: Time, protected val distribution: RealDistribution) :
-    AbstractDistribution(start) {
+open class AnyRealDistribution<T> private constructor(
+    start: Time,
+    protected val distribution: RealDistribution,
+    private val distributionFactory: (() -> RealDistribution)?,
+) : AbstractDistribution<T>(start) {
 
     /**
      * Builds a generator from an Apache Commons Math distribution name.
@@ -41,7 +46,7 @@ open class AnyRealDistribution(start: Time, protected val distribution: RealDist
      * @param parameters distribution parameters
      */
     constructor(start: Time, rng: RandomGenerator, distribution: String, vararg parameters: Double) :
-        this(start, RealDistributions.makeRealDistribution(rng, distribution, *parameters))
+        this(start, { RealDistributions.makeRealDistribution(rng, distribution, *parameters) })
 
     /**
      * Builds a generator delegating to [distribution].
@@ -49,6 +54,18 @@ open class AnyRealDistribution(start: Time, protected val distribution: RealDist
      * @param distribution source distribution, configured with the simulation random generator for reproducibility
      */
     constructor(distribution: RealDistribution) : this(Time.ZERO, distribution)
+
+    /**
+     * Builds a generator delegating to [distribution].
+     *
+     * Since an arbitrary distribution instance does not expose a reconstruction recipe, [newInstanceOn] fails for
+     * objects built through this constructor. Subclasses may override that method when they can reconstruct the
+     * backing distribution.
+     *
+     * @param start initial scheduling time
+     * @param distribution source distribution, configured with the simulation random generator for reproducibility
+     */
+    constructor(start: Time, distribution: RealDistribution) : this(start, distribution, null)
 
     /** Mean value exposed by the backing distribution. */
     val mean: Double get() = distribution.numericalMean
@@ -59,4 +76,15 @@ open class AnyRealDistribution(start: Time, protected val distribution: RealDist
         }
         DoubleTime(delay)
     }
+
+    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> {
+        val factory = checkNotNull(distributionFactory) {
+            "Cannot reconstruct $this from an opaque RealDistribution instance. " +
+                "Construct it from a distribution description or override newInstanceOn()."
+        }
+        return AnyRealDistribution(startTime, factory)
+    }
+
+    private constructor(start: Time, distributionFactory: () -> RealDistribution) :
+        this(start, distributionFactory(), distributionFactory)
 }

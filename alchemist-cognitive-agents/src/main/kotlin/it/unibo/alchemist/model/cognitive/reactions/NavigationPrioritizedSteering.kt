@@ -40,7 +40,7 @@ open class NavigationPrioritizedSteering<T, N : ConvexPolygon>
 constructor(
     environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
     pedestrian: PedestrianProperty<T>,
-    timeDistribution: TimeDistribution,
+    timeDistribution: TimeDistribution<T>,
     /** Tolerance angle in degrees (see [SinglePrevalent]). */
     toleranceAngle: Double = Math.toDegrees(SinglePrevalent.DEFAULT_TOLERANCE_ANGLE),
     /** Alpha value for exponential smoothing (see [SinglePrevalent]). */
@@ -78,12 +78,12 @@ constructor(
     }
 }
 
-private val TimeDistribution.steeringRate: Double
+private val TimeDistribution<*>.steeringRate: Double
     get() = when (this) {
-        is DiracComb -> frequency
-        is ExponentialTime -> lambda
-        is AnyRealDistribution -> mean
-        is WeibullTime -> mean
+        is DiracComb<*> -> frequency
+        is ExponentialTime<*> -> lambda
+        is AnyRealDistribution<*> -> mean
+        is WeibullTime<*> -> mean
         is SimpleNetworkArrivals<*> -> expectedRate
         else -> Double.NaN
     }

@@ -80,7 +80,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         final Environment<List<ILsaMolecule>, ?> environment,
         final ILsaNode node,
         final RandomGenerator randomGenerator,
-        final TimeDistribution timeDistribution
+        final TimeDistribution<List<ILsaMolecule>> timeDistribution
     ) {
         super(node, timeDistribution);
         if (getTimeDistribution() instanceof SAPERETimeDistribution) {
@@ -98,18 +98,15 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         @Nonnull final Node<List<ILsaMolecule>> node,
         @Nonnull final Time currentTime
     ) {
-        final SAPEREReaction res = new SAPEREReaction(environment, (ILsaNode) node, rng, getTimeDistribution());
-        final ArrayList<Condition<List<ILsaMolecule>>> c = new ArrayList<>();
-        for (final Condition<List<ILsaMolecule>> cond : getConditions()) {
-            c.add(cond.cloneCondition(node, res));
-        }
-        final ArrayList<Action<List<ILsaMolecule>>> a = new ArrayList<>();
-        for (final Action<List<ILsaMolecule>> act : getActions()) {
-            a.add(act.cloneAction(node, res));
-        }
-        res.setActions(a);
-        res.setConditions(c);
-        return res;
+        return prepareClone(
+            new SAPEREReaction(
+                environment,
+                (ILsaNode) node,
+                rng,
+                getTimeDistribution().newInstanceOn(node)
+            ),
+            currentTime
+        );
     }
 
     /**

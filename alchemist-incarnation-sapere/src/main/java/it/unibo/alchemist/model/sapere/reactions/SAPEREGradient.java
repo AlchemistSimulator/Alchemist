@@ -135,7 +135,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             final String expression,
             final ILsaMolecule contextTemplate,
             final double gradThreshold,
-            final TimeDistribution timeDistribution
+            final TimeDistribution<List<ILsaMolecule>> timeDistribution
     ) {
         super(node, timeDistribution);
         setInputContext(Context.NEIGHBORHOOD);
@@ -215,7 +215,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      */
     public SAPEREGradient(final Environment<List<ILsaMolecule>, P> environment,
             final ILsaNode node,
-            final TimeDistribution timeDistribution,
+            final TimeDistribution<List<ILsaMolecule>> timeDistribution,
             final String sourceTemplate,
             final String gradientTemplate,
             final int valuePosition,

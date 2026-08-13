@@ -20,19 +20,20 @@ import it.unibo.alchemist.model.timedistributions.AnyRealDistribution
  *
  * @param T concentration type
  */
-open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution) :
+open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
     AbstractReaction<T>(node, timeDistribution) {
 
     private var currentRate = 0.0
 
     final override val rate: Double get() = currentRate
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ChemicalReaction<T> = makeClone {
-        ChemicalReaction(node, timeDistribution)
-    }
+    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ChemicalReaction<T> =
+        makeClone(node, currentTime) { freshGenerator -> ChemicalReaction(node, freshGenerator) }
 
     override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
-        update(atTime)
+        if (!isNewlyInstantiatedProgram) {
+            update(atTime)
+        }
     }
 
     /**
@@ -53,7 +54,7 @@ open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution
 
     override fun updateScheduling(currentTime: Time, hasBeenExecuted: Boolean) {
         val distribution = timeDistribution
-        if (distribution is AnyRealDistribution) {
+        if (distribution is AnyRealDistribution<*>) {
             when {
                 rate == 0.0 -> setNextOccurrence(Time.INFINITY)
                 hasBeenExecuted || tau.current.isInfinite || currentTime < tau.current ->

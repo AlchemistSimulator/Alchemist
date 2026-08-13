@@ -51,7 +51,7 @@ interface DeploymentContext<T, P : Position<P>> {
      * @param timeDistribution the time distribution to use for reactions configured inside [block].
      * @param block the configuration block for defining reactions sharing [timeDistribution].
      */
-    fun <TimeDistributionType : TimeDistribution> timeDistribution(
+    fun <TimeDistributionType : TimeDistribution<T>> timeDistribution(
         timeDistribution: TimeDistributionType,
         block: context(TimeDistributionType) TimeDistributionContext<T, P>.() -> Unit,
     ) {
@@ -78,9 +78,9 @@ interface DeploymentContext<T, P : Position<P>> {
     )
     fun withTimeDistribution(
         parameter: Any? = null,
-        block: context(TimeDistribution) TimeDistributionContext<T, P>.() -> Unit,
+        block: context(TimeDistribution<T>) TimeDistributionContext<T, P>.() -> Unit,
     ) = timeDistribution(
-        parameter as? TimeDistribution ?: makeTimeDistribution(parameter),
+        parameter as? TimeDistribution<T> ?: makeTimeDistribution(parameter),
         block,
     )
 
@@ -143,7 +143,7 @@ interface DeploymentContext<T, P : Position<P>> {
             environment: Environment<T, P>,
             node: Node<T>
         )
-        private fun <T, P : Position<P>> makeTimeDistribution(parameter: Any? = null): TimeDistribution =
+        private fun <T, P : Position<P>> makeTimeDistribution(parameter: Any? = null): TimeDistribution<T> =
             incarnation.createTimeDistribution(
                 randomGenerator,
                 environment,
@@ -156,7 +156,7 @@ interface DeploymentContext<T, P : Position<P>> {
             randomGenerator: RandomGenerator,
             environment: Environment<T, P>,
             node: Node<T>,
-            timeDistribution: TimeDistribution
+            timeDistribution: TimeDistribution<T>
         )
         private fun <T, P : Position<P>> makeReaction(descriptor: String?): Reaction<T> = incarnation.createReaction(
             randomGenerator,

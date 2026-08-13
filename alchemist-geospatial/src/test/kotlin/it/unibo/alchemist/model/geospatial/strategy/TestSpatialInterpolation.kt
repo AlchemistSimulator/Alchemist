@@ -40,7 +40,7 @@ class TestSpatialInterpolation : StringSpec({
         latitudes = doubleArrayOf(10.0, 20.0),
         longitudes = doubleArrayOf(100.0, 200.0),
         // row-major representation
-        values = doubleArrayOf(southWest, southEast, northWest, northEast),
+        gridValues = doubleArrayOf(southWest, southEast, northWest, northEast),
     )
 
     /*
@@ -50,7 +50,7 @@ class TestSpatialInterpolation : StringSpec({
     val affineGrid = ArrayRasterGrid(
         latitudes = doubleArrayOf(10.0, 20.0, 30.0),
         longitudes = doubleArrayOf(100.0, 200.0, 300.0),
-        values = doubleArrayOf(
+        gridValues = doubleArrayOf(
             110.0, 210.0, 310.0, // lat = 10
             120.0, 220.0, 320.0, // lat = 20
             130.0, 230.0, 330.0, // lat = 30
@@ -84,7 +84,7 @@ class TestSpatialInterpolation : StringSpec({
         val gridWithHole = ArrayRasterGrid(
             latitudes = doubleArrayOf(10.0, 20.0),
             longitudes = doubleArrayOf(100.0, 200.0),
-            values = doubleArrayOf(Double.NaN, 10.0, 20.0, 100.0), // south-west is missing
+            gridValues = doubleArrayOf(Double.NaN, 10.0, 20.0, 100.0), // south-west is missing
         )
         nearest.valueAt(gridWithHole, mockGeoPosition(11.0, 105.0)).shouldBeNaN()
     }
@@ -130,7 +130,7 @@ class TestSpatialInterpolation : StringSpec({
             val gridWithHole = ArrayRasterGrid(
                 latitudes = doubleArrayOf(10.0, 20.0),
                 longitudes = doubleArrayOf(100.0, 200.0),
-                values = values,
+                gridValues = values,
             )
             bilinear.valueAt(gridWithHole, mockGeoPosition(15.0, 150.0)).shouldBeNaN()
         }

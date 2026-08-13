@@ -10,29 +10,16 @@
 package it.unibo.alchemist.model.geospatial.reading
 
 /**
- * In-memory implementation of [RasterGrid] where values
- * are stored in a single flattened row-major array.
+ * In-memory implementation of [RasterGrid] where values are stored in a single flattened row-major array.
  *
  * Suited for dense grids, where most cells hold a value.
  *
- * @property latitudes see [RasterGrid.latitudes] (ascending).
- * @property longitudes see [RasterGrid.longitudes] (ascending).
- * @property values cell values in row-major order; [Double.NaN] values represent missing/fill values.
- *
- * @throws IllegalArgumentException if [latitudes]/[longitudes] are not strictly ascending or if
- * [values]' size does not equal `latitudes.size * longitudes.size`.
+ * @see RasterGrid
  */
-class ArrayRasterGrid(
-    override val latitudes: DoubleArray,
-    override val longitudes: DoubleArray,
-    private val values: DoubleArray,
-) : RasterGrid {
+class ArrayRasterGrid(latitudes: DoubleArray, longitudes: DoubleArray, gridValues: DoubleArray) :
+    RasterGrid(latitudes, longitudes, gridValues) {
 
-    init {
-        requireValidGridAxes(latitudes, longitudes, values.size)
-    }
-
-    override fun valueAt(latIndex: Int, lonIndex: Int): Double = values[latIndex * longitudes.size + lonIndex]
+    override fun valueAt(latIndex: Int, lonIndex: Int): Double = gridValues[latIndex * longitudes.size + lonIndex]
 
     private companion object {
         private const val serialVersionUID = 1L

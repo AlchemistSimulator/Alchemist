@@ -79,6 +79,24 @@ fun rasterGridContract(gridOf: (DoubleArray, DoubleArray, DoubleArray) -> Raster
             )
         }
     }
+
+    "axes that are not strictly increasing should raise an exception" {
+        shouldThrow<IllegalArgumentException> {
+            gridOf(
+                lats.reversedArray(),
+                lons,
+                values,
+            )
+        }
+
+        shouldThrow<IllegalArgumentException> {
+            gridOf(
+                lats,
+                lons.reversedArray(),
+                values,
+            )
+        }
+    }
 }
 
 // tests the array implementation (suitable for dense grids)

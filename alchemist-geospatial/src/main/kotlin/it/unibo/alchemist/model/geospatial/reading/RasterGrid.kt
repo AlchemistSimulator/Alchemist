@@ -43,15 +43,36 @@ interface RasterGrid : Serializable {
 }
 
 /**
- * Validates that the number of provided values matches the size of the grid
- * described by [latitudes] and [longitudes].
+ * Validates that [latitudes] and [longitudes] are strictly ascending and that the number of
+ * provided values matches the size of the grid described by [latitudes] and [longitudes].
  *
- * @throws IllegalArgumentException if [valuesSize] does not equal `latitudes.size * longitudes.size`.
+ * @throws IllegalArgumentException if [latitudes]/[longitudes] are not strictly ascending or if
+ * [valuesSize] does not equal `latitudes.size * longitudes.size`.
  */
-internal fun requireMatchingGridSize(latitudes: DoubleArray, longitudes: DoubleArray, valuesSize: Int) {
+internal fun requireValidGridAxes(latitudes: DoubleArray, longitudes: DoubleArray, valuesSize: Int) {
+    require(latitudes.isStrictlyAscending()) {
+        "latitudes must be strictly ascending, but got ${latitudes.contentToString()}"
+    }
+    require(longitudes.isStrictlyAscending()) {
+        "longitudes must be strictly ascending, but got ${longitudes.contentToString()}"
+    }
+
     val expectedSize = latitudes.size * longitudes.size
     require(valuesSize == expectedSize) {
         "Dimension mismatch: expected $expectedSize values " +
             "(${latitudes.size} lat x ${longitudes.size} lon), but got $valuesSize"
+    }
+}
+
+/**
+ * @return `true` if this [DoubleArray] is stricly ascending.
+ */
+private fun DoubleArray.isStrictlyAscending(): Boolean = when {
+    this.size <= 1 -> true
+    else -> {
+        for (i in 0 until this.size - 1) {
+            if (this[i] >= this[i + 1]) return false
+        }
+        return true
     }
 }

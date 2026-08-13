@@ -317,7 +317,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         }
         canRun.setCurrent(false);
         final Map<HashString, ITreeNode<?>> matches = new HashMap<>();
-        matches.put(LsaMolecule.SYN_T, new NumTreeNode(getTau().getCurrent().toDouble()));
+        matches.put(LsaMolecule.SYN_T, new NumTreeNode(getNextOccurrence().getCurrent().toDouble()));
         // PMD suppression: there is a side effect
         final List<ILsaMolecule> createdFromSource = cleanUpExistingAndRecomputeFromSource(matches); //NOPMD
         /*

@@ -31,7 +31,7 @@ class TestReactiveDependencies : AbstractDependencyTest() {
 
         val subscriptions = dependencies.associateWith { target ->
             target.initializationComplete(Time.ZERO, environment)
-            target.tau.subscribe(false) {
+            target.nextOccurrence.subscribe(false) {
                 counters[target]?.incrementAndGet()
             }
         }

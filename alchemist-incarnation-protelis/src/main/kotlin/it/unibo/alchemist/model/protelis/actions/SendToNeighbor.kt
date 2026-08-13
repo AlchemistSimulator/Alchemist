@@ -42,7 +42,7 @@ class SendToNeighbor(node: Node<Any>, reaction: Reaction<Any>, val protelisProgr
     override fun execute() {
         val protelisDevice = node.asProperty<ProtelisDevice<*>>(ProtelisDevice::class.java)
         val mgr = protelisDevice.getNetworkManager(this.protelisProgram)
-        mgr.simulateMessageArrival(reaction.tau.current.toDouble())
+        mgr.simulateMessageArrival(reaction.nextOccurrence.current.toDouble())
         protelisProgram.prepareForComputationalCycle()
     }
 

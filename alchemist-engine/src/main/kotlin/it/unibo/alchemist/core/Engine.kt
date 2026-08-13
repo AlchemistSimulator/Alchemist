@@ -47,7 +47,7 @@ open class Engine<T, P : Position<out P>>(
             LOGGER.info("No more reactions.")
             return
         }
-        val scheduledTime = nextEvent.tau.current
+        val scheduledTime = nextEvent.nextOccurrence.current
         check(scheduledTime >= time) {
             "$nextEvent is scheduled in the past at time $scheduledTime. Current time: $time; current step: $step."
         }
@@ -103,7 +103,7 @@ open class Engine<T, P : Position<out P>>(
         }
         reaction.initializationComplete(time, environment)
         scheduler.addReaction(reaction)
-        val subscription = reaction.tau.subscribe(invokeOnSubscription = false) {
+        val subscription = reaction.nextOccurrence.subscribe(invokeOnSubscription = false) {
             requestSchedulerUpdate(reaction)
         }
         schedulingSubscriptions[reaction] = subscription

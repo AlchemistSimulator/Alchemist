@@ -57,7 +57,7 @@ open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution
         if (distribution is AnyRealDistribution<*>) {
             when {
                 rate == 0.0 -> setNextOccurrence(Time.INFINITY)
-                hasBeenExecuted || tau.current.isInfinite || currentTime < tau.current ->
+                hasBeenExecuted || nextOccurrence.current.isInfinite || currentTime < nextOccurrence.current ->
                     scheduleSampleAfter(maxOf(currentTime, distribution.startTime))
             }
         } else {

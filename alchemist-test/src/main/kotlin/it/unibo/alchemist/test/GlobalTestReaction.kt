@@ -33,7 +33,7 @@ class GlobalTestReaction<T>(val environment: Environment<T, *>, override val tim
     override val outputContext: Context = Context.GLOBAL
     override val rate: Double get() = timeDistribution.expectedRate
     private val mutableNextOccurrence = MutableObservable.observe(timeDistribution.startTime, false)
-    override val tau: Observable<Time> = mutableNextOccurrence.map { it }
+    override val nextOccurrence: Observable<Time> = mutableNextOccurrence.map { it }
     override var actions: List<Action<T>> = emptyList()
     private var validity: Observable<Boolean> = MutableObservable.observe(true)
 
@@ -47,7 +47,7 @@ class GlobalTestReaction<T>(val environment: Environment<T, *>, override val tim
                 ?: MutableObservable.observe(true)
         }
 
-    override fun compareTo(other: Actionable<T>): Int = tau.current.compareTo(other.tau.current)
+    override fun compareTo(other: Actionable<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)
 
     override fun canExecute(): Observable<Boolean> = validity
 
@@ -64,7 +64,7 @@ class GlobalTestReaction<T>(val environment: Environment<T, *>, override val tim
     override fun dispose() {
         validity.dispose()
         conditions.forEach(Condition<T>::dispose)
-        tau.dispose()
+        nextOccurrence.dispose()
         mutableNextOccurrence.dispose()
     }
 

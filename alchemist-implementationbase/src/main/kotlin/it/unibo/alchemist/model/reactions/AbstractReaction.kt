@@ -93,14 +93,14 @@ abstract class AbstractReaction<T>(
 
     private var previousRate: Double? = null
 
-    override val tau: Observable<Time> get() = observableNextOccurrence
+    override val nextOccurrence: Observable<Time> get() = observableNextOccurrence
 
     override val rate: Double
         get() = timeDistribution.defaultReactionRate
 
     override fun canExecute(): Observable<Boolean> = canExecute
 
-    override fun compareTo(other: Actionable<T>): Int = tau.current.compareTo(other.tau.current)
+    override fun compareTo(other: Actionable<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)
 
     /**
      * The default execution iterates all actions in order.
@@ -221,7 +221,7 @@ abstract class AbstractReaction<T>(
     override fun toString(): String = buildString {
         append(reactionName)
         append('@')
-        append(tau.current)
+        append(nextOccurrence.current)
         append(':')
         append(conditions)
         append('-')
@@ -304,7 +304,7 @@ abstract class AbstractReaction<T>(
                 setNextOccurrence(currentTime.plus(sampledDelay))
             }
             oldRate != newRate -> {
-                val remaining = tau.current.minus(currentTime)
+                val remaining = nextOccurrence.current.minus(currentTime)
                 setNextOccurrence(currentTime.plus(remaining.times(oldRate / newRate)))
             }
         }

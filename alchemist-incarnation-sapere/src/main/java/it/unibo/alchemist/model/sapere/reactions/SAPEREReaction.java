@@ -145,7 +145,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          * of the time. Other special values (#NEIG, #O, #D) will be allocated
          * inside the actions.
          */
-        matches.put(LsaMolecule.SYN_T, new NumTreeNode(getTau().getCurrent().toDouble()));
+        matches.put(LsaMolecule.SYN_T, new NumTreeNode(getNextOccurrence().getCurrent().toDouble()));
         executeActions(matches);
         /*
          * Empty action optimization

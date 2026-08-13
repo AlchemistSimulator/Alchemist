@@ -74,7 +74,7 @@ class TimeDistributionSamplingTest {
 
         reaction.update(Time.ZERO)
 
-        assertEquals(0.0, reaction.tau.current.toDouble())
+        assertEquals(0.0, reaction.nextOccurrence.current.toDouble())
     }
 
     @Test
@@ -98,7 +98,7 @@ class TimeDistributionSamplingTest {
 
         reaction.update(DoubleTime(3.0))
 
-        assertEquals(DoubleTime(5.0), reaction.tau.current)
+        assertEquals(DoubleTime(5.0), reaction.nextOccurrence.current)
     }
 
     @Test

@@ -51,8 +51,8 @@ class ReactionCloningTest {
         clone.initializationComplete(DoubleTime(10.0), environment)
 
         assertNotSame(sourceDistribution, clone.timeDistribution)
-        assertEquals(DoubleTime(5.0), source.tau.current)
-        assertEquals(DoubleTime(12.0), clone.tau.current)
+        assertEquals(DoubleTime(5.0), source.nextOccurrence.current)
+        assertEquals(DoubleTime(12.0), clone.nextOccurrence.current)
     }
 
     @Test
@@ -62,7 +62,7 @@ class ReactionCloningTest {
         val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
         clone.initializationComplete(DoubleTime(10.0), environment)
 
-        assertEquals(DoubleTime(22.0), clone.tau.current)
+        assertEquals(DoubleTime(22.0), clone.nextOccurrence.current)
     }
 
     @Test
@@ -73,7 +73,7 @@ class ReactionCloningTest {
         clone.initializationComplete(DoubleTime(10.0), environment)
 
         assertNotSame(source.timeDistribution, clone.timeDistribution)
-        assertEquals(DoubleTime(20.0), clone.tau.current)
+        assertEquals(DoubleTime(20.0), clone.nextOccurrence.current)
     }
 
     @Test
@@ -88,8 +88,8 @@ class ReactionCloningTest {
         source.update(DoubleTime(1.0))
 
         assertNotSame(sourceDistribution, clone.timeDistribution)
-        assertEquals(DoubleTime(101.0), source.tau.current)
-        assertEquals(DoubleTime(11.0), clone.tau.current)
+        assertEquals(DoubleTime(101.0), source.nextOccurrence.current)
+        assertEquals(DoubleTime(11.0), clone.nextOccurrence.current)
     }
 
     @Test
@@ -100,7 +100,7 @@ class ReactionCloningTest {
         val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
         clone.initializationComplete(DoubleTime(10.0), environment)
 
-        assertEquals(DoubleTime(13.0), clone.tau.current)
+        assertEquals(DoubleTime(13.0), clone.nextOccurrence.current)
     }
 
     @Test
@@ -122,7 +122,7 @@ class ReactionCloningTest {
 
         val cloneDistribution = assertIs<MoleculeControlledTimeDistribution<*>>(clone.timeDistribution)
         assertSame(destinationNode, cloneDistribution.node)
-        assertEquals(DoubleTime(14.0), clone.tau.current)
+        assertEquals(DoubleTime(14.0), clone.nextOccurrence.current)
     }
 
     @Test
@@ -135,7 +135,7 @@ class ReactionCloningTest {
 
         assertNotSame(source.timeDistribution, clone.timeDistribution)
         assertIs<ExponentialTime<*>>(clone.timeDistribution)
-        assertTrue(clone.tau.current > DoubleTime(10.0))
+        assertTrue(clone.nextOccurrence.current > DoubleTime(10.0))
     }
 
     @Test
@@ -147,7 +147,7 @@ class ReactionCloningTest {
 
         assertNotSame(source.timeDistribution, clone.timeDistribution)
         assertIs<WeibullTime<*>>(clone.timeDistribution)
-        assertTrue(clone.tau.current > DoubleTime(10.0))
+        assertTrue(clone.nextOccurrence.current > DoubleTime(10.0))
     }
 
     @Test

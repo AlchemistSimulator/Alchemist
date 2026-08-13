@@ -39,7 +39,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
     @Override
     public void addReaction(final Actionable<T> reaction) {
         tree.add(reaction);
-        times.add(reaction.getTau().getCurrent());
+        times.add(reaction.getNextOccurrence().getCurrent());
         final int index = tree.size() - 1;
         indexes.put(reaction, index);
         updateEffectively(reaction, index);
@@ -47,7 +47,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
 
     private void down(final Actionable<T> reaction, final int reactionIndex) {
         int index = reactionIndex;
-        final Time newTime = reaction.getTau().getCurrent();
+        final Time newTime = reaction.getNextOccurrence().getCurrent();
         while (true) {
             int minIndex = 2 * index + 1;
             if (minIndex > tree.size() - 1) {
@@ -102,7 +102,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
             final Actionable<T> swapped = tree.get(last);
             indexes.put(swapped, index);
             tree.set(index, swapped);
-            times.set(index, swapped.getTau().getCurrent());
+            times.set(index, swapped.getNextOccurrence().getCurrent());
             tree.remove(last);
             times.remove(last);
             indexes.remove(reaction);
@@ -148,7 +148,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
     private boolean up(final Actionable<T> reaction, final int reactionIndex) {
         int index = reactionIndex;
         int parentIndex = getParent(index);
-        final Time newTime = reaction.getTau().getCurrent();
+        final Time newTime = reaction.getNextOccurrence().getCurrent();
         if (parentIndex == -1) {
             return false;
         } else {
@@ -183,7 +183,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
     public void updateReaction(final Actionable<T> reaction) {
         final int index = indexes.get(reaction);
         if (index != indexes.getNoEntryValue()) {
-            times.set(index, reaction.getTau().getCurrent());
+            times.set(index, reaction.getNextOccurrence().getCurrent());
             updateEffectively(reaction, index);
         }
     }

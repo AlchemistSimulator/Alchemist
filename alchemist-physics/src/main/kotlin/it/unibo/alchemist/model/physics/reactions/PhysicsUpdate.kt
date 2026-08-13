@@ -44,7 +44,7 @@ class PhysicsUpdate<T>(
     override val outputContext: Context = Context.GLOBAL
     override val rate: Double get() = timeDistribution.expectedRate
     private val mutableNextOccurrence = observe(timeDistribution.startTime, false)
-    override val tau: Observable<Time> = mutableNextOccurrence.map { it }
+    override val nextOccurrence: Observable<Time> = mutableNextOccurrence.map { it }
 
     override var actions: List<Action<T>> = emptyList()
 
@@ -59,7 +59,7 @@ class PhysicsUpdate<T>(
                 .map { it.getOrElse { true } }
         }
 
-    override fun compareTo(other: Actionable<T>): Int = tau.current.compareTo(other.tau.current)
+    override fun compareTo(other: Actionable<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)
 
     override fun canExecute(): Observable<Boolean> = validity
 
@@ -78,7 +78,7 @@ class PhysicsUpdate<T>(
     override fun dispose() {
         validity.dispose()
         conditions.forEach(Condition<T>::dispose)
-        tau.dispose()
+        nextOccurrence.dispose()
         mutableNextOccurrence.dispose()
     }
 

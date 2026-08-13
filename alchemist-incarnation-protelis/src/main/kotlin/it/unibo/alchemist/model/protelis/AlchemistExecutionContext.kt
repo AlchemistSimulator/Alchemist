@@ -163,7 +163,7 @@ class AlchemistExecutionContext<P : Position<P>>(
 
     override fun getCoordinates(): Tuple = DatatypeFactory.createTuple(this.devicePosition.coordinates.toList())
 
-    override fun getCurrentTime() = reaction.tau.current.toDouble()
+    override fun getCurrentTime() = reaction.nextOccurrence.current.toDouble()
 
     override fun getDeviceUID(): DeviceUID = protelisDevice
 

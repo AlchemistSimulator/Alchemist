@@ -78,7 +78,7 @@ sealed interface Actionable<T> :
      * @return The global [Time] at which this reaction is scheduled to be
      * executed
      */
-    val tau: Observable<Time>
+    val nextOccurrence: Observable<Time>
 
     /**
      * @return the [TimeDistribution] for this [Reaction]

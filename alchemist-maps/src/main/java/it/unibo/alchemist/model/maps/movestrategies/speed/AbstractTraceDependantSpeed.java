@@ -21,7 +21,6 @@ import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.maps.movestrategies.AbstractStrategyWithGPS;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 
-import java.io.Serial;
 import java.util.Objects;
 
 /**
@@ -36,8 +35,6 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
     extends AbstractStrategyWithGPS
     implements SpeedSelectionStrategy<T, GeoPosition> {
 
-    @Serial
-    private static final long serialVersionUID = 8021140539083062866L;
     private final Reaction<T> reaction;
     private final MapEnvironment<T, O, S> mapEnvironment;
     private final Node<T> node;
@@ -63,7 +60,7 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
 
     @Override
     public final double getNodeMovementLength(final GeoPosition target) {
-        final Time currentTime = reaction.getTau().getCurrent();
+        final Time currentTime = reaction.getNextOccurrence().getCurrent();
         final double curTime = currentTime.toDouble();
         final GPSPoint next = getTrace().getNextPosition(currentTime);
         final double expArrival = next.getTime().toDouble();

@@ -21,6 +21,25 @@ import java.nio.file.Path
 class TestCdmGridSnapshots : StringSpec({
 
     /**
+     * Creates a NetCDF-3 file with:
+     * - latitudes: (10°, 20°, 30°).
+     * - longitudes: (5°, 15°, 25°, 35°).
+     * - the provided hours offset from `2024-01-01 00:00`.
+     *
+     * @param dir the directory where the file will be created (must exist).
+     * @param fileName the name of the file.
+     * @param timeHours hours offsets from `2024-01-01 00:00`.
+     */
+    fun writeFixedTestNetcdf(dir: Path, fileName: String, timeHours: DoubleArray) {
+        writeTestNetcdf(
+            path = dir.resolve(fileName),
+            lats = floatArrayOf(10f, 20f, 30f),
+            lons = floatArrayOf(5f, 15f, 25f, 35f),
+            timeHours = timeHours,
+        )
+    }
+
+    /**
      * the directory where the temporary NetCDF files for the tests will be created.
      */
     val tempDir: Path = Files.createTempDirectory("cdm-timed-grid-test")
@@ -108,6 +127,25 @@ class TestCdmGridSnapshots : StringSpec({
         grid.valueAt(0, 1) shouldBe 42.0
     }
 
+    // Dimension order test
+    "values should be read correctly regardless of the on-disk dimension order" {
+        val dir = Files.createTempDirectory(tempDir, "dim-order")
+        writeTestNetcdf(
+            path = dir.resolve("permuted.nc"),
+            lats = floatArrayOf(10f, 20f),
+            lons = floatArrayOf(5f, 15f),
+            timeHours = doubleArrayOf(0.0, 24.0),
+            // scrambled relative to the canonical (time, latitude, longitude) order
+            dimensionOrder = listOf("longitude", "time", "latitude"),
+        )
+        val grid = CdmGridSnapshots(dir).grid(0)
+
+        grid.valueAt(0, 0) shouldBe 0.0
+        grid.valueAt(0, 1) shouldBe 1.0
+        grid.valueAt(1, 0) shouldBe 10.0
+        grid.valueAt(1, 1) shouldBe 11.0
+    }
+
     // Configuration errors tests
     "should throw IllegalArgumentException on empty directory" {
         val emptyDir = Files.createTempDirectory(tempDir, "empty")
@@ -140,22 +178,3 @@ class TestCdmGridSnapshots : StringSpec({
         shouldThrow<IllegalArgumentException> { CdmGridSnapshots(dir) }
     }
 })
-
-/**
- * Creates a NetCDF-3 file with:
- * - latitudes: (10°, 20°, 30°).
- * - longitudes: (5°, 15°, 25°, 35°).
- * - the provided hours offset from `2024-01-01 00:00`.
- *
- * @param dir the directory where the file will be created (must exist).
- * @param fileName the name of the file.
- * @param timeHours hours offsets from `2024-01-01 00:00`.
- */
-private fun writeFixedTestNetcdf(dir: Path, fileName: String, timeHours: DoubleArray) {
-    writeTestNetcdf(
-        path = dir.resolve(fileName),
-        lats = floatArrayOf(10f, 20f, 30f),
-        lons = floatArrayOf(5f, 15f, 25f, 35f),
-        timeHours = timeHours,
-    )
-}

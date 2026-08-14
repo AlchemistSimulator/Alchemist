@@ -13,7 +13,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipException
 import java.util.zip.ZipFile
-import kotlin.collections.iterator
 
 /**
  * Extract all ZIP files inside of [dir] and deletes them.

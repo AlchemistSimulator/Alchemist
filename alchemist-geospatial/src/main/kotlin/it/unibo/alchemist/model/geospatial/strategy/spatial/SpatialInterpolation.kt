@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.geospatial.reading.RasterGrid
 import java.io.Serializable
 
 /**
- * Strategy for **spatial interpolation**: given a grid slice and a position assumed to be *inside*
+ * Strategy for **spatial interpolation**: given a [RasterGrid] and a position assumed to be *inside*
  * its extent, produces a value by combining nearby cells. It is a functional interface, so a custom rule
  * can be passed as a lambda.
  */

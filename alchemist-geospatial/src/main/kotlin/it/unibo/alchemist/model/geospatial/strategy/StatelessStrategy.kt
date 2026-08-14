@@ -22,7 +22,7 @@ package it.unibo.alchemist.model.geospatial.strategy
  * resolve constructor ambiguity, and rejects the whole specification otherwise.
  *
  * Only for strategies with **no** primary-constructor parameters. A strategy that carries
- * actual configuration  should be a `data class` instead, so equality reflects its configuration,
+ * actual configuration should be a `data class` instead, so equality reflects its configuration,
  * not just its type.
  */
 open class StatelessStrategy protected constructor() {

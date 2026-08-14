@@ -14,6 +14,8 @@ package it.unibo.alchemist.model.geospatial.reading
  * are stored in a map keyed by latitude-longitude index pairs.
  *
  * Suited for sparse grids, where most cells hold a missing value.
+ *
+ * @see RasterGrid
  */
 class MapRasterGrid(latitudes: DoubleArray, longitudes: DoubleArray, gridValues: DoubleArray) :
     RasterGrid(latitudes, longitudes, gridValues) {

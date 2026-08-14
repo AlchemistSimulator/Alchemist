@@ -35,7 +35,7 @@ import ucar.nc2.dataset.NetcdfDatasets
  * Supports datasets readable by NetCDF-Java whose selected variable is a 3D
  * regular latitude/longitude field with one temporal dimension and whose
  * coordinate axes are 1D.
- * The dataset does not need to follow a convention, what matters is that the
+ * The dataset does not need to follow a specific convention, what matters is that the
  * relevant variable exposes the standard geophysical metadata `units` (e.g,
  * `degree_north`/`degree_east`) on which NetCDF relies to interpret the
  * axes as time, latitude, and longitude
@@ -93,11 +93,11 @@ class CdmGridSnapshots(directory: Path, variableName: String? = null) : GridSnap
 
         for (file in files) {
             /*
-             * opens the file in "enhanced mode": every fill value get replaced with NaN
+             * opens the file in "enhanced mode": all fill values are replaced with NaN
              * and expects dimensions to be properly tagged.
              */
             NetcdfDatasets.openDataset(file.toString()).use { ds ->
-                // ensures that all axis are present (time, lat, lon)
+                // ensures that all axes are present (time, lat, lon)
                 val rawTimeAxis = requireNotNull(ds.findCoordinateAxis(AxisType.Time)) {
                     "No time axis in $file"
                 }
@@ -109,7 +109,7 @@ class CdmGridSnapshots(directory: Path, variableName: String? = null) : GridSnap
                 }
                 val errMsg = Formatter()
 
-                // constructs a CF-aware timeline.
+                // constructs a CF-aware time axis
                 val timeAxis = requireNotNull(CoordinateAxis1DTime.factory(ds, rawTimeAxis, errMsg)) {
                     "Cannot build time axis in $file: $errMsg"
                 }
@@ -147,7 +147,7 @@ class CdmGridSnapshots(directory: Path, variableName: String? = null) : GridSnap
 
                 /*
                  * finds the variable to read, either by name or by auto-detection
-                 * of the only variable with dimensions {time, lat, lon}.
+                 * of the only variable whose dimensions are {time, lat, lon}.
                  */
                 val variable = resolveVariable(ds, variableName, timeDimName, latDimName, lonDimName, file)
 
@@ -249,12 +249,6 @@ class CdmGridSnapshots(directory: Path, variableName: String? = null) : GridSnap
         grids = map.values.toList()
     }
 
-    /**
-     * Returns the spatial slice at the given index.
-     *
-     * @param index 0-based index, aligned with [instants].
-     * @return the [RasterGrid] for that instant.
-     */
     override fun grid(index: Int): RasterGrid = grids[index]
 
     /**

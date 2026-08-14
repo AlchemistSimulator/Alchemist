@@ -29,7 +29,7 @@ class TestCdsApiRc : StringSpec({
     }
 
     /**
-     *  Writes [content] to a fresh `.cdsapirc`-style file and returns its path.
+     * Writes [content] to a fresh `.cdsapirc`-style file and returns its path.
      */
     fun rcFile(content: String): Path = Files.createTempFile(
         tempDir,

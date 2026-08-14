@@ -27,8 +27,8 @@ fun interface SpatioTemporalInterpolation : Serializable {
      * Interpolates a value at the specified geographic [position] and temporal offset.
      *
      * @param position the geographic target position to sample.
-     * @param gridBefore the raster grid slice at or immediately preceding the target time.
-     * @param gridAfter the raster grid slice immediately following the target time.
+     * @param gridBefore the temporal slice at or immediately preceding the target time.
+     * @param gridAfter the temporal slice immediately following the target time.
      * @param timeWeight normalized temporal factor in the range `[0.0, 1.0]`, where `0.0`
      * corresponds exactly to [gridBefore] and `1.0` to [gridAfter].
      * @return the interpolated `Double` value, or [Double.NaN] if the interpolation

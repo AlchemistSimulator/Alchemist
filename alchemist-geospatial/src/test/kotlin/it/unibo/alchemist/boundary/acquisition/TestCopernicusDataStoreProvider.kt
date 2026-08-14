@@ -117,7 +117,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
         }
 
     /**
-     * Replayes [store]'s captured submit body: the provider then follows its `rel="monitor"` link.
+     * Replays [store]'s captured submit body: the provider then follows its `rel="monitor"` link.
      */
     fun FakeHttpServer.replaySubmit(store: Store) {
         val body = store.body("submit").withFakeBase(this)

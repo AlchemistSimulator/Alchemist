@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.acquisition
 
-import java.io.Serializable
 import java.nio.file.FileSystemException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -22,7 +21,7 @@ import org.slf4j.LoggerFactory
  * individual APIs, depending only on [CacheKey].
  *
  * This class considers **atomicity but non locking**: if two simultaneous cache-miss runs
- * for the production of data; one wins the atomic rename, the other discards its own work.
+ * for the production of data, one wins the atomic rename, the other discards its own work.
  * Wasteful in that rare case, but it never corrupts the cache.
  *
  * **Note!** The entries are **trust-based**: a present directory is assumed complete and valid: the content
@@ -46,7 +45,7 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
      * On **cache miss**, the [provider] runs into a temporary directory, its non-emptiness is
      * validated, and it is then promoted to the final location with an atomic rename.
      * If a concurrent process produced the same entry in the meantime, that one is used
-     * and the local work is discarded. If, for any reason, [provider] fails, the themporary
+     * and the local work is discarded. If, for any reason, [provider] fails, the temporary
      * directory is removed (no "poisoned" entry is left in cache).
      *
      * @param request request identity (to determine the directory name).

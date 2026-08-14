@@ -323,3 +323,13 @@ private val Provider<RegularFile>.fileProperty get(): RegularFileProperty = obje
     it.set(this)
     it.disallowChanges()
 }
+
+configurations.all {
+    resolutionStrategy {
+        eachDependency {
+            if (requested.group == "com.google.protobuf" && requested.name == "protobuf-java") {
+                useVersion("3.12.2")
+            }
+        }
+    }
+}

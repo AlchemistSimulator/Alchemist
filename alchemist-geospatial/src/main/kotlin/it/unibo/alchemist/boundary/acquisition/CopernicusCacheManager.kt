@@ -73,6 +73,8 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
             check(hasData(temp)) { "Provider produced no files for '${request.toFileName()}'" }
 
             moved = promote(temp, finalDir)
+            logger.info("Asset(s) cached in $finalDir")
+
             return finalDir
         } finally {
             // deletes the temp directory if any accident occurs

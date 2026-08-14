@@ -43,7 +43,7 @@ class TestIntegrity : StringSpec({
     )
 
     /**
-     * [knownMD5], but formatted the way data store adverises them:
+     * [knownMD5], but formatted the way data store advertises them:
      * hashes are emitted without left zero-padding.
      */
     val advertisedUnpadded = mapOf(
@@ -100,8 +100,8 @@ class TestIntegrity : StringSpec({
     }
 
     /*
-     * Data stores strips leading zeros from the digest it advertises, so
-     * non-32 chars digest can be valid.
+     * Data stores strip leading zeros from the digest it advertises, so
+     * a non-32 chars digest can be valid.
      */
     "verify accepts an MD5 advertised without its leading zeros" {
         Files.writeString(file, "a")

@@ -12,8 +12,7 @@ package it.unibo.alchemist.model.geospatial.strategy.temporal
 import it.unibo.alchemist.model.geospatial.strategy.StatelessStrategy
 
 /**
- * [TemporalInterpolation] that always resolves with the value of
- * the last temporal slice.
+ * [TemporalInterpolation] that always resolves with the value of the last temporal slice.
  */
 class LastInterpolation :
     StatelessStrategy(),

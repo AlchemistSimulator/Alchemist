@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.geospatial.strategy.temporal.TemporalInterpolati
  * algorithms.
  *
  * **Warning!** Whether this decoupling preserves an exact mathematical equivalence
- * a "joint" spatio-temporal formula depends on the strategies plugged in.
+ * to a "joint" spatio-temporal formula depends on the strategies plugged in.
  *
  * **Note on missing values:** If the [spatialStrategy] evaluates to [Double.NaN]
  * for one or both grids, those `NaN` values are propagated to the [temporalStrategy],

@@ -79,7 +79,7 @@ internal fun writeTestNetcdf(
         addAttribute(Attribute("axis", "X"))
     }
 
-    // the data variable's dimensions follows the given order
+    // the data variable's dimensions follow the given order
     builder.addVariable(variableName, DataType.FLOAT, dimensionOrder.joinToString(" "))
         .addAttribute(Attribute("_FillValue", fillValue))
 

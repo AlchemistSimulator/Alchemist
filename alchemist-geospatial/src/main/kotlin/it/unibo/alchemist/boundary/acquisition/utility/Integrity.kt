@@ -13,7 +13,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.security.DigestInputStream
 import java.security.MessageDigest
-import org.slf4j.LoggerFactory
 
 /**
  * Size of the buffer used to stream a file through the MD5 digest, in bytes.

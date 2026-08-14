@@ -12,8 +12,7 @@ package it.unibo.alchemist.model.geospatial.strategy.temporal
 import it.unibo.alchemist.model.geospatial.strategy.StatelessStrategy
 
 /**
- * [TemporalInterpolation] that always resolves with the resolved value of
- * the closest temporal slice.
+ * [TemporalInterpolation] that always returns the value from the closest temporal slice.
  */
 class ClosestInterpolation :
     StatelessStrategy(),

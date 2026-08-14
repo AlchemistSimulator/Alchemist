@@ -71,7 +71,7 @@ class TestCdmGridSnapshots : StringSpec({
         val dir = Files.createTempDirectory(tempDir, "align")
         writeFixedTestNetcdf(dir, "data.nc", doubleArrayOf(0.0, 24.0, 48.0, 72.0, 96.0))
         val tg = CdmGridSnapshots(dir)
-        // ff instants and grids are misaligned, the grid(s) would throw an IndexOutOfBoundsException
+        // if instants and grids were misaligned, the grid(s) would throw an IndexOutOfBoundsException
         tg.instants.indices.forEach { i -> tg.grid(i).latitudes.size shouldBe 3 }
     }
 

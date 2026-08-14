@@ -41,11 +41,11 @@ import kotlin.time.Instant
  * value of the first or last slice is returned; outside the covered **spatial** extent
  * no extrapolation is performed and [getValue] fails.
  *
- * Once the construction is complete, real-world time [Instant] are converted proportionally to
+ * Once the construction is complete, real-world time [Instant]s are converted proportionally to
  * simulation time using [timeOrigin] and [timeScale].
  *
  * Three constructors are available:
- * - **Primary** (this): accepts a ready-built [GridSnapshots]; it is used in tests.
+ * - **Primary**: accepts a ready-built [GridSnapshots]; it is used in tests.
  * - **Directory** (YAML): takes the path of a local directory of data files. No network, no cache,
  * no credentials. Selected from YAML by providing `dataDirectory`.
  * - **Datastore**: takes a Copernicus-family endpoint plus an opaque request, retrieves the
@@ -57,7 +57,7 @@ import kotlin.time.Instant
  * @param timeOrigin real-world [Instant] corresponding to simulation `Time.ZERO`.
  * Defaults to the first instant in [data].
  * @param timeScale real-world [Duration] of one simulation time unit. Defaults to one hour.
- * @param interpolation strategy for generating a value from the spatio-temporal grid slices.
+ * @param interpolation strategy for generating a value from the spatio-temporal time slices.
  * @param converter strategy for converting the interpolated [Double] (or [Double.NaN] if missing) into the
  * target type [T].
  *
@@ -68,8 +68,8 @@ import kotlin.time.Instant
 open class CopernicusLayer<T>(
     private val environment: Environment<*, GeoPosition>,
     private val data: GridSnapshots,
-    timeScale: Duration = DEFAULT_TIME_SCALE,
-    timeOrigin: Instant? = null,
+    private val timeScale: Duration = DEFAULT_TIME_SCALE,
+    private val timeOrigin: Instant? = null,
     private val interpolation: SpatioTemporalInterpolation,
     private val converter: MeasurementConverter<T>,
 ) : GeoLayer<T> {
@@ -100,11 +100,11 @@ open class CopernicusLayer<T>(
      *
      * @param dataDirectory path of a directory holding one or more homogeneous data files (same
      * variable and spatial grid, disjoint time ranges). A leading `~` is expanded to the user home.
-     * @param variable variable name inside the file (e.g. `"dis24"`, the GRIB shortName, not the
-     * catalogue name). Auto-detected as the unique `(time, lat, lon)` variable when `null`.
      * @param timeScale real-world duration of one simulation time unit, as an ISO-8601 duration (e.g. `"PT6H"`).
      * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601 instant
      * (e.g. `"2024-06-10T00:00:00Z"`). The first instant found in the data is used when `null`.
+     * @param variable variable name inside the file (e.g. `"dis24"`, the GRIB shortName, not the
+     * catalogue name). Auto-detected as the unique `(time, lat, lon)` variable when `null`.
      * @param interpolation strategy for spatio-temporal evaluation.
      * @param converter defines how read [Double] values are converted into [T].
      *
@@ -115,9 +115,9 @@ open class CopernicusLayer<T>(
     constructor(
         environment: Environment<*, GeoPosition>,
         dataDirectory: String,
-        variable: String? = null,
         timeScale: String = DEFAULT_TIME_SCALE_ISO,
         timeOrigin: String? = null,
+        variable: String? = null,
         interpolation: SpatioTemporalInterpolation,
         converter: MeasurementConverter<T>,
     ) : this(
@@ -145,11 +145,11 @@ open class CopernicusLayer<T>(
      * A leading `~` is expanded to the user home.
      * @param checkMd5 whether to check the MD5 digest of the downloaded asset.
      * Sometimes Copernicus stores return the correct requested assets but report an incorrect MD5,
-     * so it may be useful to disable this check. `true` by default.
-     * @param variable variable name inside the downloaded file. Auto-detected when `null`.
+     * so it may be useful to disable this check.
      * @param timeScale real-world duration of one simulation time unit, as an ISO-8601 duration.
      * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601
      * instant. The first instant found in the data is used when `null`.
+     * @param variable variable name inside the downloaded file. Auto-detected when `null`.
      * @param cacheDirectory root of the local cache. A leading `~` is expanded to the user home.
      * @param cdsApiRcFile path of a `.cdsapirc`-formatted file holding the API token. A leading `~`
      * is expanded to the user home.
@@ -166,10 +166,10 @@ open class CopernicusLayer<T>(
         endpoint: String,
         dataset: String,
         inputsFile: String,
-        checkMd5: Boolean = true,
-        variable: String? = null,
+        checkMd5: Boolean,
         timeScale: String = DEFAULT_TIME_SCALE_ISO,
         timeOrigin: String? = null,
+        variable: String? = null,
         cacheDirectory: String = DEFAULT_CACHE_DIRECTORY,
         cdsApiRcFile: String = DEFAULT_CDSAPIRC_FILE,
         interpolation: SpatioTemporalInterpolation,

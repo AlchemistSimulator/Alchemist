@@ -14,11 +14,12 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeSortedWith
 import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.TestVariable
 import it.unibo.alchemist.writeTestNetcdf
 import java.nio.file.Files
 import java.nio.file.Path
 
-class TestCdmGridSnapshots : StringSpec({
+class TestEagerGridSnapshots : StringSpec({
 
     /**
      * Creates a NetCDF-3 file with:
@@ -33,8 +34,8 @@ class TestCdmGridSnapshots : StringSpec({
     fun writeFixedTestNetcdf(dir: Path, fileName: String, timeHours: DoubleArray) {
         writeTestNetcdf(
             path = dir.resolve(fileName),
-            lats = floatArrayOf(10f, 20f, 30f),
-            lons = floatArrayOf(5f, 15f, 25f, 35f),
+            lats = doubleArrayOf(10.0, 20.0, 30.0),
+            lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0),
             timeHours = timeHours,
         )
     }
@@ -53,7 +54,7 @@ class TestCdmGridSnapshots : StringSpec({
     "should read a single file and expose the correct number of instants" {
         val dir = Files.createTempDirectory(tempDir, "basic")
         writeFixedTestNetcdf(dir, "data.nc", doubleArrayOf(0.0, 24.0, 48.0))
-        val tg = CdmGridSnapshots(dir)
+        val tg = EagerGridSnapshots(dir)
         tg.instants.size shouldBe 3
     }
 
@@ -62,7 +63,7 @@ class TestCdmGridSnapshots : StringSpec({
         // b_file.nc is read second (in alphabetical order) but contains the most recent times
         writeFixedTestNetcdf(dir, "b_file.nc", doubleArrayOf(48.0, 72.0))
         writeFixedTestNetcdf(dir, "a_file.nc", doubleArrayOf(0.0, 24.0))
-        val tg = CdmGridSnapshots(dir)
+        val tg = EagerGridSnapshots(dir)
         tg.instants.size shouldBe 4
         tg.instants shouldBeSortedWith compareBy { it }
     }
@@ -70,7 +71,7 @@ class TestCdmGridSnapshots : StringSpec({
     "grid[i] should be accessible for every index in instants" {
         val dir = Files.createTempDirectory(tempDir, "align")
         writeFixedTestNetcdf(dir, "data.nc", doubleArrayOf(0.0, 24.0, 48.0, 72.0, 96.0))
-        val tg = CdmGridSnapshots(dir)
+        val tg = EagerGridSnapshots(dir)
         // if instants and grids were misaligned, the grid(s) would throw an IndexOutOfBoundsException
         tg.instants.indices.forEach { i -> tg.grid(i).latitudes.size shouldBe 3 }
     }
@@ -80,11 +81,11 @@ class TestCdmGridSnapshots : StringSpec({
         val dir = Files.createTempDirectory(tempDir, "lat-desc")
         writeTestNetcdf(
             path = dir.resolve("desc.nc"),
-            lats = floatArrayOf(30f, 20f, 10f), // descending latitudes
-            lons = floatArrayOf(5f, 15f, 25f, 35f),
+            lats = doubleArrayOf(30.0, 20.0, 10.0), // descending latitudes
+            lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0),
             timeHours = doubleArrayOf(0.0),
         )
-        val resultLats = CdmGridSnapshots(dir).grid(0).latitudes
+        val resultLats = EagerGridSnapshots(dir).grid(0).latitudes
         resultLats shouldBe doubleArrayOf(10.0, 20.0, 30.0)
     }
 
@@ -96,14 +97,14 @@ class TestCdmGridSnapshots : StringSpec({
          */
         writeTestNetcdf(
             path = dir.resolve("remap.nc"),
-            lats = floatArrayOf(20f, 10f),
-            lons = floatArrayOf(5f, 15f),
+            lats = doubleArrayOf(20.0, 10.0),
+            lons = doubleArrayOf(5.0, 15.0),
             timeHours = doubleArrayOf(0.0),
             // north=[100,101], south=[200,201]
-            rawValues = floatArrayOf(100f, 101f, 200f, 201f),
+            variables = listOf(TestVariable(rawValues = doubleArrayOf(100.0, 101.0, 200.0, 201.0))),
         )
         // checks if the rows get reversed
-        val grid = CdmGridSnapshots(dir).grid(0)
+        val grid = EagerGridSnapshots(dir).grid(0)
         grid.valueAt(0, 0) shouldBe 200.0
         grid.valueAt(0, 1) shouldBe 201.0
         grid.valueAt(1, 0) shouldBe 100.0
@@ -113,16 +114,20 @@ class TestCdmGridSnapshots : StringSpec({
     // "_FillValue" to NaN test
     "fill values should be exposed as Double.NaN" {
         val dir = Files.createTempDirectory(tempDir, "fillval")
-        val fill = -9999f
+        val fill = -9999.0
         writeTestNetcdf(
             path = dir.resolve("fill.nc"),
-            lats = floatArrayOf(10f, 20f),
-            lons = floatArrayOf(5f, 15f),
+            lats = doubleArrayOf(10.0, 20.0),
+            lons = doubleArrayOf(5.0, 15.0),
             timeHours = doubleArrayOf(0.0),
-            rawValues = floatArrayOf(fill, 42f, 42f, 42f),
-            fillValue = fill,
+            variables = listOf(
+                TestVariable(
+                    rawValues = doubleArrayOf(fill, 42.0, 42.0, 42.0),
+                    fillValue = fill,
+                ),
+            ),
         )
-        val grid = CdmGridSnapshots(dir).grid(0)
+        val grid = EagerGridSnapshots(dir).grid(0)
         grid.valueAt(0, 0).shouldBeNaN()
         grid.valueAt(0, 1) shouldBe 42.0
     }
@@ -132,13 +137,13 @@ class TestCdmGridSnapshots : StringSpec({
         val dir = Files.createTempDirectory(tempDir, "dim-order")
         writeTestNetcdf(
             path = dir.resolve("permuted.nc"),
-            lats = floatArrayOf(10f, 20f),
-            lons = floatArrayOf(5f, 15f),
+            lats = doubleArrayOf(10.0, 20.0),
+            lons = doubleArrayOf(5.0, 15.0),
             timeHours = doubleArrayOf(0.0, 24.0),
             // scrambled relative to the canonical (time, latitude, longitude) order
             dimensionOrder = listOf("longitude", "time", "latitude"),
         )
-        val grid = CdmGridSnapshots(dir).grid(0)
+        val grid = EagerGridSnapshots(dir).grid(0)
 
         grid.valueAt(0, 0) shouldBe 0.0
         grid.valueAt(0, 1) shouldBe 1.0
@@ -149,7 +154,7 @@ class TestCdmGridSnapshots : StringSpec({
     // Configuration errors tests
     "should throw IllegalArgumentException on empty directory" {
         val emptyDir = Files.createTempDirectory(tempDir, "empty")
-        shouldThrow<IllegalArgumentException> { CdmGridSnapshots(emptyDir) }
+        shouldThrow<IllegalArgumentException> { EagerGridSnapshots(emptyDir) }
     }
 
     "should throw IllegalArgumentException on duplicate timestamps across files" {
@@ -158,23 +163,23 @@ class TestCdmGridSnapshots : StringSpec({
         for (i in 1..3) {
             writeFixedTestNetcdf(dir, "f$i.nc", doubleArrayOf(0.0, 24.0))
         }
-        shouldThrow<IllegalArgumentException> { CdmGridSnapshots(dir) }
+        shouldThrow<IllegalArgumentException> { EagerGridSnapshots(dir) }
     }
 
     "should throw IllegalArgumentException when files have mismatched spatial grids" {
         val dir = Files.createTempDirectory(tempDir, "mismatch")
         writeTestNetcdf(
             dir.resolve("f1.nc"),
-            floatArrayOf(10f, 20f, 30f),
-            floatArrayOf(5f, 15f),
+            doubleArrayOf(10.0, 20.0, 30.0),
+            doubleArrayOf(5.0, 15.0),
             doubleArrayOf(0.0),
         )
         writeTestNetcdf(
             dir.resolve("f2.nc"),
-            floatArrayOf(40f, 50f, 60f),
-            floatArrayOf(5f, 15f),
+            doubleArrayOf(40.0, 50.0, 60.0),
+            doubleArrayOf(5.0, 15.0),
             doubleArrayOf(24.0),
         )
-        shouldThrow<IllegalArgumentException> { CdmGridSnapshots(dir) }
+        shouldThrow<IllegalArgumentException> { EagerGridSnapshots(dir) }
     }
 })

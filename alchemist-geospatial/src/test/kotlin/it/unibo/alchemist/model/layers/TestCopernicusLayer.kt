@@ -16,6 +16,7 @@ import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import it.unibo.alchemist.TestVariable
 import it.unibo.alchemist.mockGeoPosition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
@@ -239,10 +240,10 @@ class TestCopernicusLayer : StringSpec({
          */
         writeTestNetcdf(
             path = dir.resolve("data.nc"),
-            lats = floatArrayOf(44f, 45f, 46f),
-            lons = floatArrayOf(11f, 12f, 13f),
+            lats = doubleArrayOf(44.0, 45.0, 46.0),
+            lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0, 1.0, 2.0),
-            rawValues = FloatArray(27) { idx -> ((idx / 9) + 1) * 10f },
+            variables = listOf(TestVariable(rawValues = DoubleArray(27) { idx -> ((idx / 9) + 1) * 10.0 })),
         )
 
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString())
@@ -255,10 +256,10 @@ class TestCopernicusLayer : StringSpec({
         val dir = tempDir.resolve("interp").also { it.toFile().mkdirs() }
         writeTestNetcdf(
             path = dir.resolve("data.nc"),
-            lats = floatArrayOf(44f, 45f, 46f),
-            lons = floatArrayOf(11f, 12f, 13f),
+            lats = doubleArrayOf(44.0, 45.0, 46.0),
+            lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0, 1.0),
-            rawValues = FloatArray(18) { idx -> if (idx < 9) 0f else 10f },
+            variables = listOf(TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 0.0 else 10.0 })),
         )
 
         val layer = DoubleCopernicusLayer(envAt(0.5), dir.absolutePathString())
@@ -271,16 +272,20 @@ class TestCopernicusLayer : StringSpec({
         val dir = tempDir.resolve("desc-lat").also { it.toFile().mkdirs() }
         writeTestNetcdf(
             path = dir.resolve("data.nc"),
-            lats = floatArrayOf(46f, 45f, 44f), // lats descending
-            lons = floatArrayOf(11f, 12f, 13f),
+            lats = doubleArrayOf(46.0, 45.0, 44.0), // lats descending
+            lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0),
-            rawValues = FloatArray(9) { idx ->
-                when (idx / 3) {
-                    0 -> 1f
-                    1 -> 2f
-                    else -> 3f
-                }
-            },
+            variables = listOf(
+                TestVariable(
+                    rawValues = DoubleArray(9) { idx ->
+                        when (idx / 3) {
+                            0 -> 1.0
+                            1 -> 2.0
+                            else -> 3.0
+                        }
+                    },
+                ),
+            ),
         )
 
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString())
@@ -299,10 +304,15 @@ class TestCopernicusLayer : StringSpec({
         val dir = tempDir.resolve("auto-detect").also { it.toFile().mkdirs() }
         writeTestNetcdf(
             path = dir.resolve("data.nc"),
-            lats = floatArrayOf(44f, 45f, 46f),
-            lons = floatArrayOf(11f, 12f, 13f),
+            lats = doubleArrayOf(44.0, 45.0, 46.0),
+            lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0),
-            rawValues = FloatArray(9) { 7f },
+            variables = listOf(
+                TestVariable(
+                    "wonderfulvariablename",
+                    DoubleArray(9) { 7.0 },
+                ),
+            ),
         )
 
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString(), variable = null)
@@ -313,17 +323,22 @@ class TestCopernicusLayer : StringSpec({
 
     "directory constructor: explicit variable name is used correctly" {
         val dir = tempDir.resolve("explicit-var").also { it.toFile().mkdirs() }
+        val varName = "temperature"
         writeTestNetcdf(
             path = dir.resolve("data.nc"),
-            lats = floatArrayOf(44f, 45f, 46f),
-            lons = floatArrayOf(11f, 12f, 13f),
+            lats = doubleArrayOf(44.0, 45.0, 46.0),
+            lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0),
-            rawValues = FloatArray(9) { 42f },
-            variableName = "dis24",
+            variables = listOf(
+                TestVariable(
+                    varName,
+                    DoubleArray(9) { 42.0 },
+                ),
+            ),
         )
 
-        val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString(), variable = "dis24")
-        withClue("explicit variable 'dis24'; all cells = 42.0") {
+        val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString(), variable = varName)
+        withClue("explicit variable '$varName'; all cells = 42.0") {
             layer.getValue(center) shouldBe (42.0 plusOrMinus TOLERANCE)
         }
     }
@@ -333,18 +348,22 @@ class TestCopernicusLayer : StringSpec({
         // file 1: t=0h (all values=10.0) and t=1h (all values=20.0)
         writeTestNetcdf(
             path = dir.resolve("part1.nc"),
-            lats = floatArrayOf(44f, 45f, 46f),
-            lons = floatArrayOf(11f, 12f, 13f),
+            lats = doubleArrayOf(44.0, 45.0, 46.0),
+            lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0, 1.0),
-            rawValues = FloatArray(18) { idx -> if (idx < 9) 10f else 20f },
+            variables = listOf(
+                TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 10.0 else 20.0 }),
+            ),
         )
         // file 2: t=2h (all values=30.0) and t=3h (all values=40.0)
         writeTestNetcdf(
             path = dir.resolve("part2.nc"),
-            lats = floatArrayOf(44f, 45f, 46f),
-            lons = floatArrayOf(11f, 12f, 13f),
+            lats = doubleArrayOf(44.0, 45.0, 46.0),
+            lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(2.0, 3.0),
-            rawValues = FloatArray(18) { idx -> if (idx < 9) 30f else 40f },
+            variables = listOf(
+                TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 30.0 else 40.0 }),
+            ),
         )
         var t = 0.0
         val layer = DoubleCopernicusLayer(mutableEnv { t }, dir.absolutePathString())

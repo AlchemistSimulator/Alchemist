@@ -17,7 +17,7 @@ import it.unibo.alchemist.boundary.acquisition.utility.CopernicusInputs
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.expandUser
-import it.unibo.alchemist.model.geospatial.reading.CdmGridSnapshots
+import it.unibo.alchemist.model.geospatial.reading.EagerGridSnapshots
 import it.unibo.alchemist.model.geospatial.reading.GridSnapshots
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
 import it.unibo.alchemist.model.geospatial.strategy.bracketIndices
@@ -122,7 +122,7 @@ open class CopernicusLayer<T>(
         converter: MeasurementConverter<T>,
     ) : this(
         environment,
-        CdmGridSnapshots(dataDirectory.expandUser(), variable),
+        EagerGridSnapshots(dataDirectory.expandUser(), variable),
         Duration.parseIsoString(timeScale),
         timeOrigin?.let(Instant::parse),
         interpolation,
@@ -176,7 +176,7 @@ open class CopernicusLayer<T>(
         converter: MeasurementConverter<T>,
     ) : this(
         environment,
-        CdmGridSnapshots(
+        EagerGridSnapshots(
             resolveDataDirectory(
                 endpoint,
                 dataset,

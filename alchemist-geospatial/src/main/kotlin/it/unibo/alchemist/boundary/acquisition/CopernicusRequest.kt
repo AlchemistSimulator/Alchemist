@@ -62,6 +62,6 @@ data class CopernicusRequest(val dataset: String, val inputs: Map<String, Any>) 
  * Renders this `String` as a single file-system-safe path segment: every character outside `[A-Za-z0-9._-]`
  * is replaced with `_`. Distinct strings may collapse to the same output (e.g. `"a b"` and `"a_b"`).
  *
- * @return this string sanitized (i.e. all non alphatical/numerical characters replaced by `_`)
+ * @return this string sanitized (i.e. all non-alphabetical/numerical characters replaced by `_`)
  */
 internal fun String.toFileSystemSafe(): String = this.replace(Regex("[^A-Za-z0-9._-]"), "_")

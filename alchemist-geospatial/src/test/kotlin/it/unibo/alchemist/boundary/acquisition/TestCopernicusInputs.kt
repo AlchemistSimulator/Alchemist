@@ -47,12 +47,12 @@ class TestCopernicusInputs : StringSpec({
         CopernicusInputs.read(path) shouldBe mapOf("area" to listOf(44.0, 11.0, 45.0, 12.0))
     }
 
-    "throws IllegalStateException when the file holds a JSON array instead of an object" {
+    "throws JsonSyntaxException when the file holds a JSON array instead of an object" {
         val path = inputsFile("[1, 2, 3]")
         shouldThrow<JsonSyntaxException> { CopernicusInputs.read(path) }
     }
 
-    "throws IllegalStateException when the file holds a scalar" {
+    "throws JsonSyntaxException when the file holds a scalar" {
         val path = inputsFile("\"cmon, this is just a string!\"")
         shouldThrow<JsonSyntaxException> { CopernicusInputs.read(path) }
     }

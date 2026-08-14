@@ -36,7 +36,7 @@ internal typealias Responder = (HttpExchange) -> Unit
 /**
  * A dummy in-JVM HTTP server for testing REST providers without external dependencies.
  *
- * A single handler incercepts **all** requests; responses are configured via
+ * A single handler intercepts **all** requests; responses are configured via
  * [enqueue] to simulate states (e.g., polling) or [constant] for static endpoints.
  *
  * Each received request is logged in [requests] for test assertions.
@@ -65,7 +65,7 @@ internal class FakeHttpServer : AutoCloseable {
      */
     private val constants = HashMap<Pair<String, String>, Responder>()
 
-    // all request received, in arrival order (for test assertions).
+    // all requests received, in arrival order (for test assertions).
     val requests = mutableListOf<CapturedRequest>()
 
     // base URL to feed into the provider's endpoint.
@@ -98,7 +98,7 @@ internal class FakeHttpServer : AutoCloseable {
      * Enqueues a response for the next [method]-[route] request.
      *
      * @param method the HTTP method used.
-     * @param route the queried route.
+     * @param route the requested route.
      * @param responder the response for the next [method]-[route] request.
      */
     fun enqueue(method: String, route: String, responder: Responder) {
@@ -119,7 +119,7 @@ internal class FakeHttpServer : AutoCloseable {
     }
 
     /**
-     * Stops the server AND shuts dows its executor.
+     * Stops the server AND shuts down its executor.
      */
     override fun close() {
         server.stop(0)
@@ -140,7 +140,7 @@ internal class FakeHttpServer : AutoCloseable {
         }
 
         /**
-         * Simulates a binary response (e.g. a downloadble file).
+         * Simulates a binary response (e.g. a downloadable file).
          *
          * @param code HTTP response code.
          * @param data the raw data sent in the response.
@@ -151,7 +151,7 @@ internal class FakeHttpServer : AutoCloseable {
          * Adds a response in the [ex] http exchange.
          *
          * @param ex the HTTP exchange.
-         * @param code the HTTP code of the response.
+         * @param code the HTTP status code of the response.
          * @param data the raw data sent in the response.
          */
         private fun respond(ex: HttpExchange, code: Int, data: ByteArray) {

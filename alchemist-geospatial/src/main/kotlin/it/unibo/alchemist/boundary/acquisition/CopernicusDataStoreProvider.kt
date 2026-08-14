@@ -100,7 +100,7 @@ class CopernicusDataStoreProvider(
         logger.info("Fetching dataset '${request.dataset}'.")
         val start = System.nanoTime()
 
-        // asks ECMWF servers to elaborate the data.
+        // asks ECMWF servers to process the data.
         val monitorUrl = submit(request)
         // polls until the data can be retrieved.
         val resultsUrl = awaitSuccess(monitorUrl)

@@ -20,27 +20,19 @@ import kotlin.time.Duration
 import kotlin.time.Instant
 
 /**
- * A [CopernicusLayer] producing plain [Double] values.
+ * A specialized version of [CopernicusLayer] configured to yield `Double` values.
  *
- * It mirrors the three constructors of [CopernicusLayer], supplying [TrilinearInterpolation] and
- * [DoubleIdentityWithFallback] as defaults, so a minimal YAML needs no strategy at all.
+ * This class mirrors the constructors of its superclass but provides default
+ * strategies: it uses [TrilinearInterpolation] for spatial and temporal interpolation,
+ * and [DoubleIdentityWithFallback] to convert measurements into `Double`.
+ *
+ * For detailed descriptions of the common parameters (such as `environment`, `timeScale`,
+ * `endpoint`, and configuration files), refer to the documentation of [CopernicusLayer].
  *
  * @see CopernicusLayer
  */
 class DoubleCopernicusLayer : CopernicusLayer<Double> {
 
-    /**
-     * Builds the layer on a ready-made [GridSnapshots]. It is the
-     * injection point for tests.
-     *
-     * @param environment simulation environment.
-     * @param data temporal raster series backing this layer.
-     * @param timeScale real-world [Duration] of one simulation time unit.
-     * @param timeOrigin real-world [Instant] mapping to simulation time `0.0`; the first instant in
-     * [data] is used when `null`.
-     * @param interpolation strategy for spatio-temporal evaluation.
-     * @param converter maps the interpolated value (possibly [Double.NaN]) to a [Double].
-     */
     constructor(
         environment: Environment<*, GeoPosition>,
         data: GridSnapshots,
@@ -57,20 +49,6 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
         converter,
     )
 
-    /**
-     * Builds the layer on a **local directory** of already-available data files: no network, no
-     * cache, no credentials.
-     *
-     * @param environment simulation environment.
-     * @param dataDirectory path of a directory holding one or more homogeneous data files. A
-     * leading `~` is expanded to the user home.
-     * @param timeScale real-world duration of one simulation time unit, as an ISO-8601 duration.
-     * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601
-     * instant; the first instant found in the data is used when `null`.
-     * @param variable variable name inside the file (e.g. `"dis24"`); auto-detected when `null`.
-     * @param interpolation strategy for spatio-temporal evaluation.
-     * @param converter maps the interpolated value (possibly [Double.NaN]) to a [Double].
-     */
     @JvmOverloads
     constructor(
         environment: Environment<*, GeoPosition>,
@@ -83,35 +61,13 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
     ) : super(
         environment,
         dataDirectory,
-        variable,
         timeScale,
         timeOrigin,
+        variable,
         interpolation,
         converter,
     )
 
-    /**
-     * Builds the layer on data fetched from a Copernicus-family datastore and kept in a local
-     * cache.
-     *
-     * @param environment simulation environment.
-     * @param endpoint base URL of the datastore (e.g. `"https://ewds.climate.copernicus.eu/api"`).
-     * @param dataset dataset identifier (e.g. `"cems-glofas-historical"`).
-     * @param inputsFile path of a JSON file holding the opaque request map for [dataset] at [endpoint],
-     * passed verbatim to the datastore.
-     * @param checkMd5 whether to check the MD5 digest of the downloaded asset.
-     * Sometimes Copernicus stores return the correct requested assets but report an incorrect MD5,
-     * so it may be useful to disable this check.
-     * @param timeScale real-world duration of one simulation time unit, as an ISO-8601 duration.
-     * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601
-     * instant; the first instant found in the data is used when `null`.
-     * @param variable variable name inside the downloaded file; auto-detected when `null`.
-     * @param cacheDirectory root of the local cache. A leading `~` is expanded to the user home.
-     * @param cdsApiRcFile path of a `.cdsapirc`-formatted file holding the API token. A leading `~`
-     * is expanded to the user home.
-     * @param interpolation strategy for spatio-temporal evaluation.
-     * @param converter maps the interpolated value (possibly [Double.NaN]) to a [Double].
-     */
     @JvmOverloads
     constructor(
         environment: Environment<*, GeoPosition>,
@@ -132,9 +88,9 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
         dataset,
         inputsFile,
         checkMd5,
-        variable,
         timeScale,
         timeOrigin,
+        variable,
         cacheDirectory,
         cdsApiRcFile,
         interpolation,

@@ -64,7 +64,9 @@ internal fun listDataFiles(directory: Path): List<Path> {
  */
 internal fun readFileAxes(dataset: NetcdfDataset, variableName: String?, file: Path): FileAxes {
     // ensures that all {time, lat, lon} axes are present
-    val rawTimeAxis = requireNotNull(dataset.findCoordinateAxis(AxisType.Time)) {
+    val rawTimeAxis = requireNotNull(
+        dataset.findCoordinateAxis(AxisType.Time) ?: dataset.findCoordinateAxis(AxisType.RunTime),
+    ) {
         "No time axis in $file"
     }
     val latAxis = requireNotNull(dataset.findCoordinateAxis(AxisType.Lat) as? CoordinateAxis1D) {
@@ -244,8 +246,8 @@ internal fun resolveVariable(
         "No variable with dimensions $targetDims found in $file"
     }
     require(candidates.size == 1) {
-        "Multiple candidate variables with dimensions $targetDims in $file: " +
-            "${candidates.map { it.shortName }}. Specify variableName explicitly."
+        "Multiple candidate variables with dimensions $targetDims in $file. " +
+            "The variables that can be used are: ${candidates.map { it.shortName }}. Specify the variable explicitly."
     }
 
     return candidates.single()

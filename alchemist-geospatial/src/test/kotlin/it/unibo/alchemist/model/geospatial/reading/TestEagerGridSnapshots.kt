@@ -157,13 +157,36 @@ class TestEagerGridSnapshots : StringSpec({
         shouldThrow<IllegalArgumentException> { EagerGridSnapshots(emptyDir) }
     }
 
-    "should throw IllegalArgumentException on duplicate timestamps across files" {
-        val dir = Files.createTempDirectory(tempDir, "dup")
-        // writes multiple files with overlapping time offsets
-        for (i in 1..3) {
-            writeFixedTestNetcdf(dir, "f$i.nc", doubleArrayOf(0.0, 24.0))
-        }
-        shouldThrow<IllegalArgumentException> { EagerGridSnapshots(dir) }
+    "should ignore duplicate timestamps across files and keep the data of the first one read" {
+        val dir = Files.createTempDirectory(tempDir, "dup-values")
+
+        val lats = doubleArrayOf(10.0)
+        val lons = doubleArrayOf(5.0)
+        val time = doubleArrayOf(0.0)
+        val firstVal = 42.0
+        val secondVal = 99.0
+
+        // both files use the same instant
+        writeTestNetcdf(
+            path = dir.resolve("first_file.nc"),
+            lats = lats,
+            lons = lons,
+            timeHours = time,
+            variables = listOf(TestVariable(rawValues = doubleArrayOf(firstVal))),
+        )
+
+        writeTestNetcdf(
+            path = dir.resolve("second_file.nc"),
+            lats = lats,
+            lons = lons,
+            timeHours = time,
+            variables = listOf(TestVariable(rawValues = doubleArrayOf(secondVal))),
+        )
+
+        val tg = EagerGridSnapshots(dir)
+
+        tg.instants.size shouldBe 1
+        tg.grid(0).valueAt(0, 0) shouldBe firstVal
     }
 
     "should throw IllegalArgumentException when files have mismatched spatial grids" {

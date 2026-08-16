@@ -343,7 +343,7 @@ class TestCopernicusLayer : StringSpec({
         }
     }
 
-    "directory constructor: two disjoint files are merged into a single ordered time series" {
+    "directory constructor: two different files are merged into a single ordered time series" {
         val dir = tempDir.resolve("two-files").also { it.toFile().mkdirs() }
         // file 1: t=0h (all values=10.0) and t=1h (all values=20.0)
         writeTestNetcdf(

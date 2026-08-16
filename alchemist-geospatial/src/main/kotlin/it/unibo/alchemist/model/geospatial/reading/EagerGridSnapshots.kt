@@ -13,25 +13,27 @@ import java.nio.file.Path
 import java.util.TreeMap
 import kotlin.time.Instant
 import kotlin.time.toKotlinInstant
+import org.slf4j.LoggerFactory
 import ucar.nc2.dataset.NetcdfDatasets
 
 /**
  * Eager [GridSnapshots] implementation. This implementation depends on
  * [NetCDF-Java](https://docs.unidata.ucar.edu/netcdf-java/current/javadoc/index.html).
  *
- * Reads a directory of **homogeneous** data files (same variable, same spatial grid,
- * disjoint temporal coverage) and exposes them as a single time-ordered slice series.
+ * Reads a directory of **homogeneous** data files (same variable, same spatial grid)
+ * and exposes them as a single time-ordered slice series.
  * All data is loaded into memory at construction time; file handles are closed before
  * the constructor returns.
+ * If two files share the same real-world instants, then only the grid associated with the file
+ * having the lower lexicographic order will be evaluated.
  *
  * ### Supported datasets
- * Supports datasets readable by NetCDF-Java whose selected variable is a 3D
- * regular latitude/longitude field with one temporal dimension and whose
+ * Supports datasets readable by NetCDF-Java whose selected variable is a 2D
+ * regular latitude/longitude field associated with one temporal dimension and whose
  * coordinate axes are 1D.
- * The dataset does not need to follow a specific convention, what matters is that the
- * relevant variable exposes the standard geophysical metadata `units` (e.g,
- * `degree_north`/`degree_east`) on which NetCDF relies to interpret the
- * axes as time, latitude, and longitude
+ * The dataset does not need to follow a specific convention (e.g, Climate and Forecast),
+ * what matters is that the relevant variable exposes the standard geophysical metadata
+ * in a format that NetCDF-Java can interpret.
  *
  * ### Grid normalization
  * Latitude and longitude axes are normalized to ascending order regardless of the direction
@@ -50,13 +52,13 @@ import ucar.nc2.dataset.NetcdfDatasets
  * The variable to read is selected by [variableName], or auto-detected as the unique
  * `{time, lat, lon}` variable in the file.
  *
- * @param directory directory of homogeneous spatial data files (NetCDFs/GRIBs).
+ * @param directory directory of spatially homogeneous data files (NetCDFs/GRIBs).
  * @param variableName name of the variable as it appears in the file (e.g. `"dis24"`),
  * NOT the variable name shown in the Copernicus store. If `null`, auto-detected from the file.
  *
  * @throws IllegalArgumentException if the directory is empty; if the variable is missing
  * or ambiguous; if files have mismatched spatial axes; if the variable dimensions are not
- * `{time, lat, lon}`; or if two files share a timestamp (i.e. the temporal coverages are not disjoint).
+ * `{time, lat, lon}`.
  */
 class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSnapshots {
 
@@ -104,15 +106,17 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
             // converts a CalendarDate to an Instant
             val instant = axes.timeAxis.getCalendarDate(t).toDate().toInstant().toKotlinInstant()
 
-            // there are duplicate timestamps in different files
-            require(!map.containsKey(instant)) {
-                "Duplicate timestamp $instant in $directory | " +
-                    "check that files have disjoint temporal coverage."
+            // there are duplicate timestamps in different files, only the first one is preserved
+            if (!map.containsKey(instant)) {
+                val slice = readPermutedSlice(axes, t, nLat, nLon)
+                val measurements = flattenAscending(slice, nLat, nLon, axes.latDescending, axes.lonDescending)
+                map[instant] = buildGrid(axes.latitudes, axes.longitudes, measurements)
+            } else {
+                logger.warn(
+                    "Two different files in $directory share the same real-world instant ($instant)." +
+                        "Ignoring the last one.",
+                )
             }
-
-            val slice = readPermutedSlice(axes, t, nLat, nLon)
-            val measurements = flattenAscending(slice, nLat, nLon, axes.latDescending, axes.lonDescending)
-            map[instant] = buildGrid(axes.latitudes, axes.longitudes, measurements)
         }
     }
 
@@ -120,5 +124,7 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
 
     private companion object {
         private const val serialVersionUID = 1L
+
+        private val logger = LoggerFactory.getLogger(EagerGridSnapshots::class.java)
     }
 }

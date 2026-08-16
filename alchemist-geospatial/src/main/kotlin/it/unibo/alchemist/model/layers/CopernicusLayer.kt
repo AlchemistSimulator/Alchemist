@@ -99,7 +99,7 @@ open class CopernicusLayer<T>(
      * no network I/O, no cache, no credentials.
      *
      * @param dataDirectory path of a directory holding one or more homogeneous data files (same
-     * variable and spatial grid, disjoint time ranges). A leading `~` is expanded to the user home.
+     * variable and spatial grid). A leading `~` is expanded to the user home.
      * @param timeScale real-world duration of one simulation time unit, as an ISO-8601 duration (e.g. `"PT6H"`).
      * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601 instant
      * (e.g. `"2024-06-10T00:00:00Z"`). The first instant found in the data is used when `null`.

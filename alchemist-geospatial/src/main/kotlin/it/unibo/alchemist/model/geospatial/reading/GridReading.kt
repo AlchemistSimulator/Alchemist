@@ -53,7 +53,7 @@ internal fun listDataFiles(directory: Path): List<Path> {
  * latitude, and longitude axes, normalizes latitude/longitude to ascending order, and resolves
  * the data [Variable] to read (by [variableName], or by auto-detection, see [resolveVariable]).
  *
- * @param dataset the dataset to open.
+ * @param dataset the already open dataset.
  * @param variableName explicit variable name, or `null` for auto-detection.
  * @param file path of the file being read (used for error messages).
  *

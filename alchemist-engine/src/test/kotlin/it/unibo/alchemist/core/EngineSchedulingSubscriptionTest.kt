@@ -8,7 +8,9 @@
  */
 package it.unibo.alchemist.core
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.Actionable
@@ -23,14 +25,21 @@ import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.reactions.AbstractReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.times.DoubleTime
+import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.delay
 
 private class RecordingScheduler<T> : Scheduler<T> {
     val reactions = mutableListOf<Actionable<T>>()
     val updates = mutableListOf<Actionable<T>>()
     var updateBeforeAdd = false
+    var throwOnAdd = false
 
     override fun addReaction(reaction: Actionable<T>) {
         reactions += reaction
+        if (throwOnAdd) {
+            reactions.remove(reaction)
+            error("synthetic scheduler failure")
+        }
     }
 
     override fun getNext(): Actionable<T>? = reactions.firstOrNull()
@@ -53,6 +62,12 @@ private class EmittingReaction(
     distribution: TimeDistribution<Double> = DiracComb(1.0),
 ) : AbstractReaction<Double>(node, distribution) {
     var emitOnExecute = false
+    var disposed = false
+
+    override fun dispose() {
+        disposed = true
+        super.dispose()
+    }
 
     override fun execute() {
         if (emitOnExecute) {
@@ -128,5 +143,51 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
 
         scheduler.reactions shouldNotContain reaction
         scheduler.updates.count { it === reaction } shouldBe updatesBeforeEmission
+        reaction.disposed shouldBe true
+    }
+
+    "duplicate registration is rejected" {
+        val (environment, _, _) = fixture()
+        val scheduler = RecordingScheduler<Double>()
+        val engine = TestEngine(environment, scheduler)
+        engine.initializeForTest()
+
+        shouldThrow<IllegalStateException> { engine.initializeForTest() }
+    }
+
+    "failed scheduler registration propagates without an engine subscription" {
+        val (environment, _, reaction) = fixture()
+        val scheduler = RecordingScheduler<Double>().also {
+            it.throwOnAdd = true
+        }
+        val engine = TestEngine(environment, scheduler)
+
+        shouldThrow<IllegalStateException> { engine.initializeForTest() }
+        reaction.nextOccurrence.observers.size shouldBe 0
+        scheduler.reactions shouldNotContain reaction
+        reaction.disposed shouldBe false
+    }
+
+    "running-engine callbacks are confined to the simulation thread" {
+        val (environment, _, reaction) = fixture()
+        val scheduler = RecordingScheduler<Double>()
+        val engine = TestEngine(environment, scheduler)
+        val worker = Thread(engine::run)
+        worker.start()
+        try {
+            val deadline = System.nanoTime() + 5_000_000_000L
+            while (engine.status != Status.READY && System.nanoTime() < deadline) {
+                delay(10.milliseconds)
+            }
+            engine.status shouldBe Status.READY
+            scheduler.reactions shouldContain reaction
+            val updatesBeforeEmission = scheduler.updates.size
+            shouldThrow<IllegalStateException> { reaction.emit(DoubleTime(3.0)) }
+            scheduler.updates.size shouldBe updatesBeforeEmission
+        } finally {
+            engine.terminate()
+            worker.join(5_000)
+            worker.isAlive shouldBe false
+        }
     }
 })

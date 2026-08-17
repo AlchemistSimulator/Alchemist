@@ -24,6 +24,9 @@ import java.util.IdentityHashMap
  * @param P the position type, extending [Position]
  * @param environment the simulation environment
  * @property scheduler the scheduler managing event execution
+ *
+ * Scheduling observables must emit on the simulation thread. Model mutations from other threads
+ * must be submitted through [Simulation.schedule].
  */
 open class Engine<T, P : Position<out P>>(
     private val environment: Environment<T, P>,
@@ -94,27 +97,35 @@ open class Engine<T, P : Position<out P>>(
     }
 
     private fun scheduleReaction(reaction: Actionable<T>) {
+        // The scheduler, subscription map, and their callbacks are all owned by the simulation thread.
+        checkCaller()
         check(!schedulingSubscriptions.containsKey(reaction)) {
             "Reaction $reaction was scheduled more than once"
         }
+        // Registration is fail-fast: AbstractEngine terminates and discards the scheduler if any step throws.
+        // Initialization computes the first occurrence before the scheduler reads it.
         reaction.initializationComplete(time, environment)
         scheduler.addReaction(reaction)
-        val subscription = reaction.nextOccurrence.subscribe(invokeOnSubscription = false) {
-            if (schedulingSubscriptions.containsKey(reaction)) {
+        // Do not emit the current value on subscription: scheduler insertion already indexed it.
+        schedulingSubscriptions[reaction] =
+            reaction.nextOccurrence.subscribe(invokeOnSubscription = false) {
+                checkCaller()
                 scheduler.updateReaction(reaction)
             }
-        }
-        schedulingSubscriptions[reaction] = subscription
     }
 
     private fun removeReaction(reaction: Actionable<T>) {
+        checkCaller()
         schedulingSubscriptions.remove(reaction)?.dispose()
         scheduler.removeReaction(reaction)
         reaction.dispose()
     }
 
     override fun afterRun() {
-        schedulingSubscriptions.values.forEach(Disposable::dispose)
+        schedulingSubscriptions.values.forEach { handle ->
+            runCatching(handle::dispose).exceptionOrNull()?.let(::recordError)
+        }
         schedulingSubscriptions.clear()
+        // Reactions belong to the environment; afterRun only releases engine-owned subscriptions.
     }
 }

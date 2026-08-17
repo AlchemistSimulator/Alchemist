@@ -61,6 +61,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
         @Synchronized set
 
     /** Thread executing the simulation. */
+    @Volatile
     private var simulationThread: Thread? = null
 
     /** Locks associated with each simulation status. */
@@ -104,6 +105,11 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
 
     protected fun setError(error: Optional<Throwable>) {
         this.error = error
+    }
+
+    /** Records a failure while preserving an existing primary failure. */
+    protected fun recordError(failure: Throwable) {
+        error.ifPresentOrElse({ it.addSuppressed(failure) }, { error = Optional.of(failure) })
     }
 
     /** @return the current simulation status. */
@@ -165,9 +171,14 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
         commands.add(runnable)
     }
 
-    /** Ensures that the method is called from the simulation thread. */
+    /**
+     * Ensures that the method is called from the simulation thread once [run] has established it.
+     *
+     * Before [run], direct setup by test harnesses and embedders remains supported.
+     */
     protected fun checkCaller() {
-        check(Thread.currentThread() == simulationThread) {
+        val owner = simulationThread
+        check(owner == null || Thread.currentThread() == owner) {
             "This method must be called from the simulation thread."
         }
     }

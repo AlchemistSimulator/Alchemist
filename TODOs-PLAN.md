@@ -243,9 +243,8 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] Ensure initialization computes `nextOccurrence` before scheduler insertion without causing duplicate
   reindexing.
 - [x] Make disposal idempotent and prevent post-removal emissions.
-- [ ] Either document and enforce simulation-thread confinement for scheduling registration or make
-  `scheduleReaction` registration atomic. Its current add-subscribe-own sequence assumes that no concurrent custom
-  observable emits between scheduler insertion and `schedulingSubscriptions` ownership registration.
+- [x] Document and enforce simulation-thread confinement for scheduling registration and fail fast on registration
+  errors.
 - [ ] Migrate global reactions and specialized reactions without duplicating the base lifecycle.
 
 ## Phase 6: simplify conditions and introduce reaction-specific invalidation signals
@@ -362,10 +361,26 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-08-17: completed the scheduling-registration checkpoint. Registration errors now fail fast without trying to
+  restore a scheduler that the terminated engine will discard or disposing environment-owned reactions. Removal
+  and shutdown still clean up successfully acquired engine subscriptions. Direct handle ownership replaces the
+  redundant captured-handle identity guard because registration, emission, and removal are simulation-thread-
+  confined. The simulation-thread regression uses coroutine-aware bounded polling; formatting, engine Detekt, all
+  six focused scheduling tests, and independent review pass. The final filtered repository build passes 915 tasks
+  in 2m40s with the documented alternate-JVM, native-package, and fat/shadow-JAR exclusions.
+- 2026-08-17: made engine scheduling ownership an explicit simulation-thread-confined transition without adding a
+  general lifecycle abstraction. The simulation-thread reference is safely published; registration initializes,
+  inserts, subscribes, and records the exact handle in order, while any registration error terminates the engine.
+  Removal disposes the handle, removes the scheduler entry, and disposes the reaction in order; any removal error
+  likewise terminates the engine immediately.
+- 2026-08-17: shutdown now releases every engine-owned subscription, clears ownership, and records cleanup failures
+  without destroying environment-owned reactions or aborting remaining cleanup. The focused
+  `EngineSchedulingSubscriptionTest` cases cover duplicate registration, fail-fast scheduler errors, off-thread
+  emission rejection, and post-removal silence. Independent concurrency review found no remaining blocking issue.
 - 2026-08-17: removed `BatchManager` and the batching wrapper around reaction execution. `Engine` now owns one
   exact `Disposable` per scheduled reaction and directly invokes `scheduler.updateReaction` for every active
-  `nextOccurrence` emission. Removal disposes the subscription before removing the scheduler entry, and the
-  callback also checks current scheduling ownership so removed reactions cannot reindex the scheduler.
+  `nextOccurrence` emission. Removal disposes the subscription before removing the scheduler entry; simulation-
+  thread confinement ensures registration, emissions, and removal cannot race.
 - 2026-08-17: added `EngineSchedulingSubscriptionTest`. Its three focused cases prove that initialization does not
   reindex before scheduler insertion, multiple distinct emissions during one step update the active scheduler
   entry directly, and removal disposes the engine subscription before scheduler removal and suppresses later

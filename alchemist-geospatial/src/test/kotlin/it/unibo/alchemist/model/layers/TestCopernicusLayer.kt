@@ -100,7 +100,7 @@ class TestCopernicusLayer : StringSpec({
         tempDir.toFile().deleteRecursively()
     }
 
-    "require fails on empty TimedGrid" {
+    "require fails on empty GridSnapshots" {
         val emptyGrid = object : GridSnapshots {
             override val instants: List<Instant> = emptyList()
             override fun grid(index: Int): RasterGrid = throw UnsupportedOperationException()
@@ -115,13 +115,13 @@ class TestCopernicusLayer : StringSpec({
 
     // timeOrigin tests
     "default timeOrigin maps the first instant to t=0.0" {
-        val timedGrid = syntheticGrid(7.0, 14.0)
+        val gridSnaps = syntheticGrid(7.0, 14.0)
         val layer = DoubleCopernicusLayer(
             environment = envAt(0.0),
-            data = timedGrid,
+            data = gridSnaps,
         )
         withClue("t=0.0 should hit the first slice exactly") {
-            timedGrid.instants.indices.forEach { _ ->
+            gridSnaps.instants.indices.forEach { _ ->
                 layer.getValue(center) shouldBe 7.0
             }
         }
@@ -193,10 +193,10 @@ class TestCopernicusLayer : StringSpec({
 
     // out of bound test
     "getValue() should raise an exception when an out-of-bounds position is passed" {
-        val timedGrid = syntheticGrid(7.0)
+        val gridSnaps = syntheticGrid(7.0)
         val layer = DoubleCopernicusLayer(
             environment = envAt(0.0),
-            data = timedGrid,
+            data = gridSnaps,
         )
         shouldThrow<IllegalArgumentException> {
             layer.getValue(mockGeoPosition(lats.first() - 1, lons.first() - 1))

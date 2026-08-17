@@ -43,7 +43,7 @@ class TestEagerGridSnapshots : StringSpec({
     /**
      * the directory where the temporary NetCDF files for the tests will be created.
      */
-    val tempDir: Path = Files.createTempDirectory("cdm-timed-grid-test")
+    val tempDir: Path = Files.createTempDirectory("eagergridsnapshots-test")
 
     // deletes the directory and its files after the tests
     afterSpec {

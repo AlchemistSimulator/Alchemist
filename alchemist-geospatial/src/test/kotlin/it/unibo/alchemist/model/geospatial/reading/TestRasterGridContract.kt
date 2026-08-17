@@ -27,7 +27,7 @@ fun rasterGridContract(gridOf: (DoubleArray, DoubleArray, DoubleArray) -> Raster
      */
     val lats = doubleArrayOf(10.0, 20.0, 30.0)
     val lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0)
-    val values = DoubleArray(12) { idx -> (idx / lons.size) * 10.0 + (idx % lons.size) }
+    val values = DoubleArray(12) { idx -> idx / lons.size * 10.0 + (idx % lons.size) }
     val grid = gridOf(lats, lons, values)
 
     // Value access tests

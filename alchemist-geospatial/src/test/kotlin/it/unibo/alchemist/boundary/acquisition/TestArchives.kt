@@ -23,6 +23,8 @@ import java.util.zip.ZipOutputStream
 class TestArchives : StringSpec({
 
     val tempDir: Path = Files.createTempDirectory("archives-test")
+    val netCdfFileName = "dis24.nc"
+    val zipFileName = "result.zip"
 
     // deletes the directory and its files after the tests
     afterSpec {
@@ -59,7 +61,7 @@ class TestArchives : StringSpec({
     }.toSet()
 
     "a non-zip file is left untouched" {
-        val data = dir.resolve("dis24.nc")
+        val data = dir.resolve(netCdfFileName)
         Files.writeString(data, "I'm not a ZIP!")
         val before = Files.readString(data)
 
@@ -67,18 +69,18 @@ class TestArchives : StringSpec({
 
         data.shouldExist()
         Files.readString(data) shouldBe before
-        fileNames(dir) shouldBe setOf("dis24.nc")
+        fileNames(dir) shouldBe setOf(netCdfFileName)
     }
 
     "a single-entry zip is extracted flat and the archive is deleted" {
-        val zip = writeZip(dir, "result.zip", mapOf("dis24.nc" to "payload"))
+        val zip = writeZip(dir, zipFileName, mapOf(netCdfFileName to "payload"))
 
         flattenArchives(dir)
 
         zip.shouldNotExist()
-        dir.resolve("dis24.nc").shouldExist()
-        Files.readString(dir.resolve("dis24.nc")) shouldBe "payload"
-        fileNames(dir) shouldBe setOf("dis24.nc")
+        dir.resolve(netCdfFileName).shouldExist()
+        Files.readString(dir.resolve(netCdfFileName)) shouldBe "payload"
+        fileNames(dir) shouldBe setOf(netCdfFileName)
     }
 
     "multiple archives in the same dir are all extracted and deleted" {
@@ -92,7 +94,7 @@ class TestArchives : StringSpec({
 
     "a data file alongside an archive: the file stays, the archive is flattened" {
         Files.writeString(dir.resolve("already.nc"), "plain")
-        writeZip(dir, "result.zip", mapOf("fromzip.nc" to "Z"))
+        writeZip(dir, zipFileName, mapOf("fromzip.nc" to "Z"))
 
         flattenArchives(dir)
 
@@ -100,7 +102,7 @@ class TestArchives : StringSpec({
     }
 
     "a multi-entry zip extracts every entry" {
-        writeZip(dir, "result.zip", mapOf("a.nc" to "A", "b.nc" to "B"))
+        writeZip(dir, zipFileName, mapOf("a.nc" to "A", "b.nc" to "B"))
 
         flattenArchives(dir)
 
@@ -110,24 +112,24 @@ class TestArchives : StringSpec({
     }
 
     "nested entry paths are flattened to their basename" {
-        writeZip(dir, "result.zip", mapOf("data/2024/06/dis24.nc" to "deep"))
+        writeZip(dir, zipFileName, mapOf("data/2024/06/dis24.nc" to "deep"))
 
         flattenArchives(dir)
 
-        dir.resolve("dis24.nc").shouldExist()
-        Files.readString(dir.resolve("dis24.nc")) shouldBe "deep"
-        fileNames(dir) shouldBe setOf("dis24.nc")
+        dir.resolve(netCdfFileName).shouldExist()
+        Files.readString(dir.resolve(netCdfFileName)) shouldBe "deep"
+        fileNames(dir) shouldBe setOf(netCdfFileName)
     }
 
     "detection is by content, not extension: a zip named '.nc' is still extracted" {
         // the archive itself is named like a data file
-        val zip = writeZip(dir, "payload.nc", mapOf("dis24.nc" to "inner"))
+        val zip = writeZip(dir, "payload.nc", mapOf(netCdfFileName to "inner"))
 
         flattenArchives(dir)
 
         zip.shouldNotExist()
-        dir.resolve("dis24.nc").shouldExist()
-        Files.readString(dir.resolve("dis24.nc")) shouldBe "inner"
+        dir.resolve(netCdfFileName).shouldExist()
+        Files.readString(dir.resolve(netCdfFileName)) shouldBe "inner"
     }
 
     "detection is by content, not extension: a non-zip named '.zip' is left untouched" {
@@ -141,13 +143,13 @@ class TestArchives : StringSpec({
     }
 
     "a flatten collision (two entries, same basename) throws IllegalStateException" {
-        writeZip(dir, "result.zip", mapOf("regionA/dis24.nc" to "A", "regionB/dis24.nc" to "B"))
+        writeZip(dir, zipFileName, mapOf("regionA/dis24.nc" to "A", "regionB/dis24.nc" to "B"))
 
         shouldThrow<IllegalStateException> { flattenArchives(dir) }
     }
 
     "an empty zip (with no entries) extracts nothing, is deleted, and leaves the dir empty" {
-        val zip = writeZip(dir, "result.zip", emptyMap())
+        val zip = writeZip(dir, zipFileName, emptyMap())
 
         flattenArchives(dir)
 

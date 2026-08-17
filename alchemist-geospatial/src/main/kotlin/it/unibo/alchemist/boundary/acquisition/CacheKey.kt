@@ -13,7 +13,7 @@ package it.unibo.alchemist.boundary.acquisition
  * Deterministic identity of a request, used by [CopernicusCacheManager] as the directory name for its
  * cache entry. Implemented by request types (e.g. [CopernicusRequest]).
  */
-interface CacheKey {
+fun interface CacheKey {
 
     /**
      * @return a **deterministic, file-system-safe** directory name derived *only* from what

@@ -1,6 +1,6 @@
 # Reactive Engine Refactor Plan
 
-Last updated: 2026-08-13
+Last updated: 2026-08-17
 
 Working branch: `marmellata`
 
@@ -14,12 +14,18 @@ Do not mark an item complete until its implementation and proportional verificat
 - Merge `origin/master` into `marmellata`; do not replace the existing work with a replay from scratch.
 - Remove the dependency graph and all dependency-descriptor APIs used only to maintain it.
 - Remove `BatchEngine` and converge on one execution and scheduling model.
+- Remove `BatchManager`; a `nextOccurrence` emission must update the scheduler directly. Future invalidation
+  transactions will deduplicate reaction recomputation before occurrence emission, rather than coalesce scheduler
+  callbacks afterward.
 - Make `TimeDistribution` responsible only for generating correctly distributed time samples.
-- Make reactions own `tau`, execution advancement, invalidation, and any transformation or replacement of a
-  previously sampled time.
+- Make reactions own `nextOccurrence`, execution advancement, invalidation, and any transformation or replacement
+  of a previously sampled time.
 - During Phase 5, rename reaction `tau` to `nextOccurrence` across the API and repository consumers.
 - Remove propensity contribution from conditions. Conditions describe reactive validity, not scheduling policy.
-- Put chemical propensity computation in a specialized token-driven reaction abstraction.
+- Remove observable dependency sets from conditions after migrating every non-validity scheduling input to a
+  direct reaction-specific invalidation signal.
+- Put chemical propensity computation in specialized reactions. Their propensity and match invalidation signals
+  are private reactive implementation details, not a new public token hierarchy or dependency-description API.
 - Renounce Java `Serializable` across the model and engine APIs.
 - When a Java source file requires significant behavioral, structural, or API modification, port that file to
   Kotlin as part of the same change instead of extending the Java implementation.
@@ -43,27 +49,31 @@ and must not leave duplicate fully qualified declarations behind.
 observable model state
     |                         +-------------------------+
     +--> reactive validity -->| Reaction                |
-    |                         | - owns tau              |--> observable tau --> Engine --> Scheduler
-    +--> reaction token ----->| - owns invalidation     |
+    |                         | - owns nextOccurrence   |--> observable nextOccurrence --> Engine --> Scheduler
+    +--> private reaction ---->| - owns invalidation     |
+         invalidation signal  |                         |
                               | - owns time adjustment  |
 TimeDistribution ------------>| - requests new samples |
 (generates time samples only) +-------------------------+
 ```
 
-The engine must not infer model dependencies. It schedules reactions and reindexes them when their owned `tau`
-changes. Model observables invalidate the reactions that directly consume them.
+The engine must not infer model dependencies. It schedules reactions and reindexes them when their owned
+`nextOccurrence` changes. Model observables invalidate the reactions that directly consume them.
 
 ### Architectural invariants
 
 1. A `TimeDistribution` does not know about `Actionable`, `Reaction`, `Environment`, conditions, propensity,
-   scheduler state, or observable `tau`.
+   scheduler state, or observable `nextOccurrence`.
 2. Drawing a new sample is observably different from adjusting an already sampled occurrence. A reaction decides
    which operation is semantically correct.
 3. A reaction owns its absolute next-occurrence time and is the only component allowed to change it.
 4. The engine observes reaction times but never computes them.
-5. Conditions expose validity only. A condition cannot implicitly own chemical propensity policy.
-6. A chemical reaction observes a propensity token containing every model value needed by its propensity law.
-   Changes that alter propensity without changing Boolean validity must still invalidate the reaction.
+5. Conditions expose validity only. They expose neither scheduling policy nor a general collection of observable
+   dependencies.
+6. A specialized reaction directly observes the private invalidation signals needed by its scheduling law. A
+   chemical reaction must therefore react to every value used by its propensity law, including changes that leave
+   Boolean condition validity `true`. These signals are ordinary reactive sources, not dependency descriptors or
+   instances of a new general-purpose token API.
 7. Each logical model mutation transaction recomputes and reindexes every affected reaction at most once.
 8. Removed or disposed reactions cannot emit scheduler updates.
 9. All scheduling calculations use the triggering event's simulation time, never a stale batch/global time.
@@ -72,10 +82,11 @@ changes. Model observables invalidate the reactions that directly consume them.
 
 ### Soundness constraints to settle before the core API is finalized
 
-- Prefer distributions that sample non-negative delays; reactions convert delays to absolute `tau`. If an absolute
-  time generator is required, document why it cannot use the delay contract.
-- Define the chemical propensity token precisely. It must be a typed, reactive snapshot or observable source, not
-  an opaque replacement for the old dependency metadata.
+- Prefer distributions that sample non-negative delays; reactions convert delays to absolute `nextOccurrence`. If
+  an absolute time generator is required, document why it cannot use the delay contract.
+- Define each specialized reaction's propensity or match inputs precisely. Prefer typed derived observables or
+  narrow change signals owned by that reaction family; do not introduce an opaque token hierarchy that recreates
+  the old dependency metadata.
 - Define adjustment semantics per reaction family. Scaling an exponential residual time is well-defined, but an
   arbitrary sampled distribution cannot necessarily be conditioned or rescaled correctly. Unsupported
   reaction/distribution combinations must fail clearly rather than silently redraw with different semantics.
@@ -93,8 +104,14 @@ changes. Model observables invalidate the reactions that directly consume them.
 - [x] Identified the next masked compiler frontier in the incomplete `Environment`/`Neighborhood` collection
   migration.
 - [x] Merge the current `origin/master` and refresh this evidence after conflict resolution.
+- [x] Audited current `HEAD` `a25805497` on 2026-08-17; the worktree is clean and the branch matches
+  `origin/marmellata`.
+- [x] Confirmed that the old `Dependency` descriptor API and general lifecycle package are absent, while exact
+  `Disposable` subscription handles and reaction/engine ownership remain in place.
+- [ ] Record post-`a25805497` formatting, focused verification, and full-build evidence.
 
-Known failures after the master merge:
+Historical failure list from the post-merge baseline (not current evidence; no post-rename full-build result is
+recorded):
 
 - Java and Kotlin declare incompatible `it.unibo.alchemist.model.TimeDistribution` interfaces.
 - `AbstractEnvironment` mixes immutable `List` declarations with mutation and stale `ListSet` APIs.
@@ -172,8 +189,9 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 - [x] Use Apache Commons Math's `RealDistribution` as the design reference: keep sampling independent from
   reaction lifecycle and scheduling, and add distribution metadata only when an identified consumer needs it.
-- [x] Define the minimal sampling contract as `sample(): Time`, returning a finite non-negative delay. The legacy
-  generic parameter and scheduling members were removed during consumer migration; no transitional API remains.
+- [x] Define the generic sampling contract as `TimeDistribution<T>.sample(): Time`, returning a finite non-negative
+  delay. The distribution is sample-only with respect to scheduling and lifecycle; the intentional
+  `newInstanceOn(node)` operation is a construction contract for fresh destination-bound generators.
 - [x] Remove `update`, `reactToUpdate`, `Actionable`, `Environment`, propensity, rate-conditioning, and observable
   next-occurrence responsibilities from `TimeDistribution`.
 - [x] Keep configured parameters such as an exponential lambda inside the sampler when they shape its probability
@@ -185,15 +203,15 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 ## Phase 5: make reactions own scheduling
 
-- [x] Give each reaction sole ownership of observable `tau`.
+- [x] Give each reaction sole ownership of observable `nextOccurrence`.
 - [x] Complete the replacement of shared-generator reaction cloning with **newly instantiated program** semantics:
   - make `TimeDistribution<T>.newInstanceOn(node)` construct a fresh, destination-bound generator with the same
     configuration; this open-world operation replaces the rejected central built-in factory registry;
   - construct a fresh `TimeDistribution` instance bound to the destination node and environment instead of passing
     the source reaction's generator object to the clone;
   - initialize a fresh reaction occurrence by sampling from the clone time (while respecting any configured
-    absolute not-before/start time), without copying the source `tau`, residual waiting time, previous propensity,
-    match token, or other reaction-local sampler state;
+    absolute not-before/start time), without copying the source `nextOccurrence`, residual waiting time, previous
+    propensity, match token, or other reaction-local sampler state;
   - allow reconstructed generators to keep using the simulation's shared RNG intentionally, without treating the
     generator object itself as shared reaction state;
   - explicitly rebind node-dependent generators such as `MoleculeControlledTimeDistribution` and
@@ -214,24 +232,35 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
     RNGs while isolating generator objects and mutable match/token state.
   - [x] Complete the deterministic, non-memoryless, destination-bound, RNG-backed, and specialized clone regression
     matrix.
-- [ ] Rename reaction `tau` to `nextOccurrence` across the API, implementations, engine, schedulers, loaders,
+- [x] Rename reaction `tau` to `nextOccurrence` across the API, implementations, engine, schedulers, loaders,
   tests, and documentation.
 - [ ] Define initialization, firing, invalidation, and removal transitions; cloning follows the newly-instantiated-
   program contract above rather than copying a running stochastic process.
 - [ ] Move all decisions about sampling, preserving, transforming, or replacing scheduled times into reactions.
-- [ ] Keep scheduler notification as a consequence of a reaction-owned `tau` change.
-- [ ] Ensure initialization computes `tau` before scheduler insertion without causing duplicate reindexing.
+- [ ] Keep scheduler notification as a consequence of a reaction-owned `nextOccurrence` change.
+- [ ] Delete `BatchManager` and make each `nextOccurrence` emission call `scheduler.updateReaction` directly.
+- [ ] Ensure initialization computes `nextOccurrence` before scheduler insertion without causing duplicate
+  reindexing.
 - [ ] Make disposal idempotent and prevent post-removal emissions.
 - [ ] Migrate global reactions and specialized reactions without duplicating the base lifecycle.
 
-## Phase 6: simplify conditions and introduce chemical propensity tokens
+## Phase 6: simplify conditions and introduce reaction-specific invalidation signals
 
 - [ ] Remove propensity contribution from `Condition` and `AbstractCondition`.
-- [ ] Remove the separate observable dependency set if direct reactive validity/token sources make it redundant.
-- [ ] Define the specialized chemical reaction type and its propensity-token type.
-- [ ] Make the token expose every concentration, match, stoichiometric quantity, or neighborhood value required to
-  recompute propensity.
-- [ ] Make token changes reactive even when condition validity remains `true`.
+- [ ] Classify every current condition dependency source as Boolean validity input or as a specialized reaction's
+  non-validity scheduling input before removing the existing dependency sets.
+- [ ] Make the base reaction observe only the combined reactive validity of its conditions.
+- [ ] Make specialized reactions directly subscribe to the narrow propensity, match, or state-change signals they
+  consume, owning every returned non-null `Disposable`.
+- [ ] Make these private signals invalidate the reaction even for semantically relevant `true`-to-`true` validity
+  changes; do not encode such changes as repeated equal Boolean emissions.
+- [ ] Remove `Condition.getDependencies`, `AbstractCondition.dependencies`, `addObservableDependency`, and related
+  merge helpers once all non-validity consumers have migrated.
+- [ ] Do not replace observable dependency sets with a public token type, token registry, or another collection of
+  dependency descriptions.
+- [ ] Define the specialized chemical reaction type and its typed propensity inputs.
+- [ ] Cover every concentration, match, stoichiometric quantity, or neighborhood value required to recompute
+  propensity.
 - [ ] Move mass-action and other propensity laws into the chemical reaction hierarchy.
 - [ ] Define which time generators are valid for chemically conditioned reactions.
 - [ ] Migrate biochemistry, SAPERE, and other propensity-aware implementations explicitly.
@@ -240,12 +269,17 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 ## Phase 7: implement reactive invalidation transactions
 
 - [ ] Introduce an engine-owned transaction/dirty-reaction set around each model mutation and reaction execution.
-- [ ] Mark reactions dirty synchronously when their reactive inputs change.
+- [ ] Mark reactions dirty synchronously through direct validity and reaction-specific invalidation callbacks; the
+  transaction must never inspect condition dependency metadata.
 - [ ] Recompute each dirty reaction once after the mutation finishes.
-- [ ] Reindex each changed `tau` once after recomputation.
+- [ ] Reindex each changed `nextOccurrence` once as a consequence of the single post-transaction recomputation.
 - [ ] Define behavior for invalidation originating from scheduled commands outside reaction execution.
 - [ ] Guard observable callback iteration against subscription mutation and re-entrant emissions.
 - [ ] Verify deterministic ordering when multiple reactions are invalidated together.
+- [ ] Keep the invalidation transaction independent from scheduler notification: it must prevent redundant
+  recomputation, resampling, and random-number consumption before `nextOccurrence` emits, not buffer scheduler
+  callbacks after emission.
+- [ ] Exclude reactions removed or disposed while a transaction is collecting dirty reactions.
 
 ## Phase 8: remove Java serialization
 
@@ -261,12 +295,18 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 ## Phase 9: complete observable model migration
 
-- [ ] Audit every condition and reaction for non-observable reads that affect validity, tokens, or scheduling.
+- [ ] Audit every condition and reaction for non-observable reads that affect validity, specialized invalidation,
+  or scheduling.
+- [ ] For every source formerly present in a condition dependency set, verify an explicit destination: condition
+  validity or a specialized reaction-owned invalidation signal.
 - [ ] Cover node contents, molecule presence, neighborhoods, positions, node counts, ranges, layers, and global state.
 - [ ] Audit biochemistry, Protelis, SAPERE, Scafi, cognitive agents, physics, maps, and global reactions.
 - [ ] Remove topology-driven dependency maintenance only after equivalent observable invalidation is tested.
 - [ ] Remove obsolete `Context` uses from scheduling; retain context only if it still has independent semantic value.
 - [ ] Verify reaction and node addition/removal clean up every subscription.
+- [ ] Update `Simulation` topology callback documentation, which still mentions dependency computation. Retain
+  node/reaction add/remove callbacks for runtime scheduler membership; remove or repurpose no-op neighbor/movement
+  callbacks only after observable topology coverage is demonstrated.
 
 ## Phase 10: behavioral and regression coverage
 
@@ -276,6 +316,8 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] Test that previously published neighborhood snapshots cannot change when topology changes and that observers
   receive a distinct immutable replacement snapshot.
 - [ ] Test propensity changes that do not change Boolean condition validity.
+- [ ] Test match and other specialized scheduling changes that leave condition validity `true`, proving that their
+  direct reaction-specific signals invalidate scheduling without dependency sets or repeated Boolean emissions.
 - [ ] Test zero-to-positive, positive-to-zero, and positive-to-positive chemical propensity transitions.
 - [ ] Verify whether each transition preserves, transforms, or redraws the sampled time as specified.
 - [ ] Assert random-number consumption explicitly for stochastic generators.
@@ -296,6 +338,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] Preserve intentional Java and Scala interoperation or document source-breaking replacements.
 - [ ] Remove compatibility shims only after all repository consumers migrate.
 - [ ] Update public documentation and migration notes for all breaking API changes.
+- [ ] Remove the remaining Swing UI `org.danilopianini:javalib-java7:0.6.1` dependency.
 
 ## Validation protocol
 
@@ -313,6 +356,16 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-08-17: decided that observable dependency sets will be removed from conditions. Conditions will expose only
+  reactive validity; base reactions will observe the combined validity directly, while specialized reactions will
+  own subscriptions to narrow propensity, match, or state invalidation signals.
+  The dependency-set API will be deleted after every existing source is classified and its non-validity consumers
+  have migrated, so `true`-to-`true` propensity or match changes remain observable.
+- 2026-08-17: decided to remove `BatchManager` rather than evolve it into the Phase 7 transaction mechanism. Its
+  current identity set only coalesces `scheduler.updateReaction` calls during `Engine.doStep`; it neither batches
+  reaction recomputation nor covers invalidation outside execution. `nextOccurrence` emissions will update the
+  scheduler directly. A future invalidation transaction will instead deduplicate dirty reactions and recompute each
+  once before occurrence emission, while excluding reactions removed or disposed during the transaction.
 - 2026-08-13: rejected the provisional `TimeDistributionFactory`/`builtInFactory()` implementation because its
   central runtime-type switch made the model closed to new distribution implementations. The replacement contract
   is `TimeDistribution<T>.newInstanceOn(node)`: each distribution owns reconstruction of a fresh equivalent
@@ -347,6 +400,8 @@ Use repository Gradle tasks from the repository root.
   Alternate-JVM `testWithJvm*`/`jvmTestWithJvm*` tasks, DEB/RPM builders, and RPM-derived `generatePKGBUILD` were
   excluded as directed. Phase 5 can proceed with the separately planned `tau` to `nextOccurrence` rename after
   this independently committable checkpoint is reviewed and committed.
+- 2026-08-17: commit `a25805497` completes the Phase 5 `tau` to `nextOccurrence` rename across the repository.
+  Post-rename formatting, focused verification, and the required full build are not yet recorded here.
 - 2026-08-13: `AbstractReaction` now delegates fresh generator construction polymorphically to
   `TimeDistribution<T>.newInstanceOn(node)`. `Event` and `ChemicalReaction` create a distinct generator for a clone,
   clone actions and conditions onto the new reaction, and defer fresh scheduling until engine initialization. The

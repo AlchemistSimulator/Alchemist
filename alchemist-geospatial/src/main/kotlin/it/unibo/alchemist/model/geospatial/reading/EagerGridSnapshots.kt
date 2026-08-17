@@ -17,8 +17,7 @@ import org.slf4j.LoggerFactory
 import ucar.nc2.dataset.NetcdfDatasets
 
 /**
- * Eager [GridSnapshots] implementation. This implementation depends on
- * [NetCDF-Java](https://docs.unidata.ucar.edu/netcdf-java/current/javadoc/index.html).
+ * Eager [GridSnapshots] implementation. This implementation depends on NetCDF-Java.
  *
  * Reads a directory of **homogeneous** data files (same variable, same spatial grid)
  * and exposes them as a single time-ordered slice series.

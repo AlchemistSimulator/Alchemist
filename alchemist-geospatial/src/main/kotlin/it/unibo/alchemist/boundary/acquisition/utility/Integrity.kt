@@ -84,11 +84,14 @@ private fun String.isMd5Hex(): Boolean = length == MD5_HEX_DIGITS && all { it in
  * streaming the file through the digest so arbitrarily large files
  * are never fully held in memory.
  *
+ * MD5 is used to verify download integrity against the checksum
+ * reported by the Copernicus API.
+ *
  * @param file the file to digest.
  * @return the MD5 digest, as a lowercase hex string.
  */
 internal fun md5Hex(file: Path): String {
-    val digest = MessageDigest.getInstance("MD5")
+    val digest = MessageDigest.getInstance("MD5") // NOSONAR: mandated by Copernicus API for integrity checks
     DigestInputStream(Files.newInputStream(file), digest).use { stream ->
         // at any given time, a maximum of DIGEST_BUFFER_BYTES bytes are allocated in memory.
         val buffer = ByteArray(DIGEST_BUFFER_BYTES)

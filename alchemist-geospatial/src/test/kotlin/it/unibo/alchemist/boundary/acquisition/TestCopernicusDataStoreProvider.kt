@@ -24,6 +24,7 @@ import kotlin.io.path.readBytes
 class TestCopernicusDataStoreProvider : StringSpec({
 
     val token = "test-token"
+    val successful = "successful-status"
 
     /**
      * The routes and captured bodies of one data store's job lifecycle.
@@ -161,7 +162,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
 
             fake.replaySubmit(cds)
             fake.replayStatus(cds, "accepted-status")
-            fake.replayStatus(cds, "successful-status")
+            fake.replayStatus(cds, successful)
             fake.replayResults(cds, payload.size)
             fake.serveAsset(cds, payload)
 
@@ -195,7 +196,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             val payload = "a".toByteArray()
 
             fake.replaySubmit(cds)
-            fake.replayStatus(cds, "successful-status")
+            fake.replayStatus(cds, successful)
             fake.replayResults(cds, payload.size, checksum = "cc175b9c0f1b6a831c399e269772661")
             fake.serveAsset(cds, payload)
 
@@ -212,7 +213,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             val tempDir = createTempDirectory()
 
             fake.replaySubmit(cds)
-            fake.replayStatus(cds, "successful-status")
+            fake.replayStatus(cds, successful)
             fake.replayResults(cds, sizeBytes = 0)
             fake.serveAsset(cds, ByteArray(0))
 
@@ -361,7 +362,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
 
             // an unforeseen status must be treated as transient, not as terminal
             fake.answerStatus(cds, """{ "status": "queued_for_retry" }""")
-            fake.replayStatus(cds, "successful-status")
+            fake.replayStatus(cds, successful)
             fake.replayResults(cds, sizeBytes = 0)
             fake.serveAsset(cds, ByteArray(0))
 
@@ -391,7 +392,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             val tempDir = createTempDirectory()
 
             fake.replaySubmit(ads)
-            fake.replayStatus(ads, "successful-status")
+            fake.replayStatus(ads, successful)
             fake.enqueue("GET", ads.resultsRoute) {
                 FakeHttpServer.json(404, loadBody("error-404-result-not-ready.json").withFakeBase(fake))(it)
             }
@@ -426,7 +427,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             val payload = "test".toByteArray()
 
             fake.replaySubmit(cds)
-            fake.replayStatus(cds, "successful-status")
+            fake.replayStatus(cds, successful)
 
             // advertises one byte more than the object store will actually serve
             fake.replayResults(cds, payload.size + 1)
@@ -445,7 +446,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             val tempDir = createTempDirectory()
 
             fake.replaySubmit(cds)
-            fake.replayStatus(cds, "successful-status")
+            fake.replayStatus(cds, successful)
             fake.replayResults(cds, sizeBytes = 0)
             fake.serveAsset(cds, ByteArray(0))
 

@@ -32,6 +32,11 @@ import it.unibo.alchemist.loadJsonCopernicusResponse
  */
 class TestCopernicusParsers : StringSpec({
 
+    val objectStoreEndpoint = "https://object-store.os-api.cci2.ecmwf.int:443"
+    val adsJobsEndpoint = "https://ads.atmosphere.copernicus.eu/api/retrieve/v1/jobs"
+    val ewdsJobsEndpoint = "https://ewds.climate.copernicus.eu/api/retrieve/v1/jobs"
+    val cdsJobsEndpoint = "https://cds.climate.copernicus.eu/api/retrieve/v1/jobs"
+
     /**
      * One full job lifecycle captured from a single data store.
      */
@@ -52,13 +57,10 @@ class TestCopernicusParsers : StringSpec({
         accepted = loadBody("cds-accepted-status.json"),
         successful = loadBody("cds-successful-status.json"),
         results = loadBody("cds-results.json"),
-        monitorUrl = "https://cds.climate.copernicus.eu/api/retrieve" +
-            "/v1/jobs/82d0a5fb-f096-42fd-b644-c7ba173b0154",
-        resultsUrl = "https://cds.climate.copernicus.eu/api/retrieve" +
-            "/v1/jobs/82d0a5fb-f096-42fd-b644-c7ba173b0154/results",
+        monitorUrl = "$cdsJobsEndpoint/82d0a5fb-f096-42fd-b644-c7ba173b0154",
+        resultsUrl = "$cdsJobsEndpoint/82d0a5fb-f096-42fd-b644-c7ba173b0154/results",
         asset = RemoteAsset(
-            href = "https://object-store.os-api.cci2.ecmwf.int:443/" +
-                "cci2-prod-cache-1/2026-08-08/f8ec201f667455bd3cf338c39fc03a1a.zip",
+            href = "$objectStoreEndpoint/cci2-prod-cache-1/2026-08-08/f8ec201f667455bd3cf338c39fc03a1a.zip",
             sizeBytes = 50_689L,
             md5 = "aa45b382ed6a3d13a4f30cca4d0a9b7",
         ),
@@ -70,13 +72,10 @@ class TestCopernicusParsers : StringSpec({
         accepted = loadBody("ads-accepted-status.json"),
         successful = loadBody("ads-successful-status.json"),
         results = loadBody("ads-results.json"),
-        monitorUrl = "https://ads.atmosphere.copernicus.eu/api/retrieve" +
-            "/v1/jobs/a79e0cce-9c46-4bd9-aec5-3570977cbbd1",
-        resultsUrl = "https://ads.atmosphere.copernicus.eu/api/retrieve" +
-            "/v1/jobs/a79e0cce-9c46-4bd9-aec5-3570977cbbd1/results",
+        monitorUrl = "$adsJobsEndpoint/a79e0cce-9c46-4bd9-aec5-3570977cbbd1",
+        resultsUrl = "$adsJobsEndpoint/a79e0cce-9c46-4bd9-aec5-3570977cbbd1/results",
         asset = RemoteAsset(
-            href = "https://object-store.os-api.cci2.ecmwf.int:443/" +
-                "cci2-prod-cache-2/2026-08-08/1b2c8f7e437451ffc09a9e23cb32a542.zip",
+            href = "$objectStoreEndpoint/cci2-prod-cache-2/2026-08-08/1b2c8f7e437451ffc09a9e23cb32a542.zip",
             sizeBytes = 7_768_356L,
             md5 = "d6c0964f89e3f43d1a99ee4d7722f505",
         ),
@@ -88,13 +87,10 @@ class TestCopernicusParsers : StringSpec({
         accepted = loadBody("ewds-accepted-status.json"),
         successful = loadBody("ewds-successful-status.json"),
         results = loadBody("ewds-results.json"),
-        monitorUrl = "https://ewds.climate.copernicus.eu/api/retrieve" +
-            "/v1/jobs/bb1ee550-0dea-4c84-b164-b8c54165a25f",
-        resultsUrl = "https://ewds.climate.copernicus.eu/api/retrieve" +
-            "/v1/jobs/bb1ee550-0dea-4c84-b164-b8c54165a25f/results",
+        monitorUrl = "$ewdsJobsEndpoint/bb1ee550-0dea-4c84-b164-b8c54165a25f",
+        resultsUrl = "$ewdsJobsEndpoint/bb1ee550-0dea-4c84-b164-b8c54165a25f/results",
         asset = RemoteAsset(
-            href = "https://object-store.os-api.cci2.ecmwf.int:443/" +
-                "cci2-prod-cache-3/2026-08-09/9600fbec69609809250b901b42f6800.zip",
+            href = "$objectStoreEndpoint/cci2-prod-cache-3/2026-08-09/9600fbec69609809250b901b42f6800.zip",
             sizeBytes = 22_643L,
             md5 = "104b13e69dc13b15f75c910d08f0e4ac",
         ),
@@ -144,8 +140,7 @@ class TestCopernicusParsers : StringSpec({
             title = "job results not ready",
             status = 404,
             detail = "status of 61ebb7be-650e-4aa5-9039-6030eb01bb68 is 'accepted'",
-            instance = "https://ads.atmosphere.copernicus.eu/api/retrieve" +
-                "/v1/jobs/61ebb7be-650e-4aa5-9039-6030eb01bb68/results",
+            instance = "$adsJobsEndpoint/61ebb7be-650e-4aa5-9039-6030eb01bb68/results",
             traceId = "e7ba3606-9816-43cc-ab6a-4f0642388701",
             traceback = null,
         )
@@ -157,8 +152,7 @@ class TestCopernicusParsers : StringSpec({
             title = "permission denied",
             status = 401,
             detail = "authentication required",
-            instance = "https://ads.atmosphere.copernicus.eu/api/retrieve" +
-                "/v1/jobs/61ebb7be-650e-4aa5-9039-6030eb01bb68",
+            instance = "$adsJobsEndpoint/61ebb7be-650e-4aa5-9039-6030eb01bb68",
             traceId = "b63a2882-2510-4ced-935a-b2faec13eead",
             traceback = null,
         )
@@ -182,8 +176,7 @@ class TestCopernicusParsers : StringSpec({
         problem.title shouldBe "The job has failed"
         problem.status shouldBe 400
         problem.detail shouldBe null
-        problem.instance shouldBe "https://ewds.climate.copernicus.eu/api/retrieve" +
-            "/v1/jobs/3a891e6b-e602-400d-9f26-d9be8acadc05/results"
+        problem.instance shouldBe "$ewdsJobsEndpoint/3a891e6b-e602-400d-9f26-d9be8acadc05/results"
         problem.traceId shouldBe "4e257fcd-dda1-494a-8e26-d5d6885676d4"
         problem.traceback shouldStartWith "The job failed with: MultiAdaptorNoDataError"
     }

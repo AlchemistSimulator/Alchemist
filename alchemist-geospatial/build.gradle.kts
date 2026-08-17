@@ -15,11 +15,14 @@ plugins {
 
 dependencies {
     api(alchemist("api"))
+
     implementation(libs.cdm.core)
-    runtimeOnly(libs.cdm.grib)
     implementation(libs.gson)
     implementation(libs.guava)
     implementation(libs.slf4j)
+
+    runtimeOnly(libs.cdm.grib)
+
     testImplementation(alchemist("test"))
 }
 

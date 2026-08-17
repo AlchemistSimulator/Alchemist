@@ -41,6 +41,8 @@ class TestCopernicusLayer : StringSpec({
 
     val center: GeoPosition = mockGeoPosition(45.0, 12.0)
 
+    val netCdfFileName = "data.nc"
+
     /**
      * Environment mock with the simulation fixed at time [t].
      */
@@ -239,7 +241,7 @@ class TestCopernicusLayer : StringSpec({
          * slice 2: all 30.0
          */
         writeTestNetcdf(
-            path = dir.resolve("data.nc"),
+            path = dir.resolve(netCdfFileName),
             lats = doubleArrayOf(44.0, 45.0, 46.0),
             lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0, 1.0, 2.0),
@@ -255,7 +257,7 @@ class TestCopernicusLayer : StringSpec({
     "directory constructor: linear interpolation between two slices in file" {
         val dir = tempDir.resolve("interp").also { it.toFile().mkdirs() }
         writeTestNetcdf(
-            path = dir.resolve("data.nc"),
+            path = dir.resolve(netCdfFileName),
             lats = doubleArrayOf(44.0, 45.0, 46.0),
             lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0, 1.0),
@@ -271,7 +273,7 @@ class TestCopernicusLayer : StringSpec({
     "directory constructor: descending latitude axis is normalised to ascending" {
         val dir = tempDir.resolve("desc-lat").also { it.toFile().mkdirs() }
         writeTestNetcdf(
-            path = dir.resolve("data.nc"),
+            path = dir.resolve(netCdfFileName),
             lats = doubleArrayOf(46.0, 45.0, 44.0), // lats descending
             lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0),
@@ -303,7 +305,7 @@ class TestCopernicusLayer : StringSpec({
     "directory constructor: variable auto-detected when variableName is null" {
         val dir = tempDir.resolve("auto-detect").also { it.toFile().mkdirs() }
         writeTestNetcdf(
-            path = dir.resolve("data.nc"),
+            path = dir.resolve(netCdfFileName),
             lats = doubleArrayOf(44.0, 45.0, 46.0),
             lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0),
@@ -325,7 +327,7 @@ class TestCopernicusLayer : StringSpec({
         val dir = tempDir.resolve("explicit-var").also { it.toFile().mkdirs() }
         val varName = "temperature"
         writeTestNetcdf(
-            path = dir.resolve("data.nc"),
+            path = dir.resolve(netCdfFileName),
             lats = doubleArrayOf(44.0, 45.0, 46.0),
             lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0),

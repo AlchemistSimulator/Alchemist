@@ -146,8 +146,8 @@ class CopernicusDataStoreProvider(
             .uri(URI.create("$base/retrieve/v1/processes/${request.dataset}/execution"))
             // always needed! A 403 error would be thrown otherwise
             .header("PRIVATE-TOKEN", token)
-            .header("Content-Type", "application/json")
-            .header("Accept", "application/json")
+            .header("Content-Type", APPLICATION_JSON)
+            .header("Accept", APPLICATION_JSON)
             .POST(HttpRequest.BodyPublishers.ofString(body))
             .build()
 
@@ -349,7 +349,7 @@ class CopernicusDataStoreProvider(
         HttpRequest.newBuilder()
             .uri(URI.create(url))
             .header("PRIVATE-TOKEN", token)
-            .header("Accept", "application/json")
+            .header("Accept", APPLICATION_JSON)
             .GET()
             .build(),
         HttpResponse.BodyHandlers.ofString(),
@@ -379,6 +379,8 @@ class CopernicusDataStoreProvider(
          * has frozen).
          */
         private const val USER_ALERT_INTERVAL_SEC = 30L
+
+        private const val APPLICATION_JSON = "application/json"
     }
 }
 

@@ -18,9 +18,11 @@ import io.kotest.matchers.string.shouldStartWith
 
 class TestCopernicusRequest : StringSpec({
 
+    val dataset = "cems-glofas-historical"
+
     // a realistic request to the EWDS data store
     val glofas = CopernicusRequest(
-        dataset = "cems-glofas-historical",
+        dataset = dataset,
         inputs = mapOf(
             "variable" to listOf("river_discharge_in_the_last_24_hours"),
             "hyear" to listOf("2024"),
@@ -37,7 +39,7 @@ class TestCopernicusRequest : StringSpec({
     "toFileName is stable under key reordering (the reason CanonicalJson exists)" {
         // same logical request, just reordered
         val reordered = CopernicusRequest(
-            dataset = "cems-glofas-historical",
+            dataset = dataset,
             inputs = mapOf(
                 "data_format" to "netcdf",
                 "hday" to listOf("10"),
@@ -85,7 +87,7 @@ class TestCopernicusRequest : StringSpec({
 
     // toFileSystemSafe extension function tests
     "a plain name with only safe characters is left unchanged" {
-        "cems-glofas-historical".toFileSystemSafe() shouldBe "cems-glofas-historical"
+        dataset.toFileSystemSafe() shouldBe dataset
         "ERA5_2024.v3".toFileSystemSafe() shouldBe "ERA5_2024.v3"
     }
 

@@ -26,7 +26,7 @@ import java.nio.file.Path
  * @param R the consumed request type, bound to [CacheKey] so that its result
  * is always cacheable.
  */
-interface ExternalDataProvider<in R : CacheKey> {
+fun interface ExternalDataProvider<in R : CacheKey> {
 
     /**
      * Fills [targetDir] with the data denoted by [request] (e.g., by downloading resources).

@@ -171,8 +171,8 @@ internal fun flattenAscending(
     for (idx in arr.indices) {
         val iLat = idx / nLon
         val iLon = idx % nLon
-        val srcLat = if (latDescending) (nLat - 1 - iLat) else iLat
-        val srcLon = if (lonDescending) (nLon - 1 - iLon) else iLon
+        val srcLat = if (latDescending) nLat - 1 - iLat else iLat
+        val srcLon = if (lonDescending) nLon - 1 - iLon else iLon
         arr[idx] = slice.getDouble(srcLat * nLon + srcLon)
     }
 }

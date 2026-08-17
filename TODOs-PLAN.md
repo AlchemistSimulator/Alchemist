@@ -35,6 +35,8 @@ Do not mark an item complete until its implementation and proportional verificat
 - Make each `Neighborhood` value an immutable snapshot. Topology may change during a simulation, but a change must
   create and publish a replacement neighborhood rather than mutate an already published instance.
 - Keep changes small and focused, and maintain this document as part of each phase.
+- Keep repository-wide validation focused on the default JVM and normal verification suites. Exclude alternate-JVM
+  test matrices, DEB/RPM packaging and RPM-derived metadata, and fat/shadow JAR construction and tests.
 - At every relevant, independently committable milestone, stop before beginning the next one and suggest a
   Conventional Commit message for the completed work.
 
@@ -108,10 +110,9 @@ The engine must not infer model dependencies. It schedules reactions and reindex
   `origin/marmellata`.
 - [x] Confirmed that the old `Dependency` descriptor API and general lifecycle package are absent, while exact
   `Disposable` subscription handles and reaction/engine ownership remain in place.
-- [ ] Record post-`a25805497` formatting, focused verification, and full-build evidence.
+- [x] Record post-`a25805497` formatting, focused verification, and full-build evidence.
 
-Historical failure list from the post-merge baseline (not current evidence; no post-rename full-build result is
-recorded):
+Historical failure list from the post-merge baseline (not current evidence):
 
 - Java and Kotlin declare incompatible `it.unibo.alchemist.model.TimeDistribution` interfaces.
 - `AbstractEnvironment` mixes immutable `List` declarations with mutation and stale `ListSet` APIs.
@@ -237,11 +238,14 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] Define initialization, firing, invalidation, and removal transitions; cloning follows the newly-instantiated-
   program contract above rather than copying a running stochastic process.
 - [ ] Move all decisions about sampling, preserving, transforming, or replacing scheduled times into reactions.
-- [ ] Keep scheduler notification as a consequence of a reaction-owned `nextOccurrence` change.
-- [ ] Delete `BatchManager` and make each `nextOccurrence` emission call `scheduler.updateReaction` directly.
-- [ ] Ensure initialization computes `nextOccurrence` before scheduler insertion without causing duplicate
+- [x] Keep scheduler notification as a consequence of a reaction-owned `nextOccurrence` change.
+- [x] Delete `BatchManager` and make each `nextOccurrence` emission call `scheduler.updateReaction` directly.
+- [x] Ensure initialization computes `nextOccurrence` before scheduler insertion without causing duplicate
   reindexing.
-- [ ] Make disposal idempotent and prevent post-removal emissions.
+- [x] Make disposal idempotent and prevent post-removal emissions.
+- [ ] Either document and enforce simulation-thread confinement for scheduling registration or make
+  `scheduleReaction` registration atomic. Its current add-subscribe-own sequence assumes that no concurrent custom
+  observable emits between scheduler insertion and `schedulingSubscriptions` ownership registration.
 - [ ] Migrate global reactions and specialized reactions without duplicating the base lifecycle.
 
 ## Phase 6: simplify conditions and introduce reaction-specific invalidation signals
@@ -349,13 +353,32 @@ Use repository Gradle tasks from the repository root.
 - [ ] When Scala in `alchemist-incarnation-scafi` changes, run
   `./gradlew --parallel alchemist-incarnation-scafi:scalafmtAll`.
 - [x] Re-run affected module verification after formatting.
-- [x] Finish every non-trivial completed change with `./gradlew --parallel build`, excluding alternate-JVM test
-  matrix tasks and the redistributable DEB/RPM package tasks. Keep the normal test suites and verification tasks.
+- [x] Finish every non-trivial completed change with a filtered `./gradlew --parallel build`. Exclude
+  `testWithJvm*`, `jvmTestWithJvm*`, `testWithLatestJvm`, the `testWithLts*` aggregate tasks, `jpackageDeb`,
+  `jpackageRpm`, `generatePKGBUILD`, `shadowJar`, and the generated `test*ShadowJarOutput` task. Keep default-JVM,
+  JavaScript, WebAssembly, documentation, static-analysis, and normal integration verification enabled.
 - [x] If the full build fails, record the exact blocker in this document and keep fixing until it passes or an
   external blocker is confirmed.
 
 ## Progress log
 
+- 2026-08-17: removed `BatchManager` and the batching wrapper around reaction execution. `Engine` now owns one
+  exact `Disposable` per scheduled reaction and directly invokes `scheduler.updateReaction` for every active
+  `nextOccurrence` emission. Removal disposes the subscription before removing the scheduler entry, and the
+  callback also checks current scheduling ownership so removed reactions cannot reindex the scheduler.
+- 2026-08-17: added `EngineSchedulingSubscriptionTest`. Its three focused cases prove that initialization does not
+  reindex before scheduler insertion, multiple distinct emissions during one step update the active scheduler
+  entry directly, and removal disposes the engine subscription before scheduler removal and suppresses later
+  emissions. The existing `EngineTest`, `TestReactionRemoval`, `TestReactiveDependencies`, and `TestConcurrency`
+  regressions also pass.
+- 2026-08-17: the first full-build attempt restored a stale Scafi Scala-test cache entry compiled against the old
+  `Environment.getNodes(): ListSet` descriptor. A forced Scafi recompilation passed all eight tests; no source
+  change was required. The final filtered repository build then passed 915 tasks in 1m27s, including default-JVM,
+  JavaScript, WebAssembly, documentation, static analysis, and integration verification while excluding the
+  alternate-JVM, DEB/RPM, derived packaging, and fat/shadow JAR tasks documented above.
+- 2026-08-17: repository-wide validation must not run alternate-JVM test matrices, DEB/RPM builders or their
+  derived package metadata, or fat/shadow JAR construction and tests. A started unfiltered build was stopped once
+  it reached those unnecessary tasks; subsequent full validation uses the filtered task graph documented above.
 - 2026-08-17: decided that observable dependency sets will be removed from conditions. Conditions will expose only
   reactive validity; base reactions will observe the combined validity directly, while specialized reactions will
   own subscriptions to narrow propensity, match, or state invalidation signals.

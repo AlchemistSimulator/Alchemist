@@ -8,7 +8,6 @@
  */
 package it.unibo.alchemist.core
 
-import it.unibo.alchemist.core.batch.BatchManager
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Neighborhood
@@ -31,7 +30,6 @@ open class Engine<T, P : Position<out P>>(
     protected val scheduler: Scheduler<T>,
 ) : AbstractEngine<T, P>(environment) {
 
-    private val batchManager = BatchManager<T>()
     private val schedulingSubscriptions = IdentityHashMap<Actionable<T>, Disposable>()
 
     constructor(environment: Environment<T, P>) : this(environment, ArrayIndexedPriorityQueue())
@@ -52,13 +50,11 @@ open class Engine<T, P : Position<out P>>(
             "$nextEvent is scheduled in the past at time $scheduledTime. Current time: $time; current step: $step."
         }
         currentTime = scheduledTime
-        batchManager.useBatch(onReschedule = { scheduler.updateReaction(it) }) {
-            if (scheduledTime.isFinite && nextEvent.canExecute().current) {
-                nextEvent.conditions.forEach { it.reactionReady() }
-                nextEvent.execute()
-            }
-            nextEvent.update(time)
+        if (scheduledTime.isFinite && nextEvent.canExecute().current) {
+            nextEvent.conditions.forEach { it.reactionReady() }
+            nextEvent.execute()
         }
+        nextEvent.update(time)
 
         monitors.forEach { it.stepDone(environment, nextEvent, time, step) }
         if (environment.isTerminated) {
@@ -104,18 +100,11 @@ open class Engine<T, P : Position<out P>>(
         reaction.initializationComplete(time, environment)
         scheduler.addReaction(reaction)
         val subscription = reaction.nextOccurrence.subscribe(invokeOnSubscription = false) {
-            requestSchedulerUpdate(reaction)
+            if (schedulingSubscriptions.containsKey(reaction)) {
+                scheduler.updateReaction(reaction)
+            }
         }
         schedulingSubscriptions[reaction] = subscription
-    }
-
-    /**
-     * Reindexes [reaction] after its observable execution time changes.
-     */
-    protected open fun requestSchedulerUpdate(reaction: Actionable<T>) {
-        batchManager.requestReschedule(reaction) {
-            scheduler.updateReaction(reaction)
-        }
     }
 
     private fun removeReaction(reaction: Actionable<T>) {

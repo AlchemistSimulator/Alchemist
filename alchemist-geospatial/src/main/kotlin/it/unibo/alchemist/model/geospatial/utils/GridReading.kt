@@ -34,7 +34,13 @@ import ucar.nc2.dataset.NetcdfDataset
 private const val SPARSE_DENSITY_THRESHOLD = 0.1
 
 /**
- * Lists the regular files contained in [directory], sorted for a deterministic processing order.
+ * File types that netCDF-Java uses as indexes for GRIB files.
+ */
+private val netcdfJavaIndexSuffixes = setOf(".gbx9", ".ncx4")
+
+/**
+ * Lists the data files contained in [directory], ignoring the indexes created by netCDF-Java,
+ * sorted for a deterministic processing order.
  *
  * @param directory the directory to scan.
  * @return the sorted list of regular files in [directory].
@@ -43,6 +49,7 @@ private const val SPARSE_DENSITY_THRESHOLD = 0.1
 internal fun listDataFiles(directory: Path): List<Path> {
     val files = Files.list(directory).use { stream ->
         stream.filter { Files.isRegularFile(it) }
+            .filter { file -> netcdfJavaIndexSuffixes.none { suffix -> file.toString().endsWith(suffix) } }
             .sorted()
             .toList()
     }

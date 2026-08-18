@@ -18,7 +18,6 @@ import java.io.Serializable
  * @property longitudes longitudes of grid nodes, in degrees, sorted in **strictly** ascending order.
  * @param gridValues cell values in row-major order respect to [latitudes] x [longitudes];
  * [Double.NaN] values represent missing/fill values.
- *
  * @throws IllegalArgumentException if [latitudes]/[longitudes] are not strictly ascending or if
  * [gridValues]' size does not equal `latitudes.size * longitudes.size`.
  */
@@ -32,7 +31,6 @@ abstract class RasterGrid(val latitudes: DoubleArray, val longitudes: DoubleArra
         require(longitudes.isStrictlyAscending()) {
             "longitudes must be strictly ascending, but got ${longitudes.contentToString()}"
         }
-
         val expectedSize = latitudes.size * longitudes.size
         require(gridValues.size == expectedSize) {
             "Dimension mismatch: expected $expectedSize values " +
@@ -45,7 +43,6 @@ abstract class RasterGrid(val latitudes: DoubleArray, val longitudes: DoubleArra
      *
      * @param latIndex index on the [latitudes] axis.
      * @param lonIndex index on the [longitudes] axis.
-     *
      * @return the raw value of the cell; a [Double.NaN] denotes a missing/fill value.
      */
     abstract fun valueAt(latIndex: Int, lonIndex: Int): Double

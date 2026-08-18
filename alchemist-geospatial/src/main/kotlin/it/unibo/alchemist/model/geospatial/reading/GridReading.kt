@@ -35,7 +35,6 @@ private const val SPARSE_DENSITY_THRESHOLD = 0.1
  *
  * @param directory the directory to scan.
  * @return the sorted list of regular files in [directory].
- *
  * @throws IllegalArgumentException if [directory] contains no regular files.
  */
 internal fun listDataFiles(directory: Path): List<Path> {
@@ -56,9 +55,7 @@ internal fun listDataFiles(directory: Path): List<Path> {
  * @param dataset the already open dataset.
  * @param variableName explicit variable name, or `null` for auto-detection.
  * @param file path of the file being read (used for error messages).
- *
  * @return the extracted, normalized [FileAxes].
- *
  * @throws IllegalArgumentException if any axis is missing or not 1D, if the time axis cannot be
  * built, if the variable is missing/ambiguous, or if its dimensions are not `{time, lat, lon}`.
  */
@@ -76,27 +73,22 @@ internal fun readFileAxes(dataset: NetcdfDataset, variableName: String?, file: P
         "No 1D longitude axis in $file"
     }
     val errMsg = Formatter()
-
     // constructs a CF-aware time axis
     val timeAxis = requireNotNull(CoordinateAxis1DTime.factory(dataset, rawTimeAxis, errMsg)) {
         "Cannot build time axis in $file: $errMsg"
     }
-
     // normalizes latitude/longitude to ascending order
     val (latitudes, latDescending) = latAxis.coordValues.ascendingWithDescendingFlag()
     val (longitudes, lonDescending) = lonAxis.coordValues.ascendingWithDescendingFlag()
-
     // derives the dimension names needed to find the variable and to validate its shape
     val timeDimName = rawTimeAxis.dimensions.first().name
     val latDimName = latAxis.dimensions.first().name
     val lonDimName = lonAxis.dimensions.first().name
-
     /*
      * finds the variable to read, either by name or by auto-detection
      * of the only variable whose dimensions are {time, lat, lon}.
      */
     val variable = resolveVariable(dataset, variableName, timeDimName, latDimName, lonDimName, file)
-
     // verifies that the variable has exactly the three expected dimensions, in any order
     val actualDims = variable.dimensions.map { it.name }
     val expectedDims = setOf(timeDimName, latDimName, lonDimName)
@@ -104,7 +96,6 @@ internal fun readFileAxes(dataset: NetcdfDataset, variableName: String?, file: P
         "Variable '${variable.shortName}' in $file has dimensions $actualDims, " +
             "but $expectedDims was expected (in any order)."
     }
-
     return FileAxes(
         timeAxis = timeAxis,
         latitudes = latitudes,
@@ -126,7 +117,6 @@ internal fun readFileAxes(dataset: NetcdfDataset, variableName: String?, file: P
  * @param t the time index within [axes]'s time axis.
  * @param nLat number of latitude coordinates.
  * @param nLon number of longitude coordinates.
- *
  * @return the rearranged slice of shape (1, [nLat], [nLon]).
  */
 internal fun readPermutedSlice(axes: FileAxes, t: Int, nLat: Int, nLon: Int): CdmArray {
@@ -141,7 +131,6 @@ internal fun readPermutedSlice(axes: FileAxes, t: Int, nLat: Int, nLon: Int): Cd
         array[axes.latPosition] = nLat
         array[axes.lonPosition] = nLon
     }
-
     // reorders the read slice to (time, lat, lon)
     return axes.variable
         .read(origin, shape)
@@ -158,7 +147,6 @@ internal fun readPermutedSlice(axes: FileAxes, t: Int, nLat: Int, nLon: Int): Cd
  * @param nLon number of longitude coordinates.
  * @param latDescending `true` if the latitude axis is descending.
  * @param lonDescending `true` if the longitude axis is descending.
- *
  * @return a [DoubleArray] representing the values in row-major order.
  */
 internal fun flattenAscending(
@@ -185,12 +173,10 @@ internal fun flattenAscending(
  * @param latitudes the grid latitudes.
  * @param longitudes the grid longitudes.
  * @param measurements cell values in row-major order; [Double.NaN] denotes missing/fill values.
- *
  * @return the constructed [RasterGrid].
  */
 internal fun buildGrid(latitudes: DoubleArray, longitudes: DoubleArray, measurements: DoubleArray): RasterGrid {
     val density = measurements.count { !it.isNaN() }.toDouble() / measurements.size
-
     return if (density < SPARSE_DENSITY_THRESHOLD) {
         MapRasterGrid(latitudes, longitudes, measurements)
     } else {
@@ -213,9 +199,7 @@ internal fun buildGrid(latitudes: DoubleArray, longitudes: DoubleArray, measurem
  * @param latDimName name of the latitude dimension (from the latitude axis).
  * @param lonDimName name of the longitude dimension (from the longitude axis).
  * @param file path of the file being read (used for error messages).
- *
  * @return the selected [Variable].
- *
  * @throws IllegalArgumentException if the named [Variable] is not found, or if
  * auto-detection finds zero or more than one candidate.
  */
@@ -233,15 +217,12 @@ internal fun resolveVariable(
                 "Available: ${ds.variables.map { it.shortName }}"
         }
     }
-
     val targetDims = setOf(timeDimName, latDimName, lonDimName)
-
     // 3D variables matching {latitude, longitude, time}
     val candidates = ds.variables.filter { v ->
         v.dimensions.size == 3 &&
             v.dimensions.map { it.name }.toSet() == targetDims
     }
-
     require(candidates.isNotEmpty()) {
         "No variable with dimensions $targetDims found in $file"
     }
@@ -249,7 +230,6 @@ internal fun resolveVariable(
         "Multiple candidate variables with dimensions $targetDims in $file. " +
             "The variables that can be used are: ${candidates.map { it.shortName }}. Specify the variable explicitly."
     }
-
     return candidates.single()
 }
 
@@ -285,7 +265,6 @@ internal class ReferenceGrid(axes: FileAxes) {
      * @param axes the schema extracted from another file.
      * @param file the path of that file (used for error messages).
      * @param directory the directory where the file is located (used for error messages).
-     *
      * @throws IllegalArgumentException if [axes] does not share this reference's spatial grid
      * or resolved variable name.
      */
@@ -297,7 +276,6 @@ internal class ReferenceGrid(axes: FileAxes) {
         require(axes.longitudes.contentEquals(longitudes)) {
             "Longitude axes differ in $file from the others"
         }
-
         // subsequent files must resolve to the same variable
         require(axes.variable.shortName == variableName) {
             "Variable name differs across files: '$variableName' vs '${axes.variable.shortName}' " +

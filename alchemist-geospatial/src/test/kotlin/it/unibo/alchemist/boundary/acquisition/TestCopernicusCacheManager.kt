@@ -63,9 +63,7 @@ class TestCopernicusCacheManager : StringSpec({
         val req = request("entry_a")
         val provider = FakeCopernicusProvider { _, dir -> writeOneFile(dir) }
         val cache = CopernicusCacheManager(provider, newRoot())
-
         val result = cache.getOrProduce(req)
-
         provider.calls shouldBe 1
         result.shouldExist()
         result.resolve(dataFileName).shouldExist()
@@ -76,15 +74,12 @@ class TestCopernicusCacheManager : StringSpec({
         var marker = "first"
         val provider = FakeCopernicusProvider { _, dir -> Files.writeString(dir.resolve(dataFileName), marker) }
         val cache = CopernicusCacheManager(provider, newRoot())
-
         val first = cache.getOrProduce(req)
         // if the cache manager wrongly re-ran the provider, the file would contain "second"
         marker = "second"
         val second = cache.getOrProduce(req)
-
         second shouldBe first
         Files.readString(second.resolve(dataFileName)) shouldBe "first"
-
         provider.calls shouldBe 1
     }
 
@@ -93,7 +88,6 @@ class TestCopernicusCacheManager : StringSpec({
         val req = request("cems-glofas_abc123")
         val provider = FakeCopernicusProvider { _, dir -> writeOneFile(dir) }
         val cache = CopernicusCacheManager(provider, root)
-
         val result = cache.getOrProduce(req)
         result shouldBe root.resolve(req.toFileName())
     }
@@ -103,7 +97,6 @@ class TestCopernicusCacheManager : StringSpec({
         val req = request("entry_fail")
         val provider = FakeCopernicusProvider { _, _ -> error("download blew up") }
         val cache = CopernicusCacheManager(provider, root)
-
         shouldThrow<IllegalStateException> { cache.getOrProduce(req) }
         root.resolve(req.toFileName()).shouldNotExist() // no poisoned dir
     }
@@ -117,10 +110,8 @@ class TestCopernicusCacheManager : StringSpec({
             error("error after writing")
         }
         val cache = CopernicusCacheManager(provider, root)
-
         // ignores the exception
         runCatching { cache.getOrProduce(req) }
-
         // .tmp must hold no temp dirs left
         val tmpRoot = root.resolve(".tmp")
         val leftovers = Files.list(tmpRoot).use { it.toList() }
@@ -132,7 +123,6 @@ class TestCopernicusCacheManager : StringSpec({
         val req = request("entry_empty")
         val provider = FakeCopernicusProvider { _, _ -> } // writes nothing
         val cache = CopernicusCacheManager(provider, root)
-
         shouldThrow<IllegalStateException> {
             cache.getOrProduce(req)
         }
@@ -147,7 +137,6 @@ class TestCopernicusCacheManager : StringSpec({
             Files.createDirectory(dir.resolve("nested"))
         }
         val cache = CopernicusCacheManager(provider, root)
-
         shouldThrow<IllegalStateException> {
             cache.getOrProduce(req)
         }
@@ -161,16 +150,10 @@ class TestCopernicusCacheManager : StringSpec({
             Files.writeString(dir.resolve(dataFileName), "first")
         }
         CopernicusCacheManager(firstProvider, root).getOrProduce(req)
-
-        /**
-         * A new manager instance over the same root must reuse the existing entry.
-         * If it didn't, the file would contain "second"
-         */
         val secondProvider = FakeCopernicusProvider { _, dir ->
             Files.writeString(dir.resolve(dataFileName), "second")
         }
         val result = CopernicusCacheManager(secondProvider, root).getOrProduce(req)
-
         Files.readString(result.resolve(dataFileName)) shouldBe "first"
     }
 })

@@ -50,7 +50,6 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
      *
      * @param request request identity (to determine the directory name).
      * @return the [Path] of the final cache directory, filled with data.
-     *
      * @throws IllegalStateException if [provider] writes no file in the temporary directory.
      */
     override fun getOrProduce(request: CopernicusRequest): Path {
@@ -60,9 +59,7 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
             logger.info("Cache hit for '${request.toFileName()}': using $finalDir")
             return finalDir
         }
-
         logger.info("Cache miss for '${request.toFileName()}': fetching data")
-
         // cache miss (also creates root if it does not exist)
         Files.createDirectories(tmpRoot)
         val temp = Files.createTempDirectory(tmpRoot, request.toFileName())
@@ -71,10 +68,8 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
             // tries to fill the directory with data
             provider.fetch(request, temp)
             check(hasData(temp)) { "Provider produced no files for '${request.toFileName()}'" }
-
             moved = promote(temp, finalDir)
             logger.info("Asset(s) cached in $finalDir")
-
             return finalDir
         } finally {
             // deletes the temp directory if any accident occurs
@@ -87,7 +82,6 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
      *
      * @param temp the path of the temporary directory.
      * @param finalDir the path of the final directory after [temp] gets promoted.
-     *
      * @return true if this call performed the move, false if a concurrent peer had already
      * produced [finalDir].
      */
@@ -96,7 +90,7 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
         true
     } catch (raceLost: FileSystemException) {
         if (!Files.isDirectory(finalDir)) throw raceLost
-        // peer won; temp dir still exists
+        // peer won but temp dir still exists
         false
     }
 
@@ -110,7 +104,6 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
 
     private companion object {
         private val logger = LoggerFactory.getLogger(CopernicusCacheManager::class.java)
-
         private const val TEMP_SUBDIR = ".tmp"
     }
 }

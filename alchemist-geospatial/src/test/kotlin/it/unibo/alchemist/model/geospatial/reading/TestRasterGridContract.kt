@@ -88,7 +88,6 @@ fun rasterGridContract(gridOf: (DoubleArray, DoubleArray, DoubleArray) -> Raster
                 values,
             )
         }
-
         shouldThrow<IllegalArgumentException> {
             gridOf(
                 lats,

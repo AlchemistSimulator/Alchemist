@@ -32,7 +32,6 @@ class TestMeasurementConverter : StringSpec({
     "Double identity replaces NaN with a default value" {
         val defaultValue = -1.0
         val id = DoubleIdentityWithFallback(defaultValue)
-
         id.convert(42.0) shouldBe 42.0
         id.convert(Double.NaN) shouldBe defaultValue
     }

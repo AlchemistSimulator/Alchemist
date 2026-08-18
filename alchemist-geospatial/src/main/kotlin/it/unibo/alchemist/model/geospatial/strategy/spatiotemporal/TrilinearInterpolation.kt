@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.model.geospatial.strategy.spatiotemporal
 
-import it.unibo.alchemist.model.geospatial.strategy.StatelessStrategy
 import it.unibo.alchemist.model.geospatial.strategy.spatial.BilinearInterpolation
 import it.unibo.alchemist.model.geospatial.strategy.temporal.LinearInterpolation
+import it.unibo.alchemist.model.geospatial.utils.StatelessStrategy
 
 /**
  * A [SpatioTemporalInterpolation] strategy that performs a trilinear interpolation

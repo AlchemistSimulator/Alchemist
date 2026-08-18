@@ -9,16 +9,16 @@
 
 package it.unibo.alchemist.boundary.acquisition
 
-import it.unibo.alchemist.boundary.acquisition.utility.CanonicalJson
-import it.unibo.alchemist.boundary.acquisition.utility.RemoteAsset
-import it.unibo.alchemist.boundary.acquisition.utility.flattenArchives
-import it.unibo.alchemist.boundary.acquisition.utility.parseAsset
-import it.unibo.alchemist.boundary.acquisition.utility.parseFailureMessage
-import it.unibo.alchemist.boundary.acquisition.utility.parseMonitorUrl
-import it.unibo.alchemist.boundary.acquisition.utility.parseProblemDetail
-import it.unibo.alchemist.boundary.acquisition.utility.parseResultsUrl
-import it.unibo.alchemist.boundary.acquisition.utility.parseStatus
-import it.unibo.alchemist.boundary.acquisition.utility.verify
+import it.unibo.alchemist.boundary.utils.CanonicalJson
+import it.unibo.alchemist.boundary.utils.RemoteAsset
+import it.unibo.alchemist.boundary.utils.flattenArchives
+import it.unibo.alchemist.boundary.utils.parseAsset
+import it.unibo.alchemist.boundary.utils.parseFailureMessage
+import it.unibo.alchemist.boundary.utils.parseMonitorUrl
+import it.unibo.alchemist.boundary.utils.parseProblemDetail
+import it.unibo.alchemist.boundary.utils.parseResultsUrl
+import it.unibo.alchemist.boundary.utils.parseStatus
+import it.unibo.alchemist.boundary.utils.verify
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest

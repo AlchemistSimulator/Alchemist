@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.geospatial.strategy.temporal
 
-import it.unibo.alchemist.model.geospatial.strategy.StatelessStrategy
+import it.unibo.alchemist.model.geospatial.utils.StatelessStrategy
 
 /**
  * [TemporalInterpolation] that blends between two adjacent values.

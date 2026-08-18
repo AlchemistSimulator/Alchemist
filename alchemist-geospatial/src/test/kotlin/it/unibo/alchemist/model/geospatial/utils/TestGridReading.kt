@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geospatial.reading
+package it.unibo.alchemist.model.geospatial.utils
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
@@ -16,7 +16,7 @@ import it.unibo.alchemist.TestVariable
 import it.unibo.alchemist.writeTestNetcdf
 import java.nio.file.Files
 import java.nio.file.Path
-import ucar.ma2.Array as CdmArray
+import ucar.ma2.Array
 import ucar.nc2.dataset.NetcdfDatasets
 
 class TestGridReading : StringSpec({
@@ -59,7 +59,7 @@ class TestGridReading : StringSpec({
     /**
      * Opens [file] and returns its [FileAxes] with the permuted slice at time index [t].
      */
-    fun readAxesAndSlice(file: Path, t: Int = 0, nLat: Int = 2, nLon: Int = 2): Pair<FileAxes, CdmArray> =
+    fun readAxesAndSlice(file: Path, t: Int = 0, nLat: Int = 2, nLon: Int = 2): Pair<FileAxes, Array> =
         NetcdfDatasets.openDataset(file.toString()).use { ds ->
             val axes = readFileAxes(ds, null, file)
             axes to readPermutedSlice(axes, t, nLat, nLon)

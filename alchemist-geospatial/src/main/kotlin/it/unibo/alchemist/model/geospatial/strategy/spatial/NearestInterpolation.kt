@@ -11,8 +11,8 @@ package it.unibo.alchemist.model.geospatial.strategy.spatial
 
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
-import it.unibo.alchemist.model.geospatial.strategy.StatelessStrategy
-import it.unibo.alchemist.model.geospatial.strategy.nearestIndex
+import it.unibo.alchemist.model.geospatial.utils.StatelessStrategy
+import it.unibo.alchemist.model.geospatial.utils.nearestIndex
 
 /**
  * Value of the nearest cell to the point.

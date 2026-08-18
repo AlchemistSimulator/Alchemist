@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,9 +12,8 @@ package it.unibo.alchemist.model
  * @param <T>
  * The type which describes the concentration of a molecule
  *
- * A generic reaction. Every reaction in the system must implement
- * this interface.
-</T> */
+ * A node-bound [Actionable]. Every reaction owns its schedule through [nextOccurrence].
+ */
 interface Reaction<T> : Actionable<T> {
     /**
      * @return The [Node] in which this [Reaction] executes.
@@ -22,9 +21,11 @@ interface Reaction<T> : Actionable<T> {
     val node: Node<T>
 
     /**
-     * This method allows to clone this reaction on a new node. It may result
-     * useful to support runtime creation of nodes with the same reaction
-     * programming, e.g. for morphogenesis.
+     * Clones this reaction's program on a new node, for example when nodes are created at runtime.
+     *
+     * The clone must be returned uninitialized, with a fresh [TimeDistribution]. The engine subsequently initializes
+     * it and establishes a new [nextOccurrence]; a running occurrence or residual delay is never copied from the
+     * source reaction.
      *
      * @param node
      * The node where to clone this Reaction

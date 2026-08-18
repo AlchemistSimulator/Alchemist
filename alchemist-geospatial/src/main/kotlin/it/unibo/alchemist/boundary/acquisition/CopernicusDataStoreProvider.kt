@@ -51,7 +51,6 @@ import org.slf4j.LoggerFactory
  * @param maxPollInterval cap on the polling interval. Defaults to 120 seconds, matching the official
  * ECMWF client's duration.
  * @param timeout overall guillotine on the wait for job completion.
- *
  * @throws IllegalArgumentException if the [endpoint] does not represent a valid URL.
  */
 class CopernicusDataStoreProvider(
@@ -87,7 +86,6 @@ class CopernicusDataStoreProvider(
      *
      * @param request the [CopernicusRequest] used to initialize the job on ECMWF servers.
      * @param targetDir the temporary directory where the downloaded assets will be saved.
-     *
      * @throws IllegalArgumentException if [targetDir] does not exist or is not a directory.
      * @throws IllegalStateException if the assets can't be downloaded, on timeout or if the
      * asset validation fails.
@@ -96,10 +94,8 @@ class CopernicusDataStoreProvider(
         require(targetDir.isDirectory()) {
             "$targetDir is not a directory or does not exist"
         }
-
         logger.info("Fetching dataset '${request.dataset}'.")
         val start = System.nanoTime()
-
         // asks ECMWF servers to process the data.
         val monitorUrl = submit(request)
         // polls until the data can be retrieved.
@@ -108,19 +104,16 @@ class CopernicusDataStoreProvider(
         val asset = fetchAsset(resultsUrl)
         // downloads the asset.
         val file = download(asset, targetDir)
-
         // asset validation and archive flattening.
         if (!checkMd5) {
             logger.warn("MD5 check disabled. Only the size in bytes is checked.")
         }
-
         verify(file, asset.sizeBytes, asset.takeIf { checkMd5 }?.md5) { md5, file ->
             check(!checkMd5) {
                 "Data store advertised an unusable MD5 checksum ($md5) for '$file': could not check asset integrity."
             }
         }
         flattenArchives(targetDir)
-
         val elapsed = Duration.ofNanos(System.nanoTime() - start).truncatedTo(ChronoUnit.MILLIS)
         logger.info("Dataset '${request.dataset}' successfully downloaded in $elapsed.")
     }
@@ -135,12 +128,10 @@ class CopernicusDataStoreProvider(
      *
      * @param request the [CopernicusRequest] used to initialize the job on ECMWF servers.
      * @return the absolute job URL to pass to [awaitSuccess].
-     *
      * @throws IllegalStateException on a non-2xx response, enriched with [parseProblemDetail].
      */
     private fun submit(request: CopernicusRequest): String {
         val body = CanonicalJson.encode(mapOf("inputs" to request.inputs))
-
         // builds the full POST request
         val httpRequest = HttpRequest.newBuilder()
             .uri(URI.create("$base/retrieve/v1/processes/${request.dataset}/execution"))
@@ -150,14 +141,11 @@ class CopernicusDataStoreProvider(
             .header("Accept", APPLICATION_JSON)
             .POST(HttpRequest.BodyPublishers.ofString(body))
             .build()
-
         val response = http.send(httpRequest, HttpResponse.BodyHandlers.ofString())
-
         // something has gone wrong
         if (!response.isSuccessful) {
             failOnHttpError("Submit of dataset '${request.dataset}'", response)
         }
-
         val monitorUrl = parseMonitorUrl(response.body())
         logger.info("Job submitted for '${request.dataset}', monitoring at $monitorUrl")
         return monitorUrl
@@ -173,7 +161,6 @@ class CopernicusDataStoreProvider(
      *
      * @param monitorUrl the URL to use to check the job status. See [submit].
      * @return the result URL (`rel="results"` link, present only once the job is `successful`).
-     *
      * @throws IllegalStateException on a terminal failure state, on [timeout], or if a `successful`
      * job exposes no `rel="results"` link (inconsistent server response).
      */
@@ -181,7 +168,6 @@ class CopernicusDataStoreProvider(
         // the last available moment to check for a successful poll.
         val deadline = System.nanoTime() + timeout.toNanos()
         var interval = pollInterval
-
         /*
          * how often to alert the user that the program is still in
          * polling mode (to prevent them from thinking the program
@@ -189,11 +175,9 @@ class CopernicusDataStoreProvider(
          */
         val heartbeatNanos = Duration.ofSeconds(USER_ALERT_INTERVAL_SEC).toNanos()
         var lastHeartbeat = System.nanoTime()
-
         // tries to poll until a success/timeout/error
         while (true) {
             val body = get(monitorUrl).body()
-
             // status check
             when (val status = parseStatus(body)) {
                 "successful" -> {
@@ -206,7 +190,6 @@ class CopernicusDataStoreProvider(
                     // fine details on debug mode
                     logger.debug("Job status '$status' at $monitorUrl")
                     val now = System.nanoTime()
-
                     // reassures the user that the program is in fact not dead.
                     if (now - lastHeartbeat >= heartbeatNanos) {
                         logger.info("Still waiting for job at $monitorUrl (status: $status)")
@@ -216,12 +199,10 @@ class CopernicusDataStoreProvider(
                 // warns the user about the new unknow status, but keeps polling.
                 else -> logger.warn("Unrecognized job status '$status' at $monitorUrl, continuing to poll")
             }
-
             // fails on timeout
             check(System.nanoTime() < deadline) {
                 "Timeout ($timeout) while waiting for job completion at $monitorUrl"
             }
-
             Thread.sleep(interval.toMillis())
             interval = minOf(interval.multipliedBy(2), maxPollInterval)
         }
@@ -240,7 +221,6 @@ class CopernicusDataStoreProvider(
     private fun fetchAsset(resultsUrl: String): RemoteAsset {
         val asset = parseAsset(get(resultsUrl).body())
         val absoluteHref = URI.create(resultsUrl).resolve(asset.href).toString()
-
         logger.info("Asset will be downloaded from: $absoluteHref (${asset.sizeBytes} bytes)")
         return asset.copy(href = absoluteHref)
     }
@@ -255,7 +235,6 @@ class CopernicusDataStoreProvider(
      * @param asset result metadata (absolute href, expected size, nullable checksum).
      * @param targetDir temporary directory to write into.
      * @return the [Path] of the downloaded asset.
-     *
      * @throws IllegalStateException on a non-2xx response from the object store (it does not
      * follow RFC 7807, so only the status is reported).
      */
@@ -265,10 +244,8 @@ class CopernicusDataStoreProvider(
         val fileName = uri.path.substringAfterLast('/').ifEmpty { "download" }
         val target = targetDir.resolve(fileName)
         logger.info("Downloading $fileName...")
-
         val request = HttpRequest.newBuilder().uri(uri).GET().build() // no PRIVATE-TOKEN needed
         val response = http.send(request, HttpResponse.BodyHandlers.ofFile(target))
-
         // http error code check
         if (!response.isSuccessful) {
             error("Download failed (HTTP ${response.statusCode()}) from ${asset.href}")
@@ -283,7 +260,6 @@ class CopernicusDataStoreProvider(
      *
      * @param action the action performed that caused the error.
      * @param response the [HttpResponse] that caused the error.
-     *
      * @throws IllegalStateException always.
      */
     private fun failOnHttpError(action: String, response: HttpResponse<String>): Nothing {
@@ -291,7 +267,6 @@ class CopernicusDataStoreProvider(
         val described = runCatching {
             parseProblemDetail(response.body()).describe()
         }.getOrNull()
-
         error(
             // if no description is available, the whole body is shown
             if (described.isNullOrBlank()) {
@@ -314,7 +289,6 @@ class CopernicusDataStoreProvider(
      * @param status the terminal failure status (`failed`/`rejected`/`dismissed`).
      * @param body the status document, used to locate the results link and, failing that, as a fallback
      * message source.
-     *
      * @throws IllegalStateException always.
      */
     private fun failOnStatus(monitorUrl: String, status: String, body: String): Nothing {
@@ -335,7 +309,6 @@ class CopernicusDataStoreProvider(
      *
      * @param url the request URL.
      * @return the [HttpResponse] received after the request.
-     *
      * @throws IllegalStateException on a non-2xx response.
      */
     private fun get(url: String): HttpResponse<String> = getRaw(url).also {
@@ -356,8 +329,6 @@ class CopernicusDataStoreProvider(
     )
 
     private companion object {
-        private val logger = LoggerFactory.getLogger(CopernicusDataStoreProvider::class.java)
-
         /**
          * Default interval in seconds between two consecutive polls.
          */
@@ -381,6 +352,7 @@ class CopernicusDataStoreProvider(
         private const val USER_ALERT_INTERVAL_SEC = 30L
 
         private const val APPLICATION_JSON = "application/json"
+        private val logger = LoggerFactory.getLogger(CopernicusDataStoreProvider::class.java)
     }
 }
 

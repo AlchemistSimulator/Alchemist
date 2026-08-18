@@ -22,7 +22,7 @@ import java.io.Serializable
 fun interface MeasurementConverter<T> : Serializable {
 
     /**
-     * Converts the raw value.
+     * Converts the raw `Double` value to [T].
      *
      * @param value the numeric value to be converted.
      * **Note:** it may be [Double.NaN] if it represents a missing/fill value.

@@ -77,13 +77,11 @@ internal class FakeHttpServer : AutoCloseable {
             exchange.use { ex ->
                 // reads the full request body
                 val body = ex.requestBody.readBytes().toString(Charsets.UTF_8)
-
                 // each header can appear multiple times: takes only the first one of each kind
                 val headers = TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER).apply {
                     ex.requestHeaders.forEach { (name, values) -> put(name, values.firstOrNull().orEmpty()) }
                 }
                 requests += CapturedRequest(ex.requestMethod, ex.requestURI.path, body, headers)
-
                 val key = ex.requestMethod to ex.requestURI.path
                 // searches in the queues first (consuming the key), fallback on constant responses otherwise
                 val responder = queues[key]?.removeFirstOrNull() ?: constants[key]

@@ -33,7 +33,6 @@ fun interface ExternalDataProvider<in R : CacheKey> {
      *
      * @param request the request identifying the data to obtain.
      * @param targetDir the directory to fill with data; it must exist and be writable.
-     *
      * @throws IllegalStateException if the data cannot be produced.
      */
     fun fetch(request: R, targetDir: Path)

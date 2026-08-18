@@ -54,8 +54,8 @@ class TestEagerGridSnapshots : StringSpec({
     "should read a single file and expose the correct number of instants" {
         val dir = Files.createTempDirectory(tempDir, "basic")
         writeFixedTestNetcdf(dir, "data.nc", doubleArrayOf(0.0, 24.0, 48.0))
-        val tg = EagerGridSnapshots(dir)
-        tg.instants.size shouldBe 3
+        val gridSnaps = EagerGridSnapshots(dir)
+        gridSnaps.instants.size shouldBe 3
     }
 
     "instants should be sorted in ascending chronological order regardless of file order" {
@@ -63,17 +63,17 @@ class TestEagerGridSnapshots : StringSpec({
         // b_file.nc is read second (in alphabetical order) but contains the most recent times
         writeFixedTestNetcdf(dir, "b_file.nc", doubleArrayOf(48.0, 72.0))
         writeFixedTestNetcdf(dir, "a_file.nc", doubleArrayOf(0.0, 24.0))
-        val tg = EagerGridSnapshots(dir)
-        tg.instants.size shouldBe 4
-        tg.instants shouldBeSortedWith compareBy { it }
+        val gridSnaps = EagerGridSnapshots(dir)
+        gridSnaps.instants.size shouldBe 4
+        gridSnaps.instants shouldBeSortedWith compareBy { it }
     }
 
     "grid[i] should be accessible for every index in instants" {
         val dir = Files.createTempDirectory(tempDir, "align")
         writeFixedTestNetcdf(dir, "data.nc", doubleArrayOf(0.0, 24.0, 48.0, 72.0, 96.0))
-        val tg = EagerGridSnapshots(dir)
+        val gridSnaps = EagerGridSnapshots(dir)
         // if instants and grids were misaligned, the grid(s) would throw an IndexOutOfBoundsException
-        tg.instants.indices.forEach { i -> tg.grid(i).latitudes.size shouldBe 3 }
+        gridSnaps.instants.indices.forEach { i -> gridSnaps.grid(i).latitudes.size shouldBe 3 }
     }
 
     // Descending latitude normalization tests
@@ -144,7 +144,6 @@ class TestEagerGridSnapshots : StringSpec({
             dimensionOrder = listOf("longitude", "time", "latitude"),
         )
         val grid = EagerGridSnapshots(dir).grid(0)
-
         grid.valueAt(0, 0) shouldBe 0.0
         grid.valueAt(0, 1) shouldBe 1.0
         grid.valueAt(1, 0) shouldBe 10.0
@@ -159,13 +158,11 @@ class TestEagerGridSnapshots : StringSpec({
 
     "should ignore duplicate timestamps across files and keep the data of the first one read" {
         val dir = Files.createTempDirectory(tempDir, "dup-values")
-
         val lats = doubleArrayOf(10.0)
         val lons = doubleArrayOf(5.0)
         val time = doubleArrayOf(0.0)
         val firstVal = 42.0
         val secondVal = 99.0
-
         // both files use the same instant
         writeTestNetcdf(
             path = dir.resolve("first_file.nc"),
@@ -174,7 +171,6 @@ class TestEagerGridSnapshots : StringSpec({
             timeHours = time,
             variables = listOf(TestVariable(rawValues = doubleArrayOf(firstVal))),
         )
-
         writeTestNetcdf(
             path = dir.resolve("second_file.nc"),
             lats = lats,
@@ -182,11 +178,9 @@ class TestEagerGridSnapshots : StringSpec({
             timeHours = time,
             variables = listOf(TestVariable(rawValues = doubleArrayOf(secondVal))),
         )
-
-        val tg = EagerGridSnapshots(dir)
-
-        tg.instants.size shouldBe 1
-        tg.grid(0).valueAt(0, 0) shouldBe firstVal
+        val gridSnaps = EagerGridSnapshots(dir)
+        gridSnaps.instants.size shouldBe 1
+        gridSnaps.grid(0).valueAt(0, 0) shouldBe firstVal
     }
 
     "should throw IllegalArgumentException when files have mismatched spatial grids" {

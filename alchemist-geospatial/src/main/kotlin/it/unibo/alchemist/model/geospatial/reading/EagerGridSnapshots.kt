@@ -54,7 +54,6 @@ import ucar.nc2.dataset.NetcdfDatasets
  * @param directory directory of spatially homogeneous data files (NetCDFs/GRIBs).
  * @param variableName name of the variable as it appears in the file (e.g. `"dis24"`),
  * NOT the variable name shown in the Copernicus store. If `null`, auto-detected from the file.
- *
  * @throws IllegalArgumentException if the directory is empty; if the variable is missing
  * or ambiguous; if files have mismatched spatial axes; if the variable dimensions are not
  * `{time, lat, lon}`.
@@ -67,10 +66,8 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
     init {
         // maps all file time instances to the corresponding RasterGrid, sorting them by Instant
         val map = TreeMap<Instant, RasterGrid>()
-
         // spatial grid and variable are established by the first file, validated against all the others
         var reference: ReferenceGrid? = null
-
         for (file in listDataFiles(directory)) {
             /*
              * opens the file in "enhanced mode": all fill values are replaced with NaN
@@ -82,7 +79,6 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
                 readTimestepsFrom(map, axes, directory)
             }
         }
-
         instants = map.keys.toList()
         grids = map.values.toList()
     }
@@ -94,17 +90,14 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
      * @param map the map, **shared** across all files in [directory].
      * @param axes the schema of the file currently being read.
      * @param directory the directory of the file (used for error messages).
-     *
      * @throws IllegalArgumentException if a timestamp already present in [map] is found again.
      */
     private fun readTimestepsFrom(map: TreeMap<Instant, RasterGrid>, axes: FileAxes, directory: Path) {
         val nLat = axes.latitudes.size
         val nLon = axes.longitudes.size
-
         for (t in 0 until axes.timeAxis.size.toInt()) {
             // converts a CalendarDate to an Instant
             val instant = axes.timeAxis.getCalendarDate(t).toDate().toInstant().toKotlinInstant()
-
             // there are duplicate timestamps in different files, only the first one is preserved
             if (!map.containsKey(instant)) {
                 val slice = readPermutedSlice(axes, t, nLat, nLon)
@@ -123,7 +116,6 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
 
     private companion object {
         private const val serialVersionUID = 1L
-
         private val logger = LoggerFactory.getLogger(EagerGridSnapshots::class.java)
     }
 }

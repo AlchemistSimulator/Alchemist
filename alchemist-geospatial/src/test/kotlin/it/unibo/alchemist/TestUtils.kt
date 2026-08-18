@@ -39,7 +39,6 @@ import ucar.nc2.write.NetcdfFormatWriter
  * as hours elapsed since this date.
  * @param dimensionOrder order of the data variables' three dimensions, using the
  * names `"time"`, `"latitude"`, `"longitude"`. Default to this specific order.
- *
  * @throws IllegalArgumentException if [variables] is empty.
  */
 internal fun writeTestNetcdf(
@@ -52,13 +51,11 @@ internal fun writeTestNetcdf(
     dimensionOrder: List<String> = listOf("time", "latitude", "longitude"),
 ) {
     require(variables.isNotEmpty()) { "variables must not be empty" }
-
     // defines the schema on the builder
     val builder = NetcdfFormatWriter.createNewNetcdf3(path.toString())
     builder.addDimension("time", timeHours.size)
     builder.addDimension("latitude", lats.size)
     builder.addDimension("longitude", lons.size)
-
     // CF compliant axis
     builder.addVariable("time", DataType.DOUBLE, "time").apply {
         addAttribute(Attribute("units", "hours since $timeEpoch"))
@@ -73,30 +70,24 @@ internal fun writeTestNetcdf(
         addAttribute(Attribute("units", "degrees_east"))
         addAttribute(Attribute("axis", "X"))
     }
-
     // each data variable's dimensions must follow the same order
     variables.forEach { variable ->
         builder.addVariable(variable.name, DataType.DOUBLE, dimensionOrder.joinToString(" "))
             .addAttribute(Attribute("_FillValue", variable.fillValue))
     }
-
     // creates the file and enters write mode
     builder.build().use { writer ->
         val timeArr = ArrayDouble.D1(timeHours.size)
         timeHours.forEachIndexed { i, v -> timeArr.set(i, v) }
         writer.write("time", timeArr)
-
         val latArr = ArrayDouble.D1(lats.size)
         lats.forEachIndexed { i, v -> latArr.set(i, v) }
         writer.write("latitude", latArr)
-
         val lonArr = ArrayDouble.D1(lons.size)
         lons.forEachIndexed { i, v -> lonArr.set(i, v) }
         writer.write("longitude", lonArr)
-
         val dimSize = mapOf("time" to timeHours.size, "latitude" to lats.size, "longitude" to lons.size)
         val shape = dimensionOrder.map { dimSize.getValue(it) }.toIntArray()
-
         variables.forEach { variable ->
             val arr = variable.rawValues ?: DoubleArray(timeHours.size * lats.size * lons.size) { idx ->
                 val dimCoord = dimensionOrder.zip(unravel(idx, shape).toList()).toMap()

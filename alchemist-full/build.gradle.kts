@@ -372,3 +372,10 @@ configurations.all {
         }
     }
 }
+
+tasks.withType<JavaExec> {
+    systemProperty(
+        "javax.xml.parsers.SAXParserFactory",
+        "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl",
+    )
+}

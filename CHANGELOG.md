@@ -1,3 +1,20 @@
+## [43.1.28](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.27...43.1.28) (2026-08-18)
+
+### Dependency updates
+
+* **deps:** update dependency com.google.guava:guava to v33.7.0-jre ([#5555](https://github.com/AlchemistSimulator/Alchemist/issues/5555)) ([0c49cf8](https://github.com/AlchemistSimulator/Alchemist/commit/0c49cf8a5de8a450bc9c9ba105d71c66ea7f0e9a))
+* **deps:** update dependency com.google.guava:guava to v33.7.1-jre ([#5558](https://github.com/AlchemistSimulator/Alchemist/issues/5558)) ([4cd7a23](https://github.com/AlchemistSimulator/Alchemist/commit/4cd7a23be6e7bcaef441c0a4a645ec3b08636366))
+* **deps:** update dependency org.danilopianini:jirf to v1.0.1 ([#5557](https://github.com/AlchemistSimulator/Alchemist/issues/5557)) ([1c82468](https://github.com/AlchemistSimulator/Alchemist/commit/1c824688a5822904bfcba7e3199821b406c23354))
+
+### Bug Fixes
+
+* **kotlinscript:** fix the Kotlin script definition class pointer ([#5553](https://github.com/AlchemistSimulator/Alchemist/issues/5553)) ([dca4bfd](https://github.com/AlchemistSimulator/Alchemist/commit/dca4bfd1ac2ffcbf18a9d4ebcfc210afe9937b63))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([1d78da3](https://github.com/AlchemistSimulator/Alchemist/commit/1d78da37e59133d03688dfdf89938f09727006c9))
+* **build:** update the javadoc.io cache ([0c31732](https://github.com/AlchemistSimulator/Alchemist/commit/0c31732854df34bd2b38856406ad0b027fc6f5b6))
+
 ## [43.1.27](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.26...43.1.27) (2026-08-17)
 
 ### Dependency updates

@@ -22,7 +22,7 @@ import java.io.Serializable
  * @throws IllegalArgumentException if [latitudes]/[longitudes] are not strictly ascending or if
  * [gridValues]' size does not equal `latitudes.size * longitudes.size`.
  */
-abstract class RasterGrid(val latitudes: DoubleArray, val longitudes: DoubleArray, val gridValues: DoubleArray) :
+abstract class RasterGrid(val latitudes: DoubleArray, val longitudes: DoubleArray, gridValues: DoubleArray) :
     Serializable {
 
     init {

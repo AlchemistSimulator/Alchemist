@@ -14,8 +14,8 @@ import java.io.Serializable
 /**
  * A single 2D spatial bounding box, based on a geographic grid (latitude/longitude).
  *
- * @param latitudes latitudes of grid nodes, in degrees, sorted in **strictly** ascending order.
- * @param longitudes longitudes of grid nodes, in degrees, sorted in **strictly** ascending order.
+ * @property latitudes latitudes of grid nodes, in degrees, sorted in **strictly** ascending order.
+ * @property longitudes longitudes of grid nodes, in degrees, sorted in **strictly** ascending order.
  * @param gridValues cell values in row-major order respect to [latitudes] x [longitudes];
  * [Double.NaN] values represent missing/fill values.
  *

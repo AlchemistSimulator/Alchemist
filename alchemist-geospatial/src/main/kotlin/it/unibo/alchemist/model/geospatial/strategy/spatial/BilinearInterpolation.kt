@@ -32,7 +32,6 @@ class BilinearInterpolation :
             grid.longitudes,
             position.longitude,
         )
-
         /*
          * axes are sorted in ascending order, so lower latitude index = south,
          * lower longitude index = west.
@@ -41,14 +40,14 @@ class BilinearInterpolation :
         val southEastValue = grid.valueAt(lowerLatitudeIndex, upperLongitudeIndex)
         val northWestValue = grid.valueAt(upperLatitudeIndex, lowerLongitudeIndex)
         val northEastValue = grid.valueAt(upperLatitudeIndex, upperLongitudeIndex)
-
         // if any of the four points is missing, returns a missing value
         val anyCornerMissing = southWestValue.isNaN() ||
             southEastValue.isNaN() ||
             northWestValue.isNaN() ||
             northEastValue.isNaN()
-        if (anyCornerMissing) return Double.NaN
-
+        if (anyCornerMissing) {
+            return Double.NaN
+        }
         val longitudeWeight = weight(
             grid.longitudes,
             lowerLongitudeIndex,
@@ -61,7 +60,6 @@ class BilinearInterpolation :
             upperLatitudeIndex,
             position.latitude,
         )
-
         // interpolates along longitude first (one value per latitude row), then along latitude.
         val southValue = southWestValue + (southEastValue - southWestValue) * longitudeWeight
         val northValue = northWestValue + (northEastValue - northWestValue) * longitudeWeight

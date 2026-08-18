@@ -120,7 +120,6 @@ private fun linkHref(json: String, rel: String): String? = JsonParser.parseStrin
  *
  * @param json the JSON string to parse.
  * @return the `href` associated with `rel="monitor"` in the links array of [json].
- *
  * @throws IllegalStateException if no `rel="monitor"` link is present in [json].
  */
 internal fun parseMonitorUrl(json: String): String =
@@ -140,7 +139,6 @@ internal fun parseMonitorUrl(json: String): String =
  *
  * @param json the JSON string to parse.
  * @return the job's processing status, verbatim.
- *
  * @throws IllegalStateException if the `status` field is absent.
  */
 internal fun parseStatus(json: String): String = JsonParser.parseString(json)
@@ -184,7 +182,6 @@ internal fun parseResultsUrl(json: String): String? = linkHref(json, "results")
  *
  * @param json the JSON string to parse.
  * @return asset metadata as a [RemoteAsset].
- *
  * @throws IllegalStateException if `asset.value`, its `href`, or its `file:size` is absent.
  */
 internal fun parseAsset(json: String): RemoteAsset {
@@ -192,9 +189,7 @@ internal fun parseAsset(json: String): RemoteAsset {
         .getAsJsonObject("asset")
         ?.getAsJsonObject("value")
         ?: error("No 'asset.value' object in the results response")
-
     fun field(name: String) = value.get(name)?.takeUnless { it.isJsonNull }
-
     return RemoteAsset(
         href = field("href")?.asString ?: error("No 'href' in asset.value"),
         sizeBytes = field("file:size")?.asLong ?: error("No 'file:size' in asset.value"),
@@ -220,7 +215,6 @@ internal fun parseProblemDetail(json: String): ProblemDetail {
 
     // a field extractor by name
     fun field(name: String) = obj.get(name)?.takeIf { it.isJsonPrimitive }?.asJsonPrimitive
-
     return ProblemDetail(
         type = field("type")?.asString ?: "about:blank",
         title = field("title")?.asString,

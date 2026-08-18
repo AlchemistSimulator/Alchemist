@@ -64,9 +64,7 @@ class TestArchives : StringSpec({
         val data = dir.resolve(netCdfFileName)
         Files.writeString(data, "I'm not a ZIP!")
         val before = Files.readString(data)
-
         flattenArchives(dir)
-
         data.shouldExist()
         Files.readString(data) shouldBe before
         fileNames(dir) shouldBe setOf(netCdfFileName)
@@ -74,9 +72,7 @@ class TestArchives : StringSpec({
 
     "a single-entry zip is extracted flat and the archive is deleted" {
         val zip = writeZip(dir, zipFileName, mapOf(netCdfFileName to "payload"))
-
         flattenArchives(dir)
-
         zip.shouldNotExist()
         dir.resolve(netCdfFileName).shouldExist()
         Files.readString(dir.resolve(netCdfFileName)) shouldBe "payload"
@@ -86,26 +82,20 @@ class TestArchives : StringSpec({
     "multiple archives in the same dir are all extracted and deleted" {
         writeZip(dir, "part1.zip", mapOf("a.nc" to "A"))
         writeZip(dir, "part2.zip", mapOf("b.nc" to "B"))
-
         flattenArchives(dir)
-
         fileNames(dir) shouldBe setOf("a.nc", "b.nc")
     }
 
     "a data file alongside an archive: the file stays, the archive is flattened" {
         Files.writeString(dir.resolve("already.nc"), "plain")
         writeZip(dir, zipFileName, mapOf("fromzip.nc" to "Z"))
-
         flattenArchives(dir)
-
         fileNames(dir) shouldBe setOf("already.nc", "fromzip.nc")
     }
 
     "a multi-entry zip extracts every entry" {
         writeZip(dir, zipFileName, mapOf("a.nc" to "A", "b.nc" to "B"))
-
         flattenArchives(dir)
-
         fileNames(dir) shouldBe setOf("a.nc", "b.nc")
         Files.readString(dir.resolve("a.nc")) shouldBe "A"
         Files.readString(dir.resolve("b.nc")) shouldBe "B"
@@ -113,9 +103,7 @@ class TestArchives : StringSpec({
 
     "nested entry paths are flattened to their basename" {
         writeZip(dir, zipFileName, mapOf("data/2024/06/dis24.nc" to "deep"))
-
         flattenArchives(dir)
-
         dir.resolve(netCdfFileName).shouldExist()
         Files.readString(dir.resolve(netCdfFileName)) shouldBe "deep"
         fileNames(dir) shouldBe setOf(netCdfFileName)
@@ -124,9 +112,7 @@ class TestArchives : StringSpec({
     "detection is by content, not extension: a zip named '.nc' is still extracted" {
         // the archive itself is named like a data file
         val zip = writeZip(dir, "payload.nc", mapOf(netCdfFileName to "inner"))
-
         flattenArchives(dir)
-
         zip.shouldNotExist()
         dir.resolve(netCdfFileName).shouldExist()
         Files.readString(dir.resolve(netCdfFileName)) shouldBe "inner"
@@ -135,24 +121,19 @@ class TestArchives : StringSpec({
     "detection is by content, not extension: a non-zip named '.zip' is left untouched" {
         val fake = dir.resolve("archive.zip")
         Files.writeString(fake, "this is plain text, not a zip")
-
         flattenArchives(dir)
-
         fake.shouldExist()
         Files.readString(fake) shouldBe "this is plain text, not a zip"
     }
 
     "a flatten collision (two entries, same basename) throws IllegalStateException" {
         writeZip(dir, zipFileName, mapOf("regionA/dis24.nc" to "A", "regionB/dis24.nc" to "B"))
-
         shouldThrow<IllegalStateException> { flattenArchives(dir) }
     }
 
     "an empty zip (with no entries) extracts nothing, is deleted, and leaves the dir empty" {
         val zip = writeZip(dir, zipFileName, emptyMap())
-
         flattenArchives(dir)
-
         zip.shouldNotExist()
         fileNames(dir) shouldBe emptySet()
     }

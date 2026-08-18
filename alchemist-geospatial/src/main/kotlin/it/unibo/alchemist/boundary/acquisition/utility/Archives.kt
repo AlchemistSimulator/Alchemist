@@ -25,7 +25,6 @@ import java.util.zip.ZipFile
  * operation, as empty ZIPs are extracted too.
  *
  * @param dir the directory that contains the ZIP archives to extract.
- *
  * @throws IllegalStateException if two entries in an archive collapse to the same basename.
  */
 internal fun flattenArchives(dir: Path) {
@@ -52,14 +51,12 @@ private fun extractArchive(archive: Path, dir: Path): Boolean = try {
         for (entry in zip.entries()) {
             // nothing to do if the entry is directory.
             if (entry.isDirectory) continue
-
             // it's a file. Resolves the new path.
             val target = dir.resolve(Path.of(entry.name).fileName.toString())
             // a file with the exact same path already exists.
             check(Files.notExists(target)) {
                 "Flatten collision on '${target.fileName}' from '${archive.fileName}'"
             }
-
             // copies the content in the target path
             zip.getInputStream(entry).use { source ->
                 Files.copy(source, target)

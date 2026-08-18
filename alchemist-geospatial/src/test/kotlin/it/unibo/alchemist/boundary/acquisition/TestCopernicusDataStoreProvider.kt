@@ -90,7 +90,6 @@ class TestCopernicusDataStoreProvider : StringSpec({
     fun String.withFakeBase(fake: FakeHttpServer): String {
         // matches the host of every absolute http URL that appears as a JSON `href` value.
         val followedHost = Regex(""""href"\s*:\s*"https?://([^/"]+)""")
-
         val replaced = replace("https://cds.climate.copernicus.eu/api", fake.baseUrl)
             .replace("https://ads.atmosphere.copernicus.eu/api", fake.baseUrl)
             .replace("https://ewds.climate.copernicus.eu/api", fake.baseUrl)
@@ -100,7 +99,6 @@ class TestCopernicusDataStoreProvider : StringSpec({
             .map { it.groupValues[1].substringBefore(':') }
             .filterNot { it == fakeHost || it == "confluence.ecmwf.int" }
             .toSet()
-
         check(stray.isEmpty()) {
             "The body still points at $stray after the rewrite: the provider would hit the network"
         }
@@ -159,23 +157,18 @@ class TestCopernicusDataStoreProvider : StringSpec({
             val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
             val payload = "test".toByteArray()
-
             fake.replaySubmit(cds)
             fake.replayStatus(cds, "accepted-status")
             fake.replayStatus(cds, successful)
             fake.replayResults(cds, payload.size)
             fake.serveAsset(cds, payload)
-
             provider.fetch(CopernicusRequest(cds.dataset, mapOf("day" to "01")), tempDir)
-
             val downloaded = tempDir.resolve(cds.assetName)
             downloaded.shouldExist()
             downloaded.readBytes() shouldBe payload
-
             // the download must NOT carry the token
             val downloadReq = fake.requests.single { it.route == cds.assetPath }
             downloadReq.header("PRIVATE-TOKEN") shouldBe null
-
             // every OGC request MUST carry the token
             fake.requests.filter { it !== downloadReq }.forEach {
                 it.header("PRIVATE-TOKEN") shouldBe token
@@ -194,14 +187,11 @@ class TestCopernicusDataStoreProvider : StringSpec({
             val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
             val payload = "a".toByteArray()
-
             fake.replaySubmit(cds)
             fake.replayStatus(cds, successful)
             fake.replayResults(cds, payload.size, checksum = "cc175b9c0f1b6a831c399e269772661")
             fake.serveAsset(cds, payload)
-
             provider.fetch(CopernicusRequest(cds.dataset, mapOf()), tempDir)
-
             tempDir.resolve(cds.assetName).readBytes() shouldBe payload
         }
     }
@@ -211,12 +201,10 @@ class TestCopernicusDataStoreProvider : StringSpec({
             // the final '/' is intentional
             val provider = createProvider("${fake.baseUrl}/")
             val tempDir = createTempDirectory()
-
             fake.replaySubmit(cds)
             fake.replayStatus(cds, successful)
             fake.replayResults(cds, sizeBytes = 0)
             fake.serveAsset(cds, ByteArray(0))
-
             provider.fetch(CopernicusRequest(cds.dataset, mapOf()), tempDir)
             tempDir.resolve(cds.assetName).shouldExist()
         }
@@ -236,9 +224,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
                   "trace_id": "cec329b8-cb55-4b84-a3a8-86b85facdbb4"
                 }
             """.trimIndent()
-
             fake.enqueue("POST", ewds.submitRoute) { FakeHttpServer.json(400, rejection)(it) }
-
             val ex = shouldThrow<IllegalStateException> {
                 provider.fetch(CopernicusRequest(ewds.dataset, mapOf()), tempDir)
             }
@@ -260,9 +246,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
                   ]
                 }
             """.trimIndent()
-
             fake.enqueue("POST", ewds.submitRoute) { FakeHttpServer.json(422, validation)(it) }
-
             val ex = shouldThrow<IllegalStateException> {
                 provider.fetch(CopernicusRequest(ewds.dataset, mapOf()), tempDir)
             }
@@ -275,12 +259,10 @@ class TestCopernicusDataStoreProvider : StringSpec({
         FakeHttpServer().use { fake ->
             val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
-
             fake.replaySubmit(ads)
             fake.enqueue("GET", ads.jobRoute) {
                 FakeHttpServer.json(401, loadBody("error-401-permission-denied.json").withFakeBase(fake))(it)
             }
-
             val ex = shouldThrow<IllegalStateException> {
                 provider.fetch(CopernicusRequest(ads.dataset, mapOf()), tempDir)
             }
@@ -298,7 +280,6 @@ class TestCopernicusDataStoreProvider : StringSpec({
             FakeHttpServer().use { fake ->
                 val provider = createProvider(fake.baseUrl)
                 val tempDir = createTempDirectory()
-
                 fake.replaySubmit(ewds)
                 fake.answerStatus(
                     ewds,
@@ -311,7 +292,6 @@ class TestCopernicusDataStoreProvider : StringSpec({
                     }
                     """.trimIndent(),
                 )
-
                 val ex = shouldThrow<IllegalStateException> {
                     provider.fetch(CopernicusRequest(ewds.dataset, mapOf()), tempDir)
                 }
@@ -325,7 +305,6 @@ class TestCopernicusDataStoreProvider : StringSpec({
         FakeHttpServer().use { fake ->
             val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
-
             fake.replaySubmit(ewds)
             fake.answerStatus(
                 ewds,
@@ -343,7 +322,6 @@ class TestCopernicusDataStoreProvider : StringSpec({
             fake.enqueue("GET", ewds.resultsRoute) {
                 FakeHttpServer.json(400, loadBody("ewds-failed-results.json").withFakeBase(fake))(it)
             }
-
             val ex = shouldThrow<IllegalStateException> {
                 provider.fetch(CopernicusRequest(ewds.dataset, mapOf()), tempDir)
             }
@@ -357,15 +335,12 @@ class TestCopernicusDataStoreProvider : StringSpec({
         FakeHttpServer().use { fake ->
             val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
-
             fake.replaySubmit(cds)
-
             // an unforeseen status must be treated as transient, not as terminal
             fake.answerStatus(cds, """{ "status": "queued_for_retry" }""")
             fake.replayStatus(cds, successful)
             fake.replayResults(cds, sizeBytes = 0)
             fake.serveAsset(cds, ByteArray(0))
-
             provider.fetch(CopernicusRequest(cds.dataset, mapOf()), tempDir)
             tempDir.resolve(cds.assetName).shouldExist()
         }
@@ -375,10 +350,8 @@ class TestCopernicusDataStoreProvider : StringSpec({
         FakeHttpServer().use { fake ->
             val provider = createProvider(fake.baseUrl, timeout = Duration.ofMillis(500))
             val tempDir = createTempDirectory()
-
             fake.replaySubmit(cds)
             fake.constant("GET", cds.jobRoute) { FakeHttpServer.json(200, """{ "status": "running" }""")(it) }
-
             val ex = shouldThrow<IllegalStateException> {
                 provider.fetch(CopernicusRequest(cds.dataset, mapOf()), tempDir)
             }
@@ -390,13 +363,11 @@ class TestCopernicusDataStoreProvider : StringSpec({
         FakeHttpServer().use { fake ->
             val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
-
             fake.replaySubmit(ads)
             fake.replayStatus(ads, successful)
             fake.enqueue("GET", ads.resultsRoute) {
                 FakeHttpServer.json(404, loadBody("error-404-result-not-ready.json").withFakeBase(fake))(it)
             }
-
             val ex = shouldThrow<IllegalStateException> {
                 provider.fetch(CopernicusRequest(ads.dataset, mapOf()), tempDir)
             }
@@ -409,10 +380,8 @@ class TestCopernicusDataStoreProvider : StringSpec({
         FakeHttpServer().use { fake ->
             val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
-
             fake.replaySubmit(cds)
             fake.answerStatus(cds, """{ "status": "successful", "links": [] }""")
-
             val ex = shouldThrow<IllegalStateException> {
                 provider.fetch(CopernicusRequest(cds.dataset, mapOf()), tempDir)
             }
@@ -425,14 +394,11 @@ class TestCopernicusDataStoreProvider : StringSpec({
             val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
             val payload = "test".toByteArray()
-
             fake.replaySubmit(cds)
             fake.replayStatus(cds, successful)
-
             // advertises one byte more than the object store will actually serve
             fake.replayResults(cds, payload.size + 1)
             fake.serveAsset(cds, payload)
-
             val ex = shouldThrow<IllegalStateException> {
                 provider.fetch(CopernicusRequest(cds.dataset, mapOf()), tempDir)
             }
@@ -444,14 +410,11 @@ class TestCopernicusDataStoreProvider : StringSpec({
         FakeHttpServer().use { fake ->
             val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
-
             fake.replaySubmit(cds)
             fake.replayStatus(cds, successful)
             fake.replayResults(cds, sizeBytes = 0)
             fake.serveAsset(cds, ByteArray(0))
-
             provider.fetch(CopernicusRequest(cds.dataset, mapOf("year" to "2023")), tempDir)
-
             val submit = fake.requests.single { it.method == "POST" }
             submit.body shouldContain "\"inputs\""
             submit.body shouldContain "\"year\""

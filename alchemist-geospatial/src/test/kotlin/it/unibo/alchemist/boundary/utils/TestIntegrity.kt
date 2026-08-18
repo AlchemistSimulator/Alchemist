@@ -7,14 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.acquisition
+package it.unibo.alchemist.boundary.utils
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.boundary.acquisition.utility.md5Hex
-import it.unibo.alchemist.boundary.acquisition.utility.verify
 import java.nio.file.Files
 import java.nio.file.Path
 

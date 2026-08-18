@@ -12,18 +12,17 @@ package it.unibo.alchemist.model.layers
 import it.unibo.alchemist.boundary.acquisition.CopernicusCacheManager
 import it.unibo.alchemist.boundary.acquisition.CopernicusDataStoreProvider
 import it.unibo.alchemist.boundary.acquisition.CopernicusRequest
-import it.unibo.alchemist.boundary.acquisition.utility.CdsApiRc
-import it.unibo.alchemist.boundary.acquisition.utility.CopernicusInputs
+import it.unibo.alchemist.boundary.utils.CdsApiRc
+import it.unibo.alchemist.boundary.utils.CopernicusInputs
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.expandUser
 import it.unibo.alchemist.model.geospatial.reading.EagerGridSnapshots
 import it.unibo.alchemist.model.geospatial.reading.GridSnapshots
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
-import it.unibo.alchemist.model.geospatial.strategy.bracketIndices
 import it.unibo.alchemist.model.geospatial.strategy.converter.MeasurementConverter
 import it.unibo.alchemist.model.geospatial.strategy.spatiotemporal.SpatioTemporalInterpolation
-import it.unibo.alchemist.model.geospatial.strategy.weight
+import it.unibo.alchemist.model.geospatial.utils.bracketIndices
+import it.unibo.alchemist.model.geospatial.utils.weight
 import java.nio.file.Path
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
@@ -96,8 +95,8 @@ open class CopernicusLayer<T>(
      * Constructs a [CopernicusLayer] reading a **local directory** of already-available data files:
      * no network I/O, no cache, no credentials.
      *
-     * @param dataDirectory path of a directory holding one or more homogeneous data files (same
-     * variable and spatial grid). A leading `~` is expanded to the user home.
+     * @param dataDirectory absolute path of a directory holding one or more homogeneous data files (same
+     * variable and spatial grid).
      * @param timeScale real-world duration of one simulation time unit, as an ISO-8601 duration (e.g. `"PT6H"`).
      * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601 instant
      * (e.g. `"2024-06-10T00:00:00Z"`). The first instant found in the data is used when `null`.
@@ -107,7 +106,7 @@ open class CopernicusLayer<T>(
      * @param converter defines how read [Double] values are converted into [T].
      * @throws IllegalArgumentException if [timeScale] or [timeOrigin] are not valid ISO-8601
      * strings; if [timeScale] is negative or infinity; if [dataDirectory] does not hold readable,
-     * homogeneous data files.
+     * homogeneous data files or if the path is not correct.
      */
     constructor(
         environment: Environment<*, GeoPosition>,
@@ -119,7 +118,7 @@ open class CopernicusLayer<T>(
         converter: MeasurementConverter<T>,
     ) : this(
         environment,
-        EagerGridSnapshots(dataDirectory.expandUser(), variable),
+        EagerGridSnapshots(Path.of(dataDirectory), variable),
         Duration.parseIsoString(timeScale),
         timeOrigin?.let(Instant::parse),
         interpolation,
@@ -137,9 +136,8 @@ open class CopernicusLayer<T>(
      *
      * @param endpoint base URL of the datastore (e.g. `"https://ewds.climate.copernicus.eu/api"`).
      * @param dataset dataset identifier (e.g. `"cems-glofas-historical"`).
-     * @param inputsFile path of a JSON file holding the opaque request map for [dataset] at
+     * @param inputsFile absolute path of a JSON file holding the opaque request map for [dataset] at
      * [endpoint] (variables, dates, area, type, ...), passed verbatim to the datastore.
-     * A leading `~` is expanded to the user home.
      * @param checkMd5 whether to check the MD5 digest of the downloaded asset.
      * Sometimes Copernicus stores return the correct requested assets but report an incorrect MD5,
      * so it may be useful to disable this check.
@@ -147,13 +145,13 @@ open class CopernicusLayer<T>(
      * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601
      * instant. The first instant found in the data is used when `null`.
      * @param variable variable name inside the downloaded file. Auto-detected when `null`.
-     * @param cacheDirectory root of the local cache. A leading `~` is expanded to the user home.
-     * @param cdsApiRcFile path of a `.cdsapirc`-formatted file holding the API token. A leading `~`
-     * is expanded to the user home.
+     * @param cacheDirectory asbolute path to the root of the local cache.
+     * @param cdsApiRcFile absolute path of a `.cdsapirc`-formatted file holding the API token.
      * @param interpolation strategy for spatio-temporal evaluation.
      * @param converter defines how read [Double] values are converted into [T].
      * @throws IllegalArgumentException if [timeScale] or [timeOrigin] are not valid ISO-8601
-     * strings; if [timeScale] is negative or infinity; if [endpoint] is not a valid URL.
+     * strings; if [timeScale] is negative or infinity; if [endpoint] is not a valid URL; if any
+     * path is malformed.
      * @throws IllegalStateException if the token cannot be read; if the remote job fails or times
      * out; if the downloaded asset fails its integrity check.
      */
@@ -177,9 +175,9 @@ open class CopernicusLayer<T>(
                 endpoint,
                 dataset,
                 checkMd5,
-                inputsFile.expandUser(),
-                cacheDirectory.expandUser(),
-                cdsApiRcFile.expandUser(),
+                Path.of(inputsFile),
+                Path.of(cacheDirectory),
+                Path.of(cdsApiRcFile),
             ),
             variable,
         ),
@@ -267,15 +265,17 @@ open class CopernicusLayer<T>(
     companion object {
         private const val serialVersionUID = 1L
 
+        private val USER_HOME: String = System.getProperty("user.home")
+
         /**
          * Default root of the local cache, used by the datastore costructor.
          */
-        internal const val DEFAULT_CACHE_DIRECTORY = "~/.alchemist/cache/geospatial"
+        internal val DEFAULT_CACHE_DIRECTORY = "$USER_HOME/.alchemist/cache/geospatial"
 
         /**
          * Default location of the file holding the datastore API token.
          */
-        internal const val DEFAULT_CDSAPIRC_FILE = "~/.cdsapirc"
+        internal val DEFAULT_CDSAPIRC_FILE = "$USER_HOME/.cdsapirc"
 
         /**
          * Default real-world duration of one simulation time unit, as a [Duration]

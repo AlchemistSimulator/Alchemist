@@ -17,11 +17,10 @@ dependencies {
     api(alchemist("api"))
 
     implementation(libs.cdm.core)
+    implementation(libs.cdm.grib)
     implementation(libs.gson)
     implementation(libs.guava)
     implementation(libs.slf4j)
-
-    runtimeOnly(libs.cdm.grib)
 
     testImplementation(alchemist("test"))
 }

@@ -71,7 +71,6 @@ class TestGridReading : StringSpec({
         val c = Files.createFile(dir.resolve("c.nc"))
         val a = Files.createFile(dir.resolve("a.nc"))
         val b = Files.createFile(dir.resolve("b.nc"))
-
         listDataFiles(dir) shouldBe listOf(a, b, c)
     }
 
@@ -90,7 +89,6 @@ class TestGridReading : StringSpec({
                 timeHours = doubleArrayOf(0.0, 24.0, 48.0),
             ),
         )
-
         axes.latitudes shouldBe doubleArrayOf(10.0, 20.0, 30.0)
         axes.longitudes shouldBe doubleArrayOf(5.0, 15.0, 25.0, 35.0)
         axes.latDescending shouldBe false
@@ -107,8 +105,7 @@ class TestGridReading : StringSpec({
         val latAxes = axesOf(testFile("axes-lat-desc", lats = doubleArrayOf(30.0, 20.0, 10.0)))
         latAxes.latitudes shouldBe doubleArrayOf(10.0, 20.0, 30.0)
         latAxes.latDescending shouldBe true
-
-        // long check
+        // lon check
         val lonAxes = axesOf(testFile("axes-lon-desc", lons = doubleArrayOf(35.0, 25.0, 15.0, 5.0)))
         lonAxes.longitudes shouldBe doubleArrayOf(5.0, 15.0, 25.0, 35.0)
         lonAxes.lonDescending shouldBe true
@@ -121,7 +118,6 @@ class TestGridReading : StringSpec({
 
     "readFileAxes should compute axis positions correctly regardless of the file dimension order" {
         val axes = axesOf(testFile("axes-scrambled", dimensionOrder = listOf("longitude", "time", "latitude")))
-
         axes.lonPosition shouldBe 0
         axes.timePosition shouldBe 1
         axes.latPosition shouldBe 2
@@ -130,7 +126,6 @@ class TestGridReading : StringSpec({
     // resolveVariable tests
     "resolveVariable should throw when the variable does not exist" {
         val file = testFile("resolve-missing")
-
         NetcdfDatasets.openDataset(file.toString()).use { ds ->
             shouldThrow<IllegalArgumentException> {
                 resolveVariable(
@@ -153,7 +148,6 @@ class TestGridReading : StringSpec({
                 TestVariable("second"),
             ),
         )
-
         NetcdfDatasets.openDataset(file.toString()).use { ds ->
             shouldThrow<IllegalArgumentException> {
                 resolveVariable(ds, null, "time", "latitude", "longitude", file)
@@ -165,7 +159,6 @@ class TestGridReading : StringSpec({
     "readPermutedSlice should reorder values to (time, lat, lon) regardless of the file axes order" {
         val file = testFile("permute", dimensionOrder = listOf("longitude", "time", "latitude"))
         val (_, slice) = readAxesAndSlice(file)
-
         slice.getDouble(0) shouldBe 0.0
         slice.getDouble(1) shouldBe 1.0
         slice.getDouble(2) shouldBe 10.0
@@ -180,7 +173,6 @@ class TestGridReading : StringSpec({
                 TestVariable(rawValues = doubleArrayOf(100.0, 101.0, 102.0, 103.0, 200.0, 201.0, 202.0, 203.0)),
             ),
         )
-
         NetcdfDatasets.openDataset(file.toString()).use { ds ->
             val axes = readFileAxes(ds, null, file)
             readPermutedSlice(axes, t = 0, nLat = 2, nLon = 2).getDouble(0) shouldBe 100.0
@@ -195,7 +187,6 @@ class TestGridReading : StringSpec({
             variables = listOf(TestVariable(rawValues = doubleArrayOf(1.0, 2.0, 3.0, 4.0))),
         )
         val (axes, slice) = readAxesAndSlice(file)
-
         flattenAscending(slice, 2, 2, axes.latDescending, axes.lonDescending) shouldBe
             doubleArrayOf(1.0, 2.0, 3.0, 4.0)
     }
@@ -210,7 +201,6 @@ class TestGridReading : StringSpec({
         val (latAxes, latSlice) = readAxesAndSlice(fileLat)
         flattenAscending(latSlice, 2, 2, latAxes.latDescending, latAxes.lonDescending) shouldBe
             doubleArrayOf(3.0, 4.0, 1.0, 2.0)
-
         // lon check
         val fileLon = testFile(
             "lon-decreasing",
@@ -234,7 +224,6 @@ class TestGridReading : StringSpec({
         val latReference = ReferenceGrid(axesOf(testFile("reference-lat-mismatch-a")))
         val fileB = testFile("reference-lat-mismatch-b", lats = doubleArrayOf(11.0, 21.0))
         shouldThrow<IllegalArgumentException> { latReference.requireMatches(axesOf(fileB), fileB, tempDir) }
-
         // longitude
         val lonReference = ReferenceGrid(axesOf(testFile("reference-lon-mismatch-a")))
         val fileC = testFile("reference-lon-mismatch-b", lons = doubleArrayOf(6.0, 16.0))
@@ -245,7 +234,6 @@ class TestGridReading : StringSpec({
         val reference = ReferenceGrid(
             axesOf(testFile("prima_file", variables = listOf(TestVariable("prima")))),
         )
-
         val fileB = testFile("seconda_file", variables = listOf(TestVariable("seconda")))
         shouldThrow<IllegalArgumentException> { reference.requireMatches(axesOf(fileB), fileB, tempDir) }
     }

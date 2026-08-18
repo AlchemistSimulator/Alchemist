@@ -41,7 +41,6 @@ private const val MD5_HEX_DIGITS = 32
  * @param expectedMd5 the expected MD5 digest as a hex string, if advertised.
  * @param checksumUnusableAction an action performed with the advertised checksum and filename
  * if the checksum turns out to be unusable.
- *
  * @throws IllegalStateException if the actual size, or the actual MD5, does not match.
  */
 internal fun verify(
@@ -51,23 +50,18 @@ internal fun verify(
     checksumUnusableAction: (String, String) -> Unit = { _, _ -> },
 ) {
     val actualSize = Files.size(file)
-
     check(actualSize == expectedSizeBytes) {
         "Size mismatch for '${file.fileName}': expected $expectedSizeBytes bytes, got $actualSize"
     }
-
     // no checksum advertised: nothing to verify.
     val advertised = expectedMd5 ?: return
     val expected = advertised.lowercase().padStart(MD5_HEX_DIGITS, '0')
-
     // warns the user that no md5 was provided.
     if (!expected.isMd5Hex()) {
         checksumUnusableAction(advertised, file.fileName.toString())
         return
     }
-
     val actual = md5Hex(file)
-
     check(actual == expected) {
         "MD5 mismatch for '${file.fileName}': expected $expected " +
             "(advertised as '$advertised'), got $actual"

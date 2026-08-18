@@ -41,7 +41,6 @@ class TestTemporalInterpolation : StringSpec({
             valueAfter,
             0.0,
         ) shouldBe (valueBefore plusOrMinus tolerance)
-
         linear.interpolate(
             valueBefore,
             valueAfter,

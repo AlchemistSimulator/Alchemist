@@ -49,7 +49,6 @@ class SeparableSpatioTemporalInterpolation(
     ): Double {
         val resolvedBeforeValue = spatialStrategy.valueAt(gridBefore, position)
         val resolvedAfterValue = spatialStrategy.valueAt(gridAfter, position)
-
         return temporalStrategy.interpolate(
             resolvedBeforeValue,
             resolvedAfterValue,

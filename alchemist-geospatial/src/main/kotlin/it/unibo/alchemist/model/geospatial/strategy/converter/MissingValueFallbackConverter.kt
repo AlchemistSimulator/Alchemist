@@ -15,7 +15,6 @@ package it.unibo.alchemist.model.geospatial.strategy.converter
  *
  * @param delegate the inner [MeasurementConverter] used for valid numerical values.
  * @param defaultValue the fallback value returned when encountering [Double.NaN].
- *
  * @param T the output type of the measurement conversion.
  */
 class MissingValueFallbackConverter<T>(private val delegate: MeasurementConverter<T>, private val defaultValue: T) :

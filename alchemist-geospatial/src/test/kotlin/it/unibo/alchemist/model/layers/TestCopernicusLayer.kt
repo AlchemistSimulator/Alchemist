@@ -151,7 +151,6 @@ class TestCopernicusLayer : StringSpec({
         withClue("t=-2.0 < sliceTimes.first()=-1.0, extrapolates to first slice: 10.0") {
             layer.getValue(center) shouldBe 10.0
         }
-
         layer = DoubleCopernicusLayer(
             envAt(2.0),
             syntheticGrid(10.0, 20.0, 30.0),
@@ -247,7 +246,6 @@ class TestCopernicusLayer : StringSpec({
             timeHours = doubleArrayOf(0.0, 1.0, 2.0),
             variables = listOf(TestVariable(rawValues = DoubleArray(27) { idx -> ((idx / 9) + 1) * 10.0 })),
         )
-
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString())
         withClue("t=0.0 -> first slice -> all cells = 10.0") {
             layer.getValue(center) shouldBe (10.0 plusOrMinus TOLERANCE)
@@ -263,7 +261,6 @@ class TestCopernicusLayer : StringSpec({
             timeHours = doubleArrayOf(0.0, 1.0),
             variables = listOf(TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 0.0 else 10.0 })),
         )
-
         val layer = DoubleCopernicusLayer(envAt(0.5), dir.absolutePathString())
         withClue("t=0.5 halfway between 0.0 and 10.0 -> 5.0") {
             layer.getValue(center) shouldBe (5.0 plusOrMinus TOLERANCE)
@@ -289,11 +286,9 @@ class TestCopernicusLayer : StringSpec({
                 ),
             ),
         )
-
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString())
         val lat44: GeoPosition = mockGeoPosition(44.0, 12.0)
         val lat46: GeoPosition = mockGeoPosition(46.0, 12.0)
-
         withClue("after normalisation, lat=44 (file-row 2) should return 3.0") {
             layer.getValue(lat44) shouldBe (3.0 plusOrMinus TOLERANCE)
         }
@@ -316,7 +311,6 @@ class TestCopernicusLayer : StringSpec({
                 ),
             ),
         )
-
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString(), variable = null)
         withClue("auto-detected variable; all cells = 7.0") {
             layer.getValue(center) shouldBe (7.0 plusOrMinus TOLERANCE)
@@ -338,7 +332,6 @@ class TestCopernicusLayer : StringSpec({
                 ),
             ),
         )
-
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString(), variable = varName)
         withClue("explicit variable '$varName'; all cells = 42.0") {
             layer.getValue(center) shouldBe (42.0 plusOrMinus TOLERANCE)
@@ -369,7 +362,6 @@ class TestCopernicusLayer : StringSpec({
         )
         var t = 0.0
         val layer = DoubleCopernicusLayer(mutableEnv { t }, dir.absolutePathString())
-
         (0..3).forEach {
             val time = it.toDouble()
             val expectedTime = (it + 1) * 10.0
@@ -379,7 +371,6 @@ class TestCopernicusLayer : StringSpec({
                 layer.getValue(center) shouldBe (expectedTime plusOrMinus TOLERANCE)
             }
         }
-
         // interpolation across the file boundary: t=1.5 should return the mean with linear interpolation
         t = 1.5
         withClue("t=1.5 crosses file boundary. LINEAR blend of 20.0 and 30.0 = 25.0") {

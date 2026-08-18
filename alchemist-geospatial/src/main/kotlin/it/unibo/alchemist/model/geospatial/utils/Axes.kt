@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geospatial.strategy
+package it.unibo.alchemist.model.geospatial.utils
 
 import java.util.Arrays
 

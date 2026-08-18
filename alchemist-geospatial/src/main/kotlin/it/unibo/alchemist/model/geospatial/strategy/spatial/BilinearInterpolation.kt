@@ -11,9 +11,9 @@ package it.unibo.alchemist.model.geospatial.strategy.spatial
 
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
-import it.unibo.alchemist.model.geospatial.strategy.StatelessStrategy
-import it.unibo.alchemist.model.geospatial.strategy.bracketIndices
-import it.unibo.alchemist.model.geospatial.strategy.weight
+import it.unibo.alchemist.model.geospatial.utils.StatelessStrategy
+import it.unibo.alchemist.model.geospatial.utils.bracketIndices
+import it.unibo.alchemist.model.geospatial.utils.weight
 
 /**
  * Bilinear interpolation over the 4 cells surrounding the point. If any of the 4 corners is

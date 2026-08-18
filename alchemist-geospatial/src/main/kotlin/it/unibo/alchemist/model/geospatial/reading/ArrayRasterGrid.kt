@@ -14,9 +14,11 @@ package it.unibo.alchemist.model.geospatial.reading
  *
  * Suited for dense grids, where most cells hold a value.
  *
+ * @property gridValues cell values in row-major order respect to [latitudes] x [longitudes];
+ *
  * @see RasterGrid
  */
-class ArrayRasterGrid(latitudes: DoubleArray, longitudes: DoubleArray, gridValues: DoubleArray) :
+class ArrayRasterGrid(latitudes: DoubleArray, longitudes: DoubleArray, val gridValues: DoubleArray) :
     RasterGrid(latitudes, longitudes, gridValues) {
 
     override fun valueAt(latIndex: Int, lonIndex: Int): Double = gridValues[latIndex * longitudes.size + lonIndex]

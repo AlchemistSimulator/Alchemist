@@ -7,13 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.acquisition
+package it.unibo.alchemist.boundary.utils
 
 import com.google.gson.JsonSyntaxException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.boundary.acquisition.utility.CopernicusInputs
 import java.nio.file.Files
 import java.nio.file.Path
 

@@ -7,21 +7,13 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.acquisition
+package it.unibo.alchemist.boundary.utils
 
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldStartWith
-import it.unibo.alchemist.boundary.acquisition.utility.ProblemDetail
-import it.unibo.alchemist.boundary.acquisition.utility.RemoteAsset
-import it.unibo.alchemist.boundary.acquisition.utility.parseAsset
-import it.unibo.alchemist.boundary.acquisition.utility.parseFailureMessage
-import it.unibo.alchemist.boundary.acquisition.utility.parseMonitorUrl
-import it.unibo.alchemist.boundary.acquisition.utility.parseProblemDetail
-import it.unibo.alchemist.boundary.acquisition.utility.parseResultsUrl
-import it.unibo.alchemist.boundary.acquisition.utility.parseStatus
 import it.unibo.alchemist.loadJsonCopernicusResponse
 
 /**

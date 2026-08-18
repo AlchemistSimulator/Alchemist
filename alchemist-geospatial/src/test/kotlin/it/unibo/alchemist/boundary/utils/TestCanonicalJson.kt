@@ -7,12 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.acquisition
+package it.unibo.alchemist.boundary.utils
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import it.unibo.alchemist.boundary.acquisition.utility.CanonicalJson
 
 class TestCanonicalJson : StringSpec({
 

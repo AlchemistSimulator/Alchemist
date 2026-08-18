@@ -7,8 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geospatial.reading
+package it.unibo.alchemist.model.geospatial.utils
 
+import it.unibo.alchemist.model.geospatial.reading.ArrayRasterGrid
+import it.unibo.alchemist.model.geospatial.reading.MapRasterGrid
+import it.unibo.alchemist.model.geospatial.reading.RasterGrid
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Formatter

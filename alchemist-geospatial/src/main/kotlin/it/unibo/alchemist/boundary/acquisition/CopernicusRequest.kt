@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.acquisition
 
-import it.unibo.alchemist.boundary.acquisition.utility.CanonicalJson
+import it.unibo.alchemist.boundary.utils.CanonicalJson
 import java.security.MessageDigest
 
 /**

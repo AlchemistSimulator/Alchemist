@@ -11,6 +11,8 @@ package it.unibo.alchemist.model.geospatial.utils
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.TestVariable
 import it.unibo.alchemist.writeTestNetcdf
@@ -22,6 +24,16 @@ import ucar.nc2.dataset.NetcdfDatasets
 class TestGridReading : StringSpec({
 
     val tempDir: Path = Files.createTempDirectory("netcdf-grid-reading-test")
+
+    /**
+     * Directory containing a real, manually downloaded GRIB fixture.
+     * The grib is from the "reanalysis-era5-single-levels" dataset.
+     */
+    val realGribsDir: Path = Path.of(
+        requireNotNull(object {}.javaClass.getResource("/gribs")) {
+            "Test resource directory 'gribs' not found on the classpath"
+        }.toURI(),
+    )
 
     afterSpec {
         tempDir.toFile().deleteRecursively()
@@ -236,5 +248,32 @@ class TestGridReading : StringSpec({
         )
         val fileB = testFile("seconda_file", variables = listOf(TestVariable("seconda")))
         shouldThrow<IllegalArgumentException> { reference.requireMatches(axesOf(fileB), fileB, tempDir) }
+    }
+
+    // GRIB reading tests
+    "listDataFiles should find the real GRIB fixture and ignore index files" {
+        val files = listDataFiles(realGribsDir)
+        files.map { it.fileName.toString() } shouldContain "fc.grib"
+    }
+
+    "readFileAxes should not fail on a GRIB file" {
+        val file = realGribsDir.resolve("fc.grib")
+        val axes = axesOf(file)
+        axes.latitudes.size shouldBeGreaterThan 0
+        axes.longitudes.size shouldBeGreaterThan 0
+        axes.timeAxis.size.toInt() shouldBeGreaterThan 0
+    }
+
+    "the GridReading pipeline should not fail a GRIB file" {
+        val file = realGribsDir.resolve("fc.grib")
+        NetcdfDatasets.openDataset(file.toString()).use { ds ->
+            val axes = readFileAxes(ds, null, file)
+            val nLat = axes.latitudes.size
+            val nLon = axes.longitudes.size
+            val slice = readPermutedSlice(axes, t = 0, nLat = nLat, nLon = nLon)
+            val flat = flattenAscending(slice, nLat, nLon, axes.latDescending, axes.lonDescending)
+            flat.size shouldBe nLat * nLon
+            buildGrid(axes.latitudes, axes.longitudes, flat) // this must not throw
+        }
     }
 })

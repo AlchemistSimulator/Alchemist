@@ -324,16 +324,6 @@ private val Provider<RegularFile>.fileProperty get(): RegularFileProperty = obje
     it.disallowChanges()
 }
 
-configurations.all {
-    resolutionStrategy {
-        eachDependency {
-            if (requested.group == "com.google.protobuf" && requested.name == "protobuf-java") {
-                useVersion("3.12.2")
-            }
-        }
-    }
-}
-
 tasks.withType<JavaExec> {
     systemProperty(
         "javax.xml.parsers.SAXParserFactory",

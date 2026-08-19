@@ -4,7 +4,7 @@ antlr4 = "4.13.2"
 ais-lib = "2.8.7"
 apollo = "5.1.0"
 arrow = "2.2.3"
-cdm = "5.9.1"
+cdm = "5.10.1-dev01+cd8efd17cc"
 compose-multiplatform = "1.11.1"
 dokka = "2.2.0"
 graphql = "10.2.1"
@@ -39,8 +39,8 @@ appdirs = "net.harawata:appdirs:1.5.0"
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
 caffeine = "com.github.ben-manes.caffeine:caffeine:3.2.4"
-cdm-core = { module = "edu.ucar:cdm-core", version.ref = "cdm" }
-cdm-grib  = { module = "edu.ucar:grib", version.ref = "cdm" }
+cdm-core = { module = "org.danilopianini:cdm-core", version.ref = "cdm" }
+cdm-grib  = { module = "org.danilopianini:grib", version.ref = "cdm" }
 classgraph = "io.github.classgraph:classgraph:4.8.192"
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }

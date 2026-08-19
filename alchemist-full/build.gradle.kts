@@ -323,10 +323,3 @@ private val Provider<RegularFile>.fileProperty get(): RegularFileProperty = obje
     it.set(this)
     it.disallowChanges()
 }
-
-tasks.withType<JavaExec> {
-    systemProperty(
-        "javax.xml.parsers.SAXParserFactory",
-        "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl",
-    )
-}

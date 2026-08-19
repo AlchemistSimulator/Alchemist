@@ -19,7 +19,6 @@ import it.unibo.alchemist.writeTestNetcdf
 import java.nio.file.Files
 import java.nio.file.Path
 import ucar.ma2.Array
-import ucar.nc2.dataset.NetcdfDatasets
 
 class TestGridReading : StringSpec({
 
@@ -43,7 +42,7 @@ class TestGridReading : StringSpec({
      * Opens [file], extracts [FileAxes] and closes it.
      */
     fun axesOf(file: Path, variableName: String? = null): FileAxes =
-        NetcdfDatasets.openDataset(file.toString()).use { readFileAxes(it, variableName, file) }
+        openNetcdfDataset(file).use { readFileAxes(it, variableName, file) }
 
     /**
      * Writes a minimal test NetCDF file in a subdir of [tempDir].
@@ -72,7 +71,7 @@ class TestGridReading : StringSpec({
      * Opens [file] and returns its [FileAxes] with the permuted slice at time index [t].
      */
     fun readAxesAndSlice(file: Path, t: Int = 0, nLat: Int = 2, nLon: Int = 2): Pair<FileAxes, Array> =
-        NetcdfDatasets.openDataset(file.toString()).use { ds ->
+        openNetcdfDataset(file).use { ds ->
             val axes = readFileAxes(ds, null, file)
             axes to readPermutedSlice(axes, t, nLat, nLon)
         }
@@ -138,7 +137,7 @@ class TestGridReading : StringSpec({
     // resolveVariable tests
     "resolveVariable should throw when the variable does not exist" {
         val file = testFile("resolve-missing")
-        NetcdfDatasets.openDataset(file.toString()).use { ds ->
+        openNetcdfDataset(file).use { ds ->
             shouldThrow<IllegalArgumentException> {
                 resolveVariable(
                     ds,
@@ -160,7 +159,7 @@ class TestGridReading : StringSpec({
                 TestVariable("second"),
             ),
         )
-        NetcdfDatasets.openDataset(file.toString()).use { ds ->
+        openNetcdfDataset(file).use { ds ->
             shouldThrow<IllegalArgumentException> {
                 resolveVariable(ds, null, "time", "latitude", "longitude", file)
             }
@@ -185,7 +184,7 @@ class TestGridReading : StringSpec({
                 TestVariable(rawValues = doubleArrayOf(100.0, 101.0, 102.0, 103.0, 200.0, 201.0, 202.0, 203.0)),
             ),
         )
-        NetcdfDatasets.openDataset(file.toString()).use { ds ->
+        openNetcdfDataset(file).use { ds ->
             val axes = readFileAxes(ds, null, file)
             readPermutedSlice(axes, t = 0, nLat = 2, nLon = 2).getDouble(0) shouldBe 100.0
             readPermutedSlice(axes, t = 1, nLat = 2, nLon = 2).getDouble(0) shouldBe 200.0
@@ -266,7 +265,7 @@ class TestGridReading : StringSpec({
 
     "the GridReading pipeline should not fail a GRIB file" {
         val file = realGribsDir.resolve("fc.grib")
-        NetcdfDatasets.openDataset(file.toString()).use { ds ->
+        openNetcdfDataset(file).use { ds ->
             val axes = readFileAxes(ds, null, file)
             val nLat = axes.latitudes.size
             val nLon = axes.longitudes.size

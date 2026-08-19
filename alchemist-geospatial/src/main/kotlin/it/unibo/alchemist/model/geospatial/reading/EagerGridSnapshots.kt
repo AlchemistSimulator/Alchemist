@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.geospatial.utils.ReferenceGrid
 import it.unibo.alchemist.model.geospatial.utils.buildGrid
 import it.unibo.alchemist.model.geospatial.utils.flattenAscending
 import it.unibo.alchemist.model.geospatial.utils.listDataFiles
+import it.unibo.alchemist.model.geospatial.utils.openNetcdfDataset
 import it.unibo.alchemist.model.geospatial.utils.readFileAxes
 import it.unibo.alchemist.model.geospatial.utils.readPermutedSlice
 import java.nio.file.Path
@@ -21,7 +22,6 @@ import java.util.TreeMap
 import kotlin.time.Instant
 import kotlin.time.toKotlinInstant
 import org.slf4j.LoggerFactory
-import ucar.nc2.dataset.NetcdfDatasets
 
 /**
  * Eager [GridSnapshots] implementation. This implementation depends on NetCDF-Java.
@@ -80,7 +80,7 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
              * opens the file in "enhanced mode": all fill values are replaced with NaN
              * and expects dimensions to be properly tagged.
              */
-            NetcdfDatasets.openDataset(file.toString()).use { ds ->
+            openNetcdfDataset(file).use { ds ->
                 val axes = readFileAxes(ds, variableName, file)
                 reference = reference?.also { it.requireMatches(axes, file, directory) } ?: ReferenceGrid(axes)
                 readTimestepsFrom(map, axes, directory)

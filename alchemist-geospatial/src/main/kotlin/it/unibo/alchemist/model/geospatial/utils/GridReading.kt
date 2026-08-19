@@ -21,6 +21,7 @@ import ucar.nc2.constants.AxisType
 import ucar.nc2.dataset.CoordinateAxis1D
 import ucar.nc2.dataset.CoordinateAxis1DTime
 import ucar.nc2.dataset.NetcdfDataset
+import ucar.nc2.dataset.NetcdfDatasets
 
 /*
  * NetCDF/GRIB schema parsing based on NetCDF-Java.
@@ -34,9 +35,40 @@ import ucar.nc2.dataset.NetcdfDataset
 private const val SPARSE_DENSITY_THRESHOLD = 0.1
 
 /**
+ * Parser needed by netCDF-Java to parse GRIB files.
+ */
+private const val SAX_PARSER_FACTORY_KEY = "javax.xml.parsers.SAXParserFactory"
+private const val JDK_XERCES_SAX_PARSER_FACTORY = "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl"
+
+/**
  * File types that netCDF-Java uses as indexes for GRIB files.
  */
 private val netcdfJavaIndexSuffixes = setOf(".gbx9", ".ncx4")
+
+/**
+ * Opens [file] as a [NetcdfDataset], temporarily forcing the JDK's built-in
+ * [javax.xml.parsers.SAXParserFactory].
+ *
+ * NetCDF-Java's GRIB reader requires this specific factory; if another SAX parser is
+ * registered system-wide, GRIB parsing fails.
+ * The system property is restored to its previous value (or cleared) right after opening.
+ *
+ * @param file the NetCDF/GRIB file to open.
+ * @return the opened, enhanced [NetcdfDataset].
+ */
+internal fun openNetcdfDataset(file: Path): NetcdfDataset {
+    val previous = System.getProperty(SAX_PARSER_FACTORY_KEY)
+    System.setProperty(SAX_PARSER_FACTORY_KEY, JDK_XERCES_SAX_PARSER_FACTORY)
+    try {
+        return NetcdfDatasets.openDataset(file.toString())
+    } finally {
+        if (previous == null) {
+            System.clearProperty(SAX_PARSER_FACTORY_KEY)
+        } else {
+            System.setProperty(SAX_PARSER_FACTORY_KEY, previous)
+        }
+    }
+}
 
 /**
  * Lists the data files contained in [directory], ignoring the indexes created by netCDF-Java,

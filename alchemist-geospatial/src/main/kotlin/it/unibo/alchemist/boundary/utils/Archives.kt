@@ -49,7 +49,7 @@ internal fun flattenArchives(dir: Path) {
 private fun extractArchive(archive: Path, dir: Path): Boolean = try {
     ZipFile(archive.toFile()).use { zip ->
         for (entry in zip.entries()) {
-            // nothing to do if the entry is directory.
+            // nothing to do if the entry is a directory.
             if (entry.isDirectory) continue
             // it's a file. Resolves the new path.
             val target = dir.resolve(Path.of(entry.name).fileName.toString())

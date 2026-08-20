@@ -47,7 +47,7 @@ import kotlin.time.Instant
  * - **Primary**: accepts a ready-built [GridSnapshots]; it is used in tests.
  * - **Directory** (YAML): takes the path of a local directory of data files. No network, no cache,
  * no credentials. Selected from YAML by providing `dataDirectory`.
- * - **Datastore**: takes a Copernicus-family endpoint plus an opaque request, retrieves the
+ * - **Datastore** (YAML): takes a Copernicus-family endpoint plus an opaque request, retrieves the
  * data through a local cache manager, then reads it. The only one that touches the network. Selected from
  * YAML by providing `endpoint`, `dataset` and `inputsFile`.
  *

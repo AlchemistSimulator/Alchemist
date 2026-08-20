@@ -24,6 +24,8 @@ class TestGridReading : StringSpec({
 
     val tempDir: Path = Files.createTempDirectory("netcdf-grid-reading-test")
 
+    val gribFileName = "fc.grib"
+
     /**
      * Directory containing a real, manually downloaded GRIB fixture.
      * The grib is from the "reanalysis-era5-single-levels" dataset.
@@ -252,11 +254,11 @@ class TestGridReading : StringSpec({
     // GRIB reading tests
     "listDataFiles should find the real GRIB fixture and ignore index files" {
         val files = listDataFiles(realGribsDir)
-        files.map { it.fileName.toString() } shouldContain "fc.grib"
+        files.map { it.fileName.toString() } shouldContain gribFileName
     }
 
     "readFileAxes should not fail on a GRIB file" {
-        val file = realGribsDir.resolve("fc.grib")
+        val file = realGribsDir.resolve(gribFileName)
         val axes = axesOf(file)
         axes.latitudes.size shouldBeGreaterThan 0
         axes.longitudes.size shouldBeGreaterThan 0
@@ -264,7 +266,7 @@ class TestGridReading : StringSpec({
     }
 
     "the GridReading pipeline should not fail a GRIB file" {
-        val file = realGribsDir.resolve("fc.grib")
+        val file = realGribsDir.resolve(gribFileName)
         openNetcdfDataset(file).use { ds ->
             val axes = readFileAxes(ds, null, file)
             val nLat = axes.latitudes.size

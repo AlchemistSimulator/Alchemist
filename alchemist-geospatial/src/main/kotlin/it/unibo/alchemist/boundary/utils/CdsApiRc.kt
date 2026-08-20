@@ -14,10 +14,11 @@ import java.nio.file.Path
 
 /**
  * Reads **only the token** from a `.cdsapirc` file (the format used by ECMWF's official client,
- * with `url:` and `key:` lines) See [how-to-api](https://cds.climate.copernicus.eu/how-to-api).
+ * with `url:` and `key:` lines).
+ * See [how-to-api](https://cds.climate.copernicus.eu/how-to-api).
  *
- * Only `key` is read, because the base URL is a layer parameter
- * (`endpoint`): a single `.cdsapirc` has one `url` and cannot serve two data stores (CDS and EWDS),
+ * Only `key` is read, because the base URL is a layer parameter: a single `.cdsapirc` has one `url`
+ * and cannot serve two different data stores (e.g. CDS and EWDS),
  * whereas the **same token** (unified ECMWF identity) is valid on both.
  *
  * **Note**: The key format is not checked, as there is no guarantee that it will not change in the future.

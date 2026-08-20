@@ -97,7 +97,6 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
      * @param map the map, **shared** across all files in [directory].
      * @param axes the schema of the file currently being read.
      * @param directory the directory of the file (used for error messages).
-     * @throws IllegalArgumentException if a timestamp already present in [map] is found again.
      */
     private fun readTimestepsFrom(map: TreeMap<Instant, RasterGrid>, axes: FileAxes, directory: Path) {
         val nLat = axes.latitudes.size
@@ -113,7 +112,7 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
             } else {
                 logger.warn(
                     "Two different files in $directory share the same real-world instant ($instant)." +
-                        "Ignoring the last one.",
+                        "Ignoring the instant of the last one.",
                 )
             }
         }

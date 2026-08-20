@@ -17,9 +17,8 @@ import kotlin.time.Instant
  *
  * [instants] and [grid] are aligned: the i-th instant is the real-world timestamp of the
  * slice returned by `grid(i)`. [instants] is guaranteed to be strictly ascending with no
- * duplicates. [instants] exposes [java.time.Instant] so that callers can convert
- * real-world timestamps to simulation time once at construction; [grid] is index-based
- * because temporal interpolation operates on adjacent indices, not timestamps directly.
+ * duplicates. [instants] exposes [Instant] so that callers can convert
+ * real-world timestamps to simulation time once at construction.
  */
 interface GridSnapshots : Serializable {
     /**

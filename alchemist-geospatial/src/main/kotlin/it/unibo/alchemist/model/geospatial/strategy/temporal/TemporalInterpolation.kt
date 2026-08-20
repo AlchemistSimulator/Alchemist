@@ -19,8 +19,8 @@ import java.io.Serializable
 fun interface TemporalInterpolation : Serializable {
 
     /**
-     * @param valueBefore value at the slice at or immediately before the current time.
-     * @param valueAfter value at the slice immediately after the current time.
+     * @param valueBefore spatially resolved value of the slice at or immediately before the current time.
+     * @param valueAfter spatially resolved value of the slice immediately after the current time.
      * @param weight normalized position in `[0.0, 1.0]`: `0.0` coincides with [valueBefore], `1.0` with [valueAfter].
      * @return the interpolated value.
      */

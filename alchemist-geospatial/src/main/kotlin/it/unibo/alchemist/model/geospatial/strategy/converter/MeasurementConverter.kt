@@ -15,7 +15,7 @@ import java.io.Serializable
  * Converts a raw `Double` value read from a GRIB / NetCDF file, into a value of type [T].
  *
  * Implementations of this interface must handle the conversion logic,
- * taking into account that any missing/fill value is encoded as [Double.NaN].
+ * taking into account that any missing/fill value is represented by a [Double.NaN].
  *
  * @param T the data type resulting from the conversion.
  */

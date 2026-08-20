@@ -30,8 +30,8 @@ internal object CopernicusInputs {
     /**
      * Parses [path] as a JSON object into the request map.
      *
-     * JSON objects become nested [Map]s, JSON arrays become [List]s preserving order (list order is
-     * semantic for the datastore API, e.g. `area: [N, W, S, E]`).
+     * JSON objects become nested [Map]s, JSON arrays become [List]s preserving order (since list order is
+     * semantic for the datastore API).
      *
      * @param path path to the JSON file (already resolved).
      * @return the parsed request map.

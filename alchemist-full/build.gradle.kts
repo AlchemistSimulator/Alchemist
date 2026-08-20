@@ -82,6 +82,8 @@ tasks.withType<ShadowJar>().configureEach {
     isZip64 = true
     mergeServiceFiles()
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    // EMF's plugin.properties must be merged if there are multiple entries
+    transform<AppendingTransformer> { resource = "plugin.properties" }
     destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })
     // EMF's plugin.properties must be merged if there are multiple entries
     transform<AppendingTransformer> { resource = "plugin.properties" }

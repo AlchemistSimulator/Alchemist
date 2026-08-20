@@ -14,12 +14,52 @@ import it.unibo.alchemist.model.observation.Observable
 import java.io.Serializable
 
 /**
- * A time-distributed entity with an execution strategy.
+ * A time-distributed entity whose absolute occurrence time is owned by the entity itself.
+ *
+ * The engine initializes an actionable before scheduling it, indexes [nextOccurrence], and subscribes to that
+ * observable without replaying its current value. After the scheduler selects the occurrence, the engine may call
+ * [execute] and always calls [updateAfterFiring] to consume it. Reactive invalidation between occurrences is owned
+ * by the implementation and is communicated to the engine only by emitting a new [nextOccurrence].
  */
 sealed interface Actionable<T> :
     Comparable<Actionable<T>>,
     Serializable,
     Disposable {
+
+    /**
+     *  The list of [Action]s of the [Reaction].
+     *  Please be careful when you modify this list.
+     */
+    var actions: List<Action<T>>
+
+    /**
+     * The list of [Condition]s of the [Reaction].
+     * Please be careful when you modify this list.
+     */
+    var conditions: List<Condition<T>>
+
+    /**
+     * Returns the speed of this [Reaction]. It is an average number, and
+     * can potentially change during the simulation, depending on the
+     * implementation.
+     *
+     * @return the number of times this [Reaction] is triggered per time
+     * unit.
+     */
+    val rate: Double
+
+    /**
+     * The absolute [Time] of the next occurrence.
+     *
+     * This is the sole observable used by the engine for scheduling. Once the actionable has been registered, every
+     * emission requests scheduler reindexing; changing other observable state does not directly notify the engine.
+     */
+    val nextOccurrence: Observable<Time>
+
+    /**
+     * @return the [TimeDistribution] for this [Reaction]
+     */
+    val timeDistribution: TimeDistribution<T>
 
     /**
      * Observes whether the reaction can be executed. This observable emits updates
@@ -35,7 +75,9 @@ sealed interface Actionable<T> :
     fun execute()
 
     /**
-     * Activates reactive scheduling after the environment is fully initialized.
+     * Activates reactive inputs after the environment is fully initialized and establishes the first occurrence.
+     *
+     * The engine invokes this method exactly once before indexing [nextOccurrence] in its scheduler.
      *
      * @param atTime the current simulation time
      * @param environment the initialized environment
@@ -43,55 +85,13 @@ sealed interface Actionable<T> :
     fun initializationComplete(atTime: Time, environment: Environment<T, *>)
 
     /**
-     *  The list of [Action]s of the [Reaction].
-     *  Please be careful when you modify this list.
-     */
-    var actions: List<Action<T>>
-
-    /**
-     * The list of [Condition]s of the [Reaction].
-     * Please be careful when you modify this list.
-     */
-    var conditions: List<Condition<T>>
-
-    /**
-     * @return the widest context inspected by this actionable's conditions
-     */
-    val inputContext: Context
-
-    /**
-     * @return the widest context modified by this actionable's actions
-     */
-    val outputContext: Context
-
-    /**
-     * Returns the speed of this [Reaction]. It is an average number, and
-     * can potentially change during the simulation, depending on the
-     * implementation.
+     * Consumes the occurrence at [currentTime], refreshing reaction state and applying post-firing scheduling policy.
      *
-     * @return the number of times this [Reaction] is triggered per time
-     * unit.
-     */
-    val rate: Double
-
-    /**
-     * @return The global [Time] at which this reaction is scheduled to be
-     * executed
-     */
-    val nextOccurrence: Observable<Time>
-
-    /**
-     * @return the [TimeDistribution] for this [Reaction]
-     */
-    val timeDistribution: TimeDistribution<T>
-
-    /**
-     * Advances this actionable's reaction-owned scheduling state after its scheduled event fires.
+     * This transition is required even when [execute] was skipped because [canExecute] was false. It is distinct
+     * from a reactive invalidation that happens between scheduled occurrences.
      *
      * @param currentTime
-     * the current [Time] of execution. This is mandatory in
-     * order to correctly compute the time shift of an
-     * already-scheduled reaction
+     * the [Time] at which the scheduled occurrence fired
      */
-    fun update(currentTime: Time)
+    fun updateAfterFiring(currentTime: Time)
 }

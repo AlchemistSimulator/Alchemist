@@ -40,15 +40,15 @@ The world of Alchemist is composed of the following entities:
     * Any event that can change the status of the *{{ anchor('environment', 'Environment') }}*
     * Each *node* has a possibly empty set of *reactions*
     * Each reaction is defined by a possibly empty list of *conditions*, one or more *actions* and a *{{ anchor('time distribution', 'TimeDistribution') }}*
-    * The frequency at which it happens depends on:
-        1. A static "rate" parameter
-        2. The value of each *condition*
-        3. A "rate equation", that combines the static rate and the value of conditions, giving back an "instantaneous rate"
-        4. A *time distribution*
+    * The reaction owns its absolute, observable next-occurrence time
+    * A *time distribution* generates delay samples; the reaction decides how samples and reactive model changes
+      affect its next occurrence
+    * [Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/) explains reactive
+      invalidation, scheduling transitions, specialized policies, and the boundary with the simulation engine
 * **Condition**
-    * A function that takes the current *environment* as input and outputs a boolean and a number
+    * A reactive prerequisite that exposes whether its owning reaction can execute
     * If the *condition* does not hold (i.e. its current output is ``false``), the *reaction* to which it is associated cannot run
-    * The outputed number may or may not influence the *reaction* speed (i.e. the average number of times the *reaction* "happens" per time unit), depending on the *reaction* and its *time distribution*.
+    * Some specialized reaction families also consume a condition's propensity contribution when deriving their rate
 * **Action**
     * Models a change in the environment.
 

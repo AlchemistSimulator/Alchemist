@@ -57,7 +57,7 @@ open class Engine<T, P : Position<out P>>(
             nextEvent.conditions.forEach { it.reactionReady() }
             nextEvent.execute()
         }
-        nextEvent.update(time)
+        nextEvent.updateAfterFiring(time)
 
         monitors.forEach { it.stepDone(environment, nextEvent, time, step) }
         if (environment.isTerminated) {

@@ -9,8 +9,10 @@ summary = "Define data layers that live in the environment"
 
 It is possible to define overlays (layers) of data that can be sensed everywhere in the environment.
 Layers can be used to model physical properties, such as pollution, light, temperature, and so on.
-As opposed to nodes' contents, layers have no dependency optimization.
-This implies that reactions that read values from layers should have special care in defining their `context` appropriately.
+Layers are static spatial functions and do not emit reactive updates.
+If custom scheduling state depends on a changing external value, the reaction must observe that value explicitly and
+publish any resulting scheduling change through its `nextOccurrence`, as described in
+[Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/).
 
 Layers are created with the [`type/parameter` syntax](/reference/yaml/#arbitrary-class-loading-system),
 as in this example:

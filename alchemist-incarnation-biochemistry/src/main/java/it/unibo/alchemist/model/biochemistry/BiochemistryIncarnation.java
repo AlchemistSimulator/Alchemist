@@ -92,15 +92,22 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final Node<Double> node,
         final TimeDistribution<Double> timeDistribution,
         final @Nullable Object parameter
-        ) {
-        return new BiochemicalReactionBuilder<>(this, node, environment)
-            .randomGenerator(randomGenerator)
-            .timeDistribution(timeDistribution)
-            .program(
-                requireNonNull(parameter, "Biochemical reactions require String a parameter to get built")
-                    .toString()
-            )
-            .build();
+    ) {
+        if (timeDistribution instanceof final ExponentialTime<Double> exponentialDistribution) {
+            return new BiochemicalReactionBuilder<>(this, node, environment)
+                .randomGenerator(randomGenerator)
+                .timeDistribution(exponentialDistribution)
+                .program(
+                    requireNonNull(parameter, "Biochemical reactions require String a parameter to get built")
+                        .toString()
+                )
+                .build();
+        }
+        throw new IllegalArgumentException(
+            "Invalid time distribution: " + timeDistribution
+                + "(" + timeDistribution.getClass().getSimpleName() + "). Required: "
+                + ExponentialTime.class.getSimpleName()
+        );
     }
 
     @Override

@@ -13,15 +13,15 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.timedistributions.AnyRealDistribution
 
 /**
- * A reaction whose rate is the product of its time distribution rate and all condition propensity contributions.
+ * A reaction whose rate is the product of its exponential time-distribution rate and all condition propensity
+ * contributions. Construction rejects non-memoryless distributions.
  *
  * @param T concentration type
  */
 open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
-    AbstractReaction<T>(node, timeDistribution) {
+    AbstractMarkovianReaction<T>(node, timeDistribution) {
 
     private var currentRate = 0.0
 
@@ -32,14 +32,15 @@ open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution
 
     override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
         if (!isNewlyInstantiatedProgram) {
-            update(atTime)
+            refreshReactionState(atTime, environment)
+            updateSchedulingAfterFiring(atTime)
         }
     }
 
     /**
      * Subclasses overriding this method must invoke the base implementation to refresh [rate].
      */
-    override fun updateInternalStatus(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) {
+    override fun refreshReactionState(currentTime: Time, environment: Environment<T, *>) {
         currentRate = super.rate
         for (condition in conditions) {
             val contribution = condition.getPropensityContribution().current
@@ -49,19 +50,6 @@ open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution
                 break
             }
             currentRate *= contribution
-        }
-    }
-
-    override fun updateScheduling(currentTime: Time, hasBeenExecuted: Boolean) {
-        val distribution = timeDistribution
-        if (distribution is AnyRealDistribution<*>) {
-            when {
-                rate == 0.0 -> setNextOccurrence(Time.INFINITY)
-                hasBeenExecuted || nextOccurrence.current.isInfinite || currentTime < nextOccurrence.current ->
-                    scheduleSampleAfter(maxOf(currentTime, distribution.startTime))
-            }
-        } else {
-            super.updateScheduling(currentTime, hasBeenExecuted)
         }
     }
 }

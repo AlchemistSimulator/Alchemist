@@ -12,7 +12,6 @@ package it.unibo.alchemist.model.reactions
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
@@ -42,23 +41,12 @@ abstract class AbstractReaction<T>(
 ) : Reaction<T> {
 
     override var actions: List<Action<T>> = emptyList()
-        set(value) {
-            field = value
-            outputContext = value.fold(Context.LOCAL) { context, action ->
-                Context.getWider(context, action.getContext())
-            }
-        }
 
     override var conditions: List<Condition<T>> = emptyList()
         set(value) {
             field = value
-            inputContext =
-                value.fold(Context.LOCAL) { context, condition ->
-                    Context.getWider(context, condition.getContext())
-                }
             canExecute.dispose()
-            canExecute = value
-                .map(Condition<T>::isValid)
+            canExecute = value.map(Condition<T>::isValid)
                 .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
                 ?: MutableObservable.observe(true)
             initializedEnvironment?.let {
@@ -66,12 +54,6 @@ abstract class AbstractReaction<T>(
                 reactToModelUpdate(it)
             }
         }
-
-    final override var inputContext: Context = Context.LOCAL
-        private set
-
-    final override var outputContext: Context = Context.LOCAL
-        private set
 
     private var canExecute: Observable<Boolean> = MutableObservable.observe(true)
 
@@ -90,8 +72,6 @@ abstract class AbstractReaction<T>(
     private val mutableNextOccurrence = MutableObservable.observe(timeDistribution.startTime, false)
 
     private val observableNextOccurrence = mutableNextOccurrence.map { it }
-
-    private var previousRate: Double? = null
 
     override val nextOccurrence: Observable<Time> get() = observableNextOccurrence
 
@@ -117,6 +97,7 @@ abstract class AbstractReaction<T>(
      */
     protected val reactionName: String get() = javaClass.simpleName
 
+    /** Initializes reactive inputs and establishes the first scheduled occurrence. */
     final override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {
         check(!disposed) { "A disposed reaction cannot be initialized again: $this" }
         lastKnownTime = atTime
@@ -125,7 +106,7 @@ abstract class AbstractReaction<T>(
         onInitializationComplete(atTime, environment)
         newlyInstantiatedAt?.let { cloneTime ->
             val schedulingTime = maxOf(cloneTime, atTime)
-            updateInternalStatus(schedulingTime, false, environment)
+            refreshReactionState(schedulingTime, environment)
             initializeNewProgramScheduling(schedulingTime)
             newlyInstantiatedAt = null
         }
@@ -164,7 +145,8 @@ abstract class AbstractReaction<T>(
         clone.newlyInstantiatedAt = currentTime
     }
 
-    final override fun update(currentTime: Time) {
+    /** Refreshes reaction state after firing, then applies firing scheduling policy. */
+    final override fun updateAfterFiring(currentTime: Time) {
         if (disposed) {
             return
         }
@@ -172,36 +154,17 @@ abstract class AbstractReaction<T>(
             "Reaction $this was advanced before initialization"
         }
         lastKnownTime = currentTime
-        updateInternalStatus(currentTime, true, environment)
-        updateScheduling(currentTime, true)
+        refreshReactionState(currentTime, environment)
+        updateSchedulingAfterFiring(currentTime)
     }
 
     /**
      * Recomputes reaction-specific state before its time distribution is updated.
      *
      * @param currentTime current simulation time
-     * @param hasBeenExecuted whether this reaction's scheduled event has fired
      * @param environment current environment
      */
-    protected abstract fun updateInternalStatus(
-        currentTime: Time,
-        hasBeenExecuted: Boolean,
-        environment: Environment<T, *>,
-    )
-
-    /**
-     * Overrides the automatically inferred input context.
-     */
-    protected fun setInputContext(context: Context) {
-        inputContext = context
-    }
-
-    /**
-     * Overrides the automatically inferred output context.
-     */
-    protected fun setOutputContext(context: Context) {
-        outputContext = context
-    }
+    protected open fun refreshReactionState(currentTime: Time, environment: Environment<T, *>) = Unit
 
     override fun dispose() {
         if (!disposed) {
@@ -245,25 +208,31 @@ abstract class AbstractReaction<T>(
 
     private fun reactToModelUpdate(environment: Environment<T, *>) {
         val currentTime = environment.simulationOrNull?.time ?: lastKnownTime
-        updateInternalStatus(currentTime, false, environment)
-        updateScheduling(currentTime, false)
+        refreshReactionState(currentTime, environment)
+        updateSchedulingAfterInvalidation(currentTime)
+    }
+
+    /** Applies scheduling policy after a reactive invalidation without firing the reaction. */
+    protected open fun updateSchedulingAfterInvalidation(currentTime: Time) {
+        val schedulingTime = maxOf(currentTime, timeDistribution.startTime)
+        if (timeDistribution !is Trigger<*>) {
+            setNextOccurrence(schedulingTime.plus(validatedSample()))
+        }
     }
 
     /**
-     * Applies this reaction's scheduling policy after execution or reactive invalidation.
+     * Applies this reaction's scheduling policy after firing.
      *
-     * The default policy draws a new delay after execution. Exponential generators additionally preserve their
-     * sampled exponential variate when the reaction rate changes, rescaling the remaining delay to the new rate.
+     * The default policy draws a new delay after each firing and invalidation. A [Trigger] is instead a one-shot
+     * absolute occurrence: firing consumes it, while invalidation leaves it unchanged.
      *
      * @param currentTime current simulation time
-     * @param hasBeenExecuted whether this reaction's scheduled event fired
      */
-    protected open fun updateScheduling(currentTime: Time, hasBeenExecuted: Boolean) {
+    protected open fun updateSchedulingAfterFiring(currentTime: Time) {
         val schedulingTime = maxOf(currentTime, timeDistribution.startTime)
-        when (val distribution = timeDistribution) {
-            is Trigger<*> -> if (hasBeenExecuted) setNextOccurrence(Time.INFINITY)
-            is ExponentialTime<*> -> updateExponentialScheduling(distribution, schedulingTime, hasBeenExecuted)
-            else -> if (hasBeenExecuted) scheduleSampleAfter(schedulingTime)
+        when (timeDistribution) {
+            is Trigger<*> -> setNextOccurrence(Time.INFINITY)
+            else -> setNextOccurrence(schedulingTime.plus(validatedSample()))
         }
     }
 
@@ -272,13 +241,8 @@ abstract class AbstractReaction<T>(
         if (timeDistribution is Trigger<*>) {
             setNextOccurrence(maxOf(currentTime, timeDistribution.startTime))
         } else {
-            updateScheduling(currentTime, true)
+            updateSchedulingAfterFiring(currentTime)
         }
-    }
-
-    /** Schedules a newly sampled delay after [currentTime]. */
-    protected fun scheduleSampleAfter(currentTime: Time) {
-        setNextOccurrence(currentTime.plus(validatedSample()))
     }
 
     /** Changes the reaction-owned absolute occurrence time. */
@@ -286,32 +250,7 @@ abstract class AbstractReaction<T>(
         mutableNextOccurrence.current = nextOccurrence
     }
 
-    private fun updateExponentialScheduling(
-        distribution: ExponentialTime<*>,
-        currentTime: Time,
-        hasBeenExecuted: Boolean,
-    ) {
-        val newRate = rate
-        val oldRate = previousRate
-        check(!newRate.isNaN() && oldRate?.isNaN() != true) { "Reaction propensity cannot be NaN" }
-        when {
-            newRate == 0.0 -> setNextOccurrence(Time.INFINITY)
-            hasBeenExecuted || oldRate == null || oldRate == 0.0 -> {
-                val baseRate = distribution.lambda
-                val sampledDelay = validatedSample().let { sample ->
-                    if (baseRate == newRate) sample else sample.times(baseRate / newRate)
-                }
-                setNextOccurrence(currentTime.plus(sampledDelay))
-            }
-            oldRate != newRate -> {
-                val remaining = nextOccurrence.current.minus(currentTime)
-                setNextOccurrence(currentTime.plus(remaining.times(oldRate / newRate)))
-            }
-        }
-        previousRate = newRate
-    }
-
-    private fun validatedSample(): Time = timeDistribution.sample().also { sample ->
+    protected fun validatedSample(): Time = timeDistribution.sample().also { sample ->
         check(sample.isFinite && sample >= Time.ZERO) {
             "$timeDistribution generated an invalid delay: $sample"
         }

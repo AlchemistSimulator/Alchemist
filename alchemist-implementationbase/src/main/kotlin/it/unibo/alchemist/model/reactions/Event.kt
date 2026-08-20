@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.reactions
 
-import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
@@ -22,9 +21,6 @@ import it.unibo.alchemist.model.TimeDistribution
  * @param timeDistribution delay generator
  */
 class Event<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) : AbstractReaction<T>(node, timeDistribution) {
-
-    override fun updateInternalStatus(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) =
-        Unit
 
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Event<T> =
         makeClone(node, currentTime) { freshGenerator -> Event(node, freshGenerator) }

@@ -11,24 +11,17 @@ package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Reaction
 
 /**
  * A surrogate class for [Reaction].
  *
- * @param inputContext the input context of the reaction
- * @param outputContext the output context of the reaction
  * @property node the [NodeSurrogate] in which this [ReactionSurrogate] executes
  * @property origin the original Reaction wrapped by this surrogate
- * @property outputContext
- * @property inputContext
  */
 @GraphQLDescription("A generic reaction")
 data class ReactionSurrogate<T>(
     @param:GraphQLIgnore override val origin: Reaction<T>,
-    val inputContext: Context = origin.inputContext,
-    val outputContext: Context = origin.outputContext,
     val node: NodeSurrogate<T> = origin.node.toGraphQLNodeSurrogate(),
 ) : GraphQLSurrogate<Reaction<T>>(origin)
 

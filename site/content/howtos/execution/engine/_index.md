@@ -11,6 +11,11 @@ tags = ["configuration", "engine", "reactive"]
 Alchemist ships a single reactive simulation engine. It is selected by default, so normal simulations require no
 engine configuration.
 
+[Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/) describes how reactions own their
+observable occurrence times and how initialization, firing, invalidation, and removal differ.
+The [simulation-engine explanation](/explanation/engine/) describes how the engine consumes those scheduling
+decisions.
+
 The former parallel `BatchEngine`, its fixed-size and epsilon schedulers, and output-replay strategies have been
 removed. A configuration that requests `BatchEngine` fails with a compatibility error instead of silently changing
 execution semantics.

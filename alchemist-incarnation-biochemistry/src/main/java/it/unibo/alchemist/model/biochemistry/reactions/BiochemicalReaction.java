@@ -56,7 +56,7 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
      * @param node
      *            node
      * @param timeDistribution
-     *            time distribution
+     *            memoryless exponential time distribution; other distributions are rejected
      * @param environment
      *            the environment
      * @param randomGenerator
@@ -83,9 +83,8 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
     }
 
     @Override
-    protected void updateInternalStatus(
+    protected void refreshReactionState(
         @Nonnull final Time currentTime,
-        final boolean hasBeenExecuted,
         @Nonnull final Environment<Double, ?> currentEnvironment
     ) {
         if (neighborConditionsPresent) {
@@ -101,7 +100,7 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
                         "At least a neighbor condition is present, but the mapping was empty"
                 ));
         }
-        super.updateInternalStatus(currentTime, hasBeenExecuted, currentEnvironment);
+        super.refreshReactionState(currentTime, currentEnvironment);
     }
 
     @Override

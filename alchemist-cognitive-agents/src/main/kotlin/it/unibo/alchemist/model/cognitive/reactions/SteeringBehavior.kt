@@ -45,9 +45,6 @@ open class SteeringBehavior<T>(
         SteeringBehavior(environment, node.pedestrianProperty, it, steerStrategy)
     }
 
-    override fun updateInternalStatus(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) =
-        Unit
-
     override fun execute() {
         (actions - steerActions().toSet()).forEach { it.execute() }
         CognitiveAgentCombineSteering(environment, this, pedestrian, steerActions(), steerStrategy).execute()

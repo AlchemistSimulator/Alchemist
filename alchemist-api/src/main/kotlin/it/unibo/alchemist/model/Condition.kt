@@ -30,7 +30,10 @@ interface Condition<T> : Disposable {
     fun getContext(): Context = Context.LOCAL
 
     /**
-     * Observable model values which may affect this condition.
+     * Observable model values which may affect this condition or its propensity contribution.
+     *
+     * Reaction implementations may observe these values to refresh their state and scheduling policy. The engine
+     * does not use them to build a dependency graph and observes only the owning reaction's next occurrence.
      */
     fun getDependencies(): ObservableSet<out Observable<*>>
 
@@ -40,7 +43,7 @@ interface Condition<T> : Disposable {
     fun getNode(): Node<T>
 
     /**
-     * The current contribution used by legacy propensity-aware reactions.
+     * The current contribution used by propensity-aware reaction scheduling policies.
      */
     fun getPropensityContribution(): Observable<Double>
 

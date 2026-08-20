@@ -62,8 +62,6 @@ class NodeSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<P> {
             }
         }
         fun <T> checkReactionSurrogate(reaction: Reaction<T>, reactionSurrogate: ReactionSurrogate<T>) {
-            assertEquals(reaction.inputContext, reactionSurrogate.inputContext, "Input context mismatch")
-            assertEquals(reaction.outputContext, reactionSurrogate.outputContext, "Output context mismatch")
             assertEquals(reaction.node.toGraphQLNodeSurrogate(), reactionSurrogate.node, "Node mapping mismatch")
         }
     }

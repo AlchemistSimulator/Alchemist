@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -19,12 +19,14 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.actions.BrownianMove;
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.layers.StepLayer;
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.reactions.Event;
 import it.unibo.alchemist.model.timedistributions.DiracComb;
 import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.test.AlchemistTesting;
@@ -35,6 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
 import java.io.Serial;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -59,13 +62,9 @@ class TestBiomolLayer {
             "[B in env] --> [A]"
         );
         cellNode.addReaction(underTest);
-        cellNode.addReaction(INCARNATION.createReaction(
-            rand,
-            environment,
-            cellNode,
-            new DiracComb(100d),
-            "[] --> [it.unibo.alchemist.model.actions.BrownianMove(10)]"
-        ));
+        final Reaction<Double> movement = new Event<>(cellNode, new DiracComb<>(100d));
+        movement.setActions(List.of(new BrownianMove<>(environment, cellNode, rand, 10)));
+        cellNode.addReaction(movement);
         cellNode.setConcentration(a, 0d);
         environment.setLinkingRule(
                 new ConnectWithinDistance<>(2)

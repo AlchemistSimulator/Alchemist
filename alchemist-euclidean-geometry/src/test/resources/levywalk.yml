@@ -11,7 +11,7 @@ deployments:
         parameters: [1]
     programs:
       - time-distribution: 1
-        type: ChemicalReaction
+        type: Event
         actions:
           - type: LevyWalk
             parameters: [1.4]

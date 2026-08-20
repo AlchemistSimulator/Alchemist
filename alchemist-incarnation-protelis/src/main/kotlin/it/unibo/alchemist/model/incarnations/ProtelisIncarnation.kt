@@ -35,6 +35,7 @@ import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.protelis.actions.SendToNeighbor
 import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
+import it.unibo.alchemist.model.reactions.AbstractReaction
 import it.unibo.alchemist.model.reactions.ChemicalReaction
 import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.timedistributions.DiracComb
@@ -148,27 +149,26 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             /*
              * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
              */
-            val alreadyDone =
-                node.reactions
-                    .asSequence()
-                    .flatMap { r: Reaction<Any> -> r.conditions.asSequence() }
-                    .filter { c: Condition<Any> -> c is ComputationalRoundComplete }
-                    .map { c: Condition<Any> -> (c as ComputationalRoundComplete).program }
-                    .toSet()
+            val alreadyDone = node.reactions
+                .asSequence()
+                .flatMap { r: Reaction<Any> -> r.conditions.asSequence() }
+                .filter { c: Condition<Any> -> c is ComputationalRoundComplete }
+                .map { c: Condition<Any> -> (c as ComputationalRoundComplete).program }
+                .toSet()
             val pList: List<RunProtelisProgram<*>> = getIncomplete(node, alreadyDone)
             check(!pList.isEmpty()) {
                 "There is no program requiring a " +
-                    ComputationalRoundComplete::class.java.getSimpleName() +
+                    ComputationalRoundComplete::class.java.simpleName +
                     " condition"
             }
             check(pList.size <= 1) {
-                "There are too many programs requiring a " + ComputationalRoundComplete::class.java.getSimpleName() +
+                "There are too many programs requiring a " + ComputationalRoundComplete::class.java.simpleName +
                     " condition: " + pList
             }
             return ComputationalRoundComplete(node, pList[0])
         }
         throw IllegalArgumentException(
-            "The provided actionable should be an instance of " + Reaction::class.java.getSimpleName(),
+            "The provided actionable should be an instance of " + Reaction::class.java.simpleName,
         )
     }
 
@@ -191,15 +191,11 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
     ): Reaction<Any> {
         val parameterString = parameter?.toString()
         val isSend = parameterString.equals("send", ignoreCase = true)
-        val result: Reaction<Any> =
-            if (isSend) {
-                ChemicalReaction(
-                    node,
-                    timeDistribution,
-                )
-            } else {
-                Event(node, timeDistribution)
-            }
+        val result: Reaction<Any> = when {
+            !isSend -> Event(node, timeDistribution)
+            timeDistribution is ExponentialTime -> ChemicalReaction(node, timeDistribution)
+            else -> ProtelisScheduledReaction(node, timeDistribution)
+        }
         parameter?.let {
             result.actions =
                 listOf(createAction(randomGenerator, environment, node, result, it))
@@ -443,4 +439,26 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             .filter { !alreadyDone.contains(it) }
             .toList()
     }
+}
+
+/**
+ * Preserves the independent program cadence when a non-memoryless Protelis send condition changes.
+ *
+ * A skipped occurrence is still advanced by the engine, as it was before scheduling became reaction-owned. Model
+ * invalidation only changes whether the send can execute; it must not restart a deterministic or otherwise stateful
+ * time distribution.
+ */
+private class ProtelisScheduledReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
+    AbstractReaction<T>(node, timeDistribution) {
+
+    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ProtelisScheduledReaction<T> =
+        makeClone(node, currentTime) { freshGenerator -> ProtelisScheduledReaction(node, freshGenerator) }
+
+    override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
+        if (!isNewlyInstantiatedProgram) {
+            updateSchedulingAfterFiring(atTime)
+        }
+    }
+
+    override fun updateSchedulingAfterInvalidation(currentTime: Time) = Unit
 }

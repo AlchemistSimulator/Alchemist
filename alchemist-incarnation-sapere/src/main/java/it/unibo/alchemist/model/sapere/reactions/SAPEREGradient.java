@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -138,8 +138,6 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             final TimeDistribution<List<ILsaMolecule>> timeDistribution
     ) {
         super(node, timeDistribution);
-        setInputContext(Context.NEIGHBORHOOD);
-        setOutputContext(Context.LOCAL);
         gradient = Objects.requireNonNull(gradientTemplate);
         source = Objects.requireNonNull(sourceTemplate);
         context = contextTemplate;
@@ -313,7 +311,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             /*
              * First run
              */
-            updateInternalStatus(Time.ZERO, true, environment);
+            refreshReactionState(Time.ZERO, environment);
         }
         canRun.setCurrent(false);
         final Map<HashString, ITreeNode<?>> matches = new HashMap<>();
@@ -404,9 +402,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     }
 
     @Override
-    protected void updateInternalStatus(
+    protected void refreshReactionState(
         @Nonnull final Time currentTime,
-        final boolean hasBeenExecuted,
         @Nonnull final Environment<List<ILsaMolecule>, ?> currentEnvironment
     ) {
         /*

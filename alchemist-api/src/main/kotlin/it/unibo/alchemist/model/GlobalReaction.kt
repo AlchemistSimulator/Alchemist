@@ -9,7 +9,5 @@
 
 package it.unibo.alchemist.model
 
-/**
- * A reaction with a GLOBAL input and output Context.
- */
+/** An environment-level actionable that is not owned by a node. */
 interface GlobalReaction<T> : Actionable<T>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -44,6 +44,7 @@ import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 import it.unibo.alchemist.model.geometry.Vector;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -150,12 +151,12 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
     }
 
     /**
-     * Set the time distribution to the passed object.
+     * Set the memoryless exponential time distribution to the passed object.
      *
-     * @param td the time distribution
+     * @param td the exponential time distribution; non-memoryless distributions are rejected
      * @return .
      */
-    public BiochemicalReactionBuilder<P> timeDistribution(final TimeDistribution<Double> td) {
+    public BiochemicalReactionBuilder<P> timeDistribution(final ExponentialTime<Double> td) {
         time = td;
         return this;
     }
@@ -227,9 +228,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 if (lctx != null) {
                     // if null, there are no parameters, so params must be an empty List (as it is, actually)
                     lctx.arg().forEach(arg ->
-                            params.add((arg.decimal() != null)
-                                    ? Double.parseDouble(arg.decimal().getText())
-                                    : arg.LITERAL().getText())
+                        params.add((arg.decimal() != null)
+                            ? Double.parseDouble(arg.decimal().getText())
+                            : arg.LITERAL().getText())
                     );
                 }
                 return factory.build(clazz, params).getCreatedObjectOrThrowException();

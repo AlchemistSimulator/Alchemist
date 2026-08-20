@@ -77,12 +77,6 @@ private class EmittingReaction(
 
     fun emit(vararg times: Time) = times.forEach(::setNextOccurrence)
 
-    override fun updateInternalStatus(
-        currentTime: Time,
-        hasBeenExecuted: Boolean,
-        environment: Environment<Double, *>,
-    ) = Unit
-
     override fun cloneOnNewNode(node: Node<Double>, currentTime: Time): Reaction<Double> = error("Not needed in test")
 }
 

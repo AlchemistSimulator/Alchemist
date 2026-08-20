@@ -27,7 +27,11 @@ import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
+import it.unibo.alchemist.model.sapere.timedistributions.SAPEREExponentialTime;
 import it.unibo.alchemist.model.sapere.timedistributions.SAPERETimeDistribution;
+import it.unibo.alchemist.model.timedistributions.AbstractDistribution;
+import it.unibo.alchemist.model.timedistributions.ExponentialTime;
+import it.unibo.alchemist.model.timedistributions.Trigger;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 
@@ -221,6 +225,17 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         return !Objects.requireNonNull(nodePositionBeforeExecution).equals(environment.getCurrentPosition(getNode()));
     }
 
+    @Override
+    protected void onInitializationComplete(
+        @Nonnull final Time atTime,
+        @Nonnull final Environment<List<ILsaMolecule>, ?> currentEnvironment
+    ) {
+        if (!isNewlyInstantiatedProgram()) {
+            refreshReactionState(atTime, currentEnvironment);
+            initializeNewProgramScheduling(atTime);
+        }
+    }
+
     /**
      * @return the local {@link Node} as {@link ILsaNode}
      */
@@ -229,9 +244,8 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    protected void updateInternalStatus(
+    protected void refreshReactionState(
         @Nonnull final Time currentTime,
-        final boolean hasBeenExecuted,
         @Nonnull final Environment<List<ILsaMolecule>, ?> currentEnvironment
     ) {
         if (emptyExecution) {
@@ -275,6 +289,9 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
                     for (final Map<HashString, ITreeNode<?>> match : possibleMatches) {
                         timeDistribution.setMatches(match);
                         final double p = timeDistribution.getRate();
+                        if (Double.isNaN(p) || p < 0d) {
+                            throw new IllegalStateException("Invalid SAPERE propensity for match: " + p);
+                        }
                         propensities.add(p);
                         totalPropensity += p;
                         if (totalPropensity == Double.POSITIVE_INFINITY) {
@@ -284,6 +301,82 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
                 }
             }
         }
+    }
+
+    @Override
+    protected void updateSchedulingAfterFiring(@Nonnull final Time currentTime) {
+        if (getTimeDistribution() instanceof Trigger) {
+            super.updateSchedulingAfterFiring(currentTime);
+        } else {
+            scheduleFreshOccurrence(currentTime);
+        }
+    }
+
+    @Override
+    protected void updateSchedulingAfterInvalidation(@Nonnull final Time currentTime) {
+        if (getTimeDistribution() instanceof Trigger) {
+            super.updateSchedulingAfterInvalidation(currentTime);
+        } else {
+            scheduleFreshOccurrence(currentTime);
+        }
+    }
+
+    private void scheduleFreshOccurrence(@Nonnull final Time currentTime) {
+        final double totalRate = getRate();
+        if (totalRate == 0d) {
+            setNextOccurrence(Time.INFINITY);
+            return;
+        }
+        if (Double.isNaN(totalRate) || totalRate < 0) {
+            throw new IllegalStateException("Invalid SAPERE propensity: total=" + totalRate);
+        }
+        /*
+         * SAPERE exponential distributions evaluate their rate against the
+         * currently installed match.  Refreshing the reaction leaves the last
+         * match installed, which may have zero propensity even when the total
+         * propensity is positive.  Install a match with a positive propensity
+         * before drawing, otherwise sampling would produce infinity and the
+         * subsequent zero scaling would yield NaN.
+         */
+        if (getTimeDistribution() instanceof SAPEREExponentialTime && !numericRate()) {
+            final int positiveMatch = findPositiveMatch();
+            timeDistribution.setMatches(possibleMatches.get(positiveMatch));
+        }
+        final double generatorRate = getTimeDistribution() instanceof SAPEREExponentialTime
+            ? ((SAPEREExponentialTime) getTimeDistribution()).getRate()
+            : getTimeDistribution() instanceof ExponentialTime
+                ? ((ExponentialTime<?>) getTimeDistribution()).getLambda()
+            : totalRate;
+        if (Double.isNaN(generatorRate) || generatorRate < 0) {
+            throw new IllegalStateException("Invalid SAPERE propensity: generator=" + generatorRate + ", total=" + totalRate);
+        }
+        final double scaling = generatorRate == totalRate
+            || Double.isInfinite(generatorRate) && Double.isInfinite(totalRate) ? 1d : generatorRate / totalRate;
+        final Time sample = validatedSample();
+        final Time schedulingTime = getTimeDistribution() instanceof AbstractDistribution
+            ? currentTime.compareTo(((AbstractDistribution<?>) getTimeDistribution()).getStartTime()) < 0
+                ? ((AbstractDistribution<?>) getTimeDistribution()).getStartTime()
+                : currentTime
+            : currentTime;
+        final Time delay = sample.times(scaling);
+        if (!delay.isFinite() || delay.compareTo(Time.ZERO) < 0) {
+            throw new IllegalStateException("Invalid transformed SAPERE delay: " + delay);
+        }
+        setNextOccurrence(schedulingTime.plus(delay));
+    }
+
+    private int findPositiveMatch() {
+        for (int i = 0; i < propensities.size(); i++) {
+            if (propensities.get(i) == Double.POSITIVE_INFINITY) {
+                return i;
+            }
+        }
+        for (int i = 0; i < propensities.size(); i++) {
+            if (propensities.get(i) > 0) {
+                return i;
+            }
+        }
+        throw new IllegalStateException("Positive SAPERE propensity without a positive match");
     }
 
     private boolean numericRate() {
@@ -321,6 +414,16 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     ) {
         super.setConditions(c);
         super.setActions(a);
-        modifiesOnlyLocally = getOutputContext() == Context.LOCAL;
+        modifiesOnlyLocally = true;
+        for (final Action<List<ILsaMolecule>> action : a) {
+            if (action.getContext() != Context.LOCAL) {
+                modifiesOnlyLocally = false;
+                break;
+            }
+        }
+    }
+
+    /* package */ boolean modifiesOnlyLocally() {
+        return modifiesOnlyLocally;
     }
 }

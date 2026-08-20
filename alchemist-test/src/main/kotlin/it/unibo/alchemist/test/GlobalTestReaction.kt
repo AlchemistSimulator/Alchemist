@@ -12,7 +12,6 @@ package it.unibo.alchemist.test
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Time
@@ -29,8 +28,6 @@ import it.unibo.alchemist.model.timedistributions.WeibullTime
 class GlobalTestReaction<T>(val environment: Environment<T, *>, override val timeDistribution: TimeDistribution<T>) :
     GlobalReaction<T> {
 
-    override val inputContext: Context = Context.GLOBAL
-    override val outputContext: Context = Context.GLOBAL
     override val rate: Double get() = timeDistribution.expectedRate
     private val mutableNextOccurrence = MutableObservable.observe(timeDistribution.startTime, false)
     override val nextOccurrence: Observable<Time> = mutableNextOccurrence.map { it }
@@ -53,7 +50,7 @@ class GlobalTestReaction<T>(val environment: Environment<T, *>, override val tim
 
     override fun execute() = actions.forEach(Action<T>::execute)
 
-    override fun update(currentTime: Time) {
+    override fun updateAfterFiring(currentTime: Time) {
         val sample = timeDistribution.sample()
         check(sample.isFinite && sample >= Time.ZERO) { "$timeDistribution generated an invalid delay: $sample" }
         mutableNextOccurrence.current = currentTime.plus(sample)

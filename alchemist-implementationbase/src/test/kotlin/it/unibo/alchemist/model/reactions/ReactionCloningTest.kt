@@ -33,6 +33,7 @@ import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import org.apache.commons.math3.distribution.DiracDeltaDistribution
+import org.apache.commons.math3.random.RandomGenerator
 import org.apache.commons.math3.random.Well19937c
 import org.junit.jupiter.api.Test
 
@@ -45,7 +46,7 @@ class ReactionCloningTest {
         val sourceDistribution = DiracComb<Any>(0.5)
         val source = Event(mockk<Node<Any>>(), sourceDistribution)
         source.initializationComplete(Time.ZERO, environment)
-        source.update(DoubleTime(3.0))
+        source.updateAfterFiring(DoubleTime(3.0))
 
         val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
         clone.initializationComplete(DoubleTime(10.0), environment)
@@ -81,11 +82,11 @@ class ReactionCloningTest {
         val sourceDistribution = SequenceDistribution(1.0, 100.0)
         val source = Event(mockk(), sourceDistribution)
         source.initializationComplete(Time.ZERO, environment)
-        source.update(Time.ZERO)
+        source.updateAfterFiring(Time.ZERO)
 
         val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
         clone.initializationComplete(DoubleTime(10.0), environment)
-        source.update(DoubleTime(1.0))
+        source.updateAfterFiring(DoubleTime(1.0))
 
         assertNotSame(sourceDistribution, clone.timeDistribution)
         assertEquals(DoubleTime(101.0), source.nextOccurrence.current)
@@ -93,14 +94,10 @@ class ReactionCloningTest {
     }
 
     @Test
-    fun `a chemical clone draws exactly one initial occurrence`() {
-        val source = ChemicalReaction(mockk<Node<Any>>(), SequenceDistribution(3.0, 100.0))
-        source.initializationComplete(Time.ZERO, environment)
-
-        val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
-        clone.initializationComplete(DoubleTime(10.0), environment)
-
-        assertEquals(DoubleTime(13.0), clone.nextOccurrence.current)
+    fun `a chemical reaction rejects non-memoryless distributions`() {
+        assertFailsWith<IllegalArgumentException> {
+            ChemicalReaction(mockk<Node<Any>>(), SequenceDistribution(3.0, 100.0))
+        }
     }
 
     @Test
@@ -136,6 +133,32 @@ class ReactionCloningTest {
         assertNotSame(source.timeDistribution, clone.timeDistribution)
         assertIs<ExponentialTime<*>>(clone.timeDistribution)
         assertTrue(clone.nextOccurrence.current > DoubleTime(10.0))
+    }
+
+    @Test
+    fun `a chemical reaction clone draws one fresh occurrence without inheriting source state`() {
+        val node = mockk<Node<Any>>()
+        val environment = mockk<Environment<Any, *>>(relaxed = true)
+        every { environment.simulationOrNull } returns null
+        val randomGenerator = mockk<RandomGenerator>()
+        var samples = 0
+        every { randomGenerator.nextDouble() } answers {
+            samples++
+            0.5
+        }
+        val source = ChemicalReaction(node, ExponentialTime(1.0, randomGenerator))
+        source.initializationComplete(Time.ZERO, environment)
+        val sourceOccurrence = source.nextOccurrence.current
+        source.updateAfterFiring(sourceOccurrence)
+        val sourceRescheduled = source.nextOccurrence.current
+
+        val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
+        clone.initializationComplete(DoubleTime(10.0), environment)
+
+        assertEquals(3, samples)
+        assertTrue(clone.nextOccurrence.current > DoubleTime(10.0))
+        assertNotSame(source.timeDistribution, clone.timeDistribution)
+        assertTrue(sourceRescheduled != clone.nextOccurrence.current)
     }
 
     @Test

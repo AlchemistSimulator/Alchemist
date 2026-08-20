@@ -13,7 +13,6 @@ import arrow.core.getOrElse
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Time
@@ -40,8 +39,6 @@ class PhysicsUpdate<T>(
 
     constructor(environment: Dynamics2DEnvironment<T>, updateRate: Double) : this(environment, DiracComb(updateRate))
 
-    override val inputContext: Context = Context.GLOBAL
-    override val outputContext: Context = Context.GLOBAL
     override val rate: Double get() = timeDistribution.expectedRate
     private val mutableNextOccurrence = observe(timeDistribution.startTime, false)
     override val nextOccurrence: Observable<Time> = mutableNextOccurrence.map { it }
@@ -67,7 +64,7 @@ class PhysicsUpdate<T>(
         environment.updatePhysics(1 / rate)
     }
 
-    override fun update(currentTime: Time) {
+    override fun updateAfterFiring(currentTime: Time) {
         val sample = timeDistribution.sample()
         check(sample.isFinite && sample >= Time.ZERO) { "$timeDistribution generated an invalid delay: $sample" }
         mutableNextOccurrence.current = currentTime.plus(sample)

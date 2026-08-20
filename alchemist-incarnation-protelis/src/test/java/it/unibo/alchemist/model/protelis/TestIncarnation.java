@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -14,18 +14,21 @@ import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.protelis.actions.SendToNeighbor;
 import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete;
-import it.unibo.alchemist.model.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.reactions.Event;
-import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram;
+import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
+
+import javax.annotation.Nonnull;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -40,6 +43,8 @@ class TestIncarnation {
 
     private static final ProtelisIncarnation<Euclidean2DPosition> INCARNATION = new ProtelisIncarnation<>();
     private static final String SEND = "send";
+    private static final double TOLERANCE = 1e-12;
+    private static final double THIRD_OCCURRENCE = 6.0;
 
     /**
      * Tests the ability of {@link ProtelisIncarnation} of properly building an
@@ -98,7 +103,6 @@ class TestIncarnation {
 
     private static void testIsSendToNeighbor(final Reaction<Object> program) {
         assertNotNull(program);
-        assertInstanceOf(ChemicalReaction.class, program);
         assertFalse(program.getConditions().isEmpty());
         assertEquals(1, program.getConditions().size());
         final Condition<Object> check = program.getConditions().get(0);
@@ -119,6 +123,55 @@ class TestIncarnation {
         assertEquals("aString", INCARNATION.createConcentration("aString"));
         assertEquals(1.0, INCARNATION.createConcentration("1"));
         assertEquals("foo", INCARNATION.createConcentration("let a = \"foo\"; a"));
+    }
+
+    @Test
+    void testSendSchedulingSamplesOnlyWhenAdvancing() {
+        final RandomGenerator rng = new MersenneTwister(0);
+        final Environment<Object, Euclidean2DPosition> environment = new Continuous2DEnvironment<>(INCARNATION);
+        final Node<Object> node = INCARNATION.createNode(rng, environment, null);
+        final TimeDistribution<Object> programDistribution = INCARNATION.createTimeDistribution(
+            rng, environment, node, "1"
+        );
+        final Reaction<Object> program = INCARNATION.createReaction(
+            rng, environment, node, programDistribution, "nbr(1)"
+        );
+        node.addReaction(program);
+        final CountingDistribution distribution = new CountingDistribution();
+        final Reaction<Object> reaction = INCARNATION.createReaction(rng, environment, node, distribution, SEND);
+        node.addReaction(reaction);
+        program.initializationComplete(Time.ZERO, environment);
+        reaction.initializationComplete(Time.ZERO, environment);
+        assertEquals(1, distribution.samples);
+        assertEquals(1.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
+        assertFalse(reaction.canExecute().getCurrent());
+        reaction.updateAfterFiring(new DoubleTime(1.0));
+        assertEquals(2, distribution.samples);
+        assertEquals(3.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
+        program.execute();
+        assertTrue(reaction.canExecute().getCurrent());
+        assertEquals(2, distribution.samples);
+        assertEquals(3.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
+        reaction.updateAfterFiring(new DoubleTime(3.0));
+        assertEquals(3, distribution.samples);
+        assertEquals(THIRD_OCCURRENCE, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
+    }
+
+    private static final class CountingDistribution implements TimeDistribution<Object> {
+        private int samples;
+
+        @Nonnull
+        @Override
+        public Time sample() {
+            samples++;
+            return new DoubleTime(samples);
+        }
+
+        @Nonnull
+        @Override
+        public TimeDistribution<Object> newInstanceOn(@Nonnull final Node<Object> node) {
+            return new CountingDistribution();
+        }
     }
 
 }

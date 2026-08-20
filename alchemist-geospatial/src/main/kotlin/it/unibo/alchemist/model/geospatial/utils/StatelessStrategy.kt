@@ -16,11 +16,6 @@ package it.unibo.alchemist.model.geospatial.utils
  * same stateless strategy are always equal, since they behave identically regardless of how
  * or when they were constructed.
  *
- * **Note:** this is not just convenience. Without it, a fresh instance created from a Kotlin
- * default parameter fails reference equality against every other instance.
- * Alchemist's loader relies on structural equality between such candidates to
- * resolve constructor ambiguity, and rejects the whole specification otherwise.
- *
  * Only for strategies with **no** primary-constructor parameters. A strategy that carries
  * actual configuration should be a `data class` instead, so equality reflects its configuration,
  * not just its type.

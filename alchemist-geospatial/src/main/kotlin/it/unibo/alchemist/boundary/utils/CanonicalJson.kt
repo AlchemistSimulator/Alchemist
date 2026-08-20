@@ -18,8 +18,7 @@ import java.util.TreeMap
  *
  * "Canonical" here means exactly one normalization: **map keys are sorted recursively** at every
  * nesting level, so a request encodes identically regardless of the key order it was authored in.
- * **List order is preserved**, since in CDS/EWDS it is semantic (e.g. `area: [N, W, S, E]`
- * has a different meaning than `[W, N, E, S]`).
+ * **List order is preserved**, since in Copernicus requests it is semantic.
  */
 internal object CanonicalJson {
 

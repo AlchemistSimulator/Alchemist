@@ -17,19 +17,16 @@ import java.util.Arrays
  * The shared precondition for every function is: axis must be non-empty and sorted in
  * STRICTLY ascending order with finite values (no duplicates, no NaN within the axis).
  *
- * The ascending order and the absence of NaN within the axis are NOT verified: an O(n) scan
- * would defeat the purpose of the O(log n) search, so violating them yields undefined results.
- * An empty axis and a NaN query coordinate throw an IllegalArgumentException, as those checks
- * are O(1).
+ * The ascending order and the absence of Double.NaN within the axis are NOT verified, in order to
+ * achieve a O(log(n)) time complexity.
  */
 
 /**
  * Finds the index of the closest coordinate on the [axis] relative to the query [coordinate].
  *
  * If the [coordinate] lies outside the boundaries of the axis, the result is clamped to the edge
- * (`0` if below the first node, `axis.lastIndex` if above the last node). This makes the function
- * suitable for both nearest-neighbor sampling inside the grid and edge-clamping outside it.
- * Ties (when the coordinate is exactly halfway between two nodes) resolve to the lower index.
+ * (`0` if below the first coordinate, `axis.lastIndex` if above the last coordinate).
+ * Ties (when the coordinate is exactly halfway between two coordinates) resolve to the lower index.
  *
  * @param axis grid coordinates along one dimension, strictly ascending.
  * @param coordinate the query coordinate in the same unit as [axis].
@@ -53,10 +50,8 @@ internal fun nearestIndex(axis: DoubleArray, coordinate: Double): Int {
         else -> {
             // the coordinate is between axis[lowerIndex] and axis[upperIndex]
             val lowerIndex = upperIndex - 1
-
             val distanceToLower = coordinate - axis[lowerIndex]
             val distanceToUpper = axis[upperIndex] - coordinate
-
             if (distanceToLower <= distanceToUpper) lowerIndex else upperIndex
         }
     }
@@ -93,8 +88,7 @@ internal fun bracketIndices(axis: DoubleArray, coordinate: Double): Pair<Int, In
 /**
  * Computes the normalized position of [coordinate] within the segment
  * `[axis[lowerIndex], axis[upperIndex]]`: `0.0` exactly at [lowerIndex], `1.0` exactly at
- * [upperIndex]. Returns `0.0` when `lowerIndex == upperIndex`, avoiding a
- * division by a zero span.
+ * [upperIndex]. Returns `0.0` when `lowerIndex == upperIndex`.
  *
  * @param axis grid coordinates along one dimension, strictly ascending.
  * @param lowerIndex the lower boundary index, as returned by [bracketIndices].

@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.boundary.extractors
 
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 
 /**
@@ -35,7 +35,7 @@ class NodesPositions<T, P : Position<P>>(private val environment: Environment<T,
 
     override fun <T> extractData(
         environment: Environment<T, *>,
-        reaction: Actionable<T>?,
+        reaction: Reaction<T>?,
         time: Time,
         step: Long,
     ): Map<String, Double> {

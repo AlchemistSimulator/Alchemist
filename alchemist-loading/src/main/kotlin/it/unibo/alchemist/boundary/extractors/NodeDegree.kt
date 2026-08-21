@@ -10,9 +10,9 @@
 package it.unibo.alchemist.boundary.extractors
 
 import it.unibo.alchemist.boundary.ExportFilter
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 
 /**
@@ -28,7 +28,7 @@ constructor(filter: ExportFilter, aggregators: List<String>, precision: Int = 2)
 
     override fun <T> getData(
         environment: Environment<T, *>,
-        reaction: Actionable<T>?,
+        reaction: Reaction<T>?,
         time: Time,
         step: Long,
     ): Map<Node<T>, Double> = environment.nodes.associateWith { node ->

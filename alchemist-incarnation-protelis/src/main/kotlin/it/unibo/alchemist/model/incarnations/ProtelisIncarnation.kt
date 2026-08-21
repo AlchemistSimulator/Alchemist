@@ -14,7 +14,6 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
@@ -25,6 +24,7 @@ import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.molecules.SimpleMolecule
@@ -79,11 +79,11 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         node: Node<Any>?,
-        actionable: Actionable<Any>,
+        reaction: Reaction<Any>,
         additionalParameters: Any?,
     ): Action<Any> {
         val parameters = additionalParameters?.toString().orEmpty()
-        require(actionable is NodeReaction<*>) {
+        require(reaction is NodeReaction<*>) {
             "The provided actionable must be an instance of ${NodeReaction::class.simpleName}"
         }
         requireNotNull(additionalParameters)
@@ -107,11 +107,11 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             check(pList.size == 1) {
                 "There are too many programs requiring a ${SendToNeighbor::class.qualifiedName} action: $pList"
             }
-            SendToNeighbor(node, actionable as NodeReaction<Any>, pList.first())
+            SendToNeighbor(node, reaction as NodeReaction<Any>, pList.first())
         } else {
             @Suppress("TooGenericExceptionCaught")
             try {
-                RunProtelisProgram(randomGenerator, environment, device, actionable as NodeReaction<Any>, parameters)
+                RunProtelisProgram(randomGenerator, environment, device, reaction as NodeReaction<Any>, parameters)
             } catch (exception: RuntimeException) {
                 throw IllegalArgumentException(
                     "Could not create the requested Protelis program: $additionalParameters",
@@ -136,10 +136,10 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         node: Node<Any>?,
-        actionable: Actionable<Any>,
+        reaction: Reaction<Any>,
         additionalParameters: Any?,
     ): Condition<Any> {
-        if (actionable is NodeReaction<*>) {
+        if (reaction is NodeReaction<*>) {
             requireNotNull(node) {
                 "Global protelis programs are not supported"
             }

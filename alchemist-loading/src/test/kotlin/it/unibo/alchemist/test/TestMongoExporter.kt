@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -21,9 +21,9 @@ import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.exporters.GlobalExporter
 import it.unibo.alchemist.boundary.exporters.MongoDBExporter
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
@@ -47,7 +47,7 @@ class TestMongoExporter<T, P : Position<P>> :
 
                         override fun stepDone(
                             environment: Environment<T, P>,
-                            reaction: Actionable<T>?,
+                            reaction: Reaction<T>?,
                             time: Time,
                             step: Long,
                         ) = checkForErrors()

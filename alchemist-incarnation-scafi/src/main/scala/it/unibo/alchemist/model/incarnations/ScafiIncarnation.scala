@@ -45,11 +45,11 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
   }
 
   override def createAction(
-      randomGenerator: RandomGenerator,
-      environment: Environment[T, P],
-      node: Node[T],
-      reaction: Actionable[T],
-      param: Any
+                             randomGenerator: RandomGenerator,
+                             environment: Environment[T, P],
+                             node: Node[T],
+                             reaction: Reaction[T],
+                             param: Any
   ): Action[T] = runInScafiDeviceContext[T, Action[T]](
     node,
     message = s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property",
@@ -102,11 +102,11 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
   override def createConcentration(): T = null.asInstanceOf[T]
 
   override def createCondition(
-      randomGenerator: RandomGenerator,
-      environment: Environment[T, P],
-      node: Node[T],
-      reaction: Actionable[T],
-      parameters: Any
+                                randomGenerator: RandomGenerator,
+                                environment: Environment[T, P],
+                                node: Node[T],
+                                reaction: Reaction[T],
+                                parameters: Any
   ): Condition[T] = runInScafiDeviceContext[T, Condition[T]](
     node,
     message = s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property",

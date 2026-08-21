@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,9 +11,9 @@ package it.unibo.alchemist.model.protelis
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
@@ -70,7 +70,7 @@ class TestGetPosition {
 
                 override fun stepDone(
                     environment: Environment<Any, Euclidean2DPosition>,
-                    reaction: Actionable<Any>?,
+                    reaction: Reaction<Any>?,
                     time: Time,
                     step: Long,
                 ) {

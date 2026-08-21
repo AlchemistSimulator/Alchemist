@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,9 +10,9 @@
 package it.unibo.alchemist.boundary.swingui.monitor.impl;
 
 import it.unibo.alchemist.boundary.OutputMonitor;
-import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.times.DoubleTime;
 
@@ -95,7 +95,7 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
     @Override
     public void stepDone(
         @Nonnull final Environment<T, P> environment,
-        final Actionable<T> reaction,
+        final Reaction<T> reaction,
         @Nonnull final Time curTime,
         final long curStep
     ) {

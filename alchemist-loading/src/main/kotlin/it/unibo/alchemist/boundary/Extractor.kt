@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,14 +9,14 @@
 
 package it.unibo.alchemist.boundary
 
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 
 /**
  * An object that is able to extract numeric information from an Alchemist
  * [Environment], given the current simulation [Time], the last executed
- * [Actionable] (usually a [it.unibo.alchemist.model.NodeReaction] or null)
+ * [Reaction] (usually a [it.unibo.alchemist.model.NodeReaction] or null)
  * and the current simulation step.
  *
  * @param E the type of extracted values
@@ -42,12 +42,7 @@ interface Extractor<out E : Any> {
      *         ordering/key contracts described above so that callers can consistently
      *         determine column ordering when producing tabular outputs.
      */
-    fun <T> extractData(
-        environment: Environment<T, *>,
-        reaction: Actionable<T>?,
-        time: Time,
-        step: Long,
-    ): Map<String, E>
+    fun <T> extractData(environment: Environment<T, *>, reaction: Reaction<T>?, time: Time, step: Long): Map<String, E>
 
     /**
      * Same as [extractData], but specifically meant for textual outputs.
@@ -66,7 +61,7 @@ interface Extractor<out E : Any> {
      */
     fun <T> extractDataAsText(
         environment: Environment<T, *>,
-        reaction: Actionable<T>?,
+        reaction: Reaction<T>?,
         time: Time,
         step: Long,
     ): Map<String, String> = extractData(environment, reaction, time, step).mapValues { it.value.toString() }

@@ -10,11 +10,11 @@
 package it.unibo.alchemist.model.reactions
 
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.observation.CompositeDisposable
@@ -80,7 +80,7 @@ abstract class AbstractNodeReaction<T>(
 
     override fun canExecute(): Observable<Boolean> = canExecute
 
-    override fun compareTo(other: Actionable<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)
+    override fun compareTo(other: Reaction<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)
 
     /**
      * The default execution iterates all actions in order.

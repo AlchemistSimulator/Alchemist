@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.core;
 
-import it.unibo.alchemist.model.Actionable;
+import it.unibo.alchemist.model.Reaction;
 
 /**
  * The type which describes the concentration of a molecule
@@ -28,14 +28,14 @@ public interface Scheduler<T> {
      * @param reaction
      *            the reaction to be added
      */
-    void addReaction(Actionable<T> reaction);
+    void addReaction(Reaction<T> reaction);
 
     /**
      * Allows to access the next reaction to be executed.
      *
      * @return the next reaction to be executed
      */
-    Actionable<T> getNext();
+    Reaction<T> getNext();
 
     /**
      * Removes a reaction from the structure. If the reaction is not present,
@@ -44,7 +44,7 @@ public interface Scheduler<T> {
      * @param reaction
      *            the reaction to be removed
      */
-    void removeReaction(Actionable<T> reaction);
+    void removeReaction(Reaction<T> reaction);
 
     /**
      * Notifies the structure that the reaction r has changed. The whole
@@ -53,6 +53,6 @@ public interface Scheduler<T> {
      * @param reaction
      *            the reaction which has changed
      */
-    void updateReaction(Actionable<T> reaction);
+    void updateReaction(Reaction<T> reaction);
 
 }

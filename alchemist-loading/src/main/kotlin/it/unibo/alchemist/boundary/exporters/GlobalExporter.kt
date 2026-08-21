@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,9 +11,9 @@ package it.unibo.alchemist.boundary.exporters
 
 import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 
 /**
@@ -32,7 +32,7 @@ class GlobalExporter<T, P : Position<P>>(val exporters: List<Exporter<T, P>>) : 
         }
     }
 
-    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         exporters.forEach {
             it.update(environment, reaction, time, step)
         }

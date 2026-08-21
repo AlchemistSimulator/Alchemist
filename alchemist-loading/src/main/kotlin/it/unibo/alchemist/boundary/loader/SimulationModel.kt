@@ -40,7 +40,6 @@ import it.unibo.alchemist.boundary.variables.Constant
 import it.unibo.alchemist.boundary.variables.JSR223Variable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.EnvironmentReaction
@@ -53,6 +52,7 @@ import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
@@ -69,7 +69,7 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
 private typealias ReactionComponentFunction<T, P, R> =
-    (RandomGenerator, Environment<T, P>, Node<T>?, Actionable<T>, Any?) -> R
+    (RandomGenerator, Environment<T, P>, Node<T>?, Reaction<T>, Any?) -> R
 
 /*
  * UTILITY FUNCTIONS
@@ -675,7 +675,7 @@ internal object SimulationModel {
         node: Node<T>?,
         context: Context,
         program: Map<*, *>,
-    ): Result<Pair<List<PositionBasedFilter<P>>, Actionable<T>>>? =
+    ): Result<Pair<List<PositionBasedFilter<P>>, Reaction<T>>>? =
         if (ProgramSyntax.validateDescriptor(program) || GlobalProgramSyntax.validateDescriptor(program)) {
             /*
              * Time distribution
@@ -693,9 +693,9 @@ internal object SimulationModel {
             /*
              * Actionable
              */
-            val actionable: Actionable<T> =
+            val reaction: Reaction<T> =
                 visitActionable(simulationRNG, incarnation, environment, node, timeDistribution, context, program)
-            context.factory.registerSingleton(Actionable::class.java, actionable)
+            context.factory.registerSingleton(Reaction::class.java, reaction)
 
             /*
              * Support function implementing the lookup strategy for conditions and actions
@@ -707,7 +707,7 @@ internal object SimulationModel {
             ): Result<R>? {
                 fun <R> create(withParameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> =
                     runCatching {
-                        makeWith(simulationRNG, environment, node, actionable, withParameter)
+                        makeWith(simulationRNG, environment, node, reaction, withParameter)
                     }
                 return when (parameter) {
                     is String -> create(parameter, incarnationFactory)
@@ -744,7 +744,7 @@ internal object SimulationModel {
                     visitIncarnationBuildable(it, incarnation::createCondition, ::visitBuilding)
                 }
             if (conditions.isNotEmpty()) {
-                actionable.conditions = actionable.conditions + conditions
+                reaction.conditions = reaction.conditions + conditions
             }
             val actions =
                 visitRecursively<Action<T>>(
@@ -755,11 +755,11 @@ internal object SimulationModel {
                     visitIncarnationBuildable(it, incarnation::createAction, ::visitBuilding)
                 }
             if (actions.isNotEmpty()) {
-                actionable.actions = actionable.actions + actions
+                reaction.actions = reaction.actions + actions
             }
-            context.factory.deregisterSingleton(actionable)
+            context.factory.deregisterSingleton(reaction)
             context.factory.deregisterSingleton(timeDistribution)
-            Result.success(Pair(filters, actionable))
+            Result.success(Pair(filters, reaction))
         } else {
             null
         }

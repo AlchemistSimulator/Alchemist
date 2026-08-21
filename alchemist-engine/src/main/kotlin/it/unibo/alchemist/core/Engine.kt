@@ -8,11 +8,11 @@
  */
 package it.unibo.alchemist.core
 
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.observation.Disposable
 import java.util.IdentityHashMap
 
@@ -33,7 +33,7 @@ open class Engine<T, P : Position<out P>>(
     protected val scheduler: Scheduler<T>,
 ) : AbstractEngine<T, P>(environment) {
 
-    private val schedulingSubscriptions = IdentityHashMap<Actionable<T>, Disposable>()
+    private val schedulingSubscriptions = IdentityHashMap<Reaction<T>, Disposable>()
 
     constructor(environment: Environment<T, P>) : this(environment, ArrayIndexedPriorityQueue())
 
@@ -88,15 +88,15 @@ open class Engine<T, P : Position<out P>>(
         }
     }
 
-    override fun reactionAdded(reactionToAdd: Actionable<T>) {
+    override fun reactionAdded(reactionToAdd: Reaction<T>) {
         schedule { scheduleReaction(reactionToAdd) }
     }
 
-    override fun reactionRemoved(reactionToRemove: Actionable<T>) {
+    override fun reactionRemoved(reactionToRemove: Reaction<T>) {
         schedule { removeReaction(reactionToRemove) }
     }
 
-    private fun scheduleReaction(reaction: Actionable<T>) {
+    private fun scheduleReaction(reaction: Reaction<T>) {
         // The scheduler, subscription map, and their callbacks are all owned by the simulation thread.
         checkCaller()
         check(!schedulingSubscriptions.containsKey(reaction)) {
@@ -114,7 +114,7 @@ open class Engine<T, P : Position<out P>>(
             }
     }
 
-    private fun removeReaction(reaction: Actionable<T>) {
+    private fun removeReaction(reaction: Reaction<T>) {
         checkCaller()
         schedulingSubscriptions.remove(reaction)?.dispose()
         scheduler.removeReaction(reaction)

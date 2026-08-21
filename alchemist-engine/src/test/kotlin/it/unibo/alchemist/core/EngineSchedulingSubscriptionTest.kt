@@ -13,10 +13,10 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
@@ -29,12 +29,12 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 
 private class RecordingScheduler<T> : Scheduler<T> {
-    val reactions = mutableListOf<Actionable<T>>()
-    val updates = mutableListOf<Actionable<T>>()
+    val reactions = mutableListOf<Reaction<T>>()
+    val updates = mutableListOf<Reaction<T>>()
     var updateBeforeAdd = false
     var throwOnAdd = false
 
-    override fun addReaction(reaction: Actionable<T>) {
+    override fun addReaction(reaction: Reaction<T>) {
         reactions += reaction
         if (throwOnAdd) {
             reactions.remove(reaction)
@@ -42,14 +42,14 @@ private class RecordingScheduler<T> : Scheduler<T> {
         }
     }
 
-    override fun getNext(): Actionable<T>? = reactions.firstOrNull()
+    override fun getNext(): Reaction<T>? = reactions.firstOrNull()
 
-    override fun removeReaction(reaction: Actionable<T>) {
+    override fun removeReaction(reaction: Reaction<T>) {
         reaction.nextOccurrence.observers.size shouldBe 0
         reactions.remove(reaction)
     }
 
-    override fun updateReaction(reaction: Actionable<T>) {
+    override fun updateReaction(reaction: Reaction<T>) {
         if (reaction !in reactions) {
             updateBeforeAdd = true
         }

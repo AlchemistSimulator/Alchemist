@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,11 +9,11 @@
 package it.unibo.alchemist.boundary.swingui.monitor.impl
 
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import java.awt.BorderLayout
 import java.awt.event.ActionEvent
@@ -61,7 +61,7 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) :
         stepDone(environment, null, Time.ZERO, 0L)
     }
 
-    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         if (reaction == null || reaction is NodeReaction<*> && reaction.node == node) {
             val content =
                 """

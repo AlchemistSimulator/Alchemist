@@ -10,13 +10,13 @@
 package it.unibo.alchemist.model.biochemistry;
 
 import it.unibo.alchemist.model.Action;
-import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.biochemistry.properties.CircularCell;
@@ -115,7 +115,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
-        final Actionable<Double> actionable,
+        final Reaction<Double> reaction,
         final @Nullable Object additionalParameters
     ) {
         return null;
@@ -126,7 +126,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
-        final Actionable<Double> actionable,
+        final Reaction<Double> reaction,
         final @Nullable Object additionalParameters
     ) {
         return null;

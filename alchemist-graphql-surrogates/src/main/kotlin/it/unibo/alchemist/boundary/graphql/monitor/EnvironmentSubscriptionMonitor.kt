@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,9 +12,9 @@ package it.unibo.alchemist.boundary.graphql.monitor
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.EnvironmentSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLEnvironmentSurrogate
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
@@ -40,7 +40,7 @@ class EnvironmentSubscriptionMonitor<T, P : Position<out P>> : OutputMonitor<T, 
      */
     val eventFlow: Flow<EnvironmentSurrogate<T, P>> get() = internalFlow
 
-    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         internalFlow.tryEmit(environment.toGraphQLEnvironmentSurrogate())
     }
 

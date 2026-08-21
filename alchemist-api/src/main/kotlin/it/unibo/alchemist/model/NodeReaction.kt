@@ -12,9 +12,9 @@ package it.unibo.alchemist.model
  * @param <T>
  * The type which describes the concentration of a molecule
  *
- * A node-bound [Actionable]. Every reaction owns its schedule through [nextOccurrence].
+ * A node-bound [Reaction]. Every reaction owns its schedule through [nextOccurrence].
  */
-interface NodeReaction<T> : Actionable<T> {
+interface NodeReaction<T> : Reaction<T> {
     /**
      * @return The [Node] in which this [NodeReaction] executes.
      */

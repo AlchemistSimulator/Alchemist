@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.boundary.extractors
 
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.util.StatUtil
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
@@ -79,7 +79,7 @@ constructor(
 
     override fun <T> extractData(
         environment: Environment<T, *>,
-        reaction: Actionable<T>?,
+        reaction: Reaction<T>?,
         time: Time,
         step: Long,
     ): Map<String, Double> {

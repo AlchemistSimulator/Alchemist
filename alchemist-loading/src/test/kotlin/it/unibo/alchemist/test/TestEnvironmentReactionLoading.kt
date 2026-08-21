@@ -14,12 +14,12 @@ import io.kotest.matchers.collections.shouldHaveSize
 import it.unibo.alchemist.boundary.LoadAlchemist
 import org.kaikikm.threadresloader.ResourceLoader
 
-class TestGlobalReactionLoading :
+class TestEnvironmentReactionLoading :
     FreeSpec({
-        "environment should contain a global reaction" {
+        "environment should contain an environment reaction" {
             val environment =
                 LoadAlchemist
-                    .from(ResourceLoader.getResource("testGlobalReactionLoading.yml"))
+                    .from(ResourceLoader.getResource("testEnvironmentReactionLoading.yml"))
                     .getDefault<Nothing, Nothing>()
                     .environment
             environment.environmentReactions shouldHaveSize 1

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -119,7 +119,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      * @param node
      *            the node that will host this object. If it is `null` the actionable
      *            will not belong to a {@link Node}
-     * @param actionable
+     * @param reaction
      *            the actionable hosting this object
      * @param additionalParameters
      *            a {@link String} describing the object
@@ -129,7 +129,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
         RandomGenerator randomGenerator,
         Environment<T, P> environment,
         @Nullable Node<T> node,
-        Actionable<T> actionable,
+        Reaction<T> reaction,
         @Nullable Object additionalParameters
     );
 
@@ -141,7 +141,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      * @param node
      *            the node that will host this object. If it is `null` the actionable
      *            will not belong to a {@link Node}
-     * @param actionable
+     * @param reaction
      *            the actionable hosting this object
      * @param additionalParameters
      *            a {@link String} describing the object
@@ -151,7 +151,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
         RandomGenerator randomGenerator,
         Environment<T, P> environment,
         @Nullable Node<T> node,
-        Actionable<T> actionable,
+        Reaction<T> reaction,
         @Nullable Object additionalParameters
     );
 }

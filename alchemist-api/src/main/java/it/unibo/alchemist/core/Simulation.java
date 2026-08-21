@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,12 +10,12 @@
 package it.unibo.alchemist.core;
 
 import it.unibo.alchemist.boundary.OutputMonitor;
-import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import kotlin.Unit;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
@@ -179,7 +179,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      *
      * @param reactionToAdd the reaction to add
      */
-    void reactionAdded(Actionable<T> reactionToAdd);
+    void reactionAdded(Reaction<T> reactionToAdd);
 
     /**
      * Removes a reaction during the simulation from the scheduler and stop to execute it.
@@ -188,7 +188,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      *
      * @param reactionToRemove the reaction to remove
      */
-    void reactionRemoved(Actionable<T> reactionToRemove);
+    void reactionRemoved(Reaction<T> reactionToRemove);
 
     /**
      * Removes an {@link OutputMonitor} to this simulation. If the

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -119,7 +119,7 @@ class TestLoadGPSTrace {
 
             @Override
             public void stepDone(
-                @Nonnull final Environment<T, GeoPosition> environment, final Actionable<T> r,
+                @Nonnull final Environment<T, GeoPosition> environment, final Reaction<T> r,
                 @Nonnull final Time time,
                 final long step
             ) { }

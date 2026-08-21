@@ -10,4 +10,4 @@
 package it.unibo.alchemist.model
 
 /** An environment-level actionable that is not owned by a node. */
-interface EnvironmentReaction<T> : Actionable<T>
+interface EnvironmentReaction<T> : Reaction<T>

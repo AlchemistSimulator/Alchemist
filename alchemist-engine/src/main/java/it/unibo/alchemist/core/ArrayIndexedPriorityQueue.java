@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,7 +13,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gnu.trove.impl.Constants;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import it.unibo.alchemist.model.Actionable;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 
 import java.util.ArrayList;
@@ -26,10 +26,10 @@ import java.util.List;
  */
 public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
 
-    private final TObjectIntMap<Actionable<T>> indexes =
+    private final TObjectIntMap<Reaction<T>> indexes =
         new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
     private final List<Time> times = new ArrayList<>();
-    private final List<Actionable<T>> tree = new ArrayList<>();
+    private final List<Reaction<T>> tree = new ArrayList<>();
 
     /**
      * Should not be overridden.
@@ -37,7 +37,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
      * @param reaction the reaction to be added
      */
     @Override
-    public void addReaction(final Actionable<T> reaction) {
+    public void addReaction(final Reaction<T> reaction) {
         tree.add(reaction);
         times.add(reaction.getNextOccurrence().getCurrent());
         final int index = tree.size() - 1;
@@ -45,7 +45,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         updateEffectively(reaction, index);
     }
 
-    private void down(final Actionable<T> reaction, final int reactionIndex) {
+    private void down(final Reaction<T> reaction, final int reactionIndex) {
         int index = reactionIndex;
         final Time newTime = reaction.getNextOccurrence().getCurrent();
         while (true) {
@@ -54,7 +54,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
                 return;
             }
             Time minTime = times.get(minIndex);
-            Actionable<T> min = tree.get(minIndex);
+            Reaction<T> min = tree.get(minIndex);
             final int right = minIndex + 1;
             if (right < tree.size()) {
                 final Time rr = times.get(right);
@@ -79,8 +79,8 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
      * @return next actionable to execute
      */
     @Override
-    public Actionable<T> getNext() {
-        Actionable<T> result = null;
+    public Reaction<T> getNext() {
+        Reaction<T> result = null;
         if (!tree.isEmpty()) {
             result = tree.get(0);
         }
@@ -91,7 +91,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
      * @param reaction the reaction to be removed
      */
     @Override
-    public void removeReaction(final Actionable<T> reaction) {
+    public void removeReaction(final Reaction<T> reaction) {
         final int index = indexes.get(reaction);
         final int last = tree.size() - 1;
         if (index == last) {
@@ -99,7 +99,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
             indexes.remove(reaction);
             times.remove(index);
         } else {
-            final Actionable<T> swapped = tree.get(last);
+            final Reaction<T> swapped = tree.get(last);
             indexes.put(swapped, index);
             tree.set(index, swapped);
             times.set(index, swapped.getNextOccurrence().getCurrent());
@@ -110,7 +110,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
-    private void swap(final int i1, final Actionable<T> r1, final int i2, final Actionable<T> r2) {
+    private void swap(final int i1, final Reaction<T> r1, final int i2, final Reaction<T> r2) {
         indexes.put(r1, i2);
         indexes.put(r2, i1);
         tree.set(i1, r2);
@@ -145,14 +145,14 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         return sb.toString();
     }
 
-    private boolean up(final Actionable<T> reaction, final int reactionIndex) {
+    private boolean up(final Reaction<T> reaction, final int reactionIndex) {
         int index = reactionIndex;
         int parentIndex = getParent(index);
         final Time newTime = reaction.getNextOccurrence().getCurrent();
         if (parentIndex == -1) {
             return false;
         } else {
-            Actionable<T> parent = tree.get(parentIndex);
+            Reaction<T> parent = tree.get(parentIndex);
             if (newTime.compareTo(times.get(parentIndex)) >= 0) {
                 return false;
             } else {
@@ -170,7 +170,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
-    private void updateEffectively(final Actionable<T> reaction, final int index) {
+    private void updateEffectively(final Reaction<T> reaction, final int index) {
         if (!up(reaction, index)) {
             down(reaction, index);
         }
@@ -180,7 +180,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
      * @param reaction the reaction which has changed
      */
     @Override
-    public void updateReaction(final Actionable<T> reaction) {
+    public void updateReaction(final Reaction<T> reaction) {
         final int index = indexes.get(reaction);
         if (index != indexes.getNoEntryValue()) {
             times.set(index, reaction.getNextOccurrence().getCurrent());
@@ -194,7 +194,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
      * @return tree
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
-    public List<Actionable<T>> getTree() {
+    public List<Reaction<T>> getTree() {
         return tree;
     }
 

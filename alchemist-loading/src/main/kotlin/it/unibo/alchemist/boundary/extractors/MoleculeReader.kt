@@ -10,11 +10,11 @@
 package it.unibo.alchemist.boundary.extractors
 
 import it.unibo.alchemist.boundary.ExportFilter
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import kotlin.math.min
 
@@ -28,7 +28,7 @@ import kotlin.math.min
  * @param incarnation
  *            the target incarnation
  * @param filter
- *            the [FilteringPolicy] to use
+ *            the [ExportFilter] to use
  * @param aggregatorNames
  *            the names of the [org.apache.commons.math3.stat.descriptive.UnivariateStatistic] to use for
  *            aggregating data. If an empty list is passed, then the values
@@ -70,7 +70,7 @@ constructor(
 
     override fun <T> getData(
         environment: Environment<T, *>,
-        reaction: Actionable<T>?,
+        reaction: Reaction<T>?,
         time: Time,
         step: Long,
     ): Map<Node<T>, Double> {

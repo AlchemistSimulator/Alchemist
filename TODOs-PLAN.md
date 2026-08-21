@@ -336,7 +336,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] Document and enforce simulation-thread confinement for scheduling registration and fail fast on registration
   errors.
 - [ ] Complete the scheduled-entity naming migration as one coherent public-API change:
-  - [ ] Rename `Actionable<T>` to the owner-neutral root `Reaction<T>` and move only behavior shared by node- and
+  - [x] Rename `Actionable<T>` to the owner-neutral root `Reaction<T>` and move only behavior shared by node- and
     environment-owned reactions into it.
   - [x] Rename the current node-owned `Reaction<T>` to `NodeReaction<T>`, retaining `node` and
     `cloneOnNewNode(...)` only on this branch.

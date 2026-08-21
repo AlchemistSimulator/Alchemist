@@ -10,10 +10,10 @@
 package it.unibo.alchemist.test
 
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.EnvironmentReaction
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.observation.MutableObservable
@@ -46,7 +46,7 @@ class EnvironmentTestReaction<T>(
                 ?: MutableObservable.observe(true)
         }
 
-    override fun compareTo(other: Actionable<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)
+    override fun compareTo(other: Reaction<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)
 
     override fun canExecute(): Observable<Boolean> = validity
 

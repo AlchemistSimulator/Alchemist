@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.incarnations;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Action;
-import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Incarnation;
@@ -19,6 +18,7 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
@@ -249,7 +249,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
         final RandomGenerator randomGenerator,
         final Environment<List<ILsaMolecule>, P> environment,
         final Node<List<ILsaMolecule>> node,
-        final Actionable<List<ILsaMolecule>> reaction,
+        final Reaction<List<ILsaMolecule>> reaction,
         final @Nullable Object additionalParameters
     ) {
         Objects.requireNonNull(additionalParameters, "The condition can't be null. Reaction:" + reaction);
@@ -268,10 +268,10 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
         final RandomGenerator randomGenerator,
         final Environment<List<ILsaMolecule>, P> environment,
         final Node<List<ILsaMolecule>> node,
-        final Actionable<List<ILsaMolecule>> actionable,
+        final Reaction<List<ILsaMolecule>> reaction,
         final @Nullable Object additionalParameters
     ) {
-        Objects.requireNonNull(additionalParameters, "The action parameter can't be null. Actionable:" + actionable);
+        Objects.requireNonNull(additionalParameters, "The action parameter can't be null. Actionable:" + reaction);
         final var parameters = additionalParameters.toString();
         if (parameters.startsWith("+")) {
             return new LsaRandomNeighborAction(

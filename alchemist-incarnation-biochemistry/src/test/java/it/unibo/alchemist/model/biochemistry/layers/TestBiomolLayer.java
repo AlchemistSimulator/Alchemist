@@ -12,12 +12,12 @@ package it.unibo.alchemist.model.biochemistry.layers;
 import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.core.Engine;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.actions.BrownianMove;
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
@@ -81,7 +81,7 @@ class TestBiomolLayer {
             @Override
             public void stepDone(
                 @NotNull final Environment<Double, Euclidean2DPosition> environment,
-                final Actionable<Double> reaction,
+                final Reaction<Double> reaction,
                 @Nonnull final Time time,
                 final long step
             ) {

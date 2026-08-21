@@ -11,10 +11,10 @@ package it.unibo.alchemist.model.physics.reactions
 
 import arrow.core.getOrElse
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.EnvironmentReaction
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
@@ -56,7 +56,7 @@ class PhysicsUpdate<T>(
                 .map { it.getOrElse { true } }
         }
 
-    override fun compareTo(other: Actionable<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)
+    override fun compareTo(other: Reaction<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)
 
     override fun canExecute(): Observable<Boolean> = validity
 

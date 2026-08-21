@@ -12,13 +12,13 @@ package it.unibo.alchemist.test
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
@@ -52,7 +52,7 @@ infix fun TimeDistribution<*>.shouldEqual(other: TimeDistribution<*>) {
     assertEquals(other::class, this::class, "TimeDistribution types don't match")
 }
 
-infix fun Actionable<*>.shouldEqual(other: Actionable<*>) {
+infix fun Reaction<*>.shouldEqual(other: Reaction<*>) {
     assertEquals(other::class, this::class, "Actionable types don't match")
     assertEquals(other.rate, rate)
     assertEquals(other.nextOccurrence.current, nextOccurrence.current)
@@ -120,7 +120,7 @@ fun <T, P : Position<P>> Simulation<T, P>.equalsForSteps(other: Simulation<T, P>
     val actualThread = Thread.currentThread()
     val syncMonitor = object : OutputMonitor<T, P> {
         val barrier = CyclicBarrier(2)
-        override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+        override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
             barrier.await(1, TimeUnit.SECONDS)
             if (barrier.isBroken) {
                 error("Barrier broken while waiting for step $step to complete")

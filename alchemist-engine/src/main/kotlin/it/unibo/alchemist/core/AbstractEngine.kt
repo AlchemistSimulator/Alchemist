@@ -10,9 +10,9 @@
 package it.unibo.alchemist.core
 
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import java.util.Collections
 import java.util.Optional
@@ -258,7 +258,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
 
             override fun stepDone(
                 targetEnvironment: Environment<T, P>,
-                reaction: Actionable<T>?,
+                reaction: Reaction<T>?,
                 time: Time,
                 step: Long,
             ) {

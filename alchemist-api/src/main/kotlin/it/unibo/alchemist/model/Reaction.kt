@@ -21,8 +21,8 @@ import java.io.Serializable
  * [execute] and always calls [updateAfterFiring] to consume it. Reactive invalidation between occurrences is owned
  * by the implementation and is communicated to the engine only by emitting a new [nextOccurrence].
  */
-sealed interface Actionable<T> :
-    Comparable<Actionable<T>>,
+sealed interface Reaction<T> :
+    Comparable<Reaction<T>>,
     Serializable,
     Disposable {
 

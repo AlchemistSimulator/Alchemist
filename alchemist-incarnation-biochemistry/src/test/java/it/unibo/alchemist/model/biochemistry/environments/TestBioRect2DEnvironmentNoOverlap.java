@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,10 +12,10 @@ package it.unibo.alchemist.model.biochemistry.environments;
 import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
@@ -775,7 +775,7 @@ class TestBioRect2DEnvironmentNoOverlap {
             @Override
             public void stepDone(
                     @Nonnull final Environment<Double, Euclidean2DPosition> environment,
-                    final Actionable<Double> reaction,
+                    final Reaction<Double> reaction,
                     @Nonnull final Time time,
                     final long step
             ) {

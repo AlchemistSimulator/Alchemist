@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.boundary;
 
-import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 
 import javax.annotation.Nonnull;
@@ -77,7 +77,7 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      */
     default void stepDone(
         @Nonnull final Environment<T, P> environment,
-        @Nullable final Actionable<T> reaction,
+        @Nullable final Reaction<T> reaction,
         @Nonnull final Time time,
         final long step
     ) { }

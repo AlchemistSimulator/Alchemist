@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.slf4j)
 
+    testImplementation(alchemist("maps"))
     testImplementation(alchemist("test"))
 }
 

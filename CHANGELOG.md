@@ -1,3 +1,22 @@
+## [43.1.30](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.29...43.1.30) (2026-08-21)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.8.3-19.2.8 ([#5561](https://github.com/AlchemistSimulator/Alchemist/issues/5561)) ([e71f923](https://github.com/AlchemistSimulator/Alchemist/commit/e71f923506f38357c9f09ee633534bd7d16d0311))
+* **deps:** update apollo graphql packages to v5.1.0 ([#5565](https://github.com/AlchemistSimulator/Alchemist/issues/5565)) ([de389f8](https://github.com/AlchemistSimulator/Alchemist/commit/de389f8dbac55615e6ce0f7fcc87974dbee26f21))
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.10.4 ([#5566](https://github.com/AlchemistSimulator/Alchemist/issues/5566)) ([70f0eb2](https://github.com/AlchemistSimulator/Alchemist/commit/70f0eb252af73926c2fb8023dfa542b73ff347d7))
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.193 ([#5569](https://github.com/AlchemistSimulator/Alchemist/issues/5569)) ([872fd4e](https://github.com/AlchemistSimulator/Alchemist/commit/872fd4ef5765b551c74e526ab799952d7c793c42))
+* **deps:** update dependency org.danilopianini:jirf to v1.0.2 ([#5560](https://github.com/AlchemistSimulator/Alchemist/issues/5560)) ([4db8471](https://github.com/AlchemistSimulator/Alchemist/commit/4db8471f98dedad2eae95310816a870fdf0393a1))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.193.0 ([#5567](https://github.com/AlchemistSimulator/Alchemist/issues/5567)) ([51f665c](https://github.com/AlchemistSimulator/Alchemist/commit/51f665c6545c655af4acefc07421567f7a89c463))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.194.0 ([#5568](https://github.com/AlchemistSimulator/Alchemist/issues/5568)) ([c003506](https://github.com/AlchemistSimulator/Alchemist/commit/c00350675b33097bbe3c8357d72cff20d8e2dd34))
+* **deps:** update gradle to v9.7.1 ([#5562](https://github.com/AlchemistSimulator/Alchemist/issues/5562)) ([8d285ea](https://github.com/AlchemistSimulator/Alchemist/commit/8d285eace2e8cc0ea88808e1c062bf1e081bf24d))
+* **deps:** update plugin multijvmtesting to v4.5.6 ([#5563](https://github.com/AlchemistSimulator/Alchemist/issues/5563)) ([507ca7f](https://github.com/AlchemistSimulator/Alchemist/commit/507ca7fc185e0ca3db04a39e4ffae1281c0f608a))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.23 ([#5564](https://github.com/AlchemistSimulator/Alchemist/issues/5564)) ([ded7176](https://github.com/AlchemistSimulator/Alchemist/commit/ded7176aed99de181bb4433c2798e93710ff63d1))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([9888ff1](https://github.com/AlchemistSimulator/Alchemist/commit/9888ff1a407e79ea06a6434132908232ca387fd5))
+
 ## [43.1.29](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.28...43.1.29) (2026-08-18)
 
 ### Dependency updates

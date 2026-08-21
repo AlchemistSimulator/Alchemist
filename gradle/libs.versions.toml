@@ -19,7 +19,7 @@ kotlinx-coroutines = "1.11.0"
 ktor = "3.5.2"
 mockito = "5.23.0"
 protelis = "19.0.0"
-react = "2026.8.2-19.2.8"
+react = "2026.8.3-19.2.8"
 scafi = "1.8.0"
 scala = "2.13.18"
 scalacache = "0.28.0"
@@ -41,7 +41,7 @@ boilerplate = "org.danilopianini:boilerplate:0.2.2"
 caffeine = "com.github.ben-manes.caffeine:caffeine:3.2.4"
 cdm-core = { module = "org.danilopianini:cdm-core", version.ref = "cdm" }
 cdm-grib  = { module = "org.danilopianini:grib", version.ref = "cdm" }
-classgraph = "io.github.classgraph:classgraph:4.8.192"
+classgraph = "io.github.classgraph:classgraph:4.8.193"
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
 compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-multiplatform" }

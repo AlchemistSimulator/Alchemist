@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.actions
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.VisibleNodeImpl
 import it.unibo.alchemist.model.physics.FieldOfView2D
@@ -53,7 +53,7 @@ constructor(
         node.setConcentration(outputMolecule, emptyList<Any>())
     }
 
-    override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>) =
+    override fun cloneAction(node: Node<Any>, reaction: NodeReaction<Any>) =
         CameraSee(node, environment, distance, angle, outputMolecule, filterByMolecule)
 
     override fun execute() {

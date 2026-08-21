@@ -11,8 +11,8 @@ package it.unibo.alchemist.model.movestrategies.target
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
 import org.danilopianini.util.regex.Patterns
 import org.slf4j.LoggerFactory
@@ -106,7 +106,7 @@ open class FollowTarget<T, P : Position<P>>(
         else -> null
     } ?: conversionError(this)
 
-    override fun cloneIfNeeded(destination: Node<T>, reaction: Reaction<T>): FollowTarget<T, P> =
+    override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): FollowTarget<T, P> =
         FollowTarget(environment, destination, this.targetMolecule)
 
     private companion object {

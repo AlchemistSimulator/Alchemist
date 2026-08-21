@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.biochemistry.actions;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.actions.AbstractAction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.biochemistry.properties.Cell;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.apache.commons.math3.util.FastMath;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -33,8 +33,6 @@ import java.util.stream.Collectors;
  */
 public final class ChemotacticPolarization extends AbstractAction<Double> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final Environment<Double, Euclidean2DPosition> environment;
     private final Biomolecule biomolecule;
     private final boolean ascend;
@@ -98,8 +96,12 @@ public final class ChemotacticPolarization extends AbstractAction<Double> {
         this(environment, node, new Biomolecule(biomolecule), ascendGrad);
     }
 
+    @Nonnull
     @Override
-    public ChemotacticPolarization cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+    public ChemotacticPolarization cloneAction(
+        @Nonnull final Node<Double> node,
+        @Nonnull final NodeReaction<Double> reaction
+    ) {
         return new ChemotacticPolarization(environment, node, biomolecule.toString(), ascend ? "up" : "down");
     }
 
@@ -160,6 +162,7 @@ public final class ChemotacticPolarization extends AbstractAction<Double> {
         return res;
     }
 
+    @Nonnull
     @Override
     public Context getContext() {
         return Context.LOCAL;

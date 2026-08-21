@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.maps.actions
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.linkingrules.NoLinks
@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test
 internal class TestTargetMapWalker {
     private lateinit var environment: OSMEnvironment<Any>
     private lateinit var node: Node<Any>
-    private lateinit var reaction: Reaction<Any>
+    private lateinit var reaction: NodeReaction<Any>
 
     @BeforeEach
     fun `Set up environment and node`() {

@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.biochemistry.actions
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.biochemistry.CellProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
@@ -31,7 +31,7 @@ class ChangeBiomolConcentrationInNeighbor(
     val deltaConcentration: Double,
 ) : AbstractNeighborAction<Double>(node, environment, randomGenerator) {
 
-    override fun cloneAction(newNode: Node<Double>, newReaction: Reaction<Double>) =
+    override fun cloneAction(newNode: Node<Double>, newReaction: NodeReaction<Double>) =
         ChangeBiomolConcentrationInNeighbor(randomGenerator, environment, newNode, molecule, deltaConcentration)
 
     override fun execute() {

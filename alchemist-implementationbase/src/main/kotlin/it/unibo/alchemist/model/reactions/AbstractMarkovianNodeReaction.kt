@@ -15,8 +15,8 @@ import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 
 /** Reaction whose scheduling is driven by a memoryless exponential distribution. */
-abstract class AbstractMarkovianReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
-    AbstractReaction<T>(node, timeDistribution) {
+abstract class AbstractMarkovianNodeReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
+    AbstractNodeReaction<T>(node, timeDistribution) {
 
     private var previousRate: Double? = null
 

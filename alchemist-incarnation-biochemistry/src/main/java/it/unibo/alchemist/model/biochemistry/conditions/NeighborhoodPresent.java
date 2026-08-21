@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,12 +11,12 @@ package it.unibo.alchemist.model.biochemistry.conditions;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * A condition is valid if the node has a neighborhood, formally if the node has at least one node
@@ -25,9 +25,6 @@ import java.io.Serial;
  * @param <T> The concentration type.
  */
 public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
-
-    @Serial
-    private static final long serialVersionUID = 689059297366332946L;
 
     /**
      * Create the condition.
@@ -45,8 +42,9 @@ public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
             ));
     }
 
+    @Nonnull
     @Override
-    public NeighborhoodPresent<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
+    public NeighborhoodPresent<T> cloneCondition(@Nonnull final Node<T> newNode, @Nonnull final NodeReaction<T> newReaction) {
         return new NeighborhoodPresent<>(getEnvironment(), newNode);
     }
 

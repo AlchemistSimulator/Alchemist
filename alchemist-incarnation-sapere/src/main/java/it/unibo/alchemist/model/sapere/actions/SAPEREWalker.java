@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.sapere.actions;
 
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.maps.actions.MoveOnMap;
 import it.unibo.alchemist.model.maps.movestrategies.routing.OnStreets;
@@ -26,7 +26,6 @@ import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.danilopianini.lang.HashString;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +39,6 @@ public final class SAPEREWalker
      * The default molecule that identifies an interacting object.
      */
     public static final ILsaMolecule DEFAULT_INTERACTING_TAG = new LsaMolecule("person");
-    @Serial
-    private static final long serialVersionUID = 8533918846332597708L;
 
     /**
      * @param environment
@@ -60,7 +57,7 @@ public final class SAPEREWalker
     public SAPEREWalker(
         final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment,
         final ILsaNode node,
-        final Reaction<List<ILsaMolecule>> reaction,
+        final NodeReaction<List<ILsaMolecule>> reaction,
         final double speed,
         final double interaction,
         final double range
@@ -87,7 +84,7 @@ public final class SAPEREWalker
     public SAPEREWalker(
             final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment,
             final ILsaNode node,
-            final Reaction<List<ILsaMolecule>> reaction,
+            final NodeReaction<List<ILsaMolecule>> reaction,
             final ILsaMolecule tag,
             final double speed,
             final double interaction,
@@ -102,8 +99,12 @@ public final class SAPEREWalker
         );
     }
 
+    @Nonnull
     @Override
-    public SAPEREWalker cloneAction(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> reaction) {
+    public SAPEREWalker cloneAction(
+        @Nonnull final Node<List<ILsaMolecule>> node,
+        @Nonnull final NodeReaction<List<ILsaMolecule>> reaction
+    ) {
         return null;
     }
 

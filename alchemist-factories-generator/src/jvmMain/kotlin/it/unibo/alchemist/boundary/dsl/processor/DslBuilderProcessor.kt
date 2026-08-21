@@ -29,7 +29,7 @@ import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.TimeDistribution
 import java.io.PrintWriter
 import java.nio.charset.StandardCharsets
@@ -76,7 +76,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator) : SymbolProc
             resolver.getClassDeclarationByName<Incarnation<*, *>>(),
             resolver.getClassDeclarationByName<Node<*>>(),
             resolver.getClassDeclarationByName<RandomGenerator>(),
-            resolver.getClassDeclarationByName<Reaction<*>>(),
+            resolver.getClassDeclarationByName<NodeReaction<*>>(),
             resolver.getClassDeclarationByName<Simulation<*, *>>(),
             resolver.getClassDeclarationByName<TimeDistribution<*>>(),
         ).map { checkNotNull(it).asStarProjectedType() }.toSet()

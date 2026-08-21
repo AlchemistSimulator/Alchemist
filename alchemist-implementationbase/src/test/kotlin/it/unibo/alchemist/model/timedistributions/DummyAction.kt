@@ -11,14 +11,14 @@ package it.unibo.alchemist.model.timedistributions
 
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.actions.AbstractLocalAction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 
 class DummyAction(
     node: Node<Int>,
 ) : AbstractLocalAction<Int>(node) {
-    override fun cloneAction(node: Node<Int>, reaction: Reaction<Int>): Action<Int> = DummyAction(node)
+    override fun cloneAction(node: Node<Int>, reaction: NodeReaction<Int>): Action<Int> = DummyAction(node)
 
     override fun execute() {
         // Do nothing, this is a dummy action

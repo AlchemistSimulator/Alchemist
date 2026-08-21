@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.sapere.conditions;
 
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
 import it.unibo.alchemist.model.sapere.ILsaCondition;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
@@ -24,6 +24,7 @@ import it.unibo.alchemist.model.sapere.dsl.impl.UIDNode;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.danilopianini.lang.HashString;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -50,13 +51,18 @@ public abstract class AbstractLsaCondition extends AbstractCondition<List<ILsaMo
     @Override
     public abstract String toString();
 
+    @Nonnull
     @Override
     public final ILsaNode getNode() {
         return (ILsaNode) super.getNode();
     }
 
+    @Nonnull
     @Override
-    public abstract AbstractLsaCondition cloneCondition(Node<List<ILsaMolecule>> node, Reaction<List<ILsaMolecule>> reaction);
+    public abstract AbstractLsaCondition cloneCondition(
+        @Nonnull Node<List<ILsaMolecule>> node,
+        @Nonnull NodeReaction<List<ILsaMolecule>> reaction
+    );
 
     /**
      * @param partialInstance

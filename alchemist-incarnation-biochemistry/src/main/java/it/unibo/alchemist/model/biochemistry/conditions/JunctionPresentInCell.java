@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,23 +11,20 @@ package it.unibo.alchemist.model.biochemistry.conditions;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableExtensions;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
  * Condition that is valid if a specific junction is present in the cell.
  */
 public final class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
-
-    @Serial
-    private static final long serialVersionUID = 4213307452790768059L;
 
     private final Junction junction;
     private final Environment<Double, ?> environment;
@@ -38,7 +35,11 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
      * @param node        the node
      * @param environment the environment
      */
-    public JunctionPresentInCell(final Environment<Double, ?> environment, final Node<Double> node, final Junction junction) {
+    public JunctionPresentInCell(
+        final Environment<Double, ?> environment,
+        final Node<Double> node,
+        final Junction junction
+    ) {
         super(environment, node);
         cell = node.asPropertyOrNull(CellProperty.class);
         Objects.requireNonNull(
@@ -50,8 +51,12 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
         setUpObservability();
     }
 
+    @Nonnull
     @Override
-    public JunctionPresentInCell cloneCondition(final Node<Double> newNode, final Reaction<Double> newReaction) {
+    public JunctionPresentInCell cloneCondition(
+        @Nonnull final Node<Double> newNode,
+        @Nonnull final NodeReaction<Double> newReaction
+    ) {
         return new JunctionPresentInCell(environment, newNode, junction);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,11 +10,11 @@
 package it.unibo.alchemist.model.sapere.actions;
 
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,9 +23,6 @@ import java.util.List;
 /**
  */
 public abstract class AbstractSAPEREAgent extends AbstractLsaAction {
-
-    @Serial
-    private static final long serialVersionUID = -471112895569621229L;
 
     /**
      * Creates a new SAPERE Agent stub. If you use this constructor, you must be
@@ -97,10 +94,11 @@ public abstract class AbstractSAPEREAgent extends AbstractLsaAction {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public AbstractSAPEREAgent cloneAction(
-            final Node<List<ILsaMolecule>> node,
-            final Reaction<List<ILsaMolecule>> reaction
+        @Nonnull final Node<List<ILsaMolecule>> node,
+        @Nonnull final NodeReaction<List<ILsaMolecule>> reaction
     ) {
         throw new UnsupportedOperationException(
                 "SAPERE Agents are not meant to be cloned. If you want, implement cloneOnNewNode yourself."

@@ -25,7 +25,7 @@ import kotlin.reflect.jvm.jvmErasure
 </T> */
 interface Node<T> :
     Serializable,
-    Iterable<Reaction<T>>,
+    Iterable<NodeReaction<T>>,
     Comparable<Node<T>>,
     Disposable {
     /**
@@ -39,7 +39,7 @@ interface Node<T> :
      *
      * @param reactionToAdd the reaction to be added
      */
-    fun addReaction(reactionToAdd: Reaction<T>)
+    fun addReaction(reactionToAdd: NodeReaction<T>)
 
     /**
      * Creates a new Node which is a clone of the current Node. The new Node
@@ -127,7 +127,7 @@ interface Node<T> :
      *
      * @return the list of rections belonging to this node
      */
-    val reactions: List<Reaction<T>>
+    val reactions: List<NodeReaction<T>>
 
     override fun hashCode(): Int
 
@@ -148,7 +148,7 @@ interface Node<T> :
      *
      * @param reactionToRemove the reaction to be removed
      */
-    fun removeReaction(reactionToRemove: Reaction<T>)
+    fun removeReaction(reactionToRemove: NodeReaction<T>)
 
     /**
      * Sets the concentration of mol to c.

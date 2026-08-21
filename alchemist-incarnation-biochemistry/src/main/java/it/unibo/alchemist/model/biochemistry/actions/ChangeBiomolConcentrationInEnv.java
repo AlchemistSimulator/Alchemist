@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,14 +13,14 @@ import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,8 +31,6 @@ import java.util.stream.Stream;
  */
 public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<Double> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final double delta;
     private final Biomolecule biomolecule;
     private final Environment<Double, ?> environment;
@@ -85,8 +83,12 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
         this(environment, node, biomolecule, -1, randomGen);
     }
 
+    @Nonnull
     @Override
-    public Action<Double> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+    public Action<Double> cloneAction(
+        @Nonnull final Node<Double> node,
+        @Nonnull final NodeReaction<Double> reaction
+    ) {
         return new ChangeBiomolConcentrationInEnv(node, biomolecule, environment, getRandomGenerator());
     }
 
@@ -129,6 +131,7 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
         }
     }
 
+    @Nonnull
     @Override
     public Context getContext() {
         return Context.NEIGHBORHOOD;

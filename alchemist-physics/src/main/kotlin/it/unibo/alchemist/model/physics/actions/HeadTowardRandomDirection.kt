@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.physics.actions
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
@@ -33,7 +33,7 @@ class HeadTowardRandomDirection<T>(
     /**
      * {@inheritDoc}.
      */
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> =
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): Action<T> =
         HeadTowardRandomDirection(node, environment, randomGenerator)
 
     /**

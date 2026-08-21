@@ -56,7 +56,7 @@ The correct invalidation policy belongs to the reaction family:
 
 * The base generic policy redraws a delay.
 * An absolute-time `Trigger` is one-shot and does not move on reactive invalidation.
-* An `AbstractMarkovianReaction` preserves or rescales a surviving exponential residual after a positive rate
+* An `AbstractMarkovianNodeReaction` preserves or rescales a surviving exponential residual after a positive rate
   change without drawing another random sample. Chemical reactions use this policy and reject non-exponential time
   distributions at construction.
 

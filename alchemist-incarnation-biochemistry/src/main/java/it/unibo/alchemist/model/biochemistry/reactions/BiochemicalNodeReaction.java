@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.biochemistry.actions.AbstractNeighborAction;
 import it.unibo.alchemist.model.biochemistry.conditions.AbstractNeighborCondition;
-import it.unibo.alchemist.model.reactions.ChemicalReaction;
+import it.unibo.alchemist.model.reactions.ChemicalNodeReaction;
 import org.apache.commons.math3.distribution.EnumeratedDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
@@ -35,7 +35,7 @@ import static java.util.stream.Collectors.toMap;
 /**
  * A biochemical Reaction.
  */
-public final class BiochemicalReaction extends ChemicalReaction<Double> {
+public final class BiochemicalNodeReaction extends ChemicalNodeReaction<Double> {
 
     @Serial
     private static final long serialVersionUID = 3849210665619933894L;
@@ -62,7 +62,7 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
      * @param randomGenerator
      *            the random generator
      */
-    public BiochemicalReaction(
+    public BiochemicalNodeReaction(
             final Node<Double> node,
             final TimeDistribution<Double> timeDistribution,
             final Environment<Double, ?> environment,
@@ -75,9 +75,9 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
 
     @Nonnull
     @Override
-    public BiochemicalReaction cloneOnNewNode(@Nonnull final Node<Double> node, @Nonnull final Time currentTime) {
+    public BiochemicalNodeReaction cloneOnNewNode(@Nonnull final Node<Double> node, @Nonnull final Time currentTime) {
         return prepareClone(
-            new BiochemicalReaction(node, getTimeDistribution().newInstanceOn(node), environment, random),
+            new BiochemicalNodeReaction(node, getTimeDistribution().newInstanceOn(node), environment, random),
             currentTime
         );
     }

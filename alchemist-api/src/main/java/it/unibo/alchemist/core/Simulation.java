@@ -14,8 +14,8 @@ import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import kotlin.Unit;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
@@ -175,7 +175,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     /**
      * Adds a reaction during the simulation to the scheduler and start to execute it.
      * The reaction addition is not propagated in the {@link Node} entity.
-     * To do that call also the method {@link Node#addReaction(Reaction)}.
+     * To do that call also the method {@link Node#addReaction(NodeReaction)}.
      *
      * @param reactionToAdd the reaction to add
      */
@@ -184,7 +184,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     /**
      * Removes a reaction during the simulation from the scheduler and stop to execute it.
      * The reaction removal is not propagated in the {@link Node} entity.
-     * To do that call also the method {@link Node#removeReaction(Reaction)}.
+     * To do that call also the method {@link Node#removeReaction(NodeReaction)}.
      *
      * @param reactionToRemove the reaction to remove
      */

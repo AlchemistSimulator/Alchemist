@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableMap
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
 import java.io.Serializable
@@ -33,7 +33,7 @@ class AlchemistNetworkManager @JvmOverloads constructor(
     /**
      * This reaction stores the time at which the neighbor state is read.
      */
-    val event: Reaction<Any>,
+    val event: NodeReaction<Any>,
     /**
      * The [ProtelisDevice] required to run Protelis.
      */

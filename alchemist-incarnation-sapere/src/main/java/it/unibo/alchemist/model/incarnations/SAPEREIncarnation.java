@@ -17,8 +17,8 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
@@ -31,7 +31,7 @@ import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.sapere.dsl.impl.Type;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.sapere.nodes.LsaNode;
-import it.unibo.alchemist.model.sapere.reactions.SAPEREReaction;
+import it.unibo.alchemist.model.sapere.reactions.SAPERENodeReaction;
 import it.unibo.alchemist.model.sapere.timedistributions.SAPEREExponentialTime;
 import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -191,13 +191,13 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
     }
 
     @Override
-    public Reaction<List<ILsaMolecule>> createReaction(
+    public NodeReaction<List<ILsaMolecule>> createReaction(
             final RandomGenerator randomGenerator,
             final Environment<List<ILsaMolecule>, P> environment,
             final Node<List<ILsaMolecule>> node,
             final TimeDistribution<List<ILsaMolecule>> timeDistribution,
             final @Nullable Object parameter) {
-        final SAPEREReaction result = new SAPEREReaction(environment, (LsaNode) node, randomGenerator, timeDistribution);
+        final SAPERENodeReaction result = new SAPERENodeReaction(environment, (LsaNode) node, randomGenerator, timeDistribution);
         if (parameter != null && !parameter.toString().isEmpty()) {
             final Matcher rMatcher = MATCH_REACTION.matcher(parameter.toString());
             if (rMatcher.matches()) {

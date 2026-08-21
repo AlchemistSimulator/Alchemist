@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,24 +13,21 @@ import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.observation.Observable;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.apache.commons.math3.util.FastMath;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Serial;
 
 /**
  * @param <P> Position type
  */
 public final class BiomolPresentInEnv<P extends Position<? extends P>> extends GenericMoleculePresent<Double> {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     private final Environment<Double, P> environment;
 
@@ -58,11 +55,16 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
         setUpObservability();
     }
 
+    @Nonnull
     @Override
-    public BiomolPresentInEnv<P> cloneCondition(final Node<Double> newNode, final Reaction<Double> newReaction) {
+    public BiomolPresentInEnv<P> cloneCondition(
+        @Nonnull final Node<Double> newNode,
+        @Nonnull final NodeReaction<Double> newReaction
+    ) {
         return new BiomolPresentInEnv<>(environment, newNode, getBiomolecule(), getQuantity());
     }
 
+    @Nonnull
     @Override
     public Context getContext() {
         return Context.NEIGHBORHOOD;

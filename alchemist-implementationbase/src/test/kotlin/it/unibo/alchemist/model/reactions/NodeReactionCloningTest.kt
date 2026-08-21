@@ -37,7 +37,7 @@ import org.apache.commons.math3.random.RandomGenerator
 import org.apache.commons.math3.random.Well19937c
 import org.junit.jupiter.api.Test
 
-class ReactionCloningTest {
+class NodeReactionCloningTest {
 
     private val environment = mockk<Environment<Any, *>>()
 
@@ -96,7 +96,7 @@ class ReactionCloningTest {
     @Test
     fun `a chemical reaction rejects non-memoryless distributions`() {
         assertFailsWith<IllegalArgumentException> {
-            ChemicalReaction(mockk<Node<Any>>(), SequenceDistribution(3.0, 100.0))
+            ChemicalNodeReaction(mockk<Node<Any>>(), SequenceDistribution(3.0, 100.0))
         }
     }
 
@@ -146,7 +146,7 @@ class ReactionCloningTest {
             samples++
             0.5
         }
-        val source = ChemicalReaction(node, ExponentialTime(1.0, randomGenerator))
+        val source = ChemicalNodeReaction(node, ExponentialTime(1.0, randomGenerator))
         source.initializationComplete(Time.ZERO, environment)
         val sourceOccurrence = source.nextOccurrence.current
         source.updateAfterFiring(sourceOccurrence)

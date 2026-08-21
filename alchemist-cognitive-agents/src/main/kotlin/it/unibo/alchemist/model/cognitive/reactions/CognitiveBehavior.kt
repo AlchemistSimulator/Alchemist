@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.cognitive.CognitiveProperty
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.reactions.AbstractReaction
+import it.unibo.alchemist.model.reactions.AbstractNodeReaction
 
 /**
  * Reaction representing a pedestrian's cognitive behavior.
@@ -29,7 +29,7 @@ import it.unibo.alchemist.model.reactions.AbstractReaction
  * @param timeDistribution the time distribution governing reaction execution.
  */
 class CognitiveBehavior<T, V, A>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
-    AbstractReaction<T>(node, timeDistribution)
+    AbstractNodeReaction<T>(node, timeDistribution)
     where V : Vector<V>, A : Transformation<V> {
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time) =
         makeClone(node, currentTime) { CognitiveBehavior<T, V, A>(node, it) }

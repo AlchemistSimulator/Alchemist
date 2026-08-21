@@ -17,9 +17,9 @@ import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Position2D
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.maps.MapEnvironment
 import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.model.molecules.SimpleMolecule
@@ -58,7 +58,7 @@ class AlchemistExecutionContext<P : Position<P>>(
     val environmentAccess: Environment<Any, P>,
     private val node: Node<Any>,
     private val protelisDevice: ProtelisDevice<P>,
-    private val reaction: Reaction<Any>,
+    private val reaction: NodeReaction<Any>,
     /**
      * The internal random generator used by the execution context.
      */
@@ -102,7 +102,7 @@ class AlchemistExecutionContext<P : Position<P>>(
      * @param localNode
      * the local [Node]
      * @param reaction
-     * the [Reaction] hosting the program
+     * the [NodeReaction] hosting the program
      * @param random
      * the [RandomGenerator] for this simulation
      * @param networkManager
@@ -111,7 +111,7 @@ class AlchemistExecutionContext<P : Position<P>>(
     constructor(
         environment: Environment<Any, P>,
         localNode: Node<Any>,
-        reaction: Reaction<Any>,
+        reaction: NodeReaction<Any>,
         random: RandomGenerator,
         networkManager: AlchemistNetworkManager,
     ) : this(

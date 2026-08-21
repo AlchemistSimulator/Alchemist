@@ -20,15 +20,15 @@ import it.unibo.alchemist.model.TimeDistribution
  *
  * @param T concentration type
  */
-open class ChemicalReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
-    AbstractMarkovianReaction<T>(node, timeDistribution) {
+open class ChemicalNodeReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
+    AbstractMarkovianNodeReaction<T>(node, timeDistribution) {
 
     private var currentRate = 0.0
 
     final override val rate: Double get() = currentRate
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ChemicalReaction<T> =
-        makeClone(node, currentTime) { freshGenerator -> ChemicalReaction(node, freshGenerator) }
+    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ChemicalNodeReaction<T> =
+        makeClone(node, currentTime) { freshGenerator -> ChemicalNodeReaction(node, freshGenerator) }
 
     override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
         if (!isNewlyInstantiatedProgram) {

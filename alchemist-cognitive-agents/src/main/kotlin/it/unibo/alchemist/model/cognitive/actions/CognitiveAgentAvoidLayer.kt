@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.EnvironmentWithObstacles
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.cognitive.CognitiveProperty
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
@@ -37,7 +37,7 @@ class CognitiveAgentAvoidLayer
 @JvmOverloads
 constructor(
     environment: Euclidean2DEnvironment<Number>,
-    reaction: Reaction<Number>,
+    reaction: NodeReaction<Number>,
     pedestrian: PedestrianProperty<Number>,
     targetMolecule: Molecule,
     private val viewDepth: Double = Double.POSITIVE_INFINITY,
@@ -52,7 +52,7 @@ constructor(
             }
         }
 
-    override fun cloneAction(node: Node<Number>, reaction: Reaction<Number>): CognitiveAgentAvoidLayer =
+    override fun cloneAction(node: Node<Number>, reaction: NodeReaction<Number>): CognitiveAgentAvoidLayer =
         CognitiveAgentAvoidLayer(
             environment,
             reaction,

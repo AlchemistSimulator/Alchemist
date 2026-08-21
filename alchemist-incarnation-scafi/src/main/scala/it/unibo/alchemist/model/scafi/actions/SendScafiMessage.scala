@@ -9,21 +9,20 @@
 
 package it.unibo.alchemist.model.scafi.actions
 
-import it.unibo.alchemist.model.{Node, Position, Reaction}
-import it.unibo.alchemist.model.incarnations.ScafiIncarnationUtils
-import it.unibo.alchemist.model._
 import it.unibo.alchemist.model.actions.AbstractAction
+import it.unibo.alchemist.model.incarnations.ScafiIncarnationUtils
 import it.unibo.alchemist.model.incarnations.ScafiIncarnationUtils.runInScafiDeviceContext
 import it.unibo.alchemist.model.scafi.properties.ScafiDevice
+import it.unibo.alchemist.model._
 
 import java.util.stream.Collectors
 import scala.jdk.CollectionConverters._
 
 class SendScafiMessage[T, P <: Position[P]](
-    environment: Environment[T, P],
-    device: ScafiDevice[T],
-    reaction: Reaction[T],
-    val program: RunScafiProgram[T, P]
+                                             environment: Environment[T, P],
+                                             device: ScafiDevice[T],
+                                             reaction: NodeReaction[T],
+                                             val program: RunScafiProgram[T, P]
 ) extends AbstractAction[T](device.getNode) {
   assert(reaction != null, "Reaction cannot be null")
   assert(program != null, "Program cannot be null")
@@ -33,13 +32,13 @@ class SendScafiMessage[T, P <: Position[P]](
    * with the same reaction programming, e.g. for morphogenesis.
    *
    * @param destinationNode
-   *   The node where to clone this {@link Action}
+   *   The node where to clone this action
    * @param reaction
    *   The reaction to which the CURRENT action is assigned
    * @return
    *   the cloned action
    */
-  override def cloneAction(destinationNode: Node[T], reaction: Reaction[T]): Action[T] =
+  override def cloneAction(destinationNode: Node[T], reaction: NodeReaction[T]): Action[T] =
     runInScafiDeviceContext[T, Action[T]](
       node = destinationNode,
       message =

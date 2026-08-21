@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.sapere.actions;
 
 import com.google.common.collect.Sets;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.actions.AbstractAction;
 import it.unibo.alchemist.model.sapere.ILsaAction;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
@@ -173,8 +173,12 @@ public abstract class AbstractLsaAction extends AbstractAction<List<ILsaMolecule
         return new LsaMolecule(template.allocateVar(getMatches()));
     }
 
+    @Nonnull
     @Override
-    public abstract AbstractLsaAction cloneAction(Node<List<ILsaMolecule>> node, Reaction<List<ILsaMolecule>> reaction);
+    public abstract AbstractLsaAction cloneAction(
+        @Nonnull Node<List<ILsaMolecule>> node,
+        @Nonnull NodeReaction<List<ILsaMolecule>> reaction
+    );
 
     /**
      * This method allows subclasses to access a field of an LSA (supposed to be

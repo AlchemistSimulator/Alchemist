@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.physics.actions
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.util.Anys.toPosition
@@ -32,13 +32,13 @@ class HeadTowardTarget<T>
 constructor(
     node: Node<T>,
     private val environment: Physics2DEnvironment<T>,
-    private val reaction: Reaction<T>,
+    private val reaction: NodeReaction<T>,
     private val target: Molecule,
     private val angularSpeedDegrees: Double = 360.0,
 ) : AbstractAction<T>(node) {
     private val angularSpeedRadians = toRadians(angularSpeedDegrees)
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>) =
         HeadTowardTarget(node, environment, reaction, target, angularSpeedDegrees)
 
     /**

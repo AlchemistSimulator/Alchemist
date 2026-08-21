@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.sapere.actions;
 
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
@@ -24,6 +24,7 @@ import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -71,8 +72,12 @@ public class LsaStandardAction extends AbstractLsaAction {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public LsaStandardAction cloneAction(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> reaction) {
+    public LsaStandardAction cloneAction(
+        @Nonnull final Node<List<ILsaMolecule>> node,
+        @Nonnull final NodeReaction<List<ILsaMolecule>> reaction
+    ) {
         return new LsaStandardAction(rand, (ILsaNode) node, getMolecule());
     }
 
@@ -87,6 +92,7 @@ public class LsaStandardAction extends AbstractLsaAction {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public Context getContext() {
         return Context.LOCAL;

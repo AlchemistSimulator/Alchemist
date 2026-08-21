@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.sapere.actions;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -101,8 +102,12 @@ public final class LsaCountNeighborsAction extends AbstractSAPERELocalAgent {
      * (alice.alchemist.model.interfaces.Node,
      * alice.alchemist.model.interfaces.Reaction)
      */
+    @Nonnull
     @Override
-    public LsaCountNeighborsAction cloneAction(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> reaction) {
+    public LsaCountNeighborsAction cloneAction(
+        @Nonnull final Node<List<ILsaMolecule>> node,
+        @Nonnull final NodeReaction<List<ILsaMolecule>> reaction
+    ) {
         return new LsaCountNeighborsAction(getEnvironment(), (ILsaNode) node, mol, countVarName, rnd);
     }
 

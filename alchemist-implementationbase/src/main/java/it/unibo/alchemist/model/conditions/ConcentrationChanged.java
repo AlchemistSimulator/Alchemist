@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,10 +13,9 @@ import com.google.common.base.Optional;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.util.Objects;
 
 /**
@@ -27,8 +26,6 @@ import java.util.Objects;
  */
 public final class ConcentrationChanged<T> extends AbstractCondition<T> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final Molecule target;
     @Nonnull
     private Optional<T> previous;
@@ -59,11 +56,13 @@ public final class ConcentrationChanged<T> extends AbstractCondition<T> {
         setPropensityContribution(isValid().map(valid -> valid ? 1d : 0d));
     }
 
+    @Nonnull
     @Override
-    public ConcentrationChanged<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
+    public ConcentrationChanged<T> cloneCondition(@Nonnull final Node<T> newNode, @Nonnull final NodeReaction<T> newReaction) {
         return new ConcentrationChanged<>(newNode, target);
     }
 
+    @Nonnull
     @Override
     public Context getContext() {
         return Context.LOCAL;

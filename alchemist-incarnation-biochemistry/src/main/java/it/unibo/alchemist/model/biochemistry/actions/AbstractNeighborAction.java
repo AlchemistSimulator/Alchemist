@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,11 +13,11 @@ import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.util.Iterables;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * Represents an action on a neighbor.
@@ -26,8 +26,6 @@ import java.io.Serial;
  */
 public abstract class AbstractNeighborAction<T> extends AbstractRandomizableAction<T> {
 
-    @Serial
-    private static final long serialVersionUID = -2287346030993830896L;
     private final Environment<T, ?> environment;
 
     /**
@@ -44,8 +42,12 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
         this.environment = environment;
     }
 
+    @Nonnull
     @Override
-    public abstract AbstractNeighborAction<T> cloneAction(Node<T> newNode, Reaction<T> newReaction);
+    public abstract AbstractNeighborAction<T> cloneAction(
+        @Nonnull Node<T> newNode,
+        @Nonnull NodeReaction<T> newReaction
+    );
 
     /**
      * Execute the action on a random neighbor if the node has a neighborhood. Otherwise do nothing.
@@ -67,6 +69,7 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
      */
     public abstract void execute(Node<T> targetNode);
 
+    @Nonnull
     @Override
     public final Context getContext() {
         return Context.NEIGHBORHOOD;

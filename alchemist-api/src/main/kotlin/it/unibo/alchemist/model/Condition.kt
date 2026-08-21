@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableSet
 
 /**
- * A reactive prerequisite for a [Reaction].
+ * A reactive prerequisite for a [NodeReaction].
  *
  * @param T concentration type
  */
@@ -22,7 +22,7 @@ interface Condition<T> : Disposable {
     /**
      * Creates an equivalent condition for [node] and [reaction].
      */
-    fun cloneCondition(node: Node<T>, reaction: Reaction<T>): Condition<T>
+    fun cloneCondition(node: Node<T>, reaction: NodeReaction<T>): Condition<T>
 
     /**
      * The context inspected by this condition.

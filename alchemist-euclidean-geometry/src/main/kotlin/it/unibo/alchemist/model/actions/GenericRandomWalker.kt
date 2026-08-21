@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.actions
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.movestrategies.RandomTarget
 import it.unibo.alchemist.model.movestrategies.RoutingStrategy
 import it.unibo.alchemist.model.movestrategies.speed.GloballyConstantSpeed
@@ -27,7 +27,7 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 open class GenericRandomWalker<T>(
     node: Node<T>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     environment: Environment<T, Euclidean2DPosition>,
     protected val randomGenerator: RandomGenerator,
     protected val speed: Double,
@@ -46,6 +46,6 @@ open class GenericRandomWalker<T>(
     RandomTarget(environment, node, randomGenerator, distanceDistribution),
     GloballyConstantSpeed(reaction, speed),
 ) {
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>) =
         GenericRandomWalker(node, reaction, environment, randomGenerator, speed, distanceDistribution)
 }

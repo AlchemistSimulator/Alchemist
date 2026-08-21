@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.biochemistry.properties.CircularCell;
@@ -86,7 +86,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
     }
 
     @Override
-    public Reaction<Double> createReaction(
+    public NodeReaction<Double> createReaction(
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,

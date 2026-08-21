@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,14 +12,13 @@ package it.unibo.alchemist.model.conditions;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableMutableSet;
 import it.unibo.alchemist.model.observation.ObservableSet;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.util.Objects;
 
 /**
@@ -27,8 +26,6 @@ import java.util.Objects;
  */
 public abstract class AbstractCondition<T> implements Condition<T> {
 
-    @Serial
-    private static final long serialVersionUID = -1610947908159507754L;
     private final Node<T> node;
 
     private final ObservableMutableSet<Observable<?>> dependencies = new ObservableMutableSet<>();
@@ -58,6 +55,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
      * Override if your {@link Condition} can return a more specific type of node.
      * The typical way is to cast the call to super.getNode().
      */
+    @Nonnull
     @Override
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "It is intentional")
     public Node<T> getNode() {
@@ -75,6 +73,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
         return dep;
     }
 
+    @Nonnull
     @Override
     public final ObservableSet<? extends Observable<?>> getDependencies() {
         return dependencies.copy();
@@ -84,6 +83,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
      * If you plan to override this method, make sure to free up additional
      * observables in {@link #dispose()}.
      */
+    @Nonnull
     @Override
     public Observable<Boolean> isValid() {
         return validity;
@@ -94,6 +94,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
      * If you plan to override this method, make sure to free up additional
      * observables in {@link #dispose()}.
      */
+    @Nonnull
     @Override
     public Observable<Double> getPropensityContribution() {
         return propensity;
@@ -117,8 +118,9 @@ public abstract class AbstractCondition<T> implements Condition<T> {
      * <p>
      * How to override: create a new action of your concrete subtype.
      */
+    @Nonnull
     @Override
-    public Condition<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
+    public Condition<T> cloneCondition(@Nonnull final Node<T> newNode, @Nonnull final NodeReaction<T> newReaction) {
         throw new UnsupportedOperationException(getClass().getSimpleName() + " has no support for cloning.");
     }
 

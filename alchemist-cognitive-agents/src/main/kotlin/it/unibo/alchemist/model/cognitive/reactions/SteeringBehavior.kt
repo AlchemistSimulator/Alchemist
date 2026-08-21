@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.cognitive.SteeringAction
 import it.unibo.alchemist.model.cognitive.SteeringStrategy
 import it.unibo.alchemist.model.cognitive.actions.CognitiveAgentCombineSteering
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.reactions.AbstractReaction
+import it.unibo.alchemist.model.reactions.AbstractNodeReaction
 
 /**
  * Reaction representing a pedestrian's steering behavior.
@@ -36,7 +36,7 @@ open class SteeringBehavior<T>(
     protected val pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
     open val steerStrategy: SteeringStrategy<T, Euclidean2DPosition>,
-) : AbstractReaction<T>(pedestrian.node, timeDistribution) {
+) : AbstractNodeReaction<T>(pedestrian.node, timeDistribution) {
     /** The list of steering actions in this reaction. */
     fun steerActions(): List<SteeringAction<T, Euclidean2DPosition>> =
         actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()

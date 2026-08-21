@@ -27,23 +27,23 @@ sealed interface Actionable<T> :
     Disposable {
 
     /**
-     *  The list of [Action]s of the [Reaction].
+     *  The list of [Action]s of the [NodeReaction].
      *  Please be careful when you modify this list.
      */
     var actions: List<Action<T>>
 
     /**
-     * The list of [Condition]s of the [Reaction].
+     * The list of [Condition]s of the [NodeReaction].
      * Please be careful when you modify this list.
      */
     var conditions: List<Condition<T>>
 
     /**
-     * Returns the speed of this [Reaction]. It is an average number, and
+     * Returns the speed of this [NodeReaction]. It is an average number, and
      * can potentially change during the simulation, depending on the
      * implementation.
      *
-     * @return the number of times this [Reaction] is triggered per time
+     * @return the number of times this [NodeReaction] is triggered per time
      * unit.
      */
     val rate: Double
@@ -57,7 +57,7 @@ sealed interface Actionable<T> :
     val nextOccurrence: Observable<Time>
 
     /**
-     * @return the [TimeDistribution] for this [Reaction]
+     * @return the [TimeDistribution] for this [NodeReaction]
      */
     val timeDistribution: TimeDistribution<T>
 

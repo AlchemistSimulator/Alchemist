@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
@@ -40,7 +40,7 @@ constructor(
      */
     val environment: Environment<T, *>,
     final override val id: Int = idFromEnv(environment),
-    final override val reactions: MutableList<Reaction<T>> = ArrayList(),
+    final override val reactions: MutableList<NodeReaction<T>> = ArrayList(),
     /**
      * The node's molecules.
      */
@@ -52,7 +52,7 @@ constructor(
 
     override val observeMoleculeCount: Observable<Int> = observableContents.map { it.size }
 
-    final override fun addReaction(reactionToAdd: Reaction<T>) {
+    final override fun addReaction(reactionToAdd: NodeReaction<T>) {
         reactions.add(reactionToAdd)
     }
 
@@ -80,7 +80,7 @@ constructor(
     /**
      * Performs an [action] for every reaction.
      */
-    final override fun forEach(action: Consumer<in Reaction<T>>) = reactions.forEach(action)
+    final override fun forEach(action: Consumer<in NodeReaction<T>>) = reactions.forEach(action)
 
     override fun getConcentration(molecule: Molecule): T = observeConcentration(molecule).current.getOrElse {
         createT()
@@ -94,7 +94,7 @@ constructor(
 
     final override fun hashCode(): Int = id // TODO: better hashing
 
-    final override fun iterator(): Iterator<Reaction<T>> = reactions.iterator()
+    final override fun iterator(): Iterator<NodeReaction<T>> = reactions.iterator()
 
     final override fun removeConcentration(moleculeToRemove: Molecule) {
         if (observableContents.remove(moleculeToRemove) == null) {
@@ -102,7 +102,7 @@ constructor(
         }
     }
 
-    final override fun removeReaction(reactionToRemove: Reaction<T>) {
+    final override fun removeReaction(reactionToRemove: NodeReaction<T>) {
         if (reactions.remove(reactionToRemove)) {
             reactionToRemove.dispose()
         }
@@ -126,7 +126,7 @@ constructor(
     /**
      * Returns the [reactions] [Spliterator].
      */
-    final override fun spliterator(): Spliterator<Reaction<T>> = reactions.spliterator()
+    final override fun spliterator(): Spliterator<NodeReaction<T>> = reactions.spliterator()
 
     override fun toString(): String = "Node$id{ properties: $properties, molecules: ${observableContents.current}}"
 

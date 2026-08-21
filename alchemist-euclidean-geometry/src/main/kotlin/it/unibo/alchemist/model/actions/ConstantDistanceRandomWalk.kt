@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.actions
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.apache.commons.math3.distribution.DiracDeltaDistribution
 import org.apache.commons.math3.random.RandomGenerator
@@ -33,7 +33,7 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 class ConstantDistanceRandomWalk<T>(
     node: Node<T>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     environment: Environment<T, Euclidean2DPosition>,
     randomGenerator: RandomGenerator,
     private val distance: Double,
@@ -46,7 +46,7 @@ class ConstantDistanceRandomWalk<T>(
     speed,
     DiracDeltaDistribution(distance),
 ) {
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) = ConstantDistanceRandomWalk(
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>) = ConstantDistanceRandomWalk(
         node,
         reaction,
         environment,

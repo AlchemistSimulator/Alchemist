@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,11 +12,11 @@ package it.unibo.alchemist.model.biochemistry.conditions;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  *
@@ -27,8 +27,7 @@ public final class EnvPresent extends AbstractCondition<Double> {
     /**
      *
      */
-    @Serial
-    private static final long serialVersionUID = 1L;
+
     private final Environment<Double, ?> environment;
 
     /**
@@ -47,11 +46,16 @@ public final class EnvPresent extends AbstractCondition<Double> {
         setPropensityContribution(isValid().map(it -> it ? 1d : 0d));
     }
 
+    @Nonnull
     @Override
-    public EnvPresent cloneCondition(final Node<Double> newNode, final Reaction<Double> newReaction) {
+    public EnvPresent cloneCondition(
+        @Nonnull final Node<Double> newNode,
+        @Nonnull final NodeReaction<Double> newReaction
+    ) {
         return new EnvPresent(environment, newNode);
     }
 
+    @Nonnull
     @Override
     public Context getContext() {
         return Context.NEIGHBORHOOD;

@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.maps.movestrategies.target
 
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.maps.GPSPoint
 import it.unibo.alchemist.model.maps.movestrategies.AbstractStrategyWithGPS
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
@@ -20,9 +20,9 @@ import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
  * A strategy that follows a [it.unibo.alchemist.model.Route].
  *
  * @param T the concentration type handled by nodes using this strategy
- * @property reaction the associated [Reaction] used to obtain time for trace progression
+ * @property reaction the associated [NodeReaction] used to obtain time for trace progression
  */
-class FollowTrace<T>(private val reaction: Reaction<*>) :
+class FollowTrace<T>(private val reaction: NodeReaction<*>) :
     AbstractStrategyWithGPS(),
     TargetSelectionStrategy<T, GeoPosition> {
 
@@ -30,7 +30,7 @@ class FollowTrace<T>(private val reaction: Reaction<*>) :
         "No valid position found at time ${reaction.nextOccurrence.current}"
     }
 
-    override fun cloneIfNeeded(destination: Node<T>, reaction: Reaction<T>): FollowTrace<T> = FollowTrace(reaction)
+    override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): FollowTrace<T> = FollowTrace(reaction)
 
     private companion object {
         private const val serialVersionUID = 2L

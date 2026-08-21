@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.timedistributions
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.AbstractLocalAction
 
 class TestTriggerAction<T, P : Position<P>>(
@@ -22,7 +22,7 @@ class TestTriggerAction<T, P : Position<P>>(
 ) : AbstractLocalAction<T>(node) {
     private var executed = false
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> = TestTriggerAction(environment, node)
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): Action<T> = TestTriggerAction(environment, node)
 
     override fun execute() {
         when (executed) {

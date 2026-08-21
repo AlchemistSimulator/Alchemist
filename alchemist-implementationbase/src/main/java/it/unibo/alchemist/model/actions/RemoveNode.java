@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,9 +13,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * Removes the current node from the environment.
@@ -24,8 +24,6 @@ import java.io.Serial;
  */
 public final class RemoveNode<T> extends AbstractAction<T> {
 
-    @Serial
-    private static final long serialVersionUID = -7358217984854060148L;
     private final Environment<T, ?> environment;
 
     /**
@@ -38,6 +36,7 @@ public final class RemoveNode<T> extends AbstractAction<T> {
         this.environment = environment;
     }
 
+    @Nonnull
     @Override
     public Context getContext() {
         return Context.LOCAL;
@@ -66,8 +65,9 @@ public final class RemoveNode<T> extends AbstractAction<T> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public RemoveNode<T> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+    public RemoveNode<T> cloneAction(@Nonnull final Node<T> node, @Nonnull final NodeReaction<T> reaction) {
         return new RemoveNode<>(getEnvironment(), node);
     }
 

@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.cognitive.actions
 
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.navigation.GoalOrientedExploration
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
@@ -31,7 +31,7 @@ import it.unibo.alchemist.util.Arrays.toPositions
  */
 class CognitiveAgentGoalOrientedExplore<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     vararg unknownDestinations: Number,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {

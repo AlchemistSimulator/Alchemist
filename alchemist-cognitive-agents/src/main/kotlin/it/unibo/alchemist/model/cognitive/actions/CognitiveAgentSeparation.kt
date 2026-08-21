@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.PerceptiveProperty
 import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
@@ -28,10 +28,10 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  */
 class CognitiveAgentSeparation<T>(
     val environment: Physics2DEnvironment<T>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
 ) : AbstractGroupSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentSeparation<T> =
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentSeparation<T> =
         CognitiveAgentSeparation(environment, reaction, node.pedestrianProperty)
 
     override fun nextPosition(): Euclidean2DPosition = (currentPosition - centroid()).coerceAtMost(maxWalk)

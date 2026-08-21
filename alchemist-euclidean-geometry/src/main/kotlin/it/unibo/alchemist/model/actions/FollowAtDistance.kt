@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.movestrategies.speed.GloballyConstantSpeed
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.util.Anys.toPosition
@@ -37,7 +37,7 @@ import kotlin.math.sin
  */
 class FollowAtDistance<T>(
     node: Node<T>,
-    private val reaction: Reaction<T>,
+    private val reaction: NodeReaction<T>,
     private val environment: Environment<T, Euclidean2DPosition>,
     private val target: Molecule,
     private val distance: Double,
@@ -45,7 +45,7 @@ class FollowAtDistance<T>(
 ) : AbstractAction<T>(node) {
     private val speedStrategy = GloballyConstantSpeed<T, Euclidean2DPosition>(reaction, speed)
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) = FollowAtDistance(
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>) = FollowAtDistance(
         node,
         reaction,
         environment,

@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model
 
 /**
- * An operation performed when a [Reaction] executes.
+ * An operation performed when a [NodeReaction] executes.
  *
  * @param T concentration type
  */
@@ -18,7 +18,7 @@ interface Action<T> {
     /**
      * Creates an equivalent action for [node] and [reaction].
      */
-    fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T>
+    fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): Action<T>
 
     /**
      * Applies this action to the model.

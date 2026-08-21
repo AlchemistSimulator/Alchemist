@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.sapere.actions;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Route;
 import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.apache.commons.math3.random.RandomGenerator;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -73,10 +74,11 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public LsaRandomNeighborAction cloneAction(
-            final Node<List<ILsaMolecule>> node,
-            final Reaction<List<ILsaMolecule>> reaction
+        @Nonnull final Node<List<ILsaMolecule>> node,
+        @Nonnull final NodeReaction<List<ILsaMolecule>> reaction
     ) {
         return new LsaRandomNeighborAction(randomEngine, getEnvironment(), (ILsaNode) node, getMolecule());
     }
@@ -114,6 +116,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
         }
     }
 
+    @Nonnull
     @Override
     public final Context getContext() {
         return Context.NEIGHBORHOOD;

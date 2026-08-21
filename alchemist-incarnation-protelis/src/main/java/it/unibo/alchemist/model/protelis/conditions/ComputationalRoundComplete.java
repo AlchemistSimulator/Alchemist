@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,21 +11,18 @@ package it.unibo.alchemist.model.protelis.conditions;
 
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
  */
 public final class ComputationalRoundComplete extends AbstractCondition<Object> {
-
-    @Serial
-    private static final long serialVersionUID = -4113718948444451107L;
 
     private final RunProtelisProgram<?> program;
 
@@ -41,18 +38,24 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
         addObservableDependency(program.getObserveComputationalCycleComplete());
     }
 
+    @Nonnull
     @Override
     public Observable<Boolean> isValid() {
         return getProgram().getObserveComputationalCycleComplete();
     }
 
+    @Nonnull
     @Override
     public Observable<Double> getPropensityContribution() {
         return isValid().map(it -> it ? 1d : 0d);
     }
 
+    @Nonnull
     @Override
-    public ComputationalRoundComplete cloneCondition(final Node<Object> node, final Reaction<Object> reaction) {
+    public ComputationalRoundComplete cloneCondition(
+        @Nonnull final Node<Object> node,
+        @Nonnull final NodeReaction<Object> reaction
+    ) {
         final ProtelisDevice<?> device = node.asPropertyOrNull(ProtelisDevice.class);
         if (device != null) {
             final List<RunProtelisProgram<?>> possibleRefs = device.allProtelisPrograms();
@@ -74,6 +77,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
         getProgram().getObserveComputationalCycleComplete().dispose();
     }
 
+    @Nonnull
     @Override
     public Context getContext() {
         return Context.LOCAL;

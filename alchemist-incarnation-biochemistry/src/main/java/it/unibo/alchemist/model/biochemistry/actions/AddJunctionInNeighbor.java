@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,13 +11,13 @@ package it.unibo.alchemist.model.biochemistry.actions;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * Represent the action of add a junction between a neighbor and the current node.
@@ -29,9 +29,6 @@ import java.io.Serial;
  * @param <P> Position type
  */
 public final class AddJunctionInNeighbor<P extends Position<? extends P>> extends AbstractNeighborAction<Double> {
-
-    @Serial
-    private static final long serialVersionUID = 8670229402770243539L;
 
     private final Junction jun;
 
@@ -51,9 +48,13 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
         jun = junction;
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
     @Override
-    public AddJunctionInNeighbor<P> cloneAction(final Node<Double> newNode, final Reaction<Double> newReaction) {
+    public AddJunctionInNeighbor<P> cloneAction(
+        @Nonnull final Node<Double> newNode,
+        @Nonnull final NodeReaction<Double> newReaction
+    ) {
         if (newNode.asPropertyOrNull(CellProperty.class) != null) {
             return new AddJunctionInNeighbor<>(
                     (Environment<Double, P>) getEnvironment(),

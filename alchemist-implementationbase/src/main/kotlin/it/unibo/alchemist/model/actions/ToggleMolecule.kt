@@ -8,10 +8,9 @@
  */
 package it.unibo.alchemist.model.actions
 
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 
 /**
  * Treats [molecule] as a switch:
@@ -20,7 +19,7 @@ import it.unibo.alchemist.model.Reaction
  */
 open class ToggleMolecule<T>(node: Node<T>, protected val molecule: Molecule, protected val concentration: T) :
     AbstractAction<T>(node) {
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) = ToggleMolecule(node, molecule, concentration)
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>) = ToggleMolecule(node, molecule, concentration)
 
     /**
      * Toggles concentration.

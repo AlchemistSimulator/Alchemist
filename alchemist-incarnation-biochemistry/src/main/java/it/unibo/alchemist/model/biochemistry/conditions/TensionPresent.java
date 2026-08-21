@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,13 +12,13 @@ package it.unibo.alchemist.model.biochemistry.conditions;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty;
 import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.stream.Stream;
 
 /**
@@ -27,8 +27,6 @@ import java.util.stream.Stream;
 @SuppressFBWarnings("FE_FLOATING_POINT")
 public final class TensionPresent extends AbstractCondition<Double> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final EnvironmentSupportingDeformableCells<?> environment;
 
     /**
@@ -45,14 +43,19 @@ public final class TensionPresent extends AbstractCondition<Double> {
         setValidity();
     }
 
+    @Nonnull
     @Override
-    public TensionPresent cloneCondition(final Node<Double> node, final Reaction<Double> reaction) {
+    public TensionPresent cloneCondition(
+        @Nonnull final Node<Double> node,
+        @Nonnull final NodeReaction<Double> reaction
+    ) {
         if (node.asPropertyOrNull(CircularDeformableCellProperty.class) != null) {
             return new TensionPresent(environment, node);
         }
         throw new IllegalArgumentException("Node must have a " + CircularDeformableCellProperty.class.getSimpleName());
     }
 
+    @Nonnull
     @Override
     public Context getContext() {
         return Context.NEIGHBORHOOD;

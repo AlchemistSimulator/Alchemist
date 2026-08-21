@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.maps.actions
 
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.RoutingService
 import it.unibo.alchemist.model.RoutingServiceOptions
 import it.unibo.alchemist.model.deployments.Polygon
@@ -29,7 +29,7 @@ import org.apache.commons.math3.random.RandomGenerator
 class RandomTargetInPolygonOnMap<T, O : RoutingServiceOptions<O>, S : RoutingService<GeoPosition, O>>(
     environment: MapEnvironment<T, O, S>,
     node: Node<T>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     speed: Double,
     val positionGenerator: Polygon<GeoPosition>,
 ) : MoveOnMap<T, O, S>(
@@ -43,14 +43,14 @@ class RandomTargetInPolygonOnMap<T, O : RoutingServiceOptions<O>, S : RoutingSer
             .findFirst()
             .orElseThrow { IllegalStateException("Bug in Alchemist.") }
 
-        override fun cloneIfNeeded(destination: Node<T>?, reaction: Reaction<T>?) = this
+        override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>) = this
     },
 ) {
     constructor(
         randomGenerator: RandomGenerator,
         environment: MapEnvironment<T, O, S>,
         node: Node<T>,
-        reaction: Reaction<T>,
+        reaction: NodeReaction<T>,
         speed: Double,
         polygonCoordinates: List<List<Number>>,
     ) : this (environment, node, reaction, speed, Polygon(environment, randomGenerator, 1, polygonCoordinates))

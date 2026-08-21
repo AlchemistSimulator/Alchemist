@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,11 +11,11 @@ package it.unibo.alchemist.model.biochemistry.conditions;
 
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 import static arrow.core.OptionKt.getOrElse;
 
@@ -28,8 +28,6 @@ import static arrow.core.OptionKt.getOrElse;
 public class GenericMoleculePresent<T extends Number> extends
     AbstractCondition<T> {
 
-    @Serial
-    private static final long serialVersionUID = -7400434133059391639L;
     private final Molecule molecule;
     private final T quantity;
 
@@ -88,8 +86,9 @@ public class GenericMoleculePresent<T extends Number> extends
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public GenericMoleculePresent<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
+    public GenericMoleculePresent<T> cloneCondition(@Nonnull final Node<T> newNode, @Nonnull final NodeReaction<T> newReaction) {
         return new GenericMoleculePresent<>(newNode, molecule, quantity);
     }
 

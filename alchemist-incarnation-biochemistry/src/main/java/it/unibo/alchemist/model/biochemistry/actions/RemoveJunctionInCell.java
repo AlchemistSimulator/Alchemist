@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,11 +11,12 @@ package it.unibo.alchemist.model.biochemistry.actions;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 import org.apache.commons.math3.random.RandomGenerator;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
@@ -52,8 +53,12 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
         this.environment = environment;
     }
 
+    @Nonnull
     @Override
-    public RemoveJunctionInCell cloneAction(final Node<Double> newNode, final Reaction<Double> newReaction) {
+    public RemoveJunctionInCell cloneAction(
+        @Nonnull final Node<Double> newNode,
+        @Nonnull final NodeReaction<Double> newReaction
+    ) {
         return new RemoveJunctionInCell(environment, newNode, jun, getRandomGenerator());
     }
 

@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.actions
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.VisibleNode
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
@@ -32,7 +32,7 @@ class CameraInjectVisibleNodeClosestToDistance(
     private val visionMolecule: Molecule,
     private val targetMolecule: Molecule,
 ) : AbstractAction<Any>(node) {
-    override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>) =
+    override fun cloneAction(node: Node<Any>, reaction: NodeReaction<Any>) =
         CameraInjectVisibleNodeClosestToDistance(node, environment, distance, visionMolecule, targetMolecule)
 
     override fun execute() {

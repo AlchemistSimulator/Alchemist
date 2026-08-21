@@ -12,8 +12,8 @@ import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import java.awt.BorderLayout
 import java.awt.event.ActionEvent
@@ -62,7 +62,7 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) :
     }
 
     override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
-        if (reaction == null || reaction is Reaction<*> && reaction.node == node) {
+        if (reaction == null || reaction is NodeReaction<*> && reaction.node == node) {
             val content =
                 """
                 |$POSITION

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.observation.ObservableExtensions;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.danilopianini.lang.HashString;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,8 +35,6 @@ import java.util.Map;
  */
 public final class LsaNeighborhoodCondition extends LsaStandardCondition {
 
-    @Serial
-    private static final long serialVersionUID = 5472803597473997104L;
     private final Environment<List<ILsaMolecule>, ?> environment;
 
     /**
@@ -69,8 +67,12 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
         ));
     }
 
+    @Nonnull
     @Override
-    public LsaNeighborhoodCondition cloneCondition(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> r) {
+    public LsaNeighborhoodCondition cloneCondition(
+        @Nonnull final Node<List<ILsaMolecule>> node,
+        @Nonnull final NodeReaction<List<ILsaMolecule>> r
+    ) {
         return new LsaNeighborhoodCondition((ILsaNode) node, getMolecule(), environment);
     }
 
@@ -284,6 +286,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
      * alice.alchemist.model.implementations.conditions.LsaStandardCondition
      * #getContext()
      */
+    @Nonnull
     @Override
     public Context getContext() {
         return Context.NEIGHBORHOOD;

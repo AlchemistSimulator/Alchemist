@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.biochemistry.actions;
 
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.actions.AbstractAction;
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty;
@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,8 +31,6 @@ import java.util.Objects;
  */
 public final class CellTensionPolarization extends AbstractAction<Double> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final EnvironmentSupportingDeformableCells<Euclidean2DPosition> environment;
     private final CircularDeformableCellProperty deformableCell;
 
@@ -63,8 +61,12 @@ public final class CellTensionPolarization extends AbstractAction<Double> {
         return getDeformableCell(node) != null;
     }
 
+    @Nonnull
     @Override
-    public CellTensionPolarization cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+    public CellTensionPolarization cloneAction(
+        @Nonnull final Node<Double> node,
+        @Nonnull final NodeReaction<Double> reaction
+    ) {
         return new CellTensionPolarization(environment, node);
     }
 
@@ -165,6 +167,7 @@ public final class CellTensionPolarization extends AbstractAction<Double> {
         }
     }
 
+    @Nonnull
     @Override
     public Context getContext() {
         return Context.LOCAL;

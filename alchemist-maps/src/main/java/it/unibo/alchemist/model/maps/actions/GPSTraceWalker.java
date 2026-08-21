@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.maps.actions;
 
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
 import it.unibo.alchemist.model.maps.GPSTrace;
@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * A walker that follows a trace. The trace is mandatory.
@@ -34,9 +34,6 @@ import java.io.Serial;
  */
 public final class GPSTraceWalker<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
     extends MoveOnMapWithGPS<T, O, S> {
-
-    @Serial
-    private static final long serialVersionUID = -6495138719085165782L;
 
     /**
      * @param environment
@@ -60,7 +57,7 @@ public final class GPSTraceWalker<T, O extends RoutingServiceOptions<O>, S exten
     public GPSTraceWalker(
             final MapEnvironment<T, O, S> environment,
             final Node<T> node,
-            final Reaction<T> reaction,
+            final NodeReaction<T> reaction,
             final O options,
             final String path,
             final boolean cycle,
@@ -96,7 +93,7 @@ public final class GPSTraceWalker<T, O extends RoutingServiceOptions<O>, S exten
     public GPSTraceWalker(
         final MapEnvironment<T, O, S> environment,
         final Node<T> node,
-        final Reaction<T> reaction,
+        final NodeReaction<T> reaction,
         final String path,
         final boolean cycle,
         final String normalizer,
@@ -117,7 +114,7 @@ public final class GPSTraceWalker<T, O extends RoutingServiceOptions<O>, S exten
     private GPSTraceWalker(
         final MapEnvironment<T, O, S> environment,
         final Node<T> node,
-        final Reaction<T> reaction,
+        final NodeReaction<T> reaction,
         final O options,
         final GPSTrace trace
     ) {
@@ -149,8 +146,9 @@ public final class GPSTraceWalker<T, O extends RoutingServiceOptions<O>, S exten
         );
     }
 
+    @Nonnull
     @Override
-    public GPSTraceWalker<T, O, S> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+    public GPSTraceWalker<T, O, S> cloneAction(@Nonnull final Node<T> node, @Nonnull final NodeReaction<T> reaction) {
         return new GPSTraceWalker<>(
             getEnvironment(),
             node,

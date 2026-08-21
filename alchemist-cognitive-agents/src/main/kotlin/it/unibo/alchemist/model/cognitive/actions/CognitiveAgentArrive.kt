@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.cognitive.actions
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.impact.individual.Speed
 import it.unibo.alchemist.model.geometry.Transformation
@@ -38,7 +38,7 @@ import it.unibo.alchemist.model.geometry.Vector
  */
 open class CognitiveAgentArrive<T, P, A>(
     environment: Environment<T, P>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     protected val decelerationRadius: Double,
     protected val arrivalTolerance: Double,
@@ -49,7 +49,7 @@ open class CognitiveAgentArrive<T, P, A>(
           A : Transformation<P> {
     constructor(
         environment: Environment<T, P>,
-        reaction: Reaction<T>,
+        reaction: NodeReaction<T>,
         pedestrian: PedestrianProperty<T>,
         decelerationRadius: Double,
         arrivalTolerance: Double,
@@ -72,7 +72,7 @@ open class CognitiveAgentArrive<T, P, A>(
             }
         }
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentArrive<T, P, A> =
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentArrive<T, P, A> =
         CognitiveAgentArrive(
             environment,
             reaction,

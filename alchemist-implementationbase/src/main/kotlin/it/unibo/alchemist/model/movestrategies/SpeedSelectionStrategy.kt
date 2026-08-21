@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.movestrategies
 
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 
 /**
  * Computes a node's movement length toward a target.
@@ -28,5 +28,5 @@ fun interface SpeedSelectionStrategy<T, P : Position<out P>> {
     /**
      * Returns a clone for [destination] and [reaction] when the strategy is stateful.
      */
-    fun cloneIfNeeded(destination: Node<T>, reaction: Reaction<T>): SpeedSelectionStrategy<T, P> = this
+    fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): SpeedSelectionStrategy<T, P> = this
 }

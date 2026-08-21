@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.actions.BrownianMove;
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
@@ -56,13 +56,13 @@ class TestBiomolLayer {
         final MersenneTwister rand = new MersenneTwister(0);
         final Node<Double> cellNode = INCARNATION.createNode(rand, environment, null);
         final Molecule a = new Biomolecule("A");
-        final Reaction<Double> underTest = INCARNATION.createReaction(
+        final NodeReaction<Double> underTest = INCARNATION.createReaction(
             rand, environment, cellNode,
             INCARNATION.createTimeDistribution(rand, environment, cellNode, "1"),
             "[B in env] --> [A]"
         );
         cellNode.addReaction(underTest);
-        final Reaction<Double> movement = new Event<>(cellNode, new DiracComb<>(100d));
+        final NodeReaction<Double> movement = new Event<>(cellNode, new DiracComb<>(100d));
         movement.setActions(List.of(new BrownianMove<>(environment, cellNode, rand, 10)));
         cellNode.addReaction(movement);
         cellNode.setConcentration(a, 0d);

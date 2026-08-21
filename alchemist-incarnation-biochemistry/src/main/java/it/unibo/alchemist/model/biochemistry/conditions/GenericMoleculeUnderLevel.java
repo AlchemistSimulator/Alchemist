@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,9 +11,9 @@ package it.unibo.alchemist.model.biochemistry.conditions;
 
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 import static arrow.core.OptionKt.getOrElse;
 
@@ -22,9 +22,6 @@ import static arrow.core.OptionKt.getOrElse;
  */
 public final class GenericMoleculeUnderLevel<T extends Number> extends
     GenericMoleculePresent<T> {
-
-    @Serial
-    private static final long serialVersionUID = -5646651431692309010L;
 
     /**
      * @param mol      the molecule
@@ -36,8 +33,12 @@ public final class GenericMoleculeUnderLevel<T extends Number> extends
         setUpObservability();
     }
 
+    @Nonnull
     @Override
-    public GenericMoleculeUnderLevel<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
+    public GenericMoleculeUnderLevel<T> cloneCondition(
+        @Nonnull final Node<T> newNode,
+        @Nonnull final NodeReaction<T> newReaction
+    ) {
         return new GenericMoleculeUnderLevel<>(newNode, getMolecule(), getQuantity());
     }
 

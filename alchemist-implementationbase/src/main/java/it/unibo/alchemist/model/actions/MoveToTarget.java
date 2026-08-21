@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,13 +13,13 @@ import com.google.common.collect.ImmutableList;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position2D;
-import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.movestrategies.speed.ConstantSpeed;
 import it.unibo.alchemist.model.movestrategies.target.FollowTarget;
 import it.unibo.alchemist.model.routes.PolygonalChain;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 import static org.apache.commons.math3.util.FastMath.atan2;
 import static org.apache.commons.math3.util.FastMath.cos;
@@ -35,8 +35,6 @@ import static org.apache.commons.math3.util.FastMath.sin;
  */
 public final class MoveToTarget<T, P extends Position2D<P>> extends AbstractConfigurableMoveNode<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final Molecule trackMolecule;
     private final double speed;
 
@@ -56,7 +54,7 @@ public final class MoveToTarget<T, P extends Position2D<P>> extends AbstractConf
     public MoveToTarget(
         final Environment<T, P> environment,
         final Node<T> node,
-        final Reaction<T> reaction,
+        final NodeReaction<T> reaction,
         final Molecule trackMolecule,
         final double speed
     ) {
@@ -71,8 +69,9 @@ public final class MoveToTarget<T, P extends Position2D<P>> extends AbstractConf
         this.speed = speed;
     }
 
+    @Nonnull
     @Override
-    public MoveToTarget<T, P> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+    public MoveToTarget<T, P> cloneAction(@Nonnull final Node<T> node, @Nonnull final NodeReaction<T> reaction) {
         return new MoveToTarget<>(getEnvironment(), node, reaction, trackMolecule, speed);
     }
 

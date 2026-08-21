@@ -23,14 +23,14 @@ import kotlin.test.assertEquals
 import org.apache.commons.math3.random.RandomGenerator
 import org.junit.jupiter.api.Test
 
-class ReactionTransitionTest {
+class NodeReactionTransitionTest {
 
     @Test
     fun `invalidation rescales an exponential occurrence without drawing another sample`() {
         val fixture = exponentialFixture(1.0) { 0.5 }
         val (node, environment, propensity, randomGenerator) = fixture
         val samples = { fixture.samples }
-        val reaction = ChemicalReaction(node, ExponentialTime(1.0, randomGenerator)).apply {
+        val reaction = ChemicalNodeReaction(node, ExponentialTime(1.0, randomGenerator)).apply {
             conditions = listOf(ObservablePropensityCondition(node, propensity))
         }
         reaction.initializationComplete(Time.ZERO, environment)
@@ -55,7 +55,7 @@ class ReactionTransitionTest {
             samples++
             0.5
         }
-        val reaction = ChemicalReaction(node, ExponentialTime(1.0, DoubleTime(10.0), randomGenerator)).apply {
+        val reaction = ChemicalNodeReaction(node, ExponentialTime(1.0, DoubleTime(10.0), randomGenerator)).apply {
             conditions = listOf(ObservablePropensityCondition(node, propensity))
         }
 
@@ -74,7 +74,7 @@ class ReactionTransitionTest {
         val fixture = exponentialFixture(1.0) { 1 - exp(-0.5) }
         val (node, environment, propensity, randomGenerator) = fixture
         val samples = { fixture.samples }
-        val reaction = ChemicalReaction(node, ExponentialTime(1.0, DoubleTime(10.0), randomGenerator)).apply {
+        val reaction = ChemicalNodeReaction(node, ExponentialTime(1.0, DoubleTime(10.0), randomGenerator)).apply {
             conditions = listOf(ObservablePropensityCondition(node, propensity))
         }
 

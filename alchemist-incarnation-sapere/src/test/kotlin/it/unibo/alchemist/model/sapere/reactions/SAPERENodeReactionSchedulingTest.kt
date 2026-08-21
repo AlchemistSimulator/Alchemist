@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
 import org.apache.commons.math3.random.RandomGenerator
 import org.junit.jupiter.api.Test
 
-class SAPEREReactionSchedulingTest {
+class SAPERENodeReactionSchedulingTest {
 
     @Test
     fun `initialization and firing draw independent exponential delays`() {
@@ -38,7 +38,7 @@ class SAPEREReactionSchedulingTest {
         val environment = Continuous2DEnvironment(incarnation)
         val node = LsaNode(environment)
         assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
-        val reaction = SAPEREReaction(environment, node, rng, SAPEREExponentialTime("2", rng))
+        val reaction = SAPERENodeReaction(environment, node, rng, SAPEREExponentialTime("2", rng))
 
         reaction.initializationComplete(DoubleTime(0.0), environment)
         assertTrue(reaction.nextOccurrence.current.isFinite)
@@ -56,7 +56,7 @@ class SAPEREReactionSchedulingTest {
         val environment = Continuous2DEnvironment(incarnation)
         val node = LsaNode(environment)
         assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
-        val reaction = SAPEREReaction(environment, node, rng, Trigger(DoubleTime(10.0)))
+        val reaction = SAPERENodeReaction(environment, node, rng, Trigger(DoubleTime(10.0)))
 
         reaction.initializationComplete(DoubleTime(0.0), environment)
         assertEquals(DoubleTime(10.0), reaction.nextOccurrence.current)
@@ -70,7 +70,7 @@ class SAPEREReactionSchedulingTest {
         val incarnation = SAPEREIncarnation<Euclidean2DPosition>()
         val environment = Continuous2DEnvironment(incarnation)
         val node = LsaNode(environment)
-        val reaction = SAPEREReaction(environment, node, mockk(relaxed = true), Trigger(DoubleTime(1.0)))
+        val reaction = SAPERENodeReaction(environment, node, mockk(relaxed = true), Trigger(DoubleTime(1.0)))
         assertTrue(reaction.modifiesOnlyLocally())
         val local = mockk<Action<List<ILsaMolecule>>>()
         every { local.getContext() } returns Context.LOCAL

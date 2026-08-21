@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.reactions.SteeringBehavior
 import it.unibo.alchemist.model.environments.Environment2DWithObstacles
@@ -34,7 +34,7 @@ class CognitiveAgentObstacleAvoidance<W : it.unibo.alchemist.model.Obstacle2D<Eu
     pedestrian: PedestrianProperty<T>,
     private val proximityRange: Double,
 ) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentObstacleAvoidance<W, T> {
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentObstacleAvoidance<W, T> {
         check(reaction is SteeringBehavior<T>) {
             "steering behavior needed but found ${this.reaction::class.run { simpleName ?: jvmName } }"
         }

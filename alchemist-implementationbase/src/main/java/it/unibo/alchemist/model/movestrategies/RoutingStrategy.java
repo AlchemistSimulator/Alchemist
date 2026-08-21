@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.movestrategies;
 
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Route;
 
 import java.io.Serializable;
@@ -36,12 +36,12 @@ public interface RoutingStrategy<T, P extends Position<P>> extends Serializable 
 
     /**
      * @param destination the {@link Node} where the strategy is being cloned
-     * @param reaction the {@link Reaction} where strategy is being cloned
+     * @param reaction the {@link NodeReaction} where strategy is being cloned
      *
      * @return A copy of the strategy if the strategy is stateful, and this object otherwise.
      *     The default implementation assumes a stateless strategy.
      */
-    default RoutingStrategy<T, P> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+    default RoutingStrategy<T, P> cloneIfNeeded(final Node<T> destination, final NodeReaction<T> reaction) {
         return this;
     }
 

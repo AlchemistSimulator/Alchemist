@@ -50,9 +50,9 @@ import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
@@ -777,7 +777,7 @@ internal object SimulationModel {
             incarnation.createReaction(simulationRNG, environment, node, timeDistribution, root[ProgramSyntax.program])
         node != null ->
             // This is a node-local reaction
-            visitBuilding<Reaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<Reaction<T>>(root)
+            visitBuilding<NodeReaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<NodeReaction<T>>(root)
         else ->
             // A reaction with no node is a GlobalReaction
             visitBuilding<GlobalReaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<GlobalReaction<T>>(root)

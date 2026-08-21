@@ -24,8 +24,8 @@ import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.linkingrules.NoLinks
@@ -241,7 +241,7 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                             .visitProgram(randomGenerator, incarnation, environment, node, context, it)
                             ?.onSuccess { (filters, actionable) ->
                                 if (
-                                    actionable is Reaction &&
+                                    actionable is NodeReaction &&
                                     (filters.isEmpty() || filters.any { shape -> nodePosition in shape })
                                 ) {
                                     node.addReaction(actionable)

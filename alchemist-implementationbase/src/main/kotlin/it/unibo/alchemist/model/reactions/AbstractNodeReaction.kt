@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.observation.CompositeDisposable
@@ -31,14 +31,14 @@ import it.unibo.alchemist.model.timedistributions.WeibullTime
 import javax.annotation.Nonnull
 
 /**
- * Partial implementation of a [Reaction] whose scheduling is driven by observable model state.
+ * Partial implementation of a [NodeReaction] whose scheduling is driven by observable model state.
  *
  * @param T concentration type
  */
-abstract class AbstractReaction<T>(
+abstract class AbstractNodeReaction<T>(
     final override val node: Node<T>,
     final override val timeDistribution: TimeDistribution<T>,
-) : Reaction<T> {
+) : NodeReaction<T> {
 
     override var actions: List<Action<T>> = emptyList()
 
@@ -123,7 +123,7 @@ abstract class AbstractReaction<T>(
     /**
      * Creates a clone and populates it with cloned actions and conditions.
      */
-    protected fun <R : AbstractReaction<T>> makeClone(
+    protected fun <R : AbstractNodeReaction<T>> makeClone(
         node: Node<T>,
         currentTime: Time,
         builder: (TimeDistribution<T>) -> R,
@@ -138,7 +138,7 @@ abstract class AbstractReaction<T>(
     /**
      * Populates a freshly constructed specialized reaction with cloned actions and conditions.
      */
-    protected fun <R : AbstractReaction<T>> prepareClone(result: R, currentTime: Time): R = result.also { clone ->
+    protected fun <R : AbstractNodeReaction<T>> prepareClone(result: R, currentTime: Time): R = result.also { clone ->
         val destination = clone.node
         clone.conditions = conditions.map { condition -> condition.cloneCondition(destination, clone) }
         clone.actions = actions.map { action -> action.cloneAction(destination, clone) }

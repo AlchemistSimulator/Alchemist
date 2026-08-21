@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.protelis.actions
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
 import java.io.Serial
@@ -24,11 +24,11 @@ import java.util.Objects
  * @param reaction the reaction triggering this action
  * @property protelisProgram the [RunProtelisProgram] whose data will be sent
  */
-class SendToNeighbor(node: Node<Any>, reaction: Reaction<Any>, val protelisProgram: RunProtelisProgram<*>) :
+class SendToNeighbor(node: Node<Any>, reaction: NodeReaction<Any>, val protelisProgram: RunProtelisProgram<*>) :
     AbstractAction<Any>(node) {
-    private val reaction: Reaction<Any> = Objects.requireNonNull<Reaction<Any>>(reaction)
+    private val reaction: NodeReaction<Any> = Objects.requireNonNull<NodeReaction<Any>>(reaction)
 
-    override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>): SendToNeighbor {
+    override fun cloneAction(node: Node<Any>, reaction: NodeReaction<Any>): SendToNeighbor {
         val device: ProtelisDevice<*> = node.asProperty()
         val possibleRefs: List<RunProtelisProgram<*>> = device.allProtelisPrograms()
         check(possibleRefs.size == 1) {

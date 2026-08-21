@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,9 +12,9 @@ package it.unibo.alchemist.model.conditions;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
@@ -24,8 +24,6 @@ import java.util.Objects;
  */
 public final class MoleculeHasConcentration<T> extends AbstractCondition<T> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final Molecule mol;
     private final T value;
 
@@ -46,8 +44,9 @@ public final class MoleculeHasConcentration<T> extends AbstractCondition<T> {
         setPropensityContribution(isValid().map(valid -> valid ? 1d : 0d));
     }
 
+    @Nonnull
     @Override
-    public Condition<T> cloneCondition(final Node<T> newNode, final Reaction<T> newReaction) {
+    public Condition<T> cloneCondition(@Nonnull final Node<T> newNode, @Nonnull final NodeReaction<T> newReaction) {
         return new MoleculeHasConcentration<>(newNode, mol, value);
     }
 

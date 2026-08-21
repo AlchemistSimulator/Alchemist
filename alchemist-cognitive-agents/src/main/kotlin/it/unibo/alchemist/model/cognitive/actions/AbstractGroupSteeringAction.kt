@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitive.GroupSteeringAction
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.geometry.Transformation
@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.geometry.Vector
  */
 abstract class AbstractGroupSteeringAction<T, P, A>(
     environment: Environment<T, P>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     GroupSteeringAction<T, P>

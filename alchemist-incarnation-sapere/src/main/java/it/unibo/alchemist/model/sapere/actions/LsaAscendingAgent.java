@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,13 +12,12 @@ package it.unibo.alchemist.model.sapere.actions;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position2D;
-import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 
-import java.io.Serial;
 import java.util.List;
 
 /**
@@ -30,8 +29,6 @@ public final class LsaAscendingAgent<P extends Position2D<? extends P>> extends 
      * an agent can move at most of LIMIT along each axis
      */
     private static final double LIMIT = 0.1;
-    @Serial
-    private static final long serialVersionUID = 228276533881360456L;
     private static final ILsaMolecule ACTIVE = new LsaMolecule("active");
     private final ILsaMolecule template;
     private final int gradDistPos;
@@ -49,7 +46,7 @@ public final class LsaAscendingAgent<P extends Position2D<? extends P>> extends 
      *            the position in the LSA of the value to read for identifying
      *            the new position
      */
-    public LsaAscendingAgent(final Reaction<List<ILsaMolecule>> reaction,
+    public LsaAscendingAgent(final NodeReaction<List<ILsaMolecule>> reaction,
             final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node,
             final LsaMolecule molecule, final int pos) {
         super(environment, node);

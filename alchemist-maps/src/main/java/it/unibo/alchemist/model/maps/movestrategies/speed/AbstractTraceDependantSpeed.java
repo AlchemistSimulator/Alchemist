@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.maps.movestrategies.speed;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
 import it.unibo.alchemist.model.Time;
@@ -35,7 +35,7 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
     extends AbstractStrategyWithGPS
     implements SpeedSelectionStrategy<T, GeoPosition> {
 
-    private final Reaction<T> reaction;
+    private final NodeReaction<T> reaction;
     private final MapEnvironment<T, O, S> mapEnvironment;
     private final Node<T> node;
 
@@ -51,7 +51,7 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
     public AbstractTraceDependantSpeed(
         final MapEnvironment<T, O, S> environment,
         final Node<T> node,
-        final Reaction<T> reaction
+        final NodeReaction<T> reaction
     ) {
         this.mapEnvironment = Objects.requireNonNull(environment);
         this.node = Objects.requireNonNull(node);

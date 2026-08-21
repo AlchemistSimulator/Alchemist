@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,14 +12,14 @@ package it.unibo.alchemist.model.biochemistry.conditions;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableExtensions;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,9 +32,6 @@ import java.util.stream.Collectors;
  * @param <T> the concentration type.
  */
 public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> {
-
-    @Serial
-    private static final long serialVersionUID = 1133243697147282024L;
 
     private final Environment<T, ?> environment;
 
@@ -49,9 +46,11 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
         setPropensityContributionObservable();
     }
 
+    @Nonnull
     @Override
-    public abstract AbstractNeighborCondition<T> cloneCondition(Node<T> newNode, Reaction<T> newReaction);
+    public abstract AbstractNeighborCondition<T> cloneCondition(@Nonnull Node<T> newNode, @Nonnull NodeReaction<T> newReaction);
 
+    @Nonnull
     @Override
     public final Context getContext() {
         return Context.NEIGHBORHOOD;

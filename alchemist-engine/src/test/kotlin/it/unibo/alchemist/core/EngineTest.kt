@@ -12,7 +12,7 @@ package it.unibo.alchemist.core
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
@@ -21,17 +21,17 @@ import it.unibo.alchemist.model.conditions.NeighborHasConcentration
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.reactions.AbstractReaction
+import it.unibo.alchemist.model.reactions.AbstractNodeReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.times.DoubleTime
 
-private class LambdaReaction<T>(
+private class LambdaNodeReaction<T>(
     node: Node<T>,
     distribution: TimeDistribution<T>,
     private val operation: () -> Unit,
-) : AbstractReaction<T>(node, distribution) {
+) : AbstractNodeReaction<T>(node, distribution) {
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Reaction<T> =
+    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): NodeReaction<T> =
         throw UnsupportedOperationException("A test-only lambda reaction cannot be cloned")
 
     override fun execute() = operation()
@@ -54,12 +54,12 @@ class EngineTest : FreeSpec({
         nodeB.setConcentration(molM, 0.0)
 
         nodeB.addReaction(
-            LambdaReaction(nodeB, DiracComb(1.0)) {
+            LambdaNodeReaction(nodeB, DiracComb(1.0)) {
                 nodeB.setConcentration(molM, 1.0)
             },
         )
 
-        LambdaReaction(nodeA, DiracComb(1.0)) {
+        LambdaNodeReaction(nodeA, DiracComb(1.0)) {
             nodeA.setConcentration(molN, 1.0)
         }.apply {
             conditions = listOf(NeighborHasConcentration(nodeA, environment, molM, 1.0))

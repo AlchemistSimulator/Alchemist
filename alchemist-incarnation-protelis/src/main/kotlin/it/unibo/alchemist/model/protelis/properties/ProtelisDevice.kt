@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
 import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.model.protelis.AlchemistNetworkManager

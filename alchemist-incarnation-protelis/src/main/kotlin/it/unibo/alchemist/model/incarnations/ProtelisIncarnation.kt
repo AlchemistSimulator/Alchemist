@@ -23,8 +23,8 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.molecules.SimpleMolecule
@@ -35,8 +35,8 @@ import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.protelis.actions.SendToNeighbor
 import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
-import it.unibo.alchemist.model.reactions.AbstractReaction
-import it.unibo.alchemist.model.reactions.ChemicalReaction
+import it.unibo.alchemist.model.reactions.AbstractNodeReaction
+import it.unibo.alchemist.model.reactions.ChemicalNodeReaction
 import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
@@ -83,8 +83,8 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         additionalParameters: Any?,
     ): Action<Any> {
         val parameters = additionalParameters?.toString().orEmpty()
-        require(actionable is Reaction<*>) {
-            "The provided actionable must be an instance of ${Reaction::class.simpleName}"
+        require(actionable is NodeReaction<*>) {
+            "The provided actionable must be an instance of ${NodeReaction::class.simpleName}"
         }
         requireNotNull(additionalParameters)
         requireNotNull(node) {
@@ -107,11 +107,11 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             check(pList.size == 1) {
                 "There are too many programs requiring a ${SendToNeighbor::class.qualifiedName} action: $pList"
             }
-            SendToNeighbor(node, actionable as Reaction<Any>, pList.first())
+            SendToNeighbor(node, actionable as NodeReaction<Any>, pList.first())
         } else {
             @Suppress("TooGenericExceptionCaught")
             try {
-                RunProtelisProgram(randomGenerator, environment, device, actionable as Reaction<Any>, parameters)
+                RunProtelisProgram(randomGenerator, environment, device, actionable as NodeReaction<Any>, parameters)
             } catch (exception: RuntimeException) {
                 throw IllegalArgumentException(
                     "Could not create the requested Protelis program: $additionalParameters",
@@ -139,7 +139,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         actionable: Actionable<Any>,
         additionalParameters: Any?,
     ): Condition<Any> {
-        if (actionable is Reaction<*>) {
+        if (actionable is NodeReaction<*>) {
             requireNotNull(node) {
                 "Global protelis programs are not supported"
             }
@@ -151,7 +151,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
              */
             val alreadyDone = node.reactions
                 .asSequence()
-                .flatMap { r: Reaction<Any> -> r.conditions.asSequence() }
+                .flatMap { r: NodeReaction<Any> -> r.conditions.asSequence() }
                 .filter { c: Condition<Any> -> c is ComputationalRoundComplete }
                 .map { c: Condition<Any> -> (c as ComputationalRoundComplete).program }
                 .toSet()
@@ -168,7 +168,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             return ComputationalRoundComplete(node, pList[0])
         }
         throw IllegalArgumentException(
-            "The provided actionable should be an instance of " + Reaction::class.java.simpleName,
+            "The provided actionable should be an instance of " + NodeReaction::class.java.simpleName,
         )
     }
 
@@ -188,13 +188,13 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         node: Node<Any>,
         timeDistribution: TimeDistribution<Any>,
         parameter: Any?,
-    ): Reaction<Any> {
+    ): NodeReaction<Any> {
         val parameterString = parameter?.toString()
         val isSend = parameterString.equals("send", ignoreCase = true)
-        val result: Reaction<Any> = when {
+        val result: NodeReaction<Any> = when {
             !isSend -> Event(node, timeDistribution)
-            timeDistribution is ExponentialTime -> ChemicalReaction(node, timeDistribution)
-            else -> ProtelisScheduledReaction(node, timeDistribution)
+            timeDistribution is ExponentialTime -> ChemicalNodeReaction(node, timeDistribution)
+            else -> ProtelisScheduledNodeReaction(node, timeDistribution)
         }
         parameter?.let {
             result.actions =
@@ -367,13 +367,13 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override val properties: List<NodeProperty<Any>> = emptyList()
 
-        override val reactions: List<Reaction<Any>> = emptyList()
+        override val reactions: List<NodeReaction<Any>> = emptyList()
 
-        override fun iterator(): MutableIterator<Reaction<Any>> = notImplemented()
+        override fun iterator(): MutableIterator<NodeReaction<Any>> = notImplemented()
 
         override fun compareTo(@Nonnull other: Node<Any>): Int = notImplemented()
 
-        override fun addReaction(reactionToAdd: Reaction<Any>) = notImplemented<Unit>()
+        override fun addReaction(reactionToAdd: NodeReaction<Any>) = notImplemented<Unit>()
 
         override fun cloneNode(currentTime: Time): Node<Any> = notImplemented()
 
@@ -387,7 +387,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override fun removeConcentration(moleculeToRemove: Molecule) = notImplemented<Unit>()
 
-        override fun removeReaction(reactionToRemove: Reaction<Any>) = notImplemented<Unit>()
+        override fun removeReaction(reactionToRemove: NodeReaction<Any>) = notImplemented<Unit>()
 
         override fun setConcentration(molecule: Molecule, concentration: Any) = notImplemented<Unit>()
 
@@ -448,11 +448,11 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
  * invalidation only changes whether the send can execute; it must not restart a deterministic or otherwise stateful
  * time distribution.
  */
-private class ProtelisScheduledReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
-    AbstractReaction<T>(node, timeDistribution) {
+private class ProtelisScheduledNodeReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
+    AbstractNodeReaction<T>(node, timeDistribution) {
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ProtelisScheduledReaction<T> =
-        makeClone(node, currentTime) { freshGenerator -> ProtelisScheduledReaction(node, freshGenerator) }
+    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ProtelisScheduledNodeReaction<T> =
+        makeClone(node, currentTime) { freshGenerator -> ProtelisScheduledNodeReaction(node, freshGenerator) }
 
     override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
         if (!isNewlyInstantiatedProgram) {

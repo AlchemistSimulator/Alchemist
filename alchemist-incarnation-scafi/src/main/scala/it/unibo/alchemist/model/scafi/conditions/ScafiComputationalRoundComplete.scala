@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.incarnations.ScafiIncarnationUtils
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.scafi.actions.RunScafiProgram
 import it.unibo.alchemist.model.scafi.properties.ScafiDevice
-import it.unibo.alchemist.model.{Condition, Context, Node, Reaction}
+import it.unibo.alchemist.model.{Condition, Context, Node, NodeReaction}
 
 import java.lang
 
@@ -21,7 +21,7 @@ final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val p
     extends AbstractCondition(device.getNode) {
   addObservableDependency(program.observeComputationalCycleComplete)
 
-  override def cloneCondition(node: Node[T], reaction: Reaction[T]): Condition[T] = {
+  override def cloneCondition(node: Node[T], reaction: NodeReaction[T]): Condition[T] = {
     ScafiIncarnationUtils.runInScafiDeviceContext[T, Condition[T]](
       node,
       getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName,
@@ -46,7 +46,7 @@ final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val p
   override def isValid: Observable[lang.Boolean] =
     program.observeComputationalCycleComplete.map(valid => lang.Boolean.valueOf(valid))
 
-  override def getNode = super.getNode
+  override def getNode: Node[T] = super.getNode
 
-  override def toString = program.asMolecule.getName + " completed round"
+  override def toString: String = program.asMolecule.getName + " completed round"
 }

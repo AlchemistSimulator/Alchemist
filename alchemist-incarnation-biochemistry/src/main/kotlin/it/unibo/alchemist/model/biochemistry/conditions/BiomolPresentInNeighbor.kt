@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.biochemistry.conditions
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.biochemistry.CellProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
@@ -59,7 +59,7 @@ class BiomolPresentInNeighbor(
 
     override fun cloneCondition(
         newNode: Node<Double>,
-        newReaction: Reaction<Double>,
+        newReaction: NodeReaction<Double>,
     ): AbstractNeighborCondition<Double> = BiomolPresentInNeighbor(environment, newNode, molecule, concentration)
 
     override fun toString(): String = "$molecule >= $concentration in neighbor"

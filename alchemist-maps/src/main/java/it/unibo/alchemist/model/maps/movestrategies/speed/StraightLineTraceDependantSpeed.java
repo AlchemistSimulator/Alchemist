@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,12 +11,12 @@ package it.unibo.alchemist.model.maps.movestrategies.speed;
 
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
 import it.unibo.alchemist.model.maps.MapEnvironment;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * This {@link AbstractTraceDependantSpeed} uses the distance between coordinates for estimating the distance.
@@ -32,9 +32,6 @@ public final class StraightLineTraceDependantSpeed<
     >
     extends AbstractTraceDependantSpeed<T, O, S> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
     /**
      * @param environment
      *            the environment
@@ -46,7 +43,7 @@ public final class StraightLineTraceDependantSpeed<
     public StraightLineTraceDependantSpeed(
         final MapEnvironment<T, O, S> environment,
         final Node<T> node,
-        final Reaction<T> reaction
+        final NodeReaction<T> reaction
     ) {
         super(environment, node, reaction);
     }
@@ -60,8 +57,12 @@ public final class StraightLineTraceDependantSpeed<
         return environment.getCurrentPosition(currentNode).distanceTo(targetPosition);
     }
 
+    @Nonnull
     @Override
-    public StraightLineTraceDependantSpeed<T, O, S> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+    public StraightLineTraceDependantSpeed<T, O, S> cloneIfNeeded(
+        @Nonnull final Node<T> destination,
+        @Nonnull final NodeReaction<T> reaction
+    ) {
         return new StraightLineTraceDependantSpeed<>(getEnvironment(), destination, reaction);
     }
 }

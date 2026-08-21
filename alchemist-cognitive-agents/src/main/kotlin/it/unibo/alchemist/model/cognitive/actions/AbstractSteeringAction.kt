@@ -13,8 +13,8 @@ import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.AbstractMoveNode
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.SteeringAction
@@ -29,7 +29,7 @@ abstract class AbstractSteeringAction<T, P, A>(
     /**
      * The reaction in which this action is executed.
      */
-    protected open val reaction: Reaction<T>,
+    protected open val reaction: NodeReaction<T>,
     /**
      * The pedestrian property of the owner of this action.
      */
@@ -61,7 +61,7 @@ abstract class AbstractSteeringAction<T, P, A>(
      *            The reaction to which the CURRENT action is assigned
      * @return the cloned action
      */
-    abstract override fun cloneAction(node: Node<T>, reaction: Reaction<T>): AbstractSteeringAction<T, P, A>
+    abstract override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): AbstractSteeringAction<T, P, A>
 
     /**
      * Ensures that the passed [node] has type [N].

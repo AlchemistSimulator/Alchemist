@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.maps.actions;
 
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
 import it.unibo.alchemist.model.actions.AbstractConfigurableMoveNode;
@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy;
 import it.unibo.alchemist.utils.Maps;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * @param <T> Concentration type
@@ -30,9 +30,6 @@ import java.io.Serial;
  */
 public class MoveOnMap<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
     extends AbstractConfigurableMoveNode<T, GeoPosition> {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     /**
      * @param environment
@@ -63,8 +60,9 @@ public class MoveOnMap<T, O extends RoutingServiceOptions<O>, S extends RoutingS
     /**
      * Fails, can't be cloned.
      */
+    @Nonnull
     @Override
-    public MoveOnMap<T, O, S> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+    public MoveOnMap<T, O, S> cloneAction(@Nonnull final Node<T> node, @Nonnull final NodeReaction<T> reaction) {
         return new MoveOnMap<>(
             getEnvironment(),
             node,
@@ -75,7 +73,11 @@ public class MoveOnMap<T, O extends RoutingServiceOptions<O>, S extends RoutingS
     }
 
     @Override
-    protected final GeoPosition interpolatePositions(final GeoPosition current, final GeoPosition target, final double maxWalk) {
+    protected final GeoPosition interpolatePositions(
+        final GeoPosition current,
+        final GeoPosition target,
+        final double maxWalk
+    ) {
         return Maps.getDestinationLocation(current, target, maxWalk);
     }
 

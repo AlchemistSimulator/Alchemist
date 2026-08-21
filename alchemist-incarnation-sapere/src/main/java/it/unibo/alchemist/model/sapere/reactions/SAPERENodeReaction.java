@@ -15,11 +15,11 @@ import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
-import it.unibo.alchemist.model.reactions.AbstractReaction;
+import it.unibo.alchemist.model.reactions.AbstractNodeReaction;
 import it.unibo.alchemist.model.sapere.ILsaAction;
 import it.unibo.alchemist.model.sapere.ILsaCondition;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
@@ -49,7 +49,7 @@ import java.util.Objects;
  *
  */
 @SuppressWarnings("unchecked")
-public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
+public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMolecule>> {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -80,7 +80,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
      * @param timeDistribution
      *            Time Distribution
      */
-    public SAPEREReaction(
+    public SAPERENodeReaction(
         final Environment<List<ILsaMolecule>, ?> environment,
         final ILsaNode node,
         final RandomGenerator randomGenerator,
@@ -98,12 +98,12 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
 
     @Nonnull
     @Override
-    public Reaction<List<ILsaMolecule>> cloneOnNewNode(
+    public NodeReaction<List<ILsaMolecule>> cloneOnNewNode(
         @Nonnull final Node<List<ILsaMolecule>> node,
         @Nonnull final Time currentTime
     ) {
         return prepareClone(
-            new SAPEREReaction(
+            new SAPERENodeReaction(
                 environment,
                 (ILsaNode) node,
                 rng,

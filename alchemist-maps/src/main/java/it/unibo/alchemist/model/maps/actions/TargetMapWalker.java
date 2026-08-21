@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.maps.actions;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
 import it.unibo.alchemist.model.maps.MapEnvironment;
@@ -24,7 +24,6 @@ import it.unibo.alchemist.model.movestrategies.speed.InteractWithOthers;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Serial;
 
 /**
  * @param <T> Concentration type
@@ -47,9 +46,6 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      */
     public static final double DEFAULT_INTERACTION = 0;
 
-    @Serial
-    private static final long serialVersionUID = 5097382908560832035L;
-
     /**
      * @param environment
      *            the environment
@@ -57,7 +53,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link Reaction}'s getRate() method.
+     *            every step, relying on {@link NodeReaction}'s getRate() method.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
@@ -86,7 +82,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
     public TargetMapWalker(
             @Nonnull final MapEnvironment<T, O, S> environment,
             @Nonnull final Node<T> node,
-            @Nonnull final Reaction<T> reaction,
+            @Nonnull final NodeReaction<T> reaction,
             @Nonnull final Molecule trackMolecule,
             @Nullable final Molecule interactingMolecule,
             final double speed,
@@ -111,7 +107,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link Reaction}'s getRate() method.
+     *            every step, relying on {@link NodeReaction}'s getRate() method.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
@@ -135,7 +131,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
     public TargetMapWalker(
         final MapEnvironment<T, O, S> environment,
         final Node<T> node,
-        final Reaction<T> reaction,
+        final NodeReaction<T> reaction,
         final Molecule trackMolecule,
         final Molecule interactingMolecule,
         final double speed
@@ -150,7 +146,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link Reaction}'s getRate() method.
+     *            every step, relying on {@link NodeReaction}'s getRate() method.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
@@ -171,7 +167,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
     public TargetMapWalker(
         final MapEnvironment<T, O, S> environment,
         final Node<T> node,
-        final Reaction<T> reaction,
+        final NodeReaction<T> reaction,
         final Molecule trackMolecule,
         final Molecule interactingMolecule
     ) {
@@ -185,7 +181,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link Reaction}'s getRate() method.
+     *            every step, relying on {@link NodeReaction}'s getRate() method.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
@@ -214,7 +210,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
     public TargetMapWalker(
             final MapEnvironment<T, O, S> environment,
             final Node<T> node,
-            final Reaction<T> reaction,
+            final NodeReaction<T> reaction,
             final String trackMolecule,
             final String interactingMolecule,
             final double speed,
@@ -239,7 +235,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link Reaction}'s getRate() method.
+     *            every step, relying on {@link NodeReaction}'s getRate() method.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
@@ -256,7 +252,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
     public TargetMapWalker(
             final MapEnvironment<T, O, S> environment,
             final Node<T> node,
-            final Reaction<T> reaction,
+            final NodeReaction<T> reaction,
             final String trackMolecule,
             final double speed) {
         this(environment, node, reaction, trackMolecule, null, speed, DEFAULT_INTERACTION, DEFAULT_RANGE);
@@ -269,7 +265,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link Reaction}'s getRate() method.
+     *            every step, relying on {@link NodeReaction}'s getRate() method.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
@@ -284,7 +280,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
     public TargetMapWalker(
             final MapEnvironment<T, O, S> environment,
             final Node<T> node,
-            final Reaction<T> reaction,
+            final NodeReaction<T> reaction,
             final String trackMolecule) {
         this(environment, node, reaction, trackMolecule, DEFAULT_SPEED);
     }

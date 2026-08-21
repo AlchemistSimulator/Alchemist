@@ -14,7 +14,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
@@ -41,7 +41,7 @@ private val expectedInvalidations = linkedMapOf(
 
 private data class ChemicalReactionFixture(
     val environment: Environment<Double, Euclidean2DPosition>,
-    val reactionsByNode: List<Map<String, Reaction<Double>>>,
+    val reactionsByNode: List<Map<String, NodeReaction<Double>>>,
 )
 
 private fun chemicalReactionFixture(): ChemicalReactionFixture {
@@ -79,7 +79,7 @@ class ChemicalReactionInvalidationTest : StringSpec({
                 val expectedTargets = expectedTargetConfigurations
                     .map(reactionsByNode[sourceNodeIndex]::getValue)
                     .toSet()
-                val allReactions = reactionsByNode.flatMap(Map<String, Reaction<Double>>::values)
+                val allReactions = reactionsByNode.flatMap(Map<String, NodeReaction<Double>>::values)
                 val observedReactions = allReactions.filterNot { it === source }
                 val emissionCounters = observedReactions.associateWith { AtomicInteger() }
                 val subscriptions = mutableListOf<Disposable>()
@@ -105,7 +105,7 @@ class ChemicalReactionInvalidationTest : StringSpec({
                     }
                 } finally {
                     subscriptions.forEach(Disposable::dispose)
-                    allReactions.forEach(Reaction<Double>::dispose)
+                    allReactions.forEach(NodeReaction<Double>::dispose)
                 }
             }
         }

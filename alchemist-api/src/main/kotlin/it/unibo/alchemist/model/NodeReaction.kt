@@ -14,9 +14,9 @@ package it.unibo.alchemist.model
  *
  * A node-bound [Actionable]. Every reaction owns its schedule through [nextOccurrence].
  */
-interface Reaction<T> : Actionable<T> {
+interface NodeReaction<T> : Actionable<T> {
     /**
-     * @return The [Node] in which this [Reaction] executes.
+     * @return The [Node] in which this [NodeReaction] executes.
      */
     val node: Node<T>
 
@@ -33,5 +33,5 @@ interface Reaction<T> : Actionable<T> {
      * the time at which the clone is created
      * @return the cloned action
      */
-    fun cloneOnNewNode(node: Node<T>, currentTime: Time): Reaction<T>
+    fun cloneOnNewNode(node: Node<T>, currentTime: Time): NodeReaction<T>
 }

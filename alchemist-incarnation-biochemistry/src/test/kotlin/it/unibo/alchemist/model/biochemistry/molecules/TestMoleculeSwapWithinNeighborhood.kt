@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.biochemistry.molecules
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.biochemistry.conditions.AbstractNeighborCondition
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
@@ -89,5 +89,5 @@ private fun testSimulation() = environment.startSimulationWithoutParameters(
     },
 )
 
-private val Reaction<Double>.neighborConditions: List<AbstractNeighborCondition<*>>
+private val NodeReaction<Double>.neighborConditions: List<AbstractNeighborCondition<*>>
     get() = conditions.filterIsInstance<AbstractNeighborCondition<*>>()

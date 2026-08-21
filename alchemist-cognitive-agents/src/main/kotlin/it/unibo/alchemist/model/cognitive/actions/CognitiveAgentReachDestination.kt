@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Node.Companion.asProperty
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.cognitive.NavigationStrategy2D
 import it.unibo.alchemist.model.cognitive.OrientingProperty
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
@@ -39,7 +39,7 @@ import org.jgrapht.Graphs
  */
 class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     vararg destinations: Number,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {

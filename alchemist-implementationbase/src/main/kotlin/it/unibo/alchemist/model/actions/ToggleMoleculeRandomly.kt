@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.actions
 
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -39,7 +39,7 @@ open class ToggleMoleculeRandomly<T>(
         }
     }
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>) =
         ToggleMoleculeRandomly(node, randomGenerator, molecule, concentration, odds)
 
     /**

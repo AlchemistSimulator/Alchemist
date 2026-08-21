@@ -16,13 +16,13 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.reactions.AbstractReaction
+import it.unibo.alchemist.model.reactions.AbstractNodeReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.time.Duration.Companion.milliseconds
@@ -57,10 +57,10 @@ private class RecordingScheduler<T> : Scheduler<T> {
     }
 }
 
-private class EmittingReaction(
+private class EmittingNodeReaction(
     node: Node<Double>,
     distribution: TimeDistribution<Double> = DiracComb(1.0),
-) : AbstractReaction<Double>(node, distribution) {
+) : AbstractNodeReaction<Double>(node, distribution) {
     var emitOnExecute = false
     var disposed = false
 
@@ -77,7 +77,8 @@ private class EmittingReaction(
 
     fun emit(vararg times: Time) = times.forEach(::setNextOccurrence)
 
-    override fun cloneOnNewNode(node: Node<Double>, currentTime: Time): Reaction<Double> = error("Not needed in test")
+    override fun cloneOnNewNode(node: Node<Double>, currentTime: Time): NodeReaction<Double> =
+        error("Not needed in test")
 }
 
 private class TestEngine<T, P : it.unibo.alchemist.model.Position<out P>>(
@@ -92,10 +93,10 @@ private class TestEngine<T, P : it.unibo.alchemist.model.Position<out P>>(
 }
 
 class EngineSchedulingSubscriptionTest : FreeSpec({
-    fun fixture(): Triple<Continuous2DEnvironment<Double>, GenericNode<Double>, EmittingReaction> {
+    fun fixture(): Triple<Continuous2DEnvironment<Double>, GenericNode<Double>, EmittingNodeReaction> {
         val environment = Continuous2DEnvironment(BiochemistryIncarnation())
         val node = GenericNode(environment)
-        val reaction = EmittingReaction(node)
+        val reaction = EmittingNodeReaction(node)
         node.addReaction(reaction)
         environment.addNode(node, environment.makePosition(0, 0))
         return Triple(environment, node, reaction)

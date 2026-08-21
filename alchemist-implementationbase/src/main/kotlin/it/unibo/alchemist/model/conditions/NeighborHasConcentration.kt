@@ -11,11 +11,10 @@ package it.unibo.alchemist.model.conditions
 
 import arrow.core.getOrElse
 import it.unibo.alchemist.model.Condition
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
 import it.unibo.alchemist.model.observation.ObservableExtensions.switchMap
 
@@ -47,6 +46,6 @@ class NeighborHasConcentration<T>(
         )
     }
 
-    override fun cloneCondition(newNode: Node<T>, newReaction: Reaction<T>): Condition<T> =
+    override fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>): Condition<T> =
         NeighborHasConcentration(newNode, environment, target, concentration)
 }

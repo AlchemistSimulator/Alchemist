@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.actions
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.movestrategies.RoutingStrategy
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy
@@ -61,7 +61,7 @@ open class EuclideanConfigurableMoveNode<T, P>(
     constructor(
         environment: Environment<T, P>,
         node: Node<T>,
-        reaction: Reaction<T>,
+        reaction: NodeReaction<T>,
         routingStrategy: RoutingStrategy<T, P>,
         targetSelectionStrategy: TargetSelectionStrategy<T, P>,
         speed: Double,
@@ -85,7 +85,7 @@ open class EuclideanConfigurableMoveNode<T, P>(
     override fun interpolatePositions(current: P, target: P, maxWalk: Double): P =
         (target - current).coerceAtMost(maxWalk)
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> = EuclideanConfigurableMoveNode(
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): Action<T> = EuclideanConfigurableMoveNode(
         environment,
         node,
         routingStrategy,

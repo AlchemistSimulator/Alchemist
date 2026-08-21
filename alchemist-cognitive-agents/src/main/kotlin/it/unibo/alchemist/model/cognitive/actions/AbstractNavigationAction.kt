@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitive.NavigationAction
 import it.unibo.alchemist.model.cognitive.NavigationStrategy
 import it.unibo.alchemist.model.cognitive.OrientingProperty
@@ -43,7 +43,7 @@ import it.unibo.alchemist.model.physics.properties.OccupiesSpaceProperty
  */
 abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
     override val environment: EnvironmentWithGraph<*, T, P, A, N, E>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     NavigationAction<T, P, A, L, R, N, E>

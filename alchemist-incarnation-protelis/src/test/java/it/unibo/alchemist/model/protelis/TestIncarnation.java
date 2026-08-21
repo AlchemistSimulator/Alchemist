@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
@@ -58,18 +58,18 @@ class TestIncarnation {
         assertNotNull(node);
         final TimeDistribution<Object> immediately = INCARNATION.createTimeDistribution(rng, environment, node, null);
         assertNotNull(immediately);
-        final Reaction<Object> immediateReaction = INCARNATION.createReaction(rng, environment, node, immediately, null);
+        final NodeReaction<Object> immediateReaction = INCARNATION.createReaction(rng, environment, node, immediately, null);
         assertTrue(Double.isInfinite(immediateReaction.getRate()));
         assertTrue(immediateReaction.getRate() > 0);
         final TimeDistribution<Object> standard = INCARNATION.createTimeDistribution(rng, environment, node, "3");
         assertNotNull(standard);
-        final Reaction<Object> generic = INCARNATION.createReaction(rng, environment, node, standard, null);
+        final NodeReaction<Object> generic = INCARNATION.createReaction(rng, environment, node, standard, null);
         assertEquals(3d, generic.getRate(), Double.MIN_VALUE);
         assertNotNull(generic);
         assertInstanceOf(Event.class, generic);
-        final Reaction<Object> program = INCARNATION.createReaction(rng, environment, node, standard, "nbr(1)");
+        final NodeReaction<Object> program = INCARNATION.createReaction(rng, environment, node, standard, "nbr(1)");
         testIsProtelisProgram(program);
-        final Reaction<Object> program2 = INCARNATION.createReaction(rng, environment, node, standard, "testprotelis:test");
+        final NodeReaction<Object> program2 = INCARNATION.createReaction(rng, environment, node, standard, "testprotelis:test");
         testIsProtelisProgram(program2);
         try {
             INCARNATION.createReaction(rng, environment, node, standard, SEND);
@@ -86,11 +86,11 @@ class TestIncarnation {
             assertNotNull(e.getMessage());
         }
         node.removeReaction(program2);
-        final Reaction<Object> send = INCARNATION.createReaction(rng, environment, node, standard, SEND);
+        final NodeReaction<Object> send = INCARNATION.createReaction(rng, environment, node, standard, SEND);
         testIsSendToNeighbor(send);
     }
 
-    private static void testIsProtelisProgram(final Reaction<Object> program) {
+    private static void testIsProtelisProgram(final NodeReaction<Object> program) {
         assertNotNull(program);
         assertInstanceOf(Event.class, program);
         assertTrue(program.getConditions().isEmpty());
@@ -101,7 +101,7 @@ class TestIncarnation {
         assertInstanceOf(RunProtelisProgram.class, prog);
     }
 
-    private static void testIsSendToNeighbor(final Reaction<Object> program) {
+    private static void testIsSendToNeighbor(final NodeReaction<Object> program) {
         assertNotNull(program);
         assertFalse(program.getConditions().isEmpty());
         assertEquals(1, program.getConditions().size());
@@ -133,12 +133,12 @@ class TestIncarnation {
         final TimeDistribution<Object> programDistribution = INCARNATION.createTimeDistribution(
             rng, environment, node, "1"
         );
-        final Reaction<Object> program = INCARNATION.createReaction(
+        final NodeReaction<Object> program = INCARNATION.createReaction(
             rng, environment, node, programDistribution, "nbr(1)"
         );
         node.addReaction(program);
         final CountingDistribution distribution = new CountingDistribution();
-        final Reaction<Object> reaction = INCARNATION.createReaction(rng, environment, node, distribution, SEND);
+        final NodeReaction<Object> reaction = INCARNATION.createReaction(rng, environment, node, distribution, SEND);
         node.addReaction(reaction);
         program.initializationComplete(Time.ZERO, environment);
         reaction.initializationComplete(Time.ZERO, environment);

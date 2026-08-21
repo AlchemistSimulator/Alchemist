@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.cognitive.actions
 
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.cognitive.NavigationStrategy2D
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.navigation.ReachKnownDestination
@@ -33,7 +33,7 @@ import it.unibo.alchemist.util.lazyMutable
  */
 class CognitiveAgentReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     vararg destinations: Number,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {

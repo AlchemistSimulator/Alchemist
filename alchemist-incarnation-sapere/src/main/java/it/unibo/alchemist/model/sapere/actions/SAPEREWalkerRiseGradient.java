@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.sapere.actions;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.maps.actions.MoveOnMap;
 import it.unibo.alchemist.model.maps.movestrategies.routing.OnStreets;
@@ -32,9 +32,6 @@ import static java.util.Objects.requireNonNull;
 /**
  */
 public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> {
-
-    @Serial
-    private static final long serialVersionUID = 2429200360671138611L;
 
     /**
      * @param environment
@@ -57,7 +54,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
     public SAPEREWalkerRiseGradient(
             final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment,
             final ILsaNode node,
-            final Reaction<List<ILsaMolecule>> reaction,
+            final NodeReaction<List<ILsaMolecule>> reaction,
             final double speed,
             final double interaction,
             final double range,
@@ -89,7 +86,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
     public SAPEREWalkerRiseGradient(
         final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment,
         final ILsaNode node,
-        final Reaction<List<ILsaMolecule>> reaction,
+        final NodeReaction<List<ILsaMolecule>> reaction,
         final Molecule tag,
         final double speed,
         final double interaction,

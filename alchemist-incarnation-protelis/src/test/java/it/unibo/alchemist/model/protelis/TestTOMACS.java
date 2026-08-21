@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.protelis;
 
 import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.Loader;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice;
 import org.junit.jupiter.api.Assertions;
@@ -38,7 +38,7 @@ class TestTOMACS {
             StreamSupport.stream(loader.getDefault().getEnvironment().spliterator(), false)
                 .flatMap(n ->
                     n.getReactions().stream()
-                        .map(Reaction::getActions)
+                        .map(NodeReaction::getActions)
                         .flatMap(Collection::stream)
                         .filter(a -> a instanceof RunProtelisProgram)
                         .map(a -> (RunProtelisProgram<?>) a)

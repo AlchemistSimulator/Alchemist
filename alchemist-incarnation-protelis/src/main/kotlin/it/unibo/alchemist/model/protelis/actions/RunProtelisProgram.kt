@@ -14,8 +14,8 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
@@ -50,7 +50,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     val randomGenerator: RandomGenerator,
     val environment: Environment<Any, P>,
     val device: ProtelisDevice<P>,
-    val reaction: Reaction<Any>,
+    val reaction: NodeReaction<Any>,
     val originalProgram: String,
     val program: ProtelisProgram,
     val retentionTime: Double,
@@ -61,7 +61,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         device: ProtelisDevice<P>,
-        reaction: Reaction<Any>,
+        reaction: NodeReaction<Any>,
         program: ProtelisProgram,
         retentionTime: Double = Double.NaN,
     ) : this(
@@ -80,7 +80,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         device: ProtelisDevice<P>,
-        reaction: Reaction<Any>,
+        reaction: NodeReaction<Any>,
         program: ProtelisProgram,
         retentionTime: Double = Double.NaN,
         packetLossDistributionName: String,
@@ -106,7 +106,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         device: ProtelisDevice<P>,
-        reaction: Reaction<Any>,
+        reaction: NodeReaction<Any>,
         program: String,
         retentionTime: Double = Double.NaN,
     ) : this(
@@ -125,7 +125,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         device: ProtelisDevice<P>,
-        reaction: Reaction<Any>,
+        reaction: NodeReaction<Any>,
         program: String,
         retentionTime: Double = Double.NaN,
         packetLossDistributionName: String,
@@ -191,7 +191,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
      */
     fun asMolecule(): Molecule = name
 
-    override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>): RunProtelisProgram<P> = RunProtelisProgram(
+    override fun cloneAction(node: Node<Any>, reaction: NodeReaction<Any>): RunProtelisProgram<P> = RunProtelisProgram(
         randomGenerator,
         environment,
         node.asProperty(),

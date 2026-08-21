@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,10 +11,10 @@ package it.unibo.alchemist.model.actions;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position2D;
-import it.unibo.alchemist.model.Reaction;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * Moves the node along the x axis up to coordinate {@link #getMaxX()},
@@ -29,8 +29,6 @@ import java.io.Serial;
  */
 public final class MoveForwardAndTeleport<T, P extends Position2D<P>> extends AbstractMoveNode<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = 6853946136578807021L;
     private final double dx;
     private final double minx;
     private final double maxx;
@@ -56,8 +54,12 @@ public final class MoveForwardAndTeleport<T, P extends Position2D<P>> extends Ab
         maxx = maxX;
     }
 
+    @Nonnull
     @Override
-    public MoveForwardAndTeleport<T, P> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+    public MoveForwardAndTeleport<T, P> cloneAction(
+        @Nonnull final Node<T> node,
+        @Nonnull final NodeReaction<T> reaction
+    ) {
         return new MoveForwardAndTeleport<>(getEnvironment(), node, dx, minx, maxx);
     }
 

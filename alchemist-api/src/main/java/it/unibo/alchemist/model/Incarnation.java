@@ -101,9 +101,9 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the time distribution of the reaction
      * @param parameter
      *            a {@link String} describing the object
-     * @return a new {@link Reaction}
+     * @return a new {@link NodeReaction}
      */
-    Reaction<T> createReaction(
+    NodeReaction<T> createReaction(
         RandomGenerator randomGenerator,
         Environment<T, P> environment,
         Node<T> node,

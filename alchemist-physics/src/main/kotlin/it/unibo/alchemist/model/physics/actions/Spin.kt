@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.physics.actions
 
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import kotlin.math.cos
@@ -23,13 +23,13 @@ import org.apache.commons.math3.util.FastMath.toRadians
  */
 class Spin<T>(
     node: Node<T>,
-    private val reaction: Reaction<T>,
+    private val reaction: NodeReaction<T>,
     private val environment: Physics2DEnvironment<T>,
     private val angularSpeedDegrees: Double,
 ) : AbstractAction<T>(node) {
     private val angularSpeedRadians = toRadians(angularSpeedDegrees)
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>) =
         Spin(node, reaction, environment, angularSpeedDegrees)
 
     /**

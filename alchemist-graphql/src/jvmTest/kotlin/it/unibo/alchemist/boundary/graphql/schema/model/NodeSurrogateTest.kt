@@ -17,8 +17,8 @@ import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.ReactionSurro
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLNodeSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLReactionSurrogate
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.geometry.Vector
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
@@ -61,7 +61,7 @@ class NodeSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<P> {
                 checkConcentrationContent(concentration, actual)
             }
         }
-        fun <T> checkReactionSurrogate(reaction: Reaction<T>, reactionSurrogate: ReactionSurrogate<T>) {
+        fun <T> checkReactionSurrogate(reaction: NodeReaction<T>, reactionSurrogate: ReactionSurrogate<T>) {
             assertEquals(reaction.node.toGraphQLNodeSurrogate(), reactionSurrogate.node, "Node mapping mismatch")
         }
     }

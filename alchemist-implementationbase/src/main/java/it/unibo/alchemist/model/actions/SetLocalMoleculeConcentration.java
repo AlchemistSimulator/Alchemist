@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,17 +13,15 @@ import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * @param <T> concentration type
  */
 public final class SetLocalMoleculeConcentration<T> extends AbstractActionOnSingleMolecule<T> {
 
-    @Serial
-    private static final long serialVersionUID = -197253027556270645L;
     private final T val;
 
     /**
@@ -39,8 +37,9 @@ public final class SetLocalMoleculeConcentration<T> extends AbstractActionOnSing
         this.val = value;
     }
 
+    @Nonnull
     @Override
-    public Action<T> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+    public Action<T> cloneAction(@Nonnull final Node<T> node, @Nonnull final NodeReaction<T> reaction) {
         return new SetLocalMoleculeConcentration<>(node, getMolecule(), val);
     }
 
@@ -49,6 +48,7 @@ public final class SetLocalMoleculeConcentration<T> extends AbstractActionOnSing
         getNode().setConcentration(getMolecule(), val);
     }
 
+    @Nonnull
     @Override
     public Context getContext() {
         return Context.LOCAL;

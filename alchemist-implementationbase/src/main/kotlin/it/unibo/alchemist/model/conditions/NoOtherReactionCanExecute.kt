@@ -10,9 +10,8 @@
 package it.unibo.alchemist.model.conditions
 
 import arrow.core.getOrElse
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
 
 /**
@@ -20,7 +19,7 @@ import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
  * This condition can be used only in a single reaction per node,
  * as multiple instances would lead to undecidable situations.
  */
-class NoOtherReactionCanExecute<T>(node: Node<T>, private val myReaction: Reaction<T>) :
+class NoOtherReactionCanExecute<T>(node: Node<T>, private val myReaction: NodeReaction<T>) :
     AbstractNonPropensityContributingCondition<T>(node) {
     init {
         require(
@@ -44,6 +43,6 @@ class NoOtherReactionCanExecute<T>(node: Node<T>, private val myReaction: Reacti
         )
     }
 
-    override fun cloneCondition(newNode: Node<T>, newReaction: Reaction<T>) =
+    override fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>) =
         NoOtherReactionCanExecute(newNode, myReaction)
 }

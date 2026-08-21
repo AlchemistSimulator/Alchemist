@@ -27,15 +27,15 @@ Do not mark an item complete until its implementation and proportional verificat
   with a one-shot `Event<T>` reaction: after it executes successfully, the engine unregisters it instead of
   advancing it or publishing `Time.INFINITY`. Do not use `Event` for a persistent, repeatedly scheduled generator
   or `BaseReaction` for a concrete reaction.
-- Put residual-time reuse behind `AbstractMarkovianReaction`. It requires an `ExponentialTime` and fails fast for
-  every other distribution; `ChemicalReaction` and its biochemical subclasses inherit this contract.
+- Put residual-time reuse behind `AbstractMarkovianNodeReaction`. It requires an `ExponentialTime` and fails fast for
+  every other distribution; `ChemicalNodeReaction` and its biochemical subclasses inherit this contract.
 - Keep SAPERE reactions outside the Markovian hierarchy. They redraw after initialization, firing, and invalidation
   for every supported delay generator, while exponential draws still account for total match propensity.
   Absolute-time SAPERE programs use the one-shot `Event` model rather than a special distribution branch.
 - Model every Protelis send as an ordinary condition-gated `GenericReaction`, independently of the configured time
   distribution. Until `ComputationalRoundComplete` becomes true, the send exposes `Time.INFINITY` and consumes no
   sample. The false-to-true transition starts one wait from the current simulation time; firing sends once and
-  resets validity to false. Remove both `ProtelisScheduledReaction` and the exponential-send `ChemicalReaction`
+  resets validity to false. Remove both `ProtelisScheduledReaction` and the exponential-send `ChemicalNodeReaction`
   special case after base validity-gated scheduling is in place.
 - During Phase 5, rename reaction `tau` to `nextOccurrence` across the API and repository consumers.
 - Remove propensity contribution from the general condition API. A `Condition` describes reactive validity, not a
@@ -118,13 +118,13 @@ AbstractReaction
     └── environment-owned specializations such as PhysicsUpdate
 ```
 
-The root contract and `AbstractReaction` contain only owner-neutral scheduling, condition, execution, and
+The root contract and `AbstractNodeReaction` contain only owner-neutral scheduling, condition, execution, and
 subscription behavior. `NodeReaction` and `AbstractNodeReaction` own node association and cloning onto another
 node. `EnvironmentReaction` and `AbstractEnvironmentReaction` own environment association. The engine and
-scheduler consume the root `Reaction`; node, incarnation, action, condition, and clone APIs consume
+scheduler consume the root `NodeReaction`; node, incarnation, action, condition, and clone APIs consume
 `NodeReaction`; environment membership APIs consume `EnvironmentReaction`.
 
-`Event` is a one-shot specialization of `Reaction`, not a `TimeDistribution`. It owns one absolute occurrence and
+`Event` is a one-shot specialization of `NodeReaction`, not a `TimeDistribution`. It owns one absolute occurrence and
 can be node- or environment-owned. A successful execution consumes it permanently: the engine removes the exact
 scheduler entry and scheduling subscription, then removes it from its model owner so later node cloning or
 membership enumeration cannot resurrect a completed event. It is never advanced through recurring post-firing
@@ -132,7 +132,7 @@ scheduling and never parked in the scheduler at `Time.INFINITY`.
 
 ### Architectural invariants
 
-1. A `TimeDistribution` does not know about `Reaction`, `Environment`, conditions, propensity,
+1. A `TimeDistribution` does not know about `NodeReaction`, `Environment`, conditions, propensity,
    scheduler state, or observable `nextOccurrence`.
 2. Drawing a new sample is observably different from adjusting an already sampled occurrence. A reaction decides
    which operation is semantically correct.
@@ -162,7 +162,7 @@ scheduling and never parked in the scheduler at `Time.INFINITY`.
 
 - Require distributions to sample non-negative delays; reactions convert delays to absolute `nextOccurrence`.
   Represent a one-shot absolute occurrence as an `Event`, not as a `Trigger` distribution. Consequently, move
-  `timeDistribution` and recurrence-specific `rate` reporting off the owner-neutral root `Reaction` contract if an
+  `timeDistribution` and recurrence-specific `rate` reporting off the owner-neutral root `NodeReaction` contract if an
   event has no meaningful sampler or rate.
 - Define each specialized reaction's propensity or match inputs precisely. Prefer typed derived observables or
   narrow change signals owned by that reaction family; do not introduce an opaque token hierarchy that recreates
@@ -171,10 +171,10 @@ scheduling and never parked in the scheduler at `Time.INFINITY`.
   observed concentration, matching candidates, or valid neighbors—rather than a precomputed generic propensity
   scalar. Validate accepted condition types when conditions are installed, and preserve that validation through
   cloning, builders, reflection, YAML loading, and Kotlin DSL construction.
-- Apply adjustment semantics per reaction family. `AbstractMarkovianReaction` rescales a surviving exponential
+- Apply adjustment semantics per reaction family. `AbstractMarkovianNodeReaction` rescales a surviving exponential
   residual without drawing; the base generic policy and SAPERE explicitly redraw after invalidation. An `Event`
   preserves its one pending absolute occurrence and never enters recurring adjustment logic.
-  `ChemicalReaction` rejects non-exponential distributions at construction rather than silently changing policy.
+  `ChemicalNodeReaction` rejects non-exponential distributions at construction rather than silently changing policy.
 - Define what happens when an event's condition remains false through its absolute occurrence: either it expires
   and is removed without execution, or it remains pending and executes at the current time on revalidation. Do not
   inherit the current accidental behavior, which consumes the occurrence through recurring post-firing logic even
@@ -338,7 +338,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] Complete the scheduled-entity naming migration as one coherent public-API change:
   - [ ] Rename `Actionable<T>` to the owner-neutral root `Reaction<T>` and move only behavior shared by node- and
     environment-owned reactions into it.
-  - [ ] Rename the current node-owned `Reaction<T>` to `NodeReaction<T>`, retaining `node` and
+  - [x] Rename the current node-owned `Reaction<T>` to `NodeReaction<T>`, retaining `node` and
     `cloneOnNewNode(...)` only on this branch.
   - [ ] Rename `GlobalReaction<T>` to `EnvironmentReaction<T>` and make its environment ownership explicit.
   - [ ] Rename the current concrete `Event<T>` to `GenericReaction<T>`. Do not introduce `BaseReaction`; use
@@ -346,17 +346,17 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   - [ ] Remove `Trigger` from the `TimeDistribution` hierarchy. Construct an `Event` from its absolute occurrence
     directly, migrate reflective/YAML loading and SAPERE special cases, and keep delay sampling uniform for every
     remaining distribution.
-  - [ ] Keep `nextOccurrence` on the root `Reaction`, but move mandatory `timeDistribution` and recurrence-specific
+  - [ ] Keep `nextOccurrence` on the root `NodeReaction`, but move mandatory `timeDistribution` and recurrence-specific
     `rate` reporting to distribution-backed reactions so an `Event` does not expose meaningless sampler metadata.
   - [ ] Make successful event execution take the exact unregister path: dispose the engine-owned subscription,
     remove the scheduler entry, remove the event from its node/environment owner, and dispose it. Do not call
     recurring post-firing scheduling or publish `Time.INFINITY`.
   - [ ] Normalize node- and environment-membership removal so engine-initiated event completion cannot enqueue a
     duplicate removal, leave a disposed event in an owner collection, or let later node cloning recreate it.
-  - [ ] Extract an owner-neutral `AbstractReaction`; rename the current node-specific base to
+  - [ ] Extract an owner-neutral `AbstractNodeReaction`; rename the current node-specific base to
     `AbstractNodeReaction`; introduce `AbstractEnvironmentReaction`; and migrate environment-owned and specialized
     reactions without duplicating scheduling, validity, or disposal behavior.
-  - [ ] Retype engine, scheduler, simulation, output-monitor, and extractor boundaries to the root `Reaction`;
+  - [ ] Retype engine, scheduler, simulation, output-monitor, and extractor boundaries to the root `NodeReaction`;
     retype node collections, incarnations, actions, conditions, cloning, and node-oriented DSLs to `NodeReaction`;
     retype environment membership and loading boundaries to `EnvironmentReaction`.
   - [ ] Rename environment membership APIs such as `globalReactions`, `addGlobalReaction`, and
@@ -384,7 +384,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] Give each specialized reaction family an explicit accepted-condition contract and validate the complete list
   whenever conditions are assigned. Reject unsupported types with a targeted error before initialization; do not
   silently treat them as a factor of one or defer failure until the first scheduling refresh.
-- [ ] Make `ChemicalReaction` accept only the molecule presence/quantity condition types required by its mass-action
+- [ ] Make `ChemicalNodeReaction` accept only the molecule presence/quantity condition types required by its mass-action
   law and compute propensity from their typed molecule, stoichiometric requirement, and observed quantity. If
   biochemical or other chemical subclasses need additional condition forms, define and validate their accepted
   sets and scheduling laws explicitly rather than weakening the base chemical contract.
@@ -422,12 +422,12 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] Cover every concentration, match, stoichiometric quantity, or neighborhood value required to recompute
   propensity.
 - [ ] Move mass-action and other propensity laws into the chemical reaction hierarchy.
-- [x] Enforce `ExponentialTime` as the only valid generator for `ChemicalReaction` and fail fast otherwise.
+- [x] Enforce `ExponentialTime` as the only valid generator for `ChemicalNodeReaction` and fail fast otherwise.
 - [x] Migrate biochemistry and SAPERE scheduling explicitly: biochemical reactions inherit the chemical Markovian
   contract, while SAPERE reactions redraw outside that hierarchy and normalize exponential samples to total match
   propensity.
 - [ ] Replace the provisional Protelis send split with `GenericReaction` for every distribution. Remove
-  `ProtelisScheduledReaction`; do not use `ChemicalReaction` merely because a send's distribution is exponential.
+  `ProtelisScheduledReaction`; do not use `ChemicalNodeReaction` merely because a send's distribution is exponential.
 - [ ] Make a send initially invalid with `Time.INFINITY` and zero consumed samples. On the first false-to-true
   `ComputationalRoundComplete` transition, draw exactly once and schedule from the current simulation time.
 - [ ] Ensure repeated program completions while a send is already pending do not redraw or postpone it. When the
@@ -567,7 +567,7 @@ Use repository Gradle tasks from the repository root.
   `Condition` will expose general validity only; `getPropensityContribution`, `AbstractCondition` propensity state,
   the non-contributing compatibility base, and all overrides will be deleted. Specialized reactions must validate
   the condition types or semantic capabilities they accept and compute their own laws from typed state—for example,
-  `ChemicalReaction` derives mass action from accepted molecule presence/quantity conditions rather than multiplying
+  `ChemicalNodeReaction` derives mass action from accepted molecule presence/quantity conditions rather than multiplying
   opaque condition-provided scalars. The plan now covers fail-fast assignment, subclass-specific biochemical and
   SAPERE policies, direct semantic observables, cloning, builders/loaders/DSLs/factories, documentation, and positive
   and rejection regressions without introducing a replacement `PropensityCondition` abstraction.
@@ -586,7 +586,7 @@ Use repository Gradle tasks from the repository root.
   behavior and isolation regressions as complete. Repository-wide Kotlin formatting passes; the nine focused
   engine cases pass; and the final filtered repository build passes 915 tasks in 1m38s with the documented
   alternate-JVM, native-package, and fat/shadow-JAR exclusions.
-- 2026-08-20: fixed the scheduled-entity vocabulary and added its atomic migration to Phase 5. `Reaction` becomes
+- 2026-08-20: fixed the scheduled-entity vocabulary and added its atomic migration to Phase 5. `NodeReaction` becomes
   the owner-neutral root replacing `Actionable`; `NodeReaction` names node-owned reactions;
   `EnvironmentReaction` replaces `GlobalReaction`; and `GenericReaction` replaces the misleading concrete
   `Event`. The implementation hierarchy will separate owner-neutral, node-owned, and environment-owned abstract
@@ -601,7 +601,7 @@ Use repository Gradle tasks from the repository root.
   program trigger. The target behavior is now explicit: all sends become condition-gated `GenericReaction`s;
   invalid sends are infinite and consume no samples, the first completed-round transition starts one configured
   wait, repeated true emissions do not restart it, and sending resets the gate to false without pre-sampling the
-  next wait. The plan now tracks removal of both `ProtelisScheduledReaction` and the exponential `ChemicalReaction`
+  next wait. The plan now tracks removal of both `ProtelisScheduledReaction` and the exponential `ChemicalNodeReaction`
   split, replacement of the regression that currently asserts the wrong behavior, and corresponding KDoc/website
   corrections.
 - 2026-08-20: moved the canonical scheduling explanation out of the engine page and into a dedicated
@@ -624,7 +624,7 @@ Use repository Gradle tasks from the repository root.
   coordinated API/YAML/website documentation updates. This work must precede final removal of condition dependency
   sets wherever layer reads currently use them as invalidation metadata.
 - 2026-08-20: removed reaction-level `inputContext` and `outputContext` from `Actionable` and eliminated their
-  aggregation and storage in `AbstractReaction`. Engine scheduling, reaction removal, physics/global reactions,
+  aggregation and storage in `AbstractNodeReaction`. Engine scheduling, reaction removal, physics/global reactions,
   tests, and the GraphQL reaction surrogate now use no reaction-level context metadata. SAPERE retains its
   cache-locality behavior by deriving it directly from the installed actions' own contexts; regression coverage
   proves the empty, local-only, and neighborhood-action cases. The remaining action/condition `Context` contract is
@@ -633,17 +633,17 @@ Use repository Gradle tasks from the repository root.
   SAPERE, GraphQL, dynamic-removal, and cognitive-physics verification pass; independent review found no correctness
   defect. The final filtered repository build passes 915 tasks in 3m57s with the documented alternate-JVM,
   native-package, and fat/shadow-JAR exclusions.
-- 2026-08-19: completed the Markovian scheduling boundary. `AbstractReaction` now contains only distribution-agnostic
-  redraw/trigger policy, while `AbstractMarkovianReaction` alone validates `ExponentialTime` and preserves or
-  rescales a surviving exponential residual. `ChemicalReaction` and `BiochemicalReaction` inherit that fail-fast
+- 2026-08-19: completed the Markovian scheduling boundary. `AbstractNodeReaction` now contains only distribution-agnostic
+  redraw/trigger policy, while `AbstractMarkovianNodeReaction` alone validates `ExponentialTime` and preserves or
+  rescales a surviving exponential residual. `ChemicalNodeReaction` and `BiochemicalNodeReaction` inherit that fail-fast
   contract. SAPERE reactions remain outside the hierarchy and explicitly redraw on initialization, firing, and
   invalidation while normalizing exponential samples to total match propensity and preserving one-shot triggers.
   Focused transition tests cover residual reuse, configured start times, infinite-to-finite rate changes, generic
   redraws, SAPERE random-number consumption, triggers, and rejection of non-memoryless chemical generators.
 - 2026-08-19: repository-wide validation disproved the provisional assumption that every existing
-  `ChemicalReaction` call site already supplied an exponential distribution. A deterministic biochemistry movement
+  `ChemicalNodeReaction` call site already supplied an exponential distribution. A deterministic biochemistry movement
   fixture now uses an explicit `Event`, leaving actual biochemical DSL reactions Markovian. The same validation
-  introduced a split between cadence-preserving non-memoryless Protelis sends and exponential `ChemicalReaction`
+  introduced a split between cadence-preserving non-memoryless Protelis sends and exponential `ChemicalNodeReaction`
   sends. That split compiled and passed its provisional regressions but encoded the wrong send semantics; it is
   superseded by the 2026-08-20 trigger-gated `GenericReaction` decision above. The Levy-walk deterministic fixture
   likewise uses the then-current `Event` rather than a chemical reaction.
@@ -669,7 +669,7 @@ Use repository Gradle tasks from the repository root.
   `AbstractReaction.refreshReactionState(Time, Environment)` is now an optional no-op hook; implementations that
   derive rate or other scheduling state override it, while reactions with no derived state no longer carry empty
   overrides. Initialization, post-firing scheduling, and reactive invalidation remain separate because they have
-  different sampling semantics. The `Actionable`, `Reaction`, `Condition`, and `TimeDistribution` contracts now
+  different sampling semantics. The `Actionable`, `NodeReaction`, `Condition`, and `TimeDistribution` contracts now
   document that a reaction owns its absolute occurrence, `nextOccurrence` is the engine's sole scheduling
   observable, clones receive a fresh schedule, and condition dependencies are consumed by reaction policy rather
   than an engine dependency graph. The website now documents ownership plus the exact initialization,
@@ -679,7 +679,7 @@ Use repository Gradle tasks from the repository root.
   in 3m32s with the documented alternate-JVM, native-package, and fat/shadow-JAR exclusions.
 - 2026-08-18: made the firing transition explicit as `Actionable.updateAfterFiring(Time)` and removed the
   `hasBeenExecuted` Boolean that previously multiplexed firing and invalidation through the same protected hooks.
-  `AbstractReaction` now has distinct post-firing and reactive-invalidation scheduling paths while initialization
+  `AbstractNodeReaction` now has distinct post-firing and reactive-invalidation scheduling paths while initialization
   and removal remain explicit operations. Exponential invalidation still rescales the sampled residual without a
   new random draw; firing draws exactly one replacement sample, covered by a focused regression. Kotlin formatting
   and the focused implementation-base transition, sampling, cloning, engine-registration, removal, and reactive-
@@ -766,8 +766,8 @@ Use repository Gradle tasks from the repository root.
   this independently committable checkpoint is reviewed and committed.
 - 2026-08-17: commit `a25805497` completes the Phase 5 `tau` to `nextOccurrence` rename across the repository.
   Post-rename formatting, focused verification, and the required full build are not yet recorded here.
-- 2026-08-13: `AbstractReaction` now delegates fresh generator construction polymorphically to
-  `TimeDistribution<T>.newInstanceOn(node)`. `Event` and `ChemicalReaction` create a distinct generator for a clone,
+- 2026-08-13: `AbstractNodeReaction` now delegates fresh generator construction polymorphically to
+  `TimeDistribution<T>.newInstanceOn(node)`. `Event` and `ChemicalNodeReaction` create a distinct generator for a clone,
   clone actions and conditions onto the new reaction, and defer fresh scheduling until engine initialization. The
   initial occurrence is sampled after `max(cloneTime, configuredStart)` without importing the source occurrence,
   residual delay, or previous rate. A cloned absolute trigger remains pending instead of being mistaken for a
@@ -783,8 +783,8 @@ Use repository Gradle tasks from the repository root.
   next checkpoint, so the overall Phase 5 clone item remains open.
 - 2026-08-13: the superseded factory-based checkpoint passed repository-wide validation before review. Validation
   of its `newInstanceOn` replacement is tracked separately below.
-- 2026-08-13: completed the Phase 5 clone-path and construction-boundary inventory. `Event`, `ChemicalReaction`,
-  cognitive reactions, `BiochemicalReaction`, and `SAPEREReaction` currently pass the source generator object to
+- 2026-08-13: completed the Phase 5 clone-path and construction-boundary inventory. `Event`, `ChemicalNodeReaction`,
+  cognitive reactions, `BiochemicalNodeReaction`, and `SAPERENodeReaction` currently pass the source generator object to
   their clones. `MoleculeControlledTimeDistribution` and `SimpleNetworkArrivals` additionally capture the source
   node, while `SAPEREExponentialTime` carries mutable match state. The selected correction is the open-world,
   node-aware `TimeDistribution<T>.newInstanceOn(node)` operation. Each concrete generator retains the configuration
@@ -829,7 +829,7 @@ Use repository Gradle tasks from the repository root.
 - 2026-08-03: the corrected API and implementation-base production sources compile. `TimeDistribution` is now a
   non-generic functional interface containing only `sample(): Time`; the significantly changed distribution base,
   real-distribution adapter, deterministic generator, exponential generator, and event reaction were ported to
-  Kotlin. `AbstractReaction` now owns its mutable absolute occurrence, validates samples at the reaction boundary,
+  Kotlin. `AbstractNodeReaction` now owns its mutable absolute occurrence, validates samples at the reaction boundary,
   redraws after execution, and preserves the previous exponential variate by rescaling the remaining delay on a
   positive-to-positive propensity change. Distribution-owned update/react/update-observable machinery is gone.
 - 2026-08-03: removed generic distribution rate metadata as well as generic concentration parameters from the
@@ -900,7 +900,7 @@ Use repository Gradle tasks from the repository root.
   simulation topology change publishes a replacement snapshot rather than mutating existing neighborhood data.
 - 2026-08-02: strengthened `Neighborhood.neighbors` to the immutable-collection type in the public API. The
   repository-wide Kotlin formatter compiled the migration successfully through Java, Kotlin, Scala, physics,
-  maps, loading, and biochemistry before exposing four mechanical Java-getter fixes in `SAPEREReaction` as the
+  maps, loading, and biochemistry before exposing four mechanical Java-getter fixes in `SAPERENodeReaction` as the
   next compiler frontier.
 - 2026-08-02: replaced the stale SAPERE Kotlin-property syntax with Java `getRate()` calls. Focused SAPERE Kotlin
   and Java compilation now pass. The remaining bridge-method warnings are not suppressed and will disappear when

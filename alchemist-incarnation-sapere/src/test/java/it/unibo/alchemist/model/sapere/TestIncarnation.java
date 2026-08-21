@@ -10,17 +10,17 @@
 package it.unibo.alchemist.model.sapere;
 
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.reactions.Event;
 import it.unibo.alchemist.model.sapere.actions.LsaAllNeighborsAction;
 import it.unibo.alchemist.model.sapere.actions.LsaRandomNeighborAction;
 import it.unibo.alchemist.model.sapere.conditions.LsaNeighborhoodCondition;
 import it.unibo.alchemist.model.sapere.nodes.LsaNode;
 import it.unibo.alchemist.model.sapere.timedistributions.SAPEREExponentialTime;
-import it.unibo.alchemist.model.reactions.Event;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -119,7 +119,7 @@ final class TestIncarnation {
             final int nneighact,
             final int nallneighact
     ) {
-        final Reaction<List<ILsaMolecule>> r = incarnation.createReaction(
+        final NodeReaction<List<ILsaMolecule>> r = incarnation.createReaction(
                 randomGenerator, environment, node, timeDistribution, param
         );
         assertNotNull(r);

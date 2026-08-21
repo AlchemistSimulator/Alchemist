@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.sapere.conditions;
 import com.google.common.collect.Sets;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import org.danilopianini.lang.HashString;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +31,6 @@ import java.util.Map;
  * It can be deleted from the reaction, if necessary.
  */
 public class LsaStandardCondition extends AbstractLsaCondition {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     private final ILsaMolecule molecule;
     private final MutableObservable<Boolean> valid = MutableObservable.Companion.observe(false);
@@ -59,10 +56,11 @@ public class LsaStandardCondition extends AbstractLsaCondition {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public LsaStandardCondition cloneCondition(
-        final Node<List<ILsaMolecule>> newNode,
-        final Reaction<List<ILsaMolecule>> newReaction
+        @Nonnull final Node<List<ILsaMolecule>> newNode,
+        @Nonnull final NodeReaction<List<ILsaMolecule>> newReaction
     ) {
         return new LsaStandardCondition(molecule, (ILsaNode) newNode);
     }
@@ -134,6 +132,7 @@ public class LsaStandardCondition extends AbstractLsaCondition {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public Context getContext() {
         return Context.LOCAL;

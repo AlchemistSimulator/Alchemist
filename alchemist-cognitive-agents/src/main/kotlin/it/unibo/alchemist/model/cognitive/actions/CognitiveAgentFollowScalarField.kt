@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.cognitive.actions
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.EnvironmentWithObstacles
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position2D
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector2D
@@ -24,7 +24,7 @@ import it.unibo.alchemist.model.physics.PhysicsEnvironment
  */
 class CognitiveAgentFollowScalarField<T, P, A>(
     environment: Environment<T, P>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     /**
      * The position of either maximum or minimum value of the scalar field, can be null if such a position doesn't
@@ -62,7 +62,7 @@ class CognitiveAgentFollowScalarField<T, P, A>(
             .maxOr(currentPosition) - currentPosition
     }
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
         CognitiveAgentFollowScalarField(environment, reaction, node.pedestrianProperty, center, valueIn)
 
     private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> = when (environment) {

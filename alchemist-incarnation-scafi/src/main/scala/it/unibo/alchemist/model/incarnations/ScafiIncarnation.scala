@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.incarnations
 import it.unibo.alchemist.model._
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.reactions.{ChemicalReaction, Event}
+import it.unibo.alchemist.model.reactions.{ChemicalNodeReaction, Event}
 import it.unibo.alchemist.model.scafi.actions.{RunScafiProgram, SendScafiMessage}
 import it.unibo.alchemist.model.scafi.conditions.ScafiComputationalRoundComplete
 import it.unibo.alchemist.model.scafi.properties.ScafiDevice
@@ -72,13 +72,13 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
             ].getName + " action: " + scafiProgramsList
           )
         }
-        new SendScafiMessage[T, P](environment, device, reaction.asInstanceOf[Reaction[T]], scafiProgramsList.head)
+        new SendScafiMessage[T, P](environment, device, reaction.asInstanceOf[NodeReaction[T]], scafiProgramsList.head)
       } else {
         require(param != null, "Unsupported program: null")
         val action = new RunScafiProgram[T, P](
           notNull(environment, "environment"),
           notNull(node, "node"),
-          notNull(reaction.asInstanceOf[Reaction[T]], "reaction"),
+          notNull(reaction.asInstanceOf[NodeReaction[T]], "reaction"),
           notNull(randomGenerator, "random generator"),
           notNull(param.toString, "action parameter")
         )
@@ -152,12 +152,12 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       node: Node[T],
       time: TimeDistribution[T],
       parameters: Any
-  ): Reaction[T] = {
+  ): NodeReaction[T] = {
     val parameterString = Option(parameters).map(_.toString).orNull
     val isSend = "send".equalsIgnoreCase(parameterString)
-    val result: Reaction[T] =
+    val result: NodeReaction[T] =
       if (isSend) {
-        new ChemicalReaction[T](
+        new ChemicalNodeReaction[T](
           Objects.requireNonNull[Node[T]](node),
           Objects.requireNonNull[TimeDistribution[T]](time)
         )
@@ -215,7 +215,7 @@ object ScafiIncarnationUtils {
 
   def allActions[T, P <: Position[P], C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
     for {
-      reaction: Reaction[T] <- node.getReactions.asScala
+      reaction: NodeReaction[T] <- node.getReactions.asScala
       action: Action[T] <- reaction.getActions.asScala if klass.isInstance(action)
     } yield action.asInstanceOf[C]
 

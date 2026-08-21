@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,9 +13,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.Reaction;
 import org.apache.commons.math3.random.RandomGenerator;
+
+import javax.annotation.Nonnull;
 
 /**
  * Moves the node randomly.
@@ -51,8 +53,9 @@ public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNo
         this.randomGenerator = randomGenerator;
     }
 
+    @Nonnull
     @Override
-    public Action<T> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+    public Action<T> cloneAction(@Nonnull final Node<T> node, @Nonnull final NodeReaction<T> reaction) {
         return new BrownianMove<>(getEnvironment(), node, randomGenerator, range);
     }
 

@@ -22,8 +22,8 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.maps.MapEnvironment;
@@ -33,7 +33,7 @@ import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableExtensions;
 import it.unibo.alchemist.model.observation.ObservableMutableSet;
 import it.unibo.alchemist.model.observation.ObservableSet;
-import it.unibo.alchemist.model.reactions.AbstractReaction;
+import it.unibo.alchemist.model.reactions.AbstractNodeReaction;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
@@ -60,7 +60,7 @@ import java.util.Objects;
  *
  * @param <P> Position type
  */
-public final class SAPEREGradient<P extends Position<P>> extends AbstractReaction<List<ILsaMolecule>> {
+public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeReaction<List<ILsaMolecule>> {
 
     private static final List<ILsaMolecule> EMPTY_LIST = Collections.unmodifiableList(new ArrayList<>(0));
     @Serial
@@ -298,7 +298,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
 
     @Nonnull
     @Override
-    public Reaction<List<ILsaMolecule>> cloneOnNewNode(
+    public NodeReaction<List<ILsaMolecule>> cloneOnNewNode(
         @Nonnull final Node<List<ILsaMolecule>> node,
         @Nonnull final Time currentTime
     ) {
@@ -607,7 +607,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         @Nonnull
         public Action<List<ILsaMolecule>> cloneAction(
             @Nonnull final Node<List<ILsaMolecule>> node,
-            @Nonnull final Reaction<List<ILsaMolecule>> reaction
+            @Nonnull final NodeReaction<List<ILsaMolecule>> reaction
         ) {
             return null;
         }
@@ -616,7 +616,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         @Nonnull
         public Condition<List<ILsaMolecule>> cloneCondition(
             @Nonnull final Node<List<ILsaMolecule>> node,
-            @Nonnull final Reaction<List<ILsaMolecule>> reaction
+            @Nonnull final NodeReaction<List<ILsaMolecule>> reaction
         ) {
             return null;
         }

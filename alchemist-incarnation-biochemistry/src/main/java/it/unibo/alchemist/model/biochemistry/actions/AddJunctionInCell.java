@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,12 +11,12 @@ package it.unibo.alchemist.model.biochemistry.actions;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.molecules.Junction;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * Represent the action of add a junction between the current node and a neighbor.
@@ -26,9 +26,6 @@ import java.io.Serial;
  * See {@link AddJunctionInNeighbor} for the other part of the process
  */
 public final class AddJunctionInCell extends AbstractNeighborAction<Double> { // TODO try with local
-
-    @Serial
-    private static final long serialVersionUID = -7074995950043793067L;
 
     private final Junction junction;
 
@@ -50,8 +47,9 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
         this.junction = junction;
     }
 
+    @Nonnull
     @Override
-    public AddJunctionInCell cloneAction(final Node<Double> newNode, final Reaction<Double> newReaction) {
+    public AddJunctionInCell cloneAction(@Nonnull final Node<Double> newNode, @Nonnull final NodeReaction<Double> newReaction) {
         return new AddJunctionInCell(getEnvironment(), newNode, junction, getRandomGenerator());
     }
 

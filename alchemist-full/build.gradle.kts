@@ -85,8 +85,6 @@ tasks.withType<ShadowJar>().configureEach {
     // EMF's plugin.properties must be merged if there are multiple entries
     transform<AppendingTransformer> { resource = "plugin.properties" }
     destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })
-    // EMF's plugin.properties must be merged if there are multiple entries
-    transform<AppendingTransformer> { resource = "plugin.properties" }
 }
 
 val javaExecutable = javaToolchains.launcherFor {

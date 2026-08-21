@@ -22,6 +22,7 @@ include(
     "alchemist-full",
     "alchemist-graphql",
     "alchemist-graphql-surrogates",
+    "alchemist-geospatial",
     "alchemist-implementationbase",
     "alchemist-incarnation-protelis",
     "alchemist-incarnation-sapere",

@@ -1,0 +1,37 @@
+{
+    "processID": "efas-historical",
+    "type": "process",
+    "jobID": "bb1ee550-0dea-4c84-b164-b8c54165a25f",
+    "status": "accepted",
+    "created": "2026-08-09T16:07:29.273643",
+    "updated": "2026-08-09T16:07:29.273643",
+    "links": [
+        {
+            "href": "https://ewds.climate.copernicus.eu/api/retrieve/v1/processes/efas-historical/execution",
+            "rel": "self"
+        },
+        {
+            "href": "https://ewds.climate.copernicus.eu/api/retrieve/v1/jobs/bb1ee550-0dea-4c84-b164-b8c54165a25f",
+            "rel": "monitor",
+            "type": "application/json",
+            "title": "job status info"
+        }
+    ],
+    "metadata": {
+        "datasetMetadata": {
+            "messages": [
+                {
+                    "date": "2024-02-01T00:00:00",
+                    "severity": "info",
+                    "content": "Please note that accessing this dataset via CDS for time-critical operation is not advised or supported"
+                },
+                {
+                    "date": "2024-02-01T00:00:00",
+                    "severity": "info",
+                    "content": "Please note that we suggest checking the list of known issues on the EFAS wiki\n[here](https://confluence.ecmwf.int/display/CEMS/EFAS+-+Known+Issues)\nbefore downloading the dataset."
+                }
+            ]
+        },
+        "origin": "api"
+    }
+}

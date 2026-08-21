@@ -1,0 +1,27 @@
+{
+    "processID": "efas-historical",
+    "type": "process",
+    "jobID": "bb1ee550-0dea-4c84-b164-b8c54165a25f",
+    "status": "successful",
+    "created": "2026-08-09T16:07:29.273643",
+    "started": "2026-08-09T16:07:49.420505",
+    "finished": "2026-08-09T16:07:54.348020",
+    "updated": "2026-08-09T16:07:54.348020",
+    "links": [
+        {
+            "href": "https://ewds.climate.copernicus.eu/api/retrieve/v1/jobs/bb1ee550-0dea-4c84-b164-b8c54165a25f",
+            "rel": "self",
+            "type": "application/json"
+        },
+        {
+            "href": "https://ewds.climate.copernicus.eu/api/retrieve/v1/jobs/bb1ee550-0dea-4c84-b164-b8c54165a25f/results",
+            "rel": "results"
+        }
+    ],
+    "metadata": {
+        "datasetMetadata": {
+            "catalogue": "cems"
+        },
+        "origin": "api"
+    }
+}

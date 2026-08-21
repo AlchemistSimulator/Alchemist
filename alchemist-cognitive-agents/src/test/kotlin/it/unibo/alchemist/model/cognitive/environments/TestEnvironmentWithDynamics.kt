@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -39,18 +39,18 @@ class TestEnvironmentWithDynamics<T, P> :
         }
         "Environment should allow physics update rate customization" {
             val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate.yml").environment
-            environment.globalReactions.size shouldBe 1
-            environment.globalReactions.first().rate shouldBe 1.5
+            environment.environmentReactions.size shouldBe 1
+            environment.environmentReactions.first().rate shouldBe 1.5
         }
         "Ignore time distribution when updateRate is Specified" {
             val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate2.yml").environment
-            environment.globalReactions.size shouldBe 1
-            environment.globalReactions.first().rate shouldBe 0.5
+            environment.environmentReactions.size shouldBe 1
+            environment.environmentReactions.first().rate shouldBe 0.5
         }
         "Customize rate with time-distribution" {
             val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate3.yml").environment
-            environment.globalReactions.size shouldBe 1
-            val globalReaction = environment.globalReactions.first()
+            environment.environmentReactions.size shouldBe 1
+            val globalReaction = environment.environmentReactions.first()
             globalReaction.timeDistribution::class shouldBe ExponentialTime::class
             globalReaction.rate shouldBe 0.5
         }
@@ -63,6 +63,6 @@ class TestEnvironmentWithDynamics<T, P> :
             shouldThrow<IllegalArgumentException> {
                 environment.addGlobalReaction(PhysicsUpdate(environment as Dynamics2DEnvironment<T>))
             }
-            environment.globalReactions.first().rate shouldBe 2.0
+            environment.environmentReactions.first().rate shouldBe 2.0
         }
     }) where P : Position<P>, P : Vector<P>

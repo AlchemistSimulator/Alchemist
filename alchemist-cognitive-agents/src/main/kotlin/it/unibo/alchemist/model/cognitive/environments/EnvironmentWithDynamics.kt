@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.cognitive.environments
 
-import it.unibo.alchemist.model.GlobalReaction
+import it.unibo.alchemist.model.EnvironmentReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
@@ -87,7 +87,7 @@ constructor(
         }
     }
 
-    override fun addGlobalReaction(reaction: GlobalReaction<T>) {
+    override fun addGlobalReaction(reaction: EnvironmentReaction<T>) {
         if (reaction is PhysicsUpdate) {
             require(!physicsUpdateHasBeenOverriden) {
                 "${PhysicsUpdate::class.simpleName} reaction had been already overriden"

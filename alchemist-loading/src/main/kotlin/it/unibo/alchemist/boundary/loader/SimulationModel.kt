@@ -43,7 +43,7 @@ import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.GlobalReaction
+import it.unibo.alchemist.model.EnvironmentReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
@@ -780,7 +780,8 @@ internal object SimulationModel {
             visitBuilding<NodeReaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<NodeReaction<T>>(root)
         else ->
             // A reaction with no node is a GlobalReaction
-            visitBuilding<GlobalReaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<GlobalReaction<T>>(root)
+            visitBuilding<EnvironmentReaction<T>>(context, root)?.getOrThrow()
+                ?: cantBuildWith<EnvironmentReaction<T>>(root)
     }
 
     fun visitSeeds(context: Context, root: Any?): Seeds = when (root) {

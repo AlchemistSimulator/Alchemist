@@ -94,7 +94,7 @@ infix fun <T, P : Position<P>> Environment<T, P>.shouldEqual(other: Environment<
     nodes.ebeEquals(other.nodes) { expected, actual ->
         actual shouldEqual expected
     }
-    globalReactions.ebeEquals(other.globalReactions) { expected, actual -> actual shouldEqual expected }
+    environmentReactions.ebeEquals(other.environmentReactions) { expected, actual -> actual shouldEqual expected }
     layers.toList().sortedBy { (molecule, _) -> molecule.toString() }.ebeEquals(
         other.layers.toList().sortedBy { (molecule, _) -> molecule.toString() },
     ) { expected, actual ->

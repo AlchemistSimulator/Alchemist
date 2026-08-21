@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -30,19 +30,19 @@ interface Environment<T, P : Position<out P>> :
     fun addLayer(molecule: Molecule, layer: Layer<T, P>)
 
     /**
-     * Add a [GlobalReaction] to the [Environment].
+     * Add a [EnvironmentReaction] to the [Environment].
      */
-    fun addGlobalReaction(reaction: GlobalReaction<T>)
+    fun addGlobalReaction(reaction: EnvironmentReaction<T>)
 
     /**
-     * Remove a [GlobalReaction] from the [Environment].
+     * Remove a [EnvironmentReaction] from the [Environment].
      */
-    fun removeGlobalReaction(reaction: GlobalReaction<T>)
+    fun removeGlobalReaction(reaction: EnvironmentReaction<T>)
 
     /**
-     * Get the [Environment]'s [GlobalReaction]s.
+     * Get the [Environment]'s [EnvironmentReaction]s.
      */
-    val globalReactions: List<GlobalReaction<T>>
+    val environmentReactions: List<EnvironmentReaction<T>>
 
     /**
      * Adds a new [node] to this environment in a specific [position].

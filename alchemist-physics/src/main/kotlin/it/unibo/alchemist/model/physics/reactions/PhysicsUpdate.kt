@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.GlobalReaction
+import it.unibo.alchemist.model.EnvironmentReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
@@ -35,7 +35,7 @@ class PhysicsUpdate<T>(
     /** The physics environment advanced by this reaction. */
     val environment: Dynamics2DEnvironment<T>,
     override val timeDistribution: TimeDistribution<T> = DiracComb(DEFAULT_RATE),
-) : GlobalReaction<T> {
+) : EnvironmentReaction<T> {
 
     constructor(environment: Dynamics2DEnvironment<T>, updateRate: Double) : this(environment, DiracComb(updateRate))
 

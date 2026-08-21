@@ -18,7 +18,7 @@ import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.GlobalReaction
+import it.unibo.alchemist.model.EnvironmentReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
@@ -184,7 +184,7 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                         SimulationModel
                             .visitProgram(randomGenerator, incarnation, environment, null, context, it)
                             ?.onSuccess { (_, actionable) ->
-                                if (actionable is GlobalReaction) {
+                                if (actionable is EnvironmentReaction) {
                                     environment.addGlobalReaction(actionable)
                                 }
                             }

@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.kotlindsl
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.GlobalReaction
+import it.unibo.alchemist.model.EnvironmentReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
@@ -55,29 +55,29 @@ fun interface EnvironmentContext<T, P : Position<P>> {
     fun deployments(deploymentsConfiguration: context(RandomGenerator) DeploymentsContext<T, P>.() -> Unit)
 
     /**
-     * Registers a [GlobalReaction] in the current [Environment] and optionally configures it.
+     * Registers a [EnvironmentReaction] in the current [Environment] and optionally configures it.
      *
-     * The [block], if provided, is executed with [globalReaction] as a context receiver and with
+     * The [block], if provided, is executed with [environmentReaction] as a context receiver and with
      * [ActionableContext] as receiver, enabling the addition of actions and conditions.
      *
      * The [timeDistribution] parameter is currently not used by this function. The expectation is that
-     * the provided [globalReaction] is already configured with the intended scheduling strategy (if any),
+     * the provided [environmentReaction] is already configured with the intended scheduling strategy (if any),
      * or that the distribution is otherwise bound externally.
      *
      * @param timeDistribution a time distribution associated with the global program; currently ignored.
-     * @param globalReaction the global reaction to register.
+     * @param environmentReaction the global reaction to register.
      * @param block an optional configuration block for actions and conditions.
      */
     context(environment: Environment<T, P>)
     fun globalProgram(
         timeDistribution: TimeDistribution<T>,
-        globalReaction: GlobalReaction<T>,
-        block: context(GlobalReaction<T>) ActionableContext.() -> Unit = {},
+        environmentReaction: EnvironmentReaction<T>,
+        block: context(EnvironmentReaction<T>) ActionableContext.() -> Unit = {},
     ) {
-        context(globalReaction) {
+        context(environmentReaction) {
             ActionableContext.block()
         }
-        environment.addGlobalReaction(globalReaction)
+        environment.addGlobalReaction(environmentReaction)
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.test.AlchemistTesting.createEmptyEnvironment
-import it.unibo.alchemist.test.GlobalTestReaction
+import it.unibo.alchemist.test.EnvironmentTestReaction
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -68,7 +68,7 @@ class TestSimulationControl :
 
         fun Environment<Nothing, *>.tickRate(delta: Double) {
             this.simulation.schedule {
-                this.addGlobalReaction(GlobalTestReaction(this, DiracComb(Time.ZERO, delta)))
+                this.addGlobalReaction(EnvironmentTestReaction(this, DiracComb(Time.ZERO, delta)))
             }
         }
     }

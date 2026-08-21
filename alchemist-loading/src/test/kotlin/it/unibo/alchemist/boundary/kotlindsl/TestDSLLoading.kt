@@ -37,7 +37,7 @@ import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.exponentialTime
 import it.unibo.alchemist.model.timedistributions.weibullTime
 import it.unibo.alchemist.model.times.DoubleTime
-import it.unibo.alchemist.test.globalTestReaction
+import it.unibo.alchemist.test.environmentTestReaction
 import org.apache.commons.math3.random.RandomGenerator
 import org.junit.jupiter.api.Test
 
@@ -86,7 +86,7 @@ class TestDSLLoading {
         }
         simulation2D(ProtelisIncarnation()) {
             environment {
-                globalProgram(DiracComb(1.0), globalTestReaction(DiracComb(1.0)))
+                globalProgram(DiracComb(1.0), environmentTestReaction((DiracComb(1.0))))
             }
         }
         simulation2D(ProtelisIncarnation()) {

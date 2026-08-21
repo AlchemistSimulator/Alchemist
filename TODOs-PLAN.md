@@ -340,7 +340,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
     environment-owned reactions into it.
   - [x] Rename the current node-owned `Reaction<T>` to `NodeReaction<T>`, retaining `node` and
     `cloneOnNewNode(...)` only on this branch.
-  - [ ] Rename `GlobalReaction<T>` to `EnvironmentReaction<T>` and make its environment ownership explicit.
+  - [x] Rename `GlobalReaction<T>` to `EnvironmentReaction<T>` and make its environment ownership explicit.
   - [ ] Rename the current concrete `Event<T>` to `GenericReaction<T>`. Do not introduce `BaseReaction`; use
     `Event<T>` for the one-shot scheduled entity currently approximated by the `Trigger` distribution.
   - [ ] Remove `Trigger` from the `TimeDistribution` hierarchy. Construct an `Event` from its absolute occurrence

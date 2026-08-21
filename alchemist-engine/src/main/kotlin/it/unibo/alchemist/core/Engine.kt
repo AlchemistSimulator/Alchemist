@@ -38,7 +38,7 @@ open class Engine<T, P : Position<out P>>(
     constructor(environment: Environment<T, P>) : this(environment, ArrayIndexedPriorityQueue())
 
     override fun initialize() {
-        environment.globalReactions.forEach(::scheduleReaction)
+        environment.environmentReactions.forEach(::scheduleReaction)
         environment.forEach { it.reactions.forEach(::scheduleReaction) }
     }
 

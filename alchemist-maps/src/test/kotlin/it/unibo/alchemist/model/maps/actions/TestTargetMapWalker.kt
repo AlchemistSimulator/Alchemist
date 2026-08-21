@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.maps.environments.OSMEnvironment
 import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.model.molecules.SimpleMolecule
-import it.unibo.alchemist.model.reactions.Event
+import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -36,7 +36,7 @@ internal class TestTargetMapWalker {
     fun `Set up environment and node`() {
         environment = OSMEnvironment(INCARNATION, TESTMAP, true, true).apply { linkingRule = NoLinks() }
         node = INCARNATION.createNode(MersenneTwister(), environment, null)
-        reaction = Event(node, DiracComb(1.0))
+        reaction = GenericReaction(node, DiracComb(1.0))
         val walker = TargetMapWalker(environment, node, reaction, TRACK, INTERACTING)
         reaction.actions = listOf(walker)
         node.addReaction(reaction)

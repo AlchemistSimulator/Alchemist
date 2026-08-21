@@ -6,7 +6,7 @@ network-model:
 
 _gradient: &gradient
   - time-distribution: 1
-    type: Event
+    type: GenericReaction
     actions:
       - type: RunProtelisProgram
         parameters: [distanceTo, 1.01]

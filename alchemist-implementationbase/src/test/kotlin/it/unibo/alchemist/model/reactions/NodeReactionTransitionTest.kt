@@ -88,7 +88,7 @@ class NodeReactionTransitionTest {
     }
 
     @Test
-    fun `generic event invalidation redraws exponential occurrence`() {
+    fun `generic reaction invalidation redraws exponential occurrence`() {
         val node = mockk<Node<Any>>()
         val environment = mockk<Environment<Any, *>>(relaxed = true)
         every { environment.simulationOrNull } returns null
@@ -99,7 +99,7 @@ class NodeReactionTransitionTest {
             samples++
             0.5
         }
-        val reaction = Event(node, ExponentialTime(1.0, randomGenerator)).apply {
+        val reaction = GenericReaction(node, ExponentialTime(1.0, randomGenerator)).apply {
             conditions = listOf(ObservableValidityCondition(node, validity))
         }
         reaction.initializationComplete(Time.ZERO, environment)

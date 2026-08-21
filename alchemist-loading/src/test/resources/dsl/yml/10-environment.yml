@@ -7,7 +7,7 @@ incarnation: sapere
 _pools:
   - pool: &move
     - time-distribution: 15
-      type: Event
+      type: GenericReaction
       actions:
         - type: ReproduceGPSTrace
           parameters: ["gpsTrace", true, "AlignToSimulationTime"]

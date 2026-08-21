@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.reactions.Event;
+import it.unibo.alchemist.model.reactions.GenericReaction;
 import it.unibo.alchemist.model.sapere.actions.LsaAllNeighborsAction;
 import it.unibo.alchemist.model.sapere.actions.LsaRandomNeighborAction;
 import it.unibo.alchemist.model.sapere.conditions.LsaNeighborhoodCondition;
@@ -84,7 +84,7 @@ final class TestIncarnation {
                 randomGenerator, environment, node, param
         );
         assertNotNull(t0);
-        final var event = new Event<>(node, t0);
+        final var event = new GenericReaction<>(node, t0);
         if (!Double.isNaN(rate)) {
             assertEquals(rate, event.getRate(), Double.MIN_VALUE);
         }

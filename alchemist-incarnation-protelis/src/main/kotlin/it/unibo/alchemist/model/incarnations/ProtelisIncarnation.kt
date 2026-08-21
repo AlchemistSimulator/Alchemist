@@ -37,7 +37,7 @@ import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
 import it.unibo.alchemist.model.reactions.AbstractNodeReaction
 import it.unibo.alchemist.model.reactions.ChemicalNodeReaction
-import it.unibo.alchemist.model.reactions.Event
+import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.times.DoubleTime
@@ -192,7 +192,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         val parameterString = parameter?.toString()
         val isSend = parameterString.equals("send", ignoreCase = true)
         val result: NodeReaction<Any> = when {
-            !isSend -> Event(node, timeDistribution)
+            !isSend -> GenericReaction(node, timeDistribution)
             timeDistribution is ExponentialTime -> ChemicalNodeReaction(node, timeDistribution)
             else -> ProtelisScheduledNodeReaction(node, timeDistribution)
         }

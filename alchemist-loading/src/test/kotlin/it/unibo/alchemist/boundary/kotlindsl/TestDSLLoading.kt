@@ -30,7 +30,7 @@ import it.unibo.alchemist.model.maps.deployments.FromGPSTrace
 import it.unibo.alchemist.model.maps.environments.oSMEnvironment
 import it.unibo.alchemist.model.positionfilters.Rectangle
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.reactions.event
+import it.unibo.alchemist.model.reactions.genericReaction
 import it.unibo.alchemist.model.terminators.AfterTime
 import it.unibo.alchemist.model.terminators.StableForSteps
 import it.unibo.alchemist.model.timedistributions.DiracComb
@@ -127,7 +127,7 @@ class TestDSLLoading {
                     )
                     deploy(gps) {
                         withTimeDistribution(15) {
-                            program(event()) {
+                            program(genericReaction()) {
                                 ActionableContext.action(
                                     reproduceGPSTrace(
                                         "gpsTrace",

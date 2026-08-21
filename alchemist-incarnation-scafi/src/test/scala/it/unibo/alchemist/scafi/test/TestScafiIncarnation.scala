@@ -11,7 +11,7 @@ package it.unibo.alchemist.scafi.test
 import it.unibo.alchemist.model.incarnations.ScafiIncarnation
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.reactions.Event
+import it.unibo.alchemist.model.reactions.GenericReaction
 import org.apache.commons.math3.random.MersenneTwister
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
@@ -33,7 +33,7 @@ class TestScafiIncarnation extends AnyFunSuite with Matchers {
 
     val generic = INC.createReaction(rng, env, node, standard, null)
     assertNotNull(generic)
-    assertTrue(generic.isInstanceOf[Event[_]])
+    assertTrue(generic.isInstanceOf[GenericReaction[_]])
     generic.getRate shouldEqual 3d
   }
 

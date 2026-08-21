@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.reactions.Event
+import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -69,7 +69,7 @@ class TimeDistributionSamplingTest {
 
     @Test
     fun `an infinite exponential rate schedules an immediate reaction`() {
-        val reaction = Event(mockk<Node<Any>>(), ExponentialTime(Double.POSITIVE_INFINITY, Well19937c(0)))
+        val reaction = GenericReaction(mockk<Node<Any>>(), ExponentialTime(Double.POSITIVE_INFINITY, Well19937c(0)))
         reaction.initializationComplete(Time.ZERO, mockk<Environment<Any, *>>())
         reaction.updateAfterFiring(Time.ZERO)
         assertEquals(0.0, reaction.nextOccurrence.current.toDouble())
@@ -91,7 +91,7 @@ class TimeDistributionSamplingTest {
 
     @Test
     fun `reactions own absolute occurrence updates`() {
-        val reaction = Event(mockk<Node<Any>>(), FixedDistribution(DoubleTime(2.0)))
+        val reaction = GenericReaction(mockk<Node<Any>>(), FixedDistribution(DoubleTime(2.0)))
         reaction.initializationComplete(Time.ZERO, mockk<Environment<Any, *>>())
 
         reaction.updateAfterFiring(DoubleTime(3.0))
@@ -101,7 +101,7 @@ class TimeDistributionSamplingTest {
 
     @Test
     fun `reactions reject invalid custom samples`() {
-        val reaction = Event(mockk<Node<Any>>(), FixedDistribution(DoubleTime(-1.0)))
+        val reaction = GenericReaction(mockk<Node<Any>>(), FixedDistribution(DoubleTime(-1.0)))
         reaction.initializationComplete(Time.ZERO, mockk<Environment<Any, *>>())
         assertFailsWith<IllegalStateException> {
             reaction.updateAfterFiring(Time.ZERO)

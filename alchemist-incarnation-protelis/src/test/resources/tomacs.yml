@@ -51,7 +51,7 @@ _pools:
     - time-distribution:
         type: RandomDiracComb
         parameters: [*minfreq, *maxfreq]
-      type: Event
+      type: GenericReaction
       actions:
         - type: RunProtelisProgram
           parameters: ["1", *retain]
@@ -64,7 +64,7 @@ _pools:
       program: send
   - pool: &move
     - time-distribution: 10
-      type: Event
+      type: GenericReaction
       actions:
         - type: MoveToTarget
           parameters: [target, *speed]

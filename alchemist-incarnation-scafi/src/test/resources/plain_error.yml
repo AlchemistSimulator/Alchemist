@@ -8,7 +8,7 @@ export:
 
 _pool: &program
   - time-distribution: 2
-    type: Event
+    type: GenericReaction
     actions:
       - type: RunScafiProgram
         parameters: [it.unibo.alchemist.scafi.test.ScafiGradientProgram]

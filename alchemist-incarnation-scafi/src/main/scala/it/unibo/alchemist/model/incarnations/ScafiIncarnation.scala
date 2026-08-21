@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.incarnations
 import it.unibo.alchemist.model._
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.reactions.{ChemicalNodeReaction, Event}
+import it.unibo.alchemist.model.reactions.{ChemicalNodeReaction, GenericReaction}
 import it.unibo.alchemist.model.scafi.actions.{RunScafiProgram, SendScafiMessage}
 import it.unibo.alchemist.model.scafi.conditions.ScafiComputationalRoundComplete
 import it.unibo.alchemist.model.scafi.properties.ScafiDevice
@@ -162,7 +162,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
           Objects.requireNonNull[TimeDistribution[T]](time)
         )
       } else {
-        new Event[T](node, time)
+        new GenericReaction[T](node, time)
       }
     if (parameters != null) {
       result.setActions(

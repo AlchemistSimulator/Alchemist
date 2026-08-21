@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.layers.StepLayer;
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.reactions.Event;
+import it.unibo.alchemist.model.reactions.GenericReaction;
 import it.unibo.alchemist.model.timedistributions.DiracComb;
 import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.test.AlchemistTesting;
@@ -62,7 +62,7 @@ class TestBiomolLayer {
             "[B in env] --> [A]"
         );
         cellNode.addReaction(underTest);
-        final NodeReaction<Double> movement = new Event<>(cellNode, new DiracComb<>(100d));
+        final NodeReaction<Double> movement = new GenericReaction<>(cellNode, new DiracComb<>(100d));
         movement.setActions(List.of(new BrownianMove<>(environment, cellNode, rand, 10)));
         cellNode.addReaction(movement);
         cellNode.setConcentration(a, 0d);

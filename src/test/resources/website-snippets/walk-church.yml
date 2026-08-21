@@ -13,6 +13,6 @@ deployments:
         let distance = hypot(vector.get(0), vector.get(1))
         distanceTo(distance < 50)
     - program: send # Actual network message delivery
-    - type: Event
+    - type: GenericReaction
       time-distribution: 1
       actions: { type: LevyWalk, parameters: [1.4] }

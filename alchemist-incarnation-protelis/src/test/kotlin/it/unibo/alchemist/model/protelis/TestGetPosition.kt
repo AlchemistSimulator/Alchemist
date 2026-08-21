@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
-import it.unibo.alchemist.model.reactions.Event
+import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import it.unibo.alchemist.test.AlchemistTesting.terminatingAfterSteps
@@ -38,7 +38,7 @@ class TestGetPosition {
         ProtelisIncarnation<Euclidean2DPosition>()
             .createNode(randomGenerator, environment, null)
     private val reaction =
-        Event(
+        GenericReaction(
             node,
             ExponentialTime(1.0, randomGenerator),
         )

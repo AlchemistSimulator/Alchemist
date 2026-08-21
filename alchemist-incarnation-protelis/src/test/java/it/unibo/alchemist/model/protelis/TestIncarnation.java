@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.protelis.actions.SendToNeighbor;
 import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete;
-import it.unibo.alchemist.model.reactions.Event;
+import it.unibo.alchemist.model.reactions.GenericReaction;
 import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -66,7 +66,7 @@ class TestIncarnation {
         final NodeReaction<Object> generic = INCARNATION.createReaction(rng, environment, node, standard, null);
         assertEquals(3d, generic.getRate(), Double.MIN_VALUE);
         assertNotNull(generic);
-        assertInstanceOf(Event.class, generic);
+        assertInstanceOf(GenericReaction.class, generic);
         final NodeReaction<Object> program = INCARNATION.createReaction(rng, environment, node, standard, "nbr(1)");
         testIsProtelisProgram(program);
         final NodeReaction<Object> program2 = INCARNATION.createReaction(rng, environment, node, standard, "testprotelis:test");
@@ -92,7 +92,7 @@ class TestIncarnation {
 
     private static void testIsProtelisProgram(final NodeReaction<Object> program) {
         assertNotNull(program);
-        assertInstanceOf(Event.class, program);
+        assertInstanceOf(GenericReaction.class, program);
         assertTrue(program.getConditions().isEmpty());
         assertFalse(program.getActions().isEmpty());
         assertEquals(1, program.getActions().size());

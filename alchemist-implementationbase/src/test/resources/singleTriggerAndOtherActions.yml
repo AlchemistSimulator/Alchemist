@@ -11,12 +11,12 @@ deployments:
       - time-distribution:
           type: Trigger
           parameters: [3]
-        type: Event
+        type: GenericReaction
         actions:
           - type: TestTriggerAction
             parameters: []
       - time-distribution: 1
-        type: Event
+        type: GenericReaction
         actions:
           - type: DummyAction
             parameters: []

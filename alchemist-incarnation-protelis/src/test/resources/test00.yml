@@ -27,7 +27,7 @@ _pool: &program
   - time-distribution: null
     program: send
   - time-distribution: 1
-    type: Event
+    type: GenericReaction
     conditions: []
     actions:
       - type: BrownianMove
@@ -35,7 +35,7 @@ _pool: &program
   - time-distribution:
       type: Trigger
       parameters: [1]
-    type: Event
+    type: GenericReaction
     conditions: []
     actions:
       - type: BrownianMove

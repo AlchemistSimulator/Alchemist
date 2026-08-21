@@ -6,7 +6,7 @@ deployments:
     parameters: [-7, -6]
     programs:
       - time-distribution: 3
-        type: Event
+        type: GenericReaction
         actions:
           - type: EuclideanConfigurableMoveNode
             parameters:

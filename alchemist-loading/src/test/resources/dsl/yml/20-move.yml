@@ -18,5 +18,5 @@ deployments:
   parameters: [500, *lagoon]
   programs:
     - time-distribution: 10
-      type: Event
+      type: GenericReaction
       actions: { type: BrownianMove, parameters: [0.0005]}

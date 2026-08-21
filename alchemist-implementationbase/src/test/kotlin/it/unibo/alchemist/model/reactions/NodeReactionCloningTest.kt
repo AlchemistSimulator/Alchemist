@@ -44,7 +44,7 @@ class NodeReactionCloningTest {
     @Test
     fun `a clone owns a new deterministic generator and starts at clone time`() {
         val sourceDistribution = DiracComb<Any>(0.5)
-        val source = Event(mockk<Node<Any>>(), sourceDistribution)
+        val source = GenericReaction(mockk<Node<Any>>(), sourceDistribution)
         source.initializationComplete(Time.ZERO, environment)
         source.updateAfterFiring(DoubleTime(3.0))
 
@@ -58,7 +58,7 @@ class NodeReactionCloningTest {
 
     @Test
     fun `a clone respects the configured absolute start before sampling`() {
-        val source = Event(mockk<Node<Any>>(), DiracComb(DoubleTime(20.0), 0.5))
+        val source = GenericReaction(mockk<Node<Any>>(), DiracComb(DoubleTime(20.0), 0.5))
 
         val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
         clone.initializationComplete(DoubleTime(10.0), environment)
@@ -68,7 +68,7 @@ class NodeReactionCloningTest {
 
     @Test
     fun `a cloned trigger is a new pending program rather than an executed trigger`() {
-        val source = Event(mockk<Node<Any>>(), Trigger(DoubleTime(20.0)))
+        val source = GenericReaction(mockk<Node<Any>>(), Trigger(DoubleTime(20.0)))
 
         val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
         clone.initializationComplete(DoubleTime(10.0), environment)
@@ -80,7 +80,7 @@ class NodeReactionCloningTest {
     @Test
     fun `a non-memoryless clone does not inherit source sampler state`() {
         val sourceDistribution = SequenceDistribution(1.0, 100.0)
-        val source = Event(mockk(), sourceDistribution)
+        val source = GenericReaction(mockk(), sourceDistribution)
         source.initializationComplete(Time.ZERO, environment)
         source.updateAfterFiring(Time.ZERO)
 
@@ -112,7 +112,7 @@ class NodeReactionCloningTest {
             sourceNode,
             molecule,
         )
-        val source = Event(sourceNode, sourceDistribution)
+        val source = GenericReaction(sourceNode, sourceDistribution)
 
         val clone = source.cloneOnNewNode(destinationNode, DoubleTime(10.0))
         clone.initializationComplete(DoubleTime(10.0), environment)
@@ -125,7 +125,7 @@ class NodeReactionCloningTest {
     @Test
     fun `RNG-backed generators are distinct while consuming the shared simulation RNG`() {
         val rng = Well19937c(0)
-        val source = Event(mockk<Node<Any>>(), ExponentialTime(2.0, rng))
+        val source = GenericReaction(mockk<Node<Any>>(), ExponentialTime(2.0, rng))
 
         val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
         clone.initializationComplete(DoubleTime(10.0), environment)
@@ -163,7 +163,7 @@ class NodeReactionCloningTest {
 
     @Test
     fun `a non-memoryless built-in generator is reconstructed with its configured law`() {
-        val source = Event(mockk<Node<Any>>(), WeibullTime(2.0, 0.5, Well19937c(0)))
+        val source = GenericReaction(mockk<Node<Any>>(), WeibullTime(2.0, 0.5, Well19937c(0)))
 
         val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
         clone.initializationComplete(DoubleTime(10.0), environment)
@@ -182,7 +182,7 @@ class NodeReactionCloningTest {
         )
 
         distributions.forEach { distribution ->
-            val clone = Event(node, distribution).cloneOnNewNode(mockk(), DoubleTime(10.0))
+            val clone = GenericReaction(node, distribution).cloneOnNewNode(mockk(), DoubleTime(10.0))
             clone.initializationComplete(DoubleTime(10.0), environment)
 
             assertNotSame(distribution, clone.timeDistribution)
@@ -192,7 +192,7 @@ class NodeReactionCloningTest {
 
     @Test
     fun `an opaque Apache distribution reports that it cannot reconstruct itself`() {
-        val source = Event(mockk<Node<Any>>(), AnyRealDistribution(DiracDeltaDistribution(1.0)))
+        val source = GenericReaction(mockk<Node<Any>>(), AnyRealDistribution(DiracDeltaDistribution(1.0)))
 
         val error = assertFailsWith<IllegalStateException> {
             source.cloneOnNewNode(mockk(), Time.ZERO)

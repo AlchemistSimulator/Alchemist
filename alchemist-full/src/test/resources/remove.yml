@@ -2,7 +2,7 @@ incarnation: scafi
 
 _remover: &remover
   - time-distribution: 1
-    type: Event
+    type: GenericReaction
     actions:
       - type: RemoveNode
 

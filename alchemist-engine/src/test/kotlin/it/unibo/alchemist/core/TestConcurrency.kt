@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.reactions.Event
+import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.terminators.StepCount
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import java.util.concurrent.CountDownLatch
@@ -38,7 +38,7 @@ internal class TestConcurrency {
         val node = GenericNode(environment)
         environment.linkingRule = NoLinks()
         val timeDistribution = DiracComb<Double>(1.0)
-        val reaction = Event(node, timeDistribution)
+        val reaction = GenericReaction(node, timeDistribution)
         node.addReaction(reaction)
         environment.addNode(node, environment.makePosition(0, 0))
         val inWaitCount = 100

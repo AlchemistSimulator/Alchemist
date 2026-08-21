@@ -6,7 +6,7 @@ deployments:
     parameters: [1, "ais/ais-20260515.nmea", true, "AlignToSimulationTime"]
     programs:
       - time-distribution: 1
-        type: Event
+        type: GenericReaction
         actions:
           - type: ReproduceGPSTrace
             parameters: ["ais/ais-20260515.nmea", true, "AlignToSimulationTime"]

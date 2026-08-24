@@ -8,17 +8,15 @@ deployments:
   - type: Point
     parameters: [0, 0]
     programs:
-      - time-distribution:
-          type: Trigger
-          parameters: [3]
-        type: GenericReaction
+      - type: Event
+        parameters: [1]
         actions:
-          - type: TestTriggerAction
+          - type: TestEventAction
             parameters: []
-      - time-distribution: 1
-        type: GenericReaction
+      - type: Event
+        parameters: [5]
         actions:
-          - type: DummyAction
+          - type: TestEventAction
             parameters: []
 
 terminate:

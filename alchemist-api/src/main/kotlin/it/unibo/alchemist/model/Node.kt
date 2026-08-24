@@ -12,7 +12,6 @@ import arrow.core.Option
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMap
-import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
@@ -24,22 +23,9 @@ import kotlin.reflect.jvm.jvmErasure
  * This interface must be implemented in every realization of node
 </T> */
 interface Node<T> :
-    Serializable,
-    Iterable<NodeReaction<T>>,
     Comparable<Node<T>>,
-    Disposable {
-    /**
-     * Adds a reaction to this node.
-     * The reaction is added only in the node,
-     * but not in the [it.unibo.alchemist.core.Simulation] scheduler,
-     * so it will never be executed.
-     * To add the reaction also in the scheduler (and start to execute it),
-     * you have to call also the method
-     * [it.unibo.alchemist.core.Simulation.reactionAdded].
-     *
-     * @param reactionToAdd the reaction to be added
-     */
-    fun addReaction(reactionToAdd: NodeReaction<T>)
+    Disposable,
+    ReactionHost<T> {
 
     /**
      * Creates a new Node which is a clone of the current Node. The new Node
@@ -127,7 +113,7 @@ interface Node<T> :
      *
      * @return the list of rections belonging to this node
      */
-    val reactions: List<NodeReaction<T>>
+    override val reactions: List<Reaction<T>>
 
     override fun hashCode(): Int
 
@@ -137,18 +123,6 @@ interface Node<T> :
      * @param moleculeToRemove the molecule that should be removed
      */
     fun removeConcentration(moleculeToRemove: Molecule)
-
-    /**
-     * Removes a reaction from this node.
-     * The reaction is removed only in the node,
-     * but not in the [it.unibo.alchemist.core.Simulation] scheduler,
-     * so the scheduler will continue to execute the reaction.
-     * To remove the reaction also in the scheduler (and stop to execute it),
-     * you have to call also the method [it.unibo.alchemist.core.Simulation.reactionRemoved].
-     *
-     * @param reactionToRemove the reaction to be removed
-     */
-    fun removeReaction(reactionToRemove: NodeReaction<T>)
 
     /**
      * Sets the concentration of mol to c.

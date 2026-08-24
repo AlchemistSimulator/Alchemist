@@ -32,10 +32,8 @@ _pool: &program
     actions:
       - type: BrownianMove
         parameters: [1]
-  - time-distribution:
-      type: Trigger
-      parameters: [1]
-    type: GenericReaction
+  - type: Event
+    parameters: [1]
     conditions: []
     actions:
       - type: BrownianMove

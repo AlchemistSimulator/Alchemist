@@ -33,7 +33,7 @@ open class ChemicalNodeReaction<T>(node: Node<T>, timeDistribution: TimeDistribu
     override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
         if (!isNewlyInstantiatedProgram) {
             refreshReactionState(atTime, environment)
-            updateSchedulingAfterFiring(atTime)
+            scheduleNextOccurrenceAfterFiring(atTime)
         }
     }
 

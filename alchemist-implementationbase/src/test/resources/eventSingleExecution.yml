@@ -8,12 +8,10 @@ deployments:
   - type: Rectangle
     parameters: [100, 62, 15, 95, 200]
     programs:
-      - time-distribution:
-          type: Trigger
-          parameters: [0]
-        type: GenericReaction
+      - type: Event
+        parameters: [0]
         actions:
-          - type: TestTriggerAction
+          - type: TestEventAction
             parameters: []
 
 terminate:

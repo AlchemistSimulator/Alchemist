@@ -17,7 +17,6 @@ import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.ReactionSurro
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLNodeSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLReactionSurrogate
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.Vector
 import java.util.concurrent.TimeUnit
@@ -45,7 +44,7 @@ class NodeSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<P> {
             assertEquals(node.moleculeCount, nodeSurrogate.moleculeCount, "Molecule count mismatch")
             assertEquals(node.reactions.size, nodeSurrogate.reactions().size, "Reaction count mismatch")
             node.reactions.forEach { reaction ->
-                checkReactionSurrogate(reaction, reaction.toGraphQLReactionSurrogate())
+                checkReactionSurrogate(node, reaction.toGraphQLReactionSurrogate(node))
             }
             node.contents.forEach { (molecule, concentration) ->
                 val surrogate = nodeSurrogate.contents()[MoleculeInput(molecule.name)]
@@ -61,8 +60,8 @@ class NodeSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<P> {
                 checkConcentrationContent(concentration, actual)
             }
         }
-        fun <T> checkReactionSurrogate(reaction: NodeReaction<T>, reactionSurrogate: ReactionSurrogate<T>) {
-            assertEquals(reaction.node.toGraphQLNodeSurrogate(), reactionSurrogate.node, "Node mapping mismatch")
+        fun <T> checkReactionSurrogate(node: Node<T>, reactionSurrogate: ReactionSurrogate<T>) {
+            assertEquals(node.toGraphQLNodeSurrogate(), reactionSurrogate.node, "Node mapping mismatch")
         }
     }
 }

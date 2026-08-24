@@ -39,7 +39,7 @@ class NodeReactionTransitionTest {
         propensity.current = 2.0
         assertEquals(1, samples())
         assertEquals(initialOccurrence * 0.5, reaction.nextOccurrence.current)
-        reaction.updateAfterFiring(reaction.nextOccurrence.current)
+        reaction.updateSchedulingAfterFiring(reaction.nextOccurrence.current)
         assertEquals(2, samples())
     }
 

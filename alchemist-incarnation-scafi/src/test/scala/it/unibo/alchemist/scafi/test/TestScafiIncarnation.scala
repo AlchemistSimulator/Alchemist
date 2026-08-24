@@ -34,7 +34,7 @@ class TestScafiIncarnation extends AnyFunSuite with Matchers {
     val generic = INC.createReaction(rng, env, node, standard, null)
     assertNotNull(generic)
     assertTrue(generic.isInstanceOf[GenericReaction[_]])
-    generic.getRate shouldEqual 3d
+    generic.asInstanceOf[GenericReaction[Any]].getRate shouldEqual 3d
   }
 
   /** Verifies that the incarnation can properly init new concentrations. */

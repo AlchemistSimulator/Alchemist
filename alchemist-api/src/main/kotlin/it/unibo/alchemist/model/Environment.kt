@@ -12,7 +12,6 @@ package it.unibo.alchemist.model
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableSet
-import java.io.Serializable
 import kotlinx.collections.immutable.ImmutableList
 
 /**
@@ -21,28 +20,11 @@ import kotlinx.collections.immutable.ImmutableList
  * [T] is the [Concentration] type, [P] is the [Position] type.
  */
 @Suppress("TooManyFunctions")
-interface Environment<T, P : Position<out P>> :
-    Serializable,
-    Iterable<Node<T>> {
+interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     /**
      * Add a [Layer] to the [Environment].
      */
     fun addLayer(molecule: Molecule, layer: Layer<T, P>)
-
-    /**
-     * Add a [EnvironmentReaction] to the [Environment].
-     */
-    fun addGlobalReaction(reaction: EnvironmentReaction<T>)
-
-    /**
-     * Remove a [EnvironmentReaction] from the [Environment].
-     */
-    fun removeGlobalReaction(reaction: EnvironmentReaction<T>)
-
-    /**
-     * Get the [Environment]'s [EnvironmentReaction]s.
-     */
-    val environmentReactions: List<EnvironmentReaction<T>>
 
     /**
      * Adds a new [node] to this environment in a specific [position].

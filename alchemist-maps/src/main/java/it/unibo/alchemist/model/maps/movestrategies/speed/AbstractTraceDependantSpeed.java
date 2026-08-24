@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -16,6 +16,7 @@ import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.TimeDistributedReaction;
 import it.unibo.alchemist.model.maps.GPSPoint;
 import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.maps.movestrategies.AbstractStrategyWithGPS;
@@ -36,6 +37,7 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
     implements SpeedSelectionStrategy<T, GeoPosition> {
 
     private final NodeReaction<T> reaction;
+    private final TimeDistributedReaction<?> timeDistributedReaction;
     private final MapEnvironment<T, O, S> mapEnvironment;
     private final Node<T> node;
 
@@ -56,6 +58,10 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
         this.mapEnvironment = Objects.requireNonNull(environment);
         this.node = Objects.requireNonNull(node);
         this.reaction = Objects.requireNonNull(reaction);
+        if (!(reaction instanceof final TimeDistributedReaction<?> distributedReaction)) {
+            throw new IllegalArgumentException(reaction + " does not expose a recurrence rate");
+        }
+        timeDistributedReaction = distributedReaction;
     }
 
     @Override
@@ -67,7 +73,7 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
         if (curTime >= expArrival) {
             return Double.POSITIVE_INFINITY;
         }
-        final double frequency = reaction.getRate();
+        final double frequency = timeDistributedReaction.getRate();
         final double steps = (expArrival - curTime) * frequency;
         return computeDistance(mapEnvironment, node, target) / steps;
     }

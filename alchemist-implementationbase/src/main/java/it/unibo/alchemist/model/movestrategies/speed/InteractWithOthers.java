@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.TimeDistributedReaction;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 
 import javax.annotation.Nonnull;
@@ -74,7 +75,10 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
             throw new IllegalArgumentException("The radius must be positive (provided: " + radius + ")");
         }
         this.radius = radius;
-        this.speed = speed / reaction.getRate();
+        if (!(reaction instanceof final TimeDistributedReaction<?> timeDistributedReaction)) {
+            throw new IllegalArgumentException(reaction + " does not expose a recurrence rate");
+        }
+        this.speed = speed / timeDistributedReaction.getRate();
         this.interaction = interaction;
     }
 

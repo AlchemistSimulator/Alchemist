@@ -151,7 +151,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
              */
             val alreadyDone = node.reactions
                 .asSequence()
-                .flatMap { r: NodeReaction<Any> -> r.conditions.asSequence() }
+                .flatMap { r: Reaction<Any> -> r.conditions.asSequence() }
                 .filter { c: Condition<Any> -> c is ComputationalRoundComplete }
                 .map { c: Condition<Any> -> (c as ComputationalRoundComplete).program }
                 .toSet()
@@ -367,13 +367,11 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override val properties: List<NodeProperty<Any>> = emptyList()
 
-        override val reactions: List<NodeReaction<Any>> = emptyList()
-
-        override fun iterator(): MutableIterator<NodeReaction<Any>> = notImplemented()
+        override val reactions: List<Reaction<Any>> = emptyList()
 
         override fun compareTo(@Nonnull other: Node<Any>): Int = notImplemented()
 
-        override fun addReaction(reactionToAdd: NodeReaction<Any>) = notImplemented<Unit>()
+        override fun addReaction(reaction: Reaction<Any>) = notImplemented<Unit>()
 
         override fun cloneNode(currentTime: Time): Node<Any> = notImplemented()
 
@@ -387,7 +385,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override fun removeConcentration(moleculeToRemove: Molecule) = notImplemented<Unit>()
 
-        override fun removeReaction(reactionToRemove: NodeReaction<Any>) = notImplemented<Unit>()
+        override fun removeReaction(reaction: Reaction<Any>) = notImplemented<Unit>()
 
         override fun setConcentration(molecule: Molecule, concentration: Any) = notImplemented<Unit>()
 
@@ -456,7 +454,7 @@ private class ProtelisScheduledNodeReaction<T>(node: Node<T>, timeDistribution: 
 
     override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
         if (!isNewlyInstantiatedProgram) {
-            updateSchedulingAfterFiring(atTime)
+            scheduleNextOccurrenceAfterFiring(atTime)
         }
     }
 

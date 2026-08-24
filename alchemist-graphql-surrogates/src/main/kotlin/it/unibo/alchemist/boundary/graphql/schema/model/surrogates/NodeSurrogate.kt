@@ -40,7 +40,7 @@ data class NodeSurrogate<T>(@param:GraphQLIgnore override val origin: Node<T>, v
      * Returns all reactions of the node.
      */
     @GraphQLDescription("The list of reactions of this node")
-    fun reactions() = origin.reactions.map { it.toGraphQLReactionSurrogate() }
+    fun reactions() = origin.reactions.map { it.toGraphQLReactionSurrogate(origin) }
 
     /**
      * @return the molecule corresponding to the i-th position.

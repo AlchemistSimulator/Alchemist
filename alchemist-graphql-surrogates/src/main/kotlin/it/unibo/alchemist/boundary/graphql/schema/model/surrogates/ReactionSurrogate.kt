@@ -11,22 +11,29 @@ package it.unibo.alchemist.boundary.graphql.schema.model.surrogates
 
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.generator.annotations.GraphQLIgnore
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
+import it.unibo.alchemist.model.Reaction
 
 /**
- * A surrogate class for [NodeReaction].
+ * A surrogate class for a node-hosted [Reaction].
  *
  * @property node the [NodeSurrogate] in which this [ReactionSurrogate] executes
  * @property origin the original Reaction wrapped by this surrogate
  */
 @GraphQLDescription("A generic reaction")
-data class ReactionSurrogate<T>(
-    @param:GraphQLIgnore override val origin: NodeReaction<T>,
-    val node: NodeSurrogate<T> = origin.node.toGraphQLNodeSurrogate(),
-) : GraphQLSurrogate<NodeReaction<T>>(origin)
+data class ReactionSurrogate<T>(@param:GraphQLIgnore override val origin: Reaction<T>, val node: NodeSurrogate<T>) :
+    GraphQLSurrogate<Reaction<T>>(origin)
+
+/**
+ * Converts a node-hosted [Reaction] to a [ReactionSurrogate].
+ * @param host the node whose reaction collection owns this reaction
+ * @return a [ReactionSurrogate] for this [Reaction]
+ */
+fun <T> Reaction<T>.toGraphQLReactionSurrogate(host: Node<T>) = ReactionSurrogate(this, host.toGraphQLNodeSurrogate())
 
 /**
  * Converts a [NodeReaction] to a [ReactionSurrogate].
  * @return a [ReactionSurrogate] for this [NodeReaction]
  */
-fun <T> NodeReaction<T>.toGraphQLReactionSurrogate() = ReactionSurrogate(this)
+fun <T> NodeReaction<T>.toGraphQLReactionSurrogate() = toGraphQLReactionSurrogate(node)

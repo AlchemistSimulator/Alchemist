@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.actions.AbstractMoveNode
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.SteeringAction
@@ -29,7 +30,7 @@ abstract class AbstractSteeringAction<T, P, A>(
     /**
      * The reaction in which this action is executed.
      */
-    protected open val reaction: NodeReaction<T>,
+    hostingReaction: NodeReaction<T>,
     /**
      * The pedestrian property of the owner of this action.
      */
@@ -39,10 +40,19 @@ abstract class AbstractSteeringAction<T, P, A>(
     where P : Position<P>,
           P : Vector<P>,
           A : Transformation<P> {
+    /** The reaction in which this action is executed. */
+    protected open val reaction: NodeReaction<T> = hostingReaction
+
+    /** The recurrence rate required to normalize per-execution movement. */
+    protected val recurrenceRate: Double =
+        requireNotNull(hostingReaction as? TimeDistributedReaction<*>) {
+            "$hostingReaction does not expose a recurrence rate"
+        }.rate
+
     /**
      * The maximum distance the node can walk, this is a length.
      */
-    open val maxWalk: Double get() = pedestrian.speed() / reaction.rate
+    open val maxWalk: Double get() = pedestrian.speed() / recurrenceRate
 
     /**
      * @return The next position where to move, in absolute or relative coordinates depending on the

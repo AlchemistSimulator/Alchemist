@@ -12,6 +12,7 @@ package it.unibo.alchemist.model.physics.actions
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
+import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import kotlin.math.cos
@@ -28,6 +29,9 @@ class Spin<T>(
     private val angularSpeedDegrees: Double,
 ) : AbstractAction<T>(node) {
     private val angularSpeedRadians = toRadians(angularSpeedDegrees)
+    private val timeDistributedReaction = requireNotNull(reaction as? TimeDistributedReaction<*>) {
+        "$reaction does not expose a recurrence rate"
+    }
 
     override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>) =
         Spin(node, reaction, environment, angularSpeedDegrees)
@@ -36,7 +40,7 @@ class Spin<T>(
      * Spins the node around itself.
      */
     override fun execute() {
-        val realSpeed = angularSpeedRadians / reaction.rate
+        val realSpeed = angularSpeedRadians / timeDistributedReaction.rate
         val headingAngle = environment.getHeading(node).asAngle + realSpeed
         environment.setHeading(node, environment.makePosition(cos(headingAngle), sin(headingAngle)))
     }

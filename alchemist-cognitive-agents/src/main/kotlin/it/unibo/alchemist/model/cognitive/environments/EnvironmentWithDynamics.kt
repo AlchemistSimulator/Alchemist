@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.model.cognitive.environments
 
-import it.unibo.alchemist.model.EnvironmentReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.physics.environments.ContinuousPhysics2DEnvironment
@@ -80,23 +80,23 @@ constructor(
          * For further references: https://dyn4j.org/pages/advanced.html
          */
         world.settings.isAtRestDetectionEnabled = false
-        addGlobalReaction(physicsUpdate)
+        addReaction(physicsUpdate)
         physicsUpdateHasBeenOverriden = false
         obstacles.forEach { obstacle ->
             addObstacleToWorld(obstacle)
         }
     }
 
-    override fun addGlobalReaction(reaction: EnvironmentReaction<T>) {
+    override fun addReaction(reaction: Reaction<T>) {
         if (reaction is PhysicsUpdate) {
             require(!physicsUpdateHasBeenOverriden) {
                 "${PhysicsUpdate::class.simpleName} reaction had been already overriden"
             }
-            removeGlobalReaction(physicsUpdate)
+            removeReaction(physicsUpdate)
             physicsUpdateHasBeenOverriden = true
             physicsUpdate = reaction
         }
-        backingEnvironment.addGlobalReaction(reaction)
+        backingEnvironment.addReaction(reaction)
     }
 
     private fun addObstacleToWorld(obstacle: RectObstacle2D<Euclidean2DPosition>) {

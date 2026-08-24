@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
+import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.util.Anys.toPosition
@@ -37,6 +38,9 @@ constructor(
     private val angularSpeedDegrees: Double = 360.0,
 ) : AbstractAction<T>(node) {
     private val angularSpeedRadians = toRadians(angularSpeedDegrees)
+    private val timeDistributedReaction = requireNotNull(reaction as? TimeDistributedReaction<*>) {
+        "$reaction does not expose a recurrence rate"
+    }
 
     override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>) =
         HeadTowardTarget(node, environment, reaction, target, angularSpeedDegrees)
@@ -46,7 +50,7 @@ constructor(
      */
     override fun execute() {
         node.getConcentration(target)?.also {
-            val speedRadians = angularSpeedRadians / reaction.rate
+            val speedRadians = angularSpeedRadians / timeDistributedReaction.rate
             val targetPosition = it.toPosition(environment)
             val myHeading = environment.getHeading(node)
             if (targetPosition != myHeading) {

@@ -12,9 +12,9 @@ package it.unibo.alchemist.test
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.EnvironmentReaction
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.Observable
@@ -28,7 +28,7 @@ import it.unibo.alchemist.model.timedistributions.WeibullTime
 class EnvironmentTestReaction<T>(
     val environment: Environment<T, *>,
     override val timeDistribution: TimeDistribution<T>,
-) : EnvironmentReaction<T> {
+) : TimeDistributedReaction<T> {
 
     override val rate: Double get() = timeDistribution.expectedRate
     private val mutableNextOccurrence = MutableObservable.observe(timeDistribution.startTime, false)
@@ -52,7 +52,7 @@ class EnvironmentTestReaction<T>(
 
     override fun execute() = actions.forEach(Action<T>::execute)
 
-    override fun updateAfterFiring(currentTime: Time) {
+    override fun updateSchedulingAfterFiring(currentTime: Time) {
         val sample = timeDistribution.sample()
         check(sample.isFinite && sample >= Time.ZERO) { "$timeDistribution generated an invalid delay: $sample" }
         mutableNextOccurrence.current = currentTime.plus(sample)

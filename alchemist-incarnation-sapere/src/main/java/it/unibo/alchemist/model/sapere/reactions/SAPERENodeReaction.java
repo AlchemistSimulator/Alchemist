@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -31,12 +31,10 @@ import it.unibo.alchemist.model.sapere.timedistributions.SAPEREExponentialTime;
 import it.unibo.alchemist.model.sapere.timedistributions.SAPERETimeDistribution;
 import it.unibo.alchemist.model.timedistributions.AbstractDistribution;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
-import it.unibo.alchemist.model.timedistributions.Trigger;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -48,11 +46,7 @@ import java.util.Objects;
  * This class realizes a reaction with Lsa concentrations.
  *
  */
-@SuppressWarnings("unchecked")
 public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMolecule>> {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     private final Environment<List<ILsaMolecule>, ?> environment;
     @SuppressFBWarnings(
@@ -116,6 +110,7 @@ public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMole
     /**
      * @return the inner {@link Action} list, cast
      */
+    @SuppressWarnings("unchecked")
     private List<ILsaAction> getSAPEREActions() {
         return (List<ILsaAction>) (List<? extends Action<List<ILsaMolecule>>>) getActions();
     }
@@ -123,6 +118,7 @@ public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMole
     /**
      * @return the inner {@link Condition} list, cast
      */
+    @SuppressWarnings("unchecked")
     private List<ILsaCondition> getSAPEREConditions() {
         return (List<ILsaCondition>) (List<? extends Condition<List<ILsaMolecule>>>) getConditions();
     }
@@ -304,21 +300,13 @@ public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMole
     }
 
     @Override
-    protected void updateSchedulingAfterFiring(@Nonnull final Time currentTime) {
-        if (getTimeDistribution() instanceof Trigger) {
-            super.updateSchedulingAfterFiring(currentTime);
-        } else {
-            scheduleFreshOccurrence(currentTime);
-        }
+    protected void scheduleNextOccurrenceAfterFiring(@Nonnull final Time currentTime) {
+        scheduleFreshOccurrence(currentTime);
     }
 
     @Override
     protected void updateSchedulingAfterInvalidation(@Nonnull final Time currentTime) {
-        if (getTimeDistribution() instanceof Trigger) {
-            super.updateSchedulingAfterInvalidation(currentTime);
-        } else {
-            scheduleFreshOccurrence(currentTime);
-        }
+        scheduleFreshOccurrence(currentTime);
     }
 
     private void scheduleFreshOccurrence(@Nonnull final Time currentTime) {

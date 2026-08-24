@@ -71,7 +71,7 @@ class TimeDistributionSamplingTest {
     fun `an infinite exponential rate schedules an immediate reaction`() {
         val reaction = GenericReaction(mockk<Node<Any>>(), ExponentialTime(Double.POSITIVE_INFINITY, Well19937c(0)))
         reaction.initializationComplete(Time.ZERO, mockk<Environment<Any, *>>())
-        reaction.updateAfterFiring(Time.ZERO)
+        reaction.updateSchedulingAfterFiring(Time.ZERO)
         assertEquals(0.0, reaction.nextOccurrence.current.toDouble())
     }
 
@@ -85,16 +85,11 @@ class TimeDistributionSamplingTest {
     }
 
     @Test
-    fun `a trigger samples its configured time`() {
-        assertEquals(DoubleTime(42.0), Trigger<Any>(DoubleTime(42.0)).sample())
-    }
-
-    @Test
     fun `reactions own absolute occurrence updates`() {
         val reaction = GenericReaction(mockk<Node<Any>>(), FixedDistribution(DoubleTime(2.0)))
         reaction.initializationComplete(Time.ZERO, mockk<Environment<Any, *>>())
 
-        reaction.updateAfterFiring(DoubleTime(3.0))
+        reaction.updateSchedulingAfterFiring(DoubleTime(3.0))
 
         assertEquals(DoubleTime(5.0), reaction.nextOccurrence.current)
     }
@@ -104,7 +99,7 @@ class TimeDistributionSamplingTest {
         val reaction = GenericReaction(mockk<Node<Any>>(), FixedDistribution(DoubleTime(-1.0)))
         reaction.initializationComplete(Time.ZERO, mockk<Environment<Any, *>>())
         assertFailsWith<IllegalStateException> {
-            reaction.updateAfterFiring(Time.ZERO)
+            reaction.updateSchedulingAfterFiring(Time.ZERO)
         }
     }
 

@@ -9,26 +9,18 @@
 
 package it.unibo.alchemist.model.reactions
 
-import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.observation.CompositeDisposable
-import it.unibo.alchemist.model.observation.MutableObservable
-import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.merge
 import it.unibo.alchemist.model.timedistributions.AbstractDistribution
 import it.unibo.alchemist.model.timedistributions.AnyRealDistribution
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.timedistributions.SimpleNetworkArrivals
-import it.unibo.alchemist.model.timedistributions.Trigger
 import it.unibo.alchemist.model.timedistributions.WeibullTime
-import javax.annotation.Nonnull
 
 /**
  * Partial implementation of a [NodeReaction] whose scheduling is driven by observable model state.
@@ -38,72 +30,21 @@ import javax.annotation.Nonnull
 abstract class AbstractNodeReaction<T>(
     final override val node: Node<T>,
     final override val timeDistribution: TimeDistribution<T>,
-) : NodeReaction<T> {
-
-    override var actions: List<Action<T>> = emptyList()
-
-    override var conditions: List<Condition<T>> = emptyList()
-        set(value) {
-            field = value
-            canExecute.dispose()
-            canExecute = value.map(Condition<T>::isValid)
-                .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
-                ?: MutableObservable.observe(true)
-            initializedEnvironment?.let {
-                initializeDependencySubscriptions()
-                reactToModelUpdate(it)
-            }
-        }
-
-    private var canExecute: Observable<Boolean> = MutableObservable.observe(true)
-
-    @Transient
-    private var dependencySubscriptions: CompositeDisposable? = null
-
-    @Transient
-    private var initializedEnvironment: Environment<T, *>? = null
-
-    private var lastKnownTime = Time.ZERO
-
-    private var disposed = false
+) : AbstractReaction<T>(timeDistribution.startTime),
+    NodeReaction<T>,
+    TimeDistributedReaction<T> {
 
     private var newlyInstantiatedAt: Time? = null
-
-    private val mutableNextOccurrence = MutableObservable.observe(timeDistribution.startTime, false)
-
-    private val observableNextOccurrence = mutableNextOccurrence.map { it }
-
-    override val nextOccurrence: Observable<Time> get() = observableNextOccurrence
 
     override val rate: Double
         get() = timeDistribution.defaultReactionRate
 
-    override fun canExecute(): Observable<Boolean> = canExecute
-
-    override fun compareTo(other: Reaction<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)
-
-    /**
-     * The default execution iterates all actions in order.
-     */
-    override fun execute() = actions.forEach(Action<T>::execute)
-
     /**
      * @return a [String] representation of the rate
      */
-    protected open val rateAsString: String get() = rate.toString()
+    override val rateAsString: String get() = rate.toString()
 
-    /**
-     * @return the name used by [toString]
-     */
-    protected val reactionName: String get() = javaClass.simpleName
-
-    /** Initializes reactive inputs and establishes the first scheduled occurrence. */
-    final override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {
-        check(!disposed) { "A disposed reaction cannot be initialized again: $this" }
-        lastKnownTime = atTime
-        initializedEnvironment = environment
-        initializeDependencySubscriptions()
-        onInitializationComplete(atTime, environment)
+    override fun afterInitializationComplete(atTime: Time, environment: Environment<T, *>) {
         newlyInstantiatedAt?.let { cloneTime ->
             val schedulingTime = maxOf(cloneTime, atTime)
             refreshReactionState(schedulingTime, environment)
@@ -114,11 +55,6 @@ abstract class AbstractNodeReaction<T>(
 
     /** Whether this reaction is awaiting initialization as a newly instantiated program. */
     protected val isNewlyInstantiatedProgram: Boolean get() = newlyInstantiatedAt != null
-
-    /**
-     * Called once reactive dependencies have been activated.
-     */
-    protected open fun onInitializationComplete(@Nonnull atTime: Time, @Nonnull environment: Environment<T, *>) = Unit
 
     /**
      * Creates a clone and populates it with cloned actions and conditions.
@@ -146,8 +82,8 @@ abstract class AbstractNodeReaction<T>(
     }
 
     /** Refreshes reaction state after firing, then applies firing scheduling policy. */
-    final override fun updateAfterFiring(currentTime: Time) {
-        if (disposed) {
+    final override fun updateSchedulingAfterFiring(currentTime: Time) {
+        if (isDisposed) {
             return
         }
         val environment = checkNotNull(initializedEnvironment) {
@@ -155,99 +91,30 @@ abstract class AbstractNodeReaction<T>(
         }
         lastKnownTime = currentTime
         refreshReactionState(currentTime, environment)
-        updateSchedulingAfterFiring(currentTime)
-    }
-
-    /**
-     * Recomputes reaction-specific state before its time distribution is updated.
-     *
-     * @param currentTime current simulation time
-     * @param environment current environment
-     */
-    protected open fun refreshReactionState(currentTime: Time, environment: Environment<T, *>) = Unit
-
-    override fun dispose() {
-        if (!disposed) {
-            disposed = true
-            initializedEnvironment = null
-            dependencySubscriptions?.dispose()
-            dependencySubscriptions = null
-            conditions.forEach(Condition<T>::dispose)
-            conditions = emptyList()
-            actions = emptyList()
-            canExecute.dispose()
-            observableNextOccurrence.dispose()
-            mutableNextOccurrence.dispose()
-        }
-    }
-
-    override fun toString(): String = buildString {
-        append(reactionName)
-        append('@')
-        append(nextOccurrence.current)
-        append(':')
-        append(conditions)
-        append('-')
-        append(rateAsString)
-        append("->")
-        append(actions)
-    }
-
-    private fun initializeDependencySubscriptions() {
-        dependencySubscriptions?.dispose()
-        dependencySubscriptions = CompositeDisposable().apply {
-            conditions.forEach { condition ->
-                add(
-                    condition.getDependencies().merge().subscribe(invokeOnSubscription = false) {
-                        initializedEnvironment?.let(::reactToModelUpdate)
-                    },
-                )
-            }
-        }
-    }
-
-    private fun reactToModelUpdate(environment: Environment<T, *>) {
-        val currentTime = environment.simulationOrNull?.time ?: lastKnownTime
-        refreshReactionState(currentTime, environment)
-        updateSchedulingAfterInvalidation(currentTime)
+        scheduleNextOccurrenceAfterFiring(currentTime)
     }
 
     /** Applies scheduling policy after a reactive invalidation without firing the reaction. */
-    protected open fun updateSchedulingAfterInvalidation(currentTime: Time) {
+    override fun updateSchedulingAfterInvalidation(currentTime: Time) {
         val schedulingTime = maxOf(currentTime, timeDistribution.startTime)
-        if (timeDistribution !is Trigger<*>) {
-            setNextOccurrence(schedulingTime.plus(validatedSample()))
-        }
+        setNextOccurrence(schedulingTime.plus(validatedSample()))
     }
 
     /**
      * Applies this reaction's scheduling policy after firing.
      *
-     * The default policy draws a new delay after each firing and invalidation. A [Trigger] is instead a one-shot
-     * absolute occurrence: firing consumes it, while invalidation leaves it unchanged.
+     * The default policy draws a new delay after each firing and invalidation.
      *
      * @param currentTime current simulation time
      */
-    protected open fun updateSchedulingAfterFiring(currentTime: Time) {
+    protected open fun scheduleNextOccurrenceAfterFiring(currentTime: Time) {
         val schedulingTime = maxOf(currentTime, timeDistribution.startTime)
-        when (timeDistribution) {
-            is Trigger<*> -> setNextOccurrence(Time.INFINITY)
-            else -> setNextOccurrence(schedulingTime.plus(validatedSample()))
-        }
+        setNextOccurrence(schedulingTime.plus(validatedSample()))
     }
 
     /** Starts a newly instantiated program without interpreting the initialization as a previous occurrence. */
     protected open fun initializeNewProgramScheduling(currentTime: Time) {
-        if (timeDistribution is Trigger<*>) {
-            setNextOccurrence(maxOf(currentTime, timeDistribution.startTime))
-        } else {
-            updateSchedulingAfterFiring(currentTime)
-        }
-    }
-
-    /** Changes the reaction-owned absolute occurrence time. */
-    protected fun setNextOccurrence(nextOccurrence: Time) {
-        mutableNextOccurrence.current = nextOccurrence
+        scheduleNextOccurrenceAfterFiring(currentTime)
     }
 
     protected fun validatedSample(): Time = timeDistribution.sample().also { sample ->
@@ -255,9 +122,6 @@ abstract class AbstractNodeReaction<T>(
             "$timeDistribution generated an invalid delay: $sample"
         }
     }
-
-    private val TimeDistribution<T>.startTime: Time
-        get() = (this as? AbstractDistribution<*>)?.startTime ?: Time.ZERO
 
     private val TimeDistribution<T>.defaultReactionRate: Double
         get() = when (this) {
@@ -269,3 +133,6 @@ abstract class AbstractNodeReaction<T>(
             else -> Double.NaN
         }
 }
+
+private val TimeDistribution<*>.startTime: Time
+    get() = (this as? AbstractDistribution<*>)?.startTime ?: Time.ZERO

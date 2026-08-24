@@ -18,14 +18,13 @@ import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.EnvironmentReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.ReactionHost
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.linkingrules.NoLinks
@@ -82,6 +81,7 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                 SimulationModel.visitEnvironment(incarnation, context, root[AlchemistYamlSyntax.environment])
             logger.info("Created environment: {}", environment)
             contextualize(environment)
+            contextualizeReactionHost(environment)
             // GLOBAL PROGRAMS
             loadGlobalProgramsOnEnvironment(simulationRNG, incarnation, environment, root)
             // LAYERS
@@ -183,11 +183,7 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                     (program as? Map<*, *>)?.let {
                         SimulationModel
                             .visitProgram(randomGenerator, incarnation, environment, null, context, it)
-                            ?.onSuccess { (_, actionable) ->
-                                if (actionable is EnvironmentReaction) {
-                                    environment.addGlobalReaction(actionable)
-                                }
-                            }
+                            ?.onSuccess { (_, reaction) -> environment.addReaction(reaction) }
                     }
                 }
                 logger.debug("Global programs: {}", globalPrograms)
@@ -239,12 +235,9 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                     (program as? Map<*, *>)?.let {
                         SimulationModel
                             .visitProgram(randomGenerator, incarnation, environment, node, context, it)
-                            ?.onSuccess { (filters, actionable) ->
-                                if (
-                                    actionable is NodeReaction &&
-                                    (filters.isEmpty() || filters.any { shape -> nodePosition in shape })
-                                ) {
-                                    node.addReaction(actionable)
+                            ?.onSuccess { (filters, reaction) ->
+                                if (filters.isEmpty() || filters.any { shape -> nodePosition in shape }) {
+                                    node.addReaction(reaction)
                                 }
                             }
                     }
@@ -281,6 +274,7 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
             deployment.stream().forEach { position ->
                 val node = SimulationModel.visitNode(simulationRNG, incarnation, environment, context, nodeDescriptor)
                 contextualize(node)
+                contextualizeReactionHost(node)
                 // PROPERTIES
                 loadPropertiesOnNode(node, position, descriptor)
                 node.properties.forEach { contextualize(it) }
@@ -292,6 +286,8 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                 environment.addNode(node, position)
                 logger.debug("Added node {} at {}", node.id, position)
                 decontextualize(node)
+                // Reload the environment as ReactionHost
+                contextualizeReactionHost(environment)
             }
         }
 
@@ -338,6 +334,9 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
          * Use this method to register a singleton that should be suitable for any superclass in its hierarchy.
          */
         private inline fun <reified T> contextualize(target: T) = factory.registerSingleton(T::class.java, target)
+
+        private fun <T> contextualizeReactionHost(host: ReactionHost<T>) =
+            factory.registerSingleton(ReactionHost::class.java, host)
 
         /*
          * Contextualize dual operation.

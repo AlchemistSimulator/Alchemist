@@ -11,8 +11,10 @@ package it.unibo.alchemist.model.cognitive.environments
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.SupportedIncarnations
+import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.physics.reactions.PhysicsUpdate
@@ -39,18 +41,27 @@ class TestEnvironmentWithDynamics<T, P> :
         }
         "Environment should allow physics update rate customization" {
             val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate.yml").environment
-            environment.environmentReactions.size shouldBe 1
-            environment.environmentReactions.first().rate shouldBe 1.5
+            environment.reactions.size shouldBe 1
+            environment.reactions
+                .first()
+                .shouldBeInstanceOf<TimeDistributedReaction<*>>()
+                .rate shouldBe 1.5
         }
         "Ignore time distribution when updateRate is Specified" {
             val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate2.yml").environment
-            environment.environmentReactions.size shouldBe 1
-            environment.environmentReactions.first().rate shouldBe 0.5
+            environment.reactions.size shouldBe 1
+            environment.reactions
+                .first()
+                .shouldBeInstanceOf<TimeDistributedReaction<*>>()
+                .rate shouldBe 0.5
         }
         "Customize rate with time-distribution" {
             val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate3.yml").environment
-            environment.environmentReactions.size shouldBe 1
-            val globalReaction = environment.environmentReactions.first()
+            environment.reactions.size shouldBe 1
+            val globalReaction =
+                environment.reactions
+                    .first()
+                    .shouldBeInstanceOf<TimeDistributedReaction<*>>()
             globalReaction.timeDistribution::class shouldBe ExponentialTime::class
             globalReaction.rate shouldBe 0.5
         }
@@ -59,10 +70,13 @@ class TestEnvironmentWithDynamics<T, P> :
                 EnvironmentWithDynamics(
                     SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow(),
                 )
-            environment.addGlobalReaction(PhysicsUpdate(environment as Dynamics2DEnvironment<T>, 2.0))
+            environment.addReaction(PhysicsUpdate(environment as Dynamics2DEnvironment<T>, 2.0))
             shouldThrow<IllegalArgumentException> {
-                environment.addGlobalReaction(PhysicsUpdate(environment as Dynamics2DEnvironment<T>))
+                environment.addReaction(PhysicsUpdate(environment as Dynamics2DEnvironment<T>))
             }
-            environment.environmentReactions.first().rate shouldBe 2.0
+            environment.reactions
+                .first()
+                .shouldBeInstanceOf<TimeDistributedReaction<*>>()
+                .rate shouldBe 2.0
         }
     }) where P : Position<P>, P : Vector<P>

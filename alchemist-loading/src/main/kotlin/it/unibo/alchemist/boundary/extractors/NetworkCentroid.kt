@@ -44,7 +44,7 @@ class NetworkCentroid : Extractor<Double> {
 
     private fun <T> Environment<T, *>.networkHub(): List<Double> {
         val sums = DoubleArray(dimensions) { ORIGIN }
-        forEach { node ->
+        nodes.forEach { node ->
             getCurrentPosition(node).coordinates.forEachIndexed { index, value ->
                 sums[index] += value
             }

@@ -53,7 +53,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link NodeReaction}'s getRate() method.
+     *            every step, relying on the hosting reaction's recurrence rate.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
@@ -107,7 +107,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link NodeReaction}'s getRate() method.
+     *            every step, relying on the hosting reaction's recurrence rate.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
@@ -146,7 +146,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link NodeReaction}'s getRate() method.
+     *            every step, relying on the hosting reaction's recurrence rate.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
@@ -181,7 +181,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link NodeReaction}'s getRate() method.
+     *            every step, relying on the hosting reaction's recurrence rate.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
@@ -235,7 +235,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link NodeReaction}'s getRate() method.
+     *            every step, relying on the hosting reaction's recurrence rate.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},
@@ -265,7 +265,7 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link NodeReaction}'s getRate() method.
+     *            every step, relying on the hosting reaction's recurrence rate.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
      *            to compute a new target. If it is a {@link GeoPosition},

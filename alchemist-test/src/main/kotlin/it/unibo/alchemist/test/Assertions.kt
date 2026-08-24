@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import java.util.concurrent.CyclicBarrier
@@ -54,9 +55,11 @@ infix fun TimeDistribution<*>.shouldEqual(other: TimeDistribution<*>) {
 
 infix fun Reaction<*>.shouldEqual(other: Reaction<*>) {
     assertEquals(other::class, this::class, "Actionable types don't match")
-    assertEquals(other.rate, rate)
     assertEquals(other.nextOccurrence.current, nextOccurrence.current)
-    timeDistribution shouldEqual other.timeDistribution
+    if (this is TimeDistributedReaction<*> && other is TimeDistributedReaction<*>) {
+        assertEquals(other.rate, rate)
+        timeDistribution shouldEqual other.timeDistribution
+    }
     conditions.ebeEquals(other.conditions) { expected, actual -> actual shouldEqual expected }
     actions.ebeEquals(other.actions) { expected, actual -> actual shouldEqual expected }
 }
@@ -89,12 +92,12 @@ infix fun <T, P : Position<P>> Environment<T, P>.shouldEqual(other: Environment<
     assertContentEquals(other.sizeInDistanceUnits, sizeInDistanceUnits)
     linkingRule shouldEqual other.linkingRule
     val positions = nodes.sortedBy { it.id }.map { getCurrentPosition(it) }
-    val otherPositions = other.sortedBy { it.id }.map { getCurrentPosition(it) }
+    val otherPositions = other.nodes.sortedBy { it.id }.map(other::getCurrentPosition)
     positions.ebeEquals(otherPositions) { expected, actual -> assertEquals(expected, actual) }
     nodes.ebeEquals(other.nodes) { expected, actual ->
         actual shouldEqual expected
     }
-    environmentReactions.ebeEquals(other.environmentReactions) { expected, actual -> actual shouldEqual expected }
+    reactions.ebeEquals(other.reactions) { expected, actual -> actual shouldEqual expected }
     layers.toList().sortedBy { (molecule, _) -> molecule.toString() }.ebeEquals(
         other.layers.toList().sortedBy { (molecule, _) -> molecule.toString() },
     ) { expected, actual ->

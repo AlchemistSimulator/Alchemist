@@ -26,7 +26,7 @@ abstract class AbstractMarkovianNodeReaction<T>(node: Node<T>, timeDistribution:
         }
     }
 
-    override fun updateSchedulingAfterFiring(currentTime: Time) {
+    override fun scheduleNextOccurrenceAfterFiring(currentTime: Time) {
         val distribution = timeDistribution as ExponentialTime<*>
         val newRate = rate
         check(!newRate.isNaN() && previousRate?.isNaN() != true) { "Reaction propensity cannot be NaN" }
@@ -47,7 +47,7 @@ abstract class AbstractMarkovianNodeReaction<T>(node: Node<T>, timeDistribution:
         check(!newRate.isNaN() && oldRate?.isNaN() != true) { "Reaction propensity cannot be NaN" }
         when {
             newRate == 0.0 -> setNextOccurrence(Time.INFINITY)
-            oldRate == null || oldRate == 0.0 -> updateSchedulingAfterFiring(schedulingTime)
+            oldRate == null || oldRate == 0.0 -> scheduleNextOccurrenceAfterFiring(schedulingTime)
             oldRate == Double.POSITIVE_INFINITY && newRate != Double.POSITIVE_INFINITY -> {
                 // An infinite propensity has already consumed the residual and scheduled immediately.
                 // Keep that occurrence when the propensity becomes finite, without another draw.

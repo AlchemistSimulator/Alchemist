@@ -35,7 +35,7 @@ public class ReproduceGPSTrace<T, O extends RoutingServiceOptions<O>, S extends 
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link NodeReaction}'s getRate() method.
+     *            every step, relying on the hosting reaction's recurrence rate.
      * @param path
      *            resource (file, directory, ...) with GPS trace
      * @param cycle
@@ -75,7 +75,7 @@ public class ReproduceGPSTrace<T, O extends RoutingServiceOptions<O>, S extends 
      *            the node
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
-     *            every step, relying on {@link NodeReaction}'s getRate() method.
+     *            every step, relying on the hosting reaction's recurrence rate.
      * @param speed
      *            the average speed
      * @param path

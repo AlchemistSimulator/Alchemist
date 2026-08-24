@@ -17,7 +17,7 @@
         - Create Map-based environments
         - Import GPS traces
         - Deploy nodes
-        - Create one-time trigger events
+        - Create one-shot events
         - Steer nodes using navigation graphs
         - Use cognitive pedestrians
         - Drones and smart cameras

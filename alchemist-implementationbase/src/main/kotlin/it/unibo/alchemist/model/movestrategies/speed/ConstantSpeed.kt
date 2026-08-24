@@ -11,12 +11,13 @@ package it.unibo.alchemist.model.movestrategies.speed
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy
 
 /**
  * This strategy makes the node move at an average constant speed, which is
- * influenced by the [it.unibo.alchemist.model.TimeDistribution] of the [NodeReaction] hosting
- * this [it.unibo.alchemist.model.Action]. This action tries to normalize on the [NodeReaction]
+ * influenced by the [it.unibo.alchemist.model.TimeDistribution] of the [TimeDistributedReaction] hosting
+ * this [it.unibo.alchemist.model.Action]. This action tries to normalize on the reaction
  * rate, but if the [it.unibo.alchemist.model.TimeDistribution] has a high variance, the movements
  * on the map will inherit this tract.
  *
@@ -25,13 +26,17 @@ import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy
  * @param reaction the reaction used to compute movement timing
  * @param speed the speed, in meters/second
  */
-class ConstantSpeed<T, P : Position<P>>(private val reaction: NodeReaction<*>, private val speed: Double) :
+class ConstantSpeed<T, P : Position<P>>(reaction: NodeReaction<*>, private val speed: Double) :
     SpeedSelectionStrategy<T, P> {
+    private val timeDistributedReaction = requireNotNull(reaction as? TimeDistributedReaction<*>) {
+        "$reaction does not expose a recurrence rate"
+    }
+
     init {
         require(speed >= 0) { "Speed must be positive or zero in $reaction. Provided: $speed" }
     }
 
-    override fun getNodeMovementLength(target: P?): Double = speed / reaction.rate
+    override fun getNodeMovementLength(target: P?): Double = speed / timeDistributedReaction.rate
 
     override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): ConstantSpeed<T, P> =
         ConstantSpeed(reaction, speed)

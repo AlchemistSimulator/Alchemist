@@ -50,7 +50,12 @@ class TestYAMLLoader {
     @Test
     void testAnyRealDistribution() {
         final Environment<?, ?> environment = testNoVar("synthetic/anyrealdistribution.yml").getEnvironment();
-        environment.forEach(n -> n.forEach(r -> assertInstanceOf(AnyRealDistribution.class, r.getTimeDistribution())));
+        environment.getNodes().forEach(n -> n.getReactions().forEach(r ->
+            assertInstanceOf(
+                AnyRealDistribution.class,
+                assertInstanceOf(TimeDistributedReaction.class, r).getTimeDistribution()
+            )
+        ));
     }
 
     /**
@@ -60,6 +65,7 @@ class TestYAMLLoader {
     void testCustomNodes() {
         testNoVar("synthetic/customnode.yml")
             .getEnvironment()
+            .getNodes()
             .forEach(n ->
                 assertInstanceOf(
                     TestNode.class,
@@ -121,7 +127,7 @@ class TestYAMLLoader {
     @Test
     void testMultipleMolecules() {
         final Environment<?, ?> environment = testNoVar("synthetic/multiplemolecule.yml").getEnvironment();
-        environment.forEach(n -> assertEquals(4, n.getMoleculeCount()));
+        environment.getNodes().forEach(n -> assertEquals(4, n.getMoleculeCount()));
     }
 
     /**

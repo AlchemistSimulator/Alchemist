@@ -68,7 +68,7 @@ class TestSimulationControl :
 
         fun Environment<Nothing, *>.tickRate(delta: Double) {
             this.simulation.schedule {
-                this.addGlobalReaction(EnvironmentTestReaction(this, DiracComb(Time.ZERO, delta)))
+                this.addReaction(EnvironmentTestReaction(this, DiracComb(Time.ZERO, delta)))
             }
         }
     }

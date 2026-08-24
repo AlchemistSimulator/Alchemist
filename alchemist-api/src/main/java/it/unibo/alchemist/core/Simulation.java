@@ -13,7 +13,6 @@ import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
@@ -173,20 +172,20 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     CompletableFuture<Unit> play();
 
     /**
-     * Adds a reaction during the simulation to the scheduler and start to execute it.
-     * The reaction addition is not propagated in the {@link Node} entity.
-     * To do that call also the method {@link Node#addReaction(NodeReaction)}.
+     * Notifies the simulation that a reaction host has registered a reaction.
+     * Model code should register the reaction through its host; the host invokes this callback after membership
+     * actually changes.
      *
-     * @param reactionToAdd the reaction to add
+     * @param reactionToAdd the registered reaction
      */
     void reactionAdded(Reaction<T> reactionToAdd);
 
     /**
-     * Removes a reaction during the simulation from the scheduler and stop to execute it.
-     * The reaction removal is not propagated in the {@link Node} entity.
-     * To do that call also the method {@link Node#removeReaction(NodeReaction)}.
+     * Notifies the simulation that a reaction host has unregistered a reaction.
+     * Model code should unregister the reaction through its host; the host invokes this callback after membership
+     * actually changes.
      *
-     * @param reactionToRemove the reaction to remove
+     * @param reactionToRemove the unregistered reaction
      */
     void reactionRemoved(Reaction<T> reactionToRemove);
 

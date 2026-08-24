@@ -10,12 +10,12 @@
 package it.unibo.alchemist.boundary.kotlindsl
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.EnvironmentReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
@@ -55,29 +55,29 @@ fun interface EnvironmentContext<T, P : Position<P>> {
     fun deployments(deploymentsConfiguration: context(RandomGenerator) DeploymentsContext<T, P>.() -> Unit)
 
     /**
-     * Registers a [EnvironmentReaction] in the current [Environment] and optionally configures it.
+     * Registers a [Reaction] in the current [Environment] and optionally configures it.
      *
-     * The [block], if provided, is executed with [environmentReaction] as a context receiver and with
+     * The [block], if provided, is executed with [reaction] as a context receiver and with
      * [ActionableContext] as receiver, enabling the addition of actions and conditions.
      *
      * The [timeDistribution] parameter is currently not used by this function. The expectation is that
-     * the provided [environmentReaction] is already configured with the intended scheduling strategy (if any),
+     * the provided [reaction] is already configured with the intended scheduling strategy (if any),
      * or that the distribution is otherwise bound externally.
      *
      * @param timeDistribution a time distribution associated with the global program; currently ignored.
-     * @param environmentReaction the global reaction to register.
+     * @param reaction the environment-hosted reaction to register.
      * @param block an optional configuration block for actions and conditions.
      */
     context(environment: Environment<T, P>)
     fun globalProgram(
         timeDistribution: TimeDistribution<T>,
-        environmentReaction: EnvironmentReaction<T>,
-        block: context(EnvironmentReaction<T>) ActionableContext.() -> Unit = {},
+        reaction: Reaction<T>,
+        block: context(Reaction<T>) ActionableContext.() -> Unit = {},
     ) {
-        context(environmentReaction) {
+        context(reaction) {
             ActionableContext.block()
         }
-        environment.addGlobalReaction(environmentReaction)
+        environment.addReaction(reaction)
     }
 
     /**

@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.TimeDistributedReaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation;
@@ -59,12 +60,14 @@ class TestIncarnation {
         final TimeDistribution<Object> immediately = INCARNATION.createTimeDistribution(rng, environment, node, null);
         assertNotNull(immediately);
         final NodeReaction<Object> immediateReaction = INCARNATION.createReaction(rng, environment, node, immediately, null);
-        assertTrue(Double.isInfinite(immediateReaction.getRate()));
-        assertTrue(immediateReaction.getRate() > 0);
+        final TimeDistributedReaction<?> immediateRecurrence =
+            assertInstanceOf(TimeDistributedReaction.class, immediateReaction);
+        assertTrue(Double.isInfinite(immediateRecurrence.getRate()));
+        assertTrue(immediateRecurrence.getRate() > 0);
         final TimeDistribution<Object> standard = INCARNATION.createTimeDistribution(rng, environment, node, "3");
         assertNotNull(standard);
         final NodeReaction<Object> generic = INCARNATION.createReaction(rng, environment, node, standard, null);
-        assertEquals(3d, generic.getRate(), Double.MIN_VALUE);
+        assertEquals(3d, assertInstanceOf(TimeDistributedReaction.class, generic).getRate(), Double.MIN_VALUE);
         assertNotNull(generic);
         assertInstanceOf(GenericReaction.class, generic);
         final NodeReaction<Object> program = INCARNATION.createReaction(rng, environment, node, standard, "nbr(1)");
@@ -139,20 +142,22 @@ class TestIncarnation {
         node.addReaction(program);
         final CountingDistribution distribution = new CountingDistribution();
         final NodeReaction<Object> reaction = INCARNATION.createReaction(rng, environment, node, distribution, SEND);
+        final TimeDistributedReaction<?> recurringReaction =
+            assertInstanceOf(TimeDistributedReaction.class, reaction);
         node.addReaction(reaction);
         program.initializationComplete(Time.ZERO, environment);
         reaction.initializationComplete(Time.ZERO, environment);
         assertEquals(1, distribution.samples);
         assertEquals(1.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
         assertFalse(reaction.canExecute().getCurrent());
-        reaction.updateAfterFiring(new DoubleTime(1.0));
+        recurringReaction.updateSchedulingAfterFiring(new DoubleTime(1.0));
         assertEquals(2, distribution.samples);
         assertEquals(3.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
         program.execute();
         assertTrue(reaction.canExecute().getCurrent());
         assertEquals(2, distribution.samples);
         assertEquals(3.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
-        reaction.updateAfterFiring(new DoubleTime(3.0));
+        recurringReaction.updateSchedulingAfterFiring(new DoubleTime(3.0));
         assertEquals(3, distribution.samples);
         assertEquals(THIRD_OCCURRENCE, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
     }

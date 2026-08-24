@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.reactions.AbstractNodeReaction
+import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.time.Duration.Companion.milliseconds
@@ -139,6 +140,67 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         scheduler.reactions shouldNotContain reaction
         scheduler.updates.count { it === reaction } shouldBe updatesBeforeEmission
         reaction.disposed shouldBe true
+    }
+
+    "a successful event is unregistered and removed from its node without an infinite update" {
+        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+        val node = GenericNode(environment)
+        val event = Event<Double>(node, Time.ZERO)
+        node.addReaction(event)
+        environment.addNode(node, environment.makePosition(0, 0))
+        val scheduler = RecordingScheduler<Double>()
+        val engine = TestEngine(environment, scheduler)
+        engine.initializeForTest()
+
+        engine.stepForTest()
+        engine.drainCommand()
+
+        scheduler.reactions shouldNotContain event
+        scheduler.updates shouldNotContain event
+        node.reactions shouldNotContain event
+        event.nextOccurrence.observers.size shouldBe 0
+    }
+
+    "a successful environment-hosted event uses the same removal path" {
+        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+        val event = Event<Double>(environment, Time.ZERO)
+        environment.addReaction(event)
+        val scheduler = RecordingScheduler<Double>()
+        val engine = TestEngine(environment, scheduler)
+        engine.initializeForTest()
+
+        engine.stepForTest()
+        engine.drainCommand()
+
+        scheduler.reactions shouldNotContain event
+        scheduler.updates shouldNotContain event
+        environment.reactions shouldNotContain event
+        event.nextOccurrence.observers.size shouldBe 0
+    }
+
+    "runtime host mutations synchronize scheduler membership for both host types" {
+        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+        val node = GenericNode(environment)
+        environment.addNode(node, environment.makePosition(0, 0))
+        val scheduler = RecordingScheduler<Double>()
+        val engine = TestEngine(environment, scheduler)
+        engine.initializeForTest()
+        val nodeReaction = EmittingNodeReaction(node)
+        val environmentReaction = Event<Double>(environment, DoubleTime(2.0))
+
+        node.addReaction(nodeReaction)
+        engine.drainCommand()
+        environment.addReaction(environmentReaction)
+        engine.drainCommand()
+        scheduler.reactions shouldContain nodeReaction
+        scheduler.reactions shouldContain environmentReaction
+
+        node.removeReaction(nodeReaction)
+        engine.drainCommand()
+        environment.removeReaction(environmentReaction)
+        engine.drainCommand()
+        scheduler.reactions shouldNotContain nodeReaction
+        scheduler.reactions shouldNotContain environmentReaction
     }
 
     "duplicate registration is rejected" {

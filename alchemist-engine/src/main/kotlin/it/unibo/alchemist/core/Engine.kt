@@ -38,8 +38,8 @@ open class Engine<T, P : Position<out P>>(
     constructor(environment: Environment<T, P>) : this(environment, ArrayIndexedPriorityQueue())
 
     override fun initialize() {
-        environment.environmentReactions.forEach(::scheduleReaction)
-        environment.forEach { it.reactions.forEach(::scheduleReaction) }
+        environment.reactions.forEach(::scheduleReaction)
+        environment.nodes.forEach { it.reactions.forEach(::scheduleReaction) }
     }
 
     override fun doStep() {
@@ -53,11 +53,12 @@ open class Engine<T, P : Position<out P>>(
             "$nextEvent is scheduled in the past at time $scheduledTime. Current time: $time; current step: $step."
         }
         currentTime = scheduledTime
-        if (scheduledTime.isFinite && nextEvent.canExecute().current) {
+        val executed = scheduledTime.isFinite && nextEvent.canExecute().current
+        if (executed) {
             nextEvent.conditions.forEach { it.reactionReady() }
             nextEvent.execute()
         }
-        nextEvent.updateAfterFiring(time)
+        nextEvent.updateSchedulingAfterFiring(time)
 
         monitors.forEach { it.stepDone(environment, nextEvent, time, step) }
         if (environment.isTerminated) {
@@ -84,7 +85,7 @@ open class Engine<T, P : Position<out P>>(
         // copy of reactions due to how [GenericNode.dispose] clears the reactions
         val reactions = ArrayList(node.reactions)
         schedule {
-            reactions.forEach { removeReaction(it) }
+            reactions.forEach { removeReactionIfScheduled(it) }
         }
     }
 
@@ -93,7 +94,7 @@ open class Engine<T, P : Position<out P>>(
     }
 
     override fun reactionRemoved(reactionToRemove: Reaction<T>) {
-        schedule { removeReaction(reactionToRemove) }
+        schedule { removeReactionIfScheduled(reactionToRemove) }
     }
 
     private fun scheduleReaction(reaction: Reaction<T>) {
@@ -116,9 +117,17 @@ open class Engine<T, P : Position<out P>>(
 
     private fun removeReaction(reaction: Reaction<T>) {
         checkCaller()
-        schedulingSubscriptions.remove(reaction)?.dispose()
+        checkNotNull(schedulingSubscriptions.remove(reaction)) {
+            "Reaction $reaction was removed without being scheduled"
+        }.dispose()
         scheduler.removeReaction(reaction)
         reaction.dispose()
+    }
+
+    private fun removeReactionIfScheduled(reaction: Reaction<T>) {
+        if (schedulingSubscriptions.containsKey(reaction)) {
+            removeReaction(reaction)
+        }
     }
 
     override fun afterRun() {

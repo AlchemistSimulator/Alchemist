@@ -12,14 +12,19 @@ package it.unibo.alchemist.model.movestrategies.speed
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy
 
 /**
  * Similar to [ConstantSpeed] but takes in consideration the time distribution's rate instead of the reaction's rate.
  */
-class GloballyConstantSpeed<T, P : Position<P>>(private val reaction: NodeReaction<*>, private val maxSpeed: Double) :
+class GloballyConstantSpeed<T, P : Position<P>>(reaction: NodeReaction<*>, private val maxSpeed: Double) :
     SpeedSelectionStrategy<T, P> {
-    override fun getNodeMovementLength(target: P?) = maxSpeed / reaction.rate
+    private val timeDistributedReaction = requireNotNull(reaction as? TimeDistributedReaction<*>) {
+        "$reaction does not expose a recurrence rate"
+    }
+
+    override fun getNodeMovementLength(target: P?) = maxSpeed / timeDistributedReaction.rate
 
     override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): GloballyConstantSpeed<T, P> =
         GloballyConstantSpeed(reaction, maxSpeed)

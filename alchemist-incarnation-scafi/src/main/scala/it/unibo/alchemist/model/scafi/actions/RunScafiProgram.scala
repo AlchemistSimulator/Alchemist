@@ -48,7 +48,7 @@ sealed class DefaultRunScafiProgram[P <: Position[P]](
       reaction,
       randomGenerator,
       programName,
-      FastMath.nextUp(1.0 / reaction.getRate)
+      FastMath.nextUp(1.0 / RunScafiProgram.recurrenceRate(reaction))
     )
 }
 
@@ -74,7 +74,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
       reaction,
       randomGenerator,
       programName,
-      FastMath.nextUp(1.0 / reaction.getRate)
+      FastMath.nextUp(1.0 / RunScafiProgram.recurrenceRate(reaction))
     )
 
   import RunScafiProgram.NeighborData
@@ -202,6 +202,11 @@ sealed class RunScafiProgram[T, P <: Position[P]](
 }
 
 object RunScafiProgram {
+  private[actions] def recurrenceRate[T](reaction: NodeReaction[T]): Double = reaction match {
+    case recurring: TimeDistributedReaction[_] => recurring.getRate
+    case _ => throw new IllegalArgumentException(s"$reaction does not expose a recurrence rate")
+  }
+
   case class NeighborData[P <: Position[P]](exportData: EXPORT, position: P, executionTime: AlchemistTime)
 
   implicit class RichMap[K, V](map: Map[K, V]) {

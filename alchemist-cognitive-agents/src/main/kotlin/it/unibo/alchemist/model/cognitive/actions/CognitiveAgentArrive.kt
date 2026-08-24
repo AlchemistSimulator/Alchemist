@@ -67,8 +67,8 @@ open class CognitiveAgentArrive<T, P, A>(
         with((currentPosition as Vector<P>).distanceTo(target)) {
             when {
                 this < arrivalTolerance -> 0.0
-                this < decelerationRadius -> Speed.default * this / decelerationRadius / reaction.rate
-                else -> node.asProperty<T, PedestrianProperty<T>>().speed() / reaction.rate
+                this < decelerationRadius -> Speed.default * this / decelerationRadius / recurrenceRate
+                else -> node.asProperty<T, PedestrianProperty<T>>().speed() / recurrenceRate
             }
         }
 

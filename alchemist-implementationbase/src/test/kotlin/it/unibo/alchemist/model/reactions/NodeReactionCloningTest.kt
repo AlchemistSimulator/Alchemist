@@ -22,7 +22,6 @@ import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.timedistributions.MoleculeControlledTimeDistribution
 import it.unibo.alchemist.model.timedistributions.RandomDiracComb
-import it.unibo.alchemist.model.timedistributions.Trigger
 import it.unibo.alchemist.model.timedistributions.WeibullDistributedWeibullTime
 import it.unibo.alchemist.model.timedistributions.WeibullTime
 import it.unibo.alchemist.model.times.DoubleTime
@@ -46,7 +45,7 @@ class NodeReactionCloningTest {
         val sourceDistribution = DiracComb<Any>(0.5)
         val source = GenericReaction(mockk<Node<Any>>(), sourceDistribution)
         source.initializationComplete(Time.ZERO, environment)
-        source.updateAfterFiring(DoubleTime(3.0))
+        source.updateSchedulingAfterFiring(DoubleTime(3.0))
 
         val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
         clone.initializationComplete(DoubleTime(10.0), environment)
@@ -67,26 +66,15 @@ class NodeReactionCloningTest {
     }
 
     @Test
-    fun `a cloned trigger is a new pending program rather than an executed trigger`() {
-        val source = GenericReaction(mockk<Node<Any>>(), Trigger(DoubleTime(20.0)))
-
-        val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
-        clone.initializationComplete(DoubleTime(10.0), environment)
-
-        assertNotSame(source.timeDistribution, clone.timeDistribution)
-        assertEquals(DoubleTime(20.0), clone.nextOccurrence.current)
-    }
-
-    @Test
     fun `a non-memoryless clone does not inherit source sampler state`() {
         val sourceDistribution = SequenceDistribution(1.0, 100.0)
         val source = GenericReaction(mockk(), sourceDistribution)
         source.initializationComplete(Time.ZERO, environment)
-        source.updateAfterFiring(Time.ZERO)
+        source.updateSchedulingAfterFiring(Time.ZERO)
 
         val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
         clone.initializationComplete(DoubleTime(10.0), environment)
-        source.updateAfterFiring(DoubleTime(1.0))
+        source.updateSchedulingAfterFiring(DoubleTime(1.0))
 
         assertNotSame(sourceDistribution, clone.timeDistribution)
         assertEquals(DoubleTime(101.0), source.nextOccurrence.current)
@@ -149,7 +137,7 @@ class NodeReactionCloningTest {
         val source = ChemicalNodeReaction(node, ExponentialTime(1.0, randomGenerator))
         source.initializationComplete(Time.ZERO, environment)
         val sourceOccurrence = source.nextOccurrence.current
-        source.updateAfterFiring(sourceOccurrence)
+        source.updateSchedulingAfterFiring(sourceOccurrence)
         val sourceRescheduled = source.nextOccurrence.current
 
         val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))

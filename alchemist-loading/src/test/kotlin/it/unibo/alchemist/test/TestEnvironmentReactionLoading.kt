@@ -22,6 +22,6 @@ class TestEnvironmentReactionLoading :
                     .from(ResourceLoader.getResource("testEnvironmentReactionLoading.yml"))
                     .getDefault<Nothing, Nothing>()
                     .environment
-            environment.environmentReactions shouldHaveSize 1
+            environment.reactions shouldHaveSize 1
         }
     })

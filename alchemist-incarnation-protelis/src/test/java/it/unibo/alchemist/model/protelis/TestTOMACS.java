@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.protelis;
 
 import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.Loader;
-import it.unibo.alchemist.model.NodeReaction;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice;
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.util.Collection;
-import java.util.stream.StreamSupport;
 
 /**
  * Tests that the TOMACS setup could be successfully loaded (in particular,
@@ -35,10 +34,10 @@ class TestTOMACS {
     void testCustomRetainTimeLoading() {
         final Loader loader = LoadAlchemist.from(ResourceLoader.getResource("tomacs.yml"));
         Assertions.assertTrue(
-            StreamSupport.stream(loader.getDefault().getEnvironment().spliterator(), false)
+            loader.getDefault().getEnvironment().getNodes().stream()
                 .flatMap(n ->
                     n.getReactions().stream()
-                        .map(NodeReaction::getActions)
+                        .map(Reaction::getActions)
                         .flatMap(Collection::stream)
                         .filter(a -> a instanceof RunProtelisProgram)
                         .map(a -> (RunProtelisProgram<?>) a)

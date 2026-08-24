@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -16,14 +16,13 @@ import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.NodeReaction
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableMutableMap
-import java.util.Spliterator
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.function.Consumer
 import javax.annotation.Nonnull
 
 /**
@@ -32,15 +31,13 @@ import javax.annotation.Nonnull
  *
  * @param <T> concentration type
 </T> */
-open class GenericNode<T>
-@JvmOverloads
-constructor(
+open class GenericNode<T> @JvmOverloads constructor(
     /**
      * The environment in which the node is places.
      */
     val environment: Environment<T, *>,
     final override val id: Int = idFromEnv(environment),
-    final override val reactions: MutableList<NodeReaction<T>> = ArrayList(),
+    final override val reactions: MutableList<Reaction<T>> = ArrayList(),
     /**
      * The node's molecules.
      */
@@ -52,14 +49,19 @@ constructor(
 
     override val observeMoleculeCount: Observable<Int> = observableContents.map { it.size }
 
-    final override fun addReaction(reactionToAdd: NodeReaction<T>) {
-        reactions.add(reactionToAdd)
+    final override fun addReaction(reaction: Reaction<T>) {
+        if (reaction !in reactions) {
+            reactions.add(reaction)
+            ifRegisteredInEnvironment { it.reactionAdded(reaction) }
+        }
     }
 
     override fun cloneNode(currentTime: Time): Node<T> = GenericNode(environment).also {
         this.properties.forEach { property -> it.addProperty(property.cloneOnNewNode(it)) }
         this.contents.forEach(it::setConcentration)
-        this.reactions.forEach { reaction -> it.addReaction(reaction.cloneOnNewNode(it, currentTime)) }
+        this.reactions.filterIsInstance<NodeReaction<T>>().forEach { reaction ->
+            it.addReaction(reaction.cloneOnNewNode(it, currentTime))
+        }
     }
 
     final override fun compareTo(@Nonnull other: Node<T>): Int = id.compareTo(other.id)
@@ -77,11 +79,6 @@ constructor(
 
     final override fun equals(other: Any?): Boolean = other is Node<*> && other.id == id
 
-    /**
-     * Performs an [action] for every reaction.
-     */
-    final override fun forEach(action: Consumer<in NodeReaction<T>>) = reactions.forEach(action)
-
     override fun getConcentration(molecule: Molecule): T = observeConcentration(molecule).current.getOrElse {
         createT()
     }
@@ -94,17 +91,16 @@ constructor(
 
     final override fun hashCode(): Int = id // TODO: better hashing
 
-    final override fun iterator(): Iterator<NodeReaction<T>> = reactions.iterator()
-
     final override fun removeConcentration(moleculeToRemove: Molecule) {
         if (observableContents.remove(moleculeToRemove) == null) {
             throw NoSuchElementException("$moleculeToRemove was not present in node $id")
         }
     }
 
-    final override fun removeReaction(reactionToRemove: NodeReaction<T>) {
-        if (reactions.remove(reactionToRemove)) {
-            reactionToRemove.dispose()
+    final override fun removeReaction(reaction: Reaction<T>) {
+        if (reactions.remove(reaction)) {
+            ifRegisteredInEnvironment { it.reactionRemoved(reaction) }
+            reaction.dispose()
         }
     }
 
@@ -123,11 +119,6 @@ constructor(
         }
     }
 
-    /**
-     * Returns the [reactions] [Spliterator].
-     */
-    final override fun spliterator(): Spliterator<NodeReaction<T>> = reactions.spliterator()
-
     override fun toString(): String = "Node$id{ properties: $properties, molecules: ${observableContents.current}}"
 
     override fun dispose() {
@@ -135,6 +126,12 @@ constructor(
         reactions.clear()
         observableContents.dispose()
         observeMoleculeCount.dispose()
+    }
+
+    private fun ifRegisteredInEnvironment(action: (it.unibo.alchemist.core.Simulation<T, *>) -> Unit) {
+        if (environment.nodes.any { it === this }) {
+            environment.simulationOrNull?.let(action)
+        }
     }
 
     private companion object {

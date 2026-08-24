@@ -1,6 +1,6 @@
 # Reactive Engine Refactor Plan
 
-Last updated: 2026-08-21
+Last updated: 2026-08-24
 
 Working branch: `marmellata`
 
@@ -20,13 +20,20 @@ Do not mark an item complete until its implementation and proportional verificat
 - Make `TimeDistribution` responsible only for generating correctly distributed time samples.
 - Make reactions own `nextOccurrence`, execution advancement, invalidation, and any transformation or replacement
   of a previously sampled time.
+- Make `ReactionHost<T>` the single model-membership abstraction implemented by both `Node` and `Environment`.
+  Hosts add and remove root `Reaction<T>` values and notify the engine exactly once, after membership actually
+  changes. The engine owns only scheduler entries and scheduling subscriptions; it never dispatches on concrete
+  reaction types or model-owner types.
+- Keep `Node` and `Environment` non-iterable. Consumers use the explicit `Node.reactions`,
+  `Environment.reactions`, and `Environment.nodes` collections so the iterated relationship is never ambiguous.
 - Normalize scheduled-entity terminology in one atomic migration before later phases build more APIs on the current
   names: rename `Actionable<T>` to the owner-neutral root `Reaction<T>`, rename the current node-owned
-  `Reaction<T>` to `NodeReaction<T>`, rename `GlobalReaction<T>` to `EnvironmentReaction<T>`, and rename the
-  current concrete `Event<T>` to `GenericReaction<T>`. Replace the current absolute-time `Trigger` distribution
-  with a one-shot `Event<T>` reaction: after it executes successfully, the engine unregisters it instead of
-  advancing it or publishing `Time.INFINITY`. Do not use `Event` for a persistent, repeatedly scheduled generator
-  or `BaseReaction` for a concrete reaction.
+  `Reaction<T>` to `NodeReaction<T>`, remove the empty environment-reaction marker in favor of environment host
+  membership, and rename the
+  current concrete `Event<T>` to `GenericReaction<T>`. The former absolute-time `Trigger` distribution is replaced
+  by a concrete one-shot `Event<T>` reaction: after its actions execute successfully, it removes itself from its
+  `ReactionHost`, which triggers the same engine notification used by every other removal. Do not use `Event` for a
+  persistent, repeatedly scheduled generator or `BaseReaction` for a concrete reaction.
 - Put residual-time reuse behind `AbstractMarkovianNodeReaction`. It requires an `ExponentialTime` and fails fast for
   every other distribution; `ChemicalNodeReaction` and its biochemical subclasses inherit this contract.
 - Keep SAPERE reactions outside the Markovian hierarchy. They redraw after initialization, firing, and invalidation
@@ -102,33 +109,34 @@ The scheduled-entity type hierarchy will be:
 ```text
 Reaction
 ├── NodeReaction
-└── EnvironmentReaction
+└── TimeDistributedReaction
 
-Event : Reaction
-(one-shot specialization, orthogonal to node/environment ownership)
+TimeDistributedReaction contains recurrence-only timeDistribution and rate metadata.
 
 AbstractReaction
-├── AbstractNodeReaction
+├── Event
+└── AbstractNodeReaction : NodeReaction
 │   ├── GenericReaction
-│   ├── node-owned Event
 │   ├── AbstractMarkovianNodeReaction
 │   │   └── ChemicalNodeReaction
 │   └── other node-owned specializations
-└── AbstractEnvironmentReaction
-    └── environment-owned specializations such as PhysicsUpdate
+
+ReactionHost
+├── Node
+└── Environment
 ```
 
 The root `Reaction` contract and future `AbstractReaction` contain only owner-neutral scheduling, condition,
 execution, and subscription behavior. `NodeReaction` and `AbstractNodeReaction` own node association and cloning
-onto another node. `EnvironmentReaction` and `AbstractEnvironmentReaction` own environment association. The engine
-and scheduler consume the root `Reaction`; node, incarnation, action, condition, and clone APIs consume
-`NodeReaction`; environment membership APIs consume `EnvironmentReaction`.
+onto another node. `ReactionHost` owns reaction membership and forwards successful membership changes to the engine.
+The engine and scheduler consume only the root `Reaction`; node-specific actions, conditions, and clone APIs consume
+`NodeReaction`. Environment ownership needs no marker because membership in the environment host is authoritative.
 
-`Event` is a one-shot specialization of `Reaction`, not a `TimeDistribution`. It owns one absolute occurrence and
-can be node- or environment-owned. A successful execution consumes it permanently: the engine removes the exact
-scheduler entry and scheduling subscription, then removes it from its model owner so later node cloning or
-membership enumeration cannot resurrect a completed event. It is never advanced through recurring post-firing
-scheduling and never parked in the scheduler at `Time.INFINITY`.
+`Event` is a concrete one-shot `AbstractReaction`, not an interface or a `TimeDistribution`. It owns one absolute
+occurrence and a `ReactionHost`. After successful action execution it removes itself from that host. The host removes
+model membership first and then issues the ordinary engine `reactionRemoved` notification, so scheduler and
+subscription cleanup require no event-specific engine path. A host-neutral event is not a `NodeReaction` and is not
+cloned by node cloning unless a separate node-specific cloning policy is introduced deliberately.
 
 ### Architectural invariants
 
@@ -142,8 +150,8 @@ scheduling and never parked in the scheduler at `Time.INFINITY`.
    at the current simulation time before a finite occurrence is published.
 5. The engine observes reaction times but never computes them. An infinite scheduler head denotes quiescence and is
    not consumed as a firing, skipped execution, post-firing update, monitor step, or step-count increment.
-6. After a successful `Event` execution, the engine unregisters it exactly once. It does not call recurring
-   post-firing scheduling, emit an infinite occurrence, or leave the completed event in its node/environment owner.
+6. After a successful `Event` execution, the event removes itself from its host. The host notifies the engine exactly
+   once after membership removal; the engine applies the same scheduler/subscription cleanup as for every reaction.
 7. Conditions expose validity only through the general contract. They expose neither scheduling policy, a numeric
    propensity contribution, nor a general collection of observable dependencies.
 8. Each specialized reaction family defines and validates the condition types or semantic condition capabilities it
@@ -178,7 +186,10 @@ scheduling and never parked in the scheduler at `Time.INFINITY`.
 - Define what happens when an event's condition remains false through its absolute occurrence: either it expires
   and is removed without execution, or it remains pending and executes at the current time on revalidation. Do not
   inherit the current accidental behavior, which consumes the occurrence through recurring post-firing logic even
-  when execution was skipped.
+  when execution was skipped. Until this policy is selected, the concrete host-neutral `Event` rejects non-empty
+  condition lists so the ambiguous state cannot enter the scheduler.
+- Decide whether making the root `Reaction` interface open is the intended public extensibility contract. The
+  cross-module `AbstractReaction` directly implements it and therefore cannot retain the previous sealed declaration.
 - Treat the Protelis send gate as validity, not as a specialized scheduling input. The first false-to-true
   `ComputationalRoundComplete` transition schedules a `GenericReaction` with the configured distribution; repeated
   true emissions do not redraw or postpone the pending send. `SendToNeighbor` resets the gate to false when it
@@ -340,39 +351,48 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
     environment-owned reactions into it.
   - [x] Rename the current node-owned `Reaction<T>` to `NodeReaction<T>`, retaining `node` and
     `cloneOnNewNode(...)` only on this branch.
-  - [x] Rename `GlobalReaction<T>` to `EnvironmentReaction<T>` and make its environment ownership explicit.
+  - [x] Rename `GlobalReaction<T>` to the provisional `EnvironmentReaction<T>` while ownership was still encoded as
+    a marker type; the later `ReactionHost` step below removes that marker.
   - [x] Rename the current concrete `Event<T>` to `GenericReaction<T>`. Do not introduce `BaseReaction`; use
-    `Event<T>` for the one-shot scheduled entity currently approximated by the `Trigger` distribution.
-  - [ ] Remove `Trigger` from the `TimeDistribution` hierarchy. Construct an `Event` from its absolute occurrence
+    `Event<T>` for the one-shot scheduled entity previously approximated by the `Trigger` distribution.
+  - [x] Remove `Trigger` from the `TimeDistribution` hierarchy. Construct an `Event` from its absolute occurrence
     directly, migrate reflective/YAML loading and SAPERE special cases, and keep delay sampling uniform for every
     remaining distribution.
-  - [ ] Keep `nextOccurrence` on the root `Reaction`, but move mandatory `timeDistribution` and recurrence-specific
+  - [x] Keep `nextOccurrence` on the root `Reaction`, but move mandatory `timeDistribution` and recurrence-specific
     `rate` reporting to distribution-backed reactions so an `Event` does not expose meaningless sampler metadata.
-  - [ ] Make successful event execution take the exact unregister path: dispose the engine-owned subscription,
-    remove the scheduler entry, remove the event from its node/environment owner, and dispose it. Do not call
-    recurring post-firing scheduling or publish `Time.INFINITY`.
-  - [ ] Normalize node- and environment-membership removal so engine-initiated event completion cannot enqueue a
-    duplicate removal, leave a disposed event in an owner collection, or let later node cloning recreate it.
-  - [ ] Extract an owner-neutral `AbstractReaction` from the current node-specific `AbstractNodeReaction`; introduce
-    `AbstractEnvironmentReaction`; and migrate environment-owned and specialized reactions without duplicating
-    scheduling, validity, or disposal behavior.
-  - [ ] Retype engine, scheduler, simulation, output-monitor, and extractor boundaries to the root `Reaction`;
+    The temporary root post-occurrence hook below advances stateful samplers without requiring an engine type branch.
+  - [x] Make successful event execution take the exact ordinary unregister path by removing itself from its host;
+    the resulting notification disposes the engine-owned subscription and scheduler entry. Do not publish
+    `Time.INFINITY` or retain an event-specific engine path.
+  - [x] Normalize node and environment membership through `ReactionHost`, so removal changes model membership once,
+    sends at most one engine notification, and cannot let later node cloning recreate a host-neutral event.
+  - [x] Extract an owner-neutral `AbstractReaction` from the current node-specific `AbstractNodeReaction` and use it
+    for both recurring node reactions and the host-neutral event.
+  - [x] Reject conditions on the concrete host-neutral event until expiry-versus-deferred-execution semantics are
+    selected, and document this temporary construction boundary explicitly.
+  - [x] Replace the provisional `Event` and `EnvironmentReaction` interfaces with `ReactionHost`; make `Node` and
+    `Environment` host root reactions and notify the engine only after actual membership changes. Make concrete
+    `Event : AbstractReaction` remove itself from its host after successful action execution.
+  - [x] **TEMPORARY CONSTRAINT:** put `updateSchedulingAfterFiring(Time)` on the root reaction protocol and invoke it
+    uniformly after every selected occurrence. This is required only while a condition-invalid reaction can still
+    remain scheduler-visible at a finite time: skipped execution must consume that occurrence without engine type
+    inspection. Its deletion is a separate explicit Phase 6 step; this is not the final firing protocol.
+  - [x] Retype engine, scheduler, simulation, output-monitor, and extractor boundaries to the root `Reaction`;
     retype node collections, incarnations, actions, conditions, cloning, and node-oriented DSLs to `NodeReaction`;
-    retype environment membership and loading boundaries to `EnvironmentReaction`.
-  - [ ] Rename environment membership APIs such as `globalReactions`, `addGlobalReaction`, and
-    `removeGlobalReaction` consistently. Inventory reflection, factories, loaders, YAML keys, and Kotlin DSL entry
-    points first; either migrate user-facing configuration names with explicit breaking-change guidance or retain a
-    configuration spelling deliberately and document why. Do not silently maintain two vocabularies.
-  - [ ] Migrate all Java, Kotlin, and Scala consumers atomically, including tests and generated/factory-facing API
+    retype both model-membership branches to `ReactionHost` and root `Reaction`.
+  - [x] Rename environment membership APIs from `environmentReactions`, `addGlobalReaction`, and
+    `removeGlobalReaction` to the shared `reactions`, `addReaction`, and `removeReaction` host vocabulary. Keep the
+    YAML `global-programs` spelling because it identifies placement rather than a reaction type.
+  - [x] Migrate all Java, Kotlin, and Scala consumers atomically, including tests and generated/factory-facing API
     surfaces. Remove transitional aliases once repository consumers compile unless a deliberate compatibility
     contract is documented.
   - [ ] Update `external-resources/learning-scafi-alchemist` upstream from `type: Event` to
     `type: GenericReaction`, then bump the pinned submodule revision and verify its examples. Do not leave an
     uncommittable local modification in the nested repository.
-  - [ ] Update KDoc/Javadoc, the metamodel, the dedicated scheduling-and-ownership page, engine boundary
+  - [x] Update KDoc/Javadoc, the metamodel, the dedicated scheduling-and-ownership page, engine boundary
     documentation, configuration references, diagrams, and migration notes in the same change. Historical entries
     may retain old names only when clearly identified as historical.
-  - [ ] Add or adapt regressions proving that the scheduler treats both ownership branches uniformly, runtime
+  - [x] Add or adapt regressions proving that the scheduler treats both ownership branches uniformly, runtime
     addition/removal disposes subscriptions for both branches, and cloning remains exclusive to node reactions.
 
 ## Phase 6: simplify conditions and introduce reaction-specific invalidation signals
@@ -411,8 +431,14 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   match resampling, one-shot `Event`, and condition-gated Protelis sends. If a family retains suspended internal
   state, keep it private: only the validity-gated occurrence is public and scheduler-visible.
 - [ ] Make the engine treat an infinite scheduler head as quiescence. It must not call `execute`, `reactionReady`,
-  `updateAfterFiring`, or `stepDone`, and must not increment the simulation step merely to discover that no finite
+  `updateSchedulingAfterFiring`, or `stepDone`, and must not increment the simulation step merely to discover that no finite
   reaction is available.
+- [ ] **EXCEPTIONAL PATH REMOVAL:** after validity-gated `nextOccurrence` and infinite-head quiescence are complete,
+  remove the temporary selected-but-invalid path. Delete the engine's unconditional root
+  `updateSchedulingAfterFiring` call and the temporary root hook; make each successful recurring `execute()` perform
+  its own post-fire advancement, while `Event.execute()` removes itself from its host. Add a regression proving that
+  the engine performs only the uniform `Reaction.execute()` protocol and never advances a skipped or
+  concrete-type-specific reaction.
 - [ ] Make specialized reactions directly subscribe to the narrow propensity, match, or state-change signals they
   consume, owning every returned non-null `Disposable`.
 - [ ] Make these private signals invalidate the reaction even for semantically relevant `true`-to-`true` validity
@@ -569,6 +595,51 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-08-24: simplified YAML reaction construction by restoring the loader's previous invariant that every program
+  receives a contextual `TimeDistribution`. A one-shot `Event` does not request or retain that object, so the
+  distribution remains absent from its model API and behavior; accepting one cheap unused construction removes the
+  nullable local state, speculative reflection attempt, failure-driven retry, and suppressed-exception plumbing
+  that had leaked optional recurrence metadata into `visitProgram`. Exact `ReactionHost` registration keeps
+  reflective event construction independent of whether the host is a node or environment. Validation also exposed
+  stale consumers of the intentionally removed `Node` and `Environment` iterable APIs; they now select `reactions`
+  or `nodes` explicitly, and the obsolete iterator implementations are gone. Serialization findings newly exposed
+  by the clean compilation were fixed at their real boundaries: runtime-only Swing node state is transient,
+  `RoutingStrategy` is no longer serializable, and obsolete map serial metadata and suppression were removed.
+  Repository-wide Kotlin formatting and the focused loading, implementation-base, Protelis, Checkstyle, and
+  SpotBugs checks pass. The final filtered repository build passes 914 tasks in 4m with only the documented
+  alternate-JVM, native-package, and fat/shadow-JAR exclusions.
+- 2026-08-24: completed the shared reaction-host checkpoint. `Node` and `Environment` now implement
+  `ReactionHost`, own root `Reaction` membership, and notify the engine only after an add or removal actually
+  changes that membership. The provisional `EnvironmentReaction` and `Event` interfaces are gone; the concrete
+  one-shot `Event : AbstractReaction` removes itself from its exact host after successful action execution. The
+  engine schedules both ownership branches uniformly and contains no event-, node-, or environment-reaction type
+  dispatch. Loading registers the active host through the common supertype, GraphQL supplies the collecting node
+  explicitly for root-reaction surrogates, and node cloning remains limited to `NodeReaction`. KDoc, Javadoc, the
+  dedicated scheduling-and-ownership page, YAML reference, and terminology audit agree with this model. The root
+  `updateSchedulingAfterFiring(Time)` hook remains only as the documented temporary bridge for finite selected
+  reactions whose conditions are invalid; Phase 6 contains the distinct **EXCEPTIONAL PATH REMOVAL** step that
+  deletes it after validity-gated occurrences and infinite-head quiescence land. Kotlin formatting, the required
+  Scafi formatting task, focused engine/implementation/loading/incarnation/maps/GraphQL tests, and `hugoBuild`
+  pass. After correcting one stale Javadoc import found by the first attempt, the final filtered repository build
+  passes 915 tasks in 2m17s with only the documented alternate-JVM, native-package, and fat/shadow-JAR exclusions.
+- 2026-08-21: replaced the absolute-time `Trigger` distribution with a true one-shot `Event`, moved recurrence-only
+  `timeDistribution`, `rate`, and post-fire advancement to `TimeDistributedReaction`, and extracted the shared
+  owner-neutral `AbstractReaction`. The engine now removes a successfully executed event from its exact scheduler
+  entry, scheduling subscription, and node owner without publishing `Time.INFINITY`; owner callbacks tolerate only
+  the expected already-unregistered completion notification, while direct removal remains fail-fast. Explicit YAML
+  event construction initially avoided creating a phantom default distribution, while loader fallback supplied the
+  incarnation default for recurring reaction types. The 2026-08-24 simplification above deliberately supersedes
+  that loader optimization. The root `Reaction` had to become open because its abstract
+  implementation lives in another module; whether to retain that extensibility is now an explicit design question.
+  Events currently reject conditions until expiry-versus-deferred-execution semantics are selected. Trigger-specific
+  SAPERE and regression branches are gone, recurrence-rate consumers now require `TimeDistributedReaction`, and the
+  dedicated scheduling page plus YAML reference describe the implemented ownership and loading flow. Kotlin
+  formatting, focused engine/implementation-base/loading/SAPERE/Protelis/Scafi/maps/cognitive/website checks,
+  `hugoBuild`, and the final filtered repository build pass; the last post-documentation rerun completed 915 tasks
+  in 48s (85 executed, 830 up-to-date) with only the recorded alternate-JVM, native-package, and fat/shadow-JAR
+  exclusions. The Scafi formatting task still returns
+  success while reporting the configured Scalafmt version as invalid when it must reformat a changed Scala test;
+  that pre-existing verification defect remains separately tracked.
 - 2026-08-21: renamed the recurring, distribution-backed `Event<T>` implementation to `GenericReaction<T>` across
   Kotlin, Java, and Scala construction sites, type assertions, clone and transition tests, loader fixtures, and
   in-repository YAML and website examples. No compatibility alias retains the old misleading name, leaving `Event`
@@ -588,7 +659,8 @@ Use repository Gradle tasks from the repository root.
   SAPERE policies, direct semantic observables, cloning, builders/loaders/DSLs/factories, documentation, and positive
   and rejection regressions without introducing a replacement `PropensityCondition` abstraction.
 - 2026-08-20: replaced the provisional one-shot `Trigger` concept in the target architecture with `Event`.
-  Currently `Trigger` is a `TimeDistribution`; after execution, reaction policy merely emits `Time.INFINITY`, so
+  At that checkpoint `Trigger` was a `TimeDistribution`; after execution, reaction policy merely emitted
+  `Time.INFINITY`, so
   the engine retains the scheduler entry, scheduling subscription, and owning-model membership. The rename phase
   now moves one-shot semantics into an `Event : Reaction`, removes `Trigger` from delay sampling, and requires exact
   scheduler, subscription, and owner removal after successful execution without recurring post-firing advancement.
@@ -602,7 +674,7 @@ Use repository Gradle tasks from the repository root.
   behavior and isolation regressions as complete. Repository-wide Kotlin formatting passes; the nine focused
   engine cases pass; and the final filtered repository build passes 915 tasks in 1m38s with the documented
   alternate-JVM, native-package, and fat/shadow-JAR exclusions.
-- 2026-08-20: fixed the scheduled-entity vocabulary and added its atomic migration to Phase 5. `NodeReaction` becomes
+- 2026-08-20: fixed the scheduled-entity vocabulary and added its atomic migration to Phase 5. `Reaction` becomes
   the owner-neutral root replacing `Actionable`; `NodeReaction` names node-owned reactions;
   `EnvironmentReaction` replaces `GlobalReaction`; and `GenericReaction` replaces the misleading concrete
   `Event`. The implementation hierarchy will separate owner-neutral, node-owned, and environment-owned abstract

@@ -16,7 +16,6 @@ import gnu.trove.map.hash.TIntObjectHashMap
 import gnu.trove.set.hash.TIntHashSet
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.EnvironmentReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
@@ -24,6 +23,7 @@ import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.linkingrules.NoLinks
@@ -36,7 +36,6 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serial
 import java.util.Objects
-import java.util.Spliterator
 import java.util.function.Consumer
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -56,7 +55,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     internalIndex: SpatialIndex<Node<T>>,
 ) : Environment<T, P> {
     private val _nodes = LinkedHashSet<Node<T>>()
-    private val _environmentReactions = LinkedHashSet<EnvironmentReaction<T>>()
+    private val _reactions = LinkedHashSet<Reaction<T>>()
     final override var layers: Map<Molecule, Layer<T, P>> = LinkedHashMap()
         private set
 
@@ -72,8 +71,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
 //    override val layers: Map<Molecule, Layer<T, P>> get() = _layers
 
-    override val environmentReactions: ImmutableList<EnvironmentReaction<T>>
-        get() = _environmentReactions.toImmutableList()
+    override val reactions: ImmutableList<Reaction<T>>
+        get() = _reactions.toImmutableList()
 
     override val nodes: ImmutableList<Node<T>>
         get() = _nodes.toImmutableList()
@@ -131,14 +130,17 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         layers += molecule to layer
     }
 
-    override fun addGlobalReaction(reaction: EnvironmentReaction<T>) {
-        _environmentReactions.add(reaction)
-        ifEngineAvailable { it.reactionAdded(reaction) }
+    override fun addReaction(reaction: Reaction<T>) {
+        if (_reactions.add(reaction)) {
+            ifEngineAvailable { it.reactionAdded(reaction) }
+        }
     }
 
-    override fun removeGlobalReaction(reaction: EnvironmentReaction<T>) {
-        _environmentReactions.remove(reaction)
-        ifEngineAvailable { it.reactionRemoved(reaction) }
+    override fun removeReaction(reaction: Reaction<T>) {
+        if (_reactions.remove(reaction)) {
+            ifEngineAvailable { it.reactionRemoved(reaction) }
+            reaction.dispose()
+        }
     }
 
     override fun addNode(node: Node<T>, position: P): Boolean = when {
@@ -176,10 +178,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * @return the actual position where the node should be located
      */
     protected abstract fun computeActualInsertionPosition(node: Node<T>, originalPosition: P): P
-
-    override fun forEach(action: Consumer<in Node<T>?>?) {
-        nodes.forEach(action)
-    }
 
     private fun foundNeighbors(
         center: Node<T>,
@@ -375,8 +373,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     override val isTerminated: Boolean
         get() = terminationPredicate.test(this)
 
-    override fun iterator(): Iterator<Node<T>> = nodes.iterator()
-
     private fun lostNeighbors(
         center: Node<T>,
         oldNeighborhood: Neighborhood<T>?,
@@ -493,8 +489,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         observableNodeToPos[n.id] = p
         updateRegionObservers(n, p, pos)
     }
-
-    override fun spliterator(): Spliterator<Node<T>> = nodes.spliterator()
 
     private fun updateRegionObservers(node: Node<T>, newPosition: P?, oldPosition: P?) {
         if (regionObservers.isNotEmpty()) {

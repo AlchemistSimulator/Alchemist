@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.timedistributions
+package it.unibo.alchemist.model.reactions
 
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Environment
@@ -16,13 +16,13 @@ import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.actions.AbstractLocalAction
 
-class TestTriggerAction<T, P : Position<P>>(
+class TestEventAction<T, P : Position<P>>(
     private val environment: Environment<T, P>,
     node: Node<T>,
 ) : AbstractLocalAction<T>(node) {
     private var executed = false
 
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): Action<T> = TestTriggerAction(environment, node)
+    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): Action<T> = TestEventAction(environment, node)
 
     override fun execute() {
         when (executed) {

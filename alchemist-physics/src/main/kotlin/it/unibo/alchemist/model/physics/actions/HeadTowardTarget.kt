@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.physics.actions
 
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
@@ -69,8 +68,6 @@ constructor(
             }
         }
     }
-
-    override fun getContext() = Context.LOCAL
 
     /**
      * Shortest distance in radians from the angles [from] to [to] in radians.

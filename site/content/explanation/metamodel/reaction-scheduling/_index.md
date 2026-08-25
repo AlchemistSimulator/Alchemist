@@ -71,6 +71,8 @@ The correct invalidation policy belongs to the reaction family:
 Callers add and remove reactions through a `ReactionHost`, never by updating the scheduler separately.
 The host changes membership first and, if a simulation is attached,
 emits exactly one ordinary `reactionAdded` or `reactionRemoved` notification.
+Adding a node emits `reactionAdded` once for each reaction already hosted by that node; removing a node emits the
+corresponding `reactionRemoved` notifications before disposing the node.
 The engine processes that notification on the simulation thread.
 Removal disposes the exact scheduling subscription before removing the scheduler entry;
 disposal is idempotent and prevents later scheduling emissions.

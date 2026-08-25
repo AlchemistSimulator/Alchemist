@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.conditions;
 
 import com.google.common.base.Optional;
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
@@ -60,12 +59,6 @@ public final class ConcentrationChanged<T> extends AbstractCondition<T> {
     @Override
     public ConcentrationChanged<T> cloneCondition(@Nonnull final Node<T> newNode, @Nonnull final NodeReaction<T> newReaction) {
         return new ConcentrationChanged<>(newNode, target);
-    }
-
-    @Nonnull
-    @Override
-    public Context getContext() {
-        return Context.LOCAL;
     }
 
     @Override

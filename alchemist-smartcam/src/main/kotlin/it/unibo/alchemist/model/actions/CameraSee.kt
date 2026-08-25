@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.actions
 
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
@@ -63,6 +62,4 @@ constructor(
         }
         node.setConcentration(outputMolecule, seen.map { VisibleNodeImpl(it, environment.getCurrentPosition(it)) })
     }
-
-    override fun getContext() = Context.LOCAL
 }

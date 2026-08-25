@@ -9,20 +9,20 @@
 
 package it.unibo.alchemist.model.scafi.actions
 
+import it.unibo.alchemist.model._
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.incarnations.ScafiIncarnationUtils
 import it.unibo.alchemist.model.incarnations.ScafiIncarnationUtils.runInScafiDeviceContext
 import it.unibo.alchemist.model.scafi.properties.ScafiDevice
-import it.unibo.alchemist.model._
 
 import java.util.stream.Collectors
 import scala.jdk.CollectionConverters._
 
 class SendScafiMessage[T, P <: Position[P]](
-                                             environment: Environment[T, P],
-                                             device: ScafiDevice[T],
-                                             reaction: NodeReaction[T],
-                                             val program: RunScafiProgram[T, P]
+  environment: Environment[T, P],
+  device: ScafiDevice[T],
+  reaction: NodeReaction[T],
+  val program: RunScafiProgram[T, P]
 ) extends AbstractAction[T](device.getNode) {
   assert(reaction != null, "Reaction cannot be null")
   assert(program != null, "Program cannot be null")
@@ -69,7 +69,4 @@ class SendScafiMessage[T, P <: Position[P]](
     } action.sendExport(device.getNode.getId, toSend)
     program.prepareForComputationalCycle
   }
-
-  /** @return The context for this action. */
-  override def getContext: Context = Context.NEIGHBORHOOD
 }

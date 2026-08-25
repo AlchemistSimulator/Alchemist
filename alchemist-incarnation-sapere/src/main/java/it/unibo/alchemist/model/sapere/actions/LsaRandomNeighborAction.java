@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.sapere.actions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
@@ -114,12 +113,6 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
                         + getMatches() + "\nNodes: " + getNodes());
             }
         }
-    }
-
-    @Nonnull
-    @Override
-    public final Context getContext() {
-        return Context.NEIGHBORHOOD;
     }
 
     /**

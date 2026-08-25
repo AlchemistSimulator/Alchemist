@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.biochemistry.conditions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
@@ -49,12 +48,6 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     @Nonnull
     @Override
     public abstract AbstractNeighborCondition<T> cloneCondition(@Nonnull Node<T> newNode, @Nonnull NodeReaction<T> newReaction);
-
-    @Nonnull
-    @Override
-    public final Context getContext() {
-        return Context.NEIGHBORHOOD;
-    }
 
     /**
      * @return allows subclasses to access the environment

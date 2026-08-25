@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.biochemistry.conditions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
@@ -37,12 +36,10 @@ public final class EnvPresent extends AbstractCondition<Double> {
     public EnvPresent(final Environment<Double, ?> environment, final Node<Double> node) {
         super(node);
         this.environment = environment;
-
         addObservableDependency(environment.getNeighborhood(node));
         setValidity(environment.getNeighborhood(node).map(it ->
             it.getNeighbors().stream().anyMatch(n -> n instanceof EnvironmentNode)
         ));
-
         setPropensityContribution(isValid().map(it -> it ? 1d : 0d));
     }
 
@@ -53,12 +50,6 @@ public final class EnvPresent extends AbstractCondition<Double> {
         @Nonnull final NodeReaction<Double> newReaction
     ) {
         return new EnvPresent(environment, newNode);
-    }
-
-    @Nonnull
-    @Override
-    public Context getContext() {
-        return Context.NEIGHBORHOOD;
     }
 
     @Override

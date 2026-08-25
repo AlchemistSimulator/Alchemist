@@ -150,8 +150,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             require(_nodes.add(node)) { "Node with id ${node.id} was already existing in this environment." }
             observableNodes.add(node)
             spatialIndex.insert(node, *actualPosition.coordinates)
-            updateNeighborhood(node, true)
-            ifEngineAvailable { it.nodeAdded(node) }
+            updateNeighborhood(node)
+            ifEngineAvailable { simulation -> node.reactions.forEach(simulation::reactionAdded) }
             nodeAdded(node, position, retrieveNeighborhood(node))
             true
         }
@@ -183,11 +183,10 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         center: Node<T>,
         oldNeighborhood: Neighborhood<T>?,
         newNeighborhood: Neighborhood<T>,
-    ): Sequence<Operation<T>> = newNeighborhood
+    ): Sequence<Node<T>> = newNeighborhood
         .neighbors
         .asSequence()
         .filterNot { it in (oldNeighborhood ?: emptySet()) || retrieveNeighborhood(it).contains(center) }
-        .map { Operation(center, it, true) }
 
     private fun getAllNodesInRange(center: P, range: Double): List<Node<T>> {
         require(range > 0) { "Range query must be positive (provided: $range)" }
@@ -377,11 +376,10 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         center: Node<T>,
         oldNeighborhood: Neighborhood<T>?,
         newNeighborhood: Neighborhood<T>,
-    ): Sequence<Operation<T>> = oldNeighborhood
+    ): Sequence<Node<T>> = oldNeighborhood
         ?.neighbors
         ?.asSequence()
         ?.filter { neigh -> !newNeighborhood.contains(neigh) && retrieveNeighborhood(neigh).contains(center) }
-        ?.map { neigh -> Operation(center, neigh, isAdd = false) }
         .orEmpty()
 
     /**
@@ -424,29 +422,15 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                 .orElseThrow { IllegalStateException("Unknown incarnation $name") }
     }
 
-    private fun recursiveOperation(origin: Node<T>): Sequence<Operation<T>> {
-        val newNeighborhood = linkingRule.computeNeighborhood(Objects.requireNonNull(origin), this)
-        val oldNeighborhood: Neighborhood<T>? = neighCache.put(origin.id, newNeighborhood)
-        observableNeighCache.put(origin.id, newNeighborhood)
-        return toQueue(origin, oldNeighborhood, newNeighborhood)
-    }
-
-    private fun recursiveOperation(origin: Node<T>, destination: Node<T>, isAdd: Boolean): Sequence<Operation<T>> {
-        requireNotNull(destination) { "Destination node cannot be null." }
-        ifEngineAvailable {
-            if (isAdd) {
-                it.neighborAdded(origin, destination)
-            } else {
-                it.neighborRemoved(origin, destination)
-            }
-        }
-        val newNeighborhood = linkingRule.computeNeighborhood(destination, this)
-        val oldNeighborhood = neighCache.put(destination.id, newNeighborhood)
-        observableNeighCache.put(destination.id, newNeighborhood)
-        return toQueue(destination, oldNeighborhood, newNeighborhood)
+    private fun recomputeNeighborhood(node: Node<T>): Sequence<Node<T>> {
+        val newNeighborhood = linkingRule.computeNeighborhood(Objects.requireNonNull(node), this)
+        val oldNeighborhood = neighCache.put(node.id, newNeighborhood)
+        observableNeighCache.put(node.id, newNeighborhood)
+        return affectedNeighbors(node, oldNeighborhood, newNeighborhood)
     }
 
     override fun removeNode(node: Node<T>) {
+        val reactions = node.reactions.toList()
         invalidateCache()
         _nodes.remove(requireNotNull(node) { "Node cannot be null." })
         observableNodes.remove(node)
@@ -463,7 +447,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             }
         }
         updateRegionObservers(node, null, null)
-        ifEngineAvailable { it.nodeRemoved(node, neigh) }
+        ifEngineAvailable { simulation -> reactions.forEach(simulation::reactionRemoved) }
         nodeRemoved(node, neigh)
         node.dispose()
     }
@@ -517,11 +501,11 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         }
     }
 
-    private fun toQueue(
+    private fun affectedNeighbors(
         center: Node<T>,
         oldNeighborhood: Neighborhood<T>?,
         newNeighborhood: Neighborhood<T>,
-    ): Sequence<Operation<T>> = lostNeighbors(center, oldNeighborhood, newNeighborhood) +
+    ): Sequence<Node<T>> = lostNeighbors(center, oldNeighborhood, newNeighborhood) +
         foundNeighbors(center, oldNeighborhood, newNeighborhood)
 
     /**
@@ -530,13 +514,11 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     override fun toString(): String = javaClass.getSimpleName()
 
     /**
-     * After a node movement, recomputes the neighborhood and notifies the simulation of modifications.
-     * This allows movement actions to be defined as LOCAL, though they are normally considered GLOBAL.
+     * Recomputes the neighborhood after a node is added or moved.
      *
      * @param node the moved node
-     * @param isNewNode true if the node is new, false otherwise
      */
-    protected fun updateNeighborhood(node: Node<T>, isNewNode: Boolean) {
+    protected fun updateNeighborhood(node: Node<T>) {
         if (linkingRule.isLocallyConsistent()) {
             val newNeighborhood = linkingRule.computeNeighborhood(node, this)
             val oldNeighborhood: Neighborhood<T>? = neighCache.put(node.id, newNeighborhood)
@@ -554,9 +536,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                             neighCache.put(formerNeighbor.id, this)
                             observableNeighCache.put(formerNeighbor.id, this)
                         }
-                        if (!isNewNode) {
-                            ifEngineAvailable { it.neighborRemoved(node, formerNeighbor) }
-                        }
                     }
             }
             val newNeighbors = newNeighborhood.neighbors
@@ -566,17 +545,14 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                     neighCache.put(newNeighbor.id, this)
                     observableNeighCache.put(newNeighbor.id, this)
                 }
-                if (!isNewNode) {
-                    ifEngineAvailable { it.neighborAdded(node, newNeighbor) }
-                }
             }
         } else {
             val processed = TIntHashSet(nodes.size).apply { add(node.id) }
-            val operations = recursiveOperation(node).toMutableList()
-            while (operations.isNotEmpty()) {
-                val next = operations.removeLast()
-                if (processed.add(next.destination.id)) {
-                    operations.addAll(recursiveOperation(next.origin, next.destination, next.isAdd))
+            val nodesToUpdate = recomputeNeighborhood(node).toMutableList()
+            while (nodesToUpdate.isNotEmpty()) {
+                val next = nodesToUpdate.removeLast()
+                if (processed.add(next.id)) {
+                    nodesToUpdate.addAll(recomputeNeighborhood(next))
                 }
             }
         }
@@ -629,10 +605,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             delegate.dispose()
             onInactive()
         }
-    }
-
-    private data class Operation<T>(val origin: Node<T>, val destination: Node<T>, val isAdd: Boolean) {
-        override fun toString(): String = origin.toString() + (if (isAdd) " discovered " else " lost ") + destination
     }
 
     private companion object {

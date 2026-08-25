@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.model.scafi.actions
 
-import it.unibo.alchemist.model.actions.AbstractLocalAction
+import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.observation.{MutableObservable, Observable}
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
@@ -27,20 +27,20 @@ import scala.language.implicitConversions
 import scala.util.{Failure, Try}
 
 sealed class DefaultRunScafiProgram[P <: Position[P]](
-                                                       environment: Environment[Any, P],
-                                                       node: Node[Any],
-                                                       reaction: NodeReaction[Any],
-                                                       randomGenerator: RandomGenerator,
-                                                       programName: String,
-                                                       retentionTime: Double
+  environment: Environment[Any, P],
+  node: Node[Any],
+  reaction: NodeReaction[Any],
+  randomGenerator: RandomGenerator,
+  programName: String,
+  retentionTime: Double
 ) extends RunScafiProgram[Any, P](environment, node, reaction, randomGenerator, programName, retentionTime) {
 
   def this(
-            environment: Environment[Any, P],
-            node: Node[Any],
-            reaction: NodeReaction[Any],
-            randomGenerator: RandomGenerator,
-            programName: String
+    environment: Environment[Any, P],
+    node: Node[Any],
+    reaction: NodeReaction[Any],
+    randomGenerator: RandomGenerator,
+    programName: String
   ) =
     this(
       environment,
@@ -53,20 +53,20 @@ sealed class DefaultRunScafiProgram[P <: Position[P]](
 }
 
 sealed class RunScafiProgram[T, P <: Position[P]](
-                                                   environment: Environment[T, P],
-                                                   node: Node[T],
-                                                   reaction: NodeReaction[T],
-                                                   randomGenerator: RandomGenerator,
-                                                   programName: String,
-                                                   retentionTime: Double
-) extends AbstractLocalAction[T](node) {
+  environment: Environment[T, P],
+  node: Node[T],
+  reaction: NodeReaction[T],
+  randomGenerator: RandomGenerator,
+  programName: String,
+  retentionTime: Double
+) extends AbstractAction[T](node) {
 
   def this(
-            environment: Environment[T, P],
-            node: Node[T],
-            reaction: NodeReaction[T],
-            randomGenerator: RandomGenerator,
-            programName: String
+    environment: Environment[T, P],
+    node: Node[T],
+    reaction: NodeReaction[T],
+    randomGenerator: RandomGenerator,
+    programName: String
   ) =
     this(
       environment,

@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.biochemistry.actions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.actions.AbstractAction;
@@ -165,12 +164,6 @@ public final class CellTensionPolarization extends AbstractAction<Double> {
                 );
             }
         }
-    }
-
-    @Nonnull
-    @Override
-    public Context getContext() {
-        return Context.LOCAL;
     }
 
 }

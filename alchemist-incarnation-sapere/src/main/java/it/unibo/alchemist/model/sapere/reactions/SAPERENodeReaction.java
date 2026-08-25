@@ -12,11 +12,9 @@ package it.unibo.alchemist.model.sapere.reactions;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Condition;
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
-import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.reactions.AbstractNodeReaction;
@@ -40,7 +38,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 
 /**
  * This class realizes a reaction with Lsa concentrations.
@@ -56,8 +53,6 @@ public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMole
     private final RandomGenerator rng;
     private final SAPERETimeDistribution timeDistribution;
 
-    private boolean emptyExecution;
-    private boolean modifiesOnlyLocally = true;
     private List<Map<HashString, ITreeNode<?>>> possibleMatches = new ArrayList<>(0);
     private List<Map<ILsaNode, List<ILsaMolecule>>> possibleRemove = new ArrayList<>(0);
     private List<Double> propensities = new ArrayList<>(0);
@@ -129,10 +124,6 @@ public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMole
             executeActions(null);
             return;
         }
-        final Position<?> nodePosCache = modifiesOnlyLocally ? environment.getCurrentPosition(getNode()) : null;
-        final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally
-            ? new ArrayList<>(getLsaNode().getLsaSpace())
-            : null;
         final int selectedMatchIndex = selectMatchIndex();
         final Map<HashString, ITreeNode<?>> matches = possibleMatches.get(selectedMatchIndex);
         /*
@@ -147,10 +138,6 @@ public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMole
          */
         matches.put(LsaMolecule.SYN_T, new NumTreeNode(getNextOccurrence().getCurrent().toDouble()));
         executeActions(matches);
-        /*
-         * Empty action optimization
-         */
-        updateEmptyExecutionStatus(nodePosCache, localContentCache);
     }
 
     private void executeActions(final Map<HashString, ITreeNode<?>> matches) {
@@ -204,23 +191,6 @@ public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMole
         return propensities.size() - 1;
     }
 
-    private void updateEmptyExecutionStatus(
-        final Position<?> nodePositionBeforeExecution,
-        final List<? extends ILsaMolecule> localContentBeforeExecution
-    ) {
-        if (!modifiesOnlyLocally || nodePositionChanged(nodePositionBeforeExecution)) {
-            return;
-        }
-        final List<? extends ILsaMolecule> contents = getLsaNode().getLsaSpace();
-        if (contents.size() == Objects.requireNonNull(localContentBeforeExecution).size()) {
-            emptyExecution = localContentBeforeExecution.containsAll(contents);
-        }
-    }
-
-    private boolean nodePositionChanged(final Position<?> nodePositionBeforeExecution) {
-        return !Objects.requireNonNull(nodePositionBeforeExecution).equals(environment.getCurrentPosition(getNode()));
-    }
-
     @Override
     protected void onInitializationComplete(
         @Nonnull final Time atTime,
@@ -232,67 +202,55 @@ public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMole
         }
     }
 
-    /**
-     * @return the local {@link Node} as {@link ILsaNode}
-     */
-    private ILsaNode getLsaNode() {
-        return (ILsaNode) super.getNode();
-    }
-
     @Override
     protected void refreshReactionState(
         @Nonnull final Time currentTime,
         @Nonnull final Environment<List<ILsaMolecule>, ?> currentEnvironment
     ) {
-        if (emptyExecution) {
-            emptyExecution = false;
-            totalPropensity = 0;
+        /*
+         * Valid nodes must be re-initialized, as per issue #
+         */
+        final Collection<? extends Node<List<ILsaMolecule>>> neighs =
+                this.environment.getNeighborhood(getNode()).getCurrent().getNeighbors();
+        validNodes = new ArrayList<>(neighs.size());
+        for (final Node<List<ILsaMolecule>> neigh: neighs) {
+            validNodes.add((ILsaNode) neigh);
+        }
+        if (getConditions().isEmpty()) {
+            totalPropensity = baseRate();
         } else {
+            totalPropensity = 0d;
+            possibleMatches = new ArrayList<>();
+            propensities = new ArrayList<>();
+            possibleRemove = new ArrayList<>();
             /*
-             * Valid nodes must be re-initialized, as per issue #
+             * Apply all the conditions as filters
              */
-            final Collection<? extends Node<List<ILsaMolecule>>> neighs =
-                    this.environment.getNeighborhood(getNode()).getCurrent().getNeighbors();
-            validNodes = new ArrayList<>(neighs.size());
-            for (final Node<List<ILsaMolecule>> neigh: neighs) {
-                validNodes.add((ILsaNode) neigh);
-            }
-            if (getConditions().isEmpty()) {
-                totalPropensity = baseRate();
-            } else {
-                totalPropensity = 0d;
-                possibleMatches = new ArrayList<>();
-                propensities = new ArrayList<>();
-                possibleRemove = new ArrayList<>();
-                /*
-                 * Apply all the conditions as filters
-                 */
-                for (final ILsaCondition cond : getSAPEREConditions()) {
-                    if (!cond.filter(possibleMatches, validNodes, possibleRemove)) {
-                        /*
-                         * It is supposed that a condition fails if it must put null
-                         * in the filter lists, so null values are not expected.
-                         */
-                        return;
-                    }
-                }
-                if (numericRate()) {
-                    totalPropensity = possibleMatches.size() * baseRate();
-                } else {
+            for (final ILsaCondition cond : getSAPEREConditions()) {
+                if (!cond.filter(possibleMatches, validNodes, possibleRemove)) {
                     /*
-                     * For each possible match, compute the propensity
+                     * It is supposed that a condition fails if it must put null
+                     * in the filter lists, so null values are not expected.
                      */
-                    for (final Map<HashString, ITreeNode<?>> match : possibleMatches) {
-                        timeDistribution.setMatches(match);
-                        final double p = timeDistribution.getRate();
-                        if (Double.isNaN(p) || p < 0d) {
-                            throw new IllegalStateException("Invalid SAPERE propensity for match: " + p);
-                        }
-                        propensities.add(p);
-                        totalPropensity += p;
-                        if (totalPropensity == Double.POSITIVE_INFINITY) {
-                            return;
-                        }
+                    return;
+                }
+            }
+            if (numericRate()) {
+                totalPropensity = possibleMatches.size() * baseRate();
+            } else {
+                /*
+                 * For each possible match, compute the propensity
+                 */
+                for (final Map<HashString, ITreeNode<?>> match : possibleMatches) {
+                    timeDistribution.setMatches(match);
+                    final double p = timeDistribution.getRate();
+                    if (Double.isNaN(p) || p < 0d) {
+                        throw new IllegalStateException("Invalid SAPERE propensity for match: " + p);
+                    }
+                    propensities.add(p);
+                    totalPropensity += p;
+                    if (totalPropensity == Double.POSITIVE_INFINITY) {
+                        return;
                     }
                 }
             }
@@ -386,32 +344,4 @@ public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMole
         return numericRate() ? Double.toString(baseRate()) : timeDistribution.getRateEquation().toString();
     }
 
-    @Override
-    public void setActions(@Nonnull final List<? extends Action<List<ILsaMolecule>>> actions) {
-        setConditionsAndActions(getConditions(), actions);
-    }
-
-    @Override
-    public void setConditions(@Nonnull final List<? extends Condition<List<ILsaMolecule>>> conditions) {
-        setConditionsAndActions(conditions, getActions());
-    }
-
-    private void setConditionsAndActions(
-            final List<? extends Condition<List<ILsaMolecule>>> c,
-            final List<? extends Action<List<ILsaMolecule>>> a
-    ) {
-        super.setConditions(c);
-        super.setActions(a);
-        modifiesOnlyLocally = true;
-        for (final Action<List<ILsaMolecule>> action : a) {
-            if (action.getContext() != Context.LOCAL) {
-                modifiesOnlyLocally = false;
-                break;
-            }
-        }
-    }
-
-    /* package */ boolean modifiesOnlyLocally() {
-        return modifiesOnlyLocally;
-    }
 }

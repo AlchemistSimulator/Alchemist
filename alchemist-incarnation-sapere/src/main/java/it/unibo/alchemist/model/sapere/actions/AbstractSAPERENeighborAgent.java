@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.sapere.actions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Position;
@@ -17,7 +16,6 @@ import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 
-import java.io.Serial;
 import java.util.List;
 
 /**
@@ -27,8 +25,6 @@ import java.util.List;
  */
 public abstract class AbstractSAPERENeighborAgent<P extends Position<P>> extends AbstractSAPEREAgent {
 
-    @Serial
-    private static final long serialVersionUID = 8720614570156227036L;
     private final Environment<List<ILsaMolecule>, P> environment;
 
     /**
@@ -100,16 +96,6 @@ public abstract class AbstractSAPERENeighborAgent<P extends Position<P>> extends
     ) {
         super(node, m1, m2, m3);
         this.environment = environment;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see alice.alchemist.model.interfaces.Action#getContext()
-     */
-    @Override
-    public final Context getContext() {
-        return Context.NEIGHBORHOOD;
     }
 
     /**

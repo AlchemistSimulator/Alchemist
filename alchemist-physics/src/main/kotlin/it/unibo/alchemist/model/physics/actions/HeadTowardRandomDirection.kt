@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.physics.actions
 
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.actions.AbstractAction
@@ -44,11 +43,6 @@ class HeadTowardRandomDirection<T>(
         val originalAngle = environment.getHeading(node).asAngle()
         environment.setHeading(node, (originalAngle + delta).toDirection())
     }
-
-    /**
-     * {@inheritDoc}.
-     */
-    override fun getContext() = Context.LOCAL
 
     private fun Euclidean2DPosition.asAngle() = atan2(y, x)
 

@@ -17,7 +17,6 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Condition;
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Neighborhood;
@@ -46,7 +45,6 @@ import it.unibo.alchemist.model.sapere.timedistributions.SAPERETimeDistribution;
 import org.danilopianini.lang.HashString;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -63,8 +61,6 @@ import java.util.Objects;
 public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeReaction<List<ILsaMolecule>> {
 
     private static final List<ILsaMolecule> EMPTY_LIST = Collections.unmodifiableList(new ArrayList<>(0));
-    @Serial
-    private static final long serialVersionUID = 8362443887879500016L;
     private static final IExpression ZERO_NODE = new Expression(new NumTreeNode(0d));
 
     private final int argPosition;
@@ -623,12 +619,6 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
 
         @Override
         public void execute() {
-        }
-
-        @Override
-        @Nonnull
-        public Context getContext() {
-            return null;
         }
 
         @Override

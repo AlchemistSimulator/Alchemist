@@ -17,7 +17,6 @@ import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.FlexibleQuadTree;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.NaN;
@@ -30,9 +29,6 @@ import static java.lang.Double.POSITIVE_INFINITY;
  * @param <P> {@link Position2D} type
  */
 public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends AbstractEnvironment<T, P> {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     private double minX = POSITIVE_INFINITY;
     private double maxX = NEGATIVE_INFINITY;
@@ -123,8 +119,7 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
     public void moveNodeToPosition(@Nonnull final Node<T> node, @Nonnull final P newPosition) {
         includeObject(newPosition);
         setPosition(node, newPosition);
-        updateNeighborhood(node, false);
-        ifEngineAvailable(sim -> sim.nodeMoved(node));
+        updateNeighborhood(node);
     }
 
     /**

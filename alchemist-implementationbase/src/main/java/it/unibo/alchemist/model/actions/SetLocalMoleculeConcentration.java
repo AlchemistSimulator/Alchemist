@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.actions;
 
 import it.unibo.alchemist.model.Action;
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
@@ -47,11 +46,4 @@ public final class SetLocalMoleculeConcentration<T> extends AbstractActionOnSing
     public void execute() {
         getNode().setConcentration(getMolecule(), val);
     }
-
-    @Nonnull
-    @Override
-    public Context getContext() {
-        return Context.LOCAL;
-    }
-
 }

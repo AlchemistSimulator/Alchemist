@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.biochemistry.conditions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
@@ -53,12 +52,6 @@ public final class TensionPresent extends AbstractCondition<Double> {
             return new TensionPresent(environment, node);
         }
         throw new IllegalArgumentException("Node must have a " + CircularDeformableCellProperty.class.getSimpleName());
-    }
-
-    @Nonnull
-    @Override
-    public Context getContext() {
-        return Context.NEIGHBORHOOD;
     }
 
     private void setPropensityContribution() {

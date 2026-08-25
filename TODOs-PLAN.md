@@ -1,6 +1,6 @@
 # Reactive Engine Refactor Plan
 
-Last updated: 2026-08-24
+Last updated: 2026-08-25
 
 Working branch: `marmellata`
 
@@ -52,8 +52,12 @@ Do not mark an item complete until its implementation and proportional verificat
 - Make unsatisfied conditions suspend scheduling: whenever a reaction's combined validity is `false`, its public
   `nextOccurrence` is `Time.INFINITY`. Revalidation applies the reaction family's invalidation policy at the current
   simulation time before publishing a finite occurrence; it must never resurrect an occurrence in the past.
-- Remove reaction-level input/output contexts. Reactive invalidation and scheduler membership no longer use their
-  dependency-graph locality summary; specialized code that needs locality derives it from its direct inputs.
+- Remove `Context` locality metadata from reactions, actions, and conditions. Reactive invalidation is expressed by
+  exact observable inputs, not broad local, neighborhood, or global categories. Do not introduce a replacement
+  locality-capability API for scheduling optimizations.
+- Keep node movement and neighborhood maintenance entirely inside the model. The simulation boundary accepts only
+  root reaction membership notifications for scheduling: adding or removing a node expands to one ordinary
+  `reactionAdded` or `reactionRemoved` notification per hosted reaction.
 - Remove observable dependency sets from conditions after migrating every non-validity scheduling input to a
   direct reaction-specific invalidation signal.
 - Make layers observable before completing that migration. Consumers of layer data must receive changes through a
@@ -346,7 +350,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] Make disposal idempotent and prevent post-removal emissions.
 - [x] Document and enforce simulation-thread confinement for scheduling registration and fail fast on registration
   errors.
-- [ ] Complete the scheduled-entity naming migration as one coherent public-API change:
+- [x] Complete the scheduled-entity naming migration as one coherent public-API change:
   - [x] Rename `Actionable<T>` to the owner-neutral root `Reaction<T>` and move only behavior shared by node- and
     environment-owned reactions into it.
   - [x] Rename the current node-owned `Reaction<T>` to `NodeReaction<T>`, retaining `node` and
@@ -386,9 +390,6 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   - [x] Migrate all Java, Kotlin, and Scala consumers atomically, including tests and generated/factory-facing API
     surfaces. Remove transitional aliases once repository consumers compile unless a deliberate compatibility
     contract is documented.
-  - [ ] Update `external-resources/learning-scafi-alchemist` upstream from `type: Event` to
-    `type: GenericReaction`, then bump the pinned submodule revision and verify its examples. Do not leave an
-    uncommittable local modification in the nested repository.
   - [x] Update KDoc/Javadoc, the metamodel, the dedicated scheduling-and-ownership page, engine boundary
     documentation, configuration references, diagrams, and migration notes in the same change. Historical entries
     may retain old names only when clearly identified as historical.
@@ -513,14 +514,16 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   - [ ] Update the layer API documentation, YAML reference, layer how-to, and scheduling documentation in the same
     change, removing the current assumption that layers are necessarily static.
 - [ ] Audit biochemistry, Protelis, SAPERE, Scafi, cognitive agents, physics, maps, and environment-owned reactions.
-- [ ] Remove topology-driven dependency maintenance only after equivalent observable invalidation is tested.
+- [x] Remove topology-driven engine callbacks. Neighborhood and position changes remain observable model state;
+  affected reactions publish their own scheduling changes through `nextOccurrence`.
 - [x] Remove reaction-level input/output `Context` from the scheduled-reaction root, implementations, GraphQL,
-  tests, and documentation; SAPERE derives its local-modification cache decision directly from action contexts.
-- [ ] Audit the remaining action/condition `Context` API and retain only uses with independent semantic value.
-- [ ] Verify reaction and node addition/removal clean up every subscription.
-- [ ] Update `Simulation` topology callback documentation, which still mentions dependency computation. Retain
-  node/reaction add/remove callbacks for runtime scheduler membership; remove or repurpose no-op neighbor/movement
-  callbacks only after observable topology coverage is demonstrated.
+  tests, and documentation.
+- [x] Remove the remaining action/condition `Context` API and the SAPERE optimization that depended on it. SAPERE
+  now conservatively recomputes its matches instead of inferring mutation scope from action categories.
+- [x] Route runtime node addition and removal through the same per-reaction membership notifications used by direct
+  host mutations, retaining exact scheduler-subscription cleanup.
+- [x] Remove node, movement, and neighborhood callbacks from `Simulation` and `Engine`; topology recomputation no
+  longer constructs add/remove operation records whose sole consumer was dependency invalidation.
 
 ## Phase 10: behavioral and regression coverage
 
@@ -595,6 +598,21 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-08-25: completed the removal of context-driven engine invalidation. `Action` and `Condition` no longer
+  expose `Context`, the model has no replacement locality classification, and behavior-free local SAPERE/action
+  bases are gone. Neighbor-specific implementations remain only where neighborhood access is actual model
+  behavior. Removing the last context consumer also removed SAPERE's locality-based empty-execution cache; SAPERE
+  now conservatively recomputes matches and propensity on refresh. `Simulation` and `Engine` no longer expose node,
+  movement, or neighborhood callbacks. Runtime node membership instead expands into exact per-reaction
+  `reactionAdded`/`reactionRemoved` notifications after model registration changes, preserving scheduler
+  subscription ownership while keeping topology entirely model-side. Neighborhood maintenance was simplified to
+  propagate affected nodes directly, without constructing dependency-invalidation operation records. The dedicated
+  scheduling documentation now describes this reaction-only boundary. Kotlin formatting, focused API, engine,
+  implementation-base, SAPERE, Protelis, biochemistry, Scafi, physics, smart-camera, geometry, and documentation
+  checks pass; `hugoBuild` succeeds, and the final filtered repository build passes 913 tasks in 3m38s with only the
+  recorded alternate-JVM, native-package, and fat/shadow-JAR exclusions. The required Scafi formatting task was run
+  and returned Gradle success, but its embedded runner still rejects configured Scalafmt `3.11.5`; the open tooling
+  repair item above therefore remains necessary.
 - 2026-08-24: simplified YAML reaction construction by restoring the loader's previous invariant that every program
   receives a contextual `TimeDistribution`. A one-shot `Event` does not request or retain that object, so the
   distribution remains absent from its model API and behavior; accepting one cheap unused construction removes the

@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.sapere.actions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
@@ -87,15 +86,6 @@ public class LsaStandardAction extends AbstractLsaAction {
     @Override
     public void execute() {
         setConcentration(getNode());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Nonnull
-    @Override
-    public Context getContext() {
-        return Context.LOCAL;
     }
 
     /**

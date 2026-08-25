@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.biochemistry.conditions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Node;
@@ -62,12 +61,6 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
         @Nonnull final NodeReaction<Double> newReaction
     ) {
         return new BiomolPresentInEnv<>(environment, newNode, getBiomolecule(), getQuantity());
-    }
-
-    @Nonnull
-    @Override
-    public Context getContext() {
-        return Context.NEIGHBORHOOD;
     }
 
     private void setUpObservability() {

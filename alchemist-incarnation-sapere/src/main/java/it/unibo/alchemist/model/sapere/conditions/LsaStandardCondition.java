@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.sapere.conditions;
 
 import com.google.common.collect.Sets;
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.observation.MutableObservable;
@@ -127,15 +126,6 @@ public class LsaStandardCondition extends AbstractLsaCondition {
             }
         }
         return makeValid(matchesfound);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Nonnull
-    @Override
-    public Context getContext() {
-        return Context.LOCAL;
     }
 
     /**

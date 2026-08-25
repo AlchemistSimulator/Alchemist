@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.biochemistry.actions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
@@ -68,12 +67,6 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
      * @param targetNode the node where the action will be execute
      */
     public abstract void execute(Node<T> targetNode);
-
-    @Nonnull
-    @Override
-    public final Context getContext() {
-        return Context.NEIGHBORHOOD;
-    }
 
     /**
      * @return exposes the {@link Environment} to subclasses

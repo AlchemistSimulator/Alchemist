@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.biochemistry.actions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.actions.AbstractActionOnSingleMolecule;
@@ -55,12 +54,6 @@ public final class ChangeBiomolConcentrationInCell extends AbstractActionOnSingl
     @Override
     public void execute() {
         super.getNode().setConcentration(getMolecule(), super.getNode().getConcentration(getMolecule()) + deltaC);
-    }
-
-    @Nonnull
-    @Override
-    public Context getContext() {
-        return Context.LOCAL;
     }
 
     @Override

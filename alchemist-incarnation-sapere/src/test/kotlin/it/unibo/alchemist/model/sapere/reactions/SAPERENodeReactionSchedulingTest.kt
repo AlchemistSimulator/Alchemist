@@ -12,12 +12,9 @@ package it.unibo.alchemist.model.sapere.reactions
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.sapere.ILsaMolecule
 import it.unibo.alchemist.model.sapere.nodes.LsaNode
 import it.unibo.alchemist.model.sapere.timedistributions.SAPEREExponentialTime
 import it.unibo.alchemist.model.times.DoubleTime
@@ -44,23 +41,5 @@ class SAPERENodeReactionSchedulingTest {
 
         reaction.updateSchedulingAfterFiring(reaction.nextOccurrence.current)
         verify(exactly = 2) { rng.nextDouble() }
-    }
-
-    @Test
-    fun `locality follows installed action contexts`() {
-        val incarnation = SAPEREIncarnation<Euclidean2DPosition>()
-        val environment = Continuous2DEnvironment(incarnation)
-        val node = LsaNode(environment)
-        val rng = mockk<RandomGenerator>(relaxed = true)
-        val reaction = SAPERENodeReaction(environment, node, rng, SAPEREExponentialTime("1", rng))
-        assertTrue(reaction.modifiesOnlyLocally())
-        val local = mockk<Action<List<ILsaMolecule>>>()
-        every { local.getContext() } returns Context.LOCAL
-        reaction.setActions(listOf(local))
-        assertTrue(reaction.modifiesOnlyLocally())
-        val neighbor = mockk<Action<List<ILsaMolecule>>>()
-        every { neighbor.getContext() } returns Context.NEIGHBORHOOD
-        reaction.setActions(listOf(neighbor))
-        assertTrue(!reaction.modifiesOnlyLocally())
     }
 }

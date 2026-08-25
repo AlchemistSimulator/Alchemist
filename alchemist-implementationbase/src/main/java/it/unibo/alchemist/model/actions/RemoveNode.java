@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
@@ -34,12 +33,6 @@ public final class RemoveNode<T> extends AbstractAction<T> {
     public RemoveNode(final Environment<T, ?> environment, final Node<T> node) {
         super(node);
         this.environment = environment;
-    }
-
-    @Nonnull
-    @Override
-    public Context getContext() {
-        return Context.LOCAL;
     }
 
     @Override

@@ -8,7 +8,6 @@
  */
 package it.unibo.alchemist.model.protelis.actions
 
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.NodeReaction
@@ -36,8 +35,6 @@ class SendToNeighbor(node: Node<Any>, reaction: NodeReaction<Any>, val protelisP
         }
         return SendToNeighbor(node, this.reaction, possibleRefs[0])
     }
-
-    override fun getContext(): Context = Context.NEIGHBORHOOD
 
     override fun execute() {
         val protelisDevice = node.asProperty<ProtelisDevice<*>>(ProtelisDevice::class.java)

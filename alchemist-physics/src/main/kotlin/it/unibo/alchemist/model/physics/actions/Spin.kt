@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.physics.actions
 
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.TimeDistributedReaction
@@ -44,6 +43,4 @@ class Spin<T>(
         val headingAngle = environment.getHeading(node).asAngle + realSpeed
         environment.setHeading(node, environment.makePosition(cos(headingAngle), sin(headingAngle)))
     }
-
-    override fun getContext() = Context.LOCAL
 }

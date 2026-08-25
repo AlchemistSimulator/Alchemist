@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.biochemistry.actions;
 
 import it.unibo.alchemist.model.Action;
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
@@ -129,12 +128,6 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
                 changeConcentrationInSortedNodes(environmentNodesSurrounding);
             }
         }
-    }
-
-    @Nonnull
-    @Override
-    public Context getContext() {
-        return Context.NEIGHBORHOOD;
     }
 
     /**

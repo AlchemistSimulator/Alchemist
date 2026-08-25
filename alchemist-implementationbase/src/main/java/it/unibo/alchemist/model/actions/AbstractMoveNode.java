@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,13 +10,10 @@
 package it.unibo.alchemist.model.actions;
 
 import it.unibo.alchemist.model.Action;
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.EuclideanEnvironment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
-
-import java.io.Serial;
 
 /**
  * This action moves a node inside a given environment.
@@ -26,8 +23,6 @@ import java.io.Serial;
  */
 public abstract class AbstractMoveNode<T, P extends Position<P>> extends AbstractAction<T> {
 
-    @Serial
-    private static final long serialVersionUID = -5867654295577425307L;
     private final Environment<T, P> environment;
     private final boolean absolute;
 
@@ -80,11 +75,6 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
                 );
             }
         }
-    }
-
-    @Override
-    public final Context getContext() {
-        return Context.LOCAL;
     }
 
     /**

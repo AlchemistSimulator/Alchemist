@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.protelis.conditions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
@@ -75,12 +74,6 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
     public void dispose() {
         super.dispose();
         getProgram().getObserveComputationalCycleComplete().dispose();
-    }
-
-    @Nonnull
-    @Override
-    public Context getContext() {
-        return Context.LOCAL;
     }
 
     /**

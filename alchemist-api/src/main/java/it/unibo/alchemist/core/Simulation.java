@@ -11,8 +11,6 @@ package it.unibo.alchemist.core;
 
 import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Neighborhood;
-import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
@@ -96,66 +94,6 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     CompletableFuture<Unit> goToTime(Time t);
 
     /**
-     * This method must get called in case a communication link connecting two
-     * nodes gets created during the simulation. This method provides dependency
-     * and scheduling times re-computation for all the reactions interested in
-     * such change.
-     *
-     * @param node the node
-     * @param n    the second node
-     */
-    void neighborAdded(Node<T> node, Node<T> n);
-
-    /**
-     * This method must get called in case a communication link connecting two
-     * nodes gets broken during the simulation. This method provides dependency
-     * and scheduling times re-computation for all the reactions interested in
-     * such change.
-     *
-     * @param node the node
-     * @param n    the second node
-     */
-    void neighborRemoved(Node<T> node, Node<T> n);
-
-    /**
-     * This method must get called in case a node is added to the environment
-     * during the simulation and after its neighborhood has been computed (or
-     * can be consistently computed by the simulated environment). This method
-     * provides dependency computation and is responsible of correctly
-     * scheduling the Node's new reactions.
-     *
-     * @param node the freshly added node
-     * @throws IllegalMonitorStateException
-     *             if the method gets called from a different thread than the
-     *             simulation thread
-     */
-    void nodeAdded(Node<T> node);
-
-    /**
-     * This method must get called in case a node is moved in the environment
-     * during the simulation and after its neighborhood has been computed (or
-     * can be consistently computed by the simulated environment). This method
-     * provides dependency computation and is responsible of correctly
-     * scheduling the Node's reactions.
-     *
-     * @param node the node
-     */
-    void nodeMoved(Node<T> node);
-
-    /**
-     * This method must get called in case a node is removed from the
-     * environment during the simulation and after its neighborhood has been
-     * computed (or can be consistently computed by the simulated environment).
-     * This method provides dependency computation and is responsible of
-     * correctly removing the Node's reactions from the scheduler.
-     *
-     * @param node            the freshly removed node
-     * @param oldNeighborhood the neighborhood of the node as it was before it was removed
-     *                        (used to calculate reverse dependencies)
-     */
-    void nodeRemoved(Node<T> node, Neighborhood<T> oldNeighborhood);
-
-    /**
      * Sends a pause command to the simulation.
      * There is no guarantee on when this command will be actually processed.
      *
@@ -174,7 +112,8 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     /**
      * Notifies the simulation that a reaction host has registered a reaction.
      * Model code should register the reaction through its host; the host invokes this callback after membership
-     * actually changes.
+     * actually changes. Adding a node invokes this callback once for each reaction already hosted by that node;
+     * node and topology changes have no separate simulation callback.
      *
      * @param reactionToAdd the registered reaction
      */
@@ -183,7 +122,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     /**
      * Notifies the simulation that a reaction host has unregistered a reaction.
      * Model code should unregister the reaction through its host; the host invokes this callback after membership
-     * actually changes.
+     * actually changes. Removing a node invokes this callback once for each hosted reaction before disposing it.
      *
      * @param reactionToRemove the unregistered reaction
      */

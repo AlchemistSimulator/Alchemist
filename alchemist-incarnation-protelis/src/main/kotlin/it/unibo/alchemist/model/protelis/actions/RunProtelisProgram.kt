@@ -9,7 +9,6 @@
 package it.unibo.alchemist.model.protelis.actions
 
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
@@ -218,11 +217,6 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         node.setConcentration(name, vm.currentValue)
         _observeComputationalCycleComplete.update { true }
     }
-
-    /*
-     * A Protelis program never writes in other nodes
-     */
-    override fun getContext() = Context.LOCAL
 
     override fun hashCode() = name.hashCode()
 

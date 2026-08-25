@@ -11,10 +11,9 @@ package it.unibo.alchemist.scafi.test
 
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
-import it.unibo.alchemist.model.{Action, Context, Node, NodeReaction}
+import it.unibo.alchemist.model.{Action, Node, NodeReaction}
 
 class FooAction(val node: Node[Any], moleculeName: String) extends AbstractAction[Any](node) {
   override def cloneAction(node: Node[Any], reaction: NodeReaction[Any]): Action[Any] = new FooAction(node, moleculeName)
   override def execute(): Unit = node.getConcentration(new SimpleMolecule(moleculeName))
-  override def getContext: Context = Context.LOCAL
 }

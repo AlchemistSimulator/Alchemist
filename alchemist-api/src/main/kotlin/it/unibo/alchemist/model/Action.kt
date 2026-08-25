@@ -24,9 +24,4 @@ interface Action<T> {
      * Applies this action to the model.
      */
     fun execute()
-
-    /**
-     * The context in which this action may modify the model.
-     */
-    fun getContext(): Context = Context.LOCAL
 }

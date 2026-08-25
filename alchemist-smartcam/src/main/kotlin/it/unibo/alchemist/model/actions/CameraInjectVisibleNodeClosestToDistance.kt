@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.actions
 
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
@@ -61,6 +60,4 @@ class CameraInjectVisibleNodeClosestToDistance(
             }
         }
     }
-
-    override fun getContext() = Context.LOCAL
 }

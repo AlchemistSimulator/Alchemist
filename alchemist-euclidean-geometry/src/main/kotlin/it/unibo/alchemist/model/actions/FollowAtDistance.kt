@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.actions
 
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
@@ -73,6 +72,4 @@ class FollowAtDistance<T>(
             }
         }
     }
-
-    override fun getContext() = Context.LOCAL
 }

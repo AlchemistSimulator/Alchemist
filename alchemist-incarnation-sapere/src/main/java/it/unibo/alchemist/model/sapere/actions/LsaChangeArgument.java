@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  */
-public final class LsaChangeArgument extends AbstractSAPERELocalAgent {
+public final class LsaChangeArgument extends AbstractSAPEREAgent {
 
     private static final HashString OLD = new HashString("OldType");
     private final RandomGenerator rnd;

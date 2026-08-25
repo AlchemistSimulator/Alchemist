@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,25 +9,19 @@
 
 package it.unibo.alchemist.model.sapere.actions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 
-import java.io.Serial;
-
 /**
  * This agent matches a template, removes a single instance of it from the
  * current node and moves the LSA to another node (specified at creation time).
- * Please note that, since the destination could be anywhere in the system, this
- * action has a GLOBAL {@link Context}, and thus may trigger a large number of
- * updates, slowing down the whole simulation. Handle with care.
+ * Since the destination could be anywhere in the system, this action may trigger a large number of updates,
+ * slowing down the whole simulation. Handle with care.
  *
  */
 public final class SAPEREMoveLSAToAgent extends AbstractSAPEREAgent {
 
-    @Serial
-    private static final long serialVersionUID = -8020706131248061313L;
     private final ILsaNode destination;
     private final ILsaMolecule moleculeTemplate;
 
@@ -73,10 +67,4 @@ public final class SAPEREMoveLSAToAgent extends AbstractSAPEREAgent {
         getNode().removeConcentration(instance);
         destination.setConcentration(instance);
     }
-
-    @Override
-    public Context getContext() {
-        return Context.GLOBAL;
-    }
-
 }

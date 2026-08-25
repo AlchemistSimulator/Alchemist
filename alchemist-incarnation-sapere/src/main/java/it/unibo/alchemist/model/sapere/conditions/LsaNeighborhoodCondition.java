@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.sapere.conditions;
 
-import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
@@ -277,19 +276,6 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
         }
         incorporateNewMatches(matchesPerNode, matches, getMolecule(), matchesList, alreadyRemovedMap, retrieved);
         return true;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * alice.alchemist.model.implementations.conditions.LsaStandardCondition
-     * #getContext()
-     */
-    @Nonnull
-    @Override
-    public Context getContext() {
-        return Context.NEIGHBORHOOD;
     }
 
     /*

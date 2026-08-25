@@ -25,11 +25,6 @@ interface Condition<T> : Disposable {
     fun cloneCondition(node: Node<T>, reaction: NodeReaction<T>): Condition<T>
 
     /**
-     * The context inspected by this condition.
-     */
-    fun getContext(): Context = Context.LOCAL
-
-    /**
      * Observable model values which may affect this condition or its propensity contribution.
      *
      * Reaction implementations may observe these values to refresh their state and scheduling policy. The engine

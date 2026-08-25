@@ -214,10 +214,9 @@ object ScafiIncarnationUtils {
   private def isScafiNode[T](node: Node[T]): Boolean = node.asPropertyOrNull[ScafiDevice[T]](classOf[ScafiDevice[T]]) != null
 
   def allActions[T, P <: Position[P], C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
-    for {
-      reaction: NodeReaction[T] <- node.getReactions.asScala
-      action: Action[T] <- reaction.getActions.asScala if klass.isInstance(action)
-    } yield action.asInstanceOf[C]
+    node.getReactions.asScala
+      .flatMap(_.getActions.asScala)
+      .collect { case action if klass.isInstance(action) => action.asInstanceOf[C] }
 
   def allScafiProgramsFor[T, P <: Position[P]](node: Node[T]): mutable.Buffer[RunScafiProgram[T, P]] =
     allActions[T, P, RunScafiProgram[T, P]](node, classOf[RunScafiProgram[T, P]])

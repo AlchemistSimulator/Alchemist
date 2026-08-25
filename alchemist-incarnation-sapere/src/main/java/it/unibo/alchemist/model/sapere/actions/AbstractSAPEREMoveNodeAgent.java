@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -17,16 +17,13 @@ import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 
-import java.io.Serial;
 import java.util.List;
 
 /**
  * @param <P> {@link Position} type
  */
-public abstract class AbstractSAPEREMoveNodeAgent<P extends Position<? extends P>> extends AbstractSAPERELocalAgent {
+public abstract class AbstractSAPEREMoveNodeAgent<P extends Position<? extends P>> extends AbstractSAPEREAgent {
 
-    @Serial
-    private static final long serialVersionUID = 1202282862490424016L;
     private final Environment<List<ILsaMolecule>, P> environment;
 
     /**

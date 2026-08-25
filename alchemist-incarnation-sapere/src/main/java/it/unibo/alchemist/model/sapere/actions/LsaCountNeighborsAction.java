@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  */
-public final class LsaCountNeighborsAction extends AbstractSAPERELocalAgent {
+public final class LsaCountNeighborsAction extends AbstractSAPEREAgent {
 
     private final HashString countVarName;
     private final Environment<List<ILsaMolecule>, ?> environment;

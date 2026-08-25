@@ -9,8 +9,6 @@
 package it.unibo.alchemist.core
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Neighborhood
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.observation.Disposable
@@ -66,27 +64,6 @@ open class Engine<T, P : Position<out P>>(
             LOGGER.info("Termination condition reached.")
         }
         currentStep = step + 1
-    }
-
-    /* No dependency graph to update */
-    override fun neighborAdded(node: Node<T>, n: Node<T>) = Unit
-
-    override fun neighborRemoved(node: Node<T>, n: Node<T>) = Unit
-
-    override fun nodeMoved(node: Node<T>) = Unit
-
-    override fun nodeAdded(node: Node<T>) {
-        schedule {
-            node.reactions.forEach { scheduleReaction(it) }
-        }
-    }
-
-    override fun nodeRemoved(node: Node<T>, oldNeighborhood: Neighborhood<T>) {
-        // copy of reactions due to how [GenericNode.dispose] clears the reactions
-        val reactions = ArrayList(node.reactions)
-        schedule {
-            reactions.forEach { removeReactionIfScheduled(it) }
-        }
     }
 
     override fun reactionAdded(reactionToAdd: Reaction<T>) {

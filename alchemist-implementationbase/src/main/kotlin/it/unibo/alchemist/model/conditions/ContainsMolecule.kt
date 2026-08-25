@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.conditions
 
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 

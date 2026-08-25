@@ -203,6 +203,25 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         scheduler.reactions shouldNotContain environmentReaction
     }
 
+    "runtime node membership synchronizes each hosted reaction" {
+        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+        val scheduler = RecordingScheduler<Double>()
+        val engine = TestEngine(environment, scheduler)
+        engine.initializeForTest()
+        val node = GenericNode(environment)
+        val reaction = EmittingNodeReaction(node)
+        node.addReaction(reaction)
+
+        environment.addNode(node, environment.makePosition(0, 0))
+        engine.drainCommand()
+        scheduler.reactions shouldContain reaction
+
+        environment.removeNode(node)
+        engine.drainCommand()
+        scheduler.reactions shouldNotContain reaction
+        reaction.disposed shouldBe true
+    }
+
     "duplicate registration is rejected" {
         val (environment, _, _) = fixture()
         val scheduler = RecordingScheduler<Double>()

@@ -14,12 +14,12 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.actions.AbstractLocalAction
+import it.unibo.alchemist.model.actions.AbstractAction
 
 class TestEventAction<T, P : Position<P>>(
     private val environment: Environment<T, P>,
     node: Node<T>,
-) : AbstractLocalAction<T>(node) {
+) : AbstractAction<T>(node) {
     private var executed = false
 
     override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): Action<T> = TestEventAction(environment, node)

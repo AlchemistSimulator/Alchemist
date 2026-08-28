@@ -57,21 +57,21 @@ class FileSystemCacheManager<in R : CacheKey>(private val provider: ExternalData
      * @throws IllegalStateException if [provider] writes no file in the temporary directory.
      */
     override fun getOrProduce(request: R): Path {
-        val finalDir = root.resolve(request.toFileName())
+        val finalDir = root.resolve(request.toDirectoryName())
         // cache hit: the directory already exists
         if (Files.isDirectory(finalDir)) {
-            logger.info("Cache hit for '${request.toFileName()}': using $finalDir")
+            logger.info("Cache hit for '${request.toDirectoryName()}': using $finalDir")
             return finalDir
         }
-        logger.info("Cache miss for '${request.toFileName()}': fetching data")
+        logger.info("Cache miss for '${request.toDirectoryName()}': fetching data")
         // cache miss (also creates root if it does not exist)
         Files.createDirectories(tmpRoot)
-        val temp = Files.createTempDirectory(tmpRoot, request.toFileName())
+        val temp = Files.createTempDirectory(tmpRoot, request.toDirectoryName())
         var promoted = false
         try {
             // tries to fill the directory with data
             provider.fetch(request, temp)
-            check(hasData(temp)) { "Provider produced no files for '${request.toFileName()}'" }
+            check(hasData(temp)) { "Provider produced no files for '${request.toDirectoryName()}'" }
             promoted = promote(temp, finalDir)
             logger.info("Asset(s) cached in $finalDir")
             return finalDir

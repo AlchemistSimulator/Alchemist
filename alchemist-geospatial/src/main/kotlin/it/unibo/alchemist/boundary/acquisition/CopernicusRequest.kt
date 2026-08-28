@@ -28,7 +28,7 @@ data class CopernicusRequest(val dataset: String, val inputs: Map<String, Any>) 
      * followed by a truncation of the SHA-256 hash of the canonical `(dataset, inputs)` pair. The
      * prefix aids the human reading the cache directory; the hash provides collision resistance.
      */
-    override fun toFileName(): String {
+    override fun toDirectoryName(): String {
         val canonical = CanonicalJson.encode(
             mapOf(
                 "dataset" to dataset,

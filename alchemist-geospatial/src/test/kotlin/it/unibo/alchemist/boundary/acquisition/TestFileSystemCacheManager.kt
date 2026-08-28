@@ -83,13 +83,13 @@ class TestFileSystemCacheManager : StringSpec({
         provider.calls shouldBe 1
     }
 
-    "the returned directory name is exactly request.toFileName() under root" {
+    "the returned directory name is exactly request.toDirectoryName() under root" {
         val root = newRoot()
         val req = request("cems-glofas_abc123")
         val provider = FakeCopernicusProvider { _, dir -> writeOneFile(dir) }
         val cache = FileSystemCacheManager(provider, root)
         val result = cache.getOrProduce(req)
-        result shouldBe root.resolve(req.toFileName())
+        result shouldBe root.resolve(req.toDirectoryName())
     }
 
     "produce failure: the exception propagates and no entry is promoted" {
@@ -98,7 +98,7 @@ class TestFileSystemCacheManager : StringSpec({
         val provider = FakeCopernicusProvider { _, _ -> error("download blew up") }
         val cache = FileSystemCacheManager(provider, root)
         shouldThrow<IllegalStateException> { cache.getOrProduce(req) }
-        root.resolve(req.toFileName()).shouldNotExist() // no poisoned dir
+        root.resolve(req.toDirectoryName()).shouldNotExist() // no poisoned dir
     }
 
     "produce failure: the temporary directory is cleaned up, leaving .tmp empty" {
@@ -126,7 +126,7 @@ class TestFileSystemCacheManager : StringSpec({
         shouldThrow<IllegalStateException> {
             cache.getOrProduce(req)
         }
-        root.resolve(req.toFileName()).shouldNotExist()
+        root.resolve(req.toDirectoryName()).shouldNotExist()
     }
 
     "validate before promoting: a dir with only subdirs (no regular file) is rejected" {
@@ -140,7 +140,7 @@ class TestFileSystemCacheManager : StringSpec({
         shouldThrow<IllegalStateException> {
             cache.getOrProduce(req)
         }
-        root.resolve(req.toFileName()).shouldNotExist()
+        root.resolve(req.toDirectoryName()).shouldNotExist()
     }
 
     "hit is detected even across a fresh CacheManager over the same root" {

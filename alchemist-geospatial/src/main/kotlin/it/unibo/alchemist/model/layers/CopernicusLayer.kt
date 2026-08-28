@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.model.layers
 
-import it.unibo.alchemist.boundary.acquisition.CopernicusCacheManager
 import it.unibo.alchemist.boundary.acquisition.CopernicusDataStoreProvider
 import it.unibo.alchemist.boundary.acquisition.CopernicusRequest
+import it.unibo.alchemist.boundary.acquisition.FileSystemCacheManager
 import it.unibo.alchemist.boundary.utils.CdsApiRc
 import it.unibo.alchemist.boundary.utils.CopernicusInputs
 import it.unibo.alchemist.model.Environment
@@ -302,7 +302,7 @@ open class CopernicusLayer<T>(
             cdsApiRcFile: Path,
         ): Path {
             val provider = CopernicusDataStoreProvider(endpoint, checkMd5) { CdsApiRc.readToken(cdsApiRcFile) }
-            return CopernicusCacheManager(provider, cacheDirectoryRoot)
+            return FileSystemCacheManager(provider, cacheDirectoryRoot)
                 .getOrProduce(CopernicusRequest(dataset, CopernicusInputs.read(inputsFile)))
         }
     }

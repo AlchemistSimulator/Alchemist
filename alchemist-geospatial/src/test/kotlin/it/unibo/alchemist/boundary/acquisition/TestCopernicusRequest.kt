@@ -32,11 +32,11 @@ class TestCopernicusRequest : StringSpec({
         ),
     )
 
-    "toFileName is deterministic: the same request yields the same name" {
-        glofas.toFileName() shouldBe glofas.toFileName()
+    "toDirectoryName is deterministic: the same request yields the same name" {
+        glofas.toDirectoryName() shouldBe glofas.toDirectoryName()
     }
 
-    "toFileName is stable under key reordering (the reason CanonicalJson exists)" {
+    "toDirectoryName is stable under key reordering" {
         // same logical request, just reordered
         val reordered = CopernicusRequest(
             dataset = dataset,
@@ -48,16 +48,16 @@ class TestCopernicusRequest : StringSpec({
                 "variable" to listOf("river_discharge_in_the_last_24_hours"),
             ),
         )
-        reordered.toFileName() shouldBe glofas.toFileName()
+        reordered.toDirectoryName() shouldBe glofas.toDirectoryName()
     }
 
     "a different dataset yields a different name" {
-        glofas.copy(dataset = "reanalysis-era5-single-levels").toFileName() shouldNotBe glofas.toFileName()
+        glofas.copy(dataset = "reanalysis-era5-single-levels").toDirectoryName() shouldNotBe glofas.toDirectoryName()
     }
 
     "a different input value yields a different name (the bytes change)" {
         val otherDay = glofas.copy(inputs = glofas.inputs + ("hday" to listOf("11")))
-        otherDay.toFileName() shouldNotBe glofas.toFileName()
+        otherDay.toDirectoryName() shouldNotBe glofas.toDirectoryName()
     }
 
     "reordering a list inside inputs yields a different name (list order is semantic)" {
@@ -65,24 +65,24 @@ class TestCopernicusRequest : StringSpec({
         val area = listOf(50.0, 5.0, 45.0, 10.0)
         val nwse = glofas.copy(inputs = glofas.inputs + ("area" to area))
         val swapped = glofas.copy(inputs = glofas.inputs + ("area" to area.reversed()))
-        nwse.toFileName() shouldNotBe swapped.toFileName()
+        nwse.toDirectoryName() shouldNotBe swapped.toDirectoryName()
     }
 
     "the readable prefix comes from the dataset, sanitized" {
-        glofas.toFileName() shouldStartWith "cems-glofas-historical_"
+        glofas.toDirectoryName() shouldStartWith "cems-glofas-historical_"
     }
 
     "a dataset id with unsafe characters is sanitized in the prefix" {
         val weird = glofas.copy(dataset = "weird/name with:chars")
-        weird.toFileName() shouldStartWith "weird_name_with_chars_"
+        weird.toDirectoryName() shouldStartWith "weird_name_with_chars_"
     }
 
     "the name complies with the CacheKey contract: a single file-system-safe segment" {
-        glofas.toFileName() shouldMatch Regex("^[A-Za-z0-9._-]+$")
+        glofas.toDirectoryName() shouldMatch Regex("^[A-Za-z0-9._-]+$")
     }
 
     "the name is a readable prefix followed by a lowercase-hex hash suffix" {
-        glofas.toFileName() shouldMatch Regex("^cems-glofas-historical_[0-9a-f]+$")
+        glofas.toDirectoryName() shouldMatch Regex("^cems-glofas-historical_[0-9a-f]+$")
     }
 
     // toFileSystemSafe extension function tests

@@ -19,5 +19,5 @@ fun interface CacheKey {
      * determines the downloaded bytes, so that equal content always maps to the same name. The
      * returned name must be a single path segment: no separators (`/`, `\`), and safe on different OS.
      */
-    fun toFileName(): String
+    fun toDirectoryName(): String
 }

@@ -10,6 +10,7 @@
 package it.unibo.alchemist.boundary.acquisition
 
 import it.unibo.alchemist.boundary.utils.CanonicalJson
+import java.net.URI
 import java.security.MessageDigest
 
 /**
@@ -19,9 +20,27 @@ import java.security.MessageDigest
  * @property dataset dataset identifier (e.g. `"cems-glofas-historical"`).
  * @property inputs the **opaque** request map: the selection (variables, dates, area, format, ...)
  * of parameters used for the request to the datastore. It is intentionally untyped because the fields
- * vary widely per dataset (ERA5 uses `year/month/day`, GloFAS uses `hyear/hmonth/hday/system_version/...`).
+ * vary widely per dataset.
+ * @throws IllegalArgumentException if the [endpoint] does not represent a valid Copernicus endpoint
+ * or the loopback address.
  */
-data class CopernicusRequest(val dataset: String, val inputs: Map<String, Any>) : CacheKey {
+data class CopernicusRequest(val endpoint: String, val dataset: String, val inputs: Map<String, Any>) : CacheKey {
+
+    init {
+        URI.create(endpoint).also {
+            require(
+                it.isAbsolute &&
+                    it.scheme in setOf("http", "https") &&
+                    (
+                        endpoint.endsWith(COPERNICUS_STORES_ENDPOINT_END) ||
+                            it.host == "127.0.0.1"
+                        ),
+            ) {
+                "The endpoint must be an absolute http/https URL ending with " +
+                    "'$COPERNICUS_STORES_ENDPOINT_END' or point to 127.0.0.1, but was '$endpoint'"
+            }
+        }
+    }
 
     /**
      * @return a deterministic directory name: a human-readable sanitized prefix from [dataset],
@@ -31,6 +50,7 @@ data class CopernicusRequest(val dataset: String, val inputs: Map<String, Any>) 
     override fun toDirectoryName(): String {
         val canonical = CanonicalJson.encode(
             mapOf(
+                "endpoint" to endpoint,
                 "dataset" to dataset,
                 "inputs" to inputs,
             ),
@@ -45,6 +65,11 @@ data class CopernicusRequest(val dataset: String, val inputs: Map<String, Any>) 
          * Used to provide collision-safety for a personal cache while keeping the name short.
          */
         private const val HASH_PREFIX_LENGTH = 16
+
+        /**
+         * How Copernicus data store endpoints must end.
+         */
+        private const val COPERNICUS_STORES_ENDPOINT_END = ".copernicus.eu/api"
 
         /**
          * Returns the SHA-256 digest of [str] (UTF-8) as a lowercase hex string.

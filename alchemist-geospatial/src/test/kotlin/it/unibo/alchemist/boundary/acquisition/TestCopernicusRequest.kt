@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.boundary.acquisition
 
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -18,10 +20,12 @@ import io.kotest.matchers.string.shouldStartWith
 
 class TestCopernicusRequest : StringSpec({
 
+    val endpoint = "https://ewds.climate.copernicus.eu/api"
     val dataset = "cems-glofas-historical"
 
     // a realistic request to the EWDS data store
     val glofas = CopernicusRequest(
+        endpoint = endpoint,
         dataset = dataset,
         inputs = mapOf(
             "variable" to listOf("river_discharge_in_the_last_24_hours"),
@@ -32,6 +36,8 @@ class TestCopernicusRequest : StringSpec({
         ),
     )
 
+    fun emptyRequest(endpoint: String) = CopernicusRequest(endpoint, "dataset-name", mapOf())
+
     "toDirectoryName is deterministic: the same request yields the same name" {
         glofas.toDirectoryName() shouldBe glofas.toDirectoryName()
     }
@@ -39,6 +45,7 @@ class TestCopernicusRequest : StringSpec({
     "toDirectoryName is stable under key reordering" {
         // same logical request, just reordered
         val reordered = CopernicusRequest(
+            endpoint = endpoint,
             dataset = dataset,
             inputs = mapOf(
                 "data_format" to "netcdf",
@@ -83,6 +90,24 @@ class TestCopernicusRequest : StringSpec({
 
     "the name is a readable prefix followed by a lowercase-hex hash suffix" {
         glofas.toDirectoryName() shouldMatch Regex("^cems-glofas-historical_[0-9a-f]+$")
+    }
+
+    "should not throw on actual endpoints" {
+        val endpoints = setOf(
+            "https://cds.climate.copernicus.eu/api",
+            "https://ewds.climate.copernicus.eu/api",
+            "https://ads.atmosphere.copernicus.eu/api",
+        )
+        endpoints.forEach { api ->
+            emptyRequest(api)
+        }
+        emptyRequest("https://SOMETHING.SOMETHING_ELSE.copernicus.eu/api")
+    }
+
+    "should throw on illegal endpoints" {
+        shouldThrow<IllegalArgumentException> { emptyRequest("") }
+        shouldThrow<IllegalArgumentException> { emptyRequest("https://www.google.com") }
+        shouldThrow<IllegalArgumentException> { emptyRequest("https://cds.climate.eu/api") }
     }
 
     // toFileSystemSafe extension function tests

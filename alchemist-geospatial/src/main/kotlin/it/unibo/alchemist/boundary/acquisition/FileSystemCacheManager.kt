@@ -16,25 +16,29 @@ import java.nio.file.StandardCopyOption
 import org.slf4j.LoggerFactory
 
 /**
- * Filesystem cache of the directories produced by data providers. This is the **single** place
- * where cache atomicity lives, once for every provider. It knows nothing about HTTP or the
- * individual APIs, depending only on [CacheKey].
+ * Filesystem [CacheManager]: caches the directories produced by an
+ * [ExternalDataProvider] under a common root.
+ * It knows nothing about HTTP or the individual APIs, depending only on [CacheKey].
  *
- * This class considers **atomicity but non locking**: if two simultaneous cache-miss runs
- * for the production of data, one wins the atomic rename, the other discards its own work.
- * Wasteful in that rare case, but it never corrupts the cache.
+ * If two concurrent runs miss the cache for the same entry, both fetch,
+ * one wins the atomic rename and the other discards its own work. This
+ * wastes effort in that rare case, but never corrupts the cache.
  *
- * **Note!** The entries are **trust-based**: a present directory is assumed complete and valid: the content
- * of a cache-hit is not re-verified. Manual alteration of a cache entry is out of contract.
+ * **Note!** Entries are **trust-based**: an existing directory is assumed complete and valid,
+ * and its content is not re-verified on a cache hit. Manual alteration of a cache entry is
+ * out of contract.
  *
- * @param root cache root directory (e.g. `~/.alchemist/cache/geospatial`). Created on demand.
+ * @param R the type of [CacheKey] accepted by this manager.
+ * @param provider populates a cache entry whenever it is missing.
+ * @param root path of cache root directory.
  */
-class CopernicusCacheManager(override val provider: ExternalDataProvider<CopernicusRequest>, private val root: Path) :
-    CacheManager<CopernicusRequest> {
+class FileSystemCacheManager<in R : CacheKey>(private val provider: ExternalDataProvider<R>, private val root: Path) :
+    CacheManager<R> {
 
     /**
      * Temporary subdirectory, on the same filesystem as [root].
-     * (required for `ATOMIC_MOVE`).
+     * Used as a temporary destination for produced files.
+     * It gets renamed if the retrieval operation is successful.
      */
     private val tmpRoot: Path = root.resolve(TEMP_SUBDIR)
 
@@ -48,11 +52,11 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
      * and the local work is discarded. If, for any reason, [provider] fails, the temporary
      * directory is removed (no "poisoned" entry is left in cache).
      *
-     * @param request request identity (to determine the directory name).
+     * @param request request identity (to determine the directory name/determine the assets to retrieve).
      * @return the [Path] of the final cache directory, filled with data.
      * @throws IllegalStateException if [provider] writes no file in the temporary directory.
      */
-    override fun getOrProduce(request: CopernicusRequest): Path {
+    override fun getOrProduce(request: R): Path {
         val finalDir = root.resolve(request.toFileName())
         // cache hit: the directory already exists
         if (Files.isDirectory(finalDir)) {
@@ -63,17 +67,17 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
         // cache miss (also creates root if it does not exist)
         Files.createDirectories(tmpRoot)
         val temp = Files.createTempDirectory(tmpRoot, request.toFileName())
-        var moved = false // becomes true if the directory gets promoted
+        var promoted = false
         try {
             // tries to fill the directory with data
             provider.fetch(request, temp)
             check(hasData(temp)) { "Provider produced no files for '${request.toFileName()}'" }
-            moved = promote(temp, finalDir)
+            promoted = promote(temp, finalDir)
             logger.info("Asset(s) cached in $finalDir")
             return finalDir
         } finally {
             // deletes the temp directory if any accident occurs
-            if (!moved) temp.toFile().deleteRecursively()
+            if (!promoted) temp.toFile().deleteRecursively()
         }
     }
 
@@ -90,7 +94,7 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
         true
     } catch (raceLost: FileSystemException) {
         if (!Files.isDirectory(finalDir)) throw raceLost
-        // peer won but temp dir still exists
+        // peer won
         false
     }
 
@@ -103,7 +107,7 @@ class CopernicusCacheManager(override val provider: ExternalDataProvider<Coperni
         Files.list(dir).use { entries -> entries.anyMatch { Files.isRegularFile(it) } }
 
     private companion object {
-        private val logger = LoggerFactory.getLogger(CopernicusCacheManager::class.java)
+        private val logger = LoggerFactory.getLogger(FileSystemCacheManager::class.java)
         private const val TEMP_SUBDIR = ".tmp"
     }
 }

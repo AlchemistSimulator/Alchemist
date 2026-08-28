@@ -12,30 +12,22 @@ package it.unibo.alchemist.boundary.acquisition
 import java.nio.file.Path
 
 /**
- * Manages disk-based cache directories identified by deterministic [CacheKey] requests.
+ * Provides cached directories of data identified by deterministic [CacheKey] requests.
  *
- * When a directory is requested via [getOrProduce], the manager resolves its path.
- * If the directory is missing or empty, it automatically fetches and populates the
- * data using the configured [provider].
+ * Implementations guarantee that the returned directory exists and holds the data
+ * associated with the request, producing it if it is not available yet. How the data is
+ * obtained, is not part of this contract.
  *
  * @param R the type of [CacheKey] accepted by this manager.
  *
- * @see ExternalDataProvider
  * @see CacheKey
  */
 interface CacheManager<in R : CacheKey> {
-
     /**
-     * The provider responsible for populating the directory associated with the cache entry in
-     * [CacheManager.getOrProduce], in the event that it does not exist or is empty.
-     */
-    val provider: ExternalDataProvider<R>
-
-    /**
-     * Calculates and returns the directory where the data was cached via the [request].
+     * Returns the directory holding the data associated with [request], producing it if absent.
      *
-     * @param request the request used to calculate the deterministic directory path.
-     * @return the path to the directory containing the data.
+     * @param request the request identifying the cache entry.
+     * @return the path to the directory holding the data.
      */
     fun getOrProduce(request: R): Path
 }

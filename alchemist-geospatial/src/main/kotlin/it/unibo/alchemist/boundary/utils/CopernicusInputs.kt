@@ -20,7 +20,7 @@ import java.nio.file.Path
  *
  * The map is not accepted as an inline YAML mapping: some datasets require a `type` field,
  * which collides with the Alchemist loader's own `type` keyword used to select
- * nested-parameter implementations.
+ * nested-parameter implementations, so a JSON file must be used.
  */
 internal object CopernicusInputs {
 

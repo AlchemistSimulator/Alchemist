@@ -301,9 +301,10 @@ open class CopernicusLayer<T>(
             cacheDirectoryRoot: Path,
             cdsApiRcFile: Path,
         ): Path {
-            val provider = CopernicusDataStoreProvider(endpoint, checkMd5) { CdsApiRc.readToken(cdsApiRcFile) }
-            return FileSystemCacheManager(provider, cacheDirectoryRoot)
-                .getOrProduce(CopernicusRequest(dataset, CopernicusInputs.read(inputsFile)))
+            val provider = CopernicusDataStoreProvider(checkMd5) { CdsApiRc.readToken(cdsApiRcFile) }
+            val inputs = CopernicusInputs.read(inputsFile)
+            val request = CopernicusRequest(endpoint.trim().trimEnd('/'), dataset, inputs)
+            return FileSystemCacheManager(provider, cacheDirectoryRoot).getOrProduce(request)
         }
     }
 }

@@ -28,7 +28,7 @@
                 {
                     "date": "2024-02-01T00:00:00",
                     "severity": "info",
-                    "content": "Please note that we suggest checking the list of known issues on the EFAS wiki\n[here](https://confluence.ecmwf.int/display/CEMS/EFAS+-+Known+Issues)\nbefore downloading the dataset."
+                    "content": "Replaced note message."
                 }
             ]
         },

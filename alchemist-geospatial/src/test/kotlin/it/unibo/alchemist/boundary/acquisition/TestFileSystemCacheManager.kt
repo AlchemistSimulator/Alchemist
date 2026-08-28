@@ -57,7 +57,11 @@ class TestFileSystemCacheManager : StringSpec({
      * A minimal [CopernicusRequest] for a test case.
      * The inputs remain constant, only the dataset changes.
      */
-    fun request(id: String): CopernicusRequest = CopernicusRequest(dataset = id, inputs = emptyMap())
+    fun request(id: String): CopernicusRequest = CopernicusRequest(
+        endpoint = "https://ewds.climate.copernicus.eu/api",
+        dataset = id,
+        inputs = emptyMap(),
+    )
 
     "miss: produce runs exactly once and its files are promoted" {
         val req = request("entry_a")

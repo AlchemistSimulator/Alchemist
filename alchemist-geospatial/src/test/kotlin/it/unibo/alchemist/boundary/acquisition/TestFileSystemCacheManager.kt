@@ -18,7 +18,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 /**
- * Delegates each fetch call to a configurable [behavior], so that [CopernicusCacheManager] can
+ * Delegates each fetch call to a configurable [behavior], so that [FileSystemCacheManager] can
  * be tested fully offline.
  */
 private class FakeCopernicusProvider(
@@ -34,7 +34,7 @@ private class FakeCopernicusProvider(
     }
 }
 
-class TestCopernicusCacheManager : StringSpec({
+class TestFileSystemCacheManager : StringSpec({
 
     val tempDir: Path = Files.createTempDirectory("cache-manager-test")
 
@@ -62,7 +62,7 @@ class TestCopernicusCacheManager : StringSpec({
     "miss: produce runs exactly once and its files are promoted" {
         val req = request("entry_a")
         val provider = FakeCopernicusProvider { _, dir -> writeOneFile(dir) }
-        val cache = CopernicusCacheManager(provider, newRoot())
+        val cache = FileSystemCacheManager(provider, newRoot())
         val result = cache.getOrProduce(req)
         provider.calls shouldBe 1
         result.shouldExist()
@@ -73,7 +73,7 @@ class TestCopernicusCacheManager : StringSpec({
         val req = request("entry_b")
         var marker = "first"
         val provider = FakeCopernicusProvider { _, dir -> Files.writeString(dir.resolve(dataFileName), marker) }
-        val cache = CopernicusCacheManager(provider, newRoot())
+        val cache = FileSystemCacheManager(provider, newRoot())
         val first = cache.getOrProduce(req)
         // if the cache manager wrongly re-ran the provider, the file would contain "second"
         marker = "second"
@@ -87,7 +87,7 @@ class TestCopernicusCacheManager : StringSpec({
         val root = newRoot()
         val req = request("cems-glofas_abc123")
         val provider = FakeCopernicusProvider { _, dir -> writeOneFile(dir) }
-        val cache = CopernicusCacheManager(provider, root)
+        val cache = FileSystemCacheManager(provider, root)
         val result = cache.getOrProduce(req)
         result shouldBe root.resolve(req.toFileName())
     }
@@ -96,7 +96,7 @@ class TestCopernicusCacheManager : StringSpec({
         val root = newRoot()
         val req = request("entry_fail")
         val provider = FakeCopernicusProvider { _, _ -> error("download blew up") }
-        val cache = CopernicusCacheManager(provider, root)
+        val cache = FileSystemCacheManager(provider, root)
         shouldThrow<IllegalStateException> { cache.getOrProduce(req) }
         root.resolve(req.toFileName()).shouldNotExist() // no poisoned dir
     }
@@ -109,7 +109,7 @@ class TestCopernicusCacheManager : StringSpec({
             // simulates something gone wrong after having already written a file
             error("error after writing")
         }
-        val cache = CopernicusCacheManager(provider, root)
+        val cache = FileSystemCacheManager(provider, root)
         // ignores the exception
         runCatching { cache.getOrProduce(req) }
         // .tmp must hold no temp dirs left
@@ -122,7 +122,7 @@ class TestCopernicusCacheManager : StringSpec({
         val root = newRoot()
         val req = request("entry_empty")
         val provider = FakeCopernicusProvider { _, _ -> } // writes nothing
-        val cache = CopernicusCacheManager(provider, root)
+        val cache = FileSystemCacheManager(provider, root)
         shouldThrow<IllegalStateException> {
             cache.getOrProduce(req)
         }
@@ -136,7 +136,7 @@ class TestCopernicusCacheManager : StringSpec({
             // a directory, but no regular file
             Files.createDirectory(dir.resolve("nested"))
         }
-        val cache = CopernicusCacheManager(provider, root)
+        val cache = FileSystemCacheManager(provider, root)
         shouldThrow<IllegalStateException> {
             cache.getOrProduce(req)
         }
@@ -149,11 +149,11 @@ class TestCopernicusCacheManager : StringSpec({
         val firstProvider = FakeCopernicusProvider { _, dir ->
             Files.writeString(dir.resolve(dataFileName), "first")
         }
-        CopernicusCacheManager(firstProvider, root).getOrProduce(req)
+        FileSystemCacheManager(firstProvider, root).getOrProduce(req)
         val secondProvider = FakeCopernicusProvider { _, dir ->
             Files.writeString(dir.resolve(dataFileName), "second")
         }
-        val result = CopernicusCacheManager(secondProvider, root).getOrProduce(req)
+        val result = FileSystemCacheManager(secondProvider, root).getOrProduce(req)
         Files.readString(result.resolve(dataFileName)) shouldBe "first"
     }
 })

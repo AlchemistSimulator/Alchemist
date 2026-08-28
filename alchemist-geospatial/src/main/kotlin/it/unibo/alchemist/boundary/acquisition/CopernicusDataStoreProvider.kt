@@ -35,13 +35,9 @@ import org.slf4j.LoggerFactory
  * Implements the OGC API - Processes flow (submit -> poll -> results -> download) and confines it
  * entirely here.
  *
- * Serves multiple data stores (CDS, ADS, EWDS) indistinctly: the same ECMWF software
- * sits underneath, with identical sub-paths; only the host differs, supplied via [endpoint].
  * The sole auth asymmetry is the final download GET, which carries **no** token
  * (the asset lives on a public object store on a different host): see [download].
  *
- * @param endpoint base URL of the data store (e.g. `https://ewds.climate.copernicus.eu/api`); a
- * trailing slash, if present, is trimmed.
  * @param checkMd5 whether to check the MD5 digest of the downloaded file. Sometimes Copernicus stores
  * return the correct requested assets but report an incorrect MD5, so it may be useful to
  * disable this check.
@@ -51,10 +47,8 @@ import org.slf4j.LoggerFactory
  * @param maxPollInterval cap on the polling interval. Defaults to 120 seconds, matching the official
  * ECMWF client's duration.
  * @param timeout overall guillotine on the wait for job completion.
- * @throws IllegalArgumentException if the [endpoint] does not represent a valid URL.
  */
 class CopernicusDataStoreProvider(
-    private val endpoint: String,
     private val checkMd5: Boolean = true,
     private val http: HttpClient = HttpClient.newHttpClient(),
     private val pollInterval: Duration = Duration.ofSeconds(DEFAULT_POLL_INTERVAL_SEC),
@@ -68,15 +62,6 @@ class CopernicusDataStoreProvider(
      * so the token can be absent.
      */
     private val token: String by lazy(tokenSupplier)
-
-    /**
-     * endpoint normalized once: no trailing slash, so path concatenation never yields `//`.
-     */
-    private val base: URI = URI.create(endpoint.trimEnd('/')).also {
-        require(it.isAbsolute && it.scheme in setOf("http", "https")) {
-            "The endpoint must be an absolute http/https URL, but was '$endpoint'"
-        }
-    }
 
     /**
      * The full OGC API processes flow, written into [targetDir].
@@ -134,7 +119,7 @@ class CopernicusDataStoreProvider(
         val body = CanonicalJson.encode(mapOf("inputs" to request.inputs))
         // builds the full POST request
         val httpRequest = HttpRequest.newBuilder()
-            .uri(URI.create("$base/retrieve/v1/processes/${request.dataset}/execution"))
+            .uri(URI.create("${request.endpoint}/retrieve/v1/processes/${request.dataset}/execution"))
             // always needed! A 403 error would be thrown otherwise
             .header("PRIVATE-TOKEN", token)
             .header("Content-Type", APPLICATION_JSON)

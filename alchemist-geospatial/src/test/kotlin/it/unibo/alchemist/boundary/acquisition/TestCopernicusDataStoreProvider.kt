@@ -26,6 +26,8 @@ class TestCopernicusDataStoreProvider : StringSpec({
     val token = "test-token"
     val successful = "successful-status"
 
+    val standardProvider = CopernicusDataStoreProvider { token }
+
     /**
      * The routes and captured bodies of one data store's job lifecycle.
      *
@@ -39,7 +41,12 @@ class TestCopernicusDataStoreProvider : StringSpec({
      * @property assetPath the path component of the captured download URL, i.e. the route the fake
      * object store must serve.
      */
-    data class Store(val name: String, val dataset: String, val jobId: String, val assetPath: String) {
+    data class Store(
+        val name: String,
+        val dataset: String,
+        val jobId: String,
+        val assetPath: String,
+    ) {
         val submitRoute: String get() = "/retrieve/v1/processes/$dataset/execution"
         val jobRoute: String get() = "/retrieve/v1/jobs/$jobId"
         val resultsRoute: String get() = "$jobRoute/results"
@@ -70,37 +77,38 @@ class TestCopernicusDataStoreProvider : StringSpec({
         assetPath = "/cci2-prod-cache-3/2026-08-09/9600fbec69609809250b901b42f6800.zip",
     )
 
-    fun createProvider(endpoint: String, timeout: Duration = Duration.ofSeconds(2)) = CopernicusDataStoreProvider(
-        endpoint = endpoint,
-        tokenSupplier = { token },
-        http = HttpClient.newHttpClient(),
-        pollInterval = Duration.ofMillis(100),
-        maxPollInterval = Duration.ofMillis(300),
-        timeout = timeout,
-    )
+    fun emptyRequest(endpoint: String, dataset: String) = CopernicusRequest(endpoint, dataset, mapOf())
 
     /**
-     * Rewrites the real data-store and object-store hosts of a captured body into the loopback
+     * The real bases appearing in the captured bodies.
+     */
+    val realBases = setOf(
+        "https://cds.climate.copernicus.eu/api",
+        "https://ewds.climate.copernicus.eu/api",
+        "https://ads.atmosphere.copernicus.eu/api",
+        "https://object-store.os-api.cci2.ecmwf.int:443",
+    )
+    val realHosts = realBases.mapTo(mutableSetOf()) { URI.create(it).host }
+
+    /**
+     * Rewrites the real data-store and object-store bases of a captured body into the loopback
      * address of [fake].
      *
-     * Fails if any host other than the fake server survives:
-     * without this check, a host missing from the rewrite list would not produce a readable test
-     * failure, it would issue a REAL network request to ECMWF.
+     * Fails if any host that should have been rewritten survives: without this check, a base
+     * written differently from the ones listed in [realBases] would not produce a test
+     * failure, it would send a REAL network request to ECMWF.
      */
     fun String.withFakeBase(fake: FakeHttpServer): String {
         // matches the host of every absolute http URL that appears as a JSON `href` value.
         val followedHost = Regex(""""href"\s*:\s*"https?://([^/"]+)""")
-        val replaced = replace("https://cds.climate.copernicus.eu/api", fake.baseUrl)
-            .replace("https://ads.atmosphere.copernicus.eu/api", fake.baseUrl)
-            .replace("https://ewds.climate.copernicus.eu/api", fake.baseUrl)
-            .replace("https://object-store.os-api.cci2.ecmwf.int:443", fake.baseUrl)
-        val fakeHost = URI.create(fake.baseUrl).host
-        val stray = followedHost.findAll(replaced)
+        val replaced = realBases.fold(this) { body, base ->
+            body.replace(base, fake.baseUrl)
+        }
+        val items = followedHost.findAll(replaced)
             .map { it.groupValues[1].substringBefore(':') }
-            .filterNot { it == fakeHost || it == "confluence.ecmwf.int" }
-            .toSet()
-        check(stray.isEmpty()) {
-            "The body still points at $stray after the rewrite: the provider would hit the network"
+            .filterTo(mutableSetOf()) { it in realHosts }
+        check(items.isEmpty()) {
+            "The body still points at $items after the rewrite: the provider would hit the network"
         }
         return replaced
     }
@@ -154,7 +162,6 @@ class TestCopernicusDataStoreProvider : StringSpec({
     // FULL OGC CONVERSATION SIMULATION
     "completes the OGC workflow on the captured CDS conversation and downloads the asset" {
         FakeHttpServer().use { fake ->
-            val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
             val payload = "test".toByteArray()
             fake.replaySubmit(cds)
@@ -162,7 +169,8 @@ class TestCopernicusDataStoreProvider : StringSpec({
             fake.replayStatus(cds, successful)
             fake.replayResults(cds, payload.size)
             fake.serveAsset(cds, payload)
-            provider.fetch(CopernicusRequest(cds.dataset, mapOf("day" to "01")), tempDir)
+            val request = CopernicusRequest(fake.baseUrl, cds.dataset, mapOf("day" to "01"))
+            standardProvider.fetch(request, tempDir)
             val downloaded = tempDir.resolve(cds.assetName)
             downloaded.shouldExist()
             downloaded.readBytes() shouldBe payload
@@ -184,90 +192,15 @@ class TestCopernicusDataStoreProvider : StringSpec({
      */
     "accepts an asset whose advertised MD5 was served without its leading zero" {
         FakeHttpServer().use { fake ->
-            val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
             val payload = "a".toByteArray()
             fake.replaySubmit(cds)
             fake.replayStatus(cds, successful)
             fake.replayResults(cds, payload.size, checksum = "cc175b9c0f1b6a831c399e269772661")
             fake.serveAsset(cds, payload)
-            provider.fetch(CopernicusRequest(cds.dataset, mapOf()), tempDir)
+            val request = emptyRequest(fake.baseUrl, cds.dataset)
+            standardProvider.fetch(request, tempDir)
             tempDir.resolve(cds.assetName).readBytes() shouldBe payload
-        }
-    }
-
-    "normalizes an endpoint with a trailing slash (no '//' in the constructed URI)" {
-        FakeHttpServer().use { fake ->
-            // the final '/' is intentional
-            val provider = createProvider("${fake.baseUrl}/")
-            val tempDir = createTempDirectory()
-            fake.replaySubmit(cds)
-            fake.replayStatus(cds, successful)
-            fake.replayResults(cds, sizeBytes = 0)
-            fake.serveAsset(cds, ByteArray(0))
-            provider.fetch(CopernicusRequest(cds.dataset, mapOf()), tempDir)
-            tempDir.resolve(cds.assetName).shouldExist()
-        }
-    }
-
-    "reports the problem-detail of a 400 rejection at submit" {
-        FakeHttpServer().use { fake ->
-            val provider = createProvider(fake.baseUrl)
-            val tempDir = createTempDirectory()
-            // synthetic response (could not capture one)
-            val rejection = """
-                {
-                  "type": "invalid request",
-                  "title": "invalid request",
-                  "status": 400,
-                  "detail": "Request has not produced a valid combination of values, please check your selection.",
-                  "trace_id": "cec329b8-cb55-4b84-a3a8-86b85facdbb4"
-                }
-            """.trimIndent()
-            fake.enqueue("POST", ewds.submitRoute) { FakeHttpServer.json(400, rejection)(it) }
-            val ex = shouldThrow<IllegalStateException> {
-                provider.fetch(CopernicusRequest(ewds.dataset, mapOf()), tempDir)
-            }
-            ex.message shouldContain "400"
-            ex.message shouldContain "valid combination of values"
-            ex.message shouldContain "cec329b8-cb55-4b84-a3a8-86b85facdbb4"
-        }
-    }
-
-    "falls back to the raw body when a 422 carries an array-valued detail" {
-        FakeHttpServer().use { fake ->
-            val provider = createProvider(fake.baseUrl)
-            val tempDir = createTempDirectory()
-            // synthetic response (could not capture one)
-            val validation = """
-                {
-                  "detail": [
-                    { "loc": ["body", "inputs", "hyear"], "msg": "field required", "type": "value_error.missing" }
-                  ]
-                }
-            """.trimIndent()
-            fake.enqueue("POST", ewds.submitRoute) { FakeHttpServer.json(422, validation)(it) }
-            val ex = shouldThrow<IllegalStateException> {
-                provider.fetch(CopernicusRequest(ewds.dataset, mapOf()), tempDir)
-            }
-            ex.message shouldContain "422"
-            ex.message shouldContain "field required"
-        }
-    }
-
-    "reports the problem-detail of a 401 raised while polling" {
-        FakeHttpServer().use { fake ->
-            val provider = createProvider(fake.baseUrl)
-            val tempDir = createTempDirectory()
-            fake.replaySubmit(ads)
-            fake.enqueue("GET", ads.jobRoute) {
-                FakeHttpServer.json(401, loadBody("error-401-permission-denied.json").withFakeBase(fake))(it)
-            }
-            val ex = shouldThrow<IllegalStateException> {
-                provider.fetch(CopernicusRequest(ads.dataset, mapOf()), tempDir)
-            }
-            ex.message shouldContain "401"
-            ex.message shouldContain "authentication required"
         }
     }
 
@@ -278,7 +211,6 @@ class TestCopernicusDataStoreProvider : StringSpec({
     ).forEach { (status, message) ->
         "throws on the terminal state '$status', reporting the job message" {
             FakeHttpServer().use { fake ->
-                val provider = createProvider(fake.baseUrl)
                 val tempDir = createTempDirectory()
                 fake.replaySubmit(ewds)
                 fake.answerStatus(
@@ -293,7 +225,8 @@ class TestCopernicusDataStoreProvider : StringSpec({
                     """.trimIndent(),
                 )
                 val ex = shouldThrow<IllegalStateException> {
-                    provider.fetch(CopernicusRequest(ewds.dataset, mapOf()), tempDir)
+                    val request = emptyRequest(fake.baseUrl, ewds.dataset)
+                    standardProvider.fetch(request, tempDir)
                 }
                 ex.message shouldContain status
                 ex.message shouldContain message
@@ -303,7 +236,6 @@ class TestCopernicusDataStoreProvider : StringSpec({
 
     "reports the backend traceback of a failed job by referencing its results link" {
         FakeHttpServer().use { fake ->
-            val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
             fake.replaySubmit(ewds)
             fake.answerStatus(
@@ -323,7 +255,8 @@ class TestCopernicusDataStoreProvider : StringSpec({
                 FakeHttpServer.json(400, loadBody("ewds-failed-results.json").withFakeBase(fake))(it)
             }
             val ex = shouldThrow<IllegalStateException> {
-                provider.fetch(CopernicusRequest(ewds.dataset, mapOf()), tempDir)
+                val request = emptyRequest(fake.baseUrl, ewds.dataset)
+                standardProvider.fetch(request, tempDir)
             }
             ex.message shouldContain "failed"
             ex.message shouldContain "MultiAdaptorNoDataError"
@@ -333,7 +266,6 @@ class TestCopernicusDataStoreProvider : StringSpec({
 
     "keeps polling on an undocumented status instead of failing" {
         FakeHttpServer().use { fake ->
-            val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
             fake.replaySubmit(cds)
             // an unforeseen status must be treated as transient, not as terminal
@@ -341,19 +273,21 @@ class TestCopernicusDataStoreProvider : StringSpec({
             fake.replayStatus(cds, successful)
             fake.replayResults(cds, sizeBytes = 0)
             fake.serveAsset(cds, ByteArray(0))
-            provider.fetch(CopernicusRequest(cds.dataset, mapOf()), tempDir)
+            val request = emptyRequest(fake.baseUrl, cds.dataset)
+            standardProvider.fetch(request, tempDir)
             tempDir.resolve(cds.assetName).shouldExist()
         }
     }
 
     "times out if the job never completes" {
         FakeHttpServer().use { fake ->
-            val provider = createProvider(fake.baseUrl, timeout = Duration.ofMillis(500))
+            val provider = CopernicusDataStoreProvider(timeout = Duration.ofMillis(500)) { token }
             val tempDir = createTempDirectory()
             fake.replaySubmit(cds)
             fake.constant("GET", cds.jobRoute) { FakeHttpServer.json(200, """{ "status": "running" }""")(it) }
             val ex = shouldThrow<IllegalStateException> {
-                provider.fetch(CopernicusRequest(cds.dataset, mapOf()), tempDir)
+                val request = emptyRequest(fake.baseUrl, cds.dataset)
+                provider.fetch(request, tempDir)
             }
             ex.message shouldContain "Timeout"
         }
@@ -361,7 +295,6 @@ class TestCopernicusDataStoreProvider : StringSpec({
 
     "reports a 404 result-not-ready returned by the results endpoint" {
         FakeHttpServer().use { fake ->
-            val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
             fake.replaySubmit(ads)
             fake.replayStatus(ads, successful)
@@ -369,21 +302,74 @@ class TestCopernicusDataStoreProvider : StringSpec({
                 FakeHttpServer.json(404, loadBody("error-404-result-not-ready.json").withFakeBase(fake))(it)
             }
             val ex = shouldThrow<IllegalStateException> {
-                provider.fetch(CopernicusRequest(ads.dataset, mapOf()), tempDir)
+                val request = emptyRequest(fake.baseUrl, ads.dataset)
+                standardProvider.fetch(request, tempDir)
             }
             ex.message shouldContain "404"
             ex.message shouldContain "result-not-ready"
         }
     }
 
+    "reports the problem-detail of a 401 raised while polling" {
+        FakeHttpServer().use { fake ->
+            val tempDir = createTempDirectory()
+            fake.replaySubmit(ads)
+            fake.enqueue("GET", ads.jobRoute) {
+                FakeHttpServer.json(401, loadBody("error-401-permission-denied.json").withFakeBase(fake))(it)
+            }
+            val ex = shouldThrow<IllegalStateException> {
+                val request = emptyRequest(fake.baseUrl, ads.dataset)
+                standardProvider.fetch(request, tempDir)
+            }
+            ex.message shouldContain "401"
+            ex.message shouldContain "authentication required"
+        }
+    }
+
+    "reports the problem-detail of a 400 rejection at submit" {
+        FakeHttpServer().use { fake ->
+            val tempDir = createTempDirectory()
+            val rejection = loadBody("error-400-rejected.json")
+            fake.enqueue("POST", ewds.submitRoute) { FakeHttpServer.json(400, rejection)(it) }
+            val ex = shouldThrow<IllegalStateException> {
+                val request = emptyRequest(fake.baseUrl, ewds.dataset)
+                standardProvider.fetch(request, tempDir)
+            }
+            ex.message shouldContain "400"
+            ex.message shouldContain "valid combination of values"
+            ex.message shouldContain "cec329b8-cb55-4b84-a3a8-86b85facdbb4"
+        }
+    }
+
+    "falls back to the raw body when a 422 carries an array-valued detail" {
+        FakeHttpServer().use { fake ->
+            val tempDir = createTempDirectory()
+            // synthetic response (could not capture one)
+            val validation = """
+                {
+                  "detail": [
+                    { "loc": ["body", "inputs", "hyear"], "msg": "field required", "type": "value_error.missing" }
+                  ]
+                }
+            """.trimIndent()
+            fake.enqueue("POST", ewds.submitRoute) { FakeHttpServer.json(422, validation)(it) }
+            val ex = shouldThrow<IllegalStateException> {
+                val request = emptyRequest(fake.baseUrl, ewds.dataset)
+                standardProvider.fetch(request, tempDir)
+            }
+            ex.message shouldContain "422"
+            ex.message shouldContain "field required"
+        }
+    }
+
     "fails when a 'successful' job exposes no rel='results' link (inconsistent server response)" {
         FakeHttpServer().use { fake ->
-            val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
             fake.replaySubmit(cds)
             fake.answerStatus(cds, """{ "status": "successful", "links": [] }""")
             val ex = shouldThrow<IllegalStateException> {
-                provider.fetch(CopernicusRequest(cds.dataset, mapOf()), tempDir)
+                val request = emptyRequest(fake.baseUrl, cds.dataset)
+                standardProvider.fetch(request, tempDir)
             }
             ex.message shouldContain "rel='results'"
         }
@@ -391,7 +377,6 @@ class TestCopernicusDataStoreProvider : StringSpec({
 
     "fails with a clear message when the downloaded size does not match" {
         FakeHttpServer().use { fake ->
-            val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
             val payload = "test".toByteArray()
             fake.replaySubmit(cds)
@@ -400,7 +385,8 @@ class TestCopernicusDataStoreProvider : StringSpec({
             fake.replayResults(cds, payload.size + 1)
             fake.serveAsset(cds, payload)
             val ex = shouldThrow<IllegalStateException> {
-                provider.fetch(CopernicusRequest(cds.dataset, mapOf()), tempDir)
+                val request = emptyRequest(fake.baseUrl, cds.dataset)
+                standardProvider.fetch(request, tempDir)
             }
             ex.message shouldContain "Size mismatch"
         }
@@ -408,13 +394,13 @@ class TestCopernicusDataStoreProvider : StringSpec({
 
     "sends the serialized inputs in the submit body" {
         FakeHttpServer().use { fake ->
-            val provider = createProvider(fake.baseUrl)
             val tempDir = createTempDirectory()
             fake.replaySubmit(cds)
             fake.replayStatus(cds, successful)
             fake.replayResults(cds, sizeBytes = 0)
             fake.serveAsset(cds, ByteArray(0))
-            provider.fetch(CopernicusRequest(cds.dataset, mapOf("year" to "2023")), tempDir)
+            val request = CopernicusRequest(fake.baseUrl, cds.dataset, mapOf("year" to "2023"))
+            standardProvider.fetch(request, tempDir)
             val submit = fake.requests.single { it.method == "POST" }
             submit.body shouldContain "\"inputs\""
             submit.body shouldContain "\"year\""

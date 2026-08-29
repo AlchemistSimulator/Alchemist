@@ -1,3 +1,22 @@
+## [43.1.32](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.31...43.1.32) (2026-08-29)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.8.5-19.2.8 ([#5577](https://github.com/AlchemistSimulator/Alchemist/issues/5577)) ([9373f94](https://github.com/AlchemistSimulator/Alchemist/commit/9373f9458d125a5344d6a707f088d848f95cca3d))
+* **deps:** update compose.multiplatform to v1.12.0 ([#5574](https://github.com/AlchemistSimulator/Alchemist/issues/5574)) ([6eaf6d5](https://github.com/AlchemistSimulator/Alchemist/commit/6eaf6d530f4284cc1d515aa155a7399237dffbbb))
+* **deps:** update dependency org.danilopianini.gradle-java-qa:org.danilopianini.gradle-java-qa.gradle.plugin to v1.195.0 ([#5578](https://github.com/AlchemistSimulator/Alchemist/issues/5578)) ([9dcbc21](https://github.com/AlchemistSimulator/Alchemist/commit/9dcbc21c6c78e4ac56b525514788b5ba63f4c5cf))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.11.0 ([#5579](https://github.com/AlchemistSimulator/Alchemist/issues/5579)) ([d24afd5](https://github.com/AlchemistSimulator/Alchemist/commit/d24afd552696c21e8b255e09464bfe17122ab441))
+* **deps:** update node.js to 24.20 ([#5580](https://github.com/AlchemistSimulator/Alchemist/issues/5580)) ([69fa6f3](https://github.com/AlchemistSimulator/Alchemist/commit/69fa6f3e41490d470ce164f481cba7aae9f7d426))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.44 ([#5573](https://github.com/AlchemistSimulator/Alchemist/issues/5573)) ([0b4e7e8](https://github.com/AlchemistSimulator/Alchemist/commit/0b4e7e81489ee5b7ca971f9bf0440f21e8665241))
+* **deps:** update fedora docker tag to v46 ([#5575](https://github.com/AlchemistSimulator/Alchemist/issues/5575)) ([ba3fa7a](https://github.com/AlchemistSimulator/Alchemist/commit/ba3fa7aa90777dde5e0c064849c008d8fd341744))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([82a0dd5](https://github.com/AlchemistSimulator/Alchemist/commit/82a0dd59a0817c43b28b49f881d4473a5f7f95bf))
+
 ## [43.1.31](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.30...43.1.31) (2026-08-25)
 
 ### Dependency updates

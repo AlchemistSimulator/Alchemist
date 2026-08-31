@@ -25,6 +25,11 @@ import java.nio.file.Path
  */
 internal object CdsApiRc {
 
+    /**
+     * Default location of the file holding the datastore API token.
+     */
+    val DEFAULT_LOCATION: Path = Path.of(System.getProperty("user.home"), ".cdsapirc")
+
     private const val KEY_FIELD = "key"
 
     /**

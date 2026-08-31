@@ -25,7 +25,6 @@ import it.unibo.alchemist.model.geospatial.utils.bracketIndices
 import it.unibo.alchemist.model.geospatial.utils.weight
 import java.nio.file.Path
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
 
 /**
@@ -40,22 +39,22 @@ import kotlin.time.Instant
  * value of the first or last slice is returned; outside the covered **spatial** extent
  * no extrapolation is performed and [getValue] fails.
  *
- * Once the construction is complete, real-world time [Instant]s are converted proportionally to
+ * At construction time, real-world time [Instant]s are converted proportionally to
  * simulation time using [timeOrigin] and [timeScale].
  *
- * Three constructors are available:
- * - **Primary**: accepts a ready-built [GridSnapshots]; it is used in tests.
+ * Three constructors are available, each one relying on the one before:
+ * - **Primary**: accepts a ready-built [GridSnapshots].
  * - **Directory** (YAML): takes the path of a local directory of data files. No network, no cache,
  * no credentials. Selected from YAML by providing `dataDirectory`.
  * - **Datastore** (YAML): takes a Copernicus-family endpoint plus an opaque request, retrieves the
  * data through a local cache manager, then reads it. The only one that touches the network. Selected from
  * YAML by providing `endpoint`, `dataset` and `inputsFile`.
  *
- * @property environment simulation environment. Used only to read the current time via [Environment.simulationOrNull].
- * @property data temporal raster series backing this layer.
+ * @param environment simulation environment. Used only to read the current time via [Environment.simulationOrNull].
+ * @param data temporal raster series backing this layer.
  * @param timeOrigin real-world [Instant] corresponding to simulation `Time.ZERO`.
- * Defaults to the first instant in [data].
- * @param timeScale real-world [Duration] of one simulation time unit. Defaults to one hour.
+ * Defaults to the first instant in [data] if `null`.
+ * @param timeScale real-world [Duration] of one simulation time unit.
  * @param interpolation strategy for generating a value from the spatio-temporal time slices.
  * @param converter strategy for converting the interpolated [Double] (or [Double.NaN] if missing) into the
  * target type [T].
@@ -65,8 +64,8 @@ import kotlin.time.Instant
 open class CopernicusLayer<T>(
     private val environment: Environment<*, GeoPosition>,
     private val data: GridSnapshots,
-    private val timeScale: Duration = DEFAULT_TIME_SCALE,
-    private val timeOrigin: Instant? = null,
+    timeScale: Duration,
+    timeOrigin: Instant?,
     private val interpolation: SpatioTemporalInterpolation,
     private val converter: MeasurementConverter<T>,
 ) : GeoLayer<T> {
@@ -77,19 +76,16 @@ open class CopernicusLayer<T>(
     }
 
     /**
-     * Real-world instant corresponding to simulation `Time.ZERO`.
-     * Equals `timeOrigin` if provided, otherwise the first instant in [data].
-     */
-    private val origin: Instant = timeOrigin ?: data.instants.first()
-
-    /**
      * Conversion of real-world time instants to simulation time (as an array of `Double`).
-     * The conversion occurs only during construction and takes into account the `origin`
+     * The conversion occurs only during construction and takes into account the `timeOrigin`
      * and the `timeScale`.
      */
-    private val sliceTimes: DoubleArray = data.instants
-        .map { toSimulationTime(it, origin, timeScale) }
-        .toDoubleArray()
+    private val sliceTimes: DoubleArray = run {
+        val origin: Instant = timeOrigin ?: data.instants.first()
+        data.instants
+            .map { toSimulationTime(it, origin, timeScale) }
+            .toDoubleArray()
+    }
 
     /**
      * Constructs a [CopernicusLayer] reading a **local directory** of already-available data files:
@@ -111,9 +107,9 @@ open class CopernicusLayer<T>(
     constructor(
         environment: Environment<*, GeoPosition>,
         dataDirectory: String,
-        timeScale: String = DEFAULT_TIME_SCALE_ISO,
-        timeOrigin: String? = null,
-        variable: String? = null,
+        timeScale: String,
+        timeOrigin: String?,
+        variable: String?,
         interpolation: SpatioTemporalInterpolation,
         converter: MeasurementConverter<T>,
     ) : this(
@@ -161,11 +157,11 @@ open class CopernicusLayer<T>(
         dataset: String,
         inputsFile: String,
         checkMd5: Boolean,
-        timeScale: String = DEFAULT_TIME_SCALE_ISO,
-        timeOrigin: String? = null,
-        variable: String? = null,
-        cacheDirectory: String = DEFAULT_CACHE_DIRECTORY,
-        cdsApiRcFile: String = DEFAULT_CDSAPIRC_FILE,
+        timeScale: String,
+        timeOrigin: String?,
+        variable: String?,
+        cacheDirectory: String,
+        cdsApiRcFile: String,
         interpolation: SpatioTemporalInterpolation,
         converter: MeasurementConverter<T>,
     ) : this(
@@ -259,30 +255,8 @@ open class CopernicusLayer<T>(
         0.0,
     )
 
-    /**
-     * Default values and helper factory logic for [CopernicusLayer].
-     */
-    companion object {
+    private companion object {
         private const val serialVersionUID = 1L
-
-        private val USER_HOME: String = System.getProperty("user.home")
-
-        /**
-         * Default root of the local cache, used by the datastore costructor.
-         */
-        internal val DEFAULT_CACHE_DIRECTORY = "$USER_HOME/.alchemist/cache/geospatial"
-
-        /**
-         * Default location of the file holding the datastore API token.
-         */
-        internal val DEFAULT_CDSAPIRC_FILE = "$USER_HOME/.cdsapirc"
-
-        /**
-         * Default real-world duration of one simulation time unit, as a [Duration]
-         * and as a ISO-8601 string.
-         */
-        internal val DEFAULT_TIME_SCALE: Duration = 1.hours
-        internal val DEFAULT_TIME_SCALE_ISO: String = DEFAULT_TIME_SCALE.toIsoString()
 
         /**
          * Ensures the data denoted by `(dataset, inputs)` is present in the local cache rooted at

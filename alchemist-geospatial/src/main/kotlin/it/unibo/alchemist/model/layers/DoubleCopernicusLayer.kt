@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model.layers
 
+import it.unibo.alchemist.boundary.acquisition.FileSystemCacheManager
+import it.unibo.alchemist.boundary.utils.CdsApiRc
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geospatial.reading.GridSnapshots
@@ -17,6 +19,7 @@ import it.unibo.alchemist.model.geospatial.strategy.converter.MeasurementConvert
 import it.unibo.alchemist.model.geospatial.strategy.spatiotemporal.SpatioTemporalInterpolation
 import it.unibo.alchemist.model.geospatial.strategy.spatiotemporal.TrilinearInterpolation
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
 
 /**
@@ -79,7 +82,7 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
         timeOrigin: String? = null,
         variable: String? = null,
         cacheDirectory: String = DEFAULT_CACHE_DIRECTORY,
-        cdsApiRcFile: String = DEFAULT_CDSAPIRC_FILE,
+        cdsApiRcFile: String = CdsApiRc.DEFAULT_LOCATION.toString(),
         interpolation: SpatioTemporalInterpolation = TrilinearInterpolation(),
         converter: MeasurementConverter<Double> = DoubleIdentityWithFallback(),
     ) : super(
@@ -99,5 +102,17 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
 
     private companion object {
         private const val serialVersionUID = 1L
+
+        /**
+         * Default real-world duration of one simulation time unit, as a [Duration]
+         * and as a ISO-8601 string.
+         */
+        private val DEFAULT_TIME_SCALE: Duration = 1.hours
+        private val DEFAULT_TIME_SCALE_ISO: String = DEFAULT_TIME_SCALE.toIsoString()
+
+        private val DEFAULT_CACHE_DIRECTORY: String = FileSystemCacheManager
+            .DEFAULT_CACHE_DIRECTORY
+            .resolve("geospatial")
+            .toString()
     }
 }

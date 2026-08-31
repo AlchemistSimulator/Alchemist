@@ -106,8 +106,16 @@ class FileSystemCacheManager<in R : CacheKey>(private val provider: ExternalData
     private fun hasData(dir: Path): Boolean =
         Files.list(dir).use { entries -> entries.anyMatch { Files.isRegularFile(it) } }
 
-    private companion object {
-        private val logger = LoggerFactory.getLogger(FileSystemCacheManager::class.java)
+    /**
+     * Conventional locations and internal constants for the filesystem cache.
+     */
+    companion object {
+        /**
+         * Conventional root under which callers are expected to place their own
+         * cache subdirectory.
+         */
+        val DEFAULT_CACHE_DIRECTORY: Path = Path.of(System.getProperty("user.home"), ".alchemist", "cache")
         private const val TEMP_SUBDIR = ".tmp"
+        private val logger = LoggerFactory.getLogger(FileSystemCacheManager::class.java)
     }
 }

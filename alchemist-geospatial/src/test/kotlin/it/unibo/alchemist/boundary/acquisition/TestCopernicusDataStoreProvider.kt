@@ -16,7 +16,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import it.unibo.alchemist.loadJsonCopernicusResponse
 import java.net.URI
-import java.net.http.HttpClient
 import java.time.Duration
 import kotlin.io.path.createTempDirectory
 import kotlin.io.path.readBytes

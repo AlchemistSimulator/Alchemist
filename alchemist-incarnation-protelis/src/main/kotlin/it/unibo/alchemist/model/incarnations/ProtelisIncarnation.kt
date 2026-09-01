@@ -35,8 +35,6 @@ import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.protelis.actions.SendToNeighbor
 import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
-import it.unibo.alchemist.model.reactions.AbstractNodeReaction
-import it.unibo.alchemist.model.reactions.ChemicalNodeReaction
 import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
@@ -191,11 +189,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
     ): NodeReaction<Any> {
         val parameterString = parameter?.toString()
         val isSend = parameterString.equals("send", ignoreCase = true)
-        val result: NodeReaction<Any> = when {
-            !isSend -> GenericReaction(node, timeDistribution)
-            timeDistribution is ExponentialTime -> ChemicalNodeReaction(node, timeDistribution)
-            else -> ProtelisScheduledNodeReaction(node, timeDistribution)
-        }
+        val result: NodeReaction<Any> = GenericReaction(node, timeDistribution)
         parameter?.let {
             result.actions =
                 listOf(createAction(randomGenerator, environment, node, result, it))
@@ -437,26 +431,4 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             .filter { !alreadyDone.contains(it) }
             .toList()
     }
-}
-
-/**
- * Preserves the independent program cadence when a non-memoryless Protelis send condition changes.
- *
- * A skipped occurrence is still advanced by the engine, as it was before scheduling became reaction-owned. Model
- * invalidation only changes whether the send can execute; it must not restart a deterministic or otherwise stateful
- * time distribution.
- */
-private class ProtelisScheduledNodeReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
-    AbstractNodeReaction<T>(node, timeDistribution) {
-
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ProtelisScheduledNodeReaction<T> =
-        makeClone(node, currentTime) { freshGenerator -> ProtelisScheduledNodeReaction(node, freshGenerator) }
-
-    override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
-        if (!isNewlyInstantiatedProgram) {
-            scheduleNextOccurrenceAfterFiring(atTime)
-        }
-    }
-
-    override fun updateSchedulingAfterInvalidation(currentTime: Time) = Unit
 }

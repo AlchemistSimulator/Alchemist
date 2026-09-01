@@ -36,14 +36,14 @@ class NeighborHasConcentration<T>(
 ) : AbstractCondition<T>(node) {
 
     init {
-        setValidity(
-            environment.getNeighborhood(node).switchMap { neighborhood ->
-                neighborhood.neighbors.map { it.observeConcentration(target) }
-                    .combineLatest { neighborsConcentrations ->
-                        neighborsConcentrations.any { it.isSome { nConc -> nConc == concentration } }
-                    }.map { it.getOrElse { false } }
-            },
-        )
+        val validity = environment.getNeighborhood(node).switchMap { neighborhood ->
+            neighborhood.neighbors.map { it.observeConcentration(target) }
+                .combineLatest { neighborsConcentrations ->
+                    neighborsConcentrations.any { it.isSome { nConc -> nConc == concentration } }
+                }.map { it.getOrElse { false } }
+        }
+        addObservableDependency(validity)
+        setValidity(validity)
     }
 
     override fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>): Condition<T> =

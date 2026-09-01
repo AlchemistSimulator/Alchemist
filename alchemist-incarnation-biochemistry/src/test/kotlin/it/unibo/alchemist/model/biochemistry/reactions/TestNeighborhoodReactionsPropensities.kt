@@ -102,7 +102,9 @@ private fun testSimulation(reactionText: String) {
             val checks =
                 reaction.conditions
                     .filterIsInstance<AbstractNeighborCondition<Double>>()
-                    .flatMap { it.validNeighbors.map { (node, value) -> Container(it, node, value) } }
+                    .flatMap { condition ->
+                        condition.getValidNeighbors().map { (node, value) -> Container(condition, node, value) }
+                    }
             for (it in checks) {
                 assertEquals(it.expectedPropensity, it.propensity)
             }

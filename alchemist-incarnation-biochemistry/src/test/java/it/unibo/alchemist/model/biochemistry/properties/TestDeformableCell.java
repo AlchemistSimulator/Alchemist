@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.biochemistry.properties;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty;
@@ -18,6 +19,7 @@ import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCell
 import it.unibo.alchemist.model.biochemistry.actions.CellTensionPolarization;
 import it.unibo.alchemist.model.biochemistry.conditions.TensionPresent;
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironmentNoOverlap;
+import it.unibo.alchemist.model.biochemistry.reactions.BiochemicalNodeReaction;
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
 import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
@@ -156,26 +158,32 @@ class TestDeformableCell {
     void testTensionPresent1() {
         environment.addNode(cellNode1, CELL_POS_TENSPRES1_1);
         environment.addNode(cellNode2, CELL_POS_TENSPRES1_2);
-        cellNode1.addReaction(incarnation.createReaction(rand, environment, cellNode1, time, "[] --> [A] if TensionPresent()"));
+        final var reaction = incarnation.createReaction(
+            rand,
+            environment,
+            cellNode1,
+            time,
+            "[] --> [A] if TensionPresent()"
+        );
+        cellNode1.addReaction(reaction);
+        reaction.initializationComplete(Time.ZERO, environment);
         assertFalse(cellNode1.getReactions().isEmpty());
         assertTrue(cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
                 .getConditions().get(0).isValid().getCurrent());
-        assertEquals(1d, cellNode1.getReactions().stream()
+        assertEquals(1d, ((BiochemicalNodeReaction) cellNode1.getReactions().stream()
                 .findFirst()
-                .orElseThrow()
-                .getConditions().get(0).getPropensityContribution().getCurrent(),
+                .orElseThrow()).getRate(),
                 PRECISION);
         environment.moveNodeToPosition(cellNode2, new Euclidean2DPosition(0, 4));
         assertFalse(cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
                 .getConditions().get(0).isValid().getCurrent());
-        assertEquals(0d, cellNode1.getReactions().stream()
+        assertEquals(0d, ((BiochemicalNodeReaction) cellNode1.getReactions().stream()
                 .findFirst()
-                .orElseThrow()
-                .getConditions().get(0).getPropensityContribution().getCurrent(),
+                .orElseThrow()).getRate(),
                 PRECISION);
     }
 
@@ -186,36 +194,41 @@ class TestDeformableCell {
     void testTensionPresent2() {
         environment.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode3, new Euclidean2DPosition(0, 1));
-        cellNode1.addReaction(incarnation.createReaction(rand, environment, cellNode1, time, "[] --> [A] if TensionPresent()"));
+        final var reaction = incarnation.createReaction(
+            rand,
+            environment,
+            cellNode1,
+            time,
+            "[] --> [A] if TensionPresent()"
+        );
+        cellNode1.addReaction(reaction);
+        reaction.initializationComplete(Time.ZERO, environment);
         assertFalse(cellNode1.getReactions().isEmpty());
         assertTrue(cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
                 .getConditions().get(0).isValid().getCurrent());
-        assertEquals(1d, cellNode1.getReactions().stream()
+        assertEquals(1d, ((BiochemicalNodeReaction) cellNode1.getReactions().stream()
                 .findFirst()
-                .orElseThrow()
-                .getConditions().get(0).getPropensityContribution().getCurrent(),
+                .orElseThrow()).getRate(),
                 PRECISION);
         environment.moveNodeToPosition(cellNode3, MOVE_TO_POS2_1);
         assertTrue(cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
                 .getConditions().get(0).isValid().getCurrent());
-        assertEquals(0.5, cellNode1.getReactions().stream()
+        assertEquals(0.5, ((BiochemicalNodeReaction) cellNode1.getReactions().stream()
                 .findFirst()
-                .orElseThrow()
-                .getConditions().get(0).getPropensityContribution().getCurrent(),
+                .orElseThrow()).getRate(),
                 PRECISION);
         environment.moveNodeToPosition(cellNode3, MOVE_TO_POS2_2);
         assertFalse(cellNode1.getReactions().stream()
                 .findFirst()
                 .orElseThrow()
                 .getConditions().get(0).isValid().getCurrent());
-        assertEquals(0d, cellNode1.getReactions().stream()
+        assertEquals(0d, ((BiochemicalNodeReaction) cellNode1.getReactions().stream()
                 .findFirst()
-                .orElseThrow()
-                .getConditions().get(0).getPropensityContribution().getCurrent(),
+                .orElseThrow()).getRate(),
                 PRECISION);
     }
 

@@ -30,11 +30,14 @@ class EventSingleExecutionRegressionTest : FreeSpec({
             LoadAlchemist.from(ResourceLoader.getResource("eventSingleExecution.yml")).getDefault()
         val event = simulation.environment.nodes.first().reactions.single()
 
-        assertIs<Event<*>>(event)
+        assertIs<AbsoluteEvent<*>>(event)
         assertFalse(TimeDistributedReaction::class.java.isInstance(event))
     }
     "an event should not be executed twice" {
         startAlchemistFromResource("eventSingleExecution.yml")
+    }
+    "a conditional event should not be executed twice" {
+        startAlchemistFromResource("conditionalEventSingleExecution.yml")
     }
     "two independent events, scheduled at different times, should execute once each" {
         startAlchemistFromResource("multipleIndependentEvents.yml")

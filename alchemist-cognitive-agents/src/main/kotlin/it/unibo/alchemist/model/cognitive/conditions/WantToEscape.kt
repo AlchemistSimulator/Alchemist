@@ -15,12 +15,14 @@ import it.unibo.alchemist.model.cognitive.CognitiveProperty
 import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.observation.Observable
 
 /**
  * The intention of the pedestrian to evacuate or not.
  */
 open class WantToEscape<T, S : Vector<S>, A : Transformation<S>>(node: Node<T>) : AbstractCondition<T>(node) {
-    override fun isValid(): Observable<Boolean> =
-        getNode().asProperty<T, CognitiveProperty<T>>().cognitiveModel.escapeDecision
+    init {
+        val escapeDecision = getNode().asProperty<T, CognitiveProperty<T>>().cognitiveModel.escapeDecision
+        addObservableDependency(escapeDecision)
+        setValidity(escapeDecision)
+    }
 }

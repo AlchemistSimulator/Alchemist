@@ -14,18 +14,21 @@ import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableSet
 
 /**
- * A reactive prerequisite for a [NodeReaction].
+ * A prerequisite over model state associated with a [Node].
+ *
+ * Most reactions observe condition validity to gate scheduling. A reaction with occurrence-time semantics may read
+ * the same validity only when it fires, without subscribing to the condition's dependencies.
  *
  * @param T concentration type
  */
 interface Condition<T> : Disposable {
     /**
-     * Creates an equivalent condition for [node] and [reaction].
+     * Creates an equivalent condition for [newNode] and [newReaction].
      */
-    fun cloneCondition(node: Node<T>, reaction: NodeReaction<T>): Condition<T>
+    fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>): Condition<T>
 
     /**
-     * Observable model values which may affect this condition or its propensity contribution.
+     * Observable model values which may affect this condition.
      *
      * Reaction implementations may observe these values to refresh their state and scheduling policy. The engine
      * does not use them to build a dependency graph and observes only the owning reaction's next occurrence.
@@ -38,17 +41,13 @@ interface Condition<T> : Disposable {
     fun getNode(): Node<T>
 
     /**
-     * The current contribution used by propensity-aware reaction scheduling policies.
-     */
-    fun getPropensityContribution(): Observable<Double>
-
-    /**
      * The live validity of this condition.
      */
     fun isValid(): Observable<Boolean>
 
     /**
-     * Signals that the owning reaction is about to execute.
+     * Signals that the owning reaction is about to fire.
+     * Used to implement conditions latched to changes that occur in-between reaction executions.
      */
     fun reactionReady() = Unit
 }

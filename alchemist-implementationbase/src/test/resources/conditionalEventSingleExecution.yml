@@ -8,12 +8,12 @@ deployments:
   - type: Rectangle
     parameters: [100, 62, 15, 95, 200]
     programs:
-      - type: AbsoluteEvent
-        parameters: [0]
+      - type: ConditionalEvent
+        time-distribution: 1
         actions:
           - type: TestEventAction
             parameters: []
 
 terminate:
   - type: AfterTime
-    parameters: 1
+    parameters: 2

@@ -119,7 +119,19 @@ public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMole
     }
 
     @Override
-    public void execute() {
+    protected void validateConditions(
+        @Nonnull final List<? extends Condition<List<ILsaMolecule>>> conditions
+    ) {
+        final List<? extends Condition<List<ILsaMolecule>>> unsupported = conditions.stream()
+            .filter(condition -> !(condition instanceof ILsaCondition))
+            .toList();
+        if (!unsupported.isEmpty()) {
+            throw new IllegalArgumentException("SAPERE reactions require ILsaCondition instances, got " + unsupported);
+        }
+    }
+
+    @Override
+    protected void executeReaction() {
         if (possibleMatches.isEmpty()) {
             executeActions(null);
             return;

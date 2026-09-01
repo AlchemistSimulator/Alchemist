@@ -48,6 +48,7 @@ public abstract class AbstractLsaCondition extends AbstractCondition<List<ILsaMo
         super(node);
     }
 
+    @Nonnull
     @Override
     public abstract String toString();
 
@@ -60,8 +61,8 @@ public abstract class AbstractLsaCondition extends AbstractCondition<List<ILsaMo
     @Nonnull
     @Override
     public abstract AbstractLsaCondition cloneCondition(
-        @Nonnull Node<List<ILsaMolecule>> node,
-        @Nonnull NodeReaction<List<ILsaMolecule>> reaction
+        @Nonnull Node<List<ILsaMolecule>> newNode,
+        @Nonnull NodeReaction<List<ILsaMolecule>> newReaction
     );
 
     /**

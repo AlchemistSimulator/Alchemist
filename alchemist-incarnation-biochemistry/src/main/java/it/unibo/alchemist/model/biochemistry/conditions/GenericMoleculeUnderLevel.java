@@ -44,21 +44,14 @@ public final class GenericMoleculeUnderLevel<T extends Number> extends
 
     /**
      * This condition validity is true if the concentration of the molecule is lower the value;
-     * the propensity influence computed as max(0, T-[M]), where T is the threshold chosen
-     * and [M] is the current concentration of the molecule.
+     * the reaction-specific rate law may use the distance from the threshold.
      */
     private void setUpObservability() {
         final var dep = getNode().observeConcentration(getMolecule());
         final double qty = getQuantity().doubleValue();
-
         addObservableDependency(dep);
-
         setValidity(dep.map(newValue ->
             getOrElse(newValue, () -> Double.NEGATIVE_INFINITY).doubleValue() < qty
-        ));
-
-        setPropensityContribution(dep.map(newValue ->
-            Math.max(0, qty - getOrElse(newValue, () -> 0.0).doubleValue())
         ));
     }
 }

@@ -50,13 +50,16 @@ open class Engine<T, P : Position<out P>>(
         check(scheduledTime >= time) {
             "$nextEvent is scheduled in the past at time $scheduledTime. Current time: $time; current step: $step."
         }
-        currentTime = scheduledTime
-        val executed = scheduledTime.isFinite && nextEvent.canExecute().current
-        if (executed) {
-            nextEvent.conditions.forEach { it.reactionReady() }
-            nextEvent.execute()
+        if (!scheduledTime.isFinite) {
+            terminate()
+            LOGGER.info("No finite reactions remain.")
+            return
         }
-        nextEvent.updateSchedulingAfterFiring(time)
+        currentTime = scheduledTime
+        check(nextEvent.canExecute().current) {
+            "$nextEvent exposed a finite next occurrence while reporting that it could not execute"
+        }
+        nextEvent.execute()
 
         monitors.forEach { it.stepDone(environment, nextEvent, time, step) }
         if (environment.isTerminated) {

@@ -20,10 +20,12 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
+import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.nodes.GenericNode
+import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.reactions.AbsoluteEvent
 import it.unibo.alchemist.model.reactions.AbstractNodeReaction
-import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.time.Duration.Companion.milliseconds
@@ -63,6 +65,7 @@ private class EmittingNodeReaction(
     distribution: TimeDistribution<Double> = DiracComb(1.0),
 ) : AbstractNodeReaction<Double>(node, distribution) {
     var emitOnExecute = false
+    var executions = 0
     var disposed = false
 
     override fun dispose() {
@@ -70,7 +73,8 @@ private class EmittingNodeReaction(
         super.dispose()
     }
 
-    override fun execute() {
+    override fun executeReaction() {
+        executions++
         if (emitOnExecute) {
             emit(DoubleTime(4.0), DoubleTime(5.0))
         }
@@ -80,6 +84,19 @@ private class EmittingNodeReaction(
 
     override fun cloneOnNewNode(node: Node<Double>, currentTime: Time): NodeReaction<Double> =
         error("Not needed in test")
+}
+
+private class InvalidCondition(node: Node<Double>) : AbstractCondition<Double>(node) {
+    var readySignals = 0
+        private set
+
+    init {
+        setValidity(MutableObservable.observe(false))
+    }
+
+    override fun reactionReady() {
+        readySignals++
+    }
 }
 
 private class TestEngine<T, P : it.unibo.alchemist.model.Position<out P>>(
@@ -110,6 +127,22 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         engine.initializeForTest()
 
         scheduler.updateBeforeAdd shouldBe false
+        scheduler.updates shouldNotContain reaction
+    }
+
+    "an infinite scheduler head is quiescent and is not consumed as a step" {
+        val (environment, _, reaction) = fixture()
+        reaction.conditions = listOf(InvalidCondition(reaction.node))
+        val scheduler = RecordingScheduler<Double>()
+        val engine = TestEngine(environment, scheduler)
+        engine.initializeForTest()
+
+        reaction.nextOccurrence.current shouldBe Time.INFINITY
+        engine.stepForTest()
+
+        engine.time shouldBe Time.ZERO
+        engine.step shouldBe 0L
+        reaction.executions shouldBe 0
         scheduler.updates shouldNotContain reaction
     }
 
@@ -145,7 +178,7 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
     "a successful event is unregistered and removed from its node without an infinite update" {
         val environment = Continuous2DEnvironment(BiochemistryIncarnation())
         val node = GenericNode(environment)
-        val event = Event<Double>(node, Time.ZERO)
+        val event = AbsoluteEvent<Double>(node, Time.ZERO)
         node.addReaction(event)
         environment.addNode(node, environment.makePosition(0, 0))
         val scheduler = RecordingScheduler<Double>()
@@ -163,7 +196,7 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
 
     "a successful environment-hosted event uses the same removal path" {
         val environment = Continuous2DEnvironment(BiochemistryIncarnation())
-        val event = Event<Double>(environment, Time.ZERO)
+        val event = AbsoluteEvent<Double>(environment, Time.ZERO)
         environment.addReaction(event)
         val scheduler = RecordingScheduler<Double>()
         val engine = TestEngine(environment, scheduler)
@@ -178,6 +211,30 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         event.nextOccurrence.observers.size shouldBe 0
     }
 
+    "an absolute event expires at its occurrence when its conditions are invalid" {
+        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+        val node = GenericNode(environment)
+        val condition = InvalidCondition(node)
+        val event = AbsoluteEvent<Double>(node, Time.ZERO).apply {
+            conditions = listOf(condition)
+        }
+        node.addReaction(event)
+        environment.addNode(node, environment.makePosition(0, 0))
+        val scheduler = RecordingScheduler<Double>()
+        val engine = TestEngine(environment, scheduler)
+        engine.initializeForTest()
+
+        event.nextOccurrence.current shouldBe Time.ZERO
+        event.canExecute().current shouldBe true
+        engine.stepForTest()
+        engine.drainCommand()
+
+        engine.step shouldBe 1L
+        condition.readySignals shouldBe 0
+        scheduler.reactions shouldNotContain event
+        node.reactions shouldNotContain event
+    }
+
     "runtime host mutations synchronize scheduler membership for both host types" {
         val environment = Continuous2DEnvironment(BiochemistryIncarnation())
         val node = GenericNode(environment)
@@ -186,7 +243,7 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         val engine = TestEngine(environment, scheduler)
         engine.initializeForTest()
         val nodeReaction = EmittingNodeReaction(node)
-        val environmentReaction = Event<Double>(environment, DoubleTime(2.0))
+        val environmentReaction = AbsoluteEvent<Double>(environment, DoubleTime(2.0))
 
         node.addReaction(nodeReaction)
         engine.drainCommand()

@@ -35,16 +35,25 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
             validateConditions(value)
             field = value
             canExecute.dispose()
-            canExecute = value.map(Condition<T>::isValid)
-                .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
-                ?: MutableObservable.observe(true)
+            canExecute = if (conditionsGateScheduling) {
+                value.map(Condition<T>::isValid)
+                    .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
+                    ?: MutableObservable.observe(true)
+            } else {
+                MutableObservable.observe(true)
+            }
             initializedEnvironment?.let {
                 initializeDependencySubscriptions()
-                reactToModelUpdate(it)
+                if (conditionsGateScheduling) {
+                    reactToModelUpdate(it)
+                }
             }
         }
 
     private var canExecute: Observable<Boolean> = MutableObservable.observe(true)
+
+    /** Whether installed conditions reactively gate [nextOccurrence]. */
+    protected open val conditionsGateScheduling: Boolean = true
 
     @Transient
     private var dependencySubscriptions: CompositeDisposable? = null
@@ -71,11 +80,17 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
     final override fun compareTo(other: Reaction<T>): Int =
         nextOccurrence.current.compareTo(other.nextOccurrence.current)
 
-    /** The default execution iterates all actions in order. */
-    override fun execute() = actions.forEach(Action<T>::execute)
+    /** The default execution prepares valid conditions and then applies the model mutation. */
+    override fun execute() {
+        signalConditionsReady()
+        executeReaction()
+    }
 
-    /** Owner-neutral reactions have no recurring scheduling state to advance. */
-    override fun updateSchedulingAfterFiring(currentTime: Time) = Unit
+    /** Performs this reaction's model mutation. */
+    protected open fun executeReaction() = actions.forEach(Action<T>::execute)
+
+    /** Notifies conditions immediately before their valid reaction executes. */
+    protected fun signalConditionsReady() = conditions.forEach(Condition<T>::reactionReady)
 
     /** The scheduling information appended by [toString], or `null` when none exists. */
     protected open val rateAsString: String? get() = null
@@ -91,6 +106,9 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
         initializeDependencySubscriptions()
         onInitializationComplete(atTime, environment)
         afterInitializationComplete(atTime, environment)
+        if (conditionsGateScheduling && !canExecute.current) {
+            suspendScheduling()
+        }
     }
 
     /** Called once reactive dependencies have been activated. */
@@ -107,6 +125,13 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
 
     /** Applies scheduling policy after a reactive invalidation without firing the reaction. */
     protected abstract fun updateSchedulingAfterInvalidation(currentTime: Time)
+
+    /** Suspends this reaction without advancing its scheduling policy or consuming another sample. */
+    protected open fun suspendScheduling() {
+        if (nextOccurrence.current != Time.INFINITY) {
+            setNextOccurrence(Time.INFINITY)
+        }
+    }
 
     /** Changes the reaction-owned absolute occurrence time. */
     protected fun setNextOccurrence(nextOccurrence: Time) {
@@ -145,12 +170,14 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
     private fun initializeDependencySubscriptions() {
         dependencySubscriptions?.dispose()
         dependencySubscriptions = CompositeDisposable().apply {
-            conditions.forEach { condition ->
-                add(
-                    condition.getDependencies().merge().subscribe(invokeOnSubscription = false) {
-                        initializedEnvironment?.let(::reactToModelUpdate)
-                    },
-                )
+            if (conditionsGateScheduling) {
+                conditions.forEach { condition ->
+                    add(
+                        condition.getDependencies().merge().subscribe(invokeOnSubscription = false) {
+                            initializedEnvironment?.let(::reactToModelUpdate)
+                        },
+                    )
+                }
             }
         }
     }
@@ -158,6 +185,10 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
     private fun reactToModelUpdate(environment: Environment<T, *>) {
         val currentTime = environment.simulationOrNull?.time ?: lastKnownTime
         refreshReactionState(currentTime, environment)
-        updateSchedulingAfterInvalidation(currentTime)
+        if (canExecute.current) {
+            updateSchedulingAfterInvalidation(currentTime)
+        } else {
+            suspendScheduling()
+        }
     }
 }

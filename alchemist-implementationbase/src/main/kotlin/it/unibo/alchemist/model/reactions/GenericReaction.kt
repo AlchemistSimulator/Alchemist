@@ -14,13 +14,13 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 
 /**
- * A generic reaction that ignores condition propensity and schedules a new sample after every occurrence.
+ * A generic reaction gated by condition validity that schedules a new sample after every occurrence.
  *
  * @param T concentration type
  * @param node node hosting the reaction
  * @param timeDistribution delay generator
  */
-class GenericReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
+open class GenericReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
     AbstractNodeReaction<T>(node, timeDistribution) {
 
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time): GenericReaction<T> =

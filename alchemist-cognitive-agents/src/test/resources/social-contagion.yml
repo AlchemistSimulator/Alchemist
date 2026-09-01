@@ -3,15 +3,15 @@ incarnation: protelis
 _danger: &danger
   danger
 _target: &target
-  targe
+  target
 
 environment:
   type: ContinuousPhysics2DEnvironment
 
 layers:
-  - type: BidimensionalGaussianLayer
+  - type: StepLayer
     molecule: *danger
-    parameters: [80, 0, 100, 20]
+    parameters: [0, 0, 100.0, 0.0]
   - type: BidimensionalGaussianLayer
     molecule: *target
     parameters: [-50, 0, 10, 50]
@@ -20,40 +20,41 @@ seeds:
   scenario: 0
   simulation: 1
 
-_reactions: &behavior
-  - time-distribution:
-      type: DiracComb
-      parameters: [2.0]
-    type: BlendedSteering
-    actions:
-      - type: CognitiveAgentAvoidLayer
-        parameters: [*danger]
-      - type: CognitiveAgentFollowLayer
-        parameters: [*target]
-    conditions:
-      - type: WantToEscape
-  - time-distribution:
-      type: DiracComb
-      parameters: [0.5]
-    type: CognitiveBehavior
-    actions:
-      - type: HeadTowardRandomDirection
+_cognitive_behavior: &cognitive_behavior
+  time-distribution:
+    type: DiracComb
+    parameters: [0.5]
+  type: CognitiveBehavior
 
-_nodes: &nodes
+_pedestrian: &pedestrian
   properties:
     - type: Human
-      parameters: [ "adult", "male" ]
+      parameters: ["adult", "male"]
     - type: CognitivePedestrian
     - type: Cognitive2D
       parameters: [ *danger ]
     - type: Perceptive2D
     - type: CircularArea
-  programs: *behavior
 
 deployments:
-  - type: Circle
-    parameters: [25, 0, 0, 8]
-    <<: *nodes
-  - type: Circle
-    parameters: [75, 60, 0, 10]
-    <<: *nodes
+  # This pedestrian is directly exposed and remains still, acting as the source of social contagion.
+  - type: Point
+    parameters: [1, 1]
+    <<: *pedestrian
+    programs:
+      - *cognitive_behavior
+  # This pedestrian starts in the zero-valued half-plane and can evacuate only after social contagion.
+  - type: Point
+    parameters: [1, -1]
+    <<: *pedestrian
+    programs:
+      - *cognitive_behavior
+      - time-distribution:
+          type: DiracComb
+          parameters: [2.0]
+        type: BlendedSteering
+        actions:
+          - type: CognitiveAgentFollowLayer
+            parameters: [*target]
+        conditions:
+          - type: WantToEscape

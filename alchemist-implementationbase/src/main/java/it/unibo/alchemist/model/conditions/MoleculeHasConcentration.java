@@ -41,7 +41,6 @@ public final class MoleculeHasConcentration<T> extends AbstractCondition<T> {
         this.value = Objects.requireNonNull(value);
         addObservableDependency(node.observeConcentration(molecule));
         setValidity(node.observeConcentration(molecule).map(opt -> opt.fold(() -> false, value::equals)));
-        setPropensityContribution(isValid().map(valid -> valid ? 1d : 0d));
     }
 
     @Nonnull
@@ -50,9 +49,9 @@ public final class MoleculeHasConcentration<T> extends AbstractCondition<T> {
         return new MoleculeHasConcentration<>(newNode, mol, value);
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return mol + "=" + value + "?[" + isValid() + "]";
     }
-
 }

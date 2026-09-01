@@ -30,7 +30,7 @@ import org.apache.commons.math3.util.FastMath
  * @param environment   the environment
  */
 class BiomolPresentInNeighbor(
-    environment: Environment<Double, *>,
+    private val environment: Environment<Double, *>,
     node: Node<Double>,
     private val molecule: Biomolecule,
     private val concentration: Double,
@@ -40,7 +40,7 @@ class BiomolPresentInNeighbor(
         setUpObservability()
     }
 
-    protected override fun observeNeighborPropensity(neighbor: Node<Double>): Observable<Double> =
+    override fun observeNeighborWeight(neighbor: Node<Double>): Observable<Double> =
         neighbor.takeIf { it.asPropertyOrNull<Double, CellProperty<*>>() != null }?.let { n ->
             // the neighbor is eligible, its propensity is computed using the concentration of the biomolecule
             n.observeConcentration(molecule).map { maybeValue ->
@@ -70,7 +70,7 @@ class BiomolPresentInNeighbor(
             observeValidNeighbors().map { validNeighbors ->
                 val current = environment.getNeighborhood(super.getNode()).current
                 validNeighbors
-                    ?.takeIf { it.isNotEmpty() }?.entries
+                    .takeIf { it.isNotEmpty() }?.entries
                     ?.filter { it.key.asPropertyOrNull<Double, CellProperty<*>>() != null }
                     ?.all { it.key in current && it.key.getConcentration(molecule) >= concentration }
                     ?: false

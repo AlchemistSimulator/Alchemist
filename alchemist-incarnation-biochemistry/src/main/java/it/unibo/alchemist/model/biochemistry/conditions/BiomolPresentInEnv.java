@@ -17,8 +17,6 @@ import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.observation.Observable;
-import org.apache.commons.math3.util.CombinatoricsUtils;
-import org.apache.commons.math3.util.FastMath;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,6 +27,7 @@ import javax.annotation.Nullable;
 public final class BiomolPresentInEnv<P extends Position<? extends P>> extends GenericMoleculePresent<Double> {
 
     private final Environment<Double, P> environment;
+    private Observable<Double> totalQuantity;
 
     /**
      * Initialize condition for extracellular environment, implemented as a set
@@ -64,18 +63,14 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
     }
 
     private void setUpObservability() {
-        final Observable<Double> totalQuantity = observeTotalQuantity();
+        totalQuantity = observeTotalQuantity();
         addObservableDependency(totalQuantity);
         setValidity(totalQuantity.map(totalQty -> totalQty >= getQuantity()));
-        setPropensityContribution(totalQuantity.map(totalQty -> {
-            if (totalQty < getQuantity()) {
-                return 0d;
-            }
-            return CombinatoricsUtils.binomialCoefficientDouble(
-                (int) FastMath.round(totalQty),
-                (int) FastMath.round(getQuantity())
-            );
-        }));
+    }
+
+    @Override
+    public double getCurrentQuantity() {
+        return totalQuantity.getCurrent();
     }
 
     private Observable<Double> observeTotalQuantity() {

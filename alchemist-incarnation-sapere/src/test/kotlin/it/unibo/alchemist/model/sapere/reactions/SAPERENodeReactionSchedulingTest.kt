@@ -39,7 +39,7 @@ class SAPERENodeReactionSchedulingTest {
         assertTrue(reaction.nextOccurrence.current > DoubleTime(0.0))
         verify(exactly = 1) { rng.nextDouble() }
 
-        reaction.updateSchedulingAfterFiring(reaction.nextOccurrence.current)
+        reaction.execute()
         verify(exactly = 2) { rng.nextDouble() }
     }
 }

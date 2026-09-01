@@ -9,14 +9,18 @@
 
 package it.unibo.alchemist.model.reactions
 
+import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 
 /**
- * A reaction whose rate is the product of its exponential time-distribution rate and all condition propensity
- * contributions. Construction rejects non-memoryless distributions.
+ * Base for memoryless chemical reactions.
+ *
+ * The generic implementation accepts no conditions: concrete chemical families must define their accepted semantic
+ * condition types and compute their own rate from typed model state. Construction rejects non-memoryless
+ * distributions.
  *
  * @param T concentration type
  */
@@ -31,25 +35,26 @@ open class ChemicalNodeReaction<T>(node: Node<T>, timeDistribution: TimeDistribu
         makeClone(node, currentTime) { freshGenerator -> ChemicalNodeReaction(node, freshGenerator) }
 
     override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
-        if (!isNewlyInstantiatedProgram) {
+        if (!isNewlyInstantiatedProgram && canExecute().current) {
             refreshReactionState(atTime, environment)
             scheduleNextOccurrenceAfterFiring(atTime)
         }
     }
 
-    /**
-     * Subclasses overriding this method must invoke the base implementation to refresh [rate].
-     */
     override fun refreshReactionState(currentTime: Time, environment: Environment<T, *>) {
-        currentRate = super.rate
-        for (condition in conditions) {
-            val contribution = condition.getPropensityContribution().current
-            require(contribution >= 0) { "Condition $condition returned a negative propensity contribution" }
-            if (contribution == 0.0) {
-                currentRate = 0.0
-                break
-            }
-            currentRate *= contribution
+        currentRate = computeRate(currentTime, environment)
+        require(!currentRate.isNaN() && currentRate >= 0.0) { "Reaction $this computed an invalid rate: $currentRate" }
+    }
+
+    /** Computes the current chemical rate from reaction-specific typed state. */
+    protected open fun computeRate(currentTime: Time, environment: Environment<T, *>): Double = baseRate
+
+    /** The rate configured by the memoryless time distribution before chemical state is applied. */
+    protected val baseRate: Double get() = super.rate
+
+    override fun validateConditions(conditions: List<Condition<T>>) {
+        require(conditions.isEmpty()) {
+            "${javaClass.simpleName} must define an explicit accepted-condition contract before using $conditions"
         }
     }
 }

@@ -50,7 +50,11 @@ class EnvironmentTestReaction<T>(
 
     override fun canExecute(): Observable<Boolean> = validity
 
-    override fun execute() = actions.forEach(Action<T>::execute)
+    override fun execute() {
+        conditions.forEach(Condition<T>::reactionReady)
+        actions.forEach(Action<T>::execute)
+        updateSchedulingAfterFiring(environment.simulationOrNull?.time ?: nextOccurrence.current)
+    }
 
     override fun updateSchedulingAfterFiring(currentTime: Time) {
         val sample = timeDistribution.sample()

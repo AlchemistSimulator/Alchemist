@@ -61,7 +61,9 @@ class PhysicsUpdate<T>(
     override fun canExecute(): Observable<Boolean> = validity
 
     override fun execute() {
+        conditions.forEach(Condition<T>::reactionReady)
         environment.updatePhysics(1 / rate)
+        updateSchedulingAfterFiring(environment.simulationOrNull?.time ?: nextOccurrence.current)
     }
 
     override fun updateSchedulingAfterFiring(currentTime: Time) {

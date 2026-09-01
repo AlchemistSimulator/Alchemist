@@ -20,19 +20,27 @@ import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.math.exp
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import org.apache.commons.math3.random.RandomGenerator
 import org.junit.jupiter.api.Test
 
 class NodeReactionTransitionTest {
 
     @Test
+    fun `the chemical policy base rejects conditions without explicit rate semantics`() {
+        val node = mockk<Node<Any>>()
+        val condition = ObservableValidityCondition(node, MutableObservable.observe(true))
+        assertFailsWith<IllegalArgumentException> {
+            ChemicalNodeReaction(node, ExponentialTime(1.0, mockk(relaxed = true))).conditions = listOf(condition)
+        }
+    }
+
+    @Test
     fun `invalidation rescales an exponential occurrence without drawing another sample`() {
         val fixture = exponentialFixture(1.0) { 0.5 }
         val (node, environment, propensity, randomGenerator) = fixture
         val samples = { fixture.samples }
-        val reaction = ChemicalNodeReaction(node, ExponentialTime(1.0, randomGenerator)).apply {
-            conditions = listOf(ObservablePropensityCondition(node, propensity))
-        }
+        val reaction = ObservableRateReaction(node, ExponentialTime(1.0, randomGenerator), propensity)
         reaction.initializationComplete(Time.ZERO, environment)
         val initialOccurrence = reaction.nextOccurrence.current
         assertEquals(1, samples())
@@ -55,9 +63,11 @@ class NodeReactionTransitionTest {
             samples++
             0.5
         }
-        val reaction = ChemicalNodeReaction(node, ExponentialTime(1.0, DoubleTime(10.0), randomGenerator)).apply {
-            conditions = listOf(ObservablePropensityCondition(node, propensity))
-        }
+        val reaction = ObservableRateReaction(
+            node,
+            ExponentialTime(1.0, DoubleTime(10.0), randomGenerator),
+            propensity,
+        )
 
         reaction.initializationComplete(Time.ZERO, environment)
         assertEquals(1, samples)
@@ -74,9 +84,11 @@ class NodeReactionTransitionTest {
         val fixture = exponentialFixture(1.0) { 1 - exp(-0.5) }
         val (node, environment, propensity, randomGenerator) = fixture
         val samples = { fixture.samples }
-        val reaction = ChemicalNodeReaction(node, ExponentialTime(1.0, DoubleTime(10.0), randomGenerator)).apply {
-            conditions = listOf(ObservablePropensityCondition(node, propensity))
-        }
+        val reaction = ObservableRateReaction(
+            node,
+            ExponentialTime(1.0, DoubleTime(10.0), randomGenerator),
+            propensity,
+        )
 
         reaction.initializationComplete(Time.ZERO, environment)
         assertEquals(1, samples())
@@ -105,15 +117,42 @@ class NodeReactionTransitionTest {
         reaction.initializationComplete(Time.ZERO, environment)
         assertEquals(0, samples)
         validity.current = false
+        assertEquals(0, samples)
+        assertEquals(Time.INFINITY, reaction.nextOccurrence.current)
+        validity.current = true
         assertEquals(1, samples)
     }
 
-    private class ObservablePropensityCondition<T>(node: Node<T>, propensity: MutableObservable<Double>) :
-        AbstractCondition<T>(node) {
+    private class ObservableRateCondition<T>(node: Node<T>, rate: MutableObservable<Double>) : AbstractCondition<T>(
+        node,
+    ) {
         init {
-            addObservableDependency(propensity)
+            addObservableDependency(rate)
             setValidity(MutableObservable.observe(true))
-            setPropensityContribution(propensity)
+        }
+    }
+
+    private class ObservableRateReaction<T>(
+        node: Node<T>,
+        timeDistribution: ExponentialTime<T>,
+        private val observableRate: MutableObservable<Double>,
+    ) : AbstractMarkovianNodeReaction<T>(node, timeDistribution) {
+
+        init {
+            conditions = listOf(ObservableRateCondition(node, observableRate))
+        }
+
+        override val rate: Double get() = observableRate.current
+
+        override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ObservableRateReaction<T> =
+            makeClone(node, currentTime) { freshGenerator ->
+                ObservableRateReaction(node, freshGenerator as ExponentialTime<T>, observableRate)
+            }
+
+        override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
+            if (!isNewlyInstantiatedProgram) {
+                scheduleNextOccurrenceAfterFiring(atTime)
+            }
         }
     }
 

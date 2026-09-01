@@ -16,10 +16,10 @@ import it.unibo.alchemist.model.observation.Observable
  * A scheduled entity whose absolute occurrence time is owned by the entity itself.
  *
  * The engine initializes a reaction before scheduling it, indexes [nextOccurrence], and subscribes to that
- * observable without replaying its current value. After the scheduler selects the occurrence, the engine may call
- * [execute], then temporarily calls [updateSchedulingAfterFiring] to consume that selected occurrence. Reactive
- * invalidation between occurrences is owned by the implementation and is communicated to the engine only by
- * emitting a new [nextOccurrence].
+ * observable without replaying its current value.
+ * After the scheduler selects a finite occurrence, the engine calls [execute].
+ * Reactive invalidation and post-execution scheduling are owned by the implementation and are
+ * communicated to the engine only by emitting a new [nextOccurrence].
  */
 interface Reaction<T> :
     Comparable<Reaction<T>>,
@@ -32,7 +32,10 @@ interface Reaction<T> :
     var actions: List<Action<T>>
 
     /**
-     * The [Condition]s controlling whether this reaction can execute.
+     * The [Condition]s interpreted by this reaction's scheduling and execution policy.
+     *
+     * Conditions normally gate scheduling.
+     * A reaction with occurrence-time semantics may instead evaluate them only when its occurrence is selected.
      * Please be careful when modifying this list.
      */
     var conditions: List<Condition<T>>
@@ -46,8 +49,9 @@ interface Reaction<T> :
     val nextOccurrence: Observable<Time>
 
     /**
-     * Observes whether the reaction can be executed. This observable emits updates
-     * to indicate whether the conditions required for execution are satisfied.
+     * Observes whether the reaction procedure can be selected and executed by the engine. This observable emits
+     * updates when that state changes. Reactions whose procedure includes checking occurrence-time conditions may
+     * remain executable even when those conditions will suppress their model effects.
      *
      * @return An [Observable] emitting true if the reaction can be executed, false otherwise.
      */
@@ -57,15 +61,6 @@ interface Reaction<T> :
      * Executes this reaction.
      */
     fun execute()
-
-    /**
-     * Consumes the occurrence selected at [currentTime].
-     *
-     * This hook is temporarily part of the root contract while a selected reaction whose conditions became invalid
-     * must still advance stateful scheduling state. Once condition validity directly forces [nextOccurrence] to
-     * infinity, successful recurring reactions will own this transition and this method will be removed.
-     */
-    fun updateSchedulingAfterFiring(currentTime: Time)
 
     /**
      * Activates reactive inputs after the environment is fully initialized and establishes the first occurrence.

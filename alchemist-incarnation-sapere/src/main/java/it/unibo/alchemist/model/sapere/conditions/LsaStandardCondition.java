@@ -44,11 +44,8 @@ public class LsaStandardCondition extends AbstractLsaCondition {
      */
     public LsaStandardCondition(final ILsaMolecule mol, final ILsaNode n) {
         super(n, Sets.newHashSet(new ILsaMolecule[] {mol}));
-
         addObservableDependency(n.observeMoleculeName(mol.getArg(0).toString()));
         setValidity(valid);
-        setPropensityContribution(MutableObservable.Companion.observe(-1d));
-
         molecule = mol;
     }
 
@@ -138,6 +135,7 @@ public class LsaStandardCondition extends AbstractLsaCondition {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public String toString() {
         return molecule.toString();

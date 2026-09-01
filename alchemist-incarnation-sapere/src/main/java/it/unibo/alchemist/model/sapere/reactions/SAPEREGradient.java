@@ -302,7 +302,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
     }
 
     @Override
-    public void execute() {
+    protected void executeReaction() {
         if (sourceCache == null) {
             /*
              * First run
@@ -588,7 +588,6 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
     private static class SGFakeConditionAction implements Action<List<ILsaMolecule>>, Condition<List<ILsaMolecule>> {
         private final Molecule mol;
         private final Observable<Boolean> validity = MutableObservable.Companion.observe(false);
-        private final Observable<Double> propensity = MutableObservable.Companion.observe(0.0);
         private final ObservableMutableSet<Observable<?>> dependencies = new ObservableMutableSet<>();
 
         SGFakeConditionAction(final Molecule m, final Observable<?>... dependencies) {
@@ -611,8 +610,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
         @Override
         @Nonnull
         public Condition<List<ILsaMolecule>> cloneCondition(
-            @Nonnull final Node<List<ILsaMolecule>> node,
-            @Nonnull final NodeReaction<List<ILsaMolecule>> reaction
+            @Nonnull final Node<List<ILsaMolecule>> newNode,
+            @Nonnull final NodeReaction<List<ILsaMolecule>> newReaction
         ) {
             return null;
         }
@@ -635,12 +634,6 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
 
         @Override
         @Nonnull
-        public Observable<Double> getPropensityContribution() {
-            return propensity;
-        }
-
-        @Override
-        @Nonnull
         public Observable<Boolean> isValid() {
             return validity;
         }
@@ -648,7 +641,6 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
         @Override
         public void dispose() {
             validity.dispose();
-            propensity.dispose();
             dependencies.dispose();
         }
 

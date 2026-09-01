@@ -60,8 +60,9 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
         return new JunctionPresentInCell(environment, newNode, junction);
     }
 
+    @Nonnull
     @Override
-    protected Observable<Double> observeNeighborPropensity(final Node<Double> neighbor) {
+    protected Observable<Double> observeNeighborWeight(@Nonnull final Node<Double> neighbor) {
         return ObservableExtensions.INSTANCE.switchMap(
             cell.getJunctions().get(junction),
             maybeJunctions -> {
@@ -74,6 +75,7 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
         );
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "junction " + junction.toString() + " present ";

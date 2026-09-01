@@ -10,15 +10,23 @@
 package it.unibo.alchemist.model
 
 /**
- * A recurring [Reaction] whose delays are sampled from a [timeDistribution].
+ * A [Reaction] whose putative occurrence delays are sampled from a [timeDistribution].
  *
- * A time-distributed reaction exposes the sampler governing recurrence and an average execution [rate] when its
- * implementation can provide one.
+ * Most time-distributed reactions recur. A single-use implementation may instead remove itself after its first
+ * successful execution. Both expose their sampler and an average execution [rate] when one is available.
  */
 interface TimeDistributedReaction<T> : Reaction<T> {
     /** The average number of occurrences per time unit, or `NaN` when unavailable. */
     val rate: Double
 
-    /** The delay distribution governing this reaction's recurrence. */
+    /** The delay distribution governing this reaction's putative occurrences. */
     val timeDistribution: TimeDistribution<T>
+
+    /**
+     * Advances distribution-backed scheduling after successful execution at [currentTime].
+     *
+     * Normal scheduled execution invokes this through [Reaction.execute].
+     * A single-use reaction removes itself during execution, so their execution never reaches this operation.
+     */
+    fun updateSchedulingAfterFiring(currentTime: Time)
 }

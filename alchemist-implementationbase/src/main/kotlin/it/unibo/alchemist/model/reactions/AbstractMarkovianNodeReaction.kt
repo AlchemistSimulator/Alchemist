@@ -61,6 +61,11 @@ abstract class AbstractMarkovianNodeReaction<T>(node: Node<T>, timeDistribution:
         previousRate = newRate
     }
 
+    override fun suspendScheduling() {
+        super.suspendScheduling()
+        previousRate = 0.0
+    }
+
     private fun scheduleSampleAfter(currentTime: Time, distribution: ExponentialTime<*>): Time {
         val sample = validatedSample()
         val delay = if (distribution.lambda == rate) sample else sample.times(distribution.lambda / rate)

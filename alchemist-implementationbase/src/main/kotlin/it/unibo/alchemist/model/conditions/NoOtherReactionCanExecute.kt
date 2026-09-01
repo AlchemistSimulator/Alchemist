@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
  * as multiple instances would lead to undecidable situations.
  */
 class NoOtherReactionCanExecute<T>(node: Node<T>, private val myReaction: NodeReaction<T>) :
-    AbstractNonPropensityContributingCondition<T>(node) {
+    AbstractCondition<T>(node) {
     init {
         require(
             node.reactions
@@ -44,5 +44,5 @@ class NoOtherReactionCanExecute<T>(node: Node<T>, private val myReaction: NodeRe
     }
 
     override fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>) =
-        NoOtherReactionCanExecute(newNode, myReaction)
+        NoOtherReactionCanExecute(newNode, newReaction)
 }

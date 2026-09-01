@@ -45,7 +45,6 @@ class TestIncarnation {
     private static final ProtelisIncarnation<Euclidean2DPosition> INCARNATION = new ProtelisIncarnation<>();
     private static final String SEND = "send";
     private static final double TOLERANCE = 1e-12;
-    private static final double THIRD_OCCURRENCE = 6.0;
 
     /**
      * Tests the ability of {@link ProtelisIncarnation} of properly building an
@@ -129,10 +128,11 @@ class TestIncarnation {
     }
 
     @Test
-    void testSendSchedulingSamplesOnlyWhenAdvancing() {
+    void testSendSchedulingStartsOnlyWhenTheProgramCompletes() {
         final RandomGenerator rng = new MersenneTwister(0);
         final Environment<Object, Euclidean2DPosition> environment = new Continuous2DEnvironment<>(INCARNATION);
         final Node<Object> node = INCARNATION.createNode(rng, environment, null);
+        environment.addNode(node, environment.makePosition(0, 0));
         final TimeDistribution<Object> programDistribution = INCARNATION.createTimeDistribution(
             rng, environment, node, "1"
         );
@@ -142,24 +142,27 @@ class TestIncarnation {
         node.addReaction(program);
         final CountingDistribution distribution = new CountingDistribution();
         final NodeReaction<Object> reaction = INCARNATION.createReaction(rng, environment, node, distribution, SEND);
-        final TimeDistributedReaction<?> recurringReaction =
-            assertInstanceOf(TimeDistributedReaction.class, reaction);
+        assertInstanceOf(TimeDistributedReaction.class, reaction);
         node.addReaction(reaction);
         program.initializationComplete(Time.ZERO, environment);
         reaction.initializationComplete(Time.ZERO, environment);
-        assertEquals(1, distribution.samples);
-        assertEquals(1.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
+        assertEquals(0, distribution.samples);
+        assertEquals(Time.INFINITY, reaction.getNextOccurrence().getCurrent());
         assertFalse(reaction.canExecute().getCurrent());
-        recurringReaction.updateSchedulingAfterFiring(new DoubleTime(1.0));
-        assertEquals(2, distribution.samples);
-        assertEquals(3.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
         program.execute();
         assertTrue(reaction.canExecute().getCurrent());
+        assertEquals(1, distribution.samples);
+        assertEquals(1.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
+        program.execute();
+        assertEquals(1, distribution.samples);
+        reaction.execute();
+        assertFalse(reaction.canExecute().getCurrent());
+        assertEquals(Time.INFINITY, reaction.getNextOccurrence().getCurrent());
+        assertEquals(1, distribution.samples);
+        program.execute();
         assertEquals(2, distribution.samples);
+        assertTrue(reaction.canExecute().getCurrent());
         assertEquals(3.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
-        recurringReaction.updateSchedulingAfterFiring(new DoubleTime(3.0));
-        assertEquals(3, distribution.samples);
-        assertEquals(THIRD_OCCURRENCE, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
     }
 
     private static final class CountingDistribution implements TimeDistribution<Object> {

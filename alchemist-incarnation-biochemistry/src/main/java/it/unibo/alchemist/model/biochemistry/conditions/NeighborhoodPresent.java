@@ -48,14 +48,16 @@ public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
         return new NeighborhoodPresent<>(getEnvironment(), newNode);
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
     @Override
-    protected Observable<Double> observeNeighborPropensity(final Node<T> neighbor) {
+    protected Observable<Double> observeNeighborWeight(final Node<T> neighbor) {
         // to be eligible (p = 1), a neighbor just needs to be an instance of CellNode
         // Note: Property changes are not yet observable, so this assumes static properties for now.
         return MutableObservable.Companion.observe(neighbor.asPropertyOrNull(CellProperty.class) != null ? 1d : 0d);
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return " node has a neighbor ";

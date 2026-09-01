@@ -40,7 +40,6 @@ public final class EnvPresent extends AbstractCondition<Double> {
         setValidity(environment.getNeighborhood(node).map(it ->
             it.getNeighbors().stream().anyMatch(n -> n instanceof EnvironmentNode)
         ));
-        setPropensityContribution(isValid().map(it -> it ? 1d : 0d));
     }
 
     @Nonnull
@@ -52,6 +51,7 @@ public final class EnvPresent extends AbstractCondition<Double> {
         return new EnvPresent(environment, newNode);
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "has environment [" + isValid() + "]";

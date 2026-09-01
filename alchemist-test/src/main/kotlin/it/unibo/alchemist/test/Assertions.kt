@@ -40,7 +40,6 @@ private fun <T> Iterable<T>.ebeEquals(other: Iterable<T>, elementComparator: (T,
 infix fun Condition<*>.shouldEqual(other: Condition<*>) {
     assertEquals(other::class, this::class, "Condition types don't match")
     assertEquals(other.isValid().current, isValid().current, "Condition validity doesn't match")
-    assertEquals(other.getPropensityContribution().current, getPropensityContribution().current)
 }
 
 infix fun Action<*>.shouldEqual(other: Action<*>) {

@@ -1,6 +1,6 @@
 # Reactive Engine Refactor Plan
 
-Last updated: 2026-08-25
+Last updated: 2026-09-01
 
 Working branch: `marmellata`
 
@@ -31,14 +31,17 @@ Do not mark an item complete until its implementation and proportional verificat
   `Reaction<T>` to `NodeReaction<T>`, remove the empty environment-reaction marker in favor of environment host
   membership, and rename the
   current concrete `Event<T>` to `GenericReaction<T>`. The former absolute-time `Trigger` distribution is replaced
-  by a concrete one-shot `Event<T>` reaction: after its actions execute successfully, it removes itself from its
-  `ReactionHost`, which triggers the same engine notification used by every other removal. Do not use `Event` for a
-  persistent, repeatedly scheduled generator or `BaseReaction` for a concrete reaction.
+  by two one-shot reaction policies. `AbsoluteEvent<T>` owns a fixed occurrence, checks conditions only at that time,
+  applies actions when they are valid, and removes itself in either validity outcome. `ConditionalEvent<T>` is a
+  node-owned `GenericReaction<T>` specialization: it draws when conditions become valid, discards the putative
+  occurrence on invalidation, redraws on the next invalid-to-valid transition, and removes itself after firing.
+  Neither policy exposes removal as a mutable action. Do not use an event for a persistent, repeatedly scheduled
+  generator or `BaseReaction` for a concrete reaction.
 - Put residual-time reuse behind `AbstractMarkovianNodeReaction`. It requires an `ExponentialTime` and fails fast for
   every other distribution; `ChemicalNodeReaction` and its biochemical subclasses inherit this contract.
 - Keep SAPERE reactions outside the Markovian hierarchy. They redraw after initialization, firing, and invalidation
   for every supported delay generator, while exponential draws still account for total match propensity.
-  Absolute-time SAPERE programs use the one-shot `Event` model rather than a special distribution branch.
+  Absolute-time SAPERE programs use `AbsoluteEvent` rather than a special distribution branch.
 - Model every Protelis send as an ordinary condition-gated `GenericReaction`, independently of the configured time
   distribution. Until `ComputationalRoundComplete` becomes true, the send exposes `Time.INFINITY` and consumes no
   sample. The false-to-true transition starts one wait from the current simulation time; firing sends once and
@@ -49,9 +52,11 @@ Do not mark an item complete until its implementation and proportional verificat
   numeric scheduling factor. Each specialized reaction family validates the concrete condition types or semantic
   condition capabilities it accepts and computes its own scheduling law from their typed state. Do not replace
   `getPropensityContribution()` with another universal scalar-contribution interface.
-- Make unsatisfied conditions suspend scheduling: whenever a reaction's combined validity is `false`, its public
-  `nextOccurrence` is `Time.INFINITY`. Revalidation applies the reaction family's invalidation policy at the current
-  simulation time before publishing a finite occurrence; it must never resurrect an occurrence in the past.
+- Make unsatisfied scheduling conditions suspend scheduling: whenever their combined validity is `false`, the
+  reaction's public `nextOccurrence` is `Time.INFINITY`. Revalidation applies the reaction family's invalidation
+  policy at the current simulation time before publishing a finite occurrence; it must never resurrect an
+  occurrence in the past. `AbsoluteEvent` conditions are occurrence-time guards instead: they never alter its fixed
+  occurrence and are read exactly once when that occurrence is selected.
 - Remove `Context` locality metadata from reactions, actions, and conditions. Reactive invalidation is expressed by
   exact observable inputs, not broad local, neighborhood, or global categories. Do not introduce a replacement
   locality-capability API for scheduling optimizations.
@@ -81,6 +86,15 @@ Do not mark an item complete until its implementation and proportional verificat
   API, architecture, configuration, or workflows described by existing KDoc, Javadoc, website pages, READMEs, or
   migration notes, update every affected document in the same change and verify that no stale terminology or claims
   remain.
+- Write website documentation as a timeless description of the current simulator. State the implemented concepts,
+  responsibilities, behavior, and invariants directly; omit removed mechanisms, absent hooks, and comparisons with
+  previous architectures. Reserve change-oriented explanations for release notes, migration guides, and explicitly
+  historical material.
+- Link every website reference to a public Alchemist type with the Hugo `api` shortcode, including its package when
+  useful for disambiguation. Reserve inline code formatting for members, configuration keys, values, and source
+  fragments rather than rendering class names as plain code.
+- Keep model-level documentation incarnation-neutral. Incarnation-specific types and scheduling policies belong in
+  their incarnation sections, linked from shared model pages only when navigation requires it.
 - Keep repository-wide validation focused on the default JVM and normal verification suites. Exclude alternate-JVM
   test matrices, DEB/RPM packaging and RPM-derived metadata, and fat/shadow JAR construction and tests.
 - At every relevant, independently committable milestone, stop before beginning the next one and suggest a
@@ -118,9 +132,10 @@ Reaction
 TimeDistributedReaction contains recurrence-only timeDistribution and rate metadata.
 
 AbstractReaction
-├── Event
+├── AbsoluteEvent
 └── AbstractNodeReaction : NodeReaction
 │   ├── GenericReaction
+│   │   └── ConditionalEvent
 │   ├── AbstractMarkovianNodeReaction
 │   │   └── ChemicalNodeReaction
 │   └── other node-owned specializations
@@ -136,11 +151,14 @@ onto another node. `ReactionHost` owns reaction membership and forwards successf
 The engine and scheduler consume only the root `Reaction`; node-specific actions, conditions, and clone APIs consume
 `NodeReaction`. Environment ownership needs no marker because membership in the environment host is authoritative.
 
-`Event` is a concrete one-shot `AbstractReaction`, not an interface or a `TimeDistribution`. It owns one absolute
-occurrence and a `ReactionHost`. After successful action execution it removes itself from that host. The host removes
-model membership first and then issues the ordinary engine `reactionRemoved` notification, so scheduler and
-subscription cleanup require no event-specific engine path. A host-neutral event is not a `NodeReaction` and is not
-cloned by node cloning unless a separate node-specific cloning policy is introduced deliberately.
+`AbsoluteEvent` is a host-neutral one-shot `AbstractReaction`, not an interface or a `TimeDistribution`. It owns one
+absolute occurrence and a `ReactionHost`; at that occurrence it executes actions only if its conditions are valid,
+then removes itself from the host in either validity outcome. `ConditionalEvent` is a node-owned one-shot
+`GenericReaction`: each enabling transition draws a fresh putative occurrence, invalidation discards it, and
+successful execution removes the event from its node. The host removes model membership first and then issues the
+ordinary engine `reactionRemoved` notification, so scheduler and subscription cleanup require no event-specific
+engine path. Absolute events are not cloned with nodes; conditional events implement the normal `NodeReaction`
+fresh-clone contract.
 
 ### Architectural invariants
 
@@ -149,13 +167,16 @@ cloned by node cloning unless a separate node-specific cloning policy is introdu
 2. Drawing a new sample is observably different from adjusting an already sampled occurrence. A reaction decides
    which operation is semantically correct.
 3. A reaction owns its absolute next-occurrence time and is the only component allowed to change it.
-4. A reaction whose combined condition validity is `false` exposes `Time.INFINITY` as `nextOccurrence`. A
-   false-to-true transition refreshes reaction-specific state and applies that reaction family's revalidation policy
-   at the current simulation time before a finite occurrence is published.
+4. A reaction whose conditions gate scheduling and whose combined validity is `false` exposes `Time.INFINITY` as
+   `nextOccurrence`. A false-to-true transition refreshes reaction-specific state and applies that reaction family's
+   revalidation policy at the current simulation time before a finite occurrence is published. Absolute-event
+   conditions are checked only at their fixed occurrence and do not gate scheduler visibility.
 5. The engine observes reaction times but never computes them. An infinite scheduler head denotes quiescence and is
    not consumed as a firing, skipped execution, post-firing update, monitor step, or step-count increment.
-6. After a successful `Event` execution, the event removes itself from its host. The host notifies the engine exactly
-   once after membership removal; the engine applies the same scheduler/subscription cleanup as for every reaction.
+6. A completed one-shot event removes itself from its host. A conditional event completes after successful action
+   execution; an absolute event completes after its occurrence-time condition check, whether or not actions ran. The
+   host notifies the engine exactly once after membership removal; the engine applies the same
+   scheduler/subscription cleanup as for every reaction.
 7. Conditions expose validity only through the general contract. They expose neither scheduling policy, a numeric
    propensity contribution, nor a general collection of observable dependencies.
 8. Each specialized reaction family defines and validates the condition types or semantic condition capabilities it
@@ -173,7 +194,7 @@ cloned by node cloning unless a separate node-specific cloning policy is introdu
 ### Soundness constraints to settle before the core API is finalized
 
 - Require distributions to sample non-negative delays; reactions convert delays to absolute `nextOccurrence`.
-  Represent a one-shot absolute occurrence as an `Event`, not as a `Trigger` distribution. Consequently, move
+  Represent a one-shot absolute occurrence as an `AbsoluteEvent`, not as a `Trigger` distribution. Consequently, move
   `timeDistribution` and recurrence-specific `rate` reporting off the owner-neutral root `Reaction` contract if an
   event has no meaningful sampler or rate.
 - Define each specialized reaction's propensity or match inputs precisely. Prefer typed derived observables or
@@ -184,14 +205,14 @@ cloned by node cloning unless a separate node-specific cloning policy is introdu
   scalar. Validate accepted condition types when conditions are installed, and preserve that validation through
   cloning, builders, reflection, YAML loading, and Kotlin DSL construction.
 - Apply adjustment semantics per reaction family. `AbstractMarkovianNodeReaction` rescales a surviving exponential
-  residual without drawing; the base generic policy and SAPERE explicitly redraw after invalidation. An `Event`
-  preserves its one pending absolute occurrence and never enters recurring adjustment logic.
+  residual without drawing; the base generic policy and SAPERE explicitly redraw after invalidation. An
+  `AbsoluteEvent` preserves its fixed occurrence and never enters recurring adjustment logic. A `ConditionalEvent`
+  discards its putative occurrence on invalidation and draws again only on the next enabling transition.
   `ChemicalNodeReaction` rejects non-exponential distributions at construction rather than silently changing policy.
-- Define what happens when an event's condition remains false through its absolute occurrence: either it expires
-  and is removed without execution, or it remains pending and executes at the current time on revalidation. Do not
-  inherit the current accidental behavior, which consumes the occurrence through recurring post-firing logic even
-  when execution was skipped. Until this policy is selected, the concrete host-neutral `Event` rejects non-empty
-  condition lists so the ambiguous state cannot enter the scheduler.
+- [x] Define absolute-event invalidity as expiry: conditions are sampled only at the fixed occurrence, actions run
+  only if all are valid, and the event removes itself in either validity outcome. Define conditional-event
+  invalidation separately: discard the putative occurrence, expose infinity, and draw again on the next
+  invalid-to-valid transition.
 - Decide whether making the root `Reaction` interface open is the intended public extensibility contract. The
   cross-module `AbstractReaction` directly implements it and therefore cannot retain the previous sealed declaration.
 - Treat the Protelis send gate as validity, not as a specialized scheduling input. The first false-to-true
@@ -260,8 +281,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] Make reaction invalidation safe before an environment is attached to a simulation; the failing regression is
   `TestReactiveDependencies.local reactions on separate nodes should be isolated`.
 - [x] Trace and fix the website-snippet simulation failure `Propensity cannot be NaN`.
-- [x] Fix the deterministic cognitive-agent social-contagion regression: the non-exposed pedestrian never begins
-  evacuating under reactive scheduling.
+- [x] Cover social contagion with a zero-local-danger pedestrian that sees an exposed peer and begins evacuating.
 - [x] Update ten biochemistry Java test assertions to read the current value of observable validity and propensity.
 - [x] Update three Protelis Java test assertions to use the `TimeDistribution.getRate()` accessor.
 - [x] Remove the known empty initializer from `SendToNeighbor`.
@@ -357,13 +377,13 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
     `cloneOnNewNode(...)` only on this branch.
   - [x] Rename `GlobalReaction<T>` to the provisional `EnvironmentReaction<T>` while ownership was still encoded as
     a marker type; the later `ReactionHost` step below removes that marker.
-  - [x] Rename the current concrete `Event<T>` to `GenericReaction<T>`. Do not introduce `BaseReaction`; use
-    `Event<T>` for the one-shot scheduled entity previously approximated by the `Trigger` distribution.
-  - [x] Remove `Trigger` from the `TimeDistribution` hierarchy. Construct an `Event` from its absolute occurrence
+  - [x] Rename the current concrete `Event<T>` to `GenericReaction<T>`. Do not introduce `BaseReaction`; use explicit
+    `AbsoluteEvent<T>` and `ConditionalEvent<T>` names for the two one-shot scheduling policies.
+  - [x] Remove `Trigger` from the `TimeDistribution` hierarchy. Construct an `AbsoluteEvent` from its occurrence
     directly, migrate reflective/YAML loading and SAPERE special cases, and keep delay sampling uniform for every
-    remaining distribution.
+    remaining distribution. Construct `ConditionalEvent` with an ordinary `TimeDistribution`.
   - [x] Keep `nextOccurrence` on the root `Reaction`, but move mandatory `timeDistribution` and recurrence-specific
-    `rate` reporting to distribution-backed reactions so an `Event` does not expose meaningless sampler metadata.
+    `rate` reporting to distribution-backed reactions so an `AbsoluteEvent` does not expose meaningless sampler metadata.
     The temporary root post-occurrence hook below advances stateful samplers without requiring an engine type branch.
   - [x] Make successful event execution take the exact ordinary unregister path by removing itself from its host;
     the resulting notification disposes the engine-owned subscription and scheduler entry. Do not publish
@@ -372,11 +392,12 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
     sends at most one engine notification, and cannot let later node cloning recreate a host-neutral event.
   - [x] Extract an owner-neutral `AbstractReaction` from the current node-specific `AbstractNodeReaction` and use it
     for both recurring node reactions and the host-neutral event.
-  - [x] Reject conditions on the concrete host-neutral event until expiry-versus-deferred-execution semantics are
-    selected, and document this temporary construction boundary explicitly.
+  - [x] Replace the temporary rejection of event conditions with explicit policies: absolute events check once and
+    expire; conditional events discard and redraw across disabling and enabling transitions.
   - [x] Replace the provisional `Event` and `EnvironmentReaction` interfaces with `ReactionHost`; make `Node` and
     `Environment` host root reactions and notify the engine only after actual membership changes. Make concrete
-    `Event : AbstractReaction` remove itself from its host after successful action execution.
+    `AbsoluteEvent : AbstractReaction` remove itself after its occurrence-time check, and make
+    `ConditionalEvent : GenericReaction` remove itself after successful action execution.
   - [x] **TEMPORARY CONSTRAINT:** put `updateSchedulingAfterFiring(Time)` on the root reaction protocol and invoke it
     uniformly after every selected occurrence. This is required only while a condition-invalid reaction can still
     remain scheduler-visible at a finite time: skipped execution must consume that occurrence without engine type
@@ -398,71 +419,85 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 ## Phase 6: simplify conditions and introduce reaction-specific invalidation signals
 
-- [ ] Remove `Condition.getPropensityContribution()`, the propensity observable and setter from
+- [x] Remove `Condition.getPropensityContribution()`, the propensity observable and setter from
   `AbstractCondition`, `AbstractNonPropensityContributingCondition`, and every condition-level override or helper.
-- [ ] Inventory every condition that currently publishes a propensity contribution. Classify each value as either
+- [x] Inventory every condition that currently publishes a propensity contribution. Classify each value as either
   redundant with Boolean validity or semantic state that a specific reaction family must consume directly; do not
   preserve the old scalar merely under a narrower generic interface.
-- [ ] Make the base reaction consume only condition validity and accept arbitrary conditions without inferring
+- [x] Make the base reaction consume only condition validity and accept arbitrary conditions without inferring
   scheduling policy from their runtime types.
-- [ ] Give each specialized reaction family an explicit accepted-condition contract and validate the complete list
+- [x] Give each specialized reaction family an explicit accepted-condition contract and validate the complete list
   whenever conditions are assigned. Reject unsupported types with a targeted error before initialization; do not
   silently treat them as a factor of one or defer failure until the first scheduling refresh.
-- [ ] Make `ChemicalNodeReaction` accept only the molecule presence/quantity condition types required by its mass-action
-  law and compute propensity from their typed molecule, stoichiometric requirement, and observed quantity. If
-  biochemical or other chemical subclasses need additional condition forms, define and validate their accepted
-  sets and scheduling laws explicitly rather than weakening the base chemical contract.
+- [x] Keep `ChemicalNodeReaction` as a condition-free Markovian policy base. Concrete chemical families define and
+  validate their own typed condition sets and rate laws: `BiochemicalNodeReaction` accepts molecule quantity,
+  neighborhood selection, extracellular-environment, and mechanical-tension conditions and computes their factors
+  from typed state rather than weakening the base contract.
 - [ ] Expose the narrow semantic observables required by those accepted types without exposing a generic numeric
   contribution. The owning specialized reaction subscribes to them and owns every returned `Disposable`.
+  - [x] Expose biochemical molecule quantities, neighbor-selection weights, and mechanical state through typed
+    condition APIs and compute the rate from them in `BiochemicalNodeReaction`.
+  - [ ] Replace the remaining condition dependency-set subscriptions with direct specialized-reaction subscriptions.
+    In particular, `BiomolPresentInEnv` still reads a layer synchronously because layer values are not observable.
 - [ ] Preserve accepted-condition validation and typed bindings through reaction cloning, incarnation builders,
   reflection/YAML loading, generated factories, and Kotlin DSL construction.
-- [ ] Update `Condition` and specialized-reaction KDoc/Javadoc, the scheduling-and-ownership page, model and
+- [x] Update `Condition` and specialized-reaction KDoc/Javadoc, the scheduling-and-ownership page, model and
   biochemistry documentation, configuration references, and migration notes in the same change. Remove every claim
   that a general condition contributes a numeric factor to reaction propensity.
 - [ ] Classify every current condition dependency source as Boolean validity input or as a specialized reaction's
   non-validity scheduling input before removing the existing dependency sets.
 - [ ] Make the base reaction observe only the combined reactive validity of its conditions.
-- [ ] Make reaction validity gate the public scheduling observable: combined validity `false` publishes
+- [x] Make reaction validity gate the public scheduling observable: combined validity `false` publishes
   `Time.INFINITY` immediately, including during initialization, without consuming an occurrence or advancing a
   stateful distribution.
-- [ ] On a false-to-true validity transition, refresh reaction-specific state and apply the reaction family's
+- [x] On a false-to-true validity transition, refresh reaction-specific state and apply the reaction family's
   revalidation policy at the current simulation time before publishing a finite `nextOccurrence`. Never expose a
   stale internal candidate that lies in the past.
 - [ ] Specify and test revalidation separately for generic redraw, Markovian memoryless sampling/rescaling, SAPERE
-  match resampling, one-shot `Event`, and condition-gated Protelis sends. If a family retains suspended internal
+  match resampling, both one-shot event policies, and condition-gated Protelis sends. If a family retains suspended internal
   state, keep it private: only the validity-gated occurrence is public and scheduler-visible.
-- [ ] Make the engine treat an infinite scheduler head as quiescence. It must not call `execute`, `reactionReady`,
+  - [x] Cover generic redraw, Markovian rate transitions, and the deterministic/stateful Protelis send sequence.
+  - [x] Cover `ConditionalEvent` sample consumption, invalidation, re-enabling, and removal; cover
+    `AbsoluteEvent` valid execution, invalid expiry, fixed scheduler visibility, and removal.
+  - [ ] Complete SAPERE match-revalidation and exponential Protelis-send sample-count coverage.
+- [x] Make the engine treat an infinite scheduler head as quiescence. It must not call `execute`, `reactionReady`,
   `updateSchedulingAfterFiring`, or `stepDone`, and must not increment the simulation step merely to discover that no finite
   reaction is available.
-- [ ] **EXCEPTIONAL PATH REMOVAL:** after validity-gated `nextOccurrence` and infinite-head quiescence are complete,
+- [x] **EXCEPTIONAL PATH REMOVAL:** after validity-gated `nextOccurrence` and infinite-head quiescence are complete,
   remove the temporary selected-but-invalid path. Delete the engine's unconditional root
   `updateSchedulingAfterFiring` call and the temporary root hook; make each successful recurring `execute()` perform
-  its own post-fire advancement, while `Event.execute()` removes itself from its host. Add a regression proving that
+  its own post-fire advancement, while one-shot event execution removes itself from its host. Add a regression proving that
   the engine performs only the uniform `Reaction.execute()` protocol and never advances a skipped or
   concrete-type-specific reaction.
 - [ ] Make specialized reactions directly subscribe to the narrow propensity, match, or state-change signals they
   consume, owning every returned non-null `Disposable`.
+- [ ] Audit observable disposal ownership while migrating those subscriptions. A condition or reaction disposes its
+  own derived observables and subscription handles, but must not dispose a borrowed model observable; in particular,
+  remove the shared-program disposal from `ComputationalRoundComplete` and add multiple-consumer removal regressions.
 - [ ] Make these private signals invalidate the reaction even for semantically relevant `true`-to-`true` validity
   changes; do not encode such changes as repeated equal Boolean emissions.
+- [ ] Until Phase 7 transactions deduplicate invalidation, inventory condition implementations that publish both a
+  source and a derived observable through dependency sets; prevent one logical mutation from resampling or
+  recomputing a reaction twice during the direct-subscription migration.
 - [ ] Remove `Condition.getDependencies`, `AbstractCondition.dependencies`, `addObservableDependency`, and related
   merge helpers once all non-validity consumers have migrated.
-- [ ] Do not replace observable dependency sets with a public token type, token registry, or another collection of
+- [x] Do not replace observable dependency sets with a public token type, token registry, or another collection of
   dependency descriptions.
-- [ ] Define the specialized chemical reaction type and its typed condition/state inputs.
+- [x] Define the specialized chemical reaction type and its typed condition/state inputs.
 - [ ] Cover every concentration, match, stoichiometric quantity, or neighborhood value required to recompute
   propensity.
-- [ ] Move mass-action and other propensity laws into the chemical reaction hierarchy.
+- [x] Move mass-action and other propensity laws into the chemical reaction hierarchy.
 - [x] Enforce `ExponentialTime` as the only valid generator for `ChemicalNodeReaction` and fail fast otherwise.
 - [x] Migrate biochemistry and SAPERE scheduling explicitly: biochemical reactions inherit the chemical Markovian
   contract, while SAPERE reactions redraw outside that hierarchy and normalize exponential samples to total match
   propensity.
-- [ ] Replace the provisional Protelis send split with `GenericReaction` for every distribution. Remove
+- [x] Replace the provisional Protelis send split with `GenericReaction` for every distribution. Remove
   `ProtelisScheduledReaction`; do not use `ChemicalNodeReaction` merely because a send's distribution is exponential.
-- [ ] Make a send initially invalid with `Time.INFINITY` and zero consumed samples. On the first false-to-true
+- [x] Make a send initially invalid with `Time.INFINITY` and zero consumed samples. On the first false-to-true
   `ComputationalRoundComplete` transition, draw exactly once and schedule from the current simulation time.
-- [ ] Ensure repeated program completions while a send is already pending do not redraw or postpone it. When the
+- [x] Ensure repeated program completions while a send is already pending do not redraw or postpone it. When the
   send fires and `SendToNeighbor` resets completion to false, publish `Time.INFINITY` without drawing the next sample.
-- [ ] Replace the existing independent-cadence regression and update Protelis KDoc, the scheduling explanation, and
+- [x] Replace the existing independent-cadence regression and update Protelis KDoc, the scheduling explanation, and
   every plan claim that currently describes skipped-occurrence advancement or cadence preservation.
 - [ ] Reject missing, negative, NaN, or otherwise invalid propensity values at the reaction boundary.
 
@@ -529,7 +564,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 - [x] Port old dependency-graph expectations as observable behavior tests, not graph-structure tests.
 - [x] Test positive local invalidation and negative isolation across unrelated nodes.
-- [ ] Test invalid-at-initialization, true-to-false suspension, and false-to-true revalidation. Assert that invalid
+- [x] Test invalid-at-initialization, true-to-false suspension, and false-to-true revalidation. Assert that invalid
   reactions are indexed at `Time.INFINITY`, never execute, never advance stateful distributions, and never generate
   phantom monitor notifications or step increments.
 - [ ] Test that revalidation cannot publish a time earlier than the current simulation time and consumes exactly the
@@ -538,6 +573,8 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   initial false validity means infinity and zero samples; the first completed program round draws once; repeated
   true notifications preserve the pending occurrence; send execution resets validity to false and infinity without
   another draw; the next completed round starts exactly one new wait.
+  - [x] Cover the complete deterministic/stateful sequence with explicit sample counts.
+  - [ ] Repeat the sequence with an exponential distribution and explicit random-generator consumption.
 - [ ] Test neighborhood addition/removal, movement, environment-wide changes, and dynamic reaction/node changes.
 - [ ] Test that previously published neighborhood snapshots cannot change when topology changes and that observers
   receive a distinct immutable replacement snapshot.
@@ -574,13 +611,36 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] Update public documentation and migration notes for all breaking API changes.
 - [ ] Remove the remaining Swing UI `org.danilopianini:javalib-java7:0.6.1` dependency.
 
+## Phase 12: audit documentation coherence
+
+- [x] Rewrite the engine overview, metamodel overview, and reaction-scheduling page as descriptions of the current
+  architecture, removing change-history narration and links whose purpose was to explain superseded scheduling
+  mechanisms.
+- [x] Replace plain or code-formatted public type references on those pages with Hugo `api` shortcodes and keep
+  method and property names in inline code.
+- [x] Keep the reaction-scheduling page limited to shared model contracts and move incarnation-specific policies to
+  their respective incarnation documentation.
+- [ ] Audit all website content for present-state prose. Remove statements framed around mechanisms that are absent,
+  were removed, or belonged to earlier architectures; retain historical comparisons only in explicitly historical
+  or migration-oriented pages.
+- [ ] Audit all website references to public Alchemist types and replace bare or code-formatted class names with
+  package-correct Hugo `api` shortcodes. Check that every generated target exists and that similarly named types
+  resolve unambiguously.
+- [ ] Cross-check the website against public KDoc/Javadoc, YAML and CLI references, examples, diagrams, and current
+  implementation terminology. Resolve contradictory behavior, duplicated ownership descriptions, stale names,
+  broken internal links, misleading summaries, and examples that no longer exercise the documented API.
+- [ ] Keep each concept in its canonical documentation section and link to it from adjacent pages. In particular,
+  keep scheduling semantics and ownership in the model scheduling page and engine-loop details in the engine page.
+- [ ] Run the Hugo build and its linked API-documentation/snippet checks after the audit, then record any intentional
+  historical terminology and remaining external blockers here.
+
 ## Validation protocol
 
 Use repository Gradle tasks from the repository root.
 
 - [x] During each phase, run the narrow compile and test tasks for touched modules.
 - [x] When Kotlin changes, run `./gradlew --parallel ktlintFormat` before final verification.
-- [ ] When Scala in `alchemist-incarnation-scafi` changes, run
+- [x] When Scala in `alchemist-incarnation-scafi` changes, run
   `./gradlew --parallel alchemist-incarnation-scafi:scalafmtAll`.
 - [ ] Repair Scafi formatting verification: `alchemist-incarnation-scafi:scalafmtAll` currently returns Gradle
   success while its embedded Scalafmt runner reports the configured version `3.11.5` as invalid. Until corrected,
@@ -598,566 +658,17 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
-- 2026-08-25: completed the removal of context-driven engine invalidation. `Action` and `Condition` no longer
-  expose `Context`, the model has no replacement locality classification, and behavior-free local SAPERE/action
-  bases are gone. Neighbor-specific implementations remain only where neighborhood access is actual model
-  behavior. Removing the last context consumer also removed SAPERE's locality-based empty-execution cache; SAPERE
-  now conservatively recomputes matches and propensity on refresh. `Simulation` and `Engine` no longer expose node,
-  movement, or neighborhood callbacks. Runtime node membership instead expands into exact per-reaction
-  `reactionAdded`/`reactionRemoved` notifications after model registration changes, preserving scheduler
-  subscription ownership while keeping topology entirely model-side. Neighborhood maintenance was simplified to
-  propagate affected nodes directly, without constructing dependency-invalidation operation records. The dedicated
-  scheduling documentation now describes this reaction-only boundary. Kotlin formatting, focused API, engine,
-  implementation-base, SAPERE, Protelis, biochemistry, Scafi, physics, smart-camera, geometry, and documentation
-  checks pass; `hugoBuild` succeeds, and the final filtered repository build passes 913 tasks in 3m38s with only the
-  recorded alternate-JVM, native-package, and fat/shadow-JAR exclusions. The required Scafi formatting task was run
-  and returned Gradle success, but its embedded runner still rejects configured Scalafmt `3.11.5`; the open tooling
-  repair item above therefore remains necessary.
-- 2026-08-24: simplified YAML reaction construction by restoring the loader's previous invariant that every program
-  receives a contextual `TimeDistribution`. A one-shot `Event` does not request or retain that object, so the
-  distribution remains absent from its model API and behavior; accepting one cheap unused construction removes the
-  nullable local state, speculative reflection attempt, failure-driven retry, and suppressed-exception plumbing
-  that had leaked optional recurrence metadata into `visitProgram`. Exact `ReactionHost` registration keeps
-  reflective event construction independent of whether the host is a node or environment. Validation also exposed
-  stale consumers of the intentionally removed `Node` and `Environment` iterable APIs; they now select `reactions`
-  or `nodes` explicitly, and the obsolete iterator implementations are gone. Serialization findings newly exposed
-  by the clean compilation were fixed at their real boundaries: runtime-only Swing node state is transient,
-  `RoutingStrategy` is no longer serializable, and obsolete map serial metadata and suppression were removed.
-  Repository-wide Kotlin formatting and the focused loading, implementation-base, Protelis, Checkstyle, and
-  SpotBugs checks pass. The final filtered repository build passes 914 tasks in 4m with only the documented
-  alternate-JVM, native-package, and fat/shadow-JAR exclusions.
-- 2026-08-24: completed the shared reaction-host checkpoint. `Node` and `Environment` now implement
-  `ReactionHost`, own root `Reaction` membership, and notify the engine only after an add or removal actually
-  changes that membership. The provisional `EnvironmentReaction` and `Event` interfaces are gone; the concrete
-  one-shot `Event : AbstractReaction` removes itself from its exact host after successful action execution. The
-  engine schedules both ownership branches uniformly and contains no event-, node-, or environment-reaction type
-  dispatch. Loading registers the active host through the common supertype, GraphQL supplies the collecting node
-  explicitly for root-reaction surrogates, and node cloning remains limited to `NodeReaction`. KDoc, Javadoc, the
-  dedicated scheduling-and-ownership page, YAML reference, and terminology audit agree with this model. The root
-  `updateSchedulingAfterFiring(Time)` hook remains only as the documented temporary bridge for finite selected
-  reactions whose conditions are invalid; Phase 6 contains the distinct **EXCEPTIONAL PATH REMOVAL** step that
-  deletes it after validity-gated occurrences and infinite-head quiescence land. Kotlin formatting, the required
-  Scafi formatting task, focused engine/implementation/loading/incarnation/maps/GraphQL tests, and `hugoBuild`
-  pass. After correcting one stale Javadoc import found by the first attempt, the final filtered repository build
-  passes 915 tasks in 2m17s with only the documented alternate-JVM, native-package, and fat/shadow-JAR exclusions.
-- 2026-08-21: replaced the absolute-time `Trigger` distribution with a true one-shot `Event`, moved recurrence-only
-  `timeDistribution`, `rate`, and post-fire advancement to `TimeDistributedReaction`, and extracted the shared
-  owner-neutral `AbstractReaction`. The engine now removes a successfully executed event from its exact scheduler
-  entry, scheduling subscription, and node owner without publishing `Time.INFINITY`; owner callbacks tolerate only
-  the expected already-unregistered completion notification, while direct removal remains fail-fast. Explicit YAML
-  event construction initially avoided creating a phantom default distribution, while loader fallback supplied the
-  incarnation default for recurring reaction types. The 2026-08-24 simplification above deliberately supersedes
-  that loader optimization. The root `Reaction` had to become open because its abstract
-  implementation lives in another module; whether to retain that extensibility is now an explicit design question.
-  Events currently reject conditions until expiry-versus-deferred-execution semantics are selected. Trigger-specific
-  SAPERE and regression branches are gone, recurrence-rate consumers now require `TimeDistributedReaction`, and the
-  dedicated scheduling page plus YAML reference describe the implemented ownership and loading flow. Kotlin
-  formatting, focused engine/implementation-base/loading/SAPERE/Protelis/Scafi/maps/cognitive/website checks,
-  `hugoBuild`, and the final filtered repository build pass; the last post-documentation rerun completed 915 tasks
-  in 48s (85 executed, 830 up-to-date) with only the recorded alternate-JVM, native-package, and fat/shadow-JAR
-  exclusions. The Scafi formatting task still returns
-  success while reporting the configured Scalafmt version as invalid when it must reformat a changed Scala test;
-  that pre-existing verification defect remains separately tracked.
-- 2026-08-21: renamed the recurring, distribution-backed `Event<T>` implementation to `GenericReaction<T>` across
-  Kotlin, Java, and Scala construction sites, type assertions, clone and transition tests, loader fixtures, and
-  in-repository YAML and website examples. No compatibility alias retains the old misleading name, leaving `Event`
-  available for the planned one-shot scheduled entity. The separately versioned
-  `external-resources/learning-scafi-alchemist` submodule still uses `type: Event`; updating it upstream and bumping
-  the pinned revision is tracked as a remaining consumer-migration task rather than leaving its worktree dirty.
-  Kotlin formatting and focused reaction, engine, loader, incarnation, map, Swing, and website checks pass. The
-  required Scafi formatting task returns success but reports its configured Scalafmt version as invalid; repairing
-  that verification is tracked separately. The final filtered repository build passes 915 tasks in 2m57s,
-  explicitly excluding every alternate-JVM test task, native package builder, and fat/shadow-JAR task.
-- 2026-08-20: made removal of condition-level propensity contributions an explicit typed-boundary migration.
-  `Condition` will expose general validity only; `getPropensityContribution`, `AbstractCondition` propensity state,
-  the non-contributing compatibility base, and all overrides will be deleted. Specialized reactions must validate
-  the condition types or semantic capabilities they accept and compute their own laws from typed state—for example,
-  `ChemicalNodeReaction` derives mass action from accepted molecule presence/quantity conditions rather than multiplying
-  opaque condition-provided scalars. The plan now covers fail-fast assignment, subclass-specific biochemical and
-  SAPERE policies, direct semantic observables, cloning, builders/loaders/DSLs/factories, documentation, and positive
-  and rejection regressions without introducing a replacement `PropensityCondition` abstraction.
-- 2026-08-20: replaced the provisional one-shot `Trigger` concept in the target architecture with `Event`.
-  At that checkpoint `Trigger` was a `TimeDistribution`; after execution, reaction policy merely emitted
-  `Time.INFINITY`, so
-  the engine retains the scheduler entry, scheduling subscription, and owning-model membership. The rename phase
-  now moves one-shot semantics into an `Event : Reaction`, removes `Trigger` from delay sampling, and requires exact
-  scheduler, subscription, and owner removal after successful execution without recurring post-firing advancement.
-  The plan also captures the consequences for the root sampler/rate contract, YAML/reflection and SAPERE migration,
-  runtime node cloning, and the still-open policy for an event whose condition is false at its absolute occurrence.
-- 2026-08-20: removed the test-only `DependencyUtils` container. Its lambda-backed reaction is now a private
-  `EngineTest` fixture, while `AbstractDependencyTest` and its sole `TestReactiveDependencies` subclass have been
-  collapsed into `ChemicalReactionInvalidationTest`. The replacement expresses the old graph expectations as
-  observable behavior and covers all four chemical source shapes on both nodes, asserting both positive same-node
-  invalidation and zero emissions from unrelated same-node and cross-node reactions. Phase 10 now records those
-  behavior and isolation regressions as complete. Repository-wide Kotlin formatting passes; the nine focused
-  engine cases pass; and the final filtered repository build passes 915 tasks in 1m38s with the documented
-  alternate-JVM, native-package, and fat/shadow-JAR exclusions.
-- 2026-08-20: fixed the scheduled-entity vocabulary and added its atomic migration to Phase 5. `Reaction` becomes
-  the owner-neutral root replacing `Actionable`; `NodeReaction` names node-owned reactions;
-  `EnvironmentReaction` replaces `GlobalReaction`; and `GenericReaction` replaces the misleading concrete
-  `Event`. The implementation hierarchy will separate owner-neutral, node-owned, and environment-owned abstract
-  bases so environment-wide scheduling logic is not duplicated. The migration explicitly covers API consumers, runtime
-  membership and subscription cleanup, cloning, loaders and configuration compatibility, generated surfaces,
-  tests, and all affected model and engine documentation. The later one-shot decision above assigns the reserved
-  `Event` name to the scheduled entity replacing `Trigger`, never to a persistent generator; `BaseReaction` remains
-  intentionally rejected as a concrete name.
-- 2026-08-20: corrected the provisional Protelis send scheduling assumption. The current
-  `ProtelisScheduledReaction` samples while `ComputationalRoundComplete` is false, advances skipped occurrences, and
-  ignores the false-to-true invalidation, so it preserves an independent cadence instead of scheduling from the
-  program trigger. The target behavior is now explicit: all sends become condition-gated `GenericReaction`s;
-  invalid sends are infinite and consume no samples, the first completed-round transition starts one configured
-  wait, repeated true emissions do not restart it, and sending resets the gate to false without pre-sampling the
-  next wait. The plan now tracks removal of both `ProtelisScheduledReaction` and the exponential `ChemicalNodeReaction`
-  split, replacement of the regression that currently asserts the wrong behavior, and corresponding KDoc/website
-  corrections.
-- 2026-08-20: moved the canonical scheduling explanation out of the engine page and into a dedicated
-  `Reaction Scheduling and Ownership` page nested under the metamodel. The new page owns reaction occurrence,
-  time-distribution, initialization, firing, invalidation, cloning, removal, specialized-policy, and engine-boundary
-  documentation. The metamodel now links to that detail without duplicating it; the engine page retains only
-  engine-specific clock, command, monitor, subscription, scheduler, thread-confinement, and dynamic-membership
-  responsibilities. Engine configuration and layer guidance now link to the canonical model page. The Hugo and
-  linked Dokka website build passes 160 tasks in 53s; the final filtered repository build passes 915 tasks in 1m46s
-  with the documented alternate-JVM, native-package, and fat/shadow-JAR exclusions.
-- 2026-08-20: established validity-gated scheduling as an architectural invariant. A reaction with any unsatisfied
-  condition must publish `Time.INFINITY`; revalidation must refresh state and apply the family-specific policy at
-  the current simulation time before exposing a finite, non-past occurrence. The plan now also requires the engine
-  to treat an infinite scheduler head as quiescence rather than a skipped firing, post-firing advancement, monitor
-  event, or simulation step, with explicit initialization, suspension, revalidation, random-consumption, and
-  stateful-distribution regressions.
-- 2026-08-20: made observable layers an explicit Phase 9 migration milestone. The plan now requires a typed
-  observable value-at-position contract, composition with moving node positions, a decision and semantics for
-  runtime layer association changes, exact subscription ownership, behavioral and cleanup regressions, and
-  coordinated API/YAML/website documentation updates. This work must precede final removal of condition dependency
-  sets wherever layer reads currently use them as invalidation metadata.
-- 2026-08-20: removed reaction-level `inputContext` and `outputContext` from `Actionable` and eliminated their
-  aggregation and storage in `AbstractNodeReaction`. Engine scheduling, reaction removal, physics/global reactions,
-  tests, and the GraphQL reaction surrogate now use no reaction-level context metadata. SAPERE retains its
-  cache-locality behavior by deriving it directly from the installed actions' own contexts; regression coverage
-  proves the empty, local-only, and neighborhood-action cases. The remaining action/condition `Context` contract is
-  deliberately deferred to a separate semantic-use audit rather than being removed mechanically. Documentation
-  and repository searches contain no stale reaction-context claims or references. Kotlin formatting, focused core,
-  SAPERE, GraphQL, dynamic-removal, and cognitive-physics verification pass; independent review found no correctness
-  defect. The final filtered repository build passes 915 tasks in 3m57s with the documented alternate-JVM,
-  native-package, and fat/shadow-JAR exclusions.
-- 2026-08-19: completed the Markovian scheduling boundary. `AbstractNodeReaction` now contains only
-  distribution-agnostic redraw/trigger policy, while `AbstractMarkovianNodeReaction` alone validates
-  `ExponentialTime` and preserves or
-  rescales a surviving exponential residual. `ChemicalNodeReaction` and `BiochemicalNodeReaction` inherit that fail-fast
-  contract. SAPERE reactions remain outside the hierarchy and explicitly redraw on initialization, firing, and
-  invalidation while normalizing exponential samples to total match propensity and preserving one-shot triggers.
-  Focused transition tests cover residual reuse, configured start times, infinite-to-finite rate changes, generic
-  redraws, SAPERE random-number consumption, triggers, and rejection of non-memoryless chemical generators.
-- 2026-08-19: repository-wide validation disproved the provisional assumption that every existing
-  `ChemicalNodeReaction` call site already supplied an exponential distribution. A deterministic biochemistry movement
-  fixture now uses the then-current `Event` (now `GenericReaction`), leaving actual biochemical DSL reactions
-  Markovian. The same validation
-  introduced a split between cadence-preserving non-memoryless Protelis sends and exponential `ChemicalNodeReaction`
-  sends. That split compiled and passed its provisional regressions but encoded the wrong send semantics; it is
-  superseded by the 2026-08-20 trigger-gated `GenericReaction` decision above. The Levy-walk deterministic fixture
-  likewise uses the then-current `Event` rather than a chemical reaction.
-- 2026-08-19: Kotlin formatting, focused implementation-base/SAPERE/biochemistry/Protelis/Levy-walk verification,
-  CPD, Detekt, Checkstyle, and the updated website pass. The Hugo and linked Dokka build passes 160 tasks in 52s.
-  The first filtered `./gradlew --parallel build` passes 915 tasks in 2m13s. Independent review found no scheduling
-  or documentation defect and prompted direct regressions for fresh Markovian clone state plus non-memoryless
-  Protelis send initialization, skipped-occurrence advancement, and cadence-preserving validity invalidation. Those
-  Protelis regressions verified the provisional implementation rather than the intended trigger-gated behavior and
-  are explicitly slated for replacement above. The post-review final build passes the same 915-task graph in 33s,
-  retaining the normal default-JVM, JavaScript, WebAssembly, documentation, static-analysis, loader, incarnation,
-  and integration suites while excluding only the documented alternate-JVM, native-package, and fat/shadow-JAR
-  work.
-- 2026-08-18: made documentation consistency a standing acceptance criterion for every change rather than a final
-  modernization task. Audited the current website, READMEs, public scheduling KDoc/Javadoc, implementation
-  documentation, and this plan for stale dependency-graph, batching, lifecycle, `tau`, and reaction-update claims.
-  The audit found and corrected one stale layers-guide reference to context-based dependency optimization. After
-  that correction, historical names are confined to contextualized history or removed-`BatchEngine` compatibility
-  guidance, while current material consistently describes reaction-owned `nextOccurrence`, exact engine
-  subscription ownership, distribution sampling, and the distinct initialization, firing, invalidation, and
-  removal transitions. The Hugo and linked Dokka website build passes 160 tasks in 1m32s.
-- 2026-08-18: simplified reaction state refresh without collapsing distinct scheduling transitions.
-  `AbstractReaction.refreshReactionState(Time, Environment)` is now an optional no-op hook; implementations that
-  derive rate or other scheduling state override it, while reactions with no derived state no longer carry empty
-  overrides. Initialization, post-firing scheduling, and reactive invalidation remain separate because they have
-  different sampling semantics. The `Actionable`, `NodeReaction`, `Condition`, and `TimeDistribution` contracts now
-  document that a reaction owns its absolute occurrence, `nextOccurrence` is the engine's sole scheduling
-  observable, clones receive a fresh schedule, and condition dependencies are consumed by reaction policy rather
-  than an engine dependency graph. The website now documents ownership plus the exact initialization,
-  registration, firing, invalidation, and removal flow and removes the stale dependency-graph description. Kotlin
-  formatting, focused transition/cloning/sampling/engine tests, and the Hugo build pass; independent review found
-  no mismatch between the documented and implemented flow. The final filtered repository build passes 915 tasks
-  in 3m32s with the documented alternate-JVM, native-package, and fat/shadow-JAR exclusions.
-- 2026-08-18: made the firing transition explicit as `Actionable.updateAfterFiring(Time)` and removed the
-  `hasBeenExecuted` Boolean that previously multiplexed firing and invalidation through the same protected hooks.
-  `AbstractNodeReaction` now has distinct post-firing and reactive-invalidation scheduling paths while initialization
-  and removal remain explicit operations. Exponential invalidation still rescales the sampled residual without a
-  new random draw; firing draws exactly one replacement sample, covered by a focused regression. Kotlin formatting
-  and the focused implementation-base transition, sampling, cloning, engine-registration, removal, and reactive-
-  dependency tests pass. Sampling and absolute-occurrence mutation are now confined to reaction implementations;
-  the engine only observes `nextOccurrence`. Independent review found no behavioral regression. The final filtered
-  repository build passes 915 tasks in 4m03s with the documented alternate-JVM, native-package, and fat/shadow-JAR
-  exclusions.
-- 2026-08-17: completed the scheduling-registration checkpoint. Registration errors now fail fast without trying to
-  restore a scheduler that the terminated engine will discard or disposing environment-owned reactions. Removal
-  and shutdown still clean up successfully acquired engine subscriptions. Direct handle ownership replaces the
-  redundant captured-handle identity guard because registration, emission, and removal are simulation-thread-
-  confined. The simulation-thread regression uses coroutine-aware bounded polling; formatting, engine Detekt, all
-  six focused scheduling tests, and independent review pass. The final filtered repository build passes 915 tasks
-  in 2m40s with the documented alternate-JVM, native-package, and fat/shadow-JAR exclusions.
-- 2026-08-17: made engine scheduling ownership an explicit simulation-thread-confined transition without adding a
-  general lifecycle abstraction. The simulation-thread reference is safely published; registration initializes,
-  inserts, subscribes, and records the exact handle in order, while any registration error terminates the engine.
-  Removal disposes the handle, removes the scheduler entry, and disposes the reaction in order; any removal error
-  likewise terminates the engine immediately.
-- 2026-08-17: shutdown now releases every engine-owned subscription, clears ownership, and records cleanup failures
-  without destroying environment-owned reactions or aborting remaining cleanup. The focused
-  `EngineSchedulingSubscriptionTest` cases cover duplicate registration, fail-fast scheduler errors, off-thread
-  emission rejection, and post-removal silence. Independent concurrency review found no remaining blocking issue.
-- 2026-08-17: removed `BatchManager` and the batching wrapper around reaction execution. `Engine` now owns one
-  exact `Disposable` per scheduled reaction and directly invokes `scheduler.updateReaction` for every active
-  `nextOccurrence` emission. Removal disposes the subscription before removing the scheduler entry; simulation-
-  thread confinement ensures registration, emissions, and removal cannot race.
-- 2026-08-17: added `EngineSchedulingSubscriptionTest`. Its three focused cases prove that initialization does not
-  reindex before scheduler insertion, multiple distinct emissions during one step update the active scheduler
-  entry directly, and removal disposes the engine subscription before scheduler removal and suppresses later
-  emissions. The existing `EngineTest`, `TestReactionRemoval`, `TestReactiveDependencies`, and `TestConcurrency`
-  regressions also pass.
-- 2026-08-17: the first full-build attempt restored a stale Scafi Scala-test cache entry compiled against the old
-  `Environment.getNodes(): ListSet` descriptor. A forced Scafi recompilation passed all eight tests; no source
-  change was required. The final filtered repository build then passed 915 tasks in 1m27s, including default-JVM,
-  JavaScript, WebAssembly, documentation, static analysis, and integration verification while excluding the
-  alternate-JVM, DEB/RPM, derived packaging, and fat/shadow JAR tasks documented above.
-- 2026-08-17: repository-wide validation must not run alternate-JVM test matrices, DEB/RPM builders or their
-  derived package metadata, or fat/shadow JAR construction and tests. A started unfiltered build was stopped once
-  it reached those unnecessary tasks; subsequent full validation uses the filtered task graph documented above.
-- 2026-08-17: decided that observable dependency sets will be removed from conditions. Conditions will expose only
-  reactive validity; base reactions will observe the combined validity directly, while specialized reactions will
-  own subscriptions to narrow propensity, match, or state invalidation signals.
-  The dependency-set API will be deleted after every existing source is classified and its non-validity consumers
-  have migrated, so `true`-to-`true` propensity or match changes remain observable.
-- 2026-08-17: decided to remove `BatchManager` rather than evolve it into the Phase 7 transaction mechanism. Its
-  current identity set only coalesces `scheduler.updateReaction` calls during `Engine.doStep`; it neither batches
-  reaction recomputation nor covers invalidation outside execution. `nextOccurrence` emissions will update the
-  scheduler directly. A future invalidation transaction will instead deduplicate dirty reactions and recompute each
-  once before occurrence emission, while excluding reactions removed or disposed during the transaction.
-- 2026-08-13: rejected the provisional `TimeDistributionFactory`/`builtInFactory()` implementation because its
-  central runtime-type switch made the model closed to new distribution implementations. The replacement contract
-  is `TimeDistribution<T>.newInstanceOn(node)`: each distribution owns reconstruction of a fresh equivalent
-  generator, while the reaction still owns clone-time scheduling and all runtime occurrence semantics. The method
-  intentionally receives no current time, preventing generator construction from absorbing scheduling policy.
-- 2026-08-13: completed the open-world contract migration. Every distribution now implements
-  `newInstanceOn(node)`, including destination-bound network/molecule generators and randomized or SAPERE-specific
-  subclasses. Randomized Dirac, distributed-Weibull, and SAPERE exponential implementations were significantly
-  changed and therefore ported from Java to Kotlin. Core, cognitive, biochemical, and SAPERE clone paths no longer
-  pass the source generator object. Compilation and focused regression validation are green; formatting and the
-  optimized repository-wide build remain before this checkpoint can close.
-- 2026-08-13: unified specialized cloning with the base newly-instantiated-program lifecycle. Cognitive,
-  biochemical, and SAPERE reactions now reconstruct their generator through `newInstanceOn(node)`, clone actions
-  and conditions onto the destination, and record the clone time through one base helper. This prevents manual
-  specialized clones from bypassing fresh-program initialization while retaining intentionally shared simulation
-  RNGs and discarding mutable SAPERE match state. Formatting and validation are next.
-- 2026-08-13: repository-wide Kotlin formatting passes. The post-format focused suite passes all 20 sampling and
-  clone regressions in `alchemist-implementationbase`, the SAPERE fresh-generator regression, and Checkstyle for
-  both Java modules whose specialized clone paths changed. The matrix covers deterministic starts and triggers,
-  non-memoryless state isolation, destination rebinding, shared-RNG generators, Weibull and randomized specialized
-  types, SAPERE reconstruction, and the explicit failure for an opaque sampler without a reconstruction recipe.
-  The filtered repository-wide build is the remaining gate for this checkpoint.
-- 2026-08-13: the first filtered full build passed production and test compilation, documentation, Checkstyle,
-  SpotBugs, and the suites reached before failing at `alchemist-implementationbase:detektMain`. The only findings
-  are two `NoNameShadowing` reports in the new clone helper's nested implicit lambda parameters. The parameters are
-  now explicitly named; formatting and focused Detekt will be rerun before repeating the full build.
-- 2026-08-13: the lambda naming correction passes repository-wide Kotlin formatting and focused
-  `alchemist-implementationbase:detektMain`. The same filtered full build is being repeated as the final gate.
-- 2026-08-13: the `TimeDistribution<T>.newInstanceOn(node)` and newly-instantiated-program clone checkpoint is
-  complete. The final filtered `./gradlew --parallel build` passes 916 tasks in 9m22s, including normal JVM,
-  JavaScript, WebAssembly, documentation, static-analysis, loader, incarnation, and integration verification.
-  Alternate-JVM `testWithJvm*`/`jvmTestWithJvm*` tasks, DEB/RPM builders, and RPM-derived `generatePKGBUILD` were
-  excluded as directed. Phase 5 can proceed with the separately planned `tau` to `nextOccurrence` rename after
-  this independently committable checkpoint is reviewed and committed.
-- 2026-08-17: commit `a25805497` completes the Phase 5 `tau` to `nextOccurrence` rename across the repository.
-  Post-rename formatting, focused verification, and the required full build are not yet recorded here.
-- 2026-08-13: `AbstractNodeReaction` now delegates fresh generator construction polymorphically to
-  `TimeDistribution<T>.newInstanceOn(node)`. The then-current `Event` (now `GenericReaction`) and
-  `ChemicalNodeReaction` create a distinct generator for a clone,
-  clone actions and conditions onto the new reaction, and defer fresh scheduling until engine initialization. The
-  initial occurrence is sampled after `max(cloneTime, configuredStart)` without importing the source occurrence,
-  residual delay, or previous rate. A cloned absolute trigger remains pending instead of being mistaken for a
-  trigger that already fired. Built-in reconstruction currently covers deterministic, exponential, Weibull,
-  trigger, describable Apache-real, molecule-controlled, and network-arrival generators; an opaque sampler reports
-  that its implementation lacks a reconstruction recipe rather than silently sharing it. Randomized Dirac and
-  Weibull variants preserve their specialized type and recreate their per-node law; SAPERE reconstruction retains
-  its rate equation and shared simulation RNG while dropping the mutable match token.
-- 2026-08-13: the focused core clone regression matrix passes for deterministic clone-time scheduling, configured
-  absolute starts, triggers, non-memoryless state isolation, destination-node rebinding, distinct RNG-backed
-  generator objects using the shared simulation RNG, Weibull reconstruction, and explicit rejection of an opaque
-  sampler without a construction policy. Loader/DSL propagation and specialized reaction clone paths remain the
-  next checkpoint, so the overall Phase 5 clone item remains open.
-- 2026-08-13: the superseded factory-based checkpoint passed repository-wide validation before review. Validation
-  of its `newInstanceOn` replacement is tracked separately below.
-- 2026-08-13: completed the Phase 5 clone-path and construction-boundary inventory. The then-current `Event` (now
-  `GenericReaction`), `ChemicalNodeReaction`, cognitive reactions, `BiochemicalNodeReaction`, and `SAPERENodeReaction`
-  pass the source generator object to their clones. `MoleculeControlledTimeDistribution` and
-  `SimpleNetworkArrivals` additionally capture the source
-  node, while `SAPEREExponentialTime` carries mutable match state. The selected correction is the open-world,
-  node-aware `TimeDistribution<T>.newInstanceOn(node)` operation. Each concrete generator retains the configuration
-  it needs to recreate itself; an opaque nested sampler must report that it cannot do so rather than assume
-  memorylessness or silently share hidden state.
-- 2026-08-13: selected newly instantiated program semantics for reaction cloning. The next Phase 5 implementation
-  step must replace every pass-through of the source `TimeDistribution` with a fresh destination-bound generator
-  created through `newInstanceOn(node)`. A clone starts a new schedule at its clone time and inherits neither
-  the source occurrence nor reaction-local generator state; this deliberately avoids relying on memorylessness.
-- 2026-08-03: began Phase 4 from clean committed checkpoint `1898ab40a`. The sampling contract will use
-  `org.apache.commons.math3.distribution.RealDistribution` as inspiration, favoring a single `sample()` operation
-  unless the implementation inventory proves that additional distribution metadata belongs in the generic API.
-- 2026-08-03: defined the target `TimeDistribution` contract as the single operation `sample(): Time`, producing a
-  finite non-negative delay. Distribution parameters remain encapsulated when they define the probability law;
-  generic rate, absolute occurrence, lifecycle updates, node-aware cloning, and concentration typing do not belong
-  in the final API. Ported the significantly changed interface to Kotlin and added the sampling seam to every
-  current distribution family while retaining the old operations temporarily for behavior-preserving migration.
-- 2026-08-03: compiler deprecations on the transitional operations are intentionally deferred rather than
-  suppressed: warnings are errors in this repository, so annotations would make every not-yet-migrated consumer
-  fail before it can be moved. The API documentation identifies the legacy surface until its removal.
-- 2026-08-03: focused implementation-base sampling tests pass for constant-period, arbitrary real, exponential,
-  Weibull, trigger, and network-arrival generators. `AnyRealDistribution.sample()` now rejects negative, NaN, and
-  infinite delays. Removed obsolete serialization identifiers and serialization-only SpotBugs exceptions from the
-  time-distribution hierarchy after the Kotlin API stopped extending `Serializable`.
-- 2026-08-03: repository-wide Kotlin formatting and focused API, implementation-base, and SAPERE checks pass after
-  resolving the newly exposed Checkstyle and Detekt findings without suppressions. Existing trigger execution,
-  SAPERE reaction, and distribution tests remain green. The optimized full build is the final gate for this
-  contract-introduction checkpoint.
-- 2026-08-03: the first optimized full build stopped in `alchemist-full:generatePKGBUILD`, which consumes the RPM
-  artifact after `jpackageRpm` was deliberately excluded and therefore cannot find its input. The corrected build
-  excludes this RPM-derived metadata task together with the DEB/RPM builders; no source or verification task had
-  failed.
-- 2026-08-03: the Phase 4 contract-introduction checkpoint passes the corrected optimized
-  `./gradlew --parallel build`: 915 tasks completed successfully in 8m42s, including the normal JVM, JavaScript,
-  WebAssembly, documentation, static-analysis, and regression suites. Alternate-JVM matrix tasks, DEB/RPM
-  builders, and the RPM-derived `generatePKGBUILD` task were excluded as directed. The repository is ready for a
-  commit checkpoint before migrating consumers away from the transitional scheduling operations.
-- 2026-08-03: review of the uncommitted checkpoint found that retaining the legacy scheduling surface was too
-  conservative for the requested API migration. The checkpoint will be corrected before commit: `TimeDistribution`
-  will expose only `sample(): Time`; `nextOccurence`, `rate`, `update`, `reactToUpdate`, generic concentration typing,
-  and node-aware cloning will move to reaction scheduling or construction policy rather than remain transitional.
-- 2026-08-03: the corrected API and implementation-base production sources compile. `TimeDistribution` is now a
-  non-generic functional interface containing only `sample(): Time`; the significantly changed distribution base,
-  real-distribution adapter, deterministic generator, exponential generator, and event reaction were ported to
-  Kotlin. `AbstractNodeReaction` now owns its mutable absolute occurrence, validates samples at the reaction boundary,
-  redraws after execution, and preserves the previous exponential variate by rescaling the remaining delay on a
-  positive-to-positive propensity change. Distribution-owned update/react/update-observable machinery is gone.
-- 2026-08-03: removed generic distribution rate metadata as well as generic concentration parameters from the
-  built-in node-independent generators. Deterministic, exponential, arbitrary-real, Weibull, trigger,
-  network-arrival, and molecule-controlled implementations now only generate delays through the public contract;
-  reactions interpret law-specific configuration such as frequency, lambda, or mean when legacy consumers still
-  require an execution-rate view. SAPERE rate equations remain only on its specialized match-token interface for
-  the explicit chemical-reaction migration in Phase 6.
-- 2026-08-03: focused engine, implementation-base, SAPERE, physics, cognitive-agent, and loading suites pass after
-  moving occurrence ownership into local and global reactions. Coverage now asserts that `TimeDistribution`
-  declares exactly `sample`, that reactions convert delays to absolute times, and that invalid custom samples are
-  rejected at the reaction boundary. Trigger, reactive-invalidation, DSL, and real-simulation regressions remain
-  green. Formatting, static analysis, and the optimized repository-wide build are next.
-- 2026-08-03: post-format compilation found the final direct `TimeDistribution.getRate()` call in a Scafi test; the
-  test now verifies the reaction-owned rate instead. The same verification exposed an infinity-over-infinity
-  rescaling edge case for immediate exponential reactions. Reactions now preserve an unscaled sample when the
-  generator lambda already equals their execution rate, with explicit regression coverage. Focused
-  implementation-base, Scafi, and Protelis checks pass, including the Protelis gradient propagation simulation.
-- 2026-08-03: the corrected sample-only API checkpoint passes the optimized repository-wide
-  `./gradlew --parallel build`: 915 tasks completed successfully in 8m42s. This includes normal JVM, JavaScript,
-  WebAssembly, Dokka, static-analysis, loader, incarnation, real-simulation, and website-snippet verification;
-  alternate-JVM matrix tasks, DEB/RPM builders, and the RPM-derived `generatePKGBUILD` task were excluded as
-  directed. After the final API-documentation audit and Kotlin formatting, the identical optimized build passed
-  again in 1m51s (915 tasks: 85 executed, 830 up-to-date). The checkpoint is ready for review and commit before the
-  Phase 5 `tau` to `nextOccurrence` rename.
-- 2026-08-03: added a workflow checkpoint at every relevant, independently committable milestone. Each checkpoint
-  pauses further implementation and proposes a Conventional Commit message before work continues.
-- 2026-08-02: created the living plan after the initial architecture, history, and compilation audit.
-- 2026-08-02: made Java-to-Kotlin conversion mandatory whenever a Java file receives significant modification.
-- 2026-08-02: required replacement of `ListSet` and removal of `org.danilopianini:javalib-java7:0.6.1` by the end
-  of the refactor.
-- 2026-08-02: began Phase 1 on `marmellata` at pre-merge `HEAD`
-  `df3dea9fd518dc3c827283cbd1907a6f42e6c39d`. The worktree contained only this untracked plan, and the known
-  build failures above remain the pre-merge baseline. Before refreshing, `origin/master` was
-  `922a84e634d98c37779d423c5a76ec8927bc141c`.
-- 2026-08-02: refreshed `origin/master`; it remains at
-  `922a84e634d98c37779d423c5a76ec8927bc141c` (`ci(deps): update danysk/build-check-deploy-gradle-action action
-  to v4.0.42 (#5524)`).
-- 2026-08-02: started the normal merge of `origin/master`. Conflict resolution is in progress. Semantic conflicts
-  are limited to SAPERE sources, an AIS loader test, and build/automation configuration; the remaining conflicts
-  are generated Dokka/npm dependency artifacts or release metadata. The complete `dokka-cache` snapshot is taken
-  exactly from `origin/master`, including its additions and deletions, rather than regenerated during the merge.
-- 2026-08-02: resolved every merge conflict. Master supplies the newer build tooling, dependency versions,
-  lockfiles, release metadata, and exact `dokka-cache` tree; the branch supplies reactive `tau`, position, and node
-  count API usages. Branch-specific immutable-collection catalog aliases were retained alongside master's newer
-  versions. No conflict markers or unmerged index entries remain.
-- 2026-08-02: the merge commit hook reached `:alchemist-api:compileKotlin` and reproduced the known duplicate
-  Java/Kotlin `TimeDistribution` declaration. Per project-owner direction, hooks are bypassed for this master merge;
-  the failure becomes the first focused post-merge compilation frontier for Phase 2.
-- 2026-08-02: completed Phase 1 with merge commit
-  `59d06c9d52e6f4c802a3deb4726a0789f7e37ef9`, whose parents are the pre-merge branch head and the refreshed
-  `origin/master`. The post-merge worktree was clean, and focused compilation stops at the duplicate
-  `TimeDistribution` declarations as expected.
-- 2026-08-02: removed the stale duplicate Kotlin `TimeDistribution`; the Java declaration remains temporarily
-  because it is the contract consumed by the current reactive implementation. Both `:alchemist-api:compileKotlin`
-  and `:alchemist-api:compileJava` now pass, exposing implementation-base collection migration as the next
-  compiler frontier.
-- 2026-08-02: `alchemist-engine` Kotlin and Java compilation pass. `alchemist-implementationbase:compileKotlin`
-  now fails exclusively in the incomplete `Environment`/`Neighborhood` collection migration: stale `ListSet`
-  types, a malformed `SimpleNeighborhood`, immutable `List` values used as mutable collections, and consumers
-  expecting `Neighborhood` to provide iteration, membership, size, and copy-update operations.
-- 2026-08-02: completed the core collection migration. `AbstractEnvironment` uses insertion-ordered sets internally
-  and immutable-list snapshots externally; `SimpleNeighborhood` uses a deduplicated persistent list and exposes
-  iterable, membership, size, and copy-update behavior to Kotlin, Java, and Scala. Mechanical Java callers now use
-  `List`, ordered-set copies, and Java accessor syntax. `alchemist-implementationbase` Kotlin and Java compilation
-  pass; no new `javalib-java7` use was introduced.
-- 2026-08-02: made neighborhood immutability explicit: a neighborhood is an immutable topology snapshot, and a
-  simulation topology change publishes a replacement snapshot rather than mutating existing neighborhood data.
-- 2026-08-02: strengthened `Neighborhood.neighbors` to the immutable-collection type in the public API. The
-  repository-wide Kotlin formatter compiled the migration successfully through Java, Kotlin, Scala, physics,
-  maps, loading, and biochemistry before exposing four mechanical Java-getter fixes in `SAPERENodeReaction` as the
-  next compiler frontier.
-- 2026-08-02: replaced the stale SAPERE Kotlin-property syntax with Java `getRate()` calls. Focused SAPERE Kotlin
-  and Java compilation now pass. The remaining bridge-method warnings are not suppressed and will disappear when
-  reaction/time-distribution APIs are finalized.
-- 2026-08-02: the first post-migration `./gradlew --parallel build` passed all production compilation and failed in
-  five tasks: `alchemist-api:detektTest` (eight map-access findings), `alchemist-engine:test` (pre-simulation
-  reactive invalidation), `alchemist-implementationbase:compileTestKotlin` (stale `ListSets` fixtures), root `test`
-  (a website simulation reports `Propensity cannot be NaN`), and `alchemist-cognitive-agents:test` (one social-
-  contagion movement assertion). These are the active Phase 2 frontier above.
-- 2026-08-02: migrated `SimpleNetworkArrivals` test fixtures to `persistentListOf()` and replaced unsafe test-map
-  assertions with `getValue`. `:alchemist-implementationbase:compileTestKotlin` and `:alchemist-api:detektTest`
-  both pass without suppressions.
-- 2026-08-02: made reactions retain their last known simulation time, allowing dependency invalidation after
-  explicit initialization but before engine attachment. The reactive-dependency test now creates a fresh model for
-  every source/dependency relation so a prior case cannot exhaust the next case's reactants; its diagnostics name
-  both source and target. The focused engine regression passes.
-- 2026-08-02: isolated the website-snippet failure to `variables-export.yml`. A disabled Protelis send reaction
-  combined an infinite base rate with a zero condition contribution, yielding `Infinity * 0 = NaN`. Chemical
-  reactions now short-circuit zero contributions before multiplication, and snippet failures include the resource
-  name for actionable diagnostics. `./gradlew :test --tests 'TestWebsiteCodeSnippets'` passes.
-- 2026-08-02: reran `TestFeelsTransmission` in isolation. The social-contagion case fails identically while the
-  layer-driven case passes, so this is a deterministic reactive-invalidation regression rather than a stochastic
-  fluctuation. The non-exposed pedestrian remains near its start instead of reacting to propagated danger.
-- 2026-08-02: traced the cognitive regression to `WantToEscape`, which wraps the initial cognitive decision in a
-  constant observable. Implementation is in progress to expose the escape decision as model-owned reactive state
-  and publish transitions after cognitive updates.
-- 2026-08-02: `CognitiveModel` now exposes an observable escape decision, `ImpactModel` publishes decision changes
-  after each cognitive update, and `WantToEscape` consumes that live state. Both focused `TestFeelsTransmission`
-  cases pass, including social contagion.
-- 2026-08-02: all known focused Phase 2 regressions are resolved. Kotlin formatting and the repository-wide build
-  are in progress to discover any remaining collection, interoperability, or static-analysis issues.
-- 2026-08-02: Kotlin formatting passes. The next full build passes production compilation and exposes three masked
-  downstream issues: ten biochemistry Java assertions compare a scalar to `Observable<Double>`, three Protelis Java
-  assertions use `.rate` on a Java-declared distribution, and Detekt rejects `SendToNeighbor`'s empty initializer.
-- 2026-08-02: corrected all three downstream issues. Focused biochemistry and Protelis test compilation plus
-  Protelis Detekt pass. A clean formatting/build cycle is next.
-- 2026-08-03: the clean full build passes all executed tests, including website snippets and cognitive social
-  contagion. It now fails only `alchemist-implementationbase` verification: one Checkstyle overload-order finding
-  and one SpotBugs finding in the transitional `AbstractDistribution` implementation.
-- 2026-08-03: the `AbstractDistribution` overload order is fixed and its public `tau` view no longer exposes the
-  mutable backing observable. The remaining SpotBugs report is serialization fallout from already making
-  `Molecule` non-serializable plus an exposed mutable condition-dependency set. A bounded serialization-removal
-  slice is in progress rather than restoring serialization or suppressing the findings.
-- 2026-08-03: ported `Action`, `Condition`, `LinkingRule`, and `SpeedSelectionStrategy` from Java to Kotlin while
-  removing their serialization inheritance; removed now-obsolete serialization fields and suppressions encountered
-  in this slice. `AbstractCondition` now returns a defensive dependency-set copy. Core API/implementation
-  compilation, implementation-base Checkstyle, and SpotBugs pass; repository-wide formatting and build remain.
-- 2026-08-03: the repository formatter exposed one Kotlin/Java synthetic-property compatibility site in
-  `WantToEscape`; it now calls the inherited `getNode()` method explicitly. No other module failed compilation
-  before Gradle stopped at this frontier.
-- 2026-08-03: the next formatter pass reached Protelis and found only named-argument compatibility warnings in
-  `SendToNeighbor.cloneAction`; its parameter names now match the newly ported `Action` contract.
-- 2026-08-03: the full build passed all executed tests and exposed four Checkstyle findings in two biochemistry
-  actions where dependency-graph removal had left empty loops. The loops, unused imports, and obsolete
-  serialization identifiers have been removed.
-- 2026-08-03: the focused biochemistry Checkstyle rerun found one import-separator blank line left by that cleanup;
-  it has been removed.
-- 2026-08-03: the next repository build reached physics Detekt after all earlier checks passed and exposed the known
-  missing documentation on `PhysicsUpdate.environment`. The public property is now documented; focused physics
-  Detekt and repository-wide Kotlin formatting pass. The final repository-wide build is next.
-- 2026-08-03: the full build cleared the previous static-analysis frontier and all other completed tests, then found
-  one remaining biochemistry assertion comparing a Boolean to the observable returned by `canExecute()`. The
-  assertion now reads the observable's current value, and the focused `TestBiomolLayer` run passes. The final
-  repository-wide build is being rerun.
-- 2026-08-03: the rerun confirms the biochemistry suite passes and exposes only SAPERE Checkstyle findings: two
-  empty dependency loops left by graph removal and a loader-compatibility constructor separated from the primary
-  constructor. The empty loops and obsolete serialization members are removed, and constructors are regrouped;
-  focused SAPERE Checkstyle passes. The final repository-wide build is being rerun.
-- 2026-08-03: SAPERE Checkstyle, Detekt, compilation, and the biochemistry regression remain green. The full run now
-  reaches `RegressionTest.reactions with neighbor outputs should execute`, where a reaction attempts to remove a
-  cached `<token>` match after another reaction consumed it. The same run generated a SAPERE SpotBugs report; both
-  are the active Phase 2 frontier.
-- 2026-08-03: added reaction identity and cached-match context to the stale SAPERE removal failure so the focused
-  regression can identify which reactive subscription or scheduling transition failed before changing behavior.
-  It identifies the stale reaction as `<token> --> <firing>`; dependency identity, current value, and observer count
-  are now included to distinguish a missing subscription from a missed scheduler update.
-- 2026-08-03: the stale reaction's molecule-name observable has two live observers, confirming scheduling wiring is
-  present. Root cause is value aliasing: `observeMoleculeName` initially stored the mutable backing list, so removal
-  mutated the observable's current value before equality-based emission and suppressed invalidation. Its initial
-  value is now a defensive snapshot, and the temporary diagnostic wrapper has been removed.
-- 2026-08-03: focused `RegressionTest.reactions with neighbor outputs should execute` passes with the defensive
-  molecule-name snapshot. Focused SAPERE SpotBugs is next to classify the generated report before another full
-  build.
-- 2026-08-03: focused SAPERE SpotBugs completes successfully at the Gradle level; its findings are the expected
-  broader serialization-removal inventory assigned to Phase 8, not a Phase 2 blocker. Four suppressions and serial
-  identifiers on action classes became obsolete when `Action` stopped being serializable and have been removed.
-- 2026-08-03: the SAPERE verification rerun found one separator blank left by suppression removal in
-  `LsaRandomNeighborAction`; it has been removed before repeating the focused checks.
-- 2026-08-03: focused SAPERE Checkstyle and SpotBugs tasks now complete successfully, and the obsolete-suppression
-  findings are gone. Remaining SpotBugs findings are recorded serialization/API inventory for Phase 8. The final
-  repository-wide build is being rerun.
-- 2026-08-03: the next full-build frontier consists of eight map-walker tests directly advancing an uninitialized
-  reaction and one loading regression that still requires whole-environment Java serialization. The map fixture
-  will adopt the reactive lifecycle; the loading test will retain construction/incarnation coverage without
-  restoring the serialization contract that Phase 8 intentionally removes.
-- 2026-08-03: `TestTargetMapWalker` now completes the reaction's reactive initialization after installing it in the
-  environment. All eight focused map-walker tests pass.
-- 2026-08-03: `TestRegressions` now verifies environment construction and incarnation availability without Java
-  object-stream round-tripping. Both focused loading regressions pass, consistently with the planned removal of
-  `Serializable` from the live model graph.
-- 2026-08-03: repository-wide `./gradlew --parallel ktlintFormat` passes after the map fixture migration. The
-  mandatory full build is next; Phase 2 remains open until that run succeeds.
-- 2026-08-03: the full build clears the prior map, loading, SAPERE, biochemistry, website, and static-analysis
-  frontiers, then fails only `alchemist-full` `TestRemoveNode`: after a node-removal transition, the engine attempts
-  to advance the then-current `Event` (now `GenericReaction`) whose reactive initialization never completed. This
-  lifecycle defect is the remaining
-  Phase 2 frontier.
-- 2026-08-03: traced `TestRemoveNode` to the firing reaction removing and disposing its own node during
-  `execute()`. The engine's normal post-fire advancement then observes a terminal disposed reaction, not an
-  uninitialized live reaction. Advancement after disposal must therefore be inert while advancement before
-  initialization remains an error.
-- 2026-08-03: `AbstractReaction.update` now ignores advancement after terminal disposal without weakening the
-  initialization check for live reactions. Focused `alchemist-full` `TestRemoveNode` passes.
-- 2026-08-03: added the Phase 5 API rename from `tau` to `nextOccurrence`. Repository-wide validation will exclude
-  alternate-JVM test-matrix tasks and DEB/RPM packaging to reduce turnaround time, while retaining the normal test
-  suite, compilation, formatting, and static analysis.
-- 2026-08-03: Phase 2 is complete. Repository-wide Kotlin formatting passes, and the optimized full build passes
-  922 tasks with the normal test suites and verification enabled; only alternate-JVM tests and DEB/RPM packaging
-  were excluded as directed. The repository now has a compiling, test-passing reactive baseline for Phase 3.
-- 2026-08-03: began Phase 3 after the Phase 2 source checkpoint was committed as `7d93c2232`. The first step is a
-  repository-wide inventory of `BatchEngine`, its scheduler types, loader/configuration entry points, tests, and
-  documentation before choosing the deletion boundary.
-- 2026-08-03: completed the Phase 3 inventory. The deletion boundary is `BatchEngine`, `BatchedScheduler`, the
-  fixed/epsilon batch queues, the unused `EngineConfiguration` marker, the engine coroutine dependency, and stale
-  website documentation. Launcher parameter batches remain supported because they orchestrate independent normal
-  simulations. The internal scheduler-update coalescer remains until Phase 7 because it is not a parallel engine.
-  Historical changelog entries remain historical. A loader regression will make removed `BatchEngine` requests
-  fail with a targeted compatibility message.
-- 2026-08-03: deleted the inventoried batch engine and scheduler types, removed the engine module's coroutine
-  dependency, added the targeted loader rejection and regression fixture, clarified the launcher parameter-batch
-  regression, and replaced the stale parallel-engine website documentation. Focused verification is next.
-- 2026-08-03: engine Kotlin/Java compilation passes without the batch API and coroutine dependency. All focused
-  `RegressionTestOnRealCases` cases pass: launcher parameter batches still use the normal engine, and both simple
-  and fully qualified removed-engine requests are covered by the targeted type-name check. No batch execution
-  behavior needs migration into `Engine`; deletion removes its locks, sliding-window time, and replay semantics.
-- 2026-08-03: initialized documentation submodules and ran `./gradlew hugoBuild`; the rewritten single-engine page
-  and generated API documentation build successfully. Repository-wide Kotlin formatting and verification are next.
-- 2026-08-03: repository-wide `./gradlew --parallel ktlintFormat` passes after the Phase 3 Kotlin changes. Focused
-  engine/loading verification will now be repeated before the final optimized full build.
-- 2026-08-03: post-format focused verification passes: `alchemist-engine:build` and `alchemist-loading:check`
-  complete successfully with alternate-JVM test tasks excluded. This covers the remaining reactive engine tests,
-  the loading suite, static analysis, and the removed-`BatchEngine` compatibility regression. The final optimized
-  repository-wide build is next.
-- 2026-08-03: stopped the first repository-wide validation run after its task graph showed that excluding
-  `testWithJvm*` does not also exclude Kotlin Multiplatform's separately named `jvmTestWithJvm*` tasks. The final
-  rerun will exclude both naming families, plus DEB/RPM packaging, while retaining the default-JVM tests.
-- 2026-08-03: Phase 3 is complete. The corrected optimized `./gradlew --parallel build` passes 916 tasks with the
-  normal default-JVM, JavaScript, and WebAssembly suites and all verification enabled; `testWithJvm*`,
-  `jvmTestWithJvm*`, and DEB/RPM packaging tasks were excluded. The repository now exposes only the reactive
-  `Engine` execution path, with one reaction-owned event-time source feeding its scheduler-update coalescer.
+- 2026-09-01: Made the social-contagion regression direct and bounded.
+- 2026-08-26: Adopted present-state, API-linked, incarnation-neutral model documentation; broader audit remains.
+- 2026-08-26: Added absolute and conditional one-shot events and validity-gated reaction scheduling.
+- 2026-08-25: Removed context-driven invalidation and topology callbacks from the engine.
+- 2026-08-24: Unified reaction membership under `ReactionHost` and simplified loader construction.
+- 2026-08-21: Renamed recurring `Event` to `GenericReaction` and replaced `Trigger` with one-shot events.
+- 2026-08-20: Defined typed propensity ownership, observable-layer migration, and condition-gated Protelis sends.
+- 2026-08-19: Isolated exponential residual reuse in `AbstractMarkovianNodeReaction`.
+- 2026-08-18: Consolidated reaction scheduling transitions and made documentation consistency mandatory.
+- 2026-08-17: Removed `BatchManager` and made `nextOccurrence` emissions update the scheduler directly.
+- 2026-08-13: Made distribution cloning polymorphic and reaction clones fresh programs.
+- 2026-08-03: Removed `BatchEngine` and reduced `TimeDistribution` to sampling.
+- 2026-08-03: Established a compiling reactive baseline and fixed lifecycle and observable-aliasing defects.
+- 2026-08-02: Merged master and migrated core collections and cognitive state to reactive APIs.

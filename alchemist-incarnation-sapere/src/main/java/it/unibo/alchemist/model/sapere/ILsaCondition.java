@@ -45,8 +45,8 @@ public interface ILsaCondition extends Condition<List<ILsaMolecule>> {
     @Nonnull
     @Override
     ILsaCondition cloneCondition(
-        @Nonnull Node<List<ILsaMolecule>> node,
-        @Nonnull NodeReaction<List<ILsaMolecule>> reaction
+        @Nonnull Node<List<ILsaMolecule>> newNode,
+        @Nonnull NodeReaction<List<ILsaMolecule>> newReaction
     );
 
     @Nonnull

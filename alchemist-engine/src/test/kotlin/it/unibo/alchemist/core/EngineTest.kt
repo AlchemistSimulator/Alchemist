@@ -34,7 +34,7 @@ private class LambdaNodeReaction<T>(
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time): NodeReaction<T> =
         throw UnsupportedOperationException("A test-only lambda reaction cannot be cloned")
 
-    override fun execute() = operation()
+    override fun executeReaction() = operation()
 }
 
 @Suppress("UnnecessaryAbstractClass")

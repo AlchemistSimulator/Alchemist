@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.Node
 /**
  * The condition is valid if the node contains the molecule.
  */
-class ContainsMolecule<T>(node: Node<T>, molecule: Molecule) : AbstractNonPropensityContributingCondition<T>(node) {
+class ContainsMolecule<T>(node: Node<T>, molecule: Molecule) : AbstractCondition<T>(node) {
 
     init {
         addObservableDependency(node.observeContains(molecule))

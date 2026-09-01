@@ -8,12 +8,12 @@ deployments:
   - type: Point
     parameters: [0, 0]
     programs:
-      - type: Event
+      - type: AbsoluteEvent
         parameters: [1]
         actions:
           - type: TestEventAction
             parameters: []
-      - type: Event
+      - type: AbsoluteEvent
         parameters: [5]
         actions:
           - type: TestEventAction

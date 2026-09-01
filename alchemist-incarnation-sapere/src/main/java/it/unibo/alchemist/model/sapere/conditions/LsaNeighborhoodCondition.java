@@ -69,10 +69,10 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
     @Nonnull
     @Override
     public LsaNeighborhoodCondition cloneCondition(
-        @Nonnull final Node<List<ILsaMolecule>> node,
+        @Nonnull final Node<List<ILsaMolecule>> newNode,
         @Nonnull final NodeReaction<List<ILsaMolecule>> r
     ) {
-        return new LsaNeighborhoodCondition((ILsaNode) node, getMolecule(), environment);
+        return new LsaNeighborhoodCondition((ILsaNode) newNode, getMolecule(), environment);
     }
 
     @Override
@@ -285,6 +285,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
      * alice.alchemist.model.implementations.conditions.LsaStandardCondition
      * #toString()
      */
+    @Nonnull
     @Override
     public String toString() {
         return "+" + super.toString();

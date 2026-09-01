@@ -45,7 +45,6 @@ internal class TestTargetMapWalker {
 
     private fun run() = repeat(STEPS) {
         reaction.execute()
-        reaction.updateSchedulingAfterFiring(reaction.nextOccurrence.current)
     }
 
     @Test

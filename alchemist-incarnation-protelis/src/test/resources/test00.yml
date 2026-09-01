@@ -32,7 +32,7 @@ _pool: &program
     actions:
       - type: BrownianMove
         parameters: [1]
-  - type: Event
+  - type: AbsoluteEvent
     parameters: [1]
     conditions: []
     actions:

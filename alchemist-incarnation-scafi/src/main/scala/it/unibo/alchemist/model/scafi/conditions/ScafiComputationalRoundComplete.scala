@@ -38,9 +38,6 @@ final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val p
     )
   }
 
-  override def getPropensityContribution: Observable[java.lang.Double] =
-    isValid.map(valid => if (valid) 1.0 else 0.0)
-
   override def isValid: Observable[lang.Boolean] =
     program.observeComputationalCycleComplete.map(valid => lang.Boolean.valueOf(valid))
 

@@ -45,21 +45,15 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
 
     @Nonnull
     @Override
-    public Observable<Double> getPropensityContribution() {
-        return isValid().map(it -> it ? 1d : 0d);
-    }
-
-    @Nonnull
-    @Override
     public ComputationalRoundComplete cloneCondition(
-        @Nonnull final Node<Object> node,
-        @Nonnull final NodeReaction<Object> reaction
+        @Nonnull final Node<Object> newNode,
+        @Nonnull final NodeReaction<Object> newReaction
     ) {
-        final ProtelisDevice<?> device = node.asPropertyOrNull(ProtelisDevice.class);
+        final ProtelisDevice<?> device = newNode.asPropertyOrNull(ProtelisDevice.class);
         if (device != null) {
             final List<RunProtelisProgram<?>> possibleRefs = device.allProtelisPrograms();
             if (possibleRefs.size() == 1) {
-                return new ComputationalRoundComplete(node, possibleRefs.get(0));
+                return new ComputationalRoundComplete(newNode, possibleRefs.get(0));
             }
             throw new IllegalStateException(
                 "There must be one and one only unconfigured " + RunProtelisProgram.class.getSimpleName()
@@ -83,6 +77,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
         return program;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return program.asMolecule().getName() + " completed round";

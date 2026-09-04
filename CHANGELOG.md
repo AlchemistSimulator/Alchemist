@@ -1,3 +1,18 @@
+## [43.1.33](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.32...43.1.33) (2026-09-04)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.9.0-19.2.8 ([#5583](https://github.com/AlchemistSimulator/Alchemist/issues/5583)) ([2624905](https://github.com/AlchemistSimulator/Alchemist/commit/2624905f514565e2a9b47e4ad746877c8599397b))
+* **deps:** update dependency dk.dma.ais.lib:ais-lib-messages to v2.8.8 ([#5582](https://github.com/AlchemistSimulator/Alchemist/issues/5582)) ([ba92902](https://github.com/AlchemistSimulator/Alchemist/commit/ba92902049d95772f5907111f123354755e529c0))
+* **deps:** update dependency org.slf4j:slf4j-api to v2.0.19 ([#5584](https://github.com/AlchemistSimulator/Alchemist/issues/5584)) ([295562a](https://github.com/AlchemistSimulator/Alchemist/commit/295562a8a9885f09c7a96f3d5e106ac0cc07aa07))
+* **deps:** update dependency org.yaml:snakeyaml to v2.7 ([#5581](https://github.com/AlchemistSimulator/Alchemist/issues/5581)) ([6cf1b3e](https://github.com/AlchemistSimulator/Alchemist/commit/6cf1b3e745992d670d59f202988bbd8f50f7171a))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([75a7a3e](https://github.com/AlchemistSimulator/Alchemist/commit/75a7a3e2dbffb1d7866b5b37caf741be65e6a8e6))
+* **build:** update the javadoc.io cache ([6ba37c8](https://github.com/AlchemistSimulator/Alchemist/commit/6ba37c8b569a827c6019ea3a0ad329b0069ad5bc))
+* **build:** update the javadoc.io cache ([fe51e85](https://github.com/AlchemistSimulator/Alchemist/commit/fe51e8518614dcfa67ff35e41f9c830d3ddf0f0b))
+
 ## [43.1.32](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.31...43.1.32) (2026-08-29)
 
 ### Dependency updates

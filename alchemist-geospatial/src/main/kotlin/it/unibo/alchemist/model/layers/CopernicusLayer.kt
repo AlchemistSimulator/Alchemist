@@ -232,11 +232,7 @@ open class CopernicusLayer<T>(
     private fun sample(position: GeoPosition, gridBeforeIndex: Int, gridAfterIndex: Int, timeWeight: Double): T {
         val gridBefore = data.grid(gridBeforeIndex)
         val gridAfter = data.grid(gridAfterIndex)
-        val latitudes = gridBefore.latitudes
-        val longitudes = gridBefore.longitudes
-        val inBounds = position.latitude in latitudes.first()..latitudes.last() &&
-            position.longitude in longitudes.first()..longitudes.last()
-        require(inBounds) { outOfBoundsMessage(position, gridBefore) }
+        require(gridBefore.isInBounds(position)) { outOfBoundsMessage(position, gridBefore) }
         /*
          * The interpolation returns a Double, which might be NaN.
          * The converter is fully responsible for mapping it to T.

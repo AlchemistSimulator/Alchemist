@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.geospatial.reading
 
+import it.unibo.alchemist.model.GeoPosition
 import java.io.Serializable
 
 /**
@@ -46,6 +47,15 @@ abstract class RasterGrid(val latitudes: DoubleArray, val longitudes: DoubleArra
      * @return the raw value of the cell; a [Double.NaN] denotes a missing/fill value.
      */
     abstract fun valueAt(latIndex: Int, lonIndex: Int): Double
+
+    /**
+     * Returns whether the geographic location falls within this grid or not.
+     *
+     * @param position the geographical position to check.
+     * @return `true` if [position] is within the spatial extent of this grid, `false` otherwise.
+     */
+    fun isInBounds(position: GeoPosition): Boolean = position.latitude in latitudes.first()..latitudes.last() &&
+        position.longitude in longitudes.first()..longitudes.last()
 
     private companion object {
         private const val serialVersionUID = 1L

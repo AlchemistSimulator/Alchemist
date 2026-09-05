@@ -12,8 +12,11 @@ package it.unibo.alchemist.model.geospatial.reading
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.spec.style.stringSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.mockGeoPosition
 
 /**
  * Contract shared by every [RasterGrid] implementation, verified
@@ -41,6 +44,19 @@ fun rasterGridContract(gridOf: (DoubleArray, DoubleArray, DoubleArray) -> Raster
         grid.valueAt(0, 3) shouldBe 3.0 // bottom right
         grid.valueAt(2, 0) shouldBe 20.0 // top left
         grid.valueAt(2, 3) shouldBe 23.0 // top right
+    }
+
+    // Spatial coverage check
+    "isInBounds should return whether the position falls in the spatial extent" {
+        val step = 0.5
+        val latRange = generateSequence(lats.first()) { it + step }.takeWhile { it <= lats.last() }
+        val lonRange = generateSequence(lons.first()) { it + step }.takeWhile { it <= lons.last() }
+        for (lat in latRange) {
+            for (lon in lonRange) {
+                grid.isInBounds(mockGeoPosition(lat, lon)).shouldBeTrue()
+            }
+        }
+        grid.isInBounds(mockGeoPosition(lats.last() + 1, lons.last() + 1)).shouldBeFalse()
     }
 
     // Missing values tests

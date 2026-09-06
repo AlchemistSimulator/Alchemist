@@ -11,11 +11,14 @@ package it.unibo.alchemist.boundary.acquisition
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.paths.shouldExist
 import io.kotest.matchers.paths.shouldNotExist
 import io.kotest.matchers.shouldBe
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.CountDownLatch
 
 /**
  * Delegates each fetch call to a configurable [behavior], so that [FileSystemCacheManager] can
@@ -52,6 +55,31 @@ class TestFileSystemCacheManager : StringSpec({
 
     // creates a new root.
     fun newRoot(): Path = Files.createTempDirectory(tempDir, "root")
+
+    // runs every task on its own thread, releases them all at once, and rethrows any failure
+    fun concurrently(tasks: List<() -> Unit>) {
+        val gate = CountDownLatch(1)
+        // threads can safely put the exceptions here
+        val failures = ConcurrentLinkedQueue<Throwable>()
+        // creates a thread for each task
+        val threads = tasks.map { task ->
+            Thread {
+                // blocks execution until gate reaches 0
+                gate.await()
+                runCatching { task() }.onFailure { failures.add(it) }
+            }.apply {
+                // daemon flag enabled, so the JVM can terminate
+                isDaemon = true
+                start()
+            }
+        }
+        // simultaneously starts all the set-up threads
+        gate.countDown()
+        // maximum number of milliseconds to wait for a thread to finish. Used to prevent deadlocks
+        threads.forEach { it.join(10_000L) }
+        threads.forEach { it.isAlive shouldBe false }
+        failures.toList().shouldBeEmpty()
+    }
 
     /**
      * A minimal [CopernicusRequest] for a test case.
@@ -159,5 +187,39 @@ class TestFileSystemCacheManager : StringSpec({
         }
         val result = FileSystemCacheManager(secondProvider, root).getOrProduce(req)
         Files.readString(result.resolve(dataFileName)) shouldBe "first"
+    }
+
+    // multi thread tests
+    "concurrent misses on the same cache entry are fetched exactly once" {
+        val root = newRoot()
+        val req = request("entry_concurrent")
+        val threadCount = 3
+        val provider = FakeCopernicusProvider { _, dir -> writeOneFile(dir) }
+        val cache = FileSystemCacheManager(provider, root)
+        val results = ConcurrentLinkedQueue<Path>()
+        concurrently(
+            List(threadCount) {
+                { results.add(cache.getOrProduce(req)) }
+            },
+        )
+        provider.calls shouldBe 1
+        results.size shouldBe threadCount
+        results.toSet() shouldBe setOf(root.resolve(req.toDirectoryName()))
+    }
+
+    "two managers over the same root fetch a shared entry only once" {
+        val root = newRoot()
+        val req = request("entry_two_managers")
+        val firstProvider = FakeCopernicusProvider { _, dir -> writeOneFile(dir) }
+        val secondProvider = FakeCopernicusProvider { _, dir -> writeOneFile(dir) }
+        val firstCache = FileSystemCacheManager(firstProvider, root)
+        val secondCache = FileSystemCacheManager(secondProvider, root)
+        concurrently(
+            listOf(
+                { firstCache.getOrProduce(req) },
+                { secondCache.getOrProduce(req) },
+            ),
+        )
+        firstProvider.calls + secondProvider.calls shouldBe 1
     }
 })

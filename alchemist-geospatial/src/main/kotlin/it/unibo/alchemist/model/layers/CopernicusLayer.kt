@@ -83,7 +83,7 @@ open class CopernicusLayer<T>(
     private val sliceTimes: DoubleArray = run {
         val origin: Instant = timeOrigin ?: data.instants.first()
         data.instants
-            .map { toSimulationTime(it, origin, timeScale) }
+            .map { it.toSimulationTime(origin, timeScale) }
             .toDoubleArray()
     }
 
@@ -280,13 +280,12 @@ open class CopernicusLayer<T>(
 }
 
 /**
- * Converts a real-world [Instant] to a simulation time [Double].
+ * Converts this [Instant] to a simulation time [Double].
  *
- * @param instant timestamp to convert.
  * @param origin the instant that maps to `0.0` in simulation time.
  * @param scale duration of one simulation time unit.
  */
-private fun toSimulationTime(instant: Instant, origin: Instant, scale: Duration): Double = (instant - origin) / scale
+private fun Instant.toSimulationTime(origin: Instant, scale: Duration): Double = (this - origin) / scale
 
 /**
  * Builds the failure message for a [position] falling outside the extent of [grid].

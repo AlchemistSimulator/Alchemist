@@ -141,10 +141,10 @@ open class CopernicusLayer<T>(
      * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601
      * instant. The first instant found in the data is used when `null`.
      * @param variable variable name inside the downloaded file. Auto-detected when `null`.
-     * @param cacheDirectory asbolute path to the root of the local cache.
-     * @param cdsApiRcFile absolute path of a `.cdsapirc`-formatted file holding the API token.
      * @param interpolation strategy for spatio-temporal evaluation.
      * @param converter defines how read [Double] values are converted into [T].
+     * @param cacheDirectory asbolute path to the root of the local cache.
+     * @param cdsApiRcFile absolute path of a `.cdsapirc`-formatted file holding the API token.
      * @throws IllegalArgumentException if [timeScale] or [timeOrigin] are not valid ISO-8601
      * strings; if [timeScale] is negative or infinity; if [endpoint] is not a valid URL; if any
      * path is malformed.
@@ -160,10 +160,10 @@ open class CopernicusLayer<T>(
         timeScale: String,
         timeOrigin: String?,
         variable: String?,
-        cacheDirectory: String,
-        cdsApiRcFile: String,
         interpolation: SpatioTemporalInterpolation,
         converter: MeasurementConverter<T>,
+        cacheDirectory: String,
+        cdsApiRcFile: String,
     ) : this(
         environment,
         EagerGridSnapshots(

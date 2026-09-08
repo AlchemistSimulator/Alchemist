@@ -170,8 +170,8 @@ class CopernicusDataStoreProvider(
                     return parseResultsUrl(body)
                         ?: error("Job 'successful' but no rel='results' link at $monitorUrl: inconsistent response")
                 }
-                "failed", "rejected", "dismissed", "deleted" -> failOnStatus(monitorUrl, status, body)
-                "accepted", "running" -> {
+                in TERMINAL_STATUSES -> failOnStatus(monitorUrl, status, body)
+                in RUNNING_STATUSES -> {
                     // fine details on debug mode
                     logger.debug("Job status '$status' at $monitorUrl")
                     val now = System.nanoTime()
@@ -337,6 +337,11 @@ class CopernicusDataStoreProvider(
         private const val USER_ALERT_INTERVAL_SEC = 30L
 
         private const val APPLICATION_JSON = "application/json"
+
+        private val TERMINAL_STATUSES = setOf("failed", "rejected", "dismissed", "deleted")
+
+        private val RUNNING_STATUSES = setOf("accepted", "running")
+
         private val logger = LoggerFactory.getLogger(CopernicusDataStoreProvider::class.java)
     }
 }

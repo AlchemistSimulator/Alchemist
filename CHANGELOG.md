@@ -1,3 +1,15 @@
+## [43.1.34](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.33...43.1.34) (2026-09-08)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.9.1-19.2.8 ([#5585](https://github.com/AlchemistSimulator/Alchemist/issues/5585)) ([b6e85af](https://github.com/AlchemistSimulator/Alchemist/commit/b6e85af356c641fd73a9ecc2eea209e32d490b3e))
+* **deps:** update plugin gitsemver to v7.0.24 ([#5587](https://github.com/AlchemistSimulator/Alchemist/issues/5587)) ([f13096c](https://github.com/AlchemistSimulator/Alchemist/commit/f13096c7ae595932e3eef9c6ce12c72ad164ecf4))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.24 ([#5588](https://github.com/AlchemistSimulator/Alchemist/issues/5588)) ([31ce837](https://github.com/AlchemistSimulator/Alchemist/commit/31ce837a01a4bf62bfb1d851ed584eff8c61df76))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([2ce5733](https://github.com/AlchemistSimulator/Alchemist/commit/2ce5733b7e6404ee66abe4a26105ababedf8f02a))
+
 ## [43.1.33](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.32...43.1.33) (2026-09-04)
 
 ### Dependency updates

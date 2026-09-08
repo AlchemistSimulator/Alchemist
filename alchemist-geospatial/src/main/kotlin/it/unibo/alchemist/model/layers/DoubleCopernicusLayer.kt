@@ -81,10 +81,10 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
         timeScale: String = DEFAULT_TIME_SCALE_ISO,
         timeOrigin: String? = null,
         variable: String? = null,
-        cacheDirectory: String = DEFAULT_CACHE_DIRECTORY,
-        cdsApiRcFile: String = CdsApiRc.DEFAULT_LOCATION.toString(),
         interpolation: SpatioTemporalInterpolation = TrilinearInterpolation(),
         converter: MeasurementConverter<Double> = DoubleIdentityWithFallback(),
+        cacheDirectory: String = DEFAULT_CACHE_DIRECTORY,
+        cdsApiRcFile: String = CdsApiRc.DEFAULT_LOCATION.toString(),
     ) : super(
         environment,
         endpoint,
@@ -94,10 +94,10 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
         timeScale,
         timeOrigin,
         variable,
-        cacheDirectory,
-        cdsApiRcFile,
         interpolation,
         converter,
+        cacheDirectory,
+        cdsApiRcFile,
     )
 
     private companion object {

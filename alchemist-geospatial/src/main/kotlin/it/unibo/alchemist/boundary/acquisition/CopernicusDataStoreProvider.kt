@@ -24,9 +24,12 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.file.Path
-import java.time.Duration
-import java.time.temporal.ChronoUnit
 import kotlin.io.path.isDirectory
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 import org.slf4j.LoggerFactory
 
 /**
@@ -51,9 +54,9 @@ import org.slf4j.LoggerFactory
 class CopernicusDataStoreProvider(
     private val checkMd5: Boolean = true,
     private val http: HttpClient = HttpClient.newHttpClient(),
-    private val pollInterval: Duration = Duration.ofSeconds(DEFAULT_POLL_INTERVAL_SEC),
-    private val maxPollInterval: Duration = Duration.ofSeconds(DEFAULT_MAX_POLL_INTERVAL_SEC),
-    private val timeout: Duration = Duration.ofMinutes(DEFAULT_TIMEOUT_MIN),
+    private val pollInterval: Duration = DEFAULT_POLL_INTERVAL,
+    private val maxPollInterval: Duration = DEFAULT_MAX_POLL_INTERVAL,
+    private val timeout: Duration = DEFAULT_TIMEOUT,
     private val tokenSupplier: () -> String,
 ) : ExternalDataProvider<CopernicusRequest> {
 
@@ -80,7 +83,7 @@ class CopernicusDataStoreProvider(
             "$targetDir is not a directory or does not exist"
         }
         logger.info("Fetching dataset '${request.dataset}'.")
-        val start = System.nanoTime()
+        val start = TimeSource.Monotonic.markNow()
         // asks ECMWF servers to process the data.
         val monitorUrl = submit(request)
         // polls until the data can be retrieved.
@@ -99,7 +102,7 @@ class CopernicusDataStoreProvider(
             }
         }
         flattenArchives(targetDir)
-        val elapsed = Duration.ofNanos(System.nanoTime() - start).truncatedTo(ChronoUnit.MILLIS)
+        val elapsed = start.elapsedNow().inWholeMilliseconds.milliseconds
         logger.info("Dataset '${request.dataset}' successfully downloaded in $elapsed.")
     }
 
@@ -151,15 +154,13 @@ class CopernicusDataStoreProvider(
      */
     private fun awaitSuccess(monitorUrl: String): String {
         // the last available moment to check for a successful poll.
-        val deadline = System.nanoTime() + timeout.toNanos()
+        val deadline = TimeSource.Monotonic.markNow() + timeout
         var interval = pollInterval
         /*
-         * how often to alert the user that the program is still in
-         * polling mode (to prevent them from thinking the program
-         * has frozen).
+         * tracks the last time the user was alerted that the program is still
+         * polling (to prevent them from thinking it has frozen).
          */
-        val heartbeatNanos = Duration.ofSeconds(USER_ALERT_INTERVAL_SEC).toNanos()
-        var lastHeartbeat = System.nanoTime()
+        var lastHeartbeat = TimeSource.Monotonic.markNow()
         // tries to poll until a success/timeout/error
         while (true) {
             val body = get(monitorUrl).body()
@@ -174,22 +175,21 @@ class CopernicusDataStoreProvider(
                 in RUNNING_STATUSES -> {
                     // fine details on debug mode
                     logger.debug("Job status '$status' at $monitorUrl")
-                    val now = System.nanoTime()
                     // reassures the user that the program is in fact not dead.
-                    if (now - lastHeartbeat >= heartbeatNanos) {
+                    if (lastHeartbeat.elapsedNow() >= USER_ALERT_INTERVAL) {
                         logger.info("Still waiting for job at $monitorUrl (status: $status)")
-                        lastHeartbeat = now
+                        lastHeartbeat = TimeSource.Monotonic.markNow()
                     }
                 }
                 // warns the user about the new unknow status, but keeps polling.
                 else -> logger.warn("Unrecognized job status '$status' at $monitorUrl, continuing to poll")
             }
             // fails on timeout
-            check(System.nanoTime() < deadline) {
+            check(deadline.hasNotPassedNow()) {
                 "Timeout ($timeout) while waiting for job completion at $monitorUrl"
             }
-            Thread.sleep(interval.toMillis())
-            interval = minOf(interval.multipliedBy(2), maxPollInterval)
+            Thread.sleep(interval.inWholeMilliseconds)
+            interval = (interval * 2).coerceAtMost(maxPollInterval)
         }
     }
 
@@ -315,26 +315,26 @@ class CopernicusDataStoreProvider(
 
     private companion object {
         /**
-         * Default interval in seconds between two consecutive polls.
+         * Default interval between two consecutive polls.
          */
-        private const val DEFAULT_POLL_INTERVAL_SEC = 2L
+        private val DEFAULT_POLL_INTERVAL = 2.seconds
 
         /**
-         * Default max interval in seconds between two consecutive polls.
+         * Default max interval between two consecutive polls.
          */
-        private const val DEFAULT_MAX_POLL_INTERVAL_SEC = 120L
+        private val DEFAULT_MAX_POLL_INTERVAL = 120.seconds
 
         /**
-         * Default maximum number of minutes allowed to wait for a poll with a ‘successful’ status.
+         * Default maximum time allowed to wait for a poll with a ‘successful’ status.
          */
-        private const val DEFAULT_TIMEOUT_MIN = 30L
+        private val DEFAULT_TIMEOUT = 30.minutes
 
         /**
          * How often to alert the user that the program is still in
          * polling mode (to prevent them from thinking the program
          * has frozen).
          */
-        private const val USER_ALERT_INTERVAL_SEC = 30L
+        private val USER_ALERT_INTERVAL = 30.seconds
 
         private const val APPLICATION_JSON = "application/json"
 

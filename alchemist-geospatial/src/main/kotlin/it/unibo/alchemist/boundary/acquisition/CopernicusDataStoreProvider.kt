@@ -60,6 +60,12 @@ class CopernicusDataStoreProvider(
     private val tokenSupplier: () -> String,
 ) : ExternalDataProvider<CopernicusRequest> {
 
+    init {
+        require(pollInterval.isPositive()) { "pollInterval must be positive" }
+        require(maxPollInterval >= pollInterval) { "maxPollInterval must be >= than pollInterval" }
+        require(timeout.isPositive()) { "timeout must be positive" }
+    }
+
     /**
      * read on first use, not at construction: a cache hit must not require credentials,
      * so the token can be absent.
@@ -313,7 +319,12 @@ class CopernicusDataStoreProvider(
         HttpResponse.BodyHandlers.ofString(),
     )
 
-    private companion object {
+    internal companion object {
+        /**
+         * Default maximum time allowed to wait for a poll with a ‘successful’ status.
+         */
+        val DEFAULT_TIMEOUT = 30.minutes
+
         /**
          * Default interval between two consecutive polls.
          */
@@ -323,11 +334,6 @@ class CopernicusDataStoreProvider(
          * Default max interval between two consecutive polls.
          */
         private val DEFAULT_MAX_POLL_INTERVAL = 120.seconds
-
-        /**
-         * Default maximum time allowed to wait for a poll with a ‘successful’ status.
-         */
-        private val DEFAULT_TIMEOUT = 30.minutes
 
         /**
          * How often to alert the user that the program is still in

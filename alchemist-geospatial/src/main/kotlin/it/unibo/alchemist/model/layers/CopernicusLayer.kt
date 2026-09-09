@@ -145,9 +145,10 @@ open class CopernicusLayer<T>(
      * @param converter defines how read [Double] values are converted into [T].
      * @param cacheDirectory asbolute path to the root of the local cache.
      * @param cdsApiRcFile absolute path of a `.cdsapirc`-formatted file holding the API token.
-     * @throws IllegalArgumentException if [timeScale] or [timeOrigin] are not valid ISO-8601
-     * strings; if [timeScale] is negative or infinity; if [endpoint] is not a valid URL; if any
-     * path is malformed.
+     * @param providerTimeout the timeout after which the provider stops trying to retrieve the data.
+     * @throws IllegalArgumentException if [timeScale]/[timeOrigin]/[providerTimeout] are not valid ISO-8601
+     * strings; if [timeScale] is negative or infinity; if [providerTimeout] is negative;
+     * if [endpoint] is not a valid URL; if any path is malformed.
      * @throws IllegalStateException if the token cannot be read; if the remote job fails or times
      * out; if the downloaded asset fails its integrity check.
      */
@@ -164,6 +165,7 @@ open class CopernicusLayer<T>(
         converter: MeasurementConverter<T>,
         cacheDirectory: String,
         cdsApiRcFile: String,
+        providerTimeout: String,
     ) : this(
         environment,
         EagerGridSnapshots(
@@ -174,6 +176,7 @@ open class CopernicusLayer<T>(
                 Path.of(inputsFile),
                 Path.of(cacheDirectory),
                 Path.of(cdsApiRcFile),
+                Duration.parseIsoString(providerTimeout),
             ),
             variable,
         ),
@@ -255,12 +258,13 @@ open class CopernicusLayer<T>(
         private const val serialVersionUID = 1L
 
         /**
-         * Ensures the data denoted by `(dataset, inputs)` is present in the local cache rooted at
+         * Ensures the data denoted by `(endpoint, dataset, inputs)` is present in the local cache rooted at
          * [cacheDirectoryRoot], downloading it from [endpoint] on a cache miss, and returns the
          * directory it lives in. The token is read from [cdsApiRcFile] lazily, so a cache hit needs
          * no credentials.
          *
          * @return the directory holding the data files, ready to be opened.
+         * @throws IllegalArgumentException if [providerTimeout] is a negative duration.
          * @throws IllegalStateException if the data cannot be produced.
          */
         private fun resolveDataDirectory(
@@ -270,8 +274,11 @@ open class CopernicusLayer<T>(
             inputsFile: Path,
             cacheDirectoryRoot: Path,
             cdsApiRcFile: Path,
+            providerTimeout: Duration,
         ): Path {
-            val provider = CopernicusDataStoreProvider(checkMd5) { CdsApiRc.readToken(cdsApiRcFile) }
+            val provider = CopernicusDataStoreProvider(checkMd5 = checkMd5, timeout = providerTimeout) {
+                CdsApiRc.readToken(cdsApiRcFile)
+            }
             val inputs = CopernicusInputs.read(inputsFile)
             val request = CopernicusRequest(endpoint.trim().trimEnd('/'), dataset, inputs)
             return FileSystemCacheManager(provider, cacheDirectoryRoot).getOrProduce(request)

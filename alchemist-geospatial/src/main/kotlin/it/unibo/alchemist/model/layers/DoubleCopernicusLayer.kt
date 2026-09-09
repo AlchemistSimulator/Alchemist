@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.layers
 
+import it.unibo.alchemist.boundary.acquisition.CopernicusDataStoreProvider
 import it.unibo.alchemist.boundary.acquisition.FileSystemCacheManager
 import it.unibo.alchemist.boundary.utils.CdsApiRc
 import it.unibo.alchemist.model.Environment
@@ -85,6 +86,7 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
         converter: MeasurementConverter<Double> = DoubleIdentityWithFallback(),
         cacheDirectory: String = DEFAULT_CACHE_DIRECTORY,
         cdsApiRcFile: String = CdsApiRc.DEFAULT_LOCATION.toString(),
+        providerTimeout: String = CopernicusDataStoreProvider.DEFAULT_TIMEOUT.toIsoString(),
     ) : super(
         environment,
         endpoint,
@@ -98,6 +100,7 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
         converter,
         cacheDirectory,
         cdsApiRcFile,
+        providerTimeout,
     )
 
     private companion object {

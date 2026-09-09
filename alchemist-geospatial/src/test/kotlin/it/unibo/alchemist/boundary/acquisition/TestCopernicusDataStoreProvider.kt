@@ -16,9 +16,9 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import it.unibo.alchemist.loadJsonCopernicusResponse
 import java.net.URI
-import java.time.Duration
 import kotlin.io.path.createTempDirectory
 import kotlin.io.path.readBytes
+import kotlin.time.Duration.Companion.milliseconds
 
 class TestCopernicusDataStoreProvider : StringSpec({
 
@@ -280,7 +280,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
 
     "times out if the job never completes" {
         FakeHttpServer().use { fake ->
-            val provider = CopernicusDataStoreProvider(timeout = Duration.ofMillis(500)) { token }
+            val provider = CopernicusDataStoreProvider(timeout = 500.milliseconds) { token }
             val tempDir = createTempDirectory()
             fake.replaySubmit(cds)
             fake.constant("GET", cds.jobRoute) { FakeHttpServer.json(200, """{ "status": "running" }""")(it) }

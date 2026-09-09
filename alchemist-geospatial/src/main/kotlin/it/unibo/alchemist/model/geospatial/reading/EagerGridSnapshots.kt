@@ -112,7 +112,7 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
             } else {
                 logger.warn(
                     "Two different files in $directory share the same real-world instant ($instant)." +
-                        "Ignoring the instant of the last one.",
+                        "Duplicate istants are ignored.",
                 )
             }
         }

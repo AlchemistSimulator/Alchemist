@@ -198,33 +198,23 @@ open class CopernicusLayer<T>(
      */
     override fun getValue(position: GeoPosition): T {
         val t = environment.simulationOrNull?.time?.toDouble() ?: 0.0
-        return when {
+        // the indices of the spatial slices that enclose time t.
+        val (gridIndexBefore, gridIndexAfter) = bracketIndices(sliceTimes, t)
+        return if (gridIndexBefore == gridIndexAfter) {
+            // the time t falls exactly on a slice.
+            sampleExactSlice(position, gridIndexBefore)
+        } else {
             /*
-             * the simulation time is outside the calculated simulation time range.
-             * Returns the first or the last spatially resolved value.
+             * the time t lies between two distinct slices.
+             * Applies the spatio-temporal interpolation strategy.
              */
-            t < sliceTimes.first() -> sampleExactSlice(position, 0)
-            t > sliceTimes.last() -> sampleExactSlice(position, sliceTimes.lastIndex)
-            else -> {
-                // the indices of the spatial slices that enclose time t.
-                val (gridIndexBefore, gridIndexAfter) = bracketIndices(sliceTimes, t)
-                if (gridIndexBefore == gridIndexAfter) {
-                    // the time t falls exactly on a slice.
-                    sampleExactSlice(position, gridIndexBefore)
-                } else {
-                    /*
-                     * the time t lies between two distinct slices.
-                     * Applies the spatio-temporal interpolation strategy.
-                     */
-                    val timeWeight = weight(
-                        sliceTimes,
-                        gridIndexBefore,
-                        gridIndexAfter,
-                        t,
-                    )
-                    sample(position, gridIndexBefore, gridIndexAfter, timeWeight)
-                }
-            }
+            val timeWeight = weight(
+                sliceTimes,
+                gridIndexBefore,
+                gridIndexAfter,
+                t,
+            )
+            sample(position, gridIndexBefore, gridIndexAfter, timeWeight)
         }
     }
 

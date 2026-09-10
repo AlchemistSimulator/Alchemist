@@ -24,6 +24,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
 
     val token = "test-token"
     val successful = "successful-status"
+    val accepted = "accepted-status"
 
     val standardProvider = CopernicusDataStoreProvider { token }
 
@@ -164,7 +165,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             val tempDir = createTempDirectory()
             val payload = "test".toByteArray()
             fake.replaySubmit(cds)
-            fake.replayStatus(cds, "accepted-status")
+            fake.replayStatus(cds, accepted)
             fake.replayStatus(cds, successful)
             fake.replayResults(cds, payload.size)
             fake.serveAsset(cds, payload)
@@ -175,10 +176,11 @@ class TestCopernicusDataStoreProvider : StringSpec({
             downloaded.readBytes() shouldBe payload
             // the download must NOT carry the token
             val downloadReq = fake.requests.single { it.route == cds.assetPath }
-            downloadReq.header("PRIVATE-TOKEN") shouldBe null
-            // every OGC request MUST carry the token
+            val tokenHeader = "PRIVATE-TOKEN"
+            downloadReq.header(tokenHeader) shouldBe null
+            // every other OGC request MUST carry the token
             fake.requests.filter { it !== downloadReq }.forEach {
-                it.header("PRIVATE-TOKEN") shouldBe token
+                it.header(tokenHeader) shouldBe token
             }
         }
     }

@@ -48,15 +48,17 @@ fun rasterGridContract(gridOf: (DoubleArray, DoubleArray, DoubleArray) -> Raster
 
     // Spatial coverage check
     "isInBounds should return whether the position falls in the spatial extent" {
+        fun doubleSequence(start: Double, stop: Double, step: Double) =
+            generateSequence(start) { it + step }.takeWhile { it <= stop }
         val step = 0.5
-        val latRange = generateSequence(lats.first()) { it + step }.takeWhile { it <= lats.last() }
-        val lonRange = generateSequence(lons.first()) { it + step }.takeWhile { it <= lons.last() }
+        val latRange = doubleSequence(lats.first(), lats.last(), step)
+        val lonRange = doubleSequence(lons.first(), lons.last(), step)
         for (lat in latRange) {
             for (lon in lonRange) {
                 grid.isInBounds(mockGeoPosition(lat, lon)).shouldBeTrue()
             }
         }
-        grid.isInBounds(mockGeoPosition(lats.last() + 1, lons.last() + 1)).shouldBeFalse()
+        grid.isInBounds(mockGeoPosition(lats.last() + step, lons.last() + step)).shouldBeFalse()
     }
 
     // Missing values tests

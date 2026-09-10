@@ -222,4 +222,24 @@ class TestFileSystemCacheManager : StringSpec({
         )
         firstProvider.calls + secondProvider.calls shouldBe 1
     }
+
+    "a cache entry published by another process during fetch is kept and the local copy gets discarded" {
+        val root = newRoot()
+        val req = request("race_lost_test")
+        val finalDir = root.resolve(req.toDirectoryName())
+        val winnerStr = "I won!"
+        val provider = FakeCopernicusProvider { _, dir ->
+            // the local work that should lose the race
+            Files.writeString(dir.resolve(dataFileName), "local")
+            // simulates another process that publishes the exact same cache entry
+            Files.createDirectories(finalDir)
+            Files.writeString(finalDir.resolve(dataFileName), winnerStr)
+        }
+        val result = FileSystemCacheManager(provider, root).getOrProduce(req)
+        provider.calls shouldBe 1
+        result shouldBe finalDir
+        Files.readString(result.resolve(dataFileName)) shouldBe winnerStr
+        // the local copy should get discarded
+        Files.list(root.resolve(".tmp")).use { it.toList() }.shouldBeEmpty()
+    }
 })

@@ -1,3 +1,22 @@
+## [43.1.35](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.34...43.1.35) (2026-09-10)
+
+### Dependency updates
+
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.195 ([#5589](https://github.com/AlchemistSimulator/Alchemist/issues/5589)) ([28d504d](https://github.com/AlchemistSimulator/Alchemist/commit/28d504d258962e265b2592c73bb3a4f1694753d8))
+* **deps:** update dependency org.danilopianini:kotlin-symmetric-matrix to v2.0.2 ([#5590](https://github.com/AlchemistSimulator/Alchemist/issues/5590)) ([29f87d6](https://github.com/AlchemistSimulator/Alchemist/commit/29f87d6fdf4d17f083428a95a589e24842ec0b18))
+* **deps:** update dependency org.eclipse.jgit:org.eclipse.jgit to v7.8.0.202609011348-r ([#5591](https://github.com/AlchemistSimulator/Alchemist/issues/5591)) ([294a925](https://github.com/AlchemistSimulator/Alchemist/commit/294a925b35bdebe35ae5d2294e822cee1daa01eb))
+* **deps:** update node.js to 24.21 ([#5595](https://github.com/AlchemistSimulator/Alchemist/issues/5595)) ([dce02e7](https://github.com/AlchemistSimulator/Alchemist/commit/dce02e78d43e758d3c709a7e99d19c65519a2e6a))
+* **deps:** update plugin com.gradle.develocity to v4.5.1 ([#5592](https://github.com/AlchemistSimulator/Alchemist/issues/5592)) ([12553c2](https://github.com/AlchemistSimulator/Alchemist/commit/12553c232789a39d4b0f31cb96bba66c30a7306e))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.166.0 ([#5593](https://github.com/AlchemistSimulator/Alchemist/issues/5593)) ([6b7550d](https://github.com/AlchemistSimulator/Alchemist/commit/6b7550d49389b8fcb5ce045abe9edde04f565046))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([65e358c](https://github.com/AlchemistSimulator/Alchemist/commit/65e358cef75ae53dd42ca78c7358d5cbfffc64e9))
+* **build:** update the javadoc.io cache ([db1782d](https://github.com/AlchemistSimulator/Alchemist/commit/db1782dbf04897465bbab8f4f6aa93582d5ac747))
+
 ## [43.1.34](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.33...43.1.34) (2026-09-08)
 
 ### Dependency updates

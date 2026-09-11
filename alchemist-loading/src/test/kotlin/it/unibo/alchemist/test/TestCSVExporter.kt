@@ -57,7 +57,7 @@ class TestCSVExporter<T, P : Position<P>> :
             }
             "should have limited-length decimals" {
                 val limitedDecimalsFile = simulation.csvExporters()[1].dataFile("fixed-decimals_")
-                val precision2 = """(0\.0*\d\d|\d\.0*\d|\d\.\d|\d\d)(e(-|\+)\d+)?"""
+                val precision2 = """(\d\d\.\d\d|0\.0*\d\d|\d\.0*\d|\d\.\d|\d\d)(e(-|\+)\d+)?"""
                 val lineRegex = Regex("""^$precision2(\s($precision2))+$""")
                 limitedDecimalsFile.useLines { lines ->
                     lines
@@ -84,6 +84,29 @@ class TestCSVExporter<T, P : Position<P>> :
             exporterFirstLine.shouldNotBeNull()
             exporterFirstLine.shouldNotBeEmpty()
             exporterFirstLine.shouldContain("0 1 2 3")
+        }
+        "should round every column independently" {
+            val simulation: Simulation<T, P> = loadAlchemist("testCSVExporterMultipleColumns.yml")
+            simulation.runInCurrentThread()
+
+            val exporter = simulation.csvExporters().first()
+
+            val outputFile = File(exporter.exportPath)
+                .listFiles()
+                ?.first { it.name.startsWith("multiple-columns") }
+                .shouldNotBeNull()
+
+            val firstDataLine = outputFile
+                .readLines()
+                .first { line -> line.isNotBlank() && !line.startsWith("#") }
+
+            firstDataLine.split(" ") shouldBe listOf(
+                "0.0",
+                "1.23",
+                "2.35",
+                "3.0",
+                "4.57",
+            )
         }
     }) {
     // common utility functions

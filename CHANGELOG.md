@@ -1,3 +1,24 @@
+## [43.1.36](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.35...43.1.36) (2026-09-16)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.9.2-19.3.0 ([#5601](https://github.com/AlchemistSimulator/Alchemist/issues/5601)) ([3aab32e](https://github.com/AlchemistSimulator/Alchemist/commit/3aab32e5a128ab85e29eb76e156522fdb22d4fb0))
+* **deps:** update dependency com.apollographql.apollo:apollo-runtime to v5.2.0 ([#5602](https://github.com/AlchemistSimulator/Alchemist/issues/5602)) ([84934fc](https://github.com/AlchemistSimulator/Alchemist/commit/84934fc055607a236169c8ddc9356df7ecd740eb))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.11.1 ([#5596](https://github.com/AlchemistSimulator/Alchemist/issues/5596)) ([7936ebd](https://github.com/AlchemistSimulator/Alchemist/commit/7936ebd351aff274c69ea6cbe0db4276d7443ea1))
+* **deps:** update kotest to v6.2.5 ([#5597](https://github.com/AlchemistSimulator/Alchemist/issues/5597)) ([af95963](https://github.com/AlchemistSimulator/Alchemist/commit/af95963998a543489dbc643d4a4e4f77982f560a))
+* **deps:** update ktor monorepo to v3.6.0 ([#5600](https://github.com/AlchemistSimulator/Alchemist/issues/5600)) ([cfef1b9](https://github.com/AlchemistSimulator/Alchemist/commit/cfef1b9430a1070a2a111936c5f48c5aab0c2e59))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.45 ([#5594](https://github.com/AlchemistSimulator/Alchemist/issues/5594)) ([14fc02a](https://github.com/AlchemistSimulator/Alchemist/commit/14fc02a084a1b2613ccfca3fc5e7316ce1e49d0f))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.46 ([#5599](https://github.com/AlchemistSimulator/Alchemist/issues/5599)) ([50cfe81](https://github.com/AlchemistSimulator/Alchemist/commit/50cfe815a9be90a6bb7c53501045495e4c372117))
+
+### General maintenance
+
+* **build:** actualize the Kotlin JS store ([763f808](https://github.com/AlchemistSimulator/Alchemist/commit/763f808eb7f968ed6d53e64bf6991db1c6972213))
+* **build:** actualize the Kotlin JS store ([51d49de](https://github.com/AlchemistSimulator/Alchemist/commit/51d49de7c23c6f1c18c8ee61bd467fbf62cf0db7))
+* **build:** actualize the Kotlin JS store ([4f2e8fe](https://github.com/AlchemistSimulator/Alchemist/commit/4f2e8fef1a332f42bac5f5b82c258792b89cdc95))
+
 ## [43.1.35](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.34...43.1.35) (2026-09-10)
 
 ### Dependency updates

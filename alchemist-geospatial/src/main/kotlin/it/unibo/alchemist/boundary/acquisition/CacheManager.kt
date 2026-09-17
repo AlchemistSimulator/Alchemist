@@ -22,7 +22,7 @@ import java.nio.file.Path
  *
  * @see CacheKey
  */
-interface CacheManager<in R : CacheKey> {
+fun interface CacheManager<in R : CacheKey> {
     /**
      * Returns the directory holding the data associated with [request], producing it if absent.
      *

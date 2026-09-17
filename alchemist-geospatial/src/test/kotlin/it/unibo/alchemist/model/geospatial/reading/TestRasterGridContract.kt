@@ -12,11 +12,26 @@ package it.unibo.alchemist.model.geospatial.reading
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.spec.style.stringSpec
+import io.kotest.inspectors.forAll
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.mockGeoPosition
+
+/**
+ * Cartesian product of [first] and [second], in row-major order.
+ */
+private fun <A, B> cartesian(first: Iterable<A>, second: Iterable<B>): List<Pair<A, B>> =
+    first.flatMap { a -> second.map { b -> a to b } }
+
+/**
+ * Returns from [start] to [stop] in [steps] intervals.
+ */
+private fun linspace(start: Double, stop: Double, steps: Int): List<Double> = (0..steps).map { i ->
+    val t = i.toDouble() / steps
+    (1 - t) * start + t * stop
+}
 
 /**
  * Contract shared by every [RasterGrid] implementation, verified
@@ -47,18 +62,28 @@ fun rasterGridContract(gridOf: (DoubleArray, DoubleArray, DoubleArray) -> Raster
     }
 
     // Spatial coverage check
-    "isInBounds should return whether the position falls in the spatial extent" {
-        fun doubleSequence(start: Double, stop: Double, step: Double) =
-            generateSequence(start) { it + step }.takeWhile { it <= stop }
-        val step = 0.5
-        val latRange = doubleSequence(lats.first(), lats.last(), step)
-        val lonRange = doubleSequence(lons.first(), lons.last(), step)
-        for (lat in latRange) {
-            for (lon in lonRange) {
-                grid.isInBounds(mockGeoPosition(lat, lon)).shouldBeTrue()
-            }
+    "isInBounds should return true for every position within the spatial extent" {
+        val steps = 40
+        cartesian(
+            linspace(lats.first(), lats.last(), steps),
+            linspace(lons.first(), lons.last(), steps),
+        ).forAll { (lat, lon) ->
+            grid.isInBounds(mockGeoPosition(lat, lon)).shouldBeTrue()
         }
-        grid.isInBounds(mockGeoPosition(lats.last() + step, lons.last() + step)).shouldBeFalse()
+    }
+
+    "isInBounds should return false when a coordinate falls outside the spatial extent" {
+        val offset = 0.5
+        val midLat = lats[lats.size / 2]
+        val midLon = lons[lons.size / 2]
+        listOf(
+            lats.first() - offset to midLon,
+            lats.last() + offset to midLon,
+            midLat to lons.first() - offset,
+            midLat to lons.last() + offset,
+        ).forAll { (lat, lon) ->
+            grid.isInBounds(mockGeoPosition(lat, lon)).shouldBeFalse()
+        }
     }
 
     // Missing values tests
@@ -71,10 +96,8 @@ fun rasterGridContract(gridOf: (DoubleArray, DoubleArray, DoubleArray) -> Raster
 
     "a grid entirely made of Double.NaN should return NaN everywhere" {
         val allNan = ArrayRasterGrid(lats, lons, DoubleArray(12) { Double.NaN })
-        for (iLat in 0..2) {
-            for (iLon in 0..3) {
-                allNan.valueAt(iLat, iLon).shouldBeNaN()
-            }
+        cartesian(lats.indices, lons.indices).forAll { (iLat, iLon) ->
+            allNan.valueAt(iLat, iLon).shouldBeNaN()
         }
     }
 

@@ -1,0 +1,8 @@
+{
+  "type": "http://www.opengis.net/def/exceptions/ogcapi-processes-1/1.0/result-not-ready",
+  "title": "job results not ready",
+  "status": 404,
+  "detail": "status of 61ebb7be-650e-4aa5-9039-6030eb01bb68 is 'accepted'",
+  "instance": "https://ads.atmosphere.copernicus.eu/api/retrieve/v1/jobs/61ebb7be-650e-4aa5-9039-6030eb01bb68/results",
+  "trace_id": "e7ba3606-9816-43cc-ab6a-4f0642388701"
+}

@@ -8,6 +8,7 @@
  */
 import Libs.alchemist
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer
 import com.google.common.hash.Hashing
 import it.unibo.alchemist.build.commandExists
 import it.unibo.alchemist.build.isMac
@@ -81,6 +82,8 @@ tasks.withType<ShadowJar>().configureEach {
     isZip64 = true
     mergeServiceFiles()
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    // EMF's plugin.properties must be merged if there are multiple entries
+    transform<AppendingTransformer> { resource = "plugin.properties" }
     destinationDirectory.set(rootProject.layout.buildDirectory.map { it.dir("shadow") })
 }
 

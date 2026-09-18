@@ -1,0 +1,27 @@
+{
+    "processID": "derived-era5-land-daily-statistics",
+    "type": "process",
+    "jobID": "82d0a5fb-f096-42fd-b644-c7ba173b0154",
+    "status": "successful",
+    "created": "2026-08-09T16:03:03.634155",
+    "started": "2026-08-09T16:03:22.103895",
+    "finished": "2026-08-09T16:03:26.451885",
+    "updated": "2026-08-09T16:03:26.451885",
+    "links": [
+        {
+            "href": "https://cds.climate.copernicus.eu/api/retrieve/v1/jobs/82d0a5fb-f096-42fd-b644-c7ba173b0154",
+            "rel": "self",
+            "type": "application/json"
+        },
+        {
+            "href": "https://cds.climate.copernicus.eu/api/retrieve/v1/jobs/82d0a5fb-f096-42fd-b644-c7ba173b0154/results",
+            "rel": "results"
+        }
+    ],
+    "metadata": {
+        "datasetMetadata": {
+            "catalogue": "c3s"
+        },
+        "origin": "api"
+    }
+}

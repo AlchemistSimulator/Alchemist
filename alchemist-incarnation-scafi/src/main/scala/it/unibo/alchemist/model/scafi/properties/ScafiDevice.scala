@@ -27,12 +27,12 @@ class ScafiDevice[E](node: Node[E]) extends NodeProperty[E] {
   def validateCommunicationConfiguration(): Unit = {
     val hasScafiPrograms = node.getReactions.asScala
       .flatMap(_.getActions.asScala)
-      .exists(_.isInstanceOf[RunScafiProgram[_, _]])
+      .exists(_.isInstanceOf[RunScafiProgram[?, ?]])
 
     if (hasScafiPrograms) {
       val hasSendAction = node.getReactions.asScala
         .flatMap(_.getActions.asScala)
-        .exists(_.isInstanceOf[SendScafiMessage[_, _]])
+        .exists(_.isInstanceOf[SendScafiMessage[?, ?]])
 
       if (!hasSendAction) {
         ScafiDevice.LOGGER.warn(
@@ -47,5 +47,5 @@ class ScafiDevice[E](node: Node[E]) extends NodeProperty[E] {
 }
 
 object ScafiDevice {
-  private val LOGGER = LoggerFactory.getLogger(classOf[ScafiDevice[_]])
+  private val LOGGER = LoggerFactory.getLogger(classOf[ScafiDevice[?]])
 }

@@ -34,7 +34,7 @@ class TestScafiIncarnation extends AnyFunSuite with Matchers {
 
     val generic = INC.createReaction(rng, env, node, standard, null)
     assertNotNull(generic)
-    assertTrue(generic.isInstanceOf[Event[_]])
+    assertTrue(generic.isInstanceOf[Event[?]])
   }
 
   /** Verifies that the incarnation can properly init new concentrations. */

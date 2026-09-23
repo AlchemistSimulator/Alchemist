@@ -23,6 +23,7 @@ import org.kaikikm.threadresloader.ResourceLoader
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
+import scala.language.implicitConversions
 import scala.util.{Failure, Try}
 
 sealed class DefaultRunScafiProgram[P <: Position[P]](

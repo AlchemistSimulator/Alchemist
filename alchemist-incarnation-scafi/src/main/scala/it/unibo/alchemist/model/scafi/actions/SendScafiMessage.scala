@@ -48,15 +48,16 @@ class SendScafiMessage[T, P <: Position[P]](
         val possibleRef = destinationNode.getReactions
           .stream()
           .flatMap(reaction => reaction.getActions.stream())
-          .filter(action => action.isInstanceOf[RunScafiProgram[_, _]])
+          .filter(action => action.isInstanceOf[RunScafiProgram[?, ?]])
           .map(action => action.asInstanceOf[RunScafiProgram[T, P]])
           .collect(Collectors.toList[RunScafiProgram[T, P]])
         if (possibleRef.size() == 1) {
-          return new SendScafiMessage(environment, device, reaction, possibleRef.get(0))
+          new SendScafiMessage(environment, device, reaction, possibleRef.get(0))
+        } else {
+          throw new IllegalStateException(
+            "There must be one and one only unconfigured " + RunScafiProgram.getClass.getSimpleName
+          )
         }
-        throw new IllegalStateException(
-          "There must be one and one only unconfigured " + RunScafiProgram.getClass.getSimpleName
-        )
       }
     )
 

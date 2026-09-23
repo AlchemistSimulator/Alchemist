@@ -25,6 +25,7 @@ import it.unibo.alchemist.model.protelis.actions.SendToNeighbor;
 import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.reactions.GenericReaction;
 import it.unibo.alchemist.model.times.DoubleTime;
+import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,10 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  */
@@ -166,6 +171,46 @@ class TestIncarnation {
         assertEquals(2, distribution.samples);
         assertTrue(reaction.getCanExecute().getCurrent());
         assertEquals(3.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
+    }
+
+    @Test
+    void testExponentialSendSchedulingConsumesOneSamplePerCompletedRound() {
+        final RandomGenerator rng = new MersenneTwister(0);
+        final RandomGenerator dedicatedRng = mock(RandomGenerator.class);
+        when(dedicatedRng.nextDouble()).thenReturn(0.5);
+        final Environment<Object, Euclidean2DPosition> environment = new Continuous2DEnvironment<>(INCARNATION);
+        final Node<Object> node = INCARNATION.createNode(rng, environment, null);
+        environment.addNode(node, environment.makePosition(0, 0));
+        final TimeDistribution<Object> programDistribution = INCARNATION.createTimeDistribution(
+            rng, environment, node, UNIT_RATE
+        );
+        final NodeReaction<Object> program = INCARNATION.createReaction(
+            rng, environment, node, programDistribution, PROGRAM
+        );
+        node.addReaction(program);
+        final TimeDistribution<Object> distribution = new ExponentialTime<>(1.0, dedicatedRng);
+        final NodeReaction<Object> reaction = INCARNATION.createReaction(rng, environment, node, distribution, SEND);
+        node.addReaction(reaction);
+        program.initializationComplete(Time.ZERO, environment);
+        reaction.initializationComplete(Time.ZERO, environment);
+        verify(dedicatedRng, times(0)).nextDouble();
+        assertEquals(Time.INFINITY, reaction.getNextOccurrence().getCurrent());
+        assertFalse(reaction.getCanExecute().getCurrent());
+        program.execute();
+        verify(dedicatedRng, times(1)).nextDouble();
+        assertTrue(reaction.getCanExecute().getCurrent());
+        assertTrue(reaction.getNextOccurrence().getCurrent().isFinite());
+        program.execute();
+        verify(dedicatedRng, times(1)).nextDouble();
+        assertTrue(reaction.getCanExecute().getCurrent());
+        reaction.execute();
+        verify(dedicatedRng, times(1)).nextDouble();
+        assertFalse(reaction.getCanExecute().getCurrent());
+        assertEquals(Time.INFINITY, reaction.getNextOccurrence().getCurrent());
+        program.execute();
+        verify(dedicatedRng, times(2)).nextDouble();
+        assertTrue(reaction.getCanExecute().getCurrent());
+        assertTrue(reaction.getNextOccurrence().getCurrent().isFinite());
     }
 
     @Test

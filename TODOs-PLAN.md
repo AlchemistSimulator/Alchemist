@@ -456,14 +456,14 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] On a false-to-true validity transition, refresh reaction-specific state and apply the reaction family's
   revalidation policy at the current simulation time before publishing a finite `nextOccurrence`. Never expose a
   stale internal candidate that lies in the past.
-- [ ] Specify and test revalidation separately for generic redraw, Markovian memoryless sampling/rescaling, SAPERE
+- [x] Specify and test revalidation separately for generic redraw, Markovian memoryless sampling/rescaling, SAPERE
   match resampling, both one-shot event policies, and condition-gated Protelis sends. If a family retains suspended internal
   state, keep it private: only the validity-gated occurrence is public and scheduler-visible.
   - [x] Cover generic redraw, Markovian rate transitions, and the deterministic/stateful Protelis send sequence.
   - [x] Cover `ConditionalEvent` sample consumption, invalidation, re-enabling, and removal; cover
     `AbsoluteEvent` valid execution, invalid expiry, fixed scheduler visibility, and removal.
   - [x] Cover SAPERE match revalidation, including match changes while validity remains true.
-  - [ ] Complete exponential Protelis-send sample-count coverage.
+  - [x] Complete exponential Protelis-send sample-count coverage.
 - [x] Make the engine treat an infinite scheduler head as quiescence. It must not call `execute`, `reactionReady`,
   `updateSchedulingAfterFiring`, or `stepDone`, and must not increment the simulation step merely to discover that no finite
   reaction is available.
@@ -574,12 +574,12 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   phantom monitor notifications or step increments.
 - [ ] Test that revalidation cannot publish a time earlier than the current simulation time and consumes exactly the
   random samples required by the reaction family's documented policy.
-- [ ] Test the complete Protelis send sequence with both deterministic/stateful and exponential distributions:
+- [x] Test the complete Protelis send sequence with both deterministic/stateful and exponential distributions:
   initial false validity means infinity and zero samples; the first completed program round draws once; repeated
   true notifications preserve the pending occurrence; send execution resets validity to false and infinity without
   another draw; the next completed round starts exactly one new wait.
   - [x] Cover the complete deterministic/stateful sequence with explicit sample counts.
-  - [ ] Repeat the sequence with an exponential distribution and explicit random-generator consumption.
+  - [x] Repeat the sequence with an exponential distribution and explicit random-generator consumption.
 - [ ] Test neighborhood addition/removal, movement, environment-wide changes, and dynamic reaction/node changes.
 - [ ] Test that previously published neighborhood snapshots cannot change when topology changes and that observers
   receive a distinct immutable replacement snapshot.

@@ -33,7 +33,8 @@ dependencies {
     implementation(alchemist("physics"))
     implementation(libs.resourceloader)
     implementation(libs.bundles.scala)
-    implementation(libs.bundles.scalacache)
+    implementation(libs.guava)
+    implementation(libs.slf4j)
 
     testCompileOnly(libs.spotbugs.annotations)
     testImplementation(alchemist("engine"))

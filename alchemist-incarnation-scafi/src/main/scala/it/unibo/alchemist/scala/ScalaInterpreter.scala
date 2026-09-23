@@ -7,11 +7,11 @@
  */
 package it.unibo.alchemist.scala
 
-import scala.reflect.runtime.currentMirror
+import scala.reflect.runtime.universe.runtimeMirror
 import scala.tools.reflect.ToolBox
 
 object ScalaInterpreter {
-  private[this] val toolbox = currentMirror.mkToolBox()
+  private val toolbox = runtimeMirror(getClass.getClassLoader).mkToolBox()
 
   def apply[A](code: String): A = toolbox.eval(toolbox.parse(code)).asInstanceOf[A]
 }

@@ -54,7 +54,7 @@ object ScafiIncarnationForAlchemist
     override def clone(): AnyRef = new AlchemistRandomWrapper(randomGenerator)
   }
 
-  trait ScafiAlchemistSupport { self: AggregateProgram with StandardSensors =>
+  trait ScafiAlchemistSupport { self: AggregateProgram & StandardSensors =>
     def node: NodeManager = sense[NodeManager](LSNS_ALCHEMIST_NODE_MANAGER)
 
     def alchemistCoordinates: Array[Double] = sense[Array[Double]](LSNS_ALCHEMIST_COORDINATES)
@@ -71,14 +71,14 @@ object ScafiIncarnationForAlchemist
     override def randomGenerator(): Random = randomGen
     override def nextRandom(): Double = alchemistRandomGen.nextDouble()
 
-    def alchemistEnvironment: Environment[Any, Position[_]] =
-      sense[Environment[Any, Position[_]]](LSNS_ALCHEMIST_ENVIRONMENT)
+    def alchemistEnvironment: Environment[Any, Position[?]] =
+      sense[Environment[Any, Position[?]]](LSNS_ALCHEMIST_ENVIRONMENT)
 
     implicit private def optionalToOption[E](optional: Optional[E]): Option[E] =
       if (optional.isPresent) Some(optional.get()) else None
 
     private def findInLayers[A](name: String): A = {
-      val layer: Layer[Any, Position[_]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
+      val layer: Layer[Any, Position[?]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
       val node = alchemistEnvironment.getNodeByID(mid())
       layer
         .getValue(alchemistEnvironment.getPosition(node))
@@ -93,7 +93,7 @@ object ScafiIncarnationForAlchemist
    * Typical adjustment that needs to be performed when using Alchemist environments with positions of type
    * [[Euclidean2DPosition]] to properly adapt values and types to ScaFi standard sensors.
    */
-  trait AlchemistEuclidean2DPosition { self: AggregateProgram with ScafiAlchemistSupport with StandardSensors =>
+  trait AlchemistEuclidean2DPosition { self: AggregateProgram & ScafiAlchemistSupport & StandardSensors =>
     override def currentPosition(): Point3D = {
       val pos = sense[Euclidean2DPosition](LSNS_POSITION)
       Point3D(pos.getX, pos.getY, 0)

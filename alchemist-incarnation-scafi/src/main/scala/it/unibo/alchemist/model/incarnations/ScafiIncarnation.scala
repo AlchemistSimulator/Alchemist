@@ -29,10 +29,10 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
 
   import ScafiIncarnationUtils.runInScafiDeviceContext
 
-  private[this] def notNull[V](value: V, name: String = "Object"): V =
+  private def notNull[V](value: V, name: String = "Object"): V =
     Objects.requireNonNull(value, s"$name must not be null")
 
-  private[this] def toDouble(value: Any): Double = value match {
+  private def toDouble(value: Any): Double = value match {
     case x: Double => x
     case x: Int => x
     case x: String => java.lang.Double.parseDouble(x)
@@ -52,7 +52,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       param: Any
   ): Action[T] = runInScafiDeviceContext[T, Action[T]](
     node,
-    message = s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property",
+    message = s"The node must have a ${classOf[ScafiDevice[?]].getSimpleName} property",
     body = device => {
       if (param == "send") {
         val alreadyConfigured = ScafiIncarnationUtils
@@ -109,7 +109,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       parameters: Any
   ): Condition[T] = runInScafiDeviceContext[T, Condition[T]](
     node,
-    message = s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property",
+    message = s"The node must have a ${classOf[ScafiDevice[?]].getSimpleName} property",
     device => {
       val alreadyConfgiured = ScafiIncarnationUtils
         .allConditionsFor(node, classOf[ScafiComputationalRoundComplete[T]])
@@ -120,13 +120,13 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       if (scafiProgramList.isEmpty) {
         throw new IllegalStateException(
           "There is no program requiring a " +
-            classOf[ScafiComputationalRoundComplete[_]].getSimpleName + " condition"
+            classOf[ScafiComputationalRoundComplete[?]].getSimpleName + " condition"
         )
       }
       if (scafiProgramList.size > 1) {
         throw new IllegalStateException(
           "There are too many programs requiring a " +
-            classOf[ScafiComputationalRoundComplete[_]].getName + " condition: " + scafiProgramList
+            classOf[ScafiComputationalRoundComplete[?]].getName + " condition: " + scafiProgramList
         )
       }
       new ScafiComputationalRoundComplete(device, scafiProgramList.head).asInstanceOf[Condition[T]]
@@ -222,7 +222,7 @@ object ScafiIncarnationUtils {
   def allScafiProgramsFor[T, P <: Position[P]](node: Node[T]): mutable.Buffer[RunScafiProgram[T, P]] =
     allActions[T, P, RunScafiProgram[T, P]](node, classOf[RunScafiProgram[T, P]])
 
-  def allConditionsFor[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Condition[T]] =
+  def allConditionsFor[T](node: Node[T], conditionClass: Class[?]): mutable.Buffer[Condition[T]] =
     for {
       reaction <- node.getReactions.asScala
       condition <- reaction.getConditions.asScala if conditionClass.isInstance(condition)
@@ -232,14 +232,11 @@ object ScafiIncarnationUtils {
 
 object CachedInterpreter {
 
-  import com.google.common.cache.{CacheBuilder, Cache => GCache}
-  import scalacache.guava.GuavaCache
-  import scalacache.{Cache, Entry}
-  private val underlyingGuavaCache: GCache[String, Entry[Any]] = CacheBuilder
-    .newBuilder()
-    .maximumSize(1000L)
-    .build[String, Entry[Any]]
-  implicit private val scalaCache: Cache[Any] = GuavaCache(underlyingGuavaCache: GCache[String, Entry[Any]])
+  import com.google.common.cache.{Cache, CacheBuilder}
+
+  // Values are wrapped in Option, as Guava caches reject nulls
+  private val cache: Cache[String, Option[AnyRef]] =
+    CacheBuilder.newBuilder().maximumSize(1000L).build[String, Option[AnyRef]]()
 
   /**
    * Evaluates str using Scala reflection. When doCacheValue is true, the result of the evaluation is cached. When
@@ -247,10 +244,8 @@ object CachedInterpreter {
    */
   def apply[A <: AnyRef](code: String, doCacheValue: Boolean = true): A =
     if (doCacheValue) {
-      import scalacache.modes.sync._ // Synchronous mode
-      scalacache.caching("//VAL" + code)(None)(ScalaInterpreter[Any](code))
-    }.asInstanceOf[A]
-    else {
+      cache.get(code, () => Option(ScalaInterpreter[AnyRef](code))).orNull.asInstanceOf[A]
+    } else {
       ScalaInterpreter(code)
     }
 }

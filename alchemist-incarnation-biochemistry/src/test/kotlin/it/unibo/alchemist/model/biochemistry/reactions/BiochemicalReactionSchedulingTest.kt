@@ -12,18 +12,53 @@ package it.unibo.alchemist.model.biochemistry.reactions
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
+import it.unibo.alchemist.model.biochemistry.conditions.BiomolPresentInCell
 import it.unibo.alchemist.model.biochemistry.conditions.GenericMoleculePresent
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import org.apache.commons.math3.random.RandomGenerator
 import org.junit.jupiter.api.Test
 
 class BiochemicalReactionSchedulingTest {
+
+    @Test
+    fun `cloning preserves biochemical condition type and destination node`() {
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        val incarnation = BiochemistryIncarnation()
+        val environment = BioRect2DEnvironment(incarnation)
+        val source = incarnation.createNode(randomGenerator, environment, null)
+        val destination = incarnation.createNode(randomGenerator, environment, null)
+        val molecule = incarnation.createMolecule("token")
+        destination.setConcentration(molecule, 2.0)
+        val condition = BiomolPresentInCell(source, molecule, 1.0)
+        val reaction = BiochemicalNodeReaction(
+            source,
+            ExponentialTime(1.0, randomGenerator),
+            environment,
+            randomGenerator,
+        ).apply {
+            conditions = listOf(condition)
+        }
+
+        val clonedReaction = reaction.cloneOnNewNode(destination, Time.ZERO)
+        val clonedCondition = assertIs<BiomolPresentInCell>(clonedReaction.conditions.single())
+        assertSame(destination, clonedCondition.getNode())
+        assertEquals(1.0, clonedCondition.requiredQuantity)
+        assertEquals(2.0, clonedCondition.quantity.current)
+
+        assertFailsWith<IllegalArgumentException> {
+            reaction.conditions = listOf(mockk<Condition<Double>>())
+        }
+    }
 
     @Test
     fun `a quantity change updates rate while condition validity remains true`() {

@@ -11,13 +11,16 @@ package it.unibo.alchemist.model.biochemistry.conditions;
 
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
+
+import javax.annotation.Nonnull;
 
 import java.io.Serial;
 
 /**
  *
  */
-public class BiomolPresentInCell extends GenericMoleculePresent<Double> {
+public final class BiomolPresentInCell extends GenericMoleculePresent<Double> {
 
     @Serial
     private static final long serialVersionUID = -5772829360637946655L;
@@ -29,6 +32,15 @@ public class BiomolPresentInCell extends GenericMoleculePresent<Double> {
      */
     public BiomolPresentInCell(final Node<Double> node, final Molecule biomol, final Double concentration) {
         super(node, biomol, concentration);
+    }
+
+    @Nonnull
+    @Override
+    public BiomolPresentInCell cloneCondition(
+        @Nonnull final Node<Double> newNode,
+        @Nonnull final NodeReaction<Double> newReaction
+    ) {
+        return new BiomolPresentInCell(newNode, getMolecule(), getRequiredQuantity());
     }
 
 }

@@ -440,7 +440,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   - [x] Replace condition dependency-set subscriptions with direct specialized-reaction subscriptions.
     `BiomolPresentInEnv` observes the position- and neighborhood-derived total; mutable layer-value emissions remain
     part of the observable-layer migration.
-- [ ] Preserve accepted-condition validation and typed bindings through reaction cloning, incarnation builders,
+- [x] Preserve accepted-condition validation and typed bindings through reaction cloning, incarnation builders,
   reflection/YAML loading, generated factories, and Kotlin DSL construction.
 - [x] Update `Condition` and specialized-reaction KDoc/Javadoc, the scheduling-and-ownership page, model and
   biochemistry documentation, configuration references, and migration notes in the same change. Remove every claim

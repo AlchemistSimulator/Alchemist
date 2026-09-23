@@ -58,7 +58,7 @@ class PhysicsUpdate<T>(
 
     override fun compareTo(other: Reaction<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)
 
-    override fun canExecute(): Observable<Boolean> = validity
+    override val canExecute: Observable<Boolean> get() = validity
 
     override fun execute() {
         conditions.forEach(Condition<T>::reactionReady)

@@ -56,7 +56,7 @@ open class Engine<T, P : Position<out P>>(
             return
         }
         currentTime = scheduledTime
-        check(nextEvent.canExecute().current) {
+        check(nextEvent.canExecute.current) {
             "$nextEvent exposed a finite next occurrence while reporting that it could not execute"
         }
         nextEvent.execute()

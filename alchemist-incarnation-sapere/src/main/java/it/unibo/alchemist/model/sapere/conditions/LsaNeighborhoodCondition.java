@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
+import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableExtensions;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
@@ -35,6 +36,7 @@ import java.util.Map;
 public final class LsaNeighborhoodCondition extends LsaStandardCondition {
 
     private final Environment<List<ILsaMolecule>, ?> environment;
+    private final Observable<?> neighborhoodMatchInput;
 
     /**
      * @param node the node
@@ -52,7 +54,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
         // We depend on every neighbor's LSA space, hence an update is triggered
         // every time a change in node's neighborhood is emitted, or one of the
         // members' LSA space has changed.
-        addObservableDependency(ObservableExtensions.INSTANCE.switchMap(
+        neighborhoodMatchInput = ObservableExtensions.INSTANCE.switchMap(
             environment.getNeighborhood(node).map(Neighborhood::getNeighbors),
             neighbors ->
                 ObservableExtensions.INSTANCE.combineLatest(
@@ -63,7 +65,13 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                         ).toList(),
                     space -> space
                 )
-        ));
+        );
+    }
+
+    @Nonnull
+    @Override
+    public Observable<?> getMatchingInput() {
+        return neighborhoodMatchInput;
     }
 
     @Nonnull

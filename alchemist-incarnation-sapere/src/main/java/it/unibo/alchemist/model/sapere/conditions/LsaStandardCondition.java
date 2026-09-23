@@ -13,6 +13,7 @@ import com.google.common.collect.Sets;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
@@ -32,6 +33,7 @@ import java.util.Map;
 public class LsaStandardCondition extends AbstractLsaCondition {
 
     private final ILsaMolecule molecule;
+    private final Observable<?> matchInput;
     private final MutableObservable<Boolean> valid = MutableObservable.Companion.observe(false);
 
     /**
@@ -44,7 +46,7 @@ public class LsaStandardCondition extends AbstractLsaCondition {
      */
     public LsaStandardCondition(final ILsaMolecule mol, final ILsaNode n) {
         super(n, Sets.newHashSet(new ILsaMolecule[] {mol}));
-        addObservableDependency(n.observeMoleculeName(mol.getArg(0).toString()));
+        matchInput = n.observeMoleculeName(mol.getArg(0).toString());
         setValidity(valid);
         molecule = mol;
     }
@@ -123,6 +125,15 @@ public class LsaStandardCondition extends AbstractLsaCondition {
             }
         }
         return makeValid(matchesfound);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Nonnull
+    @Override
+    public Observable<?> getMatchingInput() {
+        return matchInput;
     }
 
     /**

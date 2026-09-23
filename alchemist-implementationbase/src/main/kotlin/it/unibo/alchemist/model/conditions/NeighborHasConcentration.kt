@@ -42,7 +42,6 @@ class NeighborHasConcentration<T>(
                     neighborsConcentrations.any { it.isSome { nConc -> nConc == concentration } }
                 }.map { it.getOrElse { false } }
         }
-        addObservableDependency(validity)
         setValidity(validity)
     }
 

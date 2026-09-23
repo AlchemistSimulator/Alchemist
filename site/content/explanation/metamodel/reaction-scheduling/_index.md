@@ -24,8 +24,11 @@ Scheduling responsibilities have explicit owners:
 * A {{% api package="model" class="ReactionHost" %}} owns reaction membership. Both
   {{% api package="model" class="Node" %}} and {{% api package="model" class="Environment" %}} are reaction hosts.
 * {{% api package="model" class="Condition" %}} exposes reactive validity through the general model contract.
-  Specialized reaction families validate the concrete condition types they accept and read narrow semantic state from those types.
-* Model observables invalidate the reactions that consume them.
+  A recurring reaction owns a subscription to their combined validity. Specialized reaction families validate the
+  concrete condition types they accept and own exact subscriptions to any additional semantic inputs used by their
+  scheduling law.
+* Disposing a reaction releases its derived observables and exact subscription handles. Model observables remain
+  owned by the model entities that expose them.
 * The engine owns one exact subscription to every scheduled reaction's `nextOccurrence`.
 * The scheduler indexes reactions by their current occurrence time.
 
@@ -64,6 +67,7 @@ A {{% api package="model.reactions" class="ConditionalEvent" %}} unregisters its
 
 An observable model change can invalidate a reaction between occurrences.
 The reaction refreshes its specialized state and applies an invalidation policy distinct from post-firing advancement.
+An additional semantic input can trigger this refresh while combined condition validity remains true.
 If that policy changes `nextOccurrence`, the observable emits and the engine immediately asks the scheduler to
 reindex the reaction.
 An invalid reaction publishes the infinite occurrence. Sampling occurs when its scheduling policy enables it again.

@@ -58,7 +58,7 @@ class ConditionalEvent<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) 
         makeClone(node, currentTime) { freshGenerator -> ConditionalEvent(node, freshGenerator) }
 
     private fun armIfValid(currentTime: Time) {
-        if (!armed && canExecute().current) {
+        if (!armed && canExecute.current) {
             super.updateSchedulingAfterInvalidation(currentTime)
             armed = true
         }

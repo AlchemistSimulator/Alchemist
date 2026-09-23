@@ -37,7 +37,7 @@ class NoOtherReactionCanExecute<T>(node: Node<T>, private val myReaction: NodeRe
             node.reactions
                 .filterNot { it == myReaction }
                 .filter { it.conditions.isNotEmpty() }
-                .map { it.canExecute() }
+                .map { it.canExecute }
                 .combineLatest { reactionsCanExecute -> reactionsCanExecute.none { it } }
                 .map { it.getOrElse { true } },
         )

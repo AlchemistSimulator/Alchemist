@@ -31,10 +31,6 @@ abstract class AbstractNeighborCondition<T>(private val environment: Environment
                 .map { it.getOrElse(::emptyMap) }
         }
 
-    init {
-        addObservableDependency(validNeighbors)
-    }
-
     abstract override fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>): AbstractNeighborCondition<T>
 
     protected fun getEnvironment(): Environment<T, *> = environment

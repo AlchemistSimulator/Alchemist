@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.observation.CompositeDisposable
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.merge
 import javax.annotation.Nonnull
 
 /**
@@ -34,29 +33,28 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
         set(value) {
             validateConditions(value)
             field = value
-            canExecute.dispose()
-            canExecute = if (conditionsGateScheduling) {
-                value.map(Condition<T>::isValid)
-                    .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
-                    ?: MutableObservable.observe(true)
-            } else {
-                MutableObservable.observe(true)
-            }
+            conditionValidity.dispose()
+            conditionValidity = value.map(Condition<T>::isValid)
+                .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
+                ?: MutableObservable.observe(true)
             initializedEnvironment?.let {
-                initializeDependencySubscriptions()
-                if (conditionsGateScheduling) {
-                    reactToModelUpdate(it)
-                }
+                initializeSchedulingSubscriptions()
+                reactToModelUpdate(it)
             }
         }
 
-    private var canExecute: Observable<Boolean> = MutableObservable.observe(true)
-
-    /** Whether installed conditions reactively gate [nextOccurrence]. */
-    protected open val conditionsGateScheduling: Boolean = true
+    /*
+     * The backing field is needed because replacing conditions must replace and dispose the old combined observable.
+     * Computing it in the canExecute getter would create a new observable on every access.
+     * Making canExecute itself mutable would also be undesirable: the API promises a read-only property,
+     * and subclasses must override it with a fixed val.
+     * For reactions overriding canExecute, the default conditionValidity is unused,
+     * although its derived observable remains lazy and does not subscribe to condition sources.
+     */
+    private var conditionValidity: Observable<Boolean> = MutableObservable.observe(true)
 
     @Transient
-    private var dependencySubscriptions: CompositeDisposable? = null
+    private var schedulingSubscriptions: CompositeDisposable? = null
 
     @Transient
     protected var initializedEnvironment: Environment<T, *>? = null
@@ -75,7 +73,7 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
 
     final override val nextOccurrence: Observable<Time> get() = observableNextOccurrence
 
-    override fun canExecute(): Observable<Boolean> = canExecute
+    override val canExecute: Observable<Boolean> get() = conditionValidity
 
     final override fun compareTo(other: Reaction<T>): Int =
         nextOccurrence.current.compareTo(other.nextOccurrence.current)
@@ -103,15 +101,15 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
         check(!disposed) { "A disposed reaction cannot be initialized again: $this" }
         lastKnownTime = atTime
         initializedEnvironment = environment
-        initializeDependencySubscriptions()
+        initializeSchedulingSubscriptions()
         onInitializationComplete(atTime, environment)
         afterInitializationComplete(atTime, environment)
-        if (conditionsGateScheduling && !canExecute.current) {
+        if (!canExecute.current) {
             suspendScheduling()
         }
     }
 
-    /** Called once reactive dependencies have been activated. */
+    /** Called once reactive scheduling inputs have been activated. */
     protected open fun onInitializationComplete(@Nonnull atTime: Time, @Nonnull environment: Environment<T, *>) = Unit
 
     /** Called after reaction-specific initialization completes. */
@@ -122,6 +120,25 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
 
     /** Recomputes reaction-specific state before scheduling policy is applied. */
     protected open fun refreshReactionState(currentTime: Time, environment: Environment<T, *>) = Unit
+
+    /**
+     * Adds subscriptions for the model inputs controlling this reaction's scheduling.
+     *
+     * The default policy observes only combined condition validity. Specialized reaction families override this
+     * method and subscribe to the narrow semantic inputs used by their scheduling law.
+     */
+    protected open fun subscribeToSchedulingInputs(subscriptions: CompositeDisposable) {
+        subscriptions.add(
+            canExecute.subscribe(invokeOnSubscription = false) {
+                schedulingInputChanged()
+            },
+        )
+    }
+
+    /** Refreshes scheduling after one directly observed model input changes. */
+    protected fun schedulingInputChanged() {
+        initializedEnvironment?.let(::reactToModelUpdate)
+    }
 
     /** Applies scheduling policy after a reactive invalidation without firing the reaction. */
     protected abstract fun updateSchedulingAfterInvalidation(currentTime: Time)
@@ -142,12 +159,16 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
         if (!disposed) {
             disposed = true
             initializedEnvironment = null
-            dependencySubscriptions?.dispose()
-            dependencySubscriptions = null
+            schedulingSubscriptions?.dispose()
+            schedulingSubscriptions = null
             conditions.forEach(Condition<T>::dispose)
             conditions = emptyList()
             actions = emptyList()
-            canExecute.dispose()
+            val executionEligibility = canExecute
+            executionEligibility.dispose()
+            if (executionEligibility !== conditionValidity) {
+                conditionValidity.dispose()
+            }
             observableNextOccurrence.dispose()
             mutableNextOccurrence.dispose()
         }
@@ -167,19 +188,9 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
         append(actions)
     }
 
-    private fun initializeDependencySubscriptions() {
-        dependencySubscriptions?.dispose()
-        dependencySubscriptions = CompositeDisposable().apply {
-            if (conditionsGateScheduling) {
-                conditions.forEach { condition ->
-                    add(
-                        condition.getDependencies().merge().subscribe(invokeOnSubscription = false) {
-                            initializedEnvironment?.let(::reactToModelUpdate)
-                        },
-                    )
-                }
-            }
-        }
+    private fun initializeSchedulingSubscriptions() {
+        schedulingSubscriptions?.dispose()
+        schedulingSubscriptions = CompositeDisposable().also(::subscribeToSchedulingInputs)
     }
 
     private fun reactToModelUpdate(environment: Environment<T, *>) {

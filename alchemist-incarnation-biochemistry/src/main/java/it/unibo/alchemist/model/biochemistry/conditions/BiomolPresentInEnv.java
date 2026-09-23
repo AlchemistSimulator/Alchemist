@@ -59,18 +59,18 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
         @Nonnull final Node<Double> newNode,
         @Nonnull final NodeReaction<Double> newReaction
     ) {
-        return new BiomolPresentInEnv<>(environment, newNode, getBiomolecule(), getQuantity());
+        return new BiomolPresentInEnv<>(environment, newNode, getBiomolecule(), getRequiredQuantity());
     }
 
     private void setUpObservability() {
         totalQuantity = observeTotalQuantity();
-        addObservableDependency(totalQuantity);
-        setValidity(totalQuantity.map(totalQty -> totalQty >= getQuantity()));
+        setValidity(totalQuantity.map(totalQty -> totalQty >= getRequiredQuantity()));
     }
 
+    @Nonnull
     @Override
-    public double getCurrentQuantity() {
-        return totalQuantity.getCurrent();
+    public Observable<Double> getQuantity() {
+        return totalQuantity;
     }
 
     private Observable<Double> observeTotalQuantity() {

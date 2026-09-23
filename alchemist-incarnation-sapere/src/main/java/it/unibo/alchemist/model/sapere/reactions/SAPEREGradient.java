@@ -26,12 +26,11 @@ import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.maps.MapEnvironment;
+import it.unibo.alchemist.model.observation.CompositeDisposable;
 import it.unibo.alchemist.model.observation.Disposable;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableExtensions;
-import it.unibo.alchemist.model.observation.ObservableMutableSet;
-import it.unibo.alchemist.model.observation.ObservableSet;
 import it.unibo.alchemist.model.reactions.AbstractNodeReaction;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
@@ -43,6 +42,7 @@ import it.unibo.alchemist.model.sapere.dsl.impl.Type;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.sapere.timedistributions.SAPERETimeDistribution;
 import org.danilopianini.lang.HashString;
+import kotlin.Unit;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -261,7 +261,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
 
     @Override
     @Nonnull
-    public Observable<Boolean> canExecute() {
+    public Observable<Boolean> getCanExecute() {
         return canRun;
     }
 
@@ -389,6 +389,14 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
     @Override
     public double getRate() {
         return canRun.getCurrent() ? ((SAPERETimeDistribution) getTimeDistribution()).getRate() : 0;
+    }
+
+    @Override
+    protected void subscribeToSchedulingInputs(@Nonnull final CompositeDisposable subscriptions) {
+        for (final Condition<List<ILsaMolecule>> condition : fakeconds) {
+            final SGFakeConditionAction schedulingInput = (SGFakeConditionAction) condition;
+            subscriptions.add(schedulingInput.subscribeToSchedulingInvalidation(this::schedulingInputChanged));
+        }
     }
 
     @Override
@@ -588,14 +596,12 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
     private static class SGFakeConditionAction implements Action<List<ILsaMolecule>>, Condition<List<ILsaMolecule>> {
         private final Molecule mol;
         private final Observable<Boolean> validity = MutableObservable.Companion.observe(false);
-        private final ObservableMutableSet<Observable<?>> dependencies = new ObservableMutableSet<>();
+        private final List<Observable<?>> schedulingInputs;
 
         SGFakeConditionAction(final Molecule m, final Observable<?>... dependencies) {
             super();
             mol = m;
-            for (final Observable<?> dependency : dependencies) {
-                this.dependencies.add(dependency);
-            }
+            schedulingInputs = List.of(dependencies);
         }
 
         @Override
@@ -620,10 +626,16 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
         public void execute() {
         }
 
-        @Override
         @Nonnull
-        public ObservableSet<? extends Observable<?>> getDependencies() {
-            return dependencies;
+        Disposable subscribeToSchedulingInvalidation(@Nonnull final Runnable invalidation) {
+            final CompositeDisposable subscriptions = new CompositeDisposable();
+            for (final Observable<?> input : schedulingInputs) {
+                subscriptions.add(input.subscribe(false, ignored -> {
+                    invalidation.run();
+                    return Unit.INSTANCE;
+                }));
+            }
+            return subscriptions;
         }
 
         @Override
@@ -641,7 +653,6 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
         @Override
         public void dispose() {
             validity.dispose();
-            dependencies.dispose();
         }
 
         @Override

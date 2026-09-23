@@ -9,18 +9,24 @@
 
 package it.unibo.alchemist.model.reactions
 
+import arrow.core.Option
+import arrow.core.some
 import io.mockk.every
 import io.mockk.mockk
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.conditions.AbstractCondition
+import it.unibo.alchemist.model.conditions.ConcentrationChanged
+import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.observation.CompositeDisposable
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.math.exp
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 import org.apache.commons.math3.random.RandomGenerator
 import org.junit.jupiter.api.Test
 
@@ -100,6 +106,63 @@ class NodeReactionTransitionTest {
     }
 
     @Test
+    fun `disposing a specialized reaction detaches but does not dispose its scheduling input`() {
+        val fixture = exponentialFixture(1.0) { 0.5 }
+        val reaction = ObservableRateReaction(
+            fixture.node,
+            ExponentialTime(1.0, fixture.randomGenerator),
+            fixture.propensity,
+        )
+        reaction.initializationComplete(Time.ZERO, fixture.environment)
+        assertEquals(1, fixture.propensity.observers.size)
+
+        reaction.dispose()
+
+        assertTrue(fixture.propensity.observers.isEmpty())
+        var observed = fixture.propensity.current
+        val independentSubscription = fixture.propensity.subscribe(invokeOnSubscription = false) { observed = it }
+        fixture.propensity.current = 2.0
+        assertEquals(2.0, observed)
+        independentSubscription.dispose()
+    }
+
+    @Test
+    fun `a consumed concentration change becomes invalid until the next change`() {
+        val node = mockk<Node<Any>>(relaxed = true)
+        val environment = mockk<Environment<Any, *>>(relaxed = true)
+        val molecule = SimpleMolecule("tracked")
+        val initialConcentration = Any()
+        val concentration = MutableObservable.observe<Option<Any>>(initialConcentration.some())
+        every { environment.simulationOrNull } returns null
+        every { node.getConcentration(molecule) } returns initialConcentration
+        every { node.observeConcentration(molecule) } returns concentration
+        val randomGenerator = mockk<RandomGenerator>()
+        var samples = 0
+        every { randomGenerator.nextDouble() } answers {
+            samples++
+            0.5
+        }
+        val reaction = GenericReaction(node, ExponentialTime(1.0, randomGenerator)).apply {
+            conditions = listOf(ConcentrationChanged(node, molecule))
+        }
+        reaction.initializationComplete(Time.ZERO, environment)
+        assertTrue(reaction.nextOccurrence.current.isInfinite)
+        assertEquals(0, samples)
+
+        concentration.current = Any().some()
+        assertTrue(reaction.nextOccurrence.current.isFinite)
+        assertEquals(1, samples)
+
+        reaction.execute()
+        assertTrue(reaction.nextOccurrence.current.isInfinite)
+        assertEquals(1, samples)
+
+        concentration.current = Any().some()
+        assertTrue(reaction.nextOccurrence.current.isFinite)
+        assertEquals(2, samples)
+    }
+
+    @Test
     fun `generic reaction invalidation redraws exponential occurrence`() {
         val node = mockk<Node<Any>>()
         val environment = mockk<Environment<Any, *>>(relaxed = true)
@@ -123,26 +186,21 @@ class NodeReactionTransitionTest {
         assertEquals(1, samples)
     }
 
-    private class ObservableRateCondition<T>(node: Node<T>, rate: MutableObservable<Double>) : AbstractCondition<T>(
-        node,
-    ) {
-        init {
-            addObservableDependency(rate)
-            setValidity(MutableObservable.observe(true))
-        }
-    }
-
     private class ObservableRateReaction<T>(
         node: Node<T>,
         timeDistribution: ExponentialTime<T>,
         private val observableRate: MutableObservable<Double>,
     ) : AbstractMarkovianNodeReaction<T>(node, timeDistribution) {
 
-        init {
-            conditions = listOf(ObservableRateCondition(node, observableRate))
-        }
-
         override val rate: Double get() = observableRate.current
+
+        override fun subscribeToSchedulingInputs(subscriptions: CompositeDisposable) {
+            subscriptions.add(
+                observableRate.subscribe(invokeOnSubscription = false) {
+                    schedulingInputChanged()
+                },
+            )
+        }
 
         override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ObservableRateReaction<T> =
             makeClone(node, currentTime) { freshGenerator ->
@@ -159,7 +217,6 @@ class NodeReactionTransitionTest {
     private class ObservableValidityCondition<T>(node: Node<T>, validity: MutableObservable<Boolean>) :
         AbstractCondition<T>(node) {
         init {
-            addObservableDependency(validity)
             setValidity(validity)
         }
     }

@@ -35,7 +35,7 @@ open class ChemicalNodeReaction<T>(node: Node<T>, timeDistribution: TimeDistribu
         makeClone(node, currentTime) { freshGenerator -> ChemicalNodeReaction(node, freshGenerator) }
 
     override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
-        if (!isNewlyInstantiatedProgram && canExecute().current) {
+        if (!isNewlyInstantiatedProgram && canExecute.current) {
             refreshReactionState(atTime, environment)
             scheduleNextOccurrenceAfterFiring(atTime)
         }

@@ -14,36 +14,30 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.ObservableMutableSet
-import it.unibo.alchemist.model.observation.ObservableSet
 
 /** Base implementation of a reactive [Condition]. */
 open class AbstractCondition<T>(private val node: Node<T>) : Condition<T> {
-
-    private val dependencies = ObservableMutableSet<Observable<*>>()
-
     private var validity: Observable<Boolean> = MutableObservable.observe(true)
 
     override fun getNode(): Node<T> = node
-
-    /** Records [dependency] as a model value whose changes may affect this condition. */
-    protected fun addObservableDependency(dependency: Observable<*>): Observable<*> = dependency.also(dependencies::add)
-
-    final override fun getDependencies(): ObservableSet<out Observable<*>> = dependencies.copy()
 
     override fun isValid(): Observable<Boolean> = validity
 
     override fun dispose() {
         validity.dispose()
-        dependencies.dispose()
     }
 
     override fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>): Condition<T> =
         throw UnsupportedOperationException("${javaClass.simpleName} has no support for cloning.")
 
-    /** Installs the observable backing [isValid]. */
+    /**
+     * Installs the observable backing [isValid].
+     *
+     * The condition owns the derived view created here, while [newValidity] remains owned by its model source.
+     */
     protected fun setValidity(newValidity: Observable<Boolean>) {
-        validity = newValidity
+        validity.dispose()
+        validity = newValidity.map { it }
     }
 
     override fun toString(): String = javaClass.simpleName

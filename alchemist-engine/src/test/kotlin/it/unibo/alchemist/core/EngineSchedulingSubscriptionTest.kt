@@ -225,7 +225,7 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         engine.initializeForTest()
 
         event.nextOccurrence.current shouldBe Time.ZERO
-        event.canExecute().current shouldBe true
+        event.canExecute.current shouldBe true
         engine.stepForTest()
         engine.drainCommand()
 

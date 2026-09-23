@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.model.observation.CompositeDisposable;
 import it.unibo.alchemist.model.reactions.AbstractNodeReaction;
 import it.unibo.alchemist.model.sapere.ILsaAction;
 import it.unibo.alchemist.model.sapere.ILsaCondition;
@@ -31,6 +32,7 @@ import it.unibo.alchemist.model.timedistributions.AbstractDistribution;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
+import kotlin.Unit;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -127,6 +129,16 @@ public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMole
             .toList();
         if (!unsupported.isEmpty()) {
             throw new IllegalArgumentException("SAPERE reactions require ILsaCondition instances, got " + unsupported);
+        }
+    }
+
+    @Override
+    protected void subscribeToSchedulingInputs(@Nonnull final CompositeDisposable subscriptions) {
+        for (final ILsaCondition condition : getSAPEREConditions()) {
+            subscriptions.add(condition.getMatchingInput().subscribe(false, ignored -> {
+                schedulingInputChanged();
+                return Unit.INSTANCE;
+            }));
         }
     }
 

@@ -1,6 +1,6 @@
 # Reactive Engine Refactor Plan
 
-Last updated: 2026-09-01
+Last updated: 2026-09-02
 
 Working branch: `marmellata`
 
@@ -63,11 +63,11 @@ Do not mark an item complete until its implementation and proportional verificat
 - Keep node movement and neighborhood maintenance entirely inside the model. The simulation boundary accepts only
   root reaction membership notifications for scheduling: adding or removing a node expands to one ordinary
   `reactionAdded` or `reactionRemoved` notification per hosted reaction.
-- Remove observable dependency sets from conditions after migrating every non-validity scheduling input to a
-  direct reaction-specific invalidation signal.
-- Make layers observable before completing that migration. Consumers of layer data must receive changes through a
-  typed observable layer-value contract and exact owned subscriptions, not by publishing the layer through a
-  condition dependency set.
+- Conditions expose reactive validity only. Specialized reaction families subscribe directly to every additional
+  semantic input used by their scheduling law and own the exact returned handles.
+- Make layers observable. Consumers of mutable layer data must receive changes through a typed observable
+  layer-value contract and exact owned subscriptions; conditions whose layer reads are currently derived only from
+  position and neighborhood updates migrate to that contract in Phase 9.
 - Put chemical propensity computation in specialized reactions. Their propensity and match invalidation signals
   are private reactive implementation details, not a new public token hierarchy, dependency-description API, or
   generic `PropensityCondition`. A chemical reaction may, for example, accept molecule-quantity/presence conditions
@@ -433,20 +433,23 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   validate their own typed condition sets and rate laws: `BiochemicalNodeReaction` accepts molecule quantity,
   neighborhood selection, extracellular-environment, and mechanical-tension conditions and computes their factors
   from typed state rather than weakening the base contract.
-- [ ] Expose the narrow semantic observables required by those accepted types without exposing a generic numeric
+- [x] Expose the narrow semantic observables required by those accepted types without exposing a generic numeric
   contribution. The owning specialized reaction subscribes to them and owns every returned `Disposable`.
-  - [x] Expose biochemical molecule quantities, neighbor-selection weights, and mechanical state through typed
-    condition APIs and compute the rate from them in `BiochemicalNodeReaction`.
-  - [ ] Replace the remaining condition dependency-set subscriptions with direct specialized-reaction subscriptions.
-    In particular, `BiomolPresentInEnv` still reads a layer synchronously because layer values are not observable.
+  - [x] Expose biochemical molecule quantities as `quantity: Observable<Double>`, along with typed neighbor-selection
+    weights and mechanical state, and compute the rate from them in `BiochemicalNodeReaction`.
+  - [x] Replace condition dependency-set subscriptions with direct specialized-reaction subscriptions.
+    `BiomolPresentInEnv` observes the position- and neighborhood-derived total; mutable layer-value emissions remain
+    part of the observable-layer migration.
 - [ ] Preserve accepted-condition validation and typed bindings through reaction cloning, incarnation builders,
   reflection/YAML loading, generated factories, and Kotlin DSL construction.
 - [x] Update `Condition` and specialized-reaction KDoc/Javadoc, the scheduling-and-ownership page, model and
   biochemistry documentation, configuration references, and migration notes in the same change. Remove every claim
   that a general condition contributes a numeric factor to reaction propensity.
-- [ ] Classify every current condition dependency source as Boolean validity input or as a specialized reaction's
+- [x] Classify every current condition dependency source as Boolean validity input or as a specialized reaction's
   non-validity scheduling input before removing the existing dependency sets.
-- [ ] Make the base reaction observe only the combined reactive validity of its conditions.
+- [x] Make the base reaction observe only the combined reactive validity of its conditions.
+- [x] Use `Reaction.canExecute` as the polymorphic scheduling-eligibility observable property; do not maintain a
+  parallel condition-gating mode flag. Occurrence-time events override eligibility directly.
 - [x] Make reaction validity gate the public scheduling observable: combined validity `false` publishes
   `Time.INFINITY` immediately, including during initialization, without consuming an occurrence or advancing a
   stateful distribution.
@@ -459,7 +462,8 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   - [x] Cover generic redraw, Markovian rate transitions, and the deterministic/stateful Protelis send sequence.
   - [x] Cover `ConditionalEvent` sample consumption, invalidation, re-enabling, and removal; cover
     `AbsoluteEvent` valid execution, invalid expiry, fixed scheduler visibility, and removal.
-  - [ ] Complete SAPERE match-revalidation and exponential Protelis-send sample-count coverage.
+  - [x] Cover SAPERE match revalidation, including match changes while validity remains true.
+  - [ ] Complete exponential Protelis-send sample-count coverage.
 - [x] Make the engine treat an infinite scheduler head as quiescence. It must not call `execute`, `reactionReady`,
   `updateSchedulingAfterFiring`, or `stepDone`, and must not increment the simulation step merely to discover that no finite
   reaction is available.
@@ -469,18 +473,19 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   its own post-fire advancement, while one-shot event execution removes itself from its host. Add a regression proving that
   the engine performs only the uniform `Reaction.execute()` protocol and never advances a skipped or
   concrete-type-specific reaction.
-- [ ] Make specialized reactions directly subscribe to the narrow propensity, match, or state-change signals they
+- [x] Make specialized reactions directly subscribe to the narrow propensity, match, or state-change signals they
   consume, owning every returned non-null `Disposable`.
-- [ ] Audit observable disposal ownership while migrating those subscriptions. A condition or reaction disposes its
+- [x] Audit observable disposal ownership while migrating those subscriptions. A condition or reaction disposes its
   own derived observables and subscription handles, but must not dispose a borrowed model observable; in particular,
   remove the shared-program disposal from `ComputationalRoundComplete` and add multiple-consumer removal regressions.
-- [ ] Make these private signals invalidate the reaction even for semantically relevant `true`-to-`true` validity
+- [x] Make these private signals invalidate the reaction even for semantically relevant `true`-to-`true` validity
   changes; do not encode such changes as repeated equal Boolean emissions.
-- [ ] Until Phase 7 transactions deduplicate invalidation, inventory condition implementations that publish both a
-  source and a derived observable through dependency sets; prevent one logical mutation from resampling or
-  recomputing a reaction twice during the direct-subscription migration.
-- [ ] Remove `Condition.getDependencies`, `AbstractCondition.dependencies`, `addObservableDependency`, and related
-  merge helpers once all non-validity consumers have migrated.
+- [ ] Until Phase 7 transactions deduplicate invalidation, inventory specialized reactions that subscribe to both a
+  source and a derived signal; prevent one logical mutation from resampling or recomputing a reaction twice.
+  `SAPEREGradient` currently observes both topology snapshots and derived neighbor state, so a topology change can
+  still invalidate it more than once.
+- [x] Remove `Condition.getDependencies`, `AbstractCondition.dependencies`, `addObservableDependency`, and their
+  dependency-set merge usage once all non-validity consumers have migrated.
 - [x] Do not replace observable dependency sets with a public token type, token registry, or another collection of
   dependency descriptions.
 - [x] Define the specialized chemical reaction type and its typed condition/state inputs.
@@ -578,13 +583,13 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] Test neighborhood addition/removal, movement, environment-wide changes, and dynamic reaction/node changes.
 - [ ] Test that previously published neighborhood snapshots cannot change when topology changes and that observers
   receive a distinct immutable replacement snapshot.
-- [ ] Test propensity changes that do not change Boolean condition validity.
+- [x] Test propensity changes that do not change Boolean condition validity.
 - [ ] Test that the general `Condition` API exposes no propensity contribution, supported chemical condition types
   drive the reaction-owned mass-action law, and unsupported conditions fail during assignment/loading.
 - [ ] Test specialized condition acceptance and propensity behavior across chemical, biochemical, SAPERE, and other
   families migrated from condition-level contributions, including clone reconstruction and exact subscription
   cleanup.
-- [ ] Test match and other specialized scheduling changes that leave condition validity `true`, proving that their
+- [x] Test match and other specialized scheduling changes that leave condition validity `true`, proving that their
   direct reaction-specific signals invalidate scheduling without dependency sets or repeated Boolean emissions.
 - [ ] Test zero-to-positive, positive-to-zero, and positive-to-positive chemical propensity transitions.
 - [ ] Verify whether each transition preserves, transforms, or redraws the sampled time as specified.
@@ -658,6 +663,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-09-02: Replaced condition dependency sets with exact validity and reaction-specific subscriptions.
 - 2026-09-01: Made the social-contagion regression direct and bounded.
 - 2026-08-26: Adopted present-state, API-linked, incarnation-neutral model documentation; broader audit remains.
 - 2026-08-26: Added absolute and conditional one-shot events and validity-gated reaction scheduling.

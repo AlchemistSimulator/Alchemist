@@ -39,7 +39,7 @@ public final class GenericMoleculeUnderLevel<T extends Number> extends
         @Nonnull final Node<T> newNode,
         @Nonnull final NodeReaction<T> newReaction
     ) {
-        return new GenericMoleculeUnderLevel<>(newNode, getMolecule(), getQuantity());
+        return new GenericMoleculeUnderLevel<>(newNode, getMolecule(), getRequiredQuantity());
     }
 
     /**
@@ -48,8 +48,7 @@ public final class GenericMoleculeUnderLevel<T extends Number> extends
      */
     private void setUpObservability() {
         final var dep = getNode().observeConcentration(getMolecule());
-        final double qty = getQuantity().doubleValue();
-        addObservableDependency(dep);
+        final double qty = getRequiredQuantity().doubleValue();
         setValidity(dep.map(newValue ->
             getOrElse(newValue, () -> Double.NEGATIVE_INFINITY).doubleValue() < qty
         ));

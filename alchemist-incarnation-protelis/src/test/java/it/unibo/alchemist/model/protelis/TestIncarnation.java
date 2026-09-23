@@ -30,6 +30,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -43,6 +44,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 class TestIncarnation {
 
     private static final ProtelisIncarnation<Euclidean2DPosition> INCARNATION = new ProtelisIncarnation<>();
+    private static final String PROGRAM = "nbr(1)";
+    private static final String UNIT_RATE = "1";
     private static final String SEND = "send";
     private static final double TOLERANCE = 1e-12;
 
@@ -69,7 +72,7 @@ class TestIncarnation {
         assertEquals(3d, assertInstanceOf(TimeDistributedReaction.class, generic).getRate(), Double.MIN_VALUE);
         assertNotNull(generic);
         assertInstanceOf(GenericReaction.class, generic);
-        final NodeReaction<Object> program = INCARNATION.createReaction(rng, environment, node, standard, "nbr(1)");
+        final NodeReaction<Object> program = INCARNATION.createReaction(rng, environment, node, standard, PROGRAM);
         testIsProtelisProgram(program);
         final NodeReaction<Object> program2 = INCARNATION.createReaction(rng, environment, node, standard, "testprotelis:test");
         testIsProtelisProgram(program2);
@@ -123,7 +126,7 @@ class TestIncarnation {
     @Test
     void testCreateConcentration() {
         assertEquals("aString", INCARNATION.createConcentration("aString"));
-        assertEquals(1.0, INCARNATION.createConcentration("1"));
+        assertEquals(1.0, INCARNATION.createConcentration(UNIT_RATE));
         assertEquals("foo", INCARNATION.createConcentration("let a = \"foo\"; a"));
     }
 
@@ -134,10 +137,10 @@ class TestIncarnation {
         final Node<Object> node = INCARNATION.createNode(rng, environment, null);
         environment.addNode(node, environment.makePosition(0, 0));
         final TimeDistribution<Object> programDistribution = INCARNATION.createTimeDistribution(
-            rng, environment, node, "1"
+            rng, environment, node, UNIT_RATE
         );
         final NodeReaction<Object> program = INCARNATION.createReaction(
-            rng, environment, node, programDistribution, "nbr(1)"
+            rng, environment, node, programDistribution, PROGRAM
         );
         node.addReaction(program);
         final CountingDistribution distribution = new CountingDistribution();
@@ -148,21 +151,55 @@ class TestIncarnation {
         reaction.initializationComplete(Time.ZERO, environment);
         assertEquals(0, distribution.samples);
         assertEquals(Time.INFINITY, reaction.getNextOccurrence().getCurrent());
-        assertFalse(reaction.canExecute().getCurrent());
+        assertFalse(reaction.getCanExecute().getCurrent());
         program.execute();
-        assertTrue(reaction.canExecute().getCurrent());
+        assertTrue(reaction.getCanExecute().getCurrent());
         assertEquals(1, distribution.samples);
         assertEquals(1.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
         program.execute();
         assertEquals(1, distribution.samples);
         reaction.execute();
-        assertFalse(reaction.canExecute().getCurrent());
+        assertFalse(reaction.getCanExecute().getCurrent());
         assertEquals(Time.INFINITY, reaction.getNextOccurrence().getCurrent());
         assertEquals(1, distribution.samples);
         program.execute();
         assertEquals(2, distribution.samples);
-        assertTrue(reaction.canExecute().getCurrent());
+        assertTrue(reaction.getCanExecute().getCurrent());
         assertEquals(3.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
+    }
+
+    @Test
+    void disposingOneSendMustNotDisposeAnotherSendConditionSharingTheProgram() {
+        final RandomGenerator rng = new MersenneTwister(0);
+        final Environment<Object, Euclidean2DPosition> environment = new Continuous2DEnvironment<>(INCARNATION);
+        final Node<Object> node = INCARNATION.createNode(rng, environment, null);
+        environment.addNode(node, environment.makePosition(0, 0));
+        final NodeReaction<Object> program = INCARNATION.createReaction(
+            rng,
+            environment,
+            node,
+            INCARNATION.createTimeDistribution(rng, environment, node, UNIT_RATE),
+            PROGRAM
+        );
+        node.addReaction(program);
+        final RunProtelisProgram<?> programAction = assertInstanceOf(
+            RunProtelisProgram.class,
+            program.getActions().get(0)
+        );
+        final CountingDistribution survivingDistribution = new CountingDistribution();
+        final GenericReaction<Object> removedSend = new GenericReaction<>(node, new CountingDistribution());
+        final GenericReaction<Object> survivingSend = new GenericReaction<>(node, survivingDistribution);
+        removedSend.setConditions(List.of(new ComputationalRoundComplete(node, programAction)));
+        survivingSend.setConditions(List.of(new ComputationalRoundComplete(node, programAction)));
+        removedSend.initializationComplete(Time.ZERO, environment);
+        survivingSend.initializationComplete(Time.ZERO, environment);
+
+        removedSend.dispose();
+        program.execute();
+
+        assertTrue(survivingSend.getCanExecute().getCurrent());
+        assertEquals(1, survivingDistribution.samples);
+        assertEquals(1.0, survivingSend.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
     }
 
     private static final class CountingDistribution implements TimeDistribution<Object> {

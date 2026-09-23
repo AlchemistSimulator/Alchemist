@@ -10,16 +10,13 @@ package it.unibo.alchemist.model.scafi.conditions
 
 import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.incarnations.ScafiIncarnationUtils
-import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.scafi.actions.RunScafiProgram
 import it.unibo.alchemist.model.scafi.properties.ScafiDevice
 import it.unibo.alchemist.model.{Condition, Node, NodeReaction}
 
-import java.lang
-
 final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val program: RunScafiProgram[_, _])
     extends AbstractCondition(device.getNode) {
-  addObservableDependency(program.observeComputationalCycleComplete)
+  setValidity(program.observeComputationalCycleComplete.map(valid => java.lang.Boolean.valueOf(valid)))
 
   override def cloneCondition(node: Node[T], reaction: NodeReaction[T]): Condition[T] = {
     ScafiIncarnationUtils.runInScafiDeviceContext[T, Condition[T]](
@@ -37,9 +34,6 @@ final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val p
       }
     )
   }
-
-  override def isValid: Observable[lang.Boolean] =
-    program.observeComputationalCycleComplete.map(valid => lang.Boolean.valueOf(valid))
 
   override def getNode: Node[T] = super.getNode
 

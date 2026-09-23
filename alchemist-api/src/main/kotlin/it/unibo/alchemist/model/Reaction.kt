@@ -53,9 +53,9 @@ interface Reaction<T> :
      * updates when that state changes. Reactions whose procedure includes checking occurrence-time conditions may
      * remain executable even when those conditions will suppress their model effects.
      *
-     * @return An [Observable] emitting true if the reaction can be executed, false otherwise.
+     * The observable is owned by this reaction and released when the reaction is disposed.
      */
-    fun canExecute(): Observable<Boolean>
+    val canExecute: Observable<Boolean>
 
     /**
      * Executes this reaction.

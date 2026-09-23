@@ -77,21 +77,20 @@ class EventSchedulingTest {
         listOf(false, true).forEach { validityAtOccurrence ->
             val host = mockk<ReactionHost<Any>>(relaxed = true)
             val node = mockk<Node<Any>>()
-            val condition = ObservableValidityCondition(
-                node,
-                MutableObservable.observe(validityAtOccurrence),
-            )
+            val validity = MutableObservable.observe(!validityAtOccurrence)
+            val condition = ObservableValidityCondition(node, validity)
             val action = mockk<Action<Any>>(relaxed = true)
             val event = AbsoluteEvent(host, DoubleTime(10.0)).apply {
                 conditions = listOf(condition)
                 actions = listOf(action)
             }
             every { host.removeReaction(event) } answers { firstArg<Reaction<Any>>().dispose() }
-
             event.initializationComplete(Time.ZERO, mockk(relaxed = true))
             assertEquals(DoubleTime(10.0), event.nextOccurrence.current)
-            assertEquals(true, event.canExecute().current)
-
+            assertEquals(true, event.canExecute.current)
+            validity.current = validityAtOccurrence
+            assertEquals(DoubleTime(10.0), event.nextOccurrence.current)
+            assertEquals(true, event.canExecute.current)
             event.execute()
             verify(exactly = if (validityAtOccurrence) 1 else 0) { action.execute() }
             verify(exactly = 1) { host.removeReaction(event) }
@@ -106,9 +105,7 @@ class EventSchedulingTest {
         val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
         val (environment, setTime) = environmentWithMutableTime()
         setTime(DoubleTime(10.0))
-
         clone.initializationComplete(DoubleTime(10.0), environment)
-
         val cloneDistribution = assertIs<SequenceDistribution>(clone.timeDistribution)
         assertNotSame(sourceDistribution, cloneDistribution)
         assertEquals(0, sourceDistribution.samples)
@@ -122,7 +119,6 @@ class EventSchedulingTest {
             private set
 
         init {
-            addObservableDependency(validity)
             setValidity(validity)
         }
 

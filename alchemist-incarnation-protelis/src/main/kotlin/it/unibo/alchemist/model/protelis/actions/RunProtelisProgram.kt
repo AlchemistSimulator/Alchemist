@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -151,18 +151,11 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     val node = device.node
 
     /**
-     * @return true if the Program has finished its last computation,
-     * and is ready to send a new message (used for dependency management)
-     */
-    val isComputationalCycleComplete: Boolean get() = observeComputationalCycleComplete.current
-
-    /**
      * An observable that emits updates indicating whether the computational cycle of a Protelis program
-     * has been completed. The current value of this observable is caputered by [isComputationalCycleComplete].
+     * has been completed.
      */
-    val observeComputationalCycleComplete: Observable<Boolean> get() = _observeComputationalCycleComplete
-
-    private val _observeComputationalCycleComplete: MutableObservable<Boolean> = observe(false)
+    val computationalCycleIsComplete: Observable<Boolean>
+        field: MutableObservable<Boolean> = observe(false)
 
     private val name: Molecule =
         node.reactions
@@ -215,16 +208,16 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     override fun execute() {
         vm.runCycle()
         node.setConcentration(name, vm.currentValue)
-        _observeComputationalCycleComplete.update { true }
+        computationalCycleIsComplete.update { true }
     }
 
     override fun hashCode() = name.hashCode()
 
     /**
-     * Resets the computation status (used for dependency management).
+     * Marks the computational cycle as incomplete before the next run.
      */
     fun prepareForComputationalCycle() {
-        _observeComputationalCycleComplete.update { false }
+        computationalCycleIsComplete.update { false }
     }
 
     /**

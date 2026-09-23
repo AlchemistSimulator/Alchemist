@@ -12,7 +12,6 @@ package it.unibo.alchemist.model.protelis.conditions;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.conditions.AbstractCondition;
-import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice;
 
@@ -34,13 +33,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
     public ComputationalRoundComplete(final Node<Object> node, final RunProtelisProgram<?> program) {
         super(node);
         this.program = program;
-        addObservableDependency(program.getObserveComputationalCycleComplete());
-    }
-
-    @Nonnull
-    @Override
-    public Observable<Boolean> isValid() {
-        return getProgram().getObserveComputationalCycleComplete();
+        setValidity(program.getComputationalCycleIsComplete());
     }
 
     @Nonnull
@@ -62,12 +55,6 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
         throw new IllegalStateException(
             getClass().getSimpleName() + " cannot get cloned on a node with a missing " + ProtelisDevice.class.getSimpleName()
         );
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        getProgram().getObserveComputationalCycleComplete().dispose();
     }
 
     /**

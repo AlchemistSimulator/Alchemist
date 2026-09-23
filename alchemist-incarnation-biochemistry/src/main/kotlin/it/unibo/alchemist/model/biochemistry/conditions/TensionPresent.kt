@@ -32,7 +32,6 @@ class TensionPresent(private val environment: EnvironmentSupportingDeformableCel
         requireNotNull(node.asPropertyOrNull<Double, CircularDeformableCellProperty>()) {
             "Node must have a ${CircularDeformableCellProperty::class.simpleName}"
         }
-        addObservableDependency(mechanics)
         setValidity(mechanics.map(MechanicalState::valid))
     }
 
@@ -45,6 +44,9 @@ class TensionPresent(private val environment: EnvironmentSupportingDeformableCel
 
     /** Current tension factor consumed by [it.unibo.alchemist.model.biochemistry.reactions.BiochemicalNodeReaction]. */
     fun getTension(): Double = mechanics.current.tension
+
+    /** Observable mechanical state consumed by the owning biochemical reaction. */
+    fun observeMechanicalState(): Observable<MechanicalState> = mechanics
 
     private fun computeMechanicalState(): MechanicalState {
         val thisNode = getNode()
@@ -71,5 +73,11 @@ class TensionPresent(private val environment: EnvironmentSupportingDeformableCel
         return MechanicalState(valid, totalTension)
     }
 
-    private data class MechanicalState(val valid: Boolean, val tension: Double)
+    /** Mechanical validity and tension computed from nearby cells. */
+    data class MechanicalState(
+        /** Whether the mechanical condition is valid. */
+        val valid: Boolean,
+        /** Aggregate tension applied by nearby cells. */
+        val tension: Double,
+    )
 }

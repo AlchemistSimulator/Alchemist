@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.biochemistry.conditions.EnvPresent
 import it.unibo.alchemist.model.biochemistry.conditions.GenericMoleculePresent
 import it.unibo.alchemist.model.biochemistry.conditions.GenericMoleculeUnderLevel
 import it.unibo.alchemist.model.biochemistry.conditions.TensionPresent
+import it.unibo.alchemist.model.observation.CompositeDisposable
 import it.unibo.alchemist.model.reactions.ChemicalNodeReaction
 import java.util.LinkedHashMap
 import org.apache.commons.math3.distribution.EnumeratedDistribution
@@ -59,6 +60,23 @@ class BiochemicalNodeReaction(
         super.refreshReactionState(currentTime, environment)
     }
 
+    override fun subscribeToSchedulingInputs(subscriptions: CompositeDisposable) {
+        conditions.forEach { condition ->
+            val input = when (condition) {
+                is GenericMoleculePresent<*> -> condition.quantity
+                is AbstractNeighborCondition<*> -> condition.observeValidNeighbors()
+                is TensionPresent -> condition.observeMechanicalState()
+                is EnvPresent -> condition.isValid()
+                else -> error("Unsupported biochemical condition: $condition")
+            }
+            subscriptions.add(
+                input.subscribe(invokeOnSubscription = false) {
+                    schedulingInputChanged()
+                },
+            )
+        }
+    }
+
     override fun computeRate(currentTime: Time, environment: Environment<Double, *>): Double =
         conditions.fold(baseRate) { rate, condition ->
             if (rate == 0.0) 0.0 else rate * rateFactor(condition)
@@ -89,14 +107,14 @@ class BiochemicalNodeReaction(
 
     private fun rateFactor(condition: Condition<Double>): Double = when (condition) {
         is GenericMoleculeUnderLevel<*> ->
-            (condition.getQuantity().toDouble() - condition.getCurrentQuantity()).coerceAtLeast(0.0)
+            (condition.requiredQuantity.toDouble() - condition.quantity.current).coerceAtLeast(0.0)
         is BiomolPresentInEnv<*> -> combinations(
-            round(condition.getCurrentQuantity()).toInt(),
-            round(condition.getQuantity()).toInt(),
+            round(condition.quantity.current).toInt(),
+            round(condition.requiredQuantity).toInt(),
         )
         is GenericMoleculePresent<*> -> combinations(
-            condition.getCurrentQuantity().toInt(),
-            condition.getQuantity().toInt(),
+            condition.quantity.current.toInt(),
+            condition.requiredQuantity.toInt(),
         )
         is AbstractNeighborCondition<*> -> condition.getValidNeighbors().values.sum()
         is TensionPresent -> condition.getTension()

@@ -103,7 +103,7 @@ abstract class AbstractNodeReaction<T>(
         }
         lastKnownTime = currentTime
         refreshReactionState(currentTime, environment)
-        if (canExecute().current) {
+        if (canExecute.current) {
             scheduleNextOccurrenceAfterFiring(currentTime)
         } else {
             suspendScheduling()

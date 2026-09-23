@@ -65,7 +65,6 @@ class BiomolPresentInNeighbor(
     override fun toString(): String = "$molecule >= $concentration in neighbor"
 
     private fun setUpObservability() {
-        addObservableDependency(super.getNode().observeConcentration(molecule))
         setValidity(
             observeValidNeighbors().map { validNeighbors ->
                 val current = environment.getNeighborhood(super.getNode()).current

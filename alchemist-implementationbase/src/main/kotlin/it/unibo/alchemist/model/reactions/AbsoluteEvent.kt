@@ -11,6 +11,8 @@ package it.unibo.alchemist.model.reactions
 
 import it.unibo.alchemist.model.ReactionHost
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observation.Observable
 
 /**
  * A single-use reaction checked at one absolute [occurrence].
@@ -25,13 +27,13 @@ import it.unibo.alchemist.model.Time
  */
 class AbsoluteEvent<T>(private val host: ReactionHost<T>, val occurrence: Time) : AbstractReaction<T>(occurrence) {
 
+    override val canExecute: Observable<Boolean> = MutableObservable.observe(true)
+
     init {
         require(occurrence.isFinite && occurrence >= Time.ZERO) {
             "An absolute event requires a finite, non-negative occurrence, got $occurrence"
         }
     }
-
-    override val conditionsGateScheduling: Boolean = false
 
     override fun execute() {
         if (conditions.all { it.isValid().current }) {

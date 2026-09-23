@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.Node
 class ContainsMolecule<T>(node: Node<T>, molecule: Molecule) : AbstractCondition<T>(node) {
 
     init {
-        addObservableDependency(node.observeContains(molecule))
         setValidity(node.observeContains(molecule))
     }
 }

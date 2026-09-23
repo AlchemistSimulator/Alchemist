@@ -22,7 +22,6 @@ import it.unibo.alchemist.model.geometry.Vector
 open class WantToEscape<T, S : Vector<S>, A : Transformation<S>>(node: Node<T>) : AbstractCondition<T>(node) {
     init {
         val escapeDecision = getNode().asProperty<T, CognitiveProperty<T>>().cognitiveModel.escapeDecision
-        addObservableDependency(escapeDecision)
         setValidity(escapeDecision)
     }
 }

@@ -11,18 +11,16 @@ import java.util.Objects
 import javax.script.ScriptEngineManager
 import scala.util.{Success, Try}
 
-object ScalaInterpreter {
+object ScalaInterpreter:
   private val engine = Objects.requireNonNull(
     new ScriptEngineManager().getEngineByName("scala"),
     "No Scala JSR-223 engine found: is scala3-repl on the runtime classpath?"
   )
 
-  // ponytail: one global lock, since the REPL state is shared; use an engine pool if parallel loading gets slow
-  def apply[A](code: String): A = engine.synchronized {
+  // one global lock, since the REPL state is shared; use an engine pool if parallel loading gets slow
+  def apply[A](code: String): A = engine.synchronized:
     // The Scala 3 engine reports compilation errors as missing classes or null results: wrapping tells them apart
-    Try(engine.eval(s"Some[Any]({\n$code\n})")) match {
+    Try(engine.eval(s"Some[Any]({\n$code\n})")) match
       case Success(Some(value)) => value.asInstanceOf[A]
-      case result => throw new IllegalArgumentException(s"Unable to evaluate Scala code: $code", result.failed.getOrElse(null))
-    }
-  }
-}
+      case result =>
+        throw new IllegalArgumentException(s"Unable to evaluate Scala code: $code", result.failed.getOrElse(null))

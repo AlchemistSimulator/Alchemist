@@ -9,35 +9,30 @@ package it.unibo.alchemist.scafi.test
 
 import java.time.ZoneOffset
 
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.*
 import it.unibo.scafi.space.Point3D
 
 import scala.concurrent.duration.FiniteDuration
 
-class ScafiGradientProgram extends AggregateProgram with StandardSensorNames {
+class ScafiGradientProgram extends AggregateProgram with StandardSensorNames:
   override def main(): Double = gradient(sense[Boolean]("source"))
 
   def gradient(source: Boolean): Double =
-    rep(Double.PositiveInfinity) { distance =>
-      mux(source)(0.0) {
+    rep(Double.PositiveInfinity): distance =>
+      mux(source)(0.0):
         foldhood(Double.PositiveInfinity)(Math.min)(nbr(distance) + nbrvar[Double](NBR_RANGE))
-      }
-    }
-}
 /* program used to check if the incarnation can handle two different programs */
-class ProgramMultiA extends AggregateProgram {
+class ProgramMultiA extends AggregateProgram:
   override def main(): Set[ID] =
     rep(Set(mid()))(local => foldhood(local)(_ ++ _)(nbr(local)))
-}
 /* note that the output and the nbr use different data, therefore, if the programs are mismanaged, an alignment problem should emerge */
-class ProgramMultiB extends AggregateProgram {
+class ProgramMultiB extends AggregateProgram:
   override def main(): Double =
     rep(mid())(local => foldhood(local)(_ + _)(nbr(local)))
-}
-class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAlchemistSupport with FieldUtils {
-  import ScafiEnvProgram._
+class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAlchemistSupport with FieldUtils:
+  import ScafiEnvProgram.*
 
-  override def main(): Any = {
+  override def main(): Any =
     node.put("number2", node.get[Int]("number") + 100)
 
     val itimestamp: java.time.Instant = currentTime()
@@ -78,9 +73,7 @@ class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAl
         "\nnbrDelay" + includingSelf.reifyField(nbrDelay()) +
         "\nnbrVector" + includingSelf.reifyField(nbrVector())
     )
-  }
-}
-object ScafiEnvProgram {
+object ScafiEnvProgram:
   val MOL_TIMESTAMP = "timestamp"
   val MOL_DELTA_MANUAL_MILLIS = "deltaManualEpochMilli"
   val MOL_DELTATIME = "deltatime"
@@ -88,4 +81,3 @@ object ScafiEnvProgram {
   val MOL_NBR_RANGE = "nbrran"
   val MOL_NBR_LAG = "nbrlag"
   val MOL_POSITION = "pos"
-}

@@ -19,7 +19,7 @@ import Libs.alchemist
 plugins {
     `java-library`
     scala
-    alias(libs.plugins.scalafmt)
+    alias(libs.plugins.spotless)
 }
 
 dependencies {
@@ -61,6 +61,14 @@ publishing.publications {
                 }
             }
         }
+    }
+}
+
+spotless {
+    scala {
+        val scalafmtConfig = rootProject.file(".scalafmt.conf")
+        val scalafmtVersion = scalafmtConfig.readLines().first { it.startsWith("version") }.substringAfter("=").trim()
+        scalafmt(scalafmtVersion).configFile(scalafmtConfig)
     }
 }
 

@@ -89,8 +89,3 @@ object ScafiEnvProgram {
   val MOL_NBR_LAG = "nbrlag"
   val MOL_POSITION = "pos"
 }
-
-object MyMain extends App {
-  val program = new ScafiGradientProgram()
-  program.round(new ContextImpl(1, Map(), Map("source" -> true), Map("nbrRange" -> Map(1 -> 0))))
-}

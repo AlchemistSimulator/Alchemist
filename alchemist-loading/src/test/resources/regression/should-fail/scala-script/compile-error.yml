@@ -1,0 +1,10 @@
+incarnation: sapere
+
+variables:
+  broken: &broken
+    language: scala
+    formula: List(5, 3, 4).notAMethod
+
+deployments:
+  - type: Point
+    parameters: [*broken, 0]

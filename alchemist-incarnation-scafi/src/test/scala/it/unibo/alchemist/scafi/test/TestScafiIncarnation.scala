@@ -42,6 +42,7 @@ class TestScafiIncarnation extends AnyFunSuite with Matchers {
     assertEquals("aString", INC.createConcentration("\"aString\""))
     assertEquals(1.0, INC.createConcentration("1"))
     assertEquals(true, INC.createConcentration("val a = 7 == 7; a"))
+    assertThrows[IllegalArgumentException](INC.createConcentration("_1 +"))
   }
 
   private def assertNotNull(expr: AnyRef) = expr shouldNot be(null)

@@ -71,7 +71,7 @@ constructor(
         runCatching {
             runBlocking {
                 withTimeout(timeout.milliseconds) {
-                    engine.eval(formula, variables.asBindings())
+                    if (isScala) evalScala(variables) else engine.eval(formula, variables.asBindings())
                 }
             }
         }.getOrElse { cause ->
@@ -98,4 +98,33 @@ constructor(
     }
 
     private fun Map<String, Any?>.asBindings(): Bindings = SimpleBindings(toMutableMap())
+
+    private val isScala by lazy { engine.factory.languageName == "Scala" }
+
+    /*
+     * The Scala 3 engine ignores JSR-223 bindings: they are handed over through a Bindings object living in the REPL,
+     * and exposed to the script as AnyRef values, as the Scala 2 engine did.
+     */
+    private val scalaBindings by lazy {
+        engine.eval("val alchemistBindings = new javax.script.SimpleBindings(); alchemistBindings") as Bindings
+    }
+
+    private fun evalScala(variables: Map<String, Any?>): Any? {
+        scalaBindings.clear()
+        scalaBindings.putAll(variables)
+        val definitions = variables.keys.joinToString("") { "val `$it`: AnyRef = alchemistBindings.get(\"$it\")\n" }
+        /*
+         * The Scala 3 engine does not throw ScriptExceptions: a script that does not compile surfaces as a missing
+         * wrapper class (or a null result), and a script failing at runtime as an InvocationTargetException.
+         * The result is boxed to tell failures apart from null values.
+         */
+        val result =
+            try {
+                engine.eval("Array[Any]({\n$definitions$formula\n})")
+            } catch (failure: ReflectiveOperationException) {
+                throw ScriptException(failure)
+            }
+        val boxed = result as? Array<*> ?: throw ScriptException("The Scala script does not compile")
+        return boxed.single()
+    }
 }

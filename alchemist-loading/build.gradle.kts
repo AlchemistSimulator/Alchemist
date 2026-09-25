@@ -43,7 +43,8 @@ dependencies {
 
     runtimeOnly(libs.groovy.jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))
-    runtimeOnly(libs.scala.compiler)
+    runtimeOnly(libs.scala3.library)
+    runtimeOnly(libs.scala3.repl)
 
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("kotlinscript"))

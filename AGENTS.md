@@ -6,7 +6,7 @@ Run `./gradlew --parallel build` as the final validation step for any non-trivia
 
 Format before the final validation run:
 - If you changed Kotlin files, run `./gradlew --parallel ktlintFormat`.
-- If you changed Scala files in `alchemist-incarnation-scafi`, run `./gradlew --parallel alchemist-incarnation-scafi:scalafmtAll`.
+- If you changed Scala files in `alchemist-incarnation-scafi`, run `./gradlew --parallel alchemist-incarnation-scafi:spotlessApply`.
 - After formatting, rerun the relevant verification tasks and finish with `./gradlew --parallel build`.
 
 Use narrower Gradle tasks only to iterate faster while working. Do not stop at `assemble`, `test`, or module-local checks when the change affects shared code, build logic, or release behavior.

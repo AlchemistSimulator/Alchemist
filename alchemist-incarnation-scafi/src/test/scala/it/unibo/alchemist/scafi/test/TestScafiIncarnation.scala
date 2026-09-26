@@ -18,11 +18,11 @@ import org.scalatest.matchers.should.Matchers
 
 // TODO: run with JUnit 5
 // @ExtendWith(classOf[JUnitRunner])
-class TestScafiIncarnation extends AnyFunSuite with Matchers {
+class TestScafiIncarnation extends AnyFunSuite with Matchers:
   private val INC = new ScafiIncarnation[Any, Euclidean2DPosition]
 
   /** Tests the ability of [[ScafiIncarnation]] of properly building Alchemist entities for running Scafi. */
-  test("build") {
+  test("build"):
     val rng = new MersenneTwister(0)
     val env = new Continuous2DEnvironment[Any](INC)
     val node = INC.createNode(rng, env, null)
@@ -34,17 +34,15 @@ class TestScafiIncarnation extends AnyFunSuite with Matchers {
 
     val generic = INC.createReaction(rng, env, node, standard, null)
     assertNotNull(generic)
-    assertTrue(generic.isInstanceOf[Event[_]])
-  }
+    assertTrue(generic.isInstanceOf[Event[?]])
 
   /** Verifies that the incarnation can properly init new concentrations. */
-  test("Create concentration") {
+  test("Create concentration"):
     assertEquals("aString", INC.createConcentration("\"aString\""))
     assertEquals(1.0, INC.createConcentration("1"))
     assertEquals(true, INC.createConcentration("val a = 7 == 7; a"))
-  }
+    assertThrows[IllegalArgumentException](INC.createConcentration("_1 +"))
 
   private def assertNotNull(expr: AnyRef) = expr shouldNot be(null)
   private def assertTrue(pred: Boolean) = pred shouldBe true
   private def assertEquals[T](expected: T, actual: T) = expected shouldEqual actual
-}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -24,6 +24,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.stream.SmallestN;
 import org.jooq.lambda.tuple.Tuple2;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -93,8 +94,9 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
         return ranges;
     }
 
+    @Nonnull
     @Override
-    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> environment) {
+    public final Neighborhood<T> computeNeighborhood(@Nonnull final Node<T> center, final Environment<T, P> environment) {
         if (environment.getNodeCount().getCurrent() < expectedNodes || !nodeIsEnabled(center)) {
             return Neighborhoods.make(environment, center);
         }
@@ -104,7 +106,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
                     /*
                      * Of all nodes but myself...
                      */
-                    environment.getNodes().parallelStream()
+                    environment.getNodes().toList().parallelStream()
                         /*
                          * ...select those for which I'm on the closest n
                          */
@@ -127,7 +129,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
         do {
             inRange = (environment.getNodeCount().getCurrent() > nodeCount && currentRange < maxRange
                     ? nodesInRange(environment, center, currentRange).stream()
-                    : environment.getNodes().stream())
+                    : environment.getNodes().toList().stream())
                         .filter(n -> !n.equals(center) && nodeIsEnabled(n))
                         .collect(Collectors.toCollection(LinkedHashSet::new));
             currentRange *= 2;

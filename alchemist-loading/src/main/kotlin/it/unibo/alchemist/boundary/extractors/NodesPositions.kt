@@ -30,7 +30,7 @@ class NodesPositions<T, P : Position<P>>(private val environment: Environment<T,
     }
     private val expectedNodesCount: Int by lazy { environment.nodeCount.current }
     private val maxNodeId: Int by lazy {
-        environment.nodes.maxOfOrNull { it.id } ?: error("No nodes in the environment")
+        environment.nodes.current.maxOfOrNull { it.id } ?: error("No nodes in the environment")
     }
 
     override fun <T> extractData(
@@ -40,7 +40,7 @@ class NodesPositions<T, P : Position<P>>(private val environment: Environment<T,
         step: Long,
     ): Map<String, Double> {
         checkExtractCondition(environment)
-        return environment.nodes
+        return environment.nodes.current
             .flatMap {
                 val nodeId = it.id
                 val nodePosition = environment.getCurrentPosition(it)
@@ -54,7 +54,7 @@ class NodesPositions<T, P : Position<P>>(private val environment: Environment<T,
         require(expectedNodesCount == environment.nodeCount.current) {
             "The number of nodes in the environment is ${environment.nodeCount}, but $expectedNodesCount was expected"
         }
-        val currentMaxNodeId = environment.nodes.maxOfOrNull { it.id } ?: error("No nodes in the environment")
+        val currentMaxNodeId = environment.nodes.current.maxOfOrNull { it.id } ?: error("No nodes in the environment")
         require(maxNodeId == currentMaxNodeId) {
             """
             The maximum node ID in the environment is $currentMaxNodeId, but $maxNodeId was expected.

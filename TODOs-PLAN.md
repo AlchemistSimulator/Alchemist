@@ -1,6 +1,6 @@
 # Reactive Engine Refactor Plan
 
-Last updated: 2026-09-02
+Last updated: 2026-09-25
 
 Working branch: `marmellata`
 
@@ -25,7 +25,8 @@ Do not mark an item complete until its implementation and proportional verificat
   changes. The engine owns only scheduler entries and scheduling subscriptions; it never dispatches on concrete
   reaction types or model-owner types.
 - Keep `Node` and `Environment` non-iterable. Consumers use the explicit `Node.reactions`,
-  `Environment.reactions`, and `Environment.nodes` collections so the iterated relationship is never ambiguous.
+  `Environment.reactions`, and ordered observable `Environment.nodes` collections; snapshot consumers read
+  `Environment.nodes.current`, so the iterated relationship is never ambiguous.
 - Normalize scheduled-entity terminology in one atomic migration before later phases build more APIs on the current
   names: rename `Actionable<T>` to the owner-neutral root `Reaction<T>`, rename the current node-owned
   `Reaction<T>` to `NodeReaction<T>`, remove the empty environment-reaction marker in favor of environment host
@@ -480,10 +481,8 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   remove the shared-program disposal from `ComputationalRoundComplete` and add multiple-consumer removal regressions.
 - [x] Make these private signals invalidate the reaction even for semantically relevant `true`-to-`true` validity
   changes; do not encode such changes as repeated equal Boolean emissions.
-- [ ] Until Phase 7 transactions deduplicate invalidation, inventory specialized reactions that subscribe to both a
-  source and a derived signal; prevent one logical mutation from resampling or recomputing a reaction twice.
-  `SAPEREGradient` currently observes both topology snapshots and derived neighbor state, so a topology change can
-  still invalidate it more than once.
+- [x] Make `SAPEREGradient` derive invalidation only from published topology, LSA spaces, and positions; tolerate
+  separate position and topology invalidations until Phase 7 transactions coalesce each model mutation.
 - [x] Remove `Condition.getDependencies`, `AbstractCondition.dependencies`, `addObservableDependency`, and their
   dependency-set merge usage once all non-validity consumers have migrated.
 - [x] Do not replace observable dependency sets with a public token type, token registry, or another collection of
@@ -556,6 +555,8 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] Audit biochemistry, Protelis, SAPERE, Scafi, cognitive agents, physics, maps, and environment-owned reactions.
 - [x] Remove topology-driven engine callbacks. Neighborhood and position changes remain observable model state;
   affected reactions publish their own scheduling changes through `nextOccurrence`.
+- [x] Make observable neighborhood and position maps and the ordered observable node list authoritative; remove their
+  duplicated non-observable stores.
 - [x] Remove reaction-level input/output `Context` from the scheduled-reaction root, implementations, GraphQL,
   tests, and documentation.
 - [x] Remove the remaining action/condition `Context` API and the SAPERE optimization that depended on it. SAPERE
@@ -663,6 +664,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-09-24: Consolidated environment topology, positions, and ordered nodes in their observable collections.
 - 2026-09-02: Replaced condition dependency sets with exact validity and reaction-specific subscriptions.
 - 2026-09-01: Made the social-contagion regression direct and bounded.
 - 2026-08-26: Adopted present-state, API-linked, incarnation-neutral model documentation; broader audit remains.

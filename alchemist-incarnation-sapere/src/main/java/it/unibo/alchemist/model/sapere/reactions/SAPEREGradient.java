@@ -19,7 +19,6 @@ import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
-import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
@@ -41,8 +40,8 @@ import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
 import it.unibo.alchemist.model.sapere.dsl.impl.Type;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.sapere.timedistributions.SAPERETimeDistribution;
-import org.danilopianini.lang.HashString;
 import kotlin.Unit;
+import org.danilopianini.lang.HashString;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -51,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * This class provides a fast and stable gradient implementation, inspired on
@@ -151,10 +151,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
             new SGFakeConditionAction(
                 source,
                 node.observeMoleculeName(source.getArg(0).toString()),
-                environment.getNeighborhood(node),
-                environment.getPosition(node),
-                observeNeighborLsaSpaces(environment, node),
-                observeNeighborPositions(environment, node)
+                observeNeighborState(environment, node)
             )
         );
         fakeacts.add(new SGFakeConditionAction(gradient));
@@ -229,34 +226,55 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
         );
     }
 
-    private static Observable<?> observeNeighborLsaSpaces(
-            final Environment<List<ILsaMolecule>, ?> environment,
+    private static <P extends Position<? extends P>> Observable<List<NodeState>> observeNeighborState(
+            final Environment<List<ILsaMolecule>, P> environment,
             final ILsaNode node
     ) {
-        return ObservableExtensions.INSTANCE.switchMap(
-            environment.getNeighborhood(node).map(Neighborhood::getNeighbors),
-            neighbors -> ObservableExtensions.INSTANCE.combineLatest(
-                neighbors.stream()
-                    .filter(ILsaNode.class::isInstance)
-                    .map(ILsaNode.class::cast)
-                    .map(ILsaNode::observeLsaSpace)
-                    .toList(),
-                spaces -> spaces
-            )
+        // Observe every node, not just current neighbors: a remote node can move into this neighborhood.
+        final Observable<List<NodeState>> nodeStates =
+            ObservableExtensions.ObservableListExtensions.INSTANCE.combineLatest(
+                environment.getNodes(),
+                currentNode -> observeNodeState(environment, node, currentNode),
+                ignored -> currentSpatialSnapshot(environment, node)
+            );
+        // Topology and node state are independent invalidation sources; either requires a fresh spatial snapshot.
+        return environment.getNeighborhood(node).mergeWith(
+            nodeStates,
+            (ignoredNeighborhood, ignoredNodeStates) -> currentSpatialSnapshot(environment, node)
         );
     }
 
-    private static Observable<?> observeNeighborPositions(
-            final Environment<List<ILsaMolecule>, ?> environment,
-            final ILsaNode node
+    private static <P extends Position<? extends P>> Observable<NodeState> observeNodeState(
+            final Environment<List<ILsaMolecule>, P> environment,
+            final ILsaNode center,
+            final Node<List<ILsaMolecule>> node
     ) {
-        return ObservableExtensions.INSTANCE.switchMap(
-            environment.getNeighborhood(node).map(Neighborhood::getNeighbors),
-            neighbors -> ObservableExtensions.INSTANCE.combineLatest(
-                neighbors.stream().map(environment::getPosition).toList(),
-                positions -> positions
-            )
-        );
+        final Observable<P> position = environment.getPosition(node);
+        if (node != center && node instanceof final ILsaNode lsaNode) {
+            // Neighbor matching depends on both where the node is and which LSAs it currently contains.
+            return position.mergeWith(
+                lsaNode.observeLsaSpace(),
+                (currentPosition, lsaSpace) -> new NodeState(node.getId(), currentPosition, List.copyOf(lsaSpace))
+            );
+        }
+        // The center's relevant LSAs have their own narrow observables; only its position belongs here.
+        return position.map(currentPosition -> new NodeState(node.getId(), currentPosition, List.of()));
+    }
+
+    private static <P extends Position<? extends P>> List<NodeState> currentSpatialSnapshot(
+            final Environment<List<ILsaMolecule>, P> environment,
+            final ILsaNode center
+    ) {
+        // Snapshot only published state; topology-changing moves may emit again after the neighborhood catches up.
+        return Stream.concat(Stream.of(center), environment.getNeighborhood(center).getCurrent().getNeighbors().stream())
+            .map(currentNode -> new NodeState(
+                currentNode.getId(),
+                environment.getCurrentPosition(currentNode),
+                currentNode != center && currentNode instanceof final ILsaNode lsaNode
+                    ? List.copyOf(lsaNode.observeLsaSpace().getCurrent())
+                    : List.of()
+            ))
+            .toList();
     }
 
     @Override
@@ -459,6 +477,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
             canRun.setCurrent(true);
         }
     }
+
+    private record NodeState(int id, Object position, List<?> lsaSpace) { }
 
     private class Cleaner implements TIntObjectProcedure<List<? extends ILsaMolecule>> {
         private final List<ILsaMolecule> createdFromSource;

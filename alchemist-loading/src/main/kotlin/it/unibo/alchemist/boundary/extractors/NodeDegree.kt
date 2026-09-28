@@ -31,7 +31,7 @@ constructor(filter: ExportFilter, aggregators: List<String>, precision: Int = 2)
         reaction: Reaction<T>?,
         time: Time,
         step: Long,
-    ): Map<Node<T>, Double> = environment.nodes.associateWith { node ->
+    ): Map<Node<T>, Double> = environment.nodes.current.associateWith { node ->
         environment.getNeighborhood(node).current.size().toDouble()
     }
 

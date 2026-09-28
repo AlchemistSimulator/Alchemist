@@ -129,7 +129,7 @@ open class GenericNode<T> @JvmOverloads constructor(
     }
 
     private fun ifRegisteredInEnvironment(action: (it.unibo.alchemist.core.Simulation<T, *>) -> Unit) {
-        if (environment.nodes.any { it === this }) {
+        if (environment.nodes.current.any { it === this }) {
             environment.simulationOrNull?.let(action)
         }
     }

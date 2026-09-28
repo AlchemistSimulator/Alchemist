@@ -34,7 +34,7 @@ class TestTOMACS {
     void testCustomRetainTimeLoading() {
         final Loader loader = LoadAlchemist.from(ResourceLoader.getResource("tomacs.yml"));
         Assertions.assertTrue(
-            loader.getDefault().getEnvironment().getNodes().stream()
+            loader.getDefault().getEnvironment().getNodes().toList().stream()
                 .flatMap(n ->
                     n.getReactions().stream()
                         .map(Reaction::getActions)

@@ -88,10 +88,10 @@ infix fun <T, P : Position<P>> Environment<T, P>.shouldEqual(other: Environment<
     assertEquals(other.isTerminated, isTerminated)
     assertContentEquals(other.sizeInDistanceUnits, sizeInDistanceUnits)
     linkingRule shouldEqual other.linkingRule
-    val positions = nodes.sortedBy { it.id }.map { getCurrentPosition(it) }
-    val otherPositions = other.nodes.sortedBy { it.id }.map(other::getCurrentPosition)
+    val positions = nodes.current.sortedBy { it.id }.map { getCurrentPosition(it) }
+    val otherPositions = other.nodes.current.sortedBy { it.id }.map(other::getCurrentPosition)
     positions.ebeEquals(otherPositions) { expected, actual -> assertEquals(expected, actual) }
-    nodes.ebeEquals(other.nodes) { expected, actual ->
+    nodes.current.ebeEquals(other.nodes.current) { expected, actual ->
         actual shouldEqual expected
     }
     reactions.ebeEquals(other.reactions) { expected, actual -> actual shouldEqual expected }

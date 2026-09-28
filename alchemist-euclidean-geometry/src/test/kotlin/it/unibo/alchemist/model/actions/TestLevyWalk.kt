@@ -23,6 +23,7 @@ class TestLevyWalk : StringSpec() {
                 .getDefault<Any, Euclidean2DPosition>()
                 .environment
                 .nodes
+                .current
                 .first()
                 .reactions
                 .first()

@@ -32,7 +32,7 @@ class NodeSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<P> {
     @Timeout(value = 1, unit = TimeUnit.MINUTES)
     fun `NodeSurrogate should map a Node to a GraphQL compliant object`() {
         GraphQLTestEnvironments.loadTests<T, P> {
-            it.nodes.forEach { node ->
+            it.nodes.current.forEach { node ->
                 checkNodeSurrogate(node, node.toGraphQLNodeSurrogate())
             }
         }

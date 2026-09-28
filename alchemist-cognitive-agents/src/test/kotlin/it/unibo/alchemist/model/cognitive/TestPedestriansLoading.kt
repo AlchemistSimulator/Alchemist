@@ -48,7 +48,7 @@ class TestPedestriansLoading<T, P, A> where P : Position<P>, P : Vector<P>, A : 
     fun `Groups of pedestrians loading`() {
         loadYamlSimulation<T, P>("groups.yml").startSimulation(
             onceInitialized = { environment ->
-                environment.nodes.forEach { node ->
+                environment.nodes.current.forEach { node ->
                     assertNotNull(
                         node.asPropertyOrNull<T, SocialProperty<T>>(),
                         "Each pedestrian should have a social property",

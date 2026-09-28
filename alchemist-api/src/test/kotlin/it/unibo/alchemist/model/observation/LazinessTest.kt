@@ -27,7 +27,6 @@ class LazinessTest : FunSpec({
                     computations++
                     return 26
                 }
-
                 override fun startMonitoring() = Unit
                 override fun stopMonitoring() = Unit
             }
@@ -46,7 +45,6 @@ class LazinessTest : FunSpec({
                 override fun startMonitoring() = Unit
                 override fun stopMonitoring() = Unit
             }
-
             derived.onChange(this, true) { }
             computations shouldBe 1
         }
@@ -60,7 +58,6 @@ class LazinessTest : FunSpec({
                 transforms++
                 it * 2
             }
-
             mapped.onChange(this, false) { }
             transforms shouldBe 0
         }
@@ -72,7 +69,6 @@ class LazinessTest : FunSpec({
                 transforms++
                 it * 2
             }
-
             mapped.onChange(this, true) { }
             transforms shouldBe 1
         }
@@ -81,7 +77,6 @@ class LazinessTest : FunSpec({
             val source = observe(1)
             val mapped = source.map { it * 2 }
             var lastSeen: Int? = null
-
             mapped.onChange(this, false) { lastSeen = it }
             source.update { 2 }
             lastSeen shouldBe 4
@@ -106,12 +101,9 @@ class LazinessTest : FunSpec({
             val b = observe(2)
             val merged = a.mergeWith(b) { x, y -> x + y }
             var lastSeen: Int? = null
-
             merged.onChange(this, false) { lastSeen = it }
-
             a.update { 3 }
             lastSeen shouldBe 5
-
             b.update { 4 }
             lastSeen shouldBe 7
         }
@@ -129,7 +121,6 @@ class LazinessTest : FunSpec({
                     it.sum()
                 },
             )
-
             combined.onChange(this, false) { }
             aggregations shouldBe 0
         }
@@ -142,12 +133,9 @@ class LazinessTest : FunSpec({
                 aggregator = { it.sum() },
             )
             var lastSeen: Int? = null
-
             combined.onChange(this, false) { lastSeen = it }
-
             inner.update { 20 }
             lastSeen shouldBe 20
-
             set.add("b")
             lastSeen shouldBe 40 // 20 + 20 (both map to same inner)
         }
@@ -159,7 +147,6 @@ class LazinessTest : FunSpec({
                 collections++
                 it.sum()
             }
-
             combined.onChange(this, false) { }
             collections shouldBe 0
         }
@@ -179,11 +166,34 @@ class LazinessTest : FunSpec({
             val source = observe(1)
             val switched = source.switchMap { observe(it * 10) }
             var lastSeen: Int? = null
-
             switched.onChange(this, false) { lastSeen = it }
-
             source.update { 2 }
             lastSeen shouldBe 20
+        }
+
+        test("switchMap should suppress an equal first update after lazy registration") {
+            val source = observe(10)
+            val switched = source.switchMap { observe(it / 10) }
+            var emissions = 0
+            switched.onChange(this, false) { emissions++ }
+            source.update { 11 }
+            emissions shouldBe 0
+            source.update { 20 }
+            emissions shouldBe 1
+        }
+
+        test("switchMap should dispose replaced and active inner subscriptions") {
+            val source = observe(1)
+            val first = observe("a")
+            val second = observe("b")
+            val switched = source.switchMap { if (it == 1) first else second }
+            switched.onChange(this, false) { }
+            first.observers.size shouldBe 1
+            source.update { 2 }
+            first.observers.size shouldBe 0
+            second.observers.size shouldBe 1
+            switched.stopWatching(this)
+            second.observers.size shouldBe 0
         }
     }
 })

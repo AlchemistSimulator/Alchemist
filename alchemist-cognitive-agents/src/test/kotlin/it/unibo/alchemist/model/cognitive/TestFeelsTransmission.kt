@@ -24,12 +24,12 @@ import kotlin.test.assertTrue
 import org.junit.jupiter.api.Test
 
 class TestFeelsTransmission<T> {
-    private fun Environment<T, Euclidean2DPosition>.perceivedDanger(): Double = nodes
+    private fun Environment<T, Euclidean2DPosition>.perceivedDanger(): Double = nodes.current
         .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel }
         .sumOf { it.dangerBelief() }
 
     private fun Simulation<T, Euclidean2DPosition>.dangerIsLoaded(): Simulation<T, Euclidean2DPosition> = apply {
-        environment.nodes
+        environment.nodes.current
             .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.danger }
             .forEach { assertNotNull(it, "Danger property should be loaded") }
     }
@@ -69,7 +69,8 @@ class TestFeelsTransmission<T> {
         loadYamlSimulation<T, Euclidean2DPosition>("social-contagion.yml").startSimulation(
             steps = maximumSteps,
             onceInitialized = { environment ->
-                val (directlyExposed, unexposed) = environment.nodes.partition { environment.directDanger(it) > 0 }
+                val (directlyExposed, unexposed) =
+                    environment.nodes.current.partition { environment.directDanger(it) > 0 }
                 assertEquals(1, directlyExposed.size, "The scenario should contain one directly exposed pedestrian")
                 assertEquals(1, unexposed.size, "The scenario should contain one unexposed pedestrian")
                 indirectlyExposed = unexposed.single()

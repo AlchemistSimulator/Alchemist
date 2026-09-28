@@ -28,7 +28,7 @@ class EventSingleExecutionRegressionTest : FreeSpec({
     "YAML constructs an event that owns no time distribution" {
         val simulation: Simulation<Nothing, Nothing> =
             LoadAlchemist.from(ResourceLoader.getResource("eventSingleExecution.yml")).getDefault()
-        val event = simulation.environment.nodes.first().reactions.single()
+        val event = simulation.environment.nodes.current.first().reactions.single()
 
         assertIs<AbsoluteEvent<*>>(event)
         assertFalse(TimeDistributedReaction::class.java.isInstance(event))

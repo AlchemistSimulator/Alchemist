@@ -121,7 +121,7 @@ class TestDeformableCell {
         assertNotNull(
             environment.getCurrentPosition(cellNode3), "Position of cellNode3 = " + environment.getCurrentPosition(cellNode3)
         );
-        assertFalse(environment.getNodes().contains(cellNode4), "unexpected node in the environment");
+        assertFalse(environment.getNodes().toList().contains(cellNode4), "unexpected node in the environment");
     }
 
     /**

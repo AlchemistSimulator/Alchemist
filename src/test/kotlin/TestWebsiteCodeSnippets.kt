@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.model.terminators.StepCount
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
@@ -6,6 +15,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -35,9 +45,9 @@ class TestWebsiteCodeSnippets {
                     val environment = simulation.environment
                     assertNotNull(environment, "Environment should not be null")
                     if (url.readText().contains("deployments:")) {
-                        assertFalse(environment.nodes.isEmpty(), "Expected deployed nodes but found none")
+                        assertFalse(environment.nodes.current.isEmpty(), "Expected deployed nodes but found none")
                     } else {
-                        assertTrue(environment.nodes.isEmpty(), "Expected an empty environment but found nodes")
+                        assertTrue(environment.nodes.current.isEmpty(), "Expected an empty environment but found nodes")
                     }
                     environment.addTerminator(StepCount(100))
                     val errorContainer = simulation.runInCurrentThread().error
@@ -46,8 +56,6 @@ class TestWebsiteCodeSnippets {
                         "Simulation $snippetName encountered errors: $errorContainer",
                     )
                 }
-            }.forEach {
-                it.join()
-            }
+            }.joinAll()
     }
 }

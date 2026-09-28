@@ -28,10 +28,10 @@ class TestGraphStream :
             "displace all nodes" - {
                 environment.nodeCount.current shouldBeExactly 400
                 "with neighbors closer than non-neighbors" {
-                    environment.nodes.forEach { node ->
+                    environment.nodes.current.forEach { node ->
                         val neighborhood = environment.getNeighborhood(node).current
                         val averageDistances =
-                            environment.nodes
+                            environment.nodes.current
                                 .asSequence()
                                 .groupBy { it in neighborhood }
                                 .mapValues { (_, nodes) ->
@@ -48,7 +48,7 @@ class TestGraphStream :
             }
             "create links" - {
                 val neighborhoods =
-                    environment.nodes
+                    environment.nodes.current
                         .map { environment.getNeighborhood(it).current.neighbors }
                 neighborhoods.forEach { it.shouldNotBeEmpty() }
                 "asymmetrically" {

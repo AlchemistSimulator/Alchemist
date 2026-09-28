@@ -30,7 +30,7 @@ fun <T, P, TS, PS> Environment<T, P>.toEnvironmentSurrogate(
 ): EnvironmentSurrogate<TS, PS>
     where TS : Any, P : Position<out P>, PS : PositionSurrogate = EnvironmentSurrogate(
     dimensions,
-    nodes.map {
+    nodes.current.map {
         it.toNodeSurrogate<T, P, TS, PS>(this, toConcentrationSurrogate, toPositionSurrogate)
     },
 )

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
@@ -37,8 +36,6 @@ public final class BioRect2DEnvironmentNoOverlap
         extends BioRect2DEnvironment
         implements EnvironmentSupportingDeformableCells<Euclidean2DPosition> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private static final Logger L = LoggerFactory.getLogger(BioRect2DEnvironmentNoOverlap.class);
     private Optional<Node<Double>> biggestCellWithCircularArea = Optional.absent();
     private Optional<Node<Double>> biggestCircularDeformableCell = Optional.absent();
@@ -300,7 +297,7 @@ public final class BioRect2DEnvironmentNoOverlap
             throw new UnsupportedOperationException("Input type must be CellWithCircuolarShape or CircularDeformableCell");
         }
 
-        return getNodes().stream()
+        return getNodes().toList().stream()
                 .parallel()
                 .flatMap(n -> cellClass.isInstance(n) ? Stream.of(cellClass.cast(n)) : Stream.empty())
                 .max((c1, c2) -> {

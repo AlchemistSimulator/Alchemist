@@ -339,7 +339,7 @@ object ObservableExtensions {
      */
     fun <T, R> Observable<T>.switchMap(transform: (T) -> Observable<R>): Observable<R> =
         object : DerivedObservable<R>() {
-            private var innerSubscription: Observable<R>? = null
+            private var innerSubscription: Disposable? = null
 
             override fun computeFresh(): R = transform(this@switchMap.current).current
 
@@ -355,19 +355,21 @@ object ObservableExtensions {
 
             override fun stopMonitoring() {
                 this@switchMap.stopWatching(this)
-                innerSubscription?.stopWatching(this)
+                innerSubscription?.dispose()
                 innerSubscription = null
             }
 
             private fun switchInner(value: T) = switchInner(value, true)
 
             private fun switchInner(value: T, invokeOnRegistration: Boolean) {
-                innerSubscription?.stopWatching(this)
+                innerSubscription?.dispose()
                 with(transform(value)) {
-                    innerSubscription = this
-                    onChange(this@switchMap, invokeOnRegistration, ::updateAndNotify)
+                    innerSubscription =
+                        subscribe(invokeOnSubscription = invokeOnRegistration, callback = ::updateAndNotify)
                     if (invokeOnRegistration) {
                         updateAndNotify(this.current)
+                    } else {
+                        cached = this.current.some()
                     }
                 }
             }

@@ -11,8 +11,8 @@ package it.unibo.alchemist.model
 
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableList
 import it.unibo.alchemist.model.observation.ObservableSet
-import kotlinx.collections.immutable.ImmutableList
 
 /**
  * Interface for an environment.
@@ -89,14 +89,9 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     fun getNodeByID(id: Int): Node<T>
 
     /**
-     * Returns all the [Node]s that exist in current [Environment].
+     * An ordered [Observable] view of all the [Node]s that exist in current [Environment].
      */
-    val nodes: ImmutableList<Node<T>>
-
-    /**
-     * An [Observable] view of all the [Node]s that exist in current [Environment].
-     */
-    val observableNodes: ObservableSet<Node<T>>
+    val nodes: ObservableList<Node<T>>
 
     /**
      * Returns an [Observable] view of the number of [Node]s currently in the [Environment].

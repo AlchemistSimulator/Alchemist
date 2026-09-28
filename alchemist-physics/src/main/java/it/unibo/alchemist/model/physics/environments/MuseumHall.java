@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -15,15 +15,12 @@ import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 
 /**
  * @param <T> concentration type
  */
 public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
 
-    @Serial
-    private static final long serialVersionUID = 585211392057392723L;
     private static final int SIZE = 10;
     private static final int LOWER = 3;
     private static final int LOWROOM = 4;
@@ -175,7 +172,7 @@ public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
     @Override
     public @Nonnull String toString() {
         final StringBuilder builder = new StringBuilder();
-        for (final Node<T> n : getNodes()) {
+        for (final Node<T> n : getNodes().toList()) {
             builder.append(retrievePosition(n)).append(' ').append(n).append('\n');
         }
         return builder.toString();

@@ -37,7 +37,7 @@ open class Engine<T, P : Position<out P>>(
 
     override fun initialize() {
         environment.reactions.forEach(::scheduleReaction)
-        environment.nodes.forEach { it.reactions.forEach(::scheduleReaction) }
+        environment.nodes.current.forEach { it.reactions.forEach(::scheduleReaction) }
     }
 
     override fun doStep() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,7 +12,6 @@ package it.unibo.alchemist.util
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Network
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.util.Environments.allShortestHopPaths
 import kotlin.Double.Companion.NaN
 import kotlin.Double.Companion.POSITIVE_INFINITY
 import kotlin.math.max
@@ -64,21 +63,22 @@ object Environments {
     fun <T> Environment<T, *>.allSubNetworksByNode(
         computeDistance: (Node<T>, Node<T>) -> Double = environmentMetricDistance(),
     ): Map<Node<T>, Network<T>> {
-        val subnetworks = arrayOfNulls<MutableNetwork<T>>(nodeCount.current)
+        val currentNodes = nodes.current
+        val subnetworks = arrayOfNulls<MutableNetwork<T>>(currentNodes.size)
         val result = mutableMapOf<Node<T>, Network<T>>()
         val paths = allShortestPaths(computeDistance)
         // Update all the subnetworks with the last evaluated; that is the most complete
-        nodes.forEachIndexed { centerIndex, centerNode ->
+        currentNodes.forEachIndexed { centerIndex, centerNode ->
             when (val subnetwork = subnetworks[centerIndex]) {
                 null -> {
                     val newSubnetwork = MutableNetwork(0.0, mutableListOf(centerNode))
                     result[centerNode] = newSubnetwork
                     val centerRow = paths.row(centerIndex)
-                    for (potentialNeighborIndex in centerIndex + 1 until nodeCount.current) {
+                    for (potentialNeighborIndex in centerIndex + 1 until currentNodes.size) {
                         val distanceToNeighbor = centerRow[potentialNeighborIndex]
                         if (distanceToNeighbor.isFinite()) {
                             newSubnetwork.diameter = max(newSubnetwork.diameter, distanceToNeighbor)
-                            newSubnetwork.neighbors += nodes[potentialNeighborIndex]
+                            newSubnetwork.neighbors += currentNodes[potentialNeighborIndex]
                             subnetworks[potentialNeighborIndex] = newSubnetwork
                         }
                     }
@@ -124,8 +124,8 @@ object Environments {
                 getDistanceBetweenNodes(n1, n2)
             },
     ): SymmetricMatrix<Double> {
-        val nodes = nodes.toList()
-        val currentNodeCount = nodeCount.current
+        val nodes = nodes.current
+        val currentNodeCount = nodes.size
         /*
          * The distance matrix is a triangular matrix stored in a flat array.
          */
@@ -152,8 +152,9 @@ object Environments {
      * Returns true the network is segmented, false otherwise.
      */
     fun <T> Environment<T, *>.isNetworkSegmented(): Boolean {
+        val currentNodes = nodes.current
         val explored = mutableSetOf<Node<T>>()
-        val toExplore: MutableSet<Node<T>> = nodes.firstOrNull()?.let { setOf(it) }.orEmpty().toMutableSet()
+        val toExplore: MutableSet<Node<T>> = currentNodes.firstOrNull()?.let { setOf(it) }.orEmpty().toMutableSet()
         while (toExplore.isNotEmpty()) {
             val current = toExplore.first()
             explored += current
@@ -161,7 +162,7 @@ object Environments {
             toExplore += neighbors
             toExplore -= explored
         }
-        return explored.size < nodes.size
+        return explored.size < currentNodes.size
     }
 
     /**

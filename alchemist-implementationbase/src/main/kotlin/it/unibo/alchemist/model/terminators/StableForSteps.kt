@@ -55,9 +55,9 @@ data class StableForSteps<T : Any, P : Position<P>>(private val checkInterval: L
 
     override fun invoke(environment: Environment<T, P>): Boolean {
         if (environment.simulation.step % checkInterval == 0L) {
-            val newPositions = environment.nodes.associateWith(environment::getCurrentPosition)
+            val newPositions = environment.nodes.current.associateWith(environment::getCurrentPosition)
             val newContents = makeTable<T>(environment.nodeCount.current)
-            environment.nodes.forEach { node ->
+            environment.nodes.current.forEach { node ->
                 node.contents.forEach { (molecule, concentration) ->
                     newContents.put(node, molecule, concentration)
                 }

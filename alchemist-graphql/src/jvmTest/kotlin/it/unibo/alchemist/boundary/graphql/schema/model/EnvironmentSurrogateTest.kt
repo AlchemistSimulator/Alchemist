@@ -33,15 +33,15 @@ class EnvironmentSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<
             val simulation = requireNotNull(envWrapper.simulation, { "Simulation must not be null" })
             val envSurrogate = envWrapper.toGraphQLEnvironmentSurrogate()
             assertEquals(envWrapper.dimensions, envSurrogate.dimensions)
-            assertEquals(envWrapper.nodes.size, envSurrogate.nodes().size)
-            envWrapper.nodes.forEach { node ->
+            assertEquals(envWrapper.nodes.current.size, envSurrogate.nodes().size)
+            envWrapper.nodes.current.forEach { node ->
                 val nodeSurrogate = envSurrogate.nodeById(node.id)
                 checkNodeSurrogate(node, nodeSurrogate)
                 checkPositionSurrogate(envWrapper.getCurrentPosition(node), envSurrogate.nodeToPos()[node.id]!!)
                 checkNeighborhood(envWrapper.getNeighborhood(node).current, envSurrogate.getNeighborhood(node.id))
             }
             // Test propagation of changes
-            val newNode = envWrapper.nodes.first().cloneNode(Time.ZERO)
+            val newNode = envWrapper.nodes.current.first().cloneNode(Time.ZERO)
             val newPosition = envWrapper.makePosition(0.0, 0.0)
             simulation.schedule {
                 envWrapper.addNode(newNode, newPosition)

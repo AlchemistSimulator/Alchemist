@@ -87,10 +87,12 @@ constructor(
         val value: Double =
             statistic
                 .evaluate(
-                    environment.nodes.map { incarnation.getProperty(it, mReference, pReference) }.toDoubleArray(),
+                    environment.nodes.current.map {
+                        incarnation.getProperty(it, mReference, pReference)
+                    }.toDoubleArray(),
                 )
         val mse: Double =
-            environment.nodes
+            environment.nodes.current
                 .parallelStream()
                 .mapToDouble { incarnation.getProperty(it, mActual, pActual) - value }
                 .map { it * it }

@@ -22,5 +22,5 @@ class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
     override fun isLocallyConsistent() = true
 
     override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>) =
-        Neighborhoods.make(environment, center, environment.nodes.filter { it != center })
+        Neighborhoods.make(environment, center, environment.nodes.current.filter { it != center })
 }

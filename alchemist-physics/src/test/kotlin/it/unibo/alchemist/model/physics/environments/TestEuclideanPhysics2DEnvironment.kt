@@ -53,7 +53,7 @@ class TestEuclideanPhysics2DEnvironment {
         environment.addNode(node1, Euclidean2DPosition(0.0, 0.0))
         environment.addNode(node2, Euclidean2DPosition(0.0, 0.0))
         environment.addNode(node3, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
-        assertEquals(listOf(node1, node3), environment.nodes)
+        assertEquals(listOf(node1, node3), environment.nodes.current)
     }
 
     @Test

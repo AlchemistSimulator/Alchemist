@@ -37,7 +37,7 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * Subsequent updates should be made whenever the [Environment.addLayer] is called.
      */
     private val moleculeToLayer: Map<Molecule, Layer<T, P>?> =
-        origin.nodes
+        origin.nodes.current
             .map { it.contents.keys }
             .flatten()
             .distinct()
@@ -48,7 +48,7 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * @return the nodes in this environment.
      */
     @GraphQLDescription("The nodes in this environment")
-    fun nodes() = origin.nodes.map { NodeSurrogate(it) }
+    fun nodes() = origin.nodes.current.map { NodeSurrogate(it) }
 
     /**
      * The layers inside this environment.
@@ -72,7 +72,8 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * Returns a [NodeToPosMap] representing all nodes associated with their position.
      */
     @GraphQLDescription("A list of entries NodeId-Position")
-    fun nodeToPos(): NodeToPosMap = origin.nodes.associate { it.id to origin.getCurrentPosition(it) }.toNodeToPosMap()
+    fun nodeToPos(): NodeToPosMap =
+        origin.nodes.current.associate { it.id to origin.getCurrentPosition(it) }.toNodeToPosMap()
 
     /**
      * Returns the neighborhood of the node with the given id.

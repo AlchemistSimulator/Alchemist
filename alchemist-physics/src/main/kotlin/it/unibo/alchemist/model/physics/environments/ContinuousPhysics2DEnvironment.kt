@@ -86,7 +86,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
         nodeToHeading.remove(node)
         val occupiesSpaceProperty = node.asPropertyOrNull<T, AreaProperty<T>>()
         if (occupiesSpaceProperty != null && largestShapeDiameter <= occupiesSpaceProperty.shape.diameter) {
-            largestShapeDiameter = nodes
+            largestShapeDiameter = nodes.current
                 .asSequence()
                 .filter { getShape(it) != adimensional }
                 .map { getShape(it) }

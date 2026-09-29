@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.cognitive.properties.OrientingProperty
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.test.loadYamlSimulation

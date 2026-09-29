@@ -39,7 +39,7 @@ class TestKtVariable<T, P : Position<P>> :
                 assertEquals(expectedTest + expectedTest2, variable["test3"])
             }
         }
-        ClassPathScanner.resourcesMatching(".*", "regression/should-fail/kt-script").forEach { spec ->
+        ClassPathScanner.resourcesMatching(".*", "regression/should-fail").forEach { spec ->
             "test syntax errors in ${spec.file}" {
                 val exception =
                     shouldThrow<RuntimeException> {

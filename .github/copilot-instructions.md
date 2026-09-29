@@ -70,7 +70,7 @@ After building the project, you can run simulations:
 - **Bootstrap sequence:** The project is self-contained - just run the build commands above
 - **Clean build:** If needed, run `./gradlew clean` before building
 - **Gradle daemon:** The first build will be slower as it downloads dependencies and sets up the Gradle daemon
-- **Pre-commit hooks:** The project automatically installs Git hooks that run ktlint, checkScalafmt on every commit
+- **Pre-commit hooks:** The project automatically installs Git hooks that run ktlint and spotlessCheck (scalafmt) on every commit
 - **Commit format:** All commits must follow [Conventional Commits](https://www.conventionalcommits.org/) format (fix:, feat:, etc.)
 - **Commit timing:** Commits take extra time due to automatic linting/formatting checks
 

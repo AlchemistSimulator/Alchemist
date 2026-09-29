@@ -29,7 +29,7 @@ object ScafiIncarnationForAlchemist
     extends BasicAbstractIncarnation
     with StandardLibrary
     with BasicTimeAbstraction
-    with BasicSpatialAbstraction {
+    with BasicSpatialAbstraction:
   override type P = Point3D
   implicit override val idBounded: ScafiIncarnationForAlchemist.Builtins.Bounded[Int] = Builtins.Bounded.of_i
 
@@ -42,7 +42,7 @@ object ScafiIncarnationForAlchemist
   val NBR_ALCHEMIST_DELAY = "alchemistNbrDelay"
   val NBR_ALCHEMIST_LAG = "alchemistNbrLag"
 
-  private class AlchemistRandomWrapper(val randomGenerator: RandomGenerator) extends Random {
+  private class AlchemistRandomWrapper(val randomGenerator: RandomGenerator) extends Random:
     override def nextBoolean(): Boolean = randomGenerator.nextBoolean()
     override def nextDouble(): Double = randomGenerator.nextDouble()
     override def nextInt(): Int = randomGenerator.nextInt()
@@ -52,17 +52,16 @@ object ScafiIncarnationForAlchemist
     override def nextGaussian(): Double = randomGenerator.nextGaussian()
 
     override def clone(): AnyRef = new AlchemistRandomWrapper(randomGenerator)
-  }
 
-  trait ScafiAlchemistSupport { self: AggregateProgram with StandardSensors =>
+  trait ScafiAlchemistSupport:
+    self: AggregateProgram & StandardSensors =>
     def node: NodeManager = sense[NodeManager](LSNS_ALCHEMIST_NODE_MANAGER)
 
     def alchemistCoordinates: Array[Double] = sense[Array[Double]](LSNS_ALCHEMIST_COORDINATES)
 
-    def alchemistDeltaTime(whenNan: Double = Double.NaN): Double = {
+    def alchemistDeltaTime(whenNan: Double = Double.NaN): Double =
       val dt = sense[DoubleTime](LSNS_ALCHEMIST_DELTA_TIME).toDouble
-      if (dt.isNaN) whenNan else dt
-    }
+      if dt.isNaN then whenNan else dt
 
     def alchemistTimestamp: model.Time = sense[it.unibo.alchemist.model.Time](LSNS_ALCHEMIST_TIMESTAMP)
 
@@ -71,34 +70,30 @@ object ScafiIncarnationForAlchemist
     override def randomGenerator(): Random = randomGen
     override def nextRandom(): Double = alchemistRandomGen.nextDouble()
 
-    def alchemistEnvironment: Environment[Any, Position[_]] =
-      sense[Environment[Any, Position[_]]](LSNS_ALCHEMIST_ENVIRONMENT)
+    def alchemistEnvironment: Environment[Any, Position[?]] =
+      sense[Environment[Any, Position[?]]](LSNS_ALCHEMIST_ENVIRONMENT)
 
     implicit private def optionalToOption[E](optional: Optional[E]): Option[E] =
-      if (optional.isPresent) Some(optional.get()) else None
+      if optional.isPresent then Some(optional.get()) else None
 
-    private def findInLayers[A](name: String): A = {
-      val layer: Layer[Any, Position[_]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
+    private def findInLayers[A](name: String): A =
+      val layer: Layer[Any, Position[?]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
       val node = alchemistEnvironment.getNodeByID(mid())
       layer
         .getValue(alchemistEnvironment.getPosition(node))
         .asInstanceOf[A]
-    }
 
     def senseEnvData[A](name: String): A =
       findInLayers[A](name)
-  }
 
   /**
    * Typical adjustment that needs to be performed when using Alchemist environments with positions of type
    * [[Euclidean2DPosition]] to properly adapt values and types to ScaFi standard sensors.
    */
-  trait AlchemistEuclidean2DPosition { self: AggregateProgram with ScafiAlchemistSupport with StandardSensors =>
-    override def currentPosition(): Point3D = {
+  trait AlchemistEuclidean2DPosition:
+    self: AggregateProgram & ScafiAlchemistSupport & StandardSensors =>
+    override def currentPosition(): Point3D =
       val pos = sense[Euclidean2DPosition](LSNS_POSITION)
       Point3D(pos.getX, pos.getY, 0)
-    }
 
     def current2DPosition(): Point2D = Point2D(currentPosition().x, currentPosition().y)
-  }
-}

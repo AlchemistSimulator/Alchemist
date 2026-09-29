@@ -55,7 +55,7 @@ develocity {
 gitHooks {
     commitMsg { conventionalCommits() }
     preCommit {
-        tasks("ktlintCheck", "checkScalafmt", "--parallel")
+        tasks("ktlintCheck", "spotlessCheck", "--parallel")
     }
     createHooks(overwriteExisting = true)
 }

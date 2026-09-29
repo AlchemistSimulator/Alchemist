@@ -12,8 +12,6 @@ summary: >-
 
 ### Information-oriented
 
-# Reference
-
 ## Contents
 
 {{% children description="true" depth="30" %}}

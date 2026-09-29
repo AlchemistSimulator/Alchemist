@@ -56,7 +56,7 @@ class SAPEREExponentialTime(private val rateEquation: String, start: Time, rando
     override fun getRate(): Double = if (numericRate) {
         staticRate
     } else {
-        expression.calculate(matches).getValue(matches) as Double
+        expression.calculate(matches).getValue(matches) as? Double ?: Double.NaN
     }
 
     override val lambda: Double get() = getRate()

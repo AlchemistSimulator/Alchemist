@@ -75,7 +75,7 @@ abstract class AbstractMarkovianNodeReaction<T>(node: Node<T>, timeDistribution:
         return currentTime.plus(delay)
     }
 
-    companion object {
+    private companion object {
         private fun Double.validateRate() {
             check(this >= 0.0) { "Reaction propensity must be non-negative and not NaN: $this" }
         }

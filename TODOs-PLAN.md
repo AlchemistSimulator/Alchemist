@@ -503,10 +503,11 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   send fires and `SendToNeighbor` resets completion to false, publish `Time.INFINITY` without drawing the next sample.
 - [x] Replace the existing independent-cadence regression and update Protelis KDoc, the scheduling explanation, and
   every plan claim that currently describes skipped-occurrence advancement or cadence preservation.
-- [ ] Reject missing, negative, NaN, or otherwise invalid propensity values at the reaction boundary.
+- [x] Reject missing, negative, NaN, or otherwise invalid propensity values at the reaction boundary.
   - [x] Validate Markovian rates before sampling or residual adjustment; retain zero and positive-infinity semantics.
   - [x] Require exact non-negative integer counts for biochemical binomial mass action, consistently across local,
     neighboring, and extracellular quantities; validate every factor despite an earlier zero.
+  - [x] Validate static, match-derived, and unresolved SAPERE propensities before sampling.
 
 ## Phase 7: implement reactive invalidation transactions
 
@@ -667,8 +668,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
-- 2026-09-29: Made biochemical binomial mass action require exact molecule counts.
-- 2026-09-28: Hardened Markovian rate and biochemical mass-action input validation.
+- 2026-09-29: Completed Markovian, biochemical, and SAPERE propensity validation.
 - 2026-09-24: Consolidated environment topology, positions, and ordered nodes in their observable collections.
 - 2026-09-02: Replaced condition dependency sets with exact validity and reaction-specific subscriptions.
 - 2026-09-01: Made the social-contagion regression direct and bounded.

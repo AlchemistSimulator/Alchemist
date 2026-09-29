@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.sapere.molecules.LsaMolecule
 import it.unibo.alchemist.model.sapere.nodes.LsaNode
 import it.unibo.alchemist.model.sapere.timedistributions.SAPEREExponentialTime
 import it.unibo.alchemist.model.times.DoubleTime
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 import org.apache.commons.math3.random.RandomGenerator
 import org.junit.jupiter.api.Test
@@ -55,6 +56,39 @@ class SAPERENodeReactionSchedulingTest {
         assertTrue(reaction.canExecute.current)
         assertTrue(reaction.nextOccurrence.current.isFinite)
         verify(exactly = 2) { rng.nextDouble() }
+    }
+
+    @Test
+    fun `invalid static propensities are rejected before sampling`() {
+        val (rng, environment, _, reaction) = fixture("NaN")
+        assertFailsWith<IllegalStateException> {
+            reaction.initializationComplete(DoubleTime(0.0), environment)
+        }
+        verify(exactly = 0) { rng.nextDouble() }
+    }
+
+    @Test
+    fun `invalid match propensities are rejected before sampling`() {
+        listOf("0 - N" to 1, "N / N" to 0).forEach { (rate, value) ->
+            val (rng, environment, node, reaction) = fixture(rate)
+            reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token, N"), node))
+            node.setConcentration(LsaMolecule("token, $value"))
+            assertFailsWith<IllegalStateException> {
+                reaction.initializationComplete(DoubleTime(0.0), environment)
+            }
+            verify(exactly = 0) { rng.nextDouble() }
+        }
+    }
+
+    @Test
+    fun `an unresolved match propensity is rejected at the reaction boundary`() {
+        val (rng, environment, node, reaction) = fixture("Missing")
+        reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token, N"), node))
+        node.setConcentration(LsaMolecule("token, 1"))
+        assertFailsWith<IllegalStateException> {
+            reaction.initializationComplete(DoubleTime(0.0), environment)
+        }
+        verify(exactly = 0) { rng.nextDouble() }
     }
 
     @Test
@@ -104,7 +138,7 @@ class SAPERENodeReactionSchedulingTest {
         verify(exactly = 10) { rng.nextDouble() }
     }
 
-    private fun fixture(): Fixture {
+    private fun fixture(rate: String = "2"): Fixture {
         val rng = mockk<RandomGenerator>(relaxed = true)
         every { rng.nextDouble() } returns 0.5
         val environment = Continuous2DEnvironment(SAPEREIncarnation<Euclidean2DPosition>())
@@ -114,7 +148,7 @@ class SAPERENodeReactionSchedulingTest {
             rng,
             environment,
             node,
-            SAPERENodeReaction(environment, node, rng, SAPEREExponentialTime("2", rng)),
+            SAPERENodeReaction(environment, node, rng, SAPEREExponentialTime(rate, rng)),
         )
     }
 

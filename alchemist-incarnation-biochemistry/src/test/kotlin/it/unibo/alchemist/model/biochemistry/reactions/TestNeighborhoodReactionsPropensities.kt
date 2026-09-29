@@ -27,6 +27,7 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble
 import org.junit.jupiter.api.BeforeEach
@@ -91,6 +92,13 @@ class TestNeighborhoodReactionsPropensities {
     @Test
     fun `the propensity of a reaction reading molecules from neighbors should be neighbor-sensitive`() {
         testSimulation(BIOMOLECULE_IN_NEIGHBOR_REACTION)
+    }
+
+    @Test
+    fun `neighbor mass-action quantities must be integer counts`() {
+        assertFailsWith<IllegalArgumentException> {
+            BiomolPresentInNeighbor(environment, centralNode, BIOMOLECULE, 1.5)
+        }
     }
 }
 

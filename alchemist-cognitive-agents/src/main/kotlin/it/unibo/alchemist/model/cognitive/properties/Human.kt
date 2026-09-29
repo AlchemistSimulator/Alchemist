@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.cognitive.properties
 
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.cognitive.Human2DProperty
 import it.unibo.alchemist.model.cognitive.impact.individual.Age
 import it.unibo.alchemist.model.cognitive.impact.individual.Compliance
 import it.unibo.alchemist.model.cognitive.impact.individual.Gender

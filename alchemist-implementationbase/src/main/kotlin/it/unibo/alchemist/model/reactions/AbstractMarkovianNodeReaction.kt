@@ -14,7 +14,10 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 
-/** Reaction whose scheduling is driven by a memoryless exponential distribution. */
+/**
+ * Reaction whose scheduling is driven by a memoryless exponential distribution.
+ * Propensities must be non-negative and not NaN; positive infinity is retained as an immediate occurrence.
+ */
 abstract class AbstractMarkovianNodeReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
     AbstractNodeReaction<T>(node, timeDistribution) {
 
@@ -29,7 +32,7 @@ abstract class AbstractMarkovianNodeReaction<T>(node: Node<T>, timeDistribution:
     override fun scheduleNextOccurrenceAfterFiring(currentTime: Time) {
         val distribution = timeDistribution as ExponentialTime<*>
         val newRate = rate
-        check(!newRate.isNaN() && previousRate?.isNaN() != true) { "Reaction propensity cannot be NaN" }
+        newRate.validateRate()
         if (newRate == 0.0) {
             setNextOccurrence(Time.INFINITY)
         } else {
@@ -44,7 +47,7 @@ abstract class AbstractMarkovianNodeReaction<T>(node: Node<T>, timeDistribution:
         val schedulingTime = maxOf(currentTime, distribution.startTime)
         val newRate = rate
         val oldRate = previousRate
-        check(!newRate.isNaN() && oldRate?.isNaN() != true) { "Reaction propensity cannot be NaN" }
+        newRate.validateRate()
         when {
             newRate == 0.0 -> setNextOccurrence(Time.INFINITY)
             oldRate == null || oldRate == 0.0 -> scheduleNextOccurrenceAfterFiring(schedulingTime)
@@ -70,5 +73,11 @@ abstract class AbstractMarkovianNodeReaction<T>(node: Node<T>, timeDistribution:
         val sample = validatedSample()
         val delay = if (distribution.lambda == rate) sample else sample.times(distribution.lambda / rate)
         return currentTime.plus(delay)
+    }
+
+    companion object {
+        private fun Double.validateRate() {
+            check(this >= 0.0) { "Reaction propensity must be non-negative and not NaN: $this" }
+        }
     }
 }

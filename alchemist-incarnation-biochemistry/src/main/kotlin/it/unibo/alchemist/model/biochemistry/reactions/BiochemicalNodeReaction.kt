@@ -21,16 +21,18 @@ import it.unibo.alchemist.model.biochemistry.conditions.EnvPresent
 import it.unibo.alchemist.model.biochemistry.conditions.GenericMoleculePresent
 import it.unibo.alchemist.model.biochemistry.conditions.GenericMoleculeUnderLevel
 import it.unibo.alchemist.model.biochemistry.conditions.TensionPresent
+import it.unibo.alchemist.model.biochemistry.util.toMoleculeCount
 import it.unibo.alchemist.model.observation.CompositeDisposable
 import it.unibo.alchemist.model.reactions.ChemicalNodeReaction
-import java.util.LinkedHashMap
 import org.apache.commons.math3.distribution.EnumeratedDistribution
 import org.apache.commons.math3.random.RandomGenerator
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble
-import org.apache.commons.math3.util.FastMath.round
 import org.apache.commons.math3.util.Pair
 
-/** A memoryless biochemical reaction with an explicit contract for its supported condition semantics. */
+/**
+ * A memoryless biochemical reaction with an explicit contract for its supported condition semantics.
+ * Every factor is validated even when an earlier factor has already made the total rate zero.
+ */
 class BiochemicalNodeReaction(
     node: Node<Double>,
     timeDistribution: TimeDistribution<Double>,
@@ -53,6 +55,10 @@ class BiochemicalNodeReaction(
         require(unsupported.isEmpty()) {
             "Biochemical reactions do not define rate semantics for conditions $unsupported"
         }
+        conditions
+            .filterIsInstance<GenericMoleculePresent<*>>()
+            .filterNot { it is GenericMoleculeUnderLevel<*> }
+            .forEach { it.requiredQuantity.toDouble().toMoleculeCount(it) }
     }
 
     override fun refreshReactionState(currentTime: Time, environment: Environment<Double, *>) {
@@ -79,7 +85,8 @@ class BiochemicalNodeReaction(
 
     override fun computeRate(currentTime: Time, environment: Environment<Double, *>): Double =
         conditions.fold(baseRate) { rate, condition ->
-            if (rate == 0.0) 0.0 else rate * rateFactor(condition)
+            val factor = rateFactor(condition)
+            if (rate == 0.0 || factor == 0.0) 0.0 else rate * factor
         }
 
     override fun executeReaction() {
@@ -109,12 +116,12 @@ class BiochemicalNodeReaction(
         is GenericMoleculeUnderLevel<*> ->
             (condition.requiredQuantity.toDouble() - condition.quantity.current).coerceAtLeast(0.0)
         is BiomolPresentInEnv<*> -> combinations(
-            round(condition.quantity.current).toInt(),
-            round(condition.requiredQuantity).toInt(),
+            condition.quantity.current.toMoleculeCount(condition),
+            condition.requiredQuantity.toMoleculeCount(condition),
         )
         is GenericMoleculePresent<*> -> combinations(
-            condition.quantity.current.toInt(),
-            condition.requiredQuantity.toInt(),
+            condition.quantity.current.toMoleculeCount(condition),
+            condition.requiredQuantity.toDouble().toMoleculeCount(condition),
         )
         is AbstractNeighborCondition<*> -> condition.getValidNeighbors().values.sum()
         is TensionPresent -> condition.getTension()

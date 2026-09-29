@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -15,7 +15,7 @@ import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position2D;
-import it.unibo.alchemist.model.cognitive.OrientingProperty;
+import it.unibo.alchemist.model.cognitive.properties.OrientingProperty;
 import it.unibo.alchemist.model.environments.Environment2DWithObstacles;
 import it.unibo.alchemist.model.geometry.Ellipse;
 import it.unibo.alchemist.model.geometry.navigationgraph.NavigationGraph;

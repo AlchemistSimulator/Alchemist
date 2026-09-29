@@ -15,11 +15,11 @@ import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.biochemistry.CellProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
+import it.unibo.alchemist.model.biochemistry.util.toMoleculeCount
 import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
 import it.unibo.alchemist.model.observation.Observable
 import java.io.Serial
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble
-import org.apache.commons.math3.util.FastMath
 
 /**
  * This condition is valid if a selected biomolecule is present in the neighborhood of the node.
@@ -36,6 +36,8 @@ class BiomolPresentInNeighbor(
     private val concentration: Double,
 ) : AbstractNeighborCondition<Double>(environment, node) {
 
+    private val requiredMolecules = concentration.toMoleculeCount(this)
+
     init {
         setUpObservability()
     }
@@ -47,8 +49,9 @@ class BiomolPresentInNeighbor(
                 maybeValue.fold(
                     ifEmpty = { 0.0 },
                     ifSome = {
-                        if (it >= concentration) {
-                            binomialCoefficientDouble(it.toInt(), FastMath.ceil(concentration).toInt())
+                        val availableMolecules = it.toMoleculeCount(this)
+                        if (availableMolecules >= requiredMolecules) {
+                            binomialCoefficientDouble(availableMolecules, requiredMolecules)
                         } else {
                             0.0
                         }

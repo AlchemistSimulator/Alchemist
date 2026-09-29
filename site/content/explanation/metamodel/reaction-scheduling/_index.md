@@ -82,6 +82,8 @@ The correct invalidation policy belongs to the reaction family:
 * An {{% api package="model.reactions" class="AbstractMarkovianNodeReaction" %}} preserves or rescales a surviving
   exponential residual after a positive rate change and requires an
   {{% api package="model.timedistributions" class="ExponentialTime" %}}.
+  Its rate must be non-negative and different from NaN. Zero suspends scheduling; positive infinity produces an
+  immediate occurrence subject to the distribution's start time.
 
 ### Membership and removal
 

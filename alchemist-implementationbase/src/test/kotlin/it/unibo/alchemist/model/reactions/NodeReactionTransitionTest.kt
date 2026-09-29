@@ -74,15 +74,41 @@ class NodeReactionTransitionTest {
             ExponentialTime(1.0, DoubleTime(10.0), randomGenerator),
             propensity,
         )
-
         reaction.initializationComplete(Time.ZERO, environment)
         assertEquals(1, samples)
         assertEquals(DoubleTime(10.0), reaction.nextOccurrence.current)
-
         propensity.current = 2.0
         assertEquals(1, samples)
         assertEquals(DoubleTime(10.0), reaction.nextOccurrence.current)
         assertEquals(false, reaction.nextOccurrence.current.isInfinite)
+    }
+
+    @Test
+    fun `invalid propensity is rejected before sampling`() {
+        listOf(-1.0, Double.NEGATIVE_INFINITY, Double.NaN).forEach { invalidRate ->
+            val fixture = exponentialFixture(invalidRate) { 0.5 }
+            val reaction =
+                ObservableRateReaction(fixture.node, ExponentialTime(1.0, fixture.randomGenerator), fixture.propensity)
+            assertFailsWith<IllegalStateException> {
+                reaction.initializationComplete(Time.ZERO, fixture.environment)
+            }
+            assertEquals(0, fixture.samples)
+        }
+    }
+
+    @Test
+    fun `negative propensity is rejected during invalidation`() {
+        val fixture = exponentialFixture(1.0) { 0.5 }
+        val reaction =
+            ObservableRateReaction(fixture.node, ExponentialTime(1.0, fixture.randomGenerator), fixture.propensity)
+        reaction.initializationComplete(Time.ZERO, fixture.environment)
+        val occurrence = reaction.nextOccurrence.current
+        val samples = fixture.samples
+        listOf(-1.0, Double.NEGATIVE_INFINITY, Double.NaN).forEach { invalidRate ->
+            assertFailsWith<IllegalStateException> { fixture.propensity.current = invalidRate }
+            assertEquals(occurrence, reaction.nextOccurrence.current)
+            assertEquals(samples, fixture.samples)
+        }
     }
 
     @Test
@@ -95,11 +121,9 @@ class NodeReactionTransitionTest {
             ExponentialTime(1.0, DoubleTime(10.0), randomGenerator),
             propensity,
         )
-
         reaction.initializationComplete(Time.ZERO, environment)
         assertEquals(1, samples())
         assertEquals(DoubleTime(10.5), reaction.nextOccurrence.current)
-
         propensity.current = 2.0
         assertEquals(1, samples())
         assertEquals(DoubleTime(10.25), reaction.nextOccurrence.current)
@@ -115,9 +139,7 @@ class NodeReactionTransitionTest {
         )
         reaction.initializationComplete(Time.ZERO, fixture.environment)
         assertEquals(1, fixture.propensity.observers.size)
-
         reaction.dispose()
-
         assertTrue(fixture.propensity.observers.isEmpty())
         var observed = fixture.propensity.current
         val independentSubscription = fixture.propensity.subscribe(invokeOnSubscription = false) { observed = it }
@@ -148,15 +170,12 @@ class NodeReactionTransitionTest {
         reaction.initializationComplete(Time.ZERO, environment)
         assertTrue(reaction.nextOccurrence.current.isInfinite)
         assertEquals(0, samples)
-
         concentration.current = Any().some()
         assertTrue(reaction.nextOccurrence.current.isFinite)
         assertEquals(1, samples)
-
         reaction.execute()
         assertTrue(reaction.nextOccurrence.current.isInfinite)
         assertEquals(1, samples)
-
         concentration.current = Any().some()
         assertTrue(reaction.nextOccurrence.current.isFinite)
         assertEquals(2, samples)

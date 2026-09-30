@@ -19,10 +19,14 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.biochemistry.conditions.BiomolPresentInCell
+import it.unibo.alchemist.model.biochemistry.conditions.BiomolPresentInEnv
 import it.unibo.alchemist.model.biochemistry.conditions.GenericMoleculePresent
 import it.unibo.alchemist.model.biochemistry.conditions.TensionPresent
 import it.unibo.alchemist.model.biochemistry.conditions.TensionPresent.MechanicalState
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
+import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
+import it.unibo.alchemist.model.biochemistry.nodes.EnvironmentNodeImpl
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
@@ -75,6 +79,36 @@ class BiochemicalReactionSchedulingTest {
         verify(exactly = 1) { randomGenerator.nextDouble() }
         node.setConcentration(molecule, 2.0)
         assertEquals(2.0, condition.quantity.current)
+        assertTrue(reaction.canExecute.current)
+        assertEquals(initialOccurrence * 0.5, reaction.nextOccurrence.current)
+        verify(exactly = 1) { randomGenerator.nextDouble() }
+    }
+
+    @Test
+    fun `an extracellular quantity change updates rate while condition validity remains true`() {
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        every { randomGenerator.nextDouble() } returns 0.5
+        val incarnation = BiochemistryIncarnation()
+        val environment = BioRect2DEnvironment(incarnation).apply {
+            linkingRule = ConnectWithinDistance(1.0)
+        }
+        val node = incarnation.createNode(randomGenerator, environment, null)
+        val environmentNode = EnvironmentNodeImpl(environment)
+        val molecule = assertIs<Biomolecule>(incarnation.createMolecule("token"))
+        environmentNode.setConcentration(molecule, 2.0)
+        assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
+        assertTrue(environment.addNode(environmentNode, Euclidean2DPosition(0.5, 0.0)))
+        val condition = BiomolPresentInEnv(environment, node, molecule, 1.0)
+        val reaction = BiochemicalNodeReaction(
+            node,
+            ExponentialTime(1.0, randomGenerator),
+            environment,
+            randomGenerator,
+        ).apply { conditions = listOf(condition) }
+        reaction.initializationComplete(Time.ZERO, environment)
+        val initialOccurrence = reaction.nextOccurrence.current
+        environmentNode.setConcentration(molecule, 4.0)
+        assertEquals(4.0, condition.quantity.current)
         assertTrue(reaction.canExecute.current)
         assertEquals(initialOccurrence * 0.5, reaction.nextOccurrence.current)
         verify(exactly = 1) { randomGenerator.nextDouble() }

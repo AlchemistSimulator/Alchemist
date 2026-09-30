@@ -1,6 +1,6 @@
 # Reactive Engine Refactor Plan
 
-Last updated: 2026-09-29
+Last updated: 2026-09-30
 
 Working branch: `marmellata`
 
@@ -439,8 +439,8 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   - [x] Expose biochemical molecule quantities as `quantity: Observable<Double>`, along with typed neighbor-selection
     weights and mechanical state, and compute the rate from them in `BiochemicalNodeReaction`.
   - [x] Replace condition dependency-set subscriptions with direct specialized-reaction subscriptions.
-    `BiomolPresentInEnv` observes the position- and neighborhood-derived total; mutable layer-value emissions remain
-    part of the observable-layer migration.
+    `BiomolPresentInEnv` observes position, neighborhood membership, and each neighboring environment-node quantity;
+    mutable layer-value emissions remain part of the observable-layer migration.
 - [x] Preserve accepted-condition validation and typed bindings through reaction cloning, incarnation builders,
   reflection/YAML loading, generated factories, and Kotlin DSL construction.
 - [x] Update `Condition` and specialized-reaction KDoc/Javadoc, the scheduling-and-ownership page, model and
@@ -488,7 +488,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] Do not replace observable dependency sets with a public token type, token registry, or another collection of
   dependency descriptions.
 - [x] Define the specialized chemical reaction type and its typed condition/state inputs.
-- [ ] Cover every concentration, match, stoichiometric quantity, or neighborhood value required to recompute
+- [x] Cover every concentration, match, stoichiometric quantity, or neighborhood value required to recompute
   propensity.
 - [x] Move mass-action and other propensity laws into the chemical reaction hierarchy.
 - [x] Enforce `ExponentialTime` as the only valid generator for `ChemicalNodeReaction` and fail fast otherwise.
@@ -668,6 +668,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-09-30: Completed propensity-input observability; mutable layers remain in Phase 9.
 - 2026-09-29: Completed Markovian, biochemical, and SAPERE propensity validation.
 - 2026-09-24: Consolidated environment topology, positions, and ordered nodes in their observable collections.
 - 2026-09-02: Replaced condition dependency sets with exact validity and reaction-specific subscriptions.

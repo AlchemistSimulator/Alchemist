@@ -12,8 +12,6 @@ summary: >-
 
 ### Understanding-oriented
 
-# Explanation
-
 ## Contents
 
 {{% children description="true" depth="30" %}}

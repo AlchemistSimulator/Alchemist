@@ -1,6 +1,6 @@
 {{- $root := .Get "root" | default "alchemist" -}}
 {{- $path := .Get "path" | default "README.md" | printf "%s/%s" $root -}}
-{{- $content := readFile $path | htmlUnescape -}}
+{{- $content := (resources.Get $path).Content | htmlUnescape -}}
 {{- $content := split $content "\n" -}}
 {{- $start := .Get "from" | default "1" | int | add -1 }}
 {{- $end := .Get "to" | default (len $content) | int }}

@@ -8,8 +8,6 @@ summary = "Guides on how to create simulation environments, configure node behav
 
 ### Prepare the simulated environment
 
-# Simulation
-
 ## Contents
 
 {{% children description="true" depth="30" %}}

@@ -15,8 +15,6 @@ summary: >-
 
 ### Problem-oriented
 
-# How-to Guides
-
 ## Contents
 
 {{% children description="true" depth="30" %}}

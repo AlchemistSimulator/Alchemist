@@ -29,7 +29,7 @@ and **MUST NOT** contain any other key.
 The sets of valid cobinations of mandatory and optional keys for each section of the document is specified
 in form of Kotlin code as follows:
 
-{{< code path="alchemist-loading/src/main/kotlin/it/unibo/alchemist/boundary/loader/syntax/Syntax.kt" >}}
+{{< code path="alchemist-loading/src/main/kotlin/it/unibo/alchemist/boundary/loader/syntax/AlchemistYamlSyntax.kt" >}}
 
 ### Types of entries
 

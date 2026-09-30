@@ -1,4 +1,4 @@
-{{- $content := readFile (.Get 0) | htmlUnescape -}}
+{{- $content := (resources.Get (.Get 0)).Content | htmlUnescape -}}
 {{- $content | safeHTML -}}<!--
   ~ Copyright (C) 2010-2022, Danilo Pianini and contributors
   ~ listed, for each module, in the respective subproject's build.gradle.kts file.

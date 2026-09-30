@@ -1,3 +1,17 @@
+## [43.1.38](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.37...43.1.38) (2026-09-30)
+
+### Features
+
+* add scala 3 support in scafi incarnation ([#5613](https://github.com/AlchemistSimulator/Alchemist/issues/5613)) ([dc8b64f](https://github.com/AlchemistSimulator/Alchemist/commit/dc8b64fb062967270c22d1e0a6f59f8dcb97e7ea))
+
+### Dependency updates
+
+* **deps:** update plugin spotless to v8.10.3 ([c3fc39c](https://github.com/AlchemistSimulator/Alchemist/commit/c3fc39cb1921e491cd110dd1e7f0a938c7c8cb61))
+
+### Bug Fixes
+
+* **site:** broken links and duplicated titles ([#5623](https://github.com/AlchemistSimulator/Alchemist/issues/5623)) ([2234219](https://github.com/AlchemistSimulator/Alchemist/commit/22342196084ea198be979671474836412a601d52))
+
 ## [43.1.37](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.36...43.1.37) (2026-09-29)
 
 ### Dependency updates

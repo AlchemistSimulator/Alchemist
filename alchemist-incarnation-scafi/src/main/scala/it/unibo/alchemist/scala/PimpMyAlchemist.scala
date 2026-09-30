@@ -19,13 +19,12 @@ import it.unibo.alchemist.model.times.DoubleTime
 import scala.language.implicitConversions
 
 @SuppressFBWarnings
-object PimpMyAlchemist {
+object PimpMyAlchemist:
 
   /** Wraps a Position, providing + and - operations. */
-  implicit class RichPosition[P <: Position[P] & Vector[P]](position: P) {
+  implicit class RichPosition[P <: Position[P] & Vector[P]](position: P):
     def -(p: P): P = position.minus(p)
     def +(p: P): P = position.plus(p)
-  }
 
   /** Shortcut for DoubleTime.ZERO_TIME */
   implicit val zeroTime: Time = Time.ZERO
@@ -33,5 +32,5 @@ object PimpMyAlchemist {
   implicit def double2Time(time: Double): Time = new DoubleTime(time)
   implicit def molecule2String(molecule: Molecule): String = molecule.toString
   implicit def string2Molecule(str: String): Molecule = new SimpleMolecule(str)
-  implicit def function2CacheLoader[F, T](f: F => T): CacheLoader[F, T] = new CacheLoader[F, T] { def load(key: F): T = f(key) }
-}
+  implicit def function2CacheLoader[F, T](f: F => T): CacheLoader[F, T] = new CacheLoader[F, T]:
+    def load(key: F): T = f(key)

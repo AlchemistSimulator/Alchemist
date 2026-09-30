@@ -11,24 +11,22 @@ package it.unibo.alchemist.model.scafi.nodes
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 
-trait NodeManager {
+trait NodeManager:
   def put[T](molecule: String, concentration: T): Unit
   def get[T](molecule: String): T
   def getOption[V](molecule: String): Option[V]
   def has(molecule: String): Boolean
   def remove(molecule: String): Unit
   def getOrElse[T](molecule: String, defaultValue: => T): T = getOption(molecule).getOrElse(defaultValue)
-}
 
-class SimpleNodeManager[T](val node: Node[T]) extends NodeManager {
+class SimpleNodeManager[T](val node: Node[T]) extends NodeManager:
   override def put[V](molecule: String, concentration: V): Unit =
     node.setConcentration(new SimpleMolecule(molecule), concentration.asInstanceOf[T])
 
   override def get[V](molecule: String): V = node.getConcentration(new SimpleMolecule(molecule)).asInstanceOf[V]
 
-  override def getOption[V](molecule: String): Option[V] = if (has(molecule)) Some[V](get(molecule)) else None
+  override def getOption[V](molecule: String): Option[V] = if has(molecule) then Some[V](get(molecule)) else None
 
   override def has(molecule: String): Boolean = node.contains(new SimpleMolecule(molecule))
 
   override def remove(molecule: String): Unit = node.removeConcentration(new SimpleMolecule(molecule))
-}

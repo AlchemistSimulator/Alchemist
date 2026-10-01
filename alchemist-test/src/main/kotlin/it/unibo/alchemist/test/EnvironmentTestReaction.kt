@@ -62,6 +62,14 @@ class EnvironmentTestReaction<T>(
         mutableNextOccurrence.current = currentTime.plus(sample)
     }
 
+    override fun updateSchedulingAfterInvalidation(currentTime: Time) {
+        if (canExecute.current) {
+            updateSchedulingAfterFiring(currentTime)
+        } else {
+            mutableNextOccurrence.current = Time.INFINITY
+        }
+    }
+
     override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
 
     override fun dispose() {

@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.observation.Disposable
-import java.util.IdentityHashMap
+import org.jooq.lambda.fi.lang.CheckedRunnable
 
 /**
  * Represents a simulation engine that manages execution and scheduling.
@@ -25,13 +25,24 @@ import java.util.IdentityHashMap
  *
  * Scheduling observables must emit on the simulation thread. Model mutations from other threads
  * must be submitted through [Simulation.schedule].
+ * Reaction execution and scheduled commands form invalidation transactions that refresh each affected reaction
+ * once before the next scheduler selection.
  */
 open class Engine<T, P : Position<out P>>(
     private val environment: Environment<T, P>,
     protected val scheduler: Scheduler<T>,
 ) : AbstractEngine<T, P>(environment) {
 
-    private val schedulingSubscriptions = IdentityHashMap<Reaction<T>, Disposable>()
+    private val schedulingSubscriptions = mutableMapOf<Reaction<T>, Disposable>()
+    private val dirtyReactions = mutableSetOf<Reaction<T>>()
+
+    /*
+     * A model mutation may synchronously trigger multiple, possibly nested observable cascades.
+     * We do not want to reschedule/resample from intermediate model states, thus,
+     * this variable stores the depth and refreshDirtyReactions() gets called only when
+     * the outermost mutation is complete, so that reactions reschedule once from the final mutated state.
+     */
+    private var modelMutationDepth = 0
 
     constructor(environment: Environment<T, P>) : this(environment, ArrayIndexedPriorityQueue())
 
@@ -59,8 +70,11 @@ open class Engine<T, P : Position<out P>>(
         check(nextEvent.canExecute.current) {
             "$nextEvent exposed a finite next occurrence while reporting that it could not execute"
         }
-        nextEvent.execute()
-
+        modelMutation {
+            nextEvent.execute()
+            // Successful execution owns post-firing advancement, which supersedes invalidations caused by its actions.
+            dirtyReactions.remove(nextEvent)
+        }
         monitors.forEach { it.stepDone(environment, nextEvent, time, step) }
         if (environment.isTerminated) {
             terminate()
@@ -75,6 +89,22 @@ open class Engine<T, P : Position<out P>>(
 
     override fun reactionRemoved(reactionToRemove: Reaction<T>) {
         schedule { removeReactionIfScheduled(reactionToRemove) }
+    }
+
+    override fun reactionInvalidated(reactionToUpdate: Reaction<T>) {
+        checkCaller()
+        check(schedulingSubscriptions.containsKey(reactionToUpdate)) {
+            "Reaction $reactionToUpdate was invalidated without being scheduled"
+        }
+        if (modelMutationDepth == 0) {
+            modelMutation { dirtyReactions.add(reactionToUpdate) }
+        } else {
+            dirtyReactions.add(reactionToUpdate)
+        }
+    }
+
+    override fun processCommand(command: CheckedRunnable) = modelMutation {
+        super.processCommand(command)
     }
 
     private fun scheduleReaction(reaction: Reaction<T>) {
@@ -97,6 +127,7 @@ open class Engine<T, P : Position<out P>>(
 
     private fun removeReaction(reaction: Reaction<T>) {
         checkCaller()
+        dirtyReactions.remove(reaction)
         checkNotNull(schedulingSubscriptions.remove(reaction)) {
             "Reaction $reaction was removed without being scheduled"
         }.dispose()
@@ -115,6 +146,30 @@ open class Engine<T, P : Position<out P>>(
             runCatching(handle::dispose).exceptionOrNull()?.let(::recordError)
         }
         schedulingSubscriptions.clear()
+        dirtyReactions.clear()
         // Reactions belong to the environment; afterRun only releases engine-owned subscriptions.
+    }
+
+    private inline fun <R> modelMutation(mutation: () -> R): R {
+        modelMutationDepth++
+        val result = mutation()
+        modelMutationDepth--
+        if (modelMutationDepth == 0) {
+            refreshDirtyReactions()
+        }
+        return result
+    }
+
+    private fun refreshDirtyReactions() {
+        val refreshed = mutableSetOf<Reaction<T>>()
+        while (dirtyReactions.isNotEmpty()) {
+            val pending = dirtyReactions.toList()
+            dirtyReactions.clear()
+            pending.forEach { reaction ->
+                if (refreshed.add(reaction) && schedulingSubscriptions.containsKey(reaction)) {
+                    reaction.updateSchedulingAfterInvalidation(time)
+                }
+            }
+        }
     }
 }

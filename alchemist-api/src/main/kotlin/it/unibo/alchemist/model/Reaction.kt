@@ -18,8 +18,9 @@ import it.unibo.alchemist.model.observation.Observable
  * The engine initializes a reaction before scheduling it, indexes [nextOccurrence], and subscribes to that
  * observable without replaying its current value.
  * After the scheduler selects a finite occurrence, the engine calls [execute].
- * Reactive invalidation and post-execution scheduling are owned by the implementation and are
- * communicated to the engine only by emitting a new [nextOccurrence].
+ * Observed model inputs synchronously mark the reaction dirty.
+ * When the enclosing model mutation completes, the engine invokes [updateSchedulingAfterInvalidation] once;
+ * the implementation owns that policy and communicates scheduling changes only by emitting a new [nextOccurrence].
  */
 interface Reaction<T> :
     Comparable<Reaction<T>>,
@@ -61,6 +62,18 @@ interface Reaction<T> :
      * Executes this reaction.
      */
     fun execute()
+
+    /**
+     * Refreshes this reaction's scheduling after one or more observed model inputs changed.
+     *
+     * The engine invokes this once when the enclosing model mutation completes,
+     * using the simulation time at which the mutation (execution of the reaction) happened.
+     * Implementations own the resulting scheduling policy and communicate any change only through
+     * [nextOccurrence].
+     *
+     * @param currentTime the simulation time of the model mutation
+     */
+    fun updateSchedulingAfterInvalidation(currentTime: Time)
 
     /**
      * Activates reactive inputs after the environment is fully initialized and establishes the first occurrence.

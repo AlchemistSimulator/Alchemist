@@ -511,15 +511,15 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 ## Phase 7: implement reactive invalidation transactions
 
-- [ ] Introduce an engine-owned transaction/dirty-reaction set around each model mutation and reaction execution.
-- [ ] Mark reactions dirty synchronously through direct validity and reaction-specific invalidation callbacks; the
+- [x] Introduce an engine-owned transaction/dirty-reaction set around each model mutation and reaction execution.
+- [x] Mark reactions dirty synchronously through direct validity and reaction-specific invalidation callbacks; the
   transaction must never inspect condition dependency metadata.
-- [ ] Recompute each dirty reaction once after the mutation finishes.
-- [ ] Reindex each changed `nextOccurrence` once as a consequence of the single post-transaction recomputation.
-- [ ] Define behavior for invalidation originating from scheduled commands outside reaction execution.
+- [x] Recompute each dirty reaction once after the mutation finishes.
+- [x] Reindex each changed `nextOccurrence` once as a consequence of the single post-transaction recomputation.
+- [x] Define behavior for invalidation originating from scheduled commands outside reaction execution.
 - [ ] Guard observable callback iteration against subscription mutation and re-entrant emissions.
-- [ ] Verify deterministic ordering when multiple reactions are invalidated together.
-- [ ] Keep the invalidation transaction independent from scheduler notification: it must prevent redundant
+- [x] Preserve first-invalidation order when multiple reactions are invalidated together.
+- [x] Keep the invalidation transaction independent from scheduler notification: it must prevent redundant
   recomputation, resampling, and random-number consumption before `nextOccurrence` emits, not buffer scheduler
   callbacks after emission.
 - [ ] Exclude reactions removed or disposed while a transaction is collecting dirty reactions.
@@ -668,6 +668,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-09-30: Added ordered invalidation transactions for reaction execution and scheduled commands.
 - 2026-09-30: Completed propensity-input observability; mutable layers remain in Phase 9.
 - 2026-09-29: Completed Markovian, biochemical, and SAPERE propensity validation.
 - 2026-09-24: Consolidated environment topology, positions, and ordered nodes in their observable collections.

@@ -129,6 +129,15 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     void reactionRemoved(Reaction<T> reactionToRemove);
 
     /**
+     * Marks a reaction whose observed scheduling inputs changed.
+     * The notification is synchronous and must originate on the simulation thread. The engine refreshes each
+     * affected reaction once when the enclosing model mutation completes.
+     *
+     * @param reactionToUpdate the invalidated reaction
+     */
+    void reactionInvalidated(Reaction<T> reactionToUpdate);
+
+    /**
      * Removes an {@link OutputMonitor} to this simulation. If the
      * {@link OutputMonitor} was not among those already added, this method does
      * nothing.

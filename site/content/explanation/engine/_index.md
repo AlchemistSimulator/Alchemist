@@ -26,7 +26,9 @@ The engine owns the simulation clock, command processing, output-monitor notific
 subscriptions, and the scheduler that selects the earliest occurrence.
 
 For each active reaction, the engine owns one exact subscription to `nextOccurrence`.
-Each emitted occurrence causes the scheduler to reindex that reaction immediately.
+Reaction executions and scheduled commands form model-mutation transactions: direct invalidation callbacks mark
+affected reactions dirty, and the engine refreshes each of them once when the mutation completes.
+Each resulting occurrence emission causes the scheduler to reindex that reaction immediately.
 Reaction registration, occurrence updates, scheduler operations, and removal are confined to the simulation thread;
 external mutations must enter through the simulation command queue.
 

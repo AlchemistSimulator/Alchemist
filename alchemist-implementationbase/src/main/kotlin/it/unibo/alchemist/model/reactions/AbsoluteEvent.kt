@@ -42,5 +42,5 @@ class AbsoluteEvent<T>(private val host: ReactionHost<T>, val occurrence: Time) 
         host.removeReaction(this)
     }
 
-    override fun updateSchedulingAfterInvalidation(currentTime: Time) = Unit
+    override fun scheduleAfterInvalidation(currentTime: Time) = Unit
 }

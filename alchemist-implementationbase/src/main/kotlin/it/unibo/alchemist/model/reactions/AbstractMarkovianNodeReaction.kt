@@ -42,7 +42,7 @@ abstract class AbstractMarkovianNodeReaction<T>(node: Node<T>, timeDistribution:
         previousRate = newRate
     }
 
-    override fun updateSchedulingAfterInvalidation(currentTime: Time) {
+    override fun scheduleAfterInvalidation(currentTime: Time) {
         val distribution = timeDistribution as ExponentialTime<*>
         val schedulingTime = maxOf(currentTime, distribution.startTime)
         val newRate = rate

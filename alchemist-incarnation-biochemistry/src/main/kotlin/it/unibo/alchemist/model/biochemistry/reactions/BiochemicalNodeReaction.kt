@@ -89,20 +89,21 @@ class BiochemicalNodeReaction(
             if (rate == 0.0 || factor == 0.0) 0.0 else rate * factor
         }
 
-    override fun executeReaction() {
-        if (neighborConditions.isEmpty()) {
-            super.executeReaction()
-            return
-        }
-        val target = validNeighbors.entries
-            .takeIf { it.isNotEmpty() }
-            ?.map { Pair(it.key, it.value) }
-            ?.let { EnumeratedDistribution(randomGenerator, it).sample() }
-        actions.forEach { action ->
-            if (action is AbstractNeighborAction<Double>) {
-                target?.let(action::execute)
-            } else {
-                action.execute()
+    override fun performModelMutation() = when {
+        neighborConditions.isEmpty() -> super.performModelMutation()
+        else -> {
+            val candidates = validNeighbors.map { (neighbor, weight) -> Pair(neighbor, weight) }
+            val target: Node<Double>? = when (candidates.size) {
+                0 -> null
+                1 -> candidates.first().key
+                else -> EnumeratedDistribution(randomGenerator, candidates).sample()
+            }
+            actions.forEach { action ->
+                if (action is AbstractNeighborAction<Double>) {
+                    target?.let(action::execute)
+                } else {
+                    action.execute()
+                }
             }
         }
     }

@@ -39,7 +39,7 @@ class PhysicalBlendedSteering<T>(
     /**
      * Update the node physical state.
      */
-    override fun executeReaction() {
+    override fun performModelMutation() {
         (actions - steerActions()).forEach { it.execute() }
         val force = steerStrategy.computeNextPosition(steerActions())
         if (!physics.isFallen) {

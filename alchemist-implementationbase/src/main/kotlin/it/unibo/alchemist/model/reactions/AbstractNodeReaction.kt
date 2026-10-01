@@ -81,23 +81,8 @@ abstract class AbstractNodeReaction<T>(
         clone.newlyInstantiatedAt = currentTime
     }
 
-    /**
-     * Executes the model mutation and advances recurrence only after a successful scheduled firing.
-     */
-    final override fun execute() {
-        val firingTime = nextOccurrence.current
-        signalConditionsReady()
-        executeReaction()
-        if (initializedEnvironment != null) {
-            updateSchedulingAfterFiring(firingTime)
-        }
-    }
-
     /** Refreshes reaction state after firing, then applies firing scheduling policy. */
     final override fun updateSchedulingAfterFiring(currentTime: Time) {
-        if (isDisposed) {
-            return
-        }
         val environment = checkNotNull(initializedEnvironment) {
             "Reaction $this was advanced before initialization"
         }
@@ -111,7 +96,7 @@ abstract class AbstractNodeReaction<T>(
     }
 
     /** Applies scheduling policy after a reactive invalidation without firing the reaction. */
-    override fun updateSchedulingAfterInvalidation(currentTime: Time) {
+    override fun scheduleAfterInvalidation(currentTime: Time) {
         val schedulingTime = maxOf(currentTime, timeDistribution.startTime)
         setNextOccurrence(schedulingTime.plus(validatedSample()))
     }

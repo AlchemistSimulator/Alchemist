@@ -45,7 +45,7 @@ open class SteeringBehavior<T>(
         SteeringBehavior(environment, node.pedestrianProperty, it, steerStrategy)
     }
 
-    override fun executeReaction() {
+    override fun performModelMutation() {
         (actions - steerActions().toSet()).forEach { it.execute() }
         CognitiveAgentCombineSteering(environment, this, pedestrian, steerActions(), steerStrategy).execute()
     }

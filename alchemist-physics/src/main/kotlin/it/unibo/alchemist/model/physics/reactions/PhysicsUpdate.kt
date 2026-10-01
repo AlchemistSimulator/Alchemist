@@ -9,18 +9,11 @@
 
 package it.unibo.alchemist.model.physics.reactions
 
-import arrow.core.getOrElse
-import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Condition
-import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
-import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
+import it.unibo.alchemist.model.reactions.AbstractReaction
 import it.unibo.alchemist.model.timedistributions.AbstractDistribution
 import it.unibo.alchemist.model.timedistributions.AnyRealDistribution
 import it.unibo.alchemist.model.timedistributions.DiracComb
@@ -35,51 +28,22 @@ class PhysicsUpdate<T>(
     /** The physics environment advanced by this reaction. */
     val environment: Dynamics2DEnvironment<T>,
     override val timeDistribution: TimeDistribution<T> = DiracComb(DEFAULT_RATE),
-) : TimeDistributedReaction<T> {
+) : AbstractReaction<T>(timeDistribution.startTime),
+    TimeDistributedReaction<T> {
 
     constructor(environment: Dynamics2DEnvironment<T>, updateRate: Double) : this(environment, DiracComb(updateRate))
 
     override val rate: Double get() = timeDistribution.expectedRate
-    private val mutableNextOccurrence = observe(timeDistribution.startTime, false)
-    override val nextOccurrence: Observable<Time> = mutableNextOccurrence.map { it }
 
-    override var actions: List<Action<T>> = emptyList()
-
-    private var validity: Observable<Boolean> = observe(true)
-    override var conditions: List<Condition<T>> = emptyList()
-        set(value) {
-            field = value
-            validity.dispose()
-            validity = value
-                .map(Condition<T>::isValid)
-                .combineLatest { validities -> validities.all { it } }
-                .map { it.getOrElse { true } }
-        }
-
-    override fun compareTo(other: Reaction<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)
-
-    override val canExecute: Observable<Boolean> get() = validity
-
-    override fun execute() {
-        conditions.forEach(Condition<T>::reactionReady)
-        environment.updatePhysics(1 / rate)
-        updateSchedulingAfterFiring(environment.simulationOrNull?.time ?: nextOccurrence.current)
-    }
+    override fun performModelMutation() = environment.updatePhysics(1 / rate)
 
     override fun updateSchedulingAfterFiring(currentTime: Time) {
         val sample = timeDistribution.sample()
         check(sample.isFinite && sample >= Time.ZERO) { "$timeDistribution generated an invalid delay: $sample" }
-        mutableNextOccurrence.current = currentTime.plus(sample)
+        setNextOccurrence(currentTime.plus(sample))
     }
 
-    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
-
-    override fun dispose() {
-        validity.dispose()
-        conditions.forEach(Condition<T>::dispose)
-        nextOccurrence.dispose()
-        mutableNextOccurrence.dispose()
-    }
+    override fun scheduleAfterInvalidation(currentTime: Time) = updateSchedulingAfterFiring(currentTime)
 
     private companion object {
         const val DEFAULT_RATE = 30.0

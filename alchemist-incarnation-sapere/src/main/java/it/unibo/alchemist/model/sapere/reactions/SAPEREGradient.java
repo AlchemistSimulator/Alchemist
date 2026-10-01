@@ -320,7 +320,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
     }
 
     @Override
-    protected void executeReaction() {
+    protected void performModelMutation() {
         if (sourceCache == null) {
             /*
              * First run

@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.nodes.GenericNode
+import it.unibo.alchemist.model.observation.CompositeDisposable
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.reactions.AbsoluteEvent
 import it.unibo.alchemist.model.reactions.AbstractNodeReaction
@@ -65,6 +66,7 @@ private class EmittingNodeReaction(
     distribution: TimeDistribution<Double> = DiracComb(1.0),
 ) : AbstractNodeReaction<Double>(node, distribution) {
     var emitOnExecute = false
+    var onExecute: () -> Unit = {}
     var executions = 0
     var disposed = false
 
@@ -73,8 +75,9 @@ private class EmittingNodeReaction(
         super.dispose()
     }
 
-    override fun executeReaction() {
+    override fun performModelMutation() {
         executions++
+        onExecute()
         if (emitOnExecute) {
             emit(DoubleTime(4.0), DoubleTime(5.0))
         }
@@ -84,6 +87,44 @@ private class EmittingNodeReaction(
 
     override fun cloneOnNewNode(node: Node<Double>, currentTime: Time): NodeReaction<Double> =
         error("Not needed in test")
+}
+
+private class CountingInvalidationReaction(
+    node: Node<Double>,
+    private val inputs: List<MutableObservable<Int>>,
+    private val onInvalidation: () -> Unit = {},
+    val distribution: CountingDistribution = CountingDistribution(),
+) : AbstractNodeReaction<Double>(node, distribution) {
+    var invalidations = 0
+        private set
+
+    override fun subscribeToSchedulingInputs(subscriptions: CompositeDisposable) {
+        inputs.forEach { input ->
+            subscriptions.add(
+                input.subscribe(invokeOnSubscription = false) {
+                    schedulingInputChanged()
+                },
+            )
+        }
+    }
+
+    override fun scheduleAfterInvalidation(currentTime: Time) {
+        invalidations++
+        onInvalidation()
+        super.scheduleAfterInvalidation(currentTime)
+    }
+
+    override fun cloneOnNewNode(node: Node<Double>, currentTime: Time): NodeReaction<Double> =
+        error("Not needed in test")
+}
+
+private class CountingDistribution : TimeDistribution<Double> {
+    var samples = 0
+        private set
+
+    override fun sample(): Time = DoubleTime((++samples).toDouble())
+
+    override fun newInstanceOn(node: Node<Double>): TimeDistribution<Double> = CountingDistribution()
 }
 
 private class InvalidCondition(node: Node<Double>) : AbstractCondition<Double>(node) {
@@ -125,7 +166,6 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         val scheduler = RecordingScheduler<Double>()
         val engine = TestEngine(environment, scheduler)
         engine.initializeForTest()
-
         scheduler.updateBeforeAdd shouldBe false
         scheduler.updates shouldNotContain reaction
     }
@@ -136,10 +176,8 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         val scheduler = RecordingScheduler<Double>()
         val engine = TestEngine(environment, scheduler)
         engine.initializeForTest()
-
         reaction.nextOccurrence.current shouldBe Time.INFINITY
         engine.stepForTest()
-
         engine.time shouldBe Time.ZERO
         engine.step shouldBe 0L
         reaction.executions shouldBe 0
@@ -152,12 +190,51 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         val engine = TestEngine(environment, scheduler)
         engine.initializeForTest()
         reaction.emit(DoubleTime(1.0), DoubleTime(2.0))
-
         scheduler.updates.count { it === reaction } shouldBe 2
-
         reaction.emitOnExecute = true
         engine.stepForTest()
         scheduler.updates.count { it === reaction } shouldBe 5
+    }
+
+    "each model mutation refreshes an affected reaction once" {
+        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+        val node = GenericNode(environment)
+        val inputs = List(2) { MutableObservable.observe(0, emitOnDistinct = false) }
+        val source = EmittingNodeReaction(node).apply {
+            onExecute = { inputs.forEach { it.current++ } }
+        }
+        val target = CountingInvalidationReaction(node, inputs)
+        node.addReaction(source)
+        node.addReaction(target)
+        environment.addNode(node, environment.makePosition(0, 0))
+        val scheduler = RecordingScheduler<Double>()
+        val engine = TestEngine(environment, scheduler)
+        engine.initializeForTest()
+        engine.schedule { inputs.forEach { it.current++ } }
+        engine.drainCommand()
+        target.invalidations shouldBe 1
+        target.distribution.samples shouldBe 1
+        scheduler.updates.count { it === target } shouldBe 1
+        engine.stepForTest()
+        target.invalidations shouldBe 2
+        target.distribution.samples shouldBe 2
+        scheduler.updates.count { it === target } shouldBe 2
+    }
+
+    "dirty reactions retain first-invalidation order" {
+        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+        val node = GenericNode(environment)
+        val input = MutableObservable.observe(0)
+        val refreshOrder = mutableListOf<Int>()
+        val reactions = List(8) { index ->
+            CountingInvalidationReaction(node, listOf(input), { refreshOrder += index }).also(node::addReaction)
+        }
+        environment.addNode(node, environment.makePosition(0, 0))
+        val engine = TestEngine(environment, RecordingScheduler())
+        engine.initializeForTest()
+        engine.schedule { input.current++ }
+        engine.drainCommand()
+        refreshOrder shouldBe reactions.indices.toList()
     }
 
     "removal disposes the subscription before scheduler removal" {
@@ -169,7 +246,6 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         engine.drainCommand()
         val updatesBeforeEmission = scheduler.updates.count { it === reaction }
         reaction.emit(DoubleTime(4.0))
-
         scheduler.reactions shouldNotContain reaction
         scheduler.updates.count { it === reaction } shouldBe updatesBeforeEmission
         reaction.disposed shouldBe true
@@ -184,10 +260,8 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         val scheduler = RecordingScheduler<Double>()
         val engine = TestEngine(environment, scheduler)
         engine.initializeForTest()
-
         engine.stepForTest()
         engine.drainCommand()
-
         scheduler.reactions shouldNotContain event
         scheduler.updates shouldNotContain event
         node.reactions shouldNotContain event
@@ -201,10 +275,8 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         val scheduler = RecordingScheduler<Double>()
         val engine = TestEngine(environment, scheduler)
         engine.initializeForTest()
-
         engine.stepForTest()
         engine.drainCommand()
-
         scheduler.reactions shouldNotContain event
         scheduler.updates shouldNotContain event
         environment.reactions shouldNotContain event
@@ -223,12 +295,10 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         val scheduler = RecordingScheduler<Double>()
         val engine = TestEngine(environment, scheduler)
         engine.initializeForTest()
-
         event.nextOccurrence.current shouldBe Time.ZERO
         event.canExecute.current shouldBe true
         engine.stepForTest()
         engine.drainCommand()
-
         engine.step shouldBe 1L
         condition.readySignals shouldBe 0
         scheduler.reactions shouldNotContain event
@@ -244,14 +314,12 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         engine.initializeForTest()
         val nodeReaction = EmittingNodeReaction(node)
         val environmentReaction = AbsoluteEvent<Double>(environment, DoubleTime(2.0))
-
         node.addReaction(nodeReaction)
         engine.drainCommand()
         environment.addReaction(environmentReaction)
         engine.drainCommand()
         scheduler.reactions shouldContain nodeReaction
         scheduler.reactions shouldContain environmentReaction
-
         node.removeReaction(nodeReaction)
         engine.drainCommand()
         environment.removeReaction(environmentReaction)
@@ -268,11 +336,9 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         val node = GenericNode(environment)
         val reaction = EmittingNodeReaction(node)
         node.addReaction(reaction)
-
         environment.addNode(node, environment.makePosition(0, 0))
         engine.drainCommand()
         scheduler.reactions shouldContain reaction
-
         environment.removeNode(node)
         engine.drainCommand()
         scheduler.reactions shouldNotContain reaction
@@ -284,7 +350,6 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         val scheduler = RecordingScheduler<Double>()
         val engine = TestEngine(environment, scheduler)
         engine.initializeForTest()
-
         shouldThrow<IllegalStateException> { engine.initializeForTest() }
     }
 
@@ -294,7 +359,6 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
             it.throwOnAdd = true
         }
         val engine = TestEngine(environment, scheduler)
-
         shouldThrow<IllegalStateException> { engine.initializeForTest() }
         reaction.nextOccurrence.observers.size shouldBe 0
         scheduler.reactions shouldNotContain reaction

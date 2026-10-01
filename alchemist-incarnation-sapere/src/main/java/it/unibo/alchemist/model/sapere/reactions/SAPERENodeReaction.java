@@ -143,7 +143,7 @@ public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMole
     }
 
     @Override
-    protected void executeReaction() {
+    protected void performModelMutation() {
         if (possibleMatches.isEmpty()) {
             executeActions(null);
             return;
@@ -287,7 +287,7 @@ public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMole
     }
 
     @Override
-    protected void updateSchedulingAfterInvalidation(@Nonnull final Time currentTime) {
+    protected void scheduleAfterInvalidation(@Nonnull final Time currentTime) {
         scheduleFreshOccurrence(currentTime);
     }
 

@@ -142,6 +142,9 @@ class EventSchedulingTest {
         var currentTime: Time = Time.ZERO
         val simulation = mockk<Simulation<Any, Nothing>>()
         every { simulation.time } answers { currentTime }
+        every { simulation.reactionInvalidated(any()) } answers {
+            firstArg<Reaction<Any>>().updateSchedulingAfterInvalidation(currentTime)
+        }
         val environment = mockk<Environment<Any, Nothing>>()
         every { environment.simulationOrNull } returns simulation
         return environment to { currentTime = it }

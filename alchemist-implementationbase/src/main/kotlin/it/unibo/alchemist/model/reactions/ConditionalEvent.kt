@@ -40,7 +40,7 @@ class ConditionalEvent<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) 
         armIfValid(currentTime)
     }
 
-    override fun updateSchedulingAfterInvalidation(currentTime: Time) {
+    override fun scheduleAfterInvalidation(currentTime: Time) {
         armIfValid(currentTime)
     }
 
@@ -49,8 +49,8 @@ class ConditionalEvent<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) 
         super.suspendScheduling()
     }
 
-    override fun executeReaction() {
-        super.executeReaction()
+    override fun performModelMutation() {
+        super.performModelMutation()
         node.removeReaction(this)
     }
 
@@ -59,7 +59,7 @@ class ConditionalEvent<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) 
 
     private fun armIfValid(currentTime: Time) {
         if (!armed && canExecute.current) {
-            super.updateSchedulingAfterInvalidation(currentTime)
+            super.scheduleAfterInvalidation(currentTime)
             armed = true
         }
     }

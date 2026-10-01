@@ -29,13 +29,15 @@ Scheduling responsibilities have explicit owners:
   scheduling law.
 * Disposing a reaction releases its derived observables and exact subscription handles. Model observables remain
   owned by the model entities that expose them.
+* During a reaction execution or scheduled command, the engine collects directly invalidated reactions and refreshes
+  each affected reaction once when that model mutation completes.
 * The engine owns one exact subscription to every scheduled reaction's `nextOccurrence`.
 * The scheduler indexes reactions by their current occurrence time.
 
 The model and execution paths are therefore distinct:
 
 ```text
-scheduling: model observable -> reaction policy -> nextOccurrence emission -> engine -> scheduler reindexing
+scheduling: model observable -> dirty reaction -> mutation completion -> reaction policy -> nextOccurrence emission -> engine -> scheduler reindexing
 firing: scheduler selection -> engine time advance -> reaction procedure -> model mutation and/or removal
 ```
 
@@ -66,12 +68,16 @@ A {{% api package="model.reactions" class="ConditionalEvent" %}} unregisters its
 ### Reactive invalidation
 
 An observable model change can invalidate a reaction between occurrences.
-The reaction refreshes its specialized state and applies an invalidation policy distinct from post-firing advancement.
+The reaction is marked dirty synchronously.
+When the enclosing reaction execution or scheduled command completes,
+each dirty reaction refreshes its specialized state once and applies an invalidation policy distinct from post-firing
+advancement, in first-invalidation order.
 An additional semantic input can trigger this refresh while combined condition validity remains true.
 If that policy changes `nextOccurrence`, the observable emits and the engine immediately asks the scheduler to
 reindex the reaction.
-An invalid reaction publishes the infinite occurrence. Sampling occurs when its scheduling policy enables it again.
-Revalidation refreshes specialized state and applies the family policy from the current simulation time.
+An invalid reaction publishes the infinite occurrence.
+Sampling occurs when its scheduling policy enables it again.
+Revalidation refreshes specialized state and applies the invalidation policy from the current simulation time.
 
 The correct invalidation policy belongs to the reaction family:
 
@@ -107,9 +113,11 @@ The engine integrates a reaction into execution in a fixed order:
 1. Complete reaction initialization and establish the current occurrence.
 2. Insert the reaction into the scheduler.
 3. Subscribe to `nextOccurrence`.
-4. Reindex the reaction on every subsequent occurrence emission.
-5. Select and execute the earliest finite reaction.
-6. Process membership notifications from {{% api package="model" class="ReactionHost" %}} implementations.
+4. Collect direct reaction invalidations during each reaction execution or scheduled command.
+5. Refresh each dirty reaction once when that model mutation completes.
+6. Reindex the reaction on every subsequent occurrence emission.
+7. Select and execute the earliest finite reaction.
+8. Process membership notifications from {{% api package="model" class="ReactionHost" %}} implementations.
 
 Registration, occurrence emissions, scheduler updates, and scheduler removal are confined to the simulation thread.
 Host mutations notify the engine through its command queue;

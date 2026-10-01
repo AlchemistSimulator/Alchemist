@@ -14,10 +14,10 @@ import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.observation.CompositeDisposable
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.Observable
-import javax.annotation.Nonnull
 
 /**
  * Owner-neutral implementation of the reactive state shared by all [Reaction]s.
@@ -29,6 +29,8 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
 
     override var actions: List<Action<T>> = emptyList()
 
+    override val canExecute: Observable<Boolean> get() = conditionValidity
+
     override var conditions: List<Condition<T>> = emptyList()
         set(value) {
             validateConditions(value)
@@ -37,9 +39,9 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
             conditionValidity = value.map(Condition<T>::isValid)
                 .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
                 ?: MutableObservable.observe(true)
-            initializedEnvironment?.let {
+            if (initializedEnvironment != null) {
                 initializeSchedulingSubscriptions()
-                reactToModelUpdate(it)
+                schedulingInputChanged()
             }
         }
 
@@ -53,48 +55,39 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
      */
     private var conditionValidity: Observable<Boolean> = MutableObservable.observe(true)
 
-    @Transient
-    private var schedulingSubscriptions: CompositeDisposable? = null
+    private var disposed = false
 
-    @Transient
     protected var initializedEnvironment: Environment<T, *>? = null
         private set
 
     protected var lastKnownTime = Time.ZERO
 
-    private var disposed = false
+    final override val nextOccurrence: Observable<Time>
+        field: MutableObservable<Time> = MutableObservable.observe(initialOccurrence, false)
 
-    /** Whether this reaction has already released its observable state. */
-    protected val isDisposed: Boolean get() = disposed
-
-    private val mutableNextOccurrence = MutableObservable.observe(initialOccurrence, false)
-
-    private val observableNextOccurrence = mutableNextOccurrence.map { it }
-
-    final override val nextOccurrence: Observable<Time> get() = observableNextOccurrence
-
-    override val canExecute: Observable<Boolean> get() = conditionValidity
+    private var schedulingSubscriptions: CompositeDisposable? = null
 
     final override fun compareTo(other: Reaction<T>): Int =
         nextOccurrence.current.compareTo(other.nextOccurrence.current)
 
-    /** The default execution prepares valid conditions and then applies the model mutation. */
+    /** Prepares valid conditions, applies the model mutation, and advances surviving distributed reactions. */
     override fun execute() {
+        val firingTime = nextOccurrence.current
         signalConditionsReady()
-        executeReaction()
+        performModelMutation()
+        if (initializedEnvironment != null && this is TimeDistributedReaction<*>) {
+            updateSchedulingAfterFiring(firingTime)
+        }
     }
 
     /** Performs this reaction's model mutation. */
-    protected open fun executeReaction() = actions.forEach(Action<T>::execute)
+    protected open fun performModelMutation() = actions.forEach(Action<T>::execute)
 
     /** Notifies conditions immediately before their valid reaction executes. */
     protected fun signalConditionsReady() = conditions.forEach(Condition<T>::reactionReady)
 
     /** The scheduling information appended by [toString], or `null` when none exists. */
     protected open val rateAsString: String? get() = null
-
-    /** The name used by [toString]. */
-    protected val reactionName: String get() = javaClass.simpleName
 
     /** Initializes reactive inputs after the model has been fully assembled. */
     final override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {
@@ -110,7 +103,7 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
     }
 
     /** Called once reactive scheduling inputs have been activated. */
-    protected open fun onInitializationComplete(@Nonnull atTime: Time, @Nonnull environment: Environment<T, *>) = Unit
+    protected open fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
 
     /** Called after reaction-specific initialization completes. */
     protected open fun afterInitializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
@@ -137,11 +130,28 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
 
     /** Refreshes scheduling after one directly observed model input changes. */
     protected fun schedulingInputChanged() {
-        initializedEnvironment?.let(::reactToModelUpdate)
+        initializedEnvironment?.let { environment ->
+            environment.simulationOrNull
+                ?.reactionInvalidated(this)
+                ?: updateSchedulingAfterInvalidation(lastKnownTime)
+        }
+    }
+
+    final override fun updateSchedulingAfterInvalidation(currentTime: Time) {
+        val environment = checkNotNull(initializedEnvironment) {
+            "Reaction $this was invalidated before initialization"
+        }
+        lastKnownTime = currentTime
+        refreshReactionState(currentTime, environment)
+        if (canExecute.current) {
+            scheduleAfterInvalidation(currentTime)
+        } else {
+            suspendScheduling()
+        }
     }
 
     /** Applies scheduling policy after a reactive invalidation without firing the reaction. */
-    protected abstract fun updateSchedulingAfterInvalidation(currentTime: Time)
+    protected abstract fun scheduleAfterInvalidation(currentTime: Time)
 
     /** Suspends this reaction without advancing its scheduling policy or consuming another sample. */
     protected open fun suspendScheduling() {
@@ -152,7 +162,7 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
 
     /** Changes the reaction-owned absolute occurrence time. */
     protected fun setNextOccurrence(nextOccurrence: Time) {
-        mutableNextOccurrence.current = nextOccurrence
+        this.nextOccurrence.current = nextOccurrence
     }
 
     override fun dispose() {
@@ -169,13 +179,12 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
             if (executionEligibility !== conditionValidity) {
                 conditionValidity.dispose()
             }
-            observableNextOccurrence.dispose()
-            mutableNextOccurrence.dispose()
+            nextOccurrence.dispose()
         }
     }
 
     override fun toString(): String = buildString {
-        append(reactionName)
+        append(javaClass.simpleName)
         append('@')
         append(nextOccurrence.current)
         append(':')
@@ -191,15 +200,5 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
     private fun initializeSchedulingSubscriptions() {
         schedulingSubscriptions?.dispose()
         schedulingSubscriptions = CompositeDisposable().also(::subscribeToSchedulingInputs)
-    }
-
-    private fun reactToModelUpdate(environment: Environment<T, *>) {
-        val currentTime = environment.simulationOrNull?.time ?: lastKnownTime
-        refreshReactionState(currentTime, environment)
-        if (canExecute.current) {
-            updateSchedulingAfterInvalidation(currentTime)
-        } else {
-            suspendScheduling()
-        }
     }
 }

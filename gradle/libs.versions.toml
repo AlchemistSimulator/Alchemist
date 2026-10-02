@@ -30,7 +30,7 @@ ais-lib-messages = { module = "dk.dma.ais.lib:ais-lib-messages", version.ref = "
 apache-commons-codec = "commons-codec:commons-codec:1.22.1"
 apache-commons-collections4 = "org.apache.commons:commons-collections4:4.6.0"
 apache-commons-io = "commons-io:commons-io:2.22.0"
-apache-commons-lang3 = "org.apache.commons:commons-lang3:3.20.0"
+apache-commons-lang3 = "org.apache.commons:commons-lang3:3.21.0"
 apache-commons-math3 = "org.apache.commons:commons-math3:3.6.1"
 apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }
 appdirs = "net.harawata:appdirs:1.5.0"

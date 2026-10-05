@@ -577,7 +577,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] Test invalid-at-initialization, true-to-false suspension, and false-to-true revalidation. Assert that invalid
   reactions are indexed at `Time.INFINITY`, never execute, never advance stateful distributions, and never generate
   phantom monitor notifications or step increments.
-- [ ] Test that revalidation cannot publish a time earlier than the current simulation time and consumes exactly the
+- [x] Test that revalidation cannot publish a time earlier than the current simulation time and consumes exactly the
   random samples required by the reaction family's documented policy.
 - [x] Test the complete Protelis send sequence with both deterministic/stateful and exponential distributions:
   initial false validity means infinity and zero samples; the first completed program round draws once; repeated
@@ -597,7 +597,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] Test match and other specialized scheduling changes that leave condition validity `true`, proving that their
   direct reaction-specific signals invalidate scheduling without dependency sets or repeated Boolean emissions.
 - [x] Test zero-to-positive, positive-to-zero, and positive-to-positive chemical propensity transitions.
-- [ ] Verify whether each transition preserves, transforms, or redraws the sampled time as specified.
+- [x] Verify whether each transition preserves, transforms, or redraws the sampled time as specified.
 - [ ] Assert random-number consumption explicitly for stochastic generators.
 - [x] Test one recomputation and scheduler reindex per logical transaction.
 - [x] Test observer cleanup and absence of post-removal scheduler updates.
@@ -670,6 +670,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-05: Covered generic and SAPERE revalidation from the current simulation time.
 - 2026-10-05: Covered Markovian suspension, redraw, rescaling, and preservation across propensity transitions.
 - 2026-10-05: Covered immutable neighborhood snapshot replacement on topology changes.
 - 2026-10-05: Skipped reactions removed during an invalidation transaction; cleaned up the observable API.

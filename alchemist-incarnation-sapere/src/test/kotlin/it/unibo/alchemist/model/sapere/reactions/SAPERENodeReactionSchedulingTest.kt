@@ -12,6 +12,9 @@ package it.unibo.alchemist.model.sapere.reactions
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import it.unibo.alchemist.core.Simulation
+import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import it.unibo.alchemist.model.linkingrules.ClosestN
@@ -23,6 +26,8 @@ import it.unibo.alchemist.model.sapere.molecules.LsaMolecule
 import it.unibo.alchemist.model.sapere.nodes.LsaNode
 import it.unibo.alchemist.model.sapere.timedistributions.SAPEREExponentialTime
 import it.unibo.alchemist.model.times.DoubleTime
+import kotlin.math.ln
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 import org.apache.commons.math3.random.RandomGenerator
@@ -56,6 +61,29 @@ class SAPERENodeReactionSchedulingTest {
         assertTrue(reaction.canExecute.current)
         assertTrue(reaction.nextOccurrence.current.isFinite)
         verify(exactly = 2) { rng.nextDouble() }
+    }
+
+    @Test
+    fun `match revalidation redraws from the current simulation time`() {
+        val (rng, environment, node, reaction) = fixture()
+        var now: Time = Time.ZERO
+        val simulation = mockk<Simulation<List<ILsaMolecule>, Euclidean2DPosition>>(relaxed = true)
+        every { simulation.reactionInvalidated(any()) } answers {
+            firstArg<Reaction<List<ILsaMolecule>>>().updateSchedulingAfterInvalidation(now)
+        }
+        environment.simulation = simulation
+        reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token"), node))
+        reaction.initializationComplete(Time.ZERO, environment)
+        assertEquals(Time.INFINITY, reaction.nextOccurrence.current)
+        verify(exactly = 0) { rng.nextDouble() }
+        now = DoubleTime(5.0)
+        node.setConcentration(LsaMolecule("token"))
+        verify(exactly = 1) { rng.nextDouble() }
+        assertEquals(5.0 + ln(2.0) / 2, reaction.nextOccurrence.current.toDouble(), TOLERANCE)
+        now = DoubleTime(6.0)
+        node.setConcentration(LsaMolecule("token"))
+        verify(exactly = 2) { rng.nextDouble() }
+        assertTrue(reaction.nextOccurrence.current > now)
     }
 
     @Test
@@ -150,6 +178,10 @@ class SAPERENodeReactionSchedulingTest {
             node,
             SAPERENodeReaction(environment, node, rng, SAPEREExponentialTime(rate, rng)),
         )
+    }
+
+    private companion object {
+        const val TOLERANCE = 1e-12
     }
 
     private data class Fixture(

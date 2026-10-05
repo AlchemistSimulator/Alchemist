@@ -244,6 +244,29 @@ class NodeReactionTransitionTest {
         assertEquals(1, samples)
     }
 
+    @Test
+    fun `generic reaction revalidation redraws from the current simulation time`() {
+        val fixture = exponentialFixture(1.0) { 0.5 }
+        every { fixture.environment.simulationOrNull } returns mockk(relaxed = true)
+        val validity = observe(true, emitOnDistinct = false)
+        val reaction = GenericReaction(fixture.node, ExponentialTime(1.0, fixture.randomGenerator)).apply {
+            conditions = listOf(ObservableValidityCondition(fixture.node, validity))
+        }
+        fun invalidate(valid: Boolean, currentTime: Double) {
+            validity.current = valid
+            reaction.updateSchedulingAfterInvalidation(DoubleTime(currentTime))
+        }
+        reaction.initializationComplete(Time.ZERO, fixture.environment)
+        assertEquals(Time.ZERO, reaction.nextOccurrence.current)
+        assertEquals(0, fixture.samples)
+        invalidate(false, 4.0)
+        assertEquals(Time.INFINITY, reaction.nextOccurrence.current)
+        assertEquals(0, fixture.samples)
+        invalidate(true, 7.0)
+        assertEquals(1, fixture.samples)
+        assertEquals(7.0 + ln(2.0), reaction.nextOccurrence.current.toDouble(), TOLERANCE)
+    }
+
     private class ObservableRateReaction<T>(
         node: Node<T>,
         timeDistribution: ExponentialTime<T>,

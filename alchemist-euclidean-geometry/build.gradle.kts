@@ -27,6 +27,7 @@ dependencies {
 
     testImplementation(alchemist("loading"))
     testImplementation(alchemist("physics"))
+    testImplementation(libs.kotlin.test)
     testRuntimeOnly(incarnation("protelis"))
 }
 

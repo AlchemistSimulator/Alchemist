@@ -586,7 +586,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   - [x] Cover the complete deterministic/stateful sequence with explicit sample counts.
   - [x] Repeat the sequence with an exponential distribution and explicit random-generator consumption.
 - [ ] Test neighborhood addition/removal, movement, environment-wide changes, and dynamic reaction/node changes.
-- [ ] Test that previously published neighborhood snapshots cannot change when topology changes and that observers
+- [x] Test that previously published neighborhood snapshots cannot change when topology changes and that observers
   receive a distinct immutable replacement snapshot.
 - [x] Test propensity changes that do not change Boolean condition validity.
 - [ ] Test that the general `Condition` API exposes no propensity contribution, supported chemical condition types
@@ -599,11 +599,11 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] Test zero-to-positive, positive-to-zero, and positive-to-positive chemical propensity transitions.
 - [ ] Verify whether each transition preserves, transforms, or redraws the sampled time as specified.
 - [ ] Assert random-number consumption explicitly for stochastic generators.
-- [ ] Test one recomputation and scheduler reindex per logical transaction.
-- [ ] Test observer cleanup and absence of post-removal scheduler updates.
+- [x] Test one recomputation and scheduler reindex per logical transaction.
+- [x] Test observer cleanup and absence of post-removal scheduler updates.
 - [ ] Test that node- and environment-owned events execute at most once and then disappear from the scheduler,
   engine subscription ownership, and model owner without an infinite reindex, phantom step, or clone resurrection.
-- [ ] Test and document the selected policy for an event whose condition is invalid at its absolute occurrence.
+- [x] Test and document the selected policy for an event whose condition is invalid at its absolute occurrence.
 - [ ] Add performance checks for large reaction populations and high-frequency invalidation.
 
 ## Phase 11: finish API modernization
@@ -670,6 +670,8 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-05: Covered immutable neighborhood snapshot replacement on topology changes.
+- 2026-10-05: Skipped reactions removed during an invalidation transaction; cleaned up the observable API.
 - 2026-09-30: Added ordered invalidation transactions for reaction execution and scheduled commands.
 - 2026-09-30: Completed propensity-input observability; mutable layers remain in Phase 9.
 - 2026-09-29: Completed Markovian, biochemical, and SAPERE propensity validation.

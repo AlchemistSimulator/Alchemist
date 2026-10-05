@@ -589,8 +589,6 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] Test that previously published neighborhood snapshots cannot change when topology changes and that observers
   receive a distinct immutable replacement snapshot.
 - [x] Test propensity changes that do not change Boolean condition validity.
-- [ ] Test that the general `Condition` API exposes no propensity contribution, supported chemical condition types
-  drive the reaction-owned mass-action law, and unsupported conditions fail during assignment/loading.
 - [ ] Test specialized condition acceptance and propensity behavior across chemical, biochemical, SAPERE, and other
   families migrated from condition-level contributions, including clone reconstruction and exact subscription
   cleanup.
@@ -670,6 +668,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-05: Covered the propensity-free condition API and YAML rejection of unsupported biochemical conditions.
 - 2026-10-05: Covered engine-level one-shot event execution, cleanup, and non-resurrection by node cloning.
 - 2026-10-05: Covered generic and SAPERE revalidation from the current simulation time.
 - 2026-10-05: Covered Markovian suspension, redraw, rescaling, and preservation across propensity transitions.

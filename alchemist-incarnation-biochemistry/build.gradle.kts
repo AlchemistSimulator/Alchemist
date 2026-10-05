@@ -40,6 +40,7 @@ dependencies {
 
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("loading"))
+    testImplementation(libs.kotlin.test)
 }
 
 /*

@@ -88,6 +88,9 @@ open class Engine<T, P : Position<out P>>(
     }
 
     override fun reactionRemoved(reactionToRemove: Reaction<T>) {
+        if (modelMutationDepth > 0) {
+            dirtyReactions.remove(reactionToRemove)
+        }
         schedule { removeReactionIfScheduled(reactionToRemove) }
     }
 

@@ -238,6 +238,29 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         refreshOrder shouldBe reactions.indices.toList()
     }
 
+    "a reaction removed during a model mutation is not refreshed" {
+        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+        val node = GenericNode(environment)
+        val input = observe(0)
+        val target = CountingInvalidationReaction(node, listOf(input))
+        val source = EmittingNodeReaction(node).apply {
+            onExecute = {
+                input.current++
+                node.removeReaction(target)
+            }
+        }
+        node.addReaction(source)
+        node.addReaction(target)
+        environment.addNode(node, environment.makePosition(0, 0))
+        val scheduler = RecordingScheduler<Double>()
+        val engine = TestEngine(environment, scheduler)
+        engine.initializeForTest()
+        engine.stepForTest()
+        target.invalidations shouldBe 0
+        engine.drainCommand()
+        scheduler.reactions shouldNotContain target
+    }
+
     "removal disposes the subscription before scheduler removal" {
         val (environment, _, reaction) = fixture()
         val scheduler = RecordingScheduler<Double>()

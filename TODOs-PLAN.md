@@ -522,7 +522,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] Keep the invalidation transaction independent from scheduler notification: it must prevent redundant
   recomputation, resampling, and random-number consumption before `nextOccurrence` emits, not buffer scheduler
   callbacks after emission.
-- [ ] Exclude reactions removed or disposed while a transaction is collecting dirty reactions.
+- [x] Exclude reactions removed or disposed while a transaction is collecting dirty reactions.
 
 ## Phase 8: remove Java serialization
 

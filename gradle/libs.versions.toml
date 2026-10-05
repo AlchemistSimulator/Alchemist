@@ -20,7 +20,7 @@ mockito = "5.24.0"
 protelis = "19.0.0"
 react = "2026.9.3-19.3.0"
 scafi = "1.8.0"
-scala3 = "3.9.0"
+scala3 = "3.10.0"
 
 [libraries]
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }

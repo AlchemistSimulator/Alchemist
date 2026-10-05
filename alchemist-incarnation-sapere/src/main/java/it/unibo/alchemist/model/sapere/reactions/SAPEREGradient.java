@@ -25,11 +25,11 @@ import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.maps.MapEnvironment;
-import it.unibo.alchemist.model.observation.CompositeDisposable;
+import it.unibo.alchemist.model.observables.CompositeDisposable;
+import it.unibo.alchemist.model.observables.util.ObservableLists;
 import it.unibo.alchemist.model.observation.Disposable;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
-import it.unibo.alchemist.model.observation.ObservableExtensions;
 import it.unibo.alchemist.model.reactions.AbstractNodeReaction;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
@@ -52,6 +52,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static it.unibo.alchemist.model.observables.util.MutableObservables.observe;
+
 /**
  * This class provides a fast and stable gradient implementation, inspired on
  * the NBR construct used in Proto.
@@ -64,7 +66,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
     private static final IExpression ZERO_NODE = new Expression(new NumTreeNode(0d));
 
     private final int argPosition;
-    private final MutableObservable<Boolean> canRun = MutableObservable.Companion.observe(true);
+    private final MutableObservable<Boolean> canRun = observe(true);
     private List<? extends ILsaMolecule> contextCache;
     private final Environment<List<ILsaMolecule>, P> environment;
     private final List<Action<List<ILsaMolecule>>> fakeacts = new ArrayList<>(1);
@@ -232,7 +234,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
     ) {
         // Observe every node, not just current neighbors: a remote node can move into this neighborhood.
         final Observable<List<NodeState>> nodeStates =
-            ObservableExtensions.ObservableListExtensions.INSTANCE.combineLatest(
+            ObservableLists.INSTANCE.combineLatest(
                 environment.getNodes(),
                 currentNode -> observeNodeState(environment, node, currentNode),
                 ignored -> currentSpatialSnapshot(environment, node)
@@ -615,7 +617,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
 
     private static class SGFakeConditionAction implements Action<List<ILsaMolecule>>, Condition<List<ILsaMolecule>> {
         private final Molecule mol;
-        private final Observable<Boolean> validity = MutableObservable.Companion.observe(false);
+        private final Observable<Boolean> validity = observe(false);
         private final List<Observable<?>> schedulingInputs;
 
         SGFakeConditionAction(final Molecule m, final Observable<?>... dependencies) {

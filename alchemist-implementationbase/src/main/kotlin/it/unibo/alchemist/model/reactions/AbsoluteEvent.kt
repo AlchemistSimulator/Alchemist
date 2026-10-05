@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.reactions
 
 import it.unibo.alchemist.model.ReactionHost
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
 
 /**
@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.observation.Observable
  */
 class AbsoluteEvent<T>(private val host: ReactionHost<T>, val occurrence: Time) : AbstractReaction<T>(occurrence) {
 
-    override val canExecute: Observable<Boolean> = MutableObservable.observe(true)
+    override val canExecute: Observable<Boolean> = observe(true)
 
     init {
         require(occurrence.isFinite && occurrence >= Time.ZERO) {

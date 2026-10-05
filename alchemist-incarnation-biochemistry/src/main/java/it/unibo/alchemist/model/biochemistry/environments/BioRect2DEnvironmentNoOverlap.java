@@ -297,7 +297,7 @@ public final class BioRect2DEnvironmentNoOverlap
             throw new UnsupportedOperationException("Input type must be CellWithCircuolarShape or CircularDeformableCell");
         }
 
-        return getNodes().toList().stream()
+        return getNodes().getCurrent().stream()
                 .parallel()
                 .flatMap(n -> cellClass.isInstance(n) ? Stream.of(cellClass.cast(n)) : Stream.empty())
                 .max((c1, c2) -> {

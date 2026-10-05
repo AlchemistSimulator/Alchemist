@@ -15,7 +15,8 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistributedReaction
-import it.unibo.alchemist.model.observation.CompositeDisposable
+import it.unibo.alchemist.model.observables.CompositeDisposable
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.Observable
 
@@ -38,7 +39,7 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
             conditionValidity.dispose()
             conditionValidity = value.map(Condition<T>::isValid)
                 .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
-                ?: MutableObservable.observe(true)
+                ?: observe(true)
             if (initializedEnvironment != null) {
                 initializeSchedulingSubscriptions()
                 schedulingInputChanged()
@@ -53,7 +54,7 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
      * For reactions overriding canExecute, the default conditionValidity is unused,
      * although its derived observable remains lazy and does not subscribe to condition sources.
      */
-    private var conditionValidity: Observable<Boolean> = MutableObservable.observe(true)
+    private var conditionValidity: Observable<Boolean> = observe(true)
 
     private var disposed = false
 
@@ -63,7 +64,7 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
     protected var lastKnownTime = Time.ZERO
 
     final override val nextOccurrence: Observable<Time>
-        field: MutableObservable<Time> = MutableObservable.observe(initialOccurrence, false)
+        field: MutableObservable<Time> = observe(initialOccurrence, false)
 
     private var schedulingSubscriptions: CompositeDisposable? = null
 

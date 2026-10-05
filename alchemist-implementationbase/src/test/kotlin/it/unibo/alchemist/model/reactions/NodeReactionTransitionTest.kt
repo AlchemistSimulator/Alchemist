@@ -19,7 +19,8 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.conditions.ConcentrationChanged
 import it.unibo.alchemist.model.molecules.SimpleMolecule
-import it.unibo.alchemist.model.observation.CompositeDisposable
+import it.unibo.alchemist.model.observables.CompositeDisposable
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.times.DoubleTime
@@ -35,7 +36,7 @@ class NodeReactionTransitionTest {
     @Test
     fun `the chemical policy base rejects conditions without explicit rate semantics`() {
         val node = mockk<Node<Any>>()
-        val condition = ObservableValidityCondition(node, MutableObservable.observe(true))
+        val condition = ObservableValidityCondition(node, observe(true))
         assertFailsWith<IllegalArgumentException> {
             ChemicalNodeReaction(node, ExponentialTime(1.0, mockk(relaxed = true))).conditions = listOf(condition)
         }
@@ -62,7 +63,7 @@ class NodeReactionTransitionTest {
         val node = mockk<Node<Any>>()
         val environment = mockk<Environment<Any, *>>(relaxed = true)
         every { environment.simulationOrNull } returns null
-        val propensity = MutableObservable.observe(Double.POSITIVE_INFINITY, emitOnDistinct = false)
+        val propensity = observe(Double.POSITIVE_INFINITY, emitOnDistinct = false)
         val randomGenerator = mockk<RandomGenerator>()
         var samples = 0
         every { randomGenerator.nextDouble() } answers {
@@ -154,7 +155,7 @@ class NodeReactionTransitionTest {
         val environment = mockk<Environment<Any, *>>(relaxed = true)
         val molecule = SimpleMolecule("tracked")
         val initialConcentration = Any()
-        val concentration = MutableObservable.observe<Option<Any>>(initialConcentration.some())
+        val concentration = observe<Option<Any>>(initialConcentration.some())
         every { environment.simulationOrNull } returns null
         every { node.getConcentration(molecule) } returns initialConcentration
         every { node.observeConcentration(molecule) } returns concentration
@@ -186,7 +187,7 @@ class NodeReactionTransitionTest {
         val node = mockk<Node<Any>>()
         val environment = mockk<Environment<Any, *>>(relaxed = true)
         every { environment.simulationOrNull } returns null
-        val validity = MutableObservable.observe(true, emitOnDistinct = false)
+        val validity = observe(true, emitOnDistinct = false)
         val randomGenerator = mockk<RandomGenerator>()
         var samples = 0
         every { randomGenerator.nextDouble() } answers {
@@ -252,7 +253,7 @@ class NodeReactionTransitionTest {
         val node = mockk<Node<Any>>()
         val environment = mockk<Environment<Any, *>>(relaxed = true)
         every { environment.simulationOrNull } returns null
-        val propensity = MutableObservable.observe(propensityValue, emitOnDistinct = false)
+        val propensity = observe(propensityValue, emitOnDistinct = false)
         val randomGenerator = mockk<RandomGenerator>()
         val fixture = ExponentialFixture(node, environment, propensity, randomGenerator)
         every { randomGenerator.nextDouble() } answers {

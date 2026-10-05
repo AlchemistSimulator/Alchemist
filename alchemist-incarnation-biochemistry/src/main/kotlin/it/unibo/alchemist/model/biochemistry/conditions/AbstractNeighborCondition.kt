@@ -14,9 +14,9 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.conditions.AbstractCondition
+import it.unibo.alchemist.model.observables.util.Observables.combineLatest
+import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
-import it.unibo.alchemist.model.observation.ObservableExtensions.switchMap
 
 /** A condition satisfied when at least one neighbor has a positive reaction-specific selection weight. */
 abstract class AbstractNeighborCondition<T>(private val environment: Environment<T, *>, node: Node<T>) :

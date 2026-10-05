@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,11 +13,11 @@ import arrow.core.Option;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.nodes.GenericNode;
+import it.unibo.alchemist.model.observables.ObservableMutableList;
+import it.unibo.alchemist.model.observables.ObservableMutableMap;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableList;
-import it.unibo.alchemist.model.observation.ObservableMutableList;
-import it.unibo.alchemist.model.observation.ObservableMutableMap;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
@@ -29,25 +29,24 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static it.unibo.alchemist.model.observables.util.MutableObservables.observe;
+
 /**
  * This class realizes a node with LSA concentration.
  */
 public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements ILsaNode {
 
-    @Serial
-    private static final long serialVersionUID = -2167025208984968645L;
     private static final ILsaMolecule ZEROMOL = new LsaMolecule("0");
 
     private final Map<String, List<ILsaMolecule>> instancesByName = new HashMap<>();
     private final Map<String, MutableObservable<List<ILsaMolecule>>> observablesByName = new HashMap<>();
-    private final MutableObservable<Integer> moleculeCount = MutableObservable.Companion.observe(0);
+    private final MutableObservable<Integer> moleculeCount = observe(0);
     private final ObservableMutableList<ILsaMolecule> allInstances = new ObservableMutableList<>();
     private boolean contentsDirty = true;
 
@@ -67,7 +66,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @NotNull
     public Map<Molecule, List<ILsaMolecule>> getContents() {
         if (contentsDirty) {
-            updateContents(allInstances.toList());
+            updateContents(allInstances.getCurrent());
         }
         return super.getContents();
     }
@@ -76,7 +75,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @NotNull
     public ObservableMutableMap<Molecule, List<ILsaMolecule>> getObservableContents() {
         if (contentsDirty) {
-            updateContents(allInstances.toList());
+            updateContents(allInstances.getCurrent());
         }
         return super.getObservableContents();
     }
@@ -89,7 +88,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
                 molecules.stream().anyMatch(mol -> mol.matches(toMatch))
             );
         }
-        return MutableObservable.Companion.observe(false);
+        return observe(false);
     }
 
     @Override
@@ -126,7 +125,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     public Observable<List<ILsaMolecule>> observeMoleculeName(@NotNull final String name) {
         synchronized (instancesByName) {
             return observablesByName.computeIfAbsent(name, k ->
-                MutableObservable.Companion.observe(
+                observe(
                     new ArrayList<>(instancesByName.getOrDefault(name, Collections.emptyList()))
                 )
             );
@@ -135,7 +134,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
 
     @Override
     public List<ILsaMolecule> getLsaSpace() {
-        return Collections.unmodifiableList(allInstances.toList());
+        return allInstances.getCurrent();
     }
 
     @Override

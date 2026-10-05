@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -17,24 +17,22 @@ import java.util.Collections
 /**
  * An abstract implementation of the [Observable] interface designed to support observables whose states
  * are derived from other data sources. Manages the lifecycle of observation and update propagation while
- * keeping a minimal set of active subscriptions with the underlying observables. Moreover, observation of
- * the sources is enabled if only there are observers registered with this derived observable.
+ * keeping a minimal set of active subscriptions with the underlying observables.
+ * Moreover, observation of the sources is enabled if only there are observers registered with this derived observable.
  *
  * @param emitOnDistinct whether to emit when the new derived value is different from the current one.
  * @param T The type of data being observed.
  */
-abstract class DerivedObservable<T>(private val emitOnDistinct: Boolean = true) : Observable<T> {
-    private val callbacks = LinkedHashMap<Any, List<(T) -> Unit>>()
-
+abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true) : Observable<T> {
     protected var cached: Option<T> = none()
-
-    private var isListening = false
+    private val callbacks = LinkedHashMap<Any, List<(T) -> Unit>>()
 
     override val observingCallbacks: Map<Any, List<(T) -> Unit>>
         get() = Collections.unmodifiableMap(callbacks)
 
     override val observers: List<Any>
         get() = callbacks.keys.toList()
+    private var isListening = false
 
     @Suppress("UNCHECKED_CAST")
     override val current: T
@@ -67,7 +65,6 @@ abstract class DerivedObservable<T>(private val emitOnDistinct: Boolean = true) 
 
     override fun stopWatching(registrant: Any) {
         callbacks.remove(registrant)
-
         if (callbacks.isEmpty() && isListening) {
             stopMonitoring()
             isListening = false
@@ -79,7 +76,6 @@ abstract class DerivedObservable<T>(private val emitOnDistinct: Boolean = true) 
         if (isListening) {
             stopMonitoring()
         }
-
         callbacks.clear()
         isListening = false
         cached = none()
@@ -124,9 +120,7 @@ abstract class DerivedObservable<T>(private val emitOnDistinct: Boolean = true) 
         val changed = cached.getOrNull()?.let { it != newValue } ?: true
         if (!emitOnDistinct || changed) {
             cached = newValue.some()
-            callbacks.values.forEach { cs ->
-                cs.forEach { it(newValue) }
-            }
+            callbacks.values.flatten().forEach { it(newValue) }
         }
     }
 }

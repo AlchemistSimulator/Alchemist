@@ -13,10 +13,11 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
-import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
 
 import javax.annotation.Nonnull;
+
+import static it.unibo.alchemist.model.observables.util.MutableObservables.observe;
 
 /**
  * A condition is valid if the node has a neighborhood, formally if the node has at least one node
@@ -54,7 +55,7 @@ public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
     protected Observable<Double> observeNeighborWeight(final Node<T> neighbor) {
         // to be eligible (p = 1), a neighbor just needs to be an instance of CellNode
         // Note: Property changes are not yet observable, so this assumes static properties for now.
-        return MutableObservable.Companion.observe(neighbor.asPropertyOrNull(CellProperty.class) != null ? 1d : 0d);
+        return observe(neighbor.asPropertyOrNull(CellProperty.class) != null ? 1d : 0d);
     }
 
     @Nonnull

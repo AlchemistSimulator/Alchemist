@@ -1,6 +1,6 @@
 # Reactive Engine Refactor Plan
 
-Last updated: 2026-09-30
+Last updated: 2026-10-05
 
 Working branch: `marmellata`
 
@@ -517,7 +517,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] Recompute each dirty reaction once after the mutation finishes.
 - [x] Reindex each changed `nextOccurrence` once as a consequence of the single post-transaction recomputation.
 - [x] Define behavior for invalidation originating from scheduled commands outside reaction execution.
-- [ ] Guard observable callback iteration against subscription mutation and re-entrant emissions.
+- [x] Guard observable callback iteration against subscription mutation and re-entrant emissions.
 - [x] Preserve first-invalidation order when multiple reactions are invalidated together.
 - [x] Keep the invalidation transaction independent from scheduler notification: it must prevent redundant
   recomputation, resampling, and random-number consumption before `nextOccurrence` emits, not buffer scheduler
@@ -608,6 +608,8 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 ## Phase 11: finish API modernization
 
+- [x] Keep observable collection APIs reactive-only: expose ordinary reads through immutable `current` snapshots,
+  retain explicit mutation functions on mutable implementations, and reject mutation through `current`.
 - [ ] Migrate remaining Java APIs to Kotlin one type at a time; Java files modified significantly in earlier
   phases must already have been ported as part of those changes.
 - [ ] Never leave duplicate fully qualified Java and Kotlin declarations during a port.

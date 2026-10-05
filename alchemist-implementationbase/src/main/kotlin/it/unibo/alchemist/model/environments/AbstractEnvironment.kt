@@ -27,12 +27,12 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.observables.ObservableMutableList
+import it.unibo.alchemist.model.observables.ObservableMutableMap
+import it.unibo.alchemist.model.observables.ObservableMutableSet
+import it.unibo.alchemist.model.observables.ObservableMutableSet.Companion.toObservableSet
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableList
-import it.unibo.alchemist.model.observation.ObservableMutableList
-import it.unibo.alchemist.model.observation.ObservableMutableMap
-import it.unibo.alchemist.model.observation.ObservableMutableSet
-import it.unibo.alchemist.model.observation.ObservableMutableSet.Companion.toObservableSet
 import it.unibo.alchemist.model.observation.ObservableSet
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -73,7 +73,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     override val nodes: ObservableList<Node<T>> = mutableNodes
 
     @Transient
-    final override val nodeCount: Observable<Int> = nodes.observableSize
+    final override val nodeCount: Observable<Int> = nodes.size
 
     private val regionObservers = ArrayList<RegionObserver>()
 
@@ -138,7 +138,9 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     override fun addNode(node: Node<T>, position: P): Boolean = when {
         nodeShouldBeAdded(node, position) -> {
             val actualPosition = computeActualInsertionPosition(node, position)
-            require(node !in mutableNodes) { "Node with id ${node.id} was already existing in this environment." }
+            require(node !in mutableNodes.current) {
+                "Node with id ${node.id} was already existing in this environment."
+            }
             setPosition(node, actualPosition)
             spatialIndex.insert(node, *actualPosition.coordinates)
             mutableNodes.add(node)
@@ -274,7 +276,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     protected fun retrieveNeighborhood(node: Node<T>): Neighborhood<T> {
         val result = observableNeighCache.current[node.id]
         requireNotNull(result) {
-            check(node !in nodes) {
+            check(node !in nodes.current) {
                 "The environment state is inconsistent. $node is among the nodes, but has no position."
             }
             "$node is not part of the environment."
@@ -286,7 +288,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         observableNeighCache[node.id].map { maybeNeighborhood ->
             val neighborhood = maybeNeighborhood.getOrNull()
             requireNotNull(neighborhood) {
-                check(node !in nodes) {
+                check(node !in nodes.current) {
                     "The environment state is inconsistent. $node is among the nodes, but has no position."
                 }
                 "$node is not part of the environment."
@@ -321,7 +323,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         observeAllNodesInRange({ position }, range)
 
     protected fun retrievePosition(node: Node<T>): P = requireNotNull(observableNodeToPos.current[node.id]) {
-        check(node !in nodes) {
+        check(node !in nodes.current) {
             "Node $node is registered in the environment but has no position. " +
                 "This could be a bug in Alchemist. Please open an issue at: " +
                 "https://github.com/AlchemistSimulator/Alchemist/issues/new/choose"
@@ -332,7 +334,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     override fun getPosition(node: Node<T>): Observable<P> = observableNodeToPos[node.id].map { maybePosition ->
         val position = maybePosition.getOrNull()
         requireNotNull(position) {
-            check(node !in nodes) {
+            check(node !in nodes.current) {
                 "Node $node is registered in the environment but has no position. " +
                     "This could be a bug in Alchemist. Please open an issue at: " +
                     "https://github.com/AlchemistSimulator/Alchemist/issues/new/choose"
@@ -474,7 +476,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             regionObservers.forEach { region ->
                 when {
                     newPosition == null -> { // removal
-                        if (node in region.visibleNodes) region.visibleNodes.remove(node)
+                        if (node in region.visibleNodes.current) region.visibleNodes.remove(node)
                         regionNodeCenteredIndex.remove(node.id)?.forEachValue {
                             regionObservers.remove(it)
                             true

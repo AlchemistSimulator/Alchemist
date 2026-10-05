@@ -7,12 +7,16 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.observation
+package it.unibo.alchemist.model.observables
+
+import it.unibo.alchemist.model.observables.util.notifyCurrentObservers
+import it.unibo.alchemist.model.observation.Observable
 
 /**
  * An implementation of [Observable] that emits updates to its observers when triggered manually
- * via the [emit] method. The observed value is always [Unit]. A standard [MutableObservable] of
- * [Unit] is not the answer to an observable emitter, because of observable idempotency.
+ * via the [emit] method. The observed value is always [Unit]. A standard
+ * [it.unibo.alchemist.model.observation.MutableObservable] of [Unit] is not the answer to an observable emitter,
+ * because of observable idempotency.
  *
  * This class allows multiple observers to register for notifications, and provides the ability
  * to manually emit updates to those observers.
@@ -30,7 +34,7 @@ class EventObservable : Observable<Unit> {
      * all of its observers.
      */
     fun emit() {
-        observingCallbacks.values.forEach { callbacks -> callbacks.forEach { it(Unit) } }
+        observingCallbacks.notifyCurrentObservers(Unit)
     }
 
     override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Unit) -> Unit) {

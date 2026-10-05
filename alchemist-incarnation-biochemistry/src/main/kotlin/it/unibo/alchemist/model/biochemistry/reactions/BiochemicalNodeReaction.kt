@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.biochemistry.conditions.GenericMoleculePresent
 import it.unibo.alchemist.model.biochemistry.conditions.GenericMoleculeUnderLevel
 import it.unibo.alchemist.model.biochemistry.conditions.TensionPresent
 import it.unibo.alchemist.model.biochemistry.util.toMoleculeCount
-import it.unibo.alchemist.model.observation.CompositeDisposable
+import it.unibo.alchemist.model.observables.CompositeDisposable
 import it.unibo.alchemist.model.reactions.ChemicalNodeReaction
 import org.apache.commons.math3.distribution.EnumeratedDistribution
 import org.apache.commons.math3.random.RandomGenerator

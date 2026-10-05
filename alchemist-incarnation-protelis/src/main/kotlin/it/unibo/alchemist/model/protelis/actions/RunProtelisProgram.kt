@@ -16,8 +16,8 @@ import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.MutableObservable
-import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice

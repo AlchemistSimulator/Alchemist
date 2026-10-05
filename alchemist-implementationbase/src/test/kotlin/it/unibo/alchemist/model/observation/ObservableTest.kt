@@ -19,14 +19,16 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
-import it.unibo.alchemist.model.observation.MutableObservable.Companion.updateValue
+import it.unibo.alchemist.model.observables.EventObservable
+import it.unibo.alchemist.model.observables.ObservableMutableSet
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observables.util.MutableObservables.updateValue
+import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
+import it.unibo.alchemist.model.observables.util.ObservableSets.flatMap
+import it.unibo.alchemist.model.observables.util.ObservableSets.merge
+import it.unibo.alchemist.model.observables.util.Observables.combineLatest
 import it.unibo.alchemist.model.observation.Observable.ObservableExtensions.asMutable
 import it.unibo.alchemist.model.observation.Observable.ObservableExtensions.currentOrNull
-import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.combineLatest
-import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.flatMap
-import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.merge
-import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
 
 class ObservableTest : FunSpec({
     context("base `Observable` tests") {
@@ -138,6 +140,22 @@ class ObservableTest : FunSpec({
             observable.observers shouldHaveSize 1
             second.dispose()
             observable.observers shouldHaveSize 0
+        }
+        test("subscription changes and re-entrant updates should not disrupt an emission") {
+            val observable = observe(0)
+            val emissions = mutableListOf<String>()
+            lateinit var first: Disposable
+            first = observable.subscribe(invokeOnSubscription = false) { value ->
+                emissions += "first:$value"
+                if (value == 1) {
+                    first.dispose()
+                    observable.subscribe(invokeOnSubscription = false) { emissions += "late:$it" }
+                    observable.current = 2
+                }
+            }
+            observable.subscribe(invokeOnSubscription = false) { emissions += "second:$it" }
+            observable.current = 1
+            emissions shouldContainExactly listOf("first:1", "second:2", "late:2", "second:1")
         }
         test("an observable may emit an event when assigned an equal value") {
             val observable = observe(initial = 0, emitOnDistinct = false)
@@ -341,7 +359,7 @@ class ObservableTest : FunSpec({
             val obsB = observe(-10)
             val elements = ObservableMutableSet(obsA, obsB)
             val merged = elements.merge()
-            var counter = -elements.toSet().size
+            var counter = -elements.current.size
             merged.onChange(this) {
                 println(it)
                 counter++

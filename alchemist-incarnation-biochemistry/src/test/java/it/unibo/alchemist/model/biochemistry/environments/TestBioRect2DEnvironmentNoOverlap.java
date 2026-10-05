@@ -205,7 +205,7 @@ class TestBioRect2DEnvironmentNoOverlap {
     }
 
     private void verifyNotAdded(final Node<Double> node) {
-        assertFalse(environment.getNodes().toList().contains(node));
+        assertFalse(environment.getNodes().getCurrent().contains(node));
     }
 
     private void verifyAdded(final Node<Double> node, @Nonnull final Position<?> expected) {
@@ -796,8 +796,8 @@ class TestBioRect2DEnvironmentNoOverlap {
                 assertTrue(thereIsOverlap(environment));
             }
 
-            private Stream<Node<Double>> getNodes() {
-                return env.getNodes().toList().stream()
+            private Stream<? extends Node<Double>> getNodes() {
+                return env.getNodes().getCurrent().stream()
                     .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null);
             }
 
@@ -848,7 +848,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         final Node<T> node,
         final boolean shouldBePresent
     ) {
-        final var isInEnvironment = environment.getNodes().toList().contains(node);
+        final var isInEnvironment = environment.getNodes().getCurrent().contains(node);
         if (shouldBePresent) {
             assertTrue(isInEnvironment, () -> NODE + node + " is not in the environment");
             final var position = environment.getCurrentPosition(node);

@@ -50,7 +50,7 @@ class TestYAMLLoader {
     @Test
     void testAnyRealDistribution() {
         final Environment<?, ?> environment = testNoVar("synthetic/anyrealdistribution.yml").getEnvironment();
-        environment.getNodes().toList().forEach(n -> n.getReactions().forEach(r ->
+        environment.getNodes().getCurrent().forEach(n -> n.getReactions().forEach(r ->
             assertInstanceOf(
                 AnyRealDistribution.class,
                 assertInstanceOf(TimeDistributedReaction.class, r).getTimeDistribution()
@@ -65,7 +65,7 @@ class TestYAMLLoader {
     void testCustomNodes() {
         testNoVar("synthetic/customnode.yml")
             .getEnvironment()
-            .getNodes().toList()
+            .getNodes().getCurrent()
             .forEach(n ->
                 assertInstanceOf(
                     TestNode.class,
@@ -127,7 +127,7 @@ class TestYAMLLoader {
     @Test
     void testMultipleMolecules() {
         final Environment<?, ?> environment = testNoVar("synthetic/multiplemolecule.yml").getEnvironment();
-        environment.getNodes().toList().forEach(n -> assertEquals(4, n.getMoleculeCount()));
+        environment.getNodes().getCurrent().forEach(n -> assertEquals(4, n.getMoleculeCount()));
     }
 
     /**
@@ -171,7 +171,7 @@ class TestYAMLLoader {
 
     @Test
     void testMaxAliases() {
-        assertFalse(testNoVar("yamlAliases/aliases.yml").getEnvironment().getNodes().toList().isEmpty());
+        assertFalse(testNoVar("yamlAliases/aliases.yml").getEnvironment().getNodes().getCurrent().isEmpty());
     }
 
     private static <T, P extends Position<P>> Simulation<T, P> testLoading(

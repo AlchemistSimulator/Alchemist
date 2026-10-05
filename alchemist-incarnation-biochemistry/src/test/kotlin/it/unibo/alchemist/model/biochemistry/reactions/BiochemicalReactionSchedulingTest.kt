@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.biochemistry.nodes.EnvironmentNodeImpl
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
-import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import kotlin.test.assertEquals
@@ -156,8 +156,8 @@ class BiochemicalReactionSchedulingTest {
         ).apply {
             conditions = listOf(
                 mockk<TensionPresent>(relaxed = true).also {
-                    every { it.observeMechanicalState() } returns MutableObservable.observe(MechanicalState(true, 0.0))
-                    every { it.isValid() } returns MutableObservable.observe(true)
+                    every { it.observeMechanicalState() } returns observe(MechanicalState(true, 0.0))
+                    every { it.isValid() } returns observe(true)
                     every { it.getTension() } returns 0.0
                 },
                 GenericMoleculePresent(node, malformedMolecule, 1.0),
@@ -179,8 +179,8 @@ class BiochemicalReactionSchedulingTest {
             reaction.conditions = factors.map { factor ->
                 mockk<TensionPresent>().also {
                     every { it.observeMechanicalState() } returns
-                        MutableObservable.observe(MechanicalState(true, factor))
-                    every { it.isValid() } returns MutableObservable.observe(true)
+                        observe(MechanicalState(true, factor))
+                    every { it.isValid() } returns observe(true)
                     every { it.getTension() } returns factor
                 }
             }

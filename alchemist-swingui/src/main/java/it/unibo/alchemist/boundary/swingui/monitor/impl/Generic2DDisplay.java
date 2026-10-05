@@ -758,7 +758,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             accessData();
             positions.clear();
             neighbors.clear();
-            environment.getNodes().toList().parallelStream().forEach(node -> {
+            environment.getNodes().getCurrent().parallelStream().forEach(node -> {
                 positions.put(node, environment.getCurrentPosition(node));
                 neighbors.put(node, environment.getNeighborhood(node).getCurrent());
             });

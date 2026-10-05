@@ -23,7 +23,8 @@ import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.observation.CompositeDisposable
+import it.unibo.alchemist.model.observables.CompositeDisposable
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.reactions.AbsoluteEvent
 import it.unibo.alchemist.model.reactions.AbstractNodeReaction
@@ -132,7 +133,7 @@ private class InvalidCondition(node: Node<Double>) : AbstractCondition<Double>(n
         private set
 
     init {
-        setValidity(MutableObservable.observe(false))
+        setValidity(observe(false))
     }
 
     override fun reactionReady() {
@@ -199,7 +200,7 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
     "each model mutation refreshes an affected reaction once" {
         val environment = Continuous2DEnvironment(BiochemistryIncarnation())
         val node = GenericNode(environment)
-        val inputs = List(2) { MutableObservable.observe(0, emitOnDistinct = false) }
+        val inputs = List(2) { observe(0, emitOnDistinct = false) }
         val source = EmittingNodeReaction(node).apply {
             onExecute = { inputs.forEach { it.current++ } }
         }
@@ -224,7 +225,7 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
     "dirty reactions retain first-invalidation order" {
         val environment = Continuous2DEnvironment(BiochemistryIncarnation())
         val node = GenericNode(environment)
-        val input = MutableObservable.observe(0)
+        val input = observe(0)
         val refreshOrder = mutableListOf<Int>()
         val reactions = List(8) { index ->
             CountingInvalidationReaction(node, listOf(input), { refreshOrder += index }).also(node::addReaction)

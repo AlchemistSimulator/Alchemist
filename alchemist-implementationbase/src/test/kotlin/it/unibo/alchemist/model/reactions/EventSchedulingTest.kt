@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.ReactionHost
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.conditions.AbstractCondition
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.test.assertEquals
@@ -34,7 +35,7 @@ class EventSchedulingTest {
     fun `a conditional event discards its putative occurrence and redraws when enabled again`() {
         val node = mockk<Node<Any>>(relaxed = true)
         val (environment, setTime) = environmentWithMutableTime()
-        val validity = MutableObservable.observe(false, emitOnDistinct = false)
+        val validity = observe(false, emitOnDistinct = false)
         val condition = ObservableValidityCondition(node, validity)
         val distribution = SequenceDistribution(2.0, 5.0)
         val action = mockk<Action<Any>>(relaxed = true)
@@ -77,7 +78,7 @@ class EventSchedulingTest {
         listOf(false, true).forEach { validityAtOccurrence ->
             val host = mockk<ReactionHost<Any>>(relaxed = true)
             val node = mockk<Node<Any>>()
-            val validity = MutableObservable.observe(!validityAtOccurrence)
+            val validity = observe(!validityAtOccurrence)
             val condition = ObservableValidityCondition(node, validity)
             val action = mockk<Action<Any>>(relaxed = true)
             val event = AbsoluteEvent(host, DoubleTime(10.0)).apply {

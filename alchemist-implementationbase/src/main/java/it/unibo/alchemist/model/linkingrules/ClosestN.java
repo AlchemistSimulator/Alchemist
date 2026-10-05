@@ -106,7 +106,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
                     /*
                      * Of all nodes but myself...
                      */
-                    environment.getNodes().toList().parallelStream()
+                    environment.getNodes().getCurrent().parallelStream()
                         /*
                          * ...select those for which I'm on the closest n
                          */
@@ -129,7 +129,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
         do {
             inRange = (environment.getNodeCount().getCurrent() > nodeCount && currentRange < maxRange
                     ? nodesInRange(environment, center, currentRange).stream()
-                    : environment.getNodes().toList().stream())
+                    : environment.getNodes().getCurrent().stream())
                         .filter(n -> !n.equals(center) && nodeIsEnabled(n))
                         .collect(Collectors.toCollection(LinkedHashSet::new));
             currentRange *= 2;

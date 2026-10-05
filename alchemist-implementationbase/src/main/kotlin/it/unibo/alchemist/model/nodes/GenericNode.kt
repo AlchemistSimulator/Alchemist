@@ -18,9 +18,9 @@ import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.ObservableMutableMap
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicInteger
 import javax.annotation.Nonnull

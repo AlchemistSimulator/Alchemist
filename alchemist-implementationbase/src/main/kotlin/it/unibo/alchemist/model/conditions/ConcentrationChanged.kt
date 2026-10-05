@@ -12,11 +12,11 @@ package it.unibo.alchemist.model.conditions
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
-import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 
 /** A condition that becomes valid when the concentration of [target] changes. */
 class ConcentrationChanged<T>(node: Node<T>, private val target: Molecule) : AbstractCondition<T>(node) {
-    private val resets = MutableObservable.observe(0L)
+    private val resets = observe(0L)
     private var previous: T? = node.getConcentration(target)
     private var changed = false
 

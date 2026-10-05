@@ -14,12 +14,13 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.biochemistry.CellProperty;
 import it.unibo.alchemist.model.biochemistry.molecules.Junction;
-import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observables.util.Observables;
 import it.unibo.alchemist.model.observation.Observable;
-import it.unibo.alchemist.model.observation.ObservableExtensions;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
+
+import static it.unibo.alchemist.model.observables.util.MutableObservables.observe;
 
 /**
  * Condition that is valid if a specific junction is present in the cell.
@@ -63,11 +64,11 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
     @Nonnull
     @Override
     protected Observable<Double> observeNeighborWeight(@Nonnull final Node<Double> neighbor) {
-        return ObservableExtensions.INSTANCE.switchMap(
+        return Observables.INSTANCE.switchMap(
             cell.getJunctions().get(junction),
             maybeJunctions -> {
-                if (maybeJunctions.isNone() || maybeJunctions.getOrNull().isEmpty()) {
-                    return MutableObservable.Companion.observe(0.0);
+                if (maybeJunctions.isNone() || maybeJunctions.getOrNull().getCurrent().isEmpty()) {
+                    return observe(0.0);
                 }
                 return maybeJunctions.getOrNull().get(neighbor)
                     .map(maybeCount -> maybeCount.fold(() -> 0d, Integer::doubleValue));

@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static it.unibo.alchemist.model.observables.util.MutableObservables.observe;
+
 /**
  * Simple LSA-condition (example: &lt;grad, X,1&gt;). Search an instance of a template in a node.
  * The LSAMolecule matched, if existed, will not be deleted from the node Lsa-space.
@@ -34,7 +36,7 @@ public class LsaStandardCondition extends AbstractLsaCondition {
 
     private final ILsaMolecule molecule;
     private final Observable<?> matchInput;
-    private final MutableObservable<Boolean> valid = MutableObservable.Companion.observe(false);
+    private final MutableObservable<Boolean> valid = observe(false);
 
     /**
      * Builds an LsaStandardCondition.

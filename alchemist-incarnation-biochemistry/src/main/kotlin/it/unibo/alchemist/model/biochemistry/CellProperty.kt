@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -14,10 +14,10 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
 import it.unibo.alchemist.model.geometry.Vector
+import it.unibo.alchemist.model.observables.ObservableMutableMap
+import it.unibo.alchemist.model.observables.ObservableMutableMap.ObservableMapExtensions.upsertValue
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.Observable.ObservableExtensions.currentOrNull
-import it.unibo.alchemist.model.observation.ObservableMutableMap
-import it.unibo.alchemist.model.observation.ObservableMutableMap.ObservableMapExtensions.upsertValue
 
 /**
  * A node's capability to behave as a cell.
@@ -77,7 +77,7 @@ interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
                 1 -> it.remove(neighbor)
                 else -> it[neighbor].currentOrNull()?.minus(1)
             }
-            if (it.isEmpty()) {
+            if (it.current.isEmpty()) {
                 junctions.remove(junction)
             } else {
                 junctions[junction] = inner

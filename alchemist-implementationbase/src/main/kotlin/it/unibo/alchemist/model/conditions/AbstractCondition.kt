@@ -12,12 +12,12 @@ package it.unibo.alchemist.model.conditions
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
-import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
 
 /** Base implementation of a reactive [Condition]. */
 open class AbstractCondition<T>(private val node: Node<T>) : Condition<T> {
-    private var validity: Observable<Boolean> = MutableObservable.observe(true)
+    private var validity: Observable<Boolean> = observe(true)
 
     override fun getNode(): Node<T> = node
 

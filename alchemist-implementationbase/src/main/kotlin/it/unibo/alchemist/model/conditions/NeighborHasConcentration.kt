@@ -15,8 +15,8 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
-import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
-import it.unibo.alchemist.model.observation.ObservableExtensions.switchMap
+import it.unibo.alchemist.model.observables.util.Observables.combineLatest
+import it.unibo.alchemist.model.observables.util.Observables.switchMap
 
 /**
  * A condition that evaluates whether at least one neighbor of a node has the specified [concentration]

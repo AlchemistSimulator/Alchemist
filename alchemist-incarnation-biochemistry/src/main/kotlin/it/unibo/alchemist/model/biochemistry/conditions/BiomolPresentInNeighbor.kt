@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.biochemistry.CellProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.biochemistry.util.toMoleculeCount
-import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
 import java.io.Serial
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble

@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.timedistributions.AbstractDistribution
 import it.unibo.alchemist.model.timedistributions.AnyRealDistribution
@@ -31,10 +31,10 @@ class EnvironmentTestReaction<T>(
 ) : TimeDistributedReaction<T> {
 
     override val rate: Double get() = timeDistribution.expectedRate
-    private val mutableNextOccurrence = MutableObservable.observe(timeDistribution.startTime, false)
+    private val mutableNextOccurrence = observe(timeDistribution.startTime, false)
     override val nextOccurrence: Observable<Time> = mutableNextOccurrence.map { it }
     override var actions: List<Action<T>> = emptyList()
-    private var validity: Observable<Boolean> = MutableObservable.observe(true)
+    private var validity: Observable<Boolean> = observe(true)
 
     override var conditions: List<Condition<T>> = emptyList()
         set(value) {
@@ -43,7 +43,7 @@ class EnvironmentTestReaction<T>(
             validity = value
                 .map(Condition<T>::isValid)
                 .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
-                ?: MutableObservable.observe(true)
+                ?: observe(true)
         }
 
     override fun compareTo(other: Reaction<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)

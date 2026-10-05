@@ -10,11 +10,12 @@ package it.unibo.alchemist.model.scafi.actions
 
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
-import it.unibo.alchemist.model.observation.{MutableObservable, Observable}
+import it.unibo.alchemist.model.observables.util.MutableObservables
+import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ContextImpl, _}
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
 import it.unibo.alchemist.model.scafi.nodes.SimpleNodeManager
-import it.unibo.alchemist.model.{Node, NodeReaction, Position, Time => AlchemistTime, _}
+import it.unibo.alchemist.model.{Time => AlchemistTime, _}
 import it.unibo.alchemist.scala.PimpMyAlchemist._
 import it.unibo.scafi.space.Point3D
 import org.apache.commons.math3.random.RandomGenerator
@@ -84,7 +85,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
   lazy val nodeManager = new SimpleNodeManager(node)
   private var neighborhoodManager: Map[ID, NeighborData[P]] = Map()
   private val commonNames = new ScafiIncarnationForAlchemist.StandardSensorNames {}
-  private val _completed = MutableObservable.Companion.observe[Boolean](false)
+  private val _completed = MutableObservables.observe[Boolean](false)
   def asMolecule: SimpleMolecule = programNameMolecule
 
   override def cloneAction(node: Node[T], reaction: NodeReaction[T]) =

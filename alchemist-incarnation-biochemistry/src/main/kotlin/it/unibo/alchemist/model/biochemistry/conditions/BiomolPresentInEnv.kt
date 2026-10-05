@@ -16,9 +16,9 @@ import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.biochemistry.EnvironmentNode
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
+import it.unibo.alchemist.model.observables.util.Observables.combineLatest
+import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
-import it.unibo.alchemist.model.observation.ObservableExtensions.switchMap
 
 /** A condition requiring [requiredQuantity] units of [biomolecule] in the surrounding environment. */
 class BiomolPresentInEnv<P : Position<out P>>(

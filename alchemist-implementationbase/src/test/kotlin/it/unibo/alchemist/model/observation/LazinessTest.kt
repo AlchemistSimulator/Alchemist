@@ -11,10 +11,11 @@ package it.unibo.alchemist.model.observation
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.observation.MutableObservable.Companion.observe
-import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.combineLatest
-import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
-import it.unibo.alchemist.model.observation.ObservableExtensions.switchMap
+import it.unibo.alchemist.model.observables.ObservableMutableSet
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
+import it.unibo.alchemist.model.observables.util.Observables.combineLatest
+import it.unibo.alchemist.model.observables.util.Observables.switchMap
 
 class LazinessTest : FunSpec({
 
@@ -22,7 +23,7 @@ class LazinessTest : FunSpec({
 
         test("should not compute fresh value if registered lazily") {
             var computations = 0
-            val derived = object : DerivedObservable<Int>() {
+            val derived = object : AbstractObservable<Int>() {
                 override fun computeFresh(): Int {
                     computations++
                     return 26
@@ -36,7 +37,7 @@ class LazinessTest : FunSpec({
 
         test("should compute fresh value if registered eagerly") {
             var computations = 0
-            val derived = object : DerivedObservable<Int>() {
+            val derived = object : AbstractObservable<Int>() {
                 override fun computeFresh(): Int {
                     computations++
                     return 26

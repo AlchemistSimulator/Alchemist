@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,6 +13,7 @@ import arrow.core.Option
 
 /**
  * Represents an observable object that emits updates to registered observers when its value changes.
+ * Subscription changes take effect on later emissions.
  *
  * @param T The type of the value being observed.
  */
@@ -94,7 +95,7 @@ interface Observable<T> : Disposable {
      * @param transform The function to transform each value emitted by this observable.
      * @return A new observable that emits the transformed values.
      */
-    fun <S> map(transform: (T) -> S): Observable<S> = object : DerivedObservable<S>() {
+    fun <S> map(transform: (T) -> S): Observable<S> = object : AbstractObservable<S>() {
 
         override fun computeFresh(): S = transform(this@Observable.current)
 
@@ -121,8 +122,7 @@ interface Observable<T> : Disposable {
      * @param merge The function that combines the values from the two observables into a single value.
      * @return A new observable that emits values resulting from merging the two observables.
      */
-    @Suppress("UNCHECKED_CAST")
-    fun <O, R> mergeWith(other: Observable<O>, merge: (T, O) -> R): Observable<R> = object : DerivedObservable<R>() {
+    fun <O, R> mergeWith(other: Observable<O>, merge: (T, O) -> R): Observable<R> = object : AbstractObservable<R>() {
 
         override fun computeFresh(): R = merge(this@Observable.current, other.current)
 
@@ -186,80 +186,5 @@ interface Observable<T> : Disposable {
                     this@asMutable.stopWatching(this to registrant)
                 }
             }
-    }
-}
-
-/**
- * A MutableObservable represents an extension of the Observable interface, designed to maintain
- * mutable state and notify its observers when the state changes. Updates are mainly
- * performed thanks to the [update] function.
- *
- * @param T The type of the value being observed and modified.
- */
-interface MutableObservable<T> : Observable<T> {
-    override var current: T
-
-    /**
-     * Updates the current value using the specified transformation function and returns the previous value.
-     *
-     * @param computeNewValue A function that computes the new value based on the current value.
-     * @return The previous value before the update.
-     */
-    fun update(computeNewValue: (T) -> T): T = current.also {
-        current = computeNewValue(current)
-    }
-
-    /**
-     * Factories and extension methods container.
-     */
-    companion object {
-
-        /**
-         * Creates and returns a new instance of a [MutableObservable] initialized with the given value.
-         * The resulting observable allows its state to be modified and notifies registered observers of any changes.
-         *
-         * @param T The type of the value being observed.
-         * @param initial The initial value of the observable.
-         * @return A new instance of [MutableObservable] initialized with the provided value.
-         */
-        @JvmOverloads
-        fun <T> observe(initial: T, emitOnDistinct: Boolean = true): MutableObservable<T> =
-            object : MutableObservable<T> {
-                override val observingCallbacks: MutableMap<Any, List<(T) -> Unit>> = linkedMapOf()
-
-                override var current: T = initial
-                    set(value) {
-                        if (!emitOnDistinct || value != field) {
-                            field = value
-                            observingCallbacks.values.forEach { callbacks -> callbacks.forEach { it(value) } }
-                        }
-                    }
-
-                override val observers: List<Any> get() = observingCallbacks.keys.toList()
-
-                override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
-                    if (invokeOnRegistration) {
-                        callback(current)
-                    }
-                    observingCallbacks[registrant] = observingCallbacks[registrant]?.let {
-                        it + callback
-                    } ?: listOf(callback)
-                }
-
-                override fun stopWatching(registrant: Any) {
-                    observingCallbacks.remove(registrant)
-                }
-            }
-
-        /**
-         * Handy method to update the optional[Option] contents of this [MutableObservable].
-         * Applies the given function to the value contained by the underlying [Option],
-         * if it is empty nothing is computed.
-         *
-         * @param updateFunc the update function to perform on the value wrapped by the underlying [Option]
-         */
-        fun <T> MutableObservable<Option<T>>.updateValue(updateFunc: (T) -> T) {
-            update { it.map(updateFunc) }
-        }
     }
 }

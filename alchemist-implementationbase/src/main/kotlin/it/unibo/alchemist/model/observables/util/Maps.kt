@@ -7,11 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.observation
+package it.unibo.alchemist.model.observables.util
 
-/** An observable list whose read-only snapshot is available through [current], with observable [size]. */
-interface ObservableList<T> : Observable<List<T>> {
-
-    /** Emits the list size whenever it changes. */
-    val size: Observable<Int>
+internal fun <T> Map<Any, List<(T) -> Unit>>.notifyCurrentObservers(value: T) {
+    // Snapshot both registrants and callbacks so subscriptions may change, or emit again, during notification.
+    values.flatten().forEach { it(value) }
 }

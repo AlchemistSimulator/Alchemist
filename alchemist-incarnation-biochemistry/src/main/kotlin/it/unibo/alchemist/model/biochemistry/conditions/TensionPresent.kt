@@ -17,8 +17,8 @@ import it.unibo.alchemist.model.biochemistry.CircularCellProperty
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty
 import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells
 import it.unibo.alchemist.model.conditions.AbstractCondition
+import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.ObservableExtensions.ObservableSetExtensions.combineLatest
 
 /** A condition requiring mechanical tension from at least one nearby circular cell. */
 class TensionPresent(private val environment: EnvironmentSupportingDeformableCells<*>, node: Node<Double>) :

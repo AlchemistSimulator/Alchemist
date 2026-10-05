@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -21,8 +21,6 @@ import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
 import it.unibo.alchemist.model.biochemistry.startSimulationWithoutParameters
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
-import it.unibo.alchemist.model.observation.ObservableMap.Companion.getOrElse
-import it.unibo.alchemist.model.observation.ObservableMutableMap
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import kotlin.properties.Delegates
@@ -141,12 +139,15 @@ private val Node<Double>.neighborhoodPresentPropensity: Double
 private val Node<Double>.junctionPresentPropensity: Double
     get() =
         checkCellNodeAndGetPropensity {
-            centralNode
-                .asProperty<Double, CellProperty<Euclidean2DPosition>>()
-                .junctions
-                .getOrElse(JUNCTION) { ObservableMutableMap() }
-                .getOrElse(it) { 0 }
-                .toDouble()
+            (
+                centralNode
+                    .asProperty<Double, CellProperty<Euclidean2DPosition>>()
+                    .junctions
+                    .current[JUNCTION]
+                    ?.current
+                    ?.get(it)
+                    ?: 0
+                ).toDouble()
         }
 
 private val Node<Double>.biomoleculeInNeighborPropensity: Double

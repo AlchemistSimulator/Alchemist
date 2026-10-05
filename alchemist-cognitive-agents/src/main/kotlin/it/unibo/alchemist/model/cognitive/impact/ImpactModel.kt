@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.cognitive.impact.cognitive.DesireWalkRandomly
 import it.unibo.alchemist.model.cognitive.impact.cognitive.Fear
 import it.unibo.alchemist.model.cognitive.impact.cognitive.IntentionEvacuate
 import it.unibo.alchemist.model.cognitive.impact.cognitive.IntentionWalkRandomly
-import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
 import kotlin.reflect.KClass
 
@@ -32,9 +32,8 @@ const val PARAMETERS_FILE = "it/unibo/alchemist/model/cognitive/impact/config.to
  */
 class ImpactModel(compliance: Double, influencedBy: () -> List<CognitiveModel>, environmentalFactors: () -> Double) :
     CognitiveModel {
-    private val mutableEscapeDecision = MutableObservable.observe(false)
-
-    override val escapeDecision: Observable<Boolean> get() = mutableEscapeDecision
+    override val escapeDecision: Observable<Boolean>
+        field = observe(false)
 
     private val cognitiveCharacteristics =
         linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
@@ -80,7 +79,7 @@ class ImpactModel(compliance: Double, influencedBy: () -> List<CognitiveModel>, 
 
     override fun update(frequency: Double) {
         cognitiveCharacteristics.values.forEach { it.update(frequency) }
-        mutableEscapeDecision.current = escapeIntention() > remainIntention()
+        escapeDecision.current = escapeIntention() > remainIntention()
     }
 
     private inline fun <reified C : CognitiveCharacteristic> characteristicLevel(): Double =

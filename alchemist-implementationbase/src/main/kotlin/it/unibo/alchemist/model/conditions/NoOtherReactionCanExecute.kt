@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.conditions
 import arrow.core.getOrElse
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
-import it.unibo.alchemist.model.observation.ObservableExtensions.combineLatest
+import it.unibo.alchemist.model.observables.util.Observables.combineLatest
 
 /**
  * The condition is valid if all the other reactions having at least one condition can not execute.

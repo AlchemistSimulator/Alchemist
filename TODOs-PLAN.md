@@ -601,7 +601,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] Assert random-number consumption explicitly for stochastic generators.
 - [x] Test one recomputation and scheduler reindex per logical transaction.
 - [x] Test observer cleanup and absence of post-removal scheduler updates.
-- [ ] Test that node- and environment-owned events execute at most once and then disappear from the scheduler,
+- [x] Test that node- and environment-owned events execute at most once and then disappear from the scheduler,
   engine subscription ownership, and model owner without an infinite reindex, phantom step, or clone resurrection.
 - [x] Test and document the selected policy for an event whose condition is invalid at its absolute occurrence.
 - [ ] Add performance checks for large reaction populations and high-frequency invalidation.
@@ -670,6 +670,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-05: Covered engine-level one-shot event execution, cleanup, and non-resurrection by node cloning.
 - 2026-10-05: Covered generic and SAPERE revalidation from the current simulation time.
 - 2026-10-05: Covered Markovian suspension, redraw, rescaling, and preservation across propensity transitions.
 - 2026-10-05: Covered immutable neighborhood snapshot replacement on topology changes.

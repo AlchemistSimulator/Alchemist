@@ -10,9 +10,13 @@ package it.unibo.alchemist.core
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
@@ -28,6 +32,7 @@ import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.reactions.AbsoluteEvent
 import it.unibo.alchemist.model.reactions.AbstractNodeReaction
+import it.unibo.alchemist.model.reactions.ConditionalEvent
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.time.Duration.Companion.milliseconds
@@ -47,7 +52,7 @@ private class RecordingScheduler<T> : Scheduler<T> {
         }
     }
 
-    override fun getNext(): Reaction<T>? = reactions.firstOrNull()
+    override fun getNext(): Reaction<T>? = reactions.minByOrNull { it.nextOccurrence.current }
 
     override fun removeReaction(reaction: Reaction<T>) {
         reaction.nextOccurrence.observers.size shouldBe 0
@@ -126,6 +131,15 @@ private class CountingDistribution : TimeDistribution<Double> {
     override fun sample(): Time = DoubleTime((++samples).toDouble())
 
     override fun newInstanceOn(node: Node<Double>): TimeDistribution<Double> = CountingDistribution()
+}
+
+private class CountingAction(private val executions: MutableList<Action<Double>>) : Action<Double> {
+    override fun cloneAction(node: Node<Double>, reaction: NodeReaction<Double>): Action<Double> =
+        CountingAction(executions)
+
+    override fun execute() {
+        executions += this
+    }
 }
 
 private class InvalidCondition(node: Node<Double>) : AbstractCondition<Double>(node) {
@@ -305,6 +319,52 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         scheduler.updates shouldNotContain event
         environment.reactions shouldNotContain event
         event.nextOccurrence.observers.size shouldBe 0
+    }
+
+    "events of both hosts execute once and leave no scheduling state or clonable trace" {
+        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+        val node = GenericNode(environment)
+        val executions = mutableListOf<Action<Double>>()
+        val distribution = CountingDistribution()
+        val absolute = AbsoluteEvent<Double>(node, DoubleTime(0.5)).apply {
+            actions = listOf(CountingAction(executions))
+        }
+        val conditional = ConditionalEvent(node, distribution).apply {
+            actions = listOf(CountingAction(executions))
+        }
+        val environmentEvent = AbsoluteEvent<Double>(environment, DoubleTime(3.0)).apply {
+            actions = listOf(CountingAction(executions))
+        }
+        node.addReaction(absolute)
+        node.addReaction(conditional)
+        environment.addReaction(environmentEvent)
+        environment.addNode(node, environment.makePosition(0, 0))
+        val events = listOf(absolute, conditional, environmentEvent)
+        val clonedBeforeFiring = node.cloneNode(Time.ZERO).reactions
+        clonedBeforeFiring.size shouldBe 1
+        clonedBeforeFiring.single().shouldBeInstanceOf<ConditionalEvent<Double>>()
+        clonedBeforeFiring.single() shouldNotBe conditional
+        val scheduler = RecordingScheduler<Double>()
+        val engine = TestEngine(environment, scheduler)
+        engine.initializeForTest()
+        repeat(events.size) {
+            engine.stepForTest()
+            engine.drainCommand()
+        }
+        executions.size shouldBe events.size
+        engine.step shouldBe events.size.toLong()
+        distribution.samples shouldBe 1
+        events.forEach { event ->
+            scheduler.reactions shouldNotContain event
+            scheduler.updates shouldNotContain event
+            event.nextOccurrence.observers.size shouldBe 0
+        }
+        node.reactions.shouldBeEmpty()
+        environment.reactions.shouldBeEmpty()
+        node.cloneNode(DoubleTime(3.0)).reactions.shouldBeEmpty()
+        engine.stepForTest()
+        executions.size shouldBe events.size
+        engine.step shouldBe events.size.toLong()
     }
 
     "an absolute event expires at its occurrence when its conditions are invalid" {

@@ -25,6 +25,7 @@ import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.math.exp
+import kotlin.math.ln
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -56,6 +57,43 @@ class NodeReactionTransitionTest {
         assertEquals(initialOccurrence * 0.5, reaction.nextOccurrence.current)
         reaction.updateSchedulingAfterFiring(reaction.nextOccurrence.current)
         assertEquals(2, samples())
+    }
+
+    @Test
+    fun `propensity transitions suspend, redraw from the current time, rescale, or preserve the occurrence`() {
+        val fixture = exponentialFixture(1.0) { 0.5 }
+        every { fixture.environment.simulationOrNull } returns mockk(relaxed = true)
+        val delayAtUnitRate = ln(2.0)
+        val reaction = ObservableRateReaction(
+            fixture.node,
+            ExponentialTime(1.0, fixture.randomGenerator),
+            fixture.propensity,
+        )
+        fun invalidate(propensity: Double, currentTime: Double) {
+            fixture.propensity.current = propensity
+            reaction.updateSchedulingAfterInvalidation(DoubleTime(currentTime))
+        }
+        reaction.initializationComplete(Time.ZERO, fixture.environment)
+        assertEquals(1, fixture.samples)
+        assertEquals(delayAtUnitRate, reaction.nextOccurrence.current.toDouble(), TOLERANCE)
+        // Positive to zero: suspend without drawing.
+        invalidate(0.0, 0.5)
+        assertEquals(Time.INFINITY, reaction.nextOccurrence.current)
+        assertEquals(1, fixture.samples)
+        // Zero to positive: draw once, starting from the current time.
+        invalidate(2.0, 3.0)
+        assertEquals(2, fixture.samples)
+        assertEquals(3.0 + delayAtUnitRate / 2, reaction.nextOccurrence.current.toDouble(), TOLERANCE)
+        // Positive to positive: rescale the surviving residual without drawing.
+        val rescalingTime = 3.0 + delayAtUnitRate / 4
+        invalidate(4.0, rescalingTime)
+        assertEquals(2, fixture.samples)
+        val rescaled = rescalingTime + delayAtUnitRate / 8
+        assertEquals(rescaled, reaction.nextOccurrence.current.toDouble(), TOLERANCE)
+        // Unchanged positive rate: preserve the occurrence without drawing.
+        invalidate(4.0, rescalingTime + delayAtUnitRate / 16)
+        assertEquals(2, fixture.samples)
+        assertEquals(rescaled, reaction.nextOccurrence.current.toDouble(), TOLERANCE)
     }
 
     @Test
@@ -261,5 +299,9 @@ class NodeReactionTransitionTest {
             sample()
         }
         return fixture
+    }
+
+    private companion object {
+        const val TOLERANCE = 1e-12
     }
 }

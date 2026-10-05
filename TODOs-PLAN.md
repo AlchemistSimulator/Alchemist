@@ -596,7 +596,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   cleanup.
 - [x] Test match and other specialized scheduling changes that leave condition validity `true`, proving that their
   direct reaction-specific signals invalidate scheduling without dependency sets or repeated Boolean emissions.
-- [ ] Test zero-to-positive, positive-to-zero, and positive-to-positive chemical propensity transitions.
+- [x] Test zero-to-positive, positive-to-zero, and positive-to-positive chemical propensity transitions.
 - [ ] Verify whether each transition preserves, transforms, or redraws the sampled time as specified.
 - [ ] Assert random-number consumption explicitly for stochastic generators.
 - [x] Test one recomputation and scheduler reindex per logical transaction.
@@ -670,6 +670,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-05: Covered Markovian suspension, redraw, rescaling, and preservation across propensity transitions.
 - 2026-10-05: Covered immutable neighborhood snapshot replacement on topology changes.
 - 2026-10-05: Skipped reactions removed during an invalidation transaction; cleaned up the observable API.
 - 2026-09-30: Added ordered invalidation transactions for reaction execution and scheduled commands.

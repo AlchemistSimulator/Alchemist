@@ -37,35 +37,35 @@ class SAPERENodeReactionSchedulingTest {
 
     @Test
     fun `initialization and firing draw independent exponential delays`() {
-        val (rng, environment, _, reaction) = fixture()
+        val (randomGenerator, environment, _, reaction) = fixture()
         reaction.initializationComplete(DoubleTime(0.0), environment)
         assertTrue(reaction.nextOccurrence.current.isFinite)
         assertTrue(reaction.nextOccurrence.current > DoubleTime(0.0))
-        verify(exactly = 1) { rng.nextDouble() }
+        verify(exactly = 1) { randomGenerator.nextDouble() }
         reaction.execute()
-        verify(exactly = 2) { rng.nextDouble() }
+        verify(exactly = 2) { randomGenerator.nextDouble() }
     }
 
     @Test
     fun `a new match reschedules even while condition validity remains true`() {
-        val (rng, environment, node, reaction) = fixture()
+        val (randomGenerator, environment, node, reaction) = fixture()
         reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token"), node))
         reaction.initializationComplete(DoubleTime(0.0), environment)
         assertTrue(reaction.nextOccurrence.current.isInfinite)
-        verify(exactly = 0) { rng.nextDouble() }
+        verify(exactly = 0) { randomGenerator.nextDouble() }
         node.setConcentration(LsaMolecule("token"))
         assertTrue(reaction.canExecute.current)
         assertTrue(reaction.nextOccurrence.current.isFinite)
-        verify(exactly = 1) { rng.nextDouble() }
+        verify(exactly = 1) { randomGenerator.nextDouble() }
         node.setConcentration(LsaMolecule("token"))
         assertTrue(reaction.canExecute.current)
         assertTrue(reaction.nextOccurrence.current.isFinite)
-        verify(exactly = 2) { rng.nextDouble() }
+        verify(exactly = 2) { randomGenerator.nextDouble() }
     }
 
     @Test
     fun `match revalidation redraws from the current simulation time`() {
-        val (rng, environment, node, reaction) = fixture()
+        val (randomGenerator, environment, node, reaction) = fixture()
         var now: Time = Time.ZERO
         val simulation = mockk<Simulation<List<ILsaMolecule>, Euclidean2DPosition>>(relaxed = true)
         every { simulation.reactionInvalidated(any()) } answers {
@@ -75,24 +75,52 @@ class SAPERENodeReactionSchedulingTest {
         reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token"), node))
         reaction.initializationComplete(Time.ZERO, environment)
         assertEquals(Time.INFINITY, reaction.nextOccurrence.current)
-        verify(exactly = 0) { rng.nextDouble() }
+        verify(exactly = 0) { randomGenerator.nextDouble() }
         now = DoubleTime(5.0)
         node.setConcentration(LsaMolecule("token"))
-        verify(exactly = 1) { rng.nextDouble() }
+        verify(exactly = 1) { randomGenerator.nextDouble() }
         assertEquals(5.0 + ln(2.0) / 2, reaction.nextOccurrence.current.toDouble(), TOLERANCE)
         now = DoubleTime(6.0)
         node.setConcentration(LsaMolecule("token"))
-        verify(exactly = 2) { rng.nextDouble() }
+        verify(exactly = 2) { randomGenerator.nextDouble() }
         assertTrue(reaction.nextOccurrence.current > now)
     }
 
     @Test
+    fun `a cloned reaction matches only on its destination and stops after disposal`() {
+        val (randomGenerator, environment, source, reaction) = fixture()
+        val destination = LsaNode(environment)
+        assertTrue(environment.addNode(destination, Euclidean2DPosition(5.0, 0.0)))
+        reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token"), source))
+        reaction.initializationComplete(Time.ZERO, environment)
+        val clone = reaction.cloneOnNewNode(destination, Time.ZERO)
+        clone.initializationComplete(Time.ZERO, environment)
+        assertTrue(reaction.nextOccurrence.current.isInfinite)
+        assertTrue(clone.nextOccurrence.current.isInfinite)
+        verify(exactly = 0) { randomGenerator.nextDouble() }
+        source.setConcentration(LsaMolecule("token"))
+        assertTrue(reaction.nextOccurrence.current.isFinite)
+        assertTrue(clone.nextOccurrence.current.isInfinite)
+        verify(exactly = 1) { randomGenerator.nextDouble() }
+        destination.setConcentration(LsaMolecule("token"))
+        assertTrue(clone.nextOccurrence.current.isFinite)
+        verify(exactly = 2) { randomGenerator.nextDouble() }
+        val cloneOccurrence = clone.nextOccurrence.current
+        clone.dispose()
+        destination.setConcentration(LsaMolecule("token"))
+        assertEquals(cloneOccurrence, clone.nextOccurrence.current)
+        verify(exactly = 2) { randomGenerator.nextDouble() }
+        source.setConcentration(LsaMolecule("token"))
+        verify(exactly = 3) { randomGenerator.nextDouble() }
+    }
+
+    @Test
     fun `invalid static propensities are rejected before sampling`() {
-        val (rng, environment, _, reaction) = fixture("NaN")
+        val (randomGenerator, environment, _, reaction) = fixture("NaN")
         assertFailsWith<IllegalStateException> {
             reaction.initializationComplete(DoubleTime(0.0), environment)
         }
-        verify(exactly = 0) { rng.nextDouble() }
+        verify(exactly = 0) { randomGenerator.nextDouble() }
     }
 
     @Test
@@ -110,19 +138,19 @@ class SAPERENodeReactionSchedulingTest {
 
     @Test
     fun `an unresolved match propensity is rejected at the reaction boundary`() {
-        val (rng, environment, node, reaction) = fixture("Missing")
+        val (randomGenerator, environment, node, reaction) = fixture("Missing")
         reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token, N"), node))
         node.setConcentration(LsaMolecule("token, 1"))
         assertFailsWith<IllegalStateException> {
             reaction.initializationComplete(DoubleTime(0.0), environment)
         }
-        verify(exactly = 0) { rng.nextDouble() }
+        verify(exactly = 0) { randomGenerator.nextDouble() }
     }
 
     @Test
     fun `neighbor state mutations reschedule a gradient`() {
-        val rng = mockk<RandomGenerator>(relaxed = true)
-        every { rng.nextDouble() } returns 0.5
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        every { randomGenerator.nextDouble() } returns 0.5
         val environment = Continuous2DEnvironment(SAPEREIncarnation<Euclidean2DPosition>())
         environment.linkingRule = ConnectWithinDistance(1.0)
         val node = LsaNode(environment)
@@ -136,47 +164,47 @@ class SAPERENodeReactionSchedulingTest {
             "#D",
             null,
             100.0,
-            SAPEREExponentialTime("2", rng),
+            SAPEREExponentialTime("2", randomGenerator),
         )
         reaction.initializationComplete(DoubleTime(0.0), environment)
-        verify(exactly = 0) { rng.nextDouble() }
+        verify(exactly = 0) { randomGenerator.nextDouble() }
         val neighbor = LsaNode(environment)
         assertTrue(environment.addNode(neighbor, Euclidean2DPosition(0.5, 0.0)))
         assertTrue(environment.getNeighborhood(node).current.neighbors.contains(neighbor))
-        verify(exactly = 2) { rng.nextDouble() }
+        verify(exactly = 2) { randomGenerator.nextDouble() }
         neighbor.setConcentration(LsaMolecule("gradient, 1, 1"))
-        verify(exactly = 3) { rng.nextDouble() }
+        verify(exactly = 3) { randomGenerator.nextDouble() }
         environment.moveNodeToPosition(neighbor, Euclidean2DPosition(0.75, 0.0))
-        verify(exactly = 4) { rng.nextDouble() }
+        verify(exactly = 4) { randomGenerator.nextDouble() }
         environment.moveNodeToPosition(neighbor, Euclidean2DPosition(2.0, 0.0))
-        verify(exactly = 6) { rng.nextDouble() }
+        verify(exactly = 6) { randomGenerator.nextDouble() }
         environment.moveNodeToPosition(neighbor, Euclidean2DPosition(0.5, 0.0))
-        verify(exactly = 7) { rng.nextDouble() }
+        verify(exactly = 7) { randomGenerator.nextDouble() }
         environment.removeNode(neighbor)
-        verify(exactly = 8) { rng.nextDouble() }
+        verify(exactly = 8) { randomGenerator.nextDouble() }
         environment.linkingRule = ClosestN(1)
         val closest = LsaNode(environment)
         val replacement = LsaNode(environment)
         assertTrue(environment.addNode(closest, Euclidean2DPosition(0.5, 0.0)))
-        verify(exactly = 9) { rng.nextDouble() }
+        verify(exactly = 9) { randomGenerator.nextDouble() }
         assertTrue(environment.addNode(replacement, Euclidean2DPosition(0.75, 0.0)))
-        verify(exactly = 9) { rng.nextDouble() }
+        verify(exactly = 9) { randomGenerator.nextDouble() }
         environment.removeNode(closest)
         assertTrue(environment.getNeighborhood(node).current.neighbors.contains(replacement))
-        verify(exactly = 10) { rng.nextDouble() }
+        verify(exactly = 10) { randomGenerator.nextDouble() }
     }
 
     private fun fixture(rate: String = "2"): Fixture {
-        val rng = mockk<RandomGenerator>(relaxed = true)
-        every { rng.nextDouble() } returns 0.5
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        every { randomGenerator.nextDouble() } returns 0.5
         val environment = Continuous2DEnvironment(SAPEREIncarnation<Euclidean2DPosition>())
         val node = LsaNode(environment)
         assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
         return Fixture(
-            rng,
+            randomGenerator,
             environment,
             node,
-            SAPERENodeReaction(environment, node, rng, SAPEREExponentialTime(rate, rng)),
+            SAPERENodeReaction(environment, node, randomGenerator, SAPEREExponentialTime(rate, randomGenerator)),
         )
     }
 

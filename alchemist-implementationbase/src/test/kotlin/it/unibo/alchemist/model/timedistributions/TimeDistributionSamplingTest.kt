@@ -12,9 +12,11 @@ package it.unibo.alchemist.model.timedistributions
 import io.mockk.every
 import io.mockk.mockk
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
+import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.math.sqrt
@@ -24,6 +26,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 import org.apache.commons.math3.distribution.DiracDeltaDistribution
 import org.apache.commons.math3.distribution.RealDistribution
+import org.apache.commons.math3.distribution.UniformRealDistribution
 import org.apache.commons.math3.random.RandomGenerator
 import org.apache.commons.math3.random.Well19937c
 
@@ -60,6 +63,63 @@ class TimeDistributionSamplingTest {
         assertTrue(delays.all { it.isFinite() && it >= 0.0 })
         assertEquals(0.5, delays.average(), 0.5 * RELATIVE_TOLERANCE)
         assertEquals(0.5, delays.standardDeviation(), 0.5 * RELATIVE_TOLERANCE)
+    }
+
+    @Test
+    fun `a molecule-controlled delay reads the current molecule value at every sample`() {
+        val node = mockk<Node<Any?>>()
+        var value: Any? = 1.5
+        every { node.getConcentration(MOLECULE) } answers { value }
+        every { node.id } returns 0
+        val distribution = MoleculeControlledTimeDistribution(mockk<Incarnation<Any?, *>>(), node, MOLECULE)
+        assertEquals(DoubleTime(1.5), distribution.sample())
+        listOf(3 to 3.0, "2.5" to 2.5, DoubleTime(4.0) to 4.0, null to 0.0).forEach { (current, expected) ->
+            value = current
+            assertEquals(DoubleTime(expected), distribution.sample())
+        }
+        value = -1.0
+        assertFailsWith<IllegalArgumentException> { distribution.sample() }
+        value = Any()
+        assertFailsWith<IllegalStateException> { distribution.sample() }
+    }
+
+    @Test
+    fun `a molecule-controlled delay reads a property through the incarnation when one is configured`() {
+        val node = mockk<Node<Any>>()
+        val incarnation = mockk<Incarnation<Any, *>>()
+        var value = 2.0
+        every { incarnation.getProperty(node, MOLECULE, "delay") } answers { value }
+        val distribution = MoleculeControlledTimeDistribution(incarnation, node, MOLECULE, "delay")
+        assertEquals(DoubleTime(2.0), distribution.sample())
+        value = 0.5
+        assertEquals(DoubleTime(0.5), distribution.sample())
+    }
+
+    @Test
+    fun `a molecule-controlled delay adds one error draw per sample`() {
+        val node = mockk<Node<Any>>()
+        var value = 1.0
+        every { node.getConcentration(MOLECULE) } answers { value }
+        every { node.id } returns 0
+        val random = CountingRandomGenerator()
+        val distribution = MoleculeControlledTimeDistribution(
+            mockk<Incarnation<Any, *>>(),
+            node,
+            MOLECULE,
+            errorDistribution = UniformRealDistribution(random, 0.0, 0.5),
+        )
+        val delays = List(SAMPLES) { distribution.sample().toDouble() }
+        assertEquals(SAMPLES, random.draws)
+        assertTrue(delays.all { it in 1.0..1.5 })
+        assertEquals(1.25, delays.average(), 1.25 * RELATIVE_TOLERANCE)
+        value = 0.0
+        val negativeError = MoleculeControlledTimeDistribution(
+            mockk<Incarnation<Any, *>>(),
+            node,
+            MOLECULE,
+            errorDistribution = UniformRealDistribution(random, -1.0, -0.5),
+        )
+        assertFailsWith<IllegalStateException> { negativeError.sample() }
     }
 
     @Test
@@ -155,6 +215,7 @@ class TimeDistributionSamplingTest {
 
     private companion object {
         const val SEED = 0
+        val MOLECULE = SimpleMolecule("delay")
         const val SAMPLES = 100_000
         const val RELATIVE_TOLERANCE = 0.01
 

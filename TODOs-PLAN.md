@@ -326,13 +326,13 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] Migrate deterministic, exponential, trigger, Weibull, network-arrival, molecule-controlled, and incarnation-
   specific implementations.
 - [x] Make invalid samples, negative delays, NaN, and infinity behavior explicit.
-- [ ] Add isolated deterministic and statistical tests for every distribution family.
+- [x] Add isolated deterministic and statistical tests for every distribution family.
   - [x] Dirac comb, arbitrary real, exponential, Weibull, Weibull-distributed Weibull, and random Dirac comb
     distributions, including exact random-number consumption.
   - [x] Network arrivals: live molecule-driven parameters, packet-size fallback, and access-point bandwidth sharing.
   - [x] Molecule-controlled delays: live value and property reads, value conversion and rejection, and one
     error draw per sample.
-  - [ ] SAPERE exponential distribution.
+  - [x] SAPERE exponential distribution: static and match-driven rates with one draw per sample.
 
 ## Phase 5: make reactions own scheduling
 
@@ -604,7 +604,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   direct reaction-specific signals invalidate scheduling without dependency sets or repeated Boolean emissions.
 - [x] Test zero-to-positive, positive-to-zero, and positive-to-positive chemical propensity transitions.
 - [x] Verify whether each transition preserves, transforms, or redraws the sampled time as specified.
-- [ ] Assert random-number consumption explicitly for stochastic generators.
+- [x] Assert random-number consumption explicitly for stochastic generators.
 - [x] Test one recomputation and scheduler reindex per logical transaction.
 - [x] Test observer cleanup and absence of post-removal scheduler updates.
 - [x] Test that node- and environment-owned events execute at most once and then disappear from the scheduler,
@@ -676,6 +676,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-06: Completed distribution-family tests with SAPERE static and match-driven exponential rates.
 - 2026-10-06: Covered molecule-controlled delay reads, validation, and error-distribution draws.
 - 2026-10-06: Covered network-arrival parameter refresh and access-point bandwidth sharing.
 - 2026-10-06: Added seeded statistical and draw-count tests for the core stochastic distributions.
